@@ -1,0 +1,11 @@
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Editor noise
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# docs/ is deliberately NOT ignored — working documents ship public.

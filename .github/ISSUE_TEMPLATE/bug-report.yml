@@ -1,0 +1,41 @@
+name: Bug / fix report
+description: Something in a skill or the repo is broken, wrong, or misbehaving
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: input
+    id: skill
+    attributes:
+      label: Skill or area
+      description: Which skill (or repo area, e.g. README, install instructions) is affected?
+      placeholder: e.g. huginn, install instructions
+    validations:
+      required: true
+  - type: input
+    id: harness
+    attributes:
+      label: Harness and version
+      description: Where were you running it?
+      placeholder: e.g. Claude Code 3.x, Codex CLI, other
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: What happened
+      description: What did the skill/agent actually do?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: How to reproduce
+      description: The prompt or steps that trigger it. Strip anything private before pasting.
+    validations:
+      required: false

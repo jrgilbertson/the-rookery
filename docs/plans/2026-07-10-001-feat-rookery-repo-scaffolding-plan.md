@@ -58,7 +58,7 @@ The owner is publishing his first OSS repo: an always-up-to-date, opinionated re
 
 **Publication and settings**
 
-- R14. Public repo on the owner's personal GitHub account, public from this first scaffold — build in the open, no launch gate.
+- R14. Public repo on the owner's personal GitHub account. Owner decision during execution (2026-07-10): the visibility flip happens after an owner content-edit pass rather than at first scaffold; until then the repo stays private with everything else in place. The flip is one command (`gh repo edit --visibility public`) plus a community-profile spot-check, and it remains the moment build-in-the-open begins.
 - R15. Repo settings: branch protection on `main` blocking force-pushes and branch deletion (the configurable subset on a personal account — non-owner direct pushes are already impossible with zero collaborators), squash-merge as default, Discussions off. Repo topics and the social-preview image are deferred until the banner exists.
 - R16. Versioning: repo-level semver tags with GitHub Releases at meaningful milestones; the scaffold completion is tagged `v0.1.0`.
 
@@ -175,8 +175,8 @@ U1 (community files) and U2 (templates) are independent. U7 (install-path spike)
 - **Requirements:** R14, R15, R16
 - **Dependencies:** U1–U5, U7
 - **Files:** `CHANGELOG.md` (v0.1.0 entry, added on the scaffold branch before merge); a follow-up PR updates `skills/README.md` with observed probe behavior; the rest is GitHub-side configuration
-- **Approach:** The repo already exists (private, `origin` configured, `main` pushed) — there is no creation step. In order: add the v0.1.0 CHANGELOG entry on the scaffold branch; flip the repo to public via `gh repo edit --visibility public` (build-in-the-open means the flip precedes the merge); merge the scaffold branch to `main` via squash PR; apply R15 settings via `gh`, echoing each applied setting in the PR description, with anything unreachable via CLI becoming a manual checklist line; tag `v0.1.0` and create the GitHub Release mirroring the CHANGELOG entry; run the install probe from a clean temp directory; land the probe observations in `skills/README.md` via one small follow-up PR.
-- **Execution note:** This unit takes the owner's repo public — confirm with the owner immediately before the visibility flip.
+- **Approach:** The repo already exists (private, `origin` configured, `main` pushed) — there is no creation step. In order: add the v0.1.0 CHANGELOG entry on the scaffold branch; merge the scaffold branch to `main` via squash PR; apply R15 settings via `gh`, echoing each applied setting in the PR description, with anything unreachable via CLI becoming a manual checklist line; tag `v0.1.0` and create the GitHub Release mirroring the CHANGELOG entry; run the install probe from a clean temp directory; land the probe observations in `skills/README.md` via one small follow-up PR. The visibility flip executes after the owner's content-edit pass (owner decision, see R14).
+- **Execution note:** This unit takes the owner's repo public — confirm with the owner immediately before the visibility flip. (At execution the owner deferred the flip to after an edit pass; all other steps completed while private.)
 - **Test scenarios:**
   - From a clean temp directory, `npx skills add <owner>/the-rookery` (and `--list` if supported) → resolves the repo; zero-skill behavior observed and documented in `skills/README.md`.
   - GitHub community-standards profile → all shipped files detected (license, CoC, contributing, security, templates).
@@ -202,7 +202,7 @@ No unit tests apply — the deliverable is documents and configuration; the gate
 ## Definition of Done
 
 - All units merged to `main` via the scaffold squash PR plus the single probe-documentation follow-up PR; `main` contains only install-clean scaffold content.
-- Repo is public on the owner's personal account with R15 settings verified by readback.
+- R15 settings verified by readback on the owner's personal repo. The visibility flip to public is owner-gated per R14 and executes after the owner's content-edit pass; it is deliberately outside this execution's done line.
 - `v0.1.0` tagged with a GitHub Release mirroring the CHANGELOG entry.
 - Same-door sweep is clean on the final tree; `docs/plans/` (including this file) ships public.
 - README approved section-by-section by the owner; every teaser resolves into WORKFLOWS.md.

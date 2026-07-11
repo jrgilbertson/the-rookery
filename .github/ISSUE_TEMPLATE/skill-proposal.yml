@@ -1,13 +1,13 @@
 name: Skill proposal
-description: Propose a new skill for The Rookery (curated, not collected — see CONTRIBUTING)
+description: Propose a new skill for The Rookery (curated, not collected, see CONTRIBUTING)
 title: "[proposal] "
 labels: ["skill-proposal"]
 body:
   - type: markdown
     attributes:
       value: |
-        The Rookery is curated — new skills start here as a conversation, not as a PR.
-        There's no merge promise, and a "no" is never a judgment on your work.
+        The Rookery is curated. New skills start here as a conversation instead of a PR.
+        There is no merge promise, and a no is never a judgment on your work.
         See [CONTRIBUTING](../blob/main/CONTRIBUTING.md) for how this works.
   - type: textarea
     id: what

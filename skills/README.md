@@ -1,6 +1,6 @@
 # The skills
 
-This directory is the shelf. Each skill lives in its own folder as `skills/<name>/SKILL.md` (plus any bundled references), individually installable — you never need to adopt the whole repo.
+This directory is the shelf. Each skill lives in its own folder as `skills/<name>/SKILL.md` plus any bundled references, and each installs individually. You never need to adopt the whole repo.
 
 ```bash
 # browse what's available
@@ -10,8 +10,8 @@ npx skills add jrgilbertson/the-rookery --list
 npx skills add jrgilbertson/the-rookery --skill <name>
 ```
 
-Skills here follow the [Agent Skills](https://agentskills.io) format, so they work across harnesses — Claude Code, Codex, and anything else that reads `SKILL.md`.
+Skills here follow the [Agent Skills](https://agentskills.io) format, so they work in Claude Code, Codex, and anything else that reads `SKILL.md`.
 
 ## The flock is arriving
 
-The shelf is currently being stocked. Until the first skills land, the install command above will report "No skills found" — that's expected, not broken. Watch the [CHANGELOG](../CHANGELOG.md) or releases for arrivals.
+The shelf is currently being stocked. Until the first skills land, the install command above will report "No skills found". That is expected, not broken. Watch the [CHANGELOG](../CHANGELOG.md) or releases for arrivals.

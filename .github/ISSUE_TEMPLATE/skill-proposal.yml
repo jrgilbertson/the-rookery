@@ -1,0 +1,40 @@
+name: Skill proposal
+description: Propose a new skill for The Rookery (curated, not collected — see CONTRIBUTING)
+title: "[proposal] "
+labels: ["skill-proposal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The Rookery is curated — new skills start here as a conversation, not as a PR.
+        There's no merge promise, and a "no" is never a judgment on your work.
+        See [CONTRIBUTING](../blob/main/CONTRIBUTING.md) for how this works.
+  - type: textarea
+    id: what
+    attributes:
+      label: What does the skill do?
+      description: The job it performs and when an agent should reach for it.
+    validations:
+      required: true
+  - type: input
+    id: harnesses
+    attributes:
+      label: Harnesses tested
+      description: Which harnesses have you actually run it in?
+      placeholder: e.g. Claude Code and Codex
+    validations:
+      required: true
+  - type: textarea
+    id: portability
+    attributes:
+      label: Portability notes
+      description: Anything machine-specific or harness-specific it depends on? How does it degrade when a capability is missing?
+    validations:
+      required: false
+  - type: input
+    id: link
+    attributes:
+      label: Link
+      description: Where the skill lives today (repo, gist), if anywhere.
+    validations:
+      required: false

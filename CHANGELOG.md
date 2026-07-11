@@ -10,3 +10,10 @@ Because installs pull from `main`, this file is the "what changed since you last
 looked" surface. GitHub Releases mirror its entries.
 
 ## [Unreleased]
+
+## [0.1.0] - 2026-07-10
+
+### Added
+
+- Repository scaffolding. Community files (MIT license, contributing guide, code of conduct, security policy), issue and PR templates, the skills shelf layout, and the seven-job workflow map across README and WORKFLOWS.md.
+- The rules the repo lives by. Curated not collected, main is the store shelf, and the same-door rule.

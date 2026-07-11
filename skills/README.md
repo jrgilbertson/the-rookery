@@ -14,4 +14,11 @@ Skills here follow the [Agent Skills](https://agentskills.io) format, so they wo
 
 ## The flock is arriving
 
-The shelf is currently being stocked. Until the first skills land, the install command above will report "No skills found". That is expected, not broken. Watch the [CHANGELOG](../CHANGELOG.md) or releases for arrivals.
+The shelf is currently being stocked. Until the first skills land, the install command above reports exactly this, verified against this repo.
+
+```
+No skills found
+No valid skills found. Skills require a SKILL.md with name and description.
+```
+
+That is expected, not broken. Watch the [CHANGELOG](../CHANGELOG.md) or releases for arrivals.

@@ -25,6 +25,7 @@ The built-in rubric for step 0 (audit) and step 7 (review). Work every item top 
 - Steering is positive. Pass: instructions state the target behavior ("write one-line comments"), with prohibitions kept only as hard guardrails that cannot be phrased positively — and even then paired with what to do instead.
 - Specificity matches fragility. Pass: fragile operations get exact steps or commands; open-ended ones get a heuristic plus the reason, not a rigid directive.
 - One meaning, one home. Pass: no guidance appears in two places; each behavior is a one-place edit.
+- Qualifiers are operationalized. Pass: every abstract adjective the skill leans on (thorough, clean, fast, bold) is backed by concrete behavior or a checkable criterion; an undefined qualifier becomes a fix-list entry.
 
 ## Failure-mode scan
 

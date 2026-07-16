@@ -33,6 +33,7 @@ Pin down, asking one question at a time:
 - The one job the skill does. If describing it needs "and", it is probably two skills.
 - Triggering conditions — the phrasings that should activate it, and the near-misses that must not.
 - Expected outputs and what "done" looks like.
+- Which decisions stay with the user — scope approvals, waivers, taste calls. Many skills should run fully automatic; a skill that touches judgment or taste names its steering points.
 - Real environment requirements (commands, network, credentials), if any.
 - Two or three concrete usage examples, ideally from tasks the user has actually done.
 

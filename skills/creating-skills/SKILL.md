@@ -24,7 +24,7 @@ Creating a new skill: start at step 1. Reviewing, updating, or migrating an exis
 
 Read the whole skill, then check it against [references/review-checklist.md](references/review-checklist.md). Produce a prioritized fix list — each item names what is wrong, why it matters, and the risk of fixing it. Present the list and get the user's approval on a fix scope before editing anything.
 
-Completion: the user approved a fix scope. Continue at step 1 to capture the intent of the approved changes, then run the loop from step 3 on the revised skill.
+Completion: the user approved a fix scope. Continue at step 1 to capture the intent of the approved changes, then run the loop from step 2 on the revised skill — a revision can change what earns bundling too.
 
 ### 1. Interview
 
@@ -84,7 +84,7 @@ Completion: every checklist item passes or has a recorded, deliberate exception.
 
 ### 8. Test the description
 
-Copy [assets/trigger-queries-template.md](assets/trigger-queries-template.md) next to the baseline record. Build 8-10 should-trigger phrasings (include non-obvious ones) and 8-10 near-misses. Run each 3 times in a fresh context. Passing: each should-trigger query activates in at least half its runs; any near-miss activation is a failure. Tune by front-loading trigger words and describing when to use it — never by summarizing the workflow — then re-run.
+Copy [assets/trigger-queries-template.md](assets/trigger-queries-template.md) next to the baseline record. Build 8-10 should-trigger phrasings (include non-obvious ones) and 8-10 near-misses. Run each 3 times in a fresh context, using the same clean-context mechanism as step 5 (if you have none, say so and ask the user to run them). Activation is judged at the listing level: show a fresh context only the skill's name and description alongside the query and ask whether it would activate; a live harness-discovery run, where available, is stronger evidence. Passing: each should-trigger query activates in at least half its runs; any near-miss activation is a failure. Tune by front-loading trigger words and describing when to use it — never by summarizing the workflow — then re-run.
 
 Completion: the query set passes.
 

@@ -40,17 +40,15 @@ Date: [YYYY-MM-DD] | Harness: [name] | Model: [name]
 
 Expected delta: baseline edits ad hoc; with-skill audits against the checklist, produces a prioritized fix list, gets scope approval, and compares prior against revised before shipping.
 
-## Case 3: Fix a description that never triggers
+## Case 3: Fix a description that never triggers (run against a toy "expense-notes" skill)
 
-Not yet run — scheduled with the post-merge dogfood.
-
-Date: [YYYY-MM-DD] | Harness: [name] | Model: [name]
+Date: 2026-07-16 | Harness: Claude Code subagents (fresh context per half) | Model: session default
 
 | Prompt | Baseline behavior (observed) | With-skill behavior (observed) | Verdict |
 | --- | --- | --- | --- |
-| My skill's description isn't triggering when people ask about receipts — improve it | | | |
+| My expense-notes skill's description isn't triggering when people ask about receipts — improve it | Intuition rewrite (a workflow-describing description); self-audit confirmed: no trigger queries built or run, no testing gate or waiver, no length/portability check | Checklist audit named the four description failures; approved fix scope; both gates ran — prior-vs-revised baseline and a 10/10 should-trigger / 0-of-9 near-miss query set; change correctly ruled substantive, validated clean | better |
 
-Expected delta: baseline rewrites the description by intuition (often summarizing the workflow); with-skill builds and runs the trigger-query set, front-loads keywords, and treats the change as substantive (baseline gate or recorded waiver).
+Observed delta: the with-skill run enforced the trigger-contract discipline end to end; the bare run shipped an untested description.
 
 ## Waiver (only when shipping without the comparison)
 

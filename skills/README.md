@@ -12,13 +12,12 @@ npx skills add jrgilbertson/the-rookery --skill <name>
 
 Skills here follow the [Agent Skills](https://agentskills.io) format, so they work in Claude Code, Codex, and anything else that reads `SKILL.md`.
 
-## The flock is arriving
+## On the shelf
 
-The shelf is currently being stocked. Until the first skills land, the install command above reports exactly this, verified against this repo.
+- **[creating-skills](creating-skills/SKILL.md)** — create a new agent skill, or review, update, and migrate an existing one. One loop from intent interview through baseline testing to a packaged skill that works across models and harnesses.
 
-```
-No skills found
-No valid skills found. Skills require a SKILL.md with name and description.
-```
+  ```bash
+  npx skills add jrgilbertson/the-rookery --skill creating-skills
+  ```
 
-That is expected, not broken. Watch the [CHANGELOG](../CHANGELOG.md) or releases for arrivals.
+More skills are arriving. Watch the [CHANGELOG](../CHANGELOG.md) or releases.

@@ -46,7 +46,7 @@ Completion: a file list with a one-line reason per file.
 
 ### 3. Draft
 
-Copy [assets/skill-template.md](assets/skill-template.md) for a new skill, or edit the existing one for a revision. While writing:
+Copy [assets/skill-template.md](assets/skill-template.md) into the new skill's directory — create it at the host repo's skill discovery path (see [references/portability.md](references/portability.md)) or wherever the host keeps its skills — or edit the existing skill in place for a revision. While writing:
 
 - Run the delete test on every line: would the agent get this wrong without it? If not, cut it.
 - Match specificity to fragility — exact steps for fragile operations, a heuristic plus the why for open-ended ones. Explain reasoning ("do X because Y") over bare commands.
@@ -64,7 +64,7 @@ Completion: validation clean, by tool or by named manual check.
 
 ### 5. Baseline test
 
-Copy [assets/baseline-test-template.md](assets/baseline-test-template.md). For a new skill, run 2-3 realistic prompts with and without the skill; for a revision, prior version against revised. Run every prompt in a fresh agent context with the right variant loaded — use your harness's native mechanism for a clean context (a subagent, a CLI exec, a new session). If you have no way to produce one, say so plainly and ask the user to run the prompts in a fresh session.
+Copy [assets/baseline-test-template.md](assets/baseline-test-template.md) to wherever the host repo keeps test records (`tests/<skill-name>/` when it has no convention) and fill it there. For a new skill, run 2-3 realistic prompts with and without the skill; for a revision, prior version against revised. Run every prompt in a fresh agent context with the right variant loaded — use your harness's native mechanism for a clean context (a subagent, a CLI exec, a new session). If you have no way to produce one, say so plainly and ask the user to run the prompts in a fresh session.
 
 A substantive change — any change to instruction semantics, the trigger description, or bundled resources — must not ship without this comparison or an explicit recorded waiver from the user. Typo, formatting, and link-only fixes are exempt.
 
@@ -84,13 +84,13 @@ Completion: every checklist item passes or has a recorded, deliberate exception.
 
 ### 8. Test the description
 
-Copy [assets/trigger-queries-template.md](assets/trigger-queries-template.md). Build 8-10 should-trigger phrasings (include non-obvious ones) and 8-10 near-misses. Run each 3 times in a fresh context. Passing: each should-trigger query activates in at least half its runs; any near-miss activation is a failure. Tune by front-loading trigger words and describing when to use it — never by summarizing the workflow — then re-run.
+Copy [assets/trigger-queries-template.md](assets/trigger-queries-template.md) next to the baseline record. Build 8-10 should-trigger phrasings (include non-obvious ones) and 8-10 near-misses. Run each 3 times in a fresh context. Passing: each should-trigger query activates in at least half its runs; any near-miss activation is a failure. Tune by front-loading trigger words and describing when to use it — never by summarizing the workflow — then re-run.
 
 Completion: the query set passes.
 
 ### 9. Package
 
-Follow the host repository's own conventions when they exist — look for contributing docs, agent instruction files, a changelog, and validator scripts; use what you find and say which conventions you followed. In a repo with none, use the generic path and say so: confirm the directory is self-contained, then verify a clean install through the repo's documented install path (or by copying the directory into the harness's skill home) and confirm the skill loads and triggers.
+Follow the host repository's own conventions when they exist — look for contributing docs, agent instruction files, a changelog, and validator scripts; use what you find and say which conventions you followed. In a repo with none, use the generic path and say so: confirm the directory is self-contained, then verify a clean install through the repo's documented install path (or by copying the directory into the harness's skill home — a repo-level discovery path counts when the user home is out of reach) and confirm the skill loads and triggers.
 
 Completion: an installed copy loads and triggers in at least one harness.
 

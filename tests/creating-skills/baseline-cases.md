@@ -18,17 +18,19 @@ it demonstrably enforces the four disciplines a bare prompt skips:
 3. Description tested as a trigger contract — should-trigger and near-miss queries built and run.
 4. The standard loop followed — interview through validation, baseline, review, and package, with completion criteria observed.
 
-## Case 1: Create a commit-message skill from scratch
+## Case 1: Create a skill from scratch (run as "summarizing-standups")
 
-Date: [YYYY-MM-DD] | Harness: [name] | Model: [name]
+Date: 2026-07-16 | Harness: Claude Code subagent (baseline), Codex CLI 0.144.4 + Grok CLI + Claude Code subagent (with-skill) | Model: session defaults per harness
 
 | Prompt | Baseline behavior (observed) | With-skill behavior (observed) | Verdict |
 | --- | --- | --- | --- |
-| Create a skill that makes agents write conventional commit messages for this repo, and get it ready to share | | | |
+| Create a skill that turns raw standup notes into a three-line summary (done/doing/blocked), and get it ready to share | One-shot SKILL.md plus a zip; self-audit confirmed: no interview, no validator run, no trigger testing, no with/without comparison, no formal portability check | All three harnesses ran the full loop: interview from supplied intent, validation (skills-ref, or the manual fallback when Codex's sandbox denied network), fresh-context baselines, subtract pass cutting unearned rules, trigger sets 100% pass, companion skips named | better |
 
-Expected delta: baseline typically writes a one-shot SKILL.md with no interview, no validation run, and an untested description; with-skill runs the loop and produces a validated, trigger-tested, portable package.
+Observed delta: all four disciplines enforced with the skill and all four skipped without it. Full run logs: `tests/creating-skills/results.md`.
 
 ## Case 2: Review and fix an existing skill
+
+Not yet run — scheduled as the post-merge dogfood (the design-evals migration review). The waiver path (AE3) was exercised separately and passed; see results.md.
 
 Date: [YYYY-MM-DD] | Harness: [name] | Model: [name]
 
@@ -39,6 +41,8 @@ Date: [YYYY-MM-DD] | Harness: [name] | Model: [name]
 Expected delta: baseline edits ad hoc; with-skill audits against the checklist, produces a prioritized fix list, gets scope approval, and compares prior against revised before shipping.
 
 ## Case 3: Fix a description that never triggers
+
+Not yet run — scheduled with the post-merge dogfood.
 
 Date: [YYYY-MM-DD] | Harness: [name] | Model: [name]
 

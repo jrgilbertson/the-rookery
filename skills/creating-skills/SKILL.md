@@ -1,6 +1,6 @@
 ---
 name: creating-skills
-description: Use when creating a new agent skill, or when reviewing, updating, or migrating an existing one — including fixing a skill's description, triggers, structure, or portability, and porting a skill between collections. Runs one loop from intent interview through baseline testing to a packaged, installable skill that works across models and harnesses. Do not use for building plugins, designing standalone eval suites, or reviewing prose that is not a skill.
+description: Use when creating a new agent skill, or when reviewing, updating, or migrating a skill between collections — including fixing a skill's description, triggers, structure, or portability. Produces portable, installable skills that work across models and harnesses. Do not use for building plugins, designing standalone eval suites, or reviewing prose that is not a skill.
 license: MIT
 ---
 
@@ -52,7 +52,7 @@ Copy [assets/skill-template.md](assets/skill-template.md) into the new skill's d
 - Match specificity to fragility — exact steps for fragile operations, a heuristic plus the why for open-ended ones. Explain reasoning ("do X because Y") over bare commands.
 - Keep the body near 200 lines and never past 500. Push branch-specific detail one level deep with an explicit read-trigger ("Read references/x.md when Y"), not a bare "see references/".
 - Write capability-based prose, not harness product names: "present a structured confirmation and wait for a choice", not a named vendor tool.
-- No absolute paths, no personal-environment assumptions, no private names.
+- Keep every path relative and inside the skill directory, and every name and reference public — nothing that assumes your machine or private repos.
 
 Completion: a draft with frontmatter, body, and every planned resource written.
 

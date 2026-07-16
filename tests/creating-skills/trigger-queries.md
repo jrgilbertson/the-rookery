@@ -10,6 +10,8 @@ fails the whole set.
 
 Date: 2026-07-16 | Harness: Claude Code subagents (fresh context per judge) | Model: three families — Haiku 4.5, Sonnet, Fable 5
 
+Re-run 2026-07-16 after the description revision from the writing-great-skills review (workflow-summary sentence removed, migrate/port branch collapsed): identical results — every should-trigger at rate 1.0, zero near-miss activations.
+
 ## Should-trigger queries
 
 | Query | Run 1 | Run 2 | Run 3 | Rate |

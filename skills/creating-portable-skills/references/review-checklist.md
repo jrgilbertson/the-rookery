@@ -9,7 +9,7 @@ The built-in rubric for step 0 (audit) and step 7 (review). Work every item top 
 - Trigger keywords are front-loaded. Pass: the words a user would actually type appear in the first sentence, since some harnesses truncate long descriptions.
 - Near-misses are named. Pass: the description or a "do not use for" clause excludes at least the closest adjacent task the skill should not handle.
 - Each trigger is a distinct branch. Pass: no two trigger phrases are synonyms for the same case; collapsing any pair would lose a real branch.
-- The invocation choice is deliberate. Pass: the skill is model-invoked because the agent (or another skill) must reach it on its own; a skill only ever fired by hand instead drops agent invocation and pays no per-turn context cost.
+- The invocation choice is deliberate. Pass: the skill is model-invoked because the agent (or another skill) must reach it on its own. A skill only ever fired by hand drops agent invocation where the host harness offers an invocation-control field (a vendor extension, kept in the harness adapter or under `metadata`); where none exists, its description says it is run by hand, which is the portable fallback.
 
 ## Information hierarchy
 
@@ -30,7 +30,7 @@ The built-in rubric for step 0 (audit) and step 7 (review). Work every item top 
 ## Failure-mode scan
 
 - Premature completion: no step invites an early exit. Pass: no step's completion condition is vague enough that "declare done and move on" satisfies it.
-- Duplication: no repeated meaning. Pass: no sentence restates another sentence's content in different words, in the body or between body and description.
+- Duplication: no repeated meaning. Pass: no sentence restates another sentence's content in different words, in the body or between body and description. Exempt: a "When to use" section restating the description's trigger contract, since the two load at different times (the description at listing time, the body at run time).
 - Sediment: superseded text is removed, not stacked. Pass: no line describes behavior, tooling, or structure the skill no longer has; edits replaced old text rather than appending around it.
 - Sprawl: the skill does one job. Pass: the skill's job fits one sentence without "and"; content serving a second job is split out or cut.
 - No-ops: every sentence steers. Pass: each sentence, read alone, would change agent behavior versus the default; a sentence that fails is deleted whole, not trimmed.

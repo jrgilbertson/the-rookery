@@ -53,7 +53,7 @@ For a new skill, copy [assets/skill-template.md](assets/skill-template.md) into 
 - Match specificity to fragility, with exact steps for fragile operations and a heuristic plus the why for open-ended ones. Explain reasoning ("do X because Y") over bare commands.
 - Keep the body near 200 lines and never past 500. Push branch-specific detail one level deep with an explicit read-trigger ("Read references/x.md when Y"), not a bare "see references/".
 - Write capability-based prose instead of harness product names. Say "present a structured confirmation and wait for a choice" rather than naming a vendor tool.
-- Keep every path relative and inside the skill directory, and every name and reference public. Nothing may assume your machine or private repos.
+- Keep every bundled resource the skill references (templates, references, assets) relative and inside the skill directory, and every name and reference public. Host-project paths the skill operates on are fine. Nothing may assume your machine or private repos.
 
 Completion: a draft with frontmatter, body, and every planned resource written.
 

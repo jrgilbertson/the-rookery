@@ -16,13 +16,13 @@ The built-in rubric for step 0 (audit) and step 7 (review). Work every item top 
 - The body fits its budget. Pass: `SKILL.md` body is at most 500 lines, and near 200 unless the extra lines each survive the delete test below.
 - Branch-specific detail is disclosed, one level deep. Pass: material only some runs need lives in a bundled file behind an explicit read-trigger ("Read references/x.md when Y"), never a bare "see references/", and no disclosed file points onward to a second level.
 - Inline content is universal. Pass: everything left in the body is needed by every path through the skill.
-- Steps end on completion criteria. Pass: each step closes with a checkable condition — the agent can tell done from not-done — and the condition is exhaustive where it matters ("every X accounted for", not "produce a list").
+- Steps end on completion criteria. Pass: each step closes with a checkable condition (the agent can tell done from not-done), and the condition is exhaustive where it matters ("every X accounted for", not "produce a list").
 
 ## Instruction economy
 
 - Every line survives the delete test. Pass: for each line, the agent would plausibly get something wrong without it; lines restating default model behavior are cut.
 - Every rule traces to evidence. Pass: each prescriptive rule maps to an observed failure, a with/without behavioral difference, or a named fragile operation; anticipatory rules are cut.
-- Steering is positive. Pass: instructions state the target behavior ("write one-line comments"), with prohibitions kept only as hard guardrails that cannot be phrased positively — and even then paired with what to do instead.
+- Steering is positive. Pass: instructions state the target behavior ("write one-line comments"), with prohibitions kept only as hard guardrails that cannot be phrased positively, and even then paired with what to do instead.
 - Specificity matches fragility. Pass: fragile operations get exact steps or commands; open-ended ones get a heuristic plus the reason, not a rigid directive.
 - One meaning, one home. Pass: no guidance appears in two places; each behavior is a one-place edit.
 - Qualifiers are operationalized. Pass: every abstract adjective the skill leans on (thorough, clean, fast, bold) is backed by concrete behavior or a checkable criterion; an undefined qualifier becomes a fix-list entry.
@@ -44,7 +44,7 @@ The built-in rubric for step 0 (audit) and step 7 (review). Work every item top 
 
 ## Beyond this checklist
 
-This checklist is the floor. For the deeper review vocabulary — predictability, leading words, context and cognitive load, the full failure-mode taxonomy — install `writing-great-skills` from [mattpocock/skills](https://github.com/mattpocock/skills) and run its pass as well.
+This checklist is the floor. For the deeper review vocabulary (predictability, leading words, context and cognitive load, the full failure-mode taxonomy), install `writing-great-skills` from [mattpocock/skills](https://github.com/mattpocock/skills) and run its pass as well.
 
 ## Credits
 

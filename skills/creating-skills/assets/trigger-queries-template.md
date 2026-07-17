@@ -1,48 +1,50 @@
 # Trigger query test: [skill-name]
 
-Build 8-10 should-trigger phrasings (include non-obvious ones) and 8-10
-near-misses. Run each query 3 times in a fresh agent context with the skill
-installed.
+Build 5 should-trigger phrasings (include at least one non-obvious wording)
+and 5 near-misses. Judge each once at the listing level in a fresh agent
+context: show the context only the skill's name and description alongside
+the query and ask whether it would activate, requiring a plain yes, no, or
+unsure.
 
-Pass rule: each should-trigger query must activate in at least half its runs
-(rate of at least 0.5 across the 3 runs — 2 of 3). ANY near-miss activation
-fails the whole set.
+Pass rule: every should-trigger activates and no near-miss does. An unsure
+or hedged judgment counts as borderline. On a miss or a borderline call,
+tune the description, re-judge the affected queries, and give any query
+that stays borderline two extra runs (majority wins).
+
+Full-rigor tier, for skills shipping to a public collection or where
+triggering is unusually load-bearing: extend both tables to 8-10 queries
+and run every query 3 times. A should-trigger then passes at 2 of 3, and
+any near-miss activation still fails the whole set.
 
 Date: [YYYY-MM-DD] | Harness: [name] | Model: [name]
 
 ## Should-trigger queries
 
-| Query | Run 1 | Run 2 | Run 3 | Rate |
-| --- | --- | --- | --- | --- |
-| [phrasing 1] | | | | |
-| [phrasing 2] | | | | |
-| [phrasing 3] | | | | |
-| [phrasing 4] | | | | |
-| [phrasing 5] | | | | |
-| [phrasing 6] | | | | |
-| [phrasing 7] | | | | |
-| [phrasing 8] | | | | |
-| [phrasing 9, optional] | | | | |
-| [phrasing 10, optional] | | | | |
+| Query | Judgment | Extra runs (borderline only) |
+| --- | --- | --- |
+| [phrasing 1] | | |
+| [phrasing 2] | | |
+| [phrasing 3] | | |
+| [phrasing 4] | | |
+| [phrasing 5, non-obvious] | | |
+
+Add rows up to 10 for the full-rigor tier.
 
 ## Near-miss queries (expected: no trigger)
 
-| Query | Expected | Run 1 | Run 2 | Run 3 |
-| --- | --- | --- | --- | --- |
-| [near-miss 1] | no trigger | | | |
-| [near-miss 2] | no trigger | | | |
-| [near-miss 3] | no trigger | | | |
-| [near-miss 4] | no trigger | | | |
-| [near-miss 5] | no trigger | | | |
-| [near-miss 6] | no trigger | | | |
-| [near-miss 7] | no trigger | | | |
-| [near-miss 8] | no trigger | | | |
-| [near-miss 9, optional] | no trigger | | | |
-| [near-miss 10, optional] | no trigger | | | |
+| Query | Judgment | Extra runs (borderline only) |
+| --- | --- | --- |
+| [near-miss 1] | | |
+| [near-miss 2] | | |
+| [near-miss 3] | | |
+| [near-miss 4] | | |
+| [near-miss 5] | | |
+
+Add rows up to 10 for the full-rigor tier.
 
 ## Tuning
 
 Fix failures by front-loading trigger words and describing when to use the
-skill — never by summarizing the workflow. A description that summarizes the
+skill, never by summarizing the workflow. A description that summarizes the
 steps makes agents follow the summary and skip the body. After tuning,
-re-run the full set.
+re-judge the affected queries.

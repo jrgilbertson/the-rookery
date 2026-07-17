@@ -20,13 +20,15 @@ it demonstrably enforces the four disciplines a bare prompt skips:
 
 ## Case 1: Create a skill from scratch (run as "summarizing-standups")
 
-Date: 2026-07-16 | Harness: Claude Code subagent (baseline), Codex CLI 0.144.4 + Grok CLI + Claude Code subagent (with-skill) | Model: session defaults per harness
+Date: 2026-07-16 | Harness: Claude Code, both halves | Model: session default, both halves | Fresh context per half
+
+Controlled comparison (matched pair, same harness and model):
 
 | Prompt | Baseline behavior (observed) | With-skill behavior (observed) | Verdict |
 | --- | --- | --- | --- |
-| Create a skill that turns raw standup notes into a three-line summary (done/doing/blocked), and get it ready to share | One-shot SKILL.md plus a zip; self-audit confirmed: no interview, no validator run, no trigger testing, no with/without comparison, no formal portability check | All three harnesses ran the full loop: interview from supplied intent, validation (skills-ref, or the manual fallback when Codex's sandbox denied network), fresh-context baselines, subtract pass cutting unearned rules, trigger sets 100% pass, companion skips named | better |
+| Create a skill that turns raw standup notes into a three-line summary (done/doing/blocked), and get it ready to share | Bare Claude Code subagent: one-shot SKILL.md plus a zip; self-audit confirmed: no interview, no validator run, no trigger testing, no with/without comparison, no formal portability check | Claude Code visitor run in a clean repo: all loop steps 1-9 completed with criteria met; interview from supplied intent, skills-ref validation, fresh-context baseline, subtract pass, trigger set built and run, companion depth-skips named (AE1), convention scan with the generic path declared (AE2) | better |
 
-Observed delta: all four disciplines enforced with the skill and all four skipped without it. Full run logs: `tests/creating-portable-skills/results.md`.
+Observed delta: all four disciplines enforced with the skill and all four skipped without it, in the same harness on the same session-default model with a fresh context on each side. The Codex CLI 0.144.4 and Grok CLI runs of the same create flow are portability evidence, not part of the controlled comparison; their full run logs are in `tests/creating-portable-skills/results.md`.
 
 ## Case 2: Review and fix an existing skill
 

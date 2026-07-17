@@ -9,7 +9,7 @@ Recorded runs for the plan's Verification Contract (`docs/plans/2026-07-16-001-f
 | Static validation | Pass | `npx skills-ref validate skills/creating-portable-skills` → "Valid skill", clean after every edit round |
 | Line budget | Pass | `SKILL.md` at 107 lines (ceiling 500, target ~200) |
 | Same-door sweep | Pass | Zero hits for home-directory paths and owner-environment identifiers across `skills/creating-portable-skills/` and `tests/creating-portable-skills/` |
-| Install probe | Pass (local source) | `npx skills add . --skill creating-portable-skills --agent claude-code --agent codex -g -y --copy` installed to both `~/.claude/skills/` and `~/.agents/skills/`; skill registered live in the running harness. See the branch-ref caveat below |
+| Install probe | Partial pass: local-source probe passed; remote probe (from jrgilbertson/the-rookery) pending post-merge (see caveat) | `npx skills add . --skill creating-portable-skills --agent claude-code --agent codex -g -y --copy` installed to both `~/.claude/skills/` and `~/.agents/skills/`; skill registered live in the running harness. See the branch-ref caveat below |
 | Trigger evaluation | Pass | 10/10 should-trigger at rate 1.0 (3 runs each), 0/10 near-miss activations, judged in fresh contexts across three model families (Haiku 4.5, Sonnet, Fable 5). Full tables: `trigger-queries.md` |
 | Baseline test | Pass | Bare-agent baseline skipped all four disciplines (self-audited); with-skill runs in three harnesses enforced all four. Comparison: `baseline-cases.md` case 1 |
 | Visitor create-flow (F1) | Pass | Clean non-Rookery repo, no companions: all loop steps completed, AE1 and AE2 confirmed (see below) |

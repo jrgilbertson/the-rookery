@@ -12,6 +12,8 @@ deepened: 2026-07-16
 
 # Creating-Skills Skill - Plan
 
+Naming note: after this plan was finalized, the owner renamed the skill to `creating-portable-skills` to carry its cross-harness stance. Paths, commands, and KTD9 in this document reflect the pre-rename name `creating-skills`; substitute `creating-portable-skills` (and `tests/creating-portable-skills/`) when following any of them. The shipped state is authoritative in `skills/creating-portable-skills/` and `tests/creating-portable-skills/results.md`.
+
 ## Goal Capsule
 
 - **Objective:** Ship `creating-skills`, The Rookery's first skill — a portable Agent Skills creator and maintainer that enforces the discipline a bare "help me write a skill" prompt skips.

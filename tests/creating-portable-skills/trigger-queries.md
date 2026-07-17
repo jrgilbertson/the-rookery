@@ -1,8 +1,11 @@
 # Trigger query test: creating-portable-skills
 
 Build 8-10 should-trigger phrasings (include non-obvious ones) and 8-10
-near-misses. Run each query 3 times in a fresh agent context with the skill
-installed.
+near-misses. Judge each query 3 times at the listing level in a fresh agent
+context: show the context only the skill's name and description alongside
+the query and ask whether it would activate, requiring a plain yes, no, or
+unsure. Live harness-native discovery is recorded separately (see
+`results.md`) as stronger evidence.
 
 Pass rule: each should-trigger query must activate in at least half its runs
 (rate of at least 0.5 across the 3 runs — 2 of 3). ANY near-miss activation

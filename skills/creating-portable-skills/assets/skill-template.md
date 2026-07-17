@@ -5,8 +5,10 @@ name: skill-name-here
 description: Use when [triggering conditions first, the phrasings and situations that should activate this skill, including non-obvious ones]. [What it does, one clause.] Do not use for [near-misses that must not trigger, naming where they route instead].
 # description: 1024 chars or fewer. Triggering conditions come first; the
 # description carries the entire triggering burden. The body never rescues it.
-license: MIT
-# license: optional. Delete if the host collection sets one.
+license: "[choose a license, or delete this field if the host collection declares one]"
+# license: optional, but never default it. The author must pick a license
+# deliberately, or delete this field when the host collection already
+# declares one. Do not carry over MIT or any other default.
 # compatibility: optional. Declare only real environment needs (commands,
 # network, credentials). Delete this field when there are none.
 ---

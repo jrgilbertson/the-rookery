@@ -41,13 +41,13 @@ Completion: you can state the skill's job in one sentence and list its triggers,
 
 ### 2. Plan resources
 
-Decide what earns bundling before drafting. Templates the outputs will copy go in `assets/`, material read on demand goes in `references/`, and deterministic helpers belong in `scripts/` only where instructions cannot be reliable. Everything else stays out. Skills are standalone, with no reaching outside the skill directory and no depending on another skill being installed.
+Decide what earns bundling before drafting. Templates the outputs will copy go in `assets/`, material read on demand goes in `references/`, and deterministic helpers belong in `scripts/` only where instructions cannot be reliable. Everything else stays out. Skills are standalone, with no reaching outside the skill directory and no depending on another skill being installed. Check the host repository's conventions now (contributing docs, agent instruction files, a changelog, validator scripts), since they decide where files go and which rules apply to everything the loop creates.
 
-Completion: a file list with a one-line reason per file.
+Completion: a file list with a one-line reason per file, plus the host conventions that apply.
 
 ### 3. Draft
 
-For a new skill, copy [assets/skill-template.md](assets/skill-template.md) into the skill's directory, created at the host repo's skill discovery path (see [references/portability.md](references/portability.md)) or wherever the host keeps its skills. For a revision, edit the existing skill in place. While writing:
+For a new skill, copy [assets/skill-template.md](assets/skill-template.md) into the skill's directory, created at the host repo's skill discovery path (see [references/portability.md](references/portability.md)) or wherever the host keeps its skills. For a revision, preserve a loadable copy of the prior version before editing (the last commit suffices in a versioned repo), then edit the existing skill in place; for a migration between collections, first copy the source package into the destination's skill location and revise that copy, leaving the source collection untouched. While writing:
 
 - Run the delete test on every line. Would the agent get this wrong without it? If not, cut it.
 - Match specificity to fragility, with exact steps for fragile operations and a heuristic plus the why for open-ended ones. Explain reasoning ("do X because Y") over bare commands.
@@ -59,7 +59,7 @@ Completion: a draft with frontmatter, body, and every planned resource written.
 
 ### 4. Validate
 
-Run `npx skills-ref validate <skill-directory>`. If `npx` cannot run here (no Node runtime or no network), perform the same checks manually and state that the validator was skipped. The manual checks: `name` at most 64 chars, lowercase kebab-case, matching the directory name; `description` 1 to 1024 chars; body at most 500 lines; portable frontmatter fields only. Fix and re-check until clean.
+Run `npx skills-ref validate <skill-directory>`. If `npx` cannot run here (no Node runtime or no network), perform the same checks manually and state that the validator was skipped. The manual checks: `name` at most 64 chars, lowercase kebab-case, no leading, trailing, or consecutive hyphens, matching the directory name; `description` 1 to 1024 chars; body at most 500 lines; portable frontmatter fields only; `compatibility`, when present, at most 500 chars; `metadata`, when present, string values only. Fix and re-check until clean.
 
 Completion: validation clean, by tool or by named manual check.
 
@@ -87,15 +87,15 @@ Completion: every checklist item passes or has a recorded, deliberate exception.
 
 Copy [assets/trigger-queries-template.md](assets/trigger-queries-template.md) next to the baseline record. Build 5 should-trigger phrasings (include at least one non-obvious wording) and 5 near-misses, then judge each once in a fresh context using the same clean-context mechanism as step 5 (if you have none, say so and ask the user to run them). Activation is judged at the listing level. Show the context only the skill's name and description alongside the query and ask whether it would activate, requiring a plain yes, no, or unsure; a live harness-discovery run, where available, is stronger evidence.
 
-Passing: every should-trigger activates and no near-miss does. An unsure or hedged judgment counts as borderline. On a miss or a borderline call, tune by front-loading trigger words and describing when to use the skill, never by summarizing the workflow, then re-judge the affected queries (two extra runs for any that stay borderline, majority wins). Scale up to the template's full-rigor tier (8 to 10 queries each side, 3 runs per query) only when the skill ships to a public collection or triggering is unusually load-bearing.
+Passing: every should-trigger activates and no near-miss does. An unsure or hedged judgment counts as borderline. On a miss or a borderline call, tune by front-loading trigger words and describing when to use the skill, never by summarizing the workflow, then re-judge the full query set on both tables, since an edit can newly activate a near-miss (two extra runs for any that stay borderline, majority wins), and re-run step 4's validation after the last tuning edit. Scale up to the template's full-rigor tier (8 to 10 queries each side, 3 runs per query) only when the skill ships to a public collection or triggering is unusually load-bearing.
 
 Completion: the query set passes.
 
 ### 9. Package
 
-Follow the host repository's own conventions when they exist. Look for contributing docs, agent instruction files, a changelog, and validator scripts, use what you find, and say which conventions you followed. In a repo with none, use the generic path and say so. Either way, confirm the directory is self-contained, then verify a clean install through the repo's documented install path (or by copying the directory into the harness's skill home, where a repo-level discovery path counts when the user home is out of reach) and confirm the skill loads and triggers.
+Re-verify the host conventions found in step 2 (contributing docs, agent instruction files, a changelog, validator scripts), confirm the loop's outputs still follow them, and say which conventions you followed. In a repo with none, use the generic path and say so. Either way, confirm the directory is self-contained, then verify a clean install through the repo's documented install path (or by copying the directory into the harness's skill home, where a repo-level discovery path counts when the user home is out of reach) and confirm the skill loads and triggers.
 
-Completion: an installed copy loads and triggers in at least one harness.
+Completion: an installed copy loads and triggers in one harness for a skill staying out of public collections; when the skill ships to a public collection, or its description or compatibility field names specific harnesses, verify a clean install in each named harness (mirroring step 8's full-rigor tier). The portable-frontmatter and capability-prose gates carry the general cross-harness claim.
 
 ## Gotchas
 

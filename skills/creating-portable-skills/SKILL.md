@@ -65,9 +65,9 @@ Completion: validation clean, by tool or by named manual check.
 
 ### 5. Baseline test
 
-Copy [assets/baseline-test-template.md](assets/baseline-test-template.md) to wherever the host repo keeps test records (`tests/<skill-name>/` when it has no convention) and fill it there. For a new skill, run 2 or 3 realistic prompts with and without the skill. For a revision, run the prior version against the revised one. Run every prompt in a fresh agent context with the right variant loaded, using your harness's native mechanism for a clean context (a subagent, a CLI exec, a new session). If you have no way to produce one, say so plainly and ask the user to run the prompts in a fresh session.
+Copy [assets/baseline-test-template.md](assets/baseline-test-template.md) to wherever the host repo keeps test records (`tests/<skill-name>/` when it has no convention) and fill it there. If a prior run's record already exists there, append a new dated entry or write a new dated file rather than overwriting the earlier evidence and any recorded waiver. For a new skill, run 2 or 3 realistic prompts with and without the skill. For a revision, run the prior version against the revised one. Run every prompt in a fresh agent context with the right variant loaded, using your harness's native mechanism for a clean context (a subagent, a CLI exec, a new session). If you have no way to produce one, say so plainly and ask the user to run the prompts in a fresh session.
 
-A substantive change means any change to instruction semantics, the trigger description, or bundled resources. It must not ship without this comparison or an explicit recorded waiver from the user. Typo, formatting, and link-only fixes are exempt.
+A substantive change means any change to instruction semantics, the trigger description, or bundled resources. It must not ship without this comparison or an explicit recorded waiver from the user. Typo, formatting, and link-only fixes are exempt. This gate holds for the rest of the loop. Any later edit that is substantive under this rule, whether from step 6's subtract pass, a step 7 review fix, or step 8 description tuning, routes back through step 4's validation and this comparison before the skill packages.
 
 Completion: a recorded comparison showing the skill changes behavior as intended, or a recorded waiver.
 
@@ -81,15 +81,13 @@ Completion: every surviving instruction traces to an observed difference or a na
 
 Run [references/review-checklist.md](references/review-checklist.md) top to bottom. Recommend the companions from Routing for anything deeper. When a companion is absent, the checklist is the floor and you name what was skipped.
 
-A review fix that changes instruction semantics, the trigger description, or bundled resources is substantive: run it back through step 4's validation and step 5's comparison before continuing.
-
-Completion: every checklist item passes or has a recorded, deliberate exception.
+Completion: every checklist item passes or has a recorded, deliberate exception, and any substantive fix has re-entered step 5's gate.
 
 ### 8. Test the description
 
 Copy [assets/trigger-queries-template.md](assets/trigger-queries-template.md) next to the baseline record. Build 5 should-trigger phrasings (include at least one non-obvious wording) and 5 near-misses, then judge each once in a fresh context using the same clean-context mechanism as step 5 (if you have none, say so and ask the user to run them). Activation is judged at the listing level. Show the context only the skill's name and description alongside the query and ask whether it would activate, requiring a plain yes, no, or unsure; a live harness-discovery run, where available, is stronger evidence.
 
-Passing: every should-trigger activates and no near-miss does. An unsure or hedged judgment counts as borderline. On a miss or a borderline call, tune by front-loading trigger words and describing when to use the skill, never by summarizing the workflow, then re-judge the full query set on both tables, since an edit can newly activate a near-miss (two extra runs for any that stay borderline, majority wins), and re-run step 4's validation after the last tuning edit. Scale up to the template's full-rigor tier (8 to 10 queries each side, 3 runs per query) only when the skill ships to a public collection or triggering is unusually load-bearing.
+Passing: every should-trigger activates and no near-miss does. An unsure or hedged judgment counts as borderline. On a miss or a borderline call, tune by front-loading trigger words and describing when to use the skill, never by summarizing the workflow, then re-judge the full query set on both tables, since an edit can newly activate a near-miss (two extra runs for any that stay borderline, majority wins). A tuning edit changes the trigger description, so the last one re-enters step 5's gate. Scale up to the template's full-rigor tier (8 to 10 queries each side, 3 runs per query) only when the skill ships to a public collection or triggering is unusually load-bearing.
 
 Completion: the query set passes.
 

@@ -8,8 +8,9 @@ unsure.
 
 Pass rule: every should-trigger activates and no near-miss does. An unsure
 or hedged judgment counts as borderline. On a miss or a borderline call,
-tune the description, re-judge the affected queries, and give any query
-that stays borderline two extra runs (majority wins).
+tune the description, then re-judge the entire should-trigger and
+near-miss set, since an edit can newly activate a near-miss. Give any
+query that stays borderline two extra runs (majority wins).
 
 Full-rigor tier, for skills shipping to a public collection or where
 triggering is unusually load-bearing: extend both tables to 8-10 queries

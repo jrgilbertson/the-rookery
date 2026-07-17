@@ -39,7 +39,7 @@ The built-in rubric for step 0 (audit) and step 7 (review). Work every item top 
 
 - Frontmatter is portable. Pass: only `name`, `description`, `license`, `compatibility`, and `metadata` appear; vendor-specific fields live under `metadata` if kept at all.
 - Prose is capability-based. Pass: the body names capabilities ("run the prompts in a fresh agent context"), not vendor tool or product names, outside an explicitly vendor-scoped reference file.
-- The directory is self-contained. Pass: every path the skill mentions resolves inside the skill directory, and nothing depends on another skill being installed.
+- The package is self-contained. Pass: every bundled resource the skill references (templates, references, assets) resolves inside the skill directory, and the skill never depends on another skill being installed. Host-project paths the skill operates on (source files, configs, test directories) are exempt.
 - No environment assumptions. Pass: no absolute paths, no personal or machine-specific names, no assumption of private repos, local aliases, or preconfigured credentials beyond what `compatibility` declares.
 
 ## Beyond this checklist

@@ -1,6 +1,6 @@
 # Acceptance evidence: creating-portable-skills
 
-Recorded runs for the plan's Verification Contract (`docs/plans/2026-07-16-001-feat-creating-portable-skills-plan.md`). Date: 2026-07-16. Tool versions this run: `skills-ref` 0.1.5, `skills` CLI 1.5.19, Codex CLI 0.144.4, Grok CLI 0.2.101, Claude Code (Fable 5 session; judge runs also on Haiku 4.5 and Sonnet).
+Recorded runs for the plan's Verification Contract (`docs/plans/2026-07-16-001-feat-creating-skills-plan.md` (the plan keeps its pre-rename filename as a point-in-time record)). Date: 2026-07-16. Tool versions this run: `skills-ref` 0.1.5, `skills` CLI 1.5.19, Codex CLI 0.144.4, Grok CLI 0.2.101, Claude Code (Fable 5 session; judge runs also on Haiku 4.5 and Sonnet).
 
 ## Gate results
 

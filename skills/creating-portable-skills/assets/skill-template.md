@@ -13,8 +13,9 @@ license: MIT
 
 # Skill Title
 
-<!-- delete this comment: one paragraph stating what the agent gets wrong
-without this skill. That is the skill's reason to exist. Run the delete test
+<!-- delete this comment: one paragraph stating what this skill enforces
+and why it matters, written to stand on its own for any model rather than
+as a delta over what models supposedly already know. Run the delete test
 on every line you write in this file: would the agent get it wrong without
 this line? If not, cut it. -->
 

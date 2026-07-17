@@ -11,6 +11,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ## [Unreleased]
 
+### Added
+
+- `creating-portable-skills` — the shelf's first skill. Creates new Agent Skills and reviews, updates, or migrates existing ones through one loop: intent interview, draft, static validation, with/without baseline testing, review checklist, and packaging. Portable across models and harnesses; recommends — never requires — `design-evals` and `writing-great-skills` for deeper eval and review passes.
+
 ## [0.1.0] - 2026-07-10
 
 ### Added

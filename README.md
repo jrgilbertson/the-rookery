@@ -21,7 +21,7 @@ npx skills add jrgilbertson/the-rookery --all
 
 This works in any harness that reads `SKILL.md`, including Claude Code, Codex, Cursor, and Gemini CLI. See the [Agent Skills](https://agentskills.io) ecosystem for the full list. Add `-g` for a user-level install instead of per-project.
 
-> **The shelf is being stocked.** Until the first skills land, `--list` reports "No skills found". That is expected, not broken. Watch [releases](../../releases) for arrivals.
+> **The first skill is on the shelf.** [creating-portable-skills](skills/creating-portable-skills/SKILL.md) installs with `npx skills add jrgilbertson/the-rookery --skill creating-portable-skills`. More are arriving. Watch [releases](../../releases) for arrivals.
 
 <details>
 <summary>Prefer a clone?</summary>

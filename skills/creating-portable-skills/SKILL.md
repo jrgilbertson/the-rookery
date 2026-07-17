@@ -1,5 +1,5 @@
 ---
-name: creating-skills
+name: creating-portable-skills
 description: Use when creating a new agent skill, or when reviewing, updating, or migrating a skill between collections, including fixing a skill's description, triggers, structure, or portability. Produces portable, installable skills that work across models and harnesses. Do not use for building plugins, designing standalone eval suites, or reviewing prose that is not a skill.
 license: MIT
 ---
@@ -103,7 +103,7 @@ Completion: an installed copy loads and triggers in at least one harness.
 - Skills drift longer and degrade with every ungated edit. The baseline gate exists for edit seven, not edit one.
 - A description that summarizes the workflow makes agents follow the summary and skip the body. Describe when to use it, not what the steps are.
 - Weaker models need slightly more detail than frontier ones. A portable skill is tuned for the floor it claims, not the strongest model you happen to use.
-- Check the target collection and the vendor system skills for name collisions before settling a name. Verb-led gerund names (`creating-skills`, not `skill-creator`) collide less and describe the job.
+- Check the target collection and the vendor system skills for name collisions before settling a name. Verb-led gerund names (`creating-portable-skills`, not `skill-creator`) collide less and describe the job.
 
 ## Credits
 

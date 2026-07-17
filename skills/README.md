@@ -14,10 +14,10 @@ Skills here follow the [Agent Skills](https://agentskills.io) format, so they wo
 
 ## On the shelf
 
-- **[creating-skills](creating-skills/SKILL.md)** — create a new agent skill, or review, update, and migrate an existing one. One loop from intent interview through baseline testing to a packaged skill that works across models and harnesses.
+- **[creating-portable-skills](creating-portable-skills/SKILL.md)** — create a new agent skill, or review, update, and migrate an existing one. One loop from intent interview through baseline testing to a packaged skill that works across models and harnesses.
 
   ```bash
-  npx skills add jrgilbertson/the-rookery --skill creating-skills
+  npx skills add jrgilbertson/the-rookery --skill creating-portable-skills
   ```
 
 More skills are arriving. Watch the [CHANGELOG](../CHANGELOG.md) or releases.

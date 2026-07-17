@@ -1,4 +1,4 @@
-# Baseline test: creating-skills
+# Baseline test: creating-portable-skills
 
 Mode rule — pick the mode that matches the flow:
 
@@ -26,7 +26,7 @@ Date: 2026-07-16 | Harness: Claude Code subagent (baseline), Codex CLI 0.144.4 +
 | --- | --- | --- | --- |
 | Create a skill that turns raw standup notes into a three-line summary (done/doing/blocked), and get it ready to share | One-shot SKILL.md plus a zip; self-audit confirmed: no interview, no validator run, no trigger testing, no with/without comparison, no formal portability check | All three harnesses ran the full loop: interview from supplied intent, validation (skills-ref, or the manual fallback when Codex's sandbox denied network), fresh-context baselines, subtract pass cutting unearned rules, trigger sets 100% pass, companion skips named | better |
 
-Observed delta: all four disciplines enforced with the skill and all four skipped without it. Full run logs: `tests/creating-skills/results.md`.
+Observed delta: all four disciplines enforced with the skill and all four skipped without it. Full run logs: `tests/creating-portable-skills/results.md`.
 
 ## Case 2: Review and fix an existing skill
 

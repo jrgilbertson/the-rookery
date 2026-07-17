@@ -1,4 +1,4 @@
-# Trigger query test: creating-skills
+# Trigger query test: creating-portable-skills
 
 Build 8-10 should-trigger phrasings (include non-obvious ones) and 8-10
 near-misses. Run each query 3 times in a fresh agent context with the skill
@@ -10,7 +10,9 @@ fails the whole set.
 
 Date: 2026-07-16 | Harness: Claude Code subagents (fresh context per judge) | Model: three families — Haiku 4.5, Sonnet, Fable 5
 
-Re-run 2026-07-16 after the description revision from the writing-great-skills review (workflow-summary sentence removed, migrate/port branch collapsed): identical results — every should-trigger at rate 1.0, zero near-miss activations.
+Re-run 2026-07-16 after the description revision from the writing-great-skills review (workflow-summary sentence removed, migrate/port branch collapsed): identical results, every should-trigger at rate 1.0, zero near-miss activations.
+
+Re-run 2026-07-16 after the rename to creating-portable-skills: identical results again, full-rigor tier, three model families.
 
 ## Should-trigger queries
 

@@ -81,6 +81,8 @@ Completion: every surviving instruction traces to an observed difference or a na
 
 Run [references/review-checklist.md](references/review-checklist.md) top to bottom. Recommend the companions from Routing for anything deeper. When a companion is absent, the checklist is the floor and you name what was skipped.
 
+A review fix that changes instruction semantics, the trigger description, or bundled resources is substantive: run it back through step 4's validation and step 5's comparison before continuing.
+
 Completion: every checklist item passes or has a recorded, deliberate exception.
 
 ### 8. Test the description

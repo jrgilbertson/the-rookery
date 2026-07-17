@@ -45,7 +45,3 @@ The built-in rubric for step 0 (audit) and step 7 (review). Work every item top 
 ## Beyond this checklist
 
 This checklist is the floor. For the deeper review vocabulary (predictability, leading words, context and cognitive load, the full failure-mode taxonomy), install `writing-great-skills` from [mattpocock/skills](https://github.com/mattpocock/skills) and run its pass as well.
-
-## Credits
-
-Distilled from [writing-great-skills](https://github.com/mattpocock/skills/tree/main/skills/productivity/writing-great-skills) by Matt Pocock (MIT) and [writing-skills](https://github.com/obra/superpowers/blob/main/skills/writing-skills/SKILL.md) by Jesse Vincent (obra/superpowers, MIT).

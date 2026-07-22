@@ -1,0 +1,100 @@
+version: 1
+skill: personal-chief-of-staff
+timezone: America/Los_Angeles
+
+execution:
+  environment: local
+  destination: local
+  project: this repository
+  requirements:
+    - The Mac is awake and online.
+    - The Codex desktop app and Obsidian are running.
+    - This repository's checkout and the configured Obsidian vault are available.
+    - Required connectors are authenticated.
+
+source_roles:
+  calendars:
+    - personal calendar
+    - work calendar
+  email:
+    - connected personal mailbox
+  obsidian: configured vault through the Obsidian CLI only
+  notes:
+    - Query each configured personal and work calendar separately.
+    - Calendar visibility does not imply access to its corresponding mailbox.
+    - Work-email-dependent conclusions remain partial until that mailbox is connected.
+
+run_behavior:
+  - Load the versioned skill from the current checkout.
+  - Run exactly the named mode and follow its shared source and review contracts.
+  - Prepare one conversational review bundle and wait for the user.
+  - Do not make an external or durable change because the schedule fired.
+  - Apply only a numbered action explicitly approved in that run, after revalidation.
+  - Read an attempted write back once and never retry an indeterminate result blindly.
+  - A delayed run refreshes live evidence and prepares only the currently relevant review.
+  - A missed or blocked run is not complete and does not create a catch-up backlog.
+
+automations:
+  - key: morning
+    name: Personal Chief of Staff - Morning
+    schedule: daily at 07:00
+    invocation: >-
+      Run the personal-chief-of-staff skill from this project's current checkout
+      in morning mode only. Follow the versioned skill's shared source, review,
+      approval, and completion rules. Query each configured personal and work
+      calendar separately, and treat only the connected personal mailbox as
+      email evidence. Use Obsidian only through its CLI; never use Hermes or
+      direct vault filesystem access. Prepare one conversational review bundle
+      and wait. Do not make an external or durable change because the schedule
+      fired.
+    manual_invocation: Run the personal-chief-of-staff skill in morning mode.
+
+  - key: wind_down
+    name: Personal Chief of Staff - Wind-down
+    schedule: daily at 20:30
+    invocation: >-
+      Run the personal-chief-of-staff skill from this project's current checkout
+      in wind-down mode only. Follow the versioned skill's shared source, review,
+      approval, and completion rules. Query each configured personal and work
+      calendar separately, and treat only the connected personal mailbox as
+      email evidence. Use Obsidian only through its CLI; never use Hermes or
+      direct vault filesystem access. Prepare one conversational review bundle
+      and wait. Do not make an external or durable change because the schedule
+      fired.
+    manual_invocation: Run the personal-chief-of-staff skill in wind-down mode.
+
+  - key: weekly
+    name: Personal Chief of Staff - Weekly
+    schedule: Sunday at 11:00
+    invocation: >-
+      Run the personal-chief-of-staff skill from this project's current checkout
+      in weekly mode only. Follow the versioned skill's shared source, review,
+      approval, and completion rules. Query each configured personal and work
+      calendar separately, and treat only the connected personal mailbox as
+      email evidence. Use Obsidian only through its CLI; never use Hermes or
+      direct vault filesystem access. Prepare one conversational review bundle
+      and wait. Do not make an external or durable change because the schedule
+      fired.
+    manual_invocation: Run the personal-chief-of-staff skill in weekly mode.
+
+  - key: quarterly
+    name: Personal Chief of Staff - Quarterly
+    schedule: first Saturday of January, April, July, and October at 10:00
+    invocation: >-
+      Run the personal-chief-of-staff skill from this project's current checkout
+      in quarterly mode only. Follow the versioned skill's shared source, review,
+      approval, and completion rules. Query each configured personal and work
+      calendar separately, and treat only the connected personal mailbox as
+      email evidence. Use Obsidian only through its CLI; never use Hermes or
+      direct vault filesystem access. Prepare one conversational review bundle
+      and wait. Do not make an external or durable change because the schedule
+      fired.
+    manual_invocation: Run the personal-chief-of-staff skill in quarterly mode.
+
+recovery:
+  - Recreate or update jobs by stable name; never create a duplicate mode.
+  - Bind every job to this repository as a local project and local destination.
+  - Keep account identifiers, vault names, local paths, connector IDs, project IDs,
+    automation IDs, and credentials in app configuration, not this file.
+  - After setup, read every live job back and compare its name, project, local
+    execution, schedule, mode, status, and prompt with this specification.

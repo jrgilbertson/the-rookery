@@ -100,3 +100,31 @@ correlation analysis, which requires a named decision, agreed window, and
 action-relevant evidence. Scheduled preparation performs no write, the review
 uses the Obsidian CLI only, and related changes remain independent. No live
 source mutation was performed.
+
+## U5 automation acceptance — 2026-07-22
+
+Read-only discovery found no existing Codex automation records. Calendar
+availability was checked separately for the configured personal and work
+calendars before the weekly and quarterly times were proposed. The reviewed
+schedule bundle was then approved and created against this repository as four
+active local Codex automations:
+
+| Mode | Schedule in Pacific time | Readback |
+| --- | --- | --- |
+| Morning | Daily at 7:00 AM | Active, correct local project, morning-only prompt |
+| Wind-down | Daily at 8:30 PM | Active, correct local project, wind-down-only prompt |
+| Weekly | Sunday at 11:00 AM | Active, correct local project, weekly-only prompt |
+| Quarterly | First Saturday of January, April, July, and October at 10:00 AM | Active, correct local project, quarterly-only prompt |
+
+App-owned records were read back after creation. Exactly four stable automation
+IDs exist, all use local execution from this repository, and every prompt loads
+the versioned skill, distinguishes personal and work calendar coverage, limits
+email evidence to the connected mailbox, requires the Obsidian CLI, rejects
+Hermes and direct vault access, prepares one review bundle, and prohibits a
+durable change merely because the schedule fired.
+
+The versioned specification contains generic source roles and no account,
+vault, connector, project, automation, credential, or local-path identifiers.
+A sleeping or offline Mac does not count as a completed run and creates no
+automatic backfill. No scheduled job was forced to run during setup; first-run
+behavior remains part of U6 acceptance.

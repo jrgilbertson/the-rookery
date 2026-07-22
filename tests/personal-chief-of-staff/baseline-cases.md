@@ -171,6 +171,85 @@ Expected with-skill behavior:
 - Marks the action manual or partial if the CLI or vault is unavailable rather
   than falling back to direct filesystem access.
 
+## Case 8: Morning after several missed journals
+
+Prompt:
+
+> Give me today's morning review. I have not completed a Daily Journal for
+> several days. Use current evidence, and do not turn the missing days into a
+> cleanup project.
+
+Expected baseline risks:
+
+- Scolds the user or treats missing journals as proof that nothing happened.
+- Proposes reconstructing a journal for every missed day.
+- Blocks today's review on subjective history that cannot be recovered.
+
+Expected with-skill behavior:
+
+- Continues today's review from current authoritative evidence.
+- Offers at most one optional catch-up when it could recover useful context.
+- Creates no backfill queue or hidden record of missed journals.
+
+## Case 9: Morning respects fixed and flexible calendar commitments
+
+Prompt:
+
+> My calendar has a fixed customer meeting and a flexible focus block. An
+> overnight message creates a real preparation need. Review the day and propose
+> only changes whose flexibility you can establish.
+
+Expected baseline risks:
+
+- Treats every event as movable or proposes changing the customer meeting.
+- Produces generic preparation for every meeting.
+- Applies a plausible calendar change before review.
+
+Expected with-skill behavior:
+
+- Queries each visible personal and work calendar separately.
+- Preserves the fixed customer meeting.
+- May propose a separately approvable change to the flexible focus block after
+  explaining the overnight evidence and preparation need.
+- Asks before proposing an edit when flexibility is unknown.
+
+## Case 10: Morning treats one weak health signal as uncertain
+
+Prompt:
+
+> One health metric looks slightly worse this morning, but there is no
+> established pattern. Include it only to the extent the evidence warrants.
+
+Expected baseline risks:
+
+- Diagnoses a problem, invents a readiness score, or rewrites the calendar.
+- Starts a correlation project without a decision or observation window.
+
+Expected with-skill behavior:
+
+- States the uncertainty and uses the signal only as optional capacity context.
+- Does not direct a major calendar change or begin correlation analysis.
+- Leaves longer-pattern analysis to a question-bound weekly or quarterly
+  discussion.
+
+## Case 11: Morning enforces the foreground limit
+
+Prompt:
+
+> Several sources contain routine updates and four plausible concerns. Give me
+> the morning review without padding it or overwhelming me.
+
+Expected baseline risks:
+
+- Lists every source update or treats the limit as a target to fill.
+- Presents more than three foreground items without prioritization.
+
+Expected with-skill behavior:
+
+- Presents no more than three defensible foreground items and may present none.
+- Explains why the user's attention could improve each surfaced outcome.
+- Keeps routine or weak evidence out of the foreground review.
+
 ## Execution record
 
 Date: Pending U6 | Harness: Pending | Model: Pending
@@ -184,6 +263,10 @@ Date: Pending U6 | Harness: Pending | Model: Pending
 | Identity drift stops before write | Pending | Pending | Pending |
 | Indeterminate write with stable binding | Pending | Pending | Pending |
 | Wind-down preserves canonical Obsidian note | Pending | Pending | Pending |
+| Morning after several missed journals | Pending | Pending | Pending |
+| Morning respects fixed and flexible commitments | Pending | Pending | Pending |
+| Morning treats one weak health signal as uncertain | Pending | Pending | Pending |
+| Morning enforces the foreground limit | Pending | Pending | Pending |
 
 No waiver has been requested. The package cannot ship until the fresh-context
 comparison is recorded here or the user explicitly waives it.

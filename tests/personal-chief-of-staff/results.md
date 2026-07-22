@@ -53,3 +53,18 @@ and made no write during proposal generation.
 The adversarial scan found no direct filesystem fallback, hidden state, privacy
 assumption, overformalized questionnaire, or premature-completion path. No live
 journal mutation was performed during this checkpoint.
+
+### Morning — 2026-07-22
+
+A fresh-context, read-only evaluation covered a nothing-material day, several
+missed journals, mixed fixed and flexible calendar commitments with an
+overnight preparation need, and one weak health signal. The mode preserved the
+zero-to-three foreground limit, continued today with at most one optional
+catch-up, kept weak health evidence uncertain, and required every external
+change to remain separately approvable.
+
+The adversarial scan identified and closed two ambiguities before acceptance:
+the mode now requires each visible personal and work calendar to be queried
+separately, and it explicitly preserves commitments established as fixed while
+asking when flexibility is unknown. No live source mutation was performed
+during this checkpoint.

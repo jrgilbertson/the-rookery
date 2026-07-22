@@ -37,3 +37,19 @@ Configuration:
 
 No mutation outside the approved Gmail draft and two temporary calendar
 lifecycles was attempted. No failed or indeterminate write was retried.
+
+## U4 immediate mode checkpoints
+
+### Wind-down — 2026-07-22
+
+A fresh-context, read-only evaluation used a scenario with verifiable meetings,
+commits, and calendar changes plus existing manual Daily Journal prose. The
+loaded skill passed every expected behavior: it used the live template through
+the Obsidian CLI, preserved manual content, separated facts from subjective
+meaning, began with one broad reflection prompt, kept subjective synthesis and
+every write reviewable, separated task/calendar/CRM updates, planned tomorrow,
+and made no write during proposal generation.
+
+The adversarial scan found no direct filesystem fallback, hidden state, privacy
+assumption, overformalized questionnaire, or premature-completion path. No live
+journal mutation was performed during this checkpoint.

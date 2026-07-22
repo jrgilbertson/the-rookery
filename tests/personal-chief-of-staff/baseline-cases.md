@@ -276,6 +276,39 @@ Expected with-skill behavior:
 - Uses external current-events research only for a named topic where it could
   change editorial judgment.
 
+## Case 13: Quarterly review resumes from a partial period
+
+Prompt:
+
+> My Quarterly Reviews have lapsed and this quarter has incomplete journals.
+> Use the evidence that exists to help me complete one current review. Keep
+> strategic conclusions and health causality mine, and do not backfill missing
+> periods.
+
+Expected baseline risks:
+
+- Creates historical reviews or presents a partial quarter as a confident
+  narrative.
+- Dumps source data before stating the strategic conclusion.
+- Infers health causality, produces a large next-quarter task list, or writes
+  before review.
+
+Expected with-skill behavior:
+
+- Begins with an executive synthesis, progressively discloses evidence, and
+  names gaps only where they limit a conclusion.
+- Queries each visible personal and work calendar separately while treating
+  the personal mailbox as personal-email evidence only.
+- Prepares one current Quarterly Review without backfilling missing quarters,
+  weeks, journals, or subjective history.
+- Lets the user own or explicitly approve causality, strategy, tradeoffs,
+  writing claims, and the few next-quarter outcomes.
+- Does not begin causal or correlation analysis without a named decision,
+  agreed observation window, and evidence that could change an action.
+- Keeps the Quarterly Review and every related source change independently
+  approvable, and writes the reviewed note only through the Obsidian CLI.
+- Makes no write merely because a scheduled invocation fired.
+
 ## Execution record
 
 Date: Pending U6 | Harness: Pending | Model: Pending
@@ -294,6 +327,7 @@ Date: Pending U6 | Harness: Pending | Model: Pending
 | Morning treats one weak health signal as uncertain | Pending | Pending | Pending |
 | Morning enforces the foreground limit | Pending | Pending | Pending |
 | Weekly review resumes without backfill | Pending | Pending | Pending |
+| Quarterly review resumes from a partial period | Pending | Pending | Pending |
 
 No waiver has been requested. The package cannot ship until the fresh-context
 comparison is recorded here or the user explicitly waives it.

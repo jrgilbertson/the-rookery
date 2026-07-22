@@ -83,3 +83,20 @@ the available personal mailbox is not treated as work-email coverage,
 `last30days` is limited to named editorial questions, health analysis requires
 a decision and observation window, scheduled runs do not write, and all durable
 changes remain independently approvable. No live source mutation was performed.
+
+### Quarterly — 2026-07-22
+
+A fresh-context, read-only evaluation covered lapsed reviews, an incomplete
+quarter, strategic and causal judgments, longer health evidence, writing, and
+next-quarter commitments. The mode prepared one current review without
+backfill, led with an executive synthesis, progressively disclosed support, and
+kept strategy, causality, tradeoffs, central writing claims, and forward
+commitments under user control.
+
+The adversarial scan led to two clarifications before acceptance. Each visible
+personal and work calendar is now queried separately without implying work-mail
+coverage, and descriptive health patterns are distinguished from causal or
+correlation analysis, which requires a named decision, agreed window, and
+action-relevant evidence. Scheduled preparation performs no write, the review
+uses the Obsidian CLI only, and related changes remain independent. No live
+source mutation was performed.

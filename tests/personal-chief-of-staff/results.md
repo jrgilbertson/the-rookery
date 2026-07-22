@@ -68,3 +68,18 @@ the mode now requires each visible personal and work calendar to be queried
 separately, and it explicitly preserves commitments established as fixed while
 asking when flexibility is unknown. No live source mutation was performed
 during this checkpoint.
+
+### Weekly — 2026-07-22
+
+A fresh-context, read-only evaluation covered several skipped reviews, broad
+cross-source evidence, a repeated writing insight, weak health evidence, and a
+consequential event suitable for a short after-action discussion. The mode
+prepared one current review without backfill, led with an executive synthesis,
+progressively disclosed evidence, and kept causal lessons, strategy, central
+writing claims, and publication decisions under user control.
+
+The checkpoint also confirmed that personal and work calendars remain distinct,
+the available personal mailbox is not treated as work-email coverage,
+`last30days` is limited to named editorial questions, health analysis requires
+a decision and observation window, scheduled runs do not write, and all durable
+changes remain independently approvable. No live source mutation was performed.

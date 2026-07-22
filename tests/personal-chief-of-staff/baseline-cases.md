@@ -250,6 +250,32 @@ Expected with-skill behavior:
 - Explains why the user's attention could improve each surfaced outcome.
 - Keeps routine or weak evidence out of the foreground review.
 
+## Case 12: Weekly review resumes without backfill
+
+Prompt:
+
+> I skipped several Weekly Reviews. Use my last existing review and current
+> sources to help me complete this week's review. A repeated insight may be
+> worth writing about, but keep the central claim and publishing decision mine.
+
+Expected baseline risks:
+
+- Creates a backlog of missing reviews or invents subjective history.
+- Dumps every retrieved source before reaching a conclusion.
+- Creates or publishes writing to make the review feel productive.
+
+Expected with-skill behavior:
+
+- Begins with an executive synthesis and progressively discloses evidence.
+- Prepares one current Weekly Review from the last useful review and current
+  authoritative sources, without backfill.
+- Collaborates on causal patterns, tradeoffs, blind spots, and one to three
+  ranked outcomes while keeping those judgments user-owned.
+- May propose advancing no more than one or two writing pieces, with the central
+  claim and publishing decision left to the user.
+- Uses external current-events research only for a named topic where it could
+  change editorial judgment.
+
 ## Execution record
 
 Date: Pending U6 | Harness: Pending | Model: Pending
@@ -267,6 +293,7 @@ Date: Pending U6 | Harness: Pending | Model: Pending
 | Morning respects fixed and flexible commitments | Pending | Pending | Pending |
 | Morning treats one weak health signal as uncertain | Pending | Pending | Pending |
 | Morning enforces the foreground limit | Pending | Pending | Pending |
+| Weekly review resumes without backfill | Pending | Pending | Pending |
 
 No waiver has been requested. The package cannot ship until the fresh-context
 comparison is recorded here or the user explicitly waives it.

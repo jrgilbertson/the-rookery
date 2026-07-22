@@ -20,4 +20,13 @@ Skills here follow the [Agent Skills](https://agentskills.io) format, so they wo
   npx skills add jrgilbertson/the-rookery --skill creating-portable-skills
   ```
 
+- **[personal-chief-of-staff](personal-chief-of-staff/SKILL.md)** — run an
+  evidence-based morning review, daily journal and wind-down, weekly review, or
+  quarterly review. It works from existing authoritative sources, collaborates
+  on judgment, and keeps every durable change reviewable.
+
+  ```bash
+  npx skills add jrgilbertson/the-rookery --skill personal-chief-of-staff
+  ```
+
 More skills are arriving. Watch the [CHANGELOG](../CHANGELOG.md) or releases.

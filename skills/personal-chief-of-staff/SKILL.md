@@ -17,9 +17,10 @@ brief archive.
 Choose exactly one mode from the request:
 
 - **Morning:** The user asks what needs attention today, requests a morning
-  review, invokes the scheduled morning mode, or another workflow explicitly
-  requests current cross-source priority context. The calling workflow retains
-  ownership of its narrower operation.
+  review or a generic daily chief-of-staff review without explicit evening or
+  wind-down context, invokes the scheduled morning mode, or another workflow
+  explicitly requests current cross-source priority context. The calling
+  workflow retains ownership of its narrower operation.
 - **Wind-down:** The user asks to close the day, complete the daily journal,
   reflect, prepare tomorrow, or invokes the scheduled wind-down mode.
 - **Weekly:** The user asks to complete or discuss a weekly review.

@@ -11,9 +11,11 @@ configured daily-journal template and today's journal, if one exists. Read the
 existing journal before drafting so manual content, frontmatter, links, embeds,
 and unresolved thoughts remain intact.
 
-Query only sources that can clarify what happened or what changed: the day's
-calendar, relevant messages and meetings, active tasks, relationship context,
-project or repository state, and available capacity evidence. Separate:
+Query only sources that can clarify what happened or what changed: relevant
+messages and meetings, active tasks, relationship context, project or
+repository state, and available capacity evidence. Query each visible personal
+and work calendar separately for the day and retain its calendar identity in
+the evidence. Calendar visibility supplies no work-email coverage. Separate:
 
 - observed outcomes, events, decisions, commitments, and source changes;
 - reasonable inferences that still need confirmation; and
@@ -85,10 +87,11 @@ explicitly left unchanged.
 
 ## Prepare tomorrow
 
-Read the next day's calendar and relevant active tasks. Use the actual day's
-outcomes, unresolved commitments, known capacity, and current constraints to
-propose a realistic plan. Distinguish fixed commitments from flexible blocks
-using their context rather than assuming either.
+Read each visible personal and work calendar separately for the next day,
+retaining its calendar identity, along with relevant active tasks. Use the
+actual day's outcomes, unresolved commitments, known capacity, and current
+constraints to propose a realistic plan. Distinguish fixed commitments from
+flexible blocks using their context rather than assuming either.
 
 Name the critical path and the few protected outcomes when useful. Calendar
 edits, task changes, and communications remain separate review actions. Do not

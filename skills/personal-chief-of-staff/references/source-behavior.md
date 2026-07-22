@@ -111,8 +111,9 @@ conversational review surface, not a durable artifact.
 
 For a scheduled run, complete the selected mode's read-only synthesis and
 present the review bundle. If the user is absent, stop before the first
-external action and wait for interaction. The schedule never authorizes a
-durable change.
+external action and end as **Paused**, stating that the run is awaiting user
+interaction. The schedule never authorizes a durable change, so this ending
+preserves the read-only result without implying that anything was applied.
 
 Completion: the bundle is useful at its stated coverage level and every
 proposed action can be reviewed on its own.
@@ -152,16 +153,20 @@ relying on conversational inference.
 
 Immediately before each approved action:
 
-1. Re-read the current target through the same authoritative interface.
+1. For an update, re-read the current target through the same authoritative
+   interface. For a create, re-read the authoritative destination, parent, or
+   thread where the new target will be created.
 2. Revalidate the acting identity, destination or recipients, exact target,
-   visibility when relevant, and approved content or effect.
+   visibility when relevant, and approved content or effect. For a create,
+   confirm the proposed target's identity and exact effect within that
+   destination, parent, or thread.
 3. If any of those changed, cannot be distinguished, or became ambiguous, stop
    and present a revised proposal. Never redirect an approval to a different
    account or target.
 4. If readback shows the approved effect already exists, report **already
    satisfied** and do not duplicate it.
 5. Otherwise apply the approved action once through the supported interface.
-6. Read the target again through that interface.
+6. Read the created or updated target again through that interface.
 
 Classify each action independently:
 

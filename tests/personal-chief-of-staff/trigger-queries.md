@@ -8,6 +8,7 @@ categorical and can be checked without live source access.
 | Query | Expected mode | Reason |
 | --- | --- | --- |
 | Give me my morning chief-of-staff review. | Morning | Explicit morning review. |
+| Run my daily chief-of-staff review. | Morning | Generic daily wording without evening or wind-down context defaults to Morning. |
 | What needs my attention today? Check my live context and help me decide. | Morning | Asks for the evidence-based daily orientation review. |
 | Run my scheduled morning review, but do not invent work if nothing matters. | Morning | Explicit scheduled morning mode. |
 | Help me wind down, reflect on today, and prepare tomorrow. | Wind-down | Requests the daily closing review. |

@@ -6,8 +6,12 @@ invocations follow the same interactive workflow.
 
 ## Establish the available period
 
-Resolve the local quarter and query time. Through the Obsidian CLI, find the
-current canonical quarterly review when one exists, the configured
+Resolve the local quarter and query time. A scheduled run on the first Saturday
+of January, April, July, or October reviews the quarter that just ended and
+prepares commitments for the new quarter. A manual run honors an explicitly
+requested period; without one, use the current available quarter. Through the
+Obsidian CLI, find the canonical quarterly review for that period when one
+exists, the configured
 quarterly-review template, and the last completed review that provides useful
 continuity. Read available weekly reviews, selected daily journals, the
 canonical strategy note, relevant canonical learning notes, current tasks, and
@@ -24,7 +28,8 @@ coverage.
 
 A lapsed practice does not create a reconstruction project. Synthesize the
 period the evidence can support, name consequential gaps, and prepare one
-current review. Do not backfill missing quarters, weeks, or subjective history.
+review for the selected period. Do not backfill missing quarters, weeks, or
+subjective history.
 
 Completion: the period, evidence boundary, and useful continuity are known
 without changing any source.
@@ -51,7 +56,7 @@ the user can supply. Do not turn a partial quarter into a confident story.
 Completion: the user can evaluate the quarter's implications before reviewing
 the supporting evidence.
 
-## Prefill the current review progressively
+## Prefill the selected review progressively
 
 Map verified evidence into the configured quarterly-review template as a
 conversational draft. Use weekly reviews and authoritative native sources for
@@ -109,11 +114,11 @@ Changes to strategy, learnings, tasks, calendars, CRM, repositories, writing,
 or other sources are separate actions with their own identities, targets,
 effects, and approval.
 
-After approval, create or update only the current canonical quarterly review
-through the Obsidian CLI with explicit vault targeting. Re-read the note first,
-preserve existing manual content, frontmatter, links, embeds, and vault views,
-apply only the approved content, and read it back through the CLI. Do not lint
-the vault.
+After approval, create or update only the canonical quarterly review for the
+selected period through the Obsidian CLI with explicit vault targeting. Re-read
+the note first, preserve existing manual content, frontmatter, links, embeds,
+and vault views, apply only the approved content, and read it back through the
+CLI. Do not lint the vault.
 
 End explicitly using the core run endings. A partial quarter can still end
 Complete when the reviewed note truthfully records its evidence limits; use

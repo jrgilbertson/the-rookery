@@ -43,8 +43,8 @@ automations:
       in morning mode only. Follow the versioned skill's shared source, review,
       approval, and completion rules. Query each configured personal and work
       calendar separately, and treat only the connected personal mailbox as
-      email evidence. Use Obsidian only through its CLI; never use Hermes or
-      direct vault filesystem access. Prepare one conversational review bundle
+      email evidence. Use Obsidian only through its CLI; never use direct vault
+      filesystem access. Prepare one conversational review bundle
       and wait. Do not make an external or durable change because the schedule
       fired.
     manual_invocation: Run the personal-chief-of-staff skill in morning mode.
@@ -57,8 +57,8 @@ automations:
       in wind-down mode only. Follow the versioned skill's shared source, review,
       approval, and completion rules. Query each configured personal and work
       calendar separately, and treat only the connected personal mailbox as
-      email evidence. Use Obsidian only through its CLI; never use Hermes or
-      direct vault filesystem access. Prepare one conversational review bundle
+      email evidence. Use Obsidian only through its CLI; never use direct vault
+      filesystem access. Prepare one conversational review bundle
       and wait. Do not make an external or durable change because the schedule
       fired.
     manual_invocation: Run the personal-chief-of-staff skill in wind-down mode.
@@ -71,8 +71,8 @@ automations:
       in weekly mode only. Follow the versioned skill's shared source, review,
       approval, and completion rules. Query each configured personal and work
       calendar separately, and treat only the connected personal mailbox as
-      email evidence. Use Obsidian only through its CLI; never use Hermes or
-      direct vault filesystem access. Prepare one conversational review bundle
+      email evidence. Use Obsidian only through its CLI; never use direct vault
+      filesystem access. Prepare one conversational review bundle
       and wait. Do not make an external or durable change because the schedule
       fired.
     manual_invocation: Run the personal-chief-of-staff skill in weekly mode.
@@ -85,8 +85,8 @@ automations:
       in quarterly mode only. Follow the versioned skill's shared source, review,
       approval, and completion rules. Query each configured personal and work
       calendar separately, and treat only the connected personal mailbox as
-      email evidence. Use Obsidian only through its CLI; never use Hermes or
-      direct vault filesystem access. Prepare one conversational review bundle
+      email evidence. Use Obsidian only through its CLI; never use direct vault
+      filesystem access. Prepare one conversational review bundle
       and wait. Do not make an external or durable change because the schedule
       fired.
     manual_invocation: Run the personal-chief-of-staff skill in quarterly mode.

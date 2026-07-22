@@ -1,6 +1,6 @@
 ---
 name: personal-chief-of-staff
-description: Use when the user asks for a morning review, daily wind-down, weekly review, quarterly review, chief-of-staff briefing, or an evidence-based review of what needs their attention. Do not use for isolated task creation, issue writing, email processing, calendar editing, health analysis, or ordinary planning outside one of these review modes.
+description: Use when the user asks what needs attention today, requests a morning or daily chief-of-staff review, wants to complete a daily journal or wind down, requests a weekly or quarterly review, or another workflow requests current cross-source chief-of-staff context. Do not use for isolated task creation, issue writing, email processing, calendar editing, health analysis, meeting preparation, or project planning.
 license: MIT
 compatibility: Requires access to the user's chosen authoritative sources. Obsidian workflows require a running Obsidian app and its CLI.
 ---
@@ -17,15 +17,16 @@ brief archive.
 Choose exactly one mode from the request:
 
 - **Morning:** The user asks what needs attention today, requests a morning
-  review, or invokes the scheduled morning mode.
-- **Wind-down:** The user asks to close the day, reflect, prepare tomorrow, or
-  invokes the scheduled wind-down mode.
+  review, invokes the scheduled morning mode, or another workflow explicitly
+  requests current cross-source priority context. The calling workflow retains
+  ownership of its narrower operation.
+- **Wind-down:** The user asks to close the day, complete the daily journal,
+  reflect, prepare tomorrow, or invokes the scheduled wind-down mode.
 - **Weekly:** The user asks to complete or discuss a weekly review.
 - **Quarterly:** The user asks to complete or discuss a quarterly review.
 
 An explicit mode wins. When the request does not identify one of these review
-contexts, leave it with the narrower workflow that owns it. Another workflow
-may explicitly invoke this skill when it needs current chief-of-staff context.
+contexts, leave it with the narrower workflow that owns it.
 
 Read both shared resources for every mode:
 

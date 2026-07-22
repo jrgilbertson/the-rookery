@@ -80,9 +80,10 @@ writing claims, and publication decisions under user control.
 
 The checkpoint also confirmed that personal and work calendars remain distinct,
 the available personal mailbox is not treated as work-email coverage,
-`last30days` is limited to named editorial questions, health analysis requires
-a decision and observation window, scheduled runs do not write, and all durable
-changes remain independently approvable. No live source mutation was performed.
+current external research is limited to named editorial questions, health
+analysis requires a decision and observation window, scheduled runs do not
+write, and all durable changes remain independently approvable. No live source
+mutation was performed.
 
 ### Quarterly — 2026-07-22
 
@@ -120,7 +121,7 @@ App-owned records were read back after creation. Exactly four stable automation
 IDs exist, all use local execution from this repository, and every prompt loads
 the versioned skill, distinguishes personal and work calendar coverage, limits
 email evidence to the connected mailbox, requires the Obsidian CLI, rejects
-Hermes and direct vault access, prepares one review bundle, and prohibits a
+direct vault access, prepares one review bundle, and prohibits a
 durable change merely because the schedule fired.
 
 The versioned specification contains generic source roles and no account,
@@ -128,3 +129,53 @@ vault, connector, project, automation, credential, or local-path identifiers.
 A sleeping or offline Mac does not count as a completed run and creates no
 automatic backfill. No scheduled job was forced to run during setup; first-run
 behavior remains part of U6 acceptance.
+
+## U6 launch-readiness acceptance — 2026-07-22
+
+Harness: Codex fresh-context subagents and an isolated project-level Codex
+installation. Model: session default.
+
+### Behavioral evidence
+
+- The final trigger gate passed 21 of 21 synthetic queries. All four review
+  modes invoked correctly, eight adjacent workflows remained with their
+  narrower owners, and a downstream email workflow retained ownership while
+  requesting morning-mode priority context.
+- Three realistic prompts ran in fresh contexts with and without the skill.
+  The bare responses were generally sensible but lacked the skill's explicit
+  coverage outcomes, Pyramid-first synthesis, canonical Obsidian CLI boundary,
+  exact approval binding, readback classifications, and run endings. The
+  with-skill responses supplied those behaviors.
+- All 13 synthetic trajectory cases passed with the complete package. These
+  cover no-filler mornings, user-owned reflection and strategy, partial email
+  coverage with valid shared-calendar evidence, retrieved-content isolation,
+  identity drift, indeterminate writes, Obsidian preservation, missed-review
+  recovery, fixed calendar commitments, uncertain health evidence, the morning
+  foreground limit, and weekly and quarterly resumption without backfill.
+
+### Review and portability
+
+- The final `writing-great-skills` and portable-skill review passed after four
+  fixes: scheduled runs now finish and present the read-only bundle before
+  waiting, every trigger routes to a mode, current-events research has no
+  external-skill dependency, and Obsidian sources resolve by configured role
+  rather than fixed note title.
+- Official static validation passed. The package, tests, and automation
+  specification contain no private identifiers, absolute paths, credentials,
+  local IDs, or references to the retired system.
+- A clean copied installation into an isolated Codex project found exactly the
+  intended skill package. The installed copy passed official validation and
+  matched the source package byte for byte.
+
+### Trial launch
+
+The reviewed two-week evaluation task was created through the Obsidian CLI and
+verified by note readback and the canonical All tasks Base. It is due August 5,
+2026, and measures two separate seven-day journal-continuity periods plus no
+more than three user-confirmed evidence packets before a keep, change, or stop
+decision. The task prohibits new telemetry, scoring, backfill pressure, and
+success claims based on agent activity volume.
+
+The trial's future product outcome is intentionally not claimed here. Scheduled
+first runs and the August 5 decision will supply the real evidence and any
+redacted escaped failure can become a regression case.

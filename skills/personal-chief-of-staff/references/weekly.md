@@ -7,11 +7,11 @@ same interactive workflow.
 ## Reconstruct the available week
 
 Resolve the local review window. Through the Obsidian CLI, find the current
-Weekly Review when one already exists, the live Weekly Review template, and the
-last completed review that can provide useful continuity. Read the week's Daily
-Journals, current tasks, Personal Strategy, relevant Personal Learnings, and
-only the additional notes needed to understand active projects, relationships,
-meetings, decisions, and writing.
+canonical weekly review when one already exists, the configured weekly-review
+template, and the last completed review that can provide useful continuity.
+Read the week's daily journals, current tasks, the canonical strategy note,
+relevant canonical learning notes, and only the additional notes needed to
+understand active projects, relationships, meetings, decisions, and writing.
 
 Query live calendars and selected native sources when they can confirm an
 outcome, commitment, risk, or material operating change. Use both personal and
@@ -23,10 +23,6 @@ When reviews or journals are missing, use the last existing review plus current
 authoritative evidence. Prepare one review for the current period. Do not
 backfill skipped weeks or reconstruct subjective history the sources cannot
 show.
-
-If a scheduled run reaches this point without the user present, prepare the
-review and wait. Do not create or update the Weekly Review merely because the
-schedule fired.
 
 Completion: the available period and material coverage gaps are clear, without
 creating another history or changing a source.
@@ -55,9 +51,9 @@ opening the supporting detail.
 
 ## Prefill the current review progressively
 
-Map verified evidence into the live Weekly Review template without flattening
-it into a source dump. Build a conversational draft first. Cover only the
-sections supported by the available week, drawing selectively from:
+Map verified evidence into the configured weekly-review template without
+flattening it into a source dump. Build a conversational draft first. Cover
+only the sections supported by the available week, drawing selectively from:
 
 - journals and calendar for outcomes, capacity, and use of time;
 - tasks, projects, repositories, and issue trackers for execution and open
@@ -93,9 +89,9 @@ Keep experiments small enough to learn from and specific enough to revisit.
 
 When a repeated insight could help a real audience, suggest advancing no more
 than one or two worthwhile writing pieces. Preserve the user's authorship of
-the central claim and publishing decision. Use `last30days` only for a named
-topic where current external evidence could change editorial judgment; never
-run it to populate a generic trend section.
+the central claim and publishing decision. Research current external evidence
+only for a named topic where it could change editorial judgment; never research
+trends merely to populate the review.
 
 Completion: the review contains user-owned conclusions and a realistic next
 week, not an agent-authored theory of the user's life.
@@ -103,11 +99,11 @@ week, not an agent-authored theory of the user's life.
 ## Review and write back
 
 Present the completed conversational draft and any related changes as one
-review bundle. The Weekly Review note is one proposed action. Task, calendar,
-CRM, repository, writing, or other source changes are separate actions with
-their own identities, targets, effects, and approval.
+review bundle. The canonical weekly-review note is one proposed action. Task,
+calendar, CRM, repository, writing, or other source changes are separate
+actions with their own identities, targets, effects, and approval.
 
-After approval, create or update only the current canonical Weekly Review
+After approval, create or update only the current canonical weekly review
 through the Obsidian CLI with explicit vault targeting. Re-read the note first,
 preserve existing manual content, frontmatter, links, embeds, and vault views,
 apply only the approved content, and read it back through the CLI. Do not lint
@@ -117,5 +113,5 @@ End explicitly using the core run endings. Name any evidence gap only where it
 limits a conclusion, and recap the reviewed note plus every applied,
 unapplied, manual, or indeterminate action.
 
-Completion: one current reviewed Weekly Review exists when approved, related
+Completion: one current reviewed weekly review exists when approved, related
 changes remain independently controlled, and no skipped week was backfilled.

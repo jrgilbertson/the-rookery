@@ -7,11 +7,12 @@ invocations follow the same interactive workflow.
 ## Establish the available period
 
 Resolve the local quarter and query time. Through the Obsidian CLI, find the
-current Quarterly Review when one exists, the live Quarterly Review template,
-and the last completed review that provides useful continuity. Read available
-Weekly Reviews, selected Daily Journals, Personal Strategy, relevant Personal
-Learnings, current tasks, and only the additional notes needed to understand
-material projects, decisions, relationships, health, and writing.
+current canonical quarterly review when one exists, the configured
+quarterly-review template, and the last completed review that provides useful
+continuity. Read available weekly reviews, selected daily journals, the
+canonical strategy note, relevant canonical learning notes, current tasks, and
+only the additional notes needed to understand material projects, decisions,
+relationships, health, and writing.
 
 Query native sources selectively to confirm important outcomes, commitments,
 customer or product evidence, financial or operating changes, and other facts
@@ -24,10 +25,6 @@ coverage.
 A lapsed practice does not create a reconstruction project. Synthesize the
 period the evidence can support, name consequential gaps, and prepare one
 current review. Do not backfill missing quarters, weeks, or subjective history.
-
-If a scheduled run reaches this point without the user present, prepare the
-review and wait. Do not create or update the Quarterly Review merely because
-the schedule fired.
 
 Completion: the period, evidence boundary, and useful continuity are known
 without changing any source.
@@ -56,7 +53,7 @@ the supporting evidence.
 
 ## Prefill the current review progressively
 
-Map verified evidence into the live Quarterly Review template as a
+Map verified evidence into the configured quarterly-review template as a
 conversational draft. Use weekly reviews and authoritative native sources for
 compression, then inspect lower-level evidence only to resolve a material
 question. Cover supported sections across:
@@ -107,12 +104,12 @@ evidence-backed, and specific enough to guide later reviews.
 ## Review and write back
 
 Present the completed conversational draft and any related changes as one
-review bundle. The Quarterly Review note is one proposed action. Changes to
-strategy, learnings, tasks, calendars, CRM, repositories, writing, or other
-sources are separate actions with their own identities, targets, effects, and
-approval.
+review bundle. The canonical quarterly-review note is one proposed action.
+Changes to strategy, learnings, tasks, calendars, CRM, repositories, writing,
+or other sources are separate actions with their own identities, targets,
+effects, and approval.
 
-After approval, create or update only the current canonical Quarterly Review
+After approval, create or update only the current canonical quarterly review
 through the Obsidian CLI with explicit vault targeting. Re-read the note first,
 preserve existing manual content, frontmatter, links, embeds, and vault views,
 apply only the approved content, and read it back through the CLI. Do not lint
@@ -123,5 +120,5 @@ Complete when the reviewed note truthfully records its evidence limits; use
 Partial when an unresolved source gap still prevents a material conclusion.
 Recap what changed and every action that remains unapplied.
 
-Completion: one current reviewed Quarterly Review exists when approved, its
+Completion: one current reviewed quarterly review exists when approved, its
 limits are honest, and no missing period was backfilled.

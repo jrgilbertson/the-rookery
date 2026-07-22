@@ -1,13 +1,13 @@
 # Wind-down
 
-Use this mode to close one local day through the user's existing Daily Journal
+Use this mode to close one local day through the user's canonical daily journal
 and authoritative sources. A scheduled and manual wind-down follow the same
 workflow.
 
 ## Establish the day
 
 Resolve the local date and review window. Through the Obsidian CLI, find the
-current Daily Journal template and today's journal, if one exists. Read the
+configured daily-journal template and today's journal, if one exists. Read the
 existing journal before drafting so manual content, frontmatter, links, embeds,
 and unresolved thoughts remain intact.
 
@@ -18,10 +18,6 @@ project or repository state, and available capacity evidence. Separate:
 - observed outcomes, events, decisions, commitments, and source changes;
 - reasonable inferences that still need confirmation; and
 - subjective meaning that cannot be observed.
-
-If a scheduled run reaches this point without the user present, leave the
-interactive review ready and pause. Do not create or edit the journal merely
-because the schedule fired.
 
 Completion: the review window, existing journal state, and material evidence
 gaps are known without writing anything.
@@ -42,9 +38,10 @@ drafts subjective conclusions.
 
 ## Complete the existing journal together
 
-Follow the current Daily Journal template rather than inventing a recap format.
-The agent may draft substantial objective material from verified evidence and
-the user's free-form thoughts. The user supplies or explicitly approves:
+Follow the configured daily-journal template rather than inventing a recap
+format. The agent may draft substantial objective material from verified
+evidence and the user's free-form thoughts. The user supplies or explicitly
+approves:
 
 - what felt difficult and why;
 - gratitude;
@@ -106,9 +103,9 @@ When a high-signal insight may help an audience, offer one writing seed without
 creating a quota, draft, or publication action automatically. Keep central
 thinking and the rough draft human-led unless the user asks for more help.
 
-Propose a Personal Learnings change only when the user requests it or the day
-adds evidence to a repeated, behavior-changing pattern. A one-day observation
-normally stays in the Daily Journal.
+Propose a change to the canonical learning notes only when the user requests it
+or the day adds evidence to a repeated, behavior-changing pattern. A one-day
+observation normally stays in the daily journal.
 
 Completion: optional writing and learning proposals are selective, sourced,
 and independently reviewable.
@@ -125,7 +122,7 @@ do not lint, and read the result back through the CLI before reporting it as
 applied.
 
 End explicitly using the core run endings. A completed wind-down normally ends
-in the reviewed Daily Journal plus any independently approved source changes,
+in the reviewed daily journal plus any independently approved source changes,
 not in a generated brief or internal run record.
 
 Completion: the reviewed journal is visible in its canonical note, every other

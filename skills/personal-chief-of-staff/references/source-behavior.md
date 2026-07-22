@@ -31,6 +31,11 @@ Use each source for its native role:
 - Reading, reference, and writing sources supply background or candidate ideas;
   they are not proof that an idea is important now.
 
+Resolve journal, review, strategy, learning, and task sources by their
+configured canonical role. Existing titles may inform discovery but are not
+portable identifiers. When more than one source plausibly owns a role, ask
+before selecting one.
+
 When the same evidence is synced into a configured canonical source, use one
 copy for the conclusion rather than counting it twice. Prefer the canonical
 copy for durable context; query the upstream source only when its native
@@ -103,6 +108,11 @@ gap changes confidence or scope.
 
 Do not write while retrieving evidence or preparing the bundle. A bundle is a
 conversational review surface, not a durable artifact.
+
+For a scheduled run, complete the selected mode's read-only synthesis and
+present the review bundle. If the user is absent, stop before the first
+external action and wait for interaction. The schedule never authorizes a
+durable change.
 
 Completion: the bundle is useful at its stated coverage level and every
 proposed action can be reviewed on its own.
@@ -190,10 +200,10 @@ write preserved existing content and passed CLI readback.
 Use conversational corrections immediately in the current review. Propose a
 durable source update only when the correction changes what the authoritative
 source should say. When a correction changes workflow behavior, propose a
-reviewed change to the versioned skill instead. A learning belongs in Personal
-Learnings only when the user requests it or a repeated, behavior-changing
-pattern is worth review; do not promote every correction or observation into
-durable guidance.
+reviewed change to the versioned skill instead. A learning belongs in the
+canonical learning notes only when the user requests it or a repeated,
+behavior-changing pattern is worth review; do not promote every correction or
+observation into durable guidance.
 
 Completion: current-review corrections are reflected now, while durable
 changes remain explicit, independently reviewed proposals.

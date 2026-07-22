@@ -6,10 +6,10 @@ and manual invocations follow the same workflow and remain interactive.
 ## Reconstruct the start of the day
 
 Resolve the local date and query time. Through the Obsidian CLI, read the prior
-Daily Journal when it exists, current task notes, Personal Strategy, and
-relevant Personal Learnings. Use the prior journal's reviewed next-day plan or
-single restart cue only when it still matches the canonical task and current
-evidence.
+canonical daily journal when it exists, current task notes, the canonical
+strategy note, and relevant canonical learning notes. Use the prior journal's
+reviewed next-day plan or single restart cue only when it still matches the
+canonical task and current evidence.
 
 Read today's calendars and only the additional sources that could change the
 day: material overnight messages, consequential meeting or relationship
@@ -18,16 +18,12 @@ product or business health. Query each visible personal and work calendar
 separately. Query other visible calendars when relevant. One connected mailbox
 does not imply another mailbox was covered.
 
-If a scheduled run reaches this point without the user present, prepare the
-review and wait. Do not apply proposed changes merely because the schedule
-fired.
-
 Completion: the current day, source coverage, prior reviewed intent, and
 material overnight changes are known without writing anything.
 
 ## Handle a missing prior journal lightly
 
-When the prior Daily Journal is missing, mention it without judgment and offer
+When the prior daily journal is missing, mention it without judgment and offer
 an interactive catch-up only if it could recover useful context. Continue with
 today by default. After one or several missed days, offer at most one catch-up
 and never create a backlog of journals to reconstruct.

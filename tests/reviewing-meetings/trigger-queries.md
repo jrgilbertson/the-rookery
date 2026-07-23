@@ -20,6 +20,10 @@ Date: 2026-07-22 | Planned harness: fresh agent contexts | Model: session defaul
 | Did any calls finish since the last meeting review? Use stable source IDs, not a cursor. | Yes | Non-obvious eligibility phrasing. |
 | Revisit this completed meeting and tell me whether it is already approved or still pending. | Yes | Requests exact disposition. |
 | I missed the earlier meeting batch. Find only newly eligible meetings and leave old proposals alone. | Yes | Explicit append-only catch-up. |
+| Approve action 2 from the meeting review. | Yes | Applies a visible meeting-review action. |
+| Change action 1's due date to Friday, then approve it. | Yes | Edits and approves a visible meeting-review action. |
+| Defer action 3 until next week. | Yes | Defers a visible meeting-review action. |
+| Skip action 4. | Yes | Dismisses a visible meeting-review action. |
 
 ## Near misses: should not trigger
 
@@ -43,7 +47,8 @@ passes with at least two `yes` judgments. Any `yes` on a near miss fails the
 set. Treat `unsure` as borderline, tune only the description, and rerun every
 affected query.
 
-Status: passed on 2026-07-23. Three fresh listing-level judges evaluated all
-18 queries using only the final skill name and description. Every judge marked
-all nine intended queries `yes` and all nine near misses `no` (54 of 54 correct,
-with no `unsure` judgments).
+Baseline status: passed on 2026-07-23. Three fresh listing-level judges evaluated
+the original 18 queries using only the final skill name and description. Every
+judge marked all nine intended queries `yes` and all nine near misses `no` (54
+of 54 correct, with no `unsure` judgments). The four action-response queries
+added afterward have not been evaluated yet.

@@ -28,11 +28,12 @@ required prerequisites have their own decisions.
 
 ## Re-read before writing
 
-Immediately before each approved action, use the authoritative interface to:
+Immediately before each approved writable action, use the authoritative
+interface to:
 
 1. Re-read the exact target for an update, or the destination, parent, thread,
    or calendar for a create.
-2. Search for an equivalent task, issue, note change, event, draft, or other
+2. Search for an equivalent task, issue, note change, event, or other supported
    effect using stable identity and content as the destination supports.
 3. Revalidate the acting identity, destination, target, visibility, approved
    content or effect, and prerequisite state.
@@ -79,6 +80,11 @@ Classify each action using exactly one outcome:
 - **Skipped:** the user declined it or a required prerequisite was not
   satisfied.
 
+Communication proposals are non-writing actions. When the user approves one
+unchanged, keep its exact text in the conversation, create no external draft,
+send nothing, and report **Already satisfied** because the approved text is
+already visible. An edit remains a revised proposal that requires approval.
+
 Do not retry an **Indeterminate** action. Stop that action and ask how to
 proceed. A **Failed** or **Indeterminate** prerequisite makes each dependent
 action **Skipped**, with the prerequisite named. Unrelated approved actions may
@@ -90,8 +96,8 @@ write has authoritative readback, and no effect was applied twice.
 ## Preserve partial success
 
 Treat canonical artifacts and their dependent links as separate effects. If a
-task, issue, note, event, or draft succeeds but a dependent backlink fails or
-is indeterminate, keep the successful artifact as canonical. Report both
+task, issue, note, or event succeeds but a dependent backlink fails or is
+indeterminate, keep the successful artifact as canonical. Report both
 outcomes, retain the partial success, and propose a bounded repair when useful.
 
 Do not roll back a successful prerequisite, recreate it, or retry a dependent

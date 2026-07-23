@@ -32,21 +32,23 @@ and `source_id`; it is not permission for a silent metadata rewrite.
 
 A source is sufficient when the meeting has ended, its stable ID, start time,
 and source URL are available, and its generated notes support a grounded
-account of context, discussion, decisions, and next steps. Missing optional
-fields do not block the proposal; mark them unresolved. A source still
-processing, empty generated notes, or a payload that cannot yet support a
-useful account is **Waiting for source**. A missing required identity field,
-failed required query, or contradictory identity is **Unable to prepare** or
-**Collision stop**, as applicable.
+account of context, discussion, decisions, and next steps. Determine this
+readiness before checking approved notes, filename conventions, or intended
+filenames. Missing optional fields do not block the proposal; mark them
+unresolved. A meeting that has not ended, a source still processing, empty
+generated notes, or a payload that cannot yet support a useful account is
+**Waiting for source** without requiring those later durable checks. A missing
+required identity field, failed required query, or contradictory identity is
+**Unable to prepare** or **Collision stop**, as applicable.
 
-Load the approved-note source's current filename convention through its
-supported interface before deriving a target. Apply that convention to the
-meeting's actual start time and normalized title. When the convention specifies
-a timezone, convert the start to it; otherwise preserve the source start's
-explicit offset. If the convention, time basis, folder, or extension is
-unavailable or ambiguous, classify the meeting as **Unable to prepare** instead
-of inventing a filename. The query, processing, scheduled-run, and note-creation
-times never substitute for the meeting start.
+For a source-ready candidate, load the approved-note source's current filename
+convention through its supported interface before deriving a target. Apply that
+convention to the meeting's actual start time and normalized title. When the
+convention specifies a timezone, convert the start to it; otherwise preserve
+the source start's explicit offset. If the convention, time basis, folder, or
+extension is unavailable or ambiguous, classify the meeting as **Unable to
+prepare** instead of inventing a filename. The query, processing, scheduled-run,
+and note-creation times never substitute for the meeting start.
 
 Completion: each meeting has an exact source identity, actual start time, and a
 supported readiness outcome.
@@ -101,15 +103,15 @@ was selective and purpose-bound, and unresolved attribution remains explicit.
 
 ## Check observable durable and conversational state
 
-Query approved meeting notes through their configured authoritative interface
-and search for the exact source-and-ID pair, exact source URL, and any configured
-legacy identity fields. Reconcile results by note so one note returned by more
-than one exact search still counts once. For an Obsidian source, use its CLI
-with explicit vault and path targeting for every read and search; never
-substitute direct filesystem access or run linting. Also check the intended
-filename inside the configured meeting folder. If any required check cannot
-run, the meeting is **Unable to prepare** rather than eligible for a duplicate
-proposal.
+For each source-ready candidate, query approved meeting notes through their
+configured authoritative interface and search for the exact source-and-ID pair,
+exact source URL, and any configured legacy identity fields. Reconcile results
+by note so one note returned by more than one exact search still counts once.
+For an Obsidian source, use its CLI with explicit vault and path targeting for
+every read and search; never substitute direct filesystem access or run
+linting. Also check the intended filename inside the configured meeting folder.
+If any required check cannot run, the meeting is **Unable to prepare** rather
+than eligible for a duplicate proposal.
 
 When current conversation history is retrievable, search visible meeting
 proposals and explicit dismissals for the exact source-and-ID pair. A pending
@@ -121,24 +123,27 @@ fresh proposal in that run.
 
 Assign exactly one disposition in this order:
 
-1. **Unable to prepare** when the source query, required source identity,
-   approved-note check, filename convention, or filename check is unavailable.
-2. **Collision stop** when one note matches the exact source URL or a configured
+1. **Unable to prepare** when the source query or required source identity is
+   unavailable.
+2. **Waiting for source** when the meeting has not ended or its source content
+   is still processing or insufficient. Do not require approved-note or
+   filename checks for this disposition.
+3. **Unable to prepare** when an approved-note check, filename convention, or
+   filename check is unavailable for an otherwise source-ready candidate.
+4. **Collision stop** when one note matches the exact source URL or a configured
    legacy identity but not the current source-and-ID pair, when more than one
    distinct approved note matches any current or legacy identity check, or when
    the intended filename belongs to another meeting. A unique URL-only or
    legacy-only match may return as a reviewed identity correction; it never
    falls through to a new-note proposal.
-3. **Already approved** when exactly one approved note has the exact source and
+5. **Already approved** when exactly one approved note has the exact source and
    ID. The approved note remains authoritative even if later source content
    changes; revisit it only at the user's request.
-4. **Dismissed in this conversation** when the latest visible instruction for
+6. **Dismissed in this conversation** when the latest visible instruction for
    the exact meeting is dismissal and no later recovery instruction exists.
-5. **Already pending** when an exact pending proposal is visible and has not
+7. **Already pending** when an exact pending proposal is visible and has not
    been dismissed.
-6. **Waiting for source** when the meeting has not ended or its source content
-   is still processing or insufficient.
-7. **Newly proposed** when the meeting is eligible and none of the earlier
+8. **Newly proposed** when the meeting is eligible and none of the earlier
    dispositions applies.
 
 Conversation continuity is an observable capability, not durable storage. In a

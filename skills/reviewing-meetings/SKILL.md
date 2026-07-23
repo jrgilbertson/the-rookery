@@ -1,6 +1,6 @@
 ---
 name: reviewing-meetings
-description: Use when the user asks to review, process, import, catch up on, or check for newly completed meetings from a configured meeting source, including Granola, or when a scheduled post-meeting review invokes it. Do not use for preparing an upcoming meeting, taking live notes, maintaining a CRM, or directly creating tasks, issues, or calendar events without meeting review.
+description: Use when the user asks to review, process, import, catch up on, or check for newly completed meetings from a configured meeting source, including Granola; when a scheduled post-meeting review invokes it; or when the user later approves, edits, defers, or skips visible meeting-review actions. Do not use for preparing an upcoming meeting, taking live notes, maintaining a CRM, or directly creating tasks, issues, or calendar events without meeting review.
 license: MIT
 compatibility: Requires meeting data with stable source IDs, an approved-note source with live template and naming guidance, and an authoritative ownership map for downstream actions. Pending suppression requires retrievable conversation history. When Obsidian owns a target, its CLI must be available.
 ---

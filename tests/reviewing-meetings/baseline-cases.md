@@ -125,14 +125,19 @@ the exact disposition and ending.
 
 Given a meeting has not ended but already exposes a stable ID and otherwise
 usable source material, the run classifies it as **Waiting for source**. It
-does not prepare a review bundle or attempt any durable action.
+does not prepare a review bundle or attempt any durable action. This remains
+**Waiting for source** even when the approved-note check or filename convention
+is temporarily unavailable, because those checks are not required until the
+meeting is source-ready.
 
 ### Processing meeting becomes eligible later
 
 Given a meeting has ended but generated notes are still processing, the first
-run classifies it as **Waiting for source**. When a later overlapping query
-returns sufficient notes for the same stable ID, that run may classify it as
-**Newly proposed**. No cursor or stored transition is required.
+run classifies it as **Waiting for source**, even when the approved-note check
+or filename convention is temporarily unavailable. When a later overlapping
+query returns sufficient notes for the same stable ID, that run performs the
+durable checks and may classify it as **Newly proposed**. No cursor or stored
+transition is required.
 
 ### Source unavailable
 
@@ -340,9 +345,11 @@ applies the approved action once, reads it back, and reports exactly one of
 Given a meeting supports an external reply and a consequential operational
 change, the bundle may provide complete editable reply text as a conversational
 draft, but does not create an external draft object or send it. Either effect
-belongs to a later explicit communication request. The operational change is
-routed to canonical work or reported **Manual** rather than executed by this
-workflow.
+belongs to a later explicit communication request. If the user approves the
+reply text unchanged, the workflow keeps it in the conversation and reports
+**Already satisfied** because the exact text is already visible; approval
+creates no external mutation. The operational change is routed to canonical
+work or reported **Manual** rather than executed by this workflow.
 
 ## U2 evidence status
 

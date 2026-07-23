@@ -29,3 +29,34 @@ Date: 2026-07-23
   was created or changed during this unit.
 
 Result: passed.
+
+## U4: private live acceptance
+
+Date: 2026-07-23
+
+- A completed meeting from the configured source was retrieved with its native
+  identity and matched to one existing imported note without creating a
+  duplicate.
+- The first review bundle correctly found an existing product issue as the
+  canonical owner for refund work. It did not create a second issue or an
+  Obsidian task that merely pointed to that issue.
+- A same-conversation rerun while the bundle was pending classified the meeting
+  as already pending and did not repeat, renumber, recompute, or mutate it.
+- User feedback revised the remaining actions before application. The accepted
+  bundle contained one atomic meeting-note revision, one human-owned
+  waiting-for task, one durable relationship-context update, and one skipped
+  communication draft.
+- The meeting-note revision migrated the active note to generic source metadata
+  and applied the refined body as one atomic Obsidian CLI operation. Readback
+  verified the complete approved effect.
+- The first task-create attempt failed without creating a partial task. After
+  the user restarted Obsidian and explicitly approved one retry, the direct CLI
+  created the task once and readback matched the approved task contract.
+- The relationship-context update applied once and preserved the unrelated next
+  touch value. No message was drafted or sent.
+- A final read-only rerun classified the meeting as already approved, returned
+  zero for every other disposition, and ended **Nothing new**.
+- Historical provider-specific notes were neither migrated nor changed. Their
+  legacy identity fields remain a read-only duplicate-prevention input.
+
+Result: passed.

@@ -57,13 +57,22 @@ was created.
 
 ## Prepare only new proposals
 
+Before preparing any newly proposed meeting, read
+[references/action-routing.md](references/action-routing.md),
+[references/applying-approved-actions.md](references/applying-approved-actions.md),
+and [assets/review-bundle.md](assets/review-bundle.md). Use the asset for every
+meeting proposal and use both references for routing, approval, and later
+application.
+
 For every newly proposed meeting, prepare one review section containing:
 
 - the stable Granola ID and source link for identity checking;
 - the actual meeting start time and a normalized proposed title;
 - the proposed filename using the actual start timestamp plus the title;
 - a preview shaped by the configured live meeting template; and
-- any material ambiguity or evidence limitation the user must resolve.
+- any material ambiguity or evidence limitation the user must resolve; and
+- only the supported, independently approvable actions defined by the review
+  bundle and action-routing reference.
 
 Keep the proposal inside the conversation. Do not create or edit a meeting note
 while preparing it. Present all newly proposed meetings from this run together,
@@ -78,6 +87,53 @@ duplicates.
 
 Completion: the bundle contains every and only newly proposed meeting from this
 run, or states that there is no new meeting to review.
+
+## Route and bind proposed actions
+
+Resolve an existing equivalent and one canonical owner for each proposed
+outcome. Work for the configured Linear-owned product stays in Linear, other
+repository work stays in that repository's GitHub issues, and personal,
+relationship, administrative, or cross-system commitments use the configured
+Obsidian Tasks source. Do not duplicate Linear or GitHub work into Obsidian
+unless the user has a distinct personal commitment.
+
+Keep other people's nonblocking promises in the meeting note. Propose one
+`waiting-for` task only when the user has a meaningful dependency and a real
+follow-up date. Change durable context only when the meeting materially changes
+its canonical record. Propose a calendar block only for ready work that
+benefits from reserved human attention. Communication remains editable draft
+text; sending is a separate reviewed effect.
+
+Number actions continuously across the visible bundle and include the acting
+identity, exact destination and target, visibility when relevant, complete
+content or effect, evidence and reason, and explicit dependencies. Omit empty
+categories. A vague approval authorizes no write.
+
+Completion: every proposed action is complete enough to approve independently,
+has one authoritative destination, and exposes every prerequisite.
+
+## Apply only exact approvals
+
+On a later user response, follow
+[references/applying-approved-actions.md](references/applying-approved-actions.md)
+before writing. Map approval to exact visible action numbers. Re-read each
+target and check for an equivalent effect immediately before application.
+Invalidate only actions whose identity, target, content, visibility, or
+prerequisites drifted.
+
+Apply supported approved actions once in dependency order and read every
+attempted effect back. A failed or indeterminate prerequisite skips its
+dependents while unrelated approved actions may continue. Preserve successful
+canonical artifacts when a dependent backlink fails; report the partial result
+and propose repair without rollback or blind retry.
+
+Report each action as **Applied**, **Already satisfied**, **Failed**,
+**Indeterminate**, **Manual**, **Deferred**, or **Skipped**. Available canonical
+task or issue workflows may assist with their native contracts, but are never
+required dependencies of this skill.
+
+Completion: each decided action has one readback-backed outcome or an explicit
+safe stop, and no action was redirected, duplicated, or retried blindly.
 
 ## End explicitly
 

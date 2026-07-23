@@ -160,3 +160,111 @@ meeting folder. The source cannot select another path.
   regression cases.
 - Exception: fresh-context with-skill runs are intentionally deferred; this U1
   artifact does not claim the baseline comparison passed.
+
+## U2 pre-authoring characterization
+
+Before U2, the package had no `references/action-routing.md`,
+`references/applying-approved-actions.md`, or `assets/review-bundle.md`. The U1
+entry point prepared a meeting-note-shaped proposal and kept it read-only, but
+did not define canonical action ownership, complete approval bindings,
+dependency-aware application, or readback outcomes. The cases below are the U2
+regression contract authored before those resources.
+
+## Additional U2 regression cases
+
+### Canonical Linear-owned work with separate relationship context
+
+Given a meeting supports one configured Linear-owned product follow-up and one
+material change to an existing relationship note, and an equivalent Linear
+issue already exists, the bundle proposes an update or link to that Linear
+issue rather than a duplicate issue. It creates no Obsidian task for the
+product work unless the user has a distinct personal commitment. The
+relationship change is a separate, independently approvable durable-context
+action. Unsupported action categories are omitted.
+
+### Other-person promise without a meaningful dependency
+
+Given another participant promises to send a useful but nonblocking resource,
+the promise stays in the proposed meeting note. The bundle proposes no task,
+issue, or calendar block merely to track it.
+
+### Other-person promise that blocks the user
+
+Given another participant's promised input blocks a meaningful outcome owned by
+the user, the bundle may propose one Obsidian `waiting-for` task with the
+verified person or event and a real follow-up date. It does not turn the other
+person's promise into work assigned to the user or create a second task in
+another system.
+
+### Selective calendar block
+
+Given ready configured work-product work requires focused human attention and
+has enough urgency, strategic value, or focus demand to justify reserved time,
+the bundle may propose a linked block on the configured work calendar. The
+Linear issue remains canonical, the calendar action depends on the
+canonical-work action when that action must be created or updated first, and a
+full calendar names the tradeoff. Agent-only, quick, unready, or low-value work
+receives no calendar proposal.
+
+### Declined prerequisite creates no orphan
+
+Given Action 2 creates a canonical issue and Action 3 creates a calendar block
+linked to it, approving Action 3 while declining or deferring Action 2 creates
+neither an orphan event nor an implicit issue. Action 3 is reported **Skipped**
+because its explicit prerequisite was not satisfied.
+
+### Vague approval writes nothing
+
+Given a visible bundle contains more than one numbered action, a reply such as
+`looks good` that cannot be mapped to exact action numbers authorizes no write.
+The workflow asks which numbered actions are approved. An edit produces a
+revised proposal that requires approval of its new exact content.
+
+### Target drift affects only one action
+
+Given Actions 1 and 2 are independently approved but Action 2's identity,
+destination, target, visibility, content, or prerequisite changes before
+application, Action 2 is not applied and returns as a revised proposal. Action
+1 may continue when its own pre-read remains valid.
+
+### Failed or indeterminate prerequisite
+
+Given Action 1 is a prerequisite for Action 2, a **Failed** or **Indeterminate**
+Action 1 causes Action 2 to be **Skipped**. An unrelated approved Action 3 may
+continue. An indeterminate result is not retried blindly.
+
+### Canonical success with backlink failure
+
+Given a canonical task or issue is successfully created and read back, but a
+dependent meeting-note backlink fails or its readback is indeterminate, the
+canonical artifact remains **Applied**. The workflow retains the partial
+success, reports the backlink outcome separately, and proposes repair without
+rolling back, recreating, or blindly retrying the canonical artifact.
+
+### Existing equivalent and idempotent application
+
+Given the pre-write read finds an equivalent canonical effect, the action is
+**Already satisfied** and no duplicate is created. Otherwise the workflow
+applies the approved action once, reads it back, and reports exactly one of
+**Applied**, **Failed**, or **Indeterminate** for the attempted write.
+
+### Communication and consequential operations stay bounded
+
+Given a meeting supports an external reply and a consequential operational
+change, the bundle may provide complete editable reply text as a communication
+draft, but does not send it. Sending is a separately proposed and reviewed
+action only when a verified interface supports it. The operational change is
+routed to canonical work or reported **Manual** rather than executed by this
+workflow.
+
+## U2 evidence status
+
+- Pre-authoring gap confirmed: the U1 package had none of the three U2 action
+  resources and no complete approval, dependency, or application contract.
+- Behavior changed: yes, the skill now routes supported outcomes, binds exact
+  approvals, applies actions in dependency order, and reports readback outcomes.
+- Tests added: eleven synthetic U2 regression cases covering canonical routing,
+  selective proposals, approval ambiguity, drift, dependencies, idempotency,
+  partial success, drafts, and consequential operations.
+- Exception: no live connector or durable write was exercised in U2; private
+  application and fresh-context comparisons remain assigned to later units.

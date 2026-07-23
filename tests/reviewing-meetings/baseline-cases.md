@@ -182,6 +182,33 @@ action, the meeting remains **Already pending** while any other action is still
 pending or undecided. The skipped action does not count as a whole-meeting
 dismissal and does not hide or suppress the remaining actions.
 
+### Action response bypasses discovery
+
+Given a later user message only approves, edits, defers, skips, declines,
+revisits, or otherwise decides visible meeting-review actions, the workflow
+handles those actions against the exact visible bundle before selecting a
+source scope. It does not query meeting sources or append unrelated proposals.
+If the same message explicitly requests a new meeting check, application
+finishes first and discovery follows as a separate read-only phase.
+
+### Deferred action stays with its bundle
+
+Given the user defers one visible action, that action remains tied to the same
+numbered bundle and the meeting is **Already pending**. Overlapping scheduled
+runs may remind the user that work remains but do not regenerate, renumber, or
+recompute the action. At the explicit revisit point or on recovery, the workflow
+returns the existing action to review.
+
+### Fully decided bundle remains suppressed
+
+Given every action in a visible meeting bundle is successfully applied, already
+satisfied, or explicitly skipped as a terminal decision, and no pending,
+deferred, failed, indeterminate, manual, revised, or otherwise review-needed
+action remains, the meeting is **Reviewed in this conversation**. A later
+overlapping run does not regenerate its bundle. This disposition is distinct
+from dismissing the whole meeting and is supported only by visible conversation
+history, not a durable marker.
+
 ### Filename convention unavailable
 
 Given a genuinely new candidate remains after durable and conversational

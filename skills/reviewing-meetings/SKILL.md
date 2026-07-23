@@ -2,7 +2,7 @@
 name: reviewing-meetings
 description: Use when the user asks to review, process, import, catch up on, or check for newly completed meetings from a configured meeting source, including Granola; when a scheduled post-meeting review invokes it; or when the user later approves, edits, defers, or skips visible meeting-review actions. Do not use for preparing an upcoming meeting, taking live notes, maintaining a CRM, or directly creating tasks, issues, or calendar events without meeting review.
 license: MIT
-compatibility: Requires meeting data with stable source IDs, an approved-note source with live template and naming guidance, and an authoritative ownership map for downstream actions. Pending suppression requires retrievable conversation history. When Obsidian owns a target, its CLI must be available.
+compatibility: Requires meeting data with stable source IDs, an approved-note source with live template and naming guidance, and an authoritative ownership map for downstream actions. Conversational suppression requires retrievable conversation history. When Obsidian owns a target, its CLI must be available.
 ---
 
 # Reviewing Meetings
@@ -12,6 +12,23 @@ review. Granola is one supported source, not part of the workflow's identity.
 Scheduled and manual entry use this same workflow. A schedule supplies timing,
 not extra authority: every run remains read-only until the user reviews a
 proposal.
+
+## Resolve visible action responses first
+
+Before choosing a source scope, determine whether the current user message only
+approves, edits, defers, skips, declines, revisits, or otherwise decides actions
+from a visible meeting-review bundle. If so, read
+[references/applying-approved-actions.md](references/applying-approved-actions.md)
+and handle that response directly. Do not query meeting sources, rediscover
+meetings, or append unrelated proposals.
+
+If the same message also explicitly asks for a new meeting check, finish the
+action-response phase first. Then run discovery as a separate read-only phase;
+do not use newly discovered proposals to reinterpret the earlier action
+decision.
+
+Completion: a response to visible actions was handled against that exact bundle
+before any separately requested discovery began.
 
 ## Select the source scope
 
@@ -37,7 +54,7 @@ and contains enough source material for a grounded proposal.
 
 Use the disposition definitions and precedence in the source-interpretation
 reference. Compare exact source names and IDs against approved notes and, when
-retrievable, visible pending and dismissed proposals in this conversation.
+retrievable, visible proposal lifecycles and dismissals in this conversation.
 
 Completion: every discovered meeting has one observable disposition, and no
 cursor, ledger, database, state file, transcript archive, or generated marker
@@ -56,13 +73,15 @@ explicitly unresolved.
 Keep the proposal inside the conversation. Do not create or edit a meeting note
 while preparing it. Present all newly proposed meetings from this run together,
 grouped by meeting. Later runs append only newly eligible meetings; they do not
-repeat, renumber, or recompute older pending proposals. They may add one terse
-count or reminder that older work remains pending.
+repeat, renumber, or recompute older pending or deferred proposals. They may
+add one terse count or reminder that older work remains pending. A fully
+decided visible bundle remains suppressed by its conversational disposition
+rather than becoming a new proposal again.
 
 If current conversation history is unavailable, disclose that pending and
-dismissed suppression cannot be verified. Continue using exact source-and-ID checks
-against approved notes, and do not claim the result is free of pending
-duplicates.
+reviewed or dismissed suppression cannot be verified. Continue using exact
+source-and-ID checks against approved notes, and do not claim the result is free
+of conversational duplicates.
 
 Completion: the bundle contains every and only newly proposed meeting from this
 run, or states that there is no new meeting to review.
@@ -95,7 +114,7 @@ End the read-only run as one of:
 - **Ready for review:** one or more new meeting proposals are waiting for the
   user.
 - **Nothing new:** every discovered meeting was already pending, already
-  approved, or dismissed in this conversation.
+  approved, reviewed, or dismissed in this conversation.
 - **Waiting for source:** no meeting is ready, but at least one may become
   eligible when source processing or the meeting finishes.
 - **Partial:** useful proposals were prepared, but a named source or continuity

@@ -111,16 +111,23 @@ cannot run, the meeting is **Unable to prepare** rather than eligible for a
 duplicate proposal.
 
 When current conversation history is retrievable, search visible meeting
-proposals and explicit whole-meeting dismissals for the exact source-and-ID
-pair. A pending match is **Already pending**; a whole-meeting dismissal is
-**Dismissed in this conversation**. Skipping, deferring, or declining one
-proposed action is not a whole-meeting dismissal and must not hide the meeting's
-other pending or undecided actions. Do not infer either disposition from an ID
-alone, memory summaries, titles, similar meetings, or an individual action
-decision. When both a pending proposal and a whole-meeting dismissal appear,
-the user's latest explicit whole-meeting dismissal or recovery instruction
-wins; recovery makes the named meeting eligible for a fresh proposal in that
-run.
+proposals, their action outcomes, and explicit whole-meeting dismissals for the
+exact source-and-ID pair. A bundle with any pending, deferred, or otherwise
+review-needed action is **Already pending**. A bundle whose every action is
+explicitly terminal, with no pending or review-needed action, is **Reviewed in
+this conversation**. A whole-meeting dismissal is **Dismissed in this
+conversation**.
+
+Skipping, deferring, or declining one proposed action is not a whole-meeting
+dismissal. A skipped action does not hide other pending or undecided actions. A
+deferred action remains tied to its existing bundle and pending until its
+explicit revisit point or recovery; an overlapping run must not regenerate it.
+Do not infer a conversational disposition from an ID alone, memory summaries,
+titles, or similar meetings. Use the latest visible action recap or explicit
+whole-meeting instruction for the exact pair. A later explicit revisit or
+recovery returns an existing pending or deferred bundle to review. Only an
+explicit request to reopen a fully reviewed or dismissed meeting makes it
+eligible for a fresh proposal.
 
 Assign exactly one disposition in this order:
 
@@ -144,16 +151,24 @@ Assign exactly one disposition in this order:
 7. **Dismissed in this conversation** when the latest visible instruction for
    the exact source-and-ID pair explicitly dismisses the whole meeting and no
    later recovery instruction exists.
-8. **Already pending** when an exact pending proposal is visible and has not
-   been dismissed.
-9. For the remaining genuinely new candidate, read the configured live meeting
+8. **Reviewed in this conversation** when every action in the exact visible
+   bundle has an explicitly terminal result, such as **Applied**, **Already
+   satisfied**, or terminal **Skipped**, no pending, deferred, failed,
+   indeterminate, manual, revised, or otherwise review-needed action remains,
+   and no later recovery instruction exists. This is not a whole-meeting
+   dismissal and creates no durable marker.
+9. **Already pending** when an exact visible proposal has any untouched,
+   deferred, failed, indeterminate, manual, revised, or otherwise review-needed
+   action and has not been dismissed. A revisit or recovery surfaces that same
+   bundle; it does not make the meeting new.
+10. For the remaining genuinely new candidate, read the configured live meeting
    template and filename convention, derive the intended filename from the
    actual meeting start and normalized title, and check that filename through
    the authoritative interface. An unavailable or ambiguous template,
    convention, time basis, folder, extension, or filename check is **Unable to
    prepare**. An intended filename already belonging to another meeting is
    **Collision stop**. Do not invent a template or path.
-10. **Newly proposed** when the candidate passes those creation-only checks.
+11. **Newly proposed** when the candidate passes those creation-only checks.
 
 When deriving a target, apply the approved-note source's current filename
 convention to the actual meeting start and normalized title. When the
@@ -161,14 +176,13 @@ convention specifies a timezone, convert the start to it; otherwise preserve
 the source start's explicit offset.
 
 Conversation continuity is an observable capability, not durable storage. In a
-fresh or detached conversation, say that pending and dismissed suppression is
-unavailable. Do not compensate by creating a cursor, ledger, registry, marker,
-or private copy of the proposal.
+fresh or detached conversation, say that pending, reviewed, and dismissed
+suppression is unavailable. Do not compensate by creating a cursor, ledger,
+registry, marker, or private copy of the proposal.
 
 Completion: every returned meeting has one precedence-backed disposition,
-approved suppression has one exact durable match, pending or dismissed
-suppression has retrievable conversation evidence, and the run names any
-unavailable check.
+approved suppression has one exact durable match, conversational suppression
+has retrievable evidence, and the run names any unavailable check.
 
 ## Shape the proposed meeting note
 

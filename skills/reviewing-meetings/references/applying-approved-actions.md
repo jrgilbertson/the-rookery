@@ -23,6 +23,12 @@ Approval of a dependent action never implies approval of its prerequisite.
 Approval does not transfer to a different identity, destination, target,
 visibility, content, or effect.
 
+A deferred action remains the same numbered proposal in the visible bundle. It
+is not terminal and must not be replaced or recomputed by an overlapping
+meeting check. At the user's explicit revisit point, or when the user asks to
+recover it, return that existing action to review and perform fresh pre-write
+checks only after approval.
+
 Completion: each selected action maps to one exact displayed proposal and all
 required prerequisites have their own decisions.
 
@@ -120,6 +126,16 @@ application outcome and performs no write. For **Failed**, **Indeterminate**,
 **Manual**, **Deferred**, or **Skipped**, state what remains unapplied and the
 next safe choice. Do not describe a conversational draft as an external draft
 or a proposed action as a completed change.
+
+When every visible action for one meeting has an explicitly terminal outcome
+and no pending, deferred, failed, indeterminate, manual, revised, or otherwise
+review-needed action remains, identify that meeting as **Reviewed in this
+conversation** in the visible recap. **Applied**, **Already satisfied**, and an
+explicitly terminal **Skipped** action can close a bundle. A skip caused by an
+unresolved prerequisite is not terminal while a repair choice remains. This
+conversational disposition prevents a later overlapping run from regenerating
+the bundle, but it is not a whole-meeting dismissal and creates no durable
+state.
 
 End with a compact recap of what changed, what was already satisfied, and what
 still needs review or repair. The approved meeting note and each downstream

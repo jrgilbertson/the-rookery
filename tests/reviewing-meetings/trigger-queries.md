@@ -47,8 +47,10 @@ passes with at least two `yes` judgments. Any `yes` on a near miss fails the
 set. Treat `unsure` as borderline, tune only the description, and rerun every
 affected query.
 
-Baseline status: passed on 2026-07-23. Three fresh listing-level judges evaluated
-the original 18 queries using only the final skill name and description. Every
-judge marked all nine intended queries `yes` and all nine near misses `no` (54
-of 54 correct, with no `unsure` judgments). The four action-response queries
-added afterward have not been evaluated yet.
+Status: passed on 2026-07-23. Three fresh listing-level judges evaluated the
+original 18 queries using only the final skill name and description. Every judge
+marked all nine intended queries `yes` and all nine near misses `no` (54 of 54
+correct, with no `unsure` judgments). Each of the four later action-response
+queries was then evaluated in three new listing-only contexts; all 12 judgments
+were `yes`. Combined evidence is 66 of 66 correct judgments with no `unsure`
+result.

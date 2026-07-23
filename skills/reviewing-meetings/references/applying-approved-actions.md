@@ -12,11 +12,12 @@ interpretation. Missing or ambiguous approval-binding information writes
 nothing and returns to proposal review.
 
 The user may approve, edit, defer, or skip actions independently. Apply only
-the action numbers the user unambiguously approved. A general response such as
-`looks good`, `go ahead`, or `approved` writes nothing when more than one
-visible action or interpretation remains possible; ask which action numbers it
-applies to. An edit creates a revised numbered proposal whose exact new content
-must be approved.
+the actions the user unambiguously approved. When exactly one visible action
+has exactly one interpretation, an unnumbered response such as `looks good`,
+`go ahead`, or `approved` may approve that sole action. The same response writes
+nothing when more than one visible action or interpretation remains possible;
+ask which action numbers it applies to. An edit creates a revised numbered
+proposal whose exact new content must be approved.
 
 Approval of a dependent action never implies approval of its prerequisite.
 Approval does not transfer to a different identity, destination, target,

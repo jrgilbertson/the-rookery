@@ -102,11 +102,14 @@ was selective and purpose-bound, and unresolved attribution remains explicit.
 ## Check observable durable and conversational state
 
 Query approved meeting notes through their configured authoritative interface
-and search for the exact source name and native ID. For an Obsidian source, use
-its CLI with explicit vault and path targeting for every read and search; never
+and search for the exact source-and-ID pair, exact source URL, and any configured
+legacy identity fields. Reconcile results by note so one note returned by more
+than one exact search still counts once. For an Obsidian source, use its CLI
+with explicit vault and path targeting for every read and search; never
 substitute direct filesystem access or run linting. Also check the intended
-filename inside the configured meeting folder. If either check cannot run, the
-meeting is **Unable to prepare** rather than eligible for a duplicate proposal.
+filename inside the configured meeting folder. If any required check cannot
+run, the meeting is **Unable to prepare** rather than eligible for a duplicate
+proposal.
 
 When current conversation history is retrievable, search visible meeting
 proposals and explicit dismissals for the exact source-and-ID pair. A pending
@@ -120,9 +123,12 @@ Assign exactly one disposition in this order:
 
 1. **Unable to prepare** when the source query, required source identity,
    approved-note check, filename convention, or filename check is unavailable.
-2. **Collision stop** when source identity conflicts, more than one approved
-   note has the exact source and ID, or the intended filename belongs to another
-   meeting.
+2. **Collision stop** when one note matches the exact source URL or a configured
+   legacy identity but not the current source-and-ID pair, when more than one
+   distinct approved note matches any current or legacy identity check, or when
+   the intended filename belongs to another meeting. A unique URL-only or
+   legacy-only match may return as a reviewed identity correction; it never
+   falls through to a new-note proposal.
 3. **Already approved** when exactly one approved note has the exact source and
    ID. The approved note remains authoritative even if later source content
    changes; revisit it only at the user's request.

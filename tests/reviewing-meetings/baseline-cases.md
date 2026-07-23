@@ -121,6 +121,12 @@ the exact disposition and ending.
 
 ## Additional U1 regression cases
 
+### In-progress meeting waits
+
+Given a meeting has not ended but already exposes a stable ID and otherwise
+usable source material, the run classifies it as **Waiting for source**. It
+does not prepare a review bundle or attempt any durable action.
+
 ### Processing meeting becomes eligible later
 
 Given a meeting has ended but generated notes are still processing, the first
@@ -167,10 +173,12 @@ instants rather than local calendar dates.
 ### Legacy import identity mismatch
 
 Given a retrieved meeting's current source identity differs from an existing
-note's identity fields, but the note URL identifies the same meeting, the run does not
-classify it as **Already approved** and does not propose a duplicate note. It is
-**Collision stop** unless the user explicitly selected it for a reviewed
-identity correction.
+note's identity fields, but the note's exact source URL identifies the same
+meeting, the durable-state search finds that note even when it uses a different
+filename. The run does not classify it as **Already approved** and does not
+propose a duplicate note. It is **Collision stop** unless the user explicitly
+selected it for a reviewed identity correction. More than one distinct exact
+URL match also stops for review.
 
 ### Provider change preserves the workflow
 
@@ -183,9 +191,10 @@ fields to a new note.
 ### Legacy provider fields remain readable
 
 Given a historical note contains a configured legacy provider ID field, the run
-may use that field to prevent a duplicate or propose a reviewed identity
-migration. It does not bulk-rewrite the note or copy the legacy field into a new
-note.
+finds that note even when no current source-and-ID pair matches. The meeting is
+**Collision stop** and may return as a reviewed identity correction; it never
+falls through to a new-note proposal. The run does not bulk-rewrite the note or
+copy the legacy field into a new note.
 
 ### Multi-edit target cannot be changed atomically
 
@@ -282,6 +291,13 @@ Given a visible bundle contains more than one numbered action, a reply such as
 `looks good` that cannot be mapped to exact action numbers authorizes no write.
 The workflow asks which numbered actions are approved. An edit produces a
 revised proposal that requires approval of its new exact content.
+
+### Sole unambiguous action accepts natural approval
+
+Given exactly one visible numbered action has exactly one interpretation, a
+new user reply such as `approved` may approve that sole action. The same wording
+does not approve anything when another visible action or interpretation exists,
+and a scheduled run never supplies approval on the user's behalf.
 
 ### Target drift affects only one action
 

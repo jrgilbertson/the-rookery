@@ -115,4 +115,22 @@ verified, but the first naturally scheduled occurrence has not happened yet.
 The dedicated conversation will make that delivery observable without adding a
 cursor, ledger, or forced test run.
 
+## Post-review correction gate
+
+- The manual and scheduled approval contracts now both accept an unnumbered
+  approval only when exactly one visible action has exactly one interpretation;
+  multi-action or ambiguous bundles still require action numbers.
+- Durable discovery now searches exact current identity, source URL, and
+  configured legacy identity fields, reconciles repeated hits by note, and
+  stops unique URL-only or legacy-only matches for reviewed identity correction
+  instead of allowing a new-note proposal.
+- The behavioral cases now cover an in-progress meeting, a URL-only legacy note
+  at a different filename, a legacy-ID-only note, and natural approval of one
+  unambiguous action.
+- The official skill validator, automation YAML parse, and diff check passed.
+  A fresh-context focused re-review found no actionable issue after the final
+  identity-disposition correction. A separate fresh-context behavioral check
+  passed all five corrected approval, duplicate-prevention, and meeting-readiness
+  cases without an unauthorized write or duplicate proposal.
+
 Result: passed with the stated natural-delivery limitation.

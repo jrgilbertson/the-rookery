@@ -18,8 +18,9 @@ run_behavior:
   - Invoke the versioned skill as a scheduled request in the dedicated conversation.
   - A scheduled run never applies an action, including a previously approved but
     unapplied action.
-  - Apply actions only in direct response to a new user message that explicitly
-    approves exact visible action numbers.
+  - Apply actions only in direct response to a new user message that either
+    approves exact visible action numbers or unambiguously approves the sole
+    visible action when it has exactly one interpretation.
   - A delayed or missed run does not create a catch-up cursor or backlog.
 
 automation:

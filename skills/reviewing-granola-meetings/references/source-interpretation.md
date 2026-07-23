@@ -6,10 +6,16 @@ turning the source into authority.
 
 ## Establish source identity and readiness
 
-Use the native Granola ID as meeting identity. Titles, URLs, participant lists,
-calendar event IDs, and timestamps may support identity but cannot replace the
-stable ID. Compare IDs as exact values rather than substrings or normalized
-lookalikes.
+Use the native meeting ID returned by the current Granola listing or retrieval
+interface as meeting identity. Store that exact value as `granola_id`. Titles,
+URLs, participant lists, calendar event IDs, timestamps, and identifiers from
+older imports may support identity but cannot replace the current native ID.
+Compare IDs as exact values rather than substrings or normalized lookalikes.
+
+If an existing note's URL identifies the retrieved meeting but its
+`granola_id` is missing or differs, do not treat the note as an exact approved
+match and do not create another note. Classify it as **Collision stop** unless
+the user explicitly selected that meeting for a reviewed identity correction.
 
 A source is sufficient when the meeting has ended, its stable ID, start time,
 and source URL are available, and its generated notes support a grounded
@@ -80,8 +86,9 @@ Query approved meeting notes through their configured authoritative interface
 and search for the exact Granola ID. For an Obsidian source, use its CLI with
 explicit vault and path targeting for every read and search; never substitute
 direct filesystem access or run linting. Zero matches means the approved-note
-check does not suppress the meeting. One match means **Already approved**. More
-than one match means **Collision stop** and requires human resolution. Also
+check does not suppress the meeting. One exact native-ID match means **Already
+approved**. More than one match means **Collision stop** and requires human
+resolution. Also
 check the intended filename inside the configured meeting folder; an existing
 note with another or missing source identity is **Collision stop**. If the
 approved-note or filename check cannot run, classify the affected meeting as

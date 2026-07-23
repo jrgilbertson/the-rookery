@@ -57,6 +57,14 @@ prerequisite is satisfied only when its outcome is **Applied** or **Already
 satisfied**. Apply each ready supported action once, then read the created or
 updated target back through the same authoritative interface.
 
+Before changing a target, validate the complete approved mutation against the
+current target without writing. When one action combines multiple edits to one
+target, apply them with one supported operation that either produces the whole
+approved effect or produces no effect. If the authoritative interface cannot
+do that, split the edits into separately numbered proposals and obtain exact
+approval for each before writing any part. Do not implement one approved action
+as a sequence that can leave an unreviewed partial target state.
+
 Classify each action using exactly one outcome:
 
 - **Applied:** post-write readback shows the approved effect.

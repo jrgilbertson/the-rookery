@@ -131,6 +131,21 @@ Given one approved meeting note contains the exact stable ID, the meeting is
 **Already approved**. Given two exact matches, it is **Collision stop**. A title
 or substring match alone does not suppress the meeting.
 
+### Legacy import identity mismatch
+
+Given a retrieved meeting's current native ID differs from an existing note's
+`granola_id`, but the note URL identifies the same meeting, the run does not
+classify it as **Already approved** and does not propose a duplicate note. It is
+**Collision stop** unless the user explicitly selected it for a reviewed
+identity correction.
+
+### Multi-edit target cannot be changed atomically
+
+Given one approved action changes both metadata and body content on one note,
+and the authoritative interface cannot validate and apply the complete change
+as one operation, the run writes nothing. It splits the effects into separately
+numbered proposals and obtains exact approval for each before any write.
+
 ### Fresh conversation degradation
 
 Given approved-note access works but current conversation history is not

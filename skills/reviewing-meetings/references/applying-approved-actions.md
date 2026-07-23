@@ -43,6 +43,12 @@ ambiguous, invalidate only that action and present a revised proposal. Other
 approved actions may continue when their own reads and prerequisites remain
 valid.
 
+If any required authoritative re-read or search is unavailable, fails, returns
+ambiguous results, or cannot establish the complete validation, make no write
+and report that action **Manual**. Do not proceed with it until a later
+re-read and search establish the target, duplicate, and prerequisite state.
+Unrelated approved actions may continue when their own validation succeeds.
+
 Completion: each write is still necessary, targets the approved object, and
 has not been redirected by changed state.
 
@@ -89,10 +95,12 @@ is indeterminate, keep the successful artifact as canonical. Report both
 outcomes, retain the partial success, and propose a bounded repair when useful.
 
 Do not roll back a successful prerequisite, recreate it, or retry a dependent
-effect blindly. If the meeting note depends on a task or issue link that did
-not succeed, write only the note content that remains truthful under the
-approved proposal; otherwise skip the dependent note action and return a
-revision.
+effect blindly. If the approved meeting note content depends on a task or
+issue link that did not succeed, skip the dependent note action and return a
+revised proposal showing the exact linkless content or another repair. Write
+linkless note content only after the user explicitly approves that revised
+effect. An independently approved note action whose content does not depend on
+the failed link may still proceed.
 
 Completion: successful work remains visible once, broken links stay explicit,
 and repair does not risk duplication.

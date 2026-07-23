@@ -306,6 +306,14 @@ destination, target, visibility, content, or prerequisite changes before
 application, Action 2 is not applied and returns as a revised proposal. Action
 1 may continue when its own pre-read remains valid.
 
+### Pre-write validation failure prevents mutation
+
+Given Actions 1 and 2 are independently approved but the required authoritative
+re-read or search for Action 1 is unavailable, fails, returns ambiguous
+results, or cannot establish its target, duplicate, and prerequisite state,
+Action 1 performs no mutation and is reported **Manual**. Action 2 may continue
+when its own pre-write validation succeeds and its prerequisites remain valid.
+
 ### Failed or indeterminate prerequisite
 
 Given Action 1 is a prerequisite for Action 2, a **Failed** or **Indeterminate**

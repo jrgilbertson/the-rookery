@@ -113,11 +113,13 @@ and repair does not risk duplication.
 
 ## Report the application result
 
-Report every visible action number with its outcome and the readback evidence
-that supports it. For **Failed**, **Indeterminate**, **Manual**, **Deferred**,
-or **Skipped**, state what remains unapplied and the next safe choice. Do not
-describe a conversational draft as an external draft or a proposed action as a
-completed change.
+Report an application outcome only for each action number the user selected or
+explicitly decided, with the readback evidence that supports it. List every
+other visible action separately as **Pending** for review. **Pending** is not an
+application outcome and performs no write. For **Failed**, **Indeterminate**,
+**Manual**, **Deferred**, or **Skipped**, state what remains unapplied and the
+next safe choice. Do not describe a conversational draft as an external draft
+or a proposed action as a completed change.
 
 End with a compact recap of what changed, what was already satisfied, and what
 still needs review or repair. The approved meeting note and each downstream

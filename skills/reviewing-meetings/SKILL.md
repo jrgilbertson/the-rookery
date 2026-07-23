@@ -29,10 +29,11 @@ interpretation rules.
 
 ## Discover and classify meetings
 
-Retrieve meetings in the source scope, then classify every returned meeting by
-its source name and stable native ID. A meeting is eligible only when it has
-ended, has a stable ID, and contains enough source material for a grounded
-proposal.
+Retrieve meetings in the source scope, then classify every returned meeting
+from observable source state. Once a meeting is source-ready, use its source
+name and stable native ID as its exact identity. A waiting meeting may not have
+a stable ID yet. A meeting is eligible only when it has ended, has a stable ID,
+and contains enough source material for a grounded proposal.
 
 Use the disposition definitions and precedence in the source-interpretation
 reference. Compare exact source names and IDs against approved notes and, when

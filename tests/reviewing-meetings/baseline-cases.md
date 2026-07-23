@@ -121,13 +121,13 @@ the exact disposition and ending.
 
 ## Additional U1 regression cases
 
-### In-progress meeting waits
+### In-progress meeting waits without identity
 
-Given a meeting has not ended but already exposes a stable ID and otherwise
-usable source material, the run classifies it as **Waiting for source**. It
-does not prepare a review bundle or attempt any durable action. This remains
-**Waiting for source** even when the approved-note check or filename convention
-is temporarily unavailable, because those checks are not required until the
+Given a meeting has not ended or its notes are still processing and the source
+does not expose a stable ID yet, the run classifies it as **Waiting for
+source**. It does not query approved notes or conversation state, read the live
+template or filename convention, check an intended filename, prepare a review
+bundle, or attempt any durable action. Those checks are not required until the
 meeting is source-ready.
 
 ### Processing meeting becomes eligible later
@@ -148,7 +148,19 @@ does not infer that there were no meetings.
 
 Given one approved meeting note contains the exact source-and-ID pair, the
 meeting is **Already approved**. Given two exact matches, it is **Collision
-stop**. A title, ID-only, or substring match does not suppress the meeting.
+stop**. A title, ID-only, or substring match does not suppress the meeting. The
+exact approved note still suppresses creation when the live template, filename
+convention, or intended-filename check is unavailable, because those checks
+apply only to a genuinely new candidate.
+
+### Conversation suppression precedes creation checks
+
+Given the latest visible instruction exactly dismisses the whole meeting, the
+meeting is **Dismissed in this conversation** even when the live template,
+filename convention, or intended-filename check is unavailable. Given an exact
+pending proposal and no later whole-meeting dismissal, the meeting is
+**Already pending** under the same unavailable creation checks. Neither case
+attempts to derive a filename or read the live template.
 
 ### Disposition precedence
 
@@ -172,9 +184,19 @@ dismissal and does not hide or suppress the remaining actions.
 
 ### Filename convention unavailable
 
-Given the approved-note source does not expose an unambiguous folder, filename
-format, time basis, or extension, the meeting is **Unable to prepare**. The run
-does not invent a path or perform a collision check against a guessed filename.
+Given a genuinely new candidate remains after durable and conversational
+suppression, but the approved-note source does not expose an unambiguous folder,
+filename format, time basis, or extension, the meeting is **Unable to prepare**.
+The run does not invent a path or perform a collision check against a guessed
+filename.
+
+### Live template unavailable for a new candidate
+
+Given a genuinely new candidate remains after durable and conversational
+suppression, but the configured live meeting template cannot be read through
+its supported interface, the meeting is **Unable to prepare** rather than
+**Newly proposed**. The run does not invent a canonical note shape or create a
+durable note.
 
 ### Default window boundary
 
@@ -310,6 +332,14 @@ Given exactly one visible numbered action has exactly one interpretation, a
 new user reply such as `approved` may approve that sole action. The same wording
 does not approve anything when another visible action or interpretation exists,
 and a scheduled run never supplies approval on the user's behalf.
+
+### Partial decision leaves untouched actions pending
+
+Given a visible bundle contains multiple numbered actions and the user
+approves, skips, or defers only some of them, the application report gives
+outcomes only to those explicitly decided action numbers. Every untouched
+action remains visibly **Pending** for review, receives no terminal application
+outcome, and performs no write.
 
 ### Target drift affects only one action
 

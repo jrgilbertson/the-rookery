@@ -1,12 +1,11 @@
 # Baseline test: reviewing-meetings
 
 This is synthetic characterization evidence for a new instruction package. The
-three without-skill outputs below were observed before authoring U1. U1 records
-the intended with-skill behavior as precise regression expectations; a later
-fresh-context evaluation must execute both variants before claiming the
-comparison passed.
+three without-skill outputs below were observed before authoring U1. The final
+with-skill package was then exercised in three fresh contexts against the same
+behavioral cases.
 
-Date: 2026-07-22 | Baseline harness: Codex desktop | Model: session default
+Baseline date: 2026-07-22 | Final run: 2026-07-23 | Harness: Codex desktop fresh-context agents | Model: session default
 
 ## Case 1: One new completed meeting
 
@@ -20,9 +19,10 @@ Prompt:
 > Its generated notes contain enough grounded context, discussion, decisions,
 > and next steps for a meeting-note proposal and one follow-up, but the
 > follow-up's owner and recipient are unclear. The configured live meeting
-> template is readable. The approved-note search returns zero exact ID matches,
-> the intended filename is unoccupied, and this conversation contains no
-> pending proposal or dismissal for the ID. Do not write anything yet.
+> template and naming convention are readable. The approved-note search returns
+> zero exact source-and-ID matches, the intended filename is unoccupied, and
+> this conversation contains no pending proposal or dismissal for the pair. Do
+> not write anything yet.
 
 Observed without-skill behavior:
 
@@ -41,7 +41,9 @@ Expected with-skill behavior:
 - Keeps the result read-only and ends **Ready for review** with an exact
   disposition count.
 
-Verdict: baseline characterized; with-skill fresh-context run pending.
+Verdict: passed. The fresh with-skill run added the exact disposition, naming,
+action boundary, ambiguity handling, disposition counts, and explicit ending
+missing from the bare response.
 
 ## Case 2: Append only after an earlier proposal
 
@@ -54,9 +56,10 @@ Prompt:
 > review`, the source URL
 > `https://example.invalid/meetings/meeting-new-b`, and generated notes with
 > enough grounded context, discussion, decisions, and next steps. The configured
-> live meeting template is readable. Approved-note searches return zero exact
-> ID matches for A and B, Meeting B's intended filename is unoccupied, and this
-> conversation has no dismissal for either ID. Run the next post-meeting check.
+> live meeting template and naming convention are readable. Approved-note
+> searches return zero exact source-and-ID matches for A and B, Meeting B's
+> intended filename is unoccupied, and this conversation has no dismissal for
+> either pair. Run the next post-meeting check.
 
 Observed without-skill behavior:
 
@@ -67,14 +70,16 @@ Observed without-skill behavior:
 
 Expected with-skill behavior:
 
-- Classifies Meeting A as **Already pending** from the retrievable exact-ID
-  proposal.
+- Classifies Meeting A as **Already pending** from the retrievable exact
+  source-and-ID proposal.
 - Presents only Meeting B as **Newly proposed**, without repeating,
   recomputing, or renumbering Meeting A.
 - May add one terse note that one earlier proposal remains pending.
 - Ends **Ready for review** with one newly proposed and one already pending.
 
-Verdict: baseline characterized; with-skill fresh-context run pending.
+Verdict: passed. The fresh with-skill run appended only Meeting B, preserved
+Meeting A and its numbering, returned both exact dispositions, and ended
+explicitly.
 
 ## Case 3: Ambiguous transcript attribution
 
@@ -88,11 +93,11 @@ Prompt:
 > `https://example.invalid/meetings/meeting-attribution-01`. Its generated notes
 > contain enough grounded context, discussion, decisions, and next steps; only
 > the owner attribution is ambiguous, and the relevant transcript turns are
-> available for selective inspection. The configured live meeting template is
-> readable. The approved-note search returns zero exact ID matches, the intended
-> filename is unoccupied, and this conversation contains no pending proposal or
-> dismissal for the ID. Prepare a grounded meeting proposal and resolve only
-> what the evidence supports.
+> available for selective inspection. The configured live meeting template and
+> naming convention are readable. The approved-note search returns zero exact
+> source-and-ID matches, the intended filename is unoccupied, and this
+> conversation contains no pending proposal or dismissal for the pair. Prepare
+> a grounded meeting proposal and resolve only what the evidence supports.
 
 Observed without-skill behavior:
 
@@ -110,7 +115,9 @@ Expected with-skill behavior:
 - Retains the exact source ID, omits transcript copying, classifies the meeting
   as **Newly proposed**, and ends **Ready for review**.
 
-Verdict: baseline characterized; with-skill fresh-context run pending.
+Verdict: passed. The fresh with-skill run rejected the unsupported attribution,
+kept ownership unresolved, omitted unsupported downstream actions, and returned
+the exact disposition and ending.
 
 ## Additional U1 regression cases
 
@@ -128,9 +135,34 @@ does not infer that there were no meetings.
 
 ### Exact approved-note duplicate
 
-Given one approved meeting note contains the exact stable ID, the meeting is
-**Already approved**. Given two exact matches, it is **Collision stop**. A title
-or substring match alone does not suppress the meeting.
+Given one approved meeting note contains the exact source-and-ID pair, the
+meeting is **Already approved**. Given two exact matches, it is **Collision
+stop**. A title, ID-only, or substring match does not suppress the meeting.
+
+### Disposition precedence
+
+Given one exact approved note and an older pending proposal are both visible,
+the meeting is **Already approved**. Given a collision plus any conversational
+state, it is **Collision stop**. Required access or identity that cannot be
+established remains **Unable to prepare** before any lower disposition.
+
+### Provider IDs do not collide across sources
+
+Given two configured providers return the same native ID, a pending proposal or
+dismissal for one provider does not suppress the other. Every durable and
+conversational comparison uses the exact source-and-ID pair.
+
+### Filename convention unavailable
+
+Given the approved-note source does not expose an unambiguous folder, filename
+format, time basis, or extension, the meeting is **Unable to prepare**. The run
+does not invent a path or perform a collision check against a guessed filename.
+
+### Default window boundary
+
+Given no manual or scheduled range, the source window includes both endpoints
+of the 168-hour interval ending at query time. Boundary comparisons use absolute
+instants rather than local calendar dates.
 
 ### Legacy import identity mismatch
 
@@ -187,10 +219,10 @@ meeting folder. The source cannot select another path.
   append-only proposals, selective transcript use, and explicit degradation.
 - Existing tests inspected: `tests/personal-chief-of-staff/baseline-cases.md`
   and `tests/personal-chief-of-staff/trigger-queries.md`.
-- Tests added: three characterized baseline cases and six synthetic U1
-  regression cases.
-- Exception: fresh-context with-skill runs are intentionally deferred; this U1
-  artifact does not claim the baseline comparison passed.
+- Tests added: three characterized baseline cases and synthetic U1 regression
+  cases.
+- Fresh-context result: all three final with-skill runs passed their regression
+  expectations and improved the explicit process contract over the bare runs.
 
 ## U2 pre-authoring characterization
 
@@ -282,9 +314,9 @@ applies the approved action once, reads it back, and reports exactly one of
 ### Communication and consequential operations stay bounded
 
 Given a meeting supports an external reply and a consequential operational
-change, the bundle may provide complete editable reply text as a communication
-draft, but does not send it. Sending is a separately proposed and reviewed
-action only when a verified interface supports it. The operational change is
+change, the bundle may provide complete editable reply text as a conversational
+draft, but does not create an external draft object or send it. Either effect
+belongs to a later explicit communication request. The operational change is
 routed to canonical work or reported **Manual** rather than executed by this
 workflow.
 
@@ -297,5 +329,5 @@ workflow.
 - Tests added: eleven synthetic U2 regression cases covering canonical routing,
   selective proposals, approval ambiguity, drift, dependencies, idempotency,
   partial success, drafts, and consequential operations.
-- Exception: no live connector or durable write was exercised in U2; private
-  application and fresh-context comparisons remain assigned to later units.
+- Later evidence: U4 exercised reviewed durable application and readback; U6
+  completed the fresh-context comparisons.

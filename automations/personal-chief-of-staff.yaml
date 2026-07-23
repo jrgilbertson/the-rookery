@@ -92,7 +92,9 @@ automations:
     manual_invocation: Run the personal-chief-of-staff skill in quarterly mode.
 
 recovery:
-  - Recreate or update jobs by stable name; never create a duplicate mode.
+  - Update each configured automation ID when it is available.
+  - Otherwise match the mode key, schedule, project, and destination. Create on
+    zero matches, update on one, and stop for review on more than one.
   - Bind every job to this repository as a local project and local destination.
   - Keep account identifiers, vault names, local paths, connector IDs, project IDs,
     automation IDs, and credentials in app configuration, not this file.

@@ -6,15 +6,10 @@ meeting, category, or bundle as a whole.
 
 ## Require unambiguous approval
 
-Every action must already show:
-
-- its visible action number;
-- the acting identity or account;
-- the exact authoritative destination and target;
-- visibility when relevant, including repository visibility;
-- the complete content or precise effect;
-- the evidence and reason for the change; and
-- every prerequisite action by visible number, or `None`.
+Apply only a visible numbered action whose displayed identity, authoritative
+target, visibility, complete effect, reason, and dependencies leave exactly one
+interpretation. Missing or ambiguous approval-binding information writes
+nothing and returns to proposal review.
 
 The user may approve, edit, defer, or skip actions independently. Apply only
 the action numbers the user unambiguously approved. A general response such as

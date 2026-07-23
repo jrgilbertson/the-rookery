@@ -26,7 +26,7 @@ Source record: [source URL]
 
 Meeting start: [actual source start time]
 
-Proposed note: `[timestamped filename inside the configured meeting folder]`
+Proposed note: `[exact path produced by the configured naming convention]`
 
 **State the most important grounded takeaway in a complete sentence.** Follow
 with the context, notes, decisions, next steps, evidence, and uncertainty needed
@@ -35,14 +35,13 @@ invent attribution, ownership, deadlines, links, or decisions.
 
 ### Proposed actions
 
-Use only these category labels when they help scanning: Meeting note, Task or
-issue, Durable context, Calendar, and Communication draft. Number actions
+Use one category allowed by the action-routing reference. Number actions
 continuously across the full visible bundle rather than restarting within a
 meeting or category.
 
 > **Action 1. [Complete sentence describing one proposed effect.]**
 >
-> Category: [one supported category]
+> Category: [one category allowed by the action-routing reference]
 >
 > Acting identity: [account or identity]
 >
@@ -59,18 +58,11 @@ meeting or category.
 > Depends on: [visible action numbers, or None]
 
 Repeat only for supported independent effects. One action must not hide several
-writes. A calendar backlink, external draft creation, message send, or second
-durable update is its own action when it creates a separate effect.
+writes. A calendar backlink or second durable update is its own action when it
+creates a separate effect. Communication remains conversational draft text;
+external draft creation and sending are outside this workflow.
 
 After all meetings, invite the user to approve, edit, defer, or skip each action
 number independently. State that vague approval produces no write when its
 target is ambiguous, and that any approved action will be re-read and checked
 for an equivalent before one application attempt and readback.
-
-## Application recap
-
-After review and application, list each decided action number with one outcome:
-**Applied**, **Already satisfied**, **Failed**, **Indeterminate**, **Manual**,
-**Deferred**, or **Skipped**. Name unmet dependencies and retain successful
-prerequisites when a dependent link fails. End with what changed and what still
-needs review, repair, or manual work.

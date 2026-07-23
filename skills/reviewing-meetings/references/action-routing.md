@@ -33,18 +33,18 @@ Inspect current context and existing work before proposing a create or update.
 Use stable identifiers and authoritative search where available; a similar
 title alone does not prove equivalence.
 
-Route work by ownership:
+Load the configured ownership map from the user's authoritative guidance. Keep
+product and repository work in its established issue system. Keep personal,
+relationship, administrative, and cross-system commitments in the configured
+task system. When one system mirrors another, use the upstream owner rather
+than its synchronized copy.
 
-- Work for the configured Linear-owned product goes to Linear, including when
-  Linear later synchronizes it to GitHub.
-- Work owned by another repository goes to that repository's GitHub issues.
-- Personal, relationship, administrative, and cross-system commitments go to
-  the configured Obsidian Tasks source.
-
-Do not copy Linear- or GitHub-owned work into Obsidian Tasks. An Obsidian task
-is justified only when the user has a distinct personal commitment not
-represented by the canonical issue. A meeting-note link to an issue is context,
-not a second task.
+Do not copy issue-owned work into another task system. A separate task is
+justified only when the user has a distinct personal commitment not represented
+by the canonical issue. A meeting-note link to an issue is context, not a
+second task. When the ownership map is unavailable or ambiguous, leave the
+ambiguity in the meeting review and omit that action until ownership is
+resolved instead of choosing a provider.
 
 When an applicable canonical task or issue workflow is available, use it for
 schema, context inspection, duplicate checks, approval, and readback. Such a
@@ -59,8 +59,8 @@ target or creation destination.
 
 Record another person's promise in the meeting note. Do not turn it into a task
 for the user unless it creates a meaningful dependency on an outcome the user
-owns. When that dependency is worth tracking, propose one Obsidian
-`waiting-for` task with:
+owns. When that dependency is worth tracking, propose one task in the
+configured task system using its explicit waiting state, with:
 
 - the verified person or event being awaited;
 - the user-owned outcome that depends on it; and
@@ -116,10 +116,9 @@ identity, recipients, thread or destination, and reason. Text displayed in the
 review bundle is a draft suggestion, not an external draft object and not a
 send authorization.
 
-Creating or updating an external draft is a separate action when a verified
-interface supports it. Sending a draft or message is another separately
-displayed and approved action. The meeting workflow never infers send approval
-from approval of draft text.
+The meeting workflow keeps the draft in the conversation. Creating an external
+draft object or sending a message belongs to a later, explicit communication
+request and its configured workflow; approval here never authorizes either.
 
 Route consequential operations such as payments, refunds, production changes,
 or destructive calendar changes to canonical work or mark them **Manual**.

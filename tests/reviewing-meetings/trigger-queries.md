@@ -43,4 +43,7 @@ passes with at least two `yes` judgments. Any `yes` on a near miss fails the
 set. Treat `unsure` as borderline, tune only the description, and rerun every
 affected query.
 
-Status: query set authored; fresh-context judgments pending.
+Status: passed on 2026-07-23. Three fresh listing-level judges evaluated all
+18 queries using only the final skill name and description. Every judge marked
+all nine intended queries `yes` and all nine near misses `no` (54 of 54 correct,
+with no `unsure` judgments).

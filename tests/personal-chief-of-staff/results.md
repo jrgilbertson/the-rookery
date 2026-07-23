@@ -130,6 +130,10 @@ A sleeping or offline Mac does not count as a completed run and creates no
 automatic backfill. No scheduled job was forced to run during setup; first-run
 behavior remains part of U6 acceptance.
 
+The user later approved shorter display names for all four jobs. Native
+readback verified that only the names changed to the `CoS` convention; the
+existing automation IDs, schedules, active status, and prompts were preserved.
+
 ## U6 launch-readiness acceptance — 2026-07-22
 
 Harness: Codex fresh-context subagents and an isolated project-level Codex

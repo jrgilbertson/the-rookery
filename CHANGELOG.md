@@ -18,6 +18,11 @@ looked" surface. GitHub Releases mirror its entries.
   quarterly review loop grounded in live authoritative sources. Includes
   reviewed-write safeguards, Obsidian CLI handling, behavioral evals, and a
   Git-owned specification for four local Codex schedules.
+- `reviewing-meetings` — a source-neutral post-meeting review loop that refines
+  completed meeting evidence, prevents duplicate notes and work, routes each
+  outcome to one canonical system, and applies only independently approved
+  actions. Includes sanitized behavioral evidence and a Git-owned specification
+  for the chat-attached `CoS Meetings` schedule.
 
 ## [0.1.0] - 2026-07-10
 

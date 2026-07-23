@@ -60,3 +60,24 @@ Date: 2026-07-23
   legacy identity fields remain a read-only duplicate-prevention input.
 
 Result: passed.
+
+## U5: chat-attached schedule
+
+Date: 2026-07-23
+
+- Setup discovery found no existing matching automation, so one new job was
+  created without replacing or duplicating another job.
+- The active automation is a heartbeat attached to the dedicated ongoing
+  meeting-review conversation rather than a detached cron task.
+- The schedule runs four times daily at the approved local times. The host
+  timezone was verified as Pacific at setup.
+- The thin prompt invokes the source-neutral `reviewing-meetings` skill from the
+  current checkout and preserves conversation-based pending and dismissal
+  suppression.
+- The prompt explicitly forbids applying any action because the schedule fired,
+  including an older approved but unapplied action.
+- Native readback verified the automation kind, display name, target
+  conversation, schedule, active status, and prompt. Notifications remain
+  enabled through the app's default policy.
+
+Result: passed.

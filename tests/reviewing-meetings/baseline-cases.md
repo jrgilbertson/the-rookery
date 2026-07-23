@@ -163,6 +163,13 @@ Given two configured providers return the same native ID, a pending proposal or
 dismissal for one provider does not suppress the other. Every durable and
 conversational comparison uses the exact source-and-ID pair.
 
+### Skipped action does not dismiss its meeting
+
+Given a visible meeting proposal has multiple actions and the user skips one
+action, the meeting remains **Already pending** while any other action is still
+pending or undecided. The skipped action does not count as a whole-meeting
+dismissal and does not hide or suppress the remaining actions.
+
 ### Filename convention unavailable
 
 Given the approved-note source does not expose an unambiguous folder, filename

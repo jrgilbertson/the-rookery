@@ -114,12 +114,16 @@ If any required check cannot run, the meeting is **Unable to prepare** rather
 than eligible for a duplicate proposal.
 
 When current conversation history is retrievable, search visible meeting
-proposals and explicit dismissals for the exact source-and-ID pair. A pending
-match is **Already pending**; a dismissal is **Dismissed in this conversation**.
-Do not infer either outcome from an ID alone, memory summaries, titles, or
-similar meetings. When both appear, the user's latest explicit dismissal or
-recovery instruction wins; recovery makes the named meeting eligible for a
-fresh proposal in that run.
+proposals and explicit whole-meeting dismissals for the exact source-and-ID
+pair. A pending match is **Already pending**; a whole-meeting dismissal is
+**Dismissed in this conversation**. Skipping, deferring, or declining one
+proposed action is not a whole-meeting dismissal and must not hide the meeting's
+other pending or undecided actions. Do not infer either disposition from an ID
+alone, memory summaries, titles, similar meetings, or an individual action
+decision. When both a pending proposal and a whole-meeting dismissal appear,
+the user's latest explicit whole-meeting dismissal or recovery instruction
+wins; recovery makes the named meeting eligible for a fresh proposal in that
+run.
 
 Assign exactly one disposition in this order:
 
@@ -140,7 +144,8 @@ Assign exactly one disposition in this order:
    ID. The approved note remains authoritative even if later source content
    changes; revisit it only at the user's request.
 6. **Dismissed in this conversation** when the latest visible instruction for
-   the exact meeting is dismissal and no later recovery instruction exists.
+   the exact source-and-ID pair explicitly dismisses the whole meeting and no
+   later recovery instruction exists.
 7. **Already pending** when an exact pending proposal is visible and has not
    been dismissed.
 8. **Newly proposed** when the meeting is eligible and none of the earlier

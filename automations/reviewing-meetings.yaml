@@ -41,6 +41,6 @@ recovery:
     zero matches, update on one matching job, and stop for review on more than one.
   - Keep vault names, local paths, connector IDs, task IDs, automation IDs, and
     credentials in app configuration, not this file.
-  - After setup, read the live job back and compare its kind, name, target task,
-    schedule, next-run times, status, notification behavior, and prompt with this
-    specification.
+  - After setup, read the live job back and compare its kind, name,
+    dedicated-conversation target, schedule, next-run times, status,
+    notification behavior, and prompt with this specification.

@@ -18,9 +18,11 @@ continuity cannot be verified.
 
 ## [Proposed meeting title]
 
-Granola ID: `[stable ID]`
+Source: `[configured source]`
 
-Source: [source URL]
+Source ID: `[stable native ID]`
+
+Source record: [source URL]
 
 Meeting start: [actual source start time]
 

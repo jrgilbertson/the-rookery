@@ -1,15 +1,17 @@
 ---
-name: reviewing-granola-meetings
-description: Use when the user asks to review, process, import, catch up on, or check for new Granola meetings after they end, or when a scheduled post-meeting review invokes it. Do not use for preparing an upcoming meeting, taking live notes, reviewing a transcript from another source, maintaining a CRM, or directly creating tasks, issues, or calendar events without meeting review.
+name: reviewing-meetings
+description: Use when the user asks to review, process, import, catch up on, or check for newly completed meetings from a configured meeting source, including Granola, or when a scheduled post-meeting review invokes it. Do not use for preparing an upcoming meeting, taking live notes, maintaining a CRM, or directly creating tasks, issues, or calendar events without meeting review.
 license: MIT
-compatibility: Requires readable Granola meeting data plus access to the configured approved-note source and live meeting template. Pending suppression also requires retrievable current-conversation history. When Obsidian owns the notes or template, its CLI must be available.
+compatibility: Requires readable meeting data with stable source IDs plus access to the configured approved-note source and live meeting template. Pending suppression also requires retrievable current-conversation history. When Obsidian owns the notes or template, its CLI must be available.
 ---
 
-# Reviewing Granola Meetings
+# Reviewing Meetings
 
-Turn completed Granola meetings into grounded proposals for review. Scheduled
-and manual entry use this same workflow. A schedule supplies timing, not extra
-authority: every run remains read-only until the user reviews a proposal.
+Turn completed meetings from the configured source into grounded proposals for
+review. Granola is one supported source, not part of the workflow's identity.
+Scheduled and manual entry use this same workflow. A schedule supplies timing,
+not extra authority: every run remains read-only until the user reviews a
+proposal.
 
 ## Select the source scope
 
@@ -27,10 +29,11 @@ interpretation rules.
 ## Discover and classify meetings
 
 Retrieve meetings in the source scope, then classify every returned meeting by
-stable Granola ID. A meeting is eligible only when it has ended, has a stable
-ID, and contains enough source material for a grounded proposal.
+its source name and stable native ID. A meeting is eligible only when it has
+ended, has a stable ID, and contains enough source material for a grounded
+proposal.
 
-Compare exact Granola IDs against approved meeting notes. When current
+Compare exact source names and IDs against approved meeting notes. When current
 conversation history is retrievable, also compare them against visible pending
 and dismissed proposals in this conversation. Classify each meeting as exactly
 one of:
@@ -47,7 +50,7 @@ one of:
 - **Unable to prepare:** required source access or stable identity cannot be
   established.
 
-An approved note remains authoritative even when later Granola content changes.
+An approved note remains authoritative even when later source content changes.
 Treat a changed source as evidence for a separately reviewed revision only when
 the user asks to revisit that meeting.
 
@@ -66,7 +69,7 @@ application.
 
 For every newly proposed meeting, prepare one review section containing:
 
-- the stable Granola ID and source link for identity checking;
+- the source name, stable native ID, and source link for identity checking;
 - the actual meeting start time and a normalized proposed title;
 - the proposed filename using the actual start timestamp plus the title;
 - a preview shaped by the configured live meeting template; and

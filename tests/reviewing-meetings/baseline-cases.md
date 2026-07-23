@@ -1,4 +1,4 @@
-# Baseline test: reviewing-granola-meetings
+# Baseline test: reviewing-meetings
 
 This is synthetic characterization evidence for a new instruction package. The
 three without-skill outputs below were observed before authoring U1. U1 records
@@ -12,7 +12,8 @@ Date: 2026-07-22 | Baseline harness: Codex desktop | Model: session default
 
 Prompt:
 
-> Check the completed Granola meeting with ID `meeting-new-01` and prepare what
+> Check the completed meeting from source `synthetic` with native ID
+> `meeting-new-01` and prepare what
 > should happen next. It ended on 2026-07-21, started at
 > `2026-07-21T10:00:00-07:00`, has the title `Synthetic customer follow-up`,
 > and has the source URL `https://example.invalid/meetings/meeting-new-01`.
@@ -46,8 +47,8 @@ Verdict: baseline characterized; with-skill fresh-context run pending.
 
 Prompt:
 
-> Earlier in this conversation you proposed Meeting A with Granola ID
-> `meeting-pending-a`, and I have not reviewed it. A later completed Meeting B
+> Earlier in this conversation you proposed Meeting A from source `synthetic`
+> with native ID `meeting-pending-a`, and I have not reviewed it. A later completed Meeting B
 > with ID `meeting-new-b` is now available. Meeting B ended on 2026-07-21,
 > started at `2026-07-21T15:00:00-07:00`, has the title `Synthetic product
 > review`, the source URL
@@ -79,7 +80,7 @@ Verdict: baseline characterized; with-skill fresh-context run pending.
 
 Prompt:
 
-> Granola's summary says Alex owns a consequential follow-up, but the only
+> The configured source's summary says Alex owns a consequential follow-up, but the only
 > transcript labels are `Speaker` and `Microphone`. The completed meeting has
 > the stable ID `meeting-attribution-01`, started at
 > `2026-07-21T13:00:00-07:00`, has the title `Synthetic planning discussion`,
@@ -122,7 +123,7 @@ returns sufficient notes for the same stable ID, that run may classify it as
 
 ### Source unavailable
 
-Given the required Granola query fails, the run ends **Unable to prepare** and
+Given the required meeting-source query fails, the run ends **Unable to prepare** and
 does not infer that there were no meetings.
 
 ### Exact approved-note duplicate
@@ -133,11 +134,26 @@ or substring match alone does not suppress the meeting.
 
 ### Legacy import identity mismatch
 
-Given a retrieved meeting's current native ID differs from an existing note's
-`granola_id`, but the note URL identifies the same meeting, the run does not
+Given a retrieved meeting's current source identity differs from an existing
+note's identity fields, but the note URL identifies the same meeting, the run does not
 classify it as **Already approved** and does not propose a duplicate note. It is
 **Collision stop** unless the user explicitly selected it for a reviewed
 identity correction.
+
+### Provider change preserves the workflow
+
+Given the configured meeting provider changes, its adapter supplies a new
+source name, native ID, URL, meeting start, generated notes, and any available
+transcript access. The run uses the same classification, review, approval, and
+application workflow and writes only generic `source` and `source_id` identity
+fields to a new note.
+
+### Legacy provider fields remain readable
+
+Given a historical note contains a configured legacy provider ID field, the run
+may use that field to prevent a duplicate or propose a reviewed identity
+migration. It does not bulk-rewrite the note or copy the legacy field into a new
+note.
 
 ### Multi-edit target cannot be changed atomically
 

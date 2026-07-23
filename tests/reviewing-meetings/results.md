@@ -1,4 +1,4 @@
-# Acceptance results: reviewing-granola-meetings
+# Acceptance results: reviewing-meetings
 
 This file records only sanitized behavior and capability evidence. Private
 meeting content, participant identities, account identifiers, source IDs,

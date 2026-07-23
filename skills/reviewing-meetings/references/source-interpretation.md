@@ -1,21 +1,33 @@
 # Source Interpretation
 
-Read this reference before retrieving Granola meetings. It defines when source
+Read this reference before retrieving meetings. It defines when source
 material supports a durable proposal and how to handle ambiguity without
 turning the source into authority.
 
 ## Establish source identity and readiness
 
-Use the native meeting ID returned by the current Granola listing or retrieval
-interface as meeting identity. Store that exact value as `granola_id`. Titles,
-URLs, participant lists, calendar event IDs, timestamps, and identifiers from
-older imports may support identity but cannot replace the current native ID.
-Compare IDs as exact values rather than substrings or normalized lookalikes.
+Treat the meeting provider as configuration. The configured source adapter must
+expose a source name, stable native ID, source URL, actual meeting start, usable
+generated notes, and selective transcript access when available. It may also
+declare legacy identity fields used by historical imports. Changing providers
+changes this mapping, not the review workflow or its durable action contract.
+
+Use the configured source name plus the native meeting ID returned by its
+listing or retrieval interface as meeting identity. Store those exact values in
+the live template's `source` and `source_id` fields. Titles, URLs, participant
+lists, calendar event IDs, timestamps, and identifiers from older imports may
+support identity but cannot replace the current source and native ID. Compare
+both values exactly rather than as substrings or normalized lookalikes.
 
 If an existing note's URL identifies the retrieved meeting but its
-`granola_id` is missing or differs, do not treat the note as an exact approved
+source identity is missing or differs, do not treat the note as an exact approved
 match and do not create another note. Classify it as **Collision stop** unless
 the user explicitly selected that meeting for a reviewed identity correction.
+
+Search any configured legacy identity fields only to recognize historical
+notes and prevent duplicates. Do not write legacy provider-specific fields to
+new notes. A unique legacy match may support a reviewed migration to `source`
+and `source_id`; it is not permission for a silent metadata rewrite.
 
 A source is sufficient when the meeting has ended, its stable ID, start time,
 and source URL are available, and its generated notes support a grounded
@@ -59,7 +71,7 @@ and every proposed note path remains inside the configured meeting folder.
 
 ## Refine the generated interpretation
 
-Use Granola's generated summary as a starting interpretation, then make it
+Use the configured source's generated summary as a starting interpretation, then make it
 clearer and more useful while staying within the evidence. Preserve meaningful
 uncertainty. Do not invent decisions, ownership, deadlines, attendees,
 relationships, or causal explanations.
@@ -83,11 +95,11 @@ was selective and purpose-bound, and unresolved attribution remains explicit.
 ## Check observable durable and conversational state
 
 Query approved meeting notes through their configured authoritative interface
-and search for the exact Granola ID. For an Obsidian source, use its CLI with
+and search for the exact source name and native ID. For an Obsidian source, use its CLI with
 explicit vault and path targeting for every read and search; never substitute
 direct filesystem access or run linting. Zero matches means the approved-note
-check does not suppress the meeting. One exact native-ID match means **Already
-approved**. More than one match means **Collision stop** and requires human
+check does not suppress the meeting. One exact source-and-ID match means
+**Already approved**. More than one match means **Collision stop** and requires human
 resolution. Also
 check the intended filename inside the configured meeting folder; an existing
 note with another or missing source identity is **Collision stop**. If the
@@ -114,8 +126,8 @@ the run names any unavailable check.
 
 Read the configured live meeting template through its supported interface and
 use its current sections and instructions. Do not rely on a bundled copy of the
-template. The preview should include structured source identity for the Granola
-ID, source URL, and meeting time, plus the refined title and content required by
+template. The preview should include the source name, native source ID, source
+URL, and meeting time, plus the refined title and content required by
 the live template. If the current template cannot be read, classify the meeting
 as **Unable to prepare** rather than inventing a canonical shape.
 

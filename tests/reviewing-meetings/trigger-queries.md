@@ -1,4 +1,4 @@
-# Trigger queries: reviewing-granola-meetings
+# Trigger queries: reviewing-meetings
 
 These full-rigor synthetic queries define the listing-level invocation
 boundary. They are ready for three fresh judgments per query after the complete
@@ -11,15 +11,15 @@ Date: 2026-07-22 | Planned harness: fresh agent contexts | Model: session defaul
 
 | Query | Expected judgment | Reason |
 | --- | --- | --- |
-| Review my new Granola meetings. | Yes | Explicit source and post-meeting review. |
+| Review my new meetings. | Yes | Explicit post-meeting review. |
 | Process the Granola call that just ended, but do not write anything yet. | Yes | Completed meeting intake with review boundary. |
-| Check whether any completed Granola meetings need importing. | Yes | Requests new-meeting detection. |
-| Catch me up on unprocessed Granola meetings from the last week. | Yes | Manual overlapping-window recovery. |
-| Prepare a reviewed meeting-note proposal from this Granola meeting. | Yes | Requests the skill's durable proposal. |
+| Check whether any completed meetings need importing from my configured source. | Yes | Requests source-independent new-meeting detection. |
+| Catch me up on unprocessed meetings from the last week. | Yes | Manual overlapping-window recovery. |
+| Prepare a reviewed meeting-note proposal from this completed call. | Yes | Requests the skill's durable proposal. |
 | Run the scheduled post-meeting review now. | Yes | Explicit scheduled invocation. |
-| Did any calls finish since the last meeting review? Use stable Granola IDs, not a cursor. | Yes | Non-obvious eligibility phrasing. |
-| Revisit this completed Granola meeting and tell me whether it is already approved or still pending. | Yes | Requests exact disposition. |
-| I missed the earlier meeting batch. Find only newly eligible Granola meetings and leave old proposals alone. | Yes | Explicit append-only catch-up. |
+| Did any calls finish since the last meeting review? Use stable source IDs, not a cursor. | Yes | Non-obvious eligibility phrasing. |
+| Revisit this completed meeting and tell me whether it is already approved or still pending. | Yes | Requests exact disposition. |
+| I missed the earlier meeting batch. Find only newly eligible meetings and leave old proposals alone. | Yes | Explicit append-only catch-up. |
 
 ## Near misses: should not trigger
 

@@ -1,0 +1,46 @@
+version: 1
+skill: reviewing-meetings
+timezone: America/Los_Angeles
+
+execution:
+  kind: heartbeat
+  destination: configured dedicated conversation
+  status: active
+  notifications: notify after every run
+  requirements:
+    - The Mac is awake and online.
+    - The Mac's local timezone is America/Los_Angeles.
+    - The Codex desktop app and Obsidian are running.
+    - This repository's checkout and the configured Obsidian vault are available.
+    - The configured meeting-source connector is authenticated.
+
+run_behavior:
+  - Invoke the versioned skill as a scheduled request in the dedicated conversation.
+  - A scheduled run never applies an action, including a previously approved but
+    unapplied action.
+  - Apply actions only in direct response to a new user message that either
+    approves exact visible action numbers or unambiguously approves the sole
+    visible action when it has exactly one interpretation.
+  - A delayed or missed run does not create a catch-up cursor or backlog.
+
+automation:
+  key: cos_meetings
+  name: CoS Meetings
+  schedule: daily at 08:00, 12:00, 16:00, and 20:00
+  invocation: >-
+    Run the reviewing-meetings skill from this project's current
+    checkout as a scheduled request. Continue this dedicated conversation and
+    follow the skill's source, suppression, review, and completion rules. Never
+    apply an action because the schedule fired, including a previously approved
+    but unapplied action.
+  manual_invocation: Check for newly completed meetings.
+
+recovery:
+  - Update the configured automation ID when it is available.
+  - Otherwise enumerate jobs attached to the dedicated conversation. Create on
+    zero matches, update on one matching job, and stop for review on more than one.
+  - Keep vault names, local paths, connector IDs, task IDs, automation IDs, and
+    credentials in app configuration, not this file.
+  - After setup, read the live job back and compare its kind, name,
+    dedicated-conversation target, schedule, next-run times, status,
+    notification behavior, and prompt with this specification.

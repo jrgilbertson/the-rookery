@@ -29,4 +29,13 @@ Skills here follow the [Agent Skills](https://agentskills.io) format, so they wo
   npx skills add jrgilbertson/the-rookery --skill personal-chief-of-staff
   ```
 
+- **[reviewing-meetings](reviewing-meetings/SKILL.md)** — turn newly completed
+  meetings from a configured source into grounded, independently reviewable
+  notes and follow-up actions. It prevents duplicate work, preserves one
+  canonical owner for each outcome, and keeps scheduled runs read-only.
+
+  ```bash
+  npx skills add jrgilbertson/the-rookery --skill reviewing-meetings
+  ```
+
 More skills are arriving. Watch the [CHANGELOG](../CHANGELOG.md) or releases.

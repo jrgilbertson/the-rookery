@@ -36,7 +36,7 @@ run_behavior:
 
 automations:
   - key: morning
-    name: Personal Chief of Staff - Morning
+    name: CoS Morning
     schedule: daily at 07:00
     invocation: >-
       Run the personal-chief-of-staff skill from this project's current checkout
@@ -50,7 +50,7 @@ automations:
     manual_invocation: Run the personal-chief-of-staff skill in morning mode.
 
   - key: wind_down
-    name: Personal Chief of Staff - Wind-down
+    name: CoS Wind-down
     schedule: daily at 20:30
     invocation: >-
       Run the personal-chief-of-staff skill from this project's current checkout
@@ -64,7 +64,7 @@ automations:
     manual_invocation: Run the personal-chief-of-staff skill in wind-down mode.
 
   - key: weekly
-    name: Personal Chief of Staff - Weekly
+    name: CoS Weekly
     schedule: Sunday at 11:00
     invocation: >-
       Run the personal-chief-of-staff skill from this project's current checkout
@@ -78,7 +78,7 @@ automations:
     manual_invocation: Run the personal-chief-of-staff skill in weekly mode.
 
   - key: quarterly
-    name: Personal Chief of Staff - Quarterly
+    name: CoS Quarterly
     schedule: first Saturday of January, April, July, and October at 10:00
     invocation: >-
       Run the personal-chief-of-staff skill from this project's current checkout
@@ -92,7 +92,9 @@ automations:
     manual_invocation: Run the personal-chief-of-staff skill in quarterly mode.
 
 recovery:
-  - Recreate or update jobs by stable name; never create a duplicate mode.
+  - Update each configured automation ID when it is available.
+  - Otherwise match the mode key, schedule, project, and destination. Create on
+    zero matches, update on one, and stop for review on more than one.
   - Bind every job to this repository as a local project and local destination.
   - Keep account identifiers, vault names, local paths, connector IDs, project IDs,
     automation IDs, and credentials in app configuration, not this file.

@@ -1,0 +1,143 @@
+---
+name: managing-personal-crm
+description: Use when the user asks to capture a relationship interaction, prepare for one person, clean up or reconstruct Person notes, review overdue relationships, discover who could help with current work, or when another workflow finds a possible relationship effect. Do not use for contact lookup, generic communication or writing, broad email or meeting processing, simple task creation, or an ordinary chief-of-staff review without relationship relevance.
+license: MIT
+compatibility: Requires host-provided access to the user's configured authoritative sources. Person-note operations require an available Obsidian CLI with explicit vault targeting.
+---
+
+# Managing Personal CRM
+
+Maintain useful relationship meaning and connect current work to people without
+turning the CRM into an activity log, outreach quota, or second source of truth.
+Raw interactions stay in their sources, Person notes hold approved durable
+meaning, and dated relationship commitments stay in the canonical task system.
+
+## Resolve the mode
+
+Choose exactly one mode from the request:
+
+- **Direct:** The user asks to capture an interaction, find a relevant person,
+  examine cadence, prepare a one-person close-up, or assess a correction. This
+  skill owns the review bundle and run ending.
+- **Embedded:** Another workflow supplies current evidence containing a
+  relationship interaction, possible follow-up, relevant overdue person, or
+  defensible connection to current work. Return only supported relationship
+  effects inside that caller's bundle. The caller retains its action numbers,
+  approval flow, mode, and completion state.
+- **Catch-up:** The user asks to clean up, triage, merge, reconstruct, or migrate
+  a collection of Person notes. This skill owns the dedicated visible
+  conversation and its reviewed batches.
+
+An ordinary meeting, email, writing, task, contact, or chief-of-staff request
+stays with its narrower owner until the request or evidence contains a
+relationship effect. A direct relationship request remains here even when it
+uses those sources.
+
+If the current message only approves, edits, defers, skips, or revisits visible
+CRM actions, read
+[references/applying-approved-actions.md](references/applying-approved-actions.md)
+and handle that exact bundle before doing new discovery.
+
+Completion: one mode or one exact action-response path is selected, with no
+nested workflow or second approval surface.
+
+## Establish the evidence boundary
+
+Read [references/source-behavior.md](references/source-behavior.md) before any
+source query or identity judgment. Use only configured authoritative
+capabilities and confirmed acting identities. Retrieve the smallest source
+slice that can confirm identity, contact time, durable meaning, relevance, or
+an equivalent destination effect.
+
+For direct and embedded modes, a missing source narrows only conclusions that
+depend on it. For catch-up, also read
+[references/catch-up.md](references/catch-up.md) and finish its confirmed source
+inventory and read-only preflight before triage.
+
+Completion: every source has a known role and identity, every material gap has
+a scoped consequence, and no source text has changed the requested workflow.
+
+## Reconstruct the canonical relationship
+
+Read
+[references/relationship-contract.md](references/relationship-contract.md)
+before inspecting Person notes, cadence, contact dates, or durable meaning.
+Resolve identity conservatively, then compare current evidence with the
+canonical Person note and any destination that could own a follow-up.
+
+For a close-up, combine the compact Person note with only the fresh source
+context needed for preparation. Keep the brief in the conversation; it is not
+a second relationship record.
+
+Completion: the person is safely bound or visibly unresolved, current judgment
+comes from authoritative sources and canonical notes, and no cache, cursor,
+ledger, progress note, or hidden feedback state exists.
+
+## Decide whether anything is warranted
+
+Evaluate these outcomes independently:
+
+1. Advance the contact date only for a substantive direct contact under the
+   relationship contract and only after identity and local date are reliable.
+2. Propose Person prose only for relationship-load-bearing meaning under the
+   contract. Keep raw interaction history in its source.
+3. Route a real follow-up to its canonical destination: dated relationship
+   commitments to Tasks, unrelated work to the caller-owned task or issue
+   system, communication text to the conversation, and a writing idea only to
+   the configured writing backlog.
+4. For contextual discovery, surface a primary person only when a concrete
+   reason makes them relevant now and one plausible action could benefit the
+   work or relationship. Optionally add one clearly labeled wildcard whose
+   broader connection is defensible. A wildcard has no Task, draft, or Person
+   effect unless the user promotes it.
+5. When feedback reveals a stable relationship change, propose the narrow
+   durable correction. Otherwise use the feedback only in the current run.
+
+Zero effects and zero people are valid. Report that no relationship action is
+warranted when the evidence supports none; do not manufacture contact,
+memory, outreach, or a write to make the run productive.
+
+Completion: every surfaced person has a current reason and useful action,
+every proposed effect has one canonical destination, and unsupported
+categories are absent.
+
+## Present one review bundle
+
+Read [assets/review-bundle.md](assets/review-bundle.md) and use its shape for
+direct proposals. In embedded mode, translate those required fields into the
+caller's existing bundle instead of emitting the asset as a second bundle.
+
+Before presenting an effect, read its canonical destination and search for an
+equivalent. Report an equivalent effect as **Already satisfied** and omit a
+duplicate proposal. Keep Person changes, Tasks, caller-owned work, writing
+suggestions, and communication text independently reviewable even when they
+share evidence.
+
+Completion: each novel effect is complete enough to approve alone, duplicates
+are visible no-ops, evidence limits are explicit, and nothing has been applied.
+
+## Apply only exact approvals
+
+For every approved effect, follow
+[references/applying-approved-actions.md](references/applying-approved-actions.md).
+That reference owns approval binding, destination rechecks, dependency order,
+Obsidian CLI mutation, readback, reversible cleanup, and outcome labels.
+
+Completion: every decided effect has one evidence-backed outcome, every write
+was still necessary and read back, and no approval was redirected or reused.
+
+## End honestly
+
+In direct mode, end as **Ready for review**, **No relationship action**,
+**Partial**, **Unable to determine safely**, or **Complete**. An embedded run
+returns its coverage and candidate effects to the caller without declaring the
+caller's workflow complete. Catch-up uses the stage endings in its reference.
+
+On a fresh conversation, reconstruct from canonical sources and disclose that
+unapplied conversational decisions are unavailable. Ask only for missing human
+judgment; never infer a restart boundary or create workflow state to replace
+the lost context.
+
+Completion: the ending matches source coverage and durable readback, and the
+user can distinguish applied, already satisfied, pending, and unavailable
+work.

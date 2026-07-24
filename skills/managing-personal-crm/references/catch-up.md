@@ -37,8 +37,9 @@ by evidence of recent contact or current relevance, then active-looking legacy
 records, then the remainder. This ordering is not a stored priority score and
 does not exempt any note.
 
-Present 15 to 25 people per bundle with enough bounded evidence to choose one
-independent disposition:
+Present up to 25 people per bundle, typically 15 to 25 when that many remain.
+A final or otherwise smaller bundle may contain fewer than 15 people. Include
+enough bounded evidence to choose one independent disposition:
 
 - `active`, `dormant`, `reference`, or `ended`;
 - `merge`, naming the candidate survivor and unresolved checks; or

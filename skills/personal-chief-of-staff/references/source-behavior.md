@@ -103,9 +103,12 @@ note.
 
 Relationship effects use the current chief-of-staff bundle and its next action
 numbers. Keep a contact-date change, Person-note prose, dated relationship
-Task, communication draft, and any other destination effect independently
-approvable. Do not emit a nested CRM bundle or a relationship-specific run
-ending. No relationship write occurs while preparing the bundle.
+Task, conversation-only proposed communication text, and any other destination
+effect independently approvable. Proposed communication text stays in the
+conversation for review; do not create or edit a Gmail draft or another
+external communication artifact. Do not emit a nested CRM bundle or a
+relationship-specific run ending. No relationship write occurs while
+preparing the bundle.
 
 If the companion capability is unavailable, complete the selected
 chief-of-staff mode with the evidence that remains. Mention reduced

@@ -98,9 +98,11 @@ Return no relationship item when the evidence supports none. If a relationship
 item belongs in the review, count it within the existing zero-to-three
 foreground limit and route any proposed effect through the shared bundle.
 
-Completion: the morning either contains a justified relationship exception or
-states no relationship suggestion is warranted, without creating another
-review surface.
+Completion: when the companion relationship capability is available, the
+morning either contains a justified relationship exception or states that no
+relationship suggestion is warranted. When it is unavailable, omit the
+relationship conclusion and mention reduced coverage only when material. Do
+not create another review surface.
 
 ## Add selective operating context
 

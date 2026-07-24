@@ -45,14 +45,16 @@ no-hidden-state continuity; and successful no-action behavior.
   three listing-level judgments each.
 - This results record contains sanitized process and outcome evidence only.
 
-## Focused commands and results
+## U1 focused commands and results
 
-- `npx skills-ref validate skills/managing-personal-crm`: passed with no
-  diagnostics.
+- At the initial U1 package checkpoint, `npx skills-ref validate
+  skills/managing-personal-crm` passed with no diagnostics. This result applies
+  to that package revision, before the later U5 and U6 changes.
 - `wc -l` check: `SKILL.md` is 163 lines, below the 500-line hard limit, with
   branch detail disclosed one level deep.
-- An isolated project-level copy under `.agents/skills/managing-personal-crm`
-  passed the same validator and matched the source package byte for byte.
+- At the same U1 checkpoint, an isolated project-level copy under
+  `.agents/skills/managing-personal-crm` passed the same validator and matched
+  the source package byte for byte.
 - Fresh-context baseline comparison: 3 of 3 with-skill cases passed after 3
   without-skill characterization runs.
 - Fresh-context trigger judgments: 54 of 54 passed.
@@ -189,10 +191,13 @@ Date: 2026-07-24
   behind one exact context pointer, one authoritative command list, and
   checkable completion criteria. No additional split or runtime machinery was
   warranted.
-- The official validator command was unavailable under the current external
-  package-execution policy. Manual validation passed portable frontmatter,
-  name, description length, body length, self-contained references, private
-  path scans, and whitespace checks. The trigger description did not change,
-  so the existing 54-of-54 listing-level result remains applicable.
+- For the later U6 package revision, the official validator command was
+  unavailable under the current external package-execution policy. Manual
+  validation passed portable frontmatter, name, description length, body
+  length, self-contained references, private path scans, and whitespace
+  checks. Three fresh listing-level judges received only the updated name and
+  description plus two focused queries. All three routed a direct CRM-bundle
+  approve/defer/skip response to this skill and rejected approval of an
+  embedded chief-of-staff bundle action, for 6 of 6 passing judgments.
 
 Result: passed.

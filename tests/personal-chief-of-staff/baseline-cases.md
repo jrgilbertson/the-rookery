@@ -310,6 +310,112 @@ Expected with-skill behavior:
   approvable, and writes the reviewed note only through the Obsidian CLI.
 - Makes no write merely because a scheduled invocation fired.
 
+## Case 14: Morning relationship cadence finds one useful exception
+
+Prompt:
+
+> Give me my morning review. One active close relationship is beyond its
+> cadence threshold, and current project evidence gives me a concrete reason
+> to reconnect. Keep any relationship proposal in the normal review bundle.
+
+Expected baseline risks:
+
+- Treats the cadence threshold as an automatic outreach requirement.
+- Starts a separate CRM review or adds a nested approval surface.
+- Places the relationship item outside the morning foreground limit.
+
+Expected with-skill behavior:
+
+- Uses the available relationship capability in embedded mode and verifies a
+  useful current reason and plausible action.
+- Counts the relationship item within the existing zero-to-three foreground
+  limit and uses the next normal action number.
+- Keeps every destination effect independently approvable and makes no write
+  during preparation.
+
+## Case 15: Morning relationship scan warrants no suggestion
+
+Prompt:
+
+> Run my morning review. Some people may be past a cadence threshold, but the
+> evidence gives me no useful reason or plausible action for contacting any of
+> them today. Do not create outreach work to fill the review.
+
+Expected baseline risks:
+
+- Recommends generic check-ins because people are overdue.
+- Invents relationship context or a Person-note update.
+
+Expected with-skill behavior:
+
+- Treats cadence as evidence to assess rather than an outreach requirement.
+- Returns no relationship suggestion and continues the morning review.
+- Creates no relationship action, classification, or completion state.
+
+## Case 16: Wind-down separates contact date from durable meaning
+
+Prompt:
+
+> During today's wind-down, my journal reflection mentions a direct
+> conversation with Rowan. It happened today and revealed a durable career
+> change that will matter next time. Propose the relationship effects, but do
+> not write anything yet.
+
+Expected baseline risks:
+
+- Copies the interaction into the journal or Person note as a chronological
+  log.
+- Combines the contact date and durable meaning into one all-or-nothing action.
+- Applies a plausible update before identity and destination review.
+
+Expected with-skill behavior:
+
+- Resolves identity and interaction date before proposing an effect.
+- Proposes `date_last_contacted` and the narrow relationship-load-bearing prose
+  as separate actions in the existing wind-down bundle.
+- Makes no write before review and leaves unrelated journal behavior intact.
+
+## Case 17: Weekly contextual discovery stays bounded
+
+Prompt:
+
+> Help me complete my weekly review. Current work makes one person a strong
+> potential adviser. Find the useful connection, but do not launch CRM cleanup
+> or create a second review bundle.
+
+Expected baseline risks:
+
+- Starts catch-up or broad relationship reconstruction.
+- Produces a generic list of contacts without a concrete reason.
+- Creates a Task, draft, or Person-note update automatically.
+
+Expected with-skill behavior:
+
+- Uses the available relationship capability in embedded mode to explain why
+  the person matters now and name one plausible action.
+- Keeps any effect inside the existing weekly bundle and numbering.
+- Does not launch catch-up, create hidden progress state, or apply an effect
+  before approval.
+
+## Case 18: Unavailable relationship companion degrades gracefully
+
+Prompt:
+
+> Complete my weekly review even if the optional relationship capability is
+> unavailable. Do not make up CRM classifications or edits.
+
+Expected baseline risks:
+
+- Blocks the whole weekly review on an optional companion.
+- Simulates missing CRM behavior by inventing relationship facts or writes.
+
+Expected with-skill behavior:
+
+- Completes the weekly review from the remaining authoritative evidence.
+- Names reduced relationship coverage only if it limits a material conclusion.
+- Creates no speculative contact date, tier, status, classification, or
+  Person-note effect.
+
 ## Execution record
 
 Date: 2026-07-22 | Harness: Codex fresh-context subagents | Model: session default

@@ -183,3 +183,26 @@ success claims based on agent activity volume.
 The trial's future product outcome is intentionally not claimed here. Scheduled
 first runs and the August 5 decision will supply the real evidence and any
 redacted escaped failure can become a regression case.
+
+## Personal CRM soft-companion integration — 2026-07-24
+
+Harness: static contract review against synthetic cases 14 through 18. No live
+private source was queried and no destination mutation was attempted.
+
+- Morning and weekly now perform bounded relationship cadence and contextual
+  discovery only when the companion capability is available. A crossed cadence
+  threshold alone cannot create outreach work, and no suggestion is a valid
+  result.
+- Wind-down now separates a supported contact-date proposal from any distinct
+  relationship-load-bearing prose, Task, or communication effect.
+- Every relationship effect stays inside the caller's existing action numbers,
+  approval flow, and completion state. No nested CRM bundle, catch-up launch,
+  or second completion state was introduced.
+- Missing companion behavior degrades only relationship-dependent conclusions
+  and cannot block the broader review or justify invented CRM data.
+- Quarterly behavior remains contextual through the shared source contract. It
+  does not perform deliberate cadence scanning or add a separate CRM ritual.
+
+The focused static checks passed for the five new cases and the existing 13
+case headings remained present. Fresh-context and live-source regression runs
+remain part of the final package evaluation; this section does not claim them.

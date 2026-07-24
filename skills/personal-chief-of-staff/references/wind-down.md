@@ -38,6 +38,25 @@ correct the synthesis, or keep their original wording.
 Completion: the user's own account of the day is available before the agent
 drafts subjective conclusions.
 
+## Capture relationship effects selectively
+
+When the day's evidence or the user's reflection describes a substantive
+direct interaction, use the companion relationship capability when available
+to evaluate it. Propose advancing `date_last_contacted` from the reliable local
+interaction date even when no narrative update is warranted. Propose Person
+prose only when the interaction adds durable meaning likely to improve a
+future interaction.
+
+Keep the contact-date change and each distinct Person-note, Task, or
+communication effect as separate actions in the existing wind-down bundle.
+Do not copy a transcript, message thread, meeting recap, or chronological
+interaction log into the journal or Person note. When identity or interaction
+time is unresolved, show the uncertainty and do not propose the unsafe effect.
+
+Completion: every supported substantive direct interaction produces an
+independently reviewable contact-date effect, distinct durable meaning remains
+separate, and passive or ambient activity produces no contact effect.
+
 ## Complete the existing journal together
 
 Follow the configured daily-journal template rather than inventing a recap

@@ -81,6 +81,27 @@ edit.
 Completion: the day is either credible as planned or the few material
 mismatches are explicit and reviewable.
 
+## Check relationship exceptions deliberately
+
+When the companion relationship capability is available, inspect active
+relationships whose derived cadence may be overdue and search current work,
+writing, reading, decisions, and meetings for a defensible person connection.
+This is a bounded exception check, not a general CRM review or catch-up.
+
+An overdue person earns attention only when the current evidence explains why
+contact could be useful now and suggests a plausible action. A strong
+contextual connection may surface regardless of routine cadence when the
+reason is specific. Keep any optional broader connection clearly separate and
+do not create an action for it unless the user promotes it.
+
+Return no relationship item when the evidence supports none. If a relationship
+item belongs in the review, count it within the existing zero-to-three
+foreground limit and route any proposed effect through the shared bundle.
+
+Completion: the morning either contains a justified relationship exception or
+states no relationship suggestion is warranted, without creating another
+review surface.
+
 ## Add selective operating context
 
 Include a compact product or business pulse only when customer evidence,

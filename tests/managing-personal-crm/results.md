@@ -67,3 +67,21 @@ no-hidden-state continuity; and successful no-action behavior.
   final U5 package review, after the chief-of-staff and meeting integrations
   are complete. The portable-skill checklist was the U1 review floor.
 - No live source, account, Person note, Task, or vault mutation was part of U1.
+
+## U2 proposal-only live checkpoint
+
+- A recent completed meeting, its canonical Person note, and its existing
+  follow-up Task were read only through the Obsidian CLI. The skill recognized
+  that the contact date, durable meeting context, and dated commitment were
+  already represented, returned zero novel effects, and did not duplicate any
+  destination. A legacy follow-up field remains visible for later reviewed
+  conversion rather than being silently removed.
+- A current writing draft was compared with bounded Person-note evidence. The
+  skill found one active relationship with a concrete connection to the topic
+  and a plausible request for feedback. It returned a conversation-only
+  outreach suggestion, without inventing a wildcard, Task, writing-backlog
+  item, or Person-note edit.
+- Both cases used live private evidence but record only sanitized pass/fail
+  findings here. No vault or source mutation occurred.
+
+Result: passed.

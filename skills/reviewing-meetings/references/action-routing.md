@@ -1,7 +1,7 @@
 # Action Routing
 
 Read this reference before proposing downstream work. A meeting can justify up
-to five action categories, but each useful outcome has one authoritative home.
+to six action categories, but each useful outcome has one authoritative home.
 Do not mirror work across systems or manufacture an action to fill the bundle.
 
 ## Use only supported action categories
@@ -18,6 +18,8 @@ Evaluate these categories independently for each newly proposed meeting:
    attention.
 5. **Communication draft:** complete editable text for a possible message; it
    is not permission to send.
+6. **Writing backlog:** a separately approved idea or change in the configured
+   canonical writing system.
 
 Omit a category when evidence does not support a useful change. Keep every
 proposed action independently approvable, even when one action depends on
@@ -98,7 +100,11 @@ Person-prose changes become separate durable-context actions. A dated personal
 follow-up goes to the configured canonical relationship task system, while
 unrelated product or repository work stays in its established issue system.
 Communication uses the existing draft category. Contextual insight may remain
-in the proposal without creating a destination effect.
+in the proposal without creating a destination effect. A writing idea routes
+to the writing-backlog category and its configured canonical writing system.
+If the backlog or a safe write path is unavailable, keep the idea proposal-only
+or classify application as **Manual**. Do not redirect it to a task or durable-
+context record.
 
 When the companion is unavailable, complete ordinary meeting review. Omit a
 relationship guess, or mark a clear effect **Manual** when no safe application

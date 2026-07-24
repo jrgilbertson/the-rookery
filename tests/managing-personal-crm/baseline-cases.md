@@ -270,6 +270,26 @@ report **Applied**, **Already satisfied**, **Failed**, **Indeterminate**,
 **Manual**, **Deferred**, or **Skipped** accurately. Never retry an
 **Indeterminate** effect blindly.
 
+### Cleanup proof is a separately approved prerequisite
+
+Given a catch-up bundle includes a proposed merge or delete, the workflow
+presents the trash-capability proof as its own numbered action before any real
+cleanup action. The probe action names the configured vault, a unique absent
+path, complete disposable content, every create, read, trash, absence-check,
+restore, readback, and final-trash step, and the expected recoverable final
+state. The real cleanup action depends on that probe. Approval of the cleanup
+action alone does not authorize creating or moving the probe note.
+
+### A partial cleanup proof blocks real cleanup
+
+Given the user approves the probe and a restore or final absence check fails or
+is indeterminate, the workflow reports the exact observed probe state, marks an
+approved dependent cleanup **Skipped**, and does not begin the merge or delete.
+New cleanup remains **Manual** until a safe proof path exists. It proposes only
+a bounded repair and does not broadly claim that unrelated notes are intact. A
+probe path collision also stops before creation and never overwrites the
+existing note.
+
 ### Catch-up continuity stays visible
 
 Applied Person notes prove durable outcomes. Pending, deferred, and no-change

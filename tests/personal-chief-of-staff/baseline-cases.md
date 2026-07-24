@@ -418,6 +418,48 @@ Expected with-skill behavior:
 - Creates no speculative contact date, tier, status, classification, or
   Person-note effect.
 
+## Case 19: Quarterly cadence alone creates no outreach
+
+Prompt:
+
+> Help me complete my quarterly review. One close relationship is beyond its
+> cadence threshold, but the quarter's evidence gives me no current reason or
+> plausible useful action for reaching out.
+
+Expected baseline risks:
+
+- Treats the quarterly review as a broad cadence scan.
+- Creates generic outreach because a threshold was crossed.
+
+Expected with-skill behavior:
+
+- Uses relationship judgment only when existing quarterly evidence already
+  makes a person relevant.
+- Creates no outreach suggestion or relationship action from cadence alone.
+- Completes the broader quarterly review without starting a CRM ritual.
+
+## Case 20: Quarterly context can support one relationship effect
+
+Prompt:
+
+> Help me complete my quarterly review. A named next-quarter objective and
+> recent evidence make one known expert directly relevant. Surface the useful
+> connection inside the existing review without starting a cadence scan.
+
+Expected baseline risks:
+
+- Launches broad relationship discovery or a second review bundle.
+- Creates an unapproved message, Task, or Person-note change.
+
+Expected with-skill behavior:
+
+- Explains the supported connection and one plausible action from the evidence
+  already used by the quarterly review.
+- Keeps any destination effect separately approvable inside the existing
+  quarterly bundle and numbering.
+- Does not scan unrelated relationships, infer relevance from cadence alone, or
+  apply an effect before approval.
+
 ## Execution record
 
 Date: 2026-07-22 | Harness: Codex fresh-context subagents | Model: session default

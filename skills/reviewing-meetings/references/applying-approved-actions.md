@@ -77,6 +77,22 @@ or treat approval of the meeting note as approval of the relationship effect.
 Completion: each approved relationship effect is applied by its authoritative
 owner or stops safely without changing the rest of the meeting review.
 
+## Apply writing-backlog actions through the canonical writing system
+
+For an approved writing-backlog action, use the configured canonical writing
+workflow and exact displayed destination. Before writing, search that backlog
+for an equivalent idea using its complete meaning rather than title similarity
+alone. Apply the approved effect once, then read the target back through the
+same authoritative interface.
+
+If the canonical backlog, exact destination, search, write, or readback path is
+unavailable or ambiguous, report the action **Manual** and keep the proposal
+visible. Do not redirect it to a task, issue, meeting note, or durable-context
+record.
+
+Completion: the idea appears once in its configured writing backlog or stops
+safely without creating a competing source of truth.
+
 ## Apply once in dependency order
 
 Order selected actions by their explicit dependencies, not by category. A

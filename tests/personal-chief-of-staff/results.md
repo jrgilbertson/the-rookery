@@ -209,3 +209,20 @@ expectations across cases 14 through 18, including the corrected
 **Already satisfied** contact-date path. Existing ownership, one-bundle,
 no-write, foreground-limit, trigger, and completion contracts remained intact.
 No live source was queried.
+
+## Pre-PR quarterly relationship boundary correction
+
+Date: 2026-07-24
+
+- Added a negative quarterly case proving that an overdue cadence threshold
+  alone cannot create outreach work.
+- Added a positive quarterly case allowing one contextual relationship effect
+  only when evidence already used by the quarterly review makes the person
+  relevant.
+- Both paths preserve the existing quarterly bundle, approval flow, and
+  no-write preparation boundary without launching broad CRM discovery.
+- A fresh-context evaluation passed both cases. Cadence alone produced no
+  outreach, while current quarterly evidence supported one independently
+  reviewable contextual effect without a broad relationship scan.
+
+Result: passed.

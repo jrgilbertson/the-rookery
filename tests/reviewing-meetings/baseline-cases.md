@@ -491,6 +491,16 @@ the configured canonical relationship task system while the engineering change
 routes to its established issue system. Neither is mirrored into the other's
 system.
 
+### Relationship insight routes to the writing backlog
+
+Given a meeting creates one supported writing idea connected to a known person,
+the workflow proposes it as a separate writing-backlog action in the configured
+canonical writing system. It does not disguise the idea as a task or durable-
+context update. Before applying an approved idea, it searches for an equivalent,
+writes once to the exact displayed backlog target, and reads the result back.
+If that canonical path is unavailable or ambiguous, the idea remains
+proposal-only or **Manual** without creating a competing record.
+
 ### Missing companion degrades gracefully
 
 Given the Personal CRM companion is unavailable, ordinary meeting discovery,
@@ -503,8 +513,9 @@ classification or create a second review surface.
 
 - Behavior changed: yes, meeting review now performs an optional embedded
   relationship pass after synthesis while retaining one owner and one bundle.
-- Tests added: eight synthetic regression cases covering supported effects,
+- Tests added: nine synthetic regression cases covering supported effects,
   acceptance shape, attendance, contextual discovery, identity ambiguity,
-  duplicate suppression, ownership, and graceful degradation.
+  duplicate suppression, ownership, writing-backlog routing, and graceful
+  degradation.
 - Live private mutation: not performed for this unit. Live acceptance remains
   part of the Personal CRM plan's later acceptance and cutover unit.

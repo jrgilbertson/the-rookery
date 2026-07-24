@@ -84,15 +84,33 @@ A catch-up `merge` or `delete` disposition authorizes no destructive action.
 A later proposal must identify the survivor, duplicate, exact content and link
 effects, and every alias or identity collision.
 
-Before any cleanup application, prove the active vault's trash behavior with a
-disposable CLI-created note that can be trashed, restored, and read back intact.
-For a merge, apply and read back the survivor first, review backlinks and
-aliases, then move the duplicate to verified Obsidian trash. A delete likewise
-moves only the reviewed target to verified trash. Permanent deletion is not an
-available action.
+Before proposing a real cleanup application, present the trash-capability proof
+as its own numbered prerequisite action. Show the configured vault, a unique
+vault-relative probe-note path, the complete disposable content, the exact
+create, read, trash, absence-check, restore, readback, final-trash, and final
+absence-check sequence, and the expected final state. The expected final state
+is that the probe is absent from the active vault and remains recoverable in
+verified Obsidian trash.
 
-If trash and restore cannot be proven, mark cleanup **Manual** and leave every
-note intact.
+After explicit approval, first confirm that the exact probe path is absent.
+Never overwrite an existing note. Use the Obsidian CLI to create and read back
+the exact note, trash it, confirm its absence from the active vault, restore it,
+confirm the same content, trash it again, and confirm its final absence from the
+active vault. If any step fails or is indeterminate, do not start real cleanup.
+Report the observed probe state, classify an approved dependent cleanup action
+**Skipped** because its prerequisite was not satisfied, and propose only a
+bounded repair. Until a safe proof path exists, any new cleanup proposal is
+**Manual**. Do not claim that other notes are intact unless the observed state
+proves it.
+
+A real merge or delete action must name the approved probe action as a
+prerequisite. That prerequisite is satisfied only by an **Applied** result, or
+an **Already satisfied** result from an independently approved prior proof that
+still applies to the same configured vault and trash behavior. For a merge,
+apply and read back the survivor first, review backlinks and aliases, then move
+the duplicate to verified Obsidian trash. A delete likewise moves only the
+reviewed target to verified trash. Permanent deletion is not an available
+action.
 
 Completion: the survivor is complete, links and identities are accounted for,
 and any removed note remains recoverable from verified trash.

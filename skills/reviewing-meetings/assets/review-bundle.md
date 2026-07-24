@@ -65,6 +65,8 @@ Repeat only for supported independent effects. One action must not hide several
 writes. A calendar backlink or second durable update is its own action when it
 creates a separate effect. Communication remains conversational draft text;
 external draft creation and sending are outside this workflow.
+A writing-backlog effect is likewise its own numbered action and names the
+exact configured canonical backlog target.
 
 After all meetings, invite the user to approve, edit, defer, or skip each action
 number independently. State that vague approval produces no write when its

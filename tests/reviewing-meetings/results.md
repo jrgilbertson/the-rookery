@@ -167,3 +167,22 @@ Date: 2026-07-24
 
 Result: instruction-level integration complete. Live acceptance remains in the
 Personal CRM plan's later acceptance and cutover unit.
+
+## Pre-PR writing-backlog routing correction
+
+Date: 2026-07-24
+
+- Added writing backlog as a sixth explicit meeting action category so a
+  relationship-derived writing idea has one canonical owner.
+- The application contract now requires an equivalence search, exact displayed
+  destination, one write, and authoritative readback. An unavailable or
+  ambiguous path remains proposal-only or **Manual** and is never redirected to
+  a task or durable-context record.
+- The focused synthetic regression passed by static contract review. No live
+  writing-system mutation was performed.
+- A fresh-context comparison confirmed that the prior package had no explicit
+  writing category or application path. The revised package kept the initial
+  review read-only and supplied the canonical proposal, duplicate-check,
+  application, and readback path.
+
+Result: passed.

@@ -84,6 +84,24 @@ no-hidden-state continuity; and successful no-action behavior.
 
 Result: passed.
 
+## Pre-PR cleanup safety correction
+
+Date: 2026-07-24
+
+- Added focused synthetic checks that require the disposable trash proof to be
+  an independently approved numbered prerequisite with an exact absent path,
+  complete content, operations, and final recoverable state.
+- Added the partial-failure boundary: any failed or indeterminate restore,
+  readback, or absence check skips an approved dependent cleanup, keeps new
+  cleanup manual until safe proof exists, reports only observed state, and
+  cannot overwrite a colliding note or imply broader vault safety.
+- A fresh-context comparison confirmed that the prior package could treat one
+  merge approval as authority for the hidden probe and had no explicit probe
+  outcome. The revised package required separate approval, prevented overwrite,
+  and assigned one outcome to the probe and one to the dependent cleanup.
+
+Result: passed. No live vault mutation was performed.
+
 ## U2 live Obsidian contract
 
 Date: 2026-07-24

@@ -49,7 +49,7 @@ no-hidden-state continuity; and successful no-action behavior.
 
 - `npx skills-ref validate skills/managing-personal-crm`: passed with no
   diagnostics.
-- `wc -l` check: `SKILL.md` is 143 lines, below the 500-line hard limit, with
+- `wc -l` check: `SKILL.md` is 163 lines, below the 500-line hard limit, with
   branch detail disclosed one level deep.
 - An isolated project-level copy under `.agents/skills/managing-personal-crm`
   passed the same validator and matched the source package byte for byte.
@@ -63,9 +63,7 @@ no-hidden-state continuity; and successful no-action behavior.
 
 - No script was added. The observed failures were instruction and routing
   gaps, and prose corrected them in fresh-context evaluation.
-- The required `writing-great-skills` review is intentionally deferred to the
-  final U5 package review, after the chief-of-staff and meeting integrations
-  are complete. The portable-skill checklist was the U1 review floor.
+- The U1 package used the portable-skill checklist as its initial review floor.
 - No live source, account, Person note, Task, or vault mutation was part of U1.
 
 ## U2 proposal-only live checkpoint
@@ -85,3 +83,29 @@ no-hidden-state continuity; and successful no-action behavior.
   findings here. No vault or source mutation occurred.
 
 Result: passed.
+
+## U5 package and instruction review
+
+- The final `writing-great-skills` review found four actionable issues. The
+  corrected package now makes catch-up a true triage-first branch, handles
+  visible action decisions before new discovery, treats an existing newer
+  contact date as **Already satisfied**, and leaves relationship semantics in
+  the CRM companion instead of duplicating them in meeting review.
+- A portability audit found and corrected one provider-specific task-routing
+  phrase. Runtime instructions now use the configured canonical relationship
+  task system; the host may still configure that destination as Obsidian Tasks.
+- Three current skill packages passed the official cached Agent Skills
+  validator. Repository listing found four public skills, including exactly one
+  `managing-personal-crm` package.
+- A clean local copied installation found one selected CRM skill and installed
+  it for both Codex and Claude Code. Both installed copies matched the source
+  package byte for byte at the installation checkpoint.
+- Same-door scans found no private source content, account identifiers,
+  absolute paths, vault names, retired-system machinery, hidden state,
+  executable artifacts, broken references, or unused runtime files.
+- Fresh-context companion regression judges passed 15 of 15 chief-of-staff
+  expectations and all eight meeting scenarios while preserving caller
+  ownership, one bundle, approval safety, canonical routing, and existing
+  completion states.
+
+Result: passed after the documented corrections.

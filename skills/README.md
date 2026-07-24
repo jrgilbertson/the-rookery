@@ -29,6 +29,16 @@ Skills here follow the [Agent Skills](https://agentskills.io) format, so they wo
   npx skills add jrgilbertson/the-rookery --skill personal-chief-of-staff
   ```
 
+- **[managing-personal-crm](managing-personal-crm/SKILL.md)** — maintain useful
+  relationship context, prepare for one person, find relevant people for
+  current work, and clean up Person notes without building a separate CRM
+  database. It keeps durable changes reviewable and routes each effect to its
+  canonical destination.
+
+  ```bash
+  npx skills add jrgilbertson/the-rookery --skill managing-personal-crm
+  ```
+
 - **[reviewing-meetings](reviewing-meetings/SKILL.md)** — turn newly completed
   meetings from a configured source into grounded, independently reviewable
   notes and follow-up actions. It prevents duplicate work, preserves one

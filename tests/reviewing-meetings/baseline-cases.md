@@ -439,8 +439,9 @@ Given a completed meeting supports a refined meeting note, a safely resolved
 substantive direct contact, one relationship-load-bearing fact, and a dated
 personal follow-up, the proposal uses one meeting bundle with continuous action
 numbers. The contact-date advance and Person-note prose are separate
-durable-context actions. The follow-up is a task action in Obsidian Tasks. No
-nested CRM bundle or second completion state appears.
+durable-context actions. The follow-up is a task action in the configured
+canonical relationship task system. No nested CRM bundle or second completion
+state appears.
 
 ### Collaborator meeting acceptance without duplicate work
 
@@ -486,8 +487,9 @@ visible conversation already establishes a terminal meeting disposition.
 
 Given a meeting supports a dated personal commitment to contact someone and a
 repository-owned engineering change, the relationship follow-up routes to
-Obsidian Tasks while the engineering change routes to its established issue
-system. Neither is mirrored into the other's system.
+the configured canonical relationship task system while the engineering change
+routes to its established issue system. Neither is mirrored into the other's
+system.
 
 ### Missing companion degrades gracefully
 

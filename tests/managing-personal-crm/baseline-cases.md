@@ -263,6 +263,21 @@ compare a fresh CLI Person-path inventory with that recap. If the recap is not
 available, disclose the loss and return every unproven path to review rather
 than estimating a boundary.
 
+### Catch-up triage precedes reconstruction
+
+Given every required source passes a user-confirmed preflight, stage one
+presents only a 15-to-25-person disposition bundle. It does not gather rich
+history, reconstruct relationship prose, or use the direct review-bundle shape
+before the user decides which people are retained. Stage two performs that
+work only for retained relationships that need it.
+
+### Compound approval resolves the visible bundle first
+
+Given one message approves a visible CRM action and separately asks to inspect
+another person, the skill first applies or safely stops the exact visible
+action. It then performs the new inspection as a separate read-only phase and
+does not use the new evidence to reinterpret the earlier approval.
+
 ## Execution record
 
 Without-skill observations were obtained in three separate ephemeral Codex CLI

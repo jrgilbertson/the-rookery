@@ -204,5 +204,8 @@ private source was queried and no destination mutation was attempted.
   does not perform deliberate cadence scanning or add a separate CRM ritual.
 
 The focused static checks passed for the five new cases and the existing 13
-case headings remained present. Fresh-context and live-source regression runs
-remain part of the final package evaluation; this section does not claim them.
+case headings remained present. A final fresh-context judge then passed all 15
+expectations across cases 14 through 18, including the corrected
+**Already satisfied** contact-date path. Existing ownership, one-bundle,
+no-write, foreground-limit, trigger, and completion contracts remained intact.
+No live source was queried.

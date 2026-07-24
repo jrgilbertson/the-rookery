@@ -88,22 +88,17 @@ run, or states that there is no new meeting to review.
 
 ## Evaluate relationship effects selectively
 
-After refining the meeting synthesis, check whether the evidence supports a
-substantive direct contact, relationship-load-bearing meaning, a relationship
-follow-up, or a useful connection between the current context and someone the
-user knows. When the `managing-personal-crm` skill is available, use its
-embedded semantics for this judgment. The meeting workflow still owns the
-single review bundle, continuous action numbering, approval flow, and run
-ending.
+After refining the meeting synthesis, invoke `managing-personal-crm` in embedded
+mode when the evidence contains a possible relationship interaction,
+follow-up, durable effect, or useful person connection. That companion owns the
+relationship judgment. This workflow keeps the single meeting bundle,
+continuous action numbering, approval flow, and run ending.
 
-Do not create a nested CRM bundle or treat attendance alone as contact. Carry
-only supported destination effects into the meeting bundle using the existing
-action categories. A contextual connection may appear as a concise insight in
-the meeting proposal; any Person-note change, Task, or communication draft it
-creates must be a separately numbered action. If the companion skill is
-unavailable, complete the meeting review. Omit unsupported relationship effects
-or mark a specific otherwise-actionable effect **Manual** when the missing
-capability prevents safe identity, destination, or application checks.
+Carry supported outputs into the existing meeting categories. A contextual
+connection may appear as a concise insight; every durable destination effect
+remains a separate numbered action. If the companion is unavailable, complete
+the meeting review and mark a specific otherwise-actionable relationship
+effect **Manual** only when its safe path is known to be unavailable.
 
 Completion: relationship judgment adds only supported effects to the existing
 meeting proposal and never creates a second workflow or completion state.

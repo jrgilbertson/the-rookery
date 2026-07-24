@@ -373,6 +373,8 @@ Expected with-skill behavior:
 - Resolves identity and interaction date before proposing an effect.
 - Proposes `date_last_contacted` and the narrow relationship-load-bearing prose
   as separate actions in the existing wind-down bundle.
+- Reports the contact date as **Already satisfied** instead of proposing a
+  duplicate when the canonical date is equal or newer.
 - Makes no write before review and leaves unrelated journal behavior intact.
 
 ## Case 17: Weekly contextual discovery stays bounded

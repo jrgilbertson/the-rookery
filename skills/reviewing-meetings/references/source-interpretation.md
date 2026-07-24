@@ -100,22 +100,15 @@ was selective and purpose-bound, and unresolved attribution remains explicit.
 
 ## Separate relationship evidence from attendance
 
-Evaluate relationship effects only after the grounded meeting synthesis is
-stable. A participant list can identify a candidate but does not prove a
-substantive direct exchange or a safe Person-note match. Use the meeting start
-as a possible contact date only when the evidence supports direct interaction
-and the person's identity is resolved through authoritative relationship
-evidence. An ambiguous name, generic speaker label, or inferred attendee mapping
-blocks the relationship effect without blocking the meeting proposal.
+Pass relationship evidence to the companion only after the grounded meeting
+synthesis is stable. A participant list supplies a candidate, not a resolved
+relationship. Use selective transcript inspection only to answer a named
+ambiguity needed by the companion. An unresolved name, speaker label, or
+attendee mapping blocks the relationship effect without blocking the meeting
+proposal.
 
-Use selective transcript inspection only when it can resolve a specific
-relationship-relevant ambiguity, such as whether a direct exchange occurred,
-what commitment was made, or whether a detail is likely to matter later. Keep
-the same evidence discipline as the meeting synthesis: do not turn transcript
-text into a relationship history or infer stable meaning from one vague remark.
-
-Completion: attendance never becomes contact by default, and relationship
-effects preserve the meeting workflow's identity and evidence boundaries.
+Completion: the companion receives bounded grounded evidence, and identity
+ambiguity remains local to the relationship effect.
 
 ## Check observable durable and conversational state
 

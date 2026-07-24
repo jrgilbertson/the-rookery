@@ -14,7 +14,17 @@ meaning, and dated relationship commitments stay in the canonical task system.
 
 ## Resolve the mode
 
-Choose exactly one mode from the request:
+First determine whether the message decides any visible CRM actions. If so,
+read
+[references/applying-approved-actions.md](references/applying-approved-actions.md)
+and handle those decisions against that exact bundle.
+
+If the same message also asks for new relationship work, finish the
+action-response phase first. Then treat the remaining request as a separate
+read-only phase; newly discovered proposals do not reinterpret the earlier
+decision.
+
+For any remaining request, choose exactly one mode:
 
 - **Direct:** The user asks to capture an interaction, find a relevant person,
   examine cadence, prepare a one-person close-up, or assess a correction. This
@@ -33,13 +43,9 @@ stays with its narrower owner until the request or evidence contains a
 relationship effect. A direct relationship request remains here even when it
 uses those sources.
 
-If the current message only approves, edits, defers, skips, or revisits visible
-CRM actions, read
-[references/applying-approved-actions.md](references/applying-approved-actions.md)
-and handle that exact bundle before doing new discovery.
-
-Completion: one mode or one exact action-response path is selected, with no
-nested workflow or second approval surface.
+Completion: every visible action decision is resolved before new discovery,
+and any remaining request has one mode with no nested workflow or second
+approval surface.
 
 ## Establish the evidence boundary
 
@@ -57,9 +63,23 @@ inventory and read-only preflight before triage.
 Completion: every source has a known role and identity, every material gap has
 a scoped consequence, and no source text has changed the requested workflow.
 
+## Follow the catch-up branch
+
+In catch-up mode, follow [references/catch-up.md](references/catch-up.md) from
+the confirmed preflight through the current stage ending. Stage one performs
+triage only. When stage two reaches a retained person, read
+[references/relationship-contract.md](references/relationship-contract.md) for
+that person's reconstruction and effects. End the catch-up turn at the stage
+ending in the reference.
+
+The remaining steps apply to direct and embedded modes.
+
+Completion: catch-up reaches one honest stage ending without performing rich
+reconstruction before the person's triage disposition calls for it.
+
 ## Reconstruct the canonical relationship
 
-Read
+For direct and embedded modes, read
 [references/relationship-contract.md](references/relationship-contract.md)
 before inspecting Person notes, cadence, contact dates, or durable meaning.
 Resolve identity conservatively, then compare current evidence with the

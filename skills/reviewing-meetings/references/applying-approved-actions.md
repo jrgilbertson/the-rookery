@@ -65,8 +65,9 @@ For an approved Person-note or relationship Task effect, use the available
 `managing-personal-crm` companion semantics for the pre-write equivalence check,
 identity validation, canonical destination, and readback. Every Person-note
 operation must use the Obsidian CLI with explicit configured-vault and target
-selection. A dated relationship follow-up belongs in Obsidian Tasks; unrelated
-work remains with the issue or task owner selected during routing.
+selection. A dated relationship follow-up belongs in the configured canonical
+relationship task system; unrelated work remains with the issue or task owner
+selected during routing.
 
 The companion remains optional for meeting completion. If it is unavailable or
 cannot establish the complete safe write path, report that relationship action

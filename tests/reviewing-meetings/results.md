@@ -146,8 +146,9 @@ Date: 2026-07-24
   continuous action numbering. The integration adds no nested CRM bundle,
   schedule, state, or completion status.
 - Canonical ownership remains unchanged: Person notes hold durable relationship
-  meaning, Obsidian Tasks hold dated relationship follow-ups, and unrelated
-  product or repository work remains in its established issue system.
+  meaning, the configured canonical relationship task system holds dated
+  follow-ups, and unrelated product or repository work remains in its
+  established issue system.
 - Participant names and attendance alone cannot bind a Person note or establish
   direct contact. An identity conflict blocks only the relationship effect.
 - Canonical destination checks suppress repeated contact dates, durable facts,
@@ -157,6 +158,10 @@ Date: 2026-07-24
   observations, and missing-companion degradation.
 - The official Agent Skills validator and the scoped diff whitespace check
   passed after the integration.
+- A final fresh-context judge passed all eight companion scenarios and found no
+  regression in discovery, source identity, one-bundle ownership, approval,
+  canonical routing, duplicate suppression, scheduled no-write behavior, or
+  completion endings.
 - No private source was queried and no live note, Person record, Task, issue,
   calendar event, or communication was changed for this unit.
 

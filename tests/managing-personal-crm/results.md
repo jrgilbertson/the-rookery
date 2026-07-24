@@ -84,6 +84,32 @@ no-hidden-state continuity; and successful no-action behavior.
 
 Result: passed.
 
+## U2 live Obsidian contract
+
+Date: 2026-07-24
+
+- Read-only discovery immediately before application confirmed 480 legacy
+  Person notes, 155 legacy follow-up fields, 94 active cadence exceptions, one
+  active cadence record without a contact date, and two effective references.
+- The user approved the Person Template, transition-aware Base, and Personal
+  CRM structure note as three independent actions.
+- The Person Template now writes only the target metadata and includes the four
+  relationship prose anchors. The legacy sphere and follow-up fields are no
+  longer created by the template.
+- The Base was validated as YAML before application. All seven views rendered
+  through the Obsidian CLI after readback: 480 All People, 94 Relationship
+  Attention, one Active Missing Contact, 480 Catch-up Queue, 155 Legacy
+  Commitments, two References, and 305 Dormant and Ended.
+- The structure note now documents the target Person contract, canonical task
+  routing, review and readback behavior, staged catch-up, and the new views. Its
+  existing Company Schema and Typed Structure Notes sections were preserved.
+- Every mutation used the Obsidian CLI with an explicit vault and exact target.
+  Each artifact was reread immediately before application and read back after
+  it. No Person note was migrated, no legacy commitment was removed, and the
+  vault was not linted.
+
+Result: passed.
+
 ## U5 package and instruction review
 
 - The final `writing-great-skills` review found four actionable issues. The

@@ -135,3 +135,46 @@ Result: passed.
   completion states.
 
 Result: passed after the documented corrections.
+
+## U6 local Messages adapter checkpoint
+
+Date: 2026-07-24
+
+- Installed `imsg` 0.13.3 from its official Homebrew tap.
+- Granted the parent desktop application read access through the macOS Full
+  Disk Access boundary. This setup did not request or enable Messages
+  Automation permission.
+- A metadata-only chat probe and a redacted one-message history probe passed.
+  Results exposed stable chat and message identifiers, participants, native
+  timestamps, group context, reply context, reactions, and attachment metadata
+  without recording private message content here.
+- A high-limit catch-up probe returned fewer chats than its limit, with stable
+  identifiers and participant metadata throughout. Aggregate statistics
+  corroborated an accessible history range. One list-only group chat accounted
+  for the count difference and returned zero retrievable history rows. Exact
+  private counts and dates are intentionally omitted; these are observed local
+  bounds, not evidence that another source has no earlier data.
+- The adapter reference permits bounded `chats`, `history`, `search`, and
+  `stats` reads only. Sending, reactions, read receipts, typing, live watches,
+  group mutation, polls, and advanced bridge operations remain outside CRM
+  authority.
+- A fresh-context comparison found that the previous package preserved generic
+  source safety but could not operate or preflight `imsg`. The revised package
+  passed the same synthetic case with executable read bounds, exact field
+  semantics, permission diagnosis, and fail-closed breadth reconciliation.
+- An adversarial portability review found four adapter inconsistencies. The
+  corrected reference now proves a high-limit result is untruncated, maps chat
+  list `id` to `history --chat-id`, permits aggregate statistics in the
+  configured timezone, scopes its pointer specifically to `imsg`, and compares
+  count differences symmetrically. The final recheck found no actionable issue.
+- The `writing-great-skills` pass found the provider detail correctly disclosed
+  behind one exact context pointer, one authoritative command list, and
+  checkable completion criteria. No additional split or runtime machinery was
+  warranted.
+- The official validator command was unavailable under the current external
+  package-execution policy. Manual validation passed portable frontmatter,
+  name, description length, body length, self-contained references, private
+  path scans, and whitespace checks. The trigger description did not change,
+  so the existing 54-of-54 listing-level result remains applicable.
+
+Result: passed.

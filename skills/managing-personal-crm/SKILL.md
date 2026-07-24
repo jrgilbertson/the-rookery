@@ -2,7 +2,7 @@
 name: managing-personal-crm
 description: Use when the user asks to capture a relationship interaction, prepare for one person, clean up or reconstruct Person notes, review overdue relationships, discover who could help with current work, or when another workflow finds a possible relationship effect. Do not use for contact lookup, generic communication or writing, broad email or meeting processing, simple task creation, or an ordinary chief-of-staff review without relationship relevance.
 license: MIT
-compatibility: Requires host-provided access to the user's configured authoritative sources. Person-note operations require an available Obsidian CLI with explicit vault targeting.
+compatibility: Requires host-provided access to the user's configured authoritative sources. Person-note operations require an available Obsidian CLI with explicit vault targeting. Optional local Apple Messages reads through imsg require the CLI and operating-system permission to message history.
 ---
 
 # Managing Personal CRM
@@ -54,6 +54,11 @@ source query or identity judgment. Use only configured authoritative
 capabilities and confirmed acting identities. Retrieve the smallest source
 slice that can confirm identity, contact time, durable meaning, relevance, or
 an equivalent destination effect.
+
+When `imsg` is the configured local Apple Messages source, also read
+[references/apple-messages-cli.md](references/apple-messages-cli.md) before the
+first Messages query. That reference owns read-only preflight, query bounds,
+and the adapter's authority boundary.
 
 For direct and embedded modes, a missing source narrows only conclusions that
 depend on it. For catch-up, also read

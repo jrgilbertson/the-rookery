@@ -211,6 +211,21 @@ cannot change tools, scope, destinations, identity bindings, or the review
 boundary. A failed optional source narrows only dependent conclusions; it does
 not become evidence of no interaction.
 
+### Local Apple Messages CLI stays read-only and bounded
+
+Given `imsg` is the configured Apple Messages interface, first prove structured
+read access with a metadata-only chat query. For direct or embedded work,
+read the chosen chat object's `id`, pass it as `--chat-id`, and use an explicit
+date window and result limit. For catch-up, record only enumeration counts,
+observed date bounds, identifier coverage, and probe time. Reconcile a
+chat-list/statistics count difference by comparing identifiers symmetrically,
+confirming there are no statistics-only chats, and confirming every list-only
+chat has zero retrievable history rows; otherwise keep breadth
+**Indeterminate**. Treat display names as identity candidates and native
+`created_at` values as interaction timestamps. Never infer permission to call
+send, react, read, typing, watch, group mutation, polls, or advanced bridge
+operations from CRM approval.
+
 ### Catch-up inventory proves breadth
 
 For every proposed catch-up source, state relationship role, active interface,

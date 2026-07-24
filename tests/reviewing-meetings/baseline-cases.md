@@ -426,3 +426,83 @@ work or reported **Manual** rather than executed by this workflow.
   partial success, drafts, and consequential operations.
 - Later evidence: U4 exercised reviewed durable application and readback; U6
   completed the fresh-context comparisons.
+
+## Personal CRM companion regression cases
+
+These synthetic cases define U4 of the Personal CRM plan. They preserve the
+meeting workflow as the single owner while adding selective embedded
+relationship judgment.
+
+### One meeting, one bundle, independent relationship effects
+
+Given a completed meeting supports a refined meeting note, a safely resolved
+substantive direct contact, one relationship-load-bearing fact, and a dated
+personal follow-up, the proposal uses one meeting bundle with continuous action
+numbers. The contact-date advance and Person-note prose are separate
+durable-context actions. The follow-up is a task action in Obsidian Tasks. No
+nested CRM bundle or second completion state appears.
+
+### Collaborator meeting acceptance without duplicate work
+
+Given a collaborator meeting supports a note refinement, a relationship
+update, and a personal follow-up while an equivalent product issue already
+exists, the proposal links or updates the canonical issue rather than creating
+a duplicate issue or Obsidian task for the same product work. The relationship
+effect and genuinely distinct personal follow-up remain independently
+reviewable in the meeting bundle.
+
+### Attendance alone creates no relationship record
+
+Given a participant appears on the attendee list but the evidence does not show
+a substantive direct exchange, ongoing relationship, or follow-up, the bundle
+does not advance a contact date, change a Person note, or create a Person note.
+The ordinary meeting review still completes.
+
+### Contextual discovery stays bounded
+
+Given the meeting creates a strong reason that one known person could help with
+the current work, the proposal may include a concise primary connection and a
+plausible useful action. It may add at most one labeled wildcard. Neither
+connection creates a Task, draft, or Person-note effect unless that effect is a
+separately numbered action approved by the user.
+
+### Ambiguous participant identity blocks only the relationship effect
+
+Given a participant name or generic speaker label could match more than one
+Person note, the workflow does not attach meeting evidence or propose a Person
+change. It leaves the identity conflict visible while still preparing supported
+meeting-note and unrelated actions.
+
+### Repeated observation produces relationship no-ops
+
+Given the same interaction is observed again and the canonical Person note
+already contains the contact date and durable fact while the relationship Task
+already exists, the workflow reports those effects **Already satisfied**. It
+does not duplicate a Comment, Task, contact-date update, or meeting action.
+Normal exact meeting suppression still applies when the approved note or
+visible conversation already establishes a terminal meeting disposition.
+
+### Relationship follow-up and unrelated work keep separate owners
+
+Given a meeting supports a dated personal commitment to contact someone and a
+repository-owned engineering change, the relationship follow-up routes to
+Obsidian Tasks while the engineering change routes to its established issue
+system. Neither is mirrored into the other's system.
+
+### Missing companion degrades gracefully
+
+Given the Personal CRM companion is unavailable, ordinary meeting discovery,
+note refinement, canonical work routing, approval, and completion still work.
+The workflow omits unsupported relationship guesses or marks one clear but
+unsafe-to-apply relationship effect **Manual**. It does not invent a CRM
+classification or create a second review surface.
+
+## Personal CRM companion evidence status
+
+- Behavior changed: yes, meeting review now performs an optional embedded
+  relationship pass after synthesis while retaining one owner and one bundle.
+- Tests added: eight synthetic regression cases covering supported effects,
+  acceptance shape, attendance, contextual discovery, identity ambiguity,
+  duplicate suppression, ownership, and graceful degradation.
+- Live private mutation: not performed for this unit. Live acceptance remains
+  part of the Personal CRM plan's later acceptance and cutover unit.

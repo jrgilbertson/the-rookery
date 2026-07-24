@@ -86,6 +86,28 @@ of conversational duplicates.
 Completion: the bundle contains every and only newly proposed meeting from this
 run, or states that there is no new meeting to review.
 
+## Evaluate relationship effects selectively
+
+After refining the meeting synthesis, check whether the evidence supports a
+substantive direct contact, relationship-load-bearing meaning, a relationship
+follow-up, or a useful connection between the current context and someone the
+user knows. When the `managing-personal-crm` skill is available, use its
+embedded semantics for this judgment. The meeting workflow still owns the
+single review bundle, continuous action numbering, approval flow, and run
+ending.
+
+Do not create a nested CRM bundle or treat attendance alone as contact. Carry
+only supported destination effects into the meeting bundle using the existing
+action categories. A contextual connection may appear as a concise insight in
+the meeting proposal; any Person-note change, Task, or communication draft it
+creates must be a separately numbered action. If the companion skill is
+unavailable, complete the meeting review. Omit unsupported relationship effects
+or mark a specific otherwise-actionable effect **Manual** when the missing
+capability prevents safe identity, destination, or application checks.
+
+Completion: relationship judgment adds only supported effects to the existing
+meeting proposal and never creates a second workflow or completion state.
+
 ## Route and bind proposed actions
 
 Follow the action-routing reference and review-bundle asset. They define the

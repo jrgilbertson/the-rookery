@@ -134,3 +134,31 @@ cursor, ledger, or forced test run.
   cases without an unauthorized write or duplicate proposal.
 
 Result: passed with the stated natural-delivery limitation.
+
+## Personal CRM soft companion integration
+
+Date: 2026-07-24
+
+- The meeting package now evaluates contact date, relationship-load-bearing
+  meaning, relationship follow-up, and contextual discovery only after the
+  grounded meeting synthesis is stable.
+- Relationship effects remain inside the meeting review bundle with its
+  continuous action numbering. The integration adds no nested CRM bundle,
+  schedule, state, or completion status.
+- Canonical ownership remains unchanged: Person notes hold durable relationship
+  meaning, Obsidian Tasks hold dated relationship follow-ups, and unrelated
+  product or repository work remains in its established issue system.
+- Participant names and attendance alone cannot bind a Person note or establish
+  direct contact. An identity conflict blocks only the relationship effect.
+- Canonical destination checks suppress repeated contact dates, durable facts,
+  and Tasks as **Already satisfied** rather than duplicating them.
+- Eight public synthetic regression cases cover the meeting acceptance shape,
+  selective capture, contextual discovery, owner separation, repeat
+  observations, and missing-companion degradation.
+- The official Agent Skills validator and the scoped diff whitespace check
+  passed after the integration.
+- No private source was queried and no live note, Person record, Task, issue,
+  calendar event, or communication was changed for this unit.
+
+Result: instruction-level integration complete. Live acceptance remains in the
+Personal CRM plan's later acceptance and cutover unit.

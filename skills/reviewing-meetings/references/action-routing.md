@@ -87,6 +87,52 @@ unresolved identity.
 Completion: each context proposal adds a durable fact that belongs in exactly
 one named record.
 
+## Apply relationship semantics selectively
+
+After synthesizing the meeting, evaluate four possible relationship outcomes:
+
+1. A substantive direct exchange requires a proposal to advance the safely
+   resolved person's contact date to the meeting's reliable local date, unless
+   the canonical date already equals or follows it. Merely appearing on the
+   participant list or sharing the room does not count.
+2. A Person-note change may capture the smallest relationship-load-bearing
+   meaning likely to improve a future interaction, such as a meaningful work or
+   life change, stable preference, commitment, sensitivity, shared context, or
+   current focus. Raw meeting history and small talk stay in the meeting source
+   and note.
+3. A specific relationship follow-up date belongs in the configured Obsidian
+   Tasks system. Unrelated product or repository work remains in its established
+   issue system, even when the meeting also supports a relationship update.
+4. A strong contextual connection may identify someone who matters now and one
+   plausible useful action. At most one clearly labeled wildcard connection may
+   be added. A wildcard creates no action unless the user promotes it.
+
+When available, use the `managing-personal-crm` skill as an embedded companion
+for identity, contact, durable-meaning, cadence, and contextual-discovery
+judgment. Keep the meeting workflow in charge of the note and one action
+bundle. Contact-date and Person-prose changes are separate durable-context
+actions so the user can review them independently. Any Task or communication
+effect uses its existing meeting action category and continuous numbering.
+
+Before proposing an effect, read its canonical destination and search for an
+equivalent. The same interaction observed through another source still
+supports only one contact-date advance, one durable fact, and one canonical
+follow-up. Report an equivalent effect as **Already satisfied** rather than
+creating a duplicate. Resolve a Person identity with authoritative evidence;
+a title, participant name, or alias alone is not enough to attach private
+meeting evidence. Do not create a Person note merely because someone attended
+a meeting.
+
+The CRM companion is optional. If it is unavailable, ordinary meeting review
+still completes. Do not guess CRM classifications or Person-note edits. Omit an
+unsupported relationship effect, or mark it **Manual** when the meeting clearly
+supports a useful effect but the available interfaces cannot establish or
+apply it safely.
+
+Completion: meeting-derived relationship effects are useful, independently
+reviewable, deduplicated at their canonical destinations, and contained in the
+meeting bundle.
+
 ## Reserve calendar time selectively
 
 Propose a time block only when the work is ready, needs human attention, and

@@ -33,6 +33,13 @@ with the context, notes, decisions, next steps, evidence, and uncertainty needed
 to preview the configured live meeting template. Do not paste the transcript or
 invent attribution, ownership, deadlines, links, or decisions.
 
+When a supported contextual relationship connection improves the review, add
+one concise paragraph explaining why the person matters now and one plausible
+useful action. Clearly label an optional broader connection as **Wildcard
+connection** and include at most one. This paragraph is not a second review
+bundle. It creates no durable effect unless that effect appears below as its own
+numbered action.
+
 ### Proposed actions
 
 Use one category allowed by the action-routing reference. Number actions

@@ -59,6 +59,23 @@ Unrelated approved actions may continue when their own validation succeeds.
 Completion: each write is still necessary, targets the approved object, and
 has not been redirected by changed state.
 
+## Apply relationship effects through their canonical owners
+
+For an approved Person-note or relationship Task effect, use the available
+`managing-personal-crm` companion semantics for the pre-write equivalence check,
+identity validation, canonical destination, and readback. Every Person-note
+operation must use the Obsidian CLI with explicit configured-vault and target
+selection. A dated relationship follow-up belongs in Obsidian Tasks; unrelated
+work remains with the issue or task owner selected during routing.
+
+The companion remains optional for meeting completion. If it is unavailable or
+cannot establish the complete safe write path, report that relationship action
+**Manual** and leave it unapplied. Do not redirect it, edit the vault directly,
+or treat approval of the meeting note as approval of the relationship effect.
+
+Completion: each approved relationship effect is applied by its authoritative
+owner or stops safely without changing the rest of the meeting review.
+
 ## Apply once in dependency order
 
 Order selected actions by their explicit dependencies, not by category. A

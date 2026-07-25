@@ -106,11 +106,22 @@ proves it.
 A real merge or delete action must name the approved probe action as a
 prerequisite. That prerequisite is satisfied only by an **Applied** result, or
 an **Already satisfied** result from an independently approved prior proof that
-still applies to the same configured vault and trash behavior. For a merge,
-apply and read back the survivor first, review backlinks and aliases, then move
-the duplicate to verified Obsidian trash. A delete likewise moves only the
-reviewed target to verified trash. Permanent deletion is not an available
-action.
+still applies to the same configured vault and trash behavior.
+
+Represent a merge as at least two separately numbered actions with separate
+results. The first action updates one survivor and reads it back. The later
+action moves one duplicate to verified Obsidian trash. The duplicate-trash
+action depends on a successful survivor readback and the applicable approved
+trash proof. Immediately before trashing, review backlinks, aliases, and
+identity collisions again. If any requires another target to change, propose
+that change as its own numbered action and make duplicate trash depend on its
+successful readback. If a dependency fails, is indeterminate, or is not
+satisfied, skip only the duplicate-trash action; keep and report any survivor
+update that was already applied. Never combine the survivor update and
+duplicate trash into one result.
+
+A delete likewise moves only the reviewed target to verified trash. Permanent
+deletion is not an available action.
 
 Completion: the survivor is complete, links and identities are accounted for,
 and any removed note remains recoverable from verified trash.

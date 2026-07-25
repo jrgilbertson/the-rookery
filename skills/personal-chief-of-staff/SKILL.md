@@ -1,6 +1,6 @@
 ---
 name: personal-chief-of-staff
-description: Use when the user asks what needs attention today, requests a morning or daily chief-of-staff review, wants to complete a daily journal or wind down, requests a weekly or quarterly review, or another workflow requests current cross-source chief-of-staff context. Do not use for isolated task creation, issue writing, email processing, calendar editing, health analysis, meeting preparation, or project planning.
+description: Use when the user asks what needs attention today, requests a morning or daily chief-of-staff review, wants to complete a daily journal or wind down, requests a weekly or quarterly review, later approves, edits, defers, or skips visible chief-of-staff actions, or another workflow requests current cross-source chief-of-staff context. Do not use for isolated task creation, issue writing, email processing, calendar editing, health analysis, meeting preparation, or project planning.
 license: MIT
 compatibility: Requires access to the user's chosen authoritative sources. Obsidian workflows require a running Obsidian app and its CLI.
 ---
@@ -11,6 +11,28 @@ Turn live personal and work evidence into an interactive review that helps the
 user orient, act, reflect, and learn. The user's existing systems remain
 authoritative; this skill adds no database, run ledger, cache, or generated
 brief archive.
+
+## Resolve visible action responses first
+
+Before selecting a mode, determine whether the current message approves, edits,
+defers, skips, declines, revisits, or otherwise decides actions from a visible
+chief-of-staff bundle. Resolve the response against that exact bundle and its
+originating mode. Do not infer an action from a bare number when the visible
+context does not identify it.
+
+For each decided action, use its displayed identity, target, effect, and
+approval state. Read [references/source-behavior.md](references/source-behavior.md)
+and the originating mode reference, then follow their existing shared and
+mode-specific application rules. An action-only response does not trigger new
+source retrieval or another review.
+
+If the same message explicitly requests a new review, finish the visible action
+decisions first. Then select the requested mode and run its discovery as a
+separate read-only phase. Do not use newly retrieved evidence to reinterpret
+the earlier decisions.
+
+Completion: every visible action decision was resolved against its exact
+originating bundle and mode before any separately requested review began.
 
 ## Select the mode
 

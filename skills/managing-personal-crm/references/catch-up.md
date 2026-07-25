@@ -95,7 +95,18 @@ End a catch-up turn as **Ready for review**, **Blocked by preflight**,
 **Partial**, **Paused**, or **Catch-up complete**. Claim completion only after
 the fresh inventory shows every existing Person path has a reviewed disposition
 and every retained relationship is reconstructed, already sufficient, or
-explicitly deferred.
+explicitly deferred. Every reviewed `merge` or `delete` disposition must also
+meet one of these conditions:
+
+- its cleanup was proven **Applied** or **Already satisfied** through canonical
+  readback; or
+- the user revised it to `active`, `dormant`, `reference`, or `ended`, so no
+  cleanup remains expected.
+
+A cleanup that is **Pending**, **Manual**, **Failed**, **Indeterminate**,
+**Deferred**, or **Skipped** prevents **Catch-up complete**. End **Partial**
+when reviewed work remains actionable in the catch-up, or **Paused** when
+continuation depends on user action or a safe cleanup path becoming available.
 
 Completion: progress is reproducible from canonical notes plus visible user
 decisions, with no hidden continuity state.

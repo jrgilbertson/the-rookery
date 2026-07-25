@@ -34,7 +34,10 @@ the user explicitly promotes it.
 ## Proposed effects
 
 Number effects continuously within this bundle. Keep every destination effect
-independent, even when several follow from the same interaction.
+independent, even when several follow from the same interaction. One action
+affects one authoritative target. When an intended outcome changes multiple
+targets, show each target change as a separate numbered action with explicit
+dependencies and a separate result.
 
 > **Action 1. [Complete sentence describing one effect.]**
 >
@@ -51,6 +54,12 @@ independent, even when several follow from the same interaction.
 > Coverage and uncertainty: [material source or identity limits]
 >
 > Depends on: [visible action numbers, or None]
+
+For a Person-note merge, show the survivor update and duplicate trash as
+separate actions. The duplicate-trash action depends on a successful readback
+of the survivor action, the applicable approved trash-proof action, and any
+separate backlink or alias repair actions. Never present "merge these notes" as
+one action or one result.
 
 Use these canonical destinations:
 

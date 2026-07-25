@@ -141,7 +141,8 @@ installation. Model: session default.
 
 ### Behavioral evidence
 
-- The final trigger gate passed 21 of 21 synthetic queries. All four review
+- At this checkpoint, the final trigger gate passed 21 of 21 synthetic queries.
+  All four review
   modes invoked correctly, eight adjacent workflows remained with their
   narrower owners, and a downstream email workflow retained ownership while
   requesting morning-mode priority context.
@@ -183,6 +184,13 @@ success claims based on agent activity volume.
 The trial's future product outcome is intentionally not claimed here. Scheduled
 first runs and the August 5 decision will supply the real evidence and any
 redacted escaped failure can become a regression case.
+
+## PR-review action-response trigger regression — 2026-07-24
+
+Three fresh listing-level judges saw only the updated skill name and
+description plus two focused queries. All three routed the visible
+morning-bundle approve/defer response to this skill and rejected the
+email-processing bundle action as caller-owned: 6 of 6 judgments passed.
 
 ## Personal CRM soft-companion integration — 2026-07-24
 

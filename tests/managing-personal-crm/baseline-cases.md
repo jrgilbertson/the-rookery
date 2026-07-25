@@ -237,11 +237,13 @@ user confirms the inventory and every required source passes.
 
 ### Rich reconstruction follows triage
 
-Stage one presents 15 to 25 Person notes with independently approvable `active`,
-`dormant`, `reference`, `ended`, `merge`, or `delete` dispositions. Stage two
-uses available history and focused user questions only for retained people who
-need reconstruction. Records approved for deletion or retained as already
-sufficient references do not receive unnecessary rich reconstruction.
+Stage one presents up to 25 Person notes per bundle, typically 15 to 25 when
+that many remain, with smaller final bundles allowed. Each note receives an
+independently approvable `active`, `dormant`, `reference`, `ended`, `merge`, or
+`delete` disposition. Stage two uses available history and focused user
+questions only for retained people who need reconstruction. Records approved
+for deletion or retained as already sufficient references do not receive
+unnecessary rich reconstruction.
 
 ### Mixed-schema conversion preserves next touch
 
@@ -290,6 +292,28 @@ a bounded repair and does not broadly claim that unrelated notes are intact. A
 probe path collision also stops before creation and never overwrites the
 existing note.
 
+### Merge actions preserve classifiable partial outcomes
+
+Given an approved Person-note merge, the survivor update and duplicate trash
+are separate numbered actions with separate results. Duplicate trash depends on
+a successful survivor readback, the approved trash proof, and any applicable
+backlink or alias repair. A failed or indeterminate backlink check skips trash
+and preserves the duplicate. A failed or indeterminate trash action is reported
+without retrying or claiming removal. In either case, an already applied
+survivor update remains accurately reported as **Applied**.
+
+### Catch-up completion requires proven cleanup
+
+Given every existing Person path has a reviewed disposition and every retained
+relationship is reconstructed, already sufficient, or explicitly deferred, a
+reviewed `merge` or `delete` still awaiting cleanup prevents **Catch-up
+complete**. A cleanup reported **Pending**, **Manual**, **Failed**,
+**Indeterminate**, **Deferred**, or **Skipped** ends the turn as **Partial** or
+**Paused**, as appropriate. Completion becomes available only after canonical
+readback proves each cleanup **Applied** or **Already satisfied**, or the user
+revises the record to `active`, `dormant`, `reference`, or `ended` so no cleanup
+remains expected.
+
 ### Catch-up continuity stays visible
 
 Applied Person notes prove durable outcomes. Pending, deferred, and no-change
@@ -301,10 +325,11 @@ than estimating a boundary.
 ### Catch-up triage precedes reconstruction
 
 Given every required source passes a user-confirmed preflight, stage one
-presents only a 15-to-25-person disposition bundle. It does not gather rich
+presents only a disposition bundle of up to 25 people, typically 15 to 25 when
+that many remain, with smaller final bundles allowed. It does not gather rich
 history, reconstruct relationship prose, or use the direct review-bundle shape
-before the user decides which people are retained. Stage two performs that
-work only for retained relationships that need it.
+before the user decides which people are retained. Stage two performs that work
+only for retained relationships that need it.
 
 ### Compound approval resolves the visible bundle first
 

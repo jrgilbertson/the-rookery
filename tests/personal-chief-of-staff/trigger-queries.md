@@ -20,6 +20,7 @@ categorical and can be checked without live source access.
 | Help me complete the current Quarterly Review from the evidence that exists. | Quarterly | Explicit quarterly review. |
 | My quarterly reviews lapsed. Help me examine strategy and set the next quarter. | Quarterly | Invokes quarterly resumption and strategy discussion. |
 | Run the scheduled quarterly review and wait for my judgment. | Quarterly | Explicit scheduled quarterly mode. |
+| Approve action 2 and defer action 3 from the morning chief-of-staff bundle above. | Originating visible mode | Decides actions from an identifiable visible chief-of-staff bundle. |
 
 ## Should not invoke
 
@@ -33,6 +34,7 @@ categorical and can be checked without live source access.
 | Help me plan this feature implementation. | Ordinary planning workflow | Project planning, not a chief-of-staff review. |
 | Critique this article draft in my writing style. | Writing workflow | Isolated writing request. |
 | Prepare me for my customer meeting at 2 PM. | Meeting-preparation workflow | One meeting, not a broader review. |
+| Approve the reply action from the email-processing bundle above. | Email-processing workflow | The visible action belongs to the calling workflow, not the chief-of-staff context provider. |
 
 ## Reach-through query
 

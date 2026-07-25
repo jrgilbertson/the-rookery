@@ -1,7 +1,7 @@
 # Trigger queries: managing-personal-crm
 
 These synthetic listing-level queries define the portable trigger boundary.
-The full-rigor set has nine should-trigger and nine near-miss queries. Judge
+The set has ten should-trigger and nine near-miss queries. Judge
 each in three fresh contexts using only the skill name, description, and query.
 
 ## Should invoke
@@ -11,6 +11,7 @@ each in three fresh contexts using only the skill name, description, and query.
 | I just caught up with Sam. Update our relationship context and note when we spoke. | Direct capture | Yes, yes, yes | Explicit relationship interaction capture. |
 | Prepare me for coffee with Priya using her Person note and any useful recent context. | Direct close-up | Yes, yes, yes | Requests one-person relationship preparation. |
 | Start the one-time cleanup of my Person notes and triage the first batch. | Catch-up | Yes, yes, yes | Explicit CRM catch-up and triage. |
+| For that Person-note catch-up batch, keep the first two, skip the third, and move the proof-verified duplicates to Trash. | Catch-up decisions | Yes, yes, yes | Decides catch-up dispositions and cleanup approval against the visible bundle. |
 | Which close relationships are overdue for a thoughtful check-in? | Direct cadence scan | Yes, yes, yes | Explicit relationship-cadence request. |
 | Who I know could give useful feedback on this article, and why now? | Direct discovery | Yes, yes, yes | Connects current work to a relevant person and action. |
 | This email contains a meaningful career update and a promise I made. Evaluate the relationship effects while I process it. | Embedded capture | Yes, yes, yes | Invoking workflow asks for relationship effects without giving up ownership. |
@@ -46,5 +47,11 @@ each in three fresh contexts using only the skill name, description, and query.
 Date: 2026-07-24 | Harness: Codex CLI fresh contexts | Model: session default
 
 Three independent listing-level judges saw only the final name, description,
-and query set. All 27 should-trigger judgments were `yes`; all 27 near-miss
-judgments were `no`. No description tuning or borderline rerun was required.
+and the original nine-query should-trigger set. All 27 original should-trigger
+judgments were `yes`; all 27 near-miss judgments were `no`. No description
+tuning or borderline rerun was required.
+
+After PR review expanded the description to cover catch-up decisions, three
+fresh judges evaluated the added catch-up-decision query and a focused embedded
+chief-of-staff near-miss. All three invoked for the catch-up decision and all
+three left the embedded action with the caller, for 6 of 6 passing judgments.

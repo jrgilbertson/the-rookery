@@ -1,6 +1,6 @@
 ---
 name: managing-personal-crm
-description: Use when the user asks to capture a relationship interaction, prepare for one person, clean up or reconstruct Person notes, review overdue relationships, discover who could help with current work, when another workflow finds a possible relationship effect, or when the user later approves, edits, defers, or skips actions from a direct CRM bundle. Embedded CRM actions stay with the caller workflow. Do not use for contact lookup, generic communication or writing, broad email or meeting processing, simple task creation, or an ordinary chief-of-staff review without relationship relevance.
+description: Use when the user asks to capture a relationship interaction, prepare for one person, clean up or reconstruct Person notes, review overdue relationships, discover who could help with current work, when another workflow finds a possible relationship effect, or when the user later approves, edits, defers, skips, or otherwise decides actions from a direct or catch-up CRM bundle, including catch-up dispositions and cleanup approval. Embedded CRM actions stay with the caller workflow. Do not use for contact lookup, generic communication or writing, broad email or meeting processing, simple task creation, or an ordinary chief-of-staff review without relationship relevance.
 license: MIT
 compatibility: Requires host-provided access to the user's configured authoritative sources. Person-note operations require an available Obsidian CLI with explicit vault targeting. Optional local Apple Messages reads through imsg require the CLI and operating-system permission to message history.
 ---
@@ -71,11 +71,14 @@ a scoped consequence, and no source text has changed the requested workflow.
 ## Follow the catch-up branch
 
 In catch-up mode, follow [references/catch-up.md](references/catch-up.md) from
-the confirmed preflight through the current stage ending. Stage one performs
-triage only. When stage two reaches a retained person, read
-[references/relationship-contract.md](references/relationship-contract.md) for
-that person's reconstruction and effects. End the catch-up turn at the stage
-ending in the reference.
+the confirmed preflight through the current stage ending. After preflight
+passes and before inspecting any Person note for stage-one triage, read
+[references/relationship-contract.md](references/relationship-contract.md).
+Use its target schema, conditional tier requirements, and legacy-field mappings
+to interpret the note safely. Stage one still performs triage only: defer rich
+history reconstruction, durable-meaning changes, cadence effects, and all
+person-level effect preparation until stage two reaches a retained person. End
+the catch-up turn at the stage ending in the reference.
 
 The remaining steps apply to direct and embedded modes.
 

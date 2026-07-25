@@ -120,8 +120,12 @@ satisfied, skip only the duplicate-trash action; keep and report any survivor
 update that was already applied. Never combine the survivor update and
 duplicate trash into one result.
 
-A delete likewise moves only the reviewed target to verified trash. Permanent
-deletion is not an available action.
+A delete likewise moves only the reviewed target to verified trash.
+Immediately before trashing, review backlinks, aliases, and identity
+collisions again. If any requires another target to change, invalidate the
+delete approval and present that repair as its own numbered action; do not
+trash the target under the stale approval. Permanent deletion is not an
+available action.
 
 Completion: the survivor is complete, links and identities are accounted for,
 and any removed note remains recoverable from verified trash.

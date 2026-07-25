@@ -201,3 +201,27 @@ Date: 2026-07-24
   embedded chief-of-staff bundle action, for 6 of 6 passing judgments.
 
 Result: passed.
+
+## PR review follow-up
+
+Date: 2026-07-24
+
+- The listing description now routes decisions from both direct and catch-up
+  CRM bundles while leaving embedded relationship actions with the caller.
+- Catch-up stage one loads the relationship contract after preflight and before
+  Person-note inspection. It uses only the target schema, conditional tier
+  requirements, and legacy mappings for triage; rich reconstruction remains a
+  stage-two responsibility.
+- Immediately before an approved delete, the workflow rechecks backlinks,
+  aliases, and identity collisions. New repair needs invalidate the stale
+  approval, and indeterminate evidence stops without trashing or claiming
+  deletion.
+- Three fresh listing-level judges received only the revised skill name and
+  description plus a catch-up decision query and an embedded chief-of-staff
+  near-miss. All three invoked for the catch-up decision and all three left the
+  embedded action with the caller, for 6 of 6 passing judgments.
+- Focused synthetic cases record the stage-one contract boundary and the final
+  pre-delete relationship check. No live Person note or vault content was
+  changed.
+
+Result: passed.

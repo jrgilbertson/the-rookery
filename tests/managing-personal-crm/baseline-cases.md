@@ -128,8 +128,10 @@ Expected with-skill behavior:
 - Presents the inventory for confirmation and reports each probe honestly.
 - Blocks catch-up because required Messages coverage failed; separately
   discloses that optional WhatsApp would be omitted with narrower claims.
-- Reads both legacy and target schemas during transition and writes only the
-  target contract after person-level approval.
+- After preflight passes, loads the relationship contract before stage-one
+  Person-note inspection so both legacy and target schemas, conditional tier
+  requirements, and legacy mappings govern triage. It writes only the target
+  contract after person-level approval.
 - Explains the independent active, reference, merge, and delete dispositions,
   but does not present the triage bundle while required preflight is blocked.
 - Keeps merge and delete as reversible proposals: survivor readback and link,
@@ -237,10 +239,14 @@ user confirms the inventory and every required source passes.
 
 ### Rich reconstruction follows triage
 
-Stage one presents up to 25 Person notes per bundle, typically 15 to 25 when
-that many remain, with smaller final bundles allowed. Each note receives an
-independently approvable `active`, `dormant`, `reference`, `ended`, `merge`, or
-`delete` disposition. Stage two uses available history and focused user
+After preflight passes, stage one loads the relationship contract before
+inspecting Person notes, using its target schema, conditional tier requirements,
+and legacy mappings only to interpret each record safely. It then presents up
+to 25 Person notes per bundle, typically 15 to 25 when that many remain, with
+smaller final bundles allowed. Each note receives an independently approvable
+`active`, `dormant`, `reference`, `ended`, `merge`, or `delete` disposition.
+Stage one does not gather rich history, reconstruct durable meaning, or prepare
+person-level effects. Stage two uses available history and focused user
 questions only for retained people who need reconstruction. Records approved
 for deletion or retained as already sufficient references do not receive
 unnecessary rich reconstruction.
@@ -301,6 +307,15 @@ backlink or alias repair. A failed or indeterminate backlink check skips trash
 and preserves the duplicate. A failed or indeterminate trash action is reported
 without retrying or claiming removal. In either case, an already applied
 survivor update remains accurately reported as **Applied**.
+
+### Delete actions recheck inbound relationships
+
+Given an approved Person-note delete, immediately before trashing the workflow
+rechecks backlinks, aliases, and identity collisions. If another target needs
+repair, it invalidates the delete approval, proposes the repair as its own
+numbered action, and presents a revised delete rather than trashing under the
+stale approval. If the recheck is indeterminate, it does not trash, retry, or
+claim deletion and reports the safe stop accurately.
 
 ### Catch-up completion requires proven cleanup
 

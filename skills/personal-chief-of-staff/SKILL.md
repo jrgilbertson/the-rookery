@@ -23,8 +23,18 @@ context does not identify it.
 For each decided action, use its displayed identity, target, effect, and
 approval state. Read [references/source-behavior.md](references/source-behavior.md)
 and the originating mode reference, then follow their existing shared and
-mode-specific application rules. An action-only response does not trigger new
-source retrieval or another review.
+mode-specific application rules. For an approved Person-note or relationship
+Task effect, use the available `managing-personal-crm` companion in embedded
+mode and follow its `references/applying-approved-actions.md` semantics. The
+chief-of-staff workflow keeps the action number, approval flow, result, and
+completion state; the companion creates no nested bundle. If the companion is
+unavailable, report that relationship action **Manual** rather than applying it
+under the generic source rules.
+
+An action-only response does not run new review discovery or prepare another
+review. It still performs every immediate pre-write target and destination
+re-read, equivalence, drift, dependency, and post-write readback check required
+by the loaded application rules.
 
 If the same message explicitly requests a new review, finish the visible action
 decisions first. Then select the requested mode and run its discovery as a

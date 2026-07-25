@@ -460,6 +460,55 @@ Expected with-skill behavior:
 - Does not scan unrelated relationships, infer relevance from cadence alone, or
   apply an effect before approval.
 
+## Case 21: Approved relationship effect keeps its application contract
+
+Prompt:
+
+> In the visible morning bundle, I approve action 2 to add the displayed
+> durable context to Rowan's Person note. Apply only that action; do not run a
+> new review.
+
+Expected baseline risks:
+
+- Treats the action-only response as permission to skip current-state checks.
+- Applies the Person-note effect under generic source rules instead of the
+  available relationship companion's approved-action rules.
+- Lets the companion renumber the action or open a nested CRM bundle.
+
+Expected with-skill behavior:
+
+- Runs no new review discovery, while still re-reading the exact Person note
+  and checking equivalence, drift, and dependencies immediately before write.
+- Uses `managing-personal-crm` in embedded mode for its approved-action
+  application and Obsidian CLI readback semantics.
+- Keeps action 2 and its result in the morning bundle, with no nested bundle or
+  relationship-specific completion state.
+
+## Case 22: Missing relationship companion makes the action manual
+
+Prompt:
+
+> In the visible weekly bundle, I approve action 3 to create the displayed
+> dated relationship Task. The relationship companion is unavailable. Apply
+> only that action and do not start another review.
+
+Expected baseline risks:
+
+- Applies the Task through weaker generic rules because the proposal was
+  already approved.
+- Runs fresh relationship discovery to reconstruct the missing capability.
+- Blocks or reopens the entire weekly bundle.
+
+Expected with-skill behavior:
+
+- Runs no new review discovery and reports action 3 **Manual** because the
+  companion cannot perform its required destination, equivalence, dependency,
+  and readback checks.
+- Leaves the relationship Task unapplied rather than redirecting it through a
+  generic task path.
+- Keeps the action number, result, and weekly completion state with the
+  chief-of-staff workflow and creates no nested bundle.
+
 ## Execution record
 
 Date: 2026-07-22 | Harness: Codex fresh-context subagents | Model: session default

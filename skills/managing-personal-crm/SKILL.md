@@ -15,9 +15,14 @@ meaning, and dated relationship commitments stay in the canonical task system.
 ## Resolve the mode
 
 First determine whether the message decides any visible CRM actions. If so,
-read
+read [references/source-behavior.md](references/source-behavior.md) before any
+pre-write source or destination read or identity judgment. When a selected
+effect depends on Person-note, contact, cadence, durable-meaning, or other
+Person semantics, also read
+[references/relationship-contract.md](references/relationship-contract.md).
+Then read
 [references/applying-approved-actions.md](references/applying-approved-actions.md)
-and handle those decisions against that exact bundle.
+and handle those decisions against that exact direct or catch-up bundle.
 
 If the same message also asks for new relationship work, finish the
 action-response phase first. Then treat the remaining request as a separate
@@ -110,9 +115,11 @@ Evaluate these outcomes independently:
 2. Propose Person prose only for relationship-load-bearing meaning under the
    contract. Keep raw interaction history in its source.
 3. Route a real follow-up to its canonical destination: dated relationship
-   commitments to Tasks, unrelated work to the caller-owned task or issue
-   system, communication text to the conversation, and a writing idea only to
-   the configured writing backlog.
+   commitments to Tasks; in direct mode, unrelated work to the configured
+   canonical task or issue workflow while this skill retains bundle numbering,
+   approval handling, and completion; in embedded mode, unrelated work to the
+   caller-owned task or issue system; communication text to the conversation;
+   and a writing idea only to the configured writing backlog.
 4. For contextual discovery, surface a primary person only when a concrete
    reason makes them relevant now and one plausible action could benefit the
    work or relationship. Optionally add one clearly labeled wildcard whose

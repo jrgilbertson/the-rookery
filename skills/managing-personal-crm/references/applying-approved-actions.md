@@ -109,16 +109,24 @@ an **Already satisfied** result from an independently approved prior proof that
 still applies to the same configured vault and trash behavior.
 
 Represent a merge as at least two separately numbered actions with separate
-results. The first action updates one survivor and reads it back. The later
-action moves one duplicate to verified Obsidian trash. The duplicate-trash
-action depends on a successful survivor readback and the applicable approved
-trash proof. Immediately before trashing, review backlinks, aliases, and
-identity collisions again. If any requires another target to change, propose
-that change as its own numbered action and make duplicate trash depend on its
-successful readback. If a dependency fails, is indeterminate, or is not
-satisfied, skip only the duplicate-trash action; keep and report any survivor
-update that was already applied. Never combine the survivor update and
-duplicate trash into one result.
+results. Immediately before either action, review backlinks, aliases, and
+identity collisions for both notes again. A determinate scan that preserves the
+approved same-person binding is a prerequisite for both the survivor update and
+duplicate trash. If the scan is indeterminate, or new material identity
+evidence invalidates that binding, leave both notes unchanged, invalidate the
+affected approvals, and present revised actions only after identity can be
+safely rebound. If a backlink or alias requires another target to change while
+the binding remains valid, propose that repair as its own numbered prerequisite
+for both merge actions and require its successful readback.
+
+After those shared prerequisites pass, the first merge action updates one
+survivor and reads it back. The later action moves one duplicate to verified
+Obsidian trash and depends on the successful survivor readback and applicable
+approved trash proof. Preserve separate results and safe partial outcomes only
+for failures after the shared prerequisites pass. For example, if duplicate
+trash fails or is indeterminate after the survivor update succeeds, keep and
+report the survivor update as **Applied** and preserve the duplicate. Never
+combine the survivor update and duplicate trash into one result.
 
 A delete likewise moves only the reviewed target to verified trash.
 Immediately before trashing, review backlinks, aliases, and identity

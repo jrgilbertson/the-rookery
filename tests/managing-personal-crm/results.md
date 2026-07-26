@@ -86,6 +86,29 @@ no-hidden-state continuity; and successful no-action behavior.
 
 Result: passed.
 
+## PR review follow-up: ownership, approval safeguards, and merge ordering
+
+Date: 2026-07-26
+
+- Direct CRM now routes unrelated work through the configured canonical task
+  or issue workflow while retaining CRM bundle numbering, approval handling,
+  and completion. Embedded CRM continues to leave that work with its caller.
+- Approval-only Direct and Catch-up responses load source behavior before any
+  pre-write read or identity judgment, then load the relationship contract
+  when Person semantics apply, before application rechecks.
+- A fresh backlink, alias, and identity scan that preserves the same-person
+  binding is now a shared prerequisite for both merge mutations. New identity
+  conflict or indeterminate evidence leaves both notes unchanged; partial
+  outcomes remain possible only after the shared prerequisites pass.
+- Two independent read-only evaluators passed the ownership, safeguard-loading,
+  and merge-ordering expectations, for 3 of 3 passing scenario groups. Focused
+  public-safe regressions cover Direct and Embedded ownership, approval-only
+  loading, and both merge safe-stop paths.
+- No live Person note, source, task, issue, or vault content was queried or
+  changed for this review follow-up.
+
+Result: passed.
+
 ## PR review follow-up: deletion and catch-up completion
 
 Date: 2026-07-26

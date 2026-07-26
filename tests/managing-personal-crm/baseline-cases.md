@@ -263,10 +263,13 @@ user explicitly rejects it. A partial conversion remains incomplete.
 
 Relationship meaning and routine contact dates route to Person notes through
 the Obsidian CLI. Dated relationship follow-ups route to canonical Tasks.
-Unrelated product or repository work stays with the caller-owned task or issue
-system. Communication text stays conversation-only. A configured writing
-backlog receives only a separately approved suggestion. Every unsupported
-write is **Manual**, not silently redirected.
+In direct mode, unrelated product or repository work routes through the
+configured canonical task or issue workflow while the CRM retains bundle
+numbering, approval handling, and completion. In embedded mode, unrelated work
+stays with the caller-owned task or issue system. Communication text stays
+conversation-only. A configured writing backlog receives only a separately
+approved suggestion. Every unsupported write is **Manual**, not silently
+redirected.
 
 ### Application invalidates stale approval
 
@@ -300,12 +303,20 @@ existing note.
 
 ### Merge actions preserve classifiable partial outcomes
 
-Given an approved Person-note merge, the survivor update and duplicate trash
-are separate numbered actions with separate results. Duplicate trash depends on
-a successful survivor readback, the approved trash proof, and any applicable
-backlink or alias repair. A failed or indeterminate backlink check skips trash
-and preserves the duplicate. A failed or indeterminate trash action is reported
-without retrying or claiming removal. In either case, an already applied
+Given an approved Person-note merge, immediately before either mutation the
+workflow freshly scans backlinks, aliases, and identity collisions for both
+notes. A determinate scan that preserves the approved same-person binding is a
+prerequisite for both the survivor update and duplicate trash. New material
+identity evidence that invalidates the binding, or an indeterminate scan, leaves
+both notes unchanged, invalidates the affected approvals, and requires revised
+actions after identity can be safely rebound. Any required backlink or alias
+repair is its own numbered prerequisite for both merge actions.
+
+Only after those shared prerequisites pass are the survivor update and
+duplicate trash applied as separate numbered actions with separate results.
+Duplicate trash depends on a successful survivor readback and the approved
+trash proof. A failed or indeterminate trash action is reported without
+retrying or claiming removal; the duplicate remains, while an already applied
 survivor update remains accurately reported as **Applied**.
 
 ### Delete actions recheck inbound relationships
@@ -357,6 +368,23 @@ Given one message approves a visible CRM action and separately asks to inspect
 another person, the skill first applies or safely stops the exact visible
 action. It then performs the new inspection as a separate read-only phase and
 does not use the new evidence to reinterpret the earlier approval.
+
+### Direct approval-only turns load authority before rechecks
+
+Given a later message decides an action from a visible direct CRM bundle, the
+skill reads the source-behavior reference before any pre-write source or
+destination read or identity judgment. When the selected effect depends on
+Person semantics, it then reads the relationship contract before the
+application reference performs its rechecks. It resolves the exact original
+bundle without running new discovery.
+
+### Catch-up approval-only turns load authority before rechecks
+
+Given a later message decides a cleanup or Person-dependent action from a
+visible catch-up bundle, the skill reads the source-behavior reference and the
+relationship contract before the application reference performs any pre-write
+read or identity revalidation. It resolves the exact original bundle without
+starting a new inventory, triage, or reconstruction phase.
 
 ## Execution record
 

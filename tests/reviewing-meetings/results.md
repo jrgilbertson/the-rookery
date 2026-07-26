@@ -30,6 +30,22 @@ Date: 2026-07-23
 
 Result: passed.
 
+## PR review follow-up: first-bundle completeness
+
+Date: 2026-07-26
+
+- Meeting synthesis, optional embedded CRM evaluation, and action routing now
+  complete before the workflow presents anything for review.
+- The first visible review surface is the final single bundle. It contains all
+  supported meeting and relationship effects with continuous numbering and no
+  preliminary meeting-only or nested CRM bundle.
+- A fresh read-only evaluator passed the focused scenario and found no
+  actionable contract gap. The public-safe regression records the same
+  first-bundle requirement.
+- No live meeting source or destination was queried or changed.
+
+Result: passed.
+
 ## U4: private live acceptance
 
 Date: 2026-07-23

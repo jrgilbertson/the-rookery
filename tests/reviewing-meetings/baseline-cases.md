@@ -443,6 +443,16 @@ durable-context actions. The follow-up is a task action in the configured
 canonical relationship task system. No nested CRM bundle or second completion
 state appears.
 
+### First visible bundle includes embedded relationship effects
+
+Given a completed meeting supports an ordinary meeting-note action and an
+embedded Personal CRM pass finds a supported durable relationship effect, the
+workflow completes synthesis, relationship evaluation, and action routing
+before presenting anything for review. The first visible bundle already
+contains both actions in one continuous numbered sequence. It does not present
+a preliminary meeting-only bundle, append a CRM bundle, or expose a second
+proposal surface.
+
 ### Collaborator meeting acceptance without duplicate work
 
 Given a collaborator meeting supports a note refinement, a relationship

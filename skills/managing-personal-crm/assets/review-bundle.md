@@ -1,8 +1,11 @@
 # Relationship Review Bundle
 
 Use this flexible shape for direct proposals. Omit unsupported categories and
-fields that do not improve the decision. In embedded mode, carry the required
-fields into the invoking workflow's bundle instead of creating another one.
+fields that do not improve the decision. Direct mode retains bundle numbering,
+approval handling, and completion for every effect, including unrelated work
+routed through the configured canonical task or issue workflow. In embedded
+mode, carry the required fields into the invoking workflow's bundle instead of
+creating another one; that caller retains numbering, approval, and completion.
 
 Lead with the relationship conclusion and why it matters now. State the mode,
 query time, source coverage as sufficient, partial, or insufficient, and only
@@ -66,7 +69,9 @@ Use these canonical destinations:
 - Person notes for approved durable relationship meaning and monotonic contact
   dates, through the Obsidian CLI only.
 - The configured task system for a dated relationship follow-up.
-- The caller-owned task or issue system for unrelated work.
+- In direct mode, the configured canonical task or issue workflow for unrelated
+  work, while this CRM bundle retains action ownership.
+- In embedded mode, the caller-owned task or issue system for unrelated work.
 - The conversation for editable communication text; creating a draft or
   sending is outside this skill.
 - The configured writing backlog for an approved writing suggestion.

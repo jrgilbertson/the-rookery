@@ -60,7 +60,7 @@ Completion: every discovered meeting has one observable disposition, and no
 cursor, ledger, database, state file, transcript archive, or generated marker
 was created.
 
-## Prepare only new proposals
+## Synthesize only new proposals
 
 Before preparing any newly proposed meeting, read
 [references/action-routing.md](references/action-routing.md)
@@ -70,21 +70,19 @@ each supported action. Populate every applicable field in the asset, shape the
 preview with the configured live template, and leave unsupported details
 explicitly unresolved.
 
-Keep the proposal inside the conversation. Do not create or edit a meeting note
-while preparing it. Present all newly proposed meetings from this run together,
-grouped by meeting. Later runs append only newly eligible meetings; they do not
-repeat, renumber, or recompute older pending or deferred proposals. They may
-add one terse count or reminder that older work remains pending. A fully
-decided visible bundle remains suppressed by its conversational disposition
-rather than becoming a new proposal again.
+Keep the in-progress proposal ephemeral. Do not present it yet or create or edit
+a meeting note while preparing it. Later runs append only newly eligible
+meetings; they do not repeat, renumber, or recompute older pending or deferred
+proposals. A fully decided visible bundle remains suppressed by its
+conversational disposition rather than becoming a new proposal again.
 
 If current conversation history is unavailable, disclose that pending and
 reviewed or dismissed suppression cannot be verified. Continue using exact
 source-and-ID checks against approved notes, and do not claim the result is free
 of conversational duplicates.
 
-Completion: the bundle contains every and only newly proposed meeting from this
-run, or states that there is no new meeting to review.
+Completion: the in-progress synthesis contains every and only newly proposed
+meeting from this run, or establishes that there is no new meeting to review.
 
 ## Evaluate relationship effects selectively
 
@@ -112,6 +110,19 @@ destination is unresolved.
 
 Completion: every proposed action is complete enough to approve independently,
 has one authoritative destination, and exposes every prerequisite.
+
+## Present one final review bundle
+
+Only after synthesis, any embedded relationship evaluation, and action routing
+are complete, present the first and final visible review bundle. Include all
+newly proposed meetings from this run together, grouped by meeting, with one
+continuous action-number sequence. Carry every supported relationship effect
+into that bundle; do not expose a preliminary meeting-only bundle, nested CRM
+bundle, or any second proposal surface. A later run may add one terse count or
+reminder that older work remains pending.
+
+Completion: one visible bundle contains the complete routed proposal, or the
+run states that there is no new meeting to review.
 
 ## Apply only exact approvals
 

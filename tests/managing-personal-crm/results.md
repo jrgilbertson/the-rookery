@@ -86,6 +86,23 @@ no-hidden-state continuity; and successful no-action behavior.
 
 Result: passed.
 
+## PR review follow-up: stage-two catch-up continuity
+
+Date: 2026-07-26
+
+- Visible stage-two interpretation confirmations or corrections, answers to a
+  focused question, and deferred-reconstruction resumes now continue the exact
+  current person and visible catch-up recap before mode selection.
+- These replies start no new inventory or triage and imply no approval for a
+  Person, Task, cleanup, or other destination effect. Any resulting effect
+  remains separately numbered and requires exact approval.
+- Three fresh listing-level judges invoked for all three stage-two continuation
+  shapes and rejected a generic-questionnaire near-miss, for 12 of 12 passing
+  judgments. Focused public-safe regressions cover each path.
+- No live Person note, source, task, or vault content was queried or changed.
+
+Result: passed.
+
 ## Proactive review: reversible-probe atomicity
 
 Date: 2026-07-26

@@ -30,6 +30,22 @@ Date: 2026-07-23
 
 Result: passed.
 
+## PR review follow-up: dual-owner CRM writing application
+
+Date: 2026-07-26
+
+- A meeting writing action derived from relationship evidence now requires both
+  embedded CRM identity and prerequisite revalidation and the canonical writing
+  workflow's complete-meaning equivalence, write, and readback path.
+- If either owner is unavailable or ambiguous, the action is **Manual** and
+  remains unapplied. Meeting numbering, bundle ownership, and completion remain
+  intact with no nested workflow or redirected destination.
+- Public-safe regressions cover successful dual-path application, unavailable
+  CRM revalidation, and ambiguous identity or prerequisite evidence.
+- No live relationship source or writing destination was queried or changed.
+
+Result: passed.
+
 ## Proactive review: deferred embedded-action routing
 
 Date: 2026-07-26

@@ -1,6 +1,6 @@
 ---
 name: managing-personal-crm
-description: Use when the user asks to capture a relationship interaction, prepare for one person, clean up or reconstruct Person notes, review overdue relationships, discover who could help with current work, when another workflow finds a possible relationship effect, or when the user later confirms or revises a required catch-up source inventory, revisits or resumes a deferred action, or decides actions or dispositions from a visible direct or catch-up CRM bundle, including cleanup approval. Embedded CRM actions stay with the caller workflow. Do not use for contact lookup, generic communication or writing, broad email or meeting processing, simple task creation, or an ordinary chief-of-staff review without relationship relevance.
+description: Use when the user asks to capture a relationship interaction, prepare for one person, clean up or reconstruct Person notes, review overdue relationships, discover who could help with current work, when another workflow finds a possible relationship effect, or when the user later confirms or revises a required catch-up source inventory, supplies stage-one dispositions, continues visible stage-two reconstruction by confirming or correcting an interpretation, answering a focused question, or resuming deferred reconstruction, revisits a deferred action, or decides actions from a visible direct or catch-up CRM bundle, including cleanup approval. Embedded CRM actions stay with the caller workflow. Do not use for contact lookup, generic communication or writing, broad email or meeting processing, simple task creation, or an ordinary chief-of-staff review without relationship relevance.
 license: MIT
 compatibility: Requires host-provided access to the user's configured authoritative sources. Person-note operations require an available Obsidian CLI with explicit vault targeting. Optional local Apple Messages reads through imsg require the CLI and operating-system permission to message history.
 ---
@@ -21,10 +21,16 @@ approval: perform no write, source or destination recheck, or new discovery
 until the user makes a new exact decision about that proposal.
 
 First determine whether the message continues a visible catch-up source
-inventory or stage-one disposition bundle. If it confirms or revises the
-required inventory, or supplies dispositions such as `1 active, 2 merge`, read
+inventory, stage-one disposition bundle, or stage-two reconstruction. A
+confirmation or revision of the required inventory, dispositions such as `1
+active, 2 merge`, a confirmation or correction of the visible interpretation
+for the current person, an answer to its focused question, or a request to
+resume its deferred reconstruction continues that exact catch-up stage. Read
 [references/catch-up.md](references/catch-up.md) before ordinary action handling
-or mode selection and continue that exact catch-up stage. If the required
+or mode selection. Preserve the visible recap and current person. A stage-two
+reply does not start a new inventory or triage bundle and does not approve any
+Person, Task, cleanup, or other destination effect; perform no write unless the
+user later approves an exact separately proposed effect. If the required
 preflight succeeds and that continuation will inspect any Person note for a
 first or later stage-one triage bundle, read
 [references/relationship-contract.md](references/relationship-contract.md)

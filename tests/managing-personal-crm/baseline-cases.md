@@ -462,6 +462,28 @@ later bundle uses the same target schema, conditional tier requirements, and
 legacy mappings as the first. A `merge` or `delete` disposition does not enter
 the cleanup application path, mutate a note, or authorize any cleanup action.
 
+### Stage-two interpretation replies continue the current person
+
+Given the visible catch-up recap identifies Morgan as the current stage-two
+person, a confirmation or correction of its interpretation continues Morgan's
+exact reconstruction before mode selection. It preserves the recap and current
+person, starts no inventory or triage, treats the reply as judgment rather than
+effect approval, and performs no write.
+
+### Focused stage-two answers do not restart catch-up
+
+Given the visible reconstruction asks one focused question, the answer remains
+evidence for that exact current person. It starts no inventory or new triage
+bundle. Any resulting Person-note or follow-up effect remains a separately
+numbered proposal requiring exact approval.
+
+### Deferred stage-two reconstruction resumes in place
+
+Given the visible recap marks Priya's reconstruction deferred, a request to
+resume restores Priya as the current person and continues from the visible
+interpretation and questions. Resume is not effect approval: it performs no
+destination recheck or write and retains the existing catch-up recap.
+
 ## Execution record
 
 Without-skill observations were obtained in three separate ephemeral Codex CLI

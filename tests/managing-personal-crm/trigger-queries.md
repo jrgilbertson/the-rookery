@@ -1,7 +1,7 @@
 # Trigger queries: managing-personal-crm
 
 These synthetic listing-level queries define the portable trigger boundary.
-The set has fourteen should-trigger and nine near-miss queries. Judge
+The set has seventeen should-trigger and nine near-miss queries. Judge
 each in three fresh contexts using only the skill name, description, and query.
 
 ## Should invoke
@@ -13,6 +13,9 @@ each in three fresh contexts using only the skill name, description, and query.
 | Start the one-time cleanup of my Person notes and triage the first batch. | Catch-up | Yes, yes, yes | Explicit CRM catch-up and triage. |
 | That visible catch-up source inventory is right. Keep Person notes and Messages required, drop WhatsApp, and continue the preflight. | Catch-up inventory decision | Yes, yes, yes | Confirms and revises the required source inventory for the visible catch-up. |
 | For the visible catch-up batch: 1 active, 2 merge into Taylor Reed, 3 reference, and 4 delete. Continue without applying any cleanup. | Catch-up stage-one decisions | Yes, yes, yes | Supplies mixed reviewed dispositions that continue the visible catch-up without authorizing effects or cleanup. |
+| Your visible stage-two interpretation for Morgan is right, except the shared project ended in May rather than June. Continue with Morgan. | Catch-up stage-two interpretation correction | Yes, yes, yes | Corrects the current reconstruction without approving a destination effect. |
+| Answering the focused question for the current catch-up person: we met through the Atlas project, and I expect to stay in touch. | Catch-up stage-two focused answer | Yes, yes, yes | Supplies requested reconstruction evidence for the visible current person. |
+| Resume the deferred stage-two reconstruction for Priya from the visible catch-up recap. | Catch-up stage-two resume | Yes, yes, yes | Resumes the exact deferred reconstruction rather than starting new discovery. |
 | For that Person-note catch-up batch, keep the first two, skip the third, and move the proof-verified duplicates to Trash. | Catch-up decisions | Yes, yes, yes | Decides catch-up dispositions and cleanup approval against the visible bundle. |
 | Revisit the deferred action from the visible direct CRM bundle so I can decide it now. | Direct deferred-action revisit | Yes, yes, yes | Resumes an exact deferred direct proposal without implying approval. |
 | Resume the deferred cleanup action from the visible catch-up CRM bundle for another review. | Catch-up deferred-action revisit | Yes, yes, yes | Resumes an exact deferred catch-up proposal without implying approval. |
@@ -70,3 +73,9 @@ After deferred-action routing was added, three fresh judges received only the
 revised name and description plus Direct and Catch-up resume queries and an
 email-owned near-miss. All three invoked for both CRM resumes and rejected the
 email-owned action, for 9 of 9 passing judgments.
+
+After stage-two continuation routing was added, three fresh judges received
+only the revised name and description plus interpretation-correction,
+focused-answer, and deferred-reconstruction queries and a generic-questionnaire
+near-miss. All three invoked for the three catch-up continuations and rejected
+the near-miss, for 12 of 12 passing judgments.

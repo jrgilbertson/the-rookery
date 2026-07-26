@@ -79,16 +79,24 @@ owner or stops safely without changing the rest of the meeting review.
 
 ## Apply writing-backlog actions through the canonical writing system
 
-For an approved writing-backlog action, use the configured canonical writing
-workflow and exact displayed destination. Before writing, search that backlog
-for an equivalent idea using its complete meaning rather than title similarity
-alone. Apply the approved effect once, then read the target back through the
-same authoritative interface.
+For an approved writing-backlog action derived from embedded Personal CRM
+judgment, first use the available `managing-personal-crm` companion semantics to
+revalidate the exact Person identity and every relationship prerequisite that
+supports the idea. Then use the configured canonical writing workflow and exact
+displayed destination. Before writing, search that backlog for an equivalent
+idea using its complete meaning rather than title similarity alone. Apply the
+approved effect once, then read the target back through the same authoritative
+interface. Both the embedded CRM recheck and the canonical writing
+equivalence, write, and readback path are required for application.
 
-If the canonical backlog, exact destination, search, write, or readback path is
-unavailable or ambiguous, report the action **Manual** and keep the proposal
-visible. Do not redirect it to a task, issue, meeting note, or durable-context
-record.
+If the CRM companion is unavailable, or its identity or prerequisite recheck
+is unavailable or ambiguous, report the CRM-derived writing action **Manual**.
+Do the same when the canonical backlog, exact destination, complete-meaning
+search, write, or readback path is unavailable or ambiguous. Preserve the
+meeting's existing action number and ownership; neither companion may create a
+nested bundle, renumber the action, or declare a separate completion state.
+Keep a **Manual** proposal visible and unapplied. Do not redirect it to a task,
+issue, meeting note, or durable-context record.
 
 Completion: the idea appears once in its configured writing backlog or stops
 safely without creating a competing source of truth.

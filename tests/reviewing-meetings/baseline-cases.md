@@ -501,15 +501,33 @@ the configured canonical relationship task system while the engineering change
 routes to its established issue system. Neither is mirrored into the other's
 system.
 
-### Relationship insight routes to the writing backlog
+### CRM-derived writing succeeds only through both canonical paths
 
 Given a meeting creates one supported writing idea connected to a known person,
 the workflow proposes it as a separate writing-backlog action in the configured
-canonical writing system. It does not disguise the idea as a task or durable-
-context update. Before applying an approved idea, it searches for an equivalent,
-writes once to the exact displayed backlog target, and reads the result back.
-If that canonical path is unavailable or ambiguous, the idea remains
-proposal-only or **Manual** without creating a competing record.
+canonical writing system. Before application, the embedded CRM companion
+revalidates exact Person identity and relationship prerequisites, then the
+canonical writing workflow searches by complete meaning, writes once to the
+displayed backlog target, and reads it back. Only success across both paths
+produces **Applied** or **Already satisfied**. The meeting retains its action
+number, bundle ownership, and completion state; neither companion creates a
+nested bundle.
+
+### Unavailable CRM companion makes derived writing manual
+
+Given an approved writing idea depends on embedded CRM judgment but the CRM
+companion or its recheck path is unavailable, that numbered action is
+**Manual** and unapplied. The writing path alone is insufficient. The workflow
+does not redirect or renumber the idea or create a nested bundle, while
+unrelated supported meeting actions may continue.
+
+### Ambiguous CRM identity or prerequisite blocks derived writing
+
+Given the embedded CRM recheck cannot distinguish the intended Person or
+establish a relationship prerequisite for the approved writing idea, the
+existing numbered action is **Manual** even when the writing backlog is fully
+available. No equivalence search or write occurs under the ambiguous binding;
+meeting ownership and numbering remain unchanged.
 
 ### Missing companion degrades gracefully
 

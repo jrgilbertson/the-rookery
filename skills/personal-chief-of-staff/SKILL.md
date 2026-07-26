@@ -24,17 +24,22 @@ For each decided action, use its displayed identity, target, effect, and
 approval state. Read [references/source-behavior.md](references/source-behavior.md)
 and the originating mode reference, then follow their existing shared and
 mode-specific application rules. For an approved Person-note, relationship
-Task, or CRM-derived writing-backlog effect, use the available
+Task, CRM-derived unrelated work, or CRM-derived writing-backlog effect, use
+the available
 `managing-personal-crm` companion in embedded mode and follow its
-`references/applying-approved-actions.md` semantics. Apply a writing-backlog
-effect only through the configured canonical writing workflow and exact
-displayed destination, after a complete-meaning equivalence search, then read
-the target back through the same authoritative interface. The chief-of-staff
+`references/applying-approved-actions.md` semantics. Route CRM-derived
+unrelated work through the caller's configured canonical task or issue
+workflow and exact displayed destination; route a writing-backlog effect only
+through the configured canonical writing workflow and exact displayed
+destination. For either, search that destination for complete-meaning
+equivalence immediately before mutation. Report an equivalent that has
+appeared as **Already satisfied**; otherwise apply once and read the exact
+target back through the same authoritative interface. The chief-of-staff
 workflow keeps the action number, approval flow, result, and completion state;
 the companion creates no nested bundle. If the companion or the required
-canonical destination, search, write, or readback path is unavailable or
-ambiguous, report that relationship-derived action **Manual** rather than
-applying it under the generic source rules.
+canonical workflow, exact destination, search, write, or readback path is
+unavailable or ambiguous, report that relationship-derived action **Manual**
+rather than applying it under generic source rules or another destination.
 
 An action-only response does not run new review discovery or prepare another
 review. It still performs every immediate pre-write target and destination

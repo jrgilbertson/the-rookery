@@ -86,6 +86,27 @@ no-hidden-state continuity; and successful no-action behavior.
 
 Result: passed.
 
+## PR review follow-up: catch-up relationship contract continuity
+
+Date: 2026-07-26
+
+- A catch-up inventory confirmation that passes required preflight now loads
+  the relationship contract before inspecting the first Person note for
+  stage-one triage.
+- A disposition continuation that advances to another triage batch loads the
+  same contract before inspecting the next Person note. Blocked inventory-only
+  turns may stop without loading it.
+- Mixed-schema target fields, conditional tiers, and legacy mappings therefore
+  use one contract across first and later bundles. Dispositions remain reviewed
+  classifications and authorize no note mutation or cleanup.
+- A fresh read-only evaluator passed the focused load-order and no-mutation
+  scenario. Public-safe regressions cover both the first and next triage
+  transitions.
+- No live Person note, source inventory, or vault content was queried or
+  changed.
+
+Result: passed.
+
 ## PR review follow-up: deferred actions and Messages rechecks
 
 Date: 2026-07-26

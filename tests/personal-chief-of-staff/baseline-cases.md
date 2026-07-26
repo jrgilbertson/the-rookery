@@ -559,6 +559,83 @@ Expected with-skill behavior:
 - Keeps action 4, its result, and weekly completion state with the
   chief-of-staff workflow and creates no nested bundle.
 
+## Case 25: An equivalent CRM-derived issue appeared before application
+
+Prompt:
+
+> In the visible morning bundle, I approve action 5 to create the displayed
+> repository issue derived from Rowan's relationship context. The configured
+> canonical issue workflow and exact repository remain available, but an issue
+> with a different title and equivalent complete meaning appeared after the
+> bundle was reviewed. Apply only action 5.
+
+Expected baseline risks:
+
+- Creates a duplicate because the title differs or because approval predates
+  the equivalent issue.
+- Uses a generic issue path without the CRM companion's application contract.
+- Lets the companion renumber the action or report a separate completion.
+
+Expected with-skill behavior:
+
+- Uses `managing-personal-crm` in embedded mode and searches the exact approved
+  repository through the configured canonical issue workflow for
+  complete-meaning equivalence immediately before mutation.
+- Reports action 5 **Already satisfied**, performs no write, and does not
+  redirect the effect to another task or issue destination.
+- Keeps action 5, its result, and morning completion state with the
+  chief-of-staff workflow and creates no nested bundle.
+
+## Case 26: Unavailable CRM-derived task path stays manual
+
+Prompt:
+
+> In the visible weekly bundle, I approve action 6 to create the displayed
+> unrelated project task derived from Rowan's relationship context. The CRM
+> companion is available, but the configured canonical task workflow cannot
+> search and read back the exact displayed destination. Apply only action 6.
+
+Expected baseline risks:
+
+- Applies the task through a generic fallback or another available project.
+- Treats approval as proof that equivalence search and readback are optional.
+- Lets the CRM companion open a nested bundle or take over completion.
+
+Expected with-skill behavior:
+
+- Uses `managing-personal-crm` in embedded mode but reports action 6 **Manual**
+  because the configured canonical task workflow cannot complete the exact
+  destination, complete-meaning search, and readback contract.
+- Performs no write and does not fall back to a generic task path or redirect
+  the effect to another destination.
+- Keeps action 6, its approval, result, and weekly completion state with the
+  chief-of-staff workflow and creates no nested bundle.
+
+## Case 27: Novel CRM-derived issue applies once and reads back
+
+Prompt:
+
+> In the visible morning bundle, I approve action 7 to create the displayed
+> repository issue derived from Rowan's relationship context. The configured
+> canonical issue workflow and exact repository are available, and the
+> complete-meaning search finds no equivalent. Apply only action 7.
+
+Expected baseline risks:
+
+- Creates through a generic path without a final equivalence check or readback.
+- Retries after an indeterminate result or redirects to another repository.
+- Lets the CRM companion renumber the action or take over completion.
+
+Expected with-skill behavior:
+
+- Uses `managing-personal-crm` in embedded mode and the exact configured issue
+  workflow, repeats the complete-meaning search, applies once, and reads back
+  the exact target through the same authoritative interface.
+- Reports action 7 **Applied** only when readback proves the complete approved
+  effect; otherwise uses the companion's safe result without retry or redirect.
+- Keeps action 7, its result, and morning completion state with the
+  chief-of-staff workflow and creates no nested bundle.
+
 ## Execution record
 
 Date: 2026-07-22 | Harness: Codex fresh-context subagents | Model: session default

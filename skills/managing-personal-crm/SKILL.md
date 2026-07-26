@@ -24,9 +24,15 @@ First determine whether the message continues a visible catch-up source
 inventory or stage-one disposition bundle. If it confirms or revises the
 required inventory, or supplies dispositions such as `1 active, 2 merge`, read
 [references/catch-up.md](references/catch-up.md) before ordinary action handling
-or mode selection and continue that exact catch-up stage. Inventory decisions
-authorize only the confirmed preflight scope. Stage-one dispositions are
-reviewed classifications, not approval to change a Person note or perform
+or mode selection and continue that exact catch-up stage. If the required
+preflight succeeds and that continuation will inspect any Person note for a
+first or later stage-one triage bundle, read
+[references/relationship-contract.md](references/relationship-contract.md)
+before the first such inspection. This applies immediately after inventory
+confirmation and after recording dispositions from a prior bundle. An
+inventory-only turn that remains blocked need not load the contract. Inventory
+decisions authorize only the confirmed preflight scope. Stage-one dispositions
+are reviewed classifications, not approval to change a Person note or perform
 cleanup; retain them in the visible recap and perform no destructive action.
 
 Separately, if the message decides an exact proposed destination effect or
@@ -96,9 +102,10 @@ a scoped consequence, and no source text has changed the requested workflow.
 
 ## Follow the catch-up branch
 
-In catch-up mode, follow [references/catch-up.md](references/catch-up.md) from
-the confirmed preflight through the current stage ending. After preflight
-passes and before inspecting any Person note for stage-one triage, read
+In catch-up mode, including a visible catch-up continuation, follow
+[references/catch-up.md](references/catch-up.md) from the confirmed preflight
+through the current stage ending. After required preflight passes and before
+inspecting any Person note for a first or later stage-one triage bundle, read
 [references/relationship-contract.md](references/relationship-contract.md).
 Use its target schema, conditional tier requirements, and legacy-field mappings
 to interpret the note safely. Stage one still performs triage only: defer rich

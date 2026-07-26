@@ -235,6 +235,27 @@ Date: 2026-07-24
 
 Result: passed.
 
+## PR review follow-up: CRM-derived task and issue application
+
+Date: 2026-07-26
+
+- CRM-derived unrelated work in a chief-of-staff bundle now uses embedded CRM
+  plus the configured canonical task or issue workflow and exact displayed
+  destination.
+- Immediately before mutation, the workflow searches complete meaning. A
+  post-proposal equivalent is **Already satisfied**; a novel effect applies
+  once and requires readback; an unavailable or ambiguous path is **Manual**.
+- The chief-of-staff workflow retains action numbering, approval, result, and
+  completion. There is no generic fallback, redirected destination, or nested
+  CRM bundle.
+- A fresh read-only evaluator passed the ownership, equivalence, and safe-stop
+  contract. Public-safe regressions cover equivalent, unavailable, and novel
+  apply-once paths.
+- No live task, issue, relationship source, or destination was queried or
+  changed.
+
+Result: passed.
+
 ## PR review follow-up: resumed actions and CRM-derived writing
 
 Date: 2026-07-26

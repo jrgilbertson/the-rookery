@@ -419,6 +419,16 @@ confirmed scope. The inventory decision is not an approved destination effect,
 does not enter the applying-approved-actions path, and does not start triage
 until every required source passes.
 
+### First triage after inventory confirmation loads the relationship contract
+
+Given the user confirms a visible catch-up inventory and every required source
+then passes preflight, the continuation reads the catch-up reference and loads
+the relationship contract before inspecting the first Person note for the
+first stage-one bundle. Its target schema, conditional tier requirements, and
+legacy mappings govern triage. An inventory-only turn that remains blocked may
+end without loading the relationship contract, and no Person note or cleanup
+target is mutated in either path.
+
 ### Mixed stage-one dispositions are review, not application authority
 
 Given a visible stage-one bundle and the reply `1 active, 2 merge into Taylor
@@ -429,6 +439,16 @@ mutate Person notes, perform cleanup, or treat `merge` or `delete` as approval.
 Only a separately proposed and approved Person effect or reversible cleanup
 action enters applying-approved-actions. No destructive action occurs while
 recording the mixed dispositions.
+
+### Next triage after dispositions reloads the relationship contract first
+
+Given the user supplies dispositions for a visible stage-one bundle and more
+Person notes remain, the continuation reads the catch-up reference, records the
+reviewed dispositions in the visible recap, and loads the relationship
+contract before inspecting any Person note for the next triage bundle. This
+later bundle uses the same target schema, conditional tier requirements, and
+legacy mappings as the first. A `merge` or `delete` disposition does not enter
+the cleanup application path, mutate a note, or authorize any cleanup action.
 
 ## Execution record
 

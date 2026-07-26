@@ -86,6 +86,24 @@ no-hidden-state continuity; and successful no-action behavior.
 
 Result: passed.
 
+## PR review follow-up: deferred actions and Messages rechecks
+
+Date: 2026-07-26
+
+- A request to revisit or resume a deferred action from a visible Direct or
+  Catch-up CRM bundle now recovers the exact proposal for another decision. It
+  is not approval and performs no write, recheck, or new discovery.
+- When approval-time source revalidation will query configured Apple Messages
+  through `imsg`, the workflow loads the Apple Messages adapter before the
+  first read. It does not load the adapter when no Messages query is needed.
+- Three fresh listing-level judges invoked for both CRM resume queries and
+  rejected an email-owned near-miss, for 9 of 9 passing judgments. Focused
+  public-safe regressions cover resume-without-approval plus positive and
+  negative adapter-loading paths.
+- No live message history, Person note, or destination was queried or changed.
+
+Result: passed.
+
 ## PR review follow-up: catch-up continuation routing
 
 Date: 2026-07-26

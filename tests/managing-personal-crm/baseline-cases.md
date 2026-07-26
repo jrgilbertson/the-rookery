@@ -369,6 +369,14 @@ another person, the skill first applies or safely stops the exact visible
 action. It then performs the new inspection as a separate read-only phase and
 does not use the new evidence to reinterpret the earlier approval.
 
+### Deferred actions require a new exact decision
+
+Given a visible direct or catch-up CRM bundle contains an exact proposal the
+user marked **Deferred**, a later request to revisit or resume that action
+recovers and presents the exact visible proposal. The request is not approval:
+the skill performs no write, source or destination recheck, or new discovery
+until the user makes a new exact decision about that proposal.
+
 ### Direct approval-only turns load authority before rechecks
 
 Given a later message decides an action from a visible direct CRM bundle, the
@@ -377,6 +385,21 @@ destination read or identity judgment. When the selected effect depends on
 Person semantics, it then reads the relationship contract before the
 application reference performs its rechecks. It resolves the exact original
 bundle without running new discovery.
+
+### Approval-only Messages revalidation loads its adapter contract
+
+Given `imsg` is the configured source and application-time revalidation of an
+approved action will query Messages, the skill loads the Apple Messages CLI
+reference before the first Messages read. It then follows the bounded,
+read-only query contract while resolving the exact original bundle.
+
+### Approval-only turns skip an unused Messages adapter contract
+
+Given `imsg` is configured but application-time revalidation of an approved
+action needs only its canonical destination and no Messages query, the skill
+does not load the Apple Messages CLI reference. It still loads the authority
+references required for the actual rechecks and resolves the exact original
+bundle without new discovery.
 
 ### Catch-up approval-only turns load authority before rechecks
 

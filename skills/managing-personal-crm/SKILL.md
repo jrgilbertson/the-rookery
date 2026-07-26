@@ -1,6 +1,6 @@
 ---
 name: managing-personal-crm
-description: Use when the user asks to capture a relationship interaction, prepare for one person, clean up or reconstruct Person notes, review overdue relationships, discover who could help with current work, when another workflow finds a possible relationship effect, or when the user later confirms or revises a required catch-up source inventory or decides actions or dispositions from a direct or catch-up CRM bundle, including cleanup approval. Embedded CRM actions stay with the caller workflow. Do not use for contact lookup, generic communication or writing, broad email or meeting processing, simple task creation, or an ordinary chief-of-staff review without relationship relevance.
+description: Use when the user asks to capture a relationship interaction, prepare for one person, clean up or reconstruct Person notes, review overdue relationships, discover who could help with current work, when another workflow finds a possible relationship effect, or when the user later confirms or revises a required catch-up source inventory, revisits or resumes a deferred action, or decides actions or dispositions from a visible direct or catch-up CRM bundle, including cleanup approval. Embedded CRM actions stay with the caller workflow. Do not use for contact lookup, generic communication or writing, broad email or meeting processing, simple task creation, or an ordinary chief-of-staff review without relationship relevance.
 license: MIT
 compatibility: Requires host-provided access to the user's configured authoritative sources. Person-note operations require an available Obsidian CLI with explicit vault targeting. Optional local Apple Messages reads through imsg require the CLI and operating-system permission to message history.
 ---
@@ -13,6 +13,12 @@ Raw interactions stay in their sources, Person notes hold approved durable
 meaning, and dated relationship commitments stay in the canonical task system.
 
 ## Resolve the mode
+
+First, if the message asks to revisit or resume an action the user marked
+**Deferred** in a visible direct or catch-up CRM bundle, recover and present
+that exact visible proposal for a new decision. Revisit or resume is not
+approval: perform no write, source or destination recheck, or new discovery
+until the user makes a new exact decision about that proposal.
 
 First determine whether the message continues a visible catch-up source
 inventory or stage-one disposition bundle. If it confirms or revises the
@@ -29,6 +35,10 @@ before any pre-write source or destination read or identity judgment. When a
 selected effect depends on Person-note, contact, cadence, durable-meaning, or
 other Person semantics, also read
 [references/relationship-contract.md](references/relationship-contract.md).
+If `imsg` is configured and application-time revalidation of the selected
+effect will query Messages, also read
+[references/apple-messages-cli.md](references/apple-messages-cli.md) before the
+first Messages read. Do not load it when revalidation needs no Messages query.
 Then read
 [references/applying-approved-actions.md](references/applying-approved-actions.md)
 and handle only that separately proposed action against the exact direct or

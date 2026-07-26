@@ -1,7 +1,7 @@
 # Trigger queries: managing-personal-crm
 
 These synthetic listing-level queries define the portable trigger boundary.
-The set has twelve should-trigger and nine near-miss queries. Judge
+The set has fourteen should-trigger and nine near-miss queries. Judge
 each in three fresh contexts using only the skill name, description, and query.
 
 ## Should invoke
@@ -14,6 +14,8 @@ each in three fresh contexts using only the skill name, description, and query.
 | That visible catch-up source inventory is right. Keep Person notes and Messages required, drop WhatsApp, and continue the preflight. | Catch-up inventory decision | Yes, yes, yes | Confirms and revises the required source inventory for the visible catch-up. |
 | For the visible catch-up batch: 1 active, 2 merge into Taylor Reed, 3 reference, and 4 delete. Continue without applying any cleanup. | Catch-up stage-one decisions | Yes, yes, yes | Supplies mixed reviewed dispositions that continue the visible catch-up without authorizing effects or cleanup. |
 | For that Person-note catch-up batch, keep the first two, skip the third, and move the proof-verified duplicates to Trash. | Catch-up decisions | Yes, yes, yes | Decides catch-up dispositions and cleanup approval against the visible bundle. |
+| Revisit the deferred action from the visible direct CRM bundle so I can decide it now. | Direct deferred-action revisit | Yes, yes, yes | Resumes an exact deferred direct proposal without implying approval. |
+| Resume the deferred cleanup action from the visible catch-up CRM bundle for another review. | Catch-up deferred-action revisit | Yes, yes, yes | Resumes an exact deferred catch-up proposal without implying approval. |
 | Which close relationships are overdue for a thoughtful check-in? | Direct cadence scan | Yes, yes, yes | Explicit relationship-cadence request. |
 | Who I know could give useful feedback on this article, and why now? | Direct discovery | Yes, yes, yes | Connects current work to a relevant person and action. |
 | This email contains a meaningful career update and a promise I made. Evaluate the relationship effects while I process it. | Embedded capture | Yes, yes, yes | Invoking workflow asks for relationship effects without giving up ownership. |
@@ -63,3 +65,8 @@ revised name and description plus an inventory decision, a mixed stage-one
 disposition reply, and a meeting-owned action near-miss. All three invoked for
 both catch-up continuations and rejected the meeting-owned action, for 9 of 9
 passing judgments.
+
+After deferred-action routing was added, three fresh judges received only the
+revised name and description plus Direct and Catch-up resume queries and an
+email-owned near-miss. All three invoked for both CRM resumes and rejected the
+email-owned action, for 9 of 9 passing judgments.

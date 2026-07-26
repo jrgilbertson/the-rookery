@@ -1,6 +1,6 @@
 ---
 name: reviewing-meetings
-description: Use when the user asks to review, process, import, catch up on, or check for newly completed meetings from a configured meeting source, including Granola; when a scheduled post-meeting review invokes it; or when the user later approves, edits, defers, or skips visible meeting-review actions. Do not use for preparing an upcoming meeting, taking live notes, maintaining a CRM, or directly creating tasks, issues, or calendar events without meeting review.
+description: Use when the user asks to review, process, import, catch up on, or check for newly completed meetings from a configured meeting source, including Granola; when a scheduled post-meeting review invokes it; or when the user later revisits, resumes, approves, edits, defers, skips, or otherwise decides visible meeting-review actions, including CRM-derived actions. Do not use for preparing an upcoming meeting, taking live notes, maintaining a CRM, or directly creating tasks, issues, or calendar events without meeting review.
 license: MIT
 compatibility: Requires meeting data with stable source IDs, an approved-note source with live template and naming guidance, and an authoritative ownership map for downstream actions. Conversational suppression requires retrievable conversation history. When Obsidian owns a target, its CLI must be available.
 ---
@@ -19,8 +19,14 @@ Before choosing a source scope, determine whether the current user message only
 approves, edits, defers, skips, declines, revisits, or otherwise decides actions
 from a visible meeting-review bundle. If so, read
 [references/applying-approved-actions.md](references/applying-approved-actions.md)
-and handle that response directly. Do not query meeting sources, rediscover
-meetings, or append unrelated proposals.
+and handle that response directly. Do not rediscover meetings, run a broad
+meeting-source query, or append unrelated proposals. When application-time
+revalidation of an exact CRM-derived action requires evidence from its original
+meeting, the workflow may reread only the smallest necessary slice from the
+exact displayed source and native ID. This bounded reread is not discovery and
+must not produce another meeting or proposal. If the source read is unavailable
+or fails, or the exact source or native ID is ambiguous, make no write and
+report that action **Manual**.
 
 If the same message also explicitly asks for a new meeting check, finish the
 action-response phase first. Then run discovery as a separate read-only phase;
@@ -60,7 +66,7 @@ Completion: every discovered meeting has one observable disposition, and no
 cursor, ledger, database, state file, transcript archive, or generated marker
 was created.
 
-## Prepare only new proposals
+## Synthesize only new proposals
 
 Before preparing any newly proposed meeting, read
 [references/action-routing.md](references/action-routing.md)
@@ -70,21 +76,36 @@ each supported action. Populate every applicable field in the asset, shape the
 preview with the configured live template, and leave unsupported details
 explicitly unresolved.
 
-Keep the proposal inside the conversation. Do not create or edit a meeting note
-while preparing it. Present all newly proposed meetings from this run together,
-grouped by meeting. Later runs append only newly eligible meetings; they do not
-repeat, renumber, or recompute older pending or deferred proposals. They may
-add one terse count or reminder that older work remains pending. A fully
-decided visible bundle remains suppressed by its conversational disposition
-rather than becoming a new proposal again.
+Keep the in-progress proposal ephemeral. Do not present it yet or create or edit
+a meeting note while preparing it. Later runs append only newly eligible
+meetings; they do not repeat, renumber, or recompute older pending or deferred
+proposals. A fully decided visible bundle remains suppressed by its
+conversational disposition rather than becoming a new proposal again.
 
 If current conversation history is unavailable, disclose that pending and
 reviewed or dismissed suppression cannot be verified. Continue using exact
 source-and-ID checks against approved notes, and do not claim the result is free
 of conversational duplicates.
 
-Completion: the bundle contains every and only newly proposed meeting from this
-run, or states that there is no new meeting to review.
+Completion: the in-progress synthesis contains every and only newly proposed
+meeting from this run, or establishes that there is no new meeting to review.
+
+## Evaluate relationship effects selectively
+
+After refining the meeting synthesis, invoke `managing-personal-crm` in embedded
+mode when the evidence contains a possible relationship interaction,
+follow-up, durable effect, or useful person connection. That companion owns the
+relationship judgment. This workflow keeps the single meeting bundle,
+continuous action numbering, approval flow, and run ending.
+
+Carry supported outputs into the existing meeting categories. A contextual
+connection may appear as a concise insight; every durable destination effect
+remains a separate numbered action. If the companion is unavailable, complete
+the meeting review and mark a specific otherwise-actionable relationship
+effect **Manual** only when its safe path is known to be unavailable.
+
+Completion: relationship judgment adds only supported effects to the existing
+meeting proposal and never creates a second workflow or completion state.
 
 ## Route and bind proposed actions
 
@@ -95,6 +116,19 @@ destination is unresolved.
 
 Completion: every proposed action is complete enough to approve independently,
 has one authoritative destination, and exposes every prerequisite.
+
+## Present one final review bundle
+
+Only after synthesis, any embedded relationship evaluation, and action routing
+are complete, present the first and final visible review bundle. Include all
+newly proposed meetings from this run together, grouped by meeting, with one
+continuous action-number sequence. Carry every supported relationship effect
+into that bundle; do not expose a preliminary meeting-only bundle, nested CRM
+bundle, or any second proposal surface. A later run may add one terse count or
+reminder that older work remains pending.
+
+Completion: one visible bundle contains the complete routed proposal, or the
+run states that there is no new meeting to review.
 
 ## Apply only exact approvals
 

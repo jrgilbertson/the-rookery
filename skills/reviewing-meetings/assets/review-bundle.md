@@ -33,6 +33,10 @@ with the context, notes, decisions, next steps, evidence, and uncertainty needed
 to preview the configured live meeting template. Do not paste the transcript or
 invent attribution, ownership, deadlines, links, or decisions.
 
+When the relationship companion returns a contextual connection, include its
+concise judgment in the proposal rather than starting another bundle. A
+durable effect appears below as its own numbered action.
+
 ### Proposed actions
 
 Use one category allowed by the action-routing reference. Number actions
@@ -61,6 +65,8 @@ Repeat only for supported independent effects. One action must not hide several
 writes. A calendar backlink or second durable update is its own action when it
 creates a separate effect. Communication remains conversational draft text;
 external draft creation and sending are outside this workflow.
+A writing-backlog effect is likewise its own numbered action and names the
+exact configured canonical backlog target.
 
 After all meetings, invite the user to approve, edit, defer, or skip each action
 number independently. State that vague approval produces no write when its

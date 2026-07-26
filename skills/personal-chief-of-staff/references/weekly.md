@@ -75,6 +75,25 @@ the review. Do not add another review cadence or mandatory ceremony.
 Completion: the current template has a useful objective draft, while unsupported
 sections remain blank, uncertain, or open for discussion.
 
+## Review relationship opportunities in context
+
+When the companion relationship capability is available, deliberately inspect
+active cadence exceptions and connect the week's current work, decisions,
+writing, reading, and planned commitments to relevant people. This is part of
+the weekly synthesis, not a standalone CRM ritual or the start of catch-up.
+
+Surface an overdue relationship only when there is a useful current reason and
+plausible action. Surface a contextual person only when the evidence explains
+why that person matters to current work or to the relationship. One clearly
+separated broader connection may be mentioned without creating a Task, draft,
+or Person-note effect unless the user promotes it.
+
+Keep every resulting effect independently reviewable within the existing
+weekly bundle. Return no relationship suggestion when none is warranted.
+
+Completion: the weekly review identifies only useful relationship exceptions
+and opportunities, without taking ownership of CRM maintenance or catch-up.
+
 ## Collaborate on judgment and next week
 
 Invite the user's corrections and interpretation. Work together on causal

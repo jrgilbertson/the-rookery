@@ -187,9 +187,29 @@ dismissal and does not hide or suppress the remaining actions.
 Given a later user message only approves, edits, defers, skips, declines,
 revisits, or otherwise decides visible meeting-review actions, the workflow
 handles those actions against the exact visible bundle before selecting a
-source scope. It does not query meeting sources or append unrelated proposals.
-If the same message explicitly requests a new meeting check, application
-finishes first and discovery follows as a separate read-only phase.
+source scope. It does not rediscover meetings, run broad meeting-source
+queries, or append unrelated proposals. If the same message explicitly
+requests a new meeting check, application finishes first and discovery follows
+as a separate read-only phase.
+
+### CRM revalidation may reread only the exact original meeting
+
+Given an action-only response approves a CRM-derived effect whose Person
+identity or relationship prerequisite requires application-time confirmation
+from the original meeting, the workflow rereads only the smallest necessary
+slice from the exact displayed source and native ID. When that evidence safely
+revalidates the action, normal destination checks and application may continue.
+It performs no meeting discovery or broad query and creates no new or unrelated
+proposal.
+
+### Unavailable original meeting evidence makes the CRM action manual
+
+Given the same CRM-derived action requires application-time meeting evidence
+but the exact original source read is unavailable or fails, or its source or
+native ID is ambiguous, the action is **Manual** and no write occurs. The
+workflow does not broaden the query, rediscover meetings, or append any new or
+unrelated proposal; other visible actions remain governed by their own
+approval and rechecks.
 
 ### Deferred action stays with its bundle
 
@@ -426,3 +446,162 @@ work or reported **Manual** rather than executed by this workflow.
   partial success, drafts, and consequential operations.
 - Later evidence: U4 exercised reviewed durable application and readback; U6
   completed the fresh-context comparisons.
+
+## Personal CRM companion regression cases
+
+These synthetic cases define U4 of the Personal CRM plan. They preserve the
+meeting workflow as the single owner while adding selective embedded
+relationship judgment.
+
+### One meeting, one bundle, independent relationship effects
+
+Given a completed meeting supports a refined meeting note, a safely resolved
+substantive direct contact, one relationship-load-bearing fact, and a dated
+personal follow-up, the proposal uses one meeting bundle with continuous action
+numbers. The contact-date advance and Person-note prose are separate
+durable-context actions. The follow-up is a task action in the configured
+canonical relationship task system. No nested CRM bundle or second completion
+state appears.
+
+### First visible bundle includes embedded relationship effects
+
+Given a completed meeting supports an ordinary meeting-note action and an
+embedded Personal CRM pass finds a supported durable relationship effect, the
+workflow completes synthesis, relationship evaluation, and action routing
+before presenting anything for review. The first visible bundle already
+contains both actions in one continuous numbered sequence. It does not present
+a preliminary meeting-only bundle, append a CRM bundle, or expose a second
+proposal surface.
+
+### Collaborator meeting acceptance without duplicate work
+
+Given a collaborator meeting supports a note refinement, a relationship
+update, and a personal follow-up while an equivalent product issue already
+exists, the proposal links or updates the canonical issue rather than creating
+a duplicate issue or Obsidian task for the same product work. The relationship
+effect and genuinely distinct personal follow-up remain independently
+reviewable in the meeting bundle.
+
+### Attendance alone creates no relationship record
+
+Given a participant appears on the attendee list but the evidence does not show
+a substantive direct exchange, ongoing relationship, or follow-up, the bundle
+does not advance a contact date, change a Person note, or create a Person note.
+The ordinary meeting review still completes.
+
+### Contextual discovery stays bounded
+
+Given the meeting creates a strong reason that one known person could help with
+the current work, the proposal may include a concise primary connection and a
+plausible useful action. It may add at most one labeled wildcard. Neither
+connection creates a Task, draft, or Person-note effect unless that effect is a
+separately numbered action approved by the user.
+
+### Ambiguous participant identity blocks only the relationship effect
+
+Given a participant name or generic speaker label could match more than one
+Person note, the workflow does not attach meeting evidence or propose a Person
+change. It leaves the identity conflict visible while still preparing supported
+meeting-note and unrelated actions.
+
+### Repeated observation produces relationship no-ops
+
+Given the same interaction is observed again and the canonical Person note
+already contains the contact date and durable fact while the relationship Task
+already exists, the workflow reports those effects **Already satisfied**. It
+does not duplicate a Comment, Task, contact-date update, or meeting action.
+Normal exact meeting suppression still applies when the approved note or
+visible conversation already establishes a terminal meeting disposition.
+
+### Relationship follow-up and unrelated work keep separate owners
+
+Given a meeting supports a dated personal commitment to contact someone and a
+repository-owned engineering change, the relationship follow-up routes to
+the configured canonical relationship task system while the engineering change
+routes to its established issue system. Neither is mirrored into the other's
+system.
+
+### CRM-derived unrelated work succeeds only through both owners
+
+Given an approved repository issue is unrelated work derived from a known
+Person's relationship context, the embedded CRM companion revalidates the
+exact Person identity and every supporting relationship prerequisite. The
+configured canonical issue workflow then searches the exact displayed
+destination by complete meaning. When no equivalent exists, it applies the
+effect once and reads the exact target back through the same authoritative
+interface before reporting **Applied**. The meeting keeps its existing action
+number, ownership, result, and completion state; neither owner creates a nested
+bundle.
+
+### Unavailable or ambiguous CRM recheck makes unrelated work manual
+
+Given an approved unrelated task or issue depends on embedded CRM judgment but
+the companion, exact Person identity recheck, or relationship-prerequisite
+recheck is unavailable or ambiguous, the existing numbered action is
+**Manual** and unapplied. No canonical work search or write occurs, and the
+meeting keeps ownership and numbering without creating a nested bundle.
+
+### Unavailable or ambiguous canonical work path makes unrelated work manual
+
+Given the embedded CRM recheck succeeds but the configured canonical task or
+issue workflow, exact displayed destination, complete-meaning search, write,
+or readback path is unavailable or ambiguous, the existing numbered action is
+**Manual** and unapplied. The workflow does not use a generic mutation path or
+redirect the effect, and meeting ownership and numbering remain unchanged.
+
+### CRM-derived writing succeeds only through both canonical paths
+
+Given a meeting creates one supported writing idea connected to a known person,
+the workflow proposes it as a separate writing-backlog action in the configured
+canonical writing system. Before application, the embedded CRM companion
+revalidates exact Person identity and relationship prerequisites, then the
+canonical writing workflow searches by complete meaning, writes once to the
+displayed backlog target, and reads it back. Only success across both paths
+produces **Applied** or **Already satisfied**. The meeting retains its action
+number, bundle ownership, and completion state; neither companion creates a
+nested bundle.
+
+### Post-proposal equivalent CRM-derived writing is already satisfied
+
+Given an approved writing-backlog action remains visible but a differently
+titled idea with equivalent complete meaning appears in the exact displayed
+backlog after bundle preparation, the embedded CRM recheck still runs and the
+canonical writing workflow repeats its complete-meaning search immediately
+before mutation. The action is **Already satisfied** and performs zero writes.
+It retains the meeting's existing action number, ownership, result, and
+completion state, and neither companion creates a nested bundle.
+
+### Unavailable CRM companion makes derived writing manual
+
+Given an approved writing idea depends on embedded CRM judgment but the CRM
+companion or its recheck path is unavailable, that numbered action is
+**Manual** and unapplied. The writing path alone is insufficient. The workflow
+does not redirect or renumber the idea or create a nested bundle, while
+unrelated supported meeting actions may continue.
+
+### Ambiguous CRM identity or prerequisite blocks derived writing
+
+Given the embedded CRM recheck cannot distinguish the intended Person or
+establish a relationship prerequisite for the approved writing idea, the
+existing numbered action is **Manual** even when the writing backlog is fully
+available. No equivalence search or write occurs under the ambiguous binding;
+meeting ownership and numbering remain unchanged.
+
+### Missing companion degrades gracefully
+
+Given the Personal CRM companion is unavailable, ordinary meeting discovery,
+note refinement, canonical work routing, approval, and completion still work.
+The workflow omits unsupported relationship guesses or marks one clear but
+unsafe-to-apply relationship effect **Manual**. It does not invent a CRM
+classification or create a second review surface.
+
+## Personal CRM companion evidence status
+
+- Behavior changed: yes, meeting review now performs an optional embedded
+  relationship pass after synthesis while retaining one owner and one bundle.
+- Tests added: sixteen synthetic regression cases covering supported effects,
+  acceptance shape, attendance, contextual discovery, identity ambiguity,
+  duplicate suppression, ownership, CRM-derived task, issue, and writing
+  routing, and graceful degradation.
+- Live private mutation: not performed for this unit. Live acceptance remains
+  part of the Personal CRM plan's later acceptance and cutover unit.

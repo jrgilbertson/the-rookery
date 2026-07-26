@@ -30,6 +30,99 @@ Date: 2026-07-23
 
 Result: passed.
 
+## PR review follow-up: dual-owner CRM work application
+
+Date: 2026-07-26
+
+- A meeting task or issue derived from relationship evidence now requires both
+  embedded CRM Person and prerequisite revalidation and the canonical work
+  owner's complete-meaning equivalence, write, and readback path.
+- A post-proposal equivalent is **Already satisfied**; a novel effect applies
+  once with authoritative readback. Missing or ambiguous capability on either
+  side returns **Manual** with no write or redirected destination.
+- Meeting action numbering, ownership, results, and completion remain intact
+  with no generic fallback or nested bundle.
+- Public-safe regressions cover successful application, failed CRM revalidation,
+  and an unavailable canonical work path. No live relationship source, task,
+  issue, or destination was queried or changed.
+
+Result: passed.
+
+## PR review follow-up: dual-owner CRM writing application
+
+Date: 2026-07-26
+
+- A meeting writing action derived from relationship evidence now requires both
+  embedded CRM identity and prerequisite revalidation and the canonical writing
+  workflow's complete-meaning equivalence, write, and readback path.
+- If either owner is unavailable or ambiguous, the action is **Manual** and
+  remains unapplied. Meeting numbering, bundle ownership, and completion remain
+  intact with no nested workflow or redirected destination.
+- Public-safe regressions cover successful dual-path application, unavailable
+  CRM revalidation, and ambiguous identity or prerequisite evidence.
+- No live relationship source or writing destination was queried or changed.
+
+Result: passed.
+
+## PR review follow-up: CRM writing post-proposal equivalence
+
+Date: 2026-07-26
+
+- The immediate pre-write complete-meaning search now returns **Already
+  satisfied** with no write when an equivalent writing idea appeared after
+  bundle preparation. Application and readback occur only when novelty is
+  established.
+- A focused public-safe regression preserves the meeting action number,
+  ownership, result, and completion state while preventing a nested bundle.
+- No live relationship source or writing backlog was queried or changed.
+
+Result: passed.
+
+## Proactive review: deferred embedded-action routing
+
+Date: 2026-07-26
+
+- Listing metadata now routes revisit and resume requests for deferred visible
+  meeting-review actions, including CRM-derived actions, back to the meeting
+  workflow that owns their numbering, approval, and completion.
+- Three fresh listing-level judges invoked for the meeting-owned resume and
+  rejected a Direct-CRM-owned near-miss, for 6 of 6 passing judgments.
+- No live meeting source or destination was queried or changed.
+
+Result: passed.
+
+## PR review follow-up: first-bundle completeness
+
+Date: 2026-07-26
+
+- Meeting synthesis, optional embedded CRM evaluation, and action routing now
+  complete before the workflow presents anything for review.
+- The first visible review surface is the final single bundle. It contains all
+  supported meeting and relationship effects with continuous numbering and no
+  preliminary meeting-only or nested CRM bundle.
+- A fresh read-only evaluator passed the focused scenario and found no
+  actionable contract gap. The public-safe regression records the same
+  first-bundle requirement.
+- No live meeting source or destination was queried or changed.
+
+Result: passed.
+
+## PR review follow-up: bounded action-time CRM source reread
+
+Date: 2026-07-26
+
+- Action-only meeting responses still prohibit rediscovery, broad source
+  queries, and unrelated proposals. They may reread only the smallest required
+  slice of the exact original source and native ID when an approved CRM-derived
+  action needs application-time identity or prerequisite revalidation.
+- Successful revalidation may continue through the existing application path.
+  An unavailable or failed source read, or ambiguous exact source identity,
+  returns **Manual** with no write, broadened query, or replacement proposal.
+- Focused static regressions cover both outcomes. No live judge, meeting source,
+  Person note, or destination was queried or changed for this follow-up.
+
+Result: passed.
+
 ## U4: private live acceptance
 
 Date: 2026-07-23
@@ -134,3 +227,55 @@ cursor, ledger, or forced test run.
   cases without an unauthorized write or duplicate proposal.
 
 Result: passed with the stated natural-delivery limitation.
+
+## Personal CRM soft companion integration
+
+Date: 2026-07-24
+
+- The meeting package now evaluates contact date, relationship-load-bearing
+  meaning, relationship follow-up, and contextual discovery only after the
+  grounded meeting synthesis is stable.
+- Relationship effects remain inside the meeting review bundle with its
+  continuous action numbering. The integration adds no nested CRM bundle,
+  schedule, state, or completion status.
+- Canonical ownership remains unchanged: Person notes hold durable relationship
+  meaning, the configured canonical relationship task system holds dated
+  follow-ups, and unrelated product or repository work remains in its
+  established issue system.
+- Participant names and attendance alone cannot bind a Person note or establish
+  direct contact. An identity conflict blocks only the relationship effect.
+- Canonical destination checks suppress repeated contact dates, durable facts,
+  and Tasks as **Already satisfied** rather than duplicating them.
+- Eight public synthetic regression cases cover the meeting acceptance shape,
+  selective capture, contextual discovery, owner separation, repeat
+  observations, and missing-companion degradation.
+- The official Agent Skills validator and the scoped diff whitespace check
+  passed after the integration.
+- A final fresh-context judge passed all eight companion scenarios and found no
+  regression in discovery, source identity, one-bundle ownership, approval,
+  canonical routing, duplicate suppression, scheduled no-write behavior, or
+  completion endings.
+- No private source was queried and no live note, Person record, Task, issue,
+  calendar event, or communication was changed for this unit.
+
+Result: instruction-level integration complete. Live acceptance remains in the
+Personal CRM plan's later acceptance and cutover unit.
+
+## Pre-PR writing-backlog routing correction
+
+Date: 2026-07-24
+
+- Added writing backlog as a sixth explicit meeting action category so a
+  relationship-derived writing idea has one canonical owner.
+- The application contract now requires an equivalence search, exact displayed
+  destination, one write, and authoritative readback. An unavailable or
+  ambiguous path remains proposal-only or **Manual** and is never redirected to
+  a task or durable-context record.
+- The focused synthetic regression passed by static contract review. No live
+  writing-system mutation was performed.
+- A fresh-context comparison confirmed that the prior package had no explicit
+  writing category or application path. The revised package kept the initial
+  review read-only and supplied the canonical proposal, duplicate-check,
+  application, and readback path.
+
+Result: passed.

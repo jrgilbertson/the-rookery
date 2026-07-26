@@ -18,11 +18,26 @@ looked" surface. GitHub Releases mirror its entries.
   quarterly review loop grounded in live authoritative sources. Includes
   reviewed-write safeguards, Obsidian CLI handling, behavioral evals, and a
   Git-owned specification for four local Codex schedules.
+- `managing-personal-crm` — a portable relationship layer for direct capture,
+  contextual discovery, one-person preparation, and staged Person-note
+  cleanup. It uses canonical Person notes and Tasks, conservative identity
+  matching, proposal-first writes, mixed-schema transition rules, and no hidden
+  CRM database or progress state.
 - `reviewing-meetings` — a source-neutral post-meeting review loop that refines
   completed meeting evidence, prevents duplicate notes and work, routes each
   outcome to one canonical system, and applies only independently approved
   actions. Includes sanitized behavioral evidence and a Git-owned specification
   for the chat-attached `CoS Meetings` schedule.
+
+### Changed
+
+- `personal-chief-of-staff` can now surface bounded relationship cadence and
+  contextual opportunities inside its existing morning, wind-down, and weekly
+  review bundles when the Personal CRM companion is available.
+- `reviewing-meetings` can now propose supported contact dates, durable
+  relationship context, personal follow-ups, and contextual connections while
+  preserving one meeting-owned review bundle and canonical destination per
+  effect.
 
 ## [0.1.0] - 2026-07-10
 

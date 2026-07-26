@@ -59,6 +59,77 @@ Unrelated approved actions may continue when their own validation succeeds.
 Completion: each write is still necessary, targets the approved object, and
 has not been redirected by changed state.
 
+## Apply relationship effects through their canonical owners
+
+For an approved Person-note or relationship Task effect, use the available
+`managing-personal-crm` companion semantics for the pre-write equivalence check,
+identity validation, canonical destination, and readback. Every Person-note
+operation must use the Obsidian CLI with explicit configured-vault and target
+selection. A dated relationship follow-up belongs in the configured canonical
+relationship task system; unrelated work remains with the issue or task owner
+selected during routing.
+
+The companion remains optional for meeting completion. If it is unavailable or
+cannot establish the complete safe write path, report that relationship action
+**Manual** and leave it unapplied. Do not redirect it, edit the vault directly,
+or treat approval of the meeting note as approval of the relationship effect.
+
+Completion: each approved relationship effect is applied by its authoritative
+owner or stops safely without changing the rest of the meeting review.
+
+## Apply CRM-derived unrelated work through canonical work owners
+
+For an approved unrelated task or issue action derived from embedded Personal
+CRM judgment, first use the available `managing-personal-crm` companion
+semantics to revalidate the exact Person identity and every relationship
+prerequisite that supports the work. Then use the configured canonical task or
+issue workflow and exact displayed destination. Immediately before writing,
+search that destination for an equivalent effect using its complete meaning
+rather than title similarity alone. Report an equivalent **Already satisfied**;
+otherwise apply the approved effect once and read the exact target back through
+the same authoritative interface. Both the embedded CRM recheck and the
+canonical task-or-issue equivalence, write, and readback path are required for
+application.
+
+If the CRM companion is unavailable, or its identity or prerequisite recheck
+is unavailable or ambiguous, report the CRM-derived work action **Manual** and
+make no write. Do the same when the canonical workflow, exact destination,
+complete-meaning search, write, or readback path is unavailable or ambiguous.
+Preserve the meeting's existing action number, ownership, result, and
+completion state; neither owner may create a nested bundle. Keep a **Manual**
+proposal visible and unapplied. Do not use a generic mutation path or redirect
+the effect to another task, issue, meeting note, or durable-context record.
+
+Completion: the unrelated work appears once in its configured canonical task
+or issue system or stops safely without creating a competing source of truth.
+
+## Apply writing-backlog actions through the canonical writing system
+
+For an approved writing-backlog action derived from embedded Personal CRM
+judgment, first use the available `managing-personal-crm` companion semantics to
+revalidate the exact Person identity and every relationship prerequisite that
+supports the idea. Then use the configured canonical writing workflow and exact
+displayed destination. Before writing, search that backlog for an equivalent
+idea using its complete meaning rather than title similarity alone. If the
+search finds an equivalent, make no write and report **Already satisfied**.
+Only when the search proves the idea novel, apply the approved effect once and
+read the target back through the same authoritative interface. Both the
+embedded CRM recheck and the canonical writing equivalence, conditional write,
+and readback path are required for application.
+
+If the CRM companion is unavailable, or its identity or prerequisite recheck
+is unavailable or ambiguous, report the CRM-derived writing action **Manual**.
+Do the same when the canonical backlog, exact destination, complete-meaning
+search, write, or readback path is unavailable or ambiguous. Preserve the
+meeting's existing action number, ownership, result, and completion state for
+every outcome; neither companion may create a nested bundle, renumber the
+action, or declare a separate completion state. Keep a **Manual** proposal
+visible and unapplied. Do not redirect it to a task, issue, meeting note, or
+durable-context record.
+
+Completion: the idea appears once in its configured writing backlog or stops
+safely without creating a competing source of truth.
+
 ## Apply once in dependency order
 
 Order selected actions by their explicit dependencies, not by category. A

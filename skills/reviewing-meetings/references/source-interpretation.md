@@ -98,6 +98,18 @@ not provide them.
 Completion: every proposed fact traces to meeting evidence, transcript access
 was selective and purpose-bound, and unresolved attribution remains explicit.
 
+## Separate relationship evidence from attendance
+
+Pass relationship evidence to the companion only after the grounded meeting
+synthesis is stable. A participant list supplies a candidate, not a resolved
+relationship. Use selective transcript inspection only to answer a named
+ambiguity needed by the companion. An unresolved name, speaker label, or
+attendee mapping blocks the relationship effect without blocking the meeting
+proposal.
+
+Completion: the companion receives bounded grounded evidence, and identity
+ambiguity remains local to the relationship effect.
+
 ## Check observable durable and conversational state
 
 For each source-ready candidate with complete identity, query approved meeting

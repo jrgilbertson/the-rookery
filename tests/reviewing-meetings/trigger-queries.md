@@ -24,6 +24,7 @@ Date: 2026-07-22 | Planned harness: fresh agent contexts | Model: session defaul
 | Change action 1's due date to Friday, then approve it. | Yes | Edits and approves a visible meeting-review action. |
 | Defer action 3 until next week. | Yes | Defers a visible meeting-review action. |
 | Skip action 4. | Yes | Dismisses a visible meeting-review action. |
+| Resume the deferred CRM-derived action 5 from the visible meeting-review bundle. | Yes | Revisits a deferred relationship effect without leaving the meeting workflow. |
 
 ## Near misses: should not trigger
 
@@ -53,4 +54,6 @@ marked all nine intended queries `yes` and all nine near misses `no` (54 of 54
 correct, with no `unsure` judgments). Each of the four later action-response
 queries was then evaluated in three new listing-only contexts; all 12 judgments
 were `yes`. Combined evidence is 66 of 66 correct judgments with no `unsure`
-result.
+result. Three fresh judges then invoked for the deferred CRM-derived
+meeting-action resume and rejected a direct-CRM-bundle near-miss, for 6 of 6
+passing judgments.

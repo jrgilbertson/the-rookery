@@ -141,7 +141,8 @@ installation. Model: session default.
 
 ### Behavioral evidence
 
-- The final trigger gate passed 21 of 21 synthetic queries. All four review
+- At this checkpoint, the final trigger gate passed 21 of 21 synthetic queries.
+  All four review
   modes invoked correctly, eight adjacent workflows remained with their
   narrower owners, and a downstream email workflow retained ownership while
   requesting morning-mode priority context.
@@ -183,3 +184,114 @@ success claims based on agent activity volume.
 The trial's future product outcome is intentionally not claimed here. Scheduled
 first runs and the August 5 decision will supply the real evidence and any
 redacted escaped failure can become a regression case.
+
+## PR-review action-response trigger regression — 2026-07-24
+
+Three fresh listing-level judges saw only the updated skill name and
+description plus two focused queries. All three routed the visible
+morning-bundle approve/defer response to this skill and rejected the
+email-processing bundle action as caller-owned: 6 of 6 judgments passed.
+
+## Personal CRM soft-companion integration — 2026-07-24
+
+Harness: static contract review against synthetic cases 14 through 18. No live
+private source was queried and no destination mutation was attempted.
+
+- Morning and weekly now perform bounded relationship cadence and contextual
+  discovery only when the companion capability is available. A crossed cadence
+  threshold alone cannot create outreach work, and no suggestion is a valid
+  result.
+- Wind-down now separates a supported contact-date proposal from any distinct
+  relationship-load-bearing prose, Task, or communication effect.
+- Every relationship effect stays inside the caller's existing action numbers,
+  approval flow, and completion state. No nested CRM bundle, catch-up launch,
+  or second completion state was introduced.
+- Missing companion behavior degrades only relationship-dependent conclusions
+  and cannot block the broader review or justify invented CRM data.
+- Quarterly behavior remains contextual through the shared source contract. It
+  does not perform deliberate cadence scanning or add a separate CRM ritual.
+
+The focused static checks passed for the five new cases and the existing 13
+case headings remained present. A final fresh-context judge then passed all 15
+expectations across cases 14 through 18, including the corrected
+**Already satisfied** contact-date path. Existing ownership, one-bundle,
+no-write, foreground-limit, trigger, and completion contracts remained intact.
+No live source was queried.
+
+## Pre-PR quarterly relationship boundary correction
+
+Date: 2026-07-24
+
+- Added a negative quarterly case proving that an overdue cadence threshold
+  alone cannot create outreach work.
+- Added a positive quarterly case allowing one contextual relationship effect
+  only when evidence already used by the quarterly review makes the person
+  relevant.
+- Both paths preserve the existing quarterly bundle, approval flow, and
+  no-write preparation boundary without launching broad CRM discovery.
+- A fresh-context evaluation passed both cases. Cadence alone produced no
+  outreach, while current quarterly evidence supported one independently
+  reviewable contextual effect without a broad relationship scan.
+
+Result: passed.
+
+## Proactive review: CRM-derived communication text
+
+Date: 2026-07-26
+
+- CRM-derived communication text remains editable in the conversation. It is
+  never sent, saved as a draft, or copied into another artifact by the
+  chief-of-staff workflow.
+- Unchanged approval is **Already satisfied** because the text is already
+  visible. An edit creates a revised proposal that needs new exact approval.
+- Chief-of-staff retains action numbering, results, and completion with no
+  generic mutation fallback or nested CRM bundle.
+- A focused public-safe regression records both unchanged and edited paths. No
+  live communication or destination was queried or changed.
+
+Result: passed.
+
+## PR review follow-up: CRM-derived task and issue application
+
+Date: 2026-07-26
+
+- CRM-derived unrelated work in a chief-of-staff bundle now uses embedded CRM
+  plus the configured canonical task or issue workflow and exact displayed
+  destination.
+- Immediately before mutation, the workflow searches complete meaning. A
+  post-proposal equivalent is **Already satisfied**; a novel effect applies
+  once and requires readback; an unavailable or ambiguous path is **Manual**.
+- The chief-of-staff workflow retains action numbering, approval, result, and
+  completion. There is no generic fallback, redirected destination, or nested
+  CRM bundle.
+- A fresh read-only evaluator passed the ownership, equivalence, and safe-stop
+  contract. Public-safe regressions cover equivalent, unavailable, and novel
+  apply-once paths.
+- No live task, issue, relationship source, or destination was queried or
+  changed.
+
+Result: passed.
+
+## PR review follow-up: resumed actions and CRM-derived writing
+
+Date: 2026-07-26
+
+- The listing description now routes later revisit and resume requests for a
+  visible chief-of-staff bundle without taking ownership of actions from an
+  email-processing bundle.
+- CRM-derived writing-backlog actions keep their chief-of-staff action number
+  and completion state while using the embedded CRM companion and canonical
+  writing workflow for complete-meaning equivalence, destination validation,
+  and readback.
+- If the companion or canonical writing validation path is unavailable or
+  ambiguous, the action remains **Manual** instead of falling back to generic
+  application.
+- Three fresh listing-level judges received only the revised skill name and
+  description plus one revisit query and one email-processing near-miss. All
+  three invoked for the chief-of-staff revisit and rejected the caller-owned
+  email action, for 6 of 6 passing judgments.
+- Focused synthetic cases cover exact-bundle resumption and the ambiguous
+  writing-equivalence safe stop. No live source was queried and no destination
+  mutation was attempted.
+
+Result: passed.

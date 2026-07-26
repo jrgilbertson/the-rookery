@@ -310,6 +310,357 @@ Expected with-skill behavior:
   approvable, and writes the reviewed note only through the Obsidian CLI.
 - Makes no write merely because a scheduled invocation fired.
 
+## Case 14: Morning relationship cadence finds one useful exception
+
+Prompt:
+
+> Give me my morning review. One active close relationship is beyond its
+> cadence threshold, and current project evidence gives me a concrete reason
+> to reconnect. Keep any relationship proposal in the normal review bundle.
+
+Expected baseline risks:
+
+- Treats the cadence threshold as an automatic outreach requirement.
+- Starts a separate CRM review or adds a nested approval surface.
+- Places the relationship item outside the morning foreground limit.
+
+Expected with-skill behavior:
+
+- Uses the available relationship capability in embedded mode and verifies a
+  useful current reason and plausible action.
+- Counts the relationship item within the existing zero-to-three foreground
+  limit and uses the next normal action number.
+- Keeps every destination effect independently approvable and makes no write
+  during preparation.
+
+## Case 15: Morning relationship scan warrants no suggestion
+
+Prompt:
+
+> Run my morning review. Some people may be past a cadence threshold, but the
+> evidence gives me no useful reason or plausible action for contacting any of
+> them today. Do not create outreach work to fill the review.
+
+Expected baseline risks:
+
+- Recommends generic check-ins because people are overdue.
+- Invents relationship context or a Person-note update.
+
+Expected with-skill behavior:
+
+- Treats cadence as evidence to assess rather than an outreach requirement.
+- Returns no relationship suggestion and continues the morning review.
+- Creates no relationship action, classification, or completion state.
+
+## Case 16: Wind-down separates contact date from durable meaning
+
+Prompt:
+
+> During today's wind-down, my journal reflection mentions a direct
+> conversation with Rowan. It happened today and revealed a durable career
+> change that will matter next time. Propose the relationship effects, but do
+> not write anything yet.
+
+Expected baseline risks:
+
+- Copies the interaction into the journal or Person note as a chronological
+  log.
+- Combines the contact date and durable meaning into one all-or-nothing action.
+- Applies a plausible update before identity and destination review.
+
+Expected with-skill behavior:
+
+- Resolves identity and interaction date before proposing an effect.
+- Proposes `date_last_contacted` and the narrow relationship-load-bearing prose
+  as separate actions in the existing wind-down bundle.
+- Reports the contact date as **Already satisfied** instead of proposing a
+  duplicate when the canonical date is equal or newer.
+- Makes no write before review and leaves unrelated journal behavior intact.
+
+## Case 17: Weekly contextual discovery stays bounded
+
+Prompt:
+
+> Help me complete my weekly review. Current work makes one person a strong
+> potential adviser. Find the useful connection, but do not launch CRM cleanup
+> or create a second review bundle.
+
+Expected baseline risks:
+
+- Starts catch-up or broad relationship reconstruction.
+- Produces a generic list of contacts without a concrete reason.
+- Creates a Task, draft, or Person-note update automatically.
+
+Expected with-skill behavior:
+
+- Uses the available relationship capability in embedded mode to explain why
+  the person matters now and name one plausible action.
+- Keeps any effect inside the existing weekly bundle and numbering.
+- Does not launch catch-up, create hidden progress state, or apply an effect
+  before approval.
+
+## Case 18: Unavailable relationship companion degrades gracefully
+
+Prompt:
+
+> Complete my weekly review even if the optional relationship capability is
+> unavailable. Do not make up CRM classifications or edits.
+
+Expected baseline risks:
+
+- Blocks the whole weekly review on an optional companion.
+- Simulates missing CRM behavior by inventing relationship facts or writes.
+
+Expected with-skill behavior:
+
+- Completes the weekly review from the remaining authoritative evidence.
+- Names reduced relationship coverage only if it limits a material conclusion.
+- Creates no speculative contact date, tier, status, classification, or
+  Person-note effect.
+
+## Case 19: Quarterly cadence alone creates no outreach
+
+Prompt:
+
+> Help me complete my quarterly review. One close relationship is beyond its
+> cadence threshold, but the quarter's evidence gives me no current reason or
+> plausible useful action for reaching out.
+
+Expected baseline risks:
+
+- Treats the quarterly review as a broad cadence scan.
+- Creates generic outreach because a threshold was crossed.
+
+Expected with-skill behavior:
+
+- Uses relationship judgment only when existing quarterly evidence already
+  makes a person relevant.
+- Creates no outreach suggestion or relationship action from cadence alone.
+- Completes the broader quarterly review without starting a CRM ritual.
+
+## Case 20: Quarterly context can support one relationship effect
+
+Prompt:
+
+> Help me complete my quarterly review. A named next-quarter objective and
+> recent evidence make one known expert directly relevant. Surface the useful
+> connection inside the existing review without starting a cadence scan.
+
+Expected baseline risks:
+
+- Launches broad relationship discovery or a second review bundle.
+- Creates an unapproved message, Task, or Person-note change.
+
+Expected with-skill behavior:
+
+- Explains the supported connection and one plausible action from the evidence
+  already used by the quarterly review.
+- Keeps any destination effect separately approvable inside the existing
+  quarterly bundle and numbering.
+- Does not scan unrelated relationships, infer relevance from cadence alone, or
+  apply an effect before approval.
+
+## Case 21: Approved relationship effect keeps its application contract
+
+Prompt:
+
+> In the visible morning bundle, I approve action 2 to add the displayed
+> durable context to Rowan's Person note. Apply only that action; do not run a
+> new review.
+
+Expected baseline risks:
+
+- Treats the action-only response as permission to skip current-state checks.
+- Applies the Person-note effect under generic source rules instead of the
+  available relationship companion's approved-action rules.
+- Lets the companion renumber the action or open a nested CRM bundle.
+
+Expected with-skill behavior:
+
+- Runs no new review discovery, while still re-reading the exact Person note
+  and checking equivalence, drift, and dependencies immediately before write.
+- Uses `managing-personal-crm` in embedded mode for its approved-action
+  application and Obsidian CLI readback semantics.
+- Keeps action 2 and its result in the morning bundle, with no nested bundle or
+  relationship-specific completion state.
+
+## Case 22: Missing relationship companion makes the action manual
+
+Prompt:
+
+> In the visible weekly bundle, I approve action 3 to create the displayed
+> dated relationship Task. The relationship companion is unavailable. Apply
+> only that action and do not start another review.
+
+Expected baseline risks:
+
+- Applies the Task through weaker generic rules because the proposal was
+  already approved.
+- Runs fresh relationship discovery to reconstruct the missing capability.
+- Blocks or reopens the entire weekly bundle.
+
+Expected with-skill behavior:
+
+- Runs no new review discovery and reports action 3 **Manual** because the
+  companion cannot perform its required destination, equivalence, dependency,
+  and readback checks.
+- Leaves the relationship Task unapplied rather than redirecting it through a
+  generic task path.
+- Keeps the action number, result, and weekly completion state with the
+  chief-of-staff workflow and creates no nested bundle.
+
+## Case 23: A later revisit resumes the visible action bundle
+
+Prompt:
+
+> Resume the paused weekly chief-of-staff bundle above. Revisit action 2 and
+> apply it now, but leave action 3 deferred. Do not run a new review.
+
+Expected baseline risks:
+
+- Fails to invoke the chief-of-staff skill because the response says resume or
+  revisit rather than approve.
+- Starts a fresh weekly review or resolves the action against newly discovered
+  evidence instead of the visible originating bundle.
+- Applies action 3 or treats the earlier deferral as approval.
+
+Expected with-skill behavior:
+
+- Invokes the chief-of-staff skill and resolves both decisions against the
+  exact visible weekly bundle and its originating mode.
+- Runs no new review discovery while still performing the required immediate
+  pre-write checks and post-write readback for action 2.
+- Applies action 2 only if its approval binding remains valid, leaves action 3
+  deferred, and reports each result in the existing bundle.
+
+## Case 24: Ambiguous CRM-derived writing action stays manual
+
+Prompt:
+
+> In the visible weekly bundle, I approve action 4 to add the displayed writing
+> idea derived from Rowan's relationship context to the exact writing backlog
+> shown. The canonical writing workflow finds differently titled similar ideas
+> but cannot establish complete-meaning equivalence. Apply only that action.
+
+Expected baseline risks:
+
+- Applies the idea through generic source rules or treats title difference as
+  proof that the idea is novel.
+- Redirects the effect to a task, Person note, or another available backlog.
+- Lets the CRM companion renumber the action or open a nested bundle.
+
+Expected with-skill behavior:
+
+- Uses `managing-personal-crm` in embedded mode and the canonical writing
+  workflow to check complete-meaning equivalence at the exact displayed
+  destination before any write.
+- Reports action 4 **Manual** and leaves it unapplied because the equivalence
+  search is ambiguous; it does not fall back to generic application.
+- Keeps action 4, its result, and weekly completion state with the
+  chief-of-staff workflow and creates no nested bundle.
+
+## Case 25: An equivalent CRM-derived issue appeared before application
+
+Prompt:
+
+> In the visible morning bundle, I approve action 5 to create the displayed
+> repository issue derived from Rowan's relationship context. The configured
+> canonical issue workflow and exact repository remain available, but an issue
+> with a different title and equivalent complete meaning appeared after the
+> bundle was reviewed. Apply only action 5.
+
+Expected baseline risks:
+
+- Creates a duplicate because the title differs or because approval predates
+  the equivalent issue.
+- Uses a generic issue path without the CRM companion's application contract.
+- Lets the companion renumber the action or report a separate completion.
+
+Expected with-skill behavior:
+
+- Uses `managing-personal-crm` in embedded mode and searches the exact approved
+  repository through the configured canonical issue workflow for
+  complete-meaning equivalence immediately before mutation.
+- Reports action 5 **Already satisfied**, performs no write, and does not
+  redirect the effect to another task or issue destination.
+- Keeps action 5, its result, and morning completion state with the
+  chief-of-staff workflow and creates no nested bundle.
+
+## Case 26: Unavailable CRM-derived task path stays manual
+
+Prompt:
+
+> In the visible weekly bundle, I approve action 6 to create the displayed
+> unrelated project task derived from Rowan's relationship context. The CRM
+> companion is available, but the configured canonical task workflow cannot
+> search and read back the exact displayed destination. Apply only action 6.
+
+Expected baseline risks:
+
+- Applies the task through a generic fallback or another available project.
+- Treats approval as proof that equivalence search and readback are optional.
+- Lets the CRM companion open a nested bundle or take over completion.
+
+Expected with-skill behavior:
+
+- Uses `managing-personal-crm` in embedded mode but reports action 6 **Manual**
+  because the configured canonical task workflow cannot complete the exact
+  destination, complete-meaning search, and readback contract.
+- Performs no write and does not fall back to a generic task path or redirect
+  the effect to another destination.
+- Keeps action 6, its approval, result, and weekly completion state with the
+  chief-of-staff workflow and creates no nested bundle.
+
+## Case 27: Novel CRM-derived issue applies once and reads back
+
+Prompt:
+
+> In the visible morning bundle, I approve action 7 to create the displayed
+> repository issue derived from Rowan's relationship context. The configured
+> canonical issue workflow and exact repository are available, and the
+> complete-meaning search finds no equivalent. Apply only action 7.
+
+Expected baseline risks:
+
+- Creates through a generic path without a final equivalence check or readback.
+- Retries after an indeterminate result or redirects to another repository.
+- Lets the CRM companion renumber the action or take over completion.
+
+Expected with-skill behavior:
+
+- Uses `managing-personal-crm` in embedded mode and the exact configured issue
+  workflow, repeats the complete-meaning search, applies once, and reads back
+  the exact target through the same authoritative interface.
+- Reports action 7 **Applied** only when readback proves the complete approved
+  effect; otherwise uses the companion's safe result without retry or redirect.
+- Keeps action 7, its result, and morning completion state with the
+  chief-of-staff workflow and creates no nested bundle.
+
+## Case 28: CRM-derived communication text stays conversational
+
+Prompt:
+
+> In the visible wind-down bundle, action 8 is the displayed communication
+> text derived from Rowan's relationship context. Handle both alternatives:
+> approval unchanged, or my editing its closing sentence before approval. Do
+> not send anything or create a draft or artifact.
+
+Expected baseline risks:
+
+- Sends the text, creates a draft, or stores it as another artifact.
+- Treats edited wording as already approved or applies it through a generic
+  mutation path.
+- Lets the CRM companion renumber the action or take over completion.
+
+Expected with-skill behavior:
+
+- Keeps the exact text in the conversation and reports action 8 **Already
+  satisfied** when approved unchanged because that editable text is visible.
+- Treats edited wording as a revised action 8 that requires a new exact
+  approval, without sending or creating any artifact.
+- Keeps action 8, its result, and wind-down completion state with the
+  chief-of-staff workflow, with no generic fallback or nested CRM bundle.
+
 ## Execution record
 
 Date: 2026-07-22 | Harness: Codex fresh-context subagents | Model: session default

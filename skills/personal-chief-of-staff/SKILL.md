@@ -1,6 +1,6 @@
 ---
 name: personal-chief-of-staff
-description: Use when the user asks what needs attention today, requests a morning or daily chief-of-staff review, wants to complete a daily journal or wind down, requests a weekly or quarterly review, or another workflow requests current cross-source chief-of-staff context. Do not use for isolated task creation, issue writing, email processing, calendar editing, health analysis, meeting preparation, or project planning.
+description: Use when the user asks what needs attention today, requests a morning or daily chief-of-staff review, wants to complete a daily journal or wind down, requests a weekly or quarterly review, later revisits, resumes, approves, edits, defers, skips, or otherwise decides visible chief-of-staff actions, or another workflow requests current cross-source chief-of-staff context. Do not use for isolated task creation, issue writing, email processing, calendar editing, health analysis, meeting preparation, or project planning.
 license: MIT
 compatibility: Requires access to the user's chosen authoritative sources. Obsidian workflows require a running Obsidian app and its CLI.
 ---
@@ -11,6 +11,56 @@ Turn live personal and work evidence into an interactive review that helps the
 user orient, act, reflect, and learn. The user's existing systems remain
 authoritative; this skill adds no database, run ledger, cache, or generated
 brief archive.
+
+## Resolve visible action responses first
+
+Before selecting a mode, determine whether the current message approves, edits,
+defers, skips, declines, revisits, or otherwise decides actions from a visible
+chief-of-staff bundle. Resolve the response against that exact bundle and its
+originating mode. Do not infer an action from a bare number when the visible
+context does not identify it.
+
+For each decided action, use its displayed identity, target, effect, and
+approval state. Read [references/source-behavior.md](references/source-behavior.md)
+and the originating mode reference, then follow their existing shared and
+mode-specific application rules. For an approved Person-note, relationship
+Task, CRM-derived unrelated work, or CRM-derived writing-backlog effect, use
+the available
+`managing-personal-crm` companion in embedded mode and follow its
+`references/applying-approved-actions.md` semantics. Route CRM-derived
+unrelated work through the caller's configured canonical task or issue
+workflow and exact displayed destination; route a writing-backlog effect only
+through the configured canonical writing workflow and exact displayed
+destination. For either, search that destination for complete-meaning
+equivalence immediately before mutation. Report an equivalent that has
+appeared as **Already satisfied**; otherwise apply once and read the exact
+target back through the same authoritative interface. The chief-of-staff
+workflow keeps the action number, approval flow, result, and completion state;
+the companion creates no nested bundle. If the companion or the required
+canonical workflow, exact destination, search, write, or readback path is
+unavailable or ambiguous, report that relationship-derived action **Manual**
+rather than applying it under generic source rules or another destination.
+
+For CRM-derived communication text, keep the exact displayed text in the
+conversation only. Never send it, create a draft, or create another artifact.
+If approved unchanged, report the chief-of-staff action **Already satisfied**
+because the editable text is already visible. An edit produces a revised
+proposal under the same chief-of-staff action number and requires a new exact
+approval. Keep its result and completion state with this workflow; do not use a
+generic mutation fallback or let the companion create a nested bundle.
+
+An action-only response does not run new review discovery or prepare another
+review. It still performs every immediate pre-write target and destination
+re-read, equivalence, drift, dependency, and post-write readback check required
+by the loaded application rules.
+
+If the same message explicitly requests a new review, finish the visible action
+decisions first. Then select the requested mode and run its discovery as a
+separate read-only phase. Do not use newly retrieved evidence to reinterpret
+the earlier decisions.
+
+Completion: every visible action decision was resolved against its exact
+originating bundle and mode before any separately requested review began.
 
 ## Select the mode
 

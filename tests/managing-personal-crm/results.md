@@ -138,6 +138,23 @@ Date: 2026-07-26
 
 Result: passed.
 
+## PR review follow-up: stage-two relationship contract continuity
+
+Date: 2026-07-26
+
+- Every visible stage-two interpretation confirmation or correction, focused
+  answer, and deferred-reconstruction resume now loads the relationship
+  contract before inspecting the current Person note or reconstructing it.
+- The same contract governs target schema, status-dependent tiers, monotonic
+  last-contact dates, durable relationship meaning, and safe handling of a
+  populated legacy `next_touch` commitment throughout reconstruction.
+- The blocked inventory-only exception remains narrow. It cannot bypass the
+  contract once stage-two Person inspection or reconstruction will occur.
+- A focused public-safe regression uses only synthetic recap state and records
+  no live Person-note content. No source, Task, or vault mutation occurred.
+
+Result: passed.
+
 ## PR review follow-up: deferred actions and Messages rechecks
 
 Date: 2026-07-26

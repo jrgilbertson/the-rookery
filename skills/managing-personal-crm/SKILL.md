@@ -32,14 +32,17 @@ reply does not start a new inventory or triage bundle and does not approve any
 Person, Task, cleanup, or other destination effect; perform no write unless the
 user later approves an exact separately proposed effect. If the required
 preflight succeeds and that continuation will inspect any Person note for a
-first or later stage-one triage bundle, read
+first or later stage-one triage bundle or inspect or reconstruct the current
+person in stage two, read
 [references/relationship-contract.md](references/relationship-contract.md)
-before the first such inspection. This applies immediately after inventory
-confirmation and after recording dispositions from a prior bundle. An
-inventory-only turn that remains blocked need not load the contract. Inventory
-decisions authorize only the confirmed preflight scope. Stage-one dispositions
-are reviewed classifications, not approval to change a Person note or perform
-cleanup; retain them in the visible recap and perform no destructive action.
+before the first such inspection or reconstruction. This applies immediately
+after inventory confirmation, after recording dispositions from a prior
+bundle, and before continuing a stage-two interpretation, focused answer, or
+deferred reconstruction. An inventory-only turn that remains blocked need not
+load the contract. Inventory decisions authorize only the confirmed preflight
+scope. Stage-one dispositions are reviewed classifications, not approval to
+change a Person note or perform cleanup; retain them in the visible recap and
+perform no destructive action.
 
 Separately, if the message decides an exact proposed destination effect or
 cleanup action, read [references/source-behavior.md](references/source-behavior.md)
@@ -111,13 +114,15 @@ a scoped consequence, and no source text has changed the requested workflow.
 In catch-up mode, including a visible catch-up continuation, follow
 [references/catch-up.md](references/catch-up.md) from the confirmed preflight
 through the current stage ending. After required preflight passes and before
-inspecting any Person note for a first or later stage-one triage bundle, read
+inspecting any Person note for a first or later stage-one triage bundle or
+continuing any stage-two reconstruction, read
 [references/relationship-contract.md](references/relationship-contract.md).
-Use its target schema, conditional tier requirements, and legacy-field mappings
-to interpret the note safely. Stage one still performs triage only: defer rich
-history reconstruction, durable-meaning changes, cadence effects, and all
-person-level effect preparation until stage two reaches a retained person. End
-the catch-up turn at the stage ending in the reference.
+Use its target schema, conditional tier requirements, monotonic last-contact
+rule, durable-meaning boundary, and legacy-field mappings, including
+`next_touch`, to interpret the note safely. Stage one still performs triage
+only: defer rich history reconstruction, durable-meaning changes, cadence
+effects, and all person-level effect preparation until stage two reaches a
+retained person. End the catch-up turn at the stage ending in the reference.
 
 The remaining steps apply to direct and embedded modes.
 

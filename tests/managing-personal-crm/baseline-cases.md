@@ -484,6 +484,19 @@ resume restores Priya as the current person and continues from the visible
 interpretation and questions. Resume is not effect approval: it performs no
 destination recheck or write and retains the existing catch-up recap.
 
+### Every stage-two continuation loads the relationship contract first
+
+Given a visible stage-two interpretation confirmation or correction, focused
+answer, or deferred-reconstruction resume will inspect a Person note or
+continue reconstruction, the skill loads the relationship contract first. Its
+target schema and status-dependent tier requirements govern the reconstructed
+fields; `date_last_contacted` advances only monotonically for substantive
+direct contact; proposed prose contains only relationship-load-bearing meaning;
+and a populated legacy `next_touch` remains visible until an equivalent
+canonical Task is **Applied**, **Already satisfied**, or explicitly rejected.
+The blocked inventory-only exception cannot bypass this stage-two load, and the
+continuation itself authorizes no write.
+
 ## Execution record
 
 Without-skill observations were obtained in three separate ephemeral Codex CLI

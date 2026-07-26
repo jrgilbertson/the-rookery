@@ -1,6 +1,6 @@
 ---
 name: managing-personal-crm
-description: Use when the user asks to capture a relationship interaction, prepare for one person, clean up or reconstruct Person notes, review overdue relationships, discover who could help with current work, when another workflow finds a possible relationship effect, or when the user later approves, edits, defers, skips, or otherwise decides actions from a direct or catch-up CRM bundle, including catch-up dispositions and cleanup approval. Embedded CRM actions stay with the caller workflow. Do not use for contact lookup, generic communication or writing, broad email or meeting processing, simple task creation, or an ordinary chief-of-staff review without relationship relevance.
+description: Use when the user asks to capture a relationship interaction, prepare for one person, clean up or reconstruct Person notes, review overdue relationships, discover who could help with current work, when another workflow finds a possible relationship effect, or when the user later confirms or revises a required catch-up source inventory or decides actions or dispositions from a direct or catch-up CRM bundle, including cleanup approval. Embedded CRM actions stay with the caller workflow. Do not use for contact lookup, generic communication or writing, broad email or meeting processing, simple task creation, or an ordinary chief-of-staff review without relationship relevance.
 license: MIT
 compatibility: Requires host-provided access to the user's configured authoritative sources. Person-note operations require an available Obsidian CLI with explicit vault targeting. Optional local Apple Messages reads through imsg require the CLI and operating-system permission to message history.
 ---
@@ -14,22 +14,33 @@ meaning, and dated relationship commitments stay in the canonical task system.
 
 ## Resolve the mode
 
-First determine whether the message decides any visible CRM actions. If so,
-read [references/source-behavior.md](references/source-behavior.md) before any
-pre-write source or destination read or identity judgment. When a selected
-effect depends on Person-note, contact, cadence, durable-meaning, or other
-Person semantics, also read
+First determine whether the message continues a visible catch-up source
+inventory or stage-one disposition bundle. If it confirms or revises the
+required inventory, or supplies dispositions such as `1 active, 2 merge`, read
+[references/catch-up.md](references/catch-up.md) before ordinary action handling
+or mode selection and continue that exact catch-up stage. Inventory decisions
+authorize only the confirmed preflight scope. Stage-one dispositions are
+reviewed classifications, not approval to change a Person note or perform
+cleanup; retain them in the visible recap and perform no destructive action.
+
+Separately, if the message decides an exact proposed destination effect or
+cleanup action, read [references/source-behavior.md](references/source-behavior.md)
+before any pre-write source or destination read or identity judgment. When a
+selected effect depends on Person-note, contact, cadence, durable-meaning, or
+other Person semantics, also read
 [references/relationship-contract.md](references/relationship-contract.md).
 Then read
 [references/applying-approved-actions.md](references/applying-approved-actions.md)
-and handle those decisions against that exact direct or catch-up bundle.
+and handle only that separately proposed action against the exact direct or
+catch-up bundle.
 
 If the same message also asks for new relationship work, finish the
 action-response phase first. Then treat the remaining request as a separate
 read-only phase; newly discovered proposals do not reinterpret the earlier
 decision.
 
-For any remaining request, choose exactly one mode:
+For any remaining request that is not the visible catch-up continuation, choose
+exactly one mode:
 
 - **Direct:** The user asks to capture an interaction, find a relevant person,
   examine cadence, prepare a one-person close-up, or assess a correction. This

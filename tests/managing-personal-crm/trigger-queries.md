@@ -1,7 +1,7 @@
 # Trigger queries: managing-personal-crm
 
 These synthetic listing-level queries define the portable trigger boundary.
-The set has ten should-trigger and nine near-miss queries. Judge
+The set has twelve should-trigger and nine near-miss queries. Judge
 each in three fresh contexts using only the skill name, description, and query.
 
 ## Should invoke
@@ -11,6 +11,8 @@ each in three fresh contexts using only the skill name, description, and query.
 | I just caught up with Sam. Update our relationship context and note when we spoke. | Direct capture | Yes, yes, yes | Explicit relationship interaction capture. |
 | Prepare me for coffee with Priya using her Person note and any useful recent context. | Direct close-up | Yes, yes, yes | Requests one-person relationship preparation. |
 | Start the one-time cleanup of my Person notes and triage the first batch. | Catch-up | Yes, yes, yes | Explicit CRM catch-up and triage. |
+| That visible catch-up source inventory is right. Keep Person notes and Messages required, drop WhatsApp, and continue the preflight. | Catch-up inventory decision | Yes, yes, yes | Confirms and revises the required source inventory for the visible catch-up. |
+| For the visible catch-up batch: 1 active, 2 merge into Taylor Reed, 3 reference, and 4 delete. Continue without applying any cleanup. | Catch-up stage-one decisions | Yes, yes, yes | Supplies mixed reviewed dispositions that continue the visible catch-up without authorizing effects or cleanup. |
 | For that Person-note catch-up batch, keep the first two, skip the third, and move the proof-verified duplicates to Trash. | Catch-up decisions | Yes, yes, yes | Decides catch-up dispositions and cleanup approval against the visible bundle. |
 | Which close relationships are overdue for a thoughtful check-in? | Direct cadence scan | Yes, yes, yes | Explicit relationship-cadence request. |
 | Who I know could give useful feedback on this article, and why now? | Direct discovery | Yes, yes, yes | Connects current work to a relevant person and action. |
@@ -55,3 +57,9 @@ After PR review expanded the description to cover catch-up decisions, three
 fresh judges evaluated the added catch-up-decision query and a focused embedded
 chief-of-staff near-miss. All three invoked for the catch-up decision and all
 three left the embedded action with the caller, for 6 of 6 passing judgments.
+
+After the catch-up continuation review, three fresh judges received only the
+revised name and description plus an inventory decision, a mixed stage-one
+disposition reply, and a meeting-owned action near-miss. All three invoked for
+both catch-up continuations and rejected the meeting-owned action, for 9 of 9
+passing judgments.

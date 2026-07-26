@@ -386,6 +386,27 @@ relationship contract before the application reference performs any pre-write
 read or identity revalidation. It resolves the exact original bundle without
 starting a new inventory, triage, or reconstruction phase.
 
+### Catch-up inventory decisions continue the visible preflight
+
+Given a visible proposed catch-up source inventory, a later confirmation or
+revision of which sources are required or optional is recognized before
+ordinary action handling or mode selection. The skill loads the catch-up
+reference and continues the exact inventory and preflight stage using only the
+confirmed scope. The inventory decision is not an approved destination effect,
+does not enter the applying-approved-actions path, and does not start triage
+until every required source passes.
+
+### Mixed stage-one dispositions are review, not application authority
+
+Given a visible stage-one bundle and the reply `1 active, 2 merge into Taylor
+Reed, 3 reference, 4 delete`, the skill loads the catch-up reference first,
+records each Person-note path and reviewed disposition in the compact visible
+recap, and continues the exact catch-up workflow from that stage. It does not
+mutate Person notes, perform cleanup, or treat `merge` or `delete` as approval.
+Only a separately proposed and approved Person effect or reversible cleanup
+action enters applying-approved-actions. No destructive action occurs while
+recording the mixed dispositions.
+
 ## Execution record
 
 Without-skill observations were obtained in three separate ephemeral Codex CLI

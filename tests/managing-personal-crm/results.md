@@ -86,6 +86,28 @@ no-hidden-state continuity; and successful no-action behavior.
 
 Result: passed.
 
+## PR review follow-up: catch-up continuation routing
+
+Date: 2026-07-26
+
+- The listing metadata now routes confirmations and revisions of a required
+  visible catch-up source inventory back to the CRM skill.
+- The runtime resolver recognizes source-inventory decisions and stage-one
+  dispositions before ordinary action handling or mode selection, then resumes
+  the exact visible catch-up stage through the catch-up reference.
+- Stage-one `active`, `dormant`, `reference`, `ended`, `merge`, and `delete`
+  decisions remain reviewed classifications in the conversational recap. They
+  authorize no Person-note change or cleanup; only separately proposed effects
+  and reversible cleanup actions enter application handling.
+- Three fresh listing-level judges invoked for both catch-up continuation
+  queries and rejected a meeting-owned action near-miss, for 9 of 9 passing
+  judgments. Focused public-safe regressions cover inventory revision and mixed
+  dispositions with no destructive action.
+- No live Person note, source inventory, or vault content was queried or
+  changed for this review follow-up.
+
+Result: passed.
+
 ## PR review follow-up: ownership, approval safeguards, and merge ordering
 
 Date: 2026-07-26

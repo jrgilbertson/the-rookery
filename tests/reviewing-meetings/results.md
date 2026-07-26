@@ -30,6 +30,19 @@ Date: 2026-07-23
 
 Result: passed.
 
+## Proactive review: deferred embedded-action routing
+
+Date: 2026-07-26
+
+- Listing metadata now routes revisit and resume requests for deferred visible
+  meeting-review actions, including CRM-derived actions, back to the meeting
+  workflow that owns their numbering, approval, and completion.
+- Three fresh listing-level judges invoked for the meeting-owned resume and
+  rejected a Direct-CRM-owned near-miss, for 6 of 6 passing judgments.
+- No live meeting source or destination was queried or changed.
+
+Result: passed.
+
 ## PR review follow-up: first-bundle completeness
 
 Date: 2026-07-26

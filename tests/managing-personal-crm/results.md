@@ -86,6 +86,20 @@ no-hidden-state continuity; and successful no-action behavior.
 
 Result: passed.
 
+## Proactive review: reversible-probe atomicity
+
+Date: 2026-07-26
+
+- The separately approved reversible trash-capability probe is now the explicit
+  exception to the general all-or-nothing single-target action rule.
+- Its observable intermediate states remain governed by exact state reporting,
+  dependent cleanup **Skipped**, no blind retry, and a bounded repair. The
+  exception grants no authority to any other non-atomic effect.
+- A focused public-safe regression records the interaction between the general
+  atomicity rule and the probe sequence. No live vault or trash operation ran.
+
+Result: passed.
+
 ## PR review follow-up: catch-up relationship contract continuity
 
 Date: 2026-07-26

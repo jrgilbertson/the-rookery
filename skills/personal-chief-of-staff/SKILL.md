@@ -41,6 +41,14 @@ canonical workflow, exact destination, search, write, or readback path is
 unavailable or ambiguous, report that relationship-derived action **Manual**
 rather than applying it under generic source rules or another destination.
 
+For CRM-derived communication text, keep the exact displayed text in the
+conversation only. Never send it, create a draft, or create another artifact.
+If approved unchanged, report the chief-of-staff action **Already satisfied**
+because the editable text is already visible. An edit produces a revised
+proposal under the same chief-of-staff action number and requires a new exact
+approval. Keep its result and completion state with this workflow; do not use a
+generic mutation fallback or let the companion create a nested bundle.
+
 An action-only response does not run new review discovery or prepare another
 review. It still performs every immediate pre-write target and destination
 re-read, equivalence, drift, dependency, and post-write readback check required

@@ -235,6 +235,22 @@ Date: 2026-07-24
 
 Result: passed.
 
+## Proactive review: CRM-derived communication text
+
+Date: 2026-07-26
+
+- CRM-derived communication text remains editable in the conversation. It is
+  never sent, saved as a draft, or copied into another artifact by the
+  chief-of-staff workflow.
+- Unchanged approval is **Already satisfied** because the text is already
+  visible. An edit creates a revised proposal that needs new exact approval.
+- Chief-of-staff retains action numbering, results, and completion with no
+  generic mutation fallback or nested CRM bundle.
+- A focused public-safe regression records both unchanged and edited paths. No
+  live communication or destination was queried or changed.
+
+Result: passed.
+
 ## PR review follow-up: CRM-derived task and issue application
 
 Date: 2026-07-26

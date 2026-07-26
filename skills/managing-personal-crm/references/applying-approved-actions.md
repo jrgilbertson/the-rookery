@@ -48,6 +48,11 @@ single target must use an operation that produces the complete approved result
 or no result. If the interface cannot do that, split it into separate proposals
 and obtain approval before either write.
 
+The separately approved reversible trash-capability probe below is the explicit
+exception to that atomicity rule. Its documented sequence has observable
+intermediate states, which use the observed-state reporting, dependent cleanup
+skip, and bounded repair rules in **Keep cleanup reversible**.
+
 For every Person-note read, search, create, edit, move, rename, merge, trash,
 restore, or readback, use the Obsidian CLI with explicit configured-vault and
 target selection. Preserve unrelated metadata, manual prose, wikilinks,

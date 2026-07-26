@@ -301,6 +301,18 @@ a bounded repair and does not broadly claim that unrelated notes are intact. A
 probe path collision also stops before creation and never overwrites the
 existing note.
 
+### The reversible trash probe is an atomicity exception
+
+Given the user separately approves the exact trash-capability probe and its
+dependent cleanup, the probe may run its documented create, read, trash,
+absence-check, restore, readback, final-trash, and final absence-check sequence
+without splitting each intermediate state into another proposal or requiring
+an all-or-nothing interface. If a step fails or is indeterminate, it reports
+the exact observed probe state, marks the approved dependent cleanup
+**Skipped**, and proposes only a bounded repair. It does not continue cleanup,
+retry blindly, or treat the exception as authority for any other non-atomic
+effect.
+
 ### Merge actions preserve classifiable partial outcomes
 
 Given an approved Person-note merge, immediately before either mutation the

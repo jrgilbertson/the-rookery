@@ -636,6 +636,31 @@ Expected with-skill behavior:
 - Keeps action 7, its result, and morning completion state with the
   chief-of-staff workflow and creates no nested bundle.
 
+## Case 28: CRM-derived communication text stays conversational
+
+Prompt:
+
+> In the visible wind-down bundle, action 8 is the displayed communication
+> text derived from Rowan's relationship context. Handle both alternatives:
+> approval unchanged, or my editing its closing sentence before approval. Do
+> not send anything or create a draft or artifact.
+
+Expected baseline risks:
+
+- Sends the text, creates a draft, or stores it as another artifact.
+- Treats edited wording as already approved or applies it through a generic
+  mutation path.
+- Lets the CRM companion renumber the action or take over completion.
+
+Expected with-skill behavior:
+
+- Keeps the exact text in the conversation and reports action 8 **Already
+  satisfied** when approved unchanged because that editable text is visible.
+- Treats edited wording as a revised action 8 that requires a new exact
+  approval, without sending or creating any artifact.
+- Keeps action 8, its result, and wind-down completion state with the
+  chief-of-staff workflow, with no generic fallback or nested CRM bundle.
+
 ## Execution record
 
 Date: 2026-07-22 | Harness: Codex fresh-context subagents | Model: session default

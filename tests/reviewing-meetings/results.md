@@ -64,6 +64,20 @@ Date: 2026-07-26
 
 Result: passed.
 
+## PR review follow-up: CRM writing post-proposal equivalence
+
+Date: 2026-07-26
+
+- The immediate pre-write complete-meaning search now returns **Already
+  satisfied** with no write when an equivalent writing idea appeared after
+  bundle preparation. Application and readback occur only when novelty is
+  established.
+- A focused public-safe regression preserves the meeting action number,
+  ownership, result, and completion state while preventing a nested bundle.
+- No live relationship source or writing backlog was queried or changed.
+
+Result: passed.
+
 ## Proactive review: deferred embedded-action routing
 
 Date: 2026-07-26

@@ -541,6 +541,16 @@ produces **Applied** or **Already satisfied**. The meeting retains its action
 number, bundle ownership, and completion state; neither companion creates a
 nested bundle.
 
+### Post-proposal equivalent CRM-derived writing is already satisfied
+
+Given an approved writing-backlog action remains visible but a differently
+titled idea with equivalent complete meaning appears in the exact displayed
+backlog after bundle preparation, the embedded CRM recheck still runs and the
+canonical writing workflow repeats its complete-meaning search immediately
+before mutation. The action is **Already satisfied** and performs zero writes.
+It retains the meeting's existing action number, ownership, result, and
+completion state, and neither companion creates a nested bundle.
+
 ### Unavailable CRM companion makes derived writing manual
 
 Given an approved writing idea depends on embedded CRM judgment but the CRM
@@ -569,7 +579,7 @@ classification or create a second review surface.
 
 - Behavior changed: yes, meeting review now performs an optional embedded
   relationship pass after synthesis while retaining one owner and one bundle.
-- Tests added: fifteen synthetic regression cases covering supported effects,
+- Tests added: sixteen synthetic regression cases covering supported effects,
   acceptance shape, attendance, contextual discovery, identity ambiguity,
   duplicate suppression, ownership, CRM-derived task, issue, and writing
   routing, and graceful degradation.

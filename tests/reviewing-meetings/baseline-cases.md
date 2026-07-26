@@ -501,6 +501,34 @@ the configured canonical relationship task system while the engineering change
 routes to its established issue system. Neither is mirrored into the other's
 system.
 
+### CRM-derived unrelated work succeeds only through both owners
+
+Given an approved repository issue is unrelated work derived from a known
+Person's relationship context, the embedded CRM companion revalidates the
+exact Person identity and every supporting relationship prerequisite. The
+configured canonical issue workflow then searches the exact displayed
+destination by complete meaning. When no equivalent exists, it applies the
+effect once and reads the exact target back through the same authoritative
+interface before reporting **Applied**. The meeting keeps its existing action
+number, ownership, result, and completion state; neither owner creates a nested
+bundle.
+
+### Unavailable or ambiguous CRM recheck makes unrelated work manual
+
+Given an approved unrelated task or issue depends on embedded CRM judgment but
+the companion, exact Person identity recheck, or relationship-prerequisite
+recheck is unavailable or ambiguous, the existing numbered action is
+**Manual** and unapplied. No canonical work search or write occurs, and the
+meeting keeps ownership and numbering without creating a nested bundle.
+
+### Unavailable or ambiguous canonical work path makes unrelated work manual
+
+Given the embedded CRM recheck succeeds but the configured canonical task or
+issue workflow, exact displayed destination, complete-meaning search, write,
+or readback path is unavailable or ambiguous, the existing numbered action is
+**Manual** and unapplied. The workflow does not use a generic mutation path or
+redirect the effect, and meeting ownership and numbering remain unchanged.
+
 ### CRM-derived writing succeeds only through both canonical paths
 
 Given a meeting creates one supported writing idea connected to a known person,
@@ -541,9 +569,9 @@ classification or create a second review surface.
 
 - Behavior changed: yes, meeting review now performs an optional embedded
   relationship pass after synthesis while retaining one owner and one bundle.
-- Tests added: nine synthetic regression cases covering supported effects,
+- Tests added: fifteen synthetic regression cases covering supported effects,
   acceptance shape, attendance, contextual discovery, identity ambiguity,
-  duplicate suppression, ownership, writing-backlog routing, and graceful
-  degradation.
+  duplicate suppression, ownership, CRM-derived task, issue, and writing
+  routing, and graceful degradation.
 - Live private mutation: not performed for this unit. Live acceptance remains
   part of the Personal CRM plan's later acceptance and cutover unit.

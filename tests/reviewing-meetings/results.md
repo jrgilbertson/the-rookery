@@ -30,6 +30,24 @@ Date: 2026-07-23
 
 Result: passed.
 
+## PR review follow-up: dual-owner CRM work application
+
+Date: 2026-07-26
+
+- A meeting task or issue derived from relationship evidence now requires both
+  embedded CRM Person and prerequisite revalidation and the canonical work
+  owner's complete-meaning equivalence, write, and readback path.
+- A post-proposal equivalent is **Already satisfied**; a novel effect applies
+  once with authoritative readback. Missing or ambiguous capability on either
+  side returns **Manual** with no write or redirected destination.
+- Meeting action numbering, ownership, results, and completion remain intact
+  with no generic fallback or nested bundle.
+- Public-safe regressions cover successful application, failed CRM revalidation,
+  and an unavailable canonical work path. No live relationship source, task,
+  issue, or destination was queried or changed.
+
+Result: passed.
+
 ## PR review follow-up: dual-owner CRM writing application
 
 Date: 2026-07-26

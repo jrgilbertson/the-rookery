@@ -86,6 +86,24 @@ no-hidden-state continuity; and successful no-action behavior.
 
 Result: passed.
 
+## PR review follow-up: deletion and catch-up completion
+
+Date: 2026-07-26
+
+- A newly meaningful backlink or material alias or identity signal now
+  invalidates a previously approved delete even when no second target needs
+  repair. The workflow presents a revised delete and never trashes under stale
+  approval.
+- A deferred stage-two reconstruction remains outstanding catch-up work for a
+  retained relationship. It prevents **Catch-up complete** and ends **Partial**
+  or **Paused**, depending on whether the workflow or the user must act next.
+- Focused synthetic cases preserve separate numbered repairs, safe stops for
+  indeterminate evidence, canonical cleanup readback, and recoverable trash.
+- No live Person note, relationship source, or vault content was read or
+  changed for this review follow-up.
+
+Result: passed.
+
 ## Pre-PR cleanup safety correction
 
 Date: 2026-07-24

@@ -77,8 +77,10 @@ may improve later proposals in this visible conversation, but creates no
 feedback database or durable workflow rule. Apply only exact approvals under
 the skill's approval contract.
 
-Completion: each retained relationship is reconstructed, confirmed already
-sufficient, or explicitly deferred, with every applied effect read back.
+Stage-two review may pause once each retained relationship is reconstructed,
+confirmed already sufficient, or explicitly deferred, with every applied effect
+read back. A deferred reconstruction remains outstanding catch-up work and does
+not make the relationship completion-eligible.
 
 ## Resume from canonical evidence
 
@@ -94,9 +96,12 @@ from ordering.
 End a catch-up turn as **Ready for review**, **Blocked by preflight**,
 **Partial**, **Paused**, or **Catch-up complete**. Claim completion only after
 the fresh inventory shows every existing Person path has a reviewed disposition
-and every retained relationship is reconstructed, already sufficient, or
-explicitly deferred. Every reviewed `merge` or `delete` disposition must also
-meet one of these conditions:
+and every retained relationship that needs reconstruction is reconstructed or
+confirmed already sufficient. A deferred stage-two reconstruction remains
+outstanding work and prevents **Catch-up complete**. End **Partial** when that
+work remains actionable in the catch-up, or **Paused** when continuation depends
+on user action. Every reviewed `merge` or `delete` disposition must also meet one
+of these conditions:
 
 - its cleanup was proven **Applied** or **Already satisfied** through canonical
   readback; or

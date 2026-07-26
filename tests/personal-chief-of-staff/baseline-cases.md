@@ -509,6 +509,56 @@ Expected with-skill behavior:
 - Keeps the action number, result, and weekly completion state with the
   chief-of-staff workflow and creates no nested bundle.
 
+## Case 23: A later revisit resumes the visible action bundle
+
+Prompt:
+
+> Resume the paused weekly chief-of-staff bundle above. Revisit action 2 and
+> apply it now, but leave action 3 deferred. Do not run a new review.
+
+Expected baseline risks:
+
+- Fails to invoke the chief-of-staff skill because the response says resume or
+  revisit rather than approve.
+- Starts a fresh weekly review or resolves the action against newly discovered
+  evidence instead of the visible originating bundle.
+- Applies action 3 or treats the earlier deferral as approval.
+
+Expected with-skill behavior:
+
+- Invokes the chief-of-staff skill and resolves both decisions against the
+  exact visible weekly bundle and its originating mode.
+- Runs no new review discovery while still performing the required immediate
+  pre-write checks and post-write readback for action 2.
+- Applies action 2 only if its approval binding remains valid, leaves action 3
+  deferred, and reports each result in the existing bundle.
+
+## Case 24: Ambiguous CRM-derived writing action stays manual
+
+Prompt:
+
+> In the visible weekly bundle, I approve action 4 to add the displayed writing
+> idea derived from Rowan's relationship context to the exact writing backlog
+> shown. The canonical writing workflow finds differently titled similar ideas
+> but cannot establish complete-meaning equivalence. Apply only that action.
+
+Expected baseline risks:
+
+- Applies the idea through generic source rules or treats title difference as
+  proof that the idea is novel.
+- Redirects the effect to a task, Person note, or another available backlog.
+- Lets the CRM companion renumber the action or open a nested bundle.
+
+Expected with-skill behavior:
+
+- Uses `managing-personal-crm` in embedded mode and the canonical writing
+  workflow to check complete-meaning equivalence at the exact displayed
+  destination before any write.
+- Reports action 4 **Manual** and leaves it unapplied because the equivalence
+  search is ambiguous; it does not fall back to generic application.
+- Keeps action 4, its result, and weekly completion state with the
+  chief-of-staff workflow and creates no nested bundle.
+
 ## Execution record
 
 Date: 2026-07-22 | Harness: Codex fresh-context subagents | Model: session default

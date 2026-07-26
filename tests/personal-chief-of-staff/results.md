@@ -234,3 +234,27 @@ Date: 2026-07-24
   reviewable contextual effect without a broad relationship scan.
 
 Result: passed.
+
+## PR review follow-up: resumed actions and CRM-derived writing
+
+Date: 2026-07-26
+
+- The listing description now routes later revisit and resume requests for a
+  visible chief-of-staff bundle without taking ownership of actions from an
+  email-processing bundle.
+- CRM-derived writing-backlog actions keep their chief-of-staff action number
+  and completion state while using the embedded CRM companion and canonical
+  writing workflow for complete-meaning equivalence, destination validation,
+  and readback.
+- If the companion or canonical writing validation path is unavailable or
+  ambiguous, the action remains **Manual** instead of falling back to generic
+  application.
+- Three fresh listing-level judges received only the revised skill name and
+  description plus one revisit query and one email-processing near-miss. All
+  three invoked for the chief-of-staff revisit and rejected the caller-owned
+  email action, for 6 of 6 passing judgments.
+- Focused synthetic cases cover exact-bundle resumption and the ambiguous
+  writing-equivalence safe stop. No live source was queried and no destination
+  mutation was attempted.
+
+Result: passed.

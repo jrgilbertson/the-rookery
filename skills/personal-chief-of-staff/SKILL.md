@@ -1,6 +1,6 @@
 ---
 name: personal-chief-of-staff
-description: Use when the user asks what needs attention today, requests a morning or daily chief-of-staff review, wants to complete a daily journal or wind down, requests a weekly or quarterly review, later approves, edits, defers, or skips visible chief-of-staff actions, or another workflow requests current cross-source chief-of-staff context. Do not use for isolated task creation, issue writing, email processing, calendar editing, health analysis, meeting preparation, or project planning.
+description: Use when the user asks what needs attention today, requests a morning or daily chief-of-staff review, wants to complete a daily journal or wind down, requests a weekly or quarterly review, later revisits, resumes, approves, edits, defers, skips, or otherwise decides visible chief-of-staff actions, or another workflow requests current cross-source chief-of-staff context. Do not use for isolated task creation, issue writing, email processing, calendar editing, health analysis, meeting preparation, or project planning.
 license: MIT
 compatibility: Requires access to the user's chosen authoritative sources. Obsidian workflows require a running Obsidian app and its CLI.
 ---
@@ -23,13 +23,18 @@ context does not identify it.
 For each decided action, use its displayed identity, target, effect, and
 approval state. Read [references/source-behavior.md](references/source-behavior.md)
 and the originating mode reference, then follow their existing shared and
-mode-specific application rules. For an approved Person-note or relationship
-Task effect, use the available `managing-personal-crm` companion in embedded
-mode and follow its `references/applying-approved-actions.md` semantics. The
-chief-of-staff workflow keeps the action number, approval flow, result, and
-completion state; the companion creates no nested bundle. If the companion is
-unavailable, report that relationship action **Manual** rather than applying it
-under the generic source rules.
+mode-specific application rules. For an approved Person-note, relationship
+Task, or CRM-derived writing-backlog effect, use the available
+`managing-personal-crm` companion in embedded mode and follow its
+`references/applying-approved-actions.md` semantics. Apply a writing-backlog
+effect only through the configured canonical writing workflow and exact
+displayed destination, after a complete-meaning equivalence search, then read
+the target back through the same authoritative interface. The chief-of-staff
+workflow keeps the action number, approval flow, result, and completion state;
+the companion creates no nested bundle. If the companion or the required
+canonical destination, search, write, or readback path is unavailable or
+ambiguous, report that relationship-derived action **Manual** rather than
+applying it under the generic source rules.
 
 An action-only response does not run new review discovery or prepare another
 review. It still performs every immediate pre-write target and destination

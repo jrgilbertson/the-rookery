@@ -311,23 +311,28 @@ survivor update remains accurately reported as **Applied**.
 ### Delete actions recheck inbound relationships
 
 Given an approved Person-note delete, immediately before trashing the workflow
-rechecks backlinks, aliases, and identity collisions. If another target needs
-repair, it invalidates the delete approval, proposes the repair as its own
-numbered action, and presents a revised delete rather than trashing under the
-stale approval. If the recheck is indeterminate, it does not trash, retry, or
-claim deletion and reports the safe stop accurately.
+rechecks backlinks, aliases, and identity collisions. Any newly meaningful
+backlink or material alias or identity evidence absent from the approved
+proposal invalidates the delete approval and produces a revised delete, even
+when no other target needs repair. If the evidence also requires another target
+to change, it proposes that repair as its own numbered action. It does not trash
+under the stale approval. If the recheck is indeterminate, it does not trash,
+retry, or claim deletion and reports the safe stop accurately.
 
 ### Catch-up completion requires proven cleanup
 
-Given every existing Person path has a reviewed disposition and every retained
-relationship is reconstructed, already sufficient, or explicitly deferred, a
-reviewed `merge` or `delete` still awaiting cleanup prevents **Catch-up
-complete**. A cleanup reported **Pending**, **Manual**, **Failed**,
-**Indeterminate**, **Deferred**, or **Skipped** ends the turn as **Partial** or
-**Paused**, as appropriate. Completion becomes available only after canonical
-readback proves each cleanup **Applied** or **Already satisfied**, or the user
-revises the record to `active`, `dormant`, `reference`, or `ended` so no cleanup
-remains expected.
+Given every existing Person path has a reviewed disposition, a deferred
+stage-two reconstruction for an `active` or `dormant` retained relationship
+remains work and prevents **Catch-up complete**. It ends the turn as **Partial**
+when that work remains actionable, or **Paused** when continuation depends on
+user action. Completion requires every retained relationship that needs
+reconstruction to be reconstructed or confirmed already sufficient. A reviewed
+`merge` or `delete` still awaiting cleanup also prevents completion. A cleanup
+reported **Pending**, **Manual**, **Failed**, **Indeterminate**, **Deferred**, or
+**Skipped** ends the turn as **Partial** or **Paused**, as appropriate.
+Completion becomes available only after canonical readback proves each cleanup
+**Applied** or **Already satisfied**, or the user revises the record to `active`,
+`dormant`, `reference`, or `ended` so no cleanup remains expected.
 
 ### Catch-up continuity stays visible
 

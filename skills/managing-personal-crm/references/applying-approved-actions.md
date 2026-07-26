@@ -122,10 +122,13 @@ duplicate trash into one result.
 
 A delete likewise moves only the reviewed target to verified trash.
 Immediately before trashing, review backlinks, aliases, and identity
-collisions again. If any requires another target to change, invalidate the
-delete approval and present that repair as its own numbered action; do not
-trash the target under the stale approval. Permanent deletion is not an
-available action.
+collisions again. Any newly meaningful backlink or material alias or identity
+evidence that was absent from the approved proposal invalidates the delete
+approval and requires a revised delete, even when no other target needs repair.
+If the new evidence also requires another target to change, present that repair
+as its own numbered action. If the recheck is indeterminate, stop safely. Do not
+trash the target under stale approval. Permanent deletion is not an available
+action.
 
 Completion: the survivor is complete, links and identities are accounted for,
 and any removed note remains recoverable from verified trash.

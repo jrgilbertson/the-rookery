@@ -21,6 +21,7 @@ categorical and can be checked without live source access.
 | My quarterly reviews lapsed. Help me examine strategy and set the next quarter. | Quarterly | Invokes quarterly resumption and strategy discussion. |
 | Run the scheduled quarterly review and wait for my judgment. | Quarterly | Explicit scheduled quarterly mode. |
 | Approve action 2 and defer action 3 from the morning chief-of-staff bundle above. | Originating visible mode | Decides actions from an identifiable visible chief-of-staff bundle. |
+| Resume the paused weekly bundle above and revisit action 2. | Originating visible mode | Resumes and revisits an action from an identifiable visible chief-of-staff bundle. |
 
 ## Should not invoke
 

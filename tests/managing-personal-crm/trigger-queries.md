@@ -79,3 +79,8 @@ only the revised name and description plus interpretation-correction,
 focused-answer, and deferred-reconstruction queries and a generic-questionnaire
 near-miss. All three invoked for the three catch-up continuations and rejected
 the near-miss, for 12 of 12 passing judgments.
+
+The later metadata correction restores the explicit phrase `revisits or
+resumes a deferred action`, aligning the description with the existing Direct
+revisit and Catch-up resume queries above. This was a focused static regression
+check only; no new listing-level judge run was performed.

@@ -19,8 +19,14 @@ Before choosing a source scope, determine whether the current user message only
 approves, edits, defers, skips, declines, revisits, or otherwise decides actions
 from a visible meeting-review bundle. If so, read
 [references/applying-approved-actions.md](references/applying-approved-actions.md)
-and handle that response directly. Do not query meeting sources, rediscover
-meetings, or append unrelated proposals.
+and handle that response directly. Do not rediscover meetings, run a broad
+meeting-source query, or append unrelated proposals. When application-time
+revalidation of an exact CRM-derived action requires evidence from its original
+meeting, the workflow may reread only the smallest necessary slice from the
+exact displayed source and native ID. This bounded reread is not discovery and
+must not produce another meeting or proposal. If the source read is unavailable
+or fails, or the exact source or native ID is ambiguous, make no write and
+report that action **Manual**.
 
 If the same message also explicitly asks for a new meeting check, finish the
 action-response phase first. Then run discovery as a separate read-only phase;

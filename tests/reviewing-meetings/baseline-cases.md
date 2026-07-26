@@ -187,9 +187,29 @@ dismissal and does not hide or suppress the remaining actions.
 Given a later user message only approves, edits, defers, skips, declines,
 revisits, or otherwise decides visible meeting-review actions, the workflow
 handles those actions against the exact visible bundle before selecting a
-source scope. It does not query meeting sources or append unrelated proposals.
-If the same message explicitly requests a new meeting check, application
-finishes first and discovery follows as a separate read-only phase.
+source scope. It does not rediscover meetings, run broad meeting-source
+queries, or append unrelated proposals. If the same message explicitly
+requests a new meeting check, application finishes first and discovery follows
+as a separate read-only phase.
+
+### CRM revalidation may reread only the exact original meeting
+
+Given an action-only response approves a CRM-derived effect whose Person
+identity or relationship prerequisite requires application-time confirmation
+from the original meeting, the workflow rereads only the smallest necessary
+slice from the exact displayed source and native ID. When that evidence safely
+revalidates the action, normal destination checks and application may continue.
+It performs no meeting discovery or broad query and creates no new or unrelated
+proposal.
+
+### Unavailable original meeting evidence makes the CRM action manual
+
+Given the same CRM-derived action requires application-time meeting evidence
+but the exact original source read is unavailable or fails, or its source or
+native ID is ambiguous, the action is **Manual** and no write occurs. The
+workflow does not broaden the query, rediscover meetings, or append any new or
+unrelated proposal; other visible actions remain governed by their own
+approval and rechecks.
 
 ### Deferred action stays with its bundle
 

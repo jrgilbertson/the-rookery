@@ -107,6 +107,22 @@ Date: 2026-07-26
 
 Result: passed.
 
+## PR review follow-up: bounded action-time CRM source reread
+
+Date: 2026-07-26
+
+- Action-only meeting responses still prohibit rediscovery, broad source
+  queries, and unrelated proposals. They may reread only the smallest required
+  slice of the exact original source and native ID when an approved CRM-derived
+  action needs application-time identity or prerequisite revalidation.
+- Successful revalidation may continue through the existing application path.
+  An unavailable or failed source read, or ambiguous exact source identity,
+  returns **Manual** with no write, broadened query, or replacement proposal.
+- Focused static regressions cover both outcomes. No live judge, meeting source,
+  Person note, or destination was queried or changed for this follow-up.
+
+Result: passed.
+
 ## U4: private live acceptance
 
 Date: 2026-07-23

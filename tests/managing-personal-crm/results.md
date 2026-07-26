@@ -173,6 +173,19 @@ Date: 2026-07-26
 
 Result: passed.
 
+## PR review follow-up: deferred-action listing metadata alignment
+
+Date: 2026-07-26
+
+- The listing description again says `revisits or resumes a deferred action`,
+  matching both the existing Direct revisit and Catch-up resume trigger cases.
+- A focused static check confirmed the metadata remains within the portable
+  description limit and preserves the established embedded-work exclusions.
+- No new listing-level judge run was performed. Existing judge results remain
+  historical evidence rather than evidence for this wording correction.
+
+Result: passed.
+
 ## PR review follow-up: catch-up continuation routing
 
 Date: 2026-07-26

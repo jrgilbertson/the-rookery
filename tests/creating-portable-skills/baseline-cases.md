@@ -1,22 +1,25 @@
 # Baseline test: creating-portable-skills
 
-Mode rule — pick the mode that matches the flow:
+Pick the mode that matches the flow:
 
 - **New skill:** run each prompt with and without the skill.
 - **Revision:** run each prompt with the prior version and the revised version.
 
-Run every prompt in a fresh agent context with the right variant loaded —
-use the harness's native mechanism for a clean context (a subagent, a CLI
-exec, a new session). Never compare inside one warm session; carried-over
-context contaminates the baseline.
+Run every prompt in a fresh agent context with the right variant loaded. Use
+the harness's native mechanism for a clean context, such as a subagent, CLI
+execution, or new session. Never compare inside one warm session because
+carried-over context contaminates the baseline.
 
 These cases are new-skill mode (with/without). A with-skill run passes when
 it demonstrably enforces the four disciplines a bare prompt skips:
 
-1. Portability gates applied — portable frontmatter only, capability-based prose, self-contained directory.
-2. Instructions evidence-gated — the delete test runs; unearned lines get cut.
-3. Description tested as a trigger contract — should-trigger and near-miss queries built and run.
-4. The standard loop followed — interview through validation, baseline, review, and package, with completion criteria observed.
+1. Portability gates applied: portable frontmatter, capability-based prose, and
+   a self-contained directory.
+2. Instructions evidence-gated: the delete test runs and unearned lines get cut.
+3. Description tested as a trigger contract: should-trigger and near-miss
+   queries are built and run.
+4. Standard loop followed: interview, validation, baseline, review, and
+   packaging complete with their completion criteria met.
 
 ## Case 1: Create a skill from scratch (run as "summarizing-standups")
 
@@ -32,7 +35,9 @@ Observed delta: all four disciplines enforced with the skill and all four skippe
 
 ## Case 2: Review and fix an existing skill
 
-Not yet run — scheduled as the post-merge dogfood (the design-evals migration review). The waiver path (AE3) was exercised separately and passed; see results.md.
+Not yet run. The post-merge `design-evals` migration review was scheduled as
+the dogfood case. The waiver path in AE3 ran separately and passed. See
+`results.md`.
 
 Date: [YYYY-MM-DD] | Harness: [name] | Model: [name]
 
@@ -48,7 +53,7 @@ Date: 2026-07-16 | Harness: Claude Code subagents (fresh context per half) | Mod
 
 | Prompt | Baseline behavior (observed) | With-skill behavior (observed) | Verdict |
 | --- | --- | --- | --- |
-| My expense-notes skill's description isn't triggering when people ask about receipts — improve it | Intuition rewrite (a workflow-describing description); self-audit confirmed: no trigger queries built or run, no testing gate or waiver, no length/portability check | Checklist audit named the four description failures; approved fix scope; both gates ran — prior-vs-revised baseline and a 10/10 should-trigger / 0-of-9 near-miss query set; change correctly ruled substantive, validated clean | better |
+| My expense-notes skill's description isn't triggering when people ask about receipts — improve it | Intuition rewrite (a workflow-describing description); self-audit confirmed: no trigger queries built or run, no testing gate or waiver, no length/portability check | Checklist audit named the four description failures; approved fix scope; both gates ran, including a prior-versus-revised baseline and a 10/10 should-trigger / 0-of-9 near-miss query set; change correctly ruled substantive, validated clean | better |
 
 Observed delta: the with-skill run enforced the trigger-contract discipline end to end; the bare run shipped an untested description.
 
@@ -59,7 +64,7 @@ explicit waiver from the user, recorded here. Substantive means any change
 to instruction semantics, the trigger description, or bundled resources.
 Typo, formatting, and link-only fixes are exempt and need no waiver.
 
-- Waived by the user: [yes — quote or paraphrase the user's explicit waiver]
+- Waived by the user: [yes, quote or paraphrase the user's explicit waiver]
 - Reason: [why the comparison was skipped]
 - Date: [YYYY-MM-DD]
 

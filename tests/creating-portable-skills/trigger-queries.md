@@ -7,11 +7,10 @@ the query and ask whether it would activate, requiring a plain yes, no, or
 unsure. Live harness-native discovery is recorded separately (see
 `results.md`) as stronger evidence.
 
-Pass rule: each should-trigger query must activate in at least half its runs
-(rate of at least 0.5 across the 3 runs — 2 of 3). ANY near-miss activation
-fails the whole set.
+Pass rule: each should-trigger query must activate in at least half its runs,
+meaning 2 of 3. Any near-miss activation fails the whole set.
 
-Date: 2026-07-16 | Harness: Claude Code subagents (fresh context per judge) | Model: three families — Haiku 4.5, Sonnet, Fable 5
+Date: 2026-07-16 | Harness: Claude Code subagents (fresh context per judge) | Models: Haiku 4.5, Sonnet, Fable 5
 
 Re-run 2026-07-16 after the description revision from the writing-great-skills review (workflow-summary sentence removed, migrate/port branch collapsed): identical results, every should-trigger at rate 1.0, zero near-miss activations.
 
@@ -50,9 +49,9 @@ Re-run 2026-07-16 after the rename to creating-portable-skills: identical result
 ## Tuning
 
 Fix failures by front-loading trigger words and describing when to use the
-skill — never by summarizing the workflow. A description that summarizes the
-steps makes agents follow the summary and skip the body. After tuning,
-re-run the full set.
+skill. Do not summarize the workflow. A description that summarizes the steps
+makes agents follow the summary and skip the body. After tuning, rerun the full
+set.
 
 ## 2026-07-27 frontier-retune case definitions
 

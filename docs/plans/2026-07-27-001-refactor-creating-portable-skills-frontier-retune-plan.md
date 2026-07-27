@@ -36,9 +36,18 @@ This skill also drives the creation and refinement of future personal skills. It
 
 ### Key Decisions
 
-- **One frontier-focused skill.** (session-settled: user-directed — chosen over a weaker-model floor or optional weaker-model scaffolding: one behavioral contract is easier to use and maintain.) Current target models belong to the retune evidence, while the canonical workflow accepts the target set declared for each future task. Governs R1, R2, R11, R12, R14, R15.
-- **Surgical retuning with no-change as a valid result.** (session-settled: user-approved — chosen over a full measurement program or evidence-label-only patch: remove stale ceremony without assuming the current workflow is broken.) Governs R3, R4, R11.
-- **Standalone claim guardrails.** (session-settled: user-directed — chosen over a light warning or an embedded evaluation suite: prevent false confidence without making routine skill work heavy.) Governs R7-R10.
+- **One frontier-focused skill.** User-directed. The canonical workflow keeps one
+  behavioral contract and accepts the targets declared for each task. Opus 5
+  and GPT-5.6 Sol belong to this retune's evidence, not a permanent model branch.
+  This avoids weaker-model scaffolding that would make the skill harder to use
+  and maintain. Governs R1, R2, R11, R12, R14, and R15.
+- **Surgical retuning with no-change as a valid result.** User-approved. Remove
+  stale ceremony only when evidence supports the change. Do not assume the
+  current workflow is broken or build a full measurement program for this
+  retune. Governs R3, R4, and R11.
+- **Standalone claim guardrails.** User-directed. Keep claim limits inside the
+  standalone workflow so routine skill work stays light without creating false
+  confidence. Governs R7-R10.
 - **System-owned invariants survive frontier simplification.** Templates, scripts, authority boundaries, deterministic validation, exact formats, and fragile sequences remain when they carry product behavior that model intelligence cannot infer. Governs R4-R6.
 
 <!-- ce-section: work-relationships -->
@@ -175,11 +184,34 @@ Product Contract preservation: unchanged.
 
 ### Key Technical Decisions
 
-- KTD1. **Freeze the prior skill and compare one candidate instruction group at a time.** (session-settled: user-approved — chosen over a wholesale rewrite or full measurement program: preserve a working skill and change only evidence-supported instruction groups.) Git provides the immutable prior variant; each candidate names its System-Owned Invariant before revision and re-enters the affected comparison after any substantive follow-up edit. Governs implementation of R3-R6.
-- KTD2. **Extend the existing evidence workspace instead of creating evaluation infrastructure.** (session-settled: user-approved — chosen over a per-instruction audit ledger or embedded eval suite: keep routine skill work lightweight while retaining reviewable evidence.) The baseline and trigger templates carry reusable record fields, `tests/creating-portable-skills/results.md` appends dated target cells, and a small checked-in fixture supplies a deterministic full-review target. Governs implementation of R7-R10 and R13.
-- KTD3. **Resolve model and harness targets at run time.** (session-settled: user-approved — chosen over a permanent Opus-versus-Sol branch: future callers can compare whatever current targets matter.) With no declared set, use the current model and harness as one recorded target; ask for more targets only when the requested portability or comparison claim requires them. Governs implementation of R11, R14, and R15.
-- KTD4. **Represent evidence as separate observable states.** (session-settled: user-directed — chosen over treating small baselines or listing judgments as proof: prevent routine evidence from creating false confidence.) Structural validation, listing proxy, native discovery, local install, native load, native trigger, and behavioral comparison each record passed, failed, or unverified independently. Installation and discovery may be shared by a package-harness pair, while load and trigger remain attributable to each model-harness target cell; routine conclusions remain smoke-tested or directional. Governs implementation of R7-R10 and R12-R15.
-- KTD5. **Use asymmetric full-flow coverage with conditional escalation.** (session-settled: user-approved — chosen over duplicating the complete existing-skill workflow in both current targets: close the known coverage gap without building a four-cell suite.) A disposable fixture runs end to end on one target, while the other runs the focused revision case; workflow-wide changes or material divergence trigger the second full run. Governs implementation of R11.
+- KTD1. **Freeze the prior skill and compare one candidate instruction group at
+  a time.** User-approved. Git preserves the prior variant. Each candidate names
+  its System-Owned Invariant before revision and returns to the affected
+  comparison after any substantive follow-up edit. This protects a working
+  skill from a wholesale rewrite. Governs implementation of R3-R6.
+- KTD2. **Extend the existing evidence workspace instead of creating evaluation
+  infrastructure.** User-approved. The baseline and trigger templates carry
+  reusable fields, `tests/creating-portable-skills/results.md` adds dated target
+  cells, and a small checked-in fixture provides a deterministic review target.
+  This keeps routine work light without adding an audit ledger or embedded eval
+  suite. Governs implementation of R7-R10 and R13.
+- KTD3. **Resolve model and harness targets at run time.** User-approved. With
+  no declared set, record the current model and harness as one target. Ask for
+  more targets only when the requested claim requires them. Future callers can
+  compare current targets without a permanent Opus-versus-Sol branch. Governs
+  implementation of R11, R14, and R15.
+- KTD4. **Represent evidence as separate observable states.** User-directed.
+  Structural validation, listing proxy, native discovery, local install, native
+  load, native trigger, and behavioral comparison each record passed, failed,
+  or unverified independently. Installation and discovery may be shared by a
+  package-harness pair. Load and trigger remain tied to each model-harness
+  target cell. Routine conclusions stay smoke-tested or directional. Governs
+  implementation of R7-R10 and R12-R15.
+- KTD5. **Use asymmetric full-flow coverage with conditional escalation.**
+  User-approved. One target runs the disposable fixture end to end, while the
+  other runs the focused revision case. Workflow-wide changes or material
+  divergence trigger a second full run. This closes the known coverage gap
+  without building a four-cell suite. Governs implementation of R11.
 - KTD6. **Prove pre-merge installation from the local working tree.** The install check verifies the installed files came from the current source before observing native load and trigger behavior. A remote default-branch probe may confirm the published state after merge, but remote `@ref` output does not substitute because the repository has observed it scan the wrong revision. Governs implementation of R12 and R13.
 
 ### High-Level Technical Design
@@ -324,7 +356,7 @@ flowchart TB
 
 ### U4. Finalize activation, installation, and outward claims
 
-- **Goal:** Prove the final package's structural and native behavior, then align public wording with the evidence actually earned.
+- **Goal:** Prove the final package's structural and native behavior, then align public wording with the evidence earned.
 - **Requirements:** R2, R7-R15; A1-A3; F1, F3; AE3, AE4, AE6, AE7; KTD4, KTD6.
 - **Dependencies:** U3.
 - **Files:** `skills/creating-portable-skills/SKILL.md`, `skills/creating-portable-skills/references/portability.md`, `tests/creating-portable-skills/trigger-queries.md`, `tests/creating-portable-skills/results.md`, `README.md`, `skills/README.md`, `CHANGELOG.md`.

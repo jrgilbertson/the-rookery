@@ -18,18 +18,79 @@ Recorded runs for the plan's Verification Contract (`docs/plans/2026-07-16-001-f
 
 ## Run log
 
-- **Claude Code visitor run (F1)** — clean repo, no conventions, no companions. All steps 1-9 completed with criteria met. AE1: recommended `design-evals` with the install command, ran the built-in baseline, named the skipped depth. AE2: convention scan found nothing, generic path declared. Surfaced three destination ambiguities in the skill text; fixed same-day (step 3/5/8 destination clauses, step 9 repo-level-path fallback) and re-validated.
-- **Codex CLI run (F1)** — `codex exec --full-auto`, clean repo. All steps completed. The sandbox denied network: `npx skills-ref` failed with `ENOTFOUND` and the skill's manual-fallback checks ran and were declared — the validator degradation path (plan KTD4) verified in the wild, unprompted. 24/24 should-trigger, 0/24 near-miss on its generated skill.
-- **Grok CLI run (F1)** — `grok -p --always-approve`, clean repo, native discovery from `.grok/skills/`. All steps completed; the subtract pass caught and fixed a real double-bucketing defect found by its fresh-context baseline. Companion skips named at steps 7-8.
-- **Bare-agent baseline** — same creation request, no skill: one-shot SKILL.md + zip; self-audit confirmed no interview, no validator, no trigger testing, no comparison, no portability check.
-- **Waiver probe (AE3)** — "ship a trigger-description change with no testing": the agent classified it substantive, refused to ship ungated, obtained and recorded an explicit user waiver in its workspace's waiver block, then shipped. The probe ran in a throwaway workspace, so the record is reproduced here verbatim: "Waived by the user: yes — 'yes, I waive the baseline — retro notes support is urgent for a demo'. Reason: user is time-constrained ahead of a demo and explicitly declined the prior-vs-revised comparison; description-only change, body instructions untouched. Date: 2026-07-16." The agent also quoted the exact skill line that drove the behavior (step 5's substantive-change rule) and flagged the post-demo trigger-test debt unprompted.
-- **AE2, conventions branch** — a repo with real skill conventions (contributing doc naming location, changelog, validator, naming rules): the skill's draft and package steps drove discovery of the conventions file; all four conventions were followed (location `skills/<name>/`, kebab-case verb-led naming, validator run with recorded result, changelog entry) and stated, with the generic path used only where the repo was silent. Both AE2 branches are now evidenced.
-- **Baseline case 3** — description-fix flow run both halves in fresh contexts against a toy weak-description skill; recorded in `baseline-cases.md` case 3. The with-skill half treated the change as substantive and ran both gates unprompted.
-- **writing-great-skills review pass** — the owner-invoked review found two description findings (a workflow-summary sentence the skill's own gotcha warns against; a duplicated migrate/port branch) and one negation-phrasing bullet in step 3. All three were fixed; the description change was ruled substantive under the skill's own rule, and the trigger set re-ran with three fresh judges across three model families: identical pass (rate 1.0 on all should-triggers, zero near-miss activations). The step 3 rewording preserves instruction semantics (positive phrasing of the same constraints), so it fell under the trivial-edit exemption.
-- **Skill-engineering adoption pass** — two additions sourced from Paul Bakaus's "Dark Arts of Skill Engineering" (via the Latent Space write-up): a steering-points interview bullet (which decisions stay with the user) and an operationalized-qualifiers review-checklist item. Ruled substantive (instruction semantics + bundled resource); the prior-vs-revised gate probe confirmed both deltas — the prior interview yields a fully-automatic skill for a taste-heavy job while the revised one forces named steering points, and the qualifiers item flags undefined adjectives ("punchier", "thorough", "clean") that the delete test demonstrably keeps but never defines. Description unchanged, so the trigger set was unaffected.
-- **Owner review pass (style + protocol)** — owner-directed revisions: intro rewritten to drop the models-already-know-the-format assumption (it conflicted with the skill's own weaker-models gotcha), an em-dash and unnecessary-colon sweep across all six files, and step 8's trigger test reduced from a 48-60-call protocol to a 10-call default (5+5 queries judged once, all-pass rule) with a full-rigor tier (8-10 queries, 3 runs) reserved for public-collection shipping. Gate probe confirmed the reduction preserves test integrity at roughly one-sixth the cost and the escalation fork is live, and adversarially caught that "borderline" was an undefined qualifier (the exact failure class of the new checklist item); fixed by requiring plain yes/no/unsure judgments with unsure-or-hedged defined as borderline. Description changed only in punctuation, which is formatting-exempt from the trigger gate. This skill's own fixture stays on the full-rigor tier since it ships to a public collection.
-- **Rename** — `creating-skills` became `creating-portable-skills` by owner decision, putting the cross-harness stance in the name so catalog browsers see it before investing (and Claude-Code-only expectations are corrected up front). Earlier run-log entries reference the new name retroactively; the runs themselves predate the rename. The listing changed, so the trigger set re-ran at the full-rigor tier under the new name: three fresh judges across three model families (Haiku 4.5, Sonnet, Fable 5), identical pass, every should-trigger at rate 1.0, zero near-miss activations. Installed copies on the maintainer machine were refreshed under the new name and the old-name copies removed.
-- **AE4** — near-miss queries ("design evals for my dataset" and nine others) produced zero activations in every judge run.
+- **Claude Code visitor run (F1).** The clean repository had no conventions or
+  companions. All steps 1-9 met their criteria. For AE1, the run recommended
+  `design-evals`, included the install command, ran the built-in baseline, and
+  named the skipped depth. For AE2, the convention scan found nothing and used
+  the generic path. The run exposed destination ambiguities in steps 3, 5, and
+  8, plus a missing repository-level path fallback in step 9. Each became a
+  small skill-text fix and passed revalidation the same day.
+- **Codex CLI run (F1).** `codex exec --full-auto` completed every step in a
+  clean repository. The sandbox denied network access, so `npx skills-ref`
+  failed with `ENOTFOUND`. The skill used its manual fallback checks and stated
+  that the validator was skipped, which exercised the KTD4 degradation path
+  without a scripted failure. The generated skill passed 24/24 should-trigger
+  queries with zero activations across 24 near-misses.
+- **Grok CLI run (F1).** `grok -p --always-approve` loaded the project skill
+  from `.grok/skills/` and completed every step. The fresh-context baseline
+  found a real double-bucketing defect, and the subtract pass fixed it. The run
+  also named the companion checks skipped at steps 7-8.
+- **Bare-agent baseline.** The same creation request without the skill produced
+  one `SKILL.md` file and a zip. Its self-audit confirmed that it skipped the
+  interview, validator, trigger tests, behavior comparison, and portability
+  check.
+- **Waiver probe (AE3).** The request was "ship a trigger-description change
+  with no testing." The agent treated the change as substantive, refused to
+  ship without a gate, recorded an explicit user waiver, and then shipped. The
+  throwaway workspace recorded this text verbatim: "Waived by the user: yes —
+  'yes, I waive the baseline — retro notes support is urgent for a demo'.
+  Reason: user is time-constrained ahead of a demo and explicitly declined the
+  prior-vs-revised comparison; description-only change, body instructions
+  untouched. Date: 2026-07-16." The agent also quoted the skill rule that drove
+  the decision, identified it as step 5's substantive-change rule, and flagged
+  the post-demo trigger-test debt.
+- **AE2 conventions branch.** The test repository defined a skill location,
+  naming rule, validator, and changelog policy. The workflow found and followed
+  all four: `skills/<name>/`, a kebab-case verb-led name, a recorded validator
+  run, and a changelog entry. It used the generic path only where the repository
+  was silent. Both AE2 branches now have evidence.
+- **Baseline case 3.** Both halves of the description-fix flow ran in fresh
+  contexts against a toy skill with a weak description. The with-skill run
+  treated the edit as substantive and ran both required gates. Full results are
+  in `baseline-cases.md`.
+- **`writing-great-skills` review pass.** The review found a workflow summary in
+  the description, duplicate migrate and port triggers, and one negative step 3
+  instruction. All three were fixed. The description change was substantive,
+  so three fresh judges from three model families reran the trigger set. Every
+  should-trigger passed at 1.0 and no near-miss activated. The step 3 edit kept
+  the same meaning and qualified for the trivial-edit exemption.
+- **Skill-engineering adoption pass.** Two additions came from Paul Bakaus's
+  "Dark Arts of Skill Engineering" through the Latent Space write-up: a list of
+  decisions that remain with the user and a checklist item for undefined
+  qualifiers. The prior-versus-revised probe confirmed both changes. The prior
+  interview made every decision for a taste-heavy task. The revision stopped at
+  the named user decisions. The new checklist item flagged "punchier,"
+  "thorough," and "clean," which the delete test kept without defining. The
+  description did not change, so the trigger set was unaffected.
+- **Owner review pass for style and protocol.** The intro stopped assuming that
+  models already knew the format because that conflicted with its own
+  weaker-model guidance. All six files received an em-dash and colon cleanup,
+  and the trigger test dropped from 48-60 calls to a 10-call default. The gate
+  probe showed that the smaller test kept its integrity at roughly one-sixth the
+  cost. Public collections still use 8-10 queries per side with three runs each.
+  The same probe found "borderline" undefined, so the protocol now requires
+  plain `yes`, `no`, or `unsure` judgments and treats unsure or hedged answers as
+  borderline. The description changed only in punctuation, so the trigger gate
+  did not rerun. This public skill keeps the larger query tier.
+- **Rename.** The owner renamed `creating-skills` to
+  `creating-portable-skills` so catalog readers see its cross-harness scope
+  before opening it and do not assume it is Claude Code-only. Earlier run-log
+  entries use the new name, although those runs predate the rename. Three fresh
+  judges from Haiku 4.5, Sonnet, and Fable 5 reran the full trigger tier. Every
+  should-trigger passed at 1.0, no near-miss activated, and installed copies
+  moved to the new name.
+- **AE4.** The near-miss query "design evals for my dataset" and nine other
+  queries produced zero activations in every judge run.
 
 ## Caveats and deferred confirmations
 

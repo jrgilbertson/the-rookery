@@ -23,15 +23,24 @@ tags:
   - delete-test
 ---
 
-# Operationalize the Qualifier: The Delete Test's Blind Spot for Abstract Adjectives
+# Define the abstract qualifiers that the delete test misses
 
 ## Context
 
-The delete test is the standard instruction-economy check when reviewing agent instructions: for each line, would the agent get this wrong without it? Lines that restate default model behavior get cut. This repo's skill-review checklist (`skills/creating-portable-skills/references/review-checklist.md`) uses it as the first item under Instruction economy.
+The delete test checks each agent instruction by asking whether the agent would
+get something wrong without it. Lines that restate default model behavior get
+cut. This repository's skill review checklist
+(`skills/creating-portable-skills/references/review-checklist.md`) uses it as the
+first item under Instruction economy.
 
-This session surfaced a blind spot. Abstract qualifiers like "thorough," "punchier," or "clean" survive the delete test, because removing them genuinely changes behavior, so cut-or-keep reasoning keeps them. But the kept word remains undefined, and each model backfills its own meaning. That is precisely the cross-model unpredictability that instruction review exists to prevent. The delete test asks cut-or-keep. It never asks define.
+The test misses abstract qualifiers such as "thorough," "punchier," and
+"clean." Removing one changes behavior, so the line survives. The word still
+has no definition, and each model supplies its own. The delete test decides
+whether to keep a line. It does not define the terms inside it.
 
-The fix, adopted into the checklist during the skill-engineering adoption pass (PR jrgilbertson/the-rookery#4, open but not merged as of this writing), is a distinct check that runs alongside the delete test rather than replacing it.
+The checklist now runs a separate qualifier check alongside the delete test.
+PR jrgilbertson/the-rookery#4 introduced it during the skill-engineering
+adoption pass.
 
 ## Guidance
 
@@ -52,9 +61,15 @@ Keep running the delete test too. The two checks catch disjoint failures: the de
 
 ## Why This Matters
 
-An undefined qualifier is the worst of both worlds. It costs tokens and passes review because it demonstrably changes behavior, yet the behavior it produces varies by model. On the authoring model it may look tuned; on a weaker or different model it silently means something else. For portable skills, which are explicitly tuned for the floor model they claim, this is a correctness issue, not a style issue.
+An undefined qualifier costs tokens and changes behavior, but each model may
+interpret it differently. The authoring model can appear tuned while another
+model follows a different meaning. For portable skills, that is a correctness
+problem.
 
-The blind spot is self-reinforcing. Reviewers trained on the delete test will defend the qualifier ("removing it changes output, so it earns its place") without noticing that what it changes is unspecified. A separate named check breaks that reasoning loop. As the origin source puts it, an adjective with nothing behind it is just a nice apostrophe (Paul Bakaus's skill-engineering findings, evaluated against this repo and adopted).
+Reviewers may defend the qualifier because removing it changes output. That
+still leaves the change unspecified. A separate named check catches the gap.
+This rule came from Paul Bakaus's skill-engineering findings and was tested
+against this repository before adoption.
 
 ## When to Apply
 
@@ -89,4 +104,6 @@ Summary recorded in `tests/creating-portable-skills/results.md`; the per-item br
 
 ## Related
 
-- `docs/solutions/best-practices/cross-harness-dogfood-testing.md` — probing techniques (fresh-context gate probes, prior-vs-revised comparisons) from the same shipping effort; those probes are how both examples above were caught and verified.
+- `docs/solutions/best-practices/cross-harness-dogfood-testing.md` documents the
+  fresh-context probes and prior-versus-revised comparisons that caught both
+  examples above.

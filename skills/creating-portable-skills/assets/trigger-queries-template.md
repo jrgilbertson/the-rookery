@@ -71,7 +71,7 @@ the same package revision and harness. Verify that the installed content came
 from the declared local source before using it as evidence.
 
 | Package-harness cell | Date | Harness and version | Native discovery state | Local-source install state | Installed-content identity state | Evidence or limitation |
-| --- | --- | --- | --- | --- | --- | --- | --- |
+| --- | --- | --- | --- | --- | --- | --- |
 | [package+harness-a] | [YYYY-MM-DD] | [harness, version] | [passed / failed / unverified] | [passed / failed / unverified] | [passed / failed / unverified] | [commands, revision/hash comparison, output excerpt, or reason unavailable] |
 
 ## Native model-harness checks
@@ -80,7 +80,7 @@ Native load and native trigger remain attributable to each exact model-harness
 target, even when discovery or installation evidence is shared.
 
 | Target cell | Date | Exact model | Harness and version | Configuration | Native load state | Native trigger state | Evidence or limitation |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| --- | --- | --- | --- | --- | --- | --- | --- |
 | [target-a] | [YYYY-MM-DD] | [exact model ID] | [harness, version] | [material settings] | [passed / failed / unverified] | [passed / failed / unverified] | [native observation, excerpt/reference, or reason unavailable] |
 | [target-b, if declared] | [YYYY-MM-DD] | [exact model ID] | [harness, version] | [material settings] | [passed / failed / unverified] | [passed / failed / unverified] | [native observation, excerpt/reference, or reason unavailable] |
 

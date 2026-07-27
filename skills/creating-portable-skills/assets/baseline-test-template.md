@@ -85,10 +85,10 @@ only when it discriminates a separate important behavior.
 
 | Target cell | Discriminating case | Control case | Observed loss | Target conclusion |
 | --- | --- | --- | --- | --- |
-| [target-a] | [result] | [result] | [loss or none observed] | [retain / directional candidate / unverified] |
-| [target-b, if declared] | [result] | [result] | [loss or none observed] | [retain / directional candidate / unverified] |
+| [target-a] | [result] | [result] | [loss or none observed] | [Retained / NewSkillCandidate / DirectionalCandidate / unverified] |
+| [target-b, if declared] | [result] | [result] | [loss or none observed] | [Retained / NewSkillCandidate / DirectionalCandidate / unverified] |
 
-- Candidate decision: [Retained / DirectionalCandidate]
+- Candidate state: [revision: Retained / DirectionalCandidate; new skill: NewSkillCandidate]
 - Shipment status: [not assessed / UnverifiedCandidate]
 - Earned evidence label: [none / smoke-tested / directional comparison]
 - Conclusion: [state only what the predeclared cases showed]
@@ -96,11 +96,15 @@ only when it discriminates a separate important behavior.
 
 Decision rules:
 
-- A `same` result on the discriminating case is inconclusive, not evidence that
-  the instruction is unnecessary. Retain the current instruction.
-- Retain the current instruction when an affected target is unavailable, a
-  material loss appears, or declared targets materially diverge and cannot be
-  reconciled without losing the named invariant.
+- For a revision, a `same` discriminating-case result is inconclusive, not
+  evidence that the instruction is unnecessary. Retain the current instruction.
+  An unchanged or materially stable control is expected and does not force
+  retention by itself.
+- For a revision, retain the current instruction when an affected target is
+  unavailable, a material loss appears, or declared targets materially diverge
+  and cannot be reconciled without losing the named invariant.
+- For a new skill, use `NewSkillCandidate`. It identifies a draft with no prior
+  version and implies neither a behavioral claim nor shipment status by itself.
 - Assign **directional comparison** only when matched cases show the intended
   delta, the control remains materially stable, and every required target cell
   has no observed named invariant loss. Say exactly that; do not say the
@@ -119,6 +123,8 @@ inconclusive.
 
 - Waived by the user: [yes, quote or paraphrase the explicit waiver]
 - Unavailable check and reason: [what could not run and why]
-- Shipment status: [unverified candidate]
-- Candidate instruction decision: [retain unless the required comparison supports the change]
+- Evidence state: [unverified]
+- Candidate state: [revision: Retained unless the required comparison supports the change / new skill: NewSkillCandidate; never DirectionalCandidate from this waiver]
+- Shipment status: [UnverifiedCandidate]
+- Earned evidence label: [unchanged; do not raise]
 - Date: [YYYY-MM-DD]

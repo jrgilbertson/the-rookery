@@ -26,9 +26,10 @@ Before changing one candidate instruction group, name its affected invariant and
 Apply the following decision rule:
 
 1. Run the same predeclared discriminating and control cases separately in every affected target cell.
-2. Retain the current instruction when a result is `same`, worse, unavailable, or shows an invariant loss. A waiver may authorize shipment with an unavailable check, but cannot authorize that instruction's removal or relaxation.
-3. Remove or relax an instruction only when the intended delta appears, the control stays materially stable, and there is no observed named-invariant loss in the predeclared affected-target cases. This supports only the recorded cases; it is not proof outside them and is not non-regression evidence.
-4. If targets materially diverge, make an invariant-preserving revision, validate it, and rerun all affected cells. If material divergence remains, retain the current instruction or ask the user to narrow the target set.
+2. For a revision, retain the current instruction when the discriminating-case result is `same`, or when any affected result is worse, unavailable, or shows an invariant loss. An unchanged or materially stable control is expected and does not independently force retention. A waiver may authorize shipment with an unavailable check, but cannot authorize that instruction's removal or relaxation.
+3. For a new skill, use `NewSkillCandidate`: a draft with no prior version. The state alone implies neither behavioral evidence nor shipment status. If a required target is unavailable, keep that cell unverified; a waiver may set shipment to `UnverifiedCandidate`, but cannot make the candidate `DirectionalCandidate`.
+4. For a revision, remove or relax an instruction only when the intended delta appears, the control stays materially stable, and there is no observed named-invariant loss in the predeclared affected-target cases. This supports only the recorded cases; it is not proof outside them and is not non-regression evidence.
+5. If targets materially diverge, make an invariant-preserving revision, validate it, and rerun all affected cells. If material divergence remains, retain the current instruction for a revision; for a new skill, keep `NewSkillCandidate` without a cross-target pass. Either mode may ask the user to narrow the target set.
 
 Pass: every prescriptive instruction protects a named invariant, responds to observed evidence, or covers a named fragile operation; every relaxation satisfies the rule above within an explicit Claim Ceiling.
 

@@ -53,3 +53,59 @@ Fix failures by front-loading trigger words and describing when to use the
 skill — never by summarizing the workflow. A description that summarizes the
 steps makes agents follow the summary and skip the body. After tuning,
 re-run the full set.
+
+## 2026-07-27 frontier-retune case definitions
+
+These are predeclared checks, not run results. Keep the 2026-07-16 observations
+above unchanged. Append actual states and evidence after running against the
+final description and local-source package revision.
+
+### Declared current target set
+
+| Target cell | Exact model | Harness and configuration | Query set |
+| --- | --- | --- | --- |
+| opus-5 | `claude-opus-5` | Resolve and record exact harness, version, and configuration before running | Reuse the ten should-trigger and ten near-miss queries above |
+| sol-5.6 | `gpt-5.6-sol` | Resolve and record exact harness, version, and configuration before running | Reuse the ten should-trigger and ten near-miss queries above |
+
+For each target, judge every unchanged query three times in a fresh context
+that sees only the final skill name and description. This is a listing proxy:
+it passes when every should-trigger query receives at least two `yes` judgments
+and no near-miss receives any `yes`. It does not satisfy a native check.
+
+### Separate evidence states to record
+
+| Check | Attribution | State to append after execution | Required evidence |
+| --- | --- | --- | --- |
+| Structural validation | Final package revision | [passed / failed / unverified] | Validator, version, command, and output or limitation |
+| Listing proxy | Each model-harness target cell | [passed / failed / unverified] | Per-query judgments and exact target metadata |
+| Native discovery | Each package-harness cell | [passed / failed / unverified] | Native discovery observation or limitation |
+| Local-source install | Each package-harness cell | [passed / failed / unverified] | Local source revision and install output or limitation |
+| Installed-content identity | Each package-harness cell | [passed / failed / unverified] | Diff, checksum, or equivalent source-identity proof |
+| Native load | Each model-harness target cell | [passed / failed / unverified] | Exact target metadata and native load observation |
+| Native trigger | Each model-harness target cell | [passed / failed / unverified] | Representative query and native activation observation |
+
+Discovery, installation, and identity evidence may be shared only when target
+cells use the same package revision and harness. Load and trigger evidence stay
+separate for `opus-5` and `sol-5.6`.
+
+### TR-P1: Listing/native split
+
+- Input: every listing-proxy query passes, but native trigger access is
+  unavailable for one declared target.
+- Expected transition: listing proxy is passed for that target and native
+  trigger remains unverified. Overall status cannot claim native activation or
+  behavioral compatibility for the missing cell.
+
+### TR-P2: Waiver
+
+- Input: the user explicitly waives the unavailable native check for shipment.
+- Expected transition: shipment may proceed only as an unverified candidate.
+  The waiver changes no evidence state, raises no label, and cannot support an
+  unrelated instruction removal.
+
+### TR-P3: Three-target split
+
+- Input: a future declared set contains three target cells where native trigger
+  passes in one, fails in one, and is unavailable in one.
+- Expected transition: record passed, failed, and unverified separately. Do not
+  collapse them into a harness-wide or cross-target pass.

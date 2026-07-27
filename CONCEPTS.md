@@ -16,7 +16,12 @@ The maintainer installs from this repository exactly the way a visitor does, so 
 ## Skill quality gates
 
 ### Baseline Test
-The comparison gate proving a skill changes agent behavior in the intended direction: a new skill runs realistic prompts with and without it, a revision runs the prior version against the revised one, always in fresh contexts so carried-over conversation cannot contaminate the result. A substantive change ships only with this comparison or an explicit recorded waiver.
+The comparison gate for observing whether a skill changes agent behavior in the intended direction: a new skill runs realistic prompts with and without it, while a revision runs the prior version against the revised one in fresh contexts with each variant's Loaded Skill Identity established. A substantive revision ships only when the required comparison supports it; a waiver may authorize shipment when a required check is unavailable, but cannot satisfy absent or inconclusive evidence, authorize an unsupported change, or raise the evidence label.
+
+### Loaded Skill Identity
+The evidence property that the exact declared skill package, rather than a same-named project, user, shared, or system copy, supplied the instructions observed in a model-harness run.
+
+Fresh context does not establish Loaded Skill Identity. A native run needs source-to-install identity plus observable load evidence; a bounded policy-only probe may instead embed the exact authoritative policy, but it does not become native discovery or load evidence. A run that cannot establish the intended identity is excluded from the comparison.
 
 ### Degradation Path
 A skill's defined behavior when something it prefers is absent — a validator that cannot run, a companion skill not installed, a harness without a clean-context mechanism. A degradation path degrades loudly: the skill does the best available substitute and names what was skipped, never failing or skipping silently.

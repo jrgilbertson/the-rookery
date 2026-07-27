@@ -13,7 +13,7 @@ front door you do.**
 The front door is the [skills installer](https://github.com/vercel-labs/skills). No clone, no setup.
 
 ```bash
-# browse the shelf
+# list available skills
 npx skills add jrgilbertson/the-rookery --list
 
 # install one skill
@@ -28,7 +28,7 @@ Codex, Cursor, and Gemini CLI. See the [Agent Skills](https://agentskills.io)
 ecosystem for the full list. Add `-g` for a user-level install instead of a
 project install.
 
-> **The first skill is on the shelf.** [creating-portable-skills](skills/creating-portable-skills/SKILL.md) installs with `npx skills add jrgilbertson/the-rookery --skill creating-portable-skills`. More are arriving. Watch [releases](../../releases) for arrivals.
+> [creating-portable-skills](skills/creating-portable-skills/SKILL.md) is the first published skill. Install it with `npx skills add jrgilbertson/the-rookery --skill creating-portable-skills`. Watch [releases](../../releases) for new skills.
 
 <details>
 <summary>Prefer a clone?</summary>

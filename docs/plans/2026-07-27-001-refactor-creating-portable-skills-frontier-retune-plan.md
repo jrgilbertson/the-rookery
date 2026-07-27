@@ -156,7 +156,7 @@ flowchart TB
 - No permanent Opus 5 versus GPT-5.6 Sol branch or tie-break rule in the canonical skill.
 - No per-instruction audit ledger or new durable record type; existing comparison and result records remain the evidence surface for substantive changes.
 - No broad rewrite of the Agent Skills package structure, portable frontmatter contract, templates, references, or scripts without direct evidence that the structure is obsolete.
-- No behavioral changes to other shelf skills; repository-level copy changes are limited to replacing cross-harness behavioral language with structural portability and installability wording.
+- No behavioral changes to other published skills. Repository-level copy changes are limited to replacing cross-harness behavioral language with structural portability and installability wording.
 - No claim that Opus 5 universally broke existing skills.
 
 ### Dependencies and Assumptions
@@ -364,7 +364,7 @@ flowchart TB
   1. Freeze the final description, run the public-collection trigger-query tier in fresh target contexts, and label those judgments as listing proxies.
   2. Discover and install the skill from the local working tree into each target harness, verify installed content identity, then observe native load and trigger behavior separately.
   3. Append final structural, proxy, native, model, harness, configuration, date, limitation, and Claim Ceiling results to the existing record using KTD4's package-harness and target-cell attribution.
-  4. Narrow skill-specific, shelf, changelog, and repository-level copy to structural portability and installability without changing any other skill's behavior.
+  4. Narrow skill-specific, catalog, changelog, and repository-level copy to structural portability and installability without changing any other skill's behavior.
   5. Repeat structural validation and affected behavioral gates after any final substantive edit.
 - **Patterns to follow:** Local-source install evidence in `tests/creating-portable-skills/results.md`; published-state follow-up in `docs/solutions/integration-issues/skills-cli-ref-not-checked-out.md`; public catalog wording in `skills/README.md` and `CHANGELOG.md`.
 - **Test scenarios:**

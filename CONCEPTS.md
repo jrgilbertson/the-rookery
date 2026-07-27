@@ -7,20 +7,21 @@ a glossary, not a specification or catch-all.
 
 ## Shipping and verification
 
-### The Shelf
-The public catalog of skills this repository stocks. Whatever lands on the
-default branch is immediately what installers receive, so that branch stays
-install-clean. A skill is on the shelf once it appears in the catalog and
-installs on its own. Visitors never need to adopt the whole collection.
+### Published Catalog
+The skills available for individual installation from this repository.
+Installers read the default branch, so anything merged there becomes available
+immediately. That branch stays install-clean. A skill is published once it
+appears in the catalog and installs on its own.
 
 ### Install Probe
 The verification gate proving a skill installs through the repository's documented install path and loads in at least one real harness. A probe passes only when its success is discriminating: output that cannot distinguish a working mechanism from a silent fallback proves nothing. Runs before merge from the local source and again after merge against the published state.
 
 ### Same-Door Rule
 The maintainer installs from this repository exactly the way a visitor does.
-Nothing on the shelf may depend on context that exists only on the maintainer's
-machine, including absolute paths, private names, or personal-environment
-assumptions. A verification sweep enforces the rule across shipped files.
+Nothing in the published catalog may depend on context that exists only on the
+maintainer's machine, including absolute paths, private names, or
+personal-environment assumptions. A verification sweep enforces the rule
+across shipped files.
 
 ## Skill quality gates
 

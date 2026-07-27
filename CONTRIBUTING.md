@@ -30,6 +30,6 @@ This is a personal project with **no support SLA**. I read issues and PRs, but r
 
 ## The rules this repo lives by
 
-- **`main` is the store shelf.** Installs pull from the default branch, so whatever lands on `main` is instantly what people get. `main` stays install-clean. Experiments live on branches.
+- **`main` is the install source.** Installs pull from the default branch, so whatever lands on `main` is instantly what people get. `main` stays install-clean. Experiments live on branches.
 - **The same-door rule.** I install from this repo the same way you do. Nothing in it may depend on context that exists only on my machine. That means no absolute paths, no private repo names, and no personal-environment assumptions. Contributions are held to the same rule.
 - **Docs ship public.** The working documents in `docs/` (plans, learnings) are part of the repo on purpose. The process is part of what's being shared.

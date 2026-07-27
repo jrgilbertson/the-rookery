@@ -13,7 +13,7 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
-- `creating-portable-skills` is the shelf's first skill. It creates new Agent
+- `creating-portable-skills` is the first published skill. It creates new Agent
   Skills and helps review, update, or move existing skills. It starts from the
   user's goal, checks the package structure, compares behavior with focused
   tests, and verifies installation separately from activation. It works
@@ -48,5 +48,5 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
-- Repository scaffolding. Community files (MIT license, contributing guide, code of conduct, security policy), issue and PR templates, the skills shelf layout, and the seven-job workflow map across README and WORKFLOWS.md.
-- The rules the repo lives by. Curated not collected, main is the store shelf, and the same-door rule.
+- Repository scaffolding. Community files (MIT license, contributing guide, code of conduct, security policy), issue and PR templates, the skills catalog layout, and the seven-job workflow map across README and WORKFLOWS.md.
+- The rules the repo lives by. Curated not collected, main is the install source, and the same-door rule.

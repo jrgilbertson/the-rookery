@@ -229,6 +229,16 @@ Before an approved edit, read the current note, preserve manual content and
 wiki links, make only the approved change, and read the note back through the
 CLI. Do not run linting as part of this workflow.
 
+In a sandboxed runtime, a CLI error saying that Obsidian is unavailable may
+mean the runtime cannot reach the app's CLI bridge rather than that the app or
+vault is unavailable. For a failed read, verify that the app is running and
+the configured vault is available, then retry the same read once through the
+platform-approved `obsidian` execution scope. If readback fails after an
+attempted write, retry only that readback through the approved scope; never
+repeat the write. If the scoped read or readback still fails, use the normal
+partial, manual, or **Indeterminate** classification. This recovery path does
+not authorize direct vault filesystem access or bypass action approval.
+
 If the app, vault, or CLI is unavailable, mark only Obsidian-dependent work
 partial, insufficient, or manual as appropriate. Do not substitute filesystem
 access.

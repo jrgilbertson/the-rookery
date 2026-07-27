@@ -2,7 +2,7 @@
 
 # The Rookery
 
-An opinionated, always-current home for how I build with AI. It holds the workflows I use every day and the skills that power them. Everything installs individually and works across harnesses like Claude Code and Codex. One rule anchors it all. **I use this repo through the same front door you do.**
+An opinionated, always-current home for how I build with AI. It holds the workflows I use every day and the skills that power them. Each skill installs individually as a standard Agent Skills package in compatible harnesses such as Claude Code and Codex. One rule anchors it all. **I use this repo through the same front door you do.**
 
 ## Install
 
@@ -19,7 +19,7 @@ npx skills add jrgilbertson/the-rookery --skill <name>
 npx skills add jrgilbertson/the-rookery --all
 ```
 
-This works in any harness that reads `SKILL.md`, including Claude Code, Codex, Cursor, and Gemini CLI. See the [Agent Skills](https://agentskills.io) ecosystem for the full list. Add `-g` for a user-level install instead of per-project.
+The installer targets compatible harnesses that read `SKILL.md`, including Claude Code, Codex, Cursor, and Gemini CLI. See the [Agent Skills](https://agentskills.io) ecosystem for the full list. Add `-g` for a user-level install instead of per-project.
 
 > **The first skill is on the shelf.** [creating-portable-skills](skills/creating-portable-skills/SKILL.md) installs with `npx skills add jrgilbertson/the-rookery --skill creating-portable-skills`. More are arriving. Watch [releases](../../releases) for arrivals.
 

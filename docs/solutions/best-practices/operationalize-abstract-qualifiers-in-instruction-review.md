@@ -10,7 +10,7 @@ applies_when:
   - "Running a delete-test pass on skill or prompt wording during review"
 symptoms:
   - "A qualifier passes the delete test (removing it changes behavior) yet remains undefined, so each model interprets it differently"
-  - "A gate probe caught the word \"borderline\" undefined in the skill's own step 8, despite passing the standard delete test"
+  - "A gate probe caught the word \"borderline\" undefined in the authoring workflow's then-current step 8, despite passing the standard delete test"
 root_cause: inadequate_documentation
 resolution_type: documentation_update
 related_components:
@@ -59,7 +59,7 @@ The blind spot is self-reinforcing. Reviewers trained on the delete test will de
 ## When to Apply
 
 - Reviewing or auditing any agent instructions: skills, prompts, CLAUDE.md files, subagent task briefs.
-- Running the Instruction economy group of the skill-review checklist (step 0 audit or step 7 review in `skills/creating-portable-skills/SKILL.md`).
+- Running the Instruction economy group of the skill-review checklist (step 0 audit or step 6, Decide and review, in `skills/creating-portable-skills/SKILL.md`).
 - Writing new instructions that reach for an adjective to describe output quality. Define it at write time rather than deferring to review.
 - Gate-probing a revised skill, where the check applies to the skill's own text, not just the skills it reviews (see the borderline example below, caught exactly this way).
 
@@ -77,11 +77,11 @@ A probe ran the checklist's Instruction economy group against a toy instruction 
 
 ### The borderline fix (the check catching its own host skill)
 
-Same day, a gate probe applied this lens to the adopting skill's own step 8 and caught "borderline" undefined. A 50/50 trigger judgment could pass by luck, with nothing forcing a re-sample.
+Same day, a gate probe applied this lens to the adopting skill's then-current step 8 and caught "borderline" undefined. A 50/50 trigger judgment could pass by luck, with nothing forcing a re-sample.
 
-**Before.** Step 8 told the reviewer to re-judge "on a miss or a borderline call" without defining borderline (an in-session draft state; the definition and the surrounding protocol shipped together in one commit, so git history holds only the After text), and accepted free-form activation judgments.
+**Before.** The then-current step 8 draft told the reviewer to re-judge "on a miss or a borderline call" without defining borderline (an in-session draft state; the definition and the surrounding protocol shipped together in one commit, so git history holds only the After text), and accepted free-form activation judgments.
 
-**After.** Step 8 in `skills/creating-portable-skills/SKILL.md` now constrains the judgment to enumerated options and defines the qualifier by criterion:
+**After.** The listing-judgment protocol now lives in `skills/creating-portable-skills/assets/trigger-queries-template.md`; it constrains the judgment to enumerated options and defines the qualifier by criterion:
 
 > "...ask whether it would activate, requiring a plain yes, no, or unsure" and "An unsure or hedged judgment counts as borderline."
 

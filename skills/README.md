@@ -10,11 +10,11 @@ npx skills add jrgilbertson/the-rookery --list
 npx skills add jrgilbertson/the-rookery --skill <name>
 ```
 
-Skills here follow the [Agent Skills](https://agentskills.io) format, so they work in Claude Code, Codex, and anything else that reads `SKILL.md`.
+Skills here follow the [Agent Skills](https://agentskills.io) format and can be installed in compatible harnesses that read `SKILL.md`, including Claude Code and Codex.
 
 ## On the shelf
 
-- **[creating-portable-skills](creating-portable-skills/SKILL.md)** — create a new agent skill, or review, update, and migrate an existing one. One loop from intent interview through baseline testing to a packaged skill that works across models and harnesses.
+- **[creating-portable-skills](creating-portable-skills/SKILL.md)** — create a new agent skill, or review, update, and migrate an existing one. Uses context-first intent resolution, structural validation, scoped directional comparisons, and separate package and activation checks.
 
   ```bash
   npx skills add jrgilbertson/the-rookery --skill creating-portable-skills

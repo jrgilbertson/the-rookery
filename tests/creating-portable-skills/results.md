@@ -9,7 +9,7 @@ Recorded runs for the plan's Verification Contract (`docs/plans/2026-07-16-001-f
 | Static validation | Pass | `npx skills-ref validate skills/creating-portable-skills` → "Valid skill", clean after every edit round |
 | Line budget | Pass | `SKILL.md` at 107 lines (ceiling 500, target ~200) |
 | Same-door sweep | Pass | Zero hits for home-directory paths and owner-environment identifiers across `skills/creating-portable-skills/` and `tests/creating-portable-skills/` |
-| Install probe | Partial pass: local-source probe passed; remote probe (from jrgilbertson/the-rookery) pending post-merge (see caveat) | `npx skills add . --skill creating-portable-skills --agent claude-code --agent codex -g -y --copy` installed to both `~/.claude/skills/` and `~/.agents/skills/`; skill registered live in the running harness. See the branch-ref caveat below |
+| Historical 2026-07-16 install probe | Historical partial pass: local-source probe passed; remote probe (from jrgilbertson/the-rookery) remained pending post-merge (see caveat) | `npx skills add . --skill creating-portable-skills --agent claude-code --agent codex -g -y --copy` installed to both `~/.claude/skills/` and `~/.agents/skills/`; skill registered live in the running harness. This remote publication follow-up is non-gating for the 2026-07-27 final-source U4 result |
 | Trigger evaluation | Pass | 10/10 should-trigger at rate 1.0 (3 runs each), 0/10 near-miss activations, judged in fresh contexts across three model families (Haiku 4.5, Sonnet, Fable 5). Full tables: `trigger-queries.md` |
 | Baseline test | Pass | Bare-agent baseline skipped all four disciplines (self-audited); with-skill runs in three harnesses enforced all four. Comparison: `baseline-cases.md` case 1 |
 | Visitor create-flow (F1) | Pass | Clean non-Rookery repo, no companions: all loop steps completed, AE1 and AE2 confirmed (see below) |
@@ -33,7 +33,7 @@ Recorded runs for the plan's Verification Contract (`docs/plans/2026-07-16-001-f
 
 ## Caveats and deferred confirmations
 
-- **Remote install probe runs post-merge.** `npx skills add jrgilbertson/the-rookery` scans the default branch; skills CLI 1.5.19's `@ref` targeting clones but does not check out the requested ref (verified against both a branch name and a commit SHA), so the branch-ref workaround does not work. The plain remote probe re-runs against `main` after merge.
+- **Historical 2026-07-16 remote publication follow-up (non-gating for the 2026-07-27 final-source U4 result).** `npx skills add jrgilbertson/the-rookery` scans the default branch; skills CLI 1.5.19's `@ref` targeting clones but does not check out the requested ref (verified against both a branch name and a commit SHA), so the branch-ref workaround does not work. The plain remote probe was deferred until the change reached `main`.
 - Baseline case 2 (full review/migrate flow on a real skill) is scheduled with the post-merge dogfood: the `design-evals` migration review is the acceptance run per the plan's KTD10. Cases 1 and 3 ran pre-merge.
 - Trigger judgments are listing-level (name + description shown to a fresh judge), the standard approximation for description routing; harness-native discovery was additionally confirmed live in Claude Code, Codex, and Grok.
 
@@ -51,18 +51,22 @@ Tool and target metadata:
 - Claude Code 2.1.220 with exact model `claude-opus-5`, high effort, project
   settings, and no session persistence for matched cells.
 
-### U3 gate states
+### U3 checkpoint gate states
+
+This table preserves the U3 checkpoint before the later review-fix follow-up.
+Pending or unverified states here are superseded by the current sections below.
 
 | Gate | State | Evidence and limitation |
 | --- | --- | --- |
 | Structural validation | passed | `npx skills-ref validate skills/creating-portable-skills` → `Valid skill`; final body 95 lines |
-| FR-D1 create comparison | passed within Claim Ceiling | Both target cells used the complete contract without questions and preserved every named item; the result was `same`, so the final candidate retained focused one-question-at-a-time clarification for material gaps |
-| FR-C1 authority control | passed within Claim Ceiling | Both target cells stopped before drafting and kept auto-close authority user-owned; final Opus led with that boundary, final Sol asked the same single focused boundary question as prior |
+| FR-D1 create comparison | retained within Claim Ceiling | Both target cells used the complete contract without questions and preserved every named item; the discriminating result was `same`, so it earns no behavioral-improvement claim for the step-1 group |
+| FR-C1 authority control | passed as a stable control | Both target cells stopped before drafting and kept auto-close authority user-owned; final Opus led with that boundary, but question-order movement in a predeclared control is not improvement evidence |
 | FR-P1 same-decision probe | passed | Both priors chose subtraction; both finals retained the instruction and treated missing affected evidence as unverified |
 | FR-P2 waiver probe | passed | Both finals kept the unavailable cell unverified and did not raise the label or authorize removal |
 | FR-P3 divergence probe | passed | Both finals preserved pass, loss, and unavailable states and required revision/rerun, then retention or target narrowing |
+| FR-P4 new-skill unavailable-target probe | pending at U3 checkpoint; superseded below | Predeclared in `baseline-cases.md`; the later review-fix follow-up passed in both target cells |
 | Strong-claim probe | passed | Both finals refused causal and non-regression labels for a small matched comparison and named the missing rigor without requiring another skill |
-| Opus full fixture flow | retained | Audit, pre-edit approval boundary, scoped disposable revision, validation, and matched application comparison ran; application result was `same`, so the candidate removals remained unsupported and the safe-publication sequence remained intact |
+| Opus full fixture flow | completed; candidate retained | Audit, pre-edit approval boundary, scoped disposable revision, validation, matched application comparison, affected listing-proxy checks, and local-source packaging ran; application result was `same`, so the candidate removals remained unsupported and the safe-publication sequence remained intact |
 | Sol focused fixture audit | passed as focused coverage | Prior and final both stopped for approval and preserved the fragile sequence; the final used explicit System-Owned Invariant classification, but prose-level differences alone were not treated as improvement evidence |
 | Listing proxy | passed in both target cells | Full tables in `trigger-queries.md`; 10/10 should-trigger at 3/3 `yes` in each target and zero near-miss `yes`; Opus recorded two `unsure` judgments on one near-miss |
 
@@ -85,12 +89,218 @@ Tool and target metadata:
   `next_action: await_fix_scope_approval`; a repository diff confirmed the
   disposable target was unchanged until approval.
 
-### Claim Ceiling after U3
+### Opus fixture trigger and package completion
 
-The retune is a **DirectionalCandidate**. The predeclared create and policy
-cases show no observed invariant loss, and the unsafe `same` → delete shortcut
-changed in the intended direction on both current targets. These runs do not
-prove causal improvement, non-regression, equivalent behavior across targets,
-or behavior outside the named cases. Listing results remain proxy evidence.
-Local-source installation, installed-content identity, native discovery,
-native load, and native trigger are still unverified until U4 records them.
+Because the disposable fixture description changed, a routine listing-proxy
+check ran five should-trigger and five near-miss queries on Opus 5. Each ran in
+a fresh tool-less process that saw only the fixture name and description. All
+five should-trigger judgments were `yes`, all five near-miss judgments were
+`no`, and no result was borderline.
+
+The revised fixture then installed from its local source through skills CLI
+1.5.20 into a disposable Claude Code project. `diff -qr` found no difference
+between source and installed content. Both source and installed `SKILL.md`
+files had SHA-256
+`94877b118a7c4e7b1b1351db8d4c6d6ba601831199a8b648c12ecbebc714b238`.
+
+### Claim Ceiling at the U3 checkpoint
+
+The unsafe `same` → delete shortcut changed in the intended direction on both
+current targets, supporting a **DirectionalCandidate** for the
+candidate-decision policy only. The step-1 candidate is **Retained**: FR-D1 was
+`same` in both targets, and FR-C1's stable-control question-order movement does
+not earn a behavioral-improvement claim. These runs do not prove causal
+improvement, non-regression, equivalent behavior across targets, or behavior
+outside the named cases. Listing results remain proxy evidence. At this U3
+checkpoint, local-source installation, installed-content identity, native
+discovery, native load, and native trigger were unverified; the later U4
+sections supersede this interim state.
+
+### U4 local-source and native checks
+
+The final package source was revision
+`61bd49283426c4c7f149b8f245b8408bcff7cbba`; its `SKILL.md` SHA-256 was
+`092a0846f2d0b1faf77f3bed646f547374dc0622268c9368ae9848642c872c57`.
+The skills CLI was version 1.5.20.
+
+From a fresh disposable Git repository, this command ran against the local
+working tree rather than a remote default branch:
+
+```bash
+npx skills add <local-repository-path> \
+  --skill creating-portable-skills --agent codex --agent claude-code --copy -y
+```
+
+The installer reported one selected skill and copied it to both
+`.agents/skills/creating-portable-skills` and
+`.claude/skills/creating-portable-skills`. `diff -qr` returned no differences
+between either installed directory and the canonical source. All six installed
+file hashes matched across the two destinations; the `SKILL.md` hash above
+also matched the source.
+
+| Check | Codex package/model cell | Claude Code package/model cell |
+| --- | --- | --- |
+| Local-source install | passed | passed |
+| Installed-content identity | passed | passed |
+| Native discovery | passed; implicit query selected the project skill after the colliding user-level path was disabled | passed; Claude initialization listed `creating-portable-skills` in both `skills` and `slash_commands` |
+| Native load | passed; tool trace read `<disposable-project>/.agents/skills/creating-portable-skills/SKILL.md` | passed; native `Skill` tool returned `Launching skill: creating-portable-skills` and a base directory under the disposable project's `.claude/skills` |
+| Native trigger | passed on “turn this repeated Agent Skill review prompt into a reusable skill” | passed on the same representative implicit query |
+
+Both native runs returned the exact first body sentence:
+`Create or revise a skill from its intent, hard constraints, authority
+boundaries, success criteria, and output contract.` Codex ran as
+`gpt-5.6-sol` at high reasoning in read-only mode. Claude Code ran as
+`claude-opus-5` at high effort with only the native `Skill` capability enabled;
+its stream showed the direct tool invocation and project-local base directory.
+
+These U4 checks apply to source revision `61bd492`. Review fixes later changed
+bundled package files at `feb9a0e`, so the install, identity, and native checks
+must rerun against the final source before they can support the final status.
+
+### Review-fix follow-up at `feb9a0ee9246b8c079bea7c049efe9f5a67c657c`
+
+#### FR-P4 new-skill unavailable-target policy
+
+The Sol exact-file run returned `NewSkillCandidate`, kept the Sol target
+unverified, set shipment to `UnverifiedCandidate`, and assigned no
+`DirectionalCandidate` or cross-target upgrade. It labeled the already observed
+Opus-only cell `smoke-tested` without treating that observation as Sol or
+cross-target evidence.
+
+Two initial Opus attempts quoted rules absent from the exact project files,
+consistent with contamination from an older same-name user skill. Both were
+discarded and are not evidence. A fresh Opus 5 safe-mode, tool-less run with the
+exact authoritative policy embedded returned `NewSkillCandidate`, kept Sol
+unverified, set shipment to `UnverifiedCandidate`, assigned no
+`DirectionalCandidate` or cross-target upgrade, and left the earned label
+unchanged.
+
+FR-P4 passed in both target cells within its policy-probe scope.
+
+#### Full Sol fixture flow
+
+The final `creating-portable-skills` package at revision `feb9a0e` installed
+into the disposable Codex project and exactly matched the source. Its
+`SKILL.md` SHA-256 was
+`092a0846f2d0b1faf77f3bed646f547374dc0622268c9368ae9848642c872c57`.
+
+The audit loaded that installed project skill, made no edits, identified the
+fixture's description and workflow ceremony, preserved the temporary-sibling →
+formatter and validator → replace only after both pass → leave the live file
+untouched and report the temporary path on failure sequence, returned an
+approval boundary, and waited. After scripted scoped approval, Sol revised only
+the disposable fixture and validated it with `skills-ref` 0.1.5. The prior
+fixture SHA-256 was
+`b9236148a6cad1f1365e68fd775ea3183031d0eef60d4baf1676ef7457e6760e`; the
+revised SHA-256 was
+`bb12c084300e23b7e9aae8406ab7a50c75da281ce4e7aea73348cb61522b4105`.
+
+Fresh matched results:
+
+- **Drafting discriminator:** the prior stopped on a redundant audience
+  question despite the supplied audience. The revision was ready with no
+  questions, grounded every factual claim, included the breaking-change action,
+  and preserved review-only/no-overwrite authority. The intended delta was
+  observed on Sol.
+- **Formatter-failure control:** both variants left `RELEASE_NOTES.md`
+  untouched after formatter failure and reported `RELEASE_NOTES.md.tmp`; the
+  fragile invariant was preserved.
+
+The revised fixture's routine Sol listing proxy ran five should-trigger and
+five near-miss queries in fresh tool-less contexts. All five should-trigger
+judgments were `yes`, all five near-misses were `no`, and no result was
+borderline. Local-source Codex packaging through skills CLI 1.5.20 passed; the
+installed fixture hash matched
+`bb12c084300e23b7e9aae8406ab7a50c75da281ce4e7aea73348cb61522b4105`, and
+`diff -qr` was clean.
+
+The Sol discriminator improved while the Opus fixture result was `same`.
+Accordingly, the cross-target fixture candidate remains **Retained**. The cells
+are not averaged, and this record supports no general improvement claim.
+
+### Final-source U4 rerun at `feb9a0ee9246b8c079bea7c049efe9f5a67c657c`
+
+The current local source installed into both project paths under disposable
+workspace `/tmp/rookery-frontier-retune.YP9X0t/final-install.tQBkI2`:
+
+- `.agents/skills/creating-portable-skills`
+- `.claude/skills/creating-portable-skills`
+
+All six installed files exactly matched the current source:
+
+| Package file | SHA-256 |
+| --- | --- |
+| `SKILL.md` | `092a0846f2d0b1faf77f3bed646f547374dc0622268c9368ae9848642c872c57` |
+| `assets/baseline-test-template.md` | `2bd6e275e0c89efddddec86730fd0bfd6d9acc2391b2a8e53bdd15b32bfce60a` |
+| `assets/skill-template.md` | `275694e017dcb91a4299a021ba9dacbf02a9873d006d7499e04d8d4db042e1aa` |
+| `assets/trigger-queries-template.md` | `eb521fbc1a40dd1fb499e27a9c3cf14d079a8f6766ae32ca5474286352d935cb` |
+| `references/portability.md` | `7b349942cee171f2bc25a1e3084db2695ee689e8b54b8c09cb12f15620ed9d31` |
+| `references/review-checklist.md` | `901fcb57dac272d1b6f443b7e183feae7d150c010a50e9d94f2ee4f17e0ecedd` |
+
+| Check | Codex / `gpt-5.6-sol` high | Claude Code / `claude-opus-5` high |
+| --- | --- | --- |
+| Local-source install | passed at the final source revision | passed at the final source revision |
+| Installed-content identity | passed; all six files matched | passed; all six files matched |
+| Native discovery | passed; the query triggered `creating-portable-skills` | passed; initialization listed the skill and slash command |
+| Native load | passed; the tool trace read the exact installed `.agents` `SKILL.md` | passed; direct `Skill` call reported `Launching skill: creating-portable-skills` from the exact installed `.claude` base directory |
+| Native trigger | passed; the final included the exact first body sentence | passed; the final included the exact first body sentence |
+
+The exact sentence observed in both finals was:
+`Create or revise a skill from its intent, hard constraints, authority
+boundaries, success criteria, and output contract.`
+
+### U2 template-instantiation verification
+
+At disposable root `/tmp/rookery-template-instantiation.NYOZiH`, the current
+`assets/skill-template.md` was instantiated as skill
+`template-instantiation-smoke`. Authoring comments were stripped, a concrete
+description was supplied, the optional license was deliberately omitted, and
+the workflow was filled. The current baseline and trigger templates were also
+instantiated by filling every bracketed record placeholder. A placeholder sweep
+found zero remaining bracketed placeholders.
+
+The first validator run failed only because the generated directory was named
+`skill` while frontmatter named the skill `template-instantiation-smoke`.
+Renaming the directory to match frontmatter satisfied the documented package
+invariant. The corrected run:
+
+```text
+npx skills-ref validate /tmp/rookery-template-instantiation.NYOZiH/template-instantiation-smoke
+Valid skill
+```
+
+Generated artifact hashes:
+
+| Artifact | SHA-256 |
+| --- | --- |
+| `template-instantiation-smoke/SKILL.md` | `fe0d2dfe7e8cbd8709270db46b78fca3d9d8a0008835b2551fd90e0c8df951d3` |
+| Instantiated baseline record | `7b0ffd1e8ecc108a0bc8b4b3a7fc2439ededabc42107f87b075fe5d491220600` |
+| Instantiated trigger record | `27e98a3159ef225c5c94dffddf447638e0706ab3f94d2404237daf0b353fa4a0` |
+
+The instantiated baseline exposed mode, candidate group, named invariant,
+output contract, target set, target conclusions, earned label, and limitation.
+The instantiated trigger record exposed target metadata, listing-proxy rows,
+package-harness and native rows, earned label, and limitation. This is
+structural template evidence only; it does not upgrade any behavioral claim.
+
+### Final 2026-07-27 state
+
+| Evidence layer | State |
+| --- | --- |
+| Structural validation | passed |
+| U2 template instantiation | passed; generated skill validated and both evidence records exposed every required field, structural evidence only |
+| Step-1 behavioral candidate | Retained; FR-D1 was `same`, while FR-C1 remained a stable control |
+| Directional behavioral comparison | passed for the unsafe `same` → delete policy transition only |
+| FR-P4 new-skill state policy | passed in both target cells within the predeclared policy-probe scope |
+| Full fixture flow | completed in both target cells; cross-target candidate Retained because Opus was `same` while Sol showed the intended delta |
+| Listing proxy | passed in both target cells |
+| Prior-source U4 install, identity, and native checks | passed at source revision `61bd492`; superseded for final-package verification |
+| Final-source U4 install, identity, and native checks | passed at `feb9a0e` in both recorded target harnesses; all six installed files matched the source |
+
+Final workflow state: **VerifiedRetune**, scoped strictly to the recorded
+`gpt-5.6-sol`/Codex and `claude-opus-5`/Claude Code target cells and the checks
+above under the Claim Ceiling. This does not establish causal improvement,
+non-regression, equivalent behavior across targets, universal behavior, or
+behavior outside the recorded cases. The remote default-branch install probe
+remains a post-merge publication confirmation and is not used as pre-merge
+evidence.

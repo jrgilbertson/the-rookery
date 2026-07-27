@@ -14,7 +14,7 @@ Open a PR directly for any of these. Small and focused beats large and sweeping.
 
 ## Proposing a new skill
 
-The Rookery is **curated, not collected**. Every skill here is something I use and can vouch for across harnesses. New skills start as an issue, not a PR.
+The Rookery is **curated, not collected**. Every skill here is something I use and package for installation in compatible harnesses. New skills start as an issue, not a PR.
 
 1. Open a [skill proposal issue](../../issues/new/choose) describing what the skill does and which harnesses you've tested it in.
 2. We talk about it.

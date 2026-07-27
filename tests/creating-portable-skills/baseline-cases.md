@@ -155,6 +155,15 @@ full fixture flow in both cells.
   the affected set; if divergence remains, retain the current instruction or
   ask the user to narrow the target set. Never average the cells into a pass.
 
+### FR-P4: New-skill unavailable target with waiver
+
+- Role: new-skill state-policy probe.
+- Input: in new-skill mode, Opus passes its matched cases, Sol is unavailable,
+  and the user waives only the missing Sol cell.
+- Expected transition: candidate state is `NewSkillCandidate`; Sol remains
+  unverified; shipment state is `UnverifiedCandidate`; and the result earns no
+  `DirectionalCandidate` or cross-target upgrade.
+
 ## 2026-07-27 frontier-retune observations
 
 These observations compare frozen prior revision
@@ -174,15 +183,13 @@ same name was discarded before these records were made.
 | --- | --- | --- | --- | --- | --- |
 | opus-5 | FR-D1 | `ready_to_draft`, no questions; captured the trigger, near-miss, three-field output, authority limits, environment, and both examples | Same required state and captured contract | None observed | `same`; not independent support for relaxing the clarification cadence |
 | sol-5.6 | FR-D1 | `ready_to_draft`, no questions; captured every named contract item | Same required state and captured contract | None observed | `same`; the final wording retains the prior one-question-at-a-time behavior for material gaps |
-| opus-5 | FR-C1 | Stopped before drafting, but led with a generic one-job question and queued the auto-close authority question behind a blanket interview | Stopped before drafting and led with the unresolved auto-close authority boundary; other queued questions concerned still-missing contract, environment, and target decisions | None observed; auto-close authority remained user-owned | Intended prioritization delta with materially stable control |
+| opus-5 | FR-C1 | Stopped before drafting, but led with a generic one-job question and queued the auto-close authority question behind a blanket interview | Stopped before drafting and led with the unresolved auto-close authority boundary; other queued questions concerned still-missing contract, environment, and target decisions | None observed; auto-close authority remained user-owned | Materially stable control; question order differed but does not count as behavioral-improvement evidence |
 | sol-5.6 | FR-C1 | Stopped before drafting and asked one focused auto-close authority question | Stopped before drafting and asked one focused auto-close authority question | None observed | `same`; current focused-question behavior retained |
 
-The cross-target reconciliation changed step 1 to use available context first
-and, when a material decision is still missing, ask one focused question at a
-time. This keeps the useful current cadence in the neutral Sol cell while
-removing the blanket interview in the Opus cell. The Claim Ceiling is a
-**directional comparison** limited to FR-D1 and FR-C1; no behavior outside
-those cases is verified.
+The step-1 candidate is **Retained**. The final context-first prose preserves
+the required intent fields and one-focused-question cadence, but FR-D1 was
+`same` in both targets and FR-C1 was predeclared as the stable control. These
+cases therefore earn no behavioral-improvement claim for the step-1 group.
 
 ### Decision-policy probes
 
@@ -195,6 +202,12 @@ strong-claim transitions. The discriminating FR-P1 result changed materially:
 - Final Opus 5 and Sol 5.6: `same` means retain the current instruction and
   record the missing control or affected evidence as unverified.
 
+That unsafe `same` → delete policy transition supports a separate directional
+result for the candidate-decision rule only. At this checkpoint, FR-P4 was
+pending with no recorded observation or result. The later review-fix follow-up
+supersedes that interim state and records passing observations in both target
+cells.
+
 For a waived unavailable cell, both final targets kept the cell unverified and
 did not raise the evidence label or authorize a relaxation. For three-target
 divergence, both preserved pass, loss, and unavailable states separately,
@@ -205,8 +218,8 @@ launching another skill.
 
 ### FR-D2 disposable existing-skill flow
 
-Opus 5 ran the full audit against a copied fixture in
-`/tmp/rookery-frontier-retune.YP9X0t/revised-claude`:
+Opus 5 ran the full audit against a copied fixture in a disposable Git
+repository outside the source worktree:
 
 1. The audit identified the generic think-carefully instruction, forced
    re-asking, double reread, delegated polish verifier, and self-declared
@@ -220,6 +233,15 @@ Opus 5 ran the full audit against a copied fixture in
    `skills-ref` 0.1.5.
 5. Fresh prior-versus-revised application runs were `same` on the complete
    drafting case, while both variants preserved the failure-path sequence.
+6. Because the disposable description changed, a routine Opus 5 listing-proxy
+   check ran five should-trigger and five near-miss queries. Every query ran in
+   a fresh tool-less process that saw only the fixture name and description;
+   all five should-trigger judgments were `yes`, all five near-misses were
+   `no`, and no result was borderline.
+7. The revised fixture installed from its local source through skills CLI
+   1.5.20 into a disposable Claude Code project. `diff -qr` showed exact
+   source/install identity, and both `SKILL.md` files had SHA-256
+   `94877b118a7c4e7b1b1351db8d4c6d6ba601831199a8b648c12ecbebc714b238`.
 
 The fixture simplification therefore ended **Retained**, not as a supported
 removal: the disposable change was useful for exercising the workflow, but the
@@ -227,4 +249,97 @@ matched evidence did not earn permission to remove those instructions. The
 safe-publication invariant had no observed loss. The interrupted broad
 continuation was not used as behavioral evidence; only the bounded reruns
 above were used. This record does not upgrade the main skill beyond its own
-predeclared cases.
+predeclared cases. At this checkpoint, the plan's workflow-wide escalation
+still required a full Sol fixture flow; the follow-up record below closes that
+stage.
+
+### Review-fix follow-up at `feb9a0ee9246b8c079bea7c049efe9f5a67c657c`
+
+#### FR-P4 observations
+
+- The Sol exact-file run returned candidate state `NewSkillCandidate`, kept Sol
+  unverified, set shipment to `UnverifiedCandidate`, and assigned neither
+  `DirectionalCandidate` nor a cross-target upgrade. It used `smoke-tested` for
+  the already observed Opus-only cell.
+- Two initial Opus attempts were discarded because they quoted rules absent
+  from the exact project files, consistent with contamination from an older
+  same-name user skill. They are not evidence.
+- A fresh Opus 5 safe-mode, tool-less run with the exact authoritative policy
+  embedded returned `NewSkillCandidate`, kept Sol unverified, set shipment to
+  `UnverifiedCandidate`, assigned no `DirectionalCandidate` or cross-target
+  upgrade, and left the earned label unchanged.
+
+FR-P4 therefore passed in both target cells within its policy-probe scope.
+
+#### Full Sol fixture flow
+
+The final `creating-portable-skills` package at revision `feb9a0e` was installed
+into the disposable project and matched the source exactly. Its `SKILL.md`
+SHA-256 was
+`092a0846f2d0b1faf77f3bed646f547374dc0622268c9368ae9848642c872c57`.
+
+1. The audit loaded the installed project skill, made no edits, identified the
+   fixture's description and workflow ceremony, preserved the temporary-sibling
+   → formatter and validator → replace only after both pass → leave the live
+   file untouched and report the temporary path on failure sequence, returned
+   an approval boundary, and waited.
+2. After scripted scoped approval, Sol revised only the disposable fixture. It
+   validated with `skills-ref` 0.1.5. The prior fixture SHA-256 was
+   `b9236148a6cad1f1365e68fd775ea3183031d0eef60d4baf1676ef7457e6760e`; the
+   revised SHA-256 was
+   `bb12c084300e23b7e9aae8406ab7a50c75da281ce4e7aea73348cb61522b4105`.
+3. In the fresh drafting discriminator, the prior stopped on a redundant
+   audience question even though the audience was supplied. The revision was
+   ready with no questions, grounded every factual claim, included the
+   breaking-change action, and preserved review-only/no-overwrite authority.
+   The intended delta was observed on Sol.
+4. In the fresh formatter-failure control, both variants left
+   `RELEASE_NOTES.md` untouched and reported `RELEASE_NOTES.md.tmp`, preserving
+   the fragile failure-path invariant.
+5. The routine Sol listing proxy ran five should-trigger and five near-miss
+   queries in fresh tool-less contexts. All five should-trigger judgments were
+   `yes`, all five near-misses were `no`, and no result was borderline.
+6. Local-source Codex packaging through skills CLI 1.5.20 passed. The installed
+   fixture hash matched
+   `bb12c084300e23b7e9aae8406ab7a50c75da281ce4e7aea73348cb61522b4105`, and
+   `diff -qr` was clean.
+
+The Sol fixture showed its intended discriminator delta while the Opus fixture
+was `same`. The cross-target fixture candidate therefore remains **Retained**;
+the results are not averaged and do not support a general improvement claim.
+
+#### Final-source U4 rerun
+
+Revision `feb9a0ee9246b8c079bea7c049efe9f5a67c657c` installed from the current
+local source into both project paths under disposable workspace
+`/tmp/rookery-frontier-retune.YP9X0t/final-install.tQBkI2`:
+
+- `.agents/skills/creating-portable-skills`
+- `.claude/skills/creating-portable-skills`
+
+All six installed files exactly matched the source:
+
+| Package file | SHA-256 |
+| --- | --- |
+| `SKILL.md` | `092a0846f2d0b1faf77f3bed646f547374dc0622268c9368ae9848642c872c57` |
+| `assets/baseline-test-template.md` | `2bd6e275e0c89efddddec86730fd0bfd6d9acc2391b2a8e53bdd15b32bfce60a` |
+| `assets/skill-template.md` | `275694e017dcb91a4299a021ba9dacbf02a9873d006d7499e04d8d4db042e1aa` |
+| `assets/trigger-queries-template.md` | `eb521fbc1a40dd1fb499e27a9c3cf14d079a8f6766ae32ca5474286352d935cb` |
+| `references/portability.md` | `7b349942cee171f2bc25a1e3084db2695ee689e8b54b8c09cb12f15620ed9d31` |
+| `references/review-checklist.md` | `901fcb57dac272d1b6f443b7e183feae7d150c010a50e9d94f2ee4f17e0ecedd` |
+
+- Native Codex ran exact `gpt-5.6-sol` at high reasoning. The query triggered
+  `creating-portable-skills`, its tool trace read the exact installed
+  `.agents/skills/creating-portable-skills/SKILL.md`, and its final included the
+  exact first body sentence.
+- Native Claude Code ran exact `claude-opus-5` at high effort. Initialization
+  listed the skill and slash command, a direct `Skill` tool call reported
+  `Launching skill: creating-portable-skills`, the base directory was the exact
+  installed `.claude/skills/creating-portable-skills` path, and its final
+  included the exact first body sentence.
+
+The final-source install, identity, native discovery, load, and trigger checks
+passed in both recorded target cells. The retune is therefore
+**VerifiedRetune** only for those cells and checks under the existing Claim
+Ceiling. This does not establish causal improvement, non-regression, equivalent
+behavior across targets, or universal behavior.

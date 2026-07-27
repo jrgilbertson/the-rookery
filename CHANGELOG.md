@@ -13,7 +13,7 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
-- `creating-portable-skills` — the shelf's first skill. Creates new Agent Skills and reviews, updates, or migrates existing ones through one loop: intent interview, draft, static validation, with/without baseline testing, review checklist, and packaging. Portable across models and harnesses; recommends — never requires — `design-evals` and `writing-great-skills` for deeper eval and review passes.
+- `creating-portable-skills` — the shelf's first skill. Creates new Agent Skills and reviews, updates, or migrates existing ones through context-first intent resolution, structural validation, matched directional comparisons with explicit Claim Ceilings, and separate package and activation checks. Ships as a portable, installable Agent Skills package without requiring companion skills.
 - `personal-chief-of-staff` — an interactive morning, wind-down, weekly, and
   quarterly review loop grounded in live authoritative sources. Includes
   reviewed-write safeguards, Obsidian CLI handling, behavioral evals, and a

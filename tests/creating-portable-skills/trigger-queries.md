@@ -158,3 +158,18 @@ Every should-trigger received three of three `yes` judgments in both targets.
 No near-miss received a `yes`. The listing proxy is **passed** for both target
 cells; native discovery, loading, and triggering remain separate states in
 `results.md`.
+
+### Final evidence states
+
+| Check | Codex / `gpt-5.6-sol` | Claude Code / `claude-opus-5` |
+| --- | --- | --- |
+| Structural validation | passed (shared final package) | passed (shared final package) |
+| Listing proxy | passed | passed |
+| Local-source install | passed | passed |
+| Installed-content identity | passed | passed |
+| Native discovery | passed | passed |
+| Native load | passed | passed |
+| Native trigger | passed | passed |
+
+The detailed commands, paths, hashes, target configuration, and Claim Ceiling
+are recorded in `results.md`. No proxy result was used to fill a native state.

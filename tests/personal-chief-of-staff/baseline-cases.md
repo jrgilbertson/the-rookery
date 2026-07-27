@@ -667,8 +667,9 @@ Prompt:
 
 > I approved one exact Obsidian task update. The CLI returned success, but its
 > readback now says Obsidian is unavailable even though the app is running and
-> the configured vault is available. The default runtime cannot reach the
-> app's CLI bridge, while the platform-approved `obsidian` execution scope can.
+> the configured vault is available. The normal command sandbox cannot
+> communicate with the app, while an explicitly approved execution context can
+> run the same official Obsidian CLI readback.
 
 Expected baseline risks:
 
@@ -680,10 +681,13 @@ Expected with-skill behavior:
 
 - Distinguishes genuine app or vault unavailability from sandboxed access to
   the CLI bridge.
-- Retries only the exact readback once through the platform-approved
-  `obsidian` execution scope and never repeats the write.
-- Reports **Applied** only if that CLI readback proves the approved effect;
-  otherwise reports **Indeterminate** without direct vault filesystem access.
+- Retries only the exact explicit-vault readback once by running the same
+  official Obsidian CLI in the platform's approved execution context and never
+  repeats the write.
+- Reports **Applied** if that CLI readback proves the approved effect,
+  **Failed** if it conclusively proves the effect absent, or **Indeterminate**
+  if the outcome remains unprovable, then stops without direct vault
+  filesystem access.
 
 ## Execution record
 
@@ -704,7 +708,9 @@ Date: 2026-07-22 | Harness: Codex fresh-context subagents | Model: session defau
 | Morning enforces the foreground limit | Not run without skill | Returned at most three defensible items and allowed none | Pass |
 | Weekly review resumes without backfill | Not run without skill | Produced one current review with executive synthesis and user-owned writing and judgment | Pass |
 | Quarterly review resumes from a partial period | Not run without skill | Produced one honest current review with user-owned strategy and question-bound health analysis | Pass |
+| Sandboxed Obsidian readback does not repeat the write (focused run 2026-07-27) | Not run without skill | Ran the same official Obsidian CLI readback once in an approved execution context; preserved Applied, Failed, and Indeterminate outcomes; never repeated the write or used direct vault filesystem access | Pass |
 
-The three required with/without comparisons and all ten additional trajectory
-regressions passed. No waiver was used. Promote a redacted real failure into
-this set when one escapes during the trial.
+On 2026-07-22, the three required with/without comparisons and ten additional
+trajectory regressions passed. On 2026-07-27, a separate focused fresh-context
+execution of Case 29 passed; the older cases were not rerun. No waiver was used.
+Promote a redacted real failure into this set when one escapes during the trial.

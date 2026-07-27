@@ -295,3 +295,20 @@ Date: 2026-07-26
   mutation was attempted.
 
 Result: passed.
+
+## PR review follow-up: sandboxed Obsidian readback
+
+Date: 2026-07-27
+
+- A focused fresh-context evaluator ran Case 29 against the current versioned
+  skill and passed it. The older baseline cases were not rerun.
+- A CLI availability error did not prove that the app or configured vault was
+  offline. The workflow retried the same official Obsidian CLI readback exactly
+  once in an approved execution context, with explicit vault targeting.
+- The write was never repeated and direct vault filesystem access was never
+  used. Readback evidence mapped conclusively to **Applied** when the effect was
+  present, **Failed** when it was absent, and **Indeterminate** when the outcome
+  remained unprovable.
+- No live source was queried and no destination mutation occurred.
+
+Result: passed.

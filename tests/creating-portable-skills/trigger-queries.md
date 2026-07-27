@@ -109,3 +109,52 @@ separate for `opus-5` and `sol-5.6`.
   passes in one, fails in one, and is unavailable in one.
 - Expected transition: record passed, failed, and unverified separately. Do not
   collapse them into a harness-wide or cross-target pass.
+
+## 2026-07-27 listing-proxy observations
+
+Final listing at revision `c1ec71a` was judged in three fresh, tool-less
+contexts per target. Each context saw the candidate name, final description,
+and the unchanged twenty-query set above. This is listing-proxy evidence only.
+
+Actual targets:
+
+- `gpt-5.6-sol`, Codex CLI 0.145.0, high reasoning, ephemeral read-only
+  execution with user config ignored. The colliding user-level
+  `creating-portable-skills` path was disabled for these listing judgments.
+- `claude-opus-5`, Claude Code 2.1.220, high effort, no session persistence,
+  no tools, project setting source in an empty disposable repository.
+
+### Should-trigger judgments
+
+| Query | Sol 1/2/3 | Opus 1/2/3 | State |
+| --- | --- | --- | --- |
+| Help me create a new skill for formatting SQL queries | yes / yes / yes | yes / yes / yes | passed |
+| I want to write an agent skill that enforces our commit message style | yes / yes / yes | yes / yes / yes | passed |
+| Review my deploy-checks skill and tell me what's wrong with it | yes / yes / yes | yes / yes / yes | passed |
+| Update the description on my notes skill so it triggers more reliably | yes / yes / yes | yes / yes / yes | passed |
+| Port this skill from my old toolkit repo into this collection | yes / yes / yes | yes / yes / yes | passed |
+| Migrate the data-validation skill over here and fix it up during the move | yes / yes / yes | yes / yes / yes | passed |
+| My skill never fires when I ask about invoices — fix its triggers | yes / yes / yes | yes / yes / yes | passed |
+| Turn this prompt I keep pasting into a proper reusable skill | yes / yes / yes | yes / yes / yes | passed |
+| Is my skill's SKILL.md structured right? Audit it | yes / yes / yes | yes / yes / yes | passed |
+| Make this skill work in Codex too, not just Claude Code | yes / yes / yes | yes / yes / yes | passed |
+
+### Near-miss judgments
+
+| Query | Sol 1/2/3 | Opus 1/2/3 | State |
+| --- | --- | --- | --- |
+| Design evals for my dataset | no / no / no | no / no / no | passed |
+| Create a plugin for my editor that adds a slash command | no / no / no | no / no / no | passed |
+| Review my README for clarity | no / no / no | no / no / no | passed |
+| Build a grader and rubric for judging model outputs | no / no / no | no / no / no | passed |
+| Help me write better prompts for my chatbot | no / no / no | no / no / no | passed |
+| Set up an MCP server for our internal API | no / no / no | no / no / no | passed |
+| Create a GitHub Action that lints markdown | no / no / no | no / no / no | passed |
+| What skills should I install for web development? | no / no / no | no / no / no | passed |
+| Summarize what this skill does | no / no / no | unsure / unsure / no | passed; no activation, with two borderline judgments recorded |
+| Write documentation for our API endpoints | no / no / no | no / no / no | passed |
+
+Every should-trigger received three of three `yes` judgments in both targets.
+No near-miss received a `yes`. The listing proxy is **passed** for both target
+cells; native discovery, loading, and triggering remain separate states in
+`results.md`.

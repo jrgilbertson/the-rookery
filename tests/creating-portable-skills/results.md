@@ -36,3 +36,61 @@ Recorded runs for the plan's Verification Contract (`docs/plans/2026-07-16-001-f
 - **Remote install probe runs post-merge.** `npx skills add jrgilbertson/the-rookery` scans the default branch; skills CLI 1.5.19's `@ref` targeting clones but does not check out the requested ref (verified against both a branch name and a commit SHA), so the branch-ref workaround does not work. The plain remote probe re-runs against `main` after merge.
 - Baseline case 2 (full review/migrate flow on a real skill) is scheduled with the post-merge dogfood: the `design-evals` migration review is the acceptance run per the plan's KTD10. Cases 1 and 3 ran pre-merge.
 - Trigger judgments are listing-level (name + description shown to a fresh judge), the standard approximation for description routing; harness-native discovery was additionally confirmed live in Claude Code, Codex, and Grok.
+
+## 2026-07-27 frontier retune
+
+Plan: `docs/plans/2026-07-27-001-refactor-creating-portable-skills-frontier-retune-plan.md`.
+Frozen prior: `af5e4f686528961b7dd401fa7b780f485ca774fd`.
+Final behavioral candidate for this phase: `c1ec71a`.
+
+Tool and target metadata:
+
+- Agent Skills validator 0.1.5.
+- Codex CLI 0.145.0 with exact model `gpt-5.6-sol`, high reasoning,
+  ephemeral read-only runs, and user config ignored.
+- Claude Code 2.1.220 with exact model `claude-opus-5`, high effort, project
+  settings, and no session persistence for matched cells.
+
+### U3 gate states
+
+| Gate | State | Evidence and limitation |
+| --- | --- | --- |
+| Structural validation | passed | `npx skills-ref validate skills/creating-portable-skills` → `Valid skill`; final body 95 lines |
+| FR-D1 create comparison | passed within Claim Ceiling | Both target cells used the complete contract without questions and preserved every named item; the result was `same`, so the final candidate retained focused one-question-at-a-time clarification for material gaps |
+| FR-C1 authority control | passed within Claim Ceiling | Both target cells stopped before drafting and kept auto-close authority user-owned; final Opus led with that boundary, final Sol asked the same single focused boundary question as prior |
+| FR-P1 same-decision probe | passed | Both priors chose subtraction; both finals retained the instruction and treated missing affected evidence as unverified |
+| FR-P2 waiver probe | passed | Both finals kept the unavailable cell unverified and did not raise the label or authorize removal |
+| FR-P3 divergence probe | passed | Both finals preserved pass, loss, and unavailable states and required revision/rerun, then retention or target narrowing |
+| Strong-claim probe | passed | Both finals refused causal and non-regression labels for a small matched comparison and named the missing rigor without requiring another skill |
+| Opus full fixture flow | retained | Audit, pre-edit approval boundary, scoped disposable revision, validation, and matched application comparison ran; application result was `same`, so the candidate removals remained unsupported and the safe-publication sequence remained intact |
+| Sol focused fixture audit | passed as focused coverage | Prior and final both stopped for approval and preserved the fragile sequence; the final used explicit System-Owned Invariant classification, but prose-level differences alone were not treated as improvement evidence |
+| Listing proxy | passed in both target cells | Full tables in `trigger-queries.md`; 10/10 should-trigger at 3/3 `yes` in each target and zero near-miss `yes`; Opus recorded two `unsure` judgments on one near-miss |
+
+### Raw-enough decision excerpts
+
+- Prior Sol FR-P1: `"decision": "subtract"`, because the observation did
+  not discriminate prior from revised.
+- Prior Opus FR-P1: `Do not ship as-is. Subtract` because `same everywhere`
+  did not let the instruction earn its tokens.
+- Final Sol FR-P1: `retain_current_instruction`; the discriminating case
+  showed no intended delta and the missing control stayed unverified.
+- Final Opus FR-P1: `Retain the candidate instruction as-is; do not remove or
+  relax it.`
+- Final Sol FR-C1: `What exact ticket classes, if any, may the skill close
+  without per-ticket user approval?`
+- Final Opus FR-C1 led with `Auto-close authority` and explicitly labeled it
+  the one question asked now; later material gaps were queued rather than used
+  to widen auto-close authority.
+- Opus fixture audit returned `edited_files: []` and
+  `next_action: await_fix_scope_approval`; a repository diff confirmed the
+  disposable target was unchanged until approval.
+
+### Claim Ceiling after U3
+
+The retune is a **DirectionalCandidate**. The predeclared create and policy
+cases show no observed invariant loss, and the unsafe `same` → delete shortcut
+changed in the intended direction on both current targets. These runs do not
+prove causal improvement, non-regression, equivalent behavior across targets,
+or behavior outside the named cases. Listing results remain proxy evidence.
+Local-source installation, installed-content identity, native discovery,
+native load, and native trigger are still unverified until U4 records them.

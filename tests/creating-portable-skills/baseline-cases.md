@@ -154,3 +154,77 @@ full fixture flow in both cells.
 - Expected transition: preserve all three states separately. Revise and rerun
   the affected set; if divergence remains, retain the current instruction or
   ask the user to narrow the target set. Never average the cells into a pass.
+
+## 2026-07-27 frontier-retune observations
+
+These observations compare frozen prior revision
+`af5e4f686528961b7dd401fa7b780f485ca774fd` with final candidate revision
+`c1ec71a`. Each case used a fresh process and an explicitly addressed local
+variant. An exploratory Codex run that resolved the user-level skill with the
+same name was discarded before these records were made.
+
+| Target cell | Actual configuration | Variant loading |
+| --- | --- | --- |
+| opus-5 | Claude Code 2.1.220, `claude-opus-5`, high effort, project settings, no session persistence | Exact `.claude/skills/creating-portable-skills/SKILL.md` path read in each disposable prior or candidate workspace |
+| sol-5.6 | Codex CLI 0.145.0, `gpt-5.6-sol`, high reasoning, ephemeral read-only execution, user config ignored | Exact `.agents/skills/creating-portable-skills/SKILL.md` path read in each disposable prior or candidate workspace |
+
+### Create-flow matched cases
+
+| Target | Case | Prior observation | Final candidate observation | Loss | Result |
+| --- | --- | --- | --- | --- | --- |
+| opus-5 | FR-D1 | `ready_to_draft`, no questions; captured the trigger, near-miss, three-field output, authority limits, environment, and both examples | Same required state and captured contract | None observed | `same`; not independent support for relaxing the clarification cadence |
+| sol-5.6 | FR-D1 | `ready_to_draft`, no questions; captured every named contract item | Same required state and captured contract | None observed | `same`; the final wording retains the prior one-question-at-a-time behavior for material gaps |
+| opus-5 | FR-C1 | Stopped before drafting, but led with a generic one-job question and queued the auto-close authority question behind a blanket interview | Stopped before drafting and led with the unresolved auto-close authority boundary; other queued questions concerned still-missing contract, environment, and target decisions | None observed; auto-close authority remained user-owned | Intended prioritization delta with materially stable control |
+| sol-5.6 | FR-C1 | Stopped before drafting and asked one focused auto-close authority question | Stopped before drafting and asked one focused auto-close authority question | None observed | `same`; current focused-question behavior retained |
+
+The cross-target reconciliation changed step 1 to use available context first
+and, when a material decision is still missing, ask one focused question at a
+time. This keeps the useful current cadence in the neutral Sol cell while
+removing the blanket interview in the Opus cell. The Claim Ceiling is a
+**directional comparison** limited to FR-D1 and FR-C1; no behavior outside
+those cases is verified.
+
+### Decision-policy probes
+
+Both final target cells produced the expected FR-P1, FR-P2, FR-P3, and
+strong-claim transitions. The discriminating FR-P1 result changed materially:
+
+- Prior Opus 5: `same` meant "subtract" because the instruction was not
+  earning tokens.
+- Prior Sol 5.6: `same` meant `subtract` for the same reason.
+- Final Opus 5 and Sol 5.6: `same` means retain the current instruction and
+  record the missing control or affected evidence as unverified.
+
+For a waived unavailable cell, both final targets kept the cell unverified and
+did not raise the evidence label or authorize a relaxation. For three-target
+divergence, both preserved pass, loss, and unavailable states separately,
+required an invariant-preserving revision and rerun, then retained or narrowed
+the target set if divergence remained. Both refused to call a two-case matched
+comparison causal or non-regressing and named the missing rigor without
+launching another skill.
+
+### FR-D2 disposable existing-skill flow
+
+Opus 5 ran the full audit against a copied fixture in
+`/tmp/rookery-frontier-retune.YP9X0t/revised-claude`:
+
+1. The audit identified the generic think-carefully instruction, forced
+   re-asking, double reread, delegated polish verifier, and self-declared
+   completion as candidate choreography.
+2. It classified the temporary-sibling → formatter and validator → replace
+   only after both pass → preserve the live file and report the temporary path
+   on failure sequence as a System-Owned Invariant.
+3. It returned `await_fix_scope_approval` with `edited_files: []`; `git diff
+   --exit-code` confirmed no fixture edit before approval.
+4. After explicit scoped approval, the disposable revision validated with
+   `skills-ref` 0.1.5.
+5. Fresh prior-versus-revised application runs were `same` on the complete
+   drafting case, while both variants preserved the failure-path sequence.
+
+The fixture simplification therefore ended **Retained**, not as a supported
+removal: the disposable change was useful for exercising the workflow, but the
+matched evidence did not earn permission to remove those instructions. The
+safe-publication invariant had no observed loss. The interrupted broad
+continuation was not used as behavioral evidence; only the bounded reruns
+above were used. This record does not upgrade the main skill beyond its own
+predeclared cases.

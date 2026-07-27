@@ -1,6 +1,6 @@
 # Review Checklist
 
-Use this rubric for an existing-skill audit, a final review, and every proposed instruction relaxation. Work top to bottom. A failure becomes a fix-list item that names the problem, impact, and change risk. Review is complete when every item passes or has a recorded, user-approved exception.
+Use this rubric for an existing-skill audit, a final review, and every proposed instruction relaxation. A separate fresh-context agent that did not author the candidate performs the review. Give it the intended outcome, hard constraints, skill package, evidence record, actual artifacts, and relevant traces without the author's conclusions. Work top to bottom. A failure becomes a fix-list item that names the problem, impact, and change risk. Review is complete when every item passes or has a recorded, user-approved exception.
 
 ## System-Owned Invariants and candidate decisions
 
@@ -45,15 +45,20 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 ## Information hierarchy
 
 - The body fits its budget. Pass: `SKILL.md` is at most 500 lines, with every line beyond the concise core earning its place.
+- The body respects the context target. Pass: it aims below 5,000 tokens; because tokenizers vary, this is an authoring target rather than a portable validation claim.
 - Branch-specific detail is disclosed one level deep. Pass: material needed only on some runs lives in a bundled file behind an explicit read-trigger, and that file does not disclose another layer.
+- Long references are navigable. Pass: a reference longer than 300 lines has a table of contents.
 - Inline content is universal. Pass: everything left in the body is needed by every path.
 - Completion criteria are observable. Pass: each workflow stage closes on an exhaustive, checkable state where early completion would be visible.
 
 ## Instruction economy
 
 - Every line survives the delete test. Pass: removing it would plausibly lose required behavior; text that only restates default reasoning is cut.
+- Guidance is grounded. Pass: domain rules and gotchas trace to real project evidence, observed execution, or a named hard constraint rather than generic model knowledge.
 - Steering is positive. Pass: instructions state the target behavior, with prohibitions reserved for hard guardrails and paired with the safe alternative where useful.
 - Specificity matches fragility. Pass: fragile operations retain exact steps or commands; open-ended work names the required outcome and only its hard constraints instead of prescribing a cognitive cadence.
+- Tool and approach selection is clear. Pass: when the skill names several tools or approaches, it gives a default or a selection rule rather than an equal menu; otherwise it leaves the implementation choice open.
+- Examples earn their space. Pass: an example resolves a real ambiguity or demonstrates an exact format and does not narrow the general procedure to one case.
 - One meaning has one owner. Pass: a rule is defined in one place and cited elsewhere rather than paraphrased.
 - Qualifiers are operationalized. Pass: abstract words such as thorough, clean, fast, bold, reliable, compatible, and improved map to concrete behavior or an observable check.
 
@@ -65,10 +70,20 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 - Sprawl. Pass: the skill's job fits one sentence without joining two independent jobs.
 - No-ops. Pass: each sentence changes behavior versus the default or protects a System-Owned Invariant.
 
+## Evidence integrity
+
+- Review context is independent. Pass: a separate fresh-context agent that did not author the candidate or produce the artifacts grades and inspects each matched case; another fresh-context agent performs the final checklist and holistic review. Deterministic scripts may perform mechanical checks. When either independent context is unavailable, the affected review stays unverified until a separate session completes it.
+- Artifacts are inspected directly. Pass: the reviewer opens the relevant outputs instead of relying on the executor's summary or claimed filenames.
+- Every pass has substance. Pass: each judgment cites concrete artifact or trace evidence that demonstrates the outcome, not a heading, filename, or other surface compliance.
+- Checks are reviewed too. Pass: no objective check is trivial, unverifiable from the available evidence, or missing a material part of the required outcome.
+- Subjective judgment stays subjective. Pass: taste, polish, and whether an output feels right are handled through specific human feedback or an explicitly scoped blind comparison, not presented as deterministic pass or fail.
+- Traces inform revision. Pass: wasted paths, ignored or ambiguous instructions, repeated corrections, and repeatedly reinvented helper work are considered when deciding what to remove, clarify, add to `Gotchas`, or bundle in `scripts/`.
+
 ## Portability
 
 - Frontmatter is canonical. Pass: only `name`, `description`, `license`, `compatibility`, and `metadata` appear.
 - Prose is capability-based. Pass: the canonical body names capabilities rather than vendor products or proprietary tools.
 - The package is self-contained. Pass: every referenced template, reference, asset, and script resolves inside the skill directory, with no requirement that another skill be installed. Host-project files the skill operates on are allowed.
 - Environment requirements are explicit. Pass: no absolute owner path, personal identifier, private-repository assumption, local alias, or undeclared credential is required.
+- Package behavior matches its stated intent. Pass: bundled content, side effects, requested access, and authority remain within the job described to the user.
 - Claims match evidence. Pass: canonical structure and successful installation are not presented as equivalent behavior across untested models or harnesses; proxy and native checks remain distinct.

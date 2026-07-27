@@ -344,7 +344,7 @@ The instantiated trigger record exposed target metadata, listing-proxy rows,
 package-harness and native rows, earned label, and limitation. This is
 structural template evidence only; it does not upgrade any behavioral claim.
 
-### Final 2026-07-27 state
+### Historical final retune state at `feb9a0e`
 
 | Evidence layer | State |
 | --- | --- |
@@ -396,3 +396,82 @@ files shared SHA-256
 The description and trigger boundary did not change in this follow-up, so the
 listing and native-trigger suites were not rerun and earn no new evidence from
 this section.
+
+### Independent-review and evidence-quality follow-up
+
+Date: 2026-07-27. Frozen prior: `5af34de`. Revised `SKILL.md` SHA-256:
+`9d9352e5776b1bd8bb77459c614f1f612de5bc79fe0395c6b8d2e5f5333add26`.
+The target was the current Codex agent runtime. The harness did not expose its
+exact runtime model ID to the execution agents, so that identity remains
+unverified and this record makes no cross-model claim.
+
+Every execution and judgment used a separate agent started with no inherited
+conversation turns. The prior and revised policy outputs came from
+`case1_prior_executor` and `policy_revised_final`; the mechanical control came
+from `case2_prior_executor` and `case2_revised_rerun`. The independent matched
+grader was `policy_grader_final`. Full prompts, outputs, loaded-variant
+confirmations, resource-specific controls, and per-case
+judgments are preserved in `independent-review-follow-up.md`.
+
+| Case | Prior | Revised | Independent conclusion |
+| --- | --- | --- | --- |
+| Grading policy discriminator | Said the workflow did not require a separate independent grader | Required a fresh grader independent of the author and artifact producers, direct artifact and trace inspection, evidence for every pass, review of weak checks, human or blind review for subjective qualities, and an unverified handoff when an independent context is unavailable | Intended delta observed |
+| Mechanical-validation control | Kept `skills-ref` and manual checks script-driven without a separate reviewer | Preserved the same decision and mechanism | Materially stable |
+
+The grader found no observed loss in the two supplied answers. It limited the
+result to a directional comparison and noted that policy recall does not prove
+artifact-level compliance.
+
+An artifact-level probe tested that limitation. The executor summary claimed a
+report passed, while the report contained only a heading and one unsupported
+recommendation, and the trace admitted that `incidents.csv` was not opened.
+`artifact_grade_prior` and `artifact_grade_revised` both rejected the claimed
+pass, cited the artifact and trace, and identified the filename and heading
+checks as insufficient. `artifact_comparison_reviewer` judged the result
+materially the same. This probe shows correct behavior for one case. It does
+not establish general reliability or non-regression.
+
+Structural validation passed:
+
+```text
+npx skills-ref validate skills/creating-portable-skills
+Valid skill: skills/creating-portable-skills
+```
+
+Skills CLI 1.5.20 installed the local source into fresh project-local Codex and
+Claude Code destinations under `/tmp/rookery-surgical.zLTYcU/project`.
+`diff -qr` returned no differences for either installed package.
+
+| Package file | SHA-256 |
+| --- | --- |
+| `SKILL.md` | `9d9352e5776b1bd8bb77459c614f1f612de5bc79fe0395c6b8d2e5f5333add26` |
+| `assets/baseline-test-template.md` | `53ff7485f6ee63274d33d16b73d0258db2cba3fb984d8f4d16d2194a9b948b6a` |
+| `assets/skill-template.md` | `88f38f6898893ab491b14a3d1cd1232a056c8dab4799abc1d001af3ac8d1b294` |
+| `assets/trigger-queries-template.md` | `700d844b3361f1dfd2fd22a825a8b6eabc186e66ca9378e85f63c02794cba1bb` |
+| `references/portability.md` | `7b349942cee171f2bc25a1e3084db2695ee689e8b54b8c09cb12f15620ed9d31` |
+| `references/review-checklist.md` | `36e21e8e0529f5a0a92b13c218b941aedfb4cbdc752e7e93196b3fbe0e128b1e` |
+
+The skill description did not change, so listing and native-trigger tests were
+not rerun. Native discovery, load, and trigger at this new package hash remain
+unverified. Earlier native results apply only to their recorded package hashes.
+
+### Current state after the independent-review follow-up
+
+| Evidence layer | Current state |
+| --- | --- |
+| Structural validation | Passed at the current package hash |
+| Independent-grading policy comparison | Directional candidate for the recorded case |
+| Artifact and trace grading probe | Same correct behavior in prior and revised; no improvement claim |
+| Trigger-query construction comparison | Directional candidate for the recorded case |
+| Conditional method and destructive-confirmation comparison | Directional candidate for the recorded case |
+| Project-evidence grounding and conditional-example guidance | User-approved authoring guidance; behavioral effect unverified |
+| Context target and long-reference navigation | Current package satisfies the stated size conditions; behavioral effect unverified |
+| Mechanical-validation control | Materially stable |
+| Local-source install and content identity | Passed in disposable Codex and Claude Code project paths; all six files matched |
+| Listing and native discovery, load, and trigger | Not rerun at the current package hash; unverified for this follow-up |
+
+Current conclusion: **directional comparison** for the three named candidate
+groups only, with one smoke probe and the unverified authoring guidance listed
+above. This follow-up does not establish causal improvement, non-regression,
+equivalent behavior across models or harnesses, or behavior outside the
+recorded cases.

@@ -8,6 +8,15 @@ causal improvement, or behavior outside the predeclared cases.
 For a new skill, compare without-skill against with-skill. For a revision,
 compare the frozen prior version against the revised version. Run each prompt
 and variant in a fresh agent context with the intended variant actually loaded.
+Have a separate fresh-context agent grade the matched outputs. The grader must
+not have authored the change or produced either artifact. Mechanical checks may
+use deterministic scripts.
+
+Predeclare the required outcome and hard constraints. If an exploratory run
+makes the need for another objective check clear, add or refine that check,
+freeze it, and rerun both variants before using it in the comparison. Keep
+subjective qualities in human review or an explicit blind comparison rather
+than forcing them into binary checks.
 
 ## Declaration
 
@@ -15,6 +24,7 @@ and variant in a fresh agent context with the intended variant actually loaded.
 - Candidate instruction group: [one scoped group; do not batch unrelated changes]
 - Required outcome: [observable result and done state, including any required artifact or handoff]
 - Hard constraint under test: [authority boundary, exact format, deterministic check, or fragile operation that must survive]
+- Input files: [relative paths and identity, or none]
 - Prior variant identity: [absent for a new skill, or durable revision/path/hash]
 - Revised variant identity: [durable revision/path/hash]
 - Declared target set: [target cell IDs]
@@ -31,8 +41,10 @@ harness, or configuration.
 
 - Role: [discriminating / control]
 - Prompt: [full prompt text]
+- Input files: [relative paths and identity, or none]
 - Predeclared expectation: [for a discriminating case, the intended delta; for a control, the behavior that should remain materially stable]
-- Outcome and constraint checks: [specific checks this case exercises]
+- Objective outcome and constraint checks: [specific, observable checks fixed before grading]
+- Subjective review focus: [qualities for human or blind review, or none]
 
 Duplicate this target block for every declared target. Keep target observations
 separate; do not average conflicting outcomes.
@@ -44,12 +56,18 @@ separate; do not average conflicting outcomes.
 - Actual harness: [name and version]
 - Actual configuration: [reasoning/effort settings, tools, permissions, and other material settings]
 - Fresh-context mechanism: [new session, CLI execution, subagent, or equivalent]
+- Prior executor: [agent or session identity]
+- Revised executor: [agent or session identity]
+- Independent grader: [separate agent and its clean-context mechanism]
 - Prior variant actually loaded: [identity and how loading was confirmed]
 - Revised variant actually loaded: [identity and how loading was confirmed]
 - Prior observation: [what happened]
 - Revised observation: [what happened]
 - Observed losses: [none observed, or every material loss]
-- Raw evidence: [concise output excerpt or durable transcript reference]
+- Artifacts inspected: [actual files or outputs the grader examined]
+- Raw evidence: [per-check artifact or trace evidence, with concise excerpts or durable references]
+- Trace observation: [wasted path, ambiguity, ignored instruction, repeated helper work, or none]
+- Subjective feedback: [specific human feedback or blind result, or not applicable]
 - Case result: [intended delta observed / materially stable control / same / worse / material invariant loss / unavailable]
 - Evidence state: [passed / failed / unverified]
 - Limitation: [what this run does not show]
@@ -58,8 +76,10 @@ separate; do not average conflicting outcomes.
 
 - Role: [control / discriminating; the routine set needs at least one of each]
 - Prompt: [full prompt text]
+- Input files: [relative paths and identity, or none]
 - Predeclared expectation: [expected delta or stable behavior]
-- Outcome and constraint checks: [specific checks]
+- Objective outcome and constraint checks: [specific, observable checks fixed before grading]
+- Subjective review focus: [qualities for human or blind review, or none]
 
 ### Case 2 target: [target-cell-id]
 
@@ -68,12 +88,18 @@ separate; do not average conflicting outcomes.
 - Actual harness: [name and version]
 - Actual configuration: [material settings, tools, and permissions]
 - Fresh-context mechanism: [mechanism]
+- Prior executor: [agent or session identity]
+- Revised executor: [agent or session identity]
+- Independent grader: [separate agent and its clean-context mechanism]
 - Prior variant actually loaded: [identity and confirmation]
 - Revised variant actually loaded: [identity and confirmation]
 - Prior observation: [what happened]
 - Revised observation: [what happened]
 - Observed losses: [none observed, or every material loss]
-- Raw evidence: [concise output excerpt or durable transcript reference]
+- Artifacts inspected: [actual files or outputs the grader examined]
+- Raw evidence: [per-check artifact or trace evidence]
+- Trace observation: [wasted path, ambiguity, ignored instruction, repeated helper work, or none]
+- Subjective feedback: [specific human feedback or blind result, or not applicable]
 - Case result: [intended delta observed / materially stable control / same / worse / material invariant loss / unavailable]
 - Evidence state: [passed / failed / unverified]
 - Limitation: [what this run does not show]
@@ -109,6 +135,9 @@ Decision rules:
   delta, the control remains materially stable, and every required target cell
   has no observed named invariant loss. Say exactly that; do not say the
   revision is reliably better, proven, non-regressing, or causally improved.
+- A pass requires direct evidence of substantive completion. The grader also
+  checks whether each objective check is discriminating, verifiable from the
+  available artifacts, and complete enough to cover the required outcome.
 - A stylistic difference is not a regression when the required outcome and
   hard constraints remain intact.
 - Route requests for non-regression or causal-improvement claims to deeper

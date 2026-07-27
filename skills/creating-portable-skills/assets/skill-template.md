@@ -37,15 +37,21 @@ user authority boundaries, reusable resource requirements, and genuinely
 fragile ordering explicit because those are System-Owned Invariants. Leave
 reasoning and implementation choices to the agent. Use a numbered sequence only
 when order matters; for open-ended work, organize around outcomes and
-completion criteria. Put branch-specific detail one level deep behind an
-explicit read-trigger. -->
+completion criteria. When naming several tools or approaches, give a default or
+selection rule. For destructive or batch work, confirm the exact targets and
+planned action against the system that owns those targets before execution. Put
+branch-specific detail one level deep behind an explicit read-trigger. -->
 
 [Minimum instructions needed to reach the outcome within its constraints.]
 
+<!-- Delete this comment. Add one concise Example section only when it resolves
+a real ambiguity or demonstrates an exact format. -->
+
 ## Gotchas
 
-<!-- Delete this comment. Include only observed failure modes and their
-correction. Delete this section when there are none. -->
+<!-- Delete this comment. Include only failure modes observed in real work,
+execution traces, or user corrections. State the correction. Delete this
+section when there are none. -->
 
 ## Verification
 

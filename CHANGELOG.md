@@ -36,6 +36,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `creating-portable-skills` now grounds guidance in real project evidence,
+  uses separate fresh-context agents for reviews and grading, inspects artifacts
+  and execution traces directly, and tests activation with more realistic
+  queries.
 - `personal-chief-of-staff` can now include relationship check-ins and timely
   opportunities in its morning, wind-down, and weekly reviews when Personal CRM
   is available.

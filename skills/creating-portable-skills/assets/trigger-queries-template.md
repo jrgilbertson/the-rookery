@@ -10,6 +10,7 @@ installation, content identity, loading, or triggering.
 - Package source and revision: [local path plus revision/hash]
 - Declared model-harness target cells: [target cell IDs]
 - Listing-query tier: [routine: 5+5 once / public or load-bearing: 8-10+8-10 three times]
+- Listing-judge mechanism: [separate agent and fresh context per query]
 
 | Target cell | Exact model | Harness and version | Configuration, tools, and permissions |
 | --- | --- | --- | --- |
@@ -25,8 +26,19 @@ installation, content identity, loading, or triggering.
 ## Listing proxy
 
 Listing judgment tests the description contract only. Run each query in a fresh
-context that sees the skill's name and description, but not its body. Record the
-target cell on every judgment. An unsure or hedged judgment is borderline.
+context through a separate agent that did not author the description. Show that
+agent the skill's name, description, and one query, but not its body or the
+author's expected judgment. Record the target cell on every judgment. An unsure
+or hedged judgment is borderline.
+
+Write realistic queries with concrete context. Vary length, formality, detail,
+implied intent, abbreviations, and minor typing mistakes. Should-trigger cases
+must represent work where the skill should change execution or output.
+Near-misses should share its topic, artifact, or common wording but require a
+different job.
+
+Record the judgment and its context or transcript reference in each run cell,
+for example `[yes; run-01]`. A bare judgment does not prove a fresh context.
 
 Routine tier: five should-trigger and five near-miss queries, one run each. On a
 borderline result, run that query twice more and use the majority. Public or

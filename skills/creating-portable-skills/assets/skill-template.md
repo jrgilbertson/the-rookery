@@ -1,60 +1,50 @@
 ---
 # Delete every "#" comment line when instantiating this template.
 name: skill-name-here
-# name: lowercase kebab-case, 64 chars or fewer, must match the directory name.
-description: Use when [triggering conditions first, the phrasings and situations that should activate this skill, including non-obvious ones]. [What it does, one clause.] Do not use for [near-misses that must not trigger, naming where they route instead].
-# description: 1024 chars or fewer. Triggering conditions come first; the
-# description carries the entire triggering burden. The body never rescues it.
+# name: lowercase kebab-case, at most 64 characters, matching the directory.
+description: Use when [triggering conditions and user phrasings, including a non-obvious one]. [What it does, in one clause.] Do not use for [the closest near-miss and its destination].
+# description: at most 1024 characters. Put trigger language first. Describe
+# when to use the skill, not a summary of the workflow.
 license: "[choose a license, or delete this field if the host collection declares one]"
-# license: optional, but never default it. The author must pick a license
-# deliberately, or delete this field when the host collection already
-# declares one. Do not carry over MIT or any other default.
-# compatibility: optional. Declare only real environment needs (commands,
-# network, credentials). Delete this field when there are none.
+# license: optional. Choose it deliberately; never carry over a template default.
+# compatibility: optional. Declare only real command, network, credential, or
+# environment requirements. Delete it when there are none.
 ---
 
 # Skill Title
 
-<!-- delete this comment: one paragraph stating what this skill enforces
-and why it matters, written to stand on its own for any model rather than
-as a delta over what models supposedly already know. Run the delete test
-on every line you write in this file: would the agent get it wrong without
-this line? If not, cut it. -->
+<!-- Delete this comment. State the skill's one job and observable outcome.
+Include only intent an agent cannot safely infer from the task context. -->
 
 ## When to use
 
-<!-- delete this comment: list the triggering conditions, then route each
-near-miss explicitly ("for X, use Y instead"). Keep this section consistent
-with the frontmatter description. It is the in-body echo of the same
-trigger contract, not a second, looser one. -->
+<!-- Delete this comment. State the trigger boundary and route near-misses.
+Keep it consistent with the frontmatter description. -->
+
+## Contract
+
+<!-- Delete this comment. Name the output contract and success criteria, then
+the hard constraints and decisions that remain with the user. Omit this section
+if those facts are already clear elsewhere without duplication. -->
 
 ## Workflow
 
-<!-- delete this comment: numbered steps, each ending with a "Completion:"
-line naming a verifiable end state. Match specificity to fragility, with exact
-steps for fragile operations, a heuristic plus the why for open-ended ones.
-Explain reasoning ("do X because Y") over bare commands. Write
-capability-based prose, not harness product names: "present a structured
-confirmation and wait for a choice", not a named vendor tool. Push
-branch-specific detail one level deep with an explicit read-trigger
-("Read references/x.md when Y"), never a bare "see references/". -->
+<!-- Delete this comment. Use the least-prescriptive instructions that protect
+the contract. Give the agent freedom over reasoning and implementation. Keep
+exact formats, deterministic checks, user authority boundaries, reusable
+resource contracts, and genuinely fragile ordering explicit because those are
+System-Owned Invariants. Use a numbered sequence only when order matters; for
+open-ended work, organize around outcomes and completion criteria. Put
+branch-specific detail one level deep behind an explicit read-trigger. -->
 
-1. First step.
-
-   Completion: [verifiable end state].
-
-2. Second step.
-
-   Completion: [verifiable end state].
+[Minimum instructions needed to satisfy the contract.]
 
 ## Gotchas
 
-<!-- delete this comment: observed failure modes only, things an agent
-actually got wrong, with the correction. No speculative warnings; every
-line here must survive the delete test. Delete the section if empty. -->
+<!-- Delete this comment. Include only observed failure modes and their
+correction. Delete this section when there are none. -->
 
 ## Verification
 
-<!-- delete this comment: how the agent knows the skill worked, the
-artifact or observable state that proves the job is done, and how to
-check it. -->
+<!-- Delete this comment. Name the artifact or observable state that proves the
+job is done. Prefer a deterministic check when one exists. -->

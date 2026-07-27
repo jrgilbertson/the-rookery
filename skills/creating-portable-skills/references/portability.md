@@ -1,59 +1,66 @@
-# Portability map
+# Portability Map
 
-The canonical SKILL.md carries only what every harness understands. Everything harness-specific is an optional adapter layered on top, never something the skill depends on to work.
+Portability here means a canonical, self-contained Agent Skills package that compatible harnesses can discover and install. It does not promise equivalent behavior across every model, harness, configuration, or task. Behavioral claims require evidence from the exact declared target cells and cases they name.
 
-## Portable core
+## Canonical structure
 
-Frontmatter fields defined by the [Agent Skills specification](https://agentskills.io/specification):
+Frontmatter fields used by this skill collection from the [Agent Skills specification](https://agentskills.io/specification):
 
 | Field | Required | Constraints |
-|---|---|---|
-| `name` | Yes | ≤64 chars; lowercase alphanumerics and hyphens, no leading/trailing/consecutive hyphens; must match the directory name |
-| `description` | Yes | 1–1024 chars; what the skill does and when to use it |
-| `license` | No | License covering the skill's contents |
-| `compatibility` | No | ≤500 chars; real environment requirements only, and the spec notes most skills do not need it |
-| `metadata` | No | Arbitrary string map for vendor extensions |
+| --- | --- | --- |
+| `name` | Yes | At most 64 characters; lowercase alphanumerics and hyphens, no leading, trailing, or consecutive hyphens; matches the directory name |
+| `description` | Yes | 1 to 1024 characters; states what the skill does and when to use it |
+| `license` | No | Covers the skill's contents |
+| `compatibility` | No | At most 500 characters; real environment requirements only |
+| `metadata` | No | String map for optional metadata |
 
-`allowed-tools` is in the spec but marked experimental, and support varies across harnesses ([spec](https://agentskills.io/specification)). Keep it out of canonical skills; a harness that wants tool pre-approval can add it to its own copy.
+`allowed-tools` is experimental in the specification and support varies. Keep it out of the canonical package; tool pre-approval can be added to a harness-local copy when needed.
 
-Any other field you see in the wild is vendor-specific. Claude Code, for example, extends the standard with invocation control, subagent execution, and dynamic context injection ([Claude Code skills docs](https://code.claude.com/docs/en/skills)). Those extensions belong in a harness-local copy, not the canonical skill.
+The package may contain `references/`, `assets/`, and `scripts/`, but every referenced resource must resolve inside the skill directory. Canonical instructions use capabilities rather than assuming proprietary tools, private paths, or owner-specific configuration.
 
-## Adapter notes per harness
+## Structural checks and behavioral evidence
 
-Each of these is optional. A canonical skill works on the harness without it; the adapter only improves the experience there.
+Keep these conclusions separate:
 
-### Anthropic / Claude Code
+| Observation | Supports | Does not support by itself |
+| --- | --- | --- |
+| Structural validation passes | The package follows the checked Agent Skills schema | Discovery, installation, triggering, or useful execution |
+| Local-source installation and content identity pass | That exact package revision installed in the named harness | Load, trigger, or behavior in another target |
+| Native discovery and load pass | The named harness exposed the installed skill to the named model cell | Correct activation or task behavior |
+| Listing judgment passes | A proxy judgment of the name-and-description routing contract | Native triggering |
+| Native trigger is observed | Triggering in that exact model-harness configuration and query | Other configurations, queries, or equivalent downstream behavior |
+| A small matched comparison passes | A smoke-tested or directional result in the predeclared cases | Reliability, non-regression, causal improvement, or universal compatibility |
 
-House rules from [Anthropic's skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices):
+Use the caller-declared model and harness targets. With no declared set, record the current model and harness as one target. For multiple targets, use the same predeclared discriminating and control cases in each cell, and keep observations separate.
 
-- Write the `description` in third person ("Processes Excel files..."). First or second person hurts discovery.
-- Prefer gerund-form names (`processing-pdfs`, `writing-documentation`); avoid `helper`, `utils`, and vague names.
-- The reserved words "anthropic" and "claude" are banned in `name`, and XML tags are not allowed.
+## Optional harness metadata
 
-These are good hygiene everywhere, so a canonical skill usually satisfies them already. Nothing extra is required for the skill to load in Claude Code.
+The canonical package must not require vendor extensions. A harness-local copy may add optional metadata supported by that harness, but resulting claims stay scoped to observed checks.
 
-### OpenAI / Codex
+### Claude Code
 
-From the [Codex skills docs](https://developers.openai.com/codex/skills):
+Claude Code supports additional invocation controls, subagent execution, and dynamic context injection described in its [skills documentation](https://code.claude.com/docs/en/skills). Keep those fields out of the canonical package unless they fit under portable `metadata` without becoming a runtime dependency.
 
-- An optional `agents/openai.yaml` beside SKILL.md adds display metadata (`display_name`, `short_description`, icons, `brand_color`, `default_prompt`), the `allow_implicit_invocation` policy (default true), and MCP dependency declarations. The skill works without it.
-- The initial skill listing is budgeted at 2% of the model's context window or 8,000 characters, whichever is smaller. Over budget, descriptions get truncated or skills omitted. Front-load the key use case and trigger words so a shortened description still matches.
-- Users can invoke a skill explicitly with `$skill-name` or browse with `/skills`.
+Its authoring guidance favors third-person descriptions and gerund-form names, reserves `anthropic` and `claude` in names, and disallows XML tags. These conventions are safe hygiene when they do not conflict with the host collection.
+
+### OpenAI Codex
+
+The [Codex skills documentation](https://developers.openai.com/codex/skills) describes optional display metadata and invocation policy in `agents/openai.yaml`. The package must remain usable without that file.
+
+Codex budgets the initial skill listing, so put the key use case and trigger words early in the description. Users may also invoke skills explicitly.
 
 ## Discovery paths
 
-Where each harness looks for installed skills. Note that `.agents/skills` is emerging as the cross-tool convention: native for Codex, an interoperable alias in Gemini CLI, and scanned by OpenCode.
+Use the host repository's documented path first. These are common project and user locations; confirm the installed harness version before relying on them.
 
 | Harness | Project-level | User-level | Source |
-|---|---|---|---|
-| Claude Code | `.claude/skills/` (plus nested and parent directories) | `~/.claude/skills/` | [docs](https://code.claude.com/docs/en/skills) |
-| OpenAI Codex | `.agents/skills/` (cwd, parents, repo root) | `~/.agents/skills/` | [docs](https://developers.openai.com/codex/skills) |
-| Gemini CLI | `.gemini/skills/` and the `.agents/skills/` alias (alias wins) | `~/.gemini/skills/` and `~/.agents/skills/` | [docs](https://geminicli.com/docs/cli/skills/) |
+| --- | --- | --- | --- |
+| Claude Code | `.claude/skills/` | `~/.claude/skills/` | [docs](https://code.claude.com/docs/en/skills) |
+| OpenAI Codex | `.agents/skills/` | `~/.agents/skills/` | [docs](https://developers.openai.com/codex/skills) |
+| Gemini CLI | `.gemini/skills/` and `.agents/skills/` | `~/.gemini/skills/` and `~/.agents/skills/` | [docs](https://geminicli.com/docs/cli/skills/) |
 | OpenCode | `.opencode/skills/`, `.claude/skills/`, `.agents/skills/` | `~/.config/opencode/skills/`, `~/.claude/skills/`, `~/.agents/skills/` | [docs](https://opencode.ai/docs/skills/) |
-| Grok CLI | `.grok/skills/` (cwd, then repo root) | `~/.grok/skills/`, plus `~/.claude/skills/` for Claude compatibility | Bundled README at `~/.grok/README.md`, no public page found; verify your Grok version's skill directory |
+| Grok CLI | `.grok/skills/` | `~/.grok/skills/` and `~/.claude/skills/` | Confirm with the README bundled by the installed CLI |
 
-Grok CLI's paths come from the README its installer places in the harness home, which also states that same-named skills deduplicate with higher-priority locations winning. That file ships with the CLI rather than a public site, so re-check it after upgrading.
+## Rule
 
-## The rule
-
-Adapters add convenience on exactly one harness. The canonical SKILL.md must work with none of them present: portable frontmatter only, and no body instruction that assumes a particular harness's tools, paths, or invocation syntax. If removing every adapter breaks the skill, the skill is not canonical yet.
+A canonical package passes without optional harness metadata. Structural validation establishes canonical form; a clean local-source install establishes installability only for the checked package-harness cell. Describe behavioral support only at the evidence level earned by separately recorded model-harness cases.

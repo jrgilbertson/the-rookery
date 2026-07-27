@@ -1,109 +1,94 @@
 ---
 name: creating-portable-skills
-description: Use when creating a new agent skill, or when reviewing, updating, or migrating a skill between collections, including fixing a skill's description, triggers, structure, or portability. Produces portable, installable skills that work across models and harnesses. Do not use for building plugins, designing standalone eval suites, or reviewing prose that is not a skill.
+description: Use when creating a new agent skill, or when reviewing, updating, or migrating a skill between collections, including fixing its description, triggers, structure, or portability. Produces portable, installable Agent Skills packages. Do not use for building plugins, designing standalone eval suites, or reviewing prose that is not a skill.
 license: MIT
 ---
 
 # Creating Skills
 
-Skill authoring here is one disciplined loop, and the loop enforces four things ad-hoc authoring reliably skips on any model. Portability gates keep the package canonical. A delete test keeps every instruction earning its tokens through observed evidence. Trigger testing makes the description a real contract. One consistent process carries the work from intent to installed package.
+Create or revise a skill from its intent, hard constraints, authority boundaries, success criteria, and output contract. The result is a self-contained Agent Skills package with structural validation, appropriately scoped behavioral evidence, and separate trigger and installation checks.
 
-Skills produced here follow the [Agent Skills format](https://agentskills.io/specification): a self-contained directory with a `SKILL.md` (frontmatter plus body) and optional `references/`, `assets/`, and `scripts/`. Canonical frontmatter uses only the portable fields (`name`, `description`, `license`, `compatibility`, `metadata`). Read [references/portability.md](references/portability.md) when authoring frontmatter or targeting a specific harness.
+Skills produced here follow the [Agent Skills format](https://agentskills.io/specification): a directory with a `SKILL.md` (frontmatter plus body) and optional `references/`, `assets/`, and `scripts/`. Canonical frontmatter uses only `name`, `description`, `license`, `compatibility`, and `metadata`. Read [references/portability.md](references/portability.md) when authoring frontmatter, choosing an install location, or making a harness-specific claim.
 
-## Routing
+## Workflow
 
-- A durable eval suite (graders, rubrics, datasets, calibration) is a different job. Recommend installing the `design-evals` skill (`npx skills add jrgilbertson/the-rookery --skill design-evals`).
-- For deep review vocabulary beyond the built-in checklist, recommend the `writing-great-skills` skill ([mattpocock/skills](https://github.com/mattpocock/skills)).
-- Neither companion is required. When one is absent, use the built-in step here and tell the user which deeper pass was skipped.
+Creating a new skill starts at step 1. Reviewing, updating, or migrating an existing skill starts at step 0.
 
-## The loop
+### 0. Audit an existing skill
 
-Creating a new skill: start at step 1. Reviewing, updating, or migrating an existing skill: start at step 0.
+Read the whole package and the host repository's instructions. Apply [references/review-checklist.md](references/review-checklist.md) top to bottom, then present a prioritized fix list where each item names the problem, impact, and change risk. Get the user's approval for the material fix scope before editing.
 
-### 0. Audit (existing skills only)
+Completion: the user has approved the fix scope, including any authority or taste decisions that stay with them.
 
-Read the whole skill, then check it against [references/review-checklist.md](references/review-checklist.md). Produce a prioritized fix list where each item names what is wrong, why it matters, and the risk of fixing it. Present the list and get the user's approval on a fix scope before editing anything.
+### 1. Resolve the intent
 
-Completion: the user approved a fix scope. Continue at step 1 to capture the intent of the approved changes, then run the loop from step 2 on the revised skill, since a revision can change what earns bundling too.
+Use the conversation, existing package, repository context, and examples already available. Establish the skill's one job, triggering conditions and near-misses, output contract, success criteria, user-owned decisions, real environment requirements, and representative examples. Ask only about a missing decision that could materially change the result, scope, or authority; do not re-ask what the available context resolves.
 
-### 1. Interview
+Completion: the job fits one sentence, and the triggers, near-misses, output contract, success criteria, authority boundaries, requirements, and examples are known or explicitly not applicable.
 
-Pin down, asking one question at a time:
+### 2. Scope targets and resources
 
-- The one job the skill does. If describing it needs "and", it is probably two skills.
-- The triggering conditions, meaning the phrasings that should activate it and the near-misses that must not.
-- Expected outputs and what "done" looks like.
-- Which decisions stay with the user, such as scope approvals, waivers, and taste calls. Many skills should run fully automatic. A skill that touches judgment or taste names its steering points.
-- Real environment requirements (commands, network, credentials), if any.
-- Two or three concrete usage examples, ideally from tasks the user has actually done.
+Use the caller-declared model and harness target set. When none is declared, use the current model and harness as one target; structural portability alone does not require expanding the set. Record actual target identities and material configuration when available.
 
-Completion: you can state the skill's job in one sentence and list its triggers, near-misses, and examples.
+Choose only resources with repeatable value. Outputs copied by the workflow belong in `assets/`, material read only for a branch belongs in `references/`, and deterministic helpers belong in `scripts/` when prose cannot reliably protect the result. Keep the package standalone. Check the host repository's contribution docs, agent instructions, changelog policy, skill discovery path, and validators.
 
-### 2. Plan resources
-
-Decide what earns bundling before drafting. Templates the outputs will copy go in `assets/`, material read on demand goes in `references/`, and deterministic helpers belong in `scripts/` only where instructions cannot be reliable. Everything else stays out. Skills are standalone, with no reaching outside the skill directory and no depending on another skill being installed. Check the host repository's conventions now (contributing docs, agent instruction files, a changelog, validator scripts), since they decide where files go and which rules apply to everything the loop creates.
-
-Completion: a file list with a one-line reason per file, plus the host conventions that apply.
+Completion: the target set and applicable host conventions are recorded, with a file list and one-line reason for every bundled file.
 
 ### 3. Draft
 
-For a new skill, copy [assets/skill-template.md](assets/skill-template.md) into the skill's directory, created at the host repo's skill discovery path (see [references/portability.md](references/portability.md)) or wherever the host keeps its skills. For a revision, preserve a loadable copy of the prior version before editing (the last commit suffices in a versioned repo), then edit the existing skill in place; for a migration between collections, first copy the source package into the destination's skill location and revise that copy, leaving the source collection untouched. While writing:
+For a new skill, copy [assets/skill-template.md](assets/skill-template.md) to the host's skill discovery path or documented skill location. For a revision, preserve a loadable prior version before editing; the last commit is sufficient in a versioned repository. For a migration, copy the source package to the destination collection and revise the copy without changing the source.
 
-- Run the delete test on every line. Would the agent get this wrong without it? If not, cut it.
-- Match specificity to fragility, with exact steps for fragile operations and a heuristic plus the why for open-ended ones. Explain reasoning ("do X because Y") over bare commands.
-- Keep the body near 200 lines and never past 500. Push branch-specific detail one level deep with an explicit read-trigger ("Read references/x.md when Y"), not a bare "see references/".
-- Write capability-based prose instead of harness product names. Say "present a structured confirmation and wait for a choice" rather than naming a vendor tool.
-- Keep every bundled resource the skill references (templates, references, assets) relative and inside the skill directory, and every name and reference public. Host-project paths the skill operates on are fine. Nothing may assume your machine or private repos.
+Use the least-prescriptive instruction that protects the intended behavior. Read the System-Owned Invariants and candidate qualifier rules in [references/review-checklist.md](references/review-checklist.md) before relaxing an existing instruction. Preserve exact formats, deterministic checks, authority boundaries, reusable resources, and genuinely fragile ordering. Let the agent choose its reasoning and implementation path elsewhere.
 
-Completion: a draft with frontmatter, body, and every planned resource written.
+Keep the body at most 500 lines. Put branch-specific detail one level deep behind an explicit read-trigger, write capability-based prose, and keep every bundled reference relative and inside the skill directory. Host-project paths the skill operates on are allowed; owner-machine paths and private dependencies are not.
 
-### 4. Validate
+Completion: the draft and every planned resource implement the intent and output contract without an unprotected System-Owned Invariant.
 
-Run `npx skills-ref validate <skill-directory>`. If `npx` cannot run here (no Node runtime or no network), perform the same checks manually and state that the validator was skipped. The manual checks: `name` at most 64 chars, lowercase kebab-case, no leading, trailing, or consecutive hyphens, matching the directory name; `description` 1 to 1024 chars; body at most 500 lines; portable frontmatter fields only; `compatibility`, when present, at most 500 chars; `metadata`, when present, string values only. Fix and re-check until clean.
+### 4. Validate structure
 
-Completion: validation clean, by tool or by named manual check.
+Run `npx skills-ref validate <skill-directory>`. If it cannot run because the environment lacks Node or network access, state that limitation and manually check: `name` is at most 64 characters, lowercase kebab-case, has no leading, trailing, or consecutive hyphens, and matches the directory; `description` is 1 to 1024 characters; the body is at most 500 lines; frontmatter uses only the canonical fields; `compatibility`, when present, is at most 500 characters; and `metadata`, when present, contains string values only.
 
-### 5. Baseline test
+Completion: the validator passes, or every named fallback check passes with the tool limitation recorded.
 
-Copy [assets/baseline-test-template.md](assets/baseline-test-template.md) to wherever the host repo keeps test records (`tests/<skill-name>/` when it has no convention) and fill it there. If a prior run's record already exists there, append a new dated entry or write a new dated file rather than overwriting the earlier evidence and any recorded waiver. For a new skill, run 2 or 3 realistic prompts with and without the skill. For a revision, run the prior version against the revised one. Run every prompt in a fresh agent context with the right variant loaded, using your harness's native mechanism for a clean context (a subagent, a CLI exec, a new session). If you have no way to produce one, say so plainly and ask the user to run the prompts in a fresh session.
+### 5. Compare behavior
 
-A substantive change means any change to instruction semantics, the trigger description, or bundled resources. It must not ship without this comparison or an explicit recorded waiver from the user. Typo, formatting, and link-only fixes are exempt. This gate holds for the rest of the loop. Any later edit that is substantive under this rule, whether from step 6's subtract pass, a step 7 review fix, or step 8 description tuning, routes back through step 4's validation and this comparison before the skill packages.
+Treat changed instruction semantics, a changed trigger description, or a changed bundled resource as substantive. Copy [assets/baseline-test-template.md](assets/baseline-test-template.md) to the host's test-record location (`tests/<skill-name>/` when no convention exists), preserving earlier dated evidence. Typo, formatting, and link-only edits are exempt.
 
-Completion: a recorded comparison showing the skill changes behavior as intended, or a recorded waiver.
+Predeclare at least two matched realistic cases: one discriminating case where the change should affect behavior and one control where it should not. For a new skill, compare without-skill and with-skill behavior; for a revision, compare the frozen prior and revised versions. Run each variant in a fresh context. When multiple targets are declared, run the same cases separately in every target cell and preserve each result.
 
-### 6. Subtract
+Routine evidence earns only **smoke-tested** for one observed execution or **directional comparison** for a small matched comparison. State observations, losses, unavailable cells, and limits. If the user requests non-regression or causal improvement, explain that deeper evaluation must isolate the changed variable, account for ordinary run variation, and use repeatable outcome judgments; do not upgrade the routine record.
 
-Where the with/without runs showed no behavioral difference, those instructions are not earning their tokens. Remove them and re-check. If results plateau while you add rules, the skill is over-constrained, so remove instead of adding.
+This comparison is a shipment gate for substantive changes. An unavailable required cell remains unverified; a user waiver may authorize shipping only when the candidate decision remains supported under the checklist, and cannot raise the evidence label.
 
-Completion: every surviving instruction traces to an observed difference or a named fragile operation.
+Completion: the template records every declared target and predeclared case, the evidence it earned, and what remains unverified.
 
-### 7. Review
+### 6. Decide and review
 
-Run [references/review-checklist.md](references/review-checklist.md) top to bottom. Recommend the companions from Routing for anything deeper. When a companion is absent, the checklist is the floor and you name what was skipped.
+Apply the candidate-decision and divergence rules in [references/review-checklist.md](references/review-checklist.md). Then run the rest of that checklist top to bottom. Any substantive follow-up edit returns through structural validation and every affected comparison cell.
 
-Completion: every checklist item passes or has a recorded, deliberate exception, and any substantive fix has re-entered step 5's gate.
+Completion: each candidate is retained or supported within the recorded Claim Ceiling, every checklist item passes or has a user-approved deliberate exception, and no target conflict is collapsed into a pass.
 
-### 8. Test the description
+### 7. Test the description
 
-Copy [assets/trigger-queries-template.md](assets/trigger-queries-template.md) next to the baseline record. Build 5 should-trigger phrasings (include at least one non-obvious wording) and 5 near-misses, then judge each once in a fresh context using the same clean-context mechanism as step 5 (if you have none, say so and ask the user to run them). Activation is judged at the listing level. Show the context only the skill's name and description alongside the query and ask whether it would activate, requiring a plain yes, no, or unsure; a live harness-discovery run, where available, is stronger evidence.
+Copy [assets/trigger-queries-template.md](assets/trigger-queries-template.md) beside the baseline record. Test at least five should-trigger phrasings, including one non-obvious wording, and five near-misses in fresh contexts that see only the skill name and description. Use the template's expanded tier for a public collection or unusually load-bearing trigger contract.
 
-Passing: every should-trigger activates and no near-miss does. An unsure or hedged judgment counts as borderline. On a miss or a borderline call, tune by front-loading trigger words and describing when to use the skill, never by summarizing the workflow, then re-judge the full query set on both tables, since an edit can newly activate a near-miss (two extra runs for any that stay borderline, majority wins). A tuning edit changes the trigger description, so the last one re-enters step 5's gate. Scale up to the template's full-rigor tier (8 to 10 queries each side, 3 runs per query) only when the skill ships to a public collection or triggering is unusually load-bearing.
+Treat listing judgments as a description-routing proxy, separate from native discovery, loading, and triggering. After a description edit, rerun the whole query set and the affected behavioral comparison.
 
-Completion: the query set passes.
+Completion: every should-trigger query passes, no near-miss activates, and the result is recorded as listing-proxy evidence rather than native behavior.
 
-### 9. Package
+### 8. Package and install
 
-Re-verify the host conventions found in step 2 (contributing docs, agent instruction files, a changelog, validator scripts), confirm the loop's outputs still follow them, and say which conventions you followed. In a repo with none, use the generic path and say so. Either way, confirm the directory is self-contained, then verify a clean install through the repo's documented install path (or by copying the directory into the harness's skill home, where a repo-level discovery path counts when the user home is out of reach) and confirm the skill loads and triggers.
+Recheck the host conventions from step 2 and confirm the canonical directory is self-contained. Install from the current local source through each declared harness's documented path, verify the installed content identity, and record native discovery, loading, and triggering separately for every applicable target cell.
 
-Completion: an installed copy loads and triggers in one harness for a skill staying out of public collections; when the skill ships to a public collection, or its description or compatibility field names specific harnesses, verify a clean install in each named harness (mirroring step 8's full-rigor tier). The portable-frontmatter and capability-prose gates carry the general cross-harness claim.
+An unavailable native check stays unverified. An explicit user waiver may authorize shipping an unverified candidate, but cannot turn a proxy into native evidence, raise the evidence label, or support an otherwise unsupported instruction change.
+
+Completion: the source validates; each required structural, install, identity, discovery, load, and trigger state is recorded independently; and any shipped claim stays within those states.
 
 ## Gotchas
 
-- The description carries the entire triggering burden. Body content never rescues a weak description. Err on the pushy side, since agents under-trigger.
-- Skills drift longer and degrade with every ungated edit. The baseline gate exists for edit seven, not edit one.
-- A description that summarizes the workflow makes agents follow the summary and skip the body. Describe when to use it, not what the steps are.
-- Weaker models need slightly more detail than frontier ones. A portable skill is tuned for the floor it claims, not the strongest model you happen to use.
-- Check the target collection and the vendor system skills for name collisions before settling a name. Verb-led gerund names (`creating-portable-skills`, not `skill-creator`) collide less and describe the job.
+- The description carries the triggering burden. Describe when to use the skill, not a summary that encourages skipping the body.
+- A later substantive edit invalidates the affected comparison even when an earlier draft passed.
+- Check the target collection and system-provided skills for name collisions. Verb-led gerund names (`creating-portable-skills`, not `skill-creator`) are usually more specific.
 
 ## Credits
 

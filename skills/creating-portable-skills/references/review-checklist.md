@@ -4,7 +4,7 @@ Use this rubric for an existing-skill audit, a final review, and every proposed 
 
 ## System-Owned Invariants and candidate decisions
 
-A **System-Owned Invariant** is behavior that must remain explicit because the surrounding system or the user, rather than model judgment, owns it. The complete categories are:
+A **System-Owned Invariant** is a hard constraint that must remain explicit because the surrounding system or the user, rather than model judgment, owns it. The complete categories are:
 
 - Canonical package structure and installability requirements.
 - User authority boundaries, required approvals, and irreversible-action limits.
@@ -14,12 +14,12 @@ A **System-Owned Invariant** is behavior that must remain explicit because the s
 
 An instruction is not a System-Owned Invariant merely because it uses words such as "must" or "always." Generic reminders about thinking, checking, or narrating work are candidate choreography when the intended outcome and its deterministic check are already explicit.
 
-Before changing one candidate instruction group, name its affected invariant and output contract. Use these qualifiers consistently:
+Before changing one candidate instruction group, name its affected hard constraint and required outcome. Use these qualifiers consistently:
 
-- **Material** means capable of changing a required outcome, trigger boundary, user authority, exact output contract, deterministic check, package installability, or fragile sequence.
+- **Material** means capable of changing a required outcome, trigger boundary, user authority, exact output format, deterministic check, package installability, or fragile sequence.
 - An **affected target** is a predeclared model-harness cell in which the candidate could change that named behavior. An **affected case** is a predeclared discriminating or control case that exercises it.
 - A **discriminating case** should expose the intended behavioral difference. A **control** should remain materially stable.
-- An **invariant loss** is an observed violation of the named required behavior or output contract. Different wording, reasoning style, or implementation approach is not a loss by itself.
+- An **invariant loss** is an observed violation of the named required outcome or hard constraint. Different wording, reasoning style, or implementation approach is not a loss by itself.
 - **Material divergence** means declared targets differ on the candidate decision or a named invariant, not merely in presentation.
 - **Available evidence** comes from the declared target and configuration, in a fresh context, with the intended variant confirmed loaded. A substitute, contaminated context, or listing judgment does not qualify.
 
@@ -53,7 +53,7 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 
 - Every line survives the delete test. Pass: removing it would plausibly lose required behavior; text that only restates default reasoning is cut.
 - Steering is positive. Pass: instructions state the target behavior, with prohibitions reserved for hard guardrails and paired with the safe alternative where useful.
-- Specificity matches fragility. Pass: fragile operations retain exact steps or commands; open-ended work uses an outcome, constraint, authority boundary, success criterion, or output contract instead of a rigid cognitive cadence.
+- Specificity matches fragility. Pass: fragile operations retain exact steps or commands; open-ended work names the required outcome and only its hard constraints instead of prescribing a cognitive cadence.
 - One meaning has one owner. Pass: a rule is defined in one place and cited elsewhere rather than paraphrased.
 - Qualifiers are operationalized. Pass: abstract words such as thorough, clean, fast, bold, reliable, compatible, and improved map to concrete behavior or an observable check.
 

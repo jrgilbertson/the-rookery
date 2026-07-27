@@ -30,7 +30,7 @@ A skill's defined behavior when something it prefers is absent — a validator t
 The instruction-economy check applied line by line to agent instructions: would the agent get this wrong without this line? A line that restates default model behavior fails and is cut whole. The test decides cut-or-keep only — a word can pass it and still steer unpredictably, which is the separate operationalize-the-qualifier check's job.
 
 ### System-Owned Invariant
-An outcome, boundary, or check that must remain true regardless of which model or reasoning path produces the result. Portable formats, user authority, deterministic validation, exact output contracts, and fragile operation order are system-owned; generic reminders to think, narrate, or recheck are model-owned cognition and may be removed when they no longer help.
+A hard constraint that must remain explicit because the user or surrounding system, rather than model judgment, owns it. Portable formats, user authority, deterministic validation, exact output requirements, and fragile operation order are system-owned; generic reminders to think, narrate, or recheck are model-owned cognition and may be removed when they no longer help.
 
 ### Claim Ceiling
 The strongest conclusion an evidence record is allowed to state. A smoke test proves only that one execution worked, a small matched baseline supports a directional observation, and reliability or causal-improvement language requires repeated controlled evidence that accounts for ordinary run variation.

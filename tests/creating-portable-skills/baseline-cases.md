@@ -343,3 +343,74 @@ passed in both recorded target cells. The retune is therefore
 **VerifiedRetune** only for those cells and checks under the existing Claim
 Ceiling. This does not establish causal improvement, non-regression, equivalent
 behavior across targets, or universal behavior.
+
+## 2026-07-27 outcome-and-constraints terminology follow-up
+
+This focused revision compares the current branch head, `6452361`, with the
+working-tree candidate. The candidate instruction group replaces the generic
+`Contract` section with optional `Outcome and constraints` guidance and aligns
+the authoring and review vocabulary around a required outcome, observable done
+state, and only hard constraints.
+
+Variant identities:
+
+| Variant | `SKILL.md` SHA-256 | `assets/skill-template.md` SHA-256 |
+| --- | --- | --- |
+| Prior | `092a0846f2d0b1faf77f3bed646f547374dc0622268c9368ae9848642c872c57` | `275694e017dcb91a4299a021ba9dacbf02a9873d006d7499e04d8d4db042e1aa` |
+| Revised | `71416c5a4c314eeeec4a7fc2b6cbe512ee48274598291f6d0a0d21212d684941` | `82849705d502a478453a30cb129f86c3af41f1a3d891e680f44c89caf1055bb0` |
+
+Declared targets and configuration:
+
+| Target | Harness | Configuration |
+| --- | --- | --- |
+| `claude-opus-5` | Claude Code 2.1.220 | high effort, safe mode, tool-less, no session persistence |
+| `gpt-5.6-sol` | Codex CLI 0.145.0 | high reasoning, ephemeral read-only run, user config and rules ignored |
+
+Each case and variant ran in a fresh process with the exact authoritative
+`SKILL.md` and skill template embedded. This avoided the same-name installed
+skill contamination observed earlier in the retune.
+
+### OC-D1: Separate outcome, constraints, and optional methods
+
+- Role: discriminating.
+- Prompt summary: create a skill that drafts an incident note from supplied
+  Slack excerpts and logs. The response must include timeline, impact,
+  evidence-backed contributing factors, open questions, and next actions; it
+  must not invent facts; the user must approve external posting. `jq` and
+  bullet lists are preferences, not requirements.
+- Required outcome: produce a review-ready draft with the five named parts.
+- Hard constraints: factual claims stay grounded in supplied material and
+  external posting remains under user approval.
+- Predeclared expectation: the revised outline uses `Outcome and constraints`,
+  keeps the outcome and hard constraints explicit, makes no preferred method
+  mandatory, and asks no question because all material decisions are resolved.
+
+| Target | Prior | Revised | Loss | Result |
+| --- | --- | --- | --- | --- |
+| Claude Opus 5 | Ready, no questions; used `Contract`; preserved the five parts, factuality, and approval boundary; mandatory-method array empty | Ready, no questions; used `Outcome and constraints`; preserved the same outcome and boundaries; mandatory-method array empty | None observed | Intended terminology delta observed |
+| GPT-5.6 Sol | Ready, no questions; used `Contract`; preserved factuality and approval; mandatory-method array empty | Ready, no questions; used `Outcome and constraints`; preserved factuality and approval; mandatory-method array empty | None observed | Intended terminology delta observed |
+
+### OC-C1: Optional-section control
+
+- Role: control.
+- Prompt summary: create a simple skill that alphabetizes a supplied
+  plain-text list, preserves every item exactly except order, and returns the
+  list in the response. The title and one-sentence introduction can state the
+  whole behavior.
+- Required outcome: return the same items in alphabetical order.
+- Hard constraint: preserve item content and occurrence count while changing
+  only order.
+- Predeclared expectation: both variants omit the optional contract/outcome
+  section as duplicative and leave the sorting method open.
+
+| Target | Prior | Revised | Loss | Result |
+| --- | --- | --- | --- | --- |
+| Claude Opus 5 | Omitted the optional section; mandatory method `null` | Omitted the optional section; mandatory method `null` | None observed | Materially stable control |
+| GPT-5.6 Sol | Omitted the optional section; mandatory method `null` | Omitted the optional section; mandatory method `null` | None observed | Materially stable control |
+
+The revised candidate earns a **directional comparison** for this scoped
+terminology decision: both targets showed the intended heading change, kept the
+named outcome and hard constraints, left optional methods optional, and kept
+the optional section omittable. This does not prove quality improvement,
+causal improvement, non-regression, equivalent target behavior, or behavior
+outside these two cases.

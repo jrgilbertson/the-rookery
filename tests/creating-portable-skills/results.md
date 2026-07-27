@@ -304,3 +304,34 @@ non-regression, equivalent behavior across targets, universal behavior, or
 behavior outside the recorded cases. The remote default-branch install probe
 remains a post-merge publication confirmation and is not used as pre-merge
 evidence.
+
+### Outcome-and-constraints follow-up
+
+The optional template section is now `Outcome and constraints`. A focused
+prior-versus-revised comparison ran one discriminating incident-note case and
+one simple sorting control on Claude Code 2.1.220 with `claude-opus-5` at high
+effort and Codex CLI 0.145.0 with `gpt-5.6-sol` at high reasoning. Both revised
+discriminator runs used the new heading, preserved the required outcome,
+factuality boundary, and user approval boundary, and made neither `jq` nor
+bullet lists mandatory. Both prior and revised control runs omitted the
+optional section and left the sorting method open. No named outcome or hard
+constraint loss was observed. Case definitions, variant hashes, target
+configuration, observations, and the directional Claim Ceiling are recorded in
+`baseline-cases.md`.
+
+The revised source passed `skills-ref` 0.1.5 at 95 lines. Two disposable
+template instances also passed: one retained `Outcome and constraints` because
+it carried nonduplicative requirements, while a simple sorting skill omitted
+the section. Their `SKILL.md` SHA-256 values were
+`b9ea76f5d53ad1201ba746c4e96a56f9192a622465d89750376c8dc307afb5d7`
+and `8067394f08b430b1a63276ad20a88c3191a54252b152ef429915ad64506e2453`,
+respectively.
+
+Skills CLI 1.5.20 installed the revised package from the current local source
+into fresh project-local Codex and Claude Code destinations. `diff -qr` was
+clean for both installed directories, and the source and installed `SKILL.md`
+files shared SHA-256
+`71416c5a4c314eeeec4a7fc2b6cbe512ee48274598291f6d0a0d21212d684941`.
+The description and trigger boundary did not change in this follow-up, so the
+listing and native-trigger suites were not rerun and earn no new evidence from
+this section.

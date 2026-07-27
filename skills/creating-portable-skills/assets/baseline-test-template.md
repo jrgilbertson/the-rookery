@@ -13,8 +13,8 @@ and variant in a fresh agent context with the intended variant actually loaded.
 
 - Mode: [new skill / revision]
 - Candidate instruction group: [one scoped group; do not batch unrelated changes]
-- Named System-Owned Invariant: [required outcome, authority boundary, exact format, deterministic check, or fragile operation that must survive]
-- Output contract: [observable result and completion criteria]
+- Required outcome: [observable result and done state, including any required artifact or handoff]
+- Hard constraint under test: [authority boundary, exact format, deterministic check, or fragile operation that must survive]
 - Prior variant identity: [absent for a new skill, or durable revision/path/hash]
 - Revised variant identity: [durable revision/path/hash]
 - Declared target set: [target cell IDs]
@@ -32,7 +32,7 @@ harness, or configuration.
 - Role: [discriminating / control]
 - Prompt: [full prompt text]
 - Predeclared expectation: [for a discriminating case, the intended delta; for a control, the behavior that should remain materially stable]
-- Invariant or output-contract checks: [specific checks this case exercises]
+- Outcome and constraint checks: [specific checks this case exercises]
 
 Duplicate this target block for every declared target. Keep target observations
 separate; do not average conflicting outcomes.
@@ -59,7 +59,7 @@ separate; do not average conflicting outcomes.
 - Role: [control / discriminating; the routine set needs at least one of each]
 - Prompt: [full prompt text]
 - Predeclared expectation: [expected delta or stable behavior]
-- Invariant or output-contract checks: [specific checks]
+- Outcome and constraint checks: [specific checks]
 
 ### Case 2 target: [target-cell-id]
 
@@ -109,8 +109,8 @@ Decision rules:
   delta, the control remains materially stable, and every required target cell
   has no observed named invariant loss. Say exactly that; do not say the
   revision is reliably better, proven, non-regressing, or causally improved.
-- A stylistic difference is not a regression when the named invariant and
-  output contract remain intact.
+- A stylistic difference is not a regression when the required outcome and
+  hard constraints remain intact.
 - Route requests for non-regression or causal-improvement claims to deeper
   evaluation that isolates the changed variable and accounts for run variation.
 

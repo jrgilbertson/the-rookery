@@ -6,7 +6,7 @@ license: MIT
 
 # Creating Skills
 
-Create or revise a skill from its intent, hard constraints, authority boundaries, success criteria, and output contract. The result is a self-contained Agent Skills package with structural validation, appropriately scoped behavioral evidence, and separate trigger and installation checks.
+Create or revise a skill from its intent, required outcome, and only the hard constraints that define acceptable completion or remain under user authority. The result is a self-contained Agent Skills package with structural validation, appropriately scoped behavioral evidence, and separate trigger and installation checks.
 
 Skills produced here follow the [Agent Skills format](https://agentskills.io/specification): a directory with a `SKILL.md` (frontmatter plus body) and optional `references/`, `assets/`, and `scripts/`. Canonical frontmatter uses only `name`, `description`, `license`, `compatibility`, and `metadata`. Read [references/portability.md](references/portability.md) when authoring frontmatter, choosing an install location, or making a harness-specific claim.
 
@@ -22,9 +22,9 @@ Completion: the user has approved the fix scope, including any authority or tast
 
 ### 1. Resolve the intent
 
-Use the conversation, existing package, repository context, and examples already available. Establish the skill's one job, triggering conditions and near-misses, output contract, success criteria, user-owned decisions, real environment requirements, and representative examples. When a missing decision could materially change the result, scope, or authority, ask one focused question at a time; do not re-ask what the available context resolves.
+Use the conversation, existing package, repository context, and examples already available. Establish the skill's one job, triggering conditions and near-misses, intended outcome, and observable done state, including any required artifact or handoff. Name only the hard constraints, including decisions that remain with the user; identify real environment requirements and representative examples. When a missing decision could materially change the result, scope, or authority, ask one focused question at a time; do not re-ask what the available context resolves.
 
-Completion: the job fits one sentence, and the triggers, near-misses, output contract, success criteria, authority boundaries, requirements, and examples are known or explicitly not applicable.
+Completion: the job fits one sentence, and the triggers, near-misses, outcome, done state, hard constraints, requirements, and examples are known or explicitly not applicable.
 
 ### 2. Scope targets and resources
 
@@ -38,11 +38,11 @@ Completion: the target set and applicable host conventions are recorded, with a 
 
 For a new skill, copy [assets/skill-template.md](assets/skill-template.md) to the host's skill discovery path or documented skill location. For a revision, preserve a loadable prior version before editing; the last commit is sufficient in a versioned repository. For a migration, copy the source package to the destination collection and revise the copy without changing the source.
 
-Use the least-prescriptive instruction that protects the intended behavior. Read the System-Owned Invariants and candidate qualifier rules in [references/review-checklist.md](references/review-checklist.md) before relaxing an existing instruction. Preserve exact formats, deterministic checks, authority boundaries, reusable resources, and genuinely fragile ordering. Let the agent choose its reasoning and implementation path elsewhere.
+Use the least-prescriptive instruction that reaches the required outcome within its hard constraints. Read the System-Owned Invariants and candidate qualifier rules in [references/review-checklist.md](references/review-checklist.md) before relaxing an existing instruction. Preserve exact formats, deterministic checks, authority boundaries, reusable resources, and genuinely fragile ordering. Let the agent choose its reasoning and implementation path elsewhere.
 
 Keep the body at most 500 lines. Put branch-specific detail one level deep behind an explicit read-trigger, write capability-based prose, and keep every bundled reference relative and inside the skill directory. Host-project paths the skill operates on are allowed; owner-machine paths and private dependencies are not.
 
-Completion: the draft and every planned resource implement the intent and output contract without an unprotected System-Owned Invariant.
+Completion: the draft and every planned resource implement the intent and required outcome with every System-Owned Invariant protected.
 
 ### 4. Validate structure
 

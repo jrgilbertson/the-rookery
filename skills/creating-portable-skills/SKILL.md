@@ -22,7 +22,7 @@ Completion: the user has approved the fix scope, including any authority or tast
 
 ### 1. Resolve the intent
 
-Use the conversation, existing package, repository context, and examples already available. Establish the skill's one job, triggering conditions and near-misses, output contract, success criteria, user-owned decisions, real environment requirements, and representative examples. Ask only about a missing decision that could materially change the result, scope, or authority; do not re-ask what the available context resolves.
+Use the conversation, existing package, repository context, and examples already available. Establish the skill's one job, triggering conditions and near-misses, output contract, success criteria, user-owned decisions, real environment requirements, and representative examples. When a missing decision could materially change the result, scope, or authority, ask one focused question at a time; do not re-ask what the available context resolves.
 
 Completion: the job fits one sentence, and the triggers, near-misses, output contract, success criteria, authority boundaries, requirements, and examples are known or explicitly not applicable.
 

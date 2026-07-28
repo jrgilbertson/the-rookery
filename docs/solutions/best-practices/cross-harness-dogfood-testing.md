@@ -1,7 +1,7 @@
 ---
 title: "Prove which skill loaded in cross-harness dogfood runs"
 date: 2026-07-16
-last_updated: 2026-07-27
+last_updated: 2026-07-28
 category: best-practices
 module: "creating-portable-skills skill verification"
 problem_type: best_practice

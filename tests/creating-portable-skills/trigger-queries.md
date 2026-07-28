@@ -288,7 +288,7 @@ The tested trigger-template SHA-256 was
 No proxy result was used to fill a native state, and no native state from a
 superseded package revision was carried forward.
 
-## 2026-07-28 post-review native recheck (`72e2601`)
+## 2026-07-28 final post-review native recheck (`c9eb5e1`)
 
 - Verification mode: public or unusually load-bearing
 - Description: unchanged, so the complete listing-query results above remain
@@ -301,12 +301,12 @@ superseded package revision was carried forward.
   the six-file source package and either installed project-local copy
 - Codex native discovery, load, and trigger: passed with Codex CLI 0.145.0 and
   `gpt-5.6-sol` at high reasoning in fresh ephemeral thread
-  `019faa9f-50ab-7193-ae31-176ee7b8998b`; the tool trace read the exact
+  `019faaa7-f98c-7633-9457-7f4a1e3b28d0`; the tool trace read the exact
   installed `.agents` `SKILL.md`, and the response asked for the verification
   mode before quoting the first body sentence
 - Claude native discovery, load, and trigger: passed with Claude Code 2.1.220
   and `claude-opus-5` at high effort in fresh non-persistent session
-  `dfc4bc74-59e9-4c6f-8423-63992e5a79ab`; initialization listed the skill,
+  `5b144a80-c9fe-43ac-89ee-392ad3716d1c`; initialization listed the skill,
   the native `Skill` tool loaded the exact installed `.claude` base directory,
   and the response asked for the same decision before quoting the same sentence
 

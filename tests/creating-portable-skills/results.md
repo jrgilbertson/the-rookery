@@ -686,8 +686,8 @@ native checks therefore required exact loaded-copy attribution:
   `019faa6c-4a59-7b01-a832-a44492b3b130`. The implicit creation request
   selected the skill and read
   `<final-portable-skill-disposable-workspace>/.agents/skills/creating-portable-skills/SKILL.md`,
-  providing deterministic exact-path load provenance; its distinctive first
-  body sentence only corroborated that provenance.
+  which supplied deterministic exact-path load provenance. Its distinctive
+  first body sentence only corroborated that provenance.
 - Claude Code 2.1.220 ran `claude-opus-5` at high effort in fresh session
   `6e03ff90-7bfe-48fe-afd3-587b9154a1bb`, with project settings and only the
   native `Skill` tool available. Initialization listed the project skill, the
@@ -720,15 +720,17 @@ differences for either installed package.
 
 Codex CLI 0.145.0 ran `gpt-5.6-sol` at high reasoning in fresh ephemeral thread
 `019faaa7-f98c-7633-9457-7f4a1e3b28d0`. Its tool trace read the exact installed
-`.agents/skills/creating-portable-skills/SKILL.md`, providing deterministic
-exact-path load provenance. The response asked for the verification-mode
-decision; its first-body-sentence quote only corroborated that provenance.
+`.agents/skills/creating-portable-skills/SKILL.md`. That exact path supplied
+deterministic exact-path load provenance. The response asked for the
+verification-mode decision; its first-body-sentence quote only corroborated
+that provenance.
 Claude Code 2.1.220 ran `claude-opus-5` at high effort in fresh
 non-persistent session `5b144a80-c9fe-43ac-89ee-392ad3716d1c`, with project
 settings and only the native `Skill` tool. Initialization listed the skill, the
-tool launched it from the exact installed `.claude/skills` base directory,
-providing deterministic load provenance. The response asked for the same first
-decision; its body-sentence quote only corroborated that provenance.
+tool launched it from the exact installed `.claude/skills` base directory. That
+base directory supplied deterministic load provenance. The response asked for
+the same first decision; its body-sentence quote only corroborated that
+provenance.
 
 For the `c9eb5e1` package, local-source install and installed-content identity
 passed for both package harnesses. Native discovery, load, and trigger passed

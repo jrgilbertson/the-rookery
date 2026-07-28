@@ -294,13 +294,13 @@ cases.
   `~/.claude/skills` with a different `SKILL.md` hash
 - Codex native discovery, load, and trigger: passed in fresh
   `gpt-5.6-sol` thread `019faa6c-4a59-7b01-a832-a44492b3b130`; the trace read
-  the exact disposable `.agents` path, providing deterministic load
+  the exact disposable `.agents` path. That path supplied deterministic load
   provenance; the distinctive first body sentence only corroborated it
 - Claude native discovery, load, and trigger: passed in fresh
   `claude-opus-5` session `6e03ff90-7bfe-48fe-afd3-587b9154a1bb`; the native
-  `Skill` tool reported the exact disposable `.claude` base directory,
-  providing deterministic load provenance; the same sentence only corroborated
-  it
+  `Skill` tool reported the exact disposable `.claude` base directory. That
+  base directory supplied deterministic load provenance; the same sentence
+  only corroborated it
 
 The tested `SKILL.md` SHA-256 was
 `7530e42fe64c306cc86f97c17b223dd1385ce3b9256a94b57b9708c2a93120df`.
@@ -323,15 +323,16 @@ superseded package revision was carried forward.
 - Codex native discovery, load, and trigger: passed with Codex CLI 0.145.0 and
   `gpt-5.6-sol` at high reasoning in fresh ephemeral thread
   `019faaa7-f98c-7633-9457-7f4a1e3b28d0`; the tool trace read the exact
-  installed `.agents` `SKILL.md`, providing deterministic load provenance; the
-  response asked for the verification mode, and its first-body-sentence quote
-  only corroborated that provenance
+  installed `.agents` `SKILL.md`. That exact path supplied deterministic load
+  provenance; the response asked for the verification mode, and its
+  first-body-sentence quote only corroborated that provenance
 - Claude native discovery, load, and trigger: passed with Claude Code 2.1.220
   and `claude-opus-5` at high effort in fresh non-persistent session
   `5b144a80-c9fe-43ac-89ee-392ad3716d1c`; initialization listed the skill,
-  the native `Skill` tool loaded the exact installed `.claude` base directory,
-  providing deterministic load provenance; the response asked for the same
-  decision, and its sentence quote only corroborated that provenance
+  the native `Skill` tool loaded the exact installed `.claude` base directory.
+  That base directory supplied deterministic load provenance; the response
+  asked for the same decision, and its sentence quote only corroborated that
+  provenance
 
 The tested `SKILL.md` SHA-256 was
 `1ba4b97ad9e5a9fcbb3d27e4e69070d46683716fdb29d959709ffe90bf99af0f`.

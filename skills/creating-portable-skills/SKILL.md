@@ -69,8 +69,6 @@ Completion: every substantive changed group is enumerated and has its own comple
 
 Have a separate fresh-context agent apply the completed baseline record's candidate-decision rules, then run [references/review-checklist.md](references/review-checklist.md) top to bottom. Give the reviewer the skill, intended outcome, hard constraints, artifacts, traces, and evidence record without the author's conclusions. Use its findings to identify wasted paths, ambiguous or unused instructions, recurring corrections that belong in `Gotchas`, and helper logic repeatedly reinvented across runs that belongs in `scripts/`. Any substantive follow-up edit returns through structural validation and every affected comparison cell. It also invalidates native package-harness and model-harness evidence bound to the superseded revision until those cells rerun.
 
-If a revision is marked `Retained`, restore that candidate group's frozen-prior content before continuing. Run the revalidation and evidence-invalidation steps above. If restoring it would remove another accepted group, stop without packaging the candidate.
-
 Completion: the completed baseline record has a final candidate decision, and every checklist item passes or has a user-approved deliberate exception.
 
 ### 7. Test the description

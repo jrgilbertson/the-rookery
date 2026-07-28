@@ -752,7 +752,7 @@ recheck. The current resource hashes are:
 | `SKILL.md` | `1ba4b97ad9e5a9fcbb3d27e4e69070d46683716fdb29d959709ffe90bf99af0f` |
 | `assets/baseline-test-template.md` | `1d6a33ed6686aadced84e920378f64e9a852fbaffda6c7bfabc57c03ea13c21f` |
 | `assets/skill-template.md` | `e5cbfe744d93ba1c92c9a2a4dd97dbde00f51032ffe0563b95433683788f8458` |
-| `assets/trigger-queries-template.md` | `c06b1dbea5a2b7f4814e6cd8c8eac814a3471f3c0607e6617d8c76cb85669375` |
+| `assets/trigger-queries-template.md` | `ea30d1dbf024548c23ddfad2dab8d2e26b2e7f794ec44e65cf807ac58120a2ef` |
 | `references/portability.md` | `28a862532a0ab0db75a8d0d47525bbd25ec47fe54f303fbd2726ab597157e84d` |
 | `references/review-checklist.md` | `6baf044506a96c614d8cd14515f50942438e38e99b1269e351ec07d157307654` |
 

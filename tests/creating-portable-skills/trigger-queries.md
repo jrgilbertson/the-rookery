@@ -1,14 +1,22 @@
 # Trigger query test: creating-portable-skills
 
-Build 8-10 should-trigger phrasings (include non-obvious ones) and 8-10
-near-misses. Judge each query 3 times at the listing level in a fresh agent
-context: show the context only the skill's name and description alongside
-the query and ask whether it would activate, requiring a plain yes, no, or
-unsure. Live harness-native discovery is recorded separately (see
-`results.md`) as stronger evidence.
+This opening section records the historical 2026-07-16 procedure and results;
+it does not define current listing policy. The current authoritative policy is
+the package's `assets/trigger-queries-template.md`. Under its public or
+unusually load-bearing tier, each near-miss needs at least two categorical
+`no` judgments, any `yes` fails immediately, and a completed result below the
+categorical-`no` threshold also fails.
 
-Pass rule: each should-trigger query must activate in at least half its runs,
-meaning 2 of 3. Any near-miss activation fails the whole set.
+Historical 2026-07-16 procedure: build 8-10 should-trigger phrasings (including
+non-obvious ones) and 8-10 near-misses. Judge each query three times at the
+listing level in a fresh agent context: show the context only the skill's name
+and description alongside the query and ask whether it would activate,
+requiring a plain yes, no, or unsure. Live harness-native discovery was
+recorded separately in `results.md` as stronger evidence.
+
+Historical 2026-07-16 pass rule: each should-trigger query had to activate in
+at least half its runs, meaning 2 of 3. Any near-miss activation failed the
+whole set.
 
 Date: 2026-07-16 | Harness: Claude Code subagents (fresh context per judge) | Models: Haiku 4.5, Sonnet, Fable 5
 
@@ -353,5 +361,13 @@ portability reference after the `c9eb5e1` native recheck. For the current
 package, local-source installation, installed-content identity, native
 discovery, native load, and native trigger are **unverified** until rerun. This
 pass did not attempt a native check; missing deterministic load provenance is
-unverified rather than failed. The current trigger-template SHA-256 is
-`c06b1dbea5a2b7f4814e6cd8c8eac814a3471f3c0607e6617d8c76cb85669375`.
+unverified rather than failed. The current unverified package under review is:
+
+| Current package file | SHA-256 |
+| --- | --- |
+| `SKILL.md` | `1ba4b97ad9e5a9fcbb3d27e4e69070d46683716fdb29d959709ffe90bf99af0f` |
+| `assets/baseline-test-template.md` | `1d6a33ed6686aadced84e920378f64e9a852fbaffda6c7bfabc57c03ea13c21f` |
+| `assets/skill-template.md` | `e5cbfe744d93ba1c92c9a2a4dd97dbde00f51032ffe0563b95433683788f8458` |
+| `assets/trigger-queries-template.md` | `ea30d1dbf024548c23ddfad2dab8d2e26b2e7f794ec44e65cf807ac58120a2ef` |
+| `references/portability.md` | `28a862532a0ab0db75a8d0d47525bbd25ec47fe54f303fbd2726ab597157e84d` |
+| `references/review-checklist.md` | `6baf044506a96c614d8cd14515f50942438e38e99b1269e351ec07d157307654` |

@@ -16,7 +16,14 @@ appears in the catalog and installs on its own.
 
 ### Install Probe
 
-The verification gate proving a skill installs through the repository's documented install path and loads in at least one real harness. A probe passes only when its success is discriminating: output that cannot distinguish a working mechanism from a silent fallback proves nothing. Runs before merge from the local source and again after merge against the published state.
+The package-harness verification gate proving that an exact skill revision
+installs through the repository's documented path and that the installed
+content matches its source. A passing probe establishes installability and
+content identity only for the checked package-harness cell. Native discovery,
+load, and trigger are separate model-harness states; a native load pass also
+requires [Loaded Skill Identity](#loaded-skill-identity), including
+deterministic runtime provenance. Runs before merge from the local source and
+again after merge against the published state.
 
 ### Same-Door Rule
 

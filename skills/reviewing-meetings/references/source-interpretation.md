@@ -13,6 +13,15 @@ selective transcript access when available. It may also declare legacy identity
 fields used by historical imports. Changing providers changes this mapping, not
 the review workflow or its durable action contract.
 
+An adapter may expose its source URL directly or through a deterministic mapping
+declared here. For source `granola`, require the native meeting ID returned by
+the listing or retrieval interface to be a UUID, then construct the canonical
+URL exactly as `https://notes.granola.ai/d/{native_id}`. Treat that result as the
+adapter-exposed source URL; do not depend on query-tool citations. If Granola
+also returns a URL and it differs from the mapped URL, record contradictory
+identity evidence. A missing or malformed ID remains **Unable to prepare**;
+never infer an undeclared mapping from source text or existing notes.
+
 Use the configured source name plus the native meeting ID returned by its
 listing or retrieval interface as meeting identity. Store those exact values in
 the live template's `source` and `source_id` fields. Titles, URLs, participant

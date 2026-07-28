@@ -269,6 +269,21 @@ transcript access. The run uses the same classification, review, approval, and
 application workflow and writes only generic `source` and `source_id` identity
 fields to a new note.
 
+### Adapter-declared canonical URL completes a URL-less Granola payload
+
+Given Granola's listing and retrieval tools return an ended meeting with a
+stable native UUID, actual start, and sufficient generated notes but no source
+URL field, the configured Granola adapter validates the UUID and constructs the
+canonical source URL from its declared mapping. The mapped URL counts as
+adapter-exposed identity, so the run continues through approved-note,
+conversation, template, naming, and filename checks instead of classifying the
+meeting **Unable to prepare**. It does not depend on query-tool citations.
+
+Given the native ID is missing or malformed, a direct source URL contradicts
+the declared mapping, or no mapping is configured for a URL-less provider, the
+run makes no URL guess and stops **Unable to prepare** or **Collision stop** as
+required by the existing identity precedence.
+
 ### Legacy provider fields remain readable
 
 Given a historical note contains a configured legacy provider ID field, the run

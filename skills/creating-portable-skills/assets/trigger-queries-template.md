@@ -57,15 +57,18 @@ the tier threshold, a near-miss activates, or a completed near-miss result
 misses its categorical-`no` threshold. Record it as unverified when a required
 judgment is unavailable and no available result has already failed the set.
 
-Routine tier: five should-trigger and five near-miss queries, one run each. If
-the first judgment is borderline (`unsure` or hedged), run that query twice
-more. An available borderline judgment is neither a `yes` nor a `no` vote: a
-should-trigger passes only with at least two `yes` judgments, while any complete
-three-run result without two matching categorical judgments fails. Any
-near-miss activation still fails the set. Public or unusually load-bearing
-tier: eight to ten queries per table, three runs each; a should-trigger needs
-two of three. Every near-miss needs at least two categorical `no` judgments;
-any `yes` is an immediate failure, and a complete three-run result without two
+Routine tier: five should-trigger and five near-miss queries, one run each. A
+clear first categorical judgment determines the query result: `yes` passes a
+should-trigger and `no` fails it, while `no` passes a near-miss and `yes` fails
+it. Only when the first judgment is borderline (`unsure` or hedged) run that
+query twice more. An available borderline judgment is neither a `yes` nor a
+`no` vote. The resulting three-run should-trigger needs at least two `yes`
+judgments. The resulting three-run near-miss needs at least two categorical
+`no` judgments, and any `yes` is an immediate failure. Any complete three-run
+result that misses its threshold fails. Public or unusually load-bearing tier:
+eight to ten queries per table, three runs each; a should-trigger needs two of
+three. Every near-miss needs at least two categorical `no` judgments; any `yes`
+is an immediate failure, and a complete three-run result without two
 categorical `no` judgments fails.
 
 ### Should-trigger queries

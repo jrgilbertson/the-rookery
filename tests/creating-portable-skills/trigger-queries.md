@@ -111,6 +111,17 @@ separate for `opus-5` and `sol-5.6`.
 - Expected transition: record passed, failed, and unverified separately. Do not
   collapse them into a harness-wide or cross-target pass.
 
+### TR-C1: Routine categorical one-run control
+
+- Input: an ordinary-personal routine listing run returns a clear `yes` for a
+  should-trigger query and a clear `no` for a near-miss query on their first
+  judgments.
+- Expected transition: both queries pass after that single judgment and receive
+  no reruns. Two additional judgments are created only when the first judgment
+  is borderline; that three-run should-trigger then needs two `yes` judgments,
+  while the near-miss needs two `no` judgments and fails immediately on any
+  `yes`.
+
 ## 2026-07-27 listing-proxy observations
 
 Final listing at revision `c1ec71a` was judged in three fresh, tool-less

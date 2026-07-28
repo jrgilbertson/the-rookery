@@ -72,7 +72,7 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 
 ## Evidence integrity
 
-- Review context is independent. Pass: a separate fresh-context agent that did not author the candidate or produce the artifacts grades and inspects each matched case; another fresh-context agent performs the final checklist and holistic review. Deterministic scripts may perform mechanical checks. When either independent context is unavailable, the affected review stays unverified until a separate session completes it.
+- Review context is independent. Pass: a separate fresh-context agent that did not author the candidate or produce the artifacts inspects and grades each matched case. Another fresh-context agent performs the final checklist and holistic review. Deterministic scripts may perform mechanical checks. When either independent context is unavailable, the affected review stays unverified until a separate session completes it.
 - Artifacts are inspected directly. Pass: the reviewer opens the relevant outputs instead of relying on the executor's summary or claimed filenames.
 - Every pass has substance. Pass: each judgment cites concrete artifact or trace evidence that demonstrates the outcome, not a heading, filename, or other surface compliance.
 - Checks are reviewed too. Pass: no objective check is trivial, unverifiable from the available evidence, or missing a material part of the required outcome.

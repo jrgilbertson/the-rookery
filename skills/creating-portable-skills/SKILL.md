@@ -11,7 +11,7 @@ Create or revise a skill from its intent, required outcome, and only the hard co
 
 Skills produced here follow the [Agent Skills format](https://agentskills.io/specification): a directory with a `SKILL.md` (frontmatter plus body) and optional `references/`, `assets/`, and `scripts/`. Canonical frontmatter uses only `name`, `description`, `license`, `compatibility`, and `metadata`. Read [references/portability.md](references/portability.md) when authoring frontmatter, choosing an install location, or making a harness-specific claim.
 
-An independent reviewer has not seen the authoring discussion and has not produced the artifact under review. One independent grader may inspect and grade a matched case; the final package review uses another fresh context. When the current environment cannot start an independent context, prepare a self-contained handoff for a separate session and keep the affected grade or review unverified until it returns. Do not substitute author self-review.
+An independent reviewer did not participate in the authoring discussion or produce the artifact under review. One independent grader inspects each matched case; a different fresh-context reviewer performs the final package review. If the current environment cannot start those independent contexts, prepare a self-contained handoff for a separate session and keep the affected grade or review unverified until that session completes it. Do not substitute the author's own review.
 
 ## Workflow
 
@@ -33,7 +33,7 @@ Completion: the job fits one sentence, and the triggers, near-misses, outcome, d
 
 Use the caller-declared model and harness target set. When none is declared, use the current model and harness as one target; structural portability alone does not require expanding the set. Record actual target identities and material configuration when available.
 
-Choose only resources with repeatable value. Outputs copied by the workflow belong in `assets/`, material read only for a branch belongs in `references/`, and deterministic helpers belong in `scripts/` when prose cannot reliably protect the result. Keep the package standalone. Check the host repository's contribution docs, agent instructions, changelog policy, skill discovery path, and validators.
+Choose only resources with repeatable value. Outputs copied by the workflow belong in `assets/`. Reference material needed only for one branch belongs in `references/`. Deterministic helpers belong in `scripts/` when prose cannot reliably protect the result. Keep the package standalone. Check the host repository's contribution docs, agent instructions, changelog policy, skill discovery path, and validators.
 
 Completion: the target set and applicable host conventions are recorded, with a file list and one-line reason for every bundled file.
 

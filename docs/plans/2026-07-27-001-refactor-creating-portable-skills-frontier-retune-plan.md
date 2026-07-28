@@ -278,7 +278,7 @@ flowchart TB
 | A small run hides an instruction's value | Predeclare a discriminating case and a control, treat `same` as inconclusive, and retain the instruction without affected-target evidence. |
 | Listing judgment or a stale install produces a false pass | Record the listing result as a proxy, install from the local working tree, verify installed content identity, and observe native discovery, load, and trigger separately. |
 | Targets disagree after a change | Reconcile wording against shared invariants and rerun every affected target; retain the current instruction or narrow the target set if divergence persists. |
-| Evidence records become either opaque or burdensome | Preserve concise raw-enough excerpts or durable transcript references in existing result records; do not create a transcript archive or audit ledger. |
+| Evidence records become either opaque or burdensome | Preserve concise excerpts that directly support each recorded result, or durable transcript references, in existing result records; do not create a transcript archive or audit ledger. |
 
 ---
 
@@ -340,7 +340,7 @@ flowchart TB
   3. Run the disposable existing-skill flow end to end on one target and the focused matched revision on the other under KTD5.
   4. Compare named invariants and output contracts, not prose similarity; record observations and losses separately for each target.
   5. Treat `same`, worse, invariant loss, or unavailable affected-target evidence as retention. Reconcile material divergence and rerun every affected cell against the same candidate revision.
-  6. Append dated evidence and raw-enough excerpts or transcript references without rewriting historical observations. Any substantive edit loops through validation and the affected comparisons again.
+  6. Append dated evidence and excerpts that directly support each recorded result, or transcript references, without rewriting historical observations. Any substantive edit loops through validation and the affected comparisons again.
 - **Execution note:** Behavioral evidence drives the final diff. A valid outcome is a smaller candidate change or no instruction change; do not preserve a planned edit merely to make the retune visible.
 - **Patterns to follow:** Fresh-context prior-versus-revised cases in `tests/creating-portable-skills/baseline-cases.md`; dated per-run evidence and limitations in `tests/creating-portable-skills/results.md`; contaminated evaluator runs are discarded rather than rationalized.
 - **Test scenarios:**
@@ -406,7 +406,7 @@ flowchart TB
 - Routine evidence is labeled only smoke-tested or directional, listing judgments remain proxies, and stronger claims route out without embedding an evaluation suite.
 - The disposable fixture proves audit approval, simplification, retention of a fragile instruction, validation, comparison, affected trigger testing, and packaging without modifying `design-evals`.
 - Public copy consistently describes portable, installable skills without universal behavioral promises, a weaker-model branch, or a disclaimer layer.
-- Historical evidence is preserved, new results are dated and raw enough to review, and no per-instruction ledger or transcript archive is added.
+- Historical evidence is preserved, new results are dated and include concise supporting excerpts or durable transcript references, and no per-instruction ledger or transcript archive is added.
 - Abandoned candidate edits, stale installed copies, temporary workspaces, and dead references are absent from the final diff.
 
 ### Post-Merge Confirmation

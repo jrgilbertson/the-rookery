@@ -9,7 +9,7 @@ Recorded runs for the plan's Verification Contract (`docs/plans/2026-07-16-001-f
 | Static validation | Pass | `npx skills-ref validate skills/creating-portable-skills` → "Valid skill", clean after every edit round |
 | Line budget | Pass | `SKILL.md` at 107 lines (ceiling 500, target ~200) |
 | Same-door sweep | Pass | Zero hits for home-directory paths and owner-environment identifiers across `skills/creating-portable-skills/` and `tests/creating-portable-skills/` |
-| Historical 2026-07-16 install probe | Historical partial pass: local-source probe passed; remote probe (from jrgilbertson/the-rookery) remained pending post-merge (see caveat) | `npx skills add . --skill creating-portable-skills --agent claude-code --agent codex -g -y --copy` installed to both `~/.claude/skills/` and `~/.agents/skills/`; skill registered live in the running harness. This remote publication follow-up is non-gating for the 2026-07-27 final-source U4 result |
+| Historical 2026-07-16 install probe | Pass: local-source installation passed on 2026-07-16; the remote default-branch listing passed after merge on 2026-07-27 | The local install copied the skill to both agent locations and registered it in the running harness. Skills CLI 1.5.20 later found `creating-portable-skills` in `jrgilbertson/the-rookery` through the plain remote listing command. The follow-up is non-gating for the 2026-07-27 final-source U4 result |
 | Trigger evaluation | Pass | 10/10 should-trigger at rate 1.0 (3 runs each), 0/10 near-miss activations, judged in fresh contexts across three model families (Haiku 4.5, Sonnet, Fable 5). Full tables: `trigger-queries.md` |
 | Baseline test | Pass | Bare-agent baseline skipped all four disciplines (self-audited); with-skill runs in three harnesses enforced all four. Comparison: `baseline-cases.md` case 1 |
 | Visitor create-flow (F1) | Pass | Clean non-Rookery repo, no companions: all loop steps completed, AE1 and AE2 confirmed (see below) |
@@ -94,7 +94,7 @@ Recorded runs for the plan's Verification Contract (`docs/plans/2026-07-16-001-f
 
 ## Caveats and deferred confirmations
 
-- **Historical 2026-07-16 remote publication follow-up (non-gating for the 2026-07-27 final-source U4 result).** `npx skills add jrgilbertson/the-rookery` scans the default branch; skills CLI 1.5.19's `@ref` targeting clones but does not check out the requested ref (verified against both a branch name and a commit SHA), so the branch-ref workaround does not work. The plain remote probe was deferred until the change reached `main`.
+- **Historical 2026-07-16 remote publication follow-up (non-gating for the 2026-07-27 final-source U4 result).** Skills CLI 1.5.19's `@ref` targeting cloned the repository but did not check out the requested ref, verified against both a branch name and a commit SHA. After PR #4 merged, `npx skills@1.5.20 add jrgilbertson/the-rookery --list` reported four skills from the default branch and included `creating-portable-skills`. This completed the deferred publication check on 2026-07-27 without changing the historical `@ref` finding.
 - Baseline case 2 (full review/migrate flow on a real skill) is scheduled with the post-merge dogfood: the `design-evals` migration review is the acceptance run per the plan's KTD10. Cases 1 and 3 ran pre-merge.
 - Trigger judgments are listing-level (name + description shown to a fresh judge), the standard approximation for description routing; harness-native discovery was additionally confirmed live in Claude Code, Codex, and Grok.
 
@@ -131,7 +131,7 @@ Pending or unverified states here are superseded by the current sections below.
 | Sol focused fixture audit | passed as focused coverage | Prior and final both stopped for approval and preserved the fragile sequence; the final used explicit System-Owned Invariant classification, but prose-level differences alone were not treated as improvement evidence |
 | Listing proxy | passed in both target cells | Full tables in `trigger-queries.md`; 10/10 should-trigger at 3/3 `yes` in each target and zero near-miss `yes`; Opus recorded two `unsure` judgments on one near-miss |
 
-### Raw-enough decision excerpts
+### Decision excerpts
 
 - Prior Sol FR-P1: `"decision": "subtract"`, because the observation did
   not discriminate prior from revised.
@@ -362,9 +362,8 @@ Final workflow state: **VerifiedRetune**, scoped strictly to the recorded
 `gpt-5.6-sol`/Codex and `claude-opus-5`/Claude Code target cells and the checks
 above under the Claim Ceiling. This does not establish causal improvement,
 non-regression, equivalent behavior across targets, universal behavior, or
-behavior outside the recorded cases. The remote default-branch install probe
-remains a post-merge publication confirmation and is not used as pre-merge
-evidence.
+behavior outside the recorded cases. The remote default-branch listing passed
+after merge and remains separate from the pre-merge behavioral evidence.
 
 ### Outcome-and-constraints follow-up
 
@@ -401,9 +400,9 @@ this section.
 
 Date: 2026-07-27. Frozen prior: `5af34de`. Revised `SKILL.md` SHA-256:
 `9d9352e5776b1bd8bb77459c614f1f612de5bc79fe0395c6b8d2e5f5333add26`.
-The target was the current Codex agent runtime. The harness did not expose its
-exact runtime model ID to the execution agents, so that identity remains
-unverified and this record makes no cross-model claim.
+The target was `gpt-5.6-sol` at xhigh reasoning effort in Codex CLI 0.145.0,
+verified from the agents' recorded session metadata. This record covers that
+one model-harness target and makes no cross-model claim.
 
 Every execution and judgment used a separate agent started with no inherited
 conversation turns. The prior and revised policy outputs came from
@@ -442,7 +441,7 @@ Skills CLI 1.5.20 installed the local source into fresh project-local Codex and
 Claude Code destinations under `/tmp/rookery-surgical.zLTYcU/project`.
 `diff -qr` returned no differences for either installed package.
 
-| Package file | SHA-256 |
+| Initial independent-review package file | SHA-256 |
 | --- | --- |
 | `SKILL.md` | `9d9352e5776b1bd8bb77459c614f1f612de5bc79fe0395c6b8d2e5f5333add26` |
 | `assets/baseline-test-template.md` | `53ff7485f6ee63274d33d16b73d0258db2cba3fb984d8f4d16d2194a9b948b6a` |
@@ -455,12 +454,40 @@ The skill description did not change, so listing and native-trigger tests were
 not rerun. Native discovery, load, and trigger at this new package hash remain
 unverified. Earlier native results apply only to their recorded package hashes.
 
+A later clean-context `no-ai-slop` review found three clarity defects in the
+package: optional-sounding independent-grading language, a reversed
+inspect-and-grade sequence, and the undefined phrase `raw-enough` in the
+trigger evidence template. The final package makes the user-owned independent
+review rule explicit and requires a result summary plus either an excerpt that
+supports it or a durable reference.
+
+A matched follow-up used separate prior, revised, and grading agents. The
+reviewer-definition case made the distinct final reviewer explicit. The
+evidence-field case stopped treating a missing transcript reference as a
+provenance failure when a supporting excerpt was present. The resource-placement
+control remained stable. These results are directional for the supplied cases
+only and are preserved in `independent-review-follow-up.md`.
+
+The final package passed `skills-ref` validation at 100 lines. Skills CLI
+1.5.20 installed it from local source into fresh project-local Codex and Claude
+Code destinations, and `diff -qr` found no differences from source.
+
+| Final package file | SHA-256 |
+| --- | --- |
+| `SKILL.md` | `a466934c86175d84fddfa611dd0fdce8f39c8ee8e3142128aac3ca63871812bd` |
+| `assets/baseline-test-template.md` | `53ff7485f6ee63274d33d16b73d0258db2cba3fb984d8f4d16d2194a9b948b6a` |
+| `assets/skill-template.md` | `88f38f6898893ab491b14a3d1cd1232a056c8dab4799abc1d001af3ac8d1b294` |
+| `assets/trigger-queries-template.md` | `3c80a1c652e9edab1e2b839f217f8e1bfa63bc90500f32d7215252a6de96830b` |
+| `references/portability.md` | `7b349942cee171f2bc25a1e3084db2695ee689e8b54b8c09cb12f15620ed9d31` |
+| `references/review-checklist.md` | `d96af1066b12a2038335452fd8341978a37fc4906fa916dc360241858558b975` |
+
 ### Current state after the independent-review follow-up
 
 | Evidence layer | Current state |
 | --- | --- |
 | Structural validation | Passed at the current package hash |
-| Independent-grading policy comparison | Directional candidate for the recorded case |
+| Independent-grading policy comparison | Directional candidate for the recorded cases |
+| Evidence-record wording comparison | Directional candidate for the recorded case |
 | Artifact and trace grading probe | Same correct behavior in prior and revised; no improvement claim |
 | Trigger-query construction comparison | Directional candidate for the recorded case |
 | Conditional method and destructive-confirmation comparison | Directional candidate for the recorded case |
@@ -470,7 +497,7 @@ unverified. Earlier native results apply only to their recorded package hashes.
 | Local-source install and content identity | Passed in disposable Codex and Claude Code project paths; all six files matched |
 | Listing and native discovery, load, and trigger | Not rerun at the current package hash; unverified for this follow-up |
 
-Current conclusion: **directional comparison** for the three named candidate
+Current conclusion: **directional comparison** for the four named candidate
 groups only, with one smoke probe and the unverified authoring guidance listed
 above. This follow-up does not establish causal improvement, non-regression,
 equivalent behavior across models or harnesses, or behavior outside the

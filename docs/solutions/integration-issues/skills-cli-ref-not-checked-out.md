@@ -25,7 +25,7 @@ tags: [skills-cli, vercel-labs, git-ref, default-branch, false-positive, install
 
 The `skills` CLI (v1.5.19, resolved fresh via `npx`) accepts a ref suffix on remote installs — `npx skills add owner/repo@<ref>` — and its output claims the ref was honored. It was not. The CLI clones the repository but scans the default branch's tree, ignoring the requested ref entirely. Any pre-merge install probe that relies on `@<branch>` or `@<sha>` is testing the wrong tree.
 
-This surfaced while running the install-probe gate for `skills/creating-portable-skills` on branch `jrgilbertson/Initial-setup` of `jrgilbertson/the-rookery` (PR #4, open as of this writing). Evidence recorded in `tests/creating-portable-skills/results.md`.
+This surfaced while running the install-probe gate for `skills/creating-portable-skills` on branch `jrgilbertson/Initial-setup` of `jrgilbertson/the-rookery`. PR #4 merged on 2026-07-17. Evidence is recorded in `tests/creating-portable-skills/results.md`.
 
 ## Symptoms
 
@@ -59,7 +59,7 @@ $ npx skills add owner/repo --list
 
 Record the CLI version alongside every probe (`skills` 1.5.19 this run). The tool is 0.x and resolved fresh via `npx`, so its surface can change silently between runs.
 
-The gate row in `tests/creating-portable-skills/results.md` records the local probe as the pre-merge pass and defers the remote probe to post-merge under the "Remote install probe runs post-merge" caveat. That remote re-run is still pending: PR jrgilbertson/the-rookery#4 is open, not merged, as of this writing.
+The gate row in `tests/creating-portable-skills/results.md` records the local probe as the pre-merge pass. The deferred publication check completed after merge on 2026-07-27: `npx skills@1.5.20 add jrgilbertson/the-rookery --list` reported four skills from the default branch and included `creating-portable-skills`. This confirms default-branch publication and does not retest the historical 1.5.19 `@ref` behavior.
 
 ## Why This Works
 
@@ -74,5 +74,5 @@ The local-path scan reads the working tree directly, so it exercises the same di
 
 ## Related Issues
 
-- PR jrgilbertson/the-rookery#4 (the branch whose install-probe gate surfaced this; the post-merge remote probe re-run is tracked in its Post-Deploy Monitoring section)
+- PR jrgilbertson/the-rookery#4 (merged 2026-07-17; the branch whose install-probe gate surfaced this)
 - `tests/creating-portable-skills/results.md` — the recorded gate evidence and caveat

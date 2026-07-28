@@ -45,6 +45,16 @@ may embed the exact authoritative policy, but that does not prove native
 discovery or loading. Exclude any run that cannot establish the intended
 identity.
 
+### Independent Review Context
+An Independent Review Context is a fresh agent session that did not see the
+artifact's authoring discussion and did not produce the artifact, used for
+behavioral grading or final review.
+
+One context may grade a matched case, while another performs the final holistic
+review. Deterministic scripts remain appropriate for mechanical checks. If an
+independent context is unavailable, the affected result stays unverified and
+moves to a separate session through a self-contained handoff.
+
 ### Degradation Path
 A skill's defined behavior when something it prefers is absent, such as a
 validator that cannot run, a companion skill that is not installed, or a tool

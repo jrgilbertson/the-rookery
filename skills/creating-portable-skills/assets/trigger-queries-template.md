@@ -73,8 +73,8 @@ for the public or load-bearing tier.
 
 | Target cell | Date | Actual model | Actual harness and version | Actual configuration | Listing-proxy state | Evidence or limitation |
 | --- | --- | --- | --- | --- | --- | --- |
-| [target-a] | [YYYY-MM-DD] | [exact model ID] | [harness, version] | [material settings] | [passed / failed / unverified] | [result summary and raw-enough excerpt or reference] |
-| [target-b, if declared] | [YYYY-MM-DD] | [exact model ID] | [harness, version] | [material settings] | [passed / failed / unverified] | [result summary and raw-enough excerpt or reference] |
+| [target-a] | [YYYY-MM-DD] | [exact model ID] | [harness, version] | [material settings] | [passed / failed / unverified] | [result summary and an excerpt that supports it, or a durable reference] |
+| [target-b, if declared] | [YYYY-MM-DD] | [exact model ID] | [harness, version] | [material settings] | [passed / failed / unverified] | [result summary and an excerpt that supports it, or a durable reference] |
 
 ## Native package-harness checks
 

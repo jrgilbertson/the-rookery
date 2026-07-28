@@ -34,10 +34,10 @@ in Claude Code, Codex, and other compatible tools that read `SKILL.md`.
   ```
 
 - **[managing-personal-crm](managing-personal-crm/SKILL.md)** maintains useful
-  relationship context, prepare for one person, find relevant people for
-  current work, and clean up Person notes without building a separate CRM
-  database. It keeps durable changes reviewable and routes each effect to its
-  canonical destination.
+  relationship context, prepares for conversations with one person, finds
+  relevant people for current work, and cleans up Person notes without building
+  a separate CRM database. It keeps durable changes reviewable and routes each
+  effect to its canonical destination.
 
   ```bash
   npx skills add jrgilbertson/the-rookery --skill managing-personal-crm

@@ -6,18 +6,20 @@ Date: 2026-07-27
 
 - Mode: revision
 - Frozen prior: commit `5af34de`
-- Revised package identity: `SKILL.md` SHA-256 `9d9352e5776b1bd8bb77459c614f1f612de5bc79fe0395c6b8d2e5f5333add26`
-- Target: current Codex collaboration runtime
-- Harness version: unverified because the runtime did not expose it
-- Exact model: unverified because the runtime did not expose it
-- Material configuration: fresh default agent, task-scoped read-only instruction, repository read access, no inherited conversation turns
+- Initial revised package identity: `SKILL.md` SHA-256 `9d9352e5776b1bd8bb77459c614f1f612de5bc79fe0395c6b8d2e5f5333add26`
+- Final package identity after prose review: `SKILL.md` SHA-256 `a466934c86175d84fddfa611dd0fdce8f39c8ee8e3142128aac3ca63871812bd`
+- Target: `gpt-5.6-sol` in Codex CLI 0.145.0
+- Harness version: Codex CLI 0.145.0
+- Exact model: `gpt-5.6-sol`
+- Material configuration: xhigh reasoning effort, fresh default agent, task-scoped read-only instruction, repository read access, no inherited conversation turns
 - Fresh-context mechanism: every named agent started with `fork_turns: none`
 - Claim ceiling: directional comparison for the cases below
 
 The discriminator prompts, outputs, control results, and independent judgments
 are preserved here so a reviewer can inspect the evidence without relying on
-the run summary. The collaboration runtime did not provide durable raw
-transcripts, so the pasted outputs are the available execution evidence.
+the run summary. Session metadata identified the model, harness, and reasoning
+effort. Raw session files were not copied into the repository, so the preserved
+outputs and excerpts are the durable project evidence.
 
 | Run | Loaded-variant confirmation |
 | --- | --- |
@@ -340,11 +342,83 @@ Independent grader `resource_control_grader_final` found the control materially
 stable with no observed loss. It treated the added file safeguards as unrelated
 to the candidate group.
 
+## Prose-review clarity follow-up
+
+A fresh-context prose reviewer found that the reviewer definition sounded
+optional, the final-review context was not named distinctly enough, and
+`raw-enough` left the evidence requirement undefined. The revised package made
+the user-owned independent-review rule explicit and changed the evidence cell
+to require a supporting excerpt or a durable reference.
+
+The matched run compared commit `1fa6b2f` with the final working-tree package.
+Both executors and the grader used separate agents with no inherited
+conversation turns on `gpt-5.6-sol` at xhigh reasoning effort in Codex CLI
+0.145.0.
+
+### Reviewer-definition discriminator
+
+Prior output:
+
+> Yes, every matched case requires independent grading. No, the final package
+> review must use another fresh context. If an independent context is
+> unavailable, prepare a self-contained handoff for a separate session and
+> leave the affected grade or review unverified until it returns; author
+> self-review cannot substitute.
+
+Revised output:
+
+> Yes, every matched case requires independent grading. No, final package
+> review must use a different fresh-context reviewer. If independent contexts
+> are unavailable, prepare a self-contained handoff for a separate session and
+> leave the affected grade or review unverified until completion; do not
+> substitute author review.
+
+Independent grader `prose_fix_grader` found the intended policy articulation
+more explicit, with no material loss. This probe tests the wording of the rule,
+not whether an orchestrator actually used clean contexts. The user's hard
+constraint independently requires separate clean-context agents for grading
+and review.
+
+### Evidence-field discriminator
+
+The input supplied a PASS summary, the artifact excerpt `Decision: SHOULD
+because the query asks to audit duplicate vendor charges`, and no transcript
+reference.
+
+Prior output:
+
+> PASS; excerpt: “Decision: SHOULD because the query asks to audit duplicate
+> vendor charges”; limitation: no durable context or transcript reference
+> exists, so fresh-context provenance is unverified.
+
+Revised output:
+
+> PASS; excerpt: “Decision: SHOULD because the query asks to audit duplicate
+> vendor charges” A durable transcript reference is not required because the
+> supporting excerpt is present.
+
+The grader found the intended delta. The revised output preserved the result
+and its direct support without inventing a provenance limitation. It did not
+establish that the excerpt was authentic beyond the supplied artifact.
+
+### Resource-placement control
+
+Both variants assigned copied workflow output to `assets/`, branch-specific
+reading material to `references/`, and a deterministic helper to `scripts/`.
+The grader found the control materially stable with no observed loss.
+
+The final package passed `skills-ref` validation at 100 lines. Skills CLI
+1.5.20 installed it from local source into fresh project-local Codex and Claude
+Code destinations. Both installed directories matched the source, and both
+installed `SKILL.md` files had SHA-256
+`a466934c86175d84fddfa611dd0fdce8f39c8ee8e3142128aac3ca63871812bd`.
+
 ## Comparison decision
 
 | Candidate group | Discriminator | Control | Decision |
 | --- | --- | --- | --- |
 | Independent grading policy | Intended delta observed | Mechanical validation stable | Directional candidate |
+| Evidence-record wording | Intended delta observed | Resource placement stable | Directional candidate |
 | Artifact evidence behavior | Same correct behavior in one smoke probe | Not applicable | No candidate decision and no behavioral-improvement claim |
 | Trigger-query realism | Intended delta observed | Fixed-query classification stable | Directional candidate |
 | Conditional method selection and destructive confirmation | Intended delta observed | Non-destructive one-tool workflow stable | Directional candidate |

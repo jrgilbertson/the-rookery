@@ -137,8 +137,9 @@ Decision rules:
 - For a revision, retain the current instruction when an affected target is
   unavailable, a material loss appears, or declared targets materially diverge
   and cannot be reconciled without losing the named invariant.
-- For a new skill, use `CorrectionRequired` when any required case is marked
-  `worse` or any material invariant loss is recorded. Do not assign
+- For a new skill, use `CorrectionRequired` when any required discriminating
+  case is marked `same`, any required case is marked `worse`, or any material
+  invariant loss is recorded. Do not assign
   `NewSkillCandidate`; return the skill to correction and rerun the affected
   required cases before packaging. Otherwise, use `NewSkillCandidate`. It
   identifies a draft with no prior version and implies neither a behavioral
@@ -167,7 +168,7 @@ inconclusive.
 - Waived by the user: [yes, quote or paraphrase the explicit waiver]
 - Unavailable check and reason: [what could not run and why]
 - Evidence state: [unverified]
-- Candidate state: [revision: Retained unless the required comparison supports the change / new skill: NewSkillCandidate only when no required case is worse and no material invariant loss is recorded, otherwise CorrectionRequired; never DirectionalCandidate from this waiver]
+- Candidate state: [revision: Retained unless the required comparison supports the change / new skill: NewSkillCandidate only when no required discriminating case is same, no required case is worse, and no material invariant loss is recorded, otherwise CorrectionRequired; never DirectionalCandidate from this waiver]
 - Shipment status: [UnverifiedCandidate]
 - Earned evidence label: [unchanged; do not raise]
 - Date: [YYYY-MM-DD]

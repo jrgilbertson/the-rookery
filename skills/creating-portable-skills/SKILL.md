@@ -49,7 +49,7 @@ For a new skill, copy [assets/skill-template.md](assets/skill-template.md) to th
 
 Use the least-prescriptive instruction that reaches the required outcome within its hard constraints. Read the System-Owned Invariants and candidate qualifier rules in [references/review-checklist.md](references/review-checklist.md) before relaxing an existing instruction. Preserve exact formats, deterministic checks, authority boundaries, reusable resources, and genuinely fragile ordering. Let the agent choose its reasoning and implementation path elsewhere. If the skill names several tools or approaches, give a default or a selection rule instead of an equal menu. Add a concise example only when it resolves a real ambiguity or demonstrates an exact format.
 
-Keep the body at most 500 lines and aim below 5,000 tokens. Treat the token figure as an authoring target because tokenizers vary, not as a portable structural claim. Put branch-specific detail one level deep behind an explicit read-trigger, and add a table of contents to references longer than 300 lines. Write capability-based prose and keep every bundled reference relative and inside the skill directory. Host-project paths the skill operates on are allowed; owner-machine paths and private dependencies are not.
+Before drafting, read the **Information hierarchy** and **Portability** sections of [references/review-checklist.md](references/review-checklist.md) and apply them as authoring constraints.
 
 Completion: the draft and every planned resource implement the intent and required outcome with every System-Owned Invariant protected.
 

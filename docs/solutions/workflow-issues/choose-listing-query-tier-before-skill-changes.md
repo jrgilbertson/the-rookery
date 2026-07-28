@@ -78,9 +78,9 @@ run has been authorized.
 The `creating-portable-skills` skill is unusually load-bearing because it shapes
 future skills. A matched comparison showed the revised workflow asking for the
 choice in new-skill and approved-revision cases while leaving a read-only audit
-control materially stable
-(`tests/creating-portable-skills/verification-mode-follow-up.md:46`). That is
-directional evidence for the recorded cases, not a general reliability claim.
+control materially stable. The canonical summary is retained in
+`tests/creating-portable-skills/results.md`. That is directional evidence for
+the recorded cases, not a general reliability claim.
 
 ## Related
 

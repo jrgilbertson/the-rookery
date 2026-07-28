@@ -133,8 +133,8 @@ separate policy comparison supported only the recorded procedural changes:
 use an independent grader, inspect artifacts and traces directly, cite
 concrete evidence and challenge weak checks, route subjective quality to human
 or blind review, and preserve an unverified handoff when an independent
-context is unavailable. The preserved prompts, outputs, controls, and
-judgments are in `tests/creating-portable-skills/independent-review-follow-up.md`.
+context is unavailable. The canonical result and its Claim Ceiling are retained
+in `tests/creating-portable-skills/results.md`.
 
 The later trigger review caught a different gap. The final tables recorded
 bare `yes` and `no` judgments, so they did not support the claim that every
@@ -156,7 +156,7 @@ It is not a reliability or non-regression claim.
 - `docs/solutions/integration-issues/skills-cli-ref-not-checked-out.md` gives a
   concrete example of a green check that could not distinguish success from a
   silent fallback.
-- `tests/creating-portable-skills/writing-great-skills-follow-up.md` records the
-  matched ownership change and its bounded directional conclusion.
+- `tests/creating-portable-skills/results.md` retains the canonical bounded
+  verification summaries.
 - Issue jrgilbertson/the-rookery#13 is the frontier-model retune that produced
   this guidance.

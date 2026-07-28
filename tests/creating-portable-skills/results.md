@@ -408,9 +408,8 @@ Every execution and judgment used a separate agent started with no inherited
 conversation turns. The prior and revised policy outputs came from
 `case1_prior_executor` and `policy_revised_final`; the mechanical control came
 from `case2_prior_executor` and `case2_revised_rerun`. The independent matched
-grader was `policy_grader_final`. Full prompts, outputs, loaded-variant
-confirmations, resource-specific controls, and per-case
-judgments are preserved in `independent-review-follow-up.md`.
+grader was `policy_grader_final`. The table below is the canonical retained
+record of the per-case conclusions.
 
 | Case | Prior | Revised | Independent conclusion |
 | --- | --- | --- | --- |
@@ -466,7 +465,7 @@ reviewer-definition case made the distinct final reviewer explicit. The
 evidence-field case stopped treating a missing transcript reference as a
 provenance failure when a supporting excerpt was present. The resource-placement
 control remained stable. These results are directional for the supplied cases
-only and are preserved in `independent-review-follow-up.md`.
+only.
 
 The final package passed `skills-ref` validation at 100 lines. Skills CLI
 1.5.20 installed it from local source into fresh project-local Codex and Claude
@@ -549,13 +548,12 @@ creating-portable-skills` and the project-local
 `.claude/skills/creating-portable-skills` base directory. The fresh session ID
 was `d6eb7c3d-6a91-40ff-8777-574bb59da428`.
 
-The matched instruction results are preserved in
-`writing-great-skills-follow-up.md`. The read-only audit, generated trigger
-contract, evidence-doctrine, and single-owner cases showed their intended
-deltas. The resource-placement control remained materially stable. The result is a
-**directional comparison** for those named cases only. It does not establish
-general reliability, causal improvement, non-regression, or behavior outside
-the recorded cases and target configurations.
+The read-only audit, generated trigger contract, evidence-doctrine, and
+single-owner cases showed their intended deltas. The resource-placement control
+remained materially stable. The result is a **directional comparison** for those
+named cases only. It does not establish general reliability, causal improvement,
+non-regression, or behavior outside the recorded cases and target
+configurations.
 
 ## 2026-07-28 verification-mode choice follow-up
 
@@ -568,10 +566,9 @@ audits.
 Fresh matched cases showed the intended choice in new-skill and
 approved-revision flows, while a read-only control remained materially stable.
 An independent grader assigned `DirectionalCandidate` with no material loss
-observed. The bounded evidence and Claim Ceiling are recorded in
-`verification-mode-follow-up.md`.
+observed. The conclusion remains bounded to the recorded cases and target.
 
-The final `SKILL.md` SHA-256 was
+The tested `SKILL.md` SHA-256 for this behavior change was
 `576ce3410270fffd81baa0bb7f8c4149a36fbb0e07a7700d1699776136175821`.
 Structural validation passed. Skills CLI 1.5.20 installed an identical copy in
 a fresh Codex project. In native session

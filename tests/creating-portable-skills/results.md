@@ -499,7 +499,7 @@ Code destinations, and `diff -qr` found no differences from source.
 | `references/portability.md` | `7b349942cee171f2bc25a1e3084db2695ee689e8b54b8c09cb12f15620ed9d31` |
 | `references/review-checklist.md` | `d96af1066b12a2038335452fd8341978a37fc4906fa916dc360241858558b975` |
 
-### Current state after the independent-review follow-up
+### Historical state after the independent-review follow-up
 
 | Evidence layer | Current state |
 | --- | --- |
@@ -520,6 +520,10 @@ groups only, with one smoke probe and the unverified authoring guidance listed
 above. This follow-up does not establish causal improvement, non-regression,
 equivalent behavior across models or harnesses, or behavior outside the
 recorded cases.
+
+This table covers only that historical package. The final missing-group
+comparisons in `baseline-cases.md` later add both declared frontier targets,
+per-group decisions, and Claim Ceilings for the two authoring-guidance rows.
 
 ## 2026-07-28 writing-great-skills follow-up
 
@@ -621,6 +625,11 @@ evidence remains description-bound. The matched comparison and native run in
 this historical follow-up targeted `gpt-5.6-sol` in Codex CLI 0.145.0. The
 corresponding `claude-opus-5` behavior and native cells were unverified at this
 package hash.
+
+That statement applies only to the tested hash. The final
+missing-group comparison in `baseline-cases.md` later completes the matched
+mode-choice cases for both GPT-5.6 Sol and Claude Opus 5 against the current
+package. Current native evidence is recorded separately below.
 
 ## 2026-07-28 pre-PR evidence-contract fixes
 
@@ -742,7 +751,7 @@ Claim Ceiling: these checks support the `c9eb5e1` package, the named harness
 configurations, and the recorded native query. They do not establish behavior
 for other revisions, models, harnesses, configurations, or tasks.
 
-## 2026-07-28 current review-fix state
+## 2026-07-28 final review-fix verification (`73b9477`)
 
 Review feedback changed three package resources after the `c9eb5e1` native
 recheck. The current resource hashes are:
@@ -760,12 +769,52 @@ The description did not change. The final listing-query observations remain
 applicable and pass the current public-tier rule because every near-miss in the
 later full rerun received three categorical `no` judgments.
 
-The resource edits invalidate the `c9eb5e1` package-harness and native
-model-harness states for the current package. Local-source installation,
-installed-content identity, native discovery, native load, and native trigger
-are therefore **unverified** until the current package reruns. No native check
-was attempted in this review pass; unavailable deterministic load provenance
-is unverified, not failed. The changed evidence-contract wording also has no
-new frontier matched comparison in this pass, so its behavioral effectiveness
-remains unverified. Historical pass states above remain scoped to their exact
-recorded package revisions and traces.
+Fresh GPT-5.6 Sol and Claude Opus 5 executors tested the changed contract groups
+against their frozen priors and the current resources. The per-group cases,
+target results, independent decisions, evidence labels, and Claim Ceilings are
+in `baseline-cases.md` under "final contract comparisons" and "final
+missing-group comparisons." Deterministic loaded-copy provenance, the
+public-tier near-miss threshold, independent review ownership, context and
+navigation targets, and verification-mode timing earned bounded directional
+evidence. Required-`worse` handling, unavailable-listing waivers, routine
+first-judgment handling, and project-evidence/example guidance were retained
+without a directional label. These results support no aggregate improvement
+claim.
+
+Structural validation passed with `skills-ref` 0.1.5. Skills CLI 1.5.20 copied
+the current local package into separate disposable Codex and Claude Code
+projects under `/tmp/creating-portable-skills-native.vwcXpm`. `diff -qr`
+returned no differences between the six-file source package and either
+installed copy. Local-source installation and installed-content identity
+therefore passed for both package-harness cells.
+
+The inventory found a project-local Codex copy and a same-name user copy under
+`~/.agents/skills`; it also found a project-local Claude copy and a same-name
+user copy under `~/.claude/skills`. The native runs therefore required
+deterministic project-local load provenance:
+
+- Codex CLI 0.145.0 ran `gpt-5.6-sol` at high reasoning in fresh ephemeral
+  thread `019faae6-aed0-7d43-9fb1-905cd6c3a497`. Its command trace read the
+  exact installed
+  `/private/tmp/creating-portable-skills-native.vwcXpm/codex-project/.agents/skills/creating-portable-skills/SKILL.md`.
+  The implicit creation request selected the skill and the response asked for
+  the verification-mode decision. The exact path supplied deterministic load
+  provenance; the quoted first body sentence only corroborated it.
+- Claude Code 2.1.220 ran `claude-opus-5` at high effort in fresh
+  non-persistent session `c233aa80-5b5a-44d8-b8c7-6c9c575d5685`, with project
+  settings and only the native `Skill` tool. Initialization listed the skill,
+  the tool launched it, and the result reported the exact base directory
+  `/private/tmp/creating-portable-skills-native.vwcXpm/claude-project/.claude/skills/creating-portable-skills`.
+  The response asked for the same decision. The exact base directory supplied
+  deterministic load provenance; the quoted sentence only corroborated it.
+
+For the `73b9477` package, native discovery, load, and trigger passed in both
+declared model-harness cells. Because the description did not change, the
+complete public-tier listing evidence recorded in `trigger-queries.md` remains
+applicable.
+
+Claim Ceiling: these checks support the six-file `73b9477` package in the
+named harness configurations and for the recorded native query. The matched
+comparisons support only their predeclared cases and per-group conclusions.
+They do not establish behavior for other revisions, models, harnesses,
+configurations, tasks, or provenance mechanisms.

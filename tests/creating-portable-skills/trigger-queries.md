@@ -349,7 +349,7 @@ The tested trigger-template SHA-256 was
 No proxy result was used to fill a native state, and no native evidence from an
 earlier package revision was carried forward.
 
-## 2026-07-28 current review-fix state
+## 2026-07-28 final review-fix verification (`73b9477`)
 
 The description is unchanged, and the later full listing rerun still passes
 the current public-tier threshold: every near-miss received three categorical
@@ -357,11 +357,9 @@ the current public-tier threshold: every near-miss received three categorical
 failed under the current rule and is not used for the final listing state.
 
 Substantive edits changed the baseline template, trigger template, and
-portability reference after the `c9eb5e1` native recheck. For the current
-package, local-source installation, installed-content identity, native
-discovery, native load, and native trigger are **unverified** until rerun. This
-pass did not attempt a native check; missing deterministic load provenance is
-unverified rather than failed. The current unverified package under review is:
+portability reference after the `c9eb5e1` native recheck. The required
+installation and native checks were rerun against the final package. Its tested
+identity is:
 
 | Current package file | SHA-256 |
 | --- | --- |
@@ -371,3 +369,35 @@ unverified rather than failed. The current unverified package under review is:
 | `assets/trigger-queries-template.md` | `ea30d1dbf024548c23ddfad2dab8d2e26b2e7f794ec44e65cf807ac58120a2ef` |
 | `references/portability.md` | `28a862532a0ab0db75a8d0d47525bbd25ec47fe54f303fbd2726ab597157e84d` |
 | `references/review-checklist.md` | `6baf044506a96c614d8cd14515f50942438e38e99b1269e351ec07d157307654` |
+
+- Structural validation: passed with `skills-ref` 0.1.5.
+- Local-source installation: passed with Skills CLI 1.5.20 in separate
+  disposable Codex and Claude Code projects under
+  `/tmp/creating-portable-skills-native.vwcXpm`.
+- Installed-content identity: passed; `diff -qr` found no differences between
+  the source package and either project-local copy.
+- Same-name inventory: a user copy existed under `~/.agents/skills` for Codex
+  and under `~/.claude/skills` for Claude Code, so native load required exact
+  project-local provenance.
+- Codex native discovery, load, and trigger: passed with Codex CLI 0.145.0 and
+  `gpt-5.6-sol` at high reasoning in fresh ephemeral thread
+  `019faae6-aed0-7d43-9fb1-905cd6c3a497`. The command trace read the exact
+  installed
+  `/private/tmp/creating-portable-skills-native.vwcXpm/codex-project/.agents/skills/creating-portable-skills/SKILL.md`.
+- Claude native discovery, load, and trigger: passed with Claude Code 2.1.220
+  and `claude-opus-5` at high effort in fresh non-persistent session
+  `c233aa80-5b5a-44d8-b8c7-6c9c575d5685`. With project settings and only the
+  native `Skill` tool available, initialization listed the skill and the tool
+  result reported the exact base directory
+  `/private/tmp/creating-portable-skills-native.vwcXpm/claude-project/.claude/skills/creating-portable-skills`.
+
+Both native responses asked for the verification-mode decision. Their matching
+first-body-sentence quotes corroborated the traces but did not establish load
+identity by themselves. Installation identity, discovery, load, trigger, and
+behavior remain separate states.
+
+Claim Ceiling: the unchanged description passes the recorded public-tier
+listing proxy in both targets. The native checks support discovery, load, and
+trigger only for the exact `73b9477` package, named configurations, and
+recorded query. Other revisions, targets, configurations, queries, and task
+behavior remain unverified.

@@ -566,3 +566,239 @@ two categorical `no` judgments. The public-tier change was mechanically
 rescored from the recorded judgments in `trigger-queries.md`; no new model run
 was claimed. The other two contract changes have no new matched comparison in
 this record.
+
+### 2026-07-28 final contract comparisons
+
+This pass adds matched comparisons for the review-feedback changes above. It
+compared the frozen prior package at `2df45bc` with the current package at
+`73b9477`. Each executor received only its assigned variant's baseline
+template, trigger template, and portability reference. The runs used fresh
+contexts for both declared targets: GPT-5.6 Sol with high-reasoning, read-only
+execution and Claude Opus 5 with high-effort, safe-mode, tool-less Claude Code
+execution.
+
+| Resource | Prior SHA-256 | Current SHA-256 |
+| --- | --- | --- |
+| `assets/baseline-test-template.md` | `3e36f320bf53870672daa2a6d7e59bdb52e2ff0542f4e43d13638d998be838cf` | `1d6a33ed6686aadced84e920378f64e9a852fbaffda6c7bfabc57c03ea13c21f` |
+| `assets/trigger-queries-template.md` | `a486e99101002d5bf531bc62a9008c8e3f7ad9fff548712dd2ab412a6ee3a960` | `ea30d1dbf024548c23ddfad2dab8d2e26b2e7f794ec44e65cf807ac58120a2ef` |
+| `references/portability.md` | `83636d76ee143090ec33eff9affea1cd953a9601d441b4ef35e847e232dfeb8d` | `28a862532a0ab0db75a8d0d47525bbd25ec47fe54f303fbd2726ab597157e84d` |
+
+The fresh Sol executors were `/root/sol_contract_prior_executor` and
+`/root/sol_contract_current_executor`. They confirmed all three assigned file
+hashes before applying their variant. The fresh Opus sessions were
+`722a3bcc-e9cf-4c0e-b19c-9c29a3916256` and
+`69c294bc-0757-444a-b49e-9faed49a3a32`; both returned an actual-model receipt
+of `claude-opus-5`. Independent grader `/root/contract_comparison_grader`
+inspected the exact frozen resources and all four executor artifacts.
+
+#### Group A: deterministic loaded-copy provenance
+
+- Discriminating case: installed files match the source, a same-name user copy
+  exists, and the response quotes distinctive tested text without a path,
+  base-directory trace, or equivalent hash-linked runtime evidence.
+- Control: installed files match, same-name locations are inventoried, and a
+  native trace names the exact installed project-local path.
+- Sol result: the prior and current variants both kept native load unverified,
+  but only the current variant recorded the observed native trigger separately
+  without attributing it to the installed revision. The exact-path control
+  remained eligible to pass.
+- Opus result: the prior variant used distinctive text as standalone load
+  proof. The current variant kept load unverified, treated that text as
+  corroboration only, and recorded the observed trigger separately. The
+  exact-path control remained eligible to pass.
+- Independent grade: `better` for the discriminating case in both targets,
+  `same` for the control, and no named invariant loss.
+- Candidate decision: `DirectionalCandidate`.
+- Earned evidence label: **directional comparison**.
+- Claim Ceiling: in these two cases, the current resources require
+  deterministic loaded-copy provenance and preserve separate native-state
+  reporting in both targets while continuing to accept exact-path provenance.
+  The result does not establish real installation or native loading, other
+  provenance mechanisms, reliability, non-regression, or behavior outside the
+  declared cases.
+
+#### Group B: required `worse` handling for revisions
+
+- Discriminating case: one required revision case is `worse`, every target is
+  available and agrees, and no separate material invariant loss is recorded.
+- Control: every required target shows the intended delta, controls are stable,
+  and no named invariant loss appears.
+- Results: both variants and both targets retained the current instruction,
+  withheld a directional label, and called for correction followed by an
+  affected-case rerun. The current wording directly says that `worse` alone
+  is not a material invariant loss. The successful control stayed stable.
+- Independent grade: `same` in both targets and no named invariant loss.
+- Candidate decision: `Retained`.
+- Earned evidence label: none.
+- Claim Ceiling: the cases show stable handling of the required `worse` path
+  and the successful comparison path. They do not show that the current wording
+  improves behavior.
+
+#### Group C: unavailable-listing shipment waiver
+
+- Discriminating case: one required listing judgment is unavailable, no
+  available result has failed, and the user explicitly authorizes shipment.
+- Control: a required listing result failed and the user asks to waive it.
+- Sol result: the prior variant denied the unavailable-listing waiver. The
+  current variant allowed a shipment-only waiver while leaving the listing
+  state and evidence level unverified. The failed control remained
+  non-waivable.
+- Opus result: both variants allowed the unavailable-listing waiver without
+  raising the evidence state or claim. The current wording removed ambiguity,
+  but the final behavior was the same. The failed control remained
+  non-waivable.
+- Independent grade: `better` for Sol, `same` for Opus, `same` for both
+  controls, and no named invariant loss.
+- Candidate decision: `Retained` because the intended delta was absent in one
+  required target.
+- Earned evidence label: none.
+- Claim Ceiling: the current wording changes Sol's handling to permit an
+  explicit shipment waiver without changing the unverified listing state;
+  Opus handling is stable. Both targets continue to reject waiver of failed
+  evidence. No general improvement claim is supported.
+
+#### Group D: public-tier near-miss threshold
+
+- Discriminating case: public-tier near-miss judgments are `no`, `unsure`,
+  `unsure`.
+- Control: public-tier near-miss judgments are `no`, `no`, `unsure`.
+- Results: both targets passed the discriminating pattern under the prior
+  variant and failed it under the current two-categorical-`no` rule. Both
+  targets passed the control under both variants.
+- Independent grade: `better` for the discriminating case in both targets,
+  `same` for the control, and no named invariant loss.
+- Candidate decision: `DirectionalCandidate`.
+- Earned evidence label: **directional comparison**.
+- Claim Ceiling: for these two vote patterns, the current template enforces the
+  two-categorical-`no` public-tier threshold in both targets and preserves a
+  qualifying result. Other vote combinations, aggregation behavior,
+  reliability, and non-regression remain unverified.
+
+#### Group E: routine categorical first judgment
+
+- Discriminating case: a routine should-trigger receives a clear first `yes`
+  and a routine near-miss receives a clear first `no`.
+- Control: the first judgment is `unsure`, followed by `yes`, `yes` for the
+  should-trigger and `no`, `no` for the near-miss.
+- Results: both variants and both targets stopped after the clear categorical
+  first judgment and ran two follow-ups only after the borderline first
+  judgment. Every supplied query received the same result across variants.
+- Independent grade: `same` in both targets and no named invariant loss.
+- Candidate decision: `Retained`.
+- Earned evidence label: none.
+- Claim Ceiling: these cases show stable routine handling for clear first
+  judgments and the supplied borderline sequences. They do not show that the
+  current wording improves behavior.
+
+No aggregate label is assigned across the five groups. Groups A and D earned
+bounded directional-comparison evidence. Groups B, C, and E remain retained
+because the evidence was `same`, inconclusive, or divergent across targets.
+This record supports no claim that the whole skill is generally improved,
+non-regressing, or causally better.
+
+### 2026-07-28 final missing-group comparisons
+
+This pass closes four behavioral records that the final package review found
+incomplete. Two frozen priors were used because the mode-selection rule was
+introduced after the independent-review and authoring-guidance changes.
+
+| Assigned variant | `SKILL.md` SHA-256 | Checklist SHA-256 |
+| --- | --- | --- |
+| Independent-review prior, `5af34de` | `71416c5a4c314eeeec4a7fc2b6cbe512ee48274598291f6d0a0d21212d684941` | `64bc6a50161fda6f6559c1c586c476f1e878162dfab71061ff143a1bea0b605d` |
+| Verification-mode prior, `88c362e` | `4693702db6766235049e34df7bf95baea77c1de24108307c09e0da5a809754fe` | not used |
+| Current, `73b9477` | `1ba4b97ad9e5a9fcbb3d27e4e69070d46683716fdb29d959709ffe90bf99af0f` | `6baf044506a96c614d8cd14515f50942438e38e99b1269e351ec07d157307654` |
+
+The Sol executors were `/root/sol_ir_prior_executor`,
+`/root/sol_mode_prior_executor`, and `/root/sol_missing_current_executor`.
+Each confirmed its assigned file hashes. The Opus prior/current sessions were
+`089b5848-6945-4051-b3fe-7d07df3d404d`,
+`c5f55e7d-9c12-4b36-b01f-bced82c1f6b1`, and
+`39c014be-77da-4b53-a319-bc58ff95a118`; each returned an actual-model receipt
+of `claude-opus-5`. Independent grader
+`/root/missing_groups_independent_grader` inspected the frozen resources and
+all six executor artifacts.
+
+#### Independent grading and final review
+
+- Discriminating case: an executor summary claims a report passed, while the
+  report is only a heading and one unsupported recommendation and the trace
+  says a required input was not opened. Fresh nonauthor and final-review
+  contexts are available.
+- Control: run only the deterministic `skills-ref` structural validator.
+- Results: both targets rejected the surface-only pass under both variants.
+  The prior did not require a nonauthor/nonproducer grader or a different final
+  reviewer. The current variant assigned those roles separately and required
+  direct artifact and trace inspection. Both variants kept the isolated
+  validator mechanical and free of an agent-review requirement.
+- Independent grade: `better` for the discriminator in both targets, `same`
+  for the control, and no named invariant loss.
+- Candidate decision: `DirectionalCandidate`.
+- Earned evidence label: **directional comparison**.
+- Claim Ceiling: for this case, both targets applied the current ownership and
+  inspection rules while preserving the mechanical-validation boundary. The
+  record does not establish reliable role separation in other workflows or
+  independently replay the underlying report fixture.
+
+#### Project-evidence grounding and conditional examples
+
+- Cases: prefer a resolved repository incident over a generic likely root
+  cause; omit an example that merely repeats an exact schema; retain one concise
+  example when a custom encoding is genuinely ambiguous.
+- Results: prior and current variants made the same three decisions in both
+  targets. The prior already reached them through repository context,
+  repeatable-value, exact-contract, delete-test, and duplication rules.
+- Independent grade: `same` in both targets with no named invariant loss.
+- Candidate decision: `Retained`.
+- Earned evidence label: none.
+- Claim Ceiling: the cases show stable project-evidence and example-selection
+  decisions in both targets. They do not show that the more explicit current
+  wording improves behavior.
+
+#### Context target and long-reference navigation
+
+- H1 discriminator and embedded controls: a 470-line, roughly 4,700-token body
+  accompanies a 350-line branch reference without a table of contents.
+- H2 discriminator and embedded controls: a 470-line, roughly 5,200-token body
+  accompanies a 250-line branch reference.
+- Results: the prior had the 500-line hard limit but no token target or
+  table-of-contents threshold. In both targets, the current variant required a
+  table of contents for H1 and treated H2 as missing an authoring target rather
+  than failing portable validation. It preserved the hard line limit, accepted
+  the under-5,000-token body, and did not require a table of contents below the
+  300-line threshold.
+- Independent grade: `better` for both discriminators in both targets, stable
+  embedded controls, and no named invariant loss.
+- Candidate decision: `DirectionalCandidate`.
+- Earned evidence label: **directional comparison**.
+- Claim Ceiling: for the stipulated measurements, both targets applied the
+  over-300-line navigation rule and below-5,000-token authoring target while
+  preserving the hard structural limit and cross-rule controls. Behavior at
+  exact boundaries and tokenizer-dependent estimates near 5,000 remains
+  unverified.
+
+#### Verification-mode choice
+
+- Discriminators: a new-skill flow with enough intent to draft and an
+  authorized revision after audit and scope approval, neither with a selected
+  verification mode.
+- Control: a read-only audit without a selected mode.
+- Results: the prior defined no mode choice and continued both change flows.
+  In both targets, the current variant asked before new-skill drafting and
+  after revision scope approval but before editing. Both variants avoided the
+  question during the read-only audit and stopped that flow after step 0.
+- Independent grade: `better` for both discriminators in both targets, `same`
+  for the control, and no named invariant loss.
+- Candidate decision: `DirectionalCandidate`.
+- Earned evidence label: **directional comparison**.
+- Claim Ceiling: for these cases, both targets applied the intended mode-choice
+  timing and preserved the read-only stop. Already-supplied modes,
+  recommendation quality, and later enforcement that mode affects only the
+  listing tier remain unverified.
+
+The Sol artifacts include the assigned hashes and case answers but no separate
+CLI session receipt. The Opus artifacts record the model receipts,
+configurations, and session IDs but retain concise structured-result excerpts
+rather than full transcripts. The independent grade is therefore limited to
+the recorded instruction-application behavior and cannot replay the complete
+prompt-to-response traces. No aggregate improvement, reliability,
+non-regression, or causal claim is assigned across these groups.

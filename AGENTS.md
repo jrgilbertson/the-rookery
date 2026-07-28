@@ -12,7 +12,7 @@ unless the user explicitly requests repository development work.
   links, or an `outputs/` directory under the checkout.
 - Put final artifacts only in an explicitly approved external or private
   destination.
-- The `/outputs/` ignore rule is a safety net, not an approved storage
+- The `outputs/` ignore rule is a safety net, not an approved storage
   location.
 - Explicitly requested source, test, documentation, or configuration changes
   to this repository remain normal repository work.

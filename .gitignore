@@ -9,6 +9,6 @@ Thumbs.db
 .vscode/
 
 # Local generated artifacts may contain private user data.
-/outputs/
+outputs/
 
 # docs/ is deliberately NOT ignored — working documents ship public.

@@ -65,7 +65,7 @@ automations:
       images, downloaded attachments, builders, renders, previews, inspection
       files, dependency links, or an `outputs/` directory under the project
       checkout. Put final artifacts only in an explicitly approved external or
-      private destination. Explicitly requested Rookery source-code work may
+      private destination. Explicitly requested repository development may
       still modify the repository; this restriction governs personal and
       business artifacts, not repository development.
     manual_invocation: Run the personal-chief-of-staff skill in morning mode.
@@ -88,7 +88,7 @@ automations:
       images, downloaded attachments, builders, renders, previews, inspection
       files, dependency links, or an `outputs/` directory under the project
       checkout. Put final artifacts only in an explicitly approved external or
-      private destination. Explicitly requested Rookery source-code work may
+      private destination. Explicitly requested repository development may
       still modify the repository; this restriction governs personal and
       business artifacts, not repository development.
     manual_invocation: Run the personal-chief-of-staff skill in wind-down mode.
@@ -111,7 +111,7 @@ automations:
       images, downloaded attachments, builders, renders, previews, inspection
       files, dependency links, or an `outputs/` directory under the project
       checkout. Put final artifacts only in an explicitly approved external or
-      private destination. Explicitly requested Rookery source-code work may
+      private destination. Explicitly requested repository development may
       still modify the repository; this restriction governs personal and
       business artifacts, not repository development.
     manual_invocation: Run the personal-chief-of-staff skill in weekly mode.
@@ -134,7 +134,7 @@ automations:
       images, downloaded attachments, builders, renders, previews, inspection
       files, dependency links, or an `outputs/` directory under the project
       checkout. Put final artifacts only in an explicitly approved external or
-      private destination. Explicitly requested Rookery source-code work may
+      private destination. Explicitly requested repository development may
       still modify the repository; this restriction governs personal and
       business artifacts, not repository development.
     manual_invocation: Run the personal-chief-of-staff skill in quarterly mode.

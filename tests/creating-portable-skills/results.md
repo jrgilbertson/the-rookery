@@ -818,3 +818,53 @@ named harness configurations and for the recorded native query. The matched
 comparisons support only their predeclared cases and per-group conclusions.
 They do not establish behavior for other revisions, models, harnesses,
 configurations, tasks, or provenance mechanisms.
+
+## 2026-07-28 retained-terminal final package
+
+The final review added one step 6 rule: a revision marked `Retained` must
+restore that group's frozen-prior content and re-enter validation, or stop
+without packaging when restoration would remove another accepted group.
+
+Fresh GPT-5.6 Sol and Claude Opus 5 prior/current runs exercised the separable,
+entangled, and all-directional cases recorded in `baseline-cases.md`. The
+independent grader marked every target-case comparison `same`, observed no
+invariant loss, assigned `Retained`, and awarded no evidence label. A `same`
+revision result is inconclusive, so the explicit rule remains.
+
+| Final package file | SHA-256 |
+| --- | --- |
+| `SKILL.md` | `7c32b5fb6da9415251e15605a94ce89d3299279e1e582ae0bf13162cc3bbfe1e` |
+| `assets/baseline-test-template.md` | `1d6a33ed6686aadced84e920378f64e9a852fbaffda6c7bfabc57c03ea13c21f` |
+| `assets/skill-template.md` | `e5cbfe744d93ba1c92c9a2a4dd97dbde00f51032ffe0563b95433683788f8458` |
+| `assets/trigger-queries-template.md` | `ea30d1dbf024548c23ddfad2dab8d2e26b2e7f794ec44e65cf807ac58120a2ef` |
+| `references/portability.md` | `28a862532a0ab0db75a8d0d47525bbd25ec47fe54f303fbd2726ab597157e84d` |
+| `references/review-checklist.md` | `6baf044506a96c614d8cd14515f50942438e38e99b1269e351ec07d157307654` |
+
+Structural validation passed with `skills-ref` 0.1.5. Skills CLI 1.5.20 copied
+the package into separate disposable projects under
+`/tmp/creating-portable-skills-retained-native.x7ALuq`, and `diff -qr` found no
+differences from either installed copy.
+
+- Codex CLI 0.145.0 ran `gpt-5.6-sol` at high reasoning in fresh ephemeral
+  thread `019fab10-f994-7101-9899-0941fc202614`. Its trace read the exact
+  installed
+  `/private/tmp/creating-portable-skills-retained-native.x7ALuq/codex-project/.agents/skills/creating-portable-skills/SKILL.md`.
+- Claude Code 2.1.220 ran `claude-opus-5` at high effort in fresh
+  non-persistent session `46ace319-0643-4b94-a569-6eef22bc8a2f`, with project
+  settings and only the native `Skill` tool. The tool reported the exact base
+  directory
+  `/private/tmp/creating-portable-skills-retained-native.x7ALuq/claude-project/.claude/skills/creating-portable-skills`.
+
+Both implicit creation requests selected the skill and asked for the
+verification-mode decision. The exact path or base directory supplied
+deterministic load provenance; the matching body sentence only corroborated
+it. Local-source installation, installed-content identity, native discovery,
+load, and trigger passed for both declared harness cells at the final hashes.
+The current public-tier listing evidence still applies because the description
+did not change.
+
+Claim Ceiling: the native checks support this six-file package in the named
+configurations and for the recorded query. The matched comparison supports
+only the three retained-terminal cases and shows no directional improvement.
+Other revisions, targets, configurations, queries, and task behavior remain
+unverified.

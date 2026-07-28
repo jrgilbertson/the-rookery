@@ -802,3 +802,41 @@ rather than full transcripts. The independent grade is therefore limited to
 the recorded instruction-application behavior and cannot replay the complete
 prompt-to-response traces. No aggregate improvement, reliability,
 non-regression, or causal claim is assigned across these groups.
+
+### 2026-07-28 retained-revision terminal comparison
+
+This comparison covers the final step 6 rule that prevents unsupported
+candidate content from being packaged after a revision is marked `Retained`.
+
+| Variant | `SKILL.md` SHA-256 | Baseline-template SHA-256 |
+| --- | --- | --- |
+| Prior, `e45a1e7` | `1ba4b97ad9e5a9fcbb3d27e4e69070d46683716fdb29d959709ffe90bf99af0f` | `1d6a33ed6686aadced84e920378f64e9a852fbaffda6c7bfabc57c03ea13c21f` |
+| Current | `7c32b5fb6da9415251e15605a94ce89d3299279e1e582ae0bf13162cc3bbfe1e` | `1d6a33ed6686aadced84e920378f64e9a852fbaffda6c7bfabc57c03ea13c21f` |
+
+The fresh Sol executors were `/root/retained_sol_prior_executor` and
+`/root/retained_sol_current_executor`. The fresh Opus sessions were
+`8df98d39-8075-4fad-8d06-b6f330335c88` and
+`49601316-af6a-4057-8695-5a41b9dacbf4`; both returned an actual-model receipt
+of `claude-opus-5`. Independent grader
+`/root/retained_terminal_independent_grader` inspected both exact variants and
+all four executor artifacts.
+
+- R1 discriminator: a separable revision has one `Retained` group whose prior
+  instruction was removed and one accepted `DirectionalCandidate` group.
+- R2 discriminator: the same groups are entangled, so restoring the retained
+  group would remove the accepted group.
+- R-C control: every revision group is `DirectionalCandidate`, review passes,
+  and no retained or correction-required group remains.
+- Results: in both targets, both variants restored the separable retained group
+  and re-entered validation before continuing. Both stopped the entangled
+  candidate before packaging and allowed the all-directional control to proceed
+  to the later gates. The prior outcomes were inferred from the retention and
+  per-group rules. The current wording makes the restore-or-stop gate explicit.
+- Independent grade: `same` for all three cases in both targets with no named
+  invariant loss.
+- Candidate decision: `Retained`.
+- Earned evidence label: none.
+- Claim Ceiling: these cases show the same safe terminal outcomes in both
+  targets and a stable all-directional control. They support retaining the
+  explicit rule, but they do not establish behavioral improvement, reliability,
+  non-regression, or behavior outside the three cases.

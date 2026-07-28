@@ -401,3 +401,41 @@ listing proxy in both targets. The native checks support discovery, load, and
 trigger only for the exact `73b9477` package, named configurations, and
 recorded query. Other revisions, targets, configurations, queries, and task
 behavior remain unverified.
+
+## 2026-07-28 retained-terminal final verification
+
+The description and trigger template did not change, so the complete listing
+results above remain the applicable description-bound evidence. The step 6
+revision changed `SKILL.md`, so installation and native checks were rerun
+against the final package.
+
+- `SKILL.md` SHA-256:
+  `7c32b5fb6da9415251e15605a94ce89d3299279e1e582ae0bf13162cc3bbfe1e`
+- Trigger-template SHA-256:
+  `ea30d1dbf024548c23ddfad2dab8d2e26b2e7f794ec44e65cf807ac58120a2ef`
+- Structural validation: passed with `skills-ref` 0.1.5.
+- Local-source installation: passed for Codex and Claude Code with Skills CLI
+  1.5.20 in separate disposable projects under
+  `/tmp/creating-portable-skills-retained-native.x7ALuq`.
+- Installed-content identity: passed; `diff -qr` found no differences between
+  the six-file source package and either project-local copy.
+- Codex native discovery, load, and trigger: passed with Codex CLI 0.145.0 and
+  `gpt-5.6-sol` at high reasoning in fresh ephemeral thread
+  `019fab10-f994-7101-9899-0941fc202614`. The trace read the exact installed
+  `/private/tmp/creating-portable-skills-retained-native.x7ALuq/codex-project/.agents/skills/creating-portable-skills/SKILL.md`.
+- Claude native discovery, load, and trigger: passed with Claude Code 2.1.220
+  and `claude-opus-5` at high effort in fresh non-persistent session
+  `46ace319-0643-4b94-a569-6eef22bc8a2f`. The native `Skill` tool reported the
+  exact installed base directory
+  `/private/tmp/creating-portable-skills-retained-native.x7ALuq/claude-project/.claude/skills/creating-portable-skills`.
+
+Both native responses asked for the verification-mode decision. The exact
+path or base directory supplied deterministic load provenance; the matching
+body sentence only corroborated it. No proxy result replaced a native state,
+and no native evidence from a superseded package revision was carried forward.
+
+Claim Ceiling: the unchanged description passes the recorded public-tier
+listing proxy in both targets. The native checks support discovery, load, and
+trigger only for the final package, named configurations, and recorded query.
+Other revisions, targets, configurations, queries, and task behavior remain
+unverified.

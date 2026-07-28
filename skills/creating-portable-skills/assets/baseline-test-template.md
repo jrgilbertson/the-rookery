@@ -168,7 +168,7 @@ inconclusive.
 - Waived by the user: [yes, quote or paraphrase the explicit waiver]
 - Unavailable check and reason: [what could not run and why]
 - Evidence state: [unverified]
-- Candidate state: [revision: Retained unless the required comparison supports the change / new skill: NewSkillCandidate only when no required discriminating case is same, no required case is worse, and no material invariant loss is recorded, otherwise CorrectionRequired; never DirectionalCandidate from this waiver]
+- Candidate state: [revision: Retained unless the required comparison supports the change / new skill: CorrectionRequired when any required discriminating case is same, any required case is worse, or a material invariant loss is recorded; NewSkillCandidate otherwise; never DirectionalCandidate from this waiver]
 - Shipment status: [UnverifiedCandidate]
 - Earned evidence label: [unchanged; do not raise]
 - Date: [YYYY-MM-DD]

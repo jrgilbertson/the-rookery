@@ -8,4 +8,7 @@ Thumbs.db
 .idea/
 .vscode/
 
+# Local generated artifacts may contain private user data.
+/outputs/
+
 # docs/ is deliberately NOT ignored — working documents ship public.

@@ -12,6 +12,18 @@ execution:
     - This repository's checkout and the configured Obsidian vault are available.
     - Required connectors are authenticated.
 
+artifact_safety:
+  - Keep this checkout as the versioned skill source.
+  - For personal or business artifacts arising from a run, including later
+    user-directed follow-up, use a per-run temporary directory outside the
+    repository.
+  - Never place artifact deliverables, builders, renders, previews, inspection
+    files, dependency links, downloaded attachments, or an outputs directory
+    under the checkout.
+  - Put final artifacts only in an explicitly approved external or private
+    destination.
+  - Explicitly requested repository development remains allowed.
+
 source_roles:
   calendars:
     - personal calendar
@@ -46,7 +58,16 @@ automations:
       email evidence. Use Obsidian only through its CLI; never use direct vault
       filesystem access. Prepare one conversational review bundle
       and wait. Do not make an external or durable change because the schedule
-      fired.
+      fired. Keep the repository checkout as the versioned skill source. For
+      personal or business artifacts arising from this task—including later
+      user-directed follow-up—use a per-run temporary working directory outside
+      the repository. Never place documents, spreadsheets, slides, PDFs,
+      images, downloaded attachments, builders, renders, previews, inspection
+      files, dependency links, or an `outputs/` directory under the project
+      checkout. Put final artifacts only in an explicitly approved external or
+      private destination. Explicitly requested Rookery source-code work may
+      still modify the repository; this restriction governs personal and
+      business artifacts, not repository development.
     manual_invocation: Run the personal-chief-of-staff skill in morning mode.
 
   - key: wind_down
@@ -60,7 +81,16 @@ automations:
       email evidence. Use Obsidian only through its CLI; never use direct vault
       filesystem access. Prepare one conversational review bundle
       and wait. Do not make an external or durable change because the schedule
-      fired.
+      fired. Keep the repository checkout as the versioned skill source. For
+      personal or business artifacts arising from this task—including later
+      user-directed follow-up—use a per-run temporary working directory outside
+      the repository. Never place documents, spreadsheets, slides, PDFs,
+      images, downloaded attachments, builders, renders, previews, inspection
+      files, dependency links, or an `outputs/` directory under the project
+      checkout. Put final artifacts only in an explicitly approved external or
+      private destination. Explicitly requested Rookery source-code work may
+      still modify the repository; this restriction governs personal and
+      business artifacts, not repository development.
     manual_invocation: Run the personal-chief-of-staff skill in wind-down mode.
 
   - key: weekly
@@ -74,7 +104,16 @@ automations:
       email evidence. Use Obsidian only through its CLI; never use direct vault
       filesystem access. Prepare one conversational review bundle
       and wait. Do not make an external or durable change because the schedule
-      fired.
+      fired. Keep the repository checkout as the versioned skill source. For
+      personal or business artifacts arising from this task—including later
+      user-directed follow-up—use a per-run temporary working directory outside
+      the repository. Never place documents, spreadsheets, slides, PDFs,
+      images, downloaded attachments, builders, renders, previews, inspection
+      files, dependency links, or an `outputs/` directory under the project
+      checkout. Put final artifacts only in an explicitly approved external or
+      private destination. Explicitly requested Rookery source-code work may
+      still modify the repository; this restriction governs personal and
+      business artifacts, not repository development.
     manual_invocation: Run the personal-chief-of-staff skill in weekly mode.
 
   - key: quarterly
@@ -88,7 +127,16 @@ automations:
       email evidence. Use Obsidian only through its CLI; never use direct vault
       filesystem access. Prepare one conversational review bundle
       and wait. Do not make an external or durable change because the schedule
-      fired.
+      fired. Keep the repository checkout as the versioned skill source. For
+      personal or business artifacts arising from this task—including later
+      user-directed follow-up—use a per-run temporary working directory outside
+      the repository. Never place documents, spreadsheets, slides, PDFs,
+      images, downloaded attachments, builders, renders, previews, inspection
+      files, dependency links, or an `outputs/` directory under the project
+      checkout. Put final artifacts only in an explicitly approved external or
+      private destination. Explicitly requested Rookery source-code work may
+      still modify the repository; this restriction governs personal and
+      business artifacts, not repository development.
     manual_invocation: Run the personal-chief-of-staff skill in quarterly mode.
 
 recovery:

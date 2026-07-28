@@ -14,6 +14,18 @@ execution:
     - This repository's checkout and the configured Obsidian vault are available.
     - The configured meeting-source connector is authenticated.
 
+artifact_safety:
+  - Keep this checkout as the versioned skill source.
+  - For personal or business artifacts arising from a run, including later
+    user-directed follow-up, use a per-run temporary directory outside the
+    repository.
+  - Never place artifact deliverables, builders, renders, previews, inspection
+    files, dependency links, downloaded attachments, or an outputs directory
+    under the checkout.
+  - Put final artifacts only in an explicitly approved external or private
+    destination.
+  - Explicitly requested repository development remains allowed.
+
 run_behavior:
   - Invoke the versioned skill as a scheduled request in the dedicated conversation.
   - A scheduled run never applies an action, including a previously approved but
@@ -32,7 +44,16 @@ automation:
     checkout as a scheduled request. Continue this dedicated conversation and
     follow the skill's source, suppression, review, and completion rules. Never
     apply an action because the schedule fired, including a previously approved
-    but unapplied action.
+    but unapplied action. Keep the repository checkout as the versioned skill
+    source. For personal or business artifacts arising from this task—including
+    later user-directed follow-up—use a per-run temporary working directory
+    outside the repository. Never place documents, spreadsheets, slides, PDFs,
+    images, downloaded attachments, builders, renders, previews, inspection
+    files, dependency links, or an `outputs/` directory under the project
+    checkout. Put final artifacts only in an explicitly approved external or
+    private destination. Explicitly requested Rookery source-code work may still
+    modify the repository; this restriction governs personal and business
+    artifacts, not repository development.
   manual_invocation: Check for newly completed meetings.
 
 recovery:

@@ -67,7 +67,7 @@ Completion: the template records every declared target and predeclared case, the
 
 ### 6. Decide and review
 
-Have a separate fresh-context agent apply the completed baseline record's candidate-decision rules, then run [references/review-checklist.md](references/review-checklist.md) top to bottom. Give the reviewer the skill, intended outcome, hard constraints, artifacts, traces, and evidence record without the author's conclusions. Use its findings to identify wasted paths, ambiguous or unused instructions, recurring corrections that belong in `Gotchas`, and helper logic repeatedly reinvented across runs that belongs in `scripts/`. Any substantive follow-up edit returns through structural validation and every affected comparison cell.
+Have a separate fresh-context agent apply the completed baseline record's candidate-decision rules, then run [references/review-checklist.md](references/review-checklist.md) top to bottom. Give the reviewer the skill, intended outcome, hard constraints, artifacts, traces, and evidence record without the author's conclusions. Use its findings to identify wasted paths, ambiguous or unused instructions, recurring corrections that belong in `Gotchas`, and helper logic repeatedly reinvented across runs that belongs in `scripts/`. Any substantive follow-up edit returns through structural validation and every affected comparison cell. It also invalidates native package-harness and model-harness evidence bound to the superseded revision until those cells rerun.
 
 Completion: the completed baseline record has a final candidate decision, and every checklist item passes or has a user-approved deliberate exception.
 
@@ -81,9 +81,11 @@ Completion: the completed template reports a passing listing-proxy state for eve
 
 ### 8. Package and install
 
-Recheck the host conventions from step 2 and confirm the canonical directory is self-contained. Complete the native package-harness and model-harness sections in [assets/trigger-queries-template.md](assets/trigger-queries-template.md): install from the current local source through each declared harness's documented path, verify installed content identity, and record discovery, loading, and triggering separately for every applicable target cell.
+Recheck the host conventions from step 2 and confirm the canonical directory is self-contained. Complete the native package-harness and model-harness sections in [assets/trigger-queries-template.md](assets/trigger-queries-template.md): install from the current local source through each declared harness's documented path, verify installed content identity, and record discovery, loading, and triggering separately for every applicable target cell. Use a disposable project or workspace by default. Using a user-level skill location or overwriting an existing same-name installation requires explicit user approval.
 
 When a native check is unavailable, complete the template's Waiver section if the user authorizes shipment.
+
+If packaging exposes a defect that changes the package, apply step 6's re-entry rule before completing this step.
 
 Completion: the source validates and the completed template records every required package-harness and model-harness state.
 

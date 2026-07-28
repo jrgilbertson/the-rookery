@@ -54,6 +54,12 @@ Codex budgets the initial skill listing, so put the key use case and trigger wor
 
 Use the host repository's documented path first. These are common project and user locations; confirm the installed harness version before relying on them.
 
+A harness may discover the same skill name in several locations with
+version-specific precedence. Before recording native load or trigger evidence,
+inventory every applicable location and prove which installed copy loaded.
+Discovery of the name and source-to-install identity do not establish that by
+themselves.
+
 | Harness | Project-level | User-level | Source |
 | --- | --- | --- | --- |
 | Claude Code | `.claude/skills/` | `~/.claude/skills/` | [docs](https://code.claude.com/docs/en/skills) |

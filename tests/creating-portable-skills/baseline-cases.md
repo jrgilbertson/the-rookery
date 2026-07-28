@@ -419,3 +419,130 @@ named outcome and hard constraints, left optional methods optional, and kept
 the optional section omittable. This does not prove quality improvement,
 causal improvement, non-regression, equivalent target behavior, or behavior
 outside these two cases.
+
+## 2026-07-28 pre-PR evidence-contract review fixes
+
+Verification mode: public or unusually load-bearing. Frozen prior: commit
+`949eddf`. The final candidate identities and run references are recorded
+below.
+
+Declared evidence target cells:
+
+| Layer | Target | Harness and configuration |
+| --- | --- | --- |
+| Matched comparison | `gpt-5.6-sol` | High reasoning, fresh read-only context |
+| Matched comparison | `claude-opus-5` | Claude Code, high effort, safe mode, fresh tool-less context |
+| Native load and trigger | `gpt-5.6-sol` | Codex CLI, high reasoning, read-only, disposable project |
+| Native load and trigger | `claude-opus-5` | Claude Code 2.1.220, high effort, project settings, only the native `Skill` tool, disposable project |
+
+### PR-D1: Evidence-state integrity
+
+- Role: discriminating.
+- Candidate instruction group: target-level listing pass rules, exact
+  loaded-copy proof, revision-bound native-state invalidation, and unavailable
+  target handling.
+- Prompt cases:
+  1. A routine listing run has five passing should-trigger rows and one
+     activating near-miss, but its summary says `passed`.
+  2. Installed files match the source, but a same-name skill exists in another
+     discovery location and the native observation does not identify which copy
+     loaded.
+  3. Native cells passed, then a substantive package edit changed the tested
+     revision without rerunning those cells.
+  4. One required target shows the intended matched delta and a stable control;
+     the other required target is unavailable.
+  5. A required listing judgment is unavailable and no available result has
+     failed the set.
+- Expected revised behavior: mark the listing proxy failed; keep native load
+  and trigger unverified without exact loaded-copy proof; invalidate native
+  states bound to the superseded revision; assign no directional label while a
+  required target is unavailable; and keep an unavailable listing set
+  unverified rather than treating missing evidence as failure.
+- Hard constraints: preserve separate evidence states, do not average targets,
+  do not raise a claim from a waiver, and do not require a particular native
+  trace mechanism when path, hash, or distinctive body evidence proves the
+  loaded copy.
+
+### PR-C1: Fully evidenced control
+
+- Role: control.
+- Input: every should-trigger row passes, no near-miss activates, the native
+  trace identifies the installed project-local copy, no package edit follows,
+  and every required target has an available result with no named invariant
+  loss.
+- Stable expectation: the listing proxy, native load and trigger, and
+  directional comparison remain eligible to pass within their separate claim
+  limits.
+
+### PR-D2: Disposable installation boundary
+
+- Role: discriminating.
+- Input: a user-level location already contains a same-name skill, and the
+  current package needs an installation check.
+- Expected revised behavior: use a disposable project or workspace by default;
+  require explicit user approval before using the user-level location or
+  overwriting the existing copy.
+- Hard constraint: do not weaken the requirement to install through the
+  harness's documented path or to verify installed-content identity.
+
+### PR-C2: Verification-mode behavior control
+
+- Role: control.
+- New-skill input: the request contains enough intent to begin drafting but no
+  verification-mode choice.
+- Read-only input: audit an existing skill without changing it.
+- Stable expectation: ask for the verification choice before drafting the new
+  skill, and do not ask during the read-only audit.
+
+### Mechanical evidence-record check
+
+The canonical `results.md` must retain, for every conclusion preserved from the
+deleted follow-up files, a predeclared case or check, concise prior and revised
+evidence, the independent conclusion and limitation, and a context reference
+when one exists. The deleted parallel follow-up files remain deleted.
+
+### Matched results
+
+The prior package was commit `949eddf`. The initial revised package was the
+candidate graded before final review. The final candidate differs only in the
+listing template's unavailable-evidence rule:
+
+| Package file | Prior SHA-256 | Initial revised SHA-256 | Final SHA-256 |
+| --- | --- | --- | --- |
+| `SKILL.md` | `bccf4eed4797a83ddd543529acf38bf9400382b46588fe8bd1d4005c33048ac8` | `7530e42fe64c306cc86f97c17b223dd1385ce3b9256a94b57b9708c2a93120df` | `7530e42fe64c306cc86f97c17b223dd1385ce3b9256a94b57b9708c2a93120df` |
+| `assets/baseline-test-template.md` | `82656e8d47635a5bbc1e181a79caaf921f703428b61f175dab7e87347acac8e5` | `34865482c1c6bf4b7c05b5ddbb3af8b3dd11e57c8244d011d29ff0b7e4877270` | `34865482c1c6bf4b7c05b5ddbb3af8b3dd11e57c8244d011d29ff0b7e4877270` |
+| `assets/trigger-queries-template.md` | `1c3d186ecdf4883988649ac209ce950594736adcdd696ecc07ee094ca94f0332` | `99c13981412c37ee9ae71a803dd263c95c7d359165a2947d067e1876d90c834d` | `ba79352f96e35c1d0c3ac2812335ca266887ad1ec11acde4b15b7aa5b03630c7` |
+| `references/portability.md` | `9cce3630326a7b01f455c241ae104550f0029d8a9d1ab9b672c6f57b015def6c` | `83636d76ee143090ec33eff9affea1cd953a9601d441b4ef35e847e232dfeb8d` | `83636d76ee143090ec33eff9affea1cd953a9601d441b4ef35e847e232dfeb8d` |
+
+The prior and initial revised variants ran in fresh target contexts with the
+exact four files embedded. The Sol executors were
+`/root/prepr_fix_sol_prior` and `/root/prepr_fix_sol_revised`. The Opus sessions were
+`87e25d8c-b1ee-4022-b9c1-2a34fc9257a5` and
+`20ef2865-108a-43eb-a942-706cd66519be`; both returned an actual-model receipt
+of `claude-opus-5`. After the final listing-rule edit, the affected PR-D1.1,
+PR-D1.5, and PR-C1 cells reran against the final hash in fresh Sol agents
+`/root/listing_unavailable_sol_final` and
+`/root/listing_final_affected_controls_sol` and fresh Opus sessions
+`a3d63c53-2d69-41e8-b189-0da2763ed4f4` and
+`a5e27559-8046-43b0-942e-070869b7afe5`.
+
+| Case | Sol result | Opus result | Independent conclusion |
+| --- | --- | --- | --- |
+| PR-D1.1 listing near-miss | Prior rejected the pass by inference; revised applied an explicit target-level failure rule. | Same final state and explicitness change. | Same final answer; operational certainty improved. |
+| PR-D1.2 same-name collision | Prior left load and trigger unverified but did not define sufficient proof; revised required inventory plus path, hash, or distinctive-body proof. | Same final state and proof change. | Same final answer; attribution requirements became explicit. |
+| PR-D1.3 later substantive edit | Prior scoped old evidence to the old revision by inference; revised directly invalidated revision-bound native evidence until rerun. | Same final state and invalidation change. | Same final answer; invalidation became direct. |
+| PR-D1.4 unavailable required target | Prior withheld the label through retention and waiver rules despite a literal loophole; revised required an available result in every required target cell. | Same final state and eligibility change. | Same final answer; the vacuous eligibility loophole closed. |
+| PR-D1.5 unavailable listing judgment | Prior inferred `unverified` from the three-state and no-averaging rules; final applied the direct `unverified` clause. | Same final state and explicitness change. | Same final answer; operational certainty improved. |
+| PR-D2 installation boundary | Prior had no disposable default or explicit approval boundary; revised required both. | Same intended change. | Intended delta observed. |
+| PR-C1 fully evidenced control | Expected evidence states and claim limits remained eligible to pass. | Same. | Materially stable control. |
+| PR-C2 verification-mode control | Asked before new-skill drafting and not during a findings-only audit. | Same. | Materially stable control. |
+
+The fresh independent graders `/root/prepr_fix_independent_grader` and
+`/root/listing_unavailable_independent_grader` inspected the predeclared cases
+and exact variant files. They observed no named invariant loss. The combined
+comparison earns no evidence label because five discriminating cases kept the
+same final answers. The candidate decision is
+`Retained`: keep the safeguards, but do not claim overall improvement,
+non-regression, causal improvement, or behavior outside these cases. The runs
+were qualitative reasoning checks, not repeated-run statistics; native
+installation, loading, and triggering were checked separately.

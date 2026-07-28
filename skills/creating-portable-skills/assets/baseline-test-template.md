@@ -141,8 +141,10 @@ Decision rules:
   version and implies neither a behavioral claim nor shipment status by itself.
 - Assign **directional comparison** only when matched cases show the intended
   delta, the control remains materially stable, and every required target cell
-  has no observed named invariant loss. Say exactly that; do not say the
-  revision is reliably better, proven, non-regressing, or causally improved.
+  has an available case result with no named invariant loss. A missing or
+  unavailable required cell earns no directional label. Say exactly that; do
+  not say the revision is reliably better, proven, non-regressing, or causally
+  improved.
 - A pass requires direct evidence of substantive completion. The grader also
   checks whether each objective check is discriminating, verifiable from the
   available artifacts, and complete enough to cover the required outcome.

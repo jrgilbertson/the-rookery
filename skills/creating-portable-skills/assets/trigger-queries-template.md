@@ -49,6 +49,13 @@ different job.
 Record the judgment and its context or transcript reference in each run cell,
 for example `[yes; run-01]`. A bare judgment does not prove a fresh context.
 
+For each target, its listing proxy passes only when every required query has an
+available judgment, every should-trigger query passes under the selected tier,
+and no near-miss query receives an activating judgment. Record it as failed
+when an available should-trigger result misses the tier threshold or a
+near-miss activates. Record it as unverified when a required judgment is
+unavailable and no available result has already failed the set.
+
 Routine tier: five should-trigger and five near-miss queries, one run each. On a
 borderline result, run that query twice more and use the majority. Public or
 unusually load-bearing tier: eight to ten queries per table, three runs each; a
@@ -100,6 +107,12 @@ from the declared local source before using it as evidence.
 Native load and native trigger remain attributable to each exact model-harness
 target, even when discovery or installation evidence is shared.
 
+Before either native state can pass, inventory the applicable project, user,
+and system locations for the same skill name. Isolate non-authoritative copies
+or capture proof of the exact copy that loaded, such as a native trace naming
+the installed path, the installed hash, or distinctive text from the tested
+body. Installed-content identity alone does not prove loaded-copy identity.
+
 | Target cell | Date | Exact model | Harness and version | Configuration | Native load state | Native trigger state | Evidence or limitation |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | [target-a] | [YYYY-MM-DD] | [exact model ID] | [harness, version] | [material settings] | [passed / failed / unverified] | [passed / failed / unverified] | [native observation, excerpt/reference, or reason unavailable] |
@@ -122,6 +135,10 @@ target, even when discovery or installation evidence is shared.
 
 When target states conflict, preserve each state. Do not average a failure or an
 unavailable cell into a pass.
+
+Bind every native evidence row to the tested package revision. A later
+substantive package edit invalidates native package-harness and model-harness
+states recorded against the superseded revision until those cells rerun.
 
 ## Tuning
 

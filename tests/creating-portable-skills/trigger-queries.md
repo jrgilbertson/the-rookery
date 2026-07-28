@@ -239,8 +239,10 @@ description-bound judgments still apply to the final package hash above.
   load-bearing, continuing the package's existing classification
 - Tested verification-mode `SKILL.md` SHA-256:
   `576ce3410270fffd81baa0bb7f8c4149a36fbb0e07a7700d1699776136175821`
-- Declared target: Codex CLI 0.145.0, `gpt-5.6-sol`, high reasoning, read-only
-  execution
+- Historical matched target: Codex CLI 0.145.0, `gpt-5.6-sol`, high reasoning,
+  read-only execution
+- Other branch target: Claude Code / `claude-opus-5`; behavior, native load,
+  and native trigger were unverified for this historical package hash
 - Structural validation: passed
 - Listing proxy: passed using the unchanged description and the preceding
   description-bound judgments
@@ -254,3 +256,34 @@ description-bound judgments still apply to the final package hash above.
 The matched-comparison summary and its limits are recorded in `results.md`.
 These checks do not extend the Claim Ceiling beyond the recorded target and
 cases.
+
+## 2026-07-28 pre-PR evidence-contract fixes
+
+- Verification mode: public or unusually load-bearing
+- Description: unchanged, so the complete listing-query results above remain
+  the applicable description-bound evidence
+- Target configuration: the Opus matched comparison used a safe-mode,
+  tool-less cell; the Opus native check used a separate project-settings cell
+  with only the native `Skill` tool
+- Structural validation: passed
+- Local-source installation: passed for both harnesses with Skills CLI 1.5.20
+  in disposable workspace `/tmp/rookery-portable-skill-final.GzaDdV`
+- Installed-content identity: passed; both installed directories matched the
+  six-file source package byte for byte
+- Same-name inventory: user copies existed in `~/.agents/skills` and
+  `~/.claude/skills` with a different `SKILL.md` hash
+- Codex native discovery, load, and trigger: passed in fresh
+  `gpt-5.6-sol` thread `019faa6c-4a59-7b01-a832-a44492b3b130`; the trace read
+  the exact disposable `.agents` path and quoted the distinctive first body
+  sentence
+- Claude native discovery, load, and trigger: passed in fresh
+  `claude-opus-5` session `6e03ff90-7bfe-48fe-afd3-587b9154a1bb`; the native
+  `Skill` tool reported the exact disposable `.claude` base directory and the
+  result quoted the same sentence
+
+The current `SKILL.md` SHA-256 is
+`7530e42fe64c306cc86f97c17b223dd1385ce3b9256a94b57b9708c2a93120df`.
+The current trigger-template SHA-256 is
+`ba79352f96e35c1d0c3ac2812335ca266887ad1ec11acde4b15b7aa5b03630c7`.
+No proxy result was used to fill a native state, and no native state from a
+superseded package revision was carried forward.

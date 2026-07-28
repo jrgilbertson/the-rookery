@@ -95,8 +95,11 @@ for the public or load-bearing tier.
 ## Native package-harness checks
 
 Native discovery and local installation may be shared only by target cells using
-the same package revision and harness. Verify that the installed content came
-from the declared local source before using it as evidence.
+the same package revision, harness, install/discovery location, and material
+discovery configuration. When project or working-directory context affects
+discovery, it must also match; otherwise record discovery evidence separately.
+Verify that the installed content came from the declared local source before
+using it as evidence.
 
 | Package-harness cell | Date | Harness and version | Native discovery state | Local-source install state | Installed-content identity state | Evidence or limitation |
 | --- | --- | --- | --- | --- | --- | --- |

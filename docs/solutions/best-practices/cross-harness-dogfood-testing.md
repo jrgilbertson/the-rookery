@@ -62,11 +62,12 @@ Before treating a cross-harness skill run as evidence:
    the same name. Temporarily move non-authoritative copies outside discovery
    scope, disable them, or use a harness mode that bypasses them. Do not delete
    a user's installation merely to simplify a test.
-5. Capture proof of what loaded. Useful proof includes a native load trace that
-   names the project-local path, installed-content hashes, or a distinctive
-   expected sentence returned after the load. For a bounded tool-less policy
-   probe, embed the exact authoritative policy and label the result policy-only;
-   that does not prove native discovery or loading.
+5. Capture runtime-native proof of what loaded. A native trace or response must
+   attribute the loaded copy by tying it to its path, hash, or distinctive
+   expected content from the tested body. Installed-file hashes alone prove
+   source-to-install identity, not loaded-copy identity. For a bounded tool-less
+   policy probe, embed the exact authoritative policy and label the result
+   policy-only; that does not prove native discovery or loading.
 6. Treat each harness's constraint differences as free test fixtures. A
    network-denied sandbox tests the validator-unavailable fallback. A missing
    user-level home tests install-destination logic. A fresh-context baseline

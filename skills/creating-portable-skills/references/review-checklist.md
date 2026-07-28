@@ -8,6 +8,7 @@ A **System-Owned Invariant** is a hard constraint that must remain explicit beca
 
 - Canonical package structure and installability requirements.
 - User authority boundaries, required approvals, and irreversible-action limits.
+- Applicable safety, security, privacy/confidentiality, legal/compliance, and domain-safety boundaries.
 - Exact output formats, schemas, protocols, templates, and resource contracts.
 - Deterministic validation and mechanical checks.
 - Genuinely fragile ordered operations where reordering can change safety or correctness.

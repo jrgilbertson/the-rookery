@@ -75,9 +75,11 @@ Completion: the completed baseline record has a final candidate decision, and ev
 
 Copy [assets/trigger-queries-template.md](assets/trigger-queries-template.md) beside the baseline record and complete it using its query-construction, separate-agent judging, tier, scoring, evidence, and tuning rules.
 
+When a required listing judgment is unavailable, record it as unverified and record a shipment-only waiver with the template if the user explicitly authorizes shipment. The waiver does not change the state or Claim Ceiling. Failed listing evidence cannot be waived.
+
 After a description edit, rerun the template's complete listing query set and the affected behavioral comparison.
 
-Completion: the completed template reports a passing listing-proxy state for every declared target under its scoring rules.
+Completion: every declared target passes the template's listing-proxy rules or has an explicit user shipment waiver for an unavailable judgment, with its unverified state and Claim Ceiling preserved.
 
 ### 8. Package and install
 
@@ -85,9 +87,11 @@ Recheck the host conventions from step 2 and confirm the canonical directory is 
 
 When a native check is unavailable, complete the template's Waiver section if the user authorizes shipment.
 
+When a native check fails, return to correction or obtain an explicit user decision to remove the failing cell from the declared target scope. A failed required state cannot be waived or satisfy completion.
+
 If packaging exposes a defect that changes the package, apply step 6's re-entry rule before completing this step.
 
-Completion: the source validates and the completed template records every required package-harness and model-harness state.
+Completion: the source validates, and every required native state passes or is unavailable, remains unverified with its claim limit preserved, and has an explicit user shipment waiver; no failed required state remains.
 
 ## Gotchas
 

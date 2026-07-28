@@ -79,8 +79,8 @@ This plan owns the frontier retune of `creating-portable-skills` only. The surro
 **Evidence and claim integrity**
 
 - R7. Small baselines remain the default for routine creation and revision. They use at least two matched, realistic cases in fresh contexts: one discriminating case where the instruction should affect behavior and one control where it should not. The workflow reuses available context and records concrete observations, losses, model, harness, configuration when available, and date without starting a deeper evaluation program or adding blocking questions unless a stronger claim is requested.
-- R8. A small single-run baseline may support only a directional comparison. It must not produce claims such as reliably better, proven, non-regressing, or improved for a model.
-- R9. Evidence is labeled by the strongest level it earns: smoke-tested, directional comparison, non-regression evidence, or causal improvement. Each level states its limits beside the result, and the routine standalone workflow may assign only smoke-tested or directional-comparison labels.
+- R8. A small matched baseline may support only a directional comparison. One observed execution is a smoke probe and earns no baseline label. Neither may produce claims such as reliably better, proven, non-regressing, or improved for a model.
+- R9. Evidence is labeled by the strongest level it earns: none, directional comparison, non-regression evidence, or causal improvement. Each level states its limits beside the result, and the routine standalone workflow may assign only a directional-comparison label.
 - R10. Non-regression and causal-improvement claims route to deeper evaluation. The standalone workflow briefly names the missing rigor, including isolating the changed variable and accounting for ordinary run variation, instead of prescribing randomized trials, blinded grading, statistical machinery, or its own evaluation harness.
 
 **Target-model and portability checks**
@@ -98,7 +98,7 @@ flowchart TB
   INTENT[Task intent and product invariants] --> CORE[One frontier-focused skill]
   CORE --> CHECKS[Structural and behavioral checks]
   CHECKS --> EVIDENCE{Evidence earned}
-  EVIDENCE -->|one successful execution| SMOKE[Smoke-tested]
+  EVIDENCE -->|one successful execution| OBSERVE[Observation only]
   EVIDENCE -->|small matched comparison| DIRECTION[Directional comparison]
   EVIDENCE -->|stronger claim requested| DEEP[Route to deeper evaluation]
   DEEP --> STRONG[Non-regression or causal claim]
@@ -173,7 +173,7 @@ flowchart TB
 - [Anthropic's Opus 5 guidance](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-claude-opus-5) distinguishes redundant verifier choreography from scope limits, delegation boundaries, output calibration, and deterministic outcome checks.
 - [OpenAI's GPT-5.6 guidance](https://developers.openai.com/api/docs/guides/latest-model) supports leaner intent-led prompting while retaining context, hard constraints, authority boundaries, success criteria, and output formats.
 - [Compound Engineering's `ce-retune`](https://github.com/EveryInc/compound-engineering-plugin/blob/main/docs/skills/ce-retune.md) provides the measurement-first alternative and reinforces that causal retuning claims require a repeatable harness.
-- `skills/creating-portable-skills/` and `tests/creating-portable-skills/` are the current product and evidence record. The checked-in record has no Opus 5 or GPT-5.6 Sol behavioral run, and its full review or migration baseline remains unrun.
+- At planning time, `skills/creating-portable-skills/` and `tests/creating-portable-skills/` were the product and evidence record. The checked-in record then had no Opus 5 or GPT-5.6 Sol behavioral run, and its full review or migration baseline remained unrun.
 - `docs/plans/2026-07-16-001-feat-creating-skills-plan.md` records the original product decisions and historical acceptance contract.
 
 ---
@@ -205,7 +205,8 @@ Product Contract preservation: unchanged.
   load, native trigger, and behavioral comparison each record passed, failed,
   or unverified independently. Installation and discovery may be shared by a
   package-harness pair. Load and trigger remain tied to each model-harness
-  target cell. Routine conclusions stay smoke-tested or directional. Governs
+  target cell. Routine conclusions are either unlabeled observations or
+  directional comparisons. Governs
   implementation of R7-R10 and R12-R15.
 - KTD5. **Use asymmetric full-flow coverage with conditional escalation.**
   User-approved. One target runs the disposable fixture end to end, while the
@@ -403,7 +404,7 @@ flowchart TB
 - The canonical skill, references, and assets stay self-contained, structurally valid, and within the Agent Skills line and frontmatter limits.
 - Every removed or relaxed instruction has directional affected-target evidence with a stable control and no System-Owned Invariant loss; unsupported candidates are retained.
 - Opus 5 and GPT-5.6 Sol have separate recorded current evidence for create behavior, required existing-skill coverage, and native target checks; any missing required cell prevents the verified-retune label.
-- Routine evidence is labeled only smoke-tested or directional, listing judgments remain proxies, and stronger claims route out without embedding an evaluation suite.
+- Routine evidence is labeled only directional after a matched comparison, listing judgments remain proxies, and stronger claims route out without embedding an evaluation suite.
 - The disposable fixture proves audit approval, simplification, retention of a fragile instruction, validation, comparison, affected trigger testing, and packaging without modifying `design-evals`.
 - Public copy consistently describes portable, installable skills without universal behavioral promises, a weaker-model branch, or a disclaimer layer.
 - Historical evidence is preserved, new results are dated and include concise supporting excerpts or durable transcript references, and no per-instruction ledger or transcript archive is added.

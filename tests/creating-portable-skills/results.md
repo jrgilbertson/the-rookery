@@ -502,3 +502,57 @@ groups only, with one smoke probe and the unverified authoring guidance listed
 above. This follow-up does not establish causal improvement, non-regression,
 equivalent behavior across models or harnesses, or behavior outside the
 recorded cases.
+
+## 2026-07-28 writing-great-skills follow-up
+
+The final package passed `skills-ref` 0.1.5 validation at 94 `SKILL.md` lines. Its
+six file hashes were:
+
+| Package file | SHA-256 |
+| --- | --- |
+| `SKILL.md` | `4693702db6766235049e34df7bf95baea77c1de24108307c09e0da5a809754fe` |
+| `assets/baseline-test-template.md` | `82656e8d47635a5bbc1e181a79caaf921f703428b61f175dab7e87347acac8e5` |
+| `assets/skill-template.md` | `e5cbfe744d93ba1c92c9a2a4dd97dbde00f51032ffe0563b95433683788f8458` |
+| `assets/trigger-queries-template.md` | `f0294f045b56cdd0ddf7b1edfd104e34c3a995a6f9c14c66ad773b6e2bebdee3` |
+| `references/portability.md` | `9cce3630326a7b01f455c241ae104550f0029d8a9d1ab9b672c6f57b015def6c` |
+| `references/review-checklist.md` | `25fd4b36af18a891d03b3b1fa90ec907a94a114a630cb41a5e844b050a73d231` |
+
+Skills CLI 1.5.20 installed the local working tree into fresh project-local
+Codex and Claude Code paths under
+`/private/tmp/rookery-writing-skills-final2.Wnsy5N`. `diff -qr` reported no
+differences from the canonical package, and the installed `SKILL.md` hashes
+matched the source.
+
+| Check | Codex / `gpt-5.6-sol` | Claude Code / `claude-opus-5` |
+| --- | --- | --- |
+| Structural validation | passed | passed |
+| Listing proxy | passed | passed |
+| Local-source install | passed | passed |
+| Installed-content identity | passed | passed |
+| Native discovery | passed | passed |
+| Native load | passed | passed |
+| Native trigger | passed | passed |
+
+The Codex native run used Codex CLI 0.145.0, high reasoning, and read-only
+mode. An implicit reusable-skill request selected and read the project-local
+`.agents/skills/creating-portable-skills/SKILL.md`, then quoted its first body
+sentence. The fresh session ID was
+`019fa99b-b285-77b3-bf43-1703f90fd667`.
+
+The Claude Code native run used version 2.1.220, `claude-opus-5`, high effort,
+project settings, no session persistence, and only the native `Skill` tool.
+The initiating query was “Turn this repeated Agent Skill review prompt into a
+reusable skill.” It did not name `creating-portable-skills`. The trace then
+showed the assistant selecting the native `Skill` tool with
+`skill: creating-portable-skills`; the tool returned `Launching skill:
+creating-portable-skills` and the project-local
+`.claude/skills/creating-portable-skills` base directory. The fresh session ID
+was `d6eb7c3d-6a91-40ff-8777-574bb59da428`.
+
+The matched instruction results are preserved in
+`writing-great-skills-follow-up.md`. The read-only audit, generated trigger
+contract, evidence-doctrine, and single-owner cases showed their intended
+deltas. The resource-placement control remained materially stable. The result is a
+**directional comparison** for those named cases only. It does not establish
+general reliability, causal improvement, non-regression, or behavior outside
+the recorded cases and target configurations.

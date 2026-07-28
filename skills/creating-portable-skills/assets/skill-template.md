@@ -2,9 +2,10 @@
 # Delete every "#" comment line when instantiating this template.
 name: skill-name-here
 # name: lowercase kebab-case, at most 64 characters, matching the directory.
-description: Use when [triggering conditions and user phrasings, including a non-obvious one]. [What it does, in one clause.] Do not use for [the closest near-miss and its destination].
+description: Use when [owned triggering conditions and user phrasings, including a non-obvious one]. [What it does, in one clause.]
 # description: at most 1024 characters. Put trigger language first. Describe
-# when to use the skill, not a summary of the workflow.
+# when to use the skill, not a summary of the workflow. Keep adjacent jobs in
+# near-miss tests unless a positive destination resolves harmful ambiguity.
 license: "[choose a license, or delete this field if the host collection declares one]"
 # license: optional. Choose it deliberately; never carry over a template default.
 # compatibility: optional. Declare only real command, network, credential, or
@@ -15,11 +16,6 @@ license: "[choose a license, or delete this field if the host collection declare
 
 <!-- Delete this comment. State the skill's one job and observable outcome.
 Include only intent an agent cannot safely infer from the task context. -->
-
-## When to use
-
-<!-- Delete this comment. State the trigger boundary and route near-misses.
-Keep it consistent with the frontmatter description. -->
 
 ## Outcome and constraints
 
@@ -41,6 +37,10 @@ completion criteria. When naming several tools or approaches, give a default or
 selection rule. For destructive or batch work, confirm the exact targets and
 planned action against the system that owns those targets before execution. Put
 branch-specific detail one level deep behind an explicit read-trigger. -->
+
+<!-- Delete this comment. When invocation leads to distinct runtime branches,
+route among them beside the corresponding branch instructions instead of
+repeating the frontmatter description. -->
 
 [Minimum instructions needed to reach the outcome within its constraints.]
 

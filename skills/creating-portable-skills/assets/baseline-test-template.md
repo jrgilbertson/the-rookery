@@ -1,9 +1,12 @@
 # Baseline comparison: [skill-name]
 
-Use this record for a small, routine comparison. It can earn only
-**smoke-tested** (one observed execution) or **directional comparison**
-(matched prior/revised observations). It cannot establish non-regression,
-causal improvement, or behavior outside the predeclared cases.
+Use this record for a small, routine matched comparison. It can earn only
+**directional comparison**. It cannot establish non-regression, causal
+improvement, or behavior outside the predeclared cases.
+
+This template is the authoritative source for routine case construction,
+candidate decisions, evidence labels, matched-comparison waivers, and Claim
+Ceiling recording.
 
 For a new skill, compare without-skill against with-skill. For a revision,
 compare the frozen prior version against the revised version. Run each prompt
@@ -116,9 +119,14 @@ only when it discriminates a separate important behavior.
 
 - Candidate state: [revision: Retained / DirectionalCandidate; new skill: NewSkillCandidate]
 - Shipment status: [not assessed / UnverifiedCandidate]
-- Earned evidence label: [none / smoke-tested / directional comparison]
+- Earned evidence label: [none / directional comparison]
 - Conclusion: [state only what the predeclared cases showed]
 - Overall limitation: Behavior outside the predeclared cases remains unverified. [Add target-specific limitations.]
+- Claim Ceiling: [state the strongest conclusion this record permits]
+
+The Claim Ceiling is the strongest conclusion supported by the declared
+targets, cases, earned evidence label, observed losses, unavailable cells, and
+limitations.
 
 Decision rules:
 

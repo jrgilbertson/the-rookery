@@ -29,9 +29,10 @@ Keep these conclusions separate:
 | Native discovery and load pass | The named harness exposed the installed skill to the named model cell | Correct activation or task behavior |
 | Listing judgment passes | A proxy judgment of the name-and-description routing contract | Native triggering |
 | Native trigger is observed | Triggering in that exact model-harness configuration and query | Other configurations, queries, or equivalent downstream behavior |
-| A small matched comparison passes | A smoke-tested or directional result in the predeclared cases | Reliability, non-regression, causal improvement, or universal compatibility |
+| A small matched comparison passes | The bounded conclusion in its completed baseline record | Reliability, non-regression, causal improvement, or universal compatibility |
 
-Use the caller-declared model and harness targets. With no declared set, record the current model and harness as one target. For multiple targets, use the same predeclared discriminating and control cases in each cell, and keep observations separate.
+Use the model and harness target set declared in the completed baseline record.
+That record owns case construction and per-target observation handling.
 
 ## Optional harness metadata
 

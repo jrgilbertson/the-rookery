@@ -1,6 +1,7 @@
 ---
 module: creating-portable-skills skill evaluation
 date: 2026-07-27
+last_updated: 2026-07-28
 problem_type: best_practice
 component: testing_framework
 severity: high
@@ -9,6 +10,7 @@ applies_when:
   - "Performing a final package review after creating or revising an agent skill"
   - "Deciding whether artifact and execution-trace evidence supports a pass"
   - "Recording a result when an independent review context is unavailable"
+  - "Recording fresh-context judgments without archiving full transcripts"
 tags:
   - agent-skills
   - independent-review
@@ -45,6 +47,16 @@ Keep three evidence layers separate:
 | Outcome evidence | Whether the output met the required outcome and hard constraints | Independent inspection of actual artifacts and relevant traces |
 | Coverage | Which changed behaviors were tested and how far the conclusion reaches | Predeclared cases, controls, limitations, and an independent final review |
 
+Record routine matched-comparison case construction, candidate decisions,
+evidence labels, matched-comparison waivers, and Claim Ceiling results in the
+baseline template
+(`skills/creating-portable-skills/assets/baseline-test-template.md:7`). Record
+listing-query construction, scoring, evidence states, and native checks in the
+trigger template
+(`skills/creating-portable-skills/assets/trigger-queries-template.md:8`).
+Workflow and review files should link to these records instead of repeating
+their thresholds or decision rules.
+
 For a substantive skill change:
 
 1. Run matched variants in fresh contexts and confirm the intended version was
@@ -61,12 +73,17 @@ For a substantive skill change:
 6. If an independent context is unavailable, prepare a self-contained handoff
    and keep the affected result unverified. Author self-review does not replace
    the missing context.
+7. For listing judgments, record the result and a context or transcript
+   reference in every run cell. A session ID can identify a distinct fresh run
+   without preserving a transcript archive. If a decision depends on output
+   details, also keep a concise supporting excerpt or durable transcript
+   reference (`skills/creating-portable-skills/assets/trigger-queries-template.md:43`).
 
-Keep routine verification proportionate. One observed execution supports a
-smoke-tested label. A small matched comparison with a discriminating case and
-a stable control can support a directional observation. Reliability,
-non-regression, or causal-improvement claims require deeper evaluation that
-accounts for normal run variation.
+Keep routine verification proportionate. One observed execution is a smoke
+probe and earns no baseline label. A small matched comparison with a
+discriminating case and a stable control can support a directional
+observation. Reliability, non-regression, or causal-improvement claims require
+deeper evaluation that accounts for normal run variation.
 
 ## Why This Matters
 
@@ -80,12 +97,22 @@ Identity evidence does not prove quality, and a correct score on one case does
 not prove a better grading policy. The evidence record must say which layer
 passed and stop its claims there.
 
+Keeping each rule in one authoritative record prevents the workflow, checklist,
+and templates from diverging. Per-run context references make aggregate tables
+auditable without turning routine skill work into transcript retention. A
+context ID identifies which fresh run produced a judgment; it does not prove
+what the run contained.
+
 ## When to Apply
 
 Apply this pattern when instruction semantics, trigger descriptions, or
 bundled resources change. It is especially useful when success depends on
 qualitative completeness, evidence use, authority boundaries, or execution
 trace interpretation.
+
+It also applies when pass/fail, waiver, scoring, or claim-limit rules appear in
+more than one file, or when a trigger table contains bare judgments without
+run-specific provenance.
 
 Use deterministic validation alone for mechanical questions. Typo,
 formatting, and link-only edits do not need a behavioral comparison. Expand
@@ -109,6 +136,17 @@ or blind review, and preserve an unverified handoff when an independent
 context is unavailable. The preserved prompts, outputs, controls, and
 judgments are in `tests/creating-portable-skills/independent-review-follow-up.md`.
 
+The later trigger review caught a different gap. The final tables recorded
+bare `yes` and `no` judgments, so they did not support the claim that every
+judgment came from a fresh process. The suite was rerun as 20 queries, three
+times in each of two target cells. Each of the 120 cells now carries a unique
+session ID. Sol recorded 30 expected should-trigger decisions and 30 expected
+near-miss decisions. Opus recorded 29 of 30 expected should-trigger decisions,
+with the remaining query passing two of three, and all 30 expected near-miss
+decisions (`tests/creating-portable-skills/trigger-queries.md:201`). This
+supports the recorded listing-proxy result for those queries and targets only.
+It is not a reliability or non-regression claim.
+
 ## Related
 
 - `docs/solutions/best-practices/cross-harness-dogfood-testing.md` explains why
@@ -118,5 +156,7 @@ judgments are in `tests/creating-portable-skills/independent-review-follow-up.md
 - `docs/solutions/integration-issues/skills-cli-ref-not-checked-out.md` gives a
   concrete example of a green check that could not distinguish success from a
   silent fallback.
+- `tests/creating-portable-skills/writing-great-skills-follow-up.md` records the
+  matched ownership change and its bounded directional conclusion.
 - Issue jrgilbertson/the-rookery#13 is the frontier-model retune that produced
   this guidance.

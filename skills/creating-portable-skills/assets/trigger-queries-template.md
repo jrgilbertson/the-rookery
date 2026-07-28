@@ -5,6 +5,9 @@ behavior separate. Every check uses exactly one state: **passed**, **failed**,
 or **unverified**. A passed listing proxy never satisfies native discovery,
 installation, content identity, loading, or triggering.
 
+This template is the authoritative source for listing-query construction, tier
+selection, scoring, evidence states, and native-check recording.
+
 ## Declaration
 
 - Package source and revision: [local path plus revision/hash]
@@ -108,7 +111,7 @@ target, even when discovery or installation evidence is shared.
 | Native load | [each model-harness target cell] | [passed / failed / unverified] | Load only |
 | Native trigger | [each model-harness target cell] | [passed / failed / unverified] | Observed trigger only |
 
-- Earned evidence label: [none / smoke-tested / directional comparison]
+- Baseline comparison record: [path or not applicable]
 - Overall limitation: [missing cells and what remains unverified]
 
 When target states conflict, preserve each state. Do not average a failure or an

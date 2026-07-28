@@ -1,27 +1,29 @@
 ---
 name: creating-portable-skills
-description: Use when creating a new agent skill, or when reviewing, updating, or migrating a skill between collections, including fixing its description, triggers, structure, or portability. Produces portable, installable Agent Skills packages. Do not use for building plugins, designing standalone eval suites, or reviewing prose that is not a skill.
+description: Use when creating, updating, or migrating an Agent Skill, or when finding problems in its description, triggers, structure, portability, or evidence. Produces prioritized findings or a portable, installable Agent Skills package. Explanation-only requests stay with general reasoning.
 license: MIT
 compatibility: Requires isolated agent contexts or separate sessions for agent grading and review.
 ---
 
 # Creating Skills
 
-Create or revise a skill from its intent, required outcome, and only the hard constraints that define acceptable completion or remain under user authority. The result is a self-contained Agent Skills package with structural validation, appropriately scoped behavioral evidence, and separate trigger and installation checks.
+Create, revise, migrate, or audit a skill from its intent, required outcome, and only the hard constraints that define acceptable completion or remain under user authority. The result is either a prioritized read-only audit or a self-contained Agent Skills package with structural validation, appropriately scoped behavioral evidence, and separate trigger and installation checks.
 
 Skills produced here follow the [Agent Skills format](https://agentskills.io/specification): a directory with a `SKILL.md` (frontmatter plus body) and optional `references/`, `assets/`, and `scripts/`. Canonical frontmatter uses only `name`, `description`, `license`, `compatibility`, and `metadata`. Read [references/portability.md](references/portability.md) when authoring frontmatter, choosing an install location, or making a harness-specific claim.
 
-An independent reviewer did not participate in the authoring discussion or produce the artifact under review. One independent grader inspects each matched case; a different fresh-context reviewer performs the final package review. If the current environment cannot start those independent contexts, prepare a self-contained handoff for a separate session and keep the affected grade or review unverified until that session completes it. Do not substitute the author's own review.
+An independent reviewer must not have participated in the authoring discussion or produced the artifact under review. One independent grader inspects each matched case; a different fresh-context reviewer performs the final package review. If the current environment cannot start those independent contexts, prepare a self-contained handoff for a separate session and keep the affected grade or review unverified until that session completes it. Do not substitute the author's own review.
 
 ## Workflow
 
-Creating a new skill starts at step 1. Reviewing, updating, or migrating an existing skill starts at step 0.
+Creating a new skill starts at step 1. Auditing, updating, or migrating an existing skill starts at step 0. A read-only audit ends at step 0; approved changes continue through the remaining workflow.
 
 ### 0. Audit an existing skill
 
-Have a separate fresh-context agent that has not participated in the current authoring work read the whole package and the host repository's instructions. Give it the skill, the review checklist, and the stated intent without the author's conclusions. Have it apply [references/review-checklist.md](references/review-checklist.md) top to bottom, then present a prioritized fix list where each item names the problem, impact, and change risk. Get the user's approval for the material fix scope before editing.
+Have a separate fresh-context agent that has not participated in the current authoring work read the whole package and the host repository's instructions. Give it the skill, the review checklist, and the stated intent without the author's conclusions. Have it apply [references/review-checklist.md](references/review-checklist.md) top to bottom, then present a prioritized fix list where each item names the problem, impact, and change risk.
 
-Completion: the user has approved the fix scope, including any authority or taste decisions that stay with them.
+Read-only completion: deliver the evidence-backed review, prioritized recommendations, and final verdict without changing files. The execution ends there. Revision begins only in a separate user-authorized request.
+
+Change completion: the user has approved the material fix scope, including any authority or taste decisions that stay with them. Continue at step 1.
 
 ### 1. Resolve the intent
 
@@ -55,43 +57,35 @@ Completion: the validator passes, or every named fallback check passes with the 
 
 ### 5. Compare behavior
 
-Treat changed instruction semantics, a changed trigger description, or a changed bundled resource as substantive. Copy [assets/baseline-test-template.md](assets/baseline-test-template.md) to the host's test-record location (`tests/<skill-name>/` when no convention exists), preserving earlier dated evidence. Typo, formatting, and link-only edits are exempt.
-
-Predeclare at least two matched realistic cases: one discriminating case where the change should affect behavior and one control where it should not. For a new skill, compare without-skill and with-skill behavior; for a revision, compare the frozen prior and revised versions. Run each variant in a fresh context. Have a separate fresh-context agent that did not author the change or produce the artifact grade each matched result. Mechanical checks may use deterministic scripts. When multiple targets are declared, run the same cases separately in every target cell and preserve each result.
-
-The grader must inspect the actual artifacts and relevant trace and cite concrete evidence for every pass. It must also flag checks that are trivial, unverifiable, or missing part of the required outcome. Keep subjective qualities out of binary checks; route them to specific human feedback or, when the claim requires it, a blind comparison by another fresh-context agent.
-
-Routine evidence earns only **smoke-tested** for one observed execution or **directional comparison** for a small matched comparison. State observations, losses, unavailable cells, and limits. If the user requests non-regression or causal improvement, explain that deeper evaluation must isolate the changed variable, account for ordinary run variation, and use repeatable outcome judgments; do not upgrade the routine record.
-
-This comparison is a shipment gate for substantive changes. An unavailable required cell remains unverified; a user waiver may authorize shipping only when the candidate decision remains supported under the checklist, and cannot raise the evidence label.
+Treat changed instruction semantics, a changed trigger description, or a changed bundled resource as substantive. Copy [assets/baseline-test-template.md](assets/baseline-test-template.md) to the host's test-record location (`tests/<skill-name>/` when no convention exists), preserving earlier dated evidence. Complete it using its case-construction, grading, candidate-decision, evidence-label, Claim Ceiling, and matched-comparison waiver rules. Typo, formatting, and link-only edits are exempt.
 
 Completion: the template records every declared target and predeclared case, the evidence it earned, and what remains unverified.
 
 ### 6. Decide and review
 
-Have a separate fresh-context agent apply the candidate-decision and divergence rules in [references/review-checklist.md](references/review-checklist.md), then run the rest of that checklist top to bottom. Give the reviewer the skill, intended outcome, hard constraints, artifacts, traces, and evidence record without the author's conclusions. Use its findings to identify wasted paths, ambiguous or unused instructions, recurring corrections that belong in `Gotchas`, and helper logic repeatedly reinvented across runs that belongs in `scripts/`. Any substantive follow-up edit returns through structural validation and every affected comparison cell.
+Have a separate fresh-context agent apply the completed baseline record's candidate-decision rules, then run [references/review-checklist.md](references/review-checklist.md) top to bottom. Give the reviewer the skill, intended outcome, hard constraints, artifacts, traces, and evidence record without the author's conclusions. Use its findings to identify wasted paths, ambiguous or unused instructions, recurring corrections that belong in `Gotchas`, and helper logic repeatedly reinvented across runs that belongs in `scripts/`. Any substantive follow-up edit returns through structural validation and every affected comparison cell.
 
-Completion: each candidate is retained or supported within the recorded Claim Ceiling, every checklist item passes or has a user-approved deliberate exception, and no target conflict is collapsed into a pass.
+Completion: the completed baseline record has a final candidate decision, and every checklist item passes or has a user-approved deliberate exception.
 
 ### 7. Test the description
 
-Copy [assets/trigger-queries-template.md](assets/trigger-queries-template.md) beside the baseline record. Test at least five should-trigger phrasings, including one non-obvious wording, and five near-misses. Vary length, formality, detail, implied intent, and natural typing such as abbreviations or minor mistakes. Use concrete tasks where the skill should change execution or output. Near-misses should share its topic, artifact, or common wording but require a different job. Each judgment comes from a separate fresh-context agent that did not author the description and sees only the skill name, description, and one query. Use the template's expanded tier for a public collection or unusually load-bearing trigger contract.
+Copy [assets/trigger-queries-template.md](assets/trigger-queries-template.md) beside the baseline record and complete it using its query-construction, separate-agent judging, tier, scoring, evidence, and tuning rules.
 
-Treat listing judgments as a description-routing proxy, separate from native discovery, loading, and triggering. After a description edit, rerun the whole query set and the affected behavioral comparison.
+After a description edit, rerun the template's complete listing query set and the affected behavioral comparison.
 
-Completion: every should-trigger query passes, no near-miss activates, and the result is recorded as listing-proxy evidence rather than native behavior.
+Completion: the completed template reports a passing listing-proxy state for every declared target under its scoring rules.
 
 ### 8. Package and install
 
-Recheck the host conventions from step 2 and confirm the canonical directory is self-contained. Install from the current local source through each declared harness's documented path, verify the installed content identity, and record native discovery, loading, and triggering separately for every applicable target cell.
+Recheck the host conventions from step 2 and confirm the canonical directory is self-contained. Complete the native package-harness and model-harness sections in [assets/trigger-queries-template.md](assets/trigger-queries-template.md): install from the current local source through each declared harness's documented path, verify installed content identity, and record discovery, loading, and triggering separately for every applicable target cell.
 
-An unavailable native check stays unverified. An explicit user waiver may authorize shipping an unverified candidate, but cannot turn a proxy into native evidence, raise the evidence label, or support an otherwise unsupported instruction change.
+When a native check is unavailable, complete the template's Waiver section if the user authorizes shipment.
 
-Completion: the source validates; each required structural, install, identity, discovery, load, and trigger state is recorded independently; and any shipped claim stays within those states.
+Completion: the source validates and the completed template records every required package-harness and model-harness state.
 
 ## Gotchas
 
-- The description carries the triggering burden. Describe when to use the skill, not a summary that encourages skipping the body.
+- The description carries the triggering burden. State its owned trigger branches and reserve workflow details for the body.
 - A later substantive edit invalidates the affected comparison even when an earlier draft passed.
 - Check the target collection and system-provided skills for name collisions. Verb-led gerund names (`creating-portable-skills`, not `skill-creator`) are usually more specific.
 

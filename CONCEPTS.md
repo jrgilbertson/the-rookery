@@ -46,14 +46,16 @@ discovery or loading. Exclude any run that cannot establish the intended
 identity.
 
 ### Independent Review Context
-An Independent Review Context is a fresh agent session that did not see the
-artifact's authoring discussion and did not produce the artifact, used for
-behavioral grading or final review.
+An Independent Review Context is a fresh session in which the reviewing agent
+neither saw the artifact's authoring discussion nor produced the artifact.
 
 One context may grade a matched case, while another performs the final holistic
 review. Deterministic scripts remain appropriate for mechanical checks. If an
 independent context is unavailable, the affected result stays unverified and
 moves to a separate session through a self-contained handoff.
+
+A recorded context ID identifies the run. It does not replace artifact or
+trace evidence for the judgment made in that run.
 
 ### Degradation Path
 A skill's defined behavior when something it prefers is absent, such as a
@@ -76,9 +78,14 @@ reminders to think, narrate, or recheck may be removed when they no longer help.
 
 ### Claim Ceiling
 A Claim Ceiling limits conclusions to the evidence collected. One successful
-execution is a smoke test. A small matched baseline supports a directional
-observation. Reliability or causal-improvement claims require repeated,
-controlled evidence that accounts for normal run variation.
+execution is only a smoke probe and earns no baseline label. A small matched
+baseline supports a directional observation. Reliability or
+causal-improvement claims require repeated, controlled evidence that accounts
+for normal run variation.
 
 ### Trigger Contract
-The stance that a skill's description is a tested activation API, not documentation: only the name and description are loaded when the fire-or-skip decision happens, so the description alone decides whether the skill ever runs. Tested with should-trigger phrasings that must activate and near-misses that must not, judged in fresh contexts.
+A Trigger Contract treats a skill's description as a tested activation API,
+not documentation. At the fire-or-skip decision, the agent sees only the
+skill's name and description. Test this metadata with should-trigger phrasings
+that must activate and near-misses that must not. Record each judgment in a
+fresh context with a context or transcript reference.

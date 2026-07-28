@@ -15,6 +15,10 @@ An independent reviewer must not have participated in the authoring discussion o
 
 ## Workflow
 
+Before starting a new skill, ask the user to choose **ordinary personal skill** or **public or unusually load-bearing skill** verification. For an authorized revision or migration, ask after the audit and scope approval, before changing files. Do not ask during a read-only audit. Skip the question only when the user has already chosen in the current request; otherwise, briefly recommend one mode and let the user decide.
+
+Ordinary personal verification uses the routine listing-query tier. Public or unusually load-bearing verification uses the public or unusually load-bearing listing-query tier. The choice changes only the listing-query tier defined in [assets/trigger-queries-template.md](assets/trigger-queries-template.md); it does not change the required matched comparison, structural validation, native checks, or declared model-harness target set.
+
 Creating a new skill starts at step 1. Auditing, updating, or migrating an existing skill starts at step 0. A read-only audit ends at step 0; approved changes continue through the remaining workflow.
 
 ### 0. Audit an existing skill
@@ -29,7 +33,7 @@ Change completion: the user has approved the material fix scope, including any a
 
 Use the conversation, existing package, repository context, and examples already available. Ground the reusable guidance in real work: user corrections, successful task history, input and output examples, project documentation, schemas, review comments, issues, version history, and resolved failures. Establish the skill's one job, triggering conditions and near-misses, intended outcome, and observable done state, including any required artifact or handoff. Name only the hard constraints, including decisions that remain with the user; identify real environment requirements and representative examples. When a missing decision could materially change the result, scope, or authority, ask one focused question at a time; do not re-ask what the available context resolves.
 
-Completion: the job fits one sentence, and the triggers, near-misses, outcome, done state, hard constraints, requirements, and examples are known or explicitly not applicable.
+Completion: the user-selected verification mode is recorded, the job fits one sentence, and the triggers, near-misses, outcome, done state, hard constraints, requirements, and examples are known or explicitly not applicable.
 
 ### 2. Scope targets and resources
 

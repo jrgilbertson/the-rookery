@@ -232,3 +232,25 @@ two of three and passed the declared majority threshold. No near-miss received
 a `yes`. The final listing proxy passed in both targets.
 Later body and resource edits did not change the listing text, so these
 description-bound judgments still apply to the final package hash above.
+
+## 2026-07-28 verification-mode choice follow-up
+
+- Verification mode for this self-hosted change: public or unusually
+  load-bearing, continuing the package's existing classification
+- Final package `SKILL.md` SHA-256:
+  `576ce3410270fffd81baa0bb7f8c4149a36fbb0e07a7700d1699776136175821`
+- Declared target: Codex CLI 0.145.0, `gpt-5.6-sol`, high reasoning, read-only
+  execution
+- Structural validation: passed
+- Listing proxy: passed using the unchanged description and the preceding
+  description-bound judgments
+- Local-source installation: passed with Skills CLI 1.5.20
+- Installed-content identity: passed; `diff -qr` was clean and the installed
+  `SKILL.md` hash matched the source
+- Native discovery, load, and trigger: passed; in fresh session
+  `019fa9e3-c7dd-7be0-a749-05892984f6d4`, the agent selected and read the exact
+  installed skill before asking for the verification-mode choice
+
+The matched comparison and limits are recorded in
+`verification-mode-follow-up.md`. These checks do not extend the Claim Ceiling
+beyond the recorded target and cases.

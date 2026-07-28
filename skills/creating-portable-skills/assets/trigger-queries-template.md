@@ -12,7 +12,8 @@ selection, scoring, evidence states, and native-check recording.
 
 - Package source and revision: [local path plus revision/hash]
 - Declared model-harness target cells: [target cell IDs]
-- Listing-query tier: [routine: 5+5 once / public or load-bearing: 8-10+8-10 three times]
+- User-selected verification mode: [ordinary personal skill / public or unusually load-bearing skill]
+- Listing-query tier: [ordinary personal skill: routine 5+5 once / public or unusually load-bearing skill: 8-10+8-10 three times]
 - Listing-judge mechanism: [separate agent and fresh context per query]
 
 | Target cell | Exact model | Harness and version | Configuration, tools, and permissions |
@@ -33,6 +34,11 @@ context through a separate agent that did not author the description. Show that
 agent the skill's name, description, and one query, but not its body or the
 author's expected judgment. Record the target cell on every judgment. An unsure
 or hedged judgment is borderline.
+
+The selected verification mode changes only listing-proxy evaluation: query
+count, repetition, and tier-specific judgment rules. It does not change the
+required matched comparison, structural validation, native checks, or declared
+model-harness target set.
 
 Write realistic queries with concrete context. Vary length, formality, detail,
 implied intent, abbreviations, and minor typing mistakes. Should-trigger cases

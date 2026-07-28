@@ -83,6 +83,15 @@ baseline supports a directional observation. Reliability or
 causal-improvement claims require repeated, controlled evidence that accounts
 for normal run variation.
 
+### Verification Mode
+Verification Mode records whether listing-query checks use the ordinary
+personal tier or the public or unusually load-bearing tier.
+
+The selected tier determines query count, repetition, and tier-specific
+judgment rules. Matched behavioral comparisons, structural validation, native
+and installation checks, and declared model-harness targets remain separate
+requirements.
+
 ### Trigger Contract
 A Trigger Contract treats a skill's description as a tested activation API,
 not documentation. At the fire-or-skip decision, the agent sees only the

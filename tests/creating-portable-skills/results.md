@@ -556,3 +556,26 @@ deltas. The resource-placement control remained materially stable. The result is
 **directional comparison** for those named cases only. It does not establish
 general reliability, causal improvement, non-regression, or behavior outside
 the recorded cases and target configurations.
+
+## 2026-07-28 verification-mode choice follow-up
+
+The skill now asks the user to choose between ordinary personal skill
+verification and public or unusually load-bearing skill verification before a
+new skill is drafted or an approved revision is edited. The choice changes only
+the listing-query tier. The skill does not ask the question during read-only
+audits.
+
+Fresh matched cases showed the intended choice in new-skill and
+approved-revision flows, while a read-only control remained materially stable.
+An independent grader assigned `DirectionalCandidate` with no material loss
+observed. The bounded evidence and Claim Ceiling are recorded in
+`verification-mode-follow-up.md`.
+
+The final `SKILL.md` SHA-256 was
+`576ce3410270fffd81baa0bb7f8c4149a36fbb0e07a7700d1699776136175821`.
+Structural validation passed. Skills CLI 1.5.20 installed an identical copy in
+a fresh Codex project. In native session
+`019fa9e3-c7dd-7be0-a749-05892984f6d4`, the agent selected and read that
+installed skill, then asked the user to choose a verification mode. Because the
+description was unchanged, the listing-query test was not rerun; the existing
+evidence remains description-bound.

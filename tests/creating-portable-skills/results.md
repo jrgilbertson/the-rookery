@@ -8,7 +8,7 @@ Recorded runs for the plan's Verification Contract (`docs/plans/2026-07-16-001-f
 | --- | --- | --- |
 | Static validation | Pass | `npx skills-ref validate skills/creating-portable-skills` → "Valid skill", clean after every edit round |
 | Line budget | Pass | `SKILL.md` at 107 lines (ceiling 500, target ~200) |
-| Same-door sweep | Pass | Zero hits for home-directory paths and owner-environment identifiers across `skills/creating-portable-skills/` and `tests/creating-portable-skills/` |
+| Same-door sweep | Pass | No owner-specific home paths or owner-environment identifiers across `skills/creating-portable-skills/` and `tests/creating-portable-skills/`; generic documented discovery locations and normalized disposable placeholders are acceptable |
 | Historical 2026-07-16 install probe | Pass: local-source installation passed on 2026-07-16; the remote default-branch listing passed after merge on 2026-07-27 | The local install copied the skill to both agent locations and registered it in the running harness. Skills CLI 1.5.20 later found `creating-portable-skills` in `jrgilbertson/the-rookery` through the plain remote listing command. The follow-up is non-gating for the 2026-07-27 final-source U4 result |
 | Trigger evaluation | Pass | 10/10 should-trigger at rate 1.0 (3 runs each), 0/10 near-miss activations, judged in fresh contexts across three model families (Haiku 4.5, Sonnet, Fable 5). Full tables: `trigger-queries.md` |
 | Baseline test | Pass | Bare-agent baseline skipped all four disciplines (self-audited); with-skill runs in three harnesses enforced all four. Comparison: `baseline-cases.md` case 1 |
@@ -282,7 +282,7 @@ are not averaged, and this record supports no general improvement claim.
 ### Final-source U4 rerun at `feb9a0ee9246b8c079bea7c049efe9f5a67c657c`
 
 The current local source installed into both project paths under disposable
-workspace `/tmp/rookery-frontier-retune.YP9X0t/final-install.tQBkI2`:
+workspace `<final-source-disposable-workspace>`:
 
 - `.agents/skills/creating-portable-skills`
 - `.claude/skills/creating-portable-skills`
@@ -312,7 +312,7 @@ boundaries, success criteria, and output contract.`
 
 ### U2 template-instantiation verification
 
-At disposable root `/tmp/rookery-template-instantiation.NYOZiH`, the current
+At disposable root `<template-instantiation-disposable-root>`, the current
 `assets/skill-template.md` was instantiated as skill
 `template-instantiation-smoke`. Authoring comments were stripped, a concrete
 description was supplied, the optional license was deliberately omitted, and
@@ -326,7 +326,7 @@ Renaming the directory to match frontmatter satisfied the documented package
 invariant. The corrected run:
 
 ```text
-npx skills-ref validate /tmp/rookery-template-instantiation.NYOZiH/template-instantiation-smoke
+npx skills-ref validate <template-instantiation-disposable-root>/template-instantiation-smoke
 Valid skill
 ```
 
@@ -448,7 +448,7 @@ Valid skill: skills/creating-portable-skills
 ```
 
 Skills CLI 1.5.20 installed the local source into fresh project-local Codex and
-Claude Code destinations under `/tmp/rookery-surgical.zLTYcU/project`.
+Claude Code destinations under `<independent-review-disposable-workspace>/project`.
 `diff -qr` returned no differences for either installed package.
 
 | Initial independent-review package file | SHA-256 |
@@ -543,7 +543,7 @@ six file hashes were:
 
 Skills CLI 1.5.20 installed the local working tree into fresh project-local
 Codex and Claude Code paths under
-`/private/tmp/rookery-writing-skills-final2.Wnsy5N`. `diff -qr` reported no
+`<writing-skills-disposable-workspace>`. `diff -qr` reported no
 differences from the canonical package, and the installed `SKILL.md` hashes
 matched the source.
 
@@ -655,7 +655,7 @@ Structural validation passed with `skills-ref` 0.1.5. Skills CLI 1.5.20 found
 the repository's four published skills, selected only
 `creating-portable-skills`, and copied the current local source into both
 project-local destinations under disposable workspace
-`/tmp/rookery-portable-skill-final.GzaDdV`. `diff -qr` returned no differences
+`<final-portable-skill-disposable-workspace>`. `diff -qr` returned no differences
 for either installed package.
 
 The final unavailable-listing edit reran its affected comparison cells. Fresh
@@ -685,13 +685,13 @@ checks therefore required exact loaded-copy attribution:
 - Codex ran `gpt-5.6-sol` at high reasoning in fresh thread
   `019faa6c-4a59-7b01-a832-a44492b3b130`. The implicit creation request
   selected the skill and read
-  `/private/tmp/rookery-portable-skill-final.GzaDdV/.agents/skills/creating-portable-skills/SKILL.md`,
+  `<final-portable-skill-disposable-workspace>/.agents/skills/creating-portable-skills/SKILL.md`,
   then quoted its distinctive first body sentence.
 - Claude Code 2.1.220 ran `claude-opus-5` at high effort in fresh session
   `6e03ff90-7bfe-48fe-afd3-587b9154a1bb`, with project settings and only the
   native `Skill` tool available. Initialization listed the project skill, the
   tool launched it, and the result identified
-  `/private/tmp/rookery-portable-skill-final.GzaDdV/.claude/skills/creating-portable-skills/SKILL.md`
+  `<final-portable-skill-disposable-workspace>/.claude/skills/creating-portable-skills/SKILL.md`
   before quoting the same sentence.
 
 Local-source install and installed-content identity passed for both package

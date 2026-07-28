@@ -15,12 +15,17 @@ the review workflow or its durable action contract.
 
 An adapter may expose its source URL directly or through a deterministic mapping
 declared here. For source `granola`, require the native meeting ID returned by
-the listing or retrieval interface to be a UUID, then construct the canonical
-URL exactly as `https://notes.granola.ai/d/{native_id}`. Treat that result as the
-adapter-exposed source URL; do not depend on query-tool citations. If Granola
-also returns a URL and it differs from the mapped URL, record contradictory
-identity evidence. A missing or malformed ID remains **Unable to prepare**;
-never infer an undeclared mapping from source text or existing notes.
+the listing or retrieval interface to be a canonical lowercase 36-character
+UUID string matching
+`^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$` across the
+entire returned value. Use that exact value unchanged: do not trim, case-fold,
+decode, remove braces or a URN prefix, or otherwise normalize it. Construct the
+canonical URL exactly as `https://notes.granola.ai/d/{native_id}` and treat that
+result as the adapter-exposed source URL; do not depend on query-tool citations.
+If Granola also returns a URL, an exact match confirms the mapped identity and a
+different value is contradictory identity evidence. A missing or noncanonical
+ID remains **Unable to prepare**; never infer an undeclared mapping from source
+text or existing notes.
 
 Use the configured source name plus the native meeting ID returned by its
 listing or retrieval interface as meeting identity. Store those exact values in

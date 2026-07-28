@@ -257,7 +257,7 @@ The matched-comparison summary and its limits are recorded in `results.md`.
 These checks do not extend the Claim Ceiling beyond the recorded target and
 cases.
 
-## 2026-07-28 pre-PR evidence-contract fixes
+## 2026-07-28 pre-PR evidence-contract fixes (`af7861b`)
 
 - Verification mode: public or unusually load-bearing
 - Description: unchanged, so the complete listing-query results above remain
@@ -281,9 +281,38 @@ cases.
   `Skill` tool reported the exact disposable `.claude` base directory and the
   result quoted the same sentence
 
-The current `SKILL.md` SHA-256 is
+The tested `SKILL.md` SHA-256 was
 `7530e42fe64c306cc86f97c17b223dd1385ce3b9256a94b57b9708c2a93120df`.
-The current trigger-template SHA-256 is
+The tested trigger-template SHA-256 was
 `ba79352f96e35c1d0c3ac2812335ca266887ad1ec11acde4b15b7aa5b03630c7`.
 No proxy result was used to fill a native state, and no native state from a
 superseded package revision was carried forward.
+
+## 2026-07-28 post-review native recheck (`72e2601`)
+
+- Verification mode: public or unusually load-bearing
+- Description: unchanged, so the complete listing-query results above remain
+  the applicable description-bound evidence
+- Structural validation: passed with `skills-ref` 0.1.5
+- Local-source installation: passed for Codex and Claude Code with Skills CLI
+  1.5.20 in disposable workspace
+  `<post-review-portable-skill-disposable-workspace>`
+- Installed-content identity: passed; `diff -qr` found no differences between
+  the six-file source package and either installed project-local copy
+- Codex native discovery, load, and trigger: passed with Codex CLI 0.145.0 and
+  `gpt-5.6-sol` at high reasoning in fresh ephemeral thread
+  `019faa9f-50ab-7193-ae31-176ee7b8998b`; the tool trace read the exact
+  installed `.agents` `SKILL.md`, and the response asked for the verification
+  mode before quoting the first body sentence
+- Claude native discovery, load, and trigger: passed with Claude Code 2.1.220
+  and `claude-opus-5` at high effort in fresh non-persistent session
+  `dfc4bc74-59e9-4c6f-8423-63992e5a79ab`; initialization listed the skill,
+  the native `Skill` tool loaded the exact installed `.claude` base directory,
+  and the response asked for the same decision before quoting the same sentence
+
+The tested `SKILL.md` SHA-256 was
+`1ba4b97ad9e5a9fcbb3d27e4e69070d46683716fdb29d959709ffe90bf99af0f`.
+The tested trigger-template SHA-256 was
+`a486e99101002d5bf531bc62a9008c8e3f7ad9fff548712dd2ab412a6ee3a960`.
+No proxy result was used to fill a native state, and no native evidence from an
+earlier package revision was carried forward.

@@ -700,7 +700,7 @@ for the two separately declared native target cells at the hashes recorded
 above. The safe-mode Opus cell belongs to the matched comparison and was not
 used as native evidence.
 
-| Current working-tree package file (unverified) | SHA-256 |
+| PR-head package file (`72e2601`) | SHA-256 |
 | --- | --- |
 | `SKILL.md` | `1ba4b97ad9e5a9fcbb3d27e4e69070d46683716fdb29d959709ffe90bf99af0f` |
 | `assets/baseline-test-template.md` | `1c6d4439aa5664dd88dfd78d83e890848c6dba48732a3999356ff4298589ccc5` |
@@ -709,14 +709,30 @@ used as native evidence.
 | `references/portability.md` | `83636d76ee143090ec33eff9affea1cd953a9601d441b4ef35e847e232dfeb8d` |
 | `references/review-checklist.md` | `6baf044506a96c614d8cd14515f50942438e38e99b1269e351ec07d157307654` |
 
-Substantive package edits after `af7861b` invalidated the package-harness and
-native model-harness cells for the current working tree. Local-source install,
-installed-content identity, and native discovery, load, and trigger are
-therefore unverified for the current hashes. The description did not change,
-so the existing complete listing-query results remain description-bound; they
-do not validate any of those current-package cells.
+Substantive package edits after `af7861b` invalidated its package-harness and
+native model-harness cells. The current hashes above were therefore rechecked
+from the local source at `72e2601`. Skills CLI 1.5.20 copied the package into
+both project-local destinations under disposable workspace
+`<post-review-portable-skill-disposable-workspace>`. `diff -qr` returned no
+differences for either installed package.
 
-Claim Ceiling: the historical checks support only the `af7861b` package, named
-harness configurations, query, and cases. The current working-tree package
-earns no package-harness or native model-harness conclusion until those cells
-are rerun against its recorded hashes.
+Codex CLI 0.145.0 ran `gpt-5.6-sol` at high reasoning in fresh ephemeral thread
+`019faa9f-50ab-7193-ae31-176ee7b8998b`. Its tool trace read the exact installed
+`.agents/skills/creating-portable-skills/SKILL.md`, and the response asked for
+the verification-mode decision before quoting the first body sentence. Claude
+Code 2.1.220 ran `claude-opus-5` at high effort in fresh
+non-persistent session `dfc4bc74-59e9-4c6f-8423-63992e5a79ab`, with project
+settings and only the native `Skill` tool. Initialization listed the skill, the
+tool launched it from the exact installed `.claude/skills` base directory, and
+the response asked for the same first decision before quoting the same body
+sentence.
+
+For the `72e2601` package, local-source install and installed-content identity
+passed for both package harnesses. Native discovery, load, and trigger passed
+for the declared `gpt-5.6-sol`/Codex and `claude-opus-5`/Claude Code cells. The
+description did not change, so the existing complete listing-query results
+remain the applicable description-bound evidence.
+
+Claim Ceiling: these checks support the `72e2601` package, the named harness
+configurations, and the recorded native query. They do not establish behavior
+for other revisions, models, harnesses, configurations, or tasks.

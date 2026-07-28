@@ -114,10 +114,10 @@ only when it discriminates a separate important behavior.
 
 | Target cell | Discriminating case | Control case | Observed loss | Target conclusion |
 | --- | --- | --- | --- | --- |
-| [target-a] | [result] | [result] | [loss or none observed] | [Retained / NewSkillCandidate / DirectionalCandidate / unverified] |
-| [target-b, if declared] | [result] | [result] | [loss or none observed] | [Retained / NewSkillCandidate / DirectionalCandidate / unverified] |
+| [target-a] | [result] | [result] | [loss or none observed] | [Retained / CorrectionRequired / NewSkillCandidate / DirectionalCandidate / unverified] |
+| [target-b, if declared] | [result] | [result] | [loss or none observed] | [Retained / CorrectionRequired / NewSkillCandidate / DirectionalCandidate / unverified] |
 
-- Candidate state: [revision: Retained / DirectionalCandidate; new skill: NewSkillCandidate]
+- Candidate state: [revision: Retained / DirectionalCandidate; new skill: CorrectionRequired / NewSkillCandidate]
 - Shipment status: [not assessed / UnverifiedCandidate]
 - Earned evidence label: [none / directional comparison]
 - Conclusion: [state only what the predeclared cases showed]
@@ -137,8 +137,12 @@ Decision rules:
 - For a revision, retain the current instruction when an affected target is
   unavailable, a material loss appears, or declared targets materially diverge
   and cannot be reconciled without losing the named invariant.
-- For a new skill, use `NewSkillCandidate`. It identifies a draft with no prior
-  version and implies neither a behavioral claim nor shipment status by itself.
+- For a new skill, use `CorrectionRequired` when any required case is marked
+  `worse` or any material invariant loss is recorded. Do not assign
+  `NewSkillCandidate`; return the skill to correction and rerun the affected
+  required cases before packaging. Otherwise, use `NewSkillCandidate`. It
+  identifies a draft with no prior version and implies neither a behavioral
+  claim nor shipment status by itself.
 - Assign **directional comparison** only when matched cases show the intended
   delta, the control remains materially stable, and every required target cell
   has an available case result with no named invariant loss. A missing or
@@ -163,7 +167,7 @@ inconclusive.
 - Waived by the user: [yes, quote or paraphrase the explicit waiver]
 - Unavailable check and reason: [what could not run and why]
 - Evidence state: [unverified]
-- Candidate state: [revision: Retained unless the required comparison supports the change / new skill: NewSkillCandidate; never DirectionalCandidate from this waiver]
+- Candidate state: [revision: Retained unless the required comparison supports the change / new skill: NewSkillCandidate only when no required case is worse and no material invariant loss is recorded, otherwise CorrectionRequired; never DirectionalCandidate from this waiver]
 - Shipment status: [UnverifiedCandidate]
 - Earned evidence label: [unchanged; do not raise]
 - Date: [YYYY-MM-DD]

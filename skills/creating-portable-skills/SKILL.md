@@ -61,9 +61,9 @@ Completion: the validator passes, or every named fallback check passes with the 
 
 ### 5. Compare behavior
 
-Treat changed instruction semantics, a changed trigger description, or a changed bundled resource as substantive. Copy [assets/baseline-test-template.md](assets/baseline-test-template.md) to the host's test-record location (`tests/<skill-name>/` when no convention exists), preserving earlier dated evidence. Complete it using its case-construction, grading, candidate-decision, evidence-label, Claim Ceiling, and matched-comparison waiver rules. Typo, formatting, and link-only edits are exempt.
+Treat changed instruction semantics, a changed trigger description, or a changed bundled resource as substantive. Before comparing behavior, enumerate every substantive changed instruction or resource group. The baseline template permits one scoped candidate instruction group, so create and complete a separate record for each unrelated group; do not let evidence or a candidate decision for one group stand in for another. Copy [assets/baseline-test-template.md](assets/baseline-test-template.md) to the host's test-record location (`tests/<skill-name>/` when no convention exists), preserving earlier dated evidence. Complete each record using its case-construction, grading, candidate-decision, evidence-label, Claim Ceiling, and matched-comparison waiver rules. Typo, formatting, and link-only edits are exempt.
 
-Completion: the template records every declared target and predeclared case, the evidence it earned, and what remains unverified.
+Completion: every substantive changed group is enumerated and has its own completed record and candidate decision; each record covers every declared target and predeclared case, the evidence it earned, and what remains unverified.
 
 ### 6. Decide and review
 

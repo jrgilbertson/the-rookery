@@ -56,10 +56,14 @@ when an available should-trigger result misses the tier threshold or a
 near-miss activates. Record it as unverified when a required judgment is
 unavailable and no available result has already failed the set.
 
-Routine tier: five should-trigger and five near-miss queries, one run each. On a
-borderline result, run that query twice more and use the majority. Public or
-unusually load-bearing tier: eight to ten queries per table, three runs each; a
-should-trigger needs two of three, and any near-miss activation fails the set.
+Routine tier: five should-trigger and five near-miss queries, one run each. If
+the first judgment is borderline (`unsure` or hedged), run that query twice
+more. An available borderline judgment is neither a `yes` nor a `no` vote: a
+should-trigger passes only with at least two `yes` judgments, while any complete
+three-run result without two matching categorical judgments fails. Any
+near-miss activation still fails the set. Public or unusually load-bearing
+tier: eight to ten queries per table, three runs each; a should-trigger needs
+two of three, and any near-miss activation fails the set.
 
 ### Should-trigger queries
 

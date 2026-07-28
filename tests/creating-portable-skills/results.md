@@ -651,12 +651,12 @@ answer. The candidate decision is `Retained`: keep the explicit safeguards,
 but do not claim overall behavioral improvement, non-regression, causal
 improvement, or behavior outside the recorded cases.
 
-Structural validation passed with `skills-ref` 0.1.5. Skills CLI 1.5.20 found
-the repository's four published skills, selected only
-`creating-portable-skills`, and copied the current local source into both
-project-local destinations under disposable workspace
-`<final-portable-skill-disposable-workspace>`. `diff -qr` returned no differences
-for either installed package.
+The last natively tested package was commit `af7861b`. Structural validation
+passed for that package with `skills-ref` 0.1.5. Skills CLI 1.5.20 found the
+repository's four published skills, selected only `creating-portable-skills`,
+and copied that package into both project-local destinations under disposable
+workspace `<final-portable-skill-disposable-workspace>`. `diff -qr` returned no
+differences for either installed package.
 
 The final unavailable-listing edit reran its affected comparison cells. Fresh
 Sol agents `/root/listing_unavailable_sol_final` and
@@ -669,7 +669,7 @@ control with native states still separated. Independent grader
 `same`, the control materially stable, and no invariant loss. This did not
 raise the evidence label or candidate decision.
 
-| Final package file | SHA-256 |
+| Last natively tested package file (`af7861b`) | SHA-256 |
 | --- | --- |
 | `SKILL.md` | `7530e42fe64c306cc86f97c17b223dd1385ce3b9256a94b57b9708c2a93120df` |
 | `assets/baseline-test-template.md` | `34865482c1c6bf4b7c05b5ddbb3af8b3dd11e57c8244d011d29ff0b7e4877270` |
@@ -679,8 +679,8 @@ raise the evidence label or candidate decision.
 | `references/review-checklist.md` | `25fd4b36af18a891d03b3b1fa90ec907a94a114a630cb41a5e844b050a73d231` |
 
 Same-name user copies existed in both `~/.agents/skills` and
-`~/.claude/skills`, each with a different `SKILL.md` hash. The final native
-checks therefore required exact loaded-copy attribution:
+`~/.claude/skills`, each with a different `SKILL.md` hash. Those historical
+native checks therefore required exact loaded-copy attribution:
 
 - Codex ran `gpt-5.6-sol` at high reasoning in fresh thread
   `019faa6c-4a59-7b01-a832-a44492b3b130`. The implicit creation request
@@ -694,10 +694,29 @@ checks therefore required exact loaded-copy attribution:
   `<final-portable-skill-disposable-workspace>/.claude/skills/creating-portable-skills/SKILL.md`
   before quoting the same sentence.
 
-Local-source install and installed-content identity passed for both package
-harnesses. Native discovery, load, and trigger passed for the two separately
-declared native target cells at the recorded hashes. The safe-mode Opus cell
-belongs to the matched comparison and was not used as native evidence. The
-description did not change, so the existing complete listing-query results
-remain the description-bound evidence and were not rerun. These checks support
-only the named package revisions, harness configurations, query, and cases.
+For the `af7861b` package, local-source install and installed-content identity
+passed for both package harnesses. Native discovery, load, and trigger passed
+for the two separately declared native target cells at the hashes recorded
+above. The safe-mode Opus cell belongs to the matched comparison and was not
+used as native evidence.
+
+| Current working-tree package file (unverified) | SHA-256 |
+| --- | --- |
+| `SKILL.md` | `1ba4b97ad9e5a9fcbb3d27e4e69070d46683716fdb29d959709ffe90bf99af0f` |
+| `assets/baseline-test-template.md` | `1c6d4439aa5664dd88dfd78d83e890848c6dba48732a3999356ff4298589ccc5` |
+| `assets/skill-template.md` | `e5cbfe744d93ba1c92c9a2a4dd97dbde00f51032ffe0563b95433683788f8458` |
+| `assets/trigger-queries-template.md` | `a486e99101002d5bf531bc62a9008c8e3f7ad9fff548712dd2ab412a6ee3a960` |
+| `references/portability.md` | `83636d76ee143090ec33eff9affea1cd953a9601d441b4ef35e847e232dfeb8d` |
+| `references/review-checklist.md` | `6baf044506a96c614d8cd14515f50942438e38e99b1269e351ec07d157307654` |
+
+Substantive package edits after `af7861b` invalidated the package-harness and
+native model-harness cells for the current working tree. Local-source install,
+installed-content identity, and native discovery, load, and trigger are
+therefore unverified for the current hashes. The description did not change,
+so the existing complete listing-query results remain description-bound; they
+do not validate any of those current-package cells.
+
+Claim Ceiling: the historical checks support only the `af7861b` package, named
+harness configurations, query, and cases. The current working-tree package
+earns no package-harness or native model-harness conclusion until those cells
+are rerun against its recorded hashes.

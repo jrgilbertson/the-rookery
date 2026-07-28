@@ -97,10 +97,12 @@ separate for `opus-5` and `sol-5.6`.
 
 ### TR-P2: Waiver
 
-- Input: the user explicitly waives the unavailable native check for shipment.
+- Input: the user explicitly waives an unavailable required listing judgment
+  or unavailable required native check for shipment.
 - Expected transition: shipment may proceed only as an unverified candidate.
-  The waiver changes no evidence state, raises no label, and cannot support an
-  unrelated instruction removal.
+  The unavailable evidence remains unverified, failed evidence cannot be
+  waived, and the waiver raises neither the evidence label nor Claim Ceiling.
+  It cannot support an unrelated instruction removal.
 
 ### TR-P3: Three-target split
 
@@ -150,13 +152,19 @@ Actual targets:
 | Set up an MCP server for our internal API | no / no / no | no / no / no | passed |
 | Create a GitHub Action that lints markdown | no / no / no | no / no / no | passed |
 | What skills should I install for web development? | no / no / no | no / no / no | passed |
-| Summarize what this skill does | no / no / no | unsure / unsure / no | passed; no activation, with two borderline judgments recorded |
+| Summarize what this skill does | no / no / no | unsure / unsure / no | Sol passed; Opus failed under the current public-tier rule because it received only one categorical `no` |
 | Write documentation for our API endpoints | no / no / no | no / no / no | passed |
 
 Every should-trigger received three of three `yes` judgments in both targets.
-No near-miss received a `yes`. The listing proxy is **passed** for both target
-cells; native discovery, loading, and triggering remain separate states in
+No near-miss received a `yes`, but the Opus `Summarize what this skill does`
+result received only one categorical `no`. Under the current public-tier rule,
+the historical listing proxy is **passed** for Sol and **failed** for Opus.
+Native discovery, loading, and triggering remain separate states in
 `results.md`.
+
+The final evidence states below rely on the later 2026-07-28 full rerun, not
+this historical Opus result. That rerun recorded three categorical `no`
+judgments for every near-miss in both targets.
 
 ### Final evidence states
 
@@ -228,8 +236,9 @@ The full set was then rerun from the beginning.
 
 Every Sol should-trigger query received three `yes` judgments. Nine Opus
 should-trigger queries received three; the `SKILL.md` structure audit received
-two of three and passed the declared majority threshold. No near-miss received
-a `yes`. The final listing proxy passed in both targets.
+two of three and passed the declared majority threshold. Every near-miss
+received three categorical `no` judgments in both targets. The final listing
+proxy passed in both targets.
 Later body and resource edits did not change the listing text, so these
 description-bound judgments still apply to the final package hash above.
 
@@ -274,12 +283,13 @@ cases.
   `~/.claude/skills` with a different `SKILL.md` hash
 - Codex native discovery, load, and trigger: passed in fresh
   `gpt-5.6-sol` thread `019faa6c-4a59-7b01-a832-a44492b3b130`; the trace read
-  the exact disposable `.agents` path and quoted the distinctive first body
-  sentence
+  the exact disposable `.agents` path, providing deterministic load
+  provenance; the distinctive first body sentence only corroborated it
 - Claude native discovery, load, and trigger: passed in fresh
   `claude-opus-5` session `6e03ff90-7bfe-48fe-afd3-587b9154a1bb`; the native
-  `Skill` tool reported the exact disposable `.claude` base directory and the
-  result quoted the same sentence
+  `Skill` tool reported the exact disposable `.claude` base directory,
+  providing deterministic load provenance; the same sentence only corroborated
+  it
 
 The tested `SKILL.md` SHA-256 was
 `7530e42fe64c306cc86f97c17b223dd1385ce3b9256a94b57b9708c2a93120df`.
@@ -302,13 +312,15 @@ superseded package revision was carried forward.
 - Codex native discovery, load, and trigger: passed with Codex CLI 0.145.0 and
   `gpt-5.6-sol` at high reasoning in fresh ephemeral thread
   `019faaa7-f98c-7633-9457-7f4a1e3b28d0`; the tool trace read the exact
-  installed `.agents` `SKILL.md`, and the response asked for the verification
-  mode before quoting the first body sentence
+  installed `.agents` `SKILL.md`, providing deterministic load provenance; the
+  response asked for the verification mode, and its first-body-sentence quote
+  only corroborated that provenance
 - Claude native discovery, load, and trigger: passed with Claude Code 2.1.220
   and `claude-opus-5` at high effort in fresh non-persistent session
   `5b144a80-c9fe-43ac-89ee-392ad3716d1c`; initialization listed the skill,
   the native `Skill` tool loaded the exact installed `.claude` base directory,
-  and the response asked for the same decision before quoting the same sentence
+  providing deterministic load provenance; the response asked for the same
+  decision, and its sentence quote only corroborated that provenance
 
 The tested `SKILL.md` SHA-256 was
 `1ba4b97ad9e5a9fcbb3d27e4e69070d46683716fdb29d959709ffe90bf99af0f`.
@@ -316,3 +328,18 @@ The tested trigger-template SHA-256 was
 `a486e99101002d5bf531bc62a9008c8e3f7ad9fff548712dd2ab412a6ee3a960`.
 No proxy result was used to fill a native state, and no native evidence from an
 earlier package revision was carried forward.
+
+## 2026-07-28 current review-fix state
+
+The description is unchanged, and the later full listing rerun still passes
+the current public-tier threshold: every near-miss received three categorical
+`no` judgments. The historical `unsure` / `unsure` / `no` Opus result is
+failed under the current rule and is not used for the final listing state.
+
+Substantive edits changed the baseline template, trigger template, and
+portability reference after the `c9eb5e1` native recheck. For the current
+package, local-source installation, installed-content identity, native
+discovery, native load, and native trigger are **unverified** until rerun. This
+pass did not attempt a native check; missing deterministic load provenance is
+unverified rather than failed. The current trigger-template SHA-256 is
+`c06b1dbea5a2b7f4814e6cd8c8eac814a3471f3c0607e6617d8c76cb85669375`.

@@ -134,9 +134,13 @@ Decision rules:
   evidence that the instruction is unnecessary. Retain the current instruction.
   An unchanged or materially stable control is expected and does not force
   retention by itself.
-- For a revision, retain the current instruction when an affected target is
-  unavailable, a material loss appears, or declared targets materially diverge
-  and cannot be reconciled without losing the named invariant.
+- For a revision, retain the current instruction when any required case is
+  marked `worse`, an affected target is unavailable, a material loss appears,
+  or declared targets materially diverge and cannot be reconciled without
+  losing the named invariant. A required `worse` result also returns the
+  candidate to correction and requires rerunning the affected required cases.
+  Do not treat `worse` by itself as a material invariant loss; record any such
+  loss separately.
 - For a new skill, use `CorrectionRequired` when any required discriminating
   case is marked `same`, any required case is marked `worse`, or any material
   invariant loss is recorded. Do not assign

@@ -129,7 +129,7 @@ Pending or unverified states here are superseded by the current sections below.
 | Strong-claim probe | passed | Both finals refused causal and non-regression labels for a small matched comparison and named the missing rigor without requiring another skill |
 | Opus full fixture flow | completed; candidate retained | Audit, pre-edit approval boundary, scoped disposable revision, validation, matched application comparison, affected listing-proxy checks, and local-source packaging ran; application result was `same`, so the candidate removals remained unsupported and the safe-publication sequence remained intact |
 | Sol focused fixture audit | passed as focused coverage | Prior and final both stopped for approval and preserved the fragile sequence; the final used explicit System-Owned Invariant classification, but prose-level differences alone were not treated as improvement evidence |
-| Listing proxy | passed in both target cells | Full tables in `trigger-queries.md`; 10/10 should-trigger at 3/3 `yes` in each target and zero near-miss `yes`; Opus recorded two `unsure` judgments on one near-miss |
+| Listing proxy | Sol passed; Opus failed under the current public-tier rule | Full historical tables in `trigger-queries.md`; 10/10 should-trigger passed in each target, but the Opus `unsure` / `unsure` / `no` near-miss result had only one categorical `no`. The later 2026-07-28 full rerun separately supports the final description-bound pass |
 
 ### Decision excerpts
 
@@ -207,7 +207,7 @@ also matched the source.
 | Native load | passed; tool trace read `<disposable-project>/.agents/skills/creating-portable-skills/SKILL.md` | passed; native `Skill` tool returned `Launching skill: creating-portable-skills` and a base directory under the disposable project's `.claude/skills` |
 | Native trigger | passed on “turn this repeated Agent Skill review prompt into a reusable skill” | passed on the same representative implicit query |
 
-Both native runs returned the exact first body sentence:
+Both native runs also returned the exact first body sentence as corroboration:
 `Create or revise a skill from its intent, hard constraints, authority
 boundaries, success criteria, and output contract.` Codex ran as
 `gpt-5.6-sol` at high reasoning in read-only mode. Claude Code ran as
@@ -304,9 +304,9 @@ All six installed files exactly matched the current source:
 | Installed-content identity | passed; all six files matched | passed; all six files matched |
 | Native discovery | passed; the query triggered `creating-portable-skills` | passed; initialization listed the skill and slash command |
 | Native load | passed; the tool trace read the exact installed `.agents` `SKILL.md` | passed; direct `Skill` call reported `Launching skill: creating-portable-skills` from the exact installed `.claude` base directory |
-| Native trigger | passed; the final included the exact first body sentence | passed; the final included the exact first body sentence |
+| Native trigger | passed; the implicit query selected the native skill | passed; the implicit query invoked the native `Skill` tool |
 
-The exact sentence observed in both finals was:
+As separate behavioral corroboration, both finals included this exact sentence:
 `Create or revise a skill from its intent, hard constraints, authority
 boundaries, success criteria, and output contract.`
 
@@ -354,7 +354,7 @@ structural template evidence only; it does not upgrade any behavioral claim.
 | Directional behavioral comparison | passed for the unsafe `same` → delete policy transition only |
 | FR-P4 new-skill state policy | passed in both target cells within the predeclared policy-probe scope |
 | Full fixture flow | completed in both target cells; cross-target candidate Retained because Opus was `same` while Sol showed the intended delta |
-| Listing proxy | passed in both target cells |
+| Listing proxy | passed in both target cells on the later 2026-07-28 full rerun; every near-miss received three categorical `no` judgments |
 | Prior-source U4 install, identity, and native checks | passed at source revision `61bd492`; superseded for final-package verification |
 | Final-source U4 install, identity, and native checks | passed at `feb9a0e` in both recorded target harnesses; all six installed files matched the source |
 
@@ -637,7 +637,7 @@ executors evaluated both variants, then the separate fresh-context grader
 | Change | Result in both targets | Independent grade |
 | --- | --- | --- |
 | Routine listing pass rule | Both variants rejected an activating near-miss; the revised rule made the target-level failure direct. | Same final answer; clearer operational rule. |
-| Exact loaded-copy proof | Both variants kept unattributed native evidence unverified; the revision defined sufficient proof and rejected install identity alone. | Same final answer; explicit attribution boundary. |
+| Loaded-copy provenance (historical rule) | Both variants kept unattributed native load unverified; the tested revision accepted path, hash, or distinctive-body evidence after collision inventory and rejected install identity alone. | Same final answer under the then-current rule; the stricter deterministic-provenance change below was not part of this run. |
 | Revision-bound native evidence | Both variants treated earlier native evidence as inapplicable to the edited package; the revision made invalidation and rerun explicit. | Same final answer; direct invalidation rule. |
 | Unavailable required target | Both variants withheld an overall directional conclusion; the revision closed the literal no-observed-loss loophole. | Same final answer; unavailable cells cannot qualify. |
 | Unavailable listing judgment | Both variants returned `unverified`; the final rule made the three-state transition direct instead of inferential. | Same final answer; clearer operational rule. |
@@ -686,13 +686,15 @@ native checks therefore required exact loaded-copy attribution:
   `019faa6c-4a59-7b01-a832-a44492b3b130`. The implicit creation request
   selected the skill and read
   `<final-portable-skill-disposable-workspace>/.agents/skills/creating-portable-skills/SKILL.md`,
-  then quoted its distinctive first body sentence.
+  providing deterministic exact-path load provenance; its distinctive first
+  body sentence only corroborated that provenance.
 - Claude Code 2.1.220 ran `claude-opus-5` at high effort in fresh session
   `6e03ff90-7bfe-48fe-afd3-587b9154a1bb`, with project settings and only the
   native `Skill` tool available. Initialization listed the project skill, the
   tool launched it, and the result identified
   `<final-portable-skill-disposable-workspace>/.claude/skills/creating-portable-skills/SKILL.md`
-  before quoting the same sentence.
+  as deterministic exact-path load provenance. The same sentence only
+  corroborated that provenance.
 
 For the `af7861b` package, local-source install and installed-content identity
 passed for both package harnesses. Native discovery, load, and trigger passed
@@ -718,14 +720,15 @@ differences for either installed package.
 
 Codex CLI 0.145.0 ran `gpt-5.6-sol` at high reasoning in fresh ephemeral thread
 `019faaa7-f98c-7633-9457-7f4a1e3b28d0`. Its tool trace read the exact installed
-`.agents/skills/creating-portable-skills/SKILL.md`, and the response asked for
-the verification-mode decision before quoting the first body sentence. Claude
-Code 2.1.220 ran `claude-opus-5` at high effort in fresh
+`.agents/skills/creating-portable-skills/SKILL.md`, providing deterministic
+exact-path load provenance. The response asked for the verification-mode
+decision; its first-body-sentence quote only corroborated that provenance.
+Claude Code 2.1.220 ran `claude-opus-5` at high effort in fresh
 non-persistent session `5b144a80-c9fe-43ac-89ee-392ad3716d1c`, with project
 settings and only the native `Skill` tool. Initialization listed the skill, the
-tool launched it from the exact installed `.claude/skills` base directory, and
-the response asked for the same first decision before quoting the same body
-sentence.
+tool launched it from the exact installed `.claude/skills` base directory,
+providing deterministic load provenance. The response asked for the same first
+decision; its body-sentence quote only corroborated that provenance.
 
 For the `c9eb5e1` package, local-source install and installed-content identity
 passed for both package harnesses. Native discovery, load, and trigger passed
@@ -736,3 +739,31 @@ remain the applicable description-bound evidence.
 Claim Ceiling: these checks support the `c9eb5e1` package, the named harness
 configurations, and the recorded native query. They do not establish behavior
 for other revisions, models, harnesses, configurations, or tasks.
+
+## 2026-07-28 current review-fix state
+
+Review feedback changed three package resources after the `c9eb5e1` native
+recheck. The current resource hashes are:
+
+| Current package file | SHA-256 |
+| --- | --- |
+| `SKILL.md` | `1ba4b97ad9e5a9fcbb3d27e4e69070d46683716fdb29d959709ffe90bf99af0f` |
+| `assets/baseline-test-template.md` | `1d6a33ed6686aadced84e920378f64e9a852fbaffda6c7bfabc57c03ea13c21f` |
+| `assets/skill-template.md` | `e5cbfe744d93ba1c92c9a2a4dd97dbde00f51032ffe0563b95433683788f8458` |
+| `assets/trigger-queries-template.md` | `c06b1dbea5a2b7f4814e6cd8c8eac814a3471f3c0607e6617d8c76cb85669375` |
+| `references/portability.md` | `28a862532a0ab0db75a8d0d47525bbd25ec47fe54f303fbd2726ab597157e84d` |
+| `references/review-checklist.md` | `6baf044506a96c614d8cd14515f50942438e38e99b1269e351ec07d157307654` |
+
+The description did not change. The final listing-query observations remain
+applicable and pass the current public-tier rule because every near-miss in the
+later full rerun received three categorical `no` judgments.
+
+The resource edits invalidate the `c9eb5e1` package-harness and native
+model-harness states for the current package. Local-source installation,
+installed-content identity, native discovery, native load, and native trigger
+are therefore **unverified** until the current package reruns. No native check
+was attempted in this review pass; unavailable deterministic load provenance
+is unverified, not failed. The changed evidence-contract wording also has no
+new frontier matched comparison in this pass, so its behavioral effectiveness
+remains unverified. Historical pass states above remain scoped to their exact
+recorded package revisions and traces.

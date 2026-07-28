@@ -56,9 +56,14 @@ Use the host repository's documented path first. These are common project and us
 
 A harness may discover the same skill name in several locations with
 version-specific precedence. Before recording native load or trigger evidence,
-inventory every applicable location and prove which installed copy loaded.
-Discovery of the name and source-to-install identity do not establish that by
-themselves.
+inventory every applicable location. A native load pass requires deterministic
+runtime provenance tied to the installed source: a native trace naming the
+exact installed path or base directory, or equivalent runtime evidence linked
+to the installed content hash. Distinctive output may corroborate that
+provenance, but cannot independently prove which copy loaded. If deterministic
+runtime provenance is unavailable, keep native load unverified rather than
+failed. Record source-to-install identity, native discovery, native load,
+native trigger, and behavioral evidence separately.
 
 | Harness | Project-level | User-level | Source |
 | --- | --- | --- | --- |

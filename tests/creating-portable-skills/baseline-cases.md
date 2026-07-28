@@ -438,9 +438,9 @@ Declared evidence target cells:
 ### PR-D1: Evidence-state integrity
 
 - Role: discriminating.
-- Candidate instruction group: target-level listing pass rules, exact
-  loaded-copy proof, revision-bound native-state invalidation, and unavailable
-  target handling.
+- Candidate instruction group: target-level listing pass rules, deterministic
+  loaded-copy provenance, revision-bound native-state invalidation, and
+  unavailable target handling.
 - Prompt cases:
   1. A routine listing run has five passing should-trigger rows and one
      activating near-miss, but its summary says `passed`.
@@ -454,14 +454,17 @@ Declared evidence target cells:
   5. A required listing judgment is unavailable and no available result has
      failed the set.
 - Expected revised behavior: mark the listing proxy failed; keep native load
-  and trigger unverified without exact loaded-copy proof; invalidate native
-  states bound to the superseded revision; assign no directional label while a
-  required target is unavailable; and keep an unavailable listing set
+  unverified without deterministic runtime provenance tied to the installed
+  source, while recording any native-trigger observation separately; invalidate
+  native states bound to the superseded revision; assign no directional label
+  while a required target is unavailable; and keep an unavailable listing set
   unverified rather than treating missing evidence as failure.
 - Hard constraints: preserve separate evidence states, do not average targets,
   do not raise a claim from a waiver, and do not require a particular native
-  trace mechanism when path, hash, or distinctive body evidence proves the
-  loaded copy.
+  trace mechanism when an exact installed path or base directory, or equivalent
+  hash-linked runtime evidence, supplies deterministic loaded-copy provenance.
+  Distinctive output may only corroborate that provenance. If deterministic
+  provenance is unavailable, native load remains unverified rather than failed.
 
 ### PR-C1: Fully evidenced control
 
@@ -529,7 +532,7 @@ PR-D1.5, and PR-C1 cells reran against the final hash in fresh Sol agents
 | Case | Sol result | Opus result | Independent conclusion |
 | --- | --- | --- | --- |
 | PR-D1.1 listing near-miss | Prior rejected the pass by inference; revised applied an explicit target-level failure rule. | Same final state and explicitness change. | Same final answer; operational certainty improved. |
-| PR-D1.2 same-name collision | Prior left load and trigger unverified but did not define sufficient proof; revised required inventory plus path, hash, or distinctive-body proof. | Same final state and proof change. | Same final answer; attribution requirements became explicit. |
+| PR-D1.2 same-name collision | Prior left load and trigger unverified but did not define sufficient proof; the tested revision required inventory plus path, hash, or distinctive-body proof. | Same final state and proof change under the then-current rule. | Same final answer; attribution requirements became explicit, but the stricter deterministic-provenance rule below was not part of this run. |
 | PR-D1.3 later substantive edit | Prior scoped old evidence to the old revision by inference; revised directly invalidated revision-bound native evidence until rerun. | Same final state and invalidation change. | Same final answer; invalidation became direct. |
 | PR-D1.4 unavailable required target | Prior withheld the label through retention and waiver rules despite a literal loophole; revised required an available result in every required target cell. | Same final state and eligibility change. | Same final answer; the vacuous eligibility loophole closed. |
 | PR-D1.5 unavailable listing judgment | Prior inferred `unverified` from the three-state and no-averaging rules; final applied the direct `unverified` clause. | Same final state and explicitness change. | Same final answer; operational certainty improved. |
@@ -546,3 +549,20 @@ same final answers. The candidate decision is
 non-regression, causal improvement, or behavior outside these cases. The runs
 were qualitative reasoning checks, not repeated-run statistics; native
 installation, loading, and triggering were checked separately.
+
+### 2026-07-28 review-feedback contract changes
+
+The current PR-D1.2 expectation supersedes the tested revision's allowance for
+distinctive body text as standalone loaded-copy proof. The stricter contract
+requires deterministic runtime provenance tied to the installed source and
+uses distinctive output only as corroboration. This pass did not rerun the
+frontier matched comparison, so behavioral effectiveness of that wording is
+unverified; the historical result above remains scoped to its recorded hashes.
+
+The same review pass also changed three independent template rules: required
+`worse` revision cases now retain and return to correction, shipment waivers
+cover unavailable required listing judgments, and public-tier near-misses need
+two categorical `no` judgments. The public-tier change was mechanically
+rescored from the recorded judgments in `trigger-queries.md`; no new model run
+was claimed. The other two contract changes have no new matched comparison in
+this record.

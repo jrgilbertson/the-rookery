@@ -51,10 +51,11 @@ for example `[yes; run-01]`. A bare judgment does not prove a fresh context.
 
 For each target, its listing proxy passes only when every required query has an
 available judgment, every should-trigger query passes under the selected tier,
-and no near-miss query receives an activating judgment. Record it as failed
-when an available should-trigger result misses the tier threshold or a
-near-miss activates. Record it as unverified when a required judgment is
-unavailable and no available result has already failed the set.
+and every near-miss query passes the selected tier's categorical-`no`
+threshold. Record it as failed when an available should-trigger result misses
+the tier threshold, a near-miss activates, or a completed near-miss result
+misses its categorical-`no` threshold. Record it as unverified when a required
+judgment is unavailable and no available result has already failed the set.
 
 Routine tier: five should-trigger and five near-miss queries, one run each. If
 the first judgment is borderline (`unsure` or hedged), run that query twice
@@ -63,7 +64,9 @@ should-trigger passes only with at least two `yes` judgments, while any complete
 three-run result without two matching categorical judgments fails. Any
 near-miss activation still fails the set. Public or unusually load-bearing
 tier: eight to ten queries per table, three runs each; a should-trigger needs
-two of three, and any near-miss activation fails the set.
+two of three. Every near-miss needs at least two categorical `no` judgments;
+any `yes` is an immediate failure, and a complete three-run result without two
+categorical `no` judgments fails.
 
 ### Should-trigger queries
 
@@ -114,11 +117,17 @@ using it as evidence.
 Native load and native trigger remain attributable to each exact model-harness
 target, even when discovery or installation evidence is shared.
 
-Before either native state can pass, inventory the applicable project, user,
-and system locations for the same skill name. Isolate non-authoritative copies
-or capture proof of the exact copy that loaded, such as a native trace naming
-the installed path, the installed hash, or distinctive text from the tested
-body. Installed-content identity alone does not prove loaded-copy identity.
+Before native load can pass, inventory the applicable project, user, and
+system locations for the same skill name. Isolate non-authoritative copies or
+capture deterministic runtime provenance tied to the installed source: a
+native load trace naming the exact installed path or base directory, or
+equivalent runtime evidence linked to the installed content hash. Distinctive
+output may corroborate that provenance, but cannot independently prove
+loaded-copy identity. Installed-content identity alone also does not prove
+which copy loaded. If deterministic runtime provenance is unavailable, keep
+native load unverified rather than failed and record the limitation. Keep
+installation identity, native discovery, native load, native trigger, and
+behavioral evidence as separate states.
 
 | Target cell | Date | Exact model | Harness and version | Configuration | Native load state | Native trigger state | Evidence or limitation |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -154,13 +163,14 @@ the skill, not by summarizing the workflow. After any description edit, rerun
 the complete query set because the edit can activate a near-miss, and rerun the
 affected behavioral comparison because a description change is substantive.
 
-## Waiver (only when shipping with an unavailable native check)
+## Shipment waiver (only for an unavailable required listing judgment or native check)
 
-A waiver changes shipment authority only. It does not change a failed or
-unverified state, turn listing evidence into native evidence, raise the evidence
-label, or authorize an unsupported instruction removal.
+A waiver changes shipment authority only. It leaves unavailable evidence
+unverified; failed evidence cannot be waived. It does not turn listing evidence
+into native evidence, raise the evidence label or Claim Ceiling, or authorize
+an unsupported instruction removal.
 
 - Waived by the user: [yes, quote or paraphrase the explicit waiver]
-- Unavailable check and reason: [check, target cell, and reason]
+- Unavailable required judgment/check and reason: [listing judgment or native check, target cell, and reason]
 - Shipment status: [unverified candidate]
 - Date: [YYYY-MM-DD]

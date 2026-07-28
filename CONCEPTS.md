@@ -44,11 +44,17 @@ Loaded Skill Identity proves that the declared skill package supplied the
 instructions observed in a model-harness run. A matching name is not enough
 because project, user, shared, and system copies may collide.
 
-Fresh context does not establish Loaded Skill Identity. A native run needs
-source-to-install identity and observable load evidence. A bounded policy probe
-may embed the exact authoritative policy, but that does not prove native
-discovery or loading. Exclude any run that cannot establish the intended
-identity.
+Fresh context does not establish Loaded Skill Identity. A native load pass
+needs deterministic runtime provenance tied to the installed source: a native
+trace naming the exact installed path or base directory, or equivalent runtime
+evidence linked to the installed content hash. Distinctive output may
+corroborate that provenance, but cannot independently prove which copy loaded.
+If deterministic runtime provenance is unavailable, keep native load unverified
+rather than failed. A bounded policy probe may embed the exact authoritative
+policy, but that does not prove native discovery or loading. Keep
+source-to-install identity, native discovery, native load, native trigger, and
+behavioral evidence separate, and exclude identity-dependent claims from runs
+that cannot establish the intended loaded copy.
 
 ### Independent Review Context
 

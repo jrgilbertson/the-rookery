@@ -224,3 +224,19 @@ U1 → U2 → U3 → U4 → U5, strictly linear. The handoff chain makes section
 - `CHANGELOG.md` records the walkthroughs landing under Unreleased.
 - The Longform style holds the approved page as an example with analysis rerun.
 - No abandoned drafts or commented-out prose remain in the changed files.
+
+---
+
+## What changed after planning
+
+This plan is a record of how the work was decided, not a live contract. The page departed from it in five places while it was being written and reviewed. Each departure is recorded here with the reason, so the plan and the shipped page can be read together.
+
+**The TL;DR table came out (R1, and the first Definition of Done item).** The table went in and then came back out during drafting. The page now opens with a mermaid flowchart of the seven jobs and the loop that closes them, and the README carries seven bullets that deep-link into each section. Those two together do the skimmable-index job the table was there for, without a third place to update whenever a workflow changes.
+
+**The four-beat section anatomy loosened (R5).** Sections carry a goal, the reasoning, the tools in the order they are used, and the conditions for moving on. Where a handoff matters it reads as prose inside those beats rather than as labelled open and close lines. The loop is stated in the flowchart and in Learn's closing bullets instead of being repeated at both ends of all seven sections.
+
+**The README grew past its stated scope (R12).** R12 held the README to re-linking the seven anchors. It also gained the introduction, the rookery framing, and the guiding principles. Separately, the rebase onto `main` brought the skills catalog, the other-projects section, and the license section, which arrived through the merge base rather than through this work.
+
+**The per-section length band was not held (KTD3).** Build runs about 970 words, Maintain about 580, and Ship about 440, against a 200 to 400 target. The full page stays inside the ten-minute ceiling. Build is the first field-page candidate if this file is split, since it holds the material most likely to go stale: model rankings, orchestration patterns, and harness names.
+
+**The Longform style sync did not happen (R13, and the sixth Definition of Done item).** The Spiral CLI was uninstalled partway through the effort and the owner set the tool aside. The plan's own degradation path covers this: defer the sample sync, and neither the polish pass nor the sync blocks section content.

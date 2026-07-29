@@ -40,9 +40,9 @@ looked" surface. GitHub Releases mirror its entries.
   uses separate fresh-context agents for reviews and grading, inspects artifacts
   and execution traces directly, and tests activation with more realistic
   queries.
-- `creating-portable-skills` now asks users to choose either ordinary personal
-  skill verification or public or unusually load-bearing skill verification
-  before change-producing work. It also ends read-only audits after delivering
+- `creating-portable-skills` now asks users to choose between ordinary personal
+  verification and the stricter verification for public or unusually
+  load-bearing skills before change-producing work. It also ends read-only audits after delivering
   the review, keeps trigger descriptions positive, defines the Claim Ceiling,
   and centralizes trigger scoring and evidence states in one record.
 - `personal-chief-of-staff` can now include relationship check-ins and timely
@@ -52,6 +52,14 @@ looked" surface. GitHub Releases mirror its entries.
   context, capture personal follow-ups, and surface relevant connections. Each
   meeting still produces one review bundle, and every approved action goes to
   one canonical destination.
+- WORKFLOWS.md grew from an index into a full playbook. All seven walkthroughs
+  are written from the workflow as it actually runs, connected by handoffs from
+  Research through Learn, with a Foundations section, the model-selection
+  objective functions, the orchestration table, and the durability ladder. The
+  README's workflow bullets deep-link into each section.
+- The README gained the guiding principles and the rookery framing, and
+  `skills/README.md` now points at the README's list instead of repeating it,
+  so the published catalog has one source of truth.
 
 ## [0.1.0] - 2026-07-10
 

@@ -1,47 +1,89 @@
 # Review Checklist
 
-The built-in rubric for step 0 (audit) and step 7 (review). Work every item top to bottom. Each item states a pass criterion; an item that fails becomes a fix-list entry naming what is wrong, why it matters, and the risk of fixing it. The review is done when every item passes or carries a recorded, deliberate exception.
+Use this rubric for an existing-skill audit, a final review, and every proposed instruction relaxation. A separate fresh-context agent that did not author the candidate performs the review. Give it the intended outcome, hard constraints, skill package, evidence record, actual artifacts, and relevant traces without the author's conclusions. Work top to bottom. A failure becomes a fix-list item that names the problem, impact, and change risk. Review is complete when every item passes or has a recorded, user-approved exception where this checklist permits one.
+
+## System-Owned Invariants
+
+A **System-Owned Invariant** is a hard constraint that must remain explicit because the surrounding system or the user, rather than model judgment, owns it. The complete categories are:
+
+- Canonical package structure and installability requirements.
+- User authority boundaries, required approvals, and irreversible-action limits.
+- Applicable safety, security, privacy/confidentiality, legal/compliance, and domain-safety boundaries.
+- Exact output formats, schemas, protocols, templates, and resource contracts.
+- Deterministic validation and mechanical checks.
+- Genuinely fragile ordered operations where reordering can change safety or correctness.
+
+An instruction is not a System-Owned Invariant merely because it uses words such as "must" or "always." Generic reminders about thinking, checking, or narrating work are candidate choreography when the intended outcome and its deterministic check are already explicit.
+
+Before changing one candidate instruction group, use the hard constraint,
+required outcome, target cells, and cases declared in the completed baseline
+record. Use these qualifiers consistently:
+
+- **Material** means capable of changing a required outcome, trigger boundary, user authority, exact output format, deterministic check, package installability, or fragile sequence.
+- An **invariant loss** is an observed violation of the named required outcome or hard constraint. Different wording, reasoning style, or implementation approach is not a loss by itself.
+- **Material divergence** means declared targets differ on the candidate decision or a named invariant, not merely in presentation.
+- **Available evidence** comes from the declared target and configuration, in a fresh context, with the intended variant confirmed loaded. A substitute, contaminated context, or listing judgment does not qualify.
+
+The completed baseline record owns routine case construction, candidate
+decisions, evidence labels, matched-comparison waivers, and Claim Ceiling
+recording. Apply its
+Decision rules rather than restating them here.
+
+Pass: every prescriptive instruction protects a named invariant, responds to observed evidence, or covers a named fragile operation; every relaxation satisfies the completed baseline record's rules and Claim Ceiling.
 
 ## Invocation and triggering
 
-- The description says when to use the skill, not how it works. Pass: no step from the body is restated in the description; removing the body would leave an agent knowing when to fire the skill but not the process.
+- The description says when to use the skill, not how it works. Pass: no body step is restated in the description; without the body, an agent would know when to activate but not the process.
 - Triggering conditions lead. Pass: the first clause is a "Use when..." trigger, not an identity statement or feature list.
-- Trigger keywords are front-loaded. Pass: the words a user would actually type appear in the first sentence, since some harnesses truncate long descriptions.
-- Near-misses are named. Pass: the description or a "do not use for" clause excludes at least the closest adjacent task the skill should not handle.
-- Each trigger is a distinct branch. Pass: no two trigger phrases are synonyms for the same case; collapsing any pair would lose a real branch.
-- The invocation choice is deliberate. Pass: the skill is model-invoked because the agent (or another skill) must reach it on its own. A skill only ever fired by hand drops agent invocation where the host harness offers an invocation-control field (a vendor extension, kept in the harness adapter or under `metadata`); where none exists, its description says it is run by hand, which is the portable fallback.
+- Trigger keywords are front-loaded. Pass: words a user would type appear early enough to survive listing truncation.
+- The trigger boundary is positive. Pass: the description names the work the skill owns; adjacent jobs live in near-miss queries unless a positive destination is needed to resolve harmful ambiguity.
+- Each trigger is a distinct branch. Pass: no two trigger phrases are synonyms whose collapse would preserve the same cases.
+- Runtime routing is co-located. Pass: a body routing section appears only when invocation leads to distinct execution branches, and it sits with those branch instructions instead of restating the description.
+- Invocation policy is deliberate. Pass: portable description text is sufficient for model invocation; any harness-specific invocation control stays optional metadata outside the canonical behavior contract.
+- Trigger testing has one owner. Pass: the completed trigger record supplies query construction, tier selection, scoring, and evidence states; other files point to that record instead of restating its thresholds.
 
 ## Information hierarchy
 
-- The body fits its budget. Pass: `SKILL.md` body is at most 500 lines, and near 200 unless the extra lines each survive the delete test below.
-- Branch-specific detail is disclosed, one level deep. Pass: material only some runs need lives in a bundled file behind an explicit read-trigger ("Read references/x.md when Y"), never a bare "see references/", and no disclosed file points onward to a second level.
-- Inline content is universal. Pass: everything left in the body is needed by every path through the skill.
-- Steps end on completion criteria. Pass: each step closes with a checkable condition (the agent can tell done from not-done), and the condition is exhaustive where it matters ("every X accounted for", not "produce a list").
+- The body fits its budget. Pass: `SKILL.md` is at most 500 lines, with every line beyond the concise core earning its place.
+- The body respects the context target. Pass: it aims below 5,000 tokens; because tokenizers vary, this is an authoring target rather than a portable validation claim.
+- Branch-specific detail is disclosed one level deep. Pass: material needed only on some runs lives in a bundled file behind an explicit read-trigger, and that file does not disclose another layer.
+- Long references are navigable. Pass: a reference longer than 300 lines has a table of contents.
+- Inline content is universal. Pass: everything left in the body is needed by every path.
+- Completion criteria are observable. Pass: each workflow stage closes on an exhaustive, checkable state where early completion would be visible.
 
 ## Instruction economy
 
-- Every line survives the delete test. Pass: for each line, the agent would plausibly get something wrong without it; lines restating default model behavior are cut.
-- Every rule traces to evidence. Pass: each prescriptive rule maps to an observed failure, a with/without behavioral difference, or a named fragile operation; anticipatory rules are cut.
-- Steering is positive. Pass: instructions state the target behavior ("write one-line comments"), with prohibitions kept only as hard guardrails that cannot be phrased positively, and even then paired with what to do instead.
-- Specificity matches fragility. Pass: fragile operations get exact steps or commands; open-ended ones get a heuristic plus the reason, not a rigid directive.
-- One meaning, one home. Pass: no guidance appears in two places; each behavior is a one-place edit.
-- Qualifiers are operationalized. Pass: every abstract adjective the skill leans on (thorough, clean, fast, bold) is backed by concrete behavior or a checkable criterion; an undefined qualifier becomes a fix-list entry.
+- Every line survives the delete test. Pass: removing it would plausibly lose required behavior; text that only restates default reasoning is cut.
+- Guidance is grounded. Pass: domain rules and gotchas trace to real project evidence, observed execution, or a named hard constraint rather than generic model knowledge.
+- Steering is positive. Pass: instructions state the target behavior, with prohibitions reserved for hard guardrails and paired with the safe alternative where useful.
+- Specificity matches fragility. Pass: fragile operations retain exact steps or commands; open-ended work names the required outcome and only its hard constraints instead of prescribing a cognitive cadence.
+- Tool and approach selection is clear. Pass: when the skill names several tools or approaches, it gives a default or a selection rule rather than an equal menu; otherwise it leaves the implementation choice open.
+- Examples earn their space. Pass: an example resolves a real ambiguity or demonstrates an exact format and does not narrow the general procedure to one case.
+- One meaning has one owner. Pass: a rule is defined in one place and cited elsewhere rather than paraphrased.
+- Qualifiers are operationalized. Pass: abstract words such as thorough, clean, fast, bold, reliable, compatible, and improved map to concrete behavior or an observable check.
 
 ## Failure-mode scan
 
-- Premature completion: no step invites an early exit. Pass: no step's completion condition is vague enough that "declare done and move on" satisfies it.
-- Duplication: no repeated meaning. Pass: no sentence restates another sentence's content in different words, in the body or between body and description. Exempt: a "When to use" section restating the description's trigger contract, since the two load at different times (the description at listing time, the body at run time).
-- Sediment: superseded text is removed, not stacked. Pass: no line describes behavior, tooling, or structure the skill no longer has; edits replaced old text rather than appending around it.
-- Sprawl: the skill does one job. Pass: the skill's job fits one sentence without "and"; content serving a second job is split out or cut.
-- No-ops: every sentence steers. Pass: each sentence, read alone, would change agent behavior versus the default; a sentence that fails is deleted whole, not trimmed.
+- Premature completion. Pass: no completion condition can be satisfied by declaring success without the required artifact or observable state.
+- Duplication. Pass: no sentence restates another sentence's meaning in the description, body, or bundled files.
+- Sediment. Pass: superseded behavior is removed instead of being surrounded by new caveats.
+- Sprawl. Pass: the skill's job fits one sentence without joining two independent jobs.
+- No-ops. Pass: each sentence changes behavior versus the default or protects a System-Owned Invariant.
+
+## Evidence integrity
+
+- Review context is independent. Pass: a separate fresh-context agent that did not author the candidate or produce the artifacts inspects and grades each matched case. Another fresh-context agent performs the final checklist and holistic review. Deterministic scripts may perform mechanical checks. Grader and final reviewer availability and context independence cannot receive a checklist exception. When either independent context is unavailable, the affected review stays unverified and blocks completion until a separate session completes it.
+- Artifacts are inspected directly. Pass: the reviewer opens the relevant outputs instead of relying on the executor's summary or claimed filenames.
+- Every pass has substance. Pass: each judgment cites concrete artifact or trace evidence that demonstrates the outcome, not a heading, filename, or other surface compliance.
+- Checks are reviewed too. Pass: no objective check is trivial, unverifiable from the available evidence, or missing a material part of the required outcome.
+- Subjective judgment stays subjective. Pass: taste, polish, and whether an output feels right are handled through specific human feedback or an explicitly scoped blind comparison, not presented as deterministic pass or fail.
+- Traces inform revision. Pass: wasted paths, ignored or ambiguous instructions, repeated corrections, and repeatedly reinvented helper work are considered when deciding what to remove, clarify, add to `Gotchas`, or bundle in `scripts/`.
 
 ## Portability
 
-- Frontmatter is portable. Pass: only `name`, `description`, `license`, `compatibility`, and `metadata` appear; vendor-specific fields live under `metadata` if kept at all.
-- Prose is capability-based. Pass: the body names capabilities ("run the prompts in a fresh agent context"), not vendor tool or product names, outside an explicitly vendor-scoped reference file.
-- The package is self-contained. Pass: every bundled resource the skill references (templates, references, assets) resolves inside the skill directory, and the skill never depends on another skill being installed. Host-project paths the skill operates on (source files, configs, test directories) are exempt.
-- No environment assumptions. Pass: no absolute paths, no personal or machine-specific names, no assumption of private repos, local aliases, or preconfigured credentials beyond what `compatibility` declares.
-
-## Beyond this checklist
-
-This checklist is the floor. For the deeper review vocabulary (predictability, leading words, context and cognitive load, the full failure-mode taxonomy), install `writing-great-skills` from [mattpocock/skills](https://github.com/mattpocock/skills) and run its pass as well.
+- Frontmatter is canonical. Pass: only `name`, `description`, `license`, `compatibility`, and `metadata` appear.
+- Prose is capability-based. Pass: the canonical body names capabilities rather than vendor products or proprietary tools.
+- The package is self-contained. Pass: every referenced template, reference, asset, and script resolves inside the skill directory, with no requirement that another skill be installed. Host-project files the skill operates on are allowed.
+- Environment requirements are explicit. Pass: no absolute owner path, personal identifier, private-repository assumption, local alias, or undeclared credential is required.
+- Package behavior matches its stated intent. Pass: bundled content, side effects, requested access, and authority remain within the job described to the user.
+- Claims match evidence. Pass: canonical structure and successful installation are not presented as equivalent behavior across untested models or harnesses; proxy and native checks remain distinct.

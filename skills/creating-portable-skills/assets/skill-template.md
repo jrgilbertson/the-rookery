@@ -1,60 +1,59 @@
 ---
 # Delete every "#" comment line when instantiating this template.
 name: skill-name-here
-# name: lowercase kebab-case, 64 chars or fewer, must match the directory name.
-description: Use when [triggering conditions first, the phrasings and situations that should activate this skill, including non-obvious ones]. [What it does, one clause.] Do not use for [near-misses that must not trigger, naming where they route instead].
-# description: 1024 chars or fewer. Triggering conditions come first; the
-# description carries the entire triggering burden. The body never rescues it.
+# name: lowercase kebab-case, at most 64 characters, matching the directory.
+description: Use when [owned triggering conditions and user phrasings, including a non-obvious one]. [What it does, in one clause.]
+# description: at most 1024 characters. Put trigger language first. Describe
+# when to use the skill, not a summary of the workflow. Keep adjacent jobs in
+# near-miss tests unless a positive destination resolves harmful ambiguity.
 license: "[choose a license, or delete this field if the host collection declares one]"
-# license: optional, but never default it. The author must pick a license
-# deliberately, or delete this field when the host collection already
-# declares one. Do not carry over MIT or any other default.
-# compatibility: optional. Declare only real environment needs (commands,
-# network, credentials). Delete this field when there are none.
+# license: optional. Choose it deliberately; never carry over a template default.
+# compatibility: optional. Declare only real command, network, credential, or
+# environment requirements. Delete it when there are none.
 ---
 
 # Skill Title
 
-<!-- delete this comment: one paragraph stating what this skill enforces
-and why it matters, written to stand on its own for any model rather than
-as a delta over what models supposedly already know. Run the delete test
-on every line you write in this file: would the agent get it wrong without
-this line? If not, cut it. -->
+<!-- Delete this comment. State the skill's one job and observable outcome.
+Include only intent an agent cannot safely infer from the task context. -->
 
-## When to use
+## Outcome and constraints
 
-<!-- delete this comment: list the triggering conditions, then route each
-near-miss explicitly ("for X, use Y instead"). Keep this section consistent
-with the frontmatter description. It is the in-body echo of the same
-trigger contract, not a second, looser one. -->
+<!-- Delete this comment. State the intended outcome and observable done state,
+including any required artifact or handoff. Name only hard constraints: facts
+whose omission could change acceptability, safety, user authority, exact format,
+or completion. Leave the reasoning and method open. Omit this section when
+these facts are already clear elsewhere. -->
 
 ## Workflow
 
-<!-- delete this comment: numbered steps, each ending with a "Completion:"
-line naming a verifiable end state. Match specificity to fragility, with exact
-steps for fragile operations, a heuristic plus the why for open-ended ones.
-Explain reasoning ("do X because Y") over bare commands. Write
-capability-based prose, not harness product names: "present a structured
-confirmation and wait for a choice", not a named vendor tool. Push
-branch-specific detail one level deep with an explicit read-trigger
-("Read references/x.md when Y"), never a bare "see references/". -->
+<!-- Delete this comment. Provide only the instructions needed to reach the
+outcome within its hard constraints. Keep exact formats, deterministic checks,
+user authority boundaries, reusable resource requirements, and genuinely
+fragile ordering explicit because those are System-Owned Invariants. Leave
+reasoning and implementation choices to the agent. Use a numbered sequence only
+when order matters; for open-ended work, organize around outcomes and
+completion criteria. When naming several tools or approaches, give a default or
+selection rule. For destructive or batch work, confirm the exact targets and
+planned action against the system that owns those targets before execution. Put
+branch-specific detail one level deep behind an explicit read-trigger. -->
 
-1. First step.
+<!-- Delete this comment. When invocation leads to distinct runtime branches,
+route among them beside the corresponding branch instructions instead of
+repeating the frontmatter description. -->
 
-   Completion: [verifiable end state].
+[Minimum instructions needed to reach the outcome within its constraints.]
 
-2. Second step.
-
-   Completion: [verifiable end state].
+<!-- Delete this comment. Add one concise Example section only when it resolves
+a real ambiguity or demonstrates an exact format. -->
 
 ## Gotchas
 
-<!-- delete this comment: observed failure modes only, things an agent
-actually got wrong, with the correction. No speculative warnings; every
-line here must survive the delete test. Delete the section if empty. -->
+<!-- Delete this comment. Include only failure modes observed in real work,
+execution traces, or user corrections. State the correction. Delete this
+section when there are none. -->
 
 ## Verification
 
-<!-- delete this comment: how the agent knows the skill worked, the
-artifact or observable state that proves the job is done, and how to
-check it. -->
+<!-- Delete this comment. Name the artifact or observable state that proves the
+job is done. Prefer a deterministic check when one exists. -->

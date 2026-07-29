@@ -1,6 +1,6 @@
 # The skills
 
-This directory is the shelf. Each skill lives in its own folder as `skills/<name>/SKILL.md` plus any bundled references, and each installs individually. You never need to adopt the whole repo.
+This directory contains the installable skills. Each skill lives in its own folder as `skills/<name>/SKILL.md` plus any bundled references, and each installs individually. You never need to adopt the whole repo.
 
 ```bash
 # browse what's available
@@ -10,17 +10,21 @@ npx skills add jrgilbertson/the-rookery --list
 npx skills add jrgilbertson/the-rookery --skill <name>
 ```
 
-Skills here follow the [Agent Skills](https://agentskills.io) format, so they work in Claude Code, Codex, and anything else that reads `SKILL.md`.
+Skills here follow the [Agent Skills](https://agentskills.io) format and install
+in Claude Code, Codex, and other compatible tools that read `SKILL.md`.
 
-## On the shelf
+## Available skills
 
-- **[creating-portable-skills](creating-portable-skills/SKILL.md)** — create a new agent skill, or review, update, and migrate an existing one. One loop from intent interview through baseline testing to a packaged skill that works across models and harnesses.
+- **[creating-portable-skills](creating-portable-skills/SKILL.md)** creates a new
+  agent skill or helps review, update, and move an existing one. It starts with
+  the intended outcome, validates the package, compares behavior with focused
+  tests, and checks installation separately from activation.
 
   ```bash
   npx skills add jrgilbertson/the-rookery --skill creating-portable-skills
   ```
 
-- **[personal-chief-of-staff](personal-chief-of-staff/SKILL.md)** — run an
+- **[personal-chief-of-staff](personal-chief-of-staff/SKILL.md)** runs an
   evidence-based morning review, daily journal and wind-down, weekly review, or
   quarterly review. It works from existing authoritative sources, collaborates
   on judgment, and keeps every durable change reviewable.
@@ -29,17 +33,17 @@ Skills here follow the [Agent Skills](https://agentskills.io) format, so they wo
   npx skills add jrgilbertson/the-rookery --skill personal-chief-of-staff
   ```
 
-- **[managing-personal-crm](managing-personal-crm/SKILL.md)** — maintain useful
-  relationship context, prepare for one person, find relevant people for
-  current work, and clean up Person notes without building a separate CRM
-  database. It keeps durable changes reviewable and routes each effect to its
-  canonical destination.
+- **[managing-personal-crm](managing-personal-crm/SKILL.md)** maintains useful
+  relationship context, prepares for conversations with one person, finds
+  relevant people for current work, and cleans up Person notes without building
+  a separate CRM database. It keeps durable changes reviewable and routes each
+  effect to its canonical destination.
 
   ```bash
   npx skills add jrgilbertson/the-rookery --skill managing-personal-crm
   ```
 
-- **[reviewing-meetings](reviewing-meetings/SKILL.md)** — turn newly completed
+- **[reviewing-meetings](reviewing-meetings/SKILL.md)** turns newly completed
   meetings from a configured source into grounded, independently reviewable
   notes and follow-up actions. It prevents duplicate work, preserves one
   canonical owner for each outcome, and keeps scheduled runs read-only.

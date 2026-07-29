@@ -13,35 +13,49 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
-- `creating-portable-skills` — the shelf's first skill. Creates new Agent Skills and reviews, updates, or migrates existing ones through one loop: intent interview, draft, static validation, with/without baseline testing, review checklist, and packaging. Portable across models and harnesses; recommends — never requires — `design-evals` and `writing-great-skills` for deeper eval and review passes.
-- `personal-chief-of-staff` — an interactive morning, wind-down, weekly, and
-  quarterly review loop grounded in live authoritative sources. Includes
-  reviewed-write safeguards, Obsidian CLI handling, behavioral evals, and a
-  Git-owned specification for four local Codex schedules.
-- `managing-personal-crm` — a portable relationship layer for direct capture,
-  contextual discovery, one-person preparation, and staged Person-note
-  cleanup. It uses canonical Person notes and Tasks, conservative identity
-  matching, proposal-first writes, mixed-schema transition rules, and no hidden
-  CRM database or progress state.
-- `reviewing-meetings` — a source-neutral post-meeting review loop that refines
-  completed meeting evidence, prevents duplicate notes and work, routes each
-  outcome to one canonical system, and applies only independently approved
-  actions. Includes sanitized behavioral evidence and a Git-owned specification
-  for the chat-attached `CoS Meetings` schedule.
+- `creating-portable-skills` is the first published skill. It creates new Agent
+  Skills and helps review, update, or move existing skills. It starts from the
+  user's goal, checks the package structure, compares behavior with focused
+  tests, and verifies installation separately from activation. It works
+  without companion skills.
+- `personal-chief-of-staff` guides morning, wind-down, weekly, and quarterly
+  reviews using current data from the user's connected sources. It requires
+  review before writing changes, handles Obsidian CLI operations, tests its
+  behavior, and includes a versioned specification for four local Codex
+  schedules.
+- `managing-personal-crm` keeps relationship context in canonical Person notes
+  and Tasks. It captures updates, finds relevant context, prepares for
+  conversations with one person, and proposes cleanup in stages. It matches
+  identities carefully, proposes changes before writing them, handles mixed
+  schemas during migration, and stores no hidden CRM state.
+- `reviewing-meetings` reviews completed meeting evidence from any supported
+  source. It prevents duplicate notes and tasks, sends each outcome to one
+  canonical system, and applies only actions that the user approves
+  independently. It also includes behavior tests with sanitized data and a
+  versioned specification for the `CoS Meetings` schedule.
 
 ### Changed
 
-- `personal-chief-of-staff` can now surface bounded relationship cadence and
-  contextual opportunities inside its existing morning, wind-down, and weekly
-  review bundles when the Personal CRM companion is available.
-- `reviewing-meetings` can now propose supported contact dates, durable
-  relationship context, personal follow-ups, and contextual connections while
-  preserving one meeting-owned review bundle and canonical destination per
-  effect.
+- `creating-portable-skills` now grounds guidance in real project evidence,
+  uses separate fresh-context agents for reviews and grading, inspects artifacts
+  and execution traces directly, and tests activation with more realistic
+  queries.
+- `creating-portable-skills` now asks users to choose either ordinary personal
+  skill verification or public or unusually load-bearing skill verification
+  before change-producing work. It also ends read-only audits after delivering
+  the review, keeps trigger descriptions positive, defines the Claim Ceiling,
+  and centralizes trigger scoring and evidence states in one record.
+- `personal-chief-of-staff` can now include relationship check-ins and timely
+  opportunities in its morning, wind-down, and weekly reviews when Personal CRM
+  is available.
+- `reviewing-meetings` can now suggest contact dates, save useful relationship
+  context, capture personal follow-ups, and surface relevant connections. Each
+  meeting still produces one review bundle, and every approved action goes to
+  one canonical destination.
 
 ## [0.1.0] - 2026-07-10
 
 ### Added
 
-- Repository scaffolding. Community files (MIT license, contributing guide, code of conduct, security policy), issue and PR templates, the skills shelf layout, and the seven-job workflow map across README and WORKFLOWS.md.
-- The rules the repo lives by. Curated not collected, main is the store shelf, and the same-door rule.
+- Repository scaffolding. Community files (MIT license, contributing guide, code of conduct, security policy), issue and PR templates, the skills catalog layout, and the seven-job workflow map across README and WORKFLOWS.md.
+- The rules the repo lives by. Curated not collected, main is the install source, and the same-door rule.

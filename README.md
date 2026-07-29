@@ -2,14 +2,18 @@
 
 # The Rookery
 
-An opinionated, always-current home for how I build with AI. It holds the workflows I use every day and the skills that power them. Everything installs individually and works across harnesses like Claude Code and Codex. One rule anchors it all. **I use this repo through the same front door you do.**
+An opinionated, always-current home for how I build with AI. It holds the
+workflows I use every day and the skills behind them. Each skill installs on its
+own as a standard Agent Skills package for Claude Code, Codex, and other
+compatible tools. One rule anchors it all. **I use this repo through the same
+front door you do.**
 
 ## Install
 
 The front door is the [skills installer](https://github.com/vercel-labs/skills). No clone, no setup.
 
 ```bash
-# browse the shelf
+# list available skills
 npx skills add jrgilbertson/the-rookery --list
 
 # install one skill
@@ -19,9 +23,12 @@ npx skills add jrgilbertson/the-rookery --skill <name>
 npx skills add jrgilbertson/the-rookery --all
 ```
 
-This works in any harness that reads `SKILL.md`, including Claude Code, Codex, Cursor, and Gemini CLI. See the [Agent Skills](https://agentskills.io) ecosystem for the full list. Add `-g` for a user-level install instead of per-project.
+The installer supports tools that read `SKILL.md`, including Claude Code,
+Codex, Cursor, and Gemini CLI. See the [Agent Skills](https://agentskills.io)
+ecosystem for the full list. Add `-g` for a user-level install instead of a
+project install.
 
-> **The first skill is on the shelf.** [creating-portable-skills](skills/creating-portable-skills/SKILL.md) installs with `npx skills add jrgilbertson/the-rookery --skill creating-portable-skills`. More are arriving. Watch [releases](../../releases) for arrivals.
+> [creating-portable-skills](skills/creating-portable-skills/SKILL.md) is the first published skill. Install it with `npx skills add jrgilbertson/the-rookery --skill creating-portable-skills`. Watch [releases](../../releases) for new skills.
 
 <details>
 <summary>Prefer a clone?</summary>

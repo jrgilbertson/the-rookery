@@ -31,7 +31,7 @@ What I reach for depends on the question:
 
 - Deep research. Understanding a codebase, a methodology, or a topic in depth. Most capable models handle it well when asked directly.
 - `ce-ideate` from Compound Engineering. For when I don't yet know what to build and want evidence-backed hypotheses to react to.
-- `last30days`. Focused, recent signal on a single topic or person where recency beats depth, like the latest model rankings for development work.
+- [`last30days`](https://github.com/mvanhorn/last30days-skill). Focused, recent signal on a single topic or person where recency beats depth, like the latest model rankings for development work.
 - `storm-research`. The adversarial layer. Five or more expert perspectives on the same question.
 
 What must be true before moving to Plan:
@@ -76,7 +76,7 @@ What must be true before moving on:
 - **Inputs and tools are known.** The sources, systems, and repos the work draws on.
 - **The artifact is defined.** The work will produce a merged PR, a findings document, or a decision someone can act on.
 
-## Design (Optional)
+## Design
 
 **Goal:** Set a design brief and a written design system agents can build from.
 
@@ -170,7 +170,7 @@ The shipping sequence, in order:
 
 `pre-pr-approval` presents the branch the way an engineer asks for sign-off. What changed in plain language, why it matters, and what it learned. Then the evidence with every check named, whether the diff even needed to exist as written, the risks that remain, and whether the branch produced a learning worth keeping. It waits for one explicit decision and changes nothing until I make it. If the branch moves while I'm deciding, the readout gets rebuilt, because approval binds to exactly what I was shown. High-risk surfaces like auth, payments, or migrations get a fresh-context reviewer before I ever see the packet. The menu also has a learning option. Before approving, I can have the change or a concept it introduced explained back to me.
 
-After approval, `ce-commit-push-pr` writes the description and opens the PR, and `ce-babysit-pr` watches it through CI failures and review feedback until it reports merge-ready. Two checks happen before I merge. I read the review comments myself to confirm nothing went off track, then ask the agent to explain in plain language what the issue fixed, with before and after examples. If the explanation doesn't hold up, I don't merge. Changelogs and release notes generate from the merged PRs afterward.
+After approval, `ce-commit-push-pr` writes the description and opens the PR, and `ce-babysit-pr` watches it through CI failures and review feedback until it reports merge-ready. Two checks happen before I merge. I read the review comments myself to confirm nothing went off track, then ask the agent to explain in plain language what the issue fixed, with before and after examples. If the explanation doesn't hold up, I don't merge. I write the changelog and release notes from the merged PRs afterward.
 
 CI gates the merge on the unit and end-to-end suites, plus passes like performance and link checks in my product repos. GitHub enforces the rest, and each of these is a setting you have to turn on: a PR for every change, review comments resolved before merge, and no direct pushes to main, including for administrators.
 

@@ -43,7 +43,7 @@ Everything here fits into seven jobs. The walkthroughs live in [WORKFLOWS.md](WO
 
 - [**Research**](WORKFLOWS.md#research). Gather real signal before deciding. last30days for what people actually use, multi-perspective deep research for the hard questions.
 - [**Plan**](WORKFLOWS.md#plan). Turn intent into a clear objective. Ideation, brainstorming, and planning with Compound Engineering.
-- [**Design**](WORKFLOWS.md#design-optional). Impeccable drives every interface decision, from first layout to final polish.
+- [**Design**](WORKFLOWS.md#design). Impeccable drives every interface decision, from first layout to final polish.
 - [**Build**](WORKFLOWS.md#build). Implement in Orca with parallel worktrees and delegated agents.
 - [**Ship**](WORKFLOWS.md#ship). Review gates, pre-PR approval, and changelogs and releases with Compound Engineering.
 - [**Maintain**](WORKFLOWS.md#maintain). Keep repos healthy. Hygiene passes, architecture reviews, evals, and data quality checks.

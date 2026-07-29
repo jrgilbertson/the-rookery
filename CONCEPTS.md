@@ -109,7 +109,8 @@ for normal run variation.
 ### Verification Mode
 
 Verification Mode records whether listing-query checks use the ordinary
-personal tier or the public or unusually load-bearing tier.
+personal tier or the stricter tier for public and unusually load-bearing
+skills.
 
 The selected tier determines query count, repetition, and tier-specific
 judgment rules. Matched behavioral comparisons, structural validation, native

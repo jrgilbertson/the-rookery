@@ -2,7 +2,7 @@
 
 # The Rookery
 
-An opinionated, always-current home for how I build with AI. It holds the workflows I run every day and the skills that power them. A skill is a portable set of instructions an agent loads when a task calls for it, and every skill here installs individually as a standard Agent Skills package for Claude Code, Codex, and other compatible tools.
+An opinionated, always-current home for how I build with AI. It holds the workflows I run every day and the skills that power them. A skill is a portable set of instructions an agent loads when a task calls for it. Every skill here installs individually as a standard Agent Skills package for Claude Code, Codex, and other compatible tools.
 
 A rookery is where corvids gather to nest. This one is named for the two most famous, Odin's ravens Huginn and Muninn. Huginn is thought, Muninn is memory. Each morning they fly out to see the world, and each evening they return with what they've learned.
 
@@ -12,7 +12,7 @@ This repo is the return trip. What I learn building with AI lands here, integrat
 
 1. **Cross-agent and cross-harness.** Flexible, generalizable approaches that avoid vendor lock-in.
 2. **Minimize skill volume.** Too many skills create conflicting guidance, fill up the context window, and lead to unintended behavior as models get smarter.
-3. **Continuous improvement.** Every addition should help the overall system improve.
+3. **Continuous improvement.** Every addition should make the whole system better.
 
 ## Install
 

@@ -40,9 +40,9 @@ looked" surface. GitHub Releases mirror its entries.
   uses separate fresh-context agents for reviews and grading, inspects artifacts
   and execution traces directly, and tests activation with more realistic
   queries.
-- `creating-portable-skills` now asks users to choose either ordinary personal
-  skill verification or public or unusually load-bearing skill verification
-  before change-producing work. It also ends read-only audits after delivering
+- `creating-portable-skills` now asks users to choose between ordinary personal
+  verification and the stricter verification for public or unusually
+  load-bearing skills before change-producing work. It also ends read-only audits after delivering
   the review, keeps trigger descriptions positive, defines the Claim Ceiling,
   and centralizes trigger scoring and evidence states in one record.
 - `personal-chief-of-staff` can now include relationship check-ins and timely

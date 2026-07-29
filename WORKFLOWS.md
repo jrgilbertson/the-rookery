@@ -13,7 +13,7 @@ flowchart LR
 The workflows assume two things are in place:
 
 - **Repository-based work.** These workflows lean heavily on repositories such as GitHub for code development and knowledge management. Repos give you branches for parallel work, version control, and backups, which all help when you're running agents and working with others.
-- **A durable personal knowledge source.** Sources such as Obsidian, Notion, plain markdown files, or anything that persists outside an AI provider's memory. Turn off agent memory in each tool so your stored knowledge works across agents and harnesses.
+- **A durable personal knowledge source.** Sources such as Obsidian, Notion, plain markdown files, or anything that persists outside an AI provider's memory. Point each agent at that store so every harness reads the same knowledge. Turning off in-tool agent memory is a separate choice that stops knowledge from collecting where only one provider can reach it.
 
 A few of the skills named below are my own and not yet published: `pre-pr-approval`, `repo-maintainer`, `repo-best-practices`, `improve-repo-architecture`, `design-evals`, `validate-data`, and `storm-research`.
 
@@ -140,7 +140,7 @@ Within a worktree, I structure the agent orchestration to fit the work.
 | Harness-native subagents  | One session dispatches subagents that report back to it                                 | Side research or verification inside a session's flow. Typically written into skills such as `ce-code-review`         | Results return only to the parent                    |
 
 
-I enforce quality in tiers. Tests, linters, CI gates, and the design system enforce proactively, and prose instructions sit at the bottom. See the Learn section for the full ladder.
+I enforce quality in tiers. Tests, linters, CI gates, and the design system enforce proactively, and prose instructions sit at the bottom. See the Maintain section for the full ladder.
 
 The in-build toolkit:
 
@@ -151,7 +151,7 @@ The in-build toolkit:
 
 What must be true before moving to Ship:
 
-- **CI is green for the slice.** Unit tests, e2e, and browser checks pass, and each test exercises the shipped code path rather than a stub.
+- **CI is green for the slice.** Every suite the change calls for passes, including browser checks when it touches the UI, and each test exercises the shipped code path rather than a stub.
 - **The slice stayed bounded.** Each agent built what its slice named, and scope changes went back through Plan.
 - **Design held.** Interface work stayed inside the design system and the brief.
 

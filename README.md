@@ -2,15 +2,21 @@
 
 # The Rookery
 
-An opinionated, always-current home for how I build with AI. It holds the
-workflows I use every day and the skills behind them. Each skill installs on its
-own as a standard Agent Skills package for Claude Code, Codex, and other
-compatible tools. One rule anchors it all. **I use this repo through the same
-front door you do.**
+An opinionated, always-current home for how I build with AI. It holds the workflows I run every day and the skills that power them. A skill is a portable set of instructions an agent loads when a task calls for it, and every skill here installs individually as a standard Agent Skills package for Claude Code, Codex, and other compatible tools.
+
+A rookery is where corvids gather to nest. This one is named for the two most famous, Odin's ravens Huginn and Muninn. Huginn is thought, Muninn is memory. Each morning they fly out to see the world, and each evening they return with what they've learned.
+
+This repo is the return trip. What I learn building with AI lands here, integrated and kept current.
+
+## Guiding principles
+
+1. **Cross-agent and cross-harness.** Flexible, generalizable approaches that avoid vendor lock-in.
+2. **Minimize skill volume.** Too many skills create conflicting guidance, fill up the context window, and lead to unintended behavior as models get smarter.
+3. **Continuous improvement.** Every addition should help the overall system improve.
 
 ## Install
 
-The front door is the [skills installer](https://github.com/vercel-labs/skills). No clone, no setup.
+Install skills one at a time or all at once.
 
 ```bash
 # list available skills
@@ -23,12 +29,7 @@ npx skills add jrgilbertson/the-rookery --skill <name>
 npx skills add jrgilbertson/the-rookery --all
 ```
 
-The installer supports tools that read `SKILL.md`, including Claude Code,
-Codex, Cursor, and Gemini CLI. See the [Agent Skills](https://agentskills.io)
-ecosystem for the full list. Add `-g` for a user-level install instead of a
-project install.
-
-> [creating-portable-skills](skills/creating-portable-skills/SKILL.md) is the first published skill. Install it with `npx skills add jrgilbertson/the-rookery --skill creating-portable-skills`. Watch [releases](../../releases) for new skills.
+This works in any harness that reads `SKILL.md`, including Claude Code, Codex, Cursor, and Gemini CLI. See the [Agent Skills](https://agentskills.io) ecosystem for the full list. Add `-g` to install once for your whole machine instead of per project.
 
 <details>
 <summary>Prefer a clone?</summary>
@@ -38,26 +39,40 @@ Clone the repo and symlink any <code>skills/&lt;name&gt;</code> folder into your
 
 ## The workflows
 
-Everything here fits into seven jobs. Each links to its walkthrough in [WORKFLOWS.md](WORKFLOWS.md).
+Everything here fits into seven jobs. The walkthroughs live in [WORKFLOWS.md](WORKFLOWS.md).
 
-- **[Research](WORKFLOWS.md#research)**. Gather real signal before deciding. last30days for what people actually use, multi-perspective deep research for the hard questions.
-- **[Plan](WORKFLOWS.md#plan)**. Turn intent into work worth doing. Ideation, brainstorming, and planning with compound engineering.
-- **[Design](WORKFLOWS.md#design)**. Impeccable drives every interface decision, from first layout to final polish.
-- **[Build](WORKFLOWS.md#build)**. Implement in Orca with parallel worktrees and delegated agents.
-- **[Ship](WORKFLOWS.md#ship)**. Review gates, pre-PR approval, and changelogs and releases that write themselves.
-- **[Maintain](WORKFLOWS.md#maintain)**. Keep repos healthy. Hygiene passes, architecture reviews, evals, and data quality checks.
-- **[Learn](WORKFLOWS.md#learn)**. Turn what you read and build into durable knowledge. Networked thinking, atomic notes, and learnings that compound back into the system.
+- [**Research**](WORKFLOWS.md#research). Gather real signal before deciding. last30days for what people actually use, multi-perspective deep research for the hard questions.
+- [**Plan**](WORKFLOWS.md#plan). Turn intent into a clear objective. Ideation, brainstorming, and planning with Compound Engineering.
+- [**Design**](WORKFLOWS.md#design-optional). Impeccable drives every interface decision, from first layout to final polish.
+- [**Build**](WORKFLOWS.md#build). Implement in Orca with parallel worktrees and delegated agents.
+- [**Ship**](WORKFLOWS.md#ship). Review gates, pre-PR approval, and changelogs and releases with Compound Engineering.
+- [**Maintain**](WORKFLOWS.md#maintain). Keep repos healthy. Hygiene passes, architecture reviews, evals, and data quality checks.
+- [**Learn**](WORKFLOWS.md#learn). Turn what you read and build into durable knowledge. Networked Thinking, atomic notes, and learnings that compound back into the system.
+
+## The skills
+
+- [creating-portable-skills](skills/creating-portable-skills/SKILL.md). Create a new agent skill, or review, update, and migrate an existing one. One loop from intent interview through baseline testing to a packaged skill that works across models and harnesses.
+- [personal-chief-of-staff](skills/personal-chief-of-staff/SKILL.md). Run a morning review, daily journal and wind-down, weekly review, or quarterly review from your existing sources. Every durable change stays reviewable before it lands.
+- [managing-personal-crm](skills/managing-personal-crm/SKILL.md). Keep relationship context in canonical Person notes and tasks. Capture interactions, prepare for a conversation, find who could help with current work, and clean up notes in stages, with no separate CRM database.
+- [reviewing-meetings](skills/reviewing-meetings/SKILL.md). Turn completed meetings from a configured source into grounded notes and follow-up actions. Duplicate work is prevented, each outcome gets one canonical owner, and scheduled runs stay read-only.
+
+## My other projects
+
+- [Networked Thinking](https://networkedthinking.ai). My note system for durable learning: the book, the site, and the [skills](https://github.com/jrgilbertson/networked-thinking-skills) that run the Learn step here.
 
 ## Standing on
 
 This system builds on work by people who share theirs. Use them directly.
 
-- [Compound Engineering](https://github.com/EveryInc/compound-engineering-plugin) by Kieran Klaassen and the team at Every. The development spine.
-- [Impeccable](https://github.com/pbakaus/impeccable) by Paul Bakaus. The design language that makes agents better at design.
-- [last30days](https://github.com/mvanhorn/last30days-skill) by mvanhorn. Recent-signal research across the platforms that matter.
-- [Orca](https://github.com/stablyai/orca) by Stably. The agentic IDE all of this runs in.
-- [skills](https://github.com/vercel-labs/skills) by Vercel Labs. The installer behind the npx front door above.
+- [Compound Engineering](https://github.com/EveryInc/compound-engineering-plugin) by Trevin Chow ([@trevin](https://x.com/trevin)) and Kieran Klaassen ([@kieranklaassen](https://x.com/kieranklaassen)). The development spine.
+- [Impeccable](https://github.com/pbakaus/impeccable) by Paul Bakaus ([@pbakaus](https://x.com/pbakaus)). The design language that makes agents better at design.
+- [last30days](https://github.com/mvanhorn/last30days-skill) by Matt Van Horn ([@mvanhorn](https://x.com/mvanhorn)). Recent-signal research across Reddit, X, YouTube, HN, and the web.
+- [Orca](https://github.com/stablyai/orca) by Jinjing Liang ([@JinjingLiang](https://x.com/JinjingLiang)). The agentic IDE all of this runs in.
 
 ## Contributing
 
 Fixes and portability PRs are welcome. New skills start as an issue. See [CONTRIBUTING](CONTRIBUTING.md) for how this repo stays healthy.
+
+## License
+
+[MIT](LICENSE).

@@ -6,7 +6,7 @@ An opinionated, always-current home for how I build with AI. It holds the workfl
 
 A rookery is where corvids gather to nest. This one is named for the two most famous, Odin's ravens Huginn and Muninn. Huginn is thought, Muninn is memory. Each morning they fly out to see the world, and each evening they return with what they've learned.
 
-This repo is the return trip. What I learn building with AI lands here, integrated and kept current.
+This repo is the return trip. What I learn building with AI lands here, and I rewrite what's already here rather than pile new files on top.
 
 ## Guiding principles
 

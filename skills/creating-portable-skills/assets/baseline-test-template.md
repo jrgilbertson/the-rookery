@@ -15,6 +15,10 @@ Have a separate fresh-context agent grade the matched outputs. The grader must
 not have authored the change or produced either artifact. Mechanical checks may
 use deterministic scripts.
 
+For each unrelated candidate group in a revision, prepare one record with its
+own variant pair. Start both variants from the same source state, then apply
+only that group to the revised variant. Put changes that interact in one group.
+
 Predeclare the required outcome and hard constraints. If an exploratory run
 makes the need for another objective check clear, add or refine that check,
 freeze it, and rerun both variants before using it in the comparison. Keep
@@ -24,12 +28,12 @@ than forcing them into binary checks.
 ## Declaration
 
 - Mode: [new skill / revision]
-- Candidate instruction group: [one scoped group; do not batch unrelated changes]
+- Candidate instruction group: [one scoped group; combine interacting changes and do not batch unrelated changes]
 - Required outcome: [observable result and done state, including any required artifact or handoff]
 - Hard constraint under test: [authority boundary, exact format, deterministic check, or fragile operation that must survive]
 - Input files: [relative paths and identity, or none]
-- Prior variant identity: [absent for a new skill, or durable revision/path/hash]
-- Revised variant identity: [durable revision/path/hash]
+- Prior variant identity: [absent for a new skill, or durable revision/path/hash for the variant that differs from the revised variant only in the candidate group]
+- Revised variant identity: [durable revision/path/hash for the variant that differs from the prior variant only in the candidate group]
 - Declared target set: [target cell IDs]
 
 Record the intended set before running. Do not silently substitute a model,
@@ -168,6 +172,8 @@ A waiver changes shipment authority only. It does not change an evidence state,
 raise the earned label, satisfy a missing target, or authorize removing or
 relaxing an instruction whose affected-target comparison is absent or
 inconclusive.
+
+This waiver cannot cover an unavailable independent grader or final reviewer.
 
 - Waived by the user: [yes, quote or paraphrase the explicit waiver]
 - Unavailable check and reason: [what could not run and why]

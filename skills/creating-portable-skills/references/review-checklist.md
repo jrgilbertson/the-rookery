@@ -1,6 +1,6 @@
 # Review Checklist
 
-Use this rubric for an existing-skill audit, a final review, and every proposed instruction relaxation. A separate fresh-context agent that did not author the candidate performs the review. Give it the intended outcome, hard constraints, skill package, evidence record, actual artifacts, and relevant traces without the author's conclusions. Work top to bottom. A failure becomes a fix-list item that names the problem, impact, and change risk. Review is complete when every item passes or has a recorded, user-approved exception.
+Use this rubric for an existing-skill audit, a final review, and every proposed instruction relaxation. A separate fresh-context agent that did not author the candidate performs the review. Give it the intended outcome, hard constraints, skill package, evidence record, actual artifacts, and relevant traces without the author's conclusions. Work top to bottom. A failure becomes a fix-list item that names the problem, impact, and change risk. Review is complete when every item passes or has a recorded, user-approved exception where this checklist permits one.
 
 ## System-Owned Invariants
 
@@ -72,7 +72,7 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 
 ## Evidence integrity
 
-- Review context is independent. Pass: a separate fresh-context agent that did not author the candidate or produce the artifacts inspects and grades each matched case. Another fresh-context agent performs the final checklist and holistic review. Deterministic scripts may perform mechanical checks. When either independent context is unavailable, the affected review stays unverified until a separate session completes it.
+- Review context is independent. Pass: a separate fresh-context agent that did not author the candidate or produce the artifacts inspects and grades each matched case. Another fresh-context agent performs the final checklist and holistic review. Deterministic scripts may perform mechanical checks. Grader and final reviewer availability and context independence cannot receive a checklist exception. When either independent context is unavailable, the affected review stays unverified and blocks completion until a separate session completes it.
 - Artifacts are inspected directly. Pass: the reviewer opens the relevant outputs instead of relying on the executor's summary or claimed filenames.
 - Every pass has substance. Pass: each judgment cites concrete artifact or trace evidence that demonstrates the outcome, not a heading, filename, or other surface compliance.
 - Checks are reviewed too. Pass: no objective check is trivial, unverifiable from the available evidence, or missing a material part of the required outcome.

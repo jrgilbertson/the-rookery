@@ -818,3 +818,63 @@ named harness configurations and for the recorded native query. The matched
 comparisons support only their predeclared cases and per-group conclusions.
 They do not establish behavior for other revisions, models, harnesses,
 configurations, tasks, or provenance mechanisms.
+
+## 2026-07-28 final review-batch evidence state
+
+Four evidence-contract candidates after `5803918` were tested as isolated
+groups. Two were kept: isolated variant pairs and non-waivable independent
+review. They changed `SKILL.md`, the baseline template, and the review
+checklist. The other two candidates were restored because both target models
+already produced the required behavior without the extra wording.
+
+Structural validation passed with `skills-ref` 0.1.5. The current six-file
+package hashes and per-layer states are recorded in `trigger-queries.md`.
+
+The description did not change. The public-tier listing run predeclared both
+target models, required resolution of the exact harness and material
+configuration before execution, and recorded the exact Codex and Claude
+configurations with per-run references. That description-bound listing evidence
+remains passed.
+
+Fresh GPT-5.6 Sol and Claude Opus 5 contexts ran the prior and revised variants
+for all four isolated groups. A separate fresh-context grader inspected all
+eight package variants and all sixteen artifacts. Isolated variant pairs and
+non-waivable independent review were
+`better` in both targets with stable controls and no observed invariant loss.
+Each earned `DirectionalCandidate` and a **directional comparison** label. The
+exact-listing-target and successful-revision-state candidates were `same` in
+both targets and were restored with no evidence label. The full case record,
+session references, decisions, and limits are in `baseline-cases.md`.
+
+Skills CLI 1.5.20 installed the final local source into separate project-local
+Codex and Claude Code paths under
+`/tmp/creating-portable-skills-final.7Xveit/project`. `diff -qr` returned no
+differences between the source package and either installed copy. Local-source
+installation and installed-content identity passed for both package-harness
+cells.
+
+Same-name user copies existed under `~/.agents/skills` and
+`~/.claude/skills`, both with a different `SKILL.md` hash. Native load therefore
+required deterministic project-local provenance:
+
+- Codex CLI 0.145.0 ran `gpt-5.6-sol` at high reasoning in fresh ephemeral
+  thread `019fab5b-eecf-7ca1-b8b5-4126f2280f19`, with user configuration and
+  rules ignored. Its command trace read the installed project-local
+  `.agents/skills/creating-portable-skills/SKILL.md` from the recorded working
+  directory. The installed file hash matched the source.
+- Claude Code 2.1.220 ran `claude-opus-5` at high effort in fresh
+  non-persistent session `e9ed238b-fd49-494a-9a57-71208c4bb7f2`, with project
+  settings and only the native `Skill` tool. The tool result reported the exact
+  base directory
+  `/private/tmp/creating-portable-skills-final.7Xveit/project/.claude/skills/creating-portable-skills`.
+
+Both native responses asked for the verification-mode decision. That confirms
+the intended trigger behavior, while the exact runtime paths establish which
+installed copy ran. Native discovery, load, and trigger passed in both declared
+model-harness cells.
+
+Claim Ceiling: the native checks support only the final package hashes, named
+harness configurations, and recorded query. The matched comparisons support
+only the two kept instruction groups in their predeclared cases. They do not
+establish reliability, non-regression, causal improvement, behavior in other
+targets or configurations, or an aggregate improvement across the review batch.

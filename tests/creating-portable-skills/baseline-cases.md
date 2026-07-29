@@ -802,3 +802,64 @@ rather than full transcripts. The independent grade is therefore limited to
 the recorded instruction-application behavior and cannot replay the complete
 prompt-to-response traces. No aggregate improvement, reliability,
 non-regression, or causal claim is assigned across these groups.
+
+## 2026-07-28 final review-batch comparisons
+
+Four evidence-contract groups were compared as separate prior/revised pairs.
+Every pair started from the `5803918` package and differed only in its named
+group. Interacting edits stayed in one group.
+
+| Candidate group | Changed package identity |
+| --- | --- |
+| Isolated revision variants | `SKILL.md` `490b18a10342a3177358a3ef96df4a7516b7bcd65973f8b1b3eb6b3abf9300e3`; baseline template `a0b889d55426af735eb4a4b0d23ddaae16d530e155abd5c8c3d06571117b99cd` |
+| Independent-review completion | `SKILL.md` `64d66b504ad921482e098309721908560ec9945b604a05c0d00602b6d217b9f5`; baseline template `50d30d25016b234b6b96b599a8d8a812f74769b75426b2e7d92c89e54b6fef59`; checklist `bd0357eee2a69cf40bcc36f701ba0584255fb7eb4711e59d2fa9bf07b2d41e28` |
+| Exact listing target | trigger template `02699400150ef932153fb148b70f96625c9031ac3af6c15c322bae276b657dd5` |
+| Successful revision state | baseline template `b6b3539508a2b83537e079de6e7a74f091f8ec4880cf015244929403cff9a8f6` |
+
+The prior `5803918` identities were `SKILL.md`
+`1ba4b97ad9e5a9fcbb3d27e4e69070d46683716fdb29d959709ffe90bf99af0f`,
+baseline template
+`1d6a33ed6686aadced84e920378f64e9a852fbaffda6c7bfabc57c03ea13c21f`,
+trigger template
+`ea30d1dbf024548c23ddfad2dab8d2e26b2e7f794ec44e65cf807ac58120a2ef`,
+and checklist
+`6baf044506a96c614d8cd14515f50942438e38e99b1269e351ec07d157307654`.
+
+Eight fresh Sol executor contexts produced one prior and one revised artifact
+per group. Eight separate non-persistent Claude Code 2.1.220 sessions ran
+`claude-opus-5` at high effort in safe mode with only Read available:
+
+| Group | Opus prior session | Opus revised session |
+| --- | --- | --- |
+| Isolated revision variants | `d1b4e532-af43-4ded-aa5c-352693c641d7` | `698ee3b0-8ffc-44dd-84f4-f294246835e8` |
+| Independent-review completion | `c0a735e8-df4f-474c-a87a-34f8e6368a46` | `2a7f768c-94b4-4d05-99be-8844f12f997e` |
+| Exact listing target | `b1f4a273-55f0-4b2b-a73d-927fbc8f098b` | `2fefed8b-d68c-4a90-9666-0b5b4178602c` |
+| Successful revision state | `186e3a4d-add8-4595-8060-c8f01794587a` | `1cb3a8f9-c7f4-40a4-b9de-298342e1f559` |
+
+A separate fresh-context grader inspected all eight package variants and all
+sixteen artifacts. Its decisions were:
+
+The independent grader ran as
+`/root/fix_shared_evidence_contracts/final_contract_independent_grader`. Its
+parent, `/root/fix_shared_evidence_contracts`, created it through
+`collaboration.spawn_agent` with `fork_turns: "none"` and no model or reasoning
+override.
+
+| Candidate group | Sol discriminator | Opus discriminator | Controls | Invariant loss | Candidate decision | Evidence label |
+| --- | --- | --- | --- | --- | --- | --- |
+| Isolated revision variants | `better` | `better` | `same` in both targets | none observed | `DirectionalCandidate` | **directional comparison** |
+| Independent-review completion | `better` | `better` | `same` in both targets | none observed | `DirectionalCandidate` | **directional comparison** |
+| Exact listing target | `same` | `same` | `same` in both targets | none observed | `Retained` | none |
+| Successful revision state | `same` | `same` | `same` in both targets | none observed | `Retained` | none |
+
+The retained exact-target and successful-state wording was restored to its
+frozen-prior content before packaging. In both targets, the prior package
+already excluded a substituted target execution and already assigned
+`DirectionalCandidate` to the successful revision case. Explicit wording alone
+did not earn a behavioral claim.
+
+Claim Ceiling: the directional results cover only the isolated-variant and
+independent-review cases above in the two named target configurations. They do
+not establish reliability, non-regression, causal improvement, shipment
+status, or behavior outside these cases. The two retained groups support no
+directional claim. No aggregate claim is assigned across the four groups.

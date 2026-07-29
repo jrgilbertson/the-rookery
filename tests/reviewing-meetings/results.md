@@ -30,6 +30,24 @@ Date: 2026-07-23
 
 Result: passed.
 
+## Granola URL-less connector contract
+
+Date: 2026-07-28
+
+- The source adapter now accepts only the exact lowercase 36-character native
+  ID form observed from Granola before constructing a canonical note URL.
+- The contract forbids trimming, case-folding, prefix removal, or any other ID
+  normalization before interpolation.
+- Public-safe regressions separately require successful URL-less mapping,
+  acceptance of an equal directly returned URL, **Unable to prepare** for a
+  missing or noncanonical ID, **Collision stop** for a contradictory direct URL,
+  and **Unable to prepare** for a URL-less provider without a declared mapping.
+- The checks use synthetic IDs and contain no private meeting content, source
+  identifiers, source URLs, participant identities, or vault details.
+
+Result: passed by static contract validation; no live meeting or destination
+was queried or changed for this result.
+
 ## PR review follow-up: dual-owner CRM work application
 
 Date: 2026-07-26

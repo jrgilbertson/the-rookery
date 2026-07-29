@@ -269,6 +269,44 @@ transcript access. The run uses the same classification, review, approval, and
 application workflow and writes only generic `source` and `source_id` identity
 fields to a new note.
 
+### Adapter-declared canonical URL completes a URL-less Granola payload
+
+Given Granola's listing and retrieval tools return an ended meeting with a
+stable native ID such as `123e4567-e89b-42d3-a456-426614174000`, actual start,
+and sufficient generated notes but no source URL field, the configured Granola
+adapter validates the whole returned ID against the declared lowercase
+36-character form and constructs the canonical source URL from its mapping.
+The mapped URL counts as adapter-exposed identity, so the run continues through
+approved-note, conversation, template, naming, and filename checks instead of
+classifying the meeting **Unable to prepare**. It does not depend on query-tool
+citations.
+
+### Matching direct Granola URL confirms mapped identity
+
+Given Granola returns both a canonical native ID and a direct source URL that
+exactly equals the adapter's mapped URL, the identities agree and the meeting
+continues through the remaining checks.
+
+### Missing or noncanonical Granola ID is unable
+
+Given a URL-less Granola payload has no native ID, or its returned ID has leading
+or trailing whitespace, uppercase hexadecimal, braces, a `urn:uuid:` prefix, an
+appended suffix, the wrong length, or any other deviation from the declared
+whole-string form, the adapter does not normalize or interpolate it. The meeting
+is **Unable to prepare**.
+
+### Contradictory direct Granola URL is a collision
+
+Given Granola returns a canonical native ID but also returns a direct source URL
+that differs from the adapter's mapped URL, the run records contradictory
+identity evidence and is **Collision stop**.
+
+### URL-less provider without a mapping is unable
+
+Given another provider returns a source-ready meeting without a source URL and
+has no deterministic mapping declared in the adapter contract, the run makes no
+URL guess and is **Unable to prepare**.
+
 ### Legacy provider fields remain readable
 
 Given a historical note contains a configured legacy provider ID field, the run

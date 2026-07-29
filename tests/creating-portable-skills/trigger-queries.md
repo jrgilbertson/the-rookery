@@ -404,14 +404,15 @@ behavior remain unverified.
 
 ## 2026-07-28 final review-batch package state
 
-The final review batch kept two isolated evidence-contract changes and restored
-two candidates that did not change frontier-model behavior. The kept edits
-changed three package files after `5803918`.
+The non-waivable independent-review change remains in the final package. The
+prior variant-isolation wording was restored after it was `same` in Sol and
+`better` in Opus. Changes for the other two groups were reverted without
+evidence labels.
 
 | Current package file | SHA-256 |
 | --- | --- |
-| `SKILL.md` | `c5c3a1404ec856471c964d460ebf786138239f342133fe7e1533aa80853b1325` |
-| `assets/baseline-test-template.md` | `962efe56c97e2e51c8a0155d1fd924835dde9c82e00399b8ab37dea0374c4ce0` |
+| `SKILL.md` | `64d66b504ad921482e098309721908560ec9945b604a05c0d00602b6d217b9f5` |
+| `assets/baseline-test-template.md` | `50d30d25016b234b6b96b599a8d8a812f74769b75426b2e7d92c89e54b6fef59` |
 | `assets/skill-template.md` | `e5cbfe744d93ba1c92c9a2a4dd97dbde00f51032ffe0563b95433683788f8458` |
 | `assets/trigger-queries-template.md` | `ea30d1dbf024548c23ddfad2dab8d2e26b2e7f794ec44e65cf807ac58120a2ef` |
 | `references/portability.md` | `28a862532a0ab0db75a8d0d47525bbd25ec47fe54f303fbd2726ab597157e84d` |
@@ -421,14 +422,16 @@ changed three package files after `5803918`.
 - Listing proxy: passed. The description is unchanged, and the applicable
   public-tier run predeclared both target models and recorded the exact harness
   and material configuration for each target with per-run references.
-- Matched behavior: for isolated variant pairs and non-waivable independent
-  review, the discriminator was `better` in both declared targets, controls
-  were `same`, and no invariant loss was observed. Each group received
-  `DirectionalCandidate` and a **directional comparison** label. The other two
-  candidates were `Retained`, received no label, and were restored. Exact cases
-  and session references are in `baseline-cases.md`.
+- Matched behavior: non-waivable independent review was `better` in both
+  declared targets with stable controls and no observed invariant loss. Its
+  candidate state was `DirectionalCandidate`, and it earned **directional
+  comparison**. Variant isolation was `same` in Sol and `better` in Opus. Its
+  candidate state was `Retained`; it earned no label, and the prior wording was
+  restored. Exact prompts, checks,
+  configurations, load traces, observations, and session references are in
+  `baseline-cases.md`.
 - Local-source installation: passed with Skills CLI 1.5.20 in disposable
-  project `/tmp/creating-portable-skills-final.7Xveit/project`.
+  project `/tmp/creating-portable-skills-final2.KrEJ5g/project`.
 - Installed-content identity: passed for the project-local Codex and Claude
   Code copies. `diff -qr` found no differences from the six-file source
   package, and the installed `SKILL.md` hashes matched the source.
@@ -437,14 +440,15 @@ changed three package files after `5803918`.
   therefore required direct project-local runtime provenance.
 - Codex native discovery, load, and trigger: passed with Codex CLI 0.145.0 and
   `gpt-5.6-sol` at high reasoning in fresh ephemeral thread
-  `019fab5b-eecf-7ca1-b8b5-4126f2280f19`. The command trace read
-  `.agents/skills/creating-portable-skills/SKILL.md` from the recorded
-  project working directory, and that installed file matched the source hash.
+  `019fab85-6793-74e2-b582-58e6dac814a8`. The command trace read the exact
+  installed
+  `/private/tmp/creating-portable-skills-final2.KrEJ5g/project/.agents/skills/creating-portable-skills/SKILL.md`,
+  and that file matched the source hash.
 - Claude native discovery, load, and trigger: passed with Claude Code 2.1.220
   and `claude-opus-5` at high effort in fresh non-persistent session
-  `e9ed238b-fd49-494a-9a57-71208c4bb7f2`. With project settings and only the
+  `643ef19e-6133-4e37-8775-3d4f8d6f66a3`. With project settings and only the
   native `Skill` tool, the tool result named the exact installed base directory
-  `/private/tmp/creating-portable-skills-final.7Xveit/project/.claude/skills/creating-portable-skills`.
+  `/private/tmp/creating-portable-skills-final2.KrEJ5g/project/.claude/skills/creating-portable-skills`.
 
 The native responses asked for the verification-mode decision. This confirms
 the intended trigger behavior. The paths and matching installed hashes prove
@@ -452,6 +456,6 @@ which copies ran; response wording alone does not establish load identity.
 
 Claim Ceiling: listing evidence remains description-bound. Native checks cover
 only the exact package hashes, named configurations, and recorded query. The
-matched comparisons support only the two kept instruction groups and their
-declared cases. No aggregate reliability, non-regression, causal, or
-cross-target claim is supported.
+matched comparison supports only non-waivable independent review in its
+declared cases. No aggregate improvement, reliability, non-regression, or
+causal claim is supported across the full review batch.

@@ -821,11 +821,11 @@ configurations, tasks, or provenance mechanisms.
 
 ## 2026-07-28 final review-batch evidence state
 
-Four evidence-contract candidates after `5803918` were tested as isolated
-groups. Two were kept: isolated variant pairs and non-waivable independent
-review. They changed `SKILL.md`, the baseline template, and the review
-checklist. The other two candidates were restored because both target models
-already produced the required behavior without the extra wording.
+Four evidence-contract candidates after `5803918` were tested as separate
+groups. The non-waivable independent-review change remains in the final
+package. The prior variant-isolation wording was restored after the durable
+rerun returned `same` in Sol and `better` in Opus. Changes for the other two
+groups were reverted without evidence labels.
 
 Structural validation passed with `skills-ref` 0.1.5. The current six-file
 package hashes and per-layer states are recorded in `trigger-queries.md`.
@@ -836,19 +836,20 @@ configuration before execution, and recorded the exact Codex and Claude
 configurations with per-run references. That description-bound listing evidence
 remains passed.
 
-Fresh GPT-5.6 Sol and Claude Opus 5 contexts ran the prior and revised variants
-for all four isolated groups. A separate fresh-context grader inspected all
-eight package variants and all sixteen artifacts. Isolated variant pairs and
-non-waivable independent review were
-`better` in both targets with stable controls and no observed invariant loss.
-Each earned `DirectionalCandidate` and a **directional comparison** label. The
-exact-listing-target and successful-revision-state candidates were `same` in
-both targets and were restored with no evidence label. The full case record,
-session references, decisions, and limits are in `baseline-cases.md`.
+Fresh traced GPT-5.6 Sol sessions reran the two groups with canonical records.
+The preserved Claude Opus 5 sessions and both exact package pairs were inspected
+with those reruns by `/root/grade_durable_kept_pairs`, a separate agent created
+with `fork_turns: "none"`. Independent-review completion was `better` in both
+targets with stable controls and no observed invariant loss. Its candidate
+state was `DirectionalCandidate`, and it earned **directional comparison**.
+Variant isolation was `same` in Sol and `better` in Opus. Its candidate state
+was `Retained`; it earned no label, and the prior wording was restored. Exact
+prompts, checks, configurations, load traces, observations,
+artifact hashes, decisions, and limits are in `baseline-cases.md`.
 
 Skills CLI 1.5.20 installed the final local source into separate project-local
 Codex and Claude Code paths under
-`/tmp/creating-portable-skills-final.7Xveit/project`. `diff -qr` returned no
+`/tmp/creating-portable-skills-final2.KrEJ5g/project`. `diff -qr` returned no
 differences between the source package and either installed copy. Local-source
 installation and installed-content identity passed for both package-harness
 cells.
@@ -858,23 +859,39 @@ Same-name user copies existed under `~/.agents/skills` and
 required deterministic project-local provenance:
 
 - Codex CLI 0.145.0 ran `gpt-5.6-sol` at high reasoning in fresh ephemeral
-  thread `019fab5b-eecf-7ca1-b8b5-4126f2280f19`, with user configuration and
+  thread `019fab85-6793-74e2-b582-58e6dac814a8`, with user configuration and
   rules ignored. Its command trace read the installed project-local
-  `.agents/skills/creating-portable-skills/SKILL.md` from the recorded working
-  directory. The installed file hash matched the source.
+  `/private/tmp/creating-portable-skills-final2.KrEJ5g/project/.agents/skills/creating-portable-skills/SKILL.md`.
+  The installed file hash matched the source.
 - Claude Code 2.1.220 ran `claude-opus-5` at high effort in fresh
-  non-persistent session `e9ed238b-fd49-494a-9a57-71208c4bb7f2`, with project
+  non-persistent session `643ef19e-6133-4e37-8775-3d4f8d6f66a3`, with project
   settings and only the native `Skill` tool. The tool result reported the exact
   base directory
-  `/private/tmp/creating-portable-skills-final.7Xveit/project/.claude/skills/creating-portable-skills`.
+  `/private/tmp/creating-portable-skills-final2.KrEJ5g/project/.claude/skills/creating-portable-skills`.
 
 Both native responses asked for the verification-mode decision. That confirms
 the intended trigger behavior, while the exact runtime paths establish which
 installed copy ran. Native discovery, load, and trigger passed in both declared
 model-harness cells.
 
+A separate fresh-context final reviewer ran after the package, canonical
+comparison records, and native evidence reached their final state.
+`/root/post_records_final_reviewer` was created with
+`collaboration.spawn_agent`, `fork_turns: "none"`, agent type `default`, and no
+model or reasoning override. The reviewer had not authored the package,
+produced an executor artifact, or graded a comparison.
+
+The reviewer directly opened all six package files, the complete checklist and
+test records, the prior, isolation, and independence variants, the four exact
+prompts, four final Sol outputs and their traces, four Opus outputs, both
+installed package trees, and both final native traces. It reran structural
+validation, recursive installed-copy diffs, the final-versus-independence diff,
+package hash checks, and `git diff --check`. Every checklist item passed. The
+reviewer reported no blockers or other material findings and confirmed that
+the claims match the direct evidence.
+
 Claim Ceiling: the native checks support only the final package hashes, named
-harness configurations, and recorded query. The matched comparisons support
-only the two kept instruction groups in their predeclared cases. They do not
+harness configurations, and recorded query. The matched comparison supports
+only non-waivable independent review in its predeclared cases. It does not
 establish reliability, non-regression, causal improvement, behavior in other
 targets or configurations, or an aggregate improvement across the review batch.

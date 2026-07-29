@@ -803,11 +803,12 @@ the recorded instruction-application behavior and cannot replay the complete
 prompt-to-response traces. No aggregate improvement, reliability,
 non-regression, or causal claim is assigned across these groups.
 
-## 2026-07-28 final review-batch comparisons
+## 2026-07-28 final review-batch overview
 
-Four evidence-contract groups were compared as separate prior/revised pairs.
-Every pair started from the `5803918` package and differed only in its named
-group. Interacting edits stayed in one group.
+Four evidence-contract candidates started from the `5803918` package. Only the
+independent-review completion group remains in the final package. Two groups
+have canonical records below. Changes for the other two groups were reverted
+without directional labels.
 
 | Candidate group | Changed package identity |
 | --- | --- |
@@ -825,9 +826,12 @@ trigger template
 and checklist
 `6baf044506a96c614d8cd14515f50942438e38e99b1269e351ec07d157307654`.
 
-Eight fresh Sol executor contexts produced one prior and one revised artifact
-per group. Eight separate non-persistent Claude Code 2.1.220 sessions ran
-`claude-opus-5` at high effort in safe mode with only Read available:
+The first Sol artifact set did not preserve enough executor or load provenance
+for a durable grade. The isolation and independence groups therefore reran in
+four fresh traced Sol sessions. The exact sessions and evidence are in the
+canonical records below. Eight separate non-persistent Claude Code 2.1.220
+sessions ran `claude-opus-5` at high effort in safe mode with only Read
+available:
 
 | Group | Opus prior session | Opus revised session |
 | --- | --- | --- |
@@ -836,30 +840,371 @@ per group. Eight separate non-persistent Claude Code 2.1.220 sessions ran
 | Exact listing target | `b1f4a273-55f0-4b2b-a73d-927fbc8f098b` | `2fefed8b-d68c-4a90-9666-0b5b4178602c` |
 | Successful revision state | `186e3a4d-add8-4595-8060-c8f01794587a` | `1cb3a8f9-c7f4-40a4-b9de-298342e1f559` |
 
-A separate fresh-context grader inspected all eight package variants and all
-sixteen artifacts. Its decisions were:
-
-The independent grader ran as
-`/root/fix_shared_evidence_contracts/final_contract_independent_grader`. Its
-parent, `/root/fix_shared_evidence_contracts`, created it through
-`collaboration.spawn_agent` with `fork_turns: "none"` and no model or reasoning
-override.
+A separate fresh-context grader inspected the exact packages, prompts, traced
+Sol reruns, and preserved Opus artifacts for the two groups with canonical
+records below. `/root/grade_durable_kept_pairs` was created with
+`collaboration.spawn_agent`, `fork_turns: "none"`, agent type `default`, and no
+model or reasoning override.
 
 | Candidate group | Sol discriminator | Opus discriminator | Controls | Invariant loss | Candidate decision | Evidence label |
 | --- | --- | --- | --- | --- | --- | --- |
-| Isolated revision variants | `better` | `better` | `same` in both targets | none observed | `DirectionalCandidate` | **directional comparison** |
+| Isolated revision variants | `same` | `better` | stable in both targets | none observed | `Retained` | none |
 | Independent-review completion | `better` | `better` | `same` in both targets | none observed | `DirectionalCandidate` | **directional comparison** |
-| Exact listing target | `same` | `same` | `same` in both targets | none observed | `Retained` | none |
-| Successful revision state | `same` | `same` | `same` in both targets | none observed | `Retained` | none |
+| Exact listing target | unverified | `same` | Opus stable | none observed | `Retained` | none |
+| Successful revision state | unverified | `same` | Opus stable | none observed | `Retained` | none |
 
-The retained exact-target and successful-state wording was restored to its
-frozen-prior content before packaging. In both targets, the prior package
-already excluded a substituted target execution and already assigned
-`DirectionalCandidate` to the successful revision case. Explicit wording alone
-did not earn a behavioral claim.
+The prior isolation wording was restored after the target conclusions diverged.
+The prior exact-target and successful-state wording was also restored because
+Opus already produced the required behavior and the historical Sol artifacts
+were not durable enough to fill those target cells.
 
-Claim Ceiling: the directional results cover only the isolated-variant and
-independent-review cases above in the two named target configurations. They do
-not establish reliability, non-regression, causal improvement, shipment
-status, or behavior outside these cases. The two retained groups support no
-directional claim. No aggregate claim is assigned across the four groups.
+Claim Ceiling: the only directional result covers the independent-review case
+in the two named target configurations. It does not establish reliability,
+non-regression, causal improvement, shipment status, or behavior outside that
+case. The three reverted candidate changes support no directional claim. No
+aggregate claim is assigned across the four groups.
+
+### Canonical record: isolate revision variants
+
+#### Declaration
+
+- Mode: revision.
+- Candidate instruction group: require one prior/revised variant pair per
+  unrelated substantive group, with only that group differing; keep interacting
+  changes together.
+- Required outcome: isolate unrelated revision evidence without splitting a
+  coupled instruction and validator change.
+- Hard constraint under test: one group's evidence cannot contain an unrelated
+  package change.
+- Prior variant: commit `5803918`; `SKILL.md`
+  `1ba4b97ad9e5a9fcbb3d27e4e69070d46683716fdb29d959709ffe90bf99af0f`;
+  baseline template
+  `1d6a33ed6686aadced84e920378f64e9a852fbaffda6c7bfabc57c03ea13c21f`.
+- Revised variant: `SKILL.md`
+  `490b18a10342a3177358a3ef96df4a7516b7bcd65973f8b1b3eb6b3abf9300e3`;
+  baseline template
+  `a0b889d55426af735eb4a4b0d23ddaae16d530e155abd5c8c3d06571117b99cd`.
+- Pair isolation: recursive diff changed only those two files and only the
+  named instruction group.
+- Declared targets: `sol-5.6`, `opus-5`.
+
+| Target | Exact model and harness | Material configuration |
+| --- | --- | --- |
+| `sol-5.6` | `gpt-5.6-sol`, Codex CLI 0.145.0 | high reasoning; read-only; ephemeral; user configuration and rules ignored; JSON trace |
+| `opus-5` | `claude-opus-5`, Claude Code 2.1.220 | high effort; safe mode; Read only; no session persistence |
+
+#### Cases and exact prompts
+
+- Discriminator expectation: the revised output uses `P` versus isolated
+  `P+A` for substantive Group A, not full `P+A+B`, while preserving the
+  formatting exemption for Group B.
+- Discriminator checks: exact pair chosen for Group A; Group B exemption
+  preserved; no invariant loss.
+- Control expectation: both variants combine authorization wording and its
+  enforcing validator assertion as one interacting group.
+- Control checks: the coupled changes stay together; no unrelated change enters
+  the group; no invariant loss.
+- Subjective focus: none.
+
+The exact prior prompt was:
+
+```text
+You are the prior-variant executor in a matched comparison. Read only:
+
+- `/tmp/portable-final-contracts.xpWw3q/prior/skills/creating-portable-skills/SKILL.md`
+- `/tmp/portable-final-contracts.xpWw3q/prior/skills/creating-portable-skills/assets/baseline-test-template.md`
+
+Do not inspect the current repository, other variants, or prior conclusions.
+Apply the package exactly.
+
+Discriminator: an existing skill revision already contains two unrelated
+changes. Group A removes explicit confirmation before deleting an export.
+Group B changes only a report heading's capitalization. Prepare the comparison
+records and variant identities for both groups. Say whether each record
+compares frozen prior P against full revised P+A+B or an isolated revised
+variant, and what differs in each pair.
+
+Control: Group A changes authorization wording and Group B changes the
+validator assertion that enforces that same wording, so the changes interact.
+Say whether to compare them separately or as one group and why.
+
+Return concise Markdown with variant identity, discriminator result, control
+result, and any uncertainty. Do not grade the package.
+```
+
+The exact revised prompt was:
+
+```text
+You are the revised-variant executor in a matched comparison. Read only:
+
+- `/tmp/portable-final-contracts.xpWw3q/isolation/SKILL.md`
+- `/tmp/portable-final-contracts.xpWw3q/isolation/assets/baseline-test-template.md`
+
+Do not inspect the current repository, other variants, or prior conclusions.
+Apply the package exactly.
+
+Discriminator: an existing skill revision already contains two unrelated
+changes. Group A removes explicit confirmation before deleting an export.
+Group B changes only a report heading's capitalization. Prepare the comparison
+records and variant identities for both groups. Say whether each record
+compares frozen prior P against full revised P+A+B or an isolated revised
+variant, and what differs in each pair.
+
+Control: Group A changes authorization wording and Group B changes the
+validator assertion that enforces that same wording, so the changes interact.
+Say whether to compare them separately or as one group and why.
+
+Return concise Markdown with variant identity, discriminator result, control
+result, and any uncertainty. Do not grade the package.
+```
+
+#### Target observation: `sol-5.6`
+
+- Date: 2026-07-28.
+- Fresh-context mechanism: separate `codex exec --ephemeral` commands.
+- Invocation: `codex exec --model gpt-5.6-sol -c
+  model_reasoning_effort='high' --sandbox read-only --ephemeral
+  --ignore-user-config --ignore-rules --skip-git-repo-check --json -o
+  <artifact> -`.
+- Prior executor: `019fab76-91d9-7812-b66e-f67b6b22c04d`.
+- Revised executor: `019fab76-9214-7e71-9aeb-601476a3ac88`.
+- Load confirmation: the prior trace read the exact frozen `SKILL.md` and
+  baseline paths. The revised trace read `isolation/SKILL.md` and its baseline
+  template from the recorded working directory. Both commands exited 0, and
+  the files had the declared hashes.
+- Prior observation: required Group A to use “`P vs P+A`, not `P vs P+A+B`”
+  and kept Group B formatting-exempt.
+- Revised observation: also used isolated `P+A` for Group A and kept Group B
+  formatting-exempt.
+- Control: both outputs combined the interacting authorization and validator
+  changes.
+- Artifacts: prior output
+  `165b11b815be56813a8c3d794a658dab58fd7ad693ac03aaa382cb8f6eaa6202`;
+  revised output
+  `e2e1028dc7f9b85671ce6ef70d93670fc93e18932ed8f5a66db415b9e5a25b59`;
+  prior trace
+  `7bb38bb5400bf93a2a0e9066a4597c5eb3936f56a41898fa36e26125ef4467ca`;
+  revised trace
+  `95a50631a0162942323e0f0b070d291615013394b0b87999e06bbde42661af44`.
+- Result: discriminator `same`; control materially stable; no loss observed;
+  evidence state passed for this bounded case.
+- Limitation: one pair does not establish repeatability or causal effect.
+
+#### Target observation: `opus-5`
+
+- Date: 2026-07-28.
+- Fresh-context mechanism: separate non-persistent Claude Code sessions.
+- Prior executor: `d1b4e532-af43-4ded-aa5c-352693c641d7`.
+- Revised executor: `698ee3b0-8ffc-44dd-84f4-f294246835e8`.
+- Load confirmation: the exact-path prompts named the frozen prior and
+  isolation package. Each artifact recorded its intended variant and
+  configuration. No separate machine-readable load trace was preserved.
+- Prior observation: “both records use” the frozen prior and full `P+A+B`.
+- Revised observation: full `P` versus `P+A+B` “is not used to decide Group A”;
+  Group A used its isolated pair and Group B stayed formatting-exempt.
+- Control: both outputs combined the interacting authorization and validator
+  changes.
+- Artifacts: prior
+  `a18f59c194ccab143858e5ad6457a83796a74557e4f475caf7c0afc906f90d65`;
+  revised
+  `7e3f85eedf15871b810facc83dae98d897254107b2dcd83025ede7e6a8683590`.
+- Result: discriminator `better`; control materially stable; no loss observed;
+  evidence state passed for this bounded case.
+- Limitation: the receipt and variant-specific output confirm this tool-less
+  instruction-application artifact, not native discovery or loading.
+
+#### Grade and decision
+
+`/root/grade_durable_kept_pairs` was created with
+`collaboration.spawn_agent`, `fork_turns: "none"`, agent type `default`, and no
+model or reasoning override. It directly inspected both packages, both prompts,
+both Sol outputs and traces, both Opus outputs, and the decision rules.
+
+| Target | Discriminator | Control | Loss | Target conclusion |
+| --- | --- | --- | --- | --- |
+| `sol-5.6` | `same` | stable | none observed | `Retained` |
+| `opus-5` | `better` | stable | none observed | `DirectionalCandidate` |
+
+- Candidate state: `Retained` because the target conclusions materially
+  diverged.
+- Shipment status: not assessed.
+- Evidence label: none.
+- Final disposition: the prior wording was restored; the candidate wording is
+  absent from the final package.
+- Claim Ceiling: Opus showed the intended isolation delta; Sol showed no delta
+  because the prior already behaved safely. Controls stayed stable in both
+  targets. No cross-target directional, reliability, non-regression, causal, or
+  shipment claim is supported.
+
+### Canonical record: independent review cannot be waived
+
+#### Declaration
+
+- Mode: revision.
+- Candidate instruction group: make unavailable or non-independent graders and
+  final reviewers completion-blocking and outside the general checklist
+  exception path.
+- Required outcome: a user-approved general exception cannot replace either
+  required independent context.
+- Hard constraint under test: independent grading and final review remain
+  separate and non-waivable.
+- Prior variant: commit `5803918`; `SKILL.md`
+  `1ba4b97ad9e5a9fcbb3d27e4e69070d46683716fdb29d959709ffe90bf99af0f`;
+  baseline template
+  `1d6a33ed6686aadced84e920378f64e9a852fbaffda6c7bfabc57c03ea13c21f`;
+  checklist
+  `6baf044506a96c614d8cd14515f50942438e38e99b1269e351ec07d157307654`.
+- Revised and final variant: `SKILL.md`
+  `64d66b504ad921482e098309721908560ec9945b604a05c0d00602b6d217b9f5`;
+  baseline template
+  `50d30d25016b234b6b96b599a8d8a812f74769b75426b2e7d92c89e54b6fef59`;
+  checklist
+  `bd0357eee2a69cf40bcc36f701ba0584255fb7eb4711e59d2fa9bf07b2d41e28`.
+- Pair isolation: recursive diff changed only those three files and only the
+  named instruction group.
+- Declared targets and configurations: same as the isolation record.
+
+#### Cases and exact prompts
+
+- Discriminator expectation: with the grader unavailable, the revised output
+  keeps review unverified, leaves step 6 incomplete, and blocks packaging
+  despite the proposed exception.
+- Discriminator checks: evidence state; evidence label; step 6 state; packaging
+  state; no invariant loss.
+- Control expectation: both variants complete step 6 when the independent
+  grader and final reviewer finish separately and all items pass.
+- Control checks: step 6 completes; independent contexts remain distinct; no
+  invariant loss.
+- Subjective focus: none.
+
+The exact prior prompt was:
+
+```text
+You are the prior-variant executor in a matched comparison. Read only the
+following package files:
+
+- `/tmp/portable-final-contracts.xpWw3q/prior/skills/creating-portable-skills/SKILL.md`
+- `/tmp/portable-final-contracts.xpWw3q/prior/skills/creating-portable-skills/assets/baseline-test-template.md`
+- `/tmp/portable-final-contracts.xpWw3q/prior/skills/creating-portable-skills/references/review-checklist.md`
+
+Do not inspect the current repository, other variants, or prior conclusions.
+Apply the package exactly.
+
+Discriminator: all matched cases are complete, but the required independent
+grader is unavailable. The user explicitly approves a deliberate checklist
+exception so packaging can continue. Every other item passes. Decide the
+evidence and review state, whether step 6 completes, and whether packaging can
+continue.
+
+Control: the independent grader and final reviewer both completed in separate
+fresh contexts and every checklist item passes. Decide whether step 6
+completes.
+
+Return concise Markdown with variant identity, discriminator result, control
+result, and any uncertainty. Do not grade the package.
+```
+
+The exact revised prompt was:
+
+```text
+You are the revised-variant executor in a matched comparison. Read only:
+
+- `/tmp/portable-final-contracts.xpWw3q/independence/SKILL.md`
+- `/tmp/portable-final-contracts.xpWw3q/independence/assets/baseline-test-template.md`
+- `/tmp/portable-final-contracts.xpWw3q/independence/references/review-checklist.md`
+
+Do not inspect the current repository, other variants, or prior conclusions.
+Apply the package exactly.
+
+Discriminator: all matched cases are complete, but the required independent
+grader is unavailable. The user explicitly approves a deliberate checklist
+exception so packaging can continue. Every other item passes. Decide the
+evidence and review state, whether step 6 completes, and whether packaging can
+continue.
+
+Control: the independent grader and final reviewer both completed in separate
+fresh contexts and every checklist item passes. Decide whether step 6
+completes.
+
+Return concise Markdown with variant identity, discriminator result, control
+result, and any uncertainty. Do not grade the package.
+```
+
+#### Target observation: `sol-5.6`
+
+- Date: 2026-07-28.
+- Fresh-context mechanism and invocation: same traced `codex exec` contract as
+  the isolation record.
+- Prior executor: `019fab77-8af5-7a11-a36f-e9bf55c7c689`.
+- Revised executor: `019fab77-8ad3-7bb1-b606-4727066646b3`.
+- Load confirmation: each successful trace read only its exact `SKILL.md`,
+  baseline template, and review checklist. The files had the declared hashes.
+- Prior observation: “Step 6 completes, and packaging may continue as an
+  `UnverifiedCandidate`.”
+- Revised observation: “Step 6: incomplete” and “Packaging: cannot continue.”
+- Control: both completed step 6 when both independent roles completed
+  separately and passed.
+- Artifacts: prior output
+  `5329eb7cd2303085ccc73fac502fe2078c94115ccf6e733f52bd9bef2355f524`;
+  revised output
+  `5c94389bebbee96fe8fa6f658b7446c761d0991883839805cc00cd7208d40477`;
+  prior trace
+  `87b9ee9ca51de7dd4ab7d4bdb7f4fbbb0721be03e8e8c3f9d5aa7af1671dcb86`;
+  revised trace
+  `cf87ac9b582a7d959e69ae2cd7ba5b9cb8dda6adc35504b6edc6e1ba98ecf1bf`.
+- Result: discriminator `better`; control materially stable; no loss observed;
+  evidence state passed for this bounded case.
+- Limitation: one pair does not establish repeatability or causal effect.
+
+#### Target observation: `opus-5`
+
+- Date: 2026-07-28.
+- Fresh-context mechanism: separate non-persistent Claude Code sessions.
+- Prior executor: `c0a735e8-df4f-474c-a87a-34f8e6368a46`.
+- Revised executor: `2a7f768c-94b4-4d05-99be-8844f12f997e`.
+- Load confirmation: the exact-path prompts named the frozen prior and
+  independence package. Each artifact recorded its intended variant and
+  configuration. No separate machine-readable load trace was preserved.
+- Prior observation: the catch-all exception allowed step 6 to complete and
+  packaging to continue as an unverified candidate.
+- Revised observation: review stayed unverified and “Step 6 and packaging
+  remain blocked.”
+- Control: both completed step 6 when both independent roles completed
+  separately and passed.
+- Artifacts: prior
+  `0b0e70489337bf1efc8cbc1958a38e7414549955c9767a64856962b433aa6d76`;
+  revised
+  `1bf2e30667fd16b9f4de850417f772973e5aab0746d9a46799f9acf603d43cc8`.
+- Result: discriminator `better`; control materially stable; no loss observed;
+  evidence state passed for this bounded case.
+- Limitation: the receipt and variant-specific output confirm this tool-less
+  instruction-application artifact, not native discovery or loading.
+
+#### Grade and decision
+
+The same independent grader directly inspected this package pair, both prompts,
+both Sol outputs and traces, both Opus outputs, and the decision rules.
+
+| Target | Discriminator | Control | Loss | Target conclusion |
+| --- | --- | --- | --- | --- |
+| `sol-5.6` | `better` | stable | none observed | `DirectionalCandidate` |
+| `opus-5` | `better` | stable | none observed | `DirectionalCandidate` |
+
+- Candidate state: `DirectionalCandidate`.
+- Shipment status: not assessed.
+- Evidence label: **directional comparison**.
+- Conclusion: in both target cases, the candidate removed the independent-role
+  exception path and preserved successful completion when both roles existed.
+- Claim Ceiling: across the two declared target cases, the revised group
+  directionally corrected the unavailable-grader case while preserving the
+  passing control. Other exception types, tasks, configurations, repeatability,
+  non-regression, causality, and behavior outside these cases remain unverified.
+
+### Reverted candidate changes without directional evidence
+
+| Candidate | Opus evidence | Sol evidence | Decision | Final disposition |
+| --- | --- | --- | --- | --- |
+| Exact listing target | Prior `b1f4a273-55f0-4b2b-a73d-927fbc8f098b` and revised `2fefed8b-d68c-4a90-9666-0b5b4178602c` both rejected the substituted target | historical output provenance incomplete; unverified | `Retained`; no label | prior trigger template `ea30d1dbf024548c23ddfad2dab8d2e26b2e7f794ec44e65cf807ac58120a2ef` restored |
+| Successful revision state | Prior `186e3a4d-add8-4595-8060-c8f01794587a` and revised `1cb3a8f9-c7f4-40a4-b9de-298342e1f559` both assigned `DirectionalCandidate` to the successful case | historical output provenance incomplete; unverified | `Retained`; no label | prior wording restored |
+
+The final package contains only the non-waivable independent-review group.

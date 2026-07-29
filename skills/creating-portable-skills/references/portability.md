@@ -62,8 +62,10 @@ exact installed path or base directory, or equivalent runtime evidence linked
 to the installed content hash. Distinctive output may corroborate that
 provenance, but cannot independently prove which copy loaded. If deterministic
 runtime provenance is unavailable, keep native load unverified rather than
-failed. Record source-to-install identity, native discovery, native load,
-native trigger, and behavioral evidence separately.
+failed. Native trigger for the declared package revision is also unverified
+when loaded-copy identity is unverified; record an unattributed invocation only
+as an observation. Record source-to-install identity, native discovery, native
+load, native trigger, and behavioral evidence separately.
 
 | Harness | Project-level | User-level | Source |
 | --- | --- | --- | --- |

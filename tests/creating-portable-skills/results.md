@@ -895,3 +895,13 @@ harness configurations, and recorded query. The matched comparison supports
 only non-waivable independent review in its predeclared cases. It does not
 establish reliability, non-regression, causal improvement, behavior in other
 targets or configurations, or an aggregate improvement across the review batch.
+
+## 2026-07-28 final provenance and trigger-routing review
+
+The loaded-copy attribution rule and description-only activation route earned
+`DirectionalCandidate` in both declared targets with stable controls. The
+final package validates, installs byte-for-byte, and passes native load and
+trigger checks in Codex and Claude Code. `baseline-cases.md` owns the matched
+evidence; `trigger-queries.md` owns the final package and native evidence.
+`/root/final_package_review_after_two_fixes` inspected the exact final package
+and evidence in a fresh context and passed it with no material findings.

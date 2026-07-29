@@ -128,9 +128,11 @@ equivalent runtime evidence linked to the installed content hash. Distinctive
 output may corroborate that provenance, but cannot independently prove
 loaded-copy identity. Installed-content identity alone also does not prove
 which copy loaded. If deterministic runtime provenance is unavailable, keep
-native load unverified rather than failed and record the limitation. Keep
-installation identity, native discovery, native load, native trigger, and
-behavioral evidence as separate states.
+native load unverified rather than failed and record the limitation. Native
+trigger for the declared package revision is also unverified when loaded-copy
+identity is unverified; record an unattributed invocation only as an
+observation. Keep installation identity, native discovery, native load, native
+trigger, and behavioral evidence as separate states.
 
 | Target cell | Date | Exact model | Harness and version | Configuration | Native load state | Native trigger state | Evidence or limitation |
 | --- | --- | --- | --- | --- | --- | --- | --- |

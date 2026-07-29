@@ -1207,4 +1207,249 @@ both Sol outputs and traces, both Opus outputs, and the decision rules.
 | Exact listing target | Prior `b1f4a273-55f0-4b2b-a73d-927fbc8f098b` and revised `2fefed8b-d68c-4a90-9666-0b5b4178602c` both rejected the substituted target | historical output provenance incomplete; unverified | `Retained`; no label | prior trigger template `ea30d1dbf024548c23ddfad2dab8d2e26b2e7f794ec44e65cf807ac58120a2ef` restored |
 | Successful revision state | Prior `186e3a4d-add8-4595-8060-c8f01794587a` and revised `1cb3a8f9-c7f4-40a4-b9de-298342e1f559` both assigned `DirectionalCandidate` to the successful case | historical output provenance incomplete; unverified | `Retained`; no label | prior wording restored |
 
-The final package contains only the non-waivable independent-review group.
+## 2026-07-28 final provenance and trigger-routing comparisons
+
+These records cover the two review findings retained after the `8f3aef2`
+package review. Each pair starts from `8f3aef2` and differs only in its named
+group. Exploratory runs against the combined worktree were excluded from the
+decision.
+
+Both target sets used fresh persistent sessions. Sol ran through Codex CLI
+0.145.0 with `gpt-5.6-sol`, high reasoning, a read-only sandbox, user config and
+rules ignored, and the relevant installed skill names disabled. Opus ran
+through Claude Code 2.1.220 with `claude-opus-5`, high effort, safe mode,
+project-only settings, and plan permissions. Seven sessions used only Read;
+the `6022a005-e9a6-444b-94e7-79cc64dc2da9` control session also wrote a plan
+file outside the package. The Claude receipts recorded `claude-opus-5` as the
+canonical main model.
+
+### Canonical record: native trigger attribution follows loaded-copy identity
+
+#### Declaration
+
+- Mode: revision.
+- Candidate instruction group: when deterministic loaded-copy provenance is
+  unavailable, keep native trigger for the declared revision unverified and
+  record the invocation only as unattributed.
+- Required outcome: the evidence record never attributes a visible invocation
+  to a package revision whose loaded-copy identity is unverified.
+- Hard constraint: installation identity, discovery, load, trigger, and
+  behavior remain separate states.
+- Frozen prior root: `/tmp/creating-portable-skills-prior.WoIUsP/tree` at
+  commit `8f3aef2`; trigger template
+  `ea30d1dbf024548c23ddfad2dab8d2e26b2e7f794ec44e65cf807ac58120a2ef`;
+  portability reference
+  `28a862532a0ab0db75a8d0d47525bbd25ec47fe54f303fbd2726ab597157e84d`.
+- Isolated candidate root: `/tmp/cps-xgg-candidate.85JjPD/tree`; trigger template
+  `fcc451e43dd0346ae463bef2075984b791b9d3ea204151d74c4f873186367106`;
+  portability reference
+  `63b07a216e776e473a62cd21adc1530733ea88331484090d70dc5eea979f3cb0`.
+- Pair isolation: recursive diff changed only those two files and the named
+  attribution rule.
+
+#### Cases and exact prompts
+
+The discriminator expected both native load and native trigger to remain
+unverified for the declared revision, with the visible invocation recorded only
+as an unattributed observation. The control expected both states to pass when
+location inventory, installed-content identity, exact-path runtime provenance,
+and the visible invocation were all present. Every case also checked that the
+claim stayed scoped to the declared revision and query.
+
+For each run, `<root>` was replaced with the exact root named in the
+declaration. The discriminator prompt was:
+
+```text
+Read exactly these two evidence-policy documents and no other policy source:
+<root>/skills/creating-portable-skills/assets/trigger-queries-template.md and
+<root>/skills/creating-portable-skills/references/portability.md. Apply them as
+written. Scenario: a same-name user copy may have produced the native response.
+Installed-content identity for the reviewed revision passed. The harness
+visibly invoked something on the representative query. Deterministic runtime
+provenance identifying which copy loaded is unavailable. Record Native load
+state and Native trigger state for the declared package revision, then state
+whether the invocation can be cited as passed trigger evidence. Return a
+compact decision with the governing text.
+```
+
+The control prompt was:
+
+```text
+Before answering, use the shell to open these exact two files with line
+numbers: <root>/skills/creating-portable-skills/assets/trigger-queries-template.md
+and <root>/skills/creating-portable-skills/references/portability.md. Do not use
+another policy source. Apply them as written. Control scenario: all applicable
+project, user, and system locations were inventoried. The installed content
+hash matches the reviewed revision, a deterministic native runtime trace names
+that exact installed path, and the harness visibly invokes the reviewed
+revision on the representative query. Record Native load state and Native
+trigger state for the declared package revision. Cite the governing line
+numbers. If you cannot open both exact files, return unverified.
+```
+
+#### Target observations
+
+| Target and case | Prior executor | Candidate executor | Prior observation | Candidate observation | Result |
+| --- | --- | --- | --- | --- | --- |
+| `sol-5.6` discriminator | `019faba8-4f51-7310-ac18-096ef12534de` | `019fabb0-a3df-76b3-96b1-9e4a7f77ebcb` | Correctly inferred load and trigger `unverified` from installed-identity, provenance, and revision-binding clauses. | Reached the same states directly from the explicit dependency and classified the invocation as unattributed. | `better`; evidence passed; no loss |
+| `sol-5.6` control | `019fabc5-486e-7fa3-8adb-cfaf3cf1ff41` | `019fabc4-3458-7ba1-a3d0-552ab87a195a` | Load and trigger passed for the traced revision and query after opening both exact files. | Same. | materially stable; evidence passed; no loss |
+| `opus-5` discriminator | `b2d41745-adb4-4649-b6e5-0a61c0f3df79` | `55ef4438-7ee7-4367-9492-b66a70403d60` | Reached the correct states through a longer attribution argument across several clauses. | Cited the direct rule and recorded the invocation as an unattributed observation. | `better`; evidence passed; no loss |
+| `opus-5` control | `9aa1677e-64c7-4200-808c-5176ff7b79d5` | `e898157a-e011-4a11-8910-21426f7cd764` | Load and trigger passed with revision and query limits. | Same. | materially stable; evidence passed; no loss |
+
+For Sol, each rollout trace opened only the two exact declared files. Output
+SHA-256 values, in table order, were
+`2e1dd4a20a9720ffeadd84da15e444f2f2841908796201a0891c9fbcc32d241b`,
+`b4f0545c04e79940e9a59964b0cb4cb55c86c49dc72fbcc72615719da33cf894`,
+`56f6154e98ec4ecfe1feb2e93b5b0b8c76fff2072f1c6b159263d65acccdff66`,
+and `65c86e62851ce93edf01b3f049d9d789d408a3273e8b6c2bcc1faea6aa502a49`.
+The corresponding rollout SHA-256 values were
+`6d40a9e4ddd32aee9407f942e2317c6dbb86fe5ed3636cd69c8537c401c5a9f4`,
+`89f37a8dc3860fd427cb46f1e558e895dd78b59e8d7649a1c46612d9a5f89bf2`,
+`cf9ab7f63bdb3a1bcc5c54d64c67fa2643d5bf88ce1a37f613d263d3bcacc910`,
+and `a8a430a9396fd92b07249182e798739840ff9d705cb34f06140bf80e6253d64a`.
+
+For Opus, each persistent JSONL transcript recorded Read calls against the two
+exact declared files. Transcript SHA-256 values, in table order, were
+`10626010b362f22e3cd31c080ae74acb3ca0936ebd937b6c821a339c125c56b6`,
+`6273e4a08c36579321c3411132afc16afa25139b4ade4fac651aa5fb410d43e5`,
+`3bd7ff2f001504108a30dba34bad755a09e30c73293e26c4a6072a72233cdee2`,
+and `6db0c8bfbdc4093041f1e29a479bde75814a8a53d9eb4d52762040e7d5673a8c`.
+
+#### Grade and decision
+
+`/root/grade_two_review_fixes` was created with
+`collaboration.spawn_agent`, `fork_turns: "none"`, agent type `default`, and no
+model or reasoning override. It directly inspected the isolated packages,
+outputs, rollout traces, Claude transcripts, and baseline decision rules.
+
+| Target | Discriminator | Control | Loss | Target conclusion |
+| --- | --- | --- | --- | --- |
+| `sol-5.6` | `better` | stable | none observed | `DirectionalCandidate` |
+| `opus-5` | `better` | stable | none observed | `DirectionalCandidate` |
+
+- Candidate state: `DirectionalCandidate`.
+- Shipment status: not assessed.
+- Evidence label: **directional comparison**.
+- Conclusion: the candidate makes the loaded-copy-to-trigger dependency direct
+  while preserving the fully attributable control in both targets.
+- Claim Ceiling: these exact cases support a shorter, unambiguous attribution
+  path in the two declared targets. They do not establish reliability,
+  non-regression, causality, or behavior for other revisions, configurations,
+  or queries.
+
+### Canonical record: description-only revisions use activation evidence
+
+#### Declaration
+
+- Mode: revision.
+- Candidate instruction group: route a description-only or trigger-routing
+  revision through matched unforced activation cases instead of forced-load
+  body behavior.
+- Required outcome: the baseline discriminator measures whether the revised
+  description activates for the intended request while the matched near-miss
+  remains inactive.
+- Hard constraint: body-semantic revisions still use loaded instruction-behavior
+  comparisons, and the baseline record remains the candidate-decision owner.
+- Frozen prior root: `/tmp/creating-portable-skills-prior.WoIUsP/tree` at
+  commit `8f3aef2`; `SKILL.md`
+  `64d66b504ad921482e098309721908560ec9945b604a05c0d00602b6d217b9f5`;
+  baseline template
+  `50d30d25016b234b6b96b599a8d8a812f74769b75426b2e7d92c89e54b6fef59`.
+- Isolated candidate root: `/tmp/cps-xgh-candidate.r4b08Y/tree`; `SKILL.md`
+  `d733203658e748f9d837bdb7418c1f2015b16c63325c442e86aa24469bbeb6aa`;
+  baseline template
+  `9b2a5766e07a2377d3d19c7813c6729b11926805abef1521fe5146d3b0a9bb39`.
+- Pair isolation: recursive diff changed only those two files and the named
+  trigger-routing comparison path.
+
+#### Cases and exact prompts
+
+The discriminator expected the intended trigger query and shared near-miss to
+become the baseline cases, with the forced-load `same` result excluded from the
+discriminating slot. The control expected a body-semantic change to keep using
+a matched loaded instruction-behavior comparison.
+
+For each run, `<root>` was replaced with the exact root named in the
+declaration. The discriminator prompt was:
+
+```text
+Read exactly these three workflow-policy documents and no other policy source:
+<root>/skills/creating-portable-skills/SKILL.md,
+<root>/skills/creating-portable-skills/assets/baseline-test-template.md, and
+<root>/skills/creating-portable-skills/assets/trigger-queries-template.md. Apply
+them as written. Scenario: a revision changes only frontmatter description to
+correct under-triggering; prior and revised bodies are byte-identical. Matched
+unforced listing and native runs show the frozen prior does not activate on the
+intended query, the revised variant activates, and both remain inactive on the
+same near-miss. A forced-load body comparison is same. State which matched
+cases and evidence the baseline comparison must use, the candidate decision,
+and whether the revised description is retained or the frozen prior is
+restored. Return a compact decision with governing text.
+```
+
+The control prompt was:
+
+```text
+Before answering, use the shell to open these exact three files with line
+numbers: <root>/skills/creating-portable-skills/SKILL.md,
+<root>/skills/creating-portable-skills/assets/baseline-test-template.md, and
+<root>/skills/creating-portable-skills/assets/trigger-queries-template.md. Do
+not use another policy source. Apply them as written. Control scenario: a
+revision changes instruction semantics in the body, not its description. In
+matched fresh contexts, the frozen prior and revised variants are both
+deliberately loaded. The discriminating case shows the intended behavioral
+delta and the control stays materially stable with no invariant loss. State
+which comparison evidence the baseline record must use and the candidate
+decision. Cite the governing line numbers. If you cannot open all three exact
+files, return unverified.
+```
+
+#### Target observations
+
+| Target and case | Prior executor | Candidate executor | Prior observation | Candidate observation | Result |
+| --- | --- | --- | --- | --- | --- |
+| `sol-5.6` discriminator | `019fabaa-e6d3-75f3-b996-afd3a3a1d3a6` | `019fabb0-a3dd-78b3-ab70-cbf61f294169` | Correctly inferred that the intended query and near-miss governed and retained the revised description. | Selected those unforced cases directly and treated forced-load `same` only as body-behavior corroboration. | `better`; evidence passed; no loss |
+| `sol-5.6` control | `019fabc5-4856-7cf2-aa26-aa6c38e2a5f3` | `019fabc4-3447-78d1-b4ea-011122eb6f7d` | Opened all three exact files and used the loaded instruction-behavior comparison. | Same. | materially stable; evidence passed; no loss |
+| `opus-5` discriminator | `734b8eda-f399-4c4c-a626-b1496b527732` | `9d6deb80-33c1-4ba1-9b54-942718ef961e` | Reached the correct result by synthesizing description burden, discriminating-check, and trigger-evidence rules. | Directly selected unforced activation and excluded forced-load `same` from the discriminator. | `better`; evidence passed; no loss |
+| `opus-5` control | `0c5369cc-eccb-4ae6-abef-316fa18ae441` | `6022a005-e9a6-444b-94e7-79cc64dc2da9` | Used the loaded instruction-behavior comparison. | Same decision and evidence separation. | materially stable; evidence passed; wrote a plan file outside the package; no decision change |
+
+For Sol, each rollout trace opened only the three exact declared files. Output
+SHA-256 values, in table order, were
+`79e3a27bd388eff20b413324ebab82414a876140f17f82d989b37e4e5fef3407`,
+`1d6c11e4af71a4dc80b4a647484813e9d2f62c3e29cc555a227e9c3ca6b69c62`,
+`68892ca55ca2514e1fb21a32f41cec5969a0f7cbbea577e01497cbd8bba4c90a`,
+and `fedb4bd1032ceeef5fd395107f9bd376ac9e482418a3a6c3c416d0e2cb65c778`.
+The corresponding rollout SHA-256 values were
+`f4b2a6e62aeb71b77ad28ec5afb8f665d7954cb03e100d5b8d986673398bc57e`,
+`bea1ae7deba4763cff3e5eb934e9a3dfa273a7cd2425395339eee00783d79ff9`,
+`7d952db152deec3f529537b0131d486b18c141a8d4cd5135d0209adfd0001174`,
+and `b47ce6a8c7dcbc1b084c9e84a5b1714a5880aaf187005cbee0b6657c05f06a75`.
+
+For Opus, each persistent JSONL transcript recorded Read calls against the
+three exact declared files. Transcript SHA-256 values, in table order, were
+`24098dbc0825fa8423528d0b305fa9b95c93d2897a21889055693f2c90f51441`,
+`2bfaa2fdaa3359dad561c38b380768db98daf1c16f3b2db5dad05cb44664e6e2`,
+`af87ed5c383e99a4859434ac438bc5cec87cadebcb636932df88e822124c0a1f`,
+and `b22fe871868e2b4b906e3f37929b7a1a50f9c9429a9932ebaf397d70d9f471a2`.
+
+#### Grade and decision
+
+The same independent grader inspected this isolated pair and every artifact.
+
+| Target | Discriminator | Control | Loss | Target conclusion |
+| --- | --- | --- | --- | --- |
+| `sol-5.6` | `better` | stable | none observed | `DirectionalCandidate` |
+| `opus-5` | `better` | stable | none material | `DirectionalCandidate` |
+
+- Candidate state: `DirectionalCandidate`.
+- Shipment status: not assessed.
+- Evidence label: **directional comparison**.
+- Conclusion: the candidate makes the correct activation-evidence path direct
+  for description-only revisions and preserves the body-semantic comparison
+  path in both targets.
+- Claim Ceiling: these exact cases support the two named comparison routes in
+  the declared targets. They do not establish causal improvement, general
+  non-regression, or behavior outside the declared cases.
+
+The final package also retains the earlier non-waivable independent-review
+group.

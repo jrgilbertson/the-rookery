@@ -459,3 +459,55 @@ only the exact package hashes, named configurations, and recorded query. The
 matched comparison supports only non-waivable independent review in its
 declared cases. No aggregate improvement, reliability, non-regression, or
 causal claim is supported across the full review batch.
+
+## 2026-07-28 final provenance and trigger-routing package state
+
+The description is unchanged, so the complete public-tier listing evidence
+above remains applicable. The two new matched-comparison records and their
+limits are in `baseline-cases.md`.
+
+| Current package file | SHA-256 |
+| --- | --- |
+| `SKILL.md` | `d733203658e748f9d837bdb7418c1f2015b16c63325c442e86aa24469bbeb6aa` |
+| `assets/baseline-test-template.md` | `9b2a5766e07a2377d3d19c7813c6729b11926805abef1521fe5146d3b0a9bb39` |
+| `assets/skill-template.md` | `e5cbfe744d93ba1c92c9a2a4dd97dbde00f51032ffe0563b95433683788f8458` |
+| `assets/trigger-queries-template.md` | `fcc451e43dd0346ae463bef2075984b791b9d3ea204151d74c4f873186367106` |
+| `references/portability.md` | `63b07a216e776e473a62cd21adc1530733ea88331484090d70dc5eea979f3cb0` |
+| `references/review-checklist.md` | `bd0357eee2a69cf40bcc36f701ba0584255fb7eb4711e59d2fa9bf07b2d41e28` |
+
+- Structural validation: passed with `skills-ref`.
+- Local-source installation: passed with Skills CLI 1.5.20 in disposable
+  project
+  `/var/folders/70/8ct00f9x7_59r8gb796_5y600000gn/T/cps-final.tqttq9/project`.
+- Installed-content identity: passed. `diff -qr` found no differences between
+  the six-file source and either the `.agents` or `.claude` installed copy.
+- Same-name inventory: user copies existed under `~/.agents/skills` and
+  `~/.claude/skills` with `SKILL.md` hash
+  `e179b054a0f01f7710ed8dd71a1fb11dba235764f5f1d999628718208a36fd2f`,
+  so native load required direct project-local provenance.
+- Codex native discovery, load, and trigger: passed with Codex CLI 0.145.0 and
+  `gpt-5.6-sol` at high reasoning in fresh thread
+  `019fabb8-3d73-72b1-beb5-ca2f6a83978c`. The rollout read the exact installed
+  `.agents/skills/creating-portable-skills/SKILL.md` under the disposable
+  project, then asked for the target skill's canonical source. The output hash
+  was `94051aeeee63df27a7f5c7f5a7305fe234973fa010850ba4f70d1c8ba4d0e8e3`;
+  the rollout hash was
+  `f118b8779fec7dd10306970933903fe0332b8d6c0ac4c1cbbaddc446ba0f24ed`.
+- Claude native discovery, load, and trigger: passed with Claude Code 2.1.220
+  and `claude-opus-5` at high effort in fresh session
+  `0e2bf2b3-2691-4778-a595-9bd0d3c14285`. The persistent transcript recorded a
+  Read call against the exact installed
+  `.claude/skills/creating-portable-skills/SKILL.md`, then asked which skill and
+  canonical source should enter the audit. The transcript hash was
+  `ed1fd78a9f3bd27cdf7b620de4d8d52647e182ff47e48459ffad82e078dff6f5`.
+
+The Claude run also wrote a plan file outside the package. That trace noise did
+not change package contents, installed identity, load attribution, or the
+workflow decision.
+
+Claim Ceiling: the unchanged description passes the recorded listing proxy in
+the two declared targets. Native evidence supports discovery, exact-copy load,
+and triggering only for these final package hashes, named configurations, and
+recorded query. Matched evidence supports only the two predeclared comparison
+groups. It does not establish reliability, non-regression, causal improvement,
+or behavior outside those cells and cases.

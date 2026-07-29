@@ -10,10 +10,15 @@ Ceiling recording.
 
 For a new skill, compare without-skill against with-skill. For a revision,
 compare the frozen prior version against the revised version. Run each prompt
-and variant in a fresh agent context with the intended variant actually loaded.
-Have a separate fresh-context agent grade the matched outputs. The grader must
-not have authored the change or produced either artifact. Mechanical checks may
-use deterministic scripts.
+against each variant in a fresh agent context. For instruction-behavior cases,
+confirm that the variant loaded. For a group limited to description or trigger
+routing, use matched unforced activation observations from the listing or native
+trigger record. Confirm which variant is installed, then record whether an
+activation occurred without naming or forcing the skill. For an expected
+non-trigger, no load is required. Have a
+separate fresh-context agent grade the matched outputs. The grader must not have
+authored the change or produced either artifact. Mechanical checks may use
+deterministic scripts.
 
 Predeclare the required outcome and hard constraints. If an exploratory run
 makes the need for another objective check clear, add or refine that check,
@@ -62,8 +67,8 @@ separate; do not average conflicting outcomes.
 - Prior executor: [agent or session identity]
 - Revised executor: [agent or session identity]
 - Independent grader: [separate agent and its clean-context mechanism]
-- Prior variant actually loaded: [identity and how loading was confirmed]
-- Revised variant actually loaded: [identity and how loading was confirmed]
+- Prior variant confirmation: [loaded identity for an instruction-behavior case, or installed-content identity and observed activation state for a trigger-routing case]
+- Revised variant confirmation: [loaded identity for an instruction-behavior case, or installed-content identity and observed activation state for a trigger-routing case]
 - Prior observation: [what happened]
 - Revised observation: [what happened]
 - Observed losses: [none observed, or every material loss]
@@ -94,8 +99,8 @@ separate; do not average conflicting outcomes.
 - Prior executor: [agent or session identity]
 - Revised executor: [agent or session identity]
 - Independent grader: [separate agent and its clean-context mechanism]
-- Prior variant actually loaded: [identity and confirmation]
-- Revised variant actually loaded: [identity and confirmation]
+- Prior variant confirmation: [loaded identity for an instruction-behavior case, or installed-content identity and observed activation state for a trigger-routing case]
+- Revised variant confirmation: [loaded identity for an instruction-behavior case, or installed-content identity and observed activation state for a trigger-routing case]
 - Prior observation: [what happened]
 - Revised observation: [what happened]
 - Observed losses: [none observed, or every material loss]

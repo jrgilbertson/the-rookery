@@ -18,8 +18,10 @@ input files:
   provenance line naming the observed failure or baseline gap that motivated
   the case.
 - `log.md` — one line per run or check: `date | git rev | check | result |
-  note`. An archive-pointer line identifies where prior history lives, so git
-  remains the archive.
+  note`. The `git rev` field names the commit the run's working tree was
+  based on — the parent commit when the change under test is not yet
+  committed. An archive-pointer line identifies where prior history lives,
+  so git remains the archive.
 
 ## Rules
 

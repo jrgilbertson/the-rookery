@@ -16,8 +16,8 @@ looked" surface. GitHub Releases mirror its entries.
 - `creating-portable-skills` is the first published skill. It creates new Agent
   Skills and helps review, update, or move existing skills. It starts from the
   user's goal, checks the package structure, compares behavior with focused
-  tests, and verifies installation separately from activation. It works
-  without companion skills.
+  tests, and verifies installability and activation with a per-harness smoke
+  probe. It works without companion skills.
 - `personal-chief-of-staff` guides morning, wind-down, weekly, and quarterly
   reviews using current data from the user's connected sources. It requires
   review before writing changes, handles Obsidian CLI operations, tests its

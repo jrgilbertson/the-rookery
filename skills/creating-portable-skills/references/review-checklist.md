@@ -16,20 +16,18 @@ A **System-Owned Invariant** is a hard constraint that must remain explicit beca
 An instruction is not a System-Owned Invariant merely because it uses words such as "must" or "always." Generic reminders about thinking, checking, or narrating work are candidate choreography when the intended outcome and its deterministic check are already explicit.
 
 Before changing one candidate instruction group, use the hard constraint,
-required outcome, target cells, and cases declared in the completed baseline
-record. Use these qualifiers consistently:
+required outcome, and cases declared in the baseline comparison. Use these
+qualifiers consistently:
 
 - **Material** means capable of changing a required outcome, trigger boundary, user authority, exact output format, deterministic check, package installability, or fragile sequence.
 - An **invariant loss** is an observed violation of the named required outcome or hard constraint. Different wording, reasoning style, or implementation approach is not a loss by itself.
-- **Material divergence** means declared targets differ on the candidate decision or a named invariant, not merely in presentation.
-- **Available evidence** comes from the declared target and configuration, in a fresh context, with the intended variant confirmed loaded. A substitute, contaminated context, or listing judgment does not qualify.
+- **Available evidence** comes from a fresh context with the intended variant confirmed loaded. A substitute, contaminated context, or listing judgment does not qualify.
 
-The completed baseline record owns routine case construction, candidate
-decisions, evidence labels, matched-comparison waivers, and Claim Ceiling
-recording. Apply its
-Decision rules rather than restating them here.
+The baseline comparison template owns case construction, grading, and the
+ship or return-to-correction decision. Apply its rules rather than restating
+them here.
 
-Pass: every prescriptive instruction protects a named invariant, responds to observed evidence, or covers a named fragile operation; every relaxation satisfies the completed baseline record's rules and Claim Ceiling.
+Pass: every prescriptive instruction protects a named invariant, responds to observed evidence, or covers a named fragile operation; every relaxation satisfies the baseline comparison's decision rule.
 
 ## Invocation and triggering
 
@@ -40,7 +38,7 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 - Each trigger is a distinct branch. Pass: no two trigger phrases are synonyms whose collapse would preserve the same cases.
 - Runtime routing is co-located. Pass: a body routing section appears only when invocation leads to distinct execution branches, and it sits with those branch instructions instead of restating the description.
 - Invocation policy is deliberate. Pass: portable description text is sufficient for model invocation; any harness-specific invocation control stays optional metadata outside the canonical behavior contract.
-- Trigger testing has one owner. Pass: the completed trigger record supplies query construction, tier selection, scoring, and evidence states; other files point to that record instead of restating its thresholds.
+- Trigger testing has one owner. Pass: the trigger contract supplies query construction, judging protocol, and thresholds; other files point to it instead of restating them.
 
 ## Information hierarchy
 

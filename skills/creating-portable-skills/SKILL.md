@@ -15,10 +15,6 @@ An independent reviewer must not have participated in the authoring discussion o
 
 ## Workflow
 
-Before starting a new skill, ask the user to choose **ordinary personal skill** or **public or unusually load-bearing skill** verification. For an authorized revision or migration, ask after the audit and scope approval, before changing files. Do not ask during a read-only audit. Skip the question only when the user has already chosen in the current request; otherwise, briefly recommend one mode and let the user decide.
-
-Ordinary personal verification uses the routine listing-query tier. Public or unusually load-bearing verification uses the public or unusually load-bearing listing-query tier. The choice changes only the listing-query tier defined in [assets/trigger-queries-template.md](assets/trigger-queries-template.md); it does not change the required matched comparison, structural validation, native checks, or declared model-harness target set.
-
 Creating a new skill starts at step 1. Auditing, updating, or migrating an existing skill starts at step 0. A read-only audit ends at step 0; approved changes continue through the remaining workflow.
 
 ### 0. Audit an existing skill
@@ -33,7 +29,7 @@ Change completion: the user has approved the material fix scope, including any a
 
 Use the conversation, existing package, repository context, and examples already available. Ground the reusable guidance in real work: user corrections, successful task history, input and output examples, project documentation, schemas, review comments, issues, version history, and resolved failures. Establish the skill's one job, triggering conditions and near-misses, intended outcome, and observable done state, including any required artifact or handoff. Name only the hard constraints, including decisions that remain with the user; identify real environment requirements and representative examples. When a missing decision could materially change the result, scope, or authority, ask one focused question at a time; do not re-ask what the available context resolves.
 
-Completion: the user-selected verification mode is recorded, the job fits one sentence, and the triggers, near-misses, outcome, done state, hard constraints, requirements, and examples are known or explicitly not applicable.
+Completion: the job fits one sentence, and the triggers, near-misses, outcome, done state, hard constraints, requirements, and examples are known or explicitly not applicable.
 
 ### 2. Scope targets and resources
 
@@ -61,39 +57,35 @@ Completion: the validator passes, or every named fallback check passes with the 
 
 ### 5. Compare behavior
 
-Treat changed instruction semantics, a changed trigger description, or a changed bundled resource as substantive. Before comparing behavior, enumerate every substantive changed instruction or resource group. The baseline template permits one scoped candidate instruction group, so create and complete a separate record for each unrelated group; do not let evidence or a candidate decision for one group stand in for another. For a group limited to description or trigger routing, use matched unforced activation cases instead of forced-load behavior: compare whether each variant activates for the same trigger requests and stays inactive for the same near-misses. Copy [assets/baseline-test-template.md](assets/baseline-test-template.md) to the host's test-record location (`tests/<skill-name>/` when no convention exists), preserving earlier dated evidence. Complete each record using its case-construction, grading, candidate-decision, evidence-label, Claim Ceiling, and matched-comparison waiver rules. Typo, formatting, and link-only edits are exempt.
+Treat changed instruction semantics, a changed trigger description, or a changed bundled resource as substantive; typo, formatting, and link-only edits are exempt. Follow [assets/baseline-test-template.md](assets/baseline-test-template.md): declare a small discriminating case set, run matched with/without pairs in fresh contexts, grade binary through an independent grader, and emit the durable case files and log lines to the host's test location (`tests/<skill-name>/` when no convention exists). For a change limited to description or trigger routing, compare unforced activation on the trigger set instead of forced-load behavior.
 
-Completion: every substantive changed group is enumerated and has its own completed record and candidate decision; each record covers every declared target and predeclared case, the evidence it earned, and what remains unverified.
+Completion: every substantive change is covered by graded discriminating cases showing the intended improvement with no regression, and the case files and log lines are emitted.
 
 ### 6. Decide and review
 
-Have a separate fresh-context agent apply the completed baseline record's candidate-decision rules, then run [references/review-checklist.md](references/review-checklist.md) top to bottom. Give the reviewer the skill, intended outcome, hard constraints, artifacts, traces, and evidence record without the author's conclusions. Use its findings to identify wasted paths, ambiguous or unused instructions, recurring corrections that belong in `Gotchas`, and helper logic repeatedly reinvented across runs that belongs in `scripts/`. Any substantive follow-up edit returns through structural validation and every affected comparison cell. It also invalidates native package-harness and model-harness evidence bound to the superseded revision until those cells rerun.
+Have a separate fresh-context agent apply the baseline comparison's decision rule, then run [references/review-checklist.md](references/review-checklist.md) top to bottom. Give the reviewer the skill, intended outcome, hard constraints, artifacts, traces, and graded case results without the author's conclusions. Use its findings to identify wasted paths, ambiguous or unused instructions, recurring corrections that belong in `Gotchas`, and helper logic repeatedly reinvented across runs that belongs in `scripts/`. Any substantive follow-up edit returns through structural validation and the affected cases before shipping.
 
 The general checklist-exception path does not apply to independent grader or final reviewer availability or context independence. If either role is unavailable or cannot run in an independent context, its state remains unverified and blocks completion until a separate context completes it.
 
-Completion: the completed baseline record has a final candidate decision, and every checklist item passes or has a user-approved deliberate exception where the checklist permits one.
+Completion: the baseline comparison has a ship or return-to-correction decision, and every checklist item passes or has a user-approved deliberate exception where the checklist permits one.
 
 ### 7. Test the description
 
-Copy [assets/trigger-queries-template.md](assets/trigger-queries-template.md) beside the baseline record and complete it using its query-construction, separate-agent judging, tier, scoring, evidence, and tuning rules.
+Follow [assets/trigger-queries-template.md](assets/trigger-queries-template.md): build the should-trigger and near-miss query set, record it in `tests/<skill-name>/triggers.md`, and judge it through separate fresh-context agents using the template's protocol and thresholds.
 
-When a required listing judgment is unavailable, record it as unverified and record a shipment-only waiver with the template if the user explicitly authorizes shipment. The waiver does not change the state or Claim Ceiling. Failed listing evidence cannot be waived.
+After a description edit, rerun the complete query set and the affected behavioral comparison.
 
-After a description edit, rerun the template's complete listing query set and the affected behavioral comparison.
-
-Completion: every declared target passes the template's listing-proxy rules or has an explicit user shipment waiver for an unavailable judgment, with its unverified state and Claim Ceiling preserved.
+Completion: every should-trigger query passes and no near miss activates, with results logged; a judgment that cannot be run is recorded in the log as not run, never counted as a pass.
 
 ### 8. Package and install
 
-Recheck the host conventions from step 2 and confirm the canonical directory is self-contained. Complete the native package-harness and model-harness sections in [assets/trigger-queries-template.md](assets/trigger-queries-template.md): install from the current local source through each declared harness's documented path, verify installed content identity, and record discovery, loading, and triggering separately for every applicable target cell. Use a disposable project or workspace by default. Using a user-level skill location or overwriting an existing same-name installation requires explicit user approval.
+Recheck the host conventions from step 2 and confirm the canonical directory is self-contained. Run the smoke check from [assets/trigger-queries-template.md](assets/trigger-queries-template.md): install from the current local source into a disposable project on each roster harness, ask one should-trigger query, confirm the skill activates, and record one log line per harness. Using a user-level skill location or overwriting an existing same-name installation requires explicit user approval.
 
-When a native check is unavailable, complete the template's Waiver section if the user authorizes shipment.
-
-When a native check fails, return to correction or obtain an explicit user decision to remove the failing cell from the declared target scope. A failed required state cannot be waived or satisfy completion.
+When a roster harness is unavailable, log it as not run rather than guessing; a failed smoke check returns to correction.
 
 If packaging exposes a defect that changes the package, apply step 6's re-entry rule before completing this step.
 
-Completion: the source validates, and every required native state passes or is unavailable, remains unverified with its claim limit preserved, and has an explicit user shipment waiver; no failed required state remains.
+Completion: the source validates, and every roster harness has a logged smoke result of pass or not run, with no failure outstanding.
 
 ## Gotchas
 

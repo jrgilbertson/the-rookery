@@ -1,6 +1,6 @@
 # Portability Map
 
-Portability here means a canonical, self-contained Agent Skills package that compatible harnesses can discover and install. It does not promise equivalent behavior across every model, harness, configuration, or task. Behavioral claims require evidence from the exact declared target cells and cases they name.
+Portability here means a canonical, self-contained Agent Skills package that compatible harnesses can discover and install. It does not promise equivalent behavior across every model, harness, configuration, or task. Behavioral claims require evidence from the exact models, harnesses, and cases they name.
 
 ## Canonical structure
 

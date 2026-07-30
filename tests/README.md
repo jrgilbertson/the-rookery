@@ -50,15 +50,23 @@ input files:
 - **Trigger suite.** Judge each query in a fresh context that sees only the
   skill name, description, and that query; require yes or no. One run per
   query. A first judgment that is `unsure` or hedged is borderline: run that
-  query twice more and take the majority. Any near-miss `yes` fails the suite.
+  query twice more. `unsure` counts as neither vote — a should-trigger query
+  passes only with two categorical `yes` votes, a near miss only with two
+  categorical `no` votes, and a completed three-run set without two
+  categorical same-side votes fails. Any near-miss `yes` fails the suite
+  immediately.
 - **Behavioral case.** Fresh agent context, skill installed from current
   source, no other conversation state. The case file is self-contained: run
   its prompt, resolve fixture paths relative to the case file, grade each
   checklist item pass or fail, and record one log line.
 - **Smoke check.** Install the skill from source into a disposable project on
   each roster harness — Claude Code and Codex CLI — ask one trigger query, and
-  confirm the skill activates. One log line per harness; if a roster harness
-  is unavailable, log `not run — harness unavailable`.
+  confirm from the run's trace that the copy which activated is the
+  just-installed one (its path or base directory). When a same-name copy
+  exists in a user or system location and the activated copy's provenance
+  cannot be confirmed, log the result as inconclusive rather than pass. One
+  log line per harness; if a roster harness is unavailable, log
+  `not run — harness unavailable`.
 
 ## Honest claims
 

@@ -23,8 +23,12 @@ convention; this template restates the protocol for portable use.
   author the description. Show it only the skill name, description, and one
   query; require a plain yes or no.
 - One run per query. A first judgment that is `unsure` or hedged is
-  borderline: run that query twice more and take the majority.
-- Every should-trigger query needs a yes. Any near-miss yes fails the set.
+  borderline: run that query twice more. `unsure` counts as neither vote — a
+  should-trigger query passes only with two categorical yes votes, a near
+  miss only with two categorical no votes, and a completed three-run set
+  without two categorical same-side votes fails.
+- Every should-trigger query needs a yes. Any near-miss yes fails the set
+  immediately.
 
 ## Tune
 
@@ -40,8 +44,11 @@ convention; this template restates the protocol for portable use.
   workflow — the harnesses the skill is expected to install into (in the
   home repository of this template: Claude Code and Codex CLI).
 - Install the skill from the current local source into a disposable project
-  on each roster harness, ask one should-trigger query, and confirm the
-  skill activates.
+  on each roster harness, ask one should-trigger query, and confirm from the
+  run's trace that the copy which activated is the just-installed one (its
+  path or base directory). When a same-name copy exists in a user or system
+  location and the activated copy's provenance cannot be confirmed, log the
+  result as inconclusive rather than pass.
 - Record one log line per harness in `tests/<skill-name>/log.md` (line
   format: `date | git rev | check | result | note`); when a roster harness
   is unavailable, log `not run — harness unavailable`.

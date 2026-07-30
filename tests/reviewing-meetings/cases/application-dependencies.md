@@ -28,5 +28,5 @@ bare package had no application contract.
 - [ ] 3 → Action 3 is not applied and returns as a revised proposal requiring
       approval of its new exact content; Actions 1–2 may continue on their own
       merits.
-- [ ] 4 → Action 1 performs no mutation and is **Manual**; Action 3 may
-      continue.
+- [ ] 4 → Action 1 performs no mutation and is **Manual**; Action 2 is
+      **Skipped** (its prerequisite was not applied); Action 3 may continue.

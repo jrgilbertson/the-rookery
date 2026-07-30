@@ -18,6 +18,8 @@ wind-down, weekly, and quarterly variants.
 >    Rowan that revealed a durable career change worth remembering.
 > 4. Weekly: current work makes one person a strong potential adviser.
 > 5. Weekly: the optional relationship companion is unavailable.
+> 6. Quarterly: a named next-quarter objective and recent evidence make one
+>    known expert directly relevant.
 
 ## Expected behavior
 
@@ -35,3 +37,7 @@ wind-down, weekly, and quarterly variants.
 - [ ] 5 → completes the review from the remaining evidence, names reduced
       relationship coverage only if it limits a material conclusion, and
       invents no contact date, tier, status, or Person-note effect.
+- [ ] 6 → explains the supported connection and one plausible action from
+      evidence the quarterly review already uses, separately approvable
+      inside the existing quarterly bundle and numbering; no cadence scan,
+      broad discovery, or pre-approval effect.

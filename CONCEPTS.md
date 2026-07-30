@@ -39,8 +39,8 @@ direction. New skills run realistic prompts with and without the skill;
 revisions compare the frozen prior and revised versions, each in a fresh
 context with the intended variant confirmed loaded. Cases are binary
 pass/fail, and a substantive revision ships only when the discriminating
-cases show the intended improvement with no regression. The protocol lives in
-`tests/README.md` and the `creating-portable-skills` baseline template.
+cases show the intended improvement with no regression. The repository's
+testing convention owns the protocol.
 
 ### Independent Review Context
 
@@ -61,6 +61,16 @@ A skill's defined behavior when something it prefers is absent, such as a
 validator that cannot run, a companion skill that is not installed, or a tool
 without a clean-context mechanism. The skill uses the best available substitute
 and states what was skipped.
+
+### Disposition List
+
+A Disposition List is the per-item record a prune or restructure leaves in its
+commit message: each removed item marked kept, folded into a named survivor,
+or dropped with a reason. It is a checkable contract, not a narrative — a
+folded claim must point to the surviving line that carries the contract, a
+dropped claim must hold against its rationale, and a retired claim must
+survive a search for live references. Verified dispositions are what make
+git-as-archive recovery trustworthy.
 
 ### Delete Test
 
@@ -83,4 +93,4 @@ A Trigger Contract treats a skill's description as a tested activation API,
 not documentation. At the fire-or-skip decision, the agent sees only the
 skill's name and description. Test this metadata with should-trigger phrasings
 that must activate and near-misses that must not, judged in fresh contexts
-per the protocol in `tests/README.md`.
+under the repository's testing convention.

@@ -24,6 +24,10 @@ bare model had no disposition vocabulary or precedence order.
 > 6. Two configured providers both return native ID `meeting-d6`; a pending
 >    proposal exists for provider `alpha` only. What does that mean for
 >    provider `beta`'s meeting?
+> 7. Two approved notes contain the exact pair (`synthetic`/`meeting-d7`),
+>    and an exact pending proposal for the same pair is also visible.
+> 8. Required source access for (`synthetic`/`meeting-d8`) cannot establish
+>    the meeting's identity, while an exact pending proposal is visible.
 
 ## Expected behavior
 
@@ -36,3 +40,6 @@ bare model had no disposition vocabulary or precedence order.
 - [ ] 6 → provider `beta` is not suppressed; every comparison uses the exact
       source-and-ID pair, and a title, ID-only, or substring match never
       suppresses a meeting.
+- [ ] 7 → **Collision stop**; a collision outranks any conversational state.
+- [ ] 8 → **Unable to prepare**; unestablishable required identity outranks
+      every lower disposition, including the pending proposal.

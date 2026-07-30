@@ -29,7 +29,8 @@ convention; this template restates it for portable use.
    correction; rerun the affected cases after fixing.
 5. **Emit the durable artifacts.** One case file per kept case in
    `tests/<skill-name>/cases/` and one log line per graded run in
-   `tests/<skill-name>/log.md`. This completed template is working scratch —
+   `tests/<skill-name>/log.md` (line format: `date | git rev | check |
+   result | note`). This completed template is working scratch —
    its content lives on in the case files, log lines, and the commit message;
    do not keep it as a separate record.
 

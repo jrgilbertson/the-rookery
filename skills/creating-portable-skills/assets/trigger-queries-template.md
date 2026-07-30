@@ -36,10 +36,14 @@ convention; this template restates the protocol for portable use.
 
 ## Smoke check (packaging or install-path changes)
 
+- The roster is the harness target set declared in step 2 of the skill
+  workflow — the harnesses the skill is expected to install into (in the
+  home repository of this template: Claude Code and Codex CLI).
 - Install the skill from the current local source into a disposable project
-  on each roster harness — in this repository: Claude Code and Codex CLI —
-  ask one should-trigger query, and confirm the skill activates.
-- Record one log line per harness in `tests/<skill-name>/log.md`; when a
-  roster harness is unavailable, log `not run — harness unavailable`.
+  on each roster harness, ask one should-trigger query, and confirm the
+  skill activates.
+- Record one log line per harness in `tests/<skill-name>/log.md` (line
+  format: `date | git rev | check | result | note`); when a roster harness
+  is unavailable, log `not run — harness unavailable`.
 - A listing-proxy pass is not proof of native triggering in a harness; only
   the smoke check shows that. Keep the two claims distinct.

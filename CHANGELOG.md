@@ -36,6 +36,14 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- The skill test suites moved to a lightweight, rerunnable convention: each
+  `tests/<skill>/` now holds a trigger contract, individually runnable case
+  files with binary checklists, and a one-line-per-run log, with the
+  convention itself documented once in `tests/README.md`. The prior evidence
+  ledgers (Claim Ceilings, verification tiers, waiver records, hash tables)
+  are retired; full history remains in git. `creating-portable-skills`'
+  templates and workflow now produce the same lightweight shape, so newly
+  authored skills follow it too.
 - `creating-portable-skills` now grounds guidance in real project evidence,
   uses separate fresh-context agents for reviews and grading, inspects artifacts
   and execution traces directly, and tests activation with more realistic

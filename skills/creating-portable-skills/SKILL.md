@@ -79,7 +79,7 @@ Completion: every should-trigger query passes and no near miss activates, with r
 
 ### 8. Package and install
 
-Recheck the host conventions from step 2 and confirm the canonical directory is self-contained. Run the smoke check from [assets/trigger-queries-template.md](assets/trigger-queries-template.md): install from the current local source into a disposable project on each roster harness, ask one should-trigger query, confirm the skill activates, and record one log line per harness. Using a user-level skill location or overwriting an existing same-name installation requires explicit user approval.
+Recheck the host conventions from step 2 and confirm the canonical directory is self-contained. Run the smoke check from [assets/trigger-queries-template.md](assets/trigger-queries-template.md): install from the current local source into a disposable project on each roster harness — the harness target set declared in step 2 — ask one should-trigger query, confirm the skill activates, and record one log line per harness. Using a user-level skill location or overwriting an existing same-name installation requires explicit user approval.
 
 When a roster harness is unavailable, log it as not run rather than guessing; a failed smoke check returns to correction.
 

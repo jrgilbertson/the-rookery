@@ -23,6 +23,9 @@ owned by the managing-personal-crm suite.
 >    ideas exist but equivalence stays ambiguous.
 > 6. The action is displayed communication text, either approved unchanged
 >    or edited before approval.
+> 7. Create the displayed dated relationship Task; the companion is
+>    available and revalidates, but the canonical task workflow cannot
+>    search or read back the exact displayed destination.
 
 ## Expected behavior
 
@@ -39,3 +42,5 @@ owned by the managing-personal-crm suite.
 - [ ] 6 → keeps the text conversational: unchanged approval is already
       satisfied, an edit needs new exact approval, and nothing is sent or
       saved as a draft or artifact.
+- [ ] 7 → reports manual with no write; the effect is not redirected to a
+      generic mutation path or another destination.

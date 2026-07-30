@@ -25,14 +25,12 @@ Keep these conclusions separate:
 | Observation | Supports | Does not support by itself |
 | --- | --- | --- |
 | Structural validation passes | The package follows the checked Agent Skills schema | Discovery, installation, triggering, or useful execution |
-| Local-source installation and content identity pass | That exact package revision installed in the named harness | Load, trigger, or behavior in another target |
-| Native discovery and load pass | The named harness exposed the installed skill to the named model cell | Correct activation or task behavior |
-| Listing judgment passes | A proxy judgment of the name-and-description routing contract | Native triggering |
-| Native trigger is observed | Triggering in that exact model-harness configuration and query | Other configurations, queries, or equivalent downstream behavior |
-| A small matched comparison passes | The bounded conclusion in its completed baseline record | Reliability, non-regression, causal improvement, or universal compatibility |
+| Trigger-suite judgments pass | A listing proxy for the name-and-description routing contract | Native triggering in a harness |
+| A smoke check passes | That package revision installed and activated in that harness, on that query | Other harnesses, queries, or task behavior |
+| Graded behavioral cases pass | Those cases, in those contexts, at that revision | Reliability, non-regression, causal improvement, or universal compatibility |
 
-Use the model and harness target set declared in the completed baseline record.
-That record owns case construction and per-target observation handling.
+The baseline comparison template owns case construction and grading; the
+trigger contract owns the query set and smoke-check protocol.
 
 ## Optional harness metadata
 
@@ -77,4 +75,4 @@ load, native trigger, and behavioral evidence separately.
 
 ## Rule
 
-A canonical package passes without optional harness metadata. Structural validation establishes canonical form; a clean local-source install establishes installability only for the checked package-harness cell. Describe behavioral support only at the evidence level earned by separately recorded model-harness cases.
+A canonical package passes without optional harness metadata. Structural validation establishes canonical form; a passing smoke check establishes installability and activation only for that harness. Describe behavioral support only at the evidence level earned by separately graded cases.

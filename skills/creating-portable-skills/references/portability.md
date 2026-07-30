@@ -53,17 +53,10 @@ Codex budgets the initial skill listing, so put the key use case and trigger wor
 Use the host repository's documented path first. These are common project and user locations; confirm the installed harness version before relying on them.
 
 A harness may discover the same skill name in several locations with
-version-specific precedence. Before recording native load or trigger evidence,
-inventory every applicable location. A native load pass requires deterministic
-runtime provenance tied to the installed source: a native trace naming the
-exact installed path or base directory, or equivalent runtime evidence linked
-to the installed content hash. Distinctive output may corroborate that
-provenance, but cannot independently prove which copy loaded. If deterministic
-runtime provenance is unavailable, keep native load unverified rather than
-failed. Native trigger for the declared package revision is also unverified
-when loaded-copy identity is unverified; record an unattributed invocation only
-as an observation. Record source-to-install identity, native discovery, native
-load, native trigger, and behavioral evidence separately.
+version-specific precedence. A smoke check therefore uses a disposable
+project so the copy that activates is the copy just installed; when a
+same-name copy exists in a user or system location, confirm the activated
+copy's path before logging the pass, or log the result as inconclusive.
 
 | Harness | Project-level | User-level | Source |
 | --- | --- | --- | --- |

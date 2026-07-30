@@ -72,7 +72,10 @@ input files:
   exists in a user or system location and the activated copy's provenance
   cannot be confirmed, log the result as inconclusive rather than pass. One
   log line per harness; if a roster harness is unavailable, log
-  `not run — harness unavailable`.
+  `not run — harness unavailable`. After a packaging change merges, repeat
+  the probe once against the published default branch — installers pull
+  from it, and local-source success does not prove remote resolution — and
+  log that line too.
 
 ## Honest claims
 

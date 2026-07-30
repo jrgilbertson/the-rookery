@@ -71,11 +71,11 @@ Completion: the baseline comparison has a ship or return-to-correction decision,
 
 ### 7. Test the description
 
-Follow [assets/trigger-queries-template.md](assets/trigger-queries-template.md): build the should-trigger and near-miss query set, record it in `tests/<skill-name>/triggers.md`, and judge it through separate fresh-context agents using the template's protocol and thresholds.
+For a new skill, or whenever the description changed, follow [assets/trigger-queries-template.md](assets/trigger-queries-template.md): build the should-trigger and near-miss query set, record it in `tests/<skill-name>/triggers.md`, and judge it through separate fresh-context agents using the template's protocol and thresholds. When a revision leaves the description untouched, the existing trigger contract stands — skip the rerun; the routing contract did not change.
 
-After a description edit, rerun the complete query set and the affected behavioral comparison.
+After any description edit, rerun the complete query set and the affected behavioral comparison.
 
-Completion: every should-trigger query passes and no near miss activates, with results logged; a judgment that cannot be run is recorded in the log as not run, never counted as a pass.
+Completion: for a new or description-changed skill, every should-trigger query passes and no near miss activates, with results logged (a judgment that cannot be run is recorded as not run, never counted as a pass); otherwise the existing trigger contract is confirmed unchanged.
 
 ### 8. Package and install
 

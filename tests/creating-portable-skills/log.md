@@ -2,6 +2,14 @@
 
 Format: `date | git rev | check | result | note`
 
+Branch-time `git rev` values below are preserved by PR #19 even if the
+branch is squash-merged; the archive pointer's mainline commit stays
+directly reachable.
+
+- 2026-07-30 | 176b818 (prior) | matched comparison: baseline-before-shipping | pass (5/5) | Prior-side run against the frozen pre-retune package for the U5 revision's matched pair. Control held — the substantive-change discipline exists in both variants; the prior-specific tier question, monolithic record artifacts, and waiver machinery surfaced as the process delta the retune removes.
+- 2026-07-30 | 176b818 (prior) | matched comparison: independent-fresh-context-review | pass (4/4) | Prior-side control held; independence outcome identical across variants.
+- 2026-07-30 | 176b818 (prior) | matched comparison: fixture-review-prioritized-findings | pass (5/5) | Prior-side control held; read-only audit shape identical. With the three revised-side runs above, the matched comparison shows no regression and locates the intended delta in the retired ceremony and emitted artifact shape.
+
 - 2026-07-30 | 9b76104 | case: fixture-review-prioritized-findings | pass (5/5) | Fresh-context run against the retuned repo package (U5); read SKILL.md + review-checklist.md.
 - 2026-07-30 | 9b76104 | case: independent-fresh-context-review | pass (4/4) | Fresh-context run against the retuned repo package (U5).
 - 2026-07-30 | f2fe80d | case: baseline-before-shipping | pass (5/5) | Fresh-context rerun against the final checked-in case text (post-clarification) and the retuned repo package; graded including the unforced-activation carve-out item. Supersedes the pre-clarification run at 9b76104.

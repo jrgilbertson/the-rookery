@@ -32,8 +32,9 @@ input files:
 - Roughly 10–15 active cases per skill is a ceiling for initial mining, not a
   target; steady-state suites grown by the observed-failure rule are expected
   to stay smaller.
-- Git is the archive. No hand-recorded hashes, session IDs, evidence labels,
-  or run ledgers in these artifacts.
+- Git is the archive. Beyond the log format's required `git rev` field, no
+  hand-recorded hashes, session IDs, evidence labels, or run ledgers in
+  these artifacts.
 
 ## Cost hierarchy
 

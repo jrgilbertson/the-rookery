@@ -2,5 +2,5 @@
 
 Format: `date | git rev | check | result | note`
 
-- 2026-07-30 | 9b76104 | case: approval-binding-and-revisit | pass (4/4) | Fresh-context executability run; skill loaded; scenario-independence preamble added after the run.
+- 2026-07-30 | 9b76104 | case: approval-binding-and-revisit | pass (4/4) | Fresh-context executability run; skill loaded; the scenario-independence preamble was added after the run to state the branch-independence the graded answer had already assumed, so the result stands for the checked-in text.
 - 2026-07-30 | 176b818 | archive pointer | — | Final recorded pass states: trigger judgments 21/21 plus 12/12 follow-up routings, 14 case runs, and the connector, mode, automation, launch-readiness, CRM-integration, and Obsidian-readback acceptance checks all passed between 2026-07-22 and 2026-07-27; full prior evidence is in git history before the restructure commit that removed trigger-queries.md, baseline-cases.md, and results.md.

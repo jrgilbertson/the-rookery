@@ -25,4 +25,5 @@ named the canonical source identity, exact disposition, or an explicit ending.
 - [ ] Prepares a preview against the configured live meeting template while
       leaving the follow-up's owner and recipient unresolved.
 - [ ] Performs no durable write.
-- [ ] Ends **Ready for review** with an exact disposition count.
+- [ ] Ends **Ready for review** reporting exactly one **Newly proposed** and
+      zero for every other disposition.

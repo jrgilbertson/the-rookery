@@ -21,12 +21,15 @@ bare package had no application contract.
 
 ## Expected behavior
 
-- [ ] 1 → Action 2 is **Skipped** (prerequisite unsatisfied) with no orphan
-      event and no implicit issue; Action 3 may continue.
-- [ ] 2 → Action 2 is **Skipped**; an indeterminate Action 1 result is not
-      blindly retried; Action 3 may continue.
+- [ ] 1 → Action 1 is not applied (user-declined) with no write; Action 2 is
+      **Skipped** (prerequisite unsatisfied) with no orphan event and no
+      implicit issue; Action 3 applies once with readback.
+- [ ] 2 → Action 1 reports **Failed** or **Indeterminate** with no write
+      surviving and no blind retry; Action 2 is **Skipped**; Action 3
+      applies once with readback.
 - [ ] 3 → Action 3 is not applied and returns as a revised proposal requiring
-      approval of its new exact content; Actions 1–2 may continue on their own
-      merits.
+      approval of its new exact content; Action 1 applies once, then Action 2
+      applies with its prerequisite satisfied.
 - [ ] 4 → Action 1 performs no mutation and is **Manual**; Action 2 is
-      **Skipped** (its prerequisite was not applied); Action 3 may continue.
+      **Skipped** (its prerequisite was not applied); Action 3 applies once
+      after its own pre-write validation succeeds.

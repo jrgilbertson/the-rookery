@@ -26,7 +26,9 @@ triage-first, and completion variants.
 - [ ] 1 → recognized as an inventory decision, not a destination effect; the
       exact preflight continues with only the confirmed scope.
 - [ ] 2 → loads the relationship contract before inspecting the first Person
-      note; its target schema and legacy mappings govern triage.
+      note; its target schema and legacy mappings govern triage; preparing
+      the bundle writes nothing — no cursor, cache, ledger, or note
+      mutation.
 - [ ] 3 → records the reviewed dispositions in the visible recap and reloads
       the contract before the next bundle; `merge` and `delete` authorize no
       mutation or cleanup.

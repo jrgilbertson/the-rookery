@@ -52,8 +52,10 @@ review. Deterministic scripts remain appropriate for mechanical checks. If an
 independent context is unavailable, the affected result stays unverified and
 moves to a separate session through a self-contained handoff.
 
-A recorded context ID identifies the run. It does not replace artifact or
-trace evidence for the judgment made in that run.
+The run's log line names the fresh-context mechanism used (a fresh session,
+CLI execution, or subagent); recorded context identifiers are not kept in
+test artifacts. The named mechanism does not replace artifact or trace
+evidence for the judgment made in that run.
 
 ### Degradation Path
 

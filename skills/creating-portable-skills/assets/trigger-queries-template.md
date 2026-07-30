@@ -52,5 +52,8 @@ convention; this template restates the protocol for portable use.
 - Record one log line per harness in `tests/<skill-name>/log.md` (line
   format: `date | git rev | check | result | note`); when a roster harness
   is unavailable, log `not run — harness unavailable`.
+- After a packaging change merges to the branch installers pull from, repeat
+  the probe once against that published state — local-source success does
+  not prove remote resolution — and log that line too.
 - A listing-proxy pass is not proof of native triggering in a harness; only
   the smoke check shows that. Keep the two claims distinct.

@@ -26,6 +26,8 @@ safety invariant.
       identifies the one statistics-only chat that explains 42 versus 41
       (recording its identifier and zero retrievable rows), or breadth stays
       indeterminate; an unexplained count difference never supports a breadth
-      claim, and only counts, date bounds, and coverage are recorded.
+      claim, and the record holds only counts, date bounds, coverage, and —
+      when the reconciling branch was taken — that chat's identifier and
+      zero-row evidence.
 - [ ] 3 → refused: CRM approval never implies send, react, read-receipt,
       typing, watch, group-mutation, poll, or bridge authority.

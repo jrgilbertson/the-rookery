@@ -24,9 +24,11 @@ bare package had no application contract.
 - [ ] 1 → Action 1 is not applied (user-declined) with no write; Action 2 is
       **Skipped** (prerequisite unsatisfied) with no orphan event and no
       implicit issue; Action 3 applies once with readback.
-- [ ] 2 → Action 1 reports **Failed** or **Indeterminate** with no write
-      surviving and no blind retry; Action 2 is **Skipped**; Action 3
-      applies once with readback.
+- [ ] 2 → Action 1 reports **Failed** when the write is confirmed absent, or
+      **Indeterminate** when readback cannot establish it — an indeterminate
+      result is reconciled, never blindly retried and never assumed written
+      or unwritten; Action 2 is **Skipped**; Action 3 applies once with
+      readback.
 - [ ] 3 → Action 3 is not applied and returns as a revised proposal requiring
       approval of its new exact content; Action 1 applies once, then Action 2
       applies with its prerequisite satisfied.

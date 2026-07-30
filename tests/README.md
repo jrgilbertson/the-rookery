@@ -59,6 +59,12 @@ input files:
   source, no other conversation state. The case file is self-contained: run
   its prompt, resolve fixture paths relative to the case file, grade each
   checklist item pass or fail, and record one log line.
+- **Matched comparison (new skills and behavior-changing revisions).** A
+  single-variant run only regression-checks an unchanged skill. A new skill
+  or substantive revision runs its affected cases as matched pairs — without
+  the skill (or the frozen prior version) and with the revised version, each
+  in a fresh context — and ships only when the discriminating cases show the
+  intended improvement with no regression. Log one line per graded variant.
 - **Smoke check.** Install the skill from source into a disposable project on
   each roster harness — Claude Code and Codex CLI — ask one trigger query, and
   confirm from the run's trace that the copy which activated is the

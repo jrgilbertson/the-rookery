@@ -6,9 +6,10 @@ bare model had no disposition vocabulary or precedence order.
 
 ## Prompt
 
-> For each scenario below, state the single disposition for the meeting and
-> whether any durable check still runs. Every meeting is completed with
-> sufficient generated notes unless stated otherwise.
+> For each scenario below, state the disposition for the meeting (or, for
+> scenario 6, the suppression consequence) and whether any durable check
+> still runs. Every meeting is completed with sufficient generated notes
+> unless stated otherwise.
 >
 > 1. One approved note contains the exact source-and-ID pair
 >    (`synthetic`/`meeting-d1`); the live template read is unavailable.

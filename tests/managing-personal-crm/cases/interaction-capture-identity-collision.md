@@ -28,4 +28,5 @@ bounded-source-scope variants.
 - [ ] Defines the monotonic contact-date change and the promised introduction
       as separate post-resolution effects, with the dated follow-up routed
       only to the canonical task system.
-- [ ] Applies nothing and ends with a safe-stop disposition.
+- [ ] Applies nothing and ends **Unable to determine safely** (or the skill's
+      equivalent safe-stop ending).

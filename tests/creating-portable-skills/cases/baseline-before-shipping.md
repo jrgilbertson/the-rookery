@@ -14,7 +14,8 @@ comparison; the with-skill runs enforced the comparison end to end.
 
 - [ ] Treats the description rewrite as a behavior-changing revision, not an
       exempt typo or formatting fix.
-- [ ] Requires a prior-versus-revised comparison before calling the revision
+- [ ] Requires a prior-versus-revised comparison (unforced activation on the
+      trigger set for a description-only change) before calling the revision
       ready to ship.
 - [ ] Because the description changed, also reruns the trigger queries
       (should-trigger and near-miss) against the revised description.

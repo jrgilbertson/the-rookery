@@ -9,11 +9,13 @@ indeterminate-write, and later-resume variants.
 
 > A visible morning bundle proposed: (1) create a draft from account A to
 > recipient R on thread T with content C, (2) add next step S to task note
-> N, (3) change calendar event E. For each scenario, state what gets
-> applied and each action's result.
+> N, (3) change calendar event E. Treat each scenario as an independent
+> branch from the same starting bundle — facts stipulated in one scenario
+> do not carry into another. For each, state what gets applied and each
+> action's result.
 >
-> 1. I approve 1 and 2 and defer 3. Before applying, the active email
->    account changes and note N already contains S.
+> 1. I approve 1 and 2 and defer 3. Before applying, account A is no longer
+>    the acting identity and note N already contains S.
 > 2. I approve action 1; nothing has drifted, but the write returns an
 >    ambiguous response and readback cannot establish whether the draft
 >    exists.

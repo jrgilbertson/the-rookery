@@ -33,7 +33,7 @@ Completion: the job fits one sentence, and the triggers, near-misses, outcome, d
 
 ### 2. Scope targets and resources
 
-Use the caller-declared model and harness target set. When none is declared, use the current model and harness as one target; structural portability alone does not require expanding the set. Record actual target identities and material configuration when available.
+Use the caller-declared model and harness target set. When none is declared, use the current model and harness as one target; structural portability alone does not require expanding the set. The declared harnesses scope the step 8 smoke roster; behavioral comparisons run as single matched pairs on the current model rather than iterating declared targets. Record actual target identities and material configuration when available.
 
 Choose only resources with repeatable value. Outputs copied by the workflow belong in `assets/`. Reference material needed only for one branch belongs in `references/`. Deterministic helpers belong in `scripts/` when prose cannot reliably protect the result. Keep the package standalone. Check the host repository's contribution docs, agent instructions, changelog policy, skill discovery path, and validators.
 

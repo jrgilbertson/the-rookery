@@ -1,185 +1,49 @@
 # Baseline comparison: [skill-name]
 
-Use this record for a small, routine matched comparison. It can earn only
-**directional comparison**. It cannot establish non-regression, causal
-improvement, or behavior outside the predeclared cases.
+Use this protocol when creating a new skill or making a substantive revision
+(changed instruction semantics, trigger description, or bundled resource;
+typo, formatting, and link-only edits are exempt). It compares behavior with
+and without the change on a small case set and produces the suite's durable
+artifacts. Within this repository, `tests/README.md` is the canonical
+convention; this template restates it for portable use.
 
-This template is the authoritative source for routine case construction,
-candidate decisions, evidence labels, matched-comparison waivers, and Claim
-Ceiling recording.
+## Protocol
 
-For a new skill, compare without-skill against with-skill. For a revision,
-compare the frozen prior version against the revised version. Run each prompt
-against each variant in a fresh agent context. For instruction-behavior cases,
-confirm that the variant loaded. For a group limited to description or trigger
-routing, use matched unforced activation observations from the listing or native
-trigger record. Confirm which variant is installed, then record whether an
-activation occurred without naming or forcing the skill. For an expected
-non-trigger, no load is required. Have a
-separate fresh-context agent grade the matched outputs. The grader must not have
-authored the change or produced either artifact. Mechanical checks may use
-deterministic scripts.
+1. **Declare cases before running.** For a new skill: realistic prompts where
+   the skill should change execution or output, each named for the observed
+   failure or baseline gap that motivates it. For a revision: the existing
+   cases the change affects, plus new cases for new behavior. Keep the set
+   small — cases must discriminate, not enumerate.
+2. **Run matched pairs in fresh contexts.** Each case runs without the change
+   (bare model, or the frozen prior version for a revision) and with it.
+   Confirm the intended variant is actually loaded for with-skill runs. For a
+   change limited to the description, compare unforced activation on the
+   trigger set instead of forced-load behavior.
+3. **Grade binary.** A separate fresh-context agent that did not author the
+   change grades each run against the case's expected-behavior checklist —
+   pass or fail per item, a case fails if any item fails. Deterministic
+   scripts may grade mechanical items.
+4. **Decide.** Ship only when every discriminating case shows the intended
+   improvement and no case regresses. A regression, or a same-as-baseline
+   result on a required discriminating case, returns the change to
+   correction; rerun the affected cases after fixing.
+5. **Emit the durable artifacts.** One case file per kept case in
+   `tests/<skill-name>/cases/` and one log line per graded run in
+   `tests/<skill-name>/log.md` (line format: `date | git rev | check |
+   result | note`). This completed template is working scratch —
+   its content lives on in the case files, log lines, and the commit message;
+   do not keep it as a separate record.
 
-Predeclare the required outcome and hard constraints. If an exploratory run
-makes the need for another objective check clear, add or refine that check,
-freeze it, and rerun both variants before using it in the comparison. Keep
-subjective qualities in human review or an explicit blind comparison rather
-than forcing them into binary checks.
+## Case file shape
 
-## Declaration
+Each case file: a title, one `Provenance:` line naming the motivating failure
+or baseline gap, a self-contained `## Prompt` (blockquote, synthetic data
+only), and `## Expected behavior` as binary `- [ ]` checklist items. Fold
+near-duplicate variants into one battery case (numbered scenarios in the
+prompt, one checklist item per scenario). Keep each file under ~45 lines.
 
-- Mode: [new skill / revision]
-- Candidate instruction group: [one scoped group; do not batch unrelated changes]
-- Required outcome: [observable result and done state, including any required artifact or handoff]
-- Hard constraint under test: [authority boundary, exact format, deterministic check, or fragile operation that must survive]
-- Input files: [relative paths and identity, or none]
-- Prior variant identity: [absent for a new skill, or durable revision/path/hash]
-- Revised variant identity: [durable revision/path/hash]
-- Declared target set: [target cell IDs]
+## Honest claims
 
-Record the intended set before running. Do not silently substitute a model,
-harness, or configuration.
-
-| Target cell | Exact intended model | Harness and version | Configuration, tools, and permissions | Required cases |
-| --- | --- | --- | --- | --- |
-| [target-a] | [exact model ID] | [harness, version] | [settings and available tools] | [discriminating, control] |
-| [target-b, if declared] | [exact model ID] | [harness, version] | [settings and available tools] | [discriminating, control] |
-
-## Case 1: [one-line summary]
-
-- Role: [discriminating / control]
-- Prompt: [full prompt text]
-- Input files: [relative paths and identity, or none]
-- Predeclared expectation: [for a discriminating case, the intended delta; for a control, the behavior that should remain materially stable]
-- Objective outcome and constraint checks: [specific, observable checks fixed before grading]
-- Subjective review focus: [qualities for human or blind review, or none]
-
-Duplicate this target block for every declared target. Keep target observations
-separate; do not average conflicting outcomes.
-
-### Case 1 target: [target-cell-id]
-
-- Actual date: [YYYY-MM-DD]
-- Actual model: [exact model ID, not a family name or alias when the exact ID is available]
-- Actual harness: [name and version]
-- Actual configuration: [reasoning/effort settings, tools, permissions, and other material settings]
-- Fresh-context mechanism: [new session, CLI execution, subagent, or equivalent]
-- Prior executor: [agent or session identity]
-- Revised executor: [agent or session identity]
-- Independent grader: [separate agent and its clean-context mechanism]
-- Prior variant confirmation: [loaded identity for an instruction-behavior case, or installed-content identity and observed activation state for a trigger-routing case]
-- Revised variant confirmation: [loaded identity for an instruction-behavior case, or installed-content identity and observed activation state for a trigger-routing case]
-- Prior observation: [what happened]
-- Revised observation: [what happened]
-- Observed losses: [none observed, or every material loss]
-- Artifacts inspected: [actual files or outputs the grader examined]
-- Raw evidence: [per-check artifact or trace evidence, with concise excerpts or durable references]
-- Trace observation: [wasted path, ambiguity, ignored instruction, repeated helper work, or none]
-- Subjective feedback: [specific human feedback or blind result, or not applicable]
-- Case result: [intended delta observed / materially stable control / same / worse / material invariant loss / unavailable]
-- Evidence state: [passed / failed / unverified]
-- Limitation: [what this run does not show]
-
-## Case 2: [one-line summary]
-
-- Role: [control / discriminating; the routine set needs at least one of each]
-- Prompt: [full prompt text]
-- Input files: [relative paths and identity, or none]
-- Predeclared expectation: [expected delta or stable behavior]
-- Objective outcome and constraint checks: [specific, observable checks fixed before grading]
-- Subjective review focus: [qualities for human or blind review, or none]
-
-### Case 2 target: [target-cell-id]
-
-- Actual date: [YYYY-MM-DD]
-- Actual model: [exact model ID]
-- Actual harness: [name and version]
-- Actual configuration: [material settings, tools, and permissions]
-- Fresh-context mechanism: [mechanism]
-- Prior executor: [agent or session identity]
-- Revised executor: [agent or session identity]
-- Independent grader: [separate agent and its clean-context mechanism]
-- Prior variant confirmation: [loaded identity for an instruction-behavior case, or installed-content identity and observed activation state for a trigger-routing case]
-- Revised variant confirmation: [loaded identity for an instruction-behavior case, or installed-content identity and observed activation state for a trigger-routing case]
-- Prior observation: [what happened]
-- Revised observation: [what happened]
-- Observed losses: [none observed, or every material loss]
-- Artifacts inspected: [actual files or outputs the grader examined]
-- Raw evidence: [per-check artifact or trace evidence]
-- Trace observation: [wasted path, ambiguity, ignored instruction, repeated helper work, or none]
-- Subjective feedback: [specific human feedback or blind result, or not applicable]
-- Case result: [intended delta observed / materially stable control / same / worse / material invariant loss / unavailable]
-- Evidence state: [passed / failed / unverified]
-- Limitation: [what this run does not show]
-
-Duplicate the target block for every declared target. Add a third realistic case
-only when it discriminates a separate important behavior.
-
-## Comparison decision
-
-| Target cell | Discriminating case | Control case | Observed loss | Target conclusion |
-| --- | --- | --- | --- | --- |
-| [target-a] | [result] | [result] | [loss or none observed] | [Retained / CorrectionRequired / NewSkillCandidate / DirectionalCandidate / unverified] |
-| [target-b, if declared] | [result] | [result] | [loss or none observed] | [Retained / CorrectionRequired / NewSkillCandidate / DirectionalCandidate / unverified] |
-
-- Candidate state: [revision: Retained / DirectionalCandidate; new skill: CorrectionRequired / NewSkillCandidate]
-- Shipment status: [not assessed / UnverifiedCandidate]
-- Earned evidence label: [none / directional comparison]
-- Conclusion: [state only what the predeclared cases showed]
-- Overall limitation: Behavior outside the predeclared cases remains unverified. [Add target-specific limitations.]
-- Claim Ceiling: [state the strongest conclusion this record permits]
-
-The Claim Ceiling is the strongest conclusion supported by the declared
-targets, cases, earned evidence label, observed losses, unavailable cells, and
-limitations.
-
-Decision rules:
-
-- For a revision, a `same` discriminating-case result is inconclusive, not
-  evidence that the instruction is unnecessary. Retain the current instruction.
-  An unchanged or materially stable control is expected and does not force
-  retention by itself.
-- For a revision, retain the current instruction when any required case is
-  marked `worse`, an affected target is unavailable, a material loss appears,
-  or declared targets materially diverge and cannot be reconciled without
-  losing the named invariant. A required `worse` result also returns the
-  candidate to correction and requires rerunning the affected required cases.
-  Do not treat `worse` by itself as a material invariant loss; record any such
-  loss separately.
-- For a new skill, use `CorrectionRequired` when any required discriminating
-  case is marked `same`, any required case is marked `worse`, or any material
-  invariant loss is recorded. Do not assign
-  `NewSkillCandidate`; return the skill to correction and rerun the affected
-  required cases before packaging. Otherwise, use `NewSkillCandidate`. It
-  identifies a draft with no prior version and implies neither a behavioral
-  claim nor shipment status by itself.
-- Assign **directional comparison** only when matched cases show the intended
-  delta, the control remains materially stable, and every required target cell
-  has an available case result with no named invariant loss. A missing or
-  unavailable required cell earns no directional label. Say exactly that; do
-  not say the revision is reliably better, proven, non-regressing, or causally
-  improved.
-- A pass requires direct evidence of substantive completion. The grader also
-  checks whether each objective check is discriminating, verifiable from the
-  available artifacts, and complete enough to cover the required outcome.
-- A stylistic difference is not a regression when the required outcome and
-  hard constraints remain intact.
-- Route requests for non-regression or causal-improvement claims to deeper
-  evaluation that isolates the changed variable and accounts for run variation.
-
-## Waiver (only when shipping with an unavailable check)
-
-A waiver changes shipment authority only. It does not change an evidence state,
-raise the earned label, satisfy a missing target, or authorize removing or
-relaxing an instruction whose affected-target comparison is absent or
-inconclusive.
-
-This waiver cannot cover an unavailable independent grader or final reviewer.
-
-- Waived by the user: [yes, quote or paraphrase the explicit waiver]
-- Unavailable check and reason: [what could not run and why]
-- Evidence state: [unverified]
-- Candidate state: [revision: Retained unless the required comparison supports the change / new skill: CorrectionRequired when any required discriminating case is same, any required case is worse, or a material invariant loss is recorded; NewSkillCandidate otherwise; never DirectionalCandidate from this waiver]
-- Shipment status: [UnverifiedCandidate]
-- Earned evidence label: [unchanged; do not raise]
-- Date: [YYYY-MM-DD]
+A graded pass shows that case, in that context, at that revision — not
+reliability across models, harnesses, or untested behavior. Record what
+actually ran and nothing more.

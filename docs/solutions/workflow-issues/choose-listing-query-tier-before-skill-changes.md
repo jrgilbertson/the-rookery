@@ -16,7 +16,15 @@ tags:
   - listing-queries
   - trigger-contract
   - user-authority
+superseded: 2026-07-30
 ---
+
+> **Superseded (2026-07-30).** The verification-tier doctrine this learning
+> describes was retired with the lightweight testing convention in
+> `tests/README.md`, and the trigger/results records it cites were replaced
+> by per-suite `triggers.md` and `log.md`. Kept as history; do not apply its
+> tier-selection instruction. A `ce-compound-refresh` pass owns full
+> reconciliation.
 
 # Let users choose the listing-query tier before changing a skill
 

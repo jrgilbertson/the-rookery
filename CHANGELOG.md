@@ -16,8 +16,8 @@ looked" surface. GitHub Releases mirror its entries.
 - `creating-portable-skills` is the first published skill. It creates new Agent
   Skills and helps review, update, or move existing skills. It starts from the
   user's goal, checks the package structure, compares behavior with focused
-  tests, and verifies installation separately from activation. It works
-  without companion skills.
+  tests, and verifies installability and activation with a per-harness smoke
+  probe. It works without companion skills.
 - `personal-chief-of-staff` guides morning, wind-down, weekly, and quarterly
   reviews using current data from the user's connected sources. It requires
   review before writing changes, handles Obsidian CLI operations, tests its
@@ -36,15 +36,23 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- The skill test suites moved to a lightweight, rerunnable convention: each
+  `tests/<skill>/` now holds a trigger contract, individually runnable case
+  files with binary checklists, and a one-line-per-run log, with the
+  convention itself documented once in `tests/README.md`. The prior evidence
+  ledgers (Claim Ceilings, verification tiers, waiver records, hash tables)
+  are retired; full history remains in git. `creating-portable-skills`'
+  templates and workflow now produce the same lightweight shape, so newly
+  authored skills follow it too.
 - `creating-portable-skills` now grounds guidance in real project evidence,
   uses separate fresh-context agents for reviews and grading, inspects artifacts
   and execution traces directly, and tests activation with more realistic
   queries.
-- `creating-portable-skills` now asks users to choose between ordinary personal
-  verification and the stricter verification for public or unusually
-  load-bearing skills before change-producing work. It also ends read-only audits after delivering
-  the review, keeps trigger descriptions positive, defines the Claim Ceiling,
-  and centralizes trigger scoring and evidence states in one record.
+- `creating-portable-skills` ends read-only audits after delivering the
+  review and keeps trigger descriptions positive. (An earlier unreleased
+  revision also introduced verification tiers, a Claim Ceiling, and
+  centralized evidence records; the lightweight testing convention above
+  supersedes those before any release.)
 - `personal-chief-of-staff` can now include relationship check-ins and timely
   opportunities in its morning, wind-down, and weekly reviews when Personal CRM
   is available.

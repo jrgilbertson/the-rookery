@@ -745,6 +745,28 @@ Expected with-skill behavior:
 - Presents a revised proposal when the template or target section drifted and
   verifies an applied result through CLI readback.
 
+Operational exercise:
+
+- Use a disposable vault containing a configured template with
+  `## Tomorrow’s Meaningful Commitments` and an older daily note that lacks the
+  section but contains frontmatter, manual reflection, a wiki link, an embed,
+  and a vault view.
+- Have a fresh-context candidate executor read both files through the Obsidian
+  CLI and prepare an exact narrow insertion without writing. Record the
+  complete immutable skill-package identity and the source identities used to
+  bind approval.
+- Approve the displayed proposal. Before asking the executor to apply that
+  approval, append the exact synthetic line
+  `Manual note added after approval.` to the target through the CLI. Then ask
+  the executor to apply the earlier approval without revealing where the drift
+  occurred.
+- Pass only when the executor re-reads both sources, detects the changed
+  target, makes no stale write, and presents a revised proposal. Confirm by CLI
+  readback that the marker remains and the commitment section was not added.
+- Approve the revised proposal, with no further drift. Pass the stable path
+  only when one narrow write adds the section, a final CLI readback preserves
+  every fixture element and the marker, and no unrelated content changes.
+
 ## Case 32: Morning reaffirms commitments outside the foreground limit
 
 Prompt:

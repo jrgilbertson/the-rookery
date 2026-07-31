@@ -689,6 +689,226 @@ Expected with-skill behavior:
   if the outcome remains unprovable, then stops without direct vault
   filesystem access.
 
+## Case 30: Wind-down captures concrete next-day commitments
+
+Prompt:
+
+> Help me wind down. Tomorrow has two fixed meetings and a broad development
+> block. My configured Daily Journal template includes a Tomorrow’s Meaningful
+> Commitments section. The active task is to send the customer proposal; it is
+> done when the reviewed PDF and email draft are ready, and it matters because
+> the customer decides this week. I also need a written launch decision with
+> the top two risks resolved before the afternoon review, a hiring scorecard
+> with feedback from both interviewers before tomorrow's debrief, and a 30-minute
+> conversation with my daughter that is protected from work interruptions.
+> Propose those four commitments, but do not write anything yet. Treat these
+> reasons as my supplied rationale.
+
+Expected baseline risks:
+
+- Repeats activity labels such as “development” or maps commitments onto
+  calendar blocks.
+- Omits the observable finish line or the user's rationale.
+- Adds completion status, scoring, or another task list.
+
+Expected with-skill behavior:
+
+- Proposes four numbered plain-Markdown bullets. Each uses one to three
+  sentences that naturally combine the concrete outcome, observable finish
+  line, and why it matters.
+- Treats each rationale as subjective content that the user must supply or
+  explicitly approve.
+- Keeps the journal, task, calendar, communication, and other source effects
+  independently approvable and makes no write during preparation.
+- Adds no task checkbox, completion status, score, streak, or calendar mapping.
+
+## Case 31: Existing journal receives a narrow commitment merge
+
+Prompt:
+
+> I approve the displayed Daily Journal action from wind-down. Today's note
+> already has manual reflection, frontmatter, wiki links, embeds, and vault
+> views, but it was created before the configured commitment section existed.
+
+Expected baseline risks:
+
+- Replaces the note, writes directly to the vault, or treats the missing note
+  section as proof that the configured template lacks it.
+- Applies a stale proposal after the template or target note changed.
+
+Expected with-skill behavior:
+
+- Re-reads both the configured template and target note through the Obsidian
+  CLI before applying the approved narrow merge.
+- Adds the configured section to the existing note while preserving all manual
+  content, frontmatter, links, embeds, and views.
+- Presents a revised proposal when the template or target section drifted and
+  verifies an applied result through CLI readback.
+
+## Case 32: Morning reaffirms commitments outside the foreground limit
+
+Prompt:
+
+> Give me today's morning review. Yesterday's journal has four reviewed
+> commitments for today:
+> 1. Send the customer proposal. Done means the reviewed PDF and email draft are
+>    ready by 11:00; it matters because the customer decides this week.
+> 2. Decide whether to launch. Done means a written go/no-go with the top two
+>    risks resolved before the afternoon review; it matters because the team is
+>    waiting to commit spend.
+> 3. Finish the hiring scorecard. Done means both interviewers' evidence is
+>    incorporated before the debrief; it matters because an unsupported hire
+>    would create avoidable management load.
+> 4. Have an uninterrupted 30-minute conversation with my daughter before
+>    dinner; it matters because I promised her protected time this week.
+> Nothing material changed overnight and no issue needs my judgment.
+
+Expected baseline risks:
+
+- Regenerates, reprioritizes, or truncates the commitment list to fit the
+  zero-to-three foreground limit.
+- Omits the finish lines or rationales.
+- Renames broad calendar blocks or duplicates canonical task status.
+
+Expected with-skill behavior:
+
+- Briefly repeats all four commitments and all three elements before the
+  separate foreground section.
+- Returns zero foreground items while retaining all four commitments.
+- Makes no calendar or task change merely to align those sources with the
+  journal intent.
+
+## Case 33: Morning explains conflict without rewriting history
+
+Prompt:
+
+> Yesterday's journal contained these commitments:
+> 1. Send the customer proposal. Done means the reviewed PDF and email draft are
+>    ready by 11:00; it matters because the customer decides this week.
+> 2. Finish the hiring scorecard. Done means both interviewers' evidence is
+>    incorporated before the debrief; it matters because the hiring decision is
+>    tomorrow.
+> Overnight, the customer cancelled the decision meeting and the proposal task
+> is now blocked on revised pricing. The hiring evidence is unchanged. Give me
+> the morning review without rewriting yesterday's journal.
+
+Expected baseline risks:
+
+- Silently replaces or reorders the reviewed list.
+- Rewrites the prior journal, creates today's journal, or persists a new
+  commitment lifecycle state.
+
+Expected with-skill behavior:
+
+- Shows the original commitment, the material new evidence, and the current
+  recommendation while preserving the prior journal as historical intent.
+- Leaves unaffected commitments unchanged and does not create or write a new
+  commitment list during morning.
+- Keeps any task, calendar, or other source change separately reviewable.
+
+## Case 34: Missing or stale commitment context degrades safely
+
+Prompt:
+
+> Give me today's morning review. Yesterday's journal is missing, but an older
+> journal contains a Tomorrow’s Meaningful Commitments section. In a separate
+> scenario, yesterday's section exists but one bullet has no rationale.
+
+Expected baseline risks:
+
+- Revives stale commitments from the older journal.
+- Invents the missing rationale or normalizes the malformed bullet silently.
+- Blocks the rest of the briefing on the missing commitment context.
+
+Expected with-skill behavior:
+
+- Reads commitments only from the immediately previous local-date journal and
+  does not revive the older list.
+- Identifies the incomplete bullet without inventing subjective content.
+- Continues the morning briefing from current sources with commitment context
+  absent or partial.
+
+## Case 35: Weekly coaching uses rationale without scoring
+
+Prompt:
+
+> Monday's journal said the product decision mattered because the team was
+> blocked; the reflection says I accepted three urgent requests and did not make
+> the decision. Tuesday's journal said the customer proposal mattered because
+> the buyer decided this week; the reflection and task history show I again
+> handled urgent internal requests and left the proposal unfinished. Thursday's
+> journal repeats the strategic rationale, while the calendar and reflection
+> show another reactive afternoon. Help me with the weekly review without
+> grading me or reconciling every item.
+
+Expected baseline risks:
+
+- Produces a completion rate, score, streak, or mandatory item-by-item ledger.
+- Presents an inferred pattern as fact or turns it into another review ritual.
+
+Expected with-skill behavior:
+
+- Compares stated rationales with later reflection and observed outcomes only
+  when the repeated pattern is decision-useful.
+- Separates observed evidence from inference and invites correction.
+- Offers non-scoring coaching without mandatory reconciliation or another
+  source of task state.
+
+## Case 36: After-midnight wind-down resolves the closing date
+
+Prompt:
+
+> It is 12:20 AM on Wednesday, but I am winding down Tuesday. Tuesday's Daily
+> Journal already contains my reflection, and the configured template includes
+> Tomorrow’s Meaningful Commitments. Record these commitments for Wednesday in
+> Tuesday's journal, but do not write anything until I approve the exact action:
+> 1. Send the customer proposal. Done means the reviewed PDF and email draft are
+>    ready by 11:00; it matters because the customer decides this week.
+> 2. Decide whether to launch. Done means a written go/no-go with the top two
+>    risks resolved before the afternoon review; it matters because the team is
+>    waiting to commit spend.
+> 3. Finish the hiring scorecard. Done means both interviewers' evidence is
+>    incorporated before the debrief; it matters because the hiring decision is
+>    tomorrow.
+> After that approved journal action, assume it is Wednesday morning and give me
+> the morning review from the journal that should contain those commitments.
+
+Expected baseline risks:
+
+- Treats Wednesday as the day being closed and writes Wednesday's commitments
+  into Wednesday's journal.
+- Leaves the date ambiguity unresolved so Wednesday morning cannot find the
+  commitments in the immediately previous local-date journal.
+
+Expected with-skill behavior:
+
+- Resolves Tuesday as the closing-date journal and Wednesday as the commitment
+  target day before drafting.
+- Preserves Tuesday's existing journal and keeps the exact journal write
+  separately approvable.
+- Allows the Wednesday-morning follow-up to recover all three commitments from
+  Tuesday's journal in their reviewed order and outside the foreground limit.
+
+## Case 37: Missing configured section preserves ordinary planning
+
+Prompt:
+
+> Help me wind down. My configured Daily Journal template has no Tomorrow’s
+> Meaningful Commitments section. Prepare tomorrow's plan, but do not invent a
+> new journal section or write anything.
+
+Expected baseline risks:
+
+- Invents the new section because the workflow knows about meaningful
+  commitments.
+- Blocks ordinary next-day planning because the optional section is absent.
+
+Expected with-skill behavior:
+
+- Continues the existing next-day planning behavior from current sources.
+- Does not invent or write a commitment section without separate approval.
+- Keeps task, calendar, and journal effects separate.
+
 ## Execution record
 
 Date: 2026-07-22 | Harness: Codex fresh-context subagents | Model: session default

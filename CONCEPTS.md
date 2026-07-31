@@ -5,6 +5,12 @@ and status concepts with project-specific meaning. It starts with the core terms
 and grows through `ce-compound`, `ce-compound-refresh`, and direct edits. This is
 a glossary, not a specification or catch-all.
 
+## Personal workflows
+
+### Meaningful Commitment
+
+A reviewed next-day outcome recorded during wind-down with an observable finish line and a concise rationale for why it matters. A Daily Journal carries three to five Meaningful Commitments into morning; they express intent without replacing canonical task state or calendar capacity.
+
 ## Shipping and verification
 
 ### Published Catalog

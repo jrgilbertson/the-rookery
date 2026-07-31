@@ -312,3 +312,101 @@ Date: 2026-07-27
 - No live source was queried and no destination mutation occurred.
 
 Result: passed.
+
+## Daily meaningful commitments — 2026-07-31
+
+Harness: Codex fresh-context subagents. Model: session default. The baseline
+agent loaded revision `cc66ee8e519e5f5abbd3de2623fa85c7ea2a8af2`; the
+candidate agent loaded the working-tree skill and confirmed that only the
+wind-down, morning, and weekly references differed from that revision. Neither
+agent read private sources or performed a live mutation.
+
+### Matched behavioral comparison
+
+| Case | Prior skill | Candidate skill | Result |
+| --- | --- | --- | --- |
+| 30. Concrete wind-down commitments | Preserved judgment and source boundaries but did not guarantee three to five complete bullets, activity-label rejection, or calendar independence | Requires three to five one-to-three-sentence bullets that naturally contain the outcome, finish line, and user-approved rationale; adds no task, calendar, or scoring state | Pass |
+| 31. Narrow merge into an existing journal | Preserved existing notes and required CLI readback but did not require a template re-read or explicitly support an older note missing the newly configured section | Re-reads the template and note, inserts narrowly, preserves all existing content, revises on drift, and verifies through the CLI | Pass |
+| 32. Morning reaffirmation outside foreground | Read prior intent and allowed zero foreground items but did not define a separate complete commitment surface | Repeats every bullet and all three elements before the separate zero-to-three foreground section without task or calendar alignment writes | Pass |
+| 33. Overnight conflict without rewriting history | Compared prior intent with current evidence but could omit an invalidated commitment and did not protect the historical list explicitly | Shows original intent, new evidence, and current recommendation while leaving the prior journal and unaffected bullets unchanged | Pass |
+| 34. Missing, stale, or malformed commitment context | Continued after missing journals but did not prohibit stale-list revival or invented missing fields | Reads only the immediately previous local-date journal, continues safely, and invents no outcome, finish line, or rationale | Pass |
+| 35. Rationale-based weekly coaching | Already supported non-scoring evidence-versus-inference coaching but did not name commitment rationale or prohibit item reconciliation | Uses repeated rationale-versus-reflection evidence only for a current decision and adds no score, ledger, or task state | Pass |
+| 36. After-midnight closing date | The explicit prompt could lead to Tuesday, but the prior skill only resolved the wall-clock local date, called the target `today's journal`, and did not guarantee ordered morning recovery outside the foreground cap | Resolves Tuesday as the closing-date journal and Wednesday as the target, then recovers all three reviewed bullets from Tuesday before the separate foreground section | Pass |
+| 37. Missing configured section | Already continued ordinary next-day planning, followed the configured template, and separated source effects | Retains that safe baseline behavior and makes the no-invented-section fallback explicit | Pass (parity control) |
+
+The candidate evaluator found no regression in approval binding, canonical
+source ownership, read-only proposal preparation, Obsidian CLI safety, or the
+morning foreground limit. Official static validation passed with
+`npx skills-ref validate skills/personal-chief-of-staff`.
+
+After the user replaced labeled subfields with one-to-three-sentence bullets,
+a new fresh-context evaluator reran Cases 30–35 against the revised package.
+All six passed again. The evaluator confirmed that each bullet must naturally
+contain the outcome, observable finish line, and rationale without becoming a
+status record. No live source was queried during this rerun.
+
+After review added the after-midnight boundary and missing-section control, two
+new fresh contexts evaluated Cases 36–37 against the exact prior revision and
+current working-tree package. A third fresh context independently inspected
+both packages, the executor reports, and the acceptance criteria. It confirmed
+that Case 36 is a directional gain in closing-date resolution and ordered
+morning recovery outside the foreground cap, while Case 37 is a parity control
+that makes an already-safe fallback explicit. No live or private source was
+queried.
+
+The skill name, description, trigger boundary, and automation prompts are
+unchanged, so listing-level trigger queries were not rerun.
+
+### Portability and package checks
+
+- A same-door scan of the public skill, tests, automation specification,
+  glossary, changelog, and implementation plan found no private vault name,
+  private path, account identifier, credential, or copied private template.
+- The packaged installer did not produce a usable project-local installation
+  in this environment. The documented fallback copied the complete skill into
+  a disposable project's `.agents/skills/personal-chief-of-staff` directory.
+  `diff -qr` returned no differences and both source and installed `SKILL.md`
+  files had SHA-256
+  `9646febb983d49007d78f4ee8ac764864538caae951ed72b4cd6801ecf80fc9f`.
+- This proves package identity for the copied project-local installation. It
+  does not claim a successful skills-CLI install or a native trigger rerun.
+
+- A structured final review covered correctness, project standards, behavioral
+  evidence, agent-native operation, and relevant repository learnings. An
+  independent validator rejected two proposed evidence-ceiling findings and
+  confirmed three actionable issues: after-midnight date ambiguity,
+  under-specified fixtures, and stale labeled-row plan language. The current
+  package fixes all three and adds Cases 36–37.
+- The attempted independent cross-model adversarial pass ran through a
+  read-only external route but returned no usable output because that restricted
+  execution context could not authenticate. This does not imply the user's
+  account is logged out; local specialist review and independent validation
+  supplied the final review coverage.
+- Portable frontmatter, the matching kebab-case name and directory, relative
+  package links, and the absence of environment-specific paths were confirmed.
+  Official structural validation completed successfully after the final skill
+  edits.
+- A final fresh-context delta recheck inspected the corrected plan, skill,
+  fixtures, matched record, requirements, and implementation units. It found
+  Cases 30–37 supported, the evidence ceiling accurate, and no remaining
+  actionable defect or public/private boundary violation.
+- The deeper optional `writing-great-skills` companion pass was not rerun for
+  this focused revision. The built-in portable-skill checklist is complete.
+
+### Private template enablement
+
+The user approved one exact configured-template insertion after reviewing its
+content and placement. The first Obsidian CLI attempt failed before mutation
+because its evaluation form did not support top-level asynchronous syntax;
+immediate CLI readback proved the template unchanged. The same approved action
+then ran once through a supported asynchronous wrapper. CLI readback confirmed
+the new forward-looking section and approved bullet guidance while preserving
+the existing template content. No Daily Journal was created or changed as a
+test, and no private vault name, path, or template body is recorded here.
+
+Residual limits: Cases 30–37 are matched synthetic evaluations, not a live
+wind-down or morning run or repeated reliability evidence. The copied
+project-local package proves content identity, not native discovery, loading,
+or triggering.
+
+Result: passed.

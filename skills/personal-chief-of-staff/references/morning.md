@@ -8,8 +8,9 @@ and manual invocations follow the same workflow and remain interactive.
 Resolve the local date and query time. Through the Obsidian CLI, read the prior
 canonical daily journal when it exists, current task notes, the canonical
 strategy note, and relevant canonical learning notes. Use the prior journal's
-reviewed next-day plan or single restart cue only when it still matches the
-canonical task and current evidence.
+reviewed next-day plan or single restart cue as historical intent. Treat it as
+current direction only when it still matches the canonical task and current
+evidence.
 
 Read today's calendars and only the additional sources that could change the
 day: material overnight messages, consequential meeting or relationship
@@ -33,6 +34,37 @@ authoritative sources and ask only for meaning or decisions they cannot show.
 
 Completion: today's review continues, with at most one optional catch-up and no
 scolding, streak, or backfill plan.
+
+## Reaffirm reviewed commitments
+
+Read `Tomorrow’s Meaningful Commitments` only from the immediately previous
+local-date journal and only when those commitments were written for the current
+local date. Never revive an older journal's list after a missed day.
+
+When the section contains reviewed bullets, present a compact `Today's
+Meaningful Commitments` surface before foreground attention items. Briefly
+repeat every bullet's outcome, observable finish line, and rationale without
+splitting it into a status record. Keep the reviewed order when current
+evidence does not materially change it. This surface is intent context, not a
+set of action proposals, and its three to five bullets do not consume the
+zero-to-three foreground limit.
+
+When current evidence reveals a material conflict, invalid premise, or capacity
+change, show the original commitment, the new evidence, and the current
+recommendation. Preserve the prior journal as historical intent, leave
+unaffected bullets unchanged, and do not create today's journal or persist an
+amended commitment state during morning. Any task, calendar, communication, or
+other source effect remains a separate review action.
+
+When the immediately prior journal or section is absent, continue from current
+sources. When a bullet is empty, partial, or malformed, identify only the
+missing commitment context and do not invent an outcome, finish line, or
+subjective rationale. Do not use broad calendar blocks as substitute
+commitments.
+
+Completion: valid prior commitments appear in full before the separate
+foreground section; missing, stale, conflicted, or partial commitment context
+is handled without fabricated content or a journal write.
 
 ## Identify what needs the user
 
@@ -70,6 +102,10 @@ Surface only consequential calendar issues, such as:
 - a flexible block that no longer serves today's most important outcome;
 - a stale waiting or blocked commitment that now needs a decision; or
 - a restart cue whose canonical task is still active and important.
+
+Meaningful commitments do not require calendar blocks to be created, renamed,
+or mapped to them. Evaluate the calendar for capacity and conflicts without
+turning it into a duplicate commitment list.
 
 Do not generate preparation capsules for routine events. Calendar edits remain
 separate proposed actions and health evidence never mechanically moves a

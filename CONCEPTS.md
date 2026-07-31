@@ -16,8 +16,8 @@ A reviewed next-day outcome recorded during wind-down with an observable finish 
 ### Grilling Session
 
 A targeted, stateless interview for resolving one coherent decision tree whose
-answers depend on one another. The agent contributes recommendations and
-discoverable facts, while decisions remain with the user.
+answers depend on one another. The agent recommends answers and looks up
+discoverable facts. The user makes each decision.
 
 ### Shared Understanding Gate
 

@@ -36,6 +36,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Planning now keeps Compound Engineering as the primary route and uses
+  targeted grilling only as an optional pressure test for consequential,
+  interdependent decisions that remain unclear.
 - The skill test suites moved to a lightweight, rerunnable convention: each
   `tests/<skill>/` now holds a trigger contract, individually runnable case
   files with binary checklists, and a one-line-per-run log, with the

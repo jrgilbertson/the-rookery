@@ -1,0 +1,7 @@
+widget-catalog: request handler
+
+on request:
+  fetch the catalog page
+  if the fetch fails:
+    retry up to 3 times with a 1 second pause
+  return the page

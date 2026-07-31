@@ -15,9 +15,15 @@
 #
 # Output states. Line 1 is always `verdict: <word>`; human detail follows.
 #
-#   verdict: present                exit 0  the changelog is among the branch's
-#                                           changed paths; the detail carries the
-#                                           first added line
+#   verdict: present                exit 0  the changelog gained lines on the
+#                                           branch's surface; the detail carries
+#                                           the first added line
+#   verdict: changed without entry  exit 0  the changelog is among the branch's
+#                                           changed paths but gained no lines —
+#                                           a deletion, a reflow, or a
+#                                           whitespace-only edit. Touching the
+#                                           file is not an entry, so this is
+#                                           distinct from `present`
 #   verdict: missing                exit 0  the branch changes other files and
 #                                           leaves the changelog untouched; the
 #                                           detail carries the count of changed
@@ -54,8 +60,8 @@ Usage:
 Looks for CHANGELOG.md, CHANGELOG, CHANGELOG.txt, or changelog.md at the
 repository root.
 
-Verdicts: present | missing | no changes on surface | no changelog |
-          covered by repo gate | not run
+Verdicts: present | changed without entry | missing | no changes on surface |
+          no changelog | covered by repo gate | not run
 EOF
 }
 
@@ -166,7 +172,7 @@ if [ -z "$all_paths" ]; then
 	exit 0
 fi
 
-if ! printf '%s\n' "$all_paths" | grep -Fxq -- "$changelog"; then
+if ! printf '%s\n' "$all_paths" | grep -Fx -- "$changelog" >/dev/null; then
 	others=$(printf '%s\n' "$all_paths" | grep -Fxv -- "$changelog" || true)
 	other_count=0
 	[ -z "$others" ] || other_count=$(printf '%s\n' "$others" | wc -l | tr -d ' ')
@@ -176,24 +182,43 @@ if ! printf '%s\n' "$all_paths" | grep -Fxq -- "$changelog"; then
 	exit 0
 fi
 
-first_added=""
-if printf '%s\n' "$untracked" | grep -Fxq -- "$changelog"; then
-	first_added=$(sed -n '/[^[:space:]]/{p;q;}' "$changelog" 2>/dev/null || true)
+# A changed changelog is not yet an entry. Only lines the branch adds count, so
+# the added lines are collected across the same surface: an untracked changelog
+# is all additions, and a tracked one is diffed from the merge base (or from the
+# empty tree when the branch has no commits) through to the working tree.
+added_lines=""
+if printf '%s\n' "$untracked" | grep -Fx -- "$changelog" >/dev/null; then
+	added_lines=$(cat -- "$changelog" 2>/dev/null || true)
 else
 	if [ -n "$merge_base" ]; then
 		diff_range="$merge_base"
-	else
+	elif [ "$head_exists" -eq 1 ]; then
 		diff_range="HEAD"
+	else
+		diff_range=$(git hash-object -t tree /dev/null)
 	fi
-	first_added=$(git diff "$diff_range" -- "$changelog" 2>/dev/null |
-		grep '^+' | grep -v '^+++' | sed -n '1s/^+//p' || true)
+	added_lines=$(git diff "$diff_range" -- "$changelog" 2>/dev/null |
+		grep '^+' | grep -v '^+++' | sed 's/^+//' || true)
 fi
+
+added_count=0
+[ -z "$added_lines" ] || added_count=$(printf '%s\n' "$added_lines" | wc -l | tr -d ' ')
+
+if [ "$added_count" -eq 0 ]; then
+	printf 'verdict: changed without entry\n'
+	printf 'changelog: %s (changed on this branch, no lines added)\n' "$changelog"
+	printf 'detail: the branch touches the changelog without adding a line, so no branch work is recorded there.\n'
+	exit 0
+fi
+
+first_added=$(printf '%s\n' "$added_lines" | sed -n '/[^[:space:]]/{p;q;}')
 
 printf 'verdict: present\n'
 printf 'changelog: %s\n' "$changelog"
+printf 'added lines: %s\n' "$added_count"
 if [ -n "$first_added" ]; then
 	printf 'first added line: %s\n' "$first_added"
 else
-	printf 'first added line: none found (the changelog is on the surface with no added lines in range)\n'
+	printf 'first added line: none with content (every added line is blank)\n'
 fi
 exit 0

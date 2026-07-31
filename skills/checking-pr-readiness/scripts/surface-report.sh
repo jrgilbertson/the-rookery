@@ -23,8 +23,11 @@
 #                                              first such reviewer and every cap
 #                                              is listed in the detail lines
 #   verdict: cap unverified            exit 0  no --cap was supplied, so the size
-#                                              check could not be made; the
-#                                              surface is still reported
+#                                              check could not be made; or the
+#                                              committed category could not be
+#                                              measured, so no supplied cap can
+#                                              be called met. The surface is
+#                                              still reported
 #   verdict: no changes on surface     exit 0  all four categories are empty.
 #                                              Distinct from `under caps`: an
 #                                              absent surface is not a pass
@@ -33,13 +36,21 @@
 #                                              check; nothing was measured
 #   verdict: not run                   exit 2  usage error (unknown option, or a
 #                                              malformed --cap value)
-#   verdict: not run                   exit 4  git is unavailable, or this is not
-#                                              a git repository
+#   verdict: not run                   exit 4  git is unavailable, this is not a
+#                                              git repository, or one of the five
+#                                              git enumerations (merge base,
+#                                              committed, staged, unstaged,
+#                                              untracked) failed to read. A
+#                                              failed read is never reported as
+#                                              an empty category; the reason line
+#                                              names the enumeration
 #
 # One further state rides in the detail lines rather than the verdict: when no
 # default branch resolves, `default branch: unresolved` is printed, the
 # committed category reports `not computed`, and the other three categories are
-# still reported, so the verdict describes a HEAD-only surface.
+# still reported, so the verdict describes a HEAD-only surface. Because the
+# committed count is then unknown, supplied caps report `cap unverified` unless
+# the measured part alone already exceeds one.
 #
 # Dependencies: git and standard POSIX tools. No network, no jq, no node.
 
@@ -94,6 +105,9 @@ while [ "$#" -gt 0 ]; do
 		cap_value="${2#*=}"
 		case "$cap_value" in
 		'' | *[!0-9]*) fail_usage "--cap count must be a non-negative integer, got: $2" ;;
+		esac
+		case "${2%%=*}" in
+		'') fail_usage "--cap requires a reviewer name before '=', got: $2" ;;
 		esac
 		caps="${caps}${2}
 "
@@ -165,26 +179,57 @@ if git rev-parse --verify --quiet HEAD >/dev/null 2>&1; then
 	head_exists=1
 fi
 
+fail_read() {
+	printf 'verdict: not run\n'
+	printf 'reason: the %s enumeration could not be read: %s\n' "$1" "$2"
+	printf 'detail: a failed git read is not an empty category, so no surface and no cap result is reported.\n'
+	exit 4
+}
+
+# Every enumeration goes through this: an empty result and a failed read look
+# identical once the status is discarded, and reporting a failed read as an
+# empty category turns a broken repository into a green report.
+git_out=""
+read_or_fail() {
+	enumeration="$1"
+	shift
+	if ! git_out=$(git "$@" 2>/dev/null); then
+		fail_read "$enumeration" "git $* returned non-zero"
+	fi
+}
+
 committed=""
 merge_base=""
+committed_measured=0
 base_line="default branch: unresolved — no origin/HEAD, origin/main, origin/master, main, or master resolved; reporting HEAD-only surface"
 if [ -n "$base_ref" ]; then
 	base_line="default branch: ${base_ref} (from ${base_how})"
 	if [ "$head_exists" -eq 1 ]; then
-		merge_base=$(git merge-base HEAD "$base_ref" 2>/dev/null || true)
+		read_or_fail "merge base" merge-base HEAD "$base_ref"
+		merge_base="$git_out"
 		if [ -n "$merge_base" ]; then
-			committed=$(git diff --name-only "$merge_base" HEAD 2>/dev/null || true)
+			read_or_fail "committed" diff --name-only "$merge_base" HEAD
+			committed="$git_out"
+			committed_measured=1
 		fi
 	fi
 fi
+if [ "$head_exists" -eq 0 ]; then
+	committed_measured=1
+fi
 
 if [ "$head_exists" -eq 1 ]; then
-	staged=$(git diff --cached --name-only 2>/dev/null || true)
+	read_or_fail "staged" diff --cached --name-only
 else
-	staged=$(git diff --cached --name-only "$(git hash-object -t tree /dev/null)" 2>/dev/null || true)
+	empty_tree=$(git hash-object -t tree /dev/null 2>/dev/null || true)
+	[ -n "$empty_tree" ] || fail_read "staged" "the empty tree object could not be resolved"
+	read_or_fail "staged" diff --cached --name-only "$empty_tree"
 fi
-unstaged=$(git diff --name-only 2>/dev/null || true)
-untracked=$(git ls-files --others --exclude-standard 2>/dev/null || true)
+staged="$git_out"
+read_or_fail "unstaged" diff --name-only
+unstaged="$git_out"
+read_or_fail "untracked" ls-files --others --exclude-standard
+untracked="$git_out"
 
 all_paths=$(printf '%s\n%s\n%s\n%s\n' "$committed" "$staged" "$unstaged" "$untracked" |
 	sed '/^$/d' | sort -u)
@@ -215,7 +260,15 @@ else
 	done <<EOF
 $caps
 EOF
-	[ -z "$first_exceeded" ] || verdict="exceeds cap for ${first_exceeded}"
+	if [ -n "$first_exceeded" ]; then
+		# An unmeasured committed count only makes the total a floor, so an
+		# exceeded cap still holds.
+		verdict="exceeds cap for ${first_exceeded}"
+	elif [ "$committed_measured" -eq 0 ]; then
+		verdict="cap unverified"
+		cap_lines="${cap_lines}caps: not confirmed — the committed category could not be measured, so the total above is a floor
+"
+	fi
 	cap_lines="${cap_lines%
 }"
 fi
@@ -225,6 +278,9 @@ printf '%s\n' "$base_line"
 if [ -n "$merge_base" ]; then
 	printf 'merge base: %s\n' "$merge_base"
 	emit_category "committed" "$committed"
+elif [ "$head_exists" -eq 0 ]; then
+	printf 'merge base: not computed (the branch has no commits)\n'
+	emit_category "committed" ""
 else
 	printf 'merge base: not computed\n'
 	printf 'committed: not computed (no merge base against a default branch)\n'

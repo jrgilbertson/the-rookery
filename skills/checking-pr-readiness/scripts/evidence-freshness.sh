@@ -12,6 +12,11 @@
 # tree (staged, unstaged, or untracked) counts as edited now, because the edit
 # has happened even though no commit records it yet.
 #
+# The record itself is held to a stricter rule: its time always comes from its
+# last commit. A dirty record has no established write time, so it cannot prove
+# anything is fresh — treating it as written now would let a record and the path
+# it describes both be dirty and rate as fresh against each other.
+#
 # Usage:
 #   evidence-freshness.sh <record-file> <described-path>...
 #   evidence-freshness.sh --check-name <name> <search-root>
@@ -20,8 +25,9 @@
 #
 # Output states. Line 1 is always `verdict: <word>`; human detail follows.
 #
-#   verdict: fresh                  exit 0  the record's time is at or after the
-#                                           last edit of every described path
+#   verdict: fresh                  exit 0  the record's commit time is at or
+#                                           after the last edit of every
+#                                           described path
 #   verdict: stale record found     exit 0  a described path was edited after the
 #                                           record; the detail names that path
 #                                           and both ISO timestamps. Also emitted
@@ -29,12 +35,23 @@
 #                                           the working tree, or has no git
 #                                           history to compare against — a record
 #                                           describing something that no longer
-#                                           exists is stale, not fresh
-#   verdict: consistent             exit 0  --check-name found the literal name
-#                                           under the search root
-#   verdict: stale reference found  exit 0  --check-name found zero hits: a
+#                                           exists is stale, not fresh — and when
+#                                           the record itself has git history but
+#                                           is gone from the working tree
+#   verdict: record unverifiable    exit 0  the record is dirty in the working
+#             (dirty)                       tree, so its own write time cannot be
+#                                           established. A record that cannot be
+#                                           dated proves nothing fresh
+#   verdict: consistent             exit 0  --check-name matched a file on the
+#                                           working surface under the search root
+#                                           whose basename or path suffix is the
+#                                           name; the detail also lists any docs
+#                                           mentioning it
+#   verdict: stale reference found  exit 0  --check-name matched no such file: a
 #                                           plan-named artifact that does not
-#                                           match what shipped
+#                                           match what shipped. A name that is
+#                                           only mentioned in prose, with no file
+#                                           behind it, lands here
 #   verdict: no records             exit 2  the record file is absent — neither
 #                                           committed nor present in the working
 #                                           tree — or the --check-name search
@@ -62,14 +79,17 @@ Usage:
 
   <record-file>       A log, run record, or recorded result.
   <described-path>    A path that record describes. Repeatable.
-  --check-name        Search <search-root> for the literal <name> and report
-                      whether a plan-named artifact still matches what shipped.
+  --check-name        Look under <search-root> for a file whose basename or
+                      path suffix is the literal <name>, and report whether a
+                      plan-named artifact still matches what shipped. Takes no
+                      further arguments.
   --defer <gate-name> Report this class as owned by the named repository gate
                       and compare nothing (exit 3).
   --help              Print this text and exit 0.
 
-Verdicts: fresh | stale record found | consistent | stale reference found |
-          no records | covered by repo gate | not run
+Verdicts: fresh | stale record found | record unverifiable (dirty) |
+          consistent | stale reference found | no records |
+          covered by repo gate | not run
 EOF
 }
 
@@ -133,6 +153,13 @@ if [ -n "$defer_gate" ]; then
 	exit 3
 fi
 
+if [ "$mode" = "name" ]; then
+	# An empty name matches every path, so it would confirm anything.
+	[ -n "$check_name" ] || fail_usage "--check-name requires a non-empty <name>"
+	[ -n "$search_root" ] || fail_usage "--check-name requires a non-empty <search-root>"
+	[ "$positional_count" -eq 0 ] || fail_usage "--check-name takes no arguments beyond <name> <search-root>"
+fi
+
 if ! command -v git >/dev/null 2>&1; then
 	printf 'verdict: not run\n'
 	printf 'reason: git is not available on PATH\n'
@@ -158,19 +185,53 @@ if [ "$mode" = "name" ]; then
 		printf 'detail: nothing could be searched, so the name was neither confirmed nor refuted.\n'
 		exit 2
 	fi
-	hits=$(grep -rlF --exclude-dir=.git -e "$check_name" -- "$search_root" 2>/dev/null || true)
-	if [ -z "$hits" ]; then
+	# Existence is decided by paths, not by prose. A content grep matches the
+	# plan that proposed the name as readily as the artifact that shipped — and
+	# matches the file naming itself — so the name is matched against the paths
+	# on the working surface, and the content hits are reported as detail only.
+	surface=$(git ls-files --cached --others --exclude-standard -- "$search_root" 2>/dev/null || true)
+	matches=""
+	while IFS= read -r candidate; do
+		[ -n "$candidate" ] || continue
+		case "$candidate" in
+		"$check_name" | */"$check_name")
+			matches="${matches}${candidate}
+"
+			;;
+		esac
+	done <<EOF
+$surface
+EOF
+	for candidate in "$search_root/$check_name" "$check_name"; do
+		if [ -e "$candidate" ]; then
+			printf '%s\n' "$matches" | grep -Fx -- "$candidate" >/dev/null ||
+				matches="${matches}${candidate}
+"
+		fi
+	done
+
+	mentions=$(grep -rlF --exclude-dir=.git -e "$check_name" -- "$search_root" 2>/dev/null || true)
+
+	if [ -z "$matches" ]; then
 		printf 'verdict: stale reference found\n'
 		printf 'name: %s\n' "$check_name"
 		printf 'search root: %s\n' "$search_root"
-		printf 'detail: zero files under the search root contain this literal name.\n'
+		printf 'detail: no file under the search root carries this name.\n'
+		if [ -n "$mentions" ]; then
+			printf 'detail: the name is mentioned but nothing shipped under it; mentioned in:\n'
+			printf '%s\n' "$mentions" | sed 's/^/  /'
+		fi
 		exit 0
 	fi
 	printf 'verdict: consistent\n'
 	printf 'name: %s\n' "$check_name"
 	printf 'search root: %s\n' "$search_root"
-	printf 'found in:\n'
-	printf '%s\n' "$hits" | sed 's/^/  /'
+	printf 'files with this name:\n'
+	printf '%s' "$matches" | sed 's/^/  /'
+	if [ -n "$mentions" ]; then
+		printf 'mentioned in:\n'
+		printf '%s\n' "$mentions" | sed 's/^/  /'
+	fi
 	exit 0
 fi
 
@@ -180,25 +241,43 @@ fi
 
 now=$(date +%s)
 
-# Last edit time of a path: now when it is dirty in the working tree, otherwise
-# the commit time of its last commit. Empty when neither applies.
+is_dirty() {
+	[ -n "$(git status --porcelain -- "$1" 2>/dev/null || true)" ]
+}
+
+# Last edit time of a described path: now when it is dirty in the working tree,
+# otherwise the commit time of its last commit. Empty when neither applies.
 last_edit_of() {
-	if [ -n "$(git status --porcelain -- "$1" 2>/dev/null || true)" ]; then
+	if is_dirty "$1"; then
 		printf '%s\n' "$now"
 		return 0
 	fi
 	git log -1 --format=%ct -- "$1" 2>/dev/null || true
 }
 
-record_time=$(last_edit_of "$record")
-if [ -z "$record_time" ] && [ ! -e "$record" ]; then
+# The record is dated by its last commit only. `now` is never substituted here:
+# a record with no established write time must not certify anything as fresh.
+record_time=$(git log -1 --format=%ct -- "$record" 2>/dev/null || true)
+
+if [ ! -e "$record" ]; then
+	if [ -n "$record_time" ]; then
+		printf 'verdict: stale record found\n'
+		printf 'record missing: %s\n' "$record"
+		printf 'detail: record existed in history but is gone from the working tree.\n'
+		exit 0
+	fi
 	printf 'verdict: no records\n'
 	printf 'record missing: %s\n' "$record"
 	printf 'detail: the record is neither committed nor present in the working tree, so freshness could not be checked.\n'
 	exit 2
 fi
-if [ -z "$record_time" ]; then
-	record_time="$now"
+
+if is_dirty "$record" || [ -z "$record_time" ]; then
+	printf 'verdict: record unverifiable (dirty)\n'
+	printf 'record: %s\n' "$record"
+	printf 'detail: the record is uncommitted in the working tree, so its own write time cannot be established.\n'
+	printf 'detail: commit the record, then re-run; an undatable record cannot prove a described path fresh.\n'
+	exit 0
 fi
 
 stale_lines=""
@@ -232,7 +311,7 @@ if [ -n "$stale_lines" ]; then
 else
 	printf 'verdict: fresh\n'
 fi
-printf 'record: %s last written %s\n' "$record" "$(iso_of "$record_time")"
+printf 'record: %s last committed %s\n' "$record" "$(iso_of "$record_time")"
 [ -z "$stale_lines" ] || printf '%s' "$stale_lines"
 [ -z "$fresh_lines" ] || printf '%s' "$fresh_lines"
 exit 0

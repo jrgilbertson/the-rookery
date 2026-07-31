@@ -47,7 +47,8 @@ and malformed-commitment variants.
       state to it.
 - [ ] 6 → shows the original commitment, new evidence, and current
       recommendation while preserving the prior journal and the unaffected
-      commitment; any source change remains separately reviewable.
+      commitment in the reviewed order; any reordering or source change
+      remains separately reviewable.
 - [ ] 7 → reads only the immediately previous local-date journal, revives no
       older list, invents no missing rationale, and continues the briefing
       with commitment context absent or partial.

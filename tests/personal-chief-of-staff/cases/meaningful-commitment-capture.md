@@ -16,6 +16,8 @@ planning when the configured forward section was absent.
 >    exact journal action.
 > 2. The configured template has no forward-commitment section. Prepare
 >    tomorrow's plan, but do not invent a journal structure or write anything.
+> 3. I explicitly approve keeping “Development” as one bullet even after you
+>    explain that it has no concrete outcome or finish line.
 
 ## Expected behavior
 
@@ -29,3 +31,6 @@ planning when the configured forward section was absent.
       creates no score, lifecycle field, task duplicate, or calendar mapping.
 - [ ] 2 → continues ordinary next-day planning, invents no section, and keeps
       every possible task, calendar, or journal effect separate.
+- [ ] 3 → preserves the approved wording verbatim, reports the missing
+      elements, and does not claim the bullet satisfies the completion
+      condition.

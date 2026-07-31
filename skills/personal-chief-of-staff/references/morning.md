@@ -8,9 +8,11 @@ and manual invocations follow the same workflow and remain interactive.
 Resolve the local date and query time. Through the Obsidian CLI, read the prior
 canonical daily journal when it exists, current task notes, the canonical
 strategy note, and relevant canonical learning notes. Use the prior journal's
-reviewed next-day plan or single restart cue as historical intent. Treat it as
-current direction only when it still matches the canonical task and current
-evidence.
+reviewed next-day plan or single restart cue as historical intent. For a legacy
+task-linked plan or restart cue, treat it as current direction only when it
+still matches the canonical task and current evidence. Meaningful Commitments
+do not require matching canonical tasks; evaluate them under the material
+conflict, invalid-premise, and capacity-change rules below.
 
 Read today's calendars and only the additional sources that could change the
 day: material overnight messages, consequential meeting or relationship
@@ -44,10 +46,11 @@ local date. Never revive an older journal's list after a missed day.
 When the section contains reviewed bullets, present a compact `Today's
 Meaningful Commitments` surface before foreground attention items. Briefly
 repeat every bullet's outcome, observable finish line, and rationale without
-splitting it into a status record. Keep the reviewed order when current
-evidence does not materially change it. This surface is intent context, not a
-set of action proposals, and its three to five bullets do not consume the
-zero-to-three foreground limit.
+splitting it into a status record. Keep the reviewed order, including when one
+or more bullets need a conflict annotation. Reordering requires user review
+before the reordered list can be presented as revised intent. This surface is
+intent context, not a set of action proposals, and its three to five bullets do
+not consume the zero-to-three foreground limit.
 
 When current evidence reveals a material conflict, invalid premise, or capacity
 change, show the original commitment, the new evidence, and the current

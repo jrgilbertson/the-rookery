@@ -131,8 +131,11 @@ intent. Draft three to five numbered plain-Markdown bullets in the closing-date
 journal.
 Each bullet uses one to three sentences that naturally combine a concrete
 outcome, an observable finish line, and one short reason tied to strategy, an
-obligation, or an avoided cost. Do not preserve an activity label such as
-“development,” “meetings,” or “work on X” as the outcome.
+obligation, or an avoided cost. Collaborate to refine an activity label such as
+“development,” “meetings,” or “work on X” into a concrete outcome by default.
+If the user explicitly approves broad or incomplete wording unchanged, preserve
+it verbatim, identify the missing element, and treat it as nonconforming source
+content rather than claiming it satisfies the three-element condition.
 
 Use the day's outcomes, unresolved work, next-day capacity, fixed commitments,
 active tasks, current strategy, and the user's judgment to draft the list. The
@@ -147,11 +150,17 @@ separate from every task, calendar, communication, CRM, or repository action.
 
 When the configured section exists in the live template but the closing-date
 journal lacks it, propose a narrow insertion that preserves all manual content,
-frontmatter, links, embeds, and views. When the live template lacks the section,
-keep the ordinary next-day proposal above and do not invent or write a new
-journal structure without separate approval. If user-authored commitment
-content is incomplete, surface the missing element and collaborate rather than
-padding, truncating, or inventing subjective content.
+frontmatter, links, embeds, and views. When the journal already contains the
+section, report **Already satisfied** if its bullets exactly match the approved
+content. Otherwise show an exact section-only merge or replacement, including
+which existing text is retained or removed; preserve unrelated journal
+structure and never discard a user edit without explicit approval. Revalidate
+the section immediately before writing. When the live template lacks the
+section, keep the ordinary next-day proposal above and do not invent or write a
+new journal structure without separate approval. If user-authored commitment
+content is incomplete and has not been explicitly approved unchanged, surface
+the missing element and collaborate rather than padding, truncating, or
+inventing subjective content.
 
 Completion: when the configured section exists, the proposed journal contains
 three to five reviewed bullets with all three elements; otherwise the existing
@@ -181,8 +190,8 @@ meaningful-commitments section. Create from the current template or edit the
 existing journal through the CLI with explicit configured-vault targeting.
 Preserve manual content, frontmatter, links, embeds, and views, do not lint, and
 read the result back through the CLI before reporting it as applied. If the
-template or target section changed after approval, present a revised proposal
-instead of applying stale content.
+template or any content in the target journal changed after approval, present a
+revised proposal instead of applying stale content.
 
 End explicitly using the core run endings. A completed wind-down normally ends
 in the reviewed daily journal plus any independently approved source changes,

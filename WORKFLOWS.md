@@ -15,7 +15,7 @@ The workflows assume two things are in place:
 - **Repository-based work.** These workflows lean heavily on repositories such as GitHub for code development and knowledge management. Repos give you branches for parallel work, version control, and backups, which all help when you're running agents and working with others.
 - **A durable personal knowledge source.** Sources such as Obsidian, Notion, plain markdown files, or anything that persists outside an AI provider's memory. Point each agent at that store so every harness reads the same knowledge. Turning off in-tool agent memory is a separate choice that stops knowledge from collecting where only one provider can reach it.
 
-A few of the skills named below are my own and not yet published: `pre-pr-approval`, `repo-maintainer`, `repo-best-practices`, `improve-repo-architecture`, `design-evals`, `validate-data`, and `storm-research`.
+A few of the skills named below are my own and not yet published: `repo-maintainer`, `repo-best-practices`, `improve-repo-architecture`, `design-evals`, `validate-data`, and `storm-research`.
 
 ## Research
 
@@ -166,9 +166,9 @@ The shipping sequence, in order:
 1. `ce-simplify-code`. Tightens what was built without changing behavior.
 2. `ce-code-review`. An independent review before any PR exists.
 3. `ce-test-browser` or `ce-dogfood`. Browser verification when the change touches the UI, either a test run or hands-off dogfooding that fixes and commits as it goes.
-4. `pre-pr-approval`. The final checkpoint.
+4. [`checking-pr-readiness`](skills/checking-pr-readiness/SKILL.md). The final checkpoint.
 
-`pre-pr-approval` presents the branch the way an engineer asks for sign-off. What changed in plain language, why it matters, and what it learned. Then the evidence with every check named, whether the diff even needed to exist as written, the risks that remain, and whether the branch produced a learning worth keeping. It waits for one explicit decision and changes nothing until I make it. If the branch moves while I'm deciding, the readout gets rebuilt, because approval binds to exactly what I was shown. High-risk surfaces like auth, payments, or migrations get a fresh-context reviewer before I ever see the packet. The menu also has a learning option. Before approving, I can have the change or a concept it introduced explained back to me.
+`checking-pr-readiness` presents the branch the way an engineer asks for sign-off. The full working surface including untracked files, every upstream step reported from receipts — verified only when the evidence is named, attested when I say so, never assumed — what was planned against what was delivered, a sweep of the finding classes that drive repeated automated-review rounds, and whether the branch produced a learning worth keeping. It waits for one explicit decision and changes nothing until I make it. If the branch moves while I'm deciding, the readout gets rebuilt, because approval binds to exactly what I was shown. On approval it composes an evidence pack that lands in the PR body, so reviewers and the eventual merge check read the same record. The menu also has a learning option. Before approving, I can have the change or a concept it introduced explained back to me.
 
 After approval, `ce-commit-push-pr` writes the description and opens the PR, and `ce-babysit-pr` watches it through CI failures and review feedback until it reports merge-ready. Two checks happen before I merge. I read the review comments myself to confirm nothing went off track, then ask the agent to explain in plain language what the issue fixed, with before and after examples. If the explanation doesn't hold up, I don't merge. I write the changelog and release notes from the merged PRs afterward.
 

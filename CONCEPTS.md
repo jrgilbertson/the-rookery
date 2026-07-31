@@ -30,6 +30,26 @@ maintainer's machine, including absolute paths, private names, or
 personal-environment assumptions. A verification sweep enforces the rule
 across shipped files.
 
+## Readiness checkpoints
+
+### Evidence Pack
+
+The structured record a readiness checkpoint persists when the owner approves:
+plan-vs-delivered status, checks run with results, the explicit not-verified and
+attested list, sweep findings, UI critique scores when present, and the durable
+learning signal. Its durable home is the pull request description: the
+finishing path renders it into the PR body, and the pre-merge checkpoint
+reads it back from there. Nothing is written to the tracked tree or any
+local state store.
+
+### Targeted Sweep
+
+The pre-PR gate's check of the evidence-backed finding classes that drive
+automated-review rounds, run against the branch before any PR exists.
+Mechanical classes run through bundled helpers that defer to repo-owned
+equivalents; judgment classes run by model instruction. The class list comes
+from PR forensics and is refreshable as review history accumulates.
+
 ## Skill quality gates
 
 ### Baseline Test

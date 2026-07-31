@@ -45,7 +45,7 @@ Everything here fits into seven jobs. The walkthroughs live in [WORKFLOWS.md](WO
 - [**Plan**](WORKFLOWS.md#plan). Turn intent into a clear objective. Ideation, brainstorming, and planning with Compound Engineering.
 - [**Design**](WORKFLOWS.md#design). Impeccable drives every interface decision, from first layout to final polish.
 - [**Build**](WORKFLOWS.md#build). Implement in Orca with parallel worktrees and delegated agents.
-- [**Ship**](WORKFLOWS.md#ship). Review gates, pre-PR approval, and changelogs and releases with Compound Engineering.
+- [**Ship**](WORKFLOWS.md#ship). Review gates, the pre-PR readiness checkpoint, and changelogs and releases with Compound Engineering.
 - [**Maintain**](WORKFLOWS.md#maintain). Keep repos healthy. Hygiene passes, architecture reviews, evals, and data quality checks.
 - [**Learn**](WORKFLOWS.md#learn). Turn what you read and build into durable knowledge. Networked Thinking, atomic notes, and learnings that compound back into the system.
 
@@ -55,6 +55,7 @@ Everything here fits into seven jobs. The walkthroughs live in [WORKFLOWS.md](WO
 - [personal-chief-of-staff](skills/personal-chief-of-staff/SKILL.md). Run a morning review, daily journal and wind-down, weekly review, or quarterly review from your existing sources. Every durable change stays reviewable before it lands.
 - [managing-personal-crm](skills/managing-personal-crm/SKILL.md). Keep relationship context in canonical Person notes and tasks. Capture interactions, prepare for a conversation, find who could help with current work, and clean up notes in stages, with no separate CRM database.
 - [reviewing-meetings](skills/reviewing-meetings/SKILL.md). Turn completed meetings from a configured source into grounded notes and follow-up actions. Duplicate work is prevented, each outcome gets one canonical owner, and scheduled runs stay read-only.
+- [checking-pr-readiness](skills/checking-pr-readiness/SKILL.md). Gate a branch before the pull request opens: the full working surface reported, upstream steps verified from receipts, the plan compared against what was delivered, and a sweep of the finding classes that drive repeated review rounds. It ends in one owner decision plus an evidence pack for the PR body.
 
 ## My other projects
 

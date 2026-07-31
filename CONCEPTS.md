@@ -22,14 +22,11 @@ appears in the catalog and installs on its own.
 
 ### Install Probe
 
-The package-harness verification gate proving that an exact skill revision
-installs through the repository's documented path and that the installed
-content matches its source. A passing probe establishes installability and
-content identity only for the checked package-harness cell. Native discovery,
-load, and trigger are separate model-harness states; a native load pass also
-requires [Loaded Skill Identity](#loaded-skill-identity), including
-deterministic runtime provenance. Runs before merge from the local source and
-again after merge against the published state.
+The per-harness smoke check proving that an exact skill revision installs
+through the repository's documented path and activates on one trigger query.
+A passing probe establishes installability and activation for that harness
+only; it is not behavioral evidence. Runs before merge from the local source
+and again after merge against the published state.
 
 ### Same-Door Rule
 
@@ -44,30 +41,12 @@ across shipped files.
 ### Baseline Test
 
 A Baseline Test checks whether a skill changes agent behavior in the intended
-direction. New skills run realistic prompts with and without the skill.
-Revisions compare frozen prior and revised versions in fresh contexts after
-establishing each version's Loaded Skill Identity. A substantive revision ships
-only when the required comparison supports it. A waiver can permit shipment
-when a required check is unavailable, but it cannot replace missing evidence,
-support an otherwise unsupported change, or raise the evidence label.
-
-### Loaded Skill Identity
-
-Loaded Skill Identity proves that the declared skill package supplied the
-instructions observed in a model-harness run. A matching name is not enough
-because project, user, shared, and system copies may collide.
-
-Fresh context does not establish Loaded Skill Identity. A native load pass
-needs deterministic runtime provenance tied to the installed source: a native
-trace naming the exact installed path or base directory, or equivalent runtime
-evidence linked to the installed content hash. Distinctive output may
-corroborate that provenance, but cannot independently prove which copy loaded.
-If deterministic runtime provenance is unavailable, keep native load unverified
-rather than failed. A bounded policy probe may embed the exact authoritative
-policy, but that does not prove native discovery or loading. Keep
-source-to-install identity, native discovery, native load, native trigger, and
-behavioral evidence separate, and exclude identity-dependent claims from runs
-that cannot establish the intended loaded copy.
+direction. New skills run realistic prompts with and without the skill;
+revisions compare the frozen prior and revised versions, each in a fresh
+context with the intended variant confirmed loaded. Cases are binary
+pass/fail, and a substantive revision ships only when the discriminating
+cases show the intended improvement with no regression. The repository's
+testing convention owns the protocol.
 
 ### Independent Review Context
 
@@ -79,8 +58,10 @@ review. Deterministic scripts remain appropriate for mechanical checks. If an
 independent context is unavailable, the affected result stays unverified and
 moves to a separate session through a self-contained handoff.
 
-A recorded context ID identifies the run. It does not replace artifact or
-trace evidence for the judgment made in that run.
+The run's log line names the fresh-context mechanism used (a fresh session,
+CLI execution, or subagent); recorded context identifiers are not kept in
+test artifacts. The named mechanism does not replace artifact or trace
+evidence for the judgment made in that run.
 
 ### Degradation Path
 
@@ -88,6 +69,16 @@ A skill's defined behavior when something it prefers is absent, such as a
 validator that cannot run, a companion skill that is not installed, or a tool
 without a clean-context mechanism. The skill uses the best available substitute
 and states what was skipped.
+
+### Disposition List
+
+A Disposition List is the per-item record a prune or restructure leaves in its
+commit message: each removed item marked kept, folded into a named survivor,
+or dropped with a reason. It is a checkable contract, not a narrative — a
+folded claim must point to the surviving line that carries the contract, a
+dropped claim must hold against its rationale, and a retired claim must
+survive a search for live references. Verified dispositions are what make
+git-as-archive recovery trustworthy.
 
 ### Delete Test
 
@@ -104,29 +95,10 @@ owns it. Examples include portable formats, user authority, deterministic
 validation, exact output requirements, and fragile operation order. Generic
 reminders to think, narrate, or recheck may be removed when they no longer help.
 
-### Claim Ceiling
-
-A Claim Ceiling limits conclusions to the evidence collected. One successful
-execution is only a smoke probe and earns no baseline label. A small matched
-baseline supports a directional observation. Reliability or
-causal-improvement claims require repeated, controlled evidence that accounts
-for normal run variation.
-
-### Verification Mode
-
-Verification Mode records whether listing-query checks use the ordinary
-personal tier or the stricter tier for public or unusually load-bearing
-skills.
-
-The selected tier determines query count, repetition, and tier-specific
-judgment rules. Matched behavioral comparisons, structural validation, native
-and installation checks, and declared model-harness targets remain separate
-requirements.
-
 ### Trigger Contract
 
 A Trigger Contract treats a skill's description as a tested activation API,
 not documentation. At the fire-or-skip decision, the agent sees only the
 skill's name and description. Test this metadata with should-trigger phrasings
-that must activate and near-misses that must not. Record each judgment in a
-fresh context with a context or transcript reference.
+that must activate and near-misses that must not, judged in fresh contexts
+under the repository's testing convention.

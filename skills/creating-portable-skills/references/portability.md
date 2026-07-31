@@ -1,6 +1,6 @@
 # Portability Map
 
-Portability here means a canonical, self-contained Agent Skills package that compatible harnesses can discover and install. It does not promise equivalent behavior across every model, harness, configuration, or task. Behavioral claims require evidence from the exact declared target cells and cases they name.
+Portability here means a canonical, self-contained Agent Skills package that compatible harnesses can discover and install. It does not promise equivalent behavior across every model, harness, configuration, or task. Behavioral claims require evidence from the exact models, harnesses, and cases they name.
 
 ## Canonical structure
 
@@ -25,14 +25,12 @@ Keep these conclusions separate:
 | Observation | Supports | Does not support by itself |
 | --- | --- | --- |
 | Structural validation passes | The package follows the checked Agent Skills schema | Discovery, installation, triggering, or useful execution |
-| Local-source installation and content identity pass | That exact package revision installed in the named harness | Load, trigger, or behavior in another target |
-| Native discovery and load pass | The named harness exposed the installed skill to the named model cell | Correct activation or task behavior |
-| Listing judgment passes | A proxy judgment of the name-and-description routing contract | Native triggering |
-| Native trigger is observed | Triggering in that exact model-harness configuration and query | Other configurations, queries, or equivalent downstream behavior |
-| A small matched comparison passes | The bounded conclusion in its completed baseline record | Reliability, non-regression, causal improvement, or universal compatibility |
+| Trigger-suite judgments pass | A listing proxy for the name-and-description routing contract | Native triggering in a harness |
+| A smoke check passes | That package revision installed and activated in that harness, on that query | Other harnesses, queries, or task behavior |
+| Graded behavioral cases pass | Those cases, in those contexts, at that revision | Reliability, non-regression, causal improvement, or universal compatibility |
 
-Use the model and harness target set declared in the completed baseline record.
-That record owns case construction and per-target observation handling.
+The baseline comparison template owns case construction and grading; the
+trigger contract owns the query set and smoke-check protocol.
 
 ## Optional harness metadata
 
@@ -55,17 +53,10 @@ Codex budgets the initial skill listing, so put the key use case and trigger wor
 Use the host repository's documented path first. These are common project and user locations; confirm the installed harness version before relying on them.
 
 A harness may discover the same skill name in several locations with
-version-specific precedence. Before recording native load or trigger evidence,
-inventory every applicable location. A native load pass requires deterministic
-runtime provenance tied to the installed source: a native trace naming the
-exact installed path or base directory, or equivalent runtime evidence linked
-to the installed content hash. Distinctive output may corroborate that
-provenance, but cannot independently prove which copy loaded. If deterministic
-runtime provenance is unavailable, keep native load unverified rather than
-failed. Native trigger for the declared package revision is also unverified
-when loaded-copy identity is unverified; record an unattributed invocation only
-as an observation. Record source-to-install identity, native discovery, native
-load, native trigger, and behavioral evidence separately.
+version-specific precedence. A smoke check therefore uses a disposable
+project so the copy that activates is the copy just installed; when a
+same-name copy exists in a user or system location, confirm the activated
+copy's path before logging the pass, or log the result as inconclusive.
 
 | Harness | Project-level | User-level | Source |
 | --- | --- | --- | --- |
@@ -77,4 +68,4 @@ load, native trigger, and behavioral evidence separately.
 
 ## Rule
 
-A canonical package passes without optional harness metadata. Structural validation establishes canonical form; a clean local-source install establishes installability only for the checked package-harness cell. Describe behavioral support only at the evidence level earned by separately recorded model-harness cases.
+A canonical package passes without optional harness metadata. Structural validation establishes canonical form; a passing smoke check establishes installability and activation only for that harness. Describe behavioral support only at the evidence level earned by separately graded cases.

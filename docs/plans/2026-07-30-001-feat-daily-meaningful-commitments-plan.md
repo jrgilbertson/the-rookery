@@ -141,7 +141,7 @@ The missing record weakens next-morning continuity and deprives later Chief-of-S
 - `skills/personal-chief-of-staff/references/morning.md` — prior-intent consumption and the separate foreground-attention limit.
 - `skills/personal-chief-of-staff/references/source-behavior.md` — canonical ownership, approval, portability, and authoritative-interface rules.
 - `skills/personal-chief-of-staff/assets/review-bundle.md` — independently approvable review shape.
-- `tests/personal-chief-of-staff/baseline-cases.md` — current behavioral coverage and adjacent regression cases.
+- `tests/personal-chief-of-staff/cases/` — runnable behavioral cases and adjacent regression coverage.
 
 ---
 
@@ -162,7 +162,7 @@ The missing record weakens next-morning continuity and deprives later Chief-of-S
 - `skills/personal-chief-of-staff/references/morning.md` already reads prior reviewed intent before applying the separate foreground-attention limit.
 - `skills/personal-chief-of-staff/references/weekly.md` already reads Daily Journals and discusses divergence between intention and observed behavior.
 - `skills/personal-chief-of-staff/references/source-behavior.md` remains authoritative for configured-role discovery, separate approvals, drift revalidation, CLI-only mutation, and indeterminate readback handling.
-- `tests/personal-chief-of-staff/baseline-cases.md` and `tests/personal-chief-of-staff/results.md` are the repository's behavioral specification and durable evaluation record.
+- `tests/personal-chief-of-staff/cases/` and `tests/personal-chief-of-staff/log.md` are the repository's behavioral specification and durable evaluation record.
 
 ### Implementation Constraints
 
@@ -228,7 +228,7 @@ The missing record weakens next-morning continuity and deprives later Chief-of-S
 
 - **Goal:** Make the changed behavior reviewable and reproducible without capturing private configuration.
 - **Requirements:** All requirements; KTD6.
-- **Files:** `tests/personal-chief-of-staff/baseline-cases.md`, `tests/personal-chief-of-staff/results.md`, `CONCEPTS.md`, `CHANGELOG.md`.
+- **Files:** `tests/personal-chief-of-staff/cases/`, `tests/personal-chief-of-staff/log.md`, `CONCEPTS.md`, `CHANGELOG.md`.
 - **Approach:** Add the focused scenarios from U1-U2 to the behavioral specification. Run matched prior-versus-candidate evaluations in independent fresh contexts and append dated evidence with harness, model, loaded-package identity, result, and limitations. Keep the existing `Meaningful Commitment` glossary entry and record the user-visible workflow change. State that trigger-listing evidence was not rerun because the skill description and trigger boundary did not change.
 - **Test scenarios:**
   - Candidate outputs satisfy each new scenario while prior outputs establish the changed behavior rather than merely a favorable one-off sample.

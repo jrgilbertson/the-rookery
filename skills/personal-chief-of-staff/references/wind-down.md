@@ -6,8 +6,11 @@ workflow.
 
 ## Establish the day
 
-Resolve the local date and review window. Through the Obsidian CLI, find the
-configured daily-journal template and today's journal, if one exists. Read the
+Resolve the local date and review window. If the run time or the user's wording
+makes the day being closed ambiguous, as can happen just after midnight,
+resolve the intended journal date before drafting. Treat the following local
+date as the commitment target day. Through the Obsidian CLI, find the configured
+daily-journal template and the closing-date journal, if one exists. Read the
 existing journal before drafting so manual content, frontmatter, links, embeds,
 and unresolved thoughts remain intact.
 
@@ -77,9 +80,9 @@ Prefer a few meaningful outcomes and frictions over a chronological activity
 dump. Preserve the template's existing vault-activity views instead of copying
 their contents into prose.
 
-When today's journal already contains manual writing, propose a narrow merge
-that preserves it. Never replace the whole note with a cleaner agent-authored
-version.
+When the closing-date journal already contains manual writing, propose a narrow
+merge that preserves it. Never replace the whole note with a cleaner
+agent-authored version.
 
 Completion: the proposed journal follows the live template, preserves existing
 content, and clearly identifies every subjective statement awaiting approval.
@@ -120,6 +123,49 @@ expand the plan merely because more work is discoverable.
 Completion: the next-day proposal reflects current sources and makes its
 tradeoffs visible without writing to them.
 
+## Record tomorrow's meaningful commitments
+
+When the live daily-journal template contains a `Tomorrow’s Meaningful
+Commitments` section, use it as the configured place for reviewed next-day
+intent. Draft three to five numbered plain-Markdown bullets in the closing-date
+journal.
+Each bullet uses one to three sentences that naturally combine a concrete
+outcome, an observable finish line, and one short reason tied to strategy, an
+obligation, or an avoided cost. Collaborate to refine an activity label such as
+“development,” “meetings,” or “work on X” into a concrete outcome by default.
+If the user explicitly approves broad or incomplete wording unchanged, preserve
+it verbatim, identify the missing element, and treat it as nonconforming source
+content rather than claiming it satisfies the three-element condition.
+
+Use the day's outcomes, unresolved work, next-day capacity, fixed commitments,
+active tasks, current strategy, and the user's judgment to draft the list. The
+user supplies or explicitly approves every rationale. Do not
+use task checkboxes or add completion status, scores, streaks, grades, or
+mandatory item-by-item reconciliation.
+
+The commitments express reviewed intent. They do not replace canonical task
+state or calendar capacity, and they do not require calendar blocks to be
+created, renamed, or mapped to individual commitments. Keep the journal action
+separate from every task, calendar, communication, CRM, or repository action.
+
+When the configured section exists in the live template but the closing-date
+journal lacks it, propose a narrow insertion that preserves all manual content,
+frontmatter, links, embeds, and views. When the journal already contains the
+section, report **Already satisfied** if its bullets exactly match the approved
+content. Otherwise show an exact section-only merge or replacement, including
+which existing text is retained or removed; preserve unrelated journal
+structure and never discard a user edit without explicit approval. Revalidate
+the section immediately before writing. When the live template lacks the
+section, keep the ordinary next-day proposal above and do not invent or write a
+new journal structure without separate approval. If user-authored commitment
+content is incomplete and has not been explicitly approved unchanged, surface
+the missing element and collaborate rather than padding, truncating, or
+inventing subjective content.
+
+Completion: when the configured section exists, the proposed journal contains
+three to five reviewed bullets with all three elements; otherwise the existing
+next-day planning behavior continues without an invented journal write.
+
 ## Promote only durable signal
 
 When a high-signal insight may help an audience, offer one writing seed without
@@ -139,10 +185,13 @@ Present the journal and all source changes in one review bundle with separate
 numbered actions. Apply only approved actions under the shared source rules.
 
 For an approved journal action, re-read the target through the Obsidian CLI.
-Create from the current template or edit the existing journal through the CLI
-with explicit configured-vault targeting. Preserve manual content and links,
-do not lint, and read the result back through the CLI before reporting it as
-applied.
+Re-read the configured template as well when the action adds or changes the
+meaningful-commitments section. Create from the current template or edit the
+existing journal through the CLI with explicit configured-vault targeting.
+Preserve manual content, frontmatter, links, embeds, and views, do not lint, and
+read the result back through the CLI before reporting it as applied. If the
+template or any content in the target journal changed after approval, present a
+revised proposal instead of applying stale content.
 
 End explicitly using the core run endings. A completed wind-down normally ends
 in the reviewed daily journal plus any independently approved source changes,

@@ -56,6 +56,11 @@ looked" surface. GitHub Releases mirror its entries.
 - `personal-chief-of-staff` can now include relationship check-ins and timely
   opportunities in its morning, wind-down, and weekly reviews when Personal CRM
   is available.
+- `personal-chief-of-staff` can now record three to five concrete next-day
+  commitments with finish lines and user-approved rationales during wind-down
+  when the configured journal section is available, reaffirm them in morning
+  without creating another task or calendar system, and use repeated rationale
+  patterns for selective non-scoring coaching.
 - `reviewing-meetings` can now suggest contact dates, save useful relationship
   context, capture personal follow-ups, and surface relevant connections. Each
   meeting still produces one review bundle, and every approved action goes to

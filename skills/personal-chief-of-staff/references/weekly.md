@@ -46,6 +46,13 @@ Separate observed evidence from inference and from judgments that still need
 the user. Do not manufacture a narrative to fill the template. A quiet week or
 partial week can produce a short, honest synthesis.
 
+When daily journals contain meaningful commitments, compare their stated
+rationales with later reflection and observed outcomes only when a repeated
+pattern could improve a current prioritization, sizing, carry-forward, or
+strategic-alignment decision. Present the evidence, label the inference, and
+invite correction. Do not calculate a completion score or streak, require
+item-by-item reconciliation, or create another source of task state.
+
 Completion: the user can understand the week and its implications before
 opening the supporting detail.
 

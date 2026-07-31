@@ -21,10 +21,14 @@ names its receipt on its own line.
 verified` and the checks carrying `attested`, named individually. An empty list
 is written as `none`, never omitted.
 
-**Sweep findings:** one line per class that fired, in the order of
-`references/sweep-classes.md`, each `<class>: <verdict> — <disposition>` where
-the disposition is fixed, accepted with reason, or deferred. Classes that
-carried a passing verdict collapse to one summary line.
+**Sweep findings:** one line for every class in `references/sweep-classes.md`,
+in that file's order — never a summary line standing in for several. A class
+that fired is written `<class>: <verdict> — <disposition>`, where the
+disposition is fixed, accepted with reason, or deferred. A class that passed is
+written `<class>: <verdict>`. A class that did not run is written explicitly as
+`<class>: unavailable | skipped (covered by <gate>) | not run → judgment | not
+applicable`. A missing line reads as a class nobody checked, which is the
+failure this pack exists to prevent.
 
 **Owner decision:** approved / changes requested / stopped and filed follow-up.
 

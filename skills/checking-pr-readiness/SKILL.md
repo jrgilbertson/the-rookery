@@ -50,7 +50,9 @@ with one word from this list, used consistently and without synonyms:
 Report the branch's full working surface before any other check, because that
 surface is what the finishing path will stage and what the owner is approving.
 Run [scripts/surface-report.sh](scripts/surface-report.sh) when it is present
-and executable; otherwise gather the same four categories directly with git:
+and executable — the same helper carries the size check in step 6, so pass the
+reference's cap values here and read both results from one run; otherwise
+gather the same four categories directly with git:
 
 - committed on this branch, compared against the merge base with the default
   branch the pull request will target (resolve it from the remote's HEAD, and
@@ -160,23 +162,38 @@ request forensics behind this gate — then surface findings in that same order.
 Mechanical classes run through the bundled helpers:
 
 - [scripts/surface-report.sh](scripts/surface-report.sh) for diff size against
-  automated-reviewer file caps,
+  automated-reviewer file caps, invoked with the cap values from the
+  reference's table:
+  `scripts/surface-report.sh --cap CodeRabbit=150 --cap Greptile=100`,
 - [scripts/evidence-freshness.sh](scripts/evidence-freshness.sh) for records
-  predating the final edit they describe, and for plan-named artifacts that no
-  longer match what shipped,
+  predating the final edit they describe
+  (`scripts/evidence-freshness.sh <record> <described-path>...`), and for
+  plan-named artifacts that no longer match what shipped
+  (`scripts/evidence-freshness.sh --check-name <name> <search-root>`),
 - [scripts/changelog-union.sh](scripts/changelog-union.sh) for whether the
   branch's own work appears in the repository's changelog.
 
-Each helper defers when the host repository owns an equivalent check: report
-that class as covered by the repository gate rather than running both. When a
-helper cannot run, report its class not run and cover it with the
-model-instruction fallback the reference gives for that class. Every remaining
-class runs by model instruction from the reference. A file-cap finding names the
+Each helper defers when the host repository owns an equivalent check: invoke it
+as `<helper> --defer <gate-name>` with the gate step 2 found, and report that
+class as covered by that gate rather than running both. Every remaining class
+runs by model instruction from the reference. A file-cap finding names the
 affected reviewer and the source of the cap, or says the cap is unverified when
 the source cannot be confirmed.
 
-Completion: every class in the reference carries a status word, and each class
-that fired names the file and line where it fired.
+A helper's verdict and the gate's status words are two layers: the verdict says
+what the class found, the status word says whether the check happened. Read both
+off the helper's exit code and its `verdict:` line. On exit 0 the class carries
+that verdict from its enumerated set, and the check's status word is verified
+with the verdict line as the named evidence, or failed when the verdict is a
+finding. On exit 2 with an absent-input verdict — `no changelog`, `no records` —
+the check is unavailable. On exit 3 it is skipped, naming the repository gate the
+helper deferred to. On exit 4, and on the `not run` verdict a usage error emits
+with exit 2, the check is not run and its class falls back to the
+model-instruction check the reference gives for that class.
+
+Completion: every class in the reference carries one verdict from that class's
+enumerated set, and each class that fired names the file and line where it
+fired.
 
 ### 7. Compose the readout and take the owner decision
 
@@ -240,6 +257,11 @@ evidence pack in that readout.
 - Findings the owner declines still belong in the evidence pack with their
   disposition. A dropped finding reappears as a review comment on the pull
   request.
+- The pack reaches the finishing path only through the readout, which is
+  conversation, not a file. If the session breaks between approval and pull
+  request creation, the readout carrying the pack has to be recomposed or
+  supplied again; the pack exists durably only once the pull request body
+  carries it.
 
 ## Credits
 

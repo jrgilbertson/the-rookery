@@ -38,7 +38,7 @@
 #                                           exists is stale, not fresh — and when
 #                                           the record itself has git history but
 #                                           is gone from the working tree
-#   verdict: record unverifiable    exit 0  the record is dirty in the working
+#   verdict: record unverifiable (dirty)  exit 0  the record is dirty in the working
 #             (dirty)                       tree, so its own write time cannot be
 #                                           established. A record that cannot be
 #                                           dated proves nothing fresh

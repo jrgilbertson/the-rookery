@@ -31,11 +31,14 @@ Verdicts: clear / underspecified / not applicable.
 Two documents state different things about the same behavior, or a name, path,
 or filename is referenced that no longer matches what shipped.
 
-Check by judgment, with helper support: `evidence-freshness.sh` covers
-plan-named artifacts that no longer match what shipped. By judgment, compare
-each document the diff changed against the documents that describe the same
-behavior, and resolve every path, filename, and skill or command name the diff
-mentions against the working surface.
+Check by judgment, with helper support: `evidence-freshness.sh --check-name
+<name> <search-root>` covers plan-named artifacts that no longer match what
+shipped, by existence — it reports `consistent` when a file whose basename or
+path suffix is that literal name exists under the search root, and `stale
+reference found` when none does, so a name carried only in prose reads as
+stale. By judgment, compare each document the diff changed against the
+documents that describe the same behavior, and resolve every path, filename,
+and skill or command name the diff mentions against the working surface.
 
 Verdicts: consistent / contradiction found / stale reference found / not
 applicable.
@@ -47,7 +50,8 @@ repository that keeps one.
 
 Check with `helper: changelog-union.sh`.
 
-Verdicts: present / missing / no changelog (defer) / covered by repo gate.
+Verdicts: present / changed without entry / missing / no changes on surface /
+no changelog / covered by repo gate / not run.
 
 ## 4. Evidence or test records predating the final edit
 
@@ -57,8 +61,8 @@ it describes, so it attests to a version that no longer exists.
 Check with `helper: evidence-freshness.sh`. Comparisons use git commit times,
 never file modification times, because a checkout or copy rewrites the latter.
 
-Verdicts: fresh / stale record found / no records (absent input) / covered by
-repo gate.
+Verdicts: fresh / stale record found / record unverifiable (dirty) / no records
+/ covered by repo gate / not run.
 
 ## 5. Duplicated source-of-truth literals
 
@@ -134,20 +138,25 @@ Verdicts: enforced / prose-only invariant found / not applicable.
 The diff touches more files than an automated reviewer will read, so that
 reviewer skips the pull request or truncates its review.
 
-Check with `helper: surface-report.sh`, then read its file count against this
-table:
+Check by running `scripts/surface-report.sh --cap CodeRabbit=150 --cap
+Greptile=100` — the cap values come from the table below — and read the
+verdict line directly; the helper compares the counts itself.
 
 | Reviewer | File-count cap | Source and as-of |
 | --- | --- | --- |
 | CodeRabbit | ~150 files | vendor docs / observed behavior, as of 2026-07 |
 | Greptile | ~100 files | vendor docs / observed behavior, as of 2026-07 |
 
-A finding names the affected reviewer and the cap's source. Report `cap
-unverified` when the reviewer configured on the repository has no row in this
-table, or when the row's cap cannot be confirmed against that reviewer's
-current documentation at run time.
+A finding names the affected reviewer and the cap's source. The helper itself
+reports `cap unverified` when no cap was supplied, and when the committed
+category could not be measured, because a cap cannot be called met against a
+count that is unknown. Report it by judgment for the same reason when the
+reviewer configured on the repository has no row in this table, or when the
+row's cap cannot be confirmed against that reviewer's current documentation at
+run time.
 
-Verdicts: under caps / `exceeds cap for <reviewer>` / cap unverified.
+Verdicts: under caps / `exceeds cap for <reviewer>` / cap unverified / no
+changes on surface / covered by repo gate / not run.
 
 ## When a helper cannot run
 

@@ -63,11 +63,7 @@ After ordinary clarification, I sometimes have one coherent decision tree left w
 
 Install `grill-me` and `grilling` separately from [Matt Pocock's skills](https://github.com/mattpocock/skills); they are not part of The Rookery's catalog. An agent may recommend this route, but the operator invokes `grill-me`. That wrapper starts the session; the `grilling` skill owns the interview protocol. The agent walks the tree one question at a time, offers a concrete recommendation with each question, and leaves every decision with the user. It looks up facts available in the repository or environment instead of asking for them. A Grilling Session is stateless: it creates no glossary, ADR, or requirements-document updates.
 
-Explicit user confirmation that shared understanding has been reached is the Shared Understanding Gate. Pausing or abandoning the interview does not pass the gate or authorize downstream action. When prose cannot settle an interaction or visual decision, a separately authorized prototype or design exploration may gather evidence, then return to the same unresolved question. The prototype does not settle that decision or authorize implementation.
-
-Once the user confirms shared understanding, the clarified intent returns to `ce-plan` or the Compound Engineering planning session already underway. Grilling remains a targeted pressure test inside Plan, not a separate planning path or an eighth workflow stage.
-
-For work an agent can own end-to-end, I use the following template.
+Once the user confirms shared understanding, the clarified intent returns to the Compound Engineering planning session. For work an agent can own end-to-end, I turn that intent into the following template.
 
 ```yaml
 goal: Complete [objective] until [verifiable end state], 

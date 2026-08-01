@@ -4,7 +4,6 @@ description: Use when branch work looks complete and the next step is opening a 
 license: MIT
 compatibility: Requires a git worktree and read access to the host repository. Companion checks degrade to named skips when their skills or tooling are absent.
 ---
-
 # Checking PR Readiness
 
 Check whether a branch is ready to enter the pull request and
@@ -30,17 +29,17 @@ with one word from this list, used consistently and without synonyms:
 
 - **verified** — a named receipt supports the claim, and the readout names it.
 - **attested** — the owner states it happened and no receipt exists; recorded
-  as attestation, never as evidence.
+as attestation, never as evidence.
 - **failed** — the check ran and did not pass.
 - **not run** — the check did not execute, because a helper, tool, or context
-  it needs was unavailable.
+it needs was unavailable.
 - **not verified** — no receipt exists and no attestation was given.
 - **skipped** — deliberately not run because a companion is absent or the class
-  has no target in the working surface.
+has no target in the working surface.
 - **unavailable** — the input the check reads does not exist, such as a missing
-  plan or changelog.
+plan or changelog.
 - **bypassed** — a check that fired was overridden by the owner, recorded with
-  the reason.
+the reason.
 - **not applicable** — the working surface contains nothing this check covers.
 
 ## Workflow
@@ -51,12 +50,13 @@ Report the branch's full working surface before any other check, because that
 surface is what the finishing path will stage and what the owner is approving.
 Run [scripts/surface-report.sh](scripts/surface-report.sh) when it is present
 and executable — it also carries step 6's size check, so pass the reference's
-cap values here and read both results from one run. Otherwise gather the same
-four categories directly with git:
+cap values here and read both results from one run, statuses per step 6's
+verdict-and-status mapping. Otherwise gather the same four categories directly
+with git:
 
 - committed on this branch, compared against the merge base with the default
-  branch the pull request will target (resolve it from the remote's HEAD, and
-  ask the owner when the target is ambiguous),
+branch the pull request will target (resolve it from the remote's HEAD, and
+ask the owner when the target is ambiguous),
 - staged, unstaged, and untracked paths.
 
 List untracked paths with the same weight as tracked ones. Finishing tools stage
@@ -101,12 +101,12 @@ Use this receipt inventory to decide between verified and the honest
 alternatives:
 
 - Durable receipts: design-critique snapshots (for example
-  `.impeccable/critique/` frontmatter carrying a score and P0/P1 counts) and
-  solutions documents present in the working surface.
+`.impeccable/critique/` frontmatter carrying a score and P0/P1 counts) and
+solutions documents present in the working surface.
 - Browser testing leaves a receipt only when its output or screenshots were
-  saved; otherwise it has none.
+saved; otherwise it has none.
 - Code review and code simplification leave no durable artifact today, so
-  outside the session that ran them they are attestation-only.
+outside the session that ran them they are attestation-only.
 
 Never write verified without naming the evidence in the same line. Where no
 receipt exists, report not verified and offer the owner the chance to attest;
@@ -141,7 +141,7 @@ recorded.
 Carry exactly one durable-learning signal into the readout:
 
 - a solutions document covering this branch's work exists in the working
-  surface, named in the readout; or
+surface, named in the readout; or
 - an explicit capture plan or follow-up exists, named in the readout; or
 - the readout states why this branch produced no durable learning.
 
@@ -162,16 +162,16 @@ request forensics behind this gate — then surface findings in that same order.
 Mechanical classes run through the bundled helpers:
 
 - [scripts/surface-report.sh](scripts/surface-report.sh) for diff size against
-  automated-reviewer file caps, invoked with the cap values from the
-  reference's table:
-  `scripts/surface-report.sh --cap CodeRabbit=150 --cap Greptile=100`,
+automated-reviewer file caps, invoked with the cap values from the
+reference's table:
+`scripts/surface-report.sh --cap CodeRabbit=150 --cap Greptile=100`,
 - [scripts/evidence-freshness.sh](scripts/evidence-freshness.sh) for records
-  predating the final edit they describe
-  (`scripts/evidence-freshness.sh <record> <described-path>...`), and for
-  plan-named artifacts that no longer match what shipped
-  (`scripts/evidence-freshness.sh --check-name <name> <search-root>`),
+predating the final edit they describe
+(`scripts/evidence-freshness.sh <record> <described-path>...`), and for
+plan-named artifacts that no longer match what shipped
+(`scripts/evidence-freshness.sh --check-name <name> <search-root>`),
 - [scripts/changelog-union.sh](scripts/changelog-union.sh) for whether the
-  branch's own work appears in the repository's changelog.
+branch's own work appears in the repository's changelog.
 
 Each helper defers when the host repository owns an equivalent check: invoke it
 as `<helper> --defer <gate-name>` with the gate step 2 found, and report that
@@ -216,16 +216,17 @@ Then present exactly one decision menu:
 1. Approve and proceed to the finishing path.
 2. Request changes.
 3. Run a flagged missing step now — one option per gap found in steps 2 through
-   6, each dispatching the skill that owns that step.
+ 6, each dispatching the skill that owns that step.
 4. Have the change or a concept behind it explained, through the available
-   explanation capability (the `ce-explain` skill where the compound
-   engineering plugin is installed). Omit this option and say it is unavailable
-   when no such capability is present.
+ explanation capability (the `ce-explain` skill where the compound
+ engineering plugin is installed). Omit this option and say it is unavailable
+ when no such capability is present.
 5. Stop and file follow-up work.
 
-Options 3 and 4 are non-terminal: when one finishes, re-read the working surface
-from step 1, re-run step 6 if that surface changed, recompose the readout, and
-present the menu again. Approval binds to the surface the owner was shown.
+Options 3 and 4 are non-terminal: when one finishes, apply the opening's
+recompose rule — re-read the working surface from step 1, re-run step 6 if that
+surface changed, and present the menu again. Approval binds to the surface the
+owner was shown.
 
 On approval, fill
 [assets/evidence-pack-template.md](assets/evidence-pack-template.md) and compose
@@ -243,30 +244,23 @@ evidence pack in that readout.
 ## Gotchas
 
 - Untracked paths are part of what the owner approves, because finishing tools
-  stage them. A readout built from tracked changes alone approves less than what
-  ships.
+stage them. A readout built from tracked changes alone approves less than what
+ships.
 - Writing verified without a named receipt is the failure this gate exists to
-  prevent. When a receipt cannot be found, report not verified and offer
-  attestation.
+prevent. When a receipt cannot be found, report not verified and offer
+attestation.
 - A green continuous-integration run is not evidence that the upstream steps
-  ran. The forensics behind this gate are all-green branches that still burned
-  seven to sixteen automated-review rounds.
+ran. The forensics behind this gate are all-green branches that still burned
+seven to sixteen automated-review rounds.
 - Dispatching a missing step from the menu is the one path in this workflow that
-  changes files, and the dispatched skill owns those changes. The gate itself
-  still writes nothing.
+changes files, and the dispatched skill owns those changes. The gate itself
+still writes nothing.
 - Findings the owner declines still belong in the evidence pack with their
-  disposition. A dropped finding reappears as a review comment on the pull
-  request.
-- The pack reaches the finishing path only through the readout, which is
-  conversation, not a file. If the session breaks between approval and pull
-  request creation, the readout carrying the pack has to be recomposed or
-  supplied again; the pack exists durably only once the pull request body
-  carries it.
+disposition. A dropped finding reappears as a review comment on the pull
+request.
+- The pack reaches the finishing path only through the readout, which is  
+conversation, not a file. If the session breaks between approval and pull  
+request creation, the readout carrying the pack has to be recomposed or  
+supplied again; the pack exists durably only once the pull request body  
+carries it.
 
-## Credits
-
-This gate succeeds a private `pre-pr-approval` skill, whose
-readout-then-one-decision shape and no-mutation posture carry forward here. Its
-checklist order, learnings-capture step, and preference for named receipts over
-assertions come from the compound engineering ecosystem and its published
-shipping loop.

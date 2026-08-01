@@ -187,5 +187,33 @@ check "evidence: not run (trailing args in name mode)" "not run" 2 "$e3" \
 check "evidence: not run (one positional only)" "not run" 2 "$e3" "$evidence" logs/run.md
 check "evidence: not run (not a git repository)" "not run" 4 "$nogit" "$evidence" rec.md path.md
 
+# --- Verdict drift guard -----------------------------------------------------
+# Every verdict a helper can emit must appear in the sweep reference, so the
+# reference cannot silently drift from the scripts. One direction only:
+# reference-side additions are caught by review, not here. Parameterized
+# verdicts are checked by their fixed prefix.
+ref="$scripts/../references/sweep-classes.md"
+if [ -f "$ref" ]; then
+	emitted=$({ grep -h "printf 'verdict: " "$surface" "$evidence" "$changelog" |
+		sed "s/.*printf 'verdict: //;s/\\\\n.*//"
+		grep -h '^[[:space:]]*verdict="' "$surface" | sed 's/.*verdict="//;s/".*//'
+	} | grep -v '^%s$' | sed 's/ for \$.*/ for/' | sort -u)
+	while IFS= read -r v; do
+		[ -n "$v" ] || continue
+		if grep -qF -- "$v" "$ref"; then
+			printf 'PASS reference lists emitted verdict: %s\n' "$v"
+			passed=$((passed + 1))
+		else
+			printf 'FAIL reference missing emitted verdict: %s\n' "$v"
+			failed=$((failed + 1))
+		fi
+	done <<EOF
+$emitted
+EOF
+else
+	printf 'FAIL sweep reference not found at %s\n' "$ref"
+	failed=$((failed + 1))
+fi
+
 printf '%s assertions: %s passed, %s failed\n' "$((passed + failed))" "$passed" "$failed"
 [ "$failed" -eq 0 ]

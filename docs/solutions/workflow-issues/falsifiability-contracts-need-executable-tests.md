@@ -78,7 +78,7 @@ branch is squash-merged — closed each hole and
 committed a rerunnable fixture runner,
 `tests/checking-pr-readiness/fixtures/run-helper-checks.sh`, which
 asserts the exact verdict line and exit code for every documented output state
-across all three helpers — 34 assertions, currently green.
+across all three helpers, all currently green.
 
 ## Guidance
 
@@ -263,8 +263,8 @@ The deleted-record case (`run-helper-checks.sh:166-168`), the changelog edit
 that removes a line without adding one (`run-helper-checks.sh:111-120`), and
 the empty `--cap` name and empty `--check-name` values
 (`run-helper-checks.sh:82` and `:184`) each get the same treatment. Running
-`bash tests/checking-pr-readiness/fixtures/run-helper-checks.sh` reports
-`34 assertions: 34 passed, 0 failed`.
+`bash tests/checking-pr-readiness/fixtures/run-helper-checks.sh` reports every
+assertion passing (`0 failed`).
 
 ## Related
 

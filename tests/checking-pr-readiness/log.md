@@ -9,3 +9,4 @@ Format: `date | git rev | check | result | note`
 - 2026-07-31 | — | smoke: Claude Code | not run — deferred to post-merge | per-harness in-session activation with identity proof still owed; a trigger-suite pass is a listing proxy, not activation proof
 - 2026-07-31 | — | smoke: Codex CLI | not run — harness not exercised pre-merge | same identity-proof requirement applies
 - 2026-07-31 | 0be78bc | helper fixture runs | pass (34/34) | committed runner fixtures/run-helper-checks.sh asserts every documented verdict line and exit code across all three helpers; first green run after the review fixes closed the silent-pass holes
+- 2026-08-01 | e8f1108 (working tree) | helper fixture runs + verdict drift guard | pass (50/50) | runner now also asserts every verdict the scripts can emit appears in references/sweep-classes.md, so the reference cannot silently drift from the helpers

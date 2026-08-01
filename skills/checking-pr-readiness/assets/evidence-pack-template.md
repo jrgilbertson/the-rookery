@@ -25,17 +25,23 @@ is written as `none`, never omitted.
 in that file's order — never a summary line standing in for several. A class
 that fired is written `<class>: <verdict> — <disposition>`, where the
 disposition is fixed, accepted with reason, or deferred. A class that passed is
-written `<class>: <verdict>`. A class that did not run is written explicitly as
-`<class>: unavailable | skipped (covered by <gate>) | not run → judgment | not
-applicable`. A missing line reads as a class nobody checked.
+written `<class>: <verdict>`. A class whose helper did not run keeps its class
+verdict alongside the execution status: `<class>: not run → judgment:
+<verdict>` when the fallback judgment ran, and `<class>: unavailable`,
+`<class>: skipped (covered by <gate>)`, or `<class>: not applicable` when no
+verdict exists — a status word never replaces a verdict that was actually
+reached. A missing line reads as a class nobody checked.
 
 **Owner decision:** approved / changes requested / stopped and filed follow-up.
 
 **Learning signal:** captured at <path> / capture planned: <follow-up> / none
 because <reason> / override recorded: <the owner's stated reason>.
 
-**Design-critique scores:** <score>, <n> P0, <n> P1. Omit this line when the
-diff touches no user-interface files.
+**Design-critique scores:** <score>, <n> P0, <n> P1. When the diff touches
+user-interface files and no critique receipt exists, the line carries the
+check's status word instead — `not verified`, `skipped (<what was missing>)`,
+or `not run` — never a blank. Omit this line only when the diff touches no
+user-interface files.
 ```
 
 Every line above stays in the pack except the design-critique line, which is

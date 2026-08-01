@@ -151,6 +151,20 @@ branch "$c7"
 printf 'not an index' >"$c7/.git/index"
 check "changelog: not run (failed git read)" "not run" 4 "$c7" "$changelog"
 
+c8=$(repo changelog-unresolved feature)
+w "$c8/CHANGELOG.md" "# Changelog"
+w "$c8/src.txt" work
+cm "$c8" 2020-02-01T00:00:00Z work
+check "changelog: not run (default branch unresolved)" "not run" 4 "$c8" "$changelog"
+
+c9=$(repo changelog-whitespace)
+w "$c9/CHANGELOG.md" "# Changelog"
+cm "$c9" 2020-02-01T00:00:00Z changelog
+branch "$c9"
+printf '# Changelog\n   \n' >"$c9/CHANGELOG.md"
+check "changelog: changed without entry (whitespace-only addition)" "changed without entry" 0 \
+	"$c9" "$changelog"
+
 # --- evidence-freshness.sh ---------------------------------------------------
 
 e1=$(repo evidence-fresh)
@@ -186,6 +200,11 @@ check "evidence: stale reference found (named but never built)" "stale reference
 	"$evidence" --check-name widget-report.md docs
 check "evidence: no records (search root missing)" "no records" 2 "$e3" \
 	"$evidence" --check-name impl.md absent-dir
+check "evidence: consistent (invoked from a subdirectory)" consistent 0 "$e3/docs" \
+	"$evidence" --check-name impl.md notes
+rm "$e3/notes/impl.md"
+check "evidence: stale reference found (deleted from worktree)" "stale reference found" 0 "$e3" \
+	"$evidence" --check-name impl.md notes
 check "evidence: covered by repo gate" "covered by repo gate" 3 "$e3" "$evidence" --defer ci-evidence
 check "evidence: not run (no arguments)" "not run" 2 "$e3" "$evidence"
 check "evidence: not run (empty --check-name)" "not run" 2 "$e3" "$evidence" --check-name "" notes
@@ -201,6 +220,17 @@ w "$e4/logs/run.md" "ran the suite"
 cm "$e4" 2020-03-01T00:00:00Z record
 printf 'not an index' >"$e4/.git/index"
 check "evidence: not run (failed git read)" "not run" 4 "$e4" "$evidence" logs/run.md notes/impl.md
+
+# The record carries a deliberately future committer date: a dirty described
+# path must read as stale outright, not be ordered against a skewed clock.
+e5=$(repo evidence-dirty-path)
+w "$e5/notes/impl.md" "implementation"
+cm "$e5" 2020-02-01T00:00:00Z impl
+w "$e5/logs/run.md" "ran the suite"
+cm "$e5" 2030-01-01T00:00:00Z record
+w "$e5/notes/impl.md" "implementation, edited but uncommitted"
+check "evidence: stale record found (described path dirty)" "stale record found" 0 "$e5" \
+	"$evidence" logs/run.md notes/impl.md
 
 # --- Verdict drift guard -----------------------------------------------------
 # Every verdict a helper can emit must appear in the sweep reference, so the

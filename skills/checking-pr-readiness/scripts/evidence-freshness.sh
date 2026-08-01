@@ -9,8 +9,12 @@
 # Times come from git commit history, never from filesystem mtimes: a worktree
 # checkout or a copy stamps every file with the same recent mtime, which would
 # make every record look fresh. A described path that is dirty in the working
-# tree (staged, unstaged, or untracked) counts as edited now, because the edit
-# has happened even though no commit records it yet.
+# tree (staged, unstaged, or untracked) is stale outright: the edit happened
+# after any committed record, so it is never ordered against commit
+# timestamps, which a skewed committer clock could defeat.
+#
+# Relative paths are resolved from the repository root, matching the other
+# bundled helpers.
 #
 # The record itself is held to a stricter rule: its time always comes from its
 # last commit. A dirty record has no established write time, so it cannot prove
@@ -175,6 +179,8 @@ if ! git rev-parse --git-dir >/dev/null 2>&1; then
 	exit 4
 fi
 
+cd "$(git rev-parse --show-toplevel)"
+
 fail_read() {
 	printf 'verdict: not run\n'
 	printf 'reason: the %s read could not be completed: %s\n' "$1" "$2"
@@ -216,6 +222,9 @@ if [ "$mode" = "name" ]; then
 	matches=""
 	while IFS= read -r candidate; do
 		[ -n "$candidate" ] || continue
+		# An index entry deleted from the working tree ships as a deletion,
+		# so it does not count as a shipped artifact.
+		[ -e "$candidate" ] || continue
 		case "$candidate" in
 		"$check_name" | */"$check_name")
 			matches="${matches}${candidate}
@@ -261,8 +270,6 @@ fi
 if [ "$positional_count" -lt 2 ]; then
 	fail_usage "expected <record-file> and at least one <described-path>"
 fi
-
-now=$(date +%s)
 
 # Called from the current shell, never through a command substitution, so a
 # failed status read exits with the fail_read verdict instead of having it
@@ -326,11 +333,12 @@ while IFS= read -r path; do
 		continue
 	fi
 	if is_dirty "$path"; then
-		path_time="$now"
-	else
-		read_commit_time "$path"
-		path_time="$last_commit_time"
+		stale_lines="${stale_lines}stale: ${path} is dirty in the working tree, so it was edited after any committed record
+"
+		continue
 	fi
+	read_commit_time "$path"
+	path_time="$last_commit_time"
 	if [ -z "$path_time" ]; then
 		stale_lines="${stale_lines}described path has no git history: ${path} (freshness cannot be proven)
 "

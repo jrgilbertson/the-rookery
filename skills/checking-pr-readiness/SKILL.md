@@ -49,8 +49,8 @@ the reason.
 Report the branch's full working surface before any other check, because that
 surface is what the finishing path will stage and what the owner is approving.
 Run [scripts/surface-report.sh](scripts/surface-report.sh) when it is present
-and executable — it also carries step 6's size check, so pass the reference's
-cap values here and read both results from one run, statuses per step 6's
+and executable — it also carries step 6's size check, so pass the cap values
+step 6 resolves here and read both results from one run, statuses per step 6's
 verdict-and-status mapping. Otherwise gather the same four categories directly
 with git:
 
@@ -102,7 +102,9 @@ alternatives:
 
 - Durable receipts: design-critique snapshots (for example
 `.impeccable/critique/` frontmatter carrying a score and P0/P1 counts) and
-solutions documents present in the working surface.
+solutions documents present in the working surface. A receipt counts only when
+it identifies this branch's change; a document that covers unrelated work is
+not a receipt for it.
 - Browser testing leaves a receipt only when its output or screenshots were
 saved; otherwise it has none.
 - Code review and code simplification leave no durable artifact today, so
@@ -162,9 +164,9 @@ request forensics behind this gate — then surface findings in that same order.
 Mechanical classes run through the bundled helpers:
 
 - [scripts/surface-report.sh](scripts/surface-report.sh) for diff size against
-automated-reviewer file caps, invoked with the cap values from the
-reference's table:
-`scripts/surface-report.sh --cap CodeRabbit=150 --cap Greptile=100`,
+automated-reviewer file caps, invoked with one cap per reviewer configured on
+the host repository, each value resolved per the reference's class 11:
+`scripts/surface-report.sh --cap <reviewer>=<n>`,
 - [scripts/evidence-freshness.sh](scripts/evidence-freshness.sh) for records
 predating the final edit they describe
 (`scripts/evidence-freshness.sh <record> <described-path>...`), and for
@@ -192,8 +194,10 @@ with exit 2, the check is not run and its class falls back to the
 model-instruction check the reference gives for that class.
 
 Completion: every class in the reference carries one verdict from that class's
-enumerated set, and each class that fired names the file and line where it
-fired.
+enumerated set, and each class that fired names where it fired — the file and
+line for a line-scoped finding, the file alone for a file-level one, and the
+repository surface for a repository-level one, such as a missing changelog
+entry or an aggregate file-cap excess.
 
 ### 7. Compose the readout and take the owner decision
 
@@ -216,7 +220,10 @@ Then present exactly one decision menu:
 1. Approve and proceed to the finishing path.
 2. Request changes.
 3. Run a flagged missing step now — one option per gap found in steps 2 through
- 6, each dispatching the skill that owns that step.
+ 6 that a present skill owns, each dispatching that skill. A gap with no
+ owning skill available — a missing plan, empty gate discovery — is not a
+ dispatch option; it is resolved through attestation where a step defines
+ one, or filed through option 5.
 4. Have the change or a concept behind it explained, through the available
  explanation capability (the `ce-explain` skill where the compound
  engineering plugin is installed). Omit this option and say it is unavailable

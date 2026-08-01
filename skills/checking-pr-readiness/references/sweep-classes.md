@@ -138,22 +138,20 @@ Verdicts: enforced / prose-only invariant found / not applicable.
 The diff touches more files than an automated reviewer will read, so that
 reviewer skips the pull request or truncates its review.
 
-Check by running `scripts/surface-report.sh --cap CodeRabbit=150 --cap
-Greptile=100` — the cap values come from the table below — and read the
+Check by running `scripts/surface-report.sh --cap <reviewer>=<n>` with one
+`--cap` per automated reviewer configured on the host repository, and read the
 verdict line directly; the helper compares the counts itself.
 
-| Reviewer | File-count cap | Source and as-of |
-| --- | --- | --- |
-| CodeRabbit | ~150 files | vendor docs / observed behavior, as of 2026-07 |
-| Greptile | ~100 files | vendor docs / observed behavior, as of 2026-07 |
-
-A finding names the affected reviewer and the cap's source. The helper itself
-reports `cap unverified` when no cap was supplied, and when the committed
-category could not be measured, because a cap cannot be called met against a
-count that is unknown. Report it by judgment for the same reason when the
-reviewer configured on the repository has no row in this table, or when the
-row's cap cannot be confirmed against that reviewer's current documentation at
-run time.
+Cap values are repository-specific, never universal: each reviewer's limit
+comes from its configuration in the host repository or from the plan the
+repository runs it on, so resolve the applicable value at run time — the
+reviewer's config file in the repository, or its vendor documentation for the
+plan in use. A finding names the affected reviewer and where its cap value came
+from. The helper itself reports `cap unverified` when no cap was supplied, and
+when the committed category could not be measured, because a cap cannot be
+called met against a count that is unknown. Report it by judgment for the same
+reason when a configured reviewer's applicable cap cannot be confirmed at run
+time.
 
 Verdicts: under caps / `exceeds cap for <reviewer>` / cap unverified / no
 changes on surface / covered by repo gate / not run.

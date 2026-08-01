@@ -15,9 +15,11 @@
 #
 # Output states. Line 1 is always `verdict: <word>`; human detail follows.
 #
-#   verdict: present                exit 0  the changelog gained lines on the
-#                                           branch's surface; the detail carries
-#                                           the first added line
+#   verdict: present                exit 0  the changelog gained lines with
+#                                           content on the branch's surface; the
+#                                           detail carries the first added line.
+#                                           Whitespace-only additions do not
+#                                           count
 #   verdict: changed without entry  exit 0  the changelog is among the branch's
 #                                           changed paths but gained no lines —
 #                                           a deletion, a reflow, or a
@@ -40,10 +42,15 @@
 #                                           check; nothing was compared
 #   verdict: not run                exit 2  usage error (unknown option)
 #   verdict: not run                exit 4  git is unavailable, this is not a
-#                                           git repository, or a git read over
-#                                           the surface or the changelog failed.
-#                                           A failed read is never reported as
-#                                           an empty surface
+#                                           git repository, a git read over the
+#                                           surface or the changelog failed, or
+#                                           no default branch resolved while the
+#                                           branch has commits — the committed
+#                                           category is then unmeasurable, and a
+#                                           clean verdict against an unmeasured
+#                                           surface would be a silent pass. A
+#                                           failed read is never reported as an
+#                                           empty surface
 #
 # Dependencies: git and standard POSIX tools. No network, no jq, no node.
 
@@ -178,6 +185,24 @@ if [ -n "$base_ref" ] && [ "$head_exists" -eq 1 ]; then
 	fi
 fi
 
+# With commits on the branch but no resolvable default branch, the committed
+# category cannot be enumerated, so any verdict that depends on not finding
+# something there would be a silent pass. Positive evidence (`present`) from
+# the measurable categories is still honest; the negative verdicts are not.
+committed_measured=1
+if [ "$head_exists" -eq 1 ] && [ -z "$base_ref" ]; then
+	committed_measured=0
+fi
+
+require_committed_measured() {
+	if [ "$committed_measured" -eq 0 ]; then
+		printf 'verdict: not run\n'
+		printf 'reason: no default branch resolved (no origin/HEAD, origin/main, origin/master, main, or master), so the committed category could not be measured\n'
+		printf 'detail: a "%s" verdict against an unmeasured surface would be a silent pass; resolve the default branch and re-run.\n' "$1"
+		exit 4
+	fi
+}
+
 if [ "$head_exists" -eq 1 ]; then
 	read_or_fail "staged" diff --cached --name-only
 else
@@ -195,6 +220,7 @@ all_paths=$(printf '%s\n%s\n%s\n%s\n' "$committed" "$staged" "$unstaged" "$untra
 	sed '/^$/d' | sort -u)
 
 if [ -z "$all_paths" ]; then
+	require_committed_measured "no changes on surface"
 	printf 'verdict: no changes on surface\n'
 	printf 'changelog: %s\n' "$changelog"
 	printf 'detail: the branch changes no files, so there is no branch work to record.\n'
@@ -202,6 +228,7 @@ if [ -z "$all_paths" ]; then
 fi
 
 if ! printf '%s\n' "$all_paths" | grep -Fx -- "$changelog" >/dev/null; then
+	require_committed_measured "missing"
 	others=$(printf '%s\n' "$all_paths" | grep -Fxv -- "$changelog" || true)
 	other_count=0
 	[ -z "$others" ] || other_count=$(printf '%s\n' "$others" | wc -l | tr -d ' ')
@@ -233,13 +260,17 @@ else
 		grep '^+' | grep -v '^+++' | sed 's/^+//' || true)
 fi
 
+# Only added lines with content count as an entry: a blank or whitespace-only
+# addition is a formatting change, not recorded branch work.
 added_count=0
-[ -z "$added_lines" ] || added_count=$(printf '%s\n' "$added_lines" | wc -l | tr -d ' ')
+[ -z "$added_lines" ] ||
+	added_count=$(printf '%s\n' "$added_lines" | grep -c '[^[:space:]]' || true)
 
 if [ "$added_count" -eq 0 ]; then
+	require_committed_measured "changed without entry"
 	printf 'verdict: changed without entry\n'
-	printf 'changelog: %s (changed on this branch, no lines added)\n' "$changelog"
-	printf 'detail: the branch touches the changelog without adding a line, so no branch work is recorded there.\n'
+	printf 'changelog: %s (changed on this branch, no lines with content added)\n' "$changelog"
+	printf 'detail: the branch touches the changelog without adding a line with content, so no branch work is recorded there.\n'
 	exit 0
 fi
 
@@ -247,10 +278,6 @@ first_added=$(printf '%s\n' "$added_lines" | sed -n '/[^[:space:]]/{p;q;}')
 
 printf 'verdict: present\n'
 printf 'changelog: %s\n' "$changelog"
-printf 'added lines: %s\n' "$added_count"
-if [ -n "$first_added" ]; then
-	printf 'first added line: %s\n' "$first_added"
-else
-	printf 'first added line: none with content (every added line is blank)\n'
-fi
+printf 'added lines with content: %s\n' "$added_count"
+printf 'first added line: %s\n' "$first_added"
 exit 0

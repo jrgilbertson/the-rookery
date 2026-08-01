@@ -27,8 +27,7 @@ that fired is written `<class>: <verdict> — <disposition>`, where the
 disposition is fixed, accepted with reason, or deferred. A class that passed is
 written `<class>: <verdict>`. A class that did not run is written explicitly as
 `<class>: unavailable | skipped (covered by <gate>) | not run → judgment | not
-applicable`. A missing line reads as a class nobody checked, which is the
-failure this pack exists to prevent.
+applicable`. A missing line reads as a class nobody checked.
 
 **Owner decision:** approved / changes requested / stopped and filed follow-up.
 

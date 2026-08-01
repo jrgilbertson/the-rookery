@@ -9,10 +9,10 @@ and line where it fired.
 
 The list comes from forensics across three repositories: branches with green
 continuous integration that still burned seven to sixteen automated-review
-rounds, with each round's findings sorted into classes. The list is not fixed
-forever. The merge-gate sibling refreshes it from observed review history as
-evidence packs accumulate, so a class that stops appearing loses its place and
-a class the reviewers keep raising earns one.
+rounds, with each round's findings sorted into classes. The merge-gate sibling
+refreshes it from observed review history as evidence packs accumulate, so a
+class that stops appearing loses its place and a class the reviewers keep
+raising earns one.
 
 ## 1. Underspecified rules in prose and instruction files
 

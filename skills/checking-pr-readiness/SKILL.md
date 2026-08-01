@@ -12,9 +12,9 @@ continuous-integration process, then take one owner decision. The gate reports
 the full working surface, verifies that the shipping workflow's upstream steps
 actually ran, compares what was planned against what was delivered, sweeps the
 branch for the finding classes that drive repeated automated-review rounds, and
-confirms a durable learning was captured or explicitly planned. "Ready" means
-exactly one thing here: every check below carries a status word, every finding
-has a disposition, and the owner approved that readout.
+confirms a durable learning was captured or explicitly planned. A branch is
+ready when every check below carries a status word, every finding has a
+disposition, and the owner has approved that readout.
 
 The gate reads. It never edits, stages, commits, pushes, or opens a pull
 request, and it never re-runs a deterministic check the host repository's own
@@ -50,9 +50,9 @@ with one word from this list, used consistently and without synonyms:
 Report the branch's full working surface before any other check, because that
 surface is what the finishing path will stage and what the owner is approving.
 Run [scripts/surface-report.sh](scripts/surface-report.sh) when it is present
-and executable — the same helper carries the size check in step 6, so pass the
-reference's cap values here and read both results from one run; otherwise
-gather the same four categories directly with git:
+and executable — it also carries step 6's size check, so pass the reference's
+cap values here and read both results from one run. Otherwise gather the same
+four categories directly with git:
 
 - committed on this branch, compared against the merge base with the default
   branch the pull request will target (resolve it from the remote's HEAD, and
@@ -245,9 +245,9 @@ evidence pack in that readout.
 - Untracked paths are part of what the owner approves, because finishing tools
   stage them. A readout built from tracked changes alone approves less than what
   ships.
-- Writing verified without a named receipt is the exact failure this gate
-  exists to prevent. When a receipt cannot be found, report not verified and
-  offer attestation.
+- Writing verified without a named receipt is the failure this gate exists to
+  prevent. When a receipt cannot be found, report not verified and offer
+  attestation.
 - A green continuous-integration run is not evidence that the upstream steps
   ran. The forensics behind this gate are all-green branches that still burned
   seven to sixteen automated-review rounds.

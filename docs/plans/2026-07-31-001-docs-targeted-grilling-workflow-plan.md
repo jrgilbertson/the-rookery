@@ -214,9 +214,9 @@ Run the `no-ai-slop` edit only after those documents agree, then repeat every af
 | Gate | Method | Pass condition |
 |---|---|---|
 | Diff hygiene | `git diff --check` | No whitespace errors. |
-| Seven-stage structure | `test "$(rg -c '^## (Research|Plan|Design|Build|Ship|Maintain|Learn)$' WORKFLOWS.md)" -eq 7` | The seven workflow stage headings remain present exactly once in aggregate, with no pressure-testing stage. |
-| Removed-route sweep | `! rg -n 'grill-with-docs|domain-modeling|codebase-design|improve-codebase-architecture' WORKFLOWS.md README.md CONCEPTS.md` | Active workflow surfaces contain no recommendation for removed companion skills. |
-| Cross-document vocabulary | `rg -n 'grill-me|Grilling Session|Shared Understanding Gate' WORKFLOWS.md README.md CONCEPTS.md` | Each term appears only where its document role requires it; human review confirms no duplicated normative protocol. |
+| Seven-stage structure | `test "$(rg -c -e '^## Research$' -e '^## Plan$' -e '^## Design$' -e '^## Build$' -e '^## Ship$' -e '^## Maintain$' -e '^## Learn$' WORKFLOWS.md)" -eq 7` | The seven workflow stage headings remain present exactly once in aggregate, with no pressure-testing stage. |
+| Removed-route sweep | `! rg -n -e 'grill-with-docs' -e 'domain-modeling' -e 'codebase-design' -e 'improve-codebase-architecture' WORKFLOWS.md README.md CONCEPTS.md` | Active workflow surfaces contain no recommendation for removed companion skills. |
+| Cross-document vocabulary | `rg -n -e 'grill-me' -e 'Grilling Session' -e 'Shared Understanding Gate' WORKFLOWS.md README.md CONCEPTS.md` | Each term appears only where its document role requires it; human review confirms no duplicated normative protocol. |
 | Markdown and links | Render `WORKFLOWS.md` and `README.md`; follow the README Plan link. | Lists and headings render correctly, and the link still resolves to `WORKFLOWS.md#plan`. |
 | Routing behavior | Run the U1 fresh-context scenarios with only the finished workflow docs available. | Open intent routes to `ce-brainstorm`, clear intent routes to `ce-plan`, and one qualifying residual cluster routes to operator-invoked `grill-me`. |
 | Interaction boundary | Run the fact, recommendation, user-authority, and confirmation-return traces from U1. | The agent investigates facts, asks one recommended parent decision at a time, leaves decisions with the user, and returns confirmed intent to Compound Engineering. |

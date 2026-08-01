@@ -59,7 +59,11 @@ Agents that weren't in the planning session review the plan against the current 
 - `ce-debug`. Bugs get diagnosis rather than brainstorming.
 - `ce-pov`. A decisive, project-grounded answer to a focused question mid-plan, without falling back into another research pass.
 
-For work an agent can own end-to-end, I use the following template.
+After ordinary clarification, I sometimes have one coherent decision tree left where the answers depend on each other. I consider a targeted Grilling Session when at least one decision would be costly to reverse or affect a broad surface, one answer constrains the questions below it, or the agent would otherwise guess at an acceptance boundary. For example, authentication ownership may determine session lifetime and data access, so those decisions benefit from being settled parent-first. Several unrelated unknowns stay in `ce-brainstorm`. Clear requirements and routine, reversible choices go directly to `ce-plan`.
+
+Install `grill-me` and `grilling` separately from [Matt Pocock's skills](https://github.com/mattpocock/skills); they are not part of The Rookery's catalog. An agent may recommend this route, but the operator invokes `grill-me`. That wrapper starts the session; the `grilling` skill owns the interview protocol. The agent walks the tree one question at a time, offers a concrete recommendation with each question, and leaves every decision with the user. It looks up facts available in the repository or environment instead of asking for them. A Grilling Session is stateless: it creates no glossary, ADR, or requirements-document updates.
+
+Once the user confirms shared understanding, the clarified intent returns to the Compound Engineering planning session. For work an agent can own end-to-end, I turn that intent into the following template.
 
 ```yaml
 goal: Complete [objective] until [verifiable end state], 
@@ -229,4 +233,3 @@ What must be true for the loop to close:
 
 - **The learning is in the graph.** New topics became atomic notes, linked to what I already knew.
 - **The gaps are named.** What I don't understand yet became follow-up reading, issues, or the question that starts the next Research pass.
-

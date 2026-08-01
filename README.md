@@ -42,7 +42,7 @@ Clone the repo and symlink any <code>skills/&lt;name&gt;</code> folder into your
 Everything here fits into seven jobs. The walkthroughs live in [WORKFLOWS.md](WORKFLOWS.md).
 
 - [**Research**](WORKFLOWS.md#research). Gather real signal before deciding. last30days for what people actually use, multi-perspective deep research for the hard questions.
-- [**Plan**](WORKFLOWS.md#plan). Turn intent into a clear objective. Ideation, brainstorming, and planning with Compound Engineering.
+- [**Plan**](WORKFLOWS.md#plan). Compound Engineering turns intent into a clear objective; targeted grilling is an optional pressure test for a consequential, interdependent decision cluster.
 - [**Design**](WORKFLOWS.md#design). Impeccable drives every interface decision, from first layout to final polish.
 - [**Build**](WORKFLOWS.md#build). Implement in Orca with parallel worktrees and delegated agents.
 - [**Ship**](WORKFLOWS.md#ship). Review gates, pre-PR approval, and changelogs and releases with Compound Engineering.
@@ -65,6 +65,7 @@ Everything here fits into seven jobs. The walkthroughs live in [WORKFLOWS.md](WO
 This system builds on work by people who share theirs. Use them directly.
 
 - [Compound Engineering](https://github.com/EveryInc/compound-engineering-plugin) by Trevin Chow ([@trevin](https://x.com/trevin)) and Kieran Klaassen ([@kieranklaassen](https://x.com/kieranklaassen)). The development spine.
+- [Matt Pocock's skills](https://github.com/mattpocock/skills) by Matt Pocock. The targeted grilling pattern used to pressure-test dependent decisions.
 - [Impeccable](https://github.com/pbakaus/impeccable) by Paul Bakaus ([@pbakaus](https://x.com/pbakaus)). The design language that makes agents better at design.
 - [last30days](https://github.com/mvanhorn/last30days-skill) by Matt Van Horn ([@mvanhorn](https://x.com/mvanhorn)). Recent-signal research across Reddit, X, YouTube, HN, and the web.
 - [Orca](https://github.com/stablyai/orca) by Jinjing Liang ([@JinjingLiang](https://x.com/JinjingLiang)). The agentic IDE all of this runs in.

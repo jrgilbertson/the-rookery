@@ -11,6 +11,20 @@ a glossary, not a specification or catch-all.
 
 A reviewed next-day outcome recorded during wind-down with an observable finish line and a concise rationale for why it matters. A Daily Journal carries three to five Meaningful Commitments into morning; they express intent without replacing canonical task state or calendar capacity.
 
+## Workflow processes
+
+### Grilling Session
+
+A targeted, stateless interview for resolving one coherent decision tree whose
+answers depend on one another. The agent recommends answers and looks up
+discoverable facts. The user makes each decision.
+
+### Shared Understanding Gate
+
+A user-confirmed state in which the material decision branches have been
+resolved. Reaching it ends the Grilling Session and allows the clarified intent
+to return to planning.
+
 ## Shipping and verification
 
 ### Published Catalog

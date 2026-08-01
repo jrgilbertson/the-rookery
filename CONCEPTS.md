@@ -42,6 +42,19 @@ finishing path renders it into the PR body, and the pre-merge checkpoint
 reads it back from there. Nothing is written to the tracked tree or any
 local state store.
 
+### Falsifiability Contract
+
+The requirement that a bundled helper's output can prove failure as readily as
+success: every documented state — absent input, negative and positive verdicts,
+deferral to a repository-owned gate, environment failure — produces a distinct
+verdict line and exit code, so a gap can never be laundered into a green
+result.
+
+The contract is executable, not prose: a committed, rerunnable fixture runner
+asserts the exact verdict-and-exit pair for every documented state, including
+adversarial states. A helper whose contract exists only in its header comment
+is itself a prose-only invariant — the defect class it exists to catch.
+
 ### Targeted Sweep
 
 The pre-PR gate's check of the evidence-backed finding classes that drive

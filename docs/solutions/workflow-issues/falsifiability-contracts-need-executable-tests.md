@@ -162,7 +162,7 @@ not imagined.
 **Deleted-record bypass.** The pre-fix guard required both conditions, and a
 committed-then-deleted record satisfied only one. The fix dates the record from
 its last commit alone and splits the absent-record case in two
-(`skills/checking-pr-readiness/scripts/evidence-freshness.sh:321-337`; the
+(`skills/checking-pr-readiness/scripts/evidence-freshness.sh:328-344`; the
 commit lookup routes through the same fail-closed wrapper as every other git
 read, so a failed read exits 4 instead of reading as empty history):
 
@@ -185,8 +185,8 @@ fi
 ```
 
 A dirty record now gets its own verdict rather than certifying anything fresh
-(`evidence-freshness.sh:339-345`), and a dirty described path is reported
-stale outright (`evidence-freshness.sh:359-363`). Committed paths are ordered
+(`evidence-freshness.sh:346-352`), and a dirty described path is reported
+stale outright (`evidence-freshness.sh:373-377`). Committed paths are ordered
 by commit ancestry, never committer timestamps, which a skewed or rewritten
 clock can defeat.
 
@@ -194,7 +194,7 @@ clock can defeat.
 test. The helper counts the added lines that carry content — a whitespace-only
 addition is a formatting change, not an entry — and a zero count gets a
 distinct verdict rather than falling into `present`
-(`skills/checking-pr-readiness/scripts/changelog-union.sh:282-294`):
+(`skills/checking-pr-readiness/scripts/changelog-union.sh:296-308`):
 
 ```sh
 # Only added lines with content count as an entry: a blank or whitespace-only

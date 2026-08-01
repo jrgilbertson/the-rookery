@@ -84,6 +84,8 @@ check "surface: covered by repo gate" "covered by repo gate" 3 "$s1" "$surface" 
 check "surface: not run (unknown option)" "not run" 2 "$s1" "$surface" --bogus
 check "surface: not run (empty --cap name)" "not run" 2 "$s1" "$surface" --cap "=0"
 check "surface: not run (non-integer cap)" "not run" 2 "$s1" "$surface" --cap "reviewer=x"
+check "surface: not run (cap beyond integer range)" "not run" 2 "$s1" "$surface" \
+	--cap "reviewer=999999999999999999999999999999999999"
 
 s2=$(repo surface-clean)
 check "surface: no changes on surface" "no changes on surface" 0 "$s2" "$surface" --cap reviewer=10
@@ -170,6 +172,26 @@ w "$c8/src.txt" work
 cm "$c8" 2020-02-01T00:00:00Z work
 check "changelog: not run (default branch unresolved)" "not run" 4 "$c8" "$changelog"
 
+c12=$(repo changelog-renamed)
+w "$c12/CHANGELOG.md" "# Changelog
+- one"
+cm "$c12" 2020-02-01T00:00:00Z changelog
+branch "$c12"
+git -C "$c12" rm -q CHANGELOG.md
+w "$c12/CHANGELOG" "# Changelog
+- one
+- renamed and extended"
+git -C "$c12" add CHANGELOG
+check "changelog: present (staged rename with new entry)" present 0 "$c12" "$changelog"
+
+c13=$(repo changelog-plusplus)
+w "$c13/CHANGELOG.md" "# Changelog"
+cm "$c13" 2020-02-01T00:00:00Z changelog
+branch "$c13"
+w "$c13/CHANGELOG.md" "# Changelog
+++ Added increment operator"
+check "changelog: present (entry starting with two pluses)" present 0 "$c13" "$changelog"
+
 c11=$(repo changelog-rm)
 w "$c11/CHANGELOG.md" "# Changelog
 - one"
@@ -244,6 +266,8 @@ check "evidence: not run (no arguments)" "not run" 2 "$e3" "$evidence"
 check "evidence: not run (empty --check-name)" "not run" 2 "$e3" "$evidence" --check-name "" notes
 check "evidence: not run (trailing args in name mode)" "not run" 2 "$e3" \
 	"$evidence" --check-name impl.md notes extra
+check "evidence: not run (repeated --check-name)" "not run" 2 "$e3" \
+	"$evidence" --check-name missing.md docs --check-name impl.md notes
 check "evidence: not run (one positional only)" "not run" 2 "$e3" "$evidence" logs/run.md
 check "evidence: not run (empty --defer)" "not run" 2 "$e3" "$evidence" --defer ""
 check "evidence: not run (not a git repository)" "not run" 4 "$nogit" "$evidence" rec.md path.md
@@ -273,6 +297,24 @@ w "$e7/docs/café/widget.md" "artifact"
 cm "$e7" 2020-02-01T00:00:00Z artifact
 check "evidence: consistent (non-ASCII pathname)" consistent 0 "$e7" \
 	"$evidence" --check-name widget.md docs
+
+e9=$(repo evidence-newline)
+nl='
+'
+mkdir -p "$e9/docs/has${nl}newline"
+w "$e9/docs/has${nl}newline/widget.md" "artifact"
+cm "$e9" 2020-02-01T00:00:00Z artifact
+check "evidence: not run (pathname with embedded newline)" "not run" 4 "$e9" \
+	"$evidence" --check-name widget.md docs
+
+e10=$(repo evidence-sparse)
+w "$e10/src/app.md" "dependency"
+cm "$e10" 2020-02-01T00:00:00Z impl
+w "$e10/logs/run.md" "ran the suite"
+cm "$e10" 2020-03-01T00:00:00Z record
+git -C "$e10" sparse-checkout set logs 2>/dev/null
+check "evidence: fresh (sparse checkout omits described path)" fresh 0 "$e10" \
+	"$evidence" logs/run.md src/app.md
 
 e8=$(repo evidence-ignored)
 w "$e8/.gitignore" "docs/widget.md"

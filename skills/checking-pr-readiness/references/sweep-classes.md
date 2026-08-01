@@ -58,8 +58,12 @@ no changelog / covered by repo gate / not run.
 A log, run record, or recorded result is older than the last edit of the thing
 it describes, so it attests to a version that no longer exists.
 
-Check with `helper: evidence-freshness.sh`. Comparisons use git commit times,
-never file modification times, because a checkout or copy rewrites the latter.
+Check with `helper: evidence-freshness.sh`. Comparisons use commit ancestry,
+never committer timestamps or file modification times: a checkout or copy
+rewrites mtimes, and a skewed or rewritten committer clock can date a later
+commit earlier. A record is fresh only when every described path's last commit
+is contained in the history of the record's last commit; when checking by
+judgment, apply the same ancestry rule.
 
 Verdicts: fresh / stale record found / record unverifiable (dirty) / no records
 / covered by repo gate / not run.

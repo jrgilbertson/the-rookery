@@ -138,6 +138,7 @@ while [ "$#" -gt 0 ]; do
 		;;
 	--check-name)
 		[ "$#" -ge 3 ] || fail_usage "--check-name requires <name> <search-root>"
+		[ "$mode" != "name" ] || fail_usage "--check-name given more than once; run one check per invocation"
 		mode="name"
 		check_name="$2"
 		search_root="$3"
@@ -236,6 +237,12 @@ if [ "$mode" = "name" ]; then
 	matches=""
 	while IFS= read -r candidate; do
 		[ -n "$candidate" ] || continue
+		# A pathname git had to C-quote even with quotepath off carries an
+		# embedded control character (a newline breaks line-by-line parsing
+		# outright), so the listing cannot be trusted — fail closed.
+		case "$candidate" in
+		\"*) fail_read "search-root listing" "a pathname required C-quoting, so the listing cannot be parsed line by line" ;;
+		esac
 		# An index entry deleted from the working tree ships as a deletion, so
 		# it does not count as a shipped artifact; only a regular file does.
 		# Paths outside this enumerated surface — ignored files, directories —
@@ -352,11 +359,18 @@ fresh_lines=""
 while IFS= read -r path; do
 	[ -n "$path" ] || continue
 	if [ ! -e "$path" ]; then
-		stale_lines="${stale_lines}described path missing: ${path}
+		read_or_fail "index listing" ls-files -- "$path"
+		tracked_entry="$git_out"
+		read_or_fail "working-tree status" status --porcelain -- "$path"
+		if [ -z "$tracked_entry" ] || [ -n "$git_out" ]; then
+			stale_lines="${stale_lines}described path missing: ${path}
 "
-		continue
-	fi
-	if is_dirty "$path"; then
+			continue
+		fi
+		# Tracked, absent, and clean in status: a sparse-checkout omission,
+		# not a deletion — the path lives on in history, so it is compared
+		# by ancestry like any committed path.
+	elif is_dirty "$path"; then
 		stale_lines="${stale_lines}stale: ${path} is dirty in the working tree, so it was edited after any committed record
 "
 		continue

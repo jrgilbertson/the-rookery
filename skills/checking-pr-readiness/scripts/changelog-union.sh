@@ -158,20 +158,31 @@ fi
 # paths keeps that deletion a branch finding instead of an absent-input
 # result.
 read_or_fail "changelog tracking" ls-files -- CHANGELOG.md CHANGELOG CHANGELOG.txt changelog.md
-tracked_changelogs="$git_out"
+index_changelogs="$git_out"
+head_changelogs=""
 if [ "$head_exists" -eq 1 ]; then
 	read_or_fail "changelog history" ls-tree --name-only HEAD -- CHANGELOG.md CHANGELOG CHANGELOG.txt changelog.md
-	tracked_changelogs="$tracked_changelogs
-$git_out"
+	head_changelogs="$git_out"
 fi
+# Live candidates — on disk or in the index — win over paths that survive only
+# in HEAD, so a staged rename resolves to its replacement rather than to the
+# deleted old name.
 changelog=""
 for candidate in CHANGELOG.md CHANGELOG CHANGELOG.txt changelog.md; do
 	if [ -f "$candidate" ] ||
-		printf '%s\n' "$tracked_changelogs" | grep -Fx -- "$candidate" >/dev/null; then
+		printf '%s\n' "$index_changelogs" | grep -Fx -- "$candidate" >/dev/null; then
 		changelog="$candidate"
 		break
 	fi
 done
+if [ -z "$changelog" ]; then
+	for candidate in CHANGELOG.md CHANGELOG CHANGELOG.txt changelog.md; do
+		if printf '%s\n' "$head_changelogs" | grep -Fx -- "$candidate" >/dev/null; then
+			changelog="$candidate"
+			break
+		fi
+	done
+fi
 
 if [ -z "$changelog" ]; then
 	printf 'verdict: no changelog\n'
@@ -275,8 +286,11 @@ else
 		diff_range="$git_out"
 	fi
 	read_or_fail "changelog additions" diff "$diff_range" -- "$changelog"
+	# Drop only the destination-file diff header, never content: an added
+	# line that itself starts with ++ renders as +++ in the diff too.
 	added_lines=$(printf '%s\n' "$git_out" |
-		grep '^+' | grep -v '^+++' | sed 's/^+//' || true)
+		grep '^+' | grep -v '^+++ b/' | grep -Fxv -- '+++ /dev/null' |
+		sed 's/^+//' || true)
 fi
 
 # Only added lines with content count as an entry: a blank or whitespace-only

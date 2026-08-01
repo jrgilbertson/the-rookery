@@ -111,6 +111,9 @@ while [ "$#" -gt 0 ]; do
 		case "$cap_value" in
 		'' | *[!0-9]*) fail_usage "--cap count must be a non-negative integer, got: $2" ;;
 		esac
+		# Beyond 15 digits the shell's integer comparison breaks, and a broken
+		# comparison must not fall through to a clean verdict.
+		[ "${#cap_value}" -le 15 ] || fail_usage "--cap count is too large to compare: $2"
 		case "${2%%=*}" in
 		'') fail_usage "--cap requires a reviewer name before '=', got: $2" ;;
 		esac

@@ -158,12 +158,16 @@ fi
 # `git rm` — is still the repository's changelog: recognizing index and HEAD
 # paths keeps that deletion a branch finding instead of an absent-input
 # result.
-read_or_fail "changelog tracking" ls-files -- CHANGELOG.md CHANGELOG CHANGELOG.txt changelog.md
-index_changelogs="$git_out"
+# Symlink entries (mode 120000) are filtered in the index and in HEAD for the
+# same reason the worktree check refuses links: git ships the link, and
+# reading or diffing through one quotes paths or content from outside the
+# repository.
+read_or_fail "changelog tracking" ls-files -s -- CHANGELOG.md CHANGELOG CHANGELOG.txt changelog.md
+index_changelogs=$(printf '%s\n' "$git_out" | grep -v '^120000 ' | sed 's/^[^	]*	//' || true)
 head_changelogs=""
 if [ "$head_exists" -eq 1 ]; then
-	read_or_fail "changelog history" ls-tree --name-only HEAD -- CHANGELOG.md CHANGELOG CHANGELOG.txt changelog.md
-	head_changelogs="$git_out"
+	read_or_fail "changelog history" ls-tree HEAD -- CHANGELOG.md CHANGELOG CHANGELOG.txt changelog.md
+	head_changelogs=$(printf '%s\n' "$git_out" | grep -v '^120000 ' | sed 's/^[^	]*	//' || true)
 fi
 # Live candidates — on disk or in the index — win over paths that survive only
 # in HEAD, so a staged rename resolves to its replacement rather than to the
@@ -187,6 +191,19 @@ if [ -z "$changelog" ]; then
 	done
 fi
 
+if [ -n "$changelog" ]; then
+	# An unresolved merge conflict makes the changelog's content unmeasurable:
+	# counting conflict markers or one side's lines as an entry would be a
+	# silent pass over a file the owner has not finished writing.
+	read_or_fail "merge state" ls-files -u -- "$changelog"
+	if [ -n "$git_out" ]; then
+		printf 'verdict: not run\n'
+		printf 'reason: %s has an unresolved merge conflict, so its entries cannot be counted\n' "$changelog"
+		printf 'detail: resolve the conflict and re-run.\n'
+		exit 4
+	fi
+fi
+
 if [ -z "$changelog" ]; then
 	printf 'verdict: no changelog\n'
 	printf 'detail: no CHANGELOG.md, CHANGELOG, CHANGELOG.txt, or changelog.md at the repository root.\n'
@@ -201,8 +218,9 @@ if [ -n "$head_ref" ]; then
 else
 	# Tiered like surface-report.sh: a tier with more than one live candidate
 	# is ambiguous, and an ambiguous base leaves committed unmeasured rather
-	# than diffing against a guess.
-	for tier in "origin/main origin/master" "main master"; do
+	# than diffing against a guess. Full ref namespaces, so a tag named main
+	# or master can never satisfy a branch fallback.
+	for tier in "refs/remotes/origin/main refs/remotes/origin/master" "refs/heads/main refs/heads/master"; do
 		found=""
 		found_count=0
 		for candidate in $tier; do
@@ -310,10 +328,14 @@ else
 		-c diff.renames=true \
 		diff --no-ext-diff --no-color --src-prefix=a/ --dst-prefix=b/ "$diff_range" -- \
 		CHANGELOG.md CHANGELOG CHANGELOG.txt changelog.md
-	# Drop only the destination-file diff header, never content: an added
-	# line that itself starts with ++ renders as +++ in the diff too.
+	# Drop only the exact destination headers for the supported changelog
+	# names, never content: an added line starting with ++ (even "++ b/…")
+	# renders as +++ in the diff too, so a prefix match would discard it.
 	added_lines=$(printf '%s\n' "$git_out" |
-		grep '^+' | grep -v '^+++ b/' | grep -Fxv -- '+++ /dev/null' |
+		grep '^+' |
+		grep -Fxv -e '+++ b/CHANGELOG.md' -e '+++ b/CHANGELOG' \
+			-e '+++ b/CHANGELOG.txt' -e '+++ b/changelog.md' \
+			-e '+++ /dev/null' |
 		sed 's/^+//' || true)
 fi
 

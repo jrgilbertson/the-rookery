@@ -95,6 +95,13 @@ w "$s3/staged.txt" staged
 git -C "$s3" add -A
 check "surface: cap unverified (committed unmeasured)" "cap unverified" 0 "$s3" "$surface" --cap reviewer=10
 
+s7=$(repo surface-tag-main develop)
+w "$s7/src.txt" work
+cm "$s7" 2020-02-01T00:00:00Z work
+git -C "$s7" tag main
+check "surface: cap unverified (tag named main is not a branch)" "cap unverified" 0 \
+	"$s7" "$surface" --cap reviewer=10
+
 s6=$(repo surface-ambiguous)
 w "$s6/src.txt" work
 cm "$s6" 2020-02-01T00:00:00Z work
@@ -210,6 +217,41 @@ branch "$c11"
 git -C "$c11" rm -q CHANGELOG.md
 check "changelog: changed without entry (staged changelog deletion)" "changed without entry" 0 \
 	"$c11" "$changelog"
+
+c19=$(repo changelog-symlink-staged)
+ln -s "$work/private-target.txt" "$c19/CHANGELOG.md"
+git -C "$c19" add CHANGELOG.md
+check "changelog: no changelog (staged symlink)" "no changelog" 2 "$c19" "$changelog"
+
+c20=$(repo changelog-conflict)
+w "$c20/CHANGELOG.md" "# Changelog"
+cm "$c20" 2020-02-01T00:00:00Z changelog
+branch "$c20"
+w "$c20/CHANGELOG.md" "# Changelog
+- ours"
+cm "$c20" 2020-03-01T00:00:00Z ours
+git -C "$c20" checkout -q main
+w "$c20/CHANGELOG.md" "# Changelog
+- theirs"
+cm "$c20" 2020-03-02T00:00:00Z theirs
+git -C "$c20" checkout -q work
+git -C "$c20" merge -q main >/dev/null 2>&1 || true
+check "changelog: not run (unresolved merge conflict)" "not run" 4 "$c20" "$changelog"
+
+c21=$(repo changelog-plusplus-b)
+w "$c21/CHANGELOG.md" "# Changelog"
+cm "$c21" 2020-02-01T00:00:00Z changelog
+branch "$c21"
+w "$c21/CHANGELOG.md" "# Changelog
+++ b/release note"
+check "changelog: present (entry starting with ++ b/)" present 0 "$c21" "$changelog"
+
+c22=$(repo changelog-tag-main develop)
+w "$c22/CHANGELOG.md" "# Changelog"
+w "$c22/src.txt" work
+cm "$c22" 2020-02-01T00:00:00Z work
+git -C "$c22" tag main
+check "changelog: not run (tag named main is not a branch)" "not run" 4 "$c22" "$changelog"
 
 c16=$(repo changelog-rename-only)
 w "$c16/CHANGELOG.md" "# Changelog

@@ -179,7 +179,9 @@ resolve_base() {
 		printf '%s\torigin/HEAD\n' "${head_ref#refs/remotes/}"
 		return 0
 	fi
-	for tier in "origin/main origin/master" "main master"; do
+	# Candidates are verified in their full ref namespaces so a tag named
+	# main or master can never satisfy a branch fallback.
+	for tier in "refs/remotes/origin/main refs/remotes/origin/master" "refs/heads/main refs/heads/master"; do
 		found=""
 		found_count=0
 		for candidate in $tier; do

@@ -144,6 +144,13 @@ check "changelog: covered by repo gate" "covered by repo gate" 3 "$c6" "$changel
 check "changelog: not run (unknown option)" "not run" 2 "$c6" "$changelog" --bogus
 check "changelog: not run (not a git repository)" "not run" 4 "$nogit" "$changelog"
 
+c7=$(repo changelog-broken)
+w "$c7/CHANGELOG.md" "# Changelog"
+cm "$c7" 2020-02-01T00:00:00Z changelog
+branch "$c7"
+printf 'not an index' >"$c7/.git/index"
+check "changelog: not run (failed git read)" "not run" 4 "$c7" "$changelog"
+
 # --- evidence-freshness.sh ---------------------------------------------------
 
 e1=$(repo evidence-fresh)
@@ -186,6 +193,14 @@ check "evidence: not run (trailing args in name mode)" "not run" 2 "$e3" \
 	"$evidence" --check-name impl.md notes extra
 check "evidence: not run (one positional only)" "not run" 2 "$e3" "$evidence" logs/run.md
 check "evidence: not run (not a git repository)" "not run" 4 "$nogit" "$evidence" rec.md path.md
+
+e4=$(repo evidence-broken)
+w "$e4/notes/impl.md" "implementation"
+cm "$e4" 2020-02-01T00:00:00Z impl
+w "$e4/logs/run.md" "ran the suite"
+cm "$e4" 2020-03-01T00:00:00Z record
+printf 'not an index' >"$e4/.git/index"
+check "evidence: not run (failed git read)" "not run" 4 "$e4" "$evidence" logs/run.md notes/impl.md
 
 # --- Verdict drift guard -----------------------------------------------------
 # Every verdict a helper can emit must appear in the sweep reference, so the

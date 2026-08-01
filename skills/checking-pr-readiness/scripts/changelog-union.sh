@@ -39,8 +39,11 @@
 #   verdict: covered by repo gate   exit 3  --defer named a repository-owned
 #                                           check; nothing was compared
 #   verdict: not run                exit 2  usage error (unknown option)
-#   verdict: not run                exit 4  git is unavailable, or this is not a
-#                                           git repository
+#   verdict: not run                exit 4  git is unavailable, this is not a
+#                                           git repository, or a git read over
+#                                           the surface or the changelog failed.
+#                                           A failed read is never reported as
+#                                           an empty surface
 #
 # Dependencies: git and standard POSIX tools. No network, no jq, no node.
 
@@ -112,6 +115,25 @@ fi
 
 cd "$(git rev-parse --show-toplevel)"
 
+fail_read() {
+	printf 'verdict: not run\n'
+	printf 'reason: the %s read could not be completed: %s\n' "$1" "$2"
+	printf 'detail: a failed git read is not an empty surface, so no changelog verdict is reported.\n'
+	exit 4
+}
+
+# Every surface read goes through this: an empty result and a failed read look
+# identical once the status is discarded, and reporting a failed read as an
+# empty surface turns a broken repository into `no changes on surface`.
+git_out=""
+read_or_fail() {
+	enumeration="$1"
+	shift
+	if ! git_out=$(git "$@" 2>/dev/null); then
+		fail_read "$enumeration" "git $* returned non-zero"
+	fi
+}
+
 changelog=""
 for candidate in CHANGELOG.md CHANGELOG CHANGELOG.txt changelog.md; do
 	if [ -f "$candidate" ]; then
@@ -148,19 +170,26 @@ fi
 committed=""
 merge_base=""
 if [ -n "$base_ref" ] && [ "$head_exists" -eq 1 ]; then
-	merge_base=$(git merge-base HEAD "$base_ref" 2>/dev/null || true)
+	read_or_fail "merge base" merge-base HEAD "$base_ref"
+	merge_base="$git_out"
 	if [ -n "$merge_base" ]; then
-		committed=$(git diff --name-only "$merge_base" HEAD 2>/dev/null || true)
+		read_or_fail "committed" diff --name-only "$merge_base" HEAD
+		committed="$git_out"
 	fi
 fi
 
 if [ "$head_exists" -eq 1 ]; then
-	staged=$(git diff --cached --name-only 2>/dev/null || true)
+	read_or_fail "staged" diff --cached --name-only
 else
-	staged=$(git diff --cached --name-only "$(git hash-object -t tree /dev/null)" 2>/dev/null || true)
+	empty_tree=$(git hash-object -t tree /dev/null 2>/dev/null || true)
+	[ -n "$empty_tree" ] || fail_read "staged" "the empty tree object could not be resolved"
+	read_or_fail "staged" diff --cached --name-only "$empty_tree"
 fi
-unstaged=$(git diff --name-only 2>/dev/null || true)
-untracked=$(git ls-files --others --exclude-standard 2>/dev/null || true)
+staged="$git_out"
+read_or_fail "unstaged" diff --name-only
+unstaged="$git_out"
+read_or_fail "untracked" ls-files --others --exclude-standard
+untracked="$git_out"
 
 all_paths=$(printf '%s\n%s\n%s\n%s\n' "$committed" "$staged" "$unstaged" "$untracked" |
 	sed '/^$/d' | sort -u)
@@ -188,16 +217,19 @@ fi
 # empty tree when the branch has no commits) through to the working tree.
 added_lines=""
 if printf '%s\n' "$untracked" | grep -Fx -- "$changelog" >/dev/null; then
-	added_lines=$(cat -- "$changelog" 2>/dev/null || true)
+	added_lines=$(cat -- "$changelog" 2>/dev/null) ||
+		fail_read "changelog contents" "cat -- $changelog returned non-zero"
 else
 	if [ -n "$merge_base" ]; then
 		diff_range="$merge_base"
 	elif [ "$head_exists" -eq 1 ]; then
 		diff_range="HEAD"
 	else
-		diff_range=$(git hash-object -t tree /dev/null)
+		read_or_fail "empty tree" hash-object -t tree /dev/null
+		diff_range="$git_out"
 	fi
-	added_lines=$(git diff "$diff_range" -- "$changelog" 2>/dev/null |
+	read_or_fail "changelog additions" diff "$diff_range" -- "$changelog"
+	added_lines=$(printf '%s\n' "$git_out" |
 		grep '^+' | grep -v '^+++' | sed 's/^+//' || true)
 fi
 

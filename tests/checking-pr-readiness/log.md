@@ -10,3 +10,4 @@ Format: `date | git rev | check | result | note`
 - 2026-07-31 | — | smoke: Codex CLI | not run — harness not exercised pre-merge | same identity-proof requirement applies
 - 2026-07-31 | 0be78bc | helper fixture runs | pass (34/34) | committed runner fixtures/run-helper-checks.sh asserts every documented verdict line and exit code across all three helpers; first green run after the review fixes closed the silent-pass holes
 - 2026-08-01 | e8f1108 (working tree) | helper fixture runs + verdict drift guard | pass (50/50) | runner now also asserts every verdict the scripts can emit appears in references/sweep-classes.md, so the reference cannot silently drift from the helpers
+- 2026-08-01 | dc6b5ee (working tree) | helper fixture runs (post PR-review fix) | pass (52/52) | changelog-union.sh and evidence-freshness.sh now fail closed on failed git reads (read_or_fail, exit 4), closing the silent-pass paths PR review found; corrupted-index fixtures added for both

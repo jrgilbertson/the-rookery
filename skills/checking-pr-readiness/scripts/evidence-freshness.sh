@@ -60,8 +60,11 @@
 #   verdict: covered by repo gate   exit 3  --defer named a repository-owned
 #                                           check; nothing was compared
 #   verdict: not run                exit 2  usage error, including no arguments
-#   verdict: not run                exit 4  git is unavailable, or this is not a
-#                                           git repository
+#   verdict: not run                exit 4  git is unavailable, this is not a
+#                                           git repository, or a git read the
+#                                           comparison needs failed. A failed
+#                                           read is never reported as a clean
+#                                           status or an empty listing
 #
 # Dependencies: git and standard POSIX tools. No network, no jq, no node.
 
@@ -172,6 +175,25 @@ if ! git rev-parse --git-dir >/dev/null 2>&1; then
 	exit 4
 fi
 
+fail_read() {
+	printf 'verdict: not run\n'
+	printf 'reason: the %s read could not be completed: %s\n' "$1" "$2"
+	printf 'detail: a failed git read is not a clean status or an empty listing, so no freshness verdict is reported.\n'
+	exit 4
+}
+
+# Every git read the comparison depends on goes through this: an empty result
+# and a failed read look identical once the status is discarded, and a failed
+# status read reported as "clean" would let a dirty record rate as fresh.
+git_out=""
+read_or_fail() {
+	enumeration="$1"
+	shift
+	if ! git_out=$(git "$@" 2>/dev/null); then
+		fail_read "$enumeration" "git $* returned non-zero"
+	fi
+}
+
 iso_of() {
 	date -u -r "$1" +%Y-%m-%dT%H:%M:%SZ 2>/dev/null ||
 		date -u -d "@$1" +%Y-%m-%dT%H:%M:%SZ 2>/dev/null ||
@@ -189,7 +211,8 @@ if [ "$mode" = "name" ]; then
 	# plan that proposed the name as readily as the artifact that shipped — and
 	# matches the file naming itself — so the name is matched against the paths
 	# on the working surface, and the content hits are reported as detail only.
-	surface=$(git ls-files --cached --others --exclude-standard -- "$search_root" 2>/dev/null || true)
+	read_or_fail "search-root listing" ls-files --cached --others --exclude-standard -- "$search_root"
+	surface="$git_out"
 	matches=""
 	while IFS= read -r candidate; do
 		[ -n "$candidate" ] || continue
@@ -241,23 +264,36 @@ fi
 
 now=$(date +%s)
 
+# Called from the current shell, never through a command substitution, so a
+# failed status read exits with the fail_read verdict instead of having it
+# captured as text.
 is_dirty() {
-	[ -n "$(git status --porcelain -- "$1" 2>/dev/null || true)" ]
+	read_or_fail "working-tree status" status --porcelain -- "$1"
+	[ -n "$git_out" ]
 }
 
-# Last edit time of a described path: now when it is dirty in the working tree,
-# otherwise the commit time of its last commit. Empty when neither applies.
-last_edit_of() {
-	if is_dirty "$1"; then
-		printf '%s\n' "$now"
-		return 0
+# An unborn repository has no commits to date anything by; that is legitimate
+# empty history, distinct from a read that failed.
+head_exists=0
+if git rev-parse --verify --quiet HEAD >/dev/null 2>&1; then
+	head_exists=1
+fi
+
+# Last commit time of a path; empty when the path has no committed history.
+# Also current-shell only, for the same reason as is_dirty.
+last_commit_time=""
+read_commit_time() {
+	last_commit_time=""
+	if [ "$head_exists" -eq 1 ]; then
+		read_or_fail "commit history" log -1 --format=%ct -- "$1"
+		last_commit_time="$git_out"
 	fi
-	git log -1 --format=%ct -- "$1" 2>/dev/null || true
 }
 
 # The record is dated by its last commit only. `now` is never substituted here:
 # a record with no established write time must not certify anything as fresh.
-record_time=$(git log -1 --format=%ct -- "$record" 2>/dev/null || true)
+read_commit_time "$record"
+record_time="$last_commit_time"
 
 if [ ! -e "$record" ]; then
 	if [ -n "$record_time" ]; then
@@ -289,7 +325,12 @@ while IFS= read -r path; do
 "
 		continue
 	fi
-	path_time=$(last_edit_of "$path")
+	if is_dirty "$path"; then
+		path_time="$now"
+	else
+		read_commit_time "$path"
+		path_time="$last_commit_time"
+	fi
 	if [ -z "$path_time" ]; then
 		stale_lines="${stale_lines}described path has no git history: ${path} (freshness cannot be proven)
 "

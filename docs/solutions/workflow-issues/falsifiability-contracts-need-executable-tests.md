@@ -162,18 +162,18 @@ not imagined.
 **Deleted-record bypass.** The pre-fix guard required both conditions, and a
 committed-then-deleted record satisfied only one. The fix dates the record from
 its last commit alone and splits the absent-record case in two
-(`skills/checking-pr-readiness/scripts/evidence-freshness.sh:306-322`; the
-commit-time read routes through the same fail-closed wrapper as every other
-git read, so a failed read exits 4 instead of reading as empty history):
+(`skills/checking-pr-readiness/scripts/evidence-freshness.sh:321-337`; the
+commit lookup routes through the same fail-closed wrapper as every other git
+read, so a failed read exits 4 instead of reading as empty history):
 
 ```sh
-# The record is dated by its last commit only. `now` is never substituted here:
-# a record with no established write time must not certify anything as fresh.
-read_commit_time "$record"
-record_time="$last_commit_time"
+# The record is dated by its last commit only. A record with no established
+# committed write point must not certify anything as fresh.
+read_last_commit "$record"
+record_commit="$last_commit"
 
 if [ ! -e "$record" ]; then
-	if [ -n "$record_time" ]; then
+	if [ -n "$record_commit" ]; then
 		printf 'verdict: stale record found\n'
 		...
 		exit 0
@@ -185,15 +185,16 @@ fi
 ```
 
 A dirty record now gets its own verdict rather than certifying anything fresh
-(`evidence-freshness.sh:324-330`), and a dirty described path is reported
-stale outright — never ordered against commit timestamps, which a skewed
-committer clock could defeat (`evidence-freshness.sh:336-340`).
+(`evidence-freshness.sh:339-345`), and a dirty described path is reported
+stale outright (`evidence-freshness.sh:359-363`). Committed paths are ordered
+by commit ancestry, never committer timestamps, which a skewed or rewritten
+clock can defeat.
 
 **Changelog present-without-entry.** Path membership is now only the first
 test. The helper counts the added lines that carry content — a whitespace-only
 addition is a formatting change, not an entry — and a zero count gets a
 distinct verdict rather than falling into `present`
-(`skills/checking-pr-readiness/scripts/changelog-union.sh:269-281`):
+(`skills/checking-pr-readiness/scripts/changelog-union.sh:282-294`):
 
 ```sh
 # Only added lines with content count as an entry: a blank or whitespace-only

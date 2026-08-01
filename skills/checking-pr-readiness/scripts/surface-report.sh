@@ -97,6 +97,7 @@ while [ "$#" -gt 0 ]; do
 		;;
 	--defer)
 		[ "$#" -ge 2 ] || fail_usage "--defer requires a gate name"
+		[ -n "$2" ] || fail_usage "--defer requires a non-empty gate name"
 		defer_gate="$2"
 		shift 2
 		;;
@@ -139,6 +140,12 @@ fi
 if ! git rev-parse --git-dir >/dev/null 2>&1; then
 	printf 'verdict: not run\n'
 	printf 'reason: not inside a git repository\n'
+	exit 4
+fi
+
+if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" != "true" ]; then
+	printf 'verdict: not run\n'
+	printf 'reason: not inside a git work tree (a bare repository has no working surface to report)\n'
 	exit 4
 fi
 

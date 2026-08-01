@@ -67,6 +67,9 @@ branch() { git -C "$1" checkout -qb work; }
 nogit="$work/nogit"
 mkdir -p "$nogit"
 
+bare="$work/bare"
+git init -q --bare "$bare"
+
 # --- surface-report.sh -------------------------------------------------------
 
 s1=$(repo surface-caps)
@@ -100,6 +103,8 @@ s4=$(repo surface-broken)
 printf 'not an index' >"$s4/.git/index"
 check "surface: not run (failed git read)" "not run" 4 "$s4" "$surface" --cap reviewer=10
 check "surface: not run (not a git repository)" "not run" 4 "$nogit" "$surface"
+check "surface: not run (bare repository)" "not run" 4 "$bare" "$surface"
+check "surface: not run (empty --defer)" "not run" 2 "$s1" "$surface" --defer ""
 
 # --- changelog-union.sh ------------------------------------------------------
 
@@ -148,7 +153,9 @@ w "$c6/CHANGELOG.md" "- untracked entry"
 check "changelog: present (untracked changelog)" present 0 "$c6" "$changelog"
 check "changelog: covered by repo gate" "covered by repo gate" 3 "$c6" "$changelog" --defer ci-changelog
 check "changelog: not run (unknown option)" "not run" 2 "$c6" "$changelog" --bogus
+check "changelog: not run (empty --defer)" "not run" 2 "$c6" "$changelog" --defer ""
 check "changelog: not run (not a git repository)" "not run" 4 "$nogit" "$changelog"
+check "changelog: not run (bare repository)" "not run" 4 "$bare" "$changelog"
 
 c7=$(repo changelog-broken)
 w "$c7/CHANGELOG.md" "# Changelog"
@@ -162,6 +169,15 @@ w "$c8/CHANGELOG.md" "# Changelog"
 w "$c8/src.txt" work
 cm "$c8" 2020-02-01T00:00:00Z work
 check "changelog: not run (default branch unresolved)" "not run" 4 "$c8" "$changelog"
+
+c11=$(repo changelog-rm)
+w "$c11/CHANGELOG.md" "# Changelog
+- one"
+cm "$c11" 2020-02-01T00:00:00Z changelog
+branch "$c11"
+git -C "$c11" rm -q CHANGELOG.md
+check "changelog: changed without entry (staged changelog deletion)" "changed without entry" 0 \
+	"$c11" "$changelog"
 
 c10=$(repo changelog-deleted)
 w "$c10/CHANGELOG.md" "# Changelog
@@ -229,7 +245,9 @@ check "evidence: not run (empty --check-name)" "not run" 2 "$e3" "$evidence" --c
 check "evidence: not run (trailing args in name mode)" "not run" 2 "$e3" \
 	"$evidence" --check-name impl.md notes extra
 check "evidence: not run (one positional only)" "not run" 2 "$e3" "$evidence" logs/run.md
+check "evidence: not run (empty --defer)" "not run" 2 "$e3" "$evidence" --defer ""
 check "evidence: not run (not a git repository)" "not run" 4 "$nogit" "$evidence" rec.md path.md
+check "evidence: not run (bare repository)" "not run" 4 "$bare" "$evidence" rec.md path.md
 
 e4=$(repo evidence-broken)
 w "$e4/notes/impl.md" "implementation"
@@ -238,6 +256,30 @@ w "$e4/logs/run.md" "ran the suite"
 cm "$e4" 2020-03-01T00:00:00Z record
 printf 'not an index' >"$e4/.git/index"
 check "evidence: not run (failed git read)" "not run" 4 "$e4" "$evidence" logs/run.md notes/impl.md
+
+# The record is committed first with a deliberately future committer date; a
+# later descendant commit dated earlier must still read as stale, because
+# ancestry, not the committer clock, decides order.
+e6=$(repo evidence-skewed)
+w "$e6/logs/run.md" "ran the suite"
+cm "$e6" 2030-01-01T00:00:00Z record
+w "$e6/notes/impl.md" "implementation"
+cm "$e6" 2021-01-01T00:00:00Z impl
+check "evidence: stale record found (descendant dated earlier)" "stale record found" 0 "$e6" \
+	"$evidence" logs/run.md notes/impl.md
+
+e7=$(repo evidence-quotepath)
+w "$e7/docs/café/widget.md" "artifact"
+cm "$e7" 2020-02-01T00:00:00Z artifact
+check "evidence: consistent (non-ASCII pathname)" consistent 0 "$e7" \
+	"$evidence" --check-name widget.md docs
+
+e8=$(repo evidence-ignored)
+w "$e8/.gitignore" "docs/widget.md"
+cm "$e8" 2020-02-01T00:00:00Z ignore
+w "$e8/docs/widget.md" "generated, ignored"
+check "evidence: stale reference found (ignored file only)" "stale reference found" 0 "$e8" \
+	"$evidence" --check-name widget.md docs
 
 # The record carries a deliberately future committer date: a dirty described
 # path must read as stale outright, not be ordered against a skewed clock.

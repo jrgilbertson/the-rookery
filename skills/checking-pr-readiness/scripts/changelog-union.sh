@@ -92,6 +92,7 @@ while [ "$#" -gt 0 ]; do
 		;;
 	--defer)
 		[ "$#" -ge 2 ] || fail_usage "--defer requires a gate name"
+		[ -n "$2" ] || fail_usage "--defer requires a non-empty gate name"
 		defer_gate="$2"
 		shift 2
 		;;
@@ -120,6 +121,12 @@ if ! git rev-parse --git-dir >/dev/null 2>&1; then
 	exit 4
 fi
 
+if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" != "true" ]; then
+	printf 'verdict: not run\n'
+	printf 'reason: not inside a git work tree (a bare repository has no working surface to check)\n'
+	exit 4
+fi
+
 cd "$(git rev-parse --show-toplevel)"
 
 fail_read() {
@@ -141,11 +148,22 @@ read_or_fail() {
 	fi
 }
 
-# A changelog the branch deletes from the worktree is still the repository's
-# changelog: recognizing tracked paths keeps that deletion a branch finding
-# instead of an absent-input result.
+head_exists=0
+if git rev-parse --verify --quiet HEAD >/dev/null 2>&1; then
+	head_exists=1
+fi
+
+# A changelog the branch deletes from the worktree — plain or staged with
+# `git rm` — is still the repository's changelog: recognizing index and HEAD
+# paths keeps that deletion a branch finding instead of an absent-input
+# result.
 read_or_fail "changelog tracking" ls-files -- CHANGELOG.md CHANGELOG CHANGELOG.txt changelog.md
 tracked_changelogs="$git_out"
+if [ "$head_exists" -eq 1 ]; then
+	read_or_fail "changelog history" ls-tree --name-only HEAD -- CHANGELOG.md CHANGELOG CHANGELOG.txt changelog.md
+	tracked_changelogs="$tracked_changelogs
+$git_out"
+fi
 changelog=""
 for candidate in CHANGELOG.md CHANGELOG CHANGELOG.txt changelog.md; do
 	if [ -f "$candidate" ] ||
@@ -173,11 +191,6 @@ else
 			break
 		fi
 	done
-fi
-
-head_exists=0
-if git rev-parse --verify --quiet HEAD >/dev/null 2>&1; then
-	head_exists=1
 fi
 
 committed=""

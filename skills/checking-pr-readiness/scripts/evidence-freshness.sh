@@ -6,12 +6,13 @@
 # Serves sweep class 4 (evidence or test records predating the final edit) and
 # supports class 2 (stale cross-references) in references/sweep-classes.md.
 #
-# Times come from git commit history, never from filesystem mtimes: a worktree
-# checkout or a copy stamps every file with the same recent mtime, which would
-# make every record look fresh. A described path that is dirty in the working
-# tree (staged, unstaged, or untracked) is stale outright: the edit happened
-# after any committed record, so it is never ordered against commit
-# timestamps, which a skewed committer clock could defeat.
+# Order comes from commit ancestry, never committer timestamps or filesystem
+# mtimes: a checkout stamps every file with the same recent mtime, and a skewed
+# or rewritten committer clock can date a later commit earlier, so a described
+# path is fresh only when its last commit is contained in the history of the
+# record's last commit. A described path that is dirty in the working tree
+# (staged, unstaged, or untracked) is stale outright: the edit happened after
+# any committed record.
 #
 # Relative paths are resolved from the repository root, matching the other
 # bundled helpers.
@@ -29,18 +30,22 @@
 #
 # Output states. Line 1 is always `verdict: <word>`; human detail follows.
 #
-#   verdict: fresh                  exit 0  the record's commit time is at or
-#                                           after the last edit of every
-#                                           described path
-#   verdict: stale record found     exit 0  a described path was edited after the
-#                                           record; the detail names that path
-#                                           and both ISO timestamps. Also emitted
-#                                           when a described path is missing from
-#                                           the working tree, or has no git
-#                                           history to compare against — a record
-#                                           describing something that no longer
-#                                           exists is stale, not fresh — and when
-#                                           the record itself has git history but
+#   verdict: fresh                  exit 0  every described path's last commit
+#                                           is contained in the history of the
+#                                           record's last commit
+#   verdict: stale record found     exit 0  a described path changed after the
+#                                           record — its last commit descends
+#                                           from the record's, it is dirty in
+#                                           the working tree, or its history is
+#                                           incomparable with the record's; the
+#                                           detail names the path and commits.
+#                                           Also emitted when a described path
+#                                           is missing from the working tree, or
+#                                           has no git history to compare
+#                                           against — a record describing
+#                                           something that no longer exists is
+#                                           stale, not fresh — and when the
+#                                           record itself has git history but
 #                                           is gone from the working tree
 #   verdict: record unverifiable (dirty)  exit 0  the record is dirty in the working
 #             (dirty)                       tree, so its own write time cannot be
@@ -127,6 +132,7 @@ while [ "$#" -gt 0 ]; do
 		;;
 	--defer)
 		[ "$#" -ge 2 ] || fail_usage "--defer requires a gate name"
+		[ -n "$2" ] || fail_usage "--defer requires a non-empty gate name"
 		defer_gate="$2"
 		shift 2
 		;;
@@ -179,6 +185,12 @@ if ! git rev-parse --git-dir >/dev/null 2>&1; then
 	exit 4
 fi
 
+if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" != "true" ]; then
+	printf 'verdict: not run\n'
+	printf 'reason: not inside a git work tree (a bare repository has no working surface to check)\n'
+	exit 4
+fi
+
 cd "$(git rev-parse --show-toplevel)"
 
 fail_read() {
@@ -217,14 +229,18 @@ if [ "$mode" = "name" ]; then
 	# plan that proposed the name as readily as the artifact that shipped — and
 	# matches the file naming itself — so the name is matched against the paths
 	# on the working surface, and the content hits are reported as detail only.
-	read_or_fail "search-root listing" ls-files --cached --others --exclude-standard -- "$search_root"
+	# core.quotepath=false keeps non-ASCII pathnames raw instead of C-quoted,
+	# so the existence test and suffix match see the real path.
+	read_or_fail "search-root listing" -c core.quotepath=false ls-files --cached --others --exclude-standard -- "$search_root"
 	surface="$git_out"
 	matches=""
 	while IFS= read -r candidate; do
 		[ -n "$candidate" ] || continue
-		# An index entry deleted from the working tree ships as a deletion,
-		# so it does not count as a shipped artifact.
-		[ -e "$candidate" ] || continue
+		# An index entry deleted from the working tree ships as a deletion, so
+		# it does not count as a shipped artifact; only a regular file does.
+		# Paths outside this enumerated surface — ignored files, directories —
+		# never count, which is why there is no filesystem fallback here.
+		[ -f "$candidate" ] || continue
 		case "$candidate" in
 		"$check_name" | */"$check_name")
 			matches="${matches}${candidate}
@@ -234,19 +250,6 @@ if [ "$mode" = "name" ]; then
 	done <<EOF
 $surface
 EOF
-	for candidate in "$search_root/$check_name" "$check_name"; do
-		# The bare name counts only when it already lies under the search
-		# root; a file elsewhere must not satisfy a narrower search.
-		case "$candidate" in
-		"$search_root"/*) ;;
-		*) [ "$search_root" = "." ] || continue ;;
-		esac
-		if [ -e "$candidate" ]; then
-			printf '%s\n' "$matches" | grep -Fx -- "$candidate" >/dev/null ||
-				matches="${matches}${candidate}
-"
-		fi
-	done
 
 	mentions=$(grep -rlF --exclude-dir=.git -e "$check_name" -- "$search_root" 2>/dev/null || true)
 
@@ -292,24 +295,36 @@ if git rev-parse --verify --quiet HEAD >/dev/null 2>&1; then
 	head_exists=1
 fi
 
-# Last commit time of a path; empty when the path has no committed history.
-# Also current-shell only, for the same reason as is_dirty.
-last_commit_time=""
-read_commit_time() {
-	last_commit_time=""
+# Last commit that touched a path; empty when the path has no committed
+# history. Also current-shell only, for the same reason as is_dirty.
+last_commit=""
+read_last_commit() {
+	last_commit=""
 	if [ "$head_exists" -eq 1 ]; then
-		read_or_fail "commit history" log -1 --format=%ct -- "$1"
-		last_commit_time="$git_out"
+		read_or_fail "commit history" rev-list -1 HEAD -- "$1"
+		last_commit="$git_out"
 	fi
 }
 
-# The record is dated by its last commit only. `now` is never substituted here:
-# a record with no established write time must not certify anything as fresh.
-read_commit_time "$record"
-record_time="$last_commit_time"
+# Ancestry, not committer timestamps, decides order: a skewed or rewritten
+# committer clock can date a later commit earlier, and wall-clock ordering is
+# refused for dirty paths above for the same reason.
+# Return 0 = ancestor, 1 = not an ancestor; any other status is a failed read.
+is_ancestor() {
+	git merge-base --is-ancestor "$1" "$2" 2>/dev/null
+	ancestor_rc=$?
+	[ "$ancestor_rc" -le 1 ] ||
+		fail_read "commit ancestry" "git merge-base --is-ancestor returned status $ancestor_rc"
+	return "$ancestor_rc"
+}
+
+# The record is dated by its last commit only. A record with no established
+# committed write point must not certify anything as fresh.
+read_last_commit "$record"
+record_commit="$last_commit"
 
 if [ ! -e "$record" ]; then
-	if [ -n "$record_time" ]; then
+	if [ -n "$record_commit" ]; then
 		printf 'verdict: stale record found\n'
 		printf 'record missing: %s\n' "$record"
 		printf 'detail: record existed in history but is gone from the working tree.\n'
@@ -321,13 +336,16 @@ if [ ! -e "$record" ]; then
 	exit 2
 fi
 
-if is_dirty "$record" || [ -z "$record_time" ]; then
+if is_dirty "$record" || [ -z "$record_commit" ]; then
 	printf 'verdict: record unverifiable (dirty)\n'
 	printf 'record: %s\n' "$record"
-	printf 'detail: the record is uncommitted in the working tree, so its own write time cannot be established.\n'
+	printf 'detail: the record is uncommitted in the working tree, so its own write point cannot be established.\n'
 	printf 'detail: commit the record, then re-run; an undatable record cannot prove a described path fresh.\n'
 	exit 0
 fi
+
+read_or_fail "commit history" log -1 --format=%ct "$record_commit"
+record_time="$git_out"
 
 stale_lines=""
 fresh_lines=""
@@ -343,18 +361,24 @@ while IFS= read -r path; do
 "
 		continue
 	fi
-	read_commit_time "$path"
-	path_time="$last_commit_time"
-	if [ -z "$path_time" ]; then
+	read_last_commit "$path"
+	path_commit="$last_commit"
+	if [ -z "$path_commit" ]; then
 		stale_lines="${stale_lines}described path has no git history: ${path} (freshness cannot be proven)
 "
 		continue
 	fi
-	if [ "$path_time" -gt "$record_time" ]; then
-		stale_lines="${stale_lines}stale: ${path} edited $(iso_of "$path_time"), after the record at $(iso_of "$record_time")
+	if [ "$path_commit" = "$record_commit" ]; then
+		fresh_lines="${fresh_lines}described: ${path} last changed in the record's own commit
+"
+	elif is_ancestor "$path_commit" "$record_commit"; then
+		fresh_lines="${fresh_lines}described: ${path} last changed in $(printf '%.7s' "$path_commit"), within the record's history
+"
+	elif is_ancestor "$record_commit" "$path_commit"; then
+		stale_lines="${stale_lines}stale: ${path} last changed in $(printf '%.7s' "$path_commit"), after the record's last commit $(printf '%.7s' "$record_commit")
 "
 	else
-		fresh_lines="${fresh_lines}described: ${path} last edited $(iso_of "$path_time"), at or before the record
+		stale_lines="${stale_lines}stale: ${path} last changed in $(printf '%.7s' "$path_commit"), on a history incomparable with the record's last commit (freshness cannot be proven)
 "
 	fi
 done <<EOF
@@ -366,7 +390,7 @@ if [ -n "$stale_lines" ]; then
 else
 	printf 'verdict: fresh\n'
 fi
-printf 'record: %s last committed %s\n' "$record" "$(iso_of "$record_time")"
+printf 'record: %s last committed %s in %.7s\n' "$record" "$(iso_of "$record_time")" "$record_commit"
 [ -z "$stale_lines" ] || printf '%s' "$stale_lines"
 [ -z "$fresh_lines" ] || printf '%s' "$fresh_lines"
 exit 0

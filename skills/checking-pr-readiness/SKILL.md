@@ -51,7 +51,9 @@ surface is what the finishing path will stage and what the owner is approving.
 Run [scripts/surface-report.sh](scripts/surface-report.sh) when it is present
 and executable — it also carries step 6's size check, so pass the cap values
 step 6 resolves here and read both results from one run, statuses per step 6's
-verdict-and-status mapping. Otherwise gather the same four categories directly
+verdict-and-status mapping. Never pass `--defer` on this run, even when step 6
+defers the size class to a repository gate: a deferred run measures nothing,
+and this step's surface report must always be produced. Otherwise gather the same four categories directly
 with git:
 
 - committed on this branch, compared against the merge base with the default

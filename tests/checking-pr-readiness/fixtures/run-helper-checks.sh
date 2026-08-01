@@ -90,6 +90,12 @@ w "$s3/staged.txt" staged
 git -C "$s3" add -A
 check "surface: cap unverified (committed unmeasured)" "cap unverified" 0 "$s3" "$surface" --cap reviewer=10
 
+s5=$(repo surface-unresolved-clean feature)
+w "$s5/src.txt" work
+cm "$s5" 2020-02-01T00:00:00Z work
+check "surface: cap unverified (unresolved base, clean worktree)" "cap unverified" 0 \
+	"$s5" "$surface" --cap reviewer=10
+
 s4=$(repo surface-broken)
 printf 'not an index' >"$s4/.git/index"
 check "surface: not run (failed git read)" "not run" 4 "$s4" "$surface" --cap reviewer=10
@@ -157,6 +163,15 @@ w "$c8/src.txt" work
 cm "$c8" 2020-02-01T00:00:00Z work
 check "changelog: not run (default branch unresolved)" "not run" 4 "$c8" "$changelog"
 
+c10=$(repo changelog-deleted)
+w "$c10/CHANGELOG.md" "# Changelog
+- one"
+cm "$c10" 2020-02-01T00:00:00Z changelog
+branch "$c10"
+rm "$c10/CHANGELOG.md"
+check "changelog: changed without entry (tracked changelog deleted)" "changed without entry" 0 \
+	"$c10" "$changelog"
+
 c9=$(repo changelog-whitespace)
 w "$c9/CHANGELOG.md" "# Changelog"
 cm "$c9" 2020-02-01T00:00:00Z changelog
@@ -202,6 +217,9 @@ check "evidence: no records (search root missing)" "no records" 2 "$e3" \
 	"$evidence" --check-name impl.md absent-dir
 check "evidence: consistent (invoked from a subdirectory)" consistent 0 "$e3/docs" \
 	"$evidence" --check-name impl.md notes
+w "$e3/widget-report.md" "at the repository root, outside the search root"
+check "evidence: stale reference found (match outside search root)" "stale reference found" 0 \
+	"$e3" "$evidence" --check-name widget-report.md docs
 rm "$e3/notes/impl.md"
 check "evidence: stale reference found (deleted from worktree)" "stale reference found" 0 "$e3" \
 	"$evidence" --check-name impl.md notes

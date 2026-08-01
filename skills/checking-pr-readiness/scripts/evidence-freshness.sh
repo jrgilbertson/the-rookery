@@ -235,6 +235,12 @@ if [ "$mode" = "name" ]; then
 $surface
 EOF
 	for candidate in "$search_root/$check_name" "$check_name"; do
+		# The bare name counts only when it already lies under the search
+		# root; a file elsewhere must not satisfy a narrower search.
+		case "$candidate" in
+		"$search_root"/*) ;;
+		*) [ "$search_root" = "." ] || continue ;;
+		esac
 		if [ -e "$candidate" ]; then
 			printf '%s\n' "$matches" | grep -Fx -- "$candidate" >/dev/null ||
 				matches="${matches}${candidate}

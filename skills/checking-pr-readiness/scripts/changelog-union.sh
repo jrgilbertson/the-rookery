@@ -141,9 +141,15 @@ read_or_fail() {
 	fi
 }
 
+# A changelog the branch deletes from the worktree is still the repository's
+# changelog: recognizing tracked paths keeps that deletion a branch finding
+# instead of an absent-input result.
+read_or_fail "changelog tracking" ls-files -- CHANGELOG.md CHANGELOG CHANGELOG.txt changelog.md
+tracked_changelogs="$git_out"
 changelog=""
 for candidate in CHANGELOG.md CHANGELOG CHANGELOG.txt changelog.md; do
-	if [ -f "$candidate" ]; then
+	if [ -f "$candidate" ] ||
+		printf '%s\n' "$tracked_changelogs" | grep -Fx -- "$candidate" >/dev/null; then
 		changelog="$candidate"
 		break
 	fi

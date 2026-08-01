@@ -162,12 +162,15 @@ not imagined.
 **Deleted-record bypass.** The pre-fix guard required both conditions, and a
 committed-then-deleted record satisfied only one. The fix dates the record from
 its last commit alone and splits the absent-record case in two
-(`skills/checking-pr-readiness/scripts/evidence-freshness.sh:258-273`):
+(`skills/checking-pr-readiness/scripts/evidence-freshness.sh:306-322`; the
+commit-time read routes through the same fail-closed wrapper as every other
+git read, so a failed read exits 4 instead of reading as empty history):
 
 ```sh
 # The record is dated by its last commit only. `now` is never substituted here:
 # a record with no established write time must not certify anything as fresh.
-record_time=$(git log -1 --format=%ct -- "$record" 2>/dev/null || true)
+read_commit_time "$record"
+record_time="$last_commit_time"
 
 if [ ! -e "$record" ]; then
 	if [ -n "$record_time" ]; then
@@ -182,18 +185,22 @@ fi
 ```
 
 A dirty record now gets its own verdict rather than certifying anything fresh
-(`evidence-freshness.sh:275-281`), and `last_edit_of` — which does substitute
-`now` for a dirty path — applies only to described paths
-(`evidence-freshness.sh:250-256`).
+(`evidence-freshness.sh:324-330`), and a dirty described path is reported
+stale outright — never ordered against commit timestamps, which a skewed
+committer clock could defeat (`evidence-freshness.sh:336-340`).
 
 **Changelog present-without-entry.** Path membership is now only the first
-test. The helper collects the lines the branch actually added, and a zero count
-gets a distinct verdict rather than falling into `present`
-(`skills/checking-pr-readiness/scripts/changelog-union.sh:204-212`):
+test. The helper counts the added lines that carry content — a whitespace-only
+addition is a formatting change, not an entry — and a zero count gets a
+distinct verdict rather than falling into `present`
+(`skills/checking-pr-readiness/scripts/changelog-union.sh:269-281`):
 
 ```sh
+# Only added lines with content count as an entry: a blank or whitespace-only
+# addition is a formatting change, not recorded branch work.
 added_count=0
-[ -z "$added_lines" ] || added_count=$(printf '%s\n' "$added_lines" | wc -l | tr -d ' ')
+[ -z "$added_lines" ] ||
+	added_count=$(printf '%s\n' "$added_lines" | grep -c '[^[:space:]]' || true)
 
 if [ "$added_count" -eq 0 ]; then
 	printf 'verdict: changed without entry\n'

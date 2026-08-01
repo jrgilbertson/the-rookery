@@ -28,7 +28,11 @@
 #                                              measured, so no supplied cap can
 #                                              be called met. The surface is
 #                                              still reported
-#   verdict: no changes on surface     exit 0  all four categories are empty.
+#   verdict: no changes on surface     exit 0  all four categories are empty and
+#                                              the committed category was
+#                                              measured; when it could not be,
+#                                              an empty measured surface reports
+#                                              `cap unverified` instead.
 #                                              Distinct from `under caps`: an
 #                                              absent surface is not a pass
 #                                              against a cap
@@ -235,10 +239,18 @@ all_paths=$(printf '%s\n%s\n%s\n%s\n' "$committed" "$staged" "$unstaged" "$untra
 	sed '/^$/d' | sort -u)
 total=$(count_of "$all_paths")
 
-cap_lines="caps: none supplied — see references/sweep-classes.md cap table"
+cap_lines="caps: none supplied — see references/sweep-classes.md class 11"
 if [ -z "$all_paths" ]; then
-	verdict="no changes on surface"
-	cap_lines="caps: not evaluated — the working surface is empty"
+	if [ "$committed_measured" -eq 0 ]; then
+		# An empty measured surface proves nothing when the committed
+		# category was never measured; a clean verdict here would hide
+		# exactly the branch work this report exists to expose.
+		verdict="cap unverified"
+		cap_lines="caps: not confirmed — the committed category could not be measured, so an empty measured surface is not a no-changes result"
+	else
+		verdict="no changes on surface"
+		cap_lines="caps: not evaluated — the working surface is empty"
+	fi
 elif [ -z "$caps" ]; then
 	verdict="cap unverified"
 else

@@ -177,9 +177,14 @@ plan-named artifacts that no longer match what shipped
 - [scripts/changelog-union.sh](scripts/changelog-union.sh) for whether the
 branch's own work appears in the repository's changelog.
 
-Each helper defers when the host repository owns an equivalent check: invoke it
-as `<helper> --defer <gate-name>` with the gate step 2 found, and report that
-class as covered by that gate rather than running both. Every remaining class
+`changelog-union.sh` and `evidence-freshness.sh` defer when the host
+repository owns an equivalent check: invoke them as `<helper> --defer
+<gate-name>` with the gate step 2 found, and report that class as covered by
+that gate rather than running both. `surface-report.sh` is the exception,
+because step 1's run of it must always produce the surface report: never pass
+it `--defer`. When a repository gate owns the size check, pass no `--cap` for
+the reviewers that gate covers and report class 11 as covered by that gate
+directly from step 2's discovery. Every remaining class
 runs by model instruction from the reference. A file-cap finding names the
 affected reviewer and the source of the cap, or says the cap is unverified when
 the source cannot be confirmed.

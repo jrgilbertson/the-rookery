@@ -27,10 +27,12 @@ that fired is written `<class>: <verdict> — <disposition>`, where the
 disposition is fixed, accepted with reason, or deferred. A class that passed is
 written `<class>: <verdict>`. A class whose helper did not run keeps its class
 verdict alongside the execution status: `<class>: not run → judgment:
-<verdict>` when the fallback judgment ran, and `<class>: unavailable`,
-`<class>: skipped (covered by <gate>)`, or `<class>: not applicable` when no
-verdict exists — a status word never replaces a verdict that was actually
-reached. A missing line reads as a class nobody checked.
+<verdict>` when the fallback judgment ran, and `<class>: unavailable —
+<verdict>` when the helper reached an absent-input verdict such as `no
+changelog` or `no records`. `<class>: skipped (covered by <gate>)` and
+`<class>: not applicable` are the only bare-status forms, because deferral and
+inapplicability reach no verdict — a status word never replaces a verdict that
+was actually reached. A missing line reads as a class nobody checked.
 
 **Owner decision:** approved / changes requested / stopped and filed follow-up.
 

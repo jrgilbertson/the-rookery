@@ -221,10 +221,15 @@ iso_of() {
 
 if [ "$mode" = "name" ]; then
 	if [ ! -e "$search_root" ]; then
-		printf 'verdict: no records\n'
-		printf 'search root missing: %s\n' "$search_root"
-		printf 'detail: nothing could be searched, so the name was neither confirmed nor refuted.\n'
-		exit 2
+		read_or_fail "index listing" ls-files -- "$search_root"
+		if [ -z "$git_out" ]; then
+			printf 'verdict: no records\n'
+			printf 'search root missing: %s\n' "$search_root"
+			printf 'detail: nothing could be searched, so the name was neither confirmed nor refuted.\n'
+			exit 2
+		fi
+		# Absent on disk but present in the index: a sparse-checkout cone can
+		# omit the root while its tracked artifacts live on.
 	fi
 	# Existence is decided by paths, not by prose. A content grep matches the
 	# plan that proposed the name as readily as the artifact that shipped — and
@@ -244,10 +249,17 @@ if [ "$mode" = "name" ]; then
 		\"*) fail_read "search-root listing" "a pathname required C-quoting, so the listing cannot be parsed line by line" ;;
 		esac
 		# An index entry deleted from the working tree ships as a deletion, so
-		# it does not count as a shipped artifact; only a regular file does.
-		# Paths outside this enumerated surface — ignored files, directories —
-		# never count, which is why there is no filesystem fallback here.
-		[ -f "$candidate" ] || continue
+		# it does not count as a shipped artifact; only a regular file does —
+		# or a tracked path a sparse-checkout cone omits (absent from the
+		# worktree yet clean in status). Paths outside this enumerated
+		# surface — ignored files, directories — never count, which is why
+		# there is no filesystem fallback here.
+		if [ ! -f "$candidate" ]; then
+			read_or_fail "index listing" ls-files -- "$candidate"
+			[ -n "$git_out" ] || continue
+			read_or_fail "working-tree status" status --porcelain -- "$candidate"
+			[ -z "$git_out" ] || continue
+		fi
 		case "$candidate" in
 		"$check_name" | */"$check_name")
 			matches="${matches}${candidate}
@@ -293,6 +305,19 @@ fi
 is_dirty() {
 	read_or_fail "working-tree status" status --porcelain -- "$1"
 	[ -n "$git_out" ]
+}
+
+# An index entry marked assume-unchanged (lowercase tag) or skip-worktree (S)
+# suppresses status output, so a clean status there is no evidence of a clean
+# file. Current-shell only, like is_dirty.
+status_suppressed() {
+	read_or_fail "index flags" ls-files -v -- "$1"
+	# Explicit characters, not [a-z]: locale collation can pull uppercase
+	# letters into a lowercase range and misread every ordinary H entry.
+	case "$git_out" in
+	[hsmrck]* | S*) return 0 ;;
+	esac
+	return 1
 }
 
 # An unborn repository has no commits to date anything by; that is legitimate
@@ -352,11 +377,19 @@ if [ ! -e "$record" ]; then
 	fi
 fi
 
-if { [ "$record_sparse" -eq 0 ] && is_dirty "$record"; } || [ -z "$record_commit" ]; then
+record_undatable=0
+if [ -z "$record_commit" ]; then
+	record_undatable=1
+elif [ "$record_sparse" -eq 0 ]; then
+	if is_dirty "$record" || status_suppressed "$record"; then
+		record_undatable=1
+	fi
+fi
+if [ "$record_undatable" -eq 1 ]; then
 	printf 'verdict: record unverifiable (dirty)\n'
 	printf 'record: %s\n' "$record"
-	printf 'detail: the record is uncommitted in the working tree, so its own write point cannot be established.\n'
-	printf 'detail: commit the record, then re-run; an undatable record cannot prove a described path fresh.\n'
+	printf 'detail: the record is uncommitted in the working tree, or its status is suppressed (assume-unchanged or skip-worktree), so its own write point cannot be established.\n'
+	printf 'detail: commit the record and clear any index flags, then re-run; an undatable record cannot prove a described path fresh.\n'
 	exit 0
 fi
 
@@ -381,6 +414,10 @@ while IFS= read -r path; do
 		# by ancestry like any committed path.
 	elif is_dirty "$path"; then
 		stale_lines="${stale_lines}stale: ${path} is dirty in the working tree, so it was edited after any committed record
+"
+		continue
+	elif status_suppressed "$path"; then
+		stale_lines="${stale_lines}stale: ${path} has its status suppressed (assume-unchanged or skip-worktree), so a hidden edit cannot be ruled out (freshness cannot be proven)
 "
 		continue
 	fi

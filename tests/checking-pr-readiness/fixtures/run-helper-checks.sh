@@ -211,6 +211,29 @@ git -C "$c11" rm -q CHANGELOG.md
 check "changelog: changed without entry (staged changelog deletion)" "changed without entry" 0 \
 	"$c11" "$changelog"
 
+c16=$(repo changelog-rename-only)
+w "$c16/CHANGELOG.md" "# Changelog
+- one"
+cm "$c16" 2020-02-01T00:00:00Z changelog
+branch "$c16"
+git -C "$c16" mv CHANGELOG.md CHANGELOG
+check "changelog: changed without entry (pure rename)" "changed without entry" 0 \
+	"$c16" "$changelog"
+
+c17=$(repo changelog-symlink)
+printf '%s\n' "private content outside the repository" >"$work/private-target.txt"
+ln -s "$work/private-target.txt" "$c17/CHANGELOG.md"
+check "changelog: no changelog (untracked symlink)" "no changelog" 2 "$c17" "$changelog"
+
+c18=$(repo changelog-color)
+w "$c18/CHANGELOG.md" "# Changelog"
+cm "$c18" 2020-02-01T00:00:00Z changelog
+branch "$c18"
+git -C "$c18" config color.ui always
+w "$c18/CHANGELOG.md" "# Changelog
+- colored entry"
+check "changelog: present (color.ui=always)" present 0 "$c18" "$changelog"
+
 c14=$(repo changelog-noprefix)
 w "$c14/CHANGELOG.md" "# Changelog
 - one
@@ -356,6 +379,34 @@ cm "$e11" 2020-03-01T00:00:00Z record
 git -C "$e11" sparse-checkout set src 2>/dev/null
 check "evidence: fresh (sparse checkout omits the record)" fresh 0 "$e11" \
 	"$evidence" logs/run.md src/app.md
+
+e12=$(repo evidence-assume)
+w "$e12/notes/impl.md" "implementation"
+cm "$e12" 2020-02-01T00:00:00Z impl
+w "$e12/logs/run.md" "ran the suite"
+cm "$e12" 2020-03-01T00:00:00Z record
+w "$e12/notes/impl.md" "edited but hidden"
+git -C "$e12" update-index --assume-unchanged notes/impl.md
+check "evidence: stale record found (assume-unchanged hides an edit)" "stale record found" 0 \
+	"$e12" "$evidence" logs/run.md notes/impl.md
+
+e14=$(repo evidence-assume-record)
+w "$e14/notes/impl.md" "implementation"
+cm "$e14" 2020-02-01T00:00:00Z impl
+w "$e14/logs/run.md" "ran the suite"
+cm "$e14" 2020-03-01T00:00:00Z record
+w "$e14/logs/run.md" "edited but hidden"
+git -C "$e14" update-index --assume-unchanged logs/run.md
+check "evidence: record unverifiable (assume-unchanged record)" "record unverifiable (dirty)" 0 \
+	"$e14" "$evidence" logs/run.md notes/impl.md
+
+e13=$(repo evidence-sparse-name)
+w "$e13/docs/widget.md" "artifact"
+w "$e13/src/code.md" "code"
+cm "$e13" 2020-02-01T00:00:00Z artifact
+git -C "$e13" sparse-checkout set src 2>/dev/null
+check "evidence: consistent (sparse checkout omits search root)" consistent 0 "$e13" \
+	"$evidence" --check-name widget.md docs
 
 e8=$(repo evidence-ignored)
 w "$e8/.gitignore" "docs/widget.md"

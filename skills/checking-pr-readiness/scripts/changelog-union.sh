@@ -168,9 +168,11 @@ fi
 # Live candidates — on disk or in the index — win over paths that survive only
 # in HEAD, so a staged rename resolves to its replacement rather than to the
 # deleted old name.
+# A symlink is never the changelog: git ships the link, not its target, and
+# reading through it would quote content from outside the repository.
 changelog=""
 for candidate in CHANGELOG.md CHANGELOG CHANGELOG.txt changelog.md; do
-	if [ -f "$candidate" ] ||
+	if { [ -f "$candidate" ] && [ ! -L "$candidate" ]; } ||
 		printf '%s\n' "$index_changelogs" | grep -Fx -- "$candidate" >/dev/null; then
 		changelog="$candidate"
 		break
@@ -286,6 +288,8 @@ fi
 # empty tree when the branch has no commits) through to the working tree.
 added_lines=""
 if printf '%s\n' "$untracked" | grep -Fx -- "$changelog" >/dev/null; then
+	[ ! -L "$changelog" ] ||
+		fail_read "changelog contents" "the changelog is a symbolic link; content is not read through links"
 	added_lines=$(cat -- "$changelog" 2>/dev/null) ||
 		fail_read "changelog contents" "cat -- $changelog returned non-zero"
 else
@@ -297,11 +301,15 @@ else
 		read_or_fail "empty tree" hash-object -t tree /dev/null
 		diff_range="$git_out"
 	fi
-	# Prefixes are pinned so repository config (diff.noprefix,
-	# diff.mnemonicPrefix, external diff drivers) cannot change the header
-	# shape this filter relies on.
+	# Prefixes, color, and rename detection are pinned so repository config
+	# (diff.noprefix, diff.mnemonicPrefix, color.ui, diff.renames, external
+	# diff drivers) cannot change the output shape this filter relies on. The
+	# pathspec covers every candidate name so a rename keeps its provenance
+	# and a pure rename does not render as a wholly added file.
 	read_or_fail "changelog additions" -c diff.noprefix=false -c diff.mnemonicPrefix=false \
-		diff --no-ext-diff --src-prefix=a/ --dst-prefix=b/ "$diff_range" -- "$changelog"
+		-c diff.renames=true \
+		diff --no-ext-diff --no-color --src-prefix=a/ --dst-prefix=b/ "$diff_range" -- \
+		CHANGELOG.md CHANGELOG CHANGELOG.txt changelog.md
 	# Drop only the destination-file diff header, never content: an added
 	# line that itself starts with ++ renders as +++ in the diff too.
 	added_lines=$(printf '%s\n' "$git_out" |

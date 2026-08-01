@@ -238,9 +238,11 @@ Then present exactly one decision menu:
 5. Stop and file follow-up work.
 
 Options 3 and 4 are non-terminal: when one finishes, apply the opening's
-recompose rule — re-read the working surface from step 1, re-run step 6 if that
-surface changed, and present the menu again. Approval binds to the surface the
-owner was shown.
+recompose rule — re-read the working surface from step 1 and, when it changed,
+re-run every step that read that surface — repository gates (step 2), upstream
+receipts (step 3), the plan comparison (step 4), the learning signal (step 5),
+and the sweep (step 6) — then present the menu again. Approval binds to the
+surface the owner was shown.
 
 On approval, fill
 [assets/evidence-pack-template.md](assets/evidence-pack-template.md) and compose

@@ -40,8 +40,8 @@ enumerates the helper's output states with a distinct exit code per state:
 absent input exits 2, verdicts exit 0, an explicit deferral to a repository-owned
 gate exits 3, and an environment failure exits 4. Line 1 of every output is
 `verdict: <word>`, so a caller reads a fixed pair — verdict line and exit code —
-rather than parsing prose. `evidence-freshness.sh:26-64`,
-`changelog-union.sh:16-43`, and `surface-report.sh:17-46` each carry that
+rather than parsing prose. `evidence-freshness.sh:31-77`,
+`changelog-union.sh:16-55`, and `surface-report.sh:17-58` each carry that
 enumeration in the header.
 
 That design was not enough. All three helpers still shipped with holes where a
@@ -162,7 +162,7 @@ not imagined.
 **Deleted-record bypass.** The pre-fix guard required both conditions, and a
 committed-then-deleted record satisfied only one. The fix dates the record from
 its last commit alone and splits the absent-record case in two
-(`skills/checking-pr-readiness/scripts/evidence-freshness.sh:328-344`; the
+(`skills/checking-pr-readiness/scripts/evidence-freshness.sh:353-378`; the
 commit lookup routes through the same fail-closed wrapper as every other git
 read, so a failed read exits 4 instead of reading as empty history):
 
@@ -185,8 +185,8 @@ fi
 ```
 
 A dirty record now gets its own verdict rather than certifying anything fresh
-(`evidence-freshness.sh:346-352`), and a dirty described path is reported
-stale outright (`evidence-freshness.sh:373-377`). Committed paths are ordered
+(`evidence-freshness.sh:380-394`), and a dirty described path is reported
+stale outright (`evidence-freshness.sh:415-418`). Committed paths are ordered
 by commit ancestry, never committer timestamps, which a skewed or rewritten
 clock can defeat.
 
@@ -194,7 +194,7 @@ clock can defeat.
 test. The helper counts the added lines that carry content — a whitespace-only
 addition is a formatting change, not an entry — and a zero count gets a
 distinct verdict rather than falling into `present`
-(`skills/checking-pr-readiness/scripts/changelog-union.sh:296-308`):
+(`skills/checking-pr-readiness/scripts/changelog-union.sh:320-332`):
 
 ```sh
 # Only added lines with content count as an entry: a blank or whitespace-only
@@ -212,7 +212,7 @@ fi
 
 **Failed reads as empty categories.** Every one of the five git enumerations
 now goes through one wrapper that exits 4 on a non-zero status
-(`skills/checking-pr-readiness/scripts/surface-report.sh:189-199`):
+(`skills/checking-pr-readiness/scripts/surface-report.sh:218-228`):
 
 ```sh
 # Every enumeration goes through this: an empty result and a failed read look
@@ -230,11 +230,11 @@ read_or_fail() {
 
 An unmeasurable committed count downgrades the result to `cap unverified`
 rather than letting an under-cap total stand
-(`surface-report.sh:267-270`).
+(`surface-report.sh:307-310`).
 
 **Self-matching content grep.** Existence is now decided against paths on the
 working surface, with content hits demoted to detail
-(`skills/checking-pr-readiness/scripts/evidence-freshness.sh:188-192`):
+(`skills/checking-pr-readiness/scripts/evidence-freshness.sh:234-238`):
 
 ```sh
 # Existence is decided by paths, not by prose. A content grep matches the

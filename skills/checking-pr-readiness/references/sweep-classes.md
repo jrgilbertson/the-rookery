@@ -4,8 +4,10 @@ Step 6 of the gate reads this file and works the classes below in the order
 they appear, which is observed-frequency order from the pull request forensics
 behind this gate. Surface findings in that same order, so the class that most
 often drives another automated-review round is read first. Every class carries
-one verdict from its own enumerated set, and a class that fired names the file
-and line where it fired.
+one verdict from its own enumerated set, and a class that fired names where it
+fired — the file and line for a line-scoped finding, the file alone for a
+file-level one, and the repository surface for a repository-level finding such
+as a missing changelog entry or an aggregate file-cap excess.
 
 The list comes from forensics across three repositories: branches with green
 continuous integration that still burned seven to sixteen automated-review
@@ -157,8 +159,8 @@ called met against a count that is unknown. Report it by judgment for the same
 reason when a configured reviewer's applicable cap cannot be confirmed at run
 time.
 
-Verdicts: under caps / `exceeds cap for <reviewer>` / cap unverified / no
-changes on surface / covered by repo gate / not run.
+Verdicts: under caps / `exceeds cap for <reviewer>` / cap unverified /
+no changes on surface / covered by repo gate / not run.
 
 ## When a helper cannot run
 

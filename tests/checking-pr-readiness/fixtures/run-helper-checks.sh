@@ -95,6 +95,16 @@ w "$s3/staged.txt" staged
 git -C "$s3" add -A
 check "surface: cap unverified (committed unmeasured)" "cap unverified" 0 "$s3" "$surface" --cap reviewer=10
 
+s6=$(repo surface-ambiguous)
+w "$s6/src.txt" work
+cm "$s6" 2020-02-01T00:00:00Z work
+git -C "$s6" branch master
+git -C "$s6" checkout -qb work
+w "$s6/src.txt" changed
+cm "$s6" 2020-03-01T00:00:00Z change
+check "surface: cap unverified (ambiguous default branch)" "cap unverified" 0 \
+	"$s6" "$surface" --cap reviewer=10
+
 s5=$(repo surface-unresolved-clean feature)
 w "$s5/src.txt" work
 cm "$s5" 2020-02-01T00:00:00Z work
@@ -200,6 +210,28 @@ branch "$c11"
 git -C "$c11" rm -q CHANGELOG.md
 check "changelog: changed without entry (staged changelog deletion)" "changed without entry" 0 \
 	"$c11" "$changelog"
+
+c14=$(repo changelog-noprefix)
+w "$c14/CHANGELOG.md" "# Changelog
+- one
+- two"
+cm "$c14" 2020-02-01T00:00:00Z changelog
+branch "$c14"
+git -C "$c14" config diff.noprefix true
+w "$c14/CHANGELOG.md" "# Changelog
+- one"
+check "changelog: changed without entry (deletion under diff.noprefix)" "changed without entry" 0 \
+	"$c14" "$changelog"
+
+c15=$(repo changelog-ambiguous)
+w "$c15/CHANGELOG.md" "# Changelog"
+w "$c15/src.txt" work
+cm "$c15" 2020-02-01T00:00:00Z work
+git -C "$c15" branch master
+git -C "$c15" checkout -qb work
+w "$c15/src.txt" changed
+cm "$c15" 2020-03-01T00:00:00Z change
+check "changelog: not run (ambiguous default branch)" "not run" 4 "$c15" "$changelog"
 
 c10=$(repo changelog-deleted)
 w "$c10/CHANGELOG.md" "# Changelog
@@ -316,6 +348,15 @@ git -C "$e10" sparse-checkout set logs 2>/dev/null
 check "evidence: fresh (sparse checkout omits described path)" fresh 0 "$e10" \
 	"$evidence" logs/run.md src/app.md
 
+e11=$(repo evidence-sparse-record)
+w "$e11/src/app.md" "dependency"
+cm "$e11" 2020-02-01T00:00:00Z impl
+w "$e11/logs/run.md" "ran the suite"
+cm "$e11" 2020-03-01T00:00:00Z record
+git -C "$e11" sparse-checkout set src 2>/dev/null
+check "evidence: fresh (sparse checkout omits the record)" fresh 0 "$e11" \
+	"$evidence" logs/run.md src/app.md
+
 e8=$(repo evidence-ignored)
 w "$e8/.gitignore" "docs/widget.md"
 cm "$e8" 2020-02-01T00:00:00Z ignore
@@ -335,28 +376,46 @@ check "evidence: stale record found (described path dirty)" "stale record found"
 	"$evidence" logs/run.md notes/impl.md
 
 # --- Verdict drift guard -----------------------------------------------------
-# Every verdict a helper can emit must appear in the sweep reference, so the
-# reference cannot silently drift from the scripts. One direction only:
+# Every verdict a helper can emit must appear in the sweep-reference class that
+# helper serves — surface-report class 11, changelog-union class 3,
+# evidence-freshness classes 2 and 4 — so a verdict surviving elsewhere in the
+# reference cannot mask drift in its own class. One direction only:
 # reference-side additions are caught by review, not here. Parameterized
 # verdicts are checked by their fixed prefix.
 ref="$scripts/../references/sweep-classes.md"
 if [ -f "$ref" ]; then
-	emitted=$({ grep -h "printf 'verdict: " "$surface" "$evidence" "$changelog" |
-		sed "s/.*printf 'verdict: //;s/\\\\n.*//"
-		grep -h '^[[:space:]]*verdict="' "$surface" | sed 's/.*verdict="//;s/".*//'
-	} | grep -v '^%s$' | sed 's/ for \$.*/ for/' | sort -u)
-	while IFS= read -r v; do
-		[ -n "$v" ] || continue
-		if grep -qF -- "$v" "$ref"; then
-			printf 'PASS reference lists emitted verdict: %s\n' "$v"
-			passed=$((passed + 1))
-		else
-			printf 'FAIL reference missing emitted verdict: %s\n' "$v"
-			failed=$((failed + 1))
-		fi
-	done <<EOF
+	class_block() { # class_block <n> — print the reference's "## <n>." section
+		awk -v n="$1" '/^## /{on = ($2 == n".")} on' "$ref"
+	}
+	check_script_verdicts() { # check_script_verdicts <label> <class-numbers> <file>...
+		label="$1"
+		classes="$2"
+		shift 2
+		block=""
+		for n in $classes; do
+			block="$block
+$(class_block "$n")"
+		done
+		emitted=$({ grep -h "printf 'verdict: " "$@" |
+			sed "s/.*printf 'verdict: //;s/\\\\n.*//"
+			grep -h '^[[:space:]]*verdict="' "$@" | sed 's/.*verdict="//;s/".*//'
+		} | grep -v '^%s$' | sed 's/ for \$.*/ for/' | sort -u)
+		while IFS= read -r v; do
+			[ -n "$v" ] || continue
+			if printf '%s\n' "$block" | grep -qF -- "$v"; then
+				printf 'PASS %s: class(es) %s list verdict: %s\n' "$label" "$classes" "$v"
+				passed=$((passed + 1))
+			else
+				printf 'FAIL %s: class(es) %s missing verdict: %s\n' "$label" "$classes" "$v"
+				failed=$((failed + 1))
+			fi
+		done <<DRIFT
 $emitted
-EOF
+DRIFT
+	}
+	check_script_verdicts "surface-report" "11" "$surface"
+	check_script_verdicts "changelog-union" "3" "$changelog"
+	check_script_verdicts "evidence-freshness" "2 4" "$evidence"
 else
 	printf 'FAIL sweep reference not found at %s\n' "$ref"
 	failed=$((failed + 1))

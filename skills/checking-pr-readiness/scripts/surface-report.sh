@@ -169,22 +169,37 @@ emit_category() {
 	fi
 }
 
+# Fallbacks are tiered (remote refs, then local) and a tier with more than one
+# live candidate is ambiguous — origin/main and origin/master both existing
+# means the true target is a guess, and a surface diffed against a guessed
+# base silently omits the commits between the two.
 resolve_base() {
 	head_ref=$(git symbolic-ref --quiet refs/remotes/origin/HEAD 2>/dev/null || true)
 	if [ -n "$head_ref" ]; then
 		printf '%s\torigin/HEAD\n' "${head_ref#refs/remotes/}"
 		return 0
 	fi
-	for candidate in origin/main origin/master main master; do
-		if git rev-parse --verify --quiet "$candidate" >/dev/null 2>&1; then
-			printf '%s\tfallback\n' "$candidate"
+	for tier in "origin/main origin/master" "main master"; do
+		found=""
+		found_count=0
+		for candidate in $tier; do
+			if git rev-parse --verify --quiet "$candidate" >/dev/null 2>&1; then
+				found="$candidate"
+				found_count=$((found_count + 1))
+			fi
+		done
+		[ "$found_count" -le 1 ] || return 2
+		if [ "$found_count" -eq 1 ]; then
+			printf '%s\tfallback\n' "$found"
 			return 0
 		fi
 	done
 	return 1
 }
 
-base_info=$(resolve_base) || base_info=""
+base_rc=0
+base_info=$(resolve_base) || base_rc=$?
+[ "$base_rc" -eq 0 ] || base_info=""
 base_ref="${base_info%%	*}"
 base_how="${base_info##*	}"
 
@@ -216,6 +231,9 @@ committed=""
 merge_base=""
 committed_measured=0
 base_line="default branch: unresolved — no origin/HEAD, origin/main, origin/master, main, or master resolved; reporting HEAD-only surface"
+if [ "$base_rc" -eq 2 ]; then
+	base_line="default branch: ambiguous — more than one candidate resolves in the same tier; set origin/HEAD or name the target; reporting HEAD-only surface"
+fi
 if [ -n "$base_ref" ]; then
 	base_line="default branch: ${base_ref} (from ${base_how})"
 	if [ "$head_exists" -eq 1 ]; then

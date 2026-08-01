@@ -44,7 +44,8 @@
 #   verdict: not run                exit 4  git is unavailable, this is not a
 #                                           git repository, a git read over the
 #                                           surface or the changelog failed, or
-#                                           no default branch resolved while the
+#                                           no unambiguous default branch
+#                                           resolved while the
 #                                           branch has commits — the committed
 #                                           category is then unmeasurable, and a
 #                                           clean verdict against an unmeasured
@@ -196,11 +197,22 @@ head_ref=$(git symbolic-ref --quiet refs/remotes/origin/HEAD 2>/dev/null || true
 if [ -n "$head_ref" ]; then
 	base_ref="${head_ref#refs/remotes/}"
 else
-	for candidate in origin/main origin/master main master; do
-		if git rev-parse --verify --quiet "$candidate" >/dev/null 2>&1; then
-			base_ref="$candidate"
-			break
+	# Tiered like surface-report.sh: a tier with more than one live candidate
+	# is ambiguous, and an ambiguous base leaves committed unmeasured rather
+	# than diffing against a guess.
+	for tier in "origin/main origin/master" "main master"; do
+		found=""
+		found_count=0
+		for candidate in $tier; do
+			if git rev-parse --verify --quiet "$candidate" >/dev/null 2>&1; then
+				found="$candidate"
+				found_count=$((found_count + 1))
+			fi
+		done
+		if [ "$found_count" -eq 1 ]; then
+			base_ref="$found"
 		fi
+		[ "$found_count" -eq 0 ] || break
 	done
 fi
 
@@ -227,7 +239,7 @@ fi
 require_committed_measured() {
 	if [ "$committed_measured" -eq 0 ]; then
 		printf 'verdict: not run\n'
-		printf 'reason: no default branch resolved (no origin/HEAD, origin/main, origin/master, main, or master), so the committed category could not be measured\n'
+		printf 'reason: no unambiguous default branch resolved, so the committed category could not be measured\n'
 		printf 'detail: a "%s" verdict against an unmeasured surface would be a silent pass; resolve the default branch and re-run.\n' "$1"
 		exit 4
 	fi
@@ -285,7 +297,11 @@ else
 		read_or_fail "empty tree" hash-object -t tree /dev/null
 		diff_range="$git_out"
 	fi
-	read_or_fail "changelog additions" diff "$diff_range" -- "$changelog"
+	# Prefixes are pinned so repository config (diff.noprefix,
+	# diff.mnemonicPrefix, external diff drivers) cannot change the header
+	# shape this filter relies on.
+	read_or_fail "changelog additions" -c diff.noprefix=false -c diff.mnemonicPrefix=false \
+		diff --no-ext-diff --src-prefix=a/ --dst-prefix=b/ "$diff_range" -- "$changelog"
 	# Drop only the destination-file diff header, never content: an added
 	# line that itself starts with ++ renders as +++ in the diff too.
 	added_lines=$(printf '%s\n' "$git_out" |

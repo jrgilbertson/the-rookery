@@ -330,20 +330,29 @@ is_ancestor() {
 read_last_commit "$record"
 record_commit="$last_commit"
 
+record_sparse=0
 if [ ! -e "$record" ]; then
-	if [ -n "$record_commit" ]; then
+	read_or_fail "index listing" ls-files -- "$record"
+	record_tracked="$git_out"
+	read_or_fail "working-tree status" status --porcelain -- "$record"
+	if [ -n "$record_tracked" ] && [ -z "$git_out" ]; then
+		# Tracked, absent, and clean in status: a sparse-checkout omission,
+		# not a deletion — the record lives on in history and dates normally.
+		record_sparse=1
+	elif [ -n "$record_commit" ]; then
 		printf 'verdict: stale record found\n'
 		printf 'record missing: %s\n' "$record"
 		printf 'detail: record existed in history but is gone from the working tree.\n'
 		exit 0
+	else
+		printf 'verdict: no records\n'
+		printf 'record missing: %s\n' "$record"
+		printf 'detail: the record is neither committed nor present in the working tree, so freshness could not be checked.\n'
+		exit 2
 	fi
-	printf 'verdict: no records\n'
-	printf 'record missing: %s\n' "$record"
-	printf 'detail: the record is neither committed nor present in the working tree, so freshness could not be checked.\n'
-	exit 2
 fi
 
-if is_dirty "$record" || [ -z "$record_commit" ]; then
+if { [ "$record_sparse" -eq 0 ] && is_dirty "$record"; } || [ -z "$record_commit" ]; then
 	printf 'verdict: record unverifiable (dirty)\n'
 	printf 'record: %s\n' "$record"
 	printf 'detail: the record is uncommitted in the working tree, so its own write point cannot be established.\n'

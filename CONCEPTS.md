@@ -50,6 +50,40 @@ maintainer's machine, including absolute paths, private names, or
 personal-environment assumptions. A verification sweep enforces the rule
 across shipped files.
 
+## Readiness checkpoints
+
+### Evidence Pack
+
+The structured record a readiness checkpoint composes when the owner approves:
+plan-vs-delivered status, checks run with results, the explicit not-verified and
+attested list, sweep findings, UI critique scores when present, and the durable
+learning signal. The checkpoint only composes the pack into its readout;
+durability begins when the finishing path renders it into the pull request
+description, which is its durable home — the pre-merge checkpoint reads it back
+from there. Nothing is written to the tracked tree or any local state store.
+
+### Falsifiability Contract
+
+The requirement that a bundled helper's output can prove failure as readily as
+success: every documented state produces a distinct verdict line, and every
+state class carries its own exit code — verdicts exit 0 with the verdict line
+distinguishing negative from positive, absent input exits 2, deferral to a
+repository-owned gate exits 3, environment failure exits 4 — so a gap can
+never be laundered into a green result.
+
+The contract is executable, not prose: a committed, rerunnable fixture runner
+asserts the exact verdict-and-exit pair for every documented state, including
+adversarial states. A helper whose contract exists only in its header comment
+is itself a prose-only invariant — the defect class it exists to catch.
+
+### Targeted Sweep
+
+The pre-PR gate's check of the evidence-backed finding classes that drive
+automated-review rounds, run against the branch before any PR exists.
+Mechanical classes run through bundled helpers that defer to repo-owned
+equivalents; judgment classes run by model instruction. The class list comes
+from PR forensics and is refreshable as review history accumulates.
+
 ## Skill quality gates
 
 ### Baseline Test

@@ -33,6 +33,15 @@ looked" surface. GitHub Releases mirror its entries.
   canonical system, and applies only actions that the user approves
   independently. It also includes behavior tests with sanitized data and a
   versioned specification for the `CoS Meetings` schedule.
+- `checking-pr-readiness` gates a branch before the pull request opens. It
+  reports the full working surface including untracked files, verifies the
+  shipping workflow's upstream steps from receipts rather than assertions,
+  compares the plan against what was delivered, and sweeps the finding
+  classes that drive repeated automated-review rounds with three falsifiable
+  bundled helper scripts — the collection's first skill to ship executable
+  helpers. It ends in one owner decision plus an evidence pack rendered into
+  the pull request body, and its companions degrade to named skips when
+  absent.
 
 ### Changed
 

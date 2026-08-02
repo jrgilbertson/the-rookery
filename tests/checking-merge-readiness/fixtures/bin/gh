@@ -31,10 +31,17 @@ than passing on silence. The stub is deliberately no more permissive than real
   there, which is not what this stub serves.
 - `--json` field names are checked against the served set, so a misspelled
   field fails instead of quietly reading back null.
-- `api graphql` checks that each served connection's selection set actually
-  requests the field the skill depends on (REQUIRED_GRAPHQL_FIELDS). This is
-  a field-presence check, not a GraphQL parser: it keeps the stub honest about
-  what a real response would contain without pretending to validate the query.
+- `api graphql` parses the query's selection set and returns only the fields
+  it selected. Serving a whole fixture node regardless of the query is how a
+  malformed fetch passes here and fails against real GitHub, so the projector
+  exists to make the response no larger than what was asked for.
+- Each served connection also declares the selection paths the skill depends
+  on (REQUIRED_GRAPHQL_PATHS). A query that omits one fails loudly instead of
+  quietly reading back null.
+- A connection's `first` and `after` are honoured, including when supplied as
+  query variables bound with `-f`/`-F`. An unbound variable fails rather than
+  silently paging from the start. A specimen's `pageSize` caps every page,
+  nested connections included, which is what makes a fixture span pages.
 - `auth` serves only the read-only `status` subcommand; `login`, `logout`, and
   `refresh` write.
 """
@@ -49,22 +56,32 @@ WRITE_VERBS = {
     "delete", "ready", "lock", "unlock", "transfer", "sync",
 }
 
-# Each served GraphQL connection, and the field its selection set must request
-# for the fetched nodes to be usable. `isResolved` is the one SKILL.md calls
-# out as non-optional; the other two carry the timestamps that order the
-# review rounds and the description baseline.
-REQUIRED_GRAPHQL_FIELDS = {
-    "reviewThreads": ("isResolved", "path", "comments", "body"),
-    "reviews": ("submittedAt", "state", "body", "commit"),
-    "userContentEdits": ("editedAt",),
-    "comments": ("body", "author"),
+# Each served connection, and the selection paths SKILL.md step 2 says the
+# digest depends on. These are paths rather than bare field names because a
+# `body` anywhere under `reviewThreads` is not the same claim as a body on
+# each thread comment: the first is satisfied by a thread-level field that is
+# always null, the second is the review text the digest actually reads.
+REQUIRED_GRAPHQL_PATHS = {
+    "reviewThreads": (
+        "nodes.isResolved",
+        "nodes.path",
+        "nodes.comments.nodes.body",
+        "nodes.comments.nodes.pullRequestReview.submittedAt",
+    ),
+    "reviews": (
+        "nodes.submittedAt",
+        "nodes.state",
+        "nodes.body",
+        "nodes.commit",
+    ),
+    "userContentEdits": ("nodes.editedAt",),
+    "comments": ("nodes.body", "nodes.author"),
 }
 
-# `comments` names two different connections: the pull request's top-level
-# conversation comments, and the per-thread comments nested inside
-# reviewThreads. Only the first is served here, so a query that also names
-# reviewThreads is reading the nested one and gets no top-level connection.
-NESTED_WHEN_PRESENT = {"comments": "reviewThreads"}
+# The only arguments this stub honours on a connection. Anything else would be
+# accepted and ignored, which is the silent-wrong-data shape the projector
+# exists to prevent, so an unknown argument fails instead.
+CONNECTION_ARGS = {"first", "after"}
 
 AUTH_ERROR = "error: not authenticated. Run 'gh auth login' to authenticate."
 
@@ -140,110 +157,395 @@ def pr_view(argv, forge):
     print(json.dumps({k: full[k] for k in fields}, indent=2))
 
 
-def selection_set(query, connection):
-    """Return the brace-balanced text a connection selects, or None.
+class Field:
+    """One selected field: its name, its arguments, and its sub-selection."""
 
-    Deliberately not a parser: it finds the connection by name and walks its
-    braces, which is enough to tell whether a field was actually requested.
+    def __init__(self, alias, name, args, selections):
+        self.alias = alias
+        self.name = name
+        self.args = args
+        self.selections = selections
+
+
+TOKEN = re.compile(r"""
+    \s+
+  | (?P<punct>\.\.\.|[{}()\[\]:,!$=@|.])
+  | (?P<string>"(?:[^"\\]|\\.)*")
+  | (?P<number>-?\d+(?:\.\d+)?)
+  | (?P<name>[_A-Za-z][_0-9A-Za-z]*)
+""", re.X)
+
+
+def tokenize(text):
+    out, i = [], 0
+    while i < len(text):
+        m = TOKEN.match(text, i)
+        if not m:
+            die(f"cannot parse the query near {text[i:i + 24]!r}", 2)
+        i = m.end()
+        for kind in ("punct", "string", "number", "name"):
+            if m.group(kind) is not None:
+                out.append((kind, m.group(kind)))
+                break
+    return out
+
+
+class Parser:
+    """A selection-set parser: enough GraphQL to know what was asked for.
+
+    It reads the document's field tree with aliases, arguments, and nesting.
+    It does not implement fragments, directives, or variable typing, and says
+    so by failing loudly rather than by quietly ignoring them.
     """
-    match = re.search(rf"\b{connection}\b", query)
-    if not match:
+
+    def __init__(self, tokens):
+        self.t = tokens
+        self.i = 0
+
+    def peek(self):
+        return self.t[self.i] if self.i < len(self.t) else (None, None)
+
+    def take(self):
+        tok = self.peek()
+        self.i += 1
+        return tok
+
+    def expect(self, value):
+        kind, got = self.take()
+        if got != value:
+            die(f"expected {value!r} in the query, found {got!r}", 2)
+
+    def parse_document(self):
+        kind, val = self.peek()
+        if kind == "name" and val in ("query", "mutation", "subscription"):
+            if val != "query":
+                die(f"`{val}` is not served; this stub answers queries only", 3)
+            self.take()
+            if self.peek()[0] == "name":
+                self.take()
+            if self.peek()[1] == "(":
+                self.skip_parens()
+        elif kind == "name":
+            self.take()
+            if self.peek()[1] == "(":
+                self.skip_parens()
+        return self.parse_selections()
+
+    def skip_parens(self):
+        self.expect("(")
+        depth = 1
+        while depth:
+            kind, val = self.take()
+            if val is None:
+                die("unbalanced parentheses in the query", 2)
+            depth += {"(": 1, ")": -1}.get(val, 0)
+
+    def parse_args(self):
+        self.expect("(")
+        args, depth = {}, 1
+        while True:
+            kind, val = self.peek()
+            if val is None:
+                die("unbalanced arguments in the query", 2)
+            if val == ")":
+                self.take()
+                break
+            if kind == "name":
+                name = self.take()[1]
+                if self.peek()[1] == ":":
+                    self.take()
+                args[name] = self.parse_value()
+            else:
+                self.take()
+        return args
+
+    def parse_value(self):
+        kind, val = self.take()
+        if kind == "string":
+            return json.loads(val)
+        if kind == "number":
+            return float(val) if "." in val else int(val)
+        if val == "$":
+            return Var(self.take()[1])
+        if val in ("[", "{"):
+            close = {"[": "]", "{": "}"}[val]
+            depth = 1
+            while depth:
+                _, v = self.take()
+                if v is None:
+                    die("unbalanced value in the query", 2)
+                depth += {val: 1, close: -1}.get(v, 0)
+            return None
+        if kind == "name":
+            return {"true": True, "false": False, "null": None}.get(val, val)
         return None
-    start = query.find("{", match.end())
-    if start == -1:
-        return None
-    depth = 0
-    for i in range(start, len(query)):
-        if query[i] == "{":
-            depth += 1
-        elif query[i] == "}":
-            depth -= 1
-            if depth == 0:
-                return query[start:i + 1]
-    return None
+
+    def parse_selections(self):
+        self.expect("{")
+        fields = []
+        while True:
+            kind, val = self.peek()
+            if val is None:
+                die("unbalanced selection set in the query", 2)
+            if val == "}":
+                self.take()
+                return fields
+            if val == "..." or val == ".":
+                die("fragments are not served by this stub", 3)
+            if kind != "name":
+                die(f"unexpected {val!r} in a selection set", 2)
+            name = self.take()[1]
+            alias = None
+            if self.peek()[1] == ":":
+                self.take()
+                alias, name = name, self.take()[1]
+            args = self.parse_args() if self.peek()[1] == "(" else {}
+            sub = self.parse_selections() if self.peek()[1] == "{" else None
+            fields.append(Field(alias or name, name, args, sub))
 
 
-def paginate(forge, connection, query):
-    """Serve one page of a connection, honouring `first:` and `after:`.
+class Var:
+    """A `$name` argument, resolved against the CLI's -f/-F bindings."""
 
-    Real GraphQL may return fewer nodes than `first:` asks for, so a specimen
-    can set `pageSize` in its forge.json to cap the page below the requested
-    count. That is what makes a connection span pages, which is the only way
-    the skill's paginate-to-exhaustion contract can actually be tested: a
-    single-page connection passes whether the run follows a cursor or not.
-    """
-    nodes = forge.get(connection, [])
-    block_start = re.search(rf"\b{connection}\b", query).end()
-    args = query[block_start:query.find("{", block_start)]
+    __slots__ = ("name",)
 
-    first = re.search(r"first\s*:\s*(\d+)", args)
-    first = int(first.group(1)) if first else len(nodes)
-    cap = forge.get("pageSize")
-    size = max(1, min(first, cap) if cap else first)
+    def __init__(self, name):
+        self.name = name
 
-    after = re.search(r"after\s*:\s*(?:\"([^\"]*)\"|\$(\w+))", args)
-    start = 0
-    if after and after.group(1):
-        cursor = after.group(1)
-        if not cursor.startswith(f"{connection}:"):
-            die(f"cursor {cursor!r} does not belong to `{connection}`", 2)
-        try:
-            start = int(cursor.split(":", 1)[1])
-        except ValueError:
-            die(f"cursor {cursor!r} is not one this stub issued", 2)
-        if start > len(nodes):
-            die(f"cursor {cursor!r} is past the end of `{connection}`", 2)
 
-    page = nodes[start:start + size]
-    end = start + len(page)
-    has_next = end < len(nodes)
-    return {
-        "nodes": page,
-        "pageInfo": {
+MISSING = object()
+
+# A fixture stores these as plain strings; the real API returns an object.
+# The value names the subfield that carries the string.
+SCALAR_AS_OBJECT = {"author": "login", "editor": "login", "commit": "oid"}
+
+
+def selected_paths(field):
+    """Every dotted selection path beneath `field`, by field name not alias."""
+    paths = set()
+
+    def walk(selections, prefix):
+        for f in selections or []:
+            path = f"{prefix}.{f.name}" if prefix else f.name
+            paths.add(path)
+            walk(f.selections, path)
+
+    walk(field.selections, "")
+    return paths
+
+
+class Executor:
+    """Projects a fixture through one query's selection set."""
+
+    def __init__(self, forge, variables):
+        self.forge = forge
+        self.vars = variables
+
+    def argument(self, args, name, scope):
+        raw = args.get(name, MISSING)
+        if raw is MISSING:
+            return MISSING
+        if isinstance(raw, Var):
+            if raw.name not in self.vars:
+                die(
+                    f"`{name}` on `{scope}` is the variable `${raw.name}`, "
+                    "which no -f/-F binding supplies; real gh would reject "
+                    "the query rather than ignore the argument",
+                    2,
+                )
+            return self.vars[raw.name]
+        return raw
+
+    def page_of(self, nodes, args, scope):
+        """Slice a connection the way a server would, and issue a cursor."""
+        for name in args:
+            if name not in CONNECTION_ARGS:
+                die(
+                    f"`{name}` on `{scope}` is not an argument this stub "
+                    "honours; it would be silently ignored, so it fails "
+                    f"instead (served: {', '.join(sorted(CONNECTION_ARGS))})",
+                    2,
+                )
+
+        first = self.argument(args, "first", scope)
+        if first is MISSING:
+            first = len(nodes)
+        else:
+            # `int()` would quietly turn True into 1 and 1.5 into 1, so the
+            # accepted shapes are named rather than coerced.
+            if isinstance(first, bool) or not isinstance(first, (int, str)):
+                die(f"`first` on `{scope}` is not an integer: {first!r}", 2)
+            if isinstance(first, str):
+                if not first.isdigit():
+                    die(f"`first` on `{scope}` is not an integer: {first!r}", 2)
+                first = int(first)
+            if first < 0:
+                die(f"`first` on `{scope}` is negative: {first}", 2)
+
+        cap = self.forge.get("pageSize")
+        size = min(first, cap) if cap else first
+
+        start = 0
+        after = self.argument(args, "after", scope)
+        if after is not MISSING and after is not None:
+            after = str(after)
+            prefix, _, offset = after.rpartition(":")
+            if prefix != scope:
+                die(
+                    f"cursor {after!r} was issued for `{prefix}`, not "
+                    f"`{scope}`; a cursor names the connection it came from",
+                    2,
+                )
+            if not offset.isdigit():
+                die(f"cursor {after!r} is not one this stub issued", 2)
+            start = int(offset)
+            if start > len(nodes):
+                die(f"cursor {after!r} is past the end of `{scope}`", 2)
+
+        page = nodes[start:start + size]
+        end = start + len(page)
+        has_next = end < len(nodes)
+        return page, start, {
             "hasNextPage": has_next,
-            "endCursor": f"{connection}:{end}" if has_next else None,
-        },
-    }
+            "endCursor": f"{scope}:{end}" if has_next else None,
+        }
+
+    def project(self, value, field, scope):
+        """Return only what `field` selected, shaped the way the API shapes it."""
+        if field.selections is None:
+            if isinstance(value, (dict, list)) or field.name in SCALAR_AS_OBJECT:
+                die(
+                    f"`{field.name}` is composite and was selected without a "
+                    "selection set",
+                    2,
+                )
+            return value
+        if field.selections == []:
+            die(f"`{field.name}` was selected with an empty selection set", 2)
+
+        if isinstance(value, str):
+            carrier = SCALAR_AS_OBJECT.get(field.name)
+            return self.node({carrier: value} if carrier else {},
+                             field.selections, scope)
+
+        if isinstance(value, list):
+            page, start, info = self.page_of(value, field.args, scope)
+            out = {}
+            for f in self.unique(field.selections, scope):
+                if f.name == "nodes":
+                    # Index from the page's absolute offset: a cursor issued
+                    # for a nested connection has to name the same parent on
+                    # every page, or it silently selects another parent's list.
+                    out[f.alias] = [
+                        self.node(n, f.selections, f"{scope}[{i}]")
+                        for i, n in enumerate(page, start=start)
+                    ]
+                elif f.name == "pageInfo":
+                    out[f.alias] = self.node(info, f.selections, scope)
+                elif f.name == "totalCount":
+                    out[f.alias] = len(value)
+                else:
+                    out[f.alias] = None
+            return out
+
+        if isinstance(value, dict):
+            return self.node(value, field.selections, scope)
+        return None
+
+    def node(self, node, selections, scope):
+        out = {}
+        for f in self.unique(selections, scope):
+            if f.name not in node:
+                out[f.alias] = None
+                continue
+            out[f.alias] = self.project(node[f.name], f, f"{scope}.{f.name}")
+        return out
+
+    @staticmethod
+    def unique(selections, scope):
+        """Reject a repeated response key rather than letting the last win."""
+        seen = set()
+        for f in selections or []:
+            if f.alias in seen:
+                die(
+                    f"`{f.alias}` is selected twice on `{scope}`; this stub "
+                    "does not merge selection sets, so it fails rather than "
+                    "silently returning one of them",
+                    2,
+                )
+            seen.add(f.alias)
+        return selections or []
 
 
 def graphql(argv, forge):
     query = ""
+    variables = {}
     for i, a in enumerate(argv):
+        val = None
         if a in ("-f", "--field", "-F", "--raw-field") and i + 1 < len(argv):
             val = argv[i + 1]
-            if val.startswith("query="):
-                query = val[len("query="):]
         elif a.startswith("query="):
-            query = a[len("query="):]
+            val = a
+        if val is None:
+            continue
+        key, sep, rest = val.partition("=")
+        if not sep:
+            continue
+        if key == "query":
+            query = rest
+        else:
+            variables[key] = rest
     if not query:
         die("no query= field supplied to `api graphql`", 2)
 
-    pr = {}
-    for connection, required in REQUIRED_GRAPHQL_FIELDS.items():
-        if not re.search(rf"\b{connection}\b", query):
-            continue
-        outer = NESTED_WHEN_PRESENT.get(connection)
-        if outer and re.search(rf"\b{outer}\b", query):
-            continue
-        block = selection_set(query, connection)
-        if block is None:
-            die(f"`{connection}` is named without a selection set", 2)
-        missing = [f for f in required if not re.search(rf"\b{f}\b", block)]
-        if missing:
+    top = Parser(tokenize(query)).parse_document()
+    repo = next((f for f in top if f.name == "repository"), None)
+    if repo is None or repo.selections is None:
+        die("query does not select `repository`", 2)
+    pr_field = next(
+        (f for f in repo.selections if f.name == "pullRequest"), None
+    )
+    if pr_field is None or pr_field.selections is None:
+        die("query does not select `repository.pullRequest`", 2)
+
+    served = {
+        "reviewThreads": forge.get("reviewThreads", []),
+        "reviews": forge.get("reviews", []),
+        "userContentEdits": forge.get("userContentEdits", []),
+        "comments": forge.get("comments", []),
+        "number": forge.get("number"),
+    }
+
+    ex = Executor(forge, variables)
+    pr, hit = {}, False
+    for f in Executor.unique(pr_field.selections, "pullRequest"):
+        if f.name not in served:
             die(
-                f"`{connection}` is requested without {', '.join(missing)}; "
-                "a real response would omit the field the skill depends on",
-                2,
+                f"`{f.name}` is outside the skill's fixed read set; this stub "
+                "serves reviewThreads, reviews, userContentEdits, the "
+                "top-level comments connection, and number",
+                3,
             )
-        pr[connection] = paginate(forge, connection, query)
-    if not pr:
+        required = REQUIRED_GRAPHQL_PATHS.get(f.name)
+        if required:
+            asked = selected_paths(f)
+            missing = [r for r in required if r not in asked]
+            if missing:
+                die(
+                    f"`{f.name}` is requested without {', '.join(missing)}; "
+                    "a real response would omit what the skill depends on",
+                    2,
+                )
+            hit = True
+        pr[f.alias] = ex.project(served[f.name], f, f.name)
+
+    if not hit:
         die(
-            "query names none of reviewThreads, reviews, userContentEdits, or the "
-            "top-level comments connection; "
-            "this stub serves only the skill's fixed read set",
+            "query names none of reviewThreads, reviews, userContentEdits, or "
+            "the top-level comments connection; this stub serves only the "
+            "skill's fixed read set",
             2,
         )
-    pr.setdefault("number", forge.get("number"))
     print(json.dumps({"data": {"repository": {"pullRequest": pr}}}, indent=2))
 
 

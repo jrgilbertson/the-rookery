@@ -62,12 +62,20 @@
         {
           "author": "sentinel-review",
           "createdAt": "2026-07-21T09:14:00Z",
-          "body": "What happens if the process dies between the failure and the re-enqueue? Consider tracking the delivery's phase explicitly so a sweeper could find stuck deliveries."
+          "body": "What happens if the process dies between the failure and the re-enqueue? Consider tracking the delivery's phase explicitly so a sweeper could find stuck deliveries.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-21T09:14:00Z",
+            "state": "COMMENTED"
+          }
         },
         {
           "author": "danov",
           "createdAt": "2026-07-21T11:40:00Z",
-          "body": "Fair point for a crash window. Added a `DeliveryPhase` enum and a phase column so state is visible."
+          "body": "Fair point for a crash window. Added a `DeliveryPhase` enum and a phase column so state is visible.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-21T09:14:00Z",
+            "state": "COMMENTED"
+          }
         }
       ]
     },
@@ -79,12 +87,20 @@
         {
           "author": "sentinel-review",
           "createdAt": "2026-07-22T09:02:00Z",
-          "body": "Phase writes happen in both sender.py and queue.py and could interleave. Suggest an explicit transition table so illegal jumps fail loudly rather than corrupting state."
+          "body": "Phase writes happen in both sender.py and queue.py and could interleave. Suggest an explicit transition table so illegal jumps fail loudly rather than corrupting state.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-22T09:02:00Z",
+            "state": "COMMENTED"
+          }
         },
         {
           "author": "danov",
           "createdAt": "2026-07-22T13:19:00Z",
-          "body": "Added the `ALLOWED` transition table. Also added a `PARKED` state \u2014 gives operators a place to put a delivery if a sweeper ever finds one in a bad state."
+          "body": "Added the `ALLOWED` transition table. Also added a `PARKED` state \u2014 gives operators a place to put a delivery if a sweeper ever finds one in a bad state.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-22T09:02:00Z",
+            "state": "COMMENTED"
+          }
         }
       ]
     },
@@ -96,12 +112,20 @@
         {
           "author": "sentinel-review",
           "createdAt": "2026-07-23T09:07:00Z",
-          "body": "During a partner outage operators may want retries off without a deploy. A config flag would cover that."
+          "body": "During a partner outage operators may want retries off without a deploy. A config flag would cover that.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-23T09:07:00Z",
+            "state": "COMMENTED"
+          }
         },
         {
           "author": "danov",
           "createdAt": "2026-07-23T10:55:00Z",
-          "body": "Added `webhook_retry_mode` with `off` and `single`. I put `adaptive` in as a placeholder value so the setting won't need a migration if we ever do backoff."
+          "body": "Added `webhook_retry_mode` with `off` and `single`. I put `adaptive` in as a placeholder value so the setting won't need a migration if we ever do backoff.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-23T09:07:00Z",
+            "state": "COMMENTED"
+          }
         }
       ]
     },
@@ -113,12 +137,20 @@
         {
           "author": "sentinel-review",
           "createdAt": "2026-07-24T09:11:00Z",
-          "body": "`payload` could be None if a row predates the insert-time validation."
+          "body": "`payload` could be None if a row predates the insert-time validation.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T09:11:00Z",
+            "state": "COMMENTED"
+          }
         },
         {
           "author": "danov",
           "createdAt": "2026-07-24T09:48:00Z",
-          "body": "That validation shipped in 4.2 and the table was backfilled, but I added the guards anyway to be safe. A None payload now parks the delivery."
+          "body": "That validation shipped in 4.2 and the table was backfilled, but I added the guards anyway to be safe. A None payload now parks the delivery.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T09:11:00Z",
+            "state": "COMMENTED"
+          }
         }
       ]
     }

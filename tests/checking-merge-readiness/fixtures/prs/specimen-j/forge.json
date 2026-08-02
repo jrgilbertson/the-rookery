@@ -55,12 +55,20 @@
         {
           "author": "quill-bot",
           "createdAt": "2026-07-24T09:12:00Z",
-          "body": "`_cache.get` returning `None` is ambiguous if a resolve can legitimately return `None`."
+          "body": "`_cache.get` returning `None` is ambiguous if a resolve can legitimately return `None`.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T09:12:00Z",
+            "state": "COMMENTED"
+          }
         },
         {
           "author": "rhodes-dev",
           "createdAt": "2026-07-24T09:58:00Z",
-          "body": "It cannot; `_resolve_uncached` returns an empty frozenset for no permissions, never `None`. Added that to the docstring so the next reader does not have to check."
+          "body": "It cannot; `_resolve_uncached` returns an empty frozenset for no permissions, never `None`. Added that to the docstring so the next reader does not have to check.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T09:12:00Z",
+            "state": "COMMENTED"
+          }
         }
       ]
     },
@@ -72,17 +80,29 @@
         {
           "author": "petra-dev",
           "createdAt": "2026-07-24T14:20:00Z",
-          "body": "If this shares an eviction pool with the feature-flag cache, a burst of permission entries will evict flags and we will get flag flapping under load."
+          "body": "If this shares an eviction pool with the feature-flag cache, a burst of permission entries will evict flags and we will get flag flapping under load.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T09:12:00Z",
+            "state": "COMMENTED"
+          }
         },
         {
           "author": "rhodes-dev",
           "createdAt": "2026-07-24T15:05:00Z",
-          "body": "Good catch. Made it a second instance with its own cap rather than a shared pool, so the two cannot evict each other."
+          "body": "Good catch. Made it a second instance with its own cap rather than a shared pool, so the two cannot evict each other.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T09:12:00Z",
+            "state": "COMMENTED"
+          }
         },
         {
           "author": "petra-dev",
           "createdAt": "2026-07-24T15:19:00Z",
-          "body": "That does it. Resolved."
+          "body": "That does it. Resolved.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T09:12:00Z",
+            "state": "COMMENTED"
+          }
         }
       ]
     },
@@ -94,12 +114,20 @@
         {
           "author": "petra-dev",
           "createdAt": "2026-07-24T14:26:00Z",
-          "body": "Worth asserting the org passed through here is the same one the request authenticated against, not the one in the path parameter."
+          "body": "Worth asserting the org passed through here is the same one the request authenticated against, not the one in the path parameter.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T09:12:00Z",
+            "state": "COMMENTED"
+          }
         },
         {
           "author": "rhodes-dev",
           "createdAt": "2026-07-24T15:41:00Z",
-          "body": "It is the authenticated one; the path parameter never reaches this call. Added a test that a mismatched path org does not change the cache key."
+          "body": "It is the authenticated one; the path parameter never reaches this call. Added a test that a mismatched path org does not change the cache key.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T09:12:00Z",
+            "state": "COMMENTED"
+          }
         }
       ]
     }

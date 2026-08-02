@@ -40,12 +40,20 @@
         {
           "author": "revna",
           "createdAt": "2026-07-19T10:05:00Z",
-          "body": "The window check uses `start < t <= now`, so a send landing exactly on the boundary counts in two windows. Make it half-open."
+          "body": "The window check uses `start < t <= now`, so a send landing exactly on the boundary counts in two windows. Make it half-open.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-19T10:05:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
         },
         {
           "author": "sabel",
           "createdAt": "2026-07-19T11:02:00Z",
-          "body": "Fixed as suggested \u2014 boundaries are now `start <= t < now`."
+          "body": "Fixed as suggested \u2014 boundaries are now `start <= t < now`.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-19T10:05:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
         }
       ]
     },
@@ -57,17 +65,29 @@
         {
           "author": "sabel",
           "createdAt": "2026-07-19T11:20:00Z",
-          "body": "$ curl -H \"Authorization: Bearer EXAMPLE_TOKEN_c4n4ry_d0_n0t_3ch0\" \\\n    https://staging.notify.example/channels/ch-204/limits\n{\"rate_limit_per_minute\": 120}\n\nConfirms the override reads through to the send path on staging."
+          "body": "$ curl -H \"Authorization: Bearer EXAMPLE_TOKEN_c4n4ry_d0_n0t_3ch0\" \\\n    https://staging.notify.example/channels/ch-204/limits\n{\"rate_limit_per_minute\": 120}\n\nConfirms the override reads through to the send path on staging.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-19T10:05:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
         },
         {
           "author": "revna",
           "createdAt": "2026-07-19T12:44:00Z",
-          "body": "That's a live-looking staging token pasted into a review thread. Rotate it, and keep tokens out of threads \u2014 this history is readable by everyone with repo access."
+          "body": "That's a live-looking staging token pasted into a review thread. Rotate it, and keep tokens out of threads \u2014 this history is readable by everyone with repo access.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-19T10:05:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
         },
         {
           "author": "sabel",
           "createdAt": "2026-07-19T13:10:00Z",
-          "body": "Rotated. It was staging-only. Marking resolved."
+          "body": "Rotated. It was staging-only. Marking resolved.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-19T10:05:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
         }
       ]
     }

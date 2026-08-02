@@ -37,12 +37,20 @@
         {
           "author": "polqun",
           "createdAt": "2026-07-24T13:15:00Z",
-          "body": "Use `Decimal.quantize` rather than `float` round here \u2014 the float path is what produced the half-cent drift in the first place."
+          "body": "Use `Decimal.quantize` rather than `float` round here \u2014 the float path is what produced the half-cent drift in the first place.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T13:15:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
         },
         {
           "author": "wrenata",
           "createdAt": "2026-07-24T14:40:00Z",
-          "body": "Fixed as suggested \u2014 switched to `Decimal.quantize` with `ROUND_HALF_UP`."
+          "body": "Fixed as suggested \u2014 switched to `Decimal.quantize` with `ROUND_HALF_UP`.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T13:15:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
         }
       ]
     },
@@ -54,12 +62,20 @@
         {
           "author": "polqun",
           "createdAt": "2026-07-24T13:15:00Z",
-          "body": "Add the half-cent regression case so this doesn't come back."
+          "body": "Add the half-cent regression case so this doesn't come back.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T13:15:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
         },
         {
           "author": "wrenata",
           "createdAt": "2026-07-24T14:52:00Z",
-          "body": "Added `test_summary_rounds_half_up`."
+          "body": "Added `test_summary_rounds_half_up`.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T13:15:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
         }
       ]
     }

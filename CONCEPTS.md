@@ -76,6 +76,22 @@ asserts the exact verdict-and-exit pair for every documented state, including
 adversarial states. A helper whose contract exists only in its header comment
 is itself a prose-only invariant — the defect class it exists to catch.
 
+### Merge Digest
+
+The pre-merge readout `checking-merge-readiness` composes from a PR's
+description, diff, and review history: plain-language themes of what review
+did, an intent-drift check, and graded Risk Drivers rolling into a three-light
+recommendation of merge, pause, or do not merge. It lives in the conversation
+and changes nothing, so the owner still does the merging.
+
+### Risk Driver
+
+A named, graded (low / medium / high) finding in the Merge Digest's risk
+profile: a specific place where accumulated review fixes put tension on an
+engineering first principle such as DRY, single source of truth, YAGNI, or
+defensive-complexity creep. Drivers roll up into one merge-risk grade; a word
+grade traceable to a named driver is used instead of a numeric score.
+
 ### Targeted Sweep
 
 The pre-PR gate's check of the evidence-backed finding classes that drive

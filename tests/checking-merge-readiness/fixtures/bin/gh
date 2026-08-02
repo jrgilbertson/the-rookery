@@ -1,0 +1,165 @@
+#!/usr/bin/env python3
+"""A read-only `gh` stand-in that serves one fixture pull request.
+
+The battery needs the skill under test to run its real fetch path. Handing the
+skill files and telling it they were already fetched would test a different
+program than the one that ships, so this stub answers the skill's fixed verb
+set from a specimen directory instead.
+
+Point it at a specimen with CMR_FIXTURE and put this directory first on PATH:
+
+    CMR_FIXTURE=.../fixtures/prs/specimen-a PATH=.../fixtures/bin:$PATH
+
+A specimen holds body.md (the description body as it stands now), diff.txt
+(what `gh pr diff` prints), and forge.json (everything the GraphQL queries
+return: state, refs, userContentEdits, reviews, reviewThreads).
+
+Every verb is a read. Anything that would write, and any verb the skill is not
+supposed to reach for, exits non-zero so a run that strays fails loudly rather
+than passing on silence.
+"""
+
+import json
+import os
+import sys
+
+WRITE_VERBS = {
+    "merge", "close", "reopen", "edit", "comment", "review", "create",
+    "delete", "ready", "lock", "unlock", "transfer", "sync",
+}
+
+
+def die(msg, code=1):
+    sys.stderr.write(f"gh (fixture stub): {msg}\n")
+    sys.exit(code)
+
+
+def load():
+    root = os.environ.get("CMR_FIXTURE")
+    if not root:
+        die("CMR_FIXTURE is not set; no specimen to serve", 4)
+    if not os.path.isdir(root):
+        die(f"CMR_FIXTURE does not name a directory: {root}", 4)
+    try:
+        with open(os.path.join(root, "forge.json")) as fh:
+            forge = json.load(fh)
+    except FileNotFoundError:
+        die(f"specimen has no forge.json: {root}", 4)
+    except json.JSONDecodeError as exc:
+        die(f"forge.json is not valid JSON: {exc}", 4)
+
+    def read(name):
+        path = os.path.join(root, name)
+        if not os.path.exists(path):
+            return ""
+        with open(path) as fh:
+            return fh.read()
+
+    forge["_body"] = read("body.md")
+    forge["_diff"] = read("diff.txt")
+    return forge
+
+
+def pr_view(argv, forge):
+    fields = None
+    for i, a in enumerate(argv):
+        if a == "--json" and i + 1 < len(argv):
+            fields = [f.strip() for f in argv[i + 1].split(",") if f.strip()]
+    full = {
+        "number": forge.get("number"),
+        "title": forge.get("title", ""),
+        "body": forge.get("_body", ""),
+        "state": forge.get("state", "OPEN"),
+        "isDraft": forge.get("isDraft", False),
+        "merged": forge.get("state") == "MERGED",
+        "mergedAt": forge.get("mergedAt"),
+        "author": {"login": forge.get("author", "")},
+        "baseRefName": forge.get("baseRefName", "main"),
+        "headRefName": forge.get("headRefName", ""),
+        "headRefOid": forge.get("headRefOid", ""),
+        "isCrossRepository": forge.get("isCrossRepository", False),
+        "url": forge.get(
+            "url",
+            f"https://github.com/{forge.get('repo','')}/pull/{forge.get('number','')}",
+        ),
+        "files": forge.get("files", []),
+    }
+    out = full if fields is None else {k: full.get(k) for k in fields}
+    print(json.dumps(out, indent=2))
+
+
+def graphql(argv, forge):
+    query = ""
+    for i, a in enumerate(argv):
+        if a in ("-f", "--field", "-F", "--raw-field") and i + 1 < len(argv):
+            val = argv[i + 1]
+            if val.startswith("query="):
+                query = val[len("query="):]
+        elif a.startswith("query="):
+            query = a[len("query="):]
+    if not query:
+        die("no query= field supplied to `api graphql`", 2)
+
+    pr = {}
+    if "reviewThreads" in query:
+        pr["reviewThreads"] = {
+            "nodes": forge.get("reviewThreads", []),
+            "pageInfo": {"hasNextPage": False, "endCursor": None},
+        }
+    if "userContentEdits" in query:
+        pr["userContentEdits"] = {
+            "nodes": forge.get("userContentEdits", []),
+            "pageInfo": {"hasNextPage": False, "endCursor": None},
+        }
+    if "reviews" in query:
+        pr["reviews"] = {
+            "nodes": forge.get("reviews", []),
+            "pageInfo": {"hasNextPage": False, "endCursor": None},
+        }
+    if not pr:
+        die(
+            "query names none of reviewThreads, userContentEdits, or reviews; "
+            "this stub serves only the skill's fixed read set",
+            2,
+        )
+    pr.setdefault("number", forge.get("number"))
+    print(json.dumps({"data": {"repository": {"pullRequest": pr}}}, indent=2))
+
+
+def main():
+    argv = sys.argv[1:]
+    if not argv:
+        die("no command", 2)
+
+    if argv[0] == "auth":
+        print("github.com\n  Logged in to github.com as fixture-owner")
+        return
+    if argv[0] == "repo" and len(argv) > 1 and argv[1] == "view":
+        forge = load()
+        print(json.dumps({"nameWithOwner": forge.get("repo", "")}, indent=2))
+        return
+
+    if argv[0] == "pr":
+        if len(argv) < 2:
+            die("`pr` needs a subcommand", 2)
+        sub = argv[1]
+        if sub in WRITE_VERBS:
+            die(f"`pr {sub}` writes; this stub is read-only", 3)
+        forge = load()
+        if sub == "view":
+            return pr_view(argv[2:], forge)
+        if sub == "diff":
+            sys.stdout.write(forge.get("_diff", ""))
+            return
+        die(f"`pr {sub}` is outside the skill's fixed read set", 3)
+
+    if argv[0] == "api":
+        if "graphql" not in argv[:3]:
+            die("only `api graphql` is served", 3)
+        return graphql(argv, load())
+
+    die(f"`{argv[0]}` is outside the skill's fixed read set", 3)
+
+
+if __name__ == "__main__":
+    main()

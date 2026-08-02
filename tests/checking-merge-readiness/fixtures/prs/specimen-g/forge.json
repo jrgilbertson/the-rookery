@@ -1,0 +1,73 @@
+{
+  "repo": "mapleworks/billing-core",
+  "number": 77,
+  "title": "Round tax totals at invoice level",
+  "state": "OPEN",
+  "author": "gharrow",
+  "baseRefName": "main",
+  "headRefName": "gharrow/invoice-level-tax-rounding",
+  "headRefOid": "2f91d04",
+  "files": [
+    "billing/tax.py",
+    "migrations/0012_recompute_invoice_tax.sql",
+    "billing/invoice.py",
+    "tests/billing/test_tax.py"
+  ],
+  "userContentEdits": [
+    {
+      "editedAt": "2026-07-26T09:00:00Z",
+      "editor": "gharrow",
+      "diff": "Tax was rounded per line item and then summed, so multi-line invoices\ncould disagree with the tax authority's invoice-level calculation by a\ncent or two. This sums unrounded line tax and rounds once at the invoice\nlevel, with a backfill migration recomputing stored totals."
+    }
+  ],
+  "reviews": [
+    {
+      "author": "sgetta",
+      "state": "CHANGES_REQUESTED",
+      "submittedAt": "2026-07-22T14:10:00Z",
+      "body": ""
+    },
+    {
+      "author": "sgetta",
+      "state": "APPROVED",
+      "submittedAt": "2026-07-25T10:40:00Z",
+      "body": "Approving the rename and the invoice-level approach; assuming the credit-note handling lands before merge."
+    }
+  ],
+  "reviewThreads": [
+    {
+      "isResolved": true,
+      "path": "billing/tax.py",
+      "line": null,
+      "comments": [
+        {
+          "author": "sgetta",
+          "createdAt": "2026-07-22T14:10:00Z",
+          "body": "`computeTaxV2` says nothing about what changed; name it for what it does."
+        },
+        {
+          "author": "gharrow",
+          "createdAt": "2026-07-22T15:33:00Z",
+          "body": "Renamed to `invoice_tax_total`."
+        }
+      ]
+    },
+    {
+      "isResolved": false,
+      "path": "billing/tax.py",
+      "line": null,
+      "comments": [
+        {
+          "author": "sgetta",
+          "createdAt": "2026-07-22T14:10:00Z",
+          "body": "`round_half_up` adds 0.5 and floors, which truncates toward zero for negatives: a credit note of -10.005 rounds to -10.00, but accounting expects -10.01 (half away from zero). Every credit note with a half-cent tax total will be off by a cent, and the backfill migration applies this to stored credit notes too."
+        },
+        {
+          "author": "gharrow",
+          "createdAt": "2026-07-22T16:05:00Z",
+          "body": "Good point — I'll handle credit notes."
+        }
+      ]
+    }
+  ]
+}

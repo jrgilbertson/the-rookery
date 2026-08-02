@@ -84,6 +84,16 @@ Mechanical classes run through bundled helpers that defer to repo-owned
 equivalents; judgment classes run by model instruction. The class list comes
 from PR forensics and is refreshable as review history accumulates.
 
+## Research synthesis
+
+### First-Principles Analysis
+
+A research synthesis pass that separates verified facts, assumptions, and irreducible constraints, then traces the causal mechanisms and conditions that must hold for the main claims to be true.
+
+### System Dynamics Analysis
+
+A research synthesis pass that defines a useful system boundary, maps material relationships, incentives, constraints, feedback, and delays, and traces higher-order effects without promoting uncertain causal links to facts.
+
 ## Skill quality gates
 
 ### Baseline Test

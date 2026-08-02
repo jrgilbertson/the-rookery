@@ -59,8 +59,19 @@ for skilled/bare pairs. Scenario 11 uses real `gh` against real GitHub.
 
 Author-graded re-runs of s1/s2b/s5/s8b on 2026-08-02 exist in the prior PR's
 history but are weaker than blind grades; treat them as smoke, not ship proof.
-Re-grading a discriminating case blind on the final 331-line text remains open
-soft work, not a hard block.
+
+### Blind re-grade after step-2 reframe (2026-08-02, head 94f6e4a9c370)
+
+Matched pairs in fresh contexts; independent graders saw one readout + checklist
+only (labels runA/runB; not told skilled vs bare). Creating-portable-skills
+requires this for substantive instruction revisions; author grading does not count.
+
+- 2026-08-02 | 94f6e4a9c370 | battery s3 intent drift (skilled) | pass (4/4) | blind grader runA; baseline from earliest edit; drift ≠ scope; do not merge; redesign + ce-pov unavailable
+- 2026-08-02 | 94f6e4a9c370 | battery s3 intent drift (bare) | fail (3/4) | blind grader runB; items 1–3 pass (intent/drift/do-not-merge instinct held); item 4 fails — no redesign menu / ce-pov named unavailable. Discriminates on decision-form
+- 2026-08-02 | 94f6e4a9c370 | battery s10 non-thread feedback (skilled) | pass (5/5) | blind grader runA; nadia-sec high + tobin-sre unresolved; do not merge; multi-page after cursors in log
+- 2026-08-02 | 94f6e4a9c370 | battery s10 non-thread feedback (bare) | pass (5/5) | blind grader runB; same outcome axis as skilled on this model — does not discriminate; retained as regression guard (same class as historical s6)
+- 2026-08-02 | 94f6e4a9c370 | battery s11 live #23 (skilled) | pass (4/4) | blind grader re-fetched live; 62 threads / 88 reviews / 139 comments match; five spot-checks hold; recommendation pause (medium accretion); fetch surfaces complete in command log
+
 
 ## Known limitations
 

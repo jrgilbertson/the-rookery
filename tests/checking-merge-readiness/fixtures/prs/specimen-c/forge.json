@@ -25,6 +25,7 @@
   ],
   "reviews": [
     {
+      "id": "PRR_c0",
       "author": "tverne",
       "state": "CHANGES_REQUESTED",
       "submittedAt": "2026-07-14T10:20:00Z",
@@ -32,6 +33,7 @@
       "commit": "77b41ce"
     },
     {
+      "id": "PRR_c1",
       "author": "tverne",
       "state": "CHANGES_REQUESTED",
       "submittedAt": "2026-07-17T09:48:00Z",
@@ -39,6 +41,7 @@
       "commit": "77b41ce"
     },
     {
+      "id": "PRR_c2",
       "author": "quill-bot",
       "state": "COMMENTED",
       "submittedAt": "2026-07-21T08:55:00Z",
@@ -46,6 +49,7 @@
       "commit": "77b41ce"
     },
     {
+      "id": "PRR_c3",
       "author": "tverne",
       "state": "COMMENTED",
       "submittedAt": "2026-07-21T14:10:00Z",
@@ -53,6 +57,7 @@
       "commit": "77b41ce"
     },
     {
+      "id": "PRR_c4",
       "author": "tverne",
       "state": "APPROVED",
       "submittedAt": "2026-07-24T11:05:00Z",
@@ -62,11 +67,13 @@
   ],
   "reviewThreads": [
     {
+      "id": "PRRT_c0",
       "isResolved": true,
       "path": "api/products/handlers.py",
       "line": null,
       "comments": [
         {
+          "id": "PRRC_c0_0",
           "author": "tverne",
           "createdAt": "2026-07-14T10:20:00Z",
           "body": "A 60-second TTL means a price change shows stale for up to a minute.\nMerchandising will file bugs the first week. Can we invalidate on write\ninstead of waiting out the TTL?",
@@ -76,6 +83,7 @@
           }
         },
         {
+          "id": "PRRC_c0_1",
           "author": "lsorel",
           "createdAt": "2026-07-14T16:02:00Z",
           "body": "Agreed \u2014 switched to write-triggered invalidation for the products cache; TTL stays as a backstop.",
@@ -87,11 +95,13 @@
       ]
     },
     {
+      "id": "PRRT_c1",
       "isResolved": true,
       "path": "api/products/handlers.py",
       "line": null,
       "comments": [
         {
+          "id": "PRRC_c1_0",
           "author": "tverne",
           "createdAt": "2026-07-17T09:48:00Z",
           "body": "The invalidation hook is hard-wired to the products handler. If we're\ndoing invalidation at all, a tag registry would let other endpoints opt\nin without copying this pattern.",
@@ -101,6 +111,7 @@
           }
         },
         {
+          "id": "PRRC_c1_1",
           "author": "lsorel",
           "createdAt": "2026-07-17T15:30:00Z",
           "body": "Generalized it \u2014 added `TagRegistry` and moved products onto tags. Other endpoints can register later.",
@@ -112,11 +123,13 @@
       ]
     },
     {
+      "id": "PRRT_c2",
       "isResolved": true,
       "path": "cache/registry.py",
       "line": null,
       "comments": [
         {
+          "id": "PRRC_c2_0",
           "author": "quill-bot",
           "createdAt": "2026-07-21T08:55:00Z",
           "body": "Writers call the cache layer directly, coupling every writer to cache\ninternals. An event bus would decouple them.",
@@ -126,6 +139,7 @@
           }
         },
         {
+          "id": "PRRC_c2_1",
           "author": "lsorel",
           "createdAt": "2026-07-21T12:20:00Z",
           "body": "Added `invalidation_bus` with a documented event format, and namespaced the tags so the storefront service can subscribe to invalidation events later.",
@@ -137,11 +151,13 @@
       ]
     },
     {
+      "id": "PRRT_c3",
       "isResolved": true,
       "path": "cache/middleware.py",
       "line": null,
       "comments": [
         {
+          "id": "PRRC_c3_0",
           "author": "tverne",
           "createdAt": "2026-07-21T14:10:00Z",
           "body": "On-call will want a manual flush when a bad entry sticks. Admin\nendpoint?",
@@ -151,6 +167,7 @@
           }
         },
         {
+          "id": "PRRC_c3_1",
           "author": "lsorel",
           "createdAt": "2026-07-21T17:44:00Z",
           "body": "Added `POST /admin/cache/flush` by tag.",
@@ -161,5 +178,6 @@
         }
       ]
     }
-  ]
+  ],
+  "comments": []
 }

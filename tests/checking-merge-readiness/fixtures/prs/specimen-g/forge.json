@@ -22,6 +22,7 @@
   ],
   "reviews": [
     {
+      "id": "PRR_g0",
       "author": "sgetta",
       "state": "CHANGES_REQUESTED",
       "submittedAt": "2026-07-22T14:10:00Z",
@@ -29,6 +30,7 @@
       "commit": "2f91d04"
     },
     {
+      "id": "PRR_g1",
       "author": "sgetta",
       "state": "APPROVED",
       "submittedAt": "2026-07-25T10:40:00Z",
@@ -38,11 +40,13 @@
   ],
   "reviewThreads": [
     {
+      "id": "PRRT_g0",
       "isResolved": true,
       "path": "billing/tax.py",
       "line": null,
       "comments": [
         {
+          "id": "PRRC_g0_0",
           "author": "sgetta",
           "createdAt": "2026-07-22T14:10:00Z",
           "body": "`computeTaxV2` says nothing about what changed; name it for what it does.",
@@ -52,6 +56,7 @@
           }
         },
         {
+          "id": "PRRC_g0_1",
           "author": "gharrow",
           "createdAt": "2026-07-22T15:33:00Z",
           "body": "Renamed to `invoice_tax_total`.",
@@ -63,11 +68,13 @@
       ]
     },
     {
+      "id": "PRRT_g1",
       "isResolved": false,
       "path": "billing/tax.py",
       "line": null,
       "comments": [
         {
+          "id": "PRRC_g1_0",
           "author": "sgetta",
           "createdAt": "2026-07-22T14:10:00Z",
           "body": "`round_half_up` adds 0.5 and floors, which truncates toward zero for negatives: a credit note of -10.005 rounds to -10.00, but accounting expects -10.01 (half away from zero). Every credit note with a half-cent tax total will be off by a cent, and the backfill migration applies this to stored credit notes too.",
@@ -77,6 +84,7 @@
           }
         },
         {
+          "id": "PRRC_g1_1",
           "author": "gharrow",
           "createdAt": "2026-07-22T16:05:00Z",
           "body": "Good point \u2014 I'll handle credit notes.",
@@ -87,5 +95,6 @@
         }
       ]
     }
-  ]
+  ],
+  "comments": []
 }

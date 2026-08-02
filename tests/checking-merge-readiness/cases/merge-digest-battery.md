@@ -31,9 +31,17 @@ records its lines in `../log.md`.
 Every scenario except scenario 8 gives the run a `gh` to call.
 `../fixtures/bin/gh` is a read-only stand-in that serves one specimen: it
 answers `gh pr view`, `gh pr diff`, and the GraphQL review-thread,
-review-submission, and `userContentEdits` queries from that specimen's files,
-and it exits non-zero on any write verb or any verb outside the skill's fixed
-read set. Setting `CMR_GH_AUTH_FAIL` serves the same forge unauthenticated:
+review-submission, top-level comment, and `userContentEdits` queries from that
+specimen's files, paginating every connection so a run has to follow cursors.
+It exits non-zero on any write verb, any verb outside the skill's fixed read
+set, any selector naming a pull request the specimen is not, and any query
+that under-fetches a connection the skill depends on.
+
+What it deliberately does not do is simulate GraphQL. It does not check that a
+query is well formed or trim a response to the fields that query selected,
+because a stand-in can never be more correct about GitHub than GitHub is, only
+differently wrong. Whether the skill's fetch actually works is scenario 11's
+question, asked against the real API. Setting `CMR_GH_AUTH_FAIL` serves the same forge unauthenticated:
 every `pr` and `api` call fails with an authentication error, so a scenario
 that needs the degraded path observes a real failure instead of being told
 about one.
@@ -387,11 +395,21 @@ constructed forge cannot show what the skill does against a review history it
 did not design: dozens of threads, real pagination, and prose nobody wrote to
 be digested.
 
-Prompt: the shared frame with the stub setup removed, naming a merged pull
-request in `jrgilbertson/the-rookery` and the real `gh` already on PATH.
-Ground truth is not written here, because there is none to write: the pull
-request is whatever it is. The grader establishes ground truth by re-fetching
-the pull request and checking the run's factual claims against it.
+This scenario is not optional. It is the only place the skill's fetch contract
+meets real GitHub, and the eight constructed specimens cannot ask that question
+because the pull requests they describe never existed. A cycle that skips it
+ships a fetch contract nothing has exercised.
+
+Target: `jrgilbertson/the-rookery#23`, merged, at its merge commit. Pinning
+one pull request is what makes the scenario runnable and re-gradable: without
+it a runner cannot build the prompt and a grader has nothing stable to
+re-fetch. Any later substitution is a new scenario, recorded as such.
+
+Prompt: the shared frame with the stub setup removed, naming that pull request
+and the real `gh` already on PATH. Ground truth is not written here, because
+there is none to write: the pull request is whatever it is. The grader
+establishes ground truth by re-fetching it and checking the run's factual
+claims against it.
 
 Live pull request content stays out of this file, out of the fixtures, and
 out of the run log. Only the judgment survives.

@@ -18,6 +18,7 @@
   "userContentEdits": [],
   "reviews": [
     {
+      "id": "PRR_b0",
       "author": "sentinel-review",
       "state": "COMMENTED",
       "submittedAt": "2026-07-21T09:14:00Z",
@@ -25,6 +26,7 @@
       "commit": "9d2e770"
     },
     {
+      "id": "PRR_b1",
       "author": "sentinel-review",
       "state": "COMMENTED",
       "submittedAt": "2026-07-22T09:02:00Z",
@@ -32,6 +34,7 @@
       "commit": "9d2e770"
     },
     {
+      "id": "PRR_b2",
       "author": "sentinel-review",
       "state": "COMMENTED",
       "submittedAt": "2026-07-23T09:07:00Z",
@@ -39,6 +42,7 @@
       "commit": "9d2e770"
     },
     {
+      "id": "PRR_b3",
       "author": "sentinel-review",
       "state": "COMMENTED",
       "submittedAt": "2026-07-24T09:11:00Z",
@@ -46,6 +50,7 @@
       "commit": "9d2e770"
     },
     {
+      "id": "PRR_b4",
       "author": "imres",
       "state": "APPROVED",
       "submittedAt": "2026-07-25T15:30:00Z",
@@ -55,11 +60,13 @@
   ],
   "reviewThreads": [
     {
+      "id": "PRRT_b0",
       "isResolved": true,
       "path": "delivery/sender.py",
       "line": null,
       "comments": [
         {
+          "id": "PRRC_b0_0",
           "author": "sentinel-review",
           "createdAt": "2026-07-21T09:14:00Z",
           "body": "What happens if the process dies between the failure and the re-enqueue? Consider tracking the delivery's phase explicitly so a sweeper could find stuck deliveries.",
@@ -69,6 +76,7 @@
           }
         },
         {
+          "id": "PRRC_b0_1",
           "author": "danov",
           "createdAt": "2026-07-21T11:40:00Z",
           "body": "Fair point for a crash window. Added a `DeliveryPhase` enum and a phase column so state is visible.",
@@ -80,11 +88,13 @@
       ]
     },
     {
+      "id": "PRRT_b1",
       "isResolved": true,
       "path": "delivery/retry.py",
       "line": null,
       "comments": [
         {
+          "id": "PRRC_b1_0",
           "author": "sentinel-review",
           "createdAt": "2026-07-22T09:02:00Z",
           "body": "Phase writes happen in both sender.py and queue.py and could interleave. Suggest an explicit transition table so illegal jumps fail loudly rather than corrupting state.",
@@ -94,6 +104,7 @@
           }
         },
         {
+          "id": "PRRC_b1_1",
           "author": "danov",
           "createdAt": "2026-07-22T13:19:00Z",
           "body": "Added the `ALLOWED` transition table. Also added a `PARKED` state \u2014 gives operators a place to put a delivery if a sweeper ever finds one in a bad state.",
@@ -105,11 +116,13 @@
       ]
     },
     {
+      "id": "PRRT_b2",
       "isResolved": true,
       "path": "delivery/sender.py",
       "line": null,
       "comments": [
         {
+          "id": "PRRC_b2_0",
           "author": "sentinel-review",
           "createdAt": "2026-07-23T09:07:00Z",
           "body": "During a partner outage operators may want retries off without a deploy. A config flag would cover that.",
@@ -119,6 +132,7 @@
           }
         },
         {
+          "id": "PRRC_b2_1",
           "author": "danov",
           "createdAt": "2026-07-23T10:55:00Z",
           "body": "Added `webhook_retry_mode` with `off` and `single`. I put `adaptive` in as a placeholder value so the setting won't need a migration if we ever do backoff.",
@@ -130,11 +144,13 @@
       ]
     },
     {
+      "id": "PRRT_b3",
       "isResolved": true,
       "path": "delivery/sender.py",
       "line": null,
       "comments": [
         {
+          "id": "PRRC_b3_0",
           "author": "sentinel-review",
           "createdAt": "2026-07-24T09:11:00Z",
           "body": "`payload` could be None if a row predates the insert-time validation.",
@@ -144,6 +160,7 @@
           }
         },
         {
+          "id": "PRRC_b3_1",
           "author": "danov",
           "createdAt": "2026-07-24T09:48:00Z",
           "body": "That validation shipped in 4.2 and the table was backfilled, but I added the guards anyway to be safe. A None payload now parks the delivery.",
@@ -154,5 +171,6 @@
         }
       ]
     }
-  ]
+  ],
+  "comments": []
 }

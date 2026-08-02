@@ -1,0 +1,36 @@
+# Diff summary — PR #521 (mapleworks/relay-queue)
+
+Constructed summary of the final diff at head `c58e114` against base
+`main`. 5 files changed, +187 / -9.
+
+## migrations/0043_idempotency_key.sql (new, +14)
+
+Adds the nullable `idempotency_key` column and a partial unique index
+over `(idempotency_key)` where the key is not null, created
+`CONCURRENTLY`.
+
+## scheduler/scheduler.py (+61 / -6)
+
+The dedupe check before insert:
+
+    if job.idempotency_key is not None:
+        if store.exists_within_window(job.idempotency_key, WINDOW):
+            metrics.incr("jobs_deduplicated")
+            return DedupeResult.DROPPED
+    store.insert(job)
+
+The `exists_within_window` check and the `insert` are separate
+statements — there is no lock or upsert between them.
+
+## scheduler/store.py (+48 / -3)
+
+`exists_within_window` query and the insert path; the unique-index
+violation on the losing insert is caught and logged as
+`duplicate_key_race`, but both workers can already have executed the job
+body by then — the index stops the duplicate row, not the duplicate work.
+
+## metrics.py, tests/scheduler/test_dedupe.py (+64)
+
+Counter registration and tests: single-worker dedupe within the window,
+expiry outside the window, and keyless passthrough. No test runs two
+workers concurrently.

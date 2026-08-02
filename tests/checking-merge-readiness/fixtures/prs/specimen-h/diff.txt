@@ -1,0 +1,81 @@
+# Diff summary — PR #205 (mapleworks/inbox-svc)
+
+Constructed summary of the final diff at head `4c1b8e2` against base `main`.
+7 files changed, +268 / -9.
+
+## digest/job.py (new, +94)
+
+The scheduler entry point, run hourly. On each tick it iterates accounts with
+`daily_digest` enabled whose `digest_hour_local` matches the current hour in
+their own timezone, and calls `send_digest_for(account)` on each — one digest
+per account per local day.
+
+`send_digest_for` reads in this order. Each guard was added in a different
+review round. The order is load-bearing, and nothing in the file says so:
+
+```py
+def send_digest_for(account):
+    if not account.settings.daily_digest:
+        return DigestResult.OPTED_OUT
+    if account.created_at > now() - timedelta(hours=24):
+        return DigestResult.TOO_NEW
+    window = local_day_window(account.settings.digest_hour_local, account.timezone)
+    unread = unread_messages_in(account, window)
+    if not unread:
+        return DigestResult.NOTHING_TO_SEND
+    if recent_hard_bounce(account):
+        return DigestResult.SUPPRESSED
+    messages = unread[: account.settings.digest_max_messages]
+    Mailer.deliver(digest_email(account, messages, truncated=len(messages) < len(unread)))
+    return DigestResult.SENT
+```
+
+`DigestResult` is a five-value enum. Every value is returned by a branch above
+and asserted in the tests; the scheduler logs the counts per run. The file
+carries no comment explaining why any guard sits where it does. Two of the
+five are placement-sensitive, and reconstructing why means reading the review
+history.
+
+## digest/window.py (new, +38)
+
+`local_day_window(hour_local, tz)` returns the previous local day's bounds for
+an account, anchored on the account's configured send hour. Pure function, no
+I/O.
+
+## digest/suppression.py (new, +21)
+
+`recent_hard_bounce(account)` returns whether the account has a hard bounce
+inside the suppression window, and records the attempt. The recording is what
+makes the call order-sensitive.
+
+## digest/email.py (new, +34)
+
+`digest_email(account, messages)` builds the message from the existing
+transactional template. No new template engine; reuses `Mailer`'s renderer.
+
+## accounts/settings.py (+27 / -2)
+
+Adds three columns to the settings row:
+
+- `daily_digest` (boolean, default `false`) — the opt-in named in the
+  description.
+- `digest_hour_local` (integer, default `7`), the local hour to send at,
+  added in round 1. Validated to 0-23 on write, with the validation covered
+  by a test.
+- `digest_max_messages` (integer, default `50`), a per-account cap on how many
+  messages the email lists, added in round 4. Values above it are truncated and
+  the email says so.
+
+## migrations/0031_account_digest_settings.sql (new, +12)
+
+Adds the three columns with their defaults. No backfill required; every default
+is correct for existing rows.
+
+## tests/digest/test_job.py (new, +41)
+
+Covers each `DigestResult` value: opted out, too new, nothing to send,
+suppressed, and sent. Also covers the timezone window boundary (an account at
+`digest_hour_local = 0` in a UTC+13 zone), the settings validation rejecting
+hour 24, and truncation at `digest_max_messages`. Each test exercises one
+guard in isolation; no test covers a combination, so the relative order of the
+guards is not pinned by anything in the suite.

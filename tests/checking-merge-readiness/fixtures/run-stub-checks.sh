@@ -1,0 +1,163 @@
+#!/usr/bin/env bash
+# Minimal contract checks for the fixture `gh` stub.
+#
+# Scope: the few ways a constructed run can pass falsely —
+#   write succeeds, wrong PR served, under-fetch, page never followed,
+#   auth failure reads as success, variable cursor ignored.
+# Not in scope: GraphQL well-formedness (scenario 11 / live GitHub).
+#
+#   bash tests/checking-merge-readiness/fixtures/run-stub-checks.sh
+
+set -uo pipefail
+
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+GH="$HERE/bin/gh"
+PRS="$HERE/prs"
+PASS=0
+FAIL=0
+AUTHFAIL=
+
+pass() { PASS=$((PASS + 1)); printf 'PASS  %s\n' "$1"; }
+fail() { FAIL=$((FAIL + 1)); printf 'FAIL  %s\n     %s\n' "$1" "$2"; }
+
+exit_is() {
+  local label=$1 want=$2 spec=$3; shift 3
+  local out got
+  out=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} "$GH" "$@" 2>&1); got=$?
+  if [ "$got" = "$want" ]; then pass "$label"
+  else fail "$label" "expected exit $want, got $got: $(printf '%s' "$out" | head -1)"; fi
+}
+
+msg_is() {
+  local label=$1 want=$2 needle=$3 spec=$4; shift 4
+  local out got
+  out=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} "$GH" "$@" 2>&1); got=$?
+  if [ "$got" != "$want" ]; then
+    fail "$label" "expected exit $want, got $got: $(printf '%s' "$out" | head -1)"; return
+  fi
+  case "$out" in
+    *"$needle"*) pass "$label" ;;
+    *) fail "$label" "exit $want but for the wrong reason: $(printf '%s' "$out" | head -1)" ;;
+  esac
+}
+
+json_is() {
+  local label=$1 spec=$2 expr=$3 want=$4; shift 4
+  local raw got
+  raw=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} "$GH" "$@" 2>&1)
+  if [ $? -ne 0 ]; then
+    fail "$label" "command failed: $(printf '%s' "$raw" | head -1)"; return
+  fi
+  got=$(printf '%s' "$raw" | python3 -c "
+import json,sys
+d=json.load(sys.stdin)['data']['repository']['pullRequest']
+print($expr)
+" 2>&1)
+  if [ "$got" = "$want" ]; then pass "$label"
+  else fail "$label" "expected [$want], got [$got]"; fi
+}
+
+THREADS='query{repository{pullRequest{reviewThreads(first:100){pageInfo{hasNextPage endCursor} nodes{isResolved path comments(first:100){nodes{body author{login} pullRequestReview{submittedAt}}}}}}}}'
+REVIEWS='query{repository{pullRequest{reviews(first:100){pageInfo{hasNextPage endCursor} nodes{submittedAt state body commit{oid}}}}}}'
+COMMENTS='query{repository{pullRequest{comments(first:100){pageInfo{hasNextPage endCursor} nodes{body author{login}}}}}}'
+EDITS='query{repository{pullRequest{userContentEdits(first:100){pageInfo{hasNextPage endCursor} nodes{editedAt}}}}}'
+
+echo "== A. serve real fixture content =="
+json_is "specimen-a: four resolved threads" \
+  specimen-a "str(len(d['reviewThreads']['nodes']))+' '+str(all(t['isResolved'] for t in d['reviewThreads']['nodes']))" \
+  "4 True" api graphql -f "query=$THREADS"
+json_is "specimen-e: one unresolved thread" \
+  specimen-e "sum(1 for t in d['reviewThreads']['nodes'] if not t['isResolved'])" \
+  "1" api graphql -f "query=$THREADS"
+json_is "specimen-j: page one reports more" \
+  specimen-j "str(len(d['reviewThreads']['nodes']))+' '+str(d['reviewThreads']['pageInfo']['hasNextPage'])" \
+  "2 True" api graphql -f "query=$THREADS"
+json_is "specimen-j: page two is the third thread" \
+  specimen-j "str(len(d['reviewThreads']['nodes']))+' '+str(d['reviewThreads']['pageInfo']['hasNextPage'])" \
+  "1 False" api graphql \
+  -f 'query=query{repository{pullRequest{reviewThreads(first:100, after:"reviewThreads:2"){pageInfo{hasNextPage endCursor} nodes{isResolved path comments(first:100){nodes{body author{login} pullRequestReview{submittedAt}}}}}}}}'
+# Variable-bound after (what real skill runs use) — the footgun that forced the greenfield cursor fix.
+json_is "specimen-j: variable after advances reviews" \
+  specimen-j "any('invalidat' in (n.get('body') or '').lower() for n in d['reviews']['nodes'])" \
+  "True" api graphql \
+  -f 'query=query($cursor:String){repository{pullRequest{reviews(first:100, after:$cursor){nodes{submittedAt state body commit{oid}}}}}}' \
+  -f 'cursor=reviews:2'
+json_is "specimen-j: counters request behind comments cursor" \
+  specimen-j "any('hit' in (n.get('body') or '') for n in d['comments']['nodes'])" \
+  "True" api graphql \
+  -f 'query=query{repository{pullRequest{comments(first:100, after:"comments:2"){nodes{body author{login}}}}}}'
+
+echo "== B. under-fetch refuses =="
+exit_is "reviews without commit" 2 specimen-a api graphql \
+  -f 'query=query{repository{pullRequest{reviews(first:1){nodes{submittedAt state body}}}}}'
+exit_is "threads without isResolved" 2 specimen-a api graphql \
+  -f 'query=query{repository{pullRequest{reviewThreads(first:1){nodes{path comments(first:100){nodes{body author{login} pullRequestReview{submittedAt}}}}}}}}'
+exit_is "skill-shaped threads query accepted" 0 specimen-a api graphql -f "query=$THREADS"
+
+echo "== C. every specimen serves the battery-shaped queries =="
+for d in "$PRS"/specimen-*; do
+  s=$(basename "$d")
+  exit_is "specimen $s: threads" 0 "$s" api graphql -f "query=$THREADS"
+  exit_is "specimen $s: reviews" 0 "$s" api graphql -f "query=$REVIEWS"
+  exit_is "specimen $s: comments" 0 "$s" api graphql -f "query=$COMMENTS"
+  exit_is "specimen $s: edits" 0 "$s" api graphql -f "query=$EDITS"
+  exit_is "specimen $s: description" 0 "$s" pr view --json number,body,state
+  exit_is "specimen $s: diff" 0 "$s" pr diff
+done
+
+echo "== D. joins name real review submissions =="
+for d in "$PRS"/specimen-*; do
+  s=$(basename "$d")
+  got=$(python3 - "$d/forge.json" <<'PYE'
+import json,sys
+d=json.load(open(sys.argv[1]))
+real={r.get("submittedAt") for r in d.get("reviews",[])}
+ghosts=[c["pullRequestReview"]["submittedAt"]
+        for t in d.get("reviewThreads",[]) for c in t.get("comments",[])
+        if isinstance(c.get("pullRequestReview"),dict)
+        and c["pullRequestReview"].get("submittedAt") not in real]
+print(len(ghosts))
+PYE
+)
+  if [ "$got" = "0" ]; then pass "specimen $s: no ghost review join"
+  else fail "specimen $s: no ghost review join" "$got join(s) invent a round"; fi
+done
+
+echo "== E. read-only perimeter =="
+exit_is "pr view without --json" 2 specimen-a pr view
+exit_is "pr view unknown field" 2 specimen-a pr view --json bogusField
+exit_is "pr view served fields" 0 specimen-a pr view --json number,title
+msg_is "pr merge writes" 3 "writes; this stub is read-only" specimen-a pr merge
+msg_is "pr edit writes" 3 "writes; this stub is read-only" specimen-a pr edit
+msg_is "pr checkout outside set" 3 "outside the skill" specimen-a pr checkout
+msg_is "auth login writes" 3 "the rest of" specimen-a auth login
+exit_is "auth status reads" 0 specimen-a auth status
+exit_is "issue list outside set" 3 specimen-a issue list
+
+echo "== F. selector agrees with specimen =="
+exit_is "correct number + owner" 0 specimen-a pr view 412 --repo mapleworks --json number
+exit_is "no selector serves specimen" 0 specimen-a pr view --json number
+exit_is "wrong number" 1 specimen-a pr view 999999 --json number
+exit_is "wrong repo" 1 specimen-a pr view 412 --repo entirely/wrong --json number
+exit_is "matching URL" 0 specimen-a pr view https://github.com/mapleworks/orderline/pull/412 --json number
+exit_is "diff refuses another PR" 1 specimen-a pr diff 999999
+
+echo "== G. unauthenticated forge =="
+AUTHFAIL=1
+exit_is "auth-fail pr view" 4 specimen-a pr view --json number
+exit_is "auth-fail graphql" 4 specimen-a api graphql -f "query=$REVIEWS"
+exit_is "auth-fail status" 1 specimen-a auth status
+AUTHFAIL=
+exit_is "authenticated still serves" 0 specimen-a pr view --json number
+out=$(CMR_FIXTURE= "$GH" pr view --json number 2>&1); got=$?
+if [ "$got" = 4 ]; then pass "no specimen configured"
+else fail "no specimen configured" "expected exit 4, got $got"; fi
+
+echo "== H. unbound variable and mutation refuse =="
+exit_is "unbound after variable" 2 specimen-j api graphql \
+  -f 'query=query($cursor:String){repository{pullRequest{reviews(first:1, after:$cursor){nodes{submittedAt state body commit{oid}}}}}}'
+msg_is "mutation refused" 3 "mutation" specimen-a api graphql \
+  -f 'query=mutation{closePullRequest(input:{pullRequestId:"x"}){pullRequest{id}}}'
+
+printf '\n%d assertions: %d passed, %d failed\n' "$((PASS + FAIL))" "$PASS" "$FAIL"
+[ "$FAIL" -eq 0 ] || exit 1

@@ -1,0 +1,168 @@
+{
+  "repo": "mapleworks/orderline",
+  "number": 412,
+  "title": "Add CSV export to the invoices list",
+  "state": "OPEN",
+  "author": "petra-dev",
+  "baseRefName": "main",
+  "headRefName": "petra-dev/invoices-csv-export",
+  "headRefOid": "f3a9c21",
+  "files": [
+    "api/invoices/export.py",
+    "api/invoices/csv_rows.py",
+    "web/invoices/ListToolbar.tsx",
+    "tests/api/test_export.py"
+  ],
+  "userContentEdits": [],
+  "reviews": [
+    {
+      "id": "PRR_a0",
+      "author": "quill-bot",
+      "state": "COMMENTED",
+      "submittedAt": "2026-07-18T14:05:00Z",
+      "body": "",
+      "commit": "f3a9c21"
+    },
+    {
+      "id": "PRR_a1",
+      "author": "hbram",
+      "state": "CHANGES_REQUESTED",
+      "submittedAt": "2026-07-18T14:32:00Z",
+      "body": "",
+      "commit": "f3a9c21"
+    },
+    {
+      "id": "PRR_a2",
+      "author": "hbram",
+      "state": "APPROVED",
+      "submittedAt": "2026-07-20T16:40:00Z",
+      "body": "Matches what the description promises. Nice reuse of the list filters.",
+      "commit": "f3a9c21"
+    }
+  ],
+  "reviewThreads": [
+    {
+      "id": "PRRT_a0",
+      "isResolved": true,
+      "path": "api/invoices/export.py",
+      "line": null,
+      "comments": [
+        {
+          "id": "PRRC_a0_0",
+          "author": "quill-bot",
+          "createdAt": "2026-07-18T14:05:00Z",
+          "body": "The streaming response sets no `Content-Disposition`; browsers will render the CSV inline instead of downloading it.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-18T14:05:00Z",
+            "state": "COMMENTED"
+          }
+        },
+        {
+          "id": "PRRC_a0_1",
+          "author": "petra-dev",
+          "createdAt": "2026-07-18T15:04:00Z",
+          "body": "Fixed as suggested \u2014 added the header with a generated filename.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-18T14:05:00Z",
+            "state": "COMMENTED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "PRRT_a1",
+      "isResolved": true,
+      "path": "api/invoices/export.py",
+      "line": null,
+      "comments": [
+        {
+          "id": "PRRC_a1_0",
+          "author": "hbram",
+          "createdAt": "2026-07-18T14:32:00Z",
+          "body": "The filename interpolates the raw filter string; a filter containing a quote or newline produces a broken header.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-18T14:32:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        },
+        {
+          "id": "PRRC_a1_1",
+          "author": "petra-dev",
+          "createdAt": "2026-07-18T15:31:00Z",
+          "body": "Fixed differently \u2014 dropped the filter text from the filename entirely and used `invoices-<date>.csv`. Simpler and nothing to escape.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-18T14:32:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        },
+        {
+          "id": "PRRC_a1_2",
+          "author": "hbram",
+          "createdAt": "2026-07-18T16:02:00Z",
+          "body": "Cleaner than escaping. Resolved.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-18T14:32:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "PRRT_a2",
+      "isResolved": true,
+      "path": "api/invoices/csv_rows.py",
+      "line": null,
+      "comments": [
+        {
+          "id": "PRRC_a2_0",
+          "author": "quill-bot",
+          "createdAt": "2026-07-18T14:05:00Z",
+          "body": "`csv_rows` loads the full result set before writing; a large filtered set will buffer in memory.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-18T14:05:00Z",
+            "state": "COMMENTED"
+          }
+        },
+        {
+          "id": "PRRC_a2_1",
+          "author": "petra-dev",
+          "createdAt": "2026-07-18T15:47:00Z",
+          "body": "Fixed \u2014 reused the list endpoint's 500-row pagination helper so export batches the same way the list does.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-18T14:05:00Z",
+            "state": "COMMENTED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "PRRT_a3",
+      "isResolved": true,
+      "path": "tests/api/test_export.py",
+      "line": null,
+      "comments": [
+        {
+          "id": "PRRC_a3_0",
+          "author": "hbram",
+          "createdAt": "2026-07-20T09:15:00Z",
+          "body": "Nit: `test_export_2` doesn't say what it covers.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-18T14:32:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        },
+        {
+          "id": "PRRC_a3_1",
+          "author": "petra-dev",
+          "createdAt": "2026-07-20T10:12:00Z",
+          "body": "Renamed to `test_export_streams_in_batches`.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-18T14:32:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        }
+      ]
+    }
+  ],
+  "comments": []
+}

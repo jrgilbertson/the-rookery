@@ -1,0 +1,92 @@
+{
+  "repo": "mapleworks/ledgerd",
+  "number": 150,
+  "title": "fixes",
+  "state": "OPEN",
+  "author": "wrenata",
+  "baseRefName": "main",
+  "headRefName": "fix-summary-rounding",
+  "headRefOid": "41cc2b8",
+  "files": [
+    "report/summary.py",
+    "tests/report/test_summary.py"
+  ],
+  "userContentEdits": [],
+  "reviews": [
+    {
+      "id": "PRR_d0",
+      "author": "polqun",
+      "state": "CHANGES_REQUESTED",
+      "submittedAt": "2026-07-24T13:15:00Z",
+      "body": "",
+      "commit": "41cc2b8"
+    },
+    {
+      "id": "PRR_d1",
+      "author": "polqun",
+      "state": "APPROVED",
+      "submittedAt": "2026-07-25T09:20:00Z",
+      "body": "LGTM.",
+      "commit": "41cc2b8"
+    }
+  ],
+  "reviewThreads": [
+    {
+      "id": "PRRT_d0",
+      "isResolved": true,
+      "path": "report/summary.py",
+      "line": null,
+      "comments": [
+        {
+          "id": "PRRC_d0_0",
+          "author": "polqun",
+          "createdAt": "2026-07-24T13:15:00Z",
+          "body": "Use `Decimal.quantize` rather than `float` round here \u2014 the float path is what produced the half-cent drift in the first place.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T13:15:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        },
+        {
+          "id": "PRRC_d0_1",
+          "author": "wrenata",
+          "createdAt": "2026-07-24T14:40:00Z",
+          "body": "Fixed as suggested \u2014 switched to `Decimal.quantize` with `ROUND_HALF_UP`.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T13:15:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "PRRT_d1",
+      "isResolved": true,
+      "path": "tests/report/test_summary.py",
+      "line": null,
+      "comments": [
+        {
+          "id": "PRRC_d1_0",
+          "author": "polqun",
+          "createdAt": "2026-07-24T13:15:00Z",
+          "body": "Add the half-cent regression case so this doesn't come back.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T13:15:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        },
+        {
+          "id": "PRRC_d1_1",
+          "author": "wrenata",
+          "createdAt": "2026-07-24T14:52:00Z",
+          "body": "Added `test_summary_rounds_half_up`.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T13:15:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        }
+      ]
+    }
+  ],
+  "comments": []
+}

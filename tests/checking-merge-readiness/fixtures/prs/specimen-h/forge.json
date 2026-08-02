@@ -1,0 +1,247 @@
+{
+  "repo": "mapleworks/inbox-svc",
+  "number": 205,
+  "title": "Send a daily digest email per account",
+  "state": "OPEN",
+  "author": "tomasz",
+  "baseRefName": "main",
+  "headRefName": "daily-digest-email",
+  "headRefOid": "4c1b8e2",
+  "files": [
+    "digest/job.py",
+    "digest/window.py",
+    "digest/email.py",
+    "accounts/settings.py",
+    "migrations/0031_account_digest_settings.sql",
+    "tests/digest/test_job.py",
+    "digest/suppression.py"
+  ],
+  "userContentEdits": [],
+  "reviews": [
+    {
+      "id": "PRR_h0",
+      "author": "nadia",
+      "state": "CHANGES_REQUESTED",
+      "submittedAt": "2026-07-19T10:20:00Z",
+      "body": "Direction is right. One thing about send time before this goes out.",
+      "commit": "4c1b8e2"
+    },
+    {
+      "id": "PRR_h1",
+      "author": "nadia",
+      "state": "CHANGES_REQUESTED",
+      "submittedAt": "2026-07-20T14:05:00Z",
+      "body": "Closer. Two edge cases I want covered.",
+      "commit": "4c1b8e2"
+    },
+    {
+      "id": "PRR_h2",
+      "author": "nadia",
+      "state": "CHANGES_REQUESTED",
+      "submittedAt": "2026-07-22T09:40:00Z",
+      "body": "Three are handled. One more thing I noticed while reading the guard stack.",
+      "commit": "4c1b8e2"
+    },
+    {
+      "id": "PRR_h3",
+      "author": "nadia",
+      "state": "APPROVED",
+      "submittedAt": "2026-07-24T11:15:00Z",
+      "body": "Ordering is right now and the truncation case is covered. Approving.",
+      "commit": "4c1b8e2"
+    }
+  ],
+  "reviewThreads": [
+    {
+      "id": "PRRT_h0",
+      "isResolved": true,
+      "path": "digest/job.py",
+      "line": null,
+      "comments": [
+        {
+          "id": "PRRC_h0_0",
+          "author": "nadia",
+          "createdAt": "2026-07-19T10:20:00Z",
+          "body": "This sends at whatever hour the scheduler fires, which is UTC. Half our accounts are in Australia and would get their morning digest at 2pm. Send time needs to follow the account's timezone.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-19T10:20:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        },
+        {
+          "id": "PRRC_h0_1",
+          "author": "tomasz",
+          "createdAt": "2026-07-19T15:48:00Z",
+          "body": "Fixed as suggested. Added `digest_hour_local` to the settings row, defaulting to 7, and `local_day_window()` computes the previous local day from that hour and the account's timezone. The scheduler still fires hourly; each account sends on the tick that matches its local hour.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-19T10:20:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        },
+        {
+          "id": "PRRC_h0_2",
+          "author": "nadia",
+          "createdAt": "2026-07-19T16:30:00Z",
+          "body": "That reads well. Resolved.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-19T10:20:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "PRRT_h1",
+      "isResolved": true,
+      "path": "digest/job.py",
+      "line": null,
+      "comments": [
+        {
+          "id": "PRRC_h1_0",
+          "author": "nadia",
+          "createdAt": "2026-07-20T14:05:00Z",
+          "body": "An account with nothing unread yesterday still gets an email that says nothing. That will read as noise and undo the point of the change.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-20T14:05:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        },
+        {
+          "id": "PRRC_h1_1",
+          "author": "tomasz",
+          "createdAt": "2026-07-20T17:12:00Z",
+          "body": "Fixed. `send_digest_for` now returns `NOTHING_TO_SEND` and delivers no mail when the unread set is empty, with a test for it.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-20T14:05:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "PRRT_h2",
+      "isResolved": true,
+      "path": "digest/job.py",
+      "line": null,
+      "comments": [
+        {
+          "id": "PRRC_h2_0",
+          "author": "nadia",
+          "createdAt": "2026-07-20T14:09:00Z",
+          "body": "Also: an account created this morning has no previous local day at all. What does `local_day_window` do with that?",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-20T14:05:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        },
+        {
+          "id": "PRRC_h2_1",
+          "author": "tomasz",
+          "createdAt": "2026-07-20T17:20:00Z",
+          "body": "It would have returned a window that predates the account. Added a `TOO_NEW` branch for accounts younger than 24 hours, ahead of the window computation, plus a test. They pick up the digest the following night.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-20T14:05:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        },
+        {
+          "id": "PRRC_h2_2",
+          "author": "nadia",
+          "createdAt": "2026-07-22T09:38:00Z",
+          "body": "Confirmed both, and the enum makes the run log readable.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-20T14:05:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "PRRT_h3",
+      "isResolved": true,
+      "path": "accounts/settings.py",
+      "line": null,
+      "comments": [
+        {
+          "id": "PRRC_h3_0",
+          "author": "nadia",
+          "createdAt": "2026-07-20T14:12:00Z",
+          "body": "`digest_hour_local` should reject anything outside 0-23 rather than trusting the caller.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-20T14:05:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        },
+        {
+          "id": "PRRC_h3_1",
+          "author": "tomasz",
+          "createdAt": "2026-07-20T17:25:00Z",
+          "body": "Added the range validation on write, with a test asserting hour 24 is rejected.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-20T14:05:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        }
+      ]
+    },
+    {
+      "id": "PRRT_h4",
+      "isResolved": true,
+      "path": "digest/job.py",
+      "line": null,
+      "comments": [
+        {
+          "id": "PRRC_h4_0",
+          "author": "nadia",
+          "createdAt": "2026-07-22T09:40:00Z",
+          "body": "Two things now that the guard stack is four deep. First, accounts we've hard-bounced recently should not get a digest at all; we suppress other transactional mail for them and this would be the exception. Second, a returning account with 4,000 unread will get an unreadable wall of text, so the email needs a cap.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-22T09:40:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        },
+        {
+          "id": "PRRC_h4_1",
+          "author": "tomasz",
+          "createdAt": "2026-07-22T16:02:00Z",
+          "body": "Both added. `SUPPRESSED` for the hard-bounce case, and `digest_max_messages` (default 50) truncating the list with a note in the email. I put the suppression check at the top of the stack next to the opt-out, since they are both 'this account should not receive mail' conditions.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-22T09:40:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        },
+        {
+          "id": "PRRC_h4_2",
+          "author": "nadia",
+          "createdAt": "2026-07-23T10:24:00Z",
+          "body": "Careful with that placement. Suppression is recorded per digest attempt, so checking it above the unread query means an account with an empty inbox burns a suppression slot every night and never recovers. It has to sit after the unread check.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-22T09:40:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        },
+        {
+          "id": "PRRC_h4_3",
+          "author": "tomasz",
+          "createdAt": "2026-07-23T15:41:00Z",
+          "body": "Good catch, you're right. Moved it below the `NOTHING_TO_SEND` branch. That does mean the four guards are now in an order that only makes sense if you know why each one landed where it did.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-22T09:40:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        },
+        {
+          "id": "PRRC_h4_4",
+          "author": "nadia",
+          "createdAt": "2026-07-24T11:12:00Z",
+          "body": "That reads correctly now.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-22T09:40:00Z",
+            "state": "CHANGES_REQUESTED"
+          }
+        }
+      ]
+    }
+  ],
+  "comments": []
+}

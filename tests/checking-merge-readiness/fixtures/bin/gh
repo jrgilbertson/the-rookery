@@ -12,21 +12,61 @@ Point it at a specimen with CMR_FIXTURE and put this directory first on PATH:
 
 A specimen holds body.md (the description body as it stands now), diff.txt
 (what `gh pr diff` prints), and forge.json (everything the GraphQL queries
-return: state, refs, userContentEdits, reviews, reviewThreads).
+return: state, refs, userContentEdits, reviews, reviewThreads, and the
+pull request's top-level comments). A connection a specimen omits is served
+as an empty one, which is what a real pull request without them returns.
+
+Set CMR_GH_AUTH_FAIL to any non-empty value to serve the unauthenticated forge
+instead: every `pr` and `api` invocation fails with a realistic auth error and
+exit 4, and `gh auth status` reports not-logged-in and exits 1. A scenario that
+needs the skill's degraded path gets it from an observed failure rather than
+from an assertion about what the skill said.
 
 Every verb is a read. Anything that would write, and any verb the skill is not
 supposed to reach for, exits non-zero so a run that strays fails loudly rather
-than passing on silence.
+than passing on silence. The stub is deliberately no more permissive than real
+`gh`, because a malformed fetch that passes here would fail in production:
+
+- `pr view` without `--json` is rejected; real `gh` prints formatted text
+  there, which is not what this stub serves.
+- `--json` field names are checked against the served set, so a misspelled
+  field fails instead of quietly reading back null.
+- `api graphql` checks that each served connection's selection set actually
+  requests the field the skill depends on (REQUIRED_GRAPHQL_FIELDS). This is
+  a field-presence check, not a GraphQL parser: it keeps the stub honest about
+  what a real response would contain without pretending to validate the query.
+- `auth` serves only the read-only `status` subcommand; `login`, `logout`, and
+  `refresh` write.
 """
 
 import json
 import os
+import re
 import sys
 
 WRITE_VERBS = {
     "merge", "close", "reopen", "edit", "comment", "review", "create",
     "delete", "ready", "lock", "unlock", "transfer", "sync",
 }
+
+# Each served GraphQL connection, and the field its selection set must request
+# for the fetched nodes to be usable. `isResolved` is the one SKILL.md calls
+# out as non-optional; the other two carry the timestamps that order the
+# review rounds and the description baseline.
+REQUIRED_GRAPHQL_FIELDS = {
+    "reviewThreads": ("isResolved",),
+    "reviews": ("submittedAt",),
+    "userContentEdits": ("editedAt",),
+    "comments": ("body",),
+}
+
+# `comments` names two different connections: the pull request's top-level
+# conversation comments, and the per-thread comments nested inside
+# reviewThreads. Only the first is served here, so a query that also names
+# reviewThreads is reading the nested one and gets no top-level connection.
+NESTED_WHEN_PRESENT = {"comments": "reviewThreads"}
+
+AUTH_ERROR = "error: not authenticated. Run 'gh auth login' to authenticate."
 
 
 def die(msg, code=1):
@@ -84,8 +124,43 @@ def pr_view(argv, forge):
         ),
         "files": forge.get("files", []),
     }
-    out = full if fields is None else {k: full.get(k) for k in fields}
-    print(json.dumps(out, indent=2))
+    if not fields:
+        die(
+            "`pr view` without --json prints formatted text on real gh; this "
+            "stub serves only the JSON read the skill's fetch contract names",
+            2,
+        )
+    unknown = [f for f in fields if f not in full]
+    if unknown:
+        die(
+            "`pr view --json` names field(s) this stub does not serve: "
+            f"{', '.join(unknown)}",
+            2,
+        )
+    print(json.dumps({k: full[k] for k in fields}, indent=2))
+
+
+def selection_set(query, connection):
+    """Return the brace-balanced text a connection selects, or None.
+
+    Deliberately not a parser: it finds the connection by name and walks its
+    braces, which is enough to tell whether a field was actually requested.
+    """
+    match = re.search(rf"\b{connection}\b", query)
+    if not match:
+        return None
+    start = query.find("{", match.end())
+    if start == -1:
+        return None
+    depth = 0
+    for i in range(start, len(query)):
+        if query[i] == "{":
+            depth += 1
+        elif query[i] == "}":
+            depth -= 1
+            if depth == 0:
+                return query[start:i + 1]
+    return None
 
 
 def graphql(argv, forge):
@@ -101,24 +176,30 @@ def graphql(argv, forge):
         die("no query= field supplied to `api graphql`", 2)
 
     pr = {}
-    if "reviewThreads" in query:
-        pr["reviewThreads"] = {
-            "nodes": forge.get("reviewThreads", []),
-            "pageInfo": {"hasNextPage": False, "endCursor": None},
-        }
-    if "userContentEdits" in query:
-        pr["userContentEdits"] = {
-            "nodes": forge.get("userContentEdits", []),
-            "pageInfo": {"hasNextPage": False, "endCursor": None},
-        }
-    if "reviews" in query:
-        pr["reviews"] = {
-            "nodes": forge.get("reviews", []),
+    for connection, required in REQUIRED_GRAPHQL_FIELDS.items():
+        if not re.search(rf"\b{connection}\b", query):
+            continue
+        outer = NESTED_WHEN_PRESENT.get(connection)
+        if outer and re.search(rf"\b{outer}\b", query):
+            continue
+        block = selection_set(query, connection)
+        if block is None:
+            die(f"`{connection}` is named without a selection set", 2)
+        missing = [f for f in required if not re.search(rf"\b{f}\b", block)]
+        if missing:
+            die(
+                f"`{connection}` is requested without {', '.join(missing)}; "
+                "a real response would omit the field the skill depends on",
+                2,
+            )
+        pr[connection] = {
+            "nodes": forge.get(connection, []),
             "pageInfo": {"hasNextPage": False, "endCursor": None},
         }
     if not pr:
         die(
-            "query names none of reviewThreads, userContentEdits, or reviews; "
+            "query names none of reviewThreads, reviews, userContentEdits, or the "
+            "top-level comments connection; "
             "this stub serves only the skill's fixed read set",
             2,
         )
@@ -131,13 +212,27 @@ def main():
     if not argv:
         die("no command", 2)
 
+    unauthenticated = bool(os.environ.get("CMR_GH_AUTH_FAIL"))
+
     if argv[0] == "auth":
+        if len(argv) < 2 or argv[1] != "status":
+            die("only `auth status` is served; the rest of `auth` writes", 3)
+        if unauthenticated:
+            sys.stderr.write(
+                "You are not logged into any GitHub hosts. "
+                "To log in, run: gh auth login\n"
+            )
+            sys.exit(1)
         print("github.com\n  Logged in to github.com as fixture-owner")
         return
     if argv[0] == "repo" and len(argv) > 1 and argv[1] == "view":
         forge = load()
         print(json.dumps({"nameWithOwner": forge.get("repo", "")}, indent=2))
         return
+
+    if argv[0] in ("pr", "api") and unauthenticated:
+        sys.stderr.write(f"{AUTH_ERROR}\n")
+        sys.exit(4)
 
     if argv[0] == "pr":
         if len(argv) < 2:

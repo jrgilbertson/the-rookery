@@ -1,9 +1,9 @@
 # Relationship discovery stays bounded inside the review
 
 Provenance: CRM soft-companion integration and the quarterly boundary
-correction (2026-07-24) — cadence-threshold outreach, nested CRM bundles,
-and invented relationship data were the observed risks; folds the morning,
-wind-down, weekly, and quarterly variants.
+correction (2026-07-24). The observed risks were cadence-threshold outreach, nested CRM
+bundles, and invented relationship data. Folds the morning, wind-down,
+weekly, and quarterly variants.
 
 ## Prompt
 
@@ -27,7 +27,7 @@ wind-down, weekly, and quarterly variants.
       limit and numbered in the existing bundle; every effect independently
       approvable; no write during preparation.
 - [ ] 2 → cadence alone creates no outreach suggestion, action, or
-      classification; the review simply continues.
+      classification; the review continues.
 - [ ] 3 → proposes the contact date and the narrow durable prose as separate
       actions in the existing wind-down bundle, and reports the contact
       date already satisfied when the canonical date is equal or newer.

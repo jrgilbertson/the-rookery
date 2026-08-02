@@ -1,9 +1,9 @@
 # Interaction capture blocked by an identity collision
 
-Provenance: 2026-07-24 baseline — the bare model blocked mutation but never
-counted the unanswered outgoing message as substantive contact or defined the
-independent effects awaiting identity resolution; folds the safe-binding and
-bounded-source-scope variants.
+Provenance: 2026-07-24 baseline. The bare model blocked mutation but never
+counted the unanswered outgoing message as substantive contact, and never
+defined the independent effects awaiting identity resolution. Folds the
+safe-binding and bounded-source-scope variants.
 
 ## Prompt
 

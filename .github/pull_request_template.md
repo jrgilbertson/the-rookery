@@ -5,5 +5,5 @@
 ## Checklist
 
 - [ ] This is a fix, portability improvement, or hardening of existing content (new skills start as a [proposal issue](../../issues/new/choose), see CONTRIBUTING)
-- [ ] Nothing added depends on context that only exists on my machine (no absolute paths and no private names, per the same-door rule)
+- [ ] Nothing added depends on context that only exists on my machine (no absolute paths, no private names)
 - [ ] `main` stays install-clean: this change is complete, not a work-in-progress

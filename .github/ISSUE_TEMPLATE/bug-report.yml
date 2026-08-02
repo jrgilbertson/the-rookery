@@ -8,7 +8,7 @@ body:
     attributes:
       label: Skill or area
       description: Which skill (or repo area, e.g. README, install instructions) is affected?
-      placeholder: e.g. huginn, install instructions
+      placeholder: e.g. reviewing-meetings, install instructions
     validations:
       required: true
   - type: input

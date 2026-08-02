@@ -1,9 +1,9 @@
 # Wind-down captures concrete intent without another task system
 
-Provenance: daily-commitment baseline comparison (2026-07-31) — the prior
-skill could propose tomorrow's critical path but did not guarantee three to
-five complete commitment bullets, reject activity labels, or preserve ordinary
-planning when the configured forward section was absent.
+Provenance: daily-commitment A/B test (2026-07-31). The prior skill could
+propose tomorrow's critical path but did not guarantee three to five complete
+commitment bullets, reject activity labels, or preserve ordinary planning when
+the configured forward section was absent.
 
 ## Prompt
 

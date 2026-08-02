@@ -1,8 +1,8 @@
 # Missing access degrades honestly instead of inventing
 
-Provenance: U1 regression contract — folds the source-unavailable,
+Provenance: U1 regression contract. Folds the source-unavailable,
 waiting-for-source, missing-convention, missing-template, and
-fresh-conversation variants; degradation paths were undefined without the
+fresh-conversation variants. Graceful degradation was undefined without the
 skill.
 
 ## Prompt

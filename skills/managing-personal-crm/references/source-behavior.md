@@ -20,8 +20,8 @@ Direct and embedded modes use only accounts and identities established by
 current authoritative guidance or confirmed in the interaction. An ambiguous
 account blocks that source read, not the entire run. Query a source only when
 it can change a named identity, contact, memory, relevance, or duplicate
-decision; this is bounded evidence. Exhaustive history scans belong only to an
-approved catch-up inventory.
+decision. Exhaustive history scans belong only to an approved catch-up
+inventory.
 
 Classify conclusion-specific coverage as **Sufficient**, **Partial**, or
 **Insufficient**. An unavailable optional or unrelated source narrows only the

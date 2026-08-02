@@ -1,162 +1,171 @@
 ---
-module: creating-portable-skills skill evaluation
-date: 2026-07-27
-last_updated: 2026-07-28
+title: "Independent fresh-context review for agent skills"
+date: 2026-07-16
+last_updated: 2026-08-01
+category: best-practices
+module: "creating-portable-skills skill verification"
 problem_type: best_practice
 component: testing_framework
 severity: high
 applies_when:
-  - "Grading matched prior and revised agent-skill outputs"
-  - "Performing a final package review after creating or revising an agent skill"
-  - "Deciding whether artifact and execution-trace evidence supports a pass"
-  - "Recording a result when an independent review context is unavailable"
-  - "Recording fresh-context judgments without archiving full transcripts"
+  - "Grading a matched comparison between a frozen prior skill version and a revision"
+  - "Performing the final package review after creating or revising an agent skill"
+  - "Running a smoke test for a skill on a roster harness"
+  - "A project skill shares its name with a user-level, shared, or system-provided skill"
+  - "A blind review cannot be started in the current environment"
+symptoms:
+  - "The context that authored a revision also grades it, and every case passes"
+  - "A pass rests on the executor's summary or a filename rather than the artifact"
+  - "A model quotes an instruction absent from the package under test"
+  - "A smoke test records activation without naming which installed copy activated"
+root_cause: missing_validation
+resolution_type: workflow_improvement
+related_components:
+  - development_workflow
+  - testing
+  - documentation
 tags:
   - agent-skills
   - independent-review
   - fresh-context
+  - load-identity
+  - skill-name-collision
+  - smoke-test
+  - false-positive
   - artifact-inspection
-  - execution-traces
-  - evidence-integrity
-  - claim-ceiling
-  - skill-evaluation
 ---
 
-# Use independent contexts for skill grading and review
+# Independent fresh-context review for agent skills
 
 ## Context
 
-Agent-authored skill changes need two kinds of verification. Deterministic
-tools can check structural facts such as frontmatter, file identity, line
-counts, and links. Behavioral grading and final package review require
-judgment, so the author or artifact producer should not perform them.
+An agent-produced result is not evidence until someone else can check it. Two
+different things go wrong, and they fail independently.
 
-The distinction matters because a plausible executor summary can hide an
-incomplete artifact. A filename or heading can satisfy a weak check while the
-actual output misses the required outcome. The workflow in
-`skills/creating-portable-skills/SKILL.md` therefore gives judgment work to
-fresh agent contexts and leaves mechanical checks to scripts.
+The first is **who judged it**. An author carries the assumptions of the
+conversation that produced the artifact, which makes it easy to accept the
+intended result instead of the observable one. A plausible executor summary
+hides an incomplete artifact, and a filename or heading satisfies a weak check
+while the output misses the required outcome.
+
+The second is **which copy ran**. A fresh conversation and a clean repository
+do not prove which same-named skill the harness loaded. During the
+frontier-model retune (issue jrgilbertson/the-rookery#13), two policy probes
+quoted rules absent from the project files and were discarded rather than
+averaged into a result. Polished output from the wrong copy is still
+contaminated.
+
+`skills/creating-portable-skills/SKILL.md` gives judgment work to fresh agent
+contexts and mechanical facts to the validator, and `tests/README.md` owns the
+protocol both halves run under.
 
 ## Guidance
 
-Keep three evidence layers separate:
+1. **Give judgment to a context that did not produce the work.** A Blind
+   Review (see `CONCEPTS.md`) comes from an agent that neither saw the
+   authoring discussion nor produced the artifact. One independent context
+   grades the matched cases; a different one runs
+   `skills/creating-portable-skills/references/review-checklist.md` top to
+   bottom for the final package review.
+2. **Do not let a user waiver stand in for the missing context.** The
+   checklist's Evidence integrity section states that grader and final
+   reviewer availability and independence cannot receive an exception. If no
+   independent context can be started, prepare a self-contained handoff and
+   leave the affected result unverified until a separate session completes it.
+3. **Require concrete evidence for every pass.** The reviewer opens the
+   artifacts and traces instead of trusting a summary, and challenges any
+   check that is trivial, unverifiable from the supplied evidence, or silent
+   on part of the required outcome.
+4. **Use deterministic checks for mechanical facts.** `npx skills-ref
+   validate` and equivalent scripts need no agent reviewer. Reserve fresh
+   contexts for judgment.
+5. **Prove which copy ran, from the run's own trace.** The smoke test
+   installs the skill from current source into a disposable project on each
+   roster harness, asks one trigger query, and confirms from the trace that
+   the copy which activated is the just-installed one, by its path or base
+   directory. Distinctive expected output may corroborate that; it cannot
+   establish it on its own.
+6. **Log `inconclusive`, not `pass`, when provenance is unconfirmed.** When a
+   same-name copy exists in a user or system location and the activated copy
+   cannot be identified, the result is inconclusive
+   (`tests/README.md`, Running). Before rerunning, inventory project, user,
+   shared-collection, and system locations for the name and move or disable
+   the non-authoritative copies. Never delete a user's installation to
+   simplify a test.
+7. **Discard, do not average, a contaminated run.** If the output quotes a
+   clause absent from the authoritative package, the run proves nothing about
+   that package. Isolate the collision and rerun.
+8. **Keep the claim inside what the run checked.** A trigger-suite pass is a
+   proxy measure; only a smoke test shows native triggering. A smoke test
+   shows installability and activation for one harness, not behavior. Log
+   lines say what the run actually checked and stop there.
 
-| Layer | What it establishes | Suitable mechanism |
-| --- | --- | --- |
-| Provenance | Which package, model, harness, and configuration ran | Hashes, runtime metadata, load traces, and deterministic comparisons |
-| Outcome evidence | Whether the output met the required outcome and hard constraints | Independent inspection of actual artifacts and relevant traces |
-| Coverage | Which changed behaviors were tested and how far the conclusion reaches | Predeclared cases, controls, limitations, and an independent final review |
-
-Record routine matched-comparison case construction, candidate decisions,
-evidence labels, matched-comparison waivers, and Claim Ceiling results in the
-baseline template
-(`skills/creating-portable-skills/assets/baseline-test-template.md:7`). Record
-listing-query construction, scoring, evidence states, and native checks in the
-trigger template
-(`skills/creating-portable-skills/assets/trigger-queries-template.md:8`).
-Workflow and review files should link to these records instead of repeating
-their thresholds or decision rules.
-
-For a substantive skill change:
-
-1. Run matched variants in fresh contexts and confirm the intended version was
-   loaded.
-2. Give the outputs and relevant traces to a separate fresh-context grader who
-   did not author the change or produce either artifact.
-3. Require concrete evidence for every pass. The grader should challenge any
-   check that is trivial, cannot be verified from the supplied evidence, or
-   omits part of the required outcome.
-4. Give the complete package and evidence record to another fresh-context
-   agent for the final checklist and holistic review.
-5. Use deterministic scripts for mechanical facts. They do not need an agent
-   reviewer.
-6. If an independent context is unavailable, prepare a self-contained handoff
-   and keep the affected result unverified. Author self-review does not replace
-   the missing context.
-7. For listing judgments, record the result and a context or transcript
-   reference in every run cell. A session ID can identify a distinct fresh run
-   without preserving a transcript archive. If a decision depends on output
-   details, also keep a concise supporting excerpt or durable transcript
-   reference (`skills/creating-portable-skills/assets/trigger-queries-template.md:43`).
-
-Keep routine verification proportionate. One observed execution is a smoke
-probe and earns no baseline label. A small matched comparison with a
-discriminating case and a stable control can support a directional
-observation. Reliability, non-regression, or causal-improvement claims require
-deeper evaluation that accounts for normal run variation.
+Record runs as one line per run in `tests/<skill-name>/log.md`:
+`date | git rev | check | result | note`. Git is the archive, with no
+hand-recorded hashes, session IDs, evidence labels, or run ledgers in test
+artifacts.
 
 ## Why This Matters
 
-An author carries assumptions from the conversation that produced the
-artifact. Those assumptions make it easier to accept the intended result
-instead of the observable one. A fresh grader reduces that contamination, and
-a different fresh context for final review checks whether the evidence covers
-the complete package rather than only the cases already graded.
+The two failures produce the same outcome: a green result that could not have
+gone red. A self-graded revision passes because the grader shares the author's
+assumptions. A smoke test that records activation without provenance passes
+whether or not the intended copy ran. A verification that cannot distinguish
+success from a silent fallback is a false-positive generator, and the honest
+response to an unresolvable one is `inconclusive` rather than a pass.
 
-Identity evidence does not prove quality, and a correct score on one case does
-not prove a better grading policy. The evidence record must say which layer
-passed and stop its claims there.
-
-Keeping each rule in one authoritative record prevents the workflow, checklist,
-and templates from diverging. Per-run context references make aggregate tables
-auditable without turning routine skill work into transcript retention. A
-context ID identifies which fresh run produced a judgment; it does not prove
-what the run contained.
+Independence and identity do not cover for each other. A fresh grader looking
+at output from a stale same-name copy grades the wrong artifact. An
+airtight identity trace judged by the author still inherits the author's
+blind spots.
 
 ## When to Apply
 
-Apply this pattern when instruction semantics, trigger descriptions, or
-bundled resources change. It is especially useful when success depends on
-qualitative completeness, evidence use, authority boundaries, or execution
-trace interpretation.
+- Instruction semantics, a trigger description, or a bundled resource changed
+  and the change needs a matched comparison.
+- A skill is being installed or evaluated on more than one roster harness, or
+  its packaging or install path changed.
+- A project skill shares its name with a user-level, shared, or
+  system-provided skill.
+- A model response mentions an instruction, section, or clause absent from the
+  package under test.
 
-It also applies when pass/fail, waiver, scoring, or claim-limit rules appear in
-more than one file, or when a trigger table contains bare judgments without
-run-specific provenance.
+Deterministic validation alone is enough for mechanical questions. Typo,
+formatting, and link-only edits need no behavioral comparison.
 
-Use deterministic validation alone for mechanical questions. Typo,
-formatting, and link-only edits do not need a behavioral comparison. Expand
-beyond a small matched comparison only when the requested claim requires it.
+## Examples
 
-## Example
+**Independence.** `tests/creating-portable-skills/cases/independent-fresh-context-review.md`
+encodes the failure directly: the prompt asks the authoring context to grade
+its own revision and nudges it to self-review and mark the step done. The
+graded checklist requires it to decline, to name the fresh context as the only
+acceptable grader, and to leave the review incomplete. Its provenance line
+records both observed failures from the 2026-07-27/28 matched comparisons:
+the authoring context grading itself, and a user exception replacing the
+independent reviewer.
 
-A report was required to identify three evidence-backed operational risks and
-ask for approval before any changes. The probe paired a PASS summary with
-checks that required only the filename `report.md` and a `Recommendations`
-heading. Direct inspection showed one unsupported sentence and no approval
-request. The trace also showed that the source data was never opened.
+**Identity.** The 2026-07-30 Claude Code smoke line in
+`tests/creating-portable-skills/log.md` passes on provenance, not on
+activation alone: it installed from source into a disposable project and the
+transcript shows the Skill tool reading the installed copy's own base
+directory (`.claude/skills/creating-portable-skills` under that disposable
+project). It explicitly supersedes an earlier activation-only run at
+`9b76104`, which could not say which copy answered.
 
-Both the prior and revised graders rejected the pass after inspecting the
-artifact and trace. That result established correct behavior for one probe,
-but it did not show that the revised policy was generally more reliable. The
-separate policy comparison supported only the recorded procedural changes:
-use an independent grader, inspect artifacts and traces directly, cite
-concrete evidence and challenge weak checks, route subjective quality to human
-or blind review, and preserve an unverified handoff when an independent
-context is unavailable. The canonical result and its Claim Ceiling are retained
-in `tests/creating-portable-skills/results.md`.
-
-The later trigger review caught a different gap. The final tables recorded
-bare `yes` and `no` judgments, so they did not support the claim that every
-judgment came from a fresh process. The suite was rerun as 20 queries, three
-times in each of two target cells. Each of the 120 cells now carries a unique
-session ID. Sol recorded 30 expected should-trigger decisions and 30 expected
-near-miss decisions. Opus recorded 29 of 30 expected should-trigger decisions,
-with the remaining query passing two of three, and all 30 expected near-miss
-decisions (`tests/creating-portable-skills/trigger-queries.md:201`). This
-supports the recorded listing-proxy result for those queries and targets only.
-It is not a reliability or non-regression claim.
+Earlier per-run numbers from the retired evidence-ledger artifacts live in git
+history at commit `cc66ee8`, named by the run log's archive-pointer line.
 
 ## Related
 
-- `docs/solutions/best-practices/cross-harness-dogfood-testing.md` explains why
-  fresh context and loaded-package identity are separate requirements.
-- `docs/solutions/best-practices/operationalize-abstract-qualifiers-in-instruction-review.md`
-  shows why the quality of a check needs its own review pass.
-- `docs/solutions/integration-issues/skills-cli-ref-not-checked-out.md` gives a
-  concrete example of a green check that could not distinguish success from a
-  silent fallback.
-- `tests/creating-portable-skills/results.md` retains the canonical bounded
-  verification summaries.
+- [Verify disposition claims before landing a prune](../workflow-issues/verify-disposition-claims-before-landing-a-prune.md)
+  Independent review is the mechanism that caught the drift there, because
+  the author's own review carried the assumptions that produced it.
+- [Ship bundled skill helpers with an executable fail-closed contract](../workflow-issues/falsifiability-contracts-need-executable-tests.md)
+  applies the same lesson to helper scripts: a contract that has never been
+  executed cannot fail.
+- [skills CLI ref targeting](../integration-issues/skills-cli-ref-not-checked-out.md)
+  owns the remote-install mechanism detail and its false-positive install
+  check; the shared principle is that a check unable to distinguish success
+  from a silent fallback is not a check.
 - Issue jrgilbertson/the-rookery#13 is the frontier-model retune that produced
   this guidance.

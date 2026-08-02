@@ -2,9 +2,9 @@
 
 Use this rubric for an existing-skill audit, a final review, and every proposed instruction relaxation. A separate fresh-context agent that did not author the candidate performs the review. Give it the intended outcome, hard constraints, skill package, evidence record, actual artifacts, and relevant traces without the author's conclusions. Work top to bottom. A failure becomes a fix-list item that names the problem, impact, and change risk. Review is complete when every item passes or has a recorded, user-approved exception where this checklist permits one.
 
-## System-Owned Invariants
+## Hard Constraints
 
-A **System-Owned Invariant** is a hard constraint that must remain explicit because the surrounding system or the user, rather than model judgment, owns it. The complete categories are:
+A **Hard Constraint** is a rule that must remain explicit because the surrounding system or the user, rather than model judgment, owns it. The complete categories are:
 
 - Canonical package structure and installability requirements.
 - User authority boundaries, required approvals, and irreversible-action limits.
@@ -13,21 +13,21 @@ A **System-Owned Invariant** is a hard constraint that must remain explicit beca
 - Deterministic validation and mechanical checks.
 - Genuinely fragile ordered operations where reordering can change safety or correctness.
 
-An instruction is not a System-Owned Invariant merely because it uses words such as "must" or "always." Generic reminders about thinking, checking, or narrating work are candidate choreography when the intended outcome and its deterministic check are already explicit.
+An instruction is not a Hard Constraint merely because it uses words such as "must" or "always." Generic reminders about thinking, checking, or narrating work are candidate choreography when the intended outcome and its deterministic check are already explicit.
 
-Before changing one candidate instruction group, use the hard constraint,
-required outcome, and cases declared in the baseline comparison. Use these
+Before changing one candidate instruction group, apply the hard constraint,
+required outcome, and cases declared in the A/B test. Use these
 qualifiers consistently:
 
 - **Material** means capable of changing a required outcome, trigger boundary, user authority, exact output format, deterministic check, package installability, or fragile sequence.
 - An **invariant loss** is an observed violation of the named required outcome or hard constraint. Different wording, reasoning style, or implementation approach is not a loss by itself.
 - **Available evidence** comes from a fresh context with the intended variant confirmed loaded. A substitute, contaminated context, or listing judgment does not qualify.
 
-The baseline comparison template owns case construction, grading, and the
+The A/B test template owns case construction, grading, and the
 ship or return-to-correction decision. Apply its rules rather than restating
 them here.
 
-Pass: every prescriptive instruction protects a named invariant, responds to observed evidence, or covers a named fragile operation; every relaxation satisfies the baseline comparison's decision rule.
+Pass: every prescriptive instruction protects a named invariant, responds to observed evidence, or covers a named fragile operation; every relaxation satisfies the A/B test's decision rule.
 
 ## Invocation and triggering
 
@@ -66,7 +66,7 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 - Duplication. Pass: no sentence restates another sentence's meaning in the description, body, or bundled files.
 - Sediment. Pass: superseded behavior is removed instead of being surrounded by new caveats.
 - Sprawl. Pass: the skill's job fits one sentence without joining two independent jobs.
-- No-ops. Pass: each sentence changes behavior versus the default or protects a System-Owned Invariant.
+- No-ops. Pass: each sentence changes behavior versus the default or protects a Hard Constraint.
 
 ## Evidence integrity
 

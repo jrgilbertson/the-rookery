@@ -30,7 +30,7 @@ these facts are already clear elsewhere. -->
 <!-- Delete this comment. Provide only the instructions needed to reach the
 outcome within its hard constraints. Keep exact formats, deterministic checks,
 user authority boundaries, reusable resource requirements, and genuinely
-fragile ordering explicit because those are System-Owned Invariants. Leave
+fragile ordering explicit because those are Hard Constraints. Leave
 reasoning and implementation choices to the agent. Use a numbered sequence only
 when order matters; for open-ended work, organize around outcomes and
 completion criteria. When naming several tools or approaches, give a default or

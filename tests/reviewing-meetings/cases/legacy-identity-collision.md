@@ -1,6 +1,6 @@
 # Legacy notes stop for review instead of duplicating
 
-Provenance: post-review correction gate (2026-07-23) — durable discovery
+Provenance: post-review correction gate (2026-07-23). Durable discovery
 originally missed URL-only and legacy-ID-only matches, allowing duplicate
 proposals.
 

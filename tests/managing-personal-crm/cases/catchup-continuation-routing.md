@@ -1,8 +1,8 @@
 # Catch-up continuations resume the visible stage without applying
 
-Provenance: PR review follow-ups (2026-07-26) — continuation replies could
-be mistaken for effect approval and later triage bundles skipped the
-relationship-contract load; folds the inventory-decision, disposition,
+Provenance: PR review follow-ups (2026-07-26). Continuation replies could be
+mistaken for effect approval, and later triage bundles skipped the
+relationship-contract load. Folds the inventory-decision, disposition,
 triage-first, and completion variants.
 
 ## Prompt

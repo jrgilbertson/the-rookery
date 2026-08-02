@@ -7,8 +7,7 @@ body:
     attributes:
       value: |
         The Rookery is curated. New skills start here as a conversation instead of a PR.
-        There is no merge promise, and a no is never a judgment on your work.
-        See [CONTRIBUTING](../blob/main/CONTRIBUTING.md) for how this works.
+        There is no merge promise. See [CONTRIBUTING](../blob/main/CONTRIBUTING.md) for how this works.
   - type: textarea
     id: what
     attributes:

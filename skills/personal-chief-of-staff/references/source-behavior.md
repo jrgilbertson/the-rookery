@@ -148,8 +148,7 @@ conversational review surface, not a durable artifact.
 For a scheduled run, complete the selected mode's read-only synthesis and
 present the review bundle. If the user is absent, stop before the first
 external action and end as **Paused**, stating that the run is awaiting user
-interaction. The schedule never authorizes a durable change, so this ending
-preserves the read-only result without implying that anything was applied.
+interaction. The schedule never authorizes a durable change.
 
 Completion: the bundle is useful at its stated coverage level and every
 proposed action can be reviewed on its own.

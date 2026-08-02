@@ -17,15 +17,16 @@ meaning, and dated relationship commitments stay in the canonical task system.
 First, if the message asks to revisit or resume an action the user marked
 **Deferred** in a visible direct or catch-up CRM bundle, recover and present
 that exact visible proposal for a new decision. Revisit or resume is not
-approval: perform no write, source or destination recheck, or new discovery
+approval. Perform no write, source or destination recheck, or new discovery
 until the user makes a new exact decision about that proposal.
 
-First determine whether the message continues a visible catch-up source
-inventory, stage-one disposition bundle, or stage-two reconstruction. A
-confirmation or revision of the required inventory, dispositions such as `1
-active, 2 merge`, a confirmation or correction of the visible interpretation
-for the current person, an answer to its focused question, or a request to
-resume its deferred reconstruction continues that exact catch-up stage. Read
+Next, determine whether the message continues a visible catch-up source
+inventory, stage-one disposition bundle, or stage-two reconstruction. Any of
+these replies continues that exact catch-up stage: a confirmation or revision
+of the required inventory, dispositions such as `1 active, 2 merge`, a
+confirmation or correction of the visible interpretation for the current
+person, an answer to its focused question, or a request to resume its deferred
+reconstruction. Read
 [references/catch-up.md](references/catch-up.md) before ordinary action handling
 or mode selection. Preserve the visible recap and current person. A stage-two
 reply does not start a new inventory or triage bundle and does not approve any

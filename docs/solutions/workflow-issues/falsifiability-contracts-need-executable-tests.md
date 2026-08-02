@@ -1,5 +1,5 @@
 ---
-title: "Ship bundled skill helpers with an executable falsifiability contract"
+title: "Ship bundled skill helpers with an executable fail-closed contract"
 date: 2026-07-31
 category: workflow-issues
 module: "skills/checking-pr-readiness"
@@ -22,24 +22,24 @@ resolution_type: tooling_addition
 related_components:
   - development_workflow
   - tooling
-tags: [agent-skills, helper-scripts, falsifiability-contract, silent-pass, fixture-testing, exit-codes, fail-closed, execution-based-review]
+tags: [agent-skills, helper-scripts, fail-closed-contract, silent-pass, fixture-testing, exit-codes, fail-closed, execution-based-review]
 ---
 
-# Ship bundled skill helpers with an executable falsifiability contract
+# Ship bundled skill helpers with an executable fail-closed contract
 
 ## Context
 
 The `checking-pr-readiness` skill bundles three helper scripts that an agent
 runs to decide whether a branch is ready for review:
 `skills/checking-pr-readiness/scripts/surface-report.sh`,
-`changelog-union.sh`, and `evidence-freshness.sh`. This work is pending on
-branch `jrgilbertson/checking-pr-readiness` and has not been merged.
+`changelog-union.sh`, and `evidence-freshness.sh`. This work merged to `main`
+as `f10ac3c`, "feat(skills): add the checking-pr-readiness gate (#23)".
 
-All three were designed for falsifiability from the first draft. Each header
+All three were designed to fail closed from the first draft. Each header
 enumerates the helper's output states with a distinct exit code per state:
 absent input exits 2, verdicts exit 0, an explicit deferral to a repository-owned
 gate exits 3, and an environment failure exits 4. Line 1 of every output is
-`verdict: <word>`, so a caller reads a fixed pair — verdict line and exit code —
+`verdict: <word>`, so a caller reads a fixed pair (verdict line and exit code)
 rather than parsing prose. `evidence-freshness.sh:31-77`,
 `changelog-union.sh:16-55`, and `surface-report.sh:17-58` each carry that
 enumeration in the header.
@@ -66,15 +66,14 @@ state the header documents as a finding came back green at exit 0:
    a broken repository reported `under caps` at exit 0.
 4. **Self-matching content grep.** `--check-name` decided whether a plan-named
    artifact still existed by grepping file *contents* for the name. The
-   document that made the name stale — the plan proposing an artifact that was
-   never built — contains the name, so it matched itself. The check could not
-   fail, which made `consistent` unfalsifiable.
+   document that made the name stale (the plan proposing an artifact that was
+   never built) contains the name, so it matched itself. The check could not
+   fail, which made `consistent` an unconditional pass.
 
 Independent execution-based review found all four: a validator that ran the
 scripts against adversarial fixtures, plus a cross-model reviewer. Prose
-reviewers reading the same three files reported no issues. The fix — two
-review-fix commits on the unmerged branch above, whose SHAs will change if the
-branch is squash-merged — closed each hole and
+reviewers reading the same three files reported no issues. The fix, carried
+into `f10ac3c`, closed each hole and
 committed a rerunnable fixture runner,
 `tests/checking-pr-readiness/fixtures/run-helper-checks.sh`, which
 asserts the exact verdict line and exit code for every documented output state
@@ -90,7 +89,7 @@ When a bundled helper's output is what an agent reads to decide a gate:
    distinguish a pass from a failure to check.
 
 2. **Commit a fixture runner that asserts every documented state.** Assert
-   exactly the contract — the verdict line and the exit code as a pair — not
+   exactly the contract: the verdict line and the exit code as a pair, not
    substrings of the detail lines. Build throwaway repositories under a
    `mktemp` directory so the runner never writes to the repository under test,
    and make it rerunnable by anyone with no setup beyond `bash`.
@@ -131,22 +130,22 @@ output signals that the check did not happen.
 
 Careful design does not prevent this. All three helpers were designed around
 distinct outputs per state, with the reasoning written into the headers, and
-all three shipped with holes anyway. The gap is not between careless and
-careful authoring; it is between reading code and running it. A prose reviewer
+all three shipped with holes anyway. The gap is between reading code and
+running it. A prose reviewer
 reads `if [ -z "$record_time" ] && [ ! -e "$record" ]` and confirms it handles
 the missing-record case, which it does. Only executing it against a record that
 was committed and then deleted reveals the state the conjunction drops.
 
 The cost asymmetry favors the runner heavily. The runner is a single bash file
 that builds its own fixtures and takes seconds to run. The alternative is a
-gate that reports green on a branch it never actually checked, discovered — if
-ever — long after the branch merged.
+gate that reports green on a branch it never actually checked, discovered, if
+ever, long after the branch merged.
 
 ## When to Apply
 
 Apply this whenever a skill bundles an executable whose output an agent treats
 as evidence. It applies most strongly when the helper has states beyond
-pass and fail — absent input, deferral to another gate, environment failure —
+pass and fail (absent input, deferral to another gate, environment failure),
 because those are the states that most often collapse into a pass.
 
 It applies with less force to a helper whose only job is to print information a
@@ -191,10 +190,10 @@ by commit ancestry, never committer timestamps, which a skewed or rewritten
 clock can defeat.
 
 **Changelog present-without-entry.** Path membership is now only the first
-test. The helper counts the added lines that carry content — a whitespace-only
-addition is a formatting change, not an entry — and a zero count gets a
-distinct verdict rather than falling into `present`
-(`skills/checking-pr-readiness/scripts/changelog-union.sh:320-332`):
+test. The helper counts the added lines that carry content, since a
+whitespace-only addition is a formatting change, not an entry. A zero count
+gets a distinct verdict rather than falling into `present`
+(`skills/checking-pr-readiness/scripts/changelog-union.sh:342-353`):
 
 ```sh
 # Only added lines with content count as an entry: a blank or whitespace-only
@@ -212,7 +211,7 @@ fi
 
 **Failed reads as empty categories.** Every one of the five git enumerations
 now goes through one wrapper that exits 4 on a non-zero status
-(`skills/checking-pr-readiness/scripts/surface-report.sh:218-228`):
+(`skills/checking-pr-readiness/scripts/surface-report.sh:220-230`):
 
 ```sh
 # Every enumeration goes through this: an empty result and a failed read look
@@ -230,18 +229,19 @@ read_or_fail() {
 
 An unmeasurable committed count downgrades the result to `cap unverified`
 rather than letting an under-cap total stand
-(`surface-report.sh:307-310`).
+(`surface-report.sh:309-312`).
 
 **Self-matching content grep.** Existence is now decided against paths on the
 working surface, with content hits demoted to detail
-(`skills/checking-pr-readiness/scripts/evidence-freshness.sh:234-238`):
+(`skills/checking-pr-readiness/scripts/evidence-freshness.sh:234-241`):
 
 ```sh
 # Existence is decided by paths, not by prose. A content grep matches the
 # plan that proposed the name as readily as the artifact that shipped — and
 # matches the file naming itself — so the name is matched against the paths
 # on the working surface, and the content hits are reported as detail only.
-surface=$(git ls-files --cached --others --exclude-standard -- "$search_root" 2>/dev/null || true)
+read_or_fail "search-root listing" -c core.quotepath=false ls-files --cached --others --exclude-standard -- "$search_root"
+surface="$git_out"
 ```
 
 **The runner.** Each assertion compares the first output line and the exit code
@@ -259,7 +259,7 @@ check() { # check <state> <expected-verdict> <expected-exit> <cwd> <cmd>...
 ```
 
 The adversarial fixtures are built inline. A corrupted index is one line
-(`run-helper-checks.sh:93-95`):
+(`run-helper-checks.sh:121-123`):
 
 ```sh
 s4=$(repo surface-broken)
@@ -267,34 +267,36 @@ printf 'not an index' >"$s4/.git/index"
 check "surface: not run (failed git read)" "not run" 4 "$s4" "$surface" --cap reviewer=10
 ```
 
-The deleted-record case (`run-helper-checks.sh:166-168`), the changelog edit
-that removes a line without adding one (`run-helper-checks.sh:111-120`), and
+The deleted-record case (`run-helper-checks.sh:337-339`), the changelog edit
+that removes a line without adding one (`run-helper-checks.sh:141-150`), and
 the empty `--cap` name and empty `--check-name` values
-(`run-helper-checks.sh:82` and `:184`) each get the same treatment. Running
+(`run-helper-checks.sh:85` and `:363`) each get the same treatment. The runner
+also carries a verdict drift guard (`run-helper-checks.sh:471-515`) asserting
+that every verdict a helper can emit appears in the skill's own
+`references/sweep-classes.md`. Running
 `bash tests/checking-pr-readiness/fixtures/run-helper-checks.sh` reports every
-assertion passing (`0 failed`).
+assertion passing (96 of 96 at last run).
 
 ## Related
 
 - `docs/solutions/integration-issues/skills-cli-ref-not-checked-out.md` is the
   canonical statement of the meta-lesson this learning generalizes: a
   verification that cannot distinguish success from silent fallback is a
-  false-positive generator. That doc's example is a one-off probe against a
-  third-party CLI; this learning applies the same principle to first-party
-  bundled scripts, where the durable fix is a committed fixture runner rather
-  than a better ad hoc probe.
+  false-positive generator. That doc's example is a one-off install check
+  against a third-party CLI; this learning applies the same principle to
+  first-party bundled scripts, where the durable fix is a committed fixture
+  runner rather than a better ad hoc check.
 - `docs/solutions/workflow-issues/verify-disposition-claims-before-landing-a-prune.md`
   shows the same failure shape in prose claims: assertions that pass because
   nothing forces them to be checked against the actual artifact.
 - `docs/solutions/best-practices/independent-fresh-context-review-for-agent-skills.md`
-  covers the review-independence half of the same lesson. This learning adds
-  that for an executable artifact, independence must include execution, not
-  only fresh context.
-- `docs/solutions/best-practices/cross-harness-dogfood-testing.md` makes the
-  parallel point for skill bodies: a run is evidence only when the artifact
-  under test is the one that actually executed.
-- `skills/checking-pr-readiness/SKILL.md:183-194` maps helper exit codes and
-  verdict lines onto the gate's status words — verdicts say what a class found,
+  covers both halves of the same lesson for skill bodies: that judgment must
+  come from a context which did not produce the work, and that a run is
+  evidence only when the artifact that executed is the one under test. This
+  learning adds that for an executable artifact, independence must also
+  include execution, not only fresh context.
+- `skills/checking-pr-readiness/SKILL.md:192-201` maps helper exit codes and
+  verdict lines onto the gate's status words. Verdicts say what a class found,
   status words say whether the check happened.
 - `tests/checking-pr-readiness/log.md:11` records the first green 34/34 run
   after the fixes.

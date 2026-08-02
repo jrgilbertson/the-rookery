@@ -1,8 +1,8 @@
 # Wind-down keeps the day's meaning user-owned
 
-Provenance: U6 baseline comparison (2026-07-22) — the bare model wrote a
-polished agent-authored interpretation of the day and lacked the canonical
-journal boundary and readback rules.
+Provenance: U6 A/B test (2026-07-22). The bare model wrote a polished
+agent-authored interpretation of the day and lacked the canonical journal
+boundary and readback rules.
 
 ## Prompt
 

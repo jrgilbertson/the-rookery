@@ -1,7 +1,7 @@
 # Review Bundle
 
 Use this shape as a flexible writing aid, not a fixed form. Omit headings that
-do not improve clarity and do not create actions merely to fill the bundle.
+do not improve clarity. Do not create actions merely to fill the bundle.
 
 **State the most important conclusion in a complete, content-first sentence.**
 Follow with the evidence, interpretation, uncertainty, and consequence needed

@@ -1,4 +1,6 @@
 ---
+title: "Define the abstract qualifiers that the delete test misses"
+category: best-practices
 module: skill-instruction-review
 date: 2026-07-16
 problem_type: best_practice
@@ -55,7 +57,9 @@ Run the operationalize-the-qualifier check as its own named pass, separate from 
 
 The checklist item that encodes this lives under Instruction economy in `skills/creating-portable-skills/references/review-checklist.md`:
 
-> Qualifiers are operationalized. Pass: every abstract adjective the skill leans on (thorough, clean, fast, bold) is backed by concrete behavior or a checkable criterion; an undefined qualifier becomes a fix-list entry.
+> Qualifiers are operationalized. Pass: abstract words such as thorough, clean, fast, bold, reliable, compatible, and improved map to concrete behavior or an observable check.
+
+The fix-list clause moved to that checklist's preamble, which routes any failed item into the fix list.
 
 Keep running the delete test too. The two checks catch disjoint failures: the delete test removes lines that steer nothing, the qualifier check defines words that steer unpredictably.
 
@@ -88,7 +92,7 @@ A probe ran the checklist's Instruction economy group against a toy instruction 
 
 **Before (prior checklist group only).** The delete test, evidence tracing, positive steering, specificity matching, and one-home checks let "punchier," "thorough," and "clean" pass. At most, "be thorough" got cut (deleted, not defined) by strict evidence tracing. The probe explicitly confirmed the delete test alone cannot catch them: it asks cut-or-keep, not define.
 
-**After (with the qualifiers item).** All three words were flagged for definition and became fix-list entries. Summary recorded in `tests/creating-portable-skills/results.md`; the per-item breakdown below is from the session's probe record, "Skill-engineering adoption pass" entry.
+**After (with the qualifiers item).** All three words were flagged for definition and became fix-list entries. Summary recorded in `tests/creating-portable-skills/log.md`; the per-item breakdown is in git history at `cc66ee8`, which retired the evidence-ledger files this originally cited.
 
 ### The borderline fix (the check catching its own host skill)
 
@@ -98,12 +102,13 @@ Same day, a gate probe applied this lens to the adopting skill's then-current st
 
 **After.** The listing-judgment protocol now lives in `skills/creating-portable-skills/assets/trigger-queries-template.md`; it constrains the judgment to enumerated options and defines the qualifier by criterion:
 
-> "...ask whether it would activate, requiring a plain yes, no, or unsure" and "An unsure or hedged judgment counts as borderline."
+> "Show it only the skill name, description, and one query; require a plain yes or no." and "A first judgment that is `unsure` or hedged is borderline: run that query twice more."
 
-Summary recorded in `tests/creating-portable-skills/results.md`; the per-item breakdown below is from the session's probe record, "Owner review pass" entry. This example shows the enumerated-options fix shape and demonstrates that the check catches failures the delete test had already blessed.
+The enumerated set has since narrowed from {yes, no, unsure} to {yes, no}, with `unsure` handled as the trigger for re-sampling rather than as a third option (the same fix shape, tightened). `tests/README.md` (Running → Trigger suite) now carries this as the in-repo canonical statement alongside the template. Summary recorded in `tests/creating-portable-skills/log.md`; the per-item breakdown is in git history at `cc66ee8`.
 
 ## Related
 
-- `docs/solutions/best-practices/cross-harness-dogfood-testing.md` documents the
-  fresh-context probes and prior-versus-revised comparisons that caught both
-  examples above.
+- `docs/solutions/best-practices/independent-fresh-context-review-for-agent-skills.md`
+  documents the fresh-context probes and prior-versus-revised comparisons that
+  caught both examples above, and why a judgment from the context that wrote
+  the prose is not evidence.

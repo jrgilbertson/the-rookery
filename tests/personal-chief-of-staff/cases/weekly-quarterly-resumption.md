@@ -1,7 +1,7 @@
 # Weekly and quarterly reviews resume without backfill
 
 Provenance: quarterly acceptance scan (2026-07-22) found per-calendar querying
-and question-bound health analysis ambiguous; a 2026-07-31 baseline comparison
+and question-bound health analysis ambiguous; a 2026-07-31 A/B test
 also found no explicit rationale-based, non-scoring commitment coaching. Folds
 the weekly, quarterly, and repeated-commitment-pattern variants.
 

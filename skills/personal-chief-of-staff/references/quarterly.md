@@ -11,10 +11,10 @@ of January, April, July, or October reviews the quarter that just ended and
 prepares commitments for the new quarter. A manual run honors an explicitly
 requested period; without one, use the current available quarter. Through the
 Obsidian CLI, find the canonical quarterly review for that period when one
-exists, the configured
-quarterly-review template, and the last completed review that provides useful
-continuity. Read available weekly reviews, selected daily journals, the
-canonical strategy note, relevant canonical learning notes, current tasks, and
+exists, the configured quarterly-review template, and the last completed review
+that provides useful continuity. Read available weekly reviews, selected daily
+journals, the canonical strategy note, relevant canonical learning notes,
+current tasks, and
 only the additional notes needed to understand material projects, decisions,
 relationships, health, and writing.
 

@@ -1,10 +1,10 @@
 # Morning review shape without manufactured work or intent
 
-Provenance: U6 baseline comparison (2026-07-22) — the bare model responded
-sensibly but lacked explicit coverage outcomes, the foreground limit, and
-honest run endings; later daily-commitment comparisons showed that the prior
-skill could regenerate reviewed intent, revive a stale list, or invent a
-missing rationale. Folds the nothing-material, missed-journal,
+Provenance: U6 A/B test (2026-07-22). The bare model responded sensibly but
+lacked explicit coverage outcomes, the foreground limit, and honest run
+endings. Later daily-commitment comparisons showed the prior skill could
+regenerate reviewed intent, revive a stale list, or invent a missing
+rationale. Folds the nothing-material, missed-journal,
 weak-health-signal, foreground-limit, reviewed-commitment, overnight-conflict,
 and malformed-commitment variants.
 

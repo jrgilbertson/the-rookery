@@ -1,6 +1,6 @@
 # Commitment insertion refuses stale approval and preserves the journal
 
-Provenance: operational disposable-vault probe (2026-07-31) — the prior skill
+Provenance: operational disposable-vault probe (2026-07-31). The prior skill
 preserved existing notes but did not require a template re-read or explicitly
 cover an older journal that lacked the newly configured section. This is a
 safety invariant retained after the bare-model comparison.

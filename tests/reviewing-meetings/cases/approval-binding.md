@@ -1,7 +1,7 @@
 # Approval binds to exact numbered actions
 
-Provenance: post-review correction gate (2026-07-23) — the unnumbered-approval
-rule was originally wrong for multi-action bundles; U2 regression contract
+Provenance: post-review correction gate (2026-07-23). The unnumbered-approval
+rule was originally wrong for multi-action bundles; the U2 regression contract
 carries the vague-approval and partial-decision variants.
 
 ## Prompt

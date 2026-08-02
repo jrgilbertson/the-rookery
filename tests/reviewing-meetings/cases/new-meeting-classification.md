@@ -1,6 +1,6 @@
 # New meeting classified and kept read-only
 
-Provenance: 2026-07-22 baseline — the bare model proposed a note but never
+Provenance: 2026-07-22 baseline. The bare model proposed a note but never
 named the canonical source identity, exact disposition, or an explicit ending.
 
 ## Prompt

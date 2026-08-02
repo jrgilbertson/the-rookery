@@ -24,8 +24,8 @@ looked" surface. GitHub Releases mirror its entries.
 - `creating-portable-skills` is the first published skill. It creates new Agent
   Skills and helps review, update, or move existing skills. It starts from the
   user's goal, checks the package structure, compares behavior with focused
-  tests, and verifies installability and activation with a per-harness smoke
-  probe. It works without companion skills.
+  tests, and verifies installability with an install check and activation with
+  a per-harness smoke test. It works without companion skills.
 - `personal-chief-of-staff` guides morning, wind-down, weekly, and quarterly
   reviews using current data from the user's connected sources. It requires
   review before writing changes, handles Obsidian CLI operations, tests its
@@ -45,7 +45,7 @@ looked" surface. GitHub Releases mirror its entries.
   reports the full working surface including untracked files, verifies the
   shipping workflow's upstream steps from receipts rather than assertions,
   compares the plan against what was delivered, and sweeps the finding
-  classes that drive repeated automated-review rounds with three falsifiable
+  classes that drive repeated automated-review rounds with three fail-closed
   bundled helper scripts — the collection's first skill to ship executable
   helpers. It ends in one owner decision plus an evidence pack rendered into
   the pull request body, and its companions degrade to named skips when
@@ -99,4 +99,4 @@ looked" surface. GitHub Releases mirror its entries.
 ### Added
 
 - Repository scaffolding. Community files (MIT license, contributing guide, code of conduct, security policy), issue and PR templates, the skills catalog layout, and the seven-job workflow map across README and WORKFLOWS.md.
-- The rules the repo lives by. Curated not collected, main is the install source, and the same-door rule.
+- The rules the repo lives by. Curated not collected, main is the install source, and dogfooding.

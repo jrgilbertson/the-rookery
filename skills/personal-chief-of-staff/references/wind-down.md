@@ -11,8 +11,8 @@ makes the day being closed ambiguous, as can happen just after midnight,
 resolve the intended journal date before drafting. Treat the following local
 date as the commitment target day. Through the Obsidian CLI, find the configured
 daily-journal template and the closing-date journal, if one exists. Read the
-existing journal before drafting so manual content, frontmatter, links, embeds,
-and unresolved thoughts remain intact.
+existing journal before drafting; its manual content, frontmatter, links,
+embeds, and unresolved thoughts must remain intact.
 
 Query only sources that can clarify what happened or what changed: relevant
 messages and meetings, active tasks, relationship context, project or
@@ -128,20 +128,20 @@ tradeoffs visible without writing to them.
 When the live daily-journal template contains a `Tomorrow’s Meaningful
 Commitments` section, use it as the configured place for reviewed next-day
 intent. Draft three to five numbered plain-Markdown bullets in the closing-date
-journal.
-Each bullet uses one to three sentences that naturally combine a concrete
-outcome, an observable finish line, and one short reason tied to strategy, an
-obligation, or an avoided cost. Collaborate to refine an activity label such as
-“development,” “meetings,” or “work on X” into a concrete outcome by default.
-If the user explicitly approves broad or incomplete wording unchanged, preserve
-it verbatim, identify the missing element, and treat it as nonconforming source
-content rather than claiming it satisfies the three-element condition.
+journal. Each bullet uses one to three sentences that naturally combine a
+concrete outcome, an observable finish line, and one short reason tied to
+strategy, an obligation, or an avoided cost. Collaborate to refine an activity
+label such as “development,” “meetings,” or “work on X” into a concrete outcome
+by default. If the user explicitly approves broad or incomplete wording
+unchanged, preserve it verbatim, identify the missing element, and treat it as
+nonconforming source content rather than claiming it satisfies the
+three-element condition.
 
 Use the day's outcomes, unresolved work, next-day capacity, fixed commitments,
 active tasks, current strategy, and the user's judgment to draft the list. The
-user supplies or explicitly approves every rationale. Do not
-use task checkboxes or add completion status, scores, streaks, grades, or
-mandatory item-by-item reconciliation.
+user supplies or explicitly approves every rationale. Do not use task
+checkboxes or add completion status, scores, streaks, grades, or mandatory
+item-by-item reconciliation.
 
 The commitments express reviewed intent. They do not replace canonical task
 state or calendar capacity, and they do not require calendar blocks to be

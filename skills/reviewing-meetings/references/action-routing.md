@@ -45,8 +45,8 @@ Do not copy issue-owned work into another task system. A separate task is
 justified only when the user has a distinct personal commitment not represented
 by the canonical issue. A meeting-note link to an issue is context, not a
 second task. When the ownership map is unavailable or ambiguous, leave the
-ambiguity in the meeting review and omit that action until ownership is
-resolved instead of choosing a provider.
+ambiguity visible in the meeting review and omit that action until ownership
+is resolved. Do not pick a provider yourself.
 
 When an applicable canonical task or issue workflow is available, use it for
 schema, context inspection, duplicate checks, approval, and readback. Such a
@@ -103,8 +103,8 @@ Communication uses the existing draft category. Contextual insight may remain
 in the proposal without creating a destination effect. A writing idea routes
 to the writing-backlog category and its configured canonical writing system.
 If the backlog or a safe write path is unavailable, keep the idea proposal-only
-or classify application as **Manual**. Do not redirect it to a task or durable-
-context record.
+or classify application as **Manual**. Do not redirect it to a task or a
+durable-context record.
 
 When the companion is unavailable, complete ordinary meeting review. Omit a
 relationship guess, or mark a clear effect **Manual** when no safe application

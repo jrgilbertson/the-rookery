@@ -1,8 +1,8 @@
 # Obsidian changes go through the CLI and are never repeated
 
-Provenance: observed failure (2026-07-27) — a sandboxed readback falsely
+Provenance: observed failure (2026-07-27). A sandboxed readback falsely
 reported Obsidian unavailable after a successful write, inviting a repeated
-write or direct vault access; folds the note-preservation variant.
+write or direct vault access. Folds the note-preservation variant.
 
 ## Prompt
 

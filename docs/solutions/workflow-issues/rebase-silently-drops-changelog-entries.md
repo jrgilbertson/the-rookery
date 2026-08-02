@@ -49,7 +49,7 @@ git diff ORIG_HEAD -- CHANGELOG.md | grep '^-' | grep -v '^---'
 
 Removed lines in a changelog after a rebase are almost always a mistake. A genuine deletion (a retracted entry) is rare enough to be worth confirming by hand.
 
-The durable version of the check belongs in whatever gate runs before a pull request opens: confirm the branch's own work appears in the changelog. That question survives the specific mechanism, so it catches the same loss from a bad merge, a squash, or a hand edit.
+The durable version of the check belongs in whatever gate runs before a pull request opens: confirm the branch's own work appears in the changelog. That question survives the specific mechanism, so it catches the same loss from a bad merge, a squash, or a hand edit. That gate now exists here as sweep class 3 in `skills/checking-pr-readiness/references/sweep-classes.md`, backed by `skills/checking-pr-readiness/scripts/changelog-union.sh`. It asks whether the branch's work appears at all, which complements the `ORIG_HEAD` diff above rather than replacing it.
 
 ## Why This Matters
 

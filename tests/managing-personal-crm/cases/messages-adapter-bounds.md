@@ -1,9 +1,9 @@
 # The local Messages adapter stays read-only and proves its breadth
 
-Provenance: U6 adapter checkpoint (2026-07-24) — the pre-U6 package could
-not operate or preflight the local Messages CLI, and adversarial review
-found four adapter inconsistencies; the read-only bound is kept as a
-safety invariant.
+Provenance: U6 adapter checkpoint (2026-07-24). The pre-U6 package could not
+operate or preflight the local Messages CLI, and adversarial review found
+four adapter inconsistencies. The read-only bound is kept as a safety
+invariant.
 
 ## Prompt
 

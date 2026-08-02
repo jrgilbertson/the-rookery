@@ -49,8 +49,8 @@ repeat every bullet's outcome, observable finish line, and rationale without
 splitting it into a status record. Keep the reviewed order, including when one
 or more bullets need a conflict annotation. Reordering requires user review
 before the reordered list can be presented as revised intent. This surface is
-intent context, not a set of action proposals, and its three to five bullets do
-not consume the zero-to-three foreground limit.
+intent context rather than a set of action proposals. Its three to five bullets
+do not consume the zero-to-three foreground limit.
 
 When current evidence reveals a material conflict, invalid premise, or capacity
 change, show the original commitment, the new evidence, and the current
@@ -111,8 +111,8 @@ or mapped to them. Evaluate the calendar for capacity and conflicts without
 turning it into a duplicate commitment list.
 
 Do not generate preparation capsules for routine events. Calendar edits remain
-separate proposed actions and health evidence never mechanically moves a
-meeting or block. Preserve commitments established as fixed. Resolve conflicts
+separate proposed actions. Health evidence never mechanically moves a meeting
+or block. Preserve commitments established as fixed. Resolve conflicts
 only through separately approvable changes to events or blocks whose
 flexibility is established; if flexibility is unknown, ask before proposing an
 edit.

@@ -26,7 +26,7 @@ npx skills add jrgilbertson/the-rookery --list
 npx skills add jrgilbertson/the-rookery --skill <name>
 
 # or take everything
-npx skills add jrgilbertson/the-rookery --all
+npx skills add jrgilbertson/the-rookery
 ```
 
 This works in any harness that reads `SKILL.md`, including Claude Code, Codex, Cursor, and Gemini CLI. See the [Agent Skills](https://agentskills.io) ecosystem for the full list. Add `-g` to install once for your whole machine instead of per project.
@@ -42,20 +42,20 @@ Clone the repo and symlink any <code>skills/&lt;name&gt;</code> folder into your
 Everything here fits into seven jobs. The walkthroughs live in [WORKFLOWS.md](WORKFLOWS.md).
 
 - [**Research**](WORKFLOWS.md#research). Gather real signal before deciding. last30days for what people actually use, multi-perspective deep research for the hard questions.
-- [**Plan**](WORKFLOWS.md#plan). Compound Engineering turns intent into a clear objective; targeted grilling is an optional pressure test for a consequential, interdependent decision cluster.
+- [**Plan**](WORKFLOWS.md#plan). Compound Engineering turns intent into a clear objective. Targeted grilling is an optional pressure test when several consequential decisions depend on each other.
 - [**Design**](WORKFLOWS.md#design). Impeccable drives every interface decision, from first layout to final polish.
 - [**Build**](WORKFLOWS.md#build). Implement in Orca with parallel worktrees and delegated agents.
-- [**Ship**](WORKFLOWS.md#ship). Review gates, the pre-PR readiness checkpoint, and changelogs and releases with Compound Engineering.
+- [**Ship**](WORKFLOWS.md#ship). Review gates, the pre-PR readiness checkpoint, then changelogs and releases with Compound Engineering.
 - [**Maintain**](WORKFLOWS.md#maintain). Keep repos healthy. Hygiene passes, architecture reviews, evals, and data quality checks.
 - [**Learn**](WORKFLOWS.md#learn). Turn what you read and build into durable knowledge. Networked Thinking, atomic notes, and learnings that compound back into the system.
 
 ## The skills
 
-- [creating-portable-skills](skills/creating-portable-skills/SKILL.md). Create a new agent skill, or review, update, and migrate an existing one. One loop from intent interview through baseline testing to a packaged skill that works across models and harnesses.
+- [creating-portable-skills](skills/creating-portable-skills/SKILL.md). Create a new agent skill, or review, update, and migrate an existing one. One loop from intent interview through A/B testing to a packaged skill that works across models and harnesses.
 - [personal-chief-of-staff](skills/personal-chief-of-staff/SKILL.md). Run a morning review, daily journal and wind-down, weekly review, or quarterly review from your existing sources. Every durable change stays reviewable before it lands.
 - [managing-personal-crm](skills/managing-personal-crm/SKILL.md). Keep relationship context in canonical Person notes and tasks. Capture interactions, prepare for a conversation, find who could help with current work, and clean up notes in stages, with no separate CRM database.
 - [reviewing-meetings](skills/reviewing-meetings/SKILL.md). Turn completed meetings from a configured source into grounded notes and follow-up actions. Duplicate work is prevented, each outcome gets one canonical owner, and scheduled runs stay read-only.
-- [checking-pr-readiness](skills/checking-pr-readiness/SKILL.md). Gate a branch before the pull request opens: the full working surface reported, upstream steps verified from receipts, the plan compared against what was delivered, and a sweep of the finding classes that drive repeated review rounds. It ends in one owner decision plus an evidence pack for the PR body.
+- [checking-pr-readiness](skills/checking-pr-readiness/SKILL.md). Gate a branch before the pull request opens. It reports the full working surface, verifies upstream steps from their receipts, compares the plan against what was delivered, and sweeps for the finding classes that drive repeated review rounds. You end with one decision plus an evidence pack for the PR body.
 - [checking-merge-readiness](skills/checking-merge-readiness/SKILL.md). Digest a fully reviewed pull request before you merge it. You get plain-language themes of what review did, an intent-drift check against the description's original revision, and a graded risk profile that rolls up into one recommendation of merge, pause, or do not merge.
 
 ## My other projects

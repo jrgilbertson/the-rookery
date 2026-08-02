@@ -1,8 +1,8 @@
 # Embedded discovery suppresses duplicates and bounds the wildcard
 
-Provenance: 2026-07-24 baseline — the bare model surfaced both people but
+Provenance: 2026-07-24 baseline. The bare model surfaced both people but
 never bounded the wildcard, kept the writing suggestion independently
-reviewable, or separated durable correction from feedback; folds the
+reviewable, or separated durable correction from feedback. Folds the
 durable-context-correction variant.
 
 ## Prompt

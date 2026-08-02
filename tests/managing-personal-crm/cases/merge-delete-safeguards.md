@@ -1,8 +1,8 @@
 # Merge and delete recheck identity immediately before mutation
 
-Provenance: PR review follow-ups (2026-07-26) — merge ordering and delete
-invalidation: partial outcomes were unclassifiable and a stale delete
-approval could still trash; folds the stale-approval-invalidation pattern.
+Provenance: PR review follow-ups (2026-07-26) on merge ordering and delete
+invalidation. Partial outcomes were unclassifiable, and a stale delete
+approval could still trash. Folds the stale-approval-invalidation pattern.
 
 ## Prompt
 

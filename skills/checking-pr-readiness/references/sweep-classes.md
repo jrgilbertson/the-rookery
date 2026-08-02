@@ -5,7 +5,7 @@ they appear, which is observed-frequency order from the pull request forensics
 behind this gate. Surface findings in that same order, so the class that most
 often drives another automated-review round is read first. Every class carries
 one verdict from its own enumerated set, and a class that fired names where it
-fired — the file and line for a line-scoped finding, the file alone for a
+fired: the file and line for a line-scoped finding, the file alone for a
 file-level one, and the repository surface for a repository-level finding such
 as a missing changelog entry or an aggregate file-cap excess.
 
@@ -35,7 +35,7 @@ or filename is referenced that no longer matches what shipped.
 
 Check by judgment, with helper support: `evidence-freshness.sh --check-name
 <name> <search-root>` covers plan-named artifacts that no longer match what
-shipped, by existence — it reports `consistent` when a file whose basename or
+shipped, by existence. It reports `consistent` when a file whose basename or
 path suffix is that literal name exists under the search root, and `stale
 reference found` when none does, so a name carried only in prose reads as
 stale. By judgment, compare each document the diff changed against the
@@ -150,10 +150,10 @@ verdict line directly; the helper compares the counts itself.
 
 Cap values are repository-specific, never universal: each reviewer's limit
 comes from its configuration in the host repository or from the plan the
-repository runs it on, so resolve the applicable value at run time — the
-reviewer's config file in the repository, or its vendor documentation for the
-plan in use. A finding names the affected reviewer and where its cap value came
-from. The helper itself reports `cap unverified` when no cap was supplied, and
+repository runs it on, so resolve the applicable value at run time from the
+reviewer's config file in the repository, or from its vendor documentation for
+the plan in use. A finding names the affected reviewer and where its cap value
+came from. The helper itself reports `cap unverified` when no cap was supplied, and
 when the committed category could not be measured, because a cap cannot be
 called met against a count that is unknown. Report it by judgment for the same
 reason when a configured reviewer's applicable cap cannot be confirmed at run

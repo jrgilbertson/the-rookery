@@ -1,6 +1,6 @@
 # Generic speaker labels do not become a named owner
 
-Provenance: 2026-07-22 baseline — the bare model asked for confirmation but
+Provenance: 2026-07-22 baseline. The bare model asked for confirmation but
 did not define selective transcript use or the run outcome.
 
 ## Prompt

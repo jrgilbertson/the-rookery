@@ -1,10 +1,10 @@
 # CRM-derived actions keep the chief-of-staff contract
 
-Provenance: PR-review follow-ups (2026-07-26) — approved CRM-derived effects
+Provenance: PR-review follow-ups (2026-07-26). Approved CRM-derived effects
 risked generic-fallback application, duplicate creation, and nested CRM
-bundles; folds the applied, unavailable, equivalent, novel, ambiguous, and
-communication-text variants. Companion-internal application mechanics are
-owned by the managing-personal-crm suite.
+bundles; this case folds the applied, unavailable, equivalent, novel,
+ambiguous, and communication-text variants. The managing-personal-crm suite
+owns companion-internal application mechanics.
 
 ## Prompt
 

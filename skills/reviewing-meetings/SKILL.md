@@ -8,7 +8,7 @@ compatibility: Requires meeting data with stable source IDs, an approved-note so
 # Reviewing Meetings
 
 Turn completed meetings from the configured source into grounded proposals for
-review. Granola is one supported source, not part of the workflow's identity.
+review. Granola is one supported source; the workflow is not specific to it.
 Scheduled and manual entry use this same workflow. A schedule supplies timing,
 not extra authority: every run remains read-only until the user reviews a
 proposal.

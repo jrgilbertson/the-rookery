@@ -1,9 +1,9 @@
 # Cleanup runs only behind a separately approved reversible proof
 
-Provenance: pre-PR cleanup safety correction (2026-07-24) — one merge
-approval could silently authorize the hidden trash probe, which had no
-explicit outcome; kept as a safety invariant, folding the partial-proof
-and atomicity-exception variants.
+Provenance: pre-PR cleanup safety correction (2026-07-24). One merge approval
+could silently authorize the hidden trash probe, which had no explicit
+outcome. Kept as a safety invariant, folding the partial-proof and
+atomicity-exception variants.
 
 ## Prompt
 

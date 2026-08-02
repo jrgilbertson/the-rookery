@@ -1,7 +1,7 @@
 # Stage-two replies continue the current person without restart
 
-Provenance: PR review follow-ups (2026-07-26) — stage-two continuations
-could restart discovery or skip the relationship-contract load; folds the
+Provenance: PR review follow-ups (2026-07-26). Stage-two continuations could
+restart discovery or skip the relationship-contract load. Folds the
 interpretation-correction, focused-answer, and deferred-resume variants.
 
 ## Prompt

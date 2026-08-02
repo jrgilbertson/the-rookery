@@ -1,8 +1,8 @@
 # Catch-up blocks triage while a required source fails preflight
 
-Provenance: 2026-07-24 baseline — the clearest red run: the bare model
-offered a provisional triage bundle and review queue despite the failed
-required preflight; folds the breadth-inventory and hidden-state variants.
+Provenance: 2026-07-24 baseline, the clearest red run. The bare model offered
+a provisional triage bundle and review queue despite the failed required
+preflight. Folds the breadth-inventory and hidden-state variants.
 
 ## Prompt
 

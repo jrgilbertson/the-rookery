@@ -22,10 +22,9 @@ context does not identify it.
 
 For each decided action, use its displayed identity, target, effect, and
 approval state. Read [references/source-behavior.md](references/source-behavior.md)
-and the originating mode reference, then follow their existing shared and
-mode-specific application rules. For an approved Person-note, relationship
-Task, CRM-derived unrelated work, or CRM-derived writing-backlog effect, use
-the available
+and the originating mode reference, then follow their shared and mode-specific
+application rules. For an approved Person-note, relationship Task, CRM-derived
+unrelated work, or CRM-derived writing-backlog effect, use the available
 `managing-personal-crm` companion in embedded mode and follow its
 `references/applying-approved-actions.md` semantics. Route CRM-derived
 unrelated work through the caller's configured canonical task or issue
@@ -122,7 +121,7 @@ End the run as exactly one of:
 - **Skipped:** The user chose not to conduct the review.
 
 When resuming, refresh time-sensitive evidence. Resume in the same conversation
-when available; otherwise reconstruct from canonical sources, disclose that
+when available. Otherwise reconstruct from canonical sources, disclose that
 uncommitted conversational input is unavailable, and ask only for the missing
 human judgment.
 

@@ -1,6 +1,6 @@
 # The gate reports what it cannot verify instead of approving past it
 
-Provenance: 2026-07-31 baseline run — the bare model failed scenarios 1
+Provenance: 2026-07-31 baseline run. The bare model failed scenarios 1
 through 3 (excluded the untracked file from what ships, never offered
 attestation, compared against invented intent) and passed scenario 4, which
 stays as a control. Mines the 2026-07 pull request forensics behind this

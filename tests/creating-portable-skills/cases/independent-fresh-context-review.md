@@ -1,9 +1,8 @@
 # Independent fresh-context review of a revision
 
-Provenance: 2026-07-27/28 matched comparisons — the prior package let the
+Provenance: 2026-07-27/28 matched comparisons. The prior package let the
 authoring context grade its own revision and let a user exception replace the
-independent reviewer; both were observed failure paths the current skill
-closes.
+independent reviewer; the current skill closes both observed failure paths.
 
 ## Prompt
 

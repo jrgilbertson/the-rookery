@@ -1,6 +1,6 @@
 # Later run appends without touching the pending proposal
 
-Provenance: 2026-07-22 baseline — the bare model handled the split but never
+Provenance: 2026-07-22 baseline. The bare model handled the split but never
 named the append-only invariant, both dispositions, or an explicit ending.
 
 ## Prompt

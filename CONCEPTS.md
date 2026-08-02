@@ -19,13 +19,26 @@ A targeted, stateless interview for resolving one coherent decision tree whose
 answers depend on one another. The agent recommends answers and looks up
 discoverable facts. The user makes each decision.
 
-### Shared Understanding Gate
-
-A user-confirmed state in which the material decision branches have been
-resolved. Reaching it ends the Grilling Session and allows the clarified intent
-to return to planning.
+The session ends when the user signs off, meaning the decisions that mattered
+are settled and the clarified intent can go back to planning.
 
 ## Shipping and verification
+
+### Union Merge
+
+Git's name for resolving a conflict by keeping both sides rather than choosing
+one. It is the right resolution for a file whose content accumulates, meaning
+a growing list of independent entries such as a changelog, release notes, a
+contributor list, or an index.
+
+Accumulating files behave differently from files that evolve, which hold one
+current statement of something and are meant to be replaced. Two sides of an
+evolving file are competing statements, so one wins wholesale and the loss is
+visible. Two sides of an accumulating file have almost always both appended,
+so the conflict is positional rather than semantic, and taking either side
+silently deletes the other's entries. Union the two, resolve only genuine
+duplicates, then verify the union held. This is the class of mistake that
+leaves no failing test behind.
 
 ### Published Catalog
 
@@ -34,47 +47,56 @@ Installers read the default branch, so anything merged there becomes available
 immediately. That branch stays install-clean. A skill is published once it
 appears in the catalog and installs on its own.
 
-### Install Probe
+### Install Check
 
-The per-harness smoke check proving that an exact skill revision installs
-through the repository's documented path and activates on one trigger query.
-A passing probe establishes installability and activation for that harness
-only; it is not behavioral evidence. Runs before merge from the local source
-and again after merge against the published state.
+Verification that an exact skill revision installs through the repository's
+documented path and that every file arrives intact, with executable bits
+preserved. It covers file mechanics only and says nothing about whether a
+harness will load or activate the skill; a Smoke Test covers that. Runs before
+merge from the local source and again after merge against the published state.
 
-### Same-Door Rule
+### Smoke Test
 
-The maintainer installs from this repository exactly the way a visitor does.
-Nothing in the published catalog may depend on context that exists only on the
-maintainer's machine, including absolute paths, private names, or
-personal-environment assumptions. A verification sweep enforces the rule
-across shipped files.
+The per-harness check that a freshly installed skill actually activates. Ask
+one trigger query in a real harness and confirm from the run's trace that the
+copy which answered is the just-installed one, identified by its path or base
+directory. When a same-name copy exists elsewhere and provenance cannot be
+confirmed, the result is inconclusive rather than a pass.
+
+### Dogfooding
+
+The maintainer installs from this repository exactly the way a visitor does,
+using the published path rather than a local shortcut. Nothing in the catalog
+may depend on context that exists only on the maintainer's machine, including
+absolute paths, private names, or personal-environment assumptions. A
+verification sweep enforces this across shipped files.
 
 ## Readiness checkpoints
 
 ### Evidence Pack
 
 The structured record a readiness checkpoint composes when the owner approves:
-plan-vs-delivered status, checks run with results, the explicit not-verified and
-attested list, sweep findings, UI critique scores when present, and the durable
-learning signal. The checkpoint only composes the pack into its readout;
-durability begins when the finishing path renders it into the pull request
-description, which is its durable home — the pre-merge checkpoint reads it back
-from there. Nothing is written to the tracked tree or any local state store.
+what was planned against what was delivered, the checks run and their results,
+an explicit list of what went unverified or was taken on the owner's word,
+sweep findings, and the learning signal.
 
-### Falsifiability Contract
+The pull request description is the pack's home. The checkpoint only composes
+it into a readout; it becomes durable when the finishing path writes it into
+the description, and the pre-merge check reads it back from there. Nothing is
+written to the tracked tree or a local state store.
 
-The requirement that a bundled helper's output can prove failure as readily as
-success: every documented state produces a distinct verdict line, and every
-state class carries its own exit code — verdicts exit 0 with the verdict line
-distinguishing negative from positive, absent input exits 2, deferral to a
-repository-owned gate exits 3, environment failure exits 4 — so a gap can
-never be laundered into a green result.
+### Fail-Closed Contract
 
-The contract is executable, not prose: a committed, rerunnable fixture runner
-asserts the exact verdict-and-exit pair for every documented state, including
-adversarial states. A helper whose contract exists only in its header comment
-is itself a prose-only invariant — the defect class it exists to catch.
+The requirement that a bundled helper can report failure as readily as success.
+Every documented state produces a distinct verdict line, and each class of
+state carries its own exit code, so a check that could not run is never
+mistaken for a check that passed. A helper that swallows an error and returns
+empty fails closed in name only.
+
+The contract is executable. A committed, rerunnable fixture runner asserts the
+exact verdict-and-exit pair for every documented state, including adversarial
+ones. A helper whose contract exists only in its header comment is itself the
+unenforced-invariant defect it exists to catch.
 
 ### Merge Digest
 
@@ -92,7 +114,7 @@ engineering first principle such as DRY, single source of truth, YAGNI, or
 defensive-complexity creep. Drivers roll up into one merge-risk grade; a word
 grade traceable to a named driver is used instead of a numeric score.
 
-### Targeted Sweep
+### Sweep
 
 The pre-PR gate's check of the evidence-backed finding classes that drive
 automated-review rounds, run against the branch before any PR exists.
@@ -102,32 +124,31 @@ from PR forensics and is refreshable as review history accumulates.
 
 ## Skill quality gates
 
-### Baseline Test
+### A/B Test
 
-A Baseline Test checks whether a skill changes agent behavior in the intended
-direction. New skills run realistic prompts with and without the skill;
-revisions compare the frozen prior and revised versions, each in a fresh
-context with the intended variant confirmed loaded. Cases are binary
-pass/fail, and a substantive revision ships only when the discriminating
-cases show the intended improvement with no regression. The repository's
-testing convention owns the protocol.
+The comparison that shows whether a skill changes agent behavior in the
+intended direction. A new skill runs realistic prompts with and without it; a
+revision compares the frozen prior version against the revised one. Each run
+happens in a fresh context with the intended variant confirmed loaded, so the
+pair differs only by the thing under test.
 
-### Independent Review Context
+Cases are binary pass or fail. A substantive revision ships only when the
+discriminating cases show the intended improvement with no regression. The
+repository's testing convention owns the protocol.
 
-An Independent Review Context is a fresh session in which the reviewing agent
-neither saw the artifact's authoring discussion nor produced the artifact.
+### Blind Review
 
-One context may grade a matched case, while another performs the final holistic
-review. Deterministic scripts remain appropriate for mechanical checks. If an
-independent context is unavailable, the affected result stays unverified and
-moves to a separate session through a self-contained handoff.
+A review by an agent that neither produced the artifact nor saw the discussion
+that produced it. The reviewer is blind to the authoring, which is what makes
+its judgment evidence rather than an echo.
 
-The run's log line names the fresh-context mechanism used (a fresh session,
-CLI execution, or subagent); recorded context identifiers are not kept in
-test artifacts. The named mechanism does not replace artifact or trace
-evidence for the judgment made in that run.
+One session may grade a matched case while another performs the final holistic
+review, and deterministic scripts remain appropriate for mechanical checks. If
+no independent session is available, the affected result stays unverified and
+moves to one through a self-contained handoff rather than being graded by its
+own author.
 
-### Degradation Path
+### Graceful Degradation
 
 A skill's defined behavior when something it prefers is absent, such as a
 validator that cannot run, a companion skill that is not installed, or a tool
@@ -138,8 +159,8 @@ and states what was skipped.
 
 A Disposition List is the per-item record a prune or restructure leaves in its
 commit message: each removed item marked kept, folded into a named survivor,
-or dropped with a reason. It is a checkable contract, not a narrative — a
-folded claim must point to the surviving line that carries the contract, a
+or dropped with a reason. It is a checkable contract rather than a narrative.
+A folded claim must point to the surviving line that carries the contract, a
 dropped claim must hold against its rationale, and a retired claim must
 survive a search for live references. Verified dispositions are what make
 git-as-archive recovery trustworthy.
@@ -152,12 +173,13 @@ is cut whole. The test decides only whether to keep the line. The separate
 operationalize-the-qualifier check handles words that survive but still steer
 unpredictably.
 
-### System-Owned Invariant
+### Hard Constraint
 
-A hard constraint that stays explicit because the user or surrounding system
-owns it. Examples include portable formats, user authority, deterministic
-validation, exact output requirements, and fragile operation order. Generic
-reminders to think, narrate, or recheck may be removed when they no longer help.
+A rule that stays written down because something outside the model owns it:
+the user, the file format, another system. Examples include portable formats,
+user authority, deterministic validation, exact output requirements, and
+fragile operation order. Generic reminders to think, narrate, or recheck are
+not hard constraints and may be removed when they no longer help.
 
 ### Trigger Contract
 
@@ -166,3 +188,12 @@ not documentation. At the fire-or-skip decision, the agent sees only the
 skill's name and description. Test this metadata with should-trigger phrasings
 that must activate and near-misses that must not, judged in fresh contexts
 under the repository's testing convention.
+
+### Proxy Measure
+
+What a passing Trigger Contract establishes: the description works as an
+activation API when a judge is shown it directly. It stands in for the thing
+you care about without being it, because no harness was involved and nothing
+was installed, discovered, or loaded. Only a Smoke Test shows that the skill
+activates in practice. Recording the proxy as activation evidence is the
+substitution this entry exists to name.

@@ -1,7 +1,7 @@
 # Dependencies, drift, and failed pre-writes stay contained
 
-Provenance: U2 regression contract — folds the declined-prerequisite,
-failed-prerequisite, target-drift, and pre-write-validation variants; the
+Provenance: U2 regression contract. Folds the declined-prerequisite,
+failed-prerequisite, target-drift, and pre-write-validation variants. The
 bare package had no application contract.
 
 ## Prompt

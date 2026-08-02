@@ -7,7 +7,7 @@ compatibility: Requires isolated agent contexts or separate sessions for agent g
 
 # Creating Skills
 
-Create, revise, migrate, or audit a skill from its intent, required outcome, and only the hard constraints that define acceptable completion or remain under user authority. The result is either a prioritized read-only audit or a self-contained Agent Skills package with structural validation, appropriately scoped behavioral evidence, and separate trigger and installation checks.
+Create, revise, migrate, or audit a skill from its intent, required outcome, and only the hard constraints that define acceptable completion or remain under user authority. The result is either a prioritized read-only audit or a self-contained Agent Skills package with structural validation, behavioral evidence scoped to the change, and separate trigger and installation checks.
 
 Skills produced here follow the [Agent Skills format](https://agentskills.io/specification): a directory with a `SKILL.md` (frontmatter plus body) and optional `references/`, `assets/`, and `scripts/`. Canonical frontmatter uses only `name`, `description`, `license`, `compatibility`, and `metadata`. Read [references/portability.md](references/portability.md) when authoring frontmatter, choosing an install location, or making a harness-specific claim.
 
@@ -19,7 +19,7 @@ Creating a new skill starts at step 1. Auditing, updating, or migrating an exist
 
 ### 0. Audit an existing skill
 
-Have a separate fresh-context agent that has not participated in the current authoring work read the whole package and the host repository's instructions. Give it the skill, the review checklist, and the stated intent without the author's conclusions. Have it apply [references/review-checklist.md](references/review-checklist.md) top to bottom, then present a prioritized fix list where each item names the problem, impact, and change risk.
+Have a separate fresh-context agent, one that has not participated in the current authoring work, read the whole package and the host repository's instructions. Give it the skill, the review checklist, and the stated intent without the author's conclusions. Have it apply [references/review-checklist.md](references/review-checklist.md) top to bottom, then present a prioritized fix list where each item names the problem, impact, and change risk.
 
 Read-only completion: deliver the evidence-backed review, prioritized recommendations, and final verdict without changing files. The execution ends there. Revision begins only in a separate user-authorized request.
 
@@ -43,11 +43,11 @@ Completion: the target set and applicable host conventions are recorded, with a 
 
 For a new skill, copy [assets/skill-template.md](assets/skill-template.md) to the host's skill discovery path or documented skill location. For a revision, preserve a loadable prior version before editing; the last commit is sufficient in a versioned repository. For a migration, copy the source package to the destination collection and revise the copy without changing the source.
 
-Use the least-prescriptive instruction that reaches the required outcome within its hard constraints. Read the System-Owned Invariants and candidate qualifier rules in [references/review-checklist.md](references/review-checklist.md) before relaxing an existing instruction. Preserve exact formats, deterministic checks, authority boundaries, reusable resources, and genuinely fragile ordering. Let the agent choose its reasoning and implementation path elsewhere. If the skill names several tools or approaches, give a default or a selection rule instead of an equal menu. Add a concise example only when it resolves a real ambiguity or demonstrates an exact format.
+Use the least-prescriptive instruction that reaches the required outcome within its hard constraints. Read the Hard Constraints and candidate qualifier rules in [references/review-checklist.md](references/review-checklist.md) before relaxing an existing instruction. Preserve exact formats, deterministic checks, authority boundaries, reusable resources, and genuinely fragile ordering. Let the agent choose its reasoning and implementation path elsewhere. If the skill names several tools or approaches, give a default or a selection rule instead of an equal menu. Add a concise example only when it resolves a real ambiguity or demonstrates an exact format.
 
 Before drafting, read the **Information hierarchy** and **Portability** sections of [references/review-checklist.md](references/review-checklist.md) and apply them as authoring constraints.
 
-Completion: the draft and every planned resource implement the intent and required outcome with every System-Owned Invariant protected.
+Completion: the draft and every planned resource implement the intent and required outcome with every Hard Constraint protected.
 
 ### 4. Validate structure
 
@@ -63,15 +63,15 @@ Completion: every substantive change is covered by graded discriminating cases s
 
 ### 6. Decide and review
 
-Have a separate fresh-context agent apply the baseline comparison's decision rule, then run [references/review-checklist.md](references/review-checklist.md) top to bottom. Give the reviewer the skill, intended outcome, hard constraints, artifacts, traces, and graded case results without the author's conclusions. Use its findings to identify wasted paths, ambiguous or unused instructions, recurring corrections that belong in `Gotchas`, and helper logic repeatedly reinvented across runs that belongs in `scripts/`. Any substantive follow-up edit returns through structural validation and the affected cases before shipping.
+Have a separate fresh-context agent apply the A/B test's decision rule, then run [references/review-checklist.md](references/review-checklist.md) top to bottom. Give the reviewer the skill, intended outcome, hard constraints, artifacts, traces, and graded case results without the author's conclusions. Use its findings to identify wasted paths, ambiguous or unused instructions, recurring corrections that belong in `Gotchas`, and helper logic repeatedly reinvented across runs that belongs in `scripts/`. Any substantive follow-up edit returns through structural validation and the affected cases before shipping.
 
-The general checklist-exception path does not apply to independent grader or final reviewer availability or context independence. If either role is unavailable or cannot run in an independent context, its state remains unverified and blocks completion until a separate context completes it.
+Grader and final-reviewer availability and context independence cannot receive a checklist exception. If either role is unavailable or cannot run in an independent context, its state remains unverified and blocks completion until a separate context completes it.
 
-Completion: the baseline comparison has a ship or return-to-correction decision, and every checklist item passes or has a user-approved deliberate exception where the checklist permits one.
+Completion: the A/B test has a ship or return-to-correction decision, and every checklist item passes or has a user-approved deliberate exception where the checklist permits one.
 
 ### 7. Test the description
 
-For a new skill, or whenever the description changed, follow [assets/trigger-queries-template.md](assets/trigger-queries-template.md): build the should-trigger and near-miss query set, record it in `tests/<skill-name>/triggers.md`, and judge it through separate fresh-context agents using the template's protocol and thresholds. When a revision leaves the description untouched, the existing trigger contract stands — skip the rerun; the routing contract did not change.
+For a new skill, or whenever the description changed, follow [assets/trigger-queries-template.md](assets/trigger-queries-template.md): build the should-trigger and near-miss query set, record it in `tests/<skill-name>/triggers.md`, and judge it through separate fresh-context agents using the template's protocol and thresholds. When a revision leaves the description untouched, the existing trigger contract stands; skip the rerun.
 
 After any description edit, rerun the complete query set and the affected behavioral comparison.
 
@@ -79,9 +79,9 @@ Completion: for a new or description-changed skill, every should-trigger query p
 
 ### 8. Package and install
 
-Recheck the host conventions from step 2 and confirm the canonical directory is self-contained. Run the smoke check from [assets/trigger-queries-template.md](assets/trigger-queries-template.md): install from the current local source into a disposable project on each roster harness — the harness target set declared in step 2 — ask one should-trigger query, confirm the skill activates, and record one log line per harness. Using a user-level skill location or overwriting an existing same-name installation requires explicit user approval.
+Recheck the host conventions from step 2 and confirm the canonical directory is self-contained. Run the smoke test from [assets/trigger-queries-template.md](assets/trigger-queries-template.md): install from the current local source into a disposable project on each roster harness (the harness target set declared in step 2), ask one should-trigger query, confirm the skill activates, and record one log line per harness. Using a user-level skill location or overwriting an existing same-name installation requires explicit user approval.
 
-When a roster harness is unavailable, log it as not run rather than guessing; a failed smoke check returns to correction.
+When a roster harness is unavailable, log it as not run rather than guessing; a failed smoke test returns to correction.
 
 If packaging exposes a defect that changes the package, apply step 6's re-entry rule before completing this step.
 

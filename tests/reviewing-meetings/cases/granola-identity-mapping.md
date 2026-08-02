@@ -1,7 +1,7 @@
 # Granola URL-less payloads map identity strictly or stop
 
 Provenance: observed failure, fixed in PR #16 (`fix(meetings): recover
-Granola source URLs safely`) — URL recovery needed exact-form validation.
+Granola source URLs safely`). URL recovery needed exact-form validation.
 
 ## Prompt
 

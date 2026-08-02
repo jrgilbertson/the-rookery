@@ -37,7 +37,7 @@ both values exactly rather than as substrings or normalized lookalikes.
 If an existing note's URL identifies the retrieved meeting but its
 source identity is missing or differs, record an identity conflict. Do not treat
 the note as an exact approved match or create another note. The disposition
-step will stop on the conflict unless the user explicitly selected the meeting
+step stops on the conflict unless the user explicitly selected the meeting
 for a reviewed identity correction.
 
 Search any configured legacy identity fields only to recognize historical

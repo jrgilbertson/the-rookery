@@ -1,9 +1,9 @@
 # Cadence scan derives thresholds and never rewrites newer notes
 
-Provenance: U5 package review (2026-07-24) — the pre-review package could
-rewrite a Person note whose canonical contact date was already newer and
-used provider-specific task routing; folds the weak-tie and
-excluded-status variants.
+Provenance: U5 package review (2026-07-24). The pre-review package could
+rewrite a Person note whose canonical contact date was already newer, and it
+used provider-specific task routing. Folds the weak-tie and excluded-status
+variants.
 
 ## Prompt
 

@@ -1,6 +1,6 @@
 # Action replies route to the visible bundle, not rediscovery
 
-Provenance: proactive review (2026-07-26) — deferred embedded actions
+Provenance: proactive review (2026-07-26). Deferred embedded actions
 originally risked re-discovery and renumbering on revisit.
 
 ## Prompt

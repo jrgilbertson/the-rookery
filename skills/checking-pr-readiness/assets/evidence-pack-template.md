@@ -1,6 +1,6 @@
 # Evidence Pack Template
 
-Use this shape as a flexible writing aid, not a fixed form. Fill it at approval
+Use this shape as a writing aid, not a fixed form. Fill it at approval
 and hand it to the finishing path inside the readout. Its top heading is
 `## Evidence pack` so the section nests under a pull request description's own
 headings without restructuring them.

@@ -1,6 +1,6 @@
 # Fixed commitments survive the morning proposal
 
-Provenance: morning acceptance scan (2026-07-22) — per-calendar querying and
+Provenance: morning acceptance scan (2026-07-22). Per-calendar querying and
 fixed-commitment preservation were ambiguous until corrected before
 acceptance.
 

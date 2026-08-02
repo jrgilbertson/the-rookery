@@ -1,4 +1,4 @@
-# Baseline comparison: [skill-name]
+# A/B test: [skill-name]
 
 Use this protocol when creating a new skill or making a substantive revision
 (changed instruction semantics, trigger description, or bundled resource;
@@ -13,15 +13,15 @@ convention; this template restates it for portable use.
    the skill should change execution or output, each named for the observed
    failure or baseline gap that motivates it. For a revision: the existing
    cases the change affects, plus new cases for new behavior. Keep the set
-   small — cases must discriminate, not enumerate.
+   small; cases must discriminate, not enumerate.
 2. **Run matched pairs in fresh contexts.** Each case runs without the change
    (bare model, or the frozen prior version for a revision) and with it.
    Confirm the intended variant is actually loaded for with-skill runs. For a
    change limited to the description, compare unforced activation on the
    trigger set instead of forced-load behavior.
 3. **Grade binary.** A separate fresh-context agent that did not author the
-   change grades each run against the case's expected-behavior checklist —
-   pass or fail per item, a case fails if any item fails. Deterministic
+   change grades each run against the case's expected-behavior checklist,
+   pass or fail per item. A case fails if any item fails. Deterministic
    scripts may grade mechanical items.
 4. **Decide.** Ship only when every discriminating case shows the intended
    improvement and no case regresses. A regression, or a same-as-baseline

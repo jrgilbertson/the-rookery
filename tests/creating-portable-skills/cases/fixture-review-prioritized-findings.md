@@ -1,6 +1,6 @@
 # Fixture review produces prioritized, file-specific findings
 
-Provenance: 2026-07-27/28 disposable-fixture review runs — the discriminator
+Provenance: 2026-07-27/28 disposable-fixture review runs. The discriminator
 was separating removable ceremony from the load-bearing safe-publication
 sequence and stopping for scope approval; a bare run edits ad hoc from
 generic advice without a prioritized audit.

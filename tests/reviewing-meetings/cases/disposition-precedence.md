@@ -1,7 +1,7 @@
 # Disposition precedence across durable and conversational state
 
-Provenance: U1 regression contract — folds the exact-duplicate, collision,
-conversation-suppression, precedence, and cross-provider-ID variants; the
+Provenance: U1 regression contract. Folds the exact-duplicate, collision,
+conversation-suppression, precedence, and cross-provider-ID variants. The
 bare model had no disposition vocabulary or precedence order.
 
 ## Prompt

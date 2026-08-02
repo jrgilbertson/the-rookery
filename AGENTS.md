@@ -4,10 +4,10 @@
 
 This is a public open-source repository. Its working directory holds only this
 repository's own source, tests, docs, and configuration. Anything generated for
-the user rather than for the repo, along with its supporting files (builders,
-renders, previews, inspection files, dependency links), goes in a per-run
-temporary directory outside the working directory, and final artifacts go only
-to an explicitly approved external or private destination.
+the user rather than for the repo goes in a per-run temporary directory outside
+the working directory, along with its supporting files (builders, renders,
+previews, inspection files, dependency links). Final artifacts go only to an
+explicitly approved external or private destination.
 
 The `outputs/` ignore rule is a safety net, not an approved storage location.
 

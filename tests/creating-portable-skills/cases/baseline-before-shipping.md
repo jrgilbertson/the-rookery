@@ -1,6 +1,6 @@
-# Baseline comparison before shipping a behavior-changing revision
+# A/B test before shipping a behavior-changing revision
 
-Provenance: 2026-07-16 baseline cases 1 and 3 — the bare model shipped an
+Provenance: 2026-07-16 baseline cases 1 and 3. The bare model shipped an
 untested description rewrite and a one-shot skill with no with/without
 comparison; the with-skill runs enforced the comparison end to end.
 

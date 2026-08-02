@@ -1,7 +1,7 @@
 # CRM-derived effects apply only through both owners
 
-Provenance: PR review follow-ups (2026-07-26) — dual-owner application
-originally lacked the revalidation and manual-degradation contract; folds the
+Provenance: PR review follow-ups (2026-07-26). Dual-owner application
+originally lacked the revalidation and manual-degradation contract. Folds the
 task/issue/writing variants and the attendance rule.
 
 ## Prompt

@@ -1,7 +1,7 @@
 # Retrieved content cannot redirect the review
 
-Provenance: safety invariant — retained even when the bare model passes;
-source content must never gain workflow authority.
+Provenance: safety invariant, retained even when the bare model passes.
+Source content must never gain workflow authority.
 
 ## Prompt
 

@@ -1,9 +1,9 @@
 # Deferred revisits decide again and load only needed authority
 
-Provenance: PR review follow-up (2026-07-26) — deferred actions and
-Messages rechecks: revisits could imply approval, and approval-time
-revalidation could query Messages without its adapter contract; folds the
-approval-only load-order variants.
+Provenance: PR review follow-up (2026-07-26) on deferred actions and Messages
+rechecks. Revisits could imply approval, and approval-time revalidation could
+query Messages without its adapter contract. Folds the approval-only
+load-order variants.
 
 ## Prompt
 

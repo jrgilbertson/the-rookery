@@ -1,9 +1,9 @@
 # After-midnight wind-down preserves the closing-date journal
 
-Provenance: daily-commitment baseline comparison (2026-07-31) — the prior
-skill resolved wall-clock local date but did not guarantee that a late
-wind-down used the day being closed or that morning recovered the ordered list
-outside the foreground cap.
+Provenance: daily-commitment A/B test (2026-07-31). The prior skill resolved
+the wall-clock local date but did not guarantee that a late wind-down used the
+day being closed, or that morning recovered the ordered list outside the
+foreground cap.
 
 ## Prompt
 

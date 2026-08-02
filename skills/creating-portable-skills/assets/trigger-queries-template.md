@@ -14,7 +14,7 @@ convention; this template restates the protocol for portable use.
 - Write 5–10 near misses that share the skill's topic, artifact, or common
   wording but belong to a different owner. Name that owner.
 - Record both sets in `tests/<skill-name>/triggers.md` as two tables (query +
-  one-line reason, query + expected owner). Current contract only — run
+  one-line reason, query + expected owner). Current contract only; run
   results go in the log, not this file.
 
 ## Judge
@@ -23,7 +23,7 @@ convention; this template restates the protocol for portable use.
   author the description. Show it only the skill name, description, and one
   query; require a plain yes or no.
 - One run per query. A first judgment that is `unsure` or hedged is
-  borderline: run that query twice more. `unsure` counts as neither vote — a
+  borderline: run that query twice more. `unsure` counts as neither vote. A
   should-trigger query passes only with two categorical yes votes, a near
   miss only with two categorical no votes, and a completed three-run set
   without two categorical same-side votes fails.
@@ -38,11 +38,11 @@ convention; this template restates the protocol for portable use.
 - After any description edit, rerun the complete query set; an edit that
   fixes one query can activate a near miss.
 
-## Smoke check (packaging or install-path changes)
+## Smoke test (packaging or install-path changes)
 
 - The roster is the harness target set declared in step 2 of the skill
-  workflow — the harnesses the skill is expected to install into (in the
-  home repository of this template: Claude Code and Codex CLI).
+  workflow: the harnesses the skill is expected to install into. In the home
+  repository of this template, that roster is Claude Code and Codex CLI.
 - Install the skill from the current local source into a disposable project
   on each roster harness, ask one should-trigger query, and confirm from the
   run's trace that the copy which activated is the just-installed one (its
@@ -53,7 +53,7 @@ convention; this template restates the protocol for portable use.
   format: `date | git rev | check | result | note`); when a roster harness
   is unavailable, log `not run — harness unavailable`.
 - After a packaging change merges to the branch installers pull from, repeat
-  the probe once against that published state — local-source success does
-  not prove remote resolution — and log that line too.
-- A listing-proxy pass is not proof of native triggering in a harness; only
-  the smoke check shows that. Keep the two claims distinct.
+  the smoke test once against that published state (local-source success does
+  not prove remote resolution) and log that line too.
+- A proxy-measure pass is not proof of native triggering in a harness; only
+  the smoke test shows that. Keep the two claims distinct.

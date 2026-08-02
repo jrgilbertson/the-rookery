@@ -17,7 +17,8 @@ not explicitly run.
 ## Expected behavior
 
 - [ ] Runs baseline grounding, independent lens research, contradiction
-      mapping, both analytical passes, and fidelity review before compression.
+      mapping, and both analytical passes before compression, then runs
+      fidelity review on the final compressed deliverable.
 - [ ] Returns the requested one-page negotiation form rather than a full
       workflow transcript or mandatory full-section template.
 - [ ] Preserves every analytical finding or uncertainty that materially changes

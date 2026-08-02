@@ -73,8 +73,9 @@ machinery. Record:
 - the isolation mechanism and whether clean context was verified, including
   how queued executors were kept clean;
 - source-access state and material limits;
-- fidelity state: pending, completed-clean, completed-with-binding-findings
-  applied, or unavailable;
+- fidelity state and review history: pending, completed-clean,
+  completed-with-binding-findings applied, or unavailable, including whether a
+  revised briefing received a clean recheck;
 - overall normal or degraded state and every degradation reason.
 
 ## Grounding and budget
@@ -175,10 +176,10 @@ From the raw returns, answer:
 Preserve the force and evidence of dissent rather than flattening it into a
 generic hedge. A missing or failed lens is a coverage gap, not agreement.
 
-### 6. Audit sources and synthesize the requested form
+### 6. Audit sources
 
-For consequential, current, disputed, or source-heavy work, create a source
-audit internally or include it in the deliverable:
+Create a source audit internally for every task. Include it in the deliverable
+when the work is consequential, current, disputed, or source-heavy:
 
 | Claim | Best source | Source type | Bias or tone risk | Missing counter-source | Confidence |
 | --- | --- | --- | --- | --- | --- |
@@ -186,6 +187,25 @@ audit internally or include it in the deliverable:
 
 Use the audit to lower confidence rather than decorate the output. Source
 clusters with the same incentives do not constitute independent confirmation.
+
+### 7. Run both cross-lens analyses
+
+Read [references/analysis-methods.md](references/analysis-methods.md). After
+contradiction mapping and the source audit, run both the first-principles and
+system-dynamics passes for every routed task. Each pass uses the sourced `p0`,
+all raw returns, contradiction map, and source audit. These are curator-owned
+cross-lens analyses, not new lenses; never send them to lens executors or feed
+their results back into lens research.
+
+Retain evidence links, inference labels, calibrated confidence, and degraded
+limits in the internal analytical record. A full briefing renders both analyses
+under the exact headings `First-principles analysis` and `System dynamics and
+higher-order effects`, including an honest null result or degraded limit. A
+short or custom form may omit the headings, but it must preserve every material
+analytical finding and uncertainty. Here, material means capable of changing
+the answer, confidence, or next action.
+
+### 8. Synthesize the requested form
 
 For an article, paper, blog post, presentation, or report, produce an outline
 before prose. Include a working thesis, section sequence, key claim and needed
@@ -198,7 +218,7 @@ other research-backed form. The intended use controls the ending: include an
 actionable implication or verdict when it helps that purpose, and do not force
 one into an exploratory briefing.
 
-### 7. Emit the briefing
+### 9. Emit the briefing
 
 Unless the user requested a shorter or custom form, produce a full briefing
 with this structure:
@@ -217,6 +237,15 @@ Contradictions that matter:
 
 What all completed lenses agree on: <shared finding>
 What none addressed: <gap / blind spot>
+
+First-principles analysis
+- <verified facts, assumptions, irreducible constraints, main mechanism,
+  necessary conditions, evidence or inference labels, and confidence>
+
+System dynamics and higher-order effects
+- <boundary and time horizon; material relationships and causal chains with
+  link-level evidence or inference labels and confidence; supported dynamics
+  or an honest null finding and its limiting boundary/evidence>
 
 Most reliable findings:
 1. <finding> — supported by <lenses/sources>; confidence <High/Medium/Low>
@@ -244,10 +273,10 @@ Sources used:
 
 Include the long-form outline when applicable. Preserve compact citations for
 external factual claims. For short or custom outputs, compress presentation
-without dropping a material contradiction, confidence limit, degradation,
-frontier question, or reliability finding.
+without dropping a material contradiction, analytical finding or uncertainty,
+confidence limit, degradation, frontier question, or reliability finding.
 
-### 8. Review disagreement fidelity
+### 10. Review curation fidelity
 
 First self-review the draft for its weakest claim, lens dominance, skeptic
 steelman quality, concrete incentives, mechanism-comparable historical
@@ -256,16 +285,24 @@ examples, source-bias transfer, and fit to the user's intended use.
 
 Then read [references/fidelity-check.md](references/fidelity-check.md) and start
 one independent reviewer in a clean context. Give it the fidelity instructions,
-the draft briefing, all raw lens returns, and the execution manifest, but not
-the orchestrator's synthesis reasoning. The reviewer checks only whether the
-draft lost or invented disagreement.
+the final briefing, sourced `p0`, source audit, all raw lens returns, and the
+execution manifest, but not the orchestrator's synthesis reasoning. The
+reviewer checks only whether the briefing lost or invented disagreement and
+whether every material analytical assumption, mechanism, and causal-chain link
+is evidence-traceable or explicitly inference-labeled with calibrated
+confidence. It does not judge conclusion correctness or general quality.
 
-The report is binding. For every finding, restore the disagreement to the
+The report is binding. For every finding, restore a lost disagreement to the
 contradiction map or Source Audit, or state in the briefing why it was set
-aside. A finding may not be accepted while the briefing remains unchanged.
-Update the fidelity and overall states in the manifest. When no clean
-independent reviewer is available, state that the check did not run and lower
-confidence.
+aside; remove or correct invented tension; for an analytical finding, add the
+missing evidence trace or explicit inference label and calibrated confidence.
+A finding may not be accepted while the briefing remains unchanged. Rerun the
+same fidelity check on each revised briefing in a new clean reviewer context
+until it reports clean. If a clean recheck is unavailable, disclose the reduced
+verification, lower confidence, and record that state in the manifest. Update
+the fidelity history and overall state honestly after every attempt. When no
+clean independent reviewer is available for the initial check, state that the
+check did not run and lower confidence.
 
 ## Completion check
 
@@ -275,8 +312,15 @@ confidence.
 - Raw returns are retained, and failed lenses remain visible in the manifest.
 - Contradictions, agreement, gaps, source risk, confidence, the frontier
   question, and reliability findings survive output adaptation.
+- Both analytical passes used the sourced `p0`, all raw returns, contradiction
+  map, and source audit; material claims remain evidence-traceable or explicitly
+  inference-labeled with calibrated confidence.
+- Every full briefing has both exact analytical headings, including honest null
+  or degraded limits; compressed forms preserve every material analytical
+  finding and uncertainty.
 - Long-form work has an outline before prose.
-- The disagreement-fidelity report changed the briefing when it found a loss
-  or invention, or the unavailable check is disclosed as degradation.
+- The fidelity report changed the briefing when it found a defect and each
+  revision was rechecked until clean, or reduced verification is disclosed as
+  degradation with lower confidence.
 - The final execution manifest states lens, isolation, source-access, fidelity,
   and overall status without claiming capabilities that did not run.

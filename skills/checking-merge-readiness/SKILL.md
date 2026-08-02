@@ -63,11 +63,13 @@ That join is what attributes a thread to a round; without it the round
 pointers step 4 attaches are guesses. Paginate the thread connection and
 each comment connection to exhaustion. Plain `gh pr view` omits thread
 resolution, so the GraphQL path is not optional.
-- A GraphQL query for review submissions with their timestamps, states, and
-bodies, paginated to exhaustion. Submissions are the round markers: threads
-group into review rounds by the submission they belong to. Their bodies are
-read, not just their timestamps, because a reviewer can leave a blocking
-finding in a submission body that never becomes an inline thread.
+- A GraphQL query for review submissions with their timestamps, states,
+bodies, and the commit each one reviewed, paginated to exhaustion.
+Submissions are the round markers: threads group into review rounds by the
+submission they belong to. Their bodies are read, not just their timestamps,
+because a reviewer can leave a blocking finding in a submission body that
+never becomes an inline thread. The reviewed commit is read because an
+approval only covers the commit it was given.
 - A GraphQL query for the pull request's top-level `comments` connection,
 paginated the same way, for the same reason. An objection recorded only as a
 plain conversation comment is review history too, and a digest that reads
@@ -87,10 +89,28 @@ its cap, never an assurance from whoever invoked the skill.
 The digest is bound to one commit. Record the head OID from this fetch; every
 input in the run describes that commit, and the reads above happen at
 different moments, so nothing else guarantees they describe the same code.
-Re-read the head before presenting the readout, and again before accepting the
-owner's decision. If it moved, the assessment no longer describes what would
-merge: say so and rebuild the digest against the new head rather than letting
-the owner decide on the old one.
+
+Two things are then rechecked before the readout and again before the owner's
+decision, because each can move while the other holds still:
+
+- The head OID. If it moved, the assessment no longer describes what would
+merge: say so and rebuild the digest against the new head rather than
+letting the owner decide on the old one.
+- The review history, meaning the set of submissions with their states, the
+thread resolution flags, and the top-level comment count. A reviewer can
+add a blocking submission, reopen a resolved thread, or withdraw an
+approval without pushing anything, so a stable head is no evidence that the
+record behind the recommendation is still current. When it changed, rebuild
+rather than presenting a digest of feedback the owner has not seen.
+
+A stable head is also no evidence that anyone reviewed it. An approval covers
+the commit it was given, and where a repository does not dismiss stale reviews
+a later push leaves the approval standing over code no reviewer read. Compare
+each submission's reviewed commit against the head: when the head carries
+changes added after the last submission that approved or requested changes,
+name that in the readout as unreviewed since the last review, and cap the
+recommendation at pause. Resolved threads and a green approval say nothing
+about a commit that arrived after them.
 
 When `gh` is absent, the forge is not GitHub, or step 1 named an
 authentication gap, degrade honestly instead of stopping:
@@ -243,8 +263,9 @@ recommendation is do not merge, whatever the seven drivers graded. Scope
 growth never triggers this.
 
 Caps from steps 2 and 3 (degraded inputs, empty review history, sampled
-history, unverifiable intent) remove merge from the available outcomes; they
-never soften a high driver's do not merge. The internal grade is the
+history, unverifiable intent, changes unreviewed since the last review) remove
+merge from the available outcomes; they never soften a high driver's do not
+merge. The internal grade is the
 determinant of the recommendation, never a second visible verdict: the readout
 surfaces the drivers and exactly one recommendation, and the recommendation
 names what produced it: the drivers that fired, the drift finding, or both.
@@ -288,6 +309,9 @@ ended without writing, merging, or executing anything.
 - Resolved threads and green checks are not evidence of merge safety. The
 accretion this digest exists to catch lives in the aggregate diff that no
 single review round looked alarming enough to refuse.
+- An approval is evidence about the commit it was given, not about the head.
+Where stale reviews are not dismissed, the two come apart silently and the
+pull request looks fully reviewed either way.
 - The evidence pack is the loudest unverified claim in the inputs. When a pack
 asserts a check that the review history contradicts, surface the
 disagreement and sharpen the baseline only from the parts that verified.

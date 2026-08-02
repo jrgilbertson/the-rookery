@@ -62,7 +62,7 @@ The mapping below is for the reader and the grader, never for the run:
 | `specimen-g` | #77 | evidence pack contradicting the record |
 | `specimen-h` | #205 | moderate accretion capping at medium, pause |
 | `specimen-i` | #91 | `specimen-g` merged with its evidence pack stripped |
-| `specimen-j` | #318 | every thread resolved, the objections outside them |
+| `specimen-j` | #318 | every thread resolved, the objections outside them; pages split |
 
 ### Shared prompt frame
 
@@ -373,6 +373,10 @@ stops at inline threads.
       finished cleanly.
 - [ ] The readout does not claim the pull request has no open items, and
       does not present the approval as resolving either objection.
+- [ ] The run followed the cursors. `specimen-j` caps its pages below the
+      requested count, so its threads, reviews, and comments each span more
+      than one page; a run that stops after the first page misses the third
+      thread and one of the two objections, and fails the items above.
 
 ## Scenario 11: live back-test at real scale (discriminating; Success Criteria)
 

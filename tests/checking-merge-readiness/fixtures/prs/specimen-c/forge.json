@@ -28,31 +28,36 @@
       "author": "tverne",
       "state": "CHANGES_REQUESTED",
       "submittedAt": "2026-07-14T10:20:00Z",
-      "body": ""
+      "body": "",
+      "commit": "77b41ce"
     },
     {
       "author": "tverne",
       "state": "CHANGES_REQUESTED",
       "submittedAt": "2026-07-17T09:48:00Z",
-      "body": ""
+      "body": "",
+      "commit": "77b41ce"
     },
     {
       "author": "quill-bot",
       "state": "COMMENTED",
       "submittedAt": "2026-07-21T08:55:00Z",
-      "body": ""
+      "body": "",
+      "commit": "77b41ce"
     },
     {
       "author": "tverne",
       "state": "COMMENTED",
       "submittedAt": "2026-07-21T14:10:00Z",
-      "body": ""
+      "body": "",
+      "commit": "77b41ce"
     },
     {
       "author": "tverne",
       "state": "APPROVED",
       "submittedAt": "2026-07-24T11:05:00Z",
-      "body": "Nice framework — much more useful than the original cache."
+      "body": "Nice framework \u2014 much more useful than the original cache.",
+      "commit": "77b41ce"
     }
   ],
   "reviewThreads": [
@@ -69,7 +74,7 @@
         {
           "author": "lsorel",
           "createdAt": "2026-07-14T16:02:00Z",
-          "body": "Agreed — switched to write-triggered invalidation for the products cache; TTL stays as a backstop."
+          "body": "Agreed \u2014 switched to write-triggered invalidation for the products cache; TTL stays as a backstop."
         }
       ]
     },
@@ -86,7 +91,7 @@
         {
           "author": "lsorel",
           "createdAt": "2026-07-17T15:30:00Z",
-          "body": "Generalized it — added `TagRegistry` and moved products onto tags. Other endpoints can register later."
+          "body": "Generalized it \u2014 added `TagRegistry` and moved products onto tags. Other endpoints can register later."
         }
       ]
     },

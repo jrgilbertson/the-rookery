@@ -20,13 +20,15 @@
       "author": "revna",
       "state": "CHANGES_REQUESTED",
       "submittedAt": "2026-07-19T10:05:00Z",
-      "body": ""
+      "body": "",
+      "commit": "b7e03aa"
     },
     {
       "author": "revna",
       "state": "APPROVED",
       "submittedAt": "2026-07-21T16:25:00Z",
-      "body": "Boundary fix confirmed. Approving."
+      "body": "Boundary fix confirmed. Approving.",
+      "commit": "b7e03aa"
     }
   ],
   "reviewThreads": [
@@ -43,7 +45,7 @@
         {
           "author": "sabel",
           "createdAt": "2026-07-19T11:02:00Z",
-          "body": "Fixed as suggested — boundaries are now `start <= t < now`."
+          "body": "Fixed as suggested \u2014 boundaries are now `start <= t < now`."
         }
       ]
     },
@@ -60,7 +62,7 @@
         {
           "author": "revna",
           "createdAt": "2026-07-19T12:44:00Z",
-          "body": "That's a live-looking staging token pasted into a review thread. Rotate it, and keep tokens out of threads — this history is readable by everyone with repo access."
+          "body": "That's a live-looking staging token pasted into a review thread. Rotate it, and keep tokens out of threads \u2014 this history is readable by everyone with repo access."
         },
         {
           "author": "sabel",

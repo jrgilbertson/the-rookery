@@ -25,13 +25,15 @@
       "author": "sgetta",
       "state": "CHANGES_REQUESTED",
       "submittedAt": "2026-07-22T14:10:00Z",
-      "body": ""
+      "body": "",
+      "commit": "2f91d04"
     },
     {
       "author": "sgetta",
       "state": "APPROVED",
       "submittedAt": "2026-07-25T10:40:00Z",
-      "body": "Approving the rename and the invoice-level approach; assuming the credit-note handling lands before merge."
+      "body": "Approving the rename and the invoice-level approach; assuming the credit-note handling lands before merge.",
+      "commit": "2f91d04"
     }
   ],
   "reviewThreads": [
@@ -65,7 +67,7 @@
         {
           "author": "gharrow",
           "createdAt": "2026-07-22T16:05:00Z",
-          "body": "Good point — I'll handle credit notes."
+          "body": "Good point \u2014 I'll handle credit notes."
         }
       ]
     }

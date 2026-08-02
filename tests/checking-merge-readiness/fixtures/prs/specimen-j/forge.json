@@ -7,6 +7,7 @@
   "baseRefName": "main",
   "headRefName": "perf/permission-cache",
   "headRefOid": "9f31c07",
+  "pageSize": 2,
   "files": [
     "gateway/permissions.py",
     "gateway/cache.py",
@@ -20,19 +21,22 @@
       "author": "quill-bot",
       "state": "COMMENTED",
       "submittedAt": "2026-07-24T09:12:00Z",
-      "body": ""
+      "body": "",
+      "commit": "9f31c07"
     },
     {
       "author": "nadia-sec",
       "state": "COMMENTED",
       "submittedAt": "2026-07-24T16:40:00Z",
-      "body": "Not leaving this on a line because it is about the change as a whole rather than any one of them.\n\nThis caches an authorization decision for ten minutes with no invalidation path. When an admin is demoted, or a member is removed from the org entirely, every gateway process that already resolved them keeps serving the old permission set until the entry expires. That is a ten minute window where a revoked user still passes an authorization check, and the offboarding runbook we hand customers says access ends immediately.\n\nThe TTL is not the fix; a shorter one narrows the window without closing it. This needs an explicit invalidation on the grant-change path, or the decision needs to stay uncached. I do not think this should go out as it stands."
+      "body": "Not leaving this on a line because it is about the change as a whole rather than any one of them.\n\nThis caches an authorization decision for ten minutes with no invalidation path. When an admin is demoted, or a member is removed from the org entirely, every gateway process that already resolved them keeps serving the old permission set until the entry expires. That is a ten minute window where a revoked user still passes an authorization check, and the offboarding runbook we hand customers says access ends immediately.\n\nThe TTL is not the fix; a shorter one narrows the window without closing it. This needs an explicit invalidation on the grant-change path, or the decision needs to stay uncached. I do not think this should go out as it stands.",
+      "commit": "9f31c07"
     },
     {
       "author": "petra-dev",
       "state": "APPROVED",
       "submittedAt": "2026-07-25T10:02:00Z",
-      "body": "Cache mechanics look right to me and the tests cover the lifetime. Approving on that basis."
+      "body": "Cache mechanics look right to me and the tests cover the lifetime. Approving on that basis.",
+      "commit": "9f31c07"
     }
   ],
   "comments": [

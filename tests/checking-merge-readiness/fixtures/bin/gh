@@ -54,10 +54,10 @@ WRITE_VERBS = {
 # out as non-optional; the other two carry the timestamps that order the
 # review rounds and the description baseline.
 REQUIRED_GRAPHQL_FIELDS = {
-    "reviewThreads": ("isResolved",),
-    "reviews": ("submittedAt",),
+    "reviewThreads": ("isResolved", "path", "comments", "body"),
+    "reviews": ("submittedAt", "state", "body", "commit"),
     "userContentEdits": ("editedAt",),
-    "comments": ("body",),
+    "comments": ("body", "author"),
 }
 
 # `comments` names two different connections: the pull request's top-level
@@ -163,6 +163,49 @@ def selection_set(query, connection):
     return None
 
 
+def paginate(forge, connection, query):
+    """Serve one page of a connection, honouring `first:` and `after:`.
+
+    Real GraphQL may return fewer nodes than `first:` asks for, so a specimen
+    can set `pageSize` in its forge.json to cap the page below the requested
+    count. That is what makes a connection span pages, which is the only way
+    the skill's paginate-to-exhaustion contract can actually be tested: a
+    single-page connection passes whether the run follows a cursor or not.
+    """
+    nodes = forge.get(connection, [])
+    block_start = re.search(rf"\b{connection}\b", query).end()
+    args = query[block_start:query.find("{", block_start)]
+
+    first = re.search(r"first\s*:\s*(\d+)", args)
+    first = int(first.group(1)) if first else len(nodes)
+    cap = forge.get("pageSize")
+    size = max(1, min(first, cap) if cap else first)
+
+    after = re.search(r"after\s*:\s*(?:\"([^\"]*)\"|\$(\w+))", args)
+    start = 0
+    if after and after.group(1):
+        cursor = after.group(1)
+        if not cursor.startswith(f"{connection}:"):
+            die(f"cursor {cursor!r} does not belong to `{connection}`", 2)
+        try:
+            start = int(cursor.split(":", 1)[1])
+        except ValueError:
+            die(f"cursor {cursor!r} is not one this stub issued", 2)
+        if start > len(nodes):
+            die(f"cursor {cursor!r} is past the end of `{connection}`", 2)
+
+    page = nodes[start:start + size]
+    end = start + len(page)
+    has_next = end < len(nodes)
+    return {
+        "nodes": page,
+        "pageInfo": {
+            "hasNextPage": has_next,
+            "endCursor": f"{connection}:{end}" if has_next else None,
+        },
+    }
+
+
 def graphql(argv, forge):
     query = ""
     for i, a in enumerate(argv):
@@ -192,10 +235,7 @@ def graphql(argv, forge):
                 "a real response would omit the field the skill depends on",
                 2,
             )
-        pr[connection] = {
-            "nodes": forge.get(connection, []),
-            "pageInfo": {"hasNextPage": False, "endCursor": None},
-        }
+        pr[connection] = paginate(forge, connection, query)
     if not pr:
         die(
             "query names none of reviewThreads, reviews, userContentEdits, or the "

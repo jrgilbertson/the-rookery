@@ -20,25 +20,29 @@
       "author": "quill-bot",
       "state": "COMMENTED",
       "submittedAt": "2026-07-19T10:58:00Z",
-      "body": ""
+      "body": "",
+      "commit": "c58e114"
     },
     {
       "author": "mcairn",
       "state": "COMMENTED",
       "submittedAt": "2026-07-19T11:30:00Z",
-      "body": ""
+      "body": "",
+      "commit": "c58e114"
     },
     {
       "author": "mcairn",
       "state": "COMMENTED",
       "submittedAt": "2026-07-22T09:45:00Z",
-      "body": ""
+      "body": "",
+      "commit": "c58e114"
     },
     {
       "author": "mcairn",
       "state": "APPROVED",
       "submittedAt": "2026-07-22T09:52:00Z",
-      "body": "Approving the rest of the change; thread 3 still stands."
+      "body": "Approving the rest of the change; thread 3 still stands.",
+      "commit": "c58e114"
     }
   ],
   "reviewThreads": [
@@ -55,7 +59,7 @@
         {
           "author": "norvik",
           "createdAt": "2026-07-19T13:05:00Z",
-          "body": "Fixed — the migration now creates the index `CONCURRENTLY`."
+          "body": "Fixed \u2014 the migration now creates the index `CONCURRENTLY`."
         }
       ]
     },
@@ -84,12 +88,12 @@
         {
           "author": "mcairn",
           "createdAt": "2026-07-22T09:45:00Z",
-          "body": "The check-then-insert here isn't atomic. Two workers picking up the same key inside the window both pass `exists_within_window` before either inserts. I reproduced it locally with two workers and a 5 ms stagger: both executed the job body. The unique index stops the second row, but by then the work has run twice — which is the exact bug this PR exists to prevent."
+          "body": "The check-then-insert here isn't atomic. Two workers picking up the same key inside the window both pass `exists_within_window` before either inserts. I reproduced it locally with two workers and a 5 ms stagger: both executed the job body. The unique index stops the second row, but by then the work has run twice \u2014 which is the exact bug this PR exists to prevent."
         },
         {
           "author": "norvik",
           "createdAt": "2026-07-22T10:30:00Z",
-          "body": "Good catch — will look at this later, don't want to hold the merge on it."
+          "body": "Good catch \u2014 will look at this later, don't want to hold the merge on it."
         }
       ]
     }

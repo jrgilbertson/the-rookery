@@ -22,25 +22,29 @@
       "author": "nadia",
       "state": "CHANGES_REQUESTED",
       "submittedAt": "2026-07-19T10:20:00Z",
-      "body": "Direction is right. One thing about send time before this goes out."
+      "body": "Direction is right. One thing about send time before this goes out.",
+      "commit": "4c1b8e2"
     },
     {
       "author": "nadia",
       "state": "CHANGES_REQUESTED",
       "submittedAt": "2026-07-20T14:05:00Z",
-      "body": "Closer. Two edge cases I want covered."
+      "body": "Closer. Two edge cases I want covered.",
+      "commit": "4c1b8e2"
     },
     {
       "author": "nadia",
       "state": "CHANGES_REQUESTED",
       "submittedAt": "2026-07-22T09:40:00Z",
-      "body": "Three are handled. One more thing I noticed while reading the guard stack."
+      "body": "Three are handled. One more thing I noticed while reading the guard stack.",
+      "commit": "4c1b8e2"
     },
     {
       "author": "nadia",
       "state": "APPROVED",
       "submittedAt": "2026-07-24T11:15:00Z",
-      "body": "Ordering is right now and the truncation case is covered. Approving."
+      "body": "Ordering is right now and the truncation case is covered. Approving.",
+      "commit": "4c1b8e2"
     }
   ],
   "reviewThreads": [

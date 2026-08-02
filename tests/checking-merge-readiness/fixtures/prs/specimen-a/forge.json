@@ -19,19 +19,22 @@
       "author": "quill-bot",
       "state": "COMMENTED",
       "submittedAt": "2026-07-18T14:05:00Z",
-      "body": ""
+      "body": "",
+      "commit": "f3a9c21"
     },
     {
       "author": "hbram",
       "state": "CHANGES_REQUESTED",
       "submittedAt": "2026-07-18T14:32:00Z",
-      "body": ""
+      "body": "",
+      "commit": "f3a9c21"
     },
     {
       "author": "hbram",
       "state": "APPROVED",
       "submittedAt": "2026-07-20T16:40:00Z",
-      "body": "Matches what the description promises. Nice reuse of the list filters."
+      "body": "Matches what the description promises. Nice reuse of the list filters.",
+      "commit": "f3a9c21"
     }
   ],
   "reviewThreads": [
@@ -48,7 +51,7 @@
         {
           "author": "petra-dev",
           "createdAt": "2026-07-18T15:04:00Z",
-          "body": "Fixed as suggested — added the header with a generated filename."
+          "body": "Fixed as suggested \u2014 added the header with a generated filename."
         }
       ]
     },
@@ -65,7 +68,7 @@
         {
           "author": "petra-dev",
           "createdAt": "2026-07-18T15:31:00Z",
-          "body": "Fixed differently — dropped the filter text from the filename entirely and used `invoices-<date>.csv`. Simpler and nothing to escape."
+          "body": "Fixed differently \u2014 dropped the filter text from the filename entirely and used `invoices-<date>.csv`. Simpler and nothing to escape."
         },
         {
           "author": "hbram",
@@ -87,7 +90,7 @@
         {
           "author": "petra-dev",
           "createdAt": "2026-07-18T15:47:00Z",
-          "body": "Fixed — reused the list endpoint's 500-row pagination helper so export batches the same way the list does."
+          "body": "Fixed \u2014 reused the list endpoint's 500-row pagination helper so export batches the same way the list does."
         }
       ]
     },

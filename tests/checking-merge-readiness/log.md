@@ -84,3 +84,7 @@ soft work, not a hard block.
 - `userContentEdits.diff` is a post-edit body snapshot, not a patch; pre-edit text is not fetchable once edited
 - Never cite line numbers into this append-only log
 - Assertions that pass for the wrong reason are the recurring defect — pin message, not only exit code; falsification-probe every guard
+- Fetch contract is outcomes + completeness + a minimal floor, not a GraphQL field encyclopedia; incomplete payload removes merge the same way degraded history does
+- Stub under-fetch tokens stay aligned once to that floor, then frozen — presence checks only, no selection-set projection
+
+- 2026-08-02 | greenfield | step 2 reframe (adversarial-amended) | landed | SKILL.md surfaces/jobs + floor table + observed exhaustion + incomplete-payload cap; stub SERVED_CONNECTIONS expanded once (ids, pullRequestReview, editor, diff); self-check still green

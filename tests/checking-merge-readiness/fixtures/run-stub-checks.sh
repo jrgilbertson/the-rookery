@@ -57,10 +57,11 @@ print($expr)
   else fail "$label" "expected [$want], got [$got]"; fi
 }
 
-THREADS='query{repository{pullRequest{reviewThreads(first:100){pageInfo{hasNextPage endCursor} nodes{isResolved path comments(first:100){nodes{body author{login} pullRequestReview{submittedAt}}}}}}}}'
-REVIEWS='query{repository{pullRequest{reviews(first:100){pageInfo{hasNextPage endCursor} nodes{submittedAt state body commit{oid}}}}}}'
-COMMENTS='query{repository{pullRequest{comments(first:100){pageInfo{hasNextPage endCursor} nodes{body author{login}}}}}}'
-EDITS='query{repository{pullRequest{userContentEdits(first:100){pageInfo{hasNextPage endCursor} nodes{editedAt}}}}}'
+# Floor-aligned shapes (SKILL.md step 2); extra fields still allowed.
+THREADS='query{repository{pullRequest{reviewThreads(first:100){pageInfo{hasNextPage endCursor} nodes{id isResolved path comments(first:100){nodes{id body author{login} pullRequestReview{submittedAt}}}}}}}}'
+REVIEWS='query{repository{pullRequest{reviews(first:100){pageInfo{hasNextPage endCursor} nodes{id submittedAt state body commit{oid}}}}}}'
+COMMENTS='query{repository{pullRequest{comments(first:100){pageInfo{hasNextPage endCursor} nodes{id body author{login}}}}}}'
+EDITS='query{repository{pullRequest{userContentEdits(first:100){pageInfo{hasNextPage endCursor} nodes{editedAt editor{login} diff}}}}}'
 
 echo "== A. serve real fixture content =="
 json_is "specimen-a: four resolved threads" \
@@ -75,24 +76,33 @@ json_is "specimen-j: page one reports more" \
 json_is "specimen-j: page two is the third thread" \
   specimen-j "str(len(d['reviewThreads']['nodes']))+' '+str(d['reviewThreads']['pageInfo']['hasNextPage'])" \
   "1 False" api graphql \
-  -f 'query=query{repository{pullRequest{reviewThreads(first:100, after:"reviewThreads:2"){pageInfo{hasNextPage endCursor} nodes{isResolved path comments(first:100){nodes{body author{login} pullRequestReview{submittedAt}}}}}}}}'
+  -f 'query=query{repository{pullRequest{reviewThreads(first:100, after:"reviewThreads:2"){pageInfo{hasNextPage endCursor} nodes{id isResolved path comments(first:100){nodes{id body author{login} pullRequestReview{submittedAt}}}}}}}}'
 # Variable-bound after (what real skill runs use) — the footgun that forced the greenfield cursor fix.
 json_is "specimen-j: variable after advances reviews" \
   specimen-j "any('invalidat' in (n.get('body') or '').lower() for n in d['reviews']['nodes'])" \
   "True" api graphql \
-  -f 'query=query($cursor:String){repository{pullRequest{reviews(first:100, after:$cursor){nodes{submittedAt state body commit{oid}}}}}}' \
+  -f 'query=query($cursor:String){repository{pullRequest{reviews(first:100, after:$cursor){nodes{id submittedAt state body commit{oid}}}}}}' \
   -f 'cursor=reviews:2'
 json_is "specimen-j: counters request behind comments cursor" \
   specimen-j "any('hit' in (n.get('body') or '') for n in d['comments']['nodes'])" \
   "True" api graphql \
-  -f 'query=query{repository{pullRequest{comments(first:100, after:"comments:2"){nodes{body author{login}}}}}}'
+  -f 'query=query{repository{pullRequest{comments(first:100, after:"comments:2"){nodes{id body author{login}}}}}}'
 
-echo "== B. under-fetch refuses =="
+echo "== B. under-fetch refuses (floor-aligned) =="
 exit_is "reviews without commit" 2 specimen-a api graphql \
-  -f 'query=query{repository{pullRequest{reviews(first:1){nodes{submittedAt state body}}}}}'
+  -f 'query=query{repository{pullRequest{reviews(first:1){nodes{id submittedAt state body}}}}}'
+exit_is "reviews without id" 2 specimen-a api graphql \
+  -f 'query=query{repository{pullRequest{reviews(first:1){nodes{submittedAt state body commit{oid}}}}}}'
 exit_is "threads without isResolved" 2 specimen-a api graphql \
-  -f 'query=query{repository{pullRequest{reviewThreads(first:1){nodes{path comments(first:100){nodes{body author{login} pullRequestReview{submittedAt}}}}}}}}'
+  -f 'query=query{repository{pullRequest{reviewThreads(first:1){nodes{id path comments(first:100){nodes{id body author{login} pullRequestReview{submittedAt}}}}}}}}'
+exit_is "threads without pullRequestReview join" 2 specimen-a api graphql \
+  -f 'query=query{repository{pullRequest{reviewThreads(first:1){nodes{id isResolved path comments(first:100){nodes{id body author{login}}}}}}}}'
+exit_is "edits without diff snapshot" 2 specimen-a api graphql \
+  -f 'query=query{repository{pullRequest{userContentEdits(first:1){nodes{editedAt editor{login}}}}}}'
+exit_is "edits without editor" 2 specimen-a api graphql \
+  -f 'query=query{repository{pullRequest{userContentEdits(first:1){nodes{editedAt diff}}}}}'
 exit_is "skill-shaped threads query accepted" 0 specimen-a api graphql -f "query=$THREADS"
+exit_is "skill-shaped edits query accepted" 0 specimen-a api graphql -f "query=$EDITS"
 
 echo "== C. every specimen serves the battery-shaped queries =="
 for d in "$PRS"/specimen-*; do
@@ -155,7 +165,7 @@ else fail "no specimen configured" "expected exit 4, got $got"; fi
 
 echo "== H. unbound variable and mutation refuse =="
 exit_is "unbound after variable" 2 specimen-j api graphql \
-  -f 'query=query($cursor:String){repository{pullRequest{reviews(first:1, after:$cursor){nodes{submittedAt state body commit{oid}}}}}}'
+  -f 'query=query($cursor:String){repository{pullRequest{reviews(first:1, after:$cursor){nodes{id submittedAt state body commit{oid}}}}}}'
 msg_is "mutation refused" 3 "mutation" specimen-a api graphql \
   -f 'query=mutation{closePullRequest(input:{pullRequestId:"x"}){pullRequest{id}}}'
 

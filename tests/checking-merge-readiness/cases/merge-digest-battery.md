@@ -31,11 +31,12 @@ records its lines in `../log.md`.
 Every scenario except scenario 8 gives the run a `gh` to call.
 `../fixtures/bin/gh` is a read-only stand-in that serves one specimen: it
 answers `gh pr view`, `gh pr diff`, and the GraphQL review-thread,
-review-submission, top-level comment, and `userContentEdits` queries from that
-specimen's files, paginating every connection so a run has to follow cursors.
-It exits non-zero on any write verb, any verb outside the skill's fixed read
-set, any selector naming a pull request the specimen is not, and any query
-that under-fetches a connection the skill depends on.
+review-submission, top-level conversation comment, and `userContentEdits`
+queries from that specimen's files, paginating every connection so a run has
+to follow cursors. It exits non-zero on any write verb, any verb outside the
+skill's fixed read set, any selector naming a pull request the specimen is not,
+and any query that omits tokens from the skill's step-2 floor (presence check
+only — not a GraphQL parser).
 
 What it deliberately does not do is simulate GraphQL. It does not check that a
 query is well formed or trim a response to the fields that query selected,

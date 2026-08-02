@@ -34,14 +34,16 @@ WRITE_VERBS = {
     "delete", "ready", "lock", "unlock", "transfer", "sync",
 }
 
-# Cheap under-fetch guard: field names that must appear in the query text.
-# Presence check only — not a parser. Nested `comments` under reviewThreads
-# reuses the same "body" token the skill always requests.
+# Cheap under-fetch guard aligned once to SKILL.md step 2's floor.
+# Presence check only — not a parser, not a selection-set projector.
+# Nested comments under reviewThreads reuses body/id/author tokens.
 SERVED_CONNECTIONS = {
-    "reviewThreads": ("isResolved", "path", "comments", "body"),
-    "reviews": ("submittedAt", "state", "body", "commit"),
-    "userContentEdits": ("editedAt",),
-    "comments": ("body", "author"),
+    "reviewThreads": (
+        "id", "isResolved", "path", "comments", "body", "pullRequestReview",
+    ),
+    "reviews": ("id", "submittedAt", "state", "body", "commit"),
+    "userContentEdits": ("editedAt", "editor", "diff"),
+    "comments": ("id", "body", "author"),
 }
 
 SCALAR_AS_OBJECT = {

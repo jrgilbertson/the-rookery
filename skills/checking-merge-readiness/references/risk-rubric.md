@@ -63,17 +63,20 @@ Effort that makes the code easier to modify is not a finding.
 
 ## 4. Unresolved review items
 
-Substantive threads the review left open or deferred. Looks at every
-unresolved thread (they are read first in the triage order) and separates
-cosmetic remainders from questions about behavior the record never answers.
+Substantive review feedback left open or deferred on any history surface:
+unresolved threads (read first in triage order), unrebutted review-submission
+bodies, and standing top-level conversation comments. Separates cosmetic
+remainders from questions about behavior the record never answers. A digest
+that only looks at inline threads can miss the latter two.
 
-- Low: every unresolved thread you read is cosmetic or explicitly deferred
-  with the reviewer's assent, and none touches behavior.
-- Medium: you can name an unresolved thread raising a substantive question
-  (correctness, data handling, compatibility) that neither the diff nor the
-  discussion answers.
-- High: you can trace an unresolved item that, if the reviewer is right,
-  means the merged code misbehaves, and nothing in the record rebuts it.
+- Low: every open item you read is cosmetic or explicitly deferred with the
+  reviewer's assent, and none touches behavior.
+- Medium: you can name an open item (thread, submission body, or conversation
+  comment) raising a substantive question (correctness, data handling,
+  compatibility, observability) that neither the diff nor the discussion
+  answers.
+- High: you can trace an open item that, if the reviewer is right, means the
+  merged code misbehaves, and nothing in the record rebuts it.
 
 ## 5. Cross-round fix interaction
 

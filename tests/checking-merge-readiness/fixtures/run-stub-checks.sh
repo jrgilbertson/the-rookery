@@ -59,7 +59,7 @@ print($expr)
 
 # Floor-aligned shapes (SKILL.md step 2); extra fields still allowed.
 THREADS='query{repository{pullRequest{reviewThreads(first:100){pageInfo{hasNextPage endCursor} nodes{id isResolved path comments(first:100){nodes{id body author{login} pullRequestReview{submittedAt}}}}}}}}'
-REVIEWS='query{repository{pullRequest{reviews(first:100){pageInfo{hasNextPage endCursor} nodes{id submittedAt state body commit{oid}}}}}}'
+REVIEWS='query{repository{pullRequest{reviews(first:100){pageInfo{hasNextPage endCursor} nodes{id author{login} submittedAt state body commit{oid}}}}}}'
 COMMENTS='query{repository{pullRequest{comments(first:100){pageInfo{hasNextPage endCursor} nodes{id body author{login}}}}}}'
 EDITS='query{repository{pullRequest{userContentEdits(first:100){pageInfo{hasNextPage endCursor} nodes{editedAt editor{login} diff}}}}}'
 
@@ -81,7 +81,7 @@ json_is "specimen-j: page two is the third thread" \
 json_is "specimen-j: variable after advances reviews" \
   specimen-j "any('invalidat' in (n.get('body') or '').lower() for n in d['reviews']['nodes'])" \
   "True" api graphql \
-  -f 'query=query($cursor:String){repository{pullRequest{reviews(first:100, after:$cursor){nodes{id submittedAt state body commit{oid}}}}}}' \
+  -f 'query=query($cursor:String){repository{pullRequest{reviews(first:100, after:$cursor){nodes{id author{login} submittedAt state body commit{oid}}}}}}' \
   -f 'cursor=reviews:2'
 json_is "specimen-j: counters request behind comments cursor" \
   specimen-j "any('hit' in (n.get('body') or '') for n in d['comments']['nodes'])" \
@@ -90,9 +90,11 @@ json_is "specimen-j: counters request behind comments cursor" \
 
 echo "== B. under-fetch refuses (floor-aligned) =="
 exit_is "reviews without commit" 2 specimen-a api graphql \
-  -f 'query=query{repository{pullRequest{reviews(first:1){nodes{id submittedAt state body}}}}}'
+  -f 'query=query{repository{pullRequest{reviews(first:1){nodes{id author{login} submittedAt state body}}}}}'
 exit_is "reviews without id" 2 specimen-a api graphql \
-  -f 'query=query{repository{pullRequest{reviews(first:1){nodes{submittedAt state body commit{oid}}}}}}'
+  -f 'query=query{repository{pullRequest{reviews(first:1){nodes{author{login} submittedAt state body commit{oid}}}}}}'
+exit_is "reviews without author" 2 specimen-a api graphql \
+  -f 'query=query{repository{pullRequest{reviews(first:1){nodes{id submittedAt state body commit{oid}}}}}}'
 exit_is "threads without isResolved" 2 specimen-a api graphql \
   -f 'query=query{repository{pullRequest{reviewThreads(first:1){nodes{id path comments(first:100){nodes{id body author{login} pullRequestReview{submittedAt}}}}}}}}'
 exit_is "threads without pullRequestReview join" 2 specimen-a api graphql \
@@ -165,7 +167,15 @@ else fail "no specimen configured" "expected exit 4, got $got"; fi
 
 echo "== H. unbound variable and mutation refuse =="
 exit_is "unbound after variable" 2 specimen-j api graphql \
-  -f 'query=query($cursor:String){repository{pullRequest{reviews(first:1, after:$cursor){nodes{id submittedAt state body commit{oid}}}}}}'
+  -f 'query=query($cursor:String){repository{pullRequest{reviews(first:1, after:$cursor){nodes{id author{login} submittedAt state body commit{oid}}}}}}'
+# Combined query: top-level conversation comments must still be served when
+# reviewThreads is also present (two comments( connections). pageInfo on
+# pullRequest.comments proves the top-level connection was filled, not only
+# nested thread comments.
+json_is "combined query serves top-level comments with threads" \
+  specimen-j "str(d.get('comments',{}).get('pageInfo',{}).get('hasNextPage'))+' '+str(len(d.get('comments',{}).get('nodes',[])))" \
+  "True 2" api graphql \
+  -f 'query=query{repository{pullRequest{reviewThreads(first:2){pageInfo{hasNextPage endCursor} nodes{id isResolved path comments(first:2){nodes{id body author{login} pullRequestReview{submittedAt}}}}} comments(first:2){pageInfo{hasNextPage endCursor} nodes{id body author{login}}}}}}'
 msg_is "mutation refused" 3 "mutation" specimen-a api graphql \
   -f 'query=mutation{closePullRequest(input:{pullRequestId:"x"}){pullRequest{id}}}'
 

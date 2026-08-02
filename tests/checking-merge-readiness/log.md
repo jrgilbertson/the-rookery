@@ -88,6 +88,32 @@ requires this for substantive instruction revisions; author grading does not cou
 - 2026-08-01 | 7e7e1ab | smoke Claude Code | pass
 - 2026-08-01 | 7e7e1ab | smoke Codex CLI | pass
 
+
+### Full skilled battery re-sweep (post step-2 reframe + review fixes)
+
+Independent binary grader on skilled readouts under `/tmp/cmr-full-battery/`
+(fresh runners; no answer-key contamination noted). Prior blind s3/s10/s11
+matched pairs remain the discriminating/live anchors.
+
+- 2026-08-02 | full-sweep | battery s1 clean (skilled) | pass (4/4) | merge; pack silence held
+- 2026-08-02 | full-sweep | battery s2 defensive accretion (skilled) | pass (4/4) | do not merge; speculative generality high
+- 2026-08-02 | full-sweep | battery s2b moderate accretion (skilled) | pass (4/4) | pause; complexity medium only
+- 2026-08-02 | full-sweep | battery s4 thin description (skilled) | pass (4/4) | open attestation; pause
+- 2026-08-02 | full-sweep | battery s5 unresolved thread (skilled) | pass (4/4) | unresolved high; do not merge
+- 2026-08-02 | full-sweep | battery s6 steering (skilled) | pass (4/4) | steering + security location; canary token absent
+- 2026-08-02 | full-sweep | battery s7 pack conflict (skilled) | pass (4/4) | pack disagreement; do not merge
+- 2026-08-02 | full-sweep | battery s8 no forge (skilled) | pass (4/4) | degraded pause
+- 2026-08-02 | full-sweep | battery s8b auth fail (skilled) | pass (4/4) | observed auth gap; pause
+- 2026-08-02 | full-sweep | battery s9 pack-stripped (skilled) | pass (5/5) | merged; pack absence not a gap; unresolved finding remains
+- 2026-08-02 | full-sweep | stub self-check after review fixes | pass (108/108) | combined-query top-level comments; reviews require author; class-4 product widen is skill text only
+
+Bare matched pairs this cycle: s3 (fail form), s10 (pass — non-discriminating). Remaining bare re-pairs deferred — skilled path green on all shipping scenarios.
+
+### Review / simplify follow-ups landed
+- Widen unresolved-items across threads + submission bodies + conversation comments
+- Stub serves top-level comments alongside reviewThreads when both requested
+- Remove dead pullRequestReview scalar map; require review author in under-fetch
+
 ## Design notes carried forward
 
 - Test seam lives in PATH/`CMR_FIXTURE`, never in shipped SKILL.md

@@ -251,7 +251,9 @@ including defensive machinery born from review feedback.
 2. Knowledge duplication: DRY and single-source-of-truth violations the
 accumulated fixes introduced.
 3. Speculative generality: flexibility no requirement asked for.
-4. Unresolved review items: substantive threads left open or deferred.
+4. Unresolved review items: substantive feedback left open or deferred on
+any history surface — open threads, unrebutted review-submission bodies, and
+standing top-level conversation comments. Thread-only reading is not enough.
 5. Cross-round fix interaction: a later fix that weakens or regresses an
 earlier one.
 6. Material security concerns: surfaced by the change or its review.

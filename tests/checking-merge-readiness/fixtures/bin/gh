@@ -41,7 +41,7 @@ SERVED_CONNECTIONS = {
     "reviewThreads": (
         "id", "isResolved", "path", "comments", "body", "pullRequestReview",
     ),
-    "reviews": ("id", "submittedAt", "state", "body", "commit"),
+    "reviews": ("id", "submittedAt", "state", "body", "commit", "author"),
     "userContentEdits": ("editedAt", "editor", "diff"),
     "comments": ("id", "body", "author"),
 }
@@ -50,7 +50,6 @@ SCALAR_AS_OBJECT = {
     "author": "login",
     "editor": "login",
     "commit": "oid",
-    "pullRequestReview": None,
 }
 
 AUTH_ERROR = "error: not authenticated. Run 'gh auth login' to authenticate."
@@ -312,9 +311,15 @@ def graphql(argv, forge):
     for name, required in SERVED_CONNECTIONS.items():
         if not re.search(rf"\b{name}\b", query):
             continue
-        # Nested comments under reviewThreads are not the top-level connection.
-        if name == "comments" and re.search(r"\breviewThreads\b", query):
-            continue
+        # Nested `comments(` under reviewThreads is not the top-level
+        # conversation connection. Serve top-level comments when requested
+        # without threads, or when a second `comments(` appears alongside
+        # threads (combined query). A single `comments(` with threads only
+        # is the nested page — do not also dump forge["comments"].
+        if name == "comments":
+            n_comments = len(re.findall(r"\bcomments\s*\(", query))
+            if re.search(r"\breviewThreads\b", query) and n_comments < 2:
+                continue
         args = connection_args(query, name)
         missing = [f for f in required if not re.search(rf"\b{f}\b", query)]
         if missing:

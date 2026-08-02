@@ -58,13 +58,13 @@ read-only verb set, the only forge commands this skill runs:
 head commit OID this run binds itself to.
 - `gh pr diff` for the diff.
 - A GraphQL query for review threads through the `reviewThreads` connection,
-carrying `isResolved` on each thread and, on each thread comment, its body
+carrying `id` and `isResolved` on each thread and, on each thread comment, its id, its body
 and the `pullRequestReview` it belongs to with that review's `submittedAt`.
 That join is what attributes a thread to a round; without it the round
 pointers step 4 attaches are guesses. Paginate the thread connection and
 each comment connection to exhaustion. Plain `gh pr view` omits thread
 resolution, so the GraphQL path is not optional.
-- A GraphQL query for review submissions with their timestamps, states,
+- A GraphQL query for review submissions with their ids, timestamps, states,
 bodies, and the commit each one reviewed, paginated to exhaustion.
 Submissions are the round markers: threads group into review rounds by the
 submission they belong to. Their bodies are read, not just their timestamps,
@@ -77,7 +77,8 @@ plain conversation comment is review history too, and a digest that reads
 inline threads alone can find every one of them resolved and recommend merge
 over an objection nobody withdrew.
 - A GraphQL query for the description body's edit history through the
-`userContentEdits` connection, for step 3's baseline.
+`userContentEdits` connection, paginated to exhaustion, selecting `editedAt`,
+`editor`, and `diff`, for step 3's baseline.
 
 PR-derived text never enters a command argument. Identifiers this skill
 resolved itself (repository, number, node ids, cursors) parameterize the
@@ -91,10 +92,13 @@ The digest is bound to one commit. Record the head OID from this fetch; every
 input in the run describes that commit, and the reads above happen at
 different moments, so nothing else guarantees they describe the same code.
 
-Record alongside it a fingerprint of the review history as fetched: every
-submission as its author, timestamp, state, and reviewed commit; every thread
-as its path and resolution flag with each comment as author, timestamp, and
-body; every top-level comment the same way. Counts and resolution flags alone
+Record alongside it a fingerprint of the review history as fetched, paired
+later by node id: every submission as its id, author, timestamp, state, and
+reviewed commit; every thread as its id, path, and resolution flag, with each
+comment as its id, author, timestamp, and body; every top-level comment the
+same way. An id that is new, missing, or carrying a changed field is a
+change; without ids an inserted reply just shifts everything after it and
+reads as though many comments changed at once. Counts and resolution flags alone
 are not the fingerprint, because a reply on a resolved thread and an edited
 comment both leave those unchanged, and those are the two things most likely
 to arrive while the owner is reading. Step 6 compares against this record.
@@ -131,19 +135,26 @@ recorded, and no fetched text entered a command argument.
 
 ### 3. Establish the intent baseline
 
-The baseline is the change's pre-review intent, and it comes from the
-description's history. A description with no recorded edits was never changed,
-so the body already in hand is the original. Where edits exist, the baseline
-is the body as it stood *before* the earliest recorded edit, never that edit's
-result: the first edit often lands after review has started, and reading its
-result as the original would measure drift against a description review had
-already reshaped. When that earliest state resolves and its author is the
-invoking owner, it is the baseline, and confirmation collapses to a
-disclosure: state that the baseline was taken from the description as first
-written, and move on. When the edit history does not resolve, or the earliest
-author is someone else (fork pull requests, bot-authored descriptions), show
-the owner a redacted projection of the baseline and confirm it represents what
-the change set out to do before review began. Redaction is a projection, not a
+The baseline is the change's pre-review intent, recovered from the description
+where the forge allows it. A description with no recorded edits was never
+changed, so the body already in hand is the original, and confirmation
+collapses to a disclosure: say the baseline is the description as first
+written, and move on.
+
+Where edits exist, the original is not recoverable, and the skill says so
+rather than manufacturing it. Despite the field name, each entry's `diff` is
+the whole description body as stored for that edit, not a patch and not the
+text from before it, and the entries arrive in no guaranteed order. So sort by
+`editedAt` and take the oldest surviving entry: that is the earliest revision
+the forge still holds, which is not the same thing as what the author first
+wrote. Treat it as a candidate. When its editor is the invoking owner, show
+the owner the redacted projection of it, say plainly that the true original is
+not retrievable and this is the earliest revision that survives, and ask
+whether it still represents the pre-review intent. When the editor is someone
+else (fork pull requests, bot-authored descriptions), when the entry carries
+no body, or when the history could not be paginated to exhaustion, intent is
+unverifiable: take the cap and the attestation below rather than confirming a
+guess. Redaction is a projection, not a
 pass over the text with the secrets struck out: PR-derived text shown back to
 the owner becomes a restatement in the run's own words carrying only what
 bears on intent, with any value that could be a credential, token, key,

@@ -25,8 +25,9 @@ statements — there is no lock or upsert between them.
 ## scheduler/store.py (+48 / -3)
 
 `exists_within_window` query and the insert path; the unique-index
-violation on insert is caught and logged as `duplicate_key_race` but the
-job body has already been scheduled by whichever worker won.
+violation on the losing insert is caught and logged as
+`duplicate_key_race`, but both workers can already have executed the job
+body by then — the index stops the duplicate row, not the duplicate work.
 
 ## metrics.py, tests/scheduler/test_dedupe.py (+64)
 

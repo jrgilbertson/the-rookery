@@ -178,6 +178,8 @@ flowchart TB
 
 ## Implementation Units
 
+> **Editorial note — superseded during execution.** Where the units below have a battery case prompt stipulate fixture files as the already-fetched forge data (U1's step 2 and U4's harness contract), that approach was abandoned while this plan was executed: the stipulation would have been a test seam living in the shipped skill. The battery that shipped instead puts a read-only `gh` stub first on `PATH`, so the skill runs its real fetch path. See [`../solutions/conventions/keep-the-test-seam-out-of-the-shipped-skill.md`](../solutions/conventions/keep-the-test-seam-out-of-the-shipped-skill.md). The plan text below stands as written.
+
 ### U1. Author the skill package
 
 - **Goal:** `skills/checking-merge-readiness/SKILL.md` embodies the digest workflow end to end.

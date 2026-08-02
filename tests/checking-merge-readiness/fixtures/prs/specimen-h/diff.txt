@@ -5,8 +5,10 @@ Constructed summary of the final diff at head `4c1b8e2` against base `main`.
 
 ## digest/job.py (new, +94)
 
-The nightly entry point. Iterates accounts with `daily_digest` enabled and
-calls `send_digest_for(account)` on each.
+The scheduler entry point, run hourly. On each tick it iterates accounts with
+`daily_digest` enabled whose `digest_hour_local` matches the current hour in
+their own timezone, and calls `send_digest_for(account)` on each — one digest
+per account per local day.
 
 `send_digest_for` reads in this order. Each guard was added in a different
 review round. The order is load-bearing, and nothing in the file says so:

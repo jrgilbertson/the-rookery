@@ -16,11 +16,14 @@ endpoint's existing page size. Illustrative hunk:
         return StreamingResponse(
             csv_rows(filters, batch_size=DEFAULT_PAGE_SIZE),
             media_type="text/csv",
-            headers={"Content-Disposition": export_filename()},
+            headers={
+                "Content-Disposition":
+                    f'attachment; filename="{export_filename()}"',
+            },
         )
 
-`export_filename()` returns `invoices-<date>.csv` — no user input in the
-header.
+`export_filename()` returns `invoices-<date>.csv`, so the header is
+`attachment; filename="invoices-<date>.csv"` — no user input in it.
 
 ## api/invoices/csv_rows.py (new, +52)
 

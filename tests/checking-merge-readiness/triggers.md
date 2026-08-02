@@ -5,6 +5,16 @@ listing (both siblings plus PR-management one-liners: ce-babysit-pr,
 ce-code-review, ce-commit-push-pr) and one user query, blind to the expected
 direction. Expected outcome is the skill name a correct judge picks, or `none`.
 
+## PR-management one-liners in the judged listing
+
+These three skills live outside this repository and stand in for the
+PR-management neighbors a real listing would carry; a judge sees only the
+descriptions below, exactly as written here.
+
+- ce-babysit-pr: "Watches an already-open pull request through its review and CI cycle, resolving feedback until it is merge-ready."
+- ce-code-review: "Performs a code review of changes and reports the findings."
+- ce-commit-push-pr: "Commits, pushes, writes the pull request description, and opens the pull request."
+
 ## Should trigger (expected: checking-merge-readiness)
 
 - S1. "Is this PR safe to merge?"

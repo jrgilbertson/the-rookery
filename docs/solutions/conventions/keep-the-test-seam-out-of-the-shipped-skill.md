@@ -3,7 +3,7 @@ title: "Put the test seam in the environment, not in the shipped skill"
 date: 2026-08-01
 category: conventions
 module: "skills/checking-merge-readiness"
-problem_type: workflow_issue
+problem_type: convention
 component: testing_framework
 severity: high
 applies_when:
@@ -205,8 +205,8 @@ if sub in WRITE_VERBS:
 die(f"`pr {sub}` is outside the skill's fixed read set", 3)
 ```
 
-Specimens live under opaque names, `fixtures/prs/specimen-a` through
-`specimen-h`, so a run cannot read the expected verdict off a directory path.
+Specimens live under opaque names, `fixtures/prs/specimen-a` onward, so a run
+cannot read the expected verdict off a directory path.
 The ground-truth mapping stays in the case file, for the reader and the grader
 rather than the run.
 

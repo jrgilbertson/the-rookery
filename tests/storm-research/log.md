@@ -9,3 +9,5 @@ Format: `date | git rev | check | result | note`
 - 2026-08-02 | cdb8847 | independent U2 preservation review | pass | Frozen engine, isolation, output adaptation, and disagreement fidelity are preserved; analytical synthesis remains outside this unit.
 - 2026-08-02 | 8527871 | structural validation (skills-ref) | pass | U3 package with the directly linked analysis methods is valid and keeps the core skill below the 500-line cap.
 - 2026-08-02 | 8527871 | independent U3 package review | pass | Analysis ordering, rendering, traceability, invented-tension remediation, and clean-recheck behavior passed after three contract inconsistencies were corrected.
+- 2026-08-02 | fee282d | trigger suite (pre-tune) | fail (15/16) | All eight intended research triggers passed, but the bounded repository-adoption near miss incorrectly activated instead of remaining with `ce-pov`.
+- 2026-08-02 | fee282d | trigger suite (final description) | pass (16/16) | Eight intended triggers and eight adjacent-workflow near misses were judged in separate fresh contexts from name, description, and query only.

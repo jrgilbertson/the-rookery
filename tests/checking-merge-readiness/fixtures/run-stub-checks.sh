@@ -215,9 +215,15 @@ json_is "specimen-e: exactly one thread is left unresolved" \
 json_is "specimen-g: exactly one thread is left unresolved" \
   specimen-g "sum(1 for t in d['reviewThreads']['nodes'] if not t['isResolved'])" \
   "1" api graphql -f "query=$THREADS"
-json_is "specimen-j: every thread is resolved, so the objections are elsewhere" \
-  specimen-j "sum(1 for t in d['reviewThreads']['nodes'] if not t['isResolved'])" \
-  "0" api graphql -f "query=$THREADS"
+# specimen-j caps at two, so a single page cannot see its third thread: this
+# pins both pages, or the claim "every thread is resolved" would be blind to it.
+json_is "specimen-j: page one holds two resolved threads and reports more" \
+  specimen-j "str(len(d['reviewThreads']['nodes']))+' '+str(sum(1 for t in d['reviewThreads']['nodes'] if not t['isResolved']))+' '+str(d['reviewThreads']['pageInfo']['hasNextPage'])" \
+  "2 0 True" api graphql -f "query=$THREADS"
+json_is "specimen-j: page two holds its third thread, also resolved" \
+  specimen-j "str(len(d['reviewThreads']['nodes']))+' '+str(sum(1 for t in d['reviewThreads']['nodes'] if not t['isResolved']))+' '+str(d['reviewThreads']['pageInfo']['hasNextPage'])" \
+  "1 0 False" api graphql \
+  -f 'query=query{repository{pullRequest{reviewThreads(first:100, after:"reviewThreads:2"){pageInfo{hasNextPage endCursor} nodes{isResolved path comments(first:100){nodes{body author{login} pullRequestReview{submittedAt}}}}}}}}'
 json_is "specimen-h: five threads across its four rounds" \
   specimen-h "len(d['reviewThreads']['nodes'])" "5" api graphql -f "query=$THREADS"
 

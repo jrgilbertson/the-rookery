@@ -35,7 +35,7 @@ carried a recommendation item reading "The recommendation is pause, not merge."
 
 Partway through grading, runs on those specimens returned do not merge instead.
 That is not a wrong answer. The skill's grade-to-recommendation mapping is fixed
-(`skills/checking-merge-readiness/SKILL.md:197-200`): every driver low gives
+(the fixed mapping in SKILL.md step 5): every driver low gives
 merge, any driver medium and none high gives pause, any driver high gives do not
 merge. A specimen that grades high produces do not merge by construction, so a
 literal "pause" item fails a correct run.
@@ -51,16 +51,16 @@ defensible stronger block)". That line was later dropped from
 
 The justification holds for exactly one of the three scenarios it was applied
 to. AE7, which scenario 5 encodes, says "the recommendation is at most pause"
-(`docs/plans/2026-08-01-001-feat-checking-merge-readiness-plan.md:105`). AE2,
+(the plan's AE7). AE2,
 which scenario 2 encodes, says "the recommendation is pause with that concern
 stated" with no hedge (same file, line 100). AE9, which scenario 7 encodes,
 states no recommendation at all (line 108). One acceptance example's wording was
 carried across two scenarios it does not govern.
 
-The consequence is recorded as a known limitation in the current log
-(`tests/checking-merge-readiness/log.md:46`). The defensive-accretion specimen
-grades high, so scenario 2 exercises the do-not-merge branch and AE2's literal
-pause branch goes unexercised.
+The consequence was recorded as a known limitation in the run log, under the
+heading for limitations in the battery, and has since been closed there. While
+it stood, the defensive-accretion specimen graded high, so scenario 2 exercised
+the do-not-merge branch and AE2's literal pause branch went unexercised.
 
 Closing it took a new specimen, and the closing was harder than expected in a
 way worth recording. Scenario 2b (`specimen-h`) had to be built to grade medium
@@ -87,8 +87,8 @@ still pass. Tightening it to require high and do not merge is what made the
 scenario discriminate. The current run log line for the bare variant records
 that it "reached the same do-not-merge conclusion with sound reasoning but
 assigned no grade; under the earlier 'at least medium' wording this scenario did
-not discriminate, and the tightened item is what separates them"
-(`log.md:32`).
+not discriminate, and the tightened item is what separates them" (the s5 bare
+line in the run log).
 
 ## Guidance
 
@@ -113,8 +113,9 @@ in a test suite that can silently delete a check. Handle it as its own decision:
    item is worded. Widening the item hides that; adding a medium-capped specimen
    fixes it. Scenario 2b is the shape of the second option.
 5. **Record the gap the moment you accept a loosening you cannot fully
-   justify.** The `log.md:46` limitation line is what kept AE2's uncovered pause
-   branch findable after grading moved on.
+   justify.** The limitation line in the run log is what kept AE2's uncovered
+   pause branch findable after grading moved on, and what let it be marked
+   closed rather than quietly forgotten.
 6. **Re-check what a loosened item still separates.** After widening, ask which
    wrong output the item would now fail. If the answer is none, or if both the
    skilled and bare run now pass a scenario built to discriminate, the item is
@@ -164,7 +165,8 @@ observed output is what motivates the wording.
 It does not apply to fixing an item that tests the harness rather than the
 skill. Scenario 1 item 4 was rescoped to evidence packs alone after failing a
 run for honestly reporting it could not see CI status the stub never served
-(`log.md:24`). That is a defect in the item's scope, and the rescope narrowed
+(the s1 item-4 rescope line in the run log). That is a defect in the item's
+scope, and the rescope narrowed
 what the item covers rather than widening what it accepts.
 
 ## Examples
@@ -189,8 +191,9 @@ concern stated". The rewrite accepts do not merge, which AE2 does not name, so
 the item stopped testing AE2's mapping branch. Scenario 7 took the same rewrite
 on AE9's authority, and AE9 names no recommendation at all.
 
-**The gap it left, and the specimen that closes it.** The current log records it
-as a known limitation, not a fix (`log.md:46`). Scenario 2b answers it with a
+**The gap it left, and the specimen that closes it.** The run log recorded it as
+a known limitation rather than a fix until a specimen existed to close it.
+Scenario 2b is that specimen: it answers AE2 with a
 specimen whose accretion genuinely caps at medium, and its first item refuses
 both neighbors:
 
@@ -213,7 +216,8 @@ thread is a named unresolved-items driver graded at least medium." It now reads:
 Same kind of edit, opposite direction, and the run log line for the superseded
 battery states why it was needed: the item "accepted 'at least medium' on a
 specimen the rubric's high anchor covers exactly, so an under-grade could pass;
-tightened to require high and do not merge" (`log.md:62`).
+tightened to require high and do not merge" (the superseded battery's s5 line
+in the run log).
 
 ## Related
 

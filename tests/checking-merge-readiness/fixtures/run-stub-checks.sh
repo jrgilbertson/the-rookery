@@ -258,6 +258,20 @@ exit_is "perimeter: auth login writes" 3 specimen-a auth login
 exit_is "perimeter: auth status reads" 0 specimen-a auth status
 exit_is "perimeter: issue list is outside the read set" 3 specimen-a issue list
 
+echo "== H2. a selector must agree with the specimen =="
+exit_is "selector: correct number with the owner the prompt names" 0 specimen-a pr view 412 --repo mapleworks --json number
+exit_is "selector: correct number with the specimen's full owner/name" 0 specimen-a pr view 412 --repo mapleworks/orderline --json number
+exit_is "selector: no selector at all serves the specimen" 0 specimen-a pr view --json number
+exit_is "selector: a pull request number this specimen is not" 1 specimen-a pr view 999999 --json number
+exit_is "selector: the wrong number and the wrong repository" 1 specimen-a pr view 999999 --repo entirely/wrong --json number
+exit_is "selector: the right number in the wrong repository" 1 specimen-a pr view 412 --repo entirely/wrong --json number
+exit_is "selector: a matching pull request URL" 0 specimen-a pr view https://github.com/mapleworks/orderline/pull/412 --json number
+exit_is "selector: a URL naming another pull request" 1 specimen-a pr view https://github.com/mapleworks/orderline/pull/999 --json number
+exit_is "selector: owner/name#number shorthand that matches" 0 specimen-a pr view mapleworks/orderline#412 --json number
+exit_is "selector: a selector this stub cannot resolve" 3 specimen-a pr view some-branch-name --json number
+exit_is "selector: pr diff carries the same gate" 0 specimen-a pr diff 412 --repo mapleworks
+exit_is "selector: pr diff refuses another pull request" 1 specimen-a pr diff 999999
+
 echo "== I. the unauthenticated forge =="
 AUTHFAIL=1
 exit_is "auth-fail: pr view" 4 specimen-a pr view --json number
@@ -281,6 +295,10 @@ exit_is "parse: no repository selection" 2 specimen-a api graphql \
 exit_is "parse: a pull request field outside the read set" 3 specimen-a api graphql \
   -f 'query=query{repository{pullRequest{timelineItems(first:1){nodes{__typename}}}}}'
 exit_is "parse: no query supplied" 2 specimen-a api graphql -f 'owner=x'
+exit_is "parse: a query followed by a mutation" 2 specimen-a api graphql \
+  -f 'query=query{repository{pullRequest{reviews(first:1){nodes{submittedAt state body commit{oid}}}}}} mutation{addComment(input:{}){clientMutationId}}'
+exit_is "parse: a mutation followed by a query" 3 specimen-a api graphql \
+  -f 'query=mutation{addComment(input:{}){clientMutationId}} query{repository{pullRequest{reviews(first:1){nodes{state}}}}}'
 exit_is "parse: a directive" 2 specimen-a api graphql \
   -f 'query=query{repository{pullRequest{reviews(first:1) @include(if:true){nodes{submittedAt state body commit{oid}}}}}}'
 

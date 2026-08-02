@@ -96,12 +96,19 @@ decision, because each can move while the other holds still:
 - The head OID. If it moved, the assessment no longer describes what would
 merge: say so and rebuild the digest against the new head rather than
 letting the owner decide on the old one.
-- The review history, meaning the set of submissions with their states, the
-thread resolution flags, and the top-level comment count. A reviewer can
-add a blocking submission, reopen a resolved thread, or withdraw an
-approval without pushing anything, so a stable head is no evidence that the
-record behind the recommendation is still current. When it changed, rebuild
-rather than presenting a digest of feedback the owner has not seen.
+- The review history. A reviewer can add a blocking submission, reply on a
+resolved thread, edit a comment, or withdraw an approval without pushing
+anything, so a stable head is no evidence that the record behind the
+recommendation is still current. Re-read the same connections step 2 used
+and compare them to what the digest was built from. Counts and resolution
+flags are not the comparison, because the feedback that arrives during a
+readout usually changes neither: compare every submission as its author,
+timestamp, state, and reviewed commit; every thread as its path and
+resolution flag together with each of its comments as author, timestamp,
+and body; and every top-level comment the same way. Matching counts over
+different comment bodies is a change. When anything in that comparison
+moved, rebuild rather than presenting a digest of feedback the owner has
+not seen.
 
 A stable head is also no evidence that anyone reviewed it. An approval covers
 the commit it was given, and where a repository does not dismiss stale reviews

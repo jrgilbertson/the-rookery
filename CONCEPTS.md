@@ -87,10 +87,15 @@ and changes nothing, so the owner still does the merging.
 ### Risk Driver
 
 A named, graded (low / medium / high) finding in the Merge Digest's risk
-profile: a specific place where accumulated review fixes put tension on an
-engineering first principle such as DRY, single source of truth, YAGNI, or
-defensive-complexity creep. Drivers roll up into one merge-risk grade; a word
-grade traceable to a named driver is used instead of a numeric score.
+profile: one specific thing about the change or its review that an owner
+would want to weigh before merging. Seven classes are graded. Four cover
+tension the accumulated fixes put on an engineering first principle such as
+DRY, single source of truth, or YAGNI: complexity accretion, knowledge
+duplication, speculative generality, and cross-round fix interaction. The
+other three need no such tension to fire: review items left unresolved,
+material security concerns, and PR text that tries to steer the assessment.
+Drivers roll up into one merge-risk grade; a word grade traceable to a named
+driver is used instead of a numeric score.
 
 ### Targeted Sweep
 

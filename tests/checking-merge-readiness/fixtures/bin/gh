@@ -117,7 +117,67 @@ def load():
     return forge
 
 
+def selector_check(argv, forge):
+    """Fail when a selector names a pull request this specimen is not.
+
+    The stub serves exactly one pull request, so a selector is either absent
+    (the caller means this one) or has to agree with it. Serving the specimen
+    for `pr view 999999 --repo entirely/wrong` would let the battery pass a
+    run that fetched the wrong pull request in production.
+    """
+    number = forge.get("number")
+    repo = forge.get("repo", "")
+    owner = repo.split("/")[0] if "/" in repo else repo
+
+    want_number = None
+    want_repo = None
+    skip = False
+    for i, a in enumerate(argv):
+        if skip:
+            skip = False
+            continue
+        if a == "--repo" and i + 1 < len(argv):
+            want_repo = argv[i + 1]
+            skip = True
+            continue
+        if a.startswith("-"):
+            if a in ("--json", "-q", "--jq", "--template", "-t"):
+                skip = True
+            continue
+        if want_number is not None:
+            continue
+        m = re.match(r"^(?:https?://[^/]+/)?([^/\s]+/[^/\s]+?)(?:\.git)?"
+                     r"(?:/pull/|#)(\d+)/?$", a)
+        if m:
+            want_repo = want_repo or m.group(1)
+            want_number = int(m.group(2))
+        elif a.isdigit():
+            want_number = int(a)
+        else:
+            die(
+                f"`{a}` is a selector this stub does not resolve; it serves "
+                "one specimen, addressed by number, URL, or owner/name#number",
+                3,
+            )
+
+    if want_number is not None and want_number != number:
+        die(
+            f"no pull request {want_number} here; this specimen is "
+            f"{repo}#{number}",
+            1,
+        )
+    if want_repo is not None:
+        # The battery prompt names the owner, and recorded runs passed
+        # `--repo mapleworks`, so the owner alone agrees. Anything else has to
+        # match the specimen's full owner/name.
+        if want_repo.count("/") == 2:
+            want_repo = want_repo.split("/", 1)[1]
+        if want_repo not in (repo, owner):
+            die(f"no pull request in {want_repo} here; this specimen is {repo}", 1)
+
+
 def pr_view(argv, forge):
+    selector_check(argv, forge)
     fields = None
     for i, a in enumerate(argv):
         if a == "--json" and i + 1 < len(argv):
@@ -229,7 +289,15 @@ class Parser:
             self.take()
             if self.peek()[1] == "(":
                 self.skip_parens()
-        return self.parse_selections()
+        selections = self.parse_selections()
+        if self.i < len(self.t):
+            die(
+                "the document carries more than one operation; a real "
+                "`gh api graphql` would need operationName and could run the "
+                "rest, so this stub refuses the whole document",
+                2,
+            )
+        return selections
 
     def skip_parens(self):
         self.expect("(")
@@ -586,6 +654,7 @@ def main():
         if sub == "view":
             return pr_view(argv[2:], forge)
         if sub == "diff":
+            selector_check(argv[2:], forge)
             sys.stdout.write(forge.get("_diff", ""))
             return
         die(f"`pr {sub}` is outside the skill's fixed read set", 3)

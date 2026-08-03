@@ -1,19 +1,19 @@
 # Fidelity Check
 
-The orchestrator starts one independent reviewer in a clean context with these
-instructions, the final briefing, sourced baseline (`p0`), source audit, every
-raw lens return, and the execution manifest. It withholds its synthesis
-reasoning because the reviewer audits the result of curation, not the reasoning
-that produced it.
+The orchestrator starts one independent reviewer in a clean context. Give the
+reviewer these instructions, the final briefing, sourced baseline (`p0`), source
+audit, every raw lens return, and the execution manifest. Do not include the
+orchestrator's synthesis reasoning. The reviewer checks the briefing against the
+research record, not the reasoning that produced it.
 
 If the context inherited the orchestrator's conversation or earlier review
 work, stop and return `FIDELITY CONTEXT NOT INDEPENDENT`. The execution manifest
 identifies intended, completed, and failed lenses; use it to identify the
 available returns, not to speculate about work a failed lens might have done.
 
-This is not a review of conclusion correctness or general quality. Do not
-recommend a different conclusion, grade the prose, or substitute your own
-analysis. Answer only these two questions from the supplied artifacts:
+Review whether the synthesis preserved the research. Do not recommend a
+different conclusion, grade the prose, or add your own analysis. Answer these
+two questions from the supplied artifacts:
 
 1. **Which disagreements present in the raw returns are lost from the briefing,
    and which disagreements in the briefing were invented?**
@@ -26,14 +26,10 @@ next action. Evidence-traceable means the briefing identifies the supporting
 claim in the sourced `p0`, source audit, or a raw return. You check whether that
 trace or inference treatment exists, not whether the conclusion is correct.
 
-Curation is intentionally lossy, but independently reached disagreement is the
-most expensive research result and the easiest to erase while smoothing prose.
-
 ## What counts as disagreement
 
-Two lenses disagree when they reach incompatible conclusions from their own
-evidence, or when one finding would change what a reader does and another would
-not. The loss may be:
+Two lenses disagree when they reach incompatible conclusions or recommend
+materially incompatible actions from their own evidence. The loss may be:
 
 - **Contradicted:** the briefing presents one conclusion as settled without
   the opposing conclusion.
@@ -47,8 +43,8 @@ A lens covering more ground than another is not disagreement. Absence of a
 claim is not dissent. A failed lens is missing coverage, not evidence of
 agreement or disagreement.
 
-Also check the inverse: a conflict staged in the briefing that does not exist in
-the raw returns. Treat invented tension as seriously as lost tension.
+Also check the inverse: a conflict in the briefing that does not exist in the
+raw returns. Treat invented tension as seriously as lost tension.
 
 ## Analytical traceability
 
@@ -87,18 +83,3 @@ For each analytical traceability defect, report:
 
 Do not suggest rewrites or judge whether the conclusion is right. If both
 questions are clean, report `FIDELITY CLEAN` and stop.
-
-## Binding result
-
-Every reported defect requires the orchestrator to change the briefing: restore
-a lost disagreement to the contradiction map or Source Audit, or state why it
-was set aside; remove or correct invented tension; add the missing evidence
-trace or explicit inference label with calibrated confidence for an analytical
-defect. The briefing may not remain unchanged after an accepted finding.
-
-Run these two questions again on every revised briefing in a new independent
-context until the result is `FIDELITY CLEAN`. If that clean recheck is
-unavailable, the orchestrator records reduced verification in the execution
-manifest and lowers confidence rather than claiming a clean result. The
-manifest retains the review history, including findings applied and the final
-recheck state.

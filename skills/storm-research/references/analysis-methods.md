@@ -1,6 +1,6 @@
 # Analysis Methods
 
-Run both cross-lens passes after contradiction mapping and source auditing.
+Run both analyses after contradiction mapping and source auditing.
 Use the sourced baseline (`p0`), every raw lens return, the contradiction map,
 and the source audit as the shared analytical record. Material means capable of
 changing the answer, confidence, or next action. Calibrated confidence uses
@@ -24,16 +24,15 @@ High, Medium, or Low and names the evidence and limits that justify the rating.
    Lower confidence when a required lens, source, or independent context is
    missing.
 
-The result must make visible which part of the answer is observed, which is
-inferred, what cannot be changed, and what would break the main mechanism.
+Show which parts of the answer are observed or inferred, what cannot change,
+and what would break the main mechanism.
 
 ## Systems thinking and higher-order effects
 
 1. Define the focal system's purpose, a boundary useful to the requested
-   purpose, and a time horizon long enough to expose material downstream
-   effects. Situate it within any larger system whose behavior could change the
-   answer, and name what remains outside the boundary when that exclusion
-   matters.
+   purpose, and a time horizon long enough to show material downstream effects.
+   Place it within any larger system whose behavior could change the answer,
+   and name what remains outside the boundary when that exclusion matters.
 2. Describe the material pattern over time that the analysis must explain.
    When the record supports only snapshots, say the pattern is unverified
    rather than extrapolating a trend.
@@ -59,14 +58,14 @@ inferred, what cannot be changed, and what would break the main mechanism.
 7. When the requested purpose evaluates an intervention, stress-test it across
    the relevant time horizons. Examine actor adaptations and counter-responses,
    trade-offs, spillovers, displaced costs, distributional effects, and
-   cross-scale dependencies when material. Name the signals to monitor and the
-   conditions that would require revising the analysis. Do not force an
-   intervention or verdict into exploratory research.
+   dependencies between local and larger systems when material. Name the
+   signals to monitor and the conditions that would require revising the
+   analysis. Do not force an intervention or verdict into exploratory research.
 8. When no material dynamic or higher-order effect is supported, say so
    explicitly and name the system boundary, time horizon, or missing evidence
    that limits the claim. Do not invent a dynamic to fill the section.
 
-The result must distinguish sourced relationships from inferred ones and keep
-confidence visible at every uncertain link. In degraded research, name how lost
-isolation, source access, failed lenses, or unavailable fidelity review limits
-the boundary, chains, and confidence.
+Show which relationships are sourced and which are inferred. Give a confidence
+rating for every uncertain link. In degraded research, state how lost isolation,
+source access, failed lenses, or unavailable fidelity review limits the system
+boundary, causal chains, and confidence.

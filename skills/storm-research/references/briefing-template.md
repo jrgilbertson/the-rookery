@@ -10,7 +10,7 @@ Produce an outline before prose. Include:
 - a working thesis and section sequence;
 - the key claim and needed evidence for each section;
 - the contradiction or objection each section resolves;
-- the caveat or reliability note that must survive drafting.
+- the evidence or reliability limit that must remain in the final draft.
 
 ## Full briefing
 
@@ -23,7 +23,7 @@ Baseline facts:
 - <definitions / actors / current state / scope constraints>
 
 Perspective scan:
-- <Lens>: <question asked + grounded answer + confidence>
+- <Lens>: <question asked + sourced answer + confidence>
 
 Contradictions that matter:
 1. <conflict + evidence on each side + why it matters>
@@ -50,12 +50,13 @@ Frontier question: <the question that would change the answer most>
 
 Reliability check:
 - Weakest claim: <claim + why weak>
-- Source/bias risk: <source skew, tone transfer, missing counter-source>
+- Source/bias risk: <one-sided sources, source bias carried into the briefing,
+  missing counter-source>
 - Missing perspective: <failed or underrepresented lens/source>
 - What to verify next: <evidence that would change confidence>
 
 Execution manifest:
-- Intended / completed / failed lenses: <auditable state>
+- Intended / completed / failed lenses: <each lens and its status>
 - Isolation: <mechanism, queue handling, and clean/degraded state>
 - Source access: <state and limitations>
 - Fidelity: <state and review history>

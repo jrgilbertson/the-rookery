@@ -5,8 +5,8 @@ description: "Use only for requests whose deliverable is a full research briefin
 
 # Storm Research
 
-Produce a grounded research briefing by establishing baseline facts, discovering
-source-implied perspectives, asking independent lens-specific questions,
+Produce a grounded research briefing by establishing baseline facts, finding
+perspectives suggested by the sources, asking independent lens-specific questions,
 preserving disagreement, and auditing reliability and source quality.
 
 Material means capable of changing the answer, confidence, or next action.
@@ -19,7 +19,8 @@ Resolve the research topic and create one self-contained **framed topic** with:
 
 - the question and requested deliverable;
 - the user's role or intended use;
-- scope, time horizon, geography or domain, and useful-enough success criteria;
+- scope, time horizon, geography or domain, and what the answer must cover to be
+  useful;
 - user constraints and authority boundaries;
 - permitted resource identifiers and access boundaries, such as URLs, file
   paths, repository names, dataset IDs, or an explicit public-source allowance.
@@ -35,7 +36,7 @@ law, finance, health, APIs, prices, benchmarks, or news. Prefer primary sources
 such as official documents, papers, filings, standards, repositories, published
 data, and direct product pages. Distinguish evidence from inference.
 
-Create a concise, sourced, lens-neutral grounding record covering:
+Create a short, sourced baseline that does not favor any lens. Include:
 
 - definitions and scope boundaries;
 - key actors, systems, examples, and terms of art;
@@ -51,8 +52,9 @@ work an **unverified perspective simulation**, and keep factual confidence low.
 
 ### 3. Scan sources and lock the lens set
 
-Inspect three to five source surfaces most likely to expose a material missing
-perspective. Use the five canonical lenses unless the user narrows the set:
+Inspect three to five sources most likely to reveal a missing perspective that
+could change the answer, confidence, or next action. Use the five canonical
+lenses unless the user narrows the set:
 
 | Lens | Contribution | Failure mode it catches |
 | --- | --- | --- |
@@ -65,27 +67,27 @@ perspective. Use the five canonical lenses unless the user narrows the set:
 Add a topic-specific lens, such as a regulator, customer, clinician, operator,
 technical architect, adversary, ethicist, educator, community, or geopolitical
 perspective, only when omitting it could change the answer, confidence, or next
-action. Supplemental lenses add to the non-narrowed canonical set; they do not
-replace it.
+action. Topic-specific lenses add to the non-narrowed canonical set; they do
+not replace it.
 
 Lock the intended lens set in the execution manifest. The canonical lenses left
-after user narrowing and every user-required lens are required. Mark a
-source-discovered lens supplemental unless the research target makes it
-material to usable coverage. Record the narrowing, required and supplemental
+after user narrowing and every user-required lens are required. A topic-specific
+lens is required only when the research would be unusable without it; otherwise,
+record it as supplemental. Record the narrowing, required and supplemental
 lenses, source-access state, and any degradation before dispatch.
 
 ### 4. Dispatch one isolated executor per lens
 
 Read [references/lens-charter.md](references/lens-charter.md). It applies
-unchanged to every lens in the locked set. Use the harness's capability for
-starting isolated executor contexts, dispatching concurrently when possible
-and queueing when capacity is limited. Start a generic executor context rather
-than a preconfigured role whose hidden task instructions would contaminate the
-exact four-part seed below.
+unchanged to every lens in the locked set. Use the host's agent runner to start
+one clean executor context per lens, dispatching concurrently when possible and
+queueing when capacity is limited. Start a generic executor rather than a
+preconfigured role whose hidden task instructions would contaminate the exact
+four-part seed below.
 
-The orchestrator's orientation ends before dispatch. After dispatch, each lens
-executor owns its substantive research; the orchestrator retains and curates
-returns rather than becoming an additional lens.
+After dispatch, the orchestrator stops doing lens research. Each executor
+researches its own lens. The orchestrator collects the raw returns and later
+synthesizes them; it does not act as another lens.
 
 Give every executor exactly four seed parts:
 
@@ -106,9 +108,9 @@ cannot be verified, use the best available separation, label the result a
 An intended required lens that fails or returns no usable result stays failed.
 Continue with partial research when useful, but mark the run degraded and
 record each limitation, its effect on coverage or confidence, and what would
-upgrade the result. For unverified cleanliness, name the harness signal or
-mechanism needed to confirm that no inherited task conversation or sibling work
-entered each executor.
+upgrade the result. For unverified cleanliness, name the signal or mechanism
+needed to prove that no inherited task conversation or sibling work entered
+each executor.
 
 Collect every return unchanged and retain the raw returns for fidelity review.
 This step is complete when every intended lens is recorded as completed or
@@ -127,8 +129,8 @@ From the raw returns, answer:
 5. What did none of the completed lenses address?
 6. Which question would resolve the largest uncertainty?
 
-Preserve the force and evidence of dissent rather than flattening it into a
-generic hedge. A missing or failed lens is a coverage gap, not agreement.
+Keep each conflicting conclusion and its evidence. Do not replace disagreement
+with a vague hedge. A missing or failed lens is a coverage gap, not agreement.
 
 ### 6. Audit sources
 
@@ -140,7 +142,7 @@ when the work is consequential, current, disputed, or source-heavy:
 | `<claim>` | `<source or none found>` | Primary/secondary/tertiary/none | `<risk>` | `<needed source>` | High/Medium/Low |
 
 Audit promotional, institutional, ideological, geographic, and political bias.
-Source clusters with the same incentives do not constitute independent
+Several sources with the same incentives do not count as independent
 confirmation. This step is complete when every material user-facing claim has a
 best source, source type, bias or tone risk, missing counter-source, and
 confidence. An unsupported claim still gets a complete row: record no supporting
@@ -152,9 +154,9 @@ and keep confidence low.
 Read [references/analysis-methods.md](references/analysis-methods.md). After
 contradiction mapping and the source audit, run both the first-principles and
 systems-thinking passes for every routed task. Each pass uses the sourced `p0`,
-all raw returns, contradiction map, and source audit. These are curator-owned
-cross-lens analyses, not new lenses; never send them to lens executors or feed
-their results back into lens research.
+all raw returns, contradiction map, and source audit. The orchestrator performs
+these analyses after lens research. They are not new lenses; never send them to
+lens executors or feed their results back into lens research.
 
 Retain evidence links, inference labels, calibrated confidence, and degraded
 limits in the internal analytical record. A full briefing renders both analyses
@@ -190,19 +192,16 @@ analysis and synthesis, including unsupported claims.
 
 ### 10. Review curation fidelity
 
-First self-review the draft for its weakest claim, lens dominance, skeptic
-steelman quality, concrete incentives, mechanism-comparable historical
-analogies, unaddressed gaps, unsupported associations, overgeneralized vivid
-examples, source-bias transfer, and fit to the user's intended use.
+First check the draft for its weakest claim, overreliance on one lens, a weak
+version of the skeptic's case, vague incentives, historical analogies that do
+not share the same mechanism, unanswered gaps, unsupported connections, vivid
+examples applied too broadly, source bias repeated in the briefing, and poor fit
+with the user's intended use.
 
 Then read [references/fidelity-check.md](references/fidelity-check.md) and start
-one independent reviewer in a clean context. Give it the fidelity instructions,
-the final briefing, sourced `p0`, source audit, all raw lens returns, and the
-execution manifest, but not the orchestrator's synthesis reasoning. The
-reviewer checks only whether the briefing lost or invented disagreement and
-whether every material analytical assumption, mechanism, and causal-chain link
-is evidence-traceable or explicitly inference-labeled with calibrated
-confidence. It does not judge conclusion correctness or general quality.
+one independent reviewer in a clean context. Give it every artifact listed in
+that file, but not the orchestrator's synthesis reasoning. Apply only the check
+defined there.
 
 The report is binding. For every finding, restore a lost disagreement to the
 contradiction map or Source Audit, or state in the briefing why it was set

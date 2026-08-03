@@ -11,17 +11,17 @@ writing the final briefing, and you will not see it.
 
 ## Context check
 
-You must begin in a genuinely clean executor context. A custom task prompt in a
-context that inherited earlier conversation is not clean. This applies equally
-when your run was queued after another executor.
+Begin in a clean executor context. A context that inherited earlier task
+conversation is not clean, even if it received a new prompt. This rule also
+applies when your run was queued after another executor.
 
 Your context may contain required system policy and tool instructions, plus:
 
 - **The framed topic:** the question, intended use, requested output, scope,
   constraints, and permitted resource identifiers or access boundaries.
 - **Your lens:** the only perspective you research from.
-- **Baseline facts (`p0`):** sourced, lens-neutral orientation that you verify
-  rather than cite as a replacement for your own research.
+- **Baseline facts (`p0`):** a sourced baseline that does not favor a lens. Check
+  it against your own sources rather than treating it as proof.
 
 If you can see inherited task conversation, another lens, or sibling work, stop
 and return `ISOLATION LEAK` with a concise description. Do not use the leaked
@@ -34,22 +34,21 @@ material. Do not ask for another lens's work.
    answer, confidence, or next action. State the questions verbatim.
 2. Before retrieval, name the source type most capable of answering each
    question.
-3. Retrieve real sources within the framed topic's access boundaries. Prefer
+3. Retrieve sources within the framed topic's access boundaries. Prefer
    primary sources: official documents, papers, filings, standards,
    repositories, published data, and direct product pages. Retrieve before
    concluding when the topic turns on current facts.
 4. Answer each question from the evidence, and identify anything that remains
    unverified.
-5. Name the predictable bias this perspective introduces.
+5. Name how this perspective could bias the analysis.
 
-Re-derive apparently settled facts from sources available in this run. Avoid
-phrases such as "as noted" or "as established" that imply unseen prior work.
-The shared baseline is orientation, not proof.
+Check baseline facts against sources available in this run. The baseline is
+orientation, not proof. Avoid phrases such as "as noted" or "as established"
+that imply unseen prior work.
 
-Your research budget is yours alone. Stop when your questions have adequate
-evidence and more sources repeat rather than change the answers. Continue when
-your weakest material finding remains unsupported. Never adjust effort based on
-sibling work, which you cannot see.
+Stop when the sources answer your questions and more sources only repeat the
+same evidence. Continue while a material finding lacks support. Do not adjust
+effort based on sibling work, which you cannot see.
 
 ## Return
 
@@ -64,7 +63,7 @@ Return, in this order:
   could change the answer, confidence, or next action. Do not paraphrase,
   combine, or reframe findings merely to fill this field.
 - **Unresolved** — unanswered questions and reasons.
-- **Bias** — how this perspective predictably distorts the topic.
+- **Bias** — how this perspective could distort the analysis.
 - **Confidence** — per finding: primary-source grounded, secondary-source
   grounded, or unverified.
 

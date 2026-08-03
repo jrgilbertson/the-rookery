@@ -105,6 +105,14 @@ systems, examines material relationships and patterns over time, and traces
 feedback and higher-order effects without promoting uncertain causal links to
 facts. Formal system-dynamics models are separate, user-requested deliverables.
 
+### Storm Fidelity Review
+
+An independent check that compares a Storm Research briefing with its baseline,
+source audit, raw lens returns, and execution manifest for lost or invented
+disagreement and untraced analytical claims. Every finding is binding; each
+revision goes to a new clean reviewer until the check is clean or the run records
+reduced verification.
+
 ## Skill quality gates
 
 ### Baseline Test

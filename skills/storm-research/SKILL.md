@@ -76,11 +76,12 @@ lenses, source-access state, and any degradation before dispatch.
 
 ### 4. Dispatch one isolated executor per lens
 
-Read [references/lens-charter.md](references/lens-charter.md). Use the harness's
-capability for starting isolated executor contexts, dispatching concurrently
-when possible and queueing when capacity is limited. Start a generic executor
-context rather than a preconfigured role whose hidden task instructions could
-add a fifth seed part.
+Read [references/lens-charter.md](references/lens-charter.md). It applies
+unchanged to every lens in the locked set. Use the harness's capability for
+starting isolated executor contexts, dispatching concurrently when possible
+and queueing when capacity is limited. Start a generic executor context rather
+than a preconfigured role whose hidden task instructions would contaminate the
+exact four-part seed below.
 
 The orchestrator's orientation ends before dispatch. After dispatch, each lens
 executor owns its substantive research; the orchestrator retains and curates

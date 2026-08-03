@@ -32,7 +32,7 @@ What I reach for depends on the question:
 - Deep research. Understanding a codebase, a methodology, or a topic in depth. Most capable models handle it well when asked directly.
 - `ce-ideate` from Compound Engineering. For when I don't yet know what to build and want evidence-backed hypotheses to react to.
 - [`last30days`](https://github.com/mvanhorn/last30days-skill). Focused, recent signal on a single topic or person where recency beats depth, like the latest model rankings for development work.
-- [`storm-research`](skills/storm-research/SKILL.md). Deep, source-backed investigation through isolated practitioner, academic, skeptic, economist, and historian lenses. It grounds the topic, preserves contradiction, and adds explicit first-principles and system-dynamics synthesis. Use it when the durable result should be a multi-perspective research record; use `ce-pov` when the result should be a compact, decisive verdict earned against the project, with targeted external verification where it is load-bearing.
+- [`storm-research`](skills/storm-research/SKILL.md). Deep, source-backed investigation through isolated practitioner, academic, skeptic, economist, and historian lenses. It grounds the topic, preserves contradiction, and adds explicit first-principles and systems-thinking synthesis. Use it when the durable result should be a multi-perspective research record; use `ce-pov` when the result should be a compact, decisive verdict earned against the project, with targeted external verification where it is load-bearing.
 
 What must be true before moving to Plan:
 

@@ -1,8 +1,9 @@
 # Analytical depth and traceability
 
-Provenance: 2026-08-02 frozen-prior run — the briefing preserved evidence and
-disagreement but omitted both named analyses and link-level causal
-traceability; the graded result is recorded in the suite log.
+Provenance: 2026-08-02 frozen-prior run and approved terminology audit — the
+briefing omitted both named analyses and link-level causal traceability; the
+later live contract mislabeled broad systems thinking as formal system
+dynamics.
 
 ## Prompt
 
@@ -22,11 +23,17 @@ traceability; the graded result is recorded in the suite log.
       facts, assumptions, irreducible constraints, and inference.
 - [ ] Includes a distinct `First-principles analysis` that states a causal
       mechanism and the conditions required for its main claim to hold.
-- [ ] Includes a distinct `System dynamics and higher-order effects` analysis
+- [ ] Includes a distinct `Systems thinking and higher-order effects` analysis
       with a useful boundary, time horizon, material actors, incentives,
       resources, and constraints.
+- [ ] Situates the pricing intervention in the relevant larger transport,
+      fiscal, or equity systems without inventing relationships and treats the
+      single pilot as a snapshot rather than a verified pattern over time.
 - [ ] Presents every material multi-step effect as a causal chain and ties each
       uncertain link to evidence or labels it as inference with confidence.
+- [ ] Stress-tests the proposed intervention across relevant horizons and names
+      material adaptations, trade-offs, spillovers, monitoring signals, and
+      revision conditions without requiring a formal model.
 - [ ] Accounts for every material user-facing claim in a source audit with its
       best source, source type, bias risk, missing counter-source, and confidence,
       including complete low-confidence rows for unsupported claims introduced

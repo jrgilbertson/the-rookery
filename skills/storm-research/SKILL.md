@@ -150,14 +150,14 @@ and keep confidence low.
 
 Read [references/analysis-methods.md](references/analysis-methods.md). After
 contradiction mapping and the source audit, run both the first-principles and
-system-dynamics passes for every routed task. Each pass uses the sourced `p0`,
+systems-thinking passes for every routed task. Each pass uses the sourced `p0`,
 all raw returns, contradiction map, and source audit. These are curator-owned
 cross-lens analyses, not new lenses; never send them to lens executors or feed
 their results back into lens research.
 
 Retain evidence links, inference labels, calibrated confidence, and degraded
 limits in the internal analytical record. A full briefing renders both analyses
-under the exact headings `First-principles analysis` and `System dynamics and
+under the exact headings `First-principles analysis` and `Systems thinking and
 higher-order effects`, including an honest null result or degraded limit. A
 short or custom form may omit the headings, but it must preserve every material
 analytical finding and uncertainty.

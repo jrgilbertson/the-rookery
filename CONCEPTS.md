@@ -98,9 +98,12 @@ research record as the primary result.
 
 A research synthesis pass that separates verified facts, assumptions, and irreducible constraints, then traces the causal mechanisms and conditions that must hold for the main claims to be true.
 
-### System Dynamics Analysis
+### Systems Thinking Analysis
 
-A research synthesis pass that defines a useful system boundary, maps material relationships, incentives, constraints, feedback, and delays, and traces higher-order effects without promoting uncertain causal links to facts.
+A research synthesis pass that situates a focal system within relevant larger
+systems, examines material relationships and patterns over time, and traces
+feedback and higher-order effects without promoting uncertain causal links to
+facts. Formal system-dynamics models are separate, user-requested deliverables.
 
 ## Skill quality gates
 

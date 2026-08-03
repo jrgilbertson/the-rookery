@@ -15,7 +15,7 @@ looked" surface. GitHub Releases mirror its entries.
 
 - `storm-research` runs source-backed investigation through isolated
   practitioner, academic, skeptic, economist, and historian lenses. It maps
-  contradictions before adding first-principles and system-dynamics analysis,
+  contradictions before adding first-principles and systems-thinking analysis,
   adapts the result to the requested research deliverable, and uses a binding
   independent check to preserve disagreement and trace material causal claims.
 - `creating-portable-skills` is the first published skill. It creates new Agent
@@ -53,6 +53,10 @@ looked" surface. GitHub Releases mirror its entries.
 - `storm-research` now permits an honest null lens contribution instead of
   forcing novelty, requires a complete material-claim source audit, and loads
   its full-briefing template only for output forms that need it.
+- `storm-research` now names its qualitative cross-lens analysis as systems
+  thinking rather than formal system dynamics. It makes larger-system context
+  and patterns over time explicit, keeps formal models optional, and
+  stress-tests interventions only when the requested purpose calls for one.
 - Planning now keeps Compound Engineering as the primary route and uses
   targeted grilling only as an optional pressure test for consequential,
   interdependent decisions that remain unclear.

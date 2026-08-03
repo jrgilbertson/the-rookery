@@ -27,25 +27,42 @@ High, Medium, or Low and names the evidence and limits that justify the rating.
 The result must make visible which part of the answer is observed, which is
 inferred, what cannot be changed, and what would break the main mechanism.
 
-## System dynamics and higher-order effects
+## Systems thinking and higher-order effects
 
-1. Define a boundary useful to the requested purpose and a time horizon long
-   enough to expose material downstream effects. Name what is outside the
-   boundary when excluding it could change the answer.
-2. Map the material actors, relationships, incentives, resources, and
+1. Define the focal system's purpose, a boundary useful to the requested
+   purpose, and a time horizon long enough to expose material downstream
+   effects. Situate it within any larger system whose behavior could change the
+   answer, and name what remains outside the boundary when that exclusion
+   matters.
+2. Describe the material pattern over time that the analysis must explain.
+   When the record supports only snapshots, say the pattern is unverified
+   rather than extrapolating a trend.
+3. Map the material actors, relationships, incentives, resources, and
    constraints inside that boundary. A relationship must state how one element
    changes, enables, or constrains another; repeating two facts side by side is
    not a relationship.
-3. Trace material effects as causal chains. Separate the direct effect,
-   second-order effect, and any higher-order effects. For every link, provide
-   its evidence from the shared analytical record or label it as inference with
-   calibrated confidence. A supported start and endpoint do not verify an
-   unsupported intermediate link.
-4. Identify reinforcing or balancing feedback, delays, nonlinearities, path
+4. Trace material effects across affected actors, domains, or scales as causal
+   chains. Separate the direct effect, second-order effect, and any higher-order
+   effects. For every link, provide its evidence from the shared analytical
+   record or label it as inference with calibrated confidence. A supported
+   start and endpoint do not verify an unsupported intermediate link.
+5. Identify reinforcing or balancing feedback, delays, nonlinearities, path
    dependence, and emergent behavior only when each dynamic is material and
    supported by the record. State the mechanism rather than applying the label
    to a restatement of the same fact.
-5. When no material dynamic or higher-order effect is supported, say so
+6. When the shared analytical record supports accumulation, depletion,
+   capacity, or rate limits that materially shape the behavior, name what
+   accumulates and the evidenced inflows or outflows. Do not complete a missing
+   stock or flow structure through inference alone. A causal-loop diagram,
+   stock-and-flow model, equation, simulation, or other formal model is a
+   separate deliverable; produce one only when the user requests it.
+7. When the requested purpose evaluates an intervention, stress-test it across
+   the relevant time horizons. Examine actor adaptations and counter-responses,
+   trade-offs, spillovers, displaced costs, distributional effects, and
+   cross-scale dependencies when material. Name the signals to monitor and the
+   conditions that would require revising the analysis. Do not force an
+   intervention or verdict into exploratory research.
+8. When no material dynamic or higher-order effect is supported, say so
    explicitly and name the system boundary, time horizon, or missing evidence
    that limits the claim. Do not invent a dynamic to fill the section.
 

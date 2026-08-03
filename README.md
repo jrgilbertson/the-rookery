@@ -51,7 +51,7 @@ Everything here fits into seven jobs. The walkthroughs live in [WORKFLOWS.md](WO
 
 ## The skills
 
-- [storm-research](skills/storm-research/SKILL.md). Run deep, source-backed research through isolated practitioner, academic, skeptic, economist, and historian lenses, then preserve their disagreements through first-principles and system-dynamics synthesis. It can support a decision, but it preserves a multi-perspective research record rather than replacing `ce-pov`'s compact, decisive, project-grounded verdict.
+- [storm-research](skills/storm-research/SKILL.md). Run deep, source-backed research through isolated practitioner, academic, skeptic, economist, and historian lenses, then preserve their disagreements through first-principles and systems-thinking synthesis. It can support a decision, but it preserves a multi-perspective research record rather than replacing `ce-pov`'s compact, decisive, project-grounded verdict.
 - [creating-portable-skills](skills/creating-portable-skills/SKILL.md). Create a new agent skill, or review, update, and migrate an existing one. One loop from intent interview through baseline testing to a packaged skill that works across models and harnesses.
 - [personal-chief-of-staff](skills/personal-chief-of-staff/SKILL.md). Run a morning review, daily journal and wind-down, weekly review, or quarterly review from your existing sources. Every durable change stays reviewable before it lands.
 - [managing-personal-crm](skills/managing-personal-crm/SKILL.md). Keep relationship context in canonical Person notes and tasks. Capture interactions, prepare for a conversation, find who could help with current work, and clean up notes in stages, with no separate CRM database.

@@ -25,7 +25,7 @@ invent a distinct insight.
 - [ ] States when no material feedback loop or higher-order effect is supported
       within the defined boundary and names the evidence limiting that claim.
 - [ ] Does not invent reinforcing loops, emergence, path dependence, or causal
-      consequences merely to populate the systems section.
+      consequences merely to populate the systems-thinking section.
 - [ ] Each raw lens return either gives an evidence-backed lens-specific
       contribution or states `none beyond the findings`, and the final briefing
       does not manufacture a hidden connection or other novelty.

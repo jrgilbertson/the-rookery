@@ -52,7 +52,7 @@ the raw returns. Treat invented tension as seriously as lost tension.
 
 ## Analytical traceability
 
-Inspect the `First-principles analysis` and `System dynamics and higher-order
+Inspect the `First-principles analysis` and `Systems thinking and higher-order
 effects` sections, plus any material analytical claim preserved elsewhere in a
 short or custom form. Treat each assumption and mechanism separately. Split a
 causal chain into direct, second-order, and higher-order links and inspect every

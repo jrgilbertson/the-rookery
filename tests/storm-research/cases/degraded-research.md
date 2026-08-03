@@ -10,7 +10,7 @@ or an unavailable independent fidelity recheck.
 > mandate under these test constraints: no clean executor contexts, no external
 > source access, the required Economist lens fails, and no independent fidelity
 > reviewer is available. Do not pretend those capabilities succeeded. Show how
-> each limitation affects first-principles and systems claims.
+> each limitation affects first-principles and systems-thinking claims.
 
 ## Expected behavior
 

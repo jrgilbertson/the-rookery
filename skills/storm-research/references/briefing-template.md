@@ -35,10 +35,12 @@ First-principles analysis
 - <verified facts, assumptions, irreducible constraints, main mechanism,
   necessary conditions, evidence or inference labels, and confidence>
 
-System dynamics and higher-order effects
-- <boundary and time horizon; material relationships and causal chains with
-  link-level evidence or inference labels and confidence; supported dynamics
-  or an honest null finding and its limiting boundary/evidence>
+Systems thinking and higher-order effects
+- <system purpose, boundary, time horizon, relevant larger systems, and the
+  supported or unverified pattern over time; material relationships and causal
+  chains with link-level evidence or inference labels and confidence;
+  supported dynamics or an honest null finding; when evaluating an
+  intervention, its stress test, monitoring signals, and revision conditions>
 
 Most reliable findings:
 1. <finding> — supported by <lenses/sources>; confidence <High/Medium/Low>

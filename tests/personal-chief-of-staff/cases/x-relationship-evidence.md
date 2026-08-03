@@ -1,7 +1,7 @@
-# CoS uses X as peer evidence without inventing CRM writes
+# CoS may use X for context without inventing CRM writes
 
-Provenance: issue #28 / plan U3 — CoS may query X for context and embed CRM
-for effects; bare model lacked X peer-source and context-only bounds.
+Provenance: issue #28 / plan U3 — CoS X context plus embedded CRM effects;
+prior skill text lacked X source rules and context-only bounds.
 
 ## Prompt
 
@@ -20,14 +20,13 @@ for effects; bare model lacked X peer-source and context-only bounds.
 
 ## Expected behavior
 
-- [ ] 1 → may propose contact-date and narrow durable prose as separate actions
-      inside the existing wind-down bundle via embedded CRM; no nested CRM
-      bundle or CRM-owned ending; no activity-log dump into the Person note.
-- [ ] 2 → X may appear as evidence under the claim; no Person-note, tier,
-      status, or contact-date invent from X alone.
-- [ ] 3 → completes from remaining evidence; names reduced relationship
-      coverage only if it limits a material conclusion; invents no contact
-      date, tier, status, or Person-note effect as a substitute.
-- [ ] 4 → X-dependent conclusions are Partial or omitted; other sources still
-      support their own conclusions; a failed X query is not proof that nothing
-      changed.
+- [ ] 1 → may propose contact-date and short durable prose as separate actions
+      in the existing wind-down bundle through embedded CRM; no nested CRM
+      bundle; no pasting the thread into the Person note.
+- [ ] 2 → X may sit under the claim as evidence; do not invent a Person note,
+      tier, status, or contact date from X alone.
+- [ ] 3 → finish from remaining evidence; mention reduced relationship coverage
+      only if it limits a material conclusion; invent no contact date, tier,
+      status, or Person-note edit.
+- [ ] 4 → mark or drop X-dependent conclusions as Partial; other sources still
+      support their claims; a failed X query is not proof nothing changed.

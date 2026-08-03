@@ -9,19 +9,18 @@ Use each configured source only for its native role:
 
 - Person notes provide canonical durable relationship meaning and approved
   identity links.
-- Messages, email, meetings, calendars, journals, and X (via authenticated
-  Grok or host X search tools when available) provide interaction evidence
-  and native timestamps; they do not replace Person notes or Tasks.
+- Messages, email, meetings, calendars, journals, and X (authenticated Grok
+  or host X search tools when available) provide interaction evidence and
+  native timestamps; they do not replace Person notes or Tasks.
 - Contacts can corroborate identity but do not establish relationship meaning.
 - Tasks provide canonical dated commitments.
 - Repositories, issue trackers, reading, writing, and document sources provide
   contextual relevance when the current judgment needs it.
 
-X is a peer optional source for relationship evidence, not engagement scanning
-or interesting-posts discovery (repository issue #12). When an X query will
-run, also read [grok-x-source.md](grok-x-source.md) for capability check,
-pointer-first vs self-activity-first bounds, read-only limits, and evidence
-shape. Unavailable or incomplete X narrows only X-dependent conclusions.
+When an X query will run, read [grok-x-source.md](grok-x-source.md) first. That
+reference covers access checks, query bounds, and read-only limits. X is for
+relationship evidence, not for finding posts to read or reply to (issue #12).
+Missing or incomplete X only limits conclusions that need X.
 
 Direct and embedded modes use only accounts and identities established by
 current authoritative guidance or confirmed in the interaction. An ambiguous

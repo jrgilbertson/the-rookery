@@ -13,10 +13,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
-- `managing-personal-crm` and `personal-chief-of-staff` treat authenticated Grok
-  X search as an optional, read-only peer evidence source for relationship
-  context (pointer-first or self-activity-first), without engagement scanning
-  or X mutation. Synthetic cases cover the discriminating paths.
+- `managing-personal-crm` and `personal-chief-of-staff` can use authenticated
+  Grok X search as optional, read-only relationship evidence. They prefer a
+  known URL or handle when present, otherwise a short slice of the user's own
+  recent posts and replies. They do not post on X or scan for posts to engage
+  with.
 
 ### Added
 

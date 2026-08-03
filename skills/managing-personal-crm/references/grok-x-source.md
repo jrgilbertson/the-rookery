@@ -1,59 +1,53 @@
 # Grok X Source
 
 Read this reference only when authenticated Grok or host X search tools are
-available and a material X query is about to run. It adapts X evidence to the
-CRM source contract. It does not authorize posting, replies, likes, follows,
-or DMs.
+available and an X query is about to run. Use it for relationship evidence
+from X. Do not post, reply, like, follow, or send DMs.
 
-This is relationship evidence only. It is not engagement scanning, interesting
-posts discovery, or contribute workflows (see repository issue #12).
+Finding posts to read or contribute to is out of scope (repository issue #12).
 
 ## Prove read access
 
-Confirm the host can run authenticated read-only X search before relying on
-the source. Use whatever authenticated Grok CLI or host X tools the runtime
-exposes. On auth failure, missing tools, or error, mark X **unavailable** and
-apply Partial coverage only to conclusions that depend on X.
+Confirm the host can run authenticated read-only X search before treating X as
+available. Use the Grok CLI or host X tools the runtime already exposes.
 
-Do not like, follow, reply, post, send DMs, or otherwise mutate X as part of
-this skill. CRM or CoS approval of a Person note or Task never authorizes an
-X write.
+If tools are missing, auth fails, or the query errors, mark X **unavailable**.
+Apply **Partial** coverage only to conclusions that need X.
 
-Completion: a successful read proves access, or X is marked unavailable with
-the failure named.
+Do not mutate X in this skill. Approving a Person note or Task never authorizes
+an X write.
+
+Completion: a successful read proves access, or X is unavailable with the
+failure named.
 
 ## Bound ordinary reads
 
-Query only when X can change a named identity, contact, durable meaning,
-relevance, or duplicate decision. Prefer the smallest useful slice: an explicit
-result limit and a recent window (or equivalent host bound), not full history.
+Query X only when it can change a named identity, contact, durable meaning,
+relevance, or duplicate decision. Cap results and use a recent window (or the
+host's equivalent bound). Do not pull full history.
 
-**Pointer-first.** When evidence already has an X URL, known handle, or named
-interlocutor, scope the query to that pointer first. Self-activity may
-corroborate when it can change the named conclusion.
+**Pointer first.** If evidence already has an X URL, known handle, or named
+person, search that first. Use the user's own recent posts only when they can
+change that same conclusion.
 
-**Self-activity-first.** When X is material and no stronger pointer exists,
-start from a bounded slice of the user's own recent directed posts and replies.
-Identify who those exchanges were directed at. Then apply the previously loaded
-identity rules before attaching evidence to a Person note. Known matches may
-support contact, durable meaning, or Task proposals under the relationship
-contract. Unmatched or ambiguous candidates stay unlinked, or ask only when
+**Own activity first when there is no pointer.** Read a short slice of the
+user's recent directed posts and replies. See who those were to. Apply the
+loaded identity rules before attaching anything to a Person note. A clear match
+may support contact date, durable meaning, or a Task under the relationship
+contract. Leave unmatched or ambiguous people unlinked. Ask only when the
 ambiguity changes the result.
 
-Treat likes, passive follows, ambient broadcasts, and observing someone else's
-update as non-contact under the relationship contract. Substantive direct
-replies, DMs, and targeted exchanges may count as contact when identity and
-time are reliable.
+Likes, passive follows, broadcasts, and watching someone else's update do not
+count as contact. Direct replies, DMs, and targeted exchanges may count when
+identity and time are reliable.
 
-For each retained interaction, keep enough source context to distinguish
-**observed** facts from **inference**, and to support safe use: handle or
-profile URL when known, direction, native timestamp, brief meaning, and source
-URL when available. Use native times with the previously loaded
-time-normalization rules before proposing `date_last_contacted`.
+For each kept interaction, separate **observed** facts from **inference**. Keep
+handle or profile URL when known, direction, native timestamp, a short meaning
+line, and source URL when available. Normalize native times with the loaded
+time rules before proposing `date_last_contacted`.
 
-Raw X activity stays in X. Do not copy activity logs into Person notes. Dated
-commitments route to Tasks, not Person metadata.
+Leave raw X history on X. Do not paste activity logs into Person notes. Put
+dated commitments on Tasks, not in Person metadata.
 
-Completion: the query is bounded to a defensible purpose, pointer or
-self-activity path, result limit, and time window, with observed evidence kept
-separate from inference.
+Completion: the query has a clear purpose, a pointer or own-activity path, a
+result limit, a time bound, and observed facts kept separate from inference.

@@ -86,6 +86,14 @@ from PR forensics and is refreshable as review history accumulates.
 
 ## Research synthesis
 
+### Storm Research
+
+Deep, source-backed investigation that establishes a baseline, dispatches
+independent research lenses, preserves their disagreements, and synthesizes the
+result for the requested purpose. It may inform a decision, but unlike
+`ce-pov`'s compact, project-grounded verdict it preserves a multi-perspective
+research record as the primary result.
+
 ### First-Principles Analysis
 
 A research synthesis pass that separates verified facts, assumptions, and irreducible constraints, then traces the causal mechanisms and conditions that must hold for the main claims to be true.

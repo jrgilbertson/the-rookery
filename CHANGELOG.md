@@ -13,6 +13,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- `storm-research` runs source-backed investigation through isolated
+  practitioner, academic, skeptic, economist, and historian lenses. It maps
+  contradictions before adding first-principles and system-dynamics analysis,
+  adapts the result to the requested research deliverable, and uses a binding
+  independent check to preserve disagreement and trace material causal claims.
 - `creating-portable-skills` is the first published skill. It creates new Agent
   Skills and helps review, update, or move existing skills. It starts from the
   user's goal, checks the package structure, compares behavior with focused

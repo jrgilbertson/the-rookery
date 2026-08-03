@@ -102,9 +102,9 @@ required surface is the same class of cap.
 
 | Surface | Floor (capability, not a schema dump) |
 | --- | --- |
-| Identity / head | Head commit OID; base ref identity; PR state/draft flag; **PR author identity** (needed to exclude author self-reviews from the unreviewed-head rule); every later check binds to the head OID |
+| Identity / head | Head commit OID; base **ref name and base commit OID** (retargets and stacked base movement can change the diff without moving the head); PR state/draft flag; **PR author identity** (needed to exclude author self-reviews from the unreviewed-head rule); every later check binds to the head OID |
 | Each review submission | Stable id; author; timestamp; state; body text; **reviewed commit OID**. Missing OID ⇒ cannot clear unreviewed-since-last-review ⇒ cap merge |
-| Each review thread | Stable id; path; **resolution flag**; each comment's stable id, author, timestamp, and body; **join to a submission**. Claiming rounds without a join ⇒ incomplete |
+| Each review thread | Stable id; path; **resolution flag**; each comment's stable id, author, timestamp, body, and **line or diff-hunk context** when GitHub provides it (terse inline comments are incomplete without it); **join to a submission by review id**, not timestamp alone. Claiming rounds without a join id ⇒ incomplete |
 | Each conversation comment | Stable id; author; timestamp; body |
 | Each description edit | Timestamp; editor identity; **full post-edit body snapshot** (GitHub names this field `diff`; it is not a patch — see step 3). Edits present but snapshot missing ⇒ intent unverifiable, not "use the current body" |
 
@@ -341,17 +341,18 @@ is do not merge and the `ce-pov` skill is installed, offer it for a graded
 verdict on the redesign question; when it is absent, name that option
 unavailable rather than dropping it silently.
 
-Before accepting the decision, re-read the head OID, the base ref identity,
-the PR state and draft flag, the current description body, and the review
-history, and compare them against step 2's record (including opaque body
-digests and edit-history digests). A push, a retargeted base, a state change
-(open→draft/merged/closed), a description edit (including edit-then-revert),
-a new submission, a reply on a resolved thread, an edited comment or
-submission body, or a withdrawn approval all mean the owner would be deciding
-on a digest that no longer describes the pull request: say what moved and
-rebuild rather than taking the decision. Once is enough, and it belongs here
-rather than at the readout, because the gap that matters is the one while the
-owner is reading.
+Before accepting the decision, re-read the head OID, the base ref name and
+base commit OID (or re-fetch the PR diff and compare identity), the PR state
+and draft flag, the current description body, and the review history, and
+compare them against step 2's record (including opaque body digests and
+edit-history digests). A push, a retargeted base, base-branch advancement
+under a stacked PR, a state change (open→draft/merged/closed), a description
+edit (including edit-then-revert), a new submission, a reply on a resolved
+thread, an edited comment or submission body, or a withdrawn approval all
+mean the owner would be deciding on a digest that no longer describes the
+pull request: say what moved and rebuild rather than taking the decision.
+Once is enough, and it belongs here rather than at the readout, because the
+gap that matters is the one while the owner is reading.
 
 The readout-then-decision exchange is the whole protocol. The skill presents,
 takes the one decision, and executes nothing: no merge, no comment, no write.

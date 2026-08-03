@@ -58,7 +58,7 @@ print($expr)
 }
 
 # Floor-aligned shapes (SKILL.md step 2); extra fields still allowed.
-THREADS='query{repository{pullRequest{reviewThreads(first:100){pageInfo{hasNextPage endCursor} nodes{id isResolved path comments(first:100){nodes{id body author{login} pullRequestReview{submittedAt}}}}}}}}'
+THREADS='query{repository{pullRequest{reviewThreads(first:100){pageInfo{hasNextPage endCursor} nodes{id isResolved path line comments(first:100){nodes{id body author{login} pullRequestReview{id submittedAt}}}}}}}}'
 REVIEWS='query{repository{pullRequest{reviews(first:100){pageInfo{hasNextPage endCursor} nodes{id author{login} submittedAt state body commit{oid}}}}}}'
 COMMENTS='query{repository{pullRequest{comments(first:100){pageInfo{hasNextPage endCursor} nodes{id body author{login}}}}}}'
 EDITS='query{repository{pullRequest{userContentEdits(first:100){pageInfo{hasNextPage endCursor} nodes{editedAt editor{login} diff}}}}}'
@@ -76,7 +76,7 @@ json_is "specimen-j: page one reports more" \
 json_is "specimen-j: page two is the third thread" \
   specimen-j "str(len(d['reviewThreads']['nodes']))+' '+str(d['reviewThreads']['pageInfo']['hasNextPage'])" \
   "1 False" api graphql \
-  -f 'query=query{repository{pullRequest{reviewThreads(first:100, after:"reviewThreads:2"){pageInfo{hasNextPage endCursor} nodes{id isResolved path comments(first:100){nodes{id body author{login} pullRequestReview{submittedAt}}}}}}}}'
+  -f 'query=query{repository{pullRequest{reviewThreads(first:100, after:"reviewThreads:2"){pageInfo{hasNextPage endCursor} nodes{id isResolved path line comments(first:100){nodes{id body author{login} pullRequestReview{id submittedAt}}}}}}}}'
 # Variable-bound after (what real skill runs use) — the footgun that forced the greenfield cursor fix.
 json_is "specimen-j: variable after advances reviews" \
   specimen-j "any('invalidat' in (n.get('body') or '').lower() for n in d['reviews']['nodes'])" \
@@ -96,7 +96,7 @@ exit_is "reviews without id" 2 specimen-a api graphql \
 exit_is "reviews without author" 2 specimen-a api graphql \
   -f 'query=query{repository{pullRequest{reviews(first:1){nodes{id submittedAt state body commit{oid}}}}}}'
 exit_is "threads without isResolved" 2 specimen-a api graphql \
-  -f 'query=query{repository{pullRequest{reviewThreads(first:1){nodes{id path comments(first:100){nodes{id body author{login} pullRequestReview{submittedAt}}}}}}}}'
+  -f 'query=query{repository{pullRequest{reviewThreads(first:1){pageInfo{hasNextPage} nodes{id path line comments(first:100){nodes{id body author{login} pullRequestReview{id submittedAt}}}}}}}}'
 exit_is "threads without pullRequestReview join" 2 specimen-a api graphql \
   -f 'query=query{repository{pullRequest{reviewThreads(first:1){nodes{id isResolved path comments(first:100){nodes{id body author{login}}}}}}}}'
 exit_is "edits without diff snapshot" 2 specimen-a api graphql \
@@ -175,7 +175,7 @@ exit_is "unbound after variable" 2 specimen-j api graphql \
 json_is "combined query serves top-level comments with threads" \
   specimen-j "str(d.get('comments',{}).get('pageInfo',{}).get('hasNextPage'))+' '+str(len(d.get('comments',{}).get('nodes',[])))" \
   "True 2" api graphql \
-  -f 'query=query{repository{pullRequest{reviewThreads(first:2){pageInfo{hasNextPage endCursor} nodes{id isResolved path comments(first:2){nodes{id body author{login} pullRequestReview{submittedAt}}}}} comments(first:2){pageInfo{hasNextPage endCursor} nodes{id body author{login}}}}}}'
+  -f 'query=query{repository{pullRequest{reviewThreads(first:2){pageInfo{hasNextPage endCursor} nodes{id isResolved path line comments(first:2){nodes{id body author{login} pullRequestReview{id submittedAt}}}}} comments(first:2){pageInfo{hasNextPage endCursor} nodes{id body author{login}}}}}}'
 msg_is "mutation refused" 3 "mutation" specimen-a api graphql \
   -f 'query=mutation{closePullRequest(input:{pullRequestId:"x"}){pullRequest{id}}}'
 

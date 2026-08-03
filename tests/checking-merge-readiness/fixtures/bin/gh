@@ -40,7 +40,7 @@ WRITE_VERBS = {
 SERVED_CONNECTIONS = {
     "reviewThreads": (
         "id", "isResolved", "path", "comments", "body", "pullRequestReview",
-        "pageInfo",
+        "pageInfo", "line",
     ),
     "reviews": (
         "id", "submittedAt", "state", "body", "commit", "author", "pageInfo",

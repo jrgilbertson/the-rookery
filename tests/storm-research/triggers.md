@@ -24,6 +24,7 @@ name + description + query only, binary judgment, any near-miss `yes` fails.
 | Review this finished launch plan for gaps, ambiguity, and conflicting requirements | `ce-doc-review` for an existing artifact. |
 | Audit this CSV for missing values, duplicates, and schema drift | Dataset-quality workflow. |
 | What is the current UTC offset in Tokyo? | Routine authoritative lookup. |
+| Investigate the current API rate limit in the official docs and cite the relevant page | Routine source-backed lookup that does not need deep or competing-perspective research. |
 | Turn the recommendation above into three bullets for the executive team | Direct compression of an existing recommendation. |
 | Brainstorm ten names for a new note-taking app | Ideation without a research request. |
 | Explain first-principles thinking with a simple example | Explanation, not source-backed investigation. |

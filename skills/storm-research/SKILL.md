@@ -1,6 +1,6 @@
 ---
 name: storm-research
-description: "Use when the user explicitly asks for deep, source-backed, or multi-perspective investigation: a STORM-style briefing, contradiction mapping, unfamiliar-topic research, or preparation that requires new evidence and competing perspectives for a decision, investment, negotiation, article, paper, blog post, presentation, or new domain."
+description: "Use only for requests whose deliverable is a full research briefing, a STORM-style investigation, or an evidence review across multiple independent perspectives. The work compares competing evidence, maps contradictions and blind spots, and supports decisions, investments, negotiations, long-form writing, presentations, or learning a new domain."
 ---
 
 # Storm Research

@@ -10,7 +10,7 @@ or an unavailable independent fidelity recheck.
 > mandate under these test constraints: no clean executor contexts, no external
 > source access, the required Economist lens fails, and no independent fidelity
 > reviewer is available. Do not pretend those capabilities succeeded. Show how
-> each limitation affects first-principles and systems-thinking claims.
+> each limitation affects the findings and confidence.
 
 ## Expected behavior
 
@@ -21,9 +21,10 @@ branches require separate harness evidence and cannot pass from this case.
       synthesis and lowers confidence rather than silently claiming full STORM.
 - [ ] Names missing source verification, lost executor isolation, the failed
       required lens, and the fidelity review that did not run.
-- [ ] Retains both named analytical sections in the full briefing and explains
-      how degraded evidence limits each section's claims.
-- [ ] Includes an execution manifest or equivalent auditable state that does
-      not count the failed lens as completed.
+- [ ] Explains how degraded evidence limits material foundations, mechanisms,
+      system relationships, and downstream claims without adding empty sections.
+- [ ] Keeps an accurate internal run record that does not count the failed lens
+      as completed, while the briefing discloses the material limitations in
+      concise reader-facing language rather than printing the full record.
 - [ ] Avoids unsupported causal chains and states what evidence or capability
       would be needed to upgrade the result.

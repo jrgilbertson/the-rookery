@@ -11,6 +11,13 @@ preserving disagreement, and auditing reliability and source quality.
 
 Material means capable of changing the answer, confidence, or next action.
 
+Read [references/lens-charter.md](references/lens-charter.md) before framing the
+research. Its research-depth guidance applies throughout the run; its isolation
+and return rules apply to each lens executor.
+Read [references/analysis-methods.md](references/analysis-methods.md) for the
+evidence checks that deepen questions and synthesis without dictating output
+sections.
+
 ## Workflow
 
 ### 1. Frame the target
@@ -39,6 +46,8 @@ data, and direct product pages. Distinguish evidence from inference.
 Create a short, sourced baseline that does not favor any lens. Include:
 
 - definitions and scope boundaries;
+- foundational facts, assumptions, and constraints that material claims must
+  respect;
 - key actors, systems, examples, and terms of art;
 - timeline and current state when relevant;
 - what is known, disputed, and unknown;
@@ -70,7 +79,7 @@ perspective, only when omitting it could change the answer, confidence, or next
 action. Topic-specific lenses add to the non-narrowed canonical set; they do
 not replace it.
 
-Lock the intended lens set in the execution manifest. The canonical lenses left
+Lock the intended lens set in an internal run record. The canonical lenses left
 after user narrowing and every user-required lens are required. A topic-specific
 lens is required only when the research would be unusable without it; otherwise,
 record it as supplemental. Record the narrowing, required and supplemental
@@ -78,12 +87,10 @@ lenses, source-access state, and any degradation before dispatch.
 
 ### 4. Dispatch one isolated executor per lens
 
-Read [references/lens-charter.md](references/lens-charter.md). It applies
-unchanged to every lens in the locked set. Use the host's agent runner to start
-one clean executor context per lens, dispatching concurrently when possible and
-queueing when capacity is limited. Start a generic executor rather than a
-preconfigured role whose hidden task instructions would contaminate the exact
-four-part seed below.
+Use the host's agent runner to start one clean executor context per lens,
+dispatching concurrently when possible and queueing when capacity is limited.
+Start a generic executor rather than a preconfigured role whose hidden task
+instructions would contaminate the exact four-part seed below.
 
 After dispatch, the orchestrator stops doing lens research. Each executor
 researches its own lens. The orchestrator collects the raw returns and later
@@ -99,7 +106,7 @@ Give every executor exactly four seed parts:
 Required system policy and tool instructions may remain outside the task seed,
 but no inherited task conversation or sibling work may enter the context. Do
 not summarize an earlier return into a queued seed. Record the context-launch
-and queue isolation mechanism in the manifest.
+and queue isolation mechanism in the internal run record.
 
 If a context contains sibling work, discard its return and restart that lens in
 a clean context. When clean contexts are unavailable or their cleanliness
@@ -114,9 +121,9 @@ each executor.
 
 Collect every return unchanged and retain the raw returns for fidelity review.
 This step is complete when every intended lens is recorded as completed or
-failed, every completed return is retained unchanged, and the manifest records
-the isolation mechanism and verification state, queue handling, source access,
-and degradation state.
+failed, every completed return is retained unchanged, and the internal run
+record captures the isolation mechanism and verification state, queue handling,
+source access, and degradation state.
 
 ### 5. Map contradictions and gaps
 
@@ -131,6 +138,12 @@ From the raw returns, answer:
 
 Keep each conflicting conclusion and its evidence. Do not replace disagreement
 with a vague hedge. A missing or failed lens is a coverage gap, not agreement.
+
+Use the Lens Charter's research-depth questions while mapping the record:
+clarify the foundations and mechanisms behind material claims, and examine
+relevant relationships, patterns over time, and downstream effects. Carry these
+findings into the sections where they help the reader. Do not manufacture a
+dynamic or a separate analysis section when the evidence adds nothing material.
 
 ### 6. Audit sources
 
@@ -149,23 +162,7 @@ confidence. An unsupported claim still gets a complete row: record no supporting
 source and no source type, mark the claim unverified, name the evidence needed,
 and keep confidence low.
 
-### 7. Run both cross-lens analyses
-
-Read [references/analysis-methods.md](references/analysis-methods.md). After
-contradiction mapping and the source audit, run both the first-principles and
-systems-thinking passes for every routed task. Each pass uses the sourced `p0`,
-all raw returns, contradiction map, and source audit. The orchestrator performs
-these analyses after lens research. They are not new lenses; never send them to
-lens executors or feed their results back into lens research.
-
-Retain evidence links, inference labels, calibrated confidence, and degraded
-limits in the internal analytical record. A full briefing renders both analyses
-under the exact headings `First-principles analysis` and `Systems thinking and
-higher-order effects`, including an honest null result or degraded limit. A
-short or custom form may omit the headings, but it must preserve every material
-analytical finding and uncertainty.
-
-### 8. Synthesize the requested form
+### 7. Synthesize the requested form
 
 For an article, paper, blog post, presentation, or report, read
 [references/briefing-template.md](references/briefing-template.md) and produce
@@ -177,20 +174,30 @@ other research-backed form. The intended use controls the ending: include an
 actionable implication or verdict when it helps that purpose, and do not force
 one into an exploratory briefing.
 
-### 9. Emit the briefing
+Build material claims from sourced facts, explicit assumptions, constraints,
+and supported mechanisms. Include relevant system relationships and downstream
+effects where they change the answer, confidence, or next action. Integrate
+this reasoning into the reader's natural sections rather than adding mandatory
+first-principles or systems-thinking sections.
+
+### 8. Emit the briefing
 
 Unless the user requested a shorter or custom form, read
 [references/briefing-template.md](references/briefing-template.md) and use its
 full-briefing structure. For short or custom outputs, preserve compact
 citations and compress presentation without dropping a material contradiction,
-analytical finding or uncertainty, confidence limit, degradation, frontier
-question, or reliability finding.
+finding or uncertainty, confidence limit, degradation, frontier question, or
+reliability finding.
+
+Keep the internal run record out of a normal reader-facing deliverable. Include
+only the research limitations that materially affect interpretation. Provide
+the full record when the user requests an audit, trace, or execution details.
 
 Before fidelity review, reconcile the Source Audit against the draft. Add or
 update a complete row for every material claim introduced or changed during
 analysis and synthesis, including unsupported claims.
 
-### 10. Review curation fidelity
+### 9. Review curation fidelity
 
 First check the draft for its weakest claim, overreliance on one lens, a weak
 version of the skeptic's case, vague incentives, historical analogies that do
@@ -210,8 +217,8 @@ missing evidence trace or explicit inference label and calibrated confidence.
 A finding may not be accepted while the briefing remains unchanged. Rerun the
 same fidelity check on each revised briefing in a new clean reviewer context
 until it reports clean. If a clean recheck is unavailable, disclose the reduced
-verification, lower confidence, and record that state in the manifest. Update
-the fidelity history and overall state after every attempt. When no
+verification, lower confidence, and record that state internally. Update the
+fidelity history and overall state after every attempt. When no
 clean independent reviewer is available for the initial check, state that the
 check did not run and lower confidence.
 
@@ -220,7 +227,8 @@ check did not run and lower confidence.
 - `p0` is sourced, and the perspective scan considered additional lenses.
 - The intended set reflects user narrowing; every completed lens used a clean,
   identical four-part seed except for its own lens.
-- Raw returns are retained, and failed lenses remain visible in the manifest.
+- Raw returns are retained, and failed lenses remain visible in the internal
+  run record.
 - Each lens-specific contribution is evidence-backed or states that it adds
   nothing beyond the findings; the briefing does not manufacture novelty.
 - Contradictions, agreement, gaps, source risk, confidence, the frontier
@@ -228,15 +236,16 @@ check did not run and lower confidence.
 - Every material user-facing claim has a complete source-audit row; unsupported
   claims name the missing evidence, are classified as unverified, and carry low
   confidence.
-- Both analytical passes used the sourced `p0`, all raw returns, contradiction
-  map, and source audit; material claims remain evidence-traceable or explicitly
-  inference-labeled with calibrated confidence.
-- Every full briefing has both exact analytical headings, including honest null
-  or degraded limits; compressed forms preserve every material analytical
-  finding and uncertainty.
+- Research questions and synthesis test material foundations, mechanisms,
+  relationships, patterns over time, and downstream effects when relevant;
+  material claims remain evidence-traceable or explicitly inference-labeled
+  with calibrated confidence.
+- The briefing integrates those findings where they help the reader and does
+  not add mandatory analytical sections or unsupported dynamics.
 - Long-form work has an outline before prose.
 - The fidelity report changed the briefing when it found a defect and each
   revision was rechecked until clean, or reduced verification is disclosed as
   degradation with lower confidence.
-- The final execution manifest states lens, isolation, source-access, fidelity,
-  and overall status without claiming capabilities that did not run.
+- The internal run record states lens, isolation, source-access, fidelity, and
+  overall status without claiming capabilities that did not run. Normal output
+  omits that telemetry and discloses material degradation concisely.

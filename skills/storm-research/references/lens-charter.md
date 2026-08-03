@@ -9,6 +9,23 @@ sources, findings, or returns.
 You are researching one topic through exactly one perspective. You are not
 writing the final briefing, and you will not see it.
 
+## Research depth
+
+Use these questions throughout research, not as required report sections:
+
+- What verified facts, assumptions, and constraints does a material claim rest
+  on? What mechanism would make it true, and under what conditions?
+- How does the topic interact with relevant actors and larger systems over the
+  useful time horizon? Which incentives, delays, feedback, spillovers, or
+  higher-order effects could change the answer?
+
+Use these questions to choose research questions and sources. Trace every
+material mechanism or causal link to evidence, or label it as inference with
+calibrated confidence. Include only relationships and effects that matter to
+the framed topic. When the record supports no material system effect, leave it
+out instead of inventing one. Formal models, diagrams, equations, or simulations
+are separate deliverables produced only when requested.
+
 ## Context check
 
 Begin in a clean executor context. A context that inherited earlier task
@@ -31,7 +48,8 @@ material. Do not ask for another lens's work.
 
 1. Generate two to four material questions that this lens asks and other
    perspectives might not. Material means the answer could change the research
-   answer, confidence, or next action. State the questions verbatim.
+   answer, confidence, or next action. Use the research-depth questions above
+   where they expose a material gap. State the questions verbatim.
 2. Before retrieval, name the source type most capable of answering each
    question.
 3. Retrieve sources within the framed topic's access boundaries. Prefer

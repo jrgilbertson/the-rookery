@@ -9,7 +9,7 @@ only contexts that were known to be unavailable.
 > Read the project-local Storm Research skill. The harness offers separate
 > executor contexts but cannot report whether they inherited task conversation
 > or sibling work; no leak is currently visible. Prepare only the pre-dispatch
-> isolation decision and execution-manifest state. Do not run research or
+> isolation decision and internal-run-record state. Do not run research or
 > assume that lack of a visible leak proves cleanliness.
 
 ## Expected behavior
@@ -20,6 +20,8 @@ only contexts that were known to be unavailable.
       planned result a `single-context synthesis`.
 - [ ] Marks the run degraded and lowers confidence because cleanliness cannot
       be verified, even though contexts are technically available.
-- [ ] Records the isolation mechanism and its unverified state in the manifest.
+- [ ] Records the isolation mechanism and its unverified state in the internal
+      run record; showing it is appropriate here because the prompt explicitly
+      requests execution state rather than a reader-facing briefing.
 - [ ] Names a concrete upgrade path, such as a harness signal that confirms no
       inherited task conversation or sibling work entered each executor.

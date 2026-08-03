@@ -16,12 +16,12 @@ not explicitly run.
 
 ## Expected behavior
 
-- [ ] Runs baseline grounding, independent lens research, contradiction
-      mapping, and both analytical passes before compression, then runs
-      fidelity review on the final compressed deliverable.
+- [ ] Uses foundation, mechanism, and system-context questions during lens
+      research and synthesis, then runs fidelity review on the final compressed
+      deliverable.
 - [ ] Returns the requested one-page negotiation form rather than a full
       workflow transcript or mandatory full-section template.
-- [ ] Preserves every analytical finding or uncertainty that materially changes
+- [ ] Preserves every finding or uncertainty that materially changes
       the answer, confidence, negotiating position, or next action.
 - [ ] Keeps evidence and inference distinguishable after compression and does
       not upgrade a weak causal link into a compact factual claim.

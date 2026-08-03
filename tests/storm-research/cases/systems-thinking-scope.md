@@ -19,8 +19,10 @@ modeling deliverable.
 
 ## Expected behavior
 
-- [ ] Produces a full research briefing with distinct `First-principles
-      analysis` and `Systems thinking and higher-order effects` sections.
+- [ ] Lens questions investigate relevant mechanisms, constraints, system
+      relationships, and downstream effects before the final synthesis.
+- [ ] Integrates supported systems thinking into the relevant findings without
+      creating mandatory first-principles or systems-thinking sections.
 - [ ] States a useful purpose or function for the focal system without
       presenting an inferred organizational objective as a sourced fact.
 - [ ] Explains the observed three-quarter pattern and situates Northstar within
@@ -34,4 +36,4 @@ modeling deliverable.
       forcing a verdict or intervention plan.
 - [ ] Reports an honest null for any unsupported feedback, delay, nonlinearity,
       path dependence, emergence, stock/flow detail, spillover, or higher-order
-      relationship instead of filling a systems checklist.
+      relationship when the absence matters, instead of filling a checklist.

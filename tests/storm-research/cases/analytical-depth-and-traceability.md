@@ -1,9 +1,8 @@
 # Analytical depth and traceability
 
-Provenance: 2026-08-02 frozen-prior run and approved terminology audit — the
-briefing omitted both named analyses and link-level causal traceability; the
-later live contract mislabeled broad systems thinking as formal system
-dynamics.
+Provenance: 2026-08-03 live Pangram briefing review — mandatory analytical
+sections produced weaker, more mechanical prose than integrating the same
+questions into research and synthesis.
 
 ## Prompt
 
@@ -21,11 +20,12 @@ dynamics.
 
 - [ ] Grounds the briefing in the supplied evidence and distinguishes verified
       facts, assumptions, irreducible constraints, and inference.
-- [ ] Includes a distinct `First-principles analysis` that states a causal
-      mechanism and the conditions required for its main claim to hold.
-- [ ] Includes a distinct `Systems thinking and higher-order effects` analysis
-      with a useful boundary, time horizon, material actors, incentives,
-      resources, and constraints.
+- [ ] Lens questions investigate the foundations, causal mechanisms, and
+      conditions required for material claims rather than postponing that work
+      until the final draft.
+- [ ] Integrates the useful system boundary, time horizon, actors, incentives,
+      resources, and constraints into the relevant findings instead of adding
+      mandatory first-principles or systems-thinking sections.
 - [ ] Situates the pricing intervention in the relevant larger transport,
       fiscal, or equity systems without inventing relationships and treats the
       single pilot as a snapshot rather than a verified pattern over time.
@@ -40,3 +40,4 @@ dynamics.
       during analysis or synthesis.
 - [ ] Preserves material cross-lens disagreement and gives decision support
       without treating fluent analytical language as evidence.
+- [ ] Omits internal run telemetry from the reader-facing briefing.

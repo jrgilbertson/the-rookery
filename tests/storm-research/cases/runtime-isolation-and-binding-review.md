@@ -7,7 +7,7 @@ those runtime behaviors, and the suite log records the result.
 
 This test requires a record of each executor prompt, evidence that each context
 was clean, all raw returns, each briefing revision, and every reviewer prompt
-and return. Claims in the briefing or execution manifest do not prove those
+and return. Claims in the briefing or internal run record do not prove those
 events occurred.
 
 ## Prompt

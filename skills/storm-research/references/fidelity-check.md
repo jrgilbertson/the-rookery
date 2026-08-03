@@ -2,12 +2,12 @@
 
 The orchestrator starts one independent reviewer in a clean context. Give the
 reviewer these instructions, the final briefing, sourced baseline (`p0`), source
-audit, every raw lens return, and the execution manifest. Do not include the
+audit, every raw lens return, and the internal run record. Do not include the
 orchestrator's synthesis reasoning. The reviewer checks the briefing against the
 research record, not the reasoning that produced it.
 
 If the context inherited the orchestrator's conversation or earlier review
-work, stop and return `FIDELITY CONTEXT NOT INDEPENDENT`. The execution manifest
+work, stop and return `FIDELITY CONTEXT NOT INDEPENDENT`. The internal run record
 identifies intended, completed, and failed lenses; use it to identify the
 available returns, not to speculate about work a failed lens might have done.
 
@@ -48,12 +48,11 @@ raw returns. Treat invented tension as seriously as lost tension.
 
 ## Analytical traceability
 
-Inspect the `First-principles analysis` and `Systems thinking and higher-order
-effects` sections, plus any material analytical claim preserved elsewhere in a
-short or custom form. Treat each assumption and mechanism separately. Split a
-causal chain into direct, second-order, and higher-order links and inspect every
-material link; one sourced endpoint does not support the links between
-endpoints.
+Inspect every material assumption, mechanism, system relationship, and causal
+claim wherever it appears in the briefing. Treat each assumption and mechanism
+separately. Split a causal chain into direct, second-order, and higher-order
+links and inspect every material link; one sourced endpoint does not support the
+links between endpoints.
 
 Report a defect when a material element has no identifiable evidence trace and
 is not explicitly labeled as inference with confidence, or when an inference

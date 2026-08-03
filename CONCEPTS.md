@@ -94,21 +94,18 @@ result for the requested purpose. It may inform a decision, but unlike
 `ce-pov`'s compact, project-grounded verdict it preserves a multi-perspective
 research record as the primary result.
 
-### First-Principles Analysis
+### Research Depth Questions
 
-A research synthesis pass that separates verified facts, assumptions, and irreducible constraints, then traces the causal mechanisms and conditions that must hold for the main claims to be true.
-
-### Systems Thinking Analysis
-
-A research synthesis pass that situates a focal system within relevant larger
-systems, examines material relationships and patterns over time, and traces
-feedback and higher-order effects without promoting uncertain causal links to
-facts. Formal system-dynamics models are separate, user-requested deliverables.
+Questions used throughout Storm Research to clarify the facts, assumptions,
+constraints, and mechanisms beneath material claims and to examine relevant
+system relationships, patterns over time, and downstream effects. They shape
+research and synthesis without requiring separate sections in the briefing.
+Formal system-dynamics models remain separate, user-requested deliverables.
 
 ### Storm Fidelity Review
 
 An independent check that compares a Storm Research briefing with its baseline,
-source audit, raw lens returns, and execution manifest for lost or invented
+source audit, raw lens returns, and internal run record for lost or invented
 disagreement and untraced analytical claims. Every finding is binding; each
 revision goes to a new clean reviewer until the check is clean or the run records
 reduced verification.

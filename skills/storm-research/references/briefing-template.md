@@ -20,7 +20,7 @@ Use this structure unless the user requested a custom form:
 Answer or bottom line: <one-paragraph answer suited to the intended use>
 
 Baseline facts:
-- <definitions / actors / current state / scope constraints>
+- <definitions / actors / current state / foundational facts and constraints>
 
 Perspective scan:
 - <Lens>: <question asked + sourced answer + confidence>
@@ -31,19 +31,9 @@ Contradictions that matter:
 What all completed lenses agree on: <shared finding>
 What none addressed: <gap / blind spot>
 
-First-principles analysis
-- <verified facts, assumptions, irreducible constraints, main mechanism,
-  necessary conditions, evidence or inference labels, and confidence>
-
-Systems thinking and higher-order effects
-- <system purpose, boundary, time horizon, relevant larger systems, and the
-  supported or unverified pattern over time; material relationships and causal
-  chains with link-level evidence or inference labels and confidence;
-  supported dynamics or an honest null finding; when evaluating an
-  intervention, its stress test, monitoring signals, and revision conditions>
-
 Most reliable findings:
-1. <finding> — supported by <lenses/sources>; confidence <High/Medium/Low>
+1. <finding, including its foundation, mechanism, or wider effect when
+   material> — supported by <lenses/sources>; confidence <High/Medium/Low>
 
 Actionable implication: <when the intended use calls for one>
 Frontier question: <the question that would change the answer most>
@@ -54,13 +44,6 @@ Reliability check:
   missing counter-source>
 - Missing perspective: <failed or underrepresented lens/source>
 - What to verify next: <evidence that would change confidence>
-
-Execution manifest:
-- Intended / completed / failed lenses: <each lens and its status>
-- Isolation: <mechanism, queue handling, and clean/degraded state>
-- Source access: <state and limitations>
-- Fidelity: <state and review history>
-- Overall state: <normal or degraded, with reasons>
 
 Sources used:
 - <source/link or permitted resource identifier> — <claim it supports>

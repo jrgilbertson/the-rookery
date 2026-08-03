@@ -20,12 +20,10 @@ invent a distinct insight.
 
 - [ ] Answers as a research briefing rather than forcing an adoption decision
       or role-specific action.
-- [ ] Renders both named analytical sections because the user requested a full
-      briefing.
 - [ ] States when no material feedback loop or higher-order effect is supported
-      within the defined boundary and names the evidence limiting that claim.
+      when that null changes the answer, and names the evidence limiting it.
 - [ ] Does not invent reinforcing loops, emergence, path dependence, or causal
-      consequences merely to populate the systems-thinking section.
+      consequences, and does not add an empty systems-thinking section.
 - [ ] Each raw lens return either gives an evidence-backed lens-specific
       contribution or states `none beyond the findings`, and the final briefing
       does not manufacture a hidden connection or other novelty.

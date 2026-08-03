@@ -11,6 +11,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 ## [Unreleased]
 
+### Changed
+
+- `managing-personal-crm` and `personal-chief-of-staff` treat authenticated Grok
+  X search as an optional, read-only peer evidence source for relationship
+  context (pointer-first or self-activity-first), without engagement scanning
+  or X mutation. Synthetic cases cover the discriminating paths.
+
 ### Added
 
 - `checking-merge-readiness` digests a fully reviewed pull request before you

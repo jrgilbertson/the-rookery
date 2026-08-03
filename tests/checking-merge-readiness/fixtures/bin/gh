@@ -300,9 +300,11 @@ def graphql(argv, forge):
             query = val[len("query="):]
     if not query:
         die("no query= field supplied to `api graphql`", 2)
-    if re.match(r"\s*(?:#[^\n]*\n\s*)*mutation\b", query) or re.search(
-        r"\bmutation\s*[({]", query
-    ):
+    # Reject any document that declares a mutation operation (named or not),
+    # including after fragment definitions.
+    if re.search(r"(?m)^\s*mutation\b", query) or re.search(
+        r"\bmutation\s+[A-Za-z_]", query
+    ) or re.search(r"\bmutation\s*[({]", query):
         die("`mutation` is a write; this stub serves queries only", 3)
 
     bindings = field_bindings(argv)
@@ -377,10 +379,8 @@ def main():
         print("github.com\n  Logged in to github.com as fixture-owner")
         return
 
-    if argv[0] == "repo" and len(argv) > 1 and argv[1] == "view":
-        forge = load()
-        print(json.dumps({"nameWithOwner": forge.get("repo", "")}, indent=2))
-        return
+    if argv[0] == "repo":
+        die("`repo` is outside the skill's fixed read set", 3)
 
     if argv[0] in ("pr", "api") and unauthenticated:
         sys.stderr.write(f"{AUTH_ERROR}\n")

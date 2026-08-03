@@ -24,7 +24,7 @@ GitHub and the non-thread trap, not on stub assertion count.
 
 ## Stub perimeter
 
-- 2026-08-02 | greenfield | stub self-check | pass | thin fixture server (no GraphQL projection); read-only perimeter; selectors; under-fetch; pagination including variable-bound `after`; auth-fail mode; every specimen serves the battery-shaped queries. Falsification-probed: write-verb message pinned (not exit code alone); unbound `$cursor` fails rather than paging from zero
+- 2026-08-02 | b2c7a85 lineage | stub self-check | pass | thin fixture server (no GraphQL projection); read-only perimeter; selectors; under-fetch; pagination including variable-bound `after`; auth-fail mode; every specimen serves the battery-shaped queries. Falsification-probed: write-verb message pinned (not exit code alone); unbound `$cursor` fails rather than paging from zero
 
 ## Behavioral battery
 
@@ -124,4 +124,4 @@ Bare matched pairs this cycle: s3 (fail form), s10 (pass — non-discriminating)
 - Fetch contract is outcomes + completeness + a minimal floor, not a GraphQL field encyclopedia; incomplete payload removes merge the same way degraded history does
 - Stub under-fetch tokens stay aligned once to that floor, then frozen — presence checks only, no selection-set projection
 
-- 2026-08-02 | greenfield | step 2 reframe (adversarial-amended) | landed | SKILL.md surfaces/jobs + floor table + observed exhaustion + incomplete-payload cap; stub SERVED_CONNECTIONS expanded once (ids, pullRequestReview, editor, diff); self-check still green
+- 2026-08-02 | 94f6e4a | step 2 reframe (adversarial-amended) | landed | SKILL.md surfaces/jobs + floor table + observed exhaustion + incomplete-payload cap; stub SERVED_CONNECTIONS expanded once (ids, pullRequestReview, editor, diff); self-check still green

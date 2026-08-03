@@ -104,26 +104,31 @@ required surface is the same class of cap.
 | --- | --- |
 | Identity / head | Head commit OID recorded; every later check binds to it |
 | Each review submission | Stable id; author; timestamp; state; body text; **reviewed commit OID**. Missing OID ⇒ cannot clear unreviewed-since-last-review ⇒ cap merge |
-| Each review thread | Stable id; path; **resolution flag**; comment bodies with stable ids; **join to a submission**. Claiming rounds without a join ⇒ incomplete |
+| Each review thread | Stable id; path; **resolution flag**; each comment's stable id, author, timestamp, and body; **join to a submission**. Claiming rounds without a join ⇒ incomplete |
 | Each conversation comment | Stable id; author; timestamp; body |
 | Each description edit | Timestamp; editor identity; **full post-edit body snapshot** (GitHub names this field `diff`; it is not a patch — see step 3). Edits present but snapshot missing ⇒ intent unverifiable, not "use the current body" |
 
 **Fingerprint for step 6.** Record the history as fetched, paired later by
-node id: each submission as id, author, timestamp, state, and reviewed
-commit; each thread as id, path, and resolution, with each comment as id,
-author, timestamp, and body; each conversation comment the same way. Ids are
-the join key; those attributes are the compare set. Counts and resolution
-flags alone are not a fingerprint — a reply on a resolved thread or an edited
-comment leaves them unchanged. Without ids, step 6 cannot certify stability:
-rebuild or refuse proceed-to-merge rather than take a decision on theater.
+node id: each submission as id, author, timestamp, state, reviewed commit,
+and an **opaque digest of its body** (not the raw body — PR text can hold
+secrets and must not be retained as working notes); each thread as id, path,
+and resolution, with each comment as id, author, timestamp, and an opaque
+body digest; each conversation comment the same way. Ids are the join key;
+those attributes are the compare set. Counts and resolution flags alone are
+not a fingerprint — a reply on a resolved thread, an edited comment, or an
+edited submission body leaves them unchanged. Without ids, step 6 cannot
+certify stability: rebuild or refuse proceed-to-merge rather than take a
+decision on theater.
 
 #### Semantic traps (keep named)
 
 - Round attribution uses the submission join, not wall-clock proximity.
-- An approval covers the **reviewed commit**, not the head. When the head
-carries changes after the last approving or changes-requesting submission,
-name unreviewed-since-last-review and cap at pause. Resolved threads and a
-green approval say nothing about a later commit.
+- A review covers the **commit it reviewed**, not a later head. When the head
+carries changes after the last non-author review submission that approved,
+requested changes, **or left a substantive COMMENTED body**, name
+unreviewed-since-last-review and cap at pause. Resolved threads and a green
+approval say nothing about a later commit; COMMENTED-only history is not an
+exception — if no reviewer saw the head, merge is not available.
 - `userContentEdits.diff` is a full post-edit body snapshot, not a patch and
 not the pre-edit text (step 3).
 
@@ -334,11 +339,13 @@ is do not merge and the `ce-pov` skill is installed, offer it for a graded
 verdict on the redesign question; when it is absent, name that option
 unavailable rather than dropping it silently.
 
-Before accepting the decision, re-read the head OID and the review history and
-compare both against step 2's record. A push, a new submission, a reply on a
-resolved thread, an edited comment, or a withdrawn approval all mean the owner
-would be deciding on a digest that no longer describes the pull request: say
-what moved and rebuild rather than taking the decision. Once is enough, and it
+Before accepting the decision, re-read the head OID, the base ref identity,
+the current description body, and the review history, and compare them against
+step 2's record (including opaque body digests). A push, a retargeted base, a
+description edit, a new submission, a reply on a resolved thread, an edited
+comment or submission body, or a withdrawn approval all mean the owner would
+be deciding on a digest that no longer describes the pull request: say what
+moved and rebuild rather than taking the decision. Once is enough, and it
 belongs here rather than at the readout, because the gap that matters is the
 one while the owner is reading.
 

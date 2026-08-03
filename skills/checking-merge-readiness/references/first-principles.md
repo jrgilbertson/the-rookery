@@ -68,7 +68,8 @@ self-inflicted by the solution. Operational test: classify each review-driven
 change as addressing the problem's real difficulty or adding self-inflicted
 machinery. A fix that handles a genuinely hard case earns its weight; a fix
 whose weight comes from the shape of earlier fixes is accidental, however
-correct.
+correct. Accidental weight grades through the **complexity accretion** driver
+in risk-rubric.md; this section supplies the test, not a fifth driver class.
 
 ## Supporting evidence: churn and the cross-round driver
 

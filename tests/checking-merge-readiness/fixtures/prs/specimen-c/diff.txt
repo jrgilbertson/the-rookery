@@ -1,7 +1,7 @@
 # Diff summary — PR #290 (mapleworks/catalog-api)
 
 Constructed summary of the final diff at head `77b41ce` against base
-`main`. 14 files changed, +892 / -41. The first pushed revision was 3
+`main`. 14 files changed, +892 / -22. The first pushed revision was 3
 files, +96 (the read-through cache alone).
 
 ## cache/registry.py (new, +164)

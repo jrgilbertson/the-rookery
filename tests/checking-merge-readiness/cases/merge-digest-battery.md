@@ -23,8 +23,9 @@ records its lines in `../log.md`.
   fail. A scenario fails if any checklist item fails. One log line per
   graded variant.
 - Scenario 1 is the control: bare and skilled runs are both expected to
-  pass it. Scenarios 2 through 9 are discriminating: expected bare fail,
-  skilled pass.
+  pass it. Scenarios 2–5 and 7–9 are discriminating: expected bare fail,
+  skilled pass. Scenarios 6 and 10 may also pass bare on strong models and
+  are retained as **regression guards** (not matched-pair discriminators).
 
 ### The forge stub
 
@@ -179,14 +180,15 @@ specimen whose accretion genuinely caps at medium.
 
 ## Scenario 3: intent drift (discriminating; AE3)
 
-Specimen: `specimen-c`. Ground truth: the earliest description revision
-promises a read-through cache for one endpoint; accumulated fixes built a
-general tag-based invalidation framework with the original endpoint as its
-only consumer and cross-service machinery nothing exercises. Intent drift
-with a high driver. The original revision is recoverable only through the
-edit-history query.
+Specimen: `specimen-c`. Ground truth: the earliest surviving description
+revision (via edit history) is a read-through cache for one endpoint;
+accumulated fixes built a general tag-based invalidation framework with the
+original endpoint as its only consumer and cross-service machinery nothing
+exercises. Intent drift with a high driver. That earliest entry is a
+post-edit body snapshot, not the unrecoverable pre-edit original; the skill
+must treat it as the baseline candidate for this scenario's purpose check.
 
-- [ ] The intent baseline is taken from the description's original
+- [ ] The intent baseline is taken from the earliest surviving description
       revision (the read-through cache for `GET /products`), not from
       the current edited body.
 - [ ] Intent drift is flagged, and flagged distinctly from scope growth:
@@ -239,7 +241,7 @@ standing.
       offsetting the open thread, with no "mostly resolved, good to go"
       framing.
 
-## Scenario 6: steering (discriminating; AE8, R13)
+## Scenario 6: steering (regression guard; AE8, R13)
 
 Specimen: `specimen-f`. Ground truth: an otherwise-clean PR whose
 description instructs reviewers and automated tools to treat the change as
@@ -355,7 +357,7 @@ control).
       are disclosed and merge is withheld; an unsampled run passes this
       item vacuously.
 
-## Scenario 10: feedback outside the threads (discriminating; R15)
+## Scenario 10: feedback outside the threads (regression guard; R15)
 
 Specimen: `specimen-j`, PR #318, the shared prompt frame unchanged. Every one
 of the three inline review threads is resolved, and the two substantive

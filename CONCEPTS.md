@@ -88,14 +88,14 @@ and changes nothing, so the owner still does the merging.
 
 A named, graded (low / medium / high) finding in the Merge Digest's risk
 profile: one specific thing about the change or its review that an owner
-would want to weigh before merging. Seven classes are graded. Four cover
+would want to weigh before merging. Seven classes are graded. Three cover
 tension the accumulated fixes put on an engineering first principle such as
 DRY, single source of truth, or YAGNI: complexity accretion, knowledge
-duplication, speculative generality, and cross-round fix interaction. The
-other three need no such tension to fire: review items left unresolved,
-material security concerns, and PR text that tries to steer the assessment.
-Drivers roll up into one merge-risk grade; a word grade traceable to a named
-driver is used instead of a numeric score.
+duplication, and speculative generality. The other four need no such tension
+to fire: review items left unresolved, cross-round fix interaction, material
+security concerns, and PR text that tries to steer the assessment. Drivers
+roll up into one merge-risk grade; a word grade traceable to a named driver
+is used instead of a numeric score.
 
 ### Targeted Sweep
 

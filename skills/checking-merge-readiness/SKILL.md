@@ -102,7 +102,7 @@ required surface is the same class of cap.
 
 | Surface | Floor (capability, not a schema dump) |
 | --- | --- |
-| Identity / head | Head commit OID recorded; every later check binds to it |
+| Identity / head | Head commit OID; base ref identity; PR state/draft flag; **PR author identity** (needed to exclude author self-reviews from the unreviewed-head rule); every later check binds to the head OID |
 | Each review submission | Stable id; author; timestamp; state; body text; **reviewed commit OID**. Missing OID ⇒ cannot clear unreviewed-since-last-review ⇒ cap merge |
 | Each review thread | Stable id; path; **resolution flag**; each comment's stable id, author, timestamp, and body; **join to a submission**. Claiming rounds without a join ⇒ incomplete |
 | Each conversation comment | Stable id; author; timestamp; body |
@@ -113,12 +113,14 @@ node id: each submission as id, author, timestamp, state, reviewed commit,
 and an **opaque digest of its body** (not the raw body — PR text can hold
 secrets and must not be retained as working notes); each thread as id, path,
 and resolution, with each comment as id, author, timestamp, and an opaque
-body digest; each conversation comment the same way. Ids are the join key;
-those attributes are the compare set. Counts and resolution flags alone are
-not a fingerprint — a reply on a resolved thread, an edited comment, or an
-edited submission body leaves them unchanged. Without ids, step 6 cannot
-certify stability: rebuild or refuse proceed-to-merge rather than take a
-decision on theater.
+body digest; each conversation comment the same way; and description edit
+history as each entry's `editedAt`, editor, and an opaque digest of the
+post-edit body snapshot (so an edit-then-revert cannot look like an
+unedited description). Ids are the join key; those attributes are the
+compare set. Counts and resolution flags alone are not a fingerprint — a
+reply on a resolved thread, an edited comment, or an edited submission body
+leaves them unchanged. Without ids, step 6 cannot certify stability:
+rebuild or refuse proceed-to-merge rather than take a decision on theater.
 
 #### Semantic traps (keep named)
 
@@ -340,14 +342,16 @@ verdict on the redesign question; when it is absent, name that option
 unavailable rather than dropping it silently.
 
 Before accepting the decision, re-read the head OID, the base ref identity,
-the current description body, and the review history, and compare them against
-step 2's record (including opaque body digests). A push, a retargeted base, a
-description edit, a new submission, a reply on a resolved thread, an edited
-comment or submission body, or a withdrawn approval all mean the owner would
-be deciding on a digest that no longer describes the pull request: say what
-moved and rebuild rather than taking the decision. Once is enough, and it
-belongs here rather than at the readout, because the gap that matters is the
-one while the owner is reading.
+the PR state and draft flag, the current description body, and the review
+history, and compare them against step 2's record (including opaque body
+digests and edit-history digests). A push, a retargeted base, a state change
+(open→draft/merged/closed), a description edit (including edit-then-revert),
+a new submission, a reply on a resolved thread, an edited comment or
+submission body, or a withdrawn approval all mean the owner would be deciding
+on a digest that no longer describes the pull request: say what moved and
+rebuild rather than taking the decision. Once is enough, and it belongs here
+rather than at the readout, because the gap that matters is the one while the
+owner is reading.
 
 The readout-then-decision exchange is the whole protocol. The skill presents,
 takes the one decision, and executes nothing: no merge, no comment, no write.

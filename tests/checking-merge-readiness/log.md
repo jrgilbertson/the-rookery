@@ -107,7 +107,12 @@ matched pairs remain the discriminating/live anchors.
 - 2026-08-02 | full-sweep | battery s9 pack-stripped (skilled) | pass (5/5) | merged; pack absence not a gap; unresolved finding remains
 - 2026-08-02 | full-sweep | stub self-check after review fixes | pass (108/108) | combined-query top-level comments; reviews require author; class-4 product widen is skill text only
 
-Bare matched pairs this cycle: s3 (fail form), s10 (pass — non-discriminating). Remaining bare re-pairs deferred — skilled path green on all shipping scenarios.
+Bare matched pairs this cycle: s3 (fail form), s10 (pass — non-discriminating).
+Remaining bare re-pairs for s2–s5/s7–s9 under the shipping revision are
+**open residual** — skilled path is green on all shipping scenarios, but the
+matched-pair protocol is not fully re-satisfied until those bare halves run.
+Trigger contract: post-N4 re-judge recorded only a 3-query spot check; a full
+11-query re-judge under the final description remains **open residual**.
 
 ### Review / simplify follow-ups landed
 - Widen unresolved-items across threads + submission bodies + conversation comments

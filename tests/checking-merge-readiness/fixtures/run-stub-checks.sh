@@ -81,12 +81,12 @@ json_is "specimen-j: page two is the third thread" \
 json_is "specimen-j: variable after advances reviews" \
   specimen-j "any('invalidat' in (n.get('body') or '').lower() for n in d['reviews']['nodes'])" \
   "True" api graphql \
-  -f 'query=query($cursor:String){repository{pullRequest{reviews(first:100, after:$cursor){nodes{id author{login} submittedAt state body commit{oid}}}}}}' \
+  -f 'query=query($cursor:String){repository{pullRequest{reviews(first:100, after:$cursor){pageInfo{hasNextPage endCursor} nodes{id author{login} submittedAt state body commit{oid}}}}}}' \
   -f 'cursor=reviews:2'
 json_is "specimen-j: counters request behind comments cursor" \
   specimen-j "any('hit' in (n.get('body') or '') for n in d['comments']['nodes'])" \
   "True" api graphql \
-  -f 'query=query{repository{pullRequest{comments(first:100, after:"comments:2"){nodes{id body author{login}}}}}}'
+  -f 'query=query{repository{pullRequest{comments(first:100, after:"comments:2"){pageInfo{hasNextPage endCursor} nodes{id body author{login}}}}}}'
 
 echo "== B. under-fetch refuses (floor-aligned) =="
 exit_is "reviews without commit" 2 specimen-a api graphql \

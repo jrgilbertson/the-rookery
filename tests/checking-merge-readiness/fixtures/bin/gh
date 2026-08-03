@@ -40,10 +40,13 @@ WRITE_VERBS = {
 SERVED_CONNECTIONS = {
     "reviewThreads": (
         "id", "isResolved", "path", "comments", "body", "pullRequestReview",
+        "pageInfo",
     ),
-    "reviews": ("id", "submittedAt", "state", "body", "commit", "author"),
-    "userContentEdits": ("editedAt", "editor", "diff"),
-    "comments": ("id", "body", "author"),
+    "reviews": (
+        "id", "submittedAt", "state", "body", "commit", "author", "pageInfo",
+    ),
+    "userContentEdits": ("editedAt", "editor", "diff", "pageInfo"),
+    "comments": ("id", "body", "author", "pageInfo"),
 }
 
 SCALAR_AS_OBJECT = {

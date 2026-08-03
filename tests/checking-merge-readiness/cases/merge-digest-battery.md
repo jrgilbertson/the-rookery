@@ -326,13 +326,18 @@ gap has to come from the failure the run observes.
       from the available outcomes because the review history could not be
       fetched.
 
-## Scenario 9: pack-stripped back-test (discriminating; Success Criteria)
+## Scenario 9: pack-stripped constructed back-test (discriminating)
 
 Specimen: `specimen-i`, the shared prompt frame with no description text in
 it. Ground truth: `specimen-g`'s pull request, merged, with the
 `## Evidence pack` section removed from its description. The unaddressed
 credit-note rounding finding still stands in the review history, now with no
 pack asserting otherwise and no pack to report as missing.
+
+This is a **constructed** no-pack path on specimen-i, not a live strip of
+`jrgilbertson/the-rookery#23`. Scenario 11 is the only live-API back-test;
+it digests #23 with the description as GitHub stores it (pack present or
+not as in production).
 
 The pack is stripped from the fixture, not from the prompt: the description
 reaches the run through `gh pr view` like every other scenario's, so a

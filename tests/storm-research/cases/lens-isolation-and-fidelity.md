@@ -1,7 +1,7 @@
 # Lens isolation and binding fidelity
 
-Provenance: 2026-08-02 source contract characterization — phrase and order
-assertions protect the intended architecture, but cannot prove clean executor
+Provenance: source contract characterization found that phrase and order
+assertions protect the intended architecture but cannot prove clean executor
 seeds or binding correction at runtime; the check is recorded in the suite log.
 
 ## Prompt

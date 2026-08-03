@@ -9,90 +9,7 @@ Produce a grounded research briefing by establishing baseline facts, discovering
 source-implied perspectives, asking independent lens-specific questions,
 preserving disagreement, and auditing reliability and source quality.
 
-## Research contract
-
-Run the five canonical lenses unless the user narrows the lens set. Honor an
-explicit narrowing exactly; a perspective scan may identify omitted coverage,
-but it does not override the user's scope.
-
-| Lens | Contribution | Failure mode it catches |
-| --- | --- | --- |
-| **Practitioner** | Daily operating reality | Advice that ignores implementation friction |
-| **Academic** | Research, formal models, and measurement quality | Anecdotes or narratives unsupported by evidence |
-| **Skeptic** | The strongest counterargument | Confirmation bias and one-sided enthusiasm |
-| **Economist** | Incentives, constraints, market structure, and opportunity cost | Narratives that hide resource trade-offs |
-| **Historian** | Precedents, cycles, analogies, and failure patterns | Treating old mechanisms as unprecedented novelty |
-
-Before dispatch, scan sources for load-bearing topic-specific lenses such as a
-regulator, customer, clinician, operator, technical architect, adversary,
-ethicist, educator, community, or geopolitical perspective. Supplemental lenses
-add to the non-narrowed canonical set; they never replace it.
-
-The research orchestrator owns framing, bounded orientation, dispatch, and
-curation. Orientation consists only of the `p0` baseline and perspective scan,
-and ends before lens dispatch. Each lens executor independently performs the
-substantive research. After dispatch, the orchestrator curates returns rather
-than becoming a privileged additional lens.
-
-## Isolation and degradation
-
-Independence is part of correctness. Start every lens, including every queued
-lens, in a genuinely clean executor context containing the common seed and no
-inherited conversation, sibling questions, sources, findings, or returns. A
-custom prompt added to an inherited context is not isolation. Reusing a
-concurrency slot is acceptable only when it starts a new clean context rather
-than resuming or repurposing an earlier executor context.
-
-If a seed or context contains sibling work, discard its return and restart that
-lens cleanly. If clean contexts are unavailable, use the best available
-separation, label the result a **single-context synthesis**, state what
-separation actually occurred, and lower confidence. Never represent that run as
-independent multi-perspective research.
-
-Treat the run as degraded when any of these applies:
-
-- clean executor contexts are unavailable or cannot be verified;
-- source access needed for a required claim or lens is unavailable;
-- an intended required lens fails or returns no usable result, including after
-  the user narrows the intended set;
-- the independent disagreement-fidelity check cannot run.
-
-Continue with useful partial research when possible, but name each limitation,
-its effect on coverage or confidence, and what would upgrade the result. If
-source access is unavailable, label factual lens work an **unverified
-perspective simulation** and keep factual confidence low.
-
-Maintain a concise execution manifest throughout the run. It is an auditable
-record for the final briefing and fidelity reviewer, not checkpoint or resume
-machinery. Record:
-
-- intended lenses, distinguishing required and supplemental lenses and noting
-  any user narrowing;
-- completed lenses and failed lenses with reasons; a failed lens is never
-  counted as completed;
-- the isolation mechanism and whether clean context was verified, including
-  how queued executors were kept clean;
-- source-access state and material limits;
-- fidelity state and review history: pending, completed-clean,
-  completed-with-binding-findings applied, or unavailable, including whether a
-  revised briefing received a clean recheck;
-- overall normal or degraded state and every degradation reason.
-
-## Grounding and budget
-
-Lenses generate questions; sources provide evidence. Fetch current sources when
-the topic depends on current facts, vendor behavior, law, finance, health, APIs,
-prices, benchmarks, or news. Prefer primary sources such as official documents,
-papers, filings, standards, repositories, published data, and direct product
-pages. Distinguish evidence from inference, and audit promotional,
-institutional, ideological, geographic, and political source bias.
-
-The research budget is per executor, not per run. Each lens stops when its own
-questions are answered and cannot economize based on sibling work it cannot
-see. Stop collection when key claims have strong sources, contradictions are
-clear, and more sources repeat rather than change the answer. Continue only
-when the weakest claim, frontier question, or user-facing conclusion remains
-materially unsupported.
+Material means capable of changing the answer, confidence, or next action.
 
 ## Workflow
 
@@ -113,6 +30,11 @@ it verbatim for every lens.
 
 ### 2. Establish baseline facts (`p0`)
 
+Fetch current sources when the topic depends on current facts, vendor behavior,
+law, finance, health, APIs, prices, benchmarks, or news. Prefer primary sources
+such as official documents, papers, filings, standards, repositories, published
+data, and direct product pages. Distinguish evidence from inference.
+
 Create a concise, sourced, lens-neutral grounding record covering:
 
 - definitions and scope boundaries;
@@ -123,20 +45,34 @@ Create a concise, sourced, lens-neutral grounding record covering:
 - source-access caveats.
 
 Freeze one baseline block before dispatch and use it verbatim for every lens.
-It is shared orientation, not a substitute for each executor's own sourcing.
+It is shared orientation, not a substitute for each executor's own sourcing. If
+required source access is unavailable, mark the run degraded, label factual lens
+work an **unverified perspective simulation**, and keep factual confidence low.
 
 ### 3. Scan sources and lock the lens set
 
-Inspect three to five useful source surfaces when available: official documents,
-papers, adjacent articles, high-quality explainers, filings, repositories, or
-domain-specific sources. Ask which perspectives the canonical five miss, and
-add only load-bearing lenses for the topic or intended use. Respect explicit
-user narrowing while doing this scan.
+Inspect three to five source surfaces most likely to expose a material missing
+perspective. Use the five canonical lenses unless the user narrows the set:
+
+| Lens | Contribution | Failure mode it catches |
+| --- | --- | --- |
+| **Practitioner** | Daily operating reality | Advice that ignores implementation friction |
+| **Academic** | Research, formal models, and measurement quality | Anecdotes or narratives unsupported by evidence |
+| **Skeptic** | The strongest counterargument | Confirmation bias and one-sided enthusiasm |
+| **Economist** | Incentives, constraints, market structure, and opportunity cost | Narratives that hide resource trade-offs |
+| **Historian** | Precedents, cycles, analogies, and failure patterns | Treating old mechanisms as unprecedented novelty |
+
+Add a topic-specific lens, such as a regulator, customer, clinician, operator,
+technical architect, adversary, ethicist, educator, community, or geopolitical
+perspective, only when omitting it could change the answer, confidence, or next
+action. Supplemental lenses add to the non-narrowed canonical set; they do not
+replace it.
 
 Lock the intended lens set in the execution manifest. The canonical lenses left
 after user narrowing and every user-required lens are required. Mark a
 source-discovered lens supplemental unless the research target makes it
-necessary for usable coverage; record that decision before dispatch.
+material to usable coverage. Record the narrowing, required and supplemental
+lenses, source-access state, and any degradation before dispatch.
 
 ### 4. Dispatch one isolated executor per lens
 
@@ -145,6 +81,10 @@ capability for starting isolated executor contexts, dispatching concurrently
 when possible and queueing when capacity is limited. Start a generic executor
 context rather than a preconfigured role whose hidden task instructions could
 add a fifth seed part.
+
+The orchestrator's orientation ends before dispatch. After dispatch, each lens
+executor owns its substantive research; the orchestrator retains and curates
+returns rather than becoming an additional lens.
 
 Give every executor exactly four seed parts:
 
@@ -158,9 +98,22 @@ but no inherited task conversation or sibling work may enter the context. Do
 not summarize an earlier return into a queued seed. Record the context-launch
 and queue isolation mechanism in the manifest.
 
+If a context contains sibling work, discard its return and restart that lens in
+a clean context. When clean contexts are unavailable or their cleanliness
+cannot be verified, use the best available separation, label the result a
+**single-context synthesis**, state the separation used, and lower confidence.
+An intended required lens that fails or returns no usable result stays failed.
+Continue with partial research when useful, but mark the run degraded and
+record each limitation, its effect on coverage or confidence, and what would
+upgrade the result. For unverified cleanliness, name the harness signal or
+mechanism needed to confirm that no inherited task conversation or sibling work
+entered each executor.
+
 Collect every return unchanged and retain the raw returns for fidelity review.
-Update completed and failed lens state without silently shrinking the intended
-set.
+This step is complete when every intended lens is recorded as completed or
+failed, every completed return is retained unchanged, and the manifest records
+the isolation mechanism and verification state, queue handling, source access,
+and degradation state.
 
 ### 5. Map contradictions and gaps
 
@@ -183,10 +136,15 @@ when the work is consequential, current, disputed, or source-heavy:
 
 | Claim | Best source | Source type | Bias or tone risk | Missing counter-source | Confidence |
 | --- | --- | --- | --- | --- | --- |
-| `<claim>` | `<source>` | Primary/secondary/tertiary | `<risk>` | `<needed source>` | High/Medium/Low |
+| `<claim>` | `<source or none found>` | Primary/secondary/tertiary/none | `<risk>` | `<needed source>` | High/Medium/Low |
 
-Use the audit to lower confidence rather than decorate the output. Source
-clusters with the same incentives do not constitute independent confirmation.
+Audit promotional, institutional, ideological, geographic, and political bias.
+Source clusters with the same incentives do not constitute independent
+confirmation. This step is complete when every material user-facing claim has a
+best source, source type, bias or tone risk, missing counter-source, and
+confidence. An unsupported claim still gets a complete row: record no supporting
+source and no source type, mark the claim unverified, name the evidence needed,
+and keep confidence low.
 
 ### 7. Run both cross-lens analyses
 
@@ -202,15 +160,13 @@ limits in the internal analytical record. A full briefing renders both analyses
 under the exact headings `First-principles analysis` and `System dynamics and
 higher-order effects`, including an honest null result or degraded limit. A
 short or custom form may omit the headings, but it must preserve every material
-analytical finding and uncertainty. Here, material means capable of changing
-the answer, confidence, or next action.
+analytical finding and uncertainty.
 
 ### 8. Synthesize the requested form
 
-For an article, paper, blog post, presentation, or report, produce an outline
-before prose. Include a working thesis, section sequence, key claim and needed
-evidence per section, the contradiction or objection each section resolves,
-and the caveat or reliability note that must survive drafting.
+For an article, paper, blog post, presentation, or report, read
+[references/briefing-template.md](references/briefing-template.md) and produce
+its long-form outline before prose.
 
 For other work, synthesize directly into the user's requested briefing,
 recommendation, preparation notes, negotiation questions, learning path, or
@@ -220,61 +176,16 @@ one into an exploratory briefing.
 
 ### 9. Emit the briefing
 
-Unless the user requested a shorter or custom form, produce a full briefing
-with this structure:
+Unless the user requested a shorter or custom form, read
+[references/briefing-template.md](references/briefing-template.md) and use its
+full-briefing structure. For short or custom outputs, preserve compact
+citations and compress presentation without dropping a material contradiction,
+analytical finding or uncertainty, confidence limit, degradation, frontier
+question, or reliability finding.
 
-```text
-Answer or bottom line: <one-paragraph answer suited to the intended use>
-
-Baseline facts:
-- <definitions / actors / current state / scope constraints>
-
-Perspective scan:
-- <Lens>: <question asked + grounded answer + confidence>
-
-Contradictions that matter:
-1. <conflict + evidence on each side + why it matters>
-
-What all completed lenses agree on: <shared finding>
-What none addressed: <gap / blind spot>
-
-First-principles analysis
-- <verified facts, assumptions, irreducible constraints, main mechanism,
-  necessary conditions, evidence or inference labels, and confidence>
-
-System dynamics and higher-order effects
-- <boundary and time horizon; material relationships and causal chains with
-  link-level evidence or inference labels and confidence; supported dynamics
-  or an honest null finding and its limiting boundary/evidence>
-
-Most reliable findings:
-1. <finding> — supported by <lenses/sources>; confidence <High/Medium/Low>
-
-Hidden connection: <non-obvious synthesis, only when source-supported>
-Actionable implication: <when the intended use calls for one>
-Frontier question: <the question that would change the answer most>
-
-Reliability check:
-- Weakest claim: <claim + why weak>
-- Source/bias risk: <source skew, tone transfer, missing counter-source>
-- Missing perspective: <failed or underrepresented lens/source>
-- What to verify next: <evidence that would change confidence>
-
-Execution manifest:
-- Intended / completed / failed lenses: <auditable state>
-- Isolation: <mechanism, queue handling, and clean/degraded state>
-- Source access: <state and limitations>
-- Fidelity: <state>
-- Overall state: <normal or degraded, with reasons>
-
-Sources used:
-- <source/link or permitted resource identifier> — <claim it supports>
-```
-
-Include the long-form outline when applicable. Preserve compact citations for
-external factual claims. For short or custom outputs, compress presentation
-without dropping a material contradiction, analytical finding or uncertainty,
-confidence limit, degradation, frontier question, or reliability finding.
+Before fidelity review, reconcile the Source Audit against the draft. Add or
+update a complete row for every material claim introduced or changed during
+analysis and synthesis, including unsupported claims.
 
 ### 10. Review curation fidelity
 
@@ -300,7 +211,7 @@ A finding may not be accepted while the briefing remains unchanged. Rerun the
 same fidelity check on each revised briefing in a new clean reviewer context
 until it reports clean. If a clean recheck is unavailable, disclose the reduced
 verification, lower confidence, and record that state in the manifest. Update
-the fidelity history and overall state honestly after every attempt. When no
+the fidelity history and overall state after every attempt. When no
 clean independent reviewer is available for the initial check, state that the
 check did not run and lower confidence.
 
@@ -310,8 +221,13 @@ check did not run and lower confidence.
 - The intended set reflects user narrowing; every completed lens used a clean,
   identical four-part seed except for its own lens.
 - Raw returns are retained, and failed lenses remain visible in the manifest.
+- Each lens-specific contribution is evidence-backed or states that it adds
+  nothing beyond the findings; the briefing does not manufacture novelty.
 - Contradictions, agreement, gaps, source risk, confidence, the frontier
   question, and reliability findings survive output adaptation.
+- Every material user-facing claim has a complete source-audit row; unsupported
+  claims name the missing evidence, are classified as unverified, and carry low
+  confidence.
 - Both analytical passes used the sourced `p0`, all raw returns, contradiction
   map, and source audit; material claims remain evidence-traceable or explicitly
   inference-labeled with calibrated confidence.

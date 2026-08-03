@@ -29,8 +29,9 @@ material. Do not ask for another lens's work.
 
 ## Research
 
-1. Generate two to four high-value questions that this lens asks and other
-   perspectives might not. State them verbatim.
+1. Generate two to four material questions that this lens asks and other
+   perspectives might not. Material means the answer could change the research
+   answer, confidence, or next action. State the questions verbatim.
 2. Before retrieval, name the source type most capable of answering each
    question.
 3. Retrieve real sources within the framed topic's access boundaries. Prefer
@@ -58,7 +59,10 @@ Return, in this order:
 - **Sources consulted** — URL, citation, or permitted resource identifier for
   each, with source type.
 - **Findings** — evidence-supported answers, question by question.
-- **Unique insight** — what this lens sees that a general reader might miss.
+- **Lens-specific contribution** — write `none beyond the findings` unless the
+  lens adds an evidence-backed conclusion that is absent from **Findings** and
+  could change the answer, confidence, or next action. Do not paraphrase,
+  combine, or reframe findings merely to fill this field.
 - **Unresolved** — unanswered questions and reasons.
 - **Bias** — how this perspective predictably distorts the topic.
 - **Confidence** — per finding: primary-source grounded, secondary-source

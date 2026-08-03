@@ -27,5 +27,9 @@ traceability; the graded result is recorded in the suite log.
       resources, and constraints.
 - [ ] Presents every material multi-step effect as a causal chain and ties each
       uncertain link to evidence or labels it as inference with confidence.
+- [ ] Accounts for every material user-facing claim in a source audit with its
+      best source, source type, bias risk, missing counter-source, and confidence,
+      including complete low-confidence rows for unsupported claims introduced
+      during analysis or synthesis.
 - [ ] Preserves material cross-lens disagreement and gives decision support
       without treating fluent analytical language as evidence.

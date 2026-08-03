@@ -50,6 +50,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `storm-research` now permits an honest null lens contribution instead of
+  forcing novelty, requires a complete material-claim source audit, and loads
+  its full-briefing template only for output forms that need it.
 - Planning now keeps Compound Engineering as the primary route and uses
   targeted grilling only as an optional pressure test for consequential,
   interdependent decisions that remain unclear.

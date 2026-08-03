@@ -1,0 +1,36 @@
+# Diff summary — PR #91 (mapleworks/billing-core)
+
+Constructed summary of the final diff at head `2f91d04` against base
+`main`. 4 files changed, +143 / -28.
+
+## billing/tax.py (+41 / -19)
+
+Line tax stays unrounded; the invoice total rounds once:
+
+    def invoice_tax_total(lines):
+        raw = sum(line_tax_unrounded(l) for l in lines)
+        return round_half_up(raw)
+
+    def round_half_up(amount):
+        return (amount * 100 + Decimal("0.5")).to_integral_value(
+            rounding=ROUND_FLOOR) / 100
+
+`round_half_up` adds 0.5 and floors — correct for non-negative amounts.
+No branch handles negative totals, and no later revision touches this
+function after its introduction in the first push.
+
+## migrations/0012_recompute_invoice_tax.sql (new, +36)
+
+Backfill recomputing stored invoice tax totals with the invoice-level
+rounding. Applies to all invoices, including credit notes (negative
+totals).
+
+## billing/invoice.py (+22 / -9)
+
+Callers switched from summed per-line rounding to `invoice_tax_total`.
+
+## tests/billing/test_tax.py (+44)
+
+Cases for multi-line invoices, half-cent totals, and authority
+comparison values. All test amounts are positive; there is no credit-note
+(negative total) case.

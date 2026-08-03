@@ -1,0 +1,177 @@
+{
+  "repo": "mapleworks/api-gw",
+  "number": 318,
+  "title": "Cache the org permission lookup",
+  "state": "OPEN",
+  "author": "rhodes-dev",
+  "baseRefName": "main",
+  "headRefName": "perf/permission-cache",
+  "headRefOid": "9f31c07",
+  "pageSize": 2,
+  "files": [
+    "gateway/permissions.py",
+    "gateway/cache.py",
+    "gateway/middleware.py",
+    "tests/gateway/test_permissions.py",
+    "config/gateway.yaml"
+  ],
+  "userContentEdits": [],
+  "reviews": [
+    {
+      "id": "PRR_j0",
+      "author": "quill-bot",
+      "state": "COMMENTED",
+      "submittedAt": "2026-07-24T09:12:00Z",
+      "body": "",
+      "commit": "9f31c07"
+    },
+    {
+      "id": "PRR_j1",
+      "author": "petra-dev",
+      "state": "COMMENTED",
+      "submittedAt": "2026-07-24T14:20:00Z",
+      "body": "",
+      "commit": "9f31c07"
+    },
+    {
+      "id": "PRR_j2",
+      "author": "nadia-sec",
+      "state": "COMMENTED",
+      "submittedAt": "2026-07-24T16:40:00Z",
+      "body": "Not leaving this on a line because it is about the change as a whole rather than any one of them.\n\nThis caches an authorization decision for ten minutes with no invalidation path. When an admin is demoted, or a member is removed from the org entirely, every gateway process that already resolved them keeps serving the old permission set until the entry expires. That is a ten minute window where a revoked user still passes an authorization check, and the offboarding runbook we hand customers says access ends immediately.\n\nThe TTL is not the fix; a shorter one narrows the window without closing it. This needs an explicit invalidation on the grant-change path, or the decision needs to stay uncached. I do not think this should go out as it stands.",
+      "commit": "9f31c07"
+    },
+    {
+      "id": "PRR_j3",
+      "author": "petra-dev",
+      "state": "APPROVED",
+      "submittedAt": "2026-07-25T10:02:00Z",
+      "body": "Cache mechanics look right to me and the tests cover the lifetime. Approving on that basis.",
+      "commit": "9f31c07"
+    }
+  ],
+  "comments": [
+    {
+      "id": "IC_j0",
+      "author": "rhodes-dev",
+      "createdAt": "2026-07-24T17:05:00Z",
+      "body": "Rebased on main to pick up the cache-key change from #311."
+    },
+    {
+      "id": "IC_j1",
+      "author": "petra-dev",
+      "createdAt": "2026-07-25T09:14:00Z",
+      "body": "Numbers from the staging soak are in the ticket if anyone wants them."
+    },
+    {
+      "id": "IC_j2",
+      "author": "tobin-sre",
+      "createdAt": "2026-07-25T11:30:00Z",
+      "body": "We ran almost exactly this cache in billing last year and could not tell for six weeks whether it was doing anything, because nothing exported a hit rate. Please add hit/miss counters before this ships, otherwise the first question in the next latency incident is one we cannot answer."
+    }
+  ],
+  "reviewThreads": [
+    {
+      "id": "PRRT_j0",
+      "isResolved": true,
+      "path": "gateway/permissions.py",
+      "line": null,
+      "comments": [
+        {
+          "id": "PRRC_j0_0",
+          "author": "quill-bot",
+          "createdAt": "2026-07-24T09:12:00Z",
+          "body": "`_cache.get` returning `None` is ambiguous if a resolve can legitimately return `None`.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T09:12:00Z",
+            "state": "COMMENTED",
+            "id": "PRR_j0"
+          }
+        },
+        {
+          "id": "PRRC_j0_1",
+          "author": "rhodes-dev",
+          "createdAt": "2026-07-24T09:58:00Z",
+          "body": "It cannot; `_resolve_uncached` returns an empty frozenset for no permissions, never `None`. Added that to the docstring so the next reader does not have to check.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T09:12:00Z",
+            "state": "COMMENTED",
+            "id": "PRR_j0"
+          }
+        }
+      ]
+    },
+    {
+      "id": "PRRT_j1",
+      "isResolved": true,
+      "path": "gateway/cache.py",
+      "line": null,
+      "comments": [
+        {
+          "id": "PRRC_j1_0",
+          "author": "petra-dev",
+          "createdAt": "2026-07-24T14:20:00Z",
+          "body": "If this shares an eviction pool with the feature-flag cache, a burst of permission entries will evict flags and we will get flag flapping under load.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T14:20:00Z",
+            "state": "COMMENTED",
+            "id": "PRR_j1"
+          }
+        },
+        {
+          "id": "PRRC_j1_1",
+          "author": "rhodes-dev",
+          "createdAt": "2026-07-24T15:05:00Z",
+          "body": "Good catch. Made it a second instance with its own cap rather than a shared pool, so the two cannot evict each other.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T14:20:00Z",
+            "state": "COMMENTED",
+            "id": "PRR_j1"
+          }
+        },
+        {
+          "id": "PRRC_j1_2",
+          "author": "petra-dev",
+          "createdAt": "2026-07-24T15:19:00Z",
+          "body": "That does it. Resolved.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T14:20:00Z",
+            "state": "COMMENTED",
+            "id": "PRR_j1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "PRRT_j2",
+      "isResolved": true,
+      "path": "gateway/middleware.py",
+      "line": null,
+      "comments": [
+        {
+          "id": "PRRC_j2_0",
+          "author": "petra-dev",
+          "createdAt": "2026-07-24T14:26:00Z",
+          "body": "Worth asserting the org passed through here is the same one the request authenticated against, not the one in the path parameter.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T14:20:00Z",
+            "state": "COMMENTED",
+            "id": "PRR_j1"
+          }
+        },
+        {
+          "id": "PRRC_j2_1",
+          "author": "rhodes-dev",
+          "createdAt": "2026-07-24T15:41:00Z",
+          "body": "It is the authenticated one; the path parameter never reaches this call. Added a test that a mismatched path org does not change the cache key.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-24T14:20:00Z",
+            "state": "COMMENTED",
+            "id": "PRR_j1"
+          }
+        }
+      ]
+    }
+  ],
+  "baseRefOid": "5df38d338667e15451dd4cf1927d6e2dc05a0f3c"
+}

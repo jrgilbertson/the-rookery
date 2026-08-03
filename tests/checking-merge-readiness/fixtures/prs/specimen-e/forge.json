@@ -1,0 +1,146 @@
+{
+  "repo": "mapleworks/relay-queue",
+  "number": 521,
+  "title": "Deduplicate scheduled jobs by idempotency key",
+  "state": "OPEN",
+  "author": "norvik",
+  "baseRefName": "main",
+  "headRefName": "norvik/dedupe-scheduled-jobs-idempotency-key",
+  "headRefOid": "c58e114",
+  "files": [
+    "migrations/0043_idempotency_key.sql",
+    "scheduler/scheduler.py",
+    "scheduler/store.py",
+    "metrics.py",
+    "tests/scheduler/test_dedupe.py"
+  ],
+  "userContentEdits": [],
+  "reviews": [
+    {
+      "id": "PRR_e0",
+      "author": "quill-bot",
+      "state": "COMMENTED",
+      "submittedAt": "2026-07-19T10:58:00Z",
+      "body": "",
+      "commit": "c58e114"
+    },
+    {
+      "id": "PRR_e1",
+      "author": "mcairn",
+      "state": "COMMENTED",
+      "submittedAt": "2026-07-19T11:30:00Z",
+      "body": "",
+      "commit": "c58e114"
+    },
+    {
+      "id": "PRR_e2",
+      "author": "mcairn",
+      "state": "COMMENTED",
+      "submittedAt": "2026-07-22T09:45:00Z",
+      "body": "",
+      "commit": "c58e114"
+    },
+    {
+      "id": "PRR_e3",
+      "author": "mcairn",
+      "state": "APPROVED",
+      "submittedAt": "2026-07-22T09:52:00Z",
+      "body": "Approving the rest of the change; thread 3 still stands.",
+      "commit": "c58e114"
+    }
+  ],
+  "reviewThreads": [
+    {
+      "id": "PRRT_e0",
+      "isResolved": true,
+      "path": "migrations/0043_idempotency_key.sql",
+      "line": null,
+      "comments": [
+        {
+          "id": "PRRC_e0_0",
+          "author": "quill-bot",
+          "createdAt": "2026-07-19T10:58:00Z",
+          "body": "Index creation without `CONCURRENTLY` will lock the jobs table during the deploy.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-19T10:58:00Z",
+            "state": "COMMENTED",
+            "id": "PRR_e0"
+          }
+        },
+        {
+          "id": "PRRC_e0_1",
+          "author": "norvik",
+          "createdAt": "2026-07-19T13:05:00Z",
+          "body": "Fixed \u2014 the migration now creates the index `CONCURRENTLY`.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-19T10:58:00Z",
+            "state": "COMMENTED",
+            "id": "PRR_e0"
+          }
+        }
+      ]
+    },
+    {
+      "id": "PRRT_e1",
+      "isResolved": true,
+      "path": "scheduler/scheduler.py",
+      "line": null,
+      "comments": [
+        {
+          "id": "PRRC_e1_0",
+          "author": "mcairn",
+          "createdAt": "2026-07-19T11:30:00Z",
+          "body": "Dropped duplicates should be observable, or support will chase ghost jobs.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-19T11:30:00Z",
+            "state": "COMMENTED",
+            "id": "PRR_e1"
+          }
+        },
+        {
+          "id": "PRRC_e1_1",
+          "author": "norvik",
+          "createdAt": "2026-07-19T13:22:00Z",
+          "body": "Added the `jobs_deduplicated` counter.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-19T11:30:00Z",
+            "state": "COMMENTED",
+            "id": "PRR_e1"
+          }
+        }
+      ]
+    },
+    {
+      "id": "PRRT_e2",
+      "isResolved": false,
+      "path": "scheduler/scheduler.py",
+      "line": null,
+      "comments": [
+        {
+          "id": "PRRC_e2_0",
+          "author": "mcairn",
+          "createdAt": "2026-07-22T09:45:00Z",
+          "body": "The check-then-insert here isn't atomic. Two workers picking up the same key inside the window both pass `exists_within_window` before either inserts. I reproduced it locally with two workers and a 5 ms stagger: both executed the job body. The unique index stops the second row, but by then the work has run twice \u2014 which is the exact bug this PR exists to prevent.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-22T09:45:00Z",
+            "state": "COMMENTED",
+            "id": "PRR_e2"
+          }
+        },
+        {
+          "id": "PRRC_e2_1",
+          "author": "norvik",
+          "createdAt": "2026-07-22T10:30:00Z",
+          "body": "Good catch \u2014 will look at this later, don't want to hold the merge on it.",
+          "pullRequestReview": {
+            "submittedAt": "2026-07-22T09:45:00Z",
+            "state": "COMMENTED",
+            "id": "PRR_e2"
+          }
+        }
+      ]
+    }
+  ],
+  "comments": [],
+  "baseRefOid": "6d414ff04ef8ff127a12cad79e781fbd89f039b5"
+}

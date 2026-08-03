@@ -1,0 +1,61 @@
+# Diff summary — PR #388 (mapleworks/shiplog)
+
+Constructed summary of the final diff at head `9d2e770` against base
+`main`. 6 files changed, +341 / -18. The first pushed revision was 2
+files, +54.
+
+## delivery/retry.py (new, +138)
+
+A `DeliveryPhase` enum with an explicit transition table:
+
+    class DeliveryPhase(Enum):
+        PENDING = auto()
+        IN_FLIGHT = auto()
+        AWAITING_RETRY = auto()
+        RETRYING = auto()
+        EXHAUSTED = auto()
+        PARKED = auto()  # reserved: operator-initiated hold
+
+    ALLOWED = {
+        PENDING: {IN_FLIGHT},
+        IN_FLIGHT: {AWAITING_RETRY, EXHAUSTED},
+        AWAITING_RETRY: {RETRYING, PARKED},
+        RETRYING: {EXHAUSTED},
+        PARKED: set(),  # no transition out defined
+    }
+
+Nothing in the PR transitions a delivery into `PARKED`, and no code path
+leaves it. `transition()` raises on any jump not in `ALLOWED`.
+
+## config/settings.py (+22)
+
+New `webhook_retry_mode` setting accepting `off`, `single`, `adaptive`.
+`adaptive` is accepted and stored but falls through to `single` behavior
+with a log line: "adaptive mode reserved for future use". No requirement
+or incident action item references a retry mode.
+
+## delivery/sender.py (+96 / -12)
+
+The retry itself: on a transient error, transition the delivery to
+`AWAITING_RETRY` and re-enqueue with a 30-second delay — this is the
+change the description promises. Also adds None-guards on `payload` and
+`endpoint_url` before every use:
+
+    if payload is None:
+        log.warning("delivery %s has no payload; parking", delivery.id)
+        transition(delivery, DeliveryPhase.PARKED)
+        return
+
+`enqueue_delivery` in delivery/queue.py (unchanged by this PR) already
+rejects None payloads at insert time, and the pre-validation rows were
+backfilled in release 4.2.
+
+## delivery/queue.py (+31 / -6)
+
+Delay parameter on re-enqueue; phase column read/write.
+
+## tests/delivery/test_retry.py, tests/delivery/test_phases.py (new, +54)
+
+Covers the single retry, the transition table's rejection of illegal
+jumps, and the mode flag's `off` and `single` values. No test enters
+`PARKED` or exercises `adaptive`.

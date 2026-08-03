@@ -13,6 +13,14 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- `checking-merge-readiness` digests a fully reviewed pull request before you
+  merge it. It reads the description, diff, and review history, checks
+  whether accumulated fixes drifted the change from its original intent, and
+  profiles risk as graded named drivers anchored in an engineering-canon
+  reference. Those roll into one of three recommendations: merge, pause, or do
+  not merge. It is read-only and conversation-only, it treats every
+  PR-derived text as untrusted input, and it never merges anything itself.
+
 - `creating-portable-skills` is the first published skill. It creates new Agent
   Skills and helps review, update, or move existing skills. It starts from the
   user's goal, checks the package structure, compares behavior with focused

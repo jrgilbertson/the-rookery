@@ -63,7 +63,8 @@
           "body": "Index creation without `CONCURRENTLY` will lock the jobs table during the deploy.",
           "pullRequestReview": {
             "submittedAt": "2026-07-19T10:58:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_e0"
           }
         },
         {
@@ -73,7 +74,8 @@
           "body": "Fixed \u2014 the migration now creates the index `CONCURRENTLY`.",
           "pullRequestReview": {
             "submittedAt": "2026-07-19T10:58:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_e0"
           }
         }
       ]
@@ -91,7 +93,8 @@
           "body": "Dropped duplicates should be observable, or support will chase ghost jobs.",
           "pullRequestReview": {
             "submittedAt": "2026-07-19T11:30:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_e1"
           }
         },
         {
@@ -101,7 +104,8 @@
           "body": "Added the `jobs_deduplicated` counter.",
           "pullRequestReview": {
             "submittedAt": "2026-07-19T11:30:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_e1"
           }
         }
       ]
@@ -119,7 +123,8 @@
           "body": "The check-then-insert here isn't atomic. Two workers picking up the same key inside the window both pass `exists_within_window` before either inserts. I reproduced it locally with two workers and a 5 ms stagger: both executed the job body. The unique index stops the second row, but by then the work has run twice \u2014 which is the exact bug this PR exists to prevent.",
           "pullRequestReview": {
             "submittedAt": "2026-07-22T09:45:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_e2"
           }
         },
         {
@@ -129,11 +134,13 @@
           "body": "Good catch \u2014 will look at this later, don't want to hold the merge on it.",
           "pullRequestReview": {
             "submittedAt": "2026-07-22T09:45:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_e2"
           }
         }
       ]
     }
   ],
-  "comments": []
+  "comments": [],
+  "baseRefOid": "6d414ff04ef8ff127a12cad79e781fbd89f039b5"
 }

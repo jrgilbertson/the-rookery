@@ -117,23 +117,30 @@ for d in "$PRS"/specimen-*; do
   exit_is "specimen $s: diff" 0 "$s" pr diff
 done
 
-echo "== D. joins name real review submissions =="
+echo "== D. joins name real review submissions by id =="
 for d in "$PRS"/specimen-*; do
   s=$(basename "$d")
   got=$(python3 - "$d/forge.json" <<'PYE'
 import json,sys
 d=json.load(open(sys.argv[1]))
-real={r.get("submittedAt") for r in d.get("reviews",[])}
-ghosts=[c["pullRequestReview"]["submittedAt"]
+real={r.get("id") for r in d.get("reviews",[]) if r.get("id")}
+ghosts=[c["pullRequestReview"].get("id")
         for t in d.get("reviewThreads",[]) for c in t.get("comments",[])
         if isinstance(c.get("pullRequestReview"),dict)
-        and c["pullRequestReview"].get("submittedAt") not in real]
-print(len(ghosts))
+        and c["pullRequestReview"].get("id") not in real]
+missing=sum(1 for t in d.get("reviewThreads",[]) for c in t.get("comments",[])
+            if isinstance(c.get("pullRequestReview"),dict)
+            and not c["pullRequestReview"].get("id"))
+print(f"{len(ghosts)} {missing}")
 PYE
 )
-  if [ "$got" = "0" ]; then pass "specimen $s: no ghost review join"
-  else fail "specimen $s: no ghost review join" "$got join(s) invent a round"; fi
+  if [ "$got" = "0 0" ]; then pass "specimen $s: no ghost review join id"
+  else fail "specimen $s: no ghost review join id" "ghosts/missing: $got"; fi
 done
+out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" pr view --json baseRefOid 2>&1); got=$?
+if [ "$got" = 0 ] && printf '%s' "$out" | python3 -c 'import json,sys; d=json.load(sys.stdin); raise SystemExit(0 if d.get("baseRefOid") else 1)' 2>/dev/null
+then pass "identity: baseRefOid non-empty on pr view"
+else fail "identity: baseRefOid non-empty on pr view" "$out"; fi
 
 echo "== E. read-only perimeter =="
 exit_is "pr view without --json" 2 specimen-a pr view

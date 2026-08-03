@@ -54,7 +54,8 @@
           "body": "The streaming response sets no `Content-Disposition`; browsers will render the CSV inline instead of downloading it.",
           "pullRequestReview": {
             "submittedAt": "2026-07-18T14:05:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_a0"
           }
         },
         {
@@ -64,7 +65,8 @@
           "body": "Fixed as suggested \u2014 added the header with a generated filename.",
           "pullRequestReview": {
             "submittedAt": "2026-07-18T14:05:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_a0"
           }
         }
       ]
@@ -82,7 +84,8 @@
           "body": "The filename interpolates the raw filter string; a filter containing a quote or newline produces a broken header.",
           "pullRequestReview": {
             "submittedAt": "2026-07-18T14:32:00Z",
-            "state": "CHANGES_REQUESTED"
+            "state": "CHANGES_REQUESTED",
+            "id": "PRR_a1"
           }
         },
         {
@@ -92,7 +95,8 @@
           "body": "Fixed differently \u2014 dropped the filter text from the filename entirely and used `invoices-<date>.csv`. Simpler and nothing to escape.",
           "pullRequestReview": {
             "submittedAt": "2026-07-18T14:32:00Z",
-            "state": "CHANGES_REQUESTED"
+            "state": "CHANGES_REQUESTED",
+            "id": "PRR_a1"
           }
         },
         {
@@ -102,7 +106,8 @@
           "body": "Cleaner than escaping. Resolved.",
           "pullRequestReview": {
             "submittedAt": "2026-07-18T14:32:00Z",
-            "state": "CHANGES_REQUESTED"
+            "state": "CHANGES_REQUESTED",
+            "id": "PRR_a1"
           }
         }
       ]
@@ -120,7 +125,8 @@
           "body": "`csv_rows` loads the full result set before writing; a large filtered set will buffer in memory.",
           "pullRequestReview": {
             "submittedAt": "2026-07-18T14:05:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_a0"
           }
         },
         {
@@ -130,7 +136,8 @@
           "body": "Fixed \u2014 reused the list endpoint's 500-row pagination helper so export batches the same way the list does.",
           "pullRequestReview": {
             "submittedAt": "2026-07-18T14:05:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_a0"
           }
         }
       ]
@@ -148,7 +155,8 @@
           "body": "Nit: `test_export_2` doesn't say what it covers.",
           "pullRequestReview": {
             "submittedAt": "2026-07-18T14:32:00Z",
-            "state": "CHANGES_REQUESTED"
+            "state": "CHANGES_REQUESTED",
+            "id": "PRR_a1"
           }
         },
         {
@@ -158,11 +166,13 @@
           "body": "Renamed to `test_export_streams_in_batches`.",
           "pullRequestReview": {
             "submittedAt": "2026-07-18T14:32:00Z",
-            "state": "CHANGES_REQUESTED"
+            "state": "CHANGES_REQUESTED",
+            "id": "PRR_a1"
           }
         }
       ]
     }
   ],
-  "comments": []
+  "comments": [],
+  "baseRefOid": "072ac39200bc2d86f2a044e5461dd1dc602f9b43"
 }

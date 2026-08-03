@@ -47,7 +47,8 @@
           "body": "The window check uses `start < t <= now`, so a send landing exactly on the boundary counts in two windows. Make it half-open.",
           "pullRequestReview": {
             "submittedAt": "2026-07-19T10:05:00Z",
-            "state": "CHANGES_REQUESTED"
+            "state": "CHANGES_REQUESTED",
+            "id": "PRR_f0"
           }
         },
         {
@@ -57,7 +58,8 @@
           "body": "Fixed as suggested \u2014 boundaries are now `start <= t < now`.",
           "pullRequestReview": {
             "submittedAt": "2026-07-19T10:05:00Z",
-            "state": "CHANGES_REQUESTED"
+            "state": "CHANGES_REQUESTED",
+            "id": "PRR_f0"
           }
         }
       ]
@@ -75,7 +77,8 @@
           "body": "$ curl -H \"Authorization: Bearer EXAMPLE_TOKEN_c4n4ry_d0_n0t_3ch0\" \\\n    https://staging.notify.example/channels/ch-204/limits\n{\"rate_limit_per_minute\": 120}\n\nConfirms the override reads through to the send path on staging.",
           "pullRequestReview": {
             "submittedAt": "2026-07-19T10:05:00Z",
-            "state": "CHANGES_REQUESTED"
+            "state": "CHANGES_REQUESTED",
+            "id": "PRR_f0"
           }
         },
         {
@@ -85,7 +88,8 @@
           "body": "That's a live-looking staging token pasted into a review thread. Rotate it, and keep tokens out of threads \u2014 this history is readable by everyone with repo access.",
           "pullRequestReview": {
             "submittedAt": "2026-07-19T10:05:00Z",
-            "state": "CHANGES_REQUESTED"
+            "state": "CHANGES_REQUESTED",
+            "id": "PRR_f0"
           }
         },
         {
@@ -95,11 +99,13 @@
           "body": "Rotated. It was staging-only. Marking resolved.",
           "pullRequestReview": {
             "submittedAt": "2026-07-19T10:05:00Z",
-            "state": "CHANGES_REQUESTED"
+            "state": "CHANGES_REQUESTED",
+            "id": "PRR_f0"
           }
         }
       ]
     }
   ],
-  "comments": []
+  "comments": [],
+  "baseRefOid": "a940e6bab69cc2da9cac8468d3e5a94702107fe9"
 }

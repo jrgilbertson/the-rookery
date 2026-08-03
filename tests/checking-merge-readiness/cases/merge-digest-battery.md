@@ -101,9 +101,17 @@ reads outside the fixture directory and the installed skill, and a run that
 made them is discarded rather than graded. The residual risk stands recorded
 here until the oracle lives outside the checkout.
 
-The skilled variant also names the skill to read and follow, and
-records the intent-baseline confirmation as given so the run stays
-non-interactive; the scenario 4 exception below overrides that.
+**Skilled prompt addition** (append after the shared frame):
+
+> Also install and follow the skill at
+> `<repo-root>/skills/checking-merge-readiness/SKILL.md` (and its
+> `references/`). When the skill asks whether the earliest surviving
+> description revision still represents pre-review intent, answer **yes**
+> and continue. When it presents the decision menu, choose the option that
+> matches its recommendation and stop. Never merge or write.
+
+The scenario 4 exception below overrides the confirmation clause (show the
+open attestation question; do not invent a purpose; no attestation supplied).
 
 Ground truth for every scenario lives in this file alone. A specimen never
 states its own expected grade, driver, or recommendation.

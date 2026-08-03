@@ -79,7 +79,8 @@
           "body": "A 60-second TTL means a price change shows stale for up to a minute.\nMerchandising will file bugs the first week. Can we invalidate on write\ninstead of waiting out the TTL?",
           "pullRequestReview": {
             "submittedAt": "2026-07-14T10:20:00Z",
-            "state": "CHANGES_REQUESTED"
+            "state": "CHANGES_REQUESTED",
+            "id": "PRR_c0"
           }
         },
         {
@@ -89,7 +90,8 @@
           "body": "Agreed \u2014 switched to write-triggered invalidation for the products cache; TTL stays as a backstop.",
           "pullRequestReview": {
             "submittedAt": "2026-07-14T10:20:00Z",
-            "state": "CHANGES_REQUESTED"
+            "state": "CHANGES_REQUESTED",
+            "id": "PRR_c0"
           }
         }
       ]
@@ -107,7 +109,8 @@
           "body": "The invalidation hook is hard-wired to the products handler. If we're\ndoing invalidation at all, a tag registry would let other endpoints opt\nin without copying this pattern.",
           "pullRequestReview": {
             "submittedAt": "2026-07-17T09:48:00Z",
-            "state": "CHANGES_REQUESTED"
+            "state": "CHANGES_REQUESTED",
+            "id": "PRR_c1"
           }
         },
         {
@@ -117,7 +120,8 @@
           "body": "Generalized it \u2014 added `TagRegistry` and moved products onto tags. Other endpoints can register later.",
           "pullRequestReview": {
             "submittedAt": "2026-07-17T09:48:00Z",
-            "state": "CHANGES_REQUESTED"
+            "state": "CHANGES_REQUESTED",
+            "id": "PRR_c1"
           }
         }
       ]
@@ -135,7 +139,8 @@
           "body": "Writers call the cache layer directly, coupling every writer to cache\ninternals. An event bus would decouple them.",
           "pullRequestReview": {
             "submittedAt": "2026-07-21T08:55:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_c2"
           }
         },
         {
@@ -145,7 +150,8 @@
           "body": "Added `invalidation_bus` with a documented event format, and namespaced the tags so the storefront service can subscribe to invalidation events later.",
           "pullRequestReview": {
             "submittedAt": "2026-07-21T08:55:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_c2"
           }
         }
       ]
@@ -163,7 +169,8 @@
           "body": "On-call will want a manual flush when a bad entry sticks. Admin\nendpoint?",
           "pullRequestReview": {
             "submittedAt": "2026-07-21T14:10:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_c3"
           }
         },
         {
@@ -173,11 +180,13 @@
           "body": "Added `POST /admin/cache/flush` by tag.",
           "pullRequestReview": {
             "submittedAt": "2026-07-21T14:10:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_c3"
           }
         }
       ]
     }
   ],
-  "comments": []
+  "comments": [],
+  "baseRefOid": "1034911ef3da2bcc6b99b82eded199e341ce8060"
 }

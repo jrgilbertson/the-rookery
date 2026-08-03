@@ -127,10 +127,12 @@ rebuild or refuse proceed-to-merge rather than take a decision on theater.
 - Round attribution uses the submission join, not wall-clock proximity.
 - A review covers the **commit it reviewed**, not a later head. When the head
 carries changes after the last non-author review submission that approved,
-requested changes, **or left a substantive COMMENTED body**, name
+requested changes, left a substantive COMMENTED body, **or has substantive
+inline comments joined to that submission** (empty top-level body still
+counts if the joined threads are substantive), name
 unreviewed-since-last-review and cap at pause. Resolved threads and a green
 approval say nothing about a later commit; COMMENTED-only history is not an
-exception — if no reviewer saw the head, merge is not available.
+exception — if no non-author reviewer saw the head, merge is not available.
 - `userContentEdits.diff` is a full post-edit body snapshot, not a patch and
 not the pre-edit text (step 3).
 

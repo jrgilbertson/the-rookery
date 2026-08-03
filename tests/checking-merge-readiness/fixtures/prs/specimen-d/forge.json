@@ -44,7 +44,8 @@
           "body": "Use `Decimal.quantize` rather than `float` round here \u2014 the float path is what produced the half-cent drift in the first place.",
           "pullRequestReview": {
             "submittedAt": "2026-07-24T13:15:00Z",
-            "state": "CHANGES_REQUESTED"
+            "state": "CHANGES_REQUESTED",
+            "id": "PRR_d0"
           }
         },
         {
@@ -54,7 +55,8 @@
           "body": "Fixed as suggested \u2014 switched to `Decimal.quantize` with `ROUND_HALF_UP`.",
           "pullRequestReview": {
             "submittedAt": "2026-07-24T13:15:00Z",
-            "state": "CHANGES_REQUESTED"
+            "state": "CHANGES_REQUESTED",
+            "id": "PRR_d0"
           }
         }
       ]
@@ -72,7 +74,8 @@
           "body": "Add the half-cent regression case so this doesn't come back.",
           "pullRequestReview": {
             "submittedAt": "2026-07-24T13:15:00Z",
-            "state": "CHANGES_REQUESTED"
+            "state": "CHANGES_REQUESTED",
+            "id": "PRR_d0"
           }
         },
         {
@@ -82,11 +85,13 @@
           "body": "Added `test_summary_rounds_half_up`.",
           "pullRequestReview": {
             "submittedAt": "2026-07-24T13:15:00Z",
-            "state": "CHANGES_REQUESTED"
+            "state": "CHANGES_REQUESTED",
+            "id": "PRR_d0"
           }
         }
       ]
     }
   ],
-  "comments": []
+  "comments": [],
+  "baseRefOid": "ee0f2c5f01626650976953f3fd67719367018879"
 }

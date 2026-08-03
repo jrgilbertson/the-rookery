@@ -161,6 +161,7 @@ def pr_view(argv, forge):
         "mergedAt": forge.get("mergedAt"),
         "author": {"login": forge.get("author", "")},
         "baseRefName": forge.get("baseRefName", "main"),
+        "baseRefOid": forge.get("baseRefOid", ""),
         "headRefName": forge.get("headRefName", ""),
         "headRefOid": forge.get("headRefOid", ""),
         "isCrossRepository": forge.get("isCrossRepository", False),
@@ -204,9 +205,18 @@ def shape(node):
     return out
 
 
-def connection_args(query, name):
-    m = re.search(rf"\b{name}\s*\(([^)]*)\)", query)
-    return m.group(1) if m else ""
+def connection_args(query, name, *, which="first"):
+    """Return connection args for `name(...)`.
+
+    which: "first" | "last" — combined GraphQL documents often nest
+    `comments(` under reviewThreads and again at pullRequest level; the
+    top-level conversation connection is the last occurrence.
+    """
+    matches = list(re.finditer(rf"\b{name}\s*\(([^)]*)\)", query))
+    if not matches:
+        return ""
+    m = matches[-1] if which == "last" else matches[0]
+    return m.group(1)
 
 
 def field_bindings(argv):
@@ -311,7 +321,8 @@ def graphql(argv, forge):
         die("`mutation` is a write; this stub serves queries only", 3)
 
     bindings = field_bindings(argv)
-    comment_args = connection_args(query, "comments")
+    nested_comment_args = connection_args(query, "comments", which="first")
+    top_comment_args = connection_args(query, "comments", which="last")
     pr, served = {}, False
     for name, required in SERVED_CONNECTIONS.items():
         if not re.search(rf"\b{name}\b", query):
@@ -325,7 +336,9 @@ def graphql(argv, forge):
             n_comments = len(re.findall(r"\bcomments\s*\(", query))
             if re.search(r"\breviewThreads\b", query) and n_comments < 2:
                 continue
-        args = connection_args(query, name)
+            args = top_comment_args
+        else:
+            args = connection_args(query, name)
         missing = [f for f in required if not re.search(rf"\b{f}\b", query)]
         if missing:
             die(
@@ -342,7 +355,7 @@ def graphql(argv, forge):
             if name == "reviewThreads" and isinstance(node.get("comments"), list):
                 inner, _, inner_info = page(
                     node["comments"],
-                    comment_args,
+                    nested_comment_args,
                     f"reviewThreads[{i}].comments",
                     forge,
                     bindings,

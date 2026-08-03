@@ -84,7 +84,8 @@
           "body": "`_cache.get` returning `None` is ambiguous if a resolve can legitimately return `None`.",
           "pullRequestReview": {
             "submittedAt": "2026-07-24T09:12:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_j0"
           }
         },
         {
@@ -94,7 +95,8 @@
           "body": "It cannot; `_resolve_uncached` returns an empty frozenset for no permissions, never `None`. Added that to the docstring so the next reader does not have to check.",
           "pullRequestReview": {
             "submittedAt": "2026-07-24T09:12:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_j0"
           }
         }
       ]
@@ -112,7 +114,8 @@
           "body": "If this shares an eviction pool with the feature-flag cache, a burst of permission entries will evict flags and we will get flag flapping under load.",
           "pullRequestReview": {
             "submittedAt": "2026-07-24T14:20:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_j1"
           }
         },
         {
@@ -122,7 +125,8 @@
           "body": "Good catch. Made it a second instance with its own cap rather than a shared pool, so the two cannot evict each other.",
           "pullRequestReview": {
             "submittedAt": "2026-07-24T14:20:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_j1"
           }
         },
         {
@@ -132,7 +136,8 @@
           "body": "That does it. Resolved.",
           "pullRequestReview": {
             "submittedAt": "2026-07-24T14:20:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_j1"
           }
         }
       ]
@@ -150,7 +155,8 @@
           "body": "Worth asserting the org passed through here is the same one the request authenticated against, not the one in the path parameter.",
           "pullRequestReview": {
             "submittedAt": "2026-07-24T14:20:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_j1"
           }
         },
         {
@@ -160,10 +166,12 @@
           "body": "It is the authenticated one; the path parameter never reaches this call. Added a test that a mismatched path org does not change the cache key.",
           "pullRequestReview": {
             "submittedAt": "2026-07-24T14:20:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_j1"
           }
         }
       ]
     }
-  ]
+  ],
+  "baseRefOid": "5df38d338667e15451dd4cf1927d6e2dc05a0f3c"
 }

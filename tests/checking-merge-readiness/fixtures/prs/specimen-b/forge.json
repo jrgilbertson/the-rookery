@@ -72,7 +72,8 @@
           "body": "What happens if the process dies between the failure and the re-enqueue? Consider tracking the delivery's phase explicitly so a sweeper could find stuck deliveries.",
           "pullRequestReview": {
             "submittedAt": "2026-07-21T09:14:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_b0"
           }
         },
         {
@@ -82,7 +83,8 @@
           "body": "Fair point for a crash window. Added a `DeliveryPhase` enum and a phase column so state is visible.",
           "pullRequestReview": {
             "submittedAt": "2026-07-21T09:14:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_b0"
           }
         }
       ]
@@ -100,7 +102,8 @@
           "body": "Phase writes happen in both sender.py and queue.py and could interleave. Suggest an explicit transition table so illegal jumps fail loudly rather than corrupting state.",
           "pullRequestReview": {
             "submittedAt": "2026-07-22T09:02:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_b1"
           }
         },
         {
@@ -110,7 +113,8 @@
           "body": "Added the `ALLOWED` transition table. Also added a `PARKED` state \u2014 gives operators a place to put a delivery if a sweeper ever finds one in a bad state.",
           "pullRequestReview": {
             "submittedAt": "2026-07-22T09:02:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_b1"
           }
         }
       ]
@@ -128,7 +132,8 @@
           "body": "During a partner outage operators may want retries off without a deploy. A config flag would cover that.",
           "pullRequestReview": {
             "submittedAt": "2026-07-23T09:07:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_b2"
           }
         },
         {
@@ -138,7 +143,8 @@
           "body": "Added `webhook_retry_mode` with `off` and `single`. I put `adaptive` in as a placeholder value so the setting won't need a migration if we ever do backoff.",
           "pullRequestReview": {
             "submittedAt": "2026-07-23T09:07:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_b2"
           }
         }
       ]
@@ -156,7 +162,8 @@
           "body": "`payload` could be None if a row predates the insert-time validation.",
           "pullRequestReview": {
             "submittedAt": "2026-07-24T09:11:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_b3"
           }
         },
         {
@@ -166,11 +173,13 @@
           "body": "That validation shipped in 4.2 and the table was backfilled, but I added the guards anyway to be safe. A None payload now parks the delivery.",
           "pullRequestReview": {
             "submittedAt": "2026-07-24T09:11:00Z",
-            "state": "COMMENTED"
+            "state": "COMMENTED",
+            "id": "PRR_b3"
           }
         }
       ]
     }
   ],
-  "comments": []
+  "comments": [],
+  "baseRefOid": "0890e223ce9871e0c9fe310397141708387c6f86"
 }

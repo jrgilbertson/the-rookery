@@ -22,13 +22,14 @@ Use each source for its native role:
 - Meeting and contact sources supply conversation and relationship evidence;
   they do not replace the canonical task or CRM destination.
 - X (authenticated Grok or host X search tools when available) supplies
-  optional interaction evidence and timestamps. Query only when it can change
-  a material conclusion. Prefer a URL, known handle, or named person already
-  in evidence; otherwise check a short slice of the user's own recent directed
-  posts and replies. Never like, follow, reply, post, send DMs, or do any other
-  X write, whatever the host tool exposes. Failed or missing X reads only
-  limit conclusions that need X (**Partial**). Person-note,
-  contact-date, and dated relationship Task effects still go through the CRM
+  optional interaction evidence, timestamps, and public post content when a
+  review conclusion turns on it. Query only when it can change a material
+  conclusion. Prefer a URL, known handle, or named person already in evidence;
+  otherwise check a short slice of the user's own recent directed posts and
+  replies. Never like, follow, reply, post, send DMs, or do any other X write,
+  whatever the host tool exposes. Failed or missing X reads only limit
+  conclusions that need X (**Partial**). Person-note, contact-date, and dated
+  relationship Task effects still go through the CRM
   companion below, not from X alone. Do not use X to find posts to read or
   reply to (issue #12).
 - Repositories and issue trackers supply project decisions, implementation

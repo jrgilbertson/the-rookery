@@ -260,9 +260,12 @@ the missing element and collaborate rather than padding, truncating, or
 inventing subjective content.
 
 Completion: when the configured section exists, the proposed journal contains
-three to five reviewed bullets with all three elements and quality gates
-applied; otherwise the existing next-day planning behavior continues without an
-invented journal write.
+three to five reviewed bullets with quality gates applied. Bullets that satisfy
+the three-element condition are recorded as conforming intent; any bullet the
+user explicitly approved incomplete is preserved verbatim, labeled
+nonconforming in the proposal, and is not claimed as a complete three-element
+commitment. When the section is absent, ordinary next-day planning continues
+without an invented journal write.
 
 ## Promote only durable signal
 
@@ -271,10 +274,11 @@ creating a quota, draft, or publication action automatically. Keep central
 thinking and the rough draft human-led unless the user asks for more help.
 
 Propose a change to the canonical learning notes or the canonical strategy note
-only when the user requests it or the day (including the coaching beat) adds
-evidence to a repeated, behavior-changing pattern. A one-day observation
-normally stays in the daily journal. Never auto-write strategy or learnings;
-each proposal is a separately numbered review action.
+only when the day (including the coaching beat) adds evidence to a repeated,
+behavior-changing pattern. A one-day observation stays in the daily journal
+even if the user asks for a vault write—the durable-signal gate still holds.
+Never auto-write strategy or learnings; each eligible proposal is a separately
+numbered review action.
 
 Completion: optional writing, learning, and strategy proposals are selective,
 sourced, and independently reviewable.

@@ -23,4 +23,3 @@ directly reachable.
 - 2026-07-31 | 6b0bca0 | case: meaningful-commitment-capture (final regression) | pass (5/5) | Fresh Codex context loaded current source and confirmed the configured-section fallback plus verbatim, nonconforming explicit overrides.
 - 2026-07-31 | 6b0bca0 | case: meaningful-commitment-write-safety (final regression) | pass (6/6) | Fresh Codex context confirmed full-target drift refusal, exact-match idempotency, user-edit preservation, narrow writes, and CLI readback.
 - 2026-07-31 | 6b0bca0 | case: morning-review-shape (final regression) | pass (8/8) | Fresh Codex context confirmed reviewed-order conflict annotations, no stale revival or invented rationale, and the separate foreground limit.
-- 2026-08-04 | 28ca43a | case: morning deprecation suite retarget (author) | pending-fresh-context | Morning mode removed; wind-down-tomorrow-close and coaching cases added; triggers near-miss morning activation.

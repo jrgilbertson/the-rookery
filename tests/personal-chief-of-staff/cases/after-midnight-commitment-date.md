@@ -19,4 +19,4 @@ leg removed (2026-08-04) — next-day usability does not depend on a morning mod
       separately approvable.
 - [ ] Drafts three Wednesday commitments with outcome, finish line, and
       rationale; no morning reaffirm step is required for the list to be usable.
-- [ ] Coaching, if delivered, happens before commitments finalize.
+- [ ] Delivers a short coaching beat before commitments finalize.

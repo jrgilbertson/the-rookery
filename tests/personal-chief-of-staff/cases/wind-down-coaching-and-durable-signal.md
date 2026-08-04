@@ -18,5 +18,6 @@ wind-down before commitments lock; strategy/learnings only under approval.
 - [ ] Coaching is evidence-grounded and non-scoring (no grades or streaks).
 - [ ] Any strategy or learnings edit is a separate numbered review action, not
       auto-applied.
-- [ ] One-day noise stays journal-only; durable vault proposals appear only
-      when the pattern is repeated or behavior-changing, or the user asks.
+- [ ] One-day noise stays journal-only even if the user asks for a vault write;
+      durable strategy or learnings proposals appear only when the day adds a
+      repeated or behavior-changing signal.

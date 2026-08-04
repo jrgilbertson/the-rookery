@@ -25,9 +25,9 @@ name + description + query only, binary judgment, any near-miss `yes` fails.
 
 | Query | Expected owner |
 | --- | --- |
-| Give me my morning chief-of-staff review. | Not a published activation; no Morning mode. |
-| What needs my attention today? Check my live context and help me decide. | Not a published activation; no Morning mode. |
-| Run my scheduled morning review, but do not invent work if nothing matters. | Not a published activation; schedule removed. |
+| Give me my morning chief-of-staff review. | No published owner (Morning mode removed). |
+| What needs my attention today? Check my live context and help me decide. | No published owner (Morning mode removed). |
+| Run my scheduled morning review, but do not invent work if nothing matters. | No published owner (morning schedule removed). |
 | Create a personal task to renew my passport next month. | Task workflow. |
 | Turn this implementation request into a GitHub issue. | Issue-writing workflow. |
 | Process my inbox and draft replies. | Email-processing workflow. |

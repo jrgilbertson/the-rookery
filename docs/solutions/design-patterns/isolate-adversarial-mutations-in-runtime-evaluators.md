@@ -44,17 +44,18 @@ and begin binding review only after the research stage has finished
 (`tests/storm-research/cases/runtime-isolation-and-binding-review.md:25`).
 
 Retain every raw return before mutation. The skill makes unchanged returns and
-the isolation record part of dispatch completion
-(`skills/storm-research/SKILL.md:115`). Give each reviewer the briefing,
-baseline, source audit, raw returns, and execution manifest, but not the
-orchestrator's synthesis reasoning
-(`skills/storm-research/references/fidelity-check.md:3`).
+the internal run record part of dispatch completion
+(`skills/storm-research/SKILL.md` **§4** — collect returns and complete only
+when every intended lens is completed or failed with isolation state recorded).
+Give each reviewer the briefing, baseline, source audit, raw returns, and
+internal run record, but not the orchestrator's synthesis reasoning
+(`skills/storm-research/references/fidelity-check.md` opening artifact list).
 
 Treat the review loop as open-ended. Apply every binding finding so the
-briefing changes, then start a new clean reviewer and repeat until one reports
-`FIDELITY CLEAN` (`skills/storm-research/SKILL.md:206`, `:210`). Require every
-reviewer prompt and return, every briefing revision, and eventual clean
-completion, not a fixed number of rounds
+reader-facing briefing changes, then start a new clean reviewer and repeat
+until one reports `FIDELITY CLEAN` (`skills/storm-research/SKILL.md` **§9** and
+**Completion check**). Require every reviewer prompt and return, every briefing
+revision, and eventual clean completion, not a fixed number of rounds
 (`tests/storm-research/cases/runtime-isolation-and-binding-review.md:8`, `:42`).
 
 ## Why This Matters
@@ -65,13 +66,14 @@ lens pair makes the test nondeterministic: the injected conflict is known false
 only when their completed conclusions are compatible; if they naturally
 disagree, it is not a defect. Different coverage and an absent claim are not
 disagreement, while a conflict invented by the briefing is a review defect
-(`skills/storm-research/references/fidelity-check.md:31`, `:42`, `:46`).
+(`skills/storm-research/references/fidelity-check.md` **What counts as
+disagreement**).
 
 An open-ended loop matters because a reviewer may find another material defect
 after the injected one is repaired. The review also checks evidence
 traceability for assumptions, mechanisms, and every material causal-chain link,
-not just contradictions (`skills/storm-research/references/fidelity-check.md:49`,
-`:58`). In the verified runtime case, the first reviewer found the injected
+not just contradictions (`skills/storm-research/references/fidelity-check.md`
+**Analytical traceability**). In the verified runtime case, the first reviewer found the injected
 disagreement and another traceability defect, the second found a separate
 systems-boundary traceability defect, and the third returned `FIDELITY CLEAN`
 (`tests/storm-research/log.md`). A requirement for exactly two reviews would

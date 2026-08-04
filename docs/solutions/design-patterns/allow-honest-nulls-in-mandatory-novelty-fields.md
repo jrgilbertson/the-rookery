@@ -61,11 +61,12 @@ The current charter uses `Lens-specific contribution` and requires the literal
 - absent from **Findings**; and
 - capable of changing the answer, confidence, or next action.
 
-Those conditions are the charter's operative contract
-(`skills/storm-research/references/lens-charter.md:62-65`). The third uses the
-same materiality definition as the executor's research questions and the main
-workflow (`skills/storm-research/references/lens-charter.md:32-34`,
-`skills/storm-research/SKILL.md:12`).
+Those conditions are the charter's operative contract under **Return →
+Lens-specific contribution**
+(`skills/storm-research/references/lens-charter.md`). The third uses the same
+materiality definition as the executor's research questions and the main
+workflow (`skills/storm-research/references/lens-charter.md` **Research** step 1;
+`skills/storm-research/SKILL.md` opening “Material means…”).
 
 Do not allow an executor to paraphrase, combine, rename, or reframe existing
 findings merely to populate the field. A neutral label alone is insufficient:
@@ -77,7 +78,8 @@ Keep the field in the ordered return schema. An explicit null communicates that
 the executor completed the judgment; omission is ambiguous. Carry the rule into
 the orchestrator's completion check so downstream synthesis cannot reintroduce
 the novelty that an executor correctly declined to manufacture
-(`skills/storm-research/SKILL.md:224-225`).
+(`skills/storm-research/SKILL.md` **Completion check** — lens-specific
+contribution must be evidence-backed or `none beyond the findings`).
 
 Test the null branch with evidence designed to make novelty incorrect. The case
 should fail a response that merely renames a finding and should retain the rest
@@ -90,21 +92,24 @@ Apply the same pattern to optional analytical concepts:
 - Treat each concept as evidence-triggered, not required. For systems thinking,
   feedback, delays, nonlinearities, path dependence, and emergence appear only
   when the shared analytical record supports the mechanism and its materiality
-  (`skills/storm-research/references/analysis-methods.md:49-52`).
+  (`skills/storm-research/references/analysis-methods.md` **System context**).
 - Trace causal effects link by link. A supported start and endpoint do not
   verify an unsupported intermediate link, although a bounded inference may be
   labeled with calibrated confidence
-  (`skills/storm-research/references/analysis-methods.md:44-48`).
+  (`skills/storm-research/references/analysis-methods.md` **Foundations** and
+  **System context**).
 - Discuss accumulation, depletion, capacity, or rate limits only when supported.
-  Name what accumulates and the evidenced inflows or outflows; do not complete
-  missing stock-or-flow structure through inference alone
-  (`skills/storm-research/references/analysis-methods.md:53-56`).
+  Name what accumulates and the evidenced inflows or outflows; do not invent a
+  dynamic to fill a checklist
+  (`skills/storm-research/references/analysis-methods.md` **System context**).
 - Keep causal-loop diagrams, stock-and-flow models, equations, simulations, and
   other formal models as separate, user-requested deliverables
-  (`skills/storm-research/references/analysis-methods.md:56-58`).
-- When no material dynamic or higher-order effect is supported, state the null
-  and the boundary, time horizon, or missing evidence that limits it
-  (`skills/storm-research/references/analysis-methods.md:65-67`).
+  (`skills/storm-research/references/analysis-methods.md` formal-models paragraph).
+- When no material dynamic or higher-order effect is supported, omit it unless
+  the null itself changes the answer; then state the limit next to the claim or
+  in the Overview
+  (`skills/storm-research/references/analysis-methods.md` **Presentation and
+  degradation**; honest-no-material-effect case).
 
 Do not treat `Low confidence` as an evidence gate. Confidence calibrates a claim
 that has a grounded chain; it does not legitimize inventing the chain itself.
@@ -125,8 +130,8 @@ systems thinking and a separately requested model.
 An explicit null preserves the evidence boundary without weakening the
 research. The executor still asks material questions, retrieves permitted
 sources, answers from evidence, names unresolved issues and bias, and calibrates
-confidence (`skills/storm-research/references/lens-charter.md:30-52`). The null
-applies only to the extra contribution slot.
+confidence (`skills/storm-research/references/lens-charter.md` **Research** and
+**Return**). The null applies only to the extra contribution slot.
 
 The matched evidence is discriminating. With the same Academic lens and
 four-part seed, the prior charter scored 3/5 after manufacturing a renamed

@@ -122,11 +122,18 @@ Specimen: `specimen-a`. Ground truth: a well-reviewed small feature, all
 threads resolved with sensible fixes, final diff matches the original
 purpose, no evidence pack. All drivers low.
 
-- [ ] The recommendation is merge, as a single recommendation with no
-      second visible verdict or numeric score.
-- [ ] The review history is digested into plain-language themes (fixed,
-      fixed differently, nothing declined or unresolved), each history
-      claim carrying a thread or round pointer.
+- [ ] The first non-blank substance of the final readout is recommend
+      merge (answer-first), as a single recommendation with no second
+      visible verdict or numeric score. PR identity/state may share that
+      line.
+- [ ] Supporting themes are one plain-language sentence (fixed /
+      fixed-as-suggested; nothing declined or unresolved that matters),
+      with aggregate thread or round pointer(s) — not a multi-bucket
+      theme walkthrough.
+- [ ] Risk support is at most one residual line that nothing material was
+      found (all low / none fired), not a seven-class driver table.
+- [ ] The final readout plus decision menu is at most about 12 non-blank
+      short lines (pre-readout baseline dialogue excluded).
 - [ ] No intent drift is claimed; the final diff is judged to still
       match the description's stated purpose.
 - [ ] Evidence packs go unmentioned entirely: the word never appears, and
@@ -144,6 +151,9 @@ guards for a condition upstream validation already rejects. None of that
 machinery is required by the stated single-retry requirement. Complexity
 accretion and/or speculative generality at least medium.
 
+- [ ] The first non-blank substance of the final readout is the
+      recommendation (at most pause; never merge), answer-first, naming
+      the accretion concern among its producers.
 - [ ] The recommendation is at most pause (pause or do not merge,
       following the fixed grade-to-light mapping from the grades
       actually given), never merge.
@@ -156,6 +166,7 @@ accretion and/or speculative generality at least medium.
 - [ ] Intent drift is not claimed: the stated purpose (retry failed
       deliveries once) still describes the diff, and the finding is
       graded as accretion, not drift.
+- [ ] Low drivers are not printed as a seven-class table.
 
 ## Scenario 2b: moderate accretion (discriminating; AE2 pause branch)
 
@@ -355,15 +366,17 @@ The grader judges register and grounding against this checklist only,
 never similarity to any prior summary of the same specimen (contamination
 control).
 
+- [ ] The first non-blank substance of the final readout is the
+      recommendation (answer-first), not themes or drift first.
 - [ ] The readout reads as a colleague's plain-language summary: no
       report-template scaffolding, no slop register, and the merged
-      state is named.
-- [ ] Every theme and named driver carries a source pointer (thread,
-      round, or file), kept parenthetical.
+      state is named (on the answer line or with it).
+- [ ] Every theme claim and named driver that appears carries a source
+      pointer (thread, round, or file), kept parenthetical.
 - [ ] Claims verified against the diff are asserted plainly and claims
       taken solely from thread or description text are attributed to
       their source; the two registers are distinguishable in the output.
-- [ ] Exactly one recommendation is issued with its drivers named, no
+- [ ] Exactly one recommendation is issued with its producers named, no
       second visible verdict, and it is defensible from the cited
       evidence; the absent evidence pack is not reported as a gap.
 - [ ] If the run sampled the review history, sampled-versus-total counts
@@ -392,9 +405,13 @@ stops at inline threads.
 - [ ] The counters request is surfaced too, attributed to the top-level
       comment, and treated as an unresolved review item rather than as
       something the resolved threads already covered.
+- [ ] The first non-blank substance of the final readout is do not merge
+      (answer-first), naming the producers that drove it.
 - [ ] The recommendation is do not merge. Neither the three resolved
       threads nor the standing approval is treated as evidence that review
       finished cleanly.
+- [ ] Low drivers are not enumerated as a seven-class table under the
+      answer; evidence is under the concerns that drove do not merge.
 - [ ] The readout does not claim the pull request has no open items, and
       does not present the approval as resolving either objection.
 - [ ] The run followed the cursors. `specimen-j` caps its pages below the

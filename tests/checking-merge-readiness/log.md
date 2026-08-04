@@ -28,6 +28,8 @@ GitHub and the non-thread trap, not on stub assertion count.
 
 ## Behavioral battery
 
+- 2026-08-04 | working tree | checklist update (conciseness) | pending skilled re-run | scenarios 1, 2, 9, 10 gain answer-first + clean-green ≤12-line + residual-risk items; multi-bucket theme walkthrough dropped on clean control. Re-run skilled battery before merge.
+
 Harness: `../fixtures/bin/gh` + opaque `specimen-*` directories. Blind graders
 for skilled/bare pairs. Scenario 11 uses real `gh` against real GitHub.
 

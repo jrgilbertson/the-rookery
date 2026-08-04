@@ -11,6 +11,15 @@ looked" surface. GitHub Releases mirror its entries.
 
 ## [Unreleased]
 
+### Changed
+
+- `checking-merge-readiness` digests use Barbara Minto's pyramid principle:
+  recommendation first, then only supporting points. Clean green readouts
+  stay about twelve short lines; pause and do-not-merge grow only around
+  real concerns. The skill body is tightened so agents load less bulk
+  without dropping fetch floors or grade mapping. Battery checklists assert
+  answer-first order and clean-green length.
+
 ### Added
 
 - `checking-merge-readiness` digests a fully reviewed pull request before you

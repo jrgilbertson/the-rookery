@@ -58,6 +58,11 @@ looked" surface. GitHub Releases mirror its entries.
   known URL or handle when present, otherwise a short slice of the user's own
   recent directed posts and replies. They do not post on X or scan for posts
   to engage with.
+- Build's orchestration guidance now treats Compound Engineering as the default
+  planner, executor, and multi-agent reviewer inside a worktree. It drops the
+  separate plan-execute-review row, warns against standing up a parallel stack
+  beside the skills, and keeps other patterns for uncovered gaps; tiny one-off
+  changes may still use a solo owner.
 - Planning now keeps Compound Engineering as the primary route and uses
   targeted grilling only as an optional pressure test for consequential,
   interdependent decisions that remain unclear.

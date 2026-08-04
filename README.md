@@ -52,7 +52,7 @@ Everything here fits into seven jobs. The walkthroughs live in [WORKFLOWS.md](WO
 ## The skills
 
 - [creating-portable-skills](skills/creating-portable-skills/SKILL.md). Create a new agent skill, or review, update, and migrate an existing one. One loop from intent interview through baseline testing to a packaged skill that works across models and harnesses.
-- [personal-chief-of-staff](skills/personal-chief-of-staff/SKILL.md). Run a morning review, daily journal and wind-down, weekly review, or quarterly review from your existing sources. Every durable change stays reviewable before it lands.
+- [personal-chief-of-staff](skills/personal-chief-of-staff/SKILL.md). Run a daily wind-down and journal, weekly review, or quarterly review from your existing sources. Every durable change stays reviewable before it lands.
 - [managing-personal-crm](skills/managing-personal-crm/SKILL.md). Keep relationship context in canonical Person notes and tasks. Capture interactions, prepare for a conversation, find who could help with current work, and clean up notes in stages, with no separate CRM database.
 - [reviewing-meetings](skills/reviewing-meetings/SKILL.md). Turn completed meetings from a configured source into grounded notes and follow-up actions. Duplicate work is prevented, each outcome gets one canonical owner, and scheduled runs stay read-only.
 - [checking-pr-readiness](skills/checking-pr-readiness/SKILL.md). Gate a branch before the pull request opens: the full working surface reported, upstream steps verified from receipts, the plan compared against what was delivered, and a sweep of the finding classes that drive repeated review rounds. It ends in one owner decision plus an evidence pack for the PR body.

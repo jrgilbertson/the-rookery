@@ -238,7 +238,9 @@ Grade fully in step 4 first. Then speak only what the owner needs, in
 **natural prose** shaped by Barbara Minto's **pyramid principle**: the
 answer first, then the grouped reasons that support it, then only the
 evidence those reasons need. Write as a colleague briefing someone at the
-merge button — continuous sentences and short paragraphs, not a form.
+merge button: continuous sentences and short paragraphs, not a form. Prefer
+commas, periods, colons, or parentheses over em dashes in the spoken
+readout (no `—`).
 
 Do **not** print bottom-up analysis (themes, then drift, then risk, then
 the verdict). Do **not** use report scaffolding: no section headers such as
@@ -273,13 +275,13 @@ verdict.
 merge), naming what produced it (drivers, caps, or intent drift). Fold PR
 identity and state into that opening so it stands alone.
 2. **Why.** In the next sentences, give the supporting arguments that
-justify the answer — review themes, intent/drift, residual risk, caps —
+justify the answer (review themes, intent/drift, residual risk, caps),
 each idea once, most decision-relevant first. Weave them as prose, not
 labeled blocks.
 3. **Evidence.** Only where a concern drove the recommendation, add the
 concrete evidence in those sentences (parenthetical pointers from step 4).
 Do not re-list low drivers.
-4. **Decision menu** (step 6) after the prose body — not before the answer.
+4. **Decision menu** (step 6) after the prose body, not before the answer.
 
 #### Print budgets
 
@@ -300,10 +302,10 @@ the opening answer and the menu compact.
 **Concern-grown** (pause or do not merge, or caps / intent drift): expand
 the prose only around medium/high drivers, caps, and intent-drift findings.
 Clean residual is a brief clause or sentence, or omitted. At most a short
-clause that remaining drivers are low — never a per-class table.
+clause that remaining drivers are low, never a per-class table.
 
 **Risk residual when all low / none fire:** in natural language, that
-nothing material showed up (all drivers low or none fired) — not wording
+nothing material showed up (all drivers low or none fired), not wording
 that implies grading was skipped.
 
 Completion: natural answer-first prose with exactly one recommendation

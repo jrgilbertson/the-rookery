@@ -1,0 +1,19 @@
+# Diff summary — PR #150 (mapleworks/ledgerd)
+
+Constructed summary of the final diff at head `41cc2b8` against base
+`main`. 2 files changed, +19 / -7.
+
+## report/summary.py (+11 / -7)
+
+Replaces float rounding in the monthly summary totals with
+`Decimal.quantize` using `ROUND_HALF_UP`:
+
+    - total = round(sum(line.amount for line in lines), 2)
+    + total = sum(Decimal(line.amount) for line in lines).quantize(
+    +     Decimal("0.01"), rounding=ROUND_HALF_UP
+    + )
+
+## tests/report/test_summary.py (+8)
+
+Adds a regression test for the half-cent case that previously rounded
+down (`test_summary_rounds_half_up`).

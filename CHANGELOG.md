@@ -20,16 +20,23 @@ looked" surface. GitHub Releases mirror its entries.
   Overview; later sections support that lead). It adapts to the requested
   deliverable and uses a binding independent check to preserve disagreement and
   keep material causal claims evidence-traceable.
+- `checking-merge-readiness` digests a fully reviewed pull request before you
+  merge it. It reads the description, diff, and review history, checks
+  whether accumulated fixes drifted the change from its original intent, and
+  profiles risk as graded named drivers anchored in an engineering-canon
+  reference. Those roll into one of three recommendations: merge, pause, or do
+  not merge. It is read-only and conversation-only, it treats every
+  PR-derived text as untrusted input, and it never merges anything itself.
 - `creating-portable-skills` is the first published skill. It creates new Agent
   Skills and helps review, update, or move existing skills. It starts from the
   user's goal, checks the package structure, compares behavior with focused
   tests, and verifies installability and activation with a per-harness smoke
   probe. It works without companion skills.
-- `personal-chief-of-staff` guides morning, wind-down, weekly, and quarterly
-  reviews using current data from the user's connected sources. It requires
-  review before writing changes, handles Obsidian CLI operations, tests its
-  behavior, and includes a versioned specification for four local Codex
-  schedules.
+- `personal-chief-of-staff` guides wind-down (the sole daily close), weekly,
+  and quarterly reviews using current data from the user's connected sources.
+  It requires review before writing changes, handles Obsidian CLI operations,
+  tests its behavior, and includes a versioned specification for three local
+  Codex schedules.
 - `managing-personal-crm` keeps relationship context in canonical Person notes
   and Tasks. It captures updates, finds relevant context, prepares for
   conversations with one person, and proposes cleanup in stages. It matches
@@ -59,6 +66,11 @@ looked" surface. GitHub Releases mirror its entries.
   (larger-system context and patterns over time when they change the answer),
   not a mandatory named report section. Formal models stay optional, and
   intervention stress-tests run only when the purpose calls for them.
+- Build's orchestration guidance now treats Compound Engineering as the default
+  planner, executor, and multi-agent reviewer inside a worktree. It drops the
+  separate plan-execute-review row, warns against standing up a parallel stack
+  beside the skills, and keeps other patterns for uncovered gaps; tiny one-off
+  changes may still use a solo owner.
 - Planning now keeps Compound Engineering as the primary route and uses
   targeted grilling only as an optional pressure test for consequential,
   interdependent decisions that remain unclear.
@@ -80,13 +92,18 @@ looked" surface. GitHub Releases mirror its entries.
   centralized evidence records; the lightweight testing convention above
   supersedes those before any release.)
 - `personal-chief-of-staff` can now include relationship check-ins and timely
-  opportunities in its morning, wind-down, and weekly reviews when Personal CRM
-  is available.
+  opportunities in its wind-down and weekly reviews when Personal CRM is
+  available.
 - `personal-chief-of-staff` can now record three to five concrete next-day
   commitments with finish lines and user-approved rationales during wind-down
-  when the configured journal section is available, reaffirm them in morning
-  without creating another task or calendar system, and use repeated rationale
-  patterns for selective non-scoring coaching.
+  when the configured journal section is available, apply quality gates at write
+  time without a morning reaffirm step, deliver light focus/stop/more/less
+  coaching every wind-down, and propose selective durable strategy or learning
+  updates under separate approval.
+- `personal-chief-of-staff` no longer ships a Morning mode or morning schedule.
+  The daily path is wind-down only; generic daily review wording selects
+  wind-down, and morning activation phrases are removed from the skill
+  description.
 - `reviewing-meetings` can now suggest contact dates, save useful relationship
   context, capture personal follow-ups, and surface relevant connections. Each
   meeting still produces one review bundle, and every approved action goes to

@@ -1,0 +1,46 @@
+# Diff summary — PR #318 (mapleworks/api-gw)
+
+Constructed summary of the final diff at head `9f31c07` against base `main`.
+5 files changed, +141 / -18.
+
+## gateway/permissions.py (+46 / -12)
+
+`resolve_for(user, org)` now reads through a module-level `PermissionCache`
+before falling back to the three-query resolve it did before:
+
+```py
+def resolve_for(user, org):
+    key = (user.id, org.id)
+    hit = _cache.get(key)
+    if hit is not None:
+        return hit
+    resolved = _resolve_uncached(user, org)
+    _cache.set(key, resolved, ttl=CACHE_TTL_SECONDS)
+    return resolved
+```
+
+`CACHE_TTL_SECONDS` is 600. `_resolve_uncached` is the previous body, moved
+without changes. Nothing writes to the cache outside `resolve_for`, and
+nothing invalidates an entry before its TTL expires.
+
+## gateway/cache.py (+12 / -2)
+
+Adds a second `TTLCache` instance with its own size cap (4096 entries) so the
+permission entries cannot evict the feature-flag entries. The class itself is
+unchanged; only the instantiation and the cap are new.
+
+## gateway/middleware.py (+9 / -4)
+
+Passes the request's org through to `resolve_for` instead of re-deriving it,
+which was the second of the three queries.
+
+## tests/gateway/test_permissions.py (+61)
+
+Covers a cold miss, a warm hit, expiry after the TTL, and the per-instance
+size cap. The hit path asserts no database call is made. No test covers what a
+cached entry does after the underlying grant changes.
+
+## config/gateway.yaml (+13)
+
+Registers the cache size and TTL as tunables, both defaulted to the values
+above.

@@ -1,0 +1,429 @@
+#!/usr/bin/env python3
+"""Read-only `gh` stand-in that serves one constructed pull request.
+
+The skill under test must run its real fetch path. This stub is that path's
+fixture server — not a GraphQL simulator. Live GitHub (battery scenario 11)
+is the only honest oracle for whether a query is well formed.
+
+    CMR_FIXTURE=.../fixtures/prs/specimen-a PATH=.../fixtures/bin:$PATH
+
+Specimen layout:
+  body.md     current description
+  diff.txt    `gh pr diff` output
+  forge.json  state, refs, userContentEdits, reviews, reviewThreads, comments
+
+Optional env:
+  CMR_GH_AUTH_FAIL  non-empty → every pr/api call fails like an unauthenticated forge
+
+Contract (deliberately small):
+  - serve only the skill's fixed read set: pr view --json, pr diff, api graphql
+  - refuse writes and out-of-set verbs
+  - refuse a selector that names another pull request
+  - refuse an under-fetch of fields the skill depends on (query-text presence)
+  - paginate connections (first / after, including -f/-F variables)
+  - do NOT project responses to selection sets; whole fixture nodes are returned
+"""
+
+import json
+import os
+import re
+import sys
+
+WRITE_VERBS = {
+    "merge", "close", "reopen", "edit", "comment", "review", "create",
+    "delete", "ready", "lock", "unlock", "transfer", "sync",
+}
+
+# Cheap under-fetch guard aligned once to SKILL.md step 2's floor.
+# Presence check only — not a parser, not a selection-set projector.
+# Nested comments under reviewThreads reuses body/id/author tokens.
+SERVED_CONNECTIONS = {
+    "reviewThreads": (
+        "id", "isResolved", "path", "comments", "body", "pullRequestReview",
+        "pageInfo", "line",
+    ),
+    "reviews": (
+        "id", "submittedAt", "state", "body", "commit", "author", "pageInfo",
+    ),
+    "userContentEdits": ("editedAt", "editor", "diff", "pageInfo"),
+    "comments": ("id", "body", "author", "pageInfo"),
+}
+
+SCALAR_AS_OBJECT = {
+    "author": "login",
+    "editor": "login",
+    "commit": "oid",
+}
+
+AUTH_ERROR = "error: not authenticated. Run 'gh auth login' to authenticate."
+
+
+def die(msg, code=1):
+    sys.stderr.write(f"gh (fixture stub): {msg}\n")
+    sys.exit(code)
+
+
+def load():
+    root = os.environ.get("CMR_FIXTURE")
+    if not root:
+        die("CMR_FIXTURE is not set; no specimen to serve", 4)
+    if not os.path.isdir(root):
+        die(f"CMR_FIXTURE does not name a directory: {root}", 4)
+    try:
+        with open(os.path.join(root, "forge.json")) as fh:
+            forge = json.load(fh)
+    except FileNotFoundError:
+        die(f"specimen has no forge.json: {root}", 4)
+    except json.JSONDecodeError as exc:
+        die(f"forge.json is not valid JSON: {exc}", 4)
+
+    def read(name):
+        path = os.path.join(root, name)
+        if not os.path.exists(path):
+            return ""
+        with open(path) as fh:
+            return fh.read()
+
+    forge["_body"] = read("body.md")
+    forge["_diff"] = read("diff.txt")
+    return forge
+
+
+def selector_check(argv, forge):
+    """Fail when a selector names a pull request this specimen is not."""
+    number = forge.get("number")
+    repo = forge.get("repo", "")
+    owner = repo.split("/")[0] if "/" in repo else repo
+
+    want_number = None
+    want_repo = None
+    skip = False
+    for i, a in enumerate(argv):
+        if skip:
+            skip = False
+            continue
+        if a == "--repo" and i + 1 < len(argv):
+            want_repo = argv[i + 1]
+            skip = True
+            continue
+        if a.startswith("-"):
+            if a in ("--json", "-q", "--jq", "--template", "-t"):
+                skip = True
+            continue
+        if want_number is not None:
+            continue
+        m = re.match(
+            r"^(?:https?://[^/]+/)?([^/\s]+/[^/\s]+?)(?:\.git)?"
+            r"(?:/pull/|#)(\d+)/?$",
+            a,
+        )
+        if m:
+            want_repo = want_repo or m.group(1)
+            want_number = int(m.group(2))
+        elif a.isdigit():
+            want_number = int(a)
+        else:
+            die(
+                f"`{a}` is a selector this stub does not resolve; it serves "
+                "one specimen, addressed by number, URL, or owner/name#number",
+                3,
+            )
+
+    if want_number is not None and want_number != number:
+        die(
+            f"no pull request {want_number} here; this specimen is "
+            f"{repo}#{number}",
+            1,
+        )
+    if want_repo is not None:
+        if want_repo.count("/") == 2:
+            want_repo = want_repo.split("/", 1)[1]
+        if want_repo not in (repo, owner):
+            die(
+                f"no pull request in {want_repo} here; this specimen is {repo}",
+                1,
+            )
+
+
+def pr_view(argv, forge):
+    selector_check(argv, forge)
+    fields = None
+    for i, a in enumerate(argv):
+        if a == "--json" and i + 1 < len(argv):
+            fields = [f.strip() for f in argv[i + 1].split(",") if f.strip()]
+    full = {
+        "number": forge.get("number"),
+        "title": forge.get("title", ""),
+        "body": forge.get("_body", ""),
+        "state": forge.get("state", "OPEN"),
+        "isDraft": forge.get("isDraft", False),
+        "merged": forge.get("state") == "MERGED",
+        "mergedAt": forge.get("mergedAt"),
+        "author": {"login": forge.get("author", "")},
+        "baseRefName": forge.get("baseRefName", "main"),
+        "baseRefOid": forge.get("baseRefOid", ""),
+        "headRefName": forge.get("headRefName", ""),
+        "headRefOid": forge.get("headRefOid", ""),
+        "isCrossRepository": forge.get("isCrossRepository", False),
+        "url": forge.get(
+            "url",
+            f"https://github.com/{forge.get('repo', '')}/pull/{forge.get('number', '')}",
+        ),
+        "files": forge.get("files", []),
+    }
+    if not fields:
+        die(
+            "`pr view` without --json prints formatted text on real gh; this "
+            "stub serves only the JSON read the skill's fetch contract names",
+            2,
+        )
+    unknown = [f for f in fields if f not in full]
+    if unknown:
+        die(
+            "`pr view --json` names field(s) this stub does not serve: "
+            f"{', '.join(unknown)}",
+            2,
+        )
+    print(json.dumps({k: full[k] for k in fields}, indent=2))
+
+
+def normalise(value, field):
+    if field in SCALAR_AS_OBJECT and isinstance(value, str):
+        return {SCALAR_AS_OBJECT[field]: value}
+    return value
+
+
+def shape(node):
+    out = {}
+    for k, v in node.items():
+        if isinstance(v, list):
+            out[k] = [shape(n) for n in v]
+        elif isinstance(v, dict):
+            out[k] = shape(v)
+        else:
+            out[k] = normalise(v, k)
+    return out
+
+
+def connection_args(query, name, *, which="first"):
+    """Return connection args for `name(...)`.
+
+    which: "first" | "last" — combined GraphQL documents often nest
+    `comments(` under reviewThreads and again at pullRequest level; the
+    top-level conversation connection is the last occurrence.
+    """
+    matches = list(re.finditer(rf"\b{name}\s*\(([^)]*)\)", query))
+    if not matches:
+        return ""
+    m = matches[-1] if which == "last" else matches[0]
+    return m.group(1)
+
+
+def field_bindings(argv):
+    """Non-query -f/-F pairs so parameterized cursors match real `gh`."""
+    bindings = {}
+    i = 0
+    while i < len(argv):
+        a = argv[i]
+        if a in ("-f", "--field", "-F", "--raw-field") and i + 1 < len(argv):
+            pair = argv[i + 1]
+            i += 2
+            if "=" not in pair:
+                continue
+            key, val = pair.split("=", 1)
+            if key != "query":
+                bindings[key] = val
+            continue
+        i += 1
+    return bindings
+
+
+def bound(name, bindings):
+    if name not in bindings:
+        die(
+            f"variable ${name} is not bound; pass -f {name}=... or "
+            f"-F {name}=...",
+            2,
+        )
+    return bindings[name]
+
+
+def resolve_first(args, bindings):
+    lit = re.search(r"first\s*:\s*(\d+)", args)
+    if lit:
+        return int(lit.group(1))
+    var = re.search(r"first\s*:\s*\$(\w+)", args)
+    if var:
+        raw = bound(var.group(1), bindings)
+        if not re.fullmatch(r"\d+", raw):
+            die(
+                f"variable ${var.group(1)} is not a non-negative integer: {raw!r}",
+                2,
+            )
+        return int(raw)
+    return None
+
+
+def resolve_after(args, bindings):
+    lit = re.search(r'after\s*:\s*"([^"]*)"', args)
+    if lit:
+        return lit.group(1)
+    var = re.search(r"after\s*:\s*\$(\w+)", args)
+    if var:
+        return bound(var.group(1), bindings)
+    return None
+
+
+def page(nodes, args, scope, forge, bindings):
+    first = resolve_first(args, bindings)
+    if first is None:
+        first = len(nodes)
+    cap = forge.get("pageSize")
+    size = min(first, cap) if cap else first
+
+    start = 0
+    cursor = resolve_after(args, bindings)
+    if cursor is not None:
+        prefix, _, offset = cursor.rpartition(":")
+        if prefix != scope:
+            die(f"cursor {cursor!r} was issued for `{prefix}`, not `{scope}`", 2)
+        if not offset.isdigit():
+            die(f"cursor {cursor!r} is not one this stub issued", 2)
+        start = int(offset)
+        if start > len(nodes):
+            die(f"cursor {cursor!r} is past the end of `{scope}`", 2)
+
+    window = nodes[start:start + size]
+    end = start + len(window)
+    return window, start, {
+        "hasNextPage": end < len(nodes),
+        "endCursor": f"{scope}:{end}" if end < len(nodes) else None,
+    }
+
+
+def graphql(argv, forge):
+    query = ""
+    for i, a in enumerate(argv):
+        val = None
+        if a in ("-f", "--field", "-F", "--raw-field") and i + 1 < len(argv):
+            val = argv[i + 1]
+        elif a.startswith("query="):
+            val = a
+        if val and val.startswith("query="):
+            query = val[len("query="):]
+    if not query:
+        die("no query= field supplied to `api graphql`", 2)
+    # Reject any document that declares a mutation operation (named or not),
+    # including after fragment definitions.
+    if re.search(r"(?m)^\s*mutation\b", query) or re.search(
+        r"\bmutation\s+[A-Za-z_]", query
+    ) or re.search(r"\bmutation\s*[({]", query):
+        die("`mutation` is a write; this stub serves queries only", 3)
+
+    bindings = field_bindings(argv)
+    nested_comment_args = connection_args(query, "comments", which="first")
+    top_comment_args = connection_args(query, "comments", which="last")
+    pr, served = {}, False
+    for name, required in SERVED_CONNECTIONS.items():
+        if not re.search(rf"\b{name}\b", query):
+            continue
+        # Nested `comments(` under reviewThreads is not the top-level
+        # conversation connection. Serve top-level comments when requested
+        # without threads, or when a second `comments(` appears alongside
+        # threads (combined query). A single `comments(` with threads only
+        # is the nested page — do not also dump forge["comments"].
+        if name == "comments":
+            n_comments = len(re.findall(r"\bcomments\s*\(", query))
+            if re.search(r"\breviewThreads\b", query) and n_comments < 2:
+                continue
+            args = top_comment_args
+        else:
+            args = connection_args(query, name)
+        missing = [f for f in required if not re.search(rf"\b{f}\b", query)]
+        if missing:
+            die(
+                f"`{name}` is requested without {', '.join(missing)}; a real "
+                "response would omit what the skill depends on",
+                2,
+            )
+        nodes, start, info = page(
+            forge.get(name, []), args, name, forge, bindings
+        )
+        out = []
+        for i, node in enumerate(nodes, start=start):
+            node = shape(node)
+            if name == "reviewThreads" and isinstance(node.get("comments"), list):
+                inner, _, inner_info = page(
+                    node["comments"],
+                    nested_comment_args,
+                    f"reviewThreads[{i}].comments",
+                    forge,
+                    bindings,
+                )
+                node["comments"] = {"nodes": inner, "pageInfo": inner_info}
+            out.append(node)
+        pr[name] = {"nodes": out, "pageInfo": info}
+        served = True
+
+    if not served:
+        die(
+            "query names none of reviewThreads, reviews, userContentEdits, or "
+            "the top-level comments connection; this stub serves only the "
+            "skill's fixed read set",
+            2,
+        )
+    pr.setdefault("number", forge.get("number"))
+    print(json.dumps({"data": {"repository": {"pullRequest": pr}}}, indent=2))
+
+
+def main():
+    argv = sys.argv[1:]
+    if not argv:
+        die("no command", 2)
+
+    unauthenticated = bool(os.environ.get("CMR_GH_AUTH_FAIL"))
+
+    if argv[0] == "auth":
+        if len(argv) < 2 or argv[1] != "status":
+            die("only `auth status` is served; the rest of `auth` writes", 3)
+        if unauthenticated:
+            sys.stderr.write(
+                "You are not logged into any GitHub hosts. "
+                "To log in, run: gh auth login\n"
+            )
+            sys.exit(1)
+        print("github.com\n  Logged in to github.com as fixture-owner")
+        return
+
+    if argv[0] == "repo":
+        die("`repo` is outside the skill's fixed read set", 3)
+
+    if argv[0] in ("pr", "api") and unauthenticated:
+        sys.stderr.write(f"{AUTH_ERROR}\n")
+        sys.exit(4)
+
+    if argv[0] == "pr":
+        if len(argv) < 2:
+            die("`pr` needs a subcommand", 2)
+        sub = argv[1]
+        if sub in WRITE_VERBS:
+            die(f"`pr {sub}` writes; this stub is read-only", 3)
+        forge = load()
+        if sub == "view":
+            return pr_view(argv[2:], forge)
+        if sub == "diff":
+            selector_check(argv[2:], forge)
+            sys.stdout.write(forge.get("_diff", ""))
+            return
+        die(f"`pr {sub}` is outside the skill's fixed read set", 3)
+
+    if argv[0] == "api":
+        if "graphql" not in argv[:3]:
+            die("only `api graphql` is served", 3)
+        return graphql(argv, load())
+
+    die(f"`{argv[0]}` is outside the skill's fixed read set", 3)
+
+
+if __name__ == "__main__":
+    main()

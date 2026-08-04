@@ -1,0 +1,41 @@
+# Diff summary — PR #290 (mapleworks/catalog-api)
+
+Constructed summary of the final diff at head `77b41ce` against base
+`main`. 14 files changed, +892 / -22. The first pushed revision was 3
+files, +96 (the read-through cache alone).
+
+## cache/registry.py (new, +164)
+
+`TagRegistry`: handlers register the tags their responses depend on;
+lookups map an invalidation event to the affected cache keys. Supports
+namespaced tags of the form `service:entity:id` "so external services
+can subscribe" — no external service subscribes in this PR.
+
+## cache/invalidation_bus.py (new, +148)
+
+An in-process publish/subscribe bus for invalidation events, with a
+serialization format documented for future cross-service transport. The
+only publisher is the products writer; the only subscriber is the cache
+middleware.
+
+## cache/middleware.py (new, +176)
+
+Read-through caching for any handler that registers tags; on an
+invalidation event, drops every entry carrying an affected tag.
+
+## api/products/handlers.py (+58 / -22)
+
+The products list handler migrated onto the framework: registers
+`catalog:product:*` tags, and the product write path publishes
+invalidation events on create, update, and delete.
+
+## api/admin/cache.py (new, +72)
+
+`POST /admin/cache/flush` — flush cached entries by tag, restricted to
+the `admin` role.
+
+## cache/tags.py, cache/serializers.py, config, tests (7 files, +274)
+
+Tag parsing and matching (including wildcard tags), event serializers,
+bus configuration, and tests for the registry, bus, middleware, and
+products migration. No endpoint other than products uses the framework.

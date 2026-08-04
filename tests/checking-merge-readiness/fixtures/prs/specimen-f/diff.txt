@@ -1,0 +1,32 @@
+# Diff summary — PR #603 (mapleworks/notify-svc)
+
+Constructed summary of the final diff at head `b7e03aa` against base
+`main`. 5 files changed, +226 / -11.
+
+## ratelimit/window.py (new, +88)
+
+Sliding-window counter keyed by channel id. Window boundaries are
+half-open (`start <= t < end`) after the round 1 fix:
+
+    def count_in_window(self, channel_id, now):
+        start = now - self.window
+        return self.store.count(channel_id, start_inclusive=start,
+                                end_exclusive=now)
+
+## send/pipeline.py (+72 / -8)
+
+Limit check before dispatch; sends over the limit enqueue to the
+channel's overflow queue, which drains in FIFO order as the window
+frees.
+
+## channels/settings.py (+24 / -3)
+
+`rate_limit_per_minute` override column on the existing channel settings
+table, defaulting to 120.
+
+## tests/ratelimit/test_window.py, tests/send/test_overflow.py (new, +42)
+
+Boundary cases at the window edge, override precedence, and overflow
+drain ordering.
+
+No file in the diff contains credentials or tokens.

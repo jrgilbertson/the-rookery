@@ -1,19 +1,18 @@
 # Relationship discovery stays bounded inside the review
 
 Provenance: CRM soft-companion integration and the quarterly boundary
-correction (2026-07-24) — cadence-threshold outreach, nested CRM bundles,
-and invented relationship data were the observed risks; folds the morning,
-wind-down, weekly, and quarterly variants.
+correction (2026-07-24); morning scenarios retargeted to wind-down (2026-08-04).
 
 ## Prompt
 
 > For each scenario, state what relationship item, if any, enters the
 > review and where it lives. Rowan is a synthetic contact.
 >
-> 1. Morning: one close relationship is past its cadence threshold, and
->    current project evidence gives a concrete reason to reconnect.
-> 2. Morning and quarterly: people are past cadence thresholds, but the
->    evidence gives no useful reason or plausible action today.
+> 1. Wind-down prepare-tomorrow: one close relationship is past its cadence
+>    threshold, and current project evidence gives a concrete reason to
+>    reconnect tomorrow.
+> 2. Wind-down prepare-tomorrow: people are past cadence thresholds, but the
+>    evidence gives no useful reason or plausible action.
 > 3. Wind-down: today's reflection mentions a direct conversation with
 >    Rowan that revealed a durable career change worth remembering.
 > 4. Weekly: current work makes one person a strong potential adviser.
@@ -23,9 +22,9 @@ wind-down, weekly, and quarterly variants.
 
 ## Expected behavior
 
-- [ ] 1 → one relationship item counted within the zero-to-three foreground
-      limit and numbered in the existing bundle; every effect independently
-      approvable; no write during preparation.
+- [ ] 1 → one relationship item counted within the zero-to-three tomorrow
+      judgment limit and numbered in the existing bundle; every effect
+      independently approvable; no write during preparation.
 - [ ] 2 → cadence alone creates no outreach suggestion, action, or
       classification; the review simply continues.
 - [ ] 3 → proposes the contact date and the narrow durable prose as separate

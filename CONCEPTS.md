@@ -9,7 +9,7 @@ a glossary, not a specification or catch-all.
 
 ### Meaningful Commitment
 
-A reviewed next-day outcome recorded during wind-down with an observable finish line and a concise rationale for why it matters. A Daily Journal carries three to five Meaningful Commitments into morning; they express intent without replacing canonical task state or calendar capacity.
+A reviewed next-day outcome recorded during wind-down with an observable finish line and a concise rationale for why it matters. When the live daily-journal template includes a configured Meaningful Commitments section, that journal carries three to five of them as next-day intent; without the section, ordinary next-day planning continues. They express intent without replacing canonical task state or calendar capacity, and they do not require a separate morning reaffirm step.
 
 ## Workflow processes
 
@@ -75,6 +75,27 @@ The contract is executable, not prose: a committed, rerunnable fixture runner
 asserts the exact verdict-and-exit pair for every documented state, including
 adversarial states. A helper whose contract exists only in its header comment
 is itself a prose-only invariant — the defect class it exists to catch.
+
+### Merge Digest
+
+The pre-merge readout `checking-merge-readiness` composes from a PR's
+description, diff, and review history: plain-language themes of what review
+did, an intent-drift check, and graded Risk Drivers rolling into a three-light
+recommendation of merge, pause, or do not merge. It lives in the conversation
+and changes nothing, so the owner still does the merging.
+
+### Risk Driver
+
+A named, graded (low / medium / high) finding in the Merge Digest's risk
+profile: one specific thing about the change or its review that an owner
+would want to weigh before merging. Seven classes are graded. Three cover
+tension the accumulated fixes put on an engineering first principle such as
+DRY, single source of truth, or YAGNI: complexity accretion, knowledge
+duplication, and speculative generality. The other four need no such tension
+to fire: review items left unresolved, cross-round fix interaction, material
+security concerns, and PR text that tries to steer the assessment. Drivers
+roll up into one merge-risk grade; a word grade traceable to a named driver
+is used instead of a numeric score.
 
 ### Targeted Sweep
 

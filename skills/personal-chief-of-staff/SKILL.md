@@ -1,6 +1,6 @@
 ---
 name: personal-chief-of-staff
-description: Use when the user asks what needs attention today, requests a morning or daily chief-of-staff review, wants to complete a daily journal or wind down, requests a weekly or quarterly review, later revisits, resumes, approves, edits, defers, skips, or otherwise decides visible chief-of-staff actions, or another workflow requests current cross-source chief-of-staff context. Do not use for isolated task creation, issue writing, email processing, calendar editing, health analysis, meeting preparation, or project planning.
+description: Use when the user wants to complete a daily journal or wind down, requests a daily chief-of-staff review, requests a weekly or quarterly review, later revisits, resumes, approves, edits, defers, skips, or otherwise decides visible chief-of-staff actions, or another workflow requests current cross-source chief-of-staff context. Do not use for isolated task creation, issue writing, email processing, calendar editing, health analysis, meeting preparation, or project planning.
 license: MIT
 compatibility: Requires access to the user's chosen authoritative sources. Obsidian workflows require a running Obsidian app and its CLI.
 ---
@@ -62,22 +62,35 @@ the earlier decisions.
 Completion: every visible action decision was resolved against its exact
 originating bundle and mode before any separately requested review began.
 
+## Supply cross-source context without a review mode
+
+When another workflow explicitly requests current cross-source chief-of-staff
+priority or context—and the message is not an action response or a request for
+wind-down, weekly, or quarterly review—do not select a review mode. Read
+[references/source-behavior.md](references/source-behavior.md) and, when a
+scannable bundle helps, [assets/review-bundle.md](assets/review-bundle.md).
+Retrieve only the evidence needed for the caller's judgment, distinguish fact
+from inference, and return priority context in the conversation. The calling
+workflow retains ownership of its narrower operation. Do not open Wind-down,
+Weekly, or Quarterly, and do not invent a Morning path.
+
+Completion: the caller has usable cross-source judgment without a chief-of-staff
+mode run or unrequested durable writes.
+
 ## Select the mode
 
 Choose exactly one mode from the request:
 
-- **Morning:** The user asks what needs attention today, requests a morning
-  review or a generic daily chief-of-staff review without explicit evening or
-  wind-down context, invokes the scheduled morning mode, or another workflow
-  explicitly requests current cross-source priority context. The calling
-  workflow retains ownership of its narrower operation.
 - **Wind-down:** The user asks to close the day, complete the daily journal,
-  reflect, prepare tomorrow, or invokes the scheduled wind-down mode.
+  reflect, prepare tomorrow, run a daily chief-of-staff review, or invokes the
+  scheduled wind-down mode. Generic daily review wording without weekly or
+  quarterly context selects Wind-down.
 - **Weekly:** The user asks to complete or discuss a weekly review.
 - **Quarterly:** The user asks to complete or discuss a quarterly review.
 
 An explicit mode wins. When the request does not identify one of these review
-contexts, leave it with the narrower workflow that owns it.
+contexts and is not a cross-source context request above, leave it with the
+narrower workflow that owns it.
 
 Read both shared resources for every mode:
 
@@ -86,13 +99,13 @@ Read both shared resources for every mode:
 
 Then read only the selected mode reference:
 
-- Morning: [references/morning.md](references/morning.md)
 - Wind-down: [references/wind-down.md](references/wind-down.md)
 - Weekly: [references/weekly.md](references/weekly.md)
 - Quarterly: [references/quarterly.md](references/quarterly.md)
 
 Completion: one mode and all required shared and mode-specific resources are
-selected before source retrieval begins.
+selected before source retrieval begins, or the cross-source non-mode path was
+used instead.
 
 ## Collaborate on judgment
 

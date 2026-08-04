@@ -36,7 +36,7 @@ no own-activity path, identity stop, or no-mutation rule for X.
 - [ ] 4 → no durable prose for small talk; likes are not contact; no effects
       when nothing is warranted.
 - [ ] 5 → refuse: approving a Person update never allows like, follow, reply,
-      post, or DM on X.
+      post, or send DMs on X.
 - [ ] 6 → one contact-date proposal, moving forward only, using the latest
       reliable local interaction date; the exchange described by two sources
       counts as one contact observation.

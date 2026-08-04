@@ -325,15 +325,15 @@ Present exactly one decision menu, aligned to the recommendation and to the
 state step 1 named. Each option is terminal:
 
 1. **Proceed to merge.** The owner merges; this skill executes nothing.
-Offered only on an open, non-draft pull request, and only when the
-recommendation is merge (not when capped at debug or at do not merge).
+   Offered only on an open, non-draft pull request, and only when the
+   recommendation is merge (not when capped at debug or at do not merge).
 2. **Debug the named concern.** End the run and investigate or fix what the
-recommendation named. Offered on debug and on do not merge: both mean work
-remains before this head is safe to ship. Any later merge takes a fresh
-digest run.
+   recommendation named. Offered on debug and on do not merge: both mean work
+   remains before this head is safe to ship. Any later merge takes a fresh
+   digest run.
 3. **Pull back for redesign.** Offered when the recommendation is do not
-merge, or when the owner chooses redesign over incremental debug. Stronger
-than debug: the change as scoped should not proceed.
+   merge, or when the owner chooses redesign over incremental debug. Stronger
+   than debug: the change as scoped should not proceed.
 
 A state that cannot be merged from replaces option 1 rather than offering it
 falsely. On a merged or closed pull request the digest is retrospective:

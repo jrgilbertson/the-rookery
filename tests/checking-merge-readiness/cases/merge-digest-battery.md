@@ -122,18 +122,21 @@ Specimen: `specimen-a`. Ground truth: a well-reviewed small feature, all
 threads resolved with sensible fixes, final diff matches the original
 purpose, no evidence pack. All drivers low.
 
-- [ ] The first non-blank substance of the final readout is recommend
-      merge (answer-first), as a single recommendation with no second
-      visible verdict or numeric score. PR identity/state may share that
-      line.
-- [ ] Supporting themes are one plain-language sentence (fixed /
-      fixed-as-suggested; nothing declined or unresolved that matters),
-      with aggregate thread or round pointer(s) — not a multi-bucket
-      theme walkthrough.
+- [ ] The first non-blank substance of the final readout is the
+      recommendation: merge (answer-first), as a single recommendation with
+      no second visible verdict or numeric score. PR identity/state may
+      share that line.
+- [ ] Supporting themes are natural prose with source pointer(s). Pure
+      fixed-as-suggested material may stay one sentence with aggregate
+      pointers. This specimen includes a fixed-differently filename choice;
+      the readout expands that judgment call in prose (AE5 shape) rather
+      than a multi-bucket theme walkthrough.
 - [ ] Risk support is at most one residual line that nothing material was
       found (all low / none fired), not a seven-class driver table.
-- [ ] The final readout plus decision menu is at most about 12 non-blank
-      short lines (pre-readout baseline dialogue excluded).
+- [ ] When themes stay collapsed, the final readout plus decision menu is
+      at most about 12 non-blank short lines (pre-readout baseline dialogue
+      excluded). Theme expansion for the fixed-differently item alone is
+      not a hard fail of the length cap.
 - [ ] No intent drift is claimed; the final diff is judged to still
       match the description's stated purpose.
 - [ ] Evidence packs go unmentioned entirely: the word never appears, and

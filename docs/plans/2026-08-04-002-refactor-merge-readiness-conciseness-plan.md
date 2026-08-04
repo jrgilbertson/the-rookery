@@ -100,7 +100,7 @@ This plan revises presentation and instruction economy for the merge digest only
 ### Acceptance Examples
 
 - AE1. **Covers R2, R4, R5, R7, R10.** Clean merge path with only fixed-as-suggested themes → first substance is recommend merge; supports short; total ≤ ~12 lines; no bottom-up build-up.
-- AE2. **Covers R3, R6, R8, R10.** One high security driver → first substance is do not merge naming that driver; evidence and pointer under it; no seven-class table.
+- AE2. **Covers R3, R6, R8, R10.** One high-security driver → first substance is do not merge naming that driver; evidence and pointer under it; no seven-class table.
 - AE3. **Covers R4, R8.** All low or none fire → risk support does not enumerate seven classes; mapping still merge.
 - AE4. **Covers R9.** Battery + live back-test: clean-green fails on length or non-answer-first; concern-grown fails if drivers/recommendation/pointers missing; live still completes.
 - AE5. **Covers R2, R5.** Merge with declined or fixed-differently items → theme support expands; 12-line cap not a hard fail for that expansion alone.
@@ -248,7 +248,7 @@ Print order is independent of compose order. Full grade always happens before pr
   2. Scenario 9 (register): require answer-first and no report-template scaffolding; keep colleague register checks.
   3. Concern scenarios (e.g. 2, 10): require recommendation first with named producers; evidence under those points; no seven-class low table.
   4. Scenario 11 (live): keep completeness and recommendation quality; do not hard-fail live on 12-line cap (KTD7).
-  5. If a specimen naturally has declined/fixed-differently with merge, add or tag AE5-style checklist items; otherwise document that AE5 is covered by instruction + optional future specimen.
+  5. Scenario 1 (`specimen-a`) includes a fixed-differently filename choice; extend its checklist with AE5-style expanded-theme assertions while keeping collapsed-theme rules for pure fixed-as-suggested clean greens.
   6. Run skilled battery scenarios affected and record results in the log.
 - **Execution note:** Prefer characterization of existing skilled runs against new checklist items; fix skill text if green runs fail only on old multi-bucket theme demands that the contract removed.
 - **Patterns to follow:** Existing battery item style (checkboxes, specimen refs, ground truth in cases file only).

@@ -81,7 +81,7 @@ is itself a prose-only invariant — the defect class it exists to catch.
 The pre-merge readout `checking-merge-readiness` composes from a PR's
 description, diff, and review history: plain-language themes of what review
 did, an intent-drift check, and graded Risk Drivers rolling into a three-light
-recommendation of merge, pause, or do not merge. It lives in the conversation
+recommendation of merge, debug, or do not merge. It lives in the conversation
 and changes nothing, so the owner still does the merging.
 
 ### Risk Driver

@@ -102,9 +102,9 @@ user's attention could improve the outcome.
 
 When the configured `managing-personal-crm` companion is available, use its
 embedded mode for supported relationship judgment without transferring
-ownership of the chief-of-staff review. Morning and weekly modes may
+ownership of the chief-of-staff review. Wind-down and weekly modes may
 deliberately inspect active relationship cadence and current work for useful
-connections. Wind-down may evaluate a substantive direct interaction for a
+connections. Wind-down may also evaluate a substantive direct interaction for a
 contact-date change and relationship-load-bearing meaning. Other modes use
 relationship judgment only when their existing evidence already makes a
 person materially relevant.
@@ -270,10 +270,10 @@ write preserved existing content and passed CLI readback.
 Use conversational corrections immediately in the current review. Propose a
 durable source update only when the correction changes what the authoritative
 source should say. When a correction changes workflow behavior, propose a
-reviewed change to the versioned skill instead. A learning belongs in the
-canonical learning notes only when the user requests it or a repeated,
-behavior-changing pattern is worth review; do not promote every correction or
-observation into durable guidance.
+reviewed change to the versioned skill instead. A learning or strategy update
+belongs in the canonical learning notes or strategy note only when the user
+requests it or a repeated, behavior-changing pattern is worth review; do not
+promote every correction or observation into durable guidance.
 
 Completion: current-review corrections are reflected now, while durable
 changes remain explicit, independently reviewed proposals.

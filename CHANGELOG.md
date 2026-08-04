@@ -26,11 +26,11 @@ looked" surface. GitHub Releases mirror its entries.
   user's goal, checks the package structure, compares behavior with focused
   tests, and verifies installability and activation with a per-harness smoke
   probe. It works without companion skills.
-- `personal-chief-of-staff` guides morning, wind-down, weekly, and quarterly
-  reviews using current data from the user's connected sources. It requires
-  review before writing changes, handles Obsidian CLI operations, tests its
-  behavior, and includes a versioned specification for four local Codex
-  schedules.
+- `personal-chief-of-staff` guides wind-down (the sole daily close), weekly,
+  and quarterly reviews using current data from the user's connected sources.
+  It requires review before writing changes, handles Obsidian CLI operations,
+  tests its behavior, and includes a versioned specification for three local
+  Codex schedules.
 - `managing-personal-crm` keeps relationship context in canonical Person notes
   and Tasks. It captures updates, finds relevant context, prepares for
   conversations with one person, and proposes cleanup in stages. It matches
@@ -84,13 +84,18 @@ looked" surface. GitHub Releases mirror its entries.
   centralized evidence records; the lightweight testing convention above
   supersedes those before any release.)
 - `personal-chief-of-staff` can now include relationship check-ins and timely
-  opportunities in its morning, wind-down, and weekly reviews when Personal CRM
-  is available.
+  opportunities in its wind-down and weekly reviews when Personal CRM is
+  available.
 - `personal-chief-of-staff` can now record three to five concrete next-day
   commitments with finish lines and user-approved rationales during wind-down
-  when the configured journal section is available, reaffirm them in morning
-  without creating another task or calendar system, and use repeated rationale
-  patterns for selective non-scoring coaching.
+  when the configured journal section is available, apply quality gates at write
+  time without a morning reaffirm step, deliver light focus/stop/more/less
+  coaching every wind-down, and propose selective durable strategy or learning
+  updates under separate approval.
+- `personal-chief-of-staff` no longer ships a Morning mode or morning schedule.
+  The daily path is wind-down only; generic daily review wording selects
+  wind-down, and morning activation phrases are removed from the skill
+  description.
 - `reviewing-meetings` can now suggest contact dates, save useful relationship
   context, capture personal follow-ups, and surface relevant connections. Each
   meeting still produces one review bundle, and every approved action goes to

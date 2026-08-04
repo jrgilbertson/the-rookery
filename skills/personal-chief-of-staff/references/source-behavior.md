@@ -26,9 +26,10 @@ Use each source for its native role:
   a material conclusion. Prefer a URL, known handle, or named person already
   in evidence; otherwise check a short slice of the user's own recent directed
   posts and replies. Never like, follow, reply, post, or DM. Failed or missing
-  X reads only limit conclusions that need X (**Partial**). Person-note and
-  contact-date effects still go through the CRM companion below, not from X
-  alone. Do not use X to find posts to read or reply to (issue #12).
+  X reads only limit conclusions that need X (**Partial**). Person-note,
+  contact-date, and dated relationship Task effects still go through the CRM
+  companion below, not from X alone. Do not use X to find posts to read or
+  reply to (issue #12).
 - Repositories and issue trackers supply project decisions, implementation
   state, and work commitments.
 - Product, infrastructure, payment, and analytics services supply native

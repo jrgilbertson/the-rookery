@@ -1,18 +1,23 @@
 # Grok X Source
 
-Read this reference only when authenticated Grok or host X search tools are
-available and an X query is about to run. Use it for relationship evidence
-from X. Do not post, reply, like, follow, or send DMs.
+Read this reference when an X query is about to run, or when judging X
+evidence a caller already retrieved. Use it for relationship evidence from X.
+Do not post, reply, like, follow, or send DMs.
 
 Finding posts to read or contribute to is out of scope (repository issue #12).
 
 ## Prove read access
 
-Confirm the host can run authenticated read-only X search before treating X as
-available. Use the Grok CLI or host X tools the runtime already exposes.
+This check applies when this skill needs its own X query. Confirm the host can
+run authenticated read-only X search before treating X as available. Use the
+Grok CLI or host X tools the runtime already exposes.
 
 If tools are missing, auth fails, or the query errors, mark X **unavailable**.
 Apply **Partial** coverage only to conclusions that need X.
+
+X evidence a caller already retrieved needs no local X tool. Judge it under the
+identity, direction, and time rules below, and mark X unavailable only for a
+further conclusion this skill would have to query for itself.
 
 Do not mutate X in this skill. Approving a Person note or Task never authorizes
 an X write.

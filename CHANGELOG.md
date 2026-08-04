@@ -53,6 +53,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Build's orchestration guidance now treats Compound Engineering as the default
+  planner, executor, and multi-agent reviewer. It drops the separate
+  plan-execute-review row, warns against standing up a parallel stack beside
+  the skills, and keeps the other patterns only for gaps the skills do not
+  cover.
 - Planning now keeps Compound Engineering as the primary route and uses
   targeted grilling only as an optional pressure test for consequential,
   interdependent decisions that remain unclear.

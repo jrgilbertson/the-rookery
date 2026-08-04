@@ -59,6 +59,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `managing-personal-crm` and `personal-chief-of-staff` can use authenticated
+  Grok X search as optional, read-only relationship evidence. They prefer a
+  known URL or handle when present, otherwise a short slice of the user's own
+  recent directed posts and replies. They do not post on X or scan for posts
+  to engage with.
 - `storm-research` now permits an honest null lens contribution instead of
   forcing novelty, requires a complete material-claim source audit, and loads
   its full-briefing template only for output forms that need it.

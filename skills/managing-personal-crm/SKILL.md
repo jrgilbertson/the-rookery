@@ -2,7 +2,7 @@
 name: managing-personal-crm
 description: Use when the user asks to capture a relationship interaction, prepare for one person, clean up or reconstruct Person notes, review overdue relationships, discover who could help with current work, when another workflow finds a possible relationship effect, or when the user later confirms or revises a required catch-up source inventory, supplies stage-one dispositions, continues visible stage-two reconstruction by confirming or correcting an interpretation, answering a focused question, or resuming deferred reconstruction, revisits or resumes a deferred action, or decides actions from a visible direct or catch-up CRM bundle, including cleanup approval. Embedded CRM actions stay with the caller workflow. Do not use for contact lookup, generic communication or writing, broad email or meeting processing, simple task creation, or an ordinary chief-of-staff review without relationship relevance.
 license: MIT
-compatibility: Requires host-provided access to the user's configured authoritative sources. Person-note operations require an available Obsidian CLI with explicit vault targeting. Optional local Apple Messages reads through imsg require the CLI and operating-system permission to message history.
+compatibility: Requires host-provided access to the user's configured authoritative sources. Person-note operations require an available Obsidian CLI with explicit vault targeting. Optional local Apple Messages reads through imsg require the CLI and operating-system permission to message history. Optional X reads through authenticated Grok or host X search tools require those tools and stay read-only.
 ---
 
 # Managing Personal CRM
@@ -54,7 +54,9 @@ If `imsg` is configured and application-time revalidation of the selected
 effect will query Messages, also read
 [references/apple-messages-cli.md](references/apple-messages-cli.md) before the
 first Messages read. Do not load it when revalidation needs no Messages query.
-Then read
+If revalidation will query X, also read
+[references/grok-x-source.md](references/grok-x-source.md) before the first X
+read. Do not load it when revalidation needs no X query. Then read
 [references/applying-approved-actions.md](references/applying-approved-actions.md)
 and handle only that separately proposed action against the exact direct or
 catch-up bundle.
@@ -100,6 +102,12 @@ When `imsg` is the configured local Apple Messages source, also read
 [references/apple-messages-cli.md](references/apple-messages-cli.md) before the
 first Messages query. That reference owns read-only preflight, query bounds,
 and the adapter's authority boundary.
+
+When an X query will run, also read
+[references/grok-x-source.md](references/grok-x-source.md) before the first X
+read. Embedded runs read it for X evidence a caller already retrieved, too.
+Skip it only when the run neither queries X nor judges X evidence. X is not
+part of catch-up inventory.
 
 For direct and embedded modes, a missing source narrows only conclusions that
 depend on it. For catch-up, also read

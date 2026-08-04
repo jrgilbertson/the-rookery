@@ -47,29 +47,6 @@ run_behavior:
   - A missed or blocked run is not complete and does not create a catch-up backlog.
 
 automations:
-  - key: morning
-    name: CoS Morning
-    schedule: daily at 07:00
-    invocation: >-
-      Run the personal-chief-of-staff skill from this project's current checkout
-      in morning mode only. Follow the versioned skill's shared source, review,
-      approval, and completion rules. Query each configured personal and work
-      calendar separately, and treat only the connected personal mailbox as
-      email evidence. Use Obsidian only through its CLI; never use direct vault
-      filesystem access. Prepare one conversational review bundle
-      and wait. Do not make an external or durable change because the schedule
-      fired. Keep the repository checkout as the versioned skill source. For
-      personal or business artifacts arising from this task—including later
-      user-directed follow-up—use a per-run temporary working directory outside
-      the repository. Never place documents, spreadsheets, slides, PDFs,
-      images, downloaded attachments, builders, renders, previews, inspection
-      files, dependency links, or an `outputs/` directory under the project
-      checkout. Put final artifacts only in an explicitly approved external or
-      private destination. Explicitly requested repository development may
-      still modify the repository; this restriction governs personal and
-      business artifacts, not repository development.
-    manual_invocation: Run the personal-chief-of-staff skill in morning mode.
-
   - key: wind_down
     name: CoS Wind-down
     schedule: daily at 20:30

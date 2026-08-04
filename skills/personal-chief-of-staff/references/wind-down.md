@@ -1,8 +1,9 @@
 # Wind-down
 
 Use this mode to close one local day through the user's canonical daily journal
-and authoritative sources. A scheduled and manual wind-down follow the same
-workflow.
+and authoritative sources, leave tomorrow ready, and deliver light coaching.
+Scheduled and manual wind-down follow the same workflow. This is the sole daily
+chief-of-staff path.
 
 ## Establish the day
 
@@ -14,18 +15,25 @@ daily-journal template and the closing-date journal, if one exists. Read the
 existing journal before drafting so manual content, frontmatter, links, embeds,
 and unresolved thoughts remain intact.
 
+When a prior daily journal that would help is missing, mention it without
+judgment and offer an interactive catch-up only if it could recover useful
+context. Continue with today's close by default. After one or several missed
+days, offer at most one catch-up and never create a backlog of journals to
+reconstruct. Do not treat a missing journal as proof that nothing happened.
+
 Query only sources that can clarify what happened or what changed: relevant
 messages and meetings, active tasks, relationship context, project or
-repository state, and available capacity evidence. Query each visible personal
-and work calendar separately for the day and retain its calendar identity in
-the evidence. Calendar visibility supplies no work-email coverage. Separate:
+repository state, available capacity evidence, the canonical strategy note, and
+relevant canonical learning notes. Query each visible personal and work
+calendar separately for the day and retain its calendar identity in the
+evidence. Calendar visibility supplies no work-email coverage. Separate:
 
 - observed outcomes, events, decisions, commitments, and source changes;
 - reasonable inferences that still need confirmation; and
 - subjective meaning that cannot be observed.
 
 Completion: the review window, existing journal state, and material evidence
-gaps are known without writing anything.
+gaps are known without writing anything, with at most one optional catch-up.
 
 ## Begin with one broad reflection
 
@@ -111,17 +119,99 @@ explicitly left unchanged.
 ## Prepare tomorrow
 
 Read each visible personal and work calendar separately for the next day,
-retaining its calendar identity, along with relevant active tasks. Use the
-actual day's outcomes, unresolved commitments, known capacity, and current
-constraints to propose a realistic plan. Distinguish fixed commitments from
-flexible blocks using their context rather than assuming either.
+retaining its calendar identity, along with relevant active tasks, strategy,
+and learnings. Use the actual day's outcomes, unresolved commitments, known
+capacity, and current constraints to propose a realistic plan. Distinguish
+fixed commitments from flexible blocks using their context rather than
+assuming either.
 
 Name the critical path and the few protected outcomes when useful. Calendar
 edits, task changes, and communications remain separate review actions. Do not
 expand the plan merely because more work is discoverable.
 
-Completion: the next-day proposal reflects current sources and makes its
-tradeoffs visible without writing to them.
+### Tomorrow judgment items
+
+Choose no more than three **tomorrow** judgment items. An item earns attention
+only when the user's judgment or presence could materially improve a decision,
+commitment, risk, opportunity, relationship, or outcome **next day**. Apply the
+shared judgment factors without turning them into a score.
+
+For each item:
+
+- state the answer or concern first;
+- explain why it matters for tomorrow;
+- point to current authoritative evidence;
+- distinguish fact, inference, and uncertainty; and
+- name the decision, preparation, or action that needs the user.
+
+Zero judgment items is valid. Never promote routine activity to fill the
+limit. Do not frame these as “what needs attention today.”
+
+### Validate tomorrow's time-blocked day
+
+Compare tomorrow's calendars with the proposed plan, active tasks, strategy,
+relevant learnings, and realistic capacity. Interpret each event through its
+purpose, participants, flexibility, and surrounding commitments.
+
+Surface only consequential calendar issues, such as:
+
+- one meeting that needs preparation or relationship context;
+- a fixed commitment that conflicts with the critical path;
+- a flexible block that no longer serves tomorrow's most important outcome;
+- a stale waiting or blocked commitment that now needs a decision; or
+- a restart cue whose canonical task is still active and important.
+
+Meaningful commitments do not require calendar blocks to be created, renamed,
+or mapped to them. Do not generate preparation capsules for routine events.
+Calendar edits remain separate proposed actions. Preserve commitments
+established as fixed. Resolve conflicts only through separately approvable
+changes to events or blocks whose flexibility is established; if flexibility
+is unknown, ask before proposing an edit.
+
+### Relationship exceptions for tomorrow
+
+When the companion relationship capability is available, inspect active
+relationships whose derived cadence may be overdue and search current work,
+writing, reading, decisions, and meetings for a defensible person connection
+useful **tomorrow**. This is a bounded exception check, not a general CRM
+review or catch-up, and is separate from today's interaction-effect capture
+above.
+
+An overdue person earns attention only when the current evidence explains why
+contact could be useful soon and suggests a plausible action. A strong
+contextual connection may surface regardless of routine cadence when the
+reason is specific. Keep any optional broader connection clearly separate and
+do not create an action for it unless the user promotes it.
+
+Return no relationship item when the evidence supports none. If a relationship
+item belongs among tomorrow judgment items, count it within the zero-to-three
+limit and route any proposed effect through the shared bundle. When the
+companion is unavailable, omit the relationship conclusion and mention reduced
+coverage only when material.
+
+Completion: the next-day proposal reflects current sources, makes its
+tradeoffs visible without writing to them, and contains zero to three
+defensible tomorrow judgment items with no filler.
+
+## Coach lightly
+
+After evidence, user reflection, and prepare-tomorrow inputs are available—and
+**before** Meaningful Commitments are finalized—deliver a short coaching beat
+every wind-down. Ground it in the day's sources, strategy, and learnings.
+Cover, in light form:
+
+- whether focus matched intent;
+- what to stop;
+- what to do more of; and
+- what to do less of.
+
+Prefer insight over lecture. Do not score, grade, or invent a streak. Coaching
+may reshape tomorrow's commitments and plan; it is not only afterthought prose.
+Subjective coaching language that belongs in the journal follows the same
+approval rules as other subjective content.
+
+Completion: the user has received a short, evidence-grounded coaching beat
+before commitments lock.
 
 ## Record tomorrow's meaningful commitments
 
@@ -138,10 +228,17 @@ it verbatim, identify the missing element, and treat it as nonconforming source
 content rather than claiming it satisfies the three-element condition.
 
 Use the day's outcomes, unresolved work, next-day capacity, fixed commitments,
-active tasks, current strategy, and the user's judgment to draft the list. The
-user supplies or explicitly approves every rationale. Do not
-use task checkboxes or add completion status, scores, streaks, grades, or
-mandatory item-by-item reconciliation.
+active tasks, current strategy, the coaching beat, and the user's judgment to
+draft the list. Apply material conflict, invalid-premise, and capacity quality
+gates against next-day evidence: when evidence invalidates a draft bullet, show
+the intended commitment, the evidence, and the recommendation; leave unaffected
+bullets unchanged. Do not invent an outcome, finish line, or subjective
+rationale. Do not use broad calendar blocks as substitute commitments. Do not
+create a separate morning reaffirm step.
+
+The user supplies or explicitly approves every rationale. Do not use task
+checkboxes or add completion status, scores, streaks, grades, or mandatory
+item-by-item reconciliation.
 
 The commitments express reviewed intent. They do not replace canonical task
 state or calendar capacity, and they do not require calendar blocks to be
@@ -163,8 +260,12 @@ the missing element and collaborate rather than padding, truncating, or
 inventing subjective content.
 
 Completion: when the configured section exists, the proposed journal contains
-three to five reviewed bullets with all three elements; otherwise the existing
-next-day planning behavior continues without an invented journal write.
+three to five reviewed bullets with quality gates applied. Bullets that satisfy
+the three-element condition are recorded as conforming intent; any bullet the
+user explicitly approved incomplete is preserved verbatim, labeled
+nonconforming in the proposal, and is not claimed as a complete three-element
+commitment. When the section is absent, ordinary next-day planning continues
+without an invented journal write.
 
 ## Promote only durable signal
 
@@ -172,12 +273,15 @@ When a high-signal insight may help an audience, offer one writing seed without
 creating a quota, draft, or publication action automatically. Keep central
 thinking and the rough draft human-led unless the user asks for more help.
 
-Propose a change to the canonical learning notes only when the user requests it
-or the day adds evidence to a repeated, behavior-changing pattern. A one-day
-observation normally stays in the daily journal.
+Propose a change to the canonical learning notes or the canonical strategy note
+only when the day (including the coaching beat) adds evidence to a repeated,
+behavior-changing pattern. A one-day observation stays in the daily journal
+even if the user asks for a vault write—the durable-signal gate still holds.
+Never auto-write strategy or learnings; each eligible proposal is a separately
+numbered review action.
 
-Completion: optional writing and learning proposals are selective, sourced,
-and independently reviewable.
+Completion: optional writing, learning, and strategy proposals are selective,
+sourced, and independently reviewable.
 
 ## Review, write, and verify
 

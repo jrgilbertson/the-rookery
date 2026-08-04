@@ -72,7 +72,7 @@ Maximum silence is derived from tier:
 Only `active` people appear in routine overdue review. `dormant`, `reference`,
 and `ended` do not. Any status, including reference, may still surface when a
 strong contextual reason and plausible useful action make the person relevant
-now. Most deliberate cadence scans belong in configured morning or weekly
+now. Most deliberate cadence scans belong in configured wind-down or weekly
 reviews; another workflow surfaces an overdue person only when that person is
 already relevant to its current context.
 

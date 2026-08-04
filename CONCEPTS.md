@@ -9,7 +9,7 @@ a glossary, not a specification or catch-all.
 
 ### Meaningful Commitment
 
-A reviewed next-day outcome recorded during wind-down with an observable finish line and a concise rationale for why it matters. A Daily Journal carries three to five Meaningful Commitments into morning; they express intent without replacing canonical task state or calendar capacity.
+A reviewed next-day outcome recorded during wind-down with an observable finish line and a concise rationale for why it matters. When the live daily-journal template includes a configured Meaningful Commitments section, that journal carries three to five of them as next-day intent; without the section, ordinary next-day planning continues. They express intent without replacing canonical task state or calendar capacity, and they do not require a separate morning reaffirm step.
 
 ## Workflow processes
 

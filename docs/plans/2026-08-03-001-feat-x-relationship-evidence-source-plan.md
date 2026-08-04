@@ -30,9 +30,9 @@ Treat authenticated Grok X search as a normal optional evidence source for Perso
 
 ### Problem Frame
 
-Jason increasingly builds relationships on X. Chief of Staff and Personal CRM can miss useful relationship context when the exchange lives on X rather than email, calendar, meetings, Messages, or existing Person notes.
+Direct exchanges on X can matter for relationships, but Chief of Staff and Personal CRM can miss that context when the exchange lives on X rather than email, calendar, meetings, Messages, or existing Person notes.
 
-A recent inbox-triage case showed the value: a self-emailed X post led to confirming a prior exchange, creating a Person note, and routing a real follow-up. Authenticated Grok was the useful way to inspect that conversation. Without treating X as a peer source, those workflows keep under-serving X-native relationships while either inventing ad hoc checks or ignoring the channel.
+A motivating inbox-triage case showed the gap: a self-emailed X post led to confirming a prior exchange, creating a Person note, and routing a real follow-up. Authenticated Grok was the useful way to inspect that conversation. Without treating X as an ordinary optional source, those workflows keep under-serving X-native relationships while either inventing ad hoc checks or ignoring the channel.
 
 Issue #12 covers a different job—finding posts to read or contribute to—and must not be conflated with relationship evidence.
 
@@ -109,7 +109,7 @@ Issue #12 covers a different job—finding posts to read or contribute to—and 
 - F4. Self-activity-first interlocutor match
   - **Trigger:** X is material and evidence has no URL, known handle, or named interlocutor yet.
   - **Actors:** A1, A2 or A3, A4.
-  - **Steps:** Query a bounded slice of the user's own recent directed posts and replies; identify who those exchanges were directed at; for each candidate, attempt conservative CRM match (e.g. known person such as Morgan); only matched or user-confirmed identities may receive Person/Task proposals; unmatched candidates stay unlinked or ask only when ambiguity changes the result.
+  - **Steps:** Query a bounded slice of the user's own recent directed posts and replies; identify who those exchanges were directed at; for each candidate, attempt conservative CRM match to an existing Person note; only matched or user-confirmed identities may receive Person/Task proposals; unmatched candidates stay unlinked or ask only when ambiguity changes the result.
   - **Outcome:** Known people surface from the user's own directed X activity without scanning the public feed for interesting posts.
   - **Covered by:** R3, R4, R9, R15, R16.
 
@@ -165,7 +165,7 @@ Issue #12 covers a different job—finding posts to read or contribute to—and 
 
 - AE9. Self-activity discovers a known person
   - **Covers:** R15, R16, R8, R9.
-  - **Given:** No X URL is in current evidence; Grok returns the user's recent reply to a handle that already matches a known Person note (e.g. Morgan) under conservative binding.
+  - **Given:** No X URL is in current evidence; Grok returns the user's recent reply to a handle that already matches a known Person note under conservative binding.
   - **When:** CoS or CRM runs with X material under R3.
   - **Then:** The known person may receive contact-date, durable-meaning, or Task proposals when warranted; strangers from the same self-activity slice are not written without confirmation when identity is ambiguous; the run does not surface unrelated public posts for engagement.
 

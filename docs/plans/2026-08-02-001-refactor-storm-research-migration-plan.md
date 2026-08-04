@@ -24,6 +24,8 @@ execution: code
 
 ## Product Contract
 
+> **Product supersession (post-plan):** Mandatory standalone `First-principles analysis` and `System dynamics and higher-order effects` **headings** are superseded (R5, R9, and R14’s render-both-sections visibility). **Keep** R6–R8 and R10–R13 as integrated research-depth and traceability obligations (facts vs assumptions, mechanisms, boundaries, causal chains, honest nulls when a null changes the answer)—owned by analysis-methods and fidelity, not report section titles. Full briefings are Overview-led and reader-facing: action and material limits live in the Overview; later sections support that lead; no execution telemetry in normal output. Destination-first publication and source retirement (R18–R21, U5–U6) still govern delivery. Live behavior is owned by `skills/storm-research/` and `references/briefing-template.md`. Body text below that still requires named analytical sections is historical archive, not current product authority.
+
 ### Summary
 
 Port the existing package and its five-lens engine into the-rookery, add the two analyses as an explicit cross-lens synthesis layer, and replace phrase-pinned source tests with matched behavioral evidence. Publish and verify the destination before retiring agentic-toolkit's live package and routing surfaces.

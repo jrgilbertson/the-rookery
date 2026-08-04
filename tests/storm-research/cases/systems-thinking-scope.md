@@ -32,8 +32,8 @@ modeling deliverable.
 - [ ] Names backlog accumulation, capacity, or rate limits only where they
       materially explain the evidence and does not require a causal-loop
       diagram, stock-and-flow model, equation, or simulation.
-- [ ] Preserves an exploratory ending with a frontier question rather than
-      forcing a verdict or intervention plan.
+- [ ] Preserves an exploratory ending with the highest-value open question (what
+      would change this most), without forcing a verdict or intervention plan.
 - [ ] Reports an honest null for any unsupported feedback, delay, nonlinearity,
       path dependence, emergence, stock/flow detail, spillover, or higher-order
       relationship when the absence matters, instead of filling a checklist.

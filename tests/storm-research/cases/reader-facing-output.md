@@ -18,11 +18,16 @@ for a workflow auditor rather than the human reader.
 
 ## Expected behavior
 
-- [ ] The briefing integrates those findings into its baseline, perspective,
-      contradiction, reliability, and practical guidance instead of creating
-      standalone first-principles or systems-thinking sections.
+- [ ] The Overview carries the editor-facing answer and practical next steps;
+      later sections support that lead rather than introducing the decision for
+      the first time.
+- [ ] The briefing integrates research depth into its overview, baseline,
+      perspective scan (subsection per lens), key tensions, reliability, and
+      guidance instead of creating standalone first-principles or
+      systems-thinking sections.
 - [ ] The reader-facing briefing omits the internal lens, isolation, queue,
       source-access, and fidelity manifest.
-- [ ] Any material research limitation appears in concise reader-facing prose.
+- [ ] Any material research limitation appears in the Overview so it frames how
+      the rest should be read.
 - [ ] The response remains a multi-perspective evidence review rather than a
       detector verdict or a compact project-opinion memo.

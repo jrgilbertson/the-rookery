@@ -61,9 +61,11 @@ work an **unverified perspective simulation**, and keep factual confidence low.
 
 ### 3. Scan sources and lock the lens set
 
-Inspect three to five sources most likely to reveal a missing perspective that
-could change the answer, confidence, or next action. Use the five canonical
-lenses unless the user narrows the set:
+Inspect up to five sources most likely to reveal a missing perspective that
+could change the answer, confidence, or next action. Prefer three to five when
+access allows. If fewer than three inspectable sources exist, scan what is
+available, record the shortfall as degradation, and do not invent scan
+evidence. Use the five canonical lenses unless the user narrows the set:
 
 | Lens | Contribution | Failure mode it catches |
 | --- | --- | --- |
@@ -89,8 +91,11 @@ lenses, source-access state, and any degradation before dispatch.
 
 Use the host's agent runner to start one clean executor context per lens,
 dispatching concurrently when possible and queueing when capacity is limited.
-Start a generic executor rather than a preconfigured role whose hidden task
-instructions would contaminate the exact four-part seed below.
+Cleanliness is verified only by a positive harness signal that no inherited
+task conversation or sibling work entered the context. Absence of a visible
+leak is not enough. Start a generic executor rather than a preconfigured role
+whose hidden task instructions would contaminate the exact four-part seed
+below.
 
 After dispatch, the orchestrator stops doing lens research. Each executor
 researches its own lens. The orchestrator collects the raw returns and later
@@ -147,8 +152,7 @@ dynamic or a separate analysis section when the evidence adds nothing material.
 
 ### 6. Audit sources
 
-Create a source audit internally for every task. Include it in the deliverable
-when the work is consequential, current, disputed, or source-heavy:
+Create a source audit internally for every task:
 
 | Claim | Best source | Source type | Bias or tone risk | Missing counter-source | Confidence |
 | --- | --- | --- | --- | --- | --- |
@@ -156,23 +160,30 @@ when the work is consequential, current, disputed, or source-heavy:
 
 Audit promotional, institutional, ideological, geographic, and political bias.
 Several sources with the same incentives do not count as independent
-confirmation. This step is complete when every material user-facing claim has a
-best source, source type, bias or tone risk, missing counter-source, and
-confidence. An unsupported claim still gets a complete row: record no supporting
-source and no source type, mark the claim unverified, name the evidence needed,
-and keep confidence low.
+confirmation. After p0 and raw returns, complete a row for every material claim
+already in that record. An unsupported claim still gets a complete row: Best
+source `none found`, Source type `none`, Missing counter-source names the
+evidence needed, and Confidence `Low` (treat the claim as unverified). Final
+completeness for every material user-facing claim is reached only after the
+post-draft reconciliation in step 8.
+
+In a normal full briefing, carry claim support as numbered notes and surface
+source risk in the Reliability check. Include the full audit table in the
+deliverable only when the user needs an audit-style source schedule.
 
 ### 7. Synthesize the requested form
 
-For an article, paper, blog post, presentation, or report, read
-[references/briefing-template.md](references/briefing-template.md) and produce
-its long-form outline before prose.
+For a full research briefing, or for an article, paper, blog post, presentation,
+or report, read [references/briefing-template.md](references/briefing-template.md)
+and produce its long-form outline before prose. On that path, put any actionable
+implication or verdict in the Overview when the intended use calls for one, and
+do not force one into an exploratory briefing. Expand a separate What to do
+section only when the plan needs more room than Overview.
 
-For other work, synthesize directly into the user's requested briefing,
-recommendation, preparation notes, negotiation questions, learning path, or
-other research-backed form. The intended use controls the ending: include an
-actionable implication or verdict when it helps that purpose, and do not force
-one into an exploratory briefing.
+For short or custom forms (one-page notes, negotiation prep, constrained
+answers), synthesize directly into the requested shape. Put action and material
+limits in that form’s natural lead—not by inventing Overview scaffolding the
+user did not ask for.
 
 Build material claims from sourced facts, explicit assumptions, constraints,
 and supported mechanisms. Include relevant system relationships and downstream
@@ -184,14 +195,16 @@ first-principles or systems-thinking sections.
 
 Unless the user requested a shorter or custom form, read
 [references/briefing-template.md](references/briefing-template.md) and use its
-full-briefing structure. For short or custom outputs, preserve compact
-citations and compress presentation without dropping a material contradiction,
-finding or uncertainty, confidence limit, degradation, frontier question, or
-reliability finding.
+full-briefing structure and voice. For short or custom outputs, preserve
+compact citations and compress presentation without dropping a material
+tension, finding or uncertainty, confidence limit, degradation, open question
+that would change the answer most, or reliability finding.
 
-Keep the internal run record out of a normal reader-facing deliverable. Include
-only the research limitations that materially affect interpretation. Provide
-the full record when the user requests an audit, trace, or execution details.
+Keep the internal run record out of a normal reader-facing deliverable. On a
+full briefing, put material research limitations in the Overview so they frame
+how the rest is read. On short or custom forms, put them next to the affected
+claim or in the lead when they should frame the whole read. Provide the full
+record when the user requests an audit, trace, or execution details.
 
 Before fidelity review, reconcile the Source Audit against the draft. Add or
 update a complete row for every material claim introduced or changed during
@@ -199,43 +212,45 @@ analysis and synthesis, including unsupported claims.
 
 ### 9. Review curation fidelity
 
-First check the draft for its weakest claim, overreliance on one lens, a weak
-version of the skeptic's case, vague incentives, historical analogies that do
-not share the same mechanism, unanswered gaps, unsupported connections, vivid
-examples applied too broadly, source bias repeated in the briefing, and poor fit
-with the user's intended use.
-
-Then read [references/fidelity-check.md](references/fidelity-check.md) and start
-one independent reviewer in a clean context. Give it every artifact listed in
-that file, but not the orchestrator's synthesis reasoning. Apply only the check
+Read [references/fidelity-check.md](references/fidelity-check.md) and start one
+independent reviewer in a clean context. Give it every artifact listed in that
+file, but not the orchestrator's synthesis reasoning. Apply only the check
 defined there.
 
-The report is binding. For every finding, restore a lost disagreement to the
-contradiction map or Source Audit, or state in the briefing why it was set
-aside; remove or correct invented tension; for an analytical finding, add the
-missing evidence trace or explicit inference label and calibrated confidence.
-A finding may not be accepted while the briefing remains unchanged. Rerun the
-same fidelity check on each revised briefing in a new clean reviewer context
-until it reports clean. If a clean recheck is unavailable, disclose the reduced
-verification, lower confidence, and record that state internally. Update the
-fidelity history and overall state after every attempt. When no
-clean independent reviewer is available for the initial check, state that the
-check did not run and lower confidence.
+The report is binding. For every finding, restore a lost disagreement in the
+reader-facing briefing (Key tensions or an explicit set-aside in the body), and
+update the internal contradiction map or Source Audit as bookkeeping; remove or
+correct invented tension; for an analytical finding, add the missing evidence
+trace or explicit inference label and calibrated confidence. A finding may not
+be accepted while the briefing remains unchanged. Rerun the same fidelity check
+on each revised briefing in a new clean reviewer context until it reports clean.
+If a clean recheck is unavailable, disclose the reduced verification, lower
+confidence, and record that state internally. Update the fidelity history and
+overall state after every attempt. When no clean independent reviewer is
+available for the initial check, state that the check did not run and lower
+confidence.
 
 ## Completion check
 
-- `p0` is sourced, and the perspective scan considered additional lenses.
-- The intended set reflects user narrowing; every completed lens used a clean,
-  identical four-part seed except for its own lens.
+- `p0` is sourced, and the perspective scan considered additional lenses (or
+  recorded a shortfall when fewer than three sources were inspectable).
+- The intended set reflects user narrowing. Every completed lens either used a
+  verified-clean identical four-part seed except for its own lens, or the run
+  is labeled single-context synthesis / unverifiable isolation with lowered
+  confidence and a named upgrade signal.
 - Raw returns are retained, and failed lenses remain visible in the internal
   run record.
 - Each lens-specific contribution is evidence-backed or states that it adds
   nothing beyond the findings; the briefing does not manufacture novelty.
-- Contradictions, agreement, gaps, source risk, confidence, the frontier
-  question, and reliability findings survive output adaptation.
-- Every material user-facing claim has a complete source-audit row; unsupported
-  claims name the missing evidence, are classified as unverified, and carry low
-  confidence.
+- For a full briefing, the Overview carries the answer, material limits, and
+  any action the intended use requires; later sections support that lead rather
+  than introducing the decision for the first time.
+- Key tensions, agreement, gaps, source risk, confidence, the open question
+  that would change the answer most, and reliability findings survive output
+  adaptation.
+- After draft reconciliation, every material user-facing claim has a complete
+  source-audit row; unsupported claims use Best source `none found`, Source
+  type `none`, and Confidence `Low`.
 - Research questions and synthesis test material foundations, mechanisms,
   relationships, patterns over time, and downstream effects when relevant;
   material claims remain evidence-traceable or explicitly inference-labeled

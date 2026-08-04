@@ -64,7 +64,7 @@ This plan revises presentation and instruction economy for the merge digest only
 
 - R1. The skill states a presentation contract for the final readout and decision menu. The contract is binding on what is printed; it does not change how drivers are graded, which history surfaces are fetched, or how recommendations are mapped.
 - R2. On a clean green outcome (recommend merge, no material drivers, no caps, no intent drift) where themes stay collapsed per R5, the final readout plus decision menu is at most about 12 non-blank short lines. That upper bound is the checkable half-screen criterion; there is no five-line floor. Pre-readout dialogue is outside this budget. When R5 expands theme detail on an otherwise clean green outcome, growth is limited to supporting points under the recommendation; the recommendation line and decision menu stay compact, and the 12-line cap is not a hard fail for that specimen class.
-- R3. On pause or do not merge, supporting points under the recommendation grow only around medium or high drivers, caps, and intent-drift findings. Evidence and pointers appear for those concerns. Clean residual is at most one line or omitted. Do not enumerate low drivers; at most one residual risk clause such as “remaining drivers low.”
+- R3. On debug or do not merge, supporting points under the recommendation grow only around medium or high drivers, caps, and intent-drift findings. Evidence and pointers appear for those concerns. Clean residual is at most one line or omitted. Do not enumerate low drivers; at most one residual risk clause such as “remaining drivers low.”
 - R4. When every risk driver is low or none fire, the risk support is a single statement that nothing material was found (all drivers low or none fired) — not a list of the seven classes, and not wording that implies grading was skipped.
 - R5. On a clean green outcome, review themes collapse to one supporting sentence when themes are empty or purely fixed-as-suggested. Expand theme detail whenever any declined, fixed-differently, deferred, or unresolved item exists, or when a medium/high driver needs theme context.
 - R6. Source pointers stay required on every theme claim and named driver that appears, kept parenthetical. Collapsed one-sentence themes may use aggregate pointers.
@@ -94,7 +94,7 @@ This plan revises presentation and instruction economy for the merge digest only
 - F2. Concern-grown digest
   - **Trigger:** Medium/high driver, cap, or intent drift.
   - **Actors:** A1, A2
-  - **Steps:** Full fetch and grade → open with pause or do not merge naming concerns → support and evidence only for those → residual at most one line → decision menu.
+  - **Steps:** Full fetch and grade → open with debug or do not merge naming concerns → support and evidence only for those → residual at most one line → decision menu.
   - **Covers:** R1, R3, R6–R8, R10
 
 ### Acceptance Examples
@@ -109,7 +109,7 @@ This plan revises presentation and instruction economy for the merge digest only
 ### Success Criteria
 
 - Clean green digests are answer-first and ≤ ~12 short lines for readout plus menu.
-- Pause / do-not-merge digests state the stop first, then only supporting concerns.
+- Debug / do-not-merge digests state the recommendation first, then only supporting concerns; both may lead to investigation, and do not merge is a hard stop on shipping.
 - Battery + live back-test pass length/order and judgment checks.
 - SKILL.md is shorter and still portable under the review checklist budget.
 - Judgment model behavior unchanged.
@@ -155,7 +155,7 @@ This plan revises presentation and instruction economy for the merge digest only
 
 - KTD1. **Presentation lives in step 5 of `SKILL.md`** (session-settled: user-approved default after plan scoping — chosen over a separate presentation reference as primary home: agents must hit print rules at compose time; a short Minto/length block in step 5 is the binding surface). Governs R1, R10.
 - KTD2. **Operationalize length as “≤ about 12 non-blank short lines”** for the final readout plus decision menu only (session-settled product R2). Battery graders count non-blank lines after the decision menu starts; pre-readout dialogue is excluded. Governs R2, R9.
-- KTD3. **Answer-first check is structural:** first non-blank substantive line of the final readout must state the recommendation (merge / pause / do not merge), not themes or drift. Identity may share that line. Governs R10, R9.
+- KTD3. **Answer-first check is structural:** first non-blank substantive line of the final readout must state the recommendation (merge / debug / do not merge), not themes or drift. Identity may share that line; omit bare open state. Governs R10, R9.
 - KTD4. **Green theme checklist rewrite:** Scenario 1 (and any other pure clean-green cases) require one-sentence themes with aggregate pointers when only fixed-as-suggested; multi-bucket walkthrough items move to concern or AE5-style specimens. Governs R5, R9.
 - KTD5. **Slim without floor loss:** Prefer tightening prose and removing restatement over moving critical floor tables out of SKILL.md. If anything moves to `references/`, step 5 or the step that needs it must still name the rule and link. Governs R11.
 - KTD6. **Presentation supersedes green “list every driver” print:** Original plan’s “readout surfaces the drivers” is satisfied by naming drivers that produce the recommendation and by R4’s residual on green; low drivers are not printed as a class list. Document this in step 5, not by editing the old plan file. Governs R3, R4, R8.

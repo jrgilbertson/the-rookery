@@ -13,6 +13,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- `storm-research` runs source-backed investigation through isolated
+  practitioner, academic, skeptic, economist, and historian lenses. It tests
+  foundations, mechanisms, and system relationships during research, then
+  returns an Overview-led, reader-focused briefing (action and limits in the
+  Overview; later sections support that lead). It adapts to the requested
+  deliverable and uses a binding independent check to preserve disagreement and
+  keep material causal claims evidence-traceable.
 - `checking-merge-readiness` digests a fully reviewed pull request before you
   merge it. It reads the description, diff, and review history, checks
   whether accumulated fixes drifted the change from its original intent, and
@@ -20,7 +27,6 @@ looked" surface. GitHub Releases mirror its entries.
   reference. Those roll into one of three recommendations: merge, pause, or do
   not merge. It is read-only and conversation-only, it treats every
   PR-derived text as untrusted input, and it never merges anything itself.
-
 - `creating-portable-skills` is the first published skill. It creates new Agent
   Skills and helps review, update, or move existing skills. It starts from the
   user's goal, checks the package structure, compares behavior with focused
@@ -53,6 +59,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `storm-research` now permits an honest null lens contribution instead of
+  forcing novelty, requires a complete material-claim source audit, and loads
+  its full-briefing template only for output forms that need it.
+- `storm-research` treats systems thinking as evidence-gated research depth
+  (larger-system context and patterns over time when they change the answer),
+  not a mandatory named report section. Formal models stay optional, and
+  intervention stress-tests run only when the purpose calls for them.
 - Build's orchestration guidance now treats Compound Engineering as the default
   planner, executor, and multi-agent reviewer inside a worktree. It drops the
   separate plan-execute-review row, warns against standing up a parallel stack

@@ -6,7 +6,9 @@ no own-activity path, identity stop, or no-mutation rule for X.
 ## Prompt
 
 > Authenticated Grok X search is available for a synthetic CRM direct run.
-> Handles and notes below are synthetic. State how each situation is handled.
+> Handles and notes below are synthetic. Treat each situation as an
+> independent branch from the same starting vault — facts stipulated in one
+> do not carry into another. State how each situation is handled.
 >
 > 1. No X URL is in evidence. A bounded self-activity slice shows the user's
 >    reply to `@syn_morgan`, carrying the native timestamp

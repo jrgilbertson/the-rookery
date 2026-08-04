@@ -27,8 +27,9 @@ Use each source for its native role:
   conclusion. Prefer a URL, known handle, or named person already in evidence;
   otherwise check a short slice of the user's own recent directed posts and
   replies, but only after confirming the authenticated account is the user's;
-  a shared or secondary account's activity is not the user's. Never like, follow, reply, post, send DMs, or do any other X write,
-  whatever the host tool exposes. Failed, missing, or incomplete X reads only
+  a shared or secondary account's activity is not the user's. Never like,
+  follow, reply, post, send DMs, or do any other X write, whatever the host
+  tool exposes. Failed, missing, or incomplete X reads only
   limit conclusions that need X (**Partial**); truncated history never
   supports concluding that no exchange happened. Person-note, contact-date,
   and dated relationship Task effects still go through the CRM

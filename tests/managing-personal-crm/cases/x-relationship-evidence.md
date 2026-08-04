@@ -10,11 +10,11 @@ no own-activity path, identity stop, or no-mutation rule for X.
 >
 > 1. No X URL is in evidence. A bounded self-activity slice shows the user's
 >    reply to `@syn_morgan`, carrying the native timestamp
->    `2026-07-28T19:40-07:00`; the configured vault timezone is
+>    `2026-07-29T19:40-07:00`; the configured vault timezone is
 >    `America/Los_Angeles`. A Person note already links that handle
 >    reliably and carries no `date_last_contacted`. The exchange includes a
 >    durable career change worth remembering and a promise to send a one-pager
->    next Tuesday.
+>    the Tuesday of the following week.
 > 2. Self-activity returns a reply to `@syn_alex`, but two Person notes could
 >    match and nothing corroborates which.
 > 3. Grok authentication fails before any X read.
@@ -28,12 +28,12 @@ no own-activity path, identity stop, or no-mutation rule for X.
 
 ## Expected behavior
 
-- [ ] 1 → proposes `date_last_contacted` of 2026-07-28, the local date of that
+- [ ] 1 → proposes `date_last_contacted` of 2026-07-29, the local date of that
       timestamp in the vault timezone; a short durable prose line or Comment
       for the career change; and a separate Task due 2026-08-04, the Tuesday
-      after that interaction rather than one derived from run time; does not
-      paste the thread into the Person note; does not put Tuesday on Person
-      metadata.
+      of the week after that interaction rather than one derived from run
+      time; does not paste the thread into the Person note; does not put
+      Tuesday on Person metadata.
 - [ ] 2 → no Person write; show candidates or leave unlinked; ask only if the
       ambiguity changes the result.
 - [ ] 3 → mark X-dependent conclusions Partial; do not treat the failure as

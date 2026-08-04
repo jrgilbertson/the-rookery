@@ -133,7 +133,7 @@ The work runs in one of two modes. `ce-work` works through the plan unit by unit
 
 Compound Engineering already is the planner, executor, and multi-agent reviewer. The skills run brainstorm → plan → work → simplify → review → compound, and each cycle pulls prior solutions from `docs/solutions/`. That is the default inside a worktree. I do not stand up a second planner, executor, and reviewer beside those skills. A parallel stack burns tokens twice, loses the handoffs and quality gates the plugin already owns, and skips the durable files that make later cycles easier. The multi-persona reviewers inside `ce-code-review` already cost the most. Another review layer on top only adds spend.
 
-I pick a different orchestration only when the skills do not cover the work. Tiny one-off changes often skip the full loop and stay with a solo owner. When something specialized is missing, I extend Compound Engineering rather than build a second system.
+I pick a different orchestration only when the skills do not cover the work. Tiny one-off changes often skip the full loop and stay with a solo owner. When something specialized is missing, I extend Compound Engineering rather than build a second system. Either mode can run the CE default or one of those exceptions. The table below is that exception menu, not a second default next to the skills.
 
 
 | Orchestration             | What it is                                                                              | Best for                                                                                                              | Cost                                                 |
@@ -142,7 +142,7 @@ I pick a different orchestration only when the skills do not cover the work. Tin
 | Executor with advisor     | The executor consults a stronger model only on hard calls, Anthropic's advisor strategy | Cost-sensitive work with occasional deep judgment                                                                     | Consult latency                                      |
 | Produce, critique, revise | A producer drafts, a separate critic scores, revision rounds capped                     | Rubric-judged quality work where refinement measurably helps                                                          | Rounds add latency, and it needs the separate critic |
 | Orchestrator with workers | A lead agent delegates to separate instances in their own worktrees, then integrates    | Fan-out across many independent pieces, managed by `ultracode` (Claude Code), `ultra` (Codex) or wired myself in Orca | Integration overhead                                 |
-| Harness-native subagents  | One session dispatches subagents that report back to it                                 | Side research or verification inside a session's flow. Already how skills like `ce-code-review` run reviewer personas | Parent-only results; do not rebuild outside the skill |
+| Harness-native subagents  | One session dispatches subagents that report back to it                                 | Side research or verification inside a session's flow. Already how skills like `ce-code-review` run reviewer personas | Parent-only results; rebuilding outside the skill doubles the spend |
 
 
 I enforce quality in tiers. Tests, linters, CI gates, and the design system enforce proactively, and prose instructions sit at the bottom. See the Maintain section for the full ladder.

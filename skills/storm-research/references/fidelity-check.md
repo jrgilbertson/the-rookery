@@ -1,10 +1,13 @@
 # Fidelity Check
 
 The orchestrator starts one independent reviewer in a clean context. Give the
-reviewer these instructions, the final briefing, sourced baseline (`p0`), source
-audit, every raw lens return, and the internal run record. Do not include the
-orchestrator's synthesis reasoning. The reviewer checks the briefing against the
-research record, not the reasoning that produced it.
+reviewer these instructions, the frozen framed topic (question, deliverable,
+intended use, scope, and constraints), the final briefing, sourced baseline
+(`p0`), source audit, every raw lens return, and the internal run record. Do not
+include the orchestrator's synthesis reasoning. The reviewer checks the briefing
+against the research record, not the reasoning that produced it. Use the framed
+topic when judging whether a disagreement or gap changes the answer, confidence,
+or next action.
 
 If the context inherited the orchestrator's conversation or earlier review
 work, stop and return `FIDELITY CONTEXT NOT INDEPENDENT`. The internal run record

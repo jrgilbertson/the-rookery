@@ -33,3 +33,5 @@ the right fields but did not define completion across every material claim.
       a confidence limit.
 - [ ] Does not invent sources, causal identification, emissions evidence, or
       benefits that are absent from the record.
+- [ ] Completes reconciliation without new research or new source access beyond
+      the supplied record.

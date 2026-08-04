@@ -14,8 +14,10 @@ or an unavailable independent fidelity recheck.
 
 ## Expected behavior
 
-This simulated constraint case checks response fidelity only. Native failure
-branches require separate harness evidence and cannot pass from this case.
+This simulated constraint case checks **reader-facing response fidelity** only.
+Native failure branches and full internal-record proof require separate harness
+evidence and cannot pass from this case alone. If the evaluator provides an
+internal run-record artifact, grade it; otherwise grade only the briefing.
 
 - [ ] Labels the result as a single-context, unverified or otherwise degraded
       synthesis and lowers confidence rather than silently claiming full STORM.
@@ -23,8 +25,7 @@ branches require separate harness evidence and cannot pass from this case.
       required lens, and the fidelity review that did not run.
 - [ ] Explains how degraded evidence limits material foundations, mechanisms,
       system relationships, and downstream claims without adding empty sections.
-- [ ] Keeps an accurate internal run record that does not count the failed lens
-      as completed, while the briefing discloses the material limitations in
-      concise reader-facing language rather than printing the full record.
+- [ ] Discloses those material limitations in concise reader-facing language
+      rather than printing a full execution manifest or run-record dump.
 - [ ] Avoids unsupported causal chains and states what evidence or capability
       would be needed to upgrade the result.

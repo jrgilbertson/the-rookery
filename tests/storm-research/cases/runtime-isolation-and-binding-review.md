@@ -29,8 +29,9 @@ lens executors. Then run the skill's binding fidelity review.
 
 ## Expected behavior
 
-- [ ] Traces show one clean executor per canonical lens, each with only the
-      common charter, framed topic, its own lens, and the same sourced baseline.
+- [ ] Traces show one clean executor per canonical lens; the common charter,
+      frozen framed topic, and sourced baseline are byte-identical across
+      executors, and only the lens-specific seed part differs.
 - [ ] Each executor independently inspects the permitted fixture, and no queued
       executor receives sibling work or earlier returns.
 - [ ] The orchestrator stops lens research after dispatch, keeps every raw

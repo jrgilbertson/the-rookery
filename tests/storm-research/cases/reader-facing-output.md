@@ -18,9 +18,9 @@ for a workflow auditor rather than the human reader.
 
 ## Expected behavior
 
-- [ ] The Overview carries the editor-facing answer and practical next steps;
-      later sections support that lead rather than introducing the decision for
-      the first time.
+- [ ] The Overview carries the editor-facing answer, practical next steps, and
+      material risks or confidence limits; later sections support that lead
+      rather than introducing the decision for the first time.
 - [ ] The briefing integrates research depth into its overview, baseline,
       perspective scan (subsection per lens), key tensions, reliability, and
       guidance instead of creating standalone first-principles or

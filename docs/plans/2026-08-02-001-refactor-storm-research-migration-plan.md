@@ -24,7 +24,7 @@ execution: code
 
 ## Product Contract
 
-> **Product supersession (post-plan):** Mandatory standalone `First-principles analysis` and `System dynamics and higher-order effects` **headings** are superseded (R5, R9, and R14’s render-both-sections visibility). **Keep** R6–R8 and R10–R13 as integrated research-depth and traceability obligations (facts vs assumptions, mechanisms, boundaries, causal chains, honest nulls when a null changes the answer)—owned by analysis-methods and fidelity, not report section titles. Full briefings are Overview-led and reader-facing: action and material limits live in the Overview; later sections support that lead; no execution telemetry in normal output. Destination-first publication and source retirement (R18–R21, U5–U6) still govern delivery. Live behavior is owned by `skills/storm-research/` and `references/briefing-template.md`. Body text below that still requires named analytical sections is historical archive, not current product authority.
+> **Product supersession (post-plan) — acceptance authority:** Do **not** use R5, R9, R14’s render-both-sections rule, the flow diagram’s standalone First-principles/Systems boxes, or U3/U4/Definition-of-Done wording that still requires named analytical **headings** as merge or package-acceptance gates. Those section-visibility rules are **historical archive**. **Keep** R6–R8 and R10–R13 as integrated research-depth and traceability obligations (owned by analysis-methods and fidelity, not report section titles). Full briefings are Overview-led and reader-facing: action and material limits in the Overview; later sections support that lead; no execution telemetry in normal output. Destination-first publication and source retirement (R18–R21, U5–U6) still govern delivery. **Live acceptance contract:** `skills/storm-research/SKILL.md`, `references/briefing-template.md`, and the destination-native tests under `tests/storm-research/`.
 
 ### Summary
 
@@ -245,6 +245,7 @@ the-rookery
 │   ├── SKILL.md
 │   └── references/
 │       ├── analysis-methods.md
+│       ├── briefing-template.md
 │       ├── fidelity-check.md
 │       └── lens-charter.md
 └── tests/storm-research/
@@ -313,7 +314,7 @@ agentic-toolkit
 - **Goal:** Establish a self-contained destination package that preserves the source skill before analytical extension.
 - **Requirements:** R1-R4, R14, R16-R18; AE2, AE7; KTD1, KTD3, KTD6.
 - **Dependencies:** U1.
-- **Files:** Create `skills/storm-research/SKILL.md`, `skills/storm-research/references/lens-charter.md`, and `skills/storm-research/references/fidelity-check.md` from the frozen source.
+- **Files:** Create `skills/storm-research/SKILL.md`, `skills/storm-research/references/lens-charter.md`, `skills/storm-research/references/fidelity-check.md`, and `skills/storm-research/references/briefing-template.md` from the frozen source (briefing-template may be refined in later units).
 - **Approach:**
   - Preserve baseline grounding, perspective discovery, five canonical lenses, optional additional lenses, raw-return retention, contradiction mapping, source audit, frontier question, confidence, and requested-output adaptation.
   - Preserve the four-part lens seed: charter, framed topic, that executor's lens, and sourced baseline. Enrich the framed topic before dispatch with intended use, scope, constraints, and permitted resource identifiers, then give the same framing to every lens.
@@ -329,7 +330,7 @@ agentic-toolkit
 - **Goal:** Make first-principles and system-dynamics reasoning explicit, evidence-tethered, and inspectable without changing the independent lens engine.
 - **Requirements:** R2, R5-R16; AE1-AE5, AE9, AE10; KTD2-KTD4.
 - **Dependencies:** U2.
-- **Files:** Modify `skills/storm-research/SKILL.md` and `skills/storm-research/references/fidelity-check.md`; create `skills/storm-research/references/analysis-methods.md`.
+- **Files:** Modify `skills/storm-research/SKILL.md`, `skills/storm-research/references/fidelity-check.md`, and `skills/storm-research/references/briefing-template.md`; create `skills/storm-research/references/analysis-methods.md`.
 - **Approach:**
   - Insert both analytical passes after contradiction mapping and before requested-form synthesis. They consume the sourced baseline, raw returns, contradiction map, and source audit; they never feed lens executors.
   - First-principles analysis separates verified facts, assumptions, and irreducible constraints, then names the mechanism and conditions required for the main claim.

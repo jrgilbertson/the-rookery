@@ -54,12 +54,12 @@ skill can produce. Words such as "deep" and "source-backed" also describe
 smaller tasks, so they do not distinguish a full multi-perspective research
 briefing from one authoritative lookup. A Storm Research review caught exactly
 that boundary failure: a request to find an API rate limit in official
-documentation and cite the page still activated the five-lens workflow
-(`tests/storm-research/triggers.md:27`). The session-history reconstruction
-identified the dead end: removing one adjective branch did not help while
-source backing could still qualify the request elsewhere in the description
-(session history). The run log corroborates the failed first correction and
-the later 17/17 result (`tests/storm-research/log.md:29-30`).
+documentation and cite the page still activated the five-lens workflow.
+The near-miss regression contract for that query lives in
+`tests/storm-research/triggers.md` (API rate-limit near miss). The run log
+records the failed first correction and the later 17/17 result
+(`tests/storm-research/log.md` trigger-suite lines for the review-fix
+description).
 
 ## Guidance
 
@@ -140,9 +140,8 @@ A probe ran the checklist's Instruction economy group against a toy instruction 
 **Before (prior checklist group only).** The delete test, evidence tracing, positive steering, specificity matching, and one-home checks let "punchier," "thorough," and "clean" pass. At most, "be thorough" got cut (deleted, not defined) by strict evidence tracing. The probe explicitly confirmed the delete test alone cannot catch them: it asks cut-or-keep, not define.
 
 **After (with the qualifiers item).** All three words were flagged for
-definition and became fix-list entries. The historical aggregate test summary
-was later removed during test-suite consolidation; the per-item breakdown below
-is from the session's probe record, "Skill-engineering adoption pass" entry.
+definition and became fix-list entries (session probe record, "Skill-engineering
+adoption pass").
 
 ### The borderline fix (the check catching its own host skill)
 
@@ -156,11 +155,9 @@ requires a plain `yes` or `no`. An initial `unsure` or hedged response counts
 as borderline and triggers two additional runs. The protocol therefore defines
 the qualifier by an observable retry rule rather than leaving it to judgment.
 
-The historical aggregate test summary was later removed during test-suite
-consolidation; the per-item breakdown below is from the session's probe record,
-"Owner review pass" entry. This example shows the enumerated-options fix shape
-and demonstrates that the check catches failures the delete test had already
-blessed.
+This example shows the enumerated-options fix shape and demonstrates that the
+check catches failures the delete test had already blessed (session probe
+record, "Owner review pass").
 
 ### The source-backed activation fix (quality, then deliverable)
 

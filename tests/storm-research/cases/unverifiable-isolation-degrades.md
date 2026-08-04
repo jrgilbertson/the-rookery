@@ -16,8 +16,10 @@ only contexts that were known to be unavailable.
 
 - [ ] Does not describe the available contexts as verified clean or claim
       independent multi-perspective research can proceed normally.
-- [ ] If work continues, selects the best available separation and labels the
-      planned result a `single-context synthesis`.
+- [ ] Does not dispatch lens executors, read fixtures, or run research in this
+      pre-dispatch decision pass.
+- [ ] Selects the best available separation and labels the planned result a
+      `single-context synthesis` if work were to continue later.
 - [ ] Marks the run degraded and lowers confidence because cleanliness cannot
       be verified, even though contexts are technically available.
 - [ ] Records the isolation mechanism and its unverified state in the internal

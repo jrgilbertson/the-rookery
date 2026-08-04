@@ -6,7 +6,9 @@ prior skill text lacked X source rules and context-only bounds.
 ## Prompt
 
 > For each synthetic chief-of-staff scenario, state what enters the review and
-> where relationship effects live. Rowan is a synthetic contact.
+> where relationship effects live. Rowan is a synthetic contact. Treat each
+> scenario as an independent branch from the same starting vault — facts
+> stipulated in one do not carry into another.
 >
 > 1. Wind-down: evidence includes a self-emailed X post URL. Rowan's Person
 >    note carries a canonical link to the X account in that thread. Grok
@@ -14,7 +16,7 @@ prior skill text lacked X source rules and context-only bounds.
 >    change, carrying the native timestamp `2026-07-28T19:40-07:00`; the
 >    configured vault timezone is `America/Los_Angeles`. The CRM companion is
 >    available.
-> 2. Morning: X is needed only to confirm whether a public claim in today's
+> 2. Wind-down: X is needed only to confirm whether a public claim in today's
 >    notes matches a recent post; no Person or Task effect is warranted.
 > 3. Weekly: X evidence would matter for a relationship follow-up, but the
 >    CRM companion is unavailable.

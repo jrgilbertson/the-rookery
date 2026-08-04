@@ -25,8 +25,9 @@ Use each source for its native role:
   optional interaction evidence and timestamps. Query only when it can change
   a material conclusion. Prefer a URL, known handle, or named person already
   in evidence; otherwise check a short slice of the user's own recent directed
-  posts and replies. Never like, follow, reply, post, or DM. Failed or missing
-  X reads only limit conclusions that need X (**Partial**). Person-note,
+  posts and replies. Never like, follow, reply, post, DM, or perform any other
+  X write, whatever the host tool exposes. Failed or missing X reads only
+  limit conclusions that need X (**Partial**). Person-note,
   contact-date, and dated relationship Task effects still go through the CRM
   companion below, not from X alone. Do not use X to find posts to read or
   reply to (issue #12).
@@ -122,8 +123,9 @@ preparing the bundle.
 If the companion capability is unavailable, complete the selected
 chief-of-staff mode with the evidence that remains. Mention reduced
 relationship coverage only when it limits a material conclusion, and never
-invent a contact date, tier, status, classification, or Person-note edit as a
-substitute.
+invent a contact date, tier, status, classification, Person-note edit, or dated
+relationship Task as a substitute. X evidence stays review context in that
+case.
 
 Completion: relationship judgment contributes only supported candidate
 effects to the existing review, while the chief-of-staff mode retains its

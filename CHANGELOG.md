@@ -11,14 +11,6 @@ looked" surface. GitHub Releases mirror its entries.
 
 ## [Unreleased]
 
-### Changed
-
-- `managing-personal-crm` and `personal-chief-of-staff` can use authenticated
-  Grok X search as optional, read-only relationship evidence. They prefer a
-  known URL or handle when present, otherwise a short slice of the user's own
-  recent directed posts and replies. They do not post on X or scan for posts
-  to engage with.
-
 ### Added
 
 - `checking-merge-readiness` digests a fully reviewed pull request before you
@@ -61,6 +53,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `managing-personal-crm` and `personal-chief-of-staff` can use authenticated
+  Grok X search as optional, read-only relationship evidence. They prefer a
+  known URL or handle when present, otherwise a short slice of the user's own
+  recent directed posts and replies. They do not post on X or scan for posts
+  to engage with.
 - Planning now keeps Compound Engineering as the primary route and uses
   targeted grilling only as an optional pressure test for consequential,
   interdependent decisions that remain unclear.

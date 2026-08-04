@@ -368,9 +368,9 @@ control).
 
 - [ ] The first non-blank substance of the final readout is the
       recommendation (answer-first), not themes or drift first.
-- [ ] The readout reads as a colleague's plain-language summary: no
-      report-template scaffolding, no slop register, and the merged
-      state is named (on the answer line or with it).
+- [ ] The readout is natural prose in a colleague's register: no report
+      section headers (e.g. Themes / Intent / Risk), no slop register,
+      and the merged state is named in the opening answer.
 - [ ] Every theme claim and named driver that appears carries a source
       pointer (thread, round, or file), kept parenthetical.
 - [ ] Claims verified against the diff are asserted plainly and claims

@@ -234,10 +234,18 @@ with its grade and evidence exist, and any sampling is disclosed with counts.
 
 ### 5. Present the readout and the recommendation
 
-Grade fully in step 4 first. Then print only what the owner needs, in a
-colleague's register, using Barbara Minto's **pyramid principle** (answer
-first). Do not print a bottom-up build-up of themes → drift → risk →
-verdict. Do not use report-template section headers.
+Grade fully in step 4 first. Then speak only what the owner needs, in
+**natural prose** shaped by Barbara Minto's **pyramid principle**: the
+answer first, then the grouped reasons that support it, then only the
+evidence those reasons need. Write as a colleague briefing someone at the
+merge button — continuous sentences and short paragraphs, not a form.
+
+Do **not** print bottom-up analysis (themes, then drift, then risk, then
+the verdict). Do **not** use report scaffolding: no section headers such as
+"Themes", "Intent", "Risk", or "Drivers"; no bullet catalog of the seven
+driver classes; no second visible verdict. Pyramid order is the *logic* of
+the prose, not labels on the page. Parenthetical source pointers stay
+inside sentences.
 
 #### Recommendation mapping (internal grade → one light)
 
@@ -256,47 +264,51 @@ Caps (degraded inputs, empty review history, incomplete history or thin
 payload, unverifiable intent, unreviewed-since-last-review, sampled
 history) remove merge from the available outcomes; they never soften a
 high driver's do not merge. A cap-produced recommendation says the cap
-reason. The internal grade is never a second visible verdict.
+reason in the same prose. The internal grade is never a second visible
+verdict.
 
-#### Spoken order (binding)
+#### Pyramid content (binding order, natural prose)
 
-1. **Answer first.** First non-blank substance of the final readout is the
-single recommendation (merge / pause / do not merge), naming the drivers,
-caps, or intent-drift finding that produced it. Attach PR identity and
-state on that line (or immediately with it) so the answer is self-contained.
-2. **Supporting arguments.** A few grouped points that justify the answer
-(themes, drift, risk residual, caps), each idea once, most decision-relevant
-first.
-3. **Evidence** under points that drove the recommendation, with parenthetical
-pointers from step 4. Do not re-list low drivers as a seven-class table.
-4. **Decision menu** (step 6) after the pyramid body — not before the answer.
+1. **Answer.** Open with the single recommendation (merge / pause / do not
+merge), naming what produced it (drivers, caps, or intent drift). Fold PR
+identity and state into that opening so it stands alone.
+2. **Why.** In the next sentences, give the supporting arguments that
+justify the answer — review themes, intent/drift, residual risk, caps —
+each idea once, most decision-relevant first. Weave them as prose, not
+labeled blocks.
+3. **Evidence.** Only where a concern drove the recommendation, add the
+concrete evidence in those sentences (parenthetical pointers from step 4).
+Do not re-list low drivers.
+4. **Decision menu** (step 6) after the prose body — not before the answer.
 
 #### Print budgets
 
 **Clean green** (recommend merge, no material drivers, no caps, no intent
 drift, themes empty or purely fixed-as-suggested): final readout plus
-decision menu is at most about **12 non-blank short lines**. No five-line
-compression floor that would truncate the menu. Pre-readout dialogue
-(baseline confirmation, attestation) is outside this budget.
+decision menu is at most about **12 non-blank short lines** of natural
+prose. That is a cap, not a telegram target. No five-line floor that would
+truncate the menu. Pre-readout dialogue (baseline confirmation, attestation)
+is outside this budget.
 
-**Theme support on green:** one sentence with aggregate pointers when only
-fixed-as-suggested. Expand theme detail as supports whenever any declined,
-fixed-differently, deferred, or unresolved item exists, or a medium/high
-driver needs theme context. If theme expansion alone pushes past 12 lines
-on an otherwise green outcome, that is allowed; keep answer and menu compact.
+**Theme support on green:** fold review into one or two natural sentences
+with aggregate pointers when only fixed-as-suggested. Expand in prose
+whenever any declined, fixed-differently, deferred, or unresolved item
+exists, or a medium/high driver needs theme context. If that expansion alone
+pushes past 12 lines on an otherwise green outcome, that is allowed; keep
+the opening answer and the menu compact.
 
-**Concern-grown** (pause or do not merge, or caps / intent drift): grow
-supports only around medium/high drivers, caps, and intent-drift findings.
-Clean residual is at most one line or omitted. At most one residual risk
-clause such as "remaining drivers low" — never a per-class low table.
+**Concern-grown** (pause or do not merge, or caps / intent drift): expand
+the prose only around medium/high drivers, caps, and intent-drift findings.
+Clean residual is a brief clause or sentence, or omitted. At most a short
+clause that remaining drivers are low — never a per-class table.
 
-**Risk residual when all low / none fire:** one line that nothing material
-was found (all drivers low or none fired) — not wording that implies
-grading was skipped.
+**Risk residual when all low / none fire:** in natural language, that
+nothing material showed up (all drivers low or none fired) — not wording
+that implies grading was skipped.
 
-Completion: the readout is answer-first with exactly one recommendation
-named by its producers; supports follow the budgets above; no second
-visible verdict.
+Completion: natural answer-first prose with exactly one recommendation
+named by its producers; supports follow the budgets above; no section
+headers; no second visible verdict.
 
 ### 6. Take the one owner decision
 

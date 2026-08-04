@@ -56,8 +56,38 @@ re-run this cycle (residual, same class as prior open residual).
 - 2026-08-04 | conciseness | battery s10 non-thread feedback (skilled) | pass (7/7) | nadia-sec high + tobin-sre unresolved; do not merge; multi-surface history (threads 3, reviews 4, comments 3 with pageSize 2 stub)
 - 2026-08-04 | conciseness | battery s11 live #23 (skilled) | pass (4/4) | real `gh`: 62 threads + 88 reviews paginated to exhaustion; merged state; recommendation **debug** (medium accretion teaching residual); five spot-checks: title, merged state, thread total 62, review total 88, comments total 3
 
-Open residual this cycle: blind independent grader re-pair and bare matched
-pairs not re-run under the new presentation contract.
+### Blind re-grade (2026-08-04) — independent subagent graders
+
+Packets labeled runA–runM only (no skilled/bare tag). Graders received
+readout + checklist + specimen path; five separate grader contexts.
+Manifest: `/tmp/cmr-blind-grade/manifest.json`. Results under
+`/tmp/cmr-blind-grade/results/`.
+
+First pass (map label→scenario for the log only; graders never saw map):
+
+| Label | Scenario | Blind overall |
+| --- | --- | --- |
+| runA | s1 | PASS 6/6 |
+| runB | s2 | PASS 6/6 |
+| runC | s2b | PASS 4/4 |
+| runD | s3 | PASS 4/4 |
+| runE | s4 | PASS 4/4 |
+| runF | s5 | PASS 4/4 |
+| runG | s6 | PASS 4/4 |
+| runH | s7 | PASS 4/4 |
+| runI | s8 | **FAIL 3/4** (item: local diff not explicitly "could not check vs PR base/head") |
+| runJ | s8b | PASS 4/4 |
+| runK | s9 | PASS 6/6 |
+| runL | s10 | PASS 7/7 |
+| runM | s11 | **FAIL 3/4** (item: themes lacked specific thread/round pointers) |
+
+Repair digests for s8 and s11, then blind re-packets runN (s8) and runO (s11)
+in a fresh grader context:
+
+- 2026-08-04 | blind | runN s8 no forge | pass (4/4) | after naming unverifiable base/head identity-check
+- 2026-08-04 | blind | runO s11 live #23 | pass (4/4) | after adding thread path pointers and attribution registers
+
+**Blind skilled set green after repair.** Bare matched pairs still open residual.
 
 ### Early skilled/bare pairs (skill text then ~259 lines; still the form evidence)
 

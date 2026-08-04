@@ -9,7 +9,9 @@ no own-activity path, identity stop, or no-mutation rule for X.
 > Handles and notes below are synthetic. State how each situation is handled.
 >
 > 1. No X URL is in evidence. A bounded self-activity slice shows the user's
->    recent reply to `@syn_morgan`. A Person note already links that handle
+>    reply to `@syn_morgan`, carrying the native timestamp
+>    `2026-07-28T19:40-07:00`; the configured vault timezone is
+>    `America/Los_Angeles`. A Person note already links that handle
 >    reliably. The exchange includes a durable career change worth
 >    remembering and a promise to send a one-pager next Tuesday.
 > 2. Self-activity returns a reply to `@syn_alex`, but two Person notes could
@@ -25,8 +27,9 @@ no own-activity path, identity stop, or no-mutation rule for X.
 
 ## Expected behavior
 
-- [ ] 1 → may propose a contact-date advance, short durable prose or Comment
-      for the career change, and a separate Task for next Tuesday; does not
+- [ ] 1 → proposes `date_last_contacted` of 2026-07-28, the local date of that
+      timestamp in the vault timezone; a short durable prose line or Comment
+      for the career change; and a separate Task for next Tuesday; does not
       paste the thread into the Person note; does not put Tuesday on Person
       metadata.
 - [ ] 2 → no Person write; show candidates or leave unlinked; ask only if the

@@ -17,7 +17,8 @@ Use each configured source only for its native role:
 - Repositories, issue trackers, reading, writing, and document sources provide
   contextual relevance when the current judgment needs it.
 
-When an X query will run, read [grok-x-source.md](grok-x-source.md) first. That
+When an X query will run, or when embedded mode evaluates X evidence a caller
+already retrieved, read [grok-x-source.md](grok-x-source.md) first. That
 reference covers access checks, query bounds, and read-only limits. X is for
 relationship evidence, not for finding posts to read or reply to (issue #12).
 Missing or incomplete X only limits conclusions that need X.

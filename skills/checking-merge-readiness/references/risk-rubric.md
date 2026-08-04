@@ -8,7 +8,7 @@ as such, never invented, and counts as low in the roll-up. The principle-tension
 first-principles.md for their canon rather than restating it here.
 
 Grades map to the recommendation by the fixed rule in SKILL.md step 5: all low
-grades merge; any medium grades pause; any high grades do not merge; caps
+grades merge; any medium grades debug; any high grades do not merge; caps
 remove merge from the outcomes and never soften a high driver. This file
 never restates that mapping beyond this line.
 

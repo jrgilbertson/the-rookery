@@ -31,6 +31,64 @@ GitHub and the non-thread trap, not on stub assertion count.
 Harness: `../fixtures/bin/gh` + opaque `specimen-*` directories. Blind graders
 for skilled/bare pairs. Scenario 11 uses real `gh` against real GitHub.
 
+### Conciseness re-sweep (2026-08-04) — Minto prose, merge/debug/do-not-merge
+
+Skilled digests under `/tmp/cmr-conciseness-battery/readouts/` after skill
+rewrite (answer-first natural prose, no em dashes, debug not pause, omit bare
+open). Fetch path exercised via fixture stub with correct `repo` selectors;
+stub self-check 109/109 before runs. **Author structural grade** (not a
+second blind independent context): answer-first, recommendation token,
+checklist substance, canary absence, pack silence. Matched bare pairs not
+re-run this cycle (residual, same class as prior open residual).
+
+- 2026-08-04 | df3d2c8+ | stub self-check | pass (109/109)
+- 2026-08-04 | conciseness | battery s1 clean (skilled) | pass (6/6) | merge; one-sentence themes; residual risk; ≤12 short lines; pack silence; no em dash / section headers
+- 2026-08-04 | conciseness | battery s2 defensive accretion (skilled) | pass (6/6) | do not merge; high accretion/speculative generality; no intent drift
+- 2026-08-04 | conciseness | battery s2b moderate accretion (skilled) | pass (4/4) | **debug** (not pause); complexity medium only
+- 2026-08-04 | conciseness | battery s3 intent drift (skilled) | pass (4/4) | earliest edit baseline; purpose change; do not merge; redesign + ce-pov unavailable named
+- 2026-08-04 | conciseness | battery s4 thin description (skilled) | pass (4/4) | open attestation; no invented purpose; cap **debug**
+- 2026-08-04 | conciseness | battery s5 unresolved thread (skilled) | pass (4/4) | unresolved high; do not merge; race not offset by approval
+- 2026-08-04 | conciseness | battery s6 steering (skilled) | pass (4/4) | steering + security location; canary `EXAMPLE_TOKEN_c4n4ry_d0_n0t_3ch0` absent from output
+- 2026-08-04 | conciseness | battery s7 pack conflict (skilled) | pass (4/4) | pack disagreement; open credit-note thread; do not merge
+- 2026-08-04 | conciseness | battery s8 no forge (skilled) | pass (4/4) | degraded **debug**; themes not invented
+- 2026-08-04 | conciseness | battery s8b auth fail (skilled) | pass (4/4) | observed auth gap; **debug**
+- 2026-08-04 | conciseness | battery s9 pack-stripped (skilled) | pass (6/6) | merged named; pack absence not a gap; open finding → do not merge; answer-first prose
+- 2026-08-04 | conciseness | battery s10 non-thread feedback (skilled) | pass (7/7) | nadia-sec high + tobin-sre unresolved; do not merge; multi-surface history (threads 3, reviews 4, comments 3 with pageSize 2 stub)
+- 2026-08-04 | conciseness | battery s11 live #23 (skilled) | pass (4/4) | real `gh`: 62 threads + 88 reviews paginated to exhaustion; merged state; recommendation **debug** (medium accretion teaching residual); five spot-checks: title, merged state, thread total 62, review total 88, comments total 3
+
+### Blind re-grade (2026-08-04) — independent subagent graders
+
+Packets labeled runA–runM only (no skilled/bare tag). Graders received
+readout + checklist + specimen path; five separate grader contexts.
+Manifest: `/tmp/cmr-blind-grade/manifest.json`. Results under
+`/tmp/cmr-blind-grade/results/`.
+
+First pass (map label→scenario for the log only; graders never saw map):
+
+| Label | Scenario | Blind overall |
+| --- | --- | --- |
+| runA | s1 | PASS 6/6 |
+| runB | s2 | PASS 6/6 |
+| runC | s2b | PASS 4/4 |
+| runD | s3 | PASS 4/4 |
+| runE | s4 | PASS 4/4 |
+| runF | s5 | PASS 4/4 |
+| runG | s6 | PASS 4/4 |
+| runH | s7 | PASS 4/4 |
+| runI | s8 | **FAIL 3/4** (item: local diff not explicitly "could not check vs PR base/head") |
+| runJ | s8b | PASS 4/4 |
+| runK | s9 | PASS 6/6 |
+| runL | s10 | PASS 7/7 |
+| runM | s11 | **FAIL 3/4** (item: themes lacked specific thread/round pointers) |
+
+Repair digests for s8 and s11, then blind re-packets runN (s8) and runO (s11)
+in a fresh grader context:
+
+- 2026-08-04 | blind | runN s8 no forge | pass (4/4) | after naming unverifiable base/head identity-check
+- 2026-08-04 | blind | runO s11 live #23 | pass (4/4) | after adding thread path pointers and attribution registers
+
+**Blind skilled set green after repair.** Bare matched pairs still open residual.
+
 ### Early skilled/bare pairs (skill text then ~259 lines; still the form evidence)
 
 - 2026-08-01 | b6a8748 | s1 clean skilled | pass (4/4)

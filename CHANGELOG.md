@@ -11,6 +11,16 @@ looked" surface. GitHub Releases mirror its entries.
 
 ## [Unreleased]
 
+### Changed
+
+- `checking-merge-readiness` digests use Barbara Minto's pyramid principle:
+  recommendation first, then only supporting points in natural prose (no em
+  dashes). Clean green stays about twelve short lines; debug and do not merge
+  grow only around real concerns. Medium risk is framed as **debug** (not a
+  soft pause); do not merge is a hard stop that still leads to debug or
+  redesign. Open PR state is not labeled redundantly. Skill body tightened;
+  battery asserts answer-first order and clean-green length.
+
 ### Added
 
 - `storm-research` runs source-backed investigation through isolated
@@ -24,8 +34,8 @@ looked" surface. GitHub Releases mirror its entries.
   merge it. It reads the description, diff, and review history, checks
   whether accumulated fixes drifted the change from its original intent, and
   profiles risk as graded named drivers anchored in an engineering-canon
-  reference. Those roll into one of three recommendations: merge, pause, or do
-  not merge. It is read-only and conversation-only, it treats every
+  reference. Those roll into one of three recommendations: merge, debug, or
+  do not merge. It is read-only and conversation-only, it treats every
   PR-derived text as untrusted input, and it never merges anything itself.
 - `creating-portable-skills` is the first published skill. It creates new Agent
   Skills and helps review, update, or move existing skills. It starts from the

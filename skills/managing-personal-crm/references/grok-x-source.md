@@ -32,10 +32,11 @@ relevance, or duplicate decision. Cap results in every case and do not pull
 full history.
 
 **Pointer first.** If evidence already has an X URL, known handle, or named
-person, search that first, and bound the read around the referenced item
-rather than a recent window — an exact pointer to an older exchange is still
-the evidence that was asked for. Use the user's own recent posts only when
-they can change that same conclusion.
+person, search that first. For an exact URL, bound the read around the
+referenced item rather than a recent window — a pointer to an older exchange
+is still the evidence that was asked for. For a handle or named person with no
+exact item, use a recent window (or the host's equivalent bound). Use the
+user's own recent posts only when they can change that same conclusion.
 
 **Own activity first when there is no pointer.** Read a short slice of the
 user's recent directed posts and replies, using a recent window (or the host's

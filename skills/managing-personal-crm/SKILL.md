@@ -105,8 +105,9 @@ and the adapter's authority boundary.
 
 When an X query will run, also read
 [references/grok-x-source.md](references/grok-x-source.md) before the first X
-read. Skip it when the run will not query X. X is not part of catch-up
-inventory.
+read. Embedded runs read it for X evidence a caller already retrieved, too.
+Skip it only when the run neither queries X nor judges X evidence. X is not
+part of catch-up inventory.
 
 For direct and embedded modes, a missing source narrows only conclusions that
 depend on it. For catch-up, also read

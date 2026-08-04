@@ -27,9 +27,10 @@ Use each source for its native role:
   conclusion. Prefer a URL, known handle, or named person already in evidence;
   otherwise check a short slice of the user's own recent directed posts and
   replies. Never like, follow, reply, post, send DMs, or do any other X write,
-  whatever the host tool exposes. Failed or missing X reads only limit
-  conclusions that need X (**Partial**). Person-note, contact-date, and dated
-  relationship Task effects still go through the CRM
+  whatever the host tool exposes. Failed, missing, or incomplete X reads only
+  limit conclusions that need X (**Partial**); truncated history never
+  supports concluding that no exchange happened. Person-note, contact-date,
+  and dated relationship Task effects still go through the CRM
   companion below, not from X alone. Do not use X to find posts to read or
   reply to (issue #12).
 - Repositories and issue trackers supply project decisions, implementation

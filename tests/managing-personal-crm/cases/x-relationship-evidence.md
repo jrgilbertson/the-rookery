@@ -29,7 +29,8 @@ no own-activity path, identity stop, or no-mutation rule for X.
 
 - [ ] 1 → proposes `date_last_contacted` of 2026-07-28, the local date of that
       timestamp in the vault timezone; a short durable prose line or Comment
-      for the career change; and a separate Task for next Tuesday; does not
+      for the career change; and a separate Task due 2026-08-04, the Tuesday
+      after that interaction rather than one derived from run time; does not
       paste the thread into the Person note; does not put Tuesday on Person
       metadata.
 - [ ] 2 → no Person write; show candidates or leave unlinked; ask only if the

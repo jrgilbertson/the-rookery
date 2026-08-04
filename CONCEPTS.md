@@ -105,6 +105,32 @@ Mechanical classes run through bundled helpers that defer to repo-owned
 equivalents; judgment classes run by model instruction. The class list comes
 from PR forensics and is refreshable as review history accumulates.
 
+## Research synthesis
+
+### Storm Research
+
+Deep, source-backed investigation that establishes a baseline, dispatches
+independent research lenses, preserves their disagreements, and synthesizes the
+result for the requested purpose. It may inform a decision, but unlike
+`ce-pov`'s compact, project-grounded verdict it preserves a multi-perspective
+research record as the primary result.
+
+### Research Depth Questions
+
+Questions used throughout Storm Research to clarify the facts, assumptions,
+constraints, and mechanisms beneath material claims and to examine relevant
+system relationships, patterns over time, and downstream effects. They shape
+research and synthesis without requiring separate sections in the briefing.
+Formal system-dynamics models remain separate, user-requested deliverables.
+
+### Storm Fidelity Review
+
+An independent check that compares a Storm Research briefing with its baseline,
+source audit, raw lens returns, and internal run record for lost or invented
+disagreement and untraced analytical claims. Every finding is binding; each
+revision goes to a new clean reviewer until the check is clean or the run records
+reduced verification.
+
 ## Skill quality gates
 
 ### Baseline Test

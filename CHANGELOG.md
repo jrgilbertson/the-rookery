@@ -14,11 +14,12 @@ looked" surface. GitHub Releases mirror its entries.
 ### Changed
 
 - `checking-merge-readiness` digests use Barbara Minto's pyramid principle:
-  recommendation first, then only supporting points. Clean green readouts
-  stay about twelve short lines; pause and do-not-merge grow only around
-  real concerns. The skill body is tightened so agents load less bulk
-  without dropping fetch floors or grade mapping. Battery checklists assert
-  answer-first order and clean-green length.
+  recommendation first, then only supporting points in natural prose (no em
+  dashes). Clean green stays about twelve short lines; debug and do-not-merge
+  grow only around real concerns. Medium risk is framed as **debug** (not a
+  soft pause); do not merge is a hard stop that still leads to debug or
+  redesign. Open PR state is not labeled redundantly. Skill body tightened;
+  battery asserts answer-first order and clean-green length.
 
 ### Added
 

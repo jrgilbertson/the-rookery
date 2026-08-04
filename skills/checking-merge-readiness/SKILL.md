@@ -1,6 +1,6 @@
 ---
 name: checking-merge-readiness
-description: Use when a reviewed pull request is about to be merged and the question is whether it is safe to merge — including phrasings like digest this PR before I merge, what did review actually do to this PR, should I merge this, or is this still the change I set out to make. Reads the pull request description, diff, and review history, digests the review rounds into plain-language themes, checks whether accumulated fixes drifted the change from its original intent, profiles risk as graded named drivers, and ends in one recommendation — merge, pause, or do not merge — plus one owner decision. Do not use for judging whether a branch is ready to open a pull request, for watching or babysitting an open pull request through its review cycle, for performing a code review or resolving review feedback, or for executing the merge itself — a bare instruction to merge is an action request, not a readiness question, and never activates this skill.
+description: Use when a reviewed pull request is about to be merged and the question is whether it is safe to merge — including phrasings like digest this PR before I merge, what did review actually do to this PR, should I merge this, or is this still the change I set out to make. Reads the pull request description, diff, and review history, digests the review rounds into plain-language themes, checks whether accumulated fixes drifted the change from its original intent, profiles risk as graded named drivers, and ends in one recommendation — merge, debug, or do not merge — plus one owner decision. Do not use for judging whether a branch is ready to open a pull request, for watching or babysitting an open pull request through its review cycle, for performing a code review or resolving review feedback, or for executing the merge itself — a bare instruction to merge is an action request, not a readiness question, and never activates this skill.
 license: MIT
 compatibility: Requires the GitHub CLI (`gh`) with the invoking user's read-only credentials for review history. Without `gh`, or on a non-GitHub forge, degrades to an owner-supplied description and an identity-checked local diff, which removes merge from the available recommendations; a high-graded driver still returns do not merge.
 ---
@@ -10,7 +10,7 @@ Digest a fully reviewed pull request before the owner merges it. Grade fully
 from the description, the diff, and the review history. Print a short
 **answer-first** assessment in a colleague's register: the recommendation
 first, then only the supporting points that justify it. Recommendations are
-merge, pause, or do not merge.
+merge, debug, or do not merge.
 
 The digest runs after the review cycle is complete and before the merge.
 Unresolved threads may remain; they are graded as drivers, never grounds to
@@ -32,7 +32,9 @@ a risk driver. Every finding needs evidence; a clean change is called clean.
 
 Resolve which pull request is being digested (argument, current branch's open
 PR, or ask). Name its state: open, draft, merged, or closed. Merged or closed
-is still digestible; state rides on the answer line in step 5.
+is still digestible. In the step 5 answer, name state only when it is not the
+usual pre-merge case: say draft, merged, or closed when those apply; do not
+add a redundant "(open)" when the PR is simply open and about to merge.
 
 Forge access uses the invoking user's existing credentials, read-only. Store
 and log no tokens; request no new authority. Auth failure is a named gap and
@@ -116,7 +118,7 @@ carries changes after the last non-author review submission that approved,
 requested changes, left a substantive COMMENTED body, **or has substantive
 inline comments joined to that submission** (empty top-level body still
 counts if the joined threads are substantive), name
-unreviewed-since-last-review and cap at pause. Resolved threads and a green
+unreviewed-since-last-review and cap at debug. Resolved threads and a green
 approval say nothing about a later commit; COMMENTED-only history is not an
 exception — if no non-author reviewer saw the head, merge is not available.
 - `userContentEdits.diff` is a full post-edit body snapshot, not a patch and
@@ -143,11 +145,11 @@ where possible; when it cannot be checked, name the possible mismatch.
 - Mark history-derived themes unavailable. Never infer review history that
 was not read.
 - Merge is removed from the available outcomes: a recommendation better than
-pause requires the review history this skill was built to digest, while any
+debug requires the review history this skill was built to digest, while any
 high driver still grades do not merge per step 5's mapping.
 
 An empty review history, meaning the fetch succeeded and there is nothing to
-digest, is its own named condition and also caps the recommendation at pause.
+digest, is its own named condition and also caps the recommendation at debug.
 
 Completion: the description, diff, and review history (threads, submission
 bodies, and conversation comments) are each in hand with the floor met, or
@@ -175,7 +177,7 @@ entry has no body, or edit history was not exhausted, intent is unverifiable:
 cap and use attestation below — do not confirm a guess.
 
 When no baseline can be established, intent is unverifiable and the
-recommendation caps at pause. When the description is empty or one line, say
+recommendation caps at debug. When the description is empty or one line, say
 unverifiable and take the owner's open attestation of purpose (name no
 candidate purpose from the diff). Attestation is a prerequisite to grading
 drift, never the terminal decision.
@@ -194,7 +196,7 @@ more files or edge cases under the same purpose is scope growth.
 
 Completion: the baseline is established with its provenance named (earliest
 revision, owner confirmation, or owner attestation), or declared unverifiable
-with the pause cap recorded.
+with the debug cap recorded.
 
 ### 4. Compose the digest
 
@@ -254,8 +256,12 @@ inside sentences.
 Drivers roll up to one internal merge-risk grade. Mapping is fixed:
 
 - Every driver low (or none fire): **merge**.
-- Any driver medium and none high: **pause**, naming the medium drivers.
-- Any driver high: **do not merge**.
+- Any driver medium and none high: **debug**, naming the medium drivers
+(investigate the named concern before merging; not a soft stop-and-idle).
+- Any driver high: **do not merge**, naming the high drivers (or intent
+drift). That is a hard stop on shipping this head as-is; the next work is
+still investigation (debug the blocking issue or pull back for redesign),
+not "pause and wait."
 
 A class with nothing to grade does not fire and counts as low for the
 roll-up. Intent drift (step 4: baseline purpose no longer describes the
@@ -264,16 +270,17 @@ seven drivers. Scope growth alone never does this.
 
 Caps (degraded inputs, empty review history, incomplete history or thin
 payload, unverifiable intent, unreviewed-since-last-review, sampled
-history) remove merge from the available outcomes; they never soften a
-high driver's do not merge. A cap-produced recommendation says the cap
-reason in the same prose. The internal grade is never a second visible
-verdict.
+history) remove merge from the available outcomes and cap at **debug**;
+they never soften a high driver's do not merge. A cap-produced
+recommendation says the cap reason in the same prose. The internal grade
+is never a second visible verdict.
 
 #### Pyramid content (binding order, natural prose)
 
-1. **Answer.** Open with the single recommendation (merge / pause / do not
+1. **Answer.** Open with the single recommendation (merge / debug / do not
 merge), naming what produced it (drivers, caps, or intent drift). Fold PR
-identity and state into that opening so it stands alone.
+identity into that opening. Name draft, merged, or closed state when it
+applies; omit a bare "open" label when the PR is simply open pre-merge.
 2. **Why.** In the next sentences, give the supporting arguments that
 justify the answer (review themes, intent/drift, residual risk, caps),
 each idea once, most decision-relevant first. Weave them as prose, not
@@ -299,7 +306,7 @@ exists, or a medium/high driver needs theme context. If that expansion alone
 pushes past 12 lines on an otherwise green outcome, that is allowed; keep
 the opening answer and the menu compact.
 
-**Concern-grown** (pause or do not merge, or caps / intent drift): expand
+**Concern-grown** (debug or do not merge, or caps / intent drift): expand
 the prose only around medium/high drivers, caps, and intent-drift findings.
 Clean residual is a brief clause or sentence, or omitted. At most a short
 clause that remaining drivers are low, never a per-class table.
@@ -318,15 +325,20 @@ Present exactly one decision menu, aligned to the recommendation and to the
 state step 1 named. Each option is terminal:
 
 1. **Proceed to merge.** The owner merges; this skill executes nothing.
-Offered only on an open, non-draft pull request.
-2. **Pause.** End the run and investigate the named concern. Any later merge
-takes a fresh digest run.
-3. **Pull back for redesign.**
+Offered only on an open, non-draft pull request, and only when the
+recommendation is merge (not when capped at debug or at do not merge).
+2. **Debug the named concern.** End the run and investigate or fix what the
+recommendation named. Offered on debug and on do not merge: both mean work
+remains before this head is safe to ship. Any later merge takes a fresh
+digest run.
+3. **Pull back for redesign.** Offered when the recommendation is do not
+merge, or when the owner chooses redesign over incremental debug. Stronger
+than debug: the change as scoped should not proceed.
 
 A state that cannot be merged from replaces option 1 rather than offering it
 falsely. On a merged or closed pull request the digest is retrospective:
-there is no merge to proceed to, so the menu offers only what is still open,
-filing follow-up work or pulling the change back. On a draft, merging first
+there is no merge to proceed to, so the menu offers only what is still open
+(debug follow-up, redesign, or filing work). On a draft, merging first
 requires marking it ready, which changes the pull request and takes a fresh
 digest; say that in place of the merge option. Step 5's recommendation reads
 the same way on a state that cannot merge: it describes what the evidence

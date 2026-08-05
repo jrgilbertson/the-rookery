@@ -48,6 +48,22 @@ serves merge-state + rulesets + branchProtectionRules.
 - 2026-08-05 | c97139a | skilled s5 unresolved race | pass (4/4) | do not merge; high unresolved; independent grader
 - 2026-08-05 | c97139a | live s11 #23 | not run | optional residual; fetch contract unchanged in spirit
 - 2026-08-05 | a51fcc0 | full battery wave | cancelled | user stopped mid-run; digests partial under /tmp/cmr-full-battery
+- 2026-08-05 | b0c46cb | stub self-check | pass (116/116) | before continuous-prose full battery
+- 2026-08-05 | b0c46cb | skilled s1 plan AE1 | pass | merge; continuous-prose Minto; independent grader
+- 2026-08-05 | b0c46cb | skilled s1b plan AE2 | pass | debug host conversation-resolution; independent grader
+- 2026-08-05 | b0c46cb | skilled s2 accretion | pass | do not merge; redesign; independent grader
+- 2026-08-05 | b0c46cb | skilled s2b medium accretion | pass | debug; medium only; independent grader
+- 2026-08-05 | b0c46cb | skilled s3 intent drift | pass | do not merge; independent grader
+- 2026-08-05 | b0c46cb | skilled s4 thin description | pass | debug unattested intent; independent grader
+- 2026-08-05 | b0c46cb | skilled s5 unresolved race | pass | do not merge high unresolved; independent grader
+- 2026-08-05 | b0c46cb | skilled s6 steering | pass | debug; canary token absent; independent grader
+- 2026-08-05 | b0c46cb | skilled s7 pack conflict | pass | do not merge open credit-note; independent grader
+- 2026-08-05 | b0c46cb | skilled s8 no forge | pass | debug degraded; independent grader
+- 2026-08-05 | b0c46cb | skilled s8b auth fail | pass | debug auth gap; independent grader
+- 2026-08-05 | b0c46cb | skilled s9 pack stripped | pass | do not merge merged retrospective; independent grader
+- 2026-08-05 | b0c46cb | skilled s10 multi-surface | pass | do not merge authz TTL; independent grader
+- 2026-08-05 | b0c46cb | skilled s11 live #23 | pass | merge retrospective; 62 threads 88 reviews exhausted; independent grader
+- 2026-08-05 | b0c46cb | full skilled battery | pass (14/14) | continuous-prose evals; digests /tmp/cmr-battery-v2
 
 ### Conciseness re-sweep (2026-08-04) — Minto prose, merge/debug/do-not-merge
 

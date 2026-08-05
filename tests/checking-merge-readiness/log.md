@@ -31,6 +31,17 @@ GitHub and the non-thread trap, not on stub assertion count.
 Harness: `../fixtures/bin/gh` + opaque `specimen-*` directories. Blind graders
 for skilled/bare pairs. Scenario 11 uses real `gh` against real GitHub.
 
+### Global-pass reframe (2026-08-05) — unreviewed-head demotion, host rules
+
+Plan: `docs/plans/2026-08-05-001-feat-merge-readiness-global-pass-plan.md`.
+Skill reframed as global birth→tip pass; tip residual no longer hard-caps
+merge; host conversation resolution is a process floor. Fixtures: specimen-a
+tip lag (`a91e4f0` after review `f3a9c21`); specimen-l for plan AE2; stub
+serves merge-state + rulesets + branchProtectionRules.
+
+- 2026-08-05 | working tree | stub self-check | pass (116/116) | after merge-rule stub surfaces
+- 2026-08-05 | working tree | skilled battery re-grade | pending | plan AE1 (s1), plan AE2 (s1b), existing s2/s3/s5 still to re-run under skilled digests
+
 ### Conciseness re-sweep (2026-08-04) — Minto prose, merge/debug/do-not-merge
 
 Skilled digests under `/tmp/cmr-conciseness-battery/readouts/` after skill

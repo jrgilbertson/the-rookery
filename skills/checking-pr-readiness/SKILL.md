@@ -1,6 +1,6 @@
 ---
 name: checking-pr-readiness
-description: Use when branch work looks complete and the next step is opening a pull request, or when asked whether the branch is ready to ship, ready for review, ready for CI, or ready for a PR — including phrasings like present your work, final approval on this branch, run the pre-PR checklist, or gate this change before it goes out. Reports the full working surface, confirms the planned work was delivered, verifies that code review, simplification, UI checks, and learnings capture actually ran, sweeps the branch for the finding classes that drive repeated review rounds, and ends in one owner decision plus an evidence pack for the pull request body. Do not use for resolving feedback on a pull request that already exists, for performing a code review or simplification pass, for reviewing a plan or other document, for opening or creating the pull request itself, or for merging.
+description: Use when branch work looks complete and the next step is opening a pull request, or when asked whether the branch is ready to ship, ready for review, ready for CI, or ready for a PR — including phrasings like present your work, final approval on this branch, run the pre-PR checklist, or gate this change before it goes out. Reports the full working surface, confirms the planned work was delivered, verifies that code review, simplification, UI checks, and learnings capture actually ran, sweeps the branch for the finding classes that drive repeated review rounds, and ends in one owner decision plus an evidence pack for the pull request body. Do not use for resolving feedback on a pull request that already exists, for the pre-merge global pass on a reviewed PR (use checking-merge-readiness for birth-to-tip design health, redesign pressure, and host merge rules), for performing a code review or simplification pass, for reviewing a plan or other document, for opening or creating the pull request itself, or for merging.
 license: MIT
 compatibility: Requires a git worktree and read access to the host repository. Companion checks degrade to named skips when their skills or tooling are absent.
 ---
@@ -279,4 +279,9 @@ conversation, not a file. If the session breaks between approval and pull
 request creation, the readout carrying the pack has to be recomposed or  
 supplied again; the pack exists durably only once the pull request body  
 carries it.
+- When `checking-merge-readiness` is also installed, roles stay complementary:
+this gate optimizes entry to review; merge-readiness owns the pre-merge
+global pass (intent drift, accretion, redesign). Neither skill requires the
+other at runtime. An evidence pack in the PR body is optional enrichment for
+merge-readiness, never a required input.
 

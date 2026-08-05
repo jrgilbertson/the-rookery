@@ -13,6 +13,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `checking-merge-readiness` is reframed as a pre-merge **global pass** (birth
+  → tip design health, redesign pressure, follow-up debt) with a thin process
+  residual and host merge-rule check (e.g. required conversation resolution).
+  Tip movement after the last forge review is residual language at most, not a
+  skill-invented hard stop that forces "tag a human." Answer-first pyramid
+  prose and three-light mapping are preserved. `checking-pr-readiness` and
+  WORKFLOWS name complementary shipping-lane roles.
 - `checking-merge-readiness` digests use Barbara Minto's pyramid principle:
   recommendation first, then only supporting points in natural prose (no em
   dashes). Clean green stays about twelve short lines; debug and do not merge

@@ -10,9 +10,9 @@ Check whether a branch is ready to enter the pull request and
 continuous-integration process, then take one owner decision. Internally the
 gate still gathers the full working surface, upstream-step receipts,
 plan-versus-delivered, targeted sweep, and learning signal. The spoken readout
-uses a **Minto pyramid readout** for an executive at the ship gate (shape in
-step 7). A branch is ready when every check below carries a status word, every
-finding has a disposition, and the owner has approved that readout.
+uses a **Minto pyramid readout** for the ship decision (shape in step 7). A
+branch is ready when every check below carries a status word, every finding
+has a disposition, and the owner has approved that readout.
 
 The gate reads. It never edits, stages, commits, pushes, or opens a pull
 request, and it never re-runs a deterministic check the host repository's own
@@ -212,61 +212,51 @@ only what the owner needs for the ship decision.
 
 #### Minto pyramid readout (binding shape)
 
-Shape the final brief as answer-first natural prose. Do not print section
-labels or analysis-bucket headers (not Answer, Why, Evidence, Surface, Gates,
-Upstream, Sweep, or Learning).
+Use for the final human decision brief that carries one recommendation. Write
+answer-first continuous prose. The bracket labels below are authoring
+structure only; omit them from the spoken readout. Do not print analysis-bucket
+headers (Surface, Gates, Upstream, Sweep, Learning, or Answer/Why/Evidence).
 
 **ANSWER**
 - One recommendation (approve and proceed; request changes; or stop and file
   follow-up, as fits the evidence).
-- Short cause clause naming what produced it (gaps, verified checks, or
-  equivalent).
-- Do not argue the case here. Fold branch identity into the opening. Do not
-  open with the working-surface inventory.
+- Short cause clause naming what produced it (gaps, verified checks, or the
+  domain producer).
+- Name the producers here; argue them under Why. Fold branch identity into the
+  opening. Do not open with the working-surface inventory.
 
 **WHY**
-- Reasons the answer is true (arguments, not a tour of analysis surfaces).
-- MECE: one idea each, no overlap, jointly justify the call.
-- Most decision-relevant first: material gaps first (failed or not-verified
+- Reasons the answer is true: arguments, one idea each, MECE, jointly
+  justifying the call.
+- Most decision-relevant first (material gaps first: failed or not-verified
   upstream steps, plan-not-delivered items, open sweep findings, uncaptured
   learning that needs bypass, empty gate discovery).
-- Silence non-drivers: do not fill every analysis surface as inventory.
-- Clean outcome (approve): one affirmative residual that grading found nothing
-  material (what the branch does, surface complete including untracked if any,
-  material checks verified or attested, plan-versus-delivered clean or accepted
-  drift once, learning signal present). Do not restate the cause clause at
-  full length.
+- Print only decision-relevant supports. Do not fill every analysis surface
+  as inventory.
+- Clean outcome: one affirmative residual that grading found nothing material
+  (what the branch does, surface complete including untracked if any, material
+  checks verified or attested, plan-versus-delivered clean or accepted drift
+  once, learning signal present).
 
 **EVIDENCE**
-- Nested under only the reasons that drove the call.
+- Under only the reasons that drove the call.
 - Inline in those sentences, with source pointers (receipts, status words,
-  paths, helper verdicts).
-- No separate Evidence section. No dump at the end.
+  paths, helper verdicts). Parentheses are fine for pointers.
 
 **MENU**
 - After the pyramid body.
 - Options aligned to the answer. Do not offer actions the recommendation
   forbids. Unavailable options say "not offered" or "unavailable" in plain
-  words. Menu is protocol, not a pyramid layer.
+  words.
 
-**Vertical tests**
-- After ANSWER, each support answers: Why?
-- After a support that needs proof, evidence answers: How do you know?
-
-**Anti-patterns (fail the contract even if the checks are right)**
-- Bottom-up analysis with a buried verdict
-- Headers such as Surface / Gates / Upstream / Sweep / Learning
-- Filling every analysis surface as inventory
-- Restating the cause clause at full length in Why
-- Evidence dump at the end
-- Menu options that contradict the recommendation
-
-#### Register
-
-Prefer plain continuous prose that stays legible when markdown is flattened
-or ignored: no em dashes; no markdown heading markers. Supporting detail that
-did not drive the decision stays out of the spoken readout. Offer an appendix
-only if the owner asks for the full status-word inventory.
+**Prose shape**
+- Full sentences and short paragraphs. Prefer periods and commas.
+- Write enough that a sharp colleague can follow without decoding.
+- Avoid telegram compression: em dash stacks and colon reveals (label:
+  punchline) that smash a claim into a fragment.
+- Supporting detail that did not drive the decision stays out of the spoken
+  readout. Offer an appendix only if the owner asks for the full status-word
+  inventory.
 
 Scale which checks appear by applicability, never by how large the diff feels.
 A check is omitted from the spoken readout when the working surface holds no
@@ -274,6 +264,14 @@ path it covers (for example no user-interface files means browser testing and
 design critique are not spoken). Paths touching authentication, authorization,
 payments, data migrations, secrets handling, or a published API contract are
 never silent when they have a finding or an incomplete check.
+
+**Done when**
+- Exactly one recommendation appears, with its producers named.
+- Every printed support answers "Why this recommendation?" and is
+  decision-relevant.
+- Evidence sits only under supports that need it, with pointers.
+- Menu options match the recommendation.
+- Continuous prose: no analysis-bucket headers, no printed bracket labels.
 
 #### Decision menu
 

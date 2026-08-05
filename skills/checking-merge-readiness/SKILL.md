@@ -13,8 +13,8 @@ a recap of individual review comments. Local optimizers (babysit, bot rounds,
 point fixes) clear the queue; this skill asks whether the accumulated change is
 still the right system to put on main.
 
-Print a short **Minto pyramid readout** for an executive at the merge button
-(shape in step 6). Recommendations are merge, debug, or do not merge.
+Print a short **Minto pyramid readout** for the merge decision (shape in step
+6). Recommendations are merge, debug, or do not merge.
 
 Thin floors run first: process residual (is the review loop quiet enough to
 grade?) and host merge rules (for example required conversation resolution).
@@ -344,71 +344,62 @@ The internal grade is never a second visible verdict.
 
 #### Minto pyramid readout (binding shape)
 
-Shape the final brief as answer-first natural prose. Do not print section
-labels or analysis-bucket headers (not Answer, Why, Evidence, Themes, Intent,
-Risk, Drivers, Process, or Host).
+Use for the final human decision brief that carries one recommendation. Write
+answer-first continuous prose. The bracket labels below are authoring
+structure only; omit them from the spoken readout. Do not print analysis-bucket
+headers (Themes, Intent, Risk, Drivers, Process, Host, or Answer/Why/Evidence).
 
 **ANSWER**
 - One recommendation (merge / debug / do not merge).
-- Short cause clause naming what produced it (drivers, caps, intent drift,
-  redesign, or host/process residual).
-- Do not argue the case here. Fold PR identity into the opening. Name draft,
-  merged, or closed when those apply; omit a bare "open" label on ordinary
-  pre-merge digests. No second visible verdict and no numeric score.
+- Short cause clause naming what produced it (drivers, caps, drift, redesign,
+  or host/process residual).
+- Name the producers here; argue them under Why. Fold PR identity into the
+  opening. Name draft, merged, or closed when those apply; omit a bare "open"
+  label on ordinary pre-merge digests. No second visible verdict and no
+  numeric score.
 
 **WHY**
-- Reasons the answer is true (arguments, not a tour of analysis surfaces).
-- MECE: one idea each, no overlap, jointly justify the call.
-- Most decision-relevant first: high drivers, intent drift, and redesign;
+- Reasons the answer is true: arguments, one idea each, MECE, jointly
+  justifying the call.
+- Most decision-relevant first (high drivers, intent drift, and redesign;
   then host or process caps; tip residual last and only when merge is still
-  green.
-- Silence non-drivers: do not fill every analysis surface as inventory.
-- Clean outcome (recommend merge, nothing material): one affirmative residual
-  that grading found nothing material (intent still holds, review closed,
-  floors quiet; tip residual only if useful). Do not restate the cause clause
-  at full length.
+  green).
+- Print only decision-relevant supports. Do not fill every analysis surface
+  as inventory.
+- Clean outcome: one affirmative residual that grading found nothing material.
 
 **EVIDENCE**
-- Nested under only the reasons that drove the call.
+- Under only the reasons that drove the call.
 - Inline in those sentences, with source pointers (thread, round, or file).
-- No separate Evidence section. No dump at the end. No low-driver re-list.
+- Parentheses are fine for pointers. No separate evidence section. No dump at
+  the end.
 
 **MENU**
 - After the pyramid body (step 7).
 - Options aligned to the answer. Do not offer actions the recommendation
-  forbids. Unavailable options say "not offered" in plain words, not
-  strikethrough as the only cue. Menu is protocol, not a pyramid layer.
+  forbids. Unavailable options say "not offered" in plain words.
 
-**Vertical tests**
-- After ANSWER, each support answers: Why?
-- After a support that needs proof, evidence answers: How do you know?
+**Prose shape**
+- Full sentences and short paragraphs. Prefer periods and commas.
+- Write enough that a sharp colleague can follow without decoding.
+- Avoid telegram compression: em dash stacks and colon reveals (label:
+  punchline) that smash a claim into a fragment.
+- Grade fully in step 5, then only speak the pyramid.
 
-**Anti-patterns (fail the contract even if the grade is right)**
-- Bottom-up analysis with a buried verdict
-- Headers such as Themes / Intent / Risk / Drivers
-- Filling every analysis surface as inventory
-- Restating the cause clause at full length in Why
-- Evidence dump at the end
-- Menu options that contradict the recommendation
+**Print budgets**
+- Clean green (recommend merge, nothing material): final readout plus menu at
+  most about **12 non-blank short lines**. Pre-readout dialogue is outside
+  this budget.
+- Concern-grown: expand Why and Evidence only around the producers of the
+  light. Never a per-class driver table.
 
-#### Register and print budgets
-
-Prefer plain continuous prose that stays legible when markdown is flattened
-or ignored: no em dashes (use commas, periods, colons, or parentheses); no
-markdown heading markers. Light emphasis is optional; the light must still be
-clear without it. Grade fully in step 5, then only speak the pyramid.
-
-**Clean green** (recommend merge, no material drivers, no caps, no intent
-drift): final readout plus decision menu is at most about **12 non-blank
-short lines**. Pre-readout dialogue is outside this budget.
-
-**Concern-grown** (debug or do not merge, or caps / intent drift / redesign):
-expand Why and Evidence only around the producers of the light. Never a
-per-class driver table.
-
-Completion: ANSWER with producers named not argued; MECE Why that silences
-non-drivers; Evidence only under reasons that drove the call; MENU aligned to
-the answer; vertical tests hold; anti-patterns absent.
+**Done when**
+- Exactly one recommendation appears, with its producers named.
+- Every printed support answers "Why this recommendation?" and is
+  decision-relevant.
+- Evidence sits only under supports that need it, with pointers.
+- Menu options match the recommendation.
+- Continuous prose: no analysis-bucket headers, no printed bracket labels.
 
 ### 7. Take the one owner decision
 

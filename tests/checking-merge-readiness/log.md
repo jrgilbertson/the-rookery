@@ -47,6 +47,7 @@ serves merge-state + rulesets + branchProtectionRules.
 - 2026-08-05 | c97139a | skilled s3 intent drift | pass (4/4) | do not merge; redesign menu; independent grader
 - 2026-08-05 | c97139a | skilled s5 unresolved race | pass (4/4) | do not merge; high unresolved; independent grader
 - 2026-08-05 | c97139a | live s11 #23 | not run | optional residual; fetch contract unchanged in spirit
+- 2026-08-05 | a51fcc0 | full battery wave | cancelled | user stopped mid-run; digests partial under /tmp/cmr-full-battery
 
 ### Conciseness re-sweep (2026-08-04) — Minto prose, merge/debug/do-not-merge
 

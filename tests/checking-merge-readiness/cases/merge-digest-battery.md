@@ -126,13 +126,13 @@ the last non-author review commit (`f3a9c21`). Host conversation resolution
 is required but every thread is resolved. Tip residual may be named briefly;
 it must **not** alone force debug or "tag a human" as the only menu path.
 
-- [ ] The first non-blank substance of the final readout is the
-      recommendation: merge (pyramid answer-first), as a single recommendation
-      with no second visible verdict or numeric score. PR identity/state may
-      share that line.
-- [ ] Supports after the answer are MECE (one idea per paragraph or tight
-      cluster), not a bottom-up tour (themes then drift then drivers then
-      verdict). No section headers such as Themes, Intent, Risk, or Drivers.
+- [ ] Apex is the first substance: recommendation merge + short cause clause
+      (producers named, not argued); single light; no second visible verdict
+      or numeric score. PR identity/state may share that opening. Apex at most
+      two short sentences.
+- [ ] Level 1 arguments are MECE, silence non-drivers, and on this clean green
+      case use one affirmative residual (not a bottom-up tour of themes then
+      drift then drivers). No Apex/Level/Themes/Intent/Risk/Drivers headers.
 - [ ] Tip after last forge review does **not** alone remove merge or force
       debug; optional brief tip residual is allowed and sits after load-bearing
       supports when merge is still green.

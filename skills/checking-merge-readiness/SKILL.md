@@ -14,10 +14,9 @@ point fixes) clear the queue; this skill asks whether the accumulated change is
 still the right system to put on main.
 
 Print a short assessment in Barbara Minto's **pyramid** shape for an executive
-at the merge button: recommendation first, then MECE supporting reasons,
-evidence only under the concerns that drove the call, then the decision menu.
-Recommendations are merge, debug, or do not merge. Prefer plain prose that
-survives flat rendering across harnesses (no report headers, no em dashes).
+at the merge button. Pyramid is logic order in natural prose, not labeled
+blocks or analysis-bucket headers. Recommendations are merge, debug, or do not
+merge. Prefer plain prose that survives flat rendering across harnesses.
 
 Thin floors run first: process residual (is the review loop quiet enough to
 grade?) and host merge rules (for example required conversation resolution).
@@ -316,11 +315,9 @@ sampling disclosed with counts.
 ### 6. Present the readout and the recommendation
 
 Grade fully in step 5 first. Then speak only what the owner needs for the
-merge decision, in Barbara Minto's **pyramid principle**: answer first, then
-mutually exclusive supporting reasons (MECE), then evidence only under the
-reasons that drove the call, then the decision menu. Write as a colleague
-briefing an executive at the merge button: continuous sentences and short
-paragraphs, not a form and not a bottom-up walkthrough of the analysis.
+merge decision. Write as a colleague briefing an executive at the merge
+button: continuous sentences and short paragraphs, not a form and not a
+bottom-up walkthrough of the analysis.
 
 #### Recommendation mapping (internal grade → one light)
 
@@ -347,34 +344,51 @@ outcomes and cap at **debug**; they never soften a high driver's do not
 merge. A cap-produced recommendation says the cap reason in the same prose.
 The internal grade is never a second visible verdict.
 
-#### Pyramid content (binding order)
+#### Pyramid (binding shape)
 
-1. **Answer (one opening sentence).** Lead with the single recommendation
-(merge / debug / do not merge) and what produced it (named driver, cap,
-intent drift, or redesign). Fold PR identity into that sentence. Name draft,
+Pyramid is logic order in natural prose, not labeled blocks or analysis-bucket
+headers. Do not print Apex, Level 1, Level 2, Themes, Intent, Risk, Drivers,
+Process, or Host as headers on the page.
+
+```text
+Apex     → governing thought: one recommendation + short cause clause
+           (producers named, not argued)
+Level 1  → Why?: MECE arguments, most decision-relevant first;
+           silence non-drivers; on clean green, one affirmative residual
+Level 2  → How know?: evidence only under arguments that need it (inline)
+Then     → decision menu (protocol after the pyramid, not a pyramid layer)
+```
+
+**Apex.** One recommendation (merge / debug / do not merge) plus a short
+cause clause that names producers without arguing them (for example high
+complexity accretion, host conversation resolution, intent drift). Fold PR
+identity into that opening. Apex is at most two short sentences. Name draft,
 merged, or closed when those apply; omit a bare "open" label on ordinary
-pre-merge digests.
-2. **Why (MECE supports).** Next paragraphs are the supporting arguments that
-justify the answer only. Each paragraph is one idea; supports do not overlap
-or restate each other. Order: high drivers, intent drift, and redesign first;
-host or process caps next; brief tip residual last and only when merge is
-still green. Themes exist to back a support, not as their own tour.
-3. **Evidence (under load-bearing supports only).** Put concrete pointers
-inside the sentences that need them (thread, round, or file in parentheses).
-Do not re-list low drivers, do not walk all seven classes, do not reprint the
-full process residual when it is settled and did not drive the light.
-4. **Decision menu** (step 7) after the prose body, never before the answer.
+pre-merge digests. No second visible verdict and no numeric score.
+
+**Level 1.** Reasons the apex is true. Each paragraph is one idea; arguments
+do not overlap. Order: high drivers, intent drift, and redesign first; host
+or process caps next; tip residual last and only when merge is still green.
+Silence non-drivers: do not tour themes, all seven classes, or settled
+process when they did not produce the light. On clean green, Level 1 is one
+affirmative residual (intent still holds, review closed, floors quiet; tip
+residual only if useful). Themes back an argument when needed; they are not
+their own tour.
+
+**Level 2.** How you know, nested only under Level 1 arguments that need it:
+thread, round, or file pointers in parentheses inside those sentences. Never
+a separate Evidence section. Never re-list low drivers or walk every class.
+
+**Then.** Decision menu (step 7): options aligned to the answer; actions only,
+no re-arguing Level 1. Unavailable options say "not offered" in plain words,
+not strikethrough as the only cue.
 
 #### Register and harness-safe prose
 
-- Pyramid is the *logic* of the prose, not labels on the page. Never print
-  section headers such as Themes, Intent, Risk, Drivers, Process, or Host.
-- No second visible verdict and no numeric score.
 - Prefer plain continuous prose that stays legible when markdown is flattened
   or ignored: no em dashes (use commas, periods, colons, or parentheses); no
-  markdown heading markers; no strikethrough for unavailable menu options
-  (say "not offered" in plain words). Light emphasis is optional; the light
-  must still be clear without it.
+  markdown heading markers. Light emphasis is optional; the light must still
+  be clear without it.
 - Do **not** print bottom-up analysis (themes, then drift, then risk, then
   the verdict). Grade fully in step 5, then only speak the pyramid.
 
@@ -383,19 +397,16 @@ full process residual when it is settled and did not drive the light.
 **Clean green** (recommend merge, no material drivers, no caps, no intent
 drift): final readout plus decision menu is at most about **12 non-blank
 short lines**. Pre-readout dialogue (baseline confirmation, attestation) is
-outside this budget. On green, one short support cluster is enough: intent
-still holds, review closed (one sentence with aggregate pointers, expand only
-for fixed-differently or declined judgments), host and process floors quiet,
-tip residual only if useful.
+outside this budget.
 
 **Concern-grown** (debug or do not merge, or caps / intent drift / redesign):
-expand only around the medium/high drivers, caps, redesign, or intent-drift
-findings that produced the light. Settled process or clean residual is a brief
-clause or omitted. Never a per-class driver table.
+expand Level 1 and Level 2 only around the producers of the light. Settled
+process or clean residual is omitted unless it is the producer. Never a
+per-class driver table.
 
-Completion: pyramid-shaped prose with exactly one recommendation named by its
-producers; MECE supports; evidence only under load-bearing concerns; budgets
-above; no report headers; no second visible verdict.
+Completion: apex with producers named not argued; MECE Level 1 that silences
+non-drivers; Level 2 only under arguments that need it; menu as protocol after
+the pyramid; budgets above; no report headers; no second visible verdict.
 
 ### 7. Take the one owner decision
 

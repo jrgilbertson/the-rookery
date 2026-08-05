@@ -126,13 +126,15 @@ the last non-author review commit (`f3a9c21`). Host conversation resolution
 is required but every thread is resolved. Tip residual may be named briefly;
 it must **not** alone force debug or "tag a human" as the only menu path.
 
-- [ ] Apex is the first substance: recommendation merge + short cause clause
-      (producers named, not argued); single light; no second visible verdict
-      or numeric score. PR identity/state may share that opening. Apex at most
-      two short sentences.
-- [ ] Level 1 arguments are MECE, silence non-drivers, and on this clean green
-      case use one affirmative residual (not a bottom-up tour of themes then
-      drift then drivers). No Apex/Level/Themes/Intent/Risk/Drivers headers.
+- [ ] ANSWER is the first substance: one recommendation merge + short cause
+      clause (producers named, not argued); single light; no second visible
+      verdict or numeric score. PR identity/state may share that opening.
+- [ ] WHY is MECE, silences non-drivers, and on this clean green case is one
+      affirmative residual that grading found nothing material (not a
+      bottom-up tour of themes then drift then drivers). No Answer/Why/
+      Evidence/Themes/Intent/Risk/Drivers headers on the page.
+- [ ] EVIDENCE is nested under only the reasons that drove the call (inline
+      pointers); no separate Evidence section and no dump at the end.
 - [ ] Tip after last forge review does **not** alone remove merge or force
       debug; optional brief tip residual is allowed and sits after load-bearing
       supports when merge is still green.

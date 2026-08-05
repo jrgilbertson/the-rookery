@@ -10,10 +10,9 @@ Check whether a branch is ready to enter the pull request and
 continuous-integration process, then take one owner decision. Internally the
 gate still gathers the full working surface, upstream-step receipts,
 plan-versus-delivered, targeted sweep, and learning signal. The spoken readout
-uses Barbara Minto's **pyramid** for an executive at the ship gate. Pyramid is
-logic order in natural prose, not labeled blocks or analysis-bucket headers.
-A branch is ready when every check below carries a status word, every finding
-has a disposition, and the owner has approved that readout.
+uses a **Minto pyramid readout** for an executive at the ship gate (shape in
+step 7). A branch is ready when every check below carries a status word, every
+finding has a disposition, and the owner has approved that readout.
 
 The gate reads. It never edits, stages, commits, pushes, or opens a pull
 request, and it never re-runs a deterministic check the host repository's own
@@ -211,53 +210,63 @@ entry or an aggregate file-cap excess.
 Complete steps 1 through 6 fully first (they are the evidence). Then speak
 only what the owner needs for the ship decision.
 
-#### Pyramid (binding shape)
+#### Minto pyramid readout (binding shape)
 
-Pyramid is logic order in natural prose, not labeled blocks or analysis-bucket
-headers. Do not print Apex, Level 1, Level 2, Surface, Gates, Upstream, Sweep,
-or Learning as headers on the page.
+Shape the final brief as answer-first natural prose. Do not print section
+labels or analysis-bucket headers (not Answer, Why, Evidence, Surface, Gates,
+Upstream, Sweep, or Learning).
 
-```text
-Apex     → governing thought: one recommendation + short cause clause
-           (producers named, not argued)
-Level 1  → Why?: MECE arguments, most decision-relevant first;
-           silence non-drivers; on clean approve, one affirmative residual
-Level 2  → How know?: evidence only under arguments that need it (inline)
-Then     → decision menu (protocol after the pyramid, not a pyramid layer)
-```
+**ANSWER**
+- One recommendation (approve and proceed; request changes; or stop and file
+  follow-up, as fits the evidence).
+- Short cause clause naming what produced it (gaps, verified checks, or
+  equivalent).
+- Do not argue the case here. Fold branch identity into the opening. Do not
+  open with the working-surface inventory.
 
-**Apex.** One recommended owner decision plus a short cause clause that names
-producers without arguing them. Typical shapes: approve and proceed to the
-finishing path (all material checks clean or explicitly accepted); request
-changes (named blocking gap); or stop and file follow-up (owner should not
-ship this surface). Fold branch identity into that opening. Apex is at most
-two short sentences. Do not open with the working-surface inventory.
+**WHY**
+- Reasons the answer is true (arguments, not a tour of analysis surfaces).
+- MECE: one idea each, no overlap, jointly justify the call.
+- Most decision-relevant first: material gaps first (failed or not-verified
+  upstream steps, plan-not-delivered items, open sweep findings, uncaptured
+  learning that needs bypass, empty gate discovery).
+- Silence non-drivers: do not fill every analysis surface as inventory.
+- Clean outcome (approve): one affirmative residual that grading found nothing
+  material (what the branch does, surface complete including untracked if any,
+  material checks verified or attested, plan-versus-delivered clean or accepted
+  drift once, learning signal present). Do not restate the cause clause at
+  full length.
 
-**Level 1.** Reasons the apex is true. Each paragraph is one idea. Order
-material gaps first: failed or not-verified upstream steps, plan-not-delivered
-items, sweep findings that still need a disposition, uncaptured learning that
-would require bypass, missing repository gates when discovery found none.
-Silence non-drivers: do not dump every status word or every sweep class that
-passed. On clean approve, Level 1 is one affirmative residual: what the branch
-does in plain language, surface complete (including untracked if any),
-material checks verified or attested, plan-versus-delivered clean or accepted
-drift named once, learning signal present.
+**EVIDENCE**
+- Nested under only the reasons that drove the call.
+- Inline in those sentences, with source pointers (receipts, status words,
+  paths, helper verdicts).
+- No separate Evidence section. No dump at the end.
 
-**Level 2.** How you know, nested only under Level 1 arguments that need it:
-receipts, status words, paths, or helper verdicts in those sentences. Never a
-separate Evidence section. Never a full checklist tour on approve.
+**MENU**
+- After the pyramid body.
+- Options aligned to the answer. Do not offer actions the recommendation
+  forbids. Unavailable options say "not offered" or "unavailable" in plain
+  words. Menu is protocol, not a pyramid layer.
 
-**Then.** Decision menu: options aligned to the answer; actions only, no
-re-arguing Level 1. Unavailable options say "not offered" or "unavailable" in
-plain words, not strikethrough as the only cue.
+**Vertical tests**
+- After ANSWER, each support answers: Why?
+- After a support that needs proof, evidence answers: How do you know?
 
-#### Register and harness-safe prose
+**Anti-patterns (fail the contract even if the checks are right)**
+- Bottom-up analysis with a buried verdict
+- Headers such as Surface / Gates / Upstream / Sweep / Learning
+- Filling every analysis surface as inventory
+- Restating the cause clause at full length in Why
+- Evidence dump at the end
+- Menu options that contradict the recommendation
 
-- Prefer plain continuous prose that stays legible when markdown is flattened
-  or ignored: no em dashes; no markdown heading markers.
-- Supporting detail that did not drive the decision stays out of the spoken
-  readout. Offer an appendix only if the owner asks for the full status-word
-  inventory.
+#### Register
+
+Prefer plain continuous prose that stays legible when markdown is flattened
+or ignored: no em dashes; no markdown heading markers. Supporting detail that
+did not drive the decision stays out of the spoken readout. Offer an appendix
+only if the owner asks for the full status-word inventory.
 
 Scale which checks appear by applicability, never by how large the diff feels.
 A check is omitted from the spoken readout when the working surface holds no
@@ -331,7 +340,8 @@ this gate optimizes entry to review; merge-readiness owns the pre-merge
 global pass (intent drift, accretion, redesign). Neither skill requires the
 other at runtime. An evidence pack in the PR body is optional enrichment for
 merge-readiness, never a required input.
-- A bottom-up inventory (surface, then gates, then every status word, then the
-decision) fails this skill even when the checks are right. Pyramid order is
-part of the contract.
+- A bottom-up inventory, analysis-bucket headers, inventory of every surface,
+an evidence dump, or a menu that contradicts the recommendation fails this
+skill even when the checks are right. The Minto pyramid readout is part of the
+contract.
 

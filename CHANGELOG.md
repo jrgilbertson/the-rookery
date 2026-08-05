@@ -14,12 +14,13 @@ looked" surface. GitHub Releases mirror its entries.
 ### Changed
 
 - Owner-facing readouts for `checking-merge-readiness` and
-  `checking-pr-readiness` use a tightened Minto pyramid (Apex: recommendation
-  + short cause; Level 1: MECE Why with silence non-drivers; Level 2: How know
-  nested under arguments only; Then: decision menu as protocol). Pyramid is
-  logic order in natural prose, not labeled blocks. Each skill carries its own
-  contract; there is no shared presentation reference. Pre-PR gate still
-  gathers full checks internally; only the spoken decision brief is pyramid.
+  `checking-pr-readiness` use a Minto pyramid readout (ANSWER: recommendation
+  + short cause; WHY: MECE, silence non-drivers; EVIDENCE nested under drivers
+  only; MENU after the pyramid), with vertical Why?/How know? tests and named
+  anti-patterns. Shape is answer-first natural prose without section labels.
+  Each skill carries its own contract; there is no shared presentation
+  reference. Pre-PR gate still gathers full checks internally; only the spoken
+  decision brief is pyramid.
 - `checking-merge-readiness` is reframed as a pre-merge **global pass** (birth
   → tip design health, redesign pressure, follow-up debt) with a thin process
   residual and host merge-rule check (e.g. required conversation resolution).

@@ -13,10 +13,8 @@ a recap of individual review comments. Local optimizers (babysit, bot rounds,
 point fixes) clear the queue; this skill asks whether the accumulated change is
 still the right system to put on main.
 
-Print a short assessment in Barbara Minto's **pyramid** shape for an executive
-at the merge button. Pyramid is logic order in natural prose, not labeled
-blocks or analysis-bucket headers. Recommendations are merge, debug, or do not
-merge. Prefer plain prose that survives flat rendering across harnesses.
+Print a short **Minto pyramid readout** for an executive at the merge button
+(shape in step 6). Recommendations are merge, debug, or do not merge.
 
 Thin floors run first: process residual (is the review loop quiet enough to
 grade?) and host merge rules (for example required conversation resolution).
@@ -344,69 +342,73 @@ outcomes and cap at **debug**; they never soften a high driver's do not
 merge. A cap-produced recommendation says the cap reason in the same prose.
 The internal grade is never a second visible verdict.
 
-#### Pyramid (binding shape)
+#### Minto pyramid readout (binding shape)
 
-Pyramid is logic order in natural prose, not labeled blocks or analysis-bucket
-headers. Do not print Apex, Level 1, Level 2, Themes, Intent, Risk, Drivers,
-Process, or Host as headers on the page.
+Shape the final brief as answer-first natural prose. Do not print section
+labels or analysis-bucket headers (not Answer, Why, Evidence, Themes, Intent,
+Risk, Drivers, Process, or Host).
 
-```text
-Apex     → governing thought: one recommendation + short cause clause
-           (producers named, not argued)
-Level 1  → Why?: MECE arguments, most decision-relevant first;
-           silence non-drivers; on clean green, one affirmative residual
-Level 2  → How know?: evidence only under arguments that need it (inline)
-Then     → decision menu (protocol after the pyramid, not a pyramid layer)
-```
+**ANSWER**
+- One recommendation (merge / debug / do not merge).
+- Short cause clause naming what produced it (drivers, caps, intent drift,
+  redesign, or host/process residual).
+- Do not argue the case here. Fold PR identity into the opening. Name draft,
+  merged, or closed when those apply; omit a bare "open" label on ordinary
+  pre-merge digests. No second visible verdict and no numeric score.
 
-**Apex.** One recommendation (merge / debug / do not merge) plus a short
-cause clause that names producers without arguing them (for example high
-complexity accretion, host conversation resolution, intent drift). Fold PR
-identity into that opening. Apex is at most two short sentences. Name draft,
-merged, or closed when those apply; omit a bare "open" label on ordinary
-pre-merge digests. No second visible verdict and no numeric score.
+**WHY**
+- Reasons the answer is true (arguments, not a tour of analysis surfaces).
+- MECE: one idea each, no overlap, jointly justify the call.
+- Most decision-relevant first: high drivers, intent drift, and redesign;
+  then host or process caps; tip residual last and only when merge is still
+  green.
+- Silence non-drivers: do not fill every analysis surface as inventory.
+- Clean outcome (recommend merge, nothing material): one affirmative residual
+  that grading found nothing material (intent still holds, review closed,
+  floors quiet; tip residual only if useful). Do not restate the cause clause
+  at full length.
 
-**Level 1.** Reasons the apex is true. Each paragraph is one idea; arguments
-do not overlap. Order: high drivers, intent drift, and redesign first; host
-or process caps next; tip residual last and only when merge is still green.
-Silence non-drivers: do not tour themes, all seven classes, or settled
-process when they did not produce the light. On clean green, Level 1 is one
-affirmative residual (intent still holds, review closed, floors quiet; tip
-residual only if useful). Themes back an argument when needed; they are not
-their own tour.
+**EVIDENCE**
+- Nested under only the reasons that drove the call.
+- Inline in those sentences, with source pointers (thread, round, or file).
+- No separate Evidence section. No dump at the end. No low-driver re-list.
 
-**Level 2.** How you know, nested only under Level 1 arguments that need it:
-thread, round, or file pointers in parentheses inside those sentences. Never
-a separate Evidence section. Never re-list low drivers or walk every class.
+**MENU**
+- After the pyramid body (step 7).
+- Options aligned to the answer. Do not offer actions the recommendation
+  forbids. Unavailable options say "not offered" in plain words, not
+  strikethrough as the only cue. Menu is protocol, not a pyramid layer.
 
-**Then.** Decision menu (step 7): options aligned to the answer; actions only,
-no re-arguing Level 1. Unavailable options say "not offered" in plain words,
-not strikethrough as the only cue.
+**Vertical tests**
+- After ANSWER, each support answers: Why?
+- After a support that needs proof, evidence answers: How do you know?
 
-#### Register and harness-safe prose
+**Anti-patterns (fail the contract even if the grade is right)**
+- Bottom-up analysis with a buried verdict
+- Headers such as Themes / Intent / Risk / Drivers
+- Filling every analysis surface as inventory
+- Restating the cause clause at full length in Why
+- Evidence dump at the end
+- Menu options that contradict the recommendation
 
-- Prefer plain continuous prose that stays legible when markdown is flattened
-  or ignored: no em dashes (use commas, periods, colons, or parentheses); no
-  markdown heading markers. Light emphasis is optional; the light must still
-  be clear without it.
-- Do **not** print bottom-up analysis (themes, then drift, then risk, then
-  the verdict). Grade fully in step 5, then only speak the pyramid.
+#### Register and print budgets
 
-#### Print budgets
+Prefer plain continuous prose that stays legible when markdown is flattened
+or ignored: no em dashes (use commas, periods, colons, or parentheses); no
+markdown heading markers. Light emphasis is optional; the light must still be
+clear without it. Grade fully in step 5, then only speak the pyramid.
 
 **Clean green** (recommend merge, no material drivers, no caps, no intent
 drift): final readout plus decision menu is at most about **12 non-blank
-short lines**. Pre-readout dialogue (baseline confirmation, attestation) is
-outside this budget.
+short lines**. Pre-readout dialogue is outside this budget.
 
 **Concern-grown** (debug or do not merge, or caps / intent drift / redesign):
-expand Level 1 and Level 2 only around the producers of the light. Settled
-process or clean residual is omitted unless it is the producer. Never a
+expand Why and Evidence only around the producers of the light. Never a
 per-class driver table.
 
-Completion: apex with producers named not argued; MECE Level 1 that silences
-non-drivers; Level 2 only under arguments that need it; menu as protocol after
-the pyramid; budgets above; no report headers; no second visible verdict.
+Completion: ANSWER with producers named not argued; MECE Why that silences
+non-drivers; Evidence only under reasons that drove the call; MENU aligned to
+the answer; vertical tests hold; anti-patterns absent.
 
 ### 7. Take the one owner decision
 
@@ -455,7 +457,7 @@ rather than taking the decision. Once is enough, and it belongs here rather
 than at the readout, because the gap that matters is the one while the owner
 is reading.
 
-The pyramid readout then the decision menu is the whole protocol. Present,
+The Minto pyramid readout then the decision menu is the whole protocol. Present,
 take one decision, execute nothing: no merge, no comment, no write.
 
 Completion: the owner made exactly one decision from the menu; the run did not
@@ -476,5 +478,7 @@ merge rather than skip the check.
 - When both `checking-pr-readiness` and this skill are installed, they
 complement each other: pre-PR gate versus pre-merge global pass. Neither
 requires the other at runtime.
-- A bottom-up recap (themes then drift then drivers then verdict) fails this
-skill even when the grade is right. Pyramid order is part of the contract.
+- A bottom-up recap, analysis-bucket headers, inventory of every surface, an
+evidence dump, or a menu that contradicts the recommendation fails this skill
+even when the grade is right. The Minto pyramid readout is part of the
+contract.

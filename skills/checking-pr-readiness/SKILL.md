@@ -1,19 +1,20 @@
 ---
 name: checking-pr-readiness
-description: Use when branch work looks complete and the next step is opening a pull request, or when asked whether the branch is ready to ship, ready for review, ready for CI, or ready for a PR — including phrasings like present your work, final approval on this branch, run the pre-PR checklist, or gate this change before it goes out. Reports the full working surface, confirms the planned work was delivered, verifies that code review, simplification, UI checks, and learnings capture actually ran, sweeps the branch for the finding classes that drive repeated review rounds, and ends in one owner decision plus an evidence pack for the pull request body. Do not use for resolving feedback on a pull request that already exists, for the pre-merge global pass on a reviewed PR (use checking-merge-readiness for birth-to-tip design health, redesign pressure, and host merge rules), for performing a code review or simplification pass, for reviewing a plan or other document, for opening or creating the pull request itself, or for merging.
+description: Use when branch work looks complete and the next step is opening a pull request, or when asked whether the branch is ready to ship, ready for review, ready for CI, or ready for a PR — including phrasings like present your work, final approval on this branch, run the pre-PR checklist, or gate this change before it goes out. Gathers the full working surface, upstream-step receipts, plan-versus-delivered, targeted sweep, and learning signal, then briefs the owner with a Minto pyramid decision readout (recommended action first) and ends in one owner decision plus an evidence pack for the pull request body. Do not use for resolving feedback on a pull request that already exists, for the pre-merge global pass on a reviewed PR (use checking-merge-readiness for birth-to-tip design health, redesign pressure, and host merge rules), for performing a code review or simplification pass, for reviewing a plan or other document, for opening or creating the pull request itself, or for merging.
 license: MIT
 compatibility: Requires a git worktree and read access to the host repository. Companion checks degrade to named skips when their skills or tooling are absent.
 ---
 # Checking PR Readiness
 
 Check whether a branch is ready to enter the pull request and
-continuous-integration process, then take one owner decision. The gate reports
-the full working surface, verifies that the shipping workflow's upstream steps
-actually ran, compares what was planned against what was delivered, sweeps the
-branch for the finding classes that drive repeated automated-review rounds, and
-confirms a durable learning was captured or explicitly planned. A branch is
-ready when every check below carries a status word, every finding has a
-disposition, and the owner has approved that readout.
+continuous-integration process, then take one owner decision. Internally the
+gate still gathers the full working surface, upstream-step receipts,
+plan-versus-delivered, targeted sweep, and learning signal. The spoken readout
+uses Barbara Minto's **pyramid principle** for an executive at the ship gate:
+recommended decision first, then MECE supports, evidence only under gaps that
+drive the call, then the menu. A branch is ready when every check below
+carries a status word, every finding has a disposition, and the owner has
+approved that readout.
 
 The gate reads. It never edits, stages, commits, pushes, or opens a pull
 request, and it never re-runs a deterministic check the host repository's own
@@ -208,21 +209,55 @@ entry or an aggregate file-cap excess.
 
 ### 7. Compose the readout and take the owner decision
 
-Compose an executive readout that fits on one screen: what changed in plain
-language, the working surface, repository gates and upstream steps with their
-status words, plan-versus-delivered, sweep findings in the reference's order,
-the learning signal, and the risks that remain. Supporting detail stays out of
-the readout and is rendered as an appendix only if the owner asks for it.
+Complete steps 1 through 6 fully first (they are the evidence). Then speak
+only what the owner needs for the ship decision, in Barbara Minto's **pyramid
+principle**: answer first, then mutually exclusive supporting reasons (MECE),
+then evidence only under the gaps that drove the call, then the menu.
 
-Scale the readout to the change surface by applicability, never by how large the
-diff feels. A check is collapsed to one line or reported not applicable or
-skipped only when the working surface holds no path it covers — no
-user-interface files means browser testing and design critique are not
-applicable. Name every collapsed check with its status word; none is dropped
-silently. Paths touching authentication, authorization, payments, data
-migrations, secrets handling, or a published API contract are never collapsed.
+#### Pyramid content (binding order)
 
-Then present exactly one decision menu:
+1. **Answer (one opening sentence).** Lead with the recommended owner
+decision and what produced it. Typical shapes: approve and proceed to the
+finishing path (all material checks clean or explicitly accepted); request
+changes (named blocking gap); or stop and file follow-up (owner should not
+ship this surface). Fold branch identity into that sentence. Do not open with
+the working-surface inventory.
+2. **Why (MECE supports).** Next paragraphs justify that decision only. Each
+paragraph is one idea. Order material gaps first: failed or not-verified
+upstream steps, plan-not-delivered items, sweep findings that still need a
+disposition, uncaptured learning that would require bypass, missing
+repository gates when discovery found none. When the recommendation is
+approve, one short support cluster is enough: what the branch does in plain
+language, surface is complete (including untracked if any), material checks
+are verified or attested with status words named inline, plan-versus-delivered
+is clean or accepted drift is named once, learning signal is present.
+3. **Evidence (under load-bearing supports only).** Name receipts, status
+words, paths, or helper verdicts inside the sentences that need them. Do not
+dump a full checklist of every status word when the owner is approving a
+clean surface. Do not walk every sweep class that passed.
+4. **Decision menu** after the prose body, never before the answer.
+
+#### Register and harness-safe prose
+
+- Pyramid is the *logic* of the prose, not labels on the page. Never print
+  section headers such as Surface, Gates, Upstream, Sweep, or Learning.
+- Prefer plain continuous prose that stays legible when markdown is flattened
+  or ignored: no em dashes; no markdown heading markers; no strikethrough for
+  unavailable options (say "not offered" or "unavailable" in plain words).
+- Supporting detail that did not drive the decision stays out of the spoken
+  readout. Offer an appendix only if the owner asks for the full status-word
+  inventory.
+
+Scale which checks appear by applicability, never by how large the diff feels.
+A check is omitted from the spoken readout when the working surface holds no
+path it covers (for example no user-interface files means browser testing and
+design critique are not spoken). Paths touching authentication, authorization,
+payments, data migrations, secrets handling, or a published API contract are
+never silent when they have a finding or an incomplete check.
+
+#### Decision menu
+
+Present exactly one decision menu:
 
 1. Approve and proceed to the finishing path.
 2. Request changes.
@@ -241,21 +276,22 @@ Options 3 and 4 are non-terminal: when one finishes, apply the opening's
 recompose rule — re-read the working surface from step 1 and, when it changed,
 re-run every step that read that surface — repository gates (step 2), upstream
 receipts (step 3), the plan comparison (step 4), the learning signal (step 5),
-and the sweep (step 6) — then present the menu again. Approval binds to the
-surface the owner was shown.
+and the sweep (step 6) — then present the pyramid readout and menu again.
+Approval binds to the surface the owner was shown.
 
 On approval, fill
 [assets/evidence-pack-template.md](assets/evidence-pack-template.md) and compose
-it into the readout: plan-versus-delivered status, checks run with their status
-words and results, the explicit not-verified and attested list, sweep findings
-with their dispositions, design-critique scores when present, and the learning
-signal with any recorded override. Hand the pack to the finishing path inside
-the readout so that path renders it into the pull request body. Write nothing to
-the repository tree and open no pull request.
+it into the handoff for the finishing path (not as a second bottom-up readout
+before the decision): plan-versus-delivered status, checks run with their
+status words and results, the explicit not-verified and attested list, sweep
+findings with their dispositions, design-critique scores when present, and the
+learning signal with any recorded override. Hand the pack to the finishing path
+so that path renders it into the pull request body. Write nothing to the
+repository tree and open no pull request.
 
-Completion: the owner made exactly one decision from the menu against a readout
-matching the current working surface, and an approval carries the composed
-evidence pack in that readout.
+Completion: the owner made exactly one decision from the menu against a
+pyramid-shaped readout matching the current working surface, and an approval
+carries the composed evidence pack for the finishing path.
 
 ## Gotchas
 
@@ -284,4 +320,7 @@ this gate optimizes entry to review; merge-readiness owns the pre-merge
 global pass (intent drift, accretion, redesign). Neither skill requires the
 other at runtime. An evidence pack in the PR body is optional enrichment for
 merge-readiness, never a required input.
+- A bottom-up inventory (surface, then gates, then every status word, then the
+decision) fails this skill even when the checks are right. Pyramid order is
+part of the contract.
 

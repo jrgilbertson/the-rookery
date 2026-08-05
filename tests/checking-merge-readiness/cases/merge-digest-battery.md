@@ -127,19 +127,24 @@ is required but every thread is resolved. Tip residual may be named briefly;
 it must **not** alone force debug or "tag a human" as the only menu path.
 
 - [ ] The first non-blank substance of the final readout is the
-      recommendation: merge (answer-first), as a single recommendation with
-      no second visible verdict or numeric score. PR identity/state may
+      recommendation: merge (pyramid answer-first), as a single recommendation
+      with no second visible verdict or numeric score. PR identity/state may
       share that line.
+- [ ] Supports after the answer are MECE (one idea per paragraph or tight
+      cluster), not a bottom-up tour (themes then drift then drivers then
+      verdict). No section headers such as Themes, Intent, Risk, or Drivers.
 - [ ] Tip after last forge review does **not** alone remove merge or force
-      debug; optional brief tip residual is allowed.
+      debug; optional brief tip residual is allowed and sits after load-bearing
+      supports when merge is still green.
 - [ ] Decision menu offers proceed to merge; does not present "tag a human
-      non-author re-review" as the sole path.
+      non-author re-review" as the sole path. Unavailable options are plain
+      words (not offered), not markdown strikethrough as the only cue.
 - [ ] Supporting themes are natural prose with source pointer(s). Pure
       fixed-as-suggested material may stay one sentence with aggregate
       pointers. This specimen includes a fixed-differently filename choice;
-      the readout expands that judgment call in prose rather than a
+      the readout expands that judgment call under a support, not as a
       multi-bucket theme walkthrough.
-- [ ] Risk support is at most one residual line that nothing material was
+- [ ] Risk support is at most one residual clause that nothing material was
       found (all low / none fired), not a seven-class driver table.
 - [ ] When themes stay collapsed, the final readout plus decision menu is
       at most about 12 non-blank short lines (pre-readout baseline dialogue
@@ -161,10 +166,12 @@ clean design, one open **non-high** nit thread (test rename), host
 Principle drivers stay low; host rule blocks merge → **debug**, naming the
 rule. Do not use specimen-e here (that is plan AE6 / high race).
 
-- [ ] Recommendation is at most debug (debug preferred; never merge while
-      an unresolved thread remains under a resolution-required host rule).
+- [ ] First substance is recommendation at most debug (debug preferred;
+      never merge while an unresolved thread remains under a
+      resolution-required host rule), pyramid answer-first.
 - [ ] The readout names the host conversation-resolution requirement (or
-      equivalent ruleset language) among the producers of the cap.
+      equivalent ruleset language) among the producers of the cap, as a
+      load-bearing support (not after a full clean global tour).
 - [ ] The open nit thread is not graded high as a correctness race; plan AE6
       remains the high-unresolved oracle on specimen-e.
 - [ ] Decision menu offers debug of the process/host concern, not solely

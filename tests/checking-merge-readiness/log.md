@@ -40,7 +40,13 @@ tip lag (`a91e4f0` after review `f3a9c21`); specimen-l for plan AE2; stub
 serves merge-state + rulesets + branchProtectionRules.
 
 - 2026-08-05 | working tree | stub self-check | pass (116/116) | after merge-rule stub surfaces
-- 2026-08-05 | working tree | skilled battery re-grade | pending | plan AE1 (s1), plan AE2 (s1b), existing s2/s3/s5 still to re-run under skilled digests
+- 2026-08-05 | c97139a | skilled s1 plan AE1 tip residual | pass (8/8) | merge; tip residual not hard-stop; proceed-to-merge offered; independent grader
+- 2026-08-05 | c97139a | skilled s1b plan AE2 host resolution | pass (4/4) | debug; host conversation-resolution named; nit not high race; independent grader
+- 2026-08-05 | c97139a | skilled s2 accretion | pass (6/6) | do not merge; high accretion/speculative; redesign; independent grader
+- 2026-08-05 | c97139a | skilled s2b moderate accretion | pass (4/4) | debug; complexity medium; independent grader
+- 2026-08-05 | c97139a | skilled s3 intent drift | pass (4/4) | do not merge; redesign menu; independent grader
+- 2026-08-05 | c97139a | skilled s5 unresolved race | pass (4/4) | do not merge; high unresolved; independent grader
+- 2026-08-05 | c97139a | live s11 #23 | not run | optional residual; fetch contract unchanged in spirit
 
 ### Conciseness re-sweep (2026-08-04) — Minto prose, merge/debug/do-not-merge
 

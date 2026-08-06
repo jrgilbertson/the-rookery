@@ -48,25 +48,44 @@ participant handles, group status, and available contact names. Pass the chosen
 `chat_id`. A display name alone is not an identity binding. Apply the previously
 loaded identity rules before attaching private evidence to a Person note.
 
-For a direct or embedded request, select one candidate chat and the smallest
-date window that can change the current contact, memory, relevance, or duplicate
-decision. Use `imsg history` with an explicit limit. Add `--attachments` only
-when attachment metadata can change that named decision; never convert or read
-attachment contents speculatively.
+**Ordinary request** (no day-window scan): select one candidate chat and the
+smallest date window that can change the current contact, memory, relevance, or
+duplicate decision. Use `imsg history` with an explicit limit. Add
+`--attachments` only when attachment metadata can change that decision; never
+convert or read attachment contents speculatively.
+
+**Day-window scan** (wind-down Daily CRM Scan): preflight read access. Enumerate
+chats with `imsg chats --limit <finite>`. For each chat, read history with
+`--start` set to the first local midnight of the scan window and `--end` set to
+the midnight after the last local day in the configured vault timezone, each as
+ISO 8601 including that boundary’s applicable UTC offset, plus a finite limit.
+Treat empty in-window history as no activity for that chat only when the
+returned count is below the limit. If the returned count equals the limit, do
+not treat the chat as fully observed—continue with a supported next page or
+tighter bound when available; otherwise mark that chat and dependent Messages
+coverage Partial before zero-effect conclusions. Stop expanding the chat list
+when it is shorter than the limit or the finite chat budget is exhausted; mark
+Messages coverage Partial if the budget truncates before full-window
+confidence. Skip catch-up breadth probes and stats reconciliation. Attribute
+incoming rows by `sender`. For unanswered outgoing directed attempts, require
+`is_from_me` plus participant or recipient metadata that identifies the
+contact; leave the attempt unresolved when recipient binding is unavailable.
+After identity binding, evaluate substantive direct contact per bindable person
+under the relationship contract (including targeted group participation); leave
+unknown handles unresolved. Ambient reactions and broadcasts are not contact.
 
 Use `imsg search` only when a concrete phrase or topic is necessary and a
 conversation cannot first be selected safely. Search results remain identity
-candidates until their chat and participants are resolved.
+candidates until chat and participants are resolved.
 
-Use the message `guid` and history-row `chat_id` as source-local deduplication
-evidence, not as a new CRM registry. Use `created_at` as the native interaction
-instant and apply the previously loaded time-normalization rules before
-proposing `date_last_contacted`. Preserve direct versus group context and the
-actual sender when deciding whether contact was substantive.
+Use message `guid` and history-row `chat_id` as source-local dedup evidence, not
+a CRM registry. Use `created_at` as the native interaction instant and apply the
+loaded time-normalization rules before proposing `date_last_contacted`. Keep
+direct vs group context and the actual sender when judging contact.
 
-Completion: the query is bounded to a defensible identity, purpose, date
-window, and result limit, with stable identifiers and native timestamps kept as
-source evidence only.
+Completion: each query has a defensible identity, purpose, date window, and
+result limit; stable identifiers, per-sender attribution, and native timestamps
+are retained as source evidence only.
 
 ## Prove catch-up breadth
 

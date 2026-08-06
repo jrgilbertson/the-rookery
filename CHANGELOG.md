@@ -85,6 +85,13 @@ looked" surface. GitHub Releases mirror its entries.
   skill-invented hard stop that forces "tag a human." Three-light mapping is
   preserved. `checking-pr-readiness` and WORKFLOWS name complementary
   shipping-lane roles.
+- `personal-chief-of-staff` wind-down runs a required Daily CRM Scan before the
+  initial reconstruction (closing day, or short one-to-two-day miss expansion),
+  evaluates direct and group messages per speaker, allows zero effects, and
+  writes nothing while preparing the bundle. Deeper history stays ad hoc.
+- `managing-personal-crm` covers each configured source for a caller-required
+  day-window scan, keeps per-conversation history narrow, and attributes group
+  Messages by sender with conservative identity binding.
 - `checking-merge-readiness` digests use Barbara Minto's pyramid principle:
   recommendation first, then only supporting points in natural prose (no em
   dashes). Clean green stays about twelve short lines; debug and do not merge

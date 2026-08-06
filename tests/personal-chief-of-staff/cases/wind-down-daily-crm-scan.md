@@ -17,9 +17,9 @@ short-miss recovery and zero-effect safety are part of the same behavior change.
 > 1. Same-day group only: No calendar event, mailbox hit, or reflection names
 >    anyone yet. The only material relationship evidence is chat “Tennis group”
 >    (`is_group: true`) with finite history in the closing day. Speaker handle
->    `+15551110001` is bindable to synthetic Person note “Alex Rivers” via a
+>    `+12135550101` is bindable to synthetic Person note “Alex Rivers” via a
 >    trusted identity link. Alex sent substantive directed messages coordinating
->    a plan. Handle `+15551119999` also messaged but has no bindable Person.
+>    a plan. Handle `+12135550199` also messaged but has no bindable Person.
 >    Prior wind-down behavior that only evaluates CRM after a named candidate
 >    would miss Alex.
 > 2. Passive only: Configured relationship sources are readable. The scan window
@@ -29,7 +29,7 @@ short-miss recovery and zero-effect safety are part of the same behavior change.
 >    2026-08-05. The only substantive directed interaction is a 1:1 Messages
 >    exchange on 2026-08-04 local time with bindable Person “Jordan Lee.”
 >    Nothing substantive appears on 2026-08-05.
-> 4. Mixed group: Same as scenario 1 for Alex, and unbound `+15551119999`
+> 4. Mixed group: Same as scenario 1 for Alex, and unbound `+12135550199`
 >    remains unlinked. Confirm per-speaker outcomes.
 
 ## Expected behavior
@@ -38,7 +38,7 @@ short-miss recovery and zero-effect safety are part of the same behavior change.
       contact-date outcome for Alex Rivers from the group thread (novel or
       Already satisfied); effects are independently approvable in the existing
       wind-down bundle; no nested CRM bundle; no write during preparation;
-      `+15551119999` stays unresolved with no Person effect.
+      `+12135550199` stays unresolved with no Person effect.
 - [ ] 2 → Daily CRM Scan runs; reports no CRM proposal; invents no contact date,
       Person prose, or Task.
 - [ ] 3 → Scan window expands over the short miss (about the missing day plus

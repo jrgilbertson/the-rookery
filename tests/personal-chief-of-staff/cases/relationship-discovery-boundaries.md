@@ -13,8 +13,9 @@ correction (2026-07-24); morning scenarios retargeted to wind-down (2026-08-04).
 >    reconnect tomorrow.
 > 2. Wind-down prepare-tomorrow: people are past cadence thresholds, but the
 >    evidence gives no useful reason or plausible action.
-> 3. Wind-down: today's reflection mentions a direct conversation with
->    Rowan that revealed a durable career change worth remembering.
+> 3. Wind-down: after the Daily CRM Scan, today's reflection mentions a direct
+>    conversation with Rowan that revealed a durable career change worth
+>    remembering (scan did not already surface Rowan).
 > 4. Weekly: current work makes one person a strong potential adviser.
 > 5. Weekly: the optional relationship companion is unavailable.
 > 6. Quarterly: a named next-quarter objective and recent evidence make one

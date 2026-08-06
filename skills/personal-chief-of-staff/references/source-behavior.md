@@ -8,7 +8,10 @@ it.
 
 Start with the mode's time window and likely decisions. Query sources only
 when they can confirm a candidate item, reveal a material conflict, or supply
-context needed for judgment.
+context needed for judgment. Wind-down's Daily CRM Scan is the exception: when
+the companion is available, cover configured relationship interaction sources
+for the scan window through the companion before the initial reconstruction,
+even without a named candidate person.
 
 Use each source for its native role:
 
@@ -22,10 +25,14 @@ Use each source for its native role:
 - Meeting and contact sources supply conversation and relationship evidence;
   they do not replace the canonical task or CRM destination.
 - X (authenticated Grok or host X search tools when available) supplies
-  optional interaction evidence, timestamps, and public post content when a
-  review conclusion turns on it. Query only when it can change a material
-  conclusion. Prefer a URL, known handle, or named person already in evidence;
-  otherwise check a short slice of the user's own recent directed posts and
+  optional interaction evidence, timestamps, and public post content. Outside
+  wind-down’s Daily CRM Scan, query only when it can change a material
+  conclusion. During that scan, when the companion is available, include
+  authenticated X under its current read-only source contract for the scan
+  window even without a named candidate person—still pointer-first or a short
+  finite slice, never exhaustive history. Prefer a URL, known handle, or named
+  person already in evidence when the query is candidate-driven; otherwise for
+  the scan check a short slice of the user's own recent directed posts and
   replies, but only after confirming the authenticated account is the user's;
   a shared or secondary account's activity is not the user's. Never like,
   follow, reply, post, send DMs, or do any other X write, whatever the host
@@ -102,12 +109,11 @@ user's attention could improve the outcome.
 
 When the configured `managing-personal-crm` companion is available, use its
 embedded mode for supported relationship judgment without transferring
-ownership of the chief-of-staff review. Wind-down and weekly modes may
-deliberately inspect active relationship cadence and current work for useful
-connections. Wind-down may also evaluate a substantive direct interaction for a
-contact-date change and relationship-load-bearing meaning. Other modes use
-relationship judgment only when their existing evidence already makes a
-person materially relevant.
+ownership of the chief-of-staff review. Wind-down runs the Daily CRM Scan in
+`references/wind-down.md` before the initial reconstruction. Wind-down and
+weekly modes may also inspect active relationship cadence and current work for
+useful connections. Other modes use relationship judgment only when existing
+evidence already makes a person materially relevant.
 
 Crossing a cadence threshold is not enough by itself. Surface a person only
 when the current context supports a useful reason and plausible action. Return

@@ -11,6 +11,10 @@ a glossary, not a specification or catch-all.
 
 A reviewed next-day outcome recorded during wind-down with an observable finish line and a concise rationale for why it matters. When the live daily-journal template includes a configured Meaningful Commitments section, that journal carries three to five of them as next-day intent; without the section, ordinary next-day planning continues. They express intent without replacing canonical task state or calendar capacity, and they do not require a separate morning reaffirm step.
 
+### Daily CRM Scan
+
+Required wind-down pass over configured relationship interaction sources for the active scan window, run before the initial reconstruction whether or not a candidate person already surfaced. Default window: closing local day. After a short miss of one or two immediately prior local days (missing prior journals), expand over those days plus the closing day as a catch-up breath. Attribute messages by sender; evaluate substantive direct contact for each bindable person; leave unknown handles unresolved. Covers contact-date outcomes and selective durable meaning. Separate from prepare-tomorrow’s overdue / useful-tomorrow exception check. Excludes CRM catch-up mode, exhaustive history, and indiscriminate Person-note creation.
+
 ## Workflow processes
 
 ### Grilling Session

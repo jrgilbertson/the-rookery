@@ -13,6 +13,64 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Review fixes and repeatable test coverage for that efficiency pass. The two
+  capped listings (`surface-report.sh` categories, `evidence-freshness.sh`
+  mentions) now drain their own input instead of closing the pipe early, so a
+  surface past the pipe buffer reports its exact count and examples rather than
+  dying at exit 141 with no verdict. A supplied `--merge-base` is validated on
+  both base-reading helpers — against the merge base the resolved base yields,
+  or against HEAD ancestry when no base resolves — because an unchecked one
+  silently empties the committed category. `fetch-pr-history.sh` refuses a null
+  `pullRequest` and a null floor identity field, stops when a connection reports
+  another page with no cursor to resume from, and keeps fetched surfaces in
+  files rather than command arguments; every one of those paths exits 4 with
+  nothing on stdout, so a partial history can never be read as complete.
+  `references/risk-rubric.md` corrects a stale step reference and trims bold to
+  definition sites; `references/sweep-classes.md` drops an unverifiable
+  provenance claim and gains the helper exit → status word table as SSOT.
+  Two harnesses cover the behavior: the new
+  `tests/checking-merge-readiness/fixtures/run-fetch-checks.sh` drives the fetch
+  helper against a scripted pagination stub (page union without duplicate ids,
+  nested thread-comment resume, mid-run and malformed-page failures, rejected
+  identities, missing resume cursor, fingerprint stability and body
+  containment), and `run-helper-checks.sh` gains the listing caps, the
+  `--merge-base` cases, the untracked mentions search, and an exit-map pin that
+  holds every observed (verdict, exit) pair against that new table.
+- Efficiency pass on `checking-merge-readiness` and `checking-pr-readiness`.
+  Merge-readiness gains `scripts/fetch-pr-history.sh`: one run paginates
+  every review-history surface to exhaustion and emits a single floor-only
+  payload plus a step 7 fingerprint, replacing model-driven page-by-page
+  GraphQL; `--fingerprint` mode re-emits digests with no body text, so the
+  pre-decision stability check compares outside the conversation (verified
+  ~11x smaller than the full payload on a real 14-review PR). Step 2 now
+  summarizes `statusCheckRollup` before it enters the conversation and folds
+  step 1's resolution into one `gh pr view` call. PR-readiness bounds gate
+  discovery to gate-defining sections, runs the judgment sweep in one diff
+  pass, recomposes proportionately to what a dispatched step changed, and its
+  helpers accept `--base`/`--merge-base` pass-through; `surface-report.sh`
+  and `evidence-freshness.sh` cap path listings at exact-count-plus-examples
+  (`--full` restores dumps), and evidence-freshness's mentions search now
+  uses `git grep` plus the untracked listing instead of walking ignored
+  trees. Verdict vocabularies and exit codes unchanged.
+- Slop-and-duplication pass on `checking-merge-readiness` and
+  `checking-pr-readiness`: bold trimmed to definition sites, structural
+  labels, and the outcome mapping; duplicated restatements removed (Done-when
+  recap bullets, the sweep-class ordering rationale, the evidence-pack
+  status-word roster, first-principles' framing note); the merge digest's
+  pre-decision re-check unrolled into a readable list; both descriptions
+  collapsed to one trigger per branch. The Minto readout shape stays
+  duplicated per skill — every surveyed skills repo (Anthropic's, Pocock's,
+  superpowers, compound-engineering) keeps skill folders self-contained, so
+  each copy now carries a maintainer note naming its mirror. That convention
+  is now a repo rule in CONTRIBUTING.md: every skill stands on its own; share
+  by skill name or duplicate with a mirror note, never by cross-folder path.
+- Writing-for-agents pass on `checking-merge-readiness` and
+  `checking-pr-readiness`: merge fetch floor / traps / fingerprint disclosed
+  to `references/fetch-floor.md`; both descriptions pruned to triggers and
+  outcomes; positive briefing register over ban catalogs; SSOT for tip residual,
+  incomplete-history caps, edit-snapshot semantics, and PR helper exit → status
+  mapping. Leading words: *incomplete history*, *theme bins*, *brief*,
+  *recompose*, *status word*.
 - Owner-facing readouts for `checking-merge-readiness` and
   `checking-pr-readiness` use a Minto pyramid readout in continuous prose
   (answer first with producers named; MECE why; evidence under driving reasons

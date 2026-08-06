@@ -32,5 +32,6 @@ This is a personal project with **no support SLA**. I read issues and PRs, but r
 
 - **`main` is the install source.** Installs pull from the default branch, so whatever lands on `main` is instantly what people get, and it stays install-clean. Experiments live on branches.
 - **The same-door rule.** I install from this repo the same way you do. Nothing in it may depend on context that exists only on my machine. That means no absolute paths, no private repo names, and no personal-environment assumptions. Contributions are held to the same rule.
+- **Every skill stands on its own.** A skill folder is the unit of install, so nothing in it may reference a file in another skill's folder — the Agent Skills spec resolves paths from the skill root, and a cross-folder path breaks the moment someone installs one skill without its sibling. Share material one of two ways: cite a sibling *skill by name* and degrade gracefully when it's absent, or duplicate the material into each folder with a maintainer note naming its mirror. A shared file across skill folders is never the answer.
 - **The README lists every skill.** When a skill lands in `skills/`, it gets a line in the README's skills section in the same change.
 - **Docs ship public.** The working documents in `docs/` (plans, learnings) are part of the repo on purpose. The process is part of what's being shared.

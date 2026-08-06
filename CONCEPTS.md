@@ -73,7 +73,9 @@ never be laundered into a green result.
 
 The contract is executable, not prose: a committed, rerunnable fixture runner
 asserts the exact verdict-and-exit pair for every documented state, including
-adversarial states. A helper whose contract exists only in its header comment
+adversarial states, and the runner ships in the same change as the helper it
+pins — a helper that merges ahead of its fixtures is unfalsifiable for exactly
+that window. A helper whose contract exists only in its header comment
 is itself a prose-only invariant — the defect class it exists to catch.
 
 ### Merge Digest

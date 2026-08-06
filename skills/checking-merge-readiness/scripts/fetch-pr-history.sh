@@ -176,7 +176,8 @@ jq -c '.data.repository.pullRequest
 # Floor identity fields the skill compares against later; a null here means the
 # fetch answered but not with the history the floor requires.
 missing=$(jq -r '[to_entries[]
-  | select(.key == "headRefOid" or .key == "baseRefName" or .key == "baseRefOid")
+  | select(.key == "headRefOid" or .key == "baseRefName" or .key == "baseRefOid"
+           or .key == "author")
   | select(.value == null) | .key] | join(", ")' "$tmp/identity.out")
 [ -z "$missing" ] || die4 "identity missing $missing"
 

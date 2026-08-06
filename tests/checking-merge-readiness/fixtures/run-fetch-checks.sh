@@ -44,11 +44,11 @@ def page(after, nodes, nxt=None, more=None):
             "hasNextPage": nxt is not None if more is None else more,
             "endCursor": nxt}
 
-def identity(body=None, base_ref={"target": {"oid": "base-oid"}}):
+def identity(body=None, base_ref={"target": {"oid": "base-oid"}}, author={"login": "pr-author"}):
     return {"state": "OPEN", "isDraft": False, "headRefOid": "head-oid",
             "baseRefName": "main", "updatedAt": "2026-01-09T00:00:00Z",
             "body": body if body is not None else f"description {S}",
-            "author": {"login": "pr-author"}, "baseRef": base_ref}
+            "author": author, "baseRef": base_ref}
 
 def review(n, body=None):
     return {"id": f"REV{n}", "author": {"login": f"reviewer-{n}"},
@@ -145,6 +145,8 @@ write("notfound", {"identity": None})
 
 write("nullfloor", {"identity": identity(base_ref=None)})
 
+write("nullauthor", {"identity": identity(author=None)})
+
 # A body far past ARG_MAX: fetched text that reached a command argument would
 # fail here as something other than a clean run.
 write("bigbody", {"identity": identity(),
@@ -237,6 +239,10 @@ run nullfloor
 code_is "null base ref: exit 4" 4
 err_has "null base ref: names the missing field" "baseRefOid"
 stdout_empty "null base ref: no payload printed"
+run nullauthor
+code_is "null author: exit 4" 4
+err_has "null author: names the missing field" "author"
+stdout_empty "null author: no payload printed"
 
 echo "== E. resume cursor the forge never issued =="
 # Pins finding #7: hasNextPage with no endCursor must stop the run, not drop

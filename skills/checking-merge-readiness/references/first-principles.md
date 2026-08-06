@@ -91,11 +91,3 @@ every review comment but leaves the design harder to change fails this test
 even when no single round refused. Grade the failure through complexity
 accretion, speculative generality, and redesign pressure in risk-rubric.md;
 this section supplies the test, not an eighth driver class.
-
-## A note on the framing
-
-No prior literature names AI-review-induced defensive-complexity creep, the
-pattern where each automated review round extracts a little more guarding,
-abstraction, or state machinery than the change needs. This skill's framing
-establishes the concept rather than citing it; the principles above are the
-established canon it composes from.

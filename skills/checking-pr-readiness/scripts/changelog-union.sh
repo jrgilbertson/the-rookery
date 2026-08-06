@@ -11,7 +11,8 @@
 # finishing path stages untracked paths and they ship with the change.
 #
 # Usage:
-#   changelog-union.sh [--defer <gate-name>] [--help]
+#   changelog-union.sh [--base <ref>] [--merge-base <sha>] [--defer <gate-name>]
+#                      [--help]
 #
 # Output states. Line 1 is always `verdict: <word>`; human detail follows.
 #
@@ -43,7 +44,9 @@
 #   verdict: not run                exit 2  usage error (unknown option)
 #   verdict: not run                exit 4  git is unavailable, this is not a
 #                                           git repository, a git read over the
-#                                           surface or the changelog failed, or
+#                                           surface or the changelog failed, a
+#                                           supplied --merge-base failed
+#                                           validation, or
 #                                           no unambiguous default branch
 #                                           resolved while the
 #                                           branch has commits — the committed
@@ -62,8 +65,15 @@ usage() {
 changelog-union.sh — branch-work-in-changelog check
 
 Usage:
-  changelog-union.sh [--defer <gate-name>] [--help]
+  changelog-union.sh [--base <ref>] [--merge-base <sha>] [--defer <gate-name>]
+                     [--help]
 
+  --base <ref>        Use <ref> as the default branch instead of resolving one.
+  --merge-base <sha>  Use <sha> as the merge base instead of computing one. It
+                      is validated: whenever a base resolves (--base or a
+                      default branch) it must equal that base's merge base with
+                      HEAD, and with no base at all it must be an ancestor of
+                      HEAD. A supplied merge base that fails validation exits 4.
   --defer <gate-name> Report this class as owned by the named repository gate
                       and compare nothing (exit 3).
   --help              Print this text and exit 0.
@@ -84,6 +94,8 @@ fail_usage() {
 }
 
 defer_gate=""
+supplied_base=""
+supplied_merge_base=""
 
 while [ "$#" -gt 0 ]; do
 	case "$1" in
@@ -95,6 +107,18 @@ while [ "$#" -gt 0 ]; do
 		[ "$#" -ge 2 ] || fail_usage "--defer requires a gate name"
 		[ -n "$2" ] || fail_usage "--defer requires a non-empty gate name"
 		defer_gate="$2"
+		shift 2
+		;;
+	--base)
+		[ "$#" -ge 2 ] || fail_usage "--base requires a ref"
+		[ -n "$2" ] || fail_usage "--base requires a non-empty ref"
+		supplied_base="$2"
+		shift 2
+		;;
+	--merge-base)
+		[ "$#" -ge 2 ] || fail_usage "--merge-base requires a commit"
+		[ -n "$2" ] || fail_usage "--merge-base requires a non-empty commit"
+		supplied_merge_base="$2"
 		shift 2
 		;;
 	*)
@@ -134,6 +158,15 @@ fail_read() {
 	printf 'verdict: not run\n'
 	printf 'reason: the %s read could not be completed: %s\n' "$1" "$2"
 	printf 'detail: a failed git read is not an empty surface, so no changelog verdict is reported.\n'
+	exit 4
+}
+
+# A merge base that fails validation is as unusable as one that fails to read:
+# it silently shrinks the committed category, so it takes the same hard exit.
+fail_merge_base() {
+	printf 'verdict: not run\n'
+	printf 'reason: the supplied merge base is not usable: %s\n' "$1"
+	printf 'detail: the committed category is measured from the merge base, so an unverified one is not compared against the changelog.\n'
 	exit 4
 }
 
@@ -212,39 +245,65 @@ if [ -z "$changelog" ]; then
 fi
 
 base_ref=""
-head_ref=$(git symbolic-ref --quiet refs/remotes/origin/HEAD 2>/dev/null || true)
-if [ -n "$head_ref" ]; then
-	base_ref="${head_ref#refs/remotes/}"
+if [ -n "$supplied_base" ]; then
+	base_ref="$supplied_base"
 else
-	# Tiered like surface-report.sh: a tier with more than one live candidate
-	# is ambiguous, and an ambiguous base leaves committed unmeasured rather
-	# than diffing against a guess. Full ref namespaces, so a tag named main
-	# or master can never satisfy a branch fallback.
-	for tier in "refs/remotes/origin/main refs/remotes/origin/master" "refs/heads/main refs/heads/master"; do
-		found=""
-		found_count=0
-		for candidate in $tier; do
-			if git rev-parse --verify --quiet "$candidate" >/dev/null 2>&1; then
-				found="$candidate"
-				found_count=$((found_count + 1))
+	# Resolution is attempted even when --merge-base is supplied: a base that
+	# resolves is what the supplied merge base is checked against, and a
+	# supplied value that cannot be checked gets the weaker ancestor check.
+	head_ref=$(git symbolic-ref --quiet refs/remotes/origin/HEAD 2>/dev/null || true)
+	if [ -n "$head_ref" ]; then
+		base_ref="${head_ref#refs/remotes/}"
+	else
+		# Tiered like surface-report.sh: a tier with more than one live candidate
+		# is ambiguous, and an ambiguous base leaves committed unmeasured rather
+		# than diffing against a guess. Full ref namespaces, so a tag named main
+		# or master can never satisfy a branch fallback.
+		for tier in "refs/remotes/origin/main refs/remotes/origin/master" "refs/heads/main refs/heads/master"; do
+			found=""
+			found_count=0
+			for candidate in $tier; do
+				if git rev-parse --verify --quiet "$candidate" >/dev/null 2>&1; then
+					found="$candidate"
+					found_count=$((found_count + 1))
+				fi
+			done
+			if [ "$found_count" -eq 1 ]; then
+				base_ref="$found"
 			fi
+			[ "$found_count" -eq 0 ] || break
 		done
-		if [ "$found_count" -eq 1 ]; then
-			base_ref="$found"
-		fi
-		[ "$found_count" -eq 0 ] || break
-	done
+	fi
 fi
 
 committed=""
 merge_base=""
-if [ -n "$base_ref" ] && [ "$head_exists" -eq 1 ]; then
+if [ -n "$supplied_merge_base" ] && [ "$head_exists" -eq 1 ]; then
+	# A supplied merge base is verified as a commit before use, so a typo
+	# fails with the read named instead of a confusing diff error.
+	read_or_fail "merge base" rev-parse --verify --quiet "${supplied_merge_base}^{commit}"
+	merge_base="$git_out"
+	# An unchecked merge base decides the committed category on its own: HEAD
+	# passed here empties the committed diff, and a branch that recorded its
+	# work in an earlier commit then reads as `missing`. Whenever a base
+	# resolves, the supplied value must be the merge base that base yields;
+	# only with no base at all is the weaker ancestor check the best available.
+	if [ -n "$base_ref" ]; then
+		read_or_fail "merge base" merge-base HEAD "$base_ref"
+		if [ "$merge_base" != "$git_out" ]; then
+			fail_merge_base "supplied --merge-base ${supplied_merge_base} resolves to ${merge_base}, but the merge base with ${base_ref} is ${git_out}"
+		fi
+	else
+		git merge-base --is-ancestor "$merge_base" HEAD 2>/dev/null ||
+			fail_merge_base "supplied --merge-base ${supplied_merge_base} is not an ancestor of HEAD"
+	fi
+elif [ -n "$base_ref" ] && [ "$head_exists" -eq 1 ]; then
 	read_or_fail "merge base" merge-base HEAD "$base_ref"
 	merge_base="$git_out"
-	if [ -n "$merge_base" ]; then
-		read_or_fail "committed" diff --name-only "$merge_base" HEAD
-		committed="$git_out"
-	fi
+fi
+if [ -n "$merge_base" ]; then
+	read_or_fail "committed" diff --name-only "$merge_base" HEAD
+	committed="$git_out"
 fi
 
 # With commits on the branch but no resolvable default branch, the committed
@@ -252,7 +311,7 @@ fi
 # something there would be a silent pass. Positive evidence (`present`) from
 # the measurable categories is still honest; the negative verdicts are not.
 committed_measured=1
-if [ "$head_exists" -eq 1 ] && [ -z "$base_ref" ]; then
+if [ "$head_exists" -eq 1 ] && [ -z "$base_ref" ] && [ -z "$merge_base" ]; then
 	committed_measured=0
 fi
 

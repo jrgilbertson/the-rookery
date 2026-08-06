@@ -1,6 +1,6 @@
 ---
 name: checking-pr-readiness
-description: Use when branch work looks complete and the next step is opening a pull request, or when asked whether the branch is ready to ship, ready for review, ready for CI, or ready for a PR — including phrasings like present your work, final approval on this branch, run the pre-PR checklist, or gate this change before it goes out. Gathers the full working surface, upstream-step receipts, plan-versus-delivered, targeted sweep, and learning signal, then briefs the owner with a Minto pyramid decision readout (recommended action first) and ends in one owner decision plus an evidence pack for the pull request body. Do not use for resolving feedback on a pull request that already exists, for the pre-merge global pass on a reviewed PR (use checking-merge-readiness for birth-to-tip design health, redesign pressure, and host merge rules), for performing a code review or simplification pass, for reviewing a plan or other document, for opening or creating the pull request itself, or for merging.
+description: Use when branch work looks complete and the next step is opening a pull request, or when asked whether the branch is ready to ship — including phrasings like present your work, final approval on this branch, run the pre-PR checklist, or gate this change before it goes out. Ends in one owner decision plus an evidence pack for the pull request body. Do not use for resolving feedback on a pull request that already exists, for the pre-merge global pass on a reviewed PR (use checking-merge-readiness), for performing a code review or simplification pass, for reviewing a plan or other document, for opening or creating the pull request itself, or for merging.
 license: MIT
 compatibility: Requires a git worktree and read access to the host repository. Companion checks degrade to named skips when their skills or tooling are absent.
 ---
@@ -8,38 +8,34 @@ compatibility: Requires a git worktree and read access to the host repository. C
 
 Check whether a branch is ready to enter the pull request and
 continuous-integration process, then take one owner decision. Internally the
-gate still gathers the full working surface, upstream-step receipts,
+gate gathers the full working surface, upstream-step receipts,
 plan-versus-delivered, targeted sweep, and learning signal. The spoken readout
-uses a **Minto pyramid readout** for the ship decision (shape in step 7). A
-branch is ready when every check below carries a status word, every finding
-has a disposition, and the owner has approved that readout.
+uses a Minto pyramid readout for the ship decision (shape in step 7). A
+branch is ready when every check below carries a status word, every
+finding has a disposition, and the owner has approved that readout.
 
-The gate reads. It never edits, stages, commits, pushes, or opens a pull
-request, and it never re-runs a deterministic check the host repository's own
-hooks or task runners already own. It reimplements no companion either: code
-review, code simplification, browser testing, design critique, and learnings
-capture are verified from receipts or dispatched to the skill that owns them.
+The gate is read-only. Companion skills own edits, reviews, and capture; the host
+repository's hooks and task runners own deterministic re-runs. This skill
+verifies those from receipts or dispatches the skill that owns them.
 
 Every run ends in exactly one explicit owner decision, taken against a readout
-that matches the working surface at that moment; if the surface moves while a
-menu option runs, the readout is recomposed before the decision is taken.
-Nothing is reported as done without evidence named inline. Every check reports
-with one word from this list, used consistently and without synonyms:
+that matches the working surface at that moment. Options that change the
+surface apply the recompose rule before the next decision. Nothing is
+reported as done without evidence named inline.
+
+### Status words
+
+Every check reports with one word from this closed set, used consistently and
+without synonyms:
 
 - **verified** — a named receipt supports the claim, and the readout names it.
 - **attested** — the owner states it happened and no receipt exists; recorded
-as attestation, never as evidence.
-- **failed** — the check ran and did not pass.
-- **not run** — the check did not execute, because a helper, tool, or context
-it needs was unavailable.
+  as attestation, not as evidence.
 - **not verified** — no receipt exists and no attestation was given.
-- **skipped** — deliberately not run because a companion is absent or the class
-has no target in the working surface.
-- **unavailable** — the input the check reads does not exist, such as a missing
-plan or changelog.
-- **bypassed** — a check that fired was overridden by the owner, recorded with
-the reason.
-- **not applicable** — the working surface contains nothing this check covers.
+
+Also in the set (same one-token rule): **failed**, **not run**, **skipped**,
+**unavailable**, **bypassed**, **not applicable**. Use the ordinary meaning of
+each word; **bypassed** always records the owner's reason.
 
 ## Workflow
 
@@ -49,22 +45,22 @@ Report the branch's full working surface before any other check, because that
 surface is what the finishing path will stage and what the owner is approving.
 Run [scripts/surface-report.sh](scripts/surface-report.sh) when it is present
 and executable — it also carries step 6's size check, so pass the cap values
-step 6 resolves here and read both results from one run, statuses per step 6's
-verdict-and-status mapping. Never pass `--defer` on this run, even when step 6
-defers the size class to a repository gate: a deferred run measures nothing,
-and this step's surface report must always be produced. Otherwise gather the same four categories directly
-with git:
+resolved per [references/sweep-classes.md](references/sweep-classes.md) class
+11 and read both results from one run, statuses per the reference's helper
+exit map. Always produce the surface report on this run (omit `--defer` even
+when step 6 later treats size as covered by a repository gate). Otherwise
+gather the same four categories directly with git:
 
 - committed on this branch, compared against the merge base with the default
-branch the pull request will target (resolve it from the remote's HEAD, and
-ask the owner when the target is ambiguous),
+  branch the pull request will target (resolve it from the remote's HEAD, and
+  ask the owner when the target is ambiguous),
 - staged, unstaged, and untracked paths.
 
-List untracked paths with the same weight as tracked ones. Finishing tools stage
-them, so they ship with the change even though no diff command shows them by
-default. If the working tree is not a git repository, or git is unavailable,
-stop and say so rather than composing a readout from a surface you could not
-read.
+List untracked paths with the same weight as tracked ones. Finishing tools
+stage them, so they ship with the change even though no diff command shows
+them by default. If the working tree is not a git repository, or git is
+unavailable, stop and say so rather than composing a readout from a surface
+you could not read.
 
 Completion: every path in all four categories appears in the readout, or the
 run stopped because the working surface could not be read from git.
@@ -74,17 +70,18 @@ run stopped because the working surface could not be read from git.
 Discover the host repository's own deterministic gates and report each one
 before any model-judgment check runs. Read the repository's agent-instruction
 and contribution documents and its conventional hook and task-runner
-configuration — git hook configuration and hook-manager files, task-runner and
-package manifests, and continuous-integration workflow definitions — and take
-the gates they name.
+configuration (git hook and hook-manager files, task-runner and package
+manifests, and continuous-integration workflow definitions), and take
+the gates they name. List the conventional paths first and read only the
+sections that define gates — a search for hook, script, and job names before
+any full-file read — rather than pulling whole workflow files into the
+conversation.
 
-Report each discovered gate with a status word and with what owns it. Never
-re-run a check a repository hook already owns: report the hook's coverage and
-whether it has run on the current surface, and leave the running to the hook.
-When discovery finds no repository-owned gates, that emptiness is itself a
-reported finding — report it as unavailable and say the branch has no
-repository-owned deterministic coverage, rather than letting silence read as a
-pass.
+Report each discovered gate with a status word and with what owns it. Report
+hook coverage and whether it has run on the current surface; leave re-running
+to the hook. When discovery finds no repository-owned gates, report that
+emptiness as unavailable and say the branch has no repository-owned
+deterministic coverage, rather than letting silence read as a pass.
 
 Completion: every discovered gate carries one status word and its owner, and an
 empty discovery is reported as a named finding.
@@ -102,21 +99,21 @@ Use this receipt inventory to decide between verified and the honest
 alternatives:
 
 - Durable receipts: design-critique snapshots (for example
-`.impeccable/critique/` frontmatter carrying a score and P0/P1 counts) and
-solutions documents present in the working surface. A receipt counts only when
-it identifies this branch's change; a document that covers unrelated work is
-not a receipt for it.
+  `.impeccable/critique/` frontmatter carrying a score and P0/P1 counts) and
+  solutions documents present in the working surface. A receipt counts only when
+  it identifies this branch's change; a document that covers unrelated work is
+  not a receipt for it.
 - Browser testing leaves a receipt only when its output or screenshots were
-saved; otherwise it has none.
+  saved; otherwise it has none.
 - Code review and code simplification leave no durable artifact today, so
-outside the session that ran them they are attestation-only.
+  outside the session that ran them they are attestation-only.
 
-Never write verified without naming the evidence in the same line. Where no
-receipt exists, report not verified and offer the owner the chance to attest;
-record an attestation as attested, not as evidence. When the companion skill or
-tooling a check depends on is absent — no compound engineering plugin, no
-design-critique tooling — report that check skipped, name what was missing, and
-run the rest of the checklist.
+Write verified only with the receipt named on the same line. Where no
+receipt exists, report not verified and offer the owner the chance to
+attest; record an attestation as attested. When the companion skill or
+tooling a check depends on is absent (no compound engineering plugin, no
+design-critique tooling), report that check skipped, name what was missing,
+and run the rest of the checklist.
 
 Completion: each of the five steps carries one status word, every verified step
 names its receipt, and the user-interface classification and its basis are
@@ -144,7 +141,7 @@ recorded.
 Carry exactly one durable-learning signal into the readout:
 
 - a solutions document covering this branch's work exists in the working
-surface, named in the readout; or
+  surface, named in the readout; or
 - an explicit capture plan or follow-up exists, named in the readout; or
 - the readout states why this branch produced no durable learning.
 
@@ -159,45 +156,36 @@ approval past an uncaptured learning carries the owner's recorded reason.
 ### 6. Run the targeted sweep
 
 Read [references/sweep-classes.md](references/sweep-classes.md) and work its
-classes in the order listed there — observed frequency order from the pull
-request forensics behind this gate — then surface findings in that same order.
+classes in the order listed there, then surface findings in that same order.
 
 Mechanical classes run through the bundled helpers:
 
-- [scripts/surface-report.sh](scripts/surface-report.sh) for diff size against
-automated-reviewer file caps, invoked with one cap per reviewer configured on
-the host repository, each value resolved per the reference's class 11:
-`scripts/surface-report.sh --cap <reviewer>=<n>`,
-- [scripts/evidence-freshness.sh](scripts/evidence-freshness.sh) for records
-predating the final edit they describe
-(`scripts/evidence-freshness.sh <record> <described-path>...`), and for
-plan-named artifacts that no longer match what shipped
-(`scripts/evidence-freshness.sh --check-name <name> <search-root>`),
-- [scripts/changelog-union.sh](scripts/changelog-union.sh) for whether the
-branch's own work appears in the repository's changelog.
+- [scripts/surface-report.sh](scripts/surface-report.sh) for diff size (class
+  11): one `--cap <reviewer>=<n>` per configured reviewer, values resolved in
+  the reference.
+- [scripts/evidence-freshness.sh](scripts/evidence-freshness.sh) for stale
+  records and plan-named artifacts (classes 4 and 2 support).
+- [scripts/changelog-union.sh](scripts/changelog-union.sh) for branch
+  changelog entry (class 3).
 
 `changelog-union.sh` and `evidence-freshness.sh` defer when the host
 repository owns an equivalent check: invoke them as `<helper> --defer
 <gate-name>` with the gate step 2 found, and report that class as covered by
-that gate rather than running both. `surface-report.sh` is the exception,
-because step 1's run of it must always produce the surface report: never pass
-it `--defer`. When a repository gate owns the size check, pass no `--cap` for
-the reviewers that gate covers and report class 11 as covered by that gate
-directly from step 2's discovery. Every remaining class
-runs by model instruction from the reference. A file-cap finding names the
-affected reviewer and the source of the cap, or says the cap is unverified when
-the source cannot be confirmed.
+that gate. Surface-report always measures for step 1 (see step 1). When a
+repository gate owns the size check, pass no `--cap` for the reviewers that
+gate covers and report class 11 as covered by that gate from step 2's
+discovery. When step 1's run already resolved the target branch or merge
+base, pass it through to `surface-report.sh` and `changelog-union.sh`
+(`--base <ref>` or `--merge-base <sha>`) so those two skip re-resolving it.
+`evidence-freshness.sh` resolves no base and accepts neither flag.
 
-A helper's verdict and the gate's status words are two layers: the verdict says
-what the class found, the status word says whether the check happened. Read both
-off the helper's exit code and its `verdict:` line. On exit 0 the class carries
-that verdict from its enumerated set, and the check's status word is verified
-with the verdict line as the named evidence, or failed when the verdict is a
-finding. On exit 2 with an absent-input verdict — `no changelog`, `no records` —
-the check is unavailable. On exit 3 it is skipped, naming the repository gate the
-helper deferred to. On exit 4, and on the `not run` verdict a usage error emits
-with exit 2, the check is not run and its class falls back to the
-model-instruction check the reference gives for that class.
+Every remaining class runs by model instruction from the reference, in one
+pass: read the branch diff once and apply every judgment class to that single
+reading rather than re-reading the diff per class.
+
+Map helper exit codes and `verdict:` lines to status words using the table in
+[references/sweep-classes.md](references/sweep-classes.md) (helper exit →
+status word). Script headers are SSOT for each helper's verdict vocabulary.
 
 Completion: every class in the reference carries one verdict from that class's
 enumerated set, and each class that fired names where it fired — the file and
@@ -207,15 +195,20 @@ entry or an aggregate file-cap excess.
 
 ### 7. Compose the readout and take the owner decision
 
-Complete steps 1 through 6 fully first (they are the evidence). Then speak
-only what the owner needs for the ship decision.
+Complete steps 1 through 6 fully first (they are the evidence). Then brief
+the owner: continuous prose shaped by Barbara Minto's pyramid principle —
+answer first, then the grouped reasons that support it, then only the evidence
+those reasons need.
 
 #### Minto pyramid readout (binding shape)
 
-Use for the final human decision brief that carries one recommendation. Write
-answer-first continuous prose. The bracket labels below are authoring
-structure only; omit them from the spoken readout. Do not print analysis-bucket
-headers (Surface, Gates, Upstream, Sweep, Learning, or Answer/Why/Evidence).
+<!-- Maintainers: this readout shape is mirrored in
+checking-merge-readiness/SKILL.md step 6. Skills stay self-contained, so edit
+both copies together. -->
+
+Authoring labels (ANSWER / WHY / EVIDENCE / MENU) structure the brief; the
+spoken readout is continuous prose without those labels or analysis-bucket
+titles.
 
 **ANSWER**
 - One recommendation (approve and proceed; request changes; or stop and file
@@ -223,7 +216,7 @@ headers (Surface, Gates, Upstream, Sweep, Learning, or Answer/Why/Evidence).
 - Short cause clause naming what produced it (gaps, verified checks, or the
   domain producer).
 - Name the producers here; argue them under Why. Fold branch identity into the
-  opening. Do not open with the working-surface inventory.
+  opening. Open on the decision, not the working-surface inventory.
 
 **WHY**
 - Reasons the answer is true: arguments, one idea each, MECE, jointly
@@ -231,8 +224,7 @@ headers (Surface, Gates, Upstream, Sweep, Learning, or Answer/Why/Evidence).
 - Most decision-relevant first (material gaps first: failed or not-verified
   upstream steps, plan-not-delivered items, open sweep findings, uncaptured
   learning that needs bypass, empty gate discovery).
-- Print only decision-relevant supports. Do not fill every analysis surface
-  as inventory.
+- Only decision-relevant supports.
 - Clean outcome: one affirmative residual that grading found nothing material
   (what the branch does, surface complete including untracked if any, material
   checks verified or attested, plan-versus-delivered clean or accepted drift
@@ -245,25 +237,32 @@ headers (Surface, Gates, Upstream, Sweep, Learning, or Answer/Why/Evidence).
 
 **MENU**
 - After the pyramid body.
-- Options aligned to the answer. Do not offer actions the recommendation
-  forbids. Unavailable options say "not offered" or "unavailable" in plain
-  words.
+- Options aligned to the answer. Unavailable options say "not offered" or
+  "unavailable" in plain words.
 
 **Prose shape**
 - Full sentences and short paragraphs. Prefer periods and commas.
 - Write enough that a sharp colleague can follow without decoding.
-- Avoid telegram compression: em dash stacks and colon reveals (label:
-  punchline) that smash a claim into a fragment.
+- Prefer continuous sentences over telegram compression (em dash stacks and
+  colon reveals that smash a claim into a fragment).
 - Supporting detail that did not drive the decision stays out of the spoken
   readout. Offer an appendix only if the owner asks for the full status-word
   inventory.
+
+**Print budgets**
+- Clean green (approve and proceed, nothing material): final readout plus menu
+  at most about 12 non-blank short lines. Pre-readout dialogue is outside
+  this budget.
+- Gap-grown: expand Why and Evidence only around the producers of the
+  recommendation. Summarize residual clean checks in a short clause when
+  needed.
 
 Scale which checks appear by applicability, never by how large the diff feels.
 A check is omitted from the spoken readout when the working surface holds no
 path it covers (for example no user-interface files means browser testing and
 design critique are not spoken). Paths touching authentication, authorization,
-payments, data migrations, secrets handling, or a published API contract are
-never silent when they have a finding or an incomplete check.
+payments, data migrations, secrets handling, or a published API contract stay
+visible when they have a finding or an incomplete check.
 
 **Done when**
 - Exactly one recommendation appears, with its producers named.
@@ -271,7 +270,6 @@ never silent when they have a finding or an incomplete check.
   decision-relevant.
 - Evidence sits only under supports that need it, with pointers.
 - Menu options match the recommendation.
-- Continuous prose: no analysis-bucket headers, no printed bracket labels.
 
 #### Decision menu
 
@@ -280,22 +278,24 @@ Present exactly one decision menu:
 1. Approve and proceed to the finishing path.
 2. Request changes.
 3. Run a flagged missing step now — one option per gap found in steps 2 through
- 6 that a present skill owns, each dispatching that skill. A gap with no
- owning skill available — a missing plan, empty gate discovery — is not a
- dispatch option; it is resolved through attestation where a step defines
- one, or filed through option 5.
+   6 that a present skill owns, each dispatching that skill. A gap with no
+   owning skill available — a missing plan, empty gate discovery — is not a
+   dispatch option; it is resolved through attestation where a step defines
+   one, or filed through option 5.
 4. Have the change or a concept behind it explained, through the available
- explanation capability (the `ce-explain` skill where the compound
- engineering plugin is installed). Omit this option and say it is unavailable
- when no such capability is present.
+   explanation capability (the `ce-explain` skill where the compound
+   engineering plugin is installed). Omit this option and say it is unavailable
+   when no such capability is present.
 5. Stop and file follow-up work.
 
-Options 3 and 4 are non-terminal: when one finishes, apply the opening's
-recompose rule — re-read the working surface from step 1 and, when it changed,
-re-run every step that read that surface — repository gates (step 2), upstream
-receipts (step 3), the plan comparison (step 4), the learning signal (step 5),
-and the sweep (step 6) — then present the pyramid readout and menu again.
-Approval binds to the surface the owner was shown.
+Options 3 and 4 are non-terminal: when one finishes, **recompose** — re-read
+the working surface from step 1 and, when it changed, re-run the steps whose
+inputs the change touches: the surface report always, and each of steps 2–6
+only where a changed path feeds it (a newly captured solutions document
+re-runs the learning signal, not gate discovery; a changed hook config
+re-runs gate discovery). Re-run all of steps 2–6 when the change's reach is
+unclear. Then present the pyramid readout and menu again. Approval binds to
+the surface the owner was shown.
 
 On approval, fill
 [assets/evidence-pack-template.md](assets/evidence-pack-template.md) and compose
@@ -313,33 +313,23 @@ carries the composed evidence pack for the finishing path.
 
 ## Gotchas
 
-- Untracked paths are part of what the owner approves, because finishing tools
-stage them. A readout built from tracked changes alone approves less than what
-ships.
-- Writing verified without a named receipt is the failure this gate exists to
-prevent. When a receipt cannot be found, report not verified and offer
-attestation.
-- A green continuous-integration run is not evidence that the upstream steps
-ran. The forensics behind this gate are all-green branches that still burned
-seven to sixteen automated-review rounds.
-- Dispatching a missing step from the menu is the one path in this workflow that
-changes files, and the dispatched skill owns those changes. The gate itself
-still writes nothing.
+- Untracked paths ship with finishing tools; include them in what the owner
+  approves.
+- Verified requires a named receipt on the same line; otherwise not
+  verified and offer attestation.
+- Green CI is not evidence that upstream steps ran.
+- Dispatching a missing step from the menu is the one path that changes files,
+  and the dispatched skill owns those changes. The gate itself still writes
+  nothing.
 - Findings the owner declines still belong in the evidence pack with their
-disposition. A dropped finding reappears as a review comment on the pull
-request.
-- The pack reaches the finishing path only through the readout, which is  
-conversation, not a file. If the session breaks between approval and pull  
-request creation, the readout carrying the pack has to be recomposed or  
-supplied again; the pack exists durably only once the pull request body  
-carries it.
+  disposition.
+- The pack reaches the finishing path only through conversation. If the
+  session breaks before PR creation, recompose or supply the pack again; it
+  exists durably only once the pull request body carries it.
 - When `checking-merge-readiness` is also installed, roles stay complementary:
-this gate optimizes entry to review; merge-readiness owns the pre-merge
-global pass (intent drift, accretion, redesign). Neither skill requires the
-other at runtime. An evidence pack in the PR body is optional enrichment for
-merge-readiness, never a required input.
-- A bottom-up inventory, analysis-bucket headers, inventory of every surface,
-an evidence dump, or a menu that contradicts the recommendation fails this
-skill even when the checks are right. The Minto pyramid readout is part of the
-contract.
-
+  this gate optimizes entry to review; merge-readiness owns the pre-merge
+  global pass. Neither requires the other at runtime. An evidence pack is
+  optional enrichment for merge-readiness, never a required input.
+- A bottom-up inventory, evidence dump, or a menu that contradicts the
+  recommendation fails this skill even when the checks are right. The Minto
+  pyramid readout is part of the contract.

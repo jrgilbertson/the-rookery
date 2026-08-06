@@ -270,7 +270,23 @@ if [ "$mode" = "name" ]; then
 $surface
 EOF
 
-	mentions=$(grep -rlF --exclude-dir=.git -e "$check_name" -- "$search_root" 2>/dev/null || true)
+	# Content mentions are detail only, so failures are tolerated — but the
+	# search never walks ignored trees: --untracked extends git grep to
+	# untracked-but-not-ignored files, where a raw recursive grep would walk
+	# node_modules and every other ignored tree.
+	mentions=$(git grep -lF --untracked -e "$check_name" -- "$search_root" 2>/dev/null | sort -u || true)
+
+	# The mentions listing is detail, not the verdict, so it is capped: the
+	# count stays exact and the first ten paths are shown.
+	emit_mentions() {
+		mention_count=$(printf '%s\n' "$mentions" | wc -l | tr -d ' ')
+		# sed drains its stdin: `head` would close the pipe early and kill the
+		# writing printf with SIGPIPE, which `set -o pipefail` turns into a
+		# 141 exit for the whole script.
+		printf '%s\n' "$mentions" | sed -n '1,10s/^/  /p'
+		[ "$mention_count" -le 10 ] ||
+			printf '  … and %s more\n' "$((mention_count - 10))"
+	}
 
 	if [ -z "$matches" ]; then
 		printf 'verdict: stale reference found\n'
@@ -279,7 +295,7 @@ EOF
 		printf 'detail: no file under the search root carries this name.\n'
 		if [ -n "$mentions" ]; then
 			printf 'detail: the name is mentioned but nothing shipped under it; mentioned in:\n'
-			printf '%s\n' "$mentions" | sed 's/^/  /'
+			emit_mentions
 		fi
 		exit 0
 	fi
@@ -290,7 +306,7 @@ EOF
 	printf '%s' "$matches" | sed 's/^/  /'
 	if [ -n "$mentions" ]; then
 		printf 'mentioned in:\n'
-		printf '%s\n' "$mentions" | sed 's/^/  /'
+		emit_mentions
 	fi
 	exit 0
 fi

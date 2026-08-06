@@ -13,9 +13,8 @@ branch has no plan or brief: comparison unavailable; attested intent —
 <the owner's statement of what the branch was meant to do>.
 
 **Checks:** one line per check, each `<check name>: <status word> — <result>`.
-Status words come from the gate's list: verified, attested, failed, not run,
-not verified, skipped, unavailable, bypassed, not applicable. A verified check
-names its receipt on its own line.
+Status words come from the gate's closed set (SKILL.md, Status words). A
+verified check names its receipt on its own line.
 
 **Not verified / attested:** the explicit list of checks carrying `not
 verified` and the checks carrying `attested`, named individually. An empty list

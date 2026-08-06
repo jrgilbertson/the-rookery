@@ -29,10 +29,15 @@ account blocks that source read, not the entire run. Query a source only when
 it can change a named identity, contact, memory, relevance, or duplicate
 decision; this is bounded evidence. For a caller-required day-window scan,
 cover each configured relationship interaction source for that window, then keep
-per-conversation history narrow. Attribute messages by sender handle; evaluate
-substantive directed contact per bindable person; leave unknown handles
-unresolved. Group threads are multi-speaker. Exhaustive history and catch-up
-breadth probes belong only to approved catch-up inventory.
+per-conversation history narrow. Use a finite result limit per mailbox and per
+Messages or X query; when a query returns at the limit or otherwise cannot
+establish completeness, mark that source Partial and do not treat incomplete
+results as proof of no activity. Attribute Messages by sender for incoming
+rows; for unanswered outgoing directed attempts, bind only when recipient
+metadata identifies the contact. Evaluate substantive directed contact per
+bindable person; leave unknown handles unresolved. Group threads are
+multi-speaker. Exhaustive history and catch-up breadth probes belong only to
+approved catch-up inventory.
 
 Classify conclusion-specific coverage as **Sufficient**, **Partial**, or
 **Insufficient**. An unavailable optional or unrelated source narrows only the

@@ -56,15 +56,23 @@ convert or read attachment contents speculatively.
 
 **Day-window scan** (wind-down Daily CRM Scan): preflight read access. Enumerate
 chats with `imsg chats --limit <finite>`. For each chat, read history with
-explicit `--start` / `--end` for the scan window and a finite limit; treat empty
-in-window history as no activity for that chat. Stop expanding when the chat
-list is shorter than the limit or the finite chat budget is exhausted; mark
+`--start` set to the first local midnight of the scan window and `--end` set to
+the midnight after the last local day in the configured vault timezone, each as
+ISO 8601 including that boundary’s applicable UTC offset, plus a finite limit.
+Treat empty in-window history as no activity for that chat only when the
+returned count is below the limit. If the returned count equals the limit, do
+not treat the chat as fully observed—continue with a supported next page or
+tighter bound when available; otherwise mark that chat and dependent Messages
+coverage Partial before zero-effect conclusions. Stop expanding the chat list
+when it is shorter than the limit or the finite chat budget is exhausted; mark
 Messages coverage Partial if the budget truncates before full-window
 confidence. Skip catch-up breadth probes and stats reconciliation. Attribute
-each row by `sender`. After identity binding, evaluate substantive direct
-contact per bindable person under the relationship contract (including targeted
-group participation and unanswered outgoing directed attempts); leave unknown
-handles unresolved. Ambient reactions and broadcasts are not contact.
+incoming rows by `sender`. For unanswered outgoing directed attempts, require
+`is_from_me` plus participant or recipient metadata that identifies the
+contact; leave the attempt unresolved when recipient binding is unavailable.
+After identity binding, evaluate substantive direct contact per bindable person
+under the relationship contract (including targeted group participation); leave
+unknown handles unresolved. Ambient reactions and broadcasts are not contact.
 
 Use `imsg search` only when a concrete phrase or topic is necessary and a
 conversation cannot first be selected safely. Search results remain identity

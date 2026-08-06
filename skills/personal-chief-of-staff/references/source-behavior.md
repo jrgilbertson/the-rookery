@@ -25,10 +25,14 @@ Use each source for its native role:
 - Meeting and contact sources supply conversation and relationship evidence;
   they do not replace the canonical task or CRM destination.
 - X (authenticated Grok or host X search tools when available) supplies
-  optional interaction evidence, timestamps, and public post content when a
-  review conclusion turns on it. Query only when it can change a material
-  conclusion. Prefer a URL, known handle, or named person already in evidence;
-  otherwise check a short slice of the user's own recent directed posts and
+  optional interaction evidence, timestamps, and public post content. Outside
+  wind-down’s Daily CRM Scan, query only when it can change a material
+  conclusion. During that scan, when the companion is available, include
+  authenticated X under its current read-only source contract for the scan
+  window even without a named candidate person—still pointer-first or a short
+  finite slice, never exhaustive history. Prefer a URL, known handle, or named
+  person already in evidence when the query is candidate-driven; otherwise for
+  the scan check a short slice of the user's own recent directed posts and
   replies, but only after confirming the authenticated account is the user's;
   a shared or secondary account's activity is not the user's. Never like,
   follow, reply, post, send DMs, or do any other X write, whatever the host

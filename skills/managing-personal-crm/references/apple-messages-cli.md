@@ -48,11 +48,21 @@ participant handles, group status, and available contact names. Pass the chosen
 `chat_id`. A display name alone is not an identity binding. Apply the previously
 loaded identity rules before attaching private evidence to a Person note.
 
-For a direct or embedded request, select one candidate chat and the smallest
-date window that can change the current contact, memory, relevance, or duplicate
-decision. Use `imsg history` with an explicit limit. Add `--attachments` only
-when attachment metadata can change that named decision; never convert or read
-attachment contents speculatively.
+For a direct or embedded request that is not a required day-window scan, select
+one candidate chat and the smallest date window that can change the current
+contact, memory, relevance, or duplicate decision. Use `imsg history` with an
+explicit limit. Add `--attachments` only when attachment metadata can change
+that named decision; never convert or read attachment contents speculatively.
+
+When a caller requires a day-window relationship scan (wind-down Daily CRM
+Scan), enumerate chats with activity in the scan window using finite limits,
+then read each candidate chat's history with explicit `--start` / `--end` (or
+equivalent bounds) and an explicit limit. Do not run catch-up breadth probes for
+that scan. Attribute each history row by its `sender` handle. Evaluate
+substantive directed contact per speaker after identity binding; leave unknown
+handles unresolved. A group chat may support effects for some senders and none
+for others in the same thread. Ambient reactions and broadcasts do not count as
+contact.
 
 Use `imsg search` only when a concrete phrase or topic is necessary and a
 conversation cannot first be selected safely. Search results remain identity
@@ -65,8 +75,8 @@ proposing `date_last_contacted`. Preserve direct versus group context and the
 actual sender when deciding whether contact was substantive.
 
 Completion: the query is bounded to a defensible identity, purpose, date
-window, and result limit, with stable identifiers and native timestamps kept as
-source evidence only.
+window, and result limit, with stable identifiers, per-sender attribution, and
+native timestamps kept as source evidence only.
 
 ## Prove catch-up breadth
 

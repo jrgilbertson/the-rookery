@@ -13,6 +13,15 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `personal-chief-of-staff` wind-down runs a required Daily CRM Scan before the
+  initial reconstruction: configured relationship sources for the closing day
+  (or a short one-to-two-day miss expansion), per-speaker evaluation in direct
+  and group threads, zero effects when nothing warrants attention, and no
+  durable writes while preparing the bundle. Deeper history stays ad hoc.
+- `managing-personal-crm` treats a caller-required day-window relationship scan
+  as required coverage (not catch-up breadth), keeps per-conversation history
+  narrow, and attributes group Messages by sender handle with conservative
+  identity binding.
 - `checking-merge-readiness` digests use Barbara Minto's pyramid principle:
   recommendation first, then only supporting points in natural prose (no em
   dashes). Clean green stays about twelve short lines; debug and do not merge

@@ -32,42 +32,73 @@ evidence. Calendar visibility supplies no work-email coverage. Separate:
 - reasonable inferences that still need confirmation; and
 - subjective meaning that cannot be observed.
 
-Completion: the review window, existing journal state, and material evidence
-gaps are known without writing anything, with at most one optional catch-up.
+When the companion relationship capability is available, complete the **Daily
+CRM Scan** below as required relationship-source coverage before presenting
+the initial reconstruction. Do not wait for calendar, mailbox, reflection, or
+other non-CRM evidence to name a candidate person first.
+
+Completion: the review window, existing journal state, Daily CRM Scan when
+the companion is available, and material evidence gaps are known without
+writing anything, with at most one optional catch-up.
+
+## Daily CRM Scan
+
+When the companion is available, run one proactive, bounded relationship scan
+before the initial reconstruction. The default scan window is the closing
+day's local-time bounds. When this close follows a short miss of about one or
+two local days—typically visible as missing prior daily journals—expand the
+same scan over those missed local days as a catch-up breath. Do not open
+exhaustive history, start CRM catch-up mode, or invent a close ledger. Deeper
+historical scans stay user-requested outside this automatic path.
+
+Query each configured relationship interaction source independently within the
+scan window: Apple Messages through `imsg` when configured, each authorized
+mailbox within its own identity boundary, and authenticated X evidence when
+available under its current source contract. Calendar visibility never implies
+mailbox coverage. Treat unavailable sources as scoped relationship-coverage
+gaps, not as proof that no interaction occurred.
+
+Use the companion in embedded mode to evaluate the scan results. Attribute
+direct and group messages by sender handle. For each speaker whose identity
+can be bound safely, evaluate substantive directed contact (including targeted
+group participation) for a contact-date outcome and relationship-load-bearing
+meaning. Leave unknown handles unresolved. Ambient activity, reactions, and
+broadcasts produce no contact effect. A group thread may yield effects for
+some speakers and none for others.
+
+Return zero CRM effects when nothing warrants attention. Keep every contact-date,
+Person-note, Task, or communication effect as a separate action in the existing
+wind-down bundle. Do not copy raw history into the journal or Person note, and
+do not write while preparing the bundle.
+
+This scan is separate from the prepare-tomorrow relationship-exception check
+later in the mode.
+
+Completion: the scan window is known, configured relationship sources for that
+window were queried or marked Partial, every safely identified substantive
+directed interaction has a contact-date outcome (novel, Already satisfied, or
+identity/time unresolved), unbound handles stay unresolved, and nothing has
+been written.
 
 ## Begin with one broad reflection
 
-Present a short evidence-based reconstruction, then ask one broad invitation
-such as: “What stands out about today, including anything the sources would
-miss?” Wait for the user's free-form response before asking targeted
-follow-ups. Do not turn the template into an opening questionnaire.
+Present a short evidence-based reconstruction that already incorporates Daily
+CRM Scan findings when the companion was available, then ask one broad
+invitation such as: “What stands out about today, including anything the
+sources would miss?” Wait for the user's free-form response before asking
+targeted follow-ups. Do not turn the template into an opening questionnaire.
 
 Use follow-ups only to resolve material gaps or help complete the current
 template. The user may leave any subjective field blank, mark it uncertain,
 correct the synthesis, or keep their original wording.
 
+When the user's reflection describes a substantive direct interaction the scan
+did not surface, evaluate it through the companion the same way as scan
+results.
+
 Completion: the user's own account of the day is available before the agent
-drafts subjective conclusions.
-
-## Capture relationship effects selectively
-
-When the day's evidence or the user's reflection describes a substantive
-direct interaction, use the companion relationship capability when available
-to evaluate it. Account for the reliable local interaction date with either a
-novel `date_last_contacted` proposal or **Already satisfied** when the canonical
-date is equal or newer. Propose Person prose only when the interaction adds
-durable meaning likely to improve a future interaction.
-
-Keep the contact-date change and each distinct Person-note, Task, or
-communication effect as separate actions in the existing wind-down bundle.
-Do not copy a transcript, message thread, meeting recap, or chronological
-interaction log into the journal or Person note. When identity or interaction
-time is unresolved, show the uncertainty and do not propose the unsafe effect.
-
-Completion: every supported substantive direct interaction has a contact-date
-outcome that is either independently reviewable or already satisfied,
-distinct durable meaning remains separate, and passive or ambient activity
-produces no contact effect.
+drafts subjective conclusions, and reflection-only contacts are evaluated when
+present.
 
 ## Complete the existing journal together
 
@@ -174,8 +205,7 @@ When the companion relationship capability is available, inspect active
 relationships whose derived cadence may be overdue and search current work,
 writing, reading, decisions, and meetings for a defensible person connection
 useful **tomorrow**. This is a bounded exception check, not a general CRM
-review or catch-up, and is separate from today's interaction-effect capture
-above.
+review or catch-up, and is separate from the Daily CRM Scan above.
 
 An overdue person earns attention only when the current evidence explains why
 contact could be useful soon and suggests a plausible action. A strong

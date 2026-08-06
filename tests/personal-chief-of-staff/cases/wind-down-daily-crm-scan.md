@@ -44,5 +44,6 @@ short-miss recovery and zero-effect safety are part of the same behavior change.
 - [ ] 3 → Scan window expands over the short miss (about the missing day plus
       closing day); surfaces a contact-date outcome for Jordan Lee; does not
       start catch-up inventory, triage, or exhaustive history.
-- [ ] 4 → Alex may receive a contact-date outcome; unbound handle stays
-      unresolved; group is not treated as one anonymous contact.
+- [ ] 4 → Alex receives a contact-date outcome (novel or Already satisfied);
+      unbound handle stays unresolved with no Person effect; group is not one
+      anonymous contact.

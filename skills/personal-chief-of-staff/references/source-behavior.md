@@ -8,7 +8,10 @@ it.
 
 Start with the mode's time window and likely decisions. Query sources only
 when they can confirm a candidate item, reveal a material conflict, or supply
-context needed for judgment.
+context needed for judgment. Wind-down's Daily CRM Scan is the exception: when
+the companion is available, cover configured relationship interaction sources
+for the scan window through the companion before the initial reconstruction,
+even without a named candidate person.
 
 Use each source for its native role:
 

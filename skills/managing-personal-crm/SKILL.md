@@ -74,7 +74,12 @@ exactly one mode:
   skill owns the review bundle and run ending.
 - **Embedded:** Another workflow supplies current evidence containing a
   relationship interaction, possible follow-up, relevant overdue person, or
-  defensible connection to current work. Return only supported relationship
+  defensible connection to current work—or requires a day-window relationship
+  scan (wind-down Daily CRM Scan). For a required day-window scan, cover each
+  configured relationship interaction source for that window (adapters load
+  before Messages or X queries), then keep per-conversation history and identity
+  binding narrow. Otherwise judge only the evidence the caller already
+  supplied under the smallest-slice rule. Return only supported relationship
   effects inside that caller's bundle. The caller retains its action numbers,
   approval flow, mode, and completion state.
 - **Catch-up:** The user asks to clean up, triage, merge, reconstruct, or migrate

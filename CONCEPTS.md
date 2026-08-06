@@ -13,7 +13,7 @@ A reviewed next-day outcome recorded during wind-down with an observable finish 
 
 ### Daily CRM Scan
 
-Required wind-down pass over configured relationship interaction sources for the active scan window, run before the initial reconstruction whether or not a candidate person already surfaced. Default window: closing local day. After a short miss of about one or two days, the same pass expands as a catch-up breath. Messages are attributed per sender; substantive directed contact is evaluated for each bindable person; unknown handles stay unresolved. Includes contact-date outcomes, selective durable meaning, and the existing overdue / useful-tomorrow exception check. Excludes CRM catch-up mode, exhaustive history, and indiscriminate Person-note creation.
+Required wind-down pass over configured relationship interaction sources for the active scan window, run before the initial reconstruction whether or not a candidate person already surfaced. Default window: closing local day. After a short miss of one or two immediately prior local days (missing prior journals), expand over those days plus the closing day as a catch-up breath. Attribute messages by sender; evaluate substantive direct contact for each bindable person; leave unknown handles unresolved. Covers contact-date outcomes and selective durable meaning. Separate from prepare-tomorrow’s overdue / useful-tomorrow exception check. Excludes CRM catch-up mode, exhaustive history, and indiscriminate Person-note creation.
 
 ## Workflow processes
 

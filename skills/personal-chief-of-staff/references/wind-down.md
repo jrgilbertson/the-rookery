@@ -21,12 +21,14 @@ context. Continue with today's close by default. After one or several missed
 days, offer at most one catch-up and never create a backlog of journals to
 reconstruct. Do not treat a missing journal as proof that nothing happened.
 
-Query only sources that can clarify what happened or what changed: relevant
-messages and meetings, active tasks, relationship context, project or
-repository state, available capacity evidence, the canonical strategy note, and
-relevant canonical learning notes. Query each visible personal and work
-calendar separately for the day and retain its calendar identity in the
-evidence. Calendar visibility supplies no work-email coverage. Separate:
+Query only sources that can clarify what happened or what changed: meetings,
+active tasks, project or repository state, available capacity evidence, the
+canonical strategy note, and relevant canonical learning notes. When the
+companion is available, do **not** treat relationship interaction sources
+(Messages, relationship mailboxes, X) as this generic pass—route them through
+the **Daily CRM Scan** below. Query each visible personal and work calendar
+separately for the day and retain its calendar identity in the evidence.
+Calendar visibility supplies no work-email coverage. Separate:
 
 - observed outcomes, events, decisions, commitments, and source changes;
 - reasonable inferences that still need confirmation; and
@@ -34,40 +36,49 @@ evidence. Calendar visibility supplies no work-email coverage. Separate:
 
 When the companion relationship capability is available, finish the **Daily CRM
 Scan** below before the initial reconstruction. Calendar, mailbox, or
-reflection naming a person is not a prerequisite.
+reflection naming a person is not a prerequisite for that scan.
 
-Completion: the review window, existing journal state, Daily CRM Scan when the
-companion is available, and material evidence gaps are known without writing
-anything, with at most one optional catch-up.
+Completion: the review window, existing journal state, and material non-CRM
+evidence gaps are known without writing anything, with at most one optional
+catch-up; then Daily CRM Scan when the companion is available.
 
 ## Daily CRM Scan
 
 Run this step when the companion is available. It is required relationship
 coverage for wind-down, separate from prepare-tomorrow's cadence exceptions.
 
-1. **Window.** Default: closing local day. After a short miss of about one or
-   two local days (usually missing prior journals), expand over those days as a
-   catch-up breath. Cap at about two days. Exhaustive history, CRM catch-up
+1. **Window.** Default: closing local day only. Short miss: if the prior one
+   local daily journal is missing, window = that day ∪ closing day; if the
+   prior two are missing, window = those two ∪ closing day; if more than two
+   prior journals are missing, still expand only the two local days immediately
+   before the closing day (plus closing day). Exhaustive history, CRM catch-up
    mode, and a close ledger are out of scope. Deeper history only if the user
    asks later.
-2. **Sources.** Query each configured relationship interaction source for that
-   window on its own: Apple Messages via `imsg` when configured, each authorized
-   mailbox within its identity boundary, authenticated X under its current
-   source contract when available. Calendar visibility is not mailbox coverage.
-   Unavailable sources are Partial for dependent conclusions only.
+2. **Sources.** Require the companion to cover each configured relationship
+   interaction source for that window: Apple Messages when `imsg` is configured
+   (companion loads its Messages adapter before any Messages query), each
+   authorized mailbox within its identity boundary, authenticated X under its
+   current source contract when available. Calendar visibility is not mailbox
+   coverage. Unavailable sources are Partial for dependent conclusions only. Do
+   not invoke `imsg` as CoS-owned tooling outside the companion path.
 3. **Evaluate.** Use embedded companion mode. Attribute messages by sender
-   handle (direct and group). For each bindable speaker, evaluate substantive
-   directed contact for contact-date and relationship-load-bearing meaning.
-   Unknown handles stay unresolved. Ambient activity, reactions, and broadcasts
-   create no contact effect. One group may produce effects for some speakers
-   and none for others.
-4. **Bundle.** Zero effects is valid. Put each contact-date, Person prose,
-   Task, or communication effect as its own action in the existing wind-down
-   bundle. Keep raw history in the source. Write nothing while preparing.
+   handle. Evaluate substantive direct contact (including targeted group
+   participation and unanswered outgoing directed attempts) for each bindable
+   person under the companion relationship contract—not ambient activity,
+   reactions, or broadcasts. Unknown handles stay unresolved. Also evaluate
+   substantive direct contacts already named by non-scan day evidence
+   (calendar, meetings, journal-observed interactions). One group may produce
+   effects for some people and none for others.
+4. **Bundle.** Zero effects is valid. Novel contact-date, Person prose, Task,
+   and communication effects are separate actions in the existing wind-down
+   bundle. Report Already satisfied in coverage when the canonical date is equal
+   or newer; do not invent a duplicate Person write. Keep raw history in the
+   source. Write nothing while preparing.
 
 Completion: scan window set; each configured relationship source for the window
-queried or marked Partial; every bindable substantive directed interaction has
-a contact-date outcome (novel, Already satisfied, or identity/time unresolved);
+covered or marked Partial; every bindable substantive direct contact from the
+scan, other day evidence, or (later) reflection has a contact-date outcome
+(novel action, Already satisfied in coverage, or identity/time unresolved);
 unknown handles unresolved; no write performed.
 
 ## Begin with one broad reflection
@@ -82,8 +93,8 @@ Use follow-ups only for material gaps or template completion. The user may
 leave any subjective field blank, mark it uncertain, correct the synthesis, or
 keep their wording.
 
-If reflection names a substantive directed interaction the scan missed,
-evaluate it through the companion with the same rules.
+If reflection names a substantive direct interaction the scan and other day
+evidence missed, evaluate it through the companion with the same rules.
 
 Completion: the user's account of the day is in hand before subjective drafts,
 and any reflection-only contacts have been evaluated.

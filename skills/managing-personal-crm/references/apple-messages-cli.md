@@ -54,12 +54,17 @@ duplicate decision. Use `imsg history` with an explicit limit. Add
 `--attachments` only when attachment metadata can change that decision; never
 convert or read attachment contents speculatively.
 
-**Day-window scan** (wind-down Daily CRM Scan): enumerate chats with activity in
-the scan window (finite limit). For each candidate, read history with explicit
-`--start` / `--end` and a finite limit. Skip catch-up breadth probes. Attribute
-each row by `sender`. After identity binding, evaluate substantive directed
-contact per speaker; leave unknown handles unresolved. Ambient reactions and
-broadcasts are not contact.
+**Day-window scan** (wind-down Daily CRM Scan): preflight read access. Enumerate
+chats with `imsg chats --limit <finite>`. For each chat, read history with
+explicit `--start` / `--end` for the scan window and a finite limit; treat empty
+in-window history as no activity for that chat. Stop expanding when the chat
+list is shorter than the limit or the finite chat budget is exhausted; mark
+Messages coverage Partial if the budget truncates before full-window
+confidence. Skip catch-up breadth probes and stats reconciliation. Attribute
+each row by `sender`. After identity binding, evaluate substantive direct
+contact per bindable person under the relationship contract (including targeted
+group participation and unanswered outgoing directed attempts); leave unknown
+handles unresolved. Ambient reactions and broadcasts are not contact.
 
 Use `imsg search` only when a concrete phrase or topic is necessary and a
 conversation cannot first be selected safely. Search results remain identity

@@ -96,12 +96,10 @@ Read [references/source-behavior.md](references/source-behavior.md) before any
 source query or identity judgment. Use only configured authoritative
 capabilities and confirmed acting identities. Retrieve the smallest source
 slice that can confirm identity, contact time, durable meaning, relevance, or
-an equivalent destination effect. When a caller requires a bounded day-window
-relationship scan (wind-down's Daily CRM Scan), querying each configured
-relationship interaction source for that window is required coverage, not a
-violation of smallest-slice. Keep per-conversation history and identity
-binding narrow after that coverage; do not use catch-up breadth for ordinary
-day-window scans.
+an equivalent destination effect. For a caller-required day-window scan
+(wind-down Daily CRM Scan), cover each configured relationship interaction
+source for that window first, then keep per-conversation history and identity
+binding narrow. Use catch-up breadth only in approved catch-up inventory.
 
 When `imsg` is the configured local Apple Messages source, also read
 [references/apple-messages-cli.md](references/apple-messages-cli.md) before the

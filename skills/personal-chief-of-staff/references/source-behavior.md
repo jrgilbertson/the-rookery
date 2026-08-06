@@ -102,15 +102,11 @@ user's attention could improve the outcome.
 
 When the configured `managing-personal-crm` companion is available, use its
 embedded mode for supported relationship judgment without transferring
-ownership of the chief-of-staff review. Wind-down and weekly modes may
-deliberately inspect active relationship cadence and current work for useful
-connections. Wind-down also runs a required Daily CRM Scan before the initial
-reconstruction: query configured relationship interaction sources for the
-closing-day window (or short-miss expansion) even when no candidate person has
-already surfaced, attribute messages per sender, and evaluate substantive
-directed contact for each safely bound person. Other modes use relationship
-judgment only when their existing evidence already makes a person materially
-relevant.
+ownership of the chief-of-staff review. Wind-down runs the Daily CRM Scan in
+`references/wind-down.md` before the initial reconstruction. Wind-down and
+weekly modes may also inspect active relationship cadence and current work for
+useful connections. Other modes use relationship judgment only when existing
+evidence already makes a person materially relevant.
 
 Crossing a cadence threshold is not enough by itself. Surface a person only
 when the current context supports a useful reason and plausible action. Return

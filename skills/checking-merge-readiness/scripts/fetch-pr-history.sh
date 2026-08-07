@@ -88,12 +88,21 @@ paginate() {
     else
       page=$(gql "$query" "$@") || return 1
     fi
-    jq -e "$conn" >/dev/null 2>&1 <<<"$page" || return 1
+    # Malformed page metadata is a failed fetch, never a final page: the node
+    # list must be an array and hasNextPage an actual boolean, so a missing or
+    # non-boolean flag cannot read as "no more pages" and truncate a surface.
+    jq -e "$conn.nodes | type == \"array\"" >/dev/null 2>&1 <<<"$page" \
+      || return 1
+    jq -e "$conn.pageInfo.hasNextPage | type == \"boolean\"" \
+      >/dev/null 2>&1 <<<"$page" || return 1
     jq -c "$conn.nodes[]" <<<"$page" >> "$out" || return 1
     has=$(jq -r "$conn.pageInfo.hasNextPage" <<<"$page")
-    cursor=$(jq -r "$conn.pageInfo.endCursor // \"\"" <<<"$page")
     [ "$has" = "true" ] || break
-    [ -n "$cursor" ] || return 1
+    # More pages promised: the cursor to resume from must actually be there.
+    jq -e "$conn.pageInfo.endCursor
+           | type == \"string\" and length > 0" >/dev/null 2>&1 <<<"$page" \
+      || return 1
+    cursor=$(jq -r "$conn.pageInfo.endCursor" <<<"$page")
   done
 }
 
@@ -186,6 +195,14 @@ jq -cs 'map({id, author: (.author.login // null), submittedAt, state,
   > "$tmp/reviews.out"
 jq -e 'all(.[]; .id != null)' "$tmp/reviews.out" >/dev/null \
   || die4 "review submission with null id"
+
+# Same discipline for the comment connection nested under each thread: the
+# _more flag below decides whether continuation pages get fetched at all, so a
+# missing or non-boolean flag must fail rather than read as false.
+jq -es 'all(.[]; (.comments.nodes | type == "array")
+  and (.comments.pageInfo.hasNextPage | type == "boolean"))' \
+  "$tmp/threads.nodes" >/dev/null 2>&1 \
+  || die4 "thread comment connection metadata malformed"
 
 jq -cs 'map({id, path, isResolved,
   comments: [.comments.nodes[] | {id, author: (.author.login // null),

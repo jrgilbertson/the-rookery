@@ -151,6 +151,71 @@ write("nullauthor", {"identity": identity(author=None)})
 # fail here as something other than a clean run.
 write("bigbody", {"identity": identity(),
                   "surfaces": {"reviews": [page(None, [review(1, body="B" * 1200000)])]}})
+
+# Page metadata a well-formed connection would never carry. Each `raw` page
+# replaces the connection verbatim, so the helper sees exactly the shape named.
+def raw_reviews(conn):
+    return {"identity": identity(), "surfaces": {"reviews": [{"after": None,
+                                                              "raw": conn}]}}
+
+# No pageInfo at all: exhaustion was never observed, so this is not page one of
+# one, it is a page whose continuation is unknowable.
+write("nopageinfo", raw_reviews({"nodes": [review(1)]}))
+
+# pageInfo present, hasNextPage absent — the flag that decides "keep going"
+# must not default to false.
+write("nohasnext", raw_reviews({"pageInfo": {"endCursor": "rev:2"},
+                                "nodes": [review(1)]}))
+
+# hasNextPage as a string, not a boolean: `"false"` would compare equal to the
+# stringly read of a real false and silently end the surface.
+write("stringhasnext", raw_reviews({"pageInfo": {"hasNextPage": "false",
+                                                 "endCursor": None},
+                                    "nodes": [review(1)]}))
+
+# More pages promised with no cursor to resume from (null, then empty string).
+write("nullendcursor", raw_reviews({"pageInfo": {"hasNextPage": True,
+                                                 "endCursor": None},
+                                    "nodes": [review(1)]}))
+write("emptyendcursor", raw_reviews({"pageInfo": {"hasNextPage": True,
+                                                  "endCursor": ""},
+                                     "nodes": [review(1)]}))
+
+# nodes is not an array: a scalar or object here must fail, not iterate.
+write("badnodes", raw_reviews({"pageInfo": {"hasNextPage": False,
+                                            "endCursor": None},
+                               "nodes": None}))
+
+# The same discipline one level down, on the comment connection nested under a
+# review thread. Threads are served verbatim, so these need no raw page.
+def raw_thread(comments):
+    return {"identity": identity(),
+            "surfaces": {"reviewThreads": [page(None, [
+                {"id": "THR1", "path": "src/file1.txt", "isResolved": False,
+                 "comments": comments}])]}}
+
+write("nested-nopageinfo", raw_thread({"nodes": [tcomment("THR1", 1)]}))
+write("nested-nohasnext",
+      raw_thread({"pageInfo": {"endCursor": "tc:2"},
+                  "nodes": [tcomment("THR1", 1)]}))
+write("nested-emptyendcursor",
+      raw_thread({"pageInfo": {"hasNextPage": True, "endCursor": ""},
+                  "nodes": [tcomment("THR1", 1)]}))
+write("nested-badnodes",
+      raw_thread({"pageInfo": {"hasNextPage": False, "endCursor": None},
+                  "nodes": "one comment"}))
+
+# A deleted (ghost) GitHub account leaves a null author on the node it wrote.
+# That is a real, benign state on old pull requests: it weakens attribution
+# for themes exactly as a missing reviewed-commit OID does, and must stay
+# digestible rather than becoming incomplete history.
+write("ghostauthor", {
+    "identity": identity(),
+    "surfaces": {
+        "reviews": [page(None, [dict(review(1), author=None)])],
+        "userContentEdits": [page(None, [dict(edit(1), editor=None)])],
+    },
+})
 PYE
 [ $? -eq 0 ] || { printf 'FAIL  scenario build\n'; exit 1; }
 
@@ -300,6 +365,39 @@ echo "== G. fetched text stays out of argv =="
 run bigbody
 code_is "1.2MB body: exit 0" 0
 jq_is "1.2MB body: the review still arrives" '.counts.reviews' 1
+
+echo "== H. page metadata the floor cannot read as a final page =="
+# Pins the completion bound against malformed pagination metadata: exhaustion
+# has to be observed, so a connection missing pageInfo, missing or
+# non-boolean hasNextPage, promising more with no cursor, or carrying nodes
+# that are not an array is a failed fetch — never a quietly truncated surface.
+meta_dies() { # meta_dies <label> <scenario>
+  run "$2"
+  code_is "$1: exit 4" 4
+  stdout_empty "$1: no payload printed"
+}
+meta_dies "no pageInfo" nopageinfo
+meta_dies "pageInfo without hasNextPage" nohasnext
+meta_dies "hasNextPage is a string" stringhasnext
+meta_dies "hasNextPage true, endCursor null" nullendcursor
+meta_dies "hasNextPage true, endCursor empty" emptyendcursor
+meta_dies "nodes is not an array" badnodes
+meta_dies "nested: no pageInfo" nested-nopageinfo
+meta_dies "nested: pageInfo without hasNextPage" nested-nohasnext
+meta_dies "nested: hasNextPage true, endCursor empty" nested-emptyendcursor
+meta_dies "nested: comment nodes not an array" nested-badnodes
+
+echo "== I. a deleted account degrades attribution, it does not cap =="
+# Pins the fetch floor's ghost-account rule: a null author on a fetched review
+# or edit node is weaker attribution, like a missing reviewed-commit OID, not
+# incomplete history. Only the PR author null in identity (section D) is fatal.
+run ghostauthor
+code_is "ghost author: exit 0" 0
+jq_is "ghost author: payload is complete" '.complete' true
+jq_is "ghost author: the review still arrives, attributed to null" \
+  '[.reviews[] | .id + ":" + (.author | tostring)] | join(",")' "REV1:null"
+jq_is "ghost editor: the description edit still arrives" \
+  '[.descriptionEdits[].editor | tostring] | join(",")' "null"
 
 printf '\n%d assertions: %d passed, %d failed\n' "$((PASS + FAIL))" "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ] || exit 1

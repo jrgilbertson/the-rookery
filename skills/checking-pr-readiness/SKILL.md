@@ -23,7 +23,7 @@ that matches the working surface at that moment. Options that change the
 surface apply the recompose rule before the next decision. Nothing is
 reported as done without evidence named inline.
 
-### Status words
+## Status words
 
 Every check reports with one word from this closed set, used consistently and
 without synonyms:
@@ -48,8 +48,10 @@ and executable — it also carries step 6's size check, so pass the cap values
 resolved per [references/sweep-classes.md](references/sweep-classes.md) class
 11 and read both results from one run, statuses per the reference's helper
 exit map. Always produce the surface report on this run (omit `--defer` even
-when step 6 later treats size as covered by a repository gate). Otherwise
-gather the same four categories directly with git:
+when step 6 later treats size as covered by a repository gate), and pass
+`--full` so the listing is not capped, because this step's completion contract
+requires every path to appear in the readout. Otherwise gather the same four
+categories directly with git:
 
 - committed on this branch, compared against the merge base with the default
   branch the pull request will target (resolve it from the remote's HEAD, and

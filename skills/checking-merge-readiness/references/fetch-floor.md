@@ -62,6 +62,18 @@ judge.
 | Each description edit | Timestamp; editor identity; **full post-edit body snapshot**. Edits present but snapshot missing ⇒ intent unverifiable, not "use the current body". Snapshot field name and meaning: step 4 |
 | Host policy / merge state | Conversation-resolution required (yes/no/unknown); required approving review count when known; last-push re-approval / dismiss-stale when known; live mergeable / mergeStateStatus / reviewDecision / statusCheckRollup when available. Policy unknown ⇒ named gap, never invent "rules pass" |
 
+**Null author or editor on a fetched node.** GitHub returns a null author for
+a deleted (ghost) account, a benign and common state on older pull requests.
+On a review submission, thread comment, conversation comment, or description
+edit, that null **degrades attribution for themes exactly as a missing
+reviewed-commit OID does** — the node still counts, it just cannot be
+attributed to a person. It is **not** incomplete history and never caps merge
+on its own. The one exception is the **PR author** in the identity row: that
+field anchors the intent baseline, so a null there stays a hard stop. The
+helper follows this split — a ghost-authored review or edit exits 0 with
+`complete: true` and a null `author`/`editor`, while a null identity author
+exits 4.
+
 ## Fingerprint for step 7
 
 Record by node id: each submission (id, author, timestamp, state, reviewed

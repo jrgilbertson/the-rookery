@@ -34,6 +34,10 @@ page and the run fails loudly instead of quietly short:
 the JSON the caller parses). `fail.after` is optional; omitted, every page of
 that surface fails. An absent surface serves one empty page.
 
+A page may carry `"raw": {...}` instead of `nodes`/`hasNextPage`/`endCursor`;
+that object becomes the connection verbatim, which is how a scenario serves
+page metadata no well-formed connection would have.
+
 Nodes are returned verbatim: this is a page server, not a GraphQL simulator.
 Live GitHub remains the only honest oracle for query well-formedness.
 """
@@ -133,6 +137,11 @@ def maybe_fail(scenario, surface, cursor):
 
 
 def page_payload(page):
+    # `raw` replaces the whole connection object verbatim, so a scenario can
+    # serve metadata no well-formed page would carry (no pageInfo at all, a
+    # non-boolean hasNextPage, nodes that are not a list).
+    if "raw" in page:
+        return page["raw"]
     return {
         "pageInfo": {
             "hasNextPage": bool(page.get("hasNextPage", False)),

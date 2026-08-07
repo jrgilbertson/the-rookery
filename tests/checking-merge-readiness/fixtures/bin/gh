@@ -456,13 +456,16 @@ def api_rest(argv, forge):
             "are served",
             3,
         )
-    # Optional base-ref check: path ends with baseRefName
+    # The branch in the path must be the one this specimen merges into;
+    # a real forge answers a rules read for any other branch with a 404.
     base = forge.get("baseRefName", "main")
-    if not path.rstrip("/").endswith(base) and not path.rstrip("/").endswith(
-        f"branches/{base}"
-    ):
-        # Allow literal main/default when specimen uses main
-        pass
+    want = path.rstrip("/").partition("/rules/branches/")[2]
+    if want != base:
+        die(
+            f"Not Found (HTTP 404): no branch rules for `{want}` here; "
+            f"this specimen merges into `{base}`",
+            1,
+        )
     print(json.dumps(rules_branches_payload(forge), indent=2))
 
 

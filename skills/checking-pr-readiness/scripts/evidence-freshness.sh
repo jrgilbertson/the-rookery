@@ -282,6 +282,9 @@ EOF
 	# The mentions listing is detail, not the verdict, so it is capped: the
 	# count stays exact and the first ten paths are shown.
 	emit_mentions() {
+		# No mentions is no listing: printf would still emit one empty line,
+		# which prints as a bare indented path and counts as one match.
+		[ -n "$mentions" ] || return 0
 		mention_count=$(printf '%s\n' "$mentions" | wc -l | tr -d ' ')
 		# sed drains its stdin: `head` would close the pipe early and kill the
 		# writing printf with SIGPIPE, which `set -o pipefail` turns into a

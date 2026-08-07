@@ -69,11 +69,14 @@ from there. Nothing is written to the tracked tree or any local state store.
 ### Falsifiability Contract
 
 The requirement that a bundled helper's output can prove failure as readily as
-success: every documented state produces a distinct verdict line, and every
-state class carries its own exit code — verdicts exit 0 with the verdict line
-distinguishing negative from positive, absent input exits 2, deferral to a
-repository-owned gate exits 3, environment failure exits 4 — so a gap can
-never be laundered into a green result.
+success, so a gap can never be laundered into a green result. How a helper
+meets it depends on what it produces. A helper that emits gate verdicts gives
+every documented state a distinct verdict line and every state class its own
+exit code, where verdicts exit 0 with the verdict line distinguishing negative
+from positive, absent input exits 2, deferral to a repository-owned gate exits
+3, and environment failure exits 4. A transport helper carries a payload
+rather than grading one, so it proves failure with its exit code and an empty
+stdout, which keeps a partial payload from being mistaken for a complete one.
 
 The contract is executable, not prose: a committed, rerunnable fixture runner
 asserts the exact verdict-and-exit pair for every documented state, including

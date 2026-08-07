@@ -110,8 +110,9 @@ the step-7 fingerprint; keep fetched PR text out of command arguments.
 Completion: the description, diff, review history, and host policy/live state
 are each in hand with the floor met, or marked unavailable / incomplete with
 its cap recorded; the head OID and fingerprints are recorded, with the
-payload's fingerprint block written to a file now so step 7's re-check has
-something to compare against; no fetched text entered a command argument.
+payload's fingerprint block and a digest of the resolved host policy written to
+files now so step 7's re-check has something to compare against; no fetched
+text entered a command argument.
 
 ### 3. Process residual and host merge rules
 
@@ -372,7 +373,12 @@ because full mode wraps that object inside the larger payload. Extract
 .fingerprint`, and `diff` those two files. No PR text re-enters the
 conversation. Then
 re-check live merge state and host signals with
-`gh pr view --json`. Without the helper, re-read and compare against step 2's
+`gh pr view --json`, and re-run step 2's policy-resolution chain in the same
+order, stopping early once requirements are known as there, comparing the
+result against the policy digest recorded at step 2. Live state alone would
+miss a changed required-review, conversation-resolution, or last-push rule,
+because host policy comes from that separate chain rather than from
+`gh pr view`. Without the helper, re-read and compare against step 2's
 record, including the opaque body and edit-history digests:
 
 - the head OID, base ref name, and base commit OID (or re-fetch the PR diff

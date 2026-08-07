@@ -160,6 +160,10 @@ exit_is "wrong number" 1 specimen-a pr view 999999 --json number
 exit_is "wrong repo" 1 specimen-a pr view 412 --repo entirely/wrong --json number
 exit_is "matching URL" 0 specimen-a pr view https://github.com/mapleworks/orderline/pull/412 --json number
 exit_is "diff refuses another PR" 1 specimen-a pr diff 999999
+exit_is "rules for the specimen's base" 0 specimen-a \
+  api repos/mapleworks/orderline/rules/branches/main
+msg_is "rules for another base" 1 "Not Found (HTTP 404)" specimen-a \
+  api repos/mapleworks/orderline/rules/branches/release-2024
 
 echo "== G. unauthenticated forge =="
 AUTHFAIL=1

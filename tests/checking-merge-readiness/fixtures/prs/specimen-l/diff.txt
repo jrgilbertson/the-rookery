@@ -1,0 +1,43 @@
+# Diff summary — PR #640 (mapleworks/orderline)
+
+Constructed summary of the final diff at head `f3a9c21` against base
+`main`. 4 files changed, +214 / -6.
+
+## api/invoices/export.py (new, +118)
+
+New `GET /invoices/export` endpoint. Reuses `InvoiceFilter.from_query()`
+from the list endpoint and streams rows in batches of 500 — the list
+endpoint's existing page size. Illustrative hunk:
+
+    @router.get("/invoices/export")
+    @requires("invoices:read")
+    def export_invoices(request):
+        filters = InvoiceFilter.from_query(request.query_params)
+        return StreamingResponse(
+            csv_rows(filters, batch_size=DEFAULT_PAGE_SIZE),
+            media_type="text/csv",
+            headers={
+                "Content-Disposition":
+                    f'attachment; filename="{export_filename()}"',
+            },
+        )
+
+`export_filename()` returns `invoices-<date>.csv`, so the header is
+`attachment; filename="invoices-<date>.csv"` — no user input in it.
+
+## api/invoices/csv_rows.py (new, +52)
+
+Batched generator yielding CSV lines through the standard library `csv`
+writer. Fetches 500 rows per query using the list endpoint's pagination
+helper; never materializes the full result set.
+
+## web/invoices/ListToolbar.tsx (+26 / -2)
+
+Adds the Export CSV button, rendered only when the page's existing
+`canRead` permission flag is set. The button's href carries the current
+filter state.
+
+## tests/api/test_export.py (new, +18 / -4 across the suite)
+
+Covers filter passthrough, the content-disposition header, batch
+streaming (`test_export_streams_in_batches`), and permission denial.

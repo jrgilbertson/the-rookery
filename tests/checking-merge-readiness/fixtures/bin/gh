@@ -16,7 +16,9 @@ Optional env:
   CMR_GH_AUTH_FAIL  non-empty → every pr/api call fails like an unauthenticated forge
 
 Contract (deliberately small):
-  - serve only the skill's fixed read set: pr view --json, pr diff, api graphql
+  - serve only the skill's fixed read set: pr view --json (incl. merge state),
+    pr diff, api graphql (history + branchProtectionRules), and
+    api repos/.../rules/branches/{base} for merge policy
   - refuse writes and out-of-set verbs
   - refuse a selector that names another pull request
   - refuse an under-fetch of fields the skill depends on (query-text presence)
@@ -170,6 +172,10 @@ def pr_view(argv, forge):
             f"https://github.com/{forge.get('repo', '')}/pull/{forge.get('number', '')}",
         ),
         "files": forge.get("files", []),
+        "mergeable": forge.get("mergeable", "MERGEABLE"),
+        "mergeStateStatus": forge.get("mergeStateStatus", "CLEAN"),
+        "reviewDecision": forge.get("reviewDecision", ""),
+        "statusCheckRollup": forge.get("statusCheckRollup", []),
     }
     if not fields:
         die(
@@ -301,6 +307,59 @@ def page(nodes, args, scope, forge, bindings):
     }
 
 
+def branch_protection_payload(forge):
+    rules = forge.get("branchProtectionRules")
+    if rules is None:
+        mr = forge.get("mergeRules") or {}
+        rules = [
+            {
+                "pattern": forge.get("baseRefName", "main"),
+                "requiresConversationResolution": bool(
+                    mr.get("requiresConversationResolution", False)
+                ),
+                "requiredApprovingReviewCount": int(
+                    mr.get("requiredApprovingReviewCount", 0)
+                ),
+                "requiresStatusChecks": bool(mr.get("requiresStatusChecks", False)),
+                "requiredStatusCheckContexts": mr.get(
+                    "requiredStatusCheckContexts", []
+                ),
+            }
+        ]
+    return {"nodes": rules}
+
+
+def rules_branches_payload(forge):
+    """Shape like GET /repos/{owner}/{repo}/rules/branches/{branch}."""
+    mr = forge.get("mergeRules") or {}
+    if not mr and "rulesBranches" in forge:
+        return forge["rulesBranches"]
+    if not mr:
+        return []
+    return [
+        {
+            "type": "pull_request",
+            "parameters": {
+                "required_approving_review_count": int(
+                    mr.get("requiredApprovingReviewCount", 0)
+                ),
+                "dismiss_stale_reviews_on_push": bool(
+                    mr.get("dismissStaleReviewsOnPush", False)
+                ),
+                "require_code_owner_review": bool(
+                    mr.get("requireCodeOwnerReview", False)
+                ),
+                "require_last_push_approval": bool(
+                    mr.get("requireLastPushApproval", False)
+                ),
+                "required_review_thread_resolution": bool(
+                    mr.get("requiresConversationResolution", False)
+                ),
+            },
+        }
+    ]
+
+
 def graphql(argv, forge):
     query = ""
     for i, a in enumerate(argv):
@@ -323,7 +382,7 @@ def graphql(argv, forge):
     bindings = field_bindings(argv)
     nested_comment_args = connection_args(query, "comments", which="first")
     top_comment_args = connection_args(query, "comments", which="last")
-    pr, served = {}, False
+    pr, served_pr = {}, False
     for name, required in SERVED_CONNECTIONS.items():
         if not re.search(rf"\b{name}\b", query):
             continue
@@ -363,17 +422,51 @@ def graphql(argv, forge):
                 node["comments"] = {"nodes": inner, "pageInfo": inner_info}
             out.append(node)
         pr[name] = {"nodes": out, "pageInfo": info}
-        served = True
+        served_pr = True
 
-    if not served:
+    served_protection = bool(re.search(r"\bbranchProtectionRules\b", query))
+    if not served_pr and not served_protection:
         die(
-            "query names none of reviewThreads, reviews, userContentEdits, or "
-            "the top-level comments connection; this stub serves only the "
-            "skill's fixed read set",
+            "query names none of reviewThreads, reviews, userContentEdits, "
+            "the top-level comments connection, or branchProtectionRules; "
+            "this stub serves only the skill's fixed read set",
             2,
         )
-    pr.setdefault("number", forge.get("number"))
-    print(json.dumps({"data": {"repository": {"pullRequest": pr}}}, indent=2))
+
+    repo = {}
+    if served_pr:
+        pr.setdefault("number", forge.get("number"))
+        repo["pullRequest"] = pr
+    if served_protection:
+        repo["branchProtectionRules"] = branch_protection_payload(forge)
+    print(json.dumps({"data": {"repository": repo}}, indent=2))
+
+
+def api_rest(argv, forge):
+    """Serve GET repos/.../rules/branches/{base} when present in argv."""
+    # argv like: api repos/owner/name/rules/branches/main  or with method GET
+    path = None
+    for a in argv:
+        if a.startswith("repos/") and "/rules/branches/" in a:
+            path = a.split("?", 1)[0]
+            break
+    if path is None:
+        die(
+            "only `api graphql` and `api repos/.../rules/branches/{base}` "
+            "are served",
+            3,
+        )
+    # The branch in the path must be the one this specimen merges into;
+    # a real forge answers a rules read for any other branch with a 404.
+    base = forge.get("baseRefName", "main")
+    want = path.rstrip("/").partition("/rules/branches/")[2]
+    if want != base:
+        die(
+            f"Not Found (HTTP 404): no branch rules for `{want}` here; "
+            f"this specimen merges into `{base}`",
+            1,
+        )
+    print(json.dumps(rules_branches_payload(forge), indent=2))
 
 
 def main():
@@ -418,9 +511,10 @@ def main():
         die(f"`pr {sub}` is outside the skill's fixed read set", 3)
 
     if argv[0] == "api":
-        if "graphql" not in argv[:3]:
-            die("only `api graphql` is served", 3)
-        return graphql(argv, load())
+        forge = load()
+        if "graphql" in argv[:3]:
+            return graphql(argv, forge)
+        return api_rest(argv[1:], forge)
 
     die(f"`{argv[0]}` is outside the skill's fixed read set", 3)
 

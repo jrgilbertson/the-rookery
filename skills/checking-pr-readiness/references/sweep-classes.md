@@ -9,13 +9,6 @@ fired — the file and line for a line-scoped finding, the file alone for a
 file-level one, and the repository surface for a repository-level finding such
 as a missing changelog entry or an aggregate file-cap excess.
 
-The list comes from forensics across three repositories: branches with green
-continuous integration that still burned seven to sixteen automated-review
-rounds, with each round's findings sorted into classes. The merge-gate sibling
-refreshes it from observed review history as evidence packs accumulate, so a
-class that stops appearing loses its place and a class the reviewers keep
-raising earns one.
-
 ## 1. Underspecified rules in prose and instruction files
 
 A rule says what happens on the yes branch and leaves the no or unclear branch
@@ -161,6 +154,21 @@ time.
 
 Verdicts: under caps / `exceeds cap for <reviewer>` / cap unverified /
 no changes on surface / covered by repo gate / not run.
+
+## Helper exit → status word (SSOT)
+
+A helper's verdict and the gate's status words are two layers: the verdict says
+what the class found; the status word says whether the check happened. Read both
+off the helper's exit code and its `verdict:` line (script headers list the
+verdicts; this table maps execution).
+
+| Exit | Meaning | Status word |
+| --- | --- | --- |
+| 0 | Class carried a verdict from its enumerated set | **verified** with the verdict line as named evidence, or **failed** when the verdict is a finding |
+| 2 with absent-input verdict (`no changelog`, `no records`) | Input missing | **unavailable** |
+| 2 with `not run` / usage error | Helper could not run as invoked | **not run** → fall back to the class's model-instruction check |
+| 3 | `--defer` to a repository gate | **skipped**, naming that gate |
+| 4 | Helper hard failure | **not run** → fall back to model-instruction check |
 
 ## When a helper cannot run
 

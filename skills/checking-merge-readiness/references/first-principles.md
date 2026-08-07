@@ -78,10 +78,16 @@ High churn during fix cycles correlates with new defects, which is why the
 rubric's cross-round fix interaction driver treats repeatedly reworked
 regions as risk carriers rather than as settled code.
 
-## A note on the framing
+## 6. System health under incremental change
 
-No prior literature names AI-review-induced defensive-complexity creep, the
-pattern where each automated review round extracts a little more guarding,
-abstraction, or state machinery than the change needs. This skill's framing
-establishes the concept rather than citing it; the principles above are the
-established canon it composes from.
+Ousterhout, Ch. 2–3 (complexity is incremental; tactical versus strategic
+programming), read with Google eng-practices' bar that a change should not
+degrade overall code health through many small "reasonable" edits.
+
+Operational test: ask whether the birth-to-tip path improved or worsened the
+system the next maintainer will own — blast radius, module boundaries, and
+whether the next change has a safe place to land. A PR that locally satisfies
+every review comment but leaves the design harder to change fails this test
+even when no single round refused. Grade the failure through complexity
+accretion, speculative generality, and redesign pressure in risk-rubric.md;
+this section supplies the test, not an eighth driver class.

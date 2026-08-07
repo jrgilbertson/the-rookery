@@ -24,11 +24,21 @@ trap 'rm -rf "$work"' EXIT
 passed=0
 failed=0
 
+# Every verdict line a helper emits is recorded with its exit code, so the
+# exit-map pin at the end can hold the whole run against the reference table.
+record() { # record <output> <exit>
+	first=$(printf '%s\n' "$1" | sed -n '1p')
+	case "$first" in
+	"verdict: "*) printf '%s|%s\n' "${first#verdict: }" "$2" >>"$work/observed" ;;
+	esac
+}
+
 check() { # check <state> <expected-verdict> <expected-exit> <cwd> <cmd>...
 	state="$1" want="$2" want_code="$3" dir="$4"
 	shift 4
 	out=$(cd "$dir" && "$@" 2>&1)
 	code=$?
+	record "$out" "$code"
 	got=$(printf '%s\n' "$out" | sed -n '1p')
 	if [ "$got" = "verdict: $want" ] && [ "$code" -eq "$want_code" ]; then
 		printf 'PASS %s\n' "$state"
@@ -37,6 +47,52 @@ check() { # check <state> <expected-verdict> <expected-exit> <cwd> <cmd>...
 		printf 'FAIL %s — got [%s] exit %s, wanted [verdict: %s] exit %s\n' \
 			"$state" "$got" "$code" "$want" "$want_code"
 		failed=$((failed + 1))
+	fi
+}
+
+ok() { printf 'PASS %s\n' "$1"; passed=$((passed + 1)); }
+no() { printf 'FAIL %s — %s\n' "$1" "$2"; failed=$((failed + 1)); }
+
+# The listing, flag, and cap checks below assert on the detail lines, not only
+# on the verdict pair, so one invocation is captured and then read repeatedly.
+run_out=""
+run_code=0
+run() { # run <cwd> <cmd>...
+	dir="$1"
+	shift
+	run_out=$(cd "$dir" && "$@" 2>&1)
+	run_code=$?
+	record "$run_out" "$run_code"
+}
+
+exits() { # exits <state> <expected-exit>
+	if [ "$run_code" -eq "$2" ]; then ok "$1"; else
+		no "$1" "exit $run_code, wanted $2: $(printf '%s\n' "$run_out" | sed -n '1p')"
+	fi
+}
+
+says() { # says <state> <exact line>
+	if printf '%s\n' "$run_out" | grep -qFx -- "$2"; then ok "$1"; else
+		no "$1" "no line [$2]"
+	fi
+}
+
+mentions_text() { # mentions_text <state> <substring>
+	if printf '%s\n' "$run_out" | grep -qF -- "$2"; then ok "$1"; else
+		no "$1" "output does not carry [$2]"
+	fi
+}
+
+omits() { # omits <state> <substring that must not appear>
+	if printf '%s\n' "$run_out" | grep -qF -- "$2"; then
+		no "$1" "output carries [$2] and should not"
+	else ok "$1"; fi
+}
+
+lines_matching() { # lines_matching <state> <grep pattern> <expected count>
+	got=$(printf '%s\n' "$run_out" | grep -c -- "$2")
+	if [ "$got" -eq "$3" ]; then ok "$1"; else
+		no "$1" "$got lines match [$2], wanted $3"
 	fi
 }
 
@@ -468,6 +524,176 @@ w "$e5/notes/impl.md" "implementation, edited but uncommitted"
 check "evidence: stale record found (described path dirty)" "stale record found" 0 "$e5" \
 	"$evidence" logs/run.md notes/impl.md
 
+# --- Listing caps on a large surface -----------------------------------------
+# A capped listing has to stay a report, not a truncation that kills the run:
+# with a payload past the pipe buffer, closing the listing early raises SIGPIPE
+# on the writer, and pipefail turns that into exit 141 with no verdict at all.
+# 500 long pathnames put roughly 96 KiB through the listing, well past the
+# 64 KiB buffer, so the exit code here is the real assertion.
+
+pad=$(printf 'x%.0s' $(seq 1 180))
+s8=$(repo surface-listing-cap)
+branch "$s8"
+i=1
+while [ "$i" -le 500 ]; do
+	printf 'file %s\n' "$i" >"$s8/${pad}-$i.txt"
+	i=$((i + 1))
+done
+
+run "$s8" "$surface" --cap reviewer=1000
+exits "surface: 500 untracked paths report (not SIGPIPE)" 0
+says "surface: verdict survives the capped listing" "verdict: under caps"
+says "surface: untracked count is exact" "untracked: 500"
+says "surface: total is exact" "total distinct changed files: 500"
+lines_matching "surface: 25 paths listed under the cap" "^  ${pad}-" 25
+says "surface: the remainder is named" "  … and 475 more (--full lists every path)"
+
+run "$s8" "$surface" --cap reviewer=1000 --full
+exits "surface: --full over 500 paths" 0
+lines_matching "surface: --full lists every path" "^  ${pad}-" 500
+omits "surface: --full drops the remainder line" "… and "
+
+# --- --merge-base validation --------------------------------------------------
+# A supplied merge base decides the committed category on its own, so an
+# unchecked one is a silent pass: HEAD passed here empties the committed diff
+# and branch work reads as an empty surface (surface-report) or as `missing`
+# (changelog-union). Both helpers must refuse instead.
+
+mb=$(repo merge-base-checks)
+w "$mb/CHANGELOG.md" "# Changelog"
+cm "$mb" 2020-02-01T00:00:00Z changelog
+git -C "$mb" checkout -qb side
+w "$mb/side.txt" side
+cm "$mb" 2020-02-15T00:00:00Z side
+side_sha=$(git -C "$mb" rev-parse HEAD)
+git -C "$mb" checkout -q main
+branch "$mb"
+w "$mb/src.txt" work
+w "$mb/CHANGELOG.md" "# Changelog
+
+- added the widget"
+cm "$mb" 2020-03-01T00:00:00Z work
+true_mb=$(git -C "$mb" merge-base HEAD main)
+
+for helper_name in surface changelog; do
+	case "$helper_name" in
+	surface) helper="$surface" ;;
+	changelog) helper="$changelog" ;;
+	esac
+
+	plain=$(cd "$mb" && "$helper" 2>&1)
+	flagged=$(cd "$mb" && "$helper" --merge-base "$true_mb" 2>&1)
+	if [ "$plain" = "$flagged" ]; then
+		ok "$helper_name: --merge-base at the true merge base matches the unflagged run"
+	else
+		no "$helper_name: --merge-base at the true merge base matches the unflagged run" \
+			"outputs differ: $(printf '%s\n' "$flagged" | sed -n '1p')"
+	fi
+
+	run "$mb" "$helper" --merge-base HEAD
+	exits "$helper_name: --merge-base HEAD refused" 4
+	says "$helper_name: --merge-base HEAD reports not run" "verdict: not run"
+	mentions_text "$helper_name: --merge-base HEAD names the mismatch" \
+		"does not match merge-base(HEAD,"
+
+	run "$mb" "$helper" --merge-base "$side_sha"
+	exits "$helper_name: --merge-base off the branch refused" 4
+	says "$helper_name: --merge-base off the branch reports not run" "verdict: not run"
+done
+
+# With no base to check against, the weaker ancestor test is the only one left,
+# and a non-ancestor must still fail closed.
+nb=$(repo merge-base-nobase feature)
+w "$nb/CHANGELOG.md" "# Changelog"
+cm "$nb" 2020-02-01T00:00:00Z changelog
+git -C "$nb" checkout -qb elsewhere
+w "$nb/other.txt" other
+cm "$nb" 2020-02-15T00:00:00Z other
+other_sha=$(git -C "$nb" rev-parse HEAD)
+git -C "$nb" checkout -q feature
+w "$nb/src.txt" work
+cm "$nb" 2020-03-01T00:00:00Z work
+
+run "$nb" "$surface" --merge-base "$other_sha"
+exits "surface: non-ancestor --merge-base refused with no base to check against" 4
+mentions_text "surface: non-ancestor --merge-base names the ancestry test" \
+	"is not an ancestor of HEAD"
+run "$nb" "$changelog" --merge-base "$other_sha"
+exits "changelog: non-ancestor --merge-base refused with no base to check against" 4
+mentions_text "changelog: non-ancestor --merge-base names the ancestry test" \
+	"is not an ancestor of HEAD"
+
+# --- --base namespace resolution ----------------------------------------------
+# git resolves a bare short name tags-first, so a tag named main shadows the
+# branch: the helpers would diff the branch against its own tip and report an
+# empty committed category. A supplied --base resolves in the branch namespaces
+# only, and a value that resolves in neither is refused rather than falling back
+# to a bare rev-parse a tag could hijack.
+
+bt=$(repo base-tag-spoof)
+w "$bt/CHANGELOG.md" "# Changelog"
+cm "$bt" 2020-02-01T00:00:00Z changelog
+branch "$bt"
+w "$bt/src.txt" work
+cm "$bt" 2020-03-01T00:00:00Z work
+git -C "$bt" tag main HEAD
+git -C "$bt" tag v1.0 HEAD
+
+run "$bt" "$surface" --base main
+exits "surface: --base main measures against the branch, not the tag" 0
+says "surface: --base main names the branch namespace" \
+	"default branch: refs/heads/main (from --base)"
+says "surface: --base main counts the branch commit" "committed: 1"
+
+run "$bt" "$changelog" --base main
+exits "changelog: --base main measures against the branch, not the tag" 0
+says "changelog: --base main sees the branch work" "verdict: missing"
+says "changelog: --base main counts the branch commit" "changed non-changelog files: 1"
+
+for helper_name in surface changelog; do
+	case "$helper_name" in
+	surface) helper="$surface" ;;
+	changelog) helper="$changelog" ;;
+	esac
+
+	run "$bt" "$helper" --base v1.0
+	exits "$helper_name: --base naming only a tag refused" 4
+	says "$helper_name: --base naming only a tag reports not run" "verdict: not run"
+	mentions_text "$helper_name: --base naming only a tag names the ref" \
+		"the supplied --base v1.0 resolves to no branch"
+
+	run "$bt" "$helper" --base no-such-ref
+	exits "$helper_name: --base resolving to no branch refused" 4
+	says "$helper_name: --base resolving to no branch reports not run" "verdict: not run"
+done
+
+# --- Mentions cap and the untracked search -------------------------------------
+# Same SIGPIPE exposure as the surface listing, on the other capped listing:
+# 900 mentioning files put roughly 170 KiB through it.
+
+e15=$(repo evidence-mentions-cap)
+i=1
+while [ "$i" -le 900 ]; do
+	w "$e15/docs/${pad}-$i.md" "the plan proposes widget-report.md"
+	i=$((i + 1))
+done
+run "$e15" "$evidence" --check-name widget-report.md docs
+exits "evidence: 900 mentioning files report (not SIGPIPE)" 0
+says "evidence: verdict survives the capped mentions listing" "verdict: stale reference found"
+lines_matching "evidence: 10 mentions listed under the cap" "^  docs/${pad}-" 10
+says "evidence: the remainder is named" "  … and 890 more"
+
+# The mentions search reaches untracked files without walking ignored trees.
+e16=$(repo evidence-mentions-untracked)
+w "$e16/.gitignore" "vendor/"
+cm "$e16" 2020-02-01T00:00:00Z ignore
+w "$e16/docs/note.md" "the plan proposes widget-report.md"
+w "$e16/vendor/generated.md" "a build artifact naming widget-report.md"
+run "$e16" "$evidence" --check-name widget-report.md .
+exits "evidence: untracked mention search" 0
+says "evidence: untracked mention is found" "  docs/note.md"
+omits "evidence: ignored tree is not searched" "vendor/generated.md"
+
 # --- Verdict drift guard -----------------------------------------------------
 # Every verdict a helper can emit must appear in the sweep-reference class that
 # helper serves — surface-report class 11, changelog-union class 3,
@@ -512,6 +738,76 @@ DRIFT
 else
 	printf 'FAIL sweep reference not found at %s\n' "$ref"
 	failed=$((failed + 1))
+fi
+
+# --- Helper exit → status word pin -------------------------------------------
+# A class verdict and the gate's status word are two layers, and the mapping
+# between them is the SSOT table in the sweep reference. Every (verdict, exit)
+# pair this run observed is held against that table, so a helper that starts
+# returning a different exit for a verdict — or a table row that disappears —
+# fails here instead of quietly changing what the gate reports.
+if [ -f "$ref" ]; then
+	for row in "| 0 |" "| 2 with absent-input verdict" "| 2 with \`not run\`" "| 3 |" "| 4 |"; do
+		if grep -qF -- "$row" "$ref"; then
+			ok "exit map: the table still carries the row for ${row}"
+		else
+			no "exit map: the table still carries the row for ${row}" "row missing from the reference"
+		fi
+	done
+	# The exit-2 row names the absent-input verdicts itself, so the pin reads
+	# them from the table rather than restating them here.
+	absent_verdicts=$(grep -F '2 with absent-input verdict' "$ref" |
+		grep -o '`[^`]*`' | tr -d '`')
+	observed=$(sort -u "$work/observed")
+	while IFS='|' read -r verdict code; do
+		[ -n "$verdict" ] || continue
+		label="exit map: ${verdict} at exit ${code}"
+		case "$code" in
+		0)
+			# The gate verdict is checked in both directions: it is exit 3's
+			# verdict and only exit 3's, or `skipped` stops meaning deferred.
+			if [ "$verdict" = "not run" ]; then
+				no "$label" "exit 0 carries a class verdict, never 'not run'"
+			elif [ "$verdict" = "covered by repo gate" ]; then
+				no "$label" "the gate verdict belongs to exit 3, which the gate reads as 'skipped'"
+			else ok "$label"; fi
+			;;
+		2)
+			if [ "$verdict" = "not run" ] ||
+				printf '%s\n' "$absent_verdicts" | grep -qFx -- "$verdict"; then
+				ok "$label"
+			else
+				no "$label" "exit 2 is a usage error ('not run') or an absent-input verdict the table names"
+			fi
+			;;
+		3)
+			if [ "$verdict" = "covered by repo gate" ]; then ok "$label"; else
+				no "$label" "exit 3 is the --defer gate verdict"
+			fi
+			;;
+		4)
+			if [ "$verdict" = "not run" ]; then ok "$label"; else
+				no "$label" "exit 4 is a helper hard failure, which reports 'not run'"
+			fi
+			;;
+		*)
+			no "$label" "the table maps exits 0, 2, 3, and 4 only"
+			;;
+		esac
+	done <<MAP
+$observed
+MAP
+	# A pin over pairs that never occurred proves nothing, so every mapped exit
+	# has to have been exercised above.
+	for want in 0 2 3 4; do
+		if printf '%s\n' "$observed" | grep -q "|${want}\$"; then
+			ok "exit map: exit $want was exercised"
+		else
+			no "exit map: exit $want was exercised" "no helper run in this suite returned it"
+		fi
+	done
+else
+	no "exit map: sweep reference not found" "expected at $ref"
 fi
 
 printf '%s assertions: %s passed, %s failed\n' "$((passed + failed))" "$passed" "$failed"

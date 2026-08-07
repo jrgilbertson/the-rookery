@@ -94,7 +94,10 @@ Usage:
   --check-name        Look under <search-root> for a file whose basename or
                       path suffix is the literal <name>, and report whether a
                       plan-named artifact still matches what shipped. Takes no
-                      further arguments.
+                      further arguments. <search-root> is a git pathspec
+                      resolved within the repository: an absolute path inside
+                      the worktree is accepted, a path outside the repository is
+                      not, because every enumeration here goes through git.
   --defer <gate-name> Report this class as owned by the named repository gate
                       and compare nothing (exit 3).
   --help              Print this text and exit 0.
@@ -270,7 +273,26 @@ if [ "$mode" = "name" ]; then
 $surface
 EOF
 
-	mentions=$(grep -rlF --exclude-dir=.git -e "$check_name" -- "$search_root" 2>/dev/null || true)
+	# Content mentions are detail only, so failures are tolerated — but the
+	# search never walks ignored trees: --untracked extends git grep to
+	# untracked-but-not-ignored files, where a raw recursive grep would walk
+	# node_modules and every other ignored tree.
+	mentions=$(git grep -lF --untracked -e "$check_name" -- "$search_root" 2>/dev/null | sort -u || true)
+
+	# The mentions listing is detail, not the verdict, so it is capped: the
+	# count stays exact and the first ten paths are shown.
+	emit_mentions() {
+		# No mentions is no listing: printf would still emit one empty line,
+		# which prints as a bare indented path and counts as one match.
+		[ -n "$mentions" ] || return 0
+		mention_count=$(printf '%s\n' "$mentions" | wc -l | tr -d ' ')
+		# sed drains its stdin: `head` would close the pipe early and kill the
+		# writing printf with SIGPIPE, which `set -o pipefail` turns into a
+		# 141 exit for the whole script.
+		printf '%s\n' "$mentions" | sed -n '1,10s/^/  /p'
+		[ "$mention_count" -le 10 ] ||
+			printf '  … and %s more\n' "$((mention_count - 10))"
+	}
 
 	if [ -z "$matches" ]; then
 		printf 'verdict: stale reference found\n'
@@ -279,7 +301,7 @@ EOF
 		printf 'detail: no file under the search root carries this name.\n'
 		if [ -n "$mentions" ]; then
 			printf 'detail: the name is mentioned but nothing shipped under it; mentioned in:\n'
-			printf '%s\n' "$mentions" | sed 's/^/  /'
+			emit_mentions
 		fi
 		exit 0
 	fi
@@ -290,7 +312,7 @@ EOF
 	printf '%s' "$matches" | sed 's/^/  /'
 	if [ -n "$mentions" ]; then
 		printf 'mentioned in:\n'
-		printf '%s\n' "$mentions" | sed 's/^/  /'
+		emit_mentions
 	fi
 	exit 0
 fi

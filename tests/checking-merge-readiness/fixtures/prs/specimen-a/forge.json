@@ -6,7 +6,17 @@
   "author": "petra-dev",
   "baseRefName": "main",
   "headRefName": "petra-dev/invoices-csv-export",
-  "headRefOid": "f3a9c21",
+  "headRefOid": "a91e4f0",
+  "mergeable": "MERGEABLE",
+  "mergeStateStatus": "CLEAN",
+  "reviewDecision": "APPROVED",
+  "statusCheckRollup": [],
+  "mergeRules": {
+    "requiresConversationResolution": true,
+    "requiredApprovingReviewCount": 0,
+    "requireLastPushApproval": false,
+    "dismissStaleReviewsOnPush": false
+  },
   "files": [
     "api/invoices/export.py",
     "api/invoices/csv_rows.py",

@@ -1,0 +1,199 @@
+#!/usr/bin/env python3
+"""Read-only `gh` stand-in that serves one scripted pagination scenario.
+
+Sibling of `fixtures/bin/gh`, and deliberately not the same stub. That one
+serves a constructed pull request to the *model's* fetch path and guards
+under-fetch. This one serves `scripts/fetch-pr-history.sh`, whose queries the
+other stub does not answer (a connection-free identity query, and
+`node(id:)` thread-comment resume), and whose failure modes are the point:
+pages that must be followed by cursor, a surface that dies mid-run, an
+identity the floor rejects.
+
+    CMR_HISTORY_SCENARIO=.../scenario.json PATH=.../fixtures/history-bin:$PATH
+
+Scenario layout (JSON). Every connection is a list of pages; a page names the
+cursor that requests it, so a fetch that loses or invents a cursor finds no
+page and the run fails loudly instead of quietly short:
+
+    {
+      "identity": {...pullRequest fields...} | null,
+      "surfaces": {
+        "reviews":           [ {"after": null, "nodes": [...],
+                                "hasNextPage": true, "endCursor": "rev:2"},
+                               {"after": "rev:2", "nodes": [...],
+                                "hasNextPage": false, "endCursor": null} ],
+        "reviewThreads":     [ ... ],
+        "comments":          [ ... ],
+        "userContentEdits":  [ ... ]
+      },
+      "threadComments": { "<thread node id>": [ ...pages... ] },
+      "fail": {"surface": "comments", "after": "com:2", "mode": "nonzero"}
+    }
+
+`fail.mode` is `nonzero` (the forge errors) or `garbage` (a 200 that is not
+the JSON the caller parses). `fail.after` is optional; omitted, every page of
+that surface fails. An absent surface serves one empty page.
+
+A page may carry `"raw": {...}` instead of `nodes`/`hasNextPage`/`endCursor`;
+that object becomes the connection verbatim, which is how a scenario serves
+page metadata no well-formed connection would have.
+
+Nodes are returned verbatim: this is a page server, not a GraphQL simulator.
+Live GitHub remains the only honest oracle for query well-formedness.
+"""
+
+import json
+import os
+import re
+import sys
+
+SURFACES = ("reviews", "reviewThreads", "comments", "userContentEdits")
+
+EMPTY_PAGE = {"after": None, "nodes": [], "hasNextPage": False, "endCursor": None}
+
+
+def die(msg, code=1):
+    sys.stderr.write(f"gh (history stub): {msg}\n")
+    sys.exit(code)
+
+
+def load():
+    path = os.environ.get("CMR_HISTORY_SCENARIO")
+    if not path:
+        die("CMR_HISTORY_SCENARIO is not set; no scenario to serve", 4)
+    try:
+        with open(path) as fh:
+            return json.load(fh)
+    except FileNotFoundError:
+        die(f"scenario file not found: {path}", 4)
+    except json.JSONDecodeError as exc:
+        die(f"scenario is not valid JSON: {exc}", 4)
+
+
+def bindings(argv):
+    """Non-query -f/-F pairs, the way real `gh` binds GraphQL variables."""
+    out = {}
+    i = 0
+    while i < len(argv):
+        if argv[i] in ("-f", "--field", "-F", "--raw-field") and i + 1 < len(argv):
+            pair = argv[i + 1]
+            i += 2
+            if "=" in pair:
+                key, val = pair.split("=", 1)
+                if key != "query":
+                    out[key] = val
+            continue
+        i += 1
+    return out
+
+
+def query_of(argv):
+    for i, a in enumerate(argv):
+        val = None
+        if a in ("-f", "--field", "-F", "--raw-field") and i + 1 < len(argv):
+            val = argv[i + 1]
+        elif a.startswith("query="):
+            val = a
+        if val and val.startswith("query="):
+            return val[len("query="):]
+    die("no query= field supplied to `api graphql`", 2)
+
+
+def surface_of(query):
+    """Which of the fetch helper's six documents this is."""
+    if "PullRequestReviewThread" in query:
+        return "threadComments"
+    for name in ("reviewThreads", "reviews", "userContentEdits", "comments"):
+        if re.search(rf"\b{name}\s*\(", query):
+            return name
+    if "headRefOid" in query:
+        return "identity"
+    die("query matches none of the fetch helper's documents", 2)
+
+
+def serve_page(pages, cursor, label):
+    for page in pages:
+        if page.get("after") == cursor:
+            return page
+    die(
+        f"no page of `{label}` is served after cursor {cursor!r}; the fetch "
+        "did not follow a cursor this scenario issued",
+        1,
+    )
+
+
+def maybe_fail(scenario, surface, cursor):
+    spec = scenario.get("fail")
+    if not spec or spec.get("surface") != surface:
+        return
+    if "after" in spec and spec["after"] != cursor:
+        return
+    if spec.get("mode") == "garbage":
+        # A 200 that is not the JSON the caller parses: the caller must treat
+        # an unparseable surface as a failed fetch, never as zero nodes.
+        sys.stdout.write("{ this is not the payload you asked for\n")
+        sys.exit(0)
+    die(f"`{surface}` is unavailable (scripted failure)", 1)
+
+
+def page_payload(page):
+    # `raw` replaces the whole connection object verbatim, so a scenario can
+    # serve metadata no well-formed page would carry (no pageInfo at all, a
+    # non-boolean hasNextPage, nodes that are not a list).
+    if "raw" in page:
+        return page["raw"]
+    return {
+        "pageInfo": {
+            "hasNextPage": bool(page.get("hasNextPage", False)),
+            "endCursor": page.get("endCursor"),
+        },
+        "nodes": page.get("nodes", []),
+    }
+
+
+def main():
+    argv = sys.argv[1:]
+    if not argv:
+        die("no command", 2)
+    if argv[0] != "api" or "graphql" not in argv[:3]:
+        die(f"`{' '.join(argv[:2])}` is outside this stub's read set", 3)
+
+    query = query_of(argv)
+    if re.search(r"(?m)^\s*mutation\b", query) or re.search(r"\bmutation\s*[({]", query):
+        die("`mutation` is a write; this stub serves queries only", 3)
+
+    scenario = load()
+    bound = bindings(argv)
+    cursor = bound.get("cursor") or None
+    surface = surface_of(query)
+
+    maybe_fail(scenario, surface, cursor)
+
+    if surface == "identity":
+        print(json.dumps(
+            {"data": {"repository": {"pullRequest": scenario.get("identity")}}},
+            indent=2,
+        ))
+        return
+
+    if surface == "threadComments":
+        thread_id = bound.get("id")
+        if not thread_id:
+            die("thread-comment resume without a bound $id", 2)
+        pages = scenario.get("threadComments", {}).get(thread_id)
+        if pages is None:
+            die(f"no thread-comment pages scripted for {thread_id}", 1)
+        page = serve_page(pages, cursor, f"threadComments[{thread_id}]")
+        print(json.dumps({"data": {"node": {"comments": page_payload(page)}}}, indent=2))
+        return
+
+    pages = scenario.get("surfaces", {}).get(surface, [EMPTY_PAGE])
+    page = serve_page(pages, cursor, surface)
+    print(json.dumps(
+        {"data": {"repository": {"pullRequest": {surface: page_payload(page)}}}},
+        indent=2,
+    ))
+
+
+if __name__ == "__main__":
+    main()

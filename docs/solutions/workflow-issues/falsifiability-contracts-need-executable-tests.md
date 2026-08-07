@@ -1,8 +1,9 @@
 ---
 title: "Ship bundled skill helpers with an executable falsifiability contract"
 date: 2026-07-31
+last_updated: 2026-08-06
 category: workflow-issues
-module: "skills/checking-pr-readiness"
+module: "skills/checking-pr-readiness, skills/checking-merge-readiness"
 problem_type: workflow_issue
 component: testing_framework
 severity: high
@@ -22,7 +23,7 @@ resolution_type: tooling_addition
 related_components:
   - development_workflow
   - tooling
-tags: [agent-skills, helper-scripts, falsifiability-contract, silent-pass, fixture-testing, exit-codes, fail-closed, execution-based-review]
+tags: [agent-skills, helper-scripts, falsifiability-contract, silent-pass, fixture-testing, exit-codes, fail-closed, execution-based-review, jq-null-object, unvalidated-ref, sigpipe, recurrence]
 ---
 
 # Ship bundled skill helpers with an executable falsifiability contract
@@ -32,8 +33,7 @@ tags: [agent-skills, helper-scripts, falsifiability-contract, silent-pass, fixtu
 The `checking-pr-readiness` skill bundles three helper scripts that an agent
 runs to decide whether a branch is ready for review:
 `skills/checking-pr-readiness/scripts/surface-report.sh`,
-`changelog-union.sh`, and `evidence-freshness.sh`. This work is pending on
-branch `jrgilbertson/checking-pr-readiness` and has not been merged.
+`changelog-union.sh`, and `evidence-freshness.sh`. This work shipped in #23.
 
 All three were designed for falsifiability from the first draft. Each header
 enumerates the helper's output states with a distinct exit code per state:
@@ -80,6 +80,46 @@ committed a rerunnable fixture runner,
 asserts the exact verdict line and exit code for every documented output state
 across all three helpers, all currently green.
 
+### Recurrence (2026-08-06): a new helper, written with this learning in view
+
+The pattern recurred on `checking-merge-readiness`'s new fetch helper,
+`skills/checking-merge-readiness/scripts/fetch-pr-history.sh` — a script
+authored with this document's discipline from the first draft (enumerated
+header contract, distinct exit codes, "exit 4 is incomplete history, never a
+silent partial"). It passed prose review, shellcheck, and a live-PR
+byte-stability check, and an independent multi-reviewer pass (a cross-model
+adversarial reviewer on a different model family, plus a validator that
+reproduced each claim against fixtures before counting it) found three
+reproducible holes the same day:
+
+5. **Dead not-found guard (jq object construction over null).** jq's
+   `{state, isDraft, ...}` construction applied to a `null` input yields an
+   object of null fields, not the string `null`, so the guard comparing the
+   constructed object against `"null"` never fired and a `pullRequest: null`
+   response produced `complete: true` at exit 0. The fix tests the raw
+   response before construction (`fetch-pr-history.sh:167-168`).
+6. **Unvalidated `--merge-base` pass-through.** The sibling helpers' new
+   pass-through flag trusted any value that resolved to a commit. Passing
+   `HEAD` emptied the committed diff range and turned a diff-laden branch
+   into a green `verdict: no changes on surface` at exit 0. The fix
+   cross-checks the supplied value against the merge base the resolved
+   default branch yields, or ancestry when no base resolves
+   (`surface-report.sh:313-320`).
+7. **SIGPIPE crash in the capped-listing pipeline.** `printf | head -25 |
+   sed` under `set -euo pipefail` dies at exit 141 once the payload outlives
+   `head` closing the pipe — exactly and only on the oversized surfaces the
+   cap exists for, which is why a small live run never triggered it. The fix
+   caps with `sed -n '1,25p'`, which drains its stdin
+   (`surface-report.sh:206-212`).
+
+All three fixes shipped in the same change as the fixtures that pin them:
+`tests/checking-merge-readiness/fixtures/run-fetch-checks.sh` (31 assertions,
+including not-found, null floor identity, mid-run failure, missing resume
+cursor, and a 1.2MB body) and an extended
+`tests/checking-pr-readiness/fixtures/run-helper-checks.sh` (154 assertions,
+including 500-path and 900-file payloads sized to actually reproduce the
+SIGPIPE race).
+
 ## Guidance
 
 When a bundled helper's output is what an agent reads to decide a gate:
@@ -121,6 +161,19 @@ When a bundled helper's output is what an agent reads to decide a gate:
    that the code says what it means to say. Only execution against a fixture in
    the adversarial state verifies that the state produces the documented output.
 
+9. **Ship the adversarial fixtures in the same change as the helper, and check
+   the named trap shapes explicitly.** The recurrence above happened on a
+   helper written with items 1-8 in view, so treat these as a checklist, not
+   background: a guard for an empty response must test the raw value before
+   any jq object construction (`{a, b}` over null builds an object of nulls,
+   which is truthy); a caller-supplied ref that decides what gets measured
+   (`--base`, `--merge-base`, `--since`) must be validated against what the
+   tool would have resolved itself, because a resolvable-but-wrong ref is the
+   attack surface; and a capped listing under `pipefail` must use `sed -n`
+   rather than `head`, with a fixture payload big enough to actually trigger
+   the SIGPIPE race. "Merge now, harden the tests next" leaves the gate
+   silently unfalsifiable for exactly the window that matters.
+
 ## Why This Matters
 
 A helper that cannot fail is worse than no helper. It converts an unchecked
@@ -131,7 +184,11 @@ output signals that the check did not happen.
 
 Careful design does not prevent this. All three helpers were designed around
 distinct outputs per state, with the reasoning written into the headers, and
-all three shipped with holes anyway. The gap is not between careless and
+all three shipped with holes anyway. The 2026-08-06 recurrence sharpens the
+point: a fourth helper written by an author who had this very document in
+context shipped three more holes of the same class, so designing for
+falsifiability is necessary and still not sufficient — the gap closes only
+when the adversarial fixtures exist and someone independent runs them. The gap is not between careless and
 careful authoring; it is between reading code and running it. A prose reviewer
 reads `if [ -z "$record_time" ] && [ ! -e "$record" ]` and confirms it handles
 the missing-record case, which it does. Only executing it against a record that
@@ -297,4 +354,12 @@ assertion passing (`0 failed`).
   verdict lines onto the gate's status words — verdicts say what a class found,
   status words say whether the check happened.
 - `tests/checking-pr-readiness/log.md:11` records the first green 34/34 run
-  after the fixes.
+  after the original fixes; the harness has since grown to 154 assertions.
+- `skills/checking-merge-readiness/references/fetch-floor.md` names
+  `fetch-pr-history.sh` the preferred transport for the merge digest's history
+  surfaces, which is exactly why a silent-pass hole in it would degrade every
+  digest that relies on it.
+- `tests/checking-merge-readiness/fixtures/run-fetch-checks.sh` states the
+  generalizable question in its own header: the ways a fetch can look complete
+  without being complete are the right thing to ask of any new bundled helper
+  before trusting its exit code.

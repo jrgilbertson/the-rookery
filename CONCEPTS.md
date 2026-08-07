@@ -69,37 +69,57 @@ from there. Nothing is written to the tracked tree or any local state store.
 ### Falsifiability Contract
 
 The requirement that a bundled helper's output can prove failure as readily as
-success: every documented state produces a distinct verdict line, and every
-state class carries its own exit code — verdicts exit 0 with the verdict line
-distinguishing negative from positive, absent input exits 2, deferral to a
-repository-owned gate exits 3, environment failure exits 4 — so a gap can
-never be laundered into a green result.
+success, so a gap can never be laundered into a green result. How a helper
+meets it depends on what it produces. A helper that emits gate verdicts gives
+every documented state a distinct verdict line and every state class its own
+exit code, where verdicts exit 0 with the verdict line distinguishing negative
+from positive, absent input exits 2, deferral to a repository-owned gate exits
+3, and environment failure exits 4. A transport helper carries a payload
+rather than grading one, so it proves failure with its exit code and an empty
+stdout, which keeps a partial payload from being mistaken for a complete one.
 
 The contract is executable, not prose: a committed, rerunnable fixture runner
 asserts the exact verdict-and-exit pair for every documented state, including
-adversarial states. A helper whose contract exists only in its header comment
+adversarial states, and the runner ships in the same change as the helper it
+pins — a helper that merges ahead of its fixtures is unfalsifiable for exactly
+that window. A helper whose contract exists only in its header comment
 is itself a prose-only invariant — the defect class it exists to catch.
 
 ### Merge Digest
 
-The pre-merge readout `checking-merge-readiness` composes from a PR's
-description, diff, and review history: plain-language themes of what review
-did, an intent-drift check, and graded Risk Drivers rolling into a three-light
-recommendation of merge, debug, or do not merge. It lives in the conversation
-and changes nothing, so the owner still does the merging.
+The pre-merge readout `checking-merge-readiness` composes before the owner
+merges: a thin **Process Residual** and host merge-rule check, then the
+load-bearing **Global Pass** over the change from PR open to tip — intent
+drift, graded Risk Drivers, redesign pressure, and follow-up debt — rolling
+into one recommendation of merge, debug, or do not merge. It lives in the
+conversation and changes nothing, so the owner still does the merging.
+
+### Global Pass
+
+The merge-readiness skill's primary job: systems judgment on the full arc
+from pre-review intent through the final tip. It catches local-opt failure
+modes that babysitting and point comments miss — overengineering, YAGNI,
+intent drift, redesign-worthy shape, and future work that should be captured
+before main. Distinct from clearing individual review threads.
+
+### Process Residual
+
+The thin pre-merge process floor in the Merge Digest: whether the review loop
+is quiet enough to grade (substantive items resolved or deferred, no new open
+fire) and whether host merge rules such as required conversation resolution
+pass. Residual is named honestly; it is not a second product of reviewer
+identity, durable AI receipts, or tip-OID non-author theater.
 
 ### Risk Driver
 
 A named, graded (low / medium / high) finding in the Merge Digest's risk
 profile: one specific thing about the change or its review that an owner
-would want to weigh before merging. Seven classes are graded. Three cover
-tension the accumulated fixes put on an engineering first principle such as
-DRY, single source of truth, or YAGNI: complexity accretion, knowledge
-duplication, and speculative generality. The other four need no such tension
-to fire: review items left unresolved, cross-round fix interaction, material
-security concerns, and PR text that tries to steer the assessment. Drivers
-roll up into one merge-risk grade; a word grade traceable to a named driver
-is used instead of a numeric score.
+would want to weigh before merging. Principle-tension classes cover
+complexity accretion, knowledge duplication, and speculative generality.
+Other classes cover unresolved review items, cross-round fix interaction,
+material security concerns, and PR text that tries to steer the assessment.
+Drivers roll up into one merge-risk grade; a word grade traceable to a named
+driver is used instead of a numeric score.
 
 ### Targeted Sweep
 

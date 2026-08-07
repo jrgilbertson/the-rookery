@@ -57,7 +57,7 @@ Everything here fits into seven jobs. The walkthroughs live in [WORKFLOWS.md](WO
 - [managing-personal-crm](skills/managing-personal-crm/SKILL.md). Keep relationship context in canonical Person notes and tasks. Capture interactions, prepare for a conversation, find who could help with current work, and clean up notes in stages, with no separate CRM database.
 - [reviewing-meetings](skills/reviewing-meetings/SKILL.md). Turn completed meetings from a configured source into grounded notes and follow-up actions. Duplicate work is prevented, each outcome gets one canonical owner, and scheduled runs stay read-only.
 - [checking-pr-readiness](skills/checking-pr-readiness/SKILL.md). Gate a branch before the pull request opens: the full working surface reported, upstream steps verified from receipts, the plan compared against what was delivered, and a sweep of the finding classes that drive repeated review rounds. It ends in one owner decision plus an evidence pack for the PR body.
-- [checking-merge-readiness](skills/checking-merge-readiness/SKILL.md). Digest a fully reviewed pull request before you merge it. You get plain-language themes of what review did, an intent-drift check against the earliest available description baseline, and a graded risk profile that rolls up into one recommendation of merge, pause, or do not merge.
+- [checking-merge-readiness](skills/checking-merge-readiness/SKILL.md). Pre-merge global pass on a pull request: birth-to-tip design health (intent drift, accretion, redesign pressure, follow-up debt), thin process residual, host merge rules, and a graded risk profile that rolls up into merge, debug, or do not merge.
 
 ## My other projects
 

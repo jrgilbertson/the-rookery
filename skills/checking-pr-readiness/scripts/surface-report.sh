@@ -9,10 +9,13 @@
 # Reports four categories with counts and paths: committed against the merge
 # base with the default branch, staged, unstaged, and untracked. Empty
 # categories are printed explicitly, because a category silently omitted reads
-# as a pass.
+# as a pass. Counts are always exact; each category's path listing is capped
+# at 25 paths unless --full is given, so a huge surface reports without
+# flooding the caller.
 #
 # Usage:
-#   surface-report.sh [--cap <name>=<n>]... [--defer <gate-name>] [--help]
+#   surface-report.sh [--cap <name>=<n>]... [--base <ref>] [--merge-base <sha>]
+#                     [--full] [--defer <gate-name>] [--help]
 #
 # Output states. Line 1 is always `verdict: <word>`; human detail follows.
 #
@@ -41,13 +44,16 @@
 #   verdict: not run                   exit 2  usage error (unknown option, or a
 #                                              malformed --cap value)
 #   verdict: not run                   exit 4  git is unavailable, this is not a
-#                                              git repository, or one of the five
+#                                              git repository, one of the five
 #                                              git enumerations (merge base,
 #                                              committed, staged, unstaged,
-#                                              untracked) failed to read. A
-#                                              failed read is never reported as
-#                                              an empty category; the reason line
-#                                              names the enumeration
+#                                              untracked) failed to read, or a
+#                                              supplied --merge-base failed
+#                                              validation, or a supplied --base
+#                                              resolved to no branch. A failed
+#                                              read is never reported as an empty
+#                                              category; the reason line names the
+#                                              enumeration
 #
 # One further state rides in the detail lines rather than the verdict: when no
 # default branch resolves, `default branch: unresolved` is printed, the
@@ -65,11 +71,24 @@ usage() {
 surface-report.sh — working-surface and size report
 
 Usage:
-  surface-report.sh [--cap <name>=<n>]... [--defer <gate-name>] [--help]
+  surface-report.sh [--cap <name>=<n>]... [--base <ref>] [--merge-base <sha>]
+                    [--full] [--defer <gate-name>] [--help]
 
   --cap <name>=<n>    Compare the total distinct changed-file count against
                       reviewer cap <n> for reviewer <name>. Repeatable.
                       With no --cap the size check reports `cap unverified`.
+  --base <ref>        Use <ref> as the default branch instead of resolving one.
+                      It resolves in the branch namespaces only — refs/remotes/
+                      then refs/heads/ — so a tag cannot shadow a branch; a ref
+                      that resolves in neither exits 4.
+  --merge-base <sha>  Use <sha> as the merge base instead of computing one. It
+                      is validated: whenever a base resolves (--base or a
+                      default branch) it must equal that base's merge base with
+                      HEAD, and with no base at all it must be an ancestor of
+                      HEAD and the merge-base line says it went unverified.
+                      A supplied merge base that fails validation exits 4.
+  --full              Print every path in each category instead of the first
+                      25. Counts are exact either way.
   --defer <gate-name> Report this class as owned by the named repository gate
                       and measure nothing (exit 3).
   --help              Print this text and exit 0.
@@ -88,6 +107,9 @@ fail_usage() {
 
 caps=""
 defer_gate=""
+supplied_base=""
+supplied_merge_base=""
+full_listing=0
 
 while [ "$#" -gt 0 ]; do
 	case "$1" in
@@ -120,6 +142,22 @@ while [ "$#" -gt 0 ]; do
 		caps="${caps}${2}
 "
 		shift 2
+		;;
+	--base)
+		[ "$#" -ge 2 ] || fail_usage "--base requires a ref"
+		[ -n "$2" ] || fail_usage "--base requires a non-empty ref"
+		supplied_base="$2"
+		shift 2
+		;;
+	--merge-base)
+		[ "$#" -ge 2 ] || fail_usage "--merge-base requires a commit"
+		[ -n "$2" ] || fail_usage "--merge-base requires a non-empty commit"
+		supplied_merge_base="$2"
+		shift 2
+		;;
+	--full)
+		full_listing=1
+		shift
 		;;
 	*)
 		fail_usage "unknown option: $1"
@@ -162,10 +200,21 @@ count_of() {
 	fi
 }
 
+# The count is always exact — the cap check depends on it — but the path
+# listing is capped so a 500-file surface does not flood the caller; --full
+# restores the complete dump.
 emit_category() {
-	printf '%s: %s\n' "$1" "$(count_of "$2")"
-	if [ -n "$2" ]; then
+	category_count=$(count_of "$2")
+	printf '%s: %s\n' "$1" "$category_count"
+	[ -n "$2" ] || return 0
+	if [ "$full_listing" -eq 1 ] || [ "$category_count" -le 25 ]; then
 		printf '%s\n' "$2" | sed 's/^/  /'
+	else
+		# sed drains its stdin: `head` would close the pipe early and kill the
+		# writing printf with SIGPIPE, which `set -o pipefail` turns into a
+		# 141 exit for the whole script.
+		printf '%s\n' "$2" | sed -n '1,25s/^/  /p'
+		printf '  … and %s more (--full lists every path)\n' "$((category_count - 25))"
 	fi
 }
 
@@ -199,9 +248,40 @@ resolve_base() {
 	return 1
 }
 
+# A supplied base is resolved in the branch namespaces rather than bare: git
+# resolves an ambiguous short name tags-first, so a tag named main would shadow
+# the branch and the gate would silently measure against the wrong commit.
+# refs/remotes/ is tried first so origin/main keeps working; a value that
+# resolves in neither namespace is refused rather than falling back to a bare
+# rev-parse that a tag could hijack.
+resolve_supplied_base() {
+	for namespace in "refs/remotes/$1" "refs/heads/$1"; do
+		if git rev-parse --verify --quiet "$namespace" >/dev/null 2>&1; then
+			printf '%s\n' "$namespace"
+			return 0
+		fi
+	done
+	return 1
+}
+
+fail_base() {
+	printf 'verdict: not run\n'
+	printf 'reason: the supplied --base %s resolves to no branch: neither refs/remotes/%s nor refs/heads/%s exists\n' "$1" "$1" "$1"
+	printf 'detail: a base is resolved in the branch namespaces only, so a tag cannot shadow the branch the surface is measured against.\n'
+	exit 4
+}
+
 base_rc=0
-base_info=$(resolve_base) || base_rc=$?
-[ "$base_rc" -eq 0 ] || base_info=""
+if [ -n "$supplied_base" ]; then
+	resolved_base=$(resolve_supplied_base "$supplied_base") || fail_base "$supplied_base"
+	base_info="${resolved_base}	--base"
+else
+	# Resolution is attempted even when --merge-base is supplied: a base that
+	# resolves is what the supplied merge base is checked against, and a
+	# supplied value that cannot be checked is reported as such.
+	base_info=$(resolve_base) || base_rc=$?
+	[ "$base_rc" -eq 0 ] || base_info=""
+fi
 base_ref="${base_info%%	*}"
 base_how="${base_info##*	}"
 
@@ -214,6 +294,15 @@ fail_read() {
 	printf 'verdict: not run\n'
 	printf 'reason: the %s enumeration could not be read: %s\n' "$1" "$2"
 	printf 'detail: a failed git read is not an empty category, so no surface and no cap result is reported.\n'
+	exit 4
+}
+
+# A merge base that fails validation is as unusable as one that fails to read:
+# it silently shrinks the committed category, so it takes the same hard exit.
+fail_merge_base() {
+	printf 'verdict: not run\n'
+	printf 'reason: the supplied merge base is not usable: %s\n' "$1"
+	printf 'detail: the committed category is measured from the merge base, so an unverified one is not reported as a surface.\n'
 	exit 4
 }
 
@@ -231,6 +320,7 @@ read_or_fail() {
 
 committed=""
 merge_base=""
+merge_base_caveat=""
 committed_measured=0
 base_line="default branch: unresolved — no origin/HEAD, origin/main, origin/master, main, or master resolved; reporting HEAD-only surface"
 if [ "$base_rc" -eq 2 ]; then
@@ -238,14 +328,42 @@ if [ "$base_rc" -eq 2 ]; then
 fi
 if [ -n "$base_ref" ]; then
 	base_line="default branch: ${base_ref} (from ${base_how})"
-	if [ "$head_exists" -eq 1 ]; then
+fi
+if [ -n "$supplied_merge_base" ] && [ "$head_exists" -eq 1 ]; then
+	# A supplied merge base is verified as a commit before use, so a typo
+	# fails with the read named instead of a confusing diff error.
+	read_or_fail "merge base" rev-parse --verify --quiet "${supplied_merge_base}^{commit}"
+	merge_base="$git_out"
+	# An unchecked merge base decides the committed category on its own: HEAD
+	# passed here empties the diff and turns branch work into `no changes on
+	# surface`. Whenever a base resolves, the supplied value must be the merge
+	# base that base yields; only with no base at all is the weaker ancestor
+	# check the best available, and the readout then says so.
+	if [ -n "$base_ref" ]; then
 		read_or_fail "merge base" merge-base HEAD "$base_ref"
-		merge_base="$git_out"
-		if [ -n "$merge_base" ]; then
-			read_or_fail "committed" diff --name-only "$merge_base" HEAD
-			committed="$git_out"
-			committed_measured=1
+		if [ "$merge_base" != "$git_out" ]; then
+			fail_merge_base "supplied --merge-base ${supplied_merge_base} (resolved to ${merge_base}) does not match merge-base(HEAD, ${base_ref}) = ${git_out}"
 		fi
+	else
+		git merge-base --is-ancestor "$merge_base" HEAD 2>/dev/null ||
+			fail_merge_base "supplied --merge-base ${supplied_merge_base} is not an ancestor of HEAD"
+		merge_base_caveat=" (from --merge-base, unverified against a base)"
+		if [ "$base_rc" -eq 2 ]; then
+			base_line="default branch: ambiguous — more than one candidate resolves in the same tier; set origin/HEAD or name the target, so the supplied merge base can be checked against one"
+		else
+			base_line="default branch: not resolved here, so the supplied merge base could not be checked against one"
+		fi
+	fi
+	read_or_fail "committed" diff --name-only "$merge_base" HEAD
+	committed="$git_out"
+	committed_measured=1
+elif [ -n "$base_ref" ] && [ "$head_exists" -eq 1 ]; then
+	read_or_fail "merge base" merge-base HEAD "$base_ref"
+	merge_base="$git_out"
+	if [ -n "$merge_base" ]; then
+		read_or_fail "committed" diff --name-only "$merge_base" HEAD
+		committed="$git_out"
+		committed_measured=1
 	fi
 fi
 if [ "$head_exists" -eq 0 ]; then
@@ -318,7 +436,7 @@ fi
 printf 'verdict: %s\n' "$verdict"
 printf '%s\n' "$base_line"
 if [ -n "$merge_base" ]; then
-	printf 'merge base: %s\n' "$merge_base"
+	printf 'merge base: %s%s\n' "$merge_base" "$merge_base_caveat"
 	emit_category "committed" "$committed"
 elif [ "$head_exists" -eq 0 ]; then
 	printf 'merge base: not computed (the branch has no commits)\n'

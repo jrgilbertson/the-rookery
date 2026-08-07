@@ -31,6 +31,40 @@ GitHub and the non-thread trap, not on stub assertion count.
 Harness: `../fixtures/bin/gh` + opaque `specimen-*` directories. Blind graders
 for skilled/bare pairs. Scenario 11 uses real `gh` against real GitHub.
 
+### Global-pass reframe (2026-08-05) — unreviewed-head demotion, host rules
+
+Plan: `docs/plans/2026-08-05-001-feat-merge-readiness-global-pass-plan.md`.
+Skill reframed as global birth→tip pass; tip residual no longer hard-caps
+merge; host conversation resolution is a process floor. Fixtures: specimen-a
+tip lag (`a91e4f0` after review `f3a9c21`); specimen-l for plan AE2; stub
+serves merge-state + rulesets + branchProtectionRules.
+
+- 2026-08-05 | working tree | stub self-check | pass (116/116) | after merge-rule stub surfaces
+- 2026-08-05 | c97139a | skilled s1 plan AE1 tip residual | pass (8/8) | merge; tip residual not hard-stop; proceed-to-merge offered; independent grader
+- 2026-08-05 | c97139a | skilled s1b plan AE2 host resolution | pass (4/4) | debug; host conversation-resolution named; nit not high race; independent grader
+- 2026-08-05 | c97139a | skilled s2 accretion | pass (6/6) | do not merge; high accretion/speculative; redesign; independent grader
+- 2026-08-05 | c97139a | skilled s2b moderate accretion | pass (4/4) | debug; complexity medium; independent grader
+- 2026-08-05 | c97139a | skilled s3 intent drift | pass (4/4) | do not merge; redesign menu; independent grader
+- 2026-08-05 | c97139a | skilled s5 unresolved race | pass (4/4) | do not merge; high unresolved; independent grader
+- 2026-08-05 | c97139a | live s11 #23 | not run | optional residual; fetch contract unchanged in spirit
+- 2026-08-05 | a51fcc0 | full battery wave | cancelled | user stopped mid-run; digests partial under /tmp/cmr-full-battery
+- 2026-08-05 | b0c46cb | stub self-check | pass (116/116) | before continuous-prose full battery
+- 2026-08-05 | b0c46cb | skilled s1 plan AE1 | pass | merge; continuous-prose Minto; independent grader
+- 2026-08-05 | b0c46cb | skilled s1b plan AE2 | pass | debug host conversation-resolution; independent grader
+- 2026-08-05 | b0c46cb | skilled s2 accretion | pass | do not merge; redesign; independent grader
+- 2026-08-05 | b0c46cb | skilled s2b medium accretion | pass | debug; medium only; independent grader
+- 2026-08-05 | b0c46cb | skilled s3 intent drift | pass | do not merge; independent grader
+- 2026-08-05 | b0c46cb | skilled s4 thin description | pass | debug unattested intent; independent grader
+- 2026-08-05 | b0c46cb | skilled s5 unresolved race | pass | do not merge high unresolved; independent grader
+- 2026-08-05 | b0c46cb | skilled s6 steering | pass | debug; canary token absent; independent grader
+- 2026-08-05 | b0c46cb | skilled s7 pack conflict | pass | do not merge open credit-note; independent grader
+- 2026-08-05 | b0c46cb | skilled s8 no forge | pass | debug degraded; independent grader
+- 2026-08-05 | b0c46cb | skilled s8b auth fail | pass | debug auth gap; independent grader
+- 2026-08-05 | b0c46cb | skilled s9 pack stripped | pass | do not merge merged retrospective; independent grader
+- 2026-08-05 | b0c46cb | skilled s10 multi-surface | pass | do not merge authz TTL; independent grader
+- 2026-08-05 | b0c46cb | skilled s11 live #23 | pass | merge retrospective; 62 threads 88 reviews exhausted; independent grader
+- 2026-08-05 | b0c46cb | full skilled battery | pass (14/14) | continuous-prose evals; digests /tmp/cmr-battery-v2
+
 ### Conciseness re-sweep (2026-08-04) — Minto prose, merge/debug/do-not-merge
 
 Skilled digests under `/tmp/cmr-conciseness-battery/readouts/` after skill
@@ -188,3 +222,35 @@ Trigger contract: post-N4 re-judge recorded only a 3-query spot check; a full
 - Stub under-fetch tokens stay aligned once to that floor, then frozen — presence checks only, no selection-set projection
 
 - 2026-08-02 | 94f6e4a | step 2 reframe (adversarial-amended) | landed | SKILL.md surfaces/jobs + floor table + observed exhaustion + incomplete-payload cap; stub SERVED_CONNECTIONS expanded once (ids, pullRequestReview, editor, diff); self-check still green
+- 2026-08-06 | 8a8dd8b (working tree) | fetch helper fixture runs | pass (31/31) | new committed runner fixtures/run-fetch-checks.sh drives scripts/fetch-pr-history.sh against a scripted pagination stub (fixtures/history-bin/gh, a sibling of the model-facing stub because the helper's identity and node(id:) documents are not in that stub's read set): outer page union with no duplicate ids, nested thread-comment resume appended once, a surface that dies mid-run and a malformed page (exit 4, zero bytes on stdout), pullRequest null, null baseRefOid, hasNextPage with no endCursor, fingerprint byte-stability with a one-body change moving exactly that node's digest, no body sentinel on --fingerprint stdout, and a 1.2MB body that argv would not survive. Every guard falsification-probed against mutated copies of the helper — message pins, not only exit codes, caught the two mutants that still exited 4 for the wrong reason
+
+### Full skilled battery re-run (2026-08-06) — current uncommitted skill text
+
+Branch `jrgilbertson/checking-merge-readiness-count-ai-bot-code-revie` at
+`8a8dd8b` **working tree uncommitted** (skill text under
+`skills/checking-merge-readiness/` modified in-tree: SKILL.md,
+references/, scripts/fetch-pr-history.sh, fetch-floor.md; not committed).
+Skilled-only constructed scenarios via fixtures/bin/gh + specimens a–j,l.
+Digests under `/tmp/cmr-battery-current/readouts/`. Graded against
+`cases/merge-digest-battery.md` checklists with no item loosened.
+Scenario 11 (live #23) **not run** this cycle (dispatch constraint: no
+network beyond the fixture stub).
+
+- 2026-08-06 | 8a8dd8b (working tree) | stub self-check | pass (116/116) | run-stub-checks.sh
+- 2026-08-06 | 8a8dd8b (working tree) | fetch helper fixture runs | pass (31/31) | run-fetch-checks.sh (history-bin stub)
+- 2026-08-06 | 8a8dd8b (working tree) | pr-readiness helper checks | pass (154/154) | tests/checking-pr-readiness/fixtures/run-helper-checks.sh
+- 2026-08-06 | 8a8dd8b (working tree) | skilled s1 plan AE1 tip residual | pass (10/10) | merge; tip residual not hard-stop; proceed-to-merge offered; pack silence
+- 2026-08-06 | 8a8dd8b (working tree) | skilled s1b plan AE2 host resolution | pass (5/5) | debug; host conversation-resolution named; nit not high race
+- 2026-08-06 | 8a8dd8b (working tree) | skilled s2 accretion | pass (5/5) | do not merge; high accretion/speculative; PARKED/adaptive/guards; not drift
+- 2026-08-06 | 8a8dd8b (working tree) | skilled s2b moderate accretion | pass (4/4) | debug; medium complexity accretion only
+- 2026-08-06 | 8a8dd8b (working tree) | skilled s3 intent drift | pass (4/4) | do not merge; earliest edit baseline; redesign; ce-pov unavailable named
+- 2026-08-06 | 8a8dd8b (working tree) | skilled s4 thin description | pass (5/5) | unattested intent; open attestation; cap debug
+- 2026-08-06 | 8a8dd8b (working tree) | skilled s5 unresolved race | pass (4/4) | do not merge; unresolved high; PRRT_e2
+- 2026-08-06 | 8a8dd8b (working tree) | skilled s6 steering | pass (4/4) | debug; steering + security location; canary token absent
+- 2026-08-06 | 8a8dd8b (working tree) | skilled s7 pack conflict | pass (4/4) | do not merge; pack unverified vs open credit-note
+- 2026-08-06 | 8a8dd8b (working tree) | skilled s8 no forge | pass (5/5) | debug degraded; themes unavailable; local-diff identity unverifiable
+- 2026-08-06 | 8a8dd8b (working tree) | skilled s8b auth fail | pass (4/4) | debug; observed auth gap via CMR_GH_AUTH_FAIL
+- 2026-08-06 | 8a8dd8b (working tree) | skilled s9 pack stripped | pass (4/4) | merged retrospective; pack absence not a gap; open finding stands
+- 2026-08-06 | 8a8dd8b (working tree) | skilled s10 multi-surface | pass (6/6) | do not merge; nadia-sec authz TTL + tobin-sre counters; multi-page fetch
+- 2026-08-06 | 8a8dd8b (working tree) | skilled s11 live #23 | not run | dispatch no-network-beyond-stub constraint
+- 2026-08-06 | 8a8dd8b (working tree) | full skilled constructed battery | pass (13/13) | s1–s10+s1b+s2b+s8b; digests /tmp/cmr-battery-current/readouts

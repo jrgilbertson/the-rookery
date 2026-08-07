@@ -46,7 +46,8 @@
 #                                           git repository, a git read over the
 #                                           surface or the changelog failed, a
 #                                           supplied --merge-base failed
-#                                           validation, or
+#                                           validation, a supplied --base
+#                                           resolved to no branch, or
 #                                           no unambiguous default branch
 #                                           resolved while the
 #                                           branch has commits — the committed
@@ -69,6 +70,9 @@ Usage:
                      [--help]
 
   --base <ref>        Use <ref> as the default branch instead of resolving one.
+                      It resolves in the branch namespaces only — refs/remotes/
+                      then refs/heads/ — so a tag cannot shadow a branch; a ref
+                      that resolves in neither exits 4.
   --merge-base <sha>  Use <sha> as the merge base instead of computing one. It
                       is validated: whenever a base resolves (--base or a
                       default branch) it must equal that base's merge base with
@@ -244,9 +248,32 @@ if [ -z "$changelog" ]; then
 	exit 2
 fi
 
+# A supplied base is resolved in the branch namespaces rather than bare: git
+# resolves an ambiguous short name tags-first, so a tag named main would shadow
+# the branch and the changelog check would silently compare against the wrong
+# commit. refs/remotes/ is tried first so origin/main keeps working; a value
+# that resolves in neither namespace is refused rather than falling back to a
+# bare rev-parse that a tag could hijack.
+resolve_supplied_base() {
+	for namespace in "refs/remotes/$1" "refs/heads/$1"; do
+		if git rev-parse --verify --quiet "$namespace" >/dev/null 2>&1; then
+			printf '%s\n' "$namespace"
+			return 0
+		fi
+	done
+	return 1
+}
+
+fail_base() {
+	printf 'verdict: not run\n'
+	printf 'reason: the supplied --base %s resolves to no branch: neither refs/remotes/%s nor refs/heads/%s exists\n' "$1" "$1" "$1"
+	printf 'detail: a base is resolved in the branch namespaces only, so a tag cannot shadow the branch the surface is compared against.\n'
+	exit 4
+}
+
 base_ref=""
 if [ -n "$supplied_base" ]; then
-	base_ref="$supplied_base"
+	base_ref=$(resolve_supplied_base "$supplied_base") || fail_base "$supplied_base"
 else
 	# Resolution is attempted even when --merge-base is supplied: a base that
 	# resolves is what the supplied merge base is checked against, and a
@@ -291,7 +318,7 @@ if [ -n "$supplied_merge_base" ] && [ "$head_exists" -eq 1 ]; then
 	if [ -n "$base_ref" ]; then
 		read_or_fail "merge base" merge-base HEAD "$base_ref"
 		if [ "$merge_base" != "$git_out" ]; then
-			fail_merge_base "supplied --merge-base ${supplied_merge_base} resolves to ${merge_base}, but the merge base with ${base_ref} is ${git_out}"
+			fail_merge_base "supplied --merge-base ${supplied_merge_base} (resolved to ${merge_base}) does not match merge-base(HEAD, ${base_ref}) = ${git_out}"
 		fi
 	else
 		git merge-base --is-ancestor "$merge_base" HEAD 2>/dev/null ||

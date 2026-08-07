@@ -49,9 +49,11 @@
 #                                              committed, staged, unstaged,
 #                                              untracked) failed to read, or a
 #                                              supplied --merge-base failed
-#                                              validation. A failed read is never
-#                                              reported as an empty category; the
-#                                              reason line names the enumeration
+#                                              validation, or a supplied --base
+#                                              resolved to no branch. A failed
+#                                              read is never reported as an empty
+#                                              category; the reason line names the
+#                                              enumeration
 #
 # One further state rides in the detail lines rather than the verdict: when no
 # default branch resolves, `default branch: unresolved` is printed, the
@@ -76,6 +78,9 @@ Usage:
                       reviewer cap <n> for reviewer <name>. Repeatable.
                       With no --cap the size check reports `cap unverified`.
   --base <ref>        Use <ref> as the default branch instead of resolving one.
+                      It resolves in the branch namespaces only — refs/remotes/
+                      then refs/heads/ — so a tag cannot shadow a branch; a ref
+                      that resolves in neither exits 4.
   --merge-base <sha>  Use <sha> as the merge base instead of computing one. It
                       is validated: whenever a base resolves (--base or a
                       default branch) it must equal that base's merge base with
@@ -243,9 +248,33 @@ resolve_base() {
 	return 1
 }
 
+# A supplied base is resolved in the branch namespaces rather than bare: git
+# resolves an ambiguous short name tags-first, so a tag named main would shadow
+# the branch and the gate would silently measure against the wrong commit.
+# refs/remotes/ is tried first so origin/main keeps working; a value that
+# resolves in neither namespace is refused rather than falling back to a bare
+# rev-parse that a tag could hijack.
+resolve_supplied_base() {
+	for namespace in "refs/remotes/$1" "refs/heads/$1"; do
+		if git rev-parse --verify --quiet "$namespace" >/dev/null 2>&1; then
+			printf '%s\n' "$namespace"
+			return 0
+		fi
+	done
+	return 1
+}
+
+fail_base() {
+	printf 'verdict: not run\n'
+	printf 'reason: the supplied --base %s resolves to no branch: neither refs/remotes/%s nor refs/heads/%s exists\n' "$1" "$1" "$1"
+	printf 'detail: a base is resolved in the branch namespaces only, so a tag cannot shadow the branch the surface is measured against.\n'
+	exit 4
+}
+
 base_rc=0
 if [ -n "$supplied_base" ]; then
-	base_info="${supplied_base}	--base"
+	resolved_base=$(resolve_supplied_base "$supplied_base") || fail_base "$supplied_base"
+	base_info="${resolved_base}	--base"
 else
 	# Resolution is attempted even when --merge-base is supplied: a base that
 	# resolves is what the supplied merge base is checked against, and a
@@ -313,7 +342,7 @@ if [ -n "$supplied_merge_base" ] && [ "$head_exists" -eq 1 ]; then
 	if [ -n "$base_ref" ]; then
 		read_or_fail "merge base" merge-base HEAD "$base_ref"
 		if [ "$merge_base" != "$git_out" ]; then
-			fail_merge_base "supplied --merge-base ${supplied_merge_base} resolves to ${merge_base}, but the merge base with ${base_ref} is ${git_out}"
+			fail_merge_base "supplied --merge-base ${supplied_merge_base} (resolved to ${merge_base}) does not match merge-base(HEAD, ${base_ref}) = ${git_out}"
 		fi
 	else
 		git merge-base --is-ancestor "$merge_base" HEAD 2>/dev/null ||

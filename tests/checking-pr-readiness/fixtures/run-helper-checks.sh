@@ -594,7 +594,7 @@ for helper_name in surface changelog; do
 	exits "$helper_name: --merge-base HEAD refused" 4
 	says "$helper_name: --merge-base HEAD reports not run" "verdict: not run"
 	mentions_text "$helper_name: --merge-base HEAD names the mismatch" \
-		"but the merge base with"
+		"does not match merge-base(HEAD,"
 
 	run "$mb" "$helper" --merge-base "$side_sha"
 	exits "$helper_name: --merge-base off the branch refused" 4
@@ -622,6 +622,50 @@ run "$nb" "$changelog" --merge-base "$other_sha"
 exits "changelog: non-ancestor --merge-base refused with no base to check against" 4
 mentions_text "changelog: non-ancestor --merge-base names the ancestry test" \
 	"is not an ancestor of HEAD"
+
+# --- --base namespace resolution ----------------------------------------------
+# git resolves a bare short name tags-first, so a tag named main shadows the
+# branch: the helpers would diff the branch against its own tip and report an
+# empty committed category. A supplied --base resolves in the branch namespaces
+# only, and a value that resolves in neither is refused rather than falling back
+# to a bare rev-parse a tag could hijack.
+
+bt=$(repo base-tag-spoof)
+w "$bt/CHANGELOG.md" "# Changelog"
+cm "$bt" 2020-02-01T00:00:00Z changelog
+branch "$bt"
+w "$bt/src.txt" work
+cm "$bt" 2020-03-01T00:00:00Z work
+git -C "$bt" tag main HEAD
+git -C "$bt" tag v1.0 HEAD
+
+run "$bt" "$surface" --base main
+exits "surface: --base main measures against the branch, not the tag" 0
+says "surface: --base main names the branch namespace" \
+	"default branch: refs/heads/main (from --base)"
+says "surface: --base main counts the branch commit" "committed: 1"
+
+run "$bt" "$changelog" --base main
+exits "changelog: --base main measures against the branch, not the tag" 0
+says "changelog: --base main sees the branch work" "verdict: missing"
+says "changelog: --base main counts the branch commit" "changed non-changelog files: 1"
+
+for helper_name in surface changelog; do
+	case "$helper_name" in
+	surface) helper="$surface" ;;
+	changelog) helper="$changelog" ;;
+	esac
+
+	run "$bt" "$helper" --base v1.0
+	exits "$helper_name: --base naming only a tag refused" 4
+	says "$helper_name: --base naming only a tag reports not run" "verdict: not run"
+	mentions_text "$helper_name: --base naming only a tag names the ref" \
+		"the supplied --base v1.0 resolves to no branch"
+
+	run "$bt" "$helper" --base no-such-ref
+	exits "$helper_name: --base resolving to no branch refused" 4
+	says "$helper_name: --base resolving to no branch reports not run" "verdict: not run"
+done
 
 # --- Mentions cap and the untracked search -------------------------------------
 # Same SIGPIPE exposure as the surface listing, on the other capped listing:

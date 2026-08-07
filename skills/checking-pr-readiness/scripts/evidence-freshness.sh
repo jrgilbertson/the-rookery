@@ -94,7 +94,10 @@ Usage:
   --check-name        Look under <search-root> for a file whose basename or
                       path suffix is the literal <name>, and report whether a
                       plan-named artifact still matches what shipped. Takes no
-                      further arguments.
+                      further arguments. <search-root> is a git pathspec
+                      resolved within the repository: an absolute path inside
+                      the worktree is accepted, a path outside the repository is
+                      not, because every enumeration here goes through git.
   --defer <gate-name> Report this class as owned by the named repository gate
                       and compare nothing (exit 3).
   --help              Print this text and exit 0.

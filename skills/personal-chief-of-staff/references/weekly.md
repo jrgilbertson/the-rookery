@@ -59,11 +59,9 @@ opening the supporting detail.
 ## Coach on recurring threads
 
 After the executive synthesis and before next-week commitments, perform the
-longitudinal coaching judgment from `source-behavior.md`. Surface zero to three
-supported recurring threads. A supported thread needs at least two independent,
-temporally distinct observed episodes from the configured durable Obsidian
-roles; a review and the journals it derives from remain one evidence chain.
-Classify each supported thread as:
+longitudinal coaching judgment from `source-behavior.md`. Apply its recurrence
+and evidence-chain rules, surface zero to three supported recurring threads,
+and classify each as:
 
 - **new** when it clears the recurrence bar for the first time;
 - **already known** when an earlier review identified it and the bounded current
@@ -73,23 +71,25 @@ Classify each supported thread as:
 - **unresolved** when recurrence is supported but its implication for the
   current choice is not.
 
-For each candidate, inspect the bounded corpus for counterevidence, changed
-behavior, and alternate explanations before choosing the status. Do not count
-synced copies or a derived summary as independent support, and do not turn
-coordinated work on one critical path into a blanket lesson against parallel
-work. Show only the dated evidence, counterevidence, inference, or limit that
-helps the user judge the thread.
+For each candidate, apply the shared counterevidence rules before choosing the
+status. Treat coordinated work on one critical path as a reason to narrow any
+blanket lesson against parallel work. Show only the dated evidence,
+counterevidence, inference, or limit that helps the user judge the thread.
 
-Choose at most one highest-leverage supported thread when a small learning
-step could change next week's plan. Propose either a falsifiable experiment or
-a boundary that states the behavior or action, the observation window, and a
-signal that would support or disconfirm the interpretation. Keep it small
-enough to revisit at the next Weekly Review. The intervention may reshape the
-proposed plan, but it does not approve that plan or any durable action.
+Choose at most one supported thread when a small learning step could change
+next week's plan. If several qualify, choose the one whose result would change
+the plan most. Propose either a falsifiable experiment or a boundary that
+states the behavior or action, an observation window ending at the next Weekly
+Review, and a signal that would support or disconfirm the interpretation. The
+intervention may reshape the proposed plan, but it does not approve that plan
+or any durable action.
 
-When no candidate clears the recurrence bar, report zero supported threads and
-continue without filler advice or a generic experiment. When threads clear the
-bar but none supports a useful intervention, say so rather than forcing one.
+When no candidate clears the recurrence bar, close the coaching step with zero
+supported threads and any material evidence limit. Offer no coaching
+recommendation, experiment, boundary, or advice to keep, carry forward, or
+change the plan; next-week commitments continue through the existing review
+flow. When threads clear the bar but none supports a useful intervention, say
+so rather than forcing one.
 
 Completion: the user receives a bounded recurring-thread judgment and, only
 when useful, one falsifiable next-week intervention before commitments are

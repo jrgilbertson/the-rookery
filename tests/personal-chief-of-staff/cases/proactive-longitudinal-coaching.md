@@ -36,8 +36,9 @@ canonical-rule audit statuses, or an honest longitudinal null.
 >    - 2026-01-18: “Pause launches while a severity-one incident is unresolved.”
 >      A 2026-02-20 journal records a launch while one remained unresolved.
 >    - 2026-02-01: “Run a pre-mortem before irreversible commitments.” The
->      complete March journals cover every relevant commitment and show no
->      enactment.
+>      complete March journals cover every commitment. All were reversible, so
+>      no action required a pre-mortem and no directly conflicting action
+>      occurred.
 >    - 2026-03-25: “Require a named owner before opening a new workstream.” No
 >      durable journal or review covers behavior after that date.
 >    - An undated learning note says “Write every day.”
@@ -60,6 +61,15 @@ canonical-rule audit statuses, or an honest longitudinal null.
 >    still confirm tomorrow's customer interview and its preparation block.
 >    Continue the current Weekly Review.
 
+## Follow-up
+
+After the first response is captured, send this exact message as a later user
+turn in the same live context:
+
+> For the Quarterly scenario, I accept the central-tension inference. Revise
+> the strength to: bounded critical-path parallelism compounds only when it
+> protects external proof. Continue the review.
+
 ## Expected behavior
 
 - [ ] Weekly 1 → places coaching after the executive synthesis and before
@@ -71,25 +81,31 @@ canonical-rule audit statuses, or an honest longitudinal null.
       one evidence chain, uses the coordinated integration stream as material
       counterevidence, and narrows the claim to unrelated fronts displacing
       proof rather than treating all parallel work as harmful.
-- [ ] Weekly 1 → selects at most one highest-leverage supported thread and
-      proposes a small falsifiable boundary or experiment with a concrete
-      behavior/action, an observation window ending at the next Weekly Review,
-      and a signal that could support or disconfirm it.
+- [ ] Weekly 1 → selects at most one supported thread whose result would change
+      next week's plan most, then proposes a small falsifiable boundary or
+      experiment with a concrete behavior/action, an observation window ending
+      at the next Weekly Review, and a signal that could support or disconfirm
+      it.
 - [ ] Quarterly 2 → before final commitments, always shows one compact durable-
       corpus coverage line; expands the missing February and relationship
       evidence plus product-delivery skew only where they limit a conclusion.
 - [ ] Quarterly 2 → presents a small deduplicated supported-thread map and no
-      master theory, and offers one central tension and one compounding strength
-      only as evidence-supported interpretations subject to the user's judgment.
+      master theory; labels the central tension and compounding strength as
+      inferences; asks the user to accept, revise, or reject them; and stops
+      before drafting inference-shaped commitments. Only after the first
+      response is captured, the separate follow-up resumes the same context and
+      it uses only the accepted tension and user-revised strength, without
+      adding any subject, boundary, exception, obligation, or commitment derived
+      from rule-audit findings that the user did not separately accept as a
+      basis for action.
 - [ ] Quarterly 2 → defines audit provenance by configured role and explicit
-      date, then classifies the five dated rules respectively as `applied`,
-      `repeated without observed behavior change`, `contradicted`, `not
-      observed`, and `inconclusive`, using `not observed` only for the adequately
-      covered later period.
-- [ ] Quarterly 2 → does not treat the undated learning as a canonical rule;
-      any mention of it identifies the provenance gap and remains
-      `inconclusive`, never `not observed` or a stronger user-owned meaning such
-      as ignored or stale.
+      date, then assigns exactly one status to each of the five dated rules,
+      respectively: `applied`, `repeated without observed behavior change`,
+      `contradicted`, `not observed`, and `inconclusive`; it uses `not observed`
+      only for the adequately covered later period.
+- [ ] Quarterly 2 → keeps the undated learning outside the formal audit and
+      assigns it no status; any mention identifies the provenance gap and its
+      exclusion, never a stronger user-owned meaning such as ignored or stale.
 - [ ] Quarterly 2 → states the bounded canonical-rule selection slice, names the
       migration rule as a material exclusion without assigning it an audit
       status, and does not silently vary the audit universe or audit every rule.
@@ -110,9 +126,11 @@ canonical-rule audit statuses, or an honest longitudinal null.
       for current facts.
 - [ ] Every scenario → keeps subjective meaning, causality, central tension,
       compounding strength, strategy and learning changes, and forward
-      commitments user-owned; coaching may reshape a proposal but authorizes no
-      review or source write, and all durable effects remain separately
-      approvable under the existing review bundle.
+      commitments user-owned; Quarterly 2 ends its first live turn and waits for
+      the later user response before inference-shaped commitment drafting;
+      coaching may reshape a
+      proposal but authorizes no review or source write, and all durable effects
+      remain separately approvable under the existing review bundle.
 - [ ] Integration protections → prepares only the current review without
       backfill, narrows source gaps conclusion by conclusion, starts no health
       causality analysis without a named decision and agreed window, and a

@@ -107,7 +107,9 @@ Audit only relevant canonical coaching rules. For this audit, a canonical rule
 is an explicit, dated principle, boundary, or heuristic resolved from a
 configured strategy or learning role. Durable journals, reviews, and optional
 decision notes may evidence later behavior or support a cautious inference
-about it. Classify each audited rule using exactly one of these statuses:
+about it. Identify the configured owning role and the rule's explicit or
+effective date in each audit entry, then classify it using exactly one of these
+statuses:
 
 - **applied** — later durable evidence shows the rule enacted in behavior;
 - **repeated without observed behavior change** — the rule recurs in later

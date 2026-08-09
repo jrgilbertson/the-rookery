@@ -27,8 +27,10 @@ canonical-rule audit statuses, or an honest longitudinal null.
 >    but most February daily journals and durable relationship evidence are absent;
 >    the surviving corpus overrepresents product delivery. A March Weekly
 >    Review summarizes two dated March journals, so count that summary and its
->    journals as one evidence chain. The configured strategy and learning roles
->    contain these rules and later durable evidence:
+>    journals as one evidence chain. The configured strategy role contains the
+>    first three rules below; the configured learning role contains the final
+>    two dated rules and the undated note. Later durable evidence follows each
+>    rule:
 >    - 2026-01-05: “Ship external proof before internal polish.” Later journals
 >      show the sequence changed on 2026-01-22 and 2026-02-12.
 >    - 2026-01-10: “Protect Wednesday mornings for customer interviews.” Three

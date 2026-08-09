@@ -8,10 +8,10 @@ recurrence.
 
 ## Prompt
 
-> For each independent scenario, run wind-down through the coaching beat and
-> proposed Meaningful Commitments. Reconstruct the day from sources, wait for
-> my reflection, and prepare tomorrow first. Do not write anything until I
-> approve the exact action.
+> For each independent scenario, assume the evidence-based reconstruction and
+> my free-form reflection have already produced exactly the facts below. Prepare
+> tomorrow, deliver the coaching beat, and propose Meaningful Commitments in
+> that order. Do not write anything until I approve the exact action.
 >
 > 1. My configured strategy note contains a dated rule: favor external proof
 >    before internal polish. Today, internal work displaced a planned customer

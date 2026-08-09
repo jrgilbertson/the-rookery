@@ -88,6 +88,56 @@ on it. A failed query is not evidence that nothing changed.
 Completion: every material conclusion has enough native evidence, and each
 material gap affects only the conclusions that depend on it.
 
+## Ground longitudinal coaching in durable evidence
+
+Separate two evidence jobs. Use only dated durable material resolved through
+the configured canonical Obsidian roles for recurrence, coaching-rule, and
+other longitudinal personal claims. Current calendars, tasks, repositories,
+CRM sources, and other authoritative native systems may still establish
+current facts, outcomes, constraints, and source state. Current user input may
+guide this review, but it does not establish longitudinal recurrence.
+
+Never use AI session logs, conversation memory, a run ledger, a cached
+portrait, or another generated memory store as longitudinal evidence, even
+when one is available. Do not create a new memory store for coaching.
+
+Treat evidence as a progression rather than a count of mentions. One period
+supports a state or hypothesis, not a recurring thread. A recurring thread
+requires at least two independent, temporally distinct observed episodes.
+Count a derived review and its underlying journals as one evidence chain, as
+the synced-copy rule above counts one copy. A prior review contributes another
+episode only when it points to separately dated evidence. Strategy and learning
+notes may supply a rule or hypothesis; they do not by themselves corroborate
+later behavior.
+
+Before promoting a pattern, inspect the bounded durable corpus for dated
+counterevidence, changed behavior, or a material alternate explanation. For
+Wind-down, use the current day plus one targeted look-back for a named rule or
+hypothesis. For Weekly, use the current week, the last useful weekly review,
+relevant strategy and learning roles, and only older evidence needed to test a
+candidate thread. For Quarterly, use weekly reviews for compression, selected
+daily records for material questions, and older evidence only to corroborate
+or refute a named durable thread. Stop when more retrieval cannot change the
+conclusion or next action. When no counterexample appears, state the slice
+inspected rather than claiming none exists outside it. A relevant
+counterexample must narrow, weaken, or leave the candidate unresolved unless
+the remaining evidence supports a more precise claim.
+
+For each material coaching claim, distinguish the dated observations, the
+agent's inference, relevant counterevidence or alternate explanation, and
+subjective judgment that remains the user's. When the available evidence does
+not support a material pattern or intervention, return an honest null. Sparse
+history intentionally produces narrower coaching or no longitudinal claim;
+never fill the gap with novelty, causality, generic advice, or a questionnaire.
+
+Keep these analytical checks internal and surface only evidence or limits that
+change interpretation or choice, plus any coverage statement required by the
+selected mode. Follow the configured-role ambiguity and claim-specific
+coverage rules above and the approval, scheduled-run, Obsidian CLI, and
+write-readback rules below. This evidence contract does not narrow current
+native-source coverage, the Daily CRM Scan, or the user's authority over
+meaning, causality, commitments, strategy, learning, and durable changes.
+
 ## Decide what deserves attention
 
 Surface an item only when the user's judgment or presence could change its

@@ -1,3 +1,5 @@
+<!-- markdownlint-disable-file MD041 -->
+
 ![The Rookery banner showing Huginn returning with a field dispatch to a blueprint workspace](docs/assets/the-rookery-readme-banner.webp)
 
 # The Rookery

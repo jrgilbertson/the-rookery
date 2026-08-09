@@ -11,9 +11,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ## [Unreleased]
 
-### Changed
+### Added
 
 - Added the repository banner and its optimized README delivery asset.
+
+### Changed
+
 - Review fixes and repeatable test coverage for that efficiency pass. The two
   capped listings (`surface-report.sh` categories, `evidence-freshness.sh`
   mentions) now drain their own input instead of closing the pipe early, so a

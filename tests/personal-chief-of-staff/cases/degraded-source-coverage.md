@@ -9,8 +9,12 @@ calendar evidence.
 
 > Let's do my weekly review. My connected personal mailbox is available, my
 > work mailbox is not, and my work calendar is shared into the connected
-> calendar account. Use what you can verify, tell me what the gap affects,
-> and help me make the few decisions that matter.
+> calendar account. The readable work calendar shows a Tuesday launch review
+> whose description says the release decision is due Friday, plus a protected
+> Thursday customer-proof block. My personal mailbox confirms that an external
+> collaborator is waiting for the customer-proof result; it contains no work
+> thread or release decision. Use what you can verify, tell me what the gap
+> affects, and help me make the few decisions that matter.
 
 ## Expected behavior
 

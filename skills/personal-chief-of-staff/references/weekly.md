@@ -168,6 +168,11 @@ review bundle. The canonical weekly-review note is one proposed action. Task,
 calendar, CRM, repository, writing, or other source changes are separate
 actions with their own identities, targets, effects, and approval.
 
+When the review pauses before those actions are fully drafted, keep the later
+write gate explicit: immediately revalidate the acting identity and exact
+target before each approved write, then read back and report each action's
+result independently.
+
 After approval, create or update only the current canonical weekly review
 through the Obsidian CLI with explicit vault targeting. Re-read the note first,
 preserve existing manual content, frontmatter, links, embeds, and vault views,

@@ -225,22 +225,34 @@ defensible tomorrow judgment items with no filler.
 ## Coach lightly
 
 After evidence, user reflection, and prepare-tomorrow inputs are available—and
-**before** Meaningful Commitments are finalized—deliver a short coaching beat
-every wind-down. Ground it in the day's sources, strategy, and learnings.
-Cover, in light form:
+**before** Meaningful Commitments are finalized—deliver one short coaching
+judgment. Test whether one relevant rule from the configured strategy or
+learning roles, or one supported current hypothesis, should change tomorrow's
+actual choice. Apply at most one; do not force a rule or hypothesis merely to
+produce coaching.
 
-- whether focus matched intent;
-- what to stop;
-- what to do more of; and
-- what to do less of.
+Use the shared longitudinal-evidence contract. Distinguish a one-day state or
+hypothesis from evidence of recurrence, and inspect material counterevidence
+or an alternate explanation in the bounded Wind-down look-back. Keep the dated
+observations, the agent's inference, and the user's subjective judgment
+distinct. Invite the user to correct the evidence or interpretation.
 
-Prefer insight over lecture. Do not score, grade, or invent a streak. Coaching
-may reshape tomorrow's commitments and plan; it is not only afterthought prose.
-Subjective coaching language that belongs in the journal follows the same
-approval rules as other subjective content.
+When the evidence supports an intervention, recommend the smallest useful
+change to the proposed plan, commitment, or boundary. An evidence-backed
+recommendation to keep the current plan qualifies when it resolves the live
+choice; generic task restatement does not. Focus, stop, more, and less may be
+useful lenses, but they are not required slots. Prefer insight over lecture and
+do not score, grade, or invent a streak.
 
-Completion: the user has received a short, evidence-grounded coaching beat
-before commitments lock.
+When no material intervention is supported, say so concisely and continue to
+Meaningful Commitments without filler advice or a strategy or learning
+proposal. Coaching itself authorizes nothing: a revised commitment, its exact
+text and rationale, any journal effect, and any strategy or learning effect
+remain proposed until approved through their existing separate actions.
+
+Completion: before commitments lock, the user has received either one
+evidence-grounded recommendation tied to tomorrow's actual choice or a concise
+no-material-intervention result, with an invitation to correct the judgment.
 
 ## Record tomorrow's meaningful commitments
 

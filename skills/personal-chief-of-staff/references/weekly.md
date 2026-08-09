@@ -56,6 +56,45 @@ item-by-item reconciliation, or create another source of task state.
 Completion: the user can understand the week and its implications before
 opening the supporting detail.
 
+## Coach on recurring threads
+
+After the executive synthesis and before next-week commitments, perform the
+longitudinal coaching judgment from `source-behavior.md`. Surface zero to three
+supported recurring threads. A supported thread needs at least two independent,
+temporally distinct observed episodes from the configured durable Obsidian
+roles; a review and the journals it derives from remain one evidence chain.
+Classify each supported thread as:
+
+- **new** when it clears the recurrence bar for the first time;
+- **already known** when an earlier review identified it and the bounded current
+  evidence still supports it;
+- **weakened** when counterevidence or changed behavior narrows a thread that
+  still clears the recurrence bar; or
+- **unresolved** when recurrence is supported but its implication for the
+  current choice is not.
+
+For each candidate, inspect the bounded corpus for counterevidence, changed
+behavior, and alternate explanations before choosing the status. Do not count
+synced copies or a derived summary as independent support, and do not turn
+coordinated work on one critical path into a blanket lesson against parallel
+work. Show only the dated evidence, counterevidence, inference, or limit that
+helps the user judge the thread.
+
+Choose at most one highest-leverage supported thread when a small learning
+step could change next week's plan. Propose either a falsifiable experiment or
+a boundary that states the behavior or action, the observation window, and a
+signal that would support or disconfirm the interpretation. Keep it small
+enough to revisit at the next Weekly Review. The intervention may reshape the
+proposed plan, but it does not approve that plan or any durable action.
+
+When no candidate clears the recurrence bar, report zero supported threads and
+continue without filler advice or a generic experiment. When threads clear the
+bar but none supports a useful intervention, say so rather than forcing one.
+
+Completion: the user receives a bounded recurring-thread judgment and, only
+when useful, one falsifiable next-week intervention before commitments are
+finalized.
+
 ## Prefill the current review progressively
 
 Map verified evidence into the configured weekly-review template without

@@ -86,6 +86,56 @@ after-action discussion within the review rather than creating another system.
 Completion: objective sections are drafted to the strength of the evidence,
 and missing evidence narrows only the conclusions that depend on it.
 
+## Audit the quarter's durable coaching evidence
+
+Before final commitments, perform the longitudinal coaching judgment from
+`source-behavior.md`. Always begin this part of the review with one compact
+line stating durable-corpus coverage for the selected quarter. Expand on a gap
+or source skew only when it materially limits or biases a conclusion; keep the
+effect tied to that conclusion rather than downgrading the whole review.
+
+Present a small, deduplicated map of supported recurring threads. Each thread
+must clear the shared recurrence bar, and weekly summaries count with their
+underlying journals as one evidence chain rather than separate corroboration.
+Include material counterevidence, changed behavior, or alternate explanations.
+Do not force a master theory. Surface at most one central tension and one
+compounding strength, and only when the durable evidence supports those
+interpretations; their meaning remains the user's judgment. Zero supported
+threads is a valid result.
+
+Audit only relevant canonical coaching rules. For this audit, a canonical rule
+is an explicit, dated principle, boundary, or heuristic resolved from a
+configured strategy or learning role. Durable journals, reviews, and optional
+decision notes may evidence later behavior or support a cautious inference
+about it. Classify each audited rule using exactly one of these statuses:
+
+- **applied** — later durable evidence shows the rule enacted in behavior;
+- **repeated without observed behavior change** — the rule recurs in later
+  durable reflection while covered behavior does not change;
+- **contradicted** — later durable evidence shows behavior in conflict with the
+  rule;
+- **not observed** — the relevant later period has adequate durable coverage
+  but contains no observed enactment; or
+- **inconclusive** — the rule lacks explicit dated provenance or relevant later
+  coverage is insufficient.
+
+Do not use **not observed** when provenance or coverage is missing. An undated
+statement does not qualify as a canonical rule; if it matters enough to
+mention, identify the provenance limit and keep the result inconclusive.
+Statuses describe the inspected evidence, not the user's intent. Stronger
+meanings such as ignored, abandoned, ineffective, or stale require the user's
+confirmation.
+
+When coverage cannot support a thread, tension, strength, or rule result,
+preserve the compact coverage line and return an empty thread map or an empty
+or inconclusive audit without filler coaching. Keep any proposed commitment,
+strategy edit, or learning promotion inside the existing separately
+approvable review flow.
+
+Completion: the quarter has an honest coverage statement, a bounded thread map
+and rule audit where evidence permits, and no agent-owned strategic meaning or
+commitment.
+
 ## Collaborate on strategy
 
 Invite the user's interpretation before finalizing causal lessons, strategy,

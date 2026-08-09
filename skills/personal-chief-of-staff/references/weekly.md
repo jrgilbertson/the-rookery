@@ -188,10 +188,12 @@ the vault.
 End explicitly using the core run endings. When a useful interactive review has
 a named material evidence gap, end **Partial** even if user-owned choices or
 approvals remain; describe those open choices in the recap without relabeling
-the run **Paused**. Reserve **Paused** for a review the user intends to continue
-later when no more specific evidence ending applies. Name any evidence gap only
-where it limits a conclusion, and recap the reviewed note plus every applied,
-unapplied, manual, or indeterminate action.
+the run **Paused**. A scheduled run with the user absent ends **Paused** even
+when evidence coverage is partial; name the gap and the conclusions it limits
+in the recap. Reserve **Paused** otherwise for a review the user intends to
+continue later when no more specific evidence ending applies. Name any evidence
+gap only where it limits a conclusion, and recap the reviewed note plus every
+applied, unapplied, manual, or indeterminate action.
 
 Completion: one current reviewed weekly review exists when approved, related
 changes remain independently controlled, and no skipped week was backfilled.

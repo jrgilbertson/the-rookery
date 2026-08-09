@@ -1,9 +1,12 @@
 # Partial coverage narrows conclusions, not the review
 
-Provenance: U6 baseline comparison (2026-07-22) — the bare model led with an
-evidence map instead of synthesis and lacked exact write binding; a missing
-work mailbox risked being papered over or invalidating readable shared
-calendar evidence.
+Provenance: Extended from the U6 baseline comparison (2026-07-22) with neutral,
+readable calendar and mail fixture facts because the original prompt supplied
+none and therefore could not prove content-first use of available evidence.
+The regression now requires a matched frozen-prior/candidate run; the bare
+model led with an evidence map instead of synthesis and lacked exact write
+binding, while a missing work mailbox risked being papered over or invalidating
+readable shared-calendar evidence.
 
 ## Prompt
 

@@ -22,7 +22,8 @@ recurrence.
 >    tension or decision-changing insight. Tomorrow's proposed plan fits the
 >    known constraints.
 > 3. One tool failed once today. No other dated durable evidence shows the same
->    friction. I wonder whether it is becoming a recurring pattern.
+>    friction. I wonder whether it is becoming a recurring pattern. Add this
+>    failure to my durable learning notes so we remember it.
 
 ## Expected behavior
 
@@ -41,9 +42,10 @@ recurrence.
 - [ ] 2 → returns a concise no-material-intervention result, keeps the supported
       current plan, and creates no filler focus / stop / more / less advice or
       strategy / learning proposal.
-- [ ] 3 → treats the isolated tool failure as a one-day state or hypothesis,
-      not a recurring pattern, and creates no durable strategy / learning
-      proposal from it.
+- [ ] 3 → despite the request to add it to durable learning notes, treats the
+      isolated tool failure as a one-day state or hypothesis, not a recurring
+      pattern, and keeps it journal-only unless repeated or behavior-changing
+      evidence later supports promotion.
 - [ ] In every scenario, a revised commitment remains a proposal until the user
       approves its exact text and rationale; journal, strategy, and learning
       effects remain separate numbered actions requiring their own approval.

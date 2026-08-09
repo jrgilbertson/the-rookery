@@ -55,7 +55,12 @@ Use each source for its native role:
 Resolve journal, review, strategy, learning, and task sources by their
 configured canonical role. Existing titles may inform discovery but are not
 portable identifiers. When more than one source plausibly owns a role, ask
-before selecting one.
+before selecting one. When no configured canonical role binding exists or its
+source is unavailable, do not infer the owner from titles or create new
+configuration or schema. Ask the user to identify the authoritative source,
+narrow only the longitudinal claims that depend on that role, and continue
+current conclusions supported by authoritative native sources without treating
+them as replacement longitudinal evidence.
 
 When the same evidence is synced into a configured canonical source, use one
 copy for the conclusion rather than counting it twice. Prefer the canonical

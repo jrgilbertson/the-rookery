@@ -103,23 +103,31 @@ compounding strength, and only when the durable evidence supports those
 interpretations; their meaning remains the user's judgment. Zero supported
 threads is a valid result.
 
-Audit only relevant canonical coaching rules. For this audit, a canonical rule
-is an explicit, dated principle, boundary, or heuristic resolved from a
-configured strategy or learning role. Durable journals, reviews, and optional
-decision notes may evidence later behavior or support a cautious inference
-about it. Identify the configured owning role and the rule's explicit or
-effective date in each audit entry, then classify it using exactly one of these
-statuses:
+Audit a bounded selection of canonical coaching rules: explicit, dated
+principles, boundaries, or heuristics resolved from a configured strategy or
+learning role, effective on or before the selected quarter's end, that
+materially bear on a supported thread, central tension, compounding strength,
+or named next-quarter choice. State the selection slice inspected and any
+material exclusions; do not build a rule ledger or audit every rule. Durable
+journals, reviews, and optional decision notes may evidence later behavior or
+support a cautious inference about it. Identify the configured owning role and
+the rule's explicit or effective date in each audit entry, then classify it
+using exactly one of these statuses:
 
 - **applied** — later durable evidence shows the rule enacted in behavior;
 - **repeated without observed behavior change** — the rule recurs in later
-  durable reflection while covered behavior does not change;
-- **contradicted** — later durable evidence shows behavior in conflict with the
-  rule;
+  durable reflection while covered behavior stays unchanged;
+- **contradicted** — later durable evidence directly conflicts with the rule
+  without that restatement pattern;
 - **not observed** — the relevant later period has adequate durable coverage
   but contains no observed enactment; or
 - **inconclusive** — the rule lacks explicit dated provenance or relevant later
   coverage is insufficient.
+
+When later durable reflection restates the rule while covered behavior stays
+unchanged, use **repeated without observed behavior change** even if that
+behavior conflicts with the rule; reserve **contradicted** for a direct conflict
+without the restatement pattern.
 
 Do not use **not observed** when provenance or coverage is missing. An undated
 statement does not qualify as a canonical rule; if it matters enough to

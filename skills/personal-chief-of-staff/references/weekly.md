@@ -175,6 +175,10 @@ the authoritative interface and revalidate the acting identity, destination,
 exact target, and approved effect; afterward, read back and classify each
 action's result independently.
 
+Completion: before stopping on such a choice, the user-facing review explicitly
+says that identity and target will be revalidated before any approved write and
+that each result will be read back and reported independently.
+
 After approval, create or update only the current canonical weekly review
 through the Obsidian CLI with explicit vault targeting. Re-read the note first,
 preserve existing manual content, frontmatter, links, embeds, and vault views,

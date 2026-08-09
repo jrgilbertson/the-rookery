@@ -5,6 +5,19 @@ and authoritative sources, leave tomorrow ready, and deliver light coaching.
 Scheduled and manual wind-down follow the same workflow. This is the sole daily
 chief-of-staff path.
 
+## Contents
+
+- [Establish the day](#establish-the-day)
+- [Daily CRM Scan](#daily-crm-scan)
+- [Begin with one broad reflection](#begin-with-one-broad-reflection)
+- [Complete the existing journal together](#complete-the-existing-journal-together)
+- [Reconcile what changed elsewhere](#reconcile-what-changed-elsewhere)
+- [Prepare tomorrow](#prepare-tomorrow)
+- [Coach lightly](#coach-lightly)
+- [Record tomorrow's meaningful commitments](#record-tomorrows-meaningful-commitments)
+- [Promote only durable signal](#promote-only-durable-signal)
+- [Review, write, and verify](#review-write-and-verify)
+
 ## Establish the day
 
 Resolve the local date and review window. If the run time or the user's wording

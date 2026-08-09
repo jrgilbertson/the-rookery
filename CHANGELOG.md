@@ -17,6 +17,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Rebuilt the repository banner title and tagline as real typography and
+  delivered the asset as lossless WebP, keeping the approved illustration
+  intact while making the text crisp at GitHub display sizes.
 - Review fixes and repeatable test coverage for that efficiency pass. The two
   capped listings (`surface-report.sh` categories, `evidence-freshness.sh`
   mentions) now drain their own input instead of closing the pipe early, so a

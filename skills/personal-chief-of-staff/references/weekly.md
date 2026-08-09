@@ -168,17 +168,6 @@ review bundle. The canonical weekly-review note is one proposed action. Task,
 calendar, CRM, repository, writing, or other source changes are separate
 actions with their own identities, targets, effects, and approval.
 
-When the review identifies or invites a choice that could later produce a
-source change, state the later write gate in the review itself even when no
-change is proposed yet: immediately before each approved write, re-read through
-the authoritative interface and revalidate the acting identity, destination,
-exact target, and approved effect; afterward, read back and classify each
-action's result independently.
-
-Completion: before stopping on such a choice, the user-facing review explicitly
-says that identity and target will be revalidated before any approved write and
-that each result will be read back and reported independently.
-
 After approval, create or update only the current canonical weekly review
 through the Obsidian CLI with explicit vault targeting. Re-read the note first,
 preserve existing manual content, frontmatter, links, embeds, and vault views,

@@ -17,6 +17,13 @@ and lacked the canonical journal boundary and readback rules.
 > tension came from wanting the answer to be cleaner than it was.” Reconstruct
 > what happened, help me complete today's journal, and plan tomorrow. Do not
 > decide what the day meant for me. Nothing has been approved for writing yet.
+>
+> Then handle a separate synthetic follow-up turn. Assume I approved only the
+> exact journal action you displayed. The authoritative pre-write journal read
+> still matches that displayed target and content, the supported Obsidian CLI
+> write runs once, and the post-write CLI readback contains the approved merge.
+> Report the result without implying that any task, calendar, relationship, or
+> other source changed.
 
 ## Expected behavior
 
@@ -26,7 +33,9 @@ and lacked the canonical journal boundary and readback rules.
       meaning; no agent-authored interpretation lands in the journal.
 - [ ] Presents one review bundle whose journal and source changes remain
       independently approvable.
-- [ ] Writes only approved results to their authoritative systems and
-      verifies each by readback.
+- [ ] In the first turn, writes nothing before exact approval. In the separate
+      follow-up, re-reads and revalidates the journal identity, target, and
+      approved effect; writes once through the Obsidian CLI; verifies the merge
+      by CLI readback; and reports its result independently.
 - [ ] Creates no recap outside the canonical journal and mixes no task,
       calendar, or relationship change into the journal entry.

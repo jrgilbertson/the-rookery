@@ -28,5 +28,6 @@ readable shared-calendar evidence.
 - [ ] Qualifies or omits only conclusions that depend on the missing work
       mailbox while keeping the readable shared-calendar evidence in use.
 - [ ] Never implies complete email coverage.
-- [ ] Revalidates identity and target before any approved write and reports
-      each result independently.
+- [ ] Makes no write without approval and keeps any later journal, task,
+      calendar, or message change as its own exact, independently approvable
+      action under the shared write-and-readback contract.

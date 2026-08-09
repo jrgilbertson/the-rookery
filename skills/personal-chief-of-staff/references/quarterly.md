@@ -124,10 +124,19 @@ using exactly one of these statuses:
 - **inconclusive** — the rule lacks explicit dated provenance or relevant later
   coverage is insufficient.
 
-When later durable reflection restates the rule while covered behavior stays
-unchanged, use **repeated without observed behavior change** even if that
-behavior conflicts with the rule; reserve **contradicted** for a direct conflict
-without the restatement pattern.
+Apply the statuses in this precedence order so one bounded slice produces one
+result:
+
+1. Use **repeated without observed behavior change** when later durable
+   reflection restates the rule while covered behavior stays unchanged, even if
+   that behavior conflicts with the rule.
+2. Otherwise use **contradicted** when any covered later episode directly
+   conflicts with the rule; mixed enactment and conflict remains contradicted.
+3. Otherwise use **applied** when later durable evidence shows enactment.
+4. Otherwise use **not observed** only when adequate later coverage shows
+   neither enactment nor direct conflict.
+5. Use **inconclusive** when dated provenance or relevant later coverage cannot
+   support one of the preceding results.
 
 Do not use **not observed** when provenance or coverage is missing. An undated
 statement does not qualify as a canonical rule; if it matters enough to

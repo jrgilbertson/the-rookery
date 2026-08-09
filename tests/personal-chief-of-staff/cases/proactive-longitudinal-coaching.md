@@ -45,9 +45,9 @@ canonical-rule audit statuses, or an honest longitudinal null.
 >      migrations.” No surfaced thread, interpretation, or next-quarter choice
 >      concerns migrations.
 >    Two dated journals record unrelated new work displacing planned external
->    proof, while three dated release records show integration work clearing
->    blockers on the release critical path. Audit the rules and help me choose
->    next-quarter commitments.
+>    proof. Three dated Weekly Reviews, each pointing to a distinct underlying
+>    journal, record integration work clearing blockers on the release critical
+>    path. Audit the rules and help me choose next-quarter commitments.
 > 3. Honest-null pair. The available Weekly corpus contains one quiet,
 >    strategy-aligned week and no second independent dated episode for any
 >    candidate. The Quarterly corpus is sparse, skewed, and has no later durable

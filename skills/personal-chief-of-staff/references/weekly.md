@@ -168,10 +168,11 @@ review bundle. The canonical weekly-review note is one proposed action. Task,
 calendar, CRM, repository, writing, or other source changes are separate
 actions with their own identities, targets, effects, and approval.
 
-When the review pauses before those actions are fully drafted, keep the later
-write gate explicit: immediately revalidate the acting identity and exact
-target before each approved write, then read back and report each action's
-result independently.
+When the review proposes later source changes but ends before any are approved,
+state the later write gate in the review itself: immediately before each
+approved write, re-read through the authoritative interface and revalidate the
+acting identity, destination, exact target, and approved effect; afterward,
+read back and classify each action's result independently.
 
 After approval, create or update only the current canonical weekly review
 through the Obsidian CLI with explicit vault targeting. Re-read the note first,
@@ -179,8 +180,12 @@ preserve existing manual content, frontmatter, links, embeds, and vault views,
 apply only the approved content, and read it back through the CLI. Do not lint
 the vault.
 
-End explicitly using the core run endings. Name any evidence gap only where it
-limits a conclusion, and recap the reviewed note plus every applied,
+End explicitly using the core run endings. When a useful interactive review has
+a named material evidence gap, end **Partial** even if user-owned choices or
+approvals remain; describe those open choices in the recap without relabeling
+the run **Paused**. Reserve **Paused** for a review the user intends to continue
+later when no more specific evidence ending applies. Name any evidence gap only
+where it limits a conclusion, and recap the reviewed note plus every applied,
 unapplied, manual, or indeterminate action.
 
 Completion: one current reviewed weekly review exists when approved, related

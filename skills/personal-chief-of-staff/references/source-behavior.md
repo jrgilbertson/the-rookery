@@ -85,7 +85,11 @@ For each queried source, retain enough context in the conversation to identify
 the source, acting or owning identity when relevant, record or target, and
 query time. Use the native timestamp when available; otherwise use the current
 response plus its query time. For Obsidian, use the note contents and native
-metadata returned at query time, including `date_modified`. Do not copy results
+metadata returned at query time. Use an event or effective date from the note
+content or canonical metadata for episode ordering and audit coverage.
+`date_modified` indicates freshness only; it is not an event date. Treat a
+record without an event or effective date as undated: it may support current
+context, but not episode ordering or dated audit coverage. Do not copy results
 into a run ledger, cache, freshness registry, mirror, or brief archive.
 
 Coverage is conclusion-specific:

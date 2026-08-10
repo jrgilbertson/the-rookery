@@ -247,8 +247,9 @@ produce coaching.
 Use the shared longitudinal-evidence contract. Distinguish a one-day state or
 hypothesis from evidence of recurrence, and inspect material counterevidence
 or an alternate explanation in the bounded Wind-down look-back. Keep the dated
-observations, the agent's inference, and the user's subjective judgment
-distinct. Invite the user to correct the evidence or interpretation.
+observations, the agent's inference, material uncertainty, and the user's
+subjective judgment distinct. Do not supply the user's judgment; ask them to
+confirm or correct the evidence and interpretation.
 
 When the evidence supports an intervention, recommend the smallest useful
 change to the proposed plan, commitment, or boundary. An evidence-backed
@@ -328,11 +329,13 @@ creating a quota, draft, or publication action automatically. Keep central
 thinking and the rough draft human-led unless the user asks for more help.
 
 Propose a change to the canonical learning notes or the canonical strategy note
-only when the day (including the coaching beat) adds evidence to a repeated,
-behavior-changing pattern. A one-day observation stays in the daily journal
-even if the user asks for a vault write—the durable-signal gate still holds.
-Never auto-write strategy or learnings; each eligible proposal is a separately
-numbered review action.
+when the user explicitly requests it or when the day (including the coaching
+beat) adds evidence to a repeated, behavior-changing pattern. By default, a
+one-day observation stays in the daily journal. For a user-requested learning
+or strategy update, propose a separately numbered action that labels the
+observation as isolated and does not claim recurrence. Never auto-write
+strategy or learnings; the user must approve the exact durable update
+independently.
 
 Completion: optional writing, learning, and strategy proposals are selective,
 sourced, and independently reviewable.

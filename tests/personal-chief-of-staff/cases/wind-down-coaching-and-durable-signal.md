@@ -42,10 +42,10 @@ recurrence.
 - [ ] 2 → returns a concise no-material-intervention result, keeps the supported
       current plan, and creates no filler focus / stop / more / less advice or
       strategy / learning proposal.
-- [ ] 3 → despite the request to add it to durable learning notes, treats the
-      isolated tool failure as a one-day state or hypothesis, not a recurring
-      pattern, and keeps it journal-only unless repeated or behavior-changing
-      evidence later supports promotion.
+- [ ] 3 → treats the isolated tool failure as a one-day state or hypothesis,
+      not a recurring pattern, and offers the explicitly requested learning
+      update as a separate action that preserves that limitation rather than
+      promoting it into a recurring claim.
 - [ ] In every scenario, a revised commitment remains a proposal until the user
       approves its exact text and rationale; journal, strategy, and learning
       effects remain separate numbered actions requiring their own approval.

@@ -72,8 +72,10 @@ and classify each as:
   current choice is not.
 
 For each candidate, apply the shared counterevidence rules before choosing the
-status. Treat coordinated work on one critical path as a reason to narrow any
-blanket lesson against parallel work. Show only the dated evidence,
+status. When **already known** and **weakened** both apply, use **weakened** so
+the classification preserves the narrowing effect of counterevidence or
+changed behavior. Treat coordinated work on one critical path as a reason to
+narrow any blanket lesson against parallel work. Show only the dated evidence,
 counterevidence, inference, or limit that helps the user judge the thread.
 
 Choose at most one supported thread when a small learning step could change
@@ -175,14 +177,14 @@ apply only the approved content, and read it back through the CLI. Do not lint
 the vault.
 
 End explicitly using the core run endings. When a useful interactive review has
-a named material evidence gap, end **Partial** even if user-owned choices or
-approvals remain; describe those open choices in the recap without relabeling
-the run **Paused**. A scheduled run with the user absent ends **Paused** even
-when evidence coverage is partial; name the gap and the conclusions it limits
-in the recap. Reserve **Paused** otherwise for a review the user intends to
-continue later when no more specific evidence ending applies. Name any evidence
-gap only where it limits a conclusion, and recap the reviewed note plus every
-applied, unapplied, manual, or indeterminate action.
+a named material evidence gap and is otherwise finished, end **Partial**; open
+approvals alone do not make it Paused. When the user intends to reconnect a
+source or otherwise continue the unfinished review later, end **Paused** and
+name the evidence gap in the recap. A scheduled run with the user absent also
+ends **Paused** even when evidence coverage is partial; name the gap and the
+conclusions it limits. Name any evidence gap only where it limits a conclusion,
+and recap the reviewed note plus every applied, unapplied, manual, or
+indeterminate action.
 
 Completion: one current reviewed weekly review exists when approved, related
 changes remain independently controlled, and no skipped week was backfilled.

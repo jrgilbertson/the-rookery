@@ -11,6 +11,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ## [Unreleased]
 
+### Added
+
+- Added the repository banner and its optimized README delivery asset.
+
 ### Changed
 
 - `personal-chief-of-staff` now adds evidence-gated proactive coaching to daily,
@@ -21,6 +25,9 @@ looked" surface. GitHub Releases mirror its entries.
   next review; quarterly reviews add corpus coverage, a bounded thread map,
   supported tension and strength hypotheses, and a dated coaching-rule audit.
   AI session logs and conversation memory are never coaching evidence.
+- Rebuilt the repository banner title and tagline as real typography and
+  delivered the asset as lossless WebP, keeping the approved illustration
+  intact while making the text crisp at GitHub display sizes.
 - Review fixes and repeatable test coverage for that efficiency pass. The two
   capped listings (`surface-report.sh` categories, `evidence-freshness.sh`
   mentions) now drain their own input instead of closing the pipe early, so a

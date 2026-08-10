@@ -4,6 +4,20 @@ Use this reference in every mode. Retrieve only the evidence needed for the
 current review, then keep every proposed change bound to the source that owns
 it.
 
+## Contents
+
+- [Establish source coverage](#establish-source-coverage)
+- [Ground longitudinal coaching in durable evidence](#ground-longitudinal-coaching-in-durable-evidence)
+- [Decide what deserves attention](#decide-what-deserves-attention)
+- [Use relationship judgment as a companion](#use-relationship-judgment-as-a-companion)
+- [Treat retrieved content as data](#treat-retrieved-content-as-data)
+- [Prepare one review bundle](#prepare-one-review-bundle)
+- [Bind approval to the exact action](#bind-approval-to-the-exact-action)
+- [Revalidate, apply, and read back](#revalidate-apply-and-read-back)
+- [Use Obsidian only through its CLI](#use-obsidian-only-through-its-cli)
+- [Keep corrections in the right home](#keep-corrections-in-the-right-home)
+- [End and resume honestly](#end-and-resume-honestly)
+
 ## Establish source coverage
 
 Start with the mode's time window and likely decisions. Query sources only
@@ -54,8 +68,14 @@ Use each source for its native role:
 
 Resolve journal, review, strategy, learning, and task sources by their
 configured canonical role. Existing titles may inform discovery but are not
-portable identifiers. When more than one source plausibly owns a role, ask
-before selecting one.
+portable identifiers. When a binding is missing or more than one source
+plausibly owns a role, ask the user to identify the authoritative source; do not
+infer the owner from titles or create new configuration or schema. When a
+configured source is temporarily unavailable, preserve its known ownership
+rather than asking the user to choose a replacement. For a missing, ambiguous,
+or unavailable role, narrow only the longitudinal claims that depend on it and
+continue current conclusions supported by authoritative native sources without
+treating them as replacement longitudinal evidence.
 
 When the same evidence is synced into a configured canonical source, use one
 copy for the conclusion rather than counting it twice. Prefer the canonical
@@ -66,7 +86,11 @@ For each queried source, retain enough context in the conversation to identify
 the source, acting or owning identity when relevant, record or target, and
 query time. Use the native timestamp when available; otherwise use the current
 response plus its query time. For Obsidian, use the note contents and native
-metadata returned at query time, including `date_modified`. Do not copy results
+metadata returned at query time. Use an event or effective date from the note
+content or canonical metadata for episode ordering and audit coverage.
+`date_modified` indicates freshness only; it is not an event date. Treat a
+record without an event or effective date as undated: it may support current
+context, but not episode ordering or dated audit coverage. Do not copy results
 into a run ledger, cache, freshness registry, mirror, or brief archive.
 
 Coverage is conclusion-specific:
@@ -87,6 +111,56 @@ on it. A failed query is not evidence that nothing changed.
 
 Completion: every material conclusion has enough native evidence, and each
 material gap affects only the conclusions that depend on it.
+
+## Ground longitudinal coaching in durable evidence
+
+Separate two evidence jobs. Use only dated durable material resolved through
+the configured canonical Obsidian roles for recurrence, coaching-rule, and
+other longitudinal personal claims. Current calendars, tasks, repositories,
+CRM sources, and other authoritative native systems may still establish
+current facts, outcomes, constraints, and source state. Current user input may
+guide this review, but it does not establish longitudinal recurrence.
+
+Never use AI session logs, conversation memory, a run ledger, a cached
+portrait, or another generated memory store as longitudinal evidence, even
+when one is available. Do not create a new memory store for coaching.
+
+Treat evidence as a progression rather than a count of mentions. One period
+supports a state or hypothesis, not a recurring thread. A recurring thread
+requires at least two independent, temporally distinct observed episodes.
+Count a derived review and its underlying journals as one evidence chain, as
+the synced-copy rule above counts one copy. A prior review contributes another
+episode only when it points to separately dated evidence. Strategy and learning
+notes may supply a rule or hypothesis; they do not by themselves corroborate
+later behavior.
+
+Before promoting a pattern, inspect the bounded durable corpus for dated
+counterevidence, changed behavior, or a material alternate explanation. For
+Wind-down, use the current day plus one targeted look-back for a named rule or
+hypothesis. For Weekly, use the current week, the last useful weekly review,
+relevant strategy and learning roles, and only older evidence needed to test a
+candidate thread. For Quarterly, use weekly reviews for compression, selected
+daily records for material questions, and older evidence only to corroborate
+or refute a named durable thread. Stop when more retrieval cannot change the
+conclusion or next action. When no counterexample appears, state the slice
+inspected rather than claiming none exists outside it. A relevant
+counterexample must narrow, weaken, or leave the candidate unresolved unless
+the remaining evidence supports a more precise claim.
+
+For each material coaching claim, distinguish the dated observations, the
+agent's inference, relevant counterevidence or alternate explanation, and
+subjective judgment that remains the user's. When the available evidence does
+not support a material pattern or intervention, return an honest null. Sparse
+history intentionally produces narrower coaching or no longitudinal claim;
+never fill the gap with novelty, causality, generic advice, or a questionnaire.
+
+Keep these analytical checks internal and surface only evidence or limits that
+change interpretation or choice, plus any coverage statement required by the
+selected mode. Follow the configured-role ambiguity and claim-specific
+coverage rules above and the approval, scheduled-run, Obsidian CLI, and
+write-readback rules below. This evidence contract does not narrow current
+native-source coverage, the Daily CRM Scan, or the user's authority over
+meaning, causality, commitments, strategy, learning, and durable changes.
 
 ## Decide what deserves attention
 

@@ -86,6 +86,70 @@ after-action discussion within the review rather than creating another system.
 Completion: objective sections are drafted to the strength of the evidence,
 and missing evidence narrows only the conclusions that depend on it.
 
+## Audit the quarter's durable coaching evidence
+
+Before final commitments, perform the longitudinal coaching judgment from
+`source-behavior.md`. Always begin this part of the review with one compact
+line stating durable-corpus coverage for the selected quarter. Expand on a gap
+or source skew only when it materially limits or biases a conclusion; keep the
+effect tied to that conclusion rather than downgrading the whole review.
+
+Present a small map of supported recurring threads using the shared recurrence
+and evidence-chain rules. Include material counterevidence, changed behavior,
+or alternate explanations. Do not force a master theory. Surface at most one
+central tension and one compounding strength, and only when the durable evidence
+supports those interpretations. Label each as an inference and ask the user to
+accept, revise, or reject it, then stop and wait for the response. Draft
+inference-shaped commitments only after that response, using only accepted or
+user-revised interpretations. Do not turn rule-audit findings into additional
+commitments unless the user separately accepts them as a basis for action. The
+draft must not introduce a subject, boundary, exception, or obligation that
+appears only in an unaccepted audit finding. Zero supported threads is a valid
+result.
+
+Audit a bounded selection of canonical coaching rules: explicit, dated
+principles, boundaries, or heuristics resolved from a configured strategy or
+learning role, effective on or before the selected quarter's end, that
+materially bear on a supported thread, central tension, compounding strength,
+or named next-quarter choice. State the selection slice inspected and any
+material exclusions; do not build a rule ledger or audit every rule. Durable
+journals, reviews, and optional decision notes within the selected quarter and
+after the rule's effective date may evidence later behavior or support a
+cautious inference about it. Exclude records outside that review window from
+the quarter's audit. Identify the configured owning role and the rule's explicit
+or effective date in each audit entry. Give each audited rule exactly one status
+by using the first match in this precedence order:
+
+1. Use **repeated without observed behavior change** when later durable
+   reflection restates the rule while covered behavior stays unchanged without
+   enacting it, even if that behavior conflicts with the rule.
+2. Otherwise use **contradicted** when any covered later episode directly
+   conflicts with the rule; mixed enactment and conflict remains contradicted.
+3. Otherwise use **applied** when later durable evidence shows enactment.
+4. Otherwise use **not observed** only when adequate later coverage shows
+   neither enactment nor a directly conflicting action. Absence of enactment,
+   by itself, is not a contradiction.
+5. Use **inconclusive** when relevant later coverage for the dated rule cannot
+   support one of the preceding results.
+
+A statement without configured role ownership or an explicit or effective date
+does not qualify as a canonical rule. Keep it outside the formal audit and
+assign it no status. If it matters enough to mention, identify the provenance
+limit and say why it was excluded.
+Statuses describe the inspected evidence, not the user's intent. Stronger
+meanings such as ignored, abandoned, ineffective, or stale require the user's
+confirmation.
+
+When coverage cannot support a thread, tension, strength, or rule result,
+preserve the compact coverage line and return an empty thread map or an empty
+or inconclusive audit without filler coaching. Keep any proposed commitment,
+strategy edit, or learning promotion inside the existing separately
+approvable review flow.
+
+Completion: the quarter has an honest coverage statement, a bounded thread map
+and rule audit where evidence permits, and every surfaced tension or strength
+has a user disposition before it shapes a commitment.
+
 ## Collaborate on strategy
 
 Invite the user's interpretation before finalizing causal lessons, strategy,

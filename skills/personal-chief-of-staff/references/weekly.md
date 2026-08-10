@@ -56,6 +56,47 @@ item-by-item reconciliation, or create another source of task state.
 Completion: the user can understand the week and its implications before
 opening the supporting detail.
 
+## Coach on recurring threads
+
+After the executive synthesis and before next-week commitments, perform the
+longitudinal coaching judgment from `source-behavior.md`. Apply its recurrence
+and evidence-chain rules, surface zero to three supported recurring threads,
+and classify each as:
+
+- **new** when it clears the recurrence bar for the first time;
+- **already known** when an earlier review identified it and the bounded current
+  evidence still supports it;
+- **weakened** when counterevidence or changed behavior narrows a thread that
+  still clears the recurrence bar; or
+- **unresolved** when recurrence is supported but its implication for the
+  current choice is not.
+
+For each candidate, apply the shared counterevidence rules before choosing the
+status. When **already known** and **weakened** both apply, use **weakened** so
+the classification preserves the narrowing effect of counterevidence or
+changed behavior. Treat coordinated work on one critical path as a reason to
+narrow any blanket lesson against parallel work. Show only the dated evidence,
+counterevidence, inference, or limit that helps the user judge the thread.
+
+Choose at most one supported thread when a small learning step could change
+next week's plan. If several qualify, choose the one whose result would change
+the plan most. Propose either a falsifiable experiment or a boundary that
+states the behavior or action, an observation window ending at the next Weekly
+Review, and a signal that would support or disconfirm the interpretation. The
+intervention may reshape the proposed plan, but it does not approve that plan
+or any durable action.
+
+When no candidate clears the recurrence bar, close the coaching step with zero
+supported threads and any material evidence limit. Offer no coaching
+recommendation, experiment, boundary, or advice to keep, carry forward, or
+change the plan; next-week commitments continue through the existing review
+flow. When threads clear the bar but none supports a useful intervention, say
+so rather than forcing one.
+
+Completion: the user receives a bounded recurring-thread judgment and, only
+when useful, one falsifiable next-week intervention before commitments are
+finalized.
+
 ## Prefill the current review progressively
 
 Map verified evidence into the configured weekly-review template without
@@ -135,9 +176,15 @@ preserve existing manual content, frontmatter, links, embeds, and vault views,
 apply only the approved content, and read it back through the CLI. Do not lint
 the vault.
 
-End explicitly using the core run endings. Name any evidence gap only where it
-limits a conclusion, and recap the reviewed note plus every applied,
-unapplied, manual, or indeterminate action.
+End explicitly using the core run endings. When a useful interactive review has
+a named material evidence gap and is otherwise finished, end **Partial**; open
+approvals alone do not make it Paused. When the user intends to reconnect a
+source or otherwise continue the unfinished review later, end **Paused** and
+name the evidence gap in the recap. A scheduled run with the user absent also
+ends **Paused** even when evidence coverage is partial; name the gap and the
+conclusions it limits. Name any evidence gap only where it limits a conclusion,
+and recap the reviewed note plus every applied, unapplied, manual, or
+indeterminate action.
 
 Completion: one current reviewed weekly review exists when approved, related
 changes remain independently controlled, and no skipped week was backfilled.

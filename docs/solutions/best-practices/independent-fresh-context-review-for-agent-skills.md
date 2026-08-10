@@ -1,14 +1,14 @@
 ---
-module: creating-portable-skills skill evaluation
+module: agent-skill evaluation
 date: 2026-07-27
-last_updated: 2026-07-28
+last_updated: 2026-08-09
 problem_type: best_practice
 component: testing_framework
 severity: high
 applies_when:
   - "Grading matched prior and revised agent-skill outputs"
   - "Performing a final package review after creating or revising an agent skill"
-  - "Deciding whether artifact and execution-trace evidence supports a pass"
+  - "Deciding whether a behavioral artifact crossed every workflow boundary named by its pass claim"
   - "Recording a result when an independent review context is unavailable"
   - "Recording fresh-context judgments without archiving full transcripts"
 tags:
@@ -45,17 +45,13 @@ Keep three evidence layers separate:
 | --- | --- | --- |
 | Provenance | Which package, model, harness, and configuration ran | Hashes, runtime metadata, load traces, and deterministic comparisons |
 | Outcome evidence | Whether the output met the required outcome and hard constraints | Independent inspection of actual artifacts and relevant traces |
-| Coverage | Which changed behaviors were tested and how far the conclusion reaches | Predeclared cases, controls, limitations, and an independent final review |
+| Coverage | Which changed behaviors were tested and how far the conclusion reaches | Declared cases, limitations, and an independent final review |
 
-Record routine matched-comparison case construction, candidate decisions,
-evidence labels, matched-comparison waivers, and Claim Ceiling results in the
-baseline template
-(`skills/creating-portable-skills/assets/baseline-test-template.md:7`). Record
-listing-query construction, scoring, evidence states, and native checks in the
-trigger template
-(`skills/creating-portable-skills/assets/trigger-queries-template.md:8`).
-Workflow and review files should link to these records instead of repeating
-their thresholds or decision rules.
+Keep the durable record small: self-contained case files contain the prompt and
+binary checklist, while the log keeps one bounded line per run or check
+(`tests/README.md:10`). Behavioral revisions use matched prior/candidate runs in
+fresh contexts and ship only when discriminating cases improve without
+regression (`tests/README.md:64`).
 
 For a substantive skill change:
 
@@ -73,17 +69,24 @@ For a substantive skill change:
 6. If an independent context is unavailable, prepare a self-contained handoff
    and keep the affected result unverified. Author self-review does not replace
    the missing context.
-7. For listing judgments, record the result and a context or transcript
-   reference in every run cell. A session ID can identify a distinct fresh run
-   without preserving a transcript archive. If a decision depends on output
-   details, also keep a concise supporting excerpt or durable transcript
-   reference (`skills/creating-portable-skills/assets/trigger-queries-template.md:43`).
+7. Record the result at the narrowest level the artifact supports. A log line
+   states only what its run actually checked (`tests/README.md:82`).
 
-Keep routine verification proportionate. One observed execution is a smoke
-probe and earns no baseline label. A small matched comparison with a
-discriminating case and a stable control can support a directional
-observation. Reliability, non-regression, or causal-improvement claims require
-deeper evaluation that accounts for normal run variation.
+Make every claimed workflow transition observable in the case. “No write
+before approval” and “safe write after approval” are separate behaviors: a
+prompt that authorizes nothing can prove the first, but it cannot prove the
+second. To claim the approved path, use a safe synthetic follow-up or disposable
+fixture that causes the agent to re-read the authoritative target, revalidate
+the exact approval, write once, and read the result back. Grade those operations
+from the resulting artifact or trace, not from policy narration. Keep fixture
+facts neutral and keep expected conclusions in the checklist or grader rather
+than leaking them into the executor prompt.
+
+Keep routine verification proportionate. One graded execution supports only
+that case, in that context, at that revision. A matched comparison can show
+intended improvement across its declared discriminating cases and absence of
+regression across the cases actually run. It does not by itself establish
+general reliability, broad non-regression, or causal improvement.
 
 ## Why This Matters
 
@@ -94,14 +97,19 @@ a different fresh context for final review checks whether the evidence covers
 the complete package rather than only the cases already graded.
 
 Identity evidence does not prove quality, and a correct score on one case does
-not prove a better grading policy. The evidence record must say which layer
-passed and stop its claims there.
+not prove general reliability. The evidence record must say which layer passed
+and stop its claims there.
+
+An unexercised transition creates the same claim inflation inside one evidence
+layer. A correct refusal before approval is not evidence that the agent handles
+approval-time drift, duplicate writes, wrong targets, or failed readback. The
+run log must name only the states and transitions the retained artifacts
+actually demonstrate.
 
 Keeping each rule in one authoritative record prevents the workflow, checklist,
-and templates from diverging. Per-run context references make aggregate tables
-auditable without turning routine skill work into transcript retention. A
-context ID identifies which fresh run produced a judgment; it does not prove
-what the run contained.
+and cases from diverging. The case and its graded artifact carry the evidence;
+a context identifier can establish independence, but it cannot prove what the
+run contained.
 
 ## When to Apply
 
@@ -120,32 +128,24 @@ beyond a small matched comparison only when the requested claim requires it.
 
 ## Example
 
-A report was required to identify three evidence-backed operational risks and
-ask for approval before any changes. The probe paired a PASS summary with
-checks that required only the filename `report.md` and a `Recommendations`
-heading. Direct inspection showed one unsupported sentence and no approval
-request. The trace also showed that the source data was never opened.
+A personal-chief-of-staff case exposed a vacuous pass at an action boundary.
+Its first prompt correctly authorized no journal write, but the test and log
+also claimed approval, write, and readback safety. No approved action existed,
+so the post-approval path could not occur.
 
-Both the prior and revised graders rejected the pass after inspecting the
-artifact and trace. That result established correct behavior for one probe,
-but it did not show that the revised policy was generally more reliable. The
-separate policy comparison supported only the recorded procedural changes:
-use an independent grader, inspect artifacts and traces directly, cite
-concrete evidence and challenge weak checks, route subjective quality to human
-or blind review, and preserve an unverified handoff when an independent
-context is unavailable. The canonical result and its Claim Ceiling are retained
-in `tests/creating-portable-skills/results.md`.
-
-The later trigger review caught a different gap. The final tables recorded
-bare `yes` and `no` judgments, so they did not support the claim that every
-judgment came from a fresh process. The suite was rerun as 20 queries, three
-times in each of two target cells. Each of the 120 cells now carries a unique
-session ID. Sol recorded 30 expected should-trigger decisions and 30 expected
-near-miss decisions. Opus recorded 29 of 30 expected should-trigger decisions,
-with the remaining query passing two of three, and all 30 expected near-miss
-decisions (`tests/creating-portable-skills/trigger-queries.md:201`). This
-supports the recorded listing-proxy result for those queries and targets only.
-It is not a reliability or non-regression claim.
+The repaired case keeps that no-approval turn, then adds a separate synthetic
+follow-up with exact approval that asks the agent to state the required
+authoritative re-read, revalidation, one-write, and CLI-readback sequence
+(`tests/personal-chief-of-staff/cases/wind-down-journal-ownership.md:12`). It is
+a bounded narration check, not executable acceptance evidence; the case and
+result log say that no real source was accessed or changed. Validating the
+approved-write transition itself would require a disposable fixture that makes
+those operations observable. The production contract still requires that order
+(`skills/personal-chief-of-staff/references/source-behavior.md:278`). A separate
+pressure case asks the agent to keep a one-day failure labeled as isolated even
+when the user explicitly requests durable capture, making the recurrence and
+approval boundaries observable
+(`tests/personal-chief-of-staff/cases/wind-down-coaching-and-durable-signal.md:24`).
 
 ## Related
 
@@ -153,10 +153,10 @@ It is not a reliability or non-regression claim.
   fresh context and loaded-package identity are separate requirements.
 - `docs/solutions/best-practices/operationalize-abstract-qualifiers-in-instruction-review.md`
   shows why the quality of a check needs its own review pass.
+- `docs/solutions/workflow-issues/falsifiability-contracts-need-executable-tests.md`
+  explains why every documented state needs an executable failing specimen.
+- `docs/solutions/conventions/keep-the-test-seam-out-of-the-shipped-skill.md`
+  keeps rubric answers and harness accommodations out of the production skill.
 - `docs/solutions/integration-issues/skills-cli-ref-not-checked-out.md` gives a
   concrete example of a green check that could not distinguish success from a
   silent fallback.
-- `tests/creating-portable-skills/results.md` retains the canonical bounded
-  verification summaries.
-- Issue jrgilbertson/the-rookery#13 is the frontier-model retune that produced
-  this guidance.

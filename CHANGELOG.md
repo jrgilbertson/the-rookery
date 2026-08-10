@@ -17,6 +17,14 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `personal-chief-of-staff` now adds evidence-gated proactive coaching to daily,
+  weekly, and quarterly reviews. Longitudinal claims use only dated durable
+  records from configured canonical Obsidian roles, deduplicate derived review
+  chains, test counterevidence, and permit an honest no-pattern result. Weekly
+  reviews may turn one supported thread into a falsifiable boundary for the
+  next review; quarterly reviews add corpus coverage, a bounded thread map,
+  supported tension and strength hypotheses, and a dated coaching-rule audit.
+  AI session logs and conversation memory are never coaching evidence.
 - Rebuilt the repository banner title and tagline as real typography and
   delivered the asset as lossless WebP, keeping the approved illustration
   intact while making the text crisp at GitHub display sizes.

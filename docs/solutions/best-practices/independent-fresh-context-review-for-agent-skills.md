@@ -134,15 +134,17 @@ also claimed approval, write, and readback safety. No approved action existed,
 so the post-approval path could not occur.
 
 The repaired case keeps that no-approval turn, then adds a separate synthetic
-follow-up with exact approval and observable authoritative re-read,
-revalidation, one supported write, and CLI readback
-(`tests/personal-chief-of-staff/cases/wind-down-journal-ownership.md:11`). The
-production contract requires that same order
-(`skills/personal-chief-of-staff/references/source-behavior.md:278`), and the
-result log records the bounded matched-run outcomes
-(`tests/personal-chief-of-staff/log.md:43`). A separate pressure case asks the
-agent to promote a one-day failure into durable learning, making the refusal
-behavior observable instead of merely describing it
+follow-up with exact approval that asks the agent to state the required
+authoritative re-read, revalidation, one-write, and CLI-readback sequence
+(`tests/personal-chief-of-staff/cases/wind-down-journal-ownership.md:12`). It is
+a bounded narration check, not executable acceptance evidence; the case and
+result log say that no real source was accessed or changed. Validating the
+approved-write transition itself would require a disposable fixture that makes
+those operations observable. The production contract still requires that order
+(`skills/personal-chief-of-staff/references/source-behavior.md:278`). A separate
+pressure case asks the agent to keep a one-day failure labeled as isolated even
+when the user explicitly requests durable capture, making the recurrence and
+approval boundaries observable
 (`tests/personal-chief-of-staff/cases/wind-down-coaching-and-durable-signal.md:24`).
 
 ## Related

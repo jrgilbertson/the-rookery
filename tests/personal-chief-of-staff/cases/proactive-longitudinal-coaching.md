@@ -10,7 +10,8 @@ canonical-rule audit statuses, or an honest longitudinal null.
 
 > Treat each numbered scenario as independent. The named journals, reviews,
 > strategy records, and learning records are available from their configured
-> Obsidian roles. Local AI session logs are also available in every scenario.
+> Obsidian roles in scenarios 1–3; scenario 4 supplies its own role-resolution
+> state. Local AI session logs are also available in every scenario.
 >
 > 1. Weekly, week ending 2026-08-09. A 2026-07-14 journal records that I opened
 >    two unrelated work fronts and displaced a planned customer-proof session;
@@ -36,9 +37,7 @@ canonical-rule audit statuses, or an honest longitudinal null.
 >    - 2026-01-18: “Pause launches while a severity-one incident is unresolved.”
 >      A 2026-02-20 journal records a launch while one remained unresolved.
 >    - 2026-02-01: “Run a pre-mortem before irreversible commitments.” The
->      complete March journals cover every commitment. All were reversible, so
->      no action required a pre-mortem and no directly conflicting action
->      occurred.
+>      complete March journals cover every commitment, and all were reversible.
 >    - 2026-03-25: “Require a named owner before opening a new workstream.” No
 >      durable journal or review covers behavior after that date.
 >    - An undated learning note says “Write every day.”

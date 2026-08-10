@@ -113,10 +113,12 @@ learning role, effective on or before the selected quarter's end, that
 materially bear on a supported thread, central tension, compounding strength,
 or named next-quarter choice. State the selection slice inspected and any
 material exclusions; do not build a rule ledger or audit every rule. Durable
-journals, reviews, and optional decision notes may evidence later behavior or
-support a cautious inference about it. Identify the configured owning role and
-the rule's explicit or effective date in each audit entry. Give each audited
-rule exactly one status by using the first match in this precedence order:
+journals, reviews, and optional decision notes within the selected quarter and
+after the rule's effective date may evidence later behavior or support a
+cautious inference about it. Exclude records outside that review window from
+the quarter's audit. Identify the configured owning role and the rule's explicit
+or effective date in each audit entry. Give each audited rule exactly one status
+by using the first match in this precedence order:
 
 1. Use **repeated without observed behavior change** when later durable
    reflection restates the rule while covered behavior stays unchanged, even if

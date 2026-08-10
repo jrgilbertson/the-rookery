@@ -121,8 +121,8 @@ or effective date in each audit entry. Give each audited rule exactly one status
 by using the first match in this precedence order:
 
 1. Use **repeated without observed behavior change** when later durable
-   reflection restates the rule while covered behavior stays unchanged, even if
-   that behavior conflicts with the rule.
+   reflection restates the rule while covered behavior stays unchanged without
+   enacting it, even if that behavior conflicts with the rule.
 2. Otherwise use **contradicted** when any covered later episode directly
    conflicts with the rule; mixed enactment and conflict remains contradicted.
 3. Otherwise use **applied** when later durable evidence shows enactment.

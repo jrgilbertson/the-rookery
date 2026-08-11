@@ -40,9 +40,16 @@ BASE_SWEEP_VERDICTS = {
 EXPECTED_CHANGED_PATHS = {
     ".github/automated-reviewers.json",
     "CHANGELOG.md",
+    "fixture-validation.py",
     "src/app.txt",
     *(f"evidence/{kind}.json" for kind in SPEC["required_receipts"]),
     *(f"results/{kind}.json" for kind in SPEC["required_receipts"]),
+}
+VERIFIED_COMMANDS = {
+    "repository-gates": ("fixture-validation.py", "gate"),
+    "code-review": ("fixture-validation.py", "review"),
+    "code-simplification": ("fixture-validation.py", "simplify"),
+    "testing": ("fixture-validation.py", "test"),
 }
 EVIDENCE_COMMON_FIELDS = {
     "schema",
@@ -155,6 +162,7 @@ def evidence_documents(reviewer_mode: str = "configured") -> dict[str, dict[str,
         kind: str,
         command_id: str,
         results: list[dict[str, Any]],
+        command_arguments: list[str] | None = None,
         **substantive: Any,
     ) -> dict[str, Any]:
         return {
@@ -169,7 +177,7 @@ def evidence_documents(reviewer_mode: str = "configured") -> dict[str, dict[str,
                 "base": "main",
                 "surface": "full",
             },
-            "command": {"id": command_id, "arguments": []},
+            "command": {"id": command_id, "arguments": command_arguments or []},
             "outcome": "verified",
             "results": results,
             "result_references": [],
@@ -189,12 +197,13 @@ def evidence_documents(reviewer_mode: str = "configured") -> dict[str, dict[str,
         ),
         "repository-gates": evidence(
             "repository-gates",
-            "repository-gate-discovery",
+            "python3",
             [{"result_id": "gate:fixture-validation", "outcome": "verified", "summary": "fixture validation passed"}],
+            ["fixture-validation.py", "gate"],
             gates=[{
                 "name": "fixture-validation",
                 "owner": "fixture task runner",
-                "command": "python3 fixture-validation.py",
+                "command": "python3 fixture-validation.py gate",
                 "outcome": "verified",
                 "status": "verified",
                 "result_reference": "gate:fixture-validation",
@@ -202,25 +211,28 @@ def evidence_documents(reviewer_mode: str = "configured") -> dict[str, dict[str,
         ),
         "code-review": evidence(
             "code-review",
-            "ce-code-review",
+            "python3",
             [{"result_id": "review:summary", "outcome": "clear", "reviewed_paths": changed_paths}],
+            ["fixture-validation.py", "review"],
             finding_count=0,
             findings=[],
         ),
         "code-simplification": evidence(
             "code-simplification",
-            "ce-simplify-code",
+            "python3",
             [{"result_id": "simplification:summary", "outcome": "clear", "reviewed_paths": changed_paths}],
+            ["fixture-validation.py", "simplify"],
             finding_count=0,
             findings=[],
         ),
         "testing": evidence(
             "testing",
-            "repository-test-runner",
+            "python3",
             [{"result_id": "test:fixture-validation", "outcome": "passed", "exit_code": 0}],
+            ["fixture-validation.py", "test"],
             checks=[{
                 "name": "fixture-validation",
-                "command": "python3 fixture-validation.py",
+                "command": "python3 fixture-validation.py test",
                 "outcome": "passed",
                 "result_reference": "test:fixture-validation",
             }],
@@ -260,6 +272,7 @@ def build_repository(
     path: Path,
     reviewer_mode: str = "configured",
     evidence_mutator: Callable[[dict[str, dict[str, Any]]], None] | None = None,
+    pre_result_mutator: Callable[[dict[str, dict[str, Any]]], None] | None = None,
 ) -> str:
     path.mkdir(parents=True)
     run("git", "init", "-q", "-b", "main", cwd=path)
@@ -275,6 +288,22 @@ def build_repository(
     run("git", "checkout", "-q", "-b", "assessment-target", cwd=path)
     (path / "src" / "app.txt").write_text("ready\n", encoding="utf-8")
     (path / "CHANGELOG.md").write_text("# Changelog\n\n- Prepared synthetic assessment.\n", encoding="utf-8")
+    (path / "fixture-validation.py").write_text(
+        """#!/usr/bin/env python3
+import pathlib
+import sys
+
+mode = sys.argv[1] if len(sys.argv) == 2 else ""
+if mode not in {"gate", "review", "simplify", "test"}:
+    raise SystemExit(2)
+if pathlib.Path("src/app.txt").read_text(encoding="utf-8") != "ready\\n":
+    raise SystemExit(1)
+if "Prepared synthetic assessment." not in pathlib.Path("CHANGELOG.md").read_text(encoding="utf-8"):
+    raise SystemExit(1)
+print(f"verified:{mode}")
+""",
+        encoding="utf-8",
+    )
     if reviewer_mode == "configured":
         reviewer_configuration_document = {"automated_reviewers": [{"name": "fixture-reviewer", "cap": SPEC["reviewer_cap"]}]}
     elif reviewer_mode == "none":
@@ -283,6 +312,8 @@ def build_repository(
         reviewer_configuration_document = {"automated_reviewers": [{"name": "fixture-reviewer"}]}
     write_json(path / ".github" / "automated-reviewers.json", reviewer_configuration_document)
     documents = evidence_documents(reviewer_mode)
+    if pre_result_mutator is not None:
+        pre_result_mutator(documents)
     for kind, document in documents.items():
         results = document.pop("results")
         result_document = {
@@ -301,7 +332,7 @@ def build_repository(
         evidence_mutator(documents)
     for kind, document in documents.items():
         write_json(path / "evidence" / f"{kind}.json", document)
-    run("git", "add", "src/app.txt", "CHANGELOG.md", ".github", "evidence", "results", cwd=path)
+    run("git", "add", "src/app.txt", "CHANGELOG.md", "fixture-validation.py", ".github", "evidence", "results", cwd=path)
     run("git", "commit", "-q", "-m", "prepare synthetic assessment", cwd=path, env=git_env(COMMIT_TIME))
     revision = run("git", "rev-parse", "HEAD", cwd=path)
     require(bool(OID.fullmatch(revision)), "fixture did not produce a full Git OID")
@@ -464,6 +495,28 @@ def text_set(value: Any) -> set[str] | None:
     return set(value)
 
 
+def verify_command_evidence(kind: str, command: dict[str, Any], repo: Path) -> list[str]:
+    expected = VERIFIED_COMMANDS.get(kind)
+    if expected is None:
+        return []
+    if command != {"id": "python3", "arguments": list(expected)}:
+        return [f"command execution not verified: {kind}"]
+    try:
+        completed = subprocess.run(
+            [sys.executable, *expected],
+            cwd=repo,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return [f"command execution not verified: {kind}"]
+    expected_output = f"verified:{expected[1]}\n"
+    if completed.returncode != 0 or completed.stdout != expected_output or completed.stderr:
+        return [f"command execution not verified: {kind}"]
+    return []
+
+
 def validate_evidence_document(
     kind: str,
     document: Any,
@@ -551,7 +604,7 @@ def validate_evidence_document(
     if len(result_ids) != len(set(result_ids)):
         return [f"substantive evidence schema mismatch: {kind}"]
 
-    gaps: list[str] = []
+    gaps: list[str] = verify_command_evidence(kind, command, repo)
     if document.get("repository") != repository or document.get("subject") != live_subject:
         gaps.append(f"evidence identity mismatch: {kind}")
     if document.get("status") != "verified":
@@ -901,6 +954,7 @@ def validate_contract_sources() -> None:
         "`receipt_references`",
         "Resolve every receipt reference exactly once",
         "A detached HEAD cannot support a branch subject",
+        "Repository-authored evidence and result JSON cannot authenticate their own execution",
     ):
         require(phrase in assessment_words, f"assessment bundle contract missing: {phrase}")
     for source, phrase in (
@@ -1020,6 +1074,22 @@ def run_suite() -> None:
                 f"self-asserted {kind} evidence passed without producer, scope, command, outcome, and result references",
             )
 
+        forged_result_repo = root / "forged-command-result"
+        def forge_unrun_command(documents: dict[str, dict[str, Any]]) -> None:
+            documents["testing"]["command"] = {"id": "python3", "arguments": ["does-not-exist.py"]}
+            documents["testing"]["checks"][0]["command"] = "python3 does-not-exist.py"
+
+        forged_result_revision = build_repository(
+            forged_result_repo,
+            pre_result_mutator=forge_unrun_command,
+        )
+        forged_result = evaluate(forged_result_repo, make_bundle(forged_result_repo, forged_result_revision))
+        require(forged_result["outcome"] == "action-required", "structurally complete forged command result passed")
+        require(
+            "command execution not verified: testing" in forged_result["gaps"],
+            "structurally complete forged command result did not fail at the owning-runner boundary",
+        )
+
         bad_result_reference_repo = root / "bad-result-reference"
         bad_result_reference_revision = build_repository(
             bad_result_reference_repo,
@@ -1047,7 +1117,7 @@ def run_suite() -> None:
         print("PASS: assessment receipts bind one deterministic exact subject and revision")
         print("PASS: versioned bundle resolution, staged-only dirt, and live-subject mutations fail closed")
         print("PASS: absent reviewer is not applicable; configured reviewer without a cap fails closed")
-        print("PASS: per-kind evidence rejects self-asserted review, test, and repository-gate results")
+        print("PASS: command-backed evidence is rerun; structurally complete forged execution results fail closed")
 
 
 def materialize(destination: Path, bundle_writer: Any = write_json) -> None:

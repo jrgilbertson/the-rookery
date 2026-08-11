@@ -2,9 +2,23 @@
   {
     "id": "losing-caller",
     "scenario_type": "caller-ownership",
-    "exclusive_executor": false,
-    "bounded_read": true,
-    "write_requested": true
+    "authority": {
+      "schema": "repo-gardener-reconciliation-authority/v1",
+      "repository_id": "forge:repository:synthetic-001",
+      "report_id": "forge:report:synthetic-001",
+      "writer_id": "forge:writer:synthetic-001",
+      "run_id": "run:synthetic:009",
+      "exclusive_executor": false,
+      "wrapper_scope_allowlisted": true,
+      "raw_write_capability_absent_everywhere": true,
+      "continuity_valid": true,
+      "retention_valid": true,
+      "runtime_scope_valid": true,
+      "intended_receipt_read_back": true,
+      "authoritative_post_read_completed": true,
+      "terminal_receipt_read_back": true,
+      "write_requested": true
+    }
   },
   {
     "id": "older-unmatched-run",
@@ -267,14 +281,47 @@
     "id": "honest-no-op",
     "scenario_type": "honest-no-op",
     "receipt_fixture": "lane-receipts.json",
-    "all_expected_scouts_terminal": true,
     "reconciliation_complete": true,
-    "gate_passing_candidates": 0
+    "gate_passing_candidates": 0,
+    "authority": {
+      "schema": "repo-gardener-reconciliation-authority/v1",
+      "repository_id": "forge:repository:synthetic-001",
+      "report_id": "forge:report:synthetic-001",
+      "writer_id": "forge:writer:synthetic-001",
+      "run_id": "run:synthetic:009",
+      "exclusive_executor": true,
+      "wrapper_scope_allowlisted": true,
+      "raw_write_capability_absent_everywhere": true,
+      "continuity_valid": true,
+      "retention_valid": true,
+      "runtime_scope_valid": true,
+      "intended_receipt_read_back": true,
+      "authoritative_post_read_completed": true,
+      "terminal_receipt_read_back": true,
+      "write_requested": true
+    }
   },
   {
     "id": "incomplete-history",
     "scenario_type": "history",
-    "history_pages_complete": false
+    "history_pages_complete": false,
+    "authority": {
+      "schema": "repo-gardener-reconciliation-authority/v1",
+      "repository_id": "forge:repository:synthetic-001",
+      "report_id": "forge:report:synthetic-001",
+      "writer_id": "forge:writer:synthetic-001",
+      "run_id": "run:synthetic:009",
+      "exclusive_executor": true,
+      "wrapper_scope_allowlisted": true,
+      "raw_write_capability_absent_everywhere": true,
+      "continuity_valid": true,
+      "retention_valid": true,
+      "runtime_scope_valid": true,
+      "intended_receipt_read_back": true,
+      "authoritative_post_read_completed": true,
+      "terminal_receipt_read_back": true,
+      "write_requested": true
+    }
   },
   {
     "id": "unmatched-effect-before-discovery",

@@ -16,8 +16,9 @@ One canonical record set supplies the machine read and human report:
   bounded display description, exactly one state (`To do` or `In process`),
   lane, rationale, risk, budget use, evidence identities, exact next action,
   and nonnegative row revision;
-- authenticated `history_receipt` records run, manifest, scout, reconciliation,
-  decision, effect, and terminal facts; and
+- authenticated `history_receipt` records exactly `run-start`, `manifest`,
+  `scout-summary`, `reconciliation`, `decision`, `effect`, `report`, and
+  `terminal-run` facts; and
 - report projection assigns `Action required`, `Merge-ready`, `Watching`, or
   `Routine`.
 
@@ -29,7 +30,14 @@ repository/writer/provider receipt/operation identities, kind, run identity,
 and receipt hash. The anchor contains only sequence, head, and the complete
 `latest_receipt` repair object. The top-level last-operation markers are the
 stable operation identity plus a lowercase SHA-256 fingerprint. Missing or
-additional fields, or an unknown version, block the register read.
+additional fields, or an unknown version, block the register read. Each
+provider receipt identity authenticates exactly one canonical receipt hash
+and one fingerprint of that receipt's repository, writer, provider receipt,
+operation, kind, run, and receipt-hash material. Reusing a provider receipt
+identity, changing the authenticated receipt, or leaving extra authentication
+evidence blocks the chain. The top-level last-operation fingerprint must equal
+the authenticated fingerprint for the final receipt; a merely well-formed
+digest is insufficient.
 
 Current Portfolio is the only ownership view. Both work states consume the
 seven-row ceiling. Terminal outcomes belong in Run History. A terminal row is
@@ -40,9 +48,11 @@ Disabled-lane projections are exactly `Routine (disabled lane)` and `Action
 required (lane disabled)`.
 
 `assets/policy-template.yaml` is the single machine source for the portfolio
-limit. The deterministic contract reads `repository_portfolio_limit` from that
-asset for validation and rendering; callers and tests do not carry an
-independent numeric limit.
+limit and installed lane inventory. The deterministic contract reads only
+`boundaries.repository_portfolio_limit`, requires the public Release A value
+to equal seven, and binds the ordered manifest exactly to the top-level
+`lanes` keys. Callers and tests do not carry an independent numeric limit or
+lane list.
 
 ## Stable identities and bounds
 

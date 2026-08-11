@@ -3,8 +3,10 @@
 `canonical-records.json` is a source fixture for one repository with two
 current rows and the complete receipt chain from genesis.
 `provider-authentication.json` supplies the provider-authenticated writer and
-pagination evidence outside register-controlled data. The executable contract
-recomputes every receipt hash and validates the final anchor.
+pagination evidence outside register-controlled data. Each provider receipt
+identity is bound one-to-one to the canonical receipt hash and authenticated
+operation fingerprint. The executable contract recomputes those bindings,
+rejects replay, and validates the final anchor and last-operation marker.
 `manifest.json` declares the expected ordered scouts. `expectations.json` is
 grader-only expected data.
 

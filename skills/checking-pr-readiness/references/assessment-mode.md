@@ -120,6 +120,16 @@ Missing or additional fields, name-only checks, zero-count assertions without
 review scope, and owner/status tuples without executable gate results are
 `action-required`.
 
+Command-backed gate, review, simplification, and test results must also carry
+execution evidence from a caller-authenticated owning runner that is outside
+the assessed commit, or the assessment boundary must rerun the exact
+allowlisted command without a shell and verify its exit and bounded result.
+Repository-authored evidence and result JSON cannot authenticate their own
+execution. A command that is absent, outside the discovered gate contract, or
+reported successful without one of those independent proofs is
+`action-required`, even when every receipt field and digest is structurally
+valid.
+
 The chain contains:
 
 1. full working-surface receipt whose committed inventory exactly matches the

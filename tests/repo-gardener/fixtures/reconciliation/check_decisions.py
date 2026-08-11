@@ -9,6 +9,7 @@ import json
 import re
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any, Callable
 
@@ -79,21 +80,33 @@ def invoke_cli(command: str, payload: dict[str, Any], *, policy: bool = False) -
     return json.loads(completed.stdout)
 
 
+def reconciliation_payload(
+    scenario: dict[str, Any],
+    manifest: dict[str, Any],
+    receipt_sets: dict[str, dict[str, Any]],
+    complete_receipts: dict[str, Any],
+) -> dict[str, Any]:
+    register_dir = Path(__file__).resolve().parent.parent / "register"
+    return {
+        "schema": "repo-gardener-reconciliation-input/v1",
+        "scenario": scenario,
+        "register": load(register_dir / "canonical-records.json"),
+        "authentication": load(register_dir / "provider-authentication.json"),
+        "manifest": manifest,
+        "receipt_sets": receipt_sets,
+        "complete_receipts": complete_receipts,
+    }
+
+
 def evaluate(
     scenario: dict[str, Any],
     manifest: dict[str, Any],
-    receipt_sets: dict[str, dict[str, dict[str, Any]]],
-    complete_receipts: dict[str, dict[str, Any]],
+    receipt_sets: dict[str, dict[str, Any]],
+    complete_receipts: dict[str, Any],
 ) -> dict[str, Any]:
     return invoke_cli(
         "reconciliation-v1",
-        {
-            "schema": "repo-gardener-reconciliation-input/v1",
-            "scenario": scenario,
-            "manifest": manifest,
-            "receipt_sets": receipt_sets,
-            "complete_receipts": complete_receipts,
-        },
+        reconciliation_payload(scenario, manifest, receipt_sets, complete_receipts),
         policy=True,
     )
 
@@ -120,7 +133,6 @@ def rehash_history(records: dict[str, Any]) -> None:
         previous_hash = receipt["receipt_hash"]
     records["history_anchor"]["head"] = previous_hash
     records["history_anchor"]["latest_receipt"] = copy.deepcopy(records["history_receipts"][-1])
-    records["last_operation_fingerprint"] = previous_hash
 
 
 def assert_mutation_result(
@@ -130,8 +142,8 @@ def assert_mutation_result(
     mutate: Callable[[dict[str, Any]], None],
     expected_result: dict[str, Any],
     manifest: dict[str, Any],
-    receipt_sets: dict[str, dict[str, dict[str, Any]]],
-    receipts: dict[str, dict[str, Any]],
+    receipt_sets: dict[str, dict[str, Any]],
+    receipts: dict[str, Any],
 ) -> None:
     baseline = evaluate(scenarios[identity], manifest, receipt_sets, receipts)
     changed = copy.deepcopy(scenarios[identity])
@@ -248,16 +260,16 @@ def main() -> int:
     repo_root = fixture_dir.parents[3]
     manifest = validate_register(fixture_dir)
     complete_data = load(fixture_dir / "lane-receipts.json")
-    complete_receipts = validate_receipts_data(complete_data, manifest, "lane-receipts.json")
+    complete_receipt_map = validate_receipts_data(complete_data, manifest, "lane-receipts.json")
     incomplete_data = load(fixture_dir / "lane-receipts-incomplete.json")
-    incomplete_receipts = validate_receipts_data(incomplete_data, manifest, "lane-receipts-incomplete.json")
-    require(incomplete_receipts["runtime-error-and-alert"]["outcome"] == "incomplete", "incomplete fixture does not exercise failure coverage")
+    incomplete_receipt_map = validate_receipts_data(incomplete_data, manifest, "lane-receipts-incomplete.json")
+    require(incomplete_receipt_map["runtime-error-and-alert"]["outcome"] == "incomplete", "incomplete fixture does not exercise failure coverage")
     missing_data = load(fixture_dir / "lane-receipts-missing.json")
-    missing_receipts = validate_receipts_data(missing_data, manifest, "lane-receipts-missing.json", complete=False)
+    validate_receipts_data(missing_data, manifest, "lane-receipts-missing.json", complete=False)
     receipt_sets = {
-        "lane-receipts.json": complete_receipts,
-        "lane-receipts-incomplete.json": incomplete_receipts,
-        "lane-receipts-missing.json": missing_receipts,
+        "lane-receipts.json": complete_data,
+        "lane-receipts-incomplete.json": incomplete_data,
+        "lane-receipts-missing.json": missing_data,
     }
 
     scenario_items = load(fixture_dir / "scenarios.json")
@@ -270,7 +282,7 @@ def main() -> int:
     expectations = load(fixture_dir / "expectations.json")
     require(set(scenarios) == set(expectations), "scenario/expectation id parity failed")
     for identity, expected in expectations.items():
-        assert_expected(identity, evaluate(scenarios[identity], manifest, receipt_sets, complete_receipts), expected)
+        assert_expected(identity, evaluate(scenarios[identity], manifest, receipt_sets, complete_data), expected)
 
     gate_scenario = scenarios["ordered-gates-protected-projection"]
     gate_result = invoke_cli(
@@ -295,7 +307,7 @@ def main() -> int:
         (
             "losing-caller",
             "caller ownership",
-            lambda item: item.__setitem__("exclusive_executor", True),
+            lambda item: item["authority"].__setitem__("exclusive_executor", True),
             {"writes": 1, "last_safe_stage": "Act"},
         ),
         (
@@ -355,7 +367,7 @@ def main() -> int:
             expected_result,
             manifest,
             receipt_sets,
-            complete_receipts,
+            complete_data,
         )
 
     capability_baseline = copy.deepcopy(scenarios["shared-dependency-security-complete"])
@@ -363,8 +375,8 @@ def main() -> int:
     capability_variant = copy.deepcopy(capability_baseline)
     capability_variant["source_mutation_capability_available"] = True
     require(
-        evaluate(capability_baseline, manifest, receipt_sets, complete_receipts)
-        == evaluate(capability_variant, manifest, receipt_sets, complete_receipts),
+        evaluate(capability_baseline, manifest, receipt_sets, complete_data)
+        == evaluate(capability_variant, manifest, receipt_sets, complete_data),
         "source-mutation capability changed read-only recommendation eligibility",
     )
 
@@ -388,10 +400,62 @@ def main() -> int:
     unknown_receipt = copy.deepcopy(scenarios["stable-identity-dedupe"])
     unknown_receipt["observations"][0]["receipt_id"] = "receipt:scout:unknown"
     try:
-        evaluate(unknown_receipt, manifest, receipt_sets, complete_receipts)
+        evaluate(unknown_receipt, manifest, receipt_sets, complete_data)
         raise ContractError("unknown dedupe receipt mutation survived")
     except ContractError as error:
         require("unknown Scout Receipt" in str(error), "unknown receipt mutation failed for the wrong reason")
+
+    empty_manifest = copy.deepcopy(manifest)
+    empty_manifest["scouts"] = []
+    require_contract_error(
+        "empty reconciliation manifest",
+        "installed policy lane inventory",
+        lambda: invoke_cli(
+            "reconciliation-v1",
+            reconciliation_payload(scenarios["honest-no-op"], empty_manifest, receipt_sets, complete_data),
+            policy=True,
+        ),
+    )
+    raw_receipt_map = copy.deepcopy(receipt_sets)
+    raw_receipt_map["lane-receipts.json"] = complete_receipt_map
+    require_contract_error(
+        "raw reconciliation receipt map",
+        "Scout Receipt collection schema mismatch",
+        lambda: invoke_cli(
+            "reconciliation-v1",
+            reconciliation_payload(scenarios["honest-no-op"], manifest, raw_receipt_map, complete_data),
+            policy=True,
+        ),
+    )
+    incomplete_complete_envelope = copy.deepcopy(complete_data)
+    incomplete_complete_envelope.pop("run_id")
+    require_contract_error(
+        "incomplete complete-receipts envelope",
+        "Scout Receipt collection schema mismatch",
+        lambda: invoke_cli(
+            "reconciliation-v1",
+            reconciliation_payload(scenarios["honest-no-op"], manifest, receipt_sets, incomplete_complete_envelope),
+            policy=True,
+        ),
+    )
+    foreign_run_receipts = copy.deepcopy(complete_data)
+    foreign_run_receipts["run_id"] = "run:synthetic:other"
+    require_contract_error(
+        "foreign reconciliation run",
+        "collection run mismatch",
+        lambda: invoke_cli(
+            "reconciliation-v1",
+            reconciliation_payload(scenarios["honest-no-op"], manifest, receipt_sets, foreign_run_receipts),
+            policy=True,
+        ),
+    )
+    incomplete_authority = copy.deepcopy(scenarios["honest-no-op"])
+    incomplete_authority["authority"].pop("runtime_scope_valid")
+    require_contract_error(
+        "incomplete reconciliation authority",
+        "authority schema mismatch",
+        lambda: evaluate(incomplete_authority, manifest, receipt_sets, complete_data),
+    )
 
     scout_schema_fields = (
         "run_id",
@@ -545,6 +609,52 @@ def main() -> int:
         "lowercase SHA-256",
         lambda: CONTRACT.validate_register(malformed_operation_fingerprint, manifest, authentication, POLICY_PATH),
     )
+    replayed_provider_receipt = copy.deepcopy(records)
+    replayed_provider_receipt["history_receipts"][1]["provider_receipt_id"] = replayed_provider_receipt["history_receipts"][0]["provider_receipt_id"]
+    rehash_history(replayed_provider_receipt)
+    require_contract_error(
+        "replayed provider receipt identity",
+        "provider receipt replay",
+        lambda: CONTRACT.validate_register(replayed_provider_receipt, manifest, authentication, POLICY_PATH),
+    )
+    wrong_operation_fingerprint = copy.deepcopy(records)
+    wrong_operation_fingerprint["last_operation_fingerprint"] = "0" * 64
+    require_contract_error(
+        "valid but wrong operation fingerprint",
+        "authenticated operation material",
+        lambda: CONTRACT.validate_register(wrong_operation_fingerprint, manifest, authentication, POLICY_PATH),
+    )
+    changed_authenticated_receipt = copy.deepcopy(records)
+    changed_authenticated_receipt["history_receipts"][2]["run_id"] = "run:synthetic:forged"
+    rehash_history(changed_authenticated_receipt)
+    require_contract_error(
+        "changed authenticated receipt content",
+        "authenticated receipt content",
+        lambda: CONTRACT.validate_register(changed_authenticated_receipt, manifest, authentication, POLICY_PATH),
+    )
+
+    missing_lane = copy.deepcopy(manifest)
+    missing_lane["scouts"].pop()
+    require_contract_error(
+        "manifest missing installed lane",
+        "installed policy lane inventory",
+        lambda: CONTRACT.validate_register(records, missing_lane, authentication, POLICY_PATH),
+    )
+
+    with tempfile.TemporaryDirectory(prefix="repo-gardener-policy-") as temp:
+        policy = Path(temp) / "policy.yaml"
+        policy.write_text("unrelated:\n  repository_portfolio_limit: 99\n", encoding="utf-8")
+        require_contract_error("wrong-section portfolio limit", "boundaries.repository_portfolio_limit", lambda: CONTRACT.portfolio_limit(policy))
+        policy.write_text("boundaries:\n  exact_revision_required_for_verification: true\n", encoding="utf-8")
+        require_contract_error("missing portfolio limit", "boundaries.repository_portfolio_limit", lambda: CONTRACT.portfolio_limit(policy))
+        policy.write_text("boundaries:\n  repository_portfolio_limit: 8\n", encoding="utf-8")
+        require_contract_error("non-seven portfolio limit", "Release A value 7", lambda: CONTRACT.portfolio_limit(policy))
+        policy.write_text("boundaries:\n  repository_portfolio_limit: 7\nlanes:\n  dependency-and-vulnerability:\n    mutation: false\n", encoding="utf-8")
+        require_contract_error(
+            "incomplete installed lane inventory",
+            "public Release A contract",
+            lambda: CONTRACT.validate_register(records, manifest, authentication, policy),
+        )
 
     oversized_identity = copy.deepcopy(records)
     oversized_identity["repository_id"] = "r" * (CONTRACT.IDENTITY_LIMIT + 1)
@@ -581,7 +691,7 @@ def main() -> int:
 
     validate_sources(repo_root)
     print("PASS: Release A reconciliation outcomes derive from caller, gate, receipt, capacity, and ordering facts")
-    print(f"PASS: {len(mutations) + 38} reconciliation, history, schema, bound, and receipt mutations rejected")
+    print(f"PASS: {len(mutations) + 51} reconciliation, authority, history, policy, schema, bound, and receipt mutations rejected")
     print("NOTE: fresh-context matched cases own behavioral evidence")
     return 0
 

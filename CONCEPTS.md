@@ -152,8 +152,9 @@ History, not as a third row state.
 
 ### Run History
 
-The complete authenticated receipt chain from genesis. It records run, scout,
-decision, effect, and terminal facts. It supplies visibility, not a lock,
+The complete authenticated receipt chain from genesis. Its receipt kinds are
+exactly `run-start`, `manifest`, `scout-summary`, `reconciliation`, `decision`,
+`effect`, `report`, and `terminal-run`. It supplies visibility, not a lock,
 catch-up queue, or mutation grant.
 
 ### Scout Receipt

@@ -23,6 +23,18 @@ IDENTITY_LIMIT = 128
 DISPLAY_LIMIT = 512
 RECEIPT_LIMIT = 16 * 1024
 BODY_LIMIT = 48 * 1024
+RELEASE_A_PORTFOLIO_LIMIT = 7
+RELEASE_A_LANES = (
+    "dependency-and-vulnerability",
+    "issue-implementation",
+    "ci-and-failing-test",
+    "repository-test-and-code-health",
+    "documentation-changelog-and-release-note",
+    "runtime-error-and-alert",
+    "risk-scoped-qa-and-regression",
+    "security-secret-and-static-analysis",
+    "issue-backlog-and-customer-feedback-triage",
+)
 SCOUT_OUTCOMES = {"complete", "not applicable", "incomplete"}
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 REGISTER_FIELDS = {
@@ -73,6 +85,21 @@ HISTORY_KINDS = {
     "terminal-run",
 }
 HISTORY_ANCHOR_FIELDS = {"sequence", "head", "latest_receipt"}
+AUTHENTICATED_RECEIPT_FIELDS = {
+    "provider_receipt_id",
+    "writer_id",
+    "receipt_hash",
+    "operation_fingerprint",
+}
+OPERATION_MATERIAL_FIELDS = (
+    "repository_id",
+    "writer_id",
+    "provider_receipt_id",
+    "operation_id",
+    "kind",
+    "run_id",
+    "receipt_hash",
+)
 MANIFEST_FIELDS = {"schema", "repository_id", "run_id", "manifest_id", "policy_revision", "scouts"}
 SCOUT_COLLECTION_FIELDS = {"schema", "repository_id", "run_id", "manifest_id", "receipts"}
 SCOUT_RECEIPT_FIELDS = {
@@ -121,6 +148,35 @@ REQUIRED_EVENTS = (
     "read-terminal",
     "render-report",
     "read-report",
+)
+RECONCILIATION_AUTHORITY_FIELDS = {
+    "schema",
+    "repository_id",
+    "report_id",
+    "writer_id",
+    "run_id",
+    "exclusive_executor",
+    "wrapper_scope_allowlisted",
+    "raw_write_capability_absent_everywhere",
+    "continuity_valid",
+    "retention_valid",
+    "runtime_scope_valid",
+    "intended_receipt_read_back",
+    "authoritative_post_read_completed",
+    "terminal_receipt_read_back",
+    "write_requested",
+}
+RECONCILIATION_WRITE_PROOFS = (
+    "exclusive_executor",
+    "wrapper_scope_allowlisted",
+    "raw_write_capability_absent_everywhere",
+    "continuity_valid",
+    "retention_valid",
+    "runtime_scope_valid",
+    "intended_receipt_read_back",
+    "authoritative_post_read_completed",
+    "terminal_receipt_read_back",
+    "write_requested",
 )
 
 
@@ -206,13 +262,58 @@ def validate_body(body: Any) -> int:
     return size
 
 
-def portfolio_limit(policy_path: Path) -> int:
+def policy_section(text: str, name: str) -> list[str]:
+    lines = text.splitlines()
+    starts = [index for index, line in enumerate(lines) if re.fullmatch(rf"{re.escape(name)}:\s*(?:#.*)?", line)]
+    require(len(starts) == 1, f"policy must define top-level {name} exactly once")
+    result: list[str] = []
+    for line in lines[starts[0] + 1 :]:
+        if line and not line[0].isspace() and not line.lstrip().startswith("#"):
+            break
+        result.append(line)
+    return result
+
+
+def portfolio_limit_from_text(text: str) -> int:
+    try:
+        boundaries = policy_section(text, "boundaries")
+    except ContractError as error:
+        raise ContractError("policy must define boundaries.repository_portfolio_limit exactly once") from error
+    matches = [
+        match.group(1)
+        for line in boundaries
+        if (match := re.fullmatch(r"  repository_portfolio_limit:\s*([0-9]+)\s*(?:#.*)?", line))
+    ]
+    require(len(matches) == 1, "policy must define boundaries.repository_portfolio_limit exactly once")
+    limit = int(matches[0])
+    require(limit == RELEASE_A_PORTFOLIO_LIMIT, "boundaries.repository_portfolio_limit must equal the Release A value 7")
+    return limit
+
+
+def installed_lanes_from_text(text: str) -> list[str]:
+    lanes = policy_section(text, "lanes")
+    result = [
+        match.group(1)
+        for line in lanes
+        if (match := re.fullmatch(r"  ([a-z0-9][a-z0-9-]*):\s*(?:#.*)?", line))
+    ]
+    require(bool(result), "policy installed lane inventory is empty")
+    require(len(result) == len(set(result)), "policy installed lane inventory contains duplicates")
+    require(tuple(result) == RELEASE_A_LANES, "policy installed lane inventory differs from the public Release A contract")
+    return result
+
+
+def policy_contract(policy_path: Path) -> tuple[int, list[str]]:
     text = policy_path.read_text(encoding="utf-8")
-    matches = re.findall(r"^\s*repository_portfolio_limit:\s*([0-9]+)\s*$", text, re.MULTILINE)
-    require(len(matches) == 1, "policy must define repository_portfolio_limit exactly once")
-    value = int(matches[0])
-    require(value > 0, "repository_portfolio_limit must be positive")
-    return value
+    return portfolio_limit_from_text(text), installed_lanes_from_text(text)
+
+
+def portfolio_limit(policy_path: Path) -> int:
+    return portfolio_limit_from_text(policy_path.read_text(encoding="utf-8"))
+
+
+def installed_lanes(policy_path: Path) -> list[str]:
+    return installed_lanes_from_text(policy_path.read_text(encoding="utf-8"))
 
 
 def receipt_hash(receipt: dict[str, Any]) -> str:
@@ -220,7 +321,16 @@ def receipt_hash(receipt: dict[str, Any]) -> str:
     return hashlib.sha256(canonical_bytes(hashed)).hexdigest()
 
 
-def validate_manifest(manifest: Any, repository_id: str | None = None) -> dict[str, Any]:
+def operation_fingerprint(receipt: dict[str, Any]) -> str:
+    material = {field: receipt[field] for field in OPERATION_MATERIAL_FIELDS}
+    return hashlib.sha256(canonical_bytes(material)).hexdigest()
+
+
+def validate_manifest(
+    manifest: Any,
+    repository_id: str | None = None,
+    expected_scouts: list[str] | None = None,
+) -> dict[str, Any]:
     manifest = require_object(manifest, "manifest")
     require_exact_fields(manifest, MANIFEST_FIELDS, "manifest")
     require(manifest.get("schema") == "repo-gardener-scout-manifest/v1", "manifest schema mismatch")
@@ -234,6 +344,8 @@ def validate_manifest(manifest: Any, repository_id: str | None = None) -> dict[s
     for index, scout in enumerate(scouts):
         require_identity(scout, f"manifest scout {index}")
     require(len(scouts) == len(set(scouts)), "duplicate manifest scout")
+    if expected_scouts is not None:
+        require(scouts == expected_scouts, "manifest scouts differ from installed policy lane inventory")
     return manifest
 
 
@@ -246,7 +358,7 @@ def validate_register(
     records = require_object(records, "register")
     manifest = require_object(manifest, "manifest")
     authentication = require_object(authentication, "provider authentication evidence")
-    limit = portfolio_limit(policy_path)
+    limit, lanes = policy_contract(policy_path)
 
     require_exact_fields(records, REGISTER_FIELDS, "register")
     require(records.get("schema") == "repo-gardener-register/v1", "register schema mismatch")
@@ -290,18 +402,22 @@ def validate_register(
     require(authentication.get("repository_id") == repository_id, "authentication repository mismatch")
     require(authentication.get("history_pages_complete") is True, "canonical history pagination is incomplete")
     authenticated = require_list(authentication.get("authenticated_receipts"), "authenticated receipt evidence")
-    authenticated_map: dict[str, str] = {}
+    authenticated_map: dict[str, dict[str, Any]] = {}
     for index, raw_item in enumerate(authenticated):
         item = require_object(raw_item, f"authenticated receipt {index}")
-        require_exact_fields(item, {"provider_receipt_id", "writer_id"}, f"authenticated receipt {index}")
+        require_exact_fields(item, AUTHENTICATED_RECEIPT_FIELDS, f"authenticated receipt {index}")
         provider_receipt_id = require_identity(item.get("provider_receipt_id"), f"authenticated receipt {index} provider_receipt_id")
         require(provider_receipt_id not in authenticated_map, "duplicate provider authentication evidence")
         writer_id = require_identity(item.get("writer_id"), f"authenticated receipt {index} writer_id")
         require(writer_id == register_writer, f"authenticated receipt {index} is not bound to dedicated register writer")
-        authenticated_map[provider_receipt_id] = writer_id
+        require_sha256(item.get("receipt_hash"), f"authenticated receipt {index} receipt hash")
+        require_sha256(item.get("operation_fingerprint"), f"authenticated receipt {index} operation fingerprint")
+        authenticated_map[provider_receipt_id] = item
 
     history = require_list(records.get("history_receipts"), "history receipts")
     previous_hash = "0" * 64
+    seen_provider_receipt_ids: set[str] = set()
+    last_authenticated_operation_fingerprint: str | None = None
     for index, raw_receipt in enumerate(history, start=1):
         receipt = require_object(raw_receipt, f"history receipt {index}")
         require_exact_fields(receipt, HISTORY_RECEIPT_FIELDS, f"history receipt {index}")
@@ -315,10 +431,21 @@ def validate_register(
         require(receipt.get("kind") in HISTORY_KINDS, f"history receipt {index} kind is invalid")
         require_identity(receipt.get("run_id"), f"history receipt {index} run_id")
         provider_receipt_id = require_identity(receipt.get("provider_receipt_id"), f"history receipt {index} provider_receipt_id")
-        require(authenticated_map.get(provider_receipt_id) == writer_id, f"history receipt {index} writer is not provider-authenticated")
+        require(provider_receipt_id not in seen_provider_receipt_ids, f"history receipt {index} provider receipt replay")
+        seen_provider_receipt_ids.add(provider_receipt_id)
+        authenticated_receipt = authenticated_map.get(provider_receipt_id)
+        require(authenticated_receipt is not None and authenticated_receipt.get("writer_id") == writer_id, f"history receipt {index} writer is not provider-authenticated")
         expected_hash = receipt_hash(receipt)
         require(receipt.get("receipt_hash") == expected_hash, f"history receipt {index} hash mismatch")
+        require(authenticated_receipt.get("receipt_hash") == expected_hash, f"history receipt {index} authenticated receipt content mismatch")
+        expected_operation_fingerprint = operation_fingerprint(receipt)
+        require(
+            authenticated_receipt.get("operation_fingerprint") == expected_operation_fingerprint,
+            f"history receipt {index} authenticated operation material mismatch",
+        )
+        last_authenticated_operation_fingerprint = expected_operation_fingerprint
         previous_hash = expected_hash
+    require(set(authenticated_map) == seen_provider_receipt_ids, "provider authentication inventory differs from canonical history")
 
     anchor = require_object(records.get("history_anchor"), "history anchor")
     require_exact_fields(anchor, HISTORY_ANCHOR_FIELDS, "history anchor")
@@ -327,12 +454,16 @@ def validate_register(
         require(anchor.get("head") == previous_hash, "history anchor head mismatch")
         require(anchor.get("latest_receipt") == history[-1], "history anchor latest_receipt mismatch")
         require(records.get("last_operation_id") == history[-1].get("operation_id"), "operation marker mismatch")
-        require_sha256(records.get("last_operation_fingerprint"), "last operation fingerprint")
+        require(
+            require_sha256(records.get("last_operation_fingerprint"), "last operation fingerprint")
+            == last_authenticated_operation_fingerprint,
+            "last operation fingerprint does not match authenticated operation material",
+        )
     else:
         require(anchor.get("head") == "GENESIS" and anchor.get("latest_receipt") is None, "genesis history anchor mismatch")
         require(records.get("last_operation_id") is None and records.get("last_operation_fingerprint") is None, "genesis operation markers must be null")
 
-    manifest = validate_manifest(manifest, repository_id)
+    manifest = validate_manifest(manifest, repository_id, lanes)
     return {"manifest": manifest, "portfolio_limit": limit, "history_head": anchor["head"]}
 
 
@@ -548,27 +679,54 @@ def evaluate_gates(facts: Any) -> dict[str, Any]:
     return {"eligible": first_failing is None, "first_failing_gate": first_failing, "attention_state": "Action required" if facts["protected boundary"] is not True else "Routine", "gate_order": list(GATE_ORDER)}
 
 
-def render_capacity(retained: Any, candidates: Any, policy_path: Path) -> dict[str, Any]:
+def render_capacity_with_limit(retained: Any, candidates: Any, limit: int) -> dict[str, Any]:
     retained = require_list(retained, "retained rows")
     candidates = require_list(candidates, "eligible candidates")
-    limit = portfolio_limit(policy_path)
     require(len(retained) == len(set(retained)) and len(retained) <= limit, "retained-row order/capacity invalid")
     eligible = sum(evaluate_gates(require_object(item, "candidate").get("gate_facts"))["eligible"] for item in candidates)
     recommendations = min(limit - len(retained), eligible)
     return {"rendered_slots": limit, "retained_first": True, "available_slots": limit - len(retained) - recommendations, "recommendations": recommendations}
 
 
+def render_capacity(retained: Any, candidates: Any, policy_path: Path) -> dict[str, Any]:
+    return render_capacity_with_limit(retained, candidates, portfolio_limit(policy_path))
+
+
+def validate_reconciliation_authority(
+    scenario: dict[str, Any],
+    records: dict[str, Any],
+    manifest: dict[str, Any],
+) -> dict[str, Any]:
+    authority = require_object(scenario.get("authority"), f"{scenario.get('id', 'scenario')} reconciliation authority")
+    require_exact_fields(authority, RECONCILIATION_AUTHORITY_FIELDS, "reconciliation authority")
+    require(authority.get("schema") == "repo-gardener-reconciliation-authority/v1", "reconciliation authority schema mismatch")
+    require(authority.get("repository_id") == records.get("repository_id"), "reconciliation authority repository mismatch")
+    require(authority.get("report_id") == records.get("report_id"), "reconciliation authority report mismatch")
+    require(authority.get("writer_id") == records.get("writer_id"), "reconciliation authority writer mismatch")
+    require(authority.get("run_id") == manifest.get("run_id"), "reconciliation authority run mismatch")
+    for field in RECONCILIATION_WRITE_PROOFS:
+        require(type(authority.get(field)) is bool, f"reconciliation authority {field} must be boolean")
+    return authority
+
+
+def reconciliation_write_authorized(authority: dict[str, Any]) -> bool:
+    return all(authority[field] is True for field in RECONCILIATION_WRITE_PROOFS)
+
+
 def evaluate_reconciliation(
     scenario: Any,
+    records: dict[str, Any],
     manifest: dict[str, Any],
     receipt_sets: dict[str, dict[str, dict[str, Any]]],
     complete_receipts: dict[str, dict[str, Any]],
-    policy_path: Path,
+    policy_limit: int,
 ) -> dict[str, Any]:
     scenario = require_object(scenario, "reconciliation scenario")
     scenario_type = scenario.get("scenario_type")
     if scenario_type == "caller-ownership":
-        can_write = scenario.get("exclusive_executor") is True and scenario.get("write_requested") is True
+        require_exact_fields(scenario, {"id", "scenario_type", "authority"}, "caller-ownership scenario")
+        authority = validate_reconciliation_authority(scenario, records, manifest)
+        can_write = reconciliation_write_authorized(authority)
         return {"writes": 1 if can_write else 0, "last_safe_stage": "Act" if can_write else "Sense"}
     if scenario_type == "interrupted-run":
         return {"outcome": "interrupted" if scenario.get("older_run_start") == "unmatched" else "current", "uses_elapsed_time": False}
@@ -614,10 +772,10 @@ def evaluate_reconciliation(
         result = evaluate_gates(gate_facts)
         return {"eligible_under_owner_lane": result["eligible"], **({"first_failing_gate": result["first_failing_gate"]} if not result["eligible"] else {})}
     if scenario_type == "capacity":
-        return render_capacity(scenario.get("retained_rows"), scenario.get("eligible_candidates", []), policy_path)
+        return render_capacity_with_limit(scenario.get("retained_rows"), scenario.get("eligible_candidates", []), policy_limit)
     if scenario_type == "critical-capacity":
         retained = require_list(scenario.get("retained_rows"), "retained rows")
-        limit = portfolio_limit(policy_path)
+        limit = policy_limit
         require(len(retained) == limit and len(set(retained)) == limit, "critical capacity fixture is not full")
         candidate = require_object(scenario.get("critical_candidate"), "critical candidate")
         eligible = evaluate_gates(candidate.get("gate_facts"))["eligible"]
@@ -629,13 +787,23 @@ def evaluate_reconciliation(
         bound = scenario.get("terminal_source_binding") is True
         return {"allowed_results": ["released-same-update", "action-required-owner-release"] if bound else [], "row_action": "release-or-owner-release" if bound else "unchanged-unassociated"}
     if scenario_type == "honest-no-op":
+        require_exact_fields(
+            scenario,
+            {"id", "scenario_type", "receipt_fixture", "reconciliation_complete", "gate_passing_candidates", "authority"},
+            "honest-no-op scenario",
+        )
+        authority = validate_reconciliation_authority(scenario, records, manifest)
+        require(reconciliation_write_authorized(authority), "honest no-op lacks complete independent write authority")
         receipts = receipt_sets[scenario["receipt_fixture"]]
         complete = set(receipts) == set(manifest["scouts"]) and all(item["outcome"] in {"complete", "not applicable"} for item in receipts.values())
         routine = complete and scenario.get("reconciliation_complete") is True and scenario.get("gate_passing_candidates") == 0
-        return {"attention_state": "Routine" if routine else "Action required", "next_owner_action": "none" if routine else "complete missing coverage", "rendered_slots": portfolio_limit(policy_path)}
+        return {"attention_state": "Routine" if routine else "Action required", "next_owner_action": "none" if routine else "complete missing coverage", "rendered_slots": policy_limit}
     if scenario_type == "history":
+        require_exact_fields(scenario, {"id", "scenario_type", "history_pages_complete", "authority"}, "history scenario")
+        authority = validate_reconciliation_authority(scenario, records, manifest)
         valid = scenario.get("history_pages_complete") is True
-        return {"integrity": "valid" if valid else "unavailable", "writes": 1 if valid else 0}
+        can_write = valid and reconciliation_write_authorized(authority)
+        return {"integrity": "valid" if valid else "unavailable", "writes": 1 if can_write else 0}
     if scenario_type == "reconciliation-order":
         valid = scenario.get("effect_reconciled") is True and scenario.get("discovery_started_after_reconciliation") is True
         return {"ordering_valid": valid}
@@ -708,12 +876,27 @@ def main() -> int:
         data = _versioned_input(
             _load_input(args.input),
             "repo-gardener-reconciliation-input/v1",
-            {"scenario", "manifest", "receipt_sets", "complete_receipts"},
+            {"scenario", "register", "authentication", "manifest", "receipt_sets", "complete_receipts"},
         )
-        manifest = validate_manifest(data["manifest"])
-        receipt_sets = require_object(data["receipt_sets"], "reconciliation receipt sets")
-        complete_receipts = require_object(data["complete_receipts"], "complete reconciliation receipts")
-        result = evaluate_reconciliation(data["scenario"], manifest, receipt_sets, complete_receipts, args.policy)
+        records = require_object(data["register"], "reconciliation register")
+        authentication = require_object(data["authentication"], "reconciliation provider authentication evidence")
+        register_result = validate_register(records, data["manifest"], authentication, args.policy)
+        manifest = register_result["manifest"]
+        raw_receipt_sets = require_object(data["receipt_sets"], "reconciliation receipt sets")
+        require(bool(raw_receipt_sets), "reconciliation receipt sets are empty")
+        receipt_sets: dict[str, dict[str, dict[str, Any]]] = {}
+        for label, envelope in raw_receipt_sets.items():
+            require_identity(label, "reconciliation receipt-set identity")
+            receipt_sets[label] = validate_scout_receipts(envelope, manifest, complete=False)
+        complete_receipts = validate_scout_receipts(data["complete_receipts"], manifest, complete=True)
+        result = evaluate_reconciliation(
+            data["scenario"],
+            records,
+            manifest,
+            receipt_sets,
+            complete_receipts,
+            register_result["portfolio_limit"],
+        )
     print(json.dumps(result, sort_keys=True))
     return 0
 

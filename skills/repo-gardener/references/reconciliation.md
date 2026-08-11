@@ -13,6 +13,15 @@ An unavailable or partial read is not an empty portfolio. Reconcile every
 Current Portfolio row and every unmatched intended-effect receipt against
 current source facts before discovering candidates.
 
+At the versioned reconciliation CLI boundary, supply the exact register and
+provider-authentication envelopes, the current manifest, complete Scout
+Receipt collection envelopes, and the scenario facts. The helper validates
+the register first, binds repository/report/writer identities to the current
+run, derives the exact ordered scout inventory from the installed policy
+lanes, and validates every receipt collection before deriving any result. Raw
+lane-to-receipt maps, empty or foreign manifests, cross-run collections, and
+partial envelopes fail closed.
+
 Stored `writer_id`, anchor, sequence, or hash fields are register data, not
 proof that the provider authenticated the writer or that the complete chain was
 read. State those proofs as present only when caller-authenticated evidence
@@ -43,6 +52,15 @@ the missing association instead of inventing one.
 
 A losing caller may perform bounded reads but writes no receipt. A failed
 run-start append or readback stops before scout dispatch.
+
+Any scenario that can return `Act`, `Routine`, `integrity: valid`, or a write
+count carries the exact `repo-gardener-reconciliation-authority/v1` envelope.
+Repository, report, writer, and run identities must match the validated
+register and manifest. Exclusive executor ownership, wrapper allowlisting,
+absence of raw write capability everywhere, continuity, retention, runtime
+scope, intended-receipt readback, authoritative post-read, terminal-receipt
+readback, and write request are independent booleans; no one proof substitutes
+for another, and any missing field blocks the sensitive result.
 
 If supplied facts include both a valid-register path and an integrity-failure
 variant, evaluate them separately. The failure variant's local safe stop must

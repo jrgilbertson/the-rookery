@@ -2,7 +2,7 @@
 
 My workflow is seven jobs that create a durable learning loop. Each section covers the reasoning first, then the tools and commands.
 
-![Huginn carrying active work through a verified handoff to Muninn, who closes the seven-job learning loop back to Research](docs/assets/workflow-overview.webp)
+![Seven illustrated workflow stations forming a circuit from Research through Plan, Design, Build, Ship, Maintain, and Learn, then looping back to Research](docs/assets/workflow-overview.webp)
 
 ## Foundations
 

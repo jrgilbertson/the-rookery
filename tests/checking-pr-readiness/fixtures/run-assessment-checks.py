@@ -51,6 +51,19 @@ VERIFIED_COMMANDS = {
     "code-simplification": ("fixture-validation.py", "simplify"),
     "testing": ("fixture-validation.py", "test"),
 }
+FIXTURE_VALIDATION_SOURCE = b"""#!/usr/bin/env python3
+import pathlib
+import sys
+
+mode = sys.argv[1] if len(sys.argv) == 2 else ""
+if mode not in {"gate", "review", "simplify", "test"}:
+    raise SystemExit(2)
+if pathlib.Path("src/app.txt").read_text(encoding="utf-8") != "ready\\n":
+    raise SystemExit(1)
+if "Prepared synthetic assessment." not in pathlib.Path("CHANGELOG.md").read_text(encoding="utf-8"):
+    raise SystemExit(1)
+print(f"verified:{mode}")
+"""
 EVIDENCE_COMMON_FIELDS = {
     "schema",
     "repository",
@@ -273,6 +286,7 @@ def build_repository(
     reviewer_mode: str = "configured",
     evidence_mutator: Callable[[dict[str, dict[str, Any]]], None] | None = None,
     pre_result_mutator: Callable[[dict[str, dict[str, Any]]], None] | None = None,
+    validator_source: bytes = FIXTURE_VALIDATION_SOURCE,
 ) -> str:
     path.mkdir(parents=True)
     run("git", "init", "-q", "-b", "main", cwd=path)
@@ -288,22 +302,7 @@ def build_repository(
     run("git", "checkout", "-q", "-b", "assessment-target", cwd=path)
     (path / "src" / "app.txt").write_text("ready\n", encoding="utf-8")
     (path / "CHANGELOG.md").write_text("# Changelog\n\n- Prepared synthetic assessment.\n", encoding="utf-8")
-    (path / "fixture-validation.py").write_text(
-        """#!/usr/bin/env python3
-import pathlib
-import sys
-
-mode = sys.argv[1] if len(sys.argv) == 2 else ""
-if mode not in {"gate", "review", "simplify", "test"}:
-    raise SystemExit(2)
-if pathlib.Path("src/app.txt").read_text(encoding="utf-8") != "ready\\n":
-    raise SystemExit(1)
-if "Prepared synthetic assessment." not in pathlib.Path("CHANGELOG.md").read_text(encoding="utf-8"):
-    raise SystemExit(1)
-print(f"verified:{mode}")
-""",
-        encoding="utf-8",
-    )
+    (path / "fixture-validation.py").write_bytes(validator_source)
     if reviewer_mode == "configured":
         reviewer_configuration_document = {"automated_reviewers": [{"name": "fixture-reviewer", "cap": SPEC["reviewer_cap"]}]}
     elif reviewer_mode == "none":
@@ -504,11 +503,30 @@ def verify_command_evidence(kind: str, command: dict[str, Any], repo: Path, revi
     if command != {"id": "python3", "arguments": list(expected)}:
         return [f"command execution not verified: {kind}"]
     try:
+        validator = git_blob(repo, revision, "fixture-validation.py")
         app_state = git_blob(repo, revision, "src/app.txt")
         changelog = git_blob(repo, revision, "CHANGELOG.md")
     except subprocess.CalledProcessError:
         return [f"command execution not verified: {kind}"]
-    if app_state != b"ready\n" or b"Prepared synthetic assessment." not in changelog:
+    if validator != FIXTURE_VALIDATION_SOURCE:
+        return [f"command execution not verified: {kind}"]
+    try:
+        with tempfile.TemporaryDirectory(prefix="pr-readiness-command-") as temp:
+            command_root = Path(temp)
+            (command_root / "src").mkdir()
+            (command_root / "fixture-validation.py").write_bytes(validator)
+            (command_root / "src" / "app.txt").write_bytes(app_state)
+            (command_root / "CHANGELOG.md").write_bytes(changelog)
+            completed = subprocess.run(
+                [sys.executable, *expected],
+                cwd=command_root,
+                capture_output=True,
+                text=True,
+                timeout=10,
+            )
+    except (OSError, subprocess.TimeoutExpired):
+        return [f"command execution not verified: {kind}"]
+    if completed.returncode != 0 or completed.stdout != f"verified:{expected[1]}\n" or completed.stderr:
         return [f"command execution not verified: {kind}"]
     return []
 
@@ -1013,6 +1031,28 @@ def run_suite() -> None:
         require(not malicious_marker.exists(), "repository-controlled validator was executed")
         run("git", "restore", "fixture-validation.py", cwd=first)
 
+        committed_malicious_repo = root / "committed-malicious-validator"
+        committed_malicious_marker = root / "committed-malicious-validator-executed"
+        committed_malicious_source = (
+            "import pathlib, sys\n"
+            f"pathlib.Path({str(committed_malicious_marker)!r}).write_text('executed')\n"
+            "print(f'verified:{sys.argv[1]}')\n"
+        ).encode("utf-8")
+        committed_malicious_revision = build_repository(
+            committed_malicious_repo,
+            validator_source=committed_malicious_source,
+        )
+        committed_malicious_result = evaluate(
+            committed_malicious_repo,
+            make_bundle(committed_malicious_repo, committed_malicious_revision),
+        )
+        require(
+            committed_malicious_result["outcome"] == "action-required"
+            and "command execution not verified: testing" in committed_malicious_result["gaps"],
+            "committed non-allowlisted validator was not rejected",
+        )
+        require(not committed_malicious_marker.exists(), "committed non-allowlisted validator was executed")
+
         malformed_bundle = evaluate(first, None)
         require(malformed_bundle["outcome"] == "action-required", "null bundle did not fail closed")
         require("receipt bundle is not an object" in malformed_bundle["gaps"], "null bundle returned no normal assessment gap")
@@ -1177,7 +1217,7 @@ def run_suite() -> None:
         print("PASS: assessment receipts bind one deterministic exact subject and revision")
         print("PASS: versioned bundle resolution, staged-only dirt, and live-subject mutations fail closed")
         print("PASS: absent reviewer is not applicable; configured reviewer without a cap fails closed")
-        print("PASS: command-backed evidence effects are verified at the exact revision without executing repository code")
+        print("PASS: command-backed evidence reruns exact allowlisted commands from isolated exact-revision inputs")
 
 
 def materialize(destination: Path, bundle_writer: Any = write_json) -> None:

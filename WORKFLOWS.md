@@ -2,11 +2,7 @@
 
 My workflow is seven jobs that create a durable learning loop. Each section covers the reasoning first, then the tools and commands.
 
-```mermaid
-flowchart LR
-  R[Research] --> P[Plan] --> D[Design] --> B[Build] --> S[Ship] --> M[Maintain] --> L[Learn]
-  L -->|compounds back into| R
-```
+![Seven illustrated workflow stations forming a circuit from Research through Plan, Design, Build, Ship, Maintain, and Learn, then looping back to Research](docs/assets/workflow-overview.webp)
 
 ## Foundations
 

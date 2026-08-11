@@ -8,9 +8,43 @@ Follow with the evidence, interpretation, uncertainty, and consequence needed
 to support it. Group related claims together and keep unrelated claims
 separate.
 
-State when the review ran and which sources were queried in one compact
-coverage sentence. Mention an unavailable source again only where the gap
-limits a conclusion.
+After that synthesis, render the current response's **Source Access Audit**.
+Place it before separately approvable actions and before the run ending. Use
+the semantics and relevant-source set in `references/source-behavior.md`; the
+table reports actual access, not intended retrieval, claim provenance, or
+action success.
+
+| Source or role | Result | Scope or window | Effect on claim categories |
+| --- | --- | --- | --- |
+| [generic source family or canonical role] | [exact access result] | [bounded safe scope] | [claim categories supported or limited] |
+
+Use only these exact results: **Accessed — evidence found**, **Accessed — no
+relevant evidence**, **Attempted — unavailable or failed**, **Not configured**,
+**Declined**, and **Not needed**. For a combined action-and-review response,
+add a first **Phase** column and label each row **Action access** or **Review
+discovery**. Do not add the Phase column to other responses.
+
+Keep source labels generic and role-based. Bound every scope or window, marking
+a returned slice partial when needed and coarsening precision when it could
+identify sensitive activity. Do not expose people, projects, counterparties,
+private configured names, account identifiers, source URLs, note or event
+titles, sensitive event types, content excerpts, credentials, raw queries, or
+tool telemetry. Use separate safe rows for mixed bounded slices whose results
+differ. Include every source in the relevant-source set, but do not enumerate
+irrelevant connectors.
+
+In the effect column, name the category of claim the result supports, narrows,
+or prevents. Do not imply complete coverage from a partial scope and do not use
+an access result as evidence that an external action succeeded. Mention a
+source limitation again in prose only where it changes a material conclusion.
+
+For action access, make the access purpose independently recoverable in the
+scope cell. Use one row for the **Pre-write target or destination reread** and,
+when performed, a separate row for the **Post-write verification readback**.
+Never combine those rows because their source, scope, or result happens to
+match, and never add a row for the mutation itself. In a combined
+action-and-review table, both remain **Action access** rows under the unchanged
+Phase column; discovery rows remain **Review discovery**.
 
 For each material claim:
 

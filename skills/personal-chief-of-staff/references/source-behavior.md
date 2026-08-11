@@ -7,6 +7,7 @@ it.
 ## Contents
 
 - [Establish source coverage](#establish-source-coverage)
+- [Audit the current response's source access](#audit-the-current-responses-source-access)
 - [Ground longitudinal coaching in durable evidence](#ground-longitudinal-coaching-in-durable-evidence)
 - [Decide what deserves attention](#decide-what-deserves-attention)
 - [Use relationship judgment as a companion](#use-relationship-judgment-as-a-companion)
@@ -111,6 +112,97 @@ on it. A failed query is not evidence that nothing changed.
 
 Completion: every material conclusion has enough native evidence, and each
 material gap affects only the conclusions that depend on it.
+
+## Audit the current response's source access
+
+Every visible Wind-down, Weekly, Quarterly, cross-source non-mode, scheduled,
+resumed, and action-only response includes a current-response **Source Access
+Audit**. Treat it as a transient plan-attempt-reconcile cycle:
+
+1. Assemble the relevant-source set for this response.
+2. Make each needed bounded read through the source's authoritative interface,
+   or establish why that read cannot or should not occur now.
+3. Reconcile what actually happened into the table required by
+   `assets/review-bundle.md`.
+
+Assemble the set from all applicable sources in this order: sources required
+by the active invocation or private deployment prompt, especially the roles
+named by a scheduled automation; canonical roles required by the selected
+mode; sources the user names; configured canonical roles needed for a material
+claim; and sources surfaced during retrieval that could materially change a
+central conclusion. This is a response-specific set, not a registry or an
+inventory of every theoretical connector. A source required by the active
+invocation cannot be **Not needed**: it must be accessed, attempted and failed,
+not configured, or declined. Public instructions name generic source families
+or canonical roles; private app configuration binds those roles to exact
+sources. Do not expose those private bindings in the visible audit.
+
+Use exactly one of these access results for each relevant source slice:
+
+- **Accessed — evidence found:** a bounded authoritative read succeeded and
+  returned relevant evidence. If the result was truncated, label the returned
+  scope as partial and use only the evidence actually observed; do not imply
+  completeness.
+- **Accessed — no relevant evidence:** a bounded authoritative read succeeded,
+  returned no relevant evidence, and exposed an explicit completion signal for
+  the displayed scope. This supports absence only inside that scope.
+- **Attempted — unavailable or failed:** the authoritative read was attempted
+  but unavailable or failed. Also use this when a truncated, partial, or
+  completeness-unknown result returned no relevant evidence; such a result
+  cannot support absence.
+- **Not configured:** a required canonical role has no binding, has an
+  ambiguous binding, or has no resolved authoritative path.
+- **Declined:** the user explicitly declined this source for the current
+  response. A prior refusal does not carry forward automatically.
+- **Not needed:** the source was materially considered but is outside this
+  response's scope and no current conclusion depends on it.
+
+`Accessed` always means an actual successful bounded read through the
+authoritative interface. Connector presence, configured availability, prior
+conversation, cached knowledge, historical access, and narration of a planned
+read do not count. An empty payload without an authoritative completion signal
+is never a complete empty result. When one source supplies mixed bounded
+slices, report separate rows if their results or safe scopes differ.
+
+Keep access results separate from conclusion coverage. **Sufficient**,
+**Partial**, and **Insufficient** describe whether the available evidence
+supports a conclusion; they are not access results. A failed, missing,
+declined, or incomplete source narrows only the claims that depend on it and
+never becomes negative evidence. If no durable source read succeeds, make no
+source-backed factual, absence, recurrence, or longitudinal claim. Label any
+user premise as user-supplied and unverified. Premise-only collaboration may
+continue, but when the request's central purpose requires the missing evidence,
+end **Unable to prepare reliably**, not **Nothing material**.
+
+Apply these response boundaries:
+
+- For an action-only response, do no review discovery. Audit only the current
+  authoritative target or destination reread and verification readback access,
+  including a failed, missing, or declined path. When both the pre-write reread
+  and post-write verification readback occur, render them as two distinct rows
+  even when they use the same source, scope, and access result; one row never
+  summarizes both operations. Keep **Applied**, **Already satisfied**,
+  **Failed**, **Indeterminate**, **Manual**, **Deferred**, and **Skipped** solely
+  in the existing action-result narrative; never add a mutation row, and an
+  access result never implies a mutation outcome.
+- If the same message both decides actions and requests a new review, finish
+  the actions first and use one audit table with a **Phase** column separating
+  **Action access** from **Review discovery**. Later discovery cannot
+  reinterpret the earlier decisions.
+- On resumption, refresh required time-sensitive evidence and report only
+  access performed or re-performed for this response. Do not present access
+  from the prior turn or originating bundle as current unless it was reread.
+- A scheduled response uses the same audit and remains read-only. Scheduling
+  does not count as access or approval.
+
+The audit is conversation-only. It does not authorize an action, prove claim
+provenance, replace claim-level evidence or Quarterly corpus coverage, create
+approval or completion state, or become durable memory, telemetry, or a
+ledger.
+
+Completion: the answer-first synthesis is followed by a truthful audit of the
+entire relevant-source set for this response, and each access limit changes
+only the claims that depend on it.
 
 ## Ground longitudinal coaching in durable evidence
 

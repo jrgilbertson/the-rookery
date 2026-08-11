@@ -21,6 +21,8 @@ A few of the skills named below are my own and not yet published: `repo-maintain
 
 **Goal:** Curate enough context to plan from.
 
+![Huginn carrying one selected dispatch through an aperture that narrows many research signals into one route](docs/assets/workflow-01-research.webp)
+
 Research begins with the problem space. I'm a systems thinker, so I start wide. System design, current best practices, industry trends, how the pieces fit together, and more. Then I narrow to the actual problem. I also ask the AI where the unknown unknowns are to guard against my blind spots.
 
 Once I better understand the problem, I go looking at what already exists. Durable learnings per project live in `docs/solutions/` inside each repository, and my personal knowledge vault carries everything else, like notes and past research. Both stay DRY (don't repeat yourself) and SSOT (single source of truth), so agents get accurate context without burning tokens hunting for it.
@@ -43,6 +45,8 @@ What must be true before moving to Plan:
 ## Plan
 
 **Goal:** Write a clear, concise plan covering what to build (product plan) and how to build it (implementation plan).
+
+![Huginn lowering the bridge that connects a target to a four-stage build sequence](docs/assets/workflow-02-plan.webp)
 
 I usually plan in the same session that produced the curated context. When the research needs to outlive that session, I save it as a findings document in `docs/research/` and plan from there.
 
@@ -84,6 +88,8 @@ What must be true before moving on:
 
 **Goal:** Set a design brief and a written design system agents can build from.
 
+![Huginn locking a master stencil that gives three different components one coherent visual language](docs/assets/workflow-03-design.webp)
+
 Design is where visual iteration sharpens both the research and the plan, and it continues through building, polishing, and maintaining. Work with no interface skips this step.
 
 Design is hard with AI. The AI tends toward recognizable slop, the same gradients, feature cards, and triplets. The counter is a durable design system: a named aesthetic, tokens with purposes and prohibitions, and the components that use them. I use the [DESIGN.md standard](https://github.com/google-labs-code/design.md).
@@ -102,6 +108,8 @@ What must be true before moving to Build:
 ## Build
 
 **Goal:** Build the plan in bounded slices and verify each one.
+
+![Huginn placing the active bounded module into a four-stage verification jig](docs/assets/workflow-04-build.webp)
 
 This step runs at two levels: across worktrees, where five to ten slices of work move in parallel, and inside each worktree, through the model choice, mode, and quality gates below. A worktree is a separate working copy of the same repository, so each agent builds on its own branch in its own folder without overwriting anyone else's work.
 
@@ -164,6 +172,8 @@ What must be true before moving to Ship:
 
 **Goal:** Review and verify the change, then merge it.
 
+![Huginn handing a verified dispatch through an inspection gate to Muninn](docs/assets/workflow-05-ship.webp)
+
 Work arrives from Build when the agents believe they've met the plan's objectives. The finishing sequence is where I check that belief and refine the work. Simplifying and reviewing before the PR opens means reviewers spend their time on the substance of the change instead of on cleanup.
 
 The shipping sequence, in order:
@@ -187,6 +197,8 @@ What must be true before merge:
 ## Maintain
 
 **Goal:** Tend the repo and encode every learning where it holds.
+
+![Muninn installing an upstream prevention gate before a recurring defect reaches discarded reminder notes](docs/assets/workflow-06-maintain.webp)
 
 Repos and systems need tending over time. Maintenance runs throughout the loop, not only after merge.
 
@@ -221,6 +233,8 @@ What must be true before moving to Learn:
 ## Learn
 
 **Goal:** Capture what I learned as linked notes and name what I don't know yet.
+
+![Muninn completing a linked ring of field notes and returning one orange signal toward Research](docs/assets/workflow-07-learn.webp)
 
 Learn closes the loop, and it's about my knowledge rather than the system's.
 

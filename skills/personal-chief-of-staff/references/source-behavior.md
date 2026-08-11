@@ -8,6 +8,7 @@ it.
 
 - [Establish source coverage](#establish-source-coverage)
 - [Audit the current response's source access](#audit-the-current-responses-source-access)
+- [Make every intention verifiable](#make-every-intention-verifiable)
 - [Ground longitudinal coaching in durable evidence](#ground-longitudinal-coaching-in-durable-evidence)
 - [Decide what deserves attention](#decide-what-deserves-attention)
 - [Use relationship judgment as a companion](#use-relationship-judgment-as-a-companion)
@@ -204,6 +205,45 @@ Completion: the answer-first synthesis is followed by a truthful audit of the
 entire relevant-source set for this response, and each access limit changes
 only the claims that depend on it.
 
+## Make every intention verifiable
+
+An intention-bearing output is any future outcome, recommendation,
+priority, plan, coaching intervention, experiment, boundary, strategy or
+learning proposal, independent action effect, or a recommendation to preserve
+the current state. For every independent intention, make three meanings
+visible:
+
+- the current basis: authoritative observed evidence, or a premise explicitly
+  labeled as user-supplied and unverified;
+- the desired outcome: what the user supplied or explicitly approved; and
+- the evidence of closure: a future observable signal that would show the
+  outcome is complete, or that an experiment has been supported or
+  disconfirmed.
+
+When the agent originates a new recommended outcome, present it conditionally
+as a candidate for the user's approval. Do not attribute that outcome to the
+user or call the intention complete or user-owned until they accept it.
+User-supplied and already-approved outcomes retain their existing authority.
+
+Current support and closure evidence do different jobs. A source-access
+disclosure, tool call, action-result label, or evidence supporting the current
+basis is not the future finish line. Each independently approvable action
+carries its own closure evidence. If that evidence changes after approval,
+stop and present a revised proposal for new approval even when the proposed
+effect is otherwise unchanged.
+
+Do not infer a desired outcome or invent a closure signal to complete the
+shape. Preserve exact user wording when requested, but if it omits any meaning,
+identify the omission and keep the wording visibly nonconforming rather than
+certifying it as complete. Factual synthesis, procedural acknowledgment, and
+an honest result that no intention is warranted do not need this treatment.
+
+Completion: every independent intention has a current basis, future observable
+closure evidence, and either a user-supplied or approved desired outcome or a
+clearly conditional candidate awaiting approval. Conditional candidates are
+not called complete or user-owned, and honest nulls and incomplete user wording
+remain honest.
+
 ## Ground longitudinal coaching in durable evidence
 
 Separate two evidence jobs. Use only dated durable material resolved through
@@ -390,6 +430,13 @@ Immediately before each approved action:
    satisfied** and do not duplicate it.
 5. Otherwise apply the approved action once through the supported interface.
 6. Read the created or updated target again through that interface.
+
+Keep the action's intention recoverable in the result: the authoritative
+pre-write state supplies its current basis, the exact approved effect remains
+the desired outcome, and the proposal's future closure evidence says what
+readback or equivalence result would count as complete. Report whether the
+observed result meets that finish line without substituting an access result or
+agent activity for it. Each action stands on its own.
 
 Classify each action independently:
 

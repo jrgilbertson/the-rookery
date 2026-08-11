@@ -86,6 +86,13 @@ Review, and a signal that would support or disconfirm the interpretation. The
 intervention may reshape the proposed plan, but it does not approve that plan
 or any durable action.
 
+Use the shared intention contract for that intervention: make the supported
+current state, the outcome the user owns or approves (or a conditional
+candidate awaiting approval), and the future signal recoverable in natural
+prose. A supported recommendation to keep the current plan follows the same
+rule when it resolves the live choice; an honest finding that no intervention
+is warranted does not need an invented intention.
+
 When no candidate clears the recurrence bar, close the coaching step with zero
 supported threads and any material evidence limit. Offer no coaching
 recommendation, experiment, boundary, or advice to keep, carry forward, or
@@ -153,6 +160,11 @@ Test proposed outcomes against strategy, calendar reality, active obligations,
 relationships, health and recovery, and opportunity cost. Optimize for
 sustainable value across the whole system rather than maximizing task volume.
 Keep experiments small enough to learn from and specific enough to revisit.
+For each independent next-week outcome, priority, experiment, or boundary,
+apply the shared intention contract without imposing literal labels: connect
+the current authoritative basis or labeled user premise to the user-owned or
+user-approved outcome, or to an agent-proposed outcome clearly awaiting
+approval, and its future observable closure evidence.
 
 When a repeated insight could help a real audience, suggest advancing no more
 than one or two worthwhile writing pieces. Preserve the user's authorship of
@@ -169,6 +181,9 @@ Present the completed conversational draft and any related changes as one
 review bundle. The canonical weekly-review note is one proposed action. Task,
 calendar, CRM, repository, writing, or other source changes are separate
 actions with their own identities, targets, effects, and approval.
+Each separate action uses the bundle's intention shape and carries closure
+evidence for its own effect; changing that finish line requires a revised
+proposal and new approval.
 
 After approval, create or update only the current canonical weekly review
 through the Obsidian CLI with explicit vault targeting. Re-read the note first,

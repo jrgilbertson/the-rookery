@@ -146,6 +146,12 @@ or inconclusive audit without filler coaching. Keep any proposed commitment,
 strategy edit, or learning promotion inside the existing separately
 approvable review flow.
 
+After the user has accepted an interpretation or separately accepted an audit
+finding as a basis for action, apply the shared intention contract to any
+resulting commitment, strategy edit, or learning proposal. Before that
+disposition, do not manufacture a desired outcome or finish line from the
+agent's interpretation.
+
 Completion: the quarter has an honest coverage statement, a bounded thread map
 and rule audit where evidence permits, and every surfaced tension or strength
 has a user disposition before it shapes a commitment.
@@ -167,6 +173,14 @@ principles or experiments, and explicit boundaries over a broad task list. A
 writing idea may advance only when it supports real thinking or a real
 audience; central claims and publication remain the user's decisions.
 
+For each independent next-quarter outcome, strategy or learning proposal,
+experiment, or boundary, apply the shared intention contract in natural prose:
+connect the accepted current basis to the outcome the user owns or approves,
+or to an agent-proposed outcome clearly awaiting approval, and the future
+observable evidence that would show closure or disconfirmation. Do not draft
+an intention from an interpretation that has not passed the user disposition
+gate.
+
 Completion: strategic conclusions and forward commitments are user-owned,
 evidence-backed, and specific enough to guide later reviews.
 
@@ -177,6 +191,9 @@ review bundle. The canonical quarterly-review note is one proposed action.
 Changes to strategy, learnings, tasks, calendars, CRM, repositories, writing,
 or other sources are separate actions with their own identities, targets,
 effects, and approval.
+Each separate action uses the bundle's intention shape and carries closure
+evidence for its own effect; changing that finish line requires a revised
+proposal and new approval.
 
 After approval, create or update only the canonical quarterly review for the
 selected period through the Obsidian CLI with explicit vault targeting. Re-read

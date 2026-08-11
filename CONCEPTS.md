@@ -9,7 +9,11 @@ a glossary, not a specification or catch-all.
 
 ### Meaningful Commitment
 
-A reviewed next-day outcome recorded during wind-down with an observable finish line and a concise rationale for why it matters. When the live daily-journal template includes a configured Meaningful Commitments section, that journal carries three to five of them as next-day intent; without the section, ordinary next-day planning continues. They express intent without replacing canonical task state or calendar capacity, and they do not require a separate morning reaffirm step.
+A reviewed next-day intention recorded during wind-down. It visibly connects the current authoritative evidence or labeled user premise, the user-owned desired outcome, and the future observable evidence that will show completion, with a concise rationale for why it matters. These meanings may read as natural prose rather than labeled fields. Exact user wording that omits one remains visible as nonconforming input and is not certified as a complete commitment. When the live daily-journal template includes a configured Meaningful Commitments section, that journal carries three to five of them as next-day intent; without the section, ordinary next-day planning continues. They express intent without replacing canonical task state or calendar capacity, and they do not require a separate morning reaffirm step.
+
+### Source Access Audit
+
+A required, conversation-only account of the relevant source roles considered for one visible personal-chief-of-staff response, the bounded access that succeeded or failed, and the effect on that response's findings. It is reconciled from actual reads, rendered after the answer-first synthesis, and discarded after the response. It is not a source registry, claim-provenance ledger, approval, freshness record, or new source of truth.
 
 ### Daily CRM Scan
 

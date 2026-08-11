@@ -58,6 +58,21 @@ State overall coverage as sufficient, partial, or insufficient. When coverage
 is partial, identify the omitted or qualified conclusions. When it is
 insufficient, stop before presenting a weak conclusion as reliable.
 
+Write intentions as natural prose. For each independent future outcome,
+recommendation, priority, plan, coaching intervention, experiment, boundary,
+strategy or learning proposal, action effect, or recommendation to preserve
+the current state, let a reader recover the current authoritative basis (or an
+explicitly user-supplied, unverified premise), the outcome the user owns or has
+approved, and the future observable evidence that would show closure. These
+meanings may be woven into one or two sentences; use literal `Current`,
+`Desired`, or `Evidence` labels only when they materially improve clarity. Do
+not turn factual synthesis, procedural acknowledgment, or an honest null into
+an intention, and do not invent a missing outcome or finish line to fill the
+shape. Preserve exact incomplete user wording only as visibly nonconforming
+input. When the agent proposes a new outcome, phrase it as a candidate for the
+user's approval rather than as the user's Desired; call it user-owned or
+complete only after acceptance.
+
 When action is warranted, append one numbered proposal per independent effect:
 
 > **1. [Complete sentence describing the proposed effect.]**
@@ -72,8 +87,13 @@ When action is warranted, append one numbered proposal per independent effect:
 > Proposed content or effect: [the full content or precise change]
 >
 > Evidence and reason: [why this change follows from the review]
+>
+> Closure evidence: [future observable readback or other finish line for this
+> effect]
 
 Invite the user to approve, edit, defer, or skip each number independently.
+Each action needs its own closure evidence. Changing that evidence after
+approval creates a revised proposal that needs new approval.
 After any approved action, report its result as applied, already satisfied,
 failed, indeterminate, manual, deferred, or skipped. Close with one explicit
 run ending and a short recap of what changed and what remains unapplied.

@@ -277,7 +277,7 @@
     "scenario_type": "terminal-row",
     "row_state": "In process",
     "terminal_outcome": "closed",
-    "terminal_source_binding": false
+    "terminal_source_binding": null
   },
   {
     "id": "honest-no-op",

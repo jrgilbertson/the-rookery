@@ -286,6 +286,14 @@ def portfolio_limit_from_text(text: str) -> int:
 
 def installed_lanes_from_text(text: str) -> list[str]:
     lanes = policy_section(text, "lanes")
+    for line in lanes:
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        require(
+            re.fullmatch(r"  [a-z0-9][a-z0-9-]*:\s*(?:#.*)?", line) is not None
+            or re.fullmatch(r"    mutation:\s*(?:true|false)\s*(?:#.*)?", line) is not None,
+            "policy lanes contain an unparsed or inline entry",
+        )
     lane_starts = [
         (index, match.group(1))
         for index, line in enumerate(lanes)
@@ -586,6 +594,41 @@ def effect_compatibility(scenario: dict[str, Any]) -> str:
     return "compatible"
 
 
+def validate_effect_material(payload: Any, fingerprint: Any, label: str) -> bytes:
+    payload = require_object(payload, f"{label} payload")
+    require_payload(payload, RECEIPT_LIMIT, f"{label} payload")
+    require_identity(payload.get("report_id"), f"{label} report_id")
+    require(payload.get("verb") in {"replace-body", "append-comment"}, f"{label} verb is not allowlisted")
+    fingerprint = require_sha256(fingerprint, f"{label} fingerprint")
+    material = canonical_bytes(payload)
+    require(hashlib.sha256(material).hexdigest() == fingerprint, f"{label} fingerprint mismatch")
+    return material
+
+
+def exact_effect_observed(scenario: dict[str, Any], identity: dict[str, str]) -> bool:
+    try:
+        prepared = validate_effect_material(
+            scenario.get("prepared_effect_payload"),
+            scenario.get("prepared_effect_fingerprint"),
+            "prepared effect",
+        )
+        post_read = require_object(scenario.get("authoritative_post_read"), "authoritative effect post-read")
+        require_exact_fields(
+            post_read,
+            {"authoritative", "repository_id", "operation_id", "effect_payload", "effect_fingerprint"},
+            "authoritative effect post-read",
+        )
+        observed_identity = composite_identity(post_read.get("repository_id"), post_read.get("operation_id"))
+        observed = validate_effect_material(
+            post_read.get("effect_payload"),
+            post_read.get("effect_fingerprint"),
+            "observed effect",
+        )
+    except ContractError:
+        return False
+    return post_read.get("authoritative") is True and observed_identity == identity and observed == prepared
+
+
 def evaluate_effect(scenario: Any) -> dict[str, Any]:
     scenario = require_object(scenario, "effect scenario")
     scenario_type = scenario.get("scenario_type")
@@ -615,7 +658,7 @@ def evaluate_effect(scenario: Any) -> dict[str, Any]:
             return {"terminal_outcome": outcome, "invoke_count": 0, "blind_retry": False, "persistence_claim": False}
         invoke_result = scenario.get("invoke_result")
         post_read = scenario.get("post_read")
-        if invoke_result == "accepted" and post_read == "exact effect observed" and terminal_read_back:
+        if invoke_result == "accepted" and post_read == "exact effect observed" and terminal_read_back and exact_effect_observed(scenario, operation_identity):
             outcome = "observed"
         elif invoke_result in {"denied", "provider error"} and post_read == "unchanged" and terminal_read_back:
             outcome = "failed"
@@ -653,9 +696,11 @@ def evaluate_effect(scenario: Any) -> dict[str, Any]:
                 outcome = "ambiguous"
         return {"operation_identity": identity, "existing_operation_identity": existing, "operation_identity_preserved": result_identity == identity, "replacement_identity_minted": minted is not None, "terminal_outcome": outcome, "invoke_count": 0}
     if scenario_type == "completion-partition":
+        operation_id = require_identity(scenario.get("operation_id"), "completion partition operation_id")
         named = require_list(scenario.get("named_work"), "named_work")
         affected = require_list(scenario.get("affected_by_ambiguity"), "affected_work")
         independent = require_list(scenario.get("independent_continued"), "remaining_unblocked_work")
+        require(operation_id in named and operation_id in affected, "ambiguous operation is missing from the completion partition")
         unique = len(named) == len(set(named)) and len(affected) == len(set(affected)) and len(independent) == len(set(independent))
         affected_set = set(affected)
         remaining_set = set(independent)
@@ -669,12 +714,28 @@ def evaluate_effect(scenario: Any) -> dict[str, Any]:
         }
     if scenario_type == "delegation":
         handoff = require_object(scenario.get("handoff"), "handoff")
-        complete = all(handoff.get(field) for field in ("destination", "authorized_executor", "exact_work"))
-        return {"remaining_disposition": "delegated" if complete and handoff.get("read_back") is True else "gated"}
+        require_identity(handoff.get("destination"), "handoff destination")
+        require_identity(handoff.get("authorized_executor"), "handoff authorized_executor")
+        require_nonempty_display(handoff.get("exact_work"), "handoff exact_work")
+        return {"remaining_disposition": "delegated" if handoff.get("read_back") is True else "gated"}
     if scenario_type == "optional-scout":
         return {"dependent_work_blocked": bool(scenario.get("missing_scout")), "independent_work": "continued" if scenario.get("independent_work") is True else "gated"}
     if scenario_type == "terminal-receipt":
-        return {"persistence_claim": scenario.get("terminal_receipt_persisted") is True and scenario.get("terminal_receipt_read_back") is True}
+        identity = composite_identity(scenario.get("repository_id"), scenario.get("operation_id"))
+        authorized = effect_authority_complete(scenario, identity["repository_id"])
+        post_read = require_object(scenario.get("authoritative_post_read"), "terminal receipt authoritative post-read")
+        require_exact_fields(
+            post_read,
+            {"authoritative", "repository_id", "operation_id", "terminal_receipt_persisted"},
+            "terminal receipt authoritative post-read",
+        )
+        observed_identity = composite_identity(post_read.get("repository_id"), post_read.get("operation_id"))
+        observed = (
+            post_read.get("authoritative") is True
+            and observed_identity == identity
+            and post_read.get("terminal_receipt_persisted") is True
+        )
+        return {"persistence_claim": authorized and observed and scenario.get("terminal_receipt_read_back") is True}
     if scenario_type == "caller-completion":
         accepted = scenario.get("terminal_capability_active") is True and scenario.get("caller_accepts") is True
         pending = require_list(scenario.get("pending_decision_ids"), "pending decisions")
@@ -720,8 +781,13 @@ def require_retained_rows(retained: Any, limit: int) -> list[str]:
 
 def render_capacity_with_limit(retained: Any, candidates: Any, limit: int) -> dict[str, Any]:
     retained = require_retained_rows(retained, limit)
-    candidates = require_list(candidates, "eligible candidates")
-    eligible = sum(evaluate_gates(require_object(item, "candidate").get("gate_facts"))["eligible"] for item in candidates)
+    candidates = [
+        require_object(item, f"candidate {index}")
+        for index, item in enumerate(require_list(candidates, "eligible candidates"))
+    ]
+    source_ids = [require_identity(item.get("source_id"), f"candidate {index} source_id") for index, item in enumerate(candidates)]
+    require(len(source_ids) == len(set(source_ids)), "duplicate candidate source identity")
+    eligible = sum(evaluate_gates(item.get("gate_facts"))["eligible"] for item in candidates)
     recommendations = min(limit - len(retained), eligible)
     return {"rendered_slots": limit, "retained_first": True, "available_slots": limit - len(retained) - recommendations, "recommendations": recommendations}
 
@@ -830,6 +896,8 @@ def evaluate_reconciliation(
         retained = require_retained_rows(scenario.get("retained_rows"), limit)
         require(len(retained) == limit, "critical capacity fixture is not full")
         candidate = require_object(scenario.get("critical_candidate"), "critical candidate")
+        require_identity(candidate.get("source_id"), "critical candidate source_id")
+        require(candidate.get("expected_impact") == "critical", "critical candidate classification is invalid")
         eligible = evaluate_gates(candidate.get("gate_facts"))["eligible"]
         interruptible_row = require_identity(scenario.get("interruptible_row"), "interruptible row")
         require(interruptible_row in retained, "interruptible row is not retained")
@@ -841,7 +909,19 @@ def evaluate_reconciliation(
         critical = require_object(observations[1], "critical disabled observation")
         return {"ordinary_attention": "Routine (disabled lane)" if not ordinary.get("critical") else "Action required (lane disabled)", "critical_attention": "Action required (lane disabled)" if critical.get("critical") and critical.get("applicable") else "Routine (disabled lane)", "rows_changed": 0, "source_mutations": 0}
     if scenario_type == "terminal-row":
-        bound = scenario.get("terminal_source_binding") is True
+        current_row = scenario.get("current_row")
+        binding = scenario.get("terminal_source_binding")
+        bound = False
+        if current_row is not None or binding is not None:
+            current_row = require_object(current_row, "terminal current row")
+            binding = require_object(binding, "terminal source binding")
+            fields = {"row_id", "source_id", "source_revision"}
+            require_exact_fields(current_row, fields, "terminal current row")
+            require_exact_fields(binding, fields, "terminal source binding")
+            for field in fields:
+                require_identity(current_row.get(field), f"terminal current row {field}")
+                require_identity(binding.get(field), f"terminal source binding {field}")
+            bound = binding == current_row
         return {
             "stable_binding_dispositions": ["released-same-update", "action-required-owner-release"],
             "row_action": "release-or-owner-release" if bound else "unchanged-unassociated",
@@ -858,8 +938,21 @@ def evaluate_reconciliation(
         complete = set(receipts) == set(manifest["scouts"]) and all(item["outcome"] in {"complete", "not applicable"} for item in receipts.values())
         protected_boundary_rejected = scenario.get("protected_boundary_rejected")
         require(type(protected_boundary_rejected) is bool, "honest no-op protected-boundary fact must be boolean")
-        routine = complete and scenario.get("reconciliation_complete") is True and scenario.get("gate_passing_candidates") == 0 and not protected_boundary_rejected
-        next_action = "none" if routine else "resolve protected boundary" if protected_boundary_rejected else "complete missing coverage"
+        reconciliation_complete = scenario.get("reconciliation_complete")
+        gate_passing_candidates = scenario.get("gate_passing_candidates")
+        require(type(reconciliation_complete) is bool, "honest no-op reconciliation fact must be boolean")
+        require(type(gate_passing_candidates) is int and gate_passing_candidates >= 0, "honest no-op candidate count must be a nonnegative integer")
+        routine = complete and reconciliation_complete and gate_passing_candidates == 0 and not protected_boundary_rejected
+        if routine:
+            next_action = "none"
+        elif not complete:
+            next_action = "complete missing coverage"
+        elif not reconciliation_complete:
+            next_action = "complete reconciliation"
+        elif gate_passing_candidates:
+            next_action = "review gate-passing candidates"
+        else:
+            next_action = "resolve protected boundary"
         return {"attention_state": "Routine" if routine else "Action required", "next_owner_action": next_action, "rendered_slots": policy_limit}
     if scenario_type == "history":
         require_exact_fields(scenario, {"id", "scenario_type", "history_pages_complete", "authority"}, "history scenario")

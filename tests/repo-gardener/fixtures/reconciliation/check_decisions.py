@@ -386,6 +386,18 @@ def main() -> int:
             {"attention_state": "Action required", "next_owner_action": "resolve protected boundary"},
         ),
         (
+            "honest-no-op",
+            "incomplete reconciliation",
+            lambda item: item.__setitem__("reconciliation_complete", False),
+            {"attention_state": "Action required", "next_owner_action": "complete reconciliation"},
+        ),
+        (
+            "honest-no-op",
+            "gate-passing candidates",
+            lambda item: item.__setitem__("gate_passing_candidates", 1),
+            {"attention_state": "Action required", "next_owner_action": "review gate-passing candidates"},
+        ),
+        (
             "full-capacity",
             "capacity",
             lambda item: item["retained_rows"].pop(),
@@ -417,7 +429,12 @@ def main() -> int:
         (
             "terminal-row",
             "terminal source binding",
-            lambda item: item.__setitem__("terminal_source_binding", True),
+            lambda item: item.update(
+                {
+                    "current_row": {"row_id": "row:ci:beta", "source_id": "forge:check:beta", "source_revision": "revision:beta:1"},
+                    "terminal_source_binding": {"row_id": "row:ci:beta", "source_id": "forge:check:beta", "source_revision": "revision:beta:1"},
+                }
+            ),
             {"row_action": "release-or-owner-release", "stable_binding_dispositions": ["released-same-update", "action-required-owner-release"]},
         ),
         (
@@ -794,6 +811,17 @@ def main() -> int:
             lambda: CONTRACT.validate_register(records, manifest, authentication, policy),
         )
         canonical_policy = POLICY_PATH.read_text(encoding="utf-8")
+        inline_lane_policy = canonical_policy.replace(
+            "  dependency-and-vulnerability:\n    mutation: false",
+            "  dependency-and-vulnerability: {mutation: false}",
+            1,
+        )
+        policy.write_text(inline_lane_policy, encoding="utf-8")
+        require_contract_error(
+            "inline lane entry",
+            "unparsed or inline entry",
+            lambda: CONTRACT.validate_register(records, manifest, authentication, policy),
+        )
         for lane in CONTRACT.RELEASE_A_LANES:
             enabled_lane_policy, replacements = re.subn(
                 rf"(  {re.escape(lane)}:\n    mutation:) false",
@@ -820,6 +848,22 @@ def main() -> int:
         lambda: CONTRACT.render_capacity_with_limit(["row:valid", []], [], CONTRACT.RELEASE_A_PORTFOLIO_LIMIT),
     )
 
+    duplicate_candidate = copy.deepcopy(scenarios["seven-slot-selection"])
+    duplicate_candidate["eligible_candidates"][1]["source_id"] = duplicate_candidate["eligible_candidates"][0]["source_id"]
+    require_contract_error(
+        "duplicate capacity candidate",
+        "duplicate candidate source identity",
+        lambda: evaluate(duplicate_candidate, manifest, receipt_sets, complete_data),
+    )
+
+    noncritical_candidate = copy.deepcopy(scenarios["critical-at-capacity"])
+    noncritical_candidate["critical_candidate"]["expected_impact"] = "high"
+    require_contract_error(
+        "noncritical preemption candidate",
+        "critical candidate classification",
+        lambda: evaluate(noncritical_candidate, manifest, receipt_sets, complete_data),
+    )
+
     foreign_interruptible_row = copy.deepcopy(scenarios["critical-at-capacity"])
     foreign_interruptible_row["interruptible_row"] = "row:not-retained"
     require_contract_error(
@@ -833,6 +877,19 @@ def main() -> int:
         "invalid interruptible row",
         "interruptible row",
         lambda: evaluate(invalid_interruptible_row, manifest, receipt_sets, complete_data),
+    )
+
+    mismatched_terminal_binding = copy.deepcopy(scenarios["terminal-row"])
+    mismatched_terminal_binding.update(
+        {
+            "current_row": {"row_id": "row:ci:beta", "source_id": "forge:check:beta", "source_revision": "revision:beta:1"},
+            "terminal_source_binding": {"row_id": "row:ci:beta", "source_id": "forge:check:beta", "source_revision": "revision:beta:2"},
+        }
+    )
+    assert_expected(
+        "mismatched terminal row binding",
+        evaluate(mismatched_terminal_binding, manifest, receipt_sets, complete_data),
+        {"row_action": "unchanged-unassociated"},
     )
 
     oversized_identity = copy.deepcopy(records)
@@ -870,7 +927,7 @@ def main() -> int:
 
     validate_sources(repo_root)
     print("PASS: Release A reconciliation outcomes derive from caller, gate, receipt, capacity, and ordering facts")
-    print(f"PASS: {len(mutations) + 64} reconciliation, authority, history, policy, schema, bound, and receipt mutations rejected")
+    print(f"PASS: {len(mutations) + 68} reconciliation, authority, history, policy, schema, bound, and receipt mutations rejected")
     print("NOTE: fresh-context matched cases own behavioral evidence")
     return 0
 

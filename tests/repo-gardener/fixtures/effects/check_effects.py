@@ -183,6 +183,12 @@ def main() -> int:
             ),
             (
                 "observed",
+                "authoritative post-read target",
+                lambda item: item["authoritative_post_read"]["effect_payload"].__setitem__("report_id", "forge:report:other"),
+                {"terminal_outcome": "ambiguous", "persistence_claim": False},
+            ),
+            (
+                "observed",
                 "repository identity",
                 lambda item: item["authority"].__setitem__("repository_id", "forge:repository:other"),
                 {"terminal_outcome": "failed", "invoke_count": 0},
@@ -204,6 +210,18 @@ def main() -> int:
                 "already-satisfied terminal receipt readback",
                 lambda item: item.__setitem__("terminal_receipt_read_back", False),
                 {"terminal_outcome": "ambiguous", "persistence_claim": False},
+            ),
+            (
+                "delegation-with-readback",
+                "delegation readback truthiness",
+                lambda item: item["handoff"].__setitem__("read_back", 1),
+                {"remaining_disposition": "gated"},
+            ),
+            (
+                "persisted-terminal-receipt",
+                "terminal receipt authority",
+                lambda item: item["authority"].__setitem__("caller_exclusive", False),
+                {"persistence_claim": False},
             ),
             (
                 "observed",
@@ -314,6 +332,22 @@ def main() -> int:
     for identity, label, mutate, expected_result in mutation_specs:
         assert_mutation_result(scenarios, identity, label, mutate, expected_result)
 
+    missing_partition_operation = copy.deepcopy(scenarios["ambiguous-dependent-work"])
+    missing_partition_operation["affected_by_ambiguity"].remove(missing_partition_operation["operation_id"])
+    try:
+        evaluate(missing_partition_operation)
+        raise ContractError("completion partition omitted its ambiguous operation")
+    except ContractError as error:
+        require("ambiguous operation" in str(error), "completion partition failed for the wrong reason")
+
+    invalid_handoff = copy.deepcopy(scenarios["delegation-with-readback"])
+    invalid_handoff["handoff"]["destination"] = True
+    try:
+        evaluate(invalid_handoff)
+        raise ContractError("truthy handoff identity survived")
+    except ContractError as error:
+        require("handoff destination" in str(error), "invalid handoff failed for the wrong reason")
+
     missing_fingerprint = copy.deepcopy(scenarios["already-satisfied"])
     missing_fingerprint.pop("existing_effect_fingerprint")
     assert_expected(
@@ -379,7 +413,7 @@ def main() -> int:
 
     validate_sources(repo_root)
     print("PASS: Release A report-effect outcomes derive from scenario facts")
-    print(f"PASS: {len(mutation_specs) + 5} load-bearing authority, readback, identity, compatibility, partition, and precondition mutations rejected")
+    print(f"PASS: {len(mutation_specs) + 7} load-bearing authority, readback, identity, compatibility, partition, and precondition mutations rejected")
     print("NOTE: fresh-context matched cases own behavioral evidence")
     return 0
 

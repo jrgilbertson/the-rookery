@@ -81,6 +81,13 @@ Then perform this order exactly:
 8. stop on ambiguity, leaving the unmatched intent for reconciliation before
    new selection.
 
+Compatibility is exact machine proof, not identity equality. Compare both the
+prepared-effect fingerprint and its canonical payload with the stored
+fingerprint and payload. Missing or uncertain compatibility remains
+`ambiguous` with zero invokes; an incompatible fingerprint or payload is
+`failed` with zero invokes. The repository-qualified pair alone never proves
+`already satisfied`.
+
 Terminal outcomes are exactly:
 
 - `observed` — the authoritative post-read proves the intended result;

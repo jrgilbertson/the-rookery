@@ -21,6 +21,16 @@ One canonical record set supplies the machine read and human report:
 - report projection assigns `Action required`, `Merge-ready`, `Watching`, or
   `Routine`.
 
+`repo-gardener-register/v1` is exact, not an open property bag. A row contains
+only row/source identities, source revision, description, state, lane,
+rationale, risk, budget use, nonempty evidence identities, exact next action,
+and row revision. A history receipt contains only sequence/previous hash,
+repository/writer/provider receipt/operation identities, kind, run identity,
+and receipt hash. The anchor contains only sequence, head, and the complete
+`latest_receipt` repair object. The top-level last-operation markers are the
+stable operation identity plus a lowercase SHA-256 fingerprint. Missing or
+additional fields, or an unknown version, block the register read.
+
 Current Portfolio is the only ownership view. Both work states consume the
 seven-row ceiling. Terminal outcomes belong in Run History. A terminal row is
 released in the same logical update or projects `Action required` with owner

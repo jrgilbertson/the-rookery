@@ -7,6 +7,7 @@ import copy
 import importlib.util
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any, Callable
@@ -63,26 +64,37 @@ def validate_receipts_data(data: dict[str, Any], manifest: dict[str, Any], label
         raise ContractError(f"{label}: {error}") from error
 
 
-def read_receipt_fixture(fixture_dir: Path, manifest: dict[str, Any], filename: str) -> dict[str, dict[str, Any]]:
-    return validate_receipts_data(load(fixture_dir / filename), manifest, filename, complete=filename != "lane-receipts-missing.json")
+def invoke_cli(command: str, payload: dict[str, Any], *, policy: bool = False) -> dict[str, Any]:
+    arguments = [sys.executable, str(CONTRACT_PATH), command, "--input", "-"]
+    if policy:
+        arguments.extend(["--policy", str(POLICY_PATH)])
+    completed = subprocess.run(
+        arguments,
+        input=json.dumps(payload),
+        capture_output=True,
+        text=True,
+    )
+    if completed.returncode != 0:
+        raise ContractError(completed.stderr.strip().removeprefix("FAIL: "))
+    return json.loads(completed.stdout)
 
 
 def evaluate(
     scenario: dict[str, Any],
-    fixture_dir: Path,
     manifest: dict[str, Any],
+    receipt_sets: dict[str, dict[str, dict[str, Any]]],
     complete_receipts: dict[str, dict[str, Any]],
 ) -> dict[str, Any]:
-    receipt_sets = {
-        filename: read_receipt_fixture(fixture_dir, manifest, filename)
-        for filename in (
-            "lane-receipts.json",
-            "lane-receipts-incomplete.json",
-            "lane-receipts-missing.json",
-        )
-    }
-    return CONTRACT.evaluate_reconciliation(
-        scenario, manifest, receipt_sets, complete_receipts, POLICY_PATH
+    return invoke_cli(
+        "reconciliation-v1",
+        {
+            "schema": "repo-gardener-reconciliation-input/v1",
+            "scenario": scenario,
+            "manifest": manifest,
+            "receipt_sets": receipt_sets,
+            "complete_receipts": complete_receipts,
+        },
+        policy=True,
     )
 
 
@@ -91,20 +103,40 @@ def assert_expected(identity: str, actual: dict[str, Any], expected: dict[str, A
         require(actual.get(key) == value, f"{identity} derived {key}={actual.get(key)!r}, expected {value!r}")
 
 
+def require_contract_error(label: str, expected_text: str, action: Callable[[], Any]) -> None:
+    try:
+        action()
+    except ContractError as error:
+        require(expected_text in str(error), f"{label} mutation failed for the wrong reason: {error}")
+        return
+    raise ContractError(f"{label} mutation survived")
+
+
+def rehash_history(records: dict[str, Any]) -> None:
+    previous_hash = "0" * 64
+    for receipt in records["history_receipts"]:
+        receipt["previous_hash"] = previous_hash
+        receipt["receipt_hash"] = CONTRACT.receipt_hash(receipt)
+        previous_hash = receipt["receipt_hash"]
+    records["history_anchor"]["head"] = previous_hash
+    records["history_anchor"]["latest_receipt"] = copy.deepcopy(records["history_receipts"][-1])
+    records["last_operation_fingerprint"] = previous_hash
+
+
 def assert_mutation_result(
     scenarios: dict[str, dict[str, Any]],
     identity: str,
     label: str,
     mutate: Callable[[dict[str, Any]], None],
     expected_result: dict[str, Any],
-    fixture_dir: Path,
     manifest: dict[str, Any],
+    receipt_sets: dict[str, dict[str, dict[str, Any]]],
     receipts: dict[str, dict[str, Any]],
 ) -> None:
-    baseline = evaluate(scenarios[identity], fixture_dir, manifest, receipts)
+    baseline = evaluate(scenarios[identity], manifest, receipt_sets, receipts)
     changed = copy.deepcopy(scenarios[identity])
     mutate(changed)
-    actual = evaluate(changed, fixture_dir, manifest, receipts)
+    actual = evaluate(changed, manifest, receipt_sets, receipts)
     require(
         any(baseline.get(key) != value for key, value in expected_result.items()),
         f"mutation target does not differ from baseline: {label}",
@@ -221,7 +253,12 @@ def main() -> int:
     incomplete_receipts = validate_receipts_data(incomplete_data, manifest, "lane-receipts-incomplete.json")
     require(incomplete_receipts["runtime-error-and-alert"]["outcome"] == "incomplete", "incomplete fixture does not exercise failure coverage")
     missing_data = load(fixture_dir / "lane-receipts-missing.json")
-    validate_receipts_data(missing_data, manifest, "lane-receipts-missing.json", complete=False)
+    missing_receipts = validate_receipts_data(missing_data, manifest, "lane-receipts-missing.json", complete=False)
+    receipt_sets = {
+        "lane-receipts.json": complete_receipts,
+        "lane-receipts-incomplete.json": incomplete_receipts,
+        "lane-receipts-missing.json": missing_receipts,
+    }
 
     scenario_items = load(fixture_dir / "scenarios.json")
     for item in scenario_items:
@@ -233,7 +270,26 @@ def main() -> int:
     expectations = load(fixture_dir / "expectations.json")
     require(set(scenarios) == set(expectations), "scenario/expectation id parity failed")
     for identity, expected in expectations.items():
-        assert_expected(identity, evaluate(scenarios[identity], fixture_dir, manifest, complete_receipts), expected)
+        assert_expected(identity, evaluate(scenarios[identity], manifest, receipt_sets, complete_receipts), expected)
+
+    gate_scenario = scenarios["ordered-gates-protected-projection"]
+    gate_result = invoke_cli(
+        "gates-v1",
+        {"schema": "repo-gardener-gates-input/v1", "facts": gate_scenario["gate_facts"]},
+    )
+    require(gate_result["first_failing_gate"] == "policy and authority", "gates-v1 did not expose ordered gate derivation")
+
+    capacity_scenario = scenarios["full-capacity"]
+    capacity_result = invoke_cli(
+        "capacity-v1",
+        {
+            "schema": "repo-gardener-capacity-input/v1",
+            "retained": capacity_scenario["retained_rows"],
+            "candidates": capacity_scenario["eligible_candidates"],
+        },
+        policy=True,
+    )
+    require(capacity_result["recommendations"] == 0, "capacity-v1 did not expose policy-derived capacity")
 
     mutations: list[tuple[str, str, Callable[[dict[str, Any]], None], dict[str, Any]]] = [
         (
@@ -297,8 +353,8 @@ def main() -> int:
             label,
             mutate,
             expected_result,
-            fixture_dir,
             manifest,
+            receipt_sets,
             complete_receipts,
         )
 
@@ -307,8 +363,8 @@ def main() -> int:
     capability_variant = copy.deepcopy(capability_baseline)
     capability_variant["source_mutation_capability_available"] = True
     require(
-        evaluate(capability_baseline, fixture_dir, manifest, complete_receipts)
-        == evaluate(capability_variant, fixture_dir, manifest, complete_receipts),
+        evaluate(capability_baseline, manifest, receipt_sets, complete_receipts)
+        == evaluate(capability_variant, manifest, receipt_sets, complete_receipts),
         "source-mutation capability changed read-only recommendation eligibility",
     )
 
@@ -325,11 +381,14 @@ def main() -> int:
         validate_receipts_data(incomplete_without_reason, manifest, "incomplete-without-reason")
         raise ContractError("incomplete receipt without reason mutation survived")
     except ContractError as error:
-        require("failure reason" in str(error), "incomplete-reason mutation failed for the wrong reason")
+        require(
+            "failure reason" in str(error) or "failure_reason" in str(error),
+            "incomplete-reason mutation failed for the wrong reason",
+        )
     unknown_receipt = copy.deepcopy(scenarios["stable-identity-dedupe"])
     unknown_receipt["observations"][0]["receipt_id"] = "receipt:scout:unknown"
     try:
-        evaluate(unknown_receipt, fixture_dir, manifest, complete_receipts)
+        evaluate(unknown_receipt, manifest, receipt_sets, complete_receipts)
         raise ContractError("unknown dedupe receipt mutation survived")
     except ContractError as error:
         require("unknown Scout Receipt" in str(error), "unknown receipt mutation failed for the wrong reason")
@@ -352,6 +411,56 @@ def main() -> int:
         except ContractError as error:
             require(field in str(error) or field.replace("_", " ") in str(error), f"Scout Receipt {field} mutation failed for the wrong reason")
 
+    malformed_collection = copy.deepcopy(complete_data)
+    malformed_collection.pop("schema")
+    require_contract_error(
+        "Scout Receipt collection schema",
+        "collection schema",
+        lambda: validate_receipts_data(malformed_collection, manifest, "missing-collection-schema"),
+    )
+    cross_repository_collection = copy.deepcopy(complete_data)
+    cross_repository_collection["repository_id"] = "forge:repository:other"
+    require_contract_error(
+        "Scout Receipt collection repository",
+        "repository mismatch",
+        lambda: validate_receipts_data(cross_repository_collection, manifest, "cross-repository-collection"),
+    )
+    wrong_manifest_schema = copy.deepcopy(manifest)
+    wrong_manifest_schema["schema"] = "repo-gardener-scout-manifest/v999"
+    require_contract_error(
+        "Scout Receipt manifest schema",
+        "manifest schema mismatch",
+        lambda: validate_receipts_data(complete_data, wrong_manifest_schema, "wrong-manifest-schema"),
+    )
+    wrong_manifest_repository = copy.deepcopy(manifest)
+    wrong_manifest_repository["repository_id"] = "forge:repository:other"
+    require_contract_error(
+        "Scout Receipt manifest repository",
+        "repository mismatch",
+        lambda: validate_receipts_data(complete_data, wrong_manifest_repository, "wrong-manifest-repository"),
+    )
+    invalid_time = copy.deepcopy(complete_data)
+    invalid_time["receipts"][0]["observed_at"] = "not-a-time"
+    require_contract_error(
+        "Scout Receipt UTC observation time",
+        "UTC observation time",
+        lambda: validate_receipts_data(invalid_time, manifest, "invalid-observation-time"),
+    )
+    empty_evidence = copy.deepcopy(complete_data)
+    empty_evidence["receipts"][0]["evidence_references"] = []
+    require_contract_error(
+        "complete Scout Receipt evidence",
+        "requires evidence",
+        lambda: validate_receipts_data(empty_evidence, manifest, "empty-complete-evidence"),
+    )
+    oversized_evidence = copy.deepcopy(complete_data)
+    oversized_evidence["receipts"][0]["evidence_references"] = ["e" * (CONTRACT.IDENTITY_LIMIT + 1)]
+    require_contract_error(
+        "bounded Scout Receipt evidence",
+        "exceeds 128",
+        lambda: validate_receipts_data(oversized_evidence, manifest, "oversized-evidence"),
+    )
+
     register_dir = fixture_dir.parent / "register"
     records = load(register_dir / "canonical-records.json")
     authentication = load(register_dir / "provider-authentication.json")
@@ -369,7 +478,73 @@ def main() -> int:
         CONTRACT.validate_register(records, manifest, unauthenticated, POLICY_PATH)
         raise ContractError("unauthenticated receipt writer survived")
     except ContractError as error:
-        require("provider-authenticated" in str(error), "writer authentication mutation failed for the wrong reason")
+        require(
+            "provider-authenticated" in str(error) or "dedicated register writer" in str(error),
+            "writer authentication mutation failed for the wrong reason",
+        )
+
+    foreign_dedicated_writer = copy.deepcopy(records)
+    foreign_dedicated_writer["writer_id"] = "forge:writer:other"
+    require_contract_error(
+        "foreign dedicated writer",
+        "dedicated register writer",
+        lambda: CONTRACT.validate_register(foreign_dedicated_writer, manifest, authentication, POLICY_PATH),
+    )
+
+    for field in ("lane", "rationale", "risk", "budget_use", "evidence_ids"):
+        incomplete_row = copy.deepcopy(records)
+        incomplete_row["rows"][0].pop(field)
+        require_contract_error(
+            f"row missing {field}",
+            "row 0 schema mismatch",
+            lambda incomplete_row=incomplete_row: CONTRACT.validate_register(incomplete_row, manifest, authentication, POLICY_PATH),
+        )
+    extra_row_field = copy.deepcopy(records)
+    extra_row_field["rows"][0]["priority"] = "urgent"
+    require_contract_error(
+        "row with unknown field",
+        "row 0 schema mismatch",
+        lambda: CONTRACT.validate_register(extra_row_field, manifest, authentication, POLICY_PATH),
+    )
+
+    for field in ("kind", "run_id"):
+        incomplete_receipt = copy.deepcopy(records)
+        incomplete_receipt["history_receipts"][0].pop(field)
+        rehash_history(incomplete_receipt)
+        require_contract_error(
+            f"history receipt missing {field}",
+            "history receipt 1 schema mismatch",
+            lambda incomplete_receipt=incomplete_receipt: CONTRACT.validate_register(incomplete_receipt, manifest, authentication, POLICY_PATH),
+        )
+    unknown_receipt_kind = copy.deepcopy(records)
+    unknown_receipt_kind["history_receipts"][0]["kind"] = "caller-asserted-success"
+    rehash_history(unknown_receipt_kind)
+    require_contract_error(
+        "unknown history receipt kind",
+        "kind is invalid",
+        lambda: CONTRACT.validate_register(unknown_receipt_kind, manifest, authentication, POLICY_PATH),
+    )
+    missing_latest_receipt = copy.deepcopy(records)
+    missing_latest_receipt["history_anchor"].pop("latest_receipt")
+    require_contract_error(
+        "history anchor repair material",
+        "history anchor schema mismatch",
+        lambda: CONTRACT.validate_register(missing_latest_receipt, manifest, authentication, POLICY_PATH),
+    )
+    missing_operation_fingerprint = copy.deepcopy(records)
+    missing_operation_fingerprint.pop("last_operation_fingerprint")
+    require_contract_error(
+        "last operation fingerprint",
+        "register schema mismatch",
+        lambda: CONTRACT.validate_register(missing_operation_fingerprint, manifest, authentication, POLICY_PATH),
+    )
+    malformed_operation_fingerprint = copy.deepcopy(records)
+    malformed_operation_fingerprint["last_operation_fingerprint"] = "not-a-fingerprint"
+    require_contract_error(
+        "malformed last operation fingerprint",
+        "lowercase SHA-256",
+        lambda: CONTRACT.validate_register(malformed_operation_fingerprint, manifest, authentication, POLICY_PATH),
+    )
 
     oversized_identity = copy.deepcopy(records)
     oversized_identity["repository_id"] = "r" * (CONTRACT.IDENTITY_LIMIT + 1)
@@ -393,7 +568,10 @@ def main() -> int:
         CONTRACT.validate_register(oversized_receipt, manifest, authentication, POLICY_PATH)
         raise ContractError("oversized receipt survived")
     except ContractError as error:
-        require("canonical UTF-8 bytes" in str(error), "receipt-size mutation failed for the wrong reason")
+        require(
+            "canonical UTF-8 bytes" in str(error) or "schema mismatch" in str(error),
+            "receipt-size mutation failed for the wrong reason",
+        )
 
     try:
         CONTRACT.validate_body("x" * (CONTRACT.BODY_LIMIT + 1))
@@ -403,7 +581,7 @@ def main() -> int:
 
     validate_sources(repo_root)
     print("PASS: Release A reconciliation outcomes derive from caller, gate, receipt, capacity, and ordering facts")
-    print(f"PASS: {len(mutations) + 17} reconciliation, history, schema, bound, and receipt mutations rejected")
+    print(f"PASS: {len(mutations) + 38} reconciliation, history, schema, bound, and receipt mutations rejected")
     print("NOTE: fresh-context matched cases own behavioral evidence")
     return 0
 

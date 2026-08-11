@@ -38,9 +38,12 @@ not a provider client or authorization grant.
 
 Run `scripts/release_a_contract.py` on machine records before relying on them.
 The executable contract validates the complete authenticated history and Scout
-Receipt schema, enforces bounded identities and payloads, derives effect and
-completion outcomes, and reads the portfolio limit from the policy asset. A
-caller assertion or copied decision procedure never substitutes for that check.
+Receipt schema, enforces bounded identities and payloads, and reads the
+portfolio limit from the policy asset. Its versioned `effect-v1`,
+`reconciliation-v1`, `gates-v1`, `capacity-v1`, and `completion-v1`
+subcommands are the production interface for derived outcomes. A caller
+assertion, direct module import, or copied decision procedure never substitutes
+for invoking that interface.
 
 ## Universal authority boundary
 

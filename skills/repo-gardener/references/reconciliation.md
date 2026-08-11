@@ -75,6 +75,13 @@ candidate count, and one outcome:
   source or repository surface does not apply; or
 - `incomplete`, with a failure reason.
 
+Validate the exact `repo-gardener-scout-receipt-collection/v1` envelope and the
+exact manifest version before using any receipt. The collection binds the
+verified repository, run, and manifest. Observation time is parseable ISO-8601
+UTC ending in `Z`. Every `complete` receipt carries at least one unique,
+nonempty evidence identity bounded by the machine identity limit; an empty
+evidence list is incomplete proof, never complete coverage.
+
 Missing access, partial pagination, budget stop, error, or missing receipt is
 incomplete. A missing receipt renders `incomplete (no receipt)` and never zero
 findings. Persist and read every receipt back. Incomplete coverage excludes

@@ -15,7 +15,7 @@ import sys
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 
 HERE = Path(__file__).resolve().parent
@@ -42,7 +42,42 @@ EXPECTED_CHANGED_PATHS = {
     "CHANGELOG.md",
     "src/app.txt",
     *(f"evidence/{kind}.json" for kind in SPEC["required_receipts"]),
+    *(f"results/{kind}.json" for kind in SPEC["required_receipts"]),
 }
+EVIDENCE_COMMON_FIELDS = {
+    "schema",
+    "repository",
+    "subject",
+    "status",
+    "producer",
+    "scope",
+    "command",
+    "outcome",
+    "result_references",
+}
+EVIDENCE_KIND_FIELDS = {
+    "working-surface": {"committed", "staged", "unstaged", "untracked"},
+    "repository-gates": {"gates"},
+    "code-review": {"finding_count", "findings"},
+    "code-simplification": {"finding_count", "findings"},
+    "testing": {"checks", "ui_classification"},
+    "plan-versus-delivered": {"planned", "not_delivered"},
+    "learning-signal": {"signal"},
+    "targeted-sweep": {"verdicts", "unresolved"},
+    "preflight": {"unresolved", "bypass_requested"},
+}
+EVIDENCE_RESULT_FIELDS = {
+    "working-surface": {"result_id", "outcome", "paths"},
+    "repository-gates": {"result_id", "outcome", "summary"},
+    "code-review": {"result_id", "outcome", "reviewed_paths"},
+    "code-simplification": {"result_id", "outcome", "reviewed_paths"},
+    "testing": {"result_id", "outcome", "exit_code"},
+    "plan-versus-delivered": {"result_id", "outcome", "delivered"},
+    "learning-signal": {"result_id", "outcome", "summary"},
+    "targeted-sweep": {"result_id", "outcome", "class_count"},
+    "preflight": {"result_id", "outcome", "unresolved_count"},
+}
+EVIDENCE_BLOB_CACHE: dict[tuple[str, str, str], tuple[str, bytes]] = {}
 
 
 class FixtureError(Exception):
@@ -68,7 +103,11 @@ def run(*command: str, cwd: Path, env: dict[str, str] | None = None) -> str:
 
 def write_json(path: Path, value: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(value, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    path.write_bytes(json_bytes(value))
+
+
+def json_bytes(value: Any) -> bytes:
+    return (json.dumps(value, indent=2, sort_keys=True) + "\n").encode("utf-8")
 
 
 def package_version() -> str:
@@ -104,39 +143,124 @@ def git_env(timestamp: str) -> dict[str, str]:
 
 def evidence_documents(reviewer_mode: str = "configured") -> dict[str, dict[str, Any]]:
     if reviewer_mode == "configured":
-        automated_reviewers = [{"name": "fixture-reviewer", "cap": SPEC["reviewer_cap"]}]
         class_11 = "under caps"
     elif reviewer_mode == "none":
-        automated_reviewers = []
         class_11 = "not applicable"
     elif reviewer_mode == "missing-cap":
-        automated_reviewers = [{"name": "fixture-reviewer"}]
         class_11 = "cap unverified"
     else:
         raise FixtureError(f"unknown reviewer mode: {reviewer_mode}")
     sweep_verdicts = {**BASE_SWEEP_VERDICTS, "11": class_11}
-    common = {"repository": SPEC["repository"], "subject": SPEC["subject"], "status": "verified"}
+    def evidence(
+        kind: str,
+        command_id: str,
+        results: list[dict[str, Any]],
+        **substantive: Any,
+    ) -> dict[str, Any]:
+        return {
+            "schema": f"checking-pr-readiness-{kind}-evidence/v1",
+            "repository": SPEC["repository"],
+            "subject": SPEC["subject"],
+            "status": "verified",
+            "producer": {"id": f"fixture:{kind}", "version": "fixture-v1"},
+            "scope": {
+                "repository": SPEC["repository"],
+                "subject": SPEC["subject"],
+                "base": "main",
+                "surface": "full",
+            },
+            "command": {"id": command_id, "arguments": []},
+            "outcome": "verified",
+            "results": results,
+            "result_references": [],
+            **substantive,
+        }
+
+    changed_paths = sorted(EXPECTED_CHANGED_PATHS)
     return {
-        "working-surface": {**common, "committed": sorted(EXPECTED_CHANGED_PATHS), "staged": [], "unstaged": [], "untracked": []},
-        "repository-gates": {
-            **common,
-            "gates": [{"name": "fixture-validation", "owner": "fixture task runner", "status": "verified"}],
-        },
-        "code-review": {**common, "finding_count": 0},
-        "code-simplification": {**common, "finding_count": 0},
-        "testing": {**common, "checks": ["fixture-validation"], "ui_classification": "not applicable"},
-        "plan-versus-delivered": {**common, "planned": ["change synthetic app state"], "not_delivered": []},
-        "learning-signal": {**common, "signal": "no durable learning; synthetic change only"},
-        "targeted-sweep": {
-            **common,
-            "verdicts": sweep_verdicts,
-            "unresolved": [] if reviewer_mode != "missing-cap" else ["automated reviewer cap unresolved: fixture-reviewer"],
-        },
-        "preflight": {**common, "status": "verified", "unresolved": [], "bypass_requested": False},
+        "working-surface": evidence(
+            "working-surface",
+            "surface-report",
+            [{"result_id": "surface:inventory", "outcome": "clean", "paths": changed_paths}],
+            committed=changed_paths,
+            staged=[],
+            unstaged=[],
+            untracked=[],
+        ),
+        "repository-gates": evidence(
+            "repository-gates",
+            "repository-gate-discovery",
+            [{"result_id": "gate:fixture-validation", "outcome": "verified", "summary": "fixture validation passed"}],
+            gates=[{
+                "name": "fixture-validation",
+                "owner": "fixture task runner",
+                "command": "python3 fixture-validation.py",
+                "outcome": "verified",
+                "status": "verified",
+                "result_reference": "gate:fixture-validation",
+            }],
+        ),
+        "code-review": evidence(
+            "code-review",
+            "ce-code-review",
+            [{"result_id": "review:summary", "outcome": "clear", "reviewed_paths": changed_paths}],
+            finding_count=0,
+            findings=[],
+        ),
+        "code-simplification": evidence(
+            "code-simplification",
+            "ce-simplify-code",
+            [{"result_id": "simplification:summary", "outcome": "clear", "reviewed_paths": changed_paths}],
+            finding_count=0,
+            findings=[],
+        ),
+        "testing": evidence(
+            "testing",
+            "repository-test-runner",
+            [{"result_id": "test:fixture-validation", "outcome": "passed", "exit_code": 0}],
+            checks=[{
+                "name": "fixture-validation",
+                "command": "python3 fixture-validation.py",
+                "outcome": "passed",
+                "result_reference": "test:fixture-validation",
+            }],
+            ui_classification="not applicable",
+        ),
+        "plan-versus-delivered": evidence(
+            "plan-versus-delivered",
+            "plan-delivery-comparison",
+            [{"result_id": "delivery:summary", "outcome": "complete", "delivered": ["change synthetic app state"]}],
+            planned=["change synthetic app state"],
+            not_delivered=[],
+        ),
+        "learning-signal": evidence(
+            "learning-signal",
+            "learning-signal-assessment",
+            [{"result_id": "learning:summary", "outcome": "no-learning", "summary": "synthetic change only"}],
+            signal="no durable learning; synthetic change only",
+        ),
+        "targeted-sweep": evidence(
+            "targeted-sweep",
+            "targeted-sweep",
+            [{"result_id": "sweep:summary", "outcome": "clear", "class_count": 11}],
+            verdicts=sweep_verdicts,
+            unresolved=[] if reviewer_mode != "missing-cap" else ["automated reviewer cap unresolved: fixture-reviewer"],
+        ),
+        "preflight": evidence(
+            "preflight",
+            "checking-pr-readiness-preflight",
+            [{"result_id": "preflight:summary", "outcome": "converged", "unresolved_count": 0}],
+            unresolved=[],
+            bypass_requested=False,
+        ),
     }
 
 
-def build_repository(path: Path, reviewer_mode: str = "configured") -> str:
+def build_repository(
+    path: Path,
+    reviewer_mode: str = "configured",
+    evidence_mutator: Callable[[dict[str, dict[str, Any]]], None] | None = None,
+) -> str:
     path.mkdir(parents=True)
     run("git", "init", "-q", "-b", "main", cwd=path)
     run("git", "config", "user.name", "Synthetic Fixture", cwd=path)
@@ -158,9 +282,26 @@ def build_repository(path: Path, reviewer_mode: str = "configured") -> str:
     else:
         reviewer_configuration_document = {"automated_reviewers": [{"name": "fixture-reviewer"}]}
     write_json(path / ".github" / "automated-reviewers.json", reviewer_configuration_document)
-    for kind, document in evidence_documents(reviewer_mode).items():
+    documents = evidence_documents(reviewer_mode)
+    for kind, document in documents.items():
+        results = document.pop("results")
+        result_document = {
+            "schema": f"checking-pr-readiness-{kind}-result/v1",
+            "producer": document["producer"],
+            "scope": document["scope"],
+            "command": document["command"],
+            "outcome": document["outcome"],
+            "results": results,
+        }
+        relative = f"results/{kind}.json"
+        content = json_bytes(result_document)
+        write_json(path / relative, result_document)
+        document["result_references"] = [{"path": relative, "sha256": hashlib.sha256(content).hexdigest()}]
+    if evidence_mutator is not None:
+        evidence_mutator(documents)
+    for kind, document in documents.items():
         write_json(path / "evidence" / f"{kind}.json", document)
-    run("git", "add", "src/app.txt", "CHANGELOG.md", ".github", "evidence", cwd=path)
+    run("git", "add", "src/app.txt", "CHANGELOG.md", ".github", "evidence", "results", cwd=path)
     run("git", "commit", "-q", "-m", "prepare synthetic assessment", cwd=path, env=git_env(COMMIT_TIME))
     revision = run("git", "rev-parse", "HEAD", cwd=path)
     require(bool(OID.fullmatch(revision)), "fixture did not produce a full Git OID")
@@ -178,11 +319,22 @@ def git_blob(repo: Path, revision: str, relative: str) -> bytes:
     return completed.stdout
 
 
+def evidence_blob(repo: Path, revision: str, relative: str) -> tuple[str, bytes]:
+    key = (str(repo.resolve()), revision, relative)
+    if key not in EVIDENCE_BLOB_CACHE:
+        tree_entry = run("git", "ls-tree", revision, "--", relative, cwd=repo).split()
+        if not tree_entry:
+            raise subprocess.CalledProcessError(1, ["git", "ls-tree", revision, "--", relative])
+        EVIDENCE_BLOB_CACHE[key] = (tree_entry[0], git_blob(repo, revision, relative))
+    return EVIDENCE_BLOB_CACHE[key]
+
+
 def make_bundle(repo: Path, revision: str) -> dict[str, Any]:
     receipts = []
     for kind in SPEC["required_receipts"]:
         relative = f"evidence/{kind}.json"
-        digest = hashlib.sha256(git_blob(repo, revision, relative)).hexdigest()
+        _, content = evidence_blob(repo, revision, relative)
+        digest = hashlib.sha256(content).hexdigest()
         receipts.append(
             {
                 "schema": "checking-pr-readiness-evidence/v1",
@@ -257,7 +409,8 @@ def resolve_live_repository(repo: Path) -> tuple[str | None, list[str]]:
 
 
 def reviewer_configuration(repo: Path, revision: str) -> list[dict[str, Any]]:
-    document = json.loads(git_blob(repo, revision, ".github/automated-reviewers.json"))
+    _, content = evidence_blob(repo, revision, ".github/automated-reviewers.json")
+    document = json.loads(content)
     reviewers = document.get("automated_reviewers")
     if not isinstance(reviewers, list):
         raise FixtureError("repository automated-reviewer discovery is invalid")
@@ -301,55 +454,211 @@ def validate_surface(repo: Path, reviewers: list[dict[str, Any]]) -> tuple[list[
     return gaps, changed
 
 
+def bounded_text(value: Any, limit: int = 512) -> bool:
+    return isinstance(value, str) and bool(value.strip()) and len(value) <= limit
+
+
+def text_set(value: Any) -> set[str] | None:
+    if not isinstance(value, list) or any(not isinstance(item, str) for item in value):
+        return None
+    return set(value)
+
+
 def validate_evidence_document(
     kind: str,
     document: Any,
+    repo: Path,
+    revision: str,
     surface_paths: set[str],
     live_subject: str | None,
     reviewers: list[dict[str, Any]],
     repository: str | None,
 ) -> list[str]:
-    gaps: list[str] = []
     if not isinstance(document, dict):
         return [f"invalid evidence document: {kind}"]
+
+    expected_fields = EVIDENCE_COMMON_FIELDS | EVIDENCE_KIND_FIELDS[kind]
+    producer = document.get("producer")
+    scope = document.get("scope")
+    command = document.get("command")
+    references = document.get("result_references")
+    common_valid = all(
+        (
+            set(document) == expected_fields,
+            document.get("schema") == f"checking-pr-readiness-{kind}-evidence/v1",
+            isinstance(producer, dict) and set(producer) == {"id", "version"},
+            isinstance(producer, dict) and bounded_text(producer.get("id")) and bounded_text(producer.get("version")),
+            isinstance(scope, dict) and set(scope) == {"repository", "subject", "base", "surface"},
+            isinstance(scope, dict)
+            and scope.get("repository") == repository
+            and scope.get("subject") == live_subject
+            and scope.get("base") == "main"
+            and scope.get("surface") == "full",
+            isinstance(command, dict) and set(command) == {"id", "arguments"},
+            isinstance(command, dict) and bounded_text(command.get("id")),
+            isinstance(command, dict)
+            and isinstance(command.get("arguments"), list)
+            and len(command["arguments"]) <= 32
+            and all(bounded_text(argument) for argument in command["arguments"]),
+            document.get("outcome") == "verified",
+            isinstance(references, list) and len(references) == 1,
+        )
+    )
+    if not common_valid:
+        return [f"substantive evidence schema mismatch: {kind}"]
+
+    reference = references[0]
+    expected_result_path = f"results/{kind}.json"
+    if (
+        not isinstance(reference, dict)
+        or set(reference) != {"path", "sha256"}
+        or reference.get("path") != expected_result_path
+        or not isinstance(reference.get("sha256"), str)
+        or not re.fullmatch(r"[0-9a-f]{64}", reference["sha256"])
+    ):
+        return [f"substantive evidence schema mismatch: {kind}"]
+    try:
+        mode, result_content = evidence_blob(repo, revision, expected_result_path)
+        result_document = json.loads(result_content)
+    except (subprocess.CalledProcessError, UnicodeDecodeError, json.JSONDecodeError):
+        return [f"substantive evidence schema mismatch: {kind}"]
+    if (
+        mode != "100644"
+        or hashlib.sha256(result_content).hexdigest() != reference["sha256"]
+        or not isinstance(result_document, dict)
+        or set(result_document) != {"schema", "producer", "scope", "command", "outcome", "results"}
+        or result_document.get("schema") != f"checking-pr-readiness-{kind}-result/v1"
+        or result_document.get("producer") != producer
+        or result_document.get("scope") != scope
+        or result_document.get("command") != command
+        or result_document.get("outcome") != document.get("outcome")
+    ):
+        return [f"substantive evidence schema mismatch: {kind}"]
+
+    results = result_document.get("results")
+    if not isinstance(results, list) or not (0 < len(results) <= 64):
+        return [f"substantive evidence schema mismatch: {kind}"]
+    result_ids: list[str] = []
+    for result in results:
+        if (
+            not isinstance(result, dict)
+            or set(result) != EVIDENCE_RESULT_FIELDS[kind]
+            or not bounded_text(result.get("result_id"))
+            or not bounded_text(result.get("outcome"))
+        ):
+            return [f"substantive evidence schema mismatch: {kind}"]
+        result_ids.append(result["result_id"])
+    if len(result_ids) != len(set(result_ids)):
+        return [f"substantive evidence schema mismatch: {kind}"]
+
+    gaps: list[str] = []
     if document.get("repository") != repository or document.get("subject") != live_subject:
         gaps.append(f"evidence identity mismatch: {kind}")
     if document.get("status") != "verified":
         gaps.append(f"evidence status not verified: {kind}")
+    result_by_id = {result["result_id"]: result for result in results}
+
     if kind == "working-surface":
         committed = document.get("committed")
-        if not isinstance(committed, list) or any(not isinstance(item, str) for item in committed) or set(committed) != surface_paths:
+        inventory = result_by_id.get("surface:inventory", {})
+        if (
+            not isinstance(committed, list)
+            or any(not isinstance(item, str) for item in committed)
+            or set(committed) != surface_paths
+            or inventory.get("outcome") != "clean"
+            or text_set(inventory.get("paths")) != surface_paths
+        ):
             gaps.append("working surface evidence inventory mismatch")
         if any(document.get(category) for category in ("staged", "unstaged", "untracked")):
             gaps.append("working surface evidence reports dirty categories")
     elif kind == "repository-gates":
         gates = document.get("gates", [])
-        if not isinstance(gates, list) or not gates or any(not isinstance(gate, dict) or not gate.get("name") or not gate.get("owner") or gate.get("status") != "verified" for gate in gates):
+        if (
+            not isinstance(gates, list)
+            or not gates
+            or any(
+                not isinstance(gate, dict)
+                or set(gate) != {"name", "owner", "command", "outcome", "status", "result_reference"}
+                or not all(bounded_text(gate.get(field)) for field in ("name", "owner", "command", "result_reference"))
+                or gate.get("outcome") != "verified"
+                or gate.get("status") != "verified"
+                or gate.get("result_reference") not in result_by_id
+                or result_by_id[gate["result_reference"]].get("outcome") != "verified"
+                for gate in gates
+            )
+        ):
             gaps.append("repository gate inventory incomplete")
     elif kind in {"code-review", "code-simplification"}:
-        if document.get("finding_count") != 0:
+        summary = results[0]
+        if (
+            type(document.get("finding_count")) is not int
+            or document["finding_count"] != 0
+            or document.get("findings") != []
+            or len(results) != 1
+            or summary.get("outcome") != "clear"
+            or text_set(summary.get("reviewed_paths")) != surface_paths
+        ):
             gaps.append(f"unresolved finding: {kind}")
     elif kind == "testing":
         checks = document.get("checks")
-        if not isinstance(checks, list) or not checks or document.get("ui_classification") not in {"applicable", "not applicable"}:
+        if (
+            not isinstance(checks, list)
+            or not checks
+            or any(
+                not isinstance(check, dict)
+                or set(check) != {"name", "command", "outcome", "result_reference"}
+                or not bounded_text(check.get("name"))
+                or not bounded_text(check.get("command"))
+                or check.get("outcome") != "passed"
+                or check.get("result_reference") not in result_by_id
+                or result_by_id[check["result_reference"]].get("outcome") != "passed"
+                or result_by_id[check["result_reference"]].get("exit_code") != 0
+                for check in checks
+            )
+            or document.get("ui_classification") not in {"applicable", "not applicable"}
+        ):
             gaps.append("testing evidence incomplete")
     elif kind == "plan-versus-delivered":
         planned = document.get("planned")
         not_delivered = document.get("not_delivered")
-        if not isinstance(planned, list) or not planned or not isinstance(not_delivered, list) or not_delivered:
+        if (
+            not isinstance(planned, list)
+            or not planned
+            or text_set(planned) is None
+            or len(planned) != len(set(planned))
+            or not isinstance(not_delivered, list)
+            or not_delivered
+            or len(results) != 1
+            or results[0].get("outcome") != "complete"
+            or results[0].get("delivered") != planned
+        ):
             gaps.append("plan-versus-delivered evidence incomplete")
     elif kind == "learning-signal":
-        if not document.get("signal"):
+        if not bounded_text(document.get("signal")) or len(results) != 1 or not bounded_text(results[0].get("summary")):
             gaps.append("learning-signal evidence incomplete")
     elif kind == "targeted-sweep":
         expected_class_11 = "not applicable" if not reviewers else "under caps"
         expected_verdicts = {**BASE_SWEEP_VERDICTS, "11": expected_class_11}
         unresolved = document.get("unresolved")
-        if document.get("verdicts") != expected_verdicts or not isinstance(unresolved, list) or unresolved:
+        if (
+            document.get("verdicts") != expected_verdicts
+            or not isinstance(unresolved, list)
+            or unresolved
+            or len(results) != 1
+            or results[0].get("outcome") != "clear"
+            or results[0].get("class_count") != 11
+        ):
             gaps.append("targeted sweep evidence incomplete")
     elif kind == "preflight":
         unresolved = document.get("unresolved")
-        if not isinstance(unresolved, list) or unresolved or document.get("bypass_requested") is not False:
+        if (
+            not isinstance(unresolved, list)
+            or unresolved
+            or document.get("bypass_requested") is not False
+            or len(results) != 1
+            or results[0].get("outcome") != "converged"
+            or results[0].get("unresolved_count") != 0
+        ):
             gaps.append("preflight evidence incomplete")
     return gaps
 
@@ -402,14 +711,7 @@ def evaluate(repo: Path, bundle: Any) -> dict[str, Any]:
         else:
             valid_receipts.append(receipt)
     by_kind = {receipt.get("kind"): receipt for receipt in valid_receipts}
-    evidence_cache: dict[str, tuple[str, bytes]] = {}
     evidence_documents_by_kind: dict[str, Any] = {}
-
-    def evidence_blob(relative: str) -> tuple[str, bytes]:
-        if relative not in evidence_cache:
-            mode = run("git", "ls-tree", revision, "--", relative, cwd=repo).split()[0]
-            evidence_cache[relative] = (mode, git_blob(repo, revision, relative))
-        return evidence_cache[relative]
 
     if len(by_kind) != len(valid_receipts):
         gaps.append("duplicate receipt kind")
@@ -457,7 +759,7 @@ def evaluate(repo: Path, bundle: Any) -> dict[str, Any]:
                 gaps.append(f"invalid evidence reference: {kind}")
                 continue
             try:
-                mode, content = evidence_blob(relative)
+                mode, content = evidence_blob(repo, revision, relative)
             except (subprocess.CalledProcessError, IndexError):
                 gaps.append(f"missing evidence: {kind}")
                 continue
@@ -473,7 +775,18 @@ def evaluate(repo: Path, bundle: Any) -> dict[str, Any]:
 
     for kind in SPEC["required_receipts"]:
         if kind in evidence_documents_by_kind:
-            gaps.extend(validate_evidence_document(kind, evidence_documents_by_kind[kind], surface_paths, live_subject, reviewers, live_repository))
+            gaps.extend(
+                validate_evidence_document(
+                    kind,
+                    evidence_documents_by_kind[kind],
+                    repo,
+                    revision,
+                    surface_paths,
+                    live_subject,
+                    reviewers,
+                    live_repository,
+                )
+            )
 
     expected_ids = {f"receipt:{kind}" for kind in SPEC["required_receipts"]}
     raw_receipt_references = supplied_assessment.get("receipt_references", [])
@@ -671,6 +984,58 @@ def run_suite() -> None:
             "automated reviewer cap unresolved: fixture-reviewer" in missing_cap_result["gaps"],
             "configured reviewer without a repository-resolved cap did not fail closed",
         )
+
+        weak_documents = {
+            "repository-gates": {
+                "repository": SPEC["repository"],
+                "subject": SPEC["subject"],
+                "status": "verified",
+                "gates": [{"name": "fixture-validation", "owner": "fixture task runner", "status": "verified"}],
+            },
+            "code-review": {
+                "repository": SPEC["repository"],
+                "subject": SPEC["subject"],
+                "status": "verified",
+                "finding_count": 0,
+            },
+            "testing": {
+                "repository": SPEC["repository"],
+                "subject": SPEC["subject"],
+                "status": "verified",
+                "checks": ["fixture-validation"],
+                "ui_classification": "not applicable",
+            },
+        }
+        for kind, weak_document in weak_documents.items():
+            weak_repo = root / f"weak-{kind}"
+            weak_revision = build_repository(
+                weak_repo,
+                evidence_mutator=lambda documents, kind=kind, weak_document=weak_document: documents.__setitem__(
+                    kind, weak_document
+                ),
+            )
+            weak_result = evaluate(weak_repo, make_bundle(weak_repo, weak_revision))
+            require(
+                f"substantive evidence schema mismatch: {kind}" in weak_result["gaps"],
+                f"self-asserted {kind} evidence passed without producer, scope, command, outcome, and result references",
+            )
+
+        bad_result_reference_repo = root / "bad-result-reference"
+        bad_result_reference_revision = build_repository(
+            bad_result_reference_repo,
+            evidence_mutator=lambda documents: documents["code-review"]["result_references"][0].__setitem__(
+                "sha256", "0" * 64
+            ),
+        )
+        bad_result_reference = evaluate(
+            bad_result_reference_repo,
+            make_bundle(bad_result_reference_repo, bad_result_reference_revision),
+        )
+        require(
+            "substantive evidence schema mismatch: code-review" in bad_result_reference["gaps"],
+            "unresolvable code-review result reference passed as inspectable evidence",
+        )
+
         partial_destination = root / "partial-materialization"
         def fail_bundle_write(path: Path, value: Any) -> None:
             raise OSError("forced bundle write failure")
@@ -682,6 +1047,7 @@ def run_suite() -> None:
         print("PASS: assessment receipts bind one deterministic exact subject and revision")
         print("PASS: versioned bundle resolution, staged-only dirt, and live-subject mutations fail closed")
         print("PASS: absent reviewer is not applicable; configured reviewer without a cap fails closed")
+        print("PASS: per-kind evidence rejects self-asserted review, test, and repository-gate results")
 
 
 def materialize(destination: Path, bundle_writer: Any = write_json) -> None:

@@ -5,7 +5,7 @@
   "writer_id": "forge:writer:synthetic-001",
   "register_revision": 8,
   "last_operation_id": "operation:report:008",
-  "last_operation_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "last_operation_fingerprint": "988756c9dbea0ee65acde7faa0929136c2fd44c9977757db164a2d9b0cca6456",
   "history_receipts": [
     {
       "sequence": 1,
@@ -98,7 +98,18 @@
   ],
   "history_anchor": {
     "sequence": 8,
-    "head": "988756c9dbea0ee65acde7faa0929136c2fd44c9977757db164a2d9b0cca6456"
+    "head": "988756c9dbea0ee65acde7faa0929136c2fd44c9977757db164a2d9b0cca6456",
+    "latest_receipt": {
+      "sequence": 8,
+      "previous_hash": "1f0e331a8b263d476d120cb9f8e2b5c60ed8c9f6f2189ad7357c6b73cd9e70c7",
+      "repository_id": "forge:repository:synthetic-001",
+      "writer_id": "forge:writer:synthetic-001",
+      "provider_receipt_id": "provider:receipt:008",
+      "operation_id": "operation:report:008",
+      "kind": "terminal-run",
+      "run_id": "run:synthetic:008",
+      "receipt_hash": "988756c9dbea0ee65acde7faa0929136c2fd44c9977757db164a2d9b0cca6456"
+    }
   },
   "rows": [
     {
@@ -108,6 +119,12 @@
       "description": "Update alpha dependency",
       "state": "To do",
       "lane": "dependency-and-vulnerability",
+      "rationale": "The current dependency evidence requires owner review.",
+      "risk": "medium",
+      "budget_use": "one portfolio slot",
+      "evidence_ids": [
+        "evidence:dependency:alpha"
+      ],
       "row_revision": 3,
       "next_action": "review current source evidence"
     },
@@ -118,6 +135,12 @@
       "description": "Investigate beta check",
       "state": "In process",
       "lane": "ci-and-failing-test",
+      "rationale": "The current check remains reproducibly failing.",
+      "risk": "high",
+      "budget_use": "one portfolio slot",
+      "evidence_ids": [
+        "evidence:ci:beta"
+      ],
       "row_revision": 2,
       "next_action": "run repository-owned verification"
     }

@@ -6,6 +6,7 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any, Callable
@@ -22,7 +23,27 @@ SPEC.loader.exec_module(CONTRACT)
 ContractError = CONTRACT.ContractError
 AUTHORITY_FIELDS = CONTRACT.AUTHORITY_FIELDS
 require = CONTRACT.require
-evaluate = CONTRACT.evaluate_effect
+
+
+COMPLETION_SCENARIOS = {"completion-partition", "delegation", "optional-scout", "caller-completion"}
+
+
+def evaluate(scenario: dict[str, Any]) -> dict[str, Any]:
+    command = "completion-v1" if scenario.get("scenario_type") in COMPLETION_SCENARIOS else "effect-v1"
+    schema = (
+        "repo-gardener-completion-input/v1"
+        if command == "completion-v1"
+        else "repo-gardener-effect-input/v1"
+    )
+    completed = subprocess.run(
+        [sys.executable, str(CONTRACT_PATH), command, "--input", "-"],
+        input=json.dumps({"schema": schema, "scenario": scenario}),
+        capture_output=True,
+        text=True,
+    )
+    if completed.returncode != 0:
+        raise ContractError(completed.stderr.strip().removeprefix("FAIL: "))
+    return json.loads(completed.stdout)
 
 
 def load(path: Path) -> Any:
@@ -239,6 +260,45 @@ def main() -> int:
     for identity, label, mutate, expected_result in mutation_specs:
         assert_mutation_result(scenarios, identity, label, mutate, expected_result)
 
+    missing_fingerprint = copy.deepcopy(scenarios["already-satisfied"])
+    missing_fingerprint.pop("existing_effect_fingerprint")
+    assert_expected(
+        "already-satisfied missing compatibility fingerprint",
+        evaluate(missing_fingerprint),
+        {"terminal_outcome": "ambiguous", "invoke_count": 0, "persistence_claim": False},
+    )
+
+    incompatible_payload = copy.deepcopy(scenarios["already-satisfied"])
+    incompatible_payload["existing_effect_payload"]["verb"] = "append-comment"
+    assert_expected(
+        "already-satisfied incompatible payload",
+        evaluate(incompatible_payload),
+        {"terminal_outcome": "failed", "invoke_count": 0, "persistence_claim": False},
+    )
+
+    incompatible_collision = copy.deepcopy(scenarios["cross-repository-collision"])
+    incompatible_collision["existing_repository_id"] = incompatible_collision["repository_id"]
+    incompatible_collision["existing_effect_fingerprint"] = "f" * 64
+    assert_expected(
+        "same-identity incompatible collision",
+        evaluate(incompatible_collision),
+        {"terminal_outcome": "failed", "invoke_count": 0},
+    )
+
+    uncertain_compatibility = copy.deepcopy(scenarios["uncertain-deduplication"])
+    uncertain_compatibility.update(
+        {
+            "invoke_result": "accepted",
+            "post_read": "exact effect observed",
+            "terminal_receipt_read_back": True,
+        }
+    )
+    assert_expected(
+        "uncertain compatibility with apparent success",
+        evaluate(uncertain_compatibility),
+        {"terminal_outcome": "ambiguous", "invoke_count": 0, "persistence_claim": False},
+    )
+
     duplicate_decision = copy.deepcopy(scenarios["report-first-caller-completion"])
     duplicate_decision["assignment_persisted_decision_ids"].append("decision:follow-up:a")
     try:
@@ -249,7 +309,7 @@ def main() -> int:
 
     validate_sources(repo_root)
     print("PASS: Release A report-effect outcomes derive from scenario facts")
-    print(f"PASS: {len(mutation_specs) + 1} load-bearing authority, readback, identity, partition, and precondition mutations rejected")
+    print(f"PASS: {len(mutation_specs) + 5} load-bearing authority, readback, identity, compatibility, partition, and precondition mutations rejected")
     print("NOTE: fresh-context matched cases own behavioral evidence")
     return 0
 

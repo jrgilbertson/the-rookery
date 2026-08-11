@@ -1,4 +1,7 @@
 {
+  "schema": "repo-gardener-scout-receipt-collection/v1",
+  "repository_id": "forge:repository:synthetic-001",
+  "run_id": "run:synthetic:009",
   "manifest_id": "manifest:synthetic:009",
   "receipts": [
     {

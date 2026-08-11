@@ -11,7 +11,9 @@ Provenance: Observed failure where stale, cross-boundary, partial, and bypassed 
 > receipt reference; staged-only dirt; renamed branch; detached and ambiguous
 > live subjects; unresolved targeted-sweep finding; and preflight bypass request.
 > Also distinguish no configured automated reviewer from a configured reviewer
-> whose cap cannot be resolved. Return one assessment
+> whose cap cannot be resolved. Include self-asserted repository-gate,
+> code-review, and testing documents that omit producer, scope, executable
+> command, outcome, or inspectable result references. Return one assessment
 > receipt per variant without an owner menu.
 
 ## Expected behavior
@@ -22,3 +24,4 @@ Provenance: Observed failure where stale, cross-boundary, partial, and bypassed 
 - [ ] The variants remain independent; a gap or receipt from one is not carried into another.
 - [ ] No variant writes to the checkout, presents an owner menu, stages, commits, pushes, or opens a pull request.
 - [ ] Class 11 is `not applicable` only when discovery proves no automated reviewer is configured; a configured reviewer without a repository-resolved cap fails closed.
+- [ ] Name-only tests, zero-finding review assertions, and owner/status-only gate tuples fail their exact per-kind evidence schemas.

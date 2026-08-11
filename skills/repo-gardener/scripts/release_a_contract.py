@@ -14,6 +14,7 @@ import hashlib
 import json
 import re
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -22,8 +23,72 @@ IDENTITY_LIMIT = 128
 DISPLAY_LIMIT = 512
 RECEIPT_LIMIT = 16 * 1024
 BODY_LIMIT = 48 * 1024
-TERMINAL_OUTCOMES = {"observed", "already satisfied", "failed", "ambiguous"}
 SCOUT_OUTCOMES = {"complete", "not applicable", "incomplete"}
+SHA256 = re.compile(r"^[0-9a-f]{64}$")
+REGISTER_FIELDS = {
+    "schema",
+    "repository_id",
+    "report_id",
+    "writer_id",
+    "register_revision",
+    "last_operation_id",
+    "last_operation_fingerprint",
+    "history_receipts",
+    "history_anchor",
+    "rows",
+}
+ROW_FIELDS = {
+    "row_id",
+    "source_id",
+    "source_revision",
+    "description",
+    "state",
+    "lane",
+    "rationale",
+    "risk",
+    "budget_use",
+    "evidence_ids",
+    "next_action",
+    "row_revision",
+}
+HISTORY_RECEIPT_FIELDS = {
+    "sequence",
+    "previous_hash",
+    "repository_id",
+    "writer_id",
+    "provider_receipt_id",
+    "operation_id",
+    "kind",
+    "run_id",
+    "receipt_hash",
+}
+HISTORY_KINDS = {
+    "run-start",
+    "manifest",
+    "scout-summary",
+    "reconciliation",
+    "decision",
+    "effect",
+    "report",
+    "terminal-run",
+}
+HISTORY_ANCHOR_FIELDS = {"sequence", "head", "latest_receipt"}
+MANIFEST_FIELDS = {"schema", "repository_id", "run_id", "manifest_id", "policy_revision", "scouts"}
+SCOUT_COLLECTION_FIELDS = {"schema", "repository_id", "run_id", "manifest_id", "receipts"}
+SCOUT_RECEIPT_FIELDS = {
+    "receipt_id",
+    "scout_id",
+    "outcome",
+    "run_id",
+    "manifest_id",
+    "lane",
+    "observed_at",
+    "source_id",
+    "evidence_references",
+    "candidate_count",
+}
+EFFECT_SCENARIOS = {"operation", "retry", "identity-collision", "terminal-receipt", "repair"}
+COMPLETION_SCENARIOS = {"completion-partition", "delegation", "optional-scout", "caller-completion"}
 AUTHORITY_FIELDS = (
     "caller_exclusive",
     "wrapper_scope_allowlisted",
@@ -82,6 +147,17 @@ def require_list(value: Any, label: str) -> list[Any]:
     return value
 
 
+def require_exact_fields(value: dict[str, Any], fields: set[str], label: str) -> None:
+    missing = sorted(fields - set(value))
+    unexpected = sorted(set(value) - fields)
+    details = []
+    if missing:
+        details.append(f"missing {', '.join(missing)}")
+    if unexpected:
+        details.append(f"unexpected {', '.join(unexpected)}")
+    require(not details, f"{label} schema mismatch: {'; '.join(details)}")
+
+
 def require_identity(value: Any, label: str) -> str:
     require(isinstance(value, str) and value, f"{label} is missing")
     try:
@@ -95,6 +171,27 @@ def require_identity(value: Any, label: str) -> str:
 def require_display(value: Any, label: str) -> str:
     require(isinstance(value, str), f"{label} must be text")
     require(len(value) <= DISPLAY_LIMIT, f"{label} exceeds {DISPLAY_LIMIT} Unicode code points")
+    return value
+
+
+def require_nonempty_display(value: Any, label: str) -> str:
+    result = require_display(value, label)
+    require(bool(result.strip()), f"{label} is empty")
+    return result
+
+
+def require_sha256(value: Any, label: str) -> str:
+    require(isinstance(value, str) and SHA256.fullmatch(value) is not None, f"{label} must be a lowercase SHA-256 digest")
+    return value
+
+
+def require_utc_time(value: Any, label: str) -> str:
+    require(isinstance(value, str) and value.endswith("Z"), f"{label} must be an ISO-8601 UTC observation time")
+    try:
+        parsed = datetime.fromisoformat(value)
+    except ValueError as error:
+        raise ContractError(f"{label} must be an ISO-8601 UTC observation time") from error
+    require(parsed.tzinfo is not None and parsed.utcoffset() == timezone.utc.utcoffset(parsed), f"{label} must be an ISO-8601 UTC observation time")
     return value
 
 
@@ -123,6 +220,23 @@ def receipt_hash(receipt: dict[str, Any]) -> str:
     return hashlib.sha256(canonical_bytes(hashed)).hexdigest()
 
 
+def validate_manifest(manifest: Any, repository_id: str | None = None) -> dict[str, Any]:
+    manifest = require_object(manifest, "manifest")
+    require_exact_fields(manifest, MANIFEST_FIELDS, "manifest")
+    require(manifest.get("schema") == "repo-gardener-scout-manifest/v1", "manifest schema mismatch")
+    manifest_repository = require_identity(manifest.get("repository_id"), "manifest repository_id")
+    if repository_id is not None:
+        require(manifest_repository == repository_id, "manifest repository mismatch")
+    require_identity(manifest.get("manifest_id"), "manifest_id")
+    require_identity(manifest.get("run_id"), "manifest run_id")
+    require_identity(manifest.get("policy_revision"), "manifest policy_revision")
+    scouts = require_list(manifest.get("scouts"), "manifest scouts")
+    for index, scout in enumerate(scouts):
+        require_identity(scout, f"manifest scout {index}")
+    require(len(scouts) == len(set(scouts)), "duplicate manifest scout")
+    return manifest
+
+
 def validate_register(
     records: Any,
     manifest: Any,
@@ -134,11 +248,12 @@ def validate_register(
     authentication = require_object(authentication, "provider authentication evidence")
     limit = portfolio_limit(policy_path)
 
+    require_exact_fields(records, REGISTER_FIELDS, "register")
     require(records.get("schema") == "repo-gardener-register/v1", "register schema mismatch")
     repository_id = require_identity(records.get("repository_id"), "register repository_id")
     require_identity(records.get("report_id"), "register report_id")
-    require_identity(records.get("writer_id"), "register writer_id")
-    require(isinstance(records.get("register_revision"), int) and records["register_revision"] >= 0, "invalid register revision")
+    register_writer = require_identity(records.get("writer_id"), "register writer_id")
+    require(type(records.get("register_revision")) is int and records["register_revision"] >= 0, "invalid register revision")
 
     rows = require_list(records.get("rows"), "register rows")
     require(len(rows) <= limit, f"portfolio exceeds policy limit {limit}")
@@ -146,16 +261,31 @@ def validate_register(
     source_ids: list[str] = []
     for index, raw_row in enumerate(rows):
         row = require_object(raw_row, f"row {index}")
+        require_exact_fields(row, ROW_FIELDS, f"row {index}")
         row_ids.append(require_identity(row.get("row_id"), f"row {index} row_id"))
         source_ids.append(require_identity(row.get("source_id"), f"row {index} source_id"))
         require_identity(row.get("source_revision"), f"row {index} source_revision")
-        require_display(row.get("description"), f"row {index} description")
-        require_display(row.get("next_action"), f"row {index} next_action")
+        require_nonempty_display(row.get("description"), f"row {index} description")
+        require_identity(row.get("lane"), f"row {index} lane")
+        require_nonempty_display(row.get("rationale"), f"row {index} rationale")
+        require_nonempty_display(row.get("risk"), f"row {index} risk")
+        require_nonempty_display(row.get("budget_use"), f"row {index} budget_use")
+        evidence_ids = require_list(row.get("evidence_ids"), f"row {index} evidence_ids")
+        require(bool(evidence_ids), f"row {index} evidence_ids are empty")
+        for evidence_index, evidence_id in enumerate(evidence_ids):
+            require_identity(evidence_id, f"row {index} evidence_id {evidence_index}")
+        require(len(evidence_ids) == len(set(evidence_ids)), f"row {index} duplicate evidence identity")
+        require_nonempty_display(row.get("next_action"), f"row {index} next_action")
         require(row.get("state") in {"To do", "In process"}, f"invalid row state: {row.get('state')}")
-        require(isinstance(row.get("row_revision"), int) and row["row_revision"] >= 0, "invalid row revision")
+        require(type(row.get("row_revision")) is int and row["row_revision"] >= 0, "invalid row revision")
     require(len(row_ids) == len(set(row_ids)), "duplicate row identity")
     require(len(source_ids) == len(set(source_ids)), "duplicate source identity")
 
+    require_exact_fields(
+        authentication,
+        {"schema", "repository_id", "history_pages_complete", "authenticated_receipts"},
+        "provider authentication evidence",
+    )
     require(authentication.get("schema") == "repo-gardener-provider-authentication/v1", "authentication schema mismatch")
     require(authentication.get("repository_id") == repository_id, "authentication repository mismatch")
     require(authentication.get("history_pages_complete") is True, "canonical history pagination is incomplete")
@@ -163,21 +293,27 @@ def validate_register(
     authenticated_map: dict[str, str] = {}
     for index, raw_item in enumerate(authenticated):
         item = require_object(raw_item, f"authenticated receipt {index}")
+        require_exact_fields(item, {"provider_receipt_id", "writer_id"}, f"authenticated receipt {index}")
         provider_receipt_id = require_identity(item.get("provider_receipt_id"), f"authenticated receipt {index} provider_receipt_id")
         require(provider_receipt_id not in authenticated_map, "duplicate provider authentication evidence")
-        authenticated_map[provider_receipt_id] = require_identity(item.get("writer_id"), f"authenticated receipt {index} writer_id")
+        writer_id = require_identity(item.get("writer_id"), f"authenticated receipt {index} writer_id")
+        require(writer_id == register_writer, f"authenticated receipt {index} is not bound to dedicated register writer")
+        authenticated_map[provider_receipt_id] = writer_id
 
     history = require_list(records.get("history_receipts"), "history receipts")
-    require(history, "history receipts are empty")
     previous_hash = "0" * 64
     for index, raw_receipt in enumerate(history, start=1):
         receipt = require_object(raw_receipt, f"history receipt {index}")
+        require_exact_fields(receipt, HISTORY_RECEIPT_FIELDS, f"history receipt {index}")
         require_payload(receipt, RECEIPT_LIMIT, f"history receipt {index}")
         require(receipt.get("sequence") == index, f"history receipt {index} sequence discontinuity")
         require(receipt.get("previous_hash") == previous_hash, f"history receipt {index} previous hash mismatch")
         require(receipt.get("repository_id") == repository_id, f"history receipt {index} repository mismatch")
         writer_id = require_identity(receipt.get("writer_id"), f"history receipt {index} writer_id")
+        require(writer_id == register_writer, f"history receipt {index} is not bound to dedicated register writer")
         require_identity(receipt.get("operation_id"), f"history receipt {index} operation_id")
+        require(receipt.get("kind") in HISTORY_KINDS, f"history receipt {index} kind is invalid")
+        require_identity(receipt.get("run_id"), f"history receipt {index} run_id")
         provider_receipt_id = require_identity(receipt.get("provider_receipt_id"), f"history receipt {index} provider_receipt_id")
         require(authenticated_map.get(provider_receipt_id) == writer_id, f"history receipt {index} writer is not provider-authenticated")
         expected_hash = receipt_hash(receipt)
@@ -185,23 +321,29 @@ def validate_register(
         previous_hash = expected_hash
 
     anchor = require_object(records.get("history_anchor"), "history anchor")
+    require_exact_fields(anchor, HISTORY_ANCHOR_FIELDS, "history anchor")
     require(anchor.get("sequence") == len(history), "history anchor sequence mismatch")
-    require(anchor.get("head") == previous_hash, "history anchor head mismatch")
-    require(records.get("last_operation_id") == history[-1].get("operation_id"), "operation marker mismatch")
+    if history:
+        require(anchor.get("head") == previous_hash, "history anchor head mismatch")
+        require(anchor.get("latest_receipt") == history[-1], "history anchor latest_receipt mismatch")
+        require(records.get("last_operation_id") == history[-1].get("operation_id"), "operation marker mismatch")
+        require_sha256(records.get("last_operation_fingerprint"), "last operation fingerprint")
+    else:
+        require(anchor.get("head") == "GENESIS" and anchor.get("latest_receipt") is None, "genesis history anchor mismatch")
+        require(records.get("last_operation_id") is None and records.get("last_operation_fingerprint") is None, "genesis operation markers must be null")
 
-    require(manifest.get("schema") == "repo-gardener-scout-manifest/v1", "manifest schema mismatch")
-    require(manifest.get("repository_id") == repository_id, "manifest repository mismatch")
-    require_identity(manifest.get("manifest_id"), "manifest_id")
-    require_identity(manifest.get("run_id"), "manifest run_id")
-    scouts = require_list(manifest.get("scouts"), "manifest scouts")
-    require(all(isinstance(item, str) and item for item in scouts), "manifest scout identity is missing")
-    require(len(scouts) == len(set(scouts)), "duplicate manifest scout")
-    return {"manifest": manifest, "portfolio_limit": limit, "history_head": previous_hash}
+    manifest = validate_manifest(manifest, repository_id)
+    return {"manifest": manifest, "portfolio_limit": limit, "history_head": anchor["head"]}
 
 
 def validate_scout_receipts(data: Any, manifest: Any, *, complete: bool = True) -> dict[str, dict[str, Any]]:
     data = require_object(data, "Scout Receipt collection")
-    manifest = require_object(manifest, "manifest")
+    require_exact_fields(data, SCOUT_COLLECTION_FIELDS, "Scout Receipt collection")
+    require(data.get("schema") == "repo-gardener-scout-receipt-collection/v1", "Scout Receipt collection schema mismatch")
+    collection_repository = require_identity(data.get("repository_id"), "Scout Receipt collection repository_id")
+    collection_run = require_identity(data.get("run_id"), "Scout Receipt collection run_id")
+    manifest = validate_manifest(manifest, collection_repository)
+    require(collection_run == manifest.get("run_id"), "Scout Receipt collection run mismatch")
     require(data.get("manifest_id") == manifest.get("manifest_id"), "Scout Receipt manifest mismatch")
     receipts = require_list(data.get("receipts"), "Scout Receipts")
     scouts = require_list(manifest.get("scouts"), "manifest scouts")
@@ -210,6 +352,13 @@ def validate_scout_receipts(data: Any, manifest: Any, *, complete: bool = True) 
     receipt_map: dict[str, dict[str, Any]] = {}
     for index, raw_receipt in enumerate(receipts):
         receipt = require_object(raw_receipt, f"Scout Receipt {index}")
+        outcome = receipt.get("outcome")
+        expected_fields = set(SCOUT_RECEIPT_FIELDS)
+        if outcome == "not applicable":
+            expected_fields.add("affirmative_evidence")
+        elif outcome == "incomplete":
+            expected_fields.add("failure_reason")
+        require_exact_fields(receipt, expected_fields, f"Scout Receipt {index}")
         require_payload(receipt, RECEIPT_LIMIT, f"Scout Receipt {index}")
         receipt_id = require_identity(receipt.get("receipt_id"), f"Scout Receipt {index} receipt_id")
         scout_id = require_identity(receipt.get("scout_id"), f"Scout Receipt {index} scout_id")
@@ -217,19 +366,22 @@ def validate_scout_receipts(data: Any, manifest: Any, *, complete: bool = True) 
         require(receipt.get("run_id") == manifest.get("run_id"), f"Scout Receipt {index} run mismatch")
         require(receipt.get("manifest_id") == manifest.get("manifest_id"), f"Scout Receipt {index} manifest mismatch")
         require(receipt.get("lane") == scout_id, f"Scout Receipt {index} lane mismatch")
-        require(isinstance(receipt.get("observed_at"), str) and receipt["observed_at"], f"Scout Receipt {index} observation time missing")
+        require_utc_time(receipt.get("observed_at"), f"Scout Receipt {index} UTC observation time")
         require_identity(receipt.get("source_id"), f"Scout Receipt {index} source_id")
         evidence = require_list(receipt.get("evidence_references"), f"Scout Receipt {index} evidence_references")
-        require(all(isinstance(item, str) and item for item in evidence), f"Scout Receipt {index} evidence reference is invalid")
+        for evidence_index, evidence_reference in enumerate(evidence):
+            require_identity(evidence_reference, f"Scout Receipt {index} evidence reference {evidence_index}")
+        require(len(evidence) == len(set(evidence)), f"Scout Receipt {index} duplicate evidence reference")
         candidate_count = receipt.get("candidate_count")
-        require(isinstance(candidate_count, int) and candidate_count >= 0, f"Scout Receipt {index} candidate_count is invalid")
-        outcome = receipt.get("outcome")
+        require(type(candidate_count) is int and candidate_count >= 0, f"Scout Receipt {index} candidate_count is invalid")
         require(outcome in SCOUT_OUTCOMES, f"invalid scout outcome: {outcome}")
+        if outcome == "complete":
+            require(bool(evidence), f"complete Scout Receipt {index} requires evidence")
         if outcome == "not applicable":
-            require(bool(receipt.get("affirmative_evidence")), "not applicable lacks affirmative evidence")
+            require_nonempty_display(receipt.get("affirmative_evidence"), "not applicable affirmative evidence")
             require(candidate_count == 0, "not applicable Scout Receipt has candidates")
         if outcome == "incomplete":
-            require(bool(receipt.get("failure_reason")), "incomplete lacks failure reason")
+            require_nonempty_display(receipt.get("failure_reason"), "incomplete failure reason")
         scout_ids.append(scout_id)
         receipt_ids.append(receipt_id)
         receipt_map[scout_id] = receipt
@@ -252,6 +404,46 @@ def composite_identity(repository_id: Any, operation_id: Any) -> dict[str, str]:
     }
 
 
+def effect_compatibility(scenario: dict[str, Any]) -> str:
+    claimed = scenario.get("compatible_prior_result")
+    if claimed == "incompatible":
+        return "incompatible"
+    if claimed != "compatible":
+        return "uncertain"
+    prepared_payload = scenario.get("prepared_effect_payload")
+    existing_payload = scenario.get("existing_effect_payload")
+    prepared_fingerprint = scenario.get("prepared_effect_fingerprint")
+    existing_fingerprint = scenario.get("existing_effect_fingerprint")
+    if any(
+        field not in scenario
+        for field in (
+            "prepared_effect_payload",
+            "existing_effect_payload",
+            "prepared_effect_fingerprint",
+            "existing_effect_fingerprint",
+        )
+    ):
+        return "uncertain"
+    if not isinstance(prepared_payload, dict) or not isinstance(existing_payload, dict):
+        return "incompatible"
+    try:
+        require_payload(prepared_payload, RECEIPT_LIMIT, "prepared effect payload")
+        require_payload(existing_payload, RECEIPT_LIMIT, "existing effect payload")
+        require_sha256(prepared_fingerprint, "prepared effect fingerprint")
+        require_sha256(existing_fingerprint, "existing effect fingerprint")
+    except ContractError:
+        return "incompatible"
+    prepared_bytes = canonical_bytes(prepared_payload)
+    existing_bytes = canonical_bytes(existing_payload)
+    prepared_digest = hashlib.sha256(prepared_bytes).hexdigest()
+    existing_digest = hashlib.sha256(existing_bytes).hexdigest()
+    if prepared_fingerprint != prepared_digest or existing_fingerprint != existing_digest:
+        return "incompatible"
+    if prepared_fingerprint != existing_fingerprint or prepared_bytes != existing_bytes:
+        return "incompatible"
+    return "compatible"
+
+
 def evaluate_effect(scenario: Any) -> dict[str, Any]:
     scenario = require_object(scenario, "effect scenario")
     scenario_type = scenario.get("scenario_type")
@@ -267,9 +459,19 @@ def evaluate_effect(scenario: Any) -> dict[str, Any]:
             return {"terminal_outcome": "failed", "invoke_count": 0, "blind_retry": False, "persistence_claim": False, "all_report_writes_blocked": not authorized, "identity_valid": True}
         terminal_read_back = scenario.get("terminal_receipt_read_back") is True
         if scenario.get("desired_state_preexisting") is True:
+            compatibility = effect_compatibility(scenario)
             observed = scenario.get("post_read") == "desired state present"
-            outcome = "already satisfied" if observed and terminal_read_back else "ambiguous"
+            if compatibility == "incompatible":
+                outcome = "failed"
+            elif compatibility == "compatible" and observed and terminal_read_back:
+                outcome = "already satisfied"
+            else:
+                outcome = "ambiguous"
             return {"terminal_outcome": outcome, "invoke_count": 0, "blind_retry": False, "persistence_claim": outcome == "already satisfied"}
+        if scenario.get("compatible_prior_result") is not None:
+            compatibility = effect_compatibility(scenario)
+            outcome = "failed" if compatibility == "incompatible" else "ambiguous"
+            return {"terminal_outcome": outcome, "invoke_count": 0, "blind_retry": False, "persistence_claim": False}
         invoke_result = scenario.get("invoke_result")
         post_read = scenario.get("post_read")
         if invoke_result == "accepted" and post_read == "exact effect observed" and terminal_read_back:
@@ -278,7 +480,7 @@ def evaluate_effect(scenario: Any) -> dict[str, Any]:
             outcome = "failed"
         else:
             outcome = "ambiguous"
-        return {"terminal_outcome": outcome, "invoke_count": 0 if scenario.get("compatible_prior_result") == "uncertain" else 1, "blind_retry": False, "persistence_claim": outcome in {"observed", "already satisfied", "failed"}}
+        return {"terminal_outcome": outcome, "invoke_count": 1, "blind_retry": False, "persistence_claim": outcome in {"observed", "already satisfied", "failed"}}
     if scenario_type == "retry":
         identity = composite_identity(scenario.get("repository_id"), scenario.get("operation_id"))
         retry_identity = composite_identity(scenario.get("retry_repository_id"), scenario.get("retry_operation_id"))
@@ -294,7 +496,16 @@ def evaluate_effect(scenario: Any) -> dict[str, Any]:
         if minted is not None:
             minted = require_object(minted, "minted replacement identity")
             composite_identity(minted.get("repository_id"), minted.get("operation_id"))
-        return {"operation_identity": identity, "existing_operation_identity": existing, "operation_identity_preserved": result_identity == identity, "replacement_identity_minted": minted is not None, "terminal_outcome": "already satisfied" if identity == existing else "failed", "invoke_count": 0}
+        if identity != existing:
+            outcome = "failed"
+        else:
+            compatibility = effect_compatibility(scenario)
+            outcome = {
+                "compatible": "already satisfied",
+                "incompatible": "failed",
+                "uncertain": "ambiguous",
+            }[compatibility]
+        return {"operation_identity": identity, "existing_operation_identity": existing, "operation_identity_preserved": result_identity == identity, "replacement_identity_minted": minted is not None, "terminal_outcome": outcome, "invoke_count": 0}
     if scenario_type == "completion-partition":
         named = require_list(scenario.get("named_work"), "named_work")
         affected = require_list(scenario.get("affected_by_ambiguity"), "affected_work")
@@ -435,6 +646,19 @@ def _load(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _load_input(source: str) -> Any:
+    if source == "-":
+        return json.load(sys.stdin)
+    return _load(Path(source))
+
+
+def _versioned_input(value: Any, schema: str, fields: set[str]) -> dict[str, Any]:
+    value = require_object(value, f"{schema} input")
+    require_exact_fields(value, {"schema", *fields}, f"{schema} input")
+    require(value.get("schema") == schema, f"input schema mismatch: expected {schema}")
+    return value
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -449,14 +673,47 @@ def main() -> int:
     receipt_parser.add_argument("--allow-incomplete-coverage", action="store_true")
     body_parser = subparsers.add_parser("validate-body")
     body_parser.add_argument("--body", type=Path, required=True)
+    for command in ("effect-v1", "completion-v1", "gates-v1"):
+        input_parser = subparsers.add_parser(command)
+        input_parser.add_argument("--input", required=True)
+    for command in ("reconciliation-v1", "capacity-v1"):
+        input_parser = subparsers.add_parser(command)
+        input_parser.add_argument("--input", required=True)
+        input_parser.add_argument("--policy", type=Path, required=True)
     args = parser.parse_args()
     if args.command == "validate-register":
         result = validate_register(_load(args.register), _load(args.manifest), _load(args.authentication), args.policy)
     elif args.command == "validate-scout-receipts":
         result = {"scouts": sorted(validate_scout_receipts(_load(args.receipts), _load(args.manifest), complete=not args.allow_incomplete_coverage))}
-    else:
+    elif args.command == "validate-body":
         body = args.body.read_text(encoding="utf-8")
         result = {"body_bytes": validate_body(body)}
+    elif args.command == "effect-v1":
+        data = _versioned_input(_load_input(args.input), "repo-gardener-effect-input/v1", {"scenario"})
+        scenario = require_object(data["scenario"], "effect scenario")
+        require(scenario.get("scenario_type") in EFFECT_SCENARIOS, "effect-v1 received a non-effect scenario")
+        result = evaluate_effect(scenario)
+    elif args.command == "completion-v1":
+        data = _versioned_input(_load_input(args.input), "repo-gardener-completion-input/v1", {"scenario"})
+        scenario = require_object(data["scenario"], "completion scenario")
+        require(scenario.get("scenario_type") in COMPLETION_SCENARIOS, "completion-v1 received a non-completion scenario")
+        result = evaluate_effect(scenario)
+    elif args.command == "gates-v1":
+        data = _versioned_input(_load_input(args.input), "repo-gardener-gates-input/v1", {"facts"})
+        result = evaluate_gates(data["facts"])
+    elif args.command == "capacity-v1":
+        data = _versioned_input(_load_input(args.input), "repo-gardener-capacity-input/v1", {"retained", "candidates"})
+        result = render_capacity(data["retained"], data["candidates"], args.policy)
+    else:
+        data = _versioned_input(
+            _load_input(args.input),
+            "repo-gardener-reconciliation-input/v1",
+            {"scenario", "manifest", "receipt_sets", "complete_receipts"},
+        )
+        manifest = validate_manifest(data["manifest"])
+        receipt_sets = require_object(data["receipt_sets"], "reconciliation receipt sets")
+        complete_receipts = require_object(data["complete_receipts"], "complete reconciliation receipts")
+        result = evaluate_reconciliation(data["scenario"], manifest, receipt_sets, complete_receipts, args.policy)
     print(json.dumps(result, sort_keys=True))
     return 0
 

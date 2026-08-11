@@ -8,6 +8,9 @@ is never used as an evaluator. Mutations pin each load-bearing decision input.
 `wrapper-readbacks.json` is a test-only narrow-wrapper stub. It supplies
 completed persistence/readback facts to the executable contract without
 adding a prompt-triggered fixture exception to the shipped skill.
+The three immutable receipt fixtures are loaded and validated once per run;
+scenario derivations then exercise the shipped `reconciliation-v1`,
+`gates-v1`, and `capacity-v1` subprocess interfaces.
 
 Run from the repository root:
 

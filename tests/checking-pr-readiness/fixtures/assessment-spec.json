@@ -2,7 +2,7 @@
   "schema": "checking-pr-readiness-assessment-fixture/v1",
   "repository": "forge:repository:assessment-synthetic",
   "subject": "branch:assessment-target",
-  "reviewer_cap": 20,
+  "reviewer_cap": 40,
   "required_receipts": [
     "working-surface",
     "repository-gates",

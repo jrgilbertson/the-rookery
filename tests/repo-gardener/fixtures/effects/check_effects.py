@@ -250,6 +250,18 @@ def main() -> int:
             ),
             (
                 "cross-repository-collision",
+                "collision desired-state post-read",
+                lambda item: (item.__setitem__("existing_repository_id", item["repository_id"]), item.__setitem__("post_read", "unavailable")),
+                {"terminal_outcome": "ambiguous"},
+            ),
+            (
+                "cross-repository-collision",
+                "collision terminal receipt readback",
+                lambda item: (item.__setitem__("existing_repository_id", item["repository_id"]), item.__setitem__("terminal_receipt_read_back", False)),
+                {"terminal_outcome": "ambiguous"},
+            ),
+            (
+                "cross-repository-collision",
                 "requested identity preservation",
                 lambda item: item["result_operation_identity"].__setitem__(
                     "operation_id", "operation:report:replacement"
@@ -329,6 +341,22 @@ def main() -> int:
         evaluate(uncertain_compatibility),
         {"terminal_outcome": "ambiguous", "invoke_count": 0, "persistence_claim": False},
     )
+
+    invalid_repair_identity = copy.deepcopy(scenarios["one-valid-receipt-ahead"])
+    invalid_repair_identity["operation_id"] = []
+    try:
+        evaluate(invalid_repair_identity)
+        raise ContractError("invalid repair operation identity survived")
+    except ContractError as error:
+        require("operation_id" in str(error), "invalid repair operation identity failed for the wrong reason")
+
+    malformed_partition = copy.deepcopy(scenarios["ambiguous-dependent-work"])
+    malformed_partition["affected_by_ambiguity"].append([])
+    try:
+        evaluate(malformed_partition)
+        raise ContractError("unhashable completion identity survived")
+    except ContractError as error:
+        require("unhashable" in str(error), "TypeError did not produce stable FAIL output")
 
     duplicate_decision = copy.deepcopy(scenarios["report-first-caller-completion"])
     duplicate_decision["assignment_persisted_decision_ids"].append("decision:follow-up:a")

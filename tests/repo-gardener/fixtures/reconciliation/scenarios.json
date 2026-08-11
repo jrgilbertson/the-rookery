@@ -283,6 +283,7 @@
     "receipt_fixture": "lane-receipts.json",
     "reconciliation_complete": true,
     "gate_passing_candidates": 0,
+    "protected_boundary_rejected": false,
     "authority": {
       "schema": "repo-gardener-reconciliation-authority/v1",
       "repository_id": "forge:repository:synthetic-001",

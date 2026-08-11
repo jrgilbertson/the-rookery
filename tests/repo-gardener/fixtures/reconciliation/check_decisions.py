@@ -375,6 +375,12 @@ def main() -> int:
             {"attention_state": "Action required", "next_owner_action": "complete missing coverage"},
         ),
         (
+            "honest-no-op",
+            "protected boundary rejection",
+            lambda item: item.__setitem__("protected_boundary_rejected", True),
+            {"attention_state": "Action required", "next_owner_action": "resolve protected boundary"},
+        ),
+        (
             "full-capacity",
             "capacity",
             lambda item: item["retained_rows"].pop(),
@@ -413,6 +419,18 @@ def main() -> int:
             "unmatched-effect-before-discovery",
             "reconciled effect disposition",
             lambda item: item.__setitem__("effect_reconciled", False),
+            {"ordering_valid": False, "terminal_outcome": "ambiguous", "terminal_receipt_recording": "withheld"},
+        ),
+        (
+            "unmatched-effect-before-discovery",
+            "zero unmatched intents",
+            lambda item: item.__setitem__("unmatched_intents", 0),
+            {"ordering_valid": False, "terminal_outcome": "ambiguous", "terminal_receipt_recording": "withheld"},
+        ),
+        (
+            "unmatched-effect-before-discovery",
+            "multiple unmatched intents",
+            lambda item: item.__setitem__("unmatched_intents", 2),
             {"ordering_valid": False, "terminal_outcome": "ambiguous", "terminal_receipt_recording": "withheld"},
         ),
     ]
@@ -462,6 +480,44 @@ def main() -> int:
         raise ContractError("unknown dedupe receipt mutation survived")
     except ContractError as error:
         require("unknown Scout Receipt" in str(error), "unknown receipt mutation failed for the wrong reason")
+
+    missing_dedupe_identity = copy.deepcopy(scenarios["stable-identity-dedupe"])
+    missing_dedupe_identity["observations"][0].pop("source_id")
+    require_contract_error(
+        "missing dedupe source identity",
+        "dedupe observation 0 source_id",
+        lambda: evaluate(missing_dedupe_identity, manifest, receipt_sets, complete_data),
+    )
+    unhashable_dedupe_identity = copy.deepcopy(scenarios["stable-identity-dedupe"])
+    unhashable_dedupe_identity["observations"][0]["source_id"] = []
+    require_contract_error(
+        "unhashable dedupe source identity",
+        "dedupe observation 0 source_id",
+        lambda: evaluate(unhashable_dedupe_identity, manifest, receipt_sets, complete_data),
+    )
+
+    wrong_disabled_count = copy.deepcopy(scenarios["disabled-lane-observations"])
+    wrong_disabled_count["observations"].pop()
+    require_contract_error(
+        "disabled observation count",
+        "exactly two observations",
+        lambda: evaluate(wrong_disabled_count, manifest, receipt_sets, complete_data),
+    )
+    malformed_disabled_observation = copy.deepcopy(scenarios["disabled-lane-observations"])
+    malformed_disabled_observation["observations"][1] = []
+    require_contract_error(
+        "disabled observation object",
+        "critical disabled observation must be an object",
+        lambda: evaluate(malformed_disabled_observation, manifest, receipt_sets, complete_data),
+    )
+
+    missing_cli_key = copy.deepcopy(scenarios["missing-scout-receipt"])
+    missing_cli_key.pop("receipt_fixture")
+    require_contract_error(
+        "CLI KeyError shape mismatch",
+        "receipt_fixture",
+        lambda: evaluate(missing_cli_key, manifest, receipt_sets, complete_data),
+    )
 
     empty_manifest = copy.deepcopy(manifest)
     empty_manifest["scouts"] = []
@@ -757,6 +813,21 @@ def main() -> int:
         "unhashable retained capacity entry",
         "retained row 1",
         lambda: CONTRACT.render_capacity_with_limit(["row:valid", []], [], CONTRACT.RELEASE_A_PORTFOLIO_LIMIT),
+    )
+
+    foreign_interruptible_row = copy.deepcopy(scenarios["critical-at-capacity"])
+    foreign_interruptible_row["interruptible_row"] = "row:not-retained"
+    require_contract_error(
+        "foreign interruptible row",
+        "interruptible row is not retained",
+        lambda: evaluate(foreign_interruptible_row, manifest, receipt_sets, complete_data),
+    )
+    invalid_interruptible_row = copy.deepcopy(scenarios["critical-at-capacity"])
+    invalid_interruptible_row["interruptible_row"] = []
+    require_contract_error(
+        "invalid interruptible row",
+        "interruptible row",
+        lambda: evaluate(invalid_interruptible_row, manifest, receipt_sets, complete_data),
     )
 
     oversized_identity = copy.deepcopy(records)

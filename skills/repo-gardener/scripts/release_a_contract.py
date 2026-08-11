@@ -236,7 +236,7 @@ def require_sha256(value: Any, label: str) -> str:
 def require_utc_time(value: Any, label: str) -> str:
     require(isinstance(value, str) and value.endswith("Z"), f"{label} must be an ISO-8601 UTC observation time")
     try:
-        parsed = datetime.fromisoformat(value)
+        parsed = datetime.fromisoformat(f"{value[:-1]}+00:00")
     except ValueError as error:
         raise ContractError(f"{label} must be an ISO-8601 UTC observation time") from error
     require(parsed.tzinfo is not None and parsed.utcoffset() == timezone.utc.utcoffset(parsed), f"{label} must be an ISO-8601 UTC observation time")
@@ -639,11 +639,16 @@ def evaluate_effect(scenario: Any) -> dict[str, Any]:
             outcome = "failed"
         else:
             compatibility = effect_compatibility(scenario)
-            outcome = {
-                "compatible": "already satisfied",
-                "incompatible": "failed",
-                "uncertain": "ambiguous",
-            }[compatibility]
+            if compatibility == "incompatible":
+                outcome = "failed"
+            elif (
+                compatibility == "compatible"
+                and scenario.get("post_read") == "desired state present"
+                and scenario.get("terminal_receipt_read_back") is True
+            ):
+                outcome = "already satisfied"
+            else:
+                outcome = "ambiguous"
         return {"operation_identity": identity, "existing_operation_identity": existing, "operation_identity_preserved": result_identity == identity, "replacement_identity_minted": minted is not None, "terminal_outcome": outcome, "invoke_count": 0}
     if scenario_type == "completion-partition":
         named = require_list(scenario.get("named_work"), "named_work")
@@ -690,8 +695,8 @@ def evaluate_effect(scenario: Any) -> dict[str, Any]:
         }
     if scenario_type == "repair":
         proof = all(scenario.get(field) is True for field in ("complete_integrity_read", "exact_prepared_receipt_reused", "preconditions_match", "anchored_receipt_valid", "history_tail_missing"))
-        repository_id = require_identity(scenario.get("repository_id"), "repair repository_id")
-        if effect_authority_complete(scenario, repository_id) and proof and scenario.get("body_anchor_ahead_by") == 1:
+        identity = composite_identity(scenario.get("repository_id"), scenario.get("operation_id"))
+        if effect_authority_complete(scenario, identity["repository_id"]) and proof and scenario.get("body_anchor_ahead_by") == 1:
             return {"append_exact_stored_receipt": 1, "rewrite_body": False, "readback_required": True}
         return {"repair_allowed": False, "invoke_count": 0, "terminal_outcome": "ambiguous"}
     raise ContractError(f"unknown effect scenario type: {scenario_type}")
@@ -785,8 +790,14 @@ def evaluate_reconciliation(
     if scenario_type == "untrusted-text":
         return {"derived_effects": 0}
     if scenario_type == "dedupe":
-        observations = require_list(scenario.get("observations"), "dedupe observations")
-        source_ids = {require_object(item, "dedupe observation").get("source_id") for item in observations}
+        observations = [
+            require_object(item, f"dedupe observation {index}")
+            for index, item in enumerate(require_list(scenario.get("observations"), "dedupe observations"))
+        ]
+        source_ids = {
+            require_identity(item.get("source_id"), f"dedupe observation {index} source_id")
+            for index, item in enumerate(observations)
+        }
         require(len(source_ids) == 1, "dedupe observations do not share stable source identity")
         for item in observations:
             receipt = complete_receipts.get(item["lane"])
@@ -810,10 +821,15 @@ def evaluate_reconciliation(
         require(len(retained) == limit, "critical capacity fixture is not full")
         candidate = require_object(scenario.get("critical_candidate"), "critical candidate")
         eligible = evaluate_gates(candidate.get("gate_facts"))["eligible"]
-        return {"rendered_slots": limit, "recommendations": 0, "preemption_proposal": eligible and bool(scenario.get("interruptible_row")), "rows_changed": 0}
+        interruptible_row = require_identity(scenario.get("interruptible_row"), "interruptible row")
+        require(interruptible_row in retained, "interruptible row is not retained")
+        return {"rendered_slots": limit, "recommendations": 0, "preemption_proposal": eligible, "rows_changed": 0}
     if scenario_type == "disabled-observations":
-        ordinary, critical = require_list(scenario.get("observations"), "disabled observations")
-        return {"ordinary_attention": "Routine (disabled lane)" if not ordinary["critical"] else "Action required (lane disabled)", "critical_attention": "Action required (lane disabled)" if critical["critical"] and critical.get("applicable") else "Routine (disabled lane)", "rows_changed": 0, "source_mutations": 0}
+        observations = require_list(scenario.get("observations"), "disabled observations")
+        require(len(observations) == 2, "disabled observations must contain exactly two observations")
+        ordinary = require_object(observations[0], "ordinary disabled observation")
+        critical = require_object(observations[1], "critical disabled observation")
+        return {"ordinary_attention": "Routine (disabled lane)" if not ordinary.get("critical") else "Action required (lane disabled)", "critical_attention": "Action required (lane disabled)" if critical.get("critical") and critical.get("applicable") else "Routine (disabled lane)", "rows_changed": 0, "source_mutations": 0}
     if scenario_type == "terminal-row":
         bound = scenario.get("terminal_source_binding") is True
         return {
@@ -823,15 +839,18 @@ def evaluate_reconciliation(
     if scenario_type == "honest-no-op":
         require_exact_fields(
             scenario,
-            {"id", "scenario_type", "receipt_fixture", "reconciliation_complete", "gate_passing_candidates", "authority"},
+            {"id", "scenario_type", "receipt_fixture", "reconciliation_complete", "gate_passing_candidates", "protected_boundary_rejected", "authority"},
             "honest-no-op scenario",
         )
         authority = validate_reconciliation_authority(scenario, records, manifest)
         require(reconciliation_write_authorized(authority), "honest no-op lacks complete independent write authority")
         receipts = receipt_sets[scenario["receipt_fixture"]]
         complete = set(receipts) == set(manifest["scouts"]) and all(item["outcome"] in {"complete", "not applicable"} for item in receipts.values())
-        routine = complete and scenario.get("reconciliation_complete") is True and scenario.get("gate_passing_candidates") == 0
-        return {"attention_state": "Routine" if routine else "Action required", "next_owner_action": "none" if routine else "complete missing coverage", "rendered_slots": policy_limit}
+        protected_boundary_rejected = scenario.get("protected_boundary_rejected")
+        require(type(protected_boundary_rejected) is bool, "honest no-op protected-boundary fact must be boolean")
+        routine = complete and scenario.get("reconciliation_complete") is True and scenario.get("gate_passing_candidates") == 0 and not protected_boundary_rejected
+        next_action = "none" if routine else "resolve protected boundary" if protected_boundary_rejected else "complete missing coverage"
+        return {"attention_state": "Routine" if routine else "Action required", "next_owner_action": next_action, "rendered_slots": policy_limit}
     if scenario_type == "history":
         require_exact_fields(scenario, {"id", "scenario_type", "history_pages_complete", "authority"}, "history scenario")
         authority = validate_reconciliation_authority(scenario, records, manifest)
@@ -846,7 +865,7 @@ def evaluate_reconciliation(
         )
         unmatched_intents = scenario.get("unmatched_intents")
         require(isinstance(unmatched_intents, int) and not isinstance(unmatched_intents, bool) and unmatched_intents >= 0, "unmatched intent count must be a nonnegative integer")
-        reconciled = scenario.get("effect_reconciled") is True
+        reconciled = scenario.get("effect_reconciled") is True and unmatched_intents == 1
         valid = reconciled and scenario.get("discovery_started_after_reconciliation") is True
         return {
             "ordering_valid": valid,
@@ -961,6 +980,6 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except (ContractError, OSError, UnicodeError, json.JSONDecodeError) as error:
+    except (ContractError, OSError, UnicodeError, json.JSONDecodeError, KeyError, TypeError, ValueError) as error:
         print(f"FAIL: {error}", file=sys.stderr)
         raise SystemExit(1)

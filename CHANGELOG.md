@@ -13,6 +13,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- Added a seven-image Field Guide Blueprint illustration system to
+  `WORKFLOWS.md`, with Huginn carrying Research through Build, a verified
+  handoff to Muninn at Ship, and Muninn returning the learning loop to
+  Research.
 - Added the repository banner and its optimized README delivery asset.
 
 ### Changed

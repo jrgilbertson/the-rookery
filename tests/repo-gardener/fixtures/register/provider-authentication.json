@@ -1,0 +1,15 @@
+{
+  "schema": "repo-gardener-provider-authentication/v1",
+  "repository_id": "forge:repository:synthetic-001",
+  "history_pages_complete": true,
+  "authenticated_receipts": [
+    {"provider_receipt_id": "provider:receipt:001", "writer_id": "forge:writer:synthetic-001"},
+    {"provider_receipt_id": "provider:receipt:002", "writer_id": "forge:writer:synthetic-001"},
+    {"provider_receipt_id": "provider:receipt:003", "writer_id": "forge:writer:synthetic-001"},
+    {"provider_receipt_id": "provider:receipt:004", "writer_id": "forge:writer:synthetic-001"},
+    {"provider_receipt_id": "provider:receipt:005", "writer_id": "forge:writer:synthetic-001"},
+    {"provider_receipt_id": "provider:receipt:006", "writer_id": "forge:writer:synthetic-001"},
+    {"provider_receipt_id": "provider:receipt:007", "writer_id": "forge:writer:synthetic-001"},
+    {"provider_receipt_id": "provider:receipt:008", "writer_id": "forge:writer:synthetic-001"}
+  ]
+}

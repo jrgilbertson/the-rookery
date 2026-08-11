@@ -1,0 +1,9 @@
+{
+  "schema": "repo-gardener-register/v1",
+  "allowed_states": ["To do", "In process"],
+  "expected_repository_id": "forge:repository:synthetic-001",
+  "expected_manifest_id": "manifest:synthetic:009",
+  "expected_scout_count": 9,
+  "expected_row_count": 2,
+  "expected_history_sequence": 8
+}

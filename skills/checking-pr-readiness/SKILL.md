@@ -1,6 +1,6 @@
 ---
 name: checking-pr-readiness
-description: Use when branch work looks complete and the next step is opening a pull request, or when asked whether the branch is ready to ship — including phrasings like present your work, final approval on this branch, run the pre-PR checklist, or gate this change before it goes out. Ends in one owner decision plus an evidence pack for the pull request body. Do not use for resolving feedback on a pull request that already exists, for the pre-merge global pass on a reviewed PR (use checking-merge-readiness), for performing a code review or simplification pass, for reviewing a plan or other document, for opening or creating the pull request itself, or for merging.
+description: Use when branch work looks complete and needs a readiness decision before another workflow opens a pull request, when asked whether the branch is ready to ship, or when a caller requests an assessment-only exact-subject and exact-revision PR-readiness receipt. Interactive runs end in one owner decision plus an evidence pack; assessment-only runs return one machine-readable pass or action-required receipt without a menu. A direct request to write, open, create, or submit a pull request belongs to PR publishing, not this skill. Do not use for existing-PR feedback, the pre-merge global pass, code review, simplification, plan review, general library production-readiness questions, or merging.
 license: MIT
 compatibility: Requires a git worktree and read access to the host repository. Companion checks degrade to named skips when their skills or tooling are absent.
 ---
@@ -14,14 +14,24 @@ uses a Minto pyramid readout for the ship decision (shape in step 7). A
 branch is ready when every check below carries a status word, every
 finding has a disposition, and the owner has approved that readout.
 
+## Route assessment-only requests first
+
+When the request explicitly asks for assessment-only, headless, unattended, or
+machine-readable PR readiness bound to one exact subject and full commit OID,
+follow [references/assessment-mode.md](references/assessment-mode.md) instead
+of the interactive decision path below. The assessment branch reuses steps 1
+through 6, including `surface-report.sh --full`, current gate discovery, helper
+exit/status mapping, and sweep classes. It never substitutes attestation for a
+receipt and never presents the Minto readout or owner menu.
+
 The gate is read-only. Companion skills own edits, reviews, and capture; the host
 repository's hooks and task runners own deterministic re-runs. This skill
 verifies those from receipts or dispatches the skill that owns them.
 
-Every run ends in exactly one explicit owner decision, taken against a readout
-that matches the working surface at that moment. Options that change the
-surface apply the recompose rule before the next decision. Nothing is
-reported as done without evidence named inline.
+Every interactive run ends in exactly one explicit owner decision, taken
+against a readout that matches the working surface at that moment. Options that
+change the surface apply the recompose rule before the next decision. Nothing
+is reported as done without evidence named inline.
 
 ## Status words
 
@@ -46,8 +56,11 @@ surface is what the finishing path will stage and what the owner is approving.
 Run [scripts/surface-report.sh](scripts/surface-report.sh) when it is present
 and executable — it also carries step 6's size check, so pass the cap values
 resolved per [references/sweep-classes.md](references/sweep-classes.md) class
-11 and read both results from one run, statuses per the reference's helper
-exit map. Always produce the surface report on this run (omit `--defer` even
+11 for every configured automated reviewer and read both results from one run,
+statuses per the reference's helper exit map. When discovery proves no
+automated reviewer is configured, run without `--cap` for inventory and record
+class 11 as `not applicable` rather than treating the helper's `cap unverified`
+line as a gap. Always produce the surface report on this run (omit `--defer` even
 when step 6 later treats size as covered by a repository gate), and pass
 `--full` so the listing is not capped, because this step's completion contract
 requires every path to appear in the readout. Otherwise gather the same four
@@ -164,7 +177,9 @@ Mechanical classes run through the bundled helpers:
 
 - [scripts/surface-report.sh](scripts/surface-report.sh) for diff size (class
   11): one `--cap <reviewer>=<n>` per configured reviewer, values resolved in
-  the reference.
+  the reference. With no configured automated reviewer, pass no cap and record
+  the class as `not applicable`; a configured reviewer without a
+  repository-resolved cap remains fail-closed.
 - [scripts/evidence-freshness.sh](scripts/evidence-freshness.sh) for stale
   records and plan-named artifacts (classes 4 and 2 support).
 - [scripts/changelog-union.sh](scripts/changelog-union.sh) for branch

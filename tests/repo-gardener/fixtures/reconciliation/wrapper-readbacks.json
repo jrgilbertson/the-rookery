@@ -1,0 +1,12 @@
+{
+  "schema": "repo-gardener-test-wrapper-readbacks/v1",
+  "report_facts": [
+    {"fact": "run-start", "narrow_wrapper_persisted": true, "authoritative_readback_completed": true},
+    {"fact": "manifest", "narrow_wrapper_persisted": true, "authoritative_readback_completed": true},
+    {"fact": "supplied Scout Receipts", "narrow_wrapper_persisted": true, "authoritative_readback_completed": true},
+    {"fact": "reconciliation", "narrow_wrapper_persisted": true, "authoritative_readback_completed": true},
+    {"fact": "decisions", "narrow_wrapper_persisted": true, "authoritative_readback_completed": true},
+    {"fact": "terminal run", "narrow_wrapper_persisted": true, "authoritative_readback_completed": true},
+    {"fact": "canonical report", "narrow_wrapper_persisted": true, "authoritative_readback_completed": true}
+  ]
+}

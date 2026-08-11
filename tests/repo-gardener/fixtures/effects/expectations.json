@@ -1,0 +1,22 @@
+{
+  "observed":{"terminal_outcome":"observed","invoke_count":1,"persistence_claim":true},
+  "already-satisfied":{"terminal_outcome":"already satisfied","invoke_count":0},
+  "definitive-failure":{"terminal_outcome":"failed","blind_retry":false},
+  "timeout":{"terminal_outcome":"ambiguous","blind_retry":false},
+  "post-read-unavailable":{"terminal_outcome":"ambiguous","blind_retry":false},
+  "rate-limit-without-proof":{"terminal_outcome":"ambiguous","blind_retry":false},
+  "authentication-disguised-absence":{"terminal_outcome":"ambiguous","blind_retry":false},
+  "uncertain-deduplication":{"terminal_outcome":"ambiguous","blind_retry":false},
+  "proven-absence-retry":{"retry_allowed":true,"operation_identity":{"repository_id":"forge:repository:synthetic-001","operation_id":"operation:report:109"},"retry_operation_identity":{"repository_id":"forge:repository:synthetic-001","operation_id":"operation:report:109"},"operation_identity_reused":true,"invoke_count":1},
+  "changed-precondition":{"retry_allowed":false,"new_operation_identity":false},
+  "cross-repository-collision":{"operation_identity":{"repository_id":"forge:repository:synthetic-001","operation_id":"operation:report:111"},"existing_operation_identity":{"repository_id":"forge:repository:synthetic-002","operation_id":"operation:report:111"},"operation_identity_preserved":true,"replacement_identity_minted":false,"terminal_outcome":"failed","invoke_count":0},
+  "ambiguous-dependent-work":{"affected_work":["report write","dependent recommendation"],"remaining_unblocked_work":{"independent read-only audit":"continued"},"disjoint_exhaustive":true},
+  "delegation-with-readback":{"remaining_disposition":"delegated"},
+  "delegation-without-readback":{"remaining_disposition":"gated"},
+  "missing-global-boundary":{"invoke_count":0,"all_report_writes_blocked":true},
+  "missing-optional-scout":{"dependent_work_blocked":true,"independent_work":"continued"},
+  "missing-terminal-readback":{"persistence_claim":false},
+  "report-first-caller-completion":{"terminal_reports":1,"assignment_persisted_decisions":1,"decisions_carried_for_caller":1,"decision_partition_exact":true,"self_settled_before_acceptance":false},
+  "one-valid-receipt-ahead":{"append_exact_stored_receipt":1,"rewrite_body":false,"readback_required":true},
+  "multiple-receipt-gaps":{"repair_allowed":false,"invoke_count":0,"terminal_outcome":"ambiguous"}
+}

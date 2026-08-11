@@ -1,0 +1,21 @@
+{
+  "losing-caller":{"writes":0,"last_safe_stage":"Sense"},
+  "older-unmatched-run":{"outcome":"interrupted","uses_elapsed_time":false},
+  "report-first-sequence":{"ordered":true,"terminal_before_report":true,"readback_after_each_write":true},
+  "completed-narrow-wrapper-readbacks":{"persistence_claim":true,"persisted_report_facts":["run-start","manifest","supplied Scout Receipts","reconciliation","decisions","terminal run","canonical report"],"source_fact_persistence_claim":false},
+  "missing-scout-receipt":{"coverage":"incomplete (no receipt)","candidate_count":null},
+  "not-applicable-without-proof":{"coverage":"incomplete"},
+  "untrusted-source-text":{"derived_effects":0},
+  "stable-identity-dedupe":{"candidate_count":1,"preserved_lanes":2,"preserved_receipts":2},
+  "ordered-gates-protected-projection":{"first_failing_gate":"policy and authority","attention_state":"Action required","gate_order":["current source","policy and authority","evidence","conflict","protected boundary","capability"]},
+  "shared-dependency-security-complete":{"eligible_under_owner_lane":true},
+  "shared-dependency-security-incomplete":{"eligible_under_owner_lane":false,"first_failing_gate":"evidence"},
+  "seven-slot-selection":{"rendered_slots":7,"retained_first":true,"available_slots":3,"recommendations":2},
+  "full-capacity":{"rendered_slots":7,"recommendations":0},
+  "critical-at-capacity":{"rendered_slots":7,"recommendations":0,"preemption_proposal":true,"rows_changed":0},
+  "disabled-lane-observations":{"ordinary_attention":"Routine (disabled lane)","critical_attention":"Action required (lane disabled)","rows_changed":0,"source_mutations":0},
+  "terminal-row":{"allowed_results":[],"row_action":"unchanged-unassociated"},
+  "honest-no-op":{"attention_state":"Routine","next_owner_action":"none","rendered_slots":7},
+  "incomplete-history":{"integrity":"unavailable","writes":0},
+  "unmatched-effect-before-discovery":{"ordering_valid":true}
+}

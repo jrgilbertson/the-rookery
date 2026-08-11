@@ -13,6 +13,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- Added `repo-gardener`, a portable read-only repository maintenance loop. It
+  proposes an all-off policy during initialization, reconciles current report
+  rows and unmatched report effects before rediscovery, and renders a
+  deterministic seven-slot portfolio. A separately proven report-register
+  wrapper is its sole write surface; source mutation remains unavailable.
 - Added a seven-image Field Guide Blueprint illustration system to
   `WORKFLOWS.md`, with Huginn carrying Research through Build, a verified
   handoff to Muninn at Ship, and Muninn returning the learning loop to
@@ -21,6 +26,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `checking-pr-readiness` now supports a read-only assessment branch that binds
+  every verified claim to one stable repository, exact subject, and full commit
+  OID. A disposable real-Git fixture proves the complete chain and fails closed
+  on missing, stale, cross-subject, cross-revision, unresolved, and bypassed
+  receipts while preserving the current interactive gate.
 - `personal-chief-of-staff` now adds evidence-gated proactive coaching to daily,
   weekly, and quarterly reviews. Longitudinal claims use only dated durable
   records from configured canonical Obsidian roles, deduplicate derived review

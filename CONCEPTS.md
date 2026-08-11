@@ -129,6 +129,65 @@ Mechanical classes run through bundled helpers that defer to repo-owned
 equivalents; judgment classes run by model instruction. The class list comes
 from PR forensics and is refreshable as review history accumulates.
 
+## Repository gardening
+
+### Repository Automation Loop
+
+One repository-scoped `Sense -> Decide -> Act -> Verify -> Learn` pass. In
+repo-gardener's first release, Sense and Decide read current source facts, Act
+can write only the report register, Verify reads that report effect back, and
+Learn changes no policy.
+
+### Report-backed Orchestration Register
+
+The canonical machine records and human projection for repository-gardening
+facts. It owns portfolio rows, run receipts, and report effects, but never
+source-system truth or mutation authority.
+
+### Current Portfolio
+
+The register's only durable ownership view. It contains at most seven rows;
+`To do` and `In process` both consume capacity. Terminal outcomes belong in Run
+History, not as a third row state.
+
+### Run History
+
+The complete authenticated receipt chain from genesis. It records run, scout,
+decision, effect, and terminal facts. It supplies visibility, not a lock,
+catch-up queue, or mutation grant.
+
+### Scout Receipt
+
+One expected read-only scout's terminal result: `complete`, affirmatively `not
+applicable`, or `incomplete`. A missing expected receipt is `incomplete (no
+receipt)`, never zero findings.
+
+### Register Revision
+
+A monotonic body version used to detect stale preparation and bad readback. It
+is not an atomic provider precondition, compare-and-swap, or distributed lock.
+
+### Effect Receipt
+
+The intended-effect and terminal-outcome evidence for one stable,
+repository-qualified logical report operation. Its identity is the pair
+`(repository_id, operation_id)`, not the operation ID alone. The intended
+receipt is read back before invoke; the terminal receipt is read back after the
+authoritative post-read. Ambiguity blocks blind retry.
+
+### Attention State
+
+The report projection `Action required`, `Merge-ready`, `Watching`, or
+`Routine`. Attention communicates current handling; it is not a persisted work
+state or authority grant.
+
+### Completion Partition
+
+The disjoint, exhaustive pair `affected_work` and
+`remaining_unblocked_work`. Every named item appears exactly once, and every
+unblocked remainder is continued, durably delegated, or gated by its own named
+prerequisite.
+
 ## Research synthesis
 
 ### Storm Research

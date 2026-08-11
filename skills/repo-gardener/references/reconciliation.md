@@ -10,8 +10,8 @@ Validate the complete authenticated register from genesis before selection.
 The ordered run facts must state whether provider-authenticated identity and
 hash-chain continuity were proven; a generic "validated" label is not enough.
 An unavailable or partial read is not an empty portfolio. Reconcile every
-Current Portfolio row and every unmatched intended-effect receipt against
-current source facts before discovering candidates.
+Current Portfolio row and every unmatched report intent against current source
+facts before discovering candidates.
 
 At the versioned reconciliation CLI boundary, supply the exact register and
 provider-authentication envelopes, the current manifest, complete Scout
@@ -196,11 +196,12 @@ grants no effect authority; and it creates no portfolio state.
 
 ## Persist report facts and complete
 
-Use the manifest already persisted before dispatch. Append and read back only
-Scout Receipt, reconciliation, and decision facts not already persisted. Then
-append exactly one terminal run receipt and read it back. Render the canonical
-report and read it back last. No persistence claim is valid without readback;
-the run performs exactly one manifest persistence operation.
+Use the manifest already persisted before dispatch. Persist and read back all
+supplied Scout Receipts before appending decisions. Append and read back only
+reconciliation and decision facts not already persisted. Then append exactly
+one terminal run receipt and read it back. Render the canonical report and read
+it back last. No persistence claim is valid without readback; the run performs
+exactly one manifest persistence operation.
 
 Limit persistence claims to the report facts read back through the narrow
 report wrapper. Scout observations and source facts remain source-owned even

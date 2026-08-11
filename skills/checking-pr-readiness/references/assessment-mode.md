@@ -54,8 +54,10 @@ The bundle has exactly this semantic shape:
 ```
 
 The assessment member uses `receipt_references` only for receipt identities.
-Each evidence receipt uses `evidence_references` only for exact-commit regular
-file objects containing `path` and `sha256`. The two reference types are never
+Every element in `receipts` uses the exact
+`checking-pr-readiness-evidence/v1` schema. Each receipt's
+`evidence_references` identifies only exact-commit regular file objects
+containing `path` and `sha256`. The two reference types are never
 interchangeable. Resolve every receipt reference exactly once within the same
 bundle, reject duplicate receipt identities and unreferenced substitutes, and
 fail closed when any reference does not resolve.
@@ -111,11 +113,13 @@ versioned producer, repository/subject/base/full-surface scope, the command or
 check identity and arguments, a verified outcome, and one result reference.
 That reference resolves to the kind's exact-commit regular JSON result file by
 path and SHA-256 digest; the result file repeats the producer, scope, command,
-and outcome bindings and carries nonempty structured results. The per-kind
-fields then prove their own substance: gates name owner, command, outcome, and
-result; review and simplification name the reviewed paths and findings; tests
-name executable commands, outcomes, exit results, and applicability; the
-remaining kinds bind their inventory to a referenced structured result.
+and outcome bindings, uses the exact
+`checking-pr-readiness-<kind>-result/v1` schema, and carries nonempty structured
+results. The per-kind fields then prove their own substance: gates name owner,
+command, outcome, and result; review and simplification name the reviewed paths
+and findings; tests name executable commands, outcomes, exit results, and
+applicability; the remaining kinds bind their inventory to a referenced
+structured result.
 Missing or additional fields, name-only checks, zero-count assertions without
 review scope, and owner/status tuples without executable gate results are
 `action-required`.

@@ -153,7 +153,7 @@ def evidence_documents(reviewer_mode: str = "configured") -> dict[str, dict[str,
         class_11 = "under caps"
     elif reviewer_mode == "none":
         class_11 = "not applicable"
-    elif reviewer_mode == "missing-cap":
+    elif reviewer_mode in {"missing-cap", "invalid-shape"}:
         class_11 = "cap unverified"
     else:
         raise FixtureError(f"unknown reviewer mode: {reviewer_mode}")
@@ -308,8 +308,10 @@ print(f"verified:{mode}")
         reviewer_configuration_document = {"automated_reviewers": [{"name": "fixture-reviewer", "cap": SPEC["reviewer_cap"]}]}
     elif reviewer_mode == "none":
         reviewer_configuration_document = {"automated_reviewers": []}
-    else:
+    elif reviewer_mode == "missing-cap":
         reviewer_configuration_document = {"automated_reviewers": [{"name": "fixture-reviewer"}]}
+    else:
+        reviewer_configuration_document = {"automated_reviewers": {}}
     write_json(path / ".github" / "automated-reviewers.json", reviewer_configuration_document)
     documents = evidence_documents(reviewer_mode)
     if pre_result_mutator is not None:
@@ -473,12 +475,12 @@ def validate_surface(repo: Path, reviewers: list[dict[str, Any]]) -> tuple[list[
     expected_verdict = "under caps" if reviewers and not missing_caps else "cap unverified"
     if completed.returncode != 0 or not output.startswith(f"verdict: {expected_verdict}\n"):
         gaps.append("working surface helper returned an unexpected verdict")
-    if changed != EXPECTED_CHANGED_PATHS or f"committed: {len(changed)}" not in output:
+    output_lines = output.splitlines()
+    if changed != EXPECTED_CHANGED_PATHS or output_lines.count(f"committed: {len(changed)}") != 1:
         gaps.append("working surface inventory mismatch")
     for relative in changed:
         if f"  {relative}\n" not in f"{output}\n":
             gaps.append(f"working surface helper omitted path: {relative}")
-    output_lines = output.splitlines()
     for category in ("staged", "unstaged", "untracked"):
         if output_lines.count(f"{category}: 0") != 1:
             gaps.append(f"dirty working surface: {category}")
@@ -710,7 +712,7 @@ def validate_evidence_document(
     return gaps
 
 
-def evaluate(repo: Path, bundle: Any) -> dict[str, Any]:
+def evaluate(repo: Path, bundle: Any, input_gaps: list[str] | None = None) -> dict[str, Any]:
     revision = run("git", "rev-parse", "HEAD", cwd=repo)
     live_subject, subject_gaps = resolve_live_subject(repo)
     live_repository, repository_gaps = resolve_live_repository(repo)
@@ -727,10 +729,10 @@ def evaluate(repo: Path, bundle: Any) -> dict[str, Any]:
         "observed_at": observed_now(),
         "mode": "assessment-only",
     }
-    gaps: list[str] = [*subject_gaps, *repository_gaps]
+    gaps: list[str] = [*(input_gaps or []), *subject_gaps, *repository_gaps]
     try:
         reviewers = reviewer_configuration(repo, revision)
-    except (json.JSONDecodeError, KeyError, TypeError, subprocess.CalledProcessError) as error:
+    except (FixtureError, json.JSONDecodeError, KeyError, TypeError, subprocess.CalledProcessError) as error:
         reviewers = []
         gaps.append(f"repository automated-reviewer discovery is invalid: {type(error).__name__}")
     surface_gaps, surface_paths = validate_surface(repo, reviewers)
@@ -892,6 +894,13 @@ def variants(bundle: dict[str, Any]) -> dict[str, dict[str, Any]]:
     unreferenced["receipts"].append(extra_receipt)
     result["unreferenced-receipt"] = unreferenced
 
+    duplicate_kind = copy.deepcopy(bundle)
+    duplicate = copy.deepcopy(duplicate_kind["receipts"][0])
+    duplicate["receipt_id"] = "receipt:duplicate-kind"
+    duplicate_kind["receipts"].append(duplicate)
+    duplicate_kind["assessment"]["receipt_references"].append(duplicate["receipt_id"])
+    result["duplicate-receipt-kind"] = duplicate_kind
+
     missing_reference = copy.deepcopy(bundle)
     receipt_by_kind(missing_reference, "code-review")["evidence_references"] = []
     result["missing-evidence-reference"] = missing_reference
@@ -945,6 +954,8 @@ def validate_contract_sources() -> None:
     skill_words = " ".join(skill.split())
     for phrase in (
         "`checking-pr-readiness-receipt-bundle/v1`",
+        "`checking-pr-readiness-evidence/v1`",
+        "`checking-pr-readiness-<kind>-result/v1`",
         "`receipt_references`",
         "Resolve every receipt reference exactly once",
         "A detached HEAD cannot support a branch subject",
@@ -1048,6 +1059,28 @@ def run_suite() -> None:
             "configured reviewer without a repository-resolved cap did not fail closed",
         )
 
+        invalid_reviewer_shape = root / "invalid-reviewer-shape"
+        invalid_reviewer_revision = build_repository(invalid_reviewer_shape, "invalid-shape")
+        invalid_reviewer_result = evaluate(
+            invalid_reviewer_shape,
+            make_bundle(invalid_reviewer_shape, invalid_reviewer_revision),
+        )
+        require(
+            invalid_reviewer_result["outcome"] == "action-required"
+            and "repository automated-reviewer discovery is invalid: FixtureError" in invalid_reviewer_result["gaps"],
+            "invalid automated-reviewers shape did not return a normal action-required envelope",
+        )
+
+        _, no_reviewer_evidence = evidence_blob(
+            no_reviewer,
+            no_reviewer_revision,
+            "evidence/targeted-sweep.json",
+        )
+        require(
+            json.loads(no_reviewer_evidence)["verdicts"]["11"] == "not applicable",
+            "no-reviewer profile did not anchor class 11 as not applicable",
+        )
+
         weak_documents = {
             "repository-gates": {
                 "repository": SPEC["repository"],
@@ -1123,6 +1156,24 @@ def run_suite() -> None:
             raise FixtureError("forced materialization failure unexpectedly succeeded")
         except OSError:
             require(not partial_destination.exists(), "partial materialization destination survived failure")
+
+        malformed_bundle_path = root / "malformed-bundle.json"
+        malformed_bundle_path.write_text("{", encoding="utf-8")
+        for label, bundle_path, expected_gap in (
+            ("malformed", malformed_bundle_path, "receipt bundle is malformed"),
+            ("unreadable", root / "missing-bundle.json", "receipt bundle is unreadable"),
+        ):
+            completed = subprocess.run(
+                [sys.executable, str(Path(__file__).resolve()), "--check", str(first), str(bundle_path)],
+                capture_output=True,
+                text=True,
+            )
+            require(completed.returncode == 1 and not completed.stderr, f"{label} bundle did not fail through the normal envelope")
+            envelope = json.loads(completed.stdout)
+            require(
+                envelope["outcome"] == "action-required" and expected_gap in envelope["gaps"],
+                f"{label} bundle did not name its normal assessment gap",
+            )
         print("PASS: assessment receipts bind one deterministic exact subject and revision")
         print("PASS: versioned bundle resolution, staged-only dirt, and live-subject mutations fail closed")
         print("PASS: absent reviewer is not applicable; configured reviewer without a cap fails closed")
@@ -1142,12 +1193,20 @@ def materialize(destination: Path, bundle_writer: Any = write_json) -> None:
     except Exception:
         shutil.rmtree(destination)
         raise
-    print(json.dumps({"repository": str(repo), "receipt_bundle": str(bundle_path), "subject": SPEC["subject"], "exact_revision": revision}, sort_keys=True))
+    print(json.dumps({"checkout": str(repo), "repository": SPEC["repository"], "receipt_bundle": str(bundle_path), "subject": SPEC["subject"], "exact_revision": revision}, sort_keys=True))
 
 
 def check_materialized(repo: Path, bundle_path: Path) -> int:
-    bundle = json.loads(bundle_path.read_text(encoding="utf-8"))
-    result = evaluate(repo, bundle)
+    input_gaps: list[str] = []
+    try:
+        bundle = json.loads(bundle_path.read_text(encoding="utf-8"))
+    except OSError:
+        bundle = None
+        input_gaps.append("receipt bundle is unreadable")
+    except (UnicodeError, json.JSONDecodeError):
+        bundle = None
+        input_gaps.append("receipt bundle is malformed")
+    result = evaluate(repo, bundle, input_gaps)
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["outcome"] == "pass" else 1
 

@@ -16,8 +16,8 @@ Provenance: Safety invariant retained after baseline models accepted broad provi
 
 ## Expected behavior
 
-- [ ] Missing shared-executor, continuity, retention, runtime-scope, or narrow-wrapper proof blocks every report invoke.
-- [ ] Broad raw provider access is not accepted as an effect boundary and never reaches model/repository/test/scout contexts.
+- [ ] Missing shared-executor, continuity, retention, runtime-scope, narrow-wrapper, intended-effect readback, authoritative post-read, or terminal-receipt readback proof blocks every report invoke.
+- [ ] Broad raw provider access is not accepted as an effect boundary and never reaches model, repository, hook, test, scout, child, or worktree contexts.
 - [ ] The proven path binds stable operation identity and separate mutable preconditions before one invoke.
 - [ ] Intended-effect receipt readback precedes invoke; authoritative complete post-read precedes terminal receipt readback.
 - [ ] Source mutation and provider maintenance stay unavailable regardless of report authority.

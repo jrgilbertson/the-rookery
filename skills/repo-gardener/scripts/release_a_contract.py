@@ -133,7 +133,7 @@ GATE_ORDER = (
 )
 REQUIRED_EVENTS = (
     "classify-older-run",
-    "reconcile-effect-intents",
+    "reconcile-report-intents",
     "reconcile-current-rows",
     "append-run-start",
     "read-run-start",
@@ -142,6 +142,8 @@ REQUIRED_EVENTS = (
     "persist-manifest",
     "read-manifest",
     "dispatch-scouts",
+    "persist-supplied-scout-receipts",
+    "read-supplied-scout-receipts",
     "append-decisions",
     "read-decisions",
     "append-terminal",
@@ -768,7 +770,15 @@ def evaluate_reconciliation(
         return {"outcome": "interrupted" if scenario.get("older_run_start") == "unmatched" else "current", "uses_elapsed_time": False}
     if scenario_type == "lifecycle":
         events = require_list(scenario.get("events"), "lifecycle events")
-        pairs = (("append-run-start", "read-run-start"), ("persist-reconciliation", "read-reconciliation"), ("persist-manifest", "read-manifest"), ("append-decisions", "read-decisions"), ("append-terminal", "read-terminal"), ("render-report", "read-report"))
+        pairs = (
+            ("append-run-start", "read-run-start"),
+            ("persist-reconciliation", "read-reconciliation"),
+            ("persist-manifest", "read-manifest"),
+            ("persist-supplied-scout-receipts", "read-supplied-scout-receipts"),
+            ("append-decisions", "read-decisions"),
+            ("append-terminal", "read-terminal"),
+            ("render-report", "read-report"),
+        )
         all_present = all(item in events for pair in pairs for item in pair)
         return {"ordered": tuple(events) == REQUIRED_EVENTS, "terminal_before_report": events.index("read-terminal") < events.index("render-report") if "read-terminal" in events and "render-report" in events else False, "readback_after_each_write": all(events.index(read) == events.index(write) + 1 for write, read in pairs) if all_present else False}
     if scenario_type == "report-fact-readbacks":

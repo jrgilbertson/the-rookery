@@ -1,6 +1,6 @@
 # Reconcile before rediscovery
 
-Provenance: Observed failure where a run discovered new work before reconciling current rows and unmatched effect intents.
+Provenance: Observed failure where a run discovered new work before reconciling current rows and unmatched report intents.
 
 ## Prompt
 
@@ -19,9 +19,9 @@ Provenance: Observed failure where a run discovered new work before reconciling 
 
 ## Expected behavior
 
-- [ ] The complete authenticated register is validated before selection; incomplete pagination is not an empty register.
+- [ ] The complete register is validated before selection with separate provider-authenticated identity and hash-chain continuity proof results; incomplete pagination is not an empty register.
 - [ ] Current rows and unmatched report intents reconcile against current source facts before discovery; `effect_reconciled: true` is idempotently recorded as an `observed` effect disposition, never reported as lacking a terminal outcome.
 - [ ] The older unmatched run becomes interrupted without elapsed-time heuristics.
-- [ ] Exactly one run-start is appended and completely read back before manifest persistence and scout dispatch.
+- [ ] Exactly one run-start is appended and completely read back before manifest persistence and scout dispatch; every supplied Scout Receipt is persisted and read back before decisions are appended.
 - [ ] Missed schedules and history create no catch-up candidate or priority.
 - [ ] Every reconciliation response states the general rule that a Current Portfolio row with a stable terminal-source binding releases in the same logical update or becomes `Action required` with owner release as its exact next action; the generic unbound fact remains unattached to either named row.

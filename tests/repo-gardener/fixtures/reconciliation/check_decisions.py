@@ -200,7 +200,7 @@ def validate_sources(repo_root: Path) -> None:
     mutations = re.findall(r"^\s+mutation: (true|false)$", policy, re.MULTILINE)
     require(len(mutations) == 9 and set(mutations) == {"false"}, "policy must contain nine false lane mutations")
     for phrase in (
-        "reconcile every Current Portfolio row and every unmatched intended-effect receipt",
+        "reconcile every Current Portfolio row and every unmatched report intent",
         "Even when a safe stop prevents those operations",
         "after the missing proof is restored, append exactly one",
         "must not replace valid-path reconciliation",
@@ -225,6 +225,7 @@ def validate_sources(repo_root: Path) -> None:
         "then render each ephemeral recommendation in a free slot",
         "Render exactly that many numbered slots",
         "append exactly one terminal run receipt and read it back",
+        "Persist and read back all supplied Scout Receipts before appending decisions",
         "Render the canonical report and read it back last",
         "repository_portfolio_limit` exactly once",
         "generic terminal fact with no such binding",
@@ -266,6 +267,10 @@ def validate_sources(repo_root: Path) -> None:
     require(
         "fields alone as authentication" in reconcile_case,
         "reconciliation prompt does not distinguish stored identity data from proof",
+    )
+    require(
+        "separate provider-authenticated identity and hash-chain continuity proof results" in reconcile_case,
+        "reconciliation rubric does not require separate identity and continuity proof results",
     )
     require(
         "effect_reconciled: true" in reconcile_case

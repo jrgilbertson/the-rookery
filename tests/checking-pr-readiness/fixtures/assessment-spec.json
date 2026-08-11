@@ -18,6 +18,7 @@
     "missing-receipt": "missing receipt: code-review",
     "missing-receipt-resolution": "unresolved receipt reference: receipt:does-not-exist",
     "unreferenced-receipt": "receipt bundle contains unreferenced receipt",
+    "duplicate-receipt-kind": "duplicate receipt kind",
     "missing-evidence-reference": "missing evidence reference: code-review",
     "stale-receipt": "stale receipt: code-simplification",
     "cross-subject": "cross-subject receipt: testing",

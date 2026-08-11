@@ -2,7 +2,7 @@
 repository-scoped wrapper during a proven bootstrap operation. -->
 <!-- repo-gardener:current-portfolio:v1:begin -->
 ```json
-{"schema":"repo-gardener-register/v1","repository_id":"<verified-repository-id>","report_id":"<verified-report-id>","writer_id":"<verified-writer-id>","register_revision":0,"last_operation_id":null,"last_operation_fingerprint":null,"history_anchor":{"sequence":0,"head":"GENESIS","latest_receipt":null},"rows":[]}
+{"schema":"repo-gardener-register/v1","repository_id":"<verified-repository-id>","report_id":"<verified-report-id>","writer_id":"<verified-writer-id>","register_revision":0,"last_operation_id":null,"last_operation_fingerprint":null,"history_receipts":[],"history_anchor":{"sequence":0,"head":"GENESIS","latest_receipt":null},"rows":[]}
 ```
 <!-- repo-gardener:current-portfolio:v1:end -->
 

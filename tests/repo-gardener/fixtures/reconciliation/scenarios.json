@@ -33,7 +33,7 @@
     "exclusive_executor": true,
     "events": [
       "classify-older-run",
-      "reconcile-effect-intents",
+      "reconcile-report-intents",
       "reconcile-current-rows",
       "append-run-start",
       "read-run-start",
@@ -42,6 +42,8 @@
       "persist-manifest",
       "read-manifest",
       "dispatch-scouts",
+      "persist-supplied-scout-receipts",
+      "read-supplied-scout-receipts",
       "append-decisions",
       "read-decisions",
       "append-terminal",

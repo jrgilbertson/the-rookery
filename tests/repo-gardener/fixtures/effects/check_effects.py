@@ -113,7 +113,16 @@ def validate_sources(repo_root: Path) -> None:
         "effect-recovery prompt does not request exact single-tail mechanics",
     )
     authority_case = (repo_root / "tests" / "repo-gardener" / "cases" / "effect-authority-and-wrapper-scope.md").read_text(encoding="utf-8")
-    require("Intended-effect receipt readback precedes invoke" in authority_case, "effect authority rubric lost pre-invoke readback")
+    require(
+        "Intended-effect receipt readback precedes invoke" in authority_case
+        and "authoritative post-read" in authority_case
+        and "terminal-receipt readback" in authority_case,
+        "effect authority rubric lost an independent readback blocker",
+    )
+    require(
+        all(context in authority_case for context in ("hook", "child", "worktree")),
+        "effect authority rubric does not cover every nested execution context",
+    )
     caller_case = (repo_root / "tests" / "repo-gardener" / "cases" / "caller-lifecycle-and-local-blockers.md").read_text(encoding="utf-8")
     require("No narrow-wrapper authorization or readback is supplied" in caller_case, "caller lifecycle prompt supplies or implies assignment persistence proof")
     remainder_case = (repo_root / "tests" / "repo-gardener" / "cases" / "mixed-remainder-dispositions.md").read_text(encoding="utf-8")
@@ -138,6 +147,8 @@ def validate_sources(repo_root: Path) -> None:
         "append that exact stored receipt once without rewriting the body",
     ):
         require(phrase in register_words, f"report recovery contract missing: {phrase}")
+    report_template = (skill_dir / "assets" / "github-report-issue-template.md").read_text(encoding="utf-8")
+    require('"history_receipts":[]' in report_template, "bootstrap report register omits history_receipts")
 
 
 def main() -> int:

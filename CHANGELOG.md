@@ -15,7 +15,7 @@ looked" surface. GitHub Releases mirror its entries.
 
 - Added `repo-gardener`, a portable read-only repository maintenance loop. It
   proposes an all-off policy during initialization, reconciles current report
-  rows and unmatched report effects before rediscovery, and renders a
+  rows and unmatched report intents before rediscovery, and renders a
   deterministic seven-slot portfolio. A separately proven report-register
   wrapper is its sole write surface; source mutation remains unavailable.
 - Added a seven-image Field Guide Blueprint illustration system to

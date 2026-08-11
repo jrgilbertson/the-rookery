@@ -3,6 +3,8 @@ set -euo pipefail
 
 fixture_dir=$(cd "$(dirname "$0")" && pwd -P)
 fixture_bin="$fixture_dir/bin"
+PATH="$fixture_bin:$PATH"
+export PATH
 run_root=$(mktemp -d "${TMPDIR:-/tmp}/pcos-fixture.XXXXXX")
 trap 'rm -rf "$run_root"' EXIT
 
@@ -13,18 +15,15 @@ fail() {
 
 new_run() {
   local specimen=$1
-  PCOS_FIXTURE_ROOT="$run_root/$specimen"
-  mkdir -p "$PCOS_FIXTURE_ROOT"
+  PCOS_FIXTURE_ROOT=$(mktemp -d "$run_root/$specimen.XXXXXX")
   PCOS_FIXTURE_SPECIMEN=$specimen
   PCOS_FIXTURE_TRACE="$PCOS_FIXTURE_ROOT/trace.jsonl"
   export PCOS_FIXTURE_ROOT PCOS_FIXTURE_SPECIMEN PCOS_FIXTURE_TRACE
-  PATH="$fixture_bin:$PATH"
-  export PATH
 }
 
 assert_trace() {
   local pattern=$1
-  grep -F "$pattern" "$PCOS_FIXTURE_TRACE" >/dev/null || fail "missing trace: $pattern"
+  grep -Fq -- "$pattern" "$PCOS_FIXTURE_TRACE" || fail "missing trace: $pattern"
 }
 
 new_run q7m4
@@ -90,7 +89,9 @@ if env -u PCOS_FIXTURE_ROOT -u PCOS_FIXTURE_SPECIMEN -u PCOS_FIXTURE_TRACE \
   fail "missing fixture variables were accepted"
 fi
 
-find "$run_root" -type f -print | grep -v -E '/(trace\.jsonl|read-index|written|content)$' >/dev/null &&
-  fail "unexpected fixture state file"
+unexpected_file=$(find "$run_root" -type f \
+  ! \( -name trace.jsonl -o -name read-index -o -name written -o -name content \) \
+  -print -quit)
+[[ -z "$unexpected_file" ]] || fail "unexpected fixture state file"
 
 printf 'fixture self-check passed\n'

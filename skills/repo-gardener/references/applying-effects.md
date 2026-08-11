@@ -157,6 +157,11 @@ fields are disjoint and exhaustive; use `none` only for an empty side.
 Name the ambiguous report operation itself in `affected_work`; listing only
 its dependent items is incomplete.
 
+Explicitly render `whole_run_completion: withheld` for an ambiguous-operation
+safe stop. This remains required after the two work fields form an exact
+partition: independent dispositions prove complete accounting, while the
+nonempty affected side proves that the whole run did not complete.
+
 Return the core completion fields plus:
 
 ```text

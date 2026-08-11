@@ -102,6 +102,7 @@ def validate_sources(repo_root: Path) -> None:
         "preserve the requested repository-qualified identity",
         "If either identity component is absent or invalid before the first attempt",
         "missing terminal readback overrides both success tokens",
+        "Explicitly render `whole_run_completion: withheld` for an ambiguous-operation safe stop",
     ):
         require(phrase in effects_words, f"effect contract missing: {phrase}")
     recovery_case = (repo_root / "tests" / "repo-gardener" / "cases" / "effect-recovery-and-ambiguity.md").read_text(encoding="utf-8")
@@ -112,11 +113,18 @@ def validate_sources(repo_root: Path) -> None:
     )
     authority_case = (repo_root / "tests" / "repo-gardener" / "cases" / "effect-authority-and-wrapper-scope.md").read_text(encoding="utf-8")
     require("Intended-effect receipt readback precedes invoke" in authority_case, "effect authority rubric lost pre-invoke readback")
+    caller_case = (repo_root / "tests" / "repo-gardener" / "cases" / "caller-lifecycle-and-local-blockers.md").read_text(encoding="utf-8")
+    require("No narrow-wrapper authorization or readback is supplied" in caller_case, "caller lifecycle prompt supplies or implies assignment persistence proof")
+    remainder_case = (repo_root / "tests" / "repo-gardener" / "cases" / "mixed-remainder-dispositions.md").read_text(encoding="utf-8")
+    require("`whole_run_completion: withheld` is explicit" in remainder_case, "mixed remainder rubric does not require explicit whole-run withholding")
     for phrase in (
         "Keep it active until the caller accepts exactly one terminal",
         "Carry pending decision requests in that report for caller persistence",
         "do not block, fail, cancel, revoke, release, or otherwise settle",
         "Stop after acceptance",
+        "Do not infer assignment authority from a possible persistence path or from the current assignment itself",
+        "Caller persistence of every still-unpersisted decision is valid",
+        "Carry every unpersisted decision exactly once in that single terminal report",
     ):
         require(phrase in core_words, f"caller report ordering missing: {phrase}")
     for phrase in (
@@ -197,13 +205,19 @@ def main() -> int:
                 "ambiguous-dependent-work",
                 "duplicate completion item",
                 lambda item: item["affected_by_ambiguity"].append(item["affected_by_ambiguity"][0]),
-                {"disjoint_exhaustive": False},
+                {"disjoint_exhaustive": False, "whole_run_completion": "withheld"},
             ),
             (
                 "report-first-caller-completion",
                 "assignment persistence readback",
                 lambda item: item.__setitem__("assignment_persistence_read_back", False),
-                {"assignment_persisted_decisions": 0, "decisions_carried_for_caller": 2, "decision_partition_exact": True},
+                {"assignment_persisted_decisions": 0, "decisions_carried_for_caller": 2, "decision_partition_exact": True, "assignment_persistence_proven": False, "caller_only_allocation_valid": True},
+            ),
+            (
+                "report-first-caller-completion",
+                "assignment persistence authorization",
+                lambda item: item.__setitem__("assignment_persistence_authorized", False),
+                {"assignment_persisted_decisions": 0, "decisions_carried_for_caller": 2, "decision_partition_exact": True, "assignment_persistence_proven": False, "caller_only_allocation_valid": True},
             ),
             (
                 "proven-absence-retry",

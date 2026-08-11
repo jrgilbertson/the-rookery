@@ -105,20 +105,29 @@ dependency closure there. Put every other named item in
 - `gated` by that item's own named prerequisite.
 
 The two fields form one disjoint, exhaustive partition. Use `none` only when a
-side is empty. Do not declare whole-run completion while any remaining work
-lacks a disposition.
+side is empty. Before returning, verify that every named item appears in
+exactly one field and every independent item has exactly one `continued`,
+`delegated`, or `gated` disposition. Render `whole_run_completion: withheld`
+until that check passes. A safe stop with nonempty `affected_work` remains
+`withheld` even after the partition is exact; dispositions account for the
+other work but do not turn the stopped run into a completed run.
 
 Treat a caller-supplied one-shot terminal-report capability as the final
 ordered operation. Keep it active until the caller accepts exactly one terminal
-report. Carry pending decision requests in that report for caller persistence;
+report. Carry pending decision requests in that report for caller persistence:
+Carry every unpersisted decision exactly once in that single terminal report;
 do not block, fail, cancel, revoke, release, or otherwise settle the current
 assignment first. Stop after acceptance.
 
 Persist each pending decision exactly once. The current assignment may do so
-only through already-proven narrow-wrapper authority and complete readback; any
-decision not persisted that way travels in the terminal report for the caller
-to persist. Never assign both owners to the same decision, and never make the
-caller exclusive when the current assignment's authority is proven.
+only when the supplied facts prove narrow-wrapper authorization and complete
+authoritative readback. Do not infer assignment authority from a possible
+persistence path or from the current assignment itself. Any decision not
+persisted with that proof travels exactly once in the terminal report. Caller
+persistence of every still-unpersisted decision is valid, including all pending
+decisions when assignment proof is absent; a proven assignment path permits
+persistence but does not require it. Never assign both owners to the same
+decision.
 
 Every completion or safe stop returns:
 
@@ -127,6 +136,7 @@ last_safe_stage: <initialize | Sense | Decide | Act | Verify | Learn>
 missing_proof_or_role: <exact missing proof or named role, or none>
 affected_work: <each work item stopped by this outcome exactly once, or none>
 remaining_unblocked_work: <each other item exactly once as continued, delegated with durable handoff proof, or gated by its own named prerequisite; or none>
+whole_run_completion: <complete | withheld>
 attention_state: <Action required | Merge-ready | Watching | Routine, with disabled-lane qualifier when applicable>
 next_owner_action: <one exact action and target, or none>
 persistence: <exact report/register readback, or not persisted with reason>

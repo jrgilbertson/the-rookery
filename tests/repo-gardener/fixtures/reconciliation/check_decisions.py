@@ -236,7 +236,11 @@ def validate_sources(repo_root: Path) -> None:
     )
     require("generic fact is not attached to either named row" in reconcile_case, "terminal-row rubric permits an invented row association")
     caller_case = (case_dir / "caller-lifecycle-and-local-blockers.md").read_text(encoding="utf-8")
-    require("assigns each decision exactly once" in caller_case, "caller lifecycle rubric lost shared persistence ownership")
+    require(
+        "does not turn a possible persistence path into proof" in caller_case
+        and "carrying both for caller persistence is valid" in caller_case,
+        "caller lifecycle rubric lost proof-bound caller persistence ownership",
+    )
     normalization_case = (case_dir / "normalization-and-safety-gates.md").read_text(encoding="utf-8")
     require("source-mutation capability remains unavailable and is not required" in " ".join(normalization_case.replace(">", " ").split()), "capability rubric requires source-mutation authority")
     require("exactly one manifest persistence operation" in reconcile_words, "manifest persistence ordering is not single-operation")

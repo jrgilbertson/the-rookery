@@ -644,7 +644,14 @@ def evaluate_effect(scenario: Any) -> dict[str, Any]:
         unique = len(named) == len(set(named)) and len(affected) == len(set(affected)) and len(independent) == len(set(independent))
         affected_set = set(affected)
         remaining_set = set(independent)
-        return {"affected_work": affected, "remaining_unblocked_work": {item: "continued" for item in independent}, "disjoint_exhaustive": unique and affected_set.isdisjoint(remaining_set) and affected_set | remaining_set == set(named)}
+        return {
+            "affected_work": affected,
+            "remaining_unblocked_work": {item: "continued" for item in independent},
+            "disjoint_exhaustive": unique
+            and affected_set.isdisjoint(remaining_set)
+            and affected_set | remaining_set == set(named),
+            "whole_run_completion": "withheld",
+        }
     if scenario_type == "delegation":
         handoff = require_object(scenario.get("handoff"), "handoff")
         complete = all(handoff.get(field) for field in ("destination", "authorized_executor", "exact_work"))
@@ -663,7 +670,16 @@ def evaluate_effect(scenario: Any) -> dict[str, Any]:
         assignment_set = set(assignment) if assignment_proven else set()
         require(assignment_set <= set(pending), "assignment persisted an unknown decision")
         caller = [decision for decision in pending if decision not in assignment_set]
-        return {"terminal_reports": 1 if accepted else 0, "assignment_persisted_decisions": len(assignment_set) if accepted else 0, "decisions_carried_for_caller": len(caller) if accepted else 0, "decision_partition_exact": accepted and len(assignment_set) + len(caller) == len(pending), "self_settled_before_acceptance": False}
+        return {
+            "terminal_reports": 1 if accepted else 0,
+            "assignment_persisted_decisions": len(assignment_set) if accepted else 0,
+            "decisions_carried_for_caller": len(caller) if accepted else 0,
+            "decision_partition_exact": accepted
+            and len(assignment_set) + len(caller) == len(pending),
+            "assignment_persistence_proven": assignment_proven,
+            "caller_only_allocation_valid": not assignment_set,
+            "self_settled_before_acceptance": False,
+        }
     if scenario_type == "repair":
         proof = all(scenario.get(field) is True for field in ("complete_integrity_read", "exact_prepared_receipt_reused", "preconditions_match", "anchored_receipt_valid", "history_tail_missing"))
         if authority_complete(scenario) and proof and scenario.get("body_anchor_ahead_by") == 1:

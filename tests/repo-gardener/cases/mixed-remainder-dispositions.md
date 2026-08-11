@@ -17,4 +17,4 @@ Provenance: Observed failure where completion named affected work but omitted or
 - [ ] The documentation check is `delegated` only after the full handoff is read back.
 - [ ] The security review is `gated` by its own named specialist and does not also appear in `affected_work`.
 - [ ] The two fields are disjoint and exhaustive; `none` appears only for an actually empty side.
-- [ ] Whole-run completion is withheld until every independent item has one disposition.
+- [ ] `whole_run_completion: withheld` is explicit until every independent item has exactly one disposition in the disjoint, exhaustive partition; the ambiguous affected work keeps this safe stop from becoming whole-run completion.

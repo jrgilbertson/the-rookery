@@ -79,6 +79,7 @@ def validate_sources(repo_root: Path) -> None:
     effects = (skill_dir / "references" / "applying-effects.md").read_text(encoding="utf-8")
     core = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     register = (skill_dir / "references" / "register-and-report.md").read_text(encoding="utf-8")
+    contract = (skill_dir / "scripts" / "release_a_contract.py").read_text(encoding="utf-8")
     effects_words = " ".join(effects.split())
     core_words = " ".join(core.split())
     register_words = " ".join(register.split())
@@ -119,14 +120,18 @@ def validate_sources(repo_root: Path) -> None:
     require("`whole_run_completion: withheld` is explicit" in remainder_case, "mixed remainder rubric does not require explicit whole-run withholding")
     for phrase in (
         "Keep it active until the caller accepts exactly one terminal",
-        "Carry pending decision requests in that report for caller persistence",
+        "Carry every unpersisted decision exactly once in that single terminal report for caller persistence",
         "do not block, fail, cancel, revoke, release, or otherwise settle",
         "Stop after acceptance",
         "Do not infer assignment authority from a possible persistence path or from the current assignment itself",
         "Caller persistence of every still-unpersisted decision is valid",
-        "Carry every unpersisted decision exactly once in that single terminal report",
     ):
         require(phrase in core_words, f"caller report ordering missing: {phrase}")
+    require(
+        core_words.count("Carry every unpersisted decision exactly once in that single terminal report for caller persistence") == 1,
+        "caller persistence instruction is not one canonical phrase",
+    )
+    require("def installed_lanes(" not in contract, "unused installed_lanes policy wrapper remains")
     for phrase in (
         "prepared body replacement and one comment append",
         "not an atomic transaction or distributed lock",
@@ -232,6 +237,12 @@ def main() -> int:
                 {"retry_allowed": False, "operation_identity_reused": False, "invoke_count": 0},
             ),
             (
+                "proven-absence-retry",
+                "retry authority repository identity",
+                lambda item: item["authority"].__setitem__("repository_id", "forge:repository:other"),
+                {"retry_allowed": False, "invoke_count": 0},
+            ),
+            (
                 "cross-repository-collision",
                 "cross-repository qualification",
                 lambda item: item.__setitem__("existing_repository_id", item["repository_id"]),
@@ -267,6 +278,12 @@ def main() -> int:
                 "one-valid-receipt-ahead",
                 "repair integrity authority",
                 lambda item: item.__setitem__("complete_integrity_read", False),
+                {"repair_allowed": False, "invoke_count": 0, "terminal_outcome": "ambiguous"},
+            ),
+            (
+                "one-valid-receipt-ahead",
+                "repair authority repository identity",
+                lambda item: item["authority"].__setitem__("repository_id", "forge:repository:other"),
                 {"repair_allowed": False, "invoke_count": 0, "terminal_outcome": "ambiguous"},
             ),
         )

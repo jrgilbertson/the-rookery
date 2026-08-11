@@ -149,23 +149,6 @@ REQUIRED_EVENTS = (
     "render-report",
     "read-report",
 )
-RECONCILIATION_AUTHORITY_FIELDS = {
-    "schema",
-    "repository_id",
-    "report_id",
-    "writer_id",
-    "run_id",
-    "exclusive_executor",
-    "wrapper_scope_allowlisted",
-    "raw_write_capability_absent_everywhere",
-    "continuity_valid",
-    "retention_valid",
-    "runtime_scope_valid",
-    "intended_receipt_read_back",
-    "authoritative_post_read_completed",
-    "terminal_receipt_read_back",
-    "write_requested",
-}
 RECONCILIATION_WRITE_PROOFS = (
     "exclusive_executor",
     "wrapper_scope_allowlisted",
@@ -178,6 +161,15 @@ RECONCILIATION_WRITE_PROOFS = (
     "terminal_receipt_read_back",
     "write_requested",
 )
+RECONCILIATION_AUTHORITY_FIELDS = {
+    "schema",
+    "repository_id",
+    "report_id",
+    "writer_id",
+    "run_id",
+    *RECONCILIATION_WRITE_PROOFS,
+}
+EFFECT_AUTHORITY_FIELDS = {"repository_id", *AUTHORITY_FIELDS}
 
 
 class ContractError(Exception):
@@ -292,14 +284,26 @@ def portfolio_limit_from_text(text: str) -> int:
 
 def installed_lanes_from_text(text: str) -> list[str]:
     lanes = policy_section(text, "lanes")
-    result = [
-        match.group(1)
-        for line in lanes
+    lane_starts = [
+        (index, match.group(1))
+        for index, line in enumerate(lanes)
         if (match := re.fullmatch(r"  ([a-z0-9][a-z0-9-]*):\s*(?:#.*)?", line))
     ]
+    result = [lane for _, lane in lane_starts]
     require(bool(result), "policy installed lane inventory is empty")
     require(len(result) == len(set(result)), "policy installed lane inventory contains duplicates")
     require(tuple(result) == RELEASE_A_LANES, "policy installed lane inventory differs from the public Release A contract")
+    for position, (start, lane) in enumerate(lane_starts):
+        end = lane_starts[position + 1][0] if position + 1 < len(lane_starts) else len(lanes)
+        mutations = [
+            match.group(1)
+            for line in lanes[start + 1 : end]
+            if (match := re.fullmatch(r"    mutation:\s*(true|false)\s*(?:#.*)?", line))
+        ]
+        require(
+            mutations == ["false"],
+            f"policy lane {lane} mutation must be exactly false",
+        )
     return result
 
 
@@ -310,10 +314,6 @@ def policy_contract(policy_path: Path) -> tuple[int, list[str]]:
 
 def portfolio_limit(policy_path: Path) -> int:
     return portfolio_limit_from_text(policy_path.read_text(encoding="utf-8"))
-
-
-def installed_lanes(policy_path: Path) -> list[str]:
-    return installed_lanes_from_text(policy_path.read_text(encoding="utf-8"))
 
 
 def receipt_hash(receipt: dict[str, Any]) -> str:
@@ -378,7 +378,8 @@ def validate_register(
         source_ids.append(require_identity(row.get("source_id"), f"row {index} source_id"))
         require_identity(row.get("source_revision"), f"row {index} source_revision")
         require_nonempty_display(row.get("description"), f"row {index} description")
-        require_identity(row.get("lane"), f"row {index} lane")
+        lane = require_identity(row.get("lane"), f"row {index} lane")
+        require(lane in lanes, f"row {index} lane is outside installed policy lane inventory")
         require_nonempty_display(row.get("rationale"), f"row {index} rationale")
         require_nonempty_display(row.get("risk"), f"row {index} risk")
         require_nonempty_display(row.get("budget_use"), f"row {index} budget_use")
@@ -467,13 +468,19 @@ def validate_register(
     return {"manifest": manifest, "portfolio_limit": limit, "history_head": anchor["head"]}
 
 
-def validate_scout_receipts(data: Any, manifest: Any, *, complete: bool = True) -> dict[str, dict[str, Any]]:
+def validate_scout_receipts(
+    data: Any,
+    manifest: Any,
+    *,
+    complete: bool = True,
+    expected_scouts: list[str] | None = None,
+) -> dict[str, dict[str, Any]]:
     data = require_object(data, "Scout Receipt collection")
     require_exact_fields(data, SCOUT_COLLECTION_FIELDS, "Scout Receipt collection")
     require(data.get("schema") == "repo-gardener-scout-receipt-collection/v1", "Scout Receipt collection schema mismatch")
     collection_repository = require_identity(data.get("repository_id"), "Scout Receipt collection repository_id")
     collection_run = require_identity(data.get("run_id"), "Scout Receipt collection run_id")
-    manifest = validate_manifest(manifest, collection_repository)
+    manifest = validate_manifest(manifest, collection_repository, expected_scouts)
     require(collection_run == manifest.get("run_id"), "Scout Receipt collection run mismatch")
     require(data.get("manifest_id") == manifest.get("manifest_id"), "Scout Receipt manifest mismatch")
     receipts = require_list(data.get("receipts"), "Scout Receipts")
@@ -523,9 +530,11 @@ def validate_scout_receipts(data: Any, manifest: Any, *, complete: bool = True) 
     return receipt_map
 
 
-def authority_complete(scenario: dict[str, Any]) -> bool:
+def effect_authority_complete(scenario: dict[str, Any], repository_id: str) -> bool:
     authority = require_object(scenario.get("authority"), f"{scenario.get('id', 'scenario')} authority")
-    return all(authority.get(field) is True for field in AUTHORITY_FIELDS)
+    require_exact_fields(authority, EFFECT_AUTHORITY_FIELDS, "effect authority")
+    authority_repository = require_identity(authority.get("repository_id"), "effect authority repository_id")
+    return authority_repository == repository_id and all(authority[field] is True for field in AUTHORITY_FIELDS)
 
 
 def composite_identity(repository_id: Any, operation_id: Any) -> dict[str, str]:
@@ -583,10 +592,9 @@ def evaluate_effect(scenario: Any) -> dict[str, Any]:
             operation_identity = composite_identity(scenario.get("repository_id"), scenario.get("operation_id"))
         except ContractError:
             return {"terminal_outcome": "failed", "invoke_count": 0, "blind_retry": False, "persistence_claim": False, "identity_valid": False}
-        authorized = authority_complete(scenario)
-        repository_matches = operation_identity["repository_id"] == scenario.get("authority", {}).get("repository_id")
+        authorized = effect_authority_complete(scenario, operation_identity["repository_id"])
         preconditions_match = scenario.get("preconditions_match") is True
-        if not authorized or not repository_matches or not preconditions_match:
+        if not authorized or not preconditions_match:
             return {"terminal_outcome": "failed", "invoke_count": 0, "blind_retry": False, "persistence_claim": False, "all_report_writes_blocked": not authorized, "identity_valid": True}
         terminal_read_back = scenario.get("terminal_receipt_read_back") is True
         if scenario.get("desired_state_preexisting") is True:
@@ -616,7 +624,7 @@ def evaluate_effect(scenario: Any) -> dict[str, Any]:
         identity = composite_identity(scenario.get("repository_id"), scenario.get("operation_id"))
         retry_identity = composite_identity(scenario.get("retry_repository_id"), scenario.get("retry_operation_id"))
         reused = identity == retry_identity
-        allowed = all((authority_complete(scenario), scenario.get("source_native_absence") is True, scenario.get("preconditions_match") is True, scenario.get("wrapper_scope_unchanged") is True, reused))
+        allowed = all((effect_authority_complete(scenario, identity["repository_id"]), scenario.get("source_native_absence") is True, scenario.get("preconditions_match") is True, scenario.get("wrapper_scope_unchanged") is True, reused))
         return {"retry_allowed": allowed, "operation_identity": identity, "retry_operation_identity": retry_identity, "operation_identity_reused": reused, "new_operation_identity": False, "invoke_count": 1 if allowed else 0}
     if scenario_type == "identity-collision":
         identity = composite_identity(scenario.get("repository_id"), scenario.get("operation_id"))
@@ -682,7 +690,8 @@ def evaluate_effect(scenario: Any) -> dict[str, Any]:
         }
     if scenario_type == "repair":
         proof = all(scenario.get(field) is True for field in ("complete_integrity_read", "exact_prepared_receipt_reused", "preconditions_match", "anchored_receipt_valid", "history_tail_missing"))
-        if authority_complete(scenario) and proof and scenario.get("body_anchor_ahead_by") == 1:
+        repository_id = require_identity(scenario.get("repository_id"), "repair repository_id")
+        if effect_authority_complete(scenario, repository_id) and proof and scenario.get("body_anchor_ahead_by") == 1:
             return {"append_exact_stored_receipt": 1, "rewrite_body": False, "readback_required": True}
         return {"repair_allowed": False, "invoke_count": 0, "terminal_outcome": "ambiguous"}
     raise ContractError(f"unknown effect scenario type: {scenario_type}")
@@ -695,10 +704,16 @@ def evaluate_gates(facts: Any) -> dict[str, Any]:
     return {"eligible": first_failing is None, "first_failing_gate": first_failing, "attention_state": "Action required" if facts["protected boundary"] is not True else "Routine", "gate_order": list(GATE_ORDER)}
 
 
-def render_capacity_with_limit(retained: Any, candidates: Any, limit: int) -> dict[str, Any]:
+def require_retained_rows(retained: Any, limit: int) -> list[str]:
     retained = require_list(retained, "retained rows")
+    identities = [require_identity(item, f"retained row {index}") for index, item in enumerate(retained)]
+    require(len(identities) == len(set(identities)) and len(identities) <= limit, "retained-row order/capacity invalid")
+    return identities
+
+
+def render_capacity_with_limit(retained: Any, candidates: Any, limit: int) -> dict[str, Any]:
+    retained = require_retained_rows(retained, limit)
     candidates = require_list(candidates, "eligible candidates")
-    require(len(retained) == len(set(retained)) and len(retained) <= limit, "retained-row order/capacity invalid")
     eligible = sum(evaluate_gates(require_object(item, "candidate").get("gate_facts"))["eligible"] for item in candidates)
     recommendations = min(limit - len(retained), eligible)
     return {"rendered_slots": limit, "retained_first": True, "available_slots": limit - len(retained) - recommendations, "recommendations": recommendations}
@@ -790,9 +805,9 @@ def evaluate_reconciliation(
     if scenario_type == "capacity":
         return render_capacity_with_limit(scenario.get("retained_rows"), scenario.get("eligible_candidates", []), policy_limit)
     if scenario_type == "critical-capacity":
-        retained = require_list(scenario.get("retained_rows"), "retained rows")
         limit = policy_limit
-        require(len(retained) == limit and len(set(retained)) == limit, "critical capacity fixture is not full")
+        retained = require_retained_rows(scenario.get("retained_rows"), limit)
+        require(len(retained) == limit, "critical capacity fixture is not full")
         candidate = require_object(scenario.get("critical_candidate"), "critical candidate")
         eligible = evaluate_gates(candidate.get("gate_facts"))["eligible"]
         return {"rendered_slots": limit, "recommendations": 0, "preemption_proposal": eligible and bool(scenario.get("interruptible_row")), "rows_changed": 0}
@@ -868,7 +883,18 @@ def main() -> int:
     if args.command == "validate-register":
         result = validate_register(_load(args.register), _load(args.manifest), _load(args.authentication), args.policy)
     elif args.command == "validate-scout-receipts":
-        result = {"scouts": sorted(validate_scout_receipts(_load(args.receipts), _load(args.manifest), complete=not args.allow_incomplete_coverage))}
+        canonical_policy = Path(__file__).resolve().parent.parent / "assets" / "policy-template.yaml"
+        _, expected_scouts = policy_contract(canonical_policy)
+        result = {
+            "scouts": sorted(
+                validate_scout_receipts(
+                    _load(args.receipts),
+                    _load(args.manifest),
+                    complete=not args.allow_incomplete_coverage,
+                    expected_scouts=expected_scouts,
+                )
+            )
+        }
     elif args.command == "validate-body":
         body = args.body.read_text(encoding="utf-8")
         result = {"body_bytes": validate_body(body)}

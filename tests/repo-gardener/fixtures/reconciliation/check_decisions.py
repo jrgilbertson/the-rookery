@@ -125,6 +125,35 @@ def require_contract_error(label: str, expected_text: str, action: Callable[[], 
     raise ContractError(f"{label} mutation survived")
 
 
+def require_receipt_cli_contract_error(
+    label: str,
+    expected_text: str,
+    receipts: dict[str, Any],
+    manifest: dict[str, Any],
+) -> None:
+    with tempfile.TemporaryDirectory(prefix="repo-gardener-receipts-") as temp:
+        receipt_path = Path(temp) / "receipts.json"
+        manifest_path = Path(temp) / "manifest.json"
+        receipt_path.write_text(json.dumps(receipts), encoding="utf-8")
+        manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+        completed = subprocess.run(
+            [
+                sys.executable,
+                str(CONTRACT_PATH),
+                "validate-scout-receipts",
+                "--receipts",
+                str(receipt_path),
+                "--manifest",
+                str(manifest_path),
+            ],
+            capture_output=True,
+            text=True,
+        )
+    require(completed.returncode == 1, f"{label} mutation did not fail with the contract exit code")
+    require(completed.stderr.startswith("FAIL: "), f"{label} mutation did not fail as ContractError")
+    require(expected_text in completed.stderr, f"{label} mutation failed for the wrong reason: {completed.stderr.strip()}")
+
+
 def rehash_history(records: dict[str, Any]) -> None:
     previous_hash = "0" * 64
     for receipt in records["history_receipts"]:
@@ -645,6 +674,25 @@ def main() -> int:
         lambda: CONTRACT.validate_register(records, missing_lane, authentication, POLICY_PATH),
     )
 
+    unknown_row_lane = copy.deepcopy(records)
+    unknown_row_lane["rows"][0]["lane"] = "forged-uninstalled-lane"
+    require_contract_error(
+        "register row outside installed lane inventory",
+        "installed policy lane inventory",
+        lambda: CONTRACT.validate_register(unknown_row_lane, manifest, authentication, POLICY_PATH),
+    )
+
+    empty_standalone_manifest = copy.deepcopy(manifest)
+    empty_standalone_manifest["scouts"] = []
+    empty_standalone_receipts = copy.deepcopy(complete_data)
+    empty_standalone_receipts["receipts"] = []
+    require_receipt_cli_contract_error(
+        "standalone empty Scout Receipt inventory",
+        "installed policy lane inventory",
+        empty_standalone_receipts,
+        empty_standalone_manifest,
+    )
+
     with tempfile.TemporaryDirectory(prefix="repo-gardener-policy-") as temp:
         policy = Path(temp) / "policy.yaml"
         policy.write_text("unrelated:\n  repository_portfolio_limit: 99\n", encoding="utf-8")
@@ -659,6 +707,32 @@ def main() -> int:
             "public Release A contract",
             lambda: CONTRACT.validate_register(records, manifest, authentication, policy),
         )
+        canonical_policy = POLICY_PATH.read_text(encoding="utf-8")
+        for lane in CONTRACT.RELEASE_A_LANES:
+            enabled_lane_policy, replacements = re.subn(
+                rf"(  {re.escape(lane)}:\n    mutation:) false",
+                r"\1 true",
+                canonical_policy,
+                count=1,
+            )
+            require(replacements == 1, f"could not construct enabled-lane mutation for {lane}")
+            policy.write_text(enabled_lane_policy, encoding="utf-8")
+            require_contract_error(
+                f"enabled {lane} lane mutation",
+                "mutation must be exactly false",
+                lambda: CONTRACT.validate_register(records, manifest, authentication, policy),
+            )
+
+    require_contract_error(
+        "non-identity retained capacity entry",
+        "retained row 0",
+        lambda: CONTRACT.render_capacity_with_limit([1], [], CONTRACT.RELEASE_A_PORTFOLIO_LIMIT),
+    )
+    require_contract_error(
+        "unhashable retained capacity entry",
+        "retained row 1",
+        lambda: CONTRACT.render_capacity_with_limit(["row:valid", []], [], CONTRACT.RELEASE_A_PORTFOLIO_LIMIT),
+    )
 
     oversized_identity = copy.deepcopy(records)
     oversized_identity["repository_id"] = "r" * (CONTRACT.IDENTITY_LIMIT + 1)
@@ -695,7 +769,7 @@ def main() -> int:
 
     validate_sources(repo_root)
     print("PASS: Release A reconciliation outcomes derive from caller, gate, receipt, capacity, and ordering facts")
-    print(f"PASS: {len(mutations) + 51} reconciliation, authority, history, policy, schema, bound, and receipt mutations rejected")
+    print(f"PASS: {len(mutations) + 64} reconciliation, authority, history, policy, schema, bound, and receipt mutations rejected")
     print("NOTE: fresh-context matched cases own behavioral evidence")
     return 0
 

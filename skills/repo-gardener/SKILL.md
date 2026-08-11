@@ -114,8 +114,8 @@ other work but do not turn the stopped run into a completed run.
 
 Treat a caller-supplied one-shot terminal-report capability as the final
 ordered operation. Keep it active until the caller accepts exactly one terminal
-report. Carry pending decision requests in that report for caller persistence:
-Carry every unpersisted decision exactly once in that single terminal report;
+report. Carry every unpersisted decision exactly once in that single terminal
+report for caller persistence;
 do not block, fail, cancel, revoke, release, or otherwise settle the current
 assignment first. Stop after acceptance.
 

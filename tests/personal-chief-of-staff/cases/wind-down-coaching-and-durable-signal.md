@@ -4,7 +4,8 @@ Provenance: proactive chief-of-staff coaching plan (2026-08-09), deepening the
 morning deprecation baseline. The prior contract required a grounded
 focus / stop / more / less recap, but did not require a decision effect, an
 honest null, material counterevidence, or separation of one-day state from
-recurrence.
+recurrence. It also did not guarantee that each coached intention exposed its
+current state, user-owned desired outcome, and future observable evidence.
 
 ## Prompt
 
@@ -49,3 +50,11 @@ recurrence.
 - [ ] In every scenario, a revised commitment remains a proposal until the user
       approves its exact text and rationale; journal, strategy, and learning
       effects remain separate numbered actions requiring their own approval.
+- [ ] For each proposed commitment or durable learning effect, a fresh grader
+      can identify exact spans for the current observed state, the desired
+      user-owned change, and the future observable closure signal. A tool call,
+      access row, or statement that the agent acted is not that signal.
+- [ ] The answer-first coaching judgment precedes a response-scoped Source
+      Access Audit. Every named configured role materially used for the
+      strategy, release, journal, or learning claim is attempted or explicitly
+      classified, and a gap narrows only its dependent coaching claim.

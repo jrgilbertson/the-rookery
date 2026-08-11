@@ -134,3 +134,22 @@ turn in the same live context:
       backfill, narrows source gaps conclusion by conclusion, starts no health
       causality analysis without a named decision and agreed window, and a
       scheduled run remains read-only until user interaction.
+- [ ] Weekly and Quarterly answers lead with their synthesis, then render a
+      response-scoped Source Access Audit covering every material configured
+      journal, review, strategy, learning, relationship, task, and calendar
+      role considered for that response. A named available role may not be
+      silently omitted or labeled `Not needed` when a conclusion depends on it.
+- [ ] Scenario 2 classifies sparse February journals and absent relationship
+      evidence by the reads actually attempted and limits only the affected
+      thread, rule-audit, tension, or commitment claims. It never converts a
+      failed, truncated, or unknown-completeness read into negative evidence.
+- [ ] Scenario 4 reports each unresolved canonical role as `Not configured`
+      while preserving accessed current task and calendar facts; the access
+      rows neither guess a role owner nor create configuration.
+- [ ] Every proposed experiment or commitment exposes, in separately gradeable
+      response spans, the current supported state, the desired outcome owned or
+      accepted by the user, and a future observable signal that could close or
+      disconfirm it. Literal intention headings are optional.
+- [ ] A scheduled version of any scenario still includes the audit, proposes no
+      write, and does not turn the schedule into approval. A later same-context
+      resumption reports current access only, not access from the prior turn.

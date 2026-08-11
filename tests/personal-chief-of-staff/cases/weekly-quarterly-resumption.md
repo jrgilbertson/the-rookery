@@ -41,3 +41,14 @@ the weekly, quarterly, and repeated-commitment-pattern variants.
 - [ ] All scenarios → keeps the review and every related source change independently
       approvable, and writes nothing merely because a scheduled invocation
       fired.
+- [ ] Scenarios 1 and 2 render a new response-scoped Source Access Audit after
+      the executive synthesis. It distinguishes reads performed for this
+      current review from historical evidence described by an older review and
+      never presents prior-run access as current.
+- [ ] Scenario 2 names incomplete journal coverage and each other material
+      source-role gap with the conclusion category it limits; an unavailable
+      role narrows only dependent conclusions and is not evidence that an event
+      did not occur.
+- [ ] Every proposed weekly or quarterly outcome makes current state,
+      user-owned desired outcome, and future observable closure evidence
+      recoverable as distinct response spans without mandatory literal labels.

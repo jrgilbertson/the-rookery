@@ -1,0 +1,5 @@
+target=fixture-vault|Actions/current.md|action_target
+reads=evidence,evidence
+before=existing synthetic context;
+after=existing synthetic context;approved synthetic effect
+readback=existing synthetic context;approved synthetic effect

@@ -5,6 +5,16 @@ calendar, mailbox, reflection, or other evidence first named a candidate, so a
 same-day Apple Messages group exchange with a bindable speaker could be missed;
 short-miss recovery and zero-effect safety are part of the same behavior change.
 
+## Interface precondition
+
+If the executor calls the real configured Messages interface, command success
+and returned rows prove only the rows observed in the requested finite window.
+An empty response proves complete-empty only when that interface also supplies
+an explicit completion signal for the requested window. A cap, incomplete
+marker, or missing completeness signal is partial coverage; a nonzero command
+or unavailable database is failed access. The prompt's synthetic facts do not
+themselves count as a traced source read.
+
 ## Prompt
 
 > For each scenario, state whether a Daily CRM Scan runs before the initial
@@ -47,3 +57,15 @@ short-miss recovery and zero-effect safety are part of the same behavior change.
 - [ ] 4 → Alex receives a contact-date outcome (novel or Already satisfied);
       unbound handle stays unresolved with no Person effect; group is not one
       anonymous contact.
+- [ ] Every scenario keeps the answer-first CRM result ahead of a Source Access
+      Audit. The audit includes the configured Messages relationship-evidence
+      role and each canonical Person role actually read, uses only generic safe
+      labels and bounded scope, and narrows only claims affected by incomplete
+      or failed access.
+- [ ] Scenario 2 reports no CRM proposal only when the relevant finite window
+      is proven complete. An empty result without a completeness signal is
+      partial or failed access and cannot support “no substantive exchange.”
+- [ ] Every proposed CRM effect makes the current observed relationship state,
+      the exact user-owned desired effect, and its future canonical readback or
+      equivalence signal separately recoverable without requiring literal
+      intention headings.

@@ -125,6 +125,12 @@ against both current source facts and the current register. Record a terminal
 outcome through the report wrapper only when those authoritative facts prove
 one. Ambiguity blocks blind retry and dependent work only.
 
+An authoritative reconciliation result that marks an effect
+`effect_reconciled: true` is positive terminal evidence, not ordering evidence
+alone. Render `terminal_outcome: observed` and idempotently persist and read
+back that observed terminal receipt. Never describe that reconciled effect as
+lacking a terminal outcome.
+
 Retry is allowed only when source-native register evidence proves absence of
 the prior effect, the original repository-qualified pair is reused, current
 authority and preconditions still match, and the wrapper allowlists are

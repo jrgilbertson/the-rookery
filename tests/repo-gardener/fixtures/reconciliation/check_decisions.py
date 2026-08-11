@@ -190,9 +190,11 @@ def validate_sources(repo_root: Path) -> None:
     case_dir = repo_root / "tests" / "repo-gardener" / "cases"
     policy = (skill_dir / "assets" / "policy-template.yaml").read_text(encoding="utf-8")
     reconcile = (skill_dir / "references" / "reconciliation.md").read_text(encoding="utf-8")
+    effects = (skill_dir / "references" / "applying-effects.md").read_text(encoding="utf-8")
     register = (skill_dir / "references" / "register-and-report.md").read_text(encoding="utf-8")
     core = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     reconcile_words = " ".join(reconcile.split()).lower()
+    effects_words = " ".join(effects.split()).lower()
     register_words = " ".join(register.split())
     core_words = " ".join(core.split())
     mutations = re.findall(r"^\s+mutation: (true|false)$", policy, re.MULTILINE)
@@ -226,6 +228,8 @@ def validate_sources(repo_root: Path) -> None:
         "Render the canonical report and read it back last",
         "repository_portfolio_limit` exactly once",
         "generic terminal fact with no such binding",
+        "every reconciliation response states both terminal-row branches",
+        "stable terminal-source binding",
         "outside recommendation eligibility",
     ):
         require(phrase.lower() in reconcile_words, f"reconciliation contract missing: {phrase}")
@@ -263,7 +267,22 @@ def validate_sources(repo_root: Path) -> None:
         "fields alone as authentication" in reconcile_case,
         "reconciliation prompt does not distinguish stored identity data from proof",
     )
-    require("generic fact is not attached to either named row" in reconcile_case, "terminal-row rubric permits an invented row association")
+    require(
+        "effect_reconciled: true" in reconcile_case
+        and "idempotently recorded as an `observed` effect disposition" in reconcile_case,
+        "reconciliation rubric does not require the observed reconciled-effect disposition",
+    )
+    require(
+        "Every reconciliation response states the general rule" in reconcile_case
+        and "generic unbound fact remains unattached" in reconcile_case,
+        "terminal-row rubric does not require both the bound rule and unbound disposition",
+    )
+    require(
+        "effect_reconciled: true" in effects_words
+        and "terminal_outcome: observed" in effects_words
+        and "idempotently" in effects_words,
+        "effect recovery contract does not map reconciled effects to an idempotent observed disposition",
+    )
     caller_case = (case_dir / "caller-lifecycle-and-local-blockers.md").read_text(encoding="utf-8")
     require(
         "does not turn a possible persistence path into proof" in caller_case
@@ -388,7 +407,13 @@ def main() -> int:
             "terminal-row",
             "terminal source binding",
             lambda item: item.__setitem__("terminal_source_binding", True),
-            {"row_action": "release-or-owner-release", "allowed_results": ["released-same-update", "action-required-owner-release"]},
+            {"row_action": "release-or-owner-release", "stable_binding_dispositions": ["released-same-update", "action-required-owner-release"]},
+        ),
+        (
+            "unmatched-effect-before-discovery",
+            "reconciled effect disposition",
+            lambda item: item.__setitem__("effect_reconciled", False),
+            {"ordering_valid": False, "terminal_outcome": "ambiguous", "terminal_receipt_recording": "withheld"},
         ),
     ]
     for identity, label, mutate, expected_result in mutations:

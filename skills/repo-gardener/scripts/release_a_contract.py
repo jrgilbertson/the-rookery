@@ -816,7 +816,10 @@ def evaluate_reconciliation(
         return {"ordinary_attention": "Routine (disabled lane)" if not ordinary["critical"] else "Action required (lane disabled)", "critical_attention": "Action required (lane disabled)" if critical["critical"] and critical.get("applicable") else "Routine (disabled lane)", "rows_changed": 0, "source_mutations": 0}
     if scenario_type == "terminal-row":
         bound = scenario.get("terminal_source_binding") is True
-        return {"allowed_results": ["released-same-update", "action-required-owner-release"] if bound else [], "row_action": "release-or-owner-release" if bound else "unchanged-unassociated"}
+        return {
+            "stable_binding_dispositions": ["released-same-update", "action-required-owner-release"],
+            "row_action": "release-or-owner-release" if bound else "unchanged-unassociated",
+        }
     if scenario_type == "honest-no-op":
         require_exact_fields(
             scenario,
@@ -836,8 +839,20 @@ def evaluate_reconciliation(
         can_write = valid and reconciliation_write_authorized(authority)
         return {"integrity": "valid" if valid else "unavailable", "writes": 1 if can_write else 0}
     if scenario_type == "reconciliation-order":
-        valid = scenario.get("effect_reconciled") is True and scenario.get("discovery_started_after_reconciliation") is True
-        return {"ordering_valid": valid}
+        require_exact_fields(
+            scenario,
+            {"id", "scenario_type", "unmatched_intents", "effect_reconciled", "discovery_started_after_reconciliation"},
+            "reconciliation-order scenario",
+        )
+        unmatched_intents = scenario.get("unmatched_intents")
+        require(isinstance(unmatched_intents, int) and not isinstance(unmatched_intents, bool) and unmatched_intents >= 0, "unmatched intent count must be a nonnegative integer")
+        reconciled = scenario.get("effect_reconciled") is True
+        valid = reconciled and scenario.get("discovery_started_after_reconciliation") is True
+        return {
+            "ordering_valid": valid,
+            "terminal_outcome": "observed" if reconciled else "ambiguous",
+            "terminal_receipt_recording": "idempotent" if reconciled else "withheld",
+        }
     raise ContractError(f"unknown reconciliation scenario type: {scenario_type}")
 
 

@@ -14,8 +14,8 @@
   "full-capacity":{"rendered_slots":7,"recommendations":0},
   "critical-at-capacity":{"rendered_slots":7,"recommendations":0,"preemption_proposal":true,"rows_changed":0},
   "disabled-lane-observations":{"ordinary_attention":"Routine (disabled lane)","critical_attention":"Action required (lane disabled)","rows_changed":0,"source_mutations":0},
-  "terminal-row":{"allowed_results":[],"row_action":"unchanged-unassociated"},
+  "terminal-row":{"stable_binding_dispositions":["released-same-update","action-required-owner-release"],"row_action":"unchanged-unassociated"},
   "honest-no-op":{"attention_state":"Routine","next_owner_action":"none","rendered_slots":7},
   "incomplete-history":{"integrity":"unavailable","writes":0},
-  "unmatched-effect-before-discovery":{"ordering_valid":true}
+  "unmatched-effect-before-discovery":{"ordering_valid":true,"terminal_outcome":"observed","terminal_receipt_recording":"idempotent"}
 }

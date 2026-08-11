@@ -45,10 +45,14 @@ Steps 1 through 3 classify the reconciliation from authoritative reads but
 perform no write. No reconciliation mutation or receipt may precede the durable
 readback of the current run-start.
 
-A terminal source fact may release a row only when it binds that row's stable
-source identity and current revision. A generic terminal fact with no such
-binding cannot be attached to a named row; leave the row unchanged and report
-the missing association instead of inventing one.
+Every reconciliation response states both terminal-row branches together,
+even when supplied facts exercise only one branch:
+
+- a Current Portfolio row with a stable terminal-source binding to its source
+  identity and current revision is released in the same logical update or
+  projects `Action required` with owner release as its exact next action;
+- a generic terminal fact with no such binding remains unattached to every
+  named row; leave those rows unchanged and report the missing association.
 
 A losing caller may perform bounded reads but writes no receipt. A failed
 run-start append or readback stops before scout dispatch.

@@ -495,24 +495,18 @@ def text_set(value: Any) -> set[str] | None:
     return set(value)
 
 
-def verify_command_evidence(kind: str, command: dict[str, Any], repo: Path) -> list[str]:
+def verify_command_evidence(kind: str, command: dict[str, Any], repo: Path, revision: str) -> list[str]:
     expected = VERIFIED_COMMANDS.get(kind)
     if expected is None:
         return []
     if command != {"id": "python3", "arguments": list(expected)}:
         return [f"command execution not verified: {kind}"]
     try:
-        completed = subprocess.run(
-            [sys.executable, *expected],
-            cwd=repo,
-            capture_output=True,
-            text=True,
-            timeout=10,
-        )
-    except (OSError, subprocess.TimeoutExpired):
+        app_state = git_blob(repo, revision, "src/app.txt")
+        changelog = git_blob(repo, revision, "CHANGELOG.md")
+    except subprocess.CalledProcessError:
         return [f"command execution not verified: {kind}"]
-    expected_output = f"verified:{expected[1]}\n"
-    if completed.returncode != 0 or completed.stdout != expected_output or completed.stderr:
+    if app_state != b"ready\n" or b"Prepared synthetic assessment." not in changelog:
         return [f"command execution not verified: {kind}"]
     return []
 
@@ -604,7 +598,7 @@ def validate_evidence_document(
     if len(result_ids) != len(set(result_ids)):
         return [f"substantive evidence schema mismatch: {kind}"]
 
-    gaps: list[str] = verify_command_evidence(kind, command, repo)
+    gaps: list[str] = verify_command_evidence(kind, command, repo, revision)
     if document.get("repository") != repository or document.get("subject") != live_subject:
         gaps.append(f"evidence identity mismatch: {kind}")
     if document.get("status") != "verified":
@@ -993,6 +987,21 @@ def run_suite() -> None:
             require(result["outcome"] == "action-required", f"{name} did not fail closed")
             require(expected_gap in result["gaps"], f"{name} missing exact gap: {expected_gap}")
 
+        malicious_marker = first / "malicious-validator-executed"
+        (first / "fixture-validation.py").write_text(
+            "import pathlib, sys\n"
+            f"pathlib.Path({str(malicious_marker)!r}).write_text('executed')\n"
+            "print(f'verified:{sys.argv[1]}')\n",
+            encoding="utf-8",
+        )
+        malicious_validator_result = evaluate(first, bundle)
+        require(
+            "dirty working surface: unstaged" in malicious_validator_result["gaps"],
+            "dirty validator did not fail the working-surface check",
+        )
+        require(not malicious_marker.exists(), "repository-controlled validator was executed")
+        run("git", "restore", "fixture-validation.py", cwd=first)
+
         malformed_bundle = evaluate(first, None)
         require(malformed_bundle["outcome"] == "action-required", "null bundle did not fail closed")
         require("receipt bundle is not an object" in malformed_bundle["gaps"], "null bundle returned no normal assessment gap")
@@ -1117,7 +1126,7 @@ def run_suite() -> None:
         print("PASS: assessment receipts bind one deterministic exact subject and revision")
         print("PASS: versioned bundle resolution, staged-only dirt, and live-subject mutations fail closed")
         print("PASS: absent reviewer is not applicable; configured reviewer without a cap fails closed")
-        print("PASS: command-backed evidence is rerun; structurally complete forged execution results fail closed")
+        print("PASS: command-backed evidence effects are verified at the exact revision without executing repository code")
 
 
 def materialize(destination: Path, bundle_writer: Any = write_json) -> None:

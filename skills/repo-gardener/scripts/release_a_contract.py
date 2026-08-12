@@ -1105,8 +1105,16 @@ def evaluate_effect(scenario: Any) -> dict[str, Any]:
         return {"dependent_work_blocked": bool(scenario.get("missing_scout")), "independent_work": "continued" if scenario.get("independent_work") is True else "gated"}
     if scenario_type == "caller-completion":
         accepted = scenario.get("terminal_capability_active") is True and scenario.get("caller_accepts") is True
-        pending = require_list(scenario.get("pending_decision_ids"), "pending decisions")
-        assignment = require_list(scenario.get("assignment_persisted_decision_ids"), "assignment-persisted decisions")
+        pending = [
+            require_identity(item, f"pending_decision_ids {index}")
+            for index, item in enumerate(require_list(scenario.get("pending_decision_ids"), "pending decisions"))
+        ]
+        assignment = [
+            require_identity(item, f"assignment_persisted_decision_ids {index}")
+            for index, item in enumerate(
+                require_list(scenario.get("assignment_persisted_decision_ids"), "assignment-persisted decisions")
+            )
+        ]
         require(len(pending) == len(set(pending)), "duplicate pending decision")
         require(len(assignment) == len(set(assignment)), "duplicate assignment-persisted decision")
         assignment_proven = scenario.get("assignment_persistence_authorized") is True and scenario.get("assignment_persistence_read_back") is True

@@ -104,11 +104,25 @@ EVIDENCE_RESULT_FIELDS = {
     "repository-gates": {"result_id", "outcome", "summary"},
     "code-review": {"result_id", "outcome", "reviewed_paths"},
     "code-simplification": {"result_id", "outcome", "reviewed_paths"},
-    "testing": {"result_id", "outcome", "exit_code"},
+    "testing": {"result_id", "name", "command", "outcome", "exit_code"},
     "plan-versus-delivered": {"result_id", "outcome", "delivered"},
     "learning-signal": {"result_id", "outcome", "summary"},
     "targeted-sweep": {"result_id", "outcome", "class_count"},
     "preflight": {"result_id", "outcome", "unresolved_count"},
+}
+RECEIPT_FIELDS = {
+    "schema",
+    "receipt_id",
+    "kind",
+    "capability",
+    "capability_version",
+    "repository",
+    "subject",
+    "exact_revision",
+    "evidence_references",
+    "outcome",
+    "gaps",
+    "observed_at",
 }
 EVIDENCE_BLOB_CACHE: dict[tuple[str, str, str], tuple[str, bytes]] = {}
 
@@ -268,7 +282,13 @@ def evidence_documents(reviewer_mode: str = "configured") -> dict[str, dict[str,
         "testing": evidence(
             "testing",
             "python3",
-            [{"result_id": "test:fixture-validation", "outcome": "passed", "exit_code": 0}],
+            [{
+                "result_id": "test:fixture-validation",
+                "name": "fixture-validation",
+                "command": "python3 fixture-validation.py test",
+                "outcome": "passed",
+                "exit_code": 0,
+            }],
             ["fixture-validation.py", "test"],
             checks=[{
                 "name": "fixture-validation",
@@ -776,9 +796,17 @@ def validate_evidence_document(
             gaps.append(f"unresolved finding: {kind}")
     elif kind == "testing":
         checks = document.get("checks")
+        expected_command = " ".join([command["id"], *command["arguments"]])
+        check_references = [
+            check.get("result_reference")
+            for check in checks
+            if isinstance(check, dict)
+        ] if isinstance(checks, list) else []
         if (
             not isinstance(checks, list)
             or not checks
+            or len(checks) != len(results)
+            or len(check_references) != len(set(check_references))
             or any(
                 not isinstance(check, dict)
                 or set(check) != {"name", "command", "outcome", "result_reference"}
@@ -786,8 +814,14 @@ def validate_evidence_document(
                 or not bounded_text(check.get("command"))
                 or check.get("outcome") != "passed"
                 or check.get("result_reference") not in result_by_id
-                or result_by_id[check["result_reference"]].get("outcome") != "passed"
-                or result_by_id[check["result_reference"]].get("exit_code") != 0
+                or result_by_id[check["result_reference"]] != {
+                    "result_id": check.get("result_reference"),
+                    "name": check.get("name"),
+                    "command": check.get("command"),
+                    "outcome": "passed",
+                    "exit_code": 0,
+                }
+                or check.get("command") != expected_command
                 for check in checks
             )
             or document.get("ui_classification") not in {"applicable", "not applicable"}
@@ -896,6 +930,8 @@ def evaluate(repo: Path, bundle: Any, input_gaps: list[str] | None = None) -> di
         if receipt is None:
             gaps.append(f"missing receipt: {kind}")
             continue
+        if set(receipt) != RECEIPT_FIELDS or not isinstance(receipt.get("gaps"), list):
+            gaps.append("invalid receipt fields")
         if receipt.get("schema") != "checking-pr-readiness-evidence/v1":
             gaps.append(f"invalid receipt schema: {kind}")
         if receipt.get("receipt_id") != f"receipt:{kind}":
@@ -916,7 +952,7 @@ def evaluate(repo: Path, bundle: Any, input_gaps: list[str] | None = None) -> di
             gaps.append(f"invalid observation time: {kind}")
         if receipt.get("outcome") == "bypassed" or receipt.get("bypass_requested"):
             gaps.append(f"bypass request: {kind}")
-        elif receipt.get("outcome") not in {"verified", "not applicable"} or receipt.get("gaps"):
+        elif receipt.get("outcome") not in {"verified", "not applicable"} or receipt.get("gaps") != []:
             gaps.append(f"unresolved finding: {kind}")
         references = receipt.get("evidence_references", [])
         if not isinstance(references, list) or not references:
@@ -1262,6 +1298,47 @@ def run_suite() -> None:
             omitted_gate_result["outcome"] == "action-required"
             and "repository gate inventory incomplete" in omitted_gate_result["gaps"],
             "evidence omitted one of multiple independently discovered repository gates",
+        )
+
+        reused_test_result_repo = root / "reused-test-result"
+        def reuse_test_result(documents: dict[str, dict[str, Any]]) -> None:
+            documents["testing"]["checks"].append({
+                "name": "unexecuted-browser-test",
+                "command": "browser test",
+                "outcome": "passed",
+                "result_reference": "test:fixture-validation",
+            })
+
+        reused_test_result_revision = build_repository(
+            reused_test_result_repo,
+            evidence_mutator=reuse_test_result,
+        )
+        reused_test_result = evaluate(
+            reused_test_result_repo,
+            make_bundle(reused_test_result_repo, reused_test_result_revision),
+        )
+        require(
+            reused_test_result["outcome"] == "action-required"
+            and "testing evidence incomplete" in reused_test_result["gaps"],
+            "testing check reused unrelated passing execution evidence",
+        )
+
+        missing_receipt_gaps_repo = root / "missing-receipt-gaps"
+        missing_receipt_gaps_revision = build_repository(missing_receipt_gaps_repo)
+        missing_receipt_gaps_bundle = make_bundle(
+            missing_receipt_gaps_repo,
+            missing_receipt_gaps_revision,
+        )
+        for receipt in missing_receipt_gaps_bundle["receipts"]:
+            del receipt["gaps"]
+        missing_receipt_gaps = evaluate(
+            missing_receipt_gaps_repo,
+            missing_receipt_gaps_bundle,
+        )
+        require(
+            missing_receipt_gaps["outcome"] == "action-required"
+            and "invalid receipt fields" in missing_receipt_gaps["gaps"],
+            "receipts without an explicit gaps inventory passed",
         )
 
         weak_documents = {

@@ -310,6 +310,18 @@ def main() -> int:
         }
     )
     CONTRACT.require(caller["decisions_carried_for_caller"] == 2 and caller["self_settled_before_acceptance"] is False, "caller completion regressed")
+    for field in ("pending_decision_ids", "assignment_persisted_decision_ids"):
+        invalid_caller = {
+            "scenario_type": "caller-completion",
+            "pending_decision_ids": ["decision:a"],
+            "assignment_persisted_decision_ids": ["decision:a"],
+            "assignment_persistence_authorized": True,
+            "assignment_persistence_read_back": True,
+            "terminal_capability_active": True,
+            "caller_accepts": True,
+        }
+        invalid_caller[field][0] = True
+        expect_completion_error(invalid_caller, f"{field} 0 is missing")
 
     print(f"PASS: {len(scenarios)} exact report-effect prepare/verify scenarios")
     print("PASS: legacy authority/verdict inputs cannot mint success or repair")

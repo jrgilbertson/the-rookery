@@ -5,6 +5,10 @@ sources and prepares report-register operations. The caller may apply exact
 prepared report material under its own authority; the skill performs no
 provider or source write.
 
+When the core route loads the cross-cutting measurement-integrity contract, run
+its preflight. It contributes evidence to the nine lanes and never becomes a
+tenth lane.
+
 ## Reconcile before discovery
 
 Normalize a complete issue snapshot with `normalize-github-register` before
@@ -36,8 +40,37 @@ count, and one outcome: `complete`, `not applicable`, or `incomplete`. A missing
 receipt is `incomplete (no receipt)`, never zero findings. Incomplete coverage
 blocks only dependent candidates unless that lane owns a safety boundary.
 
+`candidate_count` is the number of distinct candidate records that scout emits
+after satisfying the common candidate evidence shape in `lane-contracts.md`.
+It never counts enumerated issues, alerts, files, events, backlog rows, or other
+source census items. Report source census totals separately. After cross-scout
+deduplication, report the normalized candidate count separately again.
+
 Rediscover unselected work from current sources on every run. History, age,
 missed schedules, and free capacity create no catch-up work.
+
+## Select bounded depth
+
+After all nine breadth scouts and any applicable measurement-integrity preflight
+return, deepen zero to the policy's `maximum_deep_targets_per_run` targets. A
+deep target is read-only enrichment in the parent invocation; it creates no
+portfolio row or child worktree. Select fewer than the maximum when the evidence
+does not justify more.
+
+Among currently evidence-justified applicable targets, choose qualitatively in
+this order: a credible threat to a critical user flow; a seam supported by
+multiple independent lanes or signals; an overdue coverage area with a current
+signal; then the strongest validated breadth finding. After the relevant
+measurement slice passes, product-behavior evidence may corroborate or break
+ties. If current evidence still does not decide, prefer the least recently
+deepened applicable area. Coverage history may choose what to inspect; it never
+makes a target eligible or important. Do not repeat the same target on
+consecutive runs without materially new evidence.
+
+For each selected target, name the triggering evidence, bounded source slice,
+questions investigated, checks run, findings, remaining uncertainty, and
+issue-ready next action. Re-evaluate after each result so variants of one cause
+coalesce into one cross-cutting investigation.
 
 ## Normalize and gate
 
@@ -72,6 +105,11 @@ first, followed by ephemeral recommendations, then `available` slots. Never
 create an eighth row. A critical candidate may produce a preemption proposal
 but does not change a row.
 
+Portfolio ownership and execution parallelism constrain claiming and authoring,
+not read-only sensing, qualification, deepening, or ephemeral recommendation.
+An owned or Merge-ready row consumes its report slot but does not suppress
+recommendations in the remaining slots.
+
 ## Verify completion
 
 For each report operation, prepare immutable material, let the caller decide
@@ -94,3 +132,12 @@ An honest no-op still requires all nine terminal lane receipts, completed
 reconciliation, no gate-passing candidate, exact report verification, and a
 `run-closed` receipt. It returns `Routine`, seven retained-or-available slots,
 and `next_owner_action: none`.
+
+When the caller created a parent workspace for this invocation, include its
+stable identity, branch, final status, checks, and issue-ready recommendations
+in the morning handoff. Leave that parent workspace available for owner
+inspection. A caller-local completion view may show its local path, but never
+persist that path in the public report. The authenticated report remains the
+durable run history; cleanup is a later owner action. This does not retain
+completed child worktrees, whose lifecycle follows their own terminal
+source-work outcome.

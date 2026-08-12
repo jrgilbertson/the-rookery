@@ -21,10 +21,12 @@ Take exactly one branch:
   It may propose the all-off policy asset, but never installs or activates it.
 - **reconcile** is the scheduled or manual Release A control loop. Read
   [references/reconciliation.md](references/reconciliation.md) and
-  [references/lane-contracts.md](references/lane-contracts.md). It may read
-  configured sources and prepare report-register effects for its caller. It
-  never invokes a provider write or claims, adopts, queues, edits, merges, or
-  otherwise mutates source work.
+  [references/lane-contracts.md](references/lane-contracts.md). When canonical
+  metrics and a configured reporting read source exist, also read
+  [references/measurement-integrity.md](references/measurement-integrity.md).
+  It may read configured sources and prepare report-register effects for its
+  caller. It never invokes a provider write or claims, adopts, queues, edits,
+  merges, or otherwise mutates source work.
 
 Before reading or writing the report-backed register, read
 [references/register-and-report.md](references/register-and-report.md) and

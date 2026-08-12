@@ -22,3 +22,5 @@ Provenance: Observed failure where a dry run treated free capacity as authority 
 - [ ] With full capacity, no eighth recommendation, row, reservation, queue item, or priority field is created.
 - [ ] The critical full-capacity case may emit only a preemption proposal naming an interruptible row; it changes neither row.
 - [ ] Qualitative comparison uses stable source identity only as final tie-break and computes no master score.
+- [ ] Execution parallelism constrains authoring, not read-only qualification,
+      deepening, or recommendations in otherwise available slots.

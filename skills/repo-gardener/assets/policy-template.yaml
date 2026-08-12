@@ -40,6 +40,7 @@ boundaries:
   repository_portfolio_limit: 7
   top_level_report_writes_serialized: true
   cheap_read_before_enrichment: true
+  maximum_deep_targets_per_run: 3
 
 caller_roles:
   repository_read: required

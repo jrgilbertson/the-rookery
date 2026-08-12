@@ -186,6 +186,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-gardener` now preserves breadth while execution work is occupied,
+  counts only evidence-qualified candidates, and may deepen up to three
+  evidence-selected targets per run. A cross-cutting measurement-integrity
+  preflight reconciles reporting data with durable repository-defined facts
+  without adding a tenth lane or treating analytics as product truth; completed
+  parent workspaces remain available for owner inspection.
 - `managing-personal-crm` and `personal-chief-of-staff` can use authenticated
   Grok X search as optional, read-only relationship evidence. They prefer a
   known URL or handle when present, otherwise a short slice of the user's own

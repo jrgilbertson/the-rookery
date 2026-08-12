@@ -17,6 +17,8 @@ FIXTURES = Path(__file__).resolve().parent
 CONTRACT_PATH = ROOT / "skills/repo-gardener/scripts/release_a_contract.py"
 SNAPSHOT_RUNNER = FIXTURES.parent / "github-register/check_snapshots.py"
 POLICY_PATH = ROOT / "skills/repo-gardener/assets/policy-template.yaml"
+RECONCILIATION_PATH = ROOT / "skills/repo-gardener/references/reconciliation.md"
+MEASUREMENT_PATH = ROOT / "skills/repo-gardener/references/measurement-integrity.md"
 sys.dont_write_bytecode = True
 
 
@@ -237,6 +239,27 @@ def main() -> int:
         capacity == {"rendered_slots": 7, "retained_first": True, "available_slots": 3, "recommendations": 2},
         "policy-derived retained-first capacity regressed",
     )
+    policy = POLICY_PATH.read_text(encoding="utf-8")
+    reconciliation = RECONCILIATION_PATH.read_text(encoding="utf-8")
+    measurement = MEASUREMENT_PATH.read_text(encoding="utf-8")
+    CONTRACT.require(
+        policy.count("maximum_deep_targets_per_run: 3") == 1,
+        "nightly depth limit must be declared exactly once",
+    )
+    for phrase in (
+        "It never counts enumerated issues",
+        "deepen zero to the policy's `maximum_deep_targets_per_run` targets",
+        "execution parallelism constrain claiming and authoring",
+        "Leave that parent workspace available",
+    ):
+        CONTRACT.require(phrase in reconciliation, f"nightly reconciliation contract missing: {phrase}")
+    for phrase in (
+        "It contributes evidence to the nine lanes",
+        "metric contract missing",
+        "Blank reporting data is `blank reporting data`",
+        "product hypothesis or conclusion",
+    ):
+        CONTRACT.require(phrase in measurement, f"measurement-integrity contract missing: {phrase}")
 
     legacy = copy.deepcopy(payloads["nine-lane-learn"])
     legacy["authority"] = {"exclusive_executor": True}

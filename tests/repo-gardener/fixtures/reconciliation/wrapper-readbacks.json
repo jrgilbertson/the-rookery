@@ -1,0 +1,9 @@
+{
+  "schema": "repo-gardener-reconciliation-readback-recipes/v2",
+  "readbacks": [
+    {"id":"observed","mutation":"exact-post-read","write_attempt":"possible"},
+    {"id":"already-satisfied","mutation":"preexisting","write_attempt":"none"},
+    {"id":"body-only","mutation":"body-only","write_attempt":"possible"},
+    {"id":"denied-unchanged","mutation":"denied-unchanged","write_attempt":"denied-before-write"}
+  ]
+}

@@ -181,6 +181,8 @@ The shipping sequence, in order:
 
 `checking-pr-readiness` presents the branch the way an engineer asks for sign-off. The full working surface including untracked files, every upstream step reported from receipts — verified only when the evidence is named, attested when I say so, never assumed — what was planned against what was delivered, a sweep of the finding classes that drive repeated automated-review rounds, and whether the branch produced a learning worth keeping. It waits for one explicit decision and changes nothing until I make it. If the branch moves while I'm deciding, the readout gets rebuilt, because approval binds to exactly what I was shown. On approval it composes an evidence pack that lands in the PR body, so reviewers and the eventual merge check read the same record. The menu also has a learning option. Before approving, I can have the change or a concept it introduced explained back to me.
 
+For unattended verification, `checking-pr-readiness` also has an assessment-only branch. It consumes one explicit exact-revision receipt bundle and returns a live-derived JSON assessment with `pass` or `action-required`. That branch presents no owner menu, waits for no decision, creates no PR-body evidence pack, and performs no write; malformed or unresolved evidence fails closed in the receipt.
+
 After approval, `ce-commit-push-pr` writes the description and opens the PR, and `ce-babysit-pr` watches it through CI failures and review feedback until the review loop is quiet — local optimization of comments and CI. Then [`checking-merge-readiness`](skills/checking-merge-readiness/SKILL.md) runs before I merge. That is the **global pass**: not another tip-identity gate, but whether the birth-to-tip change is still the right design (intent drift, overengineering, YAGNI, redesign pressure, follow-up debt), with a thin process residual and a check of host merge rules such as required conversation resolution. The one I most want caught is whether bot feedback talked the code into machinery nothing needed. That rolls into one recommendation: merge, debug, or do not merge. The skill changes nothing, so I still do the merging. I write the changelog and release notes from the merged PRs afterward.
 
 CI gates the merge on the unit and end-to-end suites, plus passes like performance and link checks in my product repos. GitHub enforces the rest, and each of these is a setting you have to turn on: a PR for every change, review comments resolved before merge, and no direct pushes to main, including for administrators.
@@ -197,6 +199,8 @@ What must be true before merge:
 ![Muninn installing an upstream prevention gate before a recurring defect reaches discarded reminder notes](docs/assets/workflow-06-maintain.webp)
 
 Repos and systems need tending over time. Maintenance runs throughout the loop, not only after merge.
+
+[`repo-gardener`](skills/repo-gardener/SKILL.md) is the portfolio-level read-only loop. It initializes one repository with an all-off policy proposal, reconciles current report rows and unmatched report intents before rediscovery, and renders exactly seven retained, recommended, or available slots from current source evidence. Its only possible write is the report register through a separately proven caller wrapper. It never claims, queues, edits, or merges source work.
 
 `repo-maintainer` is the everyday pass. It inspects the repo briefly, picks one small safe improvement, makes one diff, verifies it narrowly, and stops after a single commit. Pass `repeat N` when you want up to N passes in a row.
 

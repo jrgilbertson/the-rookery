@@ -1,0 +1,11 @@
+{
+  "schema": "repo-gardener-reconciliation-expectations/v2",
+  "expectations": {
+    "nine-lane-learn":{"effect_outcome":"observed","last_safe_stage":"Learn","overall_dogfood_complete":true,"completed":10,"blocked":0,"preserved":0,"closed":0},
+    "already-satisfied":{"effect_outcome":"already satisfied","last_safe_stage":"Learn","overall_dogfood_complete":true,"completed":10,"blocked":0,"preserved":0,"closed":0},
+    "verified-not-closed":{"effect_outcome":"observed","last_safe_stage":"Verify","overall_dogfood_complete":false,"completed":10,"blocked":0,"preserved":0,"closed":0},
+    "incomplete-local":{"effect_outcome":"observed","last_safe_stage":"Verify","overall_dogfood_complete":false,"completed":8,"blocked":1,"preserved":0,"closed":1},
+    "ambiguous-local":{"effect_outcome":"ambiguous","last_safe_stage":"Act","overall_dogfood_complete":false,"completed":7,"blocked":0,"preserved":3,"closed":0},
+    "failed-local":{"effect_outcome":"failed","last_safe_stage":"Act","overall_dogfood_complete":false,"completed":8,"blocked":0,"preserved":0,"closed":2}
+  }
+}

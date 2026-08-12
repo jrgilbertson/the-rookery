@@ -141,6 +141,15 @@ Check by running `scripts/surface-report.sh --cap <reviewer>=<n>` with one
 `--cap` per automated reviewer configured on the host repository, and read the
 verdict line directly; the helper compares the counts itself.
 
+First establish whether any automated reviewer is configured from repository
+gate, workflow, app, or review-tool configuration. When no automated reviewer
+is configured, class 11 is explicitly `not applicable`: run the surface helper
+without caps for the full inventory required by step 1, but do not reinterpret
+its mechanical `cap unverified` line as a class-11 gap. Absence of a reviewer is
+not evidence of an unknown cap. Once a reviewer is configured, absence of its
+repository-resolved cap fails closed as `cap unverified`; never fabricate a cap
+to make the class applicable.
+
 Cap values are repository-specific, never universal: each reviewer's limit
 comes from its configuration in the host repository or from the plan the
 repository runs it on, so resolve the applicable value at run time — the
@@ -153,7 +162,7 @@ reason when a configured reviewer's applicable cap cannot be confirmed at run
 time.
 
 Verdicts: under caps / `exceeds cap for <reviewer>` / cap unverified /
-no changes on surface / covered by repo gate / not run.
+no changes on surface / covered by repo gate / not run / not applicable.
 
 ## Helper exit → status word (SSOT)
 

@@ -13,6 +13,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- Added `repo-gardener`, a portable read-only repository maintenance loop. It
+  proposes an all-off policy during initialization, reconciles current report
+  rows and unmatched report intents before rediscovery, and renders a
+  deterministic seven-slot portfolio. Its sole built-in effect is exact
+  report-register preparation and structural verification; caller-owned
+  provider invocation and source mutation remain outside the skill.
 - Added a seven-image Field Guide Blueprint illustration system to
   `WORKFLOWS.md`, with Huginn carrying Research through Build, a verified
   handoff to Muninn at Ship, and Muninn returning the learning loop to
@@ -21,6 +27,16 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-gardener` now consumes the live `orchestrator-register/v1` GitHub issue
+  grammar directly, prepares immutable report body/comment material, and
+  internally verifies effect and nine-lane completion outcomes. Legacy caller
+  authority envelopes and the parallel register fixture schema were removed.
+
+- `checking-pr-readiness` now supports a read-only assessment branch that binds
+  every verified claim to one stable repository, exact subject, and full commit
+  OID. A disposable real-Git fixture proves the complete chain and fails closed
+  on missing, stale, cross-subject, cross-revision, unresolved, and bypassed
+  receipts while preserving the current interactive gate.
 - Replaced the interactive workflow diagram with a static Field Guide Blueprint
   overview and reframed all seven section illustrations as compact panoramic
   markers, preserving their visual meaning while reducing reading interruption.
@@ -170,6 +186,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-gardener` now preserves breadth while execution work is occupied,
+  counts only evidence-qualified candidates, and may deepen up to three
+  evidence-selected targets per run. A cross-cutting measurement-integrity
+  preflight reconciles reporting data with durable repository-defined facts
+  without adding a tenth lane or treating analytics as product truth; completed
+  parent workspaces remain available for owner inspection.
 - `managing-personal-crm` and `personal-chief-of-staff` can use authenticated
   Grok X search as optional, read-only relationship evidence. They prefer a
   known URL or handle when present, otherwise a short slice of the user's own

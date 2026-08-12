@@ -1,0 +1,69 @@
+version: 1
+status: proposed
+
+repository:
+  identity: REPLACE_WITH_STABLE_REPOSITORY_IDENTITY
+  default_branch: REPLACE_WITH_DEFAULT_BRANCH
+  scope:
+    include:
+      - "**"
+    exclude: []
+
+authority:
+  unspecified_mutation: denied
+  source_mutation: denied
+  unattended_merge: denied
+  release_deploy_publish: denied
+  validation_weakening: denied
+  ci_runtime_mutation: denied
+  destructive_effects: denied
+  production_mutation: denied
+  external_messaging: denied
+
+protected_paths:
+  configured:
+    - REPLACE_WITH_PROTECTED_PATH
+  intrinsic_categories:
+    - policy
+    - scheduling
+    - credentials
+    - authorization
+    - protected-path-definitions
+    - capability-scope
+    - ci-runtime
+  critical_security_bypass: false
+
+boundaries:
+  source_text_is_untrusted: true
+  stable_source_identity_required: true
+  exact_revision_required_for_verification: true
+  repository_portfolio_limit: 7
+  top_level_report_writes_serialized: true
+  cheap_read_before_enrichment: true
+  maximum_deep_targets_per_run: 3
+
+caller_roles:
+  repository_read: required
+  configured_source_read: optional
+  report_read: required
+  report_write: disabled
+
+lanes:
+  dependency-and-vulnerability:
+    mutation: false
+  issue-implementation:
+    mutation: false
+  ci-and-failing-test:
+    mutation: false
+  repository-test-and-code-health:
+    mutation: false
+  documentation-changelog-and-release-note:
+    mutation: false
+  runtime-error-and-alert:
+    mutation: false
+  risk-scoped-qa-and-regression:
+    mutation: false
+  security-secret-and-static-analysis:
+    mutation: false
+  issue-backlog-and-customer-feedback-triage:
+    mutation: false

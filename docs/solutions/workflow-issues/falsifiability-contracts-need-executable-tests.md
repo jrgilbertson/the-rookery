@@ -1,9 +1,9 @@
 ---
 title: "Ship bundled skill helpers with an executable falsifiability contract"
 date: 2026-07-31
-last_updated: 2026-08-06
+last_updated: 2026-08-11
 category: workflow-issues
-module: "skills/checking-pr-readiness, skills/checking-merge-readiness"
+module: "skills/checking-pr-readiness, skills/checking-merge-readiness, skills/repo-gardener"
 problem_type: workflow_issue
 component: testing_framework
 severity: high
@@ -120,6 +120,35 @@ cursor, and a 1.2MB body) and an extended
 including 500-path and 900-file payloads sized to actually reproduce the
 SIGPIPE race).
 
+### Recurrence (2026-08-11): self-consistent evidence without authenticated execution
+
+The same failure shape appeared at a larger boundary in `repo-gardener` and
+assessment mode. A reconciliation result could be internally well formed while
+its manifest omitted installed lanes, its receipt collections omitted complete
+envelopes, or its authority claims were merely booleans written by the caller.
+Provider authentication bound a receipt identifier only loosely enough to
+permit replay against different canonical receipt content, and the stored last
+operation fingerprint was checked for shape rather than recomputed from the
+authenticated operation. Assessment mode could likewise accept a correctly
+digested result claiming success for a command that was never run. Finally, a
+configuration search could find `repository_portfolio_limit` in the wrong YAML
+section and accept any positive value instead of the Release A contract value.
+
+The correction makes each boundary verify the authority it claims. The
+production CLI now consumes an exact installed-lane manifest, validates every
+receipt envelope and its run/register identity, requires an independent
+versioned write-authority record for write-capable scenarios, binds each
+provider receipt identifier one-to-one to canonical receipt content, and
+recomputes the operation fingerprint from authenticated operation material.
+Assessment evidence must come from an authenticated owning runner outside the
+assessed commit or from an allowlisted command that the evaluator reruns and
+verifies. Policy parsing addresses only
+`boundaries.repository_portfolio_limit` and requires the public Release A value
+exactly. Structurally complete mutations now forge each previously accepted
+shape, including a self-consistent assessment result for a command that does
+not exist, so the tests prove the rejection boundary rather than merely testing
+malformed input.
+
 ## Guidance
 
 When a bundled helper's output is what an agent reads to decide a gate:
@@ -173,6 +202,24 @@ When a bundled helper's output is what an agent reads to decide a gate:
    rather than `head`, with a fixture payload big enough to actually trigger
    the SIGPIPE race. "Merge now, harden the tests next" leaves the gate
    silently unfalsifiable for exactly the window that matters.
+
+10. **Do not let an evidence artifact authenticate itself.** A valid schema,
+    digest, and claimed exit code prove only internal consistency. Require an
+    authenticated owning runner outside the assessed change, or rerun an
+    allowlisted command and verify its exit code, standard output, and standard
+    error at the assessment boundary.
+
+11. **Bind provider identifiers to canonical content and operation material.**
+    A receipt identifier must map one-to-one to the exact canonical receipt
+    hash, must not replay across history entries, and any recorded operation
+    fingerprint must be recomputed from the authenticated operation fields.
+
+12. **Parse configuration by exact structural path and pin release constants.**
+    Searching for a key anywhere in a document lets an unrelated section
+    satisfy the gate. Require the named top-level section and its key exactly
+    once, never let the same key in another section substitute for it, and
+    compare against the exact public contract value rather than a looser
+    predicate such as positivity.
 
 ## Why This Matters
 

@@ -224,6 +224,7 @@ def require_identity(value: Any, label: str) -> str:
         value.encode("ascii")
     except UnicodeEncodeError as error:
         raise ContractError(f"{label} must be ASCII") from error
+    require(all(0x20 <= ord(character) <= 0x7E for character in value), f"{label} must contain only printable ASCII")
     require(len(value) <= IDENTITY_LIMIT, f"{label} exceeds {IDENTITY_LIMIT} ASCII characters")
     return value
 
@@ -467,6 +468,11 @@ def normalize_github_register_snapshot(snapshot: Any) -> dict[str, Any]:
     issue = require_object(snapshot.get("issue"), "GitHub issue")
     require(type(issue.get("id")) is int and issue["id"] > 0, "GitHub issue numeric id is invalid")
     require(issue.get("node_id") == report_issue_id, "issue report mismatch")
+    provider_comment_count = issue.get("comments")
+    require(
+        type(provider_comment_count) is int and provider_comment_count >= 0,
+        "GitHub issue comment total is invalid",
+    )
     body = issue.get("body")
     validate_body(body)
     body_machine_json, register = _extract_marked_json(
@@ -486,6 +492,10 @@ def normalize_github_register_snapshot(snapshot: Any) -> dict[str, Any]:
     require(snapshot.get("comment_pages_complete") is True, "comment pagination is incomplete")
     pages = require_list(snapshot.get("comment_pages"), "comment pages")
     require(bool(pages), "comment page sequence is incomplete")
+    page_size = len(require_list(pages[0], "comment page 1"))
+    require(page_size <= 100, "comment page 1 exceeds the configured page size")
+    if len(pages) > 1:
+        require(page_size > 0, "comment page sequence is incomplete")
     history_receipts: list[dict[str, Any]] = []
     ordinary_comment_ids: list[str] = []
     seen_comment_ids: set[str] = set()
@@ -493,10 +503,13 @@ def normalize_github_register_snapshot(snapshot: Any) -> dict[str, Any]:
     previous_hash = "GENESIS"
     for expected_page, raw_page in enumerate(pages, start=1):
         comments = require_list(raw_page, f"comment page {expected_page}")
-        require(bool(comments) or expected_page == len(pages), "comment page sequence is incomplete")
         require(len(comments) <= 100, f"comment page {expected_page} exceeds the configured page size")
         require(
-            expected_page == len(pages) or len(comments) == 100,
+            expected_page == len(pages) or len(comments) == page_size,
+            "comment page sequence is incomplete",
+        )
+        require(
+            len(pages) == 1 or expected_page < len(pages) or len(comments) <= page_size,
             "comment page sequence is incomplete",
         )
         for raw_comment in comments:
@@ -542,6 +555,11 @@ def normalize_github_register_snapshot(snapshot: Any) -> dict[str, Any]:
                     "receipt": receipt,
                 }
             )
+
+    require(
+        len(seen_comment_ids) == provider_comment_count,
+        "comment pagination count does not match provider total",
+    )
 
     anchor = require_object(register.get("history_anchor"), "body history anchor")
     require_exact_fields(anchor, HISTORY_ANCHOR_FIELDS, "body history anchor")
@@ -1244,7 +1262,7 @@ def reconcile_report_effect(
                 for dependency in item["dependencies"]
             ]
             disposition = dispositions[lane]
-            if "ambiguous" in dependency_outcomes:
+            if any(value in {"ambiguous", "preserved"} for value in dependency_outcomes):
                 disposition = "preserved"
             elif any(value in {"failed", "incomplete", "closed", "blocked"} for value in dependency_outcomes):
                 disposition = "closed" if "failed" in dependency_outcomes else "blocked"

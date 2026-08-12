@@ -5,7 +5,7 @@
     {"id":"already-satisfied","readback":"already-satisfied","prepared_kind":"run-closed","receipt_fixture":"lane-receipts.json","report_dependent_lanes":[],"lane_dependencies":{}},
     {"id":"verified-not-closed","readback":"observed","prepared_kind":"decision","receipt_fixture":"lane-receipts.json","report_dependent_lanes":[],"lane_dependencies":{}},
     {"id":"incomplete-local","readback":"observed","prepared_kind":"run-closed","receipt_fixture":"lane-receipts-incomplete.json","report_dependent_lanes":[],"lane_dependencies":{"security-secret-and-static-analysis":["runtime-error-and-alert"]}},
-    {"id":"ambiguous-local","readback":"body-only","prepared_kind":"decision","receipt_fixture":"lane-receipts.json","report_dependent_lanes":["issue-implementation"],"lane_dependencies":{}},
+    {"id":"ambiguous-local","readback":"body-only","prepared_kind":"decision","receipt_fixture":"lane-receipts.json","report_dependent_lanes":["issue-implementation"],"lane_dependencies":{"ci-and-failing-test":["issue-implementation"]}},
     {"id":"failed-local","readback":"denied-unchanged","prepared_kind":"decision","receipt_fixture":"lane-receipts.json","report_dependent_lanes":["issue-implementation"],"lane_dependencies":{}}
   ]
 }

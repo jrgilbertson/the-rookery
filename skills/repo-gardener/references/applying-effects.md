@@ -26,7 +26,9 @@ provider client, credential, or cryptographic service.
 
 ## Verify
 
-After any caller action, obtain a complete issue and all comment pages. Run
+After any caller action, obtain a complete issue including its provider comment
+total and all comment pages. The flattened page count must equal that total;
+otherwise verification remains ambiguous and permits no one-tail repair. Run
 `effect-v1` again with `phase: verify`, the immutable prepared object, the
 original complete pre-read, the complete post-read, and one write-attempt
 classification: `none`, `denied-before-write`, or `possible`.

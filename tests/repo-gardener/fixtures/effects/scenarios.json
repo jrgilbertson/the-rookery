@@ -17,6 +17,7 @@
     {"id":"foreign-author","mutation":"foreign-author"},
     {"id":"replayed-comment-id","mutation":"replayed-comment-id"},
     {"id":"incomplete-pagination","mutation":"incomplete-pagination"},
+    {"id":"truncated-tail","mutation":"truncated-tail"},
     {"id":"altered-material","mutation":"altered-material"}
   ]
 }

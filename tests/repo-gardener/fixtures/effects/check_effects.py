@@ -73,6 +73,7 @@ def target_snapshot(base: dict[str, Any], prepared: dict[str, Any]) -> dict[str,
             "body": prepared["comment"],
         }
     )
+    result["issue"]["comments"] += 1
     return result
 
 
@@ -124,6 +125,8 @@ def mutate(base: dict[str, Any], target: dict[str, Any], prepared: dict[str, Any
         after["comment_pages"][-1][-1]["id"] = after["comment_pages"][0][0]["id"]
     elif mutation == "incomplete-pagination":
         after["comment_pages_complete"] = False
+    elif mutation == "truncated-tail":
+        after["comment_pages"][-1].pop()
     elif mutation == "altered-material":
         after["comment_pages"][-1][-1]["body"] = prepared["comment"].replace('"kind":"effect"', '"kind":"run"')
     else:

@@ -68,6 +68,7 @@ def target_snapshot(base: dict[str, Any], prepared: dict[str, Any]) -> dict[str,
             "body": prepared["comment"],
         }
     )
+    result["issue"]["comments"] += 1
     return result
 
 
@@ -191,6 +192,18 @@ def main() -> int:
     CONTRACT.require(
         ambiguous["completion_partition"]["preserved"].count(report_identity) == 1,
         "ambiguous report identity was not preserved exactly once",
+    )
+    preserved_operations = {
+        item["operation_id"] for item in ambiguous["completion_partition"]["preserved"]
+    }
+    CONTRACT.require(
+        {
+            report_identity["operation_id"],
+            "operation:lane:issue-implementation",
+            "operation:lane:ci-and-failing-test",
+        }
+        <= preserved_operations,
+        "ambiguous report dependency was not preserved through the full two-hop closure",
     )
     failed = cli("reconciliation-v2", payloads["failed-local"])
     CONTRACT.require(failed["unmatched_intent"] is False and failed["blind_retry"] is False, "failed effect recovery regressed")

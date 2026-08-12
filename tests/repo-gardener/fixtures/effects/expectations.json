@@ -17,6 +17,7 @@
     "foreign-author":{"terminal_outcome":"ambiguous","matched_parts":null,"repair":"none"},
     "replayed-comment-id":{"terminal_outcome":"ambiguous","matched_parts":null,"repair":"none"},
     "incomplete-pagination":{"terminal_outcome":"ambiguous","matched_parts":null,"repair":"none"},
+    "truncated-tail":{"terminal_outcome":"ambiguous","matched_parts":null,"repair":"none"},
     "altered-material":{"terminal_outcome":"ambiguous","matched_parts":null,"repair":"none"}
   }
 }

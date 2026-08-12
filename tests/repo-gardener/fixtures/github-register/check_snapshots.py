@@ -7,6 +7,7 @@ import copy
 import hashlib
 import importlib.util
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -125,7 +126,7 @@ def machine_body(register: dict[str, Any]) -> str:
 
 
 def base_snapshot(label: str) -> dict[str, Any]:
-    count = {"genesis": 0, "two-receipts": 2, "live-scale": 103}[label]
+    count = {"genesis": 0, "two-receipts": 2, "live-scale": 103, "provider-page-30": 45}[label]
     receipts = make_receipts(count)
     register = make_register(receipts, genesis=not receipts)
     comments = [receipt_comment(receipt, index) for index, receipt in enumerate(receipts, start=1)]
@@ -139,16 +140,14 @@ def base_snapshot(label: str) -> dict[str, Any]:
                 "body": "Synthetic owner note.",
             },
         )
-    split = min(100, len(comments))
-    pages = [comments[:split]]
-    if len(comments) > split:
-        pages.append(comments[split:])
+    page_size = 30 if label == "provider-page-30" else 100
+    pages = [comments[index : index + page_size] for index in range(0, len(comments), page_size)] or [[]]
     return {
         "schema": "repo-gardener-github-register-snapshot/v1",
         "configured_repository_id": REPOSITORY_ID,
         "configured_report_issue_id": REPORT_ID,
         "configured_writer_id": WRITER_ID,
-        "issue": {"id": 3336, "node_id": REPORT_ID, "body": machine_body(register), "state": "open"},
+        "issue": {"id": 3336, "node_id": REPORT_ID, "body": machine_body(register), "state": "open", "comments": len(comments)},
         "comment_pages_complete": True,
         "comment_pages": pages,
     }
@@ -180,6 +179,7 @@ def apply_mutation(snapshot: dict[str, Any], mutation: str) -> None:
                 "body": "Synthetic owner note.",
             }
         )
+        snapshot["issue"]["comments"] += 1
     elif mutation == "incomplete-pagination":
         snapshot["comment_pages_complete"] = False
     elif mutation == "forged-writer-marker":
@@ -195,8 +195,17 @@ def apply_mutation(snapshot: dict[str, Any], mutation: str) -> None:
         snapshot["configured_writer_id"] = OTHER_WRITER_ID
     elif mutation == "missing-page":
         snapshot["comment_pages"].insert(0, [])
+    elif mutation == "truncated-tail":
+        snapshot["comment_pages"][-1].pop()
+    elif mutation == "nonuniform-pages":
+        tail = snapshot["comment_pages"][1]
+        snapshot["comment_pages"] = [snapshot["comment_pages"][0], tail[:-1], tail[-1:]]
     elif mutation == "duplicate-comment-id":
         comments[1]["node_id"] = comments[0]["node_id"]
+    elif mutation == "nul-identity":
+        snapshot["configured_repository_id"] = f"{REPOSITORY_ID}\0suffix"
+    elif mutation == "control-identity":
+        snapshot["configured_writer_id"] = f"{WRITER_ID}\x1fsuffix"
     elif mutation in {"sequence-gap", "altered-payload", "bad-previous-hash"}:
         receipt = json.loads(comments[1]["body"].split(RECEIPT_BEGIN)[1].split(RECEIPT_END)[0])
         if mutation == "sequence-gap":
@@ -239,6 +248,13 @@ def main() -> int:
     expectations = json.loads((FIXTURES / "expectations.json").read_text())["expectations"]
     contract = load_contract()
     failures: list[str] = []
+    concepts = (ROOT / "CONCEPTS.md").read_text()
+    run_history = concepts.split("### Run History", 1)[1].split("### Scout Receipt", 1)[0]
+    documented_kinds = set(re.findall(r"`([^`]+)`", run_history))
+    if documented_kinds != contract.ORCHESTRATOR_HISTORY_KINDS:
+        failures.append(
+            "CONCEPTS.md Run History kinds do not match ORCHESTRATOR_HISTORY_KINDS"
+        )
     for scenario in scenarios:
         snapshot = copy.deepcopy(base_snapshot(scenario["base"]))
         apply_mutation(snapshot, scenario["mutation"])

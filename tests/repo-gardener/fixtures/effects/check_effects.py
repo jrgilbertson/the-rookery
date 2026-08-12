@@ -322,6 +322,9 @@ def main() -> int:
         }
         invalid_caller[field][0] = True
         expect_completion_error(invalid_caller, f"{field} 0 is missing")
+    nonfinite_operation = copy.deepcopy(operation)
+    nonfinite_operation["payload"] = {"invalid": float("nan")}
+    expect_error(effect_input("prepare", pre_read=base, operation=nonfinite_operation), "non-finite")
 
     print(f"PASS: {len(scenarios)} exact report-effect prepare/verify scenarios")
     print("PASS: legacy authority/verdict inputs cannot mint success or repair")

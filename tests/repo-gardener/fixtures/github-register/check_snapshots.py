@@ -304,6 +304,20 @@ def main() -> int:
         failures.append("foreign comment body or author changes did not change the snapshot fingerprint")
     if "Changed foreign comment body." in json.dumps(changed_body):
         failures.append("normalized snapshot exposed foreign comment content")
+    writer_note_snapshot = base_snapshot("two-receipts")
+    writer_note_snapshot["comment_pages"][0].append({
+        "id": 20_003,
+        "node_id": "IC_SYNTHETIC_WRITER_NOTE",
+        "user": {"node_id": WRITER_ID, "login": "synthetic-writer"},
+        "body": "Ordinary advisory note from the configured writer.",
+    })
+    writer_note_snapshot["issue"]["comments"] += 1
+    try:
+        writer_note = contract.normalize_github_register_snapshot(writer_note_snapshot)
+        if "IC_SYNTHETIC_WRITER_NOTE" not in writer_note["ordinary_comment_ids"]:
+            failures.append("marker-free configured-writer comment was not preserved as ordinary")
+    except contract.ContractError as error:
+        failures.append(f"marker-free configured-writer comment failed normalization: {error!s}")
     if failures:
         print("\n".join(failures), file=sys.stderr)
         return 1

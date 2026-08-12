@@ -213,12 +213,15 @@ def main() -> int:
     receipt_map = CONTRACT.validate_scout_receipts(
         payloads["nine-lane-learn"]["receipts"], manifest, complete=True, expected_scouts=list(CONTRACT.RELEASE_A_LANES)
     )
+    shared_source_receipts = copy.deepcopy(receipt_map)
+    for lane in ("dependency-and-vulnerability", "security-secret-and-static-analysis"):
+        shared_source_receipts[lane]["source_id"] = "forge:advisory:alpha"
     deduped = CONTRACT.dedupe_scout_observations(
         [
             {"source_id": "forge:advisory:alpha", "lane": "dependency-and-vulnerability", "receipt_id": receipt_map["dependency-and-vulnerability"]["receipt_id"]},
             {"source_id": "forge:advisory:alpha", "lane": "security-secret-and-static-analysis", "receipt_id": receipt_map["security-secret-and-static-analysis"]["receipt_id"]},
         ],
-        receipt_map,
+        shared_source_receipts,
     )
     CONTRACT.require(
         deduped["candidate_count"] == 1
@@ -226,6 +229,21 @@ def main() -> int:
         and len(deduped["receipt_ids"]) == 2,
         "usable-outcome dedupe lost contributing lane evidence",
     )
+    mismatched_observation = copy.deepcopy(shared_source_receipts)
+    mismatched_observation["dependency-and-vulnerability"]["source_id"] = "forge:advisory:other"
+    try:
+        CONTRACT.dedupe_scout_observations(
+            [{
+                "source_id": "forge:advisory:alpha",
+                "lane": "dependency-and-vulnerability",
+                "receipt_id": mismatched_observation["dependency-and-vulnerability"]["receipt_id"],
+            }],
+            mismatched_observation,
+        )
+    except CONTRACT.ContractError as error:
+        CONTRACT.require("unknown or unusable" in str(error), "source-mismatched dedupe failed at the wrong boundary")
+    else:
+        raise CONTRACT.ContractError("dedupe accepted an observation for a different receipt source")
     passing_gates = {gate: True for gate in CONTRACT.GATE_ORDER}
     capacity = CONTRACT.render_capacity(
         ["row:retained:one", "row:retained:two"],

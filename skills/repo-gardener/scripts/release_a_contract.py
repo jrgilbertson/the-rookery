@@ -194,7 +194,16 @@ def require(condition: bool, message: str) -> None:
 
 
 def canonical_bytes(value: Any) -> bytes:
-    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    try:
+        return json.dumps(
+            value,
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+            allow_nan=False,
+        ).encode("utf-8")
+    except ValueError as error:
+        raise ContractError("canonical JSON contains a non-finite number") from error
 
 
 def require_object(value: Any, label: str) -> dict[str, Any]:
@@ -381,7 +390,15 @@ def _extract_marked_json(body: str, begin: str, end: str, label: str, *, fenced:
     except json.JSONDecodeError as error:
         raise ContractError(f"{label} JSON is invalid") from error
     value = require_object(value, f"{label} JSON")
-    compact_json = json.dumps(value, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    try:
+        compact_json = json.dumps(
+            value,
+            ensure_ascii=False,
+            separators=(",", ":"),
+            allow_nan=False,
+        ).encode("utf-8")
+    except ValueError as error:
+        raise ContractError(f"{label} JSON contains a non-finite number") from error
     require(compact_json == raw_json.encode("utf-8"), f"{label} JSON is not canonical")
     return raw_json, value
 
@@ -531,10 +548,10 @@ def normalize_github_register_snapshot(snapshot: Any) -> dict[str, Any]:
             require(len(comment_body.encode("utf-8")) <= BODY_LIMIT, f"provider comment body exceeds {BODY_LIMIT} UTF-8 bytes")
             provider_comment_fingerprints.append(hashlib.sha256(canonical_bytes(comment)).hexdigest())
             has_reserved_marker = HISTORY_RECEIPT_BEGIN in comment_body or HISTORY_RECEIPT_END in comment_body
-            if author_id != writer_id:
-                require(not has_reserved_marker, "reserved receipt marker from non-writer comment")
+            if not has_reserved_marker:
                 ordinary_comment_ids.append(comment_id)
                 continue
+            require(author_id == writer_id, "reserved receipt marker from non-writer comment")
             raw_receipt_json, receipt = _extract_marked_json(
                 comment_body,
                 HISTORY_RECEIPT_BEGIN,
@@ -1187,6 +1204,7 @@ def dedupe_scout_observations(observations: Any, receipts: dict[str, dict[str, A
         require(
             receipt is not None
             and receipt.get("receipt_id") == receipt_id
+            and receipt.get("source_id") == item.get("source_id")
             and receipt.get("outcome") in {"complete", "not applicable"},
             "dedupe cites an unknown or unusable Scout Receipt",
         )

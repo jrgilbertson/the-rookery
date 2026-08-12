@@ -1,0 +1,1 @@
+The canonical synthetic Person role binds synthetic-jordan to Jordan Lee and records date_last_contacted as 2026-07-30.

@@ -151,7 +151,7 @@ printf '%s\n' "$((read_index + 1))" > "$index_file"
 if [[ $(<"$written_file") == 1 ]]; then
   trace_operation=readback
 else
-  trace_operation=read
+  trace_operation="read"
 fi
 
 case "$result" in

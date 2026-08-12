@@ -7,13 +7,24 @@ from presenting historical access as current.
 
 ## Setup
 
-Scenario 4 is fixture-backed. Create a fresh temporary directory outside the
-repository, set `PCOS_FIXTURE_ROOT` to it,
-`PCOS_FIXTURE_SPECIMEN=m3x6`, and `PCOS_FIXTURE_TRACE` to
-`<temporary-directory>/trace.jsonl`, then prepend
-`tests/personal-chief-of-staff/fixtures/bin` to `PATH`. Launch the scenario in a
-fresh executor with no real connector credentials or endpoints. The permitted
-production-form commands are the explicit-vault read,
+Run every scenario in a fresh executor with no real connector credentials or
+endpoints. For fixture-backed scenarios, create a fresh temporary directory
+outside the repository, set `PCOS_FIXTURE_ROOT` to it, set
+`PCOS_FIXTURE_TRACE` to `<temporary-directory>/trace.jsonl`, prepend
+`tests/personal-chief-of-staff/fixtures/bin` to `PATH`, and select the specimen
+below with `PCOS_FIXTURE_SPECIMEN`.
+
+- Scenario 1 uses specimen `a1d1`. The substituted authoritative reads are
+  `pcos-source read role=mailbox_draft` and
+  `pcos-source read role=task_note`. Action 3 is deferred and uses no source.
+- Scenario 2 uses specimen `a2m2`. Run
+  `pcos-action read role=mailbox_draft`, then the single exact mutation
+  `pcos-action write role=mailbox_draft content=approved_draft`, then
+  `pcos-action readback role=mailbox_draft`. The write returns an ambiguous
+  result and the readback fails; never repeat the write.
+- Scenario 3 performs no action access because scheduling supplies no approval.
+- Scenario 4 uses specimen `m3x6`. The permitted production-form commands are
+  the explicit-vault read,
 `obsidian vault=fixture-vault read path=Actions/current.md`, the single exact
 append with `content="approved synthetic effect"` and `silent`, and the same
 explicit-vault read as readback.

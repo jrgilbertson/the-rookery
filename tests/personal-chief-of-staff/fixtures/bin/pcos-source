@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+die() {
+  printf '%s\n' "$1" >&2
+  exit "${2:-64}"
+}
+
+for required in PCOS_FIXTURE_ROOT PCOS_FIXTURE_SPECIMEN PCOS_FIXTURE_TRACE; do
+  [[ -n "${!required:-}" ]] || die "missing required fixture variable: ${required}"
+done
+
+[[ "$PCOS_FIXTURE_SPECIMEN" =~ ^[a-z][a-z0-9]{3}$ ]] ||
+  die "invalid fixture specimen token"
+[[ -d "$PCOS_FIXTURE_ROOT" ]] || die "fixture root must already exist"
+
+fixture_root=$(cd "$PCOS_FIXTURE_ROOT" && pwd -P)
+script_dir=$(cd "$(dirname "$0")" && pwd -P)
+fixture_dir=$(cd "$script_dir/.." && pwd -P)
+repo_root=$(cd "$fixture_dir/../../.." && pwd -P)
+
+case "$fixture_root/" in
+  "$repo_root/"*) die "fixture root must be outside the repository" ;;
+esac
+
+trace_parent=$(cd "$(dirname "$PCOS_FIXTURE_TRACE")" 2>/dev/null && pwd -P) ||
+  die "fixture trace parent must already exist"
+trace_path="$trace_parent/$(basename "$PCOS_FIXTURE_TRACE")"
+case "$trace_path" in
+  "$fixture_root/"*) ;;
+  *) die "fixture trace must stay inside the fixture root" ;;
+esac
+
+source_dir="$fixture_dir/specimens/$PCOS_FIXTURE_SPECIMEN/sources"
+[[ -d "$source_dir" ]] || die "unknown role-source fixture specimen"
+
+trace() {
+  local token=$1 result=$2 completeness=$3 evidence=$4
+  printf '{"operation":"read","target":"%s","result":"%s","completeness":"%s","evidence":"%s"}\n' \
+    "$token" "$result" "$completeness" "$evidence" >> "$trace_path"
+}
+
+reject() {
+  local reason=$1 token=${2:-unrecognized}
+  trace "$token" rejected not_applicable none
+  die "$reason"
+}
+
+[[ $# -eq 2 && "$1" == read && "$2" == role=* ]] ||
+  reject "expected: pcos-source read role=<safe-role-token>"
+role=${2#role=}
+[[ "$role" =~ ^[a-z][a-z0-9_]*$ ]] || reject "unsafe role token"
+
+evidence_file="$source_dir/$role.txt"
+empty_marker="$source_dir/$role.empty"
+partial_file="$source_dir/$role.partial"
+failure_marker="$source_dir/$role.failure"
+trace_metadata="$source_dir/$role.trace"
+
+evidence_token=""
+if [[ -f "$trace_metadata" ]]; then
+  evidence_token=$(<"$trace_metadata")
+  [[ "$evidence_token" =~ ^[a-z][a-z0-9_]*$ ]] ||
+    reject "unsafe role evidence token" "$role"
+fi
+
+matches=0
+for candidate in "$evidence_file" "$empty_marker" "$partial_file" "$failure_marker"; do
+  [[ -e "$candidate" ]] && matches=$((matches + 1))
+done
+[[ $matches -eq 1 ]] || reject "unknown or ambiguous role fixture" "$role"
+
+if [[ -f "$failure_marker" ]]; then
+  trace "$role" failure unknown "${evidence_token:-none}"
+  die "scripted authoritative role read failure" 69
+elif [[ -f "$empty_marker" ]]; then
+  trace "$role" success complete "${evidence_token:-none}"
+elif [[ -f "$partial_file" ]]; then
+  sed -n '1,$p' "$partial_file"
+  trace "$role" success truncated "${evidence_token:-partial_evidence}"
+else
+  sed -n '1,$p' "$evidence_file"
+  trace "$role" success complete "${evidence_token:-evidence_present}"
+fi

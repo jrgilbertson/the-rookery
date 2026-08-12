@@ -5,6 +5,26 @@ and question-bound health analysis ambiguous; a 2026-07-31 baseline comparison
 also found no explicit rationale-based, non-scoring commitment coaching. Folds
 the weekly, quarterly, and repeated-commitment-pattern variants.
 
+## Setup
+
+Run each numbered scenario in a fresh executor. For each run, create a fresh
+temporary directory outside the repository, set `PCOS_FIXTURE_ROOT` to it,
+set `PCOS_FIXTURE_TRACE` to `<temporary-directory>/trace.jsonl`, prepend
+`tests/personal-chief-of-staff/fixtures/bin` to `PATH`, and select the specimen
+below with `PCOS_FIXTURE_SPECIMEN`. Provide no real connector credentials or
+endpoints.
+
+The configured synthetic authoritative-role interface is
+`pcos-source read role=<role>`. The executor must call every listed role before
+synthesis; a prompt premise alone is not a read. The grader receives only the
+rendered response and JSONL trace. Remove the temporary directory afterward.
+
+| Scenario | Specimen | Required bounded role reads |
+| --- | --- | --- |
+| 1 | `w1r1` | `current_weekly_review`, `weekly_template`, `last_weekly_review`, `daily_journals`, `tasks`, `strategy`, `learning`, `projects` |
+| 2 | `q2r2` | `current_quarterly_review`, `quarterly_template`, `last_quarterly_review`, `weekly_reviews`, `daily_journals`, `strategy`, `learning`, `tasks`, `projects` |
+| 3 | `w3c3` | `daily_journals`, `work_history`, `current_weekly_review` |
+
 ## Prompt
 
 > Two independent scenarios:

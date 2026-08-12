@@ -6,6 +6,29 @@ could suggest patterns and experiments, but did not guarantee a recurrence
 threshold, evidence-chain deduplication, counterevidence-shaped coaching,
 canonical-rule audit statuses, or an honest longitudinal null.
 
+## Setup
+
+Run scenarios 1–4 in separate fresh executors. For each run, create a fresh
+temporary directory outside the repository, set `PCOS_FIXTURE_ROOT` to it,
+set `PCOS_FIXTURE_TRACE` to `<temporary-directory>/trace.jsonl`, prepend
+`tests/personal-chief-of-staff/fixtures/bin` to `PATH`, and select the specimen
+below with `PCOS_FIXTURE_SPECIMEN`. Provide no real connector credentials or
+endpoints. Scenario 2's follow-up stays in its original live executor after the
+first response is captured.
+
+The configured synthetic authoritative-role interface is
+`pcos-source read role=<role>`. The executor must call every listed role before
+synthesis; prompt premises and local AI logs do not count as reads. The grader
+receives only the rendered response and JSONL trace. Remove the temporary
+directory afterward.
+
+| Scenario | Specimen | Required bounded role reads |
+| --- | --- | --- |
+| 1 | `p1w1` | `daily_journals`, `weekly_reviews`, `strategy`, `learning`, `repository_history`, `tasks`, `calendar` |
+| 2 | `p2q2` | `weekly_reviews`, `daily_journals`, `strategy`, `learning`, `relationships`, `tasks`, `calendar` |
+| 3 | `p3n3` | `weekly_reviews`, `daily_journals`, `strategy`, `learning` |
+| 4 | `p4r4` | `tasks`, `calendar`; learning and strategy remain unresolved canonical roles and must be `Not configured` |
+
 ## Prompt
 
 > Treat each numbered scenario as independent. The named journals, reviews,

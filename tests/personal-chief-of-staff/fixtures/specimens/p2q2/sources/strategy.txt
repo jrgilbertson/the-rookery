@@ -1,0 +1,3 @@
+2026-01-05: Ship external proof before internal polish; later journals show the sequence changed on 2026-01-22 and 2026-02-12.
+2026-01-10: Protect Wednesday mornings for customer interviews; three later reviews repeat it while their cited journals show internal meetings continued.
+2026-01-18: Pause launches during a severity-one incident; a 2026-02-20 journal records a launch while one remained unresolved.

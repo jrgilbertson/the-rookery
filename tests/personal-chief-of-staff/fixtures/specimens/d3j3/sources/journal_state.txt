@@ -1,0 +1,1 @@
+The 2026-08-04 canonical daily journal is absent and the 2026-08-05 closing journal exists, so the bounded short-miss window is August 4 through August 5.

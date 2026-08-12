@@ -31,6 +31,71 @@ output=$(obsidian vault=fixture-vault read path=Roles/current.md)
 [[ "$output" == "The bounded current record says the release decision is due Friday and the protected customer-proof block is Thursday." ]] || fail "evidence output"
 assert_trace '"result":"success","completeness":"complete"'
 
+new_run w1r1
+output=$(pcos-source read role=current_weekly_review)
+[[ "$output" == "The canonical current-week review exists for the week ending 2026-08-09 and contains no synthesized outcome yet." ]] || fail "role-source evidence output"
+assert_trace '"target":"current_weekly_review","result":"success","completeness":"complete"'
+
+new_run q2r2
+output=$(pcos-source read role=daily_journals)
+[[ "$output" == *"February coverage is incomplete"* ]] || fail "role-source partial output"
+assert_trace '"target":"daily_journals","result":"success","completeness":"truncated"'
+
+new_run p2q2
+output=$(pcos-source read role=relationships)
+[[ -z "$output" ]] || fail "role-source complete-empty output"
+assert_trace '"target":"relationships","result":"success","completeness":"complete"'
+
+new_run w1r1
+if pcos-source read role=unknown_role >/dev/null 2>&1; then
+  fail "unknown role source was accepted"
+fi
+assert_trace '"target":"unknown_role","result":"rejected","completeness":"not_applicable"'
+
+new_run c1p1
+pcos-action read role=person_note >/dev/null
+output=$(pcos-action write role=person_note content=displayed_durable_context)
+[[ "$output" == success ]] || fail "action fixture write output"
+output=$(pcos-action readback role=person_note)
+[[ "$output" == *"exact displayed durable context"* ]] || fail "action fixture readback output"
+assert_trace '"operation":"write","target":"person_note","result":"success"'
+assert_trace '"operation":"readback","target":"person_note","result":"success","completeness":"complete"'
+
+new_run a2m2
+pcos-action read role=mailbox_draft >/dev/null
+output=$(pcos-action write role=mailbox_draft content=approved_draft)
+[[ "$output" == ambiguous ]] || fail "ambiguous action fixture write output"
+if pcos-action readback role=mailbox_draft >/dev/null 2>&1; then
+  fail "scripted action readback failure was accepted"
+fi
+assert_trace '"operation":"write","target":"mailbox_draft","result":"ambiguous"'
+assert_trace '"operation":"readback","target":"mailbox_draft","result":"failure","completeness":"unknown"'
+
+new_run d1g1
+output=$(imsg chats --limit 10 --json)
+[[ "$output" == *'"id":"group-1"'* ]] || fail "Messages chat output"
+output=$(imsg history --chat-id group-1 \
+  --start 2026-08-05T00:00:00-07:00 \
+  --end 2026-08-06T00:00:00-07:00 --limit 100 --json)
+[[ "$output" == *'"sender":"+12135550101"'* ]] || fail "Messages history output"
+assert_trace '"operation":"chats","target":"messages_chats","result":"success","completeness":"complete"'
+assert_trace '"operation":"history","target":"messages_history","result":"success","completeness":"complete"'
+if imsg send --chat-id group-1 --text unexpected >/dev/null 2>&1; then
+  fail "Messages write operation was accepted"
+fi
+assert_trace '"operation":"rejected","target":"unrecognized","result":"rejected"'
+
+new_run o1t1
+obsidian vault=fixture-vault read path=Actions/task.md >/dev/null
+obsidian vault=fixture-vault append path=Actions/task.md content='approved next step' silent
+output=$(obsidian vault=fixture-vault read path=Actions/task.md)
+[[ "$output" == 'manual context with [[existing wiki link]];approved next step' ]] ||
+  fail "Obsidian preservation fixture readback"
+
+new_run o2r2
+output=$(obsidian vault=fixture-vault read path=Actions/recovery.md)
+[[ "$output" == *"single earlier write"* ]] || fail "Obsidian recovery fixture output"
+
 new_run r2k9
 output=$(obsidian vault=fixture-vault read path=Roles/empty.md)
 [[ -z "$output" ]] || fail "complete-empty output"

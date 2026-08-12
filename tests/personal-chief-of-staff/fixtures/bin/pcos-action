@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+die() {
+  printf '%s\n' "$1" >&2
+  exit "${2:-64}"
+}
+
+for required in PCOS_FIXTURE_ROOT PCOS_FIXTURE_SPECIMEN PCOS_FIXTURE_TRACE; do
+  [[ -n "${!required:-}" ]] || die "missing required fixture variable: ${required}"
+done
+
+[[ "$PCOS_FIXTURE_SPECIMEN" =~ ^[a-z][a-z0-9]{3}$ ]] ||
+  die "invalid fixture specimen token"
+[[ -d "$PCOS_FIXTURE_ROOT" ]] || die "fixture root must already exist"
+
+fixture_root=$(cd "$PCOS_FIXTURE_ROOT" && pwd -P)
+script_dir=$(cd "$(dirname "$0")" && pwd -P)
+fixture_dir=$(cd "$script_dir/.." && pwd -P)
+repo_root=$(cd "$fixture_dir/../../.." && pwd -P)
+case "$fixture_root/" in
+  "$repo_root/"*) die "fixture root must be outside the repository" ;;
+esac
+
+trace_parent=$(cd "$(dirname "$PCOS_FIXTURE_TRACE")" 2>/dev/null && pwd -P) ||
+  die "fixture trace parent must already exist"
+trace_path="$trace_parent/$(basename "$PCOS_FIXTURE_TRACE")"
+case "$trace_path" in
+  "$fixture_root/"*) ;;
+  *) die "fixture trace must stay inside the fixture root" ;;
+esac
+
+trace() {
+  local operation=$1 token=$2 result=$3 completeness=$4
+  printf '{"operation":"%s","target":"%s","result":"%s","completeness":"%s"}\n' \
+    "$operation" "$token" "$result" "$completeness" >> "$trace_path"
+}
+
+reject() {
+  local operation=$1 reason=$2 token=${3:-unrecognized}
+  trace "$operation" "$token" rejected not_applicable
+  die "$reason"
+}
+
+[[ $# -ge 2 ]] || reject rejected "expected operation and role" unrecognized
+operation=$1
+role_arg=$2
+shift 2
+case "$operation" in
+  read|write|readback) ;;
+  *) reject rejected "unsupported action fixture operation" unrecognized ;;
+esac
+[[ "$role_arg" == role=* ]] || reject "$operation" "role must be explicit"
+role=${role_arg#role=}
+[[ "$role" =~ ^[a-z][a-z0-9_]*$ ]] || reject "$operation" "unsafe role token"
+
+content="__unset__"
+for arg in "$@"; do
+  case "$arg" in
+    content=*) [[ "$content" == "__unset__" ]] || reject "$operation" "duplicate content" "$role"; content=${arg#content=} ;;
+    *) reject "$operation" "unsupported action fixture parameter" "$role" ;;
+  esac
+done
+
+action_dir="$fixture_dir/specimens/$PCOS_FIXTURE_SPECIMEN/actions/$role"
+[[ -d "$action_dir" ]] || reject "$operation" "unknown action role" "$role"
+[[ -f "$action_dir/before.txt" && -f "$action_dir/after.txt" && -f "$action_dir/write-token" ]] ||
+  reject "$operation" "incomplete action fixture" "$role"
+
+state_dir="$fixture_root/action-$role"
+mkdir -p "$state_dir"
+state_file="$state_dir/content"
+written_file="$state_dir/written"
+[[ -f "$state_file" ]] || cp "$action_dir/before.txt" "$state_file"
+[[ -f "$written_file" ]] || printf '0\n' > "$written_file"
+
+case "$operation" in
+  read)
+    [[ "$content" == "__unset__" ]] || reject read "read accepts no content" "$role"
+    sed -n '1,$p' "$state_file"
+    trace read "$role" success complete
+    ;;
+  write)
+    [[ "$content" != "__unset__" ]] || reject write "write requires exact content token" "$role"
+    [[ "$content" == "$(<"$action_dir/write-token")" ]] || reject write "unexpected action content" "$role"
+    [[ "$(<"$written_file")" == 0 ]] || reject write "an extra write is not permitted" "$role"
+    cp "$action_dir/after.txt" "$state_file"
+    printf '1\n' > "$written_file"
+    if [[ -f "$action_dir/write.ambiguous" ]]; then
+      trace write "$role" ambiguous not_applicable
+      printf 'ambiguous\n'
+    else
+      trace write "$role" success not_applicable
+      printf 'success\n'
+    fi
+    ;;
+  readback)
+    [[ "$content" == "__unset__" ]] || reject readback "readback accepts no content" "$role"
+    if [[ -f "$action_dir/readback.failure" ]]; then
+      trace readback "$role" failure unknown
+      die "scripted authoritative readback failure" 69
+    fi
+    sed -n '1,$p' "$state_file"
+    trace readback "$role" success complete
+    ;;
+esac

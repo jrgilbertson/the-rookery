@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+die() {
+  printf '%s\n' "$1" >&2
+  exit "${2:-64}"
+}
+
+for required in PCOS_FIXTURE_ROOT PCOS_FIXTURE_SPECIMEN PCOS_FIXTURE_TRACE; do
+  [[ -n "${!required:-}" ]] || die "missing required fixture variable: ${required}"
+done
+
+[[ "$PCOS_FIXTURE_SPECIMEN" =~ ^[a-z][a-z0-9]{3}$ ]] ||
+  die "invalid fixture specimen token"
+[[ -d "$PCOS_FIXTURE_ROOT" ]] || die "fixture root must already exist"
+
+fixture_root=$(cd "$PCOS_FIXTURE_ROOT" && pwd -P)
+script_dir=$(cd "$(dirname "$0")" && pwd -P)
+fixture_dir=$(cd "$script_dir/.." && pwd -P)
+repo_root=$(cd "$fixture_dir/../../.." && pwd -P)
+case "$fixture_root/" in
+  "$repo_root/"*) die "fixture root must be outside the repository" ;;
+esac
+
+trace_parent=$(cd "$(dirname "$PCOS_FIXTURE_TRACE")" 2>/dev/null && pwd -P) ||
+  die "fixture trace parent must already exist"
+trace_path="$trace_parent/$(basename "$PCOS_FIXTURE_TRACE")"
+case "$trace_path" in
+  "$fixture_root/"*) ;;
+  *) die "fixture trace must stay inside the fixture root" ;;
+esac
+
+imsg_dir="$fixture_dir/specimens/$PCOS_FIXTURE_SPECIMEN/imsg"
+[[ -d "$imsg_dir" ]] || die "unknown Messages fixture specimen"
+
+trace() {
+  local operation=$1 target=$2 result=$3 completeness=$4
+  printf '{"operation":"%s","target":"%s","result":"%s","completeness":"%s"}\n' \
+    "$operation" "$target" "$result" "$completeness" >> "$trace_path"
+}
+
+reject() {
+  local reason=$1
+  trace rejected unrecognized rejected not_applicable
+  die "$reason"
+}
+
+if [[ $# -eq 1 && "$1" == --version ]]; then
+  printf 'imsg fixture 1.0\n'
+  trace preflight messages_interface success not_applicable
+  exit 0
+fi
+
+[[ $# -ge 1 ]] || reject "missing Messages operation"
+operation=$1
+shift
+
+case "$operation" in
+  chats)
+    [[ $# -eq 3 && "$1" == --limit && "$2" =~ ^[1-9][0-9]*$ && "$3" == --json ]] ||
+      reject "unsupported chats query"
+    sed -n '1,$p' "$imsg_dir/chats.json"
+    printf '{"operation":"chats","target":"messages_chats","result":"success","completeness":"complete","limit":"%s","returned":"1"}\n' \
+      "$2" >> "$trace_path"
+    ;;
+  history)
+    chat_id="" start="" end="" limit="" json=0
+    while [[ $# -gt 0 ]]; do
+      case "$1" in
+        --chat-id) [[ $# -ge 2 && -z "$chat_id" ]] || reject "invalid chat id"; chat_id=$2; shift 2 ;;
+        --start) [[ $# -ge 2 && -z "$start" ]] || reject "invalid start"; start=$2; shift 2 ;;
+        --end) [[ $# -ge 2 && -z "$end" ]] || reject "invalid end"; end=$2; shift 2 ;;
+        --limit) [[ $# -ge 2 && -z "$limit" && "$2" =~ ^[1-9][0-9]*$ ]] || reject "invalid limit"; limit=$2; shift 2 ;;
+        --json) [[ $json -eq 0 ]] || reject "duplicate json flag"; json=1; shift ;;
+        *) reject "unsupported history query" ;;
+      esac
+    done
+    [[ "$chat_id" == "$(<"$imsg_dir/chat-id")" &&
+       "$start" == "$(<"$imsg_dir/start")" &&
+       "$end" == "$(<"$imsg_dir/end")" &&
+       -n "$limit" && $json -eq 1 ]] || reject "history query did not match the bounded fixture"
+    sed -n '1,$p' "$imsg_dir/history.json"
+    evidence_token=$(<"$imsg_dir/evidence-token")
+    [[ "$evidence_token" =~ ^[a-z][a-z0-9_]*$ ]] || reject "unsafe Messages evidence token"
+    printf '{"operation":"history","target":"messages_history","result":"success","completeness":"complete","chat":"%s","start":"%s","end":"%s","limit":"%s","evidence":"%s"}\n' \
+      "$chat_id" "$start" "$end" "$limit" "$evidence_token" >> "$trace_path"
+    ;;
+  *) reject "unsupported Messages operation" ;;
+esac

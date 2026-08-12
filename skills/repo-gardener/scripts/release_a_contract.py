@@ -37,6 +37,102 @@ RELEASE_A_LANES = (
 )
 SCOUT_OUTCOMES = {"complete", "not applicable", "incomplete"}
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
+CURRENT_PORTFOLIO_BEGIN = "<!-- orchestrator:current-portfolio:v1:begin -->"
+CURRENT_PORTFOLIO_END = "<!-- orchestrator:current-portfolio:v1:end -->"
+HISTORY_RECEIPT_BEGIN = "<!-- orchestrator:history-receipt:v1:begin -->"
+HISTORY_RECEIPT_END = "<!-- orchestrator:history-receipt:v1:end -->"
+GITHUB_SNAPSHOT_FIELDS = {
+    "schema",
+    "configured_repository_id",
+    "configured_report_issue_id",
+    "configured_writer_id",
+    "issue",
+    "comment_pages_complete",
+    "comment_pages",
+}
+ORCHESTRATOR_REGISTER_FIELDS = {
+    "schema",
+    "repository_id",
+    "report_issue_id",
+    "writer_id",
+    "register_revision",
+    "last_operation_id",
+    "last_operation_fingerprint",
+    "history_anchor",
+    "rows",
+}
+ORCHESTRATOR_REGISTER_FIELD_ORDER = (
+    "schema",
+    "repository_id",
+    "report_issue_id",
+    "writer_id",
+    "register_revision",
+    "last_operation_id",
+    "last_operation_fingerprint",
+    "history_anchor",
+    "rows",
+)
+ORCHESTRATOR_ROW_FIELDS = {
+    "row_id",
+    "source_id",
+    "source_revision",
+    "description",
+    "work_state",
+    "lane",
+    "outcome",
+    "rationale",
+    "risk",
+    "budget_use",
+    "evidence",
+    "next_action",
+    "row_revision",
+}
+ORCHESTRATOR_ROW_FIELD_ORDER = (
+    "row_id",
+    "source_id",
+    "source_revision",
+    "description",
+    "work_state",
+    "lane",
+    "outcome",
+    "rationale",
+    "risk",
+    "budget_use",
+    "evidence",
+    "next_action",
+    "row_revision",
+)
+ORCHESTRATOR_RECEIPT_FIELDS = {
+    "schema",
+    "sequence",
+    "previous_hash",
+    "receipt_hash",
+    "operation_id",
+    "kind",
+    "run_id",
+    "payload",
+}
+ORCHESTRATOR_RECEIPT_FIELD_ORDER = (
+    "schema",
+    "sequence",
+    "previous_hash",
+    "receipt_hash",
+    "operation_id",
+    "kind",
+    "run_id",
+    "payload",
+)
+ORCHESTRATOR_HISTORY_KINDS = {
+    "decision",
+    "effect",
+    "evidence",
+    "manifest",
+    "release",
+    "run",
+    "run-closed",
+    "run-opened",
+    "scout",
+}
 REGISTER_FIELDS = {
     "schema",
     "repository_id",
@@ -334,6 +430,269 @@ def receipt_hash(receipt: dict[str, Any]) -> str:
 def operation_fingerprint(receipt: dict[str, Any]) -> str:
     material = {field: receipt[field] for field in OPERATION_MATERIAL_FIELDS}
     return hashlib.sha256(canonical_bytes(material)).hexdigest()
+
+
+def orchestrator_receipt_hash(
+    receipt: dict[str, Any],
+    repository_id: str,
+    report_issue_id: str,
+) -> str:
+    """Hash one live-shaped receipt without conferring provider provenance."""
+    receipt_without_hash = {
+        field: receipt[field]
+        for field in ORCHESTRATOR_RECEIPT_FIELD_ORDER
+        if field != "receipt_hash"
+    }
+    material = b"\0".join(
+        (
+            b"orchestrator-history/v1",
+            repository_id.encode("ascii"),
+            report_issue_id.encode("ascii"),
+            json.dumps(receipt_without_hash, ensure_ascii=False, separators=(",", ":")).encode("utf-8"),
+        )
+    )
+    return hashlib.sha256(material).hexdigest()
+
+
+def _extract_marked_json(body: str, begin: str, end: str, label: str, *, fenced: bool) -> tuple[str, dict[str, Any]]:
+    require(body.count(begin) == 1 and body.count(end) == 1, f"{label} markers must appear exactly once")
+    start = body.find(begin)
+    finish = body.find(end)
+    require(start < finish, f"{label} markers are reordered")
+    before = body[:start]
+    after = body[finish + len(end) :]
+    require(begin not in before + after and end not in before + after, f"{label} contains extra markers")
+    raw = body[start + len(begin) : finish]
+    if fenced:
+        require(raw.startswith("\n```json\n") and raw.endswith("\n```\n"), f"{label} must contain one fenced canonical JSON object")
+        raw_json = raw[len("\n```json\n") : -len("\n```\n")]
+    else:
+        terminal = body[finish + len(end) :]
+        require(start == 0 and terminal in {"", "\n"}, f"{label} contains surrounding text")
+        require(raw.startswith("\n") and raw.endswith("\n"), f"{label} must contain canonical JSON on one bounded block")
+        raw_json = raw[1:-1]
+    try:
+        value = json.loads(raw_json)
+    except json.JSONDecodeError as error:
+        raise ContractError(f"{label} JSON is invalid") from error
+    value = require_object(value, f"{label} JSON")
+    compact_json = json.dumps(value, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    require(compact_json == raw_json.encode("utf-8"), f"{label} JSON is not canonical")
+    return raw_json, value
+
+
+def _validate_orchestrator_receipt(
+    receipt: dict[str, Any],
+    *,
+    index: int,
+    previous_hash: str,
+    repository_id: str,
+    report_issue_id: str,
+) -> str:
+    label = f"history receipt {index}"
+    require_exact_fields(receipt, ORCHESTRATOR_RECEIPT_FIELDS, label)
+    require(tuple(receipt) == ORCHESTRATOR_RECEIPT_FIELD_ORDER, f"{label} field order mismatch")
+    require(receipt.get("schema") == "orchestrator-history/v1", f"{label} schema mismatch")
+    require(type(receipt.get("sequence")) is int and receipt["sequence"] == index, f"{label} sequence discontinuity")
+    require(receipt.get("previous_hash") == previous_hash, f"{label} previous hash mismatch")
+    require_identity(receipt.get("operation_id"), f"{label} operation_id")
+    kind = require_identity(receipt.get("kind"), f"{label} kind")
+    require(kind in ORCHESTRATOR_HISTORY_KINDS, f"{label} kind is invalid")
+    require_identity(receipt.get("run_id"), f"{label} run_id")
+    require_object(receipt.get("payload"), f"{label} payload")
+    require_payload(receipt, RECEIPT_LIMIT, label)
+    expected_hash = orchestrator_receipt_hash(receipt, repository_id, report_issue_id)
+    require(receipt.get("receipt_hash") == expected_hash, f"{label} hash mismatch")
+    return expected_hash
+
+
+def _validate_orchestrator_register(
+    register: dict[str, Any],
+    *,
+    repository_id: str,
+    report_issue_id: str,
+    writer_id: str,
+) -> None:
+    require_exact_fields(register, ORCHESTRATOR_REGISTER_FIELDS, "register")
+    require(tuple(register) == ORCHESTRATOR_REGISTER_FIELD_ORDER, "register field order mismatch")
+    require(register.get("schema") == "orchestrator-register/v1", "register schema mismatch")
+    require(register.get("repository_id") == repository_id, "register repository mismatch")
+    require(register.get("report_issue_id") == report_issue_id, "register report mismatch")
+    require(register.get("writer_id") == writer_id, "configured writer mismatch")
+    require(type(register.get("register_revision")) is int and register["register_revision"] >= 0, "invalid register revision")
+    last_operation_id = register.get("last_operation_id")
+    last_operation_fingerprint = register.get("last_operation_fingerprint")
+    require(last_operation_id is None or require_identity(last_operation_id, "last operation_id"), "invalid last operation_id")
+    require(last_operation_fingerprint is None or SHA256.fullmatch(last_operation_fingerprint) is not None, "invalid last operation fingerprint")
+
+    rows = require_list(register.get("rows"), "register rows")
+    require(len(rows) <= RELEASE_A_PORTFOLIO_LIMIT, f"portfolio exceeds policy limit {RELEASE_A_PORTFOLIO_LIMIT}")
+    row_ids: list[str] = []
+    source_ids: list[str] = []
+    for index, raw_row in enumerate(rows):
+        row = require_object(raw_row, f"row {index}")
+        require_exact_fields(row, ORCHESTRATOR_ROW_FIELDS, f"row {index}")
+        require(tuple(row) == ORCHESTRATOR_ROW_FIELD_ORDER, f"row {index} field order mismatch")
+        row_ids.append(require_identity(row.get("row_id"), f"row {index} row_id"))
+        source_ids.append(require_identity(row.get("source_id"), f"row {index} source_id"))
+        require_identity(row.get("source_revision"), f"row {index} source_revision")
+        require_nonempty_display(row.get("description"), f"row {index} description")
+        require(row.get("work_state") in {"To do", "In process"}, f"invalid row work state: {row.get('work_state')}")
+        require(require_identity(row.get("lane"), f"row {index} lane") in RELEASE_A_LANES, f"row {index} lane is outside installed inventory")
+        for field in ("outcome", "rationale", "risk", "budget_use", "next_action"):
+            require_nonempty_display(row.get(field), f"row {index} {field}")
+        evidence = require_list(row.get("evidence"), f"row {index} evidence")
+        require(bool(evidence), f"row {index} evidence is empty")
+        for evidence_index, evidence_item in enumerate(evidence):
+            require_identity(evidence_item, f"row {index} evidence {evidence_index}")
+        require(len(evidence) == len(set(evidence)), f"row {index} duplicate evidence")
+        require(type(row.get("row_revision")) is int and row["row_revision"] >= 0, f"row {index} invalid revision")
+    require(len(row_ids) == len(set(row_ids)), "duplicate row identity")
+    require(len(source_ids) == len(set(source_ids)), "duplicate source identity")
+
+
+def normalize_github_register_snapshot(snapshot: Any) -> dict[str, Any]:
+    """Normalize supplied GitHub bytes; do not claim freshness or provenance."""
+    snapshot = require_object(snapshot, "GitHub register snapshot")
+    require_exact_fields(snapshot, GITHUB_SNAPSHOT_FIELDS, "GitHub register snapshot")
+    require(snapshot.get("schema") == "repo-gardener-github-register-snapshot/v1", "GitHub register snapshot schema mismatch")
+    repository_id = require_identity(snapshot.get("configured_repository_id"), "configured repository_id")
+    report_issue_id = require_identity(snapshot.get("configured_report_issue_id"), "configured report issue_id")
+    writer_id = require_identity(snapshot.get("configured_writer_id"), "configured writer_id")
+
+    issue = require_object(snapshot.get("issue"), "GitHub issue")
+    require(type(issue.get("id")) is int and issue["id"] > 0, "GitHub issue numeric id is invalid")
+    require(issue.get("node_id") == report_issue_id, "issue report mismatch")
+    body = issue.get("body")
+    validate_body(body)
+    body_machine_json, register = _extract_marked_json(
+        body,
+        CURRENT_PORTFOLIO_BEGIN,
+        CURRENT_PORTFOLIO_END,
+        "managed body",
+        fenced=True,
+    )
+    _validate_orchestrator_register(
+        register,
+        repository_id=repository_id,
+        report_issue_id=report_issue_id,
+        writer_id=writer_id,
+    )
+
+    require(snapshot.get("comment_pages_complete") is True, "comment pagination is incomplete")
+    pages = require_list(snapshot.get("comment_pages"), "comment pages")
+    require(bool(pages), "comment page sequence is incomplete")
+    history_receipts: list[dict[str, Any]] = []
+    ordinary_comment_ids: list[str] = []
+    seen_comment_ids: set[str] = set()
+    seen_numeric_comment_ids: set[int] = set()
+    previous_hash = "GENESIS"
+    for expected_page, raw_page in enumerate(pages, start=1):
+        comments = require_list(raw_page, f"comment page {expected_page}")
+        require(bool(comments) or expected_page == len(pages), "comment page sequence is incomplete")
+        require(len(comments) <= 100, f"comment page {expected_page} exceeds the configured page size")
+        require(
+            expected_page == len(pages) or len(comments) == 100,
+            "comment page sequence is incomplete",
+        )
+        for raw_comment in comments:
+            comment = require_object(raw_comment, "provider comment")
+            numeric_comment_id = comment.get("id")
+            require(type(numeric_comment_id) is int and numeric_comment_id > 0, "provider comment numeric id is invalid")
+            comment_id = require_identity(comment.get("node_id"), "provider comment node_id")
+            require(
+                comment_id not in seen_comment_ids and numeric_comment_id not in seen_numeric_comment_ids,
+                "duplicate provider comment identity",
+            )
+            seen_comment_ids.add(comment_id)
+            seen_numeric_comment_ids.add(numeric_comment_id)
+            user = require_object(comment.get("user"), "provider comment user")
+            author_id = require_identity(user.get("node_id"), "provider comment author node_id")
+            comment_body = comment.get("body")
+            require(isinstance(comment_body, str), "provider comment body must be text")
+            require(len(comment_body.encode("utf-8")) <= BODY_LIMIT, f"provider comment body exceeds {BODY_LIMIT} UTF-8 bytes")
+            has_reserved_marker = HISTORY_RECEIPT_BEGIN in comment_body or HISTORY_RECEIPT_END in comment_body
+            if author_id != writer_id:
+                require(not has_reserved_marker, "reserved receipt marker from non-writer comment")
+                ordinary_comment_ids.append(comment_id)
+                continue
+            raw_receipt_json, receipt = _extract_marked_json(
+                comment_body,
+                HISTORY_RECEIPT_BEGIN,
+                HISTORY_RECEIPT_END,
+                f"writer comment {comment_id}",
+                fenced=False,
+            )
+            sequence = len(history_receipts) + 1
+            previous_hash = _validate_orchestrator_receipt(
+                receipt,
+                index=sequence,
+                previous_hash=previous_hash,
+                repository_id=repository_id,
+                report_issue_id=report_issue_id,
+            )
+            history_receipts.append(
+                {
+                    "provider_comment_id": comment_id,
+                    "raw_receipt_json": raw_receipt_json,
+                    "receipt": receipt,
+                }
+            )
+
+    anchor = require_object(register.get("history_anchor"), "body history anchor")
+    require_exact_fields(anchor, HISTORY_ANCHOR_FIELDS, "body history anchor")
+    require(tuple(anchor) == ("sequence", "head", "latest_receipt"), "body history anchor field order mismatch")
+    sequence = len(history_receipts)
+    anchor_sequence = anchor.get("sequence")
+    require(type(anchor_sequence) is int and anchor_sequence >= 0, "body history anchor sequence is invalid")
+    require(
+        register["register_revision"] == anchor_sequence,
+        "register revision does not match body history anchor sequence",
+    )
+    if anchor_sequence == sequence:
+        require(anchor.get("head") == previous_hash, "body history anchor head mismatch")
+        expected_latest = history_receipts[-1]["receipt"] if history_receipts else None
+        require(anchor.get("latest_receipt") == expected_latest, "body history anchor latest receipt mismatch")
+        anchor_status = "exact"
+    elif anchor_sequence == sequence + 1:
+        latest = require_object(anchor.get("latest_receipt"), "body history anchor latest receipt")
+        anchored_hash = _validate_orchestrator_receipt(
+            latest,
+            index=anchor_sequence,
+            previous_hash=previous_hash,
+            repository_id=repository_id,
+            report_issue_id=report_issue_id,
+        )
+        require(anchor.get("head") == anchored_hash, "body history anchor head mismatch")
+        anchor_status = "one-receipt-ahead"
+    else:
+        raise ContractError("body history anchor sequence mismatch")
+    if anchor_sequence == 0:
+        require(register.get("last_operation_id") is None and register.get("last_operation_fingerprint") is None, "genesis operation markers must be null")
+    else:
+        latest = require_object(anchor.get("latest_receipt"), "body history anchor latest receipt")
+        require(tuple(latest) == ORCHESTRATOR_RECEIPT_FIELD_ORDER, "body history anchor receipt field order mismatch")
+        require(register.get("last_operation_id") == latest.get("operation_id"), "last operation marker mismatch")
+        require_sha256(register.get("last_operation_fingerprint"), "last operation fingerprint")
+
+    return {
+        "schema": "repo-gardener-github-register-view/v1",
+        "repository_id": repository_id,
+        "report_issue_id": report_issue_id,
+        "writer_id": writer_id,
+        "body": body,
+        "body_machine_json": body_machine_json,
+        "body_fingerprint": hashlib.sha256(body_machine_json.encode("utf-8")).hexdigest(),
+        "register": register,
+        "history_sequence": sequence,
+        "history_head": previous_hash,
+        "anchor_status": anchor_status,
+        "history_receipts": history_receipts,
+        "ordinary_comment_ids": ordinary_comment_ids,
+        "comment_pages_complete": True,
+        "structural_integrity": "valid",
+        "provenance": "unverified",
+    }
 
 
 def validate_manifest(
@@ -1009,6 +1368,8 @@ def main() -> int:
     receipt_parser.add_argument("--allow-incomplete-coverage", action="store_true")
     body_parser = subparsers.add_parser("validate-body")
     body_parser.add_argument("--body", type=Path, required=True)
+    snapshot_parser = subparsers.add_parser("normalize-github-register")
+    snapshot_parser.add_argument("--input", required=True)
     for command in ("effect-v1", "completion-v1", "gates-v1"):
         input_parser = subparsers.add_parser(command)
         input_parser.add_argument("--input", required=True)
@@ -1035,6 +1396,8 @@ def main() -> int:
     elif args.command == "validate-body":
         body = args.body.read_text(encoding="utf-8")
         result = {"body_bytes": validate_body(body)}
+    elif args.command == "normalize-github-register":
+        result = normalize_github_register_snapshot(_load_input(args.input))
     elif args.command == "effect-v1":
         data = _versioned_input(_load_input(args.input), "repo-gardener-effect-input/v1", {"scenario"})
         scenario = require_object(data["scenario"], "effect scenario")

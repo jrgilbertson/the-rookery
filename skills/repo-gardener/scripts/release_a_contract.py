@@ -210,15 +210,7 @@ SCOUT_RECEIPT_FIELDS = {
     "evidence_references",
     "candidate_count",
 }
-EFFECT_SCENARIOS = {"operation", "retry", "identity-collision", "terminal-receipt", "repair"}
 COMPLETION_SCENARIOS = {"completion-partition", "delegation", "optional-scout", "caller-completion"}
-AUTHORITY_FIELDS = (
-    "caller_exclusive",
-    "wrapper_scope_allowlisted",
-    "raw_write_capability_absent_everywhere",
-    "continuity_and_retention_valid",
-    "intended_receipt_read_back",
-)
 GATE_ORDER = (
     "current source",
     "policy and authority",
@@ -267,7 +259,30 @@ RECONCILIATION_AUTHORITY_FIELDS = {
     "run_id",
     *RECONCILIATION_WRITE_PROOFS,
 }
-EFFECT_AUTHORITY_FIELDS = {"repository_id", *AUTHORITY_FIELDS}
+EFFECT_OPERATION_FIELDS = {"kind", "run_id", "payload", "rows", "projection"}
+EFFECT_PREPARED_FIELDS = {
+    "schema",
+    "repository_id",
+    "report_issue_id",
+    "writer_id",
+    "operation",
+    "operation_id",
+    "operation_fingerprint",
+    "expected_pre_body_fingerprint",
+    "expected_pre_revision",
+    "expected_pre_head",
+    "expected_post_revision",
+    "expected_post_head",
+    "receipt_hash",
+    "body",
+    "comment",
+}
+RESERVED_REPORT_SEQUENCES = (
+    CURRENT_PORTFOLIO_BEGIN,
+    CURRENT_PORTFOLIO_END,
+    HISTORY_RECEIPT_BEGIN,
+    HISTORY_RECEIPT_END,
+)
 
 
 class ContractError(Exception):
@@ -899,13 +914,6 @@ def validate_scout_receipts(
     return receipt_map
 
 
-def effect_authority_complete(scenario: dict[str, Any], repository_id: str) -> bool:
-    authority = require_object(scenario.get("authority"), f"{scenario.get('id', 'scenario')} authority")
-    require_exact_fields(authority, EFFECT_AUTHORITY_FIELDS, "effect authority")
-    authority_repository = require_identity(authority.get("repository_id"), "effect authority repository_id")
-    return authority_repository == repository_id and all(authority[field] is True for field in AUTHORITY_FIELDS)
-
-
 def composite_identity(repository_id: Any, operation_id: Any) -> dict[str, str]:
     return {
         "repository_id": require_identity(repository_id, "operation identity repository_id"),
@@ -913,147 +921,332 @@ def composite_identity(repository_id: Any, operation_id: Any) -> dict[str, str]:
     }
 
 
-def effect_compatibility(scenario: dict[str, Any]) -> str:
-    claimed = scenario.get("compatible_prior_result")
-    if claimed == "incompatible":
-        return "incompatible"
-    if claimed != "compatible":
-        return "uncertain"
-    prepared_payload = scenario.get("prepared_effect_payload")
-    existing_payload = scenario.get("existing_effect_payload")
-    prepared_fingerprint = scenario.get("prepared_effect_fingerprint")
-    existing_fingerprint = scenario.get("existing_effect_fingerprint")
-    if any(
-        field not in scenario
-        for field in (
-            "prepared_effect_payload",
-            "existing_effect_payload",
-            "prepared_effect_fingerprint",
-            "existing_effect_fingerprint",
+def _reject_reserved_report_content(value: Any, label: str) -> None:
+    if isinstance(value, str):
+        require(
+            not any(marker in value for marker in RESERVED_REPORT_SEQUENCES),
+            f"{label} contains a reserved report sequence",
         )
-    ):
-        return "uncertain"
-    if not isinstance(prepared_payload, dict) or not isinstance(existing_payload, dict):
-        return "incompatible"
-    try:
-        require_payload(prepared_payload, RECEIPT_LIMIT, "prepared effect payload")
-        require_payload(existing_payload, RECEIPT_LIMIT, "existing effect payload")
-        require_sha256(prepared_fingerprint, "prepared effect fingerprint")
-        require_sha256(existing_fingerprint, "existing effect fingerprint")
-    except ContractError:
-        return "incompatible"
-    prepared_bytes = canonical_bytes(prepared_payload)
-    existing_bytes = canonical_bytes(existing_payload)
-    prepared_digest = hashlib.sha256(prepared_bytes).hexdigest()
-    existing_digest = hashlib.sha256(existing_bytes).hexdigest()
-    if prepared_fingerprint != prepared_digest or existing_fingerprint != existing_digest:
-        return "incompatible"
-    if prepared_fingerprint != existing_fingerprint or prepared_bytes != existing_bytes:
-        return "incompatible"
-    return "compatible"
+    elif isinstance(value, list):
+        for index, item in enumerate(value):
+            _reject_reserved_report_content(item, f"{label}[{index}]")
+    elif isinstance(value, dict):
+        for key, item in value.items():
+            _reject_reserved_report_content(key, f"{label} key")
+            _reject_reserved_report_content(item, f"{label}.{key}")
 
 
-def validate_effect_material(payload: Any, fingerprint: Any, label: str) -> bytes:
-    payload = require_object(payload, f"{label} payload")
-    require_payload(payload, RECEIPT_LIMIT, f"{label} payload")
-    require_identity(payload.get("report_id"), f"{label} report_id")
-    require(payload.get("verb") in {"replace-body", "append-comment"}, f"{label} verb is not allowlisted")
-    fingerprint = require_sha256(fingerprint, f"{label} fingerprint")
-    material = canonical_bytes(payload)
-    require(hashlib.sha256(material).hexdigest() == fingerprint, f"{label} fingerprint mismatch")
-    return material
+def _effect_operation(operation: Any) -> dict[str, Any]:
+    operation = require_object(operation, "effect operation")
+    require_exact_fields(operation, EFFECT_OPERATION_FIELDS, "effect operation")
+    require(require_identity(operation.get("kind"), "effect kind") in ORCHESTRATOR_HISTORY_KINDS, "effect kind is invalid")
+    require_identity(operation.get("run_id"), "effect run_id")
+    require_object(operation.get("payload"), "effect payload")
+    require_list(operation.get("rows"), "effect rows")
+    require(isinstance(operation.get("projection"), str), "effect projection must be text")
+    require_payload(operation, BODY_LIMIT, "effect operation")
+    _reject_reserved_report_content(operation, "effect operation")
+    rows = []
+    for index, raw_row in enumerate(operation["rows"]):
+        row = require_object(raw_row, f"effect row {index}")
+        require_exact_fields(row, ORCHESTRATOR_ROW_FIELDS, f"effect row {index}")
+        rows.append({field: row[field] for field in ORCHESTRATOR_ROW_FIELD_ORDER})
+    return {
+        "kind": operation["kind"],
+        "run_id": operation["run_id"],
+        "payload": operation["payload"],
+        "rows": rows,
+        "projection": operation["projection"],
+    }
 
 
-def exact_effect_observed(scenario: dict[str, Any], identity: dict[str, str]) -> bool:
-    try:
-        prepared = validate_effect_material(
-            scenario.get("prepared_effect_payload"),
-            scenario.get("prepared_effect_fingerprint"),
-            "prepared effect",
-        )
-        post_read = require_object(scenario.get("authoritative_post_read"), "authoritative effect post-read")
-        require_exact_fields(
-            post_read,
-            {"authoritative", "repository_id", "operation_id", "effect_payload", "effect_fingerprint"},
-            "authoritative effect post-read",
-        )
-        observed_identity = composite_identity(post_read.get("repository_id"), post_read.get("operation_id"))
-        observed = validate_effect_material(
-            post_read.get("effect_payload"),
-            post_read.get("effect_fingerprint"),
-            "observed effect",
-        )
-    except ContractError:
+def _effect_operation_id(view: dict[str, Any], operation: dict[str, Any]) -> str:
+    identity_material = {
+        "repository_id": view["repository_id"],
+        "report_issue_id": view["report_issue_id"],
+        "writer_id": view["writer_id"],
+        "expected_pre_revision": view["register"]["register_revision"],
+        "expected_pre_head": view["register"]["history_anchor"]["head"],
+        "kind": operation["kind"],
+        "payload": operation["payload"],
+    }
+    return f"operation:report:{hashlib.sha256(canonical_bytes(identity_material)).hexdigest()}"
+
+
+def prepare_report_effect(pre_read: Any, operation: Any) -> dict[str, Any]:
+    view = normalize_github_register_snapshot(pre_read)
+    require(view["anchor_status"] == "exact", "effect pre-read is not at an exact history anchor")
+    operation = _effect_operation(operation)
+    register = view["register"]
+    require(operation["rows"] != register["rows"] or operation["projection"], "effect operation has no report material")
+    operation_id = _effect_operation_id(view, operation)
+    expected_pre_body_fingerprint = hashlib.sha256(view["body"].encode("utf-8")).hexdigest()
+    receipt = {
+        "schema": "orchestrator-history/v1",
+        "sequence": register["register_revision"] + 1,
+        "previous_hash": register["history_anchor"]["head"],
+        "receipt_hash": "",
+        "operation_id": operation_id,
+        "kind": operation["kind"],
+        "run_id": operation["run_id"],
+        "payload": operation["payload"],
+    }
+    receipt["receipt_hash"] = orchestrator_receipt_hash(
+        receipt, view["repository_id"], view["report_issue_id"]
+    )
+    _validate_orchestrator_receipt(
+        receipt,
+        index=receipt["sequence"],
+        previous_hash=register["history_anchor"]["head"],
+        repository_id=view["repository_id"],
+        report_issue_id=view["report_issue_id"],
+    )
+    fingerprint_material = {
+        "repository_id": view["repository_id"],
+        "report_issue_id": view["report_issue_id"],
+        "writer_id": view["writer_id"],
+        "operation_id": operation_id,
+        "kind": operation["kind"],
+        "run_id": operation["run_id"],
+        "receipt_hash": receipt["receipt_hash"],
+        "expected_pre_body_fingerprint": expected_pre_body_fingerprint,
+        "rows": operation["rows"],
+        "projection": operation["projection"],
+    }
+    operation_fingerprint_value = hashlib.sha256(canonical_bytes(fingerprint_material)).hexdigest()
+    next_register = {
+        "schema": "orchestrator-register/v1",
+        "repository_id": view["repository_id"],
+        "report_issue_id": view["report_issue_id"],
+        "writer_id": view["writer_id"],
+        "register_revision": receipt["sequence"],
+        "last_operation_id": operation_id,
+        "last_operation_fingerprint": operation_fingerprint_value,
+        "history_anchor": {
+            "sequence": receipt["sequence"],
+            "head": receipt["receipt_hash"],
+            "latest_receipt": receipt,
+        },
+        "rows": operation["rows"],
+    }
+    _validate_orchestrator_register(
+        next_register,
+        repository_id=view["repository_id"],
+        report_issue_id=view["report_issue_id"],
+        writer_id=view["writer_id"],
+    )
+    body = (
+        f"{CURRENT_PORTFOLIO_BEGIN}\n```json\n"
+        f"{json.dumps(next_register, ensure_ascii=False, separators=(',', ':'))}\n```\n"
+        f"{CURRENT_PORTFOLIO_END}\n{operation['projection']}"
+    )
+    validate_body(body)
+    comment = (
+        f"{HISTORY_RECEIPT_BEGIN}\n"
+        f"{json.dumps(receipt, ensure_ascii=False, separators=(',', ':'))}\n"
+        f"{HISTORY_RECEIPT_END}"
+    )
+    return {
+        "schema": "repo-gardener-prepared-report-effect/v1",
+        "repository_id": view["repository_id"],
+        "report_issue_id": view["report_issue_id"],
+        "writer_id": view["writer_id"],
+        "operation": operation,
+        "operation_id": operation_id,
+        "operation_fingerprint": operation_fingerprint_value,
+        "expected_pre_body_fingerprint": expected_pre_body_fingerprint,
+        "expected_pre_revision": register["register_revision"],
+        "expected_pre_head": register["history_anchor"]["head"],
+        "expected_post_revision": receipt["sequence"],
+        "expected_post_head": receipt["receipt_hash"],
+        "receipt_hash": receipt["receipt_hash"],
+        "body": body,
+        "comment": comment,
+    }
+
+
+def _prepared_effect(prepared: Any) -> dict[str, Any]:
+    prepared = require_object(prepared, "prepared report effect")
+    require_exact_fields(prepared, EFFECT_PREPARED_FIELDS, "prepared report effect")
+    require(prepared.get("schema") == "repo-gardener-prepared-report-effect/v1", "prepared report effect schema mismatch")
+    operation = _effect_operation(prepared.get("operation"))
+    composite_identity(prepared.get("repository_id"), prepared.get("operation_id"))
+    require_identity(prepared.get("report_issue_id"), "prepared report issue_id")
+    require_identity(prepared.get("writer_id"), "prepared writer_id")
+    require_sha256(prepared.get("operation_fingerprint"), "prepared operation fingerprint")
+    require_sha256(prepared.get("expected_pre_body_fingerprint"), "prepared pre body fingerprint")
+    if prepared.get("expected_pre_head") != "GENESIS":
+        require_sha256(prepared.get("expected_pre_head"), "prepared pre head")
+    require_sha256(prepared.get("expected_post_head"), "prepared post head")
+    require_sha256(prepared.get("receipt_hash"), "prepared receipt hash")
+    require(type(prepared.get("expected_pre_revision")) is int and prepared["expected_pre_revision"] >= 0, "prepared pre revision is invalid")
+    require(prepared.get("expected_post_revision") == prepared["expected_pre_revision"] + 1, "prepared revision transition is invalid")
+    validate_body(prepared.get("body"))
+    require(isinstance(prepared.get("comment"), str), "prepared comment must be text")
+    operation_id_material = {
+        "repository_id": prepared["repository_id"],
+        "report_issue_id": prepared["report_issue_id"],
+        "writer_id": prepared["writer_id"],
+        "expected_pre_revision": prepared["expected_pre_revision"],
+        "expected_pre_head": prepared["expected_pre_head"],
+        "kind": operation["kind"],
+        "payload": operation["payload"],
+    }
+    expected_operation_id = f"operation:report:{hashlib.sha256(canonical_bytes(operation_id_material)).hexdigest()}"
+    require(prepared["operation_id"] == expected_operation_id, "prepared operation_id mismatch")
+    _, receipt = _extract_marked_json(
+        prepared["comment"],
+        HISTORY_RECEIPT_BEGIN,
+        HISTORY_RECEIPT_END,
+        "prepared receipt comment",
+        fenced=False,
+    )
+    require(receipt.get("sequence") == prepared["expected_post_revision"], "prepared receipt sequence mismatch")
+    require(receipt.get("previous_hash") == prepared["expected_pre_head"], "prepared receipt previous hash mismatch")
+    require(receipt.get("operation_id") == prepared["operation_id"], "prepared receipt operation_id mismatch")
+    require(receipt.get("kind") == operation["kind"] and receipt.get("run_id") == operation["run_id"], "prepared receipt metadata mismatch")
+    require(receipt.get("payload") == operation["payload"], "prepared receipt payload mismatch")
+    _validate_orchestrator_receipt(
+        receipt,
+        index=prepared["expected_post_revision"],
+        previous_hash=prepared["expected_pre_head"],
+        repository_id=prepared["repository_id"],
+        report_issue_id=prepared["report_issue_id"],
+    )
+    expected_receipt_hash = orchestrator_receipt_hash(
+        receipt, prepared["repository_id"], prepared["report_issue_id"]
+    )
+    require(receipt.get("receipt_hash") == expected_receipt_hash == prepared["receipt_hash"], "prepared receipt hash mismatch")
+    require(prepared["expected_post_head"] == expected_receipt_hash, "prepared post head mismatch")
+    fingerprint_material = {
+        "repository_id": prepared["repository_id"],
+        "report_issue_id": prepared["report_issue_id"],
+        "writer_id": prepared["writer_id"],
+        "operation_id": prepared["operation_id"],
+        "kind": operation["kind"],
+        "run_id": operation["run_id"],
+        "receipt_hash": prepared["receipt_hash"],
+        "expected_pre_body_fingerprint": prepared["expected_pre_body_fingerprint"],
+        "rows": operation["rows"],
+        "projection": operation["projection"],
+    }
+    require(
+        prepared["operation_fingerprint"] == hashlib.sha256(canonical_bytes(fingerprint_material)).hexdigest(),
+        "prepared operation fingerprint mismatch",
+    )
+    _, register = _extract_marked_json(
+        prepared["body"],
+        CURRENT_PORTFOLIO_BEGIN,
+        CURRENT_PORTFOLIO_END,
+        "prepared managed body",
+        fenced=True,
+    )
+    _validate_orchestrator_register(
+        register,
+        repository_id=prepared["repository_id"],
+        report_issue_id=prepared["report_issue_id"],
+        writer_id=prepared["writer_id"],
+    )
+    expected_register = {
+        "schema": "orchestrator-register/v1",
+        "repository_id": prepared["repository_id"],
+        "report_issue_id": prepared["report_issue_id"],
+        "writer_id": prepared["writer_id"],
+        "register_revision": prepared["expected_post_revision"],
+        "last_operation_id": prepared["operation_id"],
+        "last_operation_fingerprint": prepared["operation_fingerprint"],
+        "history_anchor": {
+            "sequence": prepared["expected_post_revision"],
+            "head": prepared["expected_post_head"],
+            "latest_receipt": receipt,
+        },
+        "rows": operation["rows"],
+    }
+    require(register == expected_register, "prepared body register mismatch")
+    expected_body = (
+        f"{CURRENT_PORTFOLIO_BEGIN}\n```json\n"
+        f"{json.dumps(expected_register, ensure_ascii=False, separators=(',', ':'))}\n```\n"
+        f"{CURRENT_PORTFOLIO_END}\n{operation['projection']}"
+    )
+    require(
+        prepared["body"] == expected_body,
+        "prepared body material mismatch "
+        f"({hashlib.sha256(prepared['body'].encode('utf-8')).hexdigest()} != "
+        f"{hashlib.sha256(expected_body.encode('utf-8')).hexdigest()})",
+    )
+    return prepared
+
+
+def _view_matches_pre(view: dict[str, Any], prepared: dict[str, Any]) -> bool:
+    return (
+        view["repository_id"] == prepared["repository_id"]
+        and view["report_issue_id"] == prepared["report_issue_id"]
+        and view["writer_id"] == prepared["writer_id"]
+        and hashlib.sha256(view["body"].encode("utf-8")).hexdigest()
+        == prepared["expected_pre_body_fingerprint"]
+        and view["register"]["register_revision"] == prepared["expected_pre_revision"]
+        and view["register"]["history_anchor"]["head"] == prepared["expected_pre_head"]
+    )
+
+
+def _view_matches_post(view: dict[str, Any], prepared: dict[str, Any]) -> bool:
+    if view["body"] != prepared["body"] or view["anchor_status"] != "exact":
         return False
-    return post_read.get("authoritative") is True and observed_identity == identity and observed == prepared
+    if view["repository_id"] != prepared["repository_id"] or view["report_issue_id"] != prepared["report_issue_id"] or view["writer_id"] != prepared["writer_id"]:
+        return False
+    if view["register"]["register_revision"] != prepared["expected_post_revision"] or view["register"]["history_anchor"]["head"] != prepared["expected_post_head"]:
+        return False
+    receipts = view["history_receipts"]
+    if not receipts:
+        return False
+    latest = receipts[-1]
+    return (
+        latest["receipt"]["operation_id"] == prepared["operation_id"]
+        and latest["receipt"]["receipt_hash"] == prepared["receipt_hash"]
+        and f"{HISTORY_RECEIPT_BEGIN}\n{latest['raw_receipt_json']}\n{HISTORY_RECEIPT_END}" == prepared["comment"]
+        and view["register"]["last_operation_fingerprint"] == prepared["operation_fingerprint"]
+    )
+
+
+def verify_report_effect(prepared: Any, pre_read: Any, post_read: Any, write_attempt: Any) -> dict[str, Any]:
+    prepared = _prepared_effect(prepared)
+    require(write_attempt in {"none", "denied-before-write", "possible"}, "write_attempt is invalid")
+    try:
+        before = normalize_github_register_snapshot(pre_read)
+    except ContractError:
+        return {"terminal_outcome": "ambiguous", "matched_parts": None, "repair": "none", "provenance": "unverified"}
+    if post_read is None:
+        return {"terminal_outcome": "ambiguous", "matched_parts": None, "repair": "none", "provenance": "unverified"}
+    try:
+        after = normalize_github_register_snapshot(post_read)
+    except ContractError:
+        return {"terminal_outcome": "ambiguous", "matched_parts": None, "repair": "none", "provenance": "unverified"}
+    before_is_base = _view_matches_pre(before, prepared)
+    before_is_target = _view_matches_post(before, prepared)
+    after_is_target = _view_matches_post(after, prepared)
+    if write_attempt == "none" and before_is_target and after_is_target:
+        return {"terminal_outcome": "already satisfied", "matched_parts": 2, "repair": "none", "provenance": "unverified"}
+    if before_is_base and after_is_target:
+        return {"terminal_outcome": "observed", "matched_parts": 2, "repair": "none", "provenance": "unverified"}
+    if write_attempt == "denied-before-write" and before_is_base and before == after:
+        return {"terminal_outcome": "failed", "matched_parts": 0, "repair": "none", "provenance": "unverified"}
+    body_only = (
+        before_is_base
+        and after["body"] == prepared["body"]
+        and after["anchor_status"] == "one-receipt-ahead"
+        and after["history_sequence"] == prepared["expected_pre_revision"]
+    )
+    return {
+        "terminal_outcome": "ambiguous",
+        "matched_parts": 1 if body_only else None,
+        "repair": "append-exact-prepared-comment" if body_only else "none",
+        "provenance": "unverified",
+    }
 
 
 def evaluate_effect(scenario: Any) -> dict[str, Any]:
     scenario = require_object(scenario, "effect scenario")
     scenario_type = scenario.get("scenario_type")
-    if scenario_type == "operation":
-        try:
-            operation_identity = composite_identity(scenario.get("repository_id"), scenario.get("operation_id"))
-        except ContractError:
-            return {"terminal_outcome": "failed", "invoke_count": 0, "blind_retry": False, "persistence_claim": False, "identity_valid": False}
-        authorized = effect_authority_complete(scenario, operation_identity["repository_id"])
-        preconditions_match = scenario.get("preconditions_match") is True
-        if not authorized or not preconditions_match:
-            return {"terminal_outcome": "failed", "invoke_count": 0, "blind_retry": False, "persistence_claim": False, "all_report_writes_blocked": not authorized, "identity_valid": True}
-        terminal_read_back = scenario.get("terminal_receipt_read_back") is True
-        if scenario.get("desired_state_preexisting") is True:
-            compatibility = effect_compatibility(scenario)
-            observed = scenario.get("post_read") == "desired state present"
-            if compatibility == "incompatible":
-                outcome = "failed"
-            elif compatibility == "compatible" and observed and terminal_read_back:
-                outcome = "already satisfied"
-            else:
-                outcome = "ambiguous"
-            return {"terminal_outcome": outcome, "invoke_count": 0, "blind_retry": False, "persistence_claim": outcome == "already satisfied"}
-        if scenario.get("compatible_prior_result") is not None:
-            compatibility = effect_compatibility(scenario)
-            outcome = "failed" if compatibility == "incompatible" else "ambiguous"
-            return {"terminal_outcome": outcome, "invoke_count": 0, "blind_retry": False, "persistence_claim": False}
-        invoke_result = scenario.get("invoke_result")
-        post_read = scenario.get("post_read")
-        if invoke_result == "accepted" and post_read == "exact effect observed" and terminal_read_back and exact_effect_observed(scenario, operation_identity):
-            outcome = "observed"
-        elif invoke_result in {"denied", "provider error"} and post_read == "unchanged" and terminal_read_back:
-            outcome = "failed"
-        else:
-            outcome = "ambiguous"
-        return {"terminal_outcome": outcome, "invoke_count": 1, "blind_retry": False, "persistence_claim": outcome in {"observed", "already satisfied", "failed"}}
-    if scenario_type == "retry":
-        identity = composite_identity(scenario.get("repository_id"), scenario.get("operation_id"))
-        retry_identity = composite_identity(scenario.get("retry_repository_id"), scenario.get("retry_operation_id"))
-        reused = identity == retry_identity
-        allowed = all((effect_authority_complete(scenario, identity["repository_id"]), scenario.get("source_native_absence") is True, scenario.get("preconditions_match") is True, scenario.get("wrapper_scope_unchanged") is True, reused))
-        return {"retry_allowed": allowed, "operation_identity": identity, "retry_operation_identity": retry_identity, "operation_identity_reused": reused, "new_operation_identity": False, "invoke_count": 1 if allowed else 0}
-    if scenario_type == "identity-collision":
-        identity = composite_identity(scenario.get("repository_id"), scenario.get("operation_id"))
-        existing = composite_identity(scenario.get("existing_repository_id"), scenario.get("existing_operation_id"))
-        result = require_object(scenario.get("result_operation_identity"), "collision result identity")
-        result_identity = composite_identity(result.get("repository_id"), result.get("operation_id"))
-        minted = scenario.get("minted_replacement_identity")
-        if minted is not None:
-            minted = require_object(minted, "minted replacement identity")
-            composite_identity(minted.get("repository_id"), minted.get("operation_id"))
-        if identity != existing:
-            outcome = "failed"
-        else:
-            compatibility = effect_compatibility(scenario)
-            if compatibility == "incompatible":
-                outcome = "failed"
-            elif (
-                compatibility == "compatible"
-                and scenario.get("post_read") == "desired state present"
-                and scenario.get("terminal_receipt_read_back") is True
-            ):
-                outcome = "already satisfied"
-            else:
-                outcome = "ambiguous"
-        return {"operation_identity": identity, "existing_operation_identity": existing, "operation_identity_preserved": result_identity == identity, "replacement_identity_minted": minted is not None, "terminal_outcome": outcome, "invoke_count": 0}
     if scenario_type == "completion-partition":
         operation_id = require_identity(scenario.get("operation_id"), "completion partition operation_id")
         named = require_list(scenario.get("named_work"), "named_work")
@@ -1079,22 +1272,6 @@ def evaluate_effect(scenario: Any) -> dict[str, Any]:
         return {"remaining_disposition": "delegated" if handoff.get("read_back") is True else "gated"}
     if scenario_type == "optional-scout":
         return {"dependent_work_blocked": bool(scenario.get("missing_scout")), "independent_work": "continued" if scenario.get("independent_work") is True else "gated"}
-    if scenario_type == "terminal-receipt":
-        identity = composite_identity(scenario.get("repository_id"), scenario.get("operation_id"))
-        authorized = effect_authority_complete(scenario, identity["repository_id"])
-        post_read = require_object(scenario.get("authoritative_post_read"), "terminal receipt authoritative post-read")
-        require_exact_fields(
-            post_read,
-            {"authoritative", "repository_id", "operation_id", "terminal_receipt_persisted"},
-            "terminal receipt authoritative post-read",
-        )
-        observed_identity = composite_identity(post_read.get("repository_id"), post_read.get("operation_id"))
-        observed = (
-            post_read.get("authoritative") is True
-            and observed_identity == identity
-            and post_read.get("terminal_receipt_persisted") is True
-        )
-        return {"persistence_claim": authorized and observed and scenario.get("terminal_receipt_read_back") is True}
     if scenario_type == "caller-completion":
         accepted = scenario.get("terminal_capability_active") is True and scenario.get("caller_accepts") is True
         pending = require_list(scenario.get("pending_decision_ids"), "pending decisions")
@@ -1115,13 +1292,7 @@ def evaluate_effect(scenario: Any) -> dict[str, Any]:
             "caller_only_allocation_valid": not assignment_set,
             "self_settled_before_acceptance": False,
         }
-    if scenario_type == "repair":
-        proof = all(scenario.get(field) is True for field in ("complete_integrity_read", "exact_prepared_receipt_reused", "preconditions_match", "anchored_receipt_valid", "history_tail_missing"))
-        identity = composite_identity(scenario.get("repository_id"), scenario.get("operation_id"))
-        if effect_authority_complete(scenario, identity["repository_id"]) and proof and scenario.get("body_anchor_ahead_by") == 1:
-            return {"append_exact_stored_receipt": 1, "rewrite_body": False, "readback_required": True}
-        return {"repair_allowed": False, "invoke_count": 0, "terminal_outcome": "ambiguous"}
-    raise ContractError(f"unknown effect scenario type: {scenario_type}")
+    raise ContractError(f"unknown completion scenario type: {scenario_type}")
 
 
 def evaluate_gates(facts: Any) -> dict[str, Any]:
@@ -1399,10 +1570,24 @@ def main() -> int:
     elif args.command == "normalize-github-register":
         result = normalize_github_register_snapshot(_load_input(args.input))
     elif args.command == "effect-v1":
-        data = _versioned_input(_load_input(args.input), "repo-gardener-effect-input/v1", {"scenario"})
-        scenario = require_object(data["scenario"], "effect scenario")
-        require(scenario.get("scenario_type") in EFFECT_SCENARIOS, "effect-v1 received a non-effect scenario")
-        result = evaluate_effect(scenario)
+        data = require_object(_load_input(args.input), "effect input")
+        phase = data.get("phase")
+        if phase == "prepare":
+            require_exact_fields(data, {"schema", "phase", "pre_read", "operation"}, "effect input")
+            require(data.get("schema") == "repo-gardener-effect-input/v2", "effect input schema mismatch")
+            result = prepare_report_effect(data["pre_read"], data["operation"])
+        elif phase == "verify":
+            require_exact_fields(
+                data,
+                {"schema", "phase", "prepared", "pre_read", "post_read", "write_attempt"},
+                "effect input",
+            )
+            require(data.get("schema") == "repo-gardener-effect-input/v2", "effect input schema mismatch")
+            result = verify_report_effect(
+                data["prepared"], data["pre_read"], data["post_read"], data["write_attempt"]
+            )
+        else:
+            raise ContractError("effect input phase must be prepare or verify")
     elif args.command == "completion-v1":
         data = _versioned_input(_load_input(args.input), "repo-gardener-completion-input/v1", {"scenario"})
         scenario = require_object(data["scenario"], "completion scenario")

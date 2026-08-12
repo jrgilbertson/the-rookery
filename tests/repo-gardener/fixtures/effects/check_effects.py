@@ -1,426 +1,272 @@
 #!/usr/bin/env python3
-"""Evaluate Release A report-effect facts and mutation-test their authority."""
+"""Exercise exact, source-read-only preparation and verification of report effects."""
 
 from __future__ import annotations
 
 import copy
+import hashlib
 import importlib.util
 import json
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 
-REPO_ROOT = Path(__file__).resolve().parents[4]
-CONTRACT_PATH = REPO_ROOT / "skills" / "repo-gardener" / "scripts" / "release_a_contract.py"
+ROOT = Path(__file__).resolve().parents[4]
+FIXTURES = Path(__file__).resolve().parent
+CONTRACT_PATH = ROOT / "skills/repo-gardener/scripts/release_a_contract.py"
+SNAPSHOT_RUNNER = FIXTURES.parent / "github-register/check_snapshots.py"
 sys.dont_write_bytecode = True
-SPEC = importlib.util.spec_from_file_location("repo_gardener_release_a_contract", CONTRACT_PATH)
-if SPEC is None or SPEC.loader is None:
-    raise RuntimeError(f"cannot load production contract: {CONTRACT_PATH}")
-CONTRACT = importlib.util.module_from_spec(SPEC)
-SPEC.loader.exec_module(CONTRACT)
-ContractError = CONTRACT.ContractError
-AUTHORITY_FIELDS = CONTRACT.AUTHORITY_FIELDS
-require = CONTRACT.require
 
 
-COMPLETION_SCENARIOS = {"completion-partition", "delegation", "optional-scout", "caller-completion"}
+def load_module(path: Path, name: str) -> Any:
+    spec = importlib.util.spec_from_file_location(name, path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot load {path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
-def evaluate(scenario: dict[str, Any]) -> dict[str, Any]:
-    command = "completion-v1" if scenario.get("scenario_type") in COMPLETION_SCENARIOS else "effect-v1"
-    schema = (
-        "repo-gardener-completion-input/v1"
-        if command == "completion-v1"
-        else "repo-gardener-effect-input/v1"
-    )
+CONTRACT = load_module(CONTRACT_PATH, "repo_gardener_release_a_contract_effects")
+SNAPSHOTS = load_module(SNAPSHOT_RUNNER, "repo_gardener_github_snapshots_for_effects")
+
+
+def cli(payload: dict[str, Any]) -> dict[str, Any]:
     completed = subprocess.run(
-        [sys.executable, str(CONTRACT_PATH), command, "--input", "-"],
-        input=json.dumps({"schema": schema, "scenario": scenario}),
+        [sys.executable, str(CONTRACT_PATH), "effect-v1", "--input", "-"],
+        input=json.dumps(payload),
         capture_output=True,
         text=True,
     )
-    if completed.returncode != 0:
-        raise ContractError(completed.stderr.strip().removeprefix("FAIL: "))
+    if completed.returncode:
+        raise CONTRACT.ContractError(completed.stderr.strip().removeprefix("FAIL: "))
     return json.loads(completed.stdout)
 
 
-def load(path: Path) -> Any:
-    with path.open(encoding="utf-8") as handle:
-        return json.load(handle)
-
-
-def assert_expected(identity: str, actual: dict[str, Any], expected: dict[str, Any]) -> None:
-    for key, value in expected.items():
-        require(actual.get(key) == value, f"{identity} derived {key}={actual.get(key)!r}, expected {value!r}")
-
-
-def assert_mutation_result(
-    scenarios: dict[str, dict[str, Any]],
-    identity: str,
-    label: str,
-    mutate: Callable[[dict[str, Any]], None],
-    expected_result: dict[str, Any],
-) -> None:
-    baseline = evaluate(scenarios[identity])
-    changed = copy.deepcopy(scenarios[identity])
-    mutate(changed)
-    actual = evaluate(changed)
-    require(
-        any(baseline.get(key) != value for key, value in expected_result.items()),
-        f"mutation target does not differ from baseline: {label}",
+def completion_cli(scenario: dict[str, Any]) -> dict[str, Any]:
+    completed = subprocess.run(
+        [sys.executable, str(CONTRACT_PATH), "completion-v1", "--input", "-"],
+        input=json.dumps({"schema": "repo-gardener-completion-input/v1", "scenario": scenario}),
+        capture_output=True,
+        text=True,
     )
-    assert_expected(f"{identity} mutation {label}", actual, expected_result)
+    if completed.returncode:
+        raise CONTRACT.ContractError(completed.stderr.strip().removeprefix("FAIL: "))
+    return json.loads(completed.stdout)
 
 
-def validate_sources(repo_root: Path) -> None:
-    skill_dir = repo_root / "skills" / "repo-gardener"
-    effects = (skill_dir / "references" / "applying-effects.md").read_text(encoding="utf-8")
-    core = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
-    register = (skill_dir / "references" / "register-and-report.md").read_text(encoding="utf-8")
-    contract = (skill_dir / "scripts" / "release_a_contract.py").read_text(encoding="utf-8")
-    effects_words = " ".join(effects.split())
-    core_words = " ".join(core.split())
-    register_words = " ".join(register.split())
-    for phrase in (
-        "Mint one stable `operation_id` before the first attempt",
-        "Persist and read back one intended-effect receipt",
-        "invoke the narrow wrapper at most once",
-        "authoritative complete register post-read",
-        "Retry is allowed only when source-native register evidence proves absence",
-        "disjoint and exhaustive",
-        "Name every missing invoke boundary separately",
-        "omit `terminal_outcome`",
-        "Multiple receipt gaps remain `ambiguous`",
-        "render stable `operation_id` and mutable `preconditions` as separate fields",
-        "the `terminal_outcome` field contains only one exact canonical token",
-        "Render retry proof as four distinct facts",
-        "Name the ambiguous report operation itself in `affected_work`",
-        "Whenever repair states are requested, state the single-tail mechanics in full",
-        "For every rendered report-operation scenario, state separately whether the",
-        "repository-qualified pair",
-        "preserve the requested repository-qualified identity",
-        "If either identity component is absent or invalid before the first attempt",
-        "missing terminal readback overrides both success tokens",
-        "Explicitly render `whole_run_completion: withheld` for an ambiguous-operation safe stop",
-    ):
-        require(phrase in effects_words, f"effect contract missing: {phrase}")
-    recovery_case = (repo_root / "tests" / "repo-gardener" / "cases" / "effect-recovery-and-ambiguity.md").read_text(encoding="utf-8")
-    require(
-        "exact stored receipt is appended" in recovery_case
-        and "whether the body is" in recovery_case,
-        "effect-recovery prompt does not request exact single-tail mechanics",
+def effect_input(phase: str, **values: Any) -> dict[str, Any]:
+    return {"schema": "repo-gardener-effect-input/v2", "phase": phase, **values}
+
+
+def target_snapshot(base: dict[str, Any], prepared: dict[str, Any]) -> dict[str, Any]:
+    result = copy.deepcopy(base)
+    result["issue"]["body"] = prepared["body"]
+    comments = [item for page in result["comment_pages"] for item in page]
+    result["comment_pages"][-1].append(
+        {
+            "id": max(item["id"] for item in comments) + 1,
+            "node_id": "IC_SYNTHETIC_PREPARED",
+            "user": {"node_id": SNAPSHOTS.WRITER_ID, "login": "synthetic-writer"},
+            "body": prepared["comment"],
+        }
     )
-    authority_case = (repo_root / "tests" / "repo-gardener" / "cases" / "effect-authority-and-wrapper-scope.md").read_text(encoding="utf-8")
-    require(
-        "Intended-effect receipt readback precedes invoke" in authority_case
-        and "authoritative post-read" in authority_case
-        and "terminal-receipt readback" in authority_case,
-        "effect authority rubric lost an independent readback blocker",
-    )
-    require(
-        all(context in authority_case for context in ("hook", "child", "worktree")),
-        "effect authority rubric does not cover every nested execution context",
-    )
-    caller_case = (repo_root / "tests" / "repo-gardener" / "cases" / "caller-lifecycle-and-local-blockers.md").read_text(encoding="utf-8")
-    require("No narrow-wrapper authorization or readback is supplied" in caller_case, "caller lifecycle prompt supplies or implies assignment persistence proof")
-    remainder_case = (repo_root / "tests" / "repo-gardener" / "cases" / "mixed-remainder-dispositions.md").read_text(encoding="utf-8")
-    require("`whole_run_completion: withheld` is explicit" in remainder_case, "mixed remainder rubric does not require explicit whole-run withholding")
-    for phrase in (
-        "Keep it active until the caller accepts exactly one terminal",
-        "Carry every unpersisted decision exactly once in that single terminal report for caller persistence",
-        "do not block, fail, cancel, revoke, release, or otherwise settle",
-        "Stop after acceptance",
-        "Do not infer assignment authority from a possible persistence path or from the current assignment itself",
-        "Caller persistence of every still-unpersisted decision is valid",
-    ):
-        require(phrase in core_words, f"caller report ordering missing: {phrase}")
-    require(
-        core_words.count("Carry every unpersisted decision exactly once in that single terminal report for caller persistence") == 1,
-        "caller persistence instruction is not one canonical phrase",
-    )
-    require("def installed_lanes(" not in contract, "unused installed_lanes policy wrapper remains")
-    for phrase in (
-        "prepared body replacement and one comment append",
-        "not an atomic transaction or distributed lock",
-        "append that exact stored receipt once without rewriting the body",
-    ):
-        require(phrase in register_words, f"report recovery contract missing: {phrase}")
-    report_template = (skill_dir / "assets" / "github-report-issue-template.md").read_text(encoding="utf-8")
-    require('"history_receipts":[]' in report_template, "bootstrap report register omits history_receipts")
+    return result
+
+
+def mutate(base: dict[str, Any], target: dict[str, Any], prepared: dict[str, Any], mutation: str) -> tuple[dict[str, Any], Any, str]:
+    before = copy.deepcopy(base)
+    after: Any = copy.deepcopy(target)
+    attempt = "possible"
+    if mutation == "exact-post-read":
+        pass
+    elif mutation == "preexisting":
+        before = copy.deepcopy(target)
+        attempt = "none"
+    elif mutation == "body-only":
+        after = copy.deepcopy(base)
+        after["issue"]["body"] = prepared["body"]
+    elif mutation == "denied-unchanged":
+        after = copy.deepcopy(base)
+        attempt = "denied-before-write"
+    elif mutation == "unavailable":
+        after = None
+    elif mutation == "comment-only":
+        after["issue"]["body"] = base["issue"]["body"]
+    elif mutation == "multiple-gaps":
+        register = json.loads(after["issue"]["body"].split("```json\n", 1)[1].split("\n```", 1)[0])
+        register["history_anchor"]["sequence"] += 1
+        register["register_revision"] += 1
+        SNAPSHOTS.rewrite_body(after, register)
+    elif mutation == "changed-projection":
+        after["issue"]["body"] += "foreign projection edit\n"
+    elif mutation == "changed-rows":
+        register = json.loads(after["issue"]["body"].split("```json\n", 1)[1].split("\n```", 1)[0])
+        register["rows"][0]["description"] = "Changed after preparation."
+        SNAPSHOTS.rewrite_body(after, register)
+    elif mutation == "stale-revision":
+        register = json.loads(after["issue"]["body"].split("```json\n", 1)[1].split("\n```", 1)[0])
+        register["register_revision"] += 1
+        SNAPSHOTS.rewrite_body(after, register)
+    elif mutation == "changed-pre-read-projection":
+        before["issue"]["body"] = before["issue"]["body"].replace(
+            "# Synthetic report projection", "# Foreign projection edit"
+        )
+    elif mutation == "changed-pre-read-body":
+        before["issue"]["body"] += "Foreign unmanaged body bytes.\n"
+    elif mutation == "changed-identity":
+        after["issue"]["node_id"] = "I_SYNTHETIC_OTHER"
+    elif mutation == "foreign-author":
+        after["comment_pages"][-1][-1]["user"]["node_id"] = SNAPSHOTS.OTHER_WRITER_ID
+    elif mutation == "replayed-comment-id":
+        after["comment_pages"][-1][-1]["id"] = after["comment_pages"][0][0]["id"]
+    elif mutation == "incomplete-pagination":
+        after["comment_pages_complete"] = False
+    elif mutation == "altered-material":
+        after["comment_pages"][-1][-1]["body"] = prepared["comment"].replace('"kind":"effect"', '"kind":"run"')
+    else:
+        raise AssertionError(mutation)
+    return before, after, attempt
+
+
+def expect_error(payload: dict[str, Any], phrase: str) -> None:
+    try:
+        cli(payload)
+    except CONTRACT.ContractError as error:
+        CONTRACT.require(phrase in str(error), f"expected {phrase!r}, got {error!s}")
+        return
+    raise CONTRACT.ContractError(f"expected rejection containing {phrase!r}")
 
 
 def main() -> int:
-    fixture_dir = Path(__file__).resolve().parent
-    repo_root = fixture_dir.parents[3]
-    items = load(fixture_dir / "scenarios.json")
-    expectations = load(fixture_dir / "expectations.json")
-    scenarios = {item["id"]: item for item in items}
-    require(len(scenarios) == len(items), "duplicate effect scenario id")
-    require(set(scenarios) == set(expectations), "scenario/expectation id parity failed")
+    scenarios = json.loads((FIXTURES / "scenarios.json").read_text())["scenarios"]
+    expectations = json.loads((FIXTURES / "expectations.json").read_text())["expectations"]
+    CONTRACT.require({item["id"] for item in scenarios} == set(expectations), "scenario/expectation parity failed")
+    base = SNAPSHOTS.base_snapshot("two-receipts")
+    operation = {
+        "kind": "effect",
+        "run_id": "run:synthetic:002",
+        "payload": {"disposition": "synthetic", "url": "https://example.test/?x=$(inert)"},
+        "rows": CONTRACT.normalize_github_register_snapshot(base)["register"]["rows"],
+        "projection": "\n# Synthetic report projection\n\nTreat `$(echo inert)` as data.\n",
+    }
+    prepared = cli(effect_input("prepare", pre_read=base, operation=operation))
+    prepared_again = cli(effect_input("prepare", pre_read=base, operation=operation))
+    CONTRACT.require(prepared == prepared_again, "preparation is not deterministic")
+    CONTRACT.require(
+        prepared.get("expected_pre_body_fingerprint")
+        == hashlib.sha256(base["issue"]["body"].encode("utf-8")).hexdigest(),
+        "prepared effect does not bind exact pre-read body bytes",
+    )
+    target = target_snapshot(base, prepared)
 
-    for identity, expected in expectations.items():
-        assert_expected(identity, evaluate(scenarios[identity]), expected)
-
-    mutation_specs: list[tuple[str, str, Callable[[dict[str, Any]], None], dict[str, Any]]] = []
-    for field in AUTHORITY_FIELDS:
-        mutation_specs.append(
-            (
-                "observed",
-                f"authority.{field}",
-                lambda item, field=field: item["authority"].__setitem__(field, False),
-                {"terminal_outcome": "failed", "invoke_count": 0},
+    for scenario in scenarios:
+        before, after, attempt = mutate(base, target, prepared, scenario["mutation"])
+        actual = cli(
+            effect_input(
+                "verify",
+                prepared=prepared,
+                pre_read=before,
+                post_read=after,
+                write_attempt=attempt,
             )
         )
-    mutation_specs.extend(
-        (
-            (
-                "observed",
-                "post_read",
-                lambda item: item.__setitem__("post_read", "unavailable"),
-                {"terminal_outcome": "ambiguous"},
-            ),
-            (
-                "observed",
-                "authoritative post-read target",
-                lambda item: item["authoritative_post_read"]["effect_payload"].__setitem__("report_id", "forge:report:other"),
-                {"terminal_outcome": "ambiguous", "persistence_claim": False},
-            ),
-            (
-                "observed",
-                "repository identity",
-                lambda item: item["authority"].__setitem__("repository_id", "forge:repository:other"),
-                {"terminal_outcome": "failed", "invoke_count": 0},
-            ),
-            (
-                "observed",
-                "preconditions",
-                lambda item: item.__setitem__("preconditions_match", False),
-                {"terminal_outcome": "failed", "invoke_count": 0},
-            ),
-            (
-                "observed",
-                "terminal receipt readback",
-                lambda item: item.__setitem__("terminal_receipt_read_back", False),
-                {"terminal_outcome": "ambiguous", "persistence_claim": False},
-            ),
-            (
-                "already-satisfied",
-                "already-satisfied terminal receipt readback",
-                lambda item: item.__setitem__("terminal_receipt_read_back", False),
-                {"terminal_outcome": "ambiguous", "persistence_claim": False},
-            ),
-            (
-                "delegation-with-readback",
-                "delegation readback truthiness",
-                lambda item: item["handoff"].__setitem__("read_back", 1),
-                {"remaining_disposition": "gated"},
-            ),
-            (
-                "persisted-terminal-receipt",
-                "terminal receipt authority",
-                lambda item: item["authority"].__setitem__("caller_exclusive", False),
-                {"persistence_claim": False},
-            ),
-            (
-                "observed",
-                "initial operation identity",
-                lambda item: item.pop("operation_id"),
-                {"terminal_outcome": "failed", "invoke_count": 0, "identity_valid": False},
-            ),
-            (
-                "observed",
-                "initial repository identity",
-                lambda item: item.pop("repository_id"),
-                {"terminal_outcome": "failed", "invoke_count": 0, "identity_valid": False},
-            ),
-            (
-                "ambiguous-dependent-work",
-                "duplicate completion item",
-                lambda item: item["affected_by_ambiguity"].append(item["affected_by_ambiguity"][0]),
-                {"disjoint_exhaustive": False, "whole_run_completion": "withheld"},
-            ),
-            (
-                "report-first-caller-completion",
-                "assignment persistence readback",
-                lambda item: item.__setitem__("assignment_persistence_read_back", False),
-                {"assignment_persisted_decisions": 0, "decisions_carried_for_caller": 2, "decision_partition_exact": True, "assignment_persistence_proven": False, "caller_only_allocation_valid": True},
-            ),
-            (
-                "report-first-caller-completion",
-                "assignment persistence authorization",
-                lambda item: item.__setitem__("assignment_persistence_authorized", False),
-                {"assignment_persisted_decisions": 0, "decisions_carried_for_caller": 2, "decision_partition_exact": True, "assignment_persistence_proven": False, "caller_only_allocation_valid": True},
-            ),
-            (
-                "proven-absence-retry",
-                "operation identity",
-                lambda item: item.__setitem__("retry_operation_id", "operation:report:replacement"),
-                {"retry_allowed": False, "operation_identity_reused": False, "invoke_count": 0},
-            ),
-            (
-                "proven-absence-retry",
-                "retry repository identity",
-                lambda item: item.__setitem__("retry_repository_id", "forge:repository:other"),
-                {"retry_allowed": False, "operation_identity_reused": False, "invoke_count": 0},
-            ),
-            (
-                "proven-absence-retry",
-                "retry authority repository identity",
-                lambda item: item["authority"].__setitem__("repository_id", "forge:repository:other"),
-                {"retry_allowed": False, "invoke_count": 0},
-            ),
-            (
-                "cross-repository-collision",
-                "cross-repository qualification",
-                lambda item: item.__setitem__("existing_repository_id", item["repository_id"]),
-                {"terminal_outcome": "already satisfied"},
-            ),
-            (
-                "cross-repository-collision",
-                "collision desired-state post-read",
-                lambda item: (item.__setitem__("existing_repository_id", item["repository_id"]), item.__setitem__("post_read", "unavailable")),
-                {"terminal_outcome": "ambiguous"},
-            ),
-            (
-                "cross-repository-collision",
-                "collision terminal receipt readback",
-                lambda item: (item.__setitem__("existing_repository_id", item["repository_id"]), item.__setitem__("terminal_receipt_read_back", False)),
-                {"terminal_outcome": "ambiguous"},
-            ),
-            (
-                "cross-repository-collision",
-                "requested identity preservation",
-                lambda item: item["result_operation_identity"].__setitem__(
-                    "operation_id", "operation:report:replacement"
-                ),
-                {"operation_identity_preserved": False},
-            ),
-            (
-                "cross-repository-collision",
-                "replacement identity minting",
-                lambda item: item.__setitem__(
-                    "minted_replacement_identity",
-                    {
-                        "repository_id": item["repository_id"],
-                        "operation_id": "operation:report:replacement",
-                    },
-                ),
-                {"replacement_identity_minted": True},
-            ),
-            (
-                "proven-absence-retry",
-                "wrapper precondition",
-                lambda item: item.__setitem__("wrapper_scope_unchanged", False),
-                {"retry_allowed": False, "invoke_count": 0},
-            ),
-            (
-                "one-valid-receipt-ahead",
-                "repair integrity authority",
-                lambda item: item.__setitem__("complete_integrity_read", False),
-                {"repair_allowed": False, "invoke_count": 0, "terminal_outcome": "ambiguous"},
-            ),
-            (
-                "one-valid-receipt-ahead",
-                "repair authority repository identity",
-                lambda item: item["authority"].__setitem__("repository_id", "forge:repository:other"),
-                {"repair_allowed": False, "invoke_count": 0, "terminal_outcome": "ambiguous"},
-            ),
+        for key, expected in expectations[scenario["id"]].items():
+            CONTRACT.require(actual.get(key) == expected, f"{scenario['id']} {key}: {actual.get(key)!r} != {expected!r}")
+        CONTRACT.require(actual.get("provenance") == "unverified", f"{scenario['id']} invented provenance")
+
+    legacy = {"schema": "repo-gardener-effect-input/v1", "scenario": {"authority": {"caller_exclusive": True}}}
+    expect_error(legacy, "phase")
+    for forbidden in ("authority", "verdict", "result", "terminal_receipt_read_back"):
+        payload = effect_input("verify", prepared=prepared, pre_read=base, post_read=target, write_attempt="possible")
+        payload[forbidden] = True
+        expect_error(payload, "unexpected")
+    for attempt in ("none", "denied-before-write", "possible"):
+        actual = cli(effect_input("verify", prepared=prepared, pre_read=base, post_read=base, write_attempt=attempt))
+        CONTRACT.require(actual["terminal_outcome"] not in {"observed", "already satisfied"}, "write_attempt minted structural success")
+        CONTRACT.require(actual["repair"] == "none", "write_attempt minted repair authority")
+
+    for marker in CONTRACT.RESERVED_REPORT_SEQUENCES:
+        for location in ("payload", "rows", "projection"):
+            poisoned = copy.deepcopy(operation)
+            if location == "payload":
+                poisoned["payload"]["text"] = marker
+            elif location == "rows":
+                poisoned["rows"][0]["description"] = marker
+            else:
+                poisoned["projection"] = marker
+            expect_error(effect_input("prepare", pre_read=base, operation=poisoned), "reserved report sequence")
+
+    changed_run = copy.deepcopy(operation)
+    changed_run["run_id"] = "run:synthetic:restart"
+    restarted = cli(effect_input("prepare", pre_read=base, operation=changed_run))
+    CONTRACT.require(restarted["operation_id"] == prepared["operation_id"], "run_id became operation identity entropy")
+    CONTRACT.require(restarted["receipt_hash"] != prepared["receipt_hash"], "run_id was not bound receipt metadata")
+    for field, value in (
+        ("operation_id", "operation:report:" + "0" * 64),
+        ("operation_fingerprint", "0" * 64),
+        ("receipt_hash", "0" * 64),
+        ("expected_pre_body_fingerprint", "0" * 64),
+        ("body", prepared["body"] + "altered"),
+        ("comment", prepared["comment"].replace('"kind":"effect"', '"kind":"run"')),
+    ):
+        altered = copy.deepcopy(prepared)
+        altered[field] = value
+        expect_error(
+            effect_input("verify", prepared=altered, pre_read=base, post_read=target, write_attempt="possible"),
+            "prepared",
         )
-    )
-    for identity, label, mutate, expected_result in mutation_specs:
-        assert_mutation_result(scenarios, identity, label, mutate, expected_result)
 
-    missing_partition_operation = copy.deepcopy(scenarios["ambiguous-dependent-work"])
-    missing_partition_operation["affected_by_ambiguity"].remove(missing_partition_operation["operation_id"])
-    try:
-        evaluate(missing_partition_operation)
-        raise ContractError("completion partition omitted its ambiguous operation")
-    except ContractError as error:
-        require("ambiguous operation" in str(error), "completion partition failed for the wrong reason")
+    source = CONTRACT_PATH.read_text(encoding="utf-8")
+    CONTRACT.require("import requests" not in source and "import urllib" not in source and "import subprocess" not in source, "effect executable gained provider/network code")
 
-    invalid_handoff = copy.deepcopy(scenarios["delegation-with-readback"])
-    invalid_handoff["handoff"]["destination"] = True
-    try:
-        evaluate(invalid_handoff)
-        raise ContractError("truthy handoff identity survived")
-    except ContractError as error:
-        require("handoff destination" in str(error), "invalid handoff failed for the wrong reason")
-
-    missing_fingerprint = copy.deepcopy(scenarios["already-satisfied"])
-    missing_fingerprint.pop("existing_effect_fingerprint")
-    assert_expected(
-        "already-satisfied missing compatibility fingerprint",
-        evaluate(missing_fingerprint),
-        {"terminal_outcome": "ambiguous", "invoke_count": 0, "persistence_claim": False},
-    )
-
-    incompatible_payload = copy.deepcopy(scenarios["already-satisfied"])
-    incompatible_payload["existing_effect_payload"]["verb"] = "append-comment"
-    assert_expected(
-        "already-satisfied incompatible payload",
-        evaluate(incompatible_payload),
-        {"terminal_outcome": "failed", "invoke_count": 0, "persistence_claim": False},
-    )
-
-    incompatible_collision = copy.deepcopy(scenarios["cross-repository-collision"])
-    incompatible_collision["existing_repository_id"] = incompatible_collision["repository_id"]
-    incompatible_collision["existing_effect_fingerprint"] = "f" * 64
-    assert_expected(
-        "same-identity incompatible collision",
-        evaluate(incompatible_collision),
-        {"terminal_outcome": "failed", "invoke_count": 0},
-    )
-
-    uncertain_compatibility = copy.deepcopy(scenarios["uncertain-deduplication"])
-    uncertain_compatibility.update(
+    partition = completion_cli(
         {
-            "invoke_result": "accepted",
-            "post_read": "exact effect observed",
-            "terminal_receipt_read_back": True,
+            "scenario_type": "completion-partition",
+            "operation_id": "operation:report:completion",
+            "named_work": ["operation:report:completion", "independent audit"],
+            "affected_by_ambiguity": ["operation:report:completion"],
+            "independent_continued": ["independent audit"],
         }
     )
-    assert_expected(
-        "uncertain compatibility with apparent success",
-        evaluate(uncertain_compatibility),
-        {"terminal_outcome": "ambiguous", "invoke_count": 0, "persistence_claim": False},
+    CONTRACT.require(partition["disjoint_exhaustive"] is True and partition["whole_run_completion"] == "withheld", "completion partition regressed")
+    delegated = completion_cli(
+        {
+            "scenario_type": "delegation",
+            "handoff": {
+                "destination": "queue:synthetic",
+                "authorized_executor": "executor:synthetic",
+                "exact_work": "independent audit",
+                "read_back": True,
+            },
+        }
     )
+    CONTRACT.require(delegated == {"remaining_disposition": "delegated"}, "delegation completion regressed")
+    caller = completion_cli(
+        {
+            "scenario_type": "caller-completion",
+            "pending_decision_ids": ["decision:a", "decision:b"],
+            "assignment_persisted_decision_ids": [],
+            "assignment_persistence_authorized": True,
+            "assignment_persistence_read_back": True,
+            "terminal_capability_active": True,
+            "caller_accepts": True,
+        }
+    )
+    CONTRACT.require(caller["decisions_carried_for_caller"] == 2 and caller["self_settled_before_acceptance"] is False, "caller completion regressed")
 
-    invalid_repair_identity = copy.deepcopy(scenarios["one-valid-receipt-ahead"])
-    invalid_repair_identity["operation_id"] = []
-    try:
-        evaluate(invalid_repair_identity)
-        raise ContractError("invalid repair operation identity survived")
-    except ContractError as error:
-        require("operation_id" in str(error), "invalid repair operation identity failed for the wrong reason")
-
-    malformed_partition = copy.deepcopy(scenarios["ambiguous-dependent-work"])
-    malformed_partition["affected_by_ambiguity"].append([])
-    try:
-        evaluate(malformed_partition)
-        raise ContractError("unhashable completion identity survived")
-    except ContractError as error:
-        require("unhashable" in str(error), "TypeError did not produce stable FAIL output")
-
-    duplicate_decision = copy.deepcopy(scenarios["report-first-caller-completion"])
-    duplicate_decision["assignment_persisted_decision_ids"].append("decision:follow-up:a")
-    try:
-        evaluate(duplicate_decision)
-        raise ContractError("duplicate assignment decision survived")
-    except ContractError as error:
-        require("duplicate assignment-persisted decision" in str(error), "duplicate decision mutation failed for the wrong reason")
-
-    validate_sources(repo_root)
-    print("PASS: Release A report-effect outcomes derive from scenario facts")
-    print(f"PASS: {len(mutation_specs) + 7} load-bearing authority, readback, identity, compatibility, partition, and precondition mutations rejected")
-    print("NOTE: fresh-context matched cases own behavioral evidence")
+    print(f"PASS: {len(scenarios)} exact report-effect prepare/verify scenarios")
+    print("PASS: legacy authority/verdict inputs cannot mint success or repair")
+    print("PASS: prepared material is deterministic, tamper-evident, inert, network-free, and structurally provenance-unverified")
+    print("PASS: completion-v1 partition, delegation, and caller behavior is preserved")
     return 0
 
 
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except (ContractError, KeyError, TypeError, json.JSONDecodeError) as error:
+    except (CONTRACT.ContractError, KeyError, TypeError, json.JSONDecodeError) as error:
         print(f"FAIL: {error}", file=sys.stderr)
         raise SystemExit(1)

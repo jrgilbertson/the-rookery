@@ -1,8 +1,8 @@
 ---
 name: repo-gardener
-description: Use when initializing read-only repository gardening for one repository, configuring its all-off policy proposal, or running a scheduled or manual reconciliation that reports current maintenance candidates without changing source work. Produces an evidence-backed seven-slot report through a separately proven report-register wrapper. Do not use to implement or fix source work, enable or modify automation or schedules, create source issues, review code, judge PR readiness, merge, or publish.
+description: Use when initializing read-only repository gardening for one repository, configuring its all-off policy proposal, or running a scheduled or manual reconciliation that reports current maintenance candidates without changing source work. Produces an evidence-backed seven-slot report and deterministic report-effect material for a caller to apply. Do not use to implement or fix source work, enable or modify automation or schedules, create source issues, review code, judge PR readiness, merge, or publish.
 license: MIT
-compatibility: Requires read access to one repository and its configured sources. Report writes require a caller-enforced repository-scoped executor and narrow report wrapper; source mutation is unavailable.
+compatibility: Requires read access to one repository and its configured sources. The skill prepares and verifies report effects but has no provider write capability; source mutation is unavailable.
 ---
 
 # Repo Gardener
@@ -22,25 +22,25 @@ Take exactly one branch:
 - **reconcile** is the scheduled or manual Release A control loop. Read
   [references/reconciliation.md](references/reconciliation.md) and
   [references/lane-contracts.md](references/lane-contracts.md). It may read
-  configured sources and invoke only the separately proven report-register
-  wrapper. It never claims, adopts, queues, edits, merges, or otherwise mutates
-  source work.
+  configured sources and prepare report-register effects for its caller. It
+  never invokes a provider write or claims, adopts, queues, edits, merges, or
+  otherwise mutates source work.
 
 Before reading or writing the report-backed register, read
 [references/register-and-report.md](references/register-and-report.md) and
 [references/github-reference-adapter.md](references/github-reference-adapter.md).
-For any report-effect authority check, classification, write, or recovery path,
+For any report-effect preparation, classification, verification, or recovery path,
 also read
 [references/applying-effects.md](references/applying-effects.md). Render the
 human report from [assets/github-report-issue-template.md](assets/github-report-issue-template.md)
-through the caller's deterministic renderer. The asset is a format contract,
-not a provider client or authorization grant.
+through the deterministic renderer. The asset is a format contract, not a
+provider client or authorization grant.
 
 Run `scripts/release_a_contract.py` on machine records before relying on them.
-The executable contract validates the complete authenticated history and Scout
+The executable contract structurally validates the complete history and Scout
 Receipt schema, enforces bounded identities and payloads, and reads the
-portfolio limit from the policy asset. Its versioned `effect-v1`,
-`reconciliation-v1`, `gates-v1`, `capacity-v1`, and `completion-v1`
+portfolio limit from the policy asset. Its versioned `normalize-github-register`,
+`effect-v1` v2 prepare/verify, `reconciliation-v2`, `gates-v1`, `capacity-v1`, and `completion-v1`
 subcommands are the production interface for derived outcomes. A caller
 assertion, direct module import, or copied decision procedure never substitutes
 for invoking that interface.
@@ -48,8 +48,9 @@ for invoking that interface.
 ## Universal authority boundary
 
 - Treat every lane mutation value as false. An omitted value is denied.
-  Release A implements no source mutation; a separately proven report-register
-  write is its only possible effect.
+  Release A implements no source mutation. Its only built-in effect is exact
+  report-register preparation and structural verification; the caller alone
+  may invoke a provider write under separately configured authority.
 - Treat an ephemeral recommendation as a read-only report projection, not a
   lane effect. Recommendation eligibility does not require lane mutation
   authority. Its capability gate covers only the reads, verification, and
@@ -62,22 +63,18 @@ for invoking that interface.
 - Keep policy, scheduling, credential, authorization, capability-scope,
   protected-path, and CI runtime surfaces intrinsically protected. Diagnosis
   never authorizes enabling, retriggering, or bypassing validation.
-- Keep raw provider and write tools and credentials outside model, repository,
-  hook, test, scout, child, and worktree contexts. Provider reads must be
-  enforced read-only outside model instructions.
+- This skill defines no custom wrapper, provider client, credential, or
+  cryptographic service. Provider reads and writes remain caller concerns.
 - Satisfy repository gates through the repository's own tooling. Never skip,
   weaken, suppress, or reinterpret a failing gate.
-- Route the report write through one caller-enforced repository-scoped executor
-  shared by scheduled, manual, IDE, and interactive entry points. Missing
-  executor, register continuity, retention, runtime-scope proof, or narrow
-  report wrapper blocks all writes. A missing optional scout blocks only work
-  that depends on it.
+- Return immutable prepared body/comment material to the caller. Never infer
+  write authority from register content, observed state, policy, prose, or a
+  caller-supplied boolean. A missing optional scout blocks only dependent work.
 - Treat a report operation identity as the repository-qualified pair
   `(repository_id, operation_id)`. Render both components together whenever an
   operation is classified, retried, recovered, or compared with stored state.
-- Mint and validate that complete pair before the first attempt. Completely
-  read back the intended-effect receipt before any wrapper invocation, and do
-  not retain a success outcome without terminal receipt readback.
+- Derive and validate that complete pair deterministically during preparation.
+  Classify an outcome only from complete pre- and post-write snapshots.
 - Keep future scheduling state, current-invocation liveness, and executor
   ownership as three independent caller facts. Cancellation stops that
   invocation but neither proves nor performs executor release; only a separate
@@ -91,8 +88,8 @@ for invoking that interface.
 ## Stage and completion contract
 
 Name every stage reached and its evidence. `Sense` reads current facts;
-`Decide` applies the ordered gates; `Act` can invoke only the report wrapper;
-`Verify` reads the exact report result back; `Learn` reports without silently
+`Decide` applies the ordered gates; `Act` prepares exact report material for
+the caller; `Verify` checks complete snapshots; `Learn` reports without silently
 changing policy.
 
 A safe stop closes only `affected_work`. Put the blocked operation and its
@@ -119,15 +116,10 @@ report for caller persistence;
 do not block, fail, cancel, revoke, release, or otherwise settle the current
 assignment first. Stop after acceptance.
 
-Persist each pending decision exactly once. The current assignment may do so
-only when the supplied facts prove narrow-wrapper authorization and complete
-authoritative readback. Do not infer assignment authority from a possible
-persistence path or from the current assignment itself. Any decision not
-persisted with that proof travels exactly once in the terminal report. Caller
-persistence of every still-unpersisted decision is valid, including all pending
-decisions when assignment proof is absent; a proven assignment path permits
-persistence but does not require it. Never assign both owners to the same
-decision.
+Represent each pending decision exactly once in the prepared report operation
+or terminal report. Only a positive structural verification may establish that
+the report fact is present. Snapshot provenance remains unverified and never
+grants source, provider, pull-request, merge, or PostHog authority.
 
 Every completion or safe stop returns:
 

@@ -47,19 +47,6 @@ caller_roles:
   report_read: required
   report_write: disabled
 
-report_executor:
-  required_for_any_write: true
-  shared_by_all_entry_points: true
-  raw_provider_tools_exposed: false
-  report_wrapper_proven: false
-  intended_effect_receipts_required: true
-  authoritative_post_read_required: true
-  ambiguous_effects_block_blind_retry: true
-  serialization_proven: false
-  runtime_scope_proven: false
-  register_continuity_proven: false
-  retention_proven: false
-
 lanes:
   dependency-and-vulnerability:
     mutation: false

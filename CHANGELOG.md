@@ -16,8 +16,9 @@ looked" surface. GitHub Releases mirror its entries.
 - Added `repo-gardener`, a portable read-only repository maintenance loop. It
   proposes an all-off policy during initialization, reconciles current report
   rows and unmatched report intents before rediscovery, and renders a
-  deterministic seven-slot portfolio. A separately proven report-register
-  wrapper is its sole write surface; source mutation remains unavailable.
+  deterministic seven-slot portfolio. Its sole built-in effect is exact
+  report-register preparation and structural verification; caller-owned
+  provider invocation and source mutation remain outside the skill.
 - Added a seven-image Field Guide Blueprint illustration system to
   `WORKFLOWS.md`, with Huginn carrying Research through Build, a verified
   handoff to Muninn at Ship, and Muninn returning the learning loop to
@@ -25,6 +26,11 @@ looked" surface. GitHub Releases mirror its entries.
 - Added the repository banner and its optimized README delivery asset.
 
 ### Changed
+
+- `repo-gardener` now consumes the live `orchestrator-register/v1` GitHub issue
+  grammar directly, prepares immutable report body/comment material, and
+  internally verifies effect and nine-lane completion outcomes. Legacy caller
+  authority envelopes and the parallel register fixture schema were removed.
 
 - `checking-pr-readiness` now supports a read-only assessment branch that binds
   every verified claim to one stable repository, exact subject, and full commit

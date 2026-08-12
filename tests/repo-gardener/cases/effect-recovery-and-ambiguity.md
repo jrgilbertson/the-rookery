@@ -16,7 +16,8 @@ Provenance: Observed failure where timeout created a new operation identity and 
 
 - [ ] Outcomes use exactly `observed`, `already satisfied`, `failed`, or `ambiguous`.
 - [ ] Timeout, unavailable post-read, rate limit without proof, disguised absence, and uncertain deduplication are ambiguous with no blind retry.
-- [ ] Proven-absence retry reuses the original operation identity and requires unchanged authority/preconditions.
+- [ ] The skill never authorizes a blind retry; recovery reuses immutable prepared material after fresh complete reads.
 - [ ] A changed precondition or cross-repository collision does not mint a replacement identity or invoke.
 - [ ] One-valid-receipt-ahead register repair appends that exact receipt once without rewriting the body; multiple gaps block and remain ambiguous.
-- [ ] No effect persistence is claimed without terminal receipt readback.
+- [ ] `already satisfied` performs zero writes; `failed` requires an exact unchanged pre/post state plus `denied-before-write`.
+- [ ] No effect persistence is claimed without exact positive verification.

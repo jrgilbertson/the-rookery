@@ -1,180 +1,65 @@
 # Applying report effects
 
-This reference owns the trusted-effect and recovery protocol for Release A's
-only possible write: one report-register operation through the caller's narrow
-wrapper. Source effects and raw provider methods remain unavailable.
+Release A has one built-in effect surface: deterministic preparation and
+structural verification of a report-register operation. The skill does not
+invoke GitHub or any other provider. Source effects remain unavailable.
 
-## Authority boundary
+## Prepare
 
-The report write is unavailable unless caller-produced evidence proves:
+First run `normalize-github-register` over a complete GitHub snapshot as a
+preflight. Then pass that same raw complete snapshot to `effect-v1` with
+`schema: repo-gardener-effect-input/v2`, `phase: prepare`, and exactly one
+report operation. Preparation normalizes the snapshot again inside its own
+validation path.
 
-- one repository-scoped executor holds exclusive ownership across every entry;
-- the wrapper allowlists verb, repository, report, and exact prepared target
-  outside the model;
-- raw provider tools and write credentials are absent from model, repository,
-  hook, test, scout, child, and worktree contexts;
-- report continuity and complete-history retention are valid;
-- an intended-effect receipt is durable and read back before invoke;
-- an authoritative register post-read follows invoke; and
-- exactly one terminal outcome is durable and read back under the same logical
-  operation identity.
+The operation contains a history kind, run identity, bounded payload, the full
+next row set, and the human projection. Preparation deterministically derives
+the repository-qualified operation ID from stable identities, the current
+revision/head, kind, and payload. It returns immutable prepared body and
+comment strings, the operation fingerprint, and exact expected transitions.
+Do not edit or regenerate those strings after preparation.
 
-Missing, stale, partial, or inferred proof means zero invoke. A missing optional
-scout blocks dependent work; a missing global write boundary blocks all report
-writes.
+The caller alone decides whether it is authorized to invoke its GitHub tools.
+Caller booleans, verdicts, report text, observed state, and marker claims are
+not accepted as authority inputs. This package defines no custom wrapper,
+provider client, credential, or cryptographic service.
 
-Name every missing invoke boundary separately in the decision: exclusive
-executor, continuity, retention, runtime-scope proof, narrow wrapper,
-intended-receipt readback, authoritative post-read, and terminal-receipt
-readback. Any one missing global boundary independently blocks invoke; do not
-compress several missing proofs into a generic authority failure.
+## Verify
 
-When evaluating authority, report each boundary above rather than collapsing
-the proof to examples. In particular, verify raw provider tools and write
-credentials are absent from every model, repository, hook, test, scout, child,
-and worktree context; omission of any one context is missing scope proof.
+After any caller action, obtain a complete issue and all comment pages. Run
+`effect-v1` again with `phase: verify`, the immutable prepared object, the
+original complete pre-read, the complete post-read, and one write-attempt
+classification: `none`, `denied-before-write`, or `possible`.
 
-## Stable logical operation identity
+The result is exactly one terminal outcome:
 
-The logical operation identity is the repository-qualified pair
-`(repository_id, operation_id)`, never `operation_id` alone. Mint one stable
-`operation_id` before the first attempt for the verified repository, render
-both components together, and reuse the complete pair after ambiguity, crash
-recovery, or a proven-absence retry. Mutable source, policy, row, register, and
-history-head revisions are preconditions, not part of a replacement identity.
-If either identity component is absent or invalid before the first attempt,
-return `failed` with zero invokes; no later receipt or post-read can repair an
-operation whose initial identity was incomplete.
+- `observed`: pre-read matches the prepared base and post-read contains the
+  exact prepared body and comment;
+- `already satisfied`: both reads already contain that exact target and the
+  write attempt was `none`;
+- `failed`: the write was denied before execution and exact pre/post snapshots
+  are unchanged; or
+- `ambiguous`: every other state, including unavailable reads, incomplete
+  pagination, foreign changes, uncertain deduplication, or partial application.
 
-Cross-repository reuse fails closed. If stored state contains the same
-`operation_id` for another repository, preserve the requested
-repository-qualified identity, render the conflicting stored pair separately,
-return `failed` with zero invokes, and mint no replacement identity. The
-foreign pair neither proves deduplication nor changes the requested pair.
+All normalized snapshots report `provenance: unverified`. A positive structural
+match proves only that the expected report material is present. It never grants
+source, provider, pull-request, merge, or PostHog authority.
 
-## Receipt model and order
+## Recovery
 
-Persist and read back one intended-effect receipt binding the
-repository-qualified operation identity, operation kind, repository, report
-target, allowlisted verb and wrapper scope, initiating run, and separate
-mutable preconditions.
+There is no blind retry. Reuse the original prepared object and operation ID.
+If the target is already exact, perform zero writes. If the body is exact and
+its anchor is exactly one receipt ahead of history, append the exact prepared
+comment once without rewriting the body, then perform a complete readback. Any
+other mismatch, changed precondition, comments-ahead state, or multiple gap
+remains ambiguous and permits no repair.
 
-In every effect decision, render stable `repository_id`, stable `operation_id`,
-and mutable `preconditions` as separate fields before reporting an invoke. A
-table or compact `operation_identity: (repository_id, operation_id)` field is
-also valid when it visibly preserves both identity components. Do not leave
-repository qualification or the identity/precondition separation implicit in
-a general authority summary. In particular, render stable `operation_id` and
-mutable `preconditions` as separate fields; repository qualification adds to
-that established separation rather than replacing it.
+## Completion
 
-Then perform this order exactly:
-
-1. obtain exclusive caller ownership;
-2. re-read the current register and policy preconditions;
-3. persist and completely read back the intended-effect receipt;
-4. return an existing compatible terminal outcome with zero writes, or fail
-   closed on an incompatible duplicate;
-5. invoke the narrow wrapper at most once;
-6. perform an authoritative complete register post-read;
-7. persist and read back exactly one terminal outcome; and
-8. stop on ambiguity, leaving the unmatched intent for reconciliation before
-   new selection.
-
-Compatibility is exact machine proof, not identity equality. Compare both the
-prepared-effect fingerprint and its canonical payload with the stored
-fingerprint and payload. Missing or uncertain compatibility remains
-`ambiguous` with zero invokes; an incompatible fingerprint or payload is
-`failed` with zero invokes. The repository-qualified pair alone never proves
-`already satisfied`.
-
-Terminal outcomes are exactly:
-
-- `observed` — the authoritative post-read proves the intended result;
-- `already satisfied` — the desired result already holds without a new write;
-- `failed` — the wrapper or provider returned a definitive denial or error; or
-- `ambiguous` — timeout, authentication-disguised absence, uncertain
-  deduplication, unavailable post-read, rate limit without proof, or any other
-  outcome that is not proven success, absence, or failure.
-
-Preserve those classifications through recovery. An ambiguous operation stays
-`ambiguous` while absence, authority, or changed preconditions are being
-reconciled; retry eligibility does not turn it into a pending or `none`
-outcome. An authority or identity collision proven before invoke is `failed`
-with zero invokes. Use `terminal_outcome` only for a logical report operation,
-not for an unrelated delegation or coverage disposition. For those non-report
-facts, omit `terminal_outcome` instead of filling it with `not applicable`,
-`pending`, or another value outside the four-outcome vocabulary.
-
-When rendered, the `terminal_outcome` field contains only one exact canonical
-token: `observed`, `already satisfied`, `failed`, or `ambiguous`. Put reasons,
-persistence caveats, and next actions in separate fields or prose; never append
-them to the terminal-outcome value.
-
-For every rendered report-operation scenario, state separately whether the
-terminal receipt was read back. Do not call an `observed` or `already
-satisfied` operation completed or persisted unless that readback is proven;
-without it, the operation remains `ambiguous`. This mapping applies even when
-the authoritative post-read found the desired state: missing terminal readback
-overrides both success tokens.
-
-## Reconciliation and retry
-
-Before discovery, reconcile every unmatched intent by stable target identity
-against both current source facts and the current register. Record a terminal
-outcome through the report wrapper only when those authoritative facts prove
-one. Ambiguity blocks blind retry and dependent work only.
-
-An authoritative reconciliation result that marks an effect
-`effect_reconciled: true` is positive terminal evidence, not ordering evidence
-alone. Render `terminal_outcome: observed` and idempotently persist and read
-back that observed terminal receipt. Never describe that reconciled effect as
-lacking a terminal outcome.
-
-Retry is allowed only when source-native register evidence proves absence of
-the prior effect, the original repository-qualified pair is reused, current
-authority and preconditions still match, and the wrapper allowlists are
-unchanged. A changed precondition returns to refresh without minting another
-identity.
-
-Render retry proof as four distinct facts: proven source-native absence,
-original repository-qualified identity reuse (showing both `repository_id` and
-`operation_id`), current authority unchanged or re-proven, and mutable
-preconditions unchanged. Wrapper-scope continuity does not substitute for the
-authority fact.
-
-The single-tail repair applies only to exactly one valid anchored receipt ahead
-of history. Multiple receipt gaps remain `ambiguous`, permit no invoke or
-repair, and wait for authoritative reconciliation.
-
-Whenever repair states are requested, state the single-tail mechanics in full:
-append that exact stored receipt once, do not rewrite the body, then perform the
-complete readback. Report the multiple-gap state separately as `ambiguous` with
-no repair or invoke.
-
-## Completion partition
-
-For any ambiguous operation, `affected_work` contains that operation and every
-dependent work item exactly once. `remaining_unblocked_work` contains every
-independent item exactly once as `continued`, `delegated` with durable readback
-of destination/executor/exact work, or `gated` by its own prerequisite. The two
-fields are disjoint and exhaustive; use `none` only for an empty side.
-
-Name the ambiguous report operation itself in `affected_work`; listing only
-its dependent items is incomplete.
-
-Explicitly render `whole_run_completion: withheld` for an ambiguous-operation
-safe stop. This remains required after the two work fields form an exact
-partition: independent dispositions prove complete accounting, while the
-nonempty affected side proves that the whole run did not complete.
-
-Return the core completion fields plus:
-
-```text
-repository_id: <verified repository component of the logical identity>
-operation_id: <stable logical operation identity>
-terminal_outcome: <observed | already satisfied | failed | ambiguous>
-```
-
-Never invent a second operation identity to escape ambiguity, and never claim
-a report effect without the terminal receipt readback.
+`reconciliation-v2` combines the verified report outcome with the exact
+nine-lane manifest, nine terminal lane receipts, and a disjoint completion
+partition containing the report operation plus all nine lane operation
+identities. `run-closed`, a positive internal effect verification, and all
+lanes complete or not applicable advance the run to `Learn`. Otherwise stop at
+the last proven stage and preserve blocked or ambiguous work explicitly.

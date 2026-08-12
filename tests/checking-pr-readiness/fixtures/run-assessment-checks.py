@@ -39,6 +39,7 @@ BASE_SWEEP_VERDICTS = {
 }
 EXPECTED_CHANGED_PATHS = {
     ".github/automated-reviewers.json",
+    ".github/repository-gates.json",
     "CHANGELOG.md",
     "fixture-validation.py",
     "src/app.txt",
@@ -51,6 +52,18 @@ VERIFIED_COMMANDS = {
     "code-simplification": ("fixture-validation.py", "simplify"),
     "testing": ("fixture-validation.py", "test"),
 }
+REPOSITORY_GATES = [
+    {
+        "name": "fixture-validation",
+        "owner": "fixture task runner",
+        "command": ["python3", "fixture-validation.py", "gate"],
+    },
+    {
+        "name": "fixture-regression",
+        "owner": "fixture task runner",
+        "command": ["python3", "fixture-validation.py", "test"],
+    },
+]
 FIXTURE_VALIDATION_SOURCE = b"""#!/usr/bin/env python3
 import pathlib
 import sys
@@ -215,16 +228,26 @@ def evidence_documents(reviewer_mode: str = "configured") -> dict[str, dict[str,
         "repository-gates": evidence(
             "repository-gates",
             "python3",
-            [{"result_id": "gate:fixture-validation", "outcome": "verified", "summary": "fixture validation passed"}],
+            [
+                {
+                    "result_id": f"gate:{gate['name']}",
+                    "outcome": "verified",
+                    "summary": f"{gate['name']} passed",
+                }
+                for gate in REPOSITORY_GATES
+            ],
             ["fixture-validation.py", "gate"],
-            gates=[{
-                "name": "fixture-validation",
-                "owner": "fixture task runner",
-                "command": "python3 fixture-validation.py gate",
-                "outcome": "verified",
-                "status": "verified",
-                "result_reference": "gate:fixture-validation",
-            }],
+            gates=[
+                {
+                    "name": gate["name"],
+                    "owner": gate["owner"],
+                    "command": " ".join(gate["command"]),
+                    "outcome": "verified",
+                    "status": "verified",
+                    "result_reference": f"gate:{gate['name']}",
+                }
+                for gate in REPOSITORY_GATES
+            ],
         ),
         "code-review": evidence(
             "code-review",
@@ -316,6 +339,7 @@ def build_repository(
     else:
         reviewer_configuration_document = {"automated_reviewers": {}}
     write_json(path / ".github" / "automated-reviewers.json", reviewer_configuration_document)
+    write_json(path / ".github" / "repository-gates.json", {"gates": REPOSITORY_GATES})
     documents = evidence_documents(reviewer_mode)
     if pre_result_mutator is not None:
         pre_result_mutator(documents)
@@ -535,6 +559,69 @@ def verify_command_evidence(kind: str, command: dict[str, Any], repo: Path, revi
     return []
 
 
+def discover_repository_gates(repo: Path, revision: str) -> list[dict[str, Any]]:
+    try:
+        document = json.loads(git_blob(repo, revision, ".github/repository-gates.json"))
+    except (subprocess.CalledProcessError, UnicodeDecodeError, json.JSONDecodeError):
+        raise FixtureError("repository gate discovery is invalid")
+    gates = document.get("gates") if isinstance(document, dict) and set(document) == {"gates"} else None
+    if (
+        not isinstance(gates, list)
+        or not gates
+        or any(
+            not isinstance(gate, dict)
+            or set(gate) != {"name", "owner", "command"}
+            or not bounded_text(gate.get("name"))
+            or not bounded_text(gate.get("owner"))
+            or not isinstance(gate.get("command"), list)
+            or not gate["command"]
+            or any(not bounded_text(argument) for argument in gate["command"])
+            for gate in gates
+        )
+    ):
+        raise FixtureError("repository gate discovery is invalid")
+    identities = [(gate["name"], gate["owner"], tuple(gate["command"])) for gate in gates]
+    if len(identities) != len(set(identities)):
+        raise FixtureError("repository gate discovery is invalid")
+    return gates
+
+
+def verify_repository_gate_command(gate: dict[str, Any], repo: Path, revision: str) -> bool:
+    arguments = gate["command"]
+    if (
+        len(arguments) != 3
+        or arguments[0] != "python3"
+        or arguments[1] != "fixture-validation.py"
+        or arguments[2] not in {"gate", "test"}
+    ):
+        return False
+    try:
+        validator = git_blob(repo, revision, "fixture-validation.py")
+        app_state = git_blob(repo, revision, "src/app.txt")
+        changelog = git_blob(repo, revision, "CHANGELOG.md")
+    except subprocess.CalledProcessError:
+        return False
+    if validator != FIXTURE_VALIDATION_SOURCE:
+        return False
+    try:
+        with tempfile.TemporaryDirectory(prefix="pr-readiness-gate-") as temp:
+            command_root = Path(temp)
+            (command_root / "src").mkdir()
+            (command_root / "fixture-validation.py").write_bytes(validator)
+            (command_root / "src" / "app.txt").write_bytes(app_state)
+            (command_root / "CHANGELOG.md").write_bytes(changelog)
+            completed = subprocess.run(
+                [sys.executable, *arguments[1:]],
+                cwd=command_root,
+                capture_output=True,
+                text=True,
+                timeout=10,
+            )
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+    return completed.returncode == 0 and completed.stdout == f"verified:{arguments[2]}\n" and not completed.stderr
+
+
 def validate_evidence_document(
     kind: str,
     document: Any,
@@ -644,9 +731,24 @@ def validate_evidence_document(
             gaps.append("working surface evidence reports dirty categories")
     elif kind == "repository-gates":
         gates = document.get("gates", [])
+        try:
+            discovered_gates = discover_repository_gates(repo, revision)
+        except FixtureError:
+            discovered_gates = []
+        discovered_inventory = {
+            (gate["name"], gate["owner"], " ".join(gate["command"])) for gate in discovered_gates
+        }
+        supplied_inventory = {
+            (gate.get("name"), gate.get("owner"), gate.get("command"))
+            for gate in gates
+            if isinstance(gate, dict)
+        } if isinstance(gates, list) else set()
         if (
             not isinstance(gates, list)
             or not gates
+            or supplied_inventory != discovered_inventory
+            or len(gates) != len(discovered_inventory)
+            or not discovered_gates
             or any(
                 not isinstance(gate, dict)
                 or set(gate) != {"name", "owner", "command", "outcome", "status", "result_reference"}
@@ -659,6 +761,8 @@ def validate_evidence_document(
             )
         ):
             gaps.append("repository gate inventory incomplete")
+        if any(not verify_repository_gate_command(gate, repo, revision) for gate in discovered_gates):
+            gaps.append("repository gate command execution not verified")
     elif kind in {"code-review", "code-simplification"}:
         summary = results[0]
         if (
@@ -1143,6 +1247,21 @@ def run_suite() -> None:
         require(
             json.loads(no_reviewer_evidence)["verdicts"]["11"] == "not applicable",
             "no-reviewer profile did not anchor class 11 as not applicable",
+        )
+
+        omitted_gate_repo = root / "omitted-discovered-gate"
+        omitted_gate_revision = build_repository(
+            omitted_gate_repo,
+            evidence_mutator=lambda documents: documents["repository-gates"]["gates"].pop(),
+        )
+        omitted_gate_result = evaluate(
+            omitted_gate_repo,
+            make_bundle(omitted_gate_repo, omitted_gate_revision),
+        )
+        require(
+            omitted_gate_result["outcome"] == "action-required"
+            and "repository gate inventory incomplete" in omitted_gate_result["gaps"],
+            "evidence omitted one of multiple independently discovered repository gates",
         )
 
         weak_documents = {

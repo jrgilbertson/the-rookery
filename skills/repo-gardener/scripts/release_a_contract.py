@@ -498,6 +498,7 @@ def normalize_github_register_snapshot(snapshot: Any) -> dict[str, Any]:
         require(page_size > 0, "comment page sequence is incomplete")
     history_receipts: list[dict[str, Any]] = []
     ordinary_comment_ids: list[str] = []
+    provider_comment_fingerprints: list[str] = []
     seen_comment_ids: set[str] = set()
     seen_numeric_comment_ids: set[int] = set()
     previous_hash = "GENESIS"
@@ -528,6 +529,7 @@ def normalize_github_register_snapshot(snapshot: Any) -> dict[str, Any]:
             comment_body = comment.get("body")
             require(isinstance(comment_body, str), "provider comment body must be text")
             require(len(comment_body.encode("utf-8")) <= BODY_LIMIT, f"provider comment body exceeds {BODY_LIMIT} UTF-8 bytes")
+            provider_comment_fingerprints.append(hashlib.sha256(canonical_bytes(comment)).hexdigest())
             has_reserved_marker = HISTORY_RECEIPT_BEGIN in comment_body or HISTORY_RECEIPT_END in comment_body
             if author_id != writer_id:
                 require(not has_reserved_marker, "reserved receipt marker from non-writer comment")
@@ -611,6 +613,7 @@ def normalize_github_register_snapshot(snapshot: Any) -> dict[str, Any]:
         "anchor_status": anchor_status,
         "history_receipts": history_receipts,
         "ordinary_comment_ids": ordinary_comment_ids,
+        "comment_snapshot_fingerprint": hashlib.sha256(canonical_bytes(provider_comment_fingerprints)).hexdigest(),
         "comment_pages_complete": True,
         "structural_integrity": "valid",
         "provenance": "unverified",
@@ -1068,9 +1071,18 @@ def evaluate_effect(scenario: Any) -> dict[str, Any]:
     scenario_type = scenario.get("scenario_type")
     if scenario_type == "completion-partition":
         operation_id = require_identity(scenario.get("operation_id"), "completion partition operation_id")
-        named = require_list(scenario.get("named_work"), "named_work")
-        affected = require_list(scenario.get("affected_by_ambiguity"), "affected_work")
-        independent = require_list(scenario.get("independent_continued"), "remaining_unblocked_work")
+        named = [
+            require_identity(item, f"named_work {index}")
+            for index, item in enumerate(require_list(scenario.get("named_work"), "named_work"))
+        ]
+        affected = [
+            require_identity(item, f"affected_by_ambiguity {index}")
+            for index, item in enumerate(require_list(scenario.get("affected_by_ambiguity"), "affected_work"))
+        ]
+        independent = [
+            require_identity(item, f"independent_continued {index}")
+            for index, item in enumerate(require_list(scenario.get("independent_continued"), "remaining_unblocked_work"))
+        ]
         require(operation_id in named and operation_id in affected, "ambiguous operation is missing from the completion partition")
         unique = len(named) == len(set(named)) and len(affected) == len(set(affected)) and len(independent) == len(set(independent))
         affected_set = set(affected)

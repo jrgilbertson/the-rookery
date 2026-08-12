@@ -279,11 +279,31 @@ def main() -> int:
         }
         if actual != expected:
             failures.append(f"{scenario['id']}: expected {expected!r}, got {actual!r}")
+        if re.fullmatch(r"[0-9a-f]{64}", result.get("comment_snapshot_fingerprint", "")) is None:
+            failures.append(f"{scenario['id']}: comment snapshot fingerprint is not a bounded SHA-256 digest")
         raw_comments = [item for page in snapshot["comment_pages"] for item in page if item["user"]["node_id"] == WRITER_ID]
         if [item["raw_receipt_json"] for item in result["history_receipts"]] != [
             item["body"].split(RECEIPT_BEGIN)[1].split(RECEIPT_END)[0].strip() for item in raw_comments
         ]:
             failures.append(f"{scenario['id']}: raw receipt JSON bytes were not preserved")
+    foreign_snapshot = base_snapshot("two-receipts")
+    apply_mutation(foreign_snapshot, "add-unrelated-comment")
+    normalized_foreign = contract.normalize_github_register_snapshot(foreign_snapshot)
+    changed_foreign = copy.deepcopy(foreign_snapshot)
+    changed_foreign["comment_pages"][0][-1]["body"] = "Changed foreign comment body."
+    changed_body = contract.normalize_github_register_snapshot(changed_foreign)
+    changed_foreign = copy.deepcopy(foreign_snapshot)
+    changed_foreign["comment_pages"][0][-1]["user"]["node_id"] = "U_SYNTHETIC_FOREIGN_CHANGED"
+    changed_author = contract.normalize_github_register_snapshot(changed_foreign)
+    fingerprints = {
+        normalized_foreign["comment_snapshot_fingerprint"],
+        changed_body["comment_snapshot_fingerprint"],
+        changed_author["comment_snapshot_fingerprint"],
+    }
+    if len(fingerprints) != 3:
+        failures.append("foreign comment body or author changes did not change the snapshot fingerprint")
+    if "Changed foreign comment body." in json.dumps(changed_body):
+        failures.append("normalized snapshot exposed foreign comment content")
     if failures:
         print("\n".join(failures), file=sys.stderr)
         return 1

@@ -143,6 +143,15 @@ def expect_error(payload: dict[str, Any], phrase: str) -> None:
     raise CONTRACT.ContractError(f"expected rejection containing {phrase!r}")
 
 
+def expect_completion_error(scenario: dict[str, Any], phrase: str) -> None:
+    try:
+        completion_cli(scenario)
+    except CONTRACT.ContractError as error:
+        CONTRACT.require(phrase in str(error), f"expected {phrase!r}, got {error!s}")
+        return
+    raise CONTRACT.ContractError(f"expected rejection containing {phrase!r}")
+
+
 def main() -> int:
     scenarios = json.loads((FIXTURES / "scenarios.json").read_text())["scenarios"]
     expectations = json.loads((FIXTURES / "expectations.json").read_text())["expectations"]
@@ -235,6 +244,48 @@ def main() -> int:
         }
     )
     CONTRACT.require(partition["disjoint_exhaustive"] is True and partition["whole_run_completion"] == "withheld", "completion partition regressed")
+    for field in ("named_work", "affected_by_ambiguity", "independent_continued"):
+        invalid_partition = {
+            "scenario_type": "completion-partition",
+            "operation_id": "operation:report:completion",
+            "named_work": ["operation:report:completion", "independent audit"],
+            "affected_by_ambiguity": ["operation:report:completion"],
+            "independent_continued": ["independent audit"],
+        }
+        invalid_partition[field][0] = 7
+        expect_completion_error(invalid_partition, f"{field} 0 is missing")
+
+    foreign_base = copy.deepcopy(base)
+    foreign_base["comment_pages"][-1].append(
+        {
+            "id": 9001,
+            "node_id": "IC_SYNTHETIC_FOREIGN",
+            "user": {"node_id": SNAPSHOTS.OTHER_WRITER_ID, "login": "synthetic-foreign"},
+            "body": "Foreign comment before denied write.",
+        }
+    )
+    foreign_base["issue"]["comments"] += 1
+    foreign_operation = copy.deepcopy(operation)
+    foreign_operation["rows"] = CONTRACT.normalize_github_register_snapshot(foreign_base)["register"]["rows"]
+    foreign_prepared = cli(effect_input("prepare", pre_read=foreign_base, operation=foreign_operation))
+    for changed_field in ("body", "author"):
+        foreign_after = copy.deepcopy(foreign_base)
+        comment = foreign_after["comment_pages"][-1][-1]
+        if changed_field == "body":
+            comment["body"] = "Foreign comment changed after denied write."
+        else:
+            comment["user"]["node_id"] = "U_SYNTHETIC_FOREIGN_CHANGED"
+        actual = cli(
+            effect_input(
+                "verify",
+                prepared=foreign_prepared,
+                pre_read=foreign_base,
+                post_read=foreign_after,
+                write_attempt="denied-before-write",
+            )
+        )
+        CONTRACT.require(actual["terminal_outcome"] == "ambiguous", f"foreign comment {changed_field} edit was misclassified")
+
     delegated = completion_cli(
         {
             "scenario_type": "delegation",

@@ -133,69 +133,7 @@ ORCHESTRATOR_HISTORY_KINDS = {
     "run-opened",
     "scout",
 }
-REGISTER_FIELDS = {
-    "schema",
-    "repository_id",
-    "report_id",
-    "writer_id",
-    "register_revision",
-    "last_operation_id",
-    "last_operation_fingerprint",
-    "history_receipts",
-    "history_anchor",
-    "rows",
-}
-ROW_FIELDS = {
-    "row_id",
-    "source_id",
-    "source_revision",
-    "description",
-    "state",
-    "lane",
-    "rationale",
-    "risk",
-    "budget_use",
-    "evidence_ids",
-    "next_action",
-    "row_revision",
-}
-HISTORY_RECEIPT_FIELDS = {
-    "sequence",
-    "previous_hash",
-    "repository_id",
-    "writer_id",
-    "provider_receipt_id",
-    "operation_id",
-    "kind",
-    "run_id",
-    "receipt_hash",
-}
-HISTORY_KINDS = {
-    "run-start",
-    "manifest",
-    "scout-summary",
-    "reconciliation",
-    "decision",
-    "effect",
-    "report",
-    "terminal-run",
-}
 HISTORY_ANCHOR_FIELDS = {"sequence", "head", "latest_receipt"}
-AUTHENTICATED_RECEIPT_FIELDS = {
-    "provider_receipt_id",
-    "writer_id",
-    "receipt_hash",
-    "operation_fingerprint",
-}
-OPERATION_MATERIAL_FIELDS = (
-    "repository_id",
-    "writer_id",
-    "provider_receipt_id",
-    "operation_id",
-    "kind",
-    "run_id",
-    "receipt_hash",
-)
 MANIFEST_FIELDS = {"schema", "repository_id", "run_id", "manifest_id", "policy_revision", "scouts"}
 SCOUT_COLLECTION_FIELDS = {"schema", "repository_id", "run_id", "manifest_id", "receipts"}
 SCOUT_RECEIPT_FIELDS = {
@@ -219,46 +157,7 @@ GATE_ORDER = (
     "protected boundary",
     "capability",
 )
-REQUIRED_EVENTS = (
-    "classify-older-run",
-    "reconcile-report-intents",
-    "reconcile-current-rows",
-    "append-run-start",
-    "read-run-start",
-    "persist-reconciliation",
-    "read-reconciliation",
-    "persist-manifest",
-    "read-manifest",
-    "dispatch-scouts",
-    "persist-supplied-scout-receipts",
-    "read-supplied-scout-receipts",
-    "append-decisions",
-    "read-decisions",
-    "append-terminal",
-    "read-terminal",
-    "render-report",
-    "read-report",
-)
-RECONCILIATION_WRITE_PROOFS = (
-    "exclusive_executor",
-    "wrapper_scope_allowlisted",
-    "raw_write_capability_absent_everywhere",
-    "continuity_valid",
-    "retention_valid",
-    "runtime_scope_valid",
-    "intended_receipt_read_back",
-    "authoritative_post_read_completed",
-    "terminal_receipt_read_back",
-    "write_requested",
-)
-RECONCILIATION_AUTHORITY_FIELDS = {
-    "schema",
-    "repository_id",
-    "report_id",
-    "writer_id",
-    "run_id",
-    *RECONCILIATION_WRITE_PROOFS,
-}
+RECONCILIATION_WORK_FIELDS = {"repository_id", "operation_id", "lane", "dependencies"}
 EFFECT_OPERATION_FIELDS = {"kind", "run_id", "payload", "rows", "projection"}
 EFFECT_PREPARED_FIELDS = {
     "schema",
@@ -435,16 +334,6 @@ def policy_contract(policy_path: Path) -> tuple[int, list[str]]:
 
 def portfolio_limit(policy_path: Path) -> int:
     return portfolio_limit_from_text(policy_path.read_text(encoding="utf-8"))
-
-
-def receipt_hash(receipt: dict[str, Any]) -> str:
-    hashed = {key: value for key, value in receipt.items() if key != "receipt_hash"}
-    return hashlib.sha256(canonical_bytes(hashed)).hexdigest()
-
-
-def operation_fingerprint(receipt: dict[str, Any]) -> str:
-    material = {field: receipt[field] for field in OPERATION_MATERIAL_FIELDS}
-    return hashlib.sha256(canonical_bytes(material)).hexdigest()
 
 
 def orchestrator_receipt_hash(
@@ -731,125 +620,6 @@ def validate_manifest(
     if expected_scouts is not None:
         require(scouts == expected_scouts, "manifest scouts differ from installed policy lane inventory")
     return manifest
-
-
-def validate_register(
-    records: Any,
-    manifest: Any,
-    authentication: Any,
-    policy_path: Path,
-) -> dict[str, Any]:
-    records = require_object(records, "register")
-    manifest = require_object(manifest, "manifest")
-    authentication = require_object(authentication, "provider authentication evidence")
-    limit, lanes = policy_contract(policy_path)
-
-    require_exact_fields(records, REGISTER_FIELDS, "register")
-    require(records.get("schema") == "repo-gardener-register/v1", "register schema mismatch")
-    repository_id = require_identity(records.get("repository_id"), "register repository_id")
-    require_identity(records.get("report_id"), "register report_id")
-    register_writer = require_identity(records.get("writer_id"), "register writer_id")
-    require(type(records.get("register_revision")) is int and records["register_revision"] >= 0, "invalid register revision")
-
-    rows = require_list(records.get("rows"), "register rows")
-    require(len(rows) <= limit, f"portfolio exceeds policy limit {limit}")
-    row_ids: list[str] = []
-    source_ids: list[str] = []
-    for index, raw_row in enumerate(rows):
-        row = require_object(raw_row, f"row {index}")
-        require_exact_fields(row, ROW_FIELDS, f"row {index}")
-        row_ids.append(require_identity(row.get("row_id"), f"row {index} row_id"))
-        source_ids.append(require_identity(row.get("source_id"), f"row {index} source_id"))
-        require_identity(row.get("source_revision"), f"row {index} source_revision")
-        require_nonempty_display(row.get("description"), f"row {index} description")
-        lane = require_identity(row.get("lane"), f"row {index} lane")
-        require(lane in lanes, f"row {index} lane is outside installed policy lane inventory")
-        require_nonempty_display(row.get("rationale"), f"row {index} rationale")
-        require_nonempty_display(row.get("risk"), f"row {index} risk")
-        require_nonempty_display(row.get("budget_use"), f"row {index} budget_use")
-        evidence_ids = require_list(row.get("evidence_ids"), f"row {index} evidence_ids")
-        require(bool(evidence_ids), f"row {index} evidence_ids are empty")
-        for evidence_index, evidence_id in enumerate(evidence_ids):
-            require_identity(evidence_id, f"row {index} evidence_id {evidence_index}")
-        require(len(evidence_ids) == len(set(evidence_ids)), f"row {index} duplicate evidence identity")
-        require_nonempty_display(row.get("next_action"), f"row {index} next_action")
-        require(row.get("state") in {"To do", "In process"}, f"invalid row state: {row.get('state')}")
-        require(type(row.get("row_revision")) is int and row["row_revision"] >= 0, "invalid row revision")
-    require(len(row_ids) == len(set(row_ids)), "duplicate row identity")
-    require(len(source_ids) == len(set(source_ids)), "duplicate source identity")
-
-    require_exact_fields(
-        authentication,
-        {"schema", "repository_id", "history_pages_complete", "authenticated_receipts"},
-        "provider authentication evidence",
-    )
-    require(authentication.get("schema") == "repo-gardener-provider-authentication/v1", "authentication schema mismatch")
-    require(authentication.get("repository_id") == repository_id, "authentication repository mismatch")
-    require(authentication.get("history_pages_complete") is True, "canonical history pagination is incomplete")
-    authenticated = require_list(authentication.get("authenticated_receipts"), "authenticated receipt evidence")
-    authenticated_map: dict[str, dict[str, Any]] = {}
-    for index, raw_item in enumerate(authenticated):
-        item = require_object(raw_item, f"authenticated receipt {index}")
-        require_exact_fields(item, AUTHENTICATED_RECEIPT_FIELDS, f"authenticated receipt {index}")
-        provider_receipt_id = require_identity(item.get("provider_receipt_id"), f"authenticated receipt {index} provider_receipt_id")
-        require(provider_receipt_id not in authenticated_map, "duplicate provider authentication evidence")
-        writer_id = require_identity(item.get("writer_id"), f"authenticated receipt {index} writer_id")
-        require(writer_id == register_writer, f"authenticated receipt {index} is not bound to dedicated register writer")
-        require_sha256(item.get("receipt_hash"), f"authenticated receipt {index} receipt hash")
-        require_sha256(item.get("operation_fingerprint"), f"authenticated receipt {index} operation fingerprint")
-        authenticated_map[provider_receipt_id] = item
-
-    history = require_list(records.get("history_receipts"), "history receipts")
-    previous_hash = "0" * 64
-    seen_provider_receipt_ids: set[str] = set()
-    last_authenticated_operation_fingerprint: str | None = None
-    for index, raw_receipt in enumerate(history, start=1):
-        receipt = require_object(raw_receipt, f"history receipt {index}")
-        require_exact_fields(receipt, HISTORY_RECEIPT_FIELDS, f"history receipt {index}")
-        require_payload(receipt, RECEIPT_LIMIT, f"history receipt {index}")
-        require(receipt.get("sequence") == index, f"history receipt {index} sequence discontinuity")
-        require(receipt.get("previous_hash") == previous_hash, f"history receipt {index} previous hash mismatch")
-        require(receipt.get("repository_id") == repository_id, f"history receipt {index} repository mismatch")
-        writer_id = require_identity(receipt.get("writer_id"), f"history receipt {index} writer_id")
-        require(writer_id == register_writer, f"history receipt {index} is not bound to dedicated register writer")
-        require_identity(receipt.get("operation_id"), f"history receipt {index} operation_id")
-        require(receipt.get("kind") in HISTORY_KINDS, f"history receipt {index} kind is invalid")
-        require_identity(receipt.get("run_id"), f"history receipt {index} run_id")
-        provider_receipt_id = require_identity(receipt.get("provider_receipt_id"), f"history receipt {index} provider_receipt_id")
-        require(provider_receipt_id not in seen_provider_receipt_ids, f"history receipt {index} provider receipt replay")
-        seen_provider_receipt_ids.add(provider_receipt_id)
-        authenticated_receipt = authenticated_map.get(provider_receipt_id)
-        require(authenticated_receipt is not None and authenticated_receipt.get("writer_id") == writer_id, f"history receipt {index} writer is not provider-authenticated")
-        expected_hash = receipt_hash(receipt)
-        require(receipt.get("receipt_hash") == expected_hash, f"history receipt {index} hash mismatch")
-        require(authenticated_receipt.get("receipt_hash") == expected_hash, f"history receipt {index} authenticated receipt content mismatch")
-        expected_operation_fingerprint = operation_fingerprint(receipt)
-        require(
-            authenticated_receipt.get("operation_fingerprint") == expected_operation_fingerprint,
-            f"history receipt {index} authenticated operation material mismatch",
-        )
-        last_authenticated_operation_fingerprint = expected_operation_fingerprint
-        previous_hash = expected_hash
-    require(set(authenticated_map) == seen_provider_receipt_ids, "provider authentication inventory differs from canonical history")
-
-    anchor = require_object(records.get("history_anchor"), "history anchor")
-    require_exact_fields(anchor, HISTORY_ANCHOR_FIELDS, "history anchor")
-    require(anchor.get("sequence") == len(history), "history anchor sequence mismatch")
-    if history:
-        require(anchor.get("head") == previous_hash, "history anchor head mismatch")
-        require(anchor.get("latest_receipt") == history[-1], "history anchor latest_receipt mismatch")
-        require(records.get("last_operation_id") == history[-1].get("operation_id"), "operation marker mismatch")
-        require(
-            require_sha256(records.get("last_operation_fingerprint"), "last operation fingerprint")
-            == last_authenticated_operation_fingerprint,
-            "last operation fingerprint does not match authenticated operation material",
-        )
-    else:
-        require(anchor.get("head") == "GENESIS" and anchor.get("latest_receipt") is None, "genesis history anchor mismatch")
-        require(records.get("last_operation_id") is None and records.get("last_operation_fingerprint") is None, "genesis operation markers must be null")
-
-    manifest = validate_manifest(manifest, repository_id, lanes)
-    return {"manifest": manifest, "portfolio_limit": limit, "history_head": anchor["head"]}
 
 
 def validate_scout_receipts(
@@ -1326,186 +1096,185 @@ def render_capacity(retained: Any, candidates: Any, policy_path: Path) -> dict[s
     return render_capacity_with_limit(retained, candidates, portfolio_limit(policy_path))
 
 
-def validate_reconciliation_authority(
-    scenario: dict[str, Any],
-    records: dict[str, Any],
-    manifest: dict[str, Any],
-) -> dict[str, Any]:
-    authority = require_object(scenario.get("authority"), f"{scenario.get('id', 'scenario')} reconciliation authority")
-    require_exact_fields(authority, RECONCILIATION_AUTHORITY_FIELDS, "reconciliation authority")
-    require(authority.get("schema") == "repo-gardener-reconciliation-authority/v1", "reconciliation authority schema mismatch")
-    require(authority.get("repository_id") == records.get("repository_id"), "reconciliation authority repository mismatch")
-    require(authority.get("report_id") == records.get("report_id"), "reconciliation authority report mismatch")
-    require(authority.get("writer_id") == records.get("writer_id"), "reconciliation authority writer mismatch")
-    require(authority.get("run_id") == manifest.get("run_id"), "reconciliation authority run mismatch")
-    for field in RECONCILIATION_WRITE_PROOFS:
-        require(type(authority.get(field)) is bool, f"reconciliation authority {field} must be boolean")
-    return authority
-
-
-def reconciliation_write_authorized(authority: dict[str, Any]) -> bool:
-    return all(authority[field] is True for field in RECONCILIATION_WRITE_PROOFS)
-
-
-def evaluate_reconciliation(
-    scenario: Any,
-    records: dict[str, Any],
-    manifest: dict[str, Any],
-    receipt_sets: dict[str, dict[str, dict[str, Any]]],
-    complete_receipts: dict[str, dict[str, Any]],
-    policy_limit: int,
-) -> dict[str, Any]:
-    scenario = require_object(scenario, "reconciliation scenario")
-    scenario_type = scenario.get("scenario_type")
-    if scenario_type == "caller-ownership":
-        require_exact_fields(scenario, {"id", "scenario_type", "authority"}, "caller-ownership scenario")
-        authority = validate_reconciliation_authority(scenario, records, manifest)
-        can_write = reconciliation_write_authorized(authority)
-        return {"writes": 1 if can_write else 0, "last_safe_stage": "Act" if can_write else "Sense"}
-    if scenario_type == "interrupted-run":
-        return {"outcome": "interrupted" if scenario.get("older_run_start") == "unmatched" else "current", "uses_elapsed_time": False}
-    if scenario_type == "lifecycle":
-        events = require_list(scenario.get("events"), "lifecycle events")
-        pairs = (
-            ("append-run-start", "read-run-start"),
-            ("persist-reconciliation", "read-reconciliation"),
-            ("persist-manifest", "read-manifest"),
-            ("persist-supplied-scout-receipts", "read-supplied-scout-receipts"),
-            ("append-decisions", "read-decisions"),
-            ("append-terminal", "read-terminal"),
-            ("render-report", "read-report"),
+def dedupe_scout_observations(observations: Any, receipts: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    """Collapse one stable source while retaining every usable contributing receipt."""
+    observations = [
+        require_object(item, f"dedupe observation {index}")
+        for index, item in enumerate(require_list(observations, "dedupe observations"))
+    ]
+    require(bool(observations), "dedupe observations are empty")
+    source_ids = {
+        require_identity(item.get("source_id"), f"dedupe observation {index} source_id")
+        for index, item in enumerate(observations)
+    }
+    require(len(source_ids) == 1, "dedupe observations do not share stable source identity")
+    lanes: list[str] = []
+    receipt_ids: list[str] = []
+    for index, item in enumerate(observations):
+        require_exact_fields(item, {"source_id", "lane", "receipt_id"}, f"dedupe observation {index}")
+        lane = require_identity(item.get("lane"), f"dedupe observation {index} lane")
+        receipt_id = require_identity(item.get("receipt_id"), f"dedupe observation {index} receipt_id")
+        receipt = receipts.get(lane)
+        require(
+            receipt is not None
+            and receipt.get("receipt_id") == receipt_id
+            and receipt.get("outcome") in {"complete", "not applicable"},
+            "dedupe cites an unknown or unusable Scout Receipt",
         )
-        all_present = all(item in events for pair in pairs for item in pair)
-        return {"ordered": tuple(events) == REQUIRED_EVENTS, "terminal_before_report": events.index("read-terminal") < events.index("render-report") if "read-terminal" in events and "render-report" in events else False, "readback_after_each_write": all(events.index(read) == events.index(write) + 1 for write, read in pairs) if all_present else False}
-    if scenario_type == "report-fact-readbacks":
-        report_facts = require_list(scenario.get("report_facts"), "report facts")
-        names = [require_identity(require_object(item, "report fact").get("fact"), "report fact identity") for item in report_facts]
-        require(len(names) == len(set(names)), "duplicate report fact identity")
-        persisted = [item["fact"] for item in report_facts if item.get("narrow_wrapper_persisted") is True and item.get("authoritative_readback_completed") is True]
-        return {"persistence_claim": bool(persisted), "persisted_report_facts": persisted, "source_fact_persistence_claim": False}
-    if scenario_type == "missing-receipt":
-        receipts = receipt_sets[scenario["receipt_fixture"]]
-        receipt = receipts.get(scenario["expected_scout"])
-        if receipt is None:
-            return {"coverage": "incomplete (no receipt)", "candidate_count": None}
-        if receipt["outcome"] == "incomplete" or (receipt["outcome"] == "not applicable" and not receipt.get("affirmative_evidence")):
-            return {"coverage": "incomplete", "candidate_count": None}
-        return {"coverage": receipt["outcome"], "candidate_count": receipt.get("candidate_count", 0)}
-    if scenario_type == "not-applicable":
-        return {"coverage": "not applicable" if scenario.get("affirmative_evidence") else "incomplete"}
-    if scenario_type == "untrusted-text":
-        return {"derived_effects": 0}
-    if scenario_type == "dedupe":
-        observations = [
-            require_object(item, f"dedupe observation {index}")
-            for index, item in enumerate(require_list(scenario.get("observations"), "dedupe observations"))
+        lanes.append(lane)
+        receipt_ids.append(receipt_id)
+    return {
+        "candidate_count": 1,
+        "source_id": next(iter(source_ids)),
+        "contributing_lanes": list(dict.fromkeys(lanes)),
+        "receipt_ids": list(dict.fromkeys(receipt_ids)),
+    }
+
+
+def reconcile_report_effect(
+    prepared: Any,
+    pre_read: Any,
+    post_read: Any,
+    write_attempt: Any,
+    manifest: Any,
+    receipt_collection: Any,
+    work: Any,
+    policy_path: Path,
+) -> dict[str, Any]:
+    """Derive reconciliation state from raw report material and terminal lane receipts."""
+    prepared = _prepared_effect(prepared)
+    _, installed_lanes = policy_contract(policy_path)
+    manifest = validate_manifest(manifest, prepared["repository_id"], installed_lanes)
+    require(manifest["run_id"] == prepared["operation"]["run_id"], "reconciliation run mismatch")
+    receipts = validate_scout_receipts(
+        receipt_collection,
+        manifest,
+        complete=True,
+        expected_scouts=installed_lanes,
+    )
+    effect = verify_report_effect(prepared, pre_read, post_read, write_attempt)
+
+    raw_work = require_list(work, "reconciliation work")
+    require(len(raw_work) == len(installed_lanes), "reconciliation work must represent every installed lane exactly once")
+    work_by_lane: dict[str, dict[str, Any]] = {}
+    work_by_identity: dict[tuple[str, str], dict[str, Any]] = {}
+    for index, raw_item in enumerate(raw_work):
+        item = require_object(raw_item, f"reconciliation work {index}")
+        require_exact_fields(item, RECONCILIATION_WORK_FIELDS, f"reconciliation work {index}")
+        identity = composite_identity(item.get("repository_id"), item.get("operation_id"))
+        require(identity["repository_id"] == prepared["repository_id"], f"reconciliation work {index} repository mismatch")
+        lane = require_identity(item.get("lane"), f"reconciliation work {index} lane")
+        require(lane in installed_lanes and lane not in work_by_lane, "reconciliation work must represent every installed lane exactly once")
+        dependencies = [
+            composite_identity(
+                require_object(value, f"reconciliation work {index} dependency {dependency_index}").get("repository_id"),
+                value.get("operation_id"),
+            )
+            for dependency_index, value in enumerate(require_list(item.get("dependencies"), f"reconciliation work {index} dependencies"))
         ]
-        source_ids = {
-            require_identity(item.get("source_id"), f"dedupe observation {index} source_id")
-            for index, item in enumerate(observations)
-        }
-        require(len(source_ids) == 1, "dedupe observations do not share stable source identity")
-        for item in observations:
-            receipt = complete_receipts.get(item["lane"])
-            require(receipt is not None and receipt["receipt_id"] == item["receipt_id"], "dedupe cites an unknown Scout Receipt")
-        return {"candidate_count": 1, "preserved_lanes": len({item["lane"] for item in observations}), "preserved_receipts": len({item["receipt_id"] for item in observations})}
-    if scenario_type == "gates":
-        result = evaluate_gates(scenario.get("gate_facts"))
-        result.pop("eligible")
-        return result
-    if scenario_type == "shared-candidate":
-        gate_facts = dict(require_object(scenario.get("gate_facts"), "gate facts"))
-        if scenario.get("security_evidence") != "complete":
-            gate_facts["evidence"] = False
-        result = evaluate_gates(gate_facts)
-        return {"eligible_under_owner_lane": result["eligible"], **({"first_failing_gate": result["first_failing_gate"]} if not result["eligible"] else {})}
-    if scenario_type == "capacity":
-        return render_capacity_with_limit(scenario.get("retained_rows"), scenario.get("eligible_candidates", []), policy_limit)
-    if scenario_type == "critical-capacity":
-        limit = policy_limit
-        retained = require_retained_rows(scenario.get("retained_rows"), limit)
-        require(len(retained) == limit, "critical capacity fixture is not full")
-        candidate = require_object(scenario.get("critical_candidate"), "critical candidate")
-        require_identity(candidate.get("source_id"), "critical candidate source_id")
-        require(candidate.get("expected_impact") == "critical", "critical candidate classification is invalid")
-        eligible = evaluate_gates(candidate.get("gate_facts"))["eligible"]
-        interruptible_row = require_identity(scenario.get("interruptible_row"), "interruptible row")
-        require(interruptible_row in retained, "interruptible row is not retained")
-        return {"rendered_slots": limit, "recommendations": 0, "preemption_proposal": eligible, "rows_changed": 0}
-    if scenario_type == "disabled-observations":
-        observations = require_list(scenario.get("observations"), "disabled observations")
-        require(len(observations) == 2, "disabled observations must contain exactly two observations")
-        ordinary = require_object(observations[0], "ordinary disabled observation")
-        critical = require_object(observations[1], "critical disabled observation")
-        return {"ordinary_attention": "Routine (disabled lane)" if not ordinary.get("critical") else "Action required (lane disabled)", "critical_attention": "Action required (lane disabled)" if critical.get("critical") and critical.get("applicable") else "Routine (disabled lane)", "rows_changed": 0, "source_mutations": 0}
-    if scenario_type == "terminal-row":
-        current_row = scenario.get("current_row")
-        binding = scenario.get("terminal_source_binding")
-        bound = False
-        if current_row is not None or binding is not None:
-            current_row = require_object(current_row, "terminal current row")
-            binding = require_object(binding, "terminal source binding")
-            fields = {"row_id", "source_id", "source_revision"}
-            require_exact_fields(current_row, fields, "terminal current row")
-            require_exact_fields(binding, fields, "terminal source binding")
-            for field in fields:
-                require_identity(current_row.get(field), f"terminal current row {field}")
-                require_identity(binding.get(field), f"terminal source binding {field}")
-            bound = binding == current_row
-        return {
-            "stable_binding_dispositions": ["released-same-update", "action-required-owner-release"],
-            "row_action": "release-or-owner-release" if bound else "unchanged-unassociated",
-        }
-    if scenario_type == "honest-no-op":
-        require_exact_fields(
-            scenario,
-            {"id", "scenario_type", "receipt_fixture", "reconciliation_complete", "gate_passing_candidates", "protected_boundary_rejected", "authority"},
-            "honest-no-op scenario",
-        )
-        authority = validate_reconciliation_authority(scenario, records, manifest)
-        require(reconciliation_write_authorized(authority), "honest no-op lacks complete independent write authority")
-        receipts = receipt_sets[scenario["receipt_fixture"]]
-        complete = set(receipts) == set(manifest["scouts"]) and all(item["outcome"] in {"complete", "not applicable"} for item in receipts.values())
-        protected_boundary_rejected = scenario.get("protected_boundary_rejected")
-        require(type(protected_boundary_rejected) is bool, "honest no-op protected-boundary fact must be boolean")
-        reconciliation_complete = scenario.get("reconciliation_complete")
-        gate_passing_candidates = scenario.get("gate_passing_candidates")
-        require(type(reconciliation_complete) is bool, "honest no-op reconciliation fact must be boolean")
-        require(type(gate_passing_candidates) is int and gate_passing_candidates >= 0, "honest no-op candidate count must be a nonnegative integer")
-        routine = complete and reconciliation_complete and gate_passing_candidates == 0 and not protected_boundary_rejected
-        if routine:
-            next_action = "none"
-        elif not complete:
-            next_action = "complete missing coverage"
-        elif not reconciliation_complete:
-            next_action = "complete reconciliation"
-        elif gate_passing_candidates:
-            next_action = "review gate-passing candidates"
-        else:
-            next_action = "resolve protected boundary"
-        return {"attention_state": "Routine" if routine else "Action required", "next_owner_action": next_action, "rendered_slots": policy_limit}
-    if scenario_type == "history":
-        require_exact_fields(scenario, {"id", "scenario_type", "history_pages_complete", "authority"}, "history scenario")
-        authority = validate_reconciliation_authority(scenario, records, manifest)
-        valid = scenario.get("history_pages_complete") is True
-        can_write = valid and reconciliation_write_authorized(authority)
-        return {"integrity": "valid" if valid else "unavailable", "writes": 1 if can_write else 0}
-    if scenario_type == "reconciliation-order":
-        require_exact_fields(
-            scenario,
-            {"id", "scenario_type", "unmatched_intents", "effect_reconciled", "discovery_started_after_reconciliation"},
-            "reconciliation-order scenario",
-        )
-        unmatched_intents = scenario.get("unmatched_intents")
-        require(isinstance(unmatched_intents, int) and not isinstance(unmatched_intents, bool) and unmatched_intents >= 0, "unmatched intent count must be a nonnegative integer")
-        reconciled = scenario.get("effect_reconciled") is True and unmatched_intents == 1
-        valid = reconciled and scenario.get("discovery_started_after_reconciliation") is True
-        return {
-            "ordering_valid": valid,
-            "terminal_outcome": "observed" if reconciled else "ambiguous",
-            "terminal_receipt_recording": "idempotent" if reconciled else "withheld",
-        }
-    raise ContractError(f"unknown reconciliation scenario type: {scenario_type}")
+        dependency_keys = [(value["repository_id"], value["operation_id"]) for value in dependencies]
+        require(len(dependency_keys) == len(set(dependency_keys)), f"reconciliation work {index} has duplicate dependencies")
+        normalized = {**identity, "lane": lane, "dependencies": dependencies}
+        key = (identity["repository_id"], identity["operation_id"])
+        require(key not in work_by_identity, "duplicate reconciliation work identity")
+        work_by_lane[lane] = normalized
+        work_by_identity[key] = normalized
+    require(set(work_by_lane) == set(installed_lanes), "reconciliation work must represent every installed lane exactly once")
+
+    report_identity = (prepared["repository_id"], prepared["operation_id"])
+    require(report_identity not in work_by_identity, "lane work identity collides with prepared report identity")
+    known_identities = {*work_by_identity, report_identity}
+    for item in work_by_lane.values():
+        for dependency in item["dependencies"]:
+            require(
+                (dependency["repository_id"], dependency["operation_id"]) in known_identities,
+                "unknown completion dependency",
+            )
+
+    effect_positive = effect["terminal_outcome"] in {"observed", "already satisfied"}
+    dispositions = {
+        lane: (receipt["outcome"] if receipt["outcome"] != "incomplete" else "incomplete")
+        for lane, receipt in receipts.items()
+    }
+    terminal_by_identity = {
+        (item["repository_id"], item["operation_id"]): dispositions[lane]
+        for lane, item in work_by_lane.items()
+    }
+    terminal_by_identity[report_identity] = effect["terminal_outcome"]
+
+    changed = True
+    while changed:
+        changed = False
+        for lane, item in work_by_lane.items():
+            if dispositions[lane] not in {"complete", "not applicable"}:
+                continue
+            dependency_outcomes = [
+                terminal_by_identity[(dependency["repository_id"], dependency["operation_id"])]
+                for dependency in item["dependencies"]
+            ]
+            disposition = dispositions[lane]
+            if "ambiguous" in dependency_outcomes:
+                disposition = "preserved"
+            elif any(value in {"failed", "incomplete", "closed", "blocked"} for value in dependency_outcomes):
+                disposition = "closed" if "failed" in dependency_outcomes else "blocked"
+            if disposition != dispositions[lane]:
+                dispositions[lane] = disposition
+                terminal_by_identity[(item["repository_id"], item["operation_id"])] = disposition
+                changed = True
+
+    partition = {"completed": [], "blocked": [], "preserved": [], "closed": []}
+    lane_dispositions = []
+    for lane in installed_lanes:
+        item = work_by_lane[lane]
+        disposition = dispositions[lane]
+        lane_dispositions.append({"lane": lane, "receipt_id": receipts[lane]["receipt_id"], "disposition": disposition})
+        bucket = {
+            "complete": "completed",
+            "not applicable": "completed",
+            "blocked": "blocked",
+            "preserved": "preserved",
+            "incomplete": "closed",
+            "closed": "closed",
+        }[disposition]
+        partition[bucket].append({"repository_id": item["repository_id"], "operation_id": item["operation_id"]})
+
+    report_bucket = {
+        "observed": "completed",
+        "already satisfied": "completed",
+        "ambiguous": "preserved",
+        "failed": "closed",
+    }[effect["terminal_outcome"]]
+    partition[report_bucket].append(
+        {"repository_id": prepared["repository_id"], "operation_id": prepared["operation_id"]}
+    )
+    partition_identities = [
+        (item["repository_id"], item["operation_id"])
+        for bucket in partition.values()
+        for item in bucket
+    ]
+    require(
+        len(partition_identities) == len(set(partition_identities)) == len(installed_lanes) + 1,
+        "completion partition is not disjoint and exhaustive",
+    )
+
+    all_lanes_complete = all(value in {"complete", "not applicable"} for value in dispositions.values())
+    run_closed = prepared["operation"]["kind"] == "run-closed"
+    overall_complete = effect_positive and run_closed and all_lanes_complete
+    last_safe_stage = "Learn" if overall_complete else "Verify" if effect_positive else "Act"
+    return {
+        "schema": "repo-gardener-reconciliation-result/v2",
+        "effect_outcome": effect["terminal_outcome"],
+        "repair": effect["repair"],
+        "report_fact_persistence": effect_positive,
+        "last_safe_stage": last_safe_stage,
+        "overall_dogfood_complete": overall_complete,
+        "unmatched_intent": effect["terminal_outcome"] == "ambiguous",
+        "blind_retry": False,
+        "lane_dispositions": lane_dispositions,
+        "completion_partition": partition,
+        "granted_capabilities": [],
+        "provenance": effect["provenance"],
+    }
 
 
 def _load(path: Path) -> Any:
@@ -1528,11 +1297,6 @@ def _versioned_input(value: Any, schema: str, fields: set[str]) -> dict[str, Any
 def main() -> int:
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="command", required=True)
-    register_parser = subparsers.add_parser("validate-register")
-    register_parser.add_argument("--register", type=Path, required=True)
-    register_parser.add_argument("--manifest", type=Path, required=True)
-    register_parser.add_argument("--authentication", type=Path, required=True)
-    register_parser.add_argument("--policy", type=Path, required=True)
     receipt_parser = subparsers.add_parser("validate-scout-receipts")
     receipt_parser.add_argument("--receipts", type=Path, required=True)
     receipt_parser.add_argument("--manifest", type=Path, required=True)
@@ -1544,14 +1308,12 @@ def main() -> int:
     for command in ("effect-v1", "completion-v1", "gates-v1"):
         input_parser = subparsers.add_parser(command)
         input_parser.add_argument("--input", required=True)
-    for command in ("reconciliation-v1", "capacity-v1"):
+    for command in ("reconciliation-v2", "capacity-v1"):
         input_parser = subparsers.add_parser(command)
         input_parser.add_argument("--input", required=True)
         input_parser.add_argument("--policy", type=Path, required=True)
     args = parser.parse_args()
-    if args.command == "validate-register":
-        result = validate_register(_load(args.register), _load(args.manifest), _load(args.authentication), args.policy)
-    elif args.command == "validate-scout-receipts":
+    if args.command == "validate-scout-receipts":
         canonical_policy = Path(__file__).resolve().parent.parent / "assets" / "policy-template.yaml"
         _, expected_scouts = policy_contract(canonical_policy)
         result = {
@@ -1599,31 +1361,24 @@ def main() -> int:
     elif args.command == "capacity-v1":
         data = _versioned_input(_load_input(args.input), "repo-gardener-capacity-input/v1", {"retained", "candidates"})
         result = render_capacity(data["retained"], data["candidates"], args.policy)
-    else:
+    elif args.command == "reconciliation-v2":
         data = _versioned_input(
             _load_input(args.input),
-            "repo-gardener-reconciliation-input/v1",
-            {"scenario", "register", "authentication", "manifest", "receipt_sets", "complete_receipts"},
+            "repo-gardener-reconciliation-input/v2",
+            {"prepared", "pre_read", "post_read", "write_attempt", "manifest", "receipts", "work"},
         )
-        records = require_object(data["register"], "reconciliation register")
-        authentication = require_object(data["authentication"], "reconciliation provider authentication evidence")
-        register_result = validate_register(records, data["manifest"], authentication, args.policy)
-        manifest = register_result["manifest"]
-        raw_receipt_sets = require_object(data["receipt_sets"], "reconciliation receipt sets")
-        require(bool(raw_receipt_sets), "reconciliation receipt sets are empty")
-        receipt_sets: dict[str, dict[str, dict[str, Any]]] = {}
-        for label, envelope in raw_receipt_sets.items():
-            require_identity(label, "reconciliation receipt-set identity")
-            receipt_sets[label] = validate_scout_receipts(envelope, manifest, complete=False)
-        complete_receipts = validate_scout_receipts(data["complete_receipts"], manifest, complete=True)
-        result = evaluate_reconciliation(
-            data["scenario"],
-            records,
-            manifest,
-            receipt_sets,
-            complete_receipts,
-            register_result["portfolio_limit"],
+        result = reconcile_report_effect(
+            data["prepared"],
+            data["pre_read"],
+            data["post_read"],
+            data["write_attempt"],
+            data["manifest"],
+            data["receipts"],
+            data["work"],
+            args.policy,
         )
+    else:
+        raise ContractError(f"unknown command: {args.command}")
     print(json.dumps(result, sort_keys=True))
     return 0
 

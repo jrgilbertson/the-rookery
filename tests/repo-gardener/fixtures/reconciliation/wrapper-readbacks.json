@@ -1,12 +1,9 @@
 {
-  "schema": "repo-gardener-test-wrapper-readbacks/v1",
-  "report_facts": [
-    {"fact": "run-start", "narrow_wrapper_persisted": true, "authoritative_readback_completed": true},
-    {"fact": "manifest", "narrow_wrapper_persisted": true, "authoritative_readback_completed": true},
-    {"fact": "supplied Scout Receipts", "narrow_wrapper_persisted": true, "authoritative_readback_completed": true},
-    {"fact": "reconciliation", "narrow_wrapper_persisted": true, "authoritative_readback_completed": true},
-    {"fact": "decisions", "narrow_wrapper_persisted": true, "authoritative_readback_completed": true},
-    {"fact": "terminal run", "narrow_wrapper_persisted": true, "authoritative_readback_completed": true},
-    {"fact": "canonical report", "narrow_wrapper_persisted": true, "authoritative_readback_completed": true}
+  "schema": "repo-gardener-reconciliation-readback-recipes/v2",
+  "readbacks": [
+    {"id":"observed","mutation":"exact-post-read","write_attempt":"possible"},
+    {"id":"already-satisfied","mutation":"preexisting","write_attempt":"none"},
+    {"id":"body-only","mutation":"body-only","write_attempt":"possible"},
+    {"id":"denied-unchanged","mutation":"denied-unchanged","write_attempt":"denied-before-write"}
   ]
 }

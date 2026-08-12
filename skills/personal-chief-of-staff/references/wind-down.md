@@ -265,12 +265,9 @@ choice; generic task restatement does not. Focus, stop, more, and less may be
 useful lenses, but they are not required slots. Prefer insight over lecture and
 do not score, grade, or invent a streak.
 
-Whether the recommendation changes the plan or deliberately preserves it,
-apply the shared intention contract: make the supported current choice, the
-user-owned or approved desired result (or a conditional candidate awaiting
-approval), and the future signal that would show the choice worked recoverable
-in the prose. An honest no-material-intervention result is not an intention and
-needs no invented finish line.
+Apply the shared intention contract whether the recommendation changes the
+plan or deliberately preserves it. An honest no-material-intervention result
+is not an intention.
 
 When no material intervention is supported, say so concisely and continue to
 Meaningful Commitments without filler advice or a strategy or learning
@@ -355,10 +352,8 @@ observation as isolated and does not claim recurrence. Never auto-write
 strategy or learnings; the user must approve the exact durable update
 independently.
 
-Frame each learning or strategy proposal through the shared intention
-contract, including the future observable evidence that would show whether the
-proposed durable change had its intended effect. Do not promote an inferred
-desired outcome to the user's intention.
+Apply the shared intention contract to each learning or strategy proposal. Do
+not promote an inferred outcome to the user's intention.
 
 Completion: optional writing, learning, and strategy proposals are selective,
 sourced, and independently reviewable.
@@ -367,8 +362,7 @@ sourced, and independently reviewable.
 
 Present the journal and all source changes in one review bundle with separate
 numbered actions. Apply only approved actions under the shared source rules.
-Each action uses the bundle's intention shape and carries closure evidence for
-its own effect; another action's readback or finish line cannot close it.
+Each action uses the bundle's intention shape; another action cannot close it.
 
 For an approved journal action, re-read the target through the Obsidian CLI.
 Re-read the configured template as well when the action adds or changes the

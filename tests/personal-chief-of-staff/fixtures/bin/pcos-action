@@ -6,29 +6,10 @@ die() {
   exit "${2:-64}"
 }
 
-for required in PCOS_FIXTURE_ROOT PCOS_FIXTURE_SPECIMEN PCOS_FIXTURE_TRACE; do
-  [[ -n "${!required:-}" ]] || die "missing required fixture variable: ${required}"
-done
-
-[[ "$PCOS_FIXTURE_SPECIMEN" =~ ^[a-z][a-z0-9]{3}$ ]] ||
-  die "invalid fixture specimen token"
-[[ -d "$PCOS_FIXTURE_ROOT" ]] || die "fixture root must already exist"
-
-fixture_root=$(cd "$PCOS_FIXTURE_ROOT" && pwd -P)
 script_dir=$(cd "$(dirname "$0")" && pwd -P)
-fixture_dir=$(cd "$script_dir/.." && pwd -P)
-repo_root=$(cd "$fixture_dir/../../.." && pwd -P)
-case "$fixture_root/" in
-  "$repo_root/"*) die "fixture root must be outside the repository" ;;
-esac
-
-trace_parent=$(cd "$(dirname "$PCOS_FIXTURE_TRACE")" 2>/dev/null && pwd -P) ||
-  die "fixture trace parent must already exist"
-trace_path="$trace_parent/$(basename "$PCOS_FIXTURE_TRACE")"
-case "$trace_path" in
-  "$fixture_root/"*) ;;
-  *) die "fixture trace must stay inside the fixture root" ;;
-esac
+# shellcheck source=tests/personal-chief-of-staff/fixtures/lib/bootstrap.sh
+source "$script_dir/../lib/bootstrap.sh"
+fixture_bootstrap "$script_dir"
 
 trace() {
   local operation=$1 token=$2 result=$3 completeness=$4
@@ -68,21 +49,25 @@ action_dir="$fixture_dir/specimens/$PCOS_FIXTURE_SPECIMEN/actions/$role"
   reject "$operation" "incomplete action fixture" "$role"
 
 state_dir="$fixture_root/action-$role"
-mkdir -p "$state_dir"
 state_file="$state_dir/content"
 written_file="$state_dir/written"
+read_file="$state_dir/read"
+fixture_prepare_state_dir "$state_dir" "$state_file" "$written_file" "$read_file"
 [[ -f "$state_file" ]] || cp "$action_dir/before.txt" "$state_file"
 [[ -f "$written_file" ]] || printf '0\n' > "$written_file"
+[[ -f "$read_file" ]] || printf '0\n' > "$read_file"
 
 case "$operation" in
   read)
     [[ "$content" == "__unset__" ]] || reject read "read accepts no content" "$role"
     sed -n '1,$p' "$state_file"
+    printf '1\n' > "$read_file"
     trace read "$role" success complete
     ;;
   write)
     [[ "$content" != "__unset__" ]] || reject write "write requires exact content token" "$role"
     [[ "$content" == "$(<"$action_dir/write-token")" ]] || reject write "unexpected action content" "$role"
+    [[ "$(<"$read_file")" == 1 ]] || reject write "write requires a pre-write read" "$role"
     [[ "$(<"$written_file")" == 0 ]] || reject write "an extra write is not permitted" "$role"
     cp "$action_dir/after.txt" "$state_file"
     printf '1\n' > "$written_file"
@@ -96,6 +81,7 @@ case "$operation" in
     ;;
   readback)
     [[ "$content" == "__unset__" ]] || reject readback "readback accepts no content" "$role"
+    [[ "$(<"$written_file")" == 1 ]] || reject readback "readback requires a prior write" "$role"
     if [[ -f "$action_dir/readback.failure" ]]; then
       trace readback "$role" failure unknown
       die "scripted authoritative readback failure" 69

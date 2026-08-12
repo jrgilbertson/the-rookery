@@ -79,8 +79,13 @@ priority context in the conversation with the answer-first Source Access
 Audit. The calling workflow retains ownership of its narrower operation. Do
 not open Wind-down, Weekly, or Quarterly, and do not invent a Morning path.
 
+Before returning, always render the current response's Source Access Audit
+after the priority context, even when every requested read succeeds and no
+action is proposed. A cross-source response without that table is incomplete.
+
 Completion: the caller has usable cross-source judgment without a chief-of-staff
-mode run or unrequested durable writes.
+mode run or unrequested durable writes, and can see which current source reads
+did and did not succeed.
 
 ## Select the mode
 

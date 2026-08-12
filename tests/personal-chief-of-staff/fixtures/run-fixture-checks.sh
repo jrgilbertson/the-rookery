@@ -3,6 +3,7 @@ set -euo pipefail
 
 fixture_dir=$(cd "$(dirname "$0")" && pwd -P)
 fixture_bin="$fixture_dir/bin"
+repo_root=$(cd "$fixture_dir/../../.." && pwd -P)
 PATH="$fixture_bin:$PATH"
 export PATH
 run_root=$(mktemp -d "${TMPDIR:-/tmp}/pcos-fixture.XXXXXX")
@@ -52,6 +53,20 @@ if pcos-source read role=unknown_role >/dev/null 2>&1; then
 fi
 assert_trace '"target":"unknown_role","result":"rejected","completeness":"not_applicable"'
 
+new_run s6f6
+if pcos-source read role=current_work >/dev/null 2>&1; then
+  fail "scripted role-source failure was accepted"
+fi
+assert_trace '"target":"current_work","result":"failure","completeness":"unknown"'
+
+new_run c1p1
+if pcos-action write role=person_note content=displayed_durable_context >/dev/null 2>&1; then
+  fail "action write without a pre-write read was accepted"
+fi
+if pcos-action readback role=person_note >/dev/null 2>&1; then
+  fail "action readback without a write was accepted"
+fi
+
 new_run c1p1
 pcos-action read role=person_note >/dev/null
 output=$(pcos-action write role=person_note content=displayed_durable_context)
@@ -60,6 +75,12 @@ output=$(pcos-action readback role=person_note)
 [[ "$output" == *"exact displayed durable context"* ]] || fail "action fixture readback output"
 assert_trace '"operation":"write","target":"person_note","result":"success"'
 assert_trace '"operation":"readback","target":"person_note","result":"success","completeness":"complete"'
+if pcos-action write role=person_note content=displayed_durable_context >/dev/null 2>&1; then
+  fail "duplicate action write was accepted"
+fi
+output=$(pcos-action readback role=person_note)
+[[ "$output" == *"exact displayed durable context"* ]] ||
+  fail "duplicate action write changed state"
 
 new_run a2m2
 pcos-action read role=mailbox_draft >/dev/null
@@ -71,7 +92,26 @@ fi
 assert_trace '"operation":"write","target":"mailbox_draft","result":"ambiguous"'
 assert_trace '"operation":"readback","target":"mailbox_draft","result":"failure","completeness":"unknown"'
 
+new_run b5r5
+pcos-action read role=task_note >/dev/null
+pcos-action write role=task_note content=phase_separated_effect >/dev/null
+pcos-action readback role=task_note >/dev/null
+pcos-source read role=current_weekly_review >/dev/null
+pcos-source read role=tasks >/dev/null
+pcos-source read role=calendar >/dev/null
+assert_trace '"operation":"readback","target":"task_note","result":"success","completeness":"complete"'
+assert_trace '"operation":"read","target":"current_weekly_review","result":"success","completeness":"complete"'
+
+new_run n1m1
+pcos-source read role=current_work >/dev/null
+pcos-source read role=calendar >/dev/null
+assert_trace '"operation":"read","target":"current_work","result":"success","completeness":"complete"'
+assert_trace '"operation":"read","target":"calendar","result":"success","completeness":"complete"'
+
 new_run d1g1
+output=$(imsg --version)
+[[ "$output" == 'imsg fixture 1.0' ]] || fail "Messages preflight output"
+assert_trace '"operation":"preflight","target":"messages_interface","result":"success"'
 output=$(imsg chats --limit 10 --json)
 [[ "$output" == *'"id":"group-1"'* ]] || fail "Messages chat output"
 output=$(imsg history --chat-id group-1 \
@@ -80,6 +120,14 @@ output=$(imsg history --chat-id group-1 \
 [[ "$output" == *'"sender":"+12135550101"'* ]] || fail "Messages history output"
 assert_trace '"operation":"chats","target":"messages_chats","result":"success","completeness":"complete"'
 assert_trace '"operation":"history","target":"messages_history","result":"success","completeness":"complete"'
+if imsg chats --limit 11 --json >/dev/null 2>&1; then
+  fail "non-prescribed Messages chat limit was accepted"
+fi
+if imsg history --chat-id group-1 \
+  --start 2026-08-05T00:00:00-07:00 \
+  --end 2026-08-06T00:00:00-07:00 --limit 101 --json >/dev/null 2>&1; then
+  fail "non-prescribed Messages history limit was accepted"
+fi
 if imsg send --chat-id group-1 --text unexpected >/dev/null 2>&1; then
   fail "Messages write operation was accepted"
 fi
@@ -149,13 +197,52 @@ if obsidian vault=fixture-vault append path=Roles/current.md content=unexpected 
 fi
 assert_trace '"operation":"append","target":"current_role","result":"rejected"'
 
-if env -u PCOS_FIXTURE_ROOT -u PCOS_FIXTURE_SPECIMEN -u PCOS_FIXTURE_TRACE \
-  PATH="$fixture_bin:$PATH" obsidian vault=fixture-vault read path=Roles/current.md >/dev/null 2>&1; then
-  fail "missing fixture variables were accepted"
+for adapter in pcos-source pcos-action imsg obsidian; do
+  if env -u PCOS_FIXTURE_ROOT -u PCOS_FIXTURE_SPECIMEN -u PCOS_FIXTURE_TRACE \
+    PATH="$fixture_bin:$PATH" "$adapter" --version >/dev/null 2>&1; then
+    fail "missing fixture variables were accepted by $adapter"
+  fi
+done
+
+ancestor_root=$(cd "$repo_root/.." && pwd -P)
+ancestor_trace="$repo_root/.fixture-escape-check.jsonl"
+if env PCOS_FIXTURE_ROOT="$ancestor_root" PCOS_FIXTURE_SPECIMEN=w1r1 \
+  PCOS_FIXTURE_TRACE="$ancestor_trace" PATH="$fixture_bin:$PATH" \
+  pcos-source read role=current_weekly_review >/dev/null 2>&1; then
+  fail "fixture root containing the repository was accepted"
 fi
+[[ ! -e "$ancestor_trace" ]] || fail "ancestor-root check wrote inside the repository"
+
+new_run w1r1
+outside_trace="$run_root/outside-trace.jsonl"
+ln -s "$outside_trace" "$PCOS_FIXTURE_TRACE"
+if pcos-source read role=current_weekly_review >/dev/null 2>&1; then
+  fail "symlinked fixture trace was accepted"
+fi
+[[ ! -e "$outside_trace" ]] || fail "symlinked trace escaped the fixture root"
+
+new_run c1p1
+outside_action_state="$run_root/outside-action-state"
+mkdir -p "$outside_action_state"
+ln -s "$outside_action_state" "$PCOS_FIXTURE_ROOT/action-person_note"
+if pcos-action read role=person_note >/dev/null 2>&1; then
+  fail "symlinked action state directory was accepted"
+fi
+[[ -z "$(find "$outside_action_state" -mindepth 1 -print -quit)" ]] ||
+  fail "action state symlink escaped the fixture root"
+
+new_run m3x6
+outside_obsidian_state="$run_root/outside-obsidian-state"
+mkdir -p "$outside_obsidian_state"
+ln -s "$outside_obsidian_state" "$PCOS_FIXTURE_ROOT/state-m3x6"
+if obsidian vault=fixture-vault read path=Actions/current.md >/dev/null 2>&1; then
+  fail "symlinked Obsidian state directory was accepted"
+fi
+[[ -z "$(find "$outside_obsidian_state" -mindepth 1 -print -quit)" ]] ||
+  fail "Obsidian state symlink escaped the fixture root"
 
 unexpected_file=$(find "$run_root" -type f \
-  ! \( -name trace.jsonl -o -name read-index -o -name written -o -name content \) \
+  ! \( -name trace.jsonl -o -name read-index -o -name read -o -name written -o -name content \) \
   -print -quit)
 [[ -z "$unexpected_file" ]] || fail "unexpected fixture state file"
 

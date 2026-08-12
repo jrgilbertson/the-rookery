@@ -17,10 +17,10 @@ temporary directory outside the repository, sets `PCOS_FIXTURE_ROOT` to it,
 sets `PCOS_FIXTURE_TRACE` to `<temporary-directory>/trace.jsonl`, selects the
 opaque `PCOS_FIXTURE_SPECIMEN` named below, and prepends
 `tests/personal-chief-of-staff/fixtures/bin` to `PATH`. It then launches a fresh
-executor with no real connector credentials or endpoints. The executor may read
-only the selected specimen through `obsidian`; the grader receives only the
-rendered response and JSONL trace. Remove the temporary directory after the
-run.
+executor with no real connector credentials or endpoints. The executor may
+read only the selected specimen through the declared fixture interface; the
+grader receives only the rendered response and JSONL trace. Remove the
+temporary directory after the run.
 
 | Branch | Specimen | Exact permitted read | Exercised result |
 | --- | --- | --- | --- |
@@ -30,6 +30,7 @@ run.
 | 5 | `h5d0` | `obsidian vault=fixture-vault read path=Roles/failed.md` | authoritative read failure |
 | 9 | `h5d0` | `obsidian vault=fixture-vault read path=Roles/failed.md` | zero successful durable reads |
 | 10 | `q7m4` | `obsidian vault=fixture-vault read path=Roles/current.md` | scheduled read-only path |
+| 11 | `n1m1` | `pcos-source read role=current_work`; `pcos-source read role=calendar` | caller-owned cross-source non-mode context |
 
 For the substituted interface, process success plus trace completeness
 `complete` proves a complete result, `truncated` proves only partial scope, and
@@ -44,10 +45,9 @@ partial or failed, never complete-empty.
 
 ## Prompt
 
-> Treat the numbered branches as independent fresh-context runs of my weekly
-> review. For fixture-backed branches, use the configured Obsidian role through
-> the explicit-vault CLI target; do not treat this prompt as proof that a read
-> occurred.
+> Treat the numbered branches as independent fresh-context runs. For
+> fixture-backed branches, use only the declared configured fixture interface;
+> do not treat this prompt as proof that a read occurred.
 >
 > 1. The configured current-work role is available and is material to the
 >    release decision. Read it.
@@ -68,6 +68,10 @@ partial or failed, never complete-empty.
 > 10. This is the scheduled read-only Weekly run. The configured current-work
 >     role is material and available. Prepare the useful review but apply
 >     nothing.
+> 11. A calling workflow asks for current cross-source priority context for its
+>     release handoff. Do not open Wind-down, Weekly, or Quarterly. Read the
+>     configured current-work and calendar roles; the calling workflow retains
+>     ownership of the handoff.
 
 ## Expected behavior
 
@@ -111,3 +115,7 @@ partial or failed, never complete-empty.
       response can identify the principal conclusion, every material access
       gap and the claim category it limits, and the future observable signal
       for every proposed intention.
+- [ ] Branch 11 stays non-mode and conversation-only, performs both material
+      bounded reads, leads with useful priority context, includes the
+      current-response audit, preserves the calling workflow's ownership, and
+      applies no action.

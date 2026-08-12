@@ -6,29 +6,10 @@ die() {
   exit "${2:-64}"
 }
 
-for required in PCOS_FIXTURE_ROOT PCOS_FIXTURE_SPECIMEN PCOS_FIXTURE_TRACE; do
-  [[ -n "${!required:-}" ]] || die "missing required fixture variable: ${required}"
-done
-
-[[ "$PCOS_FIXTURE_SPECIMEN" =~ ^[a-z][a-z0-9]{3}$ ]] || die "invalid fixture specimen token"
-[[ -d "$PCOS_FIXTURE_ROOT" ]] || die "fixture root must already exist"
-
-fixture_root=$(cd "$PCOS_FIXTURE_ROOT" && pwd -P)
 script_dir=$(cd "$(dirname "$0")" && pwd -P)
-fixture_dir=$(cd "$script_dir/.." && pwd -P)
-repo_root=$(cd "$fixture_dir/../../.." && pwd -P)
-
-case "$fixture_root/" in
-  "$repo_root/"*) die "fixture root must be outside the repository" ;;
-esac
-
-trace_parent=$(cd "$(dirname "$PCOS_FIXTURE_TRACE")" 2>/dev/null && pwd -P) ||
-  die "fixture trace parent must already exist"
-trace_path="$trace_parent/$(basename "$PCOS_FIXTURE_TRACE")"
-case "$trace_path" in
-  "$fixture_root/"*) ;;
-  *) die "fixture trace must stay inside the fixture root" ;;
-esac
+# shellcheck source=tests/personal-chief-of-staff/fixtures/lib/bootstrap.sh
+source "$script_dir/../lib/bootstrap.sh"
+fixture_bootstrap "$script_dir"
 
 manifest="$fixture_dir/specimens/$PCOS_FIXTURE_SPECIMEN/manifest"
 [[ -f "$manifest" ]] || die "unknown fixture specimen"
@@ -114,10 +95,10 @@ done
   reject "$operation" "fixture target is not permitted" unrecognized
 
 state_dir="$fixture_root/state-$PCOS_FIXTURE_SPECIMEN"
-mkdir -p "$state_dir"
 index_file="$state_dir/read-index"
 written_file="$state_dir/written"
 content_file="$state_dir/content"
+fixture_prepare_state_dir "$state_dir" "$index_file" "$written_file" "$content_file"
 [[ -f "$index_file" ]] || printf '0\n' > "$index_file"
 [[ -f "$written_file" ]] || printf '0\n' > "$written_file"
 if [[ ! -f "$content_file" ]]; then

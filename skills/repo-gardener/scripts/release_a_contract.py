@@ -730,17 +730,50 @@ def _effect_operation(operation: Any) -> dict[str, Any]:
     }
 
 
-def _effect_operation_id(view: dict[str, Any], operation: dict[str, Any]) -> str:
+def _effect_operation_id(
+    *,
+    repository_id: str,
+    report_issue_id: str,
+    writer_id: str,
+    expected_pre_revision: int,
+    expected_pre_head: str,
+    operation: dict[str, Any],
+) -> str:
     identity_material = {
-        "repository_id": view["repository_id"],
-        "report_issue_id": view["report_issue_id"],
-        "writer_id": view["writer_id"],
-        "expected_pre_revision": view["register"]["register_revision"],
-        "expected_pre_head": view["register"]["history_anchor"]["head"],
+        "repository_id": repository_id,
+        "report_issue_id": report_issue_id,
+        "writer_id": writer_id,
+        "expected_pre_revision": expected_pre_revision,
+        "expected_pre_head": expected_pre_head,
         "kind": operation["kind"],
         "payload": operation["payload"],
     }
     return f"operation:report:{hashlib.sha256(canonical_bytes(identity_material)).hexdigest()}"
+
+
+def _effect_operation_fingerprint(
+    *,
+    repository_id: str,
+    report_issue_id: str,
+    writer_id: str,
+    operation_id: str,
+    receipt_hash: str,
+    expected_pre_body_fingerprint: str,
+    operation: dict[str, Any],
+) -> str:
+    fingerprint_material = {
+        "repository_id": repository_id,
+        "report_issue_id": report_issue_id,
+        "writer_id": writer_id,
+        "operation_id": operation_id,
+        "kind": operation["kind"],
+        "run_id": operation["run_id"],
+        "receipt_hash": receipt_hash,
+        "expected_pre_body_fingerprint": expected_pre_body_fingerprint,
+        "rows": operation["rows"],
+        "projection": operation["projection"],
+    }
+    return hashlib.sha256(canonical_bytes(fingerprint_material)).hexdigest()
 
 
 def prepare_report_effect(pre_read: Any, operation: Any) -> dict[str, Any]:
@@ -749,7 +782,14 @@ def prepare_report_effect(pre_read: Any, operation: Any) -> dict[str, Any]:
     operation = _effect_operation(operation)
     register = view["register"]
     require(operation["rows"] != register["rows"] or operation["projection"], "effect operation has no report material")
-    operation_id = _effect_operation_id(view, operation)
+    operation_id = _effect_operation_id(
+        repository_id=view["repository_id"],
+        report_issue_id=view["report_issue_id"],
+        writer_id=view["writer_id"],
+        expected_pre_revision=register["register_revision"],
+        expected_pre_head=register["history_anchor"]["head"],
+        operation=operation,
+    )
     expected_pre_body_fingerprint = hashlib.sha256(view["body"].encode("utf-8")).hexdigest()
     receipt = {
         "schema": "orchestrator-history/v1",
@@ -771,19 +811,15 @@ def prepare_report_effect(pre_read: Any, operation: Any) -> dict[str, Any]:
         repository_id=view["repository_id"],
         report_issue_id=view["report_issue_id"],
     )
-    fingerprint_material = {
-        "repository_id": view["repository_id"],
-        "report_issue_id": view["report_issue_id"],
-        "writer_id": view["writer_id"],
-        "operation_id": operation_id,
-        "kind": operation["kind"],
-        "run_id": operation["run_id"],
-        "receipt_hash": receipt["receipt_hash"],
-        "expected_pre_body_fingerprint": expected_pre_body_fingerprint,
-        "rows": operation["rows"],
-        "projection": operation["projection"],
-    }
-    operation_fingerprint_value = hashlib.sha256(canonical_bytes(fingerprint_material)).hexdigest()
+    operation_fingerprint_value = _effect_operation_fingerprint(
+        repository_id=view["repository_id"],
+        report_issue_id=view["report_issue_id"],
+        writer_id=view["writer_id"],
+        operation_id=operation_id,
+        receipt_hash=receipt["receipt_hash"],
+        expected_pre_body_fingerprint=expected_pre_body_fingerprint,
+        operation=operation,
+    )
     next_register = {
         "schema": "orchestrator-register/v1",
         "repository_id": view["repository_id"],
@@ -853,16 +889,14 @@ def _prepared_effect(prepared: Any) -> dict[str, Any]:
     require(prepared.get("expected_post_revision") == prepared["expected_pre_revision"] + 1, "prepared revision transition is invalid")
     validate_body(prepared.get("body"))
     require(isinstance(prepared.get("comment"), str), "prepared comment must be text")
-    operation_id_material = {
-        "repository_id": prepared["repository_id"],
-        "report_issue_id": prepared["report_issue_id"],
-        "writer_id": prepared["writer_id"],
-        "expected_pre_revision": prepared["expected_pre_revision"],
-        "expected_pre_head": prepared["expected_pre_head"],
-        "kind": operation["kind"],
-        "payload": operation["payload"],
-    }
-    expected_operation_id = f"operation:report:{hashlib.sha256(canonical_bytes(operation_id_material)).hexdigest()}"
+    expected_operation_id = _effect_operation_id(
+        repository_id=prepared["repository_id"],
+        report_issue_id=prepared["report_issue_id"],
+        writer_id=prepared["writer_id"],
+        expected_pre_revision=prepared["expected_pre_revision"],
+        expected_pre_head=prepared["expected_pre_head"],
+        operation=operation,
+    )
     require(prepared["operation_id"] == expected_operation_id, "prepared operation_id mismatch")
     _, receipt = _extract_marked_json(
         prepared["comment"],
@@ -888,20 +922,17 @@ def _prepared_effect(prepared: Any) -> dict[str, Any]:
     )
     require(receipt.get("receipt_hash") == expected_receipt_hash == prepared["receipt_hash"], "prepared receipt hash mismatch")
     require(prepared["expected_post_head"] == expected_receipt_hash, "prepared post head mismatch")
-    fingerprint_material = {
-        "repository_id": prepared["repository_id"],
-        "report_issue_id": prepared["report_issue_id"],
-        "writer_id": prepared["writer_id"],
-        "operation_id": prepared["operation_id"],
-        "kind": operation["kind"],
-        "run_id": operation["run_id"],
-        "receipt_hash": prepared["receipt_hash"],
-        "expected_pre_body_fingerprint": prepared["expected_pre_body_fingerprint"],
-        "rows": operation["rows"],
-        "projection": operation["projection"],
-    }
     require(
-        prepared["operation_fingerprint"] == hashlib.sha256(canonical_bytes(fingerprint_material)).hexdigest(),
+        prepared["operation_fingerprint"]
+        == _effect_operation_fingerprint(
+            repository_id=prepared["repository_id"],
+            report_issue_id=prepared["report_issue_id"],
+            writer_id=prepared["writer_id"],
+            operation_id=prepared["operation_id"],
+            receipt_hash=prepared["receipt_hash"],
+            expected_pre_body_fingerprint=prepared["expected_pre_body_fingerprint"],
+            operation=operation,
+        ),
         "prepared operation fingerprint mismatch",
     )
     _, register = _extract_marked_json(

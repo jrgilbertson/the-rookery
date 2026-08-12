@@ -26,10 +26,6 @@ RECEIPT_BEGIN = "<!-- orchestrator:history-receipt:v1:begin -->"
 RECEIPT_END = "<!-- orchestrator:history-receipt:v1:end -->"
 
 
-def canonical_bytes(value: Any) -> bytes:
-    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
-
-
 def receipt_hash(receipt: dict[str, Any]) -> str:
     receipt_without_hash = {key: value for key, value in receipt.items() if key != "receipt_hash"}
     material = b"\0".join(

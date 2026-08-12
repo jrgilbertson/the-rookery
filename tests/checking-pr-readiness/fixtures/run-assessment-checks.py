@@ -99,6 +99,10 @@ EVIDENCE_RESULT_FIELDS = {
 }
 EVIDENCE_BLOB_CACHE: dict[tuple[str, str, str], tuple[str, bytes]] = {}
 
+# Exact-revision assessment must resolve the recorded objects, never a local
+# replacement namespace. Child processes inherit this for every Git read.
+os.environ["GIT_NO_REPLACE_OBJECTS"] = "1"
+
 
 class FixtureError(Exception):
     pass
@@ -1002,6 +1006,26 @@ def run_suite() -> None:
         require(positive["outcome"] == "pass" and positive["gaps"] == [], f"positive fixture failed: {positive['gaps']}")
         require(positive["capability_version"] == package_version(), "assessment capability version was not live-derived")
         require(positive["observed_at"] != bundle["assessment"]["observed_at"], "assessment observation time stayed caller-controlled")
+
+        run("git", "checkout", "-q", "-b", "replacement-payload", revision, cwd=first)
+        (first / "src" / "app.txt").write_text("replacement\n", encoding="utf-8")
+        run("git", "add", "src/app.txt", cwd=first)
+        run("git", "commit", "-q", "-m", "create replacement payload", cwd=first, env=git_env(COMMIT_TIME))
+        replacement_revision = run("git", "rev-parse", "HEAD", cwd=first)
+        run("git", "checkout", "-q", "assessment-target", cwd=first)
+        run("git", "replace", revision, replacement_revision, cwd=first)
+        replacement_enabled_env = os.environ.copy()
+        replacement_enabled_env.pop("GIT_NO_REPLACE_OBJECTS")
+        require(
+            run("git", "show", f"{revision}:src/app.txt", cwd=first, env=replacement_enabled_env) == "replacement",
+            "fixture replacement object did not override the assessed commit",
+        )
+        replacement_result = evaluate(first, bundle)
+        require(
+            replacement_result["outcome"] == "pass" and replacement_result["exact_revision"] == revision,
+            f"replacement object changed exact-revision assessment: {replacement_result['gaps']}",
+        )
+        run("git", "replace", "-d", revision, cwd=first)
 
         spoofed_provenance = copy.deepcopy(bundle)
         spoofed_provenance["assessment"]["capability_version"] = "caller-controlled-spoof"

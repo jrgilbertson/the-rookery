@@ -54,6 +54,34 @@ A user-confirmed state in which the material decision branches have been
 resolved. Reaching it ends the Grilling Session and allows the clarified intent
 to return to planning.
 
+## Issue management
+
+### Canonical Tracker
+
+The one issue system authorized to own and receive mutations for a repository.
+When another tracker synchronizes the same issue, that copy is a projection or
+alias used for identity and readback evidence, not a second write target.
+
+### Owned Issue Graph
+
+The canonical issue family relevant to one requested outcome: its top parent,
+all reachable descendants, and the native blocks or blocked-by relationships
+that affect their readiness or completion. Relevant nodes outside the
+repository's authority remain read-only boundary nodes rather than silently
+disappearing from the graph.
+
+### Implementation Leaf
+
+One issue whose deliverable and Verification boundary normally fit one
+reviewable pull request, including a stacked PR series that jointly delivers
+that leaf. A single-leaf change needs no artificial parent.
+
+### Ready Frontier
+
+The leaves in an Owned Issue Graph whose current native blockers and declared
+prerequisites are satisfied. It is derived from a fresh canonical read for a
+handoff and is never stored as a parallel work state.
+
 ## Shipping and verification
 
 ### Published Catalog

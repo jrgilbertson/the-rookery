@@ -1,15 +1,15 @@
 {
   "version": 1,
   "provider": "github",
-  "target": "ExampleOrg/Project",
+  "target": "Example/Project",
   "mappings": {
     "work_type": {
-      "bug": "type:bug",
-      "feature": "type:feature"
+      "bug": "Bug",
+      "feature": "Feature"
     },
     "readiness": {
-      "blocked": "state:blocked",
-      "ready": "state:ready"
+      "blocked": "readiness:blocked",
+      "ready": "readiness:ready"
     },
     "priority": {
       "high": "priority:high",

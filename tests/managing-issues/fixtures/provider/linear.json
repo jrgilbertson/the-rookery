@@ -1,8 +1,14 @@
 {
   "schema": 1,
-  "principal": "fixture-user",
   "workspace": {"id": "workspace-fixture", "name": "Fixture Workspace"},
-  "teams": [{"id": "team-eng", "key": "ENG", "name": "Engineering"}],
+  "teams": [
+    {
+      "id": "team-eng",
+      "key": "ENG",
+      "name": "Engineering",
+      "workspace": {"id": "workspace-fixture", "name": "Fixture Workspace"}
+    }
+  ],
   "states": [
     {"id": "state-triage", "name": "Triage", "type": "triage"},
     {"id": "state-ready", "name": "Ready", "type": "unstarted"},
@@ -13,7 +19,10 @@
     {"id": "label-feature", "name": "Feature"},
     {"id": "label-fix", "name": "Fix"}
   ],
-  "next_issue": 3,
+  "members": [
+    {"id": "user-fixture", "name": "Fixture User"},
+    {"id": "user-reviewer", "name": "Fixture Reviewer"}
+  ],
   "issues": {
     "ENG-1": {
       "id": "linear-1",
@@ -22,7 +31,7 @@
       "title": "Existing issue",
       "description": "## Problem\n\nOld text\n",
       "state": {"id": "state-ready", "name": "Ready", "type": "unstarted"},
-      "priority": "high",
+      "priority": 2,
       "estimate": 3,
       "labels": [{"id": "label-feature", "name": "Feature"}],
       "assignee": null,
@@ -30,6 +39,22 @@
       "children": [],
       "relations": [],
       "url": "https://linear.app/fixture/issue/ENG-1"
+    },
+    "ENG-2": {
+      "id": "linear-2",
+      "identifier": "ENG-2",
+      "team": {"id": "team-eng", "key": "ENG"},
+      "title": "Related issue",
+      "description": "## Problem\n\nRelated text\n",
+      "state": {"id": "state-ready", "name": "Ready", "type": "unstarted"},
+      "priority": 3,
+      "estimate": 2,
+      "labels": [],
+      "assignee": null,
+      "parent": null,
+      "children": [],
+      "relations": [],
+      "url": "https://linear.app/fixture/issue/ENG-2"
     }
   }
 }

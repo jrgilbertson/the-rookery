@@ -1,14 +1,19 @@
 {
   "schema": 1,
-  "principal": "fixture-user",
   "workspace": {"id": "workspace-fixture", "name": "Fixture Workspace"},
-  "teams": [{"id": "team-eng", "key": "ENG", "name": "Engineering"}],
+  "teams": [
+    {
+      "id": "team-eng",
+      "key": "ENG",
+      "name": "Engineering",
+      "workspace": {"id": "workspace-fixture", "name": "Fixture Workspace"}
+    }
+  ],
   "states": [
     {"id": "state-ready", "name": "Ready", "type": "unstarted"},
     {"id": "state-done", "name": "Done", "type": "completed"}
   ],
   "labels": [],
-  "next_issue": 100,
   "issues": {
     "ENG-10": {
       "id": "linear-10",
@@ -17,7 +22,7 @@
       "title": "Parent outcome",
       "description": "## Verification\n\n- Outcome evidence exists.\n",
       "state": {"id": "state-ready", "name": "Ready", "type": "unstarted"},
-      "priority": "high",
+      "priority": 2,
       "estimate": null,
       "labels": [],
       "assignee": null,
@@ -33,7 +38,7 @@
       "title": "First leaf",
       "description": "## Verification\n\n- Check passes.\n",
       "state": {"id": "state-ready", "name": "Ready", "type": "unstarted"},
-      "priority": "high",
+      "priority": 2,
       "estimate": 3,
       "labels": [],
       "assignee": null,
@@ -49,7 +54,7 @@
       "title": "Blocked leaf",
       "description": "## Verification\n\n- Check passes.\n",
       "state": {"id": "state-ready", "name": "Ready", "type": "unstarted"},
-      "priority": "high",
+      "priority": 2,
       "estimate": 3,
       "labels": [],
       "assignee": null,
@@ -65,7 +70,7 @@
       "title": "External blocker",
       "description": "## Verification\n\n- Dependency is available.\n",
       "state": {"id": "state-ready", "name": "Ready", "type": "unstarted"},
-      "priority": "high",
+      "priority": 2,
       "estimate": 2,
       "labels": [],
       "assignee": null,

@@ -25,7 +25,7 @@ execution: code
 
 ### Summary
 
-`managing-issues` is one issue-management entry point for ordinary issue work and multi-PR delivery graphs. It resolves one canonical tracker, reads the relevant native relationships, previews exact effects, applies each approved effect at most once, verifies the result through the same provider, and reports the current frontier, blockers, coverage, and verification gaps.
+`managing-issues` is one issue-management entry point for ordinary issue work and multi-PR delivery graphs. It resolves one canonical tracker, reads the relevant native relationships, previews exact effects, applies each permitted GitHub effect at most once, verifies the result through GitHub, and reports the current frontier, blockers, coverage, and verification gaps. Release A reads Linear canonical state but classifies every Linear mutation as `manual` because the installed command path cannot prove the authenticated principal exactly enough for a safe write.
 
 It does not persist a graph, approval ledger, scheduler, claim, execution status, model choice, or provider capability receipt. It does not write both sides of a GitHub/Linear synchronization pair. It does not treat Done or a merged PR as proof that the requested outcome is complete.
 
@@ -33,7 +33,7 @@ It does not persist a graph, approval ledger, scheduler, claim, execution status
 
 - **Operator:** requests reads or mutations and approves exact visible effects.
 - **Issue agent:** runs the skill, interprets trusted repository policy, and applies approved effects.
-- **Canonical tracker:** GitHub or Linear; the only issue system that receives writes.
+- **Canonical tracker:** GitHub or Linear; GitHub is the only writable provider in Release A, while Linear remains canonical but read-only when selected.
 - **Synchronized projection:** a read-only alias used for identity or lag evidence.
 - **Execution orchestrator:** consumes fresh graph facts and chooses workers, models, effort, worktrees, sequencing, and retries.
 
@@ -48,7 +48,7 @@ It does not persist a graph, approval ledger, scheduler, claim, execution status
 ### Key Decisions
 
 - **KD1. One skill covers one issue and graphs** (session-settled). A one-PR task remains one leaf with no artificial parent.
-- **KD2. Exactly one tracker receives mutations** (session-settled). In a Linear-canonical synced repository, the GitHub issue is an alias, not another node.
+- **KD2. At most one tracker receives mutations** (session-settled, release-narrowed). GitHub is the only writable provider in Release A. In a Linear-canonical synced repository, the GitHub issue is an alias, Linear mutations are `manual`, and neither side receives a substitute write.
 - **KD3. Repository policy maps local metadata** (session-settled). A starter exists, but it is inert until trusted repository state adopts it.
 - **KD4. Native relationships encode delivery order** (session-settled). The skill returns graph facts; the orchestrator chooses an execution shape after a fresh read.
 - **KD5. Completion is an explicit, separately approved effect** (session-settled). The skill emits no PR closing magic in Release A.
@@ -72,7 +72,7 @@ The trusted policy path is `.agents/managing-issues.json`. Its fixed top-level s
 
 The policy narrows behavior but never grants authority. The validator rejects duplicate keys, unknown keys, invalid values, paths that resolve outside the repository, and feature-branch changes to canonical target or synchronization settings that do not match the trusted default branch.
 
-Missing policy permits explicit reads. It also permits one direct, non-topology GitHub issue write only when the preview names the authenticated principal and repository, the operator affirmatively confirms GitHub is canonical for that operation, every concrete provider-side metadata value exists, and the pre-read shows no supported synchronization marker. Any marker, unknown marker coverage, lifecycle cascade, graph operation, reusable default, or ambiguous repository identity requires policy or becomes manual. A proposed starter is a separate effect and is not active merely because it was generated.
+Missing policy permits reads and drafts only. Every requested write is `manual` until trusted default-branch policy exists and matches the active policy. Operator confirmation, apparent repository identity, absence of a visible synchronization marker, or a generated starter cannot substitute for trusted policy. A proposed starter is a separate effect and is not active merely because it was generated.
 
 #### R3. Native graph coverage
 
@@ -100,7 +100,7 @@ Release A never emits closing keywords in branch, PR, commit, or issue text and 
 
 #### R7. Provider execution paths
 
-Version 1 documents and tests the exact installed `gh` and `orca linear` command paths. Each run performs a small preflight for executable availability, authentication, target identity, and the specific operation needed. Unsupported operations degrade to a named read limitation or `manual` effect. There is no generic provider interface or claim that another CLI, MCP, or API is equivalent.
+Version 1 documents and tests exact installed command paths: GitHub reads and writes through `gh`, and Linear reads through `orca linear`. Each run performs a small preflight for executable availability and target identity; GitHub writes also prove the authenticated principal, GitHub.com host, canonical repository, and specific operation. Every Linear mutation is `manual` and no Linear write command is constructed. Unsupported reads degrade to a named limitation. There is no generic provider interface or claim that another CLI, MCP, or API is equivalent.
 
 #### R8. Orchestration handoff
 
@@ -108,7 +108,7 @@ A single-issue result returns the canonical identity and effect outcome. A graph
 
 #### R9. Evidence and portability
 
-The package is independently installable and keeps test seams outside `skills/managing-issues/`. Eight to ten discriminating behavioral cases run as fresh-context bare-model/candidate matched pairs against small stateful `gh` and `orca` substitutes. The substitutes implement only exercised verbs, reject unsupported verbs loudly, record state transitions and commands, refuse synchronized-shadow writes, and prove each mutation occurs once with a later readback. A fresh independent context grades each pair; a different fresh context performs the final package review.
+The package is independently installable and keeps test seams outside `skills/managing-issues/`. Eight to ten discriminating behavioral cases run as fresh-context bare-model/candidate matched pairs against small stateful `gh` and `orca` substitutes. The substitutes implement only exercised verbs and reject unsupported verbs loudly. The GitHub substitute records state transitions and commands, refuses synchronized-shadow writes, and proves each mutation occurs once with a later readback. The Linear substitute proves complete read paths and rejects every mutation verb. A fresh independent context grades each pair; a different fresh context performs the final package review.
 
 Structural validation, trigger and near-miss checks, same-door privacy checks, and local-source Claude Code and Codex install probes are required. Available-harness failure or inconclusive provenance blocks release. Missing live sandboxes narrow provider claims rather than becoming passes.
 
@@ -120,13 +120,13 @@ Release A is one atomic Rookery PR containing the skill, tests, compact policy t
 
 1. **One issue:** resolve canonical target, read, preview, approve, pre-read, apply once, read back, and report.
 2. **Graph change:** read complete affected families, preview nodes before edges, apply dependency-ready effects, reconcile, and return frontier/blockers/coverage.
-3. **Synchronized issue:** resolve the input to one canonical identity, mutate only that tracker, read it back, and report projection lag without repairing the shadow.
+3. **Synchronized issue:** resolve the input to one canonical identity. If GitHub is canonical and trusted policy permits the effect, mutate GitHub only, read it back, and report projection lag. If Linear is canonical, read Linear and classify the requested mutation as `manual`; never repair or mutate the shadow.
 4. **Completion:** read unchanged Verification and complete graph evidence, name cascades, then preview one explicit lifecycle effect or report blockers.
 
 ### Acceptance Examples
 
-- **AE1 — simple path:** A one-PR fix produces one leaf with no parent, project, execution interview, or policy ceremony beyond what R2 requires.
-- **AE2 — missing policy:** One explicit update in an unambiguously GitHub-canonical repository may proceed after concrete approval; a sync marker or unknown marker coverage blocks it.
+- **AE1 — simple path:** With trusted GitHub policy, a one-PR fix produces one leaf with no parent, project, execution interview, or graph ceremony.
+- **AE2 — missing policy:** A missing policy permits an exact read or draft, but every write is `manual`; direct confirmation or apparent marker absence never creates write authority.
 - **AE3 — shadow routing:** A GitHub shadow with one Linear twin resolves to Linear and receives no write. Missing or ambiguous mapping writes neither side.
 - **AE4 — partial graph:** Missing pagination or an unreadable required blocker reports partial coverage and blocks a relationship or parent-completion effect.
 - **AE5 — partial mutation:** Successful independent effects remain verified after a later failure; dependents stop, every effect is named, and no blind rollback occurs.
@@ -140,7 +140,7 @@ Release A is one atomic Rookery PR containing the skill, tests, compact policy t
 
 - Every R1-R10 requirement maps to one implementation unit and at least one verification gate.
 - The simple single-issue case remains shorter than the graph path and creates no artificial hierarchy.
-- Stateful fixtures prove canonical-only writes, at-most-once effects, readback, pagination, localized versus global stops, and completion blocking.
+- Stateful fixtures prove canonical-only GitHub writes, at-most-once effects, readback, Linear mutation refusal, pagination, localized versus global stops, and completion blocking.
 - The shipped package contains no ledger, scheduler, claim, orchestration schema, generic provider framework, PR scanner, or permanent-delete path.
 - The atomic Rookery PR is independently installable and reviewable; all cross-repository actions remain explicit follow-ups.
 
@@ -160,7 +160,7 @@ Release A is one atomic Rookery PR containing the skill, tests, compact policy t
 
 - **KTD1. One compact package.** `SKILL.md` owns routing, trust, approval, mutation, and handoff. Three one-level references own graph/completion, GitHub, and Linear/sync detail.
 - **KTD2. One mechanical helper.** A dependency-free Python script parses, validates, and normalizes the fixed JSON policy. It does not call providers, store state, evaluate completion, or emit a global safety verdict.
-- **KTD3. Provider-specific evidence, not an adapter framework.** Small stateful command substitutes exercise the same `gh` and `orca linear` shapes described by the skill and fail closed outside their tested verbs.
+- **KTD3. Provider-specific evidence, not an adapter framework.** Small stateful command substitutes exercise the exact GitHub read/write and Linear read-only shapes described by the skill and fail closed outside their tested verbs.
 - **KTD4. One graph guard.** Pagination exhaustion, a visited set, and one node cap are sufficient. Coverage is transient output, not durable graph state.
 - **KTD5. Independent behavioral evidence.** Matched fresh-context cases and independent grading are repository release requirements, not a runtime workflow.
 - **KTD6. One atomic Rookery landing.** The package and evidence land together because the default branch is the install source. Other repositories get separate issues and PRs.
@@ -172,15 +172,17 @@ Release A is one atomic Rookery PR containing the skill, tests, compact policy t
 flowchart LR
   O[Operator approval] --> S[managing-issues]
   P[Trusted repository policy] --> S
-  S --> H[gh]
-  S --> L[orca linear]
-  H --> T[(Canonical tracker)]
-  L --> T
+  S --> H[gh reads and approved writes]
+  S --> L[orca linear reads]
+  H --> T[(GitHub canonical tracker)]
+  L --> LT[(Linear canonical tracker)]
   X[(Synchronized projection)] -. identity and lag only .-> S
   T --> R[Effects, graph facts, frontier]
+  LT --> R
   R --> E[Execution orchestrator]
 
   S -. no writes .-> X
+  S -. Linear effects are manual .-> LT
   S -. no dispatch .-> E
 ```
 
@@ -190,7 +192,7 @@ flowchart LR
 2. Read the selected issue and only the family or boundary data required by the requested effect.
 3. Render exact numbered effects with concrete provider-side values and known cascades.
 4. Obtain direct approval, then repeat the authoritative identity and precondition reads.
-5. Apply each still-valid effect once in dependency order and read it back.
+5. Apply each still-valid GitHub effect once in dependency order and read it back. Return every Linear mutation as `manual` without constructing a write command.
 6. Stop locally or globally under R4, then recompute graph coverage, frontier, blockers, and Verification gaps.
 7. Return exhaustive effect results and current work facts. Persist nothing outside the tracker and repository.
 
@@ -225,7 +227,7 @@ The exact fixture split may change during implementation. No test fixture or sib
 
 - “Remove” means propose reversible close/cancel unless the operator explicitly asks about permanent deletion; Release A then explains that hard deletion is unsupported.
 - The trusted default branch can be resolved from repository metadata. If it cannot, a feature-branch policy cannot authorize a write.
-- Synchronization markers are provider-specific observed data documented in `linear-and-sync.md`; absence is accepted only when the installed integration's marker coverage is known.
+- Synchronization mapping data is read from the trusted policy source. Missing policy never falls back to marker inference for write authority.
 - Exact preview values are confirmed live before approval. The skill never creates or migrates labels, states, or estimates as a side effect of an issue write.
 - The Rookery can ship a starter template without adopting a repository policy in the same PR.
 
@@ -252,21 +254,21 @@ The exact fixture split may change during implementation. No test fixture or sib
   1. Write the trigger/routing core and common issue template.
   2. Define the fixed JSON schema and normalization output used directly by the skill.
   3. Reject duplicate or unknown keys, invalid mappings, unsafe paths, and sensitive feature-branch drift.
-  4. Implement the bounded policyless GitHub path, including explicit canonical confirmation and observed sync-marker absence.
-- **Verification:** Adversarial policy fixtures cover valid GitHub, valid Linear/sync, duplicate keys, unknown keys, bad mappings, hostile paths, default-branch drift, missing policy, and sync-marker ambiguity. The helper imports only the standard library and has no provider or filesystem writes.
+  4. Make missing-policy operation read/draft-only and classify every requested write as `manual`; keep the starter inert until normal repository workflow adopts it on the trusted branch.
+- **Verification:** Adversarial policy fixtures cover valid GitHub, valid Linear/sync, duplicate keys, unknown keys, bad mappings, hostile paths, default-branch drift, missing policy, active/trusted presence mismatch, and synchronization-mapping drift. The helper imports only the standard library and has no provider or filesystem writes.
 
-### U2. Exact GitHub and Linear mutation paths
+### U2. Exact GitHub mutation and Linear read paths
 
-- **Goal:** Make one-issue reads and reversible mutations executable through the two supported command paths.
+- **Goal:** Make one-issue GitHub reads and reversible mutations executable, while making Linear reads exact and every Linear mutation explicitly `manual`.
 - **Requirements:** R4, R5, R7; AE3, AE5-AE7.
 - **Dependencies:** U1.
 - **Files:** `references/github.md`, `references/linear-and-sync.md`, stateful `gh` and `orca` fixtures, and single-issue/canonical-routing cases.
 - **Approach:**
-  1. Document per-run preflight, complete issue reads, concrete metadata discovery, create/update/lifecycle commands, and authoritative readback.
+  1. Document GitHub per-run preflight, complete issue reads, concrete metadata discovery, create/update/lifecycle commands, and authoritative readback; document exact Linear read envelopes and limitations.
   2. Implement exact preview, direct approval, pre-read, one-attempt mutation, readback, and local/global stop behavior in `SKILL.md`.
-  3. Resolve synchronized inputs to one canonical identity and make every shadow write fail in both skill rules and fixtures.
+  3. Resolve synchronized inputs to one canonical identity, make every shadow write fail, and reject every Linear mutation command in both skill rules and fixtures.
   4. Treat indeterminate creates and unsupported operations honestly; do not retry, infer identity, or emulate deletion.
-- **Verification:** Tiny provider substitutes persist synthetic provider state and command logs. Checkers prove each write occurs once, each successful write is followed by readback, no shadow receives a mutation, global drift stops the batch, and unsupported verbs fail loudly. Read-only live probes confirm only the capabilities claimed by the references.
+- **Verification:** Tiny provider substitutes persist synthetic GitHub state and command logs while preserving Linear state unchanged. Checkers prove each GitHub write occurs once, each successful write is followed by readback, node creation precedes every dependent relationship, no shadow receives a mutation, every Linear mutation is absent, global drift stops the batch, and unsupported verbs fail loudly. Read-only live probes confirm only the capabilities claimed by the references.
 
 ### U3. Native graph and completion proof
 
@@ -303,7 +305,7 @@ The exact fixture split may change during implementation. No test fixture or sib
 | --- | --- | --- |
 | Package structure | Agent Skills validator and reference-depth check | Package is self-contained; `SKILL.md` stays within repository size limits |
 | Policy boundary | Adversarial JSON fixtures | Every accepted policy normalizes uniquely; every unsafe or ambiguous input fails closed |
-| Provider mutation | Stateful `gh` and `orca` substitutes | Canonical effects occur once, readback follows, and shadow writes are impossible |
+| Provider paths | Stateful `gh` and `orca` substitutes | GitHub effects occur once with readback; node creation precedes edges; Linear writes and shadow writes are impossible |
 | Graph coverage | Pagination, cycle, cap, boundary, and partial-failure cases | Coverage is explicit; partial reads block topology and parent completion |
 | Completion | Verification-drift, cascade, parent, Done, and merge cases | Only unchanged criteria plus trusted evidence permit an explicit completion preview |
 | Behavioral value | 8-10 fresh matched pairs with independent grading | Candidate improves the discriminating behavior without regressing the simple path |
@@ -316,7 +318,7 @@ The exact fixture split may change during implementation. No test fixture or sib
 
 | Risk | Control |
 | --- | --- |
-| A GitHub shadow is mistaken for canonical in a repository without policy | Require affirmative canonical confirmation, supported sync-marker absence, and block on ambiguity |
+| A GitHub shadow is mistaken for canonical in a repository without policy | Allow reads and drafts only; classify every write as `manual` until trusted policy exists |
 | A hidden child or blocker creates false readiness | Paginate fully, track visited nodes, report partial coverage, and block topology/completion writes |
 | A batch continues under a different account, repository, or mapping | Re-read global identity before writes and stop the whole remainder on global drift |
 | An ambiguous create is duplicated | Attempt once, require provider identity, and never adopt a semantic lookalike |
@@ -366,7 +368,7 @@ These follow-ups use each repository's own native issue dependencies and links. 
 
 - U1-U4 are complete in one coherent Rookery branch and every R1-R10 requirement has passing evidence.
 - All admitted behavioral pairs, independent grades, final review, provider fixtures, structural checks, trigger checks, same-door checks, and available local install probes pass.
-- The package writes only the canonical tracker, attempts each effect at most once, reads successful effects back, reports every effect, and never treats a lookalike as identity.
+- The package writes only a trusted GitHub canonical tracker, attempts each permitted effect at most once, reads successful effects back, reports every effect, returns every Linear mutation as `manual`, and never treats a lookalike as identity.
 - Partial graph coverage blocks relationship and parent-completion changes; Ready Frontier and blockers derive only from current native state.
 - Completion tests prove that Done and merge are insufficient, Verification edits force a new approval round, and unknown synchronized cascades remain blocked or manual.
 - No shipped file introduces a graph store, approval ledger, capability receipt, PR scanner, provider framework, execution topology, model router, hard-delete path, private identifier, or test-only dependency.

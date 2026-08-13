@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "github_to_linear": {
+    "https://github.com/ExampleOrg/Project/issues/12": "ENG-12"
+  }
+}

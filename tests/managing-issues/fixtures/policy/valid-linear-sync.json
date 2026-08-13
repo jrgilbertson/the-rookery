@@ -1,14 +1,17 @@
 {
-  "target": "ENG",
+  "target": {
+    "team": "ENG",
+    "workspace": "workspace-fixture"
+  },
   "mappings": {
     "priority": {
-      "urgent": 1,
-      "high": 2,
-      "normal": 3
+      "urgent": "urgent",
+      "high": "high",
+      "normal": "medium"
     },
     "readiness": {
-      "ready": "state-ready-id",
-      "blocked": "state-blocked-id"
+      "ready": "Ready",
+      "blocked": "Blocked"
     },
     "leaf_estimate": {
       "small": 1,
@@ -16,12 +19,12 @@
       "large": 5
     },
     "work_type": {
-      "bug": "label-bug-id",
-      "feature": "label-feature-id"
+      "bug": "label-fix",
+      "feature": "label-feature"
     }
   },
   "synchronization": {
-    "mapping_source": ".agents/config/../linear-sync.json"
+    "mapping_source": ".agents/linear-sync.json"
   },
   "provider": "linear",
   "version": 1

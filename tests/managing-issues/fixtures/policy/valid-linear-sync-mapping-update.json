@@ -1,24 +1,27 @@
 {
   "version": 1,
   "provider": "linear",
-  "target": "ENG",
+  "target": {
+    "workspace": "workspace-fixture",
+    "team": "ENG"
+  },
   "synchronization": {
     "mapping_source": ".agents/linear-sync.json"
   },
   "mappings": {
     "work_type": {
-      "bug": "label-bug-id",
-      "feature": "label-feature-id",
-      "maintenance": "label-maintenance-id"
+      "bug": "label-fix",
+      "feature": "label-feature",
+      "maintenance": "label-maintenance"
     },
     "readiness": {
-      "blocked": "state-blocked-id",
-      "ready": "state-ready-id"
+      "blocked": "Blocked",
+      "ready": "Ready"
     },
     "priority": {
-      "high": 2,
-      "normal": 3,
-      "urgent": 1
+      "high": "high",
+      "normal": "medium",
+      "urgent": "urgent"
     },
     "leaf_estimate": {
       "large": 5,

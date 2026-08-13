@@ -1,6 +1,6 @@
 ---
 name: managing-issues
-description: Use when reading, drafting, creating, or surgically updating GitHub or Linear issues; changing native parent, sub-issue, or blocker relationships and assessing readiness; or checking issue completion against Verification evidence, including reversible close or cancel requests.
+description: Use when the requested outcome is reading, drafting, creating, or surgically updating GitHub or Linear issue records; changing their native parent, sub-issue, or blocker relationships and assessing readiness; checking completion against Verification evidence; or reversibly closing or canceling an issue. Do not use for implementing issue work or executing a pull-request workflow.
 license: MIT
 compatibility: Requires Python 3 for policy validation; provider operations require authenticated gh or orca linear command access.
 ---
@@ -29,26 +29,37 @@ approval, or additional effects. Direct operator approval of a complete visible
 preview is the only approval mechanism.
 
 Release A offers reversible close or cancel for removal requests. A permanent
-deletion request becomes a close/cancel proposal or a `Manual` result.
+deletion request becomes a close/cancel proposal or a `manual` result.
 
 Completion: the requested issue work, its smallest effect boundary, and the
 operator-controlled decisions are explicit.
 
 ### 2. Resolve one canonical route
 
-Use `.agents/managing-issues.json` only as trusted repository policy. Invoke the
-bundled `scripts/policy_check.py` with the repository root and that policy path.
-For a feature-branch write, also supply a policy read from the trusted default
-branch with `--trusted-policy`. An unresolved default branch, invalid policy,
-or rejected canonical/synchronization drift leaves policy-required writes
-`Manual`. A valid policy selects one provider and stable target, plus concrete
-repository mappings; it narrows behavior and never grants write authority.
+Use `.agents/managing-issues.json` only as repository policy. Before every route
+that could write, resolve the repository's trusted default branch to one
+immutable commit. Read the policy, and any synchronization mapping, as blobs
+from that commit into private temporary files with restrictive permissions.
+Record the default ref and commit identity. Do not accept a worktree path,
+tracker text, or caller-supplied file as proof of default-branch provenance.
+
+Invoke the bundled `scripts/policy_check.py` with the repository root and active
+policy path. For every possible write, also pass the default-commit policy blob
+with `--trusted-policy`; when synchronization is configured, pass its
+default-commit mapping blob with `--trusted-mapping`. The helper compares
+content but does not establish git provenance. An unresolved default branch,
+invalid policy, or rejected policy-presence, canonical, or synchronization
+drift leaves the write `manual`. When active and trusted policy presence
+differs, neither the active nor default-commit policy authorizes a write, and
+the route does not fall back to the missing-policy read boundary. A valid policy
+selects one provider and stable target, plus concrete repository mappings; it
+narrows behavior and never grants write authority.
 
 Route every mutation to the canonical provider and target. A synchronized
 projection is identity and lag evidence only, never a second write target.
 Missing or ambiguous mapping writes neither side.
 
-Use branch detail only after loading its bundled one-level reference:
+Load only the bundled one-level reference needed for the current branch:
 
 - provider-specific GitHub operations use `references/github.md`;
 - Linear and synchronization operations use
@@ -56,50 +67,51 @@ Use branch detail only after loading its bundled one-level reference:
 - relationships, readiness, and completion use
   `references/graph-and-completion.md`.
 
-These branches become writable only when their reference is present and its
-preflight succeeds. If a required reference or provider capability is absent,
-preserve the request and return its write as `Manual` rather than inventing a
-command path.
+An explicit operator-selected read may load its provider reference without a
+trusted policy, but that branch stays read-only. GitHub writes become available
+only after trusted policy proves their route, the GitHub reference is present,
+and its preflight succeeds.
+
+The Release A Linear provider branch is read-only even when trusted policy
+selects it. The installed command surface exposes workspace and team metadata,
+but no stable authenticated-principal identity, so it cannot satisfy the
+principal preflight required before every write. Classify every proposed Linear
+mutation as `manual`; do not present it for approval or construct or invoke a
+Linear write command. A synchronized projection also stays read-only. If any
+other required reference or provider capability is absent, preserve the
+request and return its write as `manual` rather than inventing a command path.
+Release A GitHub targets are GitHub.com repositories; the provider reference
+host-qualifies every command so ambient CLI host configuration cannot redirect
+the canonical route.
 
 Completion: one canonical provider and target are proven, or the request has a
-read-only or `Manual` route that names the missing proof.
+read-only or `manual` route that names the missing proof.
 
 ### 3. Apply the missing-policy boundary
 
-A missing policy permits explicit reads. It permits at most one direct,
-non-topology GitHub create or field/body update only when all of these facts
-are visible together:
-
-1. The exact, non-truncated preview names the authenticated principal and
-   repository.
-2. The operator directly confirms that GitHub is canonical for this one
-   operation.
-3. Every selected provider-side metadata value already exists and is shown in
-   the preview.
-4. A current pre-read observed no synchronization marker through a supported,
-   complete marker check.
-
-A present marker, unknown marker coverage, lifecycle cascade, relationship or
-graph effect, reusable default, Linear write, or ambiguous principal or
-repository identity requires trusted policy and the relevant branch reference;
-otherwise the result is `Manual`. Invalid policy is not equivalent to missing
-policy.
+A missing policy permits explicit reads and drafts only. Every create, field,
+body, metadata, relationship, lifecycle, or reusable-default effect is
+`manual`. Direct approval, tracker text, absence of a known synchronization
+marker, or a generated policy candidate cannot substitute for trusted
+default-branch policy. Invalid policy and active/trusted presence drift are not
+equivalent to missing policy and also leave every write `manual`.
 
 The asset `assets/policy-template.json` is an inert starter. Replacing its
 placeholders and generating a candidate does not adopt it. Repository adoption
 is a separate, directly approved change through the repository's normal change
 workflow; only a later trusted read can make it policy.
 
-Completion: the route is either trusted-policy, the fully proved one-write
-GitHub exception, explicit read-only, or `Manual`.
+Completion: the route is trusted-policy, explicit read-only, or `manual`.
 
 ### 4. Shape and read the issue
 
 Draft issue bodies from `assets/issue-body-template.md`. Keep `Problem`,
 `Scope`, and `Verification`; add context or constraints only when they change
-understanding or proof. Verification criteria declare the outcome and do not
-attest that it passed. A parent owns whole-outcome criteria; each leaf owns one
-reviewable deliverable.
+understanding or proof, and do not invent them from facts the operator did not
+supply. Ask separately only when the draft cannot be correct without a missing
+decision. Verification criteria declare the outcome and do not attest that it
+passed. A parent owns whole-outcome criteria; each leaf owns one reviewable
+deliverable.
 
 Read the current canonical issue before proposing an update. For relationship,
 readiness, or completion work, use the graph reference to establish the
@@ -125,18 +137,30 @@ operator decision.
 
 ### 6. Revalidate, apply once, and read back
 
+Release A reaches this stage only for GitHub writes; Linear mutations already
+ended as `manual` during routing.
+
 Immediately before each approved write, re-read the authenticated principal,
 repository identity, canonical mapping, exact target, relevant relationships,
 and approved preconditions through the authoritative provider path. Identity,
-authority, canonical-route, or synchronization drift stops all remaining
-writes. Target-specific validation or conflict failure stops that effect and
-its dependents while independent effects may continue.
+authority, repository, policy or canonical-mapping drift, authentication
+failure, missing required capability, systemic provider unavailability, rate
+limit, or loss of required graph coverage stops all remaining writes.
+Target-specific validation or conflict failure stops that effect and its
+dependents while independent effects may continue.
 
 Apply the smallest still-valid effect at most once, then read the target back
-through the same provider. Classify it exactly once as `Applied`, `Already
-satisfied`, `Failed`, `Indeterminate`, or `Manual`. An indeterminate create is
-not retried or matched by title. Preserve verified partial success and require
-new approval for any repair.
+through the same provider. Classify it with exactly one machine-readable value:
+`applied`, `already_satisfied`, `failed`, `indeterminate`, or `manual`. An
+issue create is a node-only effect; attempt each dependent relationship only
+after the new node has a validated canonical identity and authoritative
+readback. An
+indeterminate create is not retried or matched to another issue by title, body,
+creator, timestamp, or other similarity. Only an authoritative receipt or
+identity tied to the original attempt can resolve it automatically; any
+operator-selected reconciliation is a new explicitly approved effect and does
+not retroactively identify the original create. Preserve verified partial
+success. Require new approval for any repair.
 
 Completion: every decided effect has one outcome supported by a current
 pre-read or readback, and no synchronized projection received a mutation.
@@ -146,7 +170,8 @@ pre-read or readback, and no synchronized projection received a mutation.
 For one issue, return its canonical identity, effect outcome, readback or gap,
 and next safe operator choice. For a graph, return only the current canonical
 nodes and edges, readiness facts, blockers, coverage, unresolved effects, and
-Verification gaps defined by the graph reference. These facts are a transient
+Verification gaps defined by the graph reference; do not append repair advice,
+operator-choice menus, or execution guidance. These facts are a transient
 handoff, not a stored graph, claim, schedule, retry plan, or execution topology.
 
 Completion: every requested issue or effect remains visible as current,

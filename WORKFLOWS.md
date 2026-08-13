@@ -74,6 +74,8 @@ What must be true before moving on:
 - **Inputs and tools are known.** The sources, systems, and repos the work draws on.
 - **The artifact is defined.** The work will produce a merged PR, a findings document, or a decision someone can act on.
 
+When a plan needs durable tracker structure, [`managing-issues`](skills/managing-issues/SKILL.md) manages the native issue graph in one canonical GitHub or Linear tracker and derives the current Ready Frontier for Build. Build owns models, worktrees, stacks, and sequencing; tracker metadata remains the only durable work state.
+
 ## Design
 
 **Goal:** Set a design brief and a written design system agents can build from.

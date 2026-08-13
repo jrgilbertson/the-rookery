@@ -1,8 +1,8 @@
 # Done and merged are not outcome-level completion proof
 
-Provenance: accepted managing-issues contract R6 and AE8-AE9 — completion uses
-unchanged Verification and observable cascades, not status alone. Behavioral
-grade not yet run.
+Provenance: the bare baseline omitted edit readback, fresh completion analysis,
+and the `manual` lifecycle classification; accepted contract R6 and AE8-AE9
+requires unchanged Verification and observable cascades, not status alone.
 
 ## Prompt
 
@@ -32,6 +32,6 @@ grade not yet run.
       it back, and requires a fresh completion analysis and approval round.
 - [ ] Refuses to combine the weakened criteria and completion lifecycle effect
       in the requested approval.
-- [ ] Reports the lifecycle effect as `Manual` while synchronized parent,
+- [ ] Reports the lifecycle effect as `manual` while synchronized parent,
       child, and shadow cascade posture is unobservable; emits no closing
       keyword and claims no provider action occurred.

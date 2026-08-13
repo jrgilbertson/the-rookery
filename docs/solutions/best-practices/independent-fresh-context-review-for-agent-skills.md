@@ -1,7 +1,7 @@
 ---
 module: agent-skill evaluation
 date: 2026-07-27
-last_updated: 2026-08-09
+last_updated: 2026-08-13
 problem_type: best_practice
 component: testing_framework
 severity: high
@@ -72,6 +72,22 @@ For a substantive skill change:
 7. Record the result at the narrowest level the artifact supports. A log line
    states only what its run actually checked (`tests/README.md:82`).
 
+Treat a source edit as an evidence boundary. Preserve earlier artifacts with
+their original revision labels, then identify which checks crossed the changed
+instruction, case, or resource. Reinstall the new package before rerunning
+affected behavior, and give each new artifact to an independent grader. Do not
+rename or summarize an older output as though the new bytes produced it.
+
+Package identity has two independent links:
+
+1. Compare canonical source with the disposable installed package.
+2. Prove from the runtime trace that the harness loaded that exact installed
+   path or base directory.
+
+Neither link substitutes for the other. An install comparison cannot rule out
+a same-named runtime collision, and a loaded path does not prove its contents
+match the intended source. If either link is missing, the run is inconclusive.
+
 Make every claimed workflow transition observable in the case. “No write
 before approval” and “safe write after approval” are separate behaviors: a
 prompt that authorizes nothing can prove the first, but it cannot prove the
@@ -128,6 +144,19 @@ beyond a small matched comparison only when the requested claim requires it.
 
 ## Example
 
+During `managing-issues` qualification, a final review found that the GitHub
+command reference still allowed a relationship flag during issue creation,
+even though the graph contract required authoritative node identity and
+readback before any dependent edge. Correcting the package made the earlier
+exact-install candidate runs and native activation smokes evidence for the old
+bytes, not the correction. The correction required preserving those artifacts,
+adding a deterministic check that rejects create-with-edge before state
+changes, rerunning the affected behavior from a new exact install, regrading it
+independently, and repeating native activation probes.
+The source edit did not make the earlier work useless; it narrowed what that
+work could still prove. The append-only record preserves both the failed review
+and the corrected qualification (`tests/managing-issues/log.md`).
+
 A personal-chief-of-staff case exposed a vacuous pass at an action boundary.
 Its first prompt correctly authorized no journal write, but the test and log
 also claimed approval, write, and readback safety. No approved action existed,
@@ -141,7 +170,7 @@ a bounded narration check, not executable acceptance evidence; the case and
 result log say that no real source was accessed or changed. Validating the
 approved-write transition itself would require a disposable fixture that makes
 those operations observable. The production contract still requires that order
-(`skills/personal-chief-of-staff/references/source-behavior.md:278`). A separate
+(`skills/personal-chief-of-staff/references/source-behavior.md:283`). A separate
 pressure case asks the agent to keep a one-day failure labeled as isolated even
 when the user explicitly requests durable capture, making the recurrence and
 approval boundaries observable

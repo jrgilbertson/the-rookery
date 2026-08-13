@@ -1,6 +1,7 @@
 {
   "schema": 1,
   "principal": "fixture-user",
+  "fixtureWriteCount": 0,
   "repository": {
     "id": "R_fixture",
     "nameWithOwner": "example/project",
@@ -8,6 +9,27 @@
     "hasIssuesEnabled": true,
     "isArchived": false,
     "viewerPermission": "ADMIN"
+  },
+  "metadata": {
+    "labels": [
+      {"id": "LA_priority_high", "name": "priority:high"},
+      {"id": "LA_priority_normal", "name": "priority:normal"},
+      {"id": "LA_readiness_ready", "name": "readiness:ready"},
+      {"id": "LA_readiness_blocked", "name": "readiness:blocked"},
+      {"id": "LA_size_small", "name": "size:s"},
+      {"id": "LA_size_medium", "name": "size:m"},
+      {"id": "LA_bug", "name": "bug"}
+    ],
+    "assignees": [
+      {"id": "U_fixture", "login": "fixture-user"},
+      {"id": "U_release_bot", "login": "release-bot"}
+    ],
+    "issueTypes": [
+      {"id": "IT_task", "name": "Task"},
+      {"id": "IT_bug", "name": "Bug"},
+      {"id": "IT_feature", "name": "Feature"},
+      {"id": "IT_maintenance", "name": "Maintenance"}
+    ]
   },
   "next_issue": 3,
   "issues": {
@@ -20,7 +42,24 @@
       "stateReason": null,
       "updatedAt": "2026-08-12T00:00:00Z",
       "url": "https://github.com/example/project/issues/1",
-      "labels": [{"name": "priority:high"}],
+      "labels": [{"id": "LA_priority_high", "name": "priority:high"}],
+      "assignees": [],
+      "issueType": null,
+      "parent": null,
+      "subIssues": [],
+      "blockedBy": [],
+      "blocking": []
+    },
+    "2": {
+      "id": "I_2",
+      "number": 2,
+      "title": "Related issue",
+      "body": "## Problem\n\nRelated text\n",
+      "state": "OPEN",
+      "stateReason": null,
+      "updatedAt": "2026-08-12T00:00:00Z",
+      "url": "https://github.com/example/project/issues/2",
+      "labels": [],
       "assignees": [],
       "issueType": null,
       "parent": null,

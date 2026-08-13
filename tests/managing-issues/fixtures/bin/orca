@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Small stateful orca linear fixture for managing-issues contract tests."""
+"""Strict read-only orca linear fixture for managing-issues contract tests."""
 
 from __future__ import annotations
 
@@ -18,7 +18,18 @@ STDIN = sys.stdin.read() if "--body-file" in ARGV else ""
 
 
 def emit(value: Any) -> None:
-    print(json.dumps(value, separators=(",", ":"), sort_keys=True))
+    print(
+        json.dumps(
+            {
+                "id": "fixture-linear-response",
+                "ok": True,
+                "result": value,
+                "_meta": {},
+            },
+            separators=(",", ":"),
+            sort_keys=True,
+        )
+    )
 
 
 def fail(message: str) -> None:
@@ -26,64 +37,87 @@ def fail(message: str) -> None:
     raise SystemExit(1)
 
 
-def flag(name: str, default: str | None = None) -> str | None:
-    try:
-        return ARGV[ARGV.index(name) + 1]
-    except (ValueError, IndexError):
-        return default
-
-
 def load() -> dict[str, Any]:
     return json.loads(STATE_PATH.read_text(encoding="utf-8"))
 
 
-def save(state: dict[str, Any]) -> None:
-    temporary = STATE_PATH.with_name(f"{STATE_PATH.name}.tmp")
-    temporary.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    temporary.replace(STATE_PATH)
+def parse_options(
+    tokens: list[str],
+    *,
+    value_flags: set[str],
+    boolean_flags: set[str] | None = None,
+    repeatable_flags: set[str] | None = None,
+) -> tuple[list[str], dict[str, list[str]], set[str]]:
+    booleans_allowed = boolean_flags or set()
+    repeatable = repeatable_flags or set()
+    positionals: list[str] = []
+    values: dict[str, list[str]] = {}
+    booleans: set[str] = set()
+    index = 0
+    while index < len(tokens):
+        token = tokens[index]
+        if token in booleans_allowed:
+            if token in booleans:
+                fail(f"duplicate flag: {token}")
+            booleans.add(token)
+            index += 1
+            continue
+        if token in value_flags:
+            if index + 1 >= len(tokens):
+                fail(f"missing value for {token}")
+            if token not in repeatable and token in values:
+                fail(f"duplicate flag: {token}")
+            values.setdefault(token, []).append(tokens[index + 1])
+            index += 2
+            continue
+        if token.startswith("-"):
+            fail(f"unsupported flag: {token}")
+        positionals.append(token)
+        index += 1
+    return positionals, values, booleans
+
+
+def one(
+    values: dict[str, list[str]], name: str, *, required: bool = False
+) -> str | None:
+    candidates = values.get(name, [])
+    if required and not candidates:
+        fail(f"missing {name}")
+    return candidates[0] if candidates else None
+
+
+def require_contract(
+    state: dict[str, Any], values: dict[str, list[str]], booleans: set[str]
+) -> None:
+    workspace = one(values, "--workspace", required=True)
+    expected = state["workspace"]["id"]
+    if workspace != expected:
+        fail(f"fixture requires --workspace {expected}")
+    if "--json" not in booleans:
+        fail("fixture requires --json")
+
+
+def team_value(state: dict[str, Any], selector: str) -> dict[str, Any]:
+    selected = next(
+        (
+            candidate
+            for candidate in state["teams"]
+            if selector in {candidate["id"], candidate["key"]}
+        ),
+        None,
+    )
+    if selected is None:
+        fail("team not found")
+    return selected
 
 
 def require_issue(state: dict[str, Any], identifier: str) -> dict[str, Any]:
     issue = state["issues"].get(identifier)
     if issue is None:
         fail("issue not found")
+    if issue["team"]["id"] not in {team["id"] for team in state["teams"]}:
+        fail("issue is outside the selected workspace")
     return issue
-
-
-def body_from_stdin() -> str:
-    if flag("--body-file") != "-":
-        fail("fixture requires --body-file -")
-    return STDIN
-
-
-def issue_ref(issue: dict[str, Any]) -> dict[str, Any]:
-    return {"id": issue["id"], "identifier": issue["identifier"]}
-
-
-def relation(issue: dict[str, Any], relation_type: str) -> dict[str, Any]:
-    return {"type": relation_type, "issue": issue_ref(issue)}
-
-
-def add_relation(issue: dict[str, Any], related: dict[str, Any], relation_type: str) -> None:
-    if not any(edge["type"] == relation_type and edge["issue"]["id"] == related["id"] for edge in issue["relations"]):
-        issue["relations"].append(relation(related, relation_type))
-
-
-def remove_relation(issue: dict[str, Any], related: dict[str, Any], relation_type: str) -> None:
-    issue["relations"] = [
-        edge
-        for edge in issue["relations"]
-        if not (edge["type"] == relation_type and edge["issue"]["id"] == related["id"])
-    ]
-
-
-def add_child(parent: dict[str, Any], child: dict[str, Any]) -> None:
-    if not any(candidate["id"] == child["id"] for candidate in parent["children"]):
-        parent["children"].append(issue_ref(child))
-
-
-def remove_child(parent: dict[str, Any], child: dict[str, Any]) -> None:
-    parent["children"] = [candidate for candidate in parent["children"] if candidate["id"] != child["id"]]
 
 
 LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -103,22 +137,62 @@ with LOG_PATH.open("a", encoding="utf-8") as stream:
 state = load()
 
 if ARGV[:3] == ["linear", "team", "list"]:
-    emit({"principal": state["principal"], "workspace": state["workspace"], "teams": state["teams"]})
+    positionals, values, booleans = parse_options(
+        ARGV[3:], value_flags={"--workspace"}, boolean_flags={"--json"}
+    )
+    if positionals:
+        fail("unsupported command")
+    require_contract(state, values, booleans)
+    emit(
+        {
+            "teams": state["teams"],
+            "meta": {
+                "returned": len(state["teams"]),
+                "limitReached": False,
+                "workspaceErrors": [],
+            },
+        }
+    )
     raise SystemExit(0)
 
-if ARGV[:3] == ["linear", "team", "states"]:
-    emit({"states": state["states"]})
-    raise SystemExit(0)
-
-if ARGV[:3] == ["linear", "team", "labels"]:
-    emit({"labels": state["labels"]})
+if ARGV[:3] in (
+    ["linear", "team", "states"],
+    ["linear", "team", "labels"],
+    ["linear", "team", "members"],
+):
+    positionals, values, booleans = parse_options(
+        ARGV[3:],
+        value_flags={"--team", "--workspace"},
+        boolean_flags={"--json"},
+    )
+    if positionals:
+        fail("unsupported command")
+    require_contract(state, values, booleans)
+    team = team_value(state, one(values, "--team", required=True) or "")
+    if ARGV[2] == "states":
+        items = state["states"]
+        emit({"team": team, "states": items, "meta": {"returned": len(items)}})
+    elif ARGV[2] == "labels":
+        items = state["labels"]
+        emit({"team": team, "labels": items, "meta": {"returned": len(items)}})
+    else:
+        items = state.get("members", [])
+        emit({"team": team, "members": items, "meta": {"returned": len(items)}})
     raise SystemExit(0)
 
 if ARGV[:2] == ["linear", "list-issues"]:
-    parent = flag("--parent-id")
-    if parent is None:
-        fail("missing --parent-id")
-    cursor = flag("--cursor")
+    positionals, values, booleans = parse_options(
+        ARGV[2:],
+        value_flags={"--parent-id", "--limit", "--cursor", "--workspace"},
+        boolean_flags={"--json"},
+    )
+    if positionals:
+        fail("unsupported command")
+    require_contract(state, values, booleans)
+    parent = one(values, "--parent-id", required=True)
+    if one(values, "--limit", required=True) != "100":
+        fail("fixture requires --limit 100")
+    cursor = one(values, "--cursor")
     scenario = os.environ.get("MI_LINEAR_GRAPH_SCENARIO", "complete")
     children = [
         issue
@@ -139,20 +213,31 @@ if ARGV[:2] == ["linear", "list-issues"]:
         emit(
             {
                 "issues": page,
-                "pageInfo": {
-                    "hasNextPage": True,
-                    "endCursor": f"cap-{page_number + 1}",
+                "meta": {
+                    "hasMore": True,
+                    "nextCursor": f"cap-{page_number + 1}",
+                    "workspaceId": state["workspace"]["id"],
+                    "workspaceErrors": [],
                 },
             }
         )
         raise SystemExit(0)
     if cursor is None:
+        workspace_errors = (
+            [{"workspaceId": state["workspace"]["id"], "message": "partial workspace read"}]
+            if scenario == "workspace-error"
+            else []
+        )
         emit(
             {
                 "issues": children[:1],
-                "pageInfo": {
-                    "hasNextPage": len(children) > 1,
-                    "endCursor": "repeat" if scenario == "repeated-cursor" else "page-2",
+                "meta": {
+                    "hasMore": len(children) > 1,
+                    "nextCursor": (
+                        "repeat" if scenario == "repeated-cursor" else "page-2"
+                    ),
+                    "workspaceId": state["workspace"]["id"],
+                    "workspaceErrors": workspace_errors,
                 },
             }
         )
@@ -160,128 +245,59 @@ if ARGV[:2] == ["linear", "list-issues"]:
     if scenario == "pagination-failure" and cursor == "page-2":
         fail("pagination failed")
     if scenario == "repeated-cursor" and cursor == "repeat":
-        emit({"issues": children[1:2], "pageInfo": {"hasNextPage": True, "endCursor": "repeat"}})
+        emit(
+            {
+                "issues": children[1:2],
+                "meta": {
+                    "hasMore": True,
+                    "nextCursor": "repeat",
+                    "workspaceId": state["workspace"]["id"],
+                    "workspaceErrors": [],
+                },
+            }
+        )
         raise SystemExit(0)
     if cursor == "page-2":
-        emit({"issues": children[1:], "pageInfo": {"hasNextPage": False, "endCursor": None}})
+        emit(
+            {
+                "issues": children[1:],
+                "meta": {
+                    "hasMore": False,
+                    "nextCursor": None,
+                    "workspaceId": state["workspace"]["id"],
+                    "workspaceErrors": [],
+                },
+            }
+        )
         raise SystemExit(0)
     fail("invalid cursor")
 
 if ARGV[:2] == ["linear", "issue"]:
-    identifier = ARGV[2] if len(ARGV) > 2 else ""
-    emit({"issue": require_issue(state, identifier)})
+    positionals, values, booleans = parse_options(
+        ARGV[2:],
+        value_flags={"--depth", "--workspace"},
+        boolean_flags={"--relations", "--children", "--json"},
+    )
+    if len(positionals) != 1:
+        fail("fixture requires one issue")
+    require_contract(state, values, booleans)
+    if "--depth" in values and "--children" not in booleans:
+        fail("--depth requires --children")
+    if "--depth" in values and not (one(values, "--depth") or "").isdigit():
+        fail("depth must be an integer")
+    issue = require_issue(state, positionals[0])
+    sections = {}
+    if "--relations" in booleans:
+        sections["relations"] = {
+            "returned": len(issue["relations"]),
+            "capReached": os.environ.get("MI_LINEAR_GRAPH_SCENARIO") == "relations-cap",
+        }
+    include_errors = (
+        [{"section": "relations", "message": "relation include failed"}]
+        if os.environ.get("MI_LINEAR_GRAPH_SCENARIO") == "include-error"
+        else []
+    )
+    emit({"issue": issue, "meta": {"sections": sections, "includeErrors": include_errors}})
     raise SystemExit(0)
 
-if ARGV[:2] == ["linear", "save-issue"]:
-    identifier = ARGV[2] if len(ARGV) > 2 else ""
-    issue = require_issue(state, identifier)
-    if flag("--title") is not None:
-        issue["title"] = flag("--title")
-    if "--body-file" in ARGV:
-        issue["description"] = body_from_stdin()
-    if flag("--parent-id") is not None:
-        parent_value = flag("--parent-id")
-        if issue.get("parent") is not None:
-            old_parent = require_issue(state, issue["parent"]["identifier"])
-            remove_child(old_parent, issue)
-        if parent_value == "null":
-            issue["parent"] = None
-        else:
-            parent = require_issue(state, parent_value or "")
-            issue["parent"] = issue_ref(parent)
-            add_child(parent, issue)
-    save(state)
-    emit({"issue": issue})
-    raise SystemExit(0)
-
-if ARGV[:2] == ["linear", "create"]:
-    team_key = flag("--team")
-    team = next((candidate for candidate in state["teams"] if candidate["key"] == team_key), None)
-    if team is None:
-        fail("team not found")
-    number = state["next_issue"]
-    identifier = f"{team_key}-{number}"
-    issue = {
-        "id": f"linear-{number}",
-        "identifier": identifier,
-        "team": {"id": team["id"], "key": team["key"]},
-        "title": flag("--title", ""),
-        "description": body_from_stdin(),
-        "state": state["states"][0],
-        "priority": "none",
-        "estimate": None,
-        "labels": [],
-        "assignee": None,
-        "parent": issue_ref(require_issue(state, flag("--parent", ""))) if flag("--parent") is not None else None,
-        "children": [],
-        "relations": [],
-        "url": f"https://linear.app/fixture/issue/{identifier}",
-    }
-    state["issues"][identifier] = issue
-    if issue["parent"] is not None:
-        add_child(require_issue(state, issue["parent"]["identifier"]), issue)
-    state["next_issue"] = number + 1
-    save(state)
-    if os.environ.get("MI_LINEAR_INDETERMINATE_CREATE") == "1":
-        fail("linear_write_unconfirmed")
-    emit({"issue": issue})
-    raise SystemExit(0)
-
-if len(ARGV) >= 4 and ARGV[:3] in (["linear", "relation", "add"], ["linear", "relation", "remove"]):
-    operation = ARGV[2]
-    issue = require_issue(state, ARGV[3])
-    related = require_issue(state, flag("--related", "") or "")
-    relation_type = flag("--type")
-    inverse = {"blocks": "blocked-by", "blocked-by": "blocks"}
-    if relation_type not in inverse:
-        fail("unsupported relation type")
-    if operation == "add":
-        add_relation(issue, related, relation_type)
-        add_relation(related, issue, inverse[relation_type])
-    else:
-        remove_relation(issue, related, relation_type)
-        remove_relation(related, issue, inverse[relation_type])
-    save(state)
-    emit({"issue": issue})
-    raise SystemExit(0)
-
-if len(ARGV) >= 4 and ARGV[0] == "linear" and ARGV[2] == "set":
-    operation = ARGV[1]
-    identifier = ARGV[3]
-    issue = require_issue(state, identifier)
-    value = flag("--to-id") if operation == "assignee" else flag("--to")
-    if value is None:
-        fail("missing --to")
-    if operation == "priority":
-        issue["priority"] = value
-    elif operation == "estimate":
-        issue["estimate"] = int(value)
-    elif operation == "assignee":
-        issue["assignee"] = {"name": value}
-    elif operation == "status":
-        selected = next((candidate for candidate in state["states"] if candidate["name"] == value), None)
-        if selected is None:
-            fail("state not found")
-        issue["state"] = selected
-    else:
-        fail("unsupported command")
-    save(state)
-    emit({"issue": issue})
-    raise SystemExit(0)
-
-if len(ARGV) >= 4 and ARGV[:2] == ["linear", "label"] and ARGV[2] in {"add", "remove"}:
-    identifier = ARGV[3]
-    issue = require_issue(state, identifier)
-    label_name = flag("--label")
-    selected = next((candidate for candidate in state["labels"] if candidate["name"] == label_name), None)
-    if selected is None:
-        fail("label not found")
-    if ARGV[2] == "add" and selected not in issue["labels"]:
-        issue["labels"].append(selected)
-    if ARGV[2] == "remove":
-        issue["labels"] = [label for label in issue["labels"] if label["id"] != selected["id"]]
-    save(state)
-    emit({"issue": issue})
-    raise SystemExit(0)
-
-fail("unsupported command")
+fail("Release A Linear mutations are manual: authenticated principal unavailable")

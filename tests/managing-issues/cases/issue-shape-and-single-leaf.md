@@ -1,8 +1,8 @@
 # One reviewable deliverable stays one leaf
 
-Provenance: accepted managing-issues contract R1 and AE1 — a simple one-PR task
-must not acquire artificial hierarchy or workflow ceremony. Behavioral grade
-not yet run.
+Provenance: the bare baseline omitted the required `Problem` and positive
+`Scope` structure and invented constraints; accepted contract R1 and AE1 keeps
+a simple one-PR task as one concise leaf.
 
 ## Prompt
 

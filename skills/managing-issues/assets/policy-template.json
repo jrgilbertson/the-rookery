@@ -1,7 +1,10 @@
 {
   "version": 1,
-  "provider": "github",
-  "target": "REPLACE_WITH_OWNER/REPLACE_WITH_REPOSITORY",
+  "provider": "linear",
+  "target": {
+    "workspace": "REPLACE_WITH_CONNECTED_WORKSPACE_ID",
+    "team": "REPLACE_WITH_TEAM_KEY_OR_ID"
+  },
   "mappings": {
     "work_type": {
       "feature": "REPLACE_WITH_PROVIDER_VALUE_FOR_FEATURE",
@@ -17,18 +20,18 @@
       "ready": "REPLACE_WITH_PROVIDER_VALUE_FOR_READY"
     },
     "priority": {
-      "urgent": "REPLACE_WITH_PROVIDER_VALUE_FOR_URGENT",
-      "high": "REPLACE_WITH_PROVIDER_VALUE_FOR_HIGH",
-      "medium": "REPLACE_WITH_PROVIDER_VALUE_FOR_MEDIUM",
-      "low": "REPLACE_WITH_PROVIDER_VALUE_FOR_LOW",
-      "none": "REPLACE_WITH_PROVIDER_VALUE_FOR_NONE"
+      "urgent": "urgent",
+      "high": "high",
+      "medium": "medium",
+      "low": "low",
+      "none": "none"
     },
     "leaf_estimate": {
-      "1": "REPLACE_WITH_PROVIDER_VALUE_FOR_1",
-      "2": "REPLACE_WITH_PROVIDER_VALUE_FOR_2",
-      "3": "REPLACE_WITH_PROVIDER_VALUE_FOR_3",
-      "5": "REPLACE_WITH_PROVIDER_VALUE_FOR_5",
-      "8": "REPLACE_WITH_PROVIDER_VALUE_FOR_8"
+      "1": 1,
+      "2": 2,
+      "3": 3,
+      "5": 5,
+      "8": 8
     }
   }
 }

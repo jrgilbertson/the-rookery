@@ -1,14 +1,17 @@
 {
   "version": 1,
   "provider": "linear",
-  "target": "ENG",
+  "target": {
+    "workspace": "workspace-fixture",
+    "team": "ENG"
+  },
   "synchronization": {
     "mapping_source": ".agents/escape/linear-sync.json"
   },
   "mappings": {
     "work_type": {"bug": "bug"},
-    "readiness": {"ready": "ready"},
-    "priority": {"normal": 3},
+    "readiness": {"ready": "Ready"},
+    "priority": {"normal": "medium"},
     "leaf_estimate": {"small": 1}
   }
 }

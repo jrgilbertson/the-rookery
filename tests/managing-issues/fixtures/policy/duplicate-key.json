@@ -2,11 +2,14 @@
   "version": 1,
   "provider": "github",
   "provider": "linear",
-  "target": "ENG",
+  "target": {
+    "workspace": "workspace-fixture",
+    "team": "ENG"
+  },
   "mappings": {
     "work_type": {"bug": "bug"},
     "readiness": {"ready": "ready"},
-    "priority": {"normal": "normal"},
+    "priority": {"normal": "medium"},
     "leaf_estimate": {"small": 1}
   }
 }

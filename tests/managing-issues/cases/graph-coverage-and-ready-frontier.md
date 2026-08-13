@@ -1,8 +1,8 @@
 # Partial graph coverage cannot authorize topology
 
-Provenance: accepted managing-issues contract R3 and AE4 — readiness and
-relationship changes require an exhausted canonical graph read. Behavioral
-grade not yet run.
+Provenance: the bare baseline rendered an approvable topology preview under
+partial coverage; accepted contract R3 and AE4 requires an exhausted canonical
+graph read before readiness or relationship writes become actionable.
 
 ## Prompt
 
@@ -28,8 +28,8 @@ grade not yet run.
 - [ ] Represents the cycle once without recursing forever and counts canonical
       identities with a visited set.
 - [ ] Treats both the repeated cursor and inaccessible one-hop blocker as
-      named `Partial` coverage; reaching the 250-node cap before exhaustion is
-      also `Partial`.
+      named `partial` coverage; reaching the 250-node cap before exhaustion is
+      also `partial`.
 - [ ] Gives only a qualified readiness report and neither previews as writable
       nor applies the topology effect under partial coverage.
 - [ ] Invents no missing node, page, execution order, or durable graph state.

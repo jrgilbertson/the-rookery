@@ -38,4 +38,8 @@ Scoring rules:
    against it, and mark expired rows in the machine-local reference so they
    leave the denominator.
 4. Anti-findings score precision: a run reporting one as a defect is a false
-   positive.
+   positive — but each anti-finding binds to the revision the audit rejected
+   it at. Re-verify an anti-finding still holds at the scored target revision
+   before counting the false positive; a mechanism that has since become a
+   real defect expires as an anti-finding and is marked expired in the
+   machine-local reference.

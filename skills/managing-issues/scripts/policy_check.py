@@ -446,7 +446,7 @@ if __name__ == "__main__":
     except (
         OSError,
         UnicodeError,
-        json.JSONDecodeError,
+        ValueError,
         PolicyError,
         RecursionError,
     ) as error:

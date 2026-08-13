@@ -405,6 +405,7 @@ def main() -> int:
         require(file_digest(marker) == before, "validator changed repository content")
 
         expect_invalid(POLICIES / "duplicate-key.json", repo_root, "duplicate key 'provider'")
+        expect_invalid(POLICIES / "huge-integer.json", repo_root, "Exceeds the limit (4300 digits)")
         expect_invalid(POLICIES / "unknown-key.json", repo_root, "unexpected key: authority")
         expect_invalid(POLICIES / "control-key.json", repo_root, r"bad\u0007key")
         expect_invalid(POLICIES / "invalid-provider.json", repo_root, "provider must be github or linear")

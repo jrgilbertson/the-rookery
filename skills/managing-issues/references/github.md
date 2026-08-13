@@ -42,8 +42,8 @@ connection. Keep the query text fixed and pass `OWNER` and `REPO` as separate
 field arguments:
 
 ```text
-gh api graphql --hostname github.com -f query=ISSUE_TYPES_QUERY -F owner=OWNER -F name=REPO
-gh api graphql --hostname github.com -f query=ISSUE_TYPES_QUERY -F owner=OWNER -F name=REPO -F endCursor=CURSOR
+gh api graphql --hostname github.com -f query=ISSUE_TYPES_QUERY -f owner=OWNER -f name=REPO
+gh api graphql --hostname github.com -f query=ISSUE_TYPES_QUERY -f owner=OWNER -f name=REPO -f endCursor=CURSOR
 ```
 
 `ISSUE_TYPES_QUERY` is the fixed query

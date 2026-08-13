@@ -200,7 +200,7 @@ What must be true before merge:
 
 Repos and systems need tending over time. Maintenance runs throughout the loop, not only after merge.
 
-[`repo-gardener`](skills/repo-gardener/SKILL.md) is the portfolio-level read-only loop. It initializes one repository with an all-off policy proposal, reconciles current report rows and unmatched report intents before rediscovery, and renders exactly seven retained, recommended, or available slots from current source evidence. Its only possible write is the report register through a separately proven caller wrapper. It never claims, queues, edits, or merges source work.
+[`repo-gardener`](skills/repo-gardener/SKILL.md) is the nightly parent loop. It surveys nine repository-health lanes, deepens zero to the installed-policy limit, and may supervise a bounded child worktree through its own planning, implementation, review, gates, and unmerged pull request. Native PR state is authoritative for authored work. The tracker receives exactly one opening and one closing record per run, while the retained parent worktree holds the full morning inspection report. The model owns qualitative selection; the checker proves only exact record closure.
 
 `repo-maintainer` is the everyday pass. It inspects the repo briefly, picks one small safe improvement, makes one diff, verifies it narrowly, and stops after a single commit. Pass `repeat N` when you want up to N passes in a row.
 

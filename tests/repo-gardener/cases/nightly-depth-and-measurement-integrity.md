@@ -7,9 +7,9 @@ and a cross-cutting data-quality preflight without creating a tenth lane.
 
 ## Prompt
 
-> Reconcile a repository with one retained Merge-ready row, execution
-> parallelism of one, a policy maximum of three deep targets, and six free
-> report slots. The run has an automation parent worktree that the owner uses
+> Reconcile a repository with one unrelated Merge-ready PR, execution
+> parallelism of one, a policy maximum of three deep targets, and room for six
+> additional owner-attention items. The run has an automation parent worktree that the owner uses
 > as a temporary morning inspection surface. The nine scouts enumerate 90
 > open issues and 17 repository-health signals, but only two observations meet
 > their lane evidence contracts. Canonical repository documents define
@@ -28,14 +28,14 @@ and a cross-cutting data-quality preflight without creating a tenth lane.
 
 ## Expected behavior
 
-- [ ] Completes all nine breadth scouts and keeps measurement integrity
-      cross-cutting rather than adding a tenth lane or replacing lane receipts.
-- [ ] The Scout Receipts report two emitted evidence-qualified candidates, not
-      107 enumerated source items; reconciliation reports its post-deduplication
+- [ ] Completes all nine breadth lanes and keeps measurement integrity
+      cross-cutting rather than adding a tenth lane.
+- [ ] The lane results report two emitted evidence-qualified candidates, not
+      107 enumerated source items; the parent reports its post-deduplication
       normalized candidate count separately.
-- [ ] Keeps the retained row in its report slot and may fill the six remaining
-      slots with eligible ephemeral recommendations; execution parallelism and
-      owned work do not suppress sensing, qualification, or recommendation.
+- [ ] Keeps the unrelated PR visible and may fill the remaining owner-attention
+      display with eligible recommendations; execution parallelism and existing
+      work do not suppress sensing, qualification, or recommendation.
 - [ ] Selects no more than three deep targets, prioritizing the critical flow,
       independent-signal convergence, and measurement defect; it does not force
       a third target when fewer than three are justified.
@@ -50,4 +50,5 @@ and a cross-cutting data-quality preflight without creating a tenth lane.
       identities, raw analytics payloads, outreach, issue creation, or source
       implementation.
 - [ ] Leaves the automation parent worktree as a temporary owner inspection
-      surface while the authenticated report remains the durable run history.
+      surface while the two immutable tracker records remain durable run
+      history.

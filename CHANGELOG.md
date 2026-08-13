@@ -13,12 +13,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
-- Added `repo-gardener`, a portable read-only repository maintenance loop. It
-  proposes an all-off policy during initialization, reconciles current report
-  rows and unmatched report intents before rediscovery, and renders a
-  deterministic seven-slot portfolio. Its sole built-in effect is exact
-  report-register preparation and structural verification; caller-owned
-  provider invocation and source mutation remain outside the skill.
+- Added `repo-gardener`, a portable repository-health parent loop. It surveys
+  nine lanes, deepens evidence-justified targets, and may supervise a
+  live-policy-bounded child through an unmerged pull request.
 - Added a seven-image Field Guide Blueprint illustration system to
   `WORKFLOWS.md`, with Huginn carrying Research through Build, a verified
   handoff to Muninn at Ship, and Muninn returning the learning loop to
@@ -27,10 +24,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
-- `repo-gardener` now consumes the live `orchestrator-register/v1` GitHub issue
-  grammar directly, prepares immutable report body/comment material, and
-  internally verifies effect and nine-lane completion outcomes. Legacy caller
-  authority envelopes and the parallel register fixture schema were removed.
+- `repo-gardener` now treats native pull requests as authored-work truth, writes
+  exactly one opening and one consolidated closing tracker record per run, and
+  leaves qualitative planning to the model. Its deterministic dogfood checker
+  reports only exact two-record closure and readback; legacy Release A command
+  interfaces remain available for existing recorded material.
 
 - `checking-pr-readiness` now supports a read-only assessment branch that binds
   every verified claim to one stable repository, exact subject, and full commit

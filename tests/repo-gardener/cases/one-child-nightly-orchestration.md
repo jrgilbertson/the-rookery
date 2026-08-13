@@ -11,7 +11,7 @@ facts.
 
 - The installed policy allows at most three read-only deep targets and one new
   low-risk, nonconflicting child PR, and the code-health lane has
-  `mutation: true`; global `authority.source_mutation` is explicitly allowed,
+  `mutation: true`; `authority.source_mutation` is exactly `allowed`,
   and `caller_roles.report_write` is `required`. Its configured default branch
   is `main`; `repository.identity` exactly matches the target, and its scope
   includes the planned adapter path. The exact installed-policy revision
@@ -72,7 +72,8 @@ The response must:
    handoff, evidence-pack handoff, push, and PR creation, repeating relevant
    gates, commit, and readiness after any file-changing readiness step or
    post-commit gate;
-8. require exact repository identity and scope plus global source-mutation,
+8. require exact repository identity and scope plus exact
+   `authority.source_mutation: allowed`,
    lane, and capacity permission; refresh policy at every mutation boundary;
    reread native overlaps before dispatch and PR creation; validate planned
    paths at dispatch and the exact committed diff before push and PR creation;

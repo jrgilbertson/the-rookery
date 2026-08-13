@@ -32,7 +32,7 @@ checker, and make no structural-closure claim.
 Child authoring is allowed only when `repository.identity` exactly matches the
 target repository, every planned or committed path is inside the effective
 `repository.scope.include`/`exclude` boundary, `authority.source_mutation` is
-affirmatively allowed, `boundaries.maximum_new_child_prs_per_run` is greater
+exactly `allowed`, `boundaries.maximum_new_child_prs_per_run` is greater
 than zero, and the owning `lanes.<lane>.mutation` value is `true`. A missing or
 mismatched identity, out-of-scope path, denied global authority, missing or
 `false` lane value, or zero limit denies authoring. The bundled starter remains
@@ -47,6 +47,8 @@ current denial does.
 Scope paths are normalized repository-relative paths with no traversal.
 Exclude wins: each authored path must match at least one include glob and no
 exclude glob. A missing, malformed, or ambiguous scope denies authoring.
+For `authority.source_mutation`, every value other than the exact string
+`allowed` denies authoring, including booleans and positive-looking synonyms.
 
 Scheduled and manual parents use the same skill contract. The caller owns
 automation scheduling, parent-worktree creation, provider authentication, and

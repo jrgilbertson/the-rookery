@@ -90,17 +90,17 @@ the prepared material matches, and the complete final snapshot reads the close
 back exactly (`skills/repo-gardener/scripts/release_a_contract.py:1050-1105`).
 The public fixture explicitly rejects candidates, plans, scores, PR readiness,
 policy, authority, and effect safety as checker inputs
-(`tests/repo-gardener/fixtures/run-records/check_run_records.py:287-295`).
+(`tests/repo-gardener/fixtures/run-records/check_run_records.py`).
 
 Report `register_closed_consistently` outside the immutable close. Never present
 it as a quality, safety, permission, or readiness verdict
-(`skills/repo-gardener/SKILL.md:126-134`).
+(`skills/repo-gardener/SKILL.md`).
 
 ### Reread live policy at mutation boundaries
 
 Child authoring requires exact target repository identity, every path inside
-the policy's effective include/exclude scope, affirmative global
-source-mutation permission, a positive
+the policy's effective include/exclude scope, exact
+`authority.source_mutation: allowed`, a positive
 `boundaries.maximum_new_child_prs_per_run`, and `mutation: true` for the owning
 lane. Missing or false permission, scope mismatch, or current overlapping work
 denies authoring. Resolve and refresh the configured remote default branch

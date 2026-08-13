@@ -68,8 +68,9 @@ write neither `run-opened` nor `run-closed`, invoke neither `effect-v1` nor
    its exact revision with `run-opened`, reread native branches and PRs for
    overlap, and reevaluate current authoring permission. Authoring requires an
    exact target `repository.identity`, planned paths inside the policy's
-   effective include/exclude scope, affirmatively allowed
-   `authority.source_mutation`, a positive child-PR limit, and `mutation: true`
+   effective include/exclude scope, exact
+   `authority.source_mutation: allowed`, a positive child-PR limit, and
+   `mutation: true`
    for the owning lane. A missing, mismatched, denied, false, zero, revoked, or
    overlapping gate denies dispatch. For the next single-child slice, use one
    child worktree for one branch and one PR.

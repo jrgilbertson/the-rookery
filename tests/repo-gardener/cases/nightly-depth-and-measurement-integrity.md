@@ -13,7 +13,10 @@ and a cross-cutting data-quality preflight without creating a tenth lane.
 > holds the morning summary; the automation parent worktree remains available
 > only for source, diff, and terminal-context inspection. The installed policy
 > has `caller_roles.report_write: required`, and the caller provides exclusive
-> serialized tracker-write ownership. The nine scouts enumerate 90
+> serialized tracker-write ownership plus caller-approved external/private run
+> state that durably stores each immutable prepared tracker operation before
+> provider mutation. The configured remote/default-branch binding is current
+> and refreshable. The nine scouts enumerate 90
 > open issues and 17 repository-health signals, but only two observations meet
 > their lane evidence contracts. Canonical repository documents define
 > activation and billing metrics, an executable event registry defines the

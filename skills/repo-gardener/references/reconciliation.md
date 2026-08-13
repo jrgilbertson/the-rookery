@@ -101,7 +101,7 @@ not read-only sensing, qualification, deepening, or recommendations.
 
 Author only when the policy's `repository.identity` exactly matches the target,
 every planned path is inside its effective include/exclude scope,
-`authority.source_mutation` is affirmatively allowed,
+`authority.source_mutation` is exactly `allowed`,
 `boundaries.maximum_new_child_prs_per_run` is greater than zero, the owning
 `lanes.<lane>.mutation` value is `true`, and the work is low risk,
 nonconflicting, outside protected boundaries, testable, and small enough for

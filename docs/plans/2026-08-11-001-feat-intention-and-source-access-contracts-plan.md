@@ -98,7 +98,7 @@ LifeOS demonstrates two useful patterns: falsifiable completion claims and visib
 
 - F3. **Action-only continuation**
   - **Entry:** The user decides an action from a visible bundle.
-  - **Flow:** Resolve the exact proposal; audit only the reread, mutation, and readback surfaces used now; apply existing approval and drift rules; report the observed action result and current audit.
+  - **Flow:** Resolve the exact proposal; audit only the authoritative target or destination reread and, when performed, the verification readback; apply existing approval and drift rules; report the mutation outcome separately in the action-result narrative and render the current access audit.
   - **Outcome:** The action result is trustworthy without implying that review discovery reran.
   - **Covered by:** R4, R7, R9–R12, R17, R19–R20
 

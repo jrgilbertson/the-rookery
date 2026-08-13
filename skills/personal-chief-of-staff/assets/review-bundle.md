@@ -20,9 +20,11 @@ action success.
 
 Use only these exact results: **Accessed — evidence found**, **Accessed — no
 relevant evidence**, **Attempted — unavailable or failed**, **Not configured**,
-**Declined**, and **Not needed**. For a combined action-and-review response,
-add a first **Phase** column and label each row **Action access** or **Review
-discovery**. Do not add the Phase column to other responses.
+**Declined**, and **Not needed**. For a response combining an action with either
+a review or non-mode context request, add a first **Phase** column. Label action
+rows **Action access**; label discovery rows **Review discovery** for a review
+request or **Context discovery** for a non-mode context request. Do not add the
+Phase column to other responses.
 
 Keep source labels generic and role-based. Bound every scope or window, marking
 a returned slice partial when needed and coarsening precision when it could
@@ -44,7 +46,8 @@ when performed, a separate row for the **Post-write verification readback**.
 Never combine those rows because their source, scope, or result happens to
 match, and never add a row for the mutation itself. In a combined
 action-and-review table, both remain **Action access** rows under the unchanged
-Phase column; discovery rows remain **Review discovery**.
+Phase column; discovery rows remain **Review discovery**. In a combined action
+and non-mode context table, discovery rows remain **Context discovery**.
 
 For each material claim:
 

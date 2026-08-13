@@ -82,6 +82,43 @@ output=$(pcos-action readback role=person_note)
 [[ "$output" == *"exact displayed durable context"* ]] ||
   fail "duplicate action write changed state"
 
+new_run c1p1
+pcos-action read role=person_note >/dev/null
+set +e
+pcos-action write role=person_note content=displayed_durable_context \
+  >"$PCOS_FIXTURE_ROOT/concurrent-write-1.out" 2>/dev/null &
+first_write_pid=$!
+pcos-action write role=person_note content=displayed_durable_context \
+  >"$PCOS_FIXTURE_ROOT/concurrent-write-2.out" 2>/dev/null &
+second_write_pid=$!
+wait "$first_write_pid"
+first_write_status=$?
+wait "$second_write_pid"
+second_write_status=$?
+set -e
+first_write_output=$(<"$PCOS_FIXTURE_ROOT/concurrent-write-1.out")
+second_write_output=$(<"$PCOS_FIXTURE_ROOT/concurrent-write-2.out")
+rm -f "$PCOS_FIXTURE_ROOT/concurrent-write-1.out" \
+  "$PCOS_FIXTURE_ROOT/concurrent-write-2.out"
+if [[ "$first_write_status" -eq 0 && "$second_write_status" -eq 0 ]] ||
+  [[ "$first_write_status" -ne 0 && "$second_write_status" -ne 0 ]]; then
+  fail "concurrent action writes did not produce exactly one winner"
+fi
+if [[ "$first_write_output" == success && -n "$second_write_output" ]] ||
+  [[ "$second_write_output" == success && -n "$first_write_output" ]]; then
+  fail "concurrent action write loser produced output"
+fi
+[[ "$first_write_output" == success || "$second_write_output" == success ]] ||
+  fail "concurrent action write winner produced unexpected output"
+successful_write_count=$(grep -Fc \
+  '"operation":"write","target":"person_note","result":"success"' \
+  "$PCOS_FIXTURE_TRACE")
+[[ "$successful_write_count" -eq 1 ]] ||
+  fail "concurrent action writes recorded an invalid success count"
+output=$(pcos-action readback role=person_note)
+[[ "$output" == *"exact displayed durable context"* ]] ||
+  fail "concurrent action write changed the expected state"
+
 new_run a2m2
 pcos-action read role=mailbox_draft >/dev/null
 output=$(pcos-action write role=mailbox_draft content=approved_draft)
@@ -101,6 +138,19 @@ pcos-source read role=tasks >/dev/null
 pcos-source read role=calendar >/dev/null
 assert_trace '"operation":"readback","target":"task_note","result":"success","completeness":"complete"'
 assert_trace '"operation":"read","target":"current_weekly_review","result":"success","completeness":"complete"'
+
+new_run b6r6
+pcos-action read role=task_note >/dev/null
+pcos-action write role=task_note content=phase_separated_effect >/dev/null
+pcos-action readback role=task_note >/dev/null
+pcos-source read role=tasks >/dev/null
+pcos-source read role=calendar >/dev/null
+if pcos-source read role=current_weekly_review >/dev/null 2>&1; then
+  fail "scenario 6 specimen exposed a Weekly Review source"
+fi
+assert_trace '"operation":"readback","target":"task_note","result":"success","completeness":"complete"'
+assert_trace '"operation":"read","target":"tasks","result":"success","completeness":"complete"'
+assert_trace '"operation":"read","target":"calendar","result":"success","completeness":"complete"'
 
 new_run n1m1
 pcos-source read role=current_work >/dev/null

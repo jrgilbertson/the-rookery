@@ -49,7 +49,7 @@ explicit-vault read as readback.
   `weekly_template`, `last_weekly_review`, `daily_journals`, `strategy`, and
   `learning` canonical roles; none has a configured binding,
   so report each as **Not configured** without attempting a fixture command.
-- Scenario 6 uses specimen `b5r5`. First run
+- Scenario 6 uses specimen `b6r6`. First run
   `pcos-action read role=task_note`, the single exact mutation
   `pcos-action write role=task_note content=phase_separated_effect`, and
   `pcos-action readback role=task_note`. Only after that action resolves, run

@@ -1,0 +1,173 @@
+#!/usr/bin/env python3
+"""Small stateful orca linear fixture for managing-issues contract tests."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+import sys
+from pathlib import Path
+from typing import Any
+
+
+ARGV = sys.argv[1:]
+STATE_PATH = Path(os.environ["MI_LINEAR_STATE"])
+LOG_PATH = Path(os.environ["MI_LINEAR_LOG"])
+STDIN = sys.stdin.read() if "--body-file" in ARGV else ""
+
+
+def emit(value: Any) -> None:
+    print(json.dumps(value, separators=(",", ":"), sort_keys=True))
+
+
+def fail(message: str) -> None:
+    print(message, file=sys.stderr)
+    raise SystemExit(1)
+
+
+def flag(name: str, default: str | None = None) -> str | None:
+    try:
+        return ARGV[ARGV.index(name) + 1]
+    except (ValueError, IndexError):
+        return default
+
+
+def load() -> dict[str, Any]:
+    return json.loads(STATE_PATH.read_text(encoding="utf-8"))
+
+
+def save(state: dict[str, Any]) -> None:
+    temporary = STATE_PATH.with_name(f"{STATE_PATH.name}.tmp")
+    temporary.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    temporary.replace(STATE_PATH)
+
+
+def require_issue(state: dict[str, Any], identifier: str) -> dict[str, Any]:
+    issue = state["issues"].get(identifier)
+    if issue is None:
+        fail("issue not found")
+    return issue
+
+
+def body_from_stdin() -> str:
+    if flag("--body-file") != "-":
+        fail("fixture requires --body-file -")
+    return STDIN
+
+
+LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+with LOG_PATH.open("a", encoding="utf-8") as stream:
+    stream.write(
+        json.dumps(
+            {
+                "argv": ARGV,
+                "stdin_length": len(STDIN.encode("utf-8")),
+                "stdin_sha256": hashlib.sha256(STDIN.encode("utf-8")).hexdigest(),
+            },
+            separators=(",", ":"),
+        )
+        + "\n"
+    )
+
+state = load()
+
+if ARGV[:3] == ["linear", "team", "list"]:
+    emit({"principal": state["principal"], "workspace": state["workspace"], "teams": state["teams"]})
+    raise SystemExit(0)
+
+if ARGV[:3] == ["linear", "team", "states"]:
+    emit({"states": state["states"]})
+    raise SystemExit(0)
+
+if ARGV[:3] == ["linear", "team", "labels"]:
+    emit({"labels": state["labels"]})
+    raise SystemExit(0)
+
+if ARGV[:2] == ["linear", "issue"]:
+    identifier = ARGV[2] if len(ARGV) > 2 else ""
+    emit({"issue": require_issue(state, identifier)})
+    raise SystemExit(0)
+
+if ARGV[:2] == ["linear", "save-issue"]:
+    identifier = ARGV[2] if len(ARGV) > 2 else ""
+    issue = require_issue(state, identifier)
+    if flag("--title") is not None:
+        issue["title"] = flag("--title")
+    if "--body-file" in ARGV:
+        issue["description"] = body_from_stdin()
+    save(state)
+    emit({"issue": issue})
+    raise SystemExit(0)
+
+if ARGV[:2] == ["linear", "create"]:
+    team_key = flag("--team")
+    team = next((candidate for candidate in state["teams"] if candidate["key"] == team_key), None)
+    if team is None:
+        fail("team not found")
+    number = state["next_issue"]
+    identifier = f"{team_key}-{number}"
+    issue = {
+        "id": f"linear-{number}",
+        "identifier": identifier,
+        "team": {"id": team["id"], "key": team["key"]},
+        "title": flag("--title", ""),
+        "description": body_from_stdin(),
+        "state": state["states"][0],
+        "priority": "none",
+        "estimate": None,
+        "labels": [],
+        "assignee": None,
+        "parent": None,
+        "children": [],
+        "relations": [],
+        "url": f"https://linear.app/fixture/issue/{identifier}",
+    }
+    state["issues"][identifier] = issue
+    state["next_issue"] = number + 1
+    save(state)
+    if os.environ.get("MI_LINEAR_INDETERMINATE_CREATE") == "1":
+        fail("linear_write_unconfirmed")
+    emit({"issue": issue})
+    raise SystemExit(0)
+
+if len(ARGV) >= 4 and ARGV[0] == "linear" and ARGV[2] == "set":
+    operation = ARGV[1]
+    identifier = ARGV[3]
+    issue = require_issue(state, identifier)
+    value = flag("--to-id") if operation == "assignee" else flag("--to")
+    if value is None:
+        fail("missing --to")
+    if operation == "priority":
+        issue["priority"] = value
+    elif operation == "estimate":
+        issue["estimate"] = int(value)
+    elif operation == "assignee":
+        issue["assignee"] = {"name": value}
+    elif operation == "status":
+        selected = next((candidate for candidate in state["states"] if candidate["name"] == value), None)
+        if selected is None:
+            fail("state not found")
+        issue["state"] = selected
+    else:
+        fail("unsupported command")
+    save(state)
+    emit({"issue": issue})
+    raise SystemExit(0)
+
+if len(ARGV) >= 4 and ARGV[:2] == ["linear", "label"] and ARGV[2] in {"add", "remove"}:
+    identifier = ARGV[3]
+    issue = require_issue(state, identifier)
+    label_name = flag("--label")
+    selected = next((candidate for candidate in state["labels"] if candidate["name"] == label_name), None)
+    if selected is None:
+        fail("label not found")
+    if ARGV[2] == "add" and selected not in issue["labels"]:
+        issue["labels"].append(selected)
+    if ARGV[2] == "remove":
+        issue["labels"] = [label for label in issue["labels"] if label["id"] != selected["id"]]
+    save(state)
+    emit({"issue": issue})
+    raise SystemExit(0)
+
+fail("unsupported command")

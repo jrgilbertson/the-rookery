@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "principal": "fixture-user",
+  "workspace": {"id": "workspace-fixture", "name": "Fixture Workspace"},
+  "teams": [{"id": "team-eng", "key": "ENG", "name": "Engineering"}],
+  "states": [
+    {"id": "state-triage", "name": "Triage", "type": "triage"},
+    {"id": "state-ready", "name": "Ready", "type": "unstarted"},
+    {"id": "state-done", "name": "Done", "type": "completed"},
+    {"id": "state-cancelled", "name": "Cancelled", "type": "canceled"}
+  ],
+  "labels": [
+    {"id": "label-feature", "name": "Feature"},
+    {"id": "label-fix", "name": "Fix"}
+  ],
+  "next_issue": 3,
+  "issues": {
+    "ENG-1": {
+      "id": "linear-1",
+      "identifier": "ENG-1",
+      "team": {"id": "team-eng", "key": "ENG"},
+      "title": "Existing issue",
+      "description": "## Problem\n\nOld text\n",
+      "state": {"id": "state-ready", "name": "Ready", "type": "unstarted"},
+      "priority": "high",
+      "estimate": 3,
+      "labels": [{"id": "label-feature", "name": "Feature"}],
+      "assignee": null,
+      "parent": null,
+      "children": [],
+      "relations": [],
+      "url": "https://linear.app/fixture/issue/ENG-1"
+    }
+  }
+}

@@ -57,8 +57,9 @@ Use branch detail only after loading its bundled one-level reference:
   `references/graph-and-completion.md`.
 
 These branches become writable only when their reference is present and its
-preflight succeeds. Until the relevant later-unit reference ships, preserve the
-request and return its write as `Manual` rather than inventing a command path.
+preflight succeeds. If a required reference or provider capability is absent,
+preserve the request and return its write as `Manual` rather than inventing a
+command path.
 
 Completion: one canonical provider and target are proven, or the request has a
 read-only or `Manual` route that names the missing proof.

@@ -1,0 +1,166 @@
+#!/usr/bin/env python3
+"""Small stateful gh fixture for managing-issues command-contract tests."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+import sys
+from pathlib import Path
+from typing import Any
+
+
+ARGV = sys.argv[1:]
+STATE_PATH = Path(os.environ["MI_GITHUB_STATE"])
+LOG_PATH = Path(os.environ["MI_GITHUB_LOG"])
+STDIN = sys.stdin.read() if "--body-file" in ARGV else ""
+
+
+def emit(value: Any) -> None:
+    print(json.dumps(value, separators=(",", ":"), sort_keys=True))
+
+
+def fail(message: str) -> None:
+    print(message, file=sys.stderr)
+    raise SystemExit(1)
+
+
+def flag(name: str, default: str | None = None) -> str | None:
+    try:
+        return ARGV[ARGV.index(name) + 1]
+    except (ValueError, IndexError):
+        return default
+
+
+def load() -> dict[str, Any]:
+    return json.loads(STATE_PATH.read_text(encoding="utf-8"))
+
+
+def save(state: dict[str, Any]) -> None:
+    temporary = STATE_PATH.with_name(f"{STATE_PATH.name}.tmp")
+    temporary.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    temporary.replace(STATE_PATH)
+
+
+def issue_number(value: str) -> str:
+    return value.rstrip("/").rsplit("/", 1)[-1]
+
+
+def body_from_stdin() -> str:
+    if flag("--body-file") != "-":
+        fail("fixture requires --body-file -")
+    return STDIN
+
+
+LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+with LOG_PATH.open("a", encoding="utf-8") as stream:
+    stream.write(
+        json.dumps(
+            {
+                "argv": ARGV,
+                "stdin_length": len(STDIN.encode("utf-8")),
+                "stdin_sha256": hashlib.sha256(STDIN.encode("utf-8")).hexdigest(),
+            },
+            separators=(",", ":"),
+        )
+        + "\n"
+    )
+
+state = load()
+repository = state["repository"]
+
+if ARGV[:2] == ["auth", "status"]:
+    emit({"principal": state["principal"]})
+    raise SystemExit(0)
+
+if ARGV[:2] == ["repo", "view"]:
+    requested = ARGV[2] if len(ARGV) > 2 else ""
+    if requested != repository["nameWithOwner"]:
+        fail("repository identity differs")
+    emit(repository)
+    raise SystemExit(0)
+
+if ARGV[:2] == ["issue", "view"]:
+    requested_repo = flag("-R")
+    if requested_repo != repository["nameWithOwner"]:
+        fail("repository identity differs")
+    key = issue_number(ARGV[2]) if len(ARGV) > 2 else ""
+    issue = state["issues"].get(key)
+    if issue is None:
+        fail("issue not found")
+    emit(issue)
+    raise SystemExit(0)
+
+if ARGV[:2] in (["issue", "edit"], ["issue", "create"], ["issue", "close"], ["issue", "reopen"]):
+    requested_repo = flag("-R")
+    if requested_repo in state.get("shadow_repositories", []):
+        fail("shadow repository is read-only")
+    if requested_repo != repository["nameWithOwner"]:
+        fail("repository identity differs")
+
+if ARGV[:2] == ["issue", "edit"]:
+    key = issue_number(ARGV[2]) if len(ARGV) > 2 else ""
+    issue = state["issues"].get(key)
+    if issue is None:
+        fail("issue not found")
+    if flag("--title") is not None:
+        issue["title"] = flag("--title")
+    if "--body-file" in ARGV:
+        issue["body"] = body_from_stdin()
+    issue["updatedAt"] = "2026-08-12T00:00:01Z"
+    save(state)
+    print(issue["url"])
+    raise SystemExit(0)
+
+if ARGV[:2] == ["issue", "create"]:
+    number = state["next_issue"]
+    key = str(number)
+    url = f'{repository["url"]}/issues/{number}'
+    state["issues"][key] = {
+        "id": f"I_{number}",
+        "number": number,
+        "title": flag("--title", ""),
+        "body": body_from_stdin(),
+        "state": "OPEN",
+        "stateReason": None,
+        "updatedAt": "2026-08-12T00:00:01Z",
+        "url": url,
+        "labels": [],
+        "assignees": [],
+        "issueType": None,
+        "parent": None,
+        "subIssues": [],
+        "blockedBy": [],
+        "blocking": [],
+    }
+    state["next_issue"] = number + 1
+    save(state)
+    if os.environ.get("MI_GITHUB_INDETERMINATE_CREATE") == "1":
+        fail("create outcome is indeterminate")
+    print(url)
+    raise SystemExit(0)
+
+if ARGV[:2] == ["issue", "close"]:
+    key = issue_number(ARGV[2]) if len(ARGV) > 2 else ""
+    issue = state["issues"].get(key)
+    if issue is None:
+        fail("issue not found")
+    issue["state"] = "CLOSED"
+    issue["stateReason"] = "NOT_PLANNED" if flag("--reason") == "not planned" else "COMPLETED"
+    save(state)
+    print(issue["url"])
+    raise SystemExit(0)
+
+if ARGV[:2] == ["issue", "reopen"]:
+    key = issue_number(ARGV[2]) if len(ARGV) > 2 else ""
+    issue = state["issues"].get(key)
+    if issue is None:
+        fail("issue not found")
+    issue["state"] = "OPEN"
+    issue["stateReason"] = None
+    save(state)
+    print(issue["url"])
+    raise SystemExit(0)
+
+fail("unsupported command")

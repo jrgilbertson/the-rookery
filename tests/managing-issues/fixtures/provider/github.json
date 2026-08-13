@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "principal": "fixture-user",
+  "repository": {
+    "id": "R_fixture",
+    "nameWithOwner": "example/project",
+    "url": "https://github.com/example/project",
+    "hasIssuesEnabled": true,
+    "isArchived": false,
+    "viewerPermission": "ADMIN"
+  },
+  "next_issue": 3,
+  "issues": {
+    "1": {
+      "id": "I_1",
+      "number": 1,
+      "title": "Existing issue",
+      "body": "## Problem\n\nOld text\n",
+      "state": "OPEN",
+      "stateReason": null,
+      "updatedAt": "2026-08-12T00:00:00Z",
+      "url": "https://github.com/example/project/issues/1",
+      "labels": [{"name": "priority:high"}],
+      "assignees": [],
+      "issueType": null,
+      "parent": null,
+      "subIssues": [],
+      "blockedBy": [],
+      "blocking": []
+    }
+  },
+  "shadow_repositories": ["example/shadow"]
+}

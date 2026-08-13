@@ -196,8 +196,9 @@ caveat naming what could not be read and which conclusions it weakens. Pair
 each machine outcome with a one-clause gloss: `applied` — done and confirmed
 in the tracker; `already_satisfied` — already this way, nothing changed;
 `failed` — the tracker rejected it, nothing changed; `indeterminate` —
-attempted but unconfirmed, check the tracker before retrying; `manual` — needs
-the operator to do it in the tracker, with the reason named.
+attempted but unconfirmed; check the tracker, and treat any retry as a new
+effect that needs its own approval; `manual` — needs the operator to do it in
+the tracker, with the reason named.
 
 Completion: every requested issue or effect remains visible as current,
 blocked, unresolved, or verified, with the canonical tracker still the only

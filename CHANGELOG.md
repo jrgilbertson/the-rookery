@@ -13,6 +13,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- `repo-gardener` lane contracts now bind five sensing floors to every lane
+  verdict (lane-specific evidence, census honesty, bodies-not-labels, honest
+  self-grading, fan-out honesty), and the repository/test/code-health lane
+  performs a rotation-based bounded code inspection of actual source each run.
+  A recall-probe scoring protocol (`tests/repo-gardener/recall-protocol.md`)
+  lets dogfood runs be scored against known findings kept outside the tree.
+
 - Added `repo-gardener`, a portable repository-health parent loop. It surveys
   nine lanes, deepens evidence-justified targets, and may supervise a
   live-policy-bounded child through an unmerged pull request.
@@ -106,8 +113,8 @@ looked" surface. GitHub Releases mirror its entries.
   to `references/fetch-floor.md`; both descriptions pruned to triggers and
   outcomes; positive briefing register over ban catalogs; SSOT for tip residual,
   incomplete-history caps, edit-snapshot semantics, and PR helper exit → status
-  mapping. Leading words: *incomplete history*, *theme bins*, *brief*,
-  *recompose*, *status word*.
+  mapping. Leading words: _incomplete history_, _theme bins_, _brief_,
+  _recompose_, _status word_.
 - Owner-facing readouts for `checking-merge-readiness` and
   `checking-pr-readiness` use a Minto pyramid readout in continuous prose
   (answer first with producers named; MECE why; evidence under driving reasons

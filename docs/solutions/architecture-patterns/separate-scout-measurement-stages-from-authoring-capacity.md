@@ -98,15 +98,18 @@ it as a quality, safety, permission, or readiness verdict
 
 ### Reread live policy at mutation boundaries
 
-Child authoring requires affirmative global source-mutation permission, a
-positive `boundaries.maximum_new_child_prs_per_run`, and `mutation: true` for
-the owning lane. Missing or false permission denies authoring. Resolve and
-refresh the configured remote default branch before reading the installed
-policy at parent dispatch, child push, child PR creation, and parent closing.
-Record revision changes, then evaluate the permission required by the current
+Child authoring requires exact target repository identity, every path inside
+the policy's effective include/exclude scope, affirmative global
+source-mutation permission, a positive
+`boundaries.maximum_new_child_prs_per_run`, and `mutation: true` for the owning
+lane. Missing or false permission, scope mismatch, or current overlapping work
+denies authoring. Resolve and refresh the configured remote default branch
+before reading policy at parent dispatch, child push, child PR creation, and
+parent closing. Recheck native overlap before dispatch and PR creation. Record
+revision changes, then evaluate the permission required by the current
 operation. Only an actual current denial stops that mutation and its dependents;
 a benign revision change does not block closing or unrelated read-only work
-(`skills/repo-gardener/references/policy-and-entry-modes.md:3-24`).
+(`skills/repo-gardener/references/policy-and-entry-modes.md`).
 
 Never fall back to the bundled starter. It intentionally has zero child
 capacity and all lane mutations disabled
@@ -116,9 +119,11 @@ capacity and all lane mutations disabled
 
 Create a persistent child worktree only for work intended to become one PR.
 The child owns planning, implementation, simplification, code review,
-repository gates, PR readiness, commit, push, and PR creation. The parent owns
-breadth, depth, selection, policy checks, tracker writes, supervision, and the
-morning report (`skills/repo-gardener/SKILL.md:73-84`).
+repository gates, commit, owner-facing PR readiness on that clean exact commit,
+owner-decision and evidence-pack handoff, push/PR policy revalidation, push, and
+PR creation. The parent owns breadth, depth, selection, dispatch policy checks,
+tracker writes, supervision, and the morning report
+(`skills/repo-gardener/SKILL.md`).
 
 Freshly read the native repository, PR number, branch, head SHA, state, and
 checks before reporting the child. Do not mirror that lifecycle into a custom

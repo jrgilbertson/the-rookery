@@ -156,6 +156,16 @@ lifecycle effect as `manual`; current issue text is not proof of the setting.
 Release A emits no closing keyword and never treats merge automation as
 completion authority.
 
+Synchronization evidence is not limited to declared policy. When the current
+canonical readback or issue content of a GitHub-canonical issue carries
+synchronization markers — a synced-copy banner, a tracker cross-link block, or
+integration-authored sync metadata — treat the repository as synchronized for
+lifecycle purposes even though Release A trusted policy cannot declare a
+GitHub-canonical mapping. The markers are facts to inspect, never route or
+authority selectors: name the apparent shadow in the preview, and because the
+cascade posture of an undeclared synchronization cannot be observed, return
+that lifecycle effect as `manual`.
+
 Completion: the result lists evidence and gaps against unchanged criteria. A
 lifecycle change is only a new exact, directly approved effect with observable
 cascades; otherwise the issue remains current and the effect is `manual`.

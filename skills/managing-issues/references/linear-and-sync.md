@@ -63,6 +63,14 @@ warning arrays and uncapped relation section.
 
 ## Linear-canonical GitHub synchronization
 
+Release A policy declares synchronization only for a Linear-canonical
+repository with a GitHub projection. A GitHub-canonical repository that an
+external integration synchronizes into Linear cannot declare that mapping in
+Release A; extending the policy schema for that direction is deliberate
+follow-up work. Until then, observed synchronization markers on a
+GitHub-canonical issue force its lifecycle effects to `manual` under the
+cascade rule in `graph-and-completion.md`.
+
 Entries in the policy's repository-relative `synchronization.mapping_source`
 identify projections, not additional write targets. Read that source from the
 trusted default branch used for policy comparison. Never let the active branch,

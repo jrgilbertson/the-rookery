@@ -13,6 +13,11 @@ fixture_bootstrap "$script_dir"
 
 imsg_dir="$fixture_dir/specimens/$PCOS_FIXTURE_SPECIMEN/imsg"
 [[ -d "$imsg_dir" ]] || die "unknown Messages fixture specimen"
+state_dir="$fixture_root/imsg-$PCOS_FIXTURE_SPECIMEN"
+stage_file="$state_dir/stage"
+fixture_prepare_state_dir "$state_dir" "$stage_file"
+[[ -f "$stage_file" ]] || printf '0\n' > "$stage_file"
+[[ $(<"$stage_file") =~ ^[0-3]$ ]] || die "invalid Messages fixture stage"
 
 trace() {
   local operation=$1 target=$2 result=$3 completeness=$4
@@ -26,9 +31,16 @@ reject() {
   die "$reason"
 }
 
+require_stage() {
+  local expected=$1 reason=$2
+  [[ $(<"$stage_file") == "$expected" ]] || reject "$reason"
+}
+
 if [[ $# -eq 1 && "$1" == --version ]]; then
+  require_stage 0 "Messages preflight must be the first operation"
   printf 'imsg fixture 1.0\n'
   trace preflight messages_interface success not_applicable
+  printf '1\n' > "$stage_file"
   exit 0
 fi
 
@@ -38,14 +50,17 @@ shift
 
 case "$operation" in
   chats)
+    require_stage 1 "Messages chats requires a successful preflight"
     [[ $# -eq 3 && "$1" == --limit && "$2" =~ ^[1-9][0-9]*$ && "$3" == --json ]] ||
       reject "unsupported chats query"
     [[ "$2" == "$(<"$imsg_dir/chats-limit")" ]] || reject "chats limit did not match the bounded fixture"
     sed -n '1,$p' "$imsg_dir/chats.json"
     printf '{"operation":"chats","target":"messages_chats","result":"success","completeness":"complete","limit":"%s","returned":"1"}\n' \
       "$2" >> "$trace_path"
+    printf '2\n' > "$stage_file"
     ;;
   history)
+    require_stage 2 "Messages history requires a successful chats query"
     chat_id="" start="" end="" limit="" json=0
     while [[ $# -gt 0 ]]; do
       case "$1" in
@@ -67,6 +82,7 @@ case "$operation" in
     [[ "$evidence_token" =~ ^[a-z][a-z0-9_]*$ ]] || reject "unsafe Messages evidence token"
     printf '{"operation":"history","target":"messages_history","result":"success","completeness":"complete","chat":"%s","start":"%s","end":"%s","limit":"%s","evidence":"%s"}\n' \
       "$chat_id" "$start" "$end" "$limit" "$evidence_token" >> "$trace_path"
+    printf '3\n' > "$stage_file"
     ;;
   *) reject "unsupported Messages operation" ;;
 esac

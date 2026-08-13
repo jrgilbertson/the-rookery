@@ -157,9 +157,11 @@ Test proposed outcomes against strategy, calendar reality, active obligations,
 relationships, health and recovery, and opportunity cost. Optimize for
 sustainable value across the whole system rather than maximizing task volume.
 Keep experiments small enough to learn from and specific enough to revisit.
-Apply the shared intention contract to each independent next-week outcome,
-priority, experiment, or boundary after the user has supplied or accepted the
-interpretation it depends on.
+Apply the shared intention contract as soon as each independent next-week
+outcome, priority, experiment, or boundary is proposed. For an agent-originated
+candidate, show its authoritative current basis, frame its desired outcome
+conditionally for the user's acceptance, and name its observable closure
+evidence; keep it explicitly unowned until the user accepts it.
 
 When a repeated insight could help a real audience, suggest advancing no more
 than one or two worthwhile writing pieces. Preserve the user's authorship of

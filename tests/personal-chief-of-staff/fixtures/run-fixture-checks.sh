@@ -159,25 +159,41 @@ assert_trace '"operation":"read","target":"current_work","result":"success","com
 assert_trace '"operation":"read","target":"calendar","result":"success","completeness":"complete"'
 
 new_run d1g1
+if imsg chats --limit 10 --json >/dev/null 2>&1; then
+  fail "Messages chats before preflight was accepted"
+fi
+if imsg history --chat-id group-1 \
+  --start 2026-08-05T00:00:00-07:00 \
+  --end 2026-08-06T00:00:00-07:00 --limit 100 --json >/dev/null 2>&1; then
+  fail "Messages history before preflight was accepted"
+fi
 output=$(imsg --version)
 [[ "$output" == 'imsg fixture 1.0' ]] || fail "Messages preflight output"
 assert_trace '"operation":"preflight","target":"messages_interface","result":"success"'
+if imsg history --chat-id group-1 \
+  --start 2026-08-05T00:00:00-07:00 \
+  --end 2026-08-06T00:00:00-07:00 --limit 100 --json >/dev/null 2>&1; then
+  fail "Messages history before chats was accepted"
+fi
+
+new_run d1g1
+imsg --version >/dev/null
+if imsg chats --limit 11 --json >/dev/null 2>&1; then
+  fail "non-prescribed Messages chat limit was accepted"
+fi
 output=$(imsg chats --limit 10 --json)
 [[ "$output" == *'"id":"group-1"'* ]] || fail "Messages chat output"
+if imsg history --chat-id group-1 \
+  --start 2026-08-05T00:00:00-07:00 \
+  --end 2026-08-06T00:00:00-07:00 --limit 101 --json >/dev/null 2>&1; then
+  fail "non-prescribed Messages history limit was accepted"
+fi
 output=$(imsg history --chat-id group-1 \
   --start 2026-08-05T00:00:00-07:00 \
   --end 2026-08-06T00:00:00-07:00 --limit 100 --json)
 [[ "$output" == *'"sender":"+12135550101"'* ]] || fail "Messages history output"
 assert_trace '"operation":"chats","target":"messages_chats","result":"success","completeness":"complete"'
 assert_trace '"operation":"history","target":"messages_history","result":"success","completeness":"complete"'
-if imsg chats --limit 11 --json >/dev/null 2>&1; then
-  fail "non-prescribed Messages chat limit was accepted"
-fi
-if imsg history --chat-id group-1 \
-  --start 2026-08-05T00:00:00-07:00 \
-  --end 2026-08-06T00:00:00-07:00 --limit 101 --json >/dev/null 2>&1; then
-  fail "non-prescribed Messages history limit was accepted"
-fi
 if imsg send --chat-id group-1 --text unexpected >/dev/null 2>&1; then
   fail "Messages write operation was accepted"
 fi
@@ -208,6 +224,33 @@ obsidian vault=fixture-vault append path=Actions/task.md content='approved next 
 output=$(obsidian vault=fixture-vault read path=Actions/task.md)
 [[ "$output" == 'manual context with [[existing wiki link]];approved next step' ]] ||
   fail "Obsidian preservation fixture readback"
+
+new_run o1t1
+obsidian vault=fixture-vault read path=Actions/task.md >/dev/null
+set +e
+obsidian vault=fixture-vault append path=Actions/task.md \
+  content='approved next step' silent >/dev/null 2>&1 &
+first_append_pid=$!
+obsidian vault=fixture-vault append path=Actions/task.md \
+  content='approved next step' silent >/dev/null 2>&1 &
+second_append_pid=$!
+wait "$first_append_pid"
+first_append_status=$?
+wait "$second_append_pid"
+second_append_status=$?
+set -e
+if [[ "$first_append_status" -eq 0 && "$second_append_status" -eq 0 ]] ||
+  [[ "$first_append_status" -ne 0 && "$second_append_status" -ne 0 ]]; then
+  fail "concurrent Obsidian appends did not produce exactly one winner"
+fi
+successful_append_count=$(grep -Fc \
+  '"operation":"append","target":"task_note","result":"success"' \
+  "$PCOS_FIXTURE_TRACE")
+[[ "$successful_append_count" -eq 1 ]] ||
+  fail "concurrent Obsidian appends recorded an invalid success count"
+output=$(obsidian vault=fixture-vault read path=Actions/task.md)
+[[ "$output" == 'manual context with [[existing wiki link]];approved next step' ]] ||
+  fail "concurrent Obsidian append changed the expected state"
 
 new_run o2r2
 output=$(obsidian vault=fixture-vault read path=Actions/recovery.md)
@@ -323,7 +366,8 @@ fi
   fail "Obsidian state symlink escaped the fixture root"
 
 unexpected_file=$(find "$run_root" -type f \
-  ! \( -name trace.jsonl -o -name read-index -o -name read -o -name written -o -name content \) \
+  ! \( -name trace.jsonl -o -name read-index -o -name read -o -name written -o -name content \
+    -o -name stage \) \
   -print -quit)
 [[ -z "$unexpected_file" ]] || fail "unexpected fixture state file"
 

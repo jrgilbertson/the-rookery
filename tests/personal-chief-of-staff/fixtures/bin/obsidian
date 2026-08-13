@@ -99,6 +99,7 @@ index_file="$state_dir/read-index"
 evidence_read_file="$state_dir/read"
 written_file="$state_dir/written"
 content_file="$state_dir/content"
+write_claim_dir="$state_dir/write-claim"
 fixture_prepare_state_dir \
   "$state_dir" "$index_file" "$evidence_read_file" "$written_file" "$content_file"
 [[ -f "$index_file" ]] || printf '0\n' > "$index_file"
@@ -124,6 +125,7 @@ if [[ "$operation" == append ]]; then
   current=$(<"$content_file")
   [[ "$current" == "$before" ]] || reject append "fixture state no longer matches the exact before value"
   [[ "$before$content" == "$after" ]] || reject append "append content does not produce the exact after value"
+  mkdir "$write_claim_dir" 2>/dev/null || reject append "an extra write is not permitted"
   printf '%s' "$after" > "$content_file"
   printf '1\n' > "$written_file"
   trace append success not_applicable

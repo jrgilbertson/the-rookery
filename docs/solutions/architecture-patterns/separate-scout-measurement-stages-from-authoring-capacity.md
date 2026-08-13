@@ -129,7 +129,7 @@ Freshly read the native repository, PR number, branch, head SHA, state, and
 checks before reporting the child. Do not mirror that lifecycle into a custom
 ownership ledger. The automation does not merge or create follow-up issues;
 the retained parent report carries issue-ready recommendations for owner review
-(`skills/repo-gardener/SKILL.md:82-89`).
+(`skills/repo-gardener/SKILL.md`).
 
 ## Why This Matters
 

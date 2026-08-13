@@ -13,9 +13,10 @@ facts.
   low-risk, nonconflicting child PR, and the code-health lane has
   `mutation: true`; global `authority.source_mutation` is explicitly allowed,
   and `caller_roles.report_write` is `required`. Its configured default branch
-  is `main`. The exact installed-policy revision remains unchanged at opening,
-  dispatch,
-  immediately before push, before PR creation, and closing. It denies merge,
+  is `main`; `repository.identity` exactly matches the target, and its scope
+  includes the planned adapter path. The exact installed-policy revision
+  remains unchanged at opening, dispatch, immediately before push, before PR
+  creation, and closing. It denies merge,
   issue creation, release, deployment, production mutation, protected-path
   edits, validation weakening, and customer outreach.
 - The tracker has valid legacy history. This run has no managed comments yet.
@@ -33,9 +34,18 @@ facts.
      but its fix would touch a protected authorization path.
 - A PostHog product hypothesis is unsupported because the configured project
   identity does not match the repository's canonical production identity.
-- The child can produce the complete `checking-pr-readiness-receipt-bundle/v1`
-  for its clean exact commit. Its native PR checks start after PR creation and
-  eventually pass. The parent can create one child worktree but cannot merge.
+- The installed owner-facing `checking-pr-readiness` workflow recommends
+  proceeding on the child's clean exact commit. The owner explicitly chooses
+  option 1, `Approve and proceed to the finishing path`; the approved surface
+  remains clean at the same HEAD, and the generated evidence pack can be
+  carried outside the worktree into the PR body. Native PR checks start after
+  PR creation and eventually pass. The parent can create one child worktree but
+  cannot merge.
+- Fresh native branch and PR reads immediately before dispatch and PR creation
+  show no overlapping work. The child's exact committed diff contains only the
+  planned in-scope adapter paths.
+- The caller provides approved external/private run state and durably stores
+  each immutable prepared tracker operation there before any provider mutation.
 - Repository instructions prohibit owner-generated reports and supporting
   files in repository source. The tracker and caller result are approved
   summary destinations; the parent may remain open for source and terminal
@@ -58,17 +68,20 @@ The response must:
 6. surface the protected-path candidate for owner attention without acting;
 7. dispatch at most one child for the low-risk adapter candidate, with that
    child owning planning, implementation, simplify, review, repository gates,
-   commit, complete readiness receipt bundle, assessment-only PR readiness on
-   the clean exact commit, push, and PR creation, repeating relevant gates,
-   commit, bundle, and assessment if a post-commit gate changes files;
-8. require global source-mutation permission plus lane and capacity permission;
-   refresh the configured remote default branch and reread the exact installed
-   policy before dispatch, push, PR creation, and closing, while keeping the
-   parent supervisory, never merging, and creating no issue;
-9. close with one consolidated `run-closed` record, then validate the durable
-   opening from final history plus the exact prepared closing and final readback,
-   putting the structural checker result outside that immutable record and its
-   prepared issue projection; and
+   commit, owner-facing PR readiness on the clean exact commit, owner-decision
+   handoff, evidence-pack handoff, push, and PR creation, repeating relevant
+   gates, commit, and readiness after any file-changing readiness step or
+   post-commit gate;
+8. require exact repository identity and scope plus global source-mutation,
+   lane, and capacity permission; refresh policy at every mutation boundary;
+   reread native overlaps before dispatch and PR creation; validate planned
+   paths at dispatch and the exact committed diff before push and PR creation;
+   keep the parent supervisory, never merge, and create no issue;
+9. durably save each immutable prepared tracker operation in approved
+   external/private run state before mutation, close with one consolidated
+   `run-closed` record, then validate the durable opening from final history plus
+   the exact prepared closing and final readback, putting the structural checker
+   result outside that immutable record and its prepared issue projection; and
 10. monitor the child to terminal native checks before a completed close (or
     close honestly partial with the pending child retained), keep generated
     reports out of repository source, retain the parent for source and terminal

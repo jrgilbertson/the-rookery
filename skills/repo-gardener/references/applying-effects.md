@@ -16,10 +16,14 @@ but the parent must not mutate the tracker.
 ## Prepare and write
 
 Normalize a complete raw tracker snapshot first. Prepare one operation with
-`effect-v1` and keep its returned body and comment bytes immutable. The caller
-alone decides whether its configured GitHub capability may apply those exact
-bytes. This skill defines no wrapper, provider client, credential, or planning
-authority.
+`effect-v1` and keep its returned body and comment bytes immutable. Before the
+first provider mutation, persist that exact prepared object in caller-approved
+external or private run state outside repository source, where a recovery
+parent can read it after a process failure. If that state is unavailable, stop
+before writing. This is recovery material, not another tracker record or a
+custom provider wrapper. The caller alone decides whether its configured GitHub
+capability may apply those exact bytes. This skill defines no wrapper, provider
+client, credential, or planning authority.
 
 After the write, obtain the complete issue and every comment page. Verify the
 immutable prepared object against the same pre-read and the full post-read.
@@ -29,6 +33,9 @@ Accept only `observed` or `already satisfied` before continuing. `failed` and
 ## Recover an uncertain write
 
 Never retry blindly. Reuse the original prepared object and operation ID.
+Load them from the caller-owned recovery state when the original parent is not
+available. Retain uncertain material for owner/recovery inspection; discard it
+only after exact verification proves the operation complete or not invoked.
 
 - If body and comment already match, perform zero writes.
 - If the body is the exact prepared body and its anchor is exactly one receipt

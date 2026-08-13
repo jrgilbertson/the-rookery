@@ -65,28 +65,35 @@ write neither `run-opened` nor `run-closed`, invoke neither `effect-v1` nor
 5. Decide whether current evidence justifies new authored work. Do not invent
    work to fill capacity. Existing PRs block only overlapping work.
 6. Immediately before child dispatch, perform the live-policy refresh, compare
-   its exact revision with `run-opened`, and reevaluate current authoring
-   permission. Authoring requires an affirmatively allowed
+   its exact revision with `run-opened`, reread native branches and PRs for
+   overlap, and reevaluate current authoring permission. Authoring requires an
+   exact target `repository.identity`, planned paths inside the policy's
+   effective include/exclude scope, affirmatively allowed
    `authority.source_mutation`, a positive child-PR limit, and `mutation: true`
-   for the owning lane. A missing, denied, false, zero, or revoked gate denies
-   dispatch. For the next single-child slice, use one child worktree for one
-   branch and one PR.
-7. Require the child to plan, implement, simplify, review, and pass repository
-   gates and commit the result. The caller-authenticated runner used by the
-   child must supply the complete existing
-   `checking-pr-readiness-receipt-bundle/v1` interface to
-   `checking-pr-readiness` assessment-only, bound to that clean exact commit.
-   Require its `pass` receipt before push. `action-required`, or an absent
-   readiness skill, interface, or authenticated runner, stops push and
-   preserves the commit with the exact gap. If a post-commit gate changes files,
-   repeat the relevant review and gates, commit, and assess the new exact
-   commit with a complete bundle.
+   for the owning lane. A missing, mismatched, denied, false, zero, revoked, or
+   overlapping gate denies dispatch. For the next single-child slice, use one
+   child worktree for one branch and one PR.
+7. Require the child to plan, implement, simplify, review, pass repository
+   gates, and commit the result. On that clean exact commit, run the installed
+   `checking-pr-readiness` owner-facing workflow. Surface its one decision to
+   the owner. Only option 1, `Approve and proceed to the finishing path`,
+   permits push. `Request changes`, `Stop and file follow-up work`, an absent
+   skill, or no owner response preserves the commit as `saved_without_pr` with
+   the exact gap. Options 3 and 4 recompose within readiness and are not
+   approval. Never manufacture owner approval or commit generated
+   readiness/support artifacts. Any readiness-dispatched or post-commit change
+   repeats the relevant review and gates, commits, and reruns readiness against
+   the new exact clean surface. Carry the approved evidence pack outside the
+   repository worktree into the PR body.
 8. The child, not the parent, owns push and PR creation. Immediately before each
-   operation, it performs the live-policy refresh and reevaluates all three
-   authoring gates. It pushes only the assessed exact commit while permission
-   holds, then creates the PR only after a second refresh confirms permission.
-   A denied push preserves the local commit; a denial after push stops PR
-   creation and preserves the saved child state for review.
+   operation, it performs the live-policy refresh and revalidates the exact
+   committed diff against repository identity, effective scope, and all
+   authoring gates. It also requires clean HEAD to equal the exact commit and
+   working surface the owner approved. It pushes only that approved commit
+   while permission holds. Before PR creation, it also rereads native branches
+   and PRs and stops if current work overlaps. A denied push preserves the local
+   commit; a denial or overlap after push stops PR creation and preserves the
+   saved child state for review.
 9. After PR creation, the parent monitors freshly read native checks and review
    state to a truthful child terminal state. If a bounded caller run must close
    while either remains pending, retain and report the child as `pending`, and
@@ -118,13 +125,13 @@ morning report. It does not implement a child's change or repeat the child's
 review and readiness work.
 
 Each selected child owns its own planning, implementation, simplification,
-code review, repository gates, commit, assessment-only PR-readiness check on a
-clean exact commit with the complete caller-authenticated receipt bundle,
-live-policy refreshes, push, and PR creation. Use read-only subagents for
-scouting and review; create a persistent child worktree only for work intended
-to become one PR. The parent supervises and monitors after creation. Native PR
-facts are authoritative: freshly read repository, PR number, branch, head SHA,
-state, checks, and review status before reporting the child result.
+code review, repository gates, commit, owner-facing PR-readiness check on a
+clean exact commit, owner-decision handoff, live-policy refreshes, push, and PR
+creation. Use read-only subagents for scouting and review; create a persistent
+child worktree only for work intended to become one PR. The parent supervises
+and monitors after creation. Native PR facts are authoritative: freshly read
+repository, PR number, branch, head SHA, state, checks, and review status before
+reporting the child result.
 
 No automated run merges a PR or creates a follow-up issue. Issue-ready
 recommendations belong in the retained parent report for owner review. Never

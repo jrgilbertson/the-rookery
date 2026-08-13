@@ -198,7 +198,8 @@ If a run opens under `policy:1` and the owner installs `policy:2`:
 - a denied tracker write before close prevents a false structural-closure
   claim and becomes an interrupted caller handoff.
 
-The active behavioral case pins all three boundaries
+The active behavioral case pins these boundaries plus opening denial,
+repository/scope mismatch, and newly overlapping work
 (`tests/repo-gardener/cases/policy-tightening-during-run.md`).
 
 ### Keep measurement yield separate from capacity
@@ -208,11 +209,11 @@ deduplicate them to one underlying problem, report all three values. If the
 single authoring slot is occupied, the run may still sense, deepen, and
 recommend; it simply may not dispatch another child.
 
-Fresh-context dogfood passed 10/10 one-child behaviors, 6/6 policy-tightening
+Fresh-context dogfood passed 10/10 one-child behaviors, 10/10 policy-tightening
 behaviors, and 8/8 depth/data-trust behaviors. The structural suite also
 covered a two-page legacy history and adversarial identity, lineage, sequence,
 operation, comment, hash, pagination, count, duplicate, missing, and
-interrupted mutations (`tests/repo-gardener/log.md:41-48`).
+interrupted mutations (`tests/repo-gardener/log.md`).
 
 ## Related
 

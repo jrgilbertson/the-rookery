@@ -412,6 +412,9 @@ def main() -> int:
         second = expect_valid(POLICIES / "valid-github.json", repo_root, expected_github)
         require(first == second, "valid policy normalization is not deterministic")
         check_relative_active_policy_argument(repo_root, expected_github)
+        expected_github_dot_repo = copy.deepcopy(expected_github)
+        expected_github_dot_repo["target"] = "exampleorg/.github"
+        expect_valid(POLICIES / "valid-github-dot-repo.json", repo_root, expected_github_dot_repo)
         expect_valid(
             POLICIES / "valid-linear-sync.json",
             repo_root,
@@ -468,6 +471,11 @@ def main() -> int:
             "mappings.leaf_estimate.small must be a nonnegative integer",
         )
         expect_invalid(
+            POLICIES / "invalid-linear-duplicate-value.json",
+            repo_root,
+            "mappings.readiness: Linear value Ready is mapped by more than one key",
+        )
+        expect_invalid(
             POLICIES / "invalid-github-numeric-mapping.json",
             repo_root,
             "mappings.leaf_estimate.small must be text",
@@ -486,6 +494,16 @@ def main() -> int:
             POLICIES / "invalid-github-shared-label.json",
             repo_root,
             "GitHub label readiness:ready is mapped by more than one of readiness, priority, leaf_estimate",
+        )
+        expect_invalid(
+            POLICIES / "invalid-github-dot-repo.json",
+            repo_root,
+            "GitHub target must be owner/repository",
+        )
+        expect_invalid(
+            POLICIES / "invalid-github-dotdot-repo.json",
+            repo_root,
+            "GitHub target must be owner/repository",
         )
         expect_invalid(
             POLICIES / "github-synchronization.json",

@@ -27,7 +27,7 @@ LINEAR_PRIORITIES = {"none", "low", "medium", "high", "urgent"}
 MAPPING_KEY = re.compile(r"^[a-z0-9][a-z0-9_-]{0,63}$")
 GITHUB_OWNER_REPO = (
     r"^(?P<owner>[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?)/"
-    r"(?P<repo>[A-Za-z0-9](?:[A-Za-z0-9._-]{0,98}[A-Za-z0-9._-])?)"
+    r"(?P<repo>(?!\.\.?(?:$|#))[A-Za-z0-9._-]{1,100})"
 )
 GITHUB_TARGET = re.compile(GITHUB_OWNER_REPO + r"$")
 LINEAR_TARGET_PART = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$")
@@ -260,6 +260,17 @@ def require_unique_github_labels(mappings: dict[str, Any]) -> None:
             seen[github_value] = field
 
 
+def require_unique_linear_mappings(mappings: dict[str, Any]) -> None:
+    for field in MAPPING_FIELDS:
+        seen: set[str | int] = set()
+        for linear_value in mappings[field].values():
+            require(
+                linear_value not in seen,
+                f"mappings.{field}: Linear value {linear_value} is mapped by more than one key",
+            )
+            seen.add(linear_value)
+
+
 def normalize_mapping_source(value: Any) -> tuple[str, tuple[str, ...]]:
     source = require_concrete_text(value, "synchronization.mapping_source")
     require(
@@ -312,6 +323,8 @@ def normalize_policy(value: dict[str, Any]) -> dict[str, Any]:
 
     if provider == "github":
         require_unique_github_labels(normalized["mappings"])
+    else:
+        require_unique_linear_mappings(normalized["mappings"])
 
     if "synchronization" in value:
         synchronization = value["synchronization"]

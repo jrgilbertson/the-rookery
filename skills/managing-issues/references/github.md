@@ -81,8 +81,13 @@ is `manual` and permits no write.
 The sole exception is the one-hop cross-repository boundary read
 `graph-and-completion.md` requires for an edge that crosses the family
 boundary: take the boundary URL only from the validated canonical read's own
-`parent`, `subIssues`, `blockedBy`, or `blocking` entries, never from
-operator-supplied text, an issue body, or search results; issue that read
+`parent`, `subIssues`, `blockedBy`, or `blocking` entries, or from the native
+paginated relationship endpoint responses (`sub_issues`,
+`dependencies/blocked_by`, `dependencies/blocking`) that
+`graph-and-completion.md` requires for exhaustion when read for a
+canonical-family node during coverage traversal -- both are authoritative
+provider API responses, never operator-supplied text, an issue body, or
+search results; issue that read
 with `-R` host-qualified to the
 boundary node's own repository; and require its returned `url`/`number` to
 match back against that repository exactly, mirroring the rule above. A
@@ -123,7 +128,12 @@ preview. The pre-read that resolves the selected value also identifies the
 prior mapped value to remove. The policy validator rejects commas and
 double quotes in these label-backed values because `gh` parses one label flag
 argument as CSV; never bypass that rejection by constructing a label command
-directly.
+directly. This CSV constraint is not limited to policy-mapped values: `gh`
+parses every `--label`, `--add-label`, or `--remove-label` argument the same
+way, so a selected label whose name contains a comma or double quote --
+policy-mapped or operator-selected -- makes that effect `manual`, naming the
+reason, because no reliable inline encoding preserves an exact single-label
+effect through that CSV parsing.
 The create command's URL is the new identity only when it is an exact issue URL
 beneath the canonical repository URL. Read that exact URL back and repeat the
 returned URL/number repository check above. If the command fails or returns no

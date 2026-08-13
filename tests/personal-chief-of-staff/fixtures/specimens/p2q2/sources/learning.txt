@@ -1,0 +1,4 @@
+2026-02-01: Run a pre-mortem before irreversible commitments; complete March journals show all commitments were reversible.
+2026-03-25: Require a named owner before opening a new workstream; no later durable evidence is available.
+Undated: Write every day.
+2025-12-01: Use two reviewers for production migrations; no surfaced thread or choice concerns migrations.

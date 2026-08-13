@@ -38,6 +38,14 @@ looked" surface. GitHub Releases mirror its entries.
 - Replaced the interactive workflow diagram with a static Field Guide Blueprint
   overview and reframed all seven section illustrations as compact panoramic
   markers, preserving their visual meaning while reducing reading interruption.
+- `personal-chief-of-staff` now makes each proposed intention recoverable in
+  natural prose from its current basis, user-approved outcome, and future
+  closure signal. Every visible response also follows its answer-first
+  synthesis with a response-scoped Source Access Audit that distinguishes
+  evidence, bounded empty reads, failures, missing configuration, declines,
+  and sources not needed for that response. Access gaps narrow only dependent
+  claims, action outcomes remain separate, and the audit creates no durable
+  state.
 - `personal-chief-of-staff` now adds evidence-gated proactive coaching to daily,
   weekly, and quarterly reviews. Longitudinal claims use only dated durable
   records from configured canonical Obsidian roles, deduplicate derived review

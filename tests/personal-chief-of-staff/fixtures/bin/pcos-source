@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+die() {
+  printf '%s\n' "$1" >&2
+  exit "${2:-64}"
+}
+
+script_dir=$(cd "$(dirname "$0")" && pwd -P)
+# shellcheck source=tests/personal-chief-of-staff/fixtures/lib/bootstrap.sh
+source "$script_dir/../lib/bootstrap.sh"
+fixture_bootstrap "$script_dir"
+
+source_dir="$fixture_dir/specimens/$PCOS_FIXTURE_SPECIMEN/sources"
+[[ -d "$source_dir" ]] || die "unknown role-source fixture specimen"
+phase_metadata="$fixture_dir/specimens/$PCOS_FIXTURE_SPECIMEN/actions/source-discovery-after-readback"
+
+trace() {
+  local token=$1 result=$2 completeness=$3 evidence=$4
+  printf '{"operation":"read","target":"%s","result":"%s","completeness":"%s","evidence":"%s"}\n' \
+    "$token" "$result" "$completeness" "$evidence" >> "$trace_path"
+}
+
+reject() {
+  local reason=$1 token=${2:-unrecognized}
+  trace "$token" rejected not_applicable none
+  die "$reason"
+}
+
+[[ $# -eq 2 && "$1" == read && "$2" == role=* ]] ||
+  reject "expected: pcos-source read role=<safe-role-token>"
+role=${2#role=}
+[[ "$role" =~ ^[a-z][a-z0-9_]*$ ]] || reject "unsafe role token"
+
+evidence_file="$source_dir/$role.txt"
+empty_marker="$source_dir/$role.empty"
+partial_file="$source_dir/$role.partial"
+failure_marker="$source_dir/$role.failure"
+trace_metadata="$source_dir/$role.trace"
+
+evidence_token=""
+if [[ -f "$trace_metadata" ]]; then
+  evidence_token=$(<"$trace_metadata")
+  [[ "$evidence_token" =~ ^[a-z][a-z0-9_]*$ ]] ||
+    reject "unsafe role evidence token" "$role"
+fi
+
+matches=0
+for candidate in "$evidence_file" "$empty_marker" "$partial_file" "$failure_marker"; do
+  [[ -e "$candidate" ]] && matches=$((matches + 1))
+done
+[[ $matches -eq 1 ]] || reject "unknown or ambiguous role fixture" "$role"
+
+if [[ -f "$phase_metadata" ]]; then
+  phase_role=$(<"$phase_metadata")
+  [[ "$phase_role" =~ ^[a-z][a-z0-9_]*$ ]] ||
+    reject "unsafe source-discovery phase role" "$role"
+  phase_file="$fixture_root/action-$phase_role/source-phase-complete"
+  if [[ ! -f "$phase_file" || -L "$phase_file" ]]; then
+    reject "source discovery requires completed action read/write/readback" "$role"
+  fi
+  fixture_require_single_link \
+    "$phase_file" "source-discovery phase must not have multiple hard links"
+  [[ "$(<"$phase_file")" == complete ]] ||
+    reject "source discovery requires completed action read/write/readback" "$role"
+fi
+
+state_dir="$fixture_root/source-$role"
+read_claim_dir="$state_dir/read-claim"
+fixture_prepare_state_dir "$state_dir"
+mkdir "$read_claim_dir" 2>/dev/null || reject "exactly one canonical role read is permitted" "$role"
+
+if [[ -f "$failure_marker" ]]; then
+  trace "$role" failure unknown "${evidence_token:-none}"
+  die "scripted authoritative role read failure" 69
+elif [[ -f "$empty_marker" ]]; then
+  trace "$role" success complete "${evidence_token:-none}"
+elif [[ -f "$partial_file" ]]; then
+  sed -n '1,$p' "$partial_file"
+  trace "$role" success truncated "${evidence_token:-partial_evidence}"
+else
+  sed -n '1,$p' "$evidence_file"
+  trace "$role" success complete "${evidence_token:-evidence_present}"
+fi

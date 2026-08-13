@@ -1,8 +1,9 @@
 ---
 title: "Put the test seam in the environment, not in the shipped skill"
 date: 2026-08-01
+last_updated: 2026-08-11
 category: conventions
-module: "skills/checking-merge-readiness"
+module: "agent-skill test harnesses"
 problem_type: convention
 component: testing_framework
 severity: high
@@ -11,12 +12,13 @@ applies_when:
   - "A test scenario would trip the artifact's degraded or fail-closed path on every case"
   - "Considering an instruction that tells a skill to accept supplied data as already fetched"
   - "Reviewing a shipped instruction whose only trigger is the wording of the invoking prompt"
-  - "Removing a mechanism that other prose in the same file referenced"
+  - "A fixture-backed executor could still reach a host connector, write outside disposable state, or hide the mounted artifact under test"
 symptoms:
   - "A clause in a shipped artifact exists only so the test suite can reach the full path"
   - "Every test scenario passes because each one exercises the carve-out as designed"
   - "The artifact cannot distinguish a test harness from any other caller who says the same words"
   - "A completion criterion still names a mechanism the body no longer contains"
+  - "A synthetic adapter accepts an unsafe operation, or a clean trace accompanies behavior the mounted skill would have forbidden or required"
 root_cause: test_scaffolding_in_production
 resolution_type: tooling_addition
 related_components:
@@ -31,6 +33,7 @@ tags:
   - prompt-triggerable-bypass
   - harness-design
   - dead-reference
+  - fixture-isolation
 ---
 
 # Put the test seam in the environment, not in the shipped skill
@@ -40,9 +43,10 @@ tags:
 `skills/checking-merge-readiness/SKILL.md` digests a reviewed pull request
 before its owner merges it. Step 2 fetches the description, the diff, and the
 review history through a fixed read-only verb set, listed in the skill as the
-only forge commands it runs: `gh pr view`, `gh pr diff`, and GraphQL queries
-for the `reviewThreads` connection with `isResolved`, for review submissions,
-and for the description's `userContentEdits` history.
+only forge commands it runs: `gh pr view`, `gh pr diff`, GraphQL queries for
+the `reviewThreads` connection with `isResolved`, review submissions, and the
+description's `userContentEdits` history, plus read-only `gh api` or GraphQL
+lookups for the base branch's host merge policy.
 
 When those commands cannot run, the skill is required to degrade rather than
 guess. It marks history-derived themes unavailable, names the gap, and caps
@@ -100,27 +104,67 @@ than an assurance from whoever invoked the skill.
    that strays fails instead of passing on silence. The stub's own self-check is
    logged as a test, verifying every read verb against all specimens.
 
-5. **State the safety rule positively in the artifact.** The replacement text
+5. **Treat the launcher as a separate isolation boundary.** A fixture binary
+   controls only calls that reach it. Before a behavioral run, inspect the
+   executor's reachable tool surface and remove host connectors, app tools,
+   credentials, and alternate implementations. If the launcher cannot prove
+   fixture-only exposure, record **not run** instead of retrying through a
+   broader environment.
+
+6. **Contain every fixture write after canonicalizing paths.** Reject a fixture
+   root inside the repository and a fixture root that contains the repository.
+   Pin traces to one exact regular-file leaf, reject symlinked trace and state
+   paths, and validate state files before initialization. A temporary-directory
+   intention is not a containment proof.
+
+7. **Make the adapter enforce the scenario's protocol.** Represent order as
+   fixture state. Reject write-before-read, readback-before-write, duplicate
+   writes, unknown roles, and query parameters that differ from the specimen's
+   exact bounds. A downstream grader cannot repair an adapter that permitted
+   the wrong operation.
+
+8. **Give failures real executable specimens.** A failure branch must emit a
+   distinct trace and nonzero exit. Do not ask the executor to imagine that a
+   call failed, and do not infer an empty or failed result from scenario prose.
+
+9. **Grade execution and presentation separately.** The trace proves what the
+   fixture executed. The rendered response proves what the agent told the
+   user. Successful reads do not prove that a mandatory access audit, authority
+   boundary, or evidence limitation was displayed.
+
+10. **State the safety rule positively in the artifact.** The replacement text
    names the failure it forbids rather than leaving a gap where the carve-out
    was. Prose that only omits a bypass invites the next author to reintroduce
    one.
 
-6. **When you remove a mechanism, sweep every reference that assumed it.** Grep
+11. **When you remove a mechanism, sweep every reference that assumed it.** Grep
    for the mechanism's vocabulary across the whole file, including completion
    criteria, examples, and compatibility notes, not just the paragraph you
    edited.
 
-7. **Explain the constraint where the harness lives.** The stub's header and the
+12. **Explain the constraint where the harness lives.** The stub's header and the
    "forge stub" section of
    `tests/checking-merge-readiness/cases/merge-digest-battery.md` both record
    why the fixtures are served through a fake binary instead of handed over as
    files. A future author who finds the indirection annoying needs that reason
    in front of them.
 
-8. **Record the superseded runs and say why they no longer count.** The battery
+13. **Record the superseded runs and say why they no longer count.** The battery
    log keeps the old file-fixture results under their own heading with a note
    that they tested a program the catalog no longer ships, and carries forward
    only the two findings whose fixes survive.
+
+14. **Prove the mounted artifact loaded before grading behavior.** Connector
+   isolation and artifact activation are separate requirements. Permit and
+   require read-only access to the skill, its shared resources, the originating
+   mode, and any newly selected mode before fixture I/O begins. If the launcher
+   cannot make that load observable, record **not run** or invalid rather than a
+   behavior failure.
+
+15. **Name invocation-owned source roles explicitly.** A private automation or
+   active invocation may require roles the public skill cannot bind. List each
+   canonical role token in the case, including roles expected to be **Not
+   configured**. “Other required sources” is not a gradeable source set.
 
 ## Why This Matters
 
@@ -131,6 +175,20 @@ caller a sentence that lifted exactly that refusal. Compare the two shapes. A
 stand-in binary changes what the environment returns, so its blast radius ends
 at the harness. A clause changes what the artifact believes, so its blast
 radius is every installation.
+
+The environment seam is itself a chain of custody. The launcher proves that
+only synthetic capabilities were reachable. The adapter proves that permitted
+operations stayed inside disposable state and followed the declared protocol.
+The trace proves which operations ran. The rendered response proves which
+access and authority claims were shown. A break at any link limits the result
+to what the remaining artifacts actually establish.
+
+This is why “the fake command was first on `PATH`” is evidence of intent, not
+proof of isolation, on a host that exposes tools outside process lookup. It is
+also why a correct trace cannot excuse an adapter that accepted a forbidden
+sequence, or a response that omitted a required Source Access Audit. The test
+must grade each layer instead of letting one green artifact stand in for all
+of them.
 
 The subtler cost is that the defect was invisible from inside the test suite.
 Every scenario exercised the carve-out as designed, and every scenario passed.
@@ -145,6 +203,46 @@ fetch path, the re-run surfaced two further skill bugs that the file-fixture
 runs had not: a clean run reported an evidence pack's absence the skill says
 never to report, and the thin-description step offered a candidate intent
 instead of asking the question open. Both are fixed in the current SKILL.md.
+
+A later recurrence in the personal-chief-of-staff battery exposed the other
+half of the same convention. Putting a stand-in command first on `PATH` did
+not by itself prove isolation. A launcher could still expose a host Obsidian or
+app connector outside `PATH`, and a permitted stand-in could still write
+through an unsafe root or symlink, accept the wrong Messages limit, or allow a
+write without its prerequisite read. The current harness therefore enforces
+both boundaries:
+
+- `tests/personal-chief-of-staff/fixtures/lib/bootstrap.sh` canonicalizes the
+  repository and fixture roots, rejects overlap in either direction, requires
+  the exact `trace.jsonl` leaf, and rejects symlinked or non-regular trace and
+  state paths.
+- `tests/personal-chief-of-staff/fixtures/bin/pcos-action` enforces one
+  pre-write read, at most one exact write, and a readback only after that
+  write. `tests/personal-chief-of-staff/fixtures/bin/imsg` requires the exact
+  specimen-owned query limits rather than any positive number.
+- Fixture-backed case launchers must expose only the declared fixture
+  commands. If they cannot prove that host alternatives are hidden, the case
+  is **not run**; it never falls back to a real tool.
+
+The expanded self-check in
+`tests/personal-chief-of-staff/fixtures/run-fixture-checks.sh` executes the
+negative states directly: ancestor-root and symlink escapes, missing fixture
+variables, wrong Messages bounds, write-before-read, readback-before-write,
+duplicate writes, and scripted source failures. This closes the gap between a
+fixture that looks constrained and one whose constraints can actually fail.
+
+Another recurrence exposed the inverse launcher failure. An isolated scenario
+allowed its six fixture commands but did not permit the executor to read the
+mounted `personal-chief-of-staff` package. The launcher permitted the exact
+action and review commands, yet the response omitted the skill-mandated Source
+Access Audit. That was not evidence of a product regression because the product
+had never loaded.
+After the launcher explicitly permitted and required the skill, shared
+resources, originating Wind-down reference, and newly requested Weekly
+reference, the frozen pre-fix skill rendered the table. Naming the five
+invocation-required but unbound Weekly roles then made each absence visible as
+**Not configured**. The tracked correction belongs to the case contract, not
+the shipped skill.
 
 Removal is not finished when the mechanism is gone. Step 2's completion
 criterion still accepted inputs "stipulated by the harness" after the body had
@@ -167,6 +265,13 @@ fragment that anyone can read and quote back.
 It applies with less force to a pure function with injected dependencies, where
 substituting the dependency is already the normal call shape and no
 accommodating instruction is tempting in the first place.
+
+Apply the full launcher-plus-adapter boundary whenever the real capability can
+read private data, mutate canonical records, communicate externally, or write
+inside the repository. It is also required when a case claims an exact finite
+window, at-most-once mutation, authoritative readback, or complete-empty or
+failed result. Those claims depend on the adapter rejecting every neighboring
+operation the case did not authorize.
 
 ## Examples
 
@@ -210,6 +315,53 @@ cannot read the expected verdict off a directory path.
 The ground-truth mapping stays in the case file, for the reader and the grader
 rather than the run.
 
+**The adapter boundary.** The personal-chief-of-staff bootstrap rejects both
+path-overlap directions rather than checking only that the fixture root is not
+below the repository:
+
+```bash
+case "$fixture_root/" in
+  "$repo_root/"*) die "fixture root must be outside the repository" ;;
+esac
+case "$repo_root/" in
+  "$fixture_root/"*) die "fixture root must not contain the repository" ;;
+esac
+```
+
+Its action stand-in then makes the mutation sequence executable instead of
+advisory:
+
+```bash
+[[ "$(<"$read_file")" == 1 ]] || reject write "write requires a pre-write read"
+[[ "$(<"$written_file")" == 0 ]] || reject write "an extra write is not permitted"
+[[ "$(<"$written_file")" == 1 ]] || reject readback "readback requires a prior write"
+```
+
+**The launcher boundary.** A case that needs a synthetic Obsidian command says
+more than “prepend the fixture directory to `PATH`.” It requires the launcher
+to expose only the declared fixture commands, not a host Obsidian or app tool.
+If that cannot be enforced, the case stops as **not run**. An unavailable safe
+harness is a narrower and more truthful result than a successful run through a
+real interface.
+
+**The activation boundary.** The same launcher must not interpret “only the
+declared fixture commands” as “the executor may read no instruction files.” A
+combined Wind-down-action and Weekly-review case permits read-only loading of
+the mounted skill, `source-behavior.md`, `review-bundle.md`, and both applicable
+mode references before the exact fixture sequence. Its active invocation also
+names `weekly_template`, `last_weekly_review`, `daily_journals`, `strategy`, and
+`learning` as required but unbound. The executor issues no calls for those
+roles; the audit records each as **Not configured**. This proves both halves
+graded by the case: the intended program ran, and the trace contains no
+real-source call.
+
+**Separate execution and response evidence.** A personal-chief-of-staff
+non-mode case initially executed both permitted source reads and made no
+mutation, but the response omitted its required Source Access Audit. The trace
+passed; the user-visible contract failed. After the non-mode completion rule
+made the table unavoidable, the fresh rerun passed both layers. Fixture traces
+and rendered responses are paired evidence, not substitutes.
+
 **The stale trace.** The step 2 completion criterion read "the description,
 diff, and review history are each in hand, stipulated by the harness, or marked
 unavailable with its cap recorded." The middle clause was the only surviving
@@ -226,7 +378,13 @@ marked unavailable with its cap recorded."
 - `../best-practices/independent-fresh-context-review-for-agent-skills.md` is
   what caught this. A reviewer outside the authoring context asked what the
   clause meant for a caller who was not the harness, which is the question the
-  authoring context had no reason to ask.
+  authoring context had no reason to ask. Its disposable-fixture and
+  trace-backed evidence rules also set the claim ceiling when launcher
+  isolation cannot be proven.
+- `../best-practices/cross-harness-dogfood-testing.md` covers the analogous
+  requirement to prove which skill copy and harness path actually ran. A
+  tool-less policy probe remains policy-only evidence; it does not become a
+  fixture-backed acceptance run.
 - `../conventions/shipping-executable-helpers-in-a-markdown-skill-catalog.md`
   holds the packaging boundary this learning depends on. Executables can ship
   inside a skill when they serve the skill's own job; the `gh` stand-in serves

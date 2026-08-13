@@ -5,6 +5,33 @@ and question-bound health analysis ambiguous; a 2026-07-31 baseline comparison
 also found no explicit rationale-based, non-scoring commitment coaching. Folds
 the weekly, quarterly, and repeated-commitment-pattern variants.
 
+## Setup
+
+Run each numbered scenario in a fresh executor. For each run, create a fresh
+temporary directory outside the repository, set `PCOS_FIXTURE_ROOT` to it,
+set `PCOS_FIXTURE_TRACE` to `<temporary-directory>/trace.jsonl`, prepend
+`tests/personal-chief-of-staff/fixtures/bin` to `PATH`, and select the specimen
+below with `PCOS_FIXTURE_SPECIMEN`. Provide no real connector credentials or
+endpoints.
+
+The launcher must expose only the declared `pcos-source` fixture executable
+and must prove host connectors and alternate role implementations unavailable.
+Before fixture I/O, it must load the mounted `personal-chief-of-staff` skill,
+its shared resources, and the applicable Weekly or Quarterly mode reference.
+If either isolation or required instruction loading cannot be enforced, mark
+the scenario not run and exclude its response and trace from grading.
+
+The configured synthetic authoritative-role interface is
+`pcos-source read role=<role>`. The executor must call every listed role before
+synthesis; a prompt premise alone is not a read. The grader receives only the
+rendered response and JSONL trace. Remove the temporary directory afterward.
+
+| Scenario | Specimen | Required bounded role reads |
+| --- | --- | --- |
+| 1 | `w1r1` | `current_weekly_review`, `weekly_template`, `last_weekly_review`, `daily_journals`, `tasks`, `strategy`, `learning`, `projects` |
+| 2 | `q2r2` | `current_quarterly_review`, `quarterly_template`, `last_quarterly_review`, `weekly_reviews`, `daily_journals`, `strategy`, `learning`, `tasks`, `projects` |
+| 3 | `w3c3` | `daily_journals`, `work_history`, `current_weekly_review` |
+
 ## Prompt
 
 > Two independent scenarios:
@@ -41,3 +68,19 @@ the weekly, quarterly, and repeated-commitment-pattern variants.
 - [ ] All scenarios → keeps the review and every related source change independently
       approvable, and writes nothing merely because a scheduled invocation
       fired.
+- [ ] Scenarios 1 and 2 render a new response-scoped Source Access Audit after
+      the executive synthesis. It distinguishes reads performed for this
+      current review from historical evidence described by an older review and
+      never presents prior-run access as current.
+- [ ] On any same-conversation resumption, stable evidence retained from the
+      prior turn supports a claim only when labeled nearby as **prior-turn
+      evidence — not refreshed**. It is excluded from the current Source Access
+      Audit unless reread, and the authoritative source is reread whenever
+      current truth matters.
+- [ ] Scenario 2 names incomplete journal coverage and each other material
+      source-role gap with the conclusion category it limits; an unavailable
+      role narrows only dependent conclusions and is not evidence that an event
+      did not occur.
+- [ ] Every proposed weekly or quarterly outcome makes current state,
+      user-owned desired outcome, and future observable closure evidence
+      recoverable as distinct response spans without mandatory literal labels.

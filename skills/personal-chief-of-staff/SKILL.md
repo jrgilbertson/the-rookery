@@ -21,11 +21,12 @@ originating mode. Do not infer an action from a bare number when the visible
 context does not identify it.
 
 For each decided action, use its displayed identity, target, effect, and
-approval state. Read [references/source-behavior.md](references/source-behavior.md)
-and the originating mode reference, then follow their existing shared and
-mode-specific application rules. For an approved Person-note, relationship
-Task, CRM-derived unrelated work, or CRM-derived writing-backlog effect, use
-the available
+approval state. Read both shared resources,
+[references/source-behavior.md](references/source-behavior.md) and
+[assets/review-bundle.md](assets/review-bundle.md), plus the originating mode
+reference, then follow their existing shared and mode-specific application
+rules. For an approved Person-note, relationship Task, CRM-derived unrelated
+work, or CRM-derived writing-backlog effect, use the available
 `managing-personal-crm` companion in embedded mode and follow its
 `references/applying-approved-actions.md` semantics. Route CRM-derived
 unrelated work through the caller's configured canonical task or issue
@@ -52,30 +53,49 @@ generic mutation fallback or let the companion create a nested bundle.
 An action-only response does not run new review discovery or prepare another
 review. It still performs every immediate pre-write target and destination
 re-read, equivalence, drift, dependency, and post-write readback check required
-by the loaded application rules.
+by the loaded application rules. Its answer-first action-result narrative stays
+separate from the Source Access Audit, which reports only current target or
+destination reread and verification readback access. It does not repeat access
+from the originating bundle.
 
 If the same message explicitly requests a new review, finish the visible action
 decisions first. Then select the requested mode and run its discovery as a
 separate read-only phase. Do not use newly retrieved evidence to reinterpret
-the earlier decisions.
+the earlier decisions. Render one Source Access Audit with a Phase column that
+separates action access from review discovery.
+
+If the same message instead requests current cross-source context without a
+review mode, also finish the visible action decisions first. Then use the
+non-mode path below as a separate read-only context-discovery phase; do not open
+Wind-down, Weekly, or Quarterly, and do not let the new context reinterpret the
+earlier decisions. Render one Source Access Audit with a Phase column that
+separates **Action access** from **Context discovery**.
 
 Completion: every visible action decision was resolved against its exact
-originating bundle and mode before any separately requested review began.
+originating bundle and mode before any separately requested review or non-mode
+context discovery began.
 
 ## Supply cross-source context without a review mode
 
 When another workflow explicitly requests current cross-source chief-of-staff
-priority or context—and the message is not an action response or a request for
-wind-down, weekly, or quarterly review—do not select a review mode. Read
-[references/source-behavior.md](references/source-behavior.md) and, when a
-scannable bundle helps, [assets/review-bundle.md](assets/review-bundle.md).
-Retrieve only the evidence needed for the caller's judgment, distinguish fact
-from inference, and return priority context in the conversation. The calling
-workflow retains ownership of its narrower operation. Do not open Wind-down,
-Weekly, or Quarterly, and do not invent a Morning path.
+priority or context—and the message does not request wind-down, weekly, or
+quarterly review—do not select a review mode. If that message also decides
+visible actions, enter this path only after resolving them under the phase
+boundary above. Read
+[references/source-behavior.md](references/source-behavior.md) and
+[assets/review-bundle.md](assets/review-bundle.md). Retrieve only the evidence
+needed for the caller's judgment, distinguish fact from inference, and return
+priority context in the conversation with the answer-first Source Access
+Audit. The calling workflow retains ownership of its narrower operation. Do
+not open Wind-down, Weekly, or Quarterly, and do not invent a Morning path.
+
+Before returning, always render the current response's Source Access Audit
+after the priority context, even when every requested read succeeds and no
+action is proposed. A cross-source response without that table is incomplete.
 
 Completion: the caller has usable cross-source judgment without a chief-of-staff
-mode run or unrequested durable writes.
+mode run or unrequested durable writes, and can see which current source reads
+did and did not succeed.
 
 ## Select the mode
 

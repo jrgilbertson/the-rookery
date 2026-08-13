@@ -53,6 +53,14 @@ The synthesis should clarify, where evidence supports it:
 Distinguish facts, inference, uncertainty, and the strategic judgment that only
 the user can supply. Do not turn a partial quarter into a confident story.
 
+Apply the shared intention contract when the agent first surfaces any candidate
+priority, outcome, experiment, boundary, strategy edit, or learning proposal.
+Ground its current basis in authoritative observed evidence or an explicitly
+labeled user-supplied, unverified premise, phrase the desired outcome
+conditionally, name observable closure evidence, and label it **agent-proposed
+— not user-owned** until the user accepts or revises it. The user-disposition
+gate still controls whether the candidate becomes a commitment or action.
+
 Completion: the user can evaluate the quarter's implications before reviewing
 the supporting evidence.
 
@@ -146,6 +154,11 @@ or inconclusive audit without filler coaching. Keep any proposed commitment,
 strategy edit, or learning promotion inside the existing separately
 approvable review flow.
 
+Keep any resulting commitment, strategy edit, or learning proposal conditional
+and explicitly unowned under the shared intention contract until the user
+accepts its interpretation or separately accepts an audit finding as a basis
+for action.
+
 Completion: the quarter has an honest coverage statement, a bounded thread map
 and rule audit where evidence permits, and every surfaced tension or strength
 has a user disposition before it shapes a commitment.
@@ -167,6 +180,10 @@ principles or experiments, and explicit boundaries over a broad task list. A
 writing idea may advance only when it supports real thinking or a real
 audience; central claims and publication remain the user's decisions.
 
+The shared intention shape applies when each independent next-quarter outcome,
+strategy or learning proposal, experiment, or boundary first appears. The
+user-disposition gate determines when it may become a user-owned commitment.
+
 Completion: strategic conclusions and forward commitments are user-owned,
 evidence-backed, and specific enough to guide later reviews.
 
@@ -177,6 +194,8 @@ review bundle. The canonical quarterly-review note is one proposed action.
 Changes to strategy, learnings, tasks, calendars, CRM, repositories, writing,
 or other sources are separate actions with their own identities, targets,
 effects, and approval.
+Each separate action uses the bundle's intention shape. Approval binds to its
+unchanged action fields, including its closure evidence.
 
 After approval, create or update only the canonical quarterly review for the
 selected period through the Obsidian CLI with explicit vault targeting. Re-read

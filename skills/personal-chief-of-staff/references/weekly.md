@@ -86,6 +86,10 @@ Review, and a signal that would support or disconfirm the interpretation. The
 intervention may reshape the proposed plan, but it does not approve that plan
 or any durable action.
 
+Apply the shared intention contract to that intervention. A supported
+recommendation to keep the current plan is in scope when it resolves the live
+choice; an honest finding that no intervention is warranted is not.
+
 When no candidate clears the recurrence bar, close the coaching step with zero
 supported threads and any material evidence limit. Offer no coaching
 recommendation, experiment, boundary, or advice to keep, carry forward, or
@@ -153,6 +157,12 @@ Test proposed outcomes against strategy, calendar reality, active obligations,
 relationships, health and recovery, and opportunity cost. Optimize for
 sustainable value across the whole system rather than maximizing task volume.
 Keep experiments small enough to learn from and specific enough to revisit.
+Apply the shared intention contract as soon as each independent next-week
+outcome, priority, experiment, or boundary is proposed. For an agent-originated
+candidate, show its current basis as authoritative observed evidence or an
+explicitly labeled user-supplied, unverified premise, frame its desired outcome
+conditionally for the user's acceptance, and name its observable closure
+evidence; keep it explicitly unowned until the user accepts it.
 
 When a repeated insight could help a real audience, suggest advancing no more
 than one or two worthwhile writing pieces. Preserve the user's authorship of
@@ -169,6 +179,8 @@ Present the completed conversational draft and any related changes as one
 review bundle. The canonical weekly-review note is one proposed action. Task,
 calendar, CRM, repository, writing, or other source changes are separate
 actions with their own identities, targets, effects, and approval.
+Each separate action uses the bundle's intention shape. Approval binds to its
+unchanged action fields, including its closure evidence.
 
 After approval, create or update only the current canonical weekly review
 through the Obsidian CLI with explicit vault targeting. Re-read the note first,

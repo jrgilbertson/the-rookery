@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+die() {
+  printf '%s\n' "$1" >&2
+  exit "${2:-64}"
+}
+
+script_dir=$(cd "$(dirname "$0")" && pwd -P)
+# shellcheck source=tests/personal-chief-of-staff/fixtures/lib/bootstrap.sh
+source "$script_dir/../lib/bootstrap.sh"
+fixture_bootstrap "$script_dir"
+
+imsg_dir="$fixture_dir/specimens/$PCOS_FIXTURE_SPECIMEN/imsg"
+[[ -d "$imsg_dir" ]] || die "unknown Messages fixture specimen"
+state_dir="$fixture_root/imsg-$PCOS_FIXTURE_SPECIMEN"
+stage_file="$state_dir/stage"
+fixture_prepare_state_dir "$state_dir" "$stage_file"
+stage_claim_dir="$state_dir/stage-claim"
+stage_claim_held=0
+
+release_stage_claim() {
+  if [[ "$stage_claim_held" -eq 1 ]]; then
+    rmdir "$stage_claim_dir" 2>/dev/null || true
+  fi
+}
+
+acquire_stage_claim() {
+  local attempts=0
+
+  while ! mkdir "$stage_claim_dir" 2>/dev/null; do
+    ((attempts += 1))
+    [[ "$attempts" -lt 500 ]] || die "timed out waiting for Messages fixture stage" 75
+    sleep 0.01
+  done
+  stage_claim_held=1
+}
+
+trap release_stage_claim EXIT
+acquire_stage_claim
+[[ -f "$stage_file" ]] || printf '0\n' > "$stage_file"
+[[ $(<"$stage_file") =~ ^[0-3]$ ]] || die "invalid Messages fixture stage"
+
+trace() {
+  local operation=$1 target=$2 result=$3 completeness=$4
+  printf '{"operation":"%s","target":"%s","result":"%s","completeness":"%s"}\n' \
+    "$operation" "$target" "$result" "$completeness" >> "$trace_path"
+}
+
+reject() {
+  local reason=$1
+  trace rejected unrecognized rejected not_applicable
+  die "$reason"
+}
+
+require_stage() {
+  local expected=$1 reason=$2
+  [[ $(<"$stage_file") == "$expected" ]] || reject "$reason"
+}
+
+if [[ $# -eq 1 && "$1" == --version ]]; then
+  require_stage 0 "Messages preflight must be the first operation"
+  printf 'imsg fixture 1.0\n'
+  trace preflight messages_interface success not_applicable
+  printf '1\n' > "$stage_file"
+  exit 0
+fi
+
+[[ $# -ge 1 ]] || reject "missing Messages operation"
+operation=$1
+shift
+
+case "$operation" in
+  chats)
+    require_stage 1 "Messages chats requires a successful preflight"
+    [[ $# -eq 3 && "$1" == --limit && "$2" =~ ^[1-9][0-9]*$ && "$3" == --json ]] ||
+      reject "unsupported chats query"
+    [[ "$2" == "$(<"$imsg_dir/chats-limit")" ]] || reject "chats limit did not match the bounded fixture"
+    sed -n '1,$p' "$imsg_dir/chats.json"
+    printf '{"operation":"chats","target":"messages_chats","result":"success","completeness":"complete","limit":"%s","returned":"1"}\n' \
+      "$2" >> "$trace_path"
+    printf '2\n' > "$stage_file"
+    ;;
+  history)
+    require_stage 2 "Messages history requires a successful chats query"
+    chat_id="" start="" end="" limit="" json=0
+    while [[ $# -gt 0 ]]; do
+      case "$1" in
+        --chat-id) [[ $# -ge 2 && -z "$chat_id" ]] || reject "invalid chat id"; chat_id=$2; shift 2 ;;
+        --start) [[ $# -ge 2 && -z "$start" ]] || reject "invalid start"; start=$2; shift 2 ;;
+        --end) [[ $# -ge 2 && -z "$end" ]] || reject "invalid end"; end=$2; shift 2 ;;
+        --limit) [[ $# -ge 2 && -z "$limit" && "$2" =~ ^[1-9][0-9]*$ ]] || reject "invalid limit"; limit=$2; shift 2 ;;
+        --json) [[ $json -eq 0 ]] || reject "duplicate json flag"; json=1; shift ;;
+        *) reject "unsupported history query" ;;
+      esac
+    done
+    [[ "$chat_id" == "$(<"$imsg_dir/chat-id")" &&
+       "$start" == "$(<"$imsg_dir/start")" &&
+       "$end" == "$(<"$imsg_dir/end")" &&
+       "$limit" == "$(<"$imsg_dir/history-limit")" && $json -eq 1 ]] ||
+      reject "history query did not match the bounded fixture"
+    sed -n '1,$p' "$imsg_dir/history.json"
+    evidence_token=$(<"$imsg_dir/evidence-token")
+    [[ "$evidence_token" =~ ^[a-z][a-z0-9_]*$ ]] || reject "unsafe Messages evidence token"
+    printf '{"operation":"history","target":"messages_history","result":"success","completeness":"complete","chat":"%s","start":"%s","end":"%s","limit":"%s","evidence":"%s"}\n' \
+      "$chat_id" "$start" "$end" "$limit" "$evidence_token" >> "$trace_path"
+    printf '3\n' > "$stage_file"
+    ;;
+  *) reject "unsupported Messages operation" ;;
+esac

@@ -1,0 +1,1 @@
+Repository history confirms the 2026-08-05 integration stream cleared a release-critical blocker.

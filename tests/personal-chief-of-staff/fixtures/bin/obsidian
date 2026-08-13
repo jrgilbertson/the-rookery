@@ -1,0 +1,203 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+die() {
+  printf '%s\n' "$1" >&2
+  exit "${2:-64}"
+}
+
+script_dir=$(cd "$(dirname "$0")" && pwd -P)
+# shellcheck source=tests/personal-chief-of-staff/fixtures/lib/bootstrap.sh
+source "$script_dir/../lib/bootstrap.sh"
+fixture_bootstrap "$script_dir"
+
+manifest="$fixture_dir/specimens/$PCOS_FIXTURE_SPECIMEN/manifest"
+[[ -f "$manifest" ]] || die "unknown fixture specimen"
+evidence_file="$fixture_dir/specimens/$PCOS_FIXTURE_SPECIMEN/evidence.txt"
+
+target=""
+reads=""
+before="__unset__"
+after="__unset__"
+readback="__unset__"
+while IFS= read -r line || [[ -n "$line" ]]; do
+  [[ -n "$line" && "$line" == *=* ]] || die "invalid fixture manifest"
+  key=${line%%=*}
+  value=${line#*=}
+  case "$key" in
+    target) [[ -z "$target" ]] || die "duplicate fixture manifest key"; target=$value ;;
+    reads) [[ -z "$reads" ]] || die "duplicate fixture manifest key"; reads=$value ;;
+    before) [[ "$before" == "__unset__" ]] || die "duplicate fixture manifest key"; before=$value ;;
+    after) [[ "$after" == "__unset__" ]] || die "duplicate fixture manifest key"; after=$value ;;
+    readback) [[ "$readback" == "__unset__" ]] || die "duplicate fixture manifest key"; readback=$value ;;
+    *) die "unknown fixture manifest key" ;;
+  esac
+done < "$manifest"
+
+IFS='|' read -r allowed_vault allowed_path target_token extra <<< "$target"
+[[ -n "$allowed_vault" && -n "$allowed_path" && -n "$target_token" && -z "${extra:-}" ]] ||
+  die "invalid fixture target"
+[[ "$target_token" =~ ^[a-z][a-z0-9_]*$ ]] || die "unsafe fixture target token"
+[[ -n "$reads" ]] || die "fixture read sequence is required"
+IFS=',' read -r -a read_sequence <<< "$reads"
+for result in "${read_sequence[@]}"; do
+  case "$result" in
+    evidence|complete_empty|truncated|failure) ;;
+    *) die "invalid fixture read result" ;;
+  esac
+done
+
+if [[ "$before" == "__unset__" || "$after" == "__unset__" || "$readback" == "__unset__" ]]; then
+  [[ "$before" == "__unset__" && "$after" == "__unset__" && "$readback" == "__unset__" ]] ||
+    die "mutation fixture requires before, after, and readback"
+  mutation_enabled=0
+else
+  mutation_enabled=1
+fi
+
+trace() {
+  local operation=$1 result=$2 completeness=$3 token=${4:-$target_token}
+  printf '{"operation":"%s","target":"%s","result":"%s","completeness":"%s"}\n' \
+    "$operation" "$token" "$result" "$completeness" >> "$trace_path"
+}
+
+reject() {
+  local operation=$1 reason=$2 token=${3:-$target_token}
+  trace "$operation" rejected not_applicable "$token"
+  die "$reason"
+}
+
+[[ $# -ge 2 ]] || reject rejected "expected explicit vault target and operation" unrecognized
+vault_arg=$1
+operation=$2
+shift 2
+[[ "$vault_arg" == vault=* ]] || reject rejected "vault must be the first explicit parameter" unrecognized
+vault=${vault_arg#vault=}
+
+case "$operation" in
+  read|append) ;;
+  *) reject rejected "unsupported Obsidian fixture operation" unrecognized ;;
+esac
+
+path=""
+content="__unset__"
+silent=0
+for arg in "$@"; do
+  case "$arg" in
+    path=*) [[ -z "$path" ]] || reject "$operation" "duplicate path parameter"; path=${arg#path=} ;;
+    content=*) [[ "$content" == "__unset__" ]] || reject "$operation" "duplicate content parameter"; content=${arg#content=} ;;
+    silent) [[ $silent -eq 0 ]] || reject "$operation" "duplicate silent flag"; silent=1 ;;
+    *) reject "$operation" "unsupported Obsidian fixture parameter" ;;
+  esac
+done
+
+[[ "$vault" == "$allowed_vault" && "$path" == "$allowed_path" ]] ||
+  reject "$operation" "fixture target is not permitted" unrecognized
+
+state_dir="$fixture_root/state-$PCOS_FIXTURE_SPECIMEN"
+index_file="$state_dir/read-index"
+evidence_read_file="$state_dir/read"
+written_file="$state_dir/written"
+content_file="$state_dir/content"
+write_claim_dir="$state_dir/write-claim"
+sequence_claim_dir="$state_dir/sequence-claim"
+fixture_prepare_state_dir \
+  "$state_dir" "$index_file" "$evidence_read_file" "$written_file" "$content_file"
+
+# Serialize first-use initialization and every read-index consumer. This makes
+# the sequence state an atomic check-and-increment and prevents concurrent
+# reads from both consuming the same slot.
+[[ ! -L "$sequence_claim_dir" ]] || die "fixture sequence claim must not be a symlink"
+sequence_claim_attempts=0
+while ! mkdir "$sequence_claim_dir" 2>/dev/null; do
+  ((sequence_claim_attempts += 1))
+  ((sequence_claim_attempts < 500)) || die "fixture sequence state is busy"
+  sleep 0.01
+done
+sequence_claim_acquired=1
+cleanup_sequence_claim() {
+  if [[ $sequence_claim_acquired -eq 1 ]]; then
+    rmdir "$sequence_claim_dir" 2>/dev/null || true
+  fi
+}
+trap cleanup_sequence_claim EXIT
+
+[[ -f "$index_file" ]] || printf '0\n' > "$index_file"
+[[ -f "$evidence_read_file" ]] || printf '0\n' > "$evidence_read_file"
+[[ -f "$written_file" ]] || printf '0\n' > "$written_file"
+if [[ ! -f "$content_file" ]]; then
+  if [[ $mutation_enabled -eq 1 ]]; then
+    printf '%s' "$before" > "$content_file"
+  else
+    : > "$content_file"
+  fi
+fi
+
+if [[ "$operation" == append ]]; then
+  [[ $mutation_enabled -eq 1 ]] || reject append "writes are not permitted for this specimen"
+  [[ "$content" != "__unset__" ]] || reject append "append requires exact content"
+  [[ $silent -eq 1 ]] || reject append "append requires the silent flag"
+  [[ $(<"$written_file") == 0 ]] || reject append "an extra write is not permitted"
+  [[ -f "$index_file" && -f "$evidence_read_file" ]] ||
+    reject append "append requires exactly one successful evidence read before writing"
+  read_index=$(<"$index_file")
+  [[ "$read_index" =~ ^[0-9]+$ ]] || die "invalid fixture read state"
+  [[ "$read_index" == 1 && $(<"$evidence_read_file") == 1 ]] ||
+    reject append "append requires exactly one successful evidence read before writing"
+  current=$(<"$content_file")
+  [[ "$current" == "$before" ]] || reject append "fixture state no longer matches the exact before value"
+  [[ "$before$content" == "$after" ]] || reject append "append content does not produce the exact after value"
+  mkdir "$write_claim_dir" 2>/dev/null || reject append "an extra write is not permitted"
+  printf '%s' "$after" > "$content_file"
+  printf '1\n' > "$written_file"
+  trace append success not_applicable
+  exit 0
+fi
+
+[[ "$content" == "__unset__" && $silent -eq 0 ]] || reject read "read accepts only the exact path target"
+read_index=$(<"$index_file")
+[[ "$read_index" =~ ^[0-9]+$ ]] || die "invalid fixture read state"
+(( read_index < ${#read_sequence[@]} )) || reject read "fixture read sequence exhausted"
+result=${read_sequence[$read_index]}
+printf '%s\n' "$((read_index + 1))" > "$index_file"
+
+if [[ $(<"$written_file") == 1 ]]; then
+  trace_operation=readback
+else
+  trace_operation="read"
+fi
+
+case "$result" in
+  evidence)
+    if [[ "$trace_operation" == readback ]]; then
+      current=$(<"$content_file")
+      [[ "$current" == "$readback" ]] || reject readback "readback does not match the manifest"
+      printf '%s\n' "$current"
+    elif [[ $mutation_enabled -eq 1 ]]; then
+      printf '%s\n' "$(<"$content_file")"
+    else
+      [[ -f "$evidence_file" ]] || die "evidence result requires specimen evidence"
+      sed -n '1,$p' "$evidence_file"
+    fi
+    trace "$trace_operation" success complete
+    if [[ "$trace_operation" == read && $mutation_enabled -eq 1 ]]; then
+      printf '1\n' > "$evidence_read_file"
+    fi
+    ;;
+  complete_empty)
+    trace "$trace_operation" success complete
+    ;;
+  truncated)
+    [[ -f "$evidence_file" ]] || die "truncated result requires specimen evidence"
+    sed -n '1,$p' "$evidence_file"
+    trace "$trace_operation" success truncated
+    ;;
+  failure)
+    trace "$trace_operation" failure unknown
+    die "scripted authoritative read failure" 69
+    ;;
+esac
+
+rmdir "$sequence_claim_dir" || die "fixture sequence claim could not be released"
+sequence_claim_acquired=0
+trap - EXIT

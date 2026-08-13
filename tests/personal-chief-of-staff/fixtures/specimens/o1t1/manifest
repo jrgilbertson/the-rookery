@@ -1,0 +1,5 @@
+target=fixture-vault|Actions/task.md|task_note
+reads=evidence,evidence
+before=manual context with [[existing wiki link]];
+after=manual context with [[existing wiki link]];approved next step
+readback=manual context with [[existing wiki link]];approved next step

@@ -1,0 +1,5 @@
+target=fixture-vault|Actions/uncertain.md|uncertain_target
+reads=evidence,failure
+before=existing synthetic context;
+after=existing synthetic context;approved synthetic effect
+readback=existing synthetic context;approved synthetic effect

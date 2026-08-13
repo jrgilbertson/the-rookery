@@ -172,6 +172,13 @@ Name the critical path and the few protected outcomes when useful. Calendar
 edits, task changes, and communications remain separate review actions. Do not
 expand the plan merely because more work is discoverable.
 
+Express each proposed outcome or priority through the shared intention
+contract: connect its current authoritative basis or labeled user premise to
+the outcome the user owns or approves, or to an agent-proposed outcome clearly
+awaiting approval, and the future observable evidence that would close it.
+Keep this natural and compact rather than turning tomorrow's plan into a
+repeated form.
+
 ### Tomorrow judgment items
 
 Choose no more than three **tomorrow** judgment items. An item earns attention
@@ -258,6 +265,10 @@ choice; generic task restatement does not. Focus, stop, more, and less may be
 useful lenses, but they are not required slots. Prefer insight over lecture and
 do not score, grade, or invent a streak.
 
+Apply the shared intention contract whether the recommendation changes the
+plan or deliberately preserves it. An honest no-material-intervention result
+is not an intention.
+
 When no material intervention is supported, say so concisely and continue to
 Meaningful Commitments without filler advice or a strategy or learning
 proposal. Coaching itself authorizes nothing: a revised commitment, its exact
@@ -275,9 +286,13 @@ Commitments` section, use it as the configured place for reviewed next-day
 intent. Draft three to five numbered plain-Markdown bullets in the closing-date
 journal.
 Each bullet uses one to three sentences that naturally combine a concrete
-outcome, an observable finish line, and one short reason tied to strategy, an
-obligation, or an avoided cost. Collaborate to refine an activity label such as
-“development,” “meetings,” or “work on X” into a concrete outcome by default.
+user-supplied or approved outcome (or a conditional candidate awaiting
+approval), its current authoritative basis or labeled user premise, an
+observable future finish line, and one short user-approved reason tied to
+strategy, an obligation, or an avoided cost. Do not require literal intention
+labels or a repeated three-bullet form. Collaborate to refine an activity label
+such as “development,” “meetings,” or “work on X” into a concrete outcome by
+default.
 If the user explicitly approves broad or incomplete wording unchanged, preserve
 it verbatim, identify the missing element, and treat it as nonconforming source
 content rather than claiming it satisfies the three-element condition.
@@ -337,6 +352,9 @@ observation as isolated and does not claim recurrence. Never auto-write
 strategy or learnings; the user must approve the exact durable update
 independently.
 
+Apply the shared intention contract to each learning or strategy proposal. Do
+not promote an inferred outcome to the user's intention.
+
 Completion: optional writing, learning, and strategy proposals are selective,
 sourced, and independently reviewable.
 
@@ -344,6 +362,7 @@ sourced, and independently reviewable.
 
 Present the journal and all source changes in one review bundle with separate
 numbered actions. Apply only approved actions under the shared source rules.
+Each action uses the bundle's intention shape; another action cannot close it.
 
 For an approved journal action, re-read the target through the Obsidian CLI.
 Re-read the configured template as well when the action adds or changes the

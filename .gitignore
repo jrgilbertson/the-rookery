@@ -12,6 +12,7 @@ Thumbs.db
 outputs/
 
 # docs/ is deliberately NOT ignored — working documents ship public.
+__pycache__/
 
 # impeccable-ignore-start
 # Ephemeral output, runtime state, and per-dev overrides.

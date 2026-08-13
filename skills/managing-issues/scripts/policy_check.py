@@ -25,17 +25,14 @@ LINEAR_TARGET_FIELDS = {"workspace", "team"}
 SYNC_MAPPING_FIELDS = {"version", "github_to_linear"}
 LINEAR_PRIORITIES = {"none", "low", "medium", "high", "urgent"}
 MAPPING_KEY = re.compile(r"^[a-z0-9][a-z0-9_-]{0,63}$")
-GITHUB_TARGET = re.compile(
-    r"^(?P<owner>[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?)/"
-    r"(?P<repo>[A-Za-z0-9](?:[A-Za-z0-9._-]{0,98}[A-Za-z0-9._-])?)$"
-)
-LINEAR_TARGET_PART = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$")
-MAPPING_SOURCE_PART = re.compile(r"^[A-Za-z0-9._-]{1,128}$")
-GITHUB_ISSUE = re.compile(
+GITHUB_OWNER_REPO = (
     r"^(?P<owner>[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?)/"
     r"(?P<repo>[A-Za-z0-9](?:[A-Za-z0-9._-]{0,98}[A-Za-z0-9._-])?)"
-    r"#(?P<number>[1-9][0-9]{0,9})$"
 )
+GITHUB_TARGET = re.compile(GITHUB_OWNER_REPO + r"$")
+LINEAR_TARGET_PART = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$")
+MAPPING_SOURCE_PART = re.compile(r"^[A-Za-z0-9._-]{1,128}$")
+GITHUB_ISSUE = re.compile(GITHUB_OWNER_REPO + r"#(?P<number>[1-9][0-9]{0,9})$")
 LINEAR_ISSUE = re.compile(r"^[A-Z][A-Z0-9]{0,15}-[1-9][0-9]{0,9}$")
 
 
@@ -166,8 +163,9 @@ def require_exact_fields(
     allowed: set[str],
     label: str,
 ) -> None:
-    missing = sorted(required - set(value))
-    unexpected = sorted(set(value) - allowed)
+    keys = set(value)
+    missing = sorted(required - keys)
+    unexpected = sorted(keys - allowed)
     if missing:
         raise PolicyError(f"{label} missing key: {missing[0]}")
     if unexpected:
@@ -178,7 +176,7 @@ def require_concrete_text(value: Any, label: str) -> str:
     require(isinstance(value, str), f"{label} must be text")
     require(value == value.strip() and bool(value), f"{label} must be nonempty trimmed text")
     require(len(value) <= MAX_TEXT_LENGTH, f"{label} exceeds {MAX_TEXT_LENGTH} characters")
-    require(all(character.isprintable() for character in value), f"{label} contains control characters")
+    require(value.isprintable(), f"{label} contains control characters")
     require("REPLACE_WITH" not in value, f"{label} has an unresolved REPLACE_WITH placeholder")
     return value
 
@@ -226,9 +224,7 @@ def normalize_mapping(
                     f"{entry_label} cannot contain GitHub label CSV syntax",
                 )
             result[key] = github_value
-        elif field == "work_type":
-            result[key] = require_concrete_text(provider_value, entry_label)
-        elif field == "readiness":
+        elif field in ("work_type", "readiness"):
             result[key] = require_concrete_text(provider_value, entry_label)
         elif field == "priority":
             require(

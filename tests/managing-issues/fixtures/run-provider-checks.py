@@ -759,5 +759,5 @@ if __name__ == "__main__":
     try:
         raise SystemExit(main())
     except (CheckFailure, json.JSONDecodeError, OSError) as error:
-        print(f"FAIL: {error}", file=os.sys.stderr)
+        print(f"FAIL: {error}", file=sys.stderr)
         raise SystemExit(1)

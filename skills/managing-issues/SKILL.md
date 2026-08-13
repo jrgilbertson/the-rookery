@@ -106,12 +106,25 @@ Completion: the route is trusted-policy, explicit read-only, or `manual`.
 ### 4. Shape and read the issue
 
 Draft issue bodies from `assets/issue-body-template.md`. Keep `Problem`,
-`Scope`, and `Verification`; add context or constraints only when they change
-understanding or proof, and do not invent them from facts the operator did not
-supply. Ask separately only when the draft cannot be correct without a missing
-decision. Verification criteria declare the outcome and do not attest that it
-passed. A parent owns whole-outcome criteria; each leaf owns one reviewable
-deliverable.
+`Scope`, and `Verification`; add `Context`, `Constraints`, `Out of scope`, or
+`Provenance` only when it changes understanding, proof, or boundary, and do
+not invent any of them from facts the operator did not supply. Ask separately
+only when the draft cannot be correct without a missing decision, or when a
+defect draft lacks reproduction evidence. Verification criteria declare the
+outcome and do not attest that it passed. For research issues, Verification
+may name the question answered and where the answer is recorded. A parent owns
+whole-outcome criteria; each leaf owns one reviewable deliverable. When
+updating an existing issue, preserve its current structure; the template
+shapes new drafts.
+
+Write issue bodies in the product team's voice, not this skill's. Use plain
+verbs, short sentences, and concrete nouns from the product; "canonical",
+"observable", "bounded outcome", "effect", and "readback" never appear in an
+issue body. State who is affected and what it costs them before how the system
+misbehaves. A Verification criterion is something a reviewer can check without
+reading this skill. Title the issue as one imperative outcome, roughly seventy
+characters or fewer, naming the deliverable rather than the activity; if the
+outcome does not fit one clause, the issue is probably not one leaf.
 
 Read the current canonical issue before proposing an update. For relationship,
 readiness, or completion work, use the graph reference to establish the
@@ -173,6 +186,18 @@ nodes and edges, readiness facts, blockers, coverage, unresolved effects, and
 Verification gaps defined by the graph reference; do not append repair advice,
 operator-choice menus, or execution guidance. These facts are a transient
 handoff, not a stored graph, claim, schedule, retry plan, or execution topology.
+
+Present those facts in the reader's language. Lead with one plain sentence a
+non-engineer can act on ("3 of 7 issues are done; 2 are ready to start now; 2
+are blocked on #45"); the summary restates the facts below it and adds nothing.
+Identify issues by tracker reference and title. Report readback as "confirmed
+in the tracker" or name what is unconfirmed; report partial coverage as a
+caveat naming what could not be read and which conclusions it weakens. Pair
+each machine outcome with a one-clause gloss: `applied` — done and confirmed
+in the tracker; `already_satisfied` — already this way, nothing changed;
+`failed` — the tracker rejected it, nothing changed; `indeterminate` —
+attempted but unconfirmed, check the tracker before retrying; `manual` — needs
+the operator to do it in the tracker, with the reason named.
 
 Completion: every requested issue or effect remains visible as current,
 blocked, unresolved, or verified, with the canonical tracker still the only

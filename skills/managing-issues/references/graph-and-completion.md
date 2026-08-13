@@ -120,13 +120,21 @@ operator-choice menus, workers, models, effort, worktrees, stacks, or
 sequencing. An orchestrator must re-read the tracker before dispatch and after
 any relevant issue or pull-request change.
 
+In the returned report, lead with one plain summary sentence that restates the
+facts and adds nothing, and present the Ready Frontier under the heading
+"Ready to start now", listing issues by reference and title. The term and its
+derivation rules stay internal.
+
 ## Prove completion separately
 
 Status, a checked box, or a merged pull request is evidence to inspect, never
 proof by itself. Read the current issue's unchanged `Verification` criteria and
 match each criterion to current trusted evidence: provider state, a repository
 check or artifact, or fresh authorized owner attestation. Name any unsupported
-criterion as a Verification gap.
+criterion as a Verification gap. When reporting, phrase each gap as what is
+still unproven and what would prove it: "Not yet confirmed: [criterion]. Would
+be proven by [check, artifact, or owner confirmation]." Keep "attestation",
+"trusted evidence", and "unsupported criterion" out of the report itself.
 
 A leaf may receive a separately approved completion preview only when its own
 criteria have evidence and it has no current unresolved blocker. A parent also

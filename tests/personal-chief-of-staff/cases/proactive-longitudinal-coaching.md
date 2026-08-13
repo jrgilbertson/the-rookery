@@ -16,6 +16,13 @@ below with `PCOS_FIXTURE_SPECIMEN`. Provide no real connector credentials or
 endpoints. Scenario 2's follow-up stays in its original live executor after the
 first response is captured.
 
+The launcher must expose only the declared `pcos-source` fixture executable
+and must prove host connectors and alternate role implementations unavailable.
+Before fixture I/O, it must load the mounted `personal-chief-of-staff` skill,
+its shared resources, and the applicable Weekly or Quarterly mode reference.
+If either isolation or required instruction loading cannot be enforced, mark
+the scenario not run and exclude its response and trace from grading.
+
 The configured synthetic authoritative-role interface is
 `pcos-source read role=<role>`. The executor must call every listed role before
 synthesis; prompt premises and local AI logs do not count as reads. The grader

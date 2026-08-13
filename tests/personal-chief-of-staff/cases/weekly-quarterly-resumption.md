@@ -14,6 +14,13 @@ set `PCOS_FIXTURE_TRACE` to `<temporary-directory>/trace.jsonl`, prepend
 below with `PCOS_FIXTURE_SPECIMEN`. Provide no real connector credentials or
 endpoints.
 
+The launcher must expose only the declared `pcos-source` fixture executable
+and must prove host connectors and alternate role implementations unavailable.
+Before fixture I/O, it must load the mounted `personal-chief-of-staff` skill,
+its shared resources, and the applicable Weekly or Quarterly mode reference.
+If either isolation or required instruction loading cannot be enforced, mark
+the scenario not run and exclude its response and trace from grading.
+
 The configured synthetic authoritative-role interface is
 `pcos-source read role=<role>`. The executor must call every listed role before
 synthesis; a prompt premise alone is not a read. The grader receives only the
@@ -65,6 +72,11 @@ rendered response and JSONL trace. Remove the temporary directory afterward.
       the executive synthesis. It distinguishes reads performed for this
       current review from historical evidence described by an older review and
       never presents prior-run access as current.
+- [ ] On any same-conversation resumption, stable evidence retained from the
+      prior turn supports a claim only when labeled nearby as **prior-turn
+      evidence — not refreshed**. It is excluded from the current Source Access
+      Audit unless reread, and the authoritative source is reread whenever
+      current truth matters.
 - [ ] Scenario 2 names incomplete journal coverage and each other material
       source-role gap with the conclusion category it limits; an unavailable
       role narrows only dependent conclusions and is not evidence that an event

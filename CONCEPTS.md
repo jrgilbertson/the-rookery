@@ -13,7 +13,7 @@ A reviewed next-day intention recorded during wind-down. It visibly connects the
 
 ### Source Access Audit
 
-A required, conversation-only account of the relevant source roles considered for one visible personal-chief-of-staff response, the bounded access that succeeded or failed, and the effect on that response's findings. It is reconciled from actual reads, rendered after the answer-first synthesis, and discarded after the response. It is not a source registry, claim-provenance ledger, approval, freshness record, or new source of truth.
+A required, conversation-only account of the relevant source roles considered for one visible personal-chief-of-staff response. For each role, it records the bounded current-response access attempt and result (`Accessed — evidence found`, `Accessed — no relevant evidence`, or `Attempted — unavailable or failed`), or an explicit no-attempt classification (`Not configured`, `Declined`, or `Not needed`), plus the effect on that response's findings. It is reconciled from those attempts and classifications, rendered after the answer-first synthesis, and discarded after the response. It is not a source registry, claim-provenance ledger, approval, freshness record, or new source of truth.
 
 ### Daily CRM Scan
 

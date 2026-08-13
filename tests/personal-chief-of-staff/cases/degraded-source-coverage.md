@@ -22,6 +22,14 @@ read only the selected specimen through the declared fixture interface; the
 grader receives only the rendered response and JSONL trace. Remove the
 temporary directory after the run.
 
+The launcher must expose only the declared fixture `obsidian` and
+`pcos-source` executables and must prove host connectors, the host Obsidian
+tool, and alternate implementations unavailable. Before fixture I/O, it must
+load the mounted `personal-chief-of-staff` skill, its shared resources, and the
+applicable mode reference when the branch selects a mode. If either isolation
+or required instruction loading cannot be enforced, mark the branch not run
+and exclude its response and trace from grading.
+
 | Branch | Specimen | Exact permitted read | Exercised result |
 | --- | --- | --- | --- |
 | 1 | `q7m4` | `obsidian vault=fixture-vault read path=Roles/current.md` | complete bounded read with evidence |

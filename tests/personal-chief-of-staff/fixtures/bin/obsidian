@@ -96,10 +96,13 @@ done
 
 state_dir="$fixture_root/state-$PCOS_FIXTURE_SPECIMEN"
 index_file="$state_dir/read-index"
+evidence_read_file="$state_dir/read"
 written_file="$state_dir/written"
 content_file="$state_dir/content"
-fixture_prepare_state_dir "$state_dir" "$index_file" "$written_file" "$content_file"
+fixture_prepare_state_dir \
+  "$state_dir" "$index_file" "$evidence_read_file" "$written_file" "$content_file"
 [[ -f "$index_file" ]] || printf '0\n' > "$index_file"
+[[ -f "$evidence_read_file" ]] || printf '0\n' > "$evidence_read_file"
 [[ -f "$written_file" ]] || printf '0\n' > "$written_file"
 if [[ ! -f "$content_file" ]]; then
   if [[ $mutation_enabled -eq 1 ]]; then
@@ -112,7 +115,12 @@ fi
 if [[ "$operation" == append ]]; then
   [[ $mutation_enabled -eq 1 ]] || reject append "writes are not permitted for this specimen"
   [[ "$content" != "__unset__" ]] || reject append "append requires exact content"
+  [[ $silent -eq 1 ]] || reject append "append requires the silent flag"
   [[ $(<"$written_file") == 0 ]] || reject append "an extra write is not permitted"
+  read_index=$(<"$index_file")
+  [[ "$read_index" =~ ^[0-9]+$ ]] || die "invalid fixture read state"
+  [[ "$read_index" == 1 && $(<"$evidence_read_file") == 1 ]] ||
+    reject append "append requires exactly one successful evidence read before writing"
   current=$(<"$content_file")
   [[ "$current" == "$before" ]] || reject append "fixture state no longer matches the exact before value"
   [[ "$before$content" == "$after" ]] || reject append "append content does not produce the exact after value"
@@ -148,6 +156,9 @@ case "$result" in
       sed -n '1,$p' "$evidence_file"
     fi
     trace "$trace_operation" success complete
+    if [[ "$trace_operation" == read && $mutation_enabled -eq 1 ]]; then
+      printf '1\n' > "$evidence_read_file"
+    fi
     ;;
   complete_empty)
     trace "$trace_operation" success complete

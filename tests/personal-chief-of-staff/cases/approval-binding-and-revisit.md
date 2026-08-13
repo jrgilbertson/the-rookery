@@ -8,9 +8,11 @@ from presenting historical access as current.
 ## Setup
 
 Run every scenario in a fresh executor with no real connector credentials or
-endpoints. The launcher must expose only the declared fixture commands, not an
-app connector or host Obsidian tool; if it cannot enforce that isolation, mark
-the fixture-backed scenario not run rather than falling back. Before any
+endpoints. The launcher must expose only the declared fixture executables, not an
+app connector, host Obsidian tool, or alternate implementation, and must prove
+those other paths unavailable. If it cannot enforce and prove that isolation,
+mark the fixture-backed scenario not run, and exclude its response and trace
+from grading rather than falling back. Before any
 fixture source or action access, the executor must load the mounted
 `personal-chief-of-staff` skill, its shared resources, the originating mode
 reference, and any separately requested mode reference. Those instruction-file
@@ -44,9 +46,17 @@ explicit-vault read as readback.
   `pcos-source read role=current_weekly_review`,
   `pcos-source read role=tasks`, and `pcos-source read role=calendar` for the
   newly requested Weekly Review. The active invocation also requires the
-  `weekly_review_template`, `last_completed_weekly_review`, `daily_journals`,
-  `strategy`, and `learnings` canonical roles; none has a configured binding,
+  `weekly_template`, `last_weekly_review`, `daily_journals`, `strategy`, and
+  `learning` canonical roles; none has a configured binding,
   so report each as **Not configured** without attempting a fixture command.
+- Scenario 6 uses specimen `b5r5`. First run
+  `pcos-action read role=task_note`, the single exact mutation
+  `pcos-action write role=task_note content=phase_separated_effect`, and
+  `pcos-action readback role=task_note`. Only after that action resolves, run
+  `pcos-source read role=tasks` and `pcos-source read role=calendar` for the
+  caller's current cross-source handoff context. Do not read
+  `current_weekly_review` or open a review cadence.
+
 The grader receives only the rendered response and JSONL trace. Remove the
 temporary directory after the run.
 
@@ -74,6 +84,12 @@ temporary directory after the run.
 >    the approved action first. Then use the configured current Weekly Review,
 >    task, and calendar roles for the new read-only discovery phase. Do not let
 >    newly retrieved evidence reinterpret the earlier approval.
+> 6. In this same message, I approve action 2 unchanged with the exact effect
+>    `phase separated effect`, and a calling workflow asks for current
+>    cross-source priority context for its release handoff. Resolve the action
+>    first. Then read the configured task and calendar roles as a separate
+>    read-only non-mode phase. The caller retains ownership of the handoff; do
+>    not open Wind-down, Weekly, or Quarterly or reinterpret the approval.
 
 ## Expected behavior
 
@@ -107,3 +123,10 @@ temporary directory after the run.
       reread and readback are separate **Action access** rows; current Weekly,
       task, calendar, and unresolved required-role rows are **Review discovery**.
       The mutation outcome remains only in the action narrative.
+- [ ] 6 → resolves action 2 first with one pre-write read, one exact write, and
+      one readback. Only afterward does it run the two bounded non-mode reads;
+      it applies no context-derived effect and opens no review cadence.
+- [ ] 6 → renders one Source Access Audit with a **Phase** column. The action
+      reread and readback are separate **Action access** rows, while task and
+      calendar are **Context discovery** rows. The action result remains only
+      in the action narrative, and later context does not reinterpret it.

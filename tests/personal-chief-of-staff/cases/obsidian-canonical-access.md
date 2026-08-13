@@ -13,6 +13,14 @@ endpoints. Create a fresh temporary directory outside the repository, set
 `tests/personal-chief-of-staff/fixtures/bin` to `PATH`, and select the specimen
 below with `PCOS_FIXTURE_SPECIMEN`.
 
+The launcher must expose only the declared fixture `obsidian` executable and
+must prove the host Obsidian tool, direct vault access, host connectors, and
+alternate implementations unavailable. Before fixture I/O, it must load the
+mounted `personal-chief-of-staff` skill, its shared resources, and the
+originating Wind-down mode reference. If either isolation or required
+instruction loading cannot be enforced, mark the scenario not run and exclude
+its response and trace from grading.
+
 - Scenario 1 uses specimen `o1t1` and the production-form sequence:
   `obsidian vault=fixture-vault read path=Actions/task.md`,
   `obsidian vault=fixture-vault append path=Actions/task.md content="approved next step" silent`,

@@ -349,11 +349,11 @@ declared fixture commands” as “the executor may read no instruction files.�
 combined Wind-down-action and Weekly-review case permits read-only loading of
 the mounted skill, `source-behavior.md`, `review-bundle.md`, and both applicable
 mode references before the exact fixture sequence. Its active invocation also
-names `weekly_review_template`, `last_completed_weekly_review`,
-`daily_journals`, `strategy`, and `learnings` as required but unbound. The
-executor issues no calls for those roles; the audit records each as **Not
-configured**. This proves both halves graded by the case: the intended program
-ran, and the trace contains no real-source call.
+names `weekly_template`, `last_weekly_review`, `daily_journals`, `strategy`, and
+`learning` as required but unbound. The executor issues no calls for those
+roles; the audit records each as **Not configured**. This proves both halves
+graded by the case: the intended program ran, and the trace contains no
+real-source call.
 
 **Separate execution and response evidence.** A personal-chief-of-staff
 non-mode case initially executed both permitted source reads and made no

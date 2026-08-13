@@ -15,6 +15,8 @@ fixture_bootstrap() {
   fixture_dir=$(cd "$caller_bin_dir/.." && pwd -P)
   repo_root=$(cd "$fixture_dir/../../.." && pwd -P)
 
+  [[ "$fixture_root" != / ]] || die "fixture root must not be the filesystem root"
+
   case "$fixture_root/" in
     "$repo_root/"*) die "fixture root must be outside the repository" ;;
   esac

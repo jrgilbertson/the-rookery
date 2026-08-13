@@ -24,6 +24,14 @@ endpoints. Create a fresh temporary directory outside the repository, set
 `tests/personal-chief-of-staff/fixtures/bin` to `PATH`, and select the specimen
 below with `PCOS_FIXTURE_SPECIMEN`.
 
+The launcher must expose only the declared fixture `imsg` and `pcos-source`
+executables and must prove host connectors, the real Messages interface, and
+alternate implementations unavailable. Before fixture I/O, it must load the
+mounted `personal-chief-of-staff` skill, its shared resources, the Wind-down
+mode reference, and the applicable embedded CRM companion resources. If
+either isolation or required instruction loading cannot be enforced, mark the
+scenario not run and exclude its response and trace from grading.
+
 For every scenario, prove the substituted Messages path with `imsg --version`,
 enumerate it with `imsg chats --limit 10 --json`, then run the exact bounded
 history command below. Returned fixture counts are below their explicit limits,

@@ -15,6 +15,15 @@ outside the repository, set `PCOS_FIXTURE_ROOT` to it, set
 `tests/personal-chief-of-staff/fixtures/bin` to `PATH`, and select the specimen
 below with `PCOS_FIXTURE_SPECIMEN`.
 
+For fixture-backed scenarios, the launcher must expose only the declared
+`pcos-action` and `pcos-source` fixture executables and must prove host
+connectors and alternate implementations unavailable. Before fixture I/O, it
+must load the mounted `personal-chief-of-staff` skill, its shared resources,
+the originating mode reference, and the applicable embedded CRM companion
+resources. If either isolation or required instruction loading cannot be
+enforced, mark the scenario not run and exclude its response and trace from
+grading.
+
 - Scenario 1, specimen `c1p1`: run `pcos-action read role=person_note`, the
   single exact mutation
   `pcos-action write role=person_note content=displayed_durable_context`, and

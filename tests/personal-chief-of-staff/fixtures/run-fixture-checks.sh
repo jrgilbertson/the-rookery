@@ -134,6 +134,25 @@ fi
 assert_trace '"operation":"rejected","target":"unrecognized","result":"rejected"'
 
 new_run o1t1
+if obsidian vault=fixture-vault append path=Actions/task.md \
+  content='approved next step' silent >/dev/null 2>&1; then
+  fail "Obsidian write-before-read was accepted"
+fi
+output=$(obsidian vault=fixture-vault read path=Actions/task.md)
+[[ "$output" == 'manual context with [[existing wiki link]];' ]] ||
+  fail "rejected Obsidian write-before-read changed state"
+
+new_run o1t1
+obsidian vault=fixture-vault read path=Actions/task.md >/dev/null
+if obsidian vault=fixture-vault append path=Actions/task.md \
+  content='approved next step' >/dev/null 2>&1; then
+  fail "Obsidian append without silent was accepted"
+fi
+output=$(obsidian vault=fixture-vault read path=Actions/task.md)
+[[ "$output" == 'manual context with [[existing wiki link]];' ]] ||
+  fail "rejected non-silent Obsidian append changed state"
+
+new_run o1t1
 obsidian vault=fixture-vault read path=Actions/task.md >/dev/null
 obsidian vault=fixture-vault append path=Actions/task.md content='approved next step' silent
 output=$(obsidian vault=fixture-vault read path=Actions/task.md)
@@ -212,6 +231,18 @@ if env PCOS_FIXTURE_ROOT="$ancestor_root" PCOS_FIXTURE_SPECIMEN=w1r1 \
   fail "fixture root containing the repository was accepted"
 fi
 [[ ! -e "$ancestor_trace" ]] || fail "ancestor-root check wrote inside the repository"
+
+root_rejection_trace="$run_root/root-rejection-trace.jsonl"
+if root_error=$(PCOS_FIXTURE_ROOT=/ PCOS_FIXTURE_SPECIMEN=w1r1 \
+  PCOS_FIXTURE_TRACE="$root_rejection_trace" \
+  bash -c 'die() { printf "%s\n" "$1" >&2; exit "${2:-64}"; }; source "$1"; fixture_bootstrap "$2"' \
+  _ "$fixture_dir/lib/bootstrap.sh" "$fixture_bin" 2>&1); then
+  fail "filesystem root was accepted as the fixture root"
+fi
+[[ "$root_error" == "fixture root must not be the filesystem root" ]] ||
+  fail "filesystem-root rejection did not use the explicit root guard"
+[[ ! -e "$root_rejection_trace" ]] ||
+  fail "filesystem-root rejection wrote outside fixture state"
 
 new_run w1r1
 outside_trace="$run_root/outside-trace.jsonl"

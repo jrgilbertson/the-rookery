@@ -64,14 +64,24 @@ separate read-only phase. Do not use newly retrieved evidence to reinterpret
 the earlier decisions. Render one Source Access Audit with a Phase column that
 separates action access from review discovery.
 
+If the same message instead requests current cross-source context without a
+review mode, also finish the visible action decisions first. Then use the
+non-mode path below as a separate read-only context-discovery phase; do not open
+Wind-down, Weekly, or Quarterly, and do not let the new context reinterpret the
+earlier decisions. Render one Source Access Audit with a Phase column that
+separates **Action access** from **Context discovery**.
+
 Completion: every visible action decision was resolved against its exact
-originating bundle and mode before any separately requested review began.
+originating bundle and mode before any separately requested review or non-mode
+context discovery began.
 
 ## Supply cross-source context without a review mode
 
 When another workflow explicitly requests current cross-source chief-of-staff
-priority or context—and the message is not an action response or a request for
-wind-down, weekly, or quarterly review—do not select a review mode. Read
+priority or context—and the message does not request wind-down, weekly, or
+quarterly review—do not select a review mode. If that message also decides
+visible actions, enter this path only after resolving them under the phase
+boundary above. Read
 [references/source-behavior.md](references/source-behavior.md) and
 [assets/review-bundle.md](assets/review-bundle.md). Retrieve only the evidence
 needed for the caller's judgment, distinguish fact from inference, and return

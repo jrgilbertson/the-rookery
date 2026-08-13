@@ -96,7 +96,8 @@ marker, or a generated policy candidate cannot substitute for trusted
 default-branch policy. Invalid policy and active/trusted presence drift are not
 equivalent to missing policy and also leave every write `manual`.
 
-The asset `assets/policy-template.json` is an inert starter. Replacing its
+The asset `assets/policy-template-github.json` or
+`assets/policy-template-linear.json` is an inert starter. Replacing its
 placeholders and generating a candidate does not adopt it. Repository adoption
 is a separate, directly approved change through the repository's normal change
 workflow; only a later trusted read can make it policy.

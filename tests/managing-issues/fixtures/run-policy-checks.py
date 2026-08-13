@@ -20,7 +20,8 @@ REPO_ROOT = HERE.parents[2]
 PRODUCTION = REPO_ROOT / "skills" / "managing-issues" / "scripts" / "policy_check.py"
 POLICIES = HERE / "policy"
 SYNC_MAPPINGS = HERE / "sync-mapping"
-TEMPLATE = REPO_ROOT / "skills" / "managing-issues" / "assets" / "policy-template.json"
+TEMPLATE_LINEAR = REPO_ROOT / "skills" / "managing-issues" / "assets" / "policy-template-linear.json"
+TEMPLATE_GITHUB = REPO_ROOT / "skills" / "managing-issues" / "assets" / "policy-template-github.json"
 ACTIVE_POLICY_RELATIVE = Path(".agents") / "managing-issues.json"
 ACTIVE_MAPPING_RELATIVE = Path(".agents") / "linear-sync.json"
 MAX_BYTES = 64 * 1024
@@ -686,33 +687,74 @@ def main() -> int:
         check_active_policy_filesystem_cases(repo_root, outside)
         check_mapping_filesystem_cases(repo_root, outside)
 
-        require(TEMPLATE.is_file(), "missing policy template")
-        template = json.loads(TEMPLATE.read_text(encoding="utf-8"))
-        require(template["provider"] == "linear", "policy template provider differs")
+        require(TEMPLATE_LINEAR.is_file(), "missing Linear policy template")
+        template_linear = json.loads(TEMPLATE_LINEAR.read_text(encoding="utf-8"))
+        require(template_linear["provider"] == "linear", "Linear policy template provider differs")
         require(
-            set(template["target"]) == {"workspace", "team"},
-            "policy template Linear target differs",
+            set(template_linear["target"]) == {"workspace", "team"},
+            "Linear policy template target differs",
         )
         require(
-            set(template["mappings"]["work_type"])
+            set(template_linear["mappings"]["work_type"])
             == {"feature", "fix", "docs", "research", "experiment", "optimization", "maintenance"},
-            "policy template work-type starter differs",
+            "Linear policy template work-type starter differs",
         )
         require(
-            set(template["mappings"]["readiness"]) == {"triage", "ready"},
-            "policy template readiness starter differs",
+            set(template_linear["mappings"]["readiness"]) == {"triage", "ready"},
+            "Linear policy template readiness starter differs",
         )
         require(
-            template["mappings"]["priority"]
+            template_linear["mappings"]["priority"]
             == {"urgent": "urgent", "high": "high", "medium": "medium", "low": "low", "none": "none"},
-            "policy template priority starter differs",
+            "Linear policy template priority starter differs",
         )
         require(
-            template["mappings"]["leaf_estimate"]
+            template_linear["mappings"]["leaf_estimate"]
             == {"1": 1, "2": 2, "3": 3, "5": 5, "8": 8},
-            "policy template leaf-estimate starter differs",
+            "Linear policy template leaf-estimate starter differs",
         )
-        expect_invalid(TEMPLATE, repo_root, "unresolved REPLACE_WITH placeholder")
+        expect_invalid(TEMPLATE_LINEAR, repo_root, "unresolved REPLACE_WITH placeholder")
+
+        require(TEMPLATE_GITHUB.is_file(), "missing GitHub policy template")
+        template_github = json.loads(TEMPLATE_GITHUB.read_text(encoding="utf-8"))
+        require(template_github["provider"] == "github", "GitHub policy template provider differs")
+        require(
+            isinstance(template_github["target"], str) and "REPLACE_WITH" in template_github["target"],
+            "GitHub policy template target differs",
+        )
+        require(
+            set(template_github["mappings"]["work_type"])
+            == {"feature", "fix", "docs", "research", "experiment", "optimization", "maintenance"},
+            "GitHub policy template work-type starter differs",
+        )
+        require(
+            set(template_github["mappings"]["readiness"]) == {"triage", "ready"},
+            "GitHub policy template readiness starter differs",
+        )
+        require(
+            set(template_github["mappings"]["priority"])
+            == {"urgent", "high", "medium", "low", "none"},
+            "GitHub policy template priority starter differs",
+        )
+        require(
+            all(
+                isinstance(value, str) and "REPLACE_WITH" in value
+                for value in template_github["mappings"]["priority"].values()
+            ),
+            "GitHub policy template priority values are not placeholder labels",
+        )
+        require(
+            set(template_github["mappings"]["leaf_estimate"]) == {"1", "2", "3", "5", "8"},
+            "GitHub policy template leaf-estimate starter differs",
+        )
+        require(
+            all(
+                isinstance(value, str) and "REPLACE_WITH" in value
+                for value in template_github["mappings"]["leaf_estimate"].values()
+            ),
+            "GitHub policy template leaf-estimate values are not placeholder labels",
+        )
+        expect_invalid(TEMPLATE_GITHUB, repo_root, "unresolved REPLACE_WITH placeholder")
 
     print("PASS: managing-issues policy contract")
     return 0

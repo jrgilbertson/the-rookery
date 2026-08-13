@@ -53,6 +53,29 @@ def body_from_stdin() -> str:
     return STDIN
 
 
+def issue_ref(issue: dict[str, Any]) -> dict[str, Any]:
+    return {"id": issue["id"], "number": issue["number"]}
+
+
+def add_unique_ref(items: list[dict[str, Any]], issue: dict[str, Any]) -> None:
+    if not any(candidate["id"] == issue["id"] for candidate in items):
+        items.append(issue_ref(issue))
+
+
+def remove_ref(items: list[dict[str, Any]], issue: dict[str, Any]) -> None:
+    items[:] = [candidate for candidate in items if candidate["id"] != issue["id"]]
+
+
+def api_issue_and_collection(state: dict[str, Any], endpoint: str) -> tuple[dict[str, Any], str]:
+    path = endpoint.split("?", 1)[0].strip("/").split("/")
+    if len(path) not in {6, 7} or path[:3] != ["repos", "example", "project"] or path[3] != "issues":
+        fail("unsupported command")
+    issue = state["issues"].get(path[4])
+    if issue is None:
+        fail("issue not found")
+    return issue, "/".join(path[5:])
+
+
 LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
 with LOG_PATH.open("a", encoding="utf-8") as stream:
     stream.write(
@@ -81,11 +104,32 @@ if ARGV[:2] == ["repo", "view"]:
     emit(repository)
     raise SystemExit(0)
 
+if ARGV[:1] == ["api"]:
+    issue, collection = api_issue_and_collection(state, ARGV[1] if len(ARGV) > 1 else "")
+    if "--paginate" not in ARGV or "--slurp" not in ARGV:
+        fail("fixture requires --paginate --slurp")
+    if collection == "sub_issues":
+        refs = issue["subIssues"]
+    elif collection == "dependencies/blocked_by":
+        refs = issue["blockedBy"]
+    elif collection == "dependencies/blocking":
+        refs = issue["blocking"]
+    else:
+        fail("unsupported command")
+    nodes = [state["issues"][str(ref["number"])] for ref in refs]
+    if issue["number"] == 10 and len(nodes) == 2:
+        emit([[nodes[0]], [nodes[1]]])
+    else:
+        emit([nodes])
+    raise SystemExit(0)
+
 if ARGV[:2] == ["issue", "view"]:
     requested_repo = flag("-R")
     if requested_repo != repository["nameWithOwner"]:
         fail("repository identity differs")
     key = issue_number(ARGV[2]) if len(ARGV) > 2 else ""
+    if os.environ.get("MI_GITHUB_GRAPH_SCENARIO") == "unreadable-boundary" and key == "99":
+        fail("required boundary is inaccessible")
     issue = state["issues"].get(key)
     if issue is None:
         fail("issue not found")
@@ -108,6 +152,41 @@ if ARGV[:2] == ["issue", "edit"]:
         issue["title"] = flag("--title")
     if "--body-file" in ARGV:
         issue["body"] = body_from_stdin()
+    if flag("--parent") is not None:
+        parent = state["issues"].get(issue_number(flag("--parent", "")))
+        if parent is None:
+            fail("parent issue not found")
+        if issue.get("parent") is not None:
+            old_parent = state["issues"].get(str(issue["parent"]["number"]))
+            if old_parent is not None:
+                remove_ref(old_parent["subIssues"], issue)
+        issue["parent"] = issue_ref(parent)
+        add_unique_ref(parent["subIssues"], issue)
+    if "--remove-parent" in ARGV and issue.get("parent") is not None:
+        old_parent = state["issues"].get(str(issue["parent"]["number"]))
+        if old_parent is not None:
+            remove_ref(old_parent["subIssues"], issue)
+        issue["parent"] = None
+    for add_flag, source_key, target_key in (
+        ("--add-blocking", "blocking", "blockedBy"),
+        ("--add-blocked-by", "blockedBy", "blocking"),
+    ):
+        if flag(add_flag) is not None:
+            related = state["issues"].get(issue_number(flag(add_flag, "")))
+            if related is None:
+                fail("related issue not found")
+            add_unique_ref(issue[source_key], related)
+            add_unique_ref(related[target_key], issue)
+    for remove_flag, source_key, target_key in (
+        ("--remove-blocking", "blocking", "blockedBy"),
+        ("--remove-blocked-by", "blockedBy", "blocking"),
+    ):
+        if flag(remove_flag) is not None:
+            related = state["issues"].get(issue_number(flag(remove_flag, "")))
+            if related is None:
+                fail("related issue not found")
+            remove_ref(issue[source_key], related)
+            remove_ref(related[target_key], issue)
     issue["updatedAt"] = "2026-08-12T00:00:01Z"
     save(state)
     print(issue["url"])

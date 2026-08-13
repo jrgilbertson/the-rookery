@@ -56,6 +56,36 @@ def body_from_stdin() -> str:
     return STDIN
 
 
+def issue_ref(issue: dict[str, Any]) -> dict[str, Any]:
+    return {"id": issue["id"], "identifier": issue["identifier"]}
+
+
+def relation(issue: dict[str, Any], relation_type: str) -> dict[str, Any]:
+    return {"type": relation_type, "issue": issue_ref(issue)}
+
+
+def add_relation(issue: dict[str, Any], related: dict[str, Any], relation_type: str) -> None:
+    if not any(edge["type"] == relation_type and edge["issue"]["id"] == related["id"] for edge in issue["relations"]):
+        issue["relations"].append(relation(related, relation_type))
+
+
+def remove_relation(issue: dict[str, Any], related: dict[str, Any], relation_type: str) -> None:
+    issue["relations"] = [
+        edge
+        for edge in issue["relations"]
+        if not (edge["type"] == relation_type and edge["issue"]["id"] == related["id"])
+    ]
+
+
+def add_child(parent: dict[str, Any], child: dict[str, Any]) -> None:
+    if not any(candidate["id"] == child["id"] for candidate in parent["children"]):
+        parent["children"].append(issue_ref(child))
+
+
+def remove_child(parent: dict[str, Any], child: dict[str, Any]) -> None:
+    parent["children"] = [candidate for candidate in parent["children"] if candidate["id"] != child["id"]]
+
+
 LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
 with LOG_PATH.open("a", encoding="utf-8") as stream:
     stream.write(
@@ -84,6 +114,59 @@ if ARGV[:3] == ["linear", "team", "labels"]:
     emit({"labels": state["labels"]})
     raise SystemExit(0)
 
+if ARGV[:2] == ["linear", "list-issues"]:
+    parent = flag("--parent-id")
+    if parent is None:
+        fail("missing --parent-id")
+    cursor = flag("--cursor")
+    scenario = os.environ.get("MI_LINEAR_GRAPH_SCENARIO", "complete")
+    children = [
+        issue
+        for issue in state["issues"].values()
+        if issue.get("parent") and issue["parent"]["identifier"] == parent
+    ]
+    children.sort(key=lambda item: item["identifier"])
+    if scenario == "cap":
+        page_number = {None: 1, "cap-2": 2, "cap-3": 3}.get(cursor)
+        if page_number is None:
+            fail("invalid cursor")
+        count = 100 if page_number < 3 else 50
+        start = (page_number - 1) * 100
+        page = [
+            {"id": f"cap-{number}", "identifier": f"CAP-{number}"}
+            for number in range(start + 1, start + count + 1)
+        ]
+        emit(
+            {
+                "issues": page,
+                "pageInfo": {
+                    "hasNextPage": True,
+                    "endCursor": f"cap-{page_number + 1}",
+                },
+            }
+        )
+        raise SystemExit(0)
+    if cursor is None:
+        emit(
+            {
+                "issues": children[:1],
+                "pageInfo": {
+                    "hasNextPage": len(children) > 1,
+                    "endCursor": "repeat" if scenario == "repeated-cursor" else "page-2",
+                },
+            }
+        )
+        raise SystemExit(0)
+    if scenario == "pagination-failure" and cursor == "page-2":
+        fail("pagination failed")
+    if scenario == "repeated-cursor" and cursor == "repeat":
+        emit({"issues": children[1:2], "pageInfo": {"hasNextPage": True, "endCursor": "repeat"}})
+        raise SystemExit(0)
+    if cursor == "page-2":
+        emit({"issues": children[1:], "pageInfo": {"hasNextPage": False, "endCursor": None}})
+        raise SystemExit(0)
+    fail("invalid cursor")
+
 if ARGV[:2] == ["linear", "issue"]:
     identifier = ARGV[2] if len(ARGV) > 2 else ""
     emit({"issue": require_issue(state, identifier)})
@@ -96,6 +179,17 @@ if ARGV[:2] == ["linear", "save-issue"]:
         issue["title"] = flag("--title")
     if "--body-file" in ARGV:
         issue["description"] = body_from_stdin()
+    if flag("--parent-id") is not None:
+        parent_value = flag("--parent-id")
+        if issue.get("parent") is not None:
+            old_parent = require_issue(state, issue["parent"]["identifier"])
+            remove_child(old_parent, issue)
+        if parent_value == "null":
+            issue["parent"] = None
+        else:
+            parent = require_issue(state, parent_value or "")
+            issue["parent"] = issue_ref(parent)
+            add_child(parent, issue)
     save(state)
     emit({"issue": issue})
     raise SystemExit(0)
@@ -118,16 +212,36 @@ if ARGV[:2] == ["linear", "create"]:
         "estimate": None,
         "labels": [],
         "assignee": None,
-        "parent": None,
+        "parent": issue_ref(require_issue(state, flag("--parent", ""))) if flag("--parent") is not None else None,
         "children": [],
         "relations": [],
         "url": f"https://linear.app/fixture/issue/{identifier}",
     }
     state["issues"][identifier] = issue
+    if issue["parent"] is not None:
+        add_child(require_issue(state, issue["parent"]["identifier"]), issue)
     state["next_issue"] = number + 1
     save(state)
     if os.environ.get("MI_LINEAR_INDETERMINATE_CREATE") == "1":
         fail("linear_write_unconfirmed")
+    emit({"issue": issue})
+    raise SystemExit(0)
+
+if len(ARGV) >= 4 and ARGV[:3] in (["linear", "relation", "add"], ["linear", "relation", "remove"]):
+    operation = ARGV[2]
+    issue = require_issue(state, ARGV[3])
+    related = require_issue(state, flag("--related", "") or "")
+    relation_type = flag("--type")
+    inverse = {"blocks": "blocked-by", "blocked-by": "blocks"}
+    if relation_type not in inverse:
+        fail("unsupported relation type")
+    if operation == "add":
+        add_relation(issue, related, relation_type)
+        add_relation(related, issue, inverse[relation_type])
+    else:
+        remove_relation(issue, related, relation_type)
+        remove_relation(related, issue, inverse[relation_type])
+    save(state)
     emit({"issue": issue})
     raise SystemExit(0)
 

@@ -16,10 +16,6 @@ looked" surface. GitHub Releases mirror its entries.
 - Added `repo-gardener`, a portable repository-health parent loop. It surveys
   nine lanes, deepens evidence-justified targets, and may supervise a
   live-policy-bounded child through an unmerged pull request.
-- Added a seven-image Field Guide Blueprint illustration system to
-  `WORKFLOWS.md`, with Huginn carrying Research through Build, a verified
-  handoff to Muninn at Ship, and Muninn returning the learning loop to
-  Research.
 - Added the repository banner and its optimized README delivery asset.
 
 ### Changed
@@ -35,9 +31,6 @@ looked" surface. GitHub Releases mirror its entries.
   OID. A disposable real-Git fixture proves the complete chain and fails closed
   on missing, stale, cross-subject, cross-revision, unresolved, and bypassed
   receipts while preserving the current interactive gate.
-- Replaced the interactive workflow diagram with a static Field Guide Blueprint
-  overview and reframed all seven section illustrations as compact panoramic
-  markers, preserving their visual meaning while reducing reading interruption.
 - `personal-chief-of-staff` now makes each proposed intention recoverable in
   natural prose from its current basis, user-approved outcome, and future
   closure signal. Every visible response also follows its answer-first

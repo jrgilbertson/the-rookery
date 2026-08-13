@@ -1047,60 +1047,57 @@ def _view_matches_post(view: dict[str, Any], prepared: dict[str, Any]) -> bool:
     )
 
 
-def verify_run_records(opened: Any, closed: Any, post_read: Any) -> dict[str, Any]:
+def verify_run_records(run_id: Any, closed: Any, post_read: Any) -> dict[str, Any]:
     """Verify one exact opening/closing receipt pair after complete readback."""
-    opened = _prepared_effect(opened)
+    run_id = require_identity(run_id, "run record run_id")
     closed = _prepared_effect(closed)
-    require(opened["operation"]["kind"] == "run-opened", "opening material must be run-opened")
     require(closed["operation"]["kind"] == "run-closed", "closing material must be run-closed")
-    run_id = opened["operation"]["run_id"]
-    require(closed["operation"]["run_id"] == run_id, "opening and closing material must use the same run_id")
-    for field in ("repository_id", "report_issue_id", "writer_id"):
-        require(opened[field] == closed[field], f"opening and closing {field} mismatch")
-    require(
-        closed["expected_pre_revision"] == opened["expected_post_revision"],
-        "opening and closing sequences are not contiguous",
-    )
-    require(
-        closed["expected_pre_head"] == opened["expected_post_head"],
-        "opening and closing history heads are not contiguous",
-    )
-    require(
-        closed["expected_pre_body_fingerprint"]
-        == hashlib.sha256(opened["body"].encode("utf-8")).hexdigest(),
-        "closing material does not follow the exact opening body",
-    )
+    require(closed["operation"]["run_id"] == run_id, "closing material run_id mismatch")
 
     view = normalize_github_register_snapshot(post_read)
     require(view["anchor_status"] == "exact", "run record requires an exact post-read")
     for field in ("repository_id", "report_issue_id", "writer_id"):
-        require(view[field] == opened[field], f"post-read {field} mismatch")
+        require(view[field] == closed[field], f"post-read {field} mismatch")
     matching = [
         item
         for item in view["history_receipts"]
         if item["receipt"]["run_id"] == run_id
     ]
     require(len(matching) == 2, "run_id must have exactly two managed receipts")
-    expected = (("run-opened", opened), ("run-closed", closed))
-    for item, (kind, material) in zip(matching, expected):
-        receipt = item["receipt"]
-        require(receipt["kind"] == kind, f"run receipt order must be {kind}")
-        require(receipt["sequence"] == material["expected_post_revision"], f"{kind} sequence mismatch")
-        require(receipt["operation_id"] == material["operation_id"], f"{kind} operation_id mismatch")
-        require(receipt["receipt_hash"] == material["receipt_hash"], f"{kind} receipt hash mismatch")
-        exact_comment = f"{HISTORY_RECEIPT_BEGIN}\n{item['raw_receipt_json']}\n{HISTORY_RECEIPT_END}"
-        require(exact_comment == material["comment"], f"{kind} comment material mismatch")
+    opened_item, closed_item = matching
+    opened_receipt = opened_item["receipt"]
+    closed_receipt = closed_item["receipt"]
+    require(opened_receipt["kind"] == "run-opened", "run receipt order must be run-opened")
+    require(closed_receipt["kind"] == "run-closed", "run receipt order must be run-closed")
+    require(
+        closed_receipt["sequence"] == opened_receipt["sequence"] + 1,
+        "run receipt sequences are not contiguous",
+    )
+    require(
+        closed_receipt["previous_hash"] == opened_receipt["receipt_hash"],
+        "run receipt history heads are not contiguous",
+    )
+    require(
+        closed["expected_pre_revision"] == opened_receipt["sequence"]
+        and closed["expected_pre_head"] == opened_receipt["receipt_hash"],
+        "closing material does not follow the durable opening receipt",
+    )
+    require(closed_receipt["sequence"] == closed["expected_post_revision"], "run-closed sequence mismatch")
+    require(closed_receipt["operation_id"] == closed["operation_id"], "run-closed operation_id mismatch")
+    require(closed_receipt["receipt_hash"] == closed["receipt_hash"], "run-closed receipt hash mismatch")
+    exact_comment = f"{HISTORY_RECEIPT_BEGIN}\n{closed_item['raw_receipt_json']}\n{HISTORY_RECEIPT_END}"
+    require(exact_comment == closed["comment"], "run-closed comment material mismatch")
     require(_view_matches_post(view, closed), "closing body and receipt were not read back exactly")
     return {
         "schema": "repo-gardener-run-records-result/v1",
         "register_closed_consistently": True,
-        "repository_id": opened["repository_id"],
-        "report_issue_id": opened["report_issue_id"],
-        "writer_id": opened["writer_id"],
+        "repository_id": view["repository_id"],
+        "report_issue_id": view["report_issue_id"],
+        "writer_id": view["writer_id"],
         "run_id": run_id,
-        "opened_operation_id": opened["operation_id"],
+        "opened_operation_id": opened_receipt["operation_id"],
         "closed_operation_id": closed["operation_id"],
-        "opened_sequence": opened["expected_post_revision"],
+        "opened_sequence": opened_receipt["sequence"],
         "closed_sequence": closed["expected_post_revision"],
     }
 
@@ -1499,9 +1496,9 @@ def main() -> int:
         data = _versioned_input(
             _load_input(args.input),
             "repo-gardener-run-records-input/v1",
-            {"opened", "closed", "post_read"},
+            {"run_id", "closed", "post_read"},
         )
-        result = verify_run_records(data["opened"], data["closed"], data["post_read"])
+        result = verify_run_records(data["run_id"], data["closed"], data["post_read"])
     elif args.command == "completion-v1":
         data = _versioned_input(_load_input(args.input), "repo-gardener-completion-input/v1", {"scenario"})
         scenario = require_object(data["scenario"], "completion scenario")

@@ -167,13 +167,13 @@ def corrupt_receipt_hash(snapshot: dict[str, Any], run_id: str, kind: str) -> No
 
 
 def run_input(
-    opened: dict[str, Any],
+    run_id: str,
     closed: dict[str, Any],
     post_read: Any,
 ) -> dict[str, Any]:
     return {
         "schema": "repo-gardener-run-records-input/v1",
-        "opened": opened,
+        "run_id": run_id,
         "closed": closed,
         "post_read": post_read,
     }
@@ -209,83 +209,132 @@ def main() -> int:
         "opened_sequence": opened["expected_post_revision"],
         "closed_sequence": closed["expected_post_revision"],
     }
-    actual = invoke("run-records-v1", run_input(opened, closed, exact_post))
+    actual = invoke("run-records-v1", run_input(run_id, closed, exact_post))
     CONTRACT.require(actual == expected, f"exact closure result mismatch: {actual!r}")
 
-    expect_error(run_input(opened, closed, after_open), "exactly two")
-    expect_error(run_input(opened, closed, base), "exactly two")
-    expect_error(run_input(closed, opened, exact_post), "run-opened")
+    expect_error(run_input(run_id, closed, after_open), "exactly two")
+    expect_error(run_input(run_id, closed, base), "exactly two")
+
+    reversed_first = prepare(base, "run-closed", run_id)
+    after_reversed_first = apply_prepared(base, reversed_first)
+    reversed_second = prepare(after_reversed_first, "run-opened", run_id)
+    reversed_post = apply_prepared(after_reversed_first, reversed_second)
+    expect_error(run_input(run_id, reversed_first, reversed_post), "run-opened")
 
     other_closed = prepare(after_open, "run-closed", "run:synthetic:other")
-    expect_error(run_input(opened, other_closed, apply_prepared(after_open, other_closed)), "same run_id")
+    expect_error(
+        run_input(run_id, other_closed, apply_prepared(after_open, other_closed)),
+        "closing material run_id mismatch",
+    )
 
     alternate_base = genesis_with_identity(repository_id="R_SYNTHETIC_REPOSITORY_002")
     alternate_opened = prepare(alternate_base, "run-opened", run_id)
     alternate_after_open = apply_prepared(alternate_base, alternate_opened)
     alternate_closed = prepare(alternate_after_open, "run-closed", run_id)
     alternate_post = apply_prepared(alternate_after_open, alternate_closed)
-    expect_error(run_input(opened, alternate_closed, alternate_post), "repository_id mismatch")
-    expect_error(run_input(opened, closed, alternate_post), "post-read repository_id mismatch")
+    alternate_expected = dict(expected)
+    alternate_expected.update(
+        {
+            "repository_id": alternate_opened["repository_id"],
+            "report_issue_id": alternate_opened["report_issue_id"],
+            "writer_id": alternate_opened["writer_id"],
+            "opened_operation_id": alternate_opened["operation_id"],
+            "closed_operation_id": alternate_closed["operation_id"],
+            "opened_sequence": alternate_opened["expected_post_revision"],
+            "closed_sequence": alternate_closed["expected_post_revision"],
+        }
+    )
+    alternate_actual = invoke("run-records-v1", run_input(run_id, alternate_closed, alternate_post))
+    CONTRACT.require(alternate_actual == alternate_expected, "snapshot identity was not bound durably")
+    expect_error(run_input(run_id, closed, alternate_post), "post-read repository_id mismatch")
 
     stale_closed = prepare(base, "run-closed", run_id)
-    expect_error(run_input(opened, stale_closed, exact_post), "sequences are not contiguous")
+    expect_error(run_input(run_id, stale_closed, exact_post), "durable opening receipt")
 
     different_opened = prepare(base, "run-opened", run_id, variant="different-head")
     after_different_open = apply_prepared(base, different_opened)
     different_closed = prepare(after_different_open, "run-closed", run_id)
     different_post = apply_prepared(after_different_open, different_closed)
-    expect_error(run_input(opened, different_closed, different_post), "history heads are not contiguous")
-    expect_error(run_input(opened, closed, different_post), "run-opened operation_id mismatch")
+    different_expected = dict(expected)
+    different_expected.update(
+        {
+            "opened_operation_id": different_opened["operation_id"],
+            "closed_operation_id": different_closed["operation_id"],
+        }
+    )
+    different_actual = invoke("run-records-v1", run_input(run_id, different_closed, different_post))
+    CONTRACT.require(different_actual == different_expected, "durable opening variant was not accepted")
+    expect_error(run_input(run_id, closed, different_post), "durable opening receipt")
 
     changed_body = copy.deepcopy(after_open)
     changed_body["issue"]["body"] += "\nOwner-only projection note.\n"
     changed_body_closed = prepare(changed_body, "run-closed", run_id)
-    expect_error(
-        run_input(opened, changed_body_closed, apply_prepared(changed_body, changed_body_closed)),
-        "does not follow the exact opening body",
+    CONTRACT.require(
+        changed_body_closed["expected_pre_body_fingerprint"]
+        != closed["expected_pre_body_fingerprint"],
+        "recovery fixture did not change the opening-state body fingerprint",
+    )
+    changed_body_actual = invoke(
+        "run-records-v1",
+        run_input(run_id, changed_body_closed, apply_prepared(changed_body, changed_body_closed)),
+    )
+    changed_body_expected = dict(expected)
+    changed_body_expected["closed_operation_id"] = changed_body_closed["operation_id"]
+    CONTRACT.require(
+        changed_body_actual == changed_body_expected,
+        "recovery closure incorrectly depended on the ephemeral opening body",
     )
 
-    tampered = copy.deepcopy(opened)
+    tampered = copy.deepcopy(closed)
     tampered["receipt_hash"] = "0" * 64
-    expect_error(run_input(tampered, closed, exact_post), "prepared receipt hash mismatch")
+    expect_error(run_input(run_id, tampered, exact_post), "prepared receipt hash mismatch")
 
     duplicate = prepare(exact_post, "run-closed", run_id)
-    expect_error(run_input(opened, closed, apply_prepared(exact_post, duplicate)), "exactly two")
+    expect_error(run_input(run_id, closed, apply_prepared(exact_post, duplicate)), "exactly two")
 
     intermediate = prepare(after_open, "evidence", "run:synthetic:intermediate")
     after_intermediate = apply_prepared(after_open, intermediate)
     late_closed = prepare(after_intermediate, "run-closed", run_id)
     late_post = apply_prepared(after_intermediate, late_closed)
-    expect_error(run_input(opened, closed, late_post), "run-closed sequence mismatch")
+    expect_error(run_input(run_id, late_closed, late_post), "sequences are not contiguous")
 
     reformatted = copy.deepcopy(exact_post)
     rewrite_receipt_comment(reformatted, run_id, "run-opened")
-    expect_error(run_input(opened, closed, reformatted), "JSON is not canonical")
+    expect_error(run_input(run_id, closed, reformatted), "JSON is not canonical")
 
     bad_hash = copy.deepcopy(exact_post)
     corrupt_receipt_hash(bad_hash, run_id, "run-closed")
-    expect_error(run_input(opened, closed, bad_hash), "hash mismatch")
+    expect_error(run_input(run_id, closed, bad_hash), "hash mismatch")
 
     wrong_count = copy.deepcopy(exact_post)
     wrong_count["issue"]["comments"] += 1
-    expect_error(run_input(opened, closed, wrong_count), "count does not match")
+    expect_error(run_input(run_id, closed, wrong_count), "count does not match")
 
     incomplete_pages = copy.deepcopy(exact_post)
     incomplete_pages["comment_pages_complete"] = False
-    expect_error(run_input(opened, closed, incomplete_pages), "pagination is incomplete")
+    expect_error(run_input(run_id, closed, incomplete_pages), "pagination is incomplete")
 
     interrupted = copy.deepcopy(after_open)
     interrupted["issue"]["body"] = closed["body"]
-    expect_error(run_input(opened, closed, interrupted), "exact post-read")
-    expect_error(run_input(opened, closed, None), "must be an object")
+    expect_error(run_input(run_id, closed, interrupted), "exact post-read")
+    expect_error(run_input(run_id, closed, None), "must be an object")
 
     unrelated_after = copy.deepcopy(exact_post)
     add_ordinary_comment(unrelated_after)
-    actual = invoke("run-records-v1", run_input(opened, closed, unrelated_after))
+    actual = invoke("run-records-v1", run_input(run_id, closed, unrelated_after))
     CONTRACT.require(actual == expected, "unrelated comments changed mechanical closure")
 
-    for forbidden in ("candidates", "plan", "score", "pr_readiness", "policy", "authority", "effect_safety"):
-        poisoned = run_input(opened, closed, exact_post)
+    for forbidden in (
+        "opened",
+        "candidates",
+        "plan",
+        "score",
+        "pr_readiness",
+        "policy",
+        "authority",
+        "effect_safety",
+    ):
+        poisoned = run_input(run_id, closed, exact_post)
         poisoned[forbidden] = True
         expect_error(poisoned, "unexpected")
 

@@ -2,8 +2,8 @@
 
 The target repository's installed policy is the only policy authority for a
 run. Read it from the repository, record its exact revision in `run-opened`,
-and reread it before child dispatch, PR creation, and closing. A tightened
-policy wins immediately.
+and reread it before child dispatch, push, PR creation, and closing. The
+current installed policy wins immediately.
 
 The bundled policy asset is a safe starter for an owner creating a repository
 policy. It is never loaded as a fallback, projected into another shape, or used
@@ -19,9 +19,13 @@ actions; read-only sensing may continue.
 Child authoring is allowed only when both
 `boundaries.maximum_new_child_prs_per_run` is greater than zero and the owning
 `lanes.<lane>.mutation` value is `true`. A missing field, `false` lane value,
-or zero limit denies authoring. Reread and compare the exact installed-policy
-revision immediately before parent dispatch, child PR creation, and parent
-closing. A revision mismatch stops only that mutation and its dependents.
+or zero limit denies authoring. Reread the installed policy from the current
+remote default branch (`origin/main` when configured) immediately before the
+child's first provider mutation (push), and again before PR creation. Revocation
+stops that operation and its dependents; preserve the local commit when push is
+denied. Immediately before closing, reread the current policy, record any
+revision change, and reevaluate tracker-write permission. A changed revision
+alone does not block a benign close; an actual current denial does.
 
 Scheduled and manual parents use the same skill contract. The caller owns
 automation scheduling, parent-worktree creation, provider authentication, and

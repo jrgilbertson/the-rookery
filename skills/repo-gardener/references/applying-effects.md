@@ -29,11 +29,12 @@ Never retry blindly. Reuse the original prepared object and operation ID.
 
 ## Check the closed run
 
-After exact closing verification, invoke `run-records-v1` with the exact
-prepared opening, exact prepared closing, and raw final snapshot. The command
-checks only the managed receipt chain, uniqueness, order, matching run and
-repository identities, exact prepared material, and final readback. A success
-returns `register_closed_consistently: true`.
+After exact closing verification, invoke `run-records-v1` with exact input
+`{schema, run_id, closed, post_read}`: the exact prepared closing object and raw
+final snapshot. The command validates the durable opening from final history,
+then checks only the managed receipt chain, uniqueness, order, matching run and
+repository identities, exact prepared closing material, and final readback. A
+success returns `register_closed_consistently: true`.
 
 Do not pass candidates, recommendations, risk judgments, PR-readiness claims,
 policy claims, or authority booleans to this checker. It neither accepts nor

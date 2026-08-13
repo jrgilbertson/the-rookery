@@ -21,11 +21,12 @@ reports `provenance: unverified`.
 
 For each of the two run records, use only immutable material returned by
 `effect-v1` preparation and verify it against a fresh full snapshot. After the
-closing read, pass both exact prepared objects and that raw snapshot to
-`run-records-v1`. The checker finds exactly one `run-opened` and one
-`run-closed` receipt for the run, requires the same repository and run identity,
-correct order and exact prepared material, and returns only the structural
-closure result.
+closing read, pass `{schema, run_id, closed, post_read}` with the exact prepared
+closing object and that raw snapshot to `run-records-v1`. The checker finds and
+validates the durable `run-opened` receipt in final history, requires exactly one
+`run-closed` receipt for the run with the same repository and run identity,
+correct order, exact prepared closing material, and final readback, and returns
+only the structural closure result.
 
 Bootstrap may use `assets/github-report-issue-template.md` after the caller
 replaces its stable identity placeholders. A nonempty incompatible issue is

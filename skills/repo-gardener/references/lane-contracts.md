@@ -75,9 +75,9 @@ External signals miss what only reading code reveals, so each run this lane
 also reads one bounded source slice — a module, flow, or directory — chosen by
 rotation. The eligible slices are the tracked tree's top-level directories
 that contain source, configuration, or test files — excluding generated,
-vendored, and pure-asset trees — plus one final slice of root-level tracked
-files, ordered lexicographically (descending into a directory's own
-subdirectories before advancing). Authoring scope never filters sensing:
+vendored, and pure-asset trees — plus one final slice of root-level source,
+configuration, and test files, ordered lexicographically (descending into a
+directory's own subdirectories before advancing). Authoring scope never filters sensing:
 read-only inspection covers protected and non-mutable code too; scope gates
 only what a repair may later touch. Rotation state is one bounded cursor in
 this lane's "what happened" cell: the most recently covered slice, plus the
@@ -88,7 +88,11 @@ the first eligible slice after the cursor, wrapping to the first slice after
 the last. Record the new cursor back into the cell. The projection is
 best-effort memory, not an ownership database: when the prior cursor is
 missing, unreadable, or format-drifted, restart from the first eligible
-slice and say so in the cell, rather than guessing at lost coverage. Within the
+slice and say so in the cell, rather than guessing at lost coverage. A
+caller-only safe-sensing run that may not write the report cannot advance
+the cursor; it still inspects the cursor slice and reports findings, and
+repetition across such runs is accepted rather than silently skipping ahead
+without a durable record. Within the
 slice, sense read-only for naming that no longer matches behavior, duplicated
 knowledge missing a single source of truth, dead or contradictory code,
 contract drift between runtimes or between code and schema, unbounded inputs

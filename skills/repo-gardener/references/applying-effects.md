@@ -1,67 +1,59 @@
-# Applying report effects
+# Applying the two tracker records
 
-Release A has one built-in effect surface: deterministic preparation and
-structural verification of a report-register operation. The skill does not
-invoke GitHub or any other provider. Source effects remain unavailable.
+The parent uses the existing `effect-v1` preparation and verification path
+exactly twice: once for `run-opened`, then once for `run-closed`. It performs no
+other managed tracker operation for that run ID.
 
-## Prepare
+## Require one tracker writer
 
-First run `normalize-github-register` over a complete GitHub snapshot as a
-preflight. Then pass that same raw complete snapshot to `effect-v1` with
-`schema: repo-gardener-effect-input/v2`, `phase: prepare`, and exactly one
-report operation. Preparation normalizes the snapshot again inside its own
-validation path.
+Before `run-opened`, the caller must ensure exclusive tracker-write ownership
+or atomic serialization such that only one parent may mutate this tracker. A
+model decision, lease check, or liveness read cannot establish that guarantee.
+This skill defines no wrapper or lock. When the guarantee is absent or unknown,
+stop before any tracker write. Read-only work may be reported to the caller,
+but the parent must not mutate the tracker.
 
-The operation contains a history kind, run identity, bounded payload, the full
-next row set, and the human projection. Preparation deterministically derives
-the repository-qualified operation ID from stable identities, the current
-revision/head, kind, and payload. It returns immutable prepared body and
-comment strings, the operation fingerprint, and exact expected transitions.
-Do not edit or regenerate those strings after preparation.
+## Prepare and write
 
-The caller alone decides whether it is authorized to invoke its GitHub tools.
-Caller booleans, verdicts, report text, observed state, and marker claims are
-not accepted as authority inputs. This package defines no custom wrapper,
-provider client, credential, or cryptographic service.
+Normalize a complete raw tracker snapshot first. Prepare one operation with
+`effect-v1` and keep its returned body and comment bytes immutable. Before the
+first provider mutation, persist that exact prepared object in caller-approved
+external or private run state outside repository source, where a recovery
+parent can read it after a process failure. If that state is unavailable, stop
+before writing. This is recovery material, not another tracker record or a
+custom provider wrapper. The caller alone decides whether its configured GitHub
+capability may apply those exact bytes. This skill defines no wrapper, provider
+client, credential, or planning authority.
 
-## Verify
+After the write, obtain the complete issue and every comment page. Verify the
+immutable prepared object against the same pre-read and the full post-read.
+Accept only `observed` or `already satisfied` before continuing. `failed` and
+`ambiguous` stop the dependent tracker sequence.
 
-After any caller action, obtain a complete issue including its provider comment
-total and all comment pages. The flattened page count must equal that total;
-otherwise verification remains ambiguous and permits no one-tail repair. Run
-`effect-v1` again with `phase: verify`, the immutable prepared object, the
-original complete pre-read, the complete post-read, and one write-attempt
-classification: `none`, `denied-before-write`, or `possible`.
+## Recover an uncertain write
 
-The result is exactly one terminal outcome:
+Never retry blindly. Reuse the original prepared object and operation ID.
+Load them from the caller-owned recovery state when the original parent is not
+available. Retain uncertain material for owner/recovery inspection; discard it
+only after exact verification proves the operation complete or not invoked.
 
-- `observed`: pre-read matches the prepared base and post-read contains the
-  exact prepared body and comment;
-- `already satisfied`: both reads already contain that exact target and the
-  write attempt was `none`;
-- `failed`: the write was denied before execution and exact pre/post snapshots
-  are unchanged; or
-- `ambiguous`: every other state, including unavailable reads, incomplete
-  pagination, foreign changes, uncertain deduplication, or partial application.
+- If body and comment already match, perform zero writes.
+- If the body is the exact prepared body and its anchor is exactly one receipt
+  ahead, append the exact prepared comment once, then read every page again.
+- Any other partial, changed, foreign, comment-ahead, or multi-gap state remains
+  ambiguous and permits no repair.
 
-All normalized snapshots report `provenance: unverified`. A positive structural
-match proves only that the expected report material is present. It never grants
-source, provider, pull-request, merge, or PostHog authority.
+## Check the closed run
 
-## Recovery
+After exact closing verification, invoke `run-records-v1` with exact input
+`{schema, run_id, closed, post_read}`: the exact prepared closing object and raw
+final snapshot. The command validates the durable opening from final history,
+then checks only the managed receipt chain, uniqueness, order, matching run and
+repository identities, exact prepared closing material, and final readback. A
+success returns `register_closed_consistently: true`.
 
-There is no blind retry. Reuse the original prepared object and operation ID.
-If the target is already exact, perform zero writes. If the body is exact and
-its anchor is exactly one receipt ahead of history, append the exact prepared
-comment once without rewriting the body, then perform a complete readback. Any
-other mismatch, changed precondition, comments-ahead state, or multiple gap
-remains ambiguous and permits no repair.
-
-## Completion
-
-`reconciliation-v2` combines the verified report outcome with the exact
-nine-lane manifest, nine terminal lane receipts, and a disjoint completion
-partition containing the report operation plus all nine lane operation
-identities. `run-closed`, a positive internal effect verification, and all
-lanes complete or not applicable advance the run to `Learn`. Otherwise stop at
-the last proven stage and preserve blocked or ambiguous work explicitly.
+Do not pass candidates, recommendations, risk judgments, PR-readiness claims,
+policy claims, or authority booleans to this checker. It neither accepts nor
+derives them. Existing older CLI commands remain compatibility interfaces for
+previously recorded Release A material; the nightly workflow does not use them
+to make or certify planning decisions.

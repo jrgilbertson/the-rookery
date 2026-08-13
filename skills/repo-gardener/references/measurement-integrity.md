@@ -24,8 +24,11 @@ revenue, or cost definition.
 
 ## Run the bounded preflight
 
-Use the repository's existing validation commands first. Then, within available
-read-only roles and a bounded current window, check:
+Confirm the configured reporting project against the repository's canonical
+production-project identity before querying. A mismatch stops only this slice.
+Name a bounded time window and timezone, product surface, expected events or
+metrics, and a query or time budget. Use the repository's existing validation
+commands first. Then, within available read-only roles, check:
 
 - executable schema, generated-reference, and observed event/property
   agreement, including required fields, types, enums, environment or release,
@@ -48,8 +51,8 @@ hypotheses with their sample size, denominator, window, and uncertainty.
 
 ## Feed reconciliation
 
-Return one cross-cutting result inside the reconciliation decision evidence,
-not another Scout Receipt. For every inspected metric, report its disposition,
+Return one cross-cutting result inside the parent decision evidence, not a
+tenth lane or another tracker comment. For every inspected metric, report its disposition,
 authority, window and timezone, grain, numerator, denominator, exclusions,
 uncertainty, reconciliation result, and bounded evidence references; use `not
 supplied` for unavailable observed values. Include every `metric contract

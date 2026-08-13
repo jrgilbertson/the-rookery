@@ -1047,6 +1047,61 @@ def _view_matches_post(view: dict[str, Any], prepared: dict[str, Any]) -> bool:
     )
 
 
+def verify_run_records(run_id: Any, closed: Any, post_read: Any) -> dict[str, Any]:
+    """Verify one exact opening/closing receipt pair after complete readback."""
+    run_id = require_identity(run_id, "run record run_id")
+    closed = _prepared_effect(closed)
+    require(closed["operation"]["kind"] == "run-closed", "closing material must be run-closed")
+    require(closed["operation"]["run_id"] == run_id, "closing material run_id mismatch")
+
+    view = normalize_github_register_snapshot(post_read)
+    require(view["anchor_status"] == "exact", "run record requires an exact post-read")
+    for field in ("repository_id", "report_issue_id", "writer_id"):
+        require(view[field] == closed[field], f"post-read {field} mismatch")
+    matching = [
+        item
+        for item in view["history_receipts"]
+        if item["receipt"]["run_id"] == run_id
+    ]
+    require(len(matching) == 2, "run_id must have exactly two managed receipts")
+    opened_item, closed_item = matching
+    opened_receipt = opened_item["receipt"]
+    closed_receipt = closed_item["receipt"]
+    require(opened_receipt["kind"] == "run-opened", "run receipt order must be run-opened")
+    require(closed_receipt["kind"] == "run-closed", "run receipt order must be run-closed")
+    require(
+        closed_receipt["sequence"] == opened_receipt["sequence"] + 1,
+        "run receipt sequences are not contiguous",
+    )
+    require(
+        closed_receipt["previous_hash"] == opened_receipt["receipt_hash"],
+        "run receipt history heads are not contiguous",
+    )
+    require(
+        closed["expected_pre_revision"] == opened_receipt["sequence"]
+        and closed["expected_pre_head"] == opened_receipt["receipt_hash"],
+        "closing material does not follow the durable opening receipt",
+    )
+    require(closed_receipt["sequence"] == closed["expected_post_revision"], "run-closed sequence mismatch")
+    require(closed_receipt["operation_id"] == closed["operation_id"], "run-closed operation_id mismatch")
+    require(closed_receipt["receipt_hash"] == closed["receipt_hash"], "run-closed receipt hash mismatch")
+    exact_comment = f"{HISTORY_RECEIPT_BEGIN}\n{closed_item['raw_receipt_json']}\n{HISTORY_RECEIPT_END}"
+    require(exact_comment == closed["comment"], "run-closed comment material mismatch")
+    require(_view_matches_post(view, closed), "closing body and receipt were not read back exactly")
+    return {
+        "schema": "repo-gardener-run-records-result/v1",
+        "register_closed_consistently": True,
+        "repository_id": view["repository_id"],
+        "report_issue_id": view["report_issue_id"],
+        "writer_id": view["writer_id"],
+        "run_id": run_id,
+        "opened_operation_id": opened_receipt["operation_id"],
+        "closed_operation_id": closed["operation_id"],
+        "opened_sequence": opened_receipt["sequence"],
+        "closed_sequence": closed["expected_post_revision"],
+    }
+
+
 def verify_report_effect(prepared: Any, pre_read: Any, post_read: Any, write_attempt: Any) -> dict[str, Any]:
     prepared = _prepared_effect(prepared)
     require(write_attempt in {"none", "denied-before-write", "possible"}, "write_attempt is invalid")
@@ -1392,7 +1447,7 @@ def main() -> int:
     body_parser.add_argument("--body", type=Path, required=True)
     snapshot_parser = subparsers.add_parser("normalize-github-register")
     snapshot_parser.add_argument("--input", required=True)
-    for command in ("effect-v1", "completion-v1", "gates-v1"):
+    for command in ("effect-v1", "run-records-v1", "completion-v1", "gates-v1"):
         input_parser = subparsers.add_parser(command)
         input_parser.add_argument("--input", required=True)
     for command in ("reconciliation-v2", "capacity-v1"):
@@ -1437,6 +1492,13 @@ def main() -> int:
             )
         else:
             raise ContractError("effect input phase must be prepare or verify")
+    elif args.command == "run-records-v1":
+        data = _versioned_input(
+            _load_input(args.input),
+            "repo-gardener-run-records-input/v1",
+            {"run_id", "closed", "post_read"},
+        )
+        result = verify_run_records(data["run_id"], data["closed"], data["post_read"])
     elif args.command == "completion-v1":
         data = _versioned_input(_load_input(args.input), "repo-gardener-completion-input/v1", {"scenario"})
         scenario = require_object(data["scenario"], "completion scenario")

@@ -266,7 +266,7 @@ def main() -> int:
     )
     for phrase in (
         "It never counts enumerated issues",
-        "deepen zero to the policy's `maximum_deep_targets_per_run` targets",
+        "smaller of three and the policy's `maximum_deep_targets_per_run`",
         "execution parallelism constrain claiming and authoring",
         "Leave that parent workspace available",
     ):

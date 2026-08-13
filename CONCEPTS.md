@@ -133,35 +133,38 @@ from PR forensics and is refreshable as review history accumulates.
 
 ### Repository Automation Loop
 
-One repository-scoped `Sense -> Decide -> Act -> Verify -> Learn` pass. In
-repo-gardener's first release, Sense and Decide read current source facts, Act
-can write only the report register, Verify reads that report effect back, and
-Learn changes no policy.
+One repository-scoped `Sense -> Decide -> Act -> Verify -> Learn` pass. The
+parent surveys nine lanes, may deepen current signals, and may supervise a
+live-policy-bounded child through an unmerged pull request. The model owns
+qualitative judgment; deterministic code checks only tracker-record closure.
 
-### Report-backed Orchestration Register
+### Gardening Tracker
 
-The canonical machine records and human projection for repository-gardening
-facts. It owns portfolio rows, run receipts, and report effects, but never
-source-system truth or mutation authority.
+The append-only run records and mutable morning projection for
+repository-gardening facts. Exactly one `run-opened` and one consolidated
+`run-closed` managed comment carry each run ID. It never owns source truth,
+mutation authority, or authored-work state.
 
 ### Current Portfolio
 
-The register's only durable ownership view. It contains at most seven rows;
-`To do` and `In process` both consume capacity. Terminal outcomes belong in Run
-History, not as a third row state.
+A legacy report projection retained for history-chain compatibility during
+early dogfooding. It is not a queue or ownership database. Native pull requests,
+branches, heads, checks, and states are authoritative for authored work.
 
 ### Run History
 
 The complete structurally hash-linked receipt history from genesis, with
-unverified provenance. Its receipt kinds are exactly `decision`, `effect`,
-`evidence`, `manifest`, `release`, `run`, `run-closed`, `run-opened`, and
-`scout`. It supplies visibility, not a lock, catch-up queue, or authority.
+unverified provenance. New gardening runs add only `run-opened` and
+`run-closed` receipts. Legacy kinds remain readable. History supplies
+visibility, not a lock, queue, authority grant, or planning-quality verdict.
+The full readable kind inventory is `decision`, `effect`, `evidence`,
+`manifest`, `release`, `run`, `run-opened`, `run-closed`, and `scout`.
 
 ### Scout Receipt
 
-One expected read-only scout's terminal result: `complete`, affirmatively `not
-applicable`, or `incomplete`. A missing expected receipt is `incomplete (no
-receipt)`, never zero findings.
+A legacy per-lane terminal record retained in older history. Current runs place
+all nine lane results in the consolidated closing record instead of writing
+nine separate managed comments.
 
 ### Register Revision
 

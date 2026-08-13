@@ -2,7 +2,7 @@
 
 My workflow is seven jobs that create a durable learning loop. Each section covers the reasoning first, then the tools and commands.
 
-![Seven illustrated workflow stations forming a circuit from Research through Plan, Design, Build, Ship, Maintain, and Learn, then looping back to Research](docs/assets/workflow-overview.webp)
+![System map of the seven-job learning loop: the five-stage Delivery Spine runs from Research turning signals into sufficient context, through Plan, optional and continuing Design, and Build, to a human-approved merged outcome at Ship; the Repository Memory Current observes every stage and returns durable prevention, while the Personal Learning Current turns experience into linked knowledge and returns a better question to Research.](docs/assets/workflow-overview.webp)
 
 ## Foundations
 
@@ -17,7 +17,7 @@ A few of the skills named below are my own and not yet published: `repo-maintain
 
 **Goal:** Curate enough context to plan from.
 
-![Huginn carrying one selected dispatch through an aperture that narrows many research signals into one route](docs/assets/workflow-01-research.webp)
+![Research workflow: intent and wide signals are curated into current context; it is ready for Plan when the evidence is sufficient.](docs/assets/workflow-01-research.webp)
 
 Research begins with the problem space. I'm a systems thinker, so I start wide. System design, current best practices, industry trends, how the pieces fit together, and more. Then I narrow to the actual problem. I also ask the AI where the unknown unknowns are to guard against my blind spots.
 
@@ -42,7 +42,7 @@ What must be true before moving to Plan:
 
 **Goal:** Write a clear, concise plan covering what to build (product plan) and how to build it (implementation plan).
 
-![Huginn lowering the bridge that connects a target to a four-stage build sequence](docs/assets/workflow-02-plan.webp)
+![Plan workflow: curated context is defined, sequenced, and reviewed into a verified plan; it is ready when the objective and finish line are clear.](docs/assets/workflow-02-plan.webp)
 
 I usually plan in the same session that produced the curated context. When the research needs to outlive that session, I save it as a findings document in `docs/research/` and plan from there.
 
@@ -84,7 +84,7 @@ What must be true before moving on:
 
 **Goal:** Set a design brief and a written design system agents can build from.
 
-![Huginn locking a master stencil that gives three different components one coherent visual language](docs/assets/workflow-03-design.webp)
+![Design workflow: intent and audience are turned from taste into explicit rules and a design system; it is ready when agents can follow the constraints.](docs/assets/workflow-03-design.webp)
 
 Design is where visual iteration sharpens both the research and the plan, and it continues through building, polishing, and maintaining. Work with no interface skips this step.
 
@@ -105,7 +105,7 @@ What must be true before moving to Build:
 
 **Goal:** Build the plan in bounded slices and verify each one.
 
-![Huginn placing the active bounded module into a four-stage verification jig](docs/assets/workflow-04-build.webp)
+![Build workflow: bounded plan units execute through verification gates into a verified change; it is ready when scope and design still hold.](docs/assets/workflow-04-build.webp)
 
 This step runs at two levels: across worktrees, where five to ten slices of work move in parallel, and inside each worktree, through the model choice, mode, and quality gates below. A worktree is a separate working copy of the same repository, so each agent builds on its own branch in its own folder without overwriting anyone else's work.
 
@@ -168,7 +168,7 @@ What must be true before moving to Ship:
 
 **Goal:** Review and verify the change, then merge it.
 
-![Huginn handing a verified dispatch through an inspection gate to Muninn](docs/assets/workflow-05-ship.webp)
+![Ship workflow: claimed completion passes through Simplify, Review, and Prove before a human merge decision produces the merged outcome.](docs/assets/workflow-05-ship.webp)
 
 Work arrives from Build when the agents believe they've met the plan's objectives. The finishing sequence is where I check that belief and refine the work. Simplifying and reviewing before the PR opens means reviewers spend their time on the substance of the change instead of on cleanup.
 
@@ -196,7 +196,7 @@ What must be true before merge:
 
 **Goal:** Tend the repo and encode every learning where it holds.
 
-![Muninn installing an upstream prevention gate before a recurring defect reaches discarded reminder notes](docs/assets/workflow-06-maintain.webp)
+![Maintain workflow: a recurring signal is encoded at the strongest repository layer to create durable prevention; it is ready when future work catches the issue.](docs/assets/workflow-06-maintain.webp)
 
 Repos and systems need tending over time. Maintenance runs throughout the loop, not only after merge.
 
@@ -234,7 +234,7 @@ What must be true before moving to Learn:
 
 **Goal:** Capture what I learned as linked notes and name what I don't know yet.
 
-![Muninn completing a linked ring of field notes and returning one orange signal toward Research](docs/assets/workflow-07-learn.webp)
+![Learn workflow: experience and gaps are distilled, linked, and turned into a question, producing linked knowledge and the next Research question.](docs/assets/workflow-07-learn.webp)
 
 Learn closes the loop, and it's about my knowledge rather than the system's.
 

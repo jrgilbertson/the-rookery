@@ -21,6 +21,27 @@ Required wind-down pass over configured relationship interaction sources for the
 
 ## Workflow processes
 
+### Delivery Spine
+
+The five-job path from Research through Plan, Design, Build, and Ship. Each job
+transforms a named input into an artifact the next job can use. Design is
+conditional for interface work and continues through later delivery rather
+than existing only as an isolated stop.
+
+### Repository Memory Current
+
+The Maintain feedback path that observes recurring signals across the Delivery
+Spine and encodes each lesson at the strongest durable layer the repository can
+enforce. It improves future work throughout the system rather than beginning
+only after Ship.
+
+### Personal Learning Current
+
+The Learn feedback path that turns experience into linked personal knowledge,
+names the gap that remains, and returns a better question to Research. It is
+distinct from the Repository Memory Current because it improves the operator's
+understanding rather than the repository's safeguards and procedures.
+
 ### Grilling Session
 
 A targeted, stateless interview for resolving one coherent decision tree whose

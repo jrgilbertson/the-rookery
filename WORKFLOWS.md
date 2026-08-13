@@ -1,6 +1,6 @@
 <!-- markdownlint-disable-file MD041 -->
 
-![The Rookery workflows banner showing Research through Ship as the Delivery Sequence, recurring signals becoming repository memory through Maintain, and experience becoming a better question through Learn](docs/assets/the-rookery-workflows-banner.webp)
+![The Rookery workflows banner showing Research through Ship as the Delivery Sequence, Maintain repairing and binding recurring signals with a press, and Learn recording experience with an open notebook and feather](docs/assets/the-rookery-workflows-banner.webp)
 
 # The workflows
 

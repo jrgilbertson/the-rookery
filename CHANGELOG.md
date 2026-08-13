@@ -21,7 +21,7 @@ looked" surface. GitHub Releases mirror its entries.
   lets dogfood runs be scored against known findings kept outside the tree.
 
 - Added a field-map hero to `WORKFLOWS.md` that distinguishes the five-job
-  Delivery Sequence from the Repository Memory and Personal Learning currents
+  Delivery Sequence from the Maintain and Learn feedback currents
   while extending the README banner's visual system, with an editable SVG text
   layer and lossless WebP export for crisp typography at GitHub display size.
 - Added `repo-gardener`, a portable repository-health parent loop. It surveys

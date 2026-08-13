@@ -82,6 +82,46 @@ new_run w1r1
 output=$(pcos-source read role=current_weekly_review)
 [[ "$output" == "The canonical current-week review exists for the week ending 2026-08-09 and contains no synthesized outcome yet." ]] || fail "role-source evidence output"
 assert_trace '"target":"current_weekly_review","result":"success","completeness":"complete"'
+if pcos-source read role=current_weekly_review >/dev/null 2>&1; then
+  fail "a second canonical role read was accepted"
+fi
+successful_role_read_count=$(grep -Fc \
+  '"target":"current_weekly_review","result":"success","completeness":"complete"' \
+  "$PCOS_FIXTURE_TRACE")
+[[ "$successful_role_read_count" -eq 1 ]] ||
+  fail "sequential role reads recorded an invalid success count"
+
+new_run w1r1
+pcos-source read role=current_weekly_review \
+  >"$PCOS_FIXTURE_ROOT/concurrent-source-read-1.out" 2>/dev/null &
+first_source_read_pid=$!
+pcos-source read role=current_weekly_review \
+  >"$PCOS_FIXTURE_ROOT/concurrent-source-read-2.out" 2>/dev/null &
+second_source_read_pid=$!
+set +e
+wait "$first_source_read_pid"
+first_source_read_status=$?
+wait "$second_source_read_pid"
+second_source_read_status=$?
+set -e
+if [[ "$first_source_read_status" -eq 0 && "$second_source_read_status" -eq 0 ]] ||
+  [[ "$first_source_read_status" -ne 0 && "$second_source_read_status" -ne 0 ]]; then
+  fail "concurrent canonical role reads did not produce exactly one winner"
+fi
+successful_role_read_count=$(grep -Fc \
+  '"target":"current_weekly_review","result":"success","completeness":"complete"' \
+  "$PCOS_FIXTURE_TRACE")
+[[ "$successful_role_read_count" -eq 1 ]] ||
+  fail "concurrent role reads recorded an invalid success count"
+if [[ "$first_source_read_status" -eq 0 ]]; then
+  successful_source_output=$(<"$PCOS_FIXTURE_ROOT/concurrent-source-read-1.out")
+else
+  successful_source_output=$(<"$PCOS_FIXTURE_ROOT/concurrent-source-read-2.out")
+fi
+[[ "$successful_source_output" == "The canonical current-week review exists for the week ending 2026-08-09 and contains no synthesized outcome yet." ]] ||
+  fail "concurrent canonical role read winner returned unexpected evidence"
+rm -f "$PCOS_FIXTURE_ROOT/concurrent-source-read-1.out" \
+  "$PCOS_FIXTURE_ROOT/concurrent-source-read-2.out"
 
 new_run q2r2
 output=$(pcos-source read role=daily_journals)
@@ -273,8 +313,17 @@ rm -f "$PCOS_FIXTURE_ROOT/concurrent-readback-1.out" \
   "$PCOS_FIXTURE_ROOT/concurrent-readback-2.out"
 
 new_run b5r5
+if pcos-source read role=current_weekly_review >/dev/null 2>&1; then
+  fail "combined scenario source discovery before action was accepted"
+fi
 pcos-action read role=task_note >/dev/null
+if pcos-source read role=current_weekly_review >/dev/null 2>&1; then
+  fail "combined scenario source discovery before action write was accepted"
+fi
 pcos-action write role=task_note content=phase_separated_effect >/dev/null
+if pcos-source read role=current_weekly_review >/dev/null 2>&1; then
+  fail "combined scenario source discovery before action readback was accepted"
+fi
 pcos-action readback role=task_note >/dev/null
 pcos-source read role=current_weekly_review >/dev/null
 pcos-source read role=tasks >/dev/null
@@ -283,6 +332,9 @@ assert_trace '"operation":"readback","target":"task_note","result":"success","co
 assert_trace '"operation":"read","target":"current_weekly_review","result":"success","completeness":"complete"'
 
 new_run b6r6
+if pcos-source read role=tasks >/dev/null 2>&1; then
+  fail "second combined scenario source discovery before action was accepted"
+fi
 pcos-action read role=task_note >/dev/null
 pcos-action write role=task_note content=phase_separated_effect >/dev/null
 pcos-action readback role=task_note >/dev/null
@@ -605,7 +657,7 @@ fi
 
 unexpected_file=$(find "$run_root" -type f \
   ! \( -name trace.jsonl -o -name read-index -o -name read -o -name written -o -name content \
-    -o -name stage \) \
+    -o -name stage -o -name source-phase-complete \) \
   -print -quit)
 [[ -z "$unexpected_file" ]] || fail "unexpected fixture state file"
 

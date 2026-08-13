@@ -451,12 +451,14 @@ Immediately before each approved action:
    interface. For a create, re-read the authoritative destination, parent, or
    thread where the new target will be created.
 2. Revalidate the acting identity, destination or recipients, exact target,
-   visibility when relevant, and approved content or effect. For a create,
-   confirm the proposed target's identity and exact effect within that
-   destination, parent, or thread.
-3. If any of those changed, cannot be distinguished, or became ambiguous, stop
-   and present a revised proposal. Never redirect an approval to a different
-   account or target.
+   visibility when relevant, approved content or effect, and closure evidence
+   against the exact approved proposal. For a create, confirm the proposed
+   target's identity and exact effect within that destination, parent, or
+   thread.
+3. If any approved action field, including closure evidence, changed, cannot
+   be distinguished, or became ambiguous, stop and present a revised proposal
+   for new approval. Never redirect an approval to a different account or
+   target.
 4. If readback shows the approved effect already exists, report **already
    satisfied** and do not duplicate it.
 5. Otherwise apply the approved action once through the supported interface.
@@ -464,10 +466,11 @@ Immediately before each approved action:
 
 Keep the action's intention recoverable in the result: the authoritative
 pre-write state supplies its current basis, the exact approved effect remains
-the desired outcome, and the proposal's future closure evidence says what
-readback or equivalence result would count as complete. Report whether the
-observed result meets that finish line without substituting an access result or
-agent activity for it. Each action stands on its own.
+the desired outcome, and the approved closure evidence remains its future
+finish line. Report the immediate action result separately, and report closure
+only when observed evidence meets that finish line; otherwise say that closure
+remains unobserved. Do not substitute an access result or agent activity for
+closure. Each action stands on its own.
 
 Classify each action independently:
 

@@ -47,6 +47,13 @@ action_dir="$fixture_dir/specimens/$PCOS_FIXTURE_SPECIMEN/actions/$role"
 [[ -d "$action_dir" ]] || reject "$operation" "unknown action role" "$role"
 [[ -f "$action_dir/before.txt" && -f "$action_dir/after.txt" && -f "$action_dir/write-token" ]] ||
   reject "$operation" "incomplete action fixture" "$role"
+phase_metadata="$fixture_dir/specimens/$PCOS_FIXTURE_SPECIMEN/actions/source-discovery-after-readback"
+phase_role=""
+if [[ -f "$phase_metadata" ]]; then
+  phase_role=$(<"$phase_metadata")
+  [[ "$phase_role" =~ ^[a-z][a-z0-9_]*$ ]] ||
+    reject "$operation" "unsafe source-discovery phase role" "$role"
+fi
 
 state_dir="$fixture_root/action-$role"
 state_file="$state_dir/content"
@@ -55,8 +62,10 @@ read_file="$state_dir/read"
 write_claim_dir="$state_dir/write-claim"
 readback_claim_dir="$state_dir/readback-claim"
 operation_claim_dir="$state_dir/operation-claim"
+phase_file="$state_dir/source-phase-complete"
 operation_claim_held=0
-fixture_prepare_state_dir "$state_dir" "$state_file" "$written_file" "$read_file"
+fixture_prepare_state_dir \
+  "$state_dir" "$state_file" "$written_file" "$read_file" "$phase_file"
 
 release_operation_claim() {
   if [[ "$operation_claim_held" -eq 1 ]]; then
@@ -117,5 +126,8 @@ case "$operation" in
     fi
     sed -n '1,$p' "$state_file"
     trace readback "$role" success complete
+    if [[ -n "$phase_role" && "$role" == "$phase_role" ]]; then
+      printf 'complete\n' > "$phase_file"
+    fi
     ;;
 esac

@@ -14,7 +14,6 @@ morning report and append-only run-history surface.
 
 - Run outcome: no run recorded
 - Dogfood milestone: not exercised
-- Register closed consistently: not checked
 - Child result: none
 
 | Lane | Status | What happened | Terminal event | Strongest evidence | Room for improvement |
@@ -32,4 +31,12 @@ None recorded.
 ## Run history
 
 Each run writes exactly one `run-opened` and one `run-closed` managed comment.
-The retained parent worktree contains the full inspection report.
+The tracker or caller result is the durable summary. Retain the parent worktree
+for source, diff, and terminal-context inspection, not as the destination for
+owner-generated reports or supporting files when target repository instructions
+prohibit that storage. Put those artifacts in a per-run temporary directory or
+a caller-approved external or private destination, as those instructions require.
+
+The structural closure result exists only after final readback and is available
+in the caller result or retained parent execution context, not in the immutable
+close or this issue body.

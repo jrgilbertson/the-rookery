@@ -6,10 +6,12 @@ bounded child through an unmerged pull request.
 
 ## Pre-open live facts
 
-Read the target repository's installed policy directly. Record its stable
+Use the live-policy refresh in `policy-and-entry-modes.md` and record its stable
 revision in `run-opened`; never replace it with the bundled starter. Before
 opening, read only repository instructions, the complete tracker, stable
-identities, and caller or automation liveness needed to open safely. Defer
+identities, and caller or automation liveness needed to open safely. Satisfy
+the caller-owned exclusive tracker-writer precondition in
+`applying-effects.md`; model output or liveness alone cannot satisfy it. Defer
 potentially expensive branch, pull-request, check, and configured-evidence
 reads until after the exact opening readback.
 
@@ -87,35 +89,46 @@ identity is only a final tie-break. No script scores or certifies the choice.
 Portfolio history and execution parallelism constrain claiming and authoring,
 not read-only sensing, qualification, deepening, or recommendations.
 
-Author only when `boundaries.maximum_new_child_prs_per_run` is greater than
-zero, the owning `lanes.<lane>.mutation` value is `true`, and the work is low
-risk, nonconflicting, outside protected boundaries, testable, and small enough
-for one coherent pull request. Absence or `false` denies authoring. For the
-current vertical slice, dispatch at most one child. An honest report with no
-child is successful operation but leaves the child milestone `not_exercised`.
+Author only when `authority.source_mutation` is affirmatively allowed,
+`boundaries.maximum_new_child_prs_per_run` is greater than zero, the owning
+`lanes.<lane>.mutation` value is `true`, and the work is low risk,
+nonconflicting, outside protected boundaries, testable, and small enough for
+one coherent pull request. Missing or denied global authority, absence or
+`false` lane permission, or zero capacity denies authoring. For the current
+vertical slice, dispatch at most one child. An honest report with no child is
+successful operation but leaves the child milestone `not_exercised`.
 
 The parent creates one child worktree for the selected prospective PR. The
 child owns its plan, implementation, `ce-simplify-code`, `ce-code-review`, and
-repository gates, then commits the result. On that clean exact commit it runs
-`checking-pr-readiness` assessment-only. If a post-commit gate changes files,
-the child repeats the relevant review and repository gates, commits, and
-reassesses the new exact commit. Only then may it push and create the PR. The
-parent monitors and helps route questions but does not redo the work. The child
-must not edit the installed policy, automation, protected paths, release or
-deployment surfaces, or any other effect the live policy denies.
+repository gates, then commits the result. The caller-authenticated runner used
+by the child supplies one complete
+`checking-pr-readiness-receipt-bundle/v1` to the installed
+`checking-pr-readiness` assessment-only interface, bound to that clean exact
+commit. Only a returned `pass` permits push. `action-required`, or an absent
+skill, interface, or authenticated runner, records the exact gap, preserves the
+commit, and leaves the child `saved_without_pr`; never synthesize a receipt or a
+fallback readiness claim. If a post-commit gate changes files, the child
+repeats the relevant review and repository gates, commits, and assesses the new
+exact commit with a complete bundle. The parent monitors and helps route
+questions but does not redo the work. The child must not edit the installed
+policy, automation, protected paths, release or deployment surfaces, or any
+other effect the live policy denies.
 
-The parent rereads and compares the exact installed-policy revision immediately
-before dispatch and reevaluates current authoring permission. Immediately before
-the child's first provider mutation (push), the child rereads the installed
-policy from the current remote default branch (`origin/main` when configured)
-and reevaluates that permission. A denial stops the push and preserves the local
-commit. After a successful push, repeat the live policy read immediately before
-PR creation. A denial stops PR creation; preserve the saved child state and
-surface the exact policy change for owner review.
+The parent performs the live-policy refresh immediately before dispatch and
+reevaluates all three authoring gates. The child owns the same refresh and gate
+evaluation immediately before push and again before PR creation. A denial
+stops the dependent operation: preserve the local commit before push, or the
+saved pushed state before PR creation, and surface the exact policy change for
+owner review.
 
-Freshly read the native PR before reporting it. Record repository, PR number,
-branch, head SHA, state, checks, and child terminal state. Never merge it. Do
-not create follow-up issues; write issue-ready recommendations instead.
+After PR creation, the parent monitors freshly read native checks and review
+state until the child truthfully reaches `pr_ready` or `pr_blocked`. If the
+bounded caller run must close first, report and retain the child as `pending`,
+set the run outcome to `partial`, and never claim `pr_ready` or `completed`.
+Pending checks or review do not block reporting all nine lanes. Record the
+repository, PR number, branch, head SHA, state, checks, review state, and child
+state. Never merge it. Do not create follow-up issues; write issue-ready
+recommendations instead.
 
 ## Close once
 
@@ -126,7 +139,7 @@ Consolidate the run into one `run-closed` record containing:
 - all nine lane rows;
 - zero-to-three depth decisions and results;
 - the bounded measurement result or exact unavailable/not-relevant reason;
-- native child PR facts and terminal state, or an honest no-child reason;
+- native child PR facts and current state, or an honest no-child reason;
 - at most seven prioritized owner-attention items plus overflow count;
 - issue-ready recommendations and improvements;
 - the installed-policy revision observed at close and any change from opening;
@@ -135,13 +148,13 @@ Consolidate the run into one `run-closed` record containing:
 - for each blocker, its affected mutation and dependency closure plus the
   unrelated work that continued or was handed off.
 
-Reread the current installed policy immediately before closing, record any
-revision change from opening, and reevaluate tracker-write permission. A
-revision change alone does not block a benign close. If the current policy
-denies the tracker write, stop closure and report the interruption to the
-caller. Otherwise prepare, write, and exactly read back that record. It is the
-second and final managed comment for the run. The mutable issue body is the
-human projection; it does not own work.
+Perform the live-policy refresh immediately before closing, record any revision
+change from opening, and reevaluate tracker-write permission. A revision change
+alone does not block a benign close. If the current policy denies the tracker
+write, stop closure and report the interruption to the caller. Otherwise
+prepare, write, and exactly read back that record. It is the second and final
+managed comment for the run. The mutable issue body is the human projection; it
+does not own work.
 
 Then invoke `run-records-v1` with `{schema, run_id, closed, post_read}`: the
 exact prepared closing object and raw final snapshot. The checker validates the
@@ -150,6 +163,6 @@ readback. Put `register_closed_consistently` in the retained parent report and
 caller result only. A structural pass does not turn the parent self-assessment
 into an authoritative quality verdict.
 
-Leave that parent workspace available for morning inspection. Keep children according to
-their terminal state. Pending CI is not terminal merely because the lease
-expired.
+Leave that parent workspace available for morning inspection. Keep children
+according to their reported state. Pending checks or review are not terminal
+merely because the lease or bounded caller run expired.

@@ -97,12 +97,14 @@ it as a quality, safety, permission, or readiness verdict
 
 ### Reread live policy at mutation boundaries
 
-Child authoring requires both a positive
-`boundaries.maximum_new_child_prs_per_run` and `mutation: true` for the owning
-lane. Missing or false permission denies authoring. Compare the exact installed
-policy revision with the opening revision immediately before parent dispatch,
-child PR creation, and parent closing. A change stops that mutation and its
-dependents, not unrelated read-only work
+Child authoring requires affirmative global source-mutation permission, a
+positive `boundaries.maximum_new_child_prs_per_run`, and `mutation: true` for
+the owning lane. Missing or false permission denies authoring. Resolve and
+refresh the configured remote default branch before reading the installed
+policy at parent dispatch, child push, child PR creation, and parent closing.
+Record revision changes, then evaluate the permission required by the current
+operation. Only an actual current denial stops that mutation and its dependents;
+a benign revision change does not block closing or unrelated read-only work
 (`skills/repo-gardener/references/policy-and-entry-modes.md:3-24`).
 
 Never fall back to the bundled starter. It intentionally has zero child

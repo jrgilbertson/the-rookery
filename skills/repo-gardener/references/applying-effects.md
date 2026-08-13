@@ -4,6 +4,15 @@ The parent uses the existing `effect-v1` preparation and verification path
 exactly twice: once for `run-opened`, then once for `run-closed`. It performs no
 other managed tracker operation for that run ID.
 
+## Require one tracker writer
+
+Before `run-opened`, the caller must ensure exclusive tracker-write ownership
+or atomic serialization such that only one parent may mutate this tracker. A
+model decision, lease check, or liveness read cannot establish that guarantee.
+This skill defines no wrapper or lock. When the guarantee is absent or unknown,
+stop before any tracker write. Read-only work may be reported to the caller,
+but the parent must not mutate the tracker.
+
 ## Prepare and write
 
 Normalize a complete raw tracker snapshot first. Prepare one operation with

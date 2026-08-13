@@ -25,6 +25,10 @@ authenticate how the snapshot was obtained.
 
 ## Write exactly two run records
 
+The caller-owned exclusive tracker-writer precondition in
+`applying-effects.md` precedes the first write. A successful exact readback does
+not replace that precondition.
+
 Each run ID owns exactly two managed comments:
 
 1. one `run-opened` record written and read back before sensing; and
@@ -52,7 +56,7 @@ The issue body and retained parent report show:
   evidence, and room for improvement;
 - selected depth targets and findings;
 - a bounded data-trust result or exact limitation;
-- native child PR facts and terminal state;
+- native child PR facts, checks, review state, and current child state;
 - up to seven owner-attention items plus overflow count;
 - ranked issue-ready recommendations;
 - run outcome and provisional dogfood milestone; and
@@ -61,3 +65,6 @@ The issue body and retained parent report show:
 
 Seven is a presentation limit only. It does not constrain sensing, depth, or
 native authored work. Never claim persistence without an exact provider read.
+When native checks or required review remain pending at bounded closure, render
+the retained child as `pending` and the run as `partial`; still render all nine
+lane results.

@@ -21,7 +21,7 @@ Required wind-down pass over configured relationship interaction sources for the
 
 ## Workflow processes
 
-### Delivery Spine
+### Delivery Sequence
 
 The five-job path from Research through Plan, Design, Build, and Ship. Each job
 transforms a named input into an artifact the next job can use. Design is
@@ -31,7 +31,7 @@ than existing only as an isolated stop.
 ### Repository Memory Current
 
 The Maintain feedback path that observes recurring signals across the Delivery
-Spine and encodes each lesson at the strongest durable layer that can hold it,
+Sequence and encodes each lesson at the strongest durable layer that can hold it,
 preferring enforceable layers when available. It improves future work
 throughout the system rather than beginning only after Ship.
 

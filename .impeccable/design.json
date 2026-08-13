@@ -1,0 +1,169 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-13T23:21:12Z",
+  "title": "Design System: The Rookery",
+  "extensions": {
+    "colorMeta": {
+      "raven-navy": {
+        "role": "primary",
+        "displayName": "Raven Navy",
+        "tonalRamp": [
+          "oklch(15% 0.08 257)",
+          "oklch(25% 0.08 257)",
+          "oklch(35% 0.08 257)",
+          "oklch(45% 0.08 257)",
+          "oklch(58% 0.08 257)",
+          "oklch(70% 0.08 257)",
+          "oklch(83% 0.08 257)",
+          "oklch(95% 0.08 257)"
+        ]
+      },
+      "route-cobalt": {
+        "role": "primary",
+        "displayName": "Route Cobalt",
+        "tonalRamp": [
+          "oklch(15% 0.20 258)",
+          "oklch(25% 0.20 258)",
+          "oklch(35% 0.20 258)",
+          "oklch(45% 0.20 258)",
+          "oklch(58% 0.20 258)",
+          "oklch(70% 0.20 258)",
+          "oklch(83% 0.20 258)",
+          "oklch(95% 0.20 258)"
+        ]
+      },
+      "mist-paper": {
+        "role": "neutral",
+        "displayName": "Mist Paper",
+        "tonalRamp": [
+          "oklch(15% 0.02 253)",
+          "oklch(25% 0.02 253)",
+          "oklch(35% 0.02 253)",
+          "oklch(45% 0.02 253)",
+          "oklch(58% 0.02 253)",
+          "oklch(70% 0.02 253)",
+          "oklch(83% 0.02 253)",
+          "oklch(95% 0.02 253)"
+        ]
+      },
+      "drafting-graphite": {
+        "role": "neutral",
+        "displayName": "Drafting Graphite",
+        "tonalRamp": [
+          "oklch(15% 0.06 257)",
+          "oklch(25% 0.06 257)",
+          "oklch(35% 0.06 257)",
+          "oklch(45% 0.06 257)",
+          "oklch(58% 0.06 257)",
+          "oklch(70% 0.06 257)",
+          "oklch(83% 0.06 257)",
+          "oklch(95% 0.06 257)"
+        ]
+      },
+      "signal-orange": {
+        "role": "secondary",
+        "displayName": "Signal Orange",
+        "tonalRamp": [
+          "oklch(15% 0.15 48)",
+          "oklch(25% 0.15 48)",
+          "oklch(35% 0.15 48)",
+          "oklch(45% 0.15 48)",
+          "oklch(58% 0.15 48)",
+          "oklch(70% 0.15 48)",
+          "oklch(83% 0.15 48)",
+          "oklch(95% 0.15 48)"
+        ]
+      },
+      "dispatch-paper": {
+        "role": "neutral",
+        "displayName": "Dispatch Paper",
+        "tonalRamp": [
+          "oklch(15% 0.02 70)",
+          "oklch(25% 0.02 70)",
+          "oklch(35% 0.02 70)",
+          "oklch(45% 0.02 70)",
+          "oklch(58% 0.02 70)",
+          "oklch(70% 0.02 70)",
+          "oklch(83% 0.02 70)",
+          "oklch(95% 0.02 70)"
+        ]
+      }
+    }
+  },
+  "components": [],
+  "narrative": {
+    "northStar": "The Returning Field Dispatch",
+    "overview": "The Rookery looks like a natural-history field manual laid over a working draft table. Cool mist-blue paper, engraved navy corvids, graphite mechanisms, and measured construction lines make the work feel studied and practical rather than mythical or corporate. The result should be professional enough for technical evaluation while retaining the warmth and memory of a hand-kept field guide.\n\nEvery illustration explains an operation. Huginn and Muninn carry, inspect, install, select, or return knowledge; they do not pose beside an abstract idea. Routes and mechanisms make sequence, observation, and return causally legible, while one restrained orange signal marks the intervention, dispatch, or return that matters most. The exact scene may change across repository-owned explanatory visuals, but the world remains one connected system in which evidence moves forward and distinct forms of feedback make future work more useful.",
+    "keyCharacteristics": [
+      "Cool drafting paper with faint grain, registration marks, and construction geometry.",
+      "Natural-history corvid engraving paired with graphite field mechanisms.",
+      "Cobalt paths that distinguish delivery from feedback and a scarce orange signal that explains intervention or return.",
+      "Wide, calm compositions with enough negative space to survive GitHub rendering at reduced sizes.",
+      "Characters whose physical action carries the meaning of the explanation."
+    ],
+    "rules": [
+      {
+        "name": "The Orange Means Intervention Rule",
+        "body": "Orange identifies the action, handoff, or return that changes the state of the workflow; it is never a general-purpose accent.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink Hierarchy Rule",
+        "body": "Raven Navy explains the subject, Route Cobalt explains movement, and Drafting Graphite explains supporting structure.",
+        "section": "colors"
+      },
+      {
+        "name": "The Printed-In Rule",
+        "body": "Lettering must share the illustration's ink hierarchy and perspective while remaining real typography; never ask the raster artwork layer to render essential copy.",
+        "section": "typography"
+      },
+      {
+        "name": "The Family Restraint Rule",
+        "body": "Use one display treatment and one explanatory treatment within an asset. Name an exact font family only when the editable source uses it.",
+        "section": "typography"
+      },
+      {
+        "name": "The Layered Type Rule",
+        "body": "Keep essential lettering as real typography over a text-free illustration plate, retain the editable source, and export the shipped raster losslessly.",
+        "section": "typography"
+      },
+      {
+        "name": "The Causal System Rule",
+        "body": "Show the five delivery jobs as an ordered sequence and each feedback process as its own path to the stages or input it changes. Never force distinct currents into a false serial loop, and never flatten the system into repeated equal containers.",
+        "section": "layout"
+      },
+      {
+        "name": "The Reduced-Size Test",
+        "body": "At ordinary GitHub content width, the five-job delivery order, repository-wide improvement path, and return of a better question to Research must remain understandable before a reader zooms into the engraving detail.",
+        "section": "layout"
+      },
+      {
+        "name": "The Drawn Depth Rule",
+        "body": "Create depth with physical overlap, perspective, and line density; do not simulate it with product-UI drop shadows or glow.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Mechanism Has Consequence Rule",
+        "body": "Every aperture, gate, jig, ring, or bridge must make the stage's operation clearer; remove decorative machinery that does not change the explanation.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do give Huginn or Muninn a load-bearing action such as carrying a dispatch, operating a mechanism, inspecting a handoff, or returning a signal.",
+      "Do use Route Cobalt and shape or direction together, so paths remain understandable without color.",
+      "Do distinguish the Delivery Sequence, Repository Memory Current, and Personal Learning Current by position, labels, direction, and mechanism as well as color.",
+      "Do keep Signal Orange scarce and attach it to one meaningful intervention or return.",
+      "Do preserve calm negative space and a strong silhouette before adding paper grain, coordinates, hatching, or registration marks.",
+      "Do write meaningful alt text that states the mechanism, sequence, and return represented by the image."
+    ],
+    "donts": [
+      "Don't turn the workflow into a generic equal-card flowchart or consulting-deck diagram.",
+      "Don't present Research, Plan, Design, Build, Ship, Maintain, and Learn as one seven-step serial loop; Maintain and Learn are distinct feedback currents with different destinations.",
+      "Don't reuse the unfolded field map as the default composition for unrelated visuals.",
+      "Don't pose a raven beside an idea it is not performing; removing the bird should break the explanation.",
+      "Don't use broad orange fills, multiple competing accents, glossy gradients, or interface-style shadows.",
+      "Don't drift into novelty mascot art or Norse-fantasy ornament that overwhelms the technical mechanism.",
+      "Don't imply that the system learns autonomously; the return mythology supports the operator's deliberate learning loop."
+    ]
+  }
+}

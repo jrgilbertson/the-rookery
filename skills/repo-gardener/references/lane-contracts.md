@@ -76,12 +76,18 @@ also reads one bounded source slice — a module, flow, or directory — chosen 
 rotation. Rotation state lives in this lane's "what happened" cell: before
 overwriting the report body, read the prior body's health-lane cell for the
 slices already covered, then choose the next uncovered slice in lexicographic
-order over the tracked tree's top-level directories plus one final slice of
-root-level tracked files (descending into a directory's own subdirectories
-before advancing), and record the chosen slice plus the covered list back
-into the cell. A partially read slice stays uncovered and is re-selected
-first, resuming from its recorded boundary; once every slice is covered, the
-covered list resets and rotation restarts from the beginning. Within the
+order over the eligible slices — the tracked tree's top-level directories
+that contain source, configuration, or test files, excluding generated,
+vendored, and pure-asset trees and anything outside the policy's scope, plus
+one final slice of root-level tracked files (descending into a directory's
+own subdirectories before advancing) — and record the chosen slice plus the
+covered list back into the cell. A partially read slice stays uncovered and
+is re-selected first, resuming from its recorded boundary; once every slice
+is covered, the covered list resets and rotation restarts from the beginning.
+The projection is best-effort memory, not an ownership database: when the
+prior cell is missing, unreadable, or format-drifted, restart rotation from
+the first eligible slice and say so in the cell, rather than guessing at
+lost coverage. Within the
 slice, sense read-only for naming that no longer matches behavior, duplicated
 knowledge missing a single source of truth, dead or contradictory code,
 contract drift between runtimes or between code and schema, unbounded inputs

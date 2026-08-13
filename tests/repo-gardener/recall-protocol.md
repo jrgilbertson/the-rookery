@@ -13,9 +13,11 @@ because its rows describe unpatched weaknesses.
 After each dogfood run, compare the run's candidates and recommendations
 against the reference and append one line to this directory's `log.md`:
 `date | skill rev | target rev | recall probe (run N) | hits: A…;
-new-unlisted: … | note`, where the target revision is the exact commit of the
-dogfood target the run sensed, so a hit or miss stays auditable after the
-target moves.
+new-unlisted: <count> | note`, where the target revision is the exact commit
+of the dogfood target the run sensed, so a hit or miss stays auditable after
+the target moves. The tracked log carries only opaque row IDs, counts, and
+non-sensitive notes; descriptions of new unlisted findings are recorded in
+the machine-local reference alongside the rows, never in the tracked log.
 
 Scoring rules:
 

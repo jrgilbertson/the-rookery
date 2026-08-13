@@ -90,7 +90,8 @@ def install_active_policy(repo_root: Path, policy: Path | None) -> Path:
     active_policy.parent.mkdir(parents=True, exist_ok=True)
     if active_policy.exists() or active_policy.is_symlink():
         active_policy.unlink()
-    if policy is not None and policy.exists():
+    if policy is not None:
+        require(policy.exists(), f"fixture policy path does not exist: {policy}")
         active_policy.write_bytes(policy.read_bytes())
     return active_policy
 
@@ -235,7 +236,8 @@ def check_script_surface() -> None:
         elif isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
             require(
                 node.func.attr not in FORBIDDEN_WRITE_METHODS,
-                f"production validator contains filesystem write method {node.func.attr}",
+                "production validator calls forbidden write-capable method name "
+                f"{node.func.attr} (receiver-independent check; rename or avoid the method)",
             )
             if node.func.attr == "open":
                 require(
@@ -293,6 +295,8 @@ def check_active_policy_filesystem_cases(repo_root: Path, outside: Path) -> None
     active_policy.rmdir()
 
     agents = active_policy.parent
+    for leftover in list(agents.iterdir()):
+        leftover.unlink()
     agents.rmdir()
     agents.symlink_to(outside, target_is_directory=True)
     expect_completed_invalid(

@@ -9,7 +9,7 @@ import json
 import os
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, NoReturn
 from urllib.parse import parse_qs, urlsplit
 
 
@@ -48,7 +48,7 @@ def emit(value: Any) -> None:
     print(json.dumps(value, separators=(",", ":"), sort_keys=True))
 
 
-def fail(message: str) -> None:
+def fail(message: str) -> NoReturn:
     print(message, file=sys.stderr)
     raise SystemExit(1)
 

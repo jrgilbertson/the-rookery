@@ -28,8 +28,11 @@ requires unchanged Verification and observable cascades, not status alone.
       names the `ENG-12`, waiver, blocker, and parent outcome evidence gaps.
 - [ ] Does not declare the parent complete until complete traversal proves all
       required leaves, blockers, approved waivers, and parent Verification.
-- [ ] Separates any Verification edit into its own preview and approval, reads
-      it back, and requires a fresh completion analysis and approval round.
+- [ ] Reports the Verification edit as its own effect, separate from the
+      lifecycle effect, and classifies it `manual` since this case is
+      Linear-canonical — no preview is presented for approval and no Linear
+      write command is constructed; once applied through the manual path, the
+      edit invalidates completion analysis and requires a fresh round.
 - [ ] Refuses to combine the weakened criteria and completion lifecycle effect
       in the requested approval.
 - [ ] Reports the lifecycle effect as `manual` while synchronized parent,

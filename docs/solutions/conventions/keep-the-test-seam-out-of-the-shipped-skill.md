@@ -12,13 +12,13 @@ applies_when:
   - "A test scenario would trip the artifact's degraded or fail-closed path on every case"
   - "Considering an instruction that tells a skill to accept supplied data as already fetched"
   - "Reviewing a shipped instruction whose only trigger is the wording of the invoking prompt"
-  - "A fixture-backed executor could still reach a host connector or write outside disposable state"
+  - "A fixture-backed executor could still reach a host connector, write outside disposable state, or hide the mounted artifact under test"
 symptoms:
   - "A clause in a shipped artifact exists only so the test suite can reach the full path"
   - "Every test scenario passes because each one exercises the carve-out as designed"
   - "The artifact cannot distinguish a test harness from any other caller who says the same words"
   - "A completion criterion still names a mechanism the body no longer contains"
-  - "A synthetic adapter accepts an unsafe path, wrong query bound, or out-of-order mutation"
+  - "A synthetic adapter accepts an unsafe operation, or a clean trace accompanies behavior the mounted skill would have forbidden or required"
 root_cause: test_scaffolding_in_production
 resolution_type: tooling_addition
 related_components:
@@ -154,6 +154,18 @@ than an assurance from whoever invoked the skill.
    that they tested a program the catalog no longer ships, and carries forward
    only the two findings whose fixes survive.
 
+14. **Prove the mounted artifact loaded before grading behavior.** Connector
+   isolation and artifact activation are separate requirements. Permit and
+   require read-only access to the skill, its shared resources, the originating
+   mode, and any newly selected mode before fixture I/O begins. If the launcher
+   cannot make that load observable, record **not run** or invalid rather than a
+   behavior failure.
+
+15. **Name invocation-owned source roles explicitly.** A private automation or
+   active invocation may require roles the public skill cannot bind. List each
+   canonical role token in the case, including roles expected to be **Not
+   configured**. “Other required sources” is not a gradeable source set.
+
 ## Why This Matters
 
 The clause did not weaken a convenience. It weakened the one behavior the skill
@@ -218,6 +230,19 @@ negative states directly: ancestor-root and symlink escapes, missing fixture
 variables, wrong Messages bounds, write-before-read, readback-before-write,
 duplicate writes, and scripted source failures. This closes the gap between a
 fixture that looks constrained and one whose constraints can actually fail.
+
+Another recurrence exposed the inverse launcher failure. An isolated scenario
+allowed its six fixture commands but did not permit the executor to read the
+mounted `personal-chief-of-staff` package. The launcher permitted the exact
+action and review commands, yet the response omitted the skill-mandated Source
+Access Audit. That was not evidence of a product regression because the product
+had never loaded.
+After the launcher explicitly permitted and required the skill, shared
+resources, originating Wind-down reference, and newly requested Weekly
+reference, the frozen pre-fix skill rendered the table. Naming the five
+invocation-required but unbound Weekly roles then made each absence visible as
+**Not configured**. The tracked correction belongs to the case contract, not
+the shipped skill.
 
 Removal is not finished when the mechanism is gone. Step 2's completion
 criterion still accepted inputs "stipulated by the harness" after the body had
@@ -318,6 +343,17 @@ to expose only the declared fixture commands, not a host Obsidian or app tool.
 If that cannot be enforced, the case stops as **not run**. An unavailable safe
 harness is a narrower and more truthful result than a successful run through a
 real interface.
+
+**The activation boundary.** The same launcher must not interpret “only the
+declared fixture commands” as “the executor may read no instruction files.” A
+combined Wind-down-action and Weekly-review case permits read-only loading of
+the mounted skill, `source-behavior.md`, `review-bundle.md`, and both applicable
+mode references before the exact fixture sequence. Its active invocation also
+names `weekly_review_template`, `last_completed_weekly_review`,
+`daily_journals`, `strategy`, and `learnings` as required but unbound. The
+executor issues no calls for those roles; the audit records each as **Not
+configured**. This proves both halves graded by the case: the intended program
+ran, and the trace contains no real-source call.
 
 **Separate execution and response evidence.** A personal-chief-of-staff
 non-mode case initially executed both permitted source reads and made no

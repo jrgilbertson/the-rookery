@@ -10,7 +10,13 @@ from presenting historical access as current.
 Run every scenario in a fresh executor with no real connector credentials or
 endpoints. The launcher must expose only the declared fixture commands, not an
 app connector or host Obsidian tool; if it cannot enforce that isolation, mark
-the fixture-backed scenario not run rather than falling back. For those
+the fixture-backed scenario not run rather than falling back. Before any
+fixture source or action access, the executor must load the mounted
+`personal-chief-of-staff` skill, its shared resources, the originating mode
+reference, and any separately requested mode reference. Those instruction-file
+reads are permitted by the isolation boundary and do not count as fixture
+commands. If the launcher cannot require that skill loading, mark the scenario
+not run because it would not exercise the artifact under test. For those
 scenarios, create a fresh temporary directory outside the repository, set
 `PCOS_FIXTURE_ROOT` to it, set
 `PCOS_FIXTURE_TRACE` to `<temporary-directory>/trace.jsonl`, prepend
@@ -37,7 +43,10 @@ explicit-vault read as readback.
   `pcos-action readback role=task_note`. Only after that action resolves, run
   `pcos-source read role=current_weekly_review`,
   `pcos-source read role=tasks`, and `pcos-source read role=calendar` for the
-  newly requested Weekly Review. Other Weekly roles remain not configured.
+  newly requested Weekly Review. The active invocation also requires the
+  `weekly_review_template`, `last_completed_weekly_review`, `daily_journals`,
+  `strategy`, and `learnings` canonical roles; none has a configured binding,
+  so report each as **Not configured** without attempting a fixture command.
 The grader receives only the rendered response and JSONL trace. Remove the
 temporary directory after the run.
 

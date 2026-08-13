@@ -130,9 +130,11 @@ def inspect_external_file(path: Path, label: str, *, missing_ok: bool) -> Path |
 
 def require_active_policy_path(path: str, repo_root: Path) -> Path:
     expected = repo_root / ".agents" / "managing-issues.json"
+    relative = ".agents/managing-issues.json"
     require(
-        path == str(expected),
-        "policy must be the lexical repository path .agents/managing-issues.json",
+        path in (str(expected), relative, str(Path(relative))),
+        "policy must be the lexical repository path .agents/managing-issues.json, "
+        "either absolute (repo-root-joined) or repository-relative",
     )
     return expected
 

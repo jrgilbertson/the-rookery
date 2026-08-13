@@ -238,10 +238,10 @@ def github_preflight(
             argv = [
                 "gh", "api", "graphql", "--hostname", "github.com",
                 "-f", f"query={ISSUE_TYPES_QUERY}",
-                "-F", "owner=example", "-F", "name=project",
+                "-f", "owner=example", "-f", "name=project",
             ]
             if cursor is not None:
-                argv.extend(["-F", f"endCursor={cursor}"])
+                argv.extend(["-f", f"endCursor={cursor}"])
             page = succeeded(run(argv, env), "GitHub issue-type preflight")
             connection = page["data"]["repository"]["issueTypes"]
             require(connection is not None, "GitHub issue-type coverage differs")

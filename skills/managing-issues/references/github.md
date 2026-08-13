@@ -101,7 +101,13 @@ smallest coherent edit; do not bundle an unrelated field or relationship.
 GitHub policy `work_type` values are exact issue-type names. `readiness`,
 `priority`, and `leaf_estimate` values are exact label names. Resolve the
 selected value through the corresponding complete metadata read above before
-preview and again before writing. The policy validator rejects commas and
+preview and again before writing. `readiness`, `priority`, and `leaf_estimate`
+are single-valued mapped fields: when the selected value replaces an issue's
+current mapped value for the same field, the same smallest coherent edit
+removes the prior mapped label and adds the new one -- `--remove-label OLD
+--add-label NEW` in one `gh issue edit` call, with both changes shown in
+preview. The pre-read that resolves the selected value also identifies the
+prior mapped value to remove. The policy validator rejects commas and
 double quotes in these label-backed values because `gh` parses one label flag
 argument as CSV; never bypass that rejection by constructing a label command
 directly.

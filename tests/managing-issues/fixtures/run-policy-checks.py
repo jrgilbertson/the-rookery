@@ -110,12 +110,15 @@ def invoke_validator(
     active_policy: str | Path,
     trusted_policy: Path | None = None,
     trusted_mapping: Path | None = None,
+    *,
+    repo_root_arg: str | Path | None = None,
+    cwd: Path | None = None,
 ) -> subprocess.CompletedProcess[str]:
     command = [
         sys.executable,
         str(PRODUCTION),
         "--repo-root",
-        str(repo_root),
+        str(repo_root_arg) if repo_root_arg is not None else str(repo_root),
         "--policy",
         str(active_policy),
     ]
@@ -123,7 +126,7 @@ def invoke_validator(
         command.extend(["--trusted-policy", str(trusted_policy)])
     if trusted_mapping is not None:
         command.extend(["--trusted-mapping", str(trusted_mapping)])
-    return subprocess.run(command, check=False, capture_output=True, text=True)
+    return subprocess.run(command, check=False, capture_output=True, text=True, cwd=cwd)
 
 
 def run_validator(
@@ -314,6 +317,27 @@ def check_active_policy_filesystem_cases(repo_root: Path, outside: Path) -> None
     active_policy.unlink()
 
 
+def check_relative_active_policy_argument(repo_root: Path, expected_policy: dict[str, Any]) -> None:
+    install_active_policy(repo_root, POLICIES / "valid-github.json")
+    completed = invoke_validator(
+        repo_root,
+        ".agents/managing-issues.json",
+        repo_root_arg=".",
+        cwd=repo_root,
+    )
+    require(
+        completed.returncode == 0,
+        f"expected valid policy for relative --policy argument: {completed.stderr.strip()}",
+    )
+    require(completed.stderr == "", "valid policy wrote to stderr for relative --policy argument")
+    parsed = json.loads(completed.stdout)
+    require(
+        parsed == {"policy": expected_policy, "status": "valid"},
+        "normalized policy differs for relative --policy argument",
+    )
+    (repo_root / ACTIVE_POLICY_RELATIVE).unlink()
+
+
 def check_mapping_filesystem_cases(repo_root: Path, outside: Path) -> None:
     active_policy = install_active_policy(repo_root, POLICIES / "valid-linear-sync.json")
     active_mapping = install_current_mapping(repo_root, None)
@@ -387,6 +411,7 @@ def main() -> int:
         first = expect_valid(POLICIES / "valid-github.json", repo_root, expected_github)
         second = expect_valid(POLICIES / "valid-github.json", repo_root, expected_github)
         require(first == second, "valid policy normalization is not deterministic")
+        check_relative_active_policy_argument(repo_root, expected_github)
         expect_valid(
             POLICIES / "valid-linear-sync.json",
             repo_root,

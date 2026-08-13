@@ -386,14 +386,14 @@ if ARGV[:1] == ["api"]:
             "github.com",
             "-f",
             f"query={ISSUE_TYPES_QUERY}",
-            "-F",
+            "-f",
             f"owner={state['repository']['nameWithOwner'].split('/', 1)[0]}",
-            "-F",
+            "-f",
             f"name={state['repository']['nameWithOwner'].split('/', 1)[1]}",
         ]
         cursor: str | None = None
         if ARGV != expected:
-            if len(ARGV) == len(expected) + 2 and ARGV[:-2] == expected and ARGV[-2] == "-F":
+            if len(ARGV) == len(expected) + 2 and ARGV[:-2] == expected and ARGV[-2] == "-f":
                 raw_cursor = ARGV[-1]
                 if not raw_cursor.startswith("endCursor="):
                     fail("fixture requires exact issue-type preflight flags")

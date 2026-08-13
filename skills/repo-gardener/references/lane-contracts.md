@@ -30,9 +30,10 @@ Every lane verdict, every run:
    complete. Partial marks the lane's own reported status; it does not by
    itself change `run_outcome`.
 3. For issue- and feedback-facing lanes, counting identifiers or labels is
-   not sensing: before reporting zero candidates, read the bodies of the five
-   most recent items in lane scope — or of every item when fewer than five
-   exist — and say which were read.
+   not sensing: before reporting the lane's verdict — zero candidates or not —
+   read the bodies of the five most recent items in lane scope, or of every
+   item when fewer than five exist, and say which were read. Finding one
+   candidate early does not excuse the rest of the sample.
 4. "Room for improvement: none" is unavailable to a lane running on shared
    reads or an incomplete census; that lane names its own sensing gap instead.
 5. A declared scouting plan is executed or explicitly replaced, and each
@@ -74,15 +75,20 @@ External signals miss what only reading code reveals, so each run this lane
 also reads one bounded source slice — a module, flow, or directory — chosen by
 rotation. Rotation state lives in this lane's "what happened" cell: before
 overwriting the report body, read the prior body's health-lane cell for the
-slices already covered, then choose the next slice in lexicographic order over
-the top-level directories of the tracked tree (descending into a directory's
-own subdirectories before advancing) and record the chosen slice plus the
-covered list back into the cell. Within the slice, sense read-only for naming
-that no longer matches behavior, duplicated knowledge missing a single source
-of truth, dead or contradictory code, contract drift between runtimes or
-between code and schema, unbounded inputs on trust boundaries, swallowed error
-paths, and coverage holes on risky branches. Findings carry `file:line`
-evidence, route to their owning lane's evidence shape, and are candidates or
+slices already covered, then choose the next uncovered slice in lexicographic
+order over the tracked tree's top-level directories plus one final slice of
+root-level tracked files (descending into a directory's own subdirectories
+before advancing), and record the chosen slice plus the covered list back
+into the cell. A partially read slice stays uncovered and is re-selected
+first, resuming from its recorded boundary; once every slice is covered, the
+covered list resets and rotation restarts from the beginning. Within the
+slice, sense read-only for naming that no longer matches behavior, duplicated
+knowledge missing a single source of truth, dead or contradictory code,
+contract drift between runtimes or between code and schema, unbounded inputs
+on trust boundaries, swallowed error paths, and coverage holes on risky
+branches. Findings carry `file:line` evidence bound to the exact inspected
+revision (the common candidate shape's identity and revision requirements
+apply), route to their owning lane's evidence shape, and are candidates or
 recommendations only — inspection never authorizes a repair by itself, and a
 routed finding contributes a candidate to the owning lane without satisfying
 that lane's floor-1 read. A slice the budget cannot finish is reported

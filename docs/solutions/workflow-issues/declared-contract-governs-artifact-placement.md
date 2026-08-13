@@ -67,9 +67,10 @@ remote plus treating the content as disclosed.
 ## Examples
 
 Wrong: commit a recall-reference file into the tests directory carrying rows
-like "client-editable account_active cookie bypasses the deleted-account
-gate" into a repo declared public-bound, because `gh repo view` says PRIVATE.
-(That file was removed from all history by the fix; it exists in no commit.)
+like "the fictional widget service trusts a client-supplied admin flag" (a
+wholly invented stand-in — real rows named real weaknesses) into a repo
+declared public-bound, because `gh repo view` says PRIVATE. (That file was
+removed from all history by the fix; it exists in no commit.)
 
 Right: store the findings table in machine-local automation state, commit
 only `tests/repo-gardener/recall-protocol.md` (generic scoring rules, no

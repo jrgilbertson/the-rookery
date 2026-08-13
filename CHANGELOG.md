@@ -16,9 +16,6 @@ looked" surface. GitHub Releases mirror its entries.
 - Added `repo-gardener`, a portable repository-health parent loop. It surveys
   nine lanes, deepens evidence-justified targets, and may supervise a
   live-policy-bounded child through an unmerged pull request.
-- Added an eight-image Field Guide Blueprint system to `WORKFLOWS.md`: one
-  system map plus seven independently composed job diagrams, each with named
-  input, transformation, output, and readiness criteria.
 - Added the repository banner and its optimized README delivery asset.
 
 ### Changed
@@ -42,10 +39,6 @@ looked" surface. GitHub Releases mirror its entries.
   and sources not needed for that response. Access gaps narrow only dependent
   claims, action outcomes remain separate, and the audit creates no durable
   state.
-- Reframed the workflow overview as a Delivery Spine plus two distinct feedback
-  currents. The section graphics now use deterministic labels and causal
-  mechanisms instead of character-led scenes, while Huginn and Muninn appear
-  only at the overview's learning exchange.
 - `personal-chief-of-staff` now adds evidence-gated proactive coaching to daily,
   weekly, and quarterly reviews. Longitudinal claims use only dated durable
   records from configured canonical Obsidian roles, deduplicate derived review

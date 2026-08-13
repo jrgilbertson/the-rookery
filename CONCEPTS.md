@@ -31,9 +31,9 @@ than existing only as an isolated stop.
 ### Repository Memory Current
 
 The Maintain feedback path that observes recurring signals across the Delivery
-Spine and encodes each lesson at the strongest durable layer the repository can
-enforce. It improves future work throughout the system rather than beginning
-only after Ship.
+Spine and encodes each lesson at the strongest durable layer that can hold it,
+preferring enforceable layers when available. It improves future work
+throughout the system rather than beginning only after Ship.
 
 ### Personal Learning Current
 

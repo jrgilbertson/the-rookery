@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "provider": "linear",
+  "target": "OPS",
+  "synchronization": {
+    "mapping_source": ".agents/linear-sync.json"
+  },
+  "mappings": {
+    "work_type": {"bug": "label-bug-id"},
+    "readiness": {"ready": "state-ready-id"},
+    "priority": {"normal": 3},
+    "leaf_estimate": {"small": 1}
+  }
+}

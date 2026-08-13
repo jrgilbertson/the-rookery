@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "provider": "github",
+  "provider": "linear",
+  "target": "ENG",
+  "mappings": {
+    "work_type": {"bug": "bug"},
+    "readiness": {"ready": "ready"},
+    "priority": {"normal": "normal"},
+    "leaf_estimate": {"small": 1}
+  }
+}

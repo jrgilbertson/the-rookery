@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "provider": "linear",
+  "target": "ENG",
+  "synchronization": {
+    "mapping_source": "../outside/linear-sync.json"
+  },
+  "mappings": {
+    "work_type": {"bug": "bug"},
+    "readiness": {"ready": "ready"},
+    "priority": {"normal": 3},
+    "leaf_estimate": {"small": 1}
+  }
+}

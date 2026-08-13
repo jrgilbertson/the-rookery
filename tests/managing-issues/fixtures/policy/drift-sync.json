@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "provider": "linear",
+  "target": "ENG",
+  "synchronization": {
+    "mapping_source": ".agents/other-sync.json"
+  },
+  "mappings": {
+    "work_type": {"bug": "label-bug-id"},
+    "readiness": {"ready": "state-ready-id"},
+    "priority": {"normal": 3},
+    "leaf_estimate": {"small": 1}
+  }
+}

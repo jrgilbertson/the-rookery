@@ -11,13 +11,15 @@ reference never enters any repository working tree, run report, issue, or PR,
 because its rows describe unpatched weaknesses.
 
 After each dogfood run, compare the run's candidates and recommendations
-against the reference and append one line to this directory's `log.md`:
-`date | skill rev | target rev | recall probe (run N) | hits: A…;
-new-unlisted: <count> | note`, where the target revision is the exact commit
-of the dogfood target the run sensed, so a hit or miss stays auditable after
-the target moves. The tracked log carries only opaque row IDs, counts, and
-non-sensitive notes; descriptions of new unlisted findings are recorded in
-the machine-local reference alongside the rows, never in the tracked log.
+against the reference, record the full result in the machine-local reference
+state (row IDs hit and missed, the exact target revision sensed, and any new
+unlisted findings with their descriptions), and append one ordinary line to
+this directory's `log.md` in its standard format: `date | git rev | recall
+probe | result | note`, where the note carries only counts (for example
+"3 hits, 1 miss, 2 new-unlisted; detail in machine-local reference"). The
+tracked log never carries row IDs, extra hashes, run ledgers, or finding
+descriptions — auditable detail lives with the reference, which records the
+target revision per probe.
 
 Scoring rules:
 

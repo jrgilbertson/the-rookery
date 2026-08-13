@@ -246,7 +246,9 @@ visible:
 
 - the current basis: authoritative observed evidence, or a premise explicitly
   labeled as user-supplied and unverified;
-- the desired outcome: what the user supplied or explicitly approved; and
+- the desired outcome: what the user supplied or explicitly approved, or an
+  explicitly conditional agent-proposed outcome awaiting the user's approval;
+  and
 - the evidence of closure: a future observable signal that would show the
   outcome is complete, or that an experiment has been supported or
   disconfirmed.

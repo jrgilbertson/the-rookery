@@ -127,9 +127,11 @@ assert_trace '"operation":"readback","target":"person_note","result":"success","
 if pcos-action write role=person_note content=displayed_durable_context >/dev/null 2>&1; then
   fail "duplicate action write was accepted"
 fi
-output=$(pcos-action readback role=person_note)
-[[ "$output" == *"exact displayed durable context"* ]] ||
-  fail "duplicate action write changed state"
+if pcos-action readback role=person_note >/dev/null 2>&1; then
+  fail "a second successful action readback was accepted"
+fi
+[[ "$(<"$PCOS_FIXTURE_ROOT/action-person_note/content")" == *"exact displayed durable context"* ]] ||
+  fail "rejected extra action operations changed state"
 
 new_run c1p1
 pcos-action read role=person_note >/dev/null
@@ -225,8 +227,50 @@ output=$(pcos-action write role=mailbox_draft content=approved_draft)
 if pcos-action readback role=mailbox_draft >/dev/null 2>&1; then
   fail "scripted action readback failure was accepted"
 fi
+if pcos-action readback role=mailbox_draft >/dev/null 2>&1; then
+  fail "a second failed action readback attempt was accepted"
+fi
 assert_trace '"operation":"write","target":"mailbox_draft","result":"ambiguous"'
 assert_trace '"operation":"readback","target":"mailbox_draft","result":"failure","completeness":"unknown"'
+failed_readback_count=$(grep -Fc \
+  '"operation":"readback","target":"mailbox_draft","result":"failure"' \
+  "$PCOS_FIXTURE_TRACE")
+[[ "$failed_readback_count" -eq 1 ]] ||
+  fail "failed action readback recorded an invalid attempt count"
+
+new_run c1p1
+pcos-action read role=person_note >/dev/null
+pcos-action write role=person_note content=displayed_durable_context >/dev/null
+set +e
+pcos-action readback role=person_note \
+  >"$PCOS_FIXTURE_ROOT/concurrent-readback-1.out" 2>/dev/null &
+first_readback_pid=$!
+pcos-action readback role=person_note \
+  >"$PCOS_FIXTURE_ROOT/concurrent-readback-2.out" 2>/dev/null &
+second_readback_pid=$!
+wait "$first_readback_pid"
+first_readback_status=$?
+wait "$second_readback_pid"
+second_readback_status=$?
+set -e
+if [[ "$first_readback_status" -eq 0 && "$second_readback_status" -eq 0 ]] ||
+  [[ "$first_readback_status" -ne 0 && "$second_readback_status" -ne 0 ]]; then
+  fail "concurrent action readbacks did not produce exactly one winner"
+fi
+successful_readback_count=$(grep -Fc \
+  '"operation":"readback","target":"person_note","result":"success"' \
+  "$PCOS_FIXTURE_TRACE")
+[[ "$successful_readback_count" -eq 1 ]] ||
+  fail "concurrent action readbacks recorded an invalid success count"
+if [[ "$first_readback_status" -eq 0 ]]; then
+  successful_readback_output=$(<"$PCOS_FIXTURE_ROOT/concurrent-readback-1.out")
+else
+  successful_readback_output=$(<"$PCOS_FIXTURE_ROOT/concurrent-readback-2.out")
+fi
+[[ "$successful_readback_output" == *"exact displayed durable context"* ]] ||
+  fail "concurrent action readback winner returned unexpected evidence"
+rm -f "$PCOS_FIXTURE_ROOT/concurrent-readback-1.out" \
+  "$PCOS_FIXTURE_ROOT/concurrent-readback-2.out"
 
 new_run b5r5
 pcos-action read role=task_note >/dev/null
@@ -516,6 +560,17 @@ if pcos-source read role=current_weekly_review >/dev/null 2>&1; then
 fi
 [[ ! -e "$outside_trace" ]] || fail "symlinked trace escaped the fixture root"
 
+new_run w1r1
+outside_hardlinked_trace="$run_root/outside-hardlinked-trace.jsonl"
+printf 'outside trace sentinel\n' > "$outside_hardlinked_trace"
+ln "$outside_hardlinked_trace" "$PCOS_FIXTURE_TRACE"
+if pcos-source read role=current_weekly_review >/dev/null 2>&1; then
+  fail "hard-linked fixture trace was accepted"
+fi
+[[ "$(<"$outside_hardlinked_trace")" == 'outside trace sentinel' ]] ||
+  fail "hard-linked trace escaped the fixture root"
+rm -f "$outside_hardlinked_trace"
+
 new_run c1p1
 outside_action_state="$run_root/outside-action-state"
 mkdir -p "$outside_action_state"
@@ -525,6 +580,18 @@ if pcos-action read role=person_note >/dev/null 2>&1; then
 fi
 [[ -z "$(find "$outside_action_state" -mindepth 1 -print -quit)" ]] ||
   fail "action state symlink escaped the fixture root"
+
+new_run c1p1
+outside_hardlinked_state="$run_root/outside-hardlinked-action-content"
+printf 'outside state sentinel\n' > "$outside_hardlinked_state"
+mkdir -p "$PCOS_FIXTURE_ROOT/action-person_note"
+ln "$outside_hardlinked_state" "$PCOS_FIXTURE_ROOT/action-person_note/content"
+if pcos-action read role=person_note >/dev/null 2>&1; then
+  fail "hard-linked action state file was accepted"
+fi
+[[ "$(<"$outside_hardlinked_state")" == 'outside state sentinel' ]] ||
+  fail "hard-linked action state escaped the fixture root"
+rm -f "$outside_hardlinked_state"
 
 new_run m3x6
 outside_obsidian_state="$run_root/outside-obsidian-state"

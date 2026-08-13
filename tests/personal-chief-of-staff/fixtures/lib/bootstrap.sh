@@ -34,6 +34,24 @@ fixture_bootstrap() {
     die "fixture trace must not be a symlink"
   [[ ! -e "$trace_path" || -f "$trace_path" ]] ||
     die "fixture trace must be a regular file"
+  if [[ -e "$trace_path" ]]; then
+    fixture_require_single_link "$trace_path" "fixture trace must not have multiple hard links"
+  fi
+}
+
+fixture_require_single_link() {
+  local path=$1 message=$2 link_count
+
+  if link_count=$(stat -f '%l' "$path" 2>/dev/null) &&
+    [[ "$link_count" =~ ^[0-9]+$ ]]; then
+    :
+  elif link_count=$(stat -c '%h' "$path" 2>/dev/null) &&
+    [[ "$link_count" =~ ^[0-9]+$ ]]; then
+    :
+  else
+    die "could not inspect fixture path link count"
+  fi
+  [[ "$link_count" -eq 1 ]] || die "$message"
 }
 
 fixture_prepare_state_dir() {
@@ -55,5 +73,9 @@ fixture_prepare_state_dir() {
     [[ ! -L "$state_path" ]] || die "fixture state file must not be a symlink"
     [[ ! -e "$state_path" || -f "$state_path" ]] ||
       die "fixture state path must be a regular file"
+    if [[ -e "$state_path" ]]; then
+      fixture_require_single_link \
+        "$state_path" "fixture state file must not have multiple hard links"
+    fi
   done
 }

@@ -53,6 +53,7 @@ state_file="$state_dir/content"
 written_file="$state_dir/written"
 read_file="$state_dir/read"
 write_claim_dir="$state_dir/write-claim"
+readback_claim_dir="$state_dir/readback-claim"
 operation_claim_dir="$state_dir/operation-claim"
 operation_claim_held=0
 fixture_prepare_state_dir "$state_dir" "$state_file" "$written_file" "$read_file"
@@ -108,6 +109,8 @@ case "$operation" in
   readback)
     [[ "$content" == "__unset__" ]] || reject readback "readback accepts no content" "$role"
     [[ "$(<"$written_file")" == 1 ]] || reject readback "readback requires a prior write" "$role"
+    mkdir "$readback_claim_dir" 2>/dev/null ||
+      reject readback "an extra readback attempt is not permitted" "$role"
     if [[ -f "$action_dir/readback.failure" ]]; then
       trace readback "$role" failure unknown
       die "scripted authoritative readback failure" 69

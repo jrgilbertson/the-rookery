@@ -76,6 +76,7 @@ findings, bypass protection, or mutate production.
 ## Issue, backlog, and customer-feedback triage
 
 Read configured issues, backlog items, and feedback. Require stable identity
-and revision, bounded quoted evidence, deduplication against current native
-work, expected impact, confidence, and verified repository relation. Never
-create an issue or contact a customer.
+and revision, a bounded redacted quote or bounded evidence reference,
+deduplication against current native work, expected impact, confidence, and
+verified repository relation. Never persist raw customer identities or
+unrestricted free text, create an issue, or contact a customer.

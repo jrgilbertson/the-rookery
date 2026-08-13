@@ -63,8 +63,9 @@ Do not compute a master score or manufacture work to consume capacity
 `skills/repo-gardener/references/reconciliation.md:78-91`).
 
 Depth is also a judgment within a hard policy bound. Finish breadth first, then
-select zero through the installed `maximum_deep_targets_per_run`. Choosing fewer
-is correct when the evidence does not justify more. Prefer critical-flow risk,
+select zero through the smaller of three and the installed
+`maximum_deep_targets_per_run`. Choosing fewer is correct when the evidence does
+not justify more. Prefer critical-flow risk,
 multi-signal convergence, and measurement defects that block trusted decisions,
 but reassess after each result instead of treating the maximum as a quota
 (`skills/repo-gardener/references/reconciliation.md:60-76`).
@@ -146,7 +147,9 @@ when another PR already exists.
 Finally, delegating one actual PR to one child makes responsibility legible.
 The child completes its workflow once; the parent coordinates and reports it
 once. This reduces duplicated review, excess worktrees, and bespoke state while
-preserving a full morning inspection surface.
+preserving the parent for source, diff, and terminal-context inspection. The
+durable morning summary stays in the tracker or a caller-approved destination,
+not in public repository source.
 
 ## When to Apply
 
@@ -172,7 +175,7 @@ representations elsewhere.
 
 ```text
 run-opened
-  -> model surveys nine lanes and deepens 0..policy maximum
+  -> model surveys nine lanes and deepens 0..min(3, policy maximum)
   -> optional child owns one complete PR workflow
 run-closed
   -> deterministic two-record structural check

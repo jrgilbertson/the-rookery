@@ -8,9 +8,12 @@ and a cross-cutting data-quality preflight without creating a tenth lane.
 ## Prompt
 
 > Reconcile a repository with one unrelated Merge-ready PR, execution
-> parallelism of one, a policy maximum of three deep targets, and room for six
-> additional owner-attention items. The run has an automation parent worktree that the owner uses
-> as a temporary morning inspection surface. The nine scouts enumerate 90
+> parallelism of one, a policy maximum of five deep targets, and room for six
+> additional owner-attention items. The tracker or caller-approved destination
+> holds the morning summary; the automation parent worktree remains available
+> only for source, diff, and terminal-context inspection. The installed policy
+> has `caller_roles.report_write: required`, and the caller provides exclusive
+> serialized tracker-write ownership. The nine scouts enumerate 90
 > open issues and 17 repository-health signals, but only two observations meet
 > their lane evidence contracts. Canonical repository documents define
 > activation and billing metrics, an executable event registry defines the
@@ -49,6 +52,7 @@ and a cross-cutting data-quality preflight without creating a tenth lane.
       evidence references, and issue-ready recommendations without customer
       identities, raw analytics payloads, outreach, issue creation, or source
       implementation.
-- [ ] Leaves the automation parent worktree as a temporary owner inspection
-      surface while the two immutable tracker records remain durable run
-      history.
+- [ ] Keeps the durable morning summary in the tracker or caller-approved
+      destination while leaving the automation parent worktree only for source,
+      diff, and terminal-context inspection; the two immutable tracker records
+      remain durable run history.

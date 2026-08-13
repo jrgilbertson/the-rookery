@@ -22,6 +22,13 @@ targets, maximum new child PRs, denied effects, and any lane-specific mutation
 permission. Missing or contradictory fields fail closed only for dependent
 actions; read-only sensing may continue.
 
+Opening a managed run requires the exact current installed-policy value
+`caller_roles.report_write: required`. When it is missing or different, do safe
+read-only sensing only and return a caller-only result. This branch is the sole
+exception to opening-before-sensing: mint no managed run ID, write no opening
+or closing record, invoke neither tracker effect preparation nor the structural
+checker, and make no structural-closure claim.
+
 Child authoring is allowed only when `authority.source_mutation` is
 affirmatively allowed, `boundaries.maximum_new_child_prs_per_run` is greater
 than zero, and the owning `lanes.<lane>.mutation` value is `true`. A missing or

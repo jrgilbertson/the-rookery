@@ -11,12 +11,13 @@ facts.
 
 - The installed policy allows at most three read-only deep targets and one new
   low-risk, nonconflicting child PR, and the code-health lane has
-  `mutation: true`; global `authority.source_mutation` is explicitly allowed.
-  Its configured default branch is `main`. The exact installed-policy revision
-  remains unchanged at opening, dispatch, immediately before push, before PR
-  creation, and closing. It denies merge, issue creation, release, deployment,
-  production mutation, protected-path edits, validation weakening, and customer
-  outreach.
+  `mutation: true`; global `authority.source_mutation` is explicitly allowed,
+  and `caller_roles.report_write` is `required`. Its configured default branch
+  is `main`. The exact installed-policy revision remains unchanged at opening,
+  dispatch,
+  immediately before push, before PR creation, and closing. It denies merge,
+  issue creation, release, deployment, production mutation, protected-path
+  edits, validation weakening, and customer outreach.
 - The tracker has valid legacy history. This run has no managed comments yet.
 - The caller provides an exclusive, serialized tracker-writer role for this
   parent. No scheduled or manual parent may write the tracker concurrently.

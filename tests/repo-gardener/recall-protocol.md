@@ -17,6 +17,11 @@ unlisted findings with their descriptions), and append one ordinary line to
 this directory's `log.md` in its standard format: `date | git rev | recall
 probe | result | note`, where the note carries only counts (for example
 "3 hits, 1 miss, 2 new-unlisted; detail in machine-local reference"). The
+result is binary: the probe passes when no row on an exercised surface was
+missed and no anti-finding was reported as a defect; any exercised-surface
+miss or any anti-finding false positive fails the probe. Low cumulative
+recall by itself neither passes nor fails a run — it is tracked in the
+machine-local reference, not graded per probe. The
 tracked log never carries row IDs, extra hashes, run ledgers, or finding
 descriptions — auditable detail lives with the reference, which records the
 target revision per probe.

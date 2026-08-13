@@ -77,7 +77,10 @@ rotation. The eligible slices are the tracked tree's top-level directories
 that contain source, configuration, or test files — excluding generated,
 vendored, and pure-asset trees — plus one final slice of root-level source,
 configuration, and test files, ordered lexicographically (descending into a
-directory's own subdirectories before advancing). Authoring scope never filters sensing:
+directory's own subdirectories before advancing). A repository whose eligible
+set is empty records that limitation in the cell and the lane senses its
+other signals only; an empty set is a recorded limitation, never license to
+fabricate a slice or inspect excluded trees. Authoring scope never filters sensing:
 read-only inspection covers protected and non-mutable code too; scope gates
 only what a repair may later touch. Rotation state is one bounded cursor in
 this lane's "what happened" cell: the most recently covered slice, plus the

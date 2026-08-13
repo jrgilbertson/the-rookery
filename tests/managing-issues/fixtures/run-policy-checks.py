@@ -483,6 +483,11 @@ def main() -> int:
             "mappings.readiness.ready cannot contain GitHub label CSV syntax",
         )
         expect_invalid(
+            POLICIES / "invalid-github-shared-label.json",
+            repo_root,
+            "GitHub label readiness:ready is mapped by more than one of readiness, priority, leaf_estimate",
+        )
+        expect_invalid(
             POLICIES / "github-synchronization.json",
             repo_root,
             "synchronization requires provider linear",

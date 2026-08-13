@@ -245,6 +245,21 @@ def normalize_mapping(
     return dict(sorted(result.items()))
 
 
+SHARED_GITHUB_LABEL_FIELDS = ("readiness", "priority", "leaf_estimate")
+
+
+def require_unique_github_labels(mappings: dict[str, Any]) -> None:
+    seen: dict[str, str] = {}
+    for field in SHARED_GITHUB_LABEL_FIELDS:
+        for github_value in mappings[field].values():
+            require(
+                github_value not in seen,
+                f"mappings: GitHub label {github_value} is mapped by more than one of "
+                f"{', '.join(SHARED_GITHUB_LABEL_FIELDS)}",
+            )
+            seen[github_value] = field
+
+
 def normalize_mapping_source(value: Any) -> tuple[str, tuple[str, ...]]:
     source = require_concrete_text(value, "synchronization.mapping_source")
     require(
@@ -294,6 +309,9 @@ def normalize_policy(value: dict[str, Any]) -> dict[str, Any]:
             field: normalize_mapping(provider, field, mappings[field]) for field in MAPPING_FIELDS
         },
     }
+
+    if provider == "github":
+        require_unique_github_labels(normalized["mappings"])
 
     if "synchronization" in value:
         synchronization = value["synchronization"]

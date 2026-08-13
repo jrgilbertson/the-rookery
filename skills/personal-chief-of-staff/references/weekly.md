@@ -159,7 +159,8 @@ sustainable value across the whole system rather than maximizing task volume.
 Keep experiments small enough to learn from and specific enough to revisit.
 Apply the shared intention contract as soon as each independent next-week
 outcome, priority, experiment, or boundary is proposed. For an agent-originated
-candidate, show its authoritative current basis, frame its desired outcome
+candidate, show its current basis as authoritative observed evidence or an
+explicitly labeled user-supplied, unverified premise, frame its desired outcome
 conditionally for the user's acceptance, and name its observable closure
 evidence; keep it explicitly unowned until the user accepts it.
 

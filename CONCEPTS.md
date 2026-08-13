@@ -105,7 +105,8 @@ The maintainer installs from this repository exactly the way a visitor does.
 Nothing in the published catalog may depend on context that exists only on the
 maintainer's machine, including absolute paths, private names, or
 personal-environment assumptions. A verification sweep enforces the rule
-across shipped files.
+across shipped files. The rule binds from the moment the repository declares
+itself public-bound, regardless of its current hosting visibility.
 
 ## Readiness checkpoints
 

@@ -18,10 +18,16 @@ input files:
   provenance line naming the observed failure or baseline gap that motivated
   the case.
 - `log.md` — one line per run or check: `date | git rev | check | result |
-  note`. The `git rev` field names the commit the run's working tree was
+note`. The `git rev` field names the commit the run's working tree was
   based on — the parent commit when the change under test is not yet
   committed. An archive-pointer line identifies where prior history lives,
   so git remains the archive.
+- optional `<name>-protocol.md` — a per-suite scoring or measurement protocol
+  for recurring checks the suite runs against external or machine-local
+  evidence. The protocol document defines how a check is scored; its results
+  still land in `log.md` as ordinary convention-compliant lines, and any
+  detailed bookkeeping the protocol needs lives with the evidence, outside
+  these artifacts.
 
 ## Rules
 
@@ -40,12 +46,12 @@ input files:
 
 ## Cost hierarchy
 
-| Tier | Check | Runs when |
-| --- | --- | --- |
-| 1 | structural validation (`skills-ref` validator) | every skill change |
-| 2 | trigger suite | skill description change |
-| 3 | affected behavioral cases | skill behavior change |
-| — | per-harness smoke check | packaging or install-path change |
+| Tier | Check                                          | Runs when                        |
+| ---- | ---------------------------------------------- | -------------------------------- |
+| 1    | structural validation (`skills-ref` validator) | every skill change               |
+| 2    | trigger suite                                  | skill description change         |
+| 3    | affected behavioral cases                      | skill behavior change            |
+| —    | per-harness smoke check                        | packaging or install-path change |
 
 ## Running
 

@@ -16,6 +16,28 @@ imsg_dir="$fixture_dir/specimens/$PCOS_FIXTURE_SPECIMEN/imsg"
 state_dir="$fixture_root/imsg-$PCOS_FIXTURE_SPECIMEN"
 stage_file="$state_dir/stage"
 fixture_prepare_state_dir "$state_dir" "$stage_file"
+stage_claim_dir="$state_dir/stage-claim"
+stage_claim_held=0
+
+release_stage_claim() {
+  if [[ "$stage_claim_held" -eq 1 ]]; then
+    rmdir "$stage_claim_dir" 2>/dev/null || true
+  fi
+}
+
+acquire_stage_claim() {
+  local attempts=0
+
+  while ! mkdir "$stage_claim_dir" 2>/dev/null; do
+    ((attempts += 1))
+    [[ "$attempts" -lt 500 ]] || die "timed out waiting for Messages fixture stage" 75
+    sleep 0.01
+  done
+  stage_claim_held=1
+}
+
+trap release_stage_claim EXIT
+acquire_stage_claim
 [[ -f "$stage_file" ]] || printf '0\n' > "$stage_file"
 [[ $(<"$stage_file") =~ ^[0-3]$ ]] || die "invalid Messages fixture stage"
 

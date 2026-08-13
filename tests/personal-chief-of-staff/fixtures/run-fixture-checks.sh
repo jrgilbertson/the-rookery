@@ -27,6 +27,52 @@ assert_trace() {
   grep -Fq -- "$pattern" "$PCOS_FIXTURE_TRACE" || fail "missing trace: $pattern"
 }
 
+assert_concurrent_messages_transition() {
+  local label=$1 expected_stage=$2 success_pattern=$3
+  shift 3
+  local state_dir="$PCOS_FIXTURE_ROOT/imsg-$PCOS_FIXTURE_SPECIMEN"
+  local claim_dir="$state_dir/stage-claim"
+  local first_pid second_pid first_status second_status success_count
+
+  mkdir -p "$state_dir"
+  mkdir "$claim_dir"
+  (
+    : > "$PCOS_FIXTURE_ROOT/$label-1.started"
+    "$@"
+  ) > "$PCOS_FIXTURE_ROOT/$label-1.out" 2>/dev/null &
+  first_pid=$!
+  (
+    : > "$PCOS_FIXTURE_ROOT/$label-2.started"
+    "$@"
+  ) > "$PCOS_FIXTURE_ROOT/$label-2.out" 2>/dev/null &
+  second_pid=$!
+  while [[ ! -f "$PCOS_FIXTURE_ROOT/$label-1.started" ||
+    ! -f "$PCOS_FIXTURE_ROOT/$label-2.started" ]]; do
+    :
+  done
+  rmdir "$claim_dir"
+  set +e
+  wait "$first_pid"
+  first_status=$?
+  wait "$second_pid"
+  second_status=$?
+  set -e
+
+  if [[ "$first_status" -eq 0 && "$second_status" -eq 0 ]] ||
+    [[ "$first_status" -ne 0 && "$second_status" -ne 0 ]]; then
+    fail "concurrent Messages $label calls did not produce exactly one winner"
+  fi
+  [[ "$(<"$state_dir/stage")" == "$expected_stage" ]] ||
+    fail "concurrent Messages $label calls recorded the wrong stage"
+  success_count=$(grep -Fc -- "$success_pattern" "$PCOS_FIXTURE_TRACE")
+  [[ "$success_count" -eq 1 ]] ||
+    fail "concurrent Messages $label calls recorded an invalid success count"
+  rm -f "$PCOS_FIXTURE_ROOT/$label-1.started" \
+    "$PCOS_FIXTURE_ROOT/$label-2.started" \
+    "$PCOS_FIXTURE_ROOT/$label-1.out" \
+    "$PCOS_FIXTURE_ROOT/$label-2.out"
+}
+
 new_run q7m4
 output=$(obsidian vault=fixture-vault read path=Roles/current.md)
 [[ "$output" == "The bounded current record says the release decision is due Friday and the protected customer-proof block is Thursday." ]] || fail "evidence output"
@@ -69,6 +115,9 @@ fi
 
 new_run c1p1
 pcos-action read role=person_note >/dev/null
+if pcos-action read role=person_note >/dev/null 2>&1; then
+  fail "a second action pre-write read was accepted"
+fi
 output=$(pcos-action write role=person_note content=displayed_durable_context)
 [[ "$output" == success ]] || fail "action fixture write output"
 output=$(pcos-action readback role=person_note)
@@ -118,6 +167,56 @@ successful_write_count=$(grep -Fc \
 output=$(pcos-action readback role=person_note)
 [[ "$output" == *"exact displayed durable context"* ]] ||
   fail "concurrent action write changed the expected state"
+
+new_run c1p1
+mkdir -p "$PCOS_FIXTURE_ROOT/action-person_note"
+mkdir "$PCOS_FIXTURE_ROOT/action-person_note/operation-claim"
+(
+  : > "$PCOS_FIXTURE_ROOT/concurrent-action-read-1.started"
+  pcos-action read role=person_note
+) > "$PCOS_FIXTURE_ROOT/concurrent-action-read-1.out" 2>/dev/null &
+first_read_pid=$!
+(
+  : > "$PCOS_FIXTURE_ROOT/concurrent-action-read-2.started"
+  pcos-action read role=person_note
+) > "$PCOS_FIXTURE_ROOT/concurrent-action-read-2.out" 2>/dev/null &
+second_read_pid=$!
+while [[ ! -f "$PCOS_FIXTURE_ROOT/concurrent-action-read-1.started" ||
+  ! -f "$PCOS_FIXTURE_ROOT/concurrent-action-read-2.started" ]]; do
+  :
+done
+rmdir "$PCOS_FIXTURE_ROOT/action-person_note/operation-claim"
+set +e
+wait "$first_read_pid"
+first_read_status=$?
+wait "$second_read_pid"
+second_read_status=$?
+set -e
+if [[ "$first_read_status" -eq 0 && "$second_read_status" -eq 0 ]] ||
+  [[ "$first_read_status" -ne 0 && "$second_read_status" -ne 0 ]]; then
+  fail "concurrent action pre-write reads did not produce exactly one winner"
+fi
+successful_prewrite_read_count=$(grep -Fc \
+  '"operation":"read","target":"person_note","result":"success"' \
+  "$PCOS_FIXTURE_TRACE")
+[[ "$successful_prewrite_read_count" -eq 1 ]] ||
+  fail "concurrent action pre-write reads recorded an invalid success count"
+if [[ "$first_read_status" -eq 0 ]]; then
+  successful_prewrite_output=$(<"$PCOS_FIXTURE_ROOT/concurrent-action-read-1.out")
+else
+  successful_prewrite_output=$(<"$PCOS_FIXTURE_ROOT/concurrent-action-read-2.out")
+fi
+[[ "$successful_prewrite_output" == *"no displayed durable context"* ]] ||
+  fail "concurrent action pre-write read winner returned unexpected evidence"
+rm -f "$PCOS_FIXTURE_ROOT/concurrent-action-read-1.started" \
+  "$PCOS_FIXTURE_ROOT/concurrent-action-read-2.started" \
+  "$PCOS_FIXTURE_ROOT/concurrent-action-read-1.out" \
+  "$PCOS_FIXTURE_ROOT/concurrent-action-read-2.out"
+output=$(pcos-action write role=person_note content=displayed_durable_context)
+[[ "$output" == success ]] || fail "action write after concurrent reads"
+output=$(pcos-action readback role=person_note)
+[[ "$output" == *"exact displayed durable context"* ]] ||
+  fail "action readback after concurrent reads"
 
 new_run a2m2
 pcos-action read role=mailbox_draft >/dev/null
@@ -198,6 +297,26 @@ if imsg send --chat-id group-1 --text unexpected >/dev/null 2>&1; then
   fail "Messages write operation was accepted"
 fi
 assert_trace '"operation":"rejected","target":"unrecognized","result":"rejected"'
+
+new_run d1g1
+assert_concurrent_messages_transition preflight 1 \
+  '"operation":"preflight","target":"messages_interface","result":"success"' \
+  imsg --version
+
+new_run d1g1
+imsg --version >/dev/null
+assert_concurrent_messages_transition chats 2 \
+  '"operation":"chats","target":"messages_chats","result":"success"' \
+  imsg chats --limit 10 --json
+
+new_run d1g1
+imsg --version >/dev/null
+imsg chats --limit 10 --json >/dev/null
+assert_concurrent_messages_transition history 3 \
+  '"operation":"history","target":"messages_history","result":"success"' \
+  imsg history --chat-id group-1 \
+  --start 2026-08-05T00:00:00-07:00 \
+  --end 2026-08-06T00:00:00-07:00 --limit 100 --json
 
 new_run o1t1
 if obsidian vault=fixture-vault append path=Actions/task.md \

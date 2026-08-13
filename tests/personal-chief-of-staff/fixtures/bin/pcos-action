@@ -53,7 +53,29 @@ state_file="$state_dir/content"
 written_file="$state_dir/written"
 read_file="$state_dir/read"
 write_claim_dir="$state_dir/write-claim"
+operation_claim_dir="$state_dir/operation-claim"
+operation_claim_held=0
 fixture_prepare_state_dir "$state_dir" "$state_file" "$written_file" "$read_file"
+
+release_operation_claim() {
+  if [[ "$operation_claim_held" -eq 1 ]]; then
+    rmdir "$operation_claim_dir" 2>/dev/null || true
+  fi
+}
+
+acquire_operation_claim() {
+  local attempts=0
+
+  while ! mkdir "$operation_claim_dir" 2>/dev/null; do
+    ((attempts += 1))
+    [[ "$attempts" -lt 500 ]] || die "timed out waiting for action fixture operation" 75
+    sleep 0.01
+  done
+  operation_claim_held=1
+}
+
+trap release_operation_claim EXIT
+acquire_operation_claim
 [[ -f "$state_file" ]] || cp "$action_dir/before.txt" "$state_file"
 [[ -f "$written_file" ]] || printf '0\n' > "$written_file"
 [[ -f "$read_file" ]] || printf '0\n' > "$read_file"
@@ -61,6 +83,8 @@ fixture_prepare_state_dir "$state_dir" "$state_file" "$written_file" "$read_file
 case "$operation" in
   read)
     [[ "$content" == "__unset__" ]] || reject read "read accepts no content" "$role"
+    [[ "$(<"$written_file")" == 0 ]] || reject read "pre-write read is not permitted after a write" "$role"
+    [[ "$(<"$read_file")" == 0 ]] || reject read "exactly one pre-write read is required" "$role"
     sed -n '1,$p' "$state_file"
     printf '1\n' > "$read_file"
     trace read "$role" success complete

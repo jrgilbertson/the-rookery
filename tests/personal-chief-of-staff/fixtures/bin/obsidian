@@ -100,8 +100,28 @@ evidence_read_file="$state_dir/read"
 written_file="$state_dir/written"
 content_file="$state_dir/content"
 write_claim_dir="$state_dir/write-claim"
+sequence_claim_dir="$state_dir/sequence-claim"
 fixture_prepare_state_dir \
   "$state_dir" "$index_file" "$evidence_read_file" "$written_file" "$content_file"
+
+# Serialize first-use initialization and every read-index consumer. This makes
+# the sequence state an atomic check-and-increment and prevents concurrent
+# reads from both consuming the same slot.
+[[ ! -L "$sequence_claim_dir" ]] || die "fixture sequence claim must not be a symlink"
+sequence_claim_attempts=0
+while ! mkdir "$sequence_claim_dir" 2>/dev/null; do
+  ((sequence_claim_attempts += 1))
+  ((sequence_claim_attempts < 500)) || die "fixture sequence state is busy"
+  sleep 0.01
+done
+sequence_claim_acquired=1
+cleanup_sequence_claim() {
+  if [[ $sequence_claim_acquired -eq 1 ]]; then
+    rmdir "$sequence_claim_dir" 2>/dev/null || true
+  fi
+}
+trap cleanup_sequence_claim EXIT
+
 [[ -f "$index_file" ]] || printf '0\n' > "$index_file"
 [[ -f "$evidence_read_file" ]] || printf '0\n' > "$evidence_read_file"
 [[ -f "$written_file" ]] || printf '0\n' > "$written_file"
@@ -118,6 +138,8 @@ if [[ "$operation" == append ]]; then
   [[ "$content" != "__unset__" ]] || reject append "append requires exact content"
   [[ $silent -eq 1 ]] || reject append "append requires the silent flag"
   [[ $(<"$written_file") == 0 ]] || reject append "an extra write is not permitted"
+  [[ -f "$index_file" && -f "$evidence_read_file" ]] ||
+    reject append "append requires exactly one successful evidence read before writing"
   read_index=$(<"$index_file")
   [[ "$read_index" =~ ^[0-9]+$ ]] || die "invalid fixture read state"
   [[ "$read_index" == 1 && $(<"$evidence_read_file") == 1 ]] ||
@@ -175,3 +197,7 @@ case "$result" in
     die "scripted authoritative read failure" 69
     ;;
 esac
+
+rmdir "$sequence_claim_dir" || die "fixture sequence claim could not be released"
+sequence_claim_acquired=0
+trap - EXIT

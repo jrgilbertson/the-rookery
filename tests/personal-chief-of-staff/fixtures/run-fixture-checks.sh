@@ -204,6 +204,7 @@ if obsidian vault=fixture-vault append path=Actions/task.md \
   content='approved next step' silent >/dev/null 2>&1; then
   fail "Obsidian write-before-read was accepted"
 fi
+assert_trace '"operation":"append","target":"task_note","result":"rejected"'
 output=$(obsidian vault=fixture-vault read path=Actions/task.md)
 [[ "$output" == 'manual context with [[existing wiki link]];' ]] ||
   fail "rejected Obsidian write-before-read changed state"
@@ -251,6 +252,57 @@ successful_append_count=$(grep -Fc \
 output=$(obsidian vault=fixture-vault read path=Actions/task.md)
 [[ "$output" == 'manual context with [[existing wiki link]];approved next step' ]] ||
   fail "concurrent Obsidian append changed the expected state"
+
+new_run o1t1
+mkdir -p "$PCOS_FIXTURE_ROOT/state-o1t1/sequence-claim"
+(
+  : > "$PCOS_FIXTURE_ROOT/concurrent-read-1.started"
+  obsidian vault=fixture-vault read path=Actions/task.md
+) > "$PCOS_FIXTURE_ROOT/concurrent-read-1.out" 2>/dev/null &
+first_read_pid=$!
+(
+  : > "$PCOS_FIXTURE_ROOT/concurrent-read-2.started"
+  obsidian vault=fixture-vault read path=Actions/task.md
+) > "$PCOS_FIXTURE_ROOT/concurrent-read-2.out" 2>/dev/null &
+second_read_pid=$!
+while [[ ! -f "$PCOS_FIXTURE_ROOT/concurrent-read-1.started" ||
+  ! -f "$PCOS_FIXTURE_ROOT/concurrent-read-2.started" ]]; do
+  :
+done
+sleep 0.1
+kill -0 "$first_read_pid" 2>/dev/null ||
+  fail "first concurrent Obsidian read bypassed the sequence claim"
+kill -0 "$second_read_pid" 2>/dev/null ||
+  fail "second concurrent Obsidian read bypassed the sequence claim"
+rmdir "$PCOS_FIXTURE_ROOT/state-o1t1/sequence-claim"
+set +e
+wait "$first_read_pid"
+first_read_status=$?
+wait "$second_read_pid"
+second_read_status=$?
+set -e
+[[ "$first_read_status" -eq 0 && "$second_read_status" -eq 0 ]] ||
+  fail "concurrent Obsidian reads did not both consume the declared sequence"
+expected_concurrent_read='manual context with [[existing wiki link]];'
+[[ $(<"$PCOS_FIXTURE_ROOT/concurrent-read-1.out") == "$expected_concurrent_read" ]] ||
+  fail "first concurrent Obsidian read returned unexpected evidence"
+[[ $(<"$PCOS_FIXTURE_ROOT/concurrent-read-2.out") == "$expected_concurrent_read" ]] ||
+  fail "second concurrent Obsidian read returned unexpected evidence"
+rm -f "$PCOS_FIXTURE_ROOT/concurrent-read-1.started" \
+  "$PCOS_FIXTURE_ROOT/concurrent-read-2.started" \
+  "$PCOS_FIXTURE_ROOT/concurrent-read-1.out" \
+  "$PCOS_FIXTURE_ROOT/concurrent-read-2.out"
+if obsidian vault=fixture-vault append path=Actions/task.md \
+  content='approved next step' silent >/dev/null 2>&1; then
+  fail "two concurrent Obsidian reads satisfied the one-read append gate"
+fi
+successful_prewrite_read_count=$(grep -Fc \
+  '"operation":"read","target":"task_note","result":"success"' \
+  "$PCOS_FIXTURE_TRACE")
+[[ "$successful_prewrite_read_count" -eq 2 ]] ||
+  fail "concurrent Obsidian reads recorded an invalid success count"
+[[ $(<"$PCOS_FIXTURE_ROOT/state-o1t1/content") == "$expected_concurrent_read" ]] ||
+  fail "rejected append after concurrent Obsidian reads changed state"
 
 new_run o2r2
 output=$(obsidian vault=fixture-vault read path=Actions/recovery.md)

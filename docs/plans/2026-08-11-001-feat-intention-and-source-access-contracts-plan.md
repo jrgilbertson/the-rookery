@@ -27,9 +27,9 @@ deepened: 2026-08-11
 
 ### Summary
 
-The chief-of-staff skill will adopt two required trust contracts. Every intention-bearing output will visibly establish the current basis, the user-owned desired outcome, and the future observable evidence that would show completion. Every visible response will also include a compact, run-scoped Source Access Audit after its answer-first synthesis.
+The chief-of-staff skill will adopt two required trust contracts. Every intention-bearing output will visibly establish the current basis, the user-owned desired outcome, and the future observable evidence that would show completion. Every visible response will also include a compact, response-scoped Source Access Audit after its answer-first synthesis.
 
-The audit will report actual bounded access, not connector presence or internal narration. Access gaps will narrow only dependent claims. When no durable source succeeds, the workflow may still use an attributed user premise, but it may not present factual or longitudinal findings as source-backed.
+The audit will report actual bounded access, not connector presence or internal narration. Access gaps will narrow only dependent claims. When no authoritative source read succeeds, the workflow may still use an attributed user premise, but it may not present factual, absence, recurrence, or longitudinal findings as source-backed. Successful native calendar, task, repository, CRM, or other authoritative reads still support current facts inside their observed scope when durable-role reads are missing; only dependent recurrence, coaching-rule, and longitudinal claims narrow.
 
 ### Problem Frame
 
@@ -58,12 +58,12 @@ LifeOS demonstrates two useful patterns: falsifiable completion claims and visib
 - R12. `Accessed` requires a successful authoritative read; connector presence, prior conversation state, cached knowledge, or narration of a read is insufficient.
 - R13. A complete empty result supports absence only inside the displayed scope and only when the authoritative interface exposes a signal that proves the read completed. A truncated, partial, or completeness-unknown read never supports an absence claim and defaults to partial or failed access under R10.
 - R14. Access failure narrows only the claims that depend on that source; access state remains distinct from conclusion-specific `Sufficient`, `Partial`, or `Insufficient` coverage.
-- R15. If no durable source succeeds, the response makes no source-backed factual, recurrence, or longitudinal claim and labels any user premise as user-supplied and unverified.
+- R15. If no authoritative source read succeeds, the response makes no source-backed factual, absence, recurrence, or longitudinal claim and labels any user premise as user-supplied and unverified. Successful native calendar, task, repository, CRM, or other authoritative reads still support current facts inside their observed scope when durable-role reads are missing; only dependent recurrence, coaching-rule, and longitudinal claims narrow.
 - R16. A premise-only response may continue as useful collaboration, but a request whose central purpose needs unavailable evidence ends `Unable to prepare reliably` rather than `Nothing material`.
 
 **Workflow and authority preservation**
 
-- R17. Action-only responses keep mutation outcomes in the existing action-result narrative and audit only the authoritative access used for the current target or destination reread and verification readback. When the same message also requests a new review, the table separates action-access and discovery phases; it never substitutes an access result for `Applied`, `Already satisfied`, `Failed`, `Indeterminate`, `Manual`, `Deferred`, or `Skipped`.
+- R17. Action-only responses keep mutation outcomes in the existing action-result narrative and audit only the authoritative access used for the current target or destination reread and verification readback. When the same message also requests a new review or non-mode cross-source context, the table separates action access from `Review discovery` or `Context discovery`; it never substitutes an access result for `Applied`, `Already satisfied`, `Failed`, `Indeterminate`, `Manual`, `Deferred`, or `Skipped`.
 - R18. A resumed turn audits its current access slice and refreshes required time-sensitive evidence; prior conversational material is not reported as newly accessed unless it is reread.
 - R19. The Source Access Audit remains conversation-only and does not authorize an action, prove claim provenance, replace claim-level evidence, replace Quarterly corpus coverage, or create durable state.
 - R20. Canonical-source ownership, Daily CRM Scan, explicit approval, immediate pre-write revalidation, one supported mutation, same-interface readback, scheduled read-only behavior, user-owned meaning, and no-generated-memory rules remain authoritative.
@@ -90,7 +90,7 @@ LifeOS demonstrates two useful patterns: falsifiable completion claims and visib
   - **Outcome:** The user sees a useful answer, verifiable intentions, conclusion-specific limits, and the sources that did or did not support the run.
   - **Covered by:** R1–R16, R18–R20
 
-- F2. **Partial or zero durable-source access**
+- F2. **Partial or zero authoritative-source access**
   - **Entry:** One or more relevant reads fail, are empty, lack configuration, or are declined.
   - **Flow:** Distinguish empty from unavailable and partial from complete; remove or narrow dependent claims; keep unaffected work; attribute user premises; choose the purpose-sensitive ending.
   - **Outcome:** The response remains useful where evidence permits and never launders an access failure into a negative finding.
@@ -111,7 +111,7 @@ LifeOS demonstrates two useful patterns: falsifiable completion claims and visib
 ### Acceptance Examples
 
 - AE1. **Mixed access:** Personal mail returns relevant evidence, a work-mail read fails, and a shared work calendar returns no relevant event in the stated window. The synthesis uses mail and calendar evidence, omits work-mail-dependent claims, and the table shows three distinct rows and effects. Covers R7–R16.
-- AE2. **No durable access:** A cross-source priority request has no successful durable read. The response may organize an explicitly labeled user premise, makes no source-backed or longitudinal claim, renders the table, and ends `Unable to prepare reliably` when factual prioritization was central. Covers R7–R16.
+- AE2. **No authoritative access:** A cross-source priority request has no successful authoritative read. The response may organize an explicitly labeled user premise, makes no source-backed factual, absence, recurrence, or longitudinal claim, renders the table, and ends `Unable to prepare reliably` when factual prioritization was central. Covers R7–R16.
 - AE3. **Action-only:** The user approves a visible note edit. The response rereads the exact target, applies once if unchanged, reads back, and reports only those current access surfaces in the table. It does not claim fresh email, calendar, or journal review. Covers R4, R7, R17, R19–R20.
 - AE4. **Complete empty versus truncated:** A complete seven-day query may support “no relevant evidence in that seven-day scope.” A truncated query may only report partial access and cannot support absence. Covers R10–R14.
 - AE5. **Verbatim vague commitment:** The user insists on “Development.” The response may preserve that text, names the missing Current or closure evidence, and does not call it a complete Meaningful Commitment. Covers R2–R6.
@@ -163,10 +163,10 @@ LifeOS demonstrates two useful patterns: falsifiable completion claims and visib
 
 ### Key Technical Decisions
 
-- KTD1. **Separate semantics from presentation and load both owners once.** Put run-scoped source states, claim gates, and the semantic intention contract in `references/source-behavior.md`; put the visible table and intention-writing shape in `assets/review-bundle.md`. `SKILL.md` loads both before every visible response, while mode references apply them at native seams without restating them. Governs R1–R20.
+- KTD1. **Separate semantics from presentation and load both owners once.** Put response-scoped source states, claim gates, and the semantic intention contract in `references/source-behavior.md`; put the visible table and intention-writing shape in `assets/review-bundle.md`. `SKILL.md` loads both before every visible response, while mode references apply them at native seams without restating them. Governs R1–R20.
 - KTD2. **Model the audit as a transient plan-attempt-reconcile cycle.** Assemble the relevant source universe for the current visible response, perform bounded authoritative reads, then reconcile actual results into the table. Do not infer access from tool availability or persist the cycle. (session-settled: user-approved — chosen over optional or connector-presence disclosure: trust depends on seeing what the run accessed.) Governs R7–R13, R17–R19.
 - KTD3. **Use the six R10 access results and keep coverage separate.** A complete bounded empty read may use `Accessed — no relevant evidence`. A truncated read with evidence uses `Accessed — evidence found` with its partial scope; a truncated read without evidence uses `Attempted — unavailable or failed` and cannot support absence. `Sufficient`, `Partial`, and `Insufficient` continue to qualify conclusions. Governs R10–R16.
-- KTD4. **Make each table a current-response snapshot of access, not action success.** A multi-turn continuation reports only evidence reread or accessed for that response. Action-only paths report their present target reread and verification readback surfaces, while the existing narrative reports the mutation outcome. A combined action-and-review response uses one table with a `Phase` column that separates action access from later discovery. The table is not cumulative memory. Governs R7, R17–R19.
+- KTD4. **Make each table a current-response snapshot of access, not action success.** A multi-turn continuation reports only evidence reread or accessed for that response. Action-only paths report their present target reread and verification readback surfaces, while the existing narrative reports the mutation outcome. A response combining an action with either a review or non-mode context request uses one table with a `Phase` column that separates action access from `Review discovery` or `Context discovery`. The table is not cumulative memory. Governs R7, R17–R19.
 - KTD5. **Render content first and audit second.** Keep the principal conclusion and intention-bearing synthesis first, then show the compact table before separately approvable actions and the ending. Narrative repeats a source limitation only where it changes a claim. (session-settled: user-approved — chosen over an evidence-map-first report: the answer must remain usable while access stays visible.) Governs R7, R11, R19.
 - KTD6. **Treat Current and Evidence as different jobs.** Current carries supporting observation or a labeled user premise. Evidence carries the future finish line. Literal `Current`, `Desired`, and `Evidence` headings are optional, but the three meanings must be visible for each independent intention. (session-settled: user-approved — chosen over optional intention metadata: intentions without a visible finish line are not trustworthy.) Governs R1–R6.
 - KTD7. **Preserve exact incomplete user wording without certifying it.** Keep the existing nonconforming path for user-owned text, name missing semantics, and do not present it as a complete intention. Governs R5–R6.
@@ -247,7 +247,7 @@ The shared reference owns steps B–F and the claim gates. The bundle asset owns
 - **Requirements:** R7–R20
 - **Files:** `skills/personal-chief-of-staff/references/source-behavior.md`, `skills/personal-chief-of-staff/assets/review-bundle.md`, `skills/personal-chief-of-staff/SKILL.md`
 - **Approach:** Implement KTD1–KTD5. Replace the current conditional coverage sentence with the required table. Make both shared resources mandatory for action-only and non-mode paths. Keep no-access endings purpose-sensitive and preserve existing write and companion boundaries.
-- **Test scenarios:** Mixed source success, complete empty result, truncated slice, missing role binding, explicit current decline, optional source not needed, no successful durable access, scheduled response, resumed response, and action-only readback.
+- **Test scenarios:** Mixed source success, complete empty result, truncated slice, missing role binding, explicit current decline, optional source not needed, no successful authoritative access, scheduled response, resumed response, and action-only readback.
 - **Verification:** Run the access-focused U1 subset now. Require a trace of each bounded read or failed attempt, a matching table row, and the expected synthesis effect. No path reports connector presence as access, no irrelevant connector inventory appears, and unrelated conclusions survive a partial failure.
 - **Dependencies:** U1.
 
@@ -318,7 +318,7 @@ Before the matrix runs, document each exercised authoritative interface's observ
 | Missing or ambiguous canonical binding | `Not configured` | Names the unresolved role and omits dependent claims |
 | Explicit current refusal | `Declined` | Applies to this response only |
 | Materially considered source outside this response's scope | `Not needed` | Does not change unrelated coverage |
-| Zero successful durable reads | Rows reflect each observed result | No source-backed factual or longitudinal claim |
+| Zero successful authoritative reads | Rows reflect each observed result | No source-backed factual, absence, recurrence, or longitudinal claim |
 
 Freeze each checklist before viewing outputs. Grade every item pass or fail against the actual response and relevant execution trace. For an access claim to pass, the trace must show the bounded read or failed attempt, the table row must match that result and scope, and the synthesis must apply the correct claim consequence. A response that only narrates what it would query fails. A separate fresh-context grader must inspect each matched output. Record one `date | git rev | check | result | note` line per graded variant in `tests/personal-chief-of-staff/log.md`.
 
@@ -350,7 +350,7 @@ Inspect every changed and untracked path before staging. Confirm that tracked sk
 - Every named available source known to be material is attempted or explicitly classified; a clean table cannot conceal a material omission.
 - Access states distinguish relevant evidence, bounded empty results, failures, missing configuration, current refusal, and not-needed sources.
 - A complete-empty claim requires an interface completeness signal; unknown completeness defaults to partial or failed access.
-- When no durable source succeeds, the response produces no source-backed factual, recurrence, or longitudinal claim.
+- When no authoritative source read succeeds, the response produces no source-backed factual, absence, recurrence, or longitudinal claim. Successful native-source reads still support current facts inside their observed scope when durable-role reads are missing; only dependent recurrence, coaching-rule, and longitudinal claims narrow.
 - Source failure narrows only dependent claims and never becomes false negative evidence.
 - Action-only, resumed, scheduled, non-mode, Wind-down, Weekly, and Quarterly behavior satisfy their distinct audit scopes.
 - Action-only tables report reread and verification-readback access while the existing narrative independently reports mutation outcomes.

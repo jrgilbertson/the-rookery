@@ -1,6 +1,10 @@
+<!-- markdownlint-disable-file MD041 -->
+
+![The Rookery workflows banner showing Research through Ship as the Delivery Sequence, Maintain repairing and binding recurring signals with a press, and Learn recording experience with an open notebook and feather](docs/assets/the-rookery-workflows-banner.webp)
+
 # The workflows
 
-My workflow is seven jobs that create a durable learning loop. Each section covers the reasoning first, then the tools and commands.
+My workflow has a five-job Delivery Sequence and two feedback currents. Research through Ship moves work forward, Maintain turns recurring signals into repository memory, and Learn turns experience into a better question for Research. Each section covers the reasoning first, then the tools and commands.
 
 ## Foundations
 

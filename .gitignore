@@ -14,6 +14,9 @@ outputs/
 # docs/ is deliberately NOT ignored — working documents ship public.
 __pycache__/
 
+# Local agent worktrees.
+.claude-worktrees/
+
 # impeccable-ignore-start
 # Ephemeral output, runtime state, and per-dev overrides.
 # Unanchored: .impeccable may sit at the repo root or under a nested
@@ -23,6 +26,7 @@ __pycache__/
 .impeccable/config.local.json
 .impeccable/hook.cache.json
 .impeccable/hook.pending.json
+.impeccable/questions/
 .impeccable/*.png
 .impeccable/live/server.json
 .impeccable/live/sessions/

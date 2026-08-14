@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "workspace": {"id": "workspace-fixture", "name": "Fixture Workspace"},
+  "teams": [
+    {
+      "id": "team-eng",
+      "key": "ENG",
+      "name": "Engineering",
+      "workspace": {"id": "workspace-fixture", "name": "Fixture Workspace"}
+    }
+  ],
+  "states": [
+    {"id": "state-triage", "name": "Triage", "type": "triage"},
+    {"id": "state-ready", "name": "Ready", "type": "unstarted"},
+    {"id": "state-done", "name": "Done", "type": "completed"},
+    {"id": "state-cancelled", "name": "Cancelled", "type": "canceled"}
+  ],
+  "labels": [
+    {"id": "label-feature", "name": "Feature"},
+    {"id": "label-fix", "name": "Fix"}
+  ],
+  "members": [
+    {"id": "user-fixture", "name": "Fixture User"},
+    {"id": "user-reviewer", "name": "Fixture Reviewer"}
+  ],
+  "issues": {
+    "ENG-1": {
+      "id": "linear-1",
+      "identifier": "ENG-1",
+      "team": {"id": "team-eng", "key": "ENG"},
+      "title": "Existing issue",
+      "description": "## Problem\n\nOld text\n",
+      "state": {"id": "state-ready", "name": "Ready", "type": "unstarted"},
+      "priority": 2,
+      "estimate": 3,
+      "labels": [{"id": "label-feature", "name": "Feature"}],
+      "assignee": null,
+      "parent": null,
+      "children": [],
+      "relations": [],
+      "url": "https://linear.app/fixture/issue/ENG-1"
+    },
+    "ENG-2": {
+      "id": "linear-2",
+      "identifier": "ENG-2",
+      "team": {"id": "team-eng", "key": "ENG"},
+      "title": "Related issue",
+      "description": "## Problem\n\nRelated text\n",
+      "state": {"id": "state-ready", "name": "Ready", "type": "unstarted"},
+      "priority": 3,
+      "estimate": 2,
+      "labels": [],
+      "assignee": null,
+      "parent": null,
+      "children": [],
+      "relations": [],
+      "url": "https://linear.app/fixture/issue/ENG-2"
+    }
+  }
+}

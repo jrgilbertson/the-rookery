@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "provider": "github",
+  "target": "example/project",
+  "authority": "write",
+  "mappings": {
+    "work_type": {"bug": "bug"},
+    "readiness": {"ready": "ready"},
+    "priority": {"normal": "normal"},
+    "leaf_estimate": {"small": "small"}
+  }
+}

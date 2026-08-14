@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "provider": "linear",
+  "target": {
+    "workspace": "workspace-fixture",
+    "team": "ENG"
+  },
+  "synchronization": {
+    "mapping_source": "../outside/linear-sync.json"
+  },
+  "mappings": {
+    "work_type": {"bug": "bug"},
+    "readiness": {"ready": "Ready"},
+    "priority": {"normal": "medium"},
+    "leaf_estimate": {"small": 1}
+  }
+}

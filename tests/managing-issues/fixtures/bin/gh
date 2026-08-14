@@ -1,0 +1,736 @@
+#!/usr/bin/env python3
+"""Strict stateful gh fixture for managing-issues command-contract tests."""
+
+from __future__ import annotations
+
+import copy
+import hashlib
+import json
+import os
+import sys
+from pathlib import Path
+from typing import Any, NoReturn
+from urllib.parse import parse_qs, urlsplit
+
+
+ARGV = sys.argv[1:]
+STATE_PATH = Path(os.environ["MI_GITHUB_STATE"])
+LOG_PATH = Path(os.environ["MI_GITHUB_LOG"])
+STDIN = sys.stdin.read() if "--body-file" in ARGV else ""
+ISSUE_FIELDS = {
+    "id",
+    "number",
+    "title",
+    "body",
+    "state",
+    "stateReason",
+    "updatedAt",
+    "url",
+    "labels",
+    "assignees",
+    "issueType",
+    "parent",
+    "subIssues",
+    "blockedBy",
+    "blocking",
+}
+REPOSITORY_FIELDS = (
+    "id,nameWithOwner,url,hasIssuesEnabled,isArchived,viewerPermission"
+)
+ISSUE_TYPES_QUERY = (
+    "query($owner:String!,$name:String!,$endCursor:String){"
+    "repository(owner:$owner,name:$name){issueTypes(first:100,after:$endCursor){"
+    "nodes{id name}pageInfo{hasNextPage endCursor}}}}"
+)
+
+
+def emit(value: Any) -> None:
+    print(json.dumps(value, separators=(",", ":"), sort_keys=True))
+
+
+def fail(message: str) -> NoReturn:
+    print(message, file=sys.stderr)
+    raise SystemExit(1)
+
+
+def load() -> dict[str, Any]:
+    return json.loads(STATE_PATH.read_text(encoding="utf-8"))
+
+
+def save(state: dict[str, Any]) -> None:
+    temporary = STATE_PATH.with_name(f"{STATE_PATH.name}.tmp")
+    temporary.write_text(
+        json.dumps(state, indent=2, sort_keys=True) + "\n", encoding="utf-8"
+    )
+    temporary.replace(STATE_PATH)
+
+
+def record_write(state: dict[str, Any]) -> None:
+    state["fixtureWriteCount"] = state.get("fixtureWriteCount", 0) + 1
+
+
+def parse_options(
+    tokens: list[str],
+    *,
+    value_flags: set[str],
+    boolean_flags: set[str] | None = None,
+    repeatable_flags: set[str] | None = None,
+) -> tuple[list[str], dict[str, list[str]], set[str]]:
+    booleans_allowed = boolean_flags or set()
+    repeatable = repeatable_flags or set()
+    positionals: list[str] = []
+    values: dict[str, list[str]] = {}
+    booleans: set[str] = set()
+    index = 0
+    while index < len(tokens):
+        token = tokens[index]
+        if token in booleans_allowed:
+            if token in booleans:
+                fail(f"duplicate flag: {token}")
+            booleans.add(token)
+            index += 1
+            continue
+        if token in value_flags:
+            if index + 1 >= len(tokens):
+                fail(f"missing value for {token}")
+            if token not in repeatable and token in values:
+                fail(f"duplicate flag: {token}")
+            values.setdefault(token, []).append(tokens[index + 1])
+            index += 2
+            continue
+        if token.startswith("-"):
+            fail(f"unsupported flag: {token}")
+        positionals.append(token)
+        index += 1
+    return positionals, values, booleans
+
+
+def one(
+    values: dict[str, list[str]], name: str, *, required: bool = False
+) -> str | None:
+    candidates = values.get(name, [])
+    if required and not candidates:
+        fail(f"missing {name}")
+    return candidates[0] if candidates else None
+
+
+def csv_values(values: dict[str, list[str]], name: str) -> list[str]:
+    result: list[str] = []
+    for raw in values.get(name, []):
+        candidates = [candidate.strip() for candidate in raw.split(",")]
+        if not candidates or any(not candidate for candidate in candidates):
+            fail(f"invalid value for {name}")
+        result.extend(candidates)
+    if len(set(result)) != len(result):
+        fail(f"duplicate value for {name}")
+    return result
+
+
+def require_repository(state: dict[str, Any], value: str | None) -> None:
+    shadows = {
+        f"github.com/{repository}"
+        for repository in state.get("shadow_repositories", [])
+    }
+    if value in shadows:
+        fail("shadow repository is read-only")
+    expected = f'github.com/{state["repository"]["nameWithOwner"]}'
+    if value != expected:
+        fail("repository identity differs")
+
+
+def issue_number(state: dict[str, Any], value: str) -> str:
+    if value.isdigit():
+        return value
+    expected_prefix = f'{state["repository"]["url"]}/issues/'
+    if value.startswith(expected_prefix) and value[len(expected_prefix) :].isdigit():
+        return value[len(expected_prefix) :]
+    fail("invalid issue reference")
+
+
+def require_issue(state: dict[str, Any], value: str) -> dict[str, Any]:
+    issue = state["issues"].get(issue_number(state, value))
+    if issue is None:
+        fail("issue not found")
+    return issue
+
+
+def issue_ref(issue: dict[str, Any]) -> dict[str, Any]:
+    return {"id": issue["id"], "number": issue["number"]}
+
+
+def add_unique_ref(items: list[dict[str, Any]], issue: dict[str, Any]) -> bool:
+    if any(candidate["id"] == issue["id"] for candidate in items):
+        return False
+    items.append(issue_ref(issue))
+    return True
+
+
+def remove_ref(items: list[dict[str, Any]], issue: dict[str, Any]) -> bool:
+    original = len(items)
+    items[:] = [candidate for candidate in items if candidate["id"] != issue["id"]]
+    return len(items) != original
+
+
+def metadata_values(state: dict[str, Any], key: str) -> list[dict[str, Any]]:
+    return state.get("metadata", {}).get(key, [])
+
+
+def label_value(state: dict[str, Any], name: str) -> dict[str, Any]:
+    selected = next(
+        (candidate for candidate in metadata_values(state, "labels") if candidate["name"] == name),
+        None,
+    )
+    if selected is None:
+        fail(f"unknown label: {name}")
+    return copy.deepcopy(selected)
+
+
+def assignee_value(state: dict[str, Any], login: str) -> dict[str, Any]:
+    selected = next(
+        (
+            candidate
+            for candidate in metadata_values(state, "assignees")
+            if candidate["login"] == login
+        ),
+        None,
+    )
+    if selected is None:
+        fail(f"unknown assignee: {login}")
+    return copy.deepcopy(selected)
+
+
+def issue_type_value(state: dict[str, Any], name: str) -> dict[str, Any]:
+    selected = next(
+        (
+            candidate
+            for candidate in metadata_values(state, "issueTypes")
+            if candidate["name"] == name
+        ),
+        None,
+    )
+    if selected is None:
+        fail(f"unknown issue type: {name}")
+    return copy.deepcopy(selected)
+
+
+def set_parent(
+    state: dict[str, Any], child: dict[str, Any], parent: dict[str, Any] | None
+) -> bool:
+    if parent is not None and parent["id"] == child["id"]:
+        fail("an issue cannot be its own parent")
+    current = child.get("parent")
+    target_id = parent["id"] if parent is not None else None
+    if (current or {}).get("id") == target_id:
+        return False
+    if current is not None:
+        old_parent = state["issues"].get(str(current["number"]))
+        if old_parent is not None:
+            remove_ref(old_parent["subIssues"], child)
+    child["parent"] = issue_ref(parent) if parent is not None else None
+    if parent is not None:
+        add_unique_ref(parent["subIssues"], child)
+    return True
+
+
+def set_block_relation(
+    source: dict[str, Any],
+    related: dict[str, Any],
+    source_key: str,
+    inverse_key: str,
+    *,
+    add: bool,
+) -> bool:
+    if source["id"] == related["id"]:
+        fail("an issue cannot block itself")
+    if add:
+        changed = add_unique_ref(source[source_key], related)
+        if changed:
+            add_unique_ref(related[inverse_key], source)
+        return changed
+    changed = remove_ref(source[source_key], related)
+    if changed:
+        remove_ref(related[inverse_key], source)
+    return changed
+
+
+def select_issue_fields(issue: dict[str, Any], fields_value: str) -> dict[str, Any]:
+    fields = fields_value.split(",")
+    if not fields or len(set(fields)) != len(fields) or any(field not in ISSUE_FIELDS for field in fields):
+        fail("unsupported issue JSON fields")
+    return {field: issue[field] for field in fields}
+
+
+def api_issue_and_collection(
+    state: dict[str, Any], endpoint: str
+) -> tuple[dict[str, Any], str, dict[str, list[str]]]:
+    parsed = urlsplit(endpoint)
+    path = parsed.path.strip("/").split("/")
+    repository = state["repository"]["nameWithOwner"].split("/")
+    if (
+        len(path) not in {6, 7}
+        or path[:3] != ["repos", *repository]
+        or path[3] != "issues"
+    ):
+        fail("unsupported command")
+    issue = state["issues"].get(path[4])
+    if issue is None:
+        fail("issue not found")
+    return issue, "/".join(path[5:]), parse_qs(parsed.query)
+
+
+def auth_payload(state: dict[str, Any]) -> dict[str, Any]:
+    login = state["principal"]
+    if (
+        os.environ.get("MI_GITHUB_DRIFT_AFTER_WRITES") == "1"
+        and state.get("fixtureWriteCount", 0) > 0
+    ):
+        login = "fixture-drift"
+    accounts = state.get(
+        "authAccounts",
+        [
+            {
+                "state": "success",
+                "active": True,
+                "host": "github.com",
+                "login": login,
+                "tokenSource": "fixture",
+                "scopes": "repo",
+                "gitProtocol": "https",
+            }
+        ],
+    )
+    return {"hosts": {"github.com": accounts}}
+
+
+LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+with LOG_PATH.open("a", encoding="utf-8") as stream:
+    stream.write(
+        json.dumps(
+            {
+                "argv": ARGV,
+                "stdin_length": len(STDIN.encode("utf-8")),
+                "stdin_sha256": hashlib.sha256(STDIN.encode("utf-8")).hexdigest(),
+            },
+            separators=(",", ":"),
+        )
+        + "\n"
+    )
+
+state = load()
+
+if ARGV[:2] == ["auth", "status"]:
+    if ARGV != [
+        "auth",
+        "status",
+        "--active",
+        "--hostname",
+        "github.com",
+        "--json",
+        "hosts",
+    ]:
+        fail("fixture requires exact GitHub auth status flags")
+    emit(auth_payload(state))
+    raise SystemExit(0)
+
+if ARGV[:2] == ["repo", "view"]:
+    positionals, values, _ = parse_options(
+        ARGV[2:], value_flags={"--json"}
+    )
+    if len(positionals) != 1:
+        fail("fixture requires one repository")
+    require_repository(state, positionals[0])
+    if one(values, "--json", required=True) != REPOSITORY_FIELDS:
+        fail("fixture requires exact repository JSON fields")
+    repository = copy.deepcopy(state["repository"])
+    scenario = os.environ.get("MI_GITHUB_REPOSITORY_SCENARIO")
+    if scenario == "archived":
+        repository["isArchived"] = True
+    elif scenario == "issues-disabled":
+        repository["hasIssuesEnabled"] = False
+    elif scenario == "read-only":
+        repository["viewerPermission"] = "READ"
+    emit(repository)
+    raise SystemExit(0)
+
+if ARGV[:2] == ["label", "list"]:
+    positionals, values, _ = parse_options(
+        ARGV[2:], value_flags={"-R", "--limit", "--json"}
+    )
+    if positionals:
+        fail("unsupported command")
+    require_repository(state, one(values, "-R", required=True))
+    if one(values, "--limit", required=True) != "1000":
+        fail("fixture requires --limit 1000")
+    if one(values, "--json", required=True) != "id,name":
+        fail("fixture requires --json id,name")
+    if os.environ.get("MI_GITHUB_LABEL_SCENARIO") == "limit-reached":
+        emit(
+            [
+                {"id": f"LA_{index}", "name": f"label:{index}"}
+                for index in range(1000)
+            ]
+        )
+    else:
+        emit(metadata_values(state, "labels"))
+    raise SystemExit(0)
+
+if ARGV[:1] == ["api"]:
+    if len(ARGV) < 2:
+        fail("unsupported command")
+    endpoint = ARGV[1]
+    if endpoint == "graphql":
+        expected = [
+            "api",
+            "graphql",
+            "--hostname",
+            "github.com",
+            "-f",
+            f"query={ISSUE_TYPES_QUERY}",
+            "-f",
+            f"owner={state['repository']['nameWithOwner'].split('/', 1)[0]}",
+            "-f",
+            f"name={state['repository']['nameWithOwner'].split('/', 1)[1]}",
+        ]
+        cursor: str | None = None
+        if ARGV != expected:
+            if len(ARGV) == len(expected) + 2 and ARGV[:-2] == expected and ARGV[-2] == "-f":
+                raw_cursor = ARGV[-1]
+                if not raw_cursor.startswith("endCursor="):
+                    fail("fixture requires exact issue-type preflight flags")
+                cursor = raw_cursor.removeprefix("endCursor=")
+            else:
+                fail("fixture requires exact issue-type preflight flags")
+        if cursor is not None and not cursor:
+            fail("fixture requires exact issue-type preflight flags")
+        issue_types: dict[str, Any] | None = {
+            "nodes": metadata_values(state, "issueTypes"),
+            "pageInfo": {"hasNextPage": False, "endCursor": None},
+        }
+        if os.environ.get("MI_GITHUB_ISSUE_TYPES_SCENARIO") == "paged":
+            values = metadata_values(state, "issueTypes")
+            if cursor is None:
+                issue_types = {
+                    "nodes": values[:2],
+                    "pageInfo": {"hasNextPage": True, "endCursor": "issue-type-page-2"},
+                }
+            elif cursor == "issue-type-page-2":
+                issue_types = {
+                    "nodes": values[2:],
+                    "pageInfo": {"hasNextPage": False, "endCursor": None},
+                }
+            else:
+                fail("unknown issue-type cursor")
+        if os.environ.get("MI_GITHUB_ISSUE_TYPES_SCENARIO") == "unavailable":
+            issue_types = None
+        emit(
+            {
+                "data": {
+                    "repository": {
+                        "issueTypes": issue_types
+                    }
+                }
+            }
+        )
+        raise SystemExit(0)
+    parsed = urlsplit(endpoint)
+    path = parsed.path.strip("/").split("/")
+    repository = state["repository"]["nameWithOwner"].split("/")
+    if len(path) == 5 and path[:3] == ["repos", *repository] and path[3] == "assignees":
+        if ARGV != ["api", endpoint, "--hostname", "github.com", "--silent"] or parsed.query:
+            fail("fixture requires exact assignee preflight flags")
+        assignee_value(state, path[4])
+        raise SystemExit(0)
+    if ARGV != ["api", endpoint, "--hostname", "github.com"]:
+        fail("fixture requires bounded explicit pages")
+    issue, collection, query = api_issue_and_collection(state, endpoint)
+    if set(query) != {"per_page", "page"} or any(len(values) != 1 for values in query.values()):
+        fail("fixture requires per_page and page")
+    try:
+        per_page = int(query["per_page"][0])
+        page = int(query["page"][0])
+    except ValueError:
+        fail("fixture requires integer per_page and page")
+    if not 1 <= per_page <= 100 or page < 1:
+        fail("invalid page request")
+    if (
+        os.environ.get("MI_GITHUB_GRAPH_SCENARIO") == "cap"
+        and issue["number"] == 10
+        and collection == "sub_issues"
+    ):
+        refs = [
+            {"id": f"I_cap_{number}", "number": 1000 + number}
+            for number in range(1, 301)
+        ]
+        start = (page - 1) * per_page
+        emit(refs[start : start + per_page])
+        raise SystemExit(0)
+    if collection == "sub_issues":
+        refs = issue["subIssues"]
+    elif collection == "dependencies/blocked_by":
+        refs = issue["blockedBy"]
+    elif collection == "dependencies/blocking":
+        refs = issue["blocking"]
+    else:
+        fail("unsupported command")
+    nodes = [state["issues"][str(ref["number"])] for ref in refs]
+    start = (page - 1) * per_page
+    emit(nodes[start : start + per_page])
+    raise SystemExit(0)
+
+if ARGV[:2] == ["issue", "view"]:
+    positionals, values, _ = parse_options(
+        ARGV[2:], value_flags={"-R", "--json"}
+    )
+    if len(positionals) != 1:
+        fail("fixture requires one issue")
+    require_repository(state, one(values, "-R", required=True))
+    if positionals[0] == "https://github.com/foreign/project/issues/1":
+        foreign_issue = {
+            "id": "I_foreign_1",
+            "number": 1,
+            "title": "Foreign issue",
+            "body": "## Problem\n\nForeign text\n",
+            "state": "OPEN",
+            "stateReason": None,
+            "updatedAt": "2026-08-12T00:00:00Z",
+            "url": positionals[0],
+            "labels": [],
+            "assignees": [],
+            "issueType": None,
+            "parent": None,
+            "subIssues": [],
+            "blockedBy": [],
+            "blocking": [],
+        }
+        emit(select_issue_fields(foreign_issue, one(values, "--json", required=True) or ""))
+        raise SystemExit(0)
+    key = issue_number(state, positionals[0])
+    if os.environ.get("MI_GITHUB_GRAPH_SCENARIO") == "unreadable-boundary" and key == "99":
+        fail("required boundary is inaccessible")
+    issue = state["issues"].get(key)
+    if issue is None:
+        fail("issue not found")
+    emit(select_issue_fields(issue, one(values, "--json", required=True) or ""))
+    raise SystemExit(0)
+
+if ARGV[:2] == ["issue", "edit"]:
+    positionals, values, booleans = parse_options(
+        ARGV[2:],
+        value_flags={
+            "-R",
+            "--title",
+            "--body-file",
+            "--add-label",
+            "--remove-label",
+            "--add-assignee",
+            "--remove-assignee",
+            "--type",
+            "--parent",
+            "--add-sub-issue",
+            "--remove-sub-issue",
+            "--add-blocked-by",
+            "--remove-blocked-by",
+            "--add-blocking",
+            "--remove-blocking",
+        },
+        boolean_flags={"--remove-type", "--remove-parent"},
+        repeatable_flags={
+            "--add-label",
+            "--remove-label",
+            "--add-assignee",
+            "--remove-assignee",
+            "--add-sub-issue",
+            "--remove-sub-issue",
+            "--add-blocked-by",
+            "--remove-blocked-by",
+            "--add-blocking",
+            "--remove-blocking",
+        },
+    )
+    if len(positionals) != 1:
+        fail("fixture requires one issue")
+    require_repository(state, one(values, "-R", required=True))
+    if "--type" in values and "--remove-type" in booleans:
+        fail("conflicting issue type flags")
+    if "--parent" in values and "--remove-parent" in booleans:
+        fail("conflicting parent flags")
+    working = copy.deepcopy(state)
+    issue = require_issue(working, positionals[0])
+    changed = False
+    title = one(values, "--title")
+    if title is not None:
+        if not title:
+            fail("title cannot be empty")
+        if issue["title"] != title:
+            issue["title"] = title
+            changed = True
+    if "--body-file" in values:
+        if one(values, "--body-file") != "-":
+            fail("fixture requires --body-file -")
+        if issue["body"] != STDIN:
+            issue["body"] = STDIN
+            changed = True
+    for option, add in (("--add-label", True), ("--remove-label", False)):
+        for name in csv_values(values, option):
+            selected = label_value(working, name)
+            present = any(label["id"] == selected["id"] for label in issue["labels"])
+            if add and not present:
+                issue["labels"].append(selected)
+                changed = True
+            if not add and present:
+                issue["labels"] = [label for label in issue["labels"] if label["id"] != selected["id"]]
+                changed = True
+    for option, add in (("--add-assignee", True), ("--remove-assignee", False)):
+        for login in csv_values(values, option):
+            selected = assignee_value(working, login)
+            present = any(user["id"] == selected["id"] for user in issue["assignees"])
+            if add and not present:
+                issue["assignees"].append(selected)
+                changed = True
+            if not add and present:
+                issue["assignees"] = [user for user in issue["assignees"] if user["id"] != selected["id"]]
+                changed = True
+    selected_type = one(values, "--type")
+    if selected_type is not None:
+        metadata = issue_type_value(working, selected_type)
+        if issue.get("issueType") != metadata:
+            issue["issueType"] = metadata
+            changed = True
+    if "--remove-type" in booleans and issue.get("issueType") is not None:
+        issue["issueType"] = None
+        changed = True
+    parent_value = one(values, "--parent")
+    if parent_value is not None:
+        changed = set_parent(working, issue, require_issue(working, parent_value)) or changed
+    if "--remove-parent" in booleans:
+        changed = set_parent(working, issue, None) or changed
+    for option, add in (("--add-sub-issue", True), ("--remove-sub-issue", False)):
+        for value in csv_values(values, option):
+            child = require_issue(working, value)
+            if add:
+                changed = set_parent(working, child, issue) or changed
+            elif (child.get("parent") or {}).get("id") == issue["id"]:
+                changed = set_parent(working, child, None) or changed
+    for option, source_key, inverse_key, add in (
+        ("--add-blocked-by", "blockedBy", "blocking", True),
+        ("--remove-blocked-by", "blockedBy", "blocking", False),
+        ("--add-blocking", "blocking", "blockedBy", True),
+        ("--remove-blocking", "blocking", "blockedBy", False),
+    ):
+        for value in csv_values(values, option):
+            related = require_issue(working, value)
+            changed = (
+                set_block_relation(
+                    issue, related, source_key, inverse_key, add=add
+                )
+                or changed
+            )
+    if not changed or working["issues"] == state["issues"]:
+        fail("edit would be a no-op")
+    issue["updatedAt"] = "2026-08-12T00:00:01Z"
+    record_write(working)
+    save(working)
+    print(issue["url"])
+    raise SystemExit(0)
+
+if ARGV[:2] == ["issue", "create"]:
+    if any(flag in ARGV[2:] for flag in {"--parent", "--blocked-by", "--blocking"}):
+        fail("relationship flags are not allowed during create")
+    positionals, values, _ = parse_options(
+        ARGV[2:],
+        value_flags={
+            "-R",
+            "--title",
+            "--body-file",
+            "--label",
+            "--assignee",
+            "--type",
+        },
+        repeatable_flags={"--label", "--assignee"},
+    )
+    if positionals:
+        fail("unsupported command")
+    require_repository(state, one(values, "-R", required=True))
+    title = one(values, "--title", required=True)
+    if not title:
+        fail("title cannot be empty")
+    if one(values, "--body-file", required=True) != "-":
+        fail("fixture requires --body-file -")
+    if os.environ.get("MI_GITHUB_REJECTED_CREATE") == "1":
+        fail("create rejected before persistence")
+    working = copy.deepcopy(state)
+    number = working["next_issue"]
+    key = str(number)
+    url = f'{working["repository"]["url"]}/issues/{number}'
+    issue = {
+        "id": f"I_{number}",
+        "number": number,
+        "title": title,
+        "body": STDIN,
+        "state": "OPEN",
+        "stateReason": None,
+        "updatedAt": "2026-08-12T00:00:01Z",
+        "url": url,
+        "labels": [label_value(working, name) for name in csv_values(values, "--label")],
+        "assignees": [
+            assignee_value(working, login) for login in csv_values(values, "--assignee")
+        ],
+        "issueType": (
+            issue_type_value(working, one(values, "--type") or "")
+            if "--type" in values
+            else None
+        ),
+        "parent": None,
+        "subIssues": [],
+        "blockedBy": [],
+        "blocking": [],
+    }
+    working["issues"][key] = issue
+    working["next_issue"] = number + 1
+    record_write(working)
+    save(working)
+    if os.environ.get("MI_GITHUB_INDETERMINATE_CREATE") == "1":
+        fail("create outcome is indeterminate")
+    print(url)
+    raise SystemExit(0)
+
+if ARGV[:2] == ["issue", "close"]:
+    positionals, values, _ = parse_options(
+        ARGV[2:], value_flags={"-R", "--reason"}
+    )
+    if len(positionals) != 1:
+        fail("fixture requires one issue")
+    require_repository(state, one(values, "-R", required=True))
+    reason = one(values, "--reason", required=True)
+    if reason not in {"completed", "not planned"}:
+        fail("unsupported close reason")
+    working = copy.deepcopy(state)
+    issue = require_issue(working, positionals[0])
+    if issue["state"] == "CLOSED":
+        fail("close would be a no-op")
+    issue["state"] = "CLOSED"
+    issue["stateReason"] = "NOT_PLANNED" if reason == "not planned" else "COMPLETED"
+    issue["updatedAt"] = "2026-08-12T00:00:01Z"
+    record_write(working)
+    save(working)
+    print(issue["url"])
+    raise SystemExit(0)
+
+if ARGV[:2] == ["issue", "reopen"]:
+    positionals, values, _ = parse_options(ARGV[2:], value_flags={"-R"})
+    if len(positionals) != 1:
+        fail("fixture requires one issue")
+    require_repository(state, one(values, "-R", required=True))
+    working = copy.deepcopy(state)
+    issue = require_issue(working, positionals[0])
+    if issue["state"] == "OPEN":
+        fail("reopen would be a no-op")
+    issue["state"] = "OPEN"
+    issue["stateReason"] = None
+    issue["updatedAt"] = "2026-08-12T00:00:01Z"
+    record_write(working)
+    save(working)
+    print(issue["url"])
+    raise SystemExit(0)
+
+fail("unsupported command")

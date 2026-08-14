@@ -55,6 +55,7 @@ Everything here fits into seven jobs. The walkthroughs live in [WORKFLOWS.md](WO
 
 - [storm-research](skills/storm-research/SKILL.md). Run deep, source-backed research through isolated practitioner, academic, skeptic, economist, and historian lenses. It tests foundations, mechanisms, system relationships, and downstream effects as part of the research, then preserves the evidence and disagreements in a reader-focused briefing. It can support a decision, but it does not replace `ce-pov`'s compact, decisive, project-grounded verdict.
 - [creating-portable-skills](skills/creating-portable-skills/SKILL.md). Create a new agent skill, or review, update, and migrate an existing one. One loop from intent interview through baseline testing to a packaged skill that works across models and harnesses.
+- [managing-issues](skills/managing-issues/SKILL.md). Manage one GitHub or Linear issue, or its native parent and blocker graph, through the repository's canonical tracker. It returns the current Ready Frontier for Build and marks completion only against Verification evidence. Release A applies approved GitHub effects; Linear stays read-only until the provider can prove the authenticated principal. Build owns execution orchestration, and the tracker remains the only durable work state.
 - [personal-chief-of-staff](skills/personal-chief-of-staff/SKILL.md). Run a daily wind-down and journal, weekly review, or quarterly review from your existing sources. Every durable change stays reviewable before it lands.
 - [managing-personal-crm](skills/managing-personal-crm/SKILL.md). Keep relationship context in canonical Person notes and tasks. Capture interactions, prepare for a conversation, find who could help with current work, and clean up notes in stages, with no separate CRM database.
 - [reviewing-meetings](skills/reviewing-meetings/SKILL.md). Turn completed meetings from a configured source into grounded notes and follow-up actions. Duplicate work is prevented, each outcome gets one canonical owner, and scheduled runs stay read-only.
@@ -71,7 +72,7 @@ Everything here fits into seven jobs. The walkthroughs live in [WORKFLOWS.md](WO
 This system builds on work by people who share theirs. Use them directly.
 
 - [Compound Engineering](https://github.com/EveryInc/compound-engineering-plugin) by Trevin Chow ([@trevin](https://x.com/trevin)) and Kieran Klaassen ([@kieranklaassen](https://x.com/kieranklaassen)). The development spine.
-- [Matt Pocock's skills](https://github.com/mattpocock/skills) by Matt Pocock. The targeted grilling pattern used to pressure-test dependent decisions.
+- [Matt Pocock's skills](https://github.com/mattpocock/skills) by Matt Pocock. The targeted grilling pattern, plus tracer-bullet issue leaves, blocker-first ordering, and frontier recomputation that informed `managing-issues`.
 - [Impeccable](https://github.com/pbakaus/impeccable) by Paul Bakaus ([@pbakaus](https://x.com/pbakaus)). The design language that makes agents better at design.
 - [last30days](https://github.com/mvanhorn/last30days-skill) by Matt Van Horn ([@mvanhorn](https://x.com/mvanhorn)). Recent-signal research across Reddit, X, YouTube, HN, and the web.
 - [Orca](https://github.com/stablyai/orca) by Jinjing Liang ([@JinjingLiang](https://x.com/JinjingLiang)). The agentic IDE all of this runs in.

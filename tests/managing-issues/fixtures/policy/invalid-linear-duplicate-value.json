@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "provider": "linear",
+  "target": {"workspace": "workspace-fixture", "team": "ENG"},
+  "mappings": {
+    "work_type": {"bug": "label-fix"},
+    "readiness": {"ready": "Ready", "blocked": "Ready"},
+    "priority": {"normal": "medium"},
+    "leaf_estimate": {"small": 1}
+  }
+}

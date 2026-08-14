@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "provider": "github",
+  "target": "Example/Project",
+  "mappings": {
+    "work_type": {
+      "bug": "Bug",
+      "feature": "Feature",
+      "maintenance": "Maintenance"
+    },
+    "readiness": {
+      "blocked": "readiness:blocked",
+      "ready": "readiness:ready"
+    },
+    "priority": {
+      "high": "priority:high",
+      "normal": "priority:normal"
+    },
+    "leaf_estimate": {
+      "small": "size:s",
+      "medium": "size:m"
+    }
+  }
+}

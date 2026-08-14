@@ -11,8 +11,15 @@ looked" surface. GitHub Releases mirror its entries.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-14
+
 ### Added
 
+- Added the public OSS documentation surface, community templates, and concise
+  maintainer release checklist for rolling `main` and immutable Release
+  Snapshots.
+- Added one shared Lefthook `pre-push` verification group and a read-only
+  GitHub Actions workflow whose stable required-check name is `Tests Status`.
 - Added `managing-issues`, a canonical GitHub or Linear issue-management path.
   It reads native parent and blocker relationships to derive the current Ready
   Frontier and marks completion only when current Verification evidence
@@ -34,15 +41,67 @@ looked" surface. GitHub Releases mirror its entries.
   nine lanes, deepens evidence-justified targets, and may supervise a
   live-policy-bounded child through an unmerged pull request.
 - Added the repository banner and its optimized README delivery asset.
+- `storm-research` runs source-backed investigation through isolated
+  practitioner, academic, skeptic, economist, and historian lenses. It tests
+  foundations, mechanisms, and system relationships during research, then
+  returns an Overview-led, reader-focused briefing (action and limits in the
+  Overview; later sections support that lead). It adapts to the requested
+  deliverable and uses a binding independent check to preserve disagreement and
+  keep material causal claims evidence-traceable.
+- `checking-merge-readiness` digests a fully reviewed pull request before you
+  merge it. It reads the description, diff, and review history, checks
+  whether accumulated fixes drifted the change from its original intent, and
+  profiles risk as graded named drivers anchored in an engineering-canon
+  reference. Those roll into one of three recommendations: merge, debug, or
+  do not merge. It is read-only and conversation-only, it treats every
+  PR-derived text as untrusted input, and it never merges anything itself.
+- `creating-portable-skills` is the first published skill. It creates new Agent
+  Skills and helps review, update, or move existing skills. It starts from the
+  user's goal, checks the package structure, compares behavior with focused
+  tests, and verifies installability and activation with a per-harness smoke
+  probe. It works without companion skills.
+- `personal-chief-of-staff` guides wind-down (the sole daily close), weekly,
+  and quarterly reviews using current data from the user's connected sources.
+  It requires review before writing changes, handles Obsidian CLI operations,
+  tests its behavior, and includes a versioned specification for three local
+  Codex schedules.
+- `managing-personal-crm` keeps relationship context in canonical Person notes
+  and Tasks. It captures updates, finds relevant context, prepares for
+  conversations with one person, and proposes cleanup in stages. It matches
+  identities carefully, proposes changes before writing them, handles mixed
+  schemas during migration, and stores no hidden CRM state.
+- `reviewing-meetings` reviews completed meeting evidence from any supported
+  source. It prevents duplicate notes and tasks, sends each outcome to one
+  canonical system, and applies only actions that the user approves
+  independently. It also includes behavior tests with sanitized data and a
+  versioned specification for the `CoS Meetings` schedule.
+- `checking-pr-readiness` gates a branch before the pull request opens. It
+  reports the full working surface including untracked files, verifies the
+  shipping workflow's upstream steps from receipts rather than assertions,
+  compares the plan against what was delivered, and sweeps the finding
+  classes that drive repeated automated-review rounds with three falsifiable
+  bundled helper scripts — the collection's first skill to ship executable
+  helpers. It ends in one owner decision plus an evidence pack rendered into
+  the pull request body, and its companions degrade to named skips when
+  absent.
 
 ### Changed
 
+- Clarified that `v0.2.0` is the first public pre-1.0 snapshot while ordinary
+  installations continue to follow the usable rolling `main` catalog.
+- Added the primary STORM paper attribution to `storm-research` and tightened
+  repository text, link, shell, JSON, YAML, and workflow integrity findings
+  exposed by the new shared checks.
+- Hardened published skill contracts by replacing an unrelated mutable
+  validator command with the official Agent Skills validator path, bounding
+  `repo-gardener` policy and provider input, keeping merge-readiness evidence
+  in private temporary storage, and declaring the capabilities a mutating
+  gardening run requires.
 - `repo-gardener` now treats native pull requests as authored-work truth, writes
   exactly one opening and one consolidated closing tracker record per run, and
   leaves qualitative planning to the model. Its deterministic dogfood checker
   reports only exact two-record closure and readback; legacy Release A command
   interfaces remain available for existing recorded material.
-
 - `checking-pr-readiness` now supports a read-only assessment branch that binds
   every verified claim to one stable repository, exact subject, and full commit
   OID. A disposable real-Git fixture proves the complete chain and fails closed
@@ -153,54 +212,6 @@ looked" surface. GitHub Releases mirror its entries.
   soft pause); do not merge is a hard stop that still leads to debug or
   redesign. Open PR state is not labeled redundantly. Skill body tightened;
   battery asserts answer-first order and clean-green length.
-
-### Added
-
-- `storm-research` runs source-backed investigation through isolated
-  practitioner, academic, skeptic, economist, and historian lenses. It tests
-  foundations, mechanisms, and system relationships during research, then
-  returns an Overview-led, reader-focused briefing (action and limits in the
-  Overview; later sections support that lead). It adapts to the requested
-  deliverable and uses a binding independent check to preserve disagreement and
-  keep material causal claims evidence-traceable.
-- `checking-merge-readiness` digests a fully reviewed pull request before you
-  merge it. It reads the description, diff, and review history, checks
-  whether accumulated fixes drifted the change from its original intent, and
-  profiles risk as graded named drivers anchored in an engineering-canon
-  reference. Those roll into one of three recommendations: merge, debug, or
-  do not merge. It is read-only and conversation-only, it treats every
-  PR-derived text as untrusted input, and it never merges anything itself.
-- `creating-portable-skills` is the first published skill. It creates new Agent
-  Skills and helps review, update, or move existing skills. It starts from the
-  user's goal, checks the package structure, compares behavior with focused
-  tests, and verifies installability and activation with a per-harness smoke
-  probe. It works without companion skills.
-- `personal-chief-of-staff` guides wind-down (the sole daily close), weekly,
-  and quarterly reviews using current data from the user's connected sources.
-  It requires review before writing changes, handles Obsidian CLI operations,
-  tests its behavior, and includes a versioned specification for three local
-  Codex schedules.
-- `managing-personal-crm` keeps relationship context in canonical Person notes
-  and Tasks. It captures updates, finds relevant context, prepares for
-  conversations with one person, and proposes cleanup in stages. It matches
-  identities carefully, proposes changes before writing them, handles mixed
-  schemas during migration, and stores no hidden CRM state.
-- `reviewing-meetings` reviews completed meeting evidence from any supported
-  source. It prevents duplicate notes and tasks, sends each outcome to one
-  canonical system, and applies only actions that the user approves
-  independently. It also includes behavior tests with sanitized data and a
-  versioned specification for the `CoS Meetings` schedule.
-- `checking-pr-readiness` gates a branch before the pull request opens. It
-  reports the full working surface including untracked files, verifies the
-  shipping workflow's upstream steps from receipts rather than assertions,
-  compares the plan against what was delivered, and sweeps the finding
-  classes that drive repeated automated-review rounds with three falsifiable
-  bundled helper scripts — the collection's first skill to ship executable
-  helpers. It ends in one owner decision plus an evidence pack rendered into
-  the pull request body, and its companions degrade to named skips when
-  absent.
-
-### Changed
 
 - `repo-gardener` now preserves breadth while execution work is occupied,
   counts only evidence-qualified candidates, and may deepen up to three

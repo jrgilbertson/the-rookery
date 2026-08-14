@@ -8,6 +8,7 @@ import importlib.util
 import json
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -305,6 +306,48 @@ def main() -> int:
     )
     CONTRACT.require(completed.returncode != 0 and "invalid choice" in completed.stderr, "obsolete validate-register command remains public")
 
+    oversized = subprocess.run(
+        [sys.executable, str(CONTRACT_PATH), "normalize-github-register", "--input", "-"],
+        input="x" * (CONTRACT.INPUT_LIMIT + 1),
+        capture_output=True,
+        text=True,
+    )
+    CONTRACT.require(
+        oversized.returncode == 1 and "standard input exceeds" in oversized.stderr,
+        "oversized provider input was not rejected before JSON parsing",
+    )
+    with tempfile.TemporaryDirectory(prefix="repo-gardener-input-limit-") as temporary:
+        temporary_root = Path(temporary)
+        oversized_input = temporary_root / "oversized.json"
+        oversized_input.write_text("x" * (CONTRACT.INPUT_LIMIT + 1), encoding="utf-8")
+        oversized_file = subprocess.run(
+            [
+                sys.executable,
+                str(CONTRACT_PATH),
+                "normalize-github-register",
+                "--input",
+                str(oversized_input),
+            ],
+            capture_output=True,
+            text=True,
+        )
+        CONTRACT.require(
+            oversized_file.returncode == 1 and "JSON input exceeds" in oversized_file.stderr,
+            "oversized file input was not rejected before JSON parsing",
+        )
+
+        oversized_body = temporary_root / "oversized-body.md"
+        oversized_body.write_text("x" * (CONTRACT.BODY_LIMIT + 1), encoding="utf-8")
+        body_file = subprocess.run(
+            [sys.executable, str(CONTRACT_PATH), "validate-body", "--body", str(oversized_body)],
+            capture_output=True,
+            text=True,
+        )
+        CONTRACT.require(
+            body_file.returncode == 1 and "managed body exceeds" in body_file.stderr,
+            "oversized managed body was not rejected before decoding",
+        )
+
     duplicate_lane = copy.deepcopy(payloads["nine-lane-learn"])
     duplicate_lane["work"][1]["lane"] = duplicate_lane["work"][0]["lane"]
     expect_error(duplicate_lane, "exactly once")
@@ -333,6 +376,7 @@ def main() -> int:
     print("PASS: nine lanes remain explicit and completion partitions are repository-qualified, disjoint, and exhaustive")
     print("PASS: legacy authority, persistence, readback, reconciled-effect, result, and verdict inputs are rejected")
     print("PASS: usable-outcome dedupe and policy-derived retained-first capacity remain covered")
+    print("PASS: oversized stdin, file-backed provider input, and managed bodies are rejected before parsing")
     return 0
 
 

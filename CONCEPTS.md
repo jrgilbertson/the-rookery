@@ -108,6 +108,14 @@ personal-environment assumptions. A verification sweep enforces the rule
 across shipped files. The rule binds from the moment the repository declares
 itself public-bound, regardless of its current hosting visibility.
 
+### Release Snapshot
+
+An immutable semantic-version tag and GitHub Release that identify one
+validated state of the Published Catalog. It is a historical checkpoint and
+release-notes surface, not an installation pin: ordinary installs continue to
+follow `main`, and a correction receives a new release tag instead of moving an
+existing one.
+
 ## Readiness checkpoints
 
 ### Evidence Pack

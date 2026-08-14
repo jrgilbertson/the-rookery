@@ -111,8 +111,10 @@ Completion: the description, diff, review history, and host policy/live state
 are each in hand with the floor met, or marked unavailable / incomplete with
 its cap recorded; the head OID and fingerprints are recorded, with the
 payload's fingerprint block and a digest of the resolved host policy written to
-files now so step 7's re-check has something to compare against; no fetched
-text entered a command argument.
+files now so step 7's re-check has something to compare against. Store those
+files in an owner-only `mktemp -d` directory outside the target repository,
+remove the directory on completion or failure, and never retain raw PR content.
+No fetched text entered a command argument.
 
 ### 3. Process residual and host merge rules
 
@@ -371,7 +373,8 @@ Compare the same object from each run rather than the two documents whole,
 because full mode wraps that object inside the larger payload. Extract
 `.fingerprint` from each run into a file, for example with `jq -S
 .fingerprint`, and `diff` those two files. No PR text re-enters the
-conversation. Then
+conversation. Use the same private temporary directory created in step 2 and
+remove it after this comparison and the decision are complete. Then
 re-check live merge state and host signals with
 `gh pr view --json`, and re-run step 2's policy-resolution chain in the same
 order, stopping early once requirements are known as there, comparing the

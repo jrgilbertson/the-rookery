@@ -64,9 +64,9 @@ Install `grill-me` and `grilling` separately from [Matt Pocock's skills](https:/
 Once the user confirms shared understanding, the clarified intent returns to the Compound Engineering planning session. For work an agent can own end-to-end, I turn that intent into the following template.
 
 ```yaml
-goal: Complete [objective] until [verifiable end state], 
-  respecting [constraints], 
-  using [inputs/tools], 
+goal: Complete [objective] until [verifiable end state],
+  respecting [constraints],
+  using [inputs/tools],
   producing [artifact/handoff].
 ```
 

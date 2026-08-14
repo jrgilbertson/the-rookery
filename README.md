@@ -4,7 +4,15 @@
 
 # The Rookery
 
-An opinionated, always-current home for how I build with AI. It holds the workflows I run every day and the skills that power them. A skill is a portable set of instructions an agent loads when a task calls for it. Every skill here installs individually as a standard Agent Skills package for Claude Code, Codex, and other compatible tools.
+An always-current field guide to how I build with AI. It connects a practical
+workflow for research, planning, design, implementation, shipping, maintenance,
+and learning with the portable agent skills I use to run it. If you are an
+engineering practitioner evaluating someone else's AI workflow, start with the
+seven jobs below, then install only the skills that solve a problem you have.
+
+A skill is a portable set of instructions an agent loads when a task calls for
+it. Every skill here installs individually as a standard Agent Skills package
+for Claude Code, Codex, and other compatible tools.
 
 A rookery is where corvids gather to nest. This one is named for the two most famous, Odin's ravens Huginn and Muninn. Huginn is thought, Muninn is memory. Each morning they fly out to see the world, and each evening they return with what they've learned.
 
@@ -31,13 +39,22 @@ npx skills add jrgilbertson/the-rookery --skill <name>
 npx skills add jrgilbertson/the-rookery --all
 ```
 
-This works in any harness that reads `SKILL.md`, including Claude Code, Codex, Cursor, and Gemini CLI. See the [Agent Skills](https://agentskills.io) ecosystem for the full list. Add `-g` to install once for your whole machine instead of per project.
+These packages use the [Agent Skills](https://agentskills.io) format supported
+by tools including Claude Code, Codex, Cursor, and Gemini CLI. Installation and
+runtime behavior remain harness-specific. Add `-g` to install once for your
+whole machine instead of per project.
 
 <details>
 <summary>Prefer a clone?</summary>
 
-Clone the repo and symlink any <code>skills/&lt;name&gt;</code> folder into your agent's skills directory, such as <code>~/.claude/skills/</code> or your harness's equivalent. The npx route does exactly this for you.
+Clone the repo and symlink any <code>skills/&lt;name&gt;</code> folder into your agent's skills directory, such as <code>~/.claude/skills/</code> or your harness's equivalent. The npx route handles this placement for you.
 </details>
+
+`main` is the rolling catalog and the normal install source. Semantic-version
+[Release Snapshots](CONCEPTS.md#release-snapshot) are immutable historical
+checkpoints with release notes; they are not install pins. The first public
+snapshot will be `v0.2.0`. The project remains in SemVer's initial-development
+phase, so its public contract may continue to evolve before `1.0.0`.
 
 ## The workflows
 
@@ -80,6 +97,10 @@ This system builds on work by people who share theirs. Use them directly.
 ## Contributing
 
 Fixes and portability PRs are welcome. New skills start as an issue. See [CONTRIBUTING](CONTRIBUTING.md) for how this repo stays healthy.
+
+This is a solo-maintained project with no support SLA. Please report security
+issues privately through the process in [SECURITY.md](SECURITY.md), and use the
+[Code of Conduct](CODE_OF_CONDUCT.md) for community participation.
 
 ## License
 

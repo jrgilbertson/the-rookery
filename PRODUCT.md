@@ -32,7 +32,7 @@ The seven workflow jobs are Research, Plan, Design, Build, Ship, Maintain, and L
 
 - Skills install individually as standard Agent Skills packages and should remain useful across Claude Code, Codex, Cursor, Gemini CLI, and other compatible tools.
 - The system avoids vendor lock-in, minimizes skill volume, and treats continuous improvement as a core operating constraint.
-- The repository is public, open source, and MIT licensed. Visuals must not imply private customer evidence, adoption metrics, endorsements, or commercial proof that the repository does not contain.
+- The repository is designed for public, open-source use and is MIT licensed. Visuals must not imply private customer evidence, adoption metrics, endorsements, or commercial proof that the repository does not contain.
 - Repository banners and social previews are separate but coordinated assets. Explanatory illustrations may extend into workflow documentation after the core identity is proven.
 - Whether Huginn and Muninn should become recurring characters is intentionally open. Test their usefulness across both repository identity and a representative workflow explanation before making them a durable system.
 

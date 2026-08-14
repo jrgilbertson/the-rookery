@@ -51,7 +51,17 @@ Completion: the draft and every planned resource implement the intent and requir
 
 ### 4. Validate structure
 
-Run `npx skills-ref validate <skill-directory>`. If it cannot run because the environment lacks Node or network access, state that limitation and manually check: `name` is at most 64 characters, lowercase kebab-case, has no leading, trailing, or consecutive hyphens, and matches the directory; `description` is 1 to 1024 characters; the body is at most 500 lines; frontmatter uses only the canonical fields; `compatibility`, when present, is at most 500 characters; and `metadata`, when present, contains string values only.
+Run a trusted, already-installed `skills-ref validate <skill-directory>` and
+record its version and source. Do not use the similarly named npm package; it
+is not the Agent Skills reference validator. If the official validator is not
+already available, either use the manual checks below or ask before downloading
+the official Python implementation from a pinned `agentskills/agentskills`
+commit. Manually check: `name` is at most 64 characters, lowercase kebab-case,
+has no leading, trailing, or consecutive hyphens, and matches the directory;
+`description` is 1 to 1024 characters; the body is at most 500 lines;
+frontmatter uses only the canonical fields; `compatibility`, when present, is
+at most 500 characters; and `metadata`, when present, contains string values
+only.
 
 Completion: the validator passes, or every named fallback check passes with the tool limitation recorded.
 

@@ -23,6 +23,7 @@ IDENTITY_LIMIT = 128
 DISPLAY_LIMIT = 512
 RECEIPT_LIMIT = 16 * 1024
 BODY_LIMIT = 48 * 1024
+INPUT_LIMIT = 8 * 1024 * 1024
 RELEASE_A_PORTFOLIO_LIMIT = 7
 RELEASE_A_LANES = (
     "dependency-and-vulnerability",
@@ -193,6 +194,19 @@ def require(condition: bool, message: str) -> None:
         raise ContractError(message)
 
 
+def read_bounded_text(path: Path, label: str, limit: int = INPUT_LIMIT) -> str:
+    with path.open("rb") as source:
+        raw = source.read(limit + 1)
+    require(len(raw) <= limit, f"{label} exceeds {limit} UTF-8 bytes")
+    return raw.decode("utf-8")
+
+
+def read_bounded_stdin(limit: int = INPUT_LIMIT) -> str:
+    raw = sys.stdin.buffer.read(limit + 1)
+    require(len(raw) <= limit, f"standard input exceeds {limit} UTF-8 bytes")
+    return raw.decode("utf-8")
+
+
 def canonical_bytes(value: Any) -> bytes:
     try:
         return json.dumps(
@@ -338,12 +352,12 @@ def installed_lanes_from_text(text: str) -> list[str]:
 
 
 def policy_contract(policy_path: Path) -> tuple[int, list[str]]:
-    text = policy_path.read_text(encoding="utf-8")
+    text = read_bounded_text(policy_path, "policy")
     return portfolio_limit_from_text(text), installed_lanes_from_text(text)
 
 
 def portfolio_limit(policy_path: Path) -> int:
-    return portfolio_limit_from_text(policy_path.read_text(encoding="utf-8"))
+    return portfolio_limit_from_text(read_bounded_text(policy_path, "policy"))
 
 
 def orchestrator_receipt_hash(
@@ -1420,12 +1434,12 @@ def reconcile_report_effect(
 
 
 def _load(path: Path) -> Any:
-    return json.loads(path.read_text(encoding="utf-8"))
+    return json.loads(read_bounded_text(path, "JSON input"))
 
 
 def _load_input(source: str) -> Any:
     if source == "-":
-        return json.load(sys.stdin)
+        return json.loads(read_bounded_stdin())
     return _load(Path(source))
 
 
@@ -1469,7 +1483,7 @@ def main() -> int:
             )
         }
     elif args.command == "validate-body":
-        body = args.body.read_text(encoding="utf-8")
+        body = read_bounded_text(args.body, "managed body", BODY_LIMIT)
         result = {"body_bytes": validate_body(body)}
     elif args.command == "normalize-github-register":
         result = normalize_github_register_snapshot(_load_input(args.input))

@@ -128,6 +128,13 @@ body. The parent monitors and helps route questions but does not redo the work.
 The child must not edit the installed policy, automation, protected paths,
 release or deployment surfaces, or any other effect the live policy denies.
 
+The simplification and code-review capabilities are required before child
+dispatch, and `checking-pr-readiness` is required before push. When either
+pre-dispatch capability is absent, do not create the child worktree; complete
+the read-only nine-lane report and name the missing capability. When readiness
+is absent after a committed child result, preserve that commit as
+`saved_without_pr` as described above.
+
 The parent performs the live-policy refresh immediately before dispatch,
 rereads native branches and PRs for overlap, validates planned paths, and
 reevaluates every authoring gate. The child owns the same refresh immediately

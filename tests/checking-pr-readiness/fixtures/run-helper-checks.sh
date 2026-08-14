@@ -756,6 +756,8 @@ if [ -f "$ref" ]; then
 	done
 	# The exit-2 row names the absent-input verdicts itself, so the pin reads
 	# them from the table rather than restating them here.
+	# The backticks are literal Markdown delimiters.
+	# shellcheck disable=SC2016
 	absent_verdicts=$(grep -F '2 with absent-input verdict' "$ref" |
 		grep -o '`[^`]*`' | tr -d '`')
 	observed=$(sort -u "$work/observed")

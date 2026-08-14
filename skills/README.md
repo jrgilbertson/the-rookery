@@ -10,6 +10,8 @@ npx skills add jrgilbertson/the-rookery --list
 npx skills add jrgilbertson/the-rookery --skill <name>
 ```
 
-Skills here follow the [Agent Skills](https://agentskills.io) format, so they work in Claude Code, Codex, and anything else that reads `SKILL.md`.
+Skills here follow the [Agent Skills](https://agentskills.io) format used by
+Claude Code, Codex, and other compatible tools. Installation and runtime
+behavior remain harness-specific.
 
 The current list lives in the [README](../README.md#the-skills).

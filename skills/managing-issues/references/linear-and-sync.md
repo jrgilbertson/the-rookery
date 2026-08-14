@@ -49,6 +49,13 @@ Read the canonical issue when current issue facts are requested:
 orca linear issue ISSUE_ID --relations --workspace WORKSPACE_ID --json
 ```
 
+This command is scoped only by workspace: a direct selector or a synchronization
+mapping can hand it an `ISSUE_ID` from any team in that workspace. Require the
+returned issue's team to match the policy-selected `TEAM_KEY_OR_ID` before
+treating the response as canonical. A mismatch means the issue is outside
+canonical authority: treat it as a read-only boundary fact, never canonical, and
+make any dependent effect `manual`, naming the team mismatch.
+
 The installed issue response carries Linear priority as an integer. Translate
 it only for reporting and policy comparison with this fixed provider mapping:
 `0` = `none`, `1` = `urgent`, `2` = `high`, `3` = `medium`, and `4` = `low`.

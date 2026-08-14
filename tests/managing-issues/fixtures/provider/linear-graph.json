@@ -1,0 +1,83 @@
+{
+  "schema": 1,
+  "workspace": {"id": "workspace-fixture", "name": "Fixture Workspace"},
+  "teams": [
+    {
+      "id": "team-eng",
+      "key": "ENG",
+      "name": "Engineering",
+      "workspace": {"id": "workspace-fixture", "name": "Fixture Workspace"}
+    }
+  ],
+  "states": [
+    {"id": "state-ready", "name": "Ready", "type": "unstarted"},
+    {"id": "state-done", "name": "Done", "type": "completed"}
+  ],
+  "labels": [],
+  "issues": {
+    "ENG-10": {
+      "id": "linear-10",
+      "identifier": "ENG-10",
+      "team": {"id": "team-eng", "key": "ENG"},
+      "title": "Parent outcome",
+      "description": "## Verification\n\n- Outcome evidence exists.\n",
+      "state": {"id": "state-ready", "name": "Ready", "type": "unstarted"},
+      "priority": 2,
+      "estimate": null,
+      "labels": [],
+      "assignee": null,
+      "parent": null,
+      "children": [{"id": "linear-11", "identifier": "ENG-11"}, {"id": "linear-12", "identifier": "ENG-12"}],
+      "relations": [],
+      "url": "https://linear.app/fixture/issue/ENG-10"
+    },
+    "ENG-11": {
+      "id": "linear-11",
+      "identifier": "ENG-11",
+      "team": {"id": "team-eng", "key": "ENG"},
+      "title": "First leaf",
+      "description": "## Verification\n\n- Check passes.\n",
+      "state": {"id": "state-ready", "name": "Ready", "type": "unstarted"},
+      "priority": 2,
+      "estimate": 3,
+      "labels": [],
+      "assignee": null,
+      "parent": {"id": "linear-10", "identifier": "ENG-10"},
+      "children": [],
+      "relations": [],
+      "url": "https://linear.app/fixture/issue/ENG-11"
+    },
+    "ENG-12": {
+      "id": "linear-12",
+      "identifier": "ENG-12",
+      "team": {"id": "team-eng", "key": "ENG"},
+      "title": "Blocked leaf",
+      "description": "## Verification\n\n- Check passes.\n",
+      "state": {"id": "state-ready", "name": "Ready", "type": "unstarted"},
+      "priority": 2,
+      "estimate": 3,
+      "labels": [],
+      "assignee": null,
+      "parent": {"id": "linear-10", "identifier": "ENG-10"},
+      "children": [],
+      "relations": [{"type": "blocked-by", "issue": {"id": "linear-99", "identifier": "ENG-99"}}],
+      "url": "https://linear.app/fixture/issue/ENG-12"
+    },
+    "ENG-99": {
+      "id": "linear-99",
+      "identifier": "ENG-99",
+      "team": {"id": "team-eng", "key": "ENG"},
+      "title": "External blocker",
+      "description": "## Verification\n\n- Dependency is available.\n",
+      "state": {"id": "state-ready", "name": "Ready", "type": "unstarted"},
+      "priority": 2,
+      "estimate": 2,
+      "labels": [],
+      "assignee": null,
+      "parent": null,
+      "children": [],
+      "relations": [{"type": "blocks", "issue": {"id": "linear-12", "identifier": "ENG-12"}}],
+      "url": "https://linear.app/fixture/issue/ENG-99"
+    }
+  }
+}

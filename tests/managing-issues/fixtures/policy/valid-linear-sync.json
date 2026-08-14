@@ -1,0 +1,31 @@
+{
+  "target": {
+    "team": "ENG",
+    "workspace": "workspace-fixture"
+  },
+  "mappings": {
+    "priority": {
+      "urgent": "urgent",
+      "high": "high",
+      "normal": "medium"
+    },
+    "readiness": {
+      "ready": "Ready",
+      "blocked": "Blocked"
+    },
+    "leaf_estimate": {
+      "small": 1,
+      "medium": 3,
+      "large": 5
+    },
+    "work_type": {
+      "bug": "label-fix",
+      "feature": "label-feature"
+    }
+  },
+  "synchronization": {
+    "mapping_source": ".agents/linear-sync.json"
+  },
+  "provider": "linear",
+  "version": 1
+}

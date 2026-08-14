@@ -13,13 +13,19 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- Added `managing-issues`, a canonical GitHub or Linear issue-management path.
+  It reads native parent and blocker relationships to derive the current Ready
+  Frontier and marks completion only when current Verification evidence
+  supports it. GitHub effects use exact approval and readback; Linear remains
+  read-only in Release A because the installed provider cannot expose the
+  authenticated principal required for a safe write. The skill hands tracker
+  facts to Build without persisting orchestration or parallel graph state.
 - `repo-gardener` lane contracts now bind five sensing floors to every lane
   verdict (lane-specific evidence, census honesty, bodies-not-labels, honest
   self-grading, fan-out honesty), and the repository/test/code-health lane
   performs a rotation-based bounded code inspection of actual source each run.
   A recall-probe scoring protocol (`tests/repo-gardener/recall-protocol.md`)
   lets dogfood runs be scored against known findings kept outside the tree.
-
 - Added `repo-gardener`, a portable repository-health parent loop. It surveys
   nine lanes, deepens evidence-justified targets, and may supervise a
   live-policy-bounded child through an unmerged pull request.

@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "provider": "linear",
+  "target": {
+    "workspace": "../workspace",
+    "team": "ENG"
+  },
+  "mappings": {
+    "work_type": {"bug": "label-bug-id"},
+    "readiness": {"ready": "Ready"},
+    "priority": {"normal": "medium"},
+    "leaf_estimate": {"small": 1}
+  }
+}

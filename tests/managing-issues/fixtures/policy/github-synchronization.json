@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "provider": "github",
+  "target": "example/project",
+  "synchronization": {
+    "mapping_source": ".agents/linear-sync.json"
+  },
+  "mappings": {
+    "work_type": {"bug": "type:bug"},
+    "readiness": {"ready": "state:ready"},
+    "priority": {"normal": "priority:normal"},
+    "leaf_estimate": {"small": "size:s"}
+  }
+}

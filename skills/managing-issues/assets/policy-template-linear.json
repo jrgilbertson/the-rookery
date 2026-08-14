@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "provider": "linear",
+  "target": {
+    "workspace": "REPLACE_WITH_CONNECTED_WORKSPACE_ID",
+    "team": "REPLACE_WITH_TEAM_KEY_OR_ID"
+  },
+  "mappings": {
+    "work_type": {
+      "feature": "REPLACE_WITH_PROVIDER_VALUE_FOR_FEATURE",
+      "fix": "REPLACE_WITH_PROVIDER_VALUE_FOR_FIX",
+      "docs": "REPLACE_WITH_PROVIDER_VALUE_FOR_DOCS",
+      "research": "REPLACE_WITH_PROVIDER_VALUE_FOR_RESEARCH",
+      "experiment": "REPLACE_WITH_PROVIDER_VALUE_FOR_EXPERIMENT",
+      "optimization": "REPLACE_WITH_PROVIDER_VALUE_FOR_OPTIMIZATION",
+      "maintenance": "REPLACE_WITH_PROVIDER_VALUE_FOR_MAINTENANCE"
+    },
+    "readiness": {
+      "triage": "REPLACE_WITH_PROVIDER_VALUE_FOR_TRIAGE",
+      "ready": "REPLACE_WITH_PROVIDER_VALUE_FOR_READY"
+    },
+    "priority": {
+      "urgent": "urgent",
+      "high": "high",
+      "medium": "medium",
+      "low": "low",
+      "none": "none"
+    },
+    "leaf_estimate": {
+      "1": 1,
+      "2": 2,
+      "3": 3,
+      "5": 5,
+      "8": 8
+    }
+  }
+}

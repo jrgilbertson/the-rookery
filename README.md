@@ -6,9 +6,7 @@
 
 An always-current field guide to how I build with AI. It connects a practical
 workflow for research, planning, design, implementation, shipping, maintenance,
-and learning with the portable agent skills I use to run it. If you are an
-engineering practitioner evaluating someone else's AI workflow, start with the
-seven jobs below, then install only the skills that solve a problem you have.
+and learning with the portable agent skills I use to run it.
 
 A skill is a portable set of instructions an agent loads when a task calls for
 it. Every skill here installs individually as a standard Agent Skills package

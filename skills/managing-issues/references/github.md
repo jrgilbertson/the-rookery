@@ -101,8 +101,24 @@ The readback must confirm the intended state and state reason.
 
 Use only GitHub's native parent, sub-issue, blocked-by, and blocking operations,
 and only after every new node has an exact identity and readback. Probe each
-required capability before a graph preview and follow
-`graph-and-completion.md` for complete coverage.
+required capability from the installed `gh issue edit --help` before a graph
+preview. An absent required flag makes the proposed graph unsupported; do not
+create its nodes.
+
+Issue-read relationship arrays do not prove collection exhaustion. For complete
+family coverage, read bounded explicit pages until one returns fewer than 100
+records:
+
+```text
+gh api "repos/OWNER/REPO/issues/NUMBER/sub_issues?per_page=100&page=PAGE" --hostname github.com
+gh api "repos/OWNER/REPO/issues/NUMBER/dependencies/blocked_by?per_page=100&page=PAGE" --hostname github.com
+gh api "repos/OWNER/REPO/issues/NUMBER/dependencies/blocking?per_page=100&page=PAGE" --hostname github.com
+```
+
+Process each page before requesting the next. A failed page, an unavailable
+endpoint, or the graph reference's node limit makes coverage partial. Read each
+returned identity through the exact issue-read path when current content,
+state, or Verification matters.
 
 When GitHub is a synchronized projection rather than the canonical provider,
 read it only for mapped identity or lag evidence. Never mutate or repair the

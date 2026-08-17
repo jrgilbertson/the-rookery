@@ -1,43 +1,37 @@
-# Topology effects reconcile native facts without rollback or dispatch
+# A failed topology effect stops every later effect
 
-Provenance: the bare baseline omitted coverage and Verification gaps and added
-execution-sequencing and speculative provider guidance, while a later
-candidate appended repair choices; accepted contract R4, R8, AE5, and AE10
-returns only reconciled tracker facts. The scenario uses GitHub because Release
-A intentionally exposes no Linear mutation path.
+Provenance: covers node-before-edge ordering, exact readback, partial success,
+and the global batch stop in R3, R13, and R15.
 
 ## Prompt
 
 > Work only from this synthetic approved GitHub batch in `example/project`; do
-> not contact a provider. Before approval, complete previews showed these
-> ordered effects:
+> not contact a provider. Capability checks passed before the preview. The
+> displayed order was:
 >
-> 1. Create leaf `#13`.
-> 2. Set `#10` as `#13`'s parent, dependent on effect 1.
-> 3. Remove the independent relation `#12 blocks #11`.
+> 1. Create ready implementation leaf `#13`.
+> 2. Set `#10` as `#13`'s parent.
+> 3. Remove the independent native relation `#12 blocks #11`.
 >
-> Fresh pre-reads stayed valid, including a native `#12 blocks #11` relation
-> confirmed present. Effect 1 was attempted once, returned canonical URL
-> `https://github.com/example/project/issues/13`, and matched canonical
-> readback. Effect 2 was attempted once but failed provider validation. Effect
-> 3 was attempted once, the provider returned an authoritative success result,
-> and both endpoint readbacks then confirmed the native `blocks`/`blocked-by`
-> relation is absent. An exhausted reconciliation now shows open ready leaves
-> `#11` and `#12` with no unresolved blockers. `#13` exists but has no parent.
+> Effect 1 ran once, returned exact canonical URL
+> `https://github.com/example/project/issues/13`, and its canonical readback
+> matched. Fresh endpoint reads for effect 2 matched the preview, but its one
+> write failed provider validation and made no relationship change. Effect 3
+> has not been attempted. The latest complete family read still shows `#11`
+> and `#12` as open, derived-ready, and unblocked. `#13` exists but is not a
+> child of `#10`.
 >
-> Report effects and the current handoff.
+> Report the batch and current graph facts.
 
 ## Expected behavior
 
-- [ ] Keeps the verified `#13` creation as `applied` and does not delete,
-      retry, or semantically rematch it after the parent failure.
-- [ ] Reports the parent effect as `failed`, while preserving and reporting
-      the successful independent relation removal in its exact native
-      direction.
-- [ ] Uses both endpoint readbacks and the exhausted affected-family read to
-      reconcile current topology after the attempts.
-- [ ] Derives Ready Frontier as `#11` and `#12` from current canonical facts,
-      and separately reports unparented `#13` as unresolved.
-- [ ] Returns nodes, edges, coverage, blockers, effect outcomes, and
-      Verification gaps only; it starts no worker and stores no schedule,
-      claim, retry record, or recommended execution topology.
+- [ ] Reports the verified `#13` creation as `applied` and preserves it without
+      deleting, retrying, or matching it by similarity.
+- [ ] Reports the parent edge as `failed` and the independent relation removal
+      as `unapplied`; it does not continue after the failure.
+- [ ] Reports current canonical nodes, edges, blockers, complete coverage, and
+      the unresolved intended parent edge from exact reads.
+- [ ] Reports `#11` and `#12` in the Ready Frontier for the connected family;
+      it does not silently treat unattached `#13` as a child.
+- [ ] Requires a fresh complete read, preview, and approval before any
+      continuation, without storing a retry schedule or execution handoff.

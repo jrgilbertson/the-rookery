@@ -55,7 +55,13 @@ mismatch is not a canonical issue and permits no write.
 
 Require successful JSON/RPC results and inspect any provider warnings or partial
 section metadata. A missing or capped requested section is unknown rather than
-empty. Follow `graph-and-completion.md` for relationship coverage.
+empty. Exhaust direct-child pages for each parent with the guide's supported
+parent filter, following every nonempty next cursor. Require every child page's
+`workspaceErrors` to exist and be empty. Require every relationship read's
+`includeErrors` to exist and be empty and its relationship `capReached` value
+to be exactly false. A failed page, empty or repeated cursor before exhaustion,
+missing field, warning, or cap makes coverage partial. Follow
+`graph-and-completion.md` for family traversal and the shared node limit.
 
 ## Creates, surgical updates, and lifecycle
 
@@ -74,6 +80,13 @@ identifier, and URL matchback. Managing Issues applies every effect once: even
 if the general Orca guide offers a retry for an unconfirmed write, an
 unconfirmed Managing Issues create is `indeterminate` and is never retried or
 similarity-matched.
+
+For a graph batch, require the loaded guide to expose every needed parent,
+child, blocker, and inverse or removal effect before previewing any node. Use
+only that version-matched syntax. After nodes have exact readbacks, apply each
+approved relationship once and read both endpoints back. If the guide cannot
+express any required edge or its readback, the graph is unsupported and no
+graph node is written.
 
 Use the guide's field-specific status operation for reversible lifecycle
 changes. Select only an exact discovered state whose type represents the

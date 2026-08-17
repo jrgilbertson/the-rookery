@@ -18,8 +18,8 @@ and the global batch stop in R3, R13, and R15.
 > matched. Fresh endpoint reads for effect 2 matched the preview, but its one
 > write failed provider validation and made no relationship change. Effect 3
 > has not been attempted. The latest complete family read still shows `#11`
-> and `#12` as open, derived-ready, and unblocked. `#13` exists but is not a
-> child of `#10`.
+> and `#12` as open implementation leaves, derived-ready, and unblocked. `#13`
+> exists but is not a child of `#10`.
 >
 > Report the batch and current graph facts.
 

@@ -25,7 +25,5 @@ R13 without adding a second trust policy.
       visible, and does not retry it.
 - [ ] Reports effect 3 as `unapplied` and does not attempt it despite its
       independence.
-- [ ] Reads any exact identity or receipt returned by effect 2, but never
-      searches or binds by title, body, author, time, or similarity.
 - [ ] Requires a fresh canonical read, complete preview, and approval before
       continuing, without inventing durable retry or shadow state.

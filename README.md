@@ -11,9 +11,7 @@ and learning with the portable agent skills I use to run it.
 A skill is a portable set of instructions an agent loads when a task calls for
 it.
 
-A rookery is where corvids gather to nest. This one is named for the two most famous, Odin's ravens Huginn and Muninn. Huginn is thought, Muninn is memory. Each morning they fly out to see the world, and each evening they return with what they've learned.
-
-This repo is the return trip.
+A rookery is where corvids gather to nest. This one is named for Odin's ravens, Huginn and Muninn. Huginn is thought, Muninn is memory. Each morning they fly out to see the world, and each evening they return with what they've learned.
 
 ## Guiding principles
 

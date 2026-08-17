@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import ast
+import copy
 import hashlib
 import json
 import os
@@ -331,7 +332,7 @@ def check_active_config_filesystem_cases(repo_root: Path, outside: Path) -> None
     active_config.unlink()
 
 
-def check_mapping_filesystem_cases(repo_root: Path, outside: Path) -> None:
+def check_mapping_filesystem_cases(repo_root: Path) -> None:
     config = base_config("linear")
     config["synchronization"] = {"mapping_source": ACTIVE_MAPPING_RELATIVE.as_posix()}
     active_config = install_active_config(repo_root, config)
@@ -408,14 +409,14 @@ def main() -> int:
         github["mappings"]["priority"] = {"high": "priority:high", "normal": "priority:normal"}
         github["mappings"]["leaf_estimate"] = {"medium": "size:m", "small": "size:s"}
         github["mappings"]["labels"] = {"bug": "Bug", "feature": "Feature"}
-        expected_github = json.loads(json.dumps(github))
+        expected_github = copy.deepcopy(github)
         expected_github["target"] = "exampleorg/project"
         first = expect_valid(github, repo_root, expected_github)
         second = expect_valid(github, repo_root, expected_github)
         require(first == second, "valid config normalization is not deterministic")
 
         github_empty = base_config("github")
-        expected_github_empty = json.loads(json.dumps(github_empty))
+        expected_github_empty = copy.deepcopy(github_empty)
         expected_github_empty["target"] = "exampleorg/project"
         expect_valid(github_empty, repo_root, expected_github_empty)
 
@@ -430,7 +431,7 @@ def main() -> int:
         for provider in ("github", "linear"):
             synced = base_config(provider)
             synced["synchronization"] = {"mapping_source": ACTIVE_MAPPING_RELATIVE.as_posix()}
-            expected_synced = json.loads(json.dumps(synced))
+            expected_synced = copy.deepcopy(synced)
             if provider == "github":
                 expected_synced["target"] = "exampleorg/project"
             expect_valid(synced, repo_root, expected_synced, current_mapping=sync_map)
@@ -586,7 +587,7 @@ def main() -> int:
         active_config.unlink()
 
         check_active_config_filesystem_cases(repo_root, outside)
-        check_mapping_filesystem_cases(repo_root, outside)
+        check_mapping_filesystem_cases(repo_root)
         check_templates(repo_root)
 
     print("PASS: managing-issues config contract")

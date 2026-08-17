@@ -130,8 +130,6 @@ LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
 with LOG_PATH.open("a", encoding="utf-8") as stream:
     stream.write(json.dumps({"argv": ARGV, "stdin_length": len(STDIN.encode("utf-8")), "stdin_sha256": hashlib.sha256(STDIN.encode("utf-8")).hexdigest()}, separators=(",", ":")) + "\n")
 
-state = load()
-
 if ARGV == ["skills", "get", "orca-linear"]:
     scenario = os.environ.get("MI_LINEAR_GUIDE_SCENARIO", "compatible")
     if scenario == "absent":
@@ -148,6 +146,8 @@ if ARGV == ["status", "--json"]:
     print(json.dumps({"ok": True, "linear": {"authenticated": True}, "version": "fixture"}, separators=(",", ":")))
     raise SystemExit(0)
 
+state = load()
+
 if ARGV[:3] == ["linear", "team", "list"]:
     positionals, values, booleans = parse_options(ARGV[3:], value_flags={"--workspace"}, boolean_flags={"--json"})
     if positionals:
@@ -163,7 +163,7 @@ if ARGV[:3] in (["linear", "team", "states"], ["linear", "team", "labels"], ["li
     require_contract(state, values, booleans)
     team = team_value(state, one(values, "--team", required=True) or "")
     noun = ARGV[2]
-    key = {"states": "states", "labels": "labels", "members": "members"}[noun]
+    key = noun
     items = state.get(key, [])
     emit_result({"team": team, key: items, "meta": {"returned": len(items)}})
     raise SystemExit(0)

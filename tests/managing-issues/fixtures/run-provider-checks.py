@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
 import os
 import shutil
@@ -11,7 +10,7 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 
 HERE = Path(__file__).resolve().parent
@@ -139,8 +138,6 @@ def github_read(env: dict[str, str], selector: str) -> dict[str, Any]:
 
 def github_happy(root: Path, base: dict[str, str]) -> None:
     env, state_path, log = github_env(root, base, "github-happy")
-    preview = "provider: github\nnormalized target: example/project\neffects: 1 create"
-    require("provider: github" in preview and "normalized target: example/project" in preview, "GitHub preview hides provider/target")
     github_auth_and_target(env)
     labels = json_result(run(["gh", "label", "list", "-R", GH_TARGET, "--limit", "1000", "--json", "id,name"], env), "GitHub labels")
     require(sum(label["name"] == "--literal;$(never-run)" for label in labels) == 1, "GitHub hostile label discovery differs")
@@ -245,8 +242,6 @@ def linear_happy(root: Path, base: dict[str, str]) -> None:
     require(len([team for team in teams["teams"] if team["key"] == LINEAR_TEAM]) == 1, "Linear canonical team differs")
     labels = linear_result(run(["orca", "linear", "team", "labels", "--team", LINEAR_TEAM, "--workspace", LINEAR_WORKSPACE, "--json"], env), "Linear labels")
     require(any(label["id"] == "label-hostile" for label in labels["labels"]), "Linear hostile label missing")
-    preview = "provider: linear\nnormalized target: workspace-fixture/ENG\neffects: 1 create"
-    require("provider: linear" in preview and "normalized target: workspace-fixture/ENG" in preview, "Linear preview hides provider/target")
 
     title = "--literal title; $(never-run)"
     body = "## Problem\n\nTreat `$(never-run)` as data.\n\n## Scope\n\nPreserve it.\n\n## Verification\n\n- [ ] Text round-trips.\n"
@@ -368,7 +363,6 @@ def config_and_sync_integration(root: Path, base: dict[str, str]) -> None:
     (agents / "managing-issues.json").write_text(json.dumps(config), encoding="utf-8")
     normalized = json_result(run([sys.executable, str(CONFIG_CHECK), "--repo-root", str(sync_root), "--config", ".agents/managing-issues.json"], base), "sync config validation")
     require(normalized["config"]["provider"] == "linear" and normalized["config"]["synchronization"] == {"mapping_source": ".agents/sync.json"}, "canonical sync routing differs")
-    require(mapping["github_to_linear"]["example/project#1"] == "ENG-1", "canonical sync identity differs")
     sync_env, _, sync_log = linear_env(root, base, "linear-sync-canonical")
     load_linear_guide(sync_env)
     linear_read(sync_env, "ENG-1")

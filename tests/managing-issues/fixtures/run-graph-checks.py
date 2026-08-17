@@ -53,9 +53,7 @@ def run(
 
 
 def succeeded(result: subprocess.CompletedProcess[str], label: str) -> Any:
-    require(result.returncode == 0, f"{label} failed: {result.stderr.strip()}")
-    require(result.stderr == "", f"{label} wrote stderr")
-    return json.loads(result.stdout)
+    return json.loads(accepted(result, label))
 
 
 def accepted(result: subprocess.CompletedProcess[str], label: str) -> str:
@@ -220,7 +218,7 @@ def canonical_identity(
         matches = [github for github, linear in pairs if selector in {github, linear}]
     else:
         matches = [linear for github, linear in pairs if selector in {github, linear}]
-    return matches[0] if len(set(matches)) == 1 and len(matches) == 1 else None
+    return matches[0] if len(matches) == 1 else None
 
 
 def synchronized_write(

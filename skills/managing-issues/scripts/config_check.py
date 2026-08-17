@@ -8,7 +8,7 @@ import json
 import re
 import stat
 import sys
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 from typing import Any
 
 
@@ -267,9 +267,7 @@ def normalize_mapping_source(value: Any) -> tuple[str, tuple[str, ...]]:
         all(MAPPING_SOURCE_PART.fullmatch(part) is not None for part in parts),
         "synchronization.mapping_source contains an invalid path segment",
     )
-    normalized = PurePosixPath(*parts).as_posix()
-    require(normalized == source, "synchronization.mapping_source must use normalized POSIX syntax")
-    return normalized, parts
+    return source, parts
 
 
 def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
@@ -322,7 +320,7 @@ def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
     return normalized
 
 
-def normalize_sync_mapping(value: dict[str, Any]) -> dict[str, Any]:
+def validate_sync_mapping(value: dict[str, Any]) -> None:
     require_exact_fields(value, SYNC_MAPPING_FIELDS, SYNC_MAPPING_FIELDS, "mapping")
     version = value["version"]
     require(
@@ -336,7 +334,7 @@ def normalize_sync_mapping(value: dict[str, Any]) -> dict[str, Any]:
         f"mapping.github_to_linear exceeds {MAX_SYNC_MAPPING_ENTRIES} entries",
     )
 
-    normalized_links: dict[str, str] = {}
+    github_issues: set[str] = set()
     linear_targets: set[str] = set()
     for github_issue, linear_issue in links.items():
         github_text = require_concrete_text(github_issue, "mapping GitHub issue")
@@ -347,23 +345,21 @@ def normalize_sync_mapping(value: dict[str, Any]) -> dict[str, Any]:
             f"{github_match.group('repo').lower()}#{github_match.group('number')}"
         )
         require(
-            normalized_github not in normalized_links,
+            normalized_github not in github_issues,
             "mapping contains a duplicate normalized GitHub issue",
         )
 
         linear_text = require_concrete_text(linear_issue, f"mapping.{github_text}")
         require(LINEAR_ISSUE.fullmatch(linear_text) is not None, "mapping Linear issue must be TEAM-NUMBER")
         require(linear_text not in linear_targets, "mapping contains a duplicate Linear target")
-        normalized_links[normalized_github] = linear_text
+        github_issues.add(normalized_github)
         linear_targets.add(linear_text)
 
-    return {"version": version, "github_to_linear": dict(sorted(normalized_links.items()))}
 
-
-def load_current_mapping(repo_root: Path, config: dict[str, Any]) -> dict[str, Any] | None:
+def validate_current_mapping(repo_root: Path, config: dict[str, Any]) -> None:
     synchronization = config.get("synchronization")
     if synchronization is None:
-        return None
+        return
     _, parts = normalize_mapping_source(synchronization["mapping_source"])
     checked = inspect_repo_file(
         repo_root,
@@ -373,7 +369,7 @@ def load_current_mapping(repo_root: Path, config: dict[str, Any]) -> dict[str, A
     )
     require(checked is not None, "synchronization.mapping_source is missing")
     raw = bounded_read(checked, MAX_SYNC_MAPPING_BYTES, "synchronization mapping")
-    return normalize_sync_mapping(parse_json_object(raw, "mapping"))
+    validate_sync_mapping(parse_json_object(raw, "mapping"))
 
 
 def canonical_json(value: Any) -> str:
@@ -397,7 +393,7 @@ def main() -> int:
         return 0
 
     config = normalize_config(raw)
-    load_current_mapping(repo_root, config)
+    validate_current_mapping(repo_root, config)
     print(canonical_json({"config": config, "status": "valid"}))
     return 0
 

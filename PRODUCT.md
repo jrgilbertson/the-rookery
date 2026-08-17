@@ -58,7 +58,7 @@ The seven workflow jobs are Research, Plan, Design, Build, Ship, Maintain, and L
 1. Prefer adopting and adapting strong existing work over rebuilding it, and credit the people who made it possible.
 2. Explain the mechanism before adding personality.
 3. Make rigorous technical work approachable without making it simplistic.
-4. Keep characters load-bearing: removing them should break the explanation, not merely reduce decoration.
+4. Make characters essential to the explanation: removing them should break the explanation, not merely reduce decoration.
 5. Preserve the system's personal, continuously improving character while keeping every workflow and skill portable across agents and harnesses.
 
 ## Accessibility & Inclusion

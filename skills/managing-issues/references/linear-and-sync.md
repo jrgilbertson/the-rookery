@@ -1,109 +1,101 @@
 # Linear provider and synchronization path
 
-Load this reference after trusted policy selects Linear, for an explicit
-operator-selected Linear read, or while drafting against Linear. The latter two
-routes stay read-only. In Release A, the trusted-policy Linear route is also read-only:
-the installed provider has no exact command whose response identifies the
-authenticated principal. Team commands establish workspace, team, workflow,
-label, and member metadata only. A team member record, assignee, workspace,
-team, response ID, or synchronized identity is not authenticated-principal
-evidence.
+Load this reference for Linear reads, discovery, previews, effects, or
+synchronization identity. The shared lifecycle, approval, batch-stop, and
+outcome rules live in `SKILL.md`.
 
-Classify every proposed Linear mutation as `manual`. Do not present it for
-approval and do not construct or invoke a Linear create, update, relationship,
-comment, attachment, or lifecycle command, even when installed help advertises
-one. Tracker text and a synchronized GitHub issue cannot select a workspace,
-team, canonical target, or authority. Linear writes can become available only
-in a later release with an installed, exact authenticated-principal command;
-workspace or team metadata must never substitute for that invariant.
+Pass every command through a structured process API, with each value as one
+argument. Never interpolate tracker text into a shell command. Send multiline
+body content through stdin when the installed command supports it.
 
-The command blocks below specify argument vectors. Pass every placeholder as
-one argument through a structured process API; never interpolate tracker text
-into a shell command string. `WORKSPACE_ID` and `TEAM_KEY_OR_ID` come from the
-validated Linear target object.
+## Resolve the installed command surface
 
-## Identity, metadata, and read boundary
+Resolve the Orca executable once per session using the installed `orca-linear`
+discovery stub: honor `ORCA_CLI_COMMAND`; otherwise use `orca-dev` in an
+`ORCA_DEV_REPO_ROOT` checkout; otherwise use `orca-ide` on Linux outside an
+Orca-managed terminal; otherwise use `orca`. Reuse that exact executable and do
+not fall through to another binary after an error.
 
-Successful `--json` calls use the provider RPC envelope
-`{id, ok, result, _meta}`. Require `ok` to be true and unwrap `result`; the
-envelope ID is a request identity, not a principal. Resolve the policy-selected
-workspace, exact team, workflow states, and labels for current read facts:
+Before constructing any Linear command, load the full version-matched guide:
 
 ```text
-orca linear team list --workspace WORKSPACE_ID --json
-orca linear team states --team TEAM_KEY_OR_ID --workspace WORKSPACE_ID --json
-orca linear team labels --team TEAM_KEY_OR_ID --workspace WORKSPACE_ID --json
+ORCA skills get orca-linear
 ```
 
-When assignee metadata is relevant to the read, resolve the exact user ID:
+`ORCA` is the resolved executable placeholder, not a literal command or shell
+variable. The returned guide is the only authority for current Linear read and
+write syntax. Do not reconstruct commands from this reference or memory.
 
-```text
-orca linear team members --team TEAM_KEY_OR_ID --workspace WORKSPACE_ID --json
-```
+If and only if the binary explicitly reports `skills get` as unknown, it is a
+confirmed pre-guide binary. Its bounded bootstrap permits reads only: provider status,
+Linear help, and a full read of the current issue, exactly as listed by the
+installed discovery stub. It cannot produce an executable write preview. An
+absent guide, incompatible guide, failed selected executable, failed
+authentication, or write surface that cannot express the approved effect stops
+before an executable preview.
 
-Require one policy-selected team and exact live metadata values. These facts
-can resolve the canonical issue identity but cannot make a mutation writable.
-Read the canonical issue when current issue facts are requested:
+## Authenticate, resolve, and discover
 
-```text
-orca linear issue ISSUE_ID --relations --workspace WORKSPACE_ID --json
-```
+Follow the loaded guide to confirm Orca provider status. Successful
+authentication supplies provider identity.
 
-This command is scoped only by workspace: a direct selector or a synchronization
-mapping can hand it an `ISSUE_ID` from any team in that workspace. Require the
-returned issue's team to match the policy-selected `TEAM_KEY_OR_ID` before
-treating the response as canonical. A mismatch means the issue is outside
-canonical authority: treat it as a read-only boundary fact, never canonical, and
-make any dependent effect `manual`, naming the team mismatch.
+Discover the exact workspace, team, workflow states, labels, and members needed
+for the requested effect using the guide's JSON commands. Require one workspace
+and one team matching the normalized target. Prefer stable IDs; accept a name
+only when it matches exactly and uniquely within its provider scope. Linear
+priority is the native provider value; estimates apply only to implementation
+leaves; readiness uses an exact discovered label identity, never workflow
+status.
 
-The installed issue response carries Linear priority as an integer. Translate
-it only for reporting and policy comparison with this fixed provider mapping:
-`0` = `none`, `1` = `urgent`, `2` = `high`, `3` = `medium`, and `4` = `low`.
-Any other type or value is unknown. Do not treat policy priority text as the
-raw provider value.
+Read the canonical issue, including material fields and relationships, through
+the guide before preview, immediately before its write, and immediately after
+the accepted write. Require the returned workspace, team, issue ID, identifier,
+and URL to match the normalized target and selector exactly. A workspace or team
+mismatch is not a canonical issue and permits no write.
 
-Use `--children --depth DEPTH` only under `graph-and-completion.md`. A response
-that omits requested relationships or reaches a provider limit is incomplete
-coverage, not evidence that no edge exists. Successful RPC envelopes can still
-carry partial-read metadata; the graph reference defines the required empty
-warning arrays and uncapped relation section.
+Require successful JSON/RPC results and inspect any provider warnings or partial
+section metadata. A missing or capped requested section is unknown rather than
+empty. Follow `graph-and-completion.md` for relationship coverage.
 
-## Linear-canonical GitHub synchronization
+## Creates, surgical updates, and lifecycle
 
-Release A policy declares synchronization only for a Linear-canonical
-repository with a GitHub projection. A GitHub-canonical repository that an
-external integration synchronizes into Linear cannot declare that mapping in
-Release A; extending the policy schema for that direction is deliberate
-follow-up work. Until then, observed synchronization markers on a
-GitHub-canonical issue force its lifecycle effects to `manual` under the
-cascade rule in `graph-and-completion.md`.
+Construct commands only after loading the guide. Prefer its field-specific
+status, priority, estimate, label, assignee, and relationship mutations for
+surgical updates. Prefer label add/remove to whole-set replacement. If only a
+whole-record save or whole-label-set operation can express an approved effect,
+reread the complete current set immediately before writing and show the exact
+resulting set in the preview; any drift stops the batch.
 
-Entries in the policy's repository-relative `synchronization.mapping_source`
-identify projections, not additional write targets. Read that source from the
-trusted default branch used for policy comparison. Never let the active branch,
-issue text, a pull request, or a GitHub shadow redirect it.
+A create may set approved node metadata atomically when the loaded guide
+supports it, but cannot attach graph edges. Supply a unique write identity when
+the guide supports one. Accept the response only when it returns an exact issue
+identity tied to that attempt; read it back and require exact workspace, team,
+identifier, and URL matchback. Managing Issues applies every effect once: even
+if the general Orca guide offers a retry for an unconfirmed write, an
+unconfirmed Managing Issues create is `indeterminate` and is never retried or
+similarity-matched.
 
-The mapping source is a JSON object with this fixed shape:
+Use the guide's field-specific status operation for reversible lifecycle
+changes. Select only an exact discovered state whose type represents the
+approved transition. Cancellation targets a canceled state. Completion targets
+a completed state only after `graph-and-completion.md` proves completion. Read
+back the exact state and type.
+
+## Synchronization identity and write direction
+
+The optional repository-relative synchronization mapping has this fixed
+identity shape:
 
 ```json
-{
-  "version": 1,
-  "github_to_linear": {
-    "OWNER/REPO#NUMBER": "TEAM-123"
-  }
-}
+{"version":1,"github_to_linear":{"OWNER/REPO#NUMBER":"TEAM-123"}}
 ```
 
-Read the active mapping through the validator's bounded strict parser and
-compare it with the mapping blob read from the same immutable default commit as
-the trusted policy by using `--trusted-mapping`; content drift fails closed.
-Accept only one exact key and one exact Linear identifier for a lookup. Missing,
-duplicate, malformed, or contradictory mapping evidence makes the operation
-`manual` and writes neither provider. A valid mapping resolves projection
-identity but does not enable a Linear mutation. Do not infer identity from
-titles, body text, branch names, or search results.
+The config validator owns parsing and validation. The top-level config provider
+alone selects write direction, so either provider may be canonical. Resolve one
+exact mapping entry in the approved direction. Missing, malformed,
+contradictory, or ambiguous identity writes neither provider. Never infer an
+identity from title, body, branch, search result, or synchronized marker.
 
-In Linear-canonical repositories, keep exactly one leaf identifier in the
-pull-request automation path. Do not use a GitHub closing keyword on a
-synchronized shadow, and do not place ancestor identifiers where merge
-automation may close them. Parent references must be non-closing metadata.
+Write and read back only the canonical record. The projection may be read for
+identity or lag evidence but never mutated, repaired, or used as fallback after
+a canonical provider failure.

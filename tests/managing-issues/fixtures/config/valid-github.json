@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "provider": "github",
+  "target": "ExampleOrg/Project",
+  "mappings": {
+    "priority": {},
+    "leaf_estimate": {},
+    "labels": {},
+    "readiness": {
+      "needs-discovery": "readiness:discovery",
+      "needs-planning": "readiness:planning",
+      "ready-for-implementation": "readiness:ready"
+    }
+  }
+}

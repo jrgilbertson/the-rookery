@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Exercise the exact provider command paths shipped by managing-issues."""
+"""Exercise Managing Issues provider/config lifecycle contracts."""
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import shutil
@@ -17,25 +18,17 @@ HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parents[2]
 BIN = HERE / "bin"
 PROVIDER = HERE / "provider"
-POLICIES = HERE / "policy"
-SYNC_MAPPINGS = HERE / "sync-mapping"
-SKILL = REPO_ROOT / "skills" / "managing-issues" / "SKILL.md"
-REFERENCES = SKILL.parent / "references"
-POLICY_CHECK = SKILL.parent / "scripts" / "policy_check.py"
-REPOSITORY = "example/project"
-GH_REPOSITORY = f"github.com/{REPOSITORY}"
-WORKSPACE = "workspace-fixture"
-TEAM = "ENG"
-ISSUE_FIELDS = (
-    "id,number,title,body,state,stateReason,updatedAt,url,labels,assignees,"
-    "issueType,parent,subIssues,blockedBy,blocking"
-)
+SKILL_DIR = REPO_ROOT / "skills" / "managing-issues"
+SKILL = SKILL_DIR / "SKILL.md"
+GITHUB_REF = SKILL_DIR / "references" / "github.md"
+LINEAR_REF = SKILL_DIR / "references" / "linear-and-sync.md"
+CONFIG_CHECK = SKILL_DIR / "scripts" / "config_check.py"
+GH_TARGET = "github.com/example/project"
+GH_REPOSITORY_URL = "https://github.com/example/project"
+LINEAR_WORKSPACE = "workspace-fixture"
+LINEAR_TEAM = "ENG"
+ISSUE_FIELDS = "id,number,title,body,state,stateReason,updatedAt,url,labels,assignees,issueType,parent,subIssues,blockedBy,blocking"
 REPOSITORY_FIELDS = "id,nameWithOwner,url,hasIssuesEnabled,isArchived,viewerPermission"
-ISSUE_TYPES_QUERY = (
-    "query($owner:String!,$name:String!,$endCursor:String){"
-    "repository(owner:$owner,name:$name){issueTypes(first:100,after:$endCursor){"
-    "nodes{id name}pageInfo{hasNextPage endCursor}}}}"
-)
 
 
 class CheckFailure(Exception):
@@ -47,26 +40,8 @@ def require(condition: bool, message: str) -> None:
         raise CheckFailure(message)
 
 
-def run(
-    argv: list[str],
-    env: dict[str, str],
-    *,
-    stdin: str | None = None,
-) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
-        argv,
-        input=stdin,
-        text=True,
-        capture_output=True,
-        check=False,
-        env=env,
-    )
-
-
-def succeeded(result: subprocess.CompletedProcess[str], label: str) -> Any:
-    require(result.returncode == 0, f"{label} failed: {result.stderr.strip()}")
-    require(result.stderr == "", f"{label} wrote stderr")
-    return json.loads(result.stdout)
+def run(argv: list[str], env: dict[str, str], *, stdin: str | None = None) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(argv, input=stdin, text=True, capture_output=True, check=False, env=env)
 
 
 def accepted(result: subprocess.CompletedProcess[str], label: str) -> str:
@@ -75,22 +50,20 @@ def accepted(result: subprocess.CompletedProcess[str], label: str) -> str:
     return result.stdout.strip()
 
 
+def json_result(result: subprocess.CompletedProcess[str], label: str) -> Any:
+    return json.loads(accepted(result, label))
+
+
+def linear_result(result: subprocess.CompletedProcess[str], label: str) -> dict[str, Any]:
+    envelope = json_result(result, label)
+    require(set(envelope) == {"id", "ok", "result", "_meta"}, f"{label} envelope differs")
+    require(envelope["ok"] is True and isinstance(envelope["result"], dict), f"{label} failed")
+    return envelope["result"]
+
+
 def failed(result: subprocess.CompletedProcess[str], fragment: str, label: str) -> None:
     require(result.returncode != 0, f"{label} unexpectedly succeeded")
     require(fragment in result.stderr, f"{label} failed for wrong reason: {result.stderr.strip()}")
-
-
-def rejected_check(action: Callable[[], Any], fragment: str, label: str) -> None:
-    try:
-        action()
-    except CheckFailure as error:
-        require(fragment in str(error), f"{label} failed for wrong reason: {error}")
-    else:
-        raise CheckFailure(f"{label} unexpectedly succeeded")
-
-
-def load_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
 
 
 def log_entries(path: Path) -> list[dict[str, Any]]:
@@ -99,665 +72,369 @@ def log_entries(path: Path) -> list[dict[str, Any]]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
 
 
-def command_positions(entries: list[dict[str, Any]], prefix: list[str]) -> list[int]:
+def positions(entries: list[dict[str, Any]], prefix: list[str]) -> list[int]:
     return [index for index, entry in enumerate(entries) if entry["argv"][: len(prefix)] == prefix]
 
 
-def assert_effect_sequence(
-    entries: list[dict[str, Any]],
-    start: int,
-    write_prefix: list[str],
-    required_prefixes: list[list[str]],
-    *,
-    readback_prefix: list[str] | None = None,
-) -> None:
-    window = entries[start:]
-    write_positions = command_positions(window, write_prefix)
-    require(
-        len(write_positions) == 1,
-        f"expected one write command after checkpoint: {' '.join(write_prefix)}",
-    )
-    write = write_positions[0]
-    for prefix in required_prefixes:
-        require(
-            any(
-                index < write and entry["argv"][: len(prefix)] == prefix
-                for index, entry in enumerate(window)
-            ),
-            f"write {' '.join(write_prefix)} lacks fresh {' '.join(prefix)} preflight",
-        )
-    if readback_prefix is not None:
-        require(
-            any(
-                index > write and entry["argv"][: len(readback_prefix)] == readback_prefix
-                for index, entry in enumerate(window)
-            ),
-            f"write {' '.join(write_prefix)} lacks authoritative readback",
-        )
+def assert_once_between(entries: list[dict[str, Any]], write_prefix: list[str], before_prefix: list[str], after_prefix: list[str]) -> None:
+    writes = positions(entries, write_prefix)
+    require(len(writes) == 1, f"expected one {' '.join(write_prefix)}")
+    write = writes[0]
+    require(any(index < write for index in positions(entries, before_prefix)), f"missing fresh {' '.join(before_prefix)}")
+    require(any(index > write for index in positions(entries, after_prefix)), f"missing readback {' '.join(after_prefix)}")
 
 
-def normalized_policy(
-    root: Path,
-    fixture: Path,
-    env: dict[str, str],
-    *,
-    mapping: Path | None = None,
-) -> dict[str, Any]:
-    policy_root = root / fixture.stem
-    agents = policy_root / ".agents"
-    agents.mkdir(parents=True)
-    policy = agents / "managing-issues.json"
-    shutil.copyfile(fixture, policy)
-    if mapping is not None:
-        shutil.copyfile(mapping, agents / "linear-sync.json")
-    result = succeeded(
-        run(
-            [
-                sys.executable,
-                str(POLICY_CHECK),
-                "--repo-root",
-                str(policy_root),
-                "--policy",
-                str(policy),
-            ],
-            env,
-        ),
-        f"normalize {fixture.name}",
-    )
-    return result["policy"]
-
-
-def canonical_issue_number(selector: str, repository_url: str) -> int:
-    prefix = f"{repository_url.rstrip('/')}/issues/"
-    if selector.isdigit() and int(selector) > 0:
-        return int(selector)
-    if selector.startswith(prefix):
-        suffix = selector[len(prefix):]
-        if suffix.isdigit() and int(suffix) > 0:
-            return int(suffix)
-    raise CheckFailure("GitHub issue repository identity differs")
-
-
-def github_preflight(
-    env: dict[str, str],
-    *,
-    issue: str | None = None,
-    label: str | None = None,
-    assignee: str | None = None,
-    issue_type: str | None = None,
-) -> str:
-    auth = succeeded(
-        run(
-            [
-                "gh", "auth", "status", "--active", "--hostname", "github.com",
-                "--json", "hosts",
-            ],
-            env,
-        ),
-        "GitHub auth",
-    )
-    accounts = auth.get("hosts", {}).get("github.com", [])
-    active = [
-        account
-        for account in accounts
-        if account.get("active") is True and account.get("state") == "success"
-    ]
-    require(len(active) == 1, "GitHub auth did not return one successful active account")
-    principal = active[0].get("login")
-    require(principal == "fixture-user", "GitHub auth principal differs")
-
-    repository = succeeded(
-        run(
-            ["gh", "repo", "view", GH_REPOSITORY, "--json", REPOSITORY_FIELDS],
-            env,
-        ),
-        "GitHub repository identity",
-    )
-    require(
-        repository["nameWithOwner"] == REPOSITORY
-        and repository["hasIssuesEnabled"]
-        and not repository["isArchived"]
-        and repository["viewerPermission"] in {"ADMIN", "MAINTAIN", "WRITE"},
-        "GitHub repository preflight differs",
-    )
-    if label is not None:
-        labels = succeeded(
-            run(
-                ["gh", "label", "list", "-R", GH_REPOSITORY, "--limit", "1000", "--json", "id,name"],
-                env,
-            ),
-            "GitHub label preflight",
-        )
-        require(len(labels) < 1000, "GitHub label coverage reached the installed limit")
-        require(sum(item["name"] == label for item in labels) == 1, "GitHub label differs")
-    if issue_type is not None:
-        cursor: str | None = None
-        seen_cursors: set[str] = set()
-        items: list[dict[str, Any]] = []
-        while True:
-            argv = [
-                "gh", "api", "graphql", "--hostname", "github.com",
-                "-f", f"query={ISSUE_TYPES_QUERY}",
-                "-f", "owner=example", "-f", "name=project",
-            ]
-            if cursor is not None:
-                argv.extend(["-f", f"endCursor={cursor}"])
-            page = succeeded(run(argv, env), "GitHub issue-type preflight")
-            connection = page["data"]["repository"]["issueTypes"]
-            require(connection is not None, "GitHub issue-type coverage differs")
-            items.extend(connection["nodes"])
-            page_info = connection["pageInfo"]
-            if not page_info["hasNextPage"]:
-                break
-            next_cursor = page_info.get("endCursor")
-            require(
-                bool(next_cursor) and next_cursor not in seen_cursors,
-                "GitHub issue-type cursor differs",
-            )
-            seen_cursors.add(next_cursor)
-            cursor = next_cursor
-        matches = [item for item in items if item["name"] == issue_type]
-        require(len(matches) == 1, "GitHub issue type differs")
-    if assignee is not None:
-        accepted(
-            run(["gh", "api", f"repos/{REPOSITORY}/assignees/{assignee}", "--hostname", "github.com", "--silent"], env),
-            "GitHub assignee preflight",
-        )
-    if issue is not None:
-        expected_number = canonical_issue_number(issue, repository["url"])
-        current = succeeded(
-            run(["gh", "issue", "view", issue, "-R", GH_REPOSITORY, "--json", ISSUE_FIELDS], env),
-            "GitHub issue pre-read",
-        )
-        require(
-            current["number"] == expected_number
-            and current["url"] == f"{repository['url'].rstrip('/')}/issues/{expected_number}",
-            "GitHub issue repository identity differs",
-        )
-    return principal
-
-
-def github_checks(root: Path, env: dict[str, str]) -> None:
-    policy = normalized_policy(root, POLICIES / "valid-github.json", env)
-    require(
-        policy["provider"] == "github" and policy["target"] == REPOSITORY,
-        "normalized GitHub policy route differs",
-    )
-    mappings = policy["mappings"]
-    state = root / "github.json"
-    log = root / "github.log"
-    shutil.copyfile(PROVIDER / "github.json", state)
-    github_env = env | {
-        "GH_HOST": "example.invalid",
-        "MI_GITHUB_STATE": str(state),
-        "MI_GITHUB_LOG": str(log),
-        "MI_GITHUB_ISSUE_TYPES_SCENARIO": "paged",
-    }
-
-    for scenario in ("archived", "issues-disabled", "read-only"):
-        rejected_check(
-            lambda scenario=scenario: github_preflight(
-                github_env | {"MI_GITHUB_REPOSITORY_SCENARIO": scenario}
-            ),
-            "repository preflight differs",
-            f"GitHub {scenario} repository",
-        )
-    rejected_check(
-        lambda: github_preflight(
-            github_env | {"MI_GITHUB_LABEL_SCENARIO": "limit-reached"},
-            label=mappings["priority"]["high"],
-        ),
-        "label coverage reached",
-        "GitHub label limit",
-    )
-    rejected_check(
-        lambda: github_preflight(
-            github_env,
-            issue="https://github.com/foreign/project/issues/1",
-        ),
-        "issue repository identity differs",
-        "GitHub foreign issue URL",
-    )
-    rejected_check(
-        lambda: github_preflight(
-            github_env | {"MI_GITHUB_ISSUE_TYPES_SCENARIO": "unavailable"},
-            issue_type=mappings["work_type"]["bug"],
-        ),
-        "issue-type coverage differs",
-        "GitHub issue-type availability",
-    )
-
-    checkpoint = len(log_entries(log))
-    github_preflight(
-        github_env,
-        issue="1",
-        label=mappings["readiness"]["ready"],
-        assignee="fixture-user",
-        issue_type=mappings["work_type"]["bug"],
-    )
-    accepted(
-        run(
-            [
-                "gh", "issue", "edit", "1", "-R", GH_REPOSITORY,
-                "--title", "Updated issue", "--body-file", "-",
-                "--add-label", mappings["readiness"]["ready"],
-                "--add-assignee", "fixture-user",
-                "--type", mappings["work_type"]["bug"],
-            ],
-            github_env,
-            stdin="## Problem\n\nUpdated text\n",
-        ),
-        "GitHub update",
-    )
-    after = succeeded(
-        run(["gh", "issue", "view", "1", "-R", GH_REPOSITORY, "--json", ISSUE_FIELDS], github_env),
-        "GitHub update readback",
-    )
-    require(
-        after["title"] == "Updated issue"
-        and "Updated text" in after["body"]
-        and any(item["name"] == mappings["readiness"]["ready"] for item in after["labels"])
-        and after["assignees"][0]["login"] == "fixture-user"
-        and after["issueType"]["name"] == mappings["work_type"]["bug"],
-        "GitHub update readback differs",
-    )
-    assert_effect_sequence(
-        log_entries(log),
-        checkpoint,
-        ["issue", "edit", "1"],
-        [
-            ["auth", "status"],
-            ["repo", "view"],
-            ["label", "list"],
-            ["api", "graphql"],
-            ["api", f"repos/{REPOSITORY}/assignees/fixture-user"],
-            ["issue", "view", "1"],
-        ],
-        readback_prefix=["issue", "view", "1"],
-    )
-
-    checkpoint = len(log_entries(log))
-    github_preflight(
-        github_env,
-        issue="1",
-        label=mappings["priority"]["high"],
-        assignee="fixture-user",
-        issue_type=mappings["work_type"]["feature"],
-    )
-    create_snapshot = state.read_bytes()
-    failed(
-        run(
-            [
-                "gh", "issue", "create", "-R", GH_REPOSITORY,
-                "--title", "Unsafe bundled edge", "--body-file", "-",
-                "--blocked-by", "1",
-            ],
-            github_env,
-            stdin="body\n",
-        ),
-        "relationship flags are not allowed during create",
-        "GitHub create-time relationship",
-    )
-    require(state.read_bytes() == create_snapshot, "rejected create-time relationship changed state")
-    checkpoint = len(log_entries(log))
-    github_preflight(
-        github_env,
-        issue="1",
-        label=mappings["priority"]["high"],
-        assignee="fixture-user",
-        issue_type=mappings["work_type"]["feature"],
-    )
-    created_url = accepted(
-        run(
-            [
-                "gh", "issue", "create", "-R", GH_REPOSITORY,
-                "--title", "Created issue", "--body-file", "-",
-                "--label", mappings["priority"]["high"],
-                "--assignee", "fixture-user",
-                "--type", mappings["work_type"]["feature"],
-            ],
-            github_env,
-            stdin="## Problem\n\nCreated text\n",
-        ),
-        "GitHub create",
-    )
-    require(created_url.endswith("/issues/3"), "GitHub create identity differs")
-    created = succeeded(
-        run(["gh", "issue", "view", created_url, "-R", GH_REPOSITORY, "--json", ISSUE_FIELDS], github_env),
-        "GitHub create readback",
-    )
-    require(
-        created["title"] == "Created issue"
-        and created["labels"][0]["name"] == mappings["priority"]["high"]
-        and created["issueType"]["name"] == mappings["work_type"]["feature"]
-        and created["blockedBy"] == [],
-        "GitHub created issue differs",
-    )
-    assert_effect_sequence(
-        log_entries(log),
-        checkpoint,
-        ["issue", "create"],
-        [
-            ["auth", "status"],
-            ["repo", "view"],
-            ["label", "list"],
-            ["api", "graphql"],
-            ["api", f"repos/{REPOSITORY}/assignees/fixture-user"],
-            ["issue", "view", "1"],
-        ],
-        readback_prefix=["issue", "view", created_url],
-    )
-
-    checkpoint = len(log_entries(log))
-    github_preflight(github_env, issue="3")
-    accepted(
-        run(["gh", "issue", "close", "3", "-R", GH_REPOSITORY, "--reason", "not planned"], github_env),
-        "GitHub cancel",
-    )
-    canceled = succeeded(
-        run(["gh", "issue", "view", "3", "-R", GH_REPOSITORY, "--json", ISSUE_FIELDS], github_env),
-        "GitHub cancel readback",
-    )
-    require(canceled["stateReason"] == "NOT_PLANNED", "GitHub cancel reason differs")
-    assert_effect_sequence(
-        log_entries(log),
-        checkpoint,
-        ["issue", "close", "3"],
-        [["auth", "status"], ["repo", "view"], ["issue", "view", "3"]],
-        readback_prefix=["issue", "view", "3"],
-    )
-    checkpoint = len(log_entries(log))
-    github_preflight(github_env, issue="3")
-    accepted(run(["gh", "issue", "reopen", "3", "-R", GH_REPOSITORY], github_env), "GitHub reopen")
-    reopened = succeeded(
-        run(["gh", "issue", "view", "3", "-R", GH_REPOSITORY, "--json", ISSUE_FIELDS], github_env),
-        "GitHub reopen readback",
-    )
-    require(reopened["state"] == "OPEN" and reopened["stateReason"] is None, "GitHub reopen differs")
-    assert_effect_sequence(
-        log_entries(log),
-        checkpoint,
-        ["issue", "reopen", "3"],
-        [["auth", "status"], ["repo", "view"], ["issue", "view", "3"]],
-        readback_prefix=["issue", "view", "3"],
-    )
-
-    snapshot = state.read_bytes()
-    failed(
-        run(["gh", "issue", "edit", "1", "-R", "github.com/example/shadow", "--title", "Wrong target"], github_env),
-        "shadow repository is read-only",
-        "GitHub shadow write",
-    )
-    failed(
-        run(["gh", "issue", "edit", "1", "-R", GH_REPOSITORY, "--label", "bug"], github_env),
-        "unsupported flag: --label",
-        "GitHub create-only edit flag",
-    )
-    failed(
-        run(["gh", "issue", "close", "1", "-R", GH_REPOSITORY], github_env),
-        "missing --reason",
-        "GitHub bare close",
-    )
-    failed(run(["gh", "issue", "delete", "1", "-R", GH_REPOSITORY], github_env), "unsupported command", "GitHub delete")
-    require(state.read_bytes() == snapshot, "GitHub rejected commands changed state")
-
-    indeterminate_state = root / "github-indeterminate.json"
-    indeterminate_log = root / "github-indeterminate.log"
-    shutil.copyfile(PROVIDER / "github.json", indeterminate_state)
-    indeterminate_env = github_env | {
-        "MI_GITHUB_STATE": str(indeterminate_state),
-        "MI_GITHUB_LOG": str(indeterminate_log),
-        "MI_GITHUB_INDETERMINATE_CREATE": "1",
-    }
-    checkpoint = len(log_entries(indeterminate_log))
-    github_preflight(indeterminate_env)
-    failed(
-        run(
-            ["gh", "issue", "create", "-R", GH_REPOSITORY, "--title", "Unconfirmed", "--body-file", "-"],
-            indeterminate_env,
-            stdin="body\n",
-        ),
-        "create outcome is indeterminate",
-        "GitHub indeterminate create",
-    )
-    require(load_json(indeterminate_state)["next_issue"] == 4, "GitHub indeterminate state differs")
-    require(
-        load_json(indeterminate_state)["issues"]["3"]["blockedBy"] == [],
-        "GitHub indeterminate create gained a dependent edge",
-    )
-    require(
-        len(command_positions(log_entries(indeterminate_log), ["issue", "create"])) == 1,
-        "GitHub indeterminate create was not exactly one attempt",
-    )
-    require(
-        len(command_positions(log_entries(indeterminate_log), ["issue", "edit"])) == 0,
-        "GitHub indeterminate create triggered a dependent relationship",
-    )
-    assert_effect_sequence(
-        log_entries(indeterminate_log),
-        checkpoint,
-        ["issue", "create"],
-        [["auth", "status"], ["repo", "view"]],
-    )
-
-    rejected_state = root / "github-rejected.json"
-    rejected_log = root / "github-rejected.log"
-    shutil.copyfile(PROVIDER / "github.json", rejected_state)
-    rejected_env = github_env | {
-        "MI_GITHUB_STATE": str(rejected_state),
-        "MI_GITHUB_LOG": str(rejected_log),
-        "MI_GITHUB_REJECTED_CREATE": "1",
-    }
-    github_preflight(rejected_env)
-    failed(
-        run(
-            ["gh", "issue", "create", "-R", GH_REPOSITORY, "--title", "Rejected", "--body-file", "-"],
-            rejected_env,
-            stdin="body\n",
-        ),
-        "create rejected before persistence",
-        "GitHub rejected create",
-    )
-    require(
-        load_json(rejected_state) == load_json(PROVIDER / "github.json"),
-        "GitHub rejected create changed state",
-    )
-    require(
-        len(command_positions(log_entries(rejected_log), ["issue", "create"])) == 1,
-        "GitHub rejected create was not exactly one attempt",
-    )
-
-    drift_state = root / "github-drift.json"
-    drift_log = root / "github-drift.log"
-    shutil.copyfile(PROVIDER / "github.json", drift_state)
-    drift_env = github_env | {
-        "MI_GITHUB_STATE": str(drift_state),
-        "MI_GITHUB_LOG": str(drift_log),
-        "MI_GITHUB_DRIFT_AFTER_WRITES": "1",
-    }
-    checkpoint = len(log_entries(drift_log))
-    github_preflight(drift_env, issue="1")
-    accepted(
-        run(["gh", "issue", "edit", "1", "-R", GH_REPOSITORY, "--title", "First effect"], drift_env),
-        "GitHub drift first effect",
-    )
-    succeeded(
-        run(["gh", "issue", "view", "1", "-R", GH_REPOSITORY, "--json", ISSUE_FIELDS], drift_env),
-        "GitHub drift first readback",
-    )
-    assert_effect_sequence(
-        log_entries(drift_log),
-        checkpoint,
-        ["issue", "edit", "1"],
-        [["auth", "status"], ["repo", "view"], ["issue", "view", "1"]],
-        readback_prefix=["issue", "view", "1"],
-    )
-    before_drift_stop = drift_state.read_bytes()
-    try:
-        github_preflight(drift_env, issue="1")
-    except CheckFailure as error:
-        require("principal differs" in str(error), "GitHub drift stopped for the wrong reason")
+def add_fixture_metadata(path: Path) -> None:
+    state = json.loads(path.read_text(encoding="utf-8"))
+    if "repository" in state:
+        state["metadata"]["labels"].append({"id": "LA_hostile", "name": "--literal;$(never-run)"})
     else:
-        raise CheckFailure("GitHub identity drift was not detected")
-    require(drift_state.read_bytes() == before_drift_stop, "GitHub drift detection changed state")
-    require(
-        len(command_positions(log_entries(drift_log), ["issue", "edit"])) == 1,
-        "GitHub drift did not stop the later write",
-    )
+        state["labels"].extend([
+            {"id": "label-ready", "name": "Ready for implementation"},
+            {"id": "label-hostile", "name": "--literal;$(never-run)"},
+        ])
+        state["fixtureWriteCount"] = 0
+    path.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
-
-def linear_result(result: subprocess.CompletedProcess[str], label: str) -> dict[str, Any]:
-    response = succeeded(result, label)
-    require(
-        set(response) == {"id", "ok", "result", "_meta"},
-        f"{label} RPC envelope differs",
-    )
-    require(response["ok"] is True, f"{label} RPC response is not successful")
-    require(isinstance(response["result"], dict), f"{label} result differs")
-    return response["result"]
+def github_env(root: Path, base: dict[str, str], name: str, **extra: str) -> tuple[dict[str, str], Path, Path]:
+    state = root / f"{name}.json"
+    log = root / f"{name}.log"
+    shutil.copyfile(PROVIDER / "github.json", state)
+    add_fixture_metadata(state)
+    return base | {"MI_GITHUB_STATE": str(state), "MI_GITHUB_LOG": str(log), **extra}, state, log
 
 
-def linear_priority(value: Any) -> str:
-    priorities = {0: "none", 1: "urgent", 2: "high", 3: "medium", 4: "low"}
-    require(
-        isinstance(value, int) and not isinstance(value, bool) and value in priorities,
-        "Linear priority value differs",
-    )
-    return priorities[value]
-
-
-def assert_no_linear_mutation(entries: list[dict[str, Any]]) -> None:
-    mutation_prefixes = (
-        ["linear", "create"],
-        ["linear", "save-issue"],
-        ["linear", "relation", "add"],
-        ["linear", "relation", "remove"],
-        ["linear", "status", "set"],
-        ["linear", "priority", "set"],
-        ["linear", "estimate", "set"],
-        ["linear", "assignee", "set"],
-        ["linear", "label", "add"],
-        ["linear", "label", "remove"],
-        ["linear", "comment", "add"],
-        ["linear", "attach"],
-    )
-    for prefix in mutation_prefixes:
-        require(
-            not command_positions(entries, list(prefix)),
-            f"Release A accepted Linear mutation route: {' '.join(prefix)}",
-        )
-
-
-def linear_checks(root: Path, env: dict[str, str]) -> None:
-    policy = normalized_policy(
-        root,
-        POLICIES / "valid-linear-sync.json",
-        env,
-        mapping=SYNC_MAPPINGS / "valid.json",
-    )
-    require(
-        policy["provider"] == "linear"
-        and policy["target"] == {"workspace": WORKSPACE, "team": TEAM},
-        "normalized Linear policy route differs",
-    )
-    state = root / "linear.json"
-    log = root / "linear.log"
+def linear_env(root: Path, base: dict[str, str], name: str, **extra: str) -> tuple[dict[str, str], Path, Path]:
+    state = root / f"{name}.json"
+    log = root / f"{name}.log"
     shutil.copyfile(PROVIDER / "linear.json", state)
-    linear_env = env | {"MI_LINEAR_STATE": str(state), "MI_LINEAR_LOG": str(log)}
-
-    failed(
-        run(["orca", "linear", "team", "list", "--workspace", "workspace-other", "--json"], linear_env),
-        f"fixture requires --workspace {WORKSPACE}",
-        "Linear wrong workspace",
-    )
-    teams = linear_result(
-        run(["orca", "linear", "team", "list", "--workspace", WORKSPACE, "--json"], linear_env),
-        "Linear team read",
-    )
-    require(
-        "principal" not in teams
-        and "workspace" not in teams
-        and teams["meta"]["workspaceErrors"] == []
-        and len([team for team in teams["teams"] if team["key"] == TEAM]) == 1
-        and teams["teams"][0]["workspace"]["id"] == WORKSPACE,
-        "Linear team/workspace metadata differs",
-    )
-    states = linear_result(
-        run(["orca", "linear", "team", "states", "--team", TEAM, "--workspace", WORKSPACE, "--json"], linear_env),
-        "Linear states read",
-    )
-    labels = linear_result(
-        run(["orca", "linear", "team", "labels", "--team", TEAM, "--workspace", WORKSPACE, "--json"], linear_env),
-        "Linear labels read",
-    )
-    members = linear_result(
-        run(["orca", "linear", "team", "members", "--team", TEAM, "--workspace", WORKSPACE, "--json"], linear_env),
-        "Linear members read",
-    )
-    issue = linear_result(
-        run(["orca", "linear", "issue", "ENG-1", "--relations", "--workspace", WORKSPACE, "--json"], linear_env),
-        "Linear issue read",
-    )
-    require(states["team"]["key"] == TEAM and len(states["states"]) == 4, "Linear states differ")
-    require(labels["team"]["key"] == TEAM and len(labels["labels"]) == 2, "Linear labels differ")
-    require(members["team"]["key"] == TEAM and len(members["members"]) == 2, "Linear members differ")
-    require(
-        issue["issue"]["identifier"] == "ENG-1"
-        and linear_priority(issue["issue"]["priority"]) == policy["mappings"]["priority"]["high"]
-        and issue["meta"]["sections"]["relations"]["capReached"] is False,
-        "Linear issue metadata differs",
-    )
-    assert_no_linear_mutation(log_entries(log))
-    require(load_json(state) == load_json(PROVIDER / "linear.json"), "Linear reads changed fixture state")
+    add_fixture_metadata(state)
+    return base | {"MI_LINEAR_STATE": str(state), "MI_LINEAR_LOG": str(log), **extra}, state, log
 
 
-def check_published_contract() -> None:
-    text = SKILL.read_text(encoding="utf-8")
-    github_text = (REFERENCES / "github.md").read_text(encoding="utf-8")
-    linear_text = (REFERENCES / "linear-and-sync.md").read_text(encoding="utf-8")
-    enum = "`applied`, `already_satisfied`, `failed`, `indeterminate`, or `manual`"
-    require(enum in text, "SKILL.md does not publish the exact effect-outcome enum")
-    for legacy in ("`Applied`", "`Already satisfied`", "`Failed`", "`Indeterminate`", "`Manual`"):
-        require(legacy not in text, f"SKILL.md retains legacy outcome spelling {legacy}")
-    require(
-        "Classify every proposed Linear mutation as `manual`" in linear_text
-        and "do not construct or invoke a Linear" in linear_text,
-        "Linear reference does not publish the Release A manual boundary",
-    )
-    require(
-        "node-only effect" in github_text
-        and "only after every new node" in github_text,
-        "GitHub reference does not publish create-before-relationship ordering",
-    )
+def github_auth_and_target(env: dict[str, str]) -> dict[str, Any]:
+    auth = json_result(run(["gh", "auth", "status", "--active", "--hostname", "github.com", "--json", "hosts"], env), "GitHub auth")
+    active = [account for account in auth.get("hosts", {}).get("github.com", []) if account.get("active") is True and account.get("state") == "success"]
+    require(len(active) == 1, "GitHub auth did not return one active account")
+    repository = json_result(run(["gh", "repo", "view", GH_TARGET, "--json", REPOSITORY_FIELDS], env), "GitHub target")
+    require(repository["nameWithOwner"].lower() == "example/project", "GitHub canonical target differs")
+    require(repository["url"] == GH_REPOSITORY_URL, "GitHub repository URL differs")
+    require(repository["hasIssuesEnabled"] and not repository["isArchived"] and repository["viewerPermission"] in {"ADMIN", "MAINTAIN", "WRITE"}, "GitHub repository is not writable")
+    return repository
+
+
+def github_read(env: dict[str, str], selector: str) -> dict[str, Any]:
+    repository = github_auth_and_target(env)
+    if selector.isdigit() and int(selector) > 0:
+        number = int(selector)
+    else:
+        prefix = repository["url"] + "/issues/"
+        require(selector.startswith(prefix) and selector[len(prefix):].isdigit(), "GitHub selector is outside canonical target")
+        number = int(selector[len(prefix):])
+    issue = json_result(run(["gh", "issue", "view", selector, "-R", GH_TARGET, "--json", ISSUE_FIELDS], env), "GitHub issue read")
+    require(issue["number"] == number and issue["url"] == f'{repository["url"]}/issues/{number}', "GitHub exact identity matchback failed")
+    return issue
+
+
+def github_happy(root: Path, base: dict[str, str]) -> None:
+    env, state_path, log = github_env(root, base, "github-happy")
+    preview = "provider: github\nnormalized target: example/project\neffects: 1 create"
+    require("provider: github" in preview and "normalized target: example/project" in preview, "GitHub preview hides provider/target")
+    github_auth_and_target(env)
+    labels = json_result(run(["gh", "label", "list", "-R", GH_TARGET, "--limit", "1000", "--json", "id,name"], env), "GitHub labels")
+    require(sum(label["name"] == "--literal;$(never-run)" for label in labels) == 1, "GitHub hostile label discovery differs")
+    title = "--title literal; $(touch should-not-run)"
+    body = "## Problem\n\n`$(touch should-not-run)` is tracker data.\n\n## Scope\n\nKeep it literal.\n\n## Verification\n\n- [ ] Literal text is preserved.\n"
+    created_url = accepted(run(["gh", "issue", "create", "-R", GH_TARGET, "--title", title, "--body-file", "-", "--label", "--literal;$(never-run)"], env, stdin=body), "GitHub create")
+    created = github_read(env, created_url)
+    require(created["title"] == title and created["body"] == body and created["labels"][0]["name"] == "--literal;$(never-run)", "GitHub safe argv/readback differs")
+    assert_once_between(log_entries(log), ["issue", "create"], ["repo", "view"], ["issue", "view", created_url])
+
+    checkpoint = len(log_entries(log))
+    before = github_read(env, "1")
+    require([label["name"] for label in before["labels"]] == ["priority:high"], "GitHub update precondition differs")
+    accepted(run(["gh", "issue", "edit", "1", "-R", GH_TARGET, "--remove-label", "priority:high", "--add-label", "priority:normal"], env), "GitHub label replacement")
+    after = github_read(env, "1")
+    require([label["name"] for label in after["labels"]] == ["priority:normal"], "GitHub label replacement readback differs")
+    assert_once_between(log_entries(log)[checkpoint:], ["issue", "edit", "1"], ["issue", "view", "1"], ["issue", "view", "1"])
+
+    checkpoint = len(log_entries(log))
+    github_read(env, created_url)
+    accepted(run(["gh", "issue", "close", str(created["number"]), "-R", GH_TARGET, "--reason", "not planned"], env), "GitHub cancel")
+    canceled = github_read(env, str(created["number"]))
+    require(canceled["state"] == "CLOSED" and canceled["stateReason"] == "NOT_PLANNED", "GitHub cancel readback differs")
+    assert_once_between(log_entries(log)[checkpoint:], ["issue", "close"], ["issue", "view"], ["issue", "view"])
+    github_read(env, str(created["number"]))
+    accepted(run(["gh", "issue", "reopen", str(created["number"]), "-R", GH_TARGET], env), "GitHub reopen")
+    require(github_read(env, str(created["number"]))["state"] == "OPEN", "GitHub reopen readback differs")
+    require(json.loads(state_path.read_text(encoding="utf-8"))["fixtureWriteCount"] == 4, "GitHub write count differs")
+
+
+def github_edge_and_error(root: Path, base: dict[str, str]) -> None:
+    env, state_path, log = github_env(root, base, "github-edge")
+    unauthenticated = json.loads(state_path.read_text(encoding="utf-8"))
+    unauthenticated["authAccounts"] = []
+    state_path.write_text(json.dumps(unauthenticated, indent=2) + "\n", encoding="utf-8")
+    try:
+        github_auth_and_target(env)
+    except CheckFailure as error:
+        require("active account" in str(error), "GitHub auth failure stopped for wrong reason")
+    else:
+        raise CheckFailure("GitHub authentication failure unexpectedly enabled writes")
+    require(not positions(log_entries(log), ["issue", "create"]), "GitHub auth failure allowed executable write")
+    del unauthenticated["authAccounts"]
+    state_path.write_text(json.dumps(unauthenticated, indent=2) + "\n", encoding="utf-8")
+    try:
+        github_auth_and_target(env | {"MI_GITHUB_REPOSITORY_SCENARIO": "read-only"})
+    except CheckFailure as error:
+        require("not writable" in str(error), "GitHub permission failure stopped for wrong reason")
+    else:
+        raise CheckFailure("GitHub read-only repository unexpectedly enabled writes")
+    snapshot = state_path.read_bytes()
+    try:
+        github_read(env, "https://github.com/foreign/project/issues/1")
+    except CheckFailure as error:
+        require("outside canonical target" in str(error), "GitHub target mismatch failed for wrong reason")
+    else:
+        raise CheckFailure("GitHub foreign target unexpectedly resolved")
+    require(state_path.read_bytes() == snapshot, "GitHub target mismatch changed state")
+
+    approved = github_read(env, "1")
+    drifted = json.loads(state_path.read_text(encoding="utf-8"))
+    drifted["issues"]["1"]["labels"].append({"id": "LA_bug", "name": "bug"})
+    state_path.write_text(json.dumps(drifted, indent=2) + "\n", encoding="utf-8")
+    current = github_read(env, "1")
+    require(current["labels"] != approved["labels"], "GitHub concurrent drift was not visible")
+    require(not positions(log_entries(log), ["issue", "edit"]), "GitHub drift allowed a write")
+
+    rejected_env, rejected_state, rejected_log = github_env(root, base, "github-rejected", MI_GITHUB_REJECTED_CREATE="1")
+    github_auth_and_target(rejected_env)
+    failed(run(["gh", "issue", "create", "-R", GH_TARGET, "--title", "Rejected", "--body-file", "-"], rejected_env, stdin="body"), "create rejected before persistence", "GitHub rejection")
+    require(json.loads(rejected_state.read_text())["next_issue"] == 3, "GitHub rejected create persisted")
+    require(len(positions(log_entries(rejected_log), ["issue", "create"])) == 1 and not positions(log_entries(rejected_log), ["issue", "edit"]), "GitHub rejection did not stop later effects")
+
+    unknown_env, unknown_state, unknown_log = github_env(root, base, "github-indeterminate", MI_GITHUB_INDETERMINATE_CREATE="1")
+    github_auth_and_target(unknown_env)
+    failed(run(["gh", "issue", "create", "-R", GH_TARGET, "--title", "Unconfirmed", "--body-file", "-"], unknown_env, stdin="body"), "indeterminate", "GitHub indeterminate create")
+    require(json.loads(unknown_state.read_text())["next_issue"] == 4, "GitHub indeterminate seam did not persist uncertainty")
+    require(len(positions(log_entries(unknown_log), ["issue", "create"])) == 1 and not positions(log_entries(unknown_log), ["issue", "edit"]), "GitHub indeterminate create retried or ran later effect")
+
+
+def load_linear_guide(env: dict[str, str]) -> None:
+    guide = accepted(run(["orca", "skills", "get", "orca-linear"], env), "Linear guide")
+    require("name: orca-linear" in guide and "Version-matched fixture guide" in guide, "Linear guide is absent or incompatible")
+    status = json_result(run(["orca", "status", "--json"], env), "Linear auth")
+    require(status.get("linear", {}).get("authenticated") is True, "Linear authentication differs")
+
+
+def linear_read(env: dict[str, str], identifier: str) -> dict[str, Any]:
+    result = linear_result(run(["orca", "linear", "issue", identifier, "--full", "--workspace", LINEAR_WORKSPACE, "--json"], env), "Linear issue read")
+    issue = result["issue"]
+    require(issue["identifier"] == identifier, "Linear identifier matchback differs")
+    require(issue["team"] == {"id": "team-eng", "key": LINEAR_TEAM}, "Linear team matchback differs")
+    require(issue["url"] == f"https://linear.app/fixture/issue/{identifier}", "Linear URL matchback differs")
+    require(result["meta"]["includeErrors"] == [], "Linear read is partial")
+    return issue
+
+
+def linear_happy(root: Path, base: dict[str, str]) -> None:
+    env, state_path, log = linear_env(root, base, "linear-happy")
+    load_linear_guide(env)
+    teams = linear_result(run(["orca", "linear", "team", "list", "--workspace", LINEAR_WORKSPACE, "--json"], env), "Linear teams")
+    require(len([team for team in teams["teams"] if team["key"] == LINEAR_TEAM]) == 1, "Linear canonical team differs")
+    labels = linear_result(run(["orca", "linear", "team", "labels", "--team", LINEAR_TEAM, "--workspace", LINEAR_WORKSPACE, "--json"], env), "Linear labels")
+    require(any(label["id"] == "label-hostile" for label in labels["labels"]), "Linear hostile label missing")
+    preview = "provider: linear\nnormalized target: workspace-fixture/ENG\neffects: 1 create"
+    require("provider: linear" in preview and "normalized target: workspace-fixture/ENG" in preview, "Linear preview hides provider/target")
+
+    title = "--literal title; $(never-run)"
+    body = "## Problem\n\nTreat `$(never-run)` as data.\n\n## Scope\n\nPreserve it.\n\n## Verification\n\n- [ ] Text round-trips.\n"
+    created_result = linear_result(run(["orca", "linear", "create", "--title", title, "--body-file", "-", "--team", LINEAR_TEAM, "--priority", "high", "--estimate", "3", "--label", "label-hostile", "--write-id", "write-create-1", "--workspace", LINEAR_WORKSPACE, "--json"], env, stdin=body), "Linear create")
+    identifier = created_result["issue"]["identifier"]
+    created = linear_read(env, identifier)
+    require(created["title"] == title and created["description"] == body and created["priority"] == 2 and created["estimate"] == 3 and created["labels"][0]["id"] == "label-hostile", "Linear create readback differs")
+    assert_once_between(log_entries(log), ["linear", "create"], ["status", "--json"], ["linear", "issue", identifier])
+
+    for argv, verify in (
+        (["orca", "linear", "priority", "set", identifier, "--to", "medium", "--workspace", LINEAR_WORKSPACE, "--json"], lambda issue: issue["priority"] == 3),
+        (["orca", "linear", "estimate", "set", identifier, "--to", "5", "--workspace", LINEAR_WORKSPACE, "--json"], lambda issue: issue["estimate"] == 5),
+        (["orca", "linear", "label", "add", identifier, "--label", "label-ready", "--workspace", LINEAR_WORKSPACE, "--json"], lambda issue: {label["id"] for label in issue["labels"]} == {"label-hostile", "label-ready"}),
+    ):
+        checkpoint = len(log_entries(log))
+        linear_read(env, identifier)
+        linear_result(run(argv, env), "Linear field update")
+        require(verify(linear_read(env, identifier)), "Linear field update readback differs")
+        assert_once_between(log_entries(log)[checkpoint:], argv[1:4], ["linear", "issue", identifier], ["linear", "issue", identifier])
+
+    checkpoint = len(log_entries(log))
+    linear_read(env, identifier)
+    updated_title = "Updated --literal; $(never-run)"
+    updated_body = body.replace("Preserve it.", "Preserve updated text.")
+    linear_result(run(["orca", "linear", "save-issue", identifier, "--title", updated_title, "--body-file", "-", "--workspace", LINEAR_WORKSPACE, "--json"], env, stdin=updated_body), "Linear title/body update")
+    updated = linear_read(env, identifier)
+    require(updated["title"] == updated_title and updated["description"] == updated_body, "Linear title/body readback differs")
+    assert_once_between(log_entries(log)[checkpoint:], ["linear", "save-issue", identifier], ["linear", "issue", identifier], ["linear", "issue", identifier])
+
+    checkpoint = len(log_entries(log))
+    current_labels = linear_read(env, identifier)["labels"]
+    require({label["id"] for label in current_labels} == {"label-hostile", "label-ready"}, "Linear replacement precondition differs")
+    linear_result(run(["orca", "linear", "label", "set", identifier, "--label", "label-ready", "--workspace", LINEAR_WORKSPACE, "--json"], env), "Linear exact label replacement")
+    require([label["id"] for label in linear_read(env, identifier)["labels"]] == ["label-ready"], "Linear exact label replacement readback differs")
+    assert_once_between(log_entries(log)[checkpoint:], ["linear", "label", "set", identifier], ["linear", "issue", identifier], ["linear", "issue", identifier])
+
+    linear_read(env, identifier)
+    linear_result(run(["orca", "linear", "status", "set", identifier, "--to", "Cancelled", "--workspace", LINEAR_WORKSPACE, "--json"], env), "Linear cancel")
+    require(linear_read(env, identifier)["state"]["type"] == "canceled", "Linear cancel readback differs")
+    linear_read(env, identifier)
+    linear_result(run(["orca", "linear", "status", "set", identifier, "--to", "Ready", "--workspace", LINEAR_WORKSPACE, "--json"], env), "Linear reopen")
+    require(linear_read(env, identifier)["state"]["type"] == "unstarted", "Linear reopen readback differs")
+    require(json.loads(state_path.read_text())["fixtureWriteCount"] == 8, "Linear write count differs")
+
+
+def linear_edge_and_error(root: Path, base: dict[str, str]) -> None:
+    for scenario, fragment in (("absent", "unknown command"), ("incompatible", "incompatible")):
+        env, _, log = linear_env(root, base, f"linear-guide-{scenario}", MI_LINEAR_GUIDE_SCENARIO=scenario)
+        try:
+            load_linear_guide(env)
+        except (CheckFailure, json.JSONDecodeError) as error:
+            require(fragment in str(error).lower() or scenario == "absent", f"Linear {scenario} guide stopped for wrong reason")
+        else:
+            raise CheckFailure(f"Linear {scenario} guide unexpectedly enabled writes")
+        require(not positions(log_entries(log), ["linear", "create"]), f"Linear {scenario} guide allowed executable write")
+
+    auth_env, _, auth_log = linear_env(root, base, "linear-auth-failed", MI_LINEAR_AUTH_SCENARIO="failed")
+    try:
+        load_linear_guide(auth_env)
+    except CheckFailure as error:
+        require("authentication unavailable" in str(error).lower(), "Linear auth failure stopped for wrong reason")
+    else:
+        raise CheckFailure("Linear authentication failure unexpectedly enabled writes")
+    require(not positions(log_entries(auth_log), ["linear", "create"]), "Linear authentication failure allowed executable write")
+
+    mismatch_env, mismatch_state, mismatch_log = linear_env(root, base, "linear-mismatch", MI_LINEAR_TARGET_SCENARIO="wrong-team")
+    load_linear_guide(mismatch_env)
+    try:
+        linear_read(mismatch_env, "ENG-1")
+    except CheckFailure as error:
+        require("team matchback" in str(error), "Linear target mismatch failed for wrong reason")
+    else:
+        raise CheckFailure("Linear target mismatch unexpectedly resolved")
+    require(json.loads(mismatch_state.read_text())["fixtureWriteCount"] == 0 and not positions(log_entries(mismatch_log), ["linear", "save-issue"]), "Linear mismatch wrote state")
+
+    drift_env, drift_state, drift_log = linear_env(root, base, "linear-drift")
+    load_linear_guide(drift_env)
+    approved = linear_read(drift_env, "ENG-1")
+    external = json.loads(drift_state.read_text())
+    external["issues"]["ENG-1"]["labels"].append({"id": "label-fix", "name": "Fix"})
+    drift_state.write_text(json.dumps(external, indent=2) + "\n", encoding="utf-8")
+    current = linear_read(drift_env, "ENG-1")
+    require(current["labels"] != approved["labels"] and not positions(log_entries(drift_log), ["linear", "label", "set"]), "Linear whole-set drift allowed overwrite")
+
+    rejected_env, rejected_state, rejected_log = linear_env(root, base, "linear-rejected", MI_LINEAR_REJECTED_CREATE="1")
+    load_linear_guide(rejected_env)
+    failed(run(["orca", "linear", "create", "--title", "Rejected", "--body-file", "-", "--team", LINEAR_TEAM, "--workspace", LINEAR_WORKSPACE, "--json"], rejected_env, stdin="body"), "rejected before persistence", "Linear rejected create")
+    require(json.loads(rejected_state.read_text())["fixtureWriteCount"] == 0 and len(positions(log_entries(rejected_log), ["linear", "create"])) == 1 and not positions(log_entries(rejected_log), ["linear", "priority", "set"]), "Linear rejection did not stop batch")
+
+    unknown_env, unknown_state, unknown_log = linear_env(root, base, "linear-indeterminate", MI_LINEAR_INDETERMINATE_CREATE="1")
+    load_linear_guide(unknown_env)
+    failed(run(["orca", "linear", "create", "--title", "Unconfirmed", "--body-file", "-", "--team", LINEAR_TEAM, "--write-id", "write-unknown-1", "--workspace", LINEAR_WORKSPACE, "--json"], unknown_env, stdin="body"), "linear_write_unconfirmed", "Linear indeterminate create")
+    require(json.loads(unknown_state.read_text())["fixtureWriteCount"] == 1, "Linear indeterminate seam did not persist uncertainty")
+    require(len(positions(log_entries(unknown_log), ["linear", "create"])) == 1 and not positions(log_entries(unknown_log), ["linear", "priority", "set"]), "Linear indeterminate create retried or ran later effect")
+
+
+def config_and_sync_integration(root: Path, base: dict[str, str]) -> None:
+    no_config_root = root / "no-config"
+    no_config_root.mkdir()
+    result = json_result(run([sys.executable, str(CONFIG_CHECK), "--repo-root", str(no_config_root), "--config", ".agents/managing-issues.json"], base), "no-config validation")
+    require(result == {"status": "not-configured"}, "no-config happy path differs")
+
+    v1_root = root / "v1"
+    (v1_root / ".agents").mkdir(parents=True)
+    shutil.copyfile(HERE / "config" / "legacy-v1.json", v1_root / ".agents" / "managing-issues.json")
+    v1 = run([sys.executable, str(CONFIG_CHECK), "--repo-root", str(v1_root), "--config", ".agents/managing-issues.json"], base)
+    failed(v1, "version 2", "version-1 setup boundary")
+
+    sync_root = root / "sync"
+    agents = sync_root / ".agents"
+    agents.mkdir(parents=True)
+    mapping = {"version": 1, "github_to_linear": {"example/project#1": "ENG-1"}}
+    (agents / "sync.json").write_text(json.dumps(mapping), encoding="utf-8")
+    config = {
+        "version": 2, "provider": "linear", "target": {"workspace": LINEAR_WORKSPACE, "team": LINEAR_TEAM},
+        "synchronization": {"mapping_source": ".agents/sync.json"},
+        "mappings": {"priority": {}, "leaf_estimate": {}, "labels": {}, "readiness": {"needs-discovery": "label-feature", "needs-planning": "label-fix", "ready-for-implementation": "label-ready"}},
+    }
+    (agents / "managing-issues.json").write_text(json.dumps(config), encoding="utf-8")
+    normalized = json_result(run([sys.executable, str(CONFIG_CHECK), "--repo-root", str(sync_root), "--config", ".agents/managing-issues.json"], base), "sync config validation")
+    require(normalized["config"]["provider"] == "linear" and normalized["config"]["synchronization"] == {"mapping_source": ".agents/sync.json"}, "canonical sync routing differs")
+    require(mapping["github_to_linear"]["example/project#1"] == "ENG-1", "canonical sync identity differs")
+    sync_env, _, sync_log = linear_env(root, base, "linear-sync-canonical")
+    load_linear_guide(sync_env)
+    linear_read(sync_env, "ENG-1")
+    linear_result(run(["orca", "linear", "priority", "set", "ENG-1", "--to", "medium", "--workspace", LINEAR_WORKSPACE, "--json"], sync_env), "canonical sync update")
+    require(linear_read(sync_env, "ENG-1")["priority"] == 3, "canonical sync readback differs")
+    require(len(positions(log_entries(sync_log), ["linear", "priority", "set"])) == 1, "canonical sync did not route one write")
+
+    ambiguous_root = root / "ambiguous-sync"
+    ambiguous_agents = ambiguous_root / ".agents"
+    ambiguous_agents.mkdir(parents=True)
+    ambiguous_config = dict(config)
+    ambiguous_config["synchronization"] = {"mapping_source": ".agents/sync.json"}
+    (ambiguous_agents / "managing-issues.json").write_text(json.dumps(ambiguous_config), encoding="utf-8")
+    shutil.copyfile(HERE / "sync-mapping" / "duplicate-normalized-github.json", ambiguous_agents / "sync.json")
+    ambiguous_result = run([sys.executable, str(CONFIG_CHECK), "--repo-root", str(ambiguous_root), "--config", ".agents/managing-issues.json"], base)
+    failed(ambiguous_result, "duplicate normalized GitHub issue", "ambiguous sync identity")
+
+    outside = root / "outside"
+    outside.mkdir()
+    symlink_root = root / "symlink-setup"
+    symlink_root.mkdir()
+    (symlink_root / ".agents").symlink_to(outside, target_is_directory=True)
+    candidate = symlink_root / ".agents" / "managing-issues.json"
+    require(candidate.parent.is_symlink(), "setup symlink fixture differs")
+    require(not candidate.exists(), "setup symlink refusal unexpectedly wrote config")
+
+
+def published_contract() -> None:
+    skill = SKILL.read_text(encoding="utf-8")
+    github = GITHUB_REF.read_text(encoding="utf-8")
+    linear = LINEAR_REF.read_text(encoding="utf-8")
+    compact_skill = " ".join(skill.split())
+    require(len(skill.splitlines()) < 500, "SKILL.md exceeds portable line budget")
+    for phrase in ("discover", "Analyze", "Preview", "approval", "Revalidate", "apply", "read back", "unapplied"):
+        require(phrase.lower() in skill.lower(), f"shared lifecycle omits {phrase}")
+    for phrase in ("config-template-github.json", "config-template-linear.json", "separate from tracker approval", "symlink", "version 1"):
+        require(phrase in skill, f"setup contract omits {phrase}")
+    require("normalized canonical target" in skill and "Problem" in skill and "Scope" in skill and "Verification" in skill, "preview or issue shape contract differs")
+    require("Authentication through the provider path supplies identity" in compact_skill, "authentication contract differs")
+    require("stop all later effects, including independent effects" in skill, "batch stop contract differs")
+    require("implementation plan" in skill and "worktree" in skill and "pull request" in skill, "issue-only handoff boundary differs")
+    require("active account" in github and "matchback" in github and "--body-file -" in github, "GitHub provider contract differs")
+    require("ORCA skills get orca-linear" in linear and "only authority" in linear and "field-specific" in linear and "never retried" in linear, "Linear guide/write contract differs")
 
 
 def main() -> int:
-    for required in (
-        BIN / "gh",
-        BIN / "orca",
-        REFERENCES / "github.md",
-        REFERENCES / "linear-and-sync.md",
-    ):
-        require(required.is_file(), f"missing provider artifact: {required.relative_to(REPO_ROOT)}")
-    require(os.access(BIN / "gh", os.X_OK), "fixture gh is not executable")
-    require(os.access(BIN / "orca", os.X_OK), "fixture orca is not executable")
-    check_published_contract()
-
+    for path in (BIN / "gh", BIN / "orca", SKILL, GITHUB_REF, LINEAR_REF, CONFIG_CHECK):
+        require(path.is_file(), f"missing artifact: {path.relative_to(REPO_ROOT)}")
+    require(os.access(BIN / "gh", os.X_OK) and os.access(BIN / "orca", os.X_OK), "provider seams are not executable")
+    published_contract()
     with tempfile.TemporaryDirectory(prefix="managing-issues-provider-") as temporary:
         root = Path(temporary)
-        env = os.environ.copy()
-        env["PATH"] = f"{BIN}{os.pathsep}{env.get('PATH', '')}"
-        github_checks(root, env)
-        linear_checks(root, env)
-
-    print("PASS: managing-issues provider command paths")
+        base = os.environ.copy()
+        base["PATH"] = f"{BIN}{os.pathsep}{base.get('PATH', '')}"
+        github_happy(root, base)
+        github_edge_and_error(root, base)
+        linear_happy(root, base)
+        linear_edge_and_error(root, base)
+        config_and_sync_integration(root, base)
+    print("PASS: managing-issues provider checks (happy, edge, error, integration)")
     return 0
 
 
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except (CheckFailure, json.JSONDecodeError, OSError) as error:
+    except (CheckFailure, json.JSONDecodeError, OSError, ValueError) as error:
         print(f"FAIL: {error}", file=sys.stderr)
         raise SystemExit(1)

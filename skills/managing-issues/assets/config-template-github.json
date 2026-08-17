@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "provider": "github",
+  "target": "REPLACE_WITH_OWNER/REPLACE_WITH_REPOSITORY",
+  "mappings": {
+    "priority": {},
+    "leaf_estimate": {},
+    "labels": {},
+    "readiness": {
+      "needs-discovery": "REPLACE_WITH_PROVIDER_LABEL_FOR_NEEDS_DISCOVERY",
+      "needs-planning": "REPLACE_WITH_PROVIDER_LABEL_FOR_NEEDS_PLANNING",
+      "ready-for-implementation": "REPLACE_WITH_PROVIDER_LABEL_FOR_READY_FOR_IMPLEMENTATION"
+    }
+  }
+}

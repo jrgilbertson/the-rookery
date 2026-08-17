@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate and normalize the managing-issues repository policy."""
+"""Validate and normalize managing-issues repository configuration."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 
 
-MAX_POLICY_BYTES = 64 * 1024
+MAX_CONFIG_BYTES = 64 * 1024
 MAX_SYNC_MAPPING_BYTES = 64 * 1024
 MAX_MAPPING_ENTRIES = 64
 MAX_SYNC_MAPPING_ENTRIES = 250
@@ -20,10 +20,16 @@ MAX_TEXT_LENGTH = 256
 MAX_INTEGER = 2_147_483_647
 TOP_LEVEL_FIELDS = {"version", "provider", "target", "synchronization", "mappings"}
 REQUIRED_TOP_LEVEL_FIELDS = {"version", "provider", "target", "mappings"}
-MAPPING_FIELDS = ("work_type", "readiness", "priority", "leaf_estimate")
+MAPPING_FIELDS = ("priority", "leaf_estimate", "labels", "readiness")
+READINESS_FIELDS = {
+    "needs-discovery",
+    "needs-planning",
+    "ready-for-implementation",
+}
 LINEAR_TARGET_FIELDS = {"workspace", "team"}
 SYNC_MAPPING_FIELDS = {"version", "github_to_linear"}
 LINEAR_PRIORITIES = {"none", "low", "medium", "high", "urgent"}
+RESERVED_MAPPING_KEYS = {"default", "defaults", "fallback", "preferred"}
 MAPPING_KEY = re.compile(r"^[a-z0-9][a-z0-9_-]{0,63}$")
 GITHUB_OWNER_REPO = (
     r"^(?P<owner>[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?)/"
@@ -36,26 +42,26 @@ GITHUB_ISSUE = re.compile(GITHUB_OWNER_REPO + r"#(?P<number>[1-9][0-9]{0,9})$")
 LINEAR_ISSUE = re.compile(r"^[A-Z][A-Z0-9]{0,15}-[1-9][0-9]{0,9}$")
 
 
-class PolicyError(Exception):
-    """The policy cannot safely select managing-issues behavior."""
+class ConfigError(Exception):
+    """The repository configuration is invalid or unsafe to read."""
 
 
 def require(condition: bool, message: str) -> None:
     if not condition:
-        raise PolicyError(message)
+        raise ConfigError(message)
 
 
 def reject_duplicate_keys(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     result: dict[str, Any] = {}
     for key, value in pairs:
         if key in result:
-            raise PolicyError(f"duplicate key {key!r}")
+            raise ConfigError(f"duplicate key {key!r}")
         result[key] = value
     return result
 
 
 def reject_non_finite(value: str) -> None:
-    raise PolicyError(f"non-finite JSON value {value} is not allowed")
+    raise ConfigError(f"non-finite JSON value {value} is not allowed")
 
 
 def parse_json_object(raw: bytes, label: str) -> dict[str, Any]:
@@ -80,7 +86,7 @@ def require_repo_root(path: Path) -> Path:
     try:
         metadata = root.lstat()
     except OSError as error:
-        raise PolicyError("repo root must be an existing directory") from error
+        raise ConfigError("repo root must be an existing directory") from error
     require(not stat.S_ISLNK(metadata.st_mode), "repo root must not be a symlink")
     require(stat.S_ISDIR(metadata.st_mode), "repo root must be an existing directory")
     return root
@@ -101,9 +107,9 @@ def inspect_repo_file(
         except FileNotFoundError as error:
             if missing_ok:
                 return None
-            raise PolicyError(f"{label} is missing") from error
+            raise ConfigError(f"{label} is missing") from error
         except OSError as error:
-            raise PolicyError(f"{label} cannot be inspected") from error
+            raise ConfigError(f"{label} cannot be inspected") from error
 
         require(not stat.S_ISLNK(metadata.st_mode), f"{label} contains a symlink component")
         if index < len(parts) - 1:
@@ -113,50 +119,28 @@ def inspect_repo_file(
     return current
 
 
-def inspect_external_file(path: Path, label: str, *, missing_ok: bool) -> Path | None:
-    candidate = path.absolute()
-    try:
-        metadata = candidate.lstat()
-    except FileNotFoundError as error:
-        if missing_ok:
-            return None
-        raise PolicyError(f"{label} is missing") from error
-    except OSError as error:
-        raise PolicyError(f"{label} cannot be inspected") from error
-    require(not stat.S_ISLNK(metadata.st_mode), f"{label} must not be a symlink")
-    require(stat.S_ISREG(metadata.st_mode), f"{label} must be a regular file")
-    return candidate
-
-
-def require_active_policy_path(path: str, repo_root: Path) -> Path:
+def require_active_config_path(path: str, repo_root: Path) -> Path:
     expected = repo_root / ".agents" / "managing-issues.json"
     relative = ".agents/managing-issues.json"
     require(
         path in (str(expected), relative, str(Path(relative))),
-        "policy must be the lexical repository path .agents/managing-issues.json, "
+        "config must be the lexical repository path .agents/managing-issues.json, "
         "either absolute (repo-root-joined) or repository-relative",
     )
     return expected
 
 
-def load_active_policy(path: str, repo_root: Path) -> dict[str, Any] | None:
-    require_active_policy_path(path, repo_root)
+def load_active_config(path: str, repo_root: Path) -> dict[str, Any] | None:
+    require_active_config_path(path, repo_root)
     checked = inspect_repo_file(
         repo_root,
         (".agents", "managing-issues.json"),
-        "active policy path",
+        "active config path",
         missing_ok=True,
     )
     if checked is None:
         return None
-    return parse_json_object(bounded_read(checked, MAX_POLICY_BYTES, "policy"), "policy")
-
-
-def load_trusted_policy(path: Path) -> dict[str, Any] | None:
-    checked = inspect_external_file(path, "trusted policy", missing_ok=True)
-    if checked is None:
-        return None
-    return parse_json_object(bounded_read(checked, MAX_POLICY_BYTES, "trusted policy"), "policy")
+    return parse_json_object(bounded_read(checked, MAX_CONFIG_BYTES, "config"), "config")
 
 
 def require_exact_fields(
@@ -169,9 +153,9 @@ def require_exact_fields(
     missing = sorted(required - keys)
     unexpected = sorted(keys - allowed)
     if missing:
-        raise PolicyError(f"{label} missing key: {missing[0]}")
+        raise ConfigError(f"{label} missing key: {missing[0]}")
     if unexpected:
-        raise PolicyError(f"{label} has unexpected key: {unexpected[0]}")
+        raise ConfigError(f"{label} has unexpected key: {unexpected[0]}")
 
 
 def require_concrete_text(value: Any, label: str) -> str:
@@ -212,21 +196,23 @@ def normalize_mapping(
 ) -> dict[str, str | int]:
     label = f"mappings.{field}"
     require(isinstance(value, dict), f"{label} must be an object")
-    require(bool(value), f"{label} must not be empty")
     require(len(value) <= MAX_MAPPING_ENTRIES, f"{label} exceeds {MAX_MAPPING_ENTRIES} entries")
     result: dict[str, str | int] = {}
     for key, provider_value in value.items():
         require(MAPPING_KEY.fullmatch(key) is not None, f"{label}.{key} has an invalid mapping key")
+        require(
+            key not in RESERVED_MAPPING_KEYS,
+            f"{label}.{key} cannot define a default, preferred, or fallback value",
+        )
         entry_label = f"{label}.{key}"
         if provider == "github":
             github_value = require_concrete_text(provider_value, entry_label)
-            if field != "work_type":
-                require(
-                    "," not in github_value and '"' not in github_value,
-                    f"{entry_label} cannot contain GitHub label CSV syntax",
-                )
+            require(
+                "," not in github_value and '"' not in github_value,
+                f"{entry_label} cannot contain GitHub label CSV syntax",
+            )
             result[key] = github_value
-        elif field in ("work_type", "readiness"):
+        elif field in ("labels", "readiness"):
             result[key] = require_concrete_text(provider_value, entry_label)
         elif field == "priority":
             require(
@@ -245,30 +231,24 @@ def normalize_mapping(
     return dict(sorted(result.items()))
 
 
-SHARED_GITHUB_LABEL_FIELDS = ("readiness", "priority", "leaf_estimate")
+def require_unique_values(mapping: dict[str, str | int], label: str) -> None:
+    seen: set[str | int] = set()
+    for value in mapping.values():
+        require(value not in seen, f"{label}: provider value {value} is mapped more than once")
+        seen.add(value)
 
 
-def require_unique_github_labels(mappings: dict[str, Any]) -> None:
-    seen: dict[str, str] = {}
-    for field in SHARED_GITHUB_LABEL_FIELDS:
-        for github_value in mappings[field].values():
+def require_unique_label_representations(provider: str, mappings: dict[str, Any]) -> None:
+    label_fields = MAPPING_FIELDS if provider == "github" else ("labels", "readiness")
+    provider_name = "GitHub" if provider == "github" else "Linear"
+    seen: set[str] = set()
+    for field in label_fields:
+        for value in mappings[field].values():
             require(
-                github_value not in seen,
-                f"mappings: GitHub label {github_value} is mapped by more than one of "
-                f"{', '.join(SHARED_GITHUB_LABEL_FIELDS)}",
+                value not in seen,
+                f"{provider_name} label {value} is mapped more than once",
             )
-            seen[github_value] = field
-
-
-def require_unique_linear_mappings(mappings: dict[str, Any]) -> None:
-    for field in MAPPING_FIELDS:
-        seen: set[str | int] = set()
-        for linear_value in mappings[field].values():
-            require(
-                linear_value not in seen,
-                f"mappings.{field}: Linear value {linear_value} is mapped by more than one key",
-            )
-            seen.add(linear_value)
+            seen.add(value)
 
 
 def normalize_mapping_source(value: Any) -> tuple[str, tuple[str, ...]]:
@@ -288,44 +268,46 @@ def normalize_mapping_source(value: Any) -> tuple[str, tuple[str, ...]]:
         "synchronization.mapping_source contains an invalid path segment",
     )
     normalized = PurePosixPath(*parts).as_posix()
-    require(
-        normalized == source,
-        "synchronization.mapping_source must use normalized POSIX syntax",
-    )
+    require(normalized == source, "synchronization.mapping_source must use normalized POSIX syntax")
     return normalized, parts
 
 
-def normalize_policy(value: dict[str, Any]) -> dict[str, Any]:
-    require_exact_fields(value, REQUIRED_TOP_LEVEL_FIELDS, TOP_LEVEL_FIELDS, "policy")
+def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
+    require_exact_fields(value, REQUIRED_TOP_LEVEL_FIELDS, TOP_LEVEL_FIELDS, "config")
     version = value["version"]
-    require(isinstance(version, int) and not isinstance(version, bool) and version == 1, "version must be 1")
+    if isinstance(version, int) and not isinstance(version, bool) and version == 1:
+        raise ConfigError(
+            "config version 1 is unsupported; run Managing Issues setup to create version 2"
+        )
+    require(
+        isinstance(version, int) and not isinstance(version, bool) and version == 2,
+        "version must be 2",
+    )
     provider = value["provider"]
     require(
         isinstance(provider, str) and provider in {"github", "linear"},
         "provider must be github or linear",
     )
-    require(
-        provider == "linear" or "synchronization" not in value,
-        "synchronization requires provider linear",
-    )
 
     mappings = value["mappings"]
     require(isinstance(mappings, dict), "mappings must be an object")
     require_exact_fields(mappings, set(MAPPING_FIELDS), set(MAPPING_FIELDS), "mappings")
+    readiness = mappings["readiness"]
+    require(isinstance(readiness, dict), "mappings.readiness must be an object")
+    require_exact_fields(readiness, READINESS_FIELDS, READINESS_FIELDS, "mappings.readiness")
+    normalized_mappings = {
+        field: normalize_mapping(provider, field, mappings[field]) for field in MAPPING_FIELDS
+    }
+    for field in MAPPING_FIELDS:
+        require_unique_values(normalized_mappings[field], f"mappings.{field}")
+    require_unique_label_representations(provider, normalized_mappings)
+
     normalized: dict[str, Any] = {
         "version": version,
         "provider": provider,
         "target": normalize_target(provider, value["target"]),
-        "mappings": {
-            field: normalize_mapping(provider, field, mappings[field]) for field in MAPPING_FIELDS
-        },
+        "mappings": normalized_mappings,
     }
-
-    if provider == "github":
-        require_unique_github_labels(normalized["mappings"])
-    else:
-        require_unique_linear_mappings(normalized["mappings"])
-
     if "synchronization" in value:
         synchronization = value["synchronization"]
         require(isinstance(synchronization, dict), "synchronization must be an object")
@@ -359,10 +341,7 @@ def normalize_sync_mapping(value: dict[str, Any]) -> dict[str, Any]:
     for github_issue, linear_issue in links.items():
         github_text = require_concrete_text(github_issue, "mapping GitHub issue")
         github_match = GITHUB_ISSUE.fullmatch(github_text)
-        require(
-            github_match is not None,
-            "mapping GitHub issue must be OWNER/REPOSITORY#NUMBER",
-        )
+        require(github_match is not None, "mapping GitHub issue must be OWNER/REPOSITORY#NUMBER")
         normalized_github = (
             f"{github_match.group('owner').lower()}/"
             f"{github_match.group('repo').lower()}#{github_match.group('number')}"
@@ -373,10 +352,7 @@ def normalize_sync_mapping(value: dict[str, Any]) -> dict[str, Any]:
         )
 
         linear_text = require_concrete_text(linear_issue, f"mapping.{github_text}")
-        require(
-            LINEAR_ISSUE.fullmatch(linear_text) is not None,
-            "mapping Linear issue must be TEAM-NUMBER",
-        )
+        require(LINEAR_ISSUE.fullmatch(linear_text) is not None, "mapping Linear issue must be TEAM-NUMBER")
         require(linear_text not in linear_targets, "mapping contains a duplicate Linear target")
         normalized_links[normalized_github] = linear_text
         linear_targets.add(linear_text)
@@ -384,8 +360,8 @@ def normalize_sync_mapping(value: dict[str, Any]) -> dict[str, Any]:
     return {"version": version, "github_to_linear": dict(sorted(normalized_links.items()))}
 
 
-def load_current_mapping(repo_root: Path, policy: dict[str, Any]) -> dict[str, Any] | None:
-    synchronization = policy.get("synchronization")
+def load_current_mapping(repo_root: Path, config: dict[str, Any]) -> dict[str, Any] | None:
+    synchronization = config.get("synchronization")
     if synchronization is None:
         return None
     _, parts = normalize_mapping_source(synchronization["mapping_source"])
@@ -400,20 +376,6 @@ def load_current_mapping(repo_root: Path, policy: dict[str, Any]) -> dict[str, A
     return normalize_sync_mapping(parse_json_object(raw, "mapping"))
 
 
-def load_trusted_mapping(path: Path) -> dict[str, Any]:
-    checked = inspect_external_file(path, "trusted mapping", missing_ok=False)
-    require(checked is not None, "trusted mapping is missing")
-    raw = bounded_read(checked, MAX_SYNC_MAPPING_BYTES, "trusted mapping")
-    return normalize_sync_mapping(parse_json_object(raw, "mapping"))
-
-
-def compare_sensitive(current: dict[str, Any], trusted: dict[str, Any]) -> None:
-    if (current["provider"], current["target"]) != (trusted["provider"], trusted["target"]):
-        raise PolicyError("canonical provider or target differs from trusted policy")
-    if current.get("synchronization") != trusted.get("synchronization"):
-        raise PolicyError("synchronization settings differ from trusted policy")
-
-
 def canonical_json(value: Any) -> str:
     return json.dumps(value, ensure_ascii=True, allow_nan=False, sort_keys=True, separators=(",", ":"))
 
@@ -425,51 +387,18 @@ def escape_diagnostic(error: BaseException) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo-root", type=Path, required=True)
-    parser.add_argument("--policy", required=True)
-    parser.add_argument("--trusted-policy", type=Path)
-    parser.add_argument("--trusted-mapping", type=Path)
+    parser.add_argument("--config", required=True)
     args = parser.parse_args()
 
-    require(
-        args.trusted_policy is not None or args.trusted_mapping is None,
-        "--trusted-mapping requires --trusted-policy",
-    )
     repo_root = require_repo_root(args.repo_root)
-    current_raw = load_active_policy(args.policy, repo_root)
-    trusted_raw = load_trusted_policy(args.trusted_policy) if args.trusted_policy is not None else None
-
-    if args.trusted_policy is not None and (current_raw is None) != (trusted_raw is None):
-        raise PolicyError("current policy presence differs from trusted policy")
-    if current_raw is None:
-        require(
-            args.trusted_mapping is None,
-            "--trusted-mapping requires trusted synchronization settings",
-        )
-        print(canonical_json({"status": "missing"}))
+    raw = load_active_config(args.config, repo_root)
+    if raw is None:
+        print(canonical_json({"status": "not-configured"}))
         return 0
 
-    current = normalize_policy(current_raw)
-    current_mapping = load_current_mapping(repo_root, current)
-    if args.trusted_policy is not None:
-        require(trusted_raw is not None, "trusted policy is missing")
-        trusted = normalize_policy(trusted_raw)
-        compare_sensitive(current, trusted)
-        if "synchronization" in trusted:
-            require(
-                args.trusted_mapping is not None,
-                "trusted Linear synchronization requires --trusted-mapping",
-            )
-            trusted_mapping = load_trusted_mapping(args.trusted_mapping)
-            require(
-                current_mapping == trusted_mapping,
-                "synchronization mapping differs from trusted mapping",
-            )
-        else:
-            require(
-                args.trusted_mapping is None,
-                "--trusted-mapping requires trusted synchronization settings",
-            )
-    print(canonical_json({"policy": current, "status": "valid"}))
+    config = normalize_config(raw)
+    load_current_mapping(repo_root, config)
+    print(canonical_json({"config": config, "status": "valid"}))
     return 0
 
 
@@ -480,7 +409,7 @@ if __name__ == "__main__":
         OSError,
         UnicodeError,
         ValueError,
-        PolicyError,
+        ConfigError,
         RecursionError,
     ) as error:
         print(f"FAIL: {escape_diagnostic(error)}", file=sys.stderr)

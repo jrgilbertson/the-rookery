@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Strict read-only orca linear fixture for managing-issues contract tests."""
+"""Strict stateful Orca Linear seam for managing-issues provider checks."""
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import os
@@ -17,19 +18,8 @@ LOG_PATH = Path(os.environ["MI_LINEAR_LOG"])
 STDIN = sys.stdin.read() if "--body-file" in ARGV else ""
 
 
-def emit(value: Any) -> None:
-    print(
-        json.dumps(
-            {
-                "id": "fixture-linear-response",
-                "ok": True,
-                "result": value,
-                "_meta": {},
-            },
-            separators=(",", ":"),
-            sort_keys=True,
-        )
-    )
+def emit_result(value: Any) -> None:
+    print(json.dumps({"id": "fixture-linear-response", "ok": True, "result": value, "_meta": {}}, separators=(",", ":"), sort_keys=True))
 
 
 def fail(message: str) -> NoReturn:
@@ -41,14 +31,14 @@ def load() -> dict[str, Any]:
     return json.loads(STATE_PATH.read_text(encoding="utf-8"))
 
 
-def parse_options(
-    tokens: list[str],
-    *,
-    value_flags: set[str],
-    boolean_flags: set[str] | None = None,
-    repeatable_flags: set[str] | None = None,
-) -> tuple[list[str], dict[str, list[str]], set[str]]:
-    booleans_allowed = boolean_flags or set()
+def save(state: dict[str, Any]) -> None:
+    temporary = STATE_PATH.with_name(f"{STATE_PATH.name}.tmp")
+    temporary.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    temporary.replace(STATE_PATH)
+
+
+def parse_options(tokens: list[str], *, value_flags: set[str], boolean_flags: set[str] | None = None, repeatable_flags: set[str] | None = None) -> tuple[list[str], dict[str, list[str]], set[str]]:
+    allowed_booleans = boolean_flags or set()
     repeatable = repeatable_flags or set()
     positionals: list[str] = []
     values: dict[str, list[str]] = {}
@@ -56,39 +46,34 @@ def parse_options(
     index = 0
     while index < len(tokens):
         token = tokens[index]
-        if token in booleans_allowed:
+        if token in allowed_booleans:
             if token in booleans:
                 fail(f"duplicate flag: {token}")
             booleans.add(token)
             index += 1
-            continue
-        if token in value_flags:
+        elif token in value_flags:
             if index + 1 >= len(tokens):
                 fail(f"missing value for {token}")
             if token not in repeatable and token in values:
                 fail(f"duplicate flag: {token}")
             values.setdefault(token, []).append(tokens[index + 1])
             index += 2
-            continue
-        if token.startswith("-"):
+        elif token.startswith("-"):
             fail(f"unsupported flag: {token}")
-        positionals.append(token)
-        index += 1
+        else:
+            positionals.append(token)
+            index += 1
     return positionals, values, booleans
 
 
-def one(
-    values: dict[str, list[str]], name: str, *, required: bool = False
-) -> str | None:
+def one(values: dict[str, list[str]], name: str, *, required: bool = False) -> str | None:
     candidates = values.get(name, [])
     if required and not candidates:
         fail(f"missing {name}")
     return candidates[0] if candidates else None
 
 
-def require_contract(
-    state: dict[str, Any], values: dict[str, list[str]], booleans: set[str]
-) -> None:
+def require_contract(state: dict[str, Any], values: dict[str, list[str]], booleans: set[str]) -> None:
     workspace = one(values, "--workspace", required=True)
     expected = state["workspace"]["id"]
     if workspace != expected:
@@ -98,206 +83,226 @@ def require_contract(
 
 
 def team_value(state: dict[str, Any], selector: str) -> dict[str, Any]:
-    selected = next(
-        (
-            candidate
-            for candidate in state["teams"]
-            if selector in {candidate["id"], candidate["key"]}
-        ),
-        None,
-    )
-    if selected is None:
-        fail("team not found")
-    return selected
+    matches = [team for team in state["teams"] if selector in {team["id"], team["key"]}]
+    if len(matches) != 1:
+        fail("team not found or ambiguous")
+    return matches[0]
 
 
 def require_issue(state: dict[str, Any], identifier: str) -> dict[str, Any]:
     issue = state["issues"].get(identifier)
     if issue is None:
         fail("issue not found")
-    if issue["team"]["id"] not in {team["id"] for team in state["teams"]}:
-        fail("issue is outside the selected workspace")
     return issue
+
+
+def label_value(state: dict[str, Any], selector: str) -> dict[str, Any]:
+    matches = [label for label in state["labels"] if selector in {label["id"], label["name"]}]
+    if len(matches) != 1:
+        fail("label not found or ambiguous")
+    return copy.deepcopy(matches[0])
+
+
+def state_value(state: dict[str, Any], selector: str) -> dict[str, Any]:
+    matches = [item for item in state["states"] if selector in {item["id"], item["name"]}]
+    if len(matches) != 1:
+        fail("state not found or ambiguous")
+    return copy.deepcopy(matches[0])
+
+
+def priority_value(value: str) -> int:
+    mapping = {"none": 0, "urgent": 1, "high": 2, "medium": 3, "low": 4}
+    if value not in mapping:
+        fail("invalid priority")
+    return mapping[value]
+
+
+def record_write(state: dict[str, Any]) -> None:
+    state["fixtureWriteCount"] = state.get("fixtureWriteCount", 0) + 1
+
+
+def persist(state: dict[str, Any]) -> None:
+    record_write(state)
+    save(state)
 
 
 LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
 with LOG_PATH.open("a", encoding="utf-8") as stream:
-    stream.write(
-        json.dumps(
-            {
-                "argv": ARGV,
-                "stdin_length": len(STDIN.encode("utf-8")),
-                "stdin_sha256": hashlib.sha256(STDIN.encode("utf-8")).hexdigest(),
-            },
-            separators=(",", ":"),
-        )
-        + "\n"
-    )
+    stream.write(json.dumps({"argv": ARGV, "stdin_length": len(STDIN.encode("utf-8")), "stdin_sha256": hashlib.sha256(STDIN.encode("utf-8")).hexdigest()}, separators=(",", ":")) + "\n")
 
 state = load()
 
+if ARGV == ["skills", "get", "orca-linear"]:
+    scenario = os.environ.get("MI_LINEAR_GUIDE_SCENARIO", "compatible")
+    if scenario == "absent":
+        fail("unknown command: skills get")
+    if scenario == "incompatible":
+        print("---\nname: unrelated-guide\n---\n# Wrong guide")
+    else:
+        print("---\nname: orca-linear\n---\n# Version-matched fixture guide\nSupports JSON reads, creates, save-issue, field-specific mutations, and lifecycle status changes.")
+    raise SystemExit(0)
+
+if ARGV == ["status", "--json"]:
+    if os.environ.get("MI_LINEAR_AUTH_SCENARIO") == "failed":
+        fail("Linear authentication unavailable")
+    print(json.dumps({"ok": True, "linear": {"authenticated": True}, "version": "fixture"}, separators=(",", ":")))
+    raise SystemExit(0)
+
 if ARGV[:3] == ["linear", "team", "list"]:
-    positionals, values, booleans = parse_options(
-        ARGV[3:], value_flags={"--workspace"}, boolean_flags={"--json"}
-    )
+    positionals, values, booleans = parse_options(ARGV[3:], value_flags={"--workspace"}, boolean_flags={"--json"})
     if positionals:
         fail("unsupported command")
     require_contract(state, values, booleans)
-    emit(
-        {
-            "teams": state["teams"],
-            "meta": {
-                "returned": len(state["teams"]),
-                "limitReached": False,
-                "workspaceErrors": [],
-            },
-        }
-    )
+    emit_result({"teams": state["teams"], "meta": {"returned": len(state["teams"]), "limitReached": False, "workspaceErrors": []}})
     raise SystemExit(0)
 
-if ARGV[:3] in (
-    ["linear", "team", "states"],
-    ["linear", "team", "labels"],
-    ["linear", "team", "members"],
-):
-    positionals, values, booleans = parse_options(
-        ARGV[3:],
-        value_flags={"--team", "--workspace"},
-        boolean_flags={"--json"},
-    )
+if ARGV[:3] in (["linear", "team", "states"], ["linear", "team", "labels"], ["linear", "team", "members"]):
+    positionals, values, booleans = parse_options(ARGV[3:], value_flags={"--team", "--workspace"}, boolean_flags={"--json"})
     if positionals:
         fail("unsupported command")
     require_contract(state, values, booleans)
     team = team_value(state, one(values, "--team", required=True) or "")
-    if ARGV[2] == "states":
-        items = state["states"]
-        emit({"team": team, "states": items, "meta": {"returned": len(items)}})
-    elif ARGV[2] == "labels":
-        items = state["labels"]
-        emit({"team": team, "labels": items, "meta": {"returned": len(items)}})
-    else:
-        items = state.get("members", [])
-        emit({"team": team, "members": items, "meta": {"returned": len(items)}})
+    noun = ARGV[2]
+    key = {"states": "states", "labels": "labels", "members": "members"}[noun]
+    items = state.get(key, [])
+    emit_result({"team": team, key: items, "meta": {"returned": len(items)}})
+    raise SystemExit(0)
+
+if ARGV[:2] == ["linear", "issue"]:
+    positionals, values, booleans = parse_options(ARGV[2:], value_flags={"--depth", "--workspace"}, boolean_flags={"--relations", "--children", "--full", "--json"})
+    if len(positionals) != 1:
+        fail("fixture requires one issue")
+    require_contract(state, values, booleans)
+    issue = copy.deepcopy(require_issue(state, positionals[0]))
+    if os.environ.get("MI_LINEAR_TARGET_SCENARIO") == "wrong-team":
+        issue["team"] = {"id": "team-ops", "key": "OPS"}
+    sections: dict[str, Any] = {}
+    if "--relations" in booleans or "--full" in booleans:
+        sections["relations"] = {"returned": len(issue["relations"]), "capReached": os.environ.get("MI_LINEAR_GRAPH_SCENARIO") == "relations-cap"}
+    errors = [{"section": "relations", "message": "relation include failed"}] if os.environ.get("MI_LINEAR_GRAPH_SCENARIO") == "include-error" else []
+    emit_result({"issue": issue, "meta": {"sections": sections, "includeErrors": errors}})
     raise SystemExit(0)
 
 if ARGV[:2] == ["linear", "list-issues"]:
-    positionals, values, booleans = parse_options(
-        ARGV[2:],
-        value_flags={"--parent-id", "--limit", "--cursor", "--workspace"},
-        boolean_flags={"--json"},
-    )
+    positionals, values, booleans = parse_options(ARGV[2:], value_flags={"--parent-id", "--limit", "--cursor", "--workspace"}, boolean_flags={"--json"})
     if positionals:
         fail("unsupported command")
     require_contract(state, values, booleans)
     parent = one(values, "--parent-id", required=True)
     if one(values, "--limit", required=True) != "100":
         fail("fixture requires --limit 100")
-    cursor = one(values, "--cursor")
-    scenario = os.environ.get("MI_LINEAR_GRAPH_SCENARIO", "complete")
-    children = [
-        issue
-        for issue in state["issues"].values()
-        if issue.get("parent") and issue["parent"]["identifier"] == parent
-    ]
+    children = [issue for issue in state["issues"].values() if issue.get("parent") and issue["parent"]["identifier"] == parent]
     children.sort(key=lambda item: item["identifier"])
-    if scenario == "cap":
-        page_number = {None: 1, "cap-2": 2, "cap-3": 3}.get(cursor)
-        if page_number is None:
-            fail("invalid cursor")
-        count = 100 if page_number < 3 else 50
-        start = (page_number - 1) * 100
-        page = [
-            {"id": f"cap-{number}", "identifier": f"CAP-{number}"}
-            for number in range(start + 1, start + count + 1)
-        ]
-        emit(
-            {
-                "issues": page,
-                "meta": {
-                    "hasMore": True,
-                    "nextCursor": f"cap-{page_number + 1}",
-                    "workspaceId": state["workspace"]["id"],
-                    "workspaceErrors": [],
-                },
-            }
-        )
-        raise SystemExit(0)
+    cursor = one(values, "--cursor")
     if cursor is None:
-        workspace_errors = (
-            [{"workspaceId": state["workspace"]["id"], "message": "partial workspace read"}]
-            if scenario == "workspace-error"
-            else []
-        )
-        emit(
-            {
-                "issues": children[:1],
-                "meta": {
-                    "hasMore": len(children) > 1,
-                    "nextCursor": (
-                        "repeat" if scenario == "repeated-cursor" else "page-2"
-                    ),
-                    "workspaceId": state["workspace"]["id"],
-                    "workspaceErrors": workspace_errors,
-                },
-            }
-        )
-        raise SystemExit(0)
-    if scenario == "pagination-failure" and cursor == "page-2":
-        fail("pagination failed")
-    if scenario == "repeated-cursor" and cursor == "repeat":
-        emit(
-            {
-                "issues": children[1:2],
-                "meta": {
-                    "hasMore": True,
-                    "nextCursor": "repeat",
-                    "workspaceId": state["workspace"]["id"],
-                    "workspaceErrors": [],
-                },
-            }
-        )
-        raise SystemExit(0)
-    if cursor == "page-2":
-        emit(
-            {
-                "issues": children[1:],
-                "meta": {
-                    "hasMore": False,
-                    "nextCursor": None,
-                    "workspaceId": state["workspace"]["id"],
-                    "workspaceErrors": [],
-                },
-            }
-        )
-        raise SystemExit(0)
-    fail("invalid cursor")
+        page, has_more, next_cursor = children[:1], len(children) > 1, "page-2"
+    elif cursor == "page-2":
+        page, has_more, next_cursor = children[1:], False, None
+    else:
+        fail("invalid cursor")
+    emit_result({"issues": page, "meta": {"hasMore": has_more, "nextCursor": next_cursor, "workspaceId": state["workspace"]["id"], "workspaceErrors": []}})
+    raise SystemExit(0)
 
-if ARGV[:2] == ["linear", "issue"]:
-    positionals, values, booleans = parse_options(
-        ARGV[2:],
-        value_flags={"--depth", "--workspace"},
-        boolean_flags={"--relations", "--children", "--json"},
-    )
+if ARGV[:2] == ["linear", "create"]:
+    positionals, values, booleans = parse_options(ARGV[2:], value_flags={"--title", "--body-file", "--team", "--priority", "--estimate", "--label", "--write-id", "--workspace"}, boolean_flags={"--json"}, repeatable_flags={"--label"})
+    if positionals:
+        fail("unsupported command")
+    require_contract(state, values, booleans)
+    team = team_value(state, one(values, "--team", required=True) or "")
+    title = one(values, "--title", required=True)
+    if not title:
+        fail("title cannot be empty")
+    if one(values, "--body-file", required=True) != "-":
+        fail("fixture requires --body-file -")
+    if os.environ.get("MI_LINEAR_REJECTED_CREATE") == "1":
+        fail("create rejected before persistence")
+    working = copy.deepcopy(state)
+    numbers = [int(key.split("-", 1)[1]) for key in working["issues"] if key.startswith(f'{team["key"]}-')]
+    number = max(numbers, default=0) + 1
+    identifier = f'{team["key"]}-{number}'
+    issue = {
+        "id": f"linear-{number}", "identifier": identifier, "team": {"id": team["id"], "key": team["key"]},
+        "title": title, "description": STDIN, "state": copy.deepcopy(working["states"][0]),
+        "priority": priority_value(one(values, "--priority") or "none"),
+        "estimate": int(one(values, "--estimate") or "0"),
+        "labels": [label_value(working, value) for value in values.get("--label", [])],
+        "assignee": None, "parent": None, "children": [], "relations": [],
+        "url": f"https://linear.app/fixture/issue/{identifier}",
+    }
+    working["issues"][identifier] = issue
+    persist(working)
+    if os.environ.get("MI_LINEAR_INDETERMINATE_CREATE") == "1":
+        fail("linear_write_unconfirmed")
+    emit_result({"issue": issue, "writeId": one(values, "--write-id")})
+    raise SystemExit(0)
+
+if ARGV[:2] == ["linear", "save-issue"]:
+    positionals, values, booleans = parse_options(ARGV[2:], value_flags={"--title", "--body-file", "--label", "--workspace"}, boolean_flags={"--json"}, repeatable_flags={"--label"})
     if len(positionals) != 1:
         fail("fixture requires one issue")
     require_contract(state, values, booleans)
-    if "--depth" in values and "--children" not in booleans:
-        fail("--depth requires --children")
-    if "--depth" in values and not (one(values, "--depth") or "").isdigit():
-        fail("depth must be an integer")
-    issue = require_issue(state, positionals[0])
-    sections = {}
-    if "--relations" in booleans:
-        sections["relations"] = {
-            "returned": len(issue["relations"]),
-            "capReached": os.environ.get("MI_LINEAR_GRAPH_SCENARIO") == "relations-cap",
-        }
-    include_errors = (
-        [{"section": "relations", "message": "relation include failed"}]
-        if os.environ.get("MI_LINEAR_GRAPH_SCENARIO") == "include-error"
-        else []
-    )
-    emit({"issue": issue, "meta": {"sections": sections, "includeErrors": include_errors}})
+    working = copy.deepcopy(state)
+    issue = require_issue(working, positionals[0])
+    changed = False
+    title = one(values, "--title")
+    if title is not None and title != issue["title"]:
+        issue["title"] = title
+        changed = True
+    if "--body-file" in values:
+        if one(values, "--body-file") != "-":
+            fail("fixture requires --body-file -")
+        if STDIN != issue["description"]:
+            issue["description"] = STDIN
+            changed = True
+    if "--label" in values:
+        labels = [label_value(working, value) for value in values["--label"]]
+        if labels != issue["labels"]:
+            issue["labels"] = labels
+            changed = True
+    if not changed:
+        fail("save would be a no-op")
+    persist(working)
+    emit_result({"issue": issue})
     raise SystemExit(0)
 
-fail("Release A Linear mutations are manual: authenticated principal unavailable")
+if ARGV[:3] in (["linear", "priority", "set"], ["linear", "estimate", "set"], ["linear", "status", "set"]):
+    positionals, values, booleans = parse_options(ARGV[3:], value_flags={"--to", "--workspace"}, boolean_flags={"--json"})
+    if len(positionals) != 1:
+        fail("fixture requires one issue")
+    require_contract(state, values, booleans)
+    working = copy.deepcopy(state)
+    issue = require_issue(working, positionals[0])
+    target = one(values, "--to", required=True) or ""
+    if ARGV[1] == "priority":
+        issue["priority"] = priority_value(target)
+    elif ARGV[1] == "estimate":
+        issue["estimate"] = int(target)
+    else:
+        issue["state"] = state_value(working, target)
+    persist(working)
+    emit_result({"issue": issue})
+    raise SystemExit(0)
+
+if ARGV[:3] in (["linear", "label", "add"], ["linear", "label", "remove"], ["linear", "label", "set"]):
+    positionals, values, booleans = parse_options(ARGV[3:], value_flags={"--label", "--workspace"}, boolean_flags={"--json"}, repeatable_flags={"--label"})
+    if len(positionals) != 1:
+        fail("fixture requires one issue")
+    require_contract(state, values, booleans)
+    selected = [label_value(state, value) for value in values.get("--label", [])]
+    if not selected:
+        fail("missing --label")
+    working = copy.deepcopy(state)
+    issue = require_issue(working, positionals[0])
+    if ARGV[2] == "set":
+        issue["labels"] = selected
+    elif ARGV[2] == "add":
+        known = {label["id"] for label in issue["labels"]}
+        issue["labels"].extend(label for label in selected if label["id"] not in known)
+    else:
+        removed = {label["id"] for label in selected}
+        issue["labels"] = [label for label in issue["labels"] if label["id"] not in removed]
+    persist(working)
+    emit_result({"issue": issue})
+    raise SystemExit(0)
+
+fail("unsupported command")

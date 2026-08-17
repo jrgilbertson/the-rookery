@@ -125,6 +125,8 @@ smallest approved provider-native effect once, then read the canonical target
 back immediately. A create is indeterminate unless its response yields an exact
 canonical identity tied to that attempt and readback confirms it. Never retry an
 indeterminate create or match one by title, body, author, time, or similarity.
+An accepted non-create effect is `indeterminate` when its exact required
+readback fails, is partial, or mismatches the approved result.
 
 Classify each processed effect as exactly `applied`, `already_satisfied`,
 `failed`, or `indeterminate`. At the first `failed` or `indeterminate` effect,

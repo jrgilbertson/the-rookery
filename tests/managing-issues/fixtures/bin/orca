@@ -173,6 +173,8 @@ if ARGV[:2] == ["linear", "issue"]:
     if len(positionals) != 1:
         fail("fixture requires one issue")
     require_contract(state, values, booleans)
+    if os.environ.get("MI_LINEAR_FAIL_READ_AFTER_WRITE") == "1" and state.get("fixtureWriteCount", 0) > 0:
+        fail("post-write readback unavailable")
     issue = copy.deepcopy(require_issue(state, positionals[0]))
     if os.environ.get("MI_LINEAR_TARGET_SCENARIO") == "wrong-team":
         issue["team"] = {"id": "team-ops", "key": "OPS"}

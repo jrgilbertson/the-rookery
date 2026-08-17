@@ -59,25 +59,27 @@
       "issueType": null,
       "parent": {"id": "I_10", "number": 10},
       "subIssues": [],
-      "blockedBy": [{"id": "I_99", "number": 99}],
+      "blockedBy": [{"id": "I_dependency_9", "number": 9, "url": "https://github.com/example/dependency/issues/9"}],
       "blocking": []
-    },
-    "99": {
-      "id": "I_99",
-      "number": 99,
+    }
+  },
+  "boundaryIssues": {
+    "https://github.com/example/dependency/issues/9": {
+      "id": "I_dependency_9",
+      "number": 9,
       "title": "External blocker",
       "body": "## Verification\n\n- Dependency is available.\n",
-      "state": "OPEN",
-      "stateReason": null,
+      "state": "CLOSED",
+      "stateReason": "COMPLETED",
       "updatedAt": "2026-08-12T00:00:00Z",
-      "url": "https://github.com/example/project/issues/99",
+      "url": "https://github.com/example/dependency/issues/9",
       "labels": [],
       "assignees": [],
       "issueType": null,
       "parent": null,
       "subIssues": [],
       "blockedBy": [],
-      "blocking": [{"id": "I_12", "number": 12}]
+      "blocking": [{"id": "I_12", "number": 12, "url": "https://github.com/example/project/issues/12"}]
     }
   },
   "shadow_repositories": []

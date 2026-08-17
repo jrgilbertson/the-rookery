@@ -78,22 +78,20 @@ provider reference. Apply the edge once, read both endpoints back, then
 recompute the affected family.
 
 Follow the shared lifecycle's first-stop rule. For graph results, inventory the
-confirmed `succeeded` effects, the stopping `failed` or `indeterminate` effect,
-and all `unapplied` effects. Do not roll back or infer a compensating
-relationship. `unapplied` says only that this batch did not run the effect; the
-latest complete canonical read still determines current graph state.
+confirmed `applied` and `already_satisfied` effects, the stopping `failed` or
+`indeterminate` effect, and all `unapplied` effects. Do not roll back or infer
+a compensating relationship. `unapplied` says only that this batch did not run
+the effect; the latest complete canonical read still determines current graph
+state.
 
 An indeterminate create receives no edge. Before a new proposal, read any exact
 canonical identity or provider receipt returned by that one attempt. Never
 match by title, body, author, time, or similarity.
 
-## Keep synchronization identity-only
+## Synchronization
 
-Resolve one exact identity through the validated mapping. The top-level
-canonical provider controls write direction: mutate and read back only that
-record. A projection is read-only identity or lag evidence. Missing or
-ambiguous mapping writes neither provider, and an absent mapping enables no
-synchronization behavior.
+For mapping resolution, canonical-provider write direction, and projection
+behavior, see [the provider/sync reference](linear-and-sync.md#synchronization-identity-and-write-direction).
 
 ## Prove completion separately
 

@@ -23,11 +23,16 @@ GITHUB_REFERENCE = REPO_ROOT / "skills/managing-issues/references/github.md"
 LINEAR_REFERENCE = REPO_ROOT / "skills/managing-issues/references/linear-and-sync.md"
 WORKSPACE = "workspace-fixture"
 GH_REPOSITORY = "github.com/example/project"
+GH_BOUNDARY_REPOSITORY = "github.com/example/dependency"
 READINESS = {
     "needs-discovery": "readiness:discovery",
     "needs-planning": "readiness:planning",
     "ready-for-implementation": "readiness:ready",
 }
+EFFECT_OUTCOMES = frozenset(
+    {"applied", "already_satisfied", "failed", "indeterminate", "unapplied"}
+)
+PROCESSED_EFFECT_OUTCOMES = EFFECT_OUTCOMES - {"unapplied"}
 
 
 class CheckFailure(Exception):
@@ -201,7 +206,7 @@ def execute_batch(
             continue
         outcome = outcomes[effect]
         require(
-            outcome in {"applied", "already_satisfied", "failed", "indeterminate"},
+            outcome in PROCESSED_EFFECT_OUTCOMES,
             f"unknown effect result: {outcome}",
         )
         result.append((effect, outcome))
@@ -380,6 +385,23 @@ Fix the save path.
         ],
         "indeterminate edge did not stop independent later effect",
     )
+    already_satisfied = execute_batch(
+        ["existing-edge", "next-effect"],
+        {"existing-edge": "already_satisfied", "next-effect": "applied"},
+    )
+    require(
+        already_satisfied == [
+            ("existing-edge", "already_satisfied"),
+            ("next-effect", "applied"),
+        ],
+        "already_satisfied effect did not retain the shared lifecycle outcome",
+    )
+    try:
+        execute_batch(["legacy-effect"], {"legacy-effect": "succeeded"})
+    except CheckFailure:
+        pass
+    else:
+        require(False, "stale succeeded effect outcome was accepted")
 
     pairs = [("example/project#11", "ENG-11")]
     require(
@@ -513,6 +535,90 @@ def github_command_checks(root: Path, base_env: dict[str, str]) -> None:
     require(child["parent"]["number"] == 10, "GitHub child parent differs")
     require(any(item["number"] == created["number"] for item in parent["subIssues"]), "GitHub parent inverse differs")
 
+    canonical = succeeded(
+        run(
+            [
+                "gh",
+                "issue",
+                "view",
+                "12",
+                "-R",
+                GH_REPOSITORY,
+                "--json",
+                "id,number,state,stateReason,url,blockedBy",
+            ],
+            env,
+        ),
+        "GitHub canonical blocker read",
+    )
+    require(len(canonical["blockedBy"]) == 1, "GitHub canonical blocker identity differs")
+    boundary_url = canonical["blockedBy"][0].get("url")
+    require(
+        boundary_url == "https://github.com/example/dependency/issues/9",
+        "GitHub canonical read lacks the exact boundary URL",
+    )
+    boundary_page = succeeded(
+        run(
+            [
+                "gh",
+                "api",
+                "repos/example/project/issues/12/dependencies/blocked_by?per_page=100&page=1",
+                "--hostname",
+                "github.com",
+            ],
+            env,
+        ),
+        "GitHub native blocker page",
+    )
+    require(
+        len(boundary_page) == 1 and boundary_page[0]["url"] == boundary_url,
+        "GitHub native blocker page differs from the validated relationship",
+    )
+    boundary = succeeded(
+        run(
+            [
+                "gh",
+                "issue",
+                "view",
+                boundary_url,
+                "-R",
+                GH_BOUNDARY_REPOSITORY,
+                "--json",
+                "id,number,state,stateReason,url,blockedBy,blocking",
+            ],
+            env,
+        ),
+        "GitHub cross-repository boundary read",
+    )
+    require(
+        boundary["number"] == 9
+        and boundary["url"] == boundary_url
+        and boundary["state"] == "CLOSED"
+        and boundary["stateReason"] == "COMPLETED",
+        "GitHub boundary state or exact identity matchback differs",
+    )
+    status, identities, gap = coverage(
+        [{"identities": [boundary["url"]], "has_more": False}],
+        accessible_boundary=True,
+    )
+    require(
+        status == "complete" and boundary_url in identities and gap is None,
+        "GitHub resolved cross-repository blocker did not complete coverage",
+    )
+
+    before_foreign_write = state.read_bytes()
+    for argv in (
+        ["gh", "issue", "edit", boundary_url, "-R", GH_BOUNDARY_REPOSITORY, "--title", "Forbidden"],
+        ["gh", "issue", "close", "9", "-R", GH_BOUNDARY_REPOSITORY, "--reason", "completed"],
+        ["gh", "issue", "reopen", "9", "-R", GH_BOUNDARY_REPOSITORY],
+    ):
+        rejected = run(argv, env)
+        require(
+            rejected.returncode != 0 and "repository identity differs" in rejected.stderr,
+            "GitHub boundary node unexpectedly became a write target",
+        )
+    require(state.read_bytes() == before_foreign_write, "GitHub rejected boundary writes changed state")
+
     entries = log_entries(log)
     create_index = next(index for index, entry in enumerate(entries) if entry["argv"][:2] == ["issue", "create"])
     create_readback = next(index for index, entry in enumerate(entries) if index > create_index and entry["argv"][:2] == ["issue", "view"] and entry["argv"][2] == url)
@@ -584,9 +690,12 @@ def published_contract_checks() -> None:
         "Ready Frontier",
         "no estimate",
         "shared lifecycle's first-stop rule",
-        "succeeded",
+        "applied",
+        "already_satisfied",
+        "failed",
+        "indeterminate",
         "unapplied",
-        "canonical provider controls write direction",
+        "provider/sync reference",
         "Never match by title",
         "separate batch",
     )
@@ -610,6 +719,7 @@ def published_contract_checks() -> None:
         "schedule",
         "orca linear relation",
         "gh issue edit CHILD",
+        "succeeded",
     )
     for fragment in forbidden:
         require(
@@ -620,8 +730,23 @@ def published_contract_checks() -> None:
     github = GITHUB_REFERENCE.read_text(encoding="utf-8")
     require("sub_issues?per_page=100&page=PAGE" in github, "GitHub reference lacks exhaustive child read")
     require("dependencies/blocked_by?per_page=100&page=PAGE" in github, "GitHub reference lacks exhaustive blocker read")
+    require(
+        "one-hop cross-repository boundary read" in github
+        and "never a create, edit, relationship, or lifecycle target" in github,
+        "GitHub reference lacks the read-only cross-repository boundary",
+    )
     linear = LINEAR_REFERENCE.read_text(encoding="utf-8")
     require("workspaceErrors" in linear and "capReached" in linear, "Linear reference lacks partial-coverage checks")
+    normalized_linear = " ".join(linear.split())
+    for fragment in (
+        "Resolve one exact mapping entry",
+        "top-level config provider alone selects write direction",
+        "projection may be read for identity or lag evidence but never mutated",
+    ):
+        require(
+            fragment in normalized_linear,
+            f"Linear reference lacks synchronization contract: {fragment}",
+        )
 
 
 def main() -> int:

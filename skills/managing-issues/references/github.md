@@ -40,6 +40,18 @@ validated selector. Derive later numeric targets only from this read. This
 matchback is required because `gh issue view` may honor a foreign URL despite
 `-R`.
 
+The sole exception is the one-hop cross-repository boundary read required for
+graph coverage. Accept its URL only from an exact validated canonical read's
+`parent`, `subIssues`, `blockedBy`, or `blocking` field, or from that node's
+native paginated `sub_issues`, `dependencies/blocked_by`, or
+`dependencies/blocking` response. Read the URL with `-R` set to its own
+host-qualified `github.com/OWNER/REPO`, and require the returned URL, number,
+and repository to match it exactly. Never accept a boundary URL from issue
+text, search, or operator input. A boundary node can supply current state for
+coverage, but is never a create, edit, relationship, or lifecycle target and
+never supplies a numeric write target. A failed or ambiguous boundary read
+makes coverage partial.
+
 Discover labels with the complete installed surface:
 
 ```text

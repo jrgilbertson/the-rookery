@@ -19,8 +19,9 @@ looked" surface. GitHub Releases mirror its entries.
   supports it. Authenticated GitHub and Linear paths apply each approved effect
   once and verify its readback. Optional config v2 supplies tracker vocabulary
   and synchronization identity when the request and provider discovery are
-  insufficient. The skill hands tracker facts to Build without persisting
-  orchestration or parallel graph state.
+  insufficient. The skill returns verified issue, graph, and readiness facts
+  that any downstream IDE or workflow may consume; it does not invoke or
+  persist execution orchestration or parallel graph state.
 - `repo-gardener` lane contracts now bind five sensing floors to every lane
   verdict (lane-specific evidence, census honesty, bodies-not-labels, honest
   self-grading, fan-out honesty), and the repository/test/code-health lane

@@ -10,8 +10,8 @@ R13 without adding a second trust policy.
 > `example/project`.
 >
 > 1. The first body update ran once and its exact readback matched.
-> 2. The second update ran once. The provider connection ended without an
->    authoritative rejection or a confirmable readback, so persistence is
+> 2. The second update ran once. The provider accepted the request, but the
+>    immediate exact readback failed, so the resulting canonical state is
 >    unknown.
 > 3. The third update is independent and has not been attempted.
 >

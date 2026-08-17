@@ -217,6 +217,16 @@ def github_edge_and_error(root: Path, base: dict[str, str]) -> None:
     require(json.loads(unknown_state.read_text())["next_issue"] == 4, "GitHub indeterminate seam did not persist uncertainty")
     require(len(positions(log_entries(unknown_log), ["issue", "create"])) == 1 and not positions(log_entries(unknown_log), ["issue", "edit"]), "GitHub indeterminate create retried or ran later effect")
 
+    readback_env, readback_state, readback_log = github_env(root, base, "github-update-readback-failed", MI_GITHUB_FAIL_READ_AFTER_WRITE="1")
+    github_read(readback_env, "1")
+    accepted(run(["gh", "issue", "edit", "1", "-R", GH_TARGET, "--remove-label", "priority:high", "--add-label", "priority:normal"], readback_env), "GitHub accepted update")
+    failed(run(["gh", "issue", "view", "1", "-R", GH_TARGET, "--json", ISSUE_FIELDS], readback_env), "post-write readback unavailable", "GitHub update readback")
+    readback_entries = log_entries(readback_log)
+    update_positions = positions(readback_entries, ["issue", "edit", "1"])
+    view_positions = positions(readback_entries, ["issue", "view", "1"])
+    require(json.loads(readback_state.read_text())["fixtureWriteCount"] == 1, "GitHub accepted update did not persist exactly once")
+    require(len(update_positions) == 1 and len(view_positions) == 2 and view_positions[0] < update_positions[0] < view_positions[1], "GitHub accepted update lacks failed post-write readback")
+
 
 def load_linear_guide(env: dict[str, str]) -> None:
     guide = accepted(run(["orca", "skills", "get", "orca-linear"], env), "Linear guide")
@@ -337,6 +347,17 @@ def linear_edge_and_error(root: Path, base: dict[str, str]) -> None:
     require(json.loads(unknown_state.read_text())["fixtureWriteCount"] == 1, "Linear indeterminate seam did not persist uncertainty")
     require(len(positions(log_entries(unknown_log), ["linear", "create"])) == 1 and not positions(log_entries(unknown_log), ["linear", "priority", "set"]), "Linear indeterminate create retried or ran later effect")
 
+    readback_env, readback_state, readback_log = linear_env(root, base, "linear-update-readback-failed", MI_LINEAR_FAIL_READ_AFTER_WRITE="1")
+    load_linear_guide(readback_env)
+    linear_read(readback_env, "ENG-1")
+    linear_result(run(["orca", "linear", "priority", "set", "ENG-1", "--to", "medium", "--workspace", LINEAR_WORKSPACE, "--json"], readback_env), "Linear accepted update")
+    failed(run(["orca", "linear", "issue", "ENG-1", "--full", "--workspace", LINEAR_WORKSPACE, "--json"], readback_env), "post-write readback unavailable", "Linear update readback")
+    readback_entries = log_entries(readback_log)
+    update_positions = positions(readback_entries, ["linear", "priority", "set", "ENG-1"])
+    view_positions = positions(readback_entries, ["linear", "issue", "ENG-1"])
+    require(json.loads(readback_state.read_text())["fixtureWriteCount"] == 1, "Linear accepted update did not persist exactly once")
+    require(len(update_positions) == 1 and len(view_positions) == 2 and view_positions[0] < update_positions[0] < view_positions[1], "Linear accepted update lacks failed post-write readback")
+
 
 def config_and_sync_integration(root: Path, base: dict[str, str]) -> None:
     no_config_root = root / "no-config"
@@ -404,6 +425,7 @@ def published_contract() -> None:
     require("Authentication through the provider path supplies identity" in compact_skill, "authentication contract differs")
     require("Never permanently delete an issue" in compact_skill, "reversible lifecycle contract differs")
     require("stop all later effects, including independent effects" in skill, "batch stop contract differs")
+    require("accepted non-create effect" in skill and "readback fails, is partial, or mismatches the approved result" in skill, "non-create readback contract differs")
     require("implementation plan" in skill and "worktree" in skill and "pull request" in skill, "issue-only handoff boundary differs")
     require("active account" in github and "matchback" in github and "--body-file -" in github, "GitHub provider contract differs")
     require("ORCA skills get orca-linear" in linear and "only authority" in linear and "field-specific" in linear and "never retried" in linear, "Linear guide/write contract differs")

@@ -9,8 +9,7 @@ workflow for research, planning, design, implementation, shipping, maintenance,
 and learning with the portable agent skills I use to run it.
 
 A skill is a portable set of instructions an agent loads when a task calls for
-it. Every skill here installs individually as a standard Agent Skills package
-for Claude Code, Codex, and other compatible tools.
+it.
 
 A rookery is where corvids gather to nest. This one is named for the two most famous, Odin's ravens Huginn and Muninn. Huginn is thought, Muninn is memory. Each morning they fly out to see the world, and each evening they return with what they've learned.
 

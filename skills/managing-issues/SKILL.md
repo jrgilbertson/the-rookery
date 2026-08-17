@@ -58,7 +58,8 @@ smallest version 2 config needed to supply them, based on the matching
 `assets/config-template-github.json` or `assets/config-template-linear.json`.
 The setup preview names the exact destination
 `.agents/managing-issues.json` and every value. A version 1 config cannot be
-reused; offer the same clean version 2 setup path.
+reused or bypassed with provider discovery. Complete the clean version 2 setup
+and validation before resuming the original request.
 
 Configuration approval is separate from tracker approval. Immediately before a
 directly approved config write, walk the exact repository-root-relative

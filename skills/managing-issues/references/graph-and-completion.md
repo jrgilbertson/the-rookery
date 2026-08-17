@@ -59,7 +59,8 @@ The Ready Frontier contains only required, open implementation leaves whose
 derived posture is `ready-for-implementation` and whose native blockers are all
 resolved. Parents never enter it. Neither do completed or canceled leaves,
 blocked leaves, unknown-readiness leaves, or members of an unresolved blocker
-cycle. Report it only from complete current coverage.
+cycle. Report it only from complete current coverage, name the set explicitly,
+and list an unattached intended node separately as unresolved topology.
 
 ## Preview and apply topology
 

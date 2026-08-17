@@ -403,7 +403,7 @@ assertion passing (`0 failed`).
 - `tests/checking-pr-readiness/log.md:11` records the first green 34/34 run
   after the original fixes; the harness has since grown to 154 assertions.
 - `skills/checking-merge-readiness/references/fetch-floor.md` names
-  `fetch-pr-history.sh` the preferred transport for the merge digest's history
+  `fetch-pr-history.sh` the preferred transport for the merge-readiness review's history
   surfaces, which is exactly why a silent-pass hole in it would degrade every
   digest that relies on it.
 - `tests/checking-merge-readiness/fixtures/run-fetch-checks.sh` states the

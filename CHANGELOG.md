@@ -169,10 +169,10 @@ looked" surface. GitHub Releases mirror its entries.
   `checking-pr-readiness`: bold trimmed to definition sites, structural
   labels, and the outcome mapping; duplicated restatements removed (Done-when
   recap bullets, the sweep-class ordering rationale, the evidence-pack
-  status-word roster, first-principles' framing note); the merge digest's
-  pre-decision re-check unrolled into a readable list; both descriptions
-  collapsed to one trigger per branch. The Minto readout shape stays
-  duplicated per skill — every surveyed skills repo (Anthropic's, Pocock's,
+  status-word roster, first-principles' framing note); the merge-readiness
+  review's pre-decision re-check unrolled into a readable list; both
+  descriptions collapsed to one trigger per branch. The Minto readout shape
+  stays duplicated per skill — every surveyed skills repo (Anthropic's, Pocock's,
   superpowers, compound-engineering) keeps skill folders self-contained, so
   each copy now carries a maintainer note naming its mirror. That convention
   is now a repo rule in CONTRIBUTING.md: every skill stands on its own; share
@@ -191,9 +191,10 @@ looked" surface. GitHub Releases mirror its entries.
   telegram style. Each skill carries its own contract; there is no shared
   presentation reference. Pre-PR gate still gathers full checks internally;
   only the spoken decision brief is pyramid.
-- `checking-merge-readiness` is reframed as a pre-merge **global pass** (birth
-  → tip design health, redesign pressure, follow-up debt) with a thin process
-  residual and host merge-rule check (e.g. required conversation resolution).
+- `checking-merge-readiness` is reframed as a whole-change pre-merge review
+  (birth → tip design health, redesign pressure, follow-up debt) with a thin
+  review-completion check and host merge-rule check (e.g. required conversation
+  resolution).
   Tip movement after the last forge review is residual language at most, not a
   skill-invented hard stop that forces "tag a human." Three-light mapping is
   preserved. `checking-pr-readiness` and WORKFLOWS name complementary
@@ -287,4 +288,4 @@ looked" surface. GitHub Releases mirror its entries.
 ### Added
 
 - Repository scaffolding. Community files (MIT license, contributing guide, code of conduct, security policy), issue and PR templates, the skills catalog layout, and the seven-job workflow map across README and WORKFLOWS.md.
-- The rules the repo lives by. Curated not collected, main is the install source, and the same-door rule.
+- The rules the repo lives by. Curated not collected, main is the install source, and installation parity.

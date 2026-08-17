@@ -1,9 +1,11 @@
 # Concepts
 
 Shared domain vocabulary for this project, including entities, named processes,
-and status concepts with project-specific meaning. It starts with the core terms
-and grows through `ce-compound`, `ce-compound-refresh`, and direct edits. This is
-a glossary, not a specification or catch-all.
+and statuses with a project-specific meaning. Prefer an established industry
+term or a plain description. Add a project term only when it carries a precise
+contract used in more than one place or names persisted compatibility data. Do
+not capitalize ordinary workflow phrases merely to turn them into concepts.
+This is a glossary, not a specification or catch-all.
 
 ## Personal workflows
 
@@ -28,18 +30,18 @@ transforms a named input into an artifact the next job can use. Design is
 conditional for interface work and continues through later delivery rather
 than existing only as an isolated stop.
 
-### Repository Memory Current
+### Repository Learning Loop
 
 The Maintain feedback path that observes recurring signals across the Delivery
 Sequence and encodes each lesson at the strongest durable layer that can hold it,
 preferring enforceable layers when available. It improves future work
 throughout the system rather than beginning only after Ship.
 
-### Personal Learning Current
+### Personal Learning Loop
 
 The Learn feedback path that turns experience into linked personal knowledge,
 names the gap that remains, and returns a better question to Research. It is
-distinct from the Repository Memory Current because it improves the operator's
+distinct from the Repository Learning Loop because it improves the operator's
 understanding rather than the repository's safeguards and procedures.
 
 ### Grilling Session
@@ -47,12 +49,6 @@ understanding rather than the repository's safeguards and procedures.
 A targeted, stateless interview for resolving one coherent decision tree whose
 answers depend on one another. The agent recommends answers and looks up
 discoverable facts. The user makes each decision.
-
-### Shared Understanding Gate
-
-A user-confirmed state in which the material decision branches have been
-resolved. Reaching it ends the Grilling Session and allows the clarified intent
-to return to planning.
 
 ## Issue management
 
@@ -62,25 +58,12 @@ The one issue system authorized to own and receive mutations for a repository.
 When another tracker synchronizes the same issue, that copy is a projection or
 alias used for identity and readback evidence, not a second write target.
 
-### Owned Issue Graph
-
-The canonical issue family relevant to one requested outcome: its top parent,
-all reachable descendants, and the native blocks or blocked-by relationships
-that affect their readiness or completion. Relevant nodes outside the
-repository's authority remain read-only boundary nodes rather than silently
-disappearing from the graph.
-
-### Implementation Leaf
-
-One issue whose deliverable and Verification boundary normally fit one
-reviewable pull request, including a stacked PR series that jointly delivers
-that leaf. A single-leaf change needs no artificial parent.
-
 ### Ready Frontier
 
-The leaves in an Owned Issue Graph whose current native blockers and declared
-prerequisites are satisfied. It is derived from a fresh canonical read for a
-handoff and is never stored as a parallel work state.
+The required open leaf issues in the canonical parent-and-blocker graph whose
+current native blockers and declared prerequisites are satisfied. It is
+derived from a fresh canonical read for a handoff and is never stored as a
+parallel work state.
 
 ## Shipping and verification
 
@@ -99,7 +82,7 @@ A passing probe establishes installability and activation for that harness
 only; it is not behavioral evidence. Runs before merge from the local source
 and again after merge against the published state.
 
-### Same-Door Rule
+### Installation Parity
 
 The maintainer installs from this repository exactly the way a visitor does.
 Nothing in the published catalog may depend on context that exists only on the
@@ -128,54 +111,20 @@ durability begins when the finishing path renders it into the pull request
 description, which is its durable home — the pre-merge checkpoint reads it back
 from there. Nothing is written to the tracked tree or any local state store.
 
-### Falsifiability Contract
-
-The requirement that a bundled helper's output can prove failure as readily as
-success, so a gap can never be laundered into a green result. How a helper
-meets it depends on what it produces. A helper that emits gate verdicts gives
-every documented state a distinct verdict line and every state class its own
-exit code, where verdicts exit 0 with the verdict line distinguishing negative
-from positive, absent input exits 2, deferral to a repository-owned gate exits
-3, and environment failure exits 4. A transport helper carries a payload
-rather than grading one, so it proves failure with its exit code and an empty
-stdout, which keeps a partial payload from being mistaken for a complete one.
-
-The contract is executable, not prose: a committed, rerunnable fixture runner
-asserts the exact verdict-and-exit pair for every documented state, including
-adversarial states, and the runner ships in the same change as the helper it
-pins — a helper that merges ahead of its fixtures is unfalsifiable for exactly
-that window. A helper whose contract exists only in its header comment
-is itself a prose-only invariant — the defect class it exists to catch.
-
-### Merge Digest
+### Merge Readiness Review
 
 The pre-merge readout `checking-merge-readiness` composes before the owner
-merges: a thin **Process Residual** and host merge-rule check, then the
-load-bearing **Global Pass** over the change from PR open to tip — intent
-drift, graded Risk Drivers, redesign pressure, and follow-up debt — rolling
-into one recommendation of merge, debug, or do not merge. It lives in the
-conversation and changes nothing, so the owner still does the merging.
-
-### Global Pass
-
-The merge-readiness skill's primary job: systems judgment on the full arc
-from pre-review intent through the final tip. It catches local-opt failure
-modes that babysitting and point comments miss — overengineering, YAGNI,
-intent drift, redesign-worthy shape, and future work that should be captured
-before main. Distinct from clearing individual review threads.
-
-### Process Residual
-
-The thin pre-merge process floor in the Merge Digest: whether the review loop
-is quiet enough to grade (substantive items resolved or deferred, no new open
-fire) and whether host merge rules such as required conversation resolution
-pass. Residual is named honestly; it is not a second product of reviewer
-identity, durable AI receipts, or tip-OID non-author theater.
+merges. It first checks whether review is complete enough to assess and whether
+the host's merge rules pass. It then reviews the full change from pull-request
+open to tip for intent drift, graded Risk Drivers, redesign pressure, and
+follow-up debt. Those findings produce one recommendation: merge, debug, or do
+not merge. The review lives in the conversation and changes nothing, so the
+owner still does the merging.
 
 ### Risk Driver
 
-A named, graded (low / medium / high) finding in the Merge Digest's risk
-profile: one specific thing about the change or its review that an owner
+A named, graded (low / medium / high) finding in a Merge Readiness Review: one
+specific thing about the change or its review that an owner
 would want to weigh before merging. Principle-tension classes cover
 complexity accretion, knowledge duplication, and speculative generality.
 Other classes cover unresolved review items, cross-round fix interaction,
@@ -183,29 +132,14 @@ material security concerns, and PR text that tries to steer the assessment.
 Drivers roll up into one merge-risk grade; a word grade traceable to a named
 driver is used instead of a numeric score.
 
-### Targeted Sweep
-
-The pre-PR gate's check of the evidence-backed finding classes that drive
-automated-review rounds, run against the branch before any PR exists.
-Mechanical classes run through bundled helpers that defer to repo-owned
-equivalents; judgment classes run by model instruction. The class list comes
-from PR forensics and is refreshable as review history accumulates.
-
 ## Repository gardening
 
-### Repository Automation Loop
+### Repository Maintenance Run
 
-One repository-scoped `Sense -> Decide -> Act -> Verify -> Learn` pass. The
-parent surveys nine lanes, may deepen current signals, and may supervise a
+One repository-scoped execution of `Sense -> Decide -> Act -> Verify -> Learn`.
+The parent surveys nine lanes, may deepen current signals, and may supervise a
 live-policy-bounded child through an unmerged pull request. The model owns
 qualitative judgment; deterministic code checks only tracker-record closure.
-
-### Gardening Tracker
-
-The append-only run records and mutable morning projection for
-repository-gardening facts. Exactly one `run-opened` and one consolidated
-`run-closed` managed comment carry each run ID. It never owns source truth,
-mutation authority, or authored-work state.
 
 ### Current Portfolio
 
@@ -230,16 +164,18 @@ nine separate managed comments.
 
 ### Register Revision
 
-A monotonic body version used to detect stale preparation and bad readback. It
-is not an atomic provider precondition, compare-and-swap, or distributed lock.
+A monotonic body version stored as `register_revision` and used to detect stale
+preparation and bad readback. It is not an atomic provider precondition,
+compare-and-swap, or distributed lock.
 
 ### Effect Receipt
 
 The intended-effect and terminal-outcome evidence for one stable,
-repository-qualified logical report operation. Its identity is the pair
-`(repository_id, operation_id)`, not the operation ID alone. The intended
-receipt is read back before invoke; the terminal receipt is read back after the
-authoritative post-read. Ambiguity blocks blind retry.
+repository-qualified logical report operation, stored with the `effect` receipt
+kind. Its identity is the pair `(repository_id, operation_id)`, not the
+operation ID alone. The intended receipt is read back before invoke; the
+terminal receipt is read back after the authoritative post-read. Ambiguity
+blocks blind retry.
 
 ### Attention State
 
@@ -256,36 +192,23 @@ prerequisite.
 
 ## Research synthesis
 
-### Storm Research
+### STORM Research
 
 Deep, source-backed investigation that establishes a baseline, dispatches
 independent research lenses, preserves their disagreements, and synthesizes the
-result for the requested purpose. It may inform a decision, but unlike
+result for the requested purpose. It asks questions about facts, assumptions,
+constraints, mechanisms, system relationships, change over time, and
+downstream effects without requiring a separate named question type. It may
+inform a decision, but unlike
 `ce-pov`'s compact, project-grounded verdict it preserves a multi-perspective
 research record as the primary result.
 
-### Research Depth Questions
-
-Questions used throughout Storm Research to clarify the facts, assumptions,
-constraints, and mechanisms beneath material claims and to examine relevant
-system relationships, patterns over time, and downstream effects. They shape
-research and synthesis without requiring separate sections in the briefing.
-Formal system-dynamics models remain separate, user-requested deliverables.
-
-### Storm Fidelity Review
-
-An independent check that compares a Storm Research briefing with its baseline,
-source audit, raw lens returns, and internal run record for lost or invented
-disagreement and untraced analytical claims. Every finding is binding; each
-revision goes to a new clean reviewer until the check is clean or the run records
-reduced verification.
-
 ## Skill quality gates
 
-### Baseline Test
+### Baseline Comparison
 
-A Baseline Test checks whether a skill changes agent behavior in the intended
-direction. New skills run realistic prompts with and without the skill;
+A Baseline Comparison checks whether a skill changes agent behavior in the
+intended direction. New skills run realistic prompts with and without the skill;
 revisions compare the frozen prior and revised versions, each in a fresh
 context with the intended variant confirmed loaded. Cases are binary
 pass/fail, and a substantive revision ships only when the discriminating

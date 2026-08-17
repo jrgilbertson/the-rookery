@@ -7,8 +7,9 @@ compatibility: Requires read access to one repository, its installed policy, nat
 
 # Repo Gardener
 
-Run one repository through `Sense -> Decide -> Act -> Verify -> Learn`. The
-model owns qualitative judgment. The repository owns policy and source facts,
+A Repository Maintenance Run takes one repository through
+`Sense -> Decide -> Act -> Verify -> Learn`. The model owns qualitative
+judgment. The repository owns policy and source facts,
 GitHub owns authored-work state, and the deterministic checker owns only exact
 tracker-record consistency.
 

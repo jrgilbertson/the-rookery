@@ -857,7 +857,7 @@ def validate_evidence_document(
             or results[0].get("outcome") != "clear"
             or results[0].get("class_count") != 11
         ):
-            gaps.append("targeted sweep evidence incomplete")
+            gaps.append("pre-PR review checks incomplete")
     elif kind == "preflight":
         unresolved = document.get("unresolved")
         if (

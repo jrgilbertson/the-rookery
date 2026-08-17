@@ -76,17 +76,14 @@ target, endpoint, material-field, and affected-family reads required by the
 provider reference. Apply the edge once, read both endpoints back, then
 recompute the affected family.
 
-Classify each effect using the shared lifecycle. At the first `failed` or
-`indeterminate` result, stop all later effects, including independent ones.
-Preserve confirmed successes and return inventories for `succeeded`, the
-stopping `failed` or `indeterminate` effect, and `unapplied` effects. Do not
-roll back or infer a compensating relationship.
+Follow the shared lifecycle's first-stop rule. For graph results, inventory the
+confirmed `succeeded` effects, the stopping `failed` or `indeterminate` effect,
+and all `unapplied` effects. Do not roll back or infer a compensating
+relationship.
 
-An indeterminate create receives no edge. Recovery starts by reading any exact
+An indeterminate create receives no edge. Before a new proposal, read any exact
 canonical identity or provider receipt returned by that one attempt. Never
-match by title, body, author, time, or similarity, and never issue a replacement
-create while the first outcome remains unresolved. Any continuation begins
-with a fresh complete read, preview, and approval.
+match by title, body, author, time, or similarity.
 
 ## Keep synchronization identity-only
 
@@ -118,8 +115,8 @@ approval.
 Before a lifecycle preview, discover every provider or synchronization cascade
 that can change a parent, child, or projection. List each observable cascade as
 an intended effect. If the cascade posture cannot be observed, stop before an
-executable lifecycle preview. Never permanently delete an issue and never use a
-closing keyword as completion authority.
+executable lifecycle preview. Never use a closing keyword as completion
+authority.
 
 Return only canonical nodes and edges, coverage, derived readiness, blockers,
 Ready Frontier, exact effect outcomes, and Verification evidence or gaps. Do

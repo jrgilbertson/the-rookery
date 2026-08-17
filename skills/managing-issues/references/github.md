@@ -92,7 +92,6 @@ change.
 Use the installed close and reopen forms against the validated numeric target.
 Cancellation uses the provider's “not planned” reason. Completion uses its
 “completed” reason only after `graph-and-completion.md` establishes completion.
-Never invoke permanent issue deletion.
 
 Read the issue immediately before the lifecycle write and immediately after it.
 The readback must confirm the intended state and state reason.

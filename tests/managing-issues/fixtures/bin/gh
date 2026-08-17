@@ -279,7 +279,7 @@ def api_issue_and_collection(
 
 
 def auth_payload(state: dict[str, Any]) -> dict[str, Any]:
-    login = state["principal"]
+    login = state["login"]
     if (
         os.environ.get("MI_GITHUB_DRIFT_AFTER_WRITES") == "1"
         and state.get("fixtureWriteCount", 0) > 0

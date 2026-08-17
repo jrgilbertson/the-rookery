@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "principal": "fixture-user",
+  "login": "fixture-user",
   "repository": {
     "id": "R_fixture",
     "nameWithOwner": "example/project",

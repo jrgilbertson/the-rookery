@@ -16,10 +16,11 @@ looked" surface. GitHub Releases mirror its entries.
 - Added `managing-issues`, a canonical GitHub or Linear issue-management path.
   It reads native parent and blocker relationships to derive the current Ready
   Frontier and marks completion only when current Verification evidence
-  supports it. GitHub effects use exact approval and readback; Linear remains
-  read-only in Release A because the installed provider cannot expose the
-  authenticated principal required for a safe write. The skill hands tracker
-  facts to Build without persisting orchestration or parallel graph state.
+  supports it. Authenticated GitHub and Linear paths apply each approved effect
+  once and verify its readback. Optional config v2 supplies tracker vocabulary
+  and synchronization identity when the request and provider discovery are
+  insufficient. The skill hands tracker facts to Build without persisting
+  orchestration or parallel graph state.
 - `repo-gardener` lane contracts now bind five sensing floors to every lane
   verdict (lane-specific evidence, census honesty, bodies-not-labels, honest
   self-grading, fan-out honesty), and the repository/test/code-health lane

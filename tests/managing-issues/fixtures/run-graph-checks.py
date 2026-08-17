@@ -585,13 +585,12 @@ def published_contract_checks() -> None:
         "exactly one",
         "Ready Frontier",
         "no estimate",
-        "stop all later effects",
+        "shared lifecycle's first-stop rule",
         "succeeded",
         "unapplied",
         "canonical provider controls write direction",
         "Never match by title",
         "separate batch",
-        "Never permanently delete",
     )
     normalized = " ".join(text.split()).casefold()
     for fragment in required:

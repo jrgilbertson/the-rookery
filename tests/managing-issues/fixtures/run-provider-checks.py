@@ -408,6 +408,7 @@ def published_contract() -> None:
         require(phrase in skill, f"setup contract omits {phrase}")
     require("normalized canonical target" in skill and "Problem" in skill and "Scope" in skill and "Verification" in skill, "preview or issue shape contract differs")
     require("Authentication through the provider path supplies identity" in compact_skill, "authentication contract differs")
+    require("Never permanently delete an issue" in compact_skill, "reversible lifecycle contract differs")
     require("stop all later effects, including independent effects" in skill, "batch stop contract differs")
     require("implementation plan" in skill and "worktree" in skill and "pull request" in skill, "issue-only handoff boundary differs")
     require("active account" in github and "matchback" in github and "--body-file -" in github, "GitHub provider contract differs")

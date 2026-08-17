@@ -16,7 +16,7 @@ colors:
 
 **Creative North Star: "The Returning Field Dispatch"**
 
-The Rookery looks like a natural-history field manual laid over a working draft table. Cool mist-blue paper, engraved navy corvids, graphite mechanisms, and measured construction lines make the work feel studied and practical rather than mythical or corporate. The result should be professional enough for technical evaluation while retaining the warmth and memory of a hand-kept field guide.
+The Rookery looks like a natural-history field manual laid over a working draft table. Cool mist-blue paper, engraved navy corvids, graphite mechanisms, and measured construction lines make the work feel studied and practical rather than mythical or corporate. The result should make the technical system clear while retaining the warmth and memory of a hand-kept field guide.
 
 Every illustration explains an operation. Huginn and Muninn carry, inspect, install, select, or return knowledge; they do not pose beside an abstract idea. Routes and mechanisms make sequence, observation, and return causally legible, while one restrained orange signal marks the intervention, dispatch, or return that matters most. The exact scene may change across repository-owned explanatory visuals, but the world remains one connected system in which evidence moves forward and distinct forms of feedback make future work more useful.
 

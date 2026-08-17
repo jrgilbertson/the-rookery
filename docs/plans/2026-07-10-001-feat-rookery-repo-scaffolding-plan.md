@@ -33,7 +33,7 @@ The owner is publishing his first OSS repo: an always-up-to-date, opinionated re
 
 **Identity and content rules**
 
-- R1. Same-door rule: the owner installs from this repo the same way strangers do, so no repo content may depend on context absent from a stranger's machine — no absolute or home-directory paths, no private repository names, no employer-specific identifiers or examples. Applies to every file, including working docs and this plan.
+- R1. Same-door rule: the owner installs from this repo the same way strangers do, so no repo content may depend on context absent from a stranger's machine — no absolute or home-directory paths, no private repository names, no organization-specific identifiers or examples. Applies to every file, including working docs and this plan.
 - R2. Working docs ship public: `docs/plans/` (and future `docs/solutions/`, `docs/ideation/`) are committed, not ignored — the process is part of the product.
 
 **Install surface and layout**

@@ -10,7 +10,7 @@ web
 
 Jason is the primary operator and maintainer. He uses The Rookery as the public, always-current home for how he builds with AI and improves that system over time.
 
-The primary visitor audience is people encountering the work through social media, practitioners evaluating whether to install or adapt a skill, and potential employers, companies, or customers evaluating how Jason understands and communicates technical work.
+The primary visitor audience is people encountering the work through social media, practitioners, and people who use AI and want to understand, install, or adapt the workflows and skills.
 
 ## Product Purpose
 
@@ -41,7 +41,7 @@ The seven workflow jobs are Research, Plan, Design, Build, Ship, Maintain, and L
 - Preserve the name **The Rookery** and its corvid meaning: a place where corvids gather and return.
 - The confirmed repository-level message is **“An always-current field guide to how I build with AI.”** Supporting copy may expand it as **“Open-source tools, practical workflows, and portable skills refined through use.”**
 - Use the standardized names **Huginn** and **Muninn**, Odin's ravens associated with thought and memory. Their outward flight and return with knowledge is supporting brand mythology, not a claim that every workflow learns autonomously.
-- The work should feel professional enough for technical evaluation while remaining warm, memorable, and fun.
+- The work should be technically clear while remaining warm, memorable, and fun.
 - Visual personality must make technical concepts easier to understand. Characters, metaphors, or motion should perform the idea rather than decorate it.
 - Avoid generic corporate diagrams, sterile consulting-deck visuals, novelty mascots, and Norse-fantasy pastiche that overwhelms the technical substance.
 

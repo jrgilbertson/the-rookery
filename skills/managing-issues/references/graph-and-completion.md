@@ -79,7 +79,8 @@ recompute the affected family.
 Follow the shared lifecycle's first-stop rule. For graph results, inventory the
 confirmed `succeeded` effects, the stopping `failed` or `indeterminate` effect,
 and all `unapplied` effects. Do not roll back or infer a compensating
-relationship.
+relationship. `unapplied` says only that this batch did not run the effect; the
+latest complete canonical read still determines current graph state.
 
 An indeterminate create receives no edge. Before a new proposal, read any exact
 canonical identity or provider receipt returned by that one attempt. Never

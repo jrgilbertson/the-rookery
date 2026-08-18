@@ -98,6 +98,27 @@ def main() -> int:
         )
         readme.write_bytes(readme_contents)
 
+        for filename in ("LICENSE", ".gitignore", ".gitleaksignore"):
+            public_text = repository / filename
+            public_text.write_bytes(b"invalid UTF-8: \xff\n")
+            invalid_utf8_public_text = run_checker(repository)
+            require(
+                invalid_utf8_public_text.returncode == 1
+                and f"{filename}: invalid UTF-8" in invalid_utf8_public_text.stderr,
+                f"invalid UTF-8 {filename} did not fail with its path",
+            )
+            public_text.unlink()
+
+        extensionless_binary = repository / "opaque-binary"
+        extensionless_binary.write_bytes(b"\x00\xff\x00")
+        extensionless_binary_result = run_checker(repository)
+        require(
+            extensionless_binary_result.returncode == 0,
+            "unrelated extensionless binary was treated as repository text: "
+            f"{extensionless_binary_result.stderr}",
+        )
+        extensionless_binary.unlink()
+
         binary_asset = repository / "asset.webp"
         binary_asset.write_bytes(b"RIFF\xffWEBP")
         binary = run_checker(repository)

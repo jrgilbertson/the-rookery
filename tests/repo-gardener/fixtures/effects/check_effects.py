@@ -215,9 +215,14 @@ def main() -> int:
                 poisoned["projection"] = marker
             expect_error(effect_input("prepare", pre_read=base, operation=poisoned), "reserved report sequence")
 
+    register_only_operation = copy.deepcopy(operation)
+    register_only_operation["rows"][0]["description"] = "Retain @types/node as machine data."
+    cli(effect_input("prepare", pre_read=base, operation=register_only_operation))
+
     for unsafe_projection, phrase in (
         ("\nOwner: @octocat\n", "notification-capable mention"),
         ("\nReviewers: @octo-org/security-team\n", "notification-capable mention"),
+        ("\nDependency: @types/node\n", "notification-capable mention"),
         (
             "\nOwner: [@octocat](https://github.com/octocat)\n",
             "notification-capable mention",
@@ -242,6 +247,13 @@ def main() -> int:
         unsafe_operation = copy.deepcopy(operation)
         unsafe_operation["payload"]["text"] = unsafe_payload
         expect_error(effect_input("prepare", pre_read=base, operation=unsafe_operation), phrase)
+
+    unsafe_comment_operation = copy.deepcopy(operation)
+    unsafe_comment_operation["payload"]["package"] = "@types/node"
+    expect_error(
+        effect_input("prepare", pre_read=base, operation=unsafe_comment_operation),
+        "notification-capable mention",
+    )
 
     for safe_projection in (
         "\nProfile: [Mastodon](https://mastodon.social/@alice)\n",

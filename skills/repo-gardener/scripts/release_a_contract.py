@@ -923,7 +923,7 @@ def prepare_report_effect(pre_read: Any, operation: Any) -> dict[str, Any]:
         f"{json.dumps(receipt, ensure_ascii=False, separators=(',', ':'))}\n"
         f"{HISTORY_RECEIPT_END}"
     )
-    _validate_report_rendering(body)
+    _validate_report_rendering(operation["projection"])
     _validate_report_rendering(comment)
     return {
         "schema": "repo-gardener-prepared-report-effect/v1",
@@ -962,7 +962,7 @@ def _prepared_effect(prepared: Any) -> dict[str, Any]:
     require(prepared.get("expected_post_revision") == prepared["expected_pre_revision"] + 1, "prepared revision transition is invalid")
     validate_body(prepared.get("body"))
     require(isinstance(prepared.get("comment"), str), "prepared comment must be text")
-    _validate_report_rendering(prepared["body"])
+    _validate_report_rendering(operation["projection"])
     _validate_report_rendering(prepared["comment"])
     expected_operation_id = _effect_operation_id(
         repository_id=prepared["repository_id"],

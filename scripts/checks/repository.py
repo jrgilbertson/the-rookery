@@ -32,6 +32,7 @@ TEXT_EXTENSIONS = frozenset(
         ".yml",
     }
 )
+TEXT_FILENAMES = frozenset({".gitignore", ".gitleaksignore", "LICENSE"})
 MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 MARKDOWN_REFERENCE = re.compile(
     r"^\s{0,3}\[(?:[^\]\\]|\\.)+\]:\s*(<[^>]*>|\S+)",
@@ -150,7 +151,7 @@ def main() -> int:
             continue
         text = readable_text(path)
         if text is None:
-            if path.suffix.lower() in TEXT_EXTENSIONS:
+            if path.suffix.lower() in TEXT_EXTENSIONS or path.name in TEXT_FILENAMES:
                 errors.append(f"{path.relative_to(ROOT)}: invalid UTF-8")
             continue
         check_text(path, text, errors)

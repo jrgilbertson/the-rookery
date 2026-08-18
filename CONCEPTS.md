@@ -58,13 +58,6 @@ The one issue system authorized to own and receive mutations for a repository.
 When another tracker synchronizes the same issue, that copy is a projection or
 alias used for identity and readback evidence, not a second write target.
 
-### Ready Frontier
-
-The required open leaf issues in the canonical parent-and-blocker graph whose
-current native blockers and declared prerequisites are satisfied. It is
-derived from a fresh canonical read for a handoff and is never stored as a
-parallel work state.
-
 ## Shipping and verification
 
 ### Published Catalog

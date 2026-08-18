@@ -36,8 +36,8 @@ A intentionally exposes no Linear mutation path.
       direction.
 - [ ] Uses both endpoint readbacks and the exhausted affected-family read to
       reconcile current topology after the attempts.
-- [ ] Derives Ready Frontier as `#11` and `#12` from current canonical facts,
-      and separately reports unparented `#13` as unresolved.
+- [ ] Reports `#11` and `#12` as ready to start now from current canonical
+      facts, and separately reports unparented `#13` as unresolved.
 - [ ] Returns nodes, edges, coverage, blockers, effect outcomes, and
       Verification gaps only; it starts no worker and stores no schedule,
       claim, retry record, or recommended execution topology.

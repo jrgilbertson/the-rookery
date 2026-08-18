@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-08-17 | 201ea5a (prior) | ready-to-start terminology — prior graph handoff | pass | A fresh context loaded the frozen HEAD package and passed all 5 topology-reconciliation items, reporting `#11` and `#12` under the exact heading `Ready to start now`.
+- 2026-08-17 | 201ea5a (working tree) | ready-to-start terminology — candidate graph handoff | pass | A separate fresh context loaded the current package and passed all 5 topology-reconciliation items; an independent grader found no regression in the readiness set, blockers, coverage, effects, or Verification gaps.
 - 2026-08-12 | f55ca32 (working tree) | policy validator proof-first red | fail (expected) | `python3 tests/managing-issues/fixtures/run-policy-checks.py` exited 1 with `FAIL: missing production validator at skills/managing-issues/scripts/policy_check.py` before implementation.
 - 2026-08-12 | f55ca32 (working tree) | policy validator fixtures | pass | Valid GitHub and Linear+sync policies normalized canonically; duplicate keys, unknown keys, invalid provider and mappings, lexical and symlink path escapes, sensitive drift, and policy-presence drift failed closed; missing-on-both-sides returned an explicit missing state. The runner also checked standard-library-only imports and a read-only repository surface.
 - 2026-08-12 | f55ca32 (working tree) | structural validation (skills-ref) | pass | `npx skills-ref validate skills/managing-issues` reported `Valid skill`; SKILL.md is 153 lines, and later-unit branch resources remain plain one-level pointers rather than fabricated references.

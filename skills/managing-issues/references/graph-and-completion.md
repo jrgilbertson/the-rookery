@@ -105,25 +105,24 @@ Completion: each topology effect has one exact effect outcome, both directions
 agree when applied, and the returned family is a fresh complete reconciliation
 or an explicitly partial read-only result.
 
-## Derive the current Ready Frontier
+## Identify issues ready to start now
 
-Ready Frontier is the current set of required open leaves that have no current
-unresolved blocker and satisfy the repository's readiness mapping. Derive it
-only from the complete canonical read. Exclude parents, completed or canceled
-nodes, leaves with unmet required predecessors, and any node whose readiness is
-unknown. Keep cycles visible; no member of an unresolved native blocker cycle
-is ready.
+The issues ready to start now are exactly the required open leaves that have no
+current unresolved blocker and satisfy the repository's readiness mapping.
+Derive the list only from the complete canonical read. Exclude parents,
+completed or canceled nodes, leaves with unmet required predecessors, and any
+node whose readiness is unknown. Keep cycles visible; no member of an unresolved
+native blocker cycle is ready.
 
-Return canonical nodes and edges, Ready Frontier, current blockers, coverage,
-unresolved effects, and Verification gaps only. Do not add repair suggestions,
-operator-choice menus, workers, models, effort, worktrees, stacks, or
-sequencing. An orchestrator must re-read the tracker before dispatch and after
-any relevant issue or pull-request change.
+Return canonical nodes and edges, the issues ready to start now, current
+blockers, coverage, unresolved effects, and Verification gaps only. Do not add
+repair suggestions, operator-choice menus, workers, models, effort, worktrees,
+stacks, or sequencing. An orchestrator must re-read the tracker before dispatch
+and after any relevant issue or pull-request change.
 
 In the returned report, lead with one plain summary sentence that restates the
-facts and adds nothing, and present the Ready Frontier under the heading
-"Ready to start now", listing issues by reference and title. The term and its
-derivation rules stay internal.
+facts and adds nothing. Present the eligible issues under the heading "Ready to
+start now", listing each one by reference and title.
 
 ## Prove completion separately
 

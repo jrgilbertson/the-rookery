@@ -14,7 +14,7 @@ execution: code
 
 ## Goal Capsule
 
-- **Objective:** Build a self-contained `managing-issues` skill in The Rookery that safely handles one issue or a native issue graph across GitHub and Linear, prevents synchronized-tracker completion mistakes, and returns the current work frontier without becoming an orchestrator or a second tracker.
+- **Objective:** Build a self-contained `managing-issues` skill in The Rookery that safely handles one issue or a native issue graph across GitHub and Linear, prevents synchronized-tracker completion mistakes, and reports which issues are ready to start without becoming an orchestrator or a second tracker.
 - **End state:** One reviewable Rookery PR contains the skill, its compact repository policy, executable provider-path evidence, behavioral cases, and catalog documentation. Tracker and repository state remain the only durable work state.
 - **Authority:** This plan owns only the Rookery package and its evidence. It does not change live tracker metadata, Corvly automation, agentic-toolkit, or user-installed skills.
 - **Open blocker:** The repository-required skill-proposal issue must exist before a PR opens. No issue or PR is created without the user's approval.
@@ -25,7 +25,7 @@ execution: code
 
 ### Summary
 
-`managing-issues` is one issue-management entry point for ordinary issue work and multi-PR delivery graphs. It resolves one canonical tracker, reads the relevant native relationships, previews exact effects, applies each permitted GitHub effect at most once, verifies the result through GitHub, and reports the current frontier, blockers, coverage, and verification gaps. Release A reads Linear canonical state but classifies every Linear mutation as `manual` because the installed command path cannot prove the authenticated principal exactly enough for a safe write.
+`managing-issues` is one issue-management entry point for ordinary issue work and multi-PR delivery graphs. It resolves one canonical tracker, reads the relevant native relationships, previews exact effects, applies each permitted GitHub effect at most once, verifies the result through GitHub, and reports which issues are ready to start, which are blocked, the graph coverage, and any verification gaps. Release A reads Linear canonical state but classifies every Linear mutation as `manual` because the installed command path cannot prove the authenticated principal exactly enough for a safe write.
 
 It does not persist a graph, approval ledger, scheduler, claim, execution status, model choice, or provider capability receipt. It does not write both sides of a GitHub/Linear synchronization pair. It does not treat Done or a merged PR as proof that the requested outcome is complete.
 
@@ -104,7 +104,7 @@ Version 1 documents and tests exact installed command paths: GitHub reads and wr
 
 #### R8. Orchestration handoff
 
-A single-issue result returns the canonical identity and effect outcome. A graph result returns canonical nodes and edges, Ready Frontier, blockers, coverage, unresolved effects, and Verification gaps. This is transient output, not a receipt, claim, reservation, or stored execution plan. The orchestrator re-reads the tracker before dispatch and after any relevant issue or PR change. The skill does not recommend models, effort levels, worker topology, create worktrees, or launch agents.
+A single-issue result returns the canonical identity and effect outcome. A graph result returns canonical nodes and edges, the issues ready to start now, blockers, coverage, unresolved effects, and Verification gaps. This is transient output, not a receipt, claim, reservation, or stored execution plan. The orchestrator re-reads the tracker before dispatch and after any relevant issue or PR change. The skill does not recommend models, effort levels, worker topology, create worktrees, or launch agents.
 
 #### R9. Evidence and portability
 
@@ -119,7 +119,7 @@ Release A is one atomic Rookery PR containing the skill, tests, compact policy t
 ### Key Flows
 
 1. **One issue:** resolve canonical target, read, preview, approve, pre-read, apply once, read back, and report.
-2. **Graph change:** read complete affected families, preview nodes before edges, apply dependency-ready effects, reconcile, and return frontier/blockers/coverage.
+2. **Graph change:** read complete affected families, preview nodes before edges, apply dependency-ready effects, reconcile, and return the issues ready to start now, blockers, and coverage.
 3. **Synchronized issue:** resolve the input to one canonical identity. If GitHub is canonical and trusted policy permits the effect, mutate GitHub only, read it back, and report projection lag. If Linear is canonical, read Linear and classify the requested mutation as `manual`; never repair or mutate the shadow.
 4. **Completion:** read unchanged Verification and complete graph evidence, name cascades, then preview one explicit lifecycle effect or report blockers.
 
@@ -134,7 +134,7 @@ Release A is one atomic Rookery PR containing the skill, tests, compact policy t
 - **AE7 — ambiguous create:** A lost create response remains indeterminate, receives no dependent edge, and is not retried or matched by title.
 - **AE8 — completion proof:** Done issues and merged PRs do not complete a parent when trusted Verification evidence is missing.
 - **AE9 — changed criteria:** Updating Verification and closing the same issue requires two approval rounds and a fresh completion analysis.
-- **AE10 — orchestration boundary:** A graph handoff contains native facts and the current Ready Frontier; it starts no workers and stores no parallel state.
+- **AE10 — orchestration boundary:** A graph handoff contains native facts and identifies the issues ready to start now; it starts no workers and stores no parallel state.
 
 ### Success Criteria
 
@@ -164,7 +164,7 @@ Release A is one atomic Rookery PR containing the skill, tests, compact policy t
 - **KTD4. One graph guard.** Pagination exhaustion, a visited set, and one node cap are sufficient. Coverage is transient output, not durable graph state.
 - **KTD5. Independent behavioral evidence.** Matched fresh-context cases and independent grading are repository release requirements, not a runtime workflow.
 - **KTD6. One atomic Rookery landing.** The package and evidence land together because the default branch is the install source. Other repositories get separate issues and PRs.
-- **KTD7. Credit ideas without importing upstream workflow.** The plan adapts tracer-bullet leaves, blocker-first ordering, and frontier recomputation from Matt Pocock's MIT-licensed `to-tickets` and `wayfinder`. If implementation copies protectable source rather than ideas, the distributed package retains the required MIT notice.
+- **KTD7. Credit ideas without importing upstream workflow.** The plan adapts tracer-bullet leaves, blocker-first ordering, and recomputing which issues can start as blockers change from Matt Pocock's MIT-licensed `to-tickets` and `wayfinder`. If implementation copies protectable source rather than ideas, the distributed package retains the required MIT notice.
 
 ### Architecture
 
@@ -177,7 +177,7 @@ flowchart LR
   H --> T[(GitHub canonical tracker)]
   L --> LT[(Linear canonical tracker)]
   X[(Synchronized projection)] -. identity and lag only .-> S
-  T --> R[Effects, graph facts, frontier]
+  T --> R[Effects, graph facts, issues ready to start]
   LT --> R
   R --> E[Execution orchestrator]
 
@@ -193,7 +193,7 @@ flowchart LR
 3. Render exact numbered effects with concrete provider-side values and known cascades.
 4. Obtain direct approval, then repeat the authoritative identity and precondition reads.
 5. Apply each still-valid GitHub effect once in dependency order and read it back. Return every Linear mutation as `manual` without constructing a write command.
-6. Stop locally or globally under R4, then recompute graph coverage, frontier, blockers, and Verification gaps.
+6. Stop locally or globally under R4, then recompute graph coverage, the issues ready to start now, blockers, and Verification gaps.
 7. Return exhaustive effect results and current work facts. Persist nothing outside the tracker and repository.
 
 ### Output Structure
@@ -272,16 +272,16 @@ The exact fixture split may change during implementation. No test fixture or sib
 
 ### U3. Native graph and completion proof
 
-- **Goal:** Extend the same loop to issue families, blockers, current frontier, and explicit completion.
+- **Goal:** Extend the same loop to issue families, blockers, issues ready to start now, and explicit completion.
 - **Requirements:** R3, R4, R6, R8; AE4, AE5, AE8-AE10.
 - **Dependencies:** U1, U2.
 - **Files:** `references/graph-and-completion.md` and graph, partial-coverage, reconciliation, completion, and handoff cases.
 - **Approach:**
   1. Traverse the top family, descendants, internal dependency edges, and required one-hop boundaries with pagination, visited identities, and one node cap.
   2. Create approved nodes before relationships, detect cycles, and reconcile affected families after each topology attempt.
-  3. Derive Ready Frontier and blockers directly from current native state. Return no topology recommendation or stored handoff schema.
+  3. Identify issues ready to start now and their blockers directly from current native state. Return no topology recommendation or stored handoff schema.
   4. Prove leaf and parent Verification independently of status or merge; separate criteria edits from completion and name known synchronized cascades.
-- **Verification:** Cases cover multi-page reads, repeated cursors, cycles, unreadable boundaries, cap exhaustion, relation direction, partial effects, frontier recomputation, Done-without-evidence, criteria drift, parent proof, and unknown cascade posture.
+- **Verification:** Cases cover multi-page reads, repeated cursors, cycles, unreadable boundaries, cap exhaustion, relation direction, partial effects, recomputing which issues can start as blockers change, Done-without-evidence, criteria drift, parent proof, and unknown cascade posture.
 
 ### U4. Release evidence and documentation
 
@@ -358,7 +358,7 @@ These follow-ups use each repository's own native issue dependencies and links. 
 
 - `SKILL.md` and its three references are the operational source of truth.
 - `README.md` publishes the skill and `CHANGELOG.md` records the addition.
-- `CONCEPTS.md` defines only Canonical Tracker, Owned Issue Graph, Implementation Leaf, and Ready Frontier.
+- `CONCEPTS.md` defines only the project-specific terms that still need a shared contract; readiness rules stay with the managing-issues graph reference.
 - `WORKFLOWS.md`, if changed, receives only a pointer from issue management to the existing execution workflow.
 - Follow-up repositories own their policy, automation, and retirement documentation.
 
@@ -369,8 +369,8 @@ These follow-ups use each repository's own native issue dependencies and links. 
 - U1-U4 are complete in one coherent Rookery branch and every R1-R10 requirement has passing evidence.
 - All admitted behavioral pairs, independent grades, final review, provider fixtures, structural checks, trigger checks, same-door checks, and available local install probes pass.
 - The package writes only a trusted GitHub canonical tracker, attempts each permitted effect at most once, reads successful effects back, reports every effect, returns every Linear mutation as `manual`, and never treats a lookalike as identity.
-- Partial graph coverage blocks relationship and parent-completion changes; Ready Frontier and blockers derive only from current native state.
+- Partial graph coverage blocks relationship and parent-completion changes; readiness and blockers derive only from current native state.
 - Completion tests prove that Done and merge are insufficient, Verification edits force a new approval round, and unknown synchronized cascades remain blocked or manual.
 - No shipped file introduces a graph store, approval ledger, capability receipt, PR scanner, provider framework, execution topology, model router, hard-delete path, private identifier, or test-only dependency.
-- Catalog, changelog, four glossary terms, and optional workflow pointer agree with the shipped package.
+- Catalog, changelog, the remaining glossary entries, and optional workflow pointer agree with the shipped package.
 - No live tracker metadata, Corvly setting, agentic-toolkit source, user installation, issue, or PR is changed as part of this implementation without separate authority.

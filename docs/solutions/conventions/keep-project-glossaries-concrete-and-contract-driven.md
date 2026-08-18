@@ -78,12 +78,16 @@ improves comprehension without breaking interoperability.
 
 ## Examples
 
-Keep terms with stable shared meaning. `Ready Frontier` names a precisely
-derived set of unblocked leaf issues (`CONCEPTS.md:61`). `Installation Parity`
-names the repository's visitor-equivalent installation invariant
-(`CONCEPTS.md:85`). `Repository Maintenance Run` names the complete
+Keep terms with stable shared meaning. `Installation Parity` names the
+repository's visitor-equivalent installation invariant (`CONCEPTS.md:78`).
+`Repository Maintenance Run` names the complete
 `Sense -> Decide -> Act -> Verify -> Learn` contract used by `repo-gardener`
-(`CONCEPTS.md:137` and `skills/repo-gardener/SKILL.md:10`).
+(`CONCEPTS.md:130` and `skills/repo-gardener/SKILL.md:10`).
+
+Use plain language when the owning workflow can state the rule directly. The
+issue-management skill reports which issues are "Ready to start now" and keeps
+the exact blocker and readiness rules in its graph reference rather than naming
+that set as a separate project concept.
 
 Remove or demote names that merely label steps. In this cleanup, `Global Pass`,
 `Process Residual`, and `Targeted Sweep` stopped being standalone concepts. The

@@ -21,10 +21,10 @@ looked" surface. GitHub Releases mirror its entries.
 - Added one shared Lefthook `pre-push` verification group and a read-only
   GitHub Actions workflow whose stable required-check name is `Tests Status`.
 - Added `managing-issues`, a canonical GitHub or Linear issue-management path.
-  It reads native parent and blocker relationships to derive the current Ready
-  Frontier and marks completion only when current Verification evidence
-  supports it. GitHub effects use exact approval and readback; Linear remains
-  read-only in Release A because the installed provider cannot expose the
+  It reads native parent and blocker relationships to report which issues are
+  ready to start now and marks completion only when current Verification
+  evidence supports it. GitHub effects use exact approval and readback; Linear
+  remains read-only in Release A because the installed provider cannot expose the
   authenticated principal required for a safe write. The skill hands tracker
   facts to Build without persisting orchestration or parallel graph state.
 - `repo-gardener` lane contracts now bind five sensing floors to every lane

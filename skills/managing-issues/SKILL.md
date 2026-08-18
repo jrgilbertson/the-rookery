@@ -88,19 +88,8 @@ without a valid config, run interactive setup. Discover the
 available authenticated GitHub and Linear choices only when the request does not
 already select a provider and target, then let the operator select the canonical
 provider and exact repository or workspace/team target. Repository setup has
-exactly one durable file, `.agents/managing-issues.json`, and its
-`synchronization` field is one required boolean. Ask whether synchronization is
-off or on, recommending off. When it is on, require the operator
-to confirm that GitHub and Linear's native Issue Sync is already configured for
-the selected target and accepts issue creation from the selected canonical
-provider. In the setup preview or explanation, show the exact boolean choice
-and state that Linear-canonical creation requires two-way sync while GitHub-
-canonical creation may use GitHub-to-Linear one-way or two-way sync. Managing
-Issues records the choice but does not configure the provider integration. If
-that direction cannot be confirmed, keep synchronization off, change the
-canonical provider, or have the operator configure the required native
-direction outside Managing Issues and confirm it before setting the boolean to
-`true`; do not promise a projection.
+exactly one durable file, `.agents/managing-issues.json`. It records the
+canonical provider, exact target, and metadata mappings.
 
 Load the selected provider's starter config from
 `assets/config-template-github.json` or `assets/config-template-linear.json`.
@@ -138,20 +127,21 @@ setup file approves no tracker effect.
 
 Authentication through the provider path supplies identity; capability checks
 determine whether the requested effect is available. The configured provider is
-canonical. When native synchronization is on, write only that canonical record;
-the configured provider integration owns mirroring. Before a create that expects
-a projection, confirm that the current integration accepts creates from the
-canonical provider. Resolve an existing projection only through an exact native
-synchronization link exposed by GitHub or Linear. If the direction, link, or
-identity is missing or ambiguous, request the exact canonical issue or stop;
-never infer identity or maintain a repository-side mapping.
+canonical and is the only write target. If a request begins from an issue in
+another tracker, resolve the canonical issue only through one exact
+provider-native cross-tracker link. If the link or identity is missing or
+ambiguous, request the exact canonical issue or stop. Never infer identity,
+maintain a repository-side mapping, or mutate the noncanonical issue.
 
-Load only the provider reference needed:
+Load the reference for every provider the operation must read or write:
 
 - GitHub: `references/github.md`.
-- Linear or synchronization: `references/linear-and-sync.md`.
+- Linear: `references/linear.md`.
 
-Load that reference before constructing a provider effect. Its authentication,
+A canonical operation needs one reference. Resolving a request that starts in
+the other tracker may need both.
+
+Load each reference before constructing a provider effect. Its authentication,
 exact target and issue matchback, and structured-data rules are part of the
 executable-preview gate. Linear selects one session transport:
 connected Linear MCP tools or the Orca CLI. The runtime MCP tool schemas are
@@ -181,7 +171,7 @@ and metadata representations needed for the proposed result are resolved.
 
 Show the whole target-visible batch before any tracker write. Name the provider,
 normalized canonical target, canonical issue identity when updating, canonical
-identity resolved through a native synchronization link when used, and every
+identity resolved through an exact provider-native link when used, and every
 ordered effect. For each effect show exact changed fields, metadata, lifecycle
 change, relationship, and rendered content. For a whole-set replacement, show
 the exact resulting set. If one requested field remains unresolved, still render

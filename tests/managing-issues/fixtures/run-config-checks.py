@@ -272,7 +272,6 @@ def base_config(provider: str = "github") -> dict[str, Any]:
         "version": 2,
         "provider": provider,
         "target": target,
-        "synchronization": False,
         "mappings": {
             "priority": {},
             "leaf_estimate": {},
@@ -320,11 +319,10 @@ def check_templates(repo_root: Path) -> None:
         require(template_path.is_file(), f"missing {provider} config template")
         template = json.loads(template_path.read_text(encoding="utf-8"))
         require(
-            set(template) == {"version", "provider", "target", "synchronization", "mappings"},
+            set(template) == {"version", "provider", "target", "mappings"},
             f"{provider} template keys differ",
         )
         require(template["version"] == 2 and template["provider"] == provider, f"{provider} template identity differs")
-        require(template["synchronization"] is False, f"{provider} template must default synchronization off")
         require(set(template["mappings"]) == {"priority", "leaf_estimate", "labels", "readiness"}, f"{provider} template mapping shape differs")
         for family, keys in RECOMMENDED_KEYS.items():
             require(set(template["mappings"][family]) == keys, f"{provider} template {family} recommendations differ")
@@ -397,14 +395,6 @@ def main() -> int:
         expect_valid(linear, repo_root, linear)
         expect_valid(base_config("linear"), repo_root, base_config("linear"))
 
-        for provider in ("github", "linear"):
-            synced = base_config(provider)
-            synced["synchronization"] = True
-            expected_synced = copy.deepcopy(synced)
-            if provider == "github":
-                expected_synced["target"] = "exampleorg/project"
-            expect_valid(synced, repo_root, expected_synced)
-
         marker = repo_root / "read-only-marker"
         marker.write_text("unchanged\n", encoding="utf-8")
         before = file_digest(marker)
@@ -413,18 +403,6 @@ def main() -> int:
 
         expect_invalid(CONFIGS / "duplicate-key.json", repo_root, "duplicate key 'provider'")
         expect_invalid(CONFIGS / "legacy-v1.json", repo_root, "run Managing Issues setup to create version 2")
-
-        missing_synchronization = base_config()
-        del missing_synchronization["synchronization"]
-        expect_invalid(missing_synchronization, repo_root, "config missing key: synchronization")
-        for invalid_value in (None, 0, 1, "true", {}, []):
-            invalid_synchronization = base_config()
-            invalid_synchronization["synchronization"] = invalid_value
-            expect_invalid(
-                invalid_synchronization,
-                repo_root,
-                "synchronization must be true or false",
-            )
 
         control_key = temporary_root / "control-key.json"
         control_key.write_text(

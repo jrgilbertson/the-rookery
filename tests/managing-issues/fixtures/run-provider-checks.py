@@ -20,7 +20,7 @@ PROVIDER = HERE / "provider"
 SKILL_DIR = REPO_ROOT / "skills" / "managing-issues"
 SKILL = SKILL_DIR / "SKILL.md"
 GITHUB_REF = SKILL_DIR / "references" / "github.md"
-LINEAR_REF = SKILL_DIR / "references" / "linear-and-sync.md"
+LINEAR_REF = SKILL_DIR / "references" / "linear.md"
 CONFIG_CHECK = SKILL_DIR / "scripts" / "config_check.py"
 GH_TARGET = "github.com/example/project"
 GH_REPOSITORY_URL = "https://github.com/example/project"
@@ -359,7 +359,7 @@ def linear_edge_and_error(root: Path, base: dict[str, str]) -> None:
     require(len(update_positions) == 1 and len(view_positions) == 2 and view_positions[0] < update_positions[0] < view_positions[1], "Linear accepted update lacks failed post-write readback")
 
 
-def config_and_sync_integration(root: Path, base: dict[str, str]) -> None:
+def config_and_route_integration(root: Path, base: dict[str, str]) -> None:
     no_config_root = root / "no-config"
     no_config_root.mkdir()
     result = json_result(run([sys.executable, str(CONFIG_CHECK), "--repo-root", str(no_config_root), "--config", ".agents/managing-issues.json"], base), "no-config validation")
@@ -371,23 +371,22 @@ def config_and_sync_integration(root: Path, base: dict[str, str]) -> None:
     v1 = run([sys.executable, str(CONFIG_CHECK), "--repo-root", str(v1_root), "--config", ".agents/managing-issues.json"], base)
     failed(v1, "version 2", "version-1 setup boundary")
 
-    sync_root = root / "sync"
-    agents = sync_root / ".agents"
+    configured_root = root / "configured"
+    agents = configured_root / ".agents"
     agents.mkdir(parents=True)
     config = {
         "version": 2, "provider": "linear", "target": {"workspace": LINEAR_WORKSPACE, "team": LINEAR_TEAM},
-        "synchronization": True,
         "mappings": {"priority": {}, "leaf_estimate": {}, "labels": {}, "readiness": {"needs-discovery": "label-feature", "needs-planning": "label-fix", "ready": "label-ready"}},
     }
     (agents / "managing-issues.json").write_text(json.dumps(config), encoding="utf-8")
-    normalized = json_result(run([sys.executable, str(CONFIG_CHECK), "--repo-root", str(sync_root), "--config", ".agents/managing-issues.json"], base), "sync config validation")
-    require(normalized["config"]["provider"] == "linear" and normalized["config"]["synchronization"] is True, "provider-managed sync posture differs")
-    sync_env, _, sync_log = linear_env(root, base, "linear-sync-canonical")
-    load_linear_guide(sync_env)
-    linear_read(sync_env, "ENG-1")
-    linear_result(run(["orca", "linear", "priority", "set", "ENG-1", "--to", "medium", "--workspace", LINEAR_WORKSPACE, "--json"], sync_env), "canonical sync update")
-    require(linear_read(sync_env, "ENG-1")["priority"] == 3, "canonical sync readback differs")
-    require(len(positions(log_entries(sync_log), ["linear", "priority", "set"])) == 1, "canonical sync did not route one write")
+    normalized = json_result(run([sys.executable, str(CONFIG_CHECK), "--repo-root", str(configured_root), "--config", ".agents/managing-issues.json"], base), "config validation")
+    require(normalized["config"] == config, "canonical route config differs")
+    route_env, _, route_log = linear_env(root, base, "linear-canonical-route")
+    load_linear_guide(route_env)
+    linear_read(route_env, "ENG-1")
+    linear_result(run(["orca", "linear", "priority", "set", "ENG-1", "--to", "medium", "--workspace", LINEAR_WORKSPACE, "--json"], route_env), "canonical update")
+    require(linear_read(route_env, "ENG-1")["priority"] == 3, "canonical readback differs")
+    require(len(positions(log_entries(route_log), ["linear", "priority", "set"])) == 1, "canonical route did not perform exactly one write")
 
     outside = root / "outside"
     outside.mkdir()
@@ -414,10 +413,7 @@ def published_contract() -> None:
         "first tracker mutation",
         "missing or invalid config never blocks a read or draft",
         "provider and exact repository or workspace/team target",
-        "recommending off",
-        "native Issue Sync",
-        "accepts issue creation from the selected canonical provider",
-        "Linear-canonical creation requires two-way sync",
+        "records the canonical provider, exact target, and metadata mappings",
         "every recommended key and provider representation",
         "never treat existing metadata as the preferred answer",
         "provider-metadata approval",
@@ -471,7 +467,7 @@ def main() -> int:
         github_edge_and_error(root, base)
         linear_happy(root, base)
         linear_edge_and_error(root, base)
-        config_and_sync_integration(root, base)
+        config_and_route_integration(root, base)
     print("PASS: managing-issues provider checks (happy, edge, error, integration)")
     return 0
 

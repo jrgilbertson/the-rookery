@@ -2,7 +2,6 @@
   "version": 2,
   "provider": "github",
   "target": "REPLACE_WITH_OWNER/REPLACE_WITH_REPOSITORY",
-  "synchronization": false,
   "mappings": {
     "priority": {
       "urgent": "priority:urgent",

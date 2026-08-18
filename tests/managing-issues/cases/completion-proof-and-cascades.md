@@ -16,8 +16,9 @@ criteria edits, and observable lifecycle cascades in R13 and R16.
 >
 > The loaded provider guide can edit Verification and change status. The
 > operator asks to replace the parent's Verification with “children are Done”
-> and complete it in the same approval. Synchronization is configured, but the
-> parent, child, and projection status cascades cannot be observed.
+> and complete it in the same approval. The provider reports that completing
+> this parent will also complete one native child relationship. Whether an
+> external service changes another tracker is unknown.
 >
 > Explain whether the outcome is complete and what may be previewed.
 
@@ -32,6 +33,7 @@ criteria edits, and observable lifecycle cascades in R13 and R16.
       approved and applied, it requires exact readback and a new completion
       assessment.
 - [ ] Refuses to combine that edit with the lifecycle change in one batch.
-- [ ] Stops before an executable lifecycle preview because the synchronized
-      parent, child, and projection cascades are unknown; it performs no
-      provider action and never permanently deletes an issue.
+- [ ] Stops the requested completion on the evidence gaps, not because external
+      tracker behavior is unknown. If a later assessment proves completion,
+      its preview surfaces the provider-reported child cascade and no
+      speculative external effect. It never permanently deletes an issue.

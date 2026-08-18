@@ -3,7 +3,6 @@
   "provider": "github",
   "provider": "linear",
   "target": "ExampleOrg/Project",
-  "synchronization": false,
   "mappings": {
     "priority": {},
     "leaf_estimate": {},

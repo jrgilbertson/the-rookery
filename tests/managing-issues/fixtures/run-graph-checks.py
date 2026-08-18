@@ -21,7 +21,7 @@ PROVIDER = HERE / "provider"
 SKILL = REPO_ROOT / "skills/managing-issues/SKILL.md"
 REFERENCE = REPO_ROOT / "skills/managing-issues/references/graph-and-completion.md"
 GITHUB_REFERENCE = REPO_ROOT / "skills/managing-issues/references/github.md"
-LINEAR_REFERENCE = REPO_ROOT / "skills/managing-issues/references/linear-and-sync.md"
+LINEAR_REFERENCE = REPO_ROOT / "skills/managing-issues/references/linear.md"
 WORKSPACE = "workspace-fixture"
 GH_REPOSITORY = "github.com/example/project"
 GH_BOUNDARY_REPOSITORY = "github.com/example/dependency"
@@ -239,11 +239,14 @@ def canonical_identity_from_native_link(
     return matches[0] if len(matches) == 1 else None
 
 
-def provider_managed_synchronized_write(
+def canonical_write_from_provider_link(
     canonical: str,
+    selector_provider: str,
     provider_links: list[tuple[str, str]],
     selector: str,
 ) -> list[str]:
+    if selector_provider == canonical:
+        return [f"write:{canonical}:{selector}"]
     target = canonical_identity_from_native_link(canonical, provider_links, selector)
     return [] if target is None else [f"write:{canonical}:{target}"]
 
@@ -254,9 +257,8 @@ def completion_gaps(
     return [criterion for criterion in verification if criterion not in evidence]
 
 
-def lifecycle_preview(cascades: tuple[str, ...] | None) -> list[str]:
-    if cascades is None:
-        return []
+def lifecycle_preview(cascades_reported_by_provider: tuple[str, ...]) -> list[str]:
+    cascades = tuple(f"provider cascade: {cascade}" for cascade in cascades_reported_by_provider)
     return ["canonical lifecycle change", *cascades]
 
 
@@ -426,29 +428,34 @@ Fix the save path.
 
     provider_links = [("example/project#11", "ENG-11")]
     require(
-        provider_managed_synchronized_write("github", provider_links, "ENG-11")
+        canonical_write_from_provider_link("github", "linear", provider_links, "ENG-11")
         == ["write:github:example/project#11"],
         "Linear-to-GitHub route differs",
     )
     require(
-        provider_managed_synchronized_write("linear", provider_links, "example/project#11")
+        canonical_write_from_provider_link("linear", "github", provider_links, "example/project#11")
         == ["write:linear:ENG-11"],
         "GitHub-to-Linear route differs",
     )
     require(
-        provider_managed_synchronized_write("github", [], "ENG-11") == [],
-        "missing native linkage allowed a synchronized write",
+        canonical_write_from_provider_link("github", "linear", [], "ENG-11") == [],
+        "missing provider-native linkage allowed a cross-tracker write",
     )
     require(
-        provider_managed_synchronized_write(
+        canonical_write_from_provider_link(
             "linear",
-            [("example/project#11", "ENG-11"), ("example/other#7", "ENG-11")],
-            "ENG-11",
+            "github",
+            [("example/project#11", "ENG-11"), ("example/project#11", "ENG-12")],
+            "example/project#11",
         )
         == [],
-        "ambiguous native linkage allowed a synchronized write",
+        "ambiguous provider-native linkage allowed a cross-tracker write",
     )
-
+    require(
+        canonical_write_from_provider_link("github", "github", [], "example/project#11")
+        == ["write:github:example/project#11"],
+        "canonical selector was incorrectly blocked by a missing cross-tracker link",
+    )
     latest_verification = ("children are completed", "support confirms outcome")
     require(
         completion_gaps(latest_verification, {"children are completed"})
@@ -464,17 +471,16 @@ Fix the save path.
         "Verification edit and lifecycle change were combined after an unresolved readback",
     )
     require(
-        lifecycle_preview(("complete parent", "close projection"))
+        lifecycle_preview(("complete linked child",))
         == [
             "canonical lifecycle change",
-            "complete parent",
-            "close projection",
+            "provider cascade: complete linked child",
         ],
-        "observable lifecycle cascades were not explicit effects",
+        "provider-reported lifecycle cascades were not explicit effects",
     )
     require(
-        lifecycle_preview(None) == [],
-        "unknown lifecycle cascades allowed an executable preview",
+        lifecycle_preview(()) == ["canonical lifecycle change"],
+        "unknown external behavior blocked the canonical lifecycle effect",
     )
 
 
@@ -717,9 +723,11 @@ def published_contract_checks() -> None:
         "failed",
         "indeterminate",
         "unapplied",
-        "provider/sync reference",
+        "provider reference",
         "Never match by title",
         "separate batch",
+        "list every cascade the provider reports as an intended effect",
+        "Do not inspect, predict, repair, or block on effects the provider does not report",
     )
     normalized = " ".join(text.split()).casefold()
     for fragment in required:
@@ -773,15 +781,15 @@ def published_contract_checks() -> None:
     )
     linear = LINEAR_REFERENCE.read_text(encoding="utf-8")
     require("workspaceErrors" in linear and "capReached" in linear, "Linear reference lacks partial-coverage checks")
-    normalized_linear = " ".join(linear.split())
+    normalized_skill_text = " ".join(skill.split())
     for fragment in (
-        "exact native synchronization link",
-        "top-level config provider alone selects the canonical tracker",
-        "never maintain a sidecar map or mutate the projection as fallback",
+        "The configured provider is canonical and is the only write target",
+        "only through one exact provider-native cross-tracker link",
+        "Never infer identity, maintain a repository-side mapping, or mutate the noncanonical issue",
     ):
         require(
-            fragment in normalized_linear,
-            f"Linear reference lacks synchronization contract: {fragment}",
+            fragment in normalized_skill_text,
+            f"main skill lacks cross-tracker routing contract: {fragment}",
         )
 
 

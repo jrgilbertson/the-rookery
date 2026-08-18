@@ -28,7 +28,8 @@ unconfirmed create.
 - [ ] Stops each complete batch at its first failed or indeterminate effect;
       later independent effects, including the approved update to `#19`, are
       reported `unapplied` and receive no provider command.
-- [ ] Does not switch providers or mutate a synchronized projection to recover.
+- [ ] Does not switch providers or mutate a noncanonical linked issue to
+      recover.
 - [ ] Preserves confirmed earlier effects if any, the stopping result, and the
       unapplied inventory. Recovery starts with a fresh canonical read, complete
       preview, and new approval.

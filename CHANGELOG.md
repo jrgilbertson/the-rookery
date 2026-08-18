@@ -19,12 +19,11 @@ looked" surface. GitHub Releases mirror its entries.
   supports it. Authenticated GitHub and Linear paths apply each approved effect
   once and verify its readback. Reads and drafts remain setup-free; interactive
   setup before a repository's first tracker mutation records the operator's
-  canonical provider, target, metadata vocabulary, and provider-managed
-  synchronization posture, including whether the native integration accepts
-  creates from that canonical tracker. Linear prefers connected MCP tools when
-  available and retains an explicitly selectable Orca CLI path. The skill writes only the
-  canonical tracker and leaves mirroring to GitHub and Linear's native
-  integration. It returns verified issue, graph, and readiness facts that any
+  canonical provider, target, and metadata vocabulary. Linear prefers connected
+  MCP tools when available and retains an explicitly selectable Orca CLI path.
+  The skill writes only the canonical tracker. Cross-tracker requests follow one
+  exact provider-native link to the canonical issue or ask for that issue instead
+  of guessing. It returns verified issue, graph, and readiness facts that any
   downstream IDE or workflow may consume; it does not invoke or persist
   execution orchestration or parallel graph state.
 - `repo-gardener` lane contracts now bind five sensing floors to every lane

@@ -59,9 +59,9 @@ to return to planning.
 ### Canonical Tracker
 
 The one issue system authorized to own and receive mutations for a repository.
-When another tracker synchronizes the same issue, that copy is a projection or
-alias. The provider's native synchronization link may identify its canonical
-record, but the projection is not a second write target.
+A cross-tracker request may reach its canonical record only through one exact
+provider-native link; otherwise Managing Issues asks for the canonical issue or
+stops. An issue in another tracker is not a second write target.
 
 ### Owned Issue Graph
 

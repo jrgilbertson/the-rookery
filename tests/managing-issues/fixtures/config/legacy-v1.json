@@ -2,7 +2,6 @@
   "version": 1,
   "provider": "github",
   "target": "ExampleOrg/Project",
-  "synchronization": false,
   "mappings": {
     "priority": {},
     "leaf_estimate": {},

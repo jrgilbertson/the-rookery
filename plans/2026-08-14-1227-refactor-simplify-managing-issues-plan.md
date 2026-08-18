@@ -25,11 +25,11 @@ execution: code
 ### Summary
 
 Managing Issues will analyze, create, and update issue records and their native relationships without becoming an implementation orchestrator.
-A small repository configuration records the operator's canonical tracker, target, metadata vocabulary, and whether provider-managed synchronization is on before the first tracker mutation; reads and drafts remain setup-free. The implementation replaces the trusted-policy and Linear-read-only paths with one authenticated, previewed, read-back workflow that scales from one leaf to the shallowest useful native graph.
+A small repository configuration records the operator's canonical tracker, target, and metadata vocabulary before the first tracker mutation; reads and drafts remain setup-free. The implementation replaces the trusted-policy and Linear-read-only paths with one authenticated, previewed, read-back workflow that scales from one leaf to the shallowest useful native graph.
 
 ### Problem Frame
 
-The current skill accumulated policy, trust, provider, synchronization, graph, and completion rules in overlapping instruction homes.
+The current skill accumulated policy, trust, provider, cross-tracker routing, graph, and completion rules in overlapping instruction homes.
 Its trusted-default-branch policy makes ordinary writes depend on a second authorization model even after the user has authenticated to GitHub or Linear.
 The result is harder to explain, configure, and maintain than the issue-management outcome requires.
 
@@ -49,7 +49,7 @@ The skill also needs to preserve its strongest property: the same workflow shoul
 - **Metadata choices are analyzed per issue.** (session-settled: user-directed — chosen over hard-coded priority and estimate defaults: a fallback would conceal missing judgment.) Governs R8-R10.
 - **Readiness is portable issue state, not a workflow instruction.** (session-settled: user-directed — chosen over literal skill recommendations: skill names change and differ across environments.) Governs R10-R11, R15.
 - **Managing Issues stops at verified tracker state.** (session-settled: user-directed — chosen over automatic orchestration handoff: worktree and implementation ownership belongs to the user's environment.) Governs R1-R3, R15.
-- **Retain one issue workflow across scales.** (session-settled: user-approved — chosen over replacing the skill with `to-tickets`: decomposition alone does not cover general issue updates, metadata, synchronization, or completion.) Governs R2-R3, R8-R11.
+- **Retain one issue workflow across scales.** (session-settled: user-approved — chosen over replacing the skill with `to-tickets`: decomposition alone does not cover general issue updates, metadata, cross-tracker routing, or completion.) Governs R2-R3, R8-R11.
 
 ### Requirements
 
@@ -61,7 +61,7 @@ The skill also needs to preserve its strongest property: the same workflow shoul
 
 **Repository setup and vocabulary**
 
-- R4. Before the first tracker mutation in a repository without a valid configuration, Managing Issues must run a short interactive setup. It uses an explicit provider and target from the request or otherwise discovers authenticated choices for the operator, asks whether native GitHub/Linear Issues Sync is off or on with off recommended, and lets the operator accept recommended metadata, map existing values, or define custom representations. Sync-on records that the provider integration is already configured; Managing Issues does not configure it. Reads and drafts require no setup.
+- R4. Before the first tracker mutation in a repository without a valid configuration, Managing Issues must run a short interactive setup. It uses an explicit provider and target from the request or otherwise discovers authenticated choices for the operator and lets the operator accept recommended metadata, map existing values, or define custom representations. Reads and drafts require no setup.
 - R5. Setup must apply any approved provider-metadata creation first, read it back, then preview and write only the separately approved repository setup files. After those files validate, the skill must resume the original request with a fresh canonical read and a separate tracker-effect preview and approval.
 - R6. Repository configuration must map the available priority levels, leaf estimates, general labels, and provider representations of the three canonical readiness postures without selecting a preferred priority, estimate, or label as a fallback.
 - R7. Parent-child and blocked-by relationships are provider capabilities rather than configurable metadata mappings. If a relationship required by a proposed graph is unavailable, the skill must report the limitation before writing and treat any reduced standalone-issue creation as a separate proposal rather than creating disconnected records or silently substituting a label or prose convention.
@@ -87,11 +87,11 @@ flowchart TB
   B -->|Yes| RF[Ready Frontier]
 ```
 
-**Provider access, writes, and synchronization**
+**Provider access, writes, and cross-tracker routing**
 
 - R12. Successful authentication through the installed GitHub or Linear provider path is sufficient provider identity for writes; the skill must not require a trusted-branch policy copy or a separately enumerated principal.
 - R13. Before writing, the skill must show the complete set of intended tracker effects for approval. One approval may cover an exact graph batch; execution must still confirm each target, apply only approved effects, and read each result back before reporting success. If an effect fails or its result is indeterminate, the skill must stop, preserve confirmed successful effects, report the `applied` or `already_satisfied`, `failed` or `indeterminate`, and `unapplied` inventory, and require a fresh read, preview, and approval before continuing.
-- R14. A synchronized repository must designate one canonical tracker and confirm that native synchronization accepts creates from it. Linear-canonical creation requires two-way sync; GitHub-canonical creation may use GitHub-to-Linear one-way or two-way sync. GitHub or Linear owns the native synchronization and cross-provider identity. Managing Issues writes only the canonical record, never maintains a sidecar identity map or treats the projection as a second mutation target, and reports unavailable or ambiguous native direction or linkage without writing either side.
+- R14. Managing Issues writes only the configured canonical tracker and never maintains a sidecar identity map or treats another tracker as a second mutation target. A cross-tracker request may resolve the canonical issue only through one exact provider-native link; a missing or ambiguous link requires the exact canonical issue or stops before mutation. A verified canonical create succeeds without waiting for another tracker record. Lifecycle results include provider-reported effects, while unreported external effects are unobservable and never block.
 
 **Output boundary**
 
@@ -103,8 +103,8 @@ flowchart TB
 - F1. Write requiring repository setup
   - **Trigger:** A1 requests the first issue mutation in a repository without valid Managing Issues configuration.
   - **Actors:** A1, A2, A3
-  - **Steps:** A2 uses the explicit provider and target or otherwise discovers authenticated choices; A1 selects the canonical route, synchronization posture, and recommended, mapped, or custom metadata representations. A2 separately previews and verifies provider metadata, writes only the approved setup files, validates them, and resumes the original issue request behind its own preview.
-  - **Outcome:** The repository gains one operator-chosen reusable issue vocabulary and synchronization posture, and the requested operation continues without a second invocation.
+  - **Steps:** A2 uses the explicit provider and target or otherwise discovers authenticated choices; A1 selects the canonical route and recommended, mapped, or custom metadata representations. A2 separately previews and verifies provider metadata, writes only the approved setup files, validates them, and resumes the original issue request behind its own preview.
+  - **Outcome:** The repository gains one operator-chosen reusable issue vocabulary, and the requested operation continues without a second invocation.
   - **Covers:** R4-R6, R12, R14.
 - F2. Create or refine one implementation leaf
   - **Trigger:** The requested outcome fits one reviewable deliverable.
@@ -150,18 +150,18 @@ flowchart TB
 - AE5. **Setup and resume**
   - **Covers R4-R6, R12-R13.**
   - **Given:** A1 requests a GitHub issue create in a repository without valid Managing Issues configuration.
-  - **When:** A1 accepts the proposed provider, target, sync posture, and metadata mappings.
+  - **When:** A1 accepts the proposed provider, target, and metadata mappings.
   - **Then:** A2 validates the setup and resumes the pending create rather than ending with setup instructions.
 - AE6. **Authenticated Linear write**
   - **Covers R12-R13.**
   - **Given:** Linear is canonical, the installed provider path is authenticated, and A1 approves an exact update.
   - **When:** A2 performs the update.
   - **Then:** Linear receives the approved mutation and the successful readback is reported without a separate trusted-policy or principal check.
-- AE7. **Synchronized projection**
+- AE7. **Cross-tracker request**
   - **Covers R14.**
-  - **Given:** Linear is canonical and the provider exposes an exact native link to its synchronized GitHub projection.
-  - **When:** A1 references the GitHub copy while requesting an update.
-  - **Then:** A2 resolves and updates only the Linear record; unavailable or ambiguous native linkage produces no mutation.
+  - **Given:** Linear is canonical and the provider exposes one exact native link from a related GitHub issue.
+  - **When:** A1 references the GitHub issue while requesting an update.
+  - **Then:** A2 resolves and updates only the Linear record; a missing or ambiguous link requires the exact Linear issue or stops without mutation. A canonical create requires only its own verified readback, and a lifecycle update reports provider-returned effects without waiting for unreported external effects.
 - AE8. **Partial graph write**
   - **Covers R13.**
   - **Given:** A provider accepts the parent and first child but rejects the next approved graph effect.
@@ -194,7 +194,7 @@ flowchart TB
 - Managing Issues does not invoke CE Brainstorm, CE Plan, CE Work, or an Orca implementation or worktree workflow. Using the installed `orca linear` client as the authenticated Linear provider path is provider access, not workflow invocation.
 - Issues do not persist literal workflow recommendations or skill names.
 - This work does not introduce a second decomposition skill; it may borrow vertical-slice and blocker-frontier ideas from `to-tickets` inside the existing graph workflow.
-- Repository setup maps tracker vocabulary and records whether provider-managed synchronization is on; it is not a public security contract, a synchronization service, or a second provider authorization system.
+- Repository setup maps tracker vocabulary; it is not a public security contract, an integration configuration surface, or a second provider authorization system.
 - Automatic creation or migration of repository labels, estimates, and provider workflow fields is not required for this simplification.
 
 <!-- ce-section: work-relationships -->
@@ -214,16 +214,16 @@ The broader workflow remains a set of independently owned consumers rather than 
 - GitHub writes require an installed authenticated `gh` client. Linear writes prefer authenticated connected MCP tools and may instead use an explicitly selected Orca client with a version-matched `orca-linear` guide. The repository config stores neither transport.
 - The canonical provider exposes the metadata choices selected during setup.
 - Native relationship behavior varies by provider; unsupported relationships remain visible as unsupported rather than being simulated silently.
-- The configured provider identifies the canonical tracker; when native synchronization is on, GitHub or Linear owns mirroring and exposes any cross-provider linkage used for resolution.
+- The configured provider identifies the canonical tracker. A cross-tracker request depends on one exact provider-native link to the canonical issue.
 
 ### Sources and Research
 
 - [GitHub issue #66](https://github.com/jrgilbertson/the-rookery/issues/66) supplies the original prose and policy-slimming problem.
-- `docs/plans/2026-08-12-001-feat-managing-issues-skill-plan.md` supplies the existing capability, graph, synchronization, and completion baseline.
+- `docs/plans/2026-08-12-001-feat-managing-issues-skill-plan.md` supplies the existing capability, graph, cross-tracker, and completion baseline.
 - `skills/managing-issues/` supplies the current instruction, provider-reference, configuration, and validation behavior that this contract simplifies.
 - [Matt Pocock's `to-tickets`](https://github.com/mattpocock/skills/blob/main/docs/engineering/to-tickets.md) demonstrates vertical implementation slices, native blocker edges, and a frontier that remains separate from execution.
 - [Matt Pocock's repository setup skill](https://github.com/mattpocock/skills/blob/main/skills/engineering/setup-matt-pocock-skills/SKILL.md) demonstrates that small per-repository tracker and label configuration is a useful shared substrate rather than avoidable ceremony.
-- [Linear's GitHub integration documentation](https://linear.app/docs/github) documents provider-managed GitHub Issues Sync and its one-way or two-way modes.
+- [Linear's GitHub integration documentation](https://linear.app/docs/github) documents the provider-native cross-tracker link.
 
 ---
 
@@ -242,10 +242,10 @@ The broader workflow remains a set of independently owned consumers rather than 
 ### Key Technical Decisions
 
 - **KTD1 — Cut configuration over cleanly to version 2.** Rename the active policy artifacts and terminology to configuration, validate the new shape, and give version 1 users a clear setup path. Do not add automatic migration, a compatibility shim, or dual-schema behavior. This is a session-settled decision chosen over carrying the old trust model through a transition layer.
-- **KTD2 — Validate repository semantics, not trust.** Preserve strict JSON parsing, duplicate-key rejection, bounded reads, the fixed contained `.agents/managing-issues.json` path, target normalization, and the synchronization boolean. Remove trusted-policy copies, trusted-mapping inputs, principal registries, default-branch comparisons, and their CLI flags. This implements R4-R7 and R12 without weakening local configuration correctness.
-- **KTD3 — Leave synchronization to the providers.** A required boolean records whether native GitHub/Linear Issues Sync is on and accepts creates from the configured canonical tracker. `provider` identifies that tracker and therefore the only write target. Linear-canonical creation requires two-way sync; GitHub-canonical creation may use GitHub-to-Linear one-way or two-way sync. The skill neither configures the integration nor stores cross-provider identities; it uses an exact native linkage exposed by the provider when one is needed. Permit either GitHub or Linear to be canonical. This is a session-settled decision chosen over a redundant sidecar map or mirrored writes.
-- **KTD4 — Keep provider semantics local and Linear transport session-local.** `github.md` and `linear-and-sync.md` own Managing Issues behavior for their provider. GitHub commands follow the installed `gh` surface. Linear uses an explicit operator-selected transport, otherwise authenticated connected MCP tools by default and Orca as the unavailable-MCP fallback. MCP runtime schemas and the installed Orca version-matched guide are their respective command authorities. Config stores canonical priority names and translates them to each transport's required representation at the boundary. No common provider API is introduced.
-- **KTD5 — Execute one transient ordered effect batch.** A preview names the canonical provider, normalized target, canonical identity when synchronization applies, and every exact node, metadata change, lifecycle change, and relationship effect. After approval, create and read back nodes before attaching and reading back edges. Immediately before an effect, reread every field or relationship that determined its approved result; material drift stops the batch for a fresh preview. Stop at the first failed or indeterminate effect, leave confirmed successes intact, and classify all remaining effects as unapplied. Recovery always starts from a fresh canonical read, preview, and approval. This implements R13's failure and indeterminacy handling.
+- **KTD2 — Validate repository semantics, not trust.** Preserve strict JSON parsing, duplicate-key rejection, bounded reads, the fixed contained `.agents/managing-issues.json` path, target normalization, and closed metadata mappings. Remove trusted-policy copies, trusted-mapping inputs, principal registries, default-branch comparisons, integration posture, and their CLI flags. This implements R4-R7 and R12 without weakening local configuration correctness.
+- **KTD3 — Route only to the canonical provider.** `provider` identifies the only write target. The shared lifecycle in `SKILL.md` stores no cross-provider identities and resolves a cross-tracker request only through one exact provider-native link. A missing or ambiguous link requires the exact canonical issue or stops before mutation. Canonical creates require only canonical readback, and lifecycle results include provider-reported effects without waiting for unreported external effects. Permit either GitHub or Linear to be canonical. This is a session-settled decision chosen over a redundant sidecar map or multiple write targets.
+- **KTD4 — Keep provider semantics local and Linear transport session-local.** `github.md` and `linear.md` own mechanics for their provider. GitHub commands follow the installed `gh` surface. Linear uses an explicit operator-selected transport, otherwise authenticated connected MCP tools by default and Orca as the unavailable-MCP fallback. MCP runtime schemas and the installed Orca version-matched guide are their respective command authorities. Config stores canonical priority names and translates them to each transport's required representation at the boundary. No common provider API is introduced.
+- **KTD5 — Execute one transient ordered effect batch.** A preview names the canonical provider, normalized target, canonical identity when cross-tracker routing applies, and every exact node, metadata change, lifecycle change, and relationship effect. After approval, create and read back nodes before attaching and reading back edges. Immediately before an effect, reread every field or relationship that determined its approved result; material drift stops the batch for a fresh preview. Stop at the first failed or indeterminate effect, leave confirmed successes intact, and classify all remaining effects as unapplied. Recovery always starts from a fresh canonical read, preview, and approval. This implements R13's failure and indeterminacy handling.
 - **KTD6 — Derive readiness; store only its provider representation.** `graph-and-completion.md` owns derivation from current Problem, Scope, and Verification, Ready Frontier calculation, and completion evaluation. Provider references own how the derived posture is represented and corrected. The derived value controls reporting and frontier membership when stored state has drifted.
 - **KTD7 — Pair deterministic contracts with fresh-context behavior evaluation.** Config, provider, and graph runners prove exact mechanics. Matched prior-versus-revised fresh-context cases prove the agent follows the simpler workflow, and independent grading prevents the authoring context from masking ambiguity. Historical evaluation logs remain append-only.
 
@@ -258,7 +258,7 @@ flowchart LR
   S --> G[graph-and-completion.md\ngraph, readiness, completion]
   S --> P{Canonical provider}
   P --> GH[github.md\nGitHub mechanics]
-  P --> LI[linear-and-sync.md\nLinear and sync mechanics]
+  P --> LI[linear.md\nLinear mechanics]
   GH --> T[(Canonical tracker)]
   LI --> T
   T --> R[Verified issue state, graph,\nblockers, Ready Frontier]
@@ -277,7 +277,7 @@ sequenceDiagram
   Skill->>Config: Read repository semantics
   Skill->>Tracker: Discover target, metadata, relationships, current state
   alt First mutation without valid config
-    Skill->>User: Choose provider, target, sync, and metadata
+    Skill->>User: Choose provider, target, and metadata
     Skill->>Tracker: Apply approved missing metadata and read back
     Skill->>User: Preview exact repository setup files
     User->>Skill: Approve repository setup
@@ -319,7 +319,7 @@ The batch is an in-session execution protocol, not persisted state. A create who
 
 ### Configuration Version 2 Contract
 
-The new `.agents/managing-issues.json` remains intentionally small and closed: the validator rejects every unknown top-level or nested key rather than preserving extension data.
+The new `.agents/managing-issues.json` remains intentionally small and closed: the validator rejects every unknown top-level or nested key rather than preserving extension data. It remains version 2 because version 2 has not shipped; simplifying the draft contract does not require another version.
 
 - `version`: exactly `2`.
 - `provider`: `github` or `linear`; this is the canonical tracker.
@@ -328,9 +328,8 @@ The new `.agents/managing-issues.json` remains intentionally small and closed: t
 - `mappings.leaf_estimate`: the available implementation-leaf estimates, with no default and no parent estimate. GitHub values are repository label names; Linear values are native numeric estimates.
 - `mappings.labels`: the available general labels. This replaces the overloaded `work_type` family.
 - `mappings.readiness`: exactly `needs-discovery`, `needs-planning`, and `ready`, each mapped to an exact provider label. GitHub values are repository label names; Linear values are label identities discovered from the canonical team. Readiness never maps to a Linear workflow status.
-- `synchronization`: required boolean. `true` records that native GitHub/Linear Issues Sync is already configured and accepts creates from the configured canonical tracker; `false` means it is off. It does not configure the integration, store cross-provider identities, or create a second write target.
 
-The provider templates contain recommended priority, estimate, label, and readiness choices, but those are setup choices rather than per-issue defaults. Setup presents them beside discovered alternatives and leaves the operator in control. Relationship and native-synchronization capabilities remain outside configuration because providers own them and they are inspected when needed.
+The provider templates contain recommended priority, estimate, label, and readiness choices, but those are setup choices rather than per-issue defaults. Setup presents them beside discovered alternatives and leaves the operator in control. Relationship capabilities and cross-tracker links remain outside configuration because providers own them and they are inspected when needed.
 
 ---
 
@@ -338,14 +337,14 @@ The provider templates contain recommended priority, estimate, label, and readin
 
 ### Unit 1 — Replace policy configuration with the minimal config-v2 contract
 
-**Goal:** Make repository configuration a small vocabulary and provider-managed synchronization posture, with no trust or authorization semantics and no legacy execution path.
+**Goal:** Make repository configuration a small canonical target and metadata vocabulary, with no trust, authorization, integration-posture, or legacy execution path.
 
 **Files:**
 
 - Rename `skills/managing-issues/scripts/policy_check.py` to `skills/managing-issues/scripts/config_check.py` and remove trusted-copy, principal, and default-branch comparison inputs while retaining strict parsing and normalization safeguards.
 - Rename `skills/managing-issues/assets/policy-template-github.json` and `skills/managing-issues/assets/policy-template-linear.json` to provider-specific config templates and replace their contents with schema-v2 shape only.
 - Rename `tests/managing-issues/fixtures/run-policy-checks.py` to `tests/managing-issues/fixtures/run-config-checks.py` and rename the associated `tests/managing-issues/fixtures/policy/` fixture family to configuration terminology.
-- Remove the synchronization-map template and fixtures; config stores only the provider-managed synchronization boolean.
+- Remove the obsolete cross-provider mapping template and fixtures; config stores no integration posture or cross-tracker identity.
 
 **Implementation notes:**
 
@@ -357,11 +356,11 @@ The provider templates contain recommended priority, estimate, label, and readin
 
 **Tests:**
 
-- In `tests/managing-issues/fixtures/run-config-checks.py`, cover valid GitHub and Linear targets; no-config behavior; empty-but-valid choice maps; populated priority, leaf-estimate, and label choices; all three exact readiness keys; and native synchronization on and off with either canonical provider.
-- Prove rejection of duplicate JSON keys, unknown top-level or nested keys, credential-shaped extra fields, oversized or non-regular input, symlink/path escape, malformed targets, non-boolean synchronization, unknown mapping families, `work_type`, missing readiness keys, mapping defaults, and schema version 1.
+- In `tests/managing-issues/fixtures/run-config-checks.py`, cover valid GitHub and Linear targets; no-config behavior; empty-but-valid choice maps; populated priority, leaf-estimate, and label choices; and all three exact readiness keys with either canonical provider.
+- Prove rejection of duplicate JSON keys, unknown top-level or nested keys, credential-shaped extra fields, oversized or non-regular input, symlink/path escape, malformed targets, unknown mapping families, `work_type`, missing readiness keys, mapping defaults, and schema version 1.
 - Prove the CLI no longer exposes or consumes trusted mapping, trusted branch, or expected-principal inputs.
 
-**Done when:** one validator and two recommended provider templates describe the entire repository configuration contract, and no shipped config artifact contains a second trust model or manual synchronization state.
+**Done when:** one validator and two recommended provider templates describe the entire repository configuration contract, and no shipped config artifact contains a second trust model, integration posture, or cross-tracker identity.
 
 **Covers:** R4-R7, R10, R12, R14; F1; AE2, AE5, AE7, AE11.
 
@@ -373,7 +372,7 @@ The provider templates contain recommended priority, estimate, label, and readin
 
 - Rewrite `skills/managing-issues/SKILL.md` around one shared lifecycle, mandatory first-mutation setup when config is absent, one exact tracker-effect approval, first-failure stop, and issue-only handoff.
 - Simplify `skills/managing-issues/references/github.md` by removing principal drift and trusted-policy gates while retaining canonical-target matching, safe argument construction, exact identity matchback, and readback.
-- Replace the Linear-read-only rules in `skills/managing-issues/references/linear-and-sync.md` with authenticated creates and surgical updates through connected Linear MCP tools or an explicitly selected installed Orca command surface, plus canonical-only sync writes. Keep transport out of repo config, translate canonical priority names at the selected transport boundary, and require canonical-target matching, exact identity matchback, and readback just as the GitHub path does.
+- Replace the Linear-read-only rules in `skills/managing-issues/references/linear.md` with authenticated creates and surgical updates through connected Linear MCP tools or an explicitly selected installed Orca command surface. Keep transport out of repo config, translate canonical priority names at the selected transport boundary, and require canonical-target matching, exact identity matchback, and readback just as the GitHub path does. Keep canonical-only cross-tracker routing in the shared lifecycle rather than duplicating it here.
 - Update `skills/managing-issues/assets/issue-body-template.md` only where needed to keep Problem, Scope, and Verification as the portable issue content contract.
 - Make `tests/managing-issues/fixtures/bin/orca` a deterministic stateful provider seam for the exact read/write commands used by the revised reference. Update `tests/managing-issues/fixtures/bin/gh` and provider fixtures only where the removed principal model or common lifecycle requires it.
 - Revise `tests/managing-issues/fixtures/run-provider-checks.py` and the behavioral cases `canonical-routing-and-policyless-write.md`, `ambiguous-create-and-provider-degradation.md`, `issue-shape-and-single-leaf.md`, and `untrusted-content-and-visible-approval.md`.
@@ -389,23 +388,23 @@ The provider templates contain recommended priority, estimate, label, and readin
 **Tests:**
 
 - In `tests/managing-issues/fixtures/run-provider-checks.py`, exercise authenticated GitHub and Linear leaf creates, lifecycle transitions, and field-specific updates; exact canonical-target confirmation; provider and normalized-target visibility in the preview; exact create identity matchback; label replacement and concurrent-drift safeguards; safe argument vectors for titles, bodies, and labels containing shell metacharacters or leading dashes; and readback of every successful effect.
-- Add a no-config read/draft path and setup-and-resume paths for the first mutation with no config and for a present version-1 config. Each setup proves operator selection of provider, exact target, sync posture, and metadata mappings; separately approved provider-metadata effects; contained non-symlink setup destinations; saved-config validation; and resumption behind a distinct tracker batch approval.
+- Add a no-config read/draft path and setup-and-resume paths for the first mutation with no config and for a present version-1 config. Each setup proves operator selection of provider, exact target, and metadata mappings; separately approved provider-metadata effects; contained non-symlink setup destinations; saved-config validation; and resumption behind a distinct tracker batch approval.
 - Prove a provider rejection and an indeterminate create both stop the batch without retrying or executing later independent effects.
-- Prove unavailable or ambiguous native synchronization linkage causes no write to either tracker, and an exact provider-exposed projection reference routes one write to the canonical record.
+- Prove a missing or ambiguous provider-native link asks for the exact canonical issue or causes no write, and one exact link routes one write to the canonical record. Prove a canonical create succeeds after canonical readback without requiring another tracker record.
 - Prove MCP is the default when available, explicit Orca selection is honored, transport is absent from config, canonical Linear priorities are converted to the MCP schema's numeric values, and absent or incompatible selected tooling stops before an executable write preview rather than guessing or switching transports.
 
 **Done when:** GitHub and Linear both satisfy the read/create/update/lifecycle portion of R1 and all of R12-R14 through one shared lifecycle, and the shipped skill no longer says Linear mutations are manual or read-only. Unit 3 completes R1's relationship, readiness, and completion behavior.
 
 **Covers:** R1-R2, R4-R6, R8-R10, R12-R15; F1-F2; AE1-AE2, AE5-AE7, AE10.
 
-### Unit 3 — Make graph ordering, readiness, synchronization, and completion normative
+### Unit 3 — Make graph ordering, readiness, routing, and completion normative
 
 **Goal:** Preserve the skill's scalable issue-graph behavior while making its derived state and partial-failure semantics unambiguous.
 
 **Files:**
 
 - Refine `skills/managing-issues/references/graph-and-completion.md` as the sole home for graph traversal, shallowest-useful decomposition, readiness derivation, Ready Frontier calculation, and completion evaluation.
-- Keep provider-specific capability probes and relationship commands in `skills/managing-issues/references/github.md` and `skills/managing-issues/references/linear-and-sync.md`.
+- Keep provider-specific capability probes and relationship commands in `skills/managing-issues/references/github.md` and `skills/managing-issues/references/linear.md`; the shared lifecycle remains the sole instruction home for cross-tracker routing.
 - Update `tests/managing-issues/fixtures/run-graph-checks.py`, provider graph fixtures, and the cases `graph-coverage-and-ready-frontier.md`, `topology-reconciliation-and-handoff.md`, `partial-mutation-and-global-stop.md`, and `completion-proof-and-cascades.md`.
 
 **Implementation notes:**
@@ -416,15 +415,15 @@ The provider templates contain recommended priority, estimate, label, and readin
 - Recovery from an indeterminate create must first reread the canonical provider for any exact identity or receipt returned by the attempted write. Never bind a record by title or other similarity, and do not preview a replacement create while the original effect remains unresolved.
 - Derive readiness from the latest canonical issue content every time readiness affects an update, report, or frontier. A stale stored mapping is a separately previewed correction; it never overrides the derived result.
 - Define “current approved Verification” as the Verification content returned by the latest exact canonical tracker readback. No external approval ledger is introduced.
-- For synchronization, resolve a projection only from exact native linkage exposed by the provider, then read and write only the canonical issue. If the linkage is unavailable or ambiguous, ask for the exact canonical issue or stop.
+- For a cross-tracker request, resolve the canonical issue only from one exact native link exposed by the provider, then read and write only that canonical issue. If the link is unavailable or ambiguous, ask for the exact canonical issue or stop. Treat canonical readback as sufficient proof of a create. Include provider-reported lifecycle effects in the result; unreported external effects are unobservable and do not block.
 
 **Tests:**
 
 - In `tests/managing-issues/fixtures/run-graph-checks.py`, cover a standalone leaf, a parent with vertical children, necessary second-level nesting, no estimates on any node with children, one blocked edge, and exact Ready Frontier computation.
 - For both providers, prove nodes are verified before edges; unsupported relationship capability prevents all graph writes; and a failed or indeterminate edge stops all later effects.
 - Cover stale stored readiness in both directions, an information-ready but blocked leaf, and a parent that supplies context but never enters the Ready Frontier.
-- Cover provider-managed synchronization with GitHub and Linear canonical routes, unavailable or ambiguous native linkage with zero writes, and no cross-provider behavior when synchronization is off.
-- Cover completion against the latest canonical Verification, incomplete parent outcome despite closed children, observable cascades, and a Verification edit as its own approved effect before reassessment.
+- Cover GitHub and Linear canonical routes, one exact cross-tracker native link, missing or ambiguous linkage with zero writes, and canonical create success without another tracker record.
+- Cover completion against the latest canonical Verification, incomplete parent outcome despite closed children, provider-reported lifecycle effects without blocking on unreported external effects, and a Verification edit as its own approved effect before reassessment.
 
 **Done when:** the deterministic suite proves the same graph semantics for either canonical provider and every stopped batch is locally observable and safely resumable from tracker state.
 
@@ -452,7 +451,7 @@ The provider templates contain recommended priority, estimate, label, and readin
 
 **Tests:**
 
-- The revised behavioral suite must cover the no-config path, setup/resume boundary including version 1, single leaf, an indistinguishable metadata choice that asks rather than guesses, native graph, failed and indeterminate partial batches, readiness drift, unsupported relationship preflight, provider-managed synchronization with either canonical provider, untrusted tracker text that cannot alter or spoof the approved batch, and completion proof.
+- The revised behavioral suite must cover the no-config path, setup/resume boundary including version 1, single leaf, an indistinguishable metadata choice that asks rather than guesses, native graph, failed and indeterminate partial batches, readiness drift, unsupported relationship preflight, canonical-only cross-tracker routing, untrusted tracker text that cannot alter or spoof the approved batch, and completion proof.
 - Independent grading must confirm the revised skill does not invent trust setup, provider authorization, workflow handoff, hard-coded metadata defaults, disconnected graph substitutes, or writes after a failed/indeterminate effect, and that tracker-supplied text never changes the proposed effects. Every revised case must meet its rubric with zero undispositioned regressions against the paired prior run.
 - A repository-wide structural scan must find no live trusted-policy, principal-registry, Linear-read-only, `work_type`, schema-v1, or continuing-after-a-failed-or-indeterminate-effect instruction in shipped skill files, active fixtures/cases, README, or current changelog text. Historical `tests/managing-issues/log.md` records remain exempt.
 
@@ -466,9 +465,9 @@ The provider templates contain recommended priority, estimate, label, and readin
 
 | Check | Command or protocol | Completion evidence |
 | --- | --- | --- |
-| Configuration contract | `python3 tests/managing-issues/fixtures/run-config-checks.py` | All config-v2, strict-parser, no-config, legacy-rejection, and provider-managed synchronization boolean cases pass. |
+| Configuration contract | `python3 tests/managing-issues/fixtures/run-config-checks.py` | All config-v2, strict-parser, no-config, legacy-rejection, canonical-target, and metadata-mapping cases pass. |
 | Provider lifecycle | `python3 tests/managing-issues/fixtures/run-provider-checks.py` | GitHub and Linear creates/updates, exact identity, approval separation, stop behavior, and readbacks pass. |
-| Graph semantics | `python3 tests/managing-issues/fixtures/run-graph-checks.py` | Capability preflight, node-before-edge ordering, readiness, frontier, partial failure, sync, and completion cases pass. |
+| Graph semantics | `python3 tests/managing-issues/fixtures/run-graph-checks.py` | Capability preflight, node-before-edge ordering, readiness, frontier, partial failure, cross-tracker routing, lifecycle reporting, and completion cases pass. |
 | Skill package | `npx skills-ref validate skills/managing-issues` | The renamed script/assets and every linked reference resolve; the skill package validates. |
 | Behavioral evaluation | Run matched prior and revised cases in independent fresh contexts, pin both skill revisions and the shared case/rubric revision, then grade both artifacts independently. | Every revised case meets its rubric with zero undispositioned regressions; the log records revisions, run contexts, grader results, and dispositions. |
 | Trigger behavior, conditional | If the description changes, run the full nine-positive/nine-near-miss suite from `tests/managing-issues/triggers.md`. | All expected triggers and near misses pass; otherwise the log records why the unchanged description made rerun unnecessary. |
@@ -485,7 +484,7 @@ Verification must exercise the production skill and scripts rather than a copied
 
 - **Public skill behavior:** authenticated Linear writes become supported through MCP or Orca, GitHub loses its second principal/trusted-branch gate, reads and drafts remain setup-free, and the first tracker mutation requires interactive repository setup.
 - **Repository contract:** `.agents/managing-issues.json` moves to a deliberately incompatible, smaller schema version. Existing version 1 files receive a clear setup path, not silent reinterpretation.
-- **Tracker state:** no new external storage or service is introduced. Native issues, metadata, relationships, and provider-managed synchronization remain the sole operational state.
+- **Tracker state:** no new external storage or service is introduced. Native issues, metadata, and relationships remain the sole operational state.
 - **Downstream workflows:** issue bodies and graph facts remain portable inputs to Orca, Compound Engineering, or another IDE/agent. No downstream invocation, worktree, branch, or PR behavior changes.
 - **Testing:** the Linear seam becomes stateful and mutation-capable, but remains wholly under `tests/`. The shipped skill keeps no harness dependency.
 - **Compatibility:** the config schema cutover is intentional. Provider drift is contained by exact deterministic fixtures, runtime MCP schemas, installed GitHub help, and the version-matched Orca guide rather than duplicated command documentation.
@@ -495,7 +494,7 @@ Verification must exercise the production skill and scripts rather than a copied
 - **Linear transports expose different value shapes.** Keep canonical meanings in config, translate them through the selected runtime MCP schema or installed Orca guide, and stop before preview when no exact conversion exists.
 - **Existing version 1 config cannot be reused automatically.** Fail clearly, offer the smallest setup populated from provider discovery, preview the config write separately, and resume the original request after validation.
 - **Provider labels may collide or require whole-set replacement.** Match canonical identities, expose the exact resulting label set in the preview, and prefer surgical field operations. Preserve GitHub's label CSV limitations explicitly where applicable.
-- **A synchronized projection can be stale or lack an exposed native linkage.** Require one exact canonical identity before mutation. Unavailable or ambiguous linkage yields zero writes, not a guess, sidecar-map change, or mirrored update.
+- **A cross-tracker request can lack an exact native link.** Require one exact canonical identity before mutation. Missing or ambiguous linkage yields zero writes, not a guess, sidecar-map change, or second write target.
 - **Partial provider success cannot always be rolled back.** Preserve verified successes, stop immediately on failure or indeterminacy, and make the inventory sufficient for a fresh canonical reconciliation.
 - **Obsolete policy language can survive outside the main skill.** Use the disposition list and structural scan across references, templates, fixtures, active cases, README, and current changelog content.
 
@@ -519,7 +518,7 @@ Verification must exercise the production skill and scripts rather than a copied
 - Standalone leaves avoid parent ceremony. Graphs use the shallowest useful native shape, estimate leaves only, preflight relationship capabilities, create nodes before edges, and report the Ready Frontier from derived readiness and blockers.
 - Failed and indeterminate effects stop the whole approved batch; confirmed successes, the stopping effect, and unapplied effects are reported, and continuation requires a fresh read/preview/approval.
 - Completion uses the latest canonical readback of current approved Verification and required graph state.
-- Provider-managed synchronization supports either canonical provider when its configured direction accepts creates from that provider, writes only the canonical record, stores no sidecar identity data, and setup recommends off unless the operator confirms the direction and turns it on.
+- Either provider may be canonical. Managing Issues writes only the canonical record, stores no sidecar identity data, resolves cross-tracker requests only through one exact provider-native link, treats canonical readback as sufficient create proof, and never blocks on unreported external lifecycle effects.
 - Linear readiness uses discovered label identities and GitHub readiness uses repository label names; neither provider confuses information readiness with workflow status.
 - All deterministic runners, package validation, applicable trigger tests, matched fresh-context evaluations, stale-rule scan, and `git diff --check` pass.
 - README, current changelog text, concepts, and any affected workflow prose agree with the final behavior; historical logs and changelog history are preserved rather than rewritten.

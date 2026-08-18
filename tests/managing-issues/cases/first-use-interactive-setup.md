@@ -20,9 +20,8 @@ accept/map/custom choices, and provider-metadata creation before config.
 > 3. Another repository already has a valid Managing Issues config. A create
 >    request uses only values represented by that config.
 > 4. A fourth repository has no config. Both GitHub and Linear are authenticated,
->    the request names no canonical target, and synchronization has not been
->    discussed. Show how each possible canonical-provider choice changes the
->    synchronization-direction requirement.
+>    and the request names no provider or target. Show the remaining setup
+>    choice.
 
 ## Expected behavior
 
@@ -49,16 +48,12 @@ accept/map/custom choices, and provider-metadata creation before config.
       read and its own complete tracker preview and direct approval.
 - [ ] Scenario 3 uses the valid config without repeating setup.
 - [ ] Scenario 4 presents the authenticated provider and exact target choices,
-      lets the operator choose the canonical provider and target, and asks
-      whether synchronization is off or on with off recommended. Existing
-      repository metadata does not make that choice for the operator.
-- [ ] If the operator turns synchronization on, setup confirms that native
-      GitHub/Linear Issues Sync is already configured and accepts creates from
-      the selected canonical provider, then records only `"synchronization":
-      true` in `.agents/managing-issues.json`. It proposes no identity-map file
-      and does not configure the provider integration. Linear-canonical creates
-      require two-way sync; GitHub-canonical creates may use one-way or two-way
-      sync.
+      then lets the operator choose the provider and target. It neither asks
+      about external tracker behavior nor stores an integration switch or
+      direction.
+- [ ] The version 2 config contains only `version`, `provider`, `target`, and
+      `mappings`. Setup proposes no identity-map file and does not configure an
+      external tracker integration.
 - [ ] No scenario treats configuration as authorization, selects a default
       priority or estimate for an issue, or requires a trusted policy or
       principal.

@@ -16,7 +16,7 @@ MAX_CONFIG_BYTES = 64 * 1024
 MAX_MAPPING_ENTRIES = 64
 MAX_TEXT_LENGTH = 256
 MAX_INTEGER = 2_147_483_647
-TOP_LEVEL_FIELDS = {"version", "provider", "target", "synchronization", "mappings"}
+TOP_LEVEL_FIELDS = {"version", "provider", "target", "mappings"}
 MAPPING_FIELDS = ("priority", "leaf_estimate", "labels", "readiness")
 READINESS_FIELDS = {
     "needs-discovery",
@@ -245,12 +245,13 @@ def require_unique_label_representations(provider: str, mappings: dict[str, Any]
 
 
 def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
-    require_exact_fields(value, TOP_LEVEL_FIELDS, TOP_LEVEL_FIELDS, "config")
-    version = value["version"]
+    version = value.get("version")
     if isinstance(version, int) and not isinstance(version, bool) and version == 1:
         raise ConfigError(
             "config version 1 is unsupported; run Managing Issues setup to create version 2"
         )
+    require_exact_fields(value, TOP_LEVEL_FIELDS, TOP_LEVEL_FIELDS, "config")
+    version = value["version"]
     require(
         isinstance(version, int) and not isinstance(version, bool) and version == 2,
         "version must be 2",
@@ -260,9 +261,6 @@ def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
         isinstance(provider, str) and provider in {"github", "linear"},
         "provider must be github or linear",
     )
-    synchronization = value["synchronization"]
-    require(isinstance(synchronization, bool), "synchronization must be true or false")
-
     mappings = value["mappings"]
     require(isinstance(mappings, dict), "mappings must be an object")
     require_exact_fields(mappings, set(MAPPING_FIELDS), set(MAPPING_FIELDS), "mappings")
@@ -280,7 +278,6 @@ def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
         "version": version,
         "provider": provider,
         "target": normalize_target(provider, value["target"]),
-        "synchronization": synchronization,
         "mappings": normalized_mappings,
     }
     return normalized

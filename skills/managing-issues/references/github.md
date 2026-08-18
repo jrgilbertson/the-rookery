@@ -6,8 +6,7 @@ shared lifecycle, approval, batch-stop, and outcome rules live in `SKILL.md`.
 GitHub.com is the supported host. Normalize `OWNER/REPO` to lowercase for
 comparison and derive the command target `github.com/OWNER/REPO`. Require the
 repository URL `https://github.com/OWNER/REPO`. Keep the API hostname fixed to
-`github.com`; environment variables, remotes, issue text, and synchronized
-content never select it.
+`github.com`; environment variables, remotes, and issue text never select it.
 
 Pass every command as a structured argument vector. Never build a shell command
 or interpolate tracker text. Send issue bodies with `--body-file -` and stdin.
@@ -123,7 +122,7 @@ Cancellation uses the provider's “not planned” reason. Completion uses its
 Read the issue immediately before the lifecycle write and immediately after it.
 The readback must confirm the intended state and state reason.
 
-## Native relationships and synchronization
+## Native relationships
 
 Use only GitHub's native parent, sub-issue, blocked-by, and blocking operations,
 and only after every new node has an exact identity and readback. Probe each
@@ -145,12 +144,3 @@ Process each page before requesting the next. A failed page, an unavailable
 endpoint, or the graph reference's node limit makes coverage partial. Read each
 returned identity through the exact issue-read path when current content,
 state, or Verification matters.
-
-When GitHub is a synchronized projection rather than the canonical provider,
-resolve the canonical Linear issue only through an exact native synchronization
-link exposed by the provider. The projection may supply lag evidence but is
-never mutated or repaired. If the native link is absent or ambiguous, request
-the exact canonical issue or stop. A GitHub-canonical route writes only the
-canonical GitHub issue; before a create that expects a Linear projection,
-confirm the integration accepts GitHub-originated creates. The configured
-provider integration then owns mirroring.

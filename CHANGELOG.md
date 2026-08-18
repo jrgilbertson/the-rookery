@@ -13,6 +13,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-gardener` list-style censuses of at most 1,000 items must enumerate to
+  completion rather than stopping at a stated page bound.
+
 - `repo-gardener` first-use now writes `.agents/repo-gardener.yaml` and creates
   a gardening tracker the way Managing Issues writes its config. A scheduled or
   manual run uses one Orchestrator that may assign parallel Workers, each with

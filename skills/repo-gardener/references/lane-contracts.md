@@ -26,10 +26,13 @@ Every lane verdict, every run:
    census page belonging to another lane's fetch is not lane-specific
    evidence, and a zero-candidate lane cites what established absence.
 2. A census either enumerates its population to completion or states the
-   exact bound it stopped at ("first page of ≥100; total unknown"). A verdict
-   over a population of unknown size is reported as partial, never as
-   complete. Partial marks the lane's own reported status; it does not by
-   itself change `run_outcome`.
+   exact bound it stopped at ("first page of ≥100; total unknown"). A
+   list-style census (issues, pull requests, alerts) whose provider-reported
+   or paged total is at most 1,000 items is enumerated to completion —
+   stopping one page short of a knowable total is not a bound, it is an
+   omission. Enumeration is cheap listing; body reads stay bounded by floor 3. A verdict over a population of unknown size is reported as partial,
+   never as complete. Partial marks the lane's own reported status; it does
+   not by itself change `run_outcome`.
 3. For issue- and feedback-facing lanes, counting identifiers or labels is
    not sensing: before reporting the lane's verdict — zero candidates or not —
    read the bodies of the five most recent items in lane scope, or of every

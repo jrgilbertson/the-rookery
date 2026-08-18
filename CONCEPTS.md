@@ -57,12 +57,6 @@ names the gap that remains, and returns a better question to Research. It is
 distinct from the Repository Learning Loop because it improves the operator's
 understanding rather than the repository's safeguards and procedures.
 
-### Grilling Session
-
-A targeted, stateless interview for resolving one coherent decision tree whose
-answers depend on one another. The agent recommends answers and looks up
-discoverable facts. The user makes each decision.
-
 ## Issue management
 
 ### Canonical Tracker

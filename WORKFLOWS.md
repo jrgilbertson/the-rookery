@@ -1,6 +1,6 @@
 <!-- markdownlint-disable-file MD041 -->
 
-![The Rookery workflows banner showing Research through Ship as the Delivery Sequence, Maintain repairing and binding recurring signals with a press, and Learn recording experience with an open notebook and feather](docs/assets/the-rookery-workflows-banner.webp)
+![Diagram of Research, Plan, Design, Build, and Ship, with Maintain and Learn feeding lessons back into the workflow](docs/assets/the-rookery-workflows-banner.webp)
 
 # The workflows
 
@@ -17,11 +17,11 @@ The workflows assume two things are in place:
 
 **Goal:** Curate enough context to plan from.
 
-Research begins with the problem space. I'm a systems thinker, so I start wide. System design, current best practices, industry trends, how the pieces fit together, and more. Then I narrow to the actual problem. I also ask the AI where the unknown unknowns are to guard against my blind spots.
+Research begins with the problem space. I'm a systems thinker, so I start wide: system design, current best practices, industry trends, and how the pieces fit together. Then I narrow to the actual problem. I also ask the AI where the unknown unknowns are to guard against my blind spots.
 
 Once I better understand the problem, I look at what already exists. Project-specific lessons live in each repository's `docs/solutions/`, while my personal knowledge vault holds notes and research that apply across projects. Each lesson has one home, so agents can find it without searching through duplicate copies.
 
-Prompt a model with a basic question and you get an average answer, because the model pulls from the average of everything it trained on. More context, more detail, and more intent narrow what it draws on until it lands closer to your actual problem. Recency matters as well. A model trains on the past up to a cutoff, so without current official docs and opposing perspectives, the recommendation relies on information that might be outdated or wrong.
+I give the model project context, specific intent, current official documentation, and opposing views. Without them, the answer can be generic or outdated.
 
 What I reach for depends on the question:
 
@@ -56,7 +56,7 @@ Agents that weren't in the planning session review the plan against the current 
 - `ce-debug`. Diagnoses a bug before anyone proposes a fix. Use it when the work begins with broken or unexpected behavior.
 - `ce-pov`. Gives a decisive, project-grounded answer to a focused planning question. Use it when one decision is blocking the plan and another research pass would add little.
 
-After ordinary clarification, I sometimes have one coherent decision tree left where the answers depend on each other. I consider a targeted Grilling Session when at least one decision would be costly to reverse or affect a broad surface, one answer constrains the questions below it, or the agent would otherwise guess at an acceptance boundary. For example, authentication ownership may determine session lifetime and data access, so those decisions benefit from being settled parent-first. Several unrelated unknowns stay in `ce-brainstorm`. Clear requirements and routine, reversible choices go directly to `ce-plan`.
+After ordinary clarification, I sometimes have one coherent decision tree left where the answers depend on each other. I consider a targeted grilling session when at least one decision would be costly to reverse or affect a broad surface, one answer constrains the questions below it, or the agent would otherwise guess at an acceptance boundary. For example, authentication ownership may determine session lifetime and data access, so those decisions benefit from being settled parent-first. Several unrelated unknowns stay in `ce-brainstorm`. Clear requirements and routine, reversible choices go directly to `ce-plan`.
 
 Install `grill-me` and `grilling` separately from [Matt Pocock's skills](https://github.com/mattpocock/skills). The agent asks one question at a time, recommends an answer, and leaves each decision to you. It looks up facts available in the repo or environment instead of asking you for them. The session creates no glossary or ADR and makes no changes to requirements documents.
 
@@ -119,7 +119,6 @@ The in-build toolkit:
 - [Orca](https://github.com/stablyai/orca). Runs parallel worktrees, delegates to agents across harnesses, and supports element-level browser feedback. Use it when a plan can be split into independent slices or an interface needs direct visual iteration.
 - **Impeccable, mid-build.** Critiques and polishes visual work, audits technical quality, hardens edge cases, and offers three variants for a selected element with the option to apply one to source. Use it while building an interface to keep the implementation aligned with the design brief and production constraints.
 - `ce-test-browser` and `ce-dogfood`. Verify the browser flows a branch touched, with dogfood able to fix small breakages, add regression tests, and commit the changes. Use `ce-test-browser` for a targeted check and `ce-dogfood` for a hands-off repair pass.
-- `validate-data`. Audits datasets for accuracy, completeness, consistency, timeliness, and relevance. Use it when a build reads, transforms, or publishes data whose quality affects the result.
 
 What must be true before moving to Ship:
 
@@ -160,10 +159,6 @@ What must be true before merge:
 Repos and systems need tending over time. Maintenance runs throughout the loop, not only after merge.
 
 [`repo-gardener`](skills/repo-gardener/SKILL.md) checks nine areas of repository health and may carry one bounded improvement to an unmerged pull request. It runs on a schedule or by hand and leaves one opening and one closing tracker record for review.
-
-`repo-maintainer` is the everyday pass. It inspects the repo briefly, picks one small safe improvement, makes one diff, verifies it narrowly, and stops after a single commit. Pass `repeat N` when you want up to N passes in a row.
-
-Bigger passes run when the repo needs a full review. `repo-best-practices` reviews what a visitor sees first, the README, the license, the contributing guide, and the issue templates. `improve-repo-architecture` reviews structure before it hardens. `design-evals` builds graders and rubrics for behavior that can't be unit tested.
 
 Design maintenance runs through Impeccable. `impeccable extract` finds patterns used three or more times with the same intent and standardizes them into tokens and primitives. `impeccable document` regenerates the design docs from what actually shipped, so the tools read the design language instead of guessing at it.
 

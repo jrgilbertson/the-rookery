@@ -72,7 +72,7 @@ Everything here fits into seven jobs. The walkthroughs live in [WORKFLOWS.md](WO
 This system builds on work by people who share theirs. Use them directly.
 
 - [Compound Engineering](https://github.com/EveryInc/compound-engineering-plugin) by Trevin Chow ([@trevin](https://x.com/trevin)) and Kieran Klaassen ([@kieranklaassen](https://x.com/kieranklaassen)). Plans, implements, reviews, and documents the development work.
-- [Matt Pocock's skills](https://github.com/mattpocock/skills) by Matt Pocock. The targeted grilling pattern, plus tracer-bullet issue leaves, blocker-first ordering, and recomputing which issues can start as blockers change, all of which informed `managing-issues`.
+- [Matt Pocock's skills](https://github.com/mattpocock/skills) by Matt Pocock. The targeted grilling and issue-planning patterns that shaped `managing-issues`.
 - [Impeccable](https://github.com/pbakaus/impeccable) by Paul Bakaus ([@pbakaus](https://x.com/pbakaus)). Shapes design direction, critiques interfaces, and keeps design systems coherent.
 - [last30days](https://github.com/mvanhorn/last30days-skill) by Matt Van Horn ([@mvanhorn](https://x.com/mvanhorn)). Recent-signal research across Reddit, X, YouTube, HN, and the web.
 - [Orca](https://github.com/stablyai/orca) by Jinjing Liang ([@JinjingLiang](https://x.com/JinjingLiang)). The agentic IDE all of this runs in.

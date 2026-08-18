@@ -28,8 +28,9 @@ evidence in the draft or preview.
 Draft each issue from `assets/issue-body-template.md` with a concise imperative
 title in the product team's language. Keep `Problem`, `Scope`, and
 `Verification`; add optional sections only when they prevent a material
-misreading. Each Verification criterion names an observable result and would be
-false before the issue is completed.
+misreading. Each Verification criterion proves behavior promised by Problem and
+Scope, names an observable result or evidence requirement, and is false or
+unproven before completion.
 
 Decompose only when the outcome needs more than one reviewable deliverable:
 

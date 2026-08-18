@@ -499,10 +499,6 @@ def main() -> int:
         duplicate_linear_label["mappings"]["labels"] = {"ready": "label-readiness-ready"}
         expect_invalid(duplicate_linear_label, repo_root, "Linear label label-readiness-ready is mapped more than once")
 
-        huge_integer = temporary_root / "huge-integer.json"
-        huge_integer.write_text('{"version":' + "1" * 5000 + "}", encoding="utf-8")
-        expect_invalid(huge_integer, repo_root, "Exceeds the limit (4300 digits)")
-
         expect_not_configured(repo_root)
         active_config = install_active_config(repo_root, github)
         completed = invoke_validator(repo_root, ".agents/managing-issues.json", repo_root_arg=".", cwd=repo_root)

@@ -49,13 +49,13 @@ phase, so its public contract may continue to evolve before `1.0.0`.
 
 Everything here fits into seven jobs. The walkthroughs live in [WORKFLOWS.md](WORKFLOWS.md).
 
-- [**Research**](WORKFLOWS.md#research). Gather real signal before deciding. last30days for what people actually use, multi-perspective deep research for the hard questions.
-- [**Plan**](WORKFLOWS.md#plan). Compound Engineering turns intent into a clear objective; targeted grilling is an optional pressure test for a consequential, interdependent decision cluster.
-- [**Design**](WORKFLOWS.md#design). Impeccable drives every interface decision, from first layout to final polish.
-- [**Build**](WORKFLOWS.md#build). Implement in Orca with parallel worktrees and delegated agents.
-- [**Ship**](WORKFLOWS.md#ship). Review gates, the pre-PR readiness checkpoint, and changelogs and releases with Compound Engineering.
-- [**Maintain**](WORKFLOWS.md#maintain). Keep repos healthy. Hygiene passes, architecture reviews, evals, and data quality checks.
-- [**Learn**](WORKFLOWS.md#learn). Turn what you read and build into durable knowledge. Networked Thinking, atomic notes, and learnings that compound back into the system.
+- [**Research**](WORKFLOWS.md#research). Gather current evidence, test it against opposing views, and curate enough context to plan.
+- [**Plan**](WORKFLOWS.md#plan). Define what to build, how to build it, and how success will be verified.
+- [**Design**](WORKFLOWS.md#design). Set the visual direction and written design system for interface work.
+- [**Build**](WORKFLOWS.md#build). Implement the plan in bounded, independently verified slices.
+- [**Ship**](WORKFLOWS.md#ship). Review and verify the finished change before merging and documenting it.
+- [**Maintain**](WORKFLOWS.md#maintain). Keep repositories healthy by turning recurring problems into durable safeguards.
+- [**Learn**](WORKFLOWS.md#learn). Turn experience into linked knowledge and new questions for Research.
 
 ## The skills
 

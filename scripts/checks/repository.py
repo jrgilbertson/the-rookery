@@ -7,12 +7,17 @@ import json
 import re
 import subprocess
 import sys
+from itertools import chain
 from pathlib import Path
 from urllib.parse import unquote
 
 
 ROOT = Path(__file__).resolve().parents[2]
 MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
+MARKDOWN_REFERENCE = re.compile(
+    r"^\s{0,3}\[(?:[^\]\\]|\\.)+\]:\s*(<[^>]*>|\S+)",
+    re.MULTILINE,
+)
 
 
 def candidate_files() -> list[Path]:
@@ -64,15 +69,25 @@ def check_text(path: Path, text: str, errors: list[str]) -> None:
             errors.append(f"{relative}:{number}: trailing whitespace")
 
 
+def reject_json_constant(value: str) -> None:
+    raise ValueError(f"non-standard JSON constant: {value}")
+
+
 def check_json(path: Path, text: str, errors: list[str]) -> None:
     if path.suffix != ".json":
         return
     try:
         # Preserve Python's integer-conversion safety limit while accepting
         # deliberate large-integer parser fixtures as syntactically valid JSON.
-        json.loads(text, parse_int=str)
+        json.loads(
+            text,
+            parse_int=str,
+            parse_constant=reject_json_constant,
+        )
     except json.JSONDecodeError as exc:
         errors.append(f"{path.relative_to(ROOT)}:{exc.lineno}:{exc.colno}: {exc.msg}")
+    except ValueError as exc:
+        errors.append(f"{path.relative_to(ROOT)}: {exc}")
 
 
 def link_target(raw_target: str) -> str:
@@ -85,7 +100,10 @@ def link_target(raw_target: str) -> str:
 def check_links(path: Path, text: str, errors: list[str]) -> None:
     if path.suffix.lower() not in {".md", ".markdown"}:
         return
-    for match in MARKDOWN_LINK.finditer(text):
+    for match in chain(
+        MARKDOWN_LINK.finditer(text),
+        MARKDOWN_REFERENCE.finditer(text),
+    ):
         target = link_target(match.group(1))
         if not target or target.startswith(("#", "http://", "https://", "mailto:")):
             continue
@@ -113,6 +131,8 @@ def main() -> int:
             continue
         text = readable_text(path)
         if text is None:
+            if path.suffix == ".json":
+                errors.append(f"{path.relative_to(ROOT)}: invalid UTF-8 JSON")
             continue
         check_text(path, text, errors)
         check_json(path, text, errors)

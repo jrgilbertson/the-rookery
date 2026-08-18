@@ -58,7 +58,10 @@ def main() -> int:
         subprocess.run(["git", "init", "-q", repository], check=True)
 
         (repository / "target.md").write_text("# Target\n", encoding="utf-8")
-        (repository / "README.md").write_text("[target](target.md)\n", encoding="utf-8")
+        (repository / "README.md").write_text(
+            "[target](target.md)\n\n[target-reference]: target.md\n",
+            encoding="utf-8",
+        )
         (repository / "large.json").write_text(
             '{"large": ' + "9" * 5000 + "}\n",
             encoding="utf-8",
@@ -75,6 +78,36 @@ def main() -> int:
         )
         invalid_json.unlink()
 
+        invalid_utf8_json = repository / "invalid-utf8.json"
+        invalid_utf8_json.write_bytes(b'{"broken": "\xff"}\n')
+        invalid_utf8 = run_checker(repository)
+        require(
+            invalid_utf8.returncode == 1 and "invalid-utf8.json" in invalid_utf8.stderr,
+            "invalid UTF-8 JSON did not fail with its path",
+        )
+        invalid_utf8_json.unlink()
+
+        nonstandard_paths = []
+        for name, constant in (
+            ("nan", "NaN"),
+            ("infinity", "Infinity"),
+            ("negative-infinity", "-Infinity"),
+        ):
+            nonstandard_json = repository / f"nonstandard-{name}.json"
+            nonstandard_json.write_text(
+                f'{{"value": {constant}}}\n',
+                encoding="utf-8",
+            )
+            nonstandard_paths.append(nonstandard_json)
+        nonstandard = run_checker(repository)
+        for nonstandard_json in nonstandard_paths:
+            require(
+                nonstandard.returncode == 1
+                and nonstandard_json.name in nonstandard.stderr,
+                f"non-standard JSON file {nonstandard_json.name} was accepted",
+            )
+            nonstandard_json.unlink()
+
         broken_link = repository / "broken.md"
         broken_link.write_text("[missing](missing.md)\n", encoding="utf-8")
         broken = run_checker(repository)
@@ -83,6 +116,19 @@ def main() -> int:
             "broken relative link did not fail with its path",
         )
         broken_link.unlink()
+
+        broken_reference = repository / "broken-reference.md"
+        broken_reference.write_text(
+            "[missing][guide]\n\n[guide]: missing.md\n",
+            encoding="utf-8",
+        )
+        broken_reference_result = run_checker(repository)
+        require(
+            broken_reference_result.returncode == 1
+            and "broken-reference.md" in broken_reference_result.stderr,
+            "broken reference-style relative link did not fail with its path",
+        )
+        broken_reference.unlink()
 
         (temporary_root / "outside.md").write_text("private sibling\n", encoding="utf-8")
         escaping_link = repository / "escaping.md"

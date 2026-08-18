@@ -39,12 +39,6 @@ by tools including Claude Code, Codex, Cursor, and Gemini CLI. Installation and
 runtime behavior remain harness-specific. Add `-g` to install once for your
 whole machine instead of per project.
 
-<details>
-<summary>Prefer a clone?</summary>
-
-Clone the repo and symlink any <code>skills/&lt;name&gt;</code> folder into your agent's skills directory, such as <code>~/.claude/skills/</code> or your harness's equivalent. The npx route handles this placement for you.
-</details>
-
 `main` is the rolling catalog and the normal install source. Semantic-version
 [Release Snapshots](CONCEPTS.md#release-snapshot) are immutable historical
 checkpoints with release notes; they are not install pins. The first public

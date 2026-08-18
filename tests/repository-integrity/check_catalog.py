@@ -78,7 +78,15 @@ def main() -> int:
             if invalid.returncode != 1 or expected_error not in invalid.stderr:
                 raise AssertionError(f"invalid optional field passed: {field}")
 
-    print("PASS: catalog door rejects noncanonical and invalid optional frontmatter")
+        external_skill = Path(temporary) / "external-SKILL.md"
+        external_skill.write_text(valid_skill, encoding="utf-8")
+        (skill_directory / "SKILL.md").unlink()
+        (skill_directory / "SKILL.md").symlink_to(external_skill)
+        symlinked = run_catalog(repository)
+        if symlinked.returncode != 1 or "must not be a symlink" not in symlinked.stderr:
+            raise AssertionError("symlinked skill package did not fail the catalog door")
+
+    print("PASS: catalog door rejects malformed and symlinked skill packages")
     return 0
 
 

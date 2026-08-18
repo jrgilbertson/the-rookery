@@ -23,6 +23,12 @@ if ! diff -u <(printf '%s\n' "$catalog_dirs") <(printf '%s\n' "$readme_links"); 
 fi
 
 while IFS= read -r skill_dir; do
+  skill_path="$skill_dir/SKILL.md"
+  if [[ -L "$skill_path" ]]; then
+    echo "$skill_path: must not be a symlink" >&2
+    exit 1
+  fi
+
   ruby scripts/checks/skill_packages.rb "$skill_dir"
 done <<< "$catalog_dirs"
 

@@ -4,7 +4,7 @@
 
 # The workflows
 
-My workflow moves through five jobs: Research, Plan, Design, Build, and Ship. Maintain turns recurring problems into tests, rules, and documented lessons. Learn turns experience into linked notes and new research questions. Each section explains how I approach the job and which tools and commands I use.
+My workflow moves through five core jobs: Research, Plan, Design, Build, and Ship. Two feedback loops keep it current: Maintain turns recurring problems into tests, rules, and documented lessons, while Learn turns experience into linked notes and new research questions. Each section explains how I approach the job and which tools and commands I use.
 
 ## Foundations
 

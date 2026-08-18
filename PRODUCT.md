@@ -24,9 +24,9 @@ The Rookery collects the open-source tools, workflows, and skills Jason actually
 
 ## Operating Context
 
-The repository is experienced primarily through GitHub-rendered Markdown, shared repository links, and individually installable skills. `README.md` introduces the system, `WORKFLOWS.md` explains its seven jobs, `CONCEPTS.md` defines project-specific language, and the `skills/` catalog contains the executable instructions.
+The repository is experienced primarily through GitHub-rendered Markdown, shared repository links, and individually installable skills. `README.md` introduces the system, `WORKFLOWS.md` explains its five core jobs and two feedback loops, `CONCEPTS.md` defines project-specific language, and the `skills/` catalog contains the executable instructions.
 
-The seven workflow jobs are Research, Plan, Design, Build, Ship, Maintain, and Learn. Visual explanations are most valuable where process, handoffs, loops, or system relationships would otherwise become text-heavy.
+The five core workflow jobs are Research, Plan, Design, Build, and Ship. Maintain and Learn are the two feedback loops. Visual explanations are most valuable where process, handoffs, loops, or system relationships would otherwise become text-heavy.
 
 ## Capabilities and Constraints
 
@@ -48,7 +48,7 @@ The seven workflow jobs are Research, Plan, Design, Build, Ship, Maintain, and L
 ## Evidence on Hand
 
 - `README.md` contains the public product story, installation path, guiding principles, skill catalog, the existing Huginn-and-Muninn narrative, and explicit credit for the open-source work the system builds upon.
-- `WORKFLOWS.md` contains the seven-job operating model and detailed process explanations suitable for visual translation.
+- `WORKFLOWS.md` contains the five core jobs, two feedback loops, and detailed process explanations suitable for visual translation.
 - `CONCEPTS.md` contains the project's canonical vocabulary.
 - `skills/`, `tests/`, and `docs/solutions/` provide real examples of the system's capabilities and quality practices.
 - No testimonials, customer logos, adoption metrics, or commercial performance claims are present and none should be fabricated.

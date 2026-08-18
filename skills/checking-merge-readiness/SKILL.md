@@ -81,10 +81,11 @@ through this fixed read-only verb set, the only forge commands this skill runs:
   in [references/fetch-floor.md](references/fetch-floor.md).
 - Host merge policy for the PR's base ref, in this order (stop adding
   sources once requirements are known; never invent policy):
-  1. `gh api repos/{owner}/{repo}/rules/branches/{baseRef}` — gh resolves the
-     literal `{owner}/{repo}` placeholders from the current working
-     directory's repository, so run it from the reviewed repository or
-     substitute the resolved owner and name. Prefer ruleset
+  1. Take `baseRefName` from the `gh pr view` result already in hand, resolve
+     the PR repository's owner and name, URL-encode the base ref as one path
+     segment, and call `gh api
+     "repos/<owner>/<repo>/rules/branches/<encoded-base-ref>"` with those
+     concrete values. Prefer ruleset
      `pull_request` fields: `required_review_thread_resolution`,
      `required_approving_review_count`, `require_last_push_approval`,
      `dismiss_stale_reviews_on_push`.

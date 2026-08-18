@@ -218,6 +218,10 @@ def main() -> int:
     for unsafe_projection, phrase in (
         ("\nOwner: @octocat\n", "notification-capable mention"),
         ("\nReviewers: @octo-org/security-team\n", "notification-capable mention"),
+        (
+            "\nOwner: [@octocat](https://github.com/octocat)\n",
+            "notification-capable mention",
+        ),
         ("\n![tracking pixel](https://attacker.example/pixel.png)\n", "image embedding"),
         (
             "\n![tracking pixel][pixel]\n\n[pixel]: https://attacker.example/pixel.png\n",
@@ -238,6 +242,15 @@ def main() -> int:
         unsafe_operation = copy.deepcopy(operation)
         unsafe_operation["payload"]["text"] = unsafe_payload
         expect_error(effect_input("prepare", pre_read=base, operation=unsafe_operation), phrase)
+
+    for safe_projection in (
+        "\nProfile: [Mastodon](https://mastodon.social/@alice)\n",
+        "\nProfile: <https://mastodon.social/@alice>\n",
+        "\nProfile: https://mastodon.social/@alice\n",
+    ):
+        safe_operation = copy.deepcopy(operation)
+        safe_operation["projection"] = safe_projection
+        cli(effect_input("prepare", pre_read=base, operation=safe_operation))
 
     changed_run = copy.deepcopy(operation)
     changed_run["run_id"] = "run:synthetic:restart"

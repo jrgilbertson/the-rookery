@@ -40,7 +40,7 @@ checkpoints with release notes; they are not install pins.
 
 ## The workflows
 
-Everything here fits into seven jobs. The walkthroughs live in [WORKFLOWS.md](WORKFLOWS.md).
+Everything here fits into five core jobs, Research through Ship, plus two feedback loops: Maintain and Learn. The walkthroughs live in [WORKFLOWS.md](WORKFLOWS.md).
 
 - [**Research**](WORKFLOWS.md#research). Gather current evidence, test it against opposing views, and curate enough context to plan.
 - [**Plan**](WORKFLOWS.md#plan). Define what to build, how to build it, and how success will be verified.

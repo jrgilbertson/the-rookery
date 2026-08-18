@@ -146,7 +146,7 @@ Release A is one atomic Rookery PR containing the skill, tests, compact policy t
 
 ### Scope Boundaries
 
-**Included:** the portable skill, JSON policy template and validator, GitHub and Linear references, native graph/completion rules, provider-path fixtures, behavioral evidence, catalog entry, changelog, and four glossary terms.
+**Included:** the portable skill, JSON policy template and validator, GitHub and Linear references, native graph/completion rules, provider-path fixtures, behavioral evidence, catalog entry, changelog, and only indispensable, project-specific glossary entries that still need a shared contract.
 
 **Deferred:** live Rookery metadata changes, policy adoption, permanent deletion, general provider certification, PR/CI enforcement, agentic-toolkit retirement, and Corvly synchronization automation changes.
 
@@ -293,7 +293,7 @@ The exact fixture split may change during implementation. No test fixture or sib
   1. Keep the suite to eight to ten discriminating cases plus trigger/near-miss coverage.
   2. Run bare-model/candidate matched pairs in fresh contexts; independently grade every pair and use a different final reviewer.
   3. Run structural validation, provider fixtures, same-door scans, and local-source Claude Code and Codex installs.
-  4. Add catalog and changelog entries, retain only the four indispensable glossary terms, and verify no test seam or private path ships.
+  4. Add catalog and changelog entries, retain only indispensable, project-specific glossary entries that still need a shared contract, and verify no test seam or private path ships.
   5. Confirm the required proposal issue before any PR opens. Record Corvly automation audit, agentic-toolkit retirement, and optional Rookery policy/metadata adoption as separate follow-ups without creating them.
 - **Verification:** `tests/managing-issues/log.md` records commands, revisions, case pairs, independent grades, final review, provider evidence, trigger results, same-door results, and install provenance. An available harness must pass; an unavailable sandbox narrows the associated claim.
 

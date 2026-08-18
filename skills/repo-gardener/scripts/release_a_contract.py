@@ -43,6 +43,7 @@ NOTIFICATION_CAPABLE_MENTION = re.compile(
     r"@[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?"
     r"(?:/[A-Za-z0-9](?:[A-Za-z0-9_-]{0,98}[A-Za-z0-9_])?)?"
 )
+HTTP_URL = re.compile(r"https?://[^\s<>\"']+", re.IGNORECASE)
 HTML_IMAGE = re.compile(r"<\s*img\b", re.IGNORECASE)
 CURRENT_PORTFOLIO_BEGIN = "<!-- orchestrator:current-portfolio:v1:begin -->"
 CURRENT_PORTFOLIO_END = "<!-- orchestrator:current-portfolio:v1:end -->"
@@ -767,7 +768,7 @@ def _reject_reserved_report_content(value: Any, label: str) -> None:
 def _validate_report_rendering(rendering: str) -> None:
     """Reject tracker rendering that can notify accounts or load image content."""
     require(
-        NOTIFICATION_CAPABLE_MENTION.search(rendering) is None,
+        NOTIFICATION_CAPABLE_MENTION.search(HTTP_URL.sub("", rendering)) is None,
         "effect report contains a notification-capable mention",
     )
     require(

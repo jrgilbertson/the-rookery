@@ -25,11 +25,11 @@ Prompt a model with a basic question and you get an average answer, because the 
 
 What I reach for depends on the question:
 
-- Deep research. Understanding a codebase, a methodology, or a topic in depth. Most capable models handle it well when asked directly.
-- `ce-ideate` from Compound Engineering. For when I don't yet know what to build and want evidence-backed hypotheses to react to.
-- [`last30days`](https://github.com/mvanhorn/last30days-skill). Focused, recent signal on a single topic or person where recency beats depth, like the latest model rankings for development work.
-- [`storm-research`](skills/storm-research/SKILL.md). Deep, source-backed investigation through isolated practitioner, academic, skeptic, economist, and historian lenses. It tests foundations, mechanisms, system relationships, and downstream effects throughout the research, then preserves material evidence and contradiction in a reader-focused briefing. Use it when the result should be a durable, multi-perspective research record.
-- `ce-pov` from Compound Engineering. A compact, decisive verdict grounded in the project, with targeted external verification where the answer depends on it. Use it when a focused question needs a recommendation rather than a durable research briefing.
+- Deep research. Builds a thorough understanding of a codebase, methodology, or topic by asking a capable model directly. Use it when the question needs broad context without a specialized research process.
+- `ce-ideate` from Compound Engineering. Generates evidence-backed hypotheses about what to build. Use it when research has not produced a clear product or improvement to pursue.
+- [`last30days`](https://github.com/mvanhorn/last30days-skill). Finds recent discussion and usage signals about one topic or person. Use it when recency matters more than depth, such as when comparing the latest model rankings.
+- [`storm-research`](skills/storm-research/SKILL.md). Investigates a hard question through independent practitioner, academic, skeptic, economist, and historian perspectives, then produces a source-backed briefing that preserves evidence, disagreements, and blind spots. Use it when the result should be a durable, multi-perspective research record.
+- `ce-pov` from Compound Engineering. Gives a compact, decisive verdict grounded in the project, with targeted external verification where the answer depends on it. Use it when a focused question needs a recommendation rather than a durable research briefing.
 
 What must be true before moving to Plan:
 
@@ -51,10 +51,10 @@ Agents that weren't in the planning session review the plan against the current 
 
 [Compound Engineering](https://github.com/EveryInc/compound-engineering-plugin) drives the planning step. The entry point depends on what research left open.
 
-- `ce-brainstorm`. Narrows research into requirements when intent still has open questions.
-- `ce-plan`. The direct route when intent is clear. Product plan first, implementation plan second.
-- `ce-debug`. Bugs get diagnosis rather than brainstorming.
-- `ce-pov`. A decisive, project-grounded answer to a focused question mid-plan, without falling back into another research pass.
+- `ce-brainstorm`. Turns open intent into clear requirements and a confirmed product direction. Use it when research leaves important questions about what to build.
+- `ce-plan`. Produces a product plan followed by an implementation plan. Use it when the intent and acceptance boundaries are already clear.
+- `ce-debug`. Diagnoses a bug before anyone proposes a fix. Use it when the work begins with broken or unexpected behavior.
+- `ce-pov`. Gives a decisive, project-grounded answer to a focused planning question. Use it when one decision is blocking the plan and another research pass would add little.
 
 After ordinary clarification, I sometimes have one coherent decision tree left where the answers depend on each other. I consider a targeted Grilling Session when at least one decision would be costly to reverse or affect a broad surface, one answer constrains the questions below it, or the agent would otherwise guess at an acceptance boundary. For example, authentication ownership may determine session lifetime and data access, so those decisions benefit from being settled parent-first. Several unrelated unknowns stay in `ce-brainstorm`. Clear requirements and routine, reversible choices go directly to `ce-plan`.
 
@@ -89,9 +89,9 @@ Design is hard with AI. The AI tends toward recognizable slop, the same gradient
 
 [Impeccable](https://github.com/pbakaus/impeccable) drives the design process.
 
-- `impeccable shape`. The planning-side tool. Discovery first, who the interface is for, what it should feel like, what it should avoid. Then iteration until there's a brief the plan can build on.
-- `impeccable audit` and `impeccable critique`. Technical checks with audit and design reviews with critique.
-- The design system. Tokens, components, and rationale live in the repo, get refreshed from the running code, and every agent that touches the UI reads them. Impeccable helps you create and update a DESIGN.md source of truth.
+- `impeccable shape`. Turns discovery about the audience, desired feel, and visual constraints into a design brief. Use it before planning or building an interface that lacks a clear visual direction.
+- `impeccable audit` and `impeccable critique`. Audit checks the interface's technical quality, while critique reviews its visual design. Use them during design and after implementation to find concrete problems.
+- The design system. Records the interface's tokens, components, rationale, and prohibitions in `DESIGN.md`. Use it to keep every agent working from the same visual rules as the interface evolves.
 
 What must be true before moving to Build:
 
@@ -148,10 +148,10 @@ I enforce quality in tiers. Tests, linters, CI gates, and the design system enfo
 
 The in-build toolkit:
 
-- [Orca](https://github.com/stablyai/orca). Parallel worktrees, delegated agents across harnesses, and a browser mode where I select elements on the running UI and kick off feedback and refinement.
-- **Impeccable, mid-build.** `impeccable critique` scores the design and `impeccable polish` closes the gap between good and great. `impeccable audit` runs a five-dimension technical check and `impeccable harden` makes interfaces production-ready, covering edge cases, internationalization, error states, and overflow. `impeccable live` picks a UI element, takes a comment, and offers three variants, one of which lands in source.
-- `ce-test-browser` and `ce-dogfood`. Browser verification of the pages a branch touched, or hands-off dogfooding that fixes small breakages, writes regression tests for them, and commits to the branch.
-- `validate-data`. Audits the datasets a build touches for accuracy, completeness, consistency, timeliness, and relevance.
+- [Orca](https://github.com/stablyai/orca). Runs parallel worktrees, delegates to agents across harnesses, and supports element-level browser feedback. Use it when a plan can be split into independent slices or an interface needs direct visual iteration.
+- **Impeccable, mid-build.** Critiques and polishes visual work, audits technical quality, hardens edge cases, and offers three variants for a selected element with the option to apply one to source. Use it while building an interface to keep the implementation aligned with the design brief and production constraints.
+- `ce-test-browser` and `ce-dogfood`. Verify the browser flows a branch touched, with dogfood able to fix small breakages, add regression tests, and commit the changes. Use `ce-test-browser` for a targeted check and `ce-dogfood` for a hands-off repair pass.
+- `validate-data`. Audits datasets for accuracy, completeness, consistency, timeliness, and relevance. Use it when a build reads, transforms, or publishes data whose quality affects the result.
 
 What must be true before moving to Ship:
 

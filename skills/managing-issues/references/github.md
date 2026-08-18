@@ -147,5 +147,10 @@ returned identity through the exact issue-read path when current content,
 state, or Verification matters.
 
 When GitHub is a synchronized projection rather than the canonical provider,
-read it only for mapped identity or lag evidence. Never mutate or repair the
-projection. A GitHub-canonical route writes only the canonical GitHub issue.
+resolve the canonical Linear issue only through an exact native synchronization
+link exposed by the provider. The projection may supply lag evidence but is
+never mutated or repaired. If the native link is absent or ambiguous, request
+the exact canonical issue or stop. A GitHub-canonical route writes only the
+canonical GitHub issue; before a create that expects a Linear projection,
+confirm the integration accepts GitHub-originated creates. The configured
+provider integration then owns mirroring.

@@ -118,4 +118,3 @@ When reviewing an issue body, trace each Verification bullet back to a promise
 in Problem or Scope. Then ask which incorrect or incomplete result could still
 pass that check. If a plausible wrong result passes, strengthen the evidence or
 narrow the promise before publishing the issue.
-

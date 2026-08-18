@@ -1,7 +1,7 @@
 # Linear provider and synchronization path
 
 Load this reference for Linear reads, discovery, previews, effects, or
-synchronization identity. The shared lifecycle, approval, batch-stop, and
+synchronization. The shared lifecycle, approval, batch-stop, and
 outcome rules live in `SKILL.md`.
 
 ## Select one session transport
@@ -135,21 +135,24 @@ the approved transition. Cancellation targets a canceled state. Completion
 targets a completed state only after `graph-and-completion.md` proves
 completion. Read back the exact state and type.
 
-## Synchronization identity and write direction
+## Provider-managed synchronization
 
-The optional repository-relative synchronization mapping has this fixed
-identity shape:
+The top-level config provider alone selects the canonical tracker. The required
+`synchronization` boolean records whether GitHub and Linear's native Issue Sync
+is already configured for the selected target and accepts issue creation from
+the canonical provider; setup recommends `false` and never configures that
+integration. Linear-canonical creation requires two-way sync. GitHub-canonical
+creation may use GitHub-to-Linear one-way or two-way sync. If the operator
+cannot confirm the needed direction, keep synchronization off, choose the
+provider that the configured direction supports, or have the operator configure
+the required native direction outside Managing Issues and confirm it before
+recording synchronization on.
 
-```json
-{"version":1,"github_to_linear":{"OWNER/REPO#NUMBER":"TEAM-123"}}
-```
-
-The config validator owns parsing and validation. The top-level config provider
-alone selects write direction, so either provider may be canonical. Resolve one
-exact mapping entry in the approved direction. Missing, malformed,
-contradictory, or ambiguous identity writes neither provider. Never infer an
-identity from title, body, branch, search result, or synchronized marker.
-
-Write and read back only the canonical record. The projection may be read for
-identity or lag evidence but never mutated, repaired, or used as fallback after
-a canonical provider failure.
+With synchronization on, write and read back only the canonical record. The
+provider integration owns mirroring. Before a create that expects a projection,
+confirm that the current integration still accepts creates from the canonical
+provider. Resolve an existing projection only through one exact native
+synchronization link exposed by GitHub or Linear. If the direction or link is
+missing or ambiguous, request the exact canonical issue or stop. Never infer
+identity from title, body, branch, search result, or a generic synchronized
+marker, and never maintain a sidecar map or mutate the projection as fallback.

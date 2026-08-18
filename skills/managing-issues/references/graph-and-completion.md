@@ -93,8 +93,8 @@ match by title, body, author, time, or similarity.
 
 ## Synchronization
 
-For mapping resolution, canonical-provider write direction, and projection
-behavior, see [the provider/sync reference](linear-and-sync.md#synchronization-identity-and-write-direction).
+For native-link resolution, canonical-provider write direction, and projection
+behavior, see [the provider/sync reference](linear-and-sync.md#provider-managed-synchronization).
 
 ## Prove completion separately
 
@@ -115,11 +115,12 @@ invalidates the earlier completion assessment. Reassess from the new canonical
 readback, then show any lifecycle change in a separate batch with separate
 approval.
 
-Before a lifecycle preview, discover every provider or synchronization cascade
-that can change a parent, child, or projection. List each observable cascade as
-an intended effect. If the cascade posture cannot be observed, stop before an
-executable lifecycle preview. Never use a closing keyword as completion
-authority.
+Before a lifecycle preview, discover every provider or provider-managed
+synchronization cascade that can change a parent, child, or projection. List
+each observable cascade as an intended effect even though Managing Issues writes
+only the canonical tracker. If the cascade posture cannot be observed, stop
+before an executable lifecycle preview. Never use a closing keyword as
+completion authority.
 
 Return only canonical nodes and edges, coverage, derived readiness, blockers,
 Ready Frontier, exact effect outcomes, and Verification evidence or gaps. Do

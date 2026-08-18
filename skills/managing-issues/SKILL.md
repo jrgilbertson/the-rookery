@@ -87,48 +87,64 @@ that read-only request. Before the first tracker mutation in a repository
 without a valid config, run interactive setup. Discover the
 available authenticated GitHub and Linear choices only when the request does not
 already select a provider and target, then let the operator select the canonical
-provider and exact repository or workspace/team target. Also ask whether
-synchronization is off or on, recommending off. When it is on, let the operator
-select an existing identity map or start from
-`assets/sync-mapping-template.json` at the recommended path
-`.agents/managing-issues-sync.json`. A new map and
-`.agents/managing-issues.json` form one separately approved repository-setup
-batch.
+provider and exact repository or workspace/team target. Repository setup has
+exactly one durable file, `.agents/managing-issues.json`, and its
+`synchronization` field is one required boolean. Ask whether synchronization is
+off or on, recommending off. When it is on, require the operator
+to confirm that GitHub and Linear's native Issue Sync is already configured for
+the selected target and accepts issue creation from the selected canonical
+provider. In the setup preview or explanation, show the exact boolean choice
+and state that Linear-canonical creation requires two-way sync while GitHub-
+canonical creation may use GitHub-to-Linear one-way or two-way sync. Managing
+Issues records the choice but does not configure the provider integration. If
+that direction cannot be confirmed, keep synchronization off, change the
+canonical provider, or have the operator configure the required native
+direction outside Managing Issues and confirm it before setting the boolean to
+`true`; do not promise a projection.
 
 Load the selected provider's starter config from
 `assets/config-template-github.json` or `assets/config-template-linear.json`.
 Discover that target's current priority, estimate, label, and readiness choices
 and the capability to create any missing metadata.
 
-Present the starter recommendations beside exact discovered alternatives. For
-each family, let the operator accept the recommendations, map selected existing
-values, or define custom representations; never treat existing metadata as the
-preferred answer. The operator may leave priority, estimate, or general-label
-mappings empty, but readiness always maps `needs-discovery`, `needs-planning`,
-and `ready`. These are available choices, never defaults applied to an issue.
+Present every recommended key and provider representation from the selected
+starter template beside exact discovered alternatives; list each one rather
+than summarizing a family. For each family, let the operator accept the
+recommendations, map selected existing values, or define custom representations;
+never treat existing metadata as the preferred answer.
+The operator may leave priority, estimate, or general-label mappings empty, but
+readiness always maps `needs-discovery`, `needs-planning`, and `ready`. These are
+available choices, never defaults applied to an issue.
 
 If the chosen representations do not exist, show their exact provider metadata
 effects as a complete setup batch with its own direct approval. Apply and read
-back that batch before rendering the config. Then preview the exact approved
-repository-setup files for separate approval. Write only those displayed paths,
-validate the config and any selected map, and resume the original request with
-a fresh canonical read and complete tracker preview. An incompatible config
-follows the same replacement path. State all three decisions explicitly:
+back that batch before rendering the config. Then preview the exact
+`.agents/managing-issues.json` content for separate approval. Write only that
+displayed path, validate the config, and resume the original request with a
+fresh canonical read, complete tracker preview, and its own direct approval
+question. An incompatible config follows the same replacement path and renders
+only schema-required fields; say so in the replacement preview. State all three
+decisions explicitly:
 provider-metadata approval approves only those metadata effects, repository-
-setup approval approves only the displayed files, and the resumed tracker batch
+setup approval approves only the displayed file, and the resumed tracker batch
 needs its own direct approval. The validator owns schema-version guidance; do
 not copy it into prose.
 
-Repository-setup approval is separate from tracker approval. Before an approved
-file write, verify that every displayed repository-relative destination and
-each existing path component are contained and are not symlinks. Write only
-those destinations, validate them, then resume the original request. Saving
-setup files approves no tracker effect.
+Repository-setup approval is separate from tracker approval. Before the
+approved file write, verify that the displayed repository-relative destination
+and each existing path component are contained and are not symlinks. Write only
+that destination, validate it, then resume the original request. Saving the
+setup file approves no tracker effect.
 
 Authentication through the provider path supplies identity; capability checks
 determine whether the requested effect is available. The configured provider is
-canonical. Synchronization supplies identity and readback evidence only, never a
-second write target; missing or ambiguous identity writes neither tracker.
+canonical. When native synchronization is on, write only that canonical record;
+the configured provider integration owns mirroring. Before a create that expects
+a projection, confirm that the current integration accepts creates from the
+canonical provider. Resolve an existing projection only through an exact native
+synchronization link exposed by GitHub or Linear. If the direction, link, or
+identity is missing or ambiguous, request the exact canonical issue or stop;
+never infer identity or maintain a repository-side mapping.
 
 Load only the provider reference needed:
 
@@ -165,12 +181,12 @@ and metadata representations needed for the proposed result are resolved.
 
 Show the whole target-visible batch before any tracker write. Name the provider,
 normalized canonical target, canonical issue identity when updating, canonical
-identity from synchronization when used, and every ordered effect. For each
-effect show exact changed fields, metadata, lifecycle change, relationship, and
-rendered content. For a whole-set replacement, show the exact resulting set. If
-one requested field remains unresolved, still render every resolved effect and
-show that field as `unresolved — non-writable`; never invent its content or hide
-the rest of the batch behind it.
+identity resolved through a native synchronization link when used, and every
+ordered effect. For each effect show exact changed fields, metadata, lifecycle
+change, relationship, and rendered content. For a whole-set replacement, show
+the exact resulting set. If one requested field remains unresolved, still render
+every resolved effect and show that field as `unresolved — non-writable`; never
+invent its content or hide the rest of the batch behind it.
 
 Before labeling a preview executable, show the provider gate evidence:
 successful authentication, exact target and issue matchback, and required

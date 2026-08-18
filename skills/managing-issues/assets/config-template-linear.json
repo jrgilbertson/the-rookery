@@ -5,6 +5,7 @@
     "workspace": "REPLACE_WITH_CONNECTED_WORKSPACE_ID",
     "team": "REPLACE_WITH_TEAM_KEY_OR_ID"
   },
+  "synchronization": false,
   "mappings": {
     "priority": {
       "urgent": "urgent",

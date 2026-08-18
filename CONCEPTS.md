@@ -60,7 +60,8 @@ to return to planning.
 
 The one issue system authorized to own and receive mutations for a repository.
 When another tracker synchronizes the same issue, that copy is a projection or
-alias used for identity and readback evidence, not a second write target.
+alias. The provider's native synchronization link may identify its canonical
+record, but the projection is not a second write target.
 
 ### Owned Issue Graph
 

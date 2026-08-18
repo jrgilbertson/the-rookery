@@ -13,13 +13,11 @@ from typing import Any
 
 
 MAX_CONFIG_BYTES = 64 * 1024
-MAX_SYNC_MAPPING_BYTES = 64 * 1024
 MAX_MAPPING_ENTRIES = 64
-MAX_SYNC_MAPPING_ENTRIES = 250
 MAX_TEXT_LENGTH = 256
 MAX_INTEGER = 2_147_483_647
 TOP_LEVEL_FIELDS = {"version", "provider", "target", "synchronization", "mappings"}
-REQUIRED_TOP_LEVEL_FIELDS = {"version", "provider", "target", "mappings"}
+REQUIRED_TOP_LEVEL_FIELDS = TOP_LEVEL_FIELDS
 MAPPING_FIELDS = ("priority", "leaf_estimate", "labels", "readiness")
 READINESS_FIELDS = {
     "needs-discovery",
@@ -27,7 +25,6 @@ READINESS_FIELDS = {
     "ready",
 }
 LINEAR_TARGET_FIELDS = {"workspace", "team"}
-SYNC_MAPPING_FIELDS = {"version", "github_to_linear"}
 LINEAR_PRIORITIES = {"none", "low", "medium", "high", "urgent"}
 RESERVED_MAPPING_KEYS = {"default", "defaults", "fallback", "preferred"}
 MAPPING_KEY = re.compile(r"^[a-z0-9][a-z0-9_-]{0,63}$")
@@ -37,9 +34,6 @@ GITHUB_OWNER_REPO = (
 )
 GITHUB_TARGET = re.compile(GITHUB_OWNER_REPO + r"$")
 LINEAR_TARGET_PART = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$")
-MAPPING_SOURCE_PART = re.compile(r"^[A-Za-z0-9._-]{1,128}$")
-GITHUB_ISSUE = re.compile(GITHUB_OWNER_REPO + r"#(?P<number>[1-9][0-9]{0,9})$")
-LINEAR_ISSUE = re.compile(r"^[A-Z][A-Z0-9]{0,15}-[1-9][0-9]{0,9}$")
 
 
 class ConfigError(Exception):
@@ -251,25 +245,6 @@ def require_unique_label_representations(provider: str, mappings: dict[str, Any]
             seen.add(value)
 
 
-def normalize_mapping_source(value: Any) -> tuple[str, tuple[str, ...]]:
-    source = require_concrete_text(value, "synchronization.mapping_source")
-    require(
-        "\\" not in source,
-        "synchronization.mapping_source must use repository-relative POSIX syntax",
-    )
-    require(not source.startswith("/"), "synchronization.mapping_source must be repository-relative")
-    parts = tuple(source.split("/"))
-    require(
-        bool(parts) and all(part not in {"", ".", ".."} for part in parts),
-        "synchronization.mapping_source must not contain empty, . or .. segments",
-    )
-    require(
-        all(MAPPING_SOURCE_PART.fullmatch(part) is not None for part in parts),
-        "synchronization.mapping_source contains an invalid path segment",
-    )
-    return source, parts
-
-
 def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
     require_exact_fields(value, REQUIRED_TOP_LEVEL_FIELDS, TOP_LEVEL_FIELDS, "config")
     version = value["version"]
@@ -286,6 +261,8 @@ def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
         isinstance(provider, str) and provider in {"github", "linear"},
         "provider must be github or linear",
     )
+    synchronization = value["synchronization"]
+    require(isinstance(synchronization, bool), "synchronization must be true or false")
 
     mappings = value["mappings"]
     require(isinstance(mappings, dict), "mappings must be an object")
@@ -304,72 +281,10 @@ def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
         "version": version,
         "provider": provider,
         "target": normalize_target(provider, value["target"]),
+        "synchronization": synchronization,
         "mappings": normalized_mappings,
     }
-    if "synchronization" in value:
-        synchronization = value["synchronization"]
-        require(isinstance(synchronization, dict), "synchronization must be an object")
-        require_exact_fields(
-            synchronization,
-            {"mapping_source"},
-            {"mapping_source"},
-            "synchronization",
-        )
-        source, _ = normalize_mapping_source(synchronization["mapping_source"])
-        normalized["synchronization"] = {"mapping_source": source}
     return normalized
-
-
-def validate_sync_mapping(value: dict[str, Any]) -> None:
-    require_exact_fields(value, SYNC_MAPPING_FIELDS, SYNC_MAPPING_FIELDS, "mapping")
-    version = value["version"]
-    require(
-        isinstance(version, int) and not isinstance(version, bool) and version == 1,
-        "mapping version must be 1",
-    )
-    links = value["github_to_linear"]
-    require(isinstance(links, dict), "mapping.github_to_linear must be an object")
-    require(
-        len(links) <= MAX_SYNC_MAPPING_ENTRIES,
-        f"mapping.github_to_linear exceeds {MAX_SYNC_MAPPING_ENTRIES} entries",
-    )
-
-    github_issues: set[str] = set()
-    linear_targets: set[str] = set()
-    for github_issue, linear_issue in links.items():
-        github_text = require_concrete_text(github_issue, "mapping GitHub issue")
-        github_match = GITHUB_ISSUE.fullmatch(github_text)
-        require(github_match is not None, "mapping GitHub issue must be OWNER/REPOSITORY#NUMBER")
-        normalized_github = (
-            f"{github_match.group('owner').lower()}/"
-            f"{github_match.group('repo').lower()}#{github_match.group('number')}"
-        )
-        require(
-            normalized_github not in github_issues,
-            "mapping contains a duplicate normalized GitHub issue",
-        )
-
-        linear_text = require_concrete_text(linear_issue, f"mapping.{github_text}")
-        require(LINEAR_ISSUE.fullmatch(linear_text) is not None, "mapping Linear issue must be TEAM-NUMBER")
-        require(linear_text not in linear_targets, "mapping contains a duplicate Linear target")
-        github_issues.add(normalized_github)
-        linear_targets.add(linear_text)
-
-
-def validate_current_mapping(repo_root: Path, config: dict[str, Any]) -> None:
-    synchronization = config.get("synchronization")
-    if synchronization is None:
-        return
-    _, parts = normalize_mapping_source(synchronization["mapping_source"])
-    checked = inspect_repo_file(
-        repo_root,
-        parts,
-        "synchronization.mapping_source",
-        missing_ok=False,
-    )
-    require(checked is not None, "synchronization.mapping_source is missing")
-    raw = bounded_read(checked, MAX_SYNC_MAPPING_BYTES, "synchronization mapping")
-    validate_sync_mapping(parse_json_object(raw, "mapping"))
 
 
 def canonical_json(value: Any) -> str:
@@ -393,7 +308,6 @@ def main() -> int:
         return 0
 
     config = normalize_config(raw)
-    validate_current_mapping(repo_root, config)
     print(canonical_json({"config": config, "status": "valid"}))
     return 0
 

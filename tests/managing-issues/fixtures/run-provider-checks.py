@@ -374,32 +374,20 @@ def config_and_sync_integration(root: Path, base: dict[str, str]) -> None:
     sync_root = root / "sync"
     agents = sync_root / ".agents"
     agents.mkdir(parents=True)
-    mapping = {"version": 1, "github_to_linear": {"example/project#1": "ENG-1"}}
-    (agents / "sync.json").write_text(json.dumps(mapping), encoding="utf-8")
     config = {
         "version": 2, "provider": "linear", "target": {"workspace": LINEAR_WORKSPACE, "team": LINEAR_TEAM},
-        "synchronization": {"mapping_source": ".agents/sync.json"},
+        "synchronization": True,
         "mappings": {"priority": {}, "leaf_estimate": {}, "labels": {}, "readiness": {"needs-discovery": "label-feature", "needs-planning": "label-fix", "ready": "label-ready"}},
     }
     (agents / "managing-issues.json").write_text(json.dumps(config), encoding="utf-8")
     normalized = json_result(run([sys.executable, str(CONFIG_CHECK), "--repo-root", str(sync_root), "--config", ".agents/managing-issues.json"], base), "sync config validation")
-    require(normalized["config"]["provider"] == "linear" and normalized["config"]["synchronization"] == {"mapping_source": ".agents/sync.json"}, "canonical sync routing differs")
+    require(normalized["config"]["provider"] == "linear" and normalized["config"]["synchronization"] is True, "provider-managed sync posture differs")
     sync_env, _, sync_log = linear_env(root, base, "linear-sync-canonical")
     load_linear_guide(sync_env)
     linear_read(sync_env, "ENG-1")
     linear_result(run(["orca", "linear", "priority", "set", "ENG-1", "--to", "medium", "--workspace", LINEAR_WORKSPACE, "--json"], sync_env), "canonical sync update")
     require(linear_read(sync_env, "ENG-1")["priority"] == 3, "canonical sync readback differs")
     require(len(positions(log_entries(sync_log), ["linear", "priority", "set"])) == 1, "canonical sync did not route one write")
-
-    ambiguous_root = root / "ambiguous-sync"
-    ambiguous_agents = ambiguous_root / ".agents"
-    ambiguous_agents.mkdir(parents=True)
-    ambiguous_config = dict(config)
-    ambiguous_config["synchronization"] = {"mapping_source": ".agents/sync.json"}
-    (ambiguous_agents / "managing-issues.json").write_text(json.dumps(ambiguous_config), encoding="utf-8")
-    shutil.copyfile(HERE / "sync-mapping" / "duplicate-normalized-github.json", ambiguous_agents / "sync.json")
-    ambiguous_result = run([sys.executable, str(CONFIG_CHECK), "--repo-root", str(ambiguous_root), "--config", ".agents/managing-issues.json"], base)
-    failed(ambiguous_result, "duplicate normalized GitHub issue", "ambiguous sync identity")
 
     outside = root / "outside"
     outside.mkdir()
@@ -423,12 +411,14 @@ def published_contract() -> None:
     for phrase in (
         "config-template-github.json",
         "config-template-linear.json",
-        "sync-mapping-template.json",
         "first tracker mutation",
         "missing or invalid config never blocks a read or draft",
         "provider and exact repository or workspace/team target",
         "recommending off",
-        "starter recommendations",
+        "native Issue Sync",
+        "accepts issue creation from the selected canonical provider",
+        "Linear-canonical creation requires two-way sync",
+        "every recommended key and provider representation",
         "never treat existing metadata as the preferred answer",
         "provider-metadata approval",
         "symlink",

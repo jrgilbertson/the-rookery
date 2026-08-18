@@ -227,24 +227,24 @@ def execute_batch(
     return result
 
 
-def canonical_identity(
+def canonical_identity_from_native_link(
     canonical: str,
-    pairs: list[tuple[str, str]],
+    provider_links: list[tuple[str, str]],
     selector: str,
 ) -> str | None:
     if canonical == "github":
-        matches = [github for github, linear in pairs if selector in {github, linear}]
+        matches = [github for github, linear in provider_links if selector in {github, linear}]
     else:
-        matches = [linear for github, linear in pairs if selector in {github, linear}]
+        matches = [linear for github, linear in provider_links if selector in {github, linear}]
     return matches[0] if len(matches) == 1 else None
 
 
-def synchronized_write(
+def provider_managed_synchronized_write(
     canonical: str,
-    pairs: list[tuple[str, str]],
+    provider_links: list[tuple[str, str]],
     selector: str,
 ) -> list[str]:
-    target = canonical_identity(canonical, pairs, selector)
+    target = canonical_identity_from_native_link(canonical, provider_links, selector)
     return [] if target is None else [f"write:{canonical}:{target}"]
 
 
@@ -424,29 +424,29 @@ Fix the save path.
     else:
         require(False, "stale succeeded effect outcome was accepted")
 
-    pairs = [("example/project#11", "ENG-11")]
+    provider_links = [("example/project#11", "ENG-11")]
     require(
-        synchronized_write("github", pairs, "ENG-11")
+        provider_managed_synchronized_write("github", provider_links, "ENG-11")
         == ["write:github:example/project#11"],
         "Linear-to-GitHub route differs",
     )
     require(
-        synchronized_write("linear", pairs, "example/project#11")
+        provider_managed_synchronized_write("linear", provider_links, "example/project#11")
         == ["write:linear:ENG-11"],
         "GitHub-to-Linear route differs",
     )
     require(
-        synchronized_write("github", [], "ENG-11") == [],
-        "missing map allowed a synchronized write",
+        provider_managed_synchronized_write("github", [], "ENG-11") == [],
+        "missing native linkage allowed a synchronized write",
     )
     require(
-        synchronized_write(
+        provider_managed_synchronized_write(
             "linear",
             [("example/project#11", "ENG-11"), ("example/other#7", "ENG-11")],
             "ENG-11",
         )
         == [],
-        "ambiguous map allowed a synchronized write",
+        "ambiguous native linkage allowed a synchronized write",
     )
 
     latest_verification = ("children are completed", "support confirms outcome")
@@ -775,9 +775,9 @@ def published_contract_checks() -> None:
     require("workspaceErrors" in linear and "capReached" in linear, "Linear reference lacks partial-coverage checks")
     normalized_linear = " ".join(linear.split())
     for fragment in (
-        "Resolve one exact mapping entry",
-        "top-level config provider alone selects write direction",
-        "projection may be read for identity or lag evidence but never mutated",
+        "exact native synchronization link",
+        "top-level config provider alone selects the canonical tracker",
+        "never maintain a sidecar map or mutate the projection as fallback",
     ):
         require(
             fragment in normalized_linear,

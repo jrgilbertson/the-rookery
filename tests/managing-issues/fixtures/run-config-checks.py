@@ -19,12 +19,9 @@ HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parents[2]
 PRODUCTION = REPO_ROOT / "skills" / "managing-issues" / "scripts" / "config_check.py"
 CONFIGS = HERE / "config"
-SYNC_MAPPINGS = HERE / "sync-mapping"
 TEMPLATE_LINEAR = REPO_ROOT / "skills" / "managing-issues" / "assets" / "config-template-linear.json"
 TEMPLATE_GITHUB = REPO_ROOT / "skills" / "managing-issues" / "assets" / "config-template-github.json"
-TEMPLATE_SYNC = REPO_ROOT / "skills" / "managing-issues" / "assets" / "sync-mapping-template.json"
 ACTIVE_CONFIG_RELATIVE = Path(".agents") / "managing-issues.json"
-ACTIVE_MAPPING_RELATIVE = Path(".agents") / "managing-issues-sync.json"
 MAX_BYTES = 64 * 1024
 READINESS_KEYS = {"needs-discovery", "needs-planning", "ready"}
 RECOMMENDED_KEYS = {
@@ -109,21 +106,6 @@ def install_active_config(repo_root: Path, config: Path | dict[str, Any] | None)
     return active_config
 
 
-def install_current_mapping(repo_root: Path, mapping: Path | dict[str, Any] | None) -> Path:
-    active_mapping = repo_root / ACTIVE_MAPPING_RELATIVE
-    if active_mapping.exists() or active_mapping.is_symlink():
-        if active_mapping.is_dir() and not active_mapping.is_symlink():
-            active_mapping.rmdir()
-        else:
-            active_mapping.unlink()
-    if isinstance(mapping, Path):
-        active_mapping.parent.mkdir(parents=True, exist_ok=True)
-        active_mapping.write_bytes(mapping.read_bytes())
-    elif mapping is not None:
-        write_json(active_mapping, mapping)
-    return active_mapping
-
-
 def invoke_validator(
     repo_root: Path,
     active_config: str | Path,
@@ -147,11 +129,8 @@ def invoke_validator(
 def run_validator(
     config: Path | dict[str, Any] | None,
     repo_root: Path,
-    *,
-    current_mapping: Path | dict[str, Any] | None = None,
 ) -> subprocess.CompletedProcess[str]:
     active_config = install_active_config(repo_root, config)
-    install_current_mapping(repo_root, current_mapping)
     return invoke_validator(repo_root, active_config)
 
 
@@ -180,10 +159,8 @@ def expect_valid(
     config: Path | dict[str, Any],
     repo_root: Path,
     expected_config: dict[str, Any],
-    *,
-    current_mapping: Path | dict[str, Any] | None = None,
 ) -> str:
-    completed = run_validator(config, repo_root, current_mapping=current_mapping)
+    completed = run_validator(config, repo_root)
     require(completed.returncode == 0, f"expected valid config: {completed.stderr.strip()}")
     require(completed.stderr == "", "valid config wrote to stderr")
     parsed = json.loads(completed.stdout)
@@ -199,11 +176,9 @@ def expect_invalid(
     config: Path | dict[str, Any] | None,
     repo_root: Path,
     message_fragment: str,
-    *,
-    current_mapping: Path | dict[str, Any] | None = None,
 ) -> None:
     expect_completed_invalid(
-        run_validator(config, repo_root, current_mapping=current_mapping),
+        run_validator(config, repo_root),
         message_fragment,
     )
 
@@ -297,6 +272,7 @@ def base_config(provider: str = "github") -> dict[str, Any]:
         "version": 2,
         "provider": provider,
         "target": target,
+        "synchronization": False,
         "mappings": {
             "priority": {},
             "leaf_estimate": {},
@@ -339,41 +315,16 @@ def check_active_config_filesystem_cases(repo_root: Path, outside: Path) -> None
     active_config.unlink()
 
 
-def check_mapping_filesystem_cases(repo_root: Path) -> None:
-    config = base_config("linear")
-    config["synchronization"] = {"mapping_source": ACTIVE_MAPPING_RELATIVE.as_posix()}
-    active_config = install_active_config(repo_root, config)
-    active_mapping = install_current_mapping(repo_root, None)
-    expect_completed_invalid(invoke_validator(repo_root, active_config), "synchronization.mapping_source is missing")
-
-    in_repo_mapping = repo_root / "mapping-copy.json"
-    write_json(in_repo_mapping, {"version": 1, "github_to_linear": {}})
-    active_mapping.symlink_to(in_repo_mapping)
-    expect_completed_invalid(
-        invoke_validator(repo_root, active_config),
-        "synchronization.mapping_source contains a symlink component",
-    )
-    active_mapping.unlink()
-    active_mapping.mkdir()
-    expect_completed_invalid(
-        invoke_validator(repo_root, active_config),
-        "synchronization.mapping_source must be a regular file",
-    )
-    active_mapping.rmdir()
-    active_mapping.write_bytes(b"{" + b" " * MAX_BYTES + b"}")
-    expect_completed_invalid(
-        invoke_validator(repo_root, active_config),
-        f"synchronization mapping exceeds {MAX_BYTES} bytes",
-    )
-    active_mapping.unlink()
-
-
 def check_templates(repo_root: Path) -> None:
     for provider, template_path in (("github", TEMPLATE_GITHUB), ("linear", TEMPLATE_LINEAR)):
         require(template_path.is_file(), f"missing {provider} config template")
         template = json.loads(template_path.read_text(encoding="utf-8"))
-        require(set(template) == {"version", "provider", "target", "mappings"}, f"{provider} template keys differ")
+        require(
+            set(template) == {"version", "provider", "target", "synchronization", "mappings"},
+            f"{provider} template keys differ",
+        )
         require(template["version"] == 2 and template["provider"] == provider, f"{provider} template identity differs")
+        require(template["synchronization"] is False, f"{provider} template must default synchronization off")
         require(set(template["mappings"]) == {"priority", "leaf_estimate", "labels", "readiness"}, f"{provider} template mapping shape differs")
         for family, keys in RECOMMENDED_KEYS.items():
             require(set(template["mappings"][family]) == keys, f"{provider} template {family} recommendations differ")
@@ -397,14 +348,6 @@ def check_templates(repo_root: Path) -> None:
         if provider == "github":
             expected["target"] = "exampleorg/project"
         expect_valid(resolved, repo_root, expected)
-
-    require(TEMPLATE_SYNC.is_file(), "missing synchronization mapping template")
-    require(
-        json.loads(TEMPLATE_SYNC.read_text(encoding="utf-8"))
-        == {"version": 1, "github_to_linear": {}},
-        "synchronization mapping template differs",
-    )
-
 
 def main() -> int:
     check_script_surface()
@@ -454,21 +397,13 @@ def main() -> int:
         expect_valid(linear, repo_root, linear)
         expect_valid(base_config("linear"), repo_root, base_config("linear"))
 
-        sync_map = SYNC_MAPPINGS / "valid.json"
         for provider in ("github", "linear"):
             synced = base_config(provider)
-            synced["synchronization"] = {"mapping_source": ACTIVE_MAPPING_RELATIVE.as_posix()}
+            synced["synchronization"] = True
             expected_synced = copy.deepcopy(synced)
             if provider == "github":
                 expected_synced["target"] = "exampleorg/project"
-            expect_valid(synced, repo_root, expected_synced, current_mapping=sync_map)
-            expect_valid(synced, repo_root, expected_synced, current_mapping=SYNC_MAPPINGS / "empty.json")
-            expect_valid(
-                synced,
-                repo_root,
-                expected_synced,
-                current_mapping=SYNC_MAPPINGS / "equivalent-normalized.json",
-            )
+            expect_valid(synced, repo_root, expected_synced)
 
         marker = repo_root / "read-only-marker"
         marker.write_text("unchanged\n", encoding="utf-8")
@@ -478,6 +413,18 @@ def main() -> int:
 
         expect_invalid(CONFIGS / "duplicate-key.json", repo_root, "duplicate key 'provider'")
         expect_invalid(CONFIGS / "legacy-v1.json", repo_root, "run Managing Issues setup to create version 2")
+
+        missing_synchronization = base_config()
+        del missing_synchronization["synchronization"]
+        expect_invalid(missing_synchronization, repo_root, "config missing key: synchronization")
+        for invalid_value in (None, 0, 1, "true", {}, []):
+            invalid_synchronization = base_config()
+            invalid_synchronization["synchronization"] = invalid_value
+            expect_invalid(
+                invalid_synchronization,
+                repo_root,
+                "synchronization must be true or false",
+            )
 
         control_key = temporary_root / "control-key.json"
         control_key.write_text(
@@ -524,13 +471,6 @@ def main() -> int:
         invalid_nested = base_config("linear")
         invalid_nested["target"]["organization"] = "unexpected"
         expect_invalid(invalid_nested, repo_root, "target has unexpected key: organization")
-        invalid_sync = base_config()
-        invalid_sync["synchronization"] = {
-            "mapping_source": ACTIVE_MAPPING_RELATIVE.as_posix(),
-            "enabled": True,
-        }
-        expect_invalid(invalid_sync, repo_root, "synchronization has unexpected key: enabled")
-
         for target in ("owner", "owner/.", "owner/..", "https://github.com/owner/repo", "owner/repo/extra"):
             invalid = base_config()
             invalid["target"] = target
@@ -559,60 +499,6 @@ def main() -> int:
         duplicate_linear_label["mappings"]["labels"] = {"ready": "label-readiness-ready"}
         expect_invalid(duplicate_linear_label, repo_root, "Linear label label-readiness-ready is mapped more than once")
 
-        for source, fragment in (
-            ("../outside/map.json", "must not contain empty, . or .. segments"),
-            (".agents/./map.json", "must not contain empty, . or .. segments"),
-            ("/tmp/map.json", "must be repository-relative"),
-            (r".agents\map.json", "must use repository-relative POSIX syntax"),
-        ):
-            invalid = base_config()
-            invalid["synchronization"] = {"mapping_source": source}
-            expect_invalid(invalid, repo_root, fragment)
-
-        synced = base_config()
-        synced["synchronization"] = {"mapping_source": ACTIVE_MAPPING_RELATIVE.as_posix()}
-        for fixture, fragment in (
-            ("duplicate-key.json", "duplicate key 'ExampleOrg/Project#12'"),
-            ("duplicate-normalized-github.json", "duplicate normalized GitHub issue"),
-            ("duplicate-linear.json", "duplicate Linear target"),
-            ("invalid-github.json", "mapping GitHub issue must be OWNER/REPOSITORY#NUMBER"),
-            ("invalid-linear.json", "mapping Linear issue must be TEAM-NUMBER"),
-            ("unknown-key.json", "mapping has unexpected key: reverse"),
-            ("control-key.json", "mapping GitHub issue contains control characters"),
-        ):
-            expect_invalid(synced, repo_root, fragment, current_mapping=SYNC_MAPPINGS / fixture)
-
-        invalid_mapping_version = {"version": 2, "github_to_linear": {}}
-        expect_invalid(
-            synced,
-            repo_root,
-            "mapping version must be 1",
-            current_mapping=invalid_mapping_version,
-        )
-        direction_mapping = {"version": 1, "github_to_linear": {}, "direction": "github-to-linear"}
-        expect_invalid(
-            synced,
-            repo_root,
-            "mapping has unexpected key: direction",
-            current_mapping=direction_mapping,
-        )
-
-        oversized_mapping = temporary_root / "oversized-mapping.json"
-        oversized_mapping.write_bytes(b"{" + b" " * MAX_BYTES + b"}")
-        expect_invalid(
-            synced,
-            repo_root,
-            f"synchronization mapping exceeds {MAX_BYTES} bytes",
-            current_mapping=oversized_mapping,
-        )
-        capped_mapping = {
-            "version": 1,
-            "github_to_linear": {
-                f"ExampleOrg/Project#{number}": f"ENG-{number}" for number in range(1, 252)
-            },
-        }
-        expect_invalid(synced, repo_root, "mapping.github_to_linear exceeds 250 entries", current_mapping=capped_mapping)
-
         huge_integer = temporary_root / "huge-integer.json"
         huge_integer.write_text('{"version":' + "1" * 5000 + "}", encoding="utf-8")
         expect_invalid(huge_integer, repo_root, "Exceeds the limit (4300 digits)")
@@ -625,7 +511,6 @@ def main() -> int:
         active_config.unlink()
 
         check_active_config_filesystem_cases(repo_root, outside)
-        check_mapping_filesystem_cases(repo_root)
         check_templates(repo_root)
 
     print("PASS: managing-issues config contract")

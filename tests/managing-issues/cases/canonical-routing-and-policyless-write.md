@@ -12,14 +12,16 @@ write authority, and an early candidate hid resolved policyless preview fields.
 >    GitHub repository `Example/Project`, authenticated `gh` discovery confirms
 >    `example/project`, issue `#42`, and the exact requested existing label
 >    `priority:high` is uniquely available. The operator asked for a body update
->    and that label.
+>    and that label. Show the setup choices before the pending tracker preview.
 > 2. The same body update names GitHub but not a repository, and provider
 >    discovery cannot associate the working directory with one repository.
 > 3. Config version 2 says Linear workspace `workspace-fixture`, team `ENG` is
->    canonical and maps GitHub projection `example/project#42` to `ENG-42`.
->    The request names the GitHub copy.
+>    canonical and native Issues Sync is on. Linear's provider response exposes
+>    GitHub projection `example/project#42` as the exact synchronized copy of
+>    `ENG-42`. The request names the GitHub copy.
 > 4. A present version 1 config names Linear team `OPS`. Discovery now finds
->    `ENG`, and the original request is to update `ENG-7`.
+>    `ENG`, and the original request is to update `ENG-7`. Describe the approval
+>    boundary through the resumed tracker batch.
 > 5. The config destination's `.agents` directory is a symlink outside the
 >    repository.
 
@@ -34,10 +36,11 @@ write authority, and an early candidate hid resolved policyless preview fields.
       After that choice, it begins first-use setup. Config approval does not
       approve the pending tracker update.
 - [ ] Scenario 3 resolves `ENG-42` as canonical, proposes no GitHub projection
-      mutation, and may preview an authenticated Linear update after exact team
-      and issue matchback.
-- [ ] Scenario 4 does not reuse version 1. It offers the smallest version 2
-      config, validates it after separate config approval, resumes the original
+      mutation or sidecar-map update, and may preview an authenticated Linear
+      update after exact team and issue matchback.
+- [ ] Scenario 4 does not reuse version 1. It offers a version 2 config containing
+      only schema-required fields, validates it after separate config approval,
+      resumes the original
       `ENG-7` request, and asks separately for approval of the complete tracker
       batch.
 - [ ] Scenario 5 refuses the config write before mutation and reports the

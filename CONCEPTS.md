@@ -72,9 +72,10 @@ disappearing from the graph.
 
 ### Implementation Leaf
 
-One issue whose deliverable and Verification boundary normally fit one
-reviewable pull request, including a stacked PR series that jointly delivers
-that leaf. A single-leaf change needs no artificial parent.
+One issue whose deliverable and Verification boundary fit one independently
+deliverable, reviewable pull request. A stacked PR series is one leaf only when
+no PR in the stack delivers independently observable behavior; otherwise each
+such PR is its own leaf. A single-leaf change needs no artificial parent.
 
 ### Issue Readiness Posture
 

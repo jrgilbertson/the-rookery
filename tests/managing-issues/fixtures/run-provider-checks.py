@@ -417,9 +417,9 @@ def published_contract() -> None:
     linear = LINEAR_REF.read_text(encoding="utf-8")
     compact_skill = " ".join(skill.split())
     require(len(skill.splitlines()) < 500, "SKILL.md exceeds portable line budget")
-    for phrase in ("discover", "Analyze", "Preview", "approval", "Revalidate", "apply", "read back", "unapplied"):
+    for phrase in ("Shape", "Analyze", "Preview", "approval", "Revalidate", "apply", "read back", "unapplied"):
         require(phrase.lower() in skill.lower(), f"shared lifecycle omits {phrase}")
-    for phrase in ("config-template-github.json", "config-template-linear.json", "separate from tracker approval", "symlink", "version 1"):
+    for phrase in ("config-template-github.json", "config-template-linear.json", "separate from tracker approval", "symlink", "incompatible config"):
         require(phrase in skill, f"setup contract omits {phrase}")
     require("normalized canonical target" in skill and "Problem" in skill and "Scope" in skill and "Verification" in skill, "preview or issue shape contract differs")
     require("Authentication through the provider path supplies identity" in compact_skill, "authentication contract differs")

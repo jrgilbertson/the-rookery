@@ -6,11 +6,11 @@ derived graph in the current response; the tracker remains the durable record.
 
 ## Shape only the useful graph
 
-Keep one reviewable deliverable as a standalone implementation leaf. When one
-outcome needs several reviewable deliverables, preserve the whole outcome on a
-parent and create vertical leaves beneath it. Add another level only when a
-child owns a distinct sub-outcome that itself needs several leaves. This is the
-shallowest useful graph; it has no fixed depth limit.
+Use the issue set that passed the main workflow's decomposition gates. Keep a
+standalone leaf parentless. When several leaves deliver one whole outcome,
+attach them to that outcome's parent. Add another level only when a child owns a
+distinct sub-outcome that itself needs several leaves. This is the shallowest
+useful graph; it has no fixed depth limit.
 
 Any node with children is a parent, including a nested sub-outcome, and carries
 no estimate. Only childless implementation leaves receive analyzed estimates.

@@ -18,6 +18,7 @@ HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parents[2]
 BIN = HERE / "bin"
 PROVIDER = HERE / "provider"
+SKILL = REPO_ROOT / "skills/managing-issues/SKILL.md"
 REFERENCE = REPO_ROOT / "skills/managing-issues/references/graph-and-completion.md"
 GITHUB_REFERENCE = REPO_ROOT / "skills/managing-issues/references/github.md"
 LINEAR_REFERENCE = REPO_ROOT / "skills/managing-issues/references/linear-and-sync.md"
@@ -680,6 +681,7 @@ def linear_command_checks(root: Path, base_env: dict[str, str]) -> None:
 
 def published_contract_checks() -> None:
     text = REFERENCE.read_text(encoding="utf-8")
+    skill = SKILL.read_text(encoding="utf-8")
     required = (
         "shallowest useful",
         "capabilities before showing an executable graph preview",
@@ -704,6 +706,20 @@ def published_contract_checks() -> None:
         require(
             fragment.casefold() in normalized,
             f"graph reference lacks contract: {fragment}",
+        )
+
+    normalized_skill = " ".join(skill.split()).casefold()
+    for fragment in (
+        "independently deliverable",
+        "vertical outcomes",
+        "what can be demonstrated",
+        "preferences and convenient ordering",
+        "expand–migrate–contract",
+        "compact decomposition check",
+    ):
+        require(
+            fragment.casefold() in normalized_skill,
+            f"main skill lacks decomposition contract: {fragment}",
         )
 
     forbidden = (
@@ -751,6 +767,7 @@ def published_contract_checks() -> None:
 
 def main() -> int:
     for required in (
+        SKILL,
         REFERENCE,
         GITHUB_REFERENCE,
         LINEAR_REFERENCE,

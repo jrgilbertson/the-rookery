@@ -23,9 +23,9 @@ capitalized prose alongside the smaller set of terms that carry shared
 contracts. The result was harder to scan and encouraged dependent documents to
 repeat project-specific labels instead of explaining the work plainly.
 
-The glossary now states its admission rule at `CONCEPTS.md:3`: prefer an
-established industry term or plain description. Add a project term only when it
-describes a precise contract used in more than one place or names persisted
+The glossary's [admission rule](../../../CONCEPTS.md#concepts) prefers an
+established industry term or plain description. Add a project term only when
+it describes a precise contract used in more than one place or names persisted
 compatibility data. Ordinary workflow phrases do not become concepts merely by
 being capitalized.
 
@@ -57,9 +57,10 @@ valid ones to be omitted.
 Persisted names are the exception to friendly renaming. Explain them clearly,
 but retain the exact field, marker, or receipt-kind identifier unless the work
 includes an intentional compatibility migration. `Register Revision`, for
-example, explicitly documents the stored `register_revision` field at
-`CONCEPTS.md:160`; `Effect Receipt` preserves the `effect` receipt kind at
-`CONCEPTS.md:167`.
+example, explicitly documents the stored `register_revision` field under
+[Register Revision](../../../CONCEPTS.md#register-revision), while
+[Effect Receipt](../../../CONCEPTS.md#effect-receipt) preserves the `effect`
+receipt kind.
 
 ## Why This Matters
 
@@ -85,11 +86,12 @@ improves comprehension without breaking interoperability.
 
 ## Examples
 
-Keep terms with stable shared meaning. `Installation Parity` names the
-repository's visitor-equivalent installation invariant (`CONCEPTS.md:78`).
-`Repository Maintenance Run` names the complete
-`Sense -> Decide -> Act -> Verify -> Learn` contract used by `repo-gardener`
-(`CONCEPTS.md:130` and `skills/repo-gardener/SKILL.md:10`).
+Keep terms with stable shared meaning.
+[Installation Parity](../../../CONCEPTS.md#installation-parity) names the
+repository's visitor-equivalent installation invariant.
+[Repository Maintenance Run](../../../CONCEPTS.md#repository-maintenance-run)
+names the complete `Sense -> Decide -> Act -> Verify -> Learn` contract used by
+[`repo-gardener`](../../../skills/repo-gardener/SKILL.md).
 
 Use plain language when the owning workflow can state the rule directly. The
 issue-management skill reports which issues are "Ready to start now" and keeps
@@ -102,9 +104,9 @@ Remove or demote names that merely label steps. In this cleanup, `Global Pass`,
 `Process Residual`, and `Targeted Sweep` stopped being standalone concepts. The
 owning skills now say directly that they review the whole change, check whether
 review is complete, and run pre-PR review checks. Likewise, `Repository Memory
-Current` and `Personal Learning Current` became the more familiar Repository
-Learning Loop and Personal Learning Loop (`CONCEPTS.md:33` and
-`CONCEPTS.md:40`).
+Current` and `Personal Learning Current` became the more familiar
+[Repository Learning Loop](../../../CONCEPTS.md#repository-learning-loop) and
+[Personal Learning Loop](../../../CONCEPTS.md#personal-learning-loop).
 
 ## Related
 

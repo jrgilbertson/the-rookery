@@ -11,15 +11,29 @@ This is a glossary, not a specification or catch-all.
 
 ### Meaningful Commitment
 
-A reviewed next-day intention recorded during wind-down. It visibly connects the current authoritative evidence or labeled user premise, the user-owned desired outcome, and the future observable evidence that will show completion, with a concise rationale for why it matters. These meanings may read as natural prose rather than labeled fields. Exact user wording that omits one remains visible as nonconforming input and is not certified as a complete commitment. When the live daily-journal template includes a configured Meaningful Commitments section, that journal carries three to five of them as next-day intent; without the section, ordinary next-day planning continues. They express intent without replacing canonical task state or calendar capacity, and they do not require a separate morning reaffirm step.
+A reviewed next-day intention that connects current evidence or an explicit user
+premise, a user-chosen outcome, and observable proof of completion.
+
+It may be written as natural prose. If the user's exact wording omits one part,
+preserve it but do not present it as complete. It records intent without
+replacing task or calendar state.
 
 ### Source Access Audit
 
-A required, conversation-only account of the relevant source roles considered for one visible personal-chief-of-staff response. For each role, it records the bounded current-response access attempt and result (`Accessed — evidence found`, `Accessed — no relevant evidence`, or `Attempted — unavailable or failed`), or an explicit no-attempt classification (`Not configured`, `Declined`, or `Not needed`), plus the effect on that response's findings. It is reconciled from those attempts and classifications, rendered after the answer-first synthesis, and discarded after the response. It is not a source registry, claim-provenance ledger, approval, freshness record, or new source of truth.
+A temporary record, shown with one response, of which relevant sources were
+checked, what each check found, and how access gaps affected the answer.
+
+It is discarded after the response. It does not prove a claim, authorize a
+change, or create stored state.
 
 ### Daily CRM Scan
 
-Required wind-down pass over configured relationship interaction sources for the active scan window, run before the initial reconstruction whether or not a candidate person already surfaced. Default window: closing local day. After a short miss of one or two immediately prior local days (missing prior journals), expand over those days plus the closing day as a catch-up breath. Attribute messages by sender; evaluate substantive direct contact for each bindable person; leave unknown handles unresolved. Covers contact-date outcomes and selective durable meaning. Separate from prepare-tomorrow’s overdue / useful-tomorrow exception check. Excludes CRM catch-up mode, exhaustive history, and indiscriminate Person-note creation.
+A required wind-down check of configured relationship sources for the active
+date window, run before the day's initial reconstruction.
+
+It attributes interactions to known people and proposes only supported contact
+updates or useful context. A short gap expands the date window; it does not
+start a full CRM catch-up.
 
 ## Workflow processes
 
@@ -32,10 +46,9 @@ than existing only as an isolated stop.
 
 ### Repository Learning Loop
 
-The Maintain feedback path that observes recurring signals across the Delivery
-Sequence and encodes each lesson at the strongest durable layer that can hold it,
-preferring enforceable layers when available. It improves future work
-throughout the system rather than beginning only after Ship.
+The Maintain feedback loop that turns recurring repository problems into tests,
+rules, reusable procedures, decision records, or documentation. It improves
+future work throughout the Delivery Sequence, not only after Ship.
 
 ### Personal Learning Loop
 
@@ -54,9 +67,9 @@ discoverable facts. The user makes each decision.
 
 ### Canonical Tracker
 
-The one issue system authorized to own and receive mutations for a repository.
-When another tracker synchronizes the same issue, that copy is a projection or
-alias used for identity and readback evidence, not a second write target.
+The single issue system allowed to receive updates for a repository. Copies
+synced to another tracker may help identify or verify the issue, but they are
+not a second place to write.
 
 ## Shipping and verification
 
@@ -96,43 +109,35 @@ existing one.
 
 ### Evidence Pack
 
-The structured record a readiness checkpoint composes when the owner approves:
-plan-vs-delivered status, checks run with results, the explicit not-verified and
-attested list, sweep findings, UI critique scores when present, and the durable
-learning signal. The checkpoint only composes the pack into its readout;
-durability begins when the finishing path renders it into the pull request
-description, which is its durable home — the pre-merge checkpoint reads it back
-from there. Nothing is written to the tracked tree or any local state store.
+A record added to the pull request description after the owner approves a
+readiness review. It summarizes plan fit, checks and evidence, unresolved gaps,
+review findings, and any learning worth keeping.
+
+The review assembles it in conversation. It becomes durable only when the
+finishing workflow adds it to the pull request description.
 
 ### Merge Readiness Review
 
-The pre-merge readout `checking-merge-readiness` composes before the owner
-merges. It first checks whether review is complete enough to assess and whether
-the host's merge rules pass. It then reviews the full change from pull-request
-open to tip for intent drift, graded Risk Drivers, redesign pressure, and
-follow-up debt. Those findings produce one recommendation: merge, debug, or do
-not merge. The review lives in the conversation and changes nothing, so the
-owner still does the merging.
+The pre-merge review produced by `checking-merge-readiness`. It checks whether
+review is complete and merge rules pass, then examines the full pull request
+for intent drift, Risk Drivers, redesign pressure, and follow-up debt.
+
+It recommends merge, debug, or do not merge. It makes no changes; the owner
+still decides and merges.
 
 ### Risk Driver
 
-A named, graded (low / medium / high) finding in a Merge Readiness Review: one
-specific thing about the change or its review that an owner
-would want to weigh before merging. Principle-tension classes cover
-complexity accretion, knowledge duplication, and speculative generality.
-Other classes cover unresolved review items, cross-round fix interaction,
-material security concerns, and PR text that tries to steer the assessment.
-Drivers roll up into one merge-risk grade; a word grade traceable to a named
-driver is used instead of a numeric score.
+A low, medium, or high risk the owner should weigh before merging, tied to one
+specific finding about the change or its review. A Merge Readiness Review uses
+the named risks to recommend merge, debug, or do not merge.
 
 ## Repository gardening
 
 ### Repository Maintenance Run
 
-One repository-scoped execution of `Sense -> Decide -> Act -> Verify -> Learn`.
-The parent surveys nine lanes, may deepen current signals, and may supervise a
-live-policy-bounded child through an unmerged pull request. The model owns
-qualitative judgment; deterministic code checks only tracker-record closure.
+One `repo-gardener` pass through `Sense -> Decide -> Act -> Verify -> Learn`.
+It surveys nine maintenance areas and may carry one bounded improvement to an
+unmerged pull request.
 
 ### Current Portfolio
 
@@ -213,15 +218,9 @@ testing convention owns the protocol.
 An Independent Review Context is a fresh session in which the reviewing agent
 neither saw the artifact's authoring discussion nor produced the artifact.
 
-One context may grade a matched case, while another performs the final holistic
-review. Deterministic scripts remain appropriate for mechanical checks. If an
-independent context is unavailable, the affected result stays unverified and
-moves to a separate session through a self-contained handoff.
-
-The run's log line names the fresh-context mechanism used (a fresh session,
-CLI execution, or subagent); recorded context identifiers are not kept in
-test artifacts. The named mechanism does not replace artifact or trace
-evidence for the judgment made in that run.
+One context may grade a matched case while another performs the final review.
+If no independent context is available, the result remains unverified until a
+separate session can review a self-contained handoff.
 
 ### Degradation Path
 
@@ -232,13 +231,10 @@ and states what was skipped.
 
 ### Disposition List
 
-A Disposition List is the per-item record a prune or restructure leaves in its
-commit message: each removed item marked kept, folded into a named survivor,
-or dropped with a reason. It is a checkable contract, not a narrative — a
-folded claim must point to the surviving line that carries the contract, a
-dropped claim must hold against its rationale, and a retired claim must
-survive a search for live references. Verified dispositions are what make
-git-as-archive recovery trustworthy.
+A per-item record in a prune or restructure commit message that marks each
+removed item as kept, folded into a named survivor, or dropped with a reason.
+Folded items point to what replaced them, and retired names must disappear from
+live references.
 
 ### Delete Test
 

@@ -4,20 +4,15 @@
 
 # The Rookery
 
-An always-current field guide to how I build with AI. It connects a practical
-workflow for research, planning, design, implementation, shipping, maintenance,
-and learning with the portable skills I use to run it.
-
-A skill is a portable set of instructions an agent loads when a task calls for
-it.
+An always-current field guide to how I build with AI. It connects a practical workflow for research, planning, design, implementation, shipping, maintenance, and learning with the skills I use to run it. A skill is a portable set of instructions an agent loads when a task calls for it.
 
 A rookery is where corvids gather to nest. This one is named for Odin's ravens, Huginn and Muninn. Huginn is thought, Muninn is memory. Each morning they fly out to see the world, and each evening they return with what they've learned.
 
 ## Guiding principles
 
-1. **Cross-agent and cross-harness.** Flexible, generalizable approaches that avoid vendor lock-in.
-2. **Minimize skill volume.** Too many skills create conflicting guidance, fill up the context window, and lead to unintended behavior as models get smarter.
-3. **Continuous improvement.** Every addition should make the whole system better.
+1. **Works across tools.** Skills should not depend on one agent or harness.
+2. **Add skills sparingly.** Create one only when existing tools leave a repeated gap.
+3. **Improve from use.** Turn recurring failures into tests, rules, or clearer instructions.
 
 ## Install
 
@@ -41,9 +36,7 @@ whole machine instead of per project.
 
 `main` is the rolling catalog and the normal install source. Semantic-version
 [Release Snapshots](CONCEPTS.md#release-snapshot) are immutable historical
-checkpoints with release notes; they are not install pins. The first public
-snapshot will be `v0.2.0`. The project remains in SemVer's initial-development
-phase, so its public contract may continue to evolve before `1.0.0`.
+checkpoints with release notes; they are not install pins.
 
 ## The workflows
 
@@ -59,14 +52,14 @@ Everything here fits into seven jobs. The walkthroughs live in [WORKFLOWS.md](WO
 
 ## The skills
 
-- [checking-merge-readiness](skills/checking-merge-readiness/SKILL.md). Review the full arc of a pull request after its review cycle, including design health, intent drift, merge rules, and unresolved risks. Run it immediately before merging to decide whether the accumulated change belongs on `main`.
-- [checking-pr-readiness](skills/checking-pr-readiness/SKILL.md). Check a finished branch's complete working surface, required evidence, plan fit, and unresolved risks before a pull request opens. Use it when you need a ship decision and evidence pack tied to the exact revision.
+- [checking-merge-readiness](skills/checking-merge-readiness/SKILL.md). Review a pull request after its review cycle for intent drift, unnecessary complexity, failed merge rules, and unresolved risks. Run it immediately before merging to decide whether the finished change belongs on `main`.
+- [checking-pr-readiness](skills/checking-pr-readiness/SKILL.md). Check a finished branch before opening a pull request. Use it to confirm the change matches the plan, required checks pass, and major risks are resolved.
 - [creating-portable-skills](skills/creating-portable-skills/SKILL.md). Create, revise, migrate, or audit a skill, then verify its structure, triggers, behavior, and installation. Use it when you need a portable skill package with separate evidence for behavior and installation.
-- [managing-issues](skills/managing-issues/SKILL.md). Read, draft, create, or update one GitHub or Linear issue and its parent, sub-issue, and blocker relationships in the canonical tracker. Choose it when you need to clarify readiness, change issue state, or verify completion without starting the implementation itself.
-- [managing-personal-crm](skills/managing-personal-crm/SKILL.md). Keep meaningful relationship context in canonical Person notes and tasks while raw interactions stay in their source systems. Use it to prepare for someone, capture an interaction, reconnect an overdue relationship, or find who could help with current work.
-- [personal-chief-of-staff](skills/personal-chief-of-staff/SKILL.md). Turn current personal and work evidence into a daily, weekly, or quarterly review with proposed actions that remain under your control. Run it when you need to orient, reflect, and decide what to do next across several sources.
-- [repo-gardener](skills/repo-gardener/SKILL.md). Survey a repository across nine maintenance areas and, when current evidence warrants it, carry one bounded improvement through an unmerged pull request. Run it on a schedule or by hand to find and address the repository's strongest current maintenance signals.
-- [reviewing-meetings](skills/reviewing-meetings/SKILL.md). Review completed meetings and turn source-grounded outcomes into proposed notes and follow-up actions. Run it after a meeting or during a catch-up when you want to capture outcomes and decide each follow-up before anything is written.
+- [managing-issues](skills/managing-issues/SKILL.md). Manage one GitHub or Linear issue, including its parent, sub-issues, and blockers. Use it to find what can start now, update issue state, or verify completion without beginning the implementation.
+- [managing-personal-crm](skills/managing-personal-crm/SKILL.md). Keep relationship context in one note per person while messages and other raw interactions stay in their original apps. Use it to prepare for someone, capture an interaction, reconnect an overdue relationship, or find who could help with current work.
+- [personal-chief-of-staff](skills/personal-chief-of-staff/SKILL.md). Turn information from your configured sources into a daily, weekly, or quarterly review. Run it when you need to orient, reflect, and decide what to do next across several parts of your life and work.
+- [repo-gardener](skills/repo-gardener/SKILL.md). Check a repository across nine maintenance areas and, when warranted, carry one bounded improvement to an unmerged pull request. Run it on a schedule or by hand to find the most important maintenance problem and leave a reviewable fix.
+- [reviewing-meetings](skills/reviewing-meetings/SKILL.md). Turn completed meetings into draft notes and follow-up actions grounded in the meeting source. Run it after a meeting or during a catch-up when you want to capture outcomes and approve each follow-up before anything is written.
 - [storm-research](skills/storm-research/SKILL.md). Research a hard question through independent perspectives and produce a source-backed briefing that preserves disagreements and blind spots. Reach for it when a decision, investment, or long-form deliverable needs evidence from several perspectives.
 
 ## My other projects
@@ -78,9 +71,9 @@ Everything here fits into seven jobs. The walkthroughs live in [WORKFLOWS.md](WO
 
 This system builds on work by people who share theirs. Use them directly.
 
-- [Compound Engineering](https://github.com/EveryInc/compound-engineering-plugin) by Trevin Chow ([@trevin](https://x.com/trevin)) and Kieran Klaassen ([@kieranklaassen](https://x.com/kieranklaassen)). The development spine.
+- [Compound Engineering](https://github.com/EveryInc/compound-engineering-plugin) by Trevin Chow ([@trevin](https://x.com/trevin)) and Kieran Klaassen ([@kieranklaassen](https://x.com/kieranklaassen)). Plans, implements, reviews, and documents the development work.
 - [Matt Pocock's skills](https://github.com/mattpocock/skills) by Matt Pocock. The targeted grilling pattern, plus tracer-bullet issue leaves, blocker-first ordering, and recomputing which issues can start as blockers change, all of which informed `managing-issues`.
-- [Impeccable](https://github.com/pbakaus/impeccable) by Paul Bakaus ([@pbakaus](https://x.com/pbakaus)). The design language that makes agents better at design.
+- [Impeccable](https://github.com/pbakaus/impeccable) by Paul Bakaus ([@pbakaus](https://x.com/pbakaus)). Shapes design direction, critiques interfaces, and keeps design systems coherent.
 - [last30days](https://github.com/mvanhorn/last30days-skill) by Matt Van Horn ([@mvanhorn](https://x.com/mvanhorn)). Recent-signal research across Reddit, X, YouTube, HN, and the web.
 - [Orca](https://github.com/stablyai/orca) by Jinjing Liang ([@JinjingLiang](https://x.com/JinjingLiang)). The agentic IDE all of this runs in.
 

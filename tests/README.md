@@ -62,6 +62,9 @@ note`. The `git rev` field names the commit the run's working tree was
 - Git is the archive. Beyond the log format's required `git rev` field, no
   hand-recorded hashes, session IDs, evidence labels, or run ledgers in
   these artifacts.
+- Name the independent-review mechanism in the log line, such as a fresh
+  session, CLI run, or subagent. Do not record context identifiers. Naming the
+  mechanism does not replace the output or trace evidence behind the judgment.
 
 ## Cost hierarchy
 

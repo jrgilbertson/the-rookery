@@ -16,11 +16,11 @@ The primary visitor audience is people encountering the work through social medi
 
 The Rookery makes Jason's working system for building with AI understandable, reusable, and portable. It brings together the strongest existing tools and open-source approaches he finds, the workflows he refines through use, and the skills he builds only when a meaningful gap remains.
 
-Success means a visitor can quickly understand the system, follow a workflow, and install a relevant skill without first decoding a wall of text. For Jason, success also means the repository remains a useful operating system rather than becoming a static showcase.
+Success means a visitor can quickly understand the system, follow a workflow, and install a relevant skill without first decoding a wall of text. For Jason, success also means the repository remains a useful working reference rather than becoming a static showcase.
 
 ## Positioning
 
-The Rookery is a personal, public field system rather than a generic skill marketplace. Its distinctive position is selective stewardship: start with strong open-source tools and patterns, credit their creators, assemble them into a coherent cross-agent workflow, and build only where daily use exposes a real gap. The repository stays current as that judgment changes.
+The Rookery collects the open-source tools, workflows, and skills Jason actually uses. It credits existing work, connects it into one cross-agent workflow, and adds a skill only when daily use exposes a recurring gap. The repository changes as that judgment changes.
 
 ## Operating Context
 
@@ -31,16 +31,16 @@ The seven workflow jobs are Research, Plan, Design, Build, Ship, Maintain, and L
 ## Capabilities and Constraints
 
 - Skills install individually and should remain useful across Claude Code, Codex, Cursor, Gemini CLI, and other compatible tools.
-- The system avoids vendor lock-in, minimizes skill volume, and treats continuous improvement as a core operating constraint.
+- The system avoids depending on one vendor, keeps the skill catalog small, and improves from use.
 - The repository is designed for public, open-source use and is MIT licensed. Visuals must not imply private customer evidence, adoption metrics, endorsements, or commercial proof that the repository does not contain.
 - Repository banners and social previews are separate but coordinated assets. Explanatory illustrations may extend into workflow documentation after the core identity is proven.
-- Whether Huginn and Muninn should become recurring characters is intentionally open. Test their usefulness across both repository identity and a representative workflow explanation before making them a durable system.
+- Huginn and Muninn are not yet recurring characters. Test whether they help explain both the repository and one workflow before reusing them across the design.
 
 ## Brand Commitments
 
 - Preserve the name **The Rookery** and its corvid meaning: a place where corvids gather and return.
 - The confirmed repository-level message is **“An always-current field guide to how I build with AI.”** Supporting copy may expand it as **“Open-source tools, practical workflows, and portable skills refined through use.”**
-- Use the standardized names **Huginn** and **Muninn**, Odin's ravens associated with thought and memory. Their outward flight and return with knowledge is supporting brand mythology, not a claim that every workflow learns autonomously.
+- Use the standardized names **Huginn** and **Muninn**, Odin's ravens associated with thought and memory. The raven story explains the name; it does not imply that the workflows learn autonomously.
 - The work should be technically clear while remaining warm, memorable, and fun.
 - Visual personality must make technical concepts easier to understand. Characters, metaphors, or motion should perform the idea rather than decorate it.
 - Avoid generic corporate diagrams, sterile consulting-deck visuals, novelty mascots, and Norse-fantasy pastiche that overwhelms the technical substance.

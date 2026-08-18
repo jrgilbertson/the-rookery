@@ -71,7 +71,8 @@ Everything here fits into seven jobs. The walkthroughs live in [WORKFLOWS.md](WO
 
 ## My other projects
 
-- [Networked Thinking](https://networkedthinking.ai). My system for turning what I learn into durable, linked notes, explained through a book and website. Use it when something I learn should become knowledge I can connect and reuse; the [networked-thinking-skills repository](https://github.com/jrgilbertson/networked-thinking-skills) contains the skills behind the Learn step.
+- [Networked Thinking](https://networkedthinking.ai). My system for turning what I learn into durable, linked notes, explained through a book and website. Use it when something I learn should become knowledge I can connect and reuse.
+- [networked-thinking-skills](https://github.com/jrgilbertson/networked-thinking-skills). A collection of skills and deterministic helpers for Networked Thinking notes and tasks in Obsidian. Use it when you want an agent to create or audit atomic notes or manage Obsidian tasks.
 
 ## Standing on
 

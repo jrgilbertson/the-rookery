@@ -74,6 +74,12 @@ then
   exit 1
 fi
 
+# Git exports repository-local variables to hooks. The fixture runners build
+# disposable repositories, so let their Git commands resolve from each cwd.
+while IFS= read -r variable; do
+  unset "$variable"
+done < <(git rev-parse --local-env-vars)
+
 for runner in "${runners[@]}"; do
   echo "fixtures: $runner"
   case "$runner" in

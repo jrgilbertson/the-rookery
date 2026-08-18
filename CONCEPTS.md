@@ -76,9 +76,18 @@ One issue whose deliverable and Verification boundary normally fit one
 reviewable pull request, including a stacked PR series that jointly delivers
 that leaf. A single-leaf change needs no artificial parent.
 
+### Issue Readiness Posture
+
+The issue's IDE-neutral information state: `needs-discovery`, `needs-planning`,
+or `ready-for-implementation`. It records whether the issue is understood well
+enough for downstream work without naming or invoking a particular skill. It is
+separate from dependency readiness, so a ready-for-implementation leaf may
+remain blocked and outside the Ready Frontier.
+
 ### Ready Frontier
 
-The leaves in an Owned Issue Graph whose current native blockers and declared
+The implementation leaves in an Owned Issue Graph whose Issue Readiness Posture
+is `ready-for-implementation` and whose current native blockers and declared
 prerequisites are satisfied. It is derived from a fresh canonical read for a
 handoff and is never stored as a parallel work state.
 

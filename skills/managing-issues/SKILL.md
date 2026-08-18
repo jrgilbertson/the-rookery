@@ -2,7 +2,7 @@
 name: managing-issues
 description: Use when the requested outcome is reading, drafting, creating, or surgically updating GitHub or Linear issue records; changing their native parent, sub-issue, or blocker relationships and assessing readiness; checking completion against Verification evidence; or reversibly closing or canceling an issue. Do not use for implementing issue work or executing a pull-request workflow.
 license: MIT
-compatibility: Requires Python 3 for configuration validation; provider operations require authenticated gh or Orca Linear command access.
+compatibility: Requires Python 3 for configuration validation; provider operations require authenticated gh, connected Linear MCP tools, or Orca Linear command access.
 ---
 
 # Managing Issues
@@ -60,8 +60,8 @@ children. Keep the graph as shallow as the outcomes allow. Parents have no
 estimate; estimate only childless implementation leaves. Analyze priority,
 relevant labels, estimate, and readiness for every issue instead of applying a
 default. Readiness is `needs-discovery`, `needs-planning`, or
-`ready-for-implementation` and describes the issue's information, not a named
-agent or workflow.
+`ready` and describes whether the issue has enough information for its role,
+not a named agent or workflow.
 
 For an existing family or any proposed relationship, load
 `references/graph-and-completion.md`. Its native coverage, readiness, frontier,
@@ -75,32 +75,55 @@ supported by the available evidence or named as unresolved.
 
 Use the explicit request and provider discovery to resolve the canonical
 provider, normalized canonical target, and available metadata choices. If
-`.agents/managing-issues.json` exists, or reusable tracker semantics are needed,
-run the bundled validator from the skill directory:
+`.agents/managing-issues.json` exists, run the bundled validator from the skill
+directory:
 
 ```text
 python3 scripts/config_check.py --repo-root ROOT --config .agents/managing-issues.json
 ```
 
-Configuration is optional when the provider, target, and every required
-metadata representation are otherwise explicit. If they remain unresolved,
-ask for a missing canonical target first and state that setup follows only if
-reusable semantics remain unresolved after that choice. Then preview the
-smallest current config from `assets/config-template-github.json` or
-`assets/config-template-linear.json` only when those semantics are still needed,
-including its exact values and the destination
-`.agents/managing-issues.json`. For an incompatible config, offer the smallest
-current replacement, validate it after separate config approval, then resume
-the original request with a fresh canonical read and complete tracker preview.
-State both decisions explicitly: config approval authorizes only the config,
-and the resumed complete tracker batch needs its own direct approval. The
-validator owns schema-version guidance; do not copy it into prose.
+A missing or invalid config never blocks a read or draft; ignore its values for
+that read-only request. Before the first tracker mutation in a repository
+without a valid config, run interactive setup. Discover the
+available authenticated GitHub and Linear choices only when the request does not
+already select a provider and target, then let the operator select the canonical
+provider and exact repository or workspace/team target. Also ask whether
+synchronization is off or on, recommending off. When it is on, let the operator
+select an existing identity map or start from
+`assets/sync-mapping-template.json` at the recommended path
+`.agents/managing-issues-sync.json`. A new map and
+`.agents/managing-issues.json` form one separately approved repository-setup
+batch.
 
-Configuration approval is separate from tracker approval. Before an approved
-config write, verify that the repository-relative destination and each existing
-path component are contained and are not symlinks. Write only that destination,
-validate it, then resume the original request. Saving config approves no tracker
-effect.
+Load the selected provider's starter config from
+`assets/config-template-github.json` or `assets/config-template-linear.json`.
+Discover that target's current priority, estimate, label, and readiness choices
+and the capability to create any missing metadata.
+
+Present the starter recommendations beside exact discovered alternatives. For
+each family, let the operator accept the recommendations, map selected existing
+values, or define custom representations; never treat existing metadata as the
+preferred answer. The operator may leave priority, estimate, or general-label
+mappings empty, but readiness always maps `needs-discovery`, `needs-planning`,
+and `ready`. These are available choices, never defaults applied to an issue.
+
+If the chosen representations do not exist, show their exact provider metadata
+effects as a complete setup batch with its own direct approval. Apply and read
+back that batch before rendering the config. Then preview the exact approved
+repository-setup files for separate approval. Write only those displayed paths,
+validate the config and any selected map, and resume the original request with
+a fresh canonical read and complete tracker preview. An incompatible config
+follows the same replacement path. State all three decisions explicitly:
+provider-metadata approval approves only those metadata effects, repository-
+setup approval approves only the displayed files, and the resumed tracker batch
+needs its own direct approval. The validator owns schema-version guidance; do
+not copy it into prose.
+
+Repository-setup approval is separate from tracker approval. Before an approved
+file write, verify that every displayed repository-relative destination and
+each existing path component are contained and are not symlinks. Write only
+those destinations, validate them, then resume the original request. Saving
+setup files approves no tracker effect.
 
 Authentication through the provider path supplies identity; capability checks
 determine whether the requested effect is available. The configured provider is
@@ -112,14 +135,18 @@ Load only the provider reference needed:
 - GitHub: `references/github.md`.
 - Linear or synchronization: `references/linear-and-sync.md`.
 
-Load that reference before constructing a provider command. Its authentication,
-exact target and issue matchback, structured argument, and body-stdin rules are
-part of the executable-preview gate. Linear additionally requires the installed
-version-matched guide. For every Linear proposal or explanation of why one is
-unavailable, render `Linear gate: authentication=...; matchback=...;
-guide=...`, filling the values with the confirmed state or `unresolved`.
-Matchback names the exact workspace, team, and issue. A missing or incompatible
-guide stops command construction.
+Load that reference before constructing a provider effect. Its authentication,
+exact target and issue matchback, and structured-data rules are part of the
+executable-preview gate. Linear selects one session transport:
+connected Linear MCP tools or the Orca CLI. The runtime MCP tool schemas are
+authoritative for MCP; Orca requires its installed version-matched guide. For
+every Linear proposal or explanation of why one is unavailable, render `Linear
+gate: transport=...; authentication=...; matchback=...; capabilities=...;
+command-authority=...`, filling the values with the confirmed state or
+`unresolved`. Matchback names the exact workspace, team, and issue; capabilities
+is `complete` only when the selected path exposes every operation needed by the
+whole proposed batch. Missing required MCP tools or a missing or incompatible
+Orca guide stops command construction.
 
 Read the canonical issue before every update. A missing field is unknown, not
 empty. For relationships, readiness, or completion, obtain the complete native
@@ -147,11 +174,13 @@ the rest of the batch behind it.
 
 Before labeling a preview executable, show the provider gate evidence:
 successful authentication, exact target and issue matchback, and required
-capabilities. For Linear, also name the installed version-matched `orca-linear`
-guide; a missing or incompatible guide stops command construction. When content
-contains shell-shaped text, metacharacters, or leading dashes, state that the
-provider command uses a structured argument vector and sends multiline body
-content through stdin so the content remains literal.
+capabilities. For Linear, also name the selected transport and its command
+authority: runtime tool schemas for MCP or the installed version-matched
+`orca-linear` guide. Missing required operations stop command construction.
+When content contains shell-shaped text, metacharacters, or leading dashes,
+state that the provider path preserves each field as structured data; an Orca
+command uses a structured argument vector and sends multiline body content
+through stdin so the content remains literal.
 
 One direct operator approval may cover this complete batch. Approval binds only
 the displayed order and effects. Any new target, field, ordering, content, or

@@ -15,12 +15,13 @@ slices.
 > `high`. Labels are `migration`, `accounts`, and `backend`. Estimates are 1, 2,
 > 3, and 5; planning evidence sizes expand and contract as 2 and every service
 > migration as 3. Readiness mappings are `needs-discovery`, `needs-planning`,
-> and `ready-for-implementation`. Show the issue family and dependencies, but do
+> and `ready`. Show the issue family and dependencies, but do
 > not create anything yet. Authenticated provider discovery confirms that the
 > workspace and team are active, every named metadata value exists, and native
 > issue creation, parent/child, and blocker relationships are available. The
-> installed version-matched `orca-linear` guide is loaded and confirms the exact
-> create, metadata, parent/child, and blocker syntax needed for this batch.
+> operator selected the Orca CLI for this session. Its installed version-matched
+> `orca-linear` guide is loaded and confirms the exact create, metadata,
+> parent/child, and blocker syntax needed for this batch.
 
 ## Expected behavior
 

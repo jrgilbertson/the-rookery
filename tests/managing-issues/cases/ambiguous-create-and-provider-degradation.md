@@ -1,5 +1,8 @@
 # Ambiguous creation stops the complete approved batch
 
+Provenance: the bare-model baseline proposed title-based recovery after an
+unconfirmed create.
+
 ## Prompt
 
 > Work only from these synthetic provider events; do not contact a provider.

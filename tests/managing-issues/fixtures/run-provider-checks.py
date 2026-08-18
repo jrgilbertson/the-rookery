@@ -379,7 +379,7 @@ def config_and_sync_integration(root: Path, base: dict[str, str]) -> None:
     config = {
         "version": 2, "provider": "linear", "target": {"workspace": LINEAR_WORKSPACE, "team": LINEAR_TEAM},
         "synchronization": {"mapping_source": ".agents/sync.json"},
-        "mappings": {"priority": {}, "leaf_estimate": {}, "labels": {}, "readiness": {"needs-discovery": "label-feature", "needs-planning": "label-fix", "ready-for-implementation": "label-ready"}},
+        "mappings": {"priority": {}, "leaf_estimate": {}, "labels": {}, "readiness": {"needs-discovery": "label-feature", "needs-planning": "label-fix", "ready": "label-ready"}},
     }
     (agents / "managing-issues.json").write_text(json.dumps(config), encoding="utf-8")
     normalized = json_result(run([sys.executable, str(CONFIG_CHECK), "--repo-root", str(sync_root), "--config", ".agents/managing-issues.json"], base), "sync config validation")
@@ -416,19 +416,56 @@ def published_contract() -> None:
     github = GITHUB_REF.read_text(encoding="utf-8")
     linear = LINEAR_REF.read_text(encoding="utf-8")
     compact_skill = " ".join(skill.split())
+    compact_linear = " ".join(linear.split())
     require(len(skill.splitlines()) < 500, "SKILL.md exceeds portable line budget")
     for phrase in ("Shape", "Analyze", "Preview", "approval", "Revalidate", "apply", "read back", "unapplied"):
         require(phrase.lower() in skill.lower(), f"shared lifecycle omits {phrase}")
-    for phrase in ("config-template-github.json", "config-template-linear.json", "separate from tracker approval", "symlink", "incompatible config"):
-        require(phrase in skill, f"setup contract omits {phrase}")
+    for phrase in (
+        "config-template-github.json",
+        "config-template-linear.json",
+        "sync-mapping-template.json",
+        "first tracker mutation",
+        "missing or invalid config never blocks a read or draft",
+        "provider and exact repository or workspace/team target",
+        "recommending off",
+        "starter recommendations",
+        "never treat existing metadata as the preferred answer",
+        "provider-metadata approval",
+        "symlink",
+        "incompatible config",
+    ):
+        require(phrase in compact_skill, f"setup contract omits {phrase}")
     require("normalized canonical target" in skill and "Problem" in skill and "Scope" in skill and "Verification" in skill, "preview or issue shape contract differs")
+    require("capabilities=..." in compact_skill and "whole proposed batch" in compact_skill, "Linear complete-capability gate differs")
     require("Authentication through the provider path supplies identity" in compact_skill, "authentication contract differs")
     require("Never permanently delete an issue" in compact_skill, "reversible lifecycle contract differs")
     require("stop all later effects, including independent effects" in skill, "batch stop contract differs")
     require("accepted non-create effect" in skill and "readback fails, is partial, or mismatches the approved result" in skill, "non-create readback contract differs")
     require("implementation plan" in skill and "worktree" in skill and "pull request" in skill, "issue-only handoff boundary differs")
-    require("active account" in github and "matchback" in github and "--body-file -" in github, "GitHub provider contract differs")
-    require("ORCA skills get orca-linear" in linear and "only authority" in linear and "field-specific" in linear and "never retried" in linear, "Linear guide/write contract differs")
+    require(
+        "active account" in github
+        and "matchback" in github
+        and "--body-file -" in github
+        and "gh label create NAME" in github,
+        "GitHub provider contract differs",
+    )
+    require(
+        "ORCA skills get orca-linear" in linear
+        and "only authority" in linear
+        and "field-specific" in linear
+        and "never retried" in linear
+        and "first-use setup" in linear,
+        "Linear guide/write contract differs",
+    )
+    for phrase in (
+        "never stores a transport",
+        "runtime-exposed tool schemas",
+        "Otherwise select an available authenticated Linear MCP",
+        "do not reconstruct private API calls or fall through to Orca",
+        "high` to `2`",
+        "pass the resulting number, never the config string",
+    ):
+        require(phrase in compact_linear, f"Linear transport contract omits {phrase}")
 
 
 def main() -> int:

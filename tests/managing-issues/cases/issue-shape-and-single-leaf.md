@@ -1,5 +1,8 @@
 # One reviewable deliverable stays one analyzed leaf
 
+Provenance: the bare-model baseline omitted the required issue shape and
+invented constraints.
+
 ## Prompt
 
 > Draft an issue for `example/project`: the settings form accepts an invalid

@@ -10,7 +10,7 @@
     "readiness": {
       "needs-discovery": "readiness:discovery",
       "needs-planning": "readiness:planning",
-      "ready-for-implementation": "readiness:ready"
+      "ready": "readiness:ready"
     }
   }
 }

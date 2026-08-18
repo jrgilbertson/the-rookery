@@ -1,4 +1,7 @@
-# Canonical routing with optional configuration
+# Canonical routing with first-use configuration
+
+Provenance: the baseline treated repository markers and branch-policy facts as
+write authority, and an early candidate hid resolved policyless preview fields.
 
 ## Prompt
 
@@ -22,14 +25,14 @@
 
 ## Expected behavior
 
-- [ ] Scenario 1 proceeds without setup: authentication, explicit target, and
-      discovery supply the required semantics. It analyzes the issue, then
-      shows one tracker preview naming provider `github`, normalized target
-      `example/project`, issue identity, body change, and label effect.
+- [ ] Scenario 1 preserves the requested update but stops before its first
+      tracker mutation for interactive setup. It shows the starter
+      recommendations and the exact discovered `priority:high` alternative
+      without choosing either, then keeps config approval separate from the
+      pending tracker preview.
 - [ ] Scenario 2 preserves the update request and asks for the exact repository.
-      After that choice, it previews the smallest version 2 setup only if
-      reusable semantics remain unresolved. Config approval does not approve
-      the pending tracker update.
+      After that choice, it begins first-use setup. Config approval does not
+      approve the pending tracker update.
 - [ ] Scenario 3 resolves `ENG-42` as canonical, proposes no GitHub projection
       mutation, and may preview an authenticated Linear update after exact team
       and issue matchback.
@@ -39,5 +42,6 @@
       batch.
 - [ ] Scenario 5 refuses the config write before mutation and reports the
       symlinked path component.
-- [ ] No scenario writes both trackers, invents a metadata default, or treats
-      repository configuration as user authorization.
+- [ ] No scenario writes both trackers, applies a recommended priority or
+      estimate to an issue by default, or treats repository configuration as
+      user authorization.

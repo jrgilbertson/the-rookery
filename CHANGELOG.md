@@ -17,9 +17,11 @@ looked" surface. GitHub Releases mirror its entries.
   It reads native parent and blocker relationships to derive the current Ready
   Frontier and marks completion only when current Verification evidence
   supports it. Authenticated GitHub and Linear paths apply each approved effect
-  once and verify its readback. Optional config v2 supplies tracker vocabulary
-  and synchronization identity when the request and provider discovery are
-  insufficient. The skill returns verified issue, graph, and readiness facts
+  once and verify its readback. Reads and drafts remain setup-free; interactive
+  setup before a repository's first tracker mutation records the operator's
+  canonical provider, target, metadata vocabulary, and optional synchronization
+  identity. Linear prefers connected MCP tools when available and retains an
+  explicitly selectable Orca CLI path. The skill returns verified issue, graph, and readiness facts
   that any downstream IDE or workflow may consume; it does not invoke or
   persist execution orchestration or parallel graph state.
 - `repo-gardener` lane contracts now bind five sensing floors to every lane

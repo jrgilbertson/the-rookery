@@ -24,7 +24,7 @@ MAPPING_FIELDS = ("priority", "leaf_estimate", "labels", "readiness")
 READINESS_FIELDS = {
     "needs-discovery",
     "needs-planning",
-    "ready-for-implementation",
+    "ready",
 }
 LINEAR_TARGET_FIELDS = {"workspace", "team"}
 SYNC_MAPPING_FIELDS = {"version", "github_to_linear"}

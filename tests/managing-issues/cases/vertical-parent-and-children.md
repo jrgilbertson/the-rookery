@@ -14,7 +14,7 @@ whether a child could be demonstrated independently.
 > Available labels are `feature`, `billing`, `settings`, and `notifications`.
 > Leaf estimates are `small`, `medium`, and `large`; planning evidence sizes the
 > settings path and delivery routing as `medium`. Readiness mappings are
-> `needs-discovery`, `needs-planning`, and `ready-for-implementation`. The work
+> `needs-discovery`, `needs-planning`, and `ready`. The work
 > requires several reviewable pull requests. Authenticated provider discovery
 > confirms that `example/project` is active, every named metadata value exists,
 > and native issue creation, sub-issues, and blocked-by relationships are

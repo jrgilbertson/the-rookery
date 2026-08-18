@@ -6,13 +6,30 @@
     "team": "REPLACE_WITH_TEAM_KEY_OR_ID"
   },
   "mappings": {
-    "priority": {},
-    "leaf_estimate": {},
-    "labels": {},
+    "priority": {
+      "urgent": "urgent",
+      "high": "high",
+      "medium": "medium",
+      "low": "low"
+    },
+    "leaf_estimate": {
+      "1": 1,
+      "2": 2,
+      "3": 3,
+      "5": 5,
+      "8": 8
+    },
+    "labels": {
+      "bug": "bug",
+      "feature": "feature",
+      "maintenance": "maintenance",
+      "research": "research",
+      "documentation": "documentation"
+    },
     "readiness": {
-      "needs-discovery": "REPLACE_WITH_PROVIDER_LABEL_FOR_NEEDS_DISCOVERY",
-      "needs-planning": "REPLACE_WITH_PROVIDER_LABEL_FOR_NEEDS_PLANNING",
-      "ready-for-implementation": "REPLACE_WITH_PROVIDER_LABEL_FOR_READY_FOR_IMPLEMENTATION"
+      "needs-discovery": "readiness:needs-discovery",
+      "needs-planning": "readiness:needs-planning",
+      "ready": "readiness:ready"
     }
   }
 }

@@ -22,10 +22,17 @@ CONFIGS = HERE / "config"
 SYNC_MAPPINGS = HERE / "sync-mapping"
 TEMPLATE_LINEAR = REPO_ROOT / "skills" / "managing-issues" / "assets" / "config-template-linear.json"
 TEMPLATE_GITHUB = REPO_ROOT / "skills" / "managing-issues" / "assets" / "config-template-github.json"
+TEMPLATE_SYNC = REPO_ROOT / "skills" / "managing-issues" / "assets" / "sync-mapping-template.json"
 ACTIVE_CONFIG_RELATIVE = Path(".agents") / "managing-issues.json"
 ACTIVE_MAPPING_RELATIVE = Path(".agents") / "managing-issues-sync.json"
 MAX_BYTES = 64 * 1024
-READINESS_KEYS = {"needs-discovery", "needs-planning", "ready-for-implementation"}
+READINESS_KEYS = {"needs-discovery", "needs-planning", "ready"}
+RECOMMENDED_KEYS = {
+    "priority": {"urgent", "high", "medium", "low"},
+    "leaf_estimate": {"1", "2", "3", "5", "8"},
+    "labels": {"bug", "feature", "maintenance", "research", "documentation"},
+    "readiness": READINESS_KEYS,
+}
 FORBIDDEN_PROCESS_OR_NETWORK_IMPORTS = {
     "ftplib",
     "github",
@@ -277,14 +284,14 @@ def base_config(provider: str = "github") -> dict[str, Any]:
         readiness = {
             "needs-discovery": "readiness:discovery",
             "needs-planning": "readiness:planning",
-            "ready-for-implementation": "readiness:ready",
+            "ready": "readiness:ready",
         }
     else:
         target = {"workspace": "workspace-fixture", "team": "ENG"}
         readiness = {
             "needs-discovery": "label-readiness-discovery",
             "needs-planning": "label-readiness-planning",
-            "ready-for-implementation": "label-readiness-ready",
+            "ready": "label-readiness-ready",
         }
     return {
         "version": 2,
@@ -368,15 +375,35 @@ def check_templates(repo_root: Path) -> None:
         require(set(template) == {"version", "provider", "target", "mappings"}, f"{provider} template keys differ")
         require(template["version"] == 2 and template["provider"] == provider, f"{provider} template identity differs")
         require(set(template["mappings"]) == {"priority", "leaf_estimate", "labels", "readiness"}, f"{provider} template mapping shape differs")
-        require(template["mappings"]["priority"] == {}, f"{provider} template hard-codes priorities")
-        require(template["mappings"]["leaf_estimate"] == {}, f"{provider} template hard-codes estimates")
-        require(template["mappings"]["labels"] == {}, f"{provider} template hard-codes labels")
-        require(set(template["mappings"]["readiness"]) == READINESS_KEYS, f"{provider} template readiness shape differs")
+        for family, keys in RECOMMENDED_KEYS.items():
+            require(set(template["mappings"][family]) == keys, f"{provider} template {family} recommendations differ")
         require(
-            all(isinstance(value, str) and "REPLACE_WITH" in value for value in template["mappings"]["readiness"].values()),
-            f"{provider} template hard-codes readiness representations",
+            template["mappings"]["readiness"]
+            == {
+                "needs-discovery": "readiness:needs-discovery",
+                "needs-planning": "readiness:needs-planning",
+                "ready": "readiness:ready",
+            },
+            f"{provider} template readiness representations differ",
         )
         expect_invalid(template_path, repo_root, "unresolved REPLACE_WITH placeholder")
+        resolved = copy.deepcopy(template)
+        resolved["target"] = (
+            "ExampleOrg/Project"
+            if provider == "github"
+            else {"workspace": "workspace-fixture", "team": "ENG"}
+        )
+        expected = copy.deepcopy(resolved)
+        if provider == "github":
+            expected["target"] = "exampleorg/project"
+        expect_valid(resolved, repo_root, expected)
+
+    require(TEMPLATE_SYNC.is_file(), "missing synchronization mapping template")
+    require(
+        json.loads(TEMPLATE_SYNC.read_text(encoding="utf-8"))
+        == {"version": 1, "github_to_linear": {}},
+        "synchronization mapping template differs",
+    )
 
 
 def main() -> int:
@@ -462,7 +489,14 @@ def main() -> int:
         non_finite.write_text('{"version":NaN}', encoding="utf-8")
         expect_invalid(non_finite, repo_root, "non-finite JSON value NaN is not allowed")
 
-        for key in ("authority", "api_token", "principal", "default_branch", "defaults"):
+        for key in (
+            "authority",
+            "api_token",
+            "principal",
+            "default_branch",
+            "defaults",
+            "transport",
+        ):
             invalid = base_config()
             invalid[key] = "unexpected"
             expect_invalid(invalid, repo_root, f"config has unexpected key: {key}")
@@ -480,8 +514,12 @@ def main() -> int:
         del missing_readiness["mappings"]["readiness"]["needs-planning"]
         expect_invalid(missing_readiness, repo_root, "mappings.readiness missing key: needs-planning")
         extra_readiness = base_config()
-        extra_readiness["mappings"]["readiness"]["ready"] = "readiness:legacy"
-        expect_invalid(extra_readiness, repo_root, "mappings.readiness has unexpected key: ready")
+        extra_readiness["mappings"]["readiness"]["ready-for-implementation"] = "readiness:legacy"
+        expect_invalid(
+            extra_readiness,
+            repo_root,
+            "mappings.readiness has unexpected key: ready-for-implementation",
+        )
 
         invalid_nested = base_config("linear")
         invalid_nested["target"]["organization"] = "unexpected"

@@ -79,17 +79,19 @@ such PR is its own leaf. A single-leaf change needs no artificial parent.
 
 ### Issue Readiness Posture
 
-The issue's IDE-neutral information state: `needs-discovery`, `needs-planning`,
-or `ready-for-implementation`. It records whether the issue is understood well
-enough for downstream work without naming or invoking a particular skill. It is
-separate from dependency readiness, so a ready-for-implementation leaf may
-remain blocked and outside the Ready Frontier.
+The issue's IDE-neutral information state: `needs-discovery` when the problem or
+outcome is not understood, `needs-planning` when the outcome is understood but
+Scope, Verification, decomposition, required metadata choices, or native
+relationships remain unsettled, or `ready` when those facts are settled for its
+role as a parent or leaf. It does not name or invoke a particular skill and
+remains separate from dependency readiness, so a ready leaf may remain blocked
+and outside the Ready Frontier.
 
 ### Ready Frontier
 
 The implementation leaves in an Owned Issue Graph whose Issue Readiness Posture
-is `ready-for-implementation` and whose current native blockers and declared
-prerequisites are satisfied. It is derived from a fresh canonical read for a
+is `ready` and whose current native blockers and declared prerequisites are
+satisfied. It is derived from a fresh canonical read for a
 handoff and is never stored as a parallel work state.
 
 ## Shipping and verification

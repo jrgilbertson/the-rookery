@@ -42,13 +42,16 @@ partial coverage.
 ## Derive readiness from current content
 
 Use the Problem, Scope, and Verification from the latest complete canonical
-readback:
+readback together with the node's current graph role:
 
 - `needs-discovery` when the problem or intended outcome is not understood.
-- `needs-planning` when the problem is understood but scope, breakdown, or
-  observable Verification remains unsettled.
-- `ready-for-implementation` when Problem, Scope, and Verification are settled
-  enough for one implementation leaf to be completed and checked.
+- `needs-planning` when the problem is understood but Scope, Verification,
+  decomposition, required metadata choices, or native relationships remain
+  unsettled.
+- `ready` when Problem, Scope, Verification, decomposition, required metadata
+  choices, and native graph position are settled for the issue's role. A parent
+  is ready when its whole outcome and child graph are settled; a leaf is ready
+  when it can be completed and checked.
 
 Never use a stored readiness representation as evidence for the derived
 posture. Compare it with the derived result. Intended metadata contains exactly
@@ -56,8 +59,8 @@ one of the three configured readiness representations; a missing, duplicate, or
 stale representation is a separate previewed correction.
 
 The Ready Frontier contains only required, open implementation leaves whose
-derived posture is `ready-for-implementation` and whose native blockers are all
-resolved. Parents never enter it. Neither do completed or canceled leaves,
+derived posture is `ready` and whose native blockers are all resolved. Parents
+never enter it. Neither do completed or canceled leaves,
 blocked leaves, unknown-readiness leaves, or members of an unresolved blocker
 cycle. Report it only from complete current coverage, name the set explicitly,
 and list an unattached intended node separately as unresolved topology.

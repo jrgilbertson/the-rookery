@@ -66,6 +66,21 @@ Resolve issue types by exact name through the complete paginated repository
 `issueTypes` GraphQL connection. If installed discovery cannot establish a
 requested metadata identity exactly, stop before previewing that effect.
 
+During first-use setup, offer exact existing labels beside the starter
+recommendations; neither source chooses for the operator. For each chosen label
+that is absent, require the installed `gh label create --help` surface and show
+its exact name, description, and six-character color in the provider-metadata
+preview. After approval, create it once without `--force`, then repeat complete
+label discovery and require one exact name before any config preview:
+
+```text
+gh label create NAME -R github.com/OWNER/REPO --description DESCRIPTION --color COLOR
+```
+
+An existing label is never rewritten during setup. A rejected create is
+`failed`; an accepted create without exact rediscovery is `indeterminate` and
+stops the remaining provider-metadata effects under the shared batch rule.
+
 ```text
 gh api repos/OWNER/REPO/assignees/LOGIN --hostname github.com --silent
 gh api graphql --hostname github.com -f query=ISSUE_TYPES_QUERY -f owner=OWNER -f name=REPO

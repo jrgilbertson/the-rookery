@@ -28,7 +28,7 @@ GH_BOUNDARY_REPOSITORY = "github.com/example/dependency"
 READINESS = {
     "needs-discovery": "readiness:discovery",
     "needs-planning": "readiness:planning",
-    "ready-for-implementation": "readiness:ready",
+    "ready": "readiness:ready",
 }
 EFFECT_OUTCOMES = frozenset(
     {"applied", "already_satisfied", "failed", "indeterminate", "unapplied"}
@@ -94,12 +94,24 @@ def heading(body: str, name: str) -> str | None:
     return None
 
 
-def derive_readiness(body: str) -> str:
+def derive_readiness(
+    body: str,
+    *,
+    decomposition_settled: bool = True,
+    metadata_settled: bool = True,
+    graph_settled: bool = True,
+) -> str:
     if not heading(body, "Problem"):
         return "needs-discovery"
-    if not heading(body, "Scope") or not heading(body, "Verification"):
+    if (
+        not heading(body, "Scope")
+        or not heading(body, "Verification")
+        or not decomposition_settled
+        or not metadata_settled
+        or not graph_settled
+    ):
         return "needs-planning"
-    return "ready-for-implementation"
+    return "ready"
 
 
 def intended_readiness_labels(labels: set[str], posture: str) -> set[str]:
@@ -123,7 +135,7 @@ def ready_frontier(nodes: dict[str, Node]) -> list[str]:
         for node in nodes.values()
         if node.state == "open"
         and not node.children
-        and derive_readiness(node.body) == "ready-for-implementation"
+        and derive_readiness(node.body) == "ready"
         and all(nodes.get(blocker, Node(blocker, "")).state in {"completed", "canceled"} for blocker in node.blockers)
     )
 
@@ -266,19 +278,27 @@ Users cannot save.
 ## Scope
 Fix the save path.
 """
-    require(derive_readiness(complete) == "ready-for-implementation", "complete issue was not ready")
+    require(derive_readiness(complete) == "ready", "complete issue was not ready")
     require(derive_readiness(missing_problem) == "needs-discovery", "missing Problem was not discovery")
     require(derive_readiness(missing_verification) == "needs-planning", "missing Verification was not planning")
+    require(
+        derive_readiness(complete, metadata_settled=False) == "needs-planning",
+        "unresolved required metadata was incorrectly ready",
+    )
+    require(
+        derive_readiness(complete, graph_settled=False) == "needs-planning",
+        "unresolved native graph position was incorrectly ready",
+    )
 
     corrected = intended_readiness_labels(
         {"bug", READINESS["needs-planning"]}, derive_readiness(complete)
     )
     require(
-        corrected == {"bug", READINESS["ready-for-implementation"]},
+        corrected == {"bug", READINESS["ready"]},
         "stale planning label overrode derived ready posture",
     )
     corrected = intended_readiness_labels(
-        {READINESS["ready-for-implementation"]}, derive_readiness(missing_verification)
+        {READINESS["ready"]}, derive_readiness(missing_verification)
     )
     require(
         corrected == {READINESS["needs-planning"]},

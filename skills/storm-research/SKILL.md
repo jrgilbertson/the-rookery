@@ -1,6 +1,7 @@
 ---
 name: storm-research
 description: "Use only for requests whose deliverable is a full research briefing, a STORM-style investigation, or an evidence review across multiple independent perspectives. The work compares competing evidence, maps contradictions and blind spots, and supports decisions, investments, negotiations, long-form writing, presentations, or learning a new domain."
+license: MIT
 ---
 
 # Storm Research

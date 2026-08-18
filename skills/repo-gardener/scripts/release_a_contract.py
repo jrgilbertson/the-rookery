@@ -764,15 +764,15 @@ def _reject_reserved_report_content(value: Any, label: str) -> None:
             _reject_reserved_report_content(item, f"{label}.{key}")
 
 
-def _validate_report_projection(projection: str) -> None:
-    """Reject report rendering that can notify accounts or load image content."""
+def _validate_report_rendering(rendering: str) -> None:
+    """Reject tracker rendering that can notify accounts or load image content."""
     require(
-        NOTIFICATION_CAPABLE_MENTION.search(projection) is None,
-        "effect projection contains a notification-capable mention",
+        NOTIFICATION_CAPABLE_MENTION.search(rendering) is None,
+        "effect report contains a notification-capable mention",
     )
     require(
-        "![" not in projection and HTML_IMAGE.search(projection) is None,
-        "effect projection contains image embedding syntax",
+        "![" not in rendering and HTML_IMAGE.search(rendering) is None,
+        "effect report contains image embedding syntax",
     )
 
 
@@ -784,7 +784,6 @@ def _effect_operation(operation: Any) -> dict[str, Any]:
     require_object(operation.get("payload"), "effect payload")
     require_list(operation.get("rows"), "effect rows")
     require(isinstance(operation.get("projection"), str), "effect projection must be text")
-    _validate_report_projection(operation["projection"])
     require_payload(operation, BODY_LIMIT, "effect operation")
     _reject_reserved_report_content(operation, "effect operation")
     rows = []
@@ -923,6 +922,8 @@ def prepare_report_effect(pre_read: Any, operation: Any) -> dict[str, Any]:
         f"{json.dumps(receipt, ensure_ascii=False, separators=(',', ':'))}\n"
         f"{HISTORY_RECEIPT_END}"
     )
+    _validate_report_rendering(body)
+    _validate_report_rendering(comment)
     return {
         "schema": "repo-gardener-prepared-report-effect/v1",
         "repository_id": view["repository_id"],
@@ -960,6 +961,8 @@ def _prepared_effect(prepared: Any) -> dict[str, Any]:
     require(prepared.get("expected_post_revision") == prepared["expected_pre_revision"] + 1, "prepared revision transition is invalid")
     validate_body(prepared.get("body"))
     require(isinstance(prepared.get("comment"), str), "prepared comment must be text")
+    _validate_report_rendering(prepared["body"])
+    _validate_report_rendering(prepared["comment"])
     expected_operation_id = _effect_operation_id(
         repository_id=prepared["repository_id"],
         report_issue_id=prepared["report_issue_id"],

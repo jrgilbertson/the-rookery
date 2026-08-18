@@ -229,6 +229,16 @@ def main() -> int:
         unsafe_operation["projection"] = unsafe_projection
         expect_error(effect_input("prepare", pre_read=base, operation=unsafe_operation), phrase)
 
+    for unsafe_payload, phrase in (
+        ("@octocat", "notification-capable mention"),
+        ("@octo-org/security-team", "notification-capable mention"),
+        ("![tracking pixel](https://attacker.example/pixel.png)", "image embedding"),
+        ('<img src="https://attacker.example/pixel.png" alt="">', "image embedding"),
+    ):
+        unsafe_operation = copy.deepcopy(operation)
+        unsafe_operation["payload"]["text"] = unsafe_payload
+        expect_error(effect_input("prepare", pre_read=base, operation=unsafe_operation), phrase)
+
     changed_run = copy.deepcopy(operation)
     changed_run["run_id"] = "run:synthetic:restart"
     restarted = cli(effect_input("prepare", pre_read=base, operation=changed_run))

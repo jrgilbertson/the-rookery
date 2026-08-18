@@ -1,6 +1,7 @@
 ---
 title: "Keep project glossaries concrete and contract-driven"
 date: 2026-08-17
+last_updated: 2026-08-17
 category: conventions
 module: "CONCEPTS.md glossary"
 problem_type: convention
@@ -47,12 +48,18 @@ tests still teach the old vocabulary. Search the live tree for the old term,
 update the owning instructions, and run the checks that cover the affected
 artifacts.
 
+Keep the owning rule exact while simplifying its name. For a derived set,
+equivalence language such as "the issues are exactly..." requires every
+qualifying item to appear and every reported item to qualify. A one-way phrase
+such as "issues appear only when..." prevents invalid entries but still permits
+valid ones to be omitted.
+
 Persisted names are the exception to friendly renaming. Explain them clearly,
 but retain the exact field, marker, or receipt-kind identifier unless the work
 includes an intentional compatibility migration. `Register Revision`, for
 example, explicitly documents the stored `register_revision` field at
-`CONCEPTS.md:165`; `Effect Receipt` preserves the `effect` receipt kind at
-`CONCEPTS.md:171`.
+`CONCEPTS.md:160`; `Effect Receipt` preserves the `effect` receipt kind at
+`CONCEPTS.md:167`.
 
 ## Why This Matters
 
@@ -87,7 +94,9 @@ repository's visitor-equivalent installation invariant (`CONCEPTS.md:78`).
 Use plain language when the owning workflow can state the rule directly. The
 issue-management skill reports which issues are "Ready to start now" and keeps
 the exact blocker and readiness rules in its graph reference rather than naming
-that set as a separate project concept.
+that set as a separate project concept. Its behavioral comparison checks both
+directions of the contract: the rewritten skill still reports every eligible
+issue and no ineligible issue.
 
 Remove or demote names that merely label steps. In this cleanup, `Global Pass`,
 `Process Residual`, and `Targeted Sweep` stopped being standalone concepts. The
@@ -99,6 +108,7 @@ Learning Loop and Personal Learning Loop (`CONCEPTS.md:33` and
 
 ## Related
 
+- [Loosening a checklist during grading removes the check](../workflow-issues/loosening-a-checklist-during-grading-removes-the-check.md)
 - [Operationalize abstract qualifiers in instruction review](../best-practices/operationalize-abstract-qualifiers-in-instruction-review.md)
 - [Use answer-first natural prose for owner-facing skill readouts](../best-practices/answer-first-natural-prose-for-owner-facing-skill-readouts.md)
 - [Allow honest nulls in mandatory novelty fields](../design-patterns/allow-honest-nulls-in-mandatory-novelty-fields.md)

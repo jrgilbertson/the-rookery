@@ -163,9 +163,8 @@ if ARGV[:3] in (["linear", "team", "states"], ["linear", "team", "labels"], ["li
     require_contract(state, values, booleans)
     team = team_value(state, one(values, "--team", required=True) or "")
     noun = ARGV[2]
-    key = noun
-    items = state.get(key, [])
-    emit_result({"team": team, key: items, "meta": {"returned": len(items)}})
+    items = state.get(noun, [])
+    emit_result({"team": team, noun: items, "meta": {"returned": len(items)}})
     raise SystemExit(0)
 
 if ARGV[:2] == ["linear", "issue"]:

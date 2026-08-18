@@ -17,7 +17,6 @@ MAX_MAPPING_ENTRIES = 64
 MAX_TEXT_LENGTH = 256
 MAX_INTEGER = 2_147_483_647
 TOP_LEVEL_FIELDS = {"version", "provider", "target", "synchronization", "mappings"}
-REQUIRED_TOP_LEVEL_FIELDS = TOP_LEVEL_FIELDS
 MAPPING_FIELDS = ("priority", "leaf_estimate", "labels", "readiness")
 READINESS_FIELDS = {
     "needs-discovery",
@@ -246,7 +245,7 @@ def require_unique_label_representations(provider: str, mappings: dict[str, Any]
 
 
 def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
-    require_exact_fields(value, REQUIRED_TOP_LEVEL_FIELDS, TOP_LEVEL_FIELDS, "config")
+    require_exact_fields(value, TOP_LEVEL_FIELDS, TOP_LEVEL_FIELDS, "config")
     version = value["version"]
     if isinstance(version, int) and not isinstance(version, bool) and version == 1:
         raise ConfigError(

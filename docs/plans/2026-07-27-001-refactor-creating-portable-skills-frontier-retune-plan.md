@@ -15,7 +15,7 @@ deepened: 2026-07-27
 ## Goal Capsule
 
 - **Objective:** Retune `creating-portable-skills` for Claude Opus 5 and GPT-5.6 Sol so it gives frontier models room to work while preserving the product outcomes, boundaries, and checks that make authored skills dependable.
-- **Product authority:** The confirmed Product Contract governs this skill only. Issue #13 and the Agent Skills specification provide upstream scope and format constraints. Changes to `design-evals` or the wider skill collection require separate work.
+- **Product authority:** The confirmed Product Contract governs this skill only. Issue #13 and the [Agent Skills specification](https://agentskills.io/specification) provide upstream scope and format constraints. Changes to `design-evals` or the wider skill collection require separate work.
 - **Execution profile:** Standard, evidence-first refactor. Freeze the current skill, revise one candidate instruction group at a time, validate structure before target runs, and keep the final result within the Claim Ceiling.
 - **Stop conditions:** Do not remove or relax a working instruction without affected-target evidence, do not collapse proxy and native checks, and do not label the retune verified while a required target cell is unavailable.
 - **Tail ownership:** The implementer owns the local-source package and target-model evidence. The published-default-branch install probe remains a post-merge operational confirmation.
@@ -70,7 +70,7 @@ This plan owns the frontier retune of `creating-portable-skills` only. The surro
 **Frontier behavior and instruction economy**
 
 - R1. The retune evaluates one canonical skill on Claude Opus 5 and GPT-5.6 Sol without creating model-specific variants or weaker-model scaffolding.
-- R2. The skill remains structurally portable through the Agent Skills format. Its outward copy promises portable, installable skills without claiming behavioral support across every model or harness; this retune's behavioral evidence targets the named frontier-model and harness cells.
+- R2. The skill remains structurally portable through the shared format. Its outward copy promises portable, installable skills without claiming behavioral support across every model or harness; this retune's behavioral evidence targets the named frontier-model and harness cells.
 - R3. The workflow starts from the assumption that the current skill works. Target-model observations or current primary guidance may open a scoped audit. Correcting an overstated evidence label may rely on the repository's existing record, but removing or relaxing a working instruction requires representative evidence from the affected target models and no loss of a named product invariant. Without that evidence, the instruction remains.
 - R4. The skill uses the least-prescriptive instruction that preserves the required outcome, replacing fixed cognitive cadence with goals, constraints, authority boundaries, success criteria, and output contracts.
 - R5. The existing four disciplines remain outcome gates: capture the skill's intent, produce and validate a portable package, compare behavior before shipping substantive changes, and verify triggering plus installation.
@@ -155,7 +155,7 @@ flowchart TB
 - No weaker-model behavioral floor, optional adapter, parallel skill version, or disclaimer section.
 - No permanent Opus 5 versus GPT-5.6 Sol branch or tie-break rule in the canonical skill.
 - No per-instruction audit ledger or new durable record type; existing comparison and result records remain the evidence surface for substantive changes.
-- No broad rewrite of the Agent Skills package structure, portable frontmatter contract, templates, references, or scripts without direct evidence that the structure is obsolete.
+- No broad rewrite of the skill package structure, portable frontmatter contract, templates, references, or scripts without direct evidence that the structure is obsolete.
 - No behavioral changes to other published skills. Repository-level copy changes are limited to replacing cross-harness behavioral language with structural portability and installability wording.
 - No claim that Opus 5 universally broke existing skills.
 
@@ -164,7 +164,7 @@ flowchart TB
 - The current skill is broadly functional until representative target-model evidence shows otherwise.
 - Official model guidance supplies hypotheses and migration risks, not proof of local improvement.
 - Behavioral results are specific to their recorded model, harness, configuration, tools, and date.
-- The Agent Skills specification remains the structural authority for portable skill packages.
+- The specification remains the structural authority for portable skill packages.
 
 ### Sources and Research
 
@@ -240,7 +240,7 @@ Verification keeps evidence layers independent so a proxy cannot silently satisf
 
 ```mermaid
 flowchart TB
-  SOURCE[Canonical package] --> STRUCTURE[Agent Skills structural validation]
+  SOURCE[Canonical package] --> STRUCTURE[Structural validation]
   SOURCE --> TARGETS[Declared model and harness targets]
   TARGETS --> MATCHED[Same discriminating and control cases]
   MATCHED --> OBS[Per-target observations, losses, and directional label]
@@ -295,7 +295,7 @@ flowchart TB
   1. Audit the fixed interview cadence, baseline gate, subtraction rule, trigger gate, packaging claim, and weaker-model gotcha as separate candidate groups under KTD1.
   2. Put the full System-Owned Invariant and qualifier rules in the review checklist, then let the core workflow cite that owner instead of duplicating the policy.
   3. Replace the single-run deletion shortcut with R3's retain-by-default decision and add KTD3's task-declared target behavior without naming permanent models in the package.
-  4. Keep Agent Skills frontmatter, one-level references, templates, authority boundaries, deterministic validation, and fragile ordered operations intact.
+  4. Keep canonical frontmatter, one-level references, templates, authority boundaries, deterministic validation, and fragile ordered operations intact.
 - **Execution note:** Characterize each candidate group against the frozen prior version before changing it; do not batch unrelated instruction cuts into one comparison.
 - **Patterns to follow:** Compact portable core and one-level disclosure in `skills/creating-portable-skills/SKILL.md`; one meaning per owner in `skills/creating-portable-skills/references/review-checklist.md`; structural and harness-specific information in `skills/creating-portable-skills/references/portability.md`.
 - **Test scenarios:**
@@ -327,7 +327,7 @@ flowchart TB
   4. A user waives an unavailable check; shipment may be labeled an unverified retune candidate, but the waiver cannot authorize an unsupported instruction removal or raise the claim label.
   5. A three-target record keeps observations separate and exposes one material invariant loss instead of averaging the set into a pass.
   6. The disposable fixture's audit identifies both removable ceremony and the fragile instruction that must survive, then waits for fix-scope approval before editing.
-- **Verification:** Both templates can be instantiated without hidden fields or external dependencies, the fixture validates as an Agent Skill, and a reviewer can determine every target cell's evidence state from the filled artifacts alone.
+- **Verification:** Both templates can be instantiated without hidden fields or external dependencies, the fixture validates as a skill, and a reviewer can determine every target cell's evidence state from the filled artifacts alone.
 
 ### U3. Run target-model comparisons and stabilize the candidate
 
@@ -401,7 +401,7 @@ flowchart TB
 
 - The Product Contract remains meaningfully unchanged, with stable R/F/AE IDs and full traceability through KTDs, units, scenarios, and gates.
 - U1-U4 satisfy their verification outcomes, and every feature-bearing unit's named scenarios have recorded results.
-- The canonical skill, references, and assets stay self-contained, structurally valid, and within the Agent Skills line and frontmatter limits.
+- The canonical skill, references, and assets stay self-contained, structurally valid, and within the specification's line and frontmatter limits.
 - Every removed or relaxed instruction has directional affected-target evidence with a stable control and no System-Owned Invariant loss; unsupported candidates are retained.
 - Opus 5 and GPT-5.6 Sol have separate recorded current evidence for create behavior, required existing-skill coverage, and native target checks; any missing required cell prevents the verified-retune label.
 - Routine evidence is labeled only directional after a matched comparison, listing judgments remain proxies, and stronger claims route out without embedding an evaluation suite.

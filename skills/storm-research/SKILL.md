@@ -12,7 +12,7 @@ preserving disagreement, and auditing reliability and source quality.
 The multi-perspective research pattern is inspired by Stanford OVAL's
 [STORM](https://arxiv.org/abs/2402.14207), "Synthesis of Topic Outlines through
 Retrieval and Multi-perspective Question Asking." This skill is an independent
-Agent Skills workflow, not a distribution of the STORM software.
+research workflow, not a distribution of the STORM software.
 
 Material means capable of changing the answer, confidence, or next action.
 

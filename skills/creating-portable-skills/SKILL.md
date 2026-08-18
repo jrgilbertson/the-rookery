@@ -1,13 +1,13 @@
 ---
 name: creating-portable-skills
-description: Use when creating, updating, or migrating an Agent Skill, or when finding problems in its description, triggers, structure, portability, or evidence. Produces prioritized findings or a portable, installable Agent Skills package. Explanation-only requests stay with general reasoning.
+description: Use when creating, updating, or migrating a skill, or when finding problems in its description, triggers, structure, portability, or evidence. Produces prioritized findings or a portable, installable skill package. Explanation-only requests stay with general reasoning.
 license: MIT
 compatibility: Requires isolated agent contexts or separate sessions for agent grading and review.
 ---
 
 # Creating Skills
 
-Create, revise, migrate, or audit a skill from its intent, required outcome, and only the hard constraints that define acceptable completion or remain under user authority. The result is either a prioritized read-only audit or a self-contained Agent Skills package with structural validation, appropriately scoped behavioral evidence, and separate trigger and installation checks.
+Create, revise, migrate, or audit a skill from its intent, required outcome, and only the hard constraints that define acceptable completion or remain under user authority. The result is either a prioritized read-only audit or a self-contained skill package with structural validation, appropriately scoped behavioral evidence, and separate trigger and installation checks.
 
 Skills produced here follow the [Agent Skills format](https://agentskills.io/specification): a directory with a `SKILL.md` (frontmatter plus body) and optional `references/`, `assets/`, and `scripts/`. Canonical frontmatter uses only `name`, `description`, `license`, `compatibility`, and `metadata`. Read [references/portability.md](references/portability.md) when authoring frontmatter, choosing an install location, or making a harness-specific claim.
 
@@ -53,7 +53,7 @@ Completion: the draft and every planned resource implement the intent and requir
 
 Run a trusted, already-installed `skills-ref validate <skill-directory>` and
 record its version and source. Do not use the similarly named npm package; it
-is not the Agent Skills reference validator. If the official validator is not
+is not the official reference validator. If the official validator is not
 already available, either use the manual checks below or ask before downloading
 the official Python implementation from a pinned `agentskills/agentskills`
 commit. Manually check: `name` is at most 64 characters, lowercase kebab-case,

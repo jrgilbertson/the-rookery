@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prove the catalog door rejects a malformed Agent Skills package."""
+"""Prove the catalog door rejects a malformed skill package."""
 
 from __future__ import annotations
 
@@ -51,7 +51,7 @@ def main() -> int:
         if malformed.returncode != 1 or "unexpected frontmatter field" not in malformed.stderr:
             raise AssertionError("malformed package did not fail the catalog door")
 
-    print("PASS: catalog door rejects noncanonical Agent Skills frontmatter")
+    print("PASS: catalog door rejects noncanonical skill frontmatter")
     return 0
 
 

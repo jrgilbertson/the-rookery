@@ -93,7 +93,7 @@ looked" surface. GitHub Releases mirror its entries.
   repository text, link, shell, JSON, YAML, and workflow integrity findings
   exposed by the new shared checks.
 - Hardened published skill contracts by replacing an unrelated mutable
-  validator command with the official Agent Skills validator path, bounding
+  validator command with the official validator path, bounding
   `repo-gardener` policy and provider input, keeping merge-readiness evidence
   in private temporary storage, and declaring the capabilities a mutating
   gardening run requires.

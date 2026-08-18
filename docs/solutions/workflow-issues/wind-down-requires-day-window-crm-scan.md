@@ -14,7 +14,7 @@ tags:
   - daily-crm-scan
   - wind-down
   - personal-crm
-  - agent-skills
+  - skills
   - smallest-slice
 ---
 

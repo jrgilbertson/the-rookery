@@ -24,13 +24,13 @@ The Rookery is a personal, public field system rather than a generic skill marke
 
 ## Operating Context
 
-The repository is experienced primarily through GitHub-rendered Markdown, shared repository links, and individually installable Agent Skills packages. `README.md` introduces the system, `WORKFLOWS.md` explains its seven jobs, `CONCEPTS.md` defines project-specific language, and the `skills/` catalog contains the executable instructions.
+The repository is experienced primarily through GitHub-rendered Markdown, shared repository links, and individually installable skills. `README.md` introduces the system, `WORKFLOWS.md` explains its seven jobs, `CONCEPTS.md` defines project-specific language, and the `skills/` catalog contains the executable instructions.
 
 The seven workflow jobs are Research, Plan, Design, Build, Ship, Maintain, and Learn. Visual explanations are most valuable where process, handoffs, loops, or system relationships would otherwise become text-heavy.
 
 ## Capabilities and Constraints
 
-- Skills install individually as standard Agent Skills packages and should remain useful across Claude Code, Codex, Cursor, Gemini CLI, and other compatible tools.
+- Skills install individually and should remain useful across Claude Code, Codex, Cursor, Gemini CLI, and other compatible tools.
 - The system avoids vendor lock-in, minimizes skill volume, and treats continuous improvement as a core operating constraint.
 - The repository is designed for public, open-source use and is MIT licensed. Visuals must not imply private customer evidence, adoption metrics, endorsements, or commercial proof that the repository does not contain.
 - Repository banners and social previews are separate but coordinated assets. Explanatory illustrations may extend into workflow documentation after the core identity is proven.

@@ -254,4 +254,4 @@ tests/
 
 - This session's read-through of all twelve `tests/` files, both templates, `SKILL.md`, `review-checklist.md`, `portability.md`, `CONCEPTS.md`, and reference greps across README/WORKFLOWS/CONTRIBUTING/docs-solutions.
 - External (load-bearing): Anthropic skill-authoring best practices (evaluation-driven development, ~3 scenarios, expected-behavior checklists, model-coverage testing); Husain & Shankar LLM Evals FAQ 2026 (binary pass/fail, error analysis first, cost hierarchy, over-engineering warning); Husain, Evals Skills for Coding Agents (failure vocabulary before evaluators).
-- Institutional: `docs/solutions/best-practices/independent-fresh-context-review-for-agent-skills.md` (fresh-context review principle — preserved in the new doctrine via Independent Review Context and the judging protocol).
+- Institutional: `docs/solutions/best-practices/independent-fresh-context-review-for-skills.md` (fresh-context review principle — preserved in the new doctrine via Independent Review Context and the judging protocol).

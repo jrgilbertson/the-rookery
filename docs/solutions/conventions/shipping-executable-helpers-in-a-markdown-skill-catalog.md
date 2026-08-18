@@ -10,7 +10,7 @@ applies_when:
   - "Adding the first (or any) scripts/ directory to a skill in this catalog"
   - "Running the install probe for a skill that bundles executable files"
   - "Deciding what a trigger-suite pass does and does not prove"
-tags: [agent-skills, bundled-scripts, install-probe, skills-ref, executable-bits, activation-smoke]
+tags: [skills, bundled-scripts, install-probe, skills-ref, executable-bits, activation-smoke]
 ---
 
 # Shipping executable helpers in a markdown skill catalog

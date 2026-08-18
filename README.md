@@ -6,7 +6,7 @@
 
 An always-current field guide to how I build with AI. It connects a practical
 workflow for research, planning, design, implementation, shipping, maintenance,
-and learning with the portable agent skills I use to run it.
+and learning with the portable skills I use to run it.
 
 A skill is a portable set of instructions an agent loads when a task calls for
 it.
@@ -60,7 +60,7 @@ Everything here fits into seven jobs. The walkthroughs live in [WORKFLOWS.md](WO
 ## The skills
 
 - [storm-research](skills/storm-research/SKILL.md). Research a hard question through independent perspectives and produce a source-backed briefing that preserves disagreements and blind spots. Reach for it when a decision, investment, or long-form deliverable needs evidence from several perspectives.
-- [creating-portable-skills](skills/creating-portable-skills/SKILL.md). Create, revise, migrate, or audit an Agent Skill, then verify its structure, triggers, behavior, and installation. Use it when you need a portable skill package with separate evidence for behavior and installation.
+- [creating-portable-skills](skills/creating-portable-skills/SKILL.md). Create, revise, migrate, or audit a skill, then verify its structure, triggers, behavior, and installation. Use it when you need a portable skill package with separate evidence for behavior and installation.
 - [managing-issues](skills/managing-issues/SKILL.md). Read, draft, create, or update one GitHub or Linear issue and its parent, sub-issue, and blocker relationships in the canonical tracker. Choose it when you need to clarify readiness, change issue state, or verify completion without starting the implementation itself.
 - [personal-chief-of-staff](skills/personal-chief-of-staff/SKILL.md). Turn current personal and work evidence into a daily, weekly, or quarterly review with proposed actions that remain under your control. Run it when you need to orient, reflect, and decide what to do next across several sources.
 - [managing-personal-crm](skills/managing-personal-crm/SKILL.md). Keep meaningful relationship context in canonical Person notes and tasks while raw interactions stay in their source systems. Use it to prepare for someone, capture an interaction, reconnect an overdue relationship, or find who could help with current work.

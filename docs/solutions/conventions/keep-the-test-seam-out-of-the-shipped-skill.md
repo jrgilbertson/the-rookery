@@ -3,7 +3,7 @@ title: "Put the test seam in the environment, not in the shipped skill"
 date: 2026-08-01
 last_updated: 2026-08-11
 category: conventions
-module: "agent-skill test harnesses"
+module: "skill test harnesses"
 problem_type: convention
 component: testing_framework
 severity: high
@@ -24,9 +24,9 @@ resolution_type: tooling_addition
 related_components:
   - testing
   - development_workflow
-  - agent_skills
+  - skills
 tags:
-  - agent-skills
+  - skills
   - test-seam
   - dependency-substitution
   - fail-closed
@@ -259,7 +259,7 @@ degraded mode is precisely what a naive fixture setup will trigger on every
 case.
 
 It applies with the most force when the artifact ships to other people and its
-instructions are visible to whoever invokes it. An agent skill is a prompt
+instructions are visible to whoever invokes it. A skill is a prompt
 fragment that anyone can read and quote back.
 
 It applies with less force to a pure function with injected dependencies, where
@@ -375,7 +375,7 @@ marked unavailable with its cap recorded."
   passed because nothing could make them fail; here, the suite passed because it
   was the intended beneficiary of the hole. Both produce green output that
   certifies nothing.
-- `../best-practices/independent-fresh-context-review-for-agent-skills.md` is
+- `../best-practices/independent-fresh-context-review-for-skills.md` is
   what caught this. A reviewer outside the authoring context asked what the
   clause meant for a caller who was not the harness, which is the question the
   authoring context had no reason to ask. Its disposable-fixture and

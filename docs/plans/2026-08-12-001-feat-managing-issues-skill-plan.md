@@ -235,7 +235,7 @@ The exact fixture split may change during implementation. No test fixture or sib
 
 - Rookery contracts: `CONTRIBUTING.md`, `tests/README.md`, `skills/creating-portable-skills/SKILL.md`, and its portability and review references.
 - Safe mutation patterns: `skills/reviewing-meetings/references/action-routing.md`, `skills/reviewing-meetings/references/applying-approved-actions.md`, and `skills/repo-gardener/references/reconciliation.md`.
-- Evidence patterns: `docs/solutions/best-practices/independent-fresh-context-review-for-agent-skills.md`, `docs/solutions/conventions/keep-the-test-seam-out-of-the-shipped-skill.md`, and `docs/solutions/workflow-issues/loosening-a-checklist-during-grading-removes-the-check.md`.
+- Evidence patterns: `docs/solutions/best-practices/independent-fresh-context-review-for-skills.md`, `docs/solutions/conventions/keep-the-test-seam-out-of-the-shipped-skill.md`, and `docs/solutions/workflow-issues/loosening-a-checklist-during-grading-removes-the-check.md`.
 - Official GitHub behavior: [sub-issues](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/adding-sub-issues), [dependencies](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/creating-issue-dependencies), and [PR linking](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue).
 - Official Linear behavior: [GitHub integration and Issues Sync](https://linear.app/docs/github) and [parent/sub-issues](https://linear.app/docs/parent-and-sub-issues).
 - Prior art: Matt Pocock's [`to-tickets`](https://github.com/mattpocock/skills/tree/main/skills/to-tickets), [`wayfinder`](https://github.com/mattpocock/skills/tree/main/skills/wayfinder), and repository [MIT license](https://github.com/mattpocock/skills/blob/main/LICENSE).
@@ -303,7 +303,7 @@ The exact fixture split may change during implementation. No test fixture or sib
 
 | Gate | Evidence | Done signal |
 | --- | --- | --- |
-| Package structure | Agent Skills validator and reference-depth check | Package is self-contained; `SKILL.md` stays within repository size limits |
+| Package structure | Validator and reference-depth check | Package is self-contained; `SKILL.md` stays within repository size limits |
 | Policy boundary | Adversarial JSON fixtures | Every accepted policy normalizes uniquely; every unsafe or ambiguous input fails closed |
 | Provider paths | Stateful `gh` and `orca` substitutes | GitHub effects occur once with readback; node creation precedes edges; Linear writes and shadow writes are impossible |
 | Graph coverage | Pagination, cycle, cap, boundary, and partial-failure cases | Coverage is explicit; partial reads block topology and parent completion |

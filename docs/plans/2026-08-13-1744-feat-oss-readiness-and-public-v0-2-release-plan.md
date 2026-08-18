@@ -40,7 +40,7 @@ The owner has not open-sourced a repository before and needs a standard, repeata
 - **Public pre-1.0 minor release and community launch** (session-settled: user-directed — `v0.2.0` is chosen over `v1.0.0` because the repository should become usable and understandable outside without declaring its public contract stable yet; a visibility-only or catalog-only release still falls short). Governs R1, R8, R10-R14.
 - **Pragmatic blocker-based readiness baseline** (session-settled: user-approved — chosen over zero-defect polish or formal certification: material public-use risks must close without turning the first public OSS release into a compliance program). Governs R2-R9.
 - **Staged manual-first release workflow** (session-settled: user-approved — chosen over simultaneous publication or full release automation: the first public OSS release should produce evidence that can shape later automation). Governs R8-R12, R15.
-- **Rolling `main` catalog with semantic release snapshots** (session-settled: user-approved — chosen over version-pinned distribution: it matches the repository's installer contract and established agent-skill catalog practice). Governs R9-R12.
+- **Rolling `main` catalog with semantic release snapshots** (session-settled: user-approved — chosen over version-pinned distribution: it matches the repository's installer contract and established skill catalog practice). Governs R9-R12.
 - **Owner verification plus an informal outside usability check** (session-settled: user-approved — chosen over treating one friend's test as the only safeguard or requiring a durable post-launch follow-up: repository-wide evidence gates release while outside use informally validates the handoff). Governs R9, R14.
 
 ### Actors

@@ -4,7 +4,7 @@
 
 # The workflows
 
-My workflow has a five-job Delivery Sequence and two feedback loops. Research through Ship moves work forward, Maintain turns recurring signals into repository memory, and Learn turns experience into a better question for Research. Each section covers the reasoning first, then the tools and commands.
+My workflow moves through five jobs: Research, Plan, Design, Build, and Ship. Maintain turns recurring problems into tests, rules, and documented lessons. Learn turns experience into linked notes and new research questions. Each section explains how I approach the job and which tools and commands I use.
 
 ## Foundations
 

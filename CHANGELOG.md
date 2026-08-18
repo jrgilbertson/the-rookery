@@ -26,6 +26,8 @@ looked" surface. GitHub Releases mirror its entries.
   performs a rotation-based bounded code inspection of actual source each run.
   A recall-probe scoring protocol (`tests/repo-gardener/recall-protocol.md`)
   lets dogfood runs be scored against known findings kept outside the tree.
+  The census floor now requires list-style censuses of at most 1,000 items to
+  enumerate to completion rather than stopping at a stated page bound.
 - Added a field-map hero to `WORKFLOWS.md` that distinguishes the five-job
   Delivery Sequence from the Maintain and Learn feedback currents
   while extending the README banner's visual system, with an editable SVG text

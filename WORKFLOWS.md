@@ -13,8 +13,6 @@ The workflows assume two things are in place:
 - **Repository-based work.** These workflows lean heavily on repositories such as GitHub for code development and knowledge management. Repos give you branches for parallel work, version control, and backups, which all help when you're running agents and working with others.
 - **A durable personal knowledge source.** Sources such as Obsidian, Notion, plain markdown files, or anything that persists outside an AI provider's memory. Point each agent at that store so every harness reads the same knowledge. Turning off in-tool agent memory is a separate choice that stops knowledge from collecting where only one provider can reach it.
 
-A few of the skills named below are my own and not yet published: `repo-maintainer`, `repo-best-practices`, `improve-repo-architecture`, `design-evals`, and `validate-data`.
-
 ## Research
 
 **Goal:** Curate enough context to plan from.

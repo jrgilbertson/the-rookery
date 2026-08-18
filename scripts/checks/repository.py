@@ -13,6 +13,25 @@ from urllib.parse import unquote
 
 
 ROOT = Path(__file__).resolve().parents[2]
+TEXT_EXTENSIONS = frozenset(
+    {
+        ".ambiguous",
+        ".empty",
+        ".failure",
+        ".json",
+        ".markdown",
+        ".md",
+        ".partial",
+        ".py",
+        ".rb",
+        ".sh",
+        ".svg",
+        ".trace",
+        ".txt",
+        ".yaml",
+        ".yml",
+    }
+)
 MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 MARKDOWN_REFERENCE = re.compile(
     r"^\s{0,3}\[(?:[^\]\\]|\\.)+\]:\s*(<[^>]*>|\S+)",
@@ -131,8 +150,8 @@ def main() -> int:
             continue
         text = readable_text(path)
         if text is None:
-            if path.suffix == ".json":
-                errors.append(f"{path.relative_to(ROOT)}: invalid UTF-8 JSON")
+            if path.suffix.lower() in TEXT_EXTENSIONS:
+                errors.append(f"{path.relative_to(ROOT)}: invalid UTF-8")
             continue
         check_text(path, text, errors)
         check_json(path, text, errors)

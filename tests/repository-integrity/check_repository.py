@@ -87,6 +87,26 @@ def main() -> int:
         )
         invalid_utf8_json.unlink()
 
+        readme = repository / "README.md"
+        readme_contents = readme.read_bytes()
+        readme.write_bytes(b"# Invalid UTF-8\n\xff\n")
+        invalid_utf8_markdown = run_checker(repository)
+        require(
+            invalid_utf8_markdown.returncode == 1
+            and "README.md: invalid UTF-8" in invalid_utf8_markdown.stderr,
+            "invalid UTF-8 Markdown did not fail with its path",
+        )
+        readme.write_bytes(readme_contents)
+
+        binary_asset = repository / "asset.webp"
+        binary_asset.write_bytes(b"RIFF\xffWEBP")
+        binary = run_checker(repository)
+        require(
+            binary.returncode == 0,
+            f"binary asset was treated as repository text: {binary.stderr}",
+        )
+        binary_asset.unlink()
+
         nonstandard_paths = []
         for name, constant in (
             ("nan", "NaN"),

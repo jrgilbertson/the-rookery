@@ -45,15 +45,17 @@ begin
   end
 
   license = frontmatter["license"]
-  fail_check(skill_path, "license must be text when present") if license && !license.is_a?(String)
+  if frontmatter.key?("license") && !license.is_a?(String)
+    fail_check(skill_path, "license must be text when present")
+  end
 
   compatibility = frontmatter["compatibility"]
-  if compatibility && (!compatibility.is_a?(String) || compatibility.length > 500)
+  if frontmatter.key?("compatibility") && (!compatibility.is_a?(String) || compatibility.length > 500)
     fail_check(skill_path, "compatibility must be text of at most 500 characters")
   end
 
   metadata = frontmatter["metadata"]
-  if metadata && (!metadata.is_a?(Hash) || metadata.any? { |key, value| !key.is_a?(String) || !value.is_a?(String) })
+  if frontmatter.key?("metadata") && (!metadata.is_a?(Hash) || metadata.any? { |key, value| !key.is_a?(String) || !value.is_a?(String) })
     fail_check(skill_path, "metadata must contain only string keys and values")
   end
 

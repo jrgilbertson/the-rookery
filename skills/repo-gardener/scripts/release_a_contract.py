@@ -38,6 +38,12 @@ RELEASE_A_LANES = (
 )
 SCOUT_OUTCOMES = {"complete", "not applicable", "incomplete"}
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
+NOTIFICATION_CAPABLE_MENTION = re.compile(
+    r"(?<![A-Za-z0-9_])"
+    r"@[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?"
+    r"(?:/[A-Za-z0-9](?:[A-Za-z0-9_-]{0,98}[A-Za-z0-9_])?)?"
+)
+HTML_IMAGE = re.compile(r"<\s*img\b", re.IGNORECASE)
 CURRENT_PORTFOLIO_BEGIN = "<!-- orchestrator:current-portfolio:v1:begin -->"
 CURRENT_PORTFOLIO_END = "<!-- orchestrator:current-portfolio:v1:end -->"
 HISTORY_RECEIPT_BEGIN = "<!-- orchestrator:history-receipt:v1:begin -->"
@@ -758,6 +764,18 @@ def _reject_reserved_report_content(value: Any, label: str) -> None:
             _reject_reserved_report_content(item, f"{label}.{key}")
 
 
+def _validate_report_projection(projection: str) -> None:
+    """Reject report rendering that can notify accounts or load image content."""
+    require(
+        NOTIFICATION_CAPABLE_MENTION.search(projection) is None,
+        "effect projection contains a notification-capable mention",
+    )
+    require(
+        "![" not in projection and HTML_IMAGE.search(projection) is None,
+        "effect projection contains image embedding syntax",
+    )
+
+
 def _effect_operation(operation: Any) -> dict[str, Any]:
     operation = require_object(operation, "effect operation")
     require_exact_fields(operation, EFFECT_OPERATION_FIELDS, "effect operation")
@@ -766,6 +784,7 @@ def _effect_operation(operation: Any) -> dict[str, Any]:
     require_object(operation.get("payload"), "effect payload")
     require_list(operation.get("rows"), "effect rows")
     require(isinstance(operation.get("projection"), str), "effect projection must be text")
+    _validate_report_projection(operation["projection"])
     require_payload(operation, BODY_LIMIT, "effect operation")
     _reject_reserved_report_content(operation, "effect operation")
     rows = []

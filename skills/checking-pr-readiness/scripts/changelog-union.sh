@@ -97,6 +97,14 @@ fail_usage() {
 	exit 2
 }
 
+validate_bounded_text() {
+	local LC_ALL=C label="$1" value="$2" maximum="$3"
+	[ "${#value}" -le "$maximum" ] || fail_usage "$label must be at most $maximum bytes"
+	if [[ "$value" =~ [[:cntrl:]] ]]; then
+		fail_usage "$label must be a single line without control characters"
+	fi
+}
+
 defer_gate=""
 supplied_base=""
 supplied_merge_base=""
@@ -110,6 +118,7 @@ while [ "$#" -gt 0 ]; do
 	--defer)
 		[ "$#" -ge 2 ] || fail_usage "--defer requires a gate name"
 		[ -n "$2" ] || fail_usage "--defer requires a non-empty gate name"
+		validate_bounded_text "--defer gate name" "$2" 128
 		defer_gate="$2"
 		shift 2
 		;;

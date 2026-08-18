@@ -14,6 +14,7 @@ from urllib.parse import unquote
 ROOT = Path(__file__).resolve().parents[2]
 MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 
+
 def candidate_files() -> list[Path]:
     result = subprocess.run(
         ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
@@ -22,6 +23,29 @@ def candidate_files() -> list[Path]:
         capture_output=True,
     )
     return [ROOT / path.decode() for path in result.stdout.split(b"\0") if path]
+
+
+def safe_regular_file(path: Path, errors: list[str]) -> bool:
+    try:
+        relative = path.relative_to(ROOT)
+    except ValueError:
+        errors.append(f"{path!s}: repository path escapes the repository")
+        return False
+    current = ROOT
+    for component in relative.parts:
+        current /= component
+        if current.is_symlink():
+            errors.append(f"{relative}: symbolic link is not allowed")
+            return False
+    try:
+        resolved = path.resolve(strict=True)
+        resolved.relative_to(ROOT)
+    except FileNotFoundError:
+        return False
+    except (OSError, ValueError):
+        errors.append(f"{relative}: resolved path leaves repository or cannot be verified")
+        return False
+    return resolved.is_file()
 
 
 def readable_text(path: Path) -> str | None:
@@ -85,7 +109,7 @@ def check_links(path: Path, text: str, errors: list[str]) -> None:
 def main() -> int:
     errors: list[str] = []
     for path in candidate_files():
-        if not path.is_file():
+        if not safe_regular_file(path, errors):
             continue
         text = readable_text(path)
         if text is None:

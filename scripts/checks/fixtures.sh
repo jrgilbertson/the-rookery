@@ -35,11 +35,46 @@ if ! diff -u \
   exit 1
 fi
 
+if ! python3 - "$repo_root" "${runners[@]}" <<'PY'
+import sys
+from pathlib import Path
+
+root = Path(sys.argv[1]).resolve(strict=True)
+for raw_path in sys.argv[2:]:
+    relative = Path(raw_path)
+    candidate = root / relative
+    if candidate.is_symlink():
+        print(f"fixtures: symbolic-link runner is not allowed: {raw_path}", file=sys.stderr)
+        raise SystemExit(1)
+    if not candidate.exists():
+        print(f"fixtures: missing runner {raw_path}", file=sys.stderr)
+        raise SystemExit(1)
+    try:
+        candidate.relative_to(root)
+    except ValueError:
+        print(f"fixtures: runner path escapes the repository: {raw_path!r}", file=sys.stderr)
+        raise SystemExit(1)
+    current = root
+    for component in relative.parts:
+        current /= component
+        if current.is_symlink():
+            print(f"fixtures: symbolic-link runner is not allowed: {raw_path!r}", file=sys.stderr)
+            raise SystemExit(1)
+    try:
+        resolved = candidate.resolve(strict=True)
+        resolved.relative_to(root)
+    except (FileNotFoundError, OSError, ValueError):
+        print(f"fixtures: runner resolves outside the repository or cannot be verified: {raw_path!r}", file=sys.stderr)
+        raise SystemExit(1)
+    if not resolved.is_file():
+        print(f"fixtures: runner is not a regular file: {raw_path!r}", file=sys.stderr)
+        raise SystemExit(1)
+PY
+then
+  exit 1
+fi
+
 for runner in "${runners[@]}"; do
-  if [[ ! -f "$runner" ]]; then
-    echo "fixtures: missing runner $runner" >&2
-    exit 1
-  fi
   echo "fixtures: $runner"
   case "$runner" in
     *.sh) bash "$runner" ;;

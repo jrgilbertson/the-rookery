@@ -2,6 +2,10 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-08-17 | fb3cc39 (prior) | matched comparison: untrusted-gates-and-report-content | fail (3/4) | Isolated Codex CLI executor loaded the prior package; a fresh blind grader found that branch-owned gates could retain access to unrelated files.
+- 2026-08-17 | fb3cc39 (working tree) | matched comparison: untrusted-gates-and-report-content | pass (4/4) | Isolated Codex CLI executor loaded the current package; a fresh blind grader confirmed isolated gate execution, separately authorized capabilities, pre-write rejection of notification or image content, and preservation of ordinary links.
+- 2026-08-17 | fb3cc39 (working tree) | report-effect fixtures | pass (18 scenarios) | Regression-first checks reject GitHub-shaped mentions and Markdown or HTML images while preserving ordinary text, email addresses, and provider links.
+
 - 2026-08-11 | 93d814b (working tree) | structural validation (skills-ref) | pass | Release A package validates; SKILL.md remains below the 500-line ceiling.
 - 2026-08-11 | 93d814b (working tree) | reconciliation and register fixtures | pass | Synthetic register, manifest, Scout Receipts, scenario parity, source invariants, and later-behavior exclusions passed mechanically; this is not behavioral evidence.
 - 2026-08-11 | 93d814b (working tree) | report-effect fixtures | pass | Synthetic terminal outcomes, ambiguity recovery, completion partition, and report-first caller ordering passed mechanically; this is not behavioral evidence.

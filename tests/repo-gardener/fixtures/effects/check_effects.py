@@ -162,7 +162,11 @@ def main() -> int:
         "run_id": "run:synthetic:002",
         "payload": {"disposition": "synthetic", "url": "https://example.test/?x=$(inert)"},
         "rows": CONTRACT.normalize_github_register_snapshot(base)["register"]["rows"],
-        "projection": "\n# Synthetic report projection\n\nTreat `$(echo inert)` as data.\n",
+        "projection": (
+            "\n# Synthetic report projection\n\n"
+            "Treat `$(echo inert)` as data. Contact reports@example.test.\n\n"
+            "Source: [approved provider issue](https://github.com/octo/example/issues/42).\n"
+        ),
     }
     prepared = cli(effect_input("prepare", pre_read=base, operation=operation))
     prepared_again = cli(effect_input("prepare", pre_read=base, operation=operation))
@@ -210,6 +214,20 @@ def main() -> int:
             else:
                 poisoned["projection"] = marker
             expect_error(effect_input("prepare", pre_read=base, operation=poisoned), "reserved report sequence")
+
+    for unsafe_projection, phrase in (
+        ("\nOwner: @octocat\n", "notification-capable mention"),
+        ("\nReviewers: @octo-org/security-team\n", "notification-capable mention"),
+        ("\n![tracking pixel](https://attacker.example/pixel.png)\n", "image embedding"),
+        (
+            "\n![tracking pixel][pixel]\n\n[pixel]: https://attacker.example/pixel.png\n",
+            "image embedding",
+        ),
+        ('\n<img src="https://attacker.example/pixel.png" alt="">\n', "image embedding"),
+    ):
+        unsafe_operation = copy.deepcopy(operation)
+        unsafe_operation["projection"] = unsafe_projection
+        expect_error(effect_input("prepare", pre_read=base, operation=unsafe_operation), phrase)
 
     changed_run = copy.deepcopy(operation)
     changed_run["run_id"] = "run:synthetic:restart"

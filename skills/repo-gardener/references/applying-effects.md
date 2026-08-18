@@ -25,6 +25,11 @@ custom provider wrapper. The caller alone decides whether its configured GitHub
 capability may apply those exact bytes. This skill defines no wrapper, provider
 client, credential, or planning authority.
 
+The projection may contain ordinary text and links. `effect-v1` rejects
+notification-capable `@mentions` and Markdown or HTML image embedding. A
+rejected projection stops before the tracker write; do not sanitize it into a
+different prepared operation.
+
 After the write, obtain the complete issue and every comment page. Verify the
 immutable prepared object against the same pre-read and the full post-read.
 Accept only `observed` or `already satisfied` before continuing. `failed` and

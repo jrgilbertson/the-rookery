@@ -76,7 +76,10 @@ write neither `run-opened` nor `run-closed`, invoke neither `effect-v1` nor
    overlapping gate denies dispatch. For the next single-child slice, use one
    child worktree for one branch and one PR.
 7. Require the child to plan, implement, simplify, review, pass repository
-   gates, and commit the result. On that clean exact commit, run the installed
+   gates, and commit the result. Run branch-owned gates in a disposable
+   environment without production credentials or access to unrelated files;
+   disable network and external writes unless the owner authorizes a capability
+   required by an exact gate. On that clean exact commit, run the installed
    `checking-pr-readiness` owner-facing workflow. Surface its one decision to
    the owner. Only option 1, `Approve and proceed to the finishing path`,
    permits push. `Request changes`, `Stop and file follow-up work`, an absent

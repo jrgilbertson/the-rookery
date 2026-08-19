@@ -82,17 +82,9 @@ When a plan needs issue structure, [`managing-issues`](skills/managing-issues/SK
 ### Do I save plans?
 
 No. Working plans, brainstorms, and ideation can live in the ignored paths
-named in `.gitignore` while the worktree exists. The worktree can disappear
-after the pull request because the result belongs in code, tests, and
-maintained documentation. Keep an ADR when a lasting architectural choice
-needs its rationale, a solution when the work produced a reusable learning,
-and the current root `RELEASING.md` when a runbook defines how to operate or
-ship the product.
-
-When the work has a source issue, update it before merge only when the shipped
-scope, an important decision, or follow-up work would otherwise be misleading
-or lost. The pull request records the reviewed change. Neither system needs a
-copy of the implementation plan.
+named in `.gitignore` while the worktree exists. Preserve the result in its
+durable owner instead of saving the plan. The enforceable lifecycle and
+durable-owner rules live in [Working artifacts](AGENTS.md#working-artifacts).
 
 ## Design
 

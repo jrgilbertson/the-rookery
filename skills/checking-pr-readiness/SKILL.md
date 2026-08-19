@@ -84,6 +84,13 @@ Then apply the repository's transient-artifact policy. Resolve transient paths
 from its instructions and ignore rules, and use Git state rather than directory
 presence to classify them:
 
+- Enumerate ignored working files with
+  `git ls-files --others --ignored --exclude-standard`, then use
+  `git check-ignore -v` to identify the rule that owns each transient hit.
+  Ordinary surface commands omit these files.
+- Search durable files for citations to every transient path family named by
+  the policy, including families with no ignored file currently present.
+
 - An ignored file with no index entry or branch addition is working material.
   It does not ship and is allowed.
 - A transient file present in the final tracked tree, staged as content, or
@@ -343,10 +350,11 @@ learning signal with any recorded override. Hand the pack to the finishing path
 so that path renders it into the pull request body. Write nothing to the
 repository tree and open no pull request.
 
-Sanitize the pack for durable use. Summarize intent and outcomes from the issue
-or brief without copying ignored-plan paths or contents, local-only paths,
-credentials, or unnecessary personal data. A transient artifact may inform the
-run, but the pull request must stand without it.
+Sanitize the pack for durable use. Summarize intent and outcomes from the
+selected durable intent source: a linked issue or ticket, a brief, or a
+maintained repository plan. Do not copy ignored-plan paths or contents,
+local-only paths, credentials, or unnecessary personal data. A transient
+artifact may inform the run, but the pull request must stand without it.
 
 Completion: the owner made exactly one decision from the menu against a
 pyramid-shaped readout matching the current working surface, and an approval

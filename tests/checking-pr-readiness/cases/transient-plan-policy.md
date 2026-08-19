@@ -7,8 +7,11 @@ plan from one that would ship or remain cited after the worktree disappeared.
 ## Prompt
 
 > Judge each scenario as an independent branch under a repository policy that
-> ignores `/docs/plans/` and keeps durable outcomes in code, tests, issues, and
-> maintained documentation.
+> ignores `/plans/`, `/docs/plans/`, `/docs/brainstorms/`, `/docs/ideation/`,
+> `/docs/dogfood-reports/`, `/docs/reports/`, and `/docs/pulse-reports/`, and
+> keeps durable outcomes in code, tests, issues, and maintained documentation.
+> Apply scenarios 1–3 to every listed path family, using a representative file
+> in that family.
 >
 > 1. `docs/plans/widget.md` exists only as an ignored file. No tracked file
 >    cites it. The linked issue and final diff agree.
@@ -25,11 +28,13 @@ plan from one that would ship or remain cited after the worktree disappeared.
 ## Expected behavior
 
 - [ ] 1 is allowed as ignored working material and excluded from the shipping
-      surface and pull-request evidence.
+      surface and pull-request evidence for every transient path family.
 - [ ] 2 is a readiness finding that must be removed before approval; a deletion
-      of previously tracked plans would instead count as cleanup.
+      of previously tracked material would instead count as cleanup. This holds
+      for every transient path family.
 - [ ] 3 is a readiness finding until the durable document becomes
-      self-contained or cites another durable source.
+      self-contained or cites another durable source, regardless of which
+      transient path family it cites.
 - [ ] 4 compares the issue to the delivered change and does not invent a
       missing-plan gap.
 - [ ] 5 uses the linked issue as durable intent and does not let the stale

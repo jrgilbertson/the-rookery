@@ -213,8 +213,8 @@ def issue_selector_check(argv, forge):
         if skip:
             skip = False
             continue
-        if a == "--repo" and i + 1 < len(argv):
-            want_repo = argv[i + 1]
+        if a in ("--repo", "-R") and i + 1 < len(argv):
+            want_repo = argv[i + 1].removeprefix("github.com/")
             skip = True
             continue
         if a.startswith("-"):
@@ -238,7 +238,8 @@ def issue_selector_check(argv, forge):
 
     if want_number is None:
         die("`issue view` requires the linked issue number or URL", 2)
-    if want_repo is not None and want_repo != repo:
+    normalized_repo = repo.removeprefix("github.com/")
+    if want_repo is not None and want_repo != normalized_repo:
         die(f"no issue in {want_repo} here; this specimen is {repo}", 1)
     for issue in issues:
         if isinstance(issue, dict) and want_number == issue.get("number"):

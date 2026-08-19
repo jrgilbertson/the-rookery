@@ -191,12 +191,14 @@ exit_is "wrong repo" 1 specimen-a pr view 412 --repo entirely/wrong --json numbe
 exit_is "matching URL" 0 specimen-a pr view https://github.com/mapleworks/orderline/pull/412 --json number
 exit_is "diff refuses another PR" 1 specimen-a pr diff 999999
 exit_is "linked issue number + repo" 0 specimen-a issue view 73 --repo mapleworks/orderline --json number
+exit_is "linked issue number + canonical repo flag" 0 specimen-a issue view 73 -R github.com/mapleworks/orderline --json number
 exit_is "linked issue URL" 0 specimen-a issue view https://github.com/mapleworks/orderline/issues/73 --json number
 ISSUEFAIL=1
 msg_is "linked issue unavailable" 4 "temporarily unavailable" specimen-a issue view 73 --repo mapleworks/orderline --json number
 ISSUEFAIL=
 exit_is "wrong issue number" 1 specimen-a issue view 999999 --repo mapleworks/orderline --json number
 exit_is "wrong issue repo" 1 specimen-a issue view 73 --repo entirely/wrong --json number
+exit_is "wrong issue repo with canonical flag" 1 specimen-a issue view 73 -R github.com/entirely/wrong --json number
 exit_is "rules for the specimen's base" 0 specimen-a \
   api repos/mapleworks/orderline/rules/branches/main
 msg_is "rules for another base" 1 "Not Found (HTTP 404)" specimen-a \

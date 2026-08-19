@@ -23,6 +23,7 @@ IDENTITY_LIMIT = 128
 DISPLAY_LIMIT = 512
 RECEIPT_LIMIT = 16 * 1024
 BODY_LIMIT = 48 * 1024
+INPUT_LIMIT = 8 * 1024 * 1024
 RELEASE_A_PORTFOLIO_LIMIT = 7
 RELEASE_A_LANES = (
     "dependency-and-vulnerability",
@@ -37,6 +38,13 @@ RELEASE_A_LANES = (
 )
 SCOUT_OUTCOMES = {"complete", "not applicable", "incomplete"}
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
+NOTIFICATION_CAPABLE_MENTION = re.compile(
+    r"(?<![A-Za-z0-9_])"
+    r"@[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?"
+    r"(?:/[A-Za-z0-9](?:[A-Za-z0-9_-]{0,98}[A-Za-z0-9_])?)?"
+)
+HTTP_URL = re.compile(r"https?://[^\s<>\"']+", re.IGNORECASE)
+HTML_IMAGE = re.compile(r"<\s*img\b", re.IGNORECASE)
 CURRENT_PORTFOLIO_BEGIN = "<!-- orchestrator:current-portfolio:v1:begin -->"
 CURRENT_PORTFOLIO_END = "<!-- orchestrator:current-portfolio:v1:end -->"
 HISTORY_RECEIPT_BEGIN = "<!-- orchestrator:history-receipt:v1:begin -->"
@@ -193,6 +201,19 @@ def require(condition: bool, message: str) -> None:
         raise ContractError(message)
 
 
+def read_bounded_text(path: Path, label: str, limit: int = INPUT_LIMIT) -> str:
+    with path.open("rb") as source:
+        raw = source.read(limit + 1)
+    require(len(raw) <= limit, f"{label} exceeds {limit} UTF-8 bytes")
+    return raw.decode("utf-8")
+
+
+def read_bounded_stdin(limit: int = INPUT_LIMIT) -> str:
+    raw = sys.stdin.buffer.read(limit + 1)
+    require(len(raw) <= limit, f"standard input exceeds {limit} UTF-8 bytes")
+    return raw.decode("utf-8")
+
+
 def canonical_bytes(value: Any) -> bytes:
     try:
         return json.dumps(
@@ -338,12 +359,12 @@ def installed_lanes_from_text(text: str) -> list[str]:
 
 
 def policy_contract(policy_path: Path) -> tuple[int, list[str]]:
-    text = policy_path.read_text(encoding="utf-8")
+    text = read_bounded_text(policy_path, "policy")
     return portfolio_limit_from_text(text), installed_lanes_from_text(text)
 
 
 def portfolio_limit(policy_path: Path) -> int:
-    return portfolio_limit_from_text(policy_path.read_text(encoding="utf-8"))
+    return portfolio_limit_from_text(read_bounded_text(policy_path, "policy"))
 
 
 def orchestrator_receipt_hash(
@@ -744,6 +765,18 @@ def _reject_reserved_report_content(value: Any, label: str) -> None:
             _reject_reserved_report_content(item, f"{label}.{key}")
 
 
+def _validate_report_rendering(rendering: str) -> None:
+    """Reject tracker rendering that can notify accounts or load image content."""
+    require(
+        NOTIFICATION_CAPABLE_MENTION.search(HTTP_URL.sub("", rendering)) is None,
+        "effect report contains a notification-capable mention",
+    )
+    require(
+        "![" not in rendering and HTML_IMAGE.search(rendering) is None,
+        "effect report contains image embedding syntax",
+    )
+
+
 def _effect_operation(operation: Any) -> dict[str, Any]:
     operation = require_object(operation, "effect operation")
     require_exact_fields(operation, EFFECT_OPERATION_FIELDS, "effect operation")
@@ -890,6 +923,8 @@ def prepare_report_effect(pre_read: Any, operation: Any) -> dict[str, Any]:
         f"{json.dumps(receipt, ensure_ascii=False, separators=(',', ':'))}\n"
         f"{HISTORY_RECEIPT_END}"
     )
+    _validate_report_rendering(operation["projection"])
+    _validate_report_rendering(comment)
     return {
         "schema": "repo-gardener-prepared-report-effect/v1",
         "repository_id": view["repository_id"],
@@ -927,6 +962,8 @@ def _prepared_effect(prepared: Any) -> dict[str, Any]:
     require(prepared.get("expected_post_revision") == prepared["expected_pre_revision"] + 1, "prepared revision transition is invalid")
     validate_body(prepared.get("body"))
     require(isinstance(prepared.get("comment"), str), "prepared comment must be text")
+    _validate_report_rendering(operation["projection"])
+    _validate_report_rendering(prepared["comment"])
     expected_operation_id = _effect_operation_id(
         repository_id=prepared["repository_id"],
         report_issue_id=prepared["report_issue_id"],
@@ -1420,12 +1457,12 @@ def reconcile_report_effect(
 
 
 def _load(path: Path) -> Any:
-    return json.loads(path.read_text(encoding="utf-8"))
+    return json.loads(read_bounded_text(path, "JSON input"))
 
 
 def _load_input(source: str) -> Any:
     if source == "-":
-        return json.load(sys.stdin)
+        return json.loads(read_bounded_stdin())
     return _load(Path(source))
 
 
@@ -1469,7 +1506,7 @@ def main() -> int:
             )
         }
     elif args.command == "validate-body":
-        body = args.body.read_text(encoding="utf-8")
+        body = read_bounded_text(args.body, "managed body", BODY_LIMIT)
         result = {"body_bytes": validate_body(body)}
     elif args.command == "normalize-github-register":
         result = normalize_github_register_snapshot(_load_input(args.input))

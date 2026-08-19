@@ -7,11 +7,11 @@ problem_type: workflow_issue
 component: development_workflow
 severity: medium
 applies_when:
-  - "Creating a new Agent Skill"
+  - "Creating a new skill"
   - "Continuing an approved skill revision or migration"
   - "Choosing a listing-query tier for an ordinary personal skill or a public or unusually load-bearing skill"
 tags:
-  - agent-skills
+  - skills
   - verification-mode
   - listing-queries
   - trigger-contract
@@ -92,6 +92,6 @@ the recorded cases, not a general reliability claim.
 
 ## Related
 
-- [Use independent contexts for skill grading and review](../best-practices/independent-fresh-context-review-for-agent-skills.md)
-- [Dogfood Agent Skills through their real harness paths](../best-practices/cross-harness-dogfood-testing.md)
+- [Use independent contexts for skill grading and review](../best-practices/independent-fresh-context-review-for-skills.md)
+- [Dogfood skills through their real harness paths](../best-practices/cross-harness-dogfood-testing.md)
 - [Issue 13: Update creating-portable-skills for Claude Opus 5 and GPT-5.6 Sol](https://github.com/jrgilbertson/the-rookery/issues/13)

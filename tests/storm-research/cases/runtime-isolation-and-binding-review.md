@@ -1,5 +1,8 @@
 # Runtime test: isolated lenses and binding review
 
+Provenance: Safety invariant — static checks cannot prove clean executor
+contexts or that a binding review changed the briefing it evaluated.
+
 This is an evaluator-only test, not a sample research request. Static checks can
 verify required wording and order. They cannot prove that executors started in
 clean contexts or that review findings changed the briefing. This test checks

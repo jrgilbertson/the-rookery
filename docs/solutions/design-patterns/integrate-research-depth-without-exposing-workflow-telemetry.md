@@ -2,13 +2,13 @@
 title: Integrate research depth without exposing workflow telemetry
 date: 2026-08-03
 category: design-patterns
-module: agent-skills
+module: skills
 problem_type: design_pattern
 component: assistant
 severity: medium
 applies_when:
   - A research skill uses internal analytical checks and execution records
-tags: [agent-skills, research, output-design, systems-thinking, first-principles]
+tags: [skills, research, output-design, systems-thinking, first-principles]
 ---
 
 # Integrate research depth without exposing workflow telemetry

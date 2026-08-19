@@ -11,7 +11,7 @@ applies_when:
   - "A repository's instruction files declare it public or open-source-bound"
   - "Sensitive content was committed and the branch has not been pushed"
 tags:
-  [artifact-placement, same-door-rule, git-history, disclosure, public-bound]
+  [artifact-placement, installation-parity, git-history, disclosure, public-bound]
 ---
 
 # The repo's declared contract governs artifact placement, not its current visibility
@@ -25,7 +25,7 @@ repository was committed to `tests/` after checking only GitHub visibility
 visibility check missed: `AGENTS.md` opens with "This is a public open-source
 repository" and routes user-generated artifacts to per-run temporary
 directories and approved private destinations, and `CONTRIBUTING.md`'s
-same-door rule forbids private repo names and personal-environment
+installation-parity rule forbids private repo names and personal-environment
 assumptions in the tree. The file violated the repo's own contract even while
 the repo was private, and open-sourcing later would have disclosed it from
 git history no matter when it was deleted.

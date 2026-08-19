@@ -16,7 +16,7 @@ colors:
 
 **Creative North Star: "The Returning Field Dispatch"**
 
-The Rookery looks like a natural-history field manual laid over a working draft table. Cool mist-blue paper, engraved navy corvids, graphite mechanisms, and measured construction lines make the work feel studied and practical rather than mythical or corporate. The result should be professional enough for technical evaluation while retaining the warmth and memory of a hand-kept field guide.
+The Rookery looks like a natural-history field manual laid over a working draft table. Cool mist-blue paper, engraved navy corvids, graphite mechanisms, and measured construction lines make the work feel studied and practical rather than mythical or corporate. The result should make the technical system clear while retaining the warmth and memory of a hand-kept field guide.
 
 Every illustration explains an operation. Huginn and Muninn carry, inspect, install, select, or return knowledge; they do not pose beside an abstract idea. Routes and mechanisms make sequence, observation, and return causally legible, while one restrained orange signal marks the intervention, dispatch, or return that matters most. The exact scene may change across repository-owned explanatory visuals, but the world remains one connected system in which evidence moves forward and distinct forms of feedback make future work more useful.
 
@@ -85,7 +85,7 @@ Banners establish hierarchy in the first glance: a clear title zone, a dominant 
 
 The approved workflow banner uses field-map composition C: a large serif title and cobalt subtitle occupy the upper-left while an unfolded diagonal map fills the field. One raven anchors Research and another descends to retrieve the verified dispatch at Ship. Research runs through Plan, Design, Build, and Ship above two quiet return ribbons, without a redundant label over the numbered delivery sequence. A solid cobalt Maintain ribbon passes through a compact repair-and-binding press, while a solid orange Learn ribbon passes through an open field notebook and feather. The ribbons deliberately abstract their detailed inputs and outcomes; the adjacent prose explains how Maintain creates repository memory and Learn returns a better question to Research. This topology is specific to the workflow explanation, not a universal template for future assets.
 
-**The Causal System Rule.** Show the five delivery jobs as an ordered sequence and each feedback process as its own path to the stages or input it changes. Never force distinct currents into a false serial loop, and never flatten the system into repeated equal containers.
+**The Causal System Rule.** Show the five delivery jobs as an ordered sequence and each feedback process as its own path to the stages or input it changes. Never force distinct feedback loops into a false serial sequence, and never flatten the system into repeated equal containers.
 
 **The Reduced-Size Test.** At ordinary GitHub content width, the five-job delivery order, repository-wide improvement path, and return of a better question to Research must remain understandable before a reader zooms into the engraving detail.
 
@@ -107,7 +107,7 @@ Organic corvid silhouettes break against precise field geometry. Circular route 
 
 - **Do** give Huginn or Muninn a load-bearing action such as carrying a dispatch, operating a mechanism, inspecting a handoff, or returning a signal.
 - **Do** use Route Cobalt and shape or direction together, so paths remain understandable without color.
-- **Do** distinguish the Delivery Sequence, Repository Memory Current, and Personal Learning Current by position, labels, direction, and mechanism as well as color.
+- **Do** distinguish the Delivery Sequence, Repository Learning Loop, and Personal Learning Loop by position, labels, direction, and mechanism as well as color.
 - **Do** keep Signal Orange scarce and attach it to one meaningful intervention or return.
 - **Do** preserve calm negative space and a strong silhouette before adding paper grain, coordinates, hatching, or registration marks.
 - **Do** write meaningful alt text that states the mechanism, sequence, and return represented by the image.
@@ -115,7 +115,7 @@ Organic corvid silhouettes break against precise field geometry. Circular route 
 ### Don't:
 
 - **Don't** turn the workflow into a generic equal-card flowchart or consulting-deck diagram.
-- **Don't** present Research, Plan, Design, Build, Ship, Maintain, and Learn as one seven-step serial loop; Maintain and Learn are distinct feedback currents with different destinations.
+- **Don't** present Research, Plan, Design, Build, Ship, Maintain, and Learn as one seven-step serial loop; Maintain and Learn are distinct feedback loops with different destinations.
 - **Don't** reuse the unfolded field map as the default composition for unrelated visuals.
 - **Don't** pose a raven beside an idea it is not performing; removing the bird should break the explanation.
 - **Don't** use broad orange fills, multiple competing accents, glossy gradients, or interface-style shadows.

@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-08-17 | b8fbafb + terminology diff | trigger suite: generic skill terminology | pass (10/10 should-trigger; 11/11 near misses) | Twenty-one isolated ephemeral Codex CLI 0.147.0 contexts each saw only the current name, description, and one query; every first judgment was categorical, including `no` for the added role-playing-game near miss.
+
 Branch-time `git rev` values below are preserved by PR #19 even if the
 branch is squash-merged; the archive pointer's mainline commit stays
 directly reachable.

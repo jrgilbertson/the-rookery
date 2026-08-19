@@ -11,6 +11,11 @@ execution: code
 
 # Targeted Grilling Workflow - Plan
 
+> **Current terminology (2026-08-17):** The workflow still uses targeted
+> grilling, but the ordinary phrase no longer has its own `CONCEPTS.md` entry.
+> References below to `Grilling Session` and `Shared Understanding Gate` record
+> the original plan.
+
 ## Goal Capsule
 
 - **Objective:** Add clear routing for targeted, stateless grilling without changing the seven-job workflow or creating a second planning and documentation system.

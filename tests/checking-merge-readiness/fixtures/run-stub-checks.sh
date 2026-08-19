@@ -44,8 +44,7 @@ msg_is() {
 json_is() {
   local label=$1 spec=$2 expr=$3 want=$4; shift 4
   local raw got
-  raw=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} "$GH" "$@" 2>&1)
-  if [ $? -ne 0 ]; then
+  if ! raw=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} "$GH" "$@" 2>&1); then
     fail "$label" "command failed: $(printf '%s' "$raw" | head -1)"; return
   fi
   got=$(printf '%s' "$raw" | python3 -c "
@@ -78,6 +77,7 @@ json_is "specimen-j: page two is the third thread" \
   "1 False" api graphql \
   -f 'query=query{repository{pullRequest{reviewThreads(first:100, after:"reviewThreads:2"){pageInfo{hasNextPage endCursor} nodes{id isResolved path line comments(first:100){nodes{id body author{login} pullRequestReview{id submittedAt}}}}}}}}'
 # Variable-bound after (what real skill runs use) — the footgun that forced the greenfield cursor fix.
+# shellcheck disable=SC2016
 json_is "specimen-j: variable after advances reviews" \
   specimen-j "any('invalidat' in (n.get('body') or '').lower() for n in d['reviews']['nodes'])" \
   "True" api graphql \
@@ -172,11 +172,12 @@ exit_is "auth-fail graphql" 4 specimen-a api graphql -f "query=$REVIEWS"
 exit_is "auth-fail status" 1 specimen-a auth status
 AUTHFAIL=
 exit_is "authenticated still serves" 0 specimen-a pr view --json number
-out=$(CMR_FIXTURE= "$GH" pr view --json number 2>&1); got=$?
+out=$(CMR_FIXTURE='' "$GH" pr view --json number 2>&1); got=$?
 if [ "$got" = 4 ]; then pass "no specimen configured"
 else fail "no specimen configured" "expected exit 4, got $got"; fi
 
 echo "== H. unbound variable and mutation refuse =="
+# shellcheck disable=SC2016
 exit_is "unbound after variable" 2 specimen-j api graphql \
   -f 'query=query($cursor:String){repository{pullRequest{reviews(first:1, after:$cursor){nodes{id author{login} submittedAt state body commit{oid}}}}}}'
 # Combined query: top-level conversation comments must still be served when

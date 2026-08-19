@@ -109,16 +109,20 @@ paginate() {
 tmp=$(mktemp -d "${TMPDIR:-/tmp}/fetch-pr-history.XXXXXX")
 trap 'rm -rf "$tmp"' EXIT
 
+# These GraphQL documents intentionally preserve literal `$` variables.
+# shellcheck disable=SC2016
 Q_IDENTITY='query($owner:String!,$name:String!,$pr:Int!){
   repository(owner:$owner,name:$name){pullRequest(number:$pr){
     state isDraft headRefOid baseRefName updatedAt body
     author{login} baseRef{target{oid}}}}}'
 
+# shellcheck disable=SC2016
 Q_REVIEWS='query($owner:String!,$name:String!,$pr:Int!,$cursor:String){
   repository(owner:$owner,name:$name){pullRequest(number:$pr){
     reviews(first:100,after:$cursor){pageInfo{hasNextPage endCursor}
       nodes{id author{login} submittedAt state body commit{oid}}}}}}'
 
+# shellcheck disable=SC2016
 Q_THREADS='query($owner:String!,$name:String!,$pr:Int!,$cursor:String){
   repository(owner:$owner,name:$name){pullRequest(number:$pr){
     reviewThreads(first:50,after:$cursor){pageInfo{hasNextPage endCursor}
@@ -127,17 +131,20 @@ Q_THREADS='query($owner:String!,$name:String!,$pr:Int!,$cursor:String){
           nodes{id author{login} createdAt body line originalLine
             pullRequestReview{id}}}}}}}}'
 
+# shellcheck disable=SC2016
 Q_THREAD_COMMENTS='query($id:ID!,$cursor:String){
   node(id:$id){... on PullRequestReviewThread{
     comments(first:100,after:$cursor){pageInfo{hasNextPage endCursor}
       nodes{id author{login} createdAt body line originalLine
         pullRequestReview{id}}}}}}'
 
+# shellcheck disable=SC2016
 Q_COMMENTS='query($owner:String!,$name:String!,$pr:Int!,$cursor:String){
   repository(owner:$owner,name:$name){pullRequest(number:$pr){
     comments(first:100,after:$cursor){pageInfo{hasNextPage endCursor}
       nodes{id author{login} createdAt body}}}}}'
 
+# shellcheck disable=SC2016
 Q_EDITS='query($owner:String!,$name:String!,$pr:Int!,$cursor:String){
   repository(owner:$owner,name:$name){pullRequest(number:$pr){
     userContentEdits(first:100,after:$cursor){pageInfo{hasNextPage endCursor}

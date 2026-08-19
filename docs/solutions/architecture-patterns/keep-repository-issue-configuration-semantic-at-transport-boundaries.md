@@ -199,6 +199,6 @@ transport” and “Creates, surgical updates, and lifecycle”).
 ## Related
 
 - [Keep issue bodies centered on Problem, Scope, and Verification](../best-practices/keep-issue-bodies-centered-on-problem-scope-and-verification.md)
-- [Independent fresh-context review for agent skills](../best-practices/independent-fresh-context-review-for-agent-skills.md)
+- [Independent fresh-context review for skills](../best-practices/independent-fresh-context-review-for-skills.md)
 - [Linear GitHub integration](https://linear.app/docs/github)
 - [GitHub issue #66](https://github.com/jrgilbertson/the-rookery/issues/66)

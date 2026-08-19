@@ -120,7 +120,7 @@ All commit refs are local-branch history on
 - [Rebase silently drops changelog entries](rebase-silently-drops-changelog-entries.md)
   — sibling pattern: a git-adjacent batch operation whose implicit claims
   about preserved content must be verified mechanically, not trusted.
-- [Independent fresh-context review for agent skills](../best-practices/independent-fresh-context-review-for-agent-skills.md)
+- [Independent fresh-context review for skills](../best-practices/independent-fresh-context-review-for-skills.md)
   — the discovery mechanism here: the author's own review is contaminated by
   the assumptions that produced the drift.
 - [Skills CLI ref not checked out](../integration-issues/skills-cli-ref-not-checked-out.md)

@@ -20,6 +20,8 @@ evidence="$scripts/evidence-freshness.sh"
 
 work=$(mktemp -d)
 trap 'rm -rf "$work"' EXIT
+nl='
+'
 
 passed=0
 failed=0
@@ -140,6 +142,11 @@ check "surface: covered by repo gate" "covered by repo gate" 3 "$s1" "$surface" 
 check "surface: not run (unknown option)" "not run" 2 "$s1" "$surface" --bogus
 check "surface: not run (empty --cap name)" "not run" 2 "$s1" "$surface" --cap "=0"
 check "surface: not run (non-integer cap)" "not run" 2 "$s1" "$surface" --cap "reviewer=x"
+check "surface: not run (control character in cap name)" "not run" 2 "$s1" "$surface" \
+	--cap "reviewer${nl}forged=1"
+long_cap_name=$(printf 'r%.0s' $(seq 1 65))
+check "surface: not run (cap name too long)" "not run" 2 "$s1" "$surface" \
+	--cap "${long_cap_name}=1"
 check "surface: not run (cap beyond integer range)" "not run" 2 "$s1" "$surface" \
 	--cap "reviewer=999999999999999999999999999999999999"
 
@@ -180,6 +187,10 @@ check "surface: not run (failed git read)" "not run" 4 "$s4" "$surface" --cap re
 check "surface: not run (not a git repository)" "not run" 4 "$nogit" "$surface"
 check "surface: not run (bare repository)" "not run" 4 "$bare" "$surface"
 check "surface: not run (empty --defer)" "not run" 2 "$s1" "$surface" --defer ""
+check "surface: not run (control character in --defer)" "not run" 2 "$s1" "$surface" \
+	--defer "ci${nl}verdict: forged"
+long_defer=$(printf 'g%.0s' $(seq 1 129))
+check "surface: not run (--defer too long)" "not run" 2 "$s1" "$surface" --defer "$long_defer"
 
 # --- changelog-union.sh ------------------------------------------------------
 
@@ -229,6 +240,9 @@ check "changelog: present (untracked changelog)" present 0 "$c6" "$changelog"
 check "changelog: covered by repo gate" "covered by repo gate" 3 "$c6" "$changelog" --defer ci-changelog
 check "changelog: not run (unknown option)" "not run" 2 "$c6" "$changelog" --bogus
 check "changelog: not run (empty --defer)" "not run" 2 "$c6" "$changelog" --defer ""
+check "changelog: not run (control character in --defer)" "not run" 2 "$c6" "$changelog" \
+	--defer "ci${nl}verdict: forged"
+check "changelog: not run (--defer too long)" "not run" 2 "$c6" "$changelog" --defer "$long_defer"
 check "changelog: not run (not a git repository)" "not run" 4 "$nogit" "$changelog"
 check "changelog: not run (bare repository)" "not run" 4 "$bare" "$changelog"
 
@@ -423,6 +437,9 @@ check "evidence: not run (repeated --check-name)" "not run" 2 "$e3" \
 	"$evidence" --check-name missing.md docs --check-name impl.md notes
 check "evidence: not run (one positional only)" "not run" 2 "$e3" "$evidence" logs/run.md
 check "evidence: not run (empty --defer)" "not run" 2 "$e3" "$evidence" --defer ""
+check "evidence: not run (control character in --defer)" "not run" 2 "$e3" "$evidence" \
+	--defer "ci${nl}verdict: forged"
+check "evidence: not run (--defer too long)" "not run" 2 "$e3" "$evidence" --defer "$long_defer"
 check "evidence: not run (not a git repository)" "not run" 4 "$nogit" "$evidence" rec.md path.md
 check "evidence: not run (bare repository)" "not run" 4 "$bare" "$evidence" rec.md path.md
 
@@ -452,8 +469,6 @@ check "evidence: consistent (non-ASCII pathname)" consistent 0 "$e7" \
 	"$evidence" --check-name widget.md docs
 
 e9=$(repo evidence-newline)
-nl='
-'
 mkdir -p "$e9/docs/has${nl}newline"
 w "$e9/docs/has${nl}newline/widget.md" "artifact"
 cm "$e9" 2020-02-01T00:00:00Z artifact
@@ -523,6 +538,25 @@ cm "$e5" 2030-01-01T00:00:00Z record
 w "$e5/notes/impl.md" "implementation, edited but uncommitted"
 check "evidence: stale record found (described path dirty)" "stale record found" 0 "$e5" \
 	"$evidence" logs/run.md notes/impl.md
+
+e17=$(repo evidence-symlink-inputs)
+w "$e17/notes/impl.md" "implementation"
+cm "$e17" 2020-02-01T00:00:00Z impl
+w "$e17/logs/run.md" "ran the suite"
+cm "$e17" 2020-03-01T00:00:00Z record
+ln -s "$work/private-target.txt" "$e17/logs/linked.md"
+ln -s "$work/private-target.txt" "$e17/notes/linked.md"
+ln -s "$work" "$e17/linked-search-root"
+check "evidence: not run (symlink record)" "not run" 4 "$e17" \
+	"$evidence" logs/linked.md notes/impl.md
+check "evidence: not run (symlink described path)" "not run" 4 "$e17" \
+	"$evidence" logs/run.md notes/linked.md
+check "evidence: not run (symlink search root)" "not run" 4 "$e17" \
+	"$evidence" --check-name private-target.txt linked-search-root
+check "evidence: not run (record outside repository)" "not run" 4 "$e17" \
+	"$evidence" ../private-target.txt notes/impl.md
+check "evidence: not run (search root outside repository)" "not run" 4 "$e17" \
+	"$evidence" --check-name private-target.txt "$work"
 
 # --- Listing caps on a large surface -----------------------------------------
 # A capped listing has to stay a report, not a truncation that kills the run:
@@ -756,6 +790,8 @@ if [ -f "$ref" ]; then
 	done
 	# The exit-2 row names the absent-input verdicts itself, so the pin reads
 	# them from the table rather than restating them here.
+	# The backticks are literal Markdown delimiters.
+	# shellcheck disable=SC2016
 	absent_verdicts=$(grep -F '2 with absent-input verdict' "$ref" |
 		grep -o '`[^`]*`' | tr -d '`')
 	observed=$(sort -u "$work/observed")

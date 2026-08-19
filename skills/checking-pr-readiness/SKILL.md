@@ -1,6 +1,6 @@
 ---
 name: checking-pr-readiness
-description: Use when branch work looks complete and needs a readiness decision before another workflow opens a pull request, when asked whether the branch is ready to ship, or when a caller requests an assessment-only exact-subject and exact-revision PR-readiness receipt. Interactive runs end in one owner decision plus an evidence pack; assessment-only runs return one machine-readable pass or action-required receipt without a menu. A direct request to write, open, create, or submit a pull request belongs to PR publishing, not this skill. Do not use for existing-PR feedback, the pre-merge global pass, code review, simplification, plan review, general library production-readiness questions, or merging.
+description: Use when branch work looks complete and needs a readiness decision before another workflow opens a pull request, when asked whether the branch is ready to ship, or when a caller requests an assessment-only exact-subject and exact-revision PR-readiness receipt. Interactive runs end in one owner decision plus an evidence pack; assessment-only runs return one machine-readable pass or action-required receipt without a menu. A direct request to write, open, create, or submit a pull request belongs to PR publishing, not this skill. Do not use for existing-PR feedback, the pre-merge whole-change review, code review, simplification, plan review, general library production-readiness questions, or merging.
 license: MIT
 compatibility: Requires a git worktree and read access to the host repository. Companion checks degrade to named skips when their skills or tooling are absent.
 ---
@@ -9,7 +9,7 @@ compatibility: Requires a git worktree and read access to the host repository. C
 Check whether a branch is ready to enter the pull request and
 continuous-integration process, then take one owner decision. Internally the
 gate gathers the full working surface, upstream-step receipts,
-plan-versus-delivered, targeted sweep, and learning signal. The spoken readout
+plan-versus-delivered, pre-PR review checks, and learning signal. The spoken readout
 uses a Minto pyramid readout for the ship decision (shape in step 7). A
 branch is ready when every check below carries a status word, every
 finding has a disposition, and the owner has approved that readout.
@@ -168,7 +168,7 @@ stated reason in the evidence pack.
 Completion: the readout carries exactly one of the three signals, and any
 approval past an uncaptured learning carries the owner's recorded reason.
 
-### 6. Run the targeted sweep
+### 6. Run the Pre-PR Review Checks
 
 Read [references/sweep-classes.md](references/sweep-classes.md) and work its
 classes in the order listed there, then surface findings in that same order.
@@ -345,7 +345,7 @@ carries the composed evidence pack for the finishing path.
   exists durably only once the pull request body carries it.
 - When `checking-merge-readiness` is also installed, roles stay complementary:
   this gate optimizes entry to review; merge-readiness owns the pre-merge
-  global pass. Neither requires the other at runtime. An evidence pack is
+  whole-change review. Neither requires the other at runtime. An evidence pack is
   optional enrichment for merge-readiness, never a required input.
 - A bottom-up inventory, evidence dump, or a menu that contradicts the
   recommendation fails this skill even when the checks are right. The Minto

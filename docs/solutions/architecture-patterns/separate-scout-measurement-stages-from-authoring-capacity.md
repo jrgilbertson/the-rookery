@@ -222,6 +222,6 @@ interrupted mutations (`tests/repo-gardener/log.md`).
 
 ## Related
 
-- [Use independent contexts for skill grading and review](../best-practices/independent-fresh-context-review-for-agent-skills.md)
+- [Use independent contexts for skill grading and review](../best-practices/independent-fresh-context-review-for-skills.md)
 - [Ship bundled skill helpers with an executable falsifiability contract](../workflow-issues/falsifiability-contracts-need-executable-tests.md)
-- [Make agent skill safe stops local and observable](../workflow-issues/make-agent-skill-safe-stops-local-and-observable.md)
+- [Make skill safe stops local and observable](../workflow-issues/make-skill-safe-stops-local-and-observable.md)

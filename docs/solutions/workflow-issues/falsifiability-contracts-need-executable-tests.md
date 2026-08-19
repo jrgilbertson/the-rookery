@@ -23,7 +23,7 @@ resolution_type: tooling_addition
 related_components:
   - development_workflow
   - tooling
-tags: [agent-skills, helper-scripts, falsifiability-contract, silent-pass, fixture-testing, exit-codes, fail-closed, execution-based-review, jq-null-object, unvalidated-ref, sigpipe, recurrence]
+tags: [skills, helper-scripts, falsifiability-contract, silent-pass, fixture-testing, exit-codes, fail-closed, execution-based-review, jq-null-object, unvalidated-ref, sigpipe, recurrence]
 ---
 
 # Ship bundled skill helpers with an executable falsifiability contract
@@ -390,7 +390,7 @@ assertion passing (`0 failed`).
 - `docs/solutions/workflow-issues/verify-disposition-claims-before-landing-a-prune.md`
   shows the same failure shape in prose claims: assertions that pass because
   nothing forces them to be checked against the actual artifact.
-- `docs/solutions/best-practices/independent-fresh-context-review-for-agent-skills.md`
+- `docs/solutions/best-practices/independent-fresh-context-review-for-skills.md`
   covers the review-independence half of the same lesson. This learning adds
   that for an executable artifact, independence must include execution, not
   only fresh context.
@@ -403,7 +403,7 @@ assertion passing (`0 failed`).
 - `tests/checking-pr-readiness/log.md:11` records the first green 34/34 run
   after the original fixes; the harness has since grown to 154 assertions.
 - `skills/checking-merge-readiness/references/fetch-floor.md` names
-  `fetch-pr-history.sh` the preferred transport for the merge digest's history
+  `fetch-pr-history.sh` the preferred transport for the merge-readiness review's history
   surfaces, which is exactly why a silent-pass hole in it would degrade every
   digest that relies on it.
 - `tests/checking-merge-readiness/fixtures/run-fetch-checks.sh` states the

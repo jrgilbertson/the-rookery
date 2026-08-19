@@ -9,7 +9,9 @@ renders, previews, inspection files, dependency links), goes in a per-run
 temporary directory outside the working directory, and final artifacts go only
 to an explicitly approved external or private destination.
 
-The `outputs/` ignore rule is a safety net, not an approved storage location.
+The root `outputs/` directory remains ignored as a privacy safeguard for older
+Codex Desktop and similar tooling that may write generated artifacts there. It
+is not part of the current workflow or an approved storage location.
 
 Before staging or committing, inspect all untracked paths and confirm that no
 personal or business artifacts are present.

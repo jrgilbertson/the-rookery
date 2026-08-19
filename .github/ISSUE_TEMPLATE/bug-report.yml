@@ -3,12 +3,16 @@ description: Something in a skill or the repo is broken, wrong, or misbehaving
 title: "[bug] "
 labels: ["bug"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Please do not report vulnerabilities here. Use private vulnerability reporting from the repository's Security tab, as described in SECURITY.md.
   - type: input
     id: skill
     attributes:
       label: Skill or area
       description: Which skill (or repo area, e.g. README, install instructions) is affected?
-      placeholder: e.g. huginn, install instructions
+      placeholder: e.g. storm-research, install instructions
     validations:
       required: true
   - type: input
@@ -37,5 +41,12 @@ body:
     attributes:
       label: How to reproduce
       description: The prompt or steps that trigger it. Strip anything private before pasting.
+    validations:
+      required: false
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Add sanitized logs, screenshots, or links that help explain the problem.
     validations:
       required: false

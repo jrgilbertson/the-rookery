@@ -1,6 +1,7 @@
 ---
 name: storm-research
 description: "Use only for requests whose deliverable is a full research briefing, a STORM-style investigation, or an evidence review across multiple independent perspectives. The work compares competing evidence, maps contradictions and blind spots, and supports decisions, investments, negotiations, long-form writing, presentations, or learning a new domain."
+license: MIT
 ---
 
 # Storm Research
@@ -8,6 +9,11 @@ description: "Use only for requests whose deliverable is a full research briefin
 Produce a grounded research briefing by establishing baseline facts, finding
 perspectives suggested by the sources, asking independent lens-specific questions,
 preserving disagreement, and auditing reliability and source quality.
+
+The multi-perspective research pattern is inspired by Stanford OVAL's
+[STORM](https://arxiv.org/abs/2402.14207), "Synthesis of Topic Outlines through
+Retrieval and Multi-perspective Question Asking." This skill is an independent
+research workflow, not a distribution of the STORM software.
 
 Material means capable of changing the answer, confidence, or next action.
 

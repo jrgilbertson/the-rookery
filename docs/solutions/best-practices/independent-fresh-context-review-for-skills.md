@@ -1,18 +1,18 @@
 ---
-module: agent-skill evaluation
+module: skill evaluation
 date: 2026-07-27
 last_updated: 2026-08-17
 problem_type: best_practice
 component: testing_framework
 severity: high
 applies_when:
-  - "Grading matched prior and revised agent-skill outputs"
-  - "Performing a final package review after creating or revising an agent skill"
+  - "Grading matched prior and revised skill outputs"
+  - "Performing a final package review after creating or revising a skill"
   - "Deciding whether a behavioral artifact crossed every workflow boundary named by its pass claim"
   - "Recording a result when an independent review context is unavailable"
   - "Recording fresh-context judgments without archiving full transcripts"
 tags:
-  - agent-skills
+  - skills
   - independent-review
   - fresh-context
   - artifact-inspection

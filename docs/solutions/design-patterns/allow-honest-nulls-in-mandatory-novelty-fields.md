@@ -16,7 +16,7 @@ related_components:
   - testing_framework
   - documentation
 tags:
-  - agent-skills
+  - skills
   - prompt-schema
   - evidence-gating
   - null-output
@@ -218,5 +218,5 @@ onboarding completion rates, support demand, and customer behavior over time.
 ## Related
 
 - [Operationalize abstract qualifiers in instruction review](../best-practices/operationalize-abstract-qualifiers-in-instruction-review.md) defines observable thresholds for vague agent-facing language. This pattern extends that guidance to a required schema field whose valid result may be null.
-- [Independent fresh-context review for agent skills](../best-practices/independent-fresh-context-review-for-agent-skills.md) describes the isolation needed to verify semantic instruction changes without allowing author context to leak into grading.
+- [Independent fresh-context review for skills](../best-practices/independent-fresh-context-review-for-skills.md) describes the isolation needed to verify semantic instruction changes without allowing author context to leak into grading.
 - [Falsifiability contracts need executable tests](../workflow-issues/falsifiability-contracts-need-executable-tests.md) explains why distinct semantic states need distinct, adversarially tested outcomes.

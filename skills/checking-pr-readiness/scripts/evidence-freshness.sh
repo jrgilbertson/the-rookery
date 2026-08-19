@@ -115,6 +115,14 @@ fail_usage() {
 	exit 2
 }
 
+validate_bounded_text() {
+	local LC_ALL=C label="$1" value="$2" maximum="$3"
+	[ "${#value}" -le "$maximum" ] || fail_usage "$label must be at most $maximum bytes"
+	if [[ "$value" =~ [[:cntrl:]] ]]; then
+		fail_usage "$label must be a single line without control characters"
+	fi
+}
+
 if [ "$#" -eq 0 ]; then
 	fail_usage "no arguments given"
 fi
@@ -136,6 +144,7 @@ while [ "$#" -gt 0 ]; do
 	--defer)
 		[ "$#" -ge 2 ] || fail_usage "--defer requires a gate name"
 		[ -n "$2" ] || fail_usage "--defer requires a non-empty gate name"
+		validate_bounded_text "--defer gate name" "$2" 128
 		defer_gate="$2"
 		shift 2
 		;;
@@ -196,6 +205,7 @@ if [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" != "true" ]; then
 fi
 
 cd "$(git rev-parse --show-toplevel)"
+repo_root=$(pwd -P)
 
 fail_read() {
 	printf 'verdict: not run\n'
@@ -203,6 +213,52 @@ fail_read() {
 	printf 'detail: a failed git read is not a clean status or an empty listing, so no freshness verdict is reported.\n'
 	exit 4
 }
+
+fail_unsafe_path() {
+	printf 'verdict: not run\n'
+	printf 'reason: unsafe %s: the path must stay within the repository and contain no symbolic links\n' "$1"
+	printf 'detail: repository paths are validated before any read.\n'
+	exit 4
+}
+
+validate_repo_path() {
+	local raw_path="$1" path_label="$2" relative_path current_path remaining_path component
+	case "$raw_path" in
+	"$repo_root") relative_path="" ;;
+	"$repo_root"/*) relative_path="${raw_path#"$repo_root"/}" ;;
+	/*) fail_unsafe_path "$path_label" ;;
+	*) relative_path="$raw_path" ;;
+	esac
+
+	current_path="$repo_root"
+	remaining_path="$relative_path"
+	while [ -n "$remaining_path" ]; do
+		component="${remaining_path%%/*}"
+		if [ "$remaining_path" = "$component" ]; then
+			remaining_path=""
+		else
+			remaining_path="${remaining_path#*/}"
+		fi
+		case "$component" in
+		'' | .) continue ;;
+		..) fail_unsafe_path "$path_label" ;;
+		esac
+		current_path="${current_path}/${component}"
+		[ ! -L "$current_path" ] || fail_unsafe_path "$path_label"
+	done
+}
+
+if [ "$mode" = "name" ]; then
+	validate_repo_path "$search_root" "search root"
+else
+	validate_repo_path "$record" "record path"
+	while IFS= read -r described_path; do
+		[ -n "$described_path" ] || continue
+		validate_repo_path "$described_path" "described path"
+	done <<EOF
+$described
+EOF
+fi
 
 # Every git read the comparison depends on goes through this: an empty result
 # and a failed read look identical once the status is discarded, and a failed

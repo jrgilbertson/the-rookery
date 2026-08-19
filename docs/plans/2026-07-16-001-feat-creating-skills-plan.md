@@ -16,7 +16,7 @@ Naming note: after this plan was finalized, the owner renamed the skill to `crea
 
 ## Goal Capsule
 
-- **Objective:** Ship `creating-skills`, The Rookery's first skill — a portable Agent Skills creator and maintainer that enforces the discipline a bare "help me write a skill" prompt skips.
+- **Objective:** Ship `creating-skills`, The Rookery's first skill — a portable skill creator and maintainer that enforces the discipline a bare "help me write a skill" prompt skips.
 - **Authority hierarchy:** Owner decisions recorded in this document > Product Contract > Planning Contract > implementer judgment on details the plan leaves open.
 - **Execution profile:** Docs-only repository; no application build. Verification runs through CLI probes (`npx skills-ref`, `npx skills add`), grep gates, and live agent runs across harnesses.
 - **Stop conditions:** Surface a blocker instead of guessing when a verification gate cannot run at all, when work would contradict a Product Contract requirement, or when scope would expand beyond the shelf-integration boundary.
@@ -29,13 +29,13 @@ Naming note: after this plan was finalized, the owner renamed the skill to `crea
 
 ### Summary
 
-`creating-skills` walks an agent and its user through creating a new Agent Skill or reviewing an existing one via a single loop — interview, draft, static validate, baseline test, review pass, package — producing skills that are portable across models and harnesses. It is standalone by construction: deep eval design and deep review vocabulary are recommended companions, never dependencies.
+`creating-skills` walks an agent and its user through creating a new skill or reviewing an existing one via a single loop — interview, draft, static validate, baseline test, review pass, package — producing skills that are portable across models and harnesses. It is standalone by construction: deep eval design and deep review vocabulary are recommended companions, never dependencies.
 
 ### Problem Frame
 
 Frontier models already know the SKILL.md format, so format knowledge adds nothing. What a bare prompt reliably skips is the discipline: portability gates get ignored, instructions accrete without evidence (skills drift longer and degrade with each manual edit), descriptions go untested as trigger contracts, and every skill lands through a slightly different process.
 
-The existing creator skills from vendors assume their own harness as the source of truth, which is exactly what The Rookery cannot inherit — its promise is that one canonical skill works across Claude Code, Codex, and anything else that reads the Agent Skills format. This skill is also the migration vehicle: every skill ported from the maintainer's private toolkit gets reviewed and fixed through it, so it must exist before the rest of the shelf.
+The existing creator skills from vendors assume their own harness as the source of truth, which is exactly what The Rookery cannot inherit — its promise is that one canonical skill works across Claude Code, Codex, and anything else that implements the [Agent Skills specification](https://agentskills.io/specification). This skill is also the migration vehicle: every skill ported from the maintainer's private toolkit gets reviewed and fixed through it, so it must exist before the rest of the shelf.
 
 ### Key Decisions
 
@@ -43,14 +43,14 @@ The existing creator skills from vendors assume their own harness as the source 
 - **The with/without baseline test is native, not optional.** Every authority treats the 2-3 case baseline comparison as a core step of skill creation itself; only durable eval infrastructure (graders, suites, calibration) belongs to the companion.
 - **Adaptive to the host repo.** The skill discovers and follows the host repo's own skill conventions when present instead of hardcoding The Rookery's pipeline — the same-door rule applied to process.
 - **Core plus disclosed references.** A tight workflow SKILL.md with references and templates one level deep, matching the proven vendor-creator shape and the compact-beats-comprehensive evidence. Static validation reuses the standard `skills-ref` validator via `npx`; no bundled scripts.
-- **Portable frontmatter only in canonical output.** Skills it produces use only Agent Skills spec fields; harness-specific extras are documented as optional adapters.
+- **Portable frontmatter only in canonical output.** Skills it produces use only the specification's fields; harness-specific extras are documented as optional adapters.
 - **Named `creating-skills`.** Gerund, verb-led, matching both the house naming convention and vendor guidance.
 
 ### Actors
 
 - A1. The maintainer, curating The Rookery and migrating skills from the private toolkit.
 - A2. A visitor skill author who installed `creating-skills` standalone into their own repo and harness.
-- A3. The executing agent, on any Agent Skills-compatible harness and model tier.
+- A3. The executing agent, on any compatible harness and model tier.
 
 ### Requirements
 
@@ -63,7 +63,7 @@ The existing creator skills from vendors assume their own harness as the source 
 
 **Portability**
 
-- R5. Skills it produces use only Agent Skills specification frontmatter (`name`, `description`, `license`, `compatibility`, `metadata`); vendor fields stay out of the canonical package.
+- R5. Skills it produces use only the specification's frontmatter fields (`name`, `description`, `license`, `compatibility`, `metadata`); vendor fields stay out of the canonical package.
 - R6. Instruction prose it produces is capability-based and tool-neutral; harness-specific quirks (Codex `agents/openai.yaml`, Claude naming rules, listing budgets) live in a disclosed reference marked as optional adapter material.
 - R7. Produced skills are self-contained directories with no reach outside the skill folder, no absolute paths, and no personal-environment assumptions.
 - R8. Descriptions are authored as trigger contracts — triggering conditions first, front-loaded keywords, within the 1024-character limit — and tested against a should-trigger / near-miss query set.
@@ -132,7 +132,7 @@ flowchart TB
 
 - Durable eval infrastructure — graders, datasets, calibration, cross-harness eval runners — stays in `design-evals` and the portable-evals follow-up (private toolkit #222).
 - No plugin or harness-specific package creation.
-- No reimplementation or local fork of the Agent Skills specification.
+- No reimplementation or local fork of the specification.
 - The Rookery README rewrite is the maintainer's manual task, not this skill's output.
 - Flipping the repository public and the OSS-hygiene fixes are a separate infrastructure track.
 

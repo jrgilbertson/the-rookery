@@ -1,5 +1,5 @@
 ---
-title: "Make agent-skill safe stops local and observable"
+title: "Make skill safe stops local and observable"
 date: 2026-08-11
 category: workflow-issues
 module: "skills/repo-gardener"
@@ -10,10 +10,10 @@ applies_when:
   - "A workflow can block one effect while independent allowed work remains"
   - "Scheduling, invocation liveness, and executor ownership can change independently"
   - "A lifecycle transition can invalidate a one-shot terminal report"
-tags: [agent-skills, safe-stops, blocker-locality, caller-lifecycle, receipts]
+tags: [skills, safe-stops, blocker-locality, caller-lifecycle, receipts]
 ---
 
-# Make agent-skill safe stops local and observable
+# Make skill safe stops local and observable
 
 ## Context
 
@@ -103,4 +103,4 @@ the report effect is uncertain.
 ## Related
 
 - [Verify disposition claims before landing a prune](verify-disposition-claims-before-landing-a-prune.md)
-- [Independent fresh-context review for agent skills](../best-practices/independent-fresh-context-review-for-agent-skills.md)
+- [Independent fresh-context review for skills](../best-practices/independent-fresh-context-review-for-skills.md)

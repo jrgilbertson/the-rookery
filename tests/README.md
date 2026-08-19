@@ -5,6 +5,25 @@ canonical statement of the testing convention; the templates in
 `skills/creating-portable-skills/assets/` restate it for portable use and defer
 to it inside this repository.
 
+## Repository checks
+
+Run the same deterministic door used by CI before pushing:
+
+```bash
+lefthook run pre-push --force --no-auto-install
+```
+
+The group validates the published catalog, repository text and configuration,
+current-tree secrets, and the explicit deterministic fixture roster. GitHub
+Actions runs this same non-empty group as the required `Tests Status` job.
+The local invocation grades the current tracked and untracked working tree;
+run it from a clean candidate checkout when binding release evidence to a
+commit. The hosted job grades its checked-out revision and is the authoritative
+revision-bound result.
+Behavioral cases and install probes remain release evidence and are selected by
+the change-based cost guidance below; they are not silently treated as part of
+the deterministic door.
+
 ## Artifacts
 
 Each skill keeps exactly three artifacts, plus `fixtures/` when cases need
@@ -43,6 +62,9 @@ note`. The `git rev` field names the commit the run's working tree was
 - Git is the archive. Beyond the log format's required `git rev` field, no
   hand-recorded hashes, session IDs, evidence labels, or run ledgers in
   these artifacts.
+- Name the independent-review mechanism in the log line, such as a fresh
+  session, CLI run, or subagent. Do not record context identifiers. Naming the
+  mechanism does not replace the output or trace evidence behind the judgment.
 
 ## Cost hierarchy
 

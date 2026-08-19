@@ -485,6 +485,9 @@ def published_contract() -> None:
         "do not reconstruct private API calls or fall through to Orca",
         "high` to `2`",
         "pass the resulting number, never the config string",
+        "workspace-scoped readiness group",
+        "Apply a child, never the parent",
+        "manual cleanup",
     ):
         require(phrase in compact_linear, f"Linear transport contract omits {phrase}")
 

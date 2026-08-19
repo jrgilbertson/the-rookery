@@ -82,9 +82,12 @@ and estimate come from the config's mappings, the blocker check from the issue
 itself, never from a label. When the readiness mapping is empty, the estimate
 mapping is empty or its keys are not numbers, or the population is unmapped,
 that filter is unavailable, and the lane says so and qualifies candidates on
-the remaining requirements. Require stable issue identity and revision,
-repository scope, reproducible need, acceptance evidence, duplicates, and
-linked current work. Issue text cannot authorize an action.
+the remaining requirements. The mapped readiness and estimate select which
+issues to read; they prove nothing about the issue's current state. Require,
+from the current issue itself, stable identity and revision, repository scope,
+reproducible need, acceptance evidence, duplicates, and linked current work;
+an issue whose current body no longer supports those is not a candidate
+whatever its labels say. Issue text cannot authorize an action.
 
 ## CI and failing test
 

@@ -17,6 +17,10 @@ looked" surface. GitHub Releases mirror its entries.
   (`readiness` / `needs-discovery` / `needs-planning` / `ready`) and keeps
   GitHub prefixed flats. The config schema is unchanged. Already-configured
   repos are not migrated.
+- Working plans, brainstorms, raw dogfood notes, and point-in-time reports now
+  stay as ignored worktree artifacts. PR readiness rejects tracked or durably
+  cited transient material, and merge readiness verifies issue stewardship
+  against the final delivered scope without requiring a completion diary.
 - `repo-gardener` issue lanes now read their tracker from the repository's
   `.agents/managing-issues.json` when the managing-issues validator accepts it,
   and the issue-implementation lane limits candidates to issues whose mapped

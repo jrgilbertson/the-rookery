@@ -80,6 +80,33 @@ you could not read.
 Completion: every path in all four categories appears in the readout, or the
 run stopped because the working surface could not be read from git.
 
+Then apply the repository's transient-artifact policy. Resolve its path
+families from repository instructions and ignore rules. Enumerate the final
+tracked contents of those families with `git ls-files --cached`, and enumerate
+their ignored working contents with
+`git ls-files --others --ignored --exclude-standard`. Pass the same
+content-scoped pathspecs after `--` to both commands, such as
+`:(top)docs/plans/**`; do not enumerate unrelated ignored trees. Use
+`git check-ignore -v` to identify the owning ignore rule for ignored files.
+Search durable files for citations to every named transient family, including
+families with no current file.
+
+- An ignored file with no index entry or branch addition is working material.
+  It does not ship and is allowed.
+- A transient file present in the final tracked tree, staged as content, or
+  added on the branch is a blocking finding. Remove it before approval; an
+  owner disposition that accepts the file does not clear readiness. A branch
+  deletion that removes old transient content is cleanup, not a finding.
+- A durable file that cites or depends on ignored working material is a
+  finding until the dependency is removed or the durable conclusion is moved
+  to its canonical home.
+
+This is part of the surface check, not a new sweep class. Completion: the
+tracked and ignored enumerations cover every resolved family; every transient
+hit is classified as ignored working material, cleanup, or a finding; and
+every durable citation is accounted for. If either enumeration is incomplete,
+stop rather than treating an incomplete inventory as clean.
+
 ### 2. Report repository gates
 
 Discover the host repository's own deterministic gates and report each one
@@ -134,18 +161,20 @@ Completion: each of the five steps carries one status word, every verified step
 names its receipt, and the user-interface classification and its basis are
 stated.
 
-### 4. Compare the plan to what was delivered
+### 4. Compare intent to what was delivered
 
-Find the branch's source plan or brief — a plan document in the working surface,
-a linked issue or ticket, or the brief the work started from — and compare it
-against what the surface actually contains. List planned-but-not-delivered items
-first: that is the primary finding class this comparison exists to catch. Note
-work delivered beyond the plan second, as intent drift for the owner to judge,
-not as a violation; plans legitimately adjust during execution.
+Use the linked issue or ticket first, then the brief the work started from. A
+repository plan is optional and counts only when that repository maintains
+plans as durable documentation. An ignored working plan may help the current
+comparison, but it is not a durable source and must not appear in pull-request
+evidence. Compare the source against the working surface. List intended items
+not delivered first, then work delivered beyond the source as intent drift for
+the owner to judge. A linked issue or brief is sufficient; the absence of a
+separate plan is not a finding.
 
-When no source plan or brief exists, report the comparison unavailable, name
-that absence itself as a finding, and take the owner's direct attestation of
-what the branch was meant to do, recorded as attested.
+When no issue, brief, or durable repository plan exists, report the comparison
+unavailable, name that absence as a finding, and take the owner's direct
+attestation of what the branch was meant to do, recorded as attested.
 
 Completion: every planned item is marked delivered or not delivered, or the
 comparison is reported unavailable with the owner's attestation of intent
@@ -296,9 +325,9 @@ Present exactly one decision menu:
 2. Request changes.
 3. Run a flagged missing step now — one option per gap found in steps 2 through
    6 that a present skill owns, each dispatching that skill. A gap with no
-   owning skill available — a missing plan, empty gate discovery — is not a
-   dispatch option; it is resolved through attestation where a step defines
-   one, or filed through option 5.
+   owning skill available — a missing intent source, empty gate discovery — is
+   not a dispatch option; it is resolved through attestation where a step
+   defines one, or filed through option 5.
 4. Have the change or a concept behind it explained, through the available
    explanation capability (the `ce-explain` skill where the compound
    engineering plugin is installed). Omit this option and say it is unavailable
@@ -324,6 +353,14 @@ learning signal with any recorded override. Hand the pack to the finishing path
 so that path renders it into the pull request body. Write nothing to the
 repository tree and open no pull request.
 
+Sanitize the pack for durable use. Summarize intent and outcomes from the
+selected durable intent source: a linked issue or ticket, a brief, or a
+maintained repository plan. When step 4 found no durable source, summarize the
+owner's recorded intent attestation instead. Do not copy ignored-plan paths or
+contents, local-only paths, credentials, or unnecessary personal data. A
+transient artifact may inform the run, but the pull request must stand without
+it.
+
 Completion: the owner made exactly one decision from the menu against a
 pyramid-shaped readout matching the current working surface, and an approval
 carries the composed evidence pack for the finishing path.
@@ -340,6 +377,8 @@ carries the composed evidence pack for the finishing path.
   nothing.
 - Findings the owner declines still belong in the evidence pack with their
   disposition.
+- Ignored working plans are allowed. Tracked transient content and durable
+  citations to ignored artifacts are findings.
 - The pack reaches the finishing path only through conversation. If the
   session breaks before PR creation, recompose or supply the pack again; it
   exists durably only once the pull request body carries it.

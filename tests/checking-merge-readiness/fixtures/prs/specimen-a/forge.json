@@ -23,6 +23,36 @@
     "web/invoices/ListToolbar.tsx",
     "tests/api/test_export.py"
   ],
+  "closingIssuesReferences": [
+    {
+      "number": 73,
+      "url": "https://github.com/mapleworks/orderline/issues/73",
+      "repository": {
+        "name": "orderline",
+        "owner": {
+          "login": "mapleworks"
+        }
+      }
+    }
+  ],
+  "sourceIssue": {
+    "number": 73,
+    "title": "Export filtered invoices as CSV",
+    "body": "Let finance export the currently filtered invoices as a CSV without buffering the full result set. Scheduled exports and XLSX output remain separate work.",
+    "state": "OPEN",
+    "url": "https://github.com/mapleworks/orderline/issues/73",
+    "comments": [
+      {
+        "id": "IC_a0",
+        "author": {
+          "login": "petra-dev"
+        },
+        "body": "The pull request delivers the requested CSV export. Scheduled exports and XLSX remain out of scope.",
+        "createdAt": "2026-07-20T17:00:00Z",
+        "url": "https://github.com/mapleworks/orderline/issues/73#issuecomment-1"
+      }
+    ]
+  },
   "userContentEdits": [],
   "reviews": [
     {

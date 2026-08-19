@@ -11,11 +11,21 @@ Thumbs.db
 # Legacy Codex Desktop or similar generated artifacts may contain private data.
 outputs/
 
-# docs/ is deliberately NOT ignored — working documents ship public.
+# Durable docs stay tracked; temporary working paths are listed below.
 __pycache__/
 
 # Local agent worktrees.
 .claude-worktrees/
+
+# Temporary working artifacts. Durable outcomes belong in code, tests, issues,
+# ADRs, release docs, or docs/solutions/.
+/docs/plans/
+/docs/brainstorms/
+/docs/ideation/
+/docs/dogfood-reports/
+/docs/reports/
+/docs/pulse-reports/
+/plans/
 
 # impeccable-ignore-start
 # Ephemeral output, runtime state, and per-dev overrides.

@@ -18,8 +18,8 @@ Optional env:
 
 Contract (deliberately small):
   - serve only the skill's fixed read set: pr view --json (incl. merge state),
-    pr diff, issue view --json for linked source issues, api graphql
-    (history + branchProtectionRules), and api
+    pr diff, issue view --json for linked source-issue metadata, api graphql
+    (history + linked-issue comments + branchProtectionRules), and api
     repos/.../rules/branches/{base} for merge policy
   - refuse writes and out-of-set verbs
   - refuse a selector that names another pull request
@@ -198,10 +198,7 @@ def pr_view(argv, forge):
 
 def issue_selector_check(argv, forge):
     """Resolve only the specimen's repository-local source issues."""
-    issues = forge.get("sourceIssues")
-    if not isinstance(issues, list):
-        issue = forge.get("sourceIssue")
-        issues = [issue] if isinstance(issue, dict) else []
+    issues = source_issues(forge)
     if not issues:
         die("this specimen has no linked source issue", 1)
 
@@ -269,7 +266,6 @@ def issue_view(argv, forge):
         "body": issue.get("body", ""),
         "state": issue.get("state", "OPEN"),
         "url": issue.get("url", ""),
-        "comments": issue.get("comments", []),
     }
     if not fields:
         die("`issue view` requires --json for the skill's fixed read", 2)
@@ -342,6 +338,30 @@ def bound(name, bindings):
             2,
         )
     return bindings[name]
+
+
+def source_issues(forge):
+    issues = forge.get("sourceIssues")
+    if isinstance(issues, list):
+        return issues
+    issue = forge.get("sourceIssue")
+    return [issue] if isinstance(issue, dict) else []
+
+
+def resolve_named_integer(args, field, bindings):
+    literal = re.search(rf"\b{field}\s*:\s*(\d+)", args)
+    if literal:
+        return int(literal.group(1))
+    variable = re.search(rf"\b{field}\s*:\s*\$(\w+)", args)
+    if variable:
+        raw = bound(variable.group(1), bindings)
+        if not re.fullmatch(r"\d+", raw):
+            die(
+                f"variable ${variable.group(1)} is not a non-negative integer: {raw!r}",
+                2,
+            )
+        return int(raw)
+    die(f"`{field}` is required", 2)
 
 
 def resolve_first(args, bindings):
@@ -472,8 +492,11 @@ def graphql(argv, forge):
     bindings = field_bindings(argv)
     nested_comment_args = connection_args(query, "comments", which="first")
     top_comment_args = connection_args(query, "comments", which="last")
+    serves_pull_request = bool(re.search(r"\bpullRequest\b", query))
     pr, served_pr = {}, False
     for name, required in SERVED_CONNECTIONS.items():
+        if not serves_pull_request:
+            break
         if not re.search(rf"\b{name}\b", query):
             continue
         # Nested `comments(` under reviewThreads is not the top-level
@@ -514,11 +537,58 @@ def graphql(argv, forge):
         pr[name] = {"nodes": out, "pageInfo": info}
         served_pr = True
 
+    served_issue = bool(re.search(r"\bissue\s*\(", query))
+    issue_payload = None
+    if served_issue:
+        issue_fields = ("number", "title", "body", "state", "url")
+        missing = [field for field in issue_fields if not re.search(rf"\b{field}\b", query)]
+        comment_fields = ("id", "body", "author", "createdAt", "pageInfo")
+        missing += [
+            field
+            for field in comment_fields
+            if not re.search(rf"\b{field}\b", query)
+        ]
+        if missing:
+            die(
+                "`issue` is requested without " + ", ".join(missing) +
+                "; a real response would omit what the skill depends on",
+                2,
+            )
+        issue_number = resolve_named_integer(
+            connection_args(query, "issue"), "number", bindings
+        )
+        issue = next(
+            (
+                candidate
+                for candidate in source_issues(forge)
+                if candidate.get("number") == issue_number
+            ),
+            None,
+        )
+        if issue is None:
+            die(f"no source issue {issue_number} in this specimen", 1)
+        comment_nodes, _, comment_info = page(
+            issue.get("comments", []),
+            connection_args(query, "comments", which="last"),
+            f"issue[{issue_number}].comments",
+            forge,
+            bindings,
+        )
+        issue_payload = {
+            field: issue.get(field, "")
+            for field in issue_fields
+        }
+        issue_payload["comments"] = {
+            "nodes": [shape(node) for node in comment_nodes],
+            "pageInfo": comment_info,
+        }
+
     served_protection = bool(re.search(r"\bbranchProtectionRules\b", query))
-    if not served_pr and not served_protection:
+    if not served_pr and not served_issue and not served_protection:
         die(
             "query names none of reviewThreads, reviews, userContentEdits, "
-            "the top-level comments connection, or branchProtectionRules; "
+            "the top-level comments connection, issue comments, or "
+            "branchProtectionRules; "
             "this stub serves only the skill's fixed read set",
             2,
         )
@@ -527,6 +597,8 @@ def graphql(argv, forge):
     if served_pr:
         pr.setdefault("number", forge.get("number"))
         repo["pullRequest"] = pr
+    if served_issue:
+        repo["issue"] = issue_payload
     if served_protection:
         repo["branchProtectionRules"] = branch_protection_payload(forge)
     print(json.dumps({"data": {"repository": repo}}, indent=2))

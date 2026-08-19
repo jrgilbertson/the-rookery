@@ -80,33 +80,32 @@ you could not read.
 Completion: every path in all four categories appears in the readout, or the
 run stopped because the working surface could not be read from git.
 
-Then apply the repository's transient-artifact policy. Resolve transient paths
-from its instructions and ignore rules, and use Git state rather than directory
-presence to classify them:
-
-- Enumerate ignored working files only within the resolved transient path
-  families. Pass those families after `--` as pathspecs to
-  `git ls-files --others --ignored --exclude-standard`. Scope each pathspec to
-  directory contents, such as `:(top)docs/plans/**`, rather than the directory
-  name itself. Then use
-  `git check-ignore -v` to identify the rule that owns each transient hit.
-  Do not enumerate unrelated ignored trees. Ordinary surface commands omit
-  these files.
-- Search durable files for citations to every transient path family named by
-  the policy, including families with no ignored file currently present.
+Then apply the repository's transient-artifact policy. Resolve its path
+families from repository instructions and ignore rules. Enumerate the final
+tracked contents of those families with `git ls-files --cached`, and enumerate
+their ignored working contents with
+`git ls-files --others --ignored --exclude-standard`. Pass the same
+content-scoped pathspecs after `--` to both commands, such as
+`:(top)docs/plans/**`; do not enumerate unrelated ignored trees. Use
+`git check-ignore -v` to identify the owning ignore rule for ignored files.
+Search durable files for citations to every named transient family, including
+families with no current file.
 
 - An ignored file with no index entry or branch addition is working material.
   It does not ship and is allowed.
 - A transient file present in the final tracked tree, staged as content, or
-  added on the branch is a finding. A branch deletion that removes an old
-  transient file is cleanup, not a finding.
+  added on the branch is a blocking finding. Remove it before approval; an
+  owner disposition that accepts the file does not clear readiness. A branch
+  deletion that removes old transient content is cleanup, not a finding.
 - A durable file that cites or depends on ignored working material is a
   finding until the dependency is removed or the durable conclusion is moved
   to its canonical home.
 
-This is part of the surface check, not a new sweep class. Completion: every
-transient-path hit is classified as ignored working material, cleanup, or a
-finding, and every durable citation to one is accounted for.
+This is part of the surface check, not a new sweep class. Completion: the
+tracked and ignored enumerations cover every resolved family; every transient
+hit is classified as ignored working material, cleanup, or a finding; and
+every durable citation is accounted for. If either enumeration is incomplete,
+stop rather than treating an incomplete inventory as clean.
 
 ### 2. Report repository gates
 

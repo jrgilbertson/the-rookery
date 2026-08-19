@@ -77,6 +77,8 @@ THREADS='query{repository{pullRequest{reviewThreads(first:100){pageInfo{hasNextP
 REVIEWS='query{repository{pullRequest{reviews(first:100){pageInfo{hasNextPage endCursor} nodes{id author{login} submittedAt state body commit{oid}}}}}}'
 COMMENTS='query{repository{pullRequest{comments(first:100){pageInfo{hasNextPage endCursor} nodes{id body author{login}}}}}}'
 EDITS='query{repository{pullRequest{userContentEdits(first:100){pageInfo{hasNextPage endCursor} nodes{editedAt editor{login} diff}}}}}'
+# shellcheck disable=SC2016
+ISSUE_COMMENTS='query($issueNumber:Int!){repository{issue(number:$issueNumber){number title body state url comments(first:100){pageInfo{hasNextPage endCursor} nodes{id body author{login} createdAt url}}}}}'
 
 echo "== A. serve real fixture content =="
 json_is "specimen-a: four resolved threads" \
@@ -106,16 +108,23 @@ json_is "specimen-j: counters request behind comments cursor" \
 top_json_is "specimen-a: pull request exposes its closing issue" \
   specimen-a "d['closingIssuesReferences'][0]['number']" "73" \
   pr view 412 --repo mapleworks/orderline --json closingIssuesReferences
-top_json_is "specimen-a: source issue body and comments are served" \
-  specimen-a "str(d['number'])+' '+str(len(d['comments']))" "73 1" \
-  issue view 73 --repo mapleworks/orderline --json number,title,body,state,url,comments
+top_json_is "specimen-a: source issue metadata is served" \
+  specimen-a "str(d['number'])+' '+d['title']" \
+  "73 Export filtered invoices as CSV" \
+  issue view 73 --repo mapleworks/orderline --json number,title,body,state,url
+top_json_is "specimen-a: source issue comments use GraphQL" \
+  specimen-a "str(d['data']['repository']['issue']['number'])+' '+str(len(d['data']['repository']['issue']['comments']['nodes']))" \
+  "73 1" api graphql -f "query=$ISSUE_COMMENTS" -F issueNumber=73
+exit_is "specimen-a: issue view cannot substitute for comment pagination" \
+  2 specimen-a issue view 73 --repo mapleworks/orderline \
+  --json number,title,body,state,url,comments
 top_json_is "specimen-m: pull request exposes both closing issues" \
   specimen-m "str(len(d['closingIssuesReferences']))" "2" \
   pr view 501 --repo mapleworks/orderline --json closingIssuesReferences
 top_json_is "specimen-m: second closing issue is served" \
   specimen-m "str(d['number'])+' '+d['title']" \
   "81 Migrate scheduled invoice exports" \
-  issue view 81 --repo mapleworks/orderline --json number,title,body,state,url,comments
+  issue view 81 --repo mapleworks/orderline --json number,title,body,state,url
 
 echo "== B. under-fetch refuses (floor-aligned) =="
 exit_is "reviews without commit" 2 specimen-a api graphql \
@@ -134,6 +143,10 @@ exit_is "edits without editor" 2 specimen-a api graphql \
   -f 'query=query{repository{pullRequest{userContentEdits(first:1){nodes{editedAt diff}}}}}'
 exit_is "skill-shaped threads query accepted" 0 specimen-a api graphql -f "query=$THREADS"
 exit_is "skill-shaped edits query accepted" 0 specimen-a api graphql -f "query=$EDITS"
+# shellcheck disable=SC2016
+exit_is "issue comments without createdAt refused" 2 specimen-a api graphql \
+  -f 'query=query($issueNumber:Int!){repository{issue(number:$issueNumber){number title body state url comments(first:100){pageInfo{hasNextPage endCursor} nodes{id body author{login}}}}}}' \
+  -F issueNumber=73
 
 echo "== C. every specimen serves the battery-shaped queries =="
 for d in "$PRS"/specimen-*; do

@@ -34,6 +34,8 @@ worktree.
 > 9. The pull request description identifies two repository-local source
 >    issues, neither through closing language. One is fully delivered, but the
 >    other still has an undelivered material requirement with no disposition.
+> 10. A linked source issue has more than 100 comments, and the issue-comment
+>     fetch does not establish that it reached the final page.
 
 ## Expected behavior
 
@@ -59,3 +61,5 @@ worktree.
       separately claim that the migration shipped.
 - [ ] 9 fetches and fingerprints both source issues named by the description
       and recommends debug for the missing material disposition.
+- [ ] 10 caps the recommendation at debug because issue stewardship is
+      incomplete until comment pagination reaches exhaustion.

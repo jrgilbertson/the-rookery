@@ -69,6 +69,32 @@ def main() -> int:
         clean = run_checker(repository)
         require(clean.returncode == 0, f"clean repository failed: {clean.stderr}")
 
+        for regular_name in (
+            "plans",
+            "docs/plans",
+            "docs/brainstorms",
+            "docs/ideation",
+            "docs/dogfood-reports",
+            "docs/reports",
+            "docs/pulse-reports",
+        ):
+            regular_path = repository / regular_name
+            regular_path.parent.mkdir(parents=True, exist_ok=True)
+            regular_path.write_text("ordinary tracked file\n", encoding="utf-8")
+            subprocess.run(["git", "add", regular_path], cwd=repository, check=True)
+            regular_result = run_checker(repository)
+            require(
+                regular_result.returncode == 0,
+                f"repository checker treated regular file {regular_name} as a transient directory",
+            )
+            subprocess.run(
+                ["git", "rm", "--cached", "--force", regular_path],
+                cwd=repository,
+                check=True,
+                capture_output=True,
+            )
+            regular_path.unlink()
+
         for transient_name in (
             "plans/force-added.md",
             "docs/plans/force-added.md",

@@ -86,7 +86,9 @@ presence to classify them:
 
 - Enumerate ignored working files only within the resolved transient path
   families. Pass those families after `--` as pathspecs to
-  `git ls-files --others --ignored --exclude-standard`, then use
+  `git ls-files --others --ignored --exclude-standard`. Scope each pathspec to
+  directory contents, such as `:(top)docs/plans/**`, rather than the directory
+  name itself. Then use
   `git check-ignore -v` to identify the rule that owns each transient hit.
   Do not enumerate unrelated ignored trees. Ordinary surface commands omit
   these files.
@@ -354,9 +356,11 @@ repository tree and open no pull request.
 
 Sanitize the pack for durable use. Summarize intent and outcomes from the
 selected durable intent source: a linked issue or ticket, a brief, or a
-maintained repository plan. Do not copy ignored-plan paths or contents,
-local-only paths, credentials, or unnecessary personal data. A transient
-artifact may inform the run, but the pull request must stand without it.
+maintained repository plan. When step 4 found no durable source, summarize the
+owner's recorded intent attestation instead. Do not copy ignored-plan paths or
+contents, local-only paths, credentials, or unnecessary personal data. A
+transient artifact may inform the run, but the pull request must stand without
+it.
 
 Completion: the owner made exactly one decision from the menu against a
 pyramid-shaped readout matching the current working surface, and an approval

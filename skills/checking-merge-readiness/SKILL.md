@@ -71,13 +71,17 @@ through this fixed read-only verb set, the only forge commands this skill runs:
   with `jq`: counts by state plus any failing or pending required contexts);
   the raw rollup can run to hundreds of lines on check-heavy repositories.
 - `gh pr diff` — the final code under review.
-- `gh issue view --json` — fetch the number, title, body, state, URL, and
-  comments for every repository-local issue in `closingIssuesReferences`.
-  Also fetch every repository-local issue link that the description identifies
-  as a source issue. Keep every selector within the pull request's repository.
-  This read is needed to judge issue stewardship; do not list or search
-  unrelated issues. If any linked issue cannot be fetched, mark issue
-  stewardship incomplete and cap the recommendation at debug.
+- `gh issue view --json` — fetch the number, title, body, state, and URL for
+  every repository-local issue in `closingIssuesReferences`. Also fetch every
+  repository-local issue link that the description identifies as a source
+  issue. Keep every selector within the pull request's repository.
+- GraphQL for each linked issue's comments. Paginate the issue's `comments`
+  connection to exhaustion and retain each comment's stable id, author,
+  timestamp, and body for stewardship. `gh issue view --json comments` does not
+  prove exhaustion and must not substitute for this loop. Fingerprint every
+  issue and its complete comment set for step 7. If any issue or comment page
+  cannot be fetched completely, mark issue stewardship incomplete and cap the
+  recommendation at debug. Do not list or search unrelated issues.
 - GraphQL for review history (plain `gh pr view` omits thread resolution
   and description edit history). Prefer the bundled helper
   [scripts/fetch-pr-history.sh](scripts/fetch-pr-history.sh) when present and

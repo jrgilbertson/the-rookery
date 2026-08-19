@@ -34,13 +34,13 @@ TEXT_EXTENSIONS = frozenset(
 )
 TEXT_FILENAMES = frozenset({".gitignore", ".gitleaksignore", "LICENSE"})
 TRANSIENT_PATHS = (
-    "plans",
-    "docs/plans",
-    "docs/brainstorms",
-    "docs/ideation",
-    "docs/dogfood-reports",
-    "docs/reports",
-    "docs/pulse-reports",
+    ":(top)plans/**",
+    ":(top)docs/plans/**",
+    ":(top)docs/brainstorms/**",
+    ":(top)docs/ideation/**",
+    ":(top)docs/dogfood-reports/**",
+    ":(top)docs/reports/**",
+    ":(top)docs/pulse-reports/**",
 )
 MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 MARKDOWN_REFERENCE = re.compile(

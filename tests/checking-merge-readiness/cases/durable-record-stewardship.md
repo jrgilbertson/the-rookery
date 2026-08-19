@@ -54,7 +54,8 @@ worktree.
 - [ ] 7 does not treat pull request authorship as disposition authority; the
       decline stays incomplete until an authorized maintainer or the invoking
       owner confirms it.
-- [ ] 8 checks both closing issues and recommends do not merge for the false
-      full-delivery claim and missing material disposition.
+- [ ] 8 checks both closing issues and recommends debug for the incorrect
+      closing claim and missing material disposition. The pull request does not
+      separately claim that the migration shipped.
 - [ ] 9 fetches and fingerprints both source issues named by the description
       and recommends debug for the missing material disposition.

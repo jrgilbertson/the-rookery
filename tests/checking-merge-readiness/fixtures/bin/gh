@@ -206,6 +206,7 @@ def issue_selector_check(argv, forge):
         die("this specimen has no linked source issue", 1)
 
     repo = forge.get("repo", "")
+    forge_host = forge.get("host", "github.com").lower()
     want_number = None
     want_repo = None
     skip = False
@@ -224,13 +225,19 @@ def issue_selector_check(argv, forge):
         if want_number is not None:
             continue
         match = re.match(
-            r"^(?:https?://[^/]+/)?([^/\s]+/[^/\s]+?)(?:\.git)?"
+            r"^(?:https?://([^/]+)/)?([^/\s]+/[^/\s]+?)(?:\.git)?"
             r"(?:/issues/|#)(\d+)/?$",
             a,
         )
         if match:
-            want_repo = want_repo or match.group(1)
-            want_number = int(match.group(2))
+            selector_host = match.group(1)
+            if selector_host is not None and selector_host.lower() != forge_host:
+                die(
+                    f"source-issue host {selector_host} does not match {forge_host}",
+                    1,
+                )
+            want_repo = want_repo or match.group(2)
+            want_number = int(match.group(3))
         elif a.isdigit():
             want_number = int(a)
         else:

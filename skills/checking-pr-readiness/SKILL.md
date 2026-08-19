@@ -84,10 +84,12 @@ Then apply the repository's transient-artifact policy. Resolve transient paths
 from its instructions and ignore rules, and use Git state rather than directory
 presence to classify them:
 
-- Enumerate ignored working files with
+- Enumerate ignored working files only within the resolved transient path
+  families. Pass those families after `--` as pathspecs to
   `git ls-files --others --ignored --exclude-standard`, then use
   `git check-ignore -v` to identify the rule that owns each transient hit.
-  Ordinary surface commands omit these files.
+  Do not enumerate unrelated ignored trees. Ordinary surface commands omit
+  these files.
 - Search durable files for citations to every transient path family named by
   the policy, including families with no ignored file currently present.
 

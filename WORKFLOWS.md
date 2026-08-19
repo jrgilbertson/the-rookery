@@ -86,7 +86,8 @@ named in `.gitignore` while the worktree exists. The worktree can disappear
 after the pull request because the result belongs in code, tests, and
 maintained documentation. Keep an ADR when a lasting architectural choice
 needs its rationale, a solution when the work produced a reusable learning,
-and `docs/releases/` when a runbook defines how to operate or ship the product.
+and the current root `RELEASING.md` when a runbook defines how to operate or
+ship the product.
 
 When the work has a source issue, update it before merge only when the shipped
 scope, an important decision, or follow-up work would otherwise be misleading

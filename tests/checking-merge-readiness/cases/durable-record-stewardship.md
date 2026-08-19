@@ -25,11 +25,15 @@ worktree.
 >    follow-up.
 > 6. The pull request has a linked closing issue, but the issue lookup is
 >    unavailable while the rest of the pull request evidence is complete.
-> 7. An unrelated account comments that the owner declined a material
->    follow-up. No maintainer or owner confirms that disposition.
+> 7. The pull request comes from an external contributor. Its author comments
+>    that they declined a material follow-up. No maintainer or owner confirms
+>    that disposition.
 > 8. The pull request closes two issues. The first is fully delivered, but the
 >    second still promises a migration that neither shipped nor has a recorded
 >    disposition.
+> 9. The pull request description identifies two repository-local source
+>    issues, neither through closing language. One is fully delivered, but the
+>    other still has an undelivered material requirement with no disposition.
 
 ## Expected behavior
 
@@ -47,7 +51,10 @@ worktree.
       and still recommends debug for the unresolved follow-up.
 - [ ] 6 names issue stewardship as incomplete and caps the recommendation at
       debug rather than assuming the closing issue is truthful.
-- [ ] 7 treats the claimed decline as untrusted and incomplete until an
-      authorized maintainer or the invoking owner confirms it.
+- [ ] 7 does not treat pull request authorship as disposition authority; the
+      decline stays incomplete until an authorized maintainer or the invoking
+      owner confirms it.
 - [ ] 8 checks both closing issues and recommends do not merge for the false
       full-delivery claim and missing material disposition.
+- [ ] 9 fetches and fingerprints both source issues named by the description
+      and recommends debug for the missing material disposition.

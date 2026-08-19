@@ -23,7 +23,8 @@ in the ignored working paths named in `.gitignore`. They may live for the life
 of a worktree, but the final pull request and default branch must not contain
 or depend on them. Preserve the outcome in its canonical home: code and tests
 for behavior, an ADR for a lasting architectural choice, `docs/solutions/` for
-a reusable learning, or `docs/releases/` for an operating procedure.
+a reusable learning, or the current root `RELEASING.md` for operating and
+shipping procedures.
 
 Research is durable only when the repository will maintain it as a current
 source. Keep temporary audits and findings with the issue, pull request, or

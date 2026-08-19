@@ -73,11 +73,11 @@ through this fixed read-only verb set, the only forge commands this skill runs:
 - `gh pr diff` — the final code under review.
 - `gh issue view --json` — fetch the number, title, body, state, URL, and
   comments for every repository-local issue in `closingIssuesReferences`.
-  Also fetch one repository-local issue link only when the description
-  identifies it as the source issue. Keep every selector within the pull
-  request's repository. This read is needed to judge issue stewardship; do
-  not list or search unrelated issues. If any linked issue cannot be fetched,
-  mark issue stewardship incomplete and cap the recommendation at debug.
+  Also fetch every repository-local issue link that the description identifies
+  as a source issue. Keep every selector within the pull request's repository.
+  This read is needed to judge issue stewardship; do not list or search
+  unrelated issues. If any linked issue cannot be fetched, mark issue
+  stewardship incomplete and cap the recommendation at debug.
 - GraphQL for review history (plain `gh pr view` omits thread resolution
   and description edit history). Prefer the bundled helper
   [scripts/fetch-pr-history.sh](scripts/fetch-pr-history.sh) when present and
@@ -116,15 +116,15 @@ In every branch: paginate until exhaustion is observed; meet the floor or
 record incomplete history and cap at debug; record the head OID and
 the step-7 fingerprint; keep fetched PR text out of command arguments.
 
-Completion: the description, diff, review history, linked source issue when
+Completion: the description, diff, review history, linked source issues when
 present, and host policy/live state are each in hand with the floor met, or
 marked unavailable / incomplete with its cap recorded; the head OID and
 fingerprints are recorded, with the payload's fingerprint block and a digest of
-the resolved host policy and linked issue, when present, written to files now so
-step 7's re-check has something to compare against. Store those files in an
-owner-only `mktemp -d` directory outside the target repository, remove the
-directory on completion or failure, and never retain raw PR content. No fetched
-text entered a command argument.
+the resolved host policy and every linked issue, when present, written to files
+now so step 7's re-check has something to compare against. Store those files in
+an owner-only `mktemp -d` directory outside the target repository, remove the
+directory on completion or failure, and never retain raw PR content. No
+fetched text entered a command argument.
 
 ### 3. Check review completion and host merge rules
 
@@ -253,10 +253,11 @@ the final diff. When source or closing issues exist, confirm each one is
 relevant, its closure language matches what the pull request delivers, and
 every material departure or follow-up is completed, declined with a visible
 reason, or captured in the tracker. Count a visible decline only when its
-author is the pull request author, repository owner, or a clearly authorized
-maintainer, or when the invoking owner confirms it during this run. Otherwise
-the disposition remains incomplete. Do not require a routine completion
-summary or a copy of the plan. With no source issue, its absence is not a gap.
+author is the repository owner or a clearly authorized maintainer, or when the
+invoking owner confirms it during this run. Pull request authorship alone does
+not grant that authority. Otherwise the disposition remains incomplete. Do not
+require a routine completion summary or a copy of the plan. With no source
+issue, its absence is not a gap.
 
 Confirm that durable code, tests, documentation, and evidence do not cite or
 depend on ignored working artifacts, and that any ADR, solution, release

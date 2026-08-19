@@ -326,13 +326,21 @@ def check_templates(repo_root: Path) -> None:
         require(set(template["mappings"]) == {"priority", "leaf_estimate", "labels", "readiness"}, f"{provider} template mapping shape differs")
         for family, keys in RECOMMENDED_KEYS.items():
             require(set(template["mappings"][family]) == keys, f"{provider} template {family} recommendations differ")
-        require(
-            template["mappings"]["readiness"]
-            == {
+        expected_readiness = (
+            {
                 "needs-discovery": "readiness:needs-discovery",
                 "needs-planning": "readiness:needs-planning",
                 "ready": "readiness:ready",
-            },
+            }
+            if provider == "github"
+            else {
+                "needs-discovery": "needs-discovery",
+                "needs-planning": "needs-planning",
+                "ready": "ready",
+            }
+        )
+        require(
+            template["mappings"]["readiness"] == expected_readiness,
             f"{provider} template readiness representations differ",
         )
         expect_invalid(template_path, repo_root, "unresolved REPLACE_WITH placeholder")

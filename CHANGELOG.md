@@ -13,6 +13,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `managing-issues` first-use now recommends a Linear exclusive readiness group
+  (`readiness` / `needs-discovery` / `needs-planning` / `ready`) and keeps
+  GitHub prefixed flats. The config schema is unchanged. Already-configured
+  repos are not migrated.
 - Working plans, brainstorms, raw dogfood notes, and point-in-time reports now
   stay as ignored worktree artifacts. PR readiness rejects tracked or durably
   cited transient material, and merge readiness verifies issue stewardship

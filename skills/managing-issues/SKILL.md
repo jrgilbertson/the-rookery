@@ -98,7 +98,9 @@ and the capability to create any missing metadata.
 
 Present every recommended key and provider representation from the selected
 starter template beside exact discovered alternatives; list each one rather
-than summarizing a family. For each family, let the operator accept the
+than summarizing a family. Linear recommends an exclusive readiness group;
+GitHub recommends prefixed flats, because Linear groups enforce one child and
+GitHub labels have no grouping surface. For each family, let the operator accept the
 recommendations, map selected existing values, or define custom representations;
 never treat existing metadata as the preferred answer.
 The operator may leave priority, estimate, or general-label mappings empty, but

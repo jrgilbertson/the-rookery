@@ -72,16 +72,33 @@ apply only to implementation leaves; readiness uses an exact discovered label
 identity, never workflow status.
 
 During first-use setup, present the native priority and estimate choices and
-exact existing labels beside the Linear starter recommendations. The operator
-chooses the mappings. Do not change the team's native priority or estimation
-scheme. When a chosen general or readiness label is absent, offer its creation
-only if the selected transport exposes an exact label-create and label-readback
-path. For connected MCP this is normally the runtime `create_issue_label` and
-`list_issue_labels` surface; for Orca it must come from the loaded guide.
-Preview the exact provider effects, apply each approved create once, then
-rediscover every chosen label by exact stable identity before rendering the
-config. If the selected path lacks either operation, stop setup without a config
-write and name the missing capability.
+exact existing labels beside the Linear starter recommendations. Recommend a
+workspace-scoped readiness group named `readiness` with kebab-case children
+`needs-discovery`, `needs-planning`, and `ready`. The operator chooses the
+mappings. Do not change the team's native priority or estimation scheme.
+
+When a chosen general label is absent, offer a flat label create. When a chosen
+readiness child is absent, offer the group-then-children recipe: create the
+workspace group if it is absent, then any missing children, then rediscover
+each chosen child. Apply a child, never the parent. Store a unique child name,
+or the label UUID when the name is not unique. Missing group-create must not
+block creating a general label such as `bug`.
+
+Offer any of those creates only if the selected transport exposes an exact
+label-create and label-readback path. For connected MCP this is normally the
+runtime `create_issue_label` and `list_issue_labels` surface; for Orca it must
+come from the loaded guide. The current MCP schema creates a workspace group
+with `isGroup` true and no `teamId`, and children with `parent` set to the
+group name and no `teamId`. If the runtime schema differs, follow it. If the
+approved batch still needs a workspace-scoped group or child create the
+selected path cannot express, stop setup without a config write and name the
+missing capability. Do not fall through to Orca.
+
+MCP cannot update or delete labels. Preview the exact provider effects, apply
+each approved create once, then rediscover every chosen child by exact stable
+identity before rendering the config. A failed or partial create uses the
+shared first-stop: later effects stay unapplied, config is not written, and
+leftover labels are manual cleanup.
 
 For updates and lifecycle changes, read the canonical existing issue, including
 material fields and relationships, before preview, immediately before its

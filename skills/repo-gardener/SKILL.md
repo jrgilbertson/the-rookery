@@ -2,13 +2,14 @@
 name: repo-gardener
 description: Use when running or interpreting a scheduled or manual repository-gardening pass for one repository. Surveys nine maintenance lanes, deepens up to the smaller of three and the installed-policy limit, optionally checks product-data trust, and may supervise a bounded child worktree through an unmerged PR when current evidence justifies it. Do not use for merging, releasing, deploying, creating issues, contacting customers, or performing an already-selected implementation outside a gardening run.
 license: MIT
-compatibility: Requires read access to one repository, its installed policy, native pull-request state, and configured evidence sources. A mutating run also requires caller-provided exclusive tracker-write serialization and child worktree/branch/PR capabilities; the skill defines no provider client, lock, or credential.
+compatibility: Requires read access to one repository, its installed policy, native pull-request state, and configured evidence sources. A mutating run requires exclusive tracker-write serialization and child worktree/branch/PR capabilities. Simplification and code review are required before child dispatch; checking-pr-readiness is required before push, and its absence preserves a committed child without a PR.
 ---
 
 # Repo Gardener
 
-Run one repository through `Sense -> Decide -> Act -> Verify -> Learn`. The
-model owns qualitative judgment. The repository owns policy and source facts,
+A Repository Maintenance Run takes one repository through
+`Sense -> Decide -> Act -> Verify -> Learn`. The model owns qualitative
+judgment. The repository owns policy and source facts,
 GitHub owns authored-work state, and the deterministic checker owns only exact
 tracker-record consistency.
 
@@ -75,12 +76,18 @@ write neither `run-opened` nor `run-closed`, invoke neither `effect-v1` nor
    overlapping gate denies dispatch. For the next single-child slice, use one
    child worktree for one branch and one PR.
 7. Require the child to plan, implement, simplify, review, pass repository
-   gates, and commit the result. On that clean exact commit, run the installed
+   gates, and commit the result. Run the repository's documented gates from
+   the child worktree with the environment those gates require. Their output is
+   evidence only and grants no provider or mutation authority. On that clean
+   exact commit, run the installed
    `checking-pr-readiness` owner-facing workflow. Surface its one decision to
    the owner. Only option 1, `Approve and proceed to the finishing path`,
    permits push. `Request changes`, `Stop and file follow-up work`, an absent
-   skill, or no owner response preserves the commit as `saved_without_pr` with
-   the exact gap. Options 3 and 4 recompose within readiness and are not
+   readiness skill, or no owner response preserves the commit as
+   `saved_without_pr` with the exact gap. If the required simplification or
+   code-review capability is absent, do not dispatch the child; complete the
+   read-only gardening report and name the missing capability. Options 3 and 4
+   recompose within readiness and are not
    approval. Never manufacture owner approval or commit generated
    readiness/support artifacts. Any readiness-dispatched or post-commit change
    repeats the relevant review and gates, commits, and reruns readiness against

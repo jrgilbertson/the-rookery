@@ -1,10 +1,10 @@
 <!-- markdownlint-disable-file MD041 -->
 
-![The Rookery workflows banner showing Research through Ship as the Delivery Sequence, Maintain repairing and binding recurring signals with a press, and Learn recording experience with an open notebook and feather](docs/assets/the-rookery-workflows-banner.webp)
+![Diagram of Research, Plan, Design, Build, and Ship, with Maintain and Learn feeding lessons back into the workflow](docs/assets/the-rookery-workflows-banner.webp)
 
 # The workflows
 
-My workflow has a five-job Delivery Sequence and two feedback currents. Research through Ship moves work forward, Maintain turns recurring signals into repository memory, and Learn turns experience into a better question for Research. Each section covers the reasoning first, then the tools and commands.
+My workflow moves through five core jobs: Research, Plan, Design, Build, and Ship. Two feedback loops keep it current: Maintain turns recurring problems into tests, rules, and documented lessons, while Learn turns experience into linked notes and new research questions. Each section explains how I approach the job and which tools and commands I use.
 
 ## Foundations
 
@@ -13,24 +13,23 @@ The workflows assume two things are in place:
 - **Repository-based work.** These workflows lean heavily on repositories such as GitHub for code development and knowledge management. Repos give you branches for parallel work, version control, and backups, which all help when you're running agents and working with others.
 - **A durable personal knowledge source.** Sources such as Obsidian, Notion, plain markdown files, or anything that persists outside an AI provider's memory. Point each agent at that store so every harness reads the same knowledge. Turning off in-tool agent memory is a separate choice that stops knowledge from collecting where only one provider can reach it.
 
-A few of the skills named below are my own and not yet published: `repo-maintainer`, `repo-best-practices`, `improve-repo-architecture`, `design-evals`, and `validate-data`.
-
 ## Research
 
 **Goal:** Curate enough context to plan from.
 
-Research begins with the problem space. I'm a systems thinker, so I start wide. System design, current best practices, industry trends, how the pieces fit together, and more. Then I narrow to the actual problem. I also ask the AI where the unknown unknowns are to guard against my blind spots.
+Research begins with the problem space. I'm a systems thinker, so I start wide: system design, current best practices, industry trends, and how the pieces fit together. Then I narrow to the actual problem. I also ask the AI where the unknown unknowns are to guard against my blind spots.
 
-Once I better understand the problem, I go looking at what already exists. Durable learnings per project live in `docs/solutions/` inside each repository, and my personal knowledge vault carries everything else, like notes and past research. Both stay DRY (don't repeat yourself) and SSOT (single source of truth), so agents get accurate context without burning tokens hunting for it.
+Once I better understand the problem, I look at what already exists. Project-specific lessons live in each repository's `docs/solutions/`, while my personal knowledge vault holds notes and research that apply across projects. Each lesson has one home, so agents can find it without searching through duplicate copies.
 
-Prompt a model with a basic question and you get an average answer, because the model pulls from the average of everything it trained on. More context, more detail, and more intent narrow what it draws on until it lands closer to your actual problem. Recency matters as well. A model trains on the past up to a cutoff, so without current official docs and opposing perspectives, the recommendation relies on information that might be outdated or wrong.
+I give the model project context, specific intent, current official documentation, and opposing views. Without them, the answer can be generic or outdated.
 
 What I reach for depends on the question:
 
-- Deep research. Understanding a codebase, a methodology, or a topic in depth. Most capable models handle it well when asked directly.
-- `ce-ideate` from Compound Engineering. For when I don't yet know what to build and want evidence-backed hypotheses to react to.
-- [`last30days`](https://github.com/mvanhorn/last30days-skill). Focused, recent signal on a single topic or person where recency beats depth, like the latest model rankings for development work.
-- [`storm-research`](skills/storm-research/SKILL.md). Deep, source-backed investigation through isolated practitioner, academic, skeptic, economist, and historian lenses. It tests foundations, mechanisms, system relationships, and downstream effects throughout the research, then preserves material evidence and contradiction in a reader-focused briefing. Use it when the durable result should be a multi-perspective research record; use `ce-pov` when the result should be a compact, decisive verdict earned against the project, with targeted external verification where it is load-bearing.
+- Deep research. Builds a thorough understanding of a codebase, methodology, or topic by asking a capable model directly. Use it when the question needs broad context without a specialized research process.
+- `ce-ideate` from Compound Engineering. Generates evidence-backed hypotheses about what to build. Use it when research has not produced a clear product or improvement to pursue.
+- [`last30days`](https://github.com/mvanhorn/last30days-skill). Finds recent discussion and usage signals about one topic or person. Use it when recency matters more than depth, such as when comparing the latest model rankings.
+- [`storm-research`](skills/storm-research/SKILL.md). Investigates a hard question through independent practitioner, academic, skeptic, economist, and historian perspectives, then produces a source-backed briefing that preserves evidence, disagreements, and blind spots. Use it when the result should be a durable, multi-perspective research record.
+- `ce-pov` from Compound Engineering. Gives a compact, decisive verdict grounded in the project, with targeted external verification where the answer depends on it. Use it when a focused question needs a recommendation rather than a durable research briefing.
 
 What must be true before moving to Plan:
 
@@ -46,27 +45,27 @@ I usually plan in the same session that produced the curated context. When the r
 
 The what (product plan) comes first and covers the exact problem, what good looks like, and how I'll know it's solved. The how (implementation plan) follows with the architectural choices and sequencing that shape everything downstream.
 
-I read the first pass closely and iterate on the product plan more than the implementation detail. A wrong first pass can sound good at a high level but turns into AI slop by the time it's built. I spend more time in planning than I did before AI because it's harder to adapt mid-execution. That tradeoff is worth taking, because AI makes spikes, research, and prototypes cheap, so I iterate before and during the plan.
+I read the first pass closely and iterate on the product plan more than the implementation detail. A wrong first pass can sound good at a high level but turns into AI slop by the time it's built. I spend more time in planning than I did before AI because it's harder to adapt mid-execution. That tradeoff is worth it because AI makes spikes, research, and prototypes cheap, so I iterate before and during the plan.
 
 Agents that weren't in the planning session review the plan against the current state of the system, recent research, and official documentation. When the same agent reviews its own artifact, especially inside the same context window, the review approves by structure rather than evidence. The reviewer shares the producer's framing and blind spots.
 
 [Compound Engineering](https://github.com/EveryInc/compound-engineering-plugin) drives the planning step. The entry point depends on what research left open.
 
-- `ce-brainstorm`. Narrows research into requirements when intent still has open questions.
-- `ce-plan`. The direct route when intent is clear. Product plan first, implementation plan second.
-- `ce-debug`. Bugs get diagnosis rather than brainstorming.
-- `ce-pov`. A decisive, project-grounded answer to a focused question mid-plan, without falling back into another research pass.
+- `ce-brainstorm`. Turns open intent into clear requirements and a confirmed product direction. Use it when research leaves important questions about what to build.
+- `ce-plan`. Produces a product plan followed by an implementation plan. Use it when the intent and acceptance boundaries are already clear.
+- `ce-debug`. Diagnoses a bug before anyone proposes a fix. Use it when the work begins with broken or unexpected behavior.
+- `ce-pov`. Gives a decisive, project-grounded answer to a focused planning question. Use it when one decision is blocking the plan and another research pass would add little.
 
-After ordinary clarification, I sometimes have one coherent decision tree left where the answers depend on each other. I consider a targeted Grilling Session when at least one decision would be costly to reverse or affect a broad surface, one answer constrains the questions below it, or the agent would otherwise guess at an acceptance boundary. For example, authentication ownership may determine session lifetime and data access, so those decisions benefit from being settled parent-first. Several unrelated unknowns stay in `ce-brainstorm`. Clear requirements and routine, reversible choices go directly to `ce-plan`.
+After ordinary clarification, I sometimes have one coherent decision tree left where the answers depend on each other. I consider a targeted grilling session when at least one decision would be costly to reverse or affect a broad surface, one answer constrains the questions below it, or the agent would otherwise guess at an acceptance boundary. For example, authentication ownership may determine session lifetime and data access, so those decisions benefit from being settled parent-first. Several unrelated unknowns stay in `ce-brainstorm`. Clear requirements and routine, reversible choices go directly to `ce-plan`.
 
-Install `grill-me` and `grilling` separately from [Matt Pocock's skills](https://github.com/mattpocock/skills); they are not part of The Rookery's catalog. An agent may recommend this route, but the operator invokes `grill-me`. That wrapper starts the session; the `grilling` skill owns the interview protocol. The agent walks the tree one question at a time, offers a concrete recommendation with each question, and leaves every decision with the user. It looks up facts available in the repository or environment instead of asking for them. A Grilling Session is stateless: it creates no glossary, ADR, or requirements-document updates.
+Install `grill-me` and `grilling` separately from [Matt Pocock's skills](https://github.com/mattpocock/skills). The agent asks one question at a time, recommends an answer, and leaves each decision to you. It looks up facts available in the repo or environment instead of asking you for them. The session creates no glossary or ADR and makes no changes to requirements documents.
 
 Once the user confirms shared understanding, the clarified intent returns to the Compound Engineering planning session. For work an agent can own end-to-end, I turn that intent into the following template.
 
 ```yaml
-goal: Complete [objective] until [verifiable end state], 
-  respecting [constraints], 
-  using [inputs/tools], 
+goal: Complete [objective] until [verifiable end state],
+  respecting [constraints],
+  using [inputs/tools],
   producing [artifact/handoff].
 ```
 
@@ -78,7 +77,7 @@ What must be true before moving on:
 - **Inputs and tools are known.** The sources, systems, and repos the work draws on.
 - **The artifact is defined.** The work will produce a merged PR, a findings document, or a decision someone can act on.
 
-When a plan needs durable tracker structure, [`managing-issues`](skills/managing-issues/SKILL.md) manages the native issue graph in one canonical GitHub or Linear tracker and derives the current Ready Frontier for Build. Build owns models, worktrees, stacks, and sequencing; tracker metadata remains the only durable work state.
+When a plan needs issue structure, [`managing-issues`](skills/managing-issues/SKILL.md) manages parent, sub-issue, and blocker relationships in the repository's GitHub or Linear tracker. It reports which required open issues with no required sub-issues are ready to start now. Build still decides models, worktrees, stacks, and sequencing.
 
 ## Design
 
@@ -90,9 +89,9 @@ Design is hard with AI. The AI tends toward recognizable slop, the same gradient
 
 [Impeccable](https://github.com/pbakaus/impeccable) drives the design process.
 
-- `impeccable shape`. The planning-side tool. Discovery first, who the interface is for, what it should feel like, what it should avoid. Then iteration until there's a brief the plan can build on.
-- `impeccable audit` and `impeccable critique`. Technical checks with audit and design reviews with critique.
-- The design system. Tokens, components, and rationale live in the repo, get refreshed from the running code, and every agent that touches the UI reads them. Impeccable helps you create and update a DESIGN.md source of truth.
+- `impeccable shape`. Turns discovery about the audience, desired feel, and visual constraints into a design brief. Use it before planning or building an interface that lacks a clear visual direction.
+- `impeccable audit` and `impeccable critique`. Audit checks the interface's technical quality, while critique reviews its visual design. Use them during design and after implementation to find concrete problems.
+- The design system. Records the interface's tokens, components, rationale, and prohibitions in `DESIGN.md`. Use it to keep every agent working from the same visual rules as the interface evolves.
 
 What must be true before moving to Build:
 
@@ -103,56 +102,23 @@ What must be true before moving to Build:
 
 **Goal:** Build the plan in bounded slices and verify each one.
 
-This step runs at two levels: across worktrees, where five to ten slices of work move in parallel, and inside each worktree, through the model choice, mode, and quality gates below. A worktree is a separate working copy of the same repository, so each agent builds on its own branch in its own folder without overwriting anyone else's work.
+Work can move across several worktrees in parallel. A worktree is a separate working copy of the same repository, so each agent builds on its own branch without overwriting anyone else's work.
 
 Orca is the agentic IDE where all of this runs. A harness is the agent tool itself, like Claude Code, Codex, Hermes, or Grok. Orca runs several of them side by side in one project, so each worktree can use whichever harness suits its work.
 
-Choosing which model gets which work comes down to two optimizations.
+I choose models by how success will be judged. For work with objective checks, I compare the expected cost of a passing result rather than the cost of one attempt. For taste-led work, I use the cheapest model whose output stays close enough to the best. Mixed work clears the objective checks first, then preference decides among the models that pass.
 
-For verifiable work, where a test or check decides success, minimize the expected cost of an acceptable completion.
+`ce-work` moves through the plan one unit at a time so I can inspect the work as it lands. `lfg` runs from plan to pull request without check-ins. `/goal` in Claude Code and Codex keeps working toward one completion condition across turns. I use autonomous modes only when the goal is clear and verifiable.
 
-$$
-\text{pick the model minimizing}\ \ \frac{\text{cost per attempt}}{\text{pass rate}}
-$$
-
-Some evals publish this number outright. VulcanBench's headline efficiency metric is cost per solved task, total spend divided by tasks passed, which is the same quantity the formula above produces.
-
-Say a strong model costs a dollar an attempt and passes 90% of the time, putting each acceptable completion at \$1.11. A cheaper model costs ten cents and passes 60% of the time, putting each one at \$0.17. The cheap model fails far more often and still finishes the work for 15% of the price.
-
-For taste-led work, where preference decides, take the cheapest route whose quality stays close enough to the best.
-
-$$
-\text{pick the cheapest model where}\ \ Q_{\text{best}} - Q(\text{model}) \le \text{quality-regret bound}
-$$
-
-Say the best model for a writing task rates 9.5 out of 10 on a preference leaderboard and the next one rates 9.2. If I've decided I'll trade half a point for a cheaper route, the second model qualifies, and at half the price I take it. The gap is a subtraction rather than a ratio because preference scores have no meaningful zero to divide by.
-
-Mixed work clears the verifiable requirements first, then I rank the survivors by preference. Rankings change too fast to print here, so I follow whatever the current evals and benchmarks say. In practice I'm also working inside whatever weekly quota each harness has left.
-
-The work runs in one of two modes. `ce-work` works through the plan unit by unit, so I can watch it land and step in when I want to. The other mode is an autonomous loop. `lfg` from Compound Engineering runs the whole distance, plan to PR, with no check-ins. `/goal` in Claude Code and Codex is narrower. It takes a completion condition and keeps working across turns until that condition is met or the budget runs out, a while loop with a model inside. The condition is the goal template from Plan, which is why that template is worth filling in carefully. A loop earns that autonomy only when the goal is neat and verifiable.
-
-Compound Engineering already is the planner, executor, and multi-agent reviewer. The skills run brainstorm → plan → work → simplify → review → compound, and each cycle pulls prior solutions from `docs/solutions/`. That is the default inside a worktree. I do not stand up a second planner, executor, and reviewer beside those skills. A parallel stack burns tokens twice, loses the handoffs and quality gates the plugin already owns, and skips the durable files that make later cycles easier. The multi-persona reviewers inside `ce-code-review` already cost the most. Another review layer on top only adds spend.
-
-I pick a different orchestration only when the skills do not cover the work. Tiny one-off changes often skip the full loop and stay with a solo owner. When something specialized is missing, I extend Compound Engineering rather than build a second system. Either mode can run the CE default or one of those exceptions. The table below is that exception menu, not a second default next to the skills.
-
-
-| Orchestration             | What it is                                                                              | Best for                                                                                                              | Cost                                                 |
-| ------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| Solo owner                | One agent owns the work end to end                                                      | Small bounded work, or work needing taste mid-flight                                                                  | Serial, and my attention is the bottleneck           |
-| Executor with advisor     | The executor consults a stronger model only on hard calls, Anthropic's advisor strategy | Cost-sensitive work with occasional deep judgment                                                                     | Consult latency                                      |
-| Produce, critique, revise | A producer drafts, a separate critic scores, revision rounds capped                     | Rubric-judged quality work where refinement measurably helps                                                          | Rounds add latency, and it needs the separate critic |
-| Orchestrator with workers | A lead agent delegates to separate instances in their own worktrees, then integrates    | Fan-out across many independent pieces, managed by `ultracode` (Claude Code), `ultra` (Codex) or wired myself in Orca | Integration overhead                                 |
-| Harness-native subagents  | One session dispatches subagents that report back to it                                 | Side research or verification inside a session's flow. Already how skills like `ce-code-review` run reviewer personas | Parent-only results; rebuilding outside the skill doubles the spend |
-
+Compound Engineering is the default planner, executor, reviewer, and learning capture inside each worktree. Small changes may stay with one agent. Independent pieces may go to workers, and hard decisions may get a stronger advisor or a separate critic. I add those roles only when the default loop does not cover the work, because a second orchestration stack repeats planning, review, and handoffs.
 
 I enforce quality in tiers. Tests, linters, CI gates, and the design system enforce proactively, and prose instructions sit at the bottom. See the Maintain section for the full ladder.
 
 The in-build toolkit:
 
-- [Orca](https://github.com/stablyai/orca). Parallel worktrees, delegated agents across harnesses, and a browser mode where I select elements on the running UI and kick off feedback and refinement.
-- **Impeccable, mid-build.** `impeccable critique` scores the design and `impeccable polish` closes the gap between good and great. `impeccable audit` runs a five-dimension technical check and `impeccable harden` makes interfaces production-ready, covering edge cases, internationalization, error states, and overflow. `impeccable live` picks a UI element, takes a comment, and offers three variants, one of which lands in source.
-- `ce-test-browser` and `ce-dogfood`. Browser verification of the pages a branch touched, or hands-off dogfooding that fixes small breakages, writes regression tests for them, and commits to the branch.
-- `validate-data`. Audits the datasets a build touches for accuracy, completeness, consistency, timeliness, and relevance.
+- [Orca](https://github.com/stablyai/orca). Runs parallel worktrees, delegates to agents across harnesses, and supports element-level browser feedback. Use it when a plan can be split into independent slices or an interface needs direct visual iteration.
+- **Impeccable, mid-build.** Critiques and polishes visual work, audits technical quality, hardens edge cases, and offers three variants for a selected element with the option to apply one to source. Use it while building an interface to keep the implementation aligned with the design brief and production constraints.
+- `ce-test-browser` and `ce-dogfood`. Verify the browser flows a branch touched, with dogfood able to fix small breakages, add regression tests, and commit the changes. Use `ce-test-browser` for a targeted check and `ce-dogfood` for a hands-off repair pass.
 
 What must be true before moving to Ship:
 
@@ -173,11 +139,11 @@ The shipping sequence, in order:
 3. `ce-test-browser` or `ce-dogfood`. Browser verification when the change touches the UI, either a test run or hands-off dogfooding that fixes and commits as it goes.
 4. [`checking-pr-readiness`](skills/checking-pr-readiness/SKILL.md). The final checkpoint.
 
-`checking-pr-readiness` presents the branch the way an engineer asks for sign-off. The full working surface including untracked files, every upstream step reported from receipts — verified only when the evidence is named, attested when I say so, never assumed — what was planned against what was delivered, a sweep of the finding classes that drive repeated automated-review rounds, and whether the branch produced a learning worth keeping. It waits for one explicit decision and changes nothing until I make it. If the branch moves while I'm deciding, the readout gets rebuilt, because approval binds to exactly what I was shown. On approval it composes an evidence pack that lands in the PR body, so reviewers and the eventual merge check read the same record. The menu also has a learning option. Before approving, I can have the change or a concept it introduced explained back to me.
+`checking-pr-readiness` compares the finished branch with the plan, verifies the named evidence, and surfaces unresolved risks before the pull request opens. It waits for me to approve the exact revision shown, then puts the evidence in the pull request description so later reviewers see the same record. Before approving, I can also ask for an explanation of the change or a concept it introduced.
 
-For unattended verification, `checking-pr-readiness` also has an assessment-only branch. It consumes one explicit exact-revision receipt bundle and returns a live-derived JSON assessment with `pass` or `action-required`. That branch presents no owner menu, waits for no decision, creates no PR-body evidence pack, and performs no write; malformed or unresolved evidence fails closed in the receipt.
+For unattended verification, its assessment-only mode returns `pass` or `action-required` for a named revision and makes no changes.
 
-After approval, `ce-commit-push-pr` writes the description and opens the PR, and `ce-babysit-pr` watches it through CI failures and review feedback until the review loop is quiet — local optimization of comments and CI. Then [`checking-merge-readiness`](skills/checking-merge-readiness/SKILL.md) runs before I merge. That is the **global pass**: not another tip-identity gate, but whether the birth-to-tip change is still the right design (intent drift, overengineering, YAGNI, redesign pressure, follow-up debt), with a thin process residual and a check of host merge rules such as required conversation resolution. The one I most want caught is whether bot feedback talked the code into machinery nothing needed. That rolls into one recommendation: merge, debug, or do not merge. The skill changes nothing, so I still do the merging. I write the changelog and release notes from the merged PRs afterward.
+After approval, `ce-commit-push-pr` writes the description and opens the pull request, and `ce-babysit-pr` works through CI failures and review feedback. Then [`checking-merge-readiness`](skills/checking-merge-readiness/SKILL.md) reviews the full change for intent drift, unnecessary complexity, unresolved feedback, and failed merge rules. It recommends merge, debug, or do not merge; I still decide and merge. I write the changelog and release notes from the merged pull requests afterward.
 
 CI gates the merge on the unit and end-to-end suites, plus passes like performance and link checks in my product repos. GitHub enforces the rest, and each of these is a setting you have to turn on: a PR for every change, review comments resolved before merge, and no direct pushes to main, including for administrators.
 
@@ -192,26 +158,22 @@ What must be true before merge:
 
 Repos and systems need tending over time. Maintenance runs throughout the loop, not only after merge.
 
-[`repo-gardener`](skills/repo-gardener/SKILL.md) is the nightly parent loop. It surveys nine repository-health lanes, deepens zero to the smaller of three and the installed-policy limit, and may supervise a bounded child worktree through its own planning, implementation, review, gates, and unmerged pull request. Native PR state is authoritative for authored work. The tracker receives exactly one opening and one closing record per managed run. The durable morning summary stays in the tracker or caller-approved destination; the retained parent worktree is only for source, diff, and terminal-context inspection. The model owns qualitative selection; the checker proves only exact record closure.
-
-`repo-maintainer` is the everyday pass. It inspects the repo briefly, picks one small safe improvement, makes one diff, verifies it narrowly, and stops after a single commit. Pass `repeat N` when you want up to N passes in a row.
-
-Bigger passes run when the repo needs a full review. `repo-best-practices` reviews what a visitor sees first, the README, the license, the contributing guide, and the issue templates. `improve-repo-architecture` reviews structure before it hardens. `design-evals` builds graders and rubrics for behavior that can't be unit tested.
+[`repo-gardener`](skills/repo-gardener/SKILL.md) checks nine areas of repository health and may carry one bounded improvement to an unmerged pull request. It runs on a schedule or by hand and leaves one opening and one closing tracker record for review.
 
 Design maintenance runs through Impeccable. `impeccable extract` finds patterns used three or more times with the same intent and standardizes them into tokens and primitives. `impeccable document` regenerates the design docs from what actually shipped, so the tools read the design language instead of guessing at it.
 
 `ce-compound` captures the durable learnings. It runs when I solve a problem, often at the pre-PR checkpoint, and writes the symptoms, root cause, failed attempts, fix, and prevention strategy to `docs/solutions/`. Planning and debugging pull from those docs later, so the next time I hit the same problem it takes minutes instead of hours.
 
-The prevention strategy decides where the learning lives, and where it lands matters as much as what it says. A learning encoded as a test enforces itself. One written as prose only works if it gets read and followed. The ladder below runs from the strongest home to the weakest. The move is to automate down, taking the highest rung each learning qualifies for.
+The prevention strategy decides where the learning lives, and where it lands matters as much as what it says. A learning encoded as a test enforces itself. One written as prose only works if it gets read and followed. The ladder below runs from the strongest home to the weakest. Put each learning on the highest rung it qualifies for.
 
 
-| Rung               | Form                                                                        | Why it holds                                                          |
-| ------------------ | --------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| Deterministic gate | Regression test, lint rule, git hook, CI check, performance budget, monitor | Runs automatically on every change, so the mistake gets caught without anyone remembering to look |
-| Path-scoped rule   | An instruction bound to one part of the codebase                            | Loads on its own when work touches that path, though the model still has to follow it |
-| Reusable procedure | A skill encoding the right way to do a recurring task                       | Structured and invokable, but fires only when the task comes up       |
-| Decision record    | An architecture decision record holding the choice, the alternatives, and the rationale | A durable why that anyone can go read, once they know to look |
-| Prose instruction  | A line in a README, a code comment, or an instructions file                 | The floor. Nothing enforces it, so it holds only as long as the model follows it |
+| Rung               | Form                                                                                    | Why it holds                                                                                      |
+| ------------------ | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Deterministic gate | Regression test, lint rule, git hook, CI check, performance budget, monitor             | Runs automatically on every change, so the mistake gets caught without anyone remembering to look |
+| Path-scoped rule   | An instruction bound to one part of the codebase                                        | Loads on its own when work touches that path, though the model still has to follow it             |
+| Reusable procedure | A skill encoding the right way to do a recurring task                                   | Structured and invokable, but fires only when the task comes up                                   |
+| Decision record    | An architecture decision record holding the choice, the alternatives, and the rationale | A durable why that anyone can go read, once they know to look                                     |
+| Prose instruction  | A line in a README, a code comment, or an instructions file                             | The floor. Nothing enforces it, so it holds only as long as the model follows it                  |
 
 
 In practice that means a reproducible bug becomes a regression test rather than a paragraph asking the model to be careful, and a convention becomes a lint rule. Only learnings with no mechanical home fall to prose, which is often the honest answer for something that can't be automated yet.

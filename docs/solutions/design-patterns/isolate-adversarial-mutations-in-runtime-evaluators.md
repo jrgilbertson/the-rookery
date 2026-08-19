@@ -7,19 +7,19 @@ problem_type: design_pattern
 component: testing_framework
 severity: high
 applies_when:
-  - Designing an agent-skill runtime test that injects a semantic defect
+  - Designing a skill runtime test that injects a semantic defect
   - The mutation depends on the actual raw outputs
   - Testing whether binding review corrects an injected defect
   - The number of correction rounds is not known in advance
 related_components: [assistant, development_workflow, documentation]
-tags: [agent-skills, runtime-testing, test-isolation, adversarial-mutation, binding-review, fidelity-review, semantic-regression, review-loops]
+tags: [skills, runtime-testing, test-isolation, adversarial-mutation, binding-review, fidelity-review, semantic-regression, review-loops]
 ---
 
 # Isolate adversarial mutations in runtime evaluators
 
 ## Context
 
-Runtime tests for agent skills sometimes need a deliberate defect so the test
+Runtime tests for skills sometimes need a deliberate defect so the test
 can prove that a later review stage detects and repairs it. That defect must not
 be part of the sample user request. The Storm Research case now labels itself
 evaluator-only, keeps the research request under `Prompt`, and puts mutation
@@ -119,5 +119,5 @@ one reports FIDELITY CLEAN. Keep every revision and review artifact.
 ## Related
 
 - [Falsifiability contracts need executable tests](../workflow-issues/falsifiability-contracts-need-executable-tests.md) gives the general rule that an adversarial case must be able to fail for the intended reason.
-- [Independent fresh-context review for agent skills](../best-practices/independent-fresh-context-review-for-agent-skills.md) covers clean review contexts, direct artifact inspection, and bounded evidence claims.
+- [Independent fresh-context review for skills](../best-practices/independent-fresh-context-review-for-skills.md) covers clean review contexts, direct artifact inspection, and bounded evidence claims.
 - [Allow honest nulls in mandatory novelty fields](allow-honest-nulls-in-mandatory-novelty-fields.md) is a related example of making the tempting positive answer provably wrong from the supplied evidence.

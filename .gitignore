@@ -8,7 +8,7 @@ Thumbs.db
 .idea/
 .vscode/
 
-# Local generated artifacts may contain private user data.
+# Legacy Codex Desktop or similar generated artifacts may contain private data.
 outputs/
 
 # docs/ is deliberately NOT ignored — working documents ship public.

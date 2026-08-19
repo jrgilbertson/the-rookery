@@ -8,7 +8,7 @@ name + description + query only, binary judgment, any near-miss `yes` fails.
 | Query | Reason |
 | --- | --- |
 | Help me create a new skill for formatting SQL queries | Explicit new-skill creation request. |
-| I want to write an agent skill that enforces our commit message style | Authoring a new agent skill from a stated behavior. |
+| I want to write a skill that enforces our commit message style | Authoring a new skill from a stated behavior. |
 | Review my deploy-checks skill and tell me what's wrong with it | Review of an existing skill. |
 | Update the description on my notes skill so it triggers more reliably | Description and trigger repair. |
 | Port this skill from my old toolkit repo into this collection | Migration between collections. |
@@ -30,5 +30,6 @@ name + description + query only, binary judgment, any near-miss `yes` fails.
 | Set up an MCP server for our internal API | MCP or integration work. |
 | Create a GitHub Action that lints markdown | CI automation. |
 | What skills should I install for web development? | Skill discovery and installation. |
+| Teach me a new skill in a role-playing game | General advice or game coaching, not skill-package work. |
 | Summarize what this skill does | Explanation-only request. |
 | Write documentation for our API endpoints | General documentation work. |

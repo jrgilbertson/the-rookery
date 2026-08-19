@@ -34,7 +34,7 @@ trap 'rm -rf "$WORK"' EXIT
 # stdout is only meaningful because the full payload proves it is really there.
 SENTINEL='SENTINEL-fixture-body-Zq7'
 
-python3 - "$WORK" "$SENTINEL" <<'PYE'
+if ! python3 - "$WORK" "$SENTINEL" <<'PYE'
 import json, os, sys
 
 work, S = sys.argv[1], sys.argv[2]
@@ -217,7 +217,10 @@ write("ghostauthor", {
     },
 })
 PYE
-[ $? -eq 0 ] || { printf 'FAIL  scenario build\n'; exit 1; }
+then
+  printf 'FAIL  scenario build\n'
+  exit 1
+fi
 
 RUN_CODE=0
 run() { # run <scenario> [fetch args...]

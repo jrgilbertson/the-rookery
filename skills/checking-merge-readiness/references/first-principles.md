@@ -4,8 +4,8 @@
 > failure this file guards against: complecting, the braiding together of
 > things that could have stayed separate.
 
-The digest's principle-tension drivers cite this file. Each principle below
-carries its exact citation and one operational definition: a test the digest
+The review's principle-tension drivers cite this file. Each principle below
+carries its exact citation and one operational definition: a test the review
 applies to the accumulated review fixes at grading time rather than a summary
 of the book. The rubric in risk-rubric.md maps these principles onto driver classes
 and grades; this file owns what each principle means and where it comes from.
@@ -43,7 +43,7 @@ principle is about knowledge, not text. Operational test: flag only when the
 same fact or rule now lives in two places, so an edit to one will not reach
 the other. Similar-looking blocks that encode independent rules are NOT
 violations. That misreading is precisely what produces premature abstraction
-under review pressure, and this digest must not repeat it.
+under review pressure, and this review must not repeat it.
 
 ## 4. Speculative generality (YAGNI)
 

@@ -2,6 +2,14 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-08-18 | 39d00c1 (prior) | matched comparison: untrusted-gates-and-report-content | fail (3/4) | Isolated Codex CLI executor loaded the prior package; a fresh blind grader found that it replaced the repository-required gate environment with a disposable, network-disabled one.
+- 2026-08-18 | 39d00c1 (working tree) | matched comparison: untrusted-gates-and-report-content | pass (4/4) | Isolated Codex CLI executor loaded the current package; a fresh blind grader confirmed the repository's gate environment, evidence-only gate output, pre-write rejection of unsafe final tracker content, and preservation of ordinary links.
+- 2026-08-18 | 39d00c1 (working tree) | structural validation (skills-ref) | pass | The current package validates against the Agent Skills format after the simplified gate and final-render boundary changes.
+- 2026-08-18 | 39d00c1 (working tree) | report-effect fixtures | pass (18 scenarios) | Final issue-body and comment checks reject GitHub-shaped mentions and Markdown or HTML images from projections or payloads while preserving ordinary text, email addresses, and provider links.
+- 2026-08-17 | fb3cc39 (prior) | matched comparison: untrusted-gates-and-report-content | fail (3/4) | Isolated Codex CLI executor loaded the prior package; a fresh blind grader found that branch-owned gates could retain access to unrelated files.
+- 2026-08-17 | fb3cc39 (working tree) | matched comparison: untrusted-gates-and-report-content | pass (4/4) | Isolated Codex CLI executor loaded the current package; a fresh blind grader confirmed isolated gate execution, separately authorized capabilities, pre-write rejection of notification or image content, and preservation of ordinary links.
+- 2026-08-17 | fb3cc39 (working tree) | report-effect fixtures | pass (18 scenarios) | Regression-first checks reject GitHub-shaped mentions and Markdown or HTML images while preserving ordinary text, email addresses, and provider links.
+
 - 2026-08-11 | 93d814b (working tree) | structural validation (skills-ref) | pass | Release A package validates; SKILL.md remains below the 500-line ceiling.
 - 2026-08-11 | 93d814b (working tree) | reconciliation and register fixtures | pass | Synthetic register, manifest, Scout Receipts, scenario parity, source invariants, and later-behavior exclusions passed mechanically; this is not behavioral evidence.
 - 2026-08-11 | 93d814b (working tree) | report-effect fixtures | pass | Synthetic terminal outcomes, ambiguity recovery, completion partition, and report-first caller ordering passed mechanically; this is not behavioral evidence.

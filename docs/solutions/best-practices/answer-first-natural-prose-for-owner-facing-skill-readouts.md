@@ -12,7 +12,7 @@ symptoms:
   - "Owner digests bury the recommendation under themes, drift, and driver tables"
   - "Medium risk is labeled pause, so the owner idles instead of investigating"
   - "Em dashes and section headers (Themes / Intent / Risk) make prose feel like a form"
-  - "Redundant PR state labels such as (open) on every pre-merge digest"
+  - "Redundant PR state labels such as (open) on every pre-merge review"
 root_cause: inadequate_documentation
 resolution_type: documentation_update
 related_components:

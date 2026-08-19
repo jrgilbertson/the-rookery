@@ -9,7 +9,7 @@ applies_when:
   - "Authoring or reviewing instruction prose for agents (skills, prompts, agent docs) that claims cross-model portability"
   - "Instructions lean on abstract qualifiers such as \"thorough\", \"clean\", \"punchier\", or \"borderline\""
   - "Running a delete-test pass on skill or prompt wording during review"
-  - "Defining a positive Agent Skill activation boundary that must exclude smaller tasks sharing words such as \"deep\" or \"source-backed\""
+  - "Defining a positive skill activation boundary that must exclude smaller tasks sharing words such as \"deep\" or \"source-backed\""
 symptoms:
   - "A qualifier passes the delete test (removing it changes behavior) yet remains undefined, so each model interprets it differently"
   - "A gate probe caught the word \"borderline\" undefined in the authoring workflow's then-current step 8, despite passing the standard delete test"
@@ -181,6 +181,6 @@ state the observable artifact that makes its workflow necessary.
 - `docs/solutions/best-practices/cross-harness-dogfood-testing.md` documents the
   fresh-context probes and prior-versus-revised comparisons that caught both
   examples above.
-- `docs/solutions/best-practices/independent-fresh-context-review-for-agent-skills.md`
+- `docs/solutions/best-practices/independent-fresh-context-review-for-skills.md`
   explains why semantic trigger changes are judged outside the authoring
   context and why their evidence claims remain bounded.

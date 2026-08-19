@@ -165,7 +165,7 @@ The user's durable Obsidian corpus already contains approved journals, reviews, 
 - `docs/solutions/best-practices/operationalize-abstract-qualifiers-in-instruction-review.md` — make proactive, recurring, material, and light behavior observable.
 - `docs/solutions/design-patterns/allow-honest-nulls-in-mandatory-novelty-fields.md` — require the judgment while permitting an evidence-gated null.
 - `docs/solutions/design-patterns/integrate-research-depth-without-exposing-workflow-telemetry.md` — keep analytical checks internal unless they change interpretation.
-- `docs/solutions/best-practices/independent-fresh-context-review-for-agent-skills.md` — use matched variants and independent inspection for semantic changes.
+- `docs/solutions/best-practices/independent-fresh-context-review-for-skills.md` — use matched variants and independent inspection for semantic changes.
 - `docs/solutions/workflow-issues/wind-down-requires-day-window-crm-scan.md` — preserve the required Daily CRM Scan and its zero-effect path.
 
 ---

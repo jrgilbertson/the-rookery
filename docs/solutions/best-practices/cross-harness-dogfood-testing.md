@@ -8,7 +8,7 @@ problem_type: best_practice
 component: testing_framework
 severity: high
 applies_when:
-  - "Shipping an agent skill for more than one named harness"
+  - "Shipping a skill for more than one named harness"
   - "Before marking a degradation path done in a skill's verification plan"
   - "When a skill's authoring environment differs from its users' environments"
   - "When a project skill may share its name with a user-level or system-provided skill"
@@ -16,7 +16,7 @@ symptoms:
   - "Scripted tests only exercise the degradation paths the skill author already anticipated"
   - "Author-only runs never surface destination ambiguities because the author's own environment answers them implicitly"
   - "A model quotes rules that are absent from the exact project skill under evaluation"
-tags: [cross-harness, dogfood-testing, agent-skills, portability, fresh-context, load-identity, skill-name-collision, false-evidence]
+tags: [cross-harness, dogfood-testing, skills, portability, fresh-context, load-identity, skill-name-collision, false-evidence]
 related_components:
   - development_workflow
   - documentation

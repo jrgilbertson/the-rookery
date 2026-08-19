@@ -126,8 +126,11 @@ review scope, and owner/status tuples without executable gate results are
 
 Command-backed gate, review, simplification, and test results must also carry
 execution evidence from a caller-authenticated owning runner that is outside
-the assessed commit, or the assessment boundary must rerun the exact
-allowlisted command without a shell and verify its exit and bounded result.
+the assessed commit, or the assessment boundary must rerun the exact command
+from a caller-owned allowlist outside that commit and verify its exit and
+bounded result. Run it without a shell, production credentials, unrelated-file
+access, network, or external-write capability unless the caller separately
+authorizes a capability required by that exact command.
 Repository-authored evidence and result JSON cannot authenticate their own
 execution. A command that is absent, outside the discovered gate contract, or
 reported successful without one of those independent proofs is

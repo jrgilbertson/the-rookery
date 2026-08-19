@@ -22,7 +22,7 @@ governs the hand-built fetch used when the helper cannot run.
 
 1. **Review threads** (`reviewThreads`). Resolution on every thread, comment
    bodies, and a join from each thread comment to the review submission it
-   belongs to. Without the join, round pointers in the global pass are
+   belongs to. Without the join, round pointers in the whole-change review are
    guesses. Nested comment pages under each thread count as their own
    connection.
 2. **Review submissions** (`reviews`). Round markers: state, time, body text
@@ -97,7 +97,7 @@ fetches.
 - **Tip residual:** a review covers the commit it reviewed, not a later
   head. When the head carries changes after the last substantive non-author
   review, name tip residual in the readout when useful. Do not
-  hard-cap merge solely for that reason when process residual is settled
+  hard-cap merge solely for that reason when the review-completion check passes
   (step 3) and no host last-push re-approval rule is violated. Host
   `require_last_push_approval` / dismiss-stale policy, when present and
   violated, is a blocking host rule, not skill identity theater.
@@ -127,8 +127,8 @@ gap:
 - Mark history-derived themes and host merge rules unavailable. Never infer
   review history or invent host policy that was not read.
 - Cap at debug: a recommendation better than debug requires the review history
-  this skill was built to digest, while any high driver still grades do not
+  this skill was built to review, while any high driver still grades do not
   merge per SKILL.md step 6's mapping.
 
-An empty review history (fetch succeeded, nothing to digest) is its own named
+An empty review history (fetch succeeded, nothing to review) is its own named
 condition and also caps at debug.

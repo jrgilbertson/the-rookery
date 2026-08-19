@@ -1,6 +1,6 @@
 # Portability Map
 
-Portability here means a canonical, self-contained Agent Skills package that compatible harnesses can discover and install. It does not promise equivalent behavior across every model, harness, configuration, or task. Behavioral claims require evidence from the exact models, harnesses, and cases they name.
+Portability here means a canonical, self-contained skill package that compatible harnesses can discover and install. It does not promise equivalent behavior across every model, harness, configuration, or task. Behavioral claims require evidence from the exact models, harnesses, and cases they name.
 
 ## Canonical structure
 
@@ -24,7 +24,7 @@ Keep these conclusions separate:
 
 | Observation | Supports | Does not support by itself |
 | --- | --- | --- |
-| Structural validation passes | The package follows the checked Agent Skills schema | Discovery, installation, triggering, or useful execution |
+| Structural validation passes | The package follows the checked schema | Discovery, installation, triggering, or useful execution |
 | Trigger-suite judgments pass | A listing proxy for the name-and-description routing contract | Native triggering in a harness |
 | A smoke check passes | That package revision installed and activated in that harness, on that query | Other harnesses, queries, or task behavior |
 | Graded behavioral cases pass | Those cases, in those contexts, at that revision | Reliability, non-regression, causal improvement, or universal compatibility |

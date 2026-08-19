@@ -1,0 +1,13 @@
+min_version: 2.1.10
+
+pre-push:
+  parallel: true
+  commands:
+    catalog:
+      run: bash scripts/checks/catalog.sh
+    repository-integrity:
+      run: bash scripts/checks/lint.sh
+    current-tree-secrets:
+      run: gitleaks dir --redact --no-banner --no-color .
+    fixtures:
+      run: bash scripts/checks/fixtures.sh

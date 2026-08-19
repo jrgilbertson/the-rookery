@@ -105,6 +105,14 @@ fail_usage() {
 	exit 2
 }
 
+validate_bounded_text() {
+	local LC_ALL=C label="$1" value="$2" maximum="$3"
+	[ "${#value}" -le "$maximum" ] || fail_usage "$label must be at most $maximum bytes"
+	if [[ "$value" =~ [[:cntrl:]] ]]; then
+		fail_usage "$label must be a single line without control characters"
+	fi
+}
+
 caps=""
 defer_gate=""
 supplied_base=""
@@ -120,11 +128,13 @@ while [ "$#" -gt 0 ]; do
 	--defer)
 		[ "$#" -ge 2 ] || fail_usage "--defer requires a gate name"
 		[ -n "$2" ] || fail_usage "--defer requires a non-empty gate name"
+		validate_bounded_text "--defer gate name" "$2" 128
 		defer_gate="$2"
 		shift 2
 		;;
 	--cap)
 		[ "$#" -ge 2 ] || fail_usage "--cap requires <name>=<n>"
+		validate_bounded_text "--cap value" "$2" 80
 		case "$2" in
 		*=*) ;;
 		*) fail_usage "--cap expects <name>=<n>, got: $2" ;;
@@ -136,9 +146,11 @@ while [ "$#" -gt 0 ]; do
 		# Beyond 15 digits the shell's integer comparison breaks, and a broken
 		# comparison must not fall through to a clean verdict.
 		[ "${#cap_value}" -le 15 ] || fail_usage "--cap count is too large to compare: $2"
-		case "${2%%=*}" in
+		cap_name="${2%%=*}"
+		case "$cap_name" in
 		'') fail_usage "--cap requires a reviewer name before '=', got: $2" ;;
 		esac
+		validate_bounded_text "--cap reviewer name" "$cap_name" 64
 		caps="${caps}${2}
 "
 		shift 2

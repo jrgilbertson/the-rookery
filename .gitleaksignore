@@ -1,0 +1,2 @@
+# Historical test fixture with an explicit EXAMPLE_TOKEN canary.
+e58b01454d562c12042b71cfae4d6373d7d7a51c:tests/checking-merge-readiness/fixtures/reviewed-pr/steering/threads.md:curl-auth-header:19

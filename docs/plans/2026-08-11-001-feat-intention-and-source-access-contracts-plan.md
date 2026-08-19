@@ -153,7 +153,7 @@ LifeOS demonstrates two useful patterns: falsifiable completion claims and visib
 - `skills/personal-chief-of-staff/assets/review-bundle.md:1-25` — current presentation seam and compact coverage sentence.
 - `docs/solutions/workflow-issues/wind-down-requires-day-window-crm-scan.md` — precedent for required bounded source coverage before synthesis.
 - `docs/solutions/design-patterns/integrate-research-depth-without-exposing-workflow-telemetry.md` — guardrail against turning evidence disclosure into an execution manifest.
-- `docs/solutions/best-practices/independent-fresh-context-review-for-agent-skills.md` — behavioral evaluation and independent-grading precedent.
+- `docs/solutions/best-practices/independent-fresh-context-review-for-skills.md` — behavioral evaluation and independent-grading precedent.
 - [LifeOS Algorithm and ISA system prompt](https://github.com/danielmiessler/LifeOS/blob/58381b3df66252d7cc0cddf8b0d4e735fac35109/LifeOS/install/LIFEOS/LIFEOS_SYSTEM_PROMPT.md) — upstream falsifiable-claim pattern.
 - [LifeOS v7.1.1 release](https://github.com/danielmiessler/LifeOS/releases/tag/v7.1.1) — upstream capability-state pattern.
 

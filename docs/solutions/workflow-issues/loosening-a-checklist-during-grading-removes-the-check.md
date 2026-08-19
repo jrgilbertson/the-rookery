@@ -16,7 +16,7 @@ symptoms:
   - "An item's new wording accepts a range of outcomes where the source criterion named one"
   - "A justification quoted from one acceptance example is applied to scenarios that example does not cover"
   - "A scenario passes both the skilled and the bare run and no longer separates them"
-tags: [test-checklists, grading, falsifiability, acceptance-criteria, agent-skills, behavioral-testing, run-logs]
+tags: [test-checklists, grading, falsifiability, acceptance-criteria, skills, behavioral-testing, run-logs]
 related_components:
   - testing
   - development_workflow
@@ -230,7 +230,7 @@ in the run log).
   states the general rule this case instantiates. A check that cannot fail is
   not a check, whether the hole came from a self-matching grep or from an item
   widened to fit the run in front of you.
-- [Independent fresh-context review for agent skills](../best-practices/independent-fresh-context-review-for-agent-skills.md)
+- [Independent fresh-context review for skills](../best-practices/independent-fresh-context-review-for-skills.md)
   covers why the loosening survives. The context that authored the checklist is
   the context deciding whether a failing item was wrong, and it will reach for
   the reading that keeps grading moving.

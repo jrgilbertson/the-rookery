@@ -25,6 +25,11 @@ custom provider wrapper. The caller alone decides whether its configured GitHub
 capability may apply those exact bytes. This skill defines no wrapper, provider
 client, credential, or planning authority.
 
+The prepared tracker content may contain ordinary text and links. `effect-v1`
+checks the final issue body and comment, rejecting notification-capable
+`@mentions` and Markdown or HTML image embedding before either write. Do not
+sanitize rejected content into a different prepared operation.
+
 After the write, obtain the complete issue and every comment page. Verify the
 immutable prepared object against the same pre-read and the full post-read.
 Accept only `observed` or `already satisfied` before continuing. `failed` and

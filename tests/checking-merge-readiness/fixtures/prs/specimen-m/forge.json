@@ -1,0 +1,40 @@
+{
+  "repo": "mapleworks/orderline",
+  "number": 501,
+  "closingIssuesReferences": [
+    {
+      "number": 73,
+      "url": "https://github.com/mapleworks/orderline/issues/73",
+      "repository": {
+        "name": "orderline",
+        "owner": { "login": "mapleworks" }
+      }
+    },
+    {
+      "number": 81,
+      "url": "https://github.com/mapleworks/orderline/issues/81",
+      "repository": {
+        "name": "orderline",
+        "owner": { "login": "mapleworks" }
+      }
+    }
+  ],
+  "sourceIssues": [
+    {
+      "number": 73,
+      "title": "Export filtered invoices as CSV",
+      "body": "Export filtered invoices without buffering the full result set.",
+      "state": "OPEN",
+      "url": "https://github.com/mapleworks/orderline/issues/73",
+      "comments": []
+    },
+    {
+      "number": 81,
+      "title": "Migrate scheduled invoice exports",
+      "body": "Move scheduled exports to the new streaming implementation.",
+      "state": "OPEN",
+      "url": "https://github.com/mapleworks/orderline/issues/81",
+      "comments": []
+    }
+  ]
+}

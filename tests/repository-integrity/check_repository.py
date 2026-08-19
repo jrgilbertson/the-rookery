@@ -69,6 +69,64 @@ def main() -> int:
         clean = run_checker(repository)
         require(clean.returncode == 0, f"clean repository failed: {clean.stderr}")
 
+        for regular_name in (
+            "plans",
+            "docs/plans",
+            "docs/brainstorms",
+            "docs/ideation",
+            "docs/dogfood-reports",
+            "docs/reports",
+            "docs/pulse-reports",
+        ):
+            regular_path = repository / regular_name
+            regular_path.parent.mkdir(parents=True, exist_ok=True)
+            regular_path.write_text("ordinary tracked file\n", encoding="utf-8")
+            subprocess.run(["git", "add", regular_path], cwd=repository, check=True)
+            regular_result = run_checker(repository)
+            require(
+                regular_result.returncode == 0,
+                f"repository checker treated regular file {regular_name} as a transient directory",
+            )
+            subprocess.run(
+                ["git", "rm", "--cached", "--force", regular_path],
+                cwd=repository,
+                check=True,
+                capture_output=True,
+            )
+            regular_path.unlink()
+
+        for transient_name in (
+            "plans/force-added.md",
+            "docs/plans/force-added.md",
+            "docs/brainstorms/force-added.md",
+            "docs/ideation/force-added.md",
+            "docs/dogfood-reports/force-added.md",
+            "docs/reports/force-added.md",
+            "docs/pulse-reports/force-added.md",
+        ):
+            transient_path = repository / transient_name
+            transient_path.parent.mkdir(parents=True, exist_ok=True)
+            transient_path.write_text("# Force-added artifact\n", encoding="utf-8")
+            subprocess.run(
+                ["git", "add", "--force", transient_path],
+                cwd=repository,
+                check=True,
+            )
+            transient_result = run_checker(repository)
+            require(
+                transient_result.returncode == 1
+                and "transient working artifact must not be tracked"
+                in transient_result.stderr,
+                f"repository checker accepted tracked transient path {transient_name}",
+            )
+            subprocess.run(
+                ["git", "rm", "--cached", "--force", transient_path],
+                cwd=repository,
+                check=True,
+                capture_output=True,
+            )
+            transient_path.unlink()
+
         invalid_json = repository / "invalid.json"
         invalid_json.write_text('{"broken": }\n', encoding="utf-8")
         invalid = run_checker(repository)
@@ -262,7 +320,10 @@ def main() -> int:
             "fixture check executed a symbolic-link runner",
         )
 
-    print("PASS: repository checks reject malformed content, unsafe links, and symlinked inputs")
+    print(
+        "PASS: repository checks reject malformed content, tracked transient "
+        "artifacts, unsafe links, and symlinked inputs"
+    )
     return 0
 
 

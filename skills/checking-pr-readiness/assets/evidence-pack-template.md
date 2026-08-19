@@ -8,9 +8,10 @@ headings without restructuring them.
 ```markdown
 ## Evidence pack
 
-**Plan vs delivered:** delivered — <items>. Not delivered — <items>. When the
-branch has no plan or brief: comparison unavailable; attested intent —
-<the owner's statement of what the branch was meant to do>.
+**Intent vs delivered:** delivered — <items>. Not delivered — <items>. When
+the branch has no linked issue or ticket, brief, or durable repository plan:
+comparison unavailable; attested intent — <the owner's statement of what the
+branch was meant to do>.
 
 **Checks:** one line per check, each `<check name>: <status word> — <result>`.
 Status words come from the gate's closed set (SKILL.md, Status words). A
@@ -49,3 +50,6 @@ Every line above stays in the pack except the design-critique line, which is
 omitted on diffs that touch no user-interface files. A check with nothing to
 report keeps its line and carries `not applicable`, because a dropped line
 reads as a pass.
+
+Summarize intent from its durable source. Omit ignored-plan paths and contents,
+local-only paths, credentials, and unnecessary personal data.

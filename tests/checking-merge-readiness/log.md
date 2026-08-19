@@ -33,7 +33,7 @@ for skilled/bare pairs. Scenario 11 uses real `gh` against real GitHub.
 
 ### Global-pass reframe (2026-08-05) — unreviewed-head demotion, host rules
 
-Plan: `docs/plans/2026-08-05-001-feat-merge-readiness-global-pass-plan.md`.
+Implementation: [pull request #39](https://github.com/jrgilbertson/the-rookery/pull/39).
 Skill reframed as global birth→tip pass; tip residual no longer hard-caps
 merge; host conversation resolution is a process floor. Fixtures: specimen-a
 tip lag (`a91e4f0` after review `f3a9c21`); specimen-l for plan AE2; stub

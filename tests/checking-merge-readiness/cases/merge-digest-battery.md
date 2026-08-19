@@ -1,14 +1,11 @@
 # The digest grades named drivers against ground truth instead of recapping threads
 
-Provenance: authored 2026-08-01 for U4 of
-docs/plans/2026-08-01-001-feat-checking-merge-readiness-plan.md. It mines
-the baseline gap named in that plan's Success Criteria. On review-heavy
-pull requests the bare model produces a thread recap or an ungrounded
-verdict rather than graded, named drivers with the fixed grade-to-light
-mapping. The 2026-07 pull request forensics behind the sibling gate showed
-all-green review histories still hiding accretion no single round refused.
-The matched-pair baseline run that certifies each discriminating scenario
-records its lines in `../log.md`.
+Provenance: authored 2026-08-01 after review-heavy pull requests showed the
+bare model producing a thread recap or an ungrounded verdict instead of graded,
+named drivers with a fixed grade-to-light mapping. The same review forensics
+showed all-green histories hiding accretion no single round refused. The
+matched-pair baseline run that certifies each discriminating scenario records
+its lines in `../log.md`.
 
 ## Protocol
 

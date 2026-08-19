@@ -33,6 +33,15 @@ TEXT_EXTENSIONS = frozenset(
     }
 )
 TEXT_FILENAMES = frozenset({".gitignore", ".gitleaksignore", "LICENSE"})
+TRANSIENT_PATHS = (
+    ":(top)plans/**",
+    ":(top)docs/plans/**",
+    ":(top)docs/brainstorms/**",
+    ":(top)docs/ideation/**",
+    ":(top)docs/dogfood-reports/**",
+    ":(top)docs/reports/**",
+    ":(top)docs/pulse-reports/**",
+)
 MARKDOWN_LINK = re.compile(r"!?\[[^\]]*\]\(([^)]+)\)")
 MARKDOWN_REFERENCE = re.compile(
     r"^\s{0,3}\[(?:[^\]\\]|\\.)+\]:\s*(<[^>]*>|\S+)",
@@ -48,6 +57,20 @@ def candidate_files() -> list[Path]:
         capture_output=True,
     )
     return [ROOT / path.decode() for path in result.stdout.split(b"\0") if path]
+
+
+def check_tracked_transient_paths(errors: list[str]) -> None:
+    result = subprocess.run(
+        ["git", "ls-files", "--cached", "-z", "--", *TRANSIENT_PATHS],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    )
+    for raw_path in result.stdout.split(b"\0"):
+        if raw_path:
+            errors.append(
+                f"{raw_path.decode()}: transient working artifact must not be tracked"
+            )
 
 
 def safe_regular_file(path: Path, errors: list[str]) -> bool:
@@ -146,6 +169,7 @@ def check_links(path: Path, text: str, errors: list[str]) -> None:
 
 def main() -> int:
     errors: list[str] = []
+    check_tracked_transient_paths(errors)
     for path in candidate_files():
         if not safe_regular_file(path, errors):
             continue

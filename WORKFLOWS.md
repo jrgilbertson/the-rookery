@@ -41,7 +41,7 @@ What must be true before moving to Plan:
 
 **Goal:** Write a clear, concise plan covering what to build (product plan) and how to build it (implementation plan).
 
-I usually plan in the same session that produced the curated context. When the research needs to outlive that session, I save it as a findings document in `docs/research/` and plan from there.
+I usually plan in the same session that produced the curated context. When research needs to remain current and useful after the work ships, I save it as a maintained findings document in `docs/research/` and plan from there. Point-in-time audits and exploratory findings stay with the issue, pull request, or research system instead of becoming repository documentation by default.
 
 The what (product plan) comes first and covers the exact problem, what good looks like, and how I'll know it's solved. The how (implementation plan) follows with the architectural choices and sequencing that shape everything downstream.
 
@@ -78,6 +78,13 @@ What must be true before moving on:
 - **The artifact is defined.** The work will produce a merged PR, a findings document, or a decision someone can act on.
 
 When a plan needs issue structure, [`managing-issues`](skills/managing-issues/SKILL.md) manages parent, sub-issue, and blocker relationships in the repository's GitHub or Linear tracker. It reports which required open issues with no required sub-issues are ready to start now. Build still decides models, worktrees, stacks, and sequencing.
+
+### Do I save plans?
+
+No. Working plans, brainstorms, and ideation can live in the ignored paths
+named in `.gitignore` while the worktree exists. Preserve the result in its
+durable owner instead of saving the plan. The enforceable lifecycle and
+durable-owner rules live in [Working artifacts](AGENTS.md#working-artifacts).
 
 ## Design
 

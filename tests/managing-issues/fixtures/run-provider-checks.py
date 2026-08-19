@@ -83,16 +83,18 @@ def assert_once_between(entries: list[dict[str, Any]], write_prefix: list[str], 
     require(any(index > write for index in positions(entries, after_prefix)), f"missing readback {' '.join(after_prefix)}")
 
 
-def add_fixture_metadata(path: Path) -> None:
+def add_fixture_metadata(path: Path, provider: str) -> None:
     state = json.loads(path.read_text(encoding="utf-8"))
-    if "repository" in state:
+    if provider == "github":
         state["metadata"]["labels"].append({"id": "LA_hostile", "name": "--literal;$(never-run)"})
-    else:
+    elif provider == "linear":
         state["labels"].extend([
             {"id": "label-ready", "name": "Ready for implementation"},
             {"id": "label-hostile", "name": "--literal;$(never-run)"},
         ])
         state["fixtureWriteCount"] = 0
+    else:
+        raise CheckFailure(f"unsupported fixture provider: {provider}")
     path.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
@@ -100,7 +102,7 @@ def github_env(root: Path, base: dict[str, str], name: str, **extra: str) -> tup
     state = root / f"{name}.json"
     log = root / f"{name}.log"
     shutil.copyfile(PROVIDER / "github.json", state)
-    add_fixture_metadata(state)
+    add_fixture_metadata(state, "github")
     return base | {"MI_GITHUB_STATE": str(state), "MI_GITHUB_LOG": str(log), **extra}, state, log
 
 
@@ -108,7 +110,7 @@ def linear_env(root: Path, base: dict[str, str], name: str, **extra: str) -> tup
     state = root / f"{name}.json"
     log = root / f"{name}.log"
     shutil.copyfile(PROVIDER / "linear.json", state)
-    add_fixture_metadata(state)
+    add_fixture_metadata(state, "linear")
     return base | {"MI_LINEAR_STATE": str(state), "MI_LINEAR_LOG": str(log), **extra}, state, log
 
 
@@ -297,13 +299,55 @@ def linear_happy(root: Path, base: dict[str, str]) -> None:
     require(json.loads(state_path.read_text())["fixtureWriteCount"] == 8, "Linear write count differs")
 
 
+def require_duplicate_labels_rejected(
+    root: Path,
+    base: dict[str, str],
+    name: str,
+    argv: list[str],
+    *,
+    stdin: str | None = None,
+) -> None:
+    env, state_path, _ = linear_env(root, base, name)
+    load_linear_guide(env)
+    before = json.loads(state_path.read_text(encoding="utf-8"))
+    failed(run(argv, env, stdin=stdin), "duplicate label", name)
+    after = json.loads(state_path.read_text(encoding="utf-8"))
+    require(after == before, f"{name} changed fixture state")
+    require(after["fixtureWriteCount"] == 0, f"{name} persisted a write")
+
+
 def linear_edge_and_error(root: Path, base: dict[str, str]) -> None:
+    duplicate_label_cases = (
+        (
+            "linear-duplicate-label-create",
+            ["orca", "linear", "create", "--title", "Duplicate labels", "--body-file", "-", "--team", LINEAR_TEAM, "--label", "label-ready", "--label", "Ready for implementation", "--workspace", LINEAR_WORKSPACE, "--json"],
+            "body",
+        ),
+        (
+            "linear-duplicate-label-save",
+            ["orca", "linear", "save-issue", "ENG-1", "--label", "label-fix", "--label", "Fix", "--workspace", LINEAR_WORKSPACE, "--json"],
+            None,
+        ),
+        (
+            "linear-duplicate-label-set",
+            ["orca", "linear", "label", "set", "ENG-1", "--label", "label-ready", "--label", "Ready for implementation", "--workspace", LINEAR_WORKSPACE, "--json"],
+            None,
+        ),
+        (
+            "linear-duplicate-label-add",
+            ["orca", "linear", "label", "add", "ENG-1", "--label", "label-ready", "--label", "Ready for implementation", "--workspace", LINEAR_WORKSPACE, "--json"],
+            None,
+        ),
+    )
+    for name, argv, stdin in duplicate_label_cases:
+        require_duplicate_labels_rejected(root, base, name, argv, stdin=stdin)
+
     for scenario, fragment in (("absent", "unknown command"), ("incompatible", "incompatible")):
         env, _, log = linear_env(root, base, f"linear-guide-{scenario}", MI_LINEAR_GUIDE_SCENARIO=scenario)
         try:
             load_linear_guide(env)
         except (CheckFailure, json.JSONDecodeError) as error:
-            require(fragment in str(error).lower() or scenario == "absent", f"Linear {scenario} guide stopped for wrong reason")
+            require(fragment in str(error).lower(), f"Linear {scenario} guide stopped for wrong reason")
         else:
             raise CheckFailure(f"Linear {scenario} guide unexpectedly enabled writes")
         require(not positions(log_entries(log), ["linear", "create"]), f"Linear {scenario} guide allowed executable write")
@@ -387,15 +431,6 @@ def config_and_route_integration(root: Path, base: dict[str, str]) -> None:
     linear_result(run(["orca", "linear", "priority", "set", "ENG-1", "--to", "medium", "--workspace", LINEAR_WORKSPACE, "--json"], route_env), "canonical update")
     require(linear_read(route_env, "ENG-1")["priority"] == 3, "canonical readback differs")
     require(len(positions(log_entries(route_log), ["linear", "priority", "set"])) == 1, "canonical route did not perform exactly one write")
-
-    outside = root / "outside"
-    outside.mkdir()
-    symlink_root = root / "symlink-setup"
-    symlink_root.mkdir()
-    (symlink_root / ".agents").symlink_to(outside, target_is_directory=True)
-    candidate = symlink_root / ".agents" / "managing-issues.json"
-    require(candidate.parent.is_symlink(), "setup symlink fixture differs")
-    require(not candidate.exists(), "setup symlink refusal unexpectedly wrote config")
 
 
 def published_contract() -> None:

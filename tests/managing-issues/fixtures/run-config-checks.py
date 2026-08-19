@@ -473,6 +473,9 @@ def main() -> int:
         duplicate_label = base_config()
         duplicate_label["mappings"]["labels"] = {"ready": "readiness:ready"}
         expect_invalid(duplicate_label, repo_root, "GitHub label readiness:ready is mapped more than once")
+        duplicate_label_case = base_config()
+        duplicate_label_case["mappings"]["labels"] = {"ready": "READINESS:READY"}
+        expect_invalid(duplicate_label_case, repo_root, "GitHub label readiness:ready is mapped more than once")
         duplicate_linear_label = base_config("linear")
         duplicate_linear_label["mappings"]["labels"] = {"ready": "label-readiness-ready"}
         expect_invalid(duplicate_linear_label, repo_root, "Linear label label-readiness-ready is mapped more than once")

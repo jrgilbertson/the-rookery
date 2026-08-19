@@ -83,12 +83,15 @@ rediscover every chosen label by exact stable identity before rendering the
 config. If the selected path lacks either operation, stop setup without a config
 write and name the missing capability.
 
-Read the canonical issue, including material fields and relationships, through
-the selected transport before preview, immediately before its write, and
-immediately after the accepted write. Require the returned workspace, team,
-issue ID, identifier, and URL to match the normalized target and selector
-exactly. A workspace or team mismatch is not a canonical issue and permits no
-write.
+For updates and lifecycle changes, read the canonical existing issue, including
+material fields and relationships, before preview, immediately before its
+write, and immediately after the accepted write. Require the returned
+workspace, team, issue ID, identifier, and URL to match the normalized target
+and selector exactly. A workspace or team mismatch is not a canonical issue and
+permits no write. For creates, require the exact normalized workspace and team
+target plus every needed capability and metadata read before preview and again
+immediately before the write, then require the exact returned-identity readback
+described below.
 
 Require successful structured results and inspect the selected transport's
 error, warning, partial-section, pagination, and cap indicators. A missing or

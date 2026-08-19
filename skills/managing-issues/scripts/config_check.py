@@ -237,11 +237,12 @@ def require_unique_label_representations(provider: str, mappings: dict[str, Any]
     seen: set[str] = set()
     for field in label_fields:
         for value in mappings[field].values():
+            comparison_value = value.casefold() if provider == "github" else value
             require(
-                value not in seen,
+                comparison_value not in seen,
                 f"{provider_name} label {value} is mapped more than once",
             )
-            seen.add(value)
+            seen.add(comparison_value)
 
 
 def normalize_config(value: dict[str, Any]) -> dict[str, Any]:

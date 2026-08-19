@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import os
 import shutil
@@ -632,6 +633,68 @@ def github_command_checks(root: Path, base_env: dict[str, str]) -> None:
         status == "complete" and boundary_url in identities and gap is None,
         "GitHub resolved cross-repository blocker did not complete coverage",
     )
+
+    normal_page_argv = [
+        "gh",
+        "api",
+        "repos/example/project/issues/10/sub_issues?per_page=100&page=1",
+        "--hostname",
+        "github.com",
+    ]
+    normal_page = succeeded(
+        run(normal_page_argv, env),
+        "GitHub native child page without relationship URLs",
+    )
+    require(
+        {item["number"] for item in normal_page} >= {11, 12},
+        "GitHub normal relationships without URLs were rejected",
+    )
+
+    original_state = state.read_bytes()
+    identity_state = json.loads(original_state)
+    normal_with_url = copy.deepcopy(identity_state)
+    normal_with_url["issues"]["10"]["subIssues"][0]["url"] = normal_with_url[
+        "issues"
+    ]["11"]["url"]
+    state.write_text(json.dumps(normal_with_url), encoding="utf-8")
+    succeeded(
+        run(normal_page_argv, env),
+        "GitHub native child page with an exact relationship URL",
+    )
+
+    normal_number_mismatch = copy.deepcopy(identity_state)
+    normal_number_mismatch["issues"]["11"]["number"] = 111
+    normal_url_mismatch = copy.deepcopy(identity_state)
+    normal_url_mismatch["issues"]["10"]["subIssues"][0]["url"] = (
+        "https://github.com/example/project/issues/111"
+    )
+    boundary_number_mismatch = copy.deepcopy(identity_state)
+    boundary_number_mismatch["issues"]["12"]["blockedBy"][0]["number"] = 99
+    boundary_url_mismatch = copy.deepcopy(identity_state)
+    boundary_url_mismatch["boundaryIssues"][boundary_url]["url"] = (
+        "https://github.com/example/dependency/issues/99"
+    )
+    boundary_page_argv = [
+        "gh",
+        "api",
+        "repos/example/project/issues/12/dependencies/blocked_by?per_page=100&page=1",
+        "--hostname",
+        "github.com",
+    ]
+    for label, argv, altered_state in (
+        ("normal number", normal_page_argv, normal_number_mismatch),
+        ("normal URL", normal_page_argv, normal_url_mismatch),
+        ("boundary number", boundary_page_argv, boundary_number_mismatch),
+        ("boundary URL", boundary_page_argv, boundary_url_mismatch),
+    ):
+        state.write_text(json.dumps(altered_state), encoding="utf-8")
+        rejected = run(argv, env)
+        require(
+            rejected.returncode != 0
+            and "related issue identity differs" in rejected.stderr,
+            f"GitHub {label} mismatch passed relationship enumeration",
+        )
+    state.write_bytes(original_state)
 
     before_foreign_write = state.read_bytes()
     for argv in (

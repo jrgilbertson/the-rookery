@@ -13,8 +13,8 @@ or interpolate tracker text. Send issue bodies with `--body-file -` and stdin.
 
 ## Authenticate, resolve, and read
 
-Authenticate and resolve the repository before an executable preview, then
-repeat both immediately before every write:
+Authenticate and resolve the repository before reads, discovery, or an
+executable mutation preview, then repeat both immediately before every write:
 
 ```text
 gh auth status --active --hostname github.com --json hosts
@@ -22,8 +22,10 @@ gh repo view github.com/OWNER/REPO --json id,nameWithOwner,url,hasIssuesEnabled,
 ```
 
 Require one successful active account for `github.com`; its presence supplies
-provider identity. Require the exact repository, enabled issues, non-archived
-state, and `ADMIN`, `MAINTAIN`, or `WRITE` permission.
+provider identity. Require the exact repository, enabled issues, and a
+non-archived state for reads and discovery. Before an executable mutation
+preview or write, additionally require `ADMIN`, `MAINTAIN`, or `WRITE`
+permission.
 
 Read the supported issue surface before an update, immediately before its write,
 and immediately after an accepted write:

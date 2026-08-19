@@ -103,6 +103,18 @@ def label_value(state: dict[str, Any], selector: str) -> dict[str, Any]:
     return copy.deepcopy(matches[0])
 
 
+def unique_label_values(state: dict[str, Any], selectors: list[str]) -> list[dict[str, Any]]:
+    result: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for selector in selectors:
+        label = label_value(state, selector)
+        if label["id"] in seen:
+            fail("duplicate label")
+        seen.add(label["id"])
+        result.append(label)
+    return result
+
+
 def state_value(state: dict[str, Any], selector: str) -> dict[str, Any]:
     matches = [item for item in state["states"] if selector in {item["id"], item["name"]}]
     if len(matches) != 1:
@@ -226,7 +238,7 @@ if ARGV[:2] == ["linear", "create"]:
         "title": title, "description": STDIN, "state": copy.deepcopy(working["states"][0]),
         "priority": priority_value(one(values, "--priority") or "none"),
         "estimate": int(one(values, "--estimate") or "0"),
-        "labels": [label_value(working, value) for value in values.get("--label", [])],
+        "labels": unique_label_values(working, values.get("--label", [])),
         "assignee": None, "parent": None, "children": [], "relations": [],
         "url": f"https://linear.app/fixture/issue/{identifier}",
     }
@@ -256,7 +268,7 @@ if ARGV[:2] == ["linear", "save-issue"]:
             issue["description"] = STDIN
             changed = True
     if "--label" in values:
-        labels = [label_value(working, value) for value in values["--label"]]
+        labels = unique_label_values(working, values["--label"])
         if labels != issue["labels"]:
             issue["labels"] = labels
             changed = True
@@ -289,7 +301,12 @@ if ARGV[:3] in (["linear", "label", "add"], ["linear", "label", "remove"], ["lin
     if len(positionals) != 1:
         fail("fixture requires one issue")
     require_contract(state, values, booleans)
-    selected = [label_value(state, value) for value in values.get("--label", [])]
+    selectors = values.get("--label", [])
+    selected = (
+        unique_label_values(state, selectors)
+        if ARGV[2] in {"add", "set"}
+        else [label_value(state, value) for value in selectors]
+    )
     if not selected:
         fail("missing --label")
     working = copy.deepcopy(state)
@@ -298,7 +315,10 @@ if ARGV[:3] in (["linear", "label", "add"], ["linear", "label", "remove"], ["lin
         issue["labels"] = selected
     elif ARGV[2] == "add":
         known = {label["id"] for label in issue["labels"]}
-        issue["labels"].extend(label for label in selected if label["id"] not in known)
+        for label in selected:
+            if label["id"] not in known:
+                issue["labels"].append(label)
+                known.add(label["id"])
     else:
         removed = {label["id"] for label in selected}
         issue["labels"] = [label for label in issue["labels"] if label["id"] not in removed]

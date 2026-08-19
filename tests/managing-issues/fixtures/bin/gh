@@ -173,10 +173,21 @@ def related_issue(state: dict[str, Any], reference: dict[str, Any]) -> dict[str,
     url = reference.get("url")
     if isinstance(url, str):
         boundary = state.get("boundaryIssues", {}).get(url)
-        if boundary is not None and boundary.get("id") == reference.get("id"):
+        if boundary is not None:
+            if (
+                boundary.get("id") != reference.get("id")
+                or boundary.get("number") != reference.get("number")
+                or boundary.get("url") != url
+            ):
+                fail("related issue identity differs")
             return boundary
     issue = state["issues"].get(str(reference["number"]))
-    if issue is None or issue.get("id") != reference.get("id"):
+    if (
+        issue is None
+        or issue.get("id") != reference.get("id")
+        or issue.get("number") != reference.get("number")
+        or ("url" in reference and issue.get("url") != url)
+    ):
         fail("related issue identity differs")
     return issue
 

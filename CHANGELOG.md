@@ -13,6 +13,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `managing-issues` first-use now recommends a Linear exclusive readiness group
+  (`readiness` / `needs-discovery` / `needs-planning` / `ready`) and keeps
+  GitHub prefixed flats. The config schema is unchanged. Already-configured
+  repos are not migrated.
 - `repo-gardener` issue lanes now read their tracker from the repository's
   `.agents/managing-issues.json` when the managing-issues validator accepts it,
   and the issue-implementation lane limits candidates to issues whose mapped

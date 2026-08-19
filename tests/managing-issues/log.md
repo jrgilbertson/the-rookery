@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-08-19 | f4c79ae (working tree) | Linear readiness group fixtures | pass | `run-config-checks.py`, `run-provider-checks.py`, and `run-graph-checks.py` passed after the Linear starter, group-create instructions, and GitHub rationale landed. `npx skills-ref validate skills/managing-issues` reported `Valid skill`.
+- 2026-08-19 | f4c79ae (working tree) | first-use Linear group case | not run — independent gate pending | `first-use-interactive-setup.md` now includes Linear accept, prefixed-config skip, and missing group-create stop; no fresh-context grade is claimed here.
 - 2026-08-17 | 201ea5a (prior) | ready-to-start terminology — prior graph handoff | pass | A fresh context loaded the frozen HEAD package and passed all 5 topology-reconciliation items, reporting `#11` and `#12` under the exact heading `Ready to start now`.
 - 2026-08-17 | 201ea5a (working tree) | ready-to-start terminology — candidate graph handoff | pass | A separate fresh context loaded the current package and passed all 5 topology-reconciliation items; an independent grader found no regression in the readiness set, blockers, coverage, effects, or Verification gaps.
 - 2026-08-12 | f55ca32 (working tree) | policy validator proof-first red | fail (expected) | `python3 tests/managing-issues/fixtures/run-policy-checks.py` exited 1 with `FAIL: missing production validator at skills/managing-issues/scripts/policy_check.py` before implementation.

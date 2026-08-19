@@ -78,7 +78,7 @@ REVIEWS='query{repository{pullRequest{reviews(first:100){pageInfo{hasNextPage en
 COMMENTS='query{repository{pullRequest{comments(first:100){pageInfo{hasNextPage endCursor} nodes{id body author{login}}}}}}'
 EDITS='query{repository{pullRequest{userContentEdits(first:100){pageInfo{hasNextPage endCursor} nodes{editedAt editor{login} diff}}}}}'
 # shellcheck disable=SC2016
-ISSUE_COMMENTS='query($issueNumber:Int!){repository{issue(number:$issueNumber){number title body state url comments(first:100){pageInfo{hasNextPage endCursor} nodes{id body author{login} createdAt url}}}}}'
+ISSUE_COMMENTS='query($owner:String!,$name:String!,$issueNumber:Int!){repository(owner:$owner,name:$name){issue(number:$issueNumber){number title body state url comments(first:100){pageInfo{hasNextPage endCursor} nodes{id body author{login} createdAt url}}}}}'
 
 echo "== A. serve real fixture content =="
 json_is "specimen-a: four resolved threads" \
@@ -114,7 +114,11 @@ top_json_is "specimen-a: source issue metadata is served" \
   issue view 73 --repo mapleworks/orderline --json number,title,body,state,url
 top_json_is "specimen-a: source issue comments use GraphQL" \
   specimen-a "str(d['data']['repository']['issue']['number'])+' '+str(len(d['data']['repository']['issue']['comments']['nodes']))" \
-  "73 1" api graphql -f "query=$ISSUE_COMMENTS" -F issueNumber=73
+  "73 1" api graphql -f "query=$ISSUE_COMMENTS" \
+  -F owner=mapleworks -F name=orderline -F issueNumber=73
+exit_is "specimen-a: issue GraphQL rejects another repository" 1 specimen-a \
+  api graphql -f "query=$ISSUE_COMMENTS" \
+  -F owner=mapleworks -F name=another-repo -F issueNumber=73
 exit_is "specimen-a: issue view cannot substitute for comment pagination" \
   2 specimen-a issue view 73 --repo mapleworks/orderline \
   --json number,title,body,state,url,comments
@@ -145,8 +149,8 @@ exit_is "skill-shaped threads query accepted" 0 specimen-a api graphql -f "query
 exit_is "skill-shaped edits query accepted" 0 specimen-a api graphql -f "query=$EDITS"
 # shellcheck disable=SC2016
 exit_is "issue comments without createdAt refused" 2 specimen-a api graphql \
-  -f 'query=query($issueNumber:Int!){repository{issue(number:$issueNumber){number title body state url comments(first:100){pageInfo{hasNextPage endCursor} nodes{id body author{login}}}}}}' \
-  -F issueNumber=73
+  -f 'query=query($owner:String!,$name:String!,$issueNumber:Int!){repository(owner:$owner,name:$name){issue(number:$issueNumber){number title body state url comments(first:100){pageInfo{hasNextPage endCursor} nodes{id body author{login}}}}}}' \
+  -F owner=mapleworks -F name=orderline -F issueNumber=73
 
 echo "== C. every specimen serves the battery-shaped queries =="
 for d in "$PRS"/specimen-*; do

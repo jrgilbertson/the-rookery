@@ -364,6 +364,19 @@ def resolve_named_integer(args, field, bindings):
     die(f"`{field}` is required", 2)
 
 
+def resolve_named_string(args, field, bindings):
+    literal = re.search(rf'\b{field}\s*:\s*"([^"]+)"', args)
+    if literal:
+        return literal.group(1)
+    variable = re.search(rf"\b{field}\s*:\s*\$(\w+)", args)
+    if variable:
+        value = bound(variable.group(1), bindings)
+        if value:
+            return value
+        die(f"variable ${variable.group(1)} is empty", 2)
+    die(f"`{field}` is required", 2)
+
+
 def resolve_first(args, bindings):
     lit = re.search(r"first\s*:\s*(\d+)", args)
     if lit:
@@ -553,6 +566,21 @@ def graphql(argv, forge):
                 "`issue` is requested without " + ", ".join(missing) +
                 "; a real response would omit what the skill depends on",
                 2,
+            )
+        repository_args = connection_args(query, "repository")
+        requested_owner = resolve_named_string(
+            repository_args, "owner", bindings
+        )
+        requested_name = resolve_named_string(repository_args, "name", bindings)
+        expected_repository = forge.get("repo", "").removeprefix("github.com/")
+        expected_owner, separator, expected_name = expected_repository.partition("/")
+        if not separator or (
+            requested_owner.lower(), requested_name.lower()
+        ) != (expected_owner.lower(), expected_name.lower()):
+            die(
+                f"no repository {requested_owner}/{requested_name} here; "
+                f"this specimen is {expected_repository}",
+                1,
             )
         issue_number = resolve_named_integer(
             connection_args(query, "issue"), "number", bindings

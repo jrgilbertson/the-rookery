@@ -2,7 +2,7 @@
 name: repo-gardener
 description: Use when running or interpreting a scheduled or manual repository-gardening pass for one repository. Surveys nine maintenance lanes, deepens up to the smaller of three and the installed-policy limit, optionally checks product-data trust, and may supervise a bounded child worktree through an unmerged PR when current evidence justifies it. Do not use for merging, releasing, deploying, creating issues, contacting customers, or performing an already-selected implementation outside a gardening run.
 license: MIT
-compatibility: Requires read access to one repository, its installed policy, native pull-request state, configured evidence sources, and an optional `.agents/managing-issues.json` that selects the issue lanes' tracker. A mutating run requires exclusive tracker-write serialization and child worktree/branch/PR capabilities. Simplification and code review are required before child dispatch; checking-pr-readiness is required before push, and its absence preserves a committed child without a PR.
+compatibility: Requires read access to one repository, its installed policy, native pull-request state, and configured evidence sources; reads an optional `.agents/managing-issues.json` to select the issue lanes' tracker. A mutating run requires exclusive tracker-write serialization and child worktree/branch/PR capabilities. Simplification and code review are required before child dispatch; checking-pr-readiness is required before push, and its absence preserves a committed child without a PR.
 ---
 
 # Repo Gardener

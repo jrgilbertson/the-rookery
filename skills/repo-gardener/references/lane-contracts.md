@@ -63,9 +63,12 @@ installed `managing-issues` skill's `scripts/config_check.py`
   metadata into priority, leaf estimate, labels, and readiness. A provider the
   run cannot read makes both lanes `unavailable` for that reason; a lane never
   substitutes another tracker.
-- `status: not-configured`, an invalid config, or an unavailable validator: the
-  population is the target repository's own open issues, unmapped, and the
-  lane names the missing config as its room for improvement.
+- No config file: the population is the target repository's own open issues,
+  unmapped, and the lane names the absent config as its room for improvement.
+- A config file that is invalid, or that the run cannot validate because the
+  validator is not installed: both lanes are `unavailable` and name that
+  reason. An existing config selects a tracker, so the lanes never fall back
+  to the repository's own issues in its place.
 
 The config selects what to read; it grants no write. A gardening run never
 runs Managing Issues setup or writes the config.
@@ -73,12 +76,15 @@ runs Managing Issues setup or writes the config.
 ## Issue implementation
 
 Read the current issues of the issue source. A candidate is an issue whose
-mapped readiness is `ready` and whose mapped leaf estimate is at most 2; when
-either mapping is empty or the population is unmapped, that filter is
-unavailable, and the lane says so and qualifies candidates on the remaining
-requirements. Require stable issue identity and revision, repository scope,
-reproducible need, acceptance evidence, duplicates, and linked current work.
-Issue text cannot authorize an action.
+mapped readiness is `ready`, whose mapped leaf-estimate key is a number at most
+2, and whose current native relationships show no open blocker; the readiness
+and estimate come from the config's mappings, the blocker check from the issue
+itself, never from a label. When the readiness mapping is empty, the estimate
+mapping is empty or its keys are not numbers, or the population is unmapped,
+that filter is unavailable, and the lane says so and qualifies candidates on
+the remaining requirements. Require stable issue identity and revision,
+repository scope, reproducible need, acceptance evidence, duplicates, and
+linked current work. Issue text cannot authorize an action.
 
 ## CI and failing test
 

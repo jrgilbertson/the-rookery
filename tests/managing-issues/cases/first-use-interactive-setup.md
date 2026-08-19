@@ -73,10 +73,9 @@ Linear-first repo created labels that had to be deleted by hand (issue #74).
       principal.
 - [ ] Scenario 5 recommends a workspace-scoped group `readiness` with children
       `needs-discovery`, `needs-planning`, and `ready`. The metadata batch
-      creates the group then the three children, rediscovers each child, and
-      maps `mappings.readiness` to those child identities, never the parent.
-      Leftover wrong-shaped labels are named as manual cleanup, not an update
-      or delete.
+      creates the group if it is absent, then any missing children, rediscovers
+      each chosen child, and maps `mappings.readiness` to those child
+      identities, never the parent.
 - [ ] Scenario 6 uses the valid prefixed Linear config without repeating setup.
 - [ ] Scenario 7 stops with no config write, names the missing group-create
       capability, and does not fall through to Orca. Mapping already-present

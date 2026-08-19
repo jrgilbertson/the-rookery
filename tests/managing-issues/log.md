@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-08-19 | 27ee5e6 (working tree) | Linear missing-children recut fixtures | pass | After the recut locked create-only-missing-children, leftover-cleanup off the empty-workspace happy path, and phrase locks for MCP tools plus the SKILL exclusive-group sentence, `run-config-checks.py`, `run-provider-checks.py`, and `run-graph-checks.py` passed. `npx skills-ref validate skills/managing-issues` reported `Valid skill`. `lefthook run pre-push --force --no-auto-install` passed. SKILL.md is 250 lines.
+- 2026-08-19 | 27ee5e6 (working tree) | first-use Linear group case | not run — independent gate pending | Scenario 5 now requires group-if-absent then missing children; leftover cleanup stays on the failed-create path. No fresh-context grade is claimed here.
 - 2026-08-19 | f4c79ae (working tree) | Linear readiness group fixtures | pass | `run-config-checks.py`, `run-provider-checks.py`, and `run-graph-checks.py` passed after the Linear starter, group-create instructions, and GitHub rationale landed. `npx skills-ref validate skills/managing-issues` reported `Valid skill`.
 - 2026-08-19 | f4c79ae (working tree) | first-use Linear group case | not run — independent gate pending | `first-use-interactive-setup.md` now includes Linear accept, prefixed-config skip, and missing group-create stop; no fresh-context grade is claimed here.
 - 2026-08-17 | 201ea5a (prior) | ready-to-start terminology — prior graph handoff | pass | A fresh context loaded the frozen HEAD package and passed all 5 topology-reconciliation items, reporting `#11` and `#12` under the exact heading `Ready to start now`.

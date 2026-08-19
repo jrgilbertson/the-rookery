@@ -464,6 +464,10 @@ def published_contract() -> None:
     require("accepted non-create effect" in skill and "readback fails, is partial, or mismatches the approved result" in skill, "non-create readback contract differs")
     require("implementation plan" in skill and "worktree" in skill and "pull request" in skill, "issue-only handoff boundary differs")
     require(
+        "Linear recommends an exclusive readiness group" in compact_skill,
+        "setup recommendation rationale differs",
+    )
+    require(
         "active account" in github
         and "matchback" in github
         and "--body-file -" in github
@@ -487,8 +491,11 @@ def published_contract() -> None:
         "high` to `2`",
         "pass the resulting number, never the config string",
         "workspace-scoped readiness group",
+        "any missing children",
         "Apply a child, never the parent",
         "manual cleanup",
+        "create_issue_label",
+        "list_issue_labels",
     ):
         require(phrase in compact_linear, f"Linear transport contract omits {phrase}")
 

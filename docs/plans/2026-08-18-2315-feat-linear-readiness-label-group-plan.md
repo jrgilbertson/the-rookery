@@ -19,7 +19,7 @@ execution: code
 - **Authority:** GitHub issue [#74](https://github.com/jrgilbertson/the-rookery/issues/74); this plan; shipped `managing-issues` contracts.
 - **Stop if:** A change would migrate already-configured repos, add a config field for group structure, or invent a Linear substitute when the selected transport cannot create a workspace-scoped exclusive group.
 - **Execution profile:** Instruction and fixture change in `skills/managing-issues` and `tests/managing-issues`.
-- **Tail:** `ce-work` or an equivalent implementer owns implementation, tests, and commits. Opening a PR stays an explicit later request.
+- **Tail:** `ce-work` owns implementation, tests, review, and shipping, including a PR.
 
 ---
 
@@ -55,7 +55,7 @@ Setup currently offers the same three flat labels (`readiness:needs-discovery`, 
 
 **Create, readback, and config**
 
-- R6. A Linear metadata batch that creates the recommended shape creates the parent group first, then the three children, then reads each child back by exact identity before any config preview.
+- R6. A Linear metadata batch that creates the recommended shape creates the parent group if it is absent, then any missing children, then reads each chosen child back by exact identity before any config preview.
 - R7. `mappings.readiness` still maps each of `needs-discovery`, `needs-planning`, and `ready` to one exact discovered child identity. Store a unique name; store the label UUID when the name is not unique in provider scope. Do not store the parent group, transport, or group structure.
 - R8. Apply a group child to an issue, never the parent group.
 - R9. If the selected transport cannot create a workspace-scoped group and children and read the children back, and the approved batch still needs that create, stop with no config write and name the missing capability. Mapping already-present identities does not require group-create capability. Do not fall through from MCP to Orca or reconstruct private API calls.
@@ -90,7 +90,7 @@ Setup currently offers the same three flat labels (`readiness:needs-discovery`, 
 
 ### Acceptance Examples
 
-- AE1. Covers F1 / R1, R6, R7. Given a Linear workspace with no readiness group and MCP `create_issue_label` exposing `isGroup`, `parent`, and omitted `teamId` for workspace labels. When the operator accepts recommendations. Then the metadata batch creates the group then three children, each child is rediscovered, and `mappings.readiness` values each resolve to exactly one child.
+- AE1. Covers F1 / R1, R6, R7. Given a Linear workspace with no readiness group and MCP `create_issue_label` exposing `isGroup`, `parent`, and omitted `teamId` for workspace labels. When the operator accepts recommendations. Then the metadata batch creates the group if absent then any missing children, each chosen child is rediscovered, and `mappings.readiness` values each resolve to exactly one child.
 - AE2. Covers F2 / R2, R11. Given GitHub first-use. When the operator accepts recommendations. Then the three prefixed flats are proposed and created as today.
 - AE3. Covers F3 / R9. Given selected Linear MCP whose schema lacks `isGroup` or `parent`. When the operator accepts the recommended group that still needs creates. Then setup stops with no config write and does not switch to Orca. Mapping three existing labels in that same session still proceeds.
 - AE4. Covers R4, R13. Given a valid existing config whose Linear readiness values are prefixed flats. When a later create uses only those values. Then setup does not rerun and those identities still validate.
@@ -229,15 +229,15 @@ External research was load-bearing for KTD4 and R6.
 1. Extend the first-use paragraph in `linear.md` with the recommended kebab-case group, workspace scope, create-only limit, and manual cleanup.
 2. Split absent general-label create from absent readiness-group create (KTD7).
 3. Document MCP field use per KTD4. Preview parent-then-children names. Orca remains “only if the loaded guide exposes the same capabilities.”
-4. Sequence the metadata batch as group then children then child readback. Map children, not the parent.
+4. Sequence the metadata batch as group (if absent) then missing children then child readback. Map children, not the parent.
 5. Say a failed create uses the existing first-stop. Do not add collision, sibling, or leftover-parent protocols.
-6. Lock new Linear phrases in `published_contract()` the same way `create_issue_label` and `list_issue_labels` are locked today.
+6. Lock `create_issue_label`, `list_issue_labels`, workspace-scoped group, missing-children create, child-not-parent, and manual cleanup in `published_contract()`.
 
 **Patterns to follow:** Existing first-use create/readback stop in `linear.md`. Phrase locks in `published_contract()`.
 
 **Test scenarios:**
 
-- `published_contract()` fails if `linear.md` omits workspace-scoped readiness group, create-only/manual cleanup, or child-not-parent mapping.
+- `published_contract()` fails if `linear.md` omits workspace-scoped readiness group, missing-children create, create-only/manual cleanup, or child-not-parent mapping.
 - Compact linear text still contains `first-use setup`, `create_issue_label`, `list_issue_labels`, and no-fallthrough-to-Orca.
 - `SKILL.md` line count stays under 500.
 
@@ -266,7 +266,7 @@ External research was load-bearing for KTD4 and R6.
 
 **Test scenarios:**
 
-- `published_contract()` still finds every existing setup phrase in `SKILL.md`.
+- `published_contract()` still finds every existing setup phrase in `SKILL.md`, including the exclusive-group versus prefixed-flats rationale.
 - GitHub reference still contains `gh label create NAME` and the new no-grouping rationale.
 - `SKILL.md` stays under 500 lines.
 
@@ -298,7 +298,7 @@ External research was load-bearing for KTD4 and R6.
 
 **Test scenarios:**
 
-- Covers AE1. Linear accept path proposes the kebab-case workspace group, creates group then children, maps children only.
+- Covers AE1. Linear accept path proposes the kebab-case workspace group, creates the group if absent then missing children, maps children only. Leftover-cleanup language belongs on the failed-create path, not the empty-workspace happy path.
 - Covers AE2. GitHub scenarios still pass with prefixed flats.
 - Covers AE3. Missing group-create capability stops when the accepted recommendation still needs creates. No config write and no Orca fallthrough. Mapping three existing labels still proceeds.
 - Covers AE4. Valid existing Linear config skips setup.

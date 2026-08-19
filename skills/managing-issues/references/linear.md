@@ -74,16 +74,15 @@ identity, never workflow status.
 During first-use setup, present the native priority and estimate choices and
 exact existing labels beside the Linear starter recommendations. Recommend a
 workspace-scoped readiness group named `readiness` with kebab-case children
-`needs-discovery`, `needs-planning`, and `ready`. Linear groups are exclusive;
-GitHub has no grouping surface. The operator chooses the mappings. Do not
-change the team's native priority or estimation scheme.
+`needs-discovery`, `needs-planning`, and `ready`. The operator chooses the
+mappings. Do not change the team's native priority or estimation scheme.
 
 When a chosen general label is absent, offer a flat label create. When a chosen
 readiness child is absent, offer the group-then-children recipe: create the
-workspace group first, then the three children, then rediscover each child.
-Apply a child, never the parent. Store a unique child name, or the label UUID
-when the name is not unique. Missing group-create must not block creating a
-general label such as `bug`.
+workspace group if it is absent, then any missing children, then rediscover
+each chosen child. Apply a child, never the parent. Store a unique child name,
+or the label UUID when the name is not unique. Missing group-create must not
+block creating a general label such as `bug`.
 
 Offer any of those creates only if the selected transport exposes an exact
 label-create and label-readback path. For connected MCP this is normally the

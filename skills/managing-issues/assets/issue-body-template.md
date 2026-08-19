@@ -1,13 +1,13 @@
 ## Problem
 
-<What is broken or missing, who runs into it, and what it costs them. Lead with the user or product impact; mention internals only as the cause. For defects, include steps to reproduce and expected vs. actual behavior.>
+<Describe the current gap, unresolved decision, or missing evidence; who or what it affects; and why it matters. For a simple defect, include concise expected versus actual behavior and reproduction here.>
 
 ## Scope
 
-<What will be true when this issue is done — one shippable change. If something nearby could be mistaken as included, say it is out of scope.>
+<Name the single outcome this issue owns and its meaningful boundary. State a non-goal only when it is likely to be mistaken as included.>
 
 ## Verification
 
-- <One observable condition per bullet that a reviewer can check — a behavior to try, a number to look up, a test that passes. Write what will be true, not that it already is. Each condition would fail before this issue is done.>
+- <One observable result or evidence requirement per bullet that proves the behavior promised by Problem and Scope. Each item must be false or unproven before completion.>
 
-<!-- Optional sections. Add `## Context` or `## Constraints` only if the issue would be misread or mis-checked without it. Add `## Out of scope` when the boundary is likely to be contested. Add `## Provenance` to link the originating plan, review, or pull request. -->
+<!-- Optional sections. Add `## Reproduction` for multi-step, intermittent, or environment-specific defects. Add `## Context` or `## Constraints` only if the issue would be misread or mis-checked without it. Add `## Out of scope` when the boundary is likely to be contested. Add `## Provenance` to link the originating plan, baseline, incident, scan, review, or pull request. -->

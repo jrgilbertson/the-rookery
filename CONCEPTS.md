@@ -61,9 +61,42 @@ understanding rather than the repository's safeguards and procedures.
 
 ### Canonical Tracker
 
-The single issue system allowed to receive updates for a repository. Copies
-synced to another tracker may help identify or verify the issue, but they are
-not a second place to write.
+The one issue system authorized to own and receive mutations for a repository.
+A cross-tracker request may reach its canonical record only through one exact
+provider-native link; otherwise Managing Issues asks for the canonical issue or
+stops. An issue in another tracker is not a second write target.
+
+### Owned Issue Graph
+
+The canonical issue family relevant to one requested outcome: its top parent,
+all reachable descendants, and the native blocks or blocked-by relationships
+that affect their readiness or completion. Relevant nodes outside the
+repository's authority remain read-only boundary nodes rather than silently
+disappearing from the graph.
+
+### Implementation Leaf
+
+One issue whose deliverable and Verification boundary fit one independently
+deliverable, reviewable pull request. A stacked PR series is one leaf only when
+no PR in the stack delivers independently observable behavior; otherwise each
+such PR is its own leaf. A single-leaf change needs no artificial parent.
+
+### Issue Readiness Posture
+
+The issue's IDE-neutral information state: `needs-discovery` when the problem or
+outcome is not understood, `needs-planning` when the outcome is understood but
+Scope, Verification, decomposition, required metadata choices, or native
+relationships remain unsettled, or `ready` when those facts are settled for its
+role as a parent or leaf. It does not name or invoke a particular skill and
+remains separate from dependency readiness, so a ready leaf may remain blocked
+and outside the Ready Frontier.
+
+### Ready Frontier
+
+The implementation leaves in an Owned Issue Graph whose Issue Readiness Posture
+is `ready` and whose current native blockers and declared prerequisites are
+satisfied. It is derived from a fresh canonical read for a
+handoff and is never stored as a parallel work state.
 
 ## Shipping and verification
 

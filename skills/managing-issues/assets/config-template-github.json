@@ -1,0 +1,32 @@
+{
+  "version": 2,
+  "provider": "github",
+  "target": "REPLACE_WITH_OWNER/REPLACE_WITH_REPOSITORY",
+  "mappings": {
+    "priority": {
+      "urgent": "priority:urgent",
+      "high": "priority:high",
+      "medium": "priority:medium",
+      "low": "priority:low"
+    },
+    "leaf_estimate": {
+      "1": "estimate:1",
+      "2": "estimate:2",
+      "3": "estimate:3",
+      "5": "estimate:5",
+      "8": "estimate:8"
+    },
+    "labels": {
+      "bug": "bug",
+      "feature": "feature",
+      "maintenance": "maintenance",
+      "research": "research",
+      "documentation": "documentation"
+    },
+    "readiness": {
+      "needs-discovery": "readiness:needs-discovery",
+      "needs-planning": "readiness:needs-planning",
+      "ready": "readiness:ready"
+    }
+  }
+}

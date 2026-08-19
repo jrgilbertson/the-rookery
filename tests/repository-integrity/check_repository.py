@@ -21,7 +21,7 @@ FIXTURE_RUNNERS = (
     "tests/checking-pr-readiness/fixtures/run-assessment-checks.py",
     "tests/checking-pr-readiness/fixtures/run-helper-checks.sh",
     "tests/managing-issues/fixtures/run-graph-checks.py",
-    "tests/managing-issues/fixtures/run-policy-checks.py",
+    "tests/managing-issues/fixtures/run-config-checks.py",
     "tests/managing-issues/fixtures/run-provider-checks.py",
     "tests/personal-chief-of-staff/fixtures/run-fixture-checks.sh",
     "tests/repository-integrity/check_catalog.py",

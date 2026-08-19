@@ -1,7 +1,0 @@
-{
-  "version": 1,
-  "github_to_linear": {
-    "ExampleOrg/Project#12": "ENG-12",
-    "ExampleOrg/Project#34": "ENG-34"
-  }
-}

@@ -1,7 +1,7 @@
 ---
 module: skill evaluation
 date: 2026-07-27
-last_updated: 2026-08-13
+last_updated: 2026-08-17
 problem_type: best_practice
 component: testing_framework
 severity: high
@@ -49,9 +49,9 @@ Keep three evidence layers separate:
 
 Keep the durable record small: self-contained case files contain the prompt and
 binary checklist, while the log keeps one bounded line per run or check
-(`tests/README.md:10`). Behavioral revisions use matched prior/candidate runs in
+(`tests/README.md:16`). Behavioral revisions use matched prior/candidate runs in
 fresh contexts and ship only when discriminating cases improve without
-regression (`tests/README.md:64`).
+regression (`tests/README.md:70`).
 
 For a substantive skill change:
 
@@ -97,6 +97,15 @@ the exact approval, write once, and read the result back. Grade those operations
 from the resulting artifact or trace, not from policy narration. Keep fixture
 facts neutral and keep expected conclusions in the checklist or grader rather
 than leaking them into the executor prompt.
+
+Apply the same boundary to provider adapters. A deterministic seam can prove
+which command ran, what disposable provider state changed, and whether exact
+readback succeeded. It cannot prove that an agent chose to stop a later
+approved effect when the harness never presented that effect to an agent or
+batch executor. Put the later effect in a behavior case, make its disposition
+observable, and grade the agent's decision in a fresh context. Absence from a
+provider log is evidence only for operations that the scenario could actually
+have emitted.
 
 Keep routine verification proportionate. One graded execution supports only
 that case, in that context, at that revision. A matched comparison can show
@@ -157,6 +166,22 @@ The source edit did not make the earlier work useless; it narrowed what that
 work could still prove. The append-only record preserves both the failed review
 and the corrected qualification (`tests/managing-issues/log.md`).
 
+The same qualification exposed a narrower stopped-batch evidence error. A
+provider fixture invoked one indeterminate create and then asserted that no
+later edit appeared in its command log
+(`tests/managing-issues/fixtures/run-provider-checks.py:214`). That can detect an
+unexpected command from the fixture interaction, but it cannot prove an agent
+declined a separately approved later effect because the harness never offered
+one. In this branch, the corrected evidence keeps provider facts in the
+deterministic runner, uses a small transition model that actually iterates
+across later effects
+(`tests/managing-issues/fixtures/run-graph-checks.py:198`), and grades the real
+agent decision with a fresh-context case that supplies three ordered effects
+and requires the third to remain `unapplied`
+(`tests/managing-issues/cases/partial-mutation-and-global-stop.md:8`). The
+retained run record limits its claim to that focused case
+(`tests/managing-issues/log.md:111`).
+
 A personal-chief-of-staff case exposed a vacuous pass at an action boundary.
 Its first prompt correctly authorized no journal write, but the test and log
 also claimed approval, write, and readback safety. No approved action existed,
@@ -166,11 +191,12 @@ The repaired case keeps that no-approval turn, then adds a separate synthetic
 follow-up with exact approval that asks the agent to state the required
 authoritative re-read, revalidation, one-write, and CLI-readback sequence
 (`tests/personal-chief-of-staff/cases/wind-down-journal-ownership.md:12`). It is
-a bounded narration check, not executable acceptance evidence; the case and
-result log say that no real source was accessed or changed. Validating the
-approved-write transition itself would require a disposable fixture that makes
-those operations observable. The production contract still requires that order
-(`skills/personal-chief-of-staff/references/source-behavior.md:283`). A separate
+a bounded narration check, not executable acceptance evidence; the case says no
+real source is accessed or changed, and the result log records that no real
+write was executed. Validating the approved-write transition itself would
+require a disposable fixture that makes those operations observable. The
+production contract still requires that order
+(`skills/personal-chief-of-staff/references/source-behavior.md:452`). A separate
 pressure case asks the agent to keep a one-day failure labeled as isolated even
 when the user explicitly requests durable capture, making the recurrence and
 approval boundaries observable

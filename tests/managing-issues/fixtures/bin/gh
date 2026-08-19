@@ -154,6 +154,44 @@ def require_issue(state: dict[str, Any], value: str) -> dict[str, Any]:
     return issue
 
 
+def boundary_issue(
+    state: dict[str, Any], repository: str, selector: str
+) -> dict[str, Any] | None:
+    issue = state.get("boundaryIssues", {}).get(selector)
+    if issue is None:
+        return None
+    repository_url, separator, number = selector.rpartition("/issues/")
+    if not separator or not number.isdigit() or issue.get("number") != int(number):
+        return None
+    expected_repository = f"github.com/{repository_url.removeprefix('https://github.com/')}"
+    if repository != expected_repository or issue.get("url") != selector:
+        return None
+    return issue
+
+
+def related_issue(state: dict[str, Any], reference: dict[str, Any]) -> dict[str, Any]:
+    url = reference.get("url")
+    if isinstance(url, str):
+        boundary = state.get("boundaryIssues", {}).get(url)
+        if boundary is not None:
+            if (
+                boundary.get("id") != reference.get("id")
+                or boundary.get("number") != reference.get("number")
+                or boundary.get("url") != url
+            ):
+                fail("related issue identity differs")
+            return boundary
+    issue = state["issues"].get(str(reference["number"]))
+    if (
+        issue is None
+        or issue.get("id") != reference.get("id")
+        or issue.get("number") != reference.get("number")
+        or ("url" in reference and issue.get("url") != url)
+    ):
+        fail("related issue identity differs")
+    return issue
+
+
 def issue_ref(issue: dict[str, Any]) -> dict[str, Any]:
     return {"id": issue["id"], "number": issue["number"]}
 
@@ -279,7 +317,7 @@ def api_issue_and_collection(
 
 
 def auth_payload(state: dict[str, Any]) -> dict[str, Any]:
-    login = state["principal"]
+    login = state["login"]
     if (
         os.environ.get("MI_GITHUB_DRIFT_AFTER_WRITES") == "1"
         and state.get("fixtureWriteCount", 0) > 0
@@ -472,7 +510,7 @@ if ARGV[:1] == ["api"]:
         refs = issue["blocking"]
     else:
         fail("unsupported command")
-    nodes = [state["issues"][str(ref["number"])] for ref in refs]
+    nodes = [related_issue(state, ref) for ref in refs]
     start = (page - 1) * per_page
     emit(nodes[start : start + per_page])
     raise SystemExit(0)
@@ -483,7 +521,17 @@ if ARGV[:2] == ["issue", "view"]:
     )
     if len(positionals) != 1:
         fail("fixture requires one issue")
-    require_repository(state, one(values, "-R", required=True))
+    repository_target = one(values, "-R", required=True) or ""
+    boundary = boundary_issue(state, repository_target, positionals[0])
+    if boundary is not None:
+        emit(select_issue_fields(boundary, one(values, "--json", required=True) or ""))
+        raise SystemExit(0)
+    require_repository(state, repository_target)
+    if (
+        os.environ.get("MI_GITHUB_FAIL_READ_AFTER_WRITE") == "1"
+        and state.get("fixtureWriteCount", 0) > 0
+    ):
+        fail("post-write readback unavailable")
     if positionals[0] == "https://github.com/foreign/project/issues/1":
         foreign_issue = {
             "id": "I_foreign_1",

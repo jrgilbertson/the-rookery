@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "provider": "linear",
+  "target": {
+    "workspace": "REPLACE_WITH_CONNECTED_WORKSPACE_ID",
+    "team": "REPLACE_WITH_TEAM_KEY_OR_ID"
+  },
+  "mappings": {
+    "priority": {
+      "urgent": "urgent",
+      "high": "high",
+      "medium": "medium",
+      "low": "low"
+    },
+    "leaf_estimate": {
+      "1": 1,
+      "2": 2,
+      "3": 3,
+      "5": 5,
+      "8": 8
+    },
+    "labels": {
+      "bug": "bug",
+      "feature": "feature",
+      "maintenance": "maintenance",
+      "research": "research",
+      "documentation": "documentation"
+    },
+    "readiness": {
+      "needs-discovery": "readiness:needs-discovery",
+      "needs-planning": "readiness:needs-planning",
+      "ready": "readiness:ready"
+    }
+  }
+}

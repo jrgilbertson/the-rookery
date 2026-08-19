@@ -11,6 +11,15 @@ looked" surface. GitHub Releases mirror its entries.
 
 ## [Unreleased]
 
+### Changed
+
+- `managing-issues` now handles authenticated GitHub and Linear creates, updates,
+  relationships, readiness, and completion through one canonical tracker.
+  First-use setup records only the provider, target, and metadata vocabulary.
+  Cross-tracker requests require one exact provider-native link, and the skill
+  writes only the canonical tracker. Linear uses connected MCP tools when
+  available and keeps Orca as an explicit session choice.
+
 ## [0.2.0] - 2026-08-14
 
 ### Added

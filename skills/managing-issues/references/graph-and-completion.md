@@ -1,170 +1,121 @@
-# Graph coverage and completion proof
+# Issue graphs, readiness, and completion
 
-Load this reference only for relationship, readiness, or completion work. Use
-native tracker relationships as the graph. Keep traversal facts in the current
-response only; do not create a graph file, claim, queue, schedule, or execution
-plan.
+Load this reference only when relationships, readiness, or completion matter.
+Use the canonical tracker's native parent and blocker relationships. Keep the
+derived graph in the current response; the tracker remains the durable record.
+
+## Shape only the useful graph
+
+Use the issue set that passed the main workflow's decomposition gates. Keep a
+standalone leaf parentless. When several leaves deliver one whole outcome,
+attach them to that outcome's parent. Add another level only when a child owns a
+distinct sub-outcome that itself needs several leaves. This is the shallowest
+useful graph; it has no fixed depth limit.
+
+Any node with children is a parent, including a nested sub-outcome, and carries
+no estimate. Only childless implementation leaves receive analyzed estimates.
+Every node still receives its own Problem, Scope, Verification, priority,
+labels, readiness, and native graph position.
 
 ## Establish complete coverage
 
-Start at the requested canonical node. Walk its parent chain to the top family,
-then read every descendant of that top node. Read every internal `blocks` and
-`blocked-by` edge. For an edge that crosses the family boundary, read the
-one-hop external node needed to know whether it still blocks; do not recursively
-adopt that node's family.
+Start at the requested canonical issue. Walk its parent chain to the top of the
+family, then read every descendant and every internal `blocks` or `blocked-by`
+edge. For an edge crossing the family boundary, read the one external endpoint
+needed to decide whether it remains an unresolved blocker. Do not adopt that
+external issue's family.
 
-Track each canonical provider identity in a visited set and count it once.
-Preserve cycles as edges and stop following an already visited identity. The
-conservative limit is 250 canonical nodes, including required one-hop boundary
-nodes. Coverage becomes `partial` when a required node is inaccessible, the
-limit is reached before exhaustion, any page fails, or a cursor is empty or
-repeats while another page is claimed. A partial result names the missing
-surface. It permits qualified reads but blocks relationship changes and parent
-completion. Narrowing the question to known nodes does not waive required
-family coverage for a topology write.
+Track canonical provider identities in a visited set, count each identity once,
+preserve cycles as edges, and never revisit a node. Stop at 250 identities,
+including one-hop external blockers. Coverage is `partial` when any required
+node or page is inaccessible, the limit is reached before exhaustion, a page
+fails, or a next cursor is empty or repeats. Name the exact missing surface.
+Partial coverage permits qualified facts but blocks topology changes, Ready
+Frontier claims, and parent completion.
 
-If a current authoritative endpoint read proves the exact requested relation
-already exists, return `already_satisfied` and perform no relationship write.
-Partial family coverage still blocks any different topology mutation or repair;
-the no-op does not grant authority to reshape adjacent edges.
+Use the selected provider reference for exhaustive native reads. Relationship
+arrays embedded in an issue read are facts, not proof that a collection is
+exhausted. A current exact endpoint read may prove one requested relationship
+`already_satisfied`; that no-op does not authorize other topology changes under
+partial coverage.
 
-### GitHub exhaustion
+## Derive readiness from current content
 
-The arrays returned by `gh issue view` are useful relationship facts but do not
-prove pagination exhaustion. Follow parents with the issue read from
-`github.md`. Read these native list endpoints one page at a time with
-`per_page=100` and an increasing `page` value:
+Use the Problem, Scope, and Verification from the latest complete canonical
+readback together with the node's current graph role:
 
-```text
-gh api "repos/OWNER/REPO/issues/NUMBER/sub_issues?per_page=100&page=PAGE" --hostname github.com
-gh api "repos/OWNER/REPO/issues/NUMBER/dependencies/blocked_by?per_page=100&page=PAGE" --hostname github.com
-gh api "repos/OWNER/REPO/issues/NUMBER/dependencies/blocking?per_page=100&page=PAGE" --hostname github.com
-```
+- `needs-discovery` when the problem or intended outcome is not understood.
+- `needs-planning` when the problem is understood but Scope, Verification,
+  decomposition, required metadata choices, or native relationships remain
+  unsettled.
+- `ready` when Problem, Scope, Verification, decomposition, required metadata
+  choices, and native graph position are settled for the issue's role. A parent
+  is ready when its whole outcome and child graph are settled; a leaf is ready
+  when it can be completed and checked.
 
-Process each page before requesting the next. A page shorter than `per_page`
-proves that collection exhausted; when a full page would cross the 250-node
-cap, retain only the bounded facts and return `partial` without fetching more.
-Read each returned canonical identity through `gh issue view` when its current
-state or Verification is required. A missing endpoint, truncated collection,
-or failed page makes coverage partial.
+Never use a stored readiness representation as evidence for the derived
+posture. Compare it with the derived result. Intended metadata contains exactly
+one of the three configured readiness representations; a missing, duplicate, or
+stale representation is a separate previewed correction.
 
-### Linear exhaustion
+The Ready Frontier contains only required, open implementation leaves whose
+derived posture is `ready` and whose native blockers are all resolved. Parents
+never enter it. Neither do completed or canceled leaves,
+blocked leaves, unknown-readiness leaves, or members of an unresolved blocker
+cycle. Report it only from complete current coverage, name the set explicitly,
+and list an unattached intended node separately as unresolved topology.
 
-Use `orca linear issue ISSUE_ID --relations --workspace WORKSPACE_ID --json`
-for the parent and native
-relations. Exhaust direct children one parent at a time:
+## Preview and apply topology
 
-```text
-orca linear list-issues --parent-id ISSUE_ID --limit 100 --workspace WORKSPACE_ID --json
-orca linear list-issues --parent-id ISSUE_ID --limit 100 --cursor CURSOR --workspace WORKSPACE_ID --json
-```
+Check capabilities before showing an executable graph preview. Probe every
+native relationship the proposed graph needs. If any capability is unavailable,
+write no graph node. A smaller standalone set is a new proposal with a new
+approval cycle.
 
-Continue until the response says there is no next page, applying the same
-rules recursively to every newly found child. `issue --children --depth` is a
-convenience read, not proof of exhaustion. A resolved Linear blocker may move
-from blocking relations to Related, so current relations alone do not prove
-blocker history; completion relies on current unresolved blockers plus the
-declared Verification evidence.
+Show the complete deterministic effect order. Place all node creates or updates
+before relationships. After approval, apply nodes before relationships and
+require an exact canonical identity and readback for every new node before any
+edge that references it. Immediately before each edge, repeat the provider,
+target, endpoint, material-field, and affected-family reads required by the
+provider reference. Apply the edge once, read both endpoints back, then
+recompute the affected family.
 
-For every child page, require `result.meta.workspaceErrors` to exist and be an
-empty array. For every `issue --relations` read, require
-`result.meta.includeErrors` to exist and be empty and require
-`result.meta.sections.relations.capReached` to be exactly `false`. A missing
-field, nonempty warning array, or reached cap makes coverage `partial` even
-when the RPC envelope says `ok` and pagination says no next page.
+Follow the shared lifecycle's first-stop rule. For graph results, inventory the
+confirmed `applied` and `already_satisfied` effects, the stopping `failed` or
+`indeterminate` effect, and all `unapplied` effects. Do not roll back or infer
+a compensating relationship. `unapplied` says only that this batch did not run
+the effect; the latest complete canonical read still determines current graph
+state.
 
-Completion: coverage is `complete` with the counted canonical identities and
-cycles named, or `partial` with exact gaps and write restrictions named.
-
-## Change topology and reconcile
-
-Release A treats every Linear topology mutation as `manual`. Complete Linear
-coverage may establish the requested relationship and current graph facts, but
-it does not make a create, parent, blocker, or removal effect writable. Do not
-present a Linear topology effect for approval and do not construct a Linear
-write command.
-
-For GitHub, render every node creation before any relationship effect. After
-each approved node create, require its authoritative identity and readback; an
-indeterminate create receives no dependent edge. Then preview relationship
-effects in native direction:
-
-- `gh issue edit CHILD -R github.com/OWNER/REPO --parent PARENT` adds a parent.
-- `gh issue edit BLOCKER -R github.com/OWNER/REPO --add-blocking BLOCKED` means
-  `BLOCKER blocks BLOCKED`.
-
-Use the GitHub provider reference for inverse or removal commands. Immediately
-before each GitHub relationship write, repeat canonical identity, authority,
-policy, both endpoint, and affected-family reads. Apply the relation once, then
-read both endpoints and recompute the full affected family through the coverage
-rules above. Do this after a failed or indeterminate topology attempt too:
-preserve verified successes, stop dependent effects, and report every
-remaining effect. Do not roll back or infer a compensating edge.
-
-Completion: each topology effect has one exact effect outcome, both directions
-agree when applied, and the returned family is a fresh complete reconciliation
-or an explicitly partial read-only result.
-
-## Identify issues ready to start now
-
-The issues ready to start now are exactly the required open leaves that have no
-current unresolved blocker and satisfy the repository's readiness mapping.
-Derive the list only from the complete canonical read. Exclude parents,
-completed or canceled nodes, leaves with unmet required predecessors, and any
-node whose readiness is unknown. Keep cycles visible; no member of an unresolved
-native blocker cycle is ready.
-
-Return canonical nodes and edges, the issues ready to start now, current
-blockers, coverage, unresolved effects, and Verification gaps only. Do not add
-repair suggestions, operator-choice menus, workers, models, effort, worktrees,
-stacks, or sequencing. An orchestrator must re-read the tracker before dispatch
-and after any relevant issue or pull-request change.
-
-In the returned report, lead with one plain summary sentence that restates the
-facts and adds nothing. Present the eligible issues under the heading "Ready to
-start now", listing each one by reference and title.
+An indeterminate create receives no edge. Before a new proposal, read any exact
+canonical identity or provider receipt returned by that one attempt. Never
+match by title, body, author, time, or similarity.
 
 ## Prove completion separately
 
-Status, a checked box, or a merged pull request is evidence to inspect, never
-proof by itself. Read the current issue's unchanged `Verification` criteria and
-match each criterion to current trusted evidence: provider state, a repository
-check or artifact, or fresh authorized owner attestation. Name any unsupported
-criterion as a Verification gap. When reporting, phrase each gap as what is
-still unproven and what would prove it: "Not yet confirmed: [criterion]. Would
-be proven by [check, artifact, or owner confirmation]." Keep "attestation",
-"trusted evidence", and "unsupported criterion" out of the report itself.
+Use the current approved Verification content from the latest exact canonical
+readback. A status, checked box, linked change, or child completion is evidence
+to evaluate, never proof by itself. Match every criterion to current provider
+state, a current repository check or artifact, or direct owner confirmation.
+State each gap as what remains unconfirmed and what would prove it.
 
-A leaf may receive a separately approved completion preview only when its own
-criteria have evidence and it has no current unresolved blocker. A parent also
-requires complete family coverage, every required leaf completed with its own
-proof, no unresolved required blocker, every waiver explicitly approved and
-still applicable, and evidence for the parent's outcome-level Verification.
+A leaf is eligible for a completion effect only when every criterion is proven
+and no blocker remains unresolved. A parent additionally requires complete
+family coverage, proven completion of every required leaf, no unresolved
+required blocker, every explicit waiver still applicable, and evidence for its
+own outcome-level Verification.
 
-Editing Verification invalidates the issue's completion analysis. Preview and
-apply that edit as its own effect, read it back, then start a new completion
-analysis, preview, and approval round. Never combine the edit and lifecycle
-change in one batch.
+A Verification edit is its own visible, approved, read-back effect. It
+invalidates the earlier completion assessment. Reassess from the new canonical
+readback, then show any lifecycle change in a separate batch with separate
+approval.
 
-Before a lifecycle effect in a synchronized repository, name every known
-shadow, parent, and child status cascade. Linear teams may optionally complete
-a parent when all sub-issues complete or complete remaining children when a
-parent completes, and GitHub synchronization can propagate status changes. If
-the applicable automation posture or cascade cannot be observed, return the
-lifecycle effect as `manual`; current issue text is not proof of the setting.
-Release A emits no closing keyword and never treats merge automation as
-completion authority.
+Before a lifecycle preview, list every cascade the provider reports as an
+intended effect, including changes to a parent or child. Read back each reported
+effect that the provider exposes. Do not inspect, predict, repair, or block on
+effects the provider does not report; Managing Issues writes only the canonical
+tracker. Never use a closing keyword as completion authority.
 
-Synchronization evidence is not limited to declared policy. When the current
-canonical readback or issue content of a GitHub-canonical issue carries
-synchronization markers — a synced-copy banner, a tracker cross-link block, or
-integration-authored sync metadata — treat the repository as synchronized for
-lifecycle purposes even though Release A trusted policy cannot declare a
-GitHub-canonical mapping. The markers are facts to inspect, never route or
-authority selectors: name the apparent shadow in the preview, and because the
-cascade posture of an undeclared synchronization cannot be observed, return
-that lifecycle effect as `manual`.
-
-Completion: the result lists evidence and gaps against unchanged criteria. A
-lifecycle change is only a new exact, directly approved effect with observable
-cascades; otherwise the issue remains current and the effect is `manual`.
+Return only canonical nodes and edges, coverage, derived readiness, blockers,
+Ready Frontier, exact effect outcomes, and Verification evidence or gaps. Do
+not add implementation recommendations or persist an execution handoff.

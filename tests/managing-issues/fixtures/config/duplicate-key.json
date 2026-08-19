@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "provider": "github",
+  "provider": "linear",
+  "target": "ExampleOrg/Project",
+  "mappings": {
+    "priority": {},
+    "leaf_estimate": {},
+    "labels": {},
+    "readiness": {
+      "needs-discovery": "readiness:discovery",
+      "needs-planning": "readiness:planning",
+      "ready": "readiness:ready"
+    }
+  }
+}

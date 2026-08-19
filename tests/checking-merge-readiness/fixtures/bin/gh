@@ -14,11 +14,13 @@ Specimen layout:
 
 Optional env:
   CMR_GH_AUTH_FAIL  non-empty → every pr/api call fails like an unauthenticated forge
+  CMR_ISSUE_VIEW_FAIL  non-empty → linked issue lookup fails as unavailable
 
 Contract (deliberately small):
   - serve only the skill's fixed read set: pr view --json (incl. merge state),
-    pr diff, api graphql (history + branchProtectionRules), and
-    api repos/.../rules/branches/{base} for merge policy
+    pr diff, issue view --json for linked source issues, api graphql
+    (history + branchProtectionRules), and api
+    repos/.../rules/branches/{base} for merge policy
   - refuse writes and out-of-set verbs
   - refuse a selector that names another pull request
   - refuse an under-fetch of fields the skill depends on (query-text presence)
@@ -176,6 +178,7 @@ def pr_view(argv, forge):
         "mergeStateStatus": forge.get("mergeStateStatus", "CLEAN"),
         "reviewDecision": forge.get("reviewDecision", ""),
         "statusCheckRollup": forge.get("statusCheckRollup", []),
+        "closingIssuesReferences": forge.get("closingIssuesReferences", []),
     }
     if not fields:
         die(
@@ -191,6 +194,85 @@ def pr_view(argv, forge):
             2,
         )
     print(json.dumps({k: full[k] for k in fields}, indent=2))
+
+
+def issue_selector_check(argv, forge):
+    """Resolve only the specimen's repository-local source issues."""
+    issues = forge.get("sourceIssues")
+    if not isinstance(issues, list):
+        issue = forge.get("sourceIssue")
+        issues = [issue] if isinstance(issue, dict) else []
+    if not issues:
+        die("this specimen has no linked source issue", 1)
+
+    repo = forge.get("repo", "")
+    want_number = None
+    want_repo = None
+    skip = False
+    for i, a in enumerate(argv):
+        if skip:
+            skip = False
+            continue
+        if a == "--repo" and i + 1 < len(argv):
+            want_repo = argv[i + 1]
+            skip = True
+            continue
+        if a.startswith("-"):
+            if a in ("--json", "-q", "--jq", "--template", "-t"):
+                skip = True
+            continue
+        if want_number is not None:
+            continue
+        match = re.match(
+            r"^(?:https?://[^/]+/)?([^/\s]+/[^/\s]+?)(?:\.git)?"
+            r"(?:/issues/|#)(\d+)/?$",
+            a,
+        )
+        if match:
+            want_repo = want_repo or match.group(1)
+            want_number = int(match.group(2))
+        elif a.isdigit():
+            want_number = int(a)
+        else:
+            die(f"`{a}` is not a supported source-issue selector", 3)
+
+    if want_number is None:
+        die("`issue view` requires the linked issue number or URL", 2)
+    if want_repo is not None and want_repo != repo:
+        die(f"no issue in {want_repo} here; this specimen is {repo}", 1)
+    for issue in issues:
+        if isinstance(issue, dict) and want_number == issue.get("number"):
+            return issue
+    served = ", ".join(
+        str(issue.get("number")) for issue in issues if isinstance(issue, dict)
+    )
+    die(f"no issue {want_number} here; this specimen serves issues {served}", 1)
+
+
+def issue_view(argv, forge):
+    issue = issue_selector_check(argv, forge)
+    fields = None
+    for i, a in enumerate(argv):
+        if a == "--json" and i + 1 < len(argv):
+            fields = [f.strip() for f in argv[i + 1].split(",") if f.strip()]
+    full = {
+        "number": issue.get("number"),
+        "title": issue.get("title", ""),
+        "body": issue.get("body", ""),
+        "state": issue.get("state", "OPEN"),
+        "url": issue.get("url", ""),
+        "comments": issue.get("comments", []),
+    }
+    if not fields:
+        die("`issue view` requires --json for the skill's fixed read", 2)
+    unknown = [field for field in fields if field not in full]
+    if unknown:
+        die(
+            "`issue view --json` names field(s) this stub does not serve: "
+            f"{', '.join(unknown)}",
+            2,
+        )
+    print(json.dumps({key: full[key] for key in fields}, indent=2))
 
 
 def normalise(value, field):
@@ -491,7 +573,7 @@ def main():
     if argv[0] == "repo":
         die("`repo` is outside the skill's fixed read set", 3)
 
-    if argv[0] in ("pr", "api") and unauthenticated:
+    if argv[0] in ("pr", "issue", "api") and unauthenticated:
         sys.stderr.write(f"{AUTH_ERROR}\n")
         sys.exit(4)
 
@@ -509,6 +591,19 @@ def main():
             sys.stdout.write(forge.get("_diff", ""))
             return
         die(f"`pr {sub}` is outside the skill's fixed read set", 3)
+
+    if argv[0] == "issue":
+        if len(argv) < 2:
+            die("`issue` needs a subcommand", 2)
+        sub = argv[1]
+        if sub in WRITE_VERBS:
+            die(f"`issue {sub}` writes; this stub is read-only", 3)
+        if sub == "view" and os.environ.get("CMR_ISSUE_VIEW_FAIL"):
+            die("linked issue is temporarily unavailable", 4)
+        forge = load()
+        if sub == "view":
+            return issue_view(argv[2:], forge)
+        die(f"`issue {sub}` is outside the skill's fixed read set", 3)
 
     if argv[0] == "api":
         forge = load()

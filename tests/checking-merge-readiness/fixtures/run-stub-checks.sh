@@ -16,6 +16,7 @@ PRS="$HERE/prs"
 PASS=0
 FAIL=0
 AUTHFAIL=
+ISSUEFAIL=
 
 pass() { PASS=$((PASS + 1)); printf 'PASS  %s\n' "$1"; }
 fail() { FAIL=$((FAIL + 1)); printf 'FAIL  %s\n     %s\n' "$1" "$2"; }
@@ -23,7 +24,7 @@ fail() { FAIL=$((FAIL + 1)); printf 'FAIL  %s\n     %s\n' "$1" "$2"; }
 exit_is() {
   local label=$1 want=$2 spec=$3; shift 3
   local out got
-  out=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} "$GH" "$@" 2>&1); got=$?
+  out=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} ${ISSUEFAIL:+CMR_ISSUE_VIEW_FAIL=1} "$GH" "$@" 2>&1); got=$?
   if [ "$got" = "$want" ]; then pass "$label"
   else fail "$label" "expected exit $want, got $got: $(printf '%s' "$out" | head -1)"; fi
 }
@@ -31,7 +32,7 @@ exit_is() {
 msg_is() {
   local label=$1 want=$2 needle=$3 spec=$4; shift 4
   local out got
-  out=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} "$GH" "$@" 2>&1); got=$?
+  out=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} ${ISSUEFAIL:+CMR_ISSUE_VIEW_FAIL=1} "$GH" "$@" 2>&1); got=$?
   if [ "$got" != "$want" ]; then
     fail "$label" "expected exit $want, got $got: $(printf '%s' "$out" | head -1)"; return
   fi
@@ -44,12 +45,27 @@ msg_is() {
 json_is() {
   local label=$1 spec=$2 expr=$3 want=$4; shift 4
   local raw got
-  if ! raw=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} "$GH" "$@" 2>&1); then
+  if ! raw=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} ${ISSUEFAIL:+CMR_ISSUE_VIEW_FAIL=1} "$GH" "$@" 2>&1); then
     fail "$label" "command failed: $(printf '%s' "$raw" | head -1)"; return
   fi
   got=$(printf '%s' "$raw" | python3 -c "
 import json,sys
 d=json.load(sys.stdin)['data']['repository']['pullRequest']
+print($expr)
+" 2>&1)
+  if [ "$got" = "$want" ]; then pass "$label"
+  else fail "$label" "expected [$want], got [$got]"; fi
+}
+
+top_json_is() {
+  local label=$1 spec=$2 expr=$3 want=$4; shift 4
+  local raw got
+  if ! raw=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} ${ISSUEFAIL:+CMR_ISSUE_VIEW_FAIL=1} "$GH" "$@" 2>&1); then
+    fail "$label" "command failed: $(printf '%s' "$raw" | head -1)"; return
+  fi
+  got=$(printf '%s' "$raw" | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
 print($expr)
 " 2>&1)
   if [ "$got" = "$want" ]; then pass "$label"
@@ -87,6 +103,19 @@ json_is "specimen-j: counters request behind comments cursor" \
   specimen-j "any('hit' in (n.get('body') or '') for n in d['comments']['nodes'])" \
   "True" api graphql \
   -f 'query=query{repository{pullRequest{comments(first:100, after:"comments:2"){pageInfo{hasNextPage endCursor} nodes{id body author{login}}}}}}'
+top_json_is "specimen-a: pull request exposes its closing issue" \
+  specimen-a "d['closingIssuesReferences'][0]['number']" "73" \
+  pr view 412 --repo mapleworks/orderline --json closingIssuesReferences
+top_json_is "specimen-a: source issue body and comments are served" \
+  specimen-a "str(d['number'])+' '+str(len(d['comments']))" "73 1" \
+  issue view 73 --repo mapleworks/orderline --json number,title,body,state,url,comments
+top_json_is "specimen-m: pull request exposes both closing issues" \
+  specimen-m "str(len(d['closingIssuesReferences']))" "2" \
+  pr view 501 --repo mapleworks/orderline --json closingIssuesReferences
+top_json_is "specimen-m: second closing issue is served" \
+  specimen-m "str(d['number'])+' '+d['title']" \
+  "81 Migrate scheduled invoice exports" \
+  issue view 81 --repo mapleworks/orderline --json number,title,body,state,url,comments
 
 echo "== B. under-fetch refuses (floor-aligned) =="
 exit_is "reviews without commit" 2 specimen-a api graphql \
@@ -145,10 +174,11 @@ else fail "identity: baseRefOid non-empty on pr view" "$out"; fi
 echo "== E. read-only perimeter =="
 exit_is "pr view without --json" 2 specimen-a pr view
 exit_is "pr view unknown field" 2 specimen-a pr view --json bogusField
-exit_is "pr view served fields" 0 specimen-a pr view --json number,title
+exit_is "pr view served fields" 0 specimen-a pr view --json number,title,closingIssuesReferences
 msg_is "pr merge writes" 3 "writes; this stub is read-only" specimen-a pr merge
 msg_is "pr edit writes" 3 "writes; this stub is read-only" specimen-a pr edit
 msg_is "pr checkout outside set" 3 "outside the skill" specimen-a pr checkout
+msg_is "issue edit writes" 3 "writes; this stub is read-only" specimen-a issue edit 73
 msg_is "auth login writes" 3 "the rest of" specimen-a auth login
 exit_is "auth status reads" 0 specimen-a auth status
 exit_is "issue list outside set" 3 specimen-a issue list
@@ -160,6 +190,13 @@ exit_is "wrong number" 1 specimen-a pr view 999999 --json number
 exit_is "wrong repo" 1 specimen-a pr view 412 --repo entirely/wrong --json number
 exit_is "matching URL" 0 specimen-a pr view https://github.com/mapleworks/orderline/pull/412 --json number
 exit_is "diff refuses another PR" 1 specimen-a pr diff 999999
+exit_is "linked issue number + repo" 0 specimen-a issue view 73 --repo mapleworks/orderline --json number
+exit_is "linked issue URL" 0 specimen-a issue view https://github.com/mapleworks/orderline/issues/73 --json number
+ISSUEFAIL=1
+msg_is "linked issue unavailable" 4 "temporarily unavailable" specimen-a issue view 73 --repo mapleworks/orderline --json number
+ISSUEFAIL=
+exit_is "wrong issue number" 1 specimen-a issue view 999999 --repo mapleworks/orderline --json number
+exit_is "wrong issue repo" 1 specimen-a issue view 73 --repo entirely/wrong --json number
 exit_is "rules for the specimen's base" 0 specimen-a \
   api repos/mapleworks/orderline/rules/branches/main
 msg_is "rules for another base" 1 "Not Found (HTTP 404)" specimen-a \
@@ -168,6 +205,7 @@ msg_is "rules for another base" 1 "Not Found (HTTP 404)" specimen-a \
 echo "== G. unauthenticated forge =="
 AUTHFAIL=1
 exit_is "auth-fail pr view" 4 specimen-a pr view --json number
+exit_is "auth-fail issue view" 4 specimen-a issue view 73 --repo mapleworks/orderline --json number
 exit_is "auth-fail graphql" 4 specimen-a api graphql -f "query=$REVIEWS"
 exit_is "auth-fail status" 1 specimen-a auth status
 AUTHFAIL=

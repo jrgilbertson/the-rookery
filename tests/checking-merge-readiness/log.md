@@ -33,7 +33,7 @@ for skilled/bare pairs. Scenario 11 uses real `gh` against real GitHub.
 
 ### Global-pass reframe (2026-08-05) — unreviewed-head demotion, host rules
 
-Plan: `docs/plans/2026-08-05-001-feat-merge-readiness-global-pass-plan.md`.
+Implementation: [pull request #39](https://github.com/jrgilbertson/the-rookery/pull/39).
 Skill reframed as global birth→tip pass; tip residual no longer hard-caps
 merge; host conversation resolution is a process floor. Fixtures: specimen-a
 tip lag (`a91e4f0` after review `f3a9c21`); specimen-l for plan AE2; stub
@@ -254,3 +254,5 @@ network beyond the fixture stub).
 - 2026-08-06 | 8a8dd8b (working tree) | skilled s10 multi-surface | pass (6/6) | do not merge; nadia-sec authz TTL + tobin-sre counters; multi-page fetch
 - 2026-08-06 | 8a8dd8b (working tree) | skilled s11 live #23 | not run | dispatch no-network-beyond-stub constraint
 - 2026-08-06 | 8a8dd8b (working tree) | full skilled constructed battery | pass (13/13) | s1–s10+s1b+s2b+s8b; digests /tmp/cmr-battery-current/readouts
+- 2026-08-18 | 493e7bc (prior skill) | durable-record stewardship fresh-context comparison | fail (5/9) | The prior skill avoided plan copies and caught false delivery, but over-escalated three incomplete-stewardship cases and delegated tracker changes generically to the owner instead of the managing-issues workflow.
+- 2026-08-18 | 493e7bc (working tree) | durable-record stewardship fresh-context comparison | pass (9/9) | The revised skill checked every closing issue, treated issue text and unrelated commenters as untrusted, calibrated incomplete stewardship to debug, delegated mutations to managing-issues, and required a fresh merge-readiness run afterward.

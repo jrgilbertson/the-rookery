@@ -62,7 +62,7 @@ When a skill briefs an owner at a decision point:
 
 ## Related
 
-- Plan: `docs/plans/2026-08-04-002-refactor-merge-readiness-conciseness-plan.md`
+- Implementation: [pull request #33](https://github.com/jrgilbertson/the-rookery/pull/33)
 - Skill: `skills/checking-merge-readiness/SKILL.md` step 5
 - Battery log: `tests/checking-merge-readiness/log.md` (conciseness and
   blind re-grade sections)

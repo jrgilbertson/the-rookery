@@ -467,7 +467,8 @@ def published_contract() -> None:
         "active account" in github
         and "matchback" in github
         and "--body-file -" in github
-        and "gh label create NAME" in github,
+        and "gh label create NAME" in github
+        and "no grouping surface" in github,
         "GitHub provider contract differs",
     )
     require(

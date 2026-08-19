@@ -13,6 +13,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-gardener` issue lanes now read their tracker from the repository's
+  `.agents/managing-issues.json` when the managing-issues validator accepts it,
+  and the issue-implementation lane limits candidates to issues whose mapped
+  readiness is `ready` and mapped leaf estimate is at most 2. Without a valid
+  config the lanes read the repository's own issues unmapped and name the
+  missing config as their room for improvement.
 - `managing-issues` now handles authenticated GitHub and Linear creates, updates,
   relationships, readiness, and completion through one canonical tracker.
   First-use setup records only the provider, target, and metadata vocabulary.

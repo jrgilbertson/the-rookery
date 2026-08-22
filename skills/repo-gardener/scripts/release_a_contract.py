@@ -68,6 +68,10 @@ EFFECT_PREPARED_FIELDS = {
     "comment",
 }
 RESERVED_REPORT_SEQUENCES = (RUN_RECORD_BEGIN, RUN_RECORD_END)
+LANE_HEADER = re.compile(
+    r"  ([a-z0-9][a-z0-9-]*):\s*(?:\{\s*(?:mutation\s*:\s*(true|false)\s*,?\s*)?\}\s*)?(?:#.*)?$"
+)
+LANE_MUTATION = re.compile(r"    mutation:\s*(true|false)\s*(?:#.*)?$")
 
 
 class ContractError(Exception):
@@ -172,26 +176,33 @@ def installed_lanes_from_text(text: str) -> list[str]:
         if not line.strip() or line.lstrip().startswith("#"):
             continue
         require(
-            re.fullmatch(r"  [a-z0-9][a-z0-9-]*:\s*(?:\{\}\s*)?(?:#.*)?", line) is not None
-            or re.fullmatch(r"    mutation:\s*(?:true|false)\s*(?:#.*)?", line) is not None,
+            LANE_HEADER.fullmatch(line) is not None or LANE_MUTATION.fullmatch(line) is not None,
             "policy lanes contain an unparsed or inline entry",
         )
-    lane_starts = [
-        (index, match.group(1))
-        for index, line in enumerate(lanes)
-        if (match := re.fullmatch(r"  ([a-z0-9][a-z0-9-]*):\s*(?:\{\}\s*)?(?:#.*)?", line))
-    ]
+    lane_starts: list[tuple[int, str]] = []
+    inline_mutations: dict[str, str] = {}
+    for index, line in enumerate(lanes):
+        match = LANE_HEADER.fullmatch(line)
+        if match is None:
+            continue
+        lane = match.group(1)
+        lane_starts.append((index, lane))
+        if match.group(2) is not None:
+            inline_mutations[lane] = match.group(2)
     result = [lane for _, lane in lane_starts]
     require(bool(result), "policy installed lane inventory is empty")
     require(len(result) == len(set(result)), "policy installed lane inventory contains duplicates")
     require(tuple(result) == RELEASE_A_LANES, "policy installed lane inventory differs from the public nine-lane contract")
     for position, (start, lane) in enumerate(lane_starts):
         end = lane_starts[position + 1][0] if position + 1 < len(lane_starts) else len(lanes)
-        mutations = [
+        mutations = []
+        if lane in inline_mutations:
+            mutations.append(inline_mutations[lane])
+        mutations.extend(
             match.group(1)
             for line in lanes[start + 1 : end]
-            if (match := re.fullmatch(r"    mutation:\s*(true|false)\s*(?:#.*)?", line))
-        ]
+            if (match := LANE_MUTATION.fullmatch(line))
+        )
         if lane == TRIAGE_LANE:
             require(mutations == [], f"policy lane {lane} must not declare mutation")
         else:
@@ -518,17 +529,36 @@ def _prepared_comment_present(view: dict[str, Any], prepared: dict[str, Any]) ->
     return _prepared_comment_count(view, prepared) > 0
 
 
-def _managed_records_unchanged(before: dict[str, Any], after: dict[str, Any]) -> bool:
-    before_records = before["managed_records"]
-    after_records = after["managed_records"]
-    if len(before_records) != len(after_records):
+def _managed_record_lists_equal(left: list[dict[str, Any]], right: list[dict[str, Any]]) -> bool:
+    if len(left) != len(right):
         return False
-    for left, right in zip(before_records, after_records):
-        if left["provider_comment_id"] != right["provider_comment_id"]:
+    for first, second in zip(left, right):
+        if first["provider_comment_id"] != second["provider_comment_id"]:
             return False
-        if not _comment_bodies_equal(left["comment_body"], right["comment_body"]):
+        if not _comment_bodies_equal(first["comment_body"], second["comment_body"]):
             return False
     return True
+
+
+def _managed_records_unchanged(before: dict[str, Any], after: dict[str, Any]) -> bool:
+    return _managed_record_lists_equal(before["managed_records"], after["managed_records"])
+
+
+def _history_matches_prepared_transition(
+    before: dict[str, Any],
+    after: dict[str, Any],
+    prepared: dict[str, Any],
+) -> bool:
+    after_records = after["managed_records"]
+    before_records = before["managed_records"]
+    if len(after_records) != len(before_records) + 1:
+        return False
+    remaining = [
+        item
+        for item in after_records
+        if not _comment_bodies_equal(item["comment_body"], prepared["comment"])
+    ]
+    return _managed_record_lists_equal(before_records, remaining)
 
 
 def _view_matches_post(view: dict[str, Any], prepared: dict[str, Any]) -> bool:
@@ -592,11 +622,17 @@ def verify_report_effect(prepared: Any, pre_read: Any, post_read: Any, write_att
         if before_is_base and pre_read == post_read:
             return {"terminal_outcome": "failed", "matched_parts": 0, "repair": "none", "provenance": "unverified"}
         return {"terminal_outcome": "ambiguous", "matched_parts": None, "repair": "none", "provenance": "unverified"}
-    if write_attempt == "possible" and before_is_base and after_is_target:
+    if (
+        write_attempt == "possible"
+        and before_is_base
+        and after_is_target
+        and _history_matches_prepared_transition(before, after, prepared)
+    ):
         return {"terminal_outcome": "observed", "matched_parts": 2, "repair": "none", "provenance": "unverified"}
     body_only = (
         write_attempt == "possible"
         and before_is_base
+        and _identities_match(after, prepared)
         and after["body"] == prepared["body"]
         and not _prepared_comment_present(after, prepared)
         and _managed_records_unchanged(before, after)

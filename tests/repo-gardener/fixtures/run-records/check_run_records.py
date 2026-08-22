@@ -287,6 +287,18 @@ def main() -> int:
         lanes == {"schema": "repo-gardener-lanes-result/v1", "lanes": list(CONTRACT.RELEASE_A_LANES)},
         f"nine-lane inventory drifted: {lanes!r}",
     )
+    flow_policy = POLICY_PATH.read_text(encoding="utf-8").replace(
+        "  dependency-and-vulnerability:\n    mutation: false\n",
+        "  dependency-and-vulnerability: {mutation: false}\n",
+    )
+    with tempfile.TemporaryDirectory() as directory:
+        flow_path = Path(directory) / "policy.yaml"
+        flow_path.write_text(flow_policy, encoding="utf-8")
+        flow_lanes = invoke("lanes-v1", {}, extra=["--policy", str(flow_path)])
+        CONTRACT.require(
+            flow_lanes == {"schema": "repo-gardener-lanes-result/v1", "lanes": list(CONTRACT.RELEASE_A_LANES)},
+            f"flow-style lanes inventory drifted: {flow_lanes!r}",
+        )
 
     removed = subprocess.run(
         [sys.executable, str(CONTRACT_PATH), "normalize-github-register", "--input", "-"],

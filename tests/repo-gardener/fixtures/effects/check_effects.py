@@ -110,6 +110,32 @@ def mutate(base: dict[str, Any], target: dict[str, Any], prepared: dict[str, Any
         after["issue"]["body"] = prepared["body"]
         after["comment_pages"][-1][-1]["id"] = 99
         after["comment_pages"][-1][-1]["node_id"] = "IC_REPLACED_099"
+    elif mutation == "observed-with-prior":
+        before = with_prior_managed(base)
+        after = SNAPSHOTS.apply_prepared(before, prepared)
+    elif mutation == "observed-but-edited-prior":
+        before = with_prior_managed(base)
+        after = SNAPSHOTS.apply_prepared(before, prepared)
+        edited = {
+            "schema": "orchestrator-run-record/v1",
+            "kind": "run-opened",
+            "run_id": "run:synthetic:prior",
+            "operation_id": "operation:report:" + "a" * 64,
+            "payload": {"disposition": "tampered"},
+        }
+        after["comment_pages"][-1][-2]["body"] = CONTRACT._run_record_comment(edited)
+    elif mutation == "observed-but-replaced-prior":
+        before = with_prior_managed(base)
+        after = SNAPSHOTS.apply_prepared(before, prepared)
+        after["comment_pages"][-1][-2]["id"] = 99
+        after["comment_pages"][-1][-2]["node_id"] = "IC_REPLACED_099"
+    elif mutation == "body-only-foreign-tracker":
+        after = copy.deepcopy(base)
+        after["issue"]["body"] = prepared["body"]
+        after["configured_repository_id"] = "R_SYNTHETIC_OTHER"
+        after["configured_report_issue_id"] = "I_SYNTHETIC_OTHER"
+        after["configured_writer_id"] = "U_SYNTHETIC_OTHER_WRITER"
+        after["issue"]["node_id"] = "I_SYNTHETIC_OTHER"
     elif mutation == "denied-unchanged":
         after = copy.deepcopy(base)
         attempt = "denied-before-write"

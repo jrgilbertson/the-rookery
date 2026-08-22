@@ -131,7 +131,7 @@ def dump_yaml(value: Any, indent: int = 0) -> str:
     if isinstance(value, int) and not isinstance(value, bool):
         return str(value)
     if isinstance(value, str):
-        if value == "" or any(ch in value for ch in ":#{}[]&*!|>%@`") or value in {"true", "false", "null"}:
+        if value == "" or any(ch in value for ch in ":#{}[]&*!|>%@`") or value in {"true", "false", "null", "Null", "NULL", "~"}:
             return json.dumps(value)
         return value
     raise CheckFailure(f"unsupported YAML dump type: {type(value)!r}")
@@ -531,6 +531,35 @@ lanes:
             "  - AGENTS.md: true\n",
         )
         expect_invalid(mapping_path, repo_root, "protected_paths[0] must be text")
+
+        nested_sequence = dump_yaml(base_config()).replace(
+            "  - AGENTS.md\n",
+            "  - - AGENTS.md\n",
+        )
+        expect_invalid(nested_sequence, repo_root, "protected_paths[0] must be text")
+
+        dotted_glob = dump_yaml(base_config()).replace(
+            "  - AGENTS.md\n",
+            "  - ./AGENTS.md\n",
+        )
+        expected_dotted = copy.deepcopy(expected)
+        expected_dotted["protected_paths"] = ["AGENTS.md", ".github/workflows/**"]
+        expect_valid(dotted_glob, repo_root, expected_dotted)
+
+        windows_glob = dump_yaml(base_config()).replace(
+            "  - AGENTS.md\n",
+            "  - src\\private\\**\n",
+        )
+        expected_windows = copy.deepcopy(expected)
+        expected_windows["protected_paths"] = ["src/private/**", ".github/workflows/**"]
+        expect_valid(windows_glob, repo_root, expected_windows)
+
+        for null_spelling in ("NULL", "Null"):
+            null_identity = dump_yaml(base_config()).replace(
+                "  identity: I_kwDOEXAMPLE001\n",
+                f"  identity: {null_spelling}\n",
+            )
+            expect_invalid(null_identity, repo_root, "YAML null values are not allowed")
 
         issue_selector = copy.deepcopy(base_config())
         issue_selector["tracker"]["identity"] = "#3336"

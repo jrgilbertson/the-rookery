@@ -161,9 +161,12 @@ def require_concrete_text(value: Any, label: str) -> str:
 def require_path_glob(value: Any, label: str) -> str:
     text = require_concrete_text(value, label)
     require(ROOTED_OR_DRIVE_PATH.match(text) is None, f"{label} must be a repository-relative path")
-    parts = tuple(part for part in "/".join(text.split("\\")).split("/") if part not in {"", "."})
-    require(".." not in parts, f"{label} must not contain path traversal")
-    return text
+    canonical = "/".join(
+        part for part in "/".join(text.split("\\")).split("/") if part not in {"", "."}
+    )
+    require(bool(canonical), f"{label} must be a repository-relative path")
+    require(".." not in canonical.split("/"), f"{label} must not contain path traversal")
+    return canonical
 
 
 def require_glob_list(value: Any, label: str, *, nonempty: bool) -> list[str]:
@@ -327,7 +330,7 @@ def parse_scalar(token: str) -> Any:
         return decode_quoted(quoted)
     if text in {"true", "false"}:
         return text == "true"
-    if text in {"null", "~"}:
+    if text in {"null", "Null", "NULL", "~"}:
         raise ConfigError("YAML null values are not allowed")
     if INTEGER_SCALAR.fullmatch(text):
         value = int(text)
@@ -561,6 +564,9 @@ class YamlLoader:
             value, end = parse_flow(rest, 0, depth)
             require(rest[end:].strip() == "", "YAML flow value has trailing content")
             return value
+        if rest == "-" or rest.startswith("- "):
+            item = "" if rest == "-" else rest[2:]
+            return [self.parse_value(parent_indent, item, depth + 1)]
         if has_block_mapping_indicator(rest):
             key, mapping_rest = split_mapping_entry(rest)
             return {key: self.parse_value(parent_indent, mapping_rest, depth + 1)}

@@ -39,7 +39,7 @@ NOTIFICATION_CAPABLE_MENTION = re.compile(
     r"@[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?"
     r"(?:/[A-Za-z0-9](?:[A-Za-z0-9_-]{0,98}[A-Za-z0-9_])?)?"
 )
-HTTP_URL = re.compile(r"https?://[^\s<>\"']+", re.IGNORECASE)
+HTTP_URL = re.compile(r"https?://[^\s<>\"')\]]+", re.IGNORECASE)
 HTML_IMAGE = re.compile(r"<\s*img\b", re.IGNORECASE)
 RUN_RECORD_BEGIN = "<!-- orchestrator:run-record:v1:begin -->"
 RUN_RECORD_END = "<!-- orchestrator:run-record:v1:end -->"
@@ -569,10 +569,12 @@ def verify_report_effect(prepared: Any, pre_read: Any, post_read: Any, write_att
     after_is_target = _view_matches_post(after, prepared)
     if write_attempt == "none" and before_is_target and after_is_target:
         return {"terminal_outcome": "already satisfied", "matched_parts": 2, "repair": "none", "provenance": "unverified"}
+    if write_attempt == "denied-before-write":
+        if before_is_base and pre_read == post_read:
+            return {"terminal_outcome": "failed", "matched_parts": 0, "repair": "none", "provenance": "unverified"}
+        return {"terminal_outcome": "ambiguous", "matched_parts": None, "repair": "none", "provenance": "unverified"}
     if before_is_base and after_is_target:
         return {"terminal_outcome": "observed", "matched_parts": 2, "repair": "none", "provenance": "unverified"}
-    if write_attempt == "denied-before-write" and before_is_base and pre_read == post_read:
-        return {"terminal_outcome": "failed", "matched_parts": 0, "repair": "none", "provenance": "unverified"}
     body_only = (
         before_is_base
         and after["body"] == prepared["body"]

@@ -174,6 +174,14 @@ def main() -> int:
         actual = cli(effect_input("verify", prepared=prepared, pre_read=base, post_read=base, write_attempt=attempt))
         CONTRACT.require(actual["terminal_outcome"] not in {"observed", "already satisfied"}, "write_attempt minted structural success")
         CONTRACT.require(actual["repair"] == "none", "write_attempt minted repair authority")
+    denied_target = cli(
+        effect_input("verify", prepared=prepared, pre_read=base, post_read=target, write_attempt="denied-before-write")
+    )
+    CONTRACT.require(
+        denied_target["terminal_outcome"] not in {"observed", "already satisfied"},
+        "denied-before-write minted observed closure from a target-shaped post-read",
+    )
+    CONTRACT.require(denied_target["repair"] == "none", "denied-before-write minted repair authority")
 
     for marker in CONTRACT.RESERVED_REPORT_SEQUENCES:
         for location in ("payload", "projection"):
@@ -190,6 +198,10 @@ def main() -> int:
         ("\nDependency: @types/node\n", "notification-capable mention"),
         (
             "\nOwner: [@octocat](https://github.com/octocat)\n",
+            "notification-capable mention",
+        ),
+        (
+            "\nSee [notes](https://example.com)(@octocat)\n",
             "notification-capable mention",
         ),
         ("\n![tracking pixel](https://attacker.example/pixel.png)\n", "image embedding"),

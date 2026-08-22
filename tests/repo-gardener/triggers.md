@@ -8,6 +8,7 @@ fresh context, binary judgment.
 | Query | Reason |
 | --- | --- |
 | Run tonight's repository gardening automation | Explicit scheduled run. |
+| Set up repo-gardener on this repository | First-use setup of the durable file and tracker. |
 | Reconcile the repo gardener tracker and inspect all maintenance lanes | Core manual run. |
 | Continue the interrupted repo-gardener Orchestrator and close its run | Recovery of the same workflow. |
 | Why did last night's repository-gardener run skip a Worker PR? | Interpret a run decision. |

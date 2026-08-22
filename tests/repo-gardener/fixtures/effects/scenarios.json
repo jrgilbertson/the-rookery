@@ -7,6 +7,8 @@
     {"id":"definitive-failure","mutation":"denied-unchanged"},
     {"id":"unavailable-readback","mutation":"unavailable"},
     {"id":"comment-ahead","mutation":"comment-only"},
+    {"id":"comment-ahead-pre","mutation":"comment-ahead-pre"},
+    {"id":"duplicate-prepared-comment","mutation":"duplicate-prepared-comment"},
     {"id":"changed-projection","mutation":"changed-projection"},
     {"id":"changed-pre-read-projection","mutation":"changed-pre-read-projection"},
     {"id":"changed-pre-read-body","mutation":"changed-pre-read-body"},

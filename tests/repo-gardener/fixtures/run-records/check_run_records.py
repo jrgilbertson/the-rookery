@@ -333,6 +333,21 @@ def main() -> int:
     else:
         raise CONTRACT.ContractError("short intermediate comment page was accepted")
 
+    nested = "[" * 2000 + "]" * 2000
+    recursion = subprocess.run(
+        [sys.executable, str(CONTRACT_PATH), "normalize-github-tracker", "--input", "-"],
+        input=nested,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    CONTRACT.require(
+        recursion.returncode == 1
+        and recursion.stderr.startswith("FAIL: ")
+        and "Traceback" not in recursion.stderr,
+        "deeply nested JSON leaked a traceback instead of a contract failure",
+    )
+
     oversized = subprocess.run(
         [sys.executable, str(CONTRACT_PATH), "normalize-github-tracker", "--input", "-"],
         input="x" * (CONTRACT.INPUT_LIMIT + 1),

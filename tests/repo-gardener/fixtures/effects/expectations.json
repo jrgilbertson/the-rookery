@@ -7,6 +7,8 @@
     "definitive-failure":{"terminal_outcome":"failed","matched_parts":0,"repair":"none"},
     "unavailable-readback":{"terminal_outcome":"ambiguous","matched_parts":null,"repair":"none"},
     "comment-ahead":{"terminal_outcome":"ambiguous","matched_parts":null,"repair":"none"},
+    "comment-ahead-pre":{"terminal_outcome":"ambiguous","matched_parts":null,"repair":"none"},
+    "duplicate-prepared-comment":{"terminal_outcome":"ambiguous","matched_parts":null,"repair":"none"},
     "changed-projection":{"terminal_outcome":"ambiguous","matched_parts":null,"repair":"none"},
     "changed-pre-read-projection":{"terminal_outcome":"ambiguous","matched_parts":null,"repair":"none"},
     "changed-pre-read-body":{"terminal_outcome":"ambiguous","matched_parts":null,"repair":"none"},

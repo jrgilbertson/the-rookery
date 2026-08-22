@@ -516,6 +516,21 @@ lanes:
         absolute_protected = copy.deepcopy(base_config())
         absolute_protected["protected_paths"] = ["/etc/**"]
         expect_invalid(absolute_protected, repo_root, "must be a repository-relative path")
+        drive_protected = copy.deepcopy(base_config())
+        drive_protected["protected_paths"] = [r"C:\outside\**"]
+        expect_invalid(drive_protected, repo_root, "must be a repository-relative path")
+
+        quoted_trailing = dump_yaml(base_config()).replace(
+            "  - AGENTS.md\n",
+            '  - "AGENTS.md" trailing "\n',
+        )
+        expect_invalid(quoted_trailing, repo_root, "YAML string has trailing content")
+
+        flow_lane = dump_yaml(base_config()).replace(
+            "  dependency-and-vulnerability:\n    mutation: true\n",
+            "  dependency-and-vulnerability: {mutation: true}\n",
+        )
+        expect_valid(flow_lane, repo_root, expected)
 
         for key in ("repository", "protected_paths", "maximum_workers", "tracker", "lanes"):
             missing = copy.deepcopy(base_config())

@@ -158,11 +158,12 @@ overlap denial on one Worker stops that Worker's dependents only; other
 Workers and read-only sensing continue. Already-open PRs stay native objects.
 
 Each Worker re-reads the file the same way immediately before push and PR
-creation. It stays inside the assigned path slice. It preserves its local
-commit on denial. Immediately before PR creation it also rereads native
-branches and PRs and stops if current work now overlaps that Worker. Preserve
-saved pushed state when PR creation is denied, and surface the exact file
-revision, scope, or overlap change for owner review.
+creation. Before either, check the exact committed paths against repository
+identity, include/exclude scope, protected paths, and the assigned slice.
+Preserve the local commit on denial. Immediately before PR creation it also
+rereads native branches and PRs and stops if current work now overlaps that
+Worker. Preserve saved pushed state when PR creation is denied, and surface
+the exact file revision, scope, or overlap change for owner review.
 
 After PR creation, the Orchestrator monitors freshly read native checks and
 review state until the Worker truthfully reaches `pr_ready` or `pr_blocked`.

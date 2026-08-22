@@ -502,18 +502,27 @@ def _view_matches_pre(view: dict[str, Any], prepared: dict[str, Any]) -> bool:
         _identities_match(view, prepared)
         and hashlib.sha256(view["body"].encode("utf-8")).hexdigest()
         == prepared["expected_pre_body_fingerprint"]
+        and not _prepared_comment_present(view, prepared)
+    )
+
+
+def _prepared_comment_count(view: dict[str, Any], prepared: dict[str, Any]) -> int:
+    return sum(
+        1
+        for item in view["managed_records"]
+        if _comment_bodies_equal(item["comment_body"], prepared["comment"])
     )
 
 
 def _prepared_comment_present(view: dict[str, Any], prepared: dict[str, Any]) -> bool:
-    return any(_comment_bodies_equal(item["comment_body"], prepared["comment"]) for item in view["managed_records"])
+    return _prepared_comment_count(view, prepared) > 0
 
 
 def _view_matches_post(view: dict[str, Any], prepared: dict[str, Any]) -> bool:
     return (
         _identities_match(view, prepared)
         and view["body"] == prepared["body"]
-        and _prepared_comment_present(view, prepared)
+        and _prepared_comment_count(view, prepared) == 1
     )
 
 
@@ -661,6 +670,15 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except (ContractError, OSError, UnicodeError, json.JSONDecodeError, KeyError, TypeError, ValueError) as error:
+    except (
+        ContractError,
+        OSError,
+        UnicodeError,
+        json.JSONDecodeError,
+        KeyError,
+        TypeError,
+        ValueError,
+        RecursionError,
+    ) as error:
         print(f"FAIL: {error}", file=sys.stderr)
         raise SystemExit(1)

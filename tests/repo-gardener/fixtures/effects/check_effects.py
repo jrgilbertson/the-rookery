@@ -104,6 +104,11 @@ def mutate(base: dict[str, Any], target: dict[str, Any], prepared: dict[str, Any
         after["comment_pages"][-1][-1]["body"] = prepared["comment"].replace(
             '"kind":"run-opened"', '"kind":"run-closed"'
         )
+    elif mutation == "comment-ahead-pre":
+        before = copy.deepcopy(target)
+        before["issue"]["body"] = base["issue"]["body"]
+    elif mutation == "duplicate-prepared-comment":
+        after = SNAPSHOTS.apply_prepared(target, prepared)
     else:
         raise AssertionError(mutation)
     return before, after, attempt

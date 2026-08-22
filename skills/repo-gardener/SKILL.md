@@ -123,10 +123,12 @@ no structural-closure claim.
    Never manufacture approval, attest later, or commit generated readiness
    artifacts.
 9. The Worker, not the Orchestrator, owns push and PR creation. Before push or
-   PR-open, re-read the durable file only to detect a revision change. A
-   change stops further source mutation, push, and PR-open for every Worker
-   and preserves local commits; already-open PRs stay native objects. Before
-   PR creation, also reread native branches and PRs. An overlap denial stops
+   PR-open, re-read the durable file only to detect a revision change, and
+   check the exact committed paths against identity, include/exclude scope,
+   protected paths, and the assigned slice. A change or out-of-slice path
+   stops further source mutation, push, and PR-open for every Worker and
+   preserves local commits; already-open PRs stay native objects. Before PR
+   creation, also reread native branches and PRs. An overlap denial stops
    that Worker's dependents only; other Workers and read-only sensing
    continue. A denied push preserves the local commit.
 10. After PR creation, the Orchestrator monitors freshly read native checks and

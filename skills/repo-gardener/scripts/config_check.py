@@ -44,6 +44,7 @@ AUTHORING_LANE_FIELDS = {"mutation"}
 EVIDENCE_SOURCE_FIELDS = {"identity"}
 EVIDENCE_SOURCE_NAME = re.compile(r"^[a-z][a-z0-9_-]{0,63}$")
 MAPPING_KEY = re.compile(r"^[A-Za-z0-9_.-][A-Za-z0-9_./-]*$")
+ROOTED_OR_DRIVE_PATH = re.compile(r"^(?:[A-Za-z]:[/\\]|[/\\])")
 INTEGER_SCALAR = re.compile(r"^-?(0|[1-9][0-9]*)$")
 FLOAT_SCALAR = re.compile(r"^-?(?:0|[1-9][0-9]*)\.[0-9]+([eE][-+]?[0-9]+)?$")
 SCIENTIFIC_SCALAR = re.compile(r"^-?(?:0|[1-9][0-9]*)[eE][-+]?[0-9]+$")
@@ -158,7 +159,7 @@ def require_concrete_text(value: Any, label: str) -> str:
 
 def require_path_glob(value: Any, label: str) -> str:
     text = require_concrete_text(value, label)
-    require(not text.startswith(("/", "\\")), f"{label} must be a repository-relative path")
+    require(ROOTED_OR_DRIVE_PATH.match(text) is None, f"{label} must be a repository-relative path")
     parts = tuple(part for part in "/".join(text.split("\\")).split("/") if part not in {"", "."})
     require(".." not in parts, f"{label} must not contain path traversal")
     return text
@@ -320,7 +321,9 @@ def parse_scalar(token: str) -> Any:
     text = token.strip()
     require(bool(text), "YAML scalar is empty")
     if text[0] in {"'", '"'}:
-        return decode_quoted(text)
+        quoted, end = read_quoted(text, 0)
+        require(text[end:].strip() == "", "YAML string has trailing content")
+        return decode_quoted(quoted)
     if text in {"true", "false"}:
         return text == "true"
     if text in {"null", "~"}:
@@ -334,14 +337,15 @@ def parse_scalar(token: str) -> Any:
     return text
 
 
-def parse_flow_scalar(text: str, index: int) -> tuple[Any, int]:
+def parse_flow_scalar(text: str, index: int, *, key: bool = False) -> tuple[Any, int]:
     index = skip_ws(text, index)
     require(index < len(text), "YAML flow value is empty")
     if text[index] in {"'", '"'}:
         token, end = read_quoted(text, index)
         return parse_scalar(token), end
     start = index
-    while index < len(text) and text[index] not in ",]}#":
+    stops = ",]}#:" if key else ",]}#"
+    while index < len(text) and text[index] not in stops:
         index += 1
     return parse_scalar(text[start:index].rstrip()), index
 
@@ -380,7 +384,7 @@ def parse_flow_mapping(text: str, index: int, depth: int) -> tuple[dict[str, Any
     if index < len(text) and text[index] == "}":
         return result, index + 1
     while True:
-        key_value, index = parse_flow_scalar(text, index)
+        key_value, index = parse_flow_scalar(text, index, key=True)
         require(isinstance(key_value, str) and bool(key_value), "YAML mapping key must be text")
         key = key_value
         index = skip_ws(text, index)

@@ -21,6 +21,10 @@ looked" surface. GitHub Releases mirror its entries.
   register is not required. Unattended Workers open PRs only through
   assessment-only `checking-pr-readiness`. In-run `checking-merge-readiness` is
   read-only feedback and never merges.
+- `managing-issues` first-use now recommends a Linear exclusive readiness group
+  (`readiness` / `needs-discovery` / `needs-planning` / `ready`) and keeps
+  GitHub prefixed flats. The config schema is unchanged. Already-configured
+  repos are not migrated.
 - Working plans, brainstorms, raw dogfood notes, and point-in-time reports now
   stay as ignored worktree artifacts. PR readiness rejects tracked or durably
   cited transient material, and merge readiness verifies issue stewardship

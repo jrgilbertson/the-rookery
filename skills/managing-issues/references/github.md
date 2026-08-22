@@ -68,7 +68,9 @@ Resolve issue types by exact name through the complete paginated repository
 requested metadata identity exactly, stop before previewing that effect.
 
 During first-use setup, offer exact existing labels beside the starter
-recommendations; neither source chooses for the operator. For each chosen label
+recommendations; neither source chooses for the operator. Prefixed flats are
+the recommended readiness shape because repository labels are a flat namespace
+with no grouping surface. For each chosen label
 that is absent, require the installed `gh label create --help` surface and show
 its exact name, description, and six-character color in the provider-metadata
 preview. After approval, create it once without `--force`, then repeat complete

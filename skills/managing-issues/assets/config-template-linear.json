@@ -27,9 +27,9 @@
       "documentation": "documentation"
     },
     "readiness": {
-      "needs-discovery": "readiness:needs-discovery",
-      "needs-planning": "readiness:needs-planning",
-      "ready": "readiness:ready"
+      "needs-discovery": "needs-discovery",
+      "needs-planning": "needs-planning",
+      "ready": "ready"
     }
   }
 }

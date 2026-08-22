@@ -1,7 +1,7 @@
 ---
 title: Separate scout measurement stages from authoring capacity
 date: 2026-08-12
-last_updated: 2026-08-12
+last_updated: 2026-08-22
 category: architecture-patterns
 module: skills/repo-gardener/reconciliation
 problem_type: architecture_pattern
@@ -35,21 +35,22 @@ The first Repo Gardener dogfood made too much of the workflow deterministic.
 Durable records accumulated around manifests, lanes, decisions, and effects,
 while executable checks were asked to stand in for judgments such as whether
 the run chose useful work or produced a good plan. That added ceremony without
-adding the claimed assurance. A script can prove identities, ordering, bytes,
-and readback. It cannot prove that a candidate matters or a plan is good.
+the claimed assurance. A script can prove identities, ordering, bytes, and
+readback. It cannot prove that a candidate matters or a plan is good.
 
 The same category error appears in measurement and capacity accounting. Source
 records inspected, evidence-qualified lane candidates, and normalized
 cross-lane candidates are different populations. Read-only sensing and depth
-are not authored work, so an occupied PR slot must not suppress them
-(`skills/repo-gardener/references/reconciliation.md:48-58`,
-`skills/repo-gardener/references/reconciliation.md:80-84`).
+are not authored work, so unrelated already-open PRs must not consume those
+budgets or the Worker cap
+(`skills/repo-gardener/references/reconciliation.md:47-50`,
+`skills/repo-gardener/references/reconciliation.md:61-67`).
 
 Assign each kind of truth to the system that can own it: the model owns
-qualitative judgment, the live repository policy owns mutation permission,
+qualitative judgment, the live repository file owns mutation permission,
 native GitHub PR state owns authored-work status, and deterministic code owns
 only mechanically falsifiable tracker consistency
-(`skills/repo-gardener/SKILL.md:10-13`).
+(`skills/repo-gardener/SKILL.md:18-19`).
 
 ## Guidance
 
@@ -59,77 +60,82 @@ Run all nine breadth lanes. Qualify current evidence and normalize overlapping
 candidates by stable identity. Let the model compare the survivors by impact,
 urgency, confidence, risk, effort, verification quality, and conflict cost.
 Do not compute a master score or manufacture work to consume capacity
-(`skills/repo-gardener/references/reconciliation.md:41-58`,
-`skills/repo-gardener/references/reconciliation.md:78-91`).
+(`skills/repo-gardener/references/reconciliation.md:61-71`,
+`skills/repo-gardener/references/reconciliation.md:96-111`).
 
-Depth is also a judgment within a hard policy bound. Finish breadth first, then
-select zero through the smaller of three and the installed
-`maximum_deep_targets_per_run`. Choosing fewer is correct when the evidence does
-not justify more. Prefer critical-flow risk,
-multi-signal convergence, and measurement defects that block trusted decisions,
-but reassess after each result instead of treating the maximum as a quota
-(`skills/repo-gardener/references/reconciliation.md:60-76`).
+Depth is also a judgment, with no count. After breadth, deepen while further
+investigation would change assignments or recommendations. Stop when it would
+not, or when the run must close. A fourth look is allowed only when it would
+change assignment or recommendation. Prefer critical-flow risk, multi-signal
+convergence, and measurement defects that block trusted decisions, then
+reassess after each result
+(`skills/repo-gardener/references/reconciliation.md:74-93`).
 
-Keep data trust cross-cutting. It contributes evidence to the nine lanes rather
-than becoming a tenth lane. Product-behavior evidence supports a conclusion only
-after the relevant metric slice has an explicit grain and authority and
-reconciles against durable truth. Blank reporting data is not zero activity
-(`skills/repo-gardener/references/measurement-integrity.md:3-23`,
-`skills/repo-gardener/references/measurement-integrity.md:45-66`).
+Keep data trust cross-cutting. It contributes evidence to the nine lanes
+rather than becoming a tenth lane. Product-behavior evidence supports a
+conclusion only after the relevant metric slice has an explicit grain and
+authority and reconciles against durable truth. Blank reporting data is not
+zero activity
+(`skills/repo-gardener/references/measurement-integrity.md`).
 
 ### Give deterministic checks a narrow claim ceiling
 
 Persist exactly two managed records for each run ID: one `run-opened` before
 sensing and one consolidated `run-closed` after supervision or an honest
-no-child decision. Do not add managed manifest, lane, decision, checker, or
-per-child comments (`skills/repo-gardener/references/register-and-report.md`).
+no-Worker close. Do not add managed manifest, lane, decision, checker, or
+per-Worker comments
+(`skills/repo-gardener/references/register-and-report.md`).
 
 After closing, deterministic code may verify only structural facts: the two
-records are unique and ordered, their identities agree, history is contiguous,
-the prepared material matches, and the complete final snapshot reads the close
-back exactly (`skills/repo-gardener/scripts/release_a_contract.py:1050-1105`).
-The public fixture explicitly rejects candidates, plans, scores, PR readiness,
-policy, authority, and effect safety as checker inputs
-(`tests/repo-gardener/fixtures/run-records/check_run_records.py`).
-
-Report `register_closed_consistently` outside the immutable close. Never present
-it as a quality, safety, permission, or readiness verdict
-(`skills/repo-gardener/SKILL.md`).
+records are unique and ordered, their identities agree, and the complete
+final snapshot reads the close back exactly
+(`skills/repo-gardener/scripts/release_a_contract.py:523-541`). The public
+fixture rejects candidates, plans, scores, PR readiness, policy, authority,
+and register-quality claims as checker outputs
+(`tests/repo-gardener/fixtures/run-records/check_run_records.py:150`).
+`register_closed_consistently` is not a production result. Never present a
+two-comment check as a quality, safety, permission, or readiness verdict
+(`skills/repo-gardener/SKILL.md:154-158`).
 
 ### Reread live policy at mutation boundaries
 
-Child authoring requires exact target repository identity, every path inside
-the policy's effective include/exclude scope, exact
-`authority.source_mutation: allowed`, a positive
-`boundaries.maximum_new_child_prs_per_run`, and `mutation: true` for the owning
-lane. Missing or false permission, scope mismatch, or current overlapping work
-denies authoring. Resolve and refresh the configured remote default branch
-before reading policy at parent dispatch, child push, child PR creation, and
-parent closing. Recheck native overlap before dispatch and PR creation. Record
-revision changes, then evaluate the permission required by the current
-operation. Only an actual current denial stops that mutation and its dependents;
-a benign revision change does not block closing or unrelated read-only work
-(`skills/repo-gardener/references/policy-and-entry-modes.md`).
+Worker authoring requires, on the opening file, exact
+`repository.identity` match, every planned path inside the effective
+include/exclude scope, `maximum_workers` greater than zero, owning lane
+`mutation: true`, and no protected path. The live gardener file that first-use
+writes on the target repository is always protected and is not a catalog
+file. Missing or false permission, scope mismatch, or current overlapping
+work denies that unit
+(`skills/repo-gardener/references/policy-and-entry-modes.md:80-88`).
 
-Never fall back to the bundled starter. It intentionally has zero child
-capacity and all lane mutations disabled
-(`skills/repo-gardener/assets/policy-template.yaml`).
+At open, read the durable file from the refreshed default branch and record
+that revision. Mid-run, re-read it only to detect that it changed,
+immediately before Worker dispatch, push, PR creation, and `run-closed`. A
+revision change stops further source mutation, push, and PR-open for every
+Worker. Unchanged grants are not re-litigated. A live-policy or overlap
+denial on one Worker stops that Worker's dependents only. If the file still
+names the tracker, the Orchestrator still writes the closed comment
+(`skills/repo-gardener/references/policy-and-entry-modes.md:95-101`).
+
+Never fall back to the bundled starter. It is fail-closed:
+`maximum_workers: 0` and all authoring-lane mutations disabled
+(`skills/repo-gardener/assets/policy-template.yaml:42-43`).
 
 ### Let native artifacts own authored work
 
-Create a persistent child worktree only for work intended to become one PR.
-The child owns planning, implementation, simplification, code review,
-repository gates, commit, owner-facing PR readiness on that clean exact commit,
-owner-decision and evidence-pack handoff, push/PR policy revalidation, push, and
-PR creation. The parent owns breadth, depth, selection, dispatch policy checks,
-tracker writes, supervision, and the morning report
-(`skills/repo-gardener/SKILL.md`).
+Create a persistent Worker worktree only for work intended to become one PR.
+The Worker owns planning, implementation, simplification, code review,
+repository gates, commit, `checking-pr-readiness` on that clean exact commit,
+push, and PR creation. The Orchestrator owns breadth, depth, selection,
+tracker writes, supervision, the morning report, and a read-only
+`checking-merge-readiness` envelope after `pr_ready`. It does not implement,
+push, or merge (`skills/repo-gardener/SKILL.md:160-174`).
 
-Freshly read the native repository, PR number, branch, head SHA, state, and
-checks before reporting the child. Do not mirror that lifecycle into a custom
-ownership ledger. The automation does not merge or create follow-up issues;
-the retained parent report carries issue-ready recommendations for owner review
-(`skills/repo-gardener/SKILL.md`).
+Freshly read the native repository, PR number, branch, head SHA, state,
+checks, and review status before reporting the Worker. Do not mirror that
+lifecycle into a custom ownership ledger. The run does not merge or create
+follow-up issues; the retained Orchestrator report carries issue-ready
+recommendations for owner review (`skills/repo-gardener/SKILL.md:176-180`).
 
 ## Why This Matters
 
@@ -147,14 +153,13 @@ Separating measurement stages makes a quiet night interpretable. Owners can
 see whether little was inspected, much was inspected but little qualified, or
 several lanes converged on one problem. Separating read-only capacity from
 authoring capacity lets the gardener keep finding and explaining useful work
-when another PR already exists.
+when unrelated PRs already exist.
 
-Finally, delegating one actual PR to one child makes responsibility legible.
-The child completes its workflow once; the parent coordinates and reports it
-once. This reduces duplicated review, excess worktrees, and bespoke state while
-preserving the parent for source, diff, and terminal-context inspection. The
-durable morning summary stays in the tracker or a caller-approved destination,
-not in public repository source.
+Finally, giving each justified unit its own Worker makes responsibility
+legible. One Worker completes one PR workflow; the Orchestrator coordinates
+and reports. Helpers scout, simplify, review, and run readiness; they do not
+own a PR. The durable morning summary stays in the tracker or a
+caller-approved destination, not in public repository source.
 
 ## When to Apply
 
@@ -163,8 +168,8 @@ not in public repository source.
 - Native systems already own durable work state, such as PRs, branches, heads,
   checks, and reviews.
 - Policy may change while a long-running agent is sensing or implementing.
-- Read-only breadth, bounded depth, recommendations, and authored work have
-  different limits or risk profiles.
+- Read-only breadth, purpose-bounded depth, recommendations, and authored work
+  have different limits or risk profiles.
 - Analytics can inform work only after schema, identity, grain, freshness, and
   source-of-truth checks make the evidence trustworthy.
 - An audit trail is useful, but only some workflow facts have exact structural
@@ -180,45 +185,43 @@ representations elsewhere.
 
 ```text
 run-opened
-  -> model surveys nine lanes and deepens 0..min(3, policy maximum)
-  -> optional child owns one complete PR workflow
+  -> model surveys nine lanes and deepens while it would change assignment
+  -> Orchestrator assigns non-overlapping Workers in parallel up to maximum_workers
+  -> each Worker owns one unmerged PR
 run-closed
-  -> deterministic two-record structural check
-  -> result reported outside the immutable close
+  -> deterministic two-comment identity check
+  -> no register-quality claim
 ```
 
 The close still contains nine lane rows, depth results, bounded data-trust
-evidence, native child facts or a no-child reason, owner attention,
+evidence, native Worker facts or a no-Worker reason, owner attention,
 recommendations, and run outcome. Less durable ceremony does not mean less
 operating coverage.
 
 ### Stop only the mutation whose permission changed
 
-If a run opens under `policy:1` and the owner installs `policy:2`:
+If a run opens against revision A of the durable file and the default branch
+later holds a different revision:
 
-- a disabled owning lane before dispatch prevents child creation but not
-  unrelated reporting;
-- a zero child limit before PR creation preserves saved child work without
+- a disabled owning lane or `maximum_workers: 0` before dispatch prevents that
+  Worker but not unrelated reporting;
+- a revision change before PR creation preserves saved Worker work without
   opening the PR; and
 - a denied tracker write before close prevents a false structural-closure
   claim and becomes an interrupted caller handoff.
 
-The active behavioral case pins these boundaries plus opening denial,
-repository/scope mismatch, and newly overlapping work
-(`tests/repo-gardener/cases/policy-tightening-during-run.md`).
+The active behavioral case pins live-file revision change, overlap, leftover
+unrelated PRs, and cap behavior
+(`tests/repo-gardener/cases/policy-tightening-during-run.md`,
+`tests/repo-gardener/cases/parallel-nightly-orchestration.md`).
 
 ### Keep measurement yield separate from capacity
 
 If nine lanes inspect 107 records, emit two evidence-qualified candidates, and
-deduplicate them to one underlying problem, report all three values. If the
-single authoring slot is occupied, the run may still sense, deepen, and
-recommend; it simply may not dispatch another child.
-
-Fresh-context dogfood passed 10/10 one-child behaviors, 10/10 policy-tightening
-behaviors, and 8/8 depth/data-trust behaviors. The structural suite also
-covered a two-page legacy history and adversarial identity, lineage, sequence,
-operation, comment, hash, pagination, count, duplicate, missing, and
-interrupted mutations (`tests/repo-gardener/log.md`).
+deduplicate them to one underlying problem, report all three values. If
+`maximum_workers` is zero or unrelated PRs already exist, the run may still
+sense, deepen, and recommend; those leftover PRs do not consume the Worker
+cap.
 
 ## Related
 

@@ -2,6 +2,7 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-08-22 | c7ac63e (working tree) | pre-push after review-fix and learning refresh | pass | Lefthook `pre-push` passed on the review-fix tree plus the Orchestrator/Worker refresh of `docs/solutions/architecture-patterns/separate-scout-measurement-stages-from-authoring-capacity.md`. Catalog, repository-integrity, gitleaks, effects, config, and run-records runners passed. The learning no longer teaches one-child dispatch, `register_closed_consistently`, or `maximum_new_child_prs_per_run`.
 - 2026-08-22 | acb400d (working tree) | structural validation (skills-ref) | pass | Current package validates against the Agent Skills format. U5 changed behavioral cases only.
 - 2026-08-22 | acb400d (working tree) | matched comparison: unattended-assessment-only-pr | not run — independent gate remains | Isolated executors and a fresh grader were not run in this unit. No matched behavioral pass is claimed for unattended PR-open.
 - 2026-08-22 | acb400d (working tree) | behavioral case rewrite (U5) | pass | Replaced one-child nightly with parallel-nightly-orchestration covering AE3. Policy tightening uses live-file revision change (AE6). Depth is purpose-stop with a fourth justified look. Sensing floors and untrusted gates use Orchestrator/Worker vocabulary. Checklist review against the shipped skill; not a matched behavioral pass.

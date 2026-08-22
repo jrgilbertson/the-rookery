@@ -30,6 +30,6 @@ repository instructions prohibit that storage. Put those artifacts in a
 per-run temporary directory or a caller-approved external or private
 destination, as those instructions require.
 
-The structural closure result exists only after final readback and is available
-in the caller result or retained Orchestrator execution context, not in the
-immutable close or this issue body.
+Exact readback of the two managed comments is required before treating the run
+as recorded. That verification is not a planning-quality, safety, or
+register-consistency claim, and it does not belong in this issue body.

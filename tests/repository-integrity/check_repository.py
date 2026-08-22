@@ -27,8 +27,7 @@ FIXTURE_RUNNERS = (
     "tests/repository-integrity/check_catalog.py",
     "tests/repository-integrity/check_repository.py",
     "tests/repo-gardener/fixtures/effects/check_effects.py",
-    "tests/repo-gardener/fixtures/github-register/check_snapshots.py",
-    "tests/repo-gardener/fixtures/reconciliation/check_decisions.py",
+    "tests/repo-gardener/fixtures/run-config-checks.py",
     "tests/repo-gardener/fixtures/run-records/check_run_records.py",
 )
 

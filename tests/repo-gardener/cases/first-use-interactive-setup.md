@@ -42,9 +42,11 @@ only authority, and a copied starter was never distinguished from adoption.
 - [ ] If the file does not already name a live tracker, setup creates a new
       GitHub issue from the skill's report template as its own approved
       provider batch, then writes `.agents/repo-gardener.yaml` as a separate
-      approved batch. Setup is complete only after that file is on the
-      refreshed default branch and read back. The read-back file names all
-      nine contracted lanes in order, with the triage lane as an empty
+      approved batch. Before that write, inspect the displayed destination
+      and each existing path component without following links and refuse a
+      symlink or path escape. Setup is complete only after that file is on
+      the refreshed default branch and read back. The read-back file names
+      all nine contracted lanes in order, with the triage lane as an empty
       mapping.
 - [ ] Creating the tracker issue does not start a gardening run. Config
       approval does not approve the first run. No `run-opened` comment is

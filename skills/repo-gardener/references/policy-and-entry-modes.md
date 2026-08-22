@@ -56,8 +56,11 @@ true`), discovered identity and branch, and existing protected paths.
 If the file does not already name a live tracker, setup creates a new GitHub
 issue from `assets/github-report-issue-template.md` as its own approved
 provider batch, then writes the durable file as a separate approved batch.
-Setup is complete only after the approved file is on the refreshed default
-branch and read back. Creating the issue does not start a gardening run.
+Before that write, inspect the displayed repository-relative destination and
+each existing path component without following links; refuse a symlink or
+path escape. Setup is complete only after the approved file is on the
+refreshed default branch and read back. Creating the issue does not start a
+gardening run.
 Config approval does not approve the first run. Write no `run-opened` comment
 before that readback.
 

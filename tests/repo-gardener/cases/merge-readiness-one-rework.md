@@ -35,10 +35,13 @@ recorded process cap and a named test failure had no one-rework bound.
 - [ ] Scenario 1 records the empty-review debug light and the missing
       required-approval finding. It does not assign rework. Both are
       process caps, not quality findings.
-- [ ] Scenario 2 allows one extra Worker push and one merge-readiness
-      re-run for the named test failure, then refuses a second rework. It
-      writes an issue-ready recommendation for the unresolved material
-      intent finding and does not create a follow-up issue.
+- [ ] Scenario 2 allows one extra Worker commit and push for the named
+      test failure. That commit repeats simplification, code review, and
+      repository gates. After the extra push, wait for freshly read native
+      checks and review on the new head, then re-run merge-readiness once,
+      then refuse a second rework. It writes an issue-ready recommendation
+      for the unresolved material intent finding and does not create a
+      follow-up issue.
 - [ ] Scenario 3 does not select `Proceed to merge` and does not merge.
 - [ ] Scenario 4 skips merge-readiness feedback, names the absent
       `checking-merge-readiness` gap, and still does not merge.

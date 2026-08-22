@@ -180,6 +180,36 @@ def mutate(base: dict[str, Any], target: dict[str, Any], prepared: dict[str, Any
         before["issue"]["body"] = base["issue"]["body"]
     elif mutation == "duplicate-prepared-comment":
         after = SNAPSHOTS.apply_prepared(target, prepared)
+    elif mutation == "already-satisfied-but-edited-prior":
+        before = with_prior_managed(target)
+        after = copy.deepcopy(before)
+        edited = {
+            "schema": "orchestrator-run-record/v1",
+            "kind": "run-opened",
+            "run_id": "run:synthetic:prior",
+            "operation_id": "operation:report:" + "a" * 64,
+            "payload": {"disposition": "tampered"},
+        }
+        after["comment_pages"][-1][-1]["body"] = CONTRACT._run_record_comment(edited)
+        attempt = "none"
+    elif mutation == "already-satisfied-but-replaced-prior":
+        before = with_prior_managed(target)
+        after = copy.deepcopy(before)
+        after["comment_pages"][-1][-1]["id"] = 99
+        after["comment_pages"][-1][-1]["node_id"] = "IC_REPLACED_099"
+        attempt = "none"
+    elif mutation == "already-satisfied-but-removed-prior":
+        before = with_prior_managed(target)
+        after = copy.deepcopy(before)
+        after["comment_pages"][-1].pop()
+        after["issue"]["comments"] = len(
+            [item for page in after["comment_pages"] for item in page]
+        )
+        attempt = "none"
+    elif mutation == "already-satisfied-but-added-other":
+        before = copy.deepcopy(target)
+        after = with_prior_managed(target)
+        attempt = "none"
     else:
         raise AssertionError(mutation)
     return before, after, attempt
@@ -342,6 +372,30 @@ def main() -> int:
             effect_input("verify", prepared=altered, pre_read=base, post_read=target, write_attempt="possible"),
             "prepared",
         )
+
+    bool_operation = copy.deepcopy(operation)
+    bool_operation["payload"] = {"approved": True}
+    bool_prepared = cli(effect_input("prepare", pre_read=base, operation=bool_operation))
+    _, bool_record = CONTRACT._extract_marked_json(
+        bool_prepared["comment"],
+        CONTRACT.RUN_RECORD_BEGIN,
+        CONTRACT.RUN_RECORD_END,
+        "prepared run-record comment",
+    )
+    confused = copy.deepcopy(bool_prepared)
+    confused_record = copy.deepcopy(bool_record)
+    confused_record["payload"] = {"approved": 1}
+    confused["comment"] = CONTRACT._run_record_comment(confused_record)
+    expect_error(
+        effect_input(
+            "verify",
+            prepared=confused,
+            pre_read=base,
+            post_read=target_snapshot(base, bool_prepared),
+            write_attempt="possible",
+        ),
+        "prepared record payload mismatch",
+    )
 
     source = CONTRACT_PATH.read_text(encoding="utf-8")
     CONTRACT.require("import requests" not in source and "import urllib" not in source and "import subprocess" not in source, "effect executable gained provider/network code")

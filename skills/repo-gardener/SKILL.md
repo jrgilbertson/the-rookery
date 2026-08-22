@@ -139,9 +139,12 @@ no structural-closure claim.
     `checking-merge-readiness` read-only: take the recommendation and named
     findings, execute nothing, and never select “Proceed to merge.” Material
     debug or do-not-merge findings (diff, tests, intent, durable records) may
-    get one extra Worker push and one re-run. Process-only caps (empty review
-    history, missing required human approvals) are recorded, not chased. A
-    second rework is refused. If that skill is absent, skip the feedback and
+    get one extra Worker commit and push. That commit repeats the Worker's
+    simplification, code review, and repository gates. After the extra push,
+    wait for freshly read native checks and review on the new head, then
+    re-run merge-readiness once. Process-only caps (empty review history,
+    missing required human approvals) are recorded, not chased. A second
+    rework is refused. If that skill is absent, skip the feedback and
     name the gap. The in-run review is not the owner's later merge gate.
     Never merge. The pending Worker does not block completion of the nine-lane
     report.

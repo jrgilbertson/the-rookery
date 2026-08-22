@@ -495,7 +495,10 @@ def _prepared_effect(prepared: Any) -> dict[str, Any]:
     _validate_run_record(record, "prepared run record")
     require(record.get("operation_id") == prepared["operation_id"], "prepared record operation_id mismatch")
     require(record.get("kind") == operation["kind"] and record.get("run_id") == operation["run_id"], "prepared record metadata mismatch")
-    require(record.get("payload") == operation["payload"], "prepared record payload mismatch")
+    require(
+        canonical_bytes(record.get("payload")) == canonical_bytes(operation["payload"]),
+        "prepared record payload mismatch",
+    )
     require(prepared["comment"] == _run_record_comment(record), "prepared comment material mismatch")
     return prepared
 
@@ -616,7 +619,12 @@ def verify_report_effect(prepared: Any, pre_read: Any, post_read: Any, write_att
     before_is_base = _view_matches_pre(before, prepared)
     before_is_target = _view_matches_post(before, prepared)
     after_is_target = _view_matches_post(after, prepared)
-    if write_attempt == "none" and before_is_target and after_is_target:
+    if (
+        write_attempt == "none"
+        and before_is_target
+        and after_is_target
+        and _managed_records_unchanged(before, after)
+    ):
         return {"terminal_outcome": "already satisfied", "matched_parts": 2, "repair": "none", "provenance": "unverified"}
     if write_attempt == "denied-before-write":
         if before_is_base and pre_read == post_read:

@@ -165,7 +165,7 @@ What must be true before merge:
 
 Repos and systems need tending over time. Maintenance runs throughout the loop, not only after merge.
 
-[`repo-gardener`](skills/repo-gardener/SKILL.md) checks nine areas of repository health and may carry one bounded improvement to an unmerged pull request. It runs on a schedule or by hand and leaves one opening and one closing tracker record for review.
+[`repo-gardener`](skills/repo-gardener/SKILL.md) checks nine areas of repository health and may assign parallel Workers that each leave one unmerged pull request. First-use writes `.agents/repo-gardener.yaml` and a gardening tracker. It runs on a schedule or by hand, leaves one opening and one closing tracker comment, and never merges.
 
 Design maintenance runs through Impeccable. `impeccable extract` finds patterns used three or more times with the same intent and standardizes them into tokens and primitives. `impeccable document` regenerates the design docs from what actually shipped, so the tools read the design language instead of guessing at it.
 

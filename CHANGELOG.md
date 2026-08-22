@@ -13,6 +13,14 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-gardener` first-use now writes `.agents/repo-gardener.yaml` and creates
+  a gardening tracker the way Managing Issues writes its config. A scheduled or
+  manual run uses one Orchestrator that may assign parallel Workers, each with
+  one unmerged pull request, up to `maximum_workers`. Depth has no count.
+  Opened and closed tracker comments are the production records; a hash-linked
+  register is not required. Unattended Workers open PRs only through
+  assessment-only `checking-pr-readiness`. In-run `checking-merge-readiness` is
+  read-only feedback and never merges.
 - Working plans, brainstorms, raw dogfood notes, and point-in-time reports now
   stay as ignored worktree artifacts. PR readiness rejects tracked or durably
   cited transient material, and merge readiness verifies issue stewardship

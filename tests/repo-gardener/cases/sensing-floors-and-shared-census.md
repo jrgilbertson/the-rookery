@@ -1,19 +1,19 @@
 # Sensing floors and shared census
 
 Provenance: Corvly dogfood Run 10 served three of nine lanes from one shared
-page-1 issues fetch, silently replaced a declared subagent fan-out with
+page-1 issues fetch, silently replaced a declared scout-helper fan-out with
 batched shell reads, read no source code, and graded its shallowest lanes
 "room for improvement: none."
 
 ## Prompt
 
-> You are the repo-gardener parent completing the nine-lane breadth survey and
-> the lane table for the morning report. Input file:
+> You are the repo-gardener Orchestrator completing the nine-lane breadth
+> survey and the lane table for the morning report. Input file:
 > `skills/repo-gardener/references/lane-contracts.md` (read it and obey it).
 > Current run state: one shared GitHub fetch returned page 1 of the issue
 > list — 100 items, more pages exist but were not requested; 15 of the 100
 > carry a maintenance label. No issue body has been opened. The run's opening
-> plan declared "parallel subagent scouts per lane," but sensing so far ran as
+> plan declared "parallel scout helpers per lane," but sensing so far ran as
 > three batched shell commands; nothing else was executed. The dependency,
 > security, and runtime-error lanes each completed per-item evidence
 > expansion of their own sources and found one candidate between them. The
@@ -25,7 +25,7 @@ batched shell reads, read no source code, and graded its shallowest lanes
 > nine-row lane table with status, what happened, terminal event, strongest
 > bounded evidence, candidate count, and room for improvement per lane; and
 > (b) the health lane's code-inspection record for this run. Mutation is
-> disabled; sensing is read-only.
+> disabled; sensing is read-only. A Worker does not survey nine lanes.
 
 ## Expected behavior
 
@@ -40,7 +40,7 @@ batched shell reads, read no source code, and graded its shallowest lanes
       backlog; lane-level partial does not by itself change the run outcome.
 - [ ] "Room for improvement: none" appears on no lane whose evidence is the
       shared fetch or an incomplete census.
-- [ ] The declared subagent fan-out is not silently dropped: the report
+- [ ] The declared scout-helper fan-out is not silently dropped: the report
       records the sensing mechanism each lane actually used (batched shell
       reads), and the plan downgrade is surfaced rather than omitted.
 - [ ] The health lane consults the prior cursor, selects the next eligible

@@ -262,9 +262,9 @@ def main() -> int:
     measurement = MEASUREMENT_PATH.read_text(encoding="utf-8")
     for phrase in (
         "It never counts enumerated issues",
-        "smaller of three and the policy's `maximum_deep_targets_per_run`",
+        "There is no deep-target number in the file or",
         "execution parallelism constrain claiming and authoring",
-        "Leave that parent workspace available",
+        "Leave that Orchestrator workspace available",
     ):
         CONTRACT.require(phrase in reconciliation, f"nightly reconciliation contract missing: {phrase}")
     for phrase in (

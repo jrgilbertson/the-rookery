@@ -9,12 +9,12 @@ fresh context, binary judgment.
 | --- | --- |
 | Run tonight's repository gardening automation | Explicit scheduled run. |
 | Reconcile the repo gardener tracker and inspect all maintenance lanes | Core manual run. |
-| Continue the interrupted repo-gardener parent and close its run | Recovery of the same workflow. |
-| Why did last night's repository-gardener run skip a child PR? | Interpret a run decision. |
+| Continue the interrupted repo-gardener Orchestrator and close its run | Recovery of the same workflow. |
+| Why did last night's repository-gardener run skip a Worker PR? | Interpret a run decision. |
 | Do the nine-lane repository-health pass and deepen the strongest current findings | Exact breadth/depth workflow. |
-| Let the nightly gardener open one safe PR if current evidence warrants it | Bounded child-authoring workflow. |
+| Let the nightly gardener open unmerged PRs if current evidence warrants it | Bounded Worker-authoring workflow. |
 | Check product-data trust as part of this repo-gardener run | Cross-cutting measurement path. |
-| Prepare the morning report from the retained repository-gardener parent | Explicit run handoff. |
+| Prepare the morning report from the retained repository-gardener Orchestrator | Explicit run handoff. |
 
 ## Near misses: should not trigger
 

@@ -2,14 +2,14 @@
 
 The target repository's only policy authority is `.agents/repo-gardener.yaml`
 on the refreshed default branch. Resolve its `repository.default_branch` and
-the repository's configured remote. Immediately before each policy-gated
-boundary (`run-opened`, Worker dispatch, push, PR creation, and `run-closed`),
-fetch or refresh that exact remote branch, then read `.agents/repo-gardener.yaml`
-from the refreshed remote revision. Record the opening revision and every later
-change. Never infer a remote or branch name from a conventional default or
-substitute a stale local checkout. A missing, ambiguous, or unrefreshable
-remote/default-branch binding, or an unreadable file at that revision, stops
-only the dependent mutation. The current refreshed file wins immediately.
+the repository's configured remote. At open, fetch or refresh that exact
+remote branch, then read `.agents/repo-gardener.yaml` from the refreshed
+remote revision and record that revision. Mid-run, re-read only to detect
+that the file changed, immediately before Worker dispatch, push, PR
+creation, and `run-closed`. Never infer a remote or branch name from a
+conventional default or substitute a stale local checkout. A missing,
+ambiguous, or unrefreshable remote/default-branch binding, or an unreadable
+file at that revision, stops only the dependent mutation.
 
 The bundled policy asset is a fail-closed starter. It is never loaded as a
 fallback, projected into another shape, or used to override the live file. A
@@ -77,33 +77,38 @@ structural checker, and make no structural-closure claim.
 
 ## Authoring and hardcoded denies
 
-Child authoring is allowed only when `repository.identity` exactly matches the
-target repository, every planned or committed path is inside the effective
-`repository.scope.include`/`exclude` boundary, `authority.source_mutation` is
-exactly `allowed`, `boundaries.maximum_new_child_prs_per_run` is greater
-than zero, and the owning `lanes.<lane>.mutation` value is `true`. A missing or
-mismatched identity, out-of-scope path, denied global authority, missing or
-`false` lane value, or zero limit denies authoring. The bundled starter remains
-denied and grants nothing. Apply the live-file refresh before dispatch, push,
-and PR creation. Check planned paths at dispatch and the exact committed diff
-at push and PR creation. Revocation or scope drift stops that operation and its
-dependents; preserve the local commit when push is denied. Apply the same
-refresh before closing, record any revision change, and reevaluate tracker-write
-permission. A changed revision alone does not block a benign close; an actual
-current denial does.
+Worker authoring is allowed only when, on the opening file,
+`repository.identity` exactly matches the target repository, every planned or
+committed path is inside the effective `repository.scope.include`/`exclude`
+boundary, `maximum_workers` is greater than zero, the owning
+`lanes.<lane>.mutation` value is `true`, and the path is not protected.
+`.agents/repo-gardener.yaml` is always protected. A missing or mismatched
+identity, out-of-scope path, missing or `false` lane value,
+`maximum_workers` of zero, or protected path denies that unit. The bundled
+starter remains denied and grants nothing.
+
+Assign overlap before parallel start. Check planned paths at dispatch against
+the opening file and the assigned path slice. A live-policy or overlap denial
+on one Worker stops that Worker's dependents only; other Workers and
+read-only sensing continue. Already-open PRs stay native objects.
+
+Mid-run, re-read the file only to detect that its revision changed. Unchanged
+grants are not re-litigated. A revision change stops further source mutation,
+push, and PR-open for every Worker. Preserve the local commit when push is
+denied. If the file still names the tracker, the Orchestrator still writes the
+closed comment. If the file no longer names the tracker or the write is
+otherwise denied, report interrupted closure and do not write through the
+denial.
 
 Scope paths are normalized repository-relative paths with no traversal.
 Exclude wins: each authored path must match at least one include glob and no
 exclude glob. A missing, malformed, or ambiguous scope denies authoring.
-For `authority.source_mutation`, every value other than the exact string
-`allowed` denies authoring, including booleans and positive-looking synonyms.
 
 Skill-hardcoded, not file knobs: never merge, release, deploy, publish, create
 follow-up issues (the setup tracker-issue batch is the sole issue create),
 weaken validation, expose secrets, mutate production, persist customer-level
-analytics, or message a customer. `.agents/repo-gardener.yaml` is always
-protected. Presentation cap 7 is not in the file. There is no depth quota in
-the file.
+analytics, or message a customer. Presentation cap 7 is not in the file. There
+is no depth quota in the file.
 
 Scheduled and manual Orchestrator runs use the same skill contract. The caller
 owns automation scheduling, Orchestrator-worktree creation, provider

@@ -120,10 +120,25 @@ path slice. Helpers do not own a PR.
 
 Each Worker owns its plan, implementation, simplification, code review, and
 repository gates, then commits the result. On that clean exact commit it runs
-`checking-pr-readiness` before opening a PR. Unattended versus attended
-readiness is not decided here. An absent skill records the exact gap, preserves
-the commit, and leaves the Worker `saved_without_pr`. Never manufacture
-approval, synthesize evidence, or commit generated readiness artifacts. The
+installed `checking-pr-readiness` before opening a PR. Cite that skill by
+name; do not fork it.
+
+When the file allows Workers and no owner is in the session, that run is
+assessment-only. Bind the exact subject and the full HEAD OID. The outcome is
+`pass` or `action-required` JSON. The Worker that ran simplify, review, and
+gates produces one `checking-pr-readiness-receipt-bundle/v1` in that same
+session, outside the repository tree, and supplies it to the assessment.
+Assessment-only forbids attestation. A later re-invocation cannot pass by
+claiming those steps happened. Do not present the owner menu.
+
+When an owner is present, the interactive `checking-pr-readiness` menu
+remains.
+
+`pass` may open a PR. Do not open the PR when `checking-pr-readiness` is
+absent or returns `action-required`, the bundle is missing, or the Worker
+does not complete the exact-subject and full-OID double-check. Keep the
+commit as `saved_without_pr` and name the gap. Never manufacture approval,
+synthesize evidence, attest, or commit generated readiness artifacts. The
 Orchestrator monitors and helps route questions but does not redo the work.
 The Worker must not edit the durable file, automation, protected paths,
 release or deployment surfaces, or any other effect the opening file denies.
@@ -131,7 +146,9 @@ release or deployment surfaces, or any other effect the opening file denies.
 Simplification and code review are required before Worker dispatch, and
 `checking-pr-readiness` is required before opening a PR. When either
 pre-dispatch capability is absent, do not create Worker worktrees; complete
-the read-only nine-lane report and name the missing capability.
+the read-only nine-lane report and name the missing capability. When
+`checking-pr-readiness` is absent after a Worker has committed, preserve the
+commit as `saved_without_pr` and name that gap.
 
 Immediately before dispatch, re-read the durable file only to detect a
 revision change from `run-opened`, and reread native branches and PRs for
@@ -153,8 +170,29 @@ If the bounded caller run must close first, report and retain the Worker as
 `pending`, set the run outcome to `partial`, and never claim `pr_ready` or
 `completed`. Pending checks or review do not block reporting all nine lanes.
 Record the repository, PR number, branch, head SHA, state, checks, review
-state, and Worker state. Never merge it. Do not create follow-up issues; write
-issue-ready recommendations instead.
+state, and Worker state.
+
+After a Worker reaches `pr_ready`, the Orchestrator runs installed
+`checking-merge-readiness` read-only. Cite that skill by name; do not fork it
+and do not add assessment-only to it. That skill always has an owner menu;
+this skill wraps the review. Invoke the installed skill's read-only review,
+take the recommendation and named findings, execute nothing, and never select
+“Proceed to merge.”
+
+Classify findings:
+
+- Material debug or do-not-merge findings about the diff, tests, intent, or
+  durable records may get one extra Worker push and one re-run of
+  merge-readiness. A named test failure is material. A second rework is
+  refused.
+- Process-only caps, including empty review history and missing required
+  human approvals, are recorded, not chased. Fresh PRs often cap at debug for
+  empty review; that is process, not rework.
+
+If `checking-merge-readiness` is absent, skip merge-readiness feedback and
+name the gap. The in-run review is not the owner's later merge gate. Never
+merge. Do not create follow-up issues; write issue-ready recommendations
+instead.
 
 ## Close once
 
@@ -166,15 +204,17 @@ Consolidate the run into one `run-closed` record containing:
 - all nine lane rows;
 - depth decisions and results, with no deep-target quota;
 - the bounded measurement result or exact unavailable/not-relevant reason;
-- native Worker PR facts and current state, or an honest no-Worker reason;
+- native Worker PR facts, in-run merge-readiness lights, and current state,
+  or an honest no-Worker reason;
 - at most seven prioritized owner-attention items plus overflow count;
 - issue-ready recommendations and improvements;
 - the durable-file revision observed at close and any change from opening; and
 - for each blocker, its affected mutation and dependency closure plus the
   unrelated work that continued or was handed off.
 
-Do not include a dogfood milestone or a “behavioral during this pilot”
-disclosure.
+The closed comment states that the in-run review is not the owner's later
+merge gate. Do not include a dogfood milestone or a “behavioral during this
+pilot” disclosure.
 
 Immediately before closing, re-read the durable file only to detect a revision
 change from opening. A revision change alone does not block a benign close when

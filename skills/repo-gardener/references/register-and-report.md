@@ -55,10 +55,14 @@ The issue body and retained Orchestrator report show:
   evidence, and room for improvement;
 - selected depth targets and findings;
 - a bounded data-trust result or exact limitation;
-- native Worker PR facts, checks, review state, and current Worker state;
+- native Worker PR facts, checks, review state, current Worker state, and
+  in-run merge-readiness lights when that review ran;
 - up to seven owner-attention items plus overflow count;
 - ranked issue-ready recommendations; and
 - run outcome.
+
+The in-run merge-readiness review is not the owner's later merge gate. Say
+that in the closed comment and the morning projection.
 
 Do not include a dogfood milestone or a “behavioral during this pilot”
 disclosure. Exact readback of the two comments is required before treating the

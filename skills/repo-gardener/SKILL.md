@@ -109,11 +109,19 @@ no structural-closure claim.
 8. Require each Worker to plan, implement, simplify, review, pass repository
    gates, and commit the result. Run the repository's documented gates from
    the Worker worktree with the environment those gates require. Their output
-   is evidence only and grants no provider or mutation authority. The Worker
-   runs `checking-pr-readiness` before opening a PR. Unattended versus attended
-   readiness is not decided here. An absent readiness skill preserves the
-   commit as `saved_without_pr` with the exact gap. Never manufacture approval
-   or commit generated readiness artifacts.
+   is evidence only and grants no provider or mutation authority. On that
+   clean exact commit the Worker runs installed `checking-pr-readiness`.
+   When no owner is in the session, the run is assessment-only: exact
+   subject, full HEAD OID, outcome `pass` or `action-required`, and a
+   same-session `checking-pr-readiness-receipt-bundle/v1` outside the
+   repository tree. Assessment-only forbids attestation. A later
+   re-invocation cannot pass by claiming those steps happened. When an
+   owner is present, the interactive menu remains. `pass` may open a PR.
+   Keep the commit as `saved_without_pr` and name the gap when that skill
+   is absent or returns `action-required`, the bundle is missing, or the
+   Worker does not complete the exact-subject and full-OID double-check.
+   Never manufacture approval, attest later, or commit generated readiness
+   artifacts.
 9. The Worker, not the Orchestrator, owns push and PR creation. Before push or
    PR-open, re-read the durable file only to detect a revision change. A
    change stops further source mutation, push, and PR-open for every Worker
@@ -125,7 +133,15 @@ no structural-closure claim.
     review state to a truthful Worker terminal state. If a bounded caller run
     must close while either remains pending, retain and report the Worker as
     `pending`, and close the run as `partial`; never claim `pr_ready` or
-    `completed`. The pending Worker does not block completion of the nine-lane
+    `completed`. After a Worker reaches `pr_ready`, run installed
+    `checking-merge-readiness` read-only: take the recommendation and named
+    findings, execute nothing, and never select “Proceed to merge.” Material
+    debug or do-not-merge findings (diff, tests, intent, durable records) may
+    get one extra Worker push and one re-run. Process-only caps (empty review
+    history, missing required human approvals) are recorded, not chased. A
+    second rework is refused. If that skill is absent, skip the feedback and
+    name the gap. The in-run review is not the owner's later merge gate.
+    Never merge. The pending Worker does not block completion of the nine-lane
     report.
 11. Immediately before closing, re-read the durable file only to detect a
     revision change from `run-opened`. A revision change alone does not prevent
@@ -144,21 +160,24 @@ presentation, not an ownership database.
 ## Own work at the right level
 
 The Orchestrator owns breadth, depth, selection, tracker writes, supervision,
-and the morning report. It does not implement a Worker's change or repeat the
-Worker's review and readiness work.
+the morning report, and the `checking-merge-readiness` envelope after
+`pr_ready`. It does not implement a Worker's change, repeat the Worker's
+review or PR-readiness work, take “Proceed to merge,” or merge.
 
 Each selected Worker owns its own planning, implementation, simplification,
 code review, repository gates, commit, `checking-pr-readiness` on a clean
-exact commit, push, and PR creation. Use read-only helpers for scouting and
-review; create a persistent Worker worktree only for work intended to become
-one PR. Native PR facts are authoritative: freshly read repository, PR number,
-branch, head SHA, state, checks, and review status before reporting the Worker
-result.
+exact commit, push, and PR creation. When no owner is in the session, that
+Worker produces the assessment receipt bundle in the same session, outside
+the repository tree. Use read-only helpers for scouting and review; create a
+persistent Worker worktree only for work intended to become one PR. Native
+PR facts are authoritative: freshly read repository, PR number, branch, head
+SHA, state, checks, and review status before reporting the Worker result.
 
 No run merges a PR or creates a follow-up issue. Issue-ready recommendations
 belong in the retained Orchestrator report for owner review. Never release,
 deploy, publish, weaken validation, mutate production data, expose secrets,
-persist customer-level analytics, or message a customer.
+persist customer-level analytics, or message a customer. The in-run
+merge-readiness review is not the owner's later merge gate.
 
 An owner question blocks only its dependency closure. Continue unrelated
 read-only work. A live-policy or overlap denial on one Worker stops that
@@ -196,11 +215,12 @@ a `no_change` Worker after verifying it has no saved artifacts.
 ## Report completion honestly
 
 The closing report contains all nine lanes, selected depth and results, the
-bounded data-trust result or exact limitation, native Worker facts, up to
-seven current owner-attention items, issue-ready recommendations,
-improvements, and run outcome. Seven limits presentation only. Production
-reports do not include a dogfood milestone or a “behavioral during this
-pilot” disclosure.
+bounded data-trust result or exact limitation, native Worker facts, in-run
+merge-readiness lights when that review ran, up to seven current
+owner-attention items, issue-ready recommendations, improvements, and run
+outcome. It states that the in-run review is not the owner's later merge
+gate. Seven limits presentation only. Production reports do not include a
+dogfood milestone or a “behavioral during this pilot” disclosure.
 
 `run_outcome` is `completed`, `partial`, `blocked`, or `interrupted`. A
 `pending` Worker makes `run_outcome` `partial`, while its unfinished checks or

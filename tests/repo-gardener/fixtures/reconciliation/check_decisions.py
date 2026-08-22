@@ -258,13 +258,8 @@ def main() -> int:
         capacity == {"rendered_slots": 7, "retained_first": True, "available_slots": 3, "recommendations": 2},
         "policy-derived retained-first capacity regressed",
     )
-    policy = POLICY_PATH.read_text(encoding="utf-8")
     reconciliation = RECONCILIATION_PATH.read_text(encoding="utf-8")
     measurement = MEASUREMENT_PATH.read_text(encoding="utf-8")
-    CONTRACT.require(
-        policy.count("maximum_deep_targets_per_run: 3") == 1,
-        "nightly depth limit must be declared exactly once",
-    )
     for phrase in (
         "It never counts enumerated issues",
         "smaller of three and the policy's `maximum_deep_targets_per_run`",

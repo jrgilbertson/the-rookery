@@ -2,7 +2,7 @@
 name: repo-gardener
 description: Use when running or interpreting a scheduled or manual repository-gardening pass for one repository. Surveys nine maintenance lanes, deepens up to the smaller of three and the installed-policy limit, optionally checks product-data trust, and may supervise a bounded child worktree through an unmerged PR when current evidence justifies it. Do not use for merging, releasing, deploying, creating issues, contacting customers, or performing an already-selected implementation outside a gardening run.
 license: MIT
-compatibility: Requires read access to one repository, its installed policy, native pull-request state, and configured evidence sources; reads an optional `.agents/managing-issues.json` to select the issue lanes' tracker. A mutating run requires exclusive tracker-write serialization and child worktree/branch/PR capabilities. Simplification and code review are required before child dispatch; checking-pr-readiness is required before push, and its absence preserves a committed child without a PR.
+compatibility: Requires Python 3 for configuration validation; read access to one repository, its policy, native PR state, and configured evidence; reads an optional `.agents/managing-issues.json` to select the issue lanes' tracker. A mutating run requires exclusive tracker-write serialization and child worktree/branch/PR capabilities. Simplification and code review are required before child dispatch; checking-pr-readiness is required before push, and its absence preserves a committed child without a PR.
 ---
 
 # Repo Gardener
@@ -30,22 +30,35 @@ Before preparing or checking either tracker record, read
 [references/github-reference-adapter.md](references/github-reference-adapter.md).
 Use [assets/github-report-issue-template.md](assets/github-report-issue-template.md)
 for the human projection. The bundled
-[assets/policy-template.yaml](assets/policy-template.yaml) is a safe starter,
-never live authority.
+[assets/policy-template.yaml](assets/policy-template.yaml) is a fail-closed
+starter, never live authority. Repository setup has exactly one durable file,
+`.agents/repo-gardener.yaml`. Validate it with:
 
-If the installed policy is missing, unreadable, or internally contradictory,
-stop only the dependent mutation. At every mutation boundary the current
-installed policy wins: record a revision change, then reevaluate the permission
-the operation needs. Continue safe sensing and report the exact gap. Never
-substitute a bundled, copied, or transformed policy.
+```text
+python3 scripts/config_check.py --repo-root ROOT --config .agents/repo-gardener.yaml
+```
 
-Opening tracker writes are permitted only by
-`caller_roles.report_write: required`. If that exact current installed-policy
-value is missing or different, perform only safe read-only sensing and return
-the result to the caller. This caller-only branch is the sole exception to the
-opening-before-sensing order. It is not a managed run: mint no managed run ID,
-write neither `run-opened` nor `run-closed`, invoke neither `effect-v1` nor
-`run-records-v1`, and claim no structural closure.
+Follow the first-use routing in
+[references/policy-and-entry-modes.md](references/policy-and-entry-modes.md):
+a missing or invalid file plus an owner who wants a managed run starts
+interactive setup; a read-only ask with a missing file stays sensing-only; an
+unattended missing or invalid file ends `blocked` with the named gap. A file
+without tracker identity is not a missing file: do not start setup; stay on
+caller-only sensing and name the gap. A copied starter is not adoption. A
+managed run opens only when the current file is valid and names a live tracker
+identity. Creating the tracker issue does not start a gardening run. Config
+approval does not approve the first run.
+
+At every mutation boundary the current refreshed file wins: record a revision
+change, then reevaluate the permission the operation needs. Continue safe
+sensing and report the exact gap. Never substitute a bundled, copied, or
+transformed file.
+
+When the managed-run gate is missing or denied, perform only safe read-only
+sensing and return the result to the caller. This caller-only branch is the
+sole exception to the opening-before-sensing order. It is not a managed run:
+mint no managed run ID, write neither `run-opened` nor `run-closed`, invoke
+neither `effect-v1` nor `run-records-v1`, and claim no structural closure.
 
 ## Run the parent loop
 

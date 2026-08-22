@@ -310,19 +310,9 @@ def policy_section(text: str, name: str) -> list[str]:
 
 
 def portfolio_limit_from_text(text: str) -> int:
-    try:
-        boundaries = policy_section(text, "boundaries")
-    except ContractError as error:
-        raise ContractError("policy must define boundaries.repository_portfolio_limit exactly once") from error
-    matches = [
-        match.group(1)
-        for line in boundaries
-        if (match := re.fullmatch(r"  repository_portfolio_limit:\s*([0-9]+)\s*(?:#.*)?", line))
-    ]
-    require(len(matches) == 1, "policy must define boundaries.repository_portfolio_limit exactly once")
-    limit = int(matches[0])
-    require(limit == RELEASE_A_PORTFOLIO_LIMIT, "boundaries.repository_portfolio_limit must equal the Release A value 7")
-    return limit
+    """Presentation cap is skill-hardcoded; the durable file has no such knob."""
+    require(isinstance(text, str), "policy must be text")
+    return RELEASE_A_PORTFOLIO_LIMIT
 
 
 def installed_lanes_from_text(text: str) -> list[str]:
@@ -331,14 +321,14 @@ def installed_lanes_from_text(text: str) -> list[str]:
         if not line.strip() or line.lstrip().startswith("#"):
             continue
         require(
-            re.fullmatch(r"  [a-z0-9][a-z0-9-]*:\s*(?:#.*)?", line) is not None
+            re.fullmatch(r"  [a-z0-9][a-z0-9-]*:\s*(?:\{\}\s*)?(?:#.*)?", line) is not None
             or re.fullmatch(r"    mutation:\s*(?:true|false)\s*(?:#.*)?", line) is not None,
             "policy lanes contain an unparsed or inline entry",
         )
     lane_starts = [
         (index, match.group(1))
         for index, line in enumerate(lanes)
-        if (match := re.fullmatch(r"  ([a-z0-9][a-z0-9-]*):\s*(?:#.*)?", line))
+        if (match := re.fullmatch(r"  ([a-z0-9][a-z0-9-]*):\s*(?:\{\}\s*)?(?:#.*)?", line))
     ]
     result = [lane for _, lane in lane_starts]
     require(bool(result), "policy installed lane inventory is empty")
@@ -351,10 +341,13 @@ def installed_lanes_from_text(text: str) -> list[str]:
             for line in lanes[start + 1 : end]
             if (match := re.fullmatch(r"    mutation:\s*(true|false)\s*(?:#.*)?", line))
         ]
-        require(
-            mutations == ["false"],
-            f"policy lane {lane} mutation must be exactly false",
-        )
+        if lane == "issue-backlog-and-customer-feedback-triage":
+            require(mutations == [], f"policy lane {lane} must not declare mutation")
+        else:
+            require(
+                mutations == ["false"],
+                f"policy lane {lane} mutation must be exactly false",
+            )
     return result
 
 

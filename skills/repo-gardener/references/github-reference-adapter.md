@@ -28,6 +28,6 @@ validates the durable `run-opened` receipt in final history, requires exactly on
 correct order, exact prepared closing material, and final readback, and returns
 only the structural closure result.
 
-Bootstrap may use `assets/github-report-issue-template.md` after the caller
-replaces its stable identity placeholders. A nonempty incompatible issue is
-foreign state, never an empty tracker.
+Setup may create the tracker from `assets/github-report-issue-template.md` as
+its own approved provider batch. A nonempty incompatible issue is foreign
+state, never an empty tracker.

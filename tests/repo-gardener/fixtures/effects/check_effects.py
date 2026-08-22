@@ -182,6 +182,14 @@ def main() -> int:
         "denied-before-write minted observed closure from a target-shaped post-read",
     )
     CONTRACT.require(denied_target["repair"] == "none", "denied-before-write minted repair authority")
+    none_target = cli(
+        effect_input("verify", prepared=prepared, pre_read=base, post_read=target, write_attempt="none")
+    )
+    CONTRACT.require(
+        none_target["terminal_outcome"] == "ambiguous",
+        "write_attempt none minted observed closure from a target-shaped post-read",
+    )
+    CONTRACT.require(none_target["repair"] == "none", "write_attempt none minted repair authority")
 
     for marker in CONTRACT.RESERVED_REPORT_SEQUENCES:
         for location in ("payload", "projection"):
@@ -271,8 +279,7 @@ def main() -> int:
     ):
         CONTRACT.require(obsolete not in source, f"obsolete register-machine production path remains: {obsolete}")
 
-    foreign_base = copy.deepcopy(base)
-    SNAPSHOTS.add_ordinary_comment(foreign_base)
+    foreign_base = SNAPSHOTS.add_ordinary_comment(base)
     foreign_prepared = cli(effect_input("prepare", pre_read=foreign_base, operation=operation))
     for changed_field in ("body", "author"):
         foreign_after = copy.deepcopy(foreign_base)

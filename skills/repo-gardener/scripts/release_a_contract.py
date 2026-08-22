@@ -207,9 +207,6 @@ def _extract_marked_json(body: str, begin: str, end: str, label: str) -> tuple[s
     start = body.find(begin)
     finish = body.find(end)
     require(start < finish, f"{label} markers are reordered")
-    before = body[:start]
-    after = body[finish + len(end) :]
-    require(begin not in before + after and end not in before + after, f"{label} contains extra markers")
     terminal = body[finish + len(end) :]
     require(start == 0 and terminal in {"", "\n"}, f"{label} contains surrounding text")
     raw = body[start + len(begin) : finish]
@@ -573,7 +570,7 @@ def verify_report_effect(prepared: Any, pre_read: Any, post_read: Any, write_att
         if before_is_base and pre_read == post_read:
             return {"terminal_outcome": "failed", "matched_parts": 0, "repair": "none", "provenance": "unverified"}
         return {"terminal_outcome": "ambiguous", "matched_parts": None, "repair": "none", "provenance": "unverified"}
-    if before_is_base and after_is_target:
+    if write_attempt == "possible" and before_is_base and after_is_target:
         return {"terminal_outcome": "observed", "matched_parts": 2, "repair": "none", "provenance": "unverified"}
     body_only = (
         before_is_base

@@ -158,6 +158,7 @@ def require_concrete_text(value: Any, label: str) -> str:
 
 def require_path_glob(value: Any, label: str) -> str:
     text = require_concrete_text(value, label)
+    require(not text.startswith(("/", "\\")), f"{label} must be a repository-relative path")
     parts = tuple(part for part in "/".join(text.split("\\")).split("/") if part not in {"", "."})
     require(".." not in parts, f"{label} must not contain path traversal")
     return text

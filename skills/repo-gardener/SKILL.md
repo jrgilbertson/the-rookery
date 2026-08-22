@@ -102,7 +102,7 @@ no structural-closure claim.
    missing capability.
 7. Assign overlap before parallel start. Then start Workers in parallel up to
    `maximum_workers` from the live file (setup default 20). Each Worker is one
-   worktree, one branch, one unmerged PR. Each Worker prompt carries the
+   worktree, one branch, and at most one unmerged PR. Each Worker prompt carries the
    opening policy revision, identity, scope, protected paths, lane grant, and
    assigned path slice. A Worker does not survey nine lanes or write tracker
    comments. Helpers do not own a PR.

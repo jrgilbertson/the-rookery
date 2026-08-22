@@ -42,7 +42,7 @@ def invoke(command: str, payload: dict[str, Any], extra: list[str] | None = None
         arguments.extend(["--input", "-"])
     completed = subprocess.run(
         arguments,
-        input=None if extra else json.dumps(payload),
+        input="" if extra else json.dumps(payload),
         capture_output=True,
         text=True,
         check=False,
@@ -118,8 +118,7 @@ def main() -> int:
     run_id = "run:synthetic:two-comments"
     base = SNAPSHOTS.empty_tracker()
     opened = prepare(base, "run-opened", run_id)
-    after_open = apply_prepared(base, opened)
-    SNAPSHOTS.add_ordinary_comment(after_open)
+    after_open = SNAPSHOTS.add_ordinary_comment(apply_prepared(base, opened))
     closed = prepare(after_open, "run-closed", run_id)
     exact_post = apply_prepared(after_open, closed)
 
@@ -265,8 +264,7 @@ def main() -> int:
     expect_error(run_input(run_id, closed, interrupted), "exactly two")
     expect_error(run_input(run_id, closed, None), "must be an object")
 
-    unrelated_after = copy.deepcopy(exact_post)
-    SNAPSHOTS.add_ordinary_comment(unrelated_after)
+    unrelated_after = SNAPSHOTS.add_ordinary_comment(exact_post)
     actual = invoke("run-records-v1", run_input(run_id, closed, unrelated_after))
     CONTRACT.require(actual == expected, "unrelated comments changed mechanical closure")
 
@@ -295,6 +293,7 @@ def main() -> int:
         input="{}",
         capture_output=True,
         text=True,
+        check=False,
     )
     CONTRACT.require(removed.returncode != 0 and "invalid choice" in removed.stderr, "normalize-github-register remains public")
     for obsolete in ("completion-v1", "gates-v1", "capacity-v1", "reconciliation-v2"):
@@ -303,6 +302,7 @@ def main() -> int:
             input="{}",
             capture_output=True,
             text=True,
+            check=False,
         )
         CONTRACT.require(completed.returncode != 0 and "invalid choice" in completed.stderr, f"{obsolete} remains public")
 
@@ -311,11 +311,34 @@ def main() -> int:
     CONTRACT.require(len(normalized["managed_records"]) == 2, "tracker snapshot lost the two run records")
     CONTRACT.require(len(normalized["ordinary_comment_ids"]) == 1, "ordinary comments were not preserved")
 
+    paged = SNAPSHOTS.split_comment_pages(exact_post, [2, 1])
+    paged_normalized = invoke("normalize-github-tracker", paged)
+    CONTRACT.require(
+        len(paged_normalized["managed_records"]) == 2,
+        "uniform first page plus short final page lost managed records",
+    )
+    CONTRACT.require(
+        len(paged_normalized["ordinary_comment_ids"]) == 1,
+        "uniform first page plus short final page lost ordinary comments",
+    )
+    four_comments = SNAPSHOTS.add_ordinary_comment(exact_post)
+    short_middle = SNAPSHOTS.split_comment_pages(four_comments, [2, 1, 1])
+    try:
+        invoke("normalize-github-tracker", short_middle)
+    except CONTRACT.ContractError as error:
+        CONTRACT.require(
+            "comment page sequence is incomplete" in str(error),
+            f"short intermediate page diagnostic differs: {error!s}",
+        )
+    else:
+        raise CONTRACT.ContractError("short intermediate comment page was accepted")
+
     oversized = subprocess.run(
         [sys.executable, str(CONTRACT_PATH), "normalize-github-tracker", "--input", "-"],
         input="x" * (CONTRACT.INPUT_LIMIT + 1),
         capture_output=True,
         text=True,
+        check=False,
     )
     CONTRACT.require(
         oversized.returncode == 1 and "standard input exceeds" in oversized.stderr,
@@ -328,6 +351,7 @@ def main() -> int:
             [sys.executable, str(CONTRACT_PATH), "validate-body", "--body", str(oversized_body)],
             capture_output=True,
             text=True,
+            check=False,
         )
         CONTRACT.require(
             body_file.returncode == 1 and "managed body exceeds" in body_file.stderr,

@@ -36,7 +36,9 @@ recorded process cap and a named test failure had no one-rework bound.
       required-approval finding. It does not assign rework. Both are
       process caps, not quality findings.
 - [ ] Scenario 2 allows one extra Worker push and one merge-readiness
-      re-run for the named test failure, then refuses a second rework.
+      re-run for the named test failure, then refuses a second rework. It
+      writes an issue-ready recommendation for the unresolved material
+      intent finding and does not create a follow-up issue.
 - [ ] Scenario 3 does not select `Proceed to merge` and does not merge.
 - [ ] Scenario 4 skips merge-readiness feedback, names the absent
       `checking-merge-readiness` gap, and still does not merge.

@@ -299,11 +299,6 @@ def check_script_surface() -> None:
         not imported & FORBIDDEN_PROCESS_OR_NETWORK_IMPORTS,
         f"config validator imports process/network modules: {sorted(imported & FORBIDDEN_PROCESS_OR_NETWORK_IMPORTS)}",
     )
-    require(
-        "re.fullmatch(r\"  maximum_workers" not in source
-        and "re.fullmatch(r'  maximum_workers" not in source,
-        "config validator 2-space-scans maximum_workers across the file",
-    )
 
 
 def check_cli_surface(repo_root: Path) -> None:
@@ -492,9 +487,17 @@ lanes:
         wrong_section["repository"]["maximum_workers"] = 20
         expect_invalid(wrong_section, repo_root, "maximum_workers")
 
+        nested_workers = copy.deepcopy(base_config())
+        nested_workers["repository"]["maximum_workers"] = 20
+        expect_invalid(nested_workers, repo_root, "repository has unexpected key: maximum_workers")
+
         bool_workers = copy.deepcopy(base_config())
         bool_workers["maximum_workers"] = True
         expect_invalid(bool_workers, repo_root, "maximum_workers must be a nonnegative integer")
+
+        zero_workers = copy.deepcopy(base_config())
+        zero_workers["maximum_workers"] = 0
+        expect_valid(zero_workers, repo_root, copy.deepcopy(zero_workers))
 
         placeholder = copy.deepcopy(base_config())
         placeholder["repository"]["identity"] = "REPLACE_WITH_STABLE_REPOSITORY_IDENTITY"
@@ -503,6 +506,16 @@ lanes:
         triage_mutation = copy.deepcopy(base_config())
         triage_mutation["lanes"][TRIAGE_LANE] = {"mutation": True}
         expect_invalid(triage_mutation, repo_root, f"lanes.{TRIAGE_LANE} has unexpected key: mutation")
+
+        reordered_lanes = copy.deepcopy(base_config())
+        lane_items = list(reordered_lanes["lanes"].items())
+        lane_items[0], lane_items[1] = lane_items[1], lane_items[0]
+        reordered_lanes["lanes"] = dict(lane_items)
+        expect_invalid(reordered_lanes, repo_root, "lanes must name every contracted lane in order")
+
+        absolute_protected = copy.deepcopy(base_config())
+        absolute_protected["protected_paths"] = ["/etc/**"]
+        expect_invalid(absolute_protected, repo_root, "must be a repository-relative path")
 
         for key in ("repository", "protected_paths", "maximum_workers", "tracker", "lanes"):
             missing = copy.deepcopy(base_config())

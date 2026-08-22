@@ -24,9 +24,10 @@ python3 scripts/config_check.py --repo-root ROOT --config .agents/repo-gardener.
 A valid file parses and names every required field with real values (no
 `REPLACE_WITH_*`): stable repository identity, default branch, authoring
 scope, configured protected paths, `maximum_workers`, live tracker identity,
-eight lane `mutation` flags, and any optional evidence-source grants. Any
-other file at that path is invalid. The file does not name `version`,
-`status`, always-denied effects, presentation caps, deep-target counts, or
+all nine contracted lanes in order with triage as an empty mapping and eight
+lane `mutation` flags, and any optional evidence-source grants. Any other
+file at that path is invalid. The file does not name `version`, `status`,
+always-denied effects, presentation caps, deep-target counts, or
 `report_write`.
 
 ## First-use
@@ -37,11 +38,10 @@ Later runs look only there for policy authority and tracker identity.
 Before a managed gardening run without a valid file, run interactive setup
 when an owner is present. A read-only ask with a missing file stays
 sensing-only and does not start setup. An unattended caller with a missing or
-invalid file ends `blocked` and names the gap.
-
-A file that parses but does not name a live tracker identity is not a missing
-file: do not start setup; stay on caller-only sensing and name the gap. #3336
-is not a live tracker.
+invalid file ends `blocked` and names the gap. A file that parses but does
+not name a live tracker identity is the narrower exception: do not start
+setup, do not end `blocked` for that gap, stay on caller-only sensing, and
+name it. #3336 is not a live tracker.
 
 Setup is one interactive review of the full recommended file. Present identity,
 default branch, scope, protected paths, `maximum_workers`, tracker identity,

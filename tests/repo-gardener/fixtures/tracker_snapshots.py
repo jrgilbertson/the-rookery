@@ -37,14 +37,19 @@ def empty_tracker(
     }
 
 
+def _next_comment_id(comments: list[dict[str, Any]]) -> int:
+    return max((item["id"] for item in comments), default=0) + 1
+
+
 def apply_prepared(snapshot: dict[str, Any], prepared: dict[str, Any]) -> dict[str, Any]:
     result = copy.deepcopy(snapshot)
     result["issue"]["body"] = prepared["body"]
     comments = [item for page in result["comment_pages"] for item in page]
+    numeric_id = _next_comment_id(comments)
     result["comment_pages"][-1].append(
         {
-            "id": max((item["id"] for item in comments), default=0) + 1,
-            "node_id": f"IC_RUN_RECORD_{len(comments) + 1:03d}",
+            "id": numeric_id,
+            "node_id": f"IC_RUN_RECORD_{numeric_id:03d}",
             "user": {"node_id": prepared["writer_id"], "login": "synthetic-writer"},
             "body": prepared["comment"],
         }
@@ -58,15 +63,32 @@ def add_ordinary_comment(
     *,
     author_id: str = OTHER_WRITER_ID,
     body: str = "A marker-free owner note.",
-) -> None:
-    comments = [item for page in snapshot["comment_pages"] for item in page]
-    numeric_id = max((item["id"] for item in comments), default=0) + 1
-    snapshot["comment_pages"][-1].append(
+) -> dict[str, Any]:
+    result = copy.deepcopy(snapshot)
+    comments = [item for page in result["comment_pages"] for item in page]
+    numeric_id = _next_comment_id(comments)
+    result["comment_pages"][-1].append(
         {
             "id": numeric_id,
-            "node_id": f"IC_ORDINARY_{numeric_id}",
+            "node_id": f"IC_ORDINARY_{numeric_id:03d}",
             "user": {"node_id": author_id, "login": "synthetic-owner"},
             "body": body,
         }
     )
-    snapshot["issue"]["comments"] = len(comments) + 1
+    result["issue"]["comments"] = len(comments) + 1
+    return result
+
+
+def split_comment_pages(snapshot: dict[str, Any], page_sizes: list[int]) -> dict[str, Any]:
+    result = copy.deepcopy(snapshot)
+    comments = [item for page in result["comment_pages"] for item in page]
+    pages: list[list[dict[str, Any]]] = []
+    index = 0
+    for size in page_sizes:
+        pages.append(comments[index : index + size])
+        index += size
+    if index != len(comments):
+        raise ValueError("page sizes do not cover every comment")
+    result["comment_pages"] = pages or [[]]
+    result["issue"]["comments"] = len(comments)
+    return result

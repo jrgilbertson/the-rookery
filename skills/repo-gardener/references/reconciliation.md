@@ -114,7 +114,7 @@ The Orchestrator selects a non-overlapping set of independently deliverable
 PR-sized units, then starts Workers in parallel up to `maximum_workers` (setup
 default 20). Overlap is path or scope conflict and is assigned before parallel
 start. Unrelated already-open PRs do not consume the cap. Each Worker is one
-worktree, one branch, one unmerged PR. Each Worker prompt carries the opening
+worktree, one branch, and at most one unmerged PR. Each Worker prompt carries the opening
 policy revision, identity, scope, protected paths, lane grant, and assigned
 path slice. Helpers do not own a PR.
 

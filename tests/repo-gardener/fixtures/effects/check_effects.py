@@ -53,6 +53,29 @@ def target_snapshot(base: dict[str, Any], prepared: dict[str, Any]) -> dict[str,
     return SNAPSHOTS.apply_prepared(base, prepared)
 
 
+def prior_managed_comment() -> dict[str, Any]:
+    record = {
+        "schema": "orchestrator-run-record/v1",
+        "kind": "run-opened",
+        "run_id": "run:synthetic:prior",
+        "operation_id": "operation:report:" + "a" * 64,
+        "payload": {"disposition": "prior"},
+    }
+    return {
+        "id": 1,
+        "node_id": "IC_PRIOR_001",
+        "user": {"node_id": SNAPSHOTS.WRITER_ID, "login": "synthetic-writer"},
+        "body": CONTRACT._run_record_comment(record),
+    }
+
+
+def with_prior_managed(snapshot: dict[str, Any]) -> dict[str, Any]:
+    result = copy.deepcopy(snapshot)
+    result["comment_pages"][-1].append(prior_managed_comment())
+    result["issue"]["comments"] = len([item for page in result["comment_pages"] for item in page])
+    return result
+
+
 def mutate(base: dict[str, Any], target: dict[str, Any], prepared: dict[str, Any], mutation: str) -> tuple[dict[str, Any], Any, str]:
     before = copy.deepcopy(base)
     after: Any = copy.deepcopy(target)
@@ -65,6 +88,28 @@ def mutate(base: dict[str, Any], target: dict[str, Any], prepared: dict[str, Any
     elif mutation == "body-only":
         after = copy.deepcopy(base)
         after["issue"]["body"] = prepared["body"]
+    elif mutation == "body-only-no-write":
+        after = copy.deepcopy(base)
+        after["issue"]["body"] = prepared["body"]
+        attempt = "none"
+    elif mutation == "edited-existing-managed":
+        before = with_prior_managed(base)
+        after = copy.deepcopy(before)
+        after["issue"]["body"] = prepared["body"]
+        edited = {
+            "schema": "orchestrator-run-record/v1",
+            "kind": "run-opened",
+            "run_id": "run:synthetic:prior",
+            "operation_id": "operation:report:" + "a" * 64,
+            "payload": {"disposition": "tampered"},
+        }
+        after["comment_pages"][-1][-1]["body"] = CONTRACT._run_record_comment(edited)
+    elif mutation == "replaced-existing-managed":
+        before = with_prior_managed(base)
+        after = copy.deepcopy(before)
+        after["issue"]["body"] = prepared["body"]
+        after["comment_pages"][-1][-1]["id"] = 99
+        after["comment_pages"][-1][-1]["node_id"] = "IC_REPLACED_099"
     elif mutation == "denied-unchanged":
         after = copy.deepcopy(base)
         attempt = "denied-before-write"

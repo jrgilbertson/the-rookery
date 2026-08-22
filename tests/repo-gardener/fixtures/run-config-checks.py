@@ -526,11 +526,39 @@ lanes:
         )
         expect_invalid(quoted_trailing, repo_root, "YAML string has trailing content")
 
+        mapping_path = dump_yaml(base_config()).replace(
+            "  - AGENTS.md\n",
+            "  - AGENTS.md: true\n",
+        )
+        expect_invalid(mapping_path, repo_root, "protected_paths[0] must be text")
+
+        issue_selector = copy.deepcopy(base_config())
+        issue_selector["tracker"]["identity"] = "#3336"
+        expect_invalid(issue_selector, repo_root, "tracker.identity must be a live tracker identity")
+        quoted_issue_selector = dump_yaml(base_config()).replace(
+            "tracker:\n  identity: I_kwDOEXAMPLE001\n",
+            'tracker:\n  identity: "#3336"\n',
+        )
+        expect_invalid(quoted_issue_selector, repo_root, "tracker.identity must be a live tracker identity")
+
+        trailing_exclude = dump_yaml(base_config()).replace(
+            "    exclude: []\n",
+            "    exclude: [tmp/**,]\n",
+        )
+        expected_trailing = copy.deepcopy(expected)
+        expected_trailing["repository"]["scope"]["exclude"] = ["tmp/**"]
+        expect_valid(trailing_exclude, repo_root, expected_trailing)
+
         flow_lane = dump_yaml(base_config()).replace(
             "  dependency-and-vulnerability:\n    mutation: true\n",
             "  dependency-and-vulnerability: {mutation: true}\n",
         )
         expect_valid(flow_lane, repo_root, expected)
+        flow_lane_comma = dump_yaml(base_config()).replace(
+            "  dependency-and-vulnerability:\n    mutation: true\n",
+            "  dependency-and-vulnerability: {mutation: true,}\n",
+        )
+        expect_valid(flow_lane_comma, repo_root, expected)
 
         for key in ("repository", "protected_paths", "maximum_workers", "tracker", "lanes"):
             missing = copy.deepcopy(base_config())

@@ -296,8 +296,6 @@ def normalize_github_tracker_snapshot(snapshot: Any) -> dict[str, Any]:
             )
             seen_comment_ids.add(comment_id)
             seen_numeric_comment_ids.add(numeric_comment_id)
-            user = require_object(comment.get("user"), "provider comment user")
-            author_id = require_identity(user.get("node_id"), "provider comment author node_id")
             comment_body = comment.get("body")
             require(isinstance(comment_body, str), "provider comment body must be text")
             require(len(comment_body.encode("utf-8")) <= BODY_LIMIT, f"provider comment body exceeds {BODY_LIMIT} UTF-8 bytes")
@@ -305,6 +303,8 @@ def normalize_github_tracker_snapshot(snapshot: Any) -> dict[str, Any]:
             if not has_reserved_marker:
                 ordinary_comment_ids.append(comment_id)
                 continue
+            user = require_object(comment.get("user"), "provider comment user")
+            author_id = require_identity(user.get("node_id"), "provider comment author node_id")
             require(author_id == writer_id, "reserved run-record marker from non-writer comment")
             raw_record_json, record = _extract_marked_json(
                 comment_body,
@@ -518,6 +518,19 @@ def _prepared_comment_present(view: dict[str, Any], prepared: dict[str, Any]) ->
     return _prepared_comment_count(view, prepared) > 0
 
 
+def _managed_records_unchanged(before: dict[str, Any], after: dict[str, Any]) -> bool:
+    before_records = before["managed_records"]
+    after_records = after["managed_records"]
+    if len(before_records) != len(after_records):
+        return False
+    for left, right in zip(before_records, after_records):
+        if left["provider_comment_id"] != right["provider_comment_id"]:
+            return False
+        if not _comment_bodies_equal(left["comment_body"], right["comment_body"]):
+            return False
+    return True
+
+
 def _view_matches_post(view: dict[str, Any], prepared: dict[str, Any]) -> bool:
     return (
         _identities_match(view, prepared)
@@ -582,10 +595,11 @@ def verify_report_effect(prepared: Any, pre_read: Any, post_read: Any, write_att
     if write_attempt == "possible" and before_is_base and after_is_target:
         return {"terminal_outcome": "observed", "matched_parts": 2, "repair": "none", "provenance": "unverified"}
     body_only = (
-        before_is_base
+        write_attempt == "possible"
+        and before_is_base
         and after["body"] == prepared["body"]
         and not _prepared_comment_present(after, prepared)
-        and len(after["managed_records"]) == len(before["managed_records"])
+        and _managed_records_unchanged(before, after)
     )
     return {
         "terminal_outcome": "ambiguous",

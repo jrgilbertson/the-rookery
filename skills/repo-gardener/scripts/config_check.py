@@ -45,6 +45,7 @@ EVIDENCE_SOURCE_FIELDS = {"identity"}
 EVIDENCE_SOURCE_NAME = re.compile(r"^[a-z][a-z0-9_-]{0,63}$")
 MAPPING_KEY = re.compile(r"^[A-Za-z0-9_.-][A-Za-z0-9_./-]*$")
 ROOTED_OR_DRIVE_PATH = re.compile(r"^(?:[A-Za-z]:[/\\]|[/\\])")
+ISSUE_NUMBER_SELECTOR = re.compile(r"^#\d+$")
 INTEGER_SCALAR = re.compile(r"^-?(0|[1-9][0-9]*)$")
 FLOAT_SCALAR = re.compile(r"^-?(?:0|[1-9][0-9]*)\.[0-9]+([eE][-+]?[0-9]+)?$")
 SCIENTIFIC_SCALAR = re.compile(r"^-?(?:0|[1-9][0-9]*)[eE][-+]?[0-9]+$")
@@ -371,7 +372,9 @@ def parse_flow_sequence(text: str, index: int, depth: int) -> tuple[list[Any], i
         items.append(value)
         index = skip_ws(text, index)
         if index < len(text) and text[index] == ",":
-            index += 1
+            index = skip_ws(text, index + 1)
+            if index < len(text) and text[index] == "]":
+                return items, index + 1
             continue
         if index < len(text) and text[index] == "]":
             return items, index + 1
@@ -395,11 +398,47 @@ def parse_flow_mapping(text: str, index: int, depth: int) -> tuple[dict[str, Any
         result[key] = value
         index = skip_ws(text, index)
         if index < len(text) and text[index] == ",":
-            index += 1
+            index = skip_ws(text, index + 1)
+            if index < len(text) and text[index] == "}":
+                return result, index + 1
             continue
         if index < len(text) and text[index] == "}":
             return result, index + 1
         raise ConfigError("YAML flow mapping is malformed")
+
+
+def has_block_mapping_indicator(content: str) -> bool:
+    in_single = False
+    in_double = False
+    index = 0
+    while index < len(content):
+        char = content[index]
+        if in_single:
+            if char == "'" and index + 1 < len(content) and content[index + 1] == "'":
+                index += 2
+                continue
+            if char == "'":
+                in_single = False
+            index += 1
+            continue
+        if in_double:
+            if char == "\\" and index + 1 < len(content):
+                index += 2
+                continue
+            if char == '"':
+                in_double = False
+            index += 1
+            continue
+        if char == "'":
+            in_single = True
+        elif char == '"':
+            in_double = True
+        elif char == ":":
+            nxt = content[index + 1] if index + 1 < len(content) else ""
+            if nxt == "" or nxt in " \t":
+                return True
+        index += 1
+    return False
 
 
 def split_mapping_entry(content: str) -> tuple[str, str]:
@@ -522,6 +561,9 @@ class YamlLoader:
             value, end = parse_flow(rest, 0, depth)
             require(rest[end:].strip() == "", "YAML flow value has trailing content")
             return value
+        if has_block_mapping_indicator(rest):
+            key, mapping_rest = split_mapping_entry(rest)
+            return {key: self.parse_value(parent_indent, mapping_rest, depth + 1)}
         return parse_scalar(rest)
 
 
@@ -553,7 +595,12 @@ def normalize_repository(value: Any) -> dict[str, Any]:
 def normalize_tracker(value: Any) -> dict[str, str]:
     require(isinstance(value, dict), "tracker must be a mapping")
     require_exact_fields(value, TRACKER_FIELDS, TRACKER_FIELDS, "tracker")
-    return {"identity": require_concrete_text(value["identity"], "tracker.identity")}
+    identity = require_concrete_text(value["identity"], "tracker.identity")
+    require(
+        ISSUE_NUMBER_SELECTOR.fullmatch(identity) is None,
+        "tracker.identity must be a live tracker identity",
+    )
+    return {"identity": identity}
 
 
 def normalize_lanes(value: Any) -> dict[str, Any]:

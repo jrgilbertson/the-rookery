@@ -311,6 +311,25 @@ def main() -> int:
     CONTRACT.require(len(normalized["managed_records"]) == 2, "tracker snapshot lost the two run records")
     CONTRACT.require(len(normalized["ordinary_comment_ids"]) == 1, "ordinary comments were not preserved")
 
+    authorless = SNAPSHOTS.add_ordinary_comment(exact_post)
+    authorless["comment_pages"][-1][-1]["user"] = None
+    authorless_normalized = invoke("normalize-github-tracker", authorless)
+    CONTRACT.require(
+        authorless["comment_pages"][-1][-1]["node_id"] in authorless_normalized["ordinary_comment_ids"],
+        "authorless ordinary comment was not preserved",
+    )
+    managed_authorless = copy.deepcopy(exact_post)
+    managed_authorless["comment_pages"][-1][-1]["user"] = None
+    try:
+        invoke("normalize-github-tracker", managed_authorless)
+    except CONTRACT.ContractError as error:
+        CONTRACT.require(
+            "provider comment user must be an object" in str(error),
+            f"authorless managed comment diagnostic differs: {error!s}",
+        )
+    else:
+        raise CONTRACT.ContractError("authorless managed comment was accepted")
+
     paged = SNAPSHOTS.split_comment_pages(exact_post, [2, 1])
     paged_normalized = invoke("normalize-github-tracker", paged)
     CONTRACT.require(

@@ -25,7 +25,10 @@ Every lane verdict, every run:
 1. A verdict rests on at least one read performed for that lane. A
    parent-owned identifier census, or a shared census page belonging to
    another lane's fetch, is not lane-specific evidence. A zero-candidate
-   lane cites what established absence.
+   lane cites what established absence. An empty-complete parent census
+   of that population is that absence evidence: the floor 3 sample is
+   complete at zero bodies, and the lane does not owe a further item
+   read. A non-empty census is still not a lane verdict.
 2. A census either enumerates its population to completion or states the
    exact bound it stopped at. For a list-style census of issues, pull
    requests, or alerts, the parent keeps listing while the item count is
@@ -35,9 +38,10 @@ Every lane verdict, every run:
    another page exists under the cap). A named bound is allowed only after
    the count reaches 10,000 with more remaining, or when the provider
    cannot continue. Unknown size with another page under the cap is not a
-   valid stop. The run produces at most one identifier census per
-   list-style population; lanes consume it and do not re-page that
-   population. Enumeration is cheap listing
+   valid stop. A named bound, an omission, or any other incomplete
+   list-style census keeps the affected lanes partial. The run produces
+   at most one identifier census per list-style population; lanes consume
+   it and do not re-page that population. Enumeration is cheap listing
    of stable identities in provider order plus cheap list fields the
    endpoint already returns (recency and scope discriminators such as
    labels or state). Body reads stay bounded by floor 3. File trees, CI
@@ -54,7 +58,9 @@ Every lane verdict, every run:
 5. A declared scouting plan is executed or explicitly replaced, and each
    lane's "what happened" cell names the sensing mechanism that lane actually
    used. For list-style lanes that includes whether the lane consumed the
-   parent identifier census or listed again. A plan silently downgraded is a
+   parent identifier census. If the lane listed that population again, name
+   that as a re-page defect. If the census was missing, name a sequencing
+   gap and that the lane did not list. A plan silently downgraded is a
    report-integrity defect. Parent listing plus lane body reads is the
    declared plan for those populations, not a silent downgrade from
    per-lane scouts.
@@ -65,10 +71,11 @@ it or a later review catches it.
 
 ## Dependency and vulnerability
 
-Read manifests, configured advisories, and current native update PRs. Require
-the exact package/version relation, source identity and revision, affected
-scope, and relevant security evidence. Titles and branch prefixes prove no
-trusted identity.
+Consume the parent identifier census of current native pull requests. Do not
+re-page that population. Then read manifests, configured advisories, and the
+update-PR rows from that list. Require the exact package/version relation,
+source identity and revision, affected scope, and relevant security evidence.
+Titles and branch prefixes prove no trusted identity.
 
 ## Issue source
 

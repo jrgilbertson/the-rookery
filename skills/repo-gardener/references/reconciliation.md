@@ -51,7 +51,9 @@ Only after exact readback, complete the list-style identifier censuses in
 only when current scope evidence says it conflicts; unrelated open work does
 not consume sensing, depth, recommendation, or the Worker cap. Native
 open-PR overlap rereads later in this file remain native facts, not that
-identifier census.
+identifier census. They list current native open PRs and branches at each
+gate. They do not treat the sensing-time PR identifier list as the live
+overlap set.
 
 ## Sense all nine lanes
 

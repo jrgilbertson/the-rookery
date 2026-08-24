@@ -86,7 +86,8 @@ claim.
    censuses in `lane-contracts.md` floor 2, then survey all nine lanes once.
    Report census totals separately from candidates, and normalized candidates
    separately from both. Native open-PR overlap checks remain native facts,
-   not that identifier census. Scout helpers stay read-only in the
+   not that identifier census. Those overlap checks list current native open
+   PRs and branches at each gate. Scout helpers stay read-only in the
    Orchestrator session.
 4. After the nine-lane survey, deepen while further investigation would change
    assignments or recommendations. Stop when it would not, or when the run

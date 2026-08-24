@@ -16,6 +16,10 @@ looked" surface. GitHub Releases mirror its entries.
 - `repo-gardener` list-style censuses of issues, pull requests, and alerts
   keep listing while remaining items are knowable and the count is under
   10,000, once per population, rather than stopping at a stated page bound.
+  A named bound or omission keeps the affected lanes partial. An
+  empty-complete census is absence evidence for a zero-item population. The
+  dependency lane consumes the parent PR identifier census. Overlap rereads
+  list current native PRs instead of that sensing census.
 
 - `repo-gardener` first-use now writes `.agents/repo-gardener.yaml` and creates
   a gardening tracker the way Managing Issues writes its config. A scheduled or

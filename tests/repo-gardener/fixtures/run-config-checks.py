@@ -566,6 +566,7 @@ lanes:
             ["node", "scripts/audit.js", "--strict"],
             ["bash", "scripts/audit.sh", "--strict"],
             ["env", "printf", "bash", "-c"],
+            ["env", "MODE=audit", "scanner", "--format=json"],
             ["pwsh", "-File", "scripts/audit.ps1", "-Verbose"],
             ["pwsh", "-ConfigurationName", "audit-host", "-File", "scripts/audit.ps1"],
         ]
@@ -616,6 +617,13 @@ lanes:
             ([["env", "-Sprintf audit"]], "command-string wrapper"),
             ([["env", "--split-string", "printf audit"]], "command-string wrapper"),
             ([["env", "--split-string=printf audit"]], "command-string wrapper"),
+            ([["env", "-C", "..", "scanner"]], "changes the audit working directory"),
+            ([["env", "-C..", "scanner"]], "changes the audit working directory"),
+            ([["env", "--chdir", "..", "scanner"]], "changes the audit working directory"),
+            ([["env", "--chdir=..", "scanner"]], "changes the audit working directory"),
+            ([["env", "API_TOKEN=value", "scanner"]], "contains or requests a credential"),
+            ([["scanner", "--token=value"]], "contains or requests a credential"),
+            ([["scanner", "--api-key", "value"]], "contains or requests a credential"),
             ([["env", "bash", "-c", "printf audit"]], "command-string wrapper"),
             (
                 [["env", "MODE=audit", "python3", "-cprint('audit')"]],

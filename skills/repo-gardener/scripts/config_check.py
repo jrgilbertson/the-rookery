@@ -62,6 +62,11 @@ NULL_SCALAR = re.compile(r"^(?:~|null|Null|NULL|)$")
 SHELL_INTERPOLATION = re.compile(r"(?:`|\$(?:[A-Za-z_][A-Za-z0-9_]*|[0-9@*#?!$-]|\(|\{))")
 SHELL_REDIRECTION = re.compile(r"^(?:[0-9]*|&)(?:>>?|<<?|<>|>&|<&).*$|^(?:>>?|<<?|<>).*$")
 SHELL_OPERATOR_TOKENS = {"&&", "||", "|", ";", "&"}
+CREDENTIAL_NAME = re.compile(
+    r"(?:^|[_-])(?:access[_-]?key|api[_-]?key|auth(?:entication|orization)?|"
+    r"credential|password|passwd|private[_-]?key|secret|token)(?:$|[_-])",
+    re.IGNORECASE,
+)
 SHELL_COMMAND_WRAPPERS = {
     "bash",
     "cmd",
@@ -422,21 +427,27 @@ def option_uses_string_wrapper(executable: str, option: str) -> bool:
     return False
 
 
-def parse_env_wrapper(arguments: list[str]) -> tuple[bool, list[str]]:
-    """Locate env's split-string option or its documented utility operand."""
+def parse_env_wrapper(arguments: list[str]) -> tuple[bool, bool, list[str]]:
+    """Locate env options that can reinterpret argv or change the command cwd."""
     index = 0
     while index < len(arguments):
         argument = arguments[index]
         if argument in {"-S", "--split-string"}:
-            return True, []
+            return True, False, []
         if argument.startswith("-S") and len(argument) > 2:
-            return True, []
+            return True, False, []
         if argument.startswith("--split-string="):
-            return True, []
+            return True, False, []
+        if argument in {"-C", "--chdir"}:
+            return False, True, []
+        if (argument.startswith("-C") and len(argument) > 2) or argument.startswith(
+            "--chdir="
+        ):
+            return False, True, []
         if argument in {"--", "-"}:
             index += 1
             break
-        if argument in {"-u", "--unset", "-C", "--chdir"}:
+        if argument in {"-u", "--unset"}:
             index += 2
             continue
         if argument.startswith("-"):
@@ -447,7 +458,13 @@ def parse_env_wrapper(arguments: list[str]) -> tuple[bool, list[str]]:
         r"^[A-Za-z_][A-Za-z0-9_]*=", arguments[index]
     ):
         index += 1
-    return False, arguments[index:]
+    return False, False, arguments[index:]
+
+
+def token_contains_or_requests_credential(token: str) -> bool:
+    candidate = token.lstrip("-")
+    name, separator, _value = candidate.partition("=")
+    return bool((separator or token.startswith("-")) and CREDENTIAL_NAME.search(name))
 
 
 def command_uses_string_wrapper(command: list[str]) -> bool:
@@ -455,7 +472,7 @@ def command_uses_string_wrapper(command: list[str]) -> bool:
     arguments = command[1:]
 
     if executable == "env":
-        uses_split_string, wrapped_command = parse_env_wrapper(arguments)
+        uses_split_string, _changes_directory, wrapped_command = parse_env_wrapper(arguments)
         return uses_split_string or bool(
             wrapped_command and command_uses_string_wrapper(wrapped_command)
         )
@@ -465,6 +482,13 @@ def command_uses_string_wrapper(command: list[str]) -> bool:
         option_uses_string_wrapper(executable, option)
         for option in arguments
     )
+
+
+def command_changes_directory(command: list[str]) -> bool:
+    if executable_name(command[0]) != "env":
+        return False
+    _uses_split_string, changes_directory, _wrapped_command = parse_env_wrapper(command[1:])
+    return changes_directory
 
 
 def normalize_audit_commands(value: Any, label: str) -> list[list[str]]:
@@ -490,6 +514,14 @@ def normalize_audit_commands(value: Any, label: str) -> list[list[str]]:
                 and SHELL_REDIRECTION.fullmatch(token) is None,
                 f"{command_label}[{token_index}] contains forbidden shell syntax",
             )
+            require(
+                not token_contains_or_requests_credential(token),
+                f"{command_label}[{token_index}] contains or requests a credential",
+            )
+        require(
+            not command_changes_directory(command),
+            f"{command_label} changes the audit working directory",
+        )
         require(
             not command_uses_string_wrapper(command),
             f"{command_label} uses a command-string wrapper",

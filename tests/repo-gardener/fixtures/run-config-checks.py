@@ -556,6 +556,25 @@ lanes:
         ]
         expect_valid(same_executable, repo_root, normalized_config(same_executable))
 
+        literal_wrapper_arguments = base_config()
+        literal_wrapper_arguments["lanes"]["repository-test-and-code-health"][
+            "audit_commands"
+        ] = [
+            ["printf", "bash", "-c"],
+            ["python3", "scripts/audit.py", "--strict"],
+            ["python3", "/tmp/audit.py", "--strict"],
+            ["node", "scripts/audit.js", "--strict"],
+            ["bash", "scripts/audit.sh", "--strict"],
+            ["env", "printf", "bash", "-c"],
+            ["pwsh", "-File", "scripts/audit.ps1", "-Verbose"],
+            ["pwsh", "-ConfigurationName", "audit-host", "-File", "scripts/audit.ps1"],
+        ]
+        expect_valid(
+            literal_wrapper_arguments,
+            repo_root,
+            normalized_config(literal_wrapper_arguments),
+        )
+
         malformed_declarations: tuple[tuple[Any, str], ...] = (
             ("npm run audit", "audit_commands must be a sequence"),
             (["npm run audit"], "audit_commands[0] must be a sequence"),
@@ -573,8 +592,35 @@ lanes:
             ([["sh", "-c", "npm run audit"]], "command-string wrapper"),
             ([["/bin/bash", "-c", "npm run audit"]], "command-string wrapper"),
             ([["cmd.exe", "/c", "npm run audit"]], "command-string wrapper"),
+            ([["cmd.exe", "/c:npm run audit"]], "command-string wrapper"),
+            ([["cmd.exe", "/config", "literal"]], "command-string wrapper"),
             ([["python3", "-c", "print('audit')"]], "command-string wrapper"),
+            ([["python3", "-cprint('audit')"]], "command-string wrapper"),
+            ([["python3", "-Bcprint('audit')"]], "command-string wrapper"),
+            ([["python3", "-W", "ignore", "-cprint('audit')"]], "command-string wrapper"),
             ([["node", "-e", "console.log('audit')"]], "command-string wrapper"),
+            ([["node", "-econsole.log('audit')"]], "command-string wrapper"),
+            ([["node", "-p1 + 1"]], "command-string wrapper"),
+            ([["node", "--eval=console.log('audit')"]], "command-string wrapper"),
+            ([["node", "-p", "1 + 1"]], "command-string wrapper"),
+            ([["node", "--print=1 + 1"]], "command-string wrapper"),
+            ([["ruby", "-eputs('audit')"]], "command-string wrapper"),
+            ([["ruby", "-we", "puts('audit')"]], "command-string wrapper"),
+            ([["perl", "-Eprint('audit')"]], "command-string wrapper"),
+            ([["perl", "-we", "print('audit')"]], "command-string wrapper"),
+            ([["php", "-recho 'audit';"]], "command-string wrapper"),
+            ([["pwsh", "-Command:Write-Output audit"]], "command-string wrapper"),
+            ([["pwsh", "-Command=Write-Output audit"]], "command-string wrapper"),
+            ([["powershell.exe", "-enc:AAAA"]], "command-string wrapper"),
+            ([["env", "-S", "printf audit"]], "command-string wrapper"),
+            ([["env", "-Sprintf audit"]], "command-string wrapper"),
+            ([["env", "--split-string", "printf audit"]], "command-string wrapper"),
+            ([["env", "--split-string=printf audit"]], "command-string wrapper"),
+            ([["env", "bash", "-c", "printf audit"]], "command-string wrapper"),
+            (
+                [["env", "MODE=audit", "python3", "-cprint('audit')"]],
+                "command-string wrapper",
+            ),
         )
         for declaration, message in malformed_declarations:
             malformed = base_config()

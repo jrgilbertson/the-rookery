@@ -385,32 +385,86 @@ def normalize_tracker(value: Any) -> dict[str, str]:
     return {"identity": identity}
 
 
-def command_uses_string_wrapper(command: list[str]) -> bool:
-    for index, token in enumerate(command[:-1]):
-        executable = re.split(r"[/\\]", token)[-1].lower()
-        if executable.endswith(".exe"):
-            executable = executable[:-4]
-        arguments = command[index + 1 :]
-        if executable in SHELL_COMMAND_WRAPPERS:
-            if executable == "cmd":
-                return any(argument.lower() in {"/c", "/k"} for argument in arguments)
-            if executable in {"pwsh", "powershell"}:
-                return any(
-                    argument.lower() in {"-c", "-command", "-encodedcommand"}
-                    for argument in arguments
-                )
-            return any(
-                argument == "--command"
-                or (argument.startswith("-") and not argument.startswith("--") and "c" in argument[1:])
-                for argument in arguments
+def executable_name(token: str) -> str:
+    executable = re.split(r"[/\\]", token)[-1].lower()
+    return executable[:-4] if executable.endswith(".exe") else executable
+
+
+def option_uses_string_wrapper(executable: str, option: str) -> bool:
+    if executable == "cmd":
+        return re.match(r"^/[ck]", option, re.IGNORECASE) is not None
+    if executable in {"pwsh", "powershell"}:
+        return (
+            re.match(
+                r"^-(?:c|command|enc|encodedcommand)(?:$|[=:])",
+                option,
+                re.IGNORECASE,
             )
-        if re.fullmatch(r"python(?:[0-9]+(?:\.[0-9]+)*)?", executable):
-            return "-c" in arguments
-        if executable in {"node", "nodejs", "ruby", "perl"}:
-            return any(argument in {"-e", "--eval"} for argument in arguments)
-        if executable == "php":
-            return "-r" in arguments
+            is not None
+        )
+    if executable in SHELL_COMMAND_WRAPPERS:
+        return (
+            option == "--command"
+            or re.match(r"^-[abefhkmnptuvxBCHP]*c", option) is not None
+        )
+    if re.fullmatch(r"python(?:[0-9]+(?:\.[0-9]+)*)?", executable):
+        return re.match(r"^(?:-c|-[bBdEhiIOPqRsSuvV]*c)", option) is not None
+    if executable in {"node", "nodejs"}:
+        return (
+            re.match(r"^(?:-[ep]|--(?:eval|print)(?:$|[=:]))", option) is not None
+        )
+    if executable == "ruby":
+        return re.match(r"^-[acdlmnpsvwx]*e", option) is not None
+    if executable == "perl":
+        return re.match(r"^-[acdlnpstTuvwxW]*[eE]", option) is not None
+    if executable == "php":
+        return re.match(r"^-[nq]*r", option) is not None
     return False
+
+
+def parse_env_wrapper(arguments: list[str]) -> tuple[bool, list[str]]:
+    """Locate env's split-string option or its documented utility operand."""
+    index = 0
+    while index < len(arguments):
+        argument = arguments[index]
+        if argument in {"-S", "--split-string"}:
+            return True, []
+        if argument.startswith("-S") and len(argument) > 2:
+            return True, []
+        if argument.startswith("--split-string="):
+            return True, []
+        if argument in {"--", "-"}:
+            index += 1
+            break
+        if argument in {"-u", "--unset", "-C", "--chdir"}:
+            index += 2
+            continue
+        if argument.startswith("-"):
+            index += 1
+            continue
+        break
+    while index < len(arguments) and re.match(
+        r"^[A-Za-z_][A-Za-z0-9_]*=", arguments[index]
+    ):
+        index += 1
+    return False, arguments[index:]
+
+
+def command_uses_string_wrapper(command: list[str]) -> bool:
+    executable = executable_name(command[0])
+    arguments = command[1:]
+
+    if executable == "env":
+        uses_split_string, wrapped_command = parse_env_wrapper(arguments)
+        return uses_split_string or bool(
+            wrapped_command and command_uses_string_wrapper(wrapped_command)
+        )
+    # Reserve wrapper switches anywhere in interpreter argv rather than
+    # duplicating each interpreter's evolving option grammar here.
+    return any(
+        option_uses_string_wrapper(executable, option)
+        for option in arguments
+    )
 
 
 def normalize_audit_commands(value: Any, label: str) -> list[list[str]]:

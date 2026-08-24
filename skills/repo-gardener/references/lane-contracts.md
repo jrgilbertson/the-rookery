@@ -28,15 +28,16 @@ Every lane verdict, every run:
    lane cites what established absence.
 2. A census either enumerates its population to completion or states the
    exact bound it stopped at. For a list-style census of issues, pull
-   requests, or alerts, the parent keeps listing while a provider-reported
-   total or another page is known and the item count is under 10,000.
-   Stopping then is an omission, not a stated bound ("first page of ≥100;
-   total unknown" is an omission when another page exists under the cap).
-   A named bound is allowed only after the count reaches 10,000 with more
-   remaining, or when the provider cannot continue. Unknown size with
-   another page under the cap is not a valid stop. The run produces at most
-   one identifier census per list-style population; lanes consume it and do
-   not re-page that population to completion. Enumeration is cheap listing
+   requests, or alerts, the parent keeps listing while the item count is
+   under 10,000 and either another page exists or the listed count is less
+   than a provider-reported total. Stopping then is an omission, not a
+   stated bound ("first page of ≥100; total unknown" is an omission when
+   another page exists under the cap). A named bound is allowed only after
+   the count reaches 10,000 with more remaining, or when the provider
+   cannot continue. Unknown size with another page under the cap is not a
+   valid stop. The run produces at most one identifier census per
+   list-style population; lanes consume it and do not re-page that
+   population. Enumeration is cheap listing
    of stable identities in provider order plus cheap list fields the
    endpoint already returns (recency and scope discriminators such as
    labels or state). Body reads stay bounded by floor 3. File trees, CI
@@ -119,8 +120,9 @@ remove, skip, or suppress validation.
 
 ## Repository, test, and code health
 
-Consume the parent identifier census of configured current issues when this
-lane is issue-facing. Do not re-page that population. Then read
+Consume the parent identifier census of configured current issues. Do not
+re-page that population. Floor 3 still owns the five-body sample when this
+lane is issue-facing. Then read
 repository-native maintenance, test-health, code-health, dead-code, and
 architecture signals. Require a stable finding or exact revision, bounded
 scope, measurable impact, conflict surface, and verification path. Exclude

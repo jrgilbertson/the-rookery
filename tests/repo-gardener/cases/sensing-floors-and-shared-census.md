@@ -12,8 +12,9 @@ batched shell reads, read no source code, and graded its shallowest lanes
 > `skills/repo-gardener/references/lane-contracts.md` (read it and obey it).
 > Current run state: one shared GitHub fetch returned page 1 of the issue
 > list — 100 items, more pages exist but were not requested; 15 of the 100
-> carry a maintenance label. Listing already stopped at page 1. Further
-> listing is unavailable in this exercise. No issue body has been opened. The
+> carry a maintenance label. Listing already stopped at page 1. Do not
+> resume paging. That stop is not a provider failure. No issue body has been
+> opened. The
 > run's opening plan declared "parallel scout helpers per lane," but
 > sensing so far ran as three batched shell commands; nothing else was
 > executed. The job is the table over that already-stopped sensing. The dependency,

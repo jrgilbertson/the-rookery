@@ -14,7 +14,7 @@ looked" surface. GitHub Releases mirror its entries.
 ### Changed
 
 - `repo-gardener` list-style censuses of issues, pull requests, and alerts
-  keep listing while a total or another page is known and the count is under
+  keep listing while remaining items are knowable and the count is under
   10,000, once per population, rather than stopping at a stated page bound.
 
 - `repo-gardener` first-use now writes `.agents/repo-gardener.yaml` and creates

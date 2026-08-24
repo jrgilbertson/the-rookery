@@ -47,6 +47,28 @@ time. Record JSON remains bounded to 16 KiB and the managed issue body to
 48 KiB. Keep raw customer identities, event payloads, free text, secrets,
 transcripts, recordings, and exported datasets out of both surfaces.
 
+Declared-audit results use the existing owning-lane cells only. In **What
+happened**, render the bounded lane, one-based declaration index, opening
+policy revision, redacted argv preview, sanitized executable provenance, and
+subject revision. Provenance may include the executable basename and source
+class, plus a safe version and repository-relative path or digest when
+available; it never includes an absolute home, temporary, or private host
+path. In **Terminal event**, preserve the exact exit disposition, confirmed
+timeout, interruption, launch failure, local refusal, or
+authority-or-subject loss. In **Strongest evidence**, render only the bounded
+redacted inert summary. Use **Room for improvement** for an evidenced missing
+declaration, missing executable, or coverage limitation. Do not add a lane,
+row type, command-result object, or candidate count for execution alone.
+
+Before either managed record or issue-body preparation, strip ANSI terminal
+and bidirectional controls from audit summaries; redact secrets and reserved
+managed-record markers; and neutralize mentions, active markup, and
+report-shaped output. Treat every excerpt as untrusted inert data. Raw audit
+output follows the private ephemeral lifecycle in `reconciliation.md` and
+never enters a tracker record, issue body, repository log, or recovery state.
+Fit summaries inside the existing record and body limits rather than
+truncating a prepared managed object into invalid material.
+
 ## Render the morning projection
 
 The issue body and retained Orchestrator report show:

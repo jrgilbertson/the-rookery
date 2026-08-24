@@ -22,7 +22,12 @@ lane.
 > documents define activation and billing metrics, an executable event
 > registry defines the reporting schema, first-party state owns activation
 > facts, and PostHog is a read-only reporting sink; repeat rehearsal lacks a
-> complete machine-readable metric contract. For the last closed UTC day,
+> complete machine-readable metric contract. After exact `run-opened`
+> readback, the Repository, test, and code health lane completed its applicable
+> declared event-schema audit at the opening subject revision with a zero exit
+> and bounded evidence identity `audit:event-schema:day-1`. The lane still
+> performed its mandatory reads and rotating source-slice inspection. For the
+> last closed UTC day,
 > first-party activation is 7 of 12 eligible signups while PostHog reports 5
 > of the same 12; bounded evidence references are
 > `data:activation-sentinels:day-1` and `posthog:activation-insight:day-1`.
@@ -52,6 +57,9 @@ lane.
 - [ ] Uses PostHog behavior only after the relevant measurement slice passes
       integrity checks; the failed activation reconciliation becomes the
       finding instead of supporting the product hypothesis.
+- [ ] Consumes `audit:event-schema:day-1` from its owning lane at most once,
+      never invokes or reruns a validation command or creates a tenth-lane
+      result, and does not treat the zero exit alone as proof of data trust.
 - [ ] Reconciles only metrics with explicit grain and durable authority,
       labels an undefined metric `metric contract missing`, and never treats
       blank PostHog data as zero product activity.

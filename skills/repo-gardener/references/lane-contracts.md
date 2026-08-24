@@ -45,12 +45,62 @@ These floors are behavioral obligations on the run; the deterministic checker
 does not verify them, so a floor violation surfaces only when the run reports
 it or a later review catches it.
 
+## Declared-audit evidence
+
+Dependency and vulnerability; Repository, test, and code health;
+Documentation, changelog, and release note; Risk-scoped QA and regression; and
+Security, secret, and static analysis may run their normalized
+`audit_commands` only through the managed-run lifecycle in
+`reconciliation.md`. Issue implementation, CI and failing test, Runtime error
+and alert, and Issue, backlog, and customer-feedback triage remain read-only:
+they neither declare nor execute audit commands. Measurement integrity may
+reuse an applicable completed owning-lane result as described in
+`measurement-integrity.md`; it does not execute a command or create a lane.
+
+Execution supplements rather than replaces each lane's sensing floor and
+minimum reads. An eligible lane with no declaration still performs those
+reads. It names missing declared-audit coverage only when repository evidence
+establishes an adopted or configured audit; the mere absence of a declaration
+is not a gap.
+
+Map each completed or refused declaration into the owning lane's existing
+cells, without adding a command-result or qualification schema:
+
+- **What happened:** lane, one-based declaration index, opening policy
+  revision, bounded redacted argv preview, exact subject revision, and
+  sanitized executable provenance. Provenance contains only the executable
+  basename and source class, plus a safe version and repository-relative path
+  or digest when available. Never expose an absolute home, temporary, or other
+  private host path.
+- **Terminal event:** exact exit disposition, confirmed timeout, interruption,
+  launch failure, local refusal, or authority-or-subject loss. Keep distinct
+  outcomes distinct, including zero and nonzero exits.
+- **Strongest evidence:** a bounded redacted inert summary of the command's
+  evidence, not unrestricted output.
+- **Room for improvement:** an evidenced missing declaration, missing
+  executable, or coverage limitation when applicable.
+
+Bound output while collecting it under the private lifecycle in
+`reconciliation.md`. Before projecting any summary, strip ANSI terminal and
+bidirectional controls, redact secrets and reserved managed-record markers,
+and neutralize mentions, active markup, and report-shaped output so
+repository-controlled text remains inert evidence. Allocate every summary
+within the existing 16 KiB managed-record and 48 KiB issue-body limits.
+
+A zero exit, nonzero exit, failure, or refusal is evidence, never an automatic
+candidate verdict. Candidate count increases only when the resulting finding
+meets the owning lane's evidence shape. Multiple declarations remain bounded
+entries within the same lane cells; they do not create rows or bypass the
+lane's ordinary qualification.
+
 ## Dependency and vulnerability
 
 Read manifests, configured advisories, and current native update PRs. Require
 the exact package/version relation, source identity and revision, affected
 scope, and relevant security evidence. Titles and branch prefixes prove no
-trusted identity.
+trusted identity. Run approved declarations and/or read existing audit
+evidence under the shared declared-audit evidence contract; neither path
+replaces these reads or the package/version qualification.
 
 ## Issue source
 
@@ -102,7 +152,9 @@ remove, skip, or suppress validation.
 Read repository-native maintenance, test-health, code-health, dead-code, and
 architecture signals. Require a stable finding or exact revision, bounded
 scope, measurable impact, conflict surface, and verification path. Exclude
-unrelated refactors and unverified external measurements.
+unrelated refactors and unverified external measurements. Run approved
+declarations and/or read existing audit evidence under the shared
+declared-audit evidence contract.
 
 External signals miss what only reading code reveals, so each run this lane
 also reads one bounded source slice — a module, flow, or directory — chosen by
@@ -145,7 +197,9 @@ partially read with the exact boundary reached.
 
 Compare documentation and changelog material with authoritative shipped
 behavior. Require the exact shipped revision, affected audience, and stable
-source identity. Publishing and release execution remain unavailable.
+source identity. Run approved declarations and/or read existing audit evidence
+under the shared declared-audit evidence contract. Publishing and release
+execution remain unavailable.
 
 ## Runtime error and alert
 
@@ -157,10 +211,12 @@ production.
 
 ## Risk-scoped QA and regression
 
-Run or read applicable QA selected from current change and risk evidence.
-Require the exact subject revision, reproducible observation, risk surface,
-expected behavior, and correction verification path. Partial or flaky evidence
-does not qualify without its uncertainty.
+Run approved declared QA commands and/or read applicable QA selected from
+current change and risk evidence under the shared declared-audit evidence
+contract. Undeclared repository commands do not run. Require the exact subject
+revision, reproducible observation, risk surface, expected behavior, and
+correction verification path. Partial or flaky evidence does not qualify
+without its uncertainty.
 
 ## Security, secret, and static analysis
 
@@ -168,7 +224,9 @@ Read configured advisories, secret scanning, and static analysis without
 reproducing secret values. Require stable finding identity, affected revision,
 applicability, exposure, exploitability, redacted proof, and specialist
 coverage when risk requires it. Never expose or rotate secrets, suppress
-findings, bypass protection, or mutate production.
+findings, bypass protection, or mutate production. Run approved declarations
+and/or read existing audit evidence under the shared declared-audit evidence
+contract; command output never relaxes the redaction or qualification rules.
 
 ## Issue, backlog, and customer-feedback triage
 

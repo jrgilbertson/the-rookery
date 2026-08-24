@@ -192,10 +192,10 @@ pull request. Merge remains a later human step.
 
 ### Census
 
-A cheap listing of one source population during a Repository Automation Loop,
-such as issues, pull requests, or alerts. Census totals are reported separately
-from candidates. Completing a census is not reading bodies and is not emitting
-candidates.
+A cheap listing of one source population, such as issues, pull requests, or
+alerts. It runs during a Repository Maintenance Run and during caller-only
+sensing. Census totals are reported separately from candidates. Completing a
+census is not reading bodies and is not emitting candidates.
 
 ### Gardening Tracker
 

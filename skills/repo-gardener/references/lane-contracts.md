@@ -72,9 +72,9 @@ it or a later review catches it.
 
 ## Dependency and vulnerability
 
-Consume the parent identifier census of current native pull requests. Do not
-re-page that population. Then read manifests, configured advisories, and the
-update-PR rows from that list. Require the exact package/version relation,
+Consume the parent identifier census of current open native pull requests.
+Do not re-page that population. Then read manifests, configured advisories,
+and the update-PR rows from that list. Require the exact package/version relation,
 source identity and revision, affected scope, and relevant security evidence.
 Titles and branch prefixes prove no trusted identity.
 

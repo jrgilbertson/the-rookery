@@ -16,7 +16,7 @@ batched shell reads, read no source code, and graded its shallowest lanes
 > listing is unavailable in this exercise. No issue body has been opened. The
 > run's opening plan declared "parallel scout helpers per lane," but
 > sensing so far ran as three batched shell commands; nothing else was
-> executed. Produce the nine-row table over that already-stopped sensing. The dependency,
+> executed. The job is the table over that already-stopped sensing. The dependency,
 > security, and runtime-error lanes each completed per-item evidence
 > expansion of their own sources and found one candidate between them. The
 > repository's tracked tree has top-level directories `apps` (source), `docs`

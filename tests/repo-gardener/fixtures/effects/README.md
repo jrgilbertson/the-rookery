@@ -1,12 +1,11 @@
-# Synthetic report-effect matrix
+# Synthetic tracker-effect matrix
 
-These fixtures grade Release A's report-register effect protocol. The checker
-passes complete synthetic GitHub snapshots through the shipped `effect-v1` v2
-prepare/verify and `completion-v1` subprocess interfaces, then compares their
-results with the separate expectation file. It mutates every load-bearing
-readback, identity, compatibility, completion, and precondition field. Caller
-authority and verdict fields are rejected rather than trusted. All identities
-and outcomes are synthetic; snapshot provenance remains unverified.
+These fixtures grade two-comment preparation and verification. The checker
+passes complete synthetic GitHub snapshots through the shipped `effect-v1`
+prepare/verify interface, then compares results with the separate expectation
+file. It mutates load-bearing readback and identity fields and proves mention
+and image rejection. Caller authority and verdict fields are rejected rather
+than trusted. Hash fields and Current Portfolio JSON are not required.
 
 Run from the repository root:
 

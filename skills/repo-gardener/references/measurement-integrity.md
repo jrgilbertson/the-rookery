@@ -51,7 +51,7 @@ hypotheses with their sample size, denominator, window, and uncertainty.
 
 ## Feed reconciliation
 
-Return one cross-cutting result inside the parent decision evidence, not a
+Return one cross-cutting result inside the Orchestrator decision evidence, not a
 tenth lane or another tracker comment. For every inspected metric, report its disposition,
 authority, window and timezone, grain, numerator, denominator, exclusions,
 uncertainty, reconciliation result, and bounded evidence references; use `not
@@ -62,8 +62,9 @@ contributing lane and assign its owning lane from the remediation it actually
 requires.
 When the relevant measurement slice fails, its behavior data cannot support a
 product hypothesis or conclusion. A defect that prevents reconciliation of a
-canonical metric or blocks a critical flow or trusted decision qualifies as a
-deep target unless it is coalesced with the same underlying investigation.
+canonical metric or blocks a critical flow or trusted decision is worth
+deepening when further investigation would change assignments or
+recommendations, unless it is coalesced with the same underlying investigation.
 Missing optional read access reduces only measurement coverage.
 
 The report contains aggregates, bounded evidence identities, and secure

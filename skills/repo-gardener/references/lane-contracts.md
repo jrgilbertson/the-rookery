@@ -1,9 +1,10 @@
 # Nine breadth lanes
 
-The parent surveys every lane once per run. Lanes discover and qualify current
-evidence; they do not independently create worktrees or mutate providers. A
-lane may nominate a child candidate, but the parent makes one cross-lane
-selection under the installed policy.
+The Orchestrator surveys every lane once per run. Lanes discover and qualify
+current evidence; they do not independently create worktrees or mutate
+providers. A lane may nominate a Worker candidate; the Orchestrator assigns a
+non-overlapping set of independently deliverable PR-sized units and starts
+Workers. A Worker does not survey nine lanes or write tracker comments.
 
 Each lane reports status, what happened, terminal event, strongest bounded
 evidence, candidate count, and room for improvement. Candidate count includes

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Exercise exact, source-read-only preparation and verification of report effects."""
+"""Exercise mention/image rejection and exact two-comment effect verification."""
 
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[4]
 FIXTURES = Path(__file__).resolve().parent
 CONTRACT_PATH = ROOT / "skills/repo-gardener/scripts/release_a_contract.py"
-SNAPSHOT_RUNNER = FIXTURES.parent / "github-register/check_snapshots.py"
+SNAPSHOT_HELPER = FIXTURES.parent / "tracker_snapshots.py"
 sys.dont_write_bytecode = True
 
 
@@ -30,7 +30,7 @@ def load_module(path: Path, name: str) -> Any:
 
 
 CONTRACT = load_module(CONTRACT_PATH, "repo_gardener_release_a_contract_effects")
-SNAPSHOTS = load_module(SNAPSHOT_RUNNER, "repo_gardener_github_snapshots_for_effects")
+SNAPSHOTS = load_module(SNAPSHOT_HELPER, "repo_gardener_tracker_snapshots_for_effects")
 
 
 def cli(payload: dict[str, Any]) -> dict[str, Any]:
@@ -45,35 +45,34 @@ def cli(payload: dict[str, Any]) -> dict[str, Any]:
     return json.loads(completed.stdout)
 
 
-def completion_cli(scenario: dict[str, Any]) -> dict[str, Any]:
-    completed = subprocess.run(
-        [sys.executable, str(CONTRACT_PATH), "completion-v1", "--input", "-"],
-        input=json.dumps({"schema": "repo-gardener-completion-input/v1", "scenario": scenario}),
-        capture_output=True,
-        text=True,
-    )
-    if completed.returncode:
-        raise CONTRACT.ContractError(completed.stderr.strip().removeprefix("FAIL: "))
-    return json.loads(completed.stdout)
-
-
 def effect_input(phase: str, **values: Any) -> dict[str, Any]:
     return {"schema": "repo-gardener-effect-input/v2", "phase": phase, **values}
 
 
 def target_snapshot(base: dict[str, Any], prepared: dict[str, Any]) -> dict[str, Any]:
-    result = copy.deepcopy(base)
-    result["issue"]["body"] = prepared["body"]
-    comments = [item for page in result["comment_pages"] for item in page]
-    result["comment_pages"][-1].append(
-        {
-            "id": max(item["id"] for item in comments) + 1,
-            "node_id": "IC_SYNTHETIC_PREPARED",
-            "user": {"node_id": SNAPSHOTS.WRITER_ID, "login": "synthetic-writer"},
-            "body": prepared["comment"],
-        }
-    )
-    result["issue"]["comments"] += 1
+    return SNAPSHOTS.apply_prepared(base, prepared)
+
+
+def prior_managed_comment() -> dict[str, Any]:
+    record = {
+        "schema": "orchestrator-run-record/v1",
+        "kind": "run-opened",
+        "run_id": "run:synthetic:prior",
+        "operation_id": "operation:report:" + "a" * 64,
+        "payload": {"disposition": "prior"},
+    }
+    return {
+        "id": 1,
+        "node_id": "IC_PRIOR_001",
+        "user": {"node_id": SNAPSHOTS.WRITER_ID, "login": "synthetic-writer"},
+        "body": CONTRACT._run_record_comment(record),
+    }
+
+
+def with_prior_managed(snapshot: dict[str, Any]) -> dict[str, Any]:
+    result = copy.deepcopy(snapshot)
+    result["comment_pages"][-1].append(prior_managed_comment())
+    result["issue"]["comments"] = len([item for page in result["comment_pages"] for item in page])
     return result
 
 
@@ -89,6 +88,54 @@ def mutate(base: dict[str, Any], target: dict[str, Any], prepared: dict[str, Any
     elif mutation == "body-only":
         after = copy.deepcopy(base)
         after["issue"]["body"] = prepared["body"]
+    elif mutation == "body-only-no-write":
+        after = copy.deepcopy(base)
+        after["issue"]["body"] = prepared["body"]
+        attempt = "none"
+    elif mutation == "edited-existing-managed":
+        before = with_prior_managed(base)
+        after = copy.deepcopy(before)
+        after["issue"]["body"] = prepared["body"]
+        edited = {
+            "schema": "orchestrator-run-record/v1",
+            "kind": "run-opened",
+            "run_id": "run:synthetic:prior",
+            "operation_id": "operation:report:" + "a" * 64,
+            "payload": {"disposition": "tampered"},
+        }
+        after["comment_pages"][-1][-1]["body"] = CONTRACT._run_record_comment(edited)
+    elif mutation == "replaced-existing-managed":
+        before = with_prior_managed(base)
+        after = copy.deepcopy(before)
+        after["issue"]["body"] = prepared["body"]
+        after["comment_pages"][-1][-1]["id"] = 99
+        after["comment_pages"][-1][-1]["node_id"] = "IC_REPLACED_099"
+    elif mutation == "observed-with-prior":
+        before = with_prior_managed(base)
+        after = SNAPSHOTS.apply_prepared(before, prepared)
+    elif mutation == "observed-but-edited-prior":
+        before = with_prior_managed(base)
+        after = SNAPSHOTS.apply_prepared(before, prepared)
+        edited = {
+            "schema": "orchestrator-run-record/v1",
+            "kind": "run-opened",
+            "run_id": "run:synthetic:prior",
+            "operation_id": "operation:report:" + "a" * 64,
+            "payload": {"disposition": "tampered"},
+        }
+        after["comment_pages"][-1][-2]["body"] = CONTRACT._run_record_comment(edited)
+    elif mutation == "observed-but-replaced-prior":
+        before = with_prior_managed(base)
+        after = SNAPSHOTS.apply_prepared(before, prepared)
+        after["comment_pages"][-1][-2]["id"] = 99
+        after["comment_pages"][-1][-2]["node_id"] = "IC_REPLACED_099"
+    elif mutation == "body-only-foreign-tracker":
+        after = copy.deepcopy(base)
+        after["issue"]["body"] = prepared["body"]
+        after["configured_repository_id"] = "R_SYNTHETIC_OTHER"
+        after["configured_report_issue_id"] = "I_SYNTHETIC_OTHER"
+        after["configured_writer_id"] = "U_SYNTHETIC_OTHER_WRITER"
+        after["issue"]["node_id"] = "I_SYNTHETIC_OTHER"
     elif mutation == "denied-unchanged":
         after = copy.deepcopy(base)
         attempt = "denied-before-write"
@@ -96,24 +143,11 @@ def mutate(base: dict[str, Any], target: dict[str, Any], prepared: dict[str, Any
         after = None
     elif mutation == "comment-only":
         after["issue"]["body"] = base["issue"]["body"]
-    elif mutation == "multiple-gaps":
-        register = json.loads(after["issue"]["body"].split("```json\n", 1)[1].split("\n```", 1)[0])
-        register["history_anchor"]["sequence"] += 1
-        register["register_revision"] += 1
-        SNAPSHOTS.rewrite_body(after, register)
     elif mutation == "changed-projection":
         after["issue"]["body"] += "foreign projection edit\n"
-    elif mutation == "changed-rows":
-        register = json.loads(after["issue"]["body"].split("```json\n", 1)[1].split("\n```", 1)[0])
-        register["rows"][0]["description"] = "Changed after preparation."
-        SNAPSHOTS.rewrite_body(after, register)
-    elif mutation == "stale-revision":
-        register = json.loads(after["issue"]["body"].split("```json\n", 1)[1].split("\n```", 1)[0])
-        register["register_revision"] += 1
-        SNAPSHOTS.rewrite_body(after, register)
     elif mutation == "changed-pre-read-projection":
         before["issue"]["body"] = before["issue"]["body"].replace(
-            "# Synthetic report projection", "# Foreign projection edit"
+            "# Synthetic morning projection", "# Foreign projection edit"
         )
     elif mutation == "changed-pre-read-body":
         before["issue"]["body"] += "Foreign unmanaged body bytes.\n"
@@ -122,13 +156,60 @@ def mutate(base: dict[str, Any], target: dict[str, Any], prepared: dict[str, Any
     elif mutation == "foreign-author":
         after["comment_pages"][-1][-1]["user"]["node_id"] = SNAPSHOTS.OTHER_WRITER_ID
     elif mutation == "replayed-comment-id":
-        after["comment_pages"][-1][-1]["id"] = after["comment_pages"][0][0]["id"]
+        after["comment_pages"][-1][-1]["id"] = 7
+        after["comment_pages"][-1].insert(
+            0,
+            {
+                "id": 7,
+                "node_id": "IC_SYNTHETIC_REPLAY",
+                "user": {"node_id": SNAPSHOTS.WRITER_ID, "login": "synthetic-writer"},
+                "body": "Ordinary duplicate-id decoy.",
+            },
+        )
+        after["issue"]["comments"] += 1
     elif mutation == "incomplete-pagination":
         after["comment_pages_complete"] = False
     elif mutation == "truncated-tail":
         after["comment_pages"][-1].pop()
     elif mutation == "altered-material":
-        after["comment_pages"][-1][-1]["body"] = prepared["comment"].replace('"kind":"effect"', '"kind":"run"')
+        after["comment_pages"][-1][-1]["body"] = prepared["comment"].replace(
+            '"kind":"run-opened"', '"kind":"run-closed"'
+        )
+    elif mutation == "comment-ahead-pre":
+        before = copy.deepcopy(target)
+        before["issue"]["body"] = base["issue"]["body"]
+    elif mutation == "duplicate-prepared-comment":
+        after = SNAPSHOTS.apply_prepared(target, prepared)
+    elif mutation == "already-satisfied-but-edited-prior":
+        before = with_prior_managed(target)
+        after = copy.deepcopy(before)
+        edited = {
+            "schema": "orchestrator-run-record/v1",
+            "kind": "run-opened",
+            "run_id": "run:synthetic:prior",
+            "operation_id": "operation:report:" + "a" * 64,
+            "payload": {"disposition": "tampered"},
+        }
+        after["comment_pages"][-1][-1]["body"] = CONTRACT._run_record_comment(edited)
+        attempt = "none"
+    elif mutation == "already-satisfied-but-replaced-prior":
+        before = with_prior_managed(target)
+        after = copy.deepcopy(before)
+        after["comment_pages"][-1][-1]["id"] = 99
+        after["comment_pages"][-1][-1]["node_id"] = "IC_REPLACED_099"
+        attempt = "none"
+    elif mutation == "already-satisfied-but-removed-prior":
+        before = with_prior_managed(target)
+        after = copy.deepcopy(before)
+        after["comment_pages"][-1].pop()
+        after["issue"]["comments"] = len(
+            [item for page in after["comment_pages"] for item in page]
+        )
+        attempt = "none"
+    elif mutation == "already-satisfied-but-added-other":
+        before = copy.deepcopy(target)
+        after = with_prior_managed(target)
+        attempt = "none"
     else:
         raise AssertionError(mutation)
     return before, after, attempt
@@ -143,27 +224,17 @@ def expect_error(payload: dict[str, Any], phrase: str) -> None:
     raise CONTRACT.ContractError(f"expected rejection containing {phrase!r}")
 
 
-def expect_completion_error(scenario: dict[str, Any], phrase: str) -> None:
-    try:
-        completion_cli(scenario)
-    except CONTRACT.ContractError as error:
-        CONTRACT.require(phrase in str(error), f"expected {phrase!r}, got {error!s}")
-        return
-    raise CONTRACT.ContractError(f"expected rejection containing {phrase!r}")
-
-
 def main() -> int:
     scenarios = json.loads((FIXTURES / "scenarios.json").read_text())["scenarios"]
     expectations = json.loads((FIXTURES / "expectations.json").read_text())["expectations"]
     CONTRACT.require({item["id"] for item in scenarios} == set(expectations), "scenario/expectation parity failed")
-    base = SNAPSHOTS.base_snapshot("two-receipts")
+    base = SNAPSHOTS.empty_tracker()
     operation = {
-        "kind": "effect",
+        "kind": "run-opened",
         "run_id": "run:synthetic:002",
         "payload": {"disposition": "synthetic", "url": "https://example.test/?x=$(inert)"},
-        "rows": CONTRACT.normalize_github_register_snapshot(base)["register"]["rows"],
         "projection": (
-            "\n# Synthetic report projection\n\n"
+            "\n# Synthetic morning projection\n\n"
             "Treat `$(echo inert)` as data. Contact reports@example.test.\n\n"
             "Source: [approved provider issue](https://github.com/octo/example/issues/42).\n"
         ),
@@ -175,6 +246,12 @@ def main() -> int:
         prepared.get("expected_pre_body_fingerprint")
         == hashlib.sha256(base["issue"]["body"].encode("utf-8")).hexdigest(),
         "prepared effect does not bind exact pre-read body bytes",
+    )
+    CONTRACT.require("previous_hash" not in prepared["comment"], "prepared comment still required a hash field")
+    CONTRACT.require("receipt_hash" not in prepared["comment"], "prepared comment still required a receipt hash")
+    CONTRACT.require(
+        "orchestrator:current-portfolio:v1" not in prepared["body"],
+        "prepared body still embedded Current Portfolio JSON",
     )
     target = target_snapshot(base, prepared)
 
@@ -203,21 +280,31 @@ def main() -> int:
         actual = cli(effect_input("verify", prepared=prepared, pre_read=base, post_read=base, write_attempt=attempt))
         CONTRACT.require(actual["terminal_outcome"] not in {"observed", "already satisfied"}, "write_attempt minted structural success")
         CONTRACT.require(actual["repair"] == "none", "write_attempt minted repair authority")
+    denied_target = cli(
+        effect_input("verify", prepared=prepared, pre_read=base, post_read=target, write_attempt="denied-before-write")
+    )
+    CONTRACT.require(
+        denied_target["terminal_outcome"] not in {"observed", "already satisfied"},
+        "denied-before-write minted observed closure from a target-shaped post-read",
+    )
+    CONTRACT.require(denied_target["repair"] == "none", "denied-before-write minted repair authority")
+    none_target = cli(
+        effect_input("verify", prepared=prepared, pre_read=base, post_read=target, write_attempt="none")
+    )
+    CONTRACT.require(
+        none_target["terminal_outcome"] == "ambiguous",
+        "write_attempt none minted observed closure from a target-shaped post-read",
+    )
+    CONTRACT.require(none_target["repair"] == "none", "write_attempt none minted repair authority")
 
     for marker in CONTRACT.RESERVED_REPORT_SEQUENCES:
-        for location in ("payload", "rows", "projection"):
+        for location in ("payload", "projection"):
             poisoned = copy.deepcopy(operation)
             if location == "payload":
                 poisoned["payload"]["text"] = marker
-            elif location == "rows":
-                poisoned["rows"][0]["description"] = marker
             else:
                 poisoned["projection"] = marker
             expect_error(effect_input("prepare", pre_read=base, operation=poisoned), "reserved report sequence")
-
-    register_only_operation = copy.deepcopy(operation)
-    register_only_operation["rows"][0]["description"] = "Retain @types/node as machine data."
-    cli(effect_input("prepare", pre_read=base, operation=register_only_operation))
 
     for unsafe_projection, phrase in (
         ("\nOwner: @octocat\n", "notification-capable mention"),
@@ -225,6 +312,10 @@ def main() -> int:
         ("\nDependency: @types/node\n", "notification-capable mention"),
         (
             "\nOwner: [@octocat](https://github.com/octocat)\n",
+            "notification-capable mention",
+        ),
+        (
+            "\nSee [notes](https://example.com)(@octocat)\n",
             "notification-capable mention",
         ),
         ("\n![tracking pixel](https://attacker.example/pixel.png)\n", "image embedding"),
@@ -268,14 +359,12 @@ def main() -> int:
     changed_run["run_id"] = "run:synthetic:restart"
     restarted = cli(effect_input("prepare", pre_read=base, operation=changed_run))
     CONTRACT.require(restarted["operation_id"] == prepared["operation_id"], "run_id became operation identity entropy")
-    CONTRACT.require(restarted["receipt_hash"] != prepared["receipt_hash"], "run_id was not bound receipt metadata")
+    CONTRACT.require(restarted["comment"] != prepared["comment"], "run_id was not bound into the comment")
     for field, value in (
         ("operation_id", "operation:report:" + "0" * 64),
-        ("operation_fingerprint", "0" * 64),
-        ("receipt_hash", "0" * 64),
         ("expected_pre_body_fingerprint", "0" * 64),
         ("body", prepared["body"] + "altered"),
-        ("comment", prepared["comment"].replace('"kind":"effect"', '"kind":"run"')),
+        ("comment", prepared["comment"].replace('"kind":"run-opened"', '"kind":"run-closed"')),
     ):
         altered = copy.deepcopy(prepared)
         altered[field] = value
@@ -284,43 +373,44 @@ def main() -> int:
             "prepared",
         )
 
+    bool_operation = copy.deepcopy(operation)
+    bool_operation["payload"] = {"approved": True}
+    bool_prepared = cli(effect_input("prepare", pre_read=base, operation=bool_operation))
+    _, bool_record = CONTRACT._extract_marked_json(
+        bool_prepared["comment"],
+        CONTRACT.RUN_RECORD_BEGIN,
+        CONTRACT.RUN_RECORD_END,
+        "prepared run-record comment",
+    )
+    confused = copy.deepcopy(bool_prepared)
+    confused_record = copy.deepcopy(bool_record)
+    confused_record["payload"] = {"approved": 1}
+    confused["comment"] = CONTRACT._run_record_comment(confused_record)
+    expect_error(
+        effect_input(
+            "verify",
+            prepared=confused,
+            pre_read=base,
+            post_read=target_snapshot(base, bool_prepared),
+            write_attempt="possible",
+        ),
+        "prepared record payload mismatch",
+    )
+
     source = CONTRACT_PATH.read_text(encoding="utf-8")
     CONTRACT.require("import requests" not in source and "import urllib" not in source and "import subprocess" not in source, "effect executable gained provider/network code")
+    for obsolete in (
+        "normalize-github-register",
+        "register_closed_consistently",
+        "orchestrator-register/v1",
+        "current-portfolio:v1",
+        "overall_dogfood_complete",
+        "RELEASE_A_PORTFOLIO_LIMIT",
+    ):
+        CONTRACT.require(obsolete not in source, f"obsolete register-machine production path remains: {obsolete}")
 
-    partition = completion_cli(
-        {
-            "scenario_type": "completion-partition",
-            "operation_id": "operation:report:completion",
-            "named_work": ["operation:report:completion", "independent audit"],
-            "affected_by_ambiguity": ["operation:report:completion"],
-            "independent_continued": ["independent audit"],
-        }
-    )
-    CONTRACT.require(partition["disjoint_exhaustive"] is True and partition["whole_run_completion"] == "withheld", "completion partition regressed")
-    for field in ("named_work", "affected_by_ambiguity", "independent_continued"):
-        invalid_partition = {
-            "scenario_type": "completion-partition",
-            "operation_id": "operation:report:completion",
-            "named_work": ["operation:report:completion", "independent audit"],
-            "affected_by_ambiguity": ["operation:report:completion"],
-            "independent_continued": ["independent audit"],
-        }
-        invalid_partition[field][0] = 7
-        expect_completion_error(invalid_partition, f"{field} 0 is missing")
-
-    foreign_base = copy.deepcopy(base)
-    foreign_base["comment_pages"][-1].append(
-        {
-            "id": 9001,
-            "node_id": "IC_SYNTHETIC_FOREIGN",
-            "user": {"node_id": SNAPSHOTS.OTHER_WRITER_ID, "login": "synthetic-foreign"},
-            "body": "Foreign comment before denied write.",
-        }
-    )
-    foreign_base["issue"]["comments"] += 1
-    foreign_operation = copy.deepcopy(operation)
-    foreign_operation["rows"] = CONTRACT.normalize_github_register_snapshot(foreign_base)["register"]["rows"]
-    foreign_prepared = cli(effect_input("prepare", pre_read=foreign_base, operation=foreign_operation))
+    foreign_base = SNAPSHOTS.add_ordinary_comment(base)
+    foreign_prepared = cli(effect_input("prepare", pre_read=foreign_base, operation=operation))
     for changed_field in ("body", "author"):
         foreign_after = copy.deepcopy(foreign_base)
         comment = foreign_after["comment_pages"][-1][-1]
@@ -339,50 +429,18 @@ def main() -> int:
         )
         CONTRACT.require(actual["terminal_outcome"] == "ambiguous", f"foreign comment {changed_field} edit was misclassified")
 
-    delegated = completion_cli(
-        {
-            "scenario_type": "delegation",
-            "handoff": {
-                "destination": "queue:synthetic",
-                "authorized_executor": "executor:synthetic",
-                "exact_work": "independent audit",
-                "read_back": True,
-            },
-        }
-    )
-    CONTRACT.require(delegated == {"remaining_disposition": "delegated"}, "delegation completion regressed")
-    caller = completion_cli(
-        {
-            "scenario_type": "caller-completion",
-            "pending_decision_ids": ["decision:a", "decision:b"],
-            "assignment_persisted_decision_ids": [],
-            "assignment_persistence_authorized": True,
-            "assignment_persistence_read_back": True,
-            "terminal_capability_active": True,
-            "caller_accepts": True,
-        }
-    )
-    CONTRACT.require(caller["decisions_carried_for_caller"] == 2 and caller["self_settled_before_acceptance"] is False, "caller completion regressed")
-    for field in ("pending_decision_ids", "assignment_persisted_decision_ids"):
-        invalid_caller = {
-            "scenario_type": "caller-completion",
-            "pending_decision_ids": ["decision:a"],
-            "assignment_persisted_decision_ids": ["decision:a"],
-            "assignment_persistence_authorized": True,
-            "assignment_persistence_read_back": True,
-            "terminal_capability_active": True,
-            "caller_accepts": True,
-        }
-        invalid_caller[field][0] = True
-        expect_completion_error(invalid_caller, f"{field} 0 is missing")
     nonfinite_operation = copy.deepcopy(operation)
     nonfinite_operation["payload"] = {"invalid": float("nan")}
     expect_error(effect_input("prepare", pre_read=base, operation=nonfinite_operation), "non-finite")
 
-    print(f"PASS: {len(scenarios)} exact report-effect prepare/verify scenarios")
-    print("PASS: legacy authority/verdict inputs cannot mint success or repair")
-    print("PASS: prepared material is deterministic, tamper-evident, inert, network-free, and structurally provenance-unverified")
-    print("PASS: completion-v1 partition, delegation, and caller behavior is preserved")
+    register_snapshot = copy.deepcopy(base)
+    register_snapshot["schema"] = "repo-gardener-github-register-snapshot/v1"
+    expect_error(effect_input("prepare", pre_read=register_snapshot, operation=operation), "tracker snapshot schema")
+
+    print(f"PASS: {len(scenarios)} exact two-comment prepare/verify scenarios")
+    print("PASS: mention and image embedding in prepared tracker content fail closed")
+    print("PASS: hash fields and Current Portfolio JSON are not production requirements")
+    print("PASS: denied or mutated readback cannot mint observed closure")
     return 0
 
 

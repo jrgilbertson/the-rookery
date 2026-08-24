@@ -11,6 +11,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+import yaml
+
 
 MAX_CONFIG_BYTES = 64 * 1024
 MAX_TEXT_LENGTH = 256
@@ -47,8 +49,8 @@ MAPPING_KEY = re.compile(r"^[A-Za-z0-9_.-][A-Za-z0-9_./-]*$")
 ROOTED_OR_DRIVE_PATH = re.compile(r"^(?:[A-Za-z]:[/\\]|[/\\])")
 ISSUE_NUMBER_SELECTOR = re.compile(r"^#\d+$")
 INTEGER_SCALAR = re.compile(r"^-?(0|[1-9][0-9]*)$")
-FLOAT_SCALAR = re.compile(r"^-?(?:0|[1-9][0-9]*)\.[0-9]+([eE][-+]?[0-9]+)?$")
-SCIENTIFIC_SCALAR = re.compile(r"^-?(?:0|[1-9][0-9]*)[eE][-+]?[0-9]+$")
+BOOLEAN_SCALAR = re.compile(r"^(?:true|false)$")
+NULL_SCALAR = re.compile(r"^(?:~|null|Null|NULL|)$")
 
 
 class ConfigError(Exception):
@@ -176,18 +178,24 @@ def require_glob_list(value: Any, label: str, *, nonempty: bool) -> list[str]:
     return [require_path_glob(item, f"{label}[{index}]") for index, item in enumerate(value)]
 
 
-def skip_ws(text: str, index: int) -> int:
-    while index < len(text) and text[index] in " \t":
-        index += 1
-    return index
+def yaml_error_message(error: yaml.YAMLError) -> str:
+    problem = getattr(error, "problem", None)
+    if isinstance(problem, str):
+        text = " ".join(problem.split())
+        if text and all(0x20 <= ord(character) <= 0x7E for character in text):
+            return f"YAML is invalid: {text}"
+    return "YAML is invalid"
 
 
-def strip_comment(text: str) -> str:
+def reject_unsupported_yaml(text: str) -> None:
+    require("\t" not in text, "YAML tabs are not allowed")
+    index = 0
     in_single = False
     in_double = False
-    index = 0
+    at_line_start = True
     while index < len(text):
         char = text[index]
+        prev = text[index - 1] if index else "\n"
         if in_single:
             if char == "'" and index + 1 < len(text) and text[index + 1] == "'":
                 index += 2
@@ -204,39 +212,24 @@ def strip_comment(text: str) -> str:
                 in_double = False
             index += 1
             continue
-        if char == "'":
-            in_single = True
-        elif char == '"':
-            in_double = True
-        elif char == "#" and (index == 0 or text[index - 1].isspace()):
-            return text[:index].rstrip()
-        index += 1
-    return text.rstrip()
-
-
-def reject_unsupported_yaml(content: str) -> None:
-    require(content not in {"---", "..."} and not content.startswith("%"), "YAML documents and directives are not allowed")
-    index = 0
-    in_single = False
-    in_double = False
-    while index < len(content):
-        char = content[index]
-        prev = content[index - 1] if index else " "
-        if in_single:
-            if char == "'" and index + 1 < len(content) and content[index + 1] == "'":
-                index += 2
-                continue
-            if char == "'":
-                in_single = False
+        if char == "\n":
+            at_line_start = True
             index += 1
             continue
-        if in_double:
-            if char == "\\" and index + 1 < len(content):
-                index += 2
-                continue
-            if char == '"':
-                in_double = False
+        if at_line_start and char in " ":
             index += 1
+            continue
+        if at_line_start and char == "%":
+            raise ConfigError("YAML documents and directives are not allowed")
+        if at_line_start and text.startswith(("---", "..."), index):
+            end = index + 3
+            nxt = text[end] if end < len(text) else "\n"
+            if nxt in " \n":
+                raise ConfigError("YAML documents and directives are not allowed")
+        at_line_start = False
+        if char == "#" and prev.isspace():
+            newline = text.find("\n", index)
+            index = len(text) if newline < 0 else newline
             continue
         if char == "'":
             in_single = True
@@ -252,330 +245,89 @@ def reject_unsupported_yaml(content: str) -> None:
         if char == "&" and (index == 0 or boundary):
             raise ConfigError("YAML aliases and anchors are not allowed")
         if char == "*" and (index == 0 or boundary):
-            nxt = content[index + 1] if index + 1 < len(content) else ""
+            nxt = text[index + 1] if index + 1 < len(text) else ""
             if nxt.isalnum() or nxt == "_":
                 raise ConfigError("YAML aliases and anchors are not allowed")
-        if content.startswith("<<", index) and (index == 0 or prev.isspace() or prev in "{,"):
+        if text.startswith("<<", index) and (index == 0 or prev.isspace() or prev in "{,"):
             end = index + 2
-            if end == len(content) or content[end] in " :},":
+            if end == len(text) or text[end] in " :},\n":
                 raise ConfigError("YAML merge keys are not allowed")
         index += 1
 
 
-def decode_quoted(token: str) -> str:
-    require(len(token) >= 2 and token[0] == token[-1] and token[0] in {"'", '"'}, "YAML string is unterminated")
-    if token[0] == "'":
-        inner = token[1:-1]
-        chars: list[str] = []
-        index = 0
-        while index < len(inner):
-            if inner[index] == "'" and index + 1 < len(inner) and inner[index + 1] == "'":
-                chars.append("'")
-                index += 2
-                continue
-            chars.append(inner[index])
-            index += 1
-        return "".join(chars)
-    inner = token[1:-1]
-    chars: list[str] = []
-    index = 0
-    escapes = {"n": "\n", "t": "\t", "\\": "\\", '"': '"', "/": "/"}
-    while index < len(inner):
-        char = inner[index]
-        if char == "\\":
-            require(index + 1 < len(inner), "YAML string is unterminated")
-            escaped = inner[index + 1]
-            require(escaped in escapes, "YAML string has an unknown escape")
-            chars.append(escapes[escaped])
-            index += 2
-            continue
-        chars.append(char)
-        index += 1
-    return "".join(chars)
-
-
-def read_quoted(text: str, index: int) -> tuple[str, int]:
-    quote = text[index]
-    start = index
-    index += 1
-    if quote == "'":
-        while index < len(text):
-            char = text[index]
-            if char == "'":
-                if index + 1 < len(text) and text[index + 1] == "'":
-                    index += 2
-                    continue
-                return text[start : index + 1], index + 1
-            index += 1
-        raise ConfigError("YAML string is unterminated")
-    require(quote == '"', "YAML string is unterminated")
-    while index < len(text):
-        char = text[index]
-        if char == "\\":
-            require(index + 1 < len(text), "YAML string is unterminated")
-            index += 2
-            continue
-        index += 1
-        if char == '"':
-            return text[start:index], index
-    raise ConfigError("YAML string is unterminated")
-
-
-def parse_scalar(token: str) -> Any:
-    text = token.strip()
-    require(bool(text), "YAML scalar is empty")
-    if text[0] in {"'", '"'}:
-        quoted, end = read_quoted(text, 0)
-        require(text[end:].strip() == "", "YAML string has trailing content")
-        return decode_quoted(quoted)
-    if text in {"true", "false"}:
-        return text == "true"
-    if text in {"null", "Null", "NULL", "~"}:
-        raise ConfigError("YAML null values are not allowed")
-    if INTEGER_SCALAR.fullmatch(text):
-        value = int(text)
-        require(abs(value) <= MAX_INTEGER, "YAML integer is out of range")
-        return value
-    if FLOAT_SCALAR.fullmatch(text) or SCIENTIFIC_SCALAR.fullmatch(text):
-        raise ConfigError("YAML floats are not allowed")
-    return text
-
-
-def parse_flow_scalar(text: str, index: int, *, key: bool = False) -> tuple[Any, int]:
-    index = skip_ws(text, index)
-    require(index < len(text), "YAML flow value is empty")
-    if text[index] in {"'", '"'}:
-        token, end = read_quoted(text, index)
-        return parse_scalar(token), end
-    start = index
-    stops = ",]}#:" if key else ",]}#"
-    while index < len(text) and text[index] not in stops:
-        index += 1
-    return parse_scalar(text[start:index].rstrip()), index
-
-
-def parse_flow(text: str, index: int, depth: int) -> tuple[Any, int]:
+def reject_disallowed_values(value: Any, *, depth: int = 0) -> None:
     require(depth <= MAX_YAML_DEPTH, "YAML nesting exceeds the allowed depth")
-    index = skip_ws(text, index)
-    require(index < len(text), "YAML flow value is empty")
-    if text[index] == "[":
-        return parse_flow_sequence(text, index, depth)
-    if text[index] == "{":
-        return parse_flow_mapping(text, index, depth)
-    return parse_flow_scalar(text, index)
-
-
-def parse_flow_sequence(text: str, index: int, depth: int) -> tuple[list[Any], int]:
-    index = skip_ws(text, index + 1)
-    items: list[Any] = []
-    if index < len(text) and text[index] == "]":
-        return items, index + 1
-    while True:
-        value, index = parse_flow(text, index, depth + 1)
-        items.append(value)
-        index = skip_ws(text, index)
-        if index < len(text) and text[index] == ",":
-            index = skip_ws(text, index + 1)
-            if index < len(text) and text[index] == "]":
-                return items, index + 1
-            continue
-        if index < len(text) and text[index] == "]":
-            return items, index + 1
-        raise ConfigError("YAML flow sequence is malformed")
-
-
-def parse_flow_mapping(text: str, index: int, depth: int) -> tuple[dict[str, Any], int]:
-    index = skip_ws(text, index + 1)
-    result: dict[str, Any] = {}
-    if index < len(text) and text[index] == "}":
-        return result, index + 1
-    while True:
-        key_value, index = parse_flow_scalar(text, index, key=True)
-        require(isinstance(key_value, str) and bool(key_value), "YAML mapping key must be text")
-        key = key_value
-        index = skip_ws(text, index)
-        require(index < len(text) and text[index] == ":", "YAML flow mapping is missing a colon")
-        value, index = parse_flow(text, index + 1, depth + 1)
-        require(key not in result, f"duplicate key {key!r}")
-        require(key != "<<", "YAML merge keys are not allowed")
-        result[key] = value
-        index = skip_ws(text, index)
-        if index < len(text) and text[index] == ",":
-            index = skip_ws(text, index + 1)
-            if index < len(text) and text[index] == "}":
-                return result, index + 1
-            continue
-        if index < len(text) and text[index] == "}":
-            return result, index + 1
-        raise ConfigError("YAML flow mapping is malformed")
-
-
-def has_block_mapping_indicator(content: str) -> bool:
-    in_single = False
-    in_double = False
-    index = 0
-    while index < len(content):
-        char = content[index]
-        if in_single:
-            if char == "'" and index + 1 < len(content) and content[index + 1] == "'":
-                index += 2
-                continue
-            if char == "'":
-                in_single = False
-            index += 1
-            continue
-        if in_double:
-            if char == "\\" and index + 1 < len(content):
-                index += 2
-                continue
-            if char == '"':
-                in_double = False
-            index += 1
-            continue
-        if char == "'":
-            in_single = True
-        elif char == '"':
-            in_double = True
-        elif char == ":":
-            nxt = content[index + 1] if index + 1 < len(content) else ""
-            if nxt == "" or nxt in " \t":
-                return True
-        index += 1
-    return False
-
-
-def split_mapping_entry(content: str) -> tuple[str, str]:
-    in_single = False
-    in_double = False
-    index = 0
-    while index < len(content):
-        char = content[index]
-        if in_single:
-            if char == "'" and index + 1 < len(content) and content[index + 1] == "'":
-                index += 2
-                continue
-            if char == "'":
-                in_single = False
-            index += 1
-            continue
-        if in_double:
-            if char == "\\" and index + 1 < len(content):
-                index += 2
-                continue
-            if char == '"':
-                in_double = False
-            index += 1
-            continue
-        if char == "'":
-            in_single = True
-        elif char == '"':
-            in_double = True
-        elif char == ":":
-            key = content[:index].strip()
-            rest = content[index + 1 :].strip()
-            require(bool(key), "YAML mapping entry is missing a key")
-            if key[0] in {"'", '"'}:
-                key = decode_quoted(key)
+    if value is None:
+        raise ConfigError("YAML null values are not allowed")
+    if isinstance(value, bool) or isinstance(value, str):
+        return
+    if isinstance(value, int):
+        require(abs(value) <= MAX_INTEGER, "YAML integer is out of range")
+        return
+    if isinstance(value, float):
+        raise ConfigError("YAML floats are not allowed")
+    if isinstance(value, list):
+        require(len(value) <= MAX_LIST_ENTRIES, f"YAML sequence exceeds {MAX_LIST_ENTRIES} entries")
+        for item in value:
+            reject_disallowed_values(item, depth=depth + 1)
+        return
+    if isinstance(value, dict):
+        require(len(value) <= MAX_LIST_ENTRIES, f"YAML mapping exceeds {MAX_LIST_ENTRIES} entries")
+        for key, item in value.items():
+            require(isinstance(key, str) and bool(key), "YAML mapping key must be text")
             require(MAPPING_KEY.fullmatch(key) is not None, f"YAML mapping key {key!r} is invalid")
-            return key, rest
-        index += 1
-    raise ConfigError("YAML mapping entry is missing a colon")
-
-
-class YamlLoader:
-    def __init__(self, text: str) -> None:
-        require("\t" not in text, "YAML tabs are not allowed")
-        self.lines: list[tuple[int, int, str]] = []
-        for number, raw in enumerate(text.splitlines(), start=1):
-            stripped = raw.lstrip(" ")
-            if stripped == "" or stripped.startswith("#"):
-                continue
-            indent = len(raw) - len(stripped)
-            content = strip_comment(raw[indent:])
-            if content == "":
-                continue
-            reject_unsupported_yaml(content)
-            self.lines.append((number, indent, content))
-        self.index = 0
-
-    def parse_document(self) -> dict[str, Any]:
-        require(bool(self.lines), "config must be a mapping")
-        _, indent, content = self.lines[0]
-        require(indent == 0, "YAML document must start at column 0")
-        require(not content.startswith("-"), "config must be a mapping")
-        value = self.parse_mapping(0, 0)
-        require(self.index >= len(self.lines), "YAML document has trailing content")
-        return value
-
-    def parse_mapping(self, indent: int, depth: int) -> dict[str, Any]:
-        require(depth <= MAX_YAML_DEPTH, "YAML nesting exceeds the allowed depth")
-        require(
-            self.index < len(self.lines) and self.lines[self.index][1] == indent,
-            "YAML mapping is empty",
-        )
-        result: dict[str, Any] = {}
-        while self.index < len(self.lines):
-            _, line_indent, content = self.lines[self.index]
-            if line_indent < indent:
-                break
-            require(line_indent == indent, "YAML indentation is inconsistent")
-            require(not content.startswith("-"), "YAML mapping entry must be a key")
-            key, rest = split_mapping_entry(content)
-            require(key not in result, f"duplicate key {key!r}")
             require(key != "<<", "YAML merge keys are not allowed")
-            self.index += 1
-            result[key] = self.parse_value(indent, rest, depth + 1)
+            reject_disallowed_values(item, depth=depth + 1)
+        return
+    raise ConfigError("YAML value type is not allowed")
+
+
+class PolicyLoader(yaml.SafeLoader):
+    yaml_implicit_resolvers: dict[Any, Any] = {}
+
+    def __init__(self, stream: Any) -> None:
+        super().__init__(stream)
+        self._policy_depth = 0
+
+    def construct_object(self, node: Any, deep: bool = False) -> Any:
+        if isinstance(node, (yaml.MappingNode, yaml.SequenceNode)):
+            self._policy_depth += 1
+            try:
+                require(self._policy_depth <= MAX_YAML_DEPTH, "YAML nesting exceeds the allowed depth")
+                return super().construct_object(node, deep=deep)
+            finally:
+                self._policy_depth -= 1
+        return super().construct_object(node, deep=deep)
+
+    def construct_mapping(self, node: Any, deep: bool = False) -> dict[str, Any]:
+        if not isinstance(node, yaml.MappingNode):
+            raise ConfigError("config must be a mapping")
+        result: dict[str, Any] = {}
+        for key_node, value_node in node.value:
+            key = self.construct_object(key_node, deep=deep)
+            require(isinstance(key, str) and bool(key), "YAML mapping key must be text")
+            require(MAPPING_KEY.fullmatch(key) is not None, f"YAML mapping key {key!r} is invalid")
+            require(key != "<<", "YAML merge keys are not allowed")
+            require(key not in result, f"duplicate key {key!r}")
+            result[key] = self.construct_object(value_node, deep=deep)
         return result
 
-    def parse_sequence(self, indent: int, depth: int) -> list[Any]:
-        require(depth <= MAX_YAML_DEPTH, "YAML nesting exceeds the allowed depth")
-        result: list[Any] = []
-        while self.index < len(self.lines):
-            _, line_indent, content = self.lines[self.index]
-            if line_indent < indent:
-                break
-            require(line_indent == indent, "YAML indentation is inconsistent")
-            if content == "-":
-                rest = ""
-            elif content.startswith("- "):
-                rest = content[2:]
-            else:
-                break
-            self.index += 1
-            result.append(self.parse_value(indent, rest, depth + 1))
-        require(bool(result), "YAML block sequence is empty")
-        return result
 
-    def parse_value(self, parent_indent: int, rest: str, depth: int) -> Any:
-        require(depth <= MAX_YAML_DEPTH, "YAML nesting exceeds the allowed depth")
-        if rest == "":
-            require(
-                self.index < len(self.lines) and self.lines[self.index][1] > parent_indent,
-                "YAML null values are not allowed",
-            )
-            child_indent = self.lines[self.index][1]
-            content = self.lines[self.index][2]
-            if content == "-" or content.startswith("- "):
-                return self.parse_sequence(child_indent, depth)
-            return self.parse_mapping(child_indent, depth)
-        if rest[0] in "|>":
-            raise ConfigError("YAML block scalars are not allowed")
-        if rest[0] in "[{":
-            value, end = parse_flow(rest, 0, depth)
-            require(rest[end:].strip() == "", "YAML flow value has trailing content")
-            return value
-        if rest == "-" or rest.startswith("- "):
-            item = "" if rest == "-" else rest[2:]
-            return [self.parse_value(parent_indent, item, depth + 1)]
-        if has_block_mapping_indicator(rest):
-            key, mapping_rest = split_mapping_entry(rest)
-            return {key: self.parse_value(parent_indent, mapping_rest, depth + 1)}
-        return parse_scalar(rest)
+PolicyLoader.add_implicit_resolver("tag:yaml.org,2002:bool", BOOLEAN_SCALAR, list("tf"))
+PolicyLoader.add_implicit_resolver("tag:yaml.org,2002:int", INTEGER_SCALAR, list("-+0123456789"))
+PolicyLoader.add_implicit_resolver("tag:yaml.org,2002:null", NULL_SCALAR, ["~", "n", "N", ""])
 
 
 def parse_yaml_mapping(text: str) -> dict[str, Any]:
-    value = YamlLoader(text).parse_document()
+    reject_unsupported_yaml(text)
+    try:
+        documents = list(yaml.load_all(text, Loader=PolicyLoader))
+    except yaml.YAMLError as error:
+        raise ConfigError(yaml_error_message(error)) from error
+    require(len(documents) == 1, "YAML documents and directives are not allowed")
+    value = documents[0]
     require(isinstance(value, dict), "config must be a mapping")
+    reject_disallowed_values(value)
     return value
 
 
@@ -697,6 +449,7 @@ if __name__ == "__main__":
         UnicodeError,
         ValueError,
         ConfigError,
+        yaml.YAMLError,
         RecursionError,
     ) as error:
         print(f"FAIL: {escape_diagnostic(error)}", file=sys.stderr)

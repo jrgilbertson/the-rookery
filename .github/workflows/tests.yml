@@ -48,6 +48,9 @@ jobs:
           chmod +x "$tool_dir/lefthook" "$tool_dir/actionlint" "$tool_dir/shellcheck" "$tool_dir/gitleaks"
           echo "$tool_dir" >> "$GITHUB_PATH"
 
+      - name: Install policy parser
+        run: python3 -m pip install --user 'pyyaml==6.0.3'
+
       - name: Validate Lefthook configuration
         run: lefthook validate
 

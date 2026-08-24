@@ -21,6 +21,11 @@ Validate the live file with:
 python3 scripts/config_check.py --repo-root ROOT --config .agents/repo-gardener.yaml
 ```
 
+The validator parses that file once with PyYAML SafeLoader, then applies the
+field schema. Tags, aliases, merge keys, nulls, and duplicate keys fail
+closed. Booleans are `true`/`false` only. Lane inventory reads the same
+mapping; the file does not have a second YAML grammar.
+
 A valid file parses and names every required field with real values (no
 `REPLACE_WITH_*`): stable repository identity, default branch, authoring
 scope, configured protected paths, `maximum_workers`, live tracker identity,

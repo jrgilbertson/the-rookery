@@ -2,7 +2,7 @@
 name: repo-gardener
 description: Use when running or interpreting a scheduled or manual repository-gardening pass for one repository, including first-use setup of `.agents/repo-gardener.yaml` and a gardening tracker. An Orchestrator surveys nine maintenance lanes, deepens while further investigation would change assignments or recommendations, optionally checks product-data trust, and may assign parallel Workers that each take one unmerged PR when current evidence justifies it. Do not use for merging, releasing, deploying, creating follow-up issues, contacting customers, or performing an already-selected implementation outside a gardening run.
 license: MIT
-compatibility: Requires Python 3 and config_check.py; read access to one repository, its durable file, native PR state, and configured evidence; optional `.agents/managing-issues.json` for issue-lane tracker selection. Loads the already-installed skill and does not reinstall because a run started. Mutating runs need Worker worktree, branch, and PR capabilities. Simplification and code review are required before Worker dispatch; checking-pr-readiness is required before opening a PR.
+compatibility: Requires Python 3, PyYAML, and config_check.py; read access to one repository, its durable file, native PR state, and configured evidence; optional `.agents/managing-issues.json` for issue-lane tracker selection. Loads the already-installed skill and does not reinstall because a run started. Mutating runs need Worker worktree, branch, and PR capabilities. Simplification and code review are required before Worker dispatch; checking-pr-readiness is required before opening a PR.
 ---
 
 # Repo Gardener

@@ -21,6 +21,10 @@ looked" surface. GitHub Releases mirror its entries.
   register is not required. Unattended Workers open PRs only through
   assessment-only `checking-pr-readiness`. In-run `checking-merge-readiness` is
   read-only feedback and never merges.
+- `repo-gardener` now parses `.agents/repo-gardener.yaml` once with PyYAML
+  SafeLoader and the existing field schema. Lane inventory uses that mapping
+  instead of a second regex grammar. Tags, aliases, merge keys, nulls, and
+  duplicate keys still fail closed. Developer installs need PyYAML.
 - `managing-issues` first-use now recommends a Linear exclusive readiness group
   (`readiness` / `needs-discovery` / `needs-planning` / `ready`) and keeps
   GitHub prefixed flats. The config schema is unchanged. Already-configured

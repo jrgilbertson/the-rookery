@@ -299,6 +299,23 @@ def main() -> int:
             flow_lanes == {"schema": "repo-gardener-lanes-result/v1", "lanes": list(CONTRACT.RELEASE_A_LANES)},
             f"flow-style lanes inventory drifted: {flow_lanes!r}",
         )
+        four_space_lines = []
+        in_lanes = False
+        for line in POLICY_PATH.read_text(encoding="utf-8").splitlines():
+            if line.startswith("lanes:"):
+                in_lanes = True
+                four_space_lines.append(line)
+                continue
+            if in_lanes and line and not line[0].isspace():
+                in_lanes = False
+            four_space_lines.append("  " + line if in_lanes and line else line)
+        four_space_path = Path(directory) / "four-space-policy.yaml"
+        four_space_path.write_text("\n".join(four_space_lines) + "\n", encoding="utf-8")
+        four_space_lanes = invoke("lanes-v1", {}, extra=["--policy", str(four_space_path)])
+        CONTRACT.require(
+            four_space_lanes == {"schema": "repo-gardener-lanes-result/v1", "lanes": list(CONTRACT.RELEASE_A_LANES)},
+            f"four-space lanes inventory drifted: {four_space_lanes!r}",
+        )
 
     removed = subprocess.run(
         [sys.executable, str(CONTRACT_PATH), "normalize-github-register", "--input", "-"],

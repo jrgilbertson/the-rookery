@@ -52,8 +52,8 @@ FORBIDDEN_PROCESS_OR_NETWORK_IMPORTS = {
     "urllib",
     "webbrowser",
     "xmlrpc",
-    "yaml",
 }
+ALLOWED_THIRD_PARTY_IMPORTS = {"yaml"}
 FORBIDDEN_WRITE_METHODS = {
     "chmod",
     "copy",
@@ -292,9 +292,14 @@ def check_script_surface() -> None:
                     "config validator contains a non-binary-read Path.open call",
                 )
     non_standard = sorted(
-        name for name in imported if name != "__future__" and name not in sys.stdlib_module_names
+        name
+        for name in imported
+        if name != "__future__"
+        and name not in sys.stdlib_module_names
+        and name not in ALLOWED_THIRD_PARTY_IMPORTS
     )
     require(not non_standard, f"config validator imports non-standard modules: {non_standard}")
+    require("yaml" in imported, "config validator must use PyYAML")
     require(
         not imported & FORBIDDEN_PROCESS_OR_NETWORK_IMPORTS,
         f"config validator imports process/network modules: {sorted(imported & FORBIDDEN_PROCESS_OR_NETWORK_IMPORTS)}",
@@ -524,7 +529,22 @@ lanes:
             "  - AGENTS.md\n",
             '  - "AGENTS.md" trailing "\n',
         )
-        expect_invalid(quoted_trailing, repo_root, "YAML string has trailing content")
+        expect_invalid(quoted_trailing, repo_root, "YAML is invalid")
+
+        yes_mutation = dump_yaml(base_config()).replace("    mutation: true\n", "    mutation: yes\n", 1)
+        expect_invalid(yes_mutation, repo_root, "mutation must be a boolean")
+
+        four_space_lines = []
+        in_lanes = False
+        for line in dump_yaml(base_config()).splitlines():
+            if line.startswith("lanes:"):
+                in_lanes = True
+                four_space_lines.append(line)
+                continue
+            if in_lanes and line and not line[0].isspace():
+                in_lanes = False
+            four_space_lines.append("  " + line if in_lanes and line else line)
+        expect_valid("\n".join(four_space_lines) + "\n", repo_root, expected)
 
         mapping_path = dump_yaml(base_config()).replace(
             "  - AGENTS.md\n",

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import re
 import sys
@@ -68,10 +69,7 @@ EFFECT_PREPARED_FIELDS = {
     "comment",
 }
 RESERVED_REPORT_SEQUENCES = (RUN_RECORD_BEGIN, RUN_RECORD_END)
-LANE_HEADER = re.compile(
-    r"  ([a-z0-9][a-z0-9-]*):\s*(?:\{\s*(?:mutation\s*:\s*(true|false)\s*,?\s*)?\}\s*)?(?:#.*)?$"
-)
-LANE_MUTATION = re.compile(r"    mutation:\s*(true|false)\s*(?:#.*)?$")
+_CONFIG_CHECK: Any = None
 
 
 class ContractError(Exception):
@@ -157,57 +155,39 @@ def validate_body(body: Any) -> int:
     return size
 
 
-def policy_section(text: str, name: str) -> list[str]:
-    lines = text.splitlines()
-    starts = [index for index, line in enumerate(lines) if re.fullmatch(rf"{re.escape(name)}:\s*(?:#.*)?", line)]
-    require(len(starts) == 1, f"policy must define top-level {name} exactly once")
-    result: list[str] = []
-    for line in lines[starts[0] + 1 :]:
-        if line and not line[0].isspace() and not line.lstrip().startswith("#"):
-            break
-        result.append(line)
-    return result
+def _config_check_module() -> Any:
+    global _CONFIG_CHECK
+    if _CONFIG_CHECK is None:
+        path = Path(__file__).resolve().parent / "config_check.py"
+        spec = importlib.util.spec_from_file_location("repo_gardener_config_check", path)
+        require(spec is not None and spec.loader is not None, "config validator is missing")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        _CONFIG_CHECK = module
+    return _CONFIG_CHECK
 
 
 def installed_lanes_from_text(text: str) -> list[str]:
     require(isinstance(text, str), "policy must be text")
-    lanes = policy_section(text, "lanes")
-    for line in lanes:
-        if not line.strip() or line.lstrip().startswith("#"):
-            continue
-        require(
-            LANE_HEADER.fullmatch(line) is not None or LANE_MUTATION.fullmatch(line) is not None,
-            "policy lanes contain an unparsed or inline entry",
-        )
-    lane_starts: list[tuple[int, str]] = []
-    inline_mutations: dict[str, str] = {}
-    for index, line in enumerate(lanes):
-        match = LANE_HEADER.fullmatch(line)
-        if match is None:
-            continue
-        lane = match.group(1)
-        lane_starts.append((index, lane))
-        if match.group(2) is not None:
-            inline_mutations[lane] = match.group(2)
-    result = [lane for _, lane in lane_starts]
+    config_check = _config_check_module()
+    try:
+        mapping = config_check.parse_yaml_mapping(text)
+    except config_check.ConfigError as error:
+        raise ContractError(str(error)) from error
+    require("lanes" in mapping, "policy must define top-level lanes exactly once")
+    lanes = mapping["lanes"]
+    require(isinstance(lanes, dict), "policy must define top-level lanes exactly once")
+    result = list(lanes)
     require(bool(result), "policy installed lane inventory is empty")
     require(len(result) == len(set(result)), "policy installed lane inventory contains duplicates")
     require(tuple(result) == RELEASE_A_LANES, "policy installed lane inventory differs from the public nine-lane contract")
-    for position, (start, lane) in enumerate(lane_starts):
-        end = lane_starts[position + 1][0] if position + 1 < len(lane_starts) else len(lanes)
-        mutations = []
-        if lane in inline_mutations:
-            mutations.append(inline_mutations[lane])
-        mutations.extend(
-            match.group(1)
-            for line in lanes[start + 1 : end]
-            if (match := LANE_MUTATION.fullmatch(line))
-        )
+    for lane, entry in lanes.items():
+        require(isinstance(entry, dict), f"policy lane {lane} must be a mapping")
         if lane == TRIAGE_LANE:
-            require(mutations == [], f"policy lane {lane} must not declare mutation")
+            require(not entry, f"policy lane {lane} must not declare mutation")
         else:
             require(
-                mutations in (["true"], ["false"]),
+                set(entry) == {"mutation"} and isinstance(entry.get("mutation"), bool),
                 f"policy lane {lane} mutation must be exactly true or false",
             )
     return result

@@ -53,8 +53,9 @@ Every lane verdict, every run:
    read the bodies of the five most recent items in lane scope, or of every
    item when fewer than five exist, and say which were read. Finding one
    candidate early does not excuse the rest of the sample.
-4. "Room for improvement: none" is unavailable to a lane running on shared
-   reads or an incomplete census; that lane names its own sensing gap instead.
+4. "Room for improvement: none" is unavailable when the lane skipped its own
+   required reads or ran on an incomplete census; that lane names its own
+   sensing gap instead.
 5. A declared scouting plan is executed or explicitly replaced, and each
    lane's "what happened" cell names the sensing mechanism that lane actually
    used. For list-style lanes that includes whether the lane consumed the
@@ -127,9 +128,10 @@ remove, skip, or suppress validation.
 
 ## Repository, test, and code health
 
-Consume the parent identifier census of configured current issues. Do not
-re-page that population. Floor 3 still owns the five-body sample when this
-lane is issue-facing. Then read
+Consume the parent identifier census of the issue source. Do not re-page
+that population. When that source is unavailable, this lane still senses
+its other signals and names the missing issue portion. Floor 3 still owns
+the five-body sample when this lane is issue-facing. Then read
 repository-native maintenance, test-health, code-health, dead-code, and
 architecture signals. Require a stable finding or exact revision, bounded
 scope, measurable impact, conflict surface, and verification path. Exclude

@@ -61,9 +61,9 @@ The Orchestrator runs every installed lane from `lane-contracts.md` once,
 after those identifier censuses exist. Read-only scout helpers may be
 parallel in the Orchestrator session; they do not need persistent worktrees
 and do not own a PR. Hand each list-style census as compact rows in the
-scout brief, or as one Orchestrator-local ephemeral path the scout can read
-when the list would dominate the brief. Never put the census on the tracker
-or in the repository working tree. A scout that lacks the census result
+scout brief, or as one file in a per-run temporary directory outside the
+worktree when the list would dominate the brief. Never put the census on
+the tracker or in the repository working tree. A scout that lacks the census result
 reports a sequencing gap and does not list that population.
 Source-unavailable and empty-complete are census results, not missing
 censuses. A Worker does not survey nine lanes or write tracker comments.

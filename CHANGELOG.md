@@ -13,8 +13,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
-- `repo-gardener` list-style censuses of at most 1,000 items must enumerate to
-  completion rather than stopping at a stated page bound.
+- `repo-gardener` list-style censuses of issues, pull requests, and alerts
+  keep listing while a total or another page is known and the count is under
+  10,000, once per population, rather than stopping at a stated page bound.
 
 - `repo-gardener` first-use now writes `.agents/repo-gardener.yaml` and creates
   a gardening tracker the way Managing Issues writes its config. A scheduled or

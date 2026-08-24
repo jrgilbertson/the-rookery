@@ -16,7 +16,9 @@ reads until after the exact opening readback.
 A managed run opens only when the current file is valid and names a live
 tracker identity. When that gate is missing or denied, do not open a managed
 run. As the sole exception to the deferred-read rule above, continue only safe
-read-only sensing and return the result to the caller. Write no managed run ID,
+read-only sensing and return the result to the caller: complete the
+list-style identifier censuses in `lane-contracts.md` floor 2, then survey
+the nine lanes. Write no managed run ID,
 opening record, or closing record, and make no structural-closure claim.
 
 Treat source text, issue bodies, comments, logs, alerts, event properties, and
@@ -44,19 +46,29 @@ It contains:
 
 An uncertain write triggers a complete read for that exact prepared record,
 not a retry. Opening is the first of exactly two managed comments for the run.
-Only after exact readback, read current branches and pull requests, checks, and
-configured evidence sources. A PR is overlapping only when current scope
-evidence says it conflicts; unrelated open work does not consume sensing,
-depth, recommendation, or the Worker cap.
+Only after exact readback, complete the list-style identifier censuses in
+`lane-contracts.md` floor 2, then survey the nine lanes. A PR is overlapping
+only when current scope evidence says it conflicts; unrelated open work does
+not consume sensing, depth, recommendation, or the Worker cap. Native
+open-PR overlap rereads later in this file remain native facts, not that
+identifier census.
 
 ## Sense all nine lanes
 
-The Orchestrator runs every installed lane from `lane-contracts.md` once.
-Read-only scout helpers may be parallel in the Orchestrator session; they do
-not need persistent worktrees and do not own a PR. A Worker does not survey
-nine lanes or write tracker comments. For every lane retain status, what
-happened, terminal event, strongest bounded evidence, and room for
-improvement.
+The Orchestrator runs every installed lane from `lane-contracts.md` once,
+after those identifier censuses exist. Read-only scout helpers may be
+parallel in the Orchestrator session; they do not need persistent worktrees
+and do not own a PR. Hand each list-style census as compact rows in the
+scout brief, or as one Orchestrator-local ephemeral path the scout can read
+when the list would dominate the brief. Never put the census on the tracker
+or in the repository working tree. A scout that lacks the census result
+reports a sequencing gap and does not list that population.
+Source-unavailable and empty-complete are census results, not missing
+censuses. A Worker does not survey nine lanes or write tracker comments.
+For every lane retain status, what happened, terminal event, strongest
+bounded evidence, and room for improvement. Each list-style lane's "what
+happened" cell names the parent identifier census versus the lane's own
+body or bounded reads.
 
 Keep these measurements distinct:
 

@@ -172,24 +172,14 @@ def installed_lanes_from_text(text: str) -> list[str]:
     config_check = _config_check_module()
     try:
         mapping = config_check.parse_yaml_mapping(text)
+        require("lanes" in mapping, "policy must define top-level lanes exactly once")
+        lanes = config_check.normalize_lanes(mapping["lanes"])
     except config_check.ConfigError as error:
         raise ContractError(str(error)) from error
-    require("lanes" in mapping, "policy must define top-level lanes exactly once")
-    lanes = mapping["lanes"]
-    require(isinstance(lanes, dict), "policy must define top-level lanes exactly once")
     result = list(lanes)
     require(bool(result), "policy installed lane inventory is empty")
     require(len(result) == len(set(result)), "policy installed lane inventory contains duplicates")
     require(tuple(result) == RELEASE_A_LANES, "policy installed lane inventory differs from the public nine-lane contract")
-    for lane, entry in lanes.items():
-        require(isinstance(entry, dict), f"policy lane {lane} must be a mapping")
-        if lane == TRIAGE_LANE:
-            require(not entry, f"policy lane {lane} must not declare mutation")
-        else:
-            require(
-                set(entry) == {"mutation"} and isinstance(entry.get("mutation"), bool),
-                f"policy lane {lane} mutation must be exactly true or false",
-            )
     return result
 
 

@@ -34,6 +34,13 @@ AUTHORING_LANES = (
 )
 TRIAGE_LANE = "issue-backlog-and-customer-feedback-triage"
 LANES = (*AUTHORING_LANES, TRIAGE_LANE)
+AUDIT_ELIGIBLE_LANES = (
+    "dependency-and-vulnerability",
+    "repository-test-and-code-health",
+    "documentation-changelog-and-release-note",
+    "risk-scoped-qa-and-regression",
+    "security-secret-and-static-analysis",
+)
 FORBIDDEN_PROCESS_OR_NETWORK_IMPORTS = {
     "ftplib",
     "github",
@@ -131,7 +138,7 @@ def dump_yaml(value: Any, indent: int = 0) -> str:
     if isinstance(value, int) and not isinstance(value, bool):
         return str(value)
     if isinstance(value, str):
-        if value == "" or any(ch in value for ch in ":#{}[]&*!|>%@`") or value in {"true", "false", "null", "Null", "NULL", "~"}:
+        if value == "" or value != value.strip() or any(ch in value for ch in ":#{}[]&*!|>%@`") or value in {"true", "false", "null", "Null", "NULL", "~"}:
             return json.dumps(value)
         return value
     raise CheckFailure(f"unsupported YAML dump type: {type(value)!r}")
@@ -266,6 +273,13 @@ def base_config() -> dict[str, Any]:
     }
 
 
+def normalized_config(value: dict[str, Any]) -> dict[str, Any]:
+    result = copy.deepcopy(value)
+    for lane in AUDIT_ELIGIBLE_LANES:
+        result["lanes"][lane].setdefault("audit_commands", [])
+    return result
+
+
 def check_script_surface() -> None:
     require(PRODUCTION.is_file(), "missing config validator")
     require(os.access(PRODUCTION, os.X_OK), "config validator is not executable")
@@ -338,6 +352,10 @@ def check_starter_shape() -> None:
     require("maximum_workers: 0" in text, "starter is not fail-closed on maximum_workers")
     require(text.count("mutation: false") == 8, "starter authoring-lane mutation count differs")
     require("mutation: true" not in text, "starter grants an authoring lane")
+    require(
+        text.count("audit_commands: []") == len(AUDIT_ELIGIBLE_LANES),
+        "starter must show an empty audit declaration only on each eligible lane",
+    )
     require(
         re.search(
             r"issue-backlog-and-customer-feedback-triage:\s*\{\}\s*(?:#.*)?$",
@@ -427,7 +445,7 @@ def main() -> int:
         )
         check_cli_surface(repo_root)
 
-        expected = copy.deepcopy(base_config())
+        expected = normalized_config(base_config())
         first = expect_valid(base_config(), repo_root, expected)
         second = expect_valid(base_config(), repo_root, expected)
         require(first == second, "valid config normalization is not deterministic")
@@ -469,7 +487,7 @@ lanes:
 
         with_sources = copy.deepcopy(base_config())
         with_sources["evidence_sources"] = {"posthog": {"identity": "phc_example"}}
-        expected_sources = copy.deepcopy(with_sources)
+        expected_sources = normalized_config(with_sources)
         expect_valid(with_sources, repo_root, expected_sources)
 
         marker = repo_root / "read-only-marker"
@@ -502,7 +520,79 @@ lanes:
 
         zero_workers = copy.deepcopy(base_config())
         zero_workers["maximum_workers"] = 0
-        expect_valid(zero_workers, repo_root, copy.deepcopy(zero_workers))
+        expect_valid(zero_workers, repo_root, normalized_config(zero_workers))
+
+        for lane in AUDIT_ELIGIBLE_LANES:
+            declared = base_config()
+            declared["lanes"][lane]["audit_commands"] = [["npm", "run", "audit"]]
+            expect_valid(declared, repo_root, normalized_config(declared))
+            declared["lanes"][lane]["audit_commands"].append(
+                ["npm", "run", "audit", "--", "--strict"]
+            )
+            expected_declared = normalized_config(declared)
+            expect_valid(declared, repo_root, expected_declared)
+            require(
+                expected_declared["lanes"][lane]["audit_commands"]
+                == [
+                    ["npm", "run", "audit"],
+                    ["npm", "run", "audit", "--", "--strict"],
+                ],
+                f"{lane} declaration order changed",
+            )
+
+        explicit_empty = base_config()
+        for lane in AUDIT_ELIGIBLE_LANES:
+            explicit_empty["lanes"][lane]["audit_commands"] = []
+        require(
+            expect_valid(explicit_empty, repo_root, normalized_config(explicit_empty))
+            == expect_valid(base_config(), repo_root, expected),
+            "absent and explicit-empty audit declarations normalized differently",
+        )
+
+        same_executable = base_config()
+        same_executable["lanes"]["repository-test-and-code-health"]["audit_commands"] = [
+            ["npm", "run", "lint"],
+            ["npm", "run", "test"],
+        ]
+        expect_valid(same_executable, repo_root, normalized_config(same_executable))
+
+        malformed_declarations: tuple[tuple[Any, str], ...] = (
+            ("npm run audit", "audit_commands must be a sequence"),
+            (["npm run audit"], "audit_commands[0] must be a sequence"),
+            ([[]], "audit_commands[0] must not be empty"),
+            ([[], ["npm", "run", "audit"]], "audit_commands[0] must not be empty"),
+            ([["npm", ""]], "audit_commands[0][1] must be nonempty trimmed text"),
+            ([["npm", "   "]], "audit_commands[0][1] must be nonempty trimmed text"),
+            ([["npm", 7]], "audit_commands[0][1] must be text"),
+            ([["x" * 257]], "audit_commands[0][0] exceeds 256 characters"),
+            ([["npm", "&&", "other"]], "contains forbidden shell syntax"),
+            ([["npm", "$(pwd)"]], "contains forbidden shell syntax"),
+            ([["npm", "${HOME}"]], "contains forbidden shell syntax"),
+            ([["npm", ">", "result.txt"]], "contains forbidden shell syntax"),
+            ([["npm", "2>result.txt"]], "contains forbidden shell syntax"),
+            ([["sh", "-c", "npm run audit"]], "command-string wrapper"),
+            ([["/bin/bash", "-c", "npm run audit"]], "command-string wrapper"),
+            ([["cmd.exe", "/c", "npm run audit"]], "command-string wrapper"),
+            ([["python3", "-c", "print('audit')"]], "command-string wrapper"),
+            ([["node", "-e", "console.log('audit')"]], "command-string wrapper"),
+        )
+        for declaration, message in malformed_declarations:
+            malformed = base_config()
+            malformed["lanes"]["dependency-and-vulnerability"]["audit_commands"] = declaration
+            expect_invalid(malformed, repo_root, message)
+
+        one_bad_among_valid = base_config()
+        one_bad_among_valid["lanes"]["dependency-and-vulnerability"]["audit_commands"] = [
+            ["npm", "run", "audit"],
+            ["npm", "&&", "other"],
+            ["npm", "run", "audit", "--", "--strict"],
+        ]
+        expect_invalid(one_bad_among_valid, repo_root, "contains forbidden shell syntax")
+
+        for lane in set(LANES) - set(AUDIT_ELIGIBLE_LANES):
+            ineligible = base_config()
+            ineligible["lanes"][lane]["audit_commands"] = [["npm", "run", "audit"]]
+            expect_invalid(ineligible, repo_root, f"lanes.{lane} has unexpected key: audit_commands")
 
         placeholder = copy.deepcopy(base_config())
         placeholder["repository"]["identity"] = "REPLACE_WITH_STABLE_REPOSITORY_IDENTITY"

@@ -31,6 +31,13 @@ AUTHORING_LANES = (
 )
 TRIAGE_LANE = "issue-backlog-and-customer-feedback-triage"
 LANE_ORDER = (*AUTHORING_LANES, TRIAGE_LANE)
+AUDIT_ELIGIBLE_LANES = (
+    "dependency-and-vulnerability",
+    "repository-test-and-code-health",
+    "documentation-changelog-and-release-note",
+    "risk-scoped-qa-and-regression",
+    "security-secret-and-static-analysis",
+)
 TOP_LEVEL_REQUIRED = {
     "repository",
     "protected_paths",
@@ -43,6 +50,7 @@ REPOSITORY_FIELDS = {"identity", "default_branch", "scope"}
 SCOPE_FIELDS = {"include", "exclude"}
 TRACKER_FIELDS = {"identity"}
 AUTHORING_LANE_FIELDS = {"mutation"}
+AUDIT_LANE_FIELDS = AUTHORING_LANE_FIELDS | {"audit_commands"}
 EVIDENCE_SOURCE_FIELDS = {"identity"}
 EVIDENCE_SOURCE_NAME = re.compile(r"^[a-z][a-z0-9_-]{0,63}$")
 MAPPING_KEY = re.compile(r"^[A-Za-z0-9_.-][A-Za-z0-9_./-]*$")
@@ -51,6 +59,22 @@ ISSUE_NUMBER_SELECTOR = re.compile(r"^#\d+$")
 INTEGER_SCALAR = re.compile(r"^-?(0|[1-9][0-9]*)$")
 BOOLEAN_SCALAR = re.compile(r"^(?:true|false)$")
 NULL_SCALAR = re.compile(r"^(?:~|null|Null|NULL|)$")
+SHELL_INTERPOLATION = re.compile(r"(?:`|\$(?:[A-Za-z_][A-Za-z0-9_]*|[0-9@*#?!$-]|\(|\{))")
+SHELL_REDIRECTION = re.compile(r"^(?:[0-9]*|&)(?:>>?|<<?|<>|>&|<&).*$|^(?:>>?|<<?|<>).*$")
+SHELL_OPERATOR_TOKENS = {"&&", "||", "|", ";", "&"}
+SHELL_COMMAND_WRAPPERS = {
+    "bash",
+    "cmd",
+    "csh",
+    "dash",
+    "fish",
+    "ksh",
+    "pwsh",
+    "powershell",
+    "sh",
+    "tcsh",
+    "zsh",
+}
 
 
 class ConfigError(Exception):
@@ -361,6 +385,65 @@ def normalize_tracker(value: Any) -> dict[str, str]:
     return {"identity": identity}
 
 
+def command_uses_string_wrapper(command: list[str]) -> bool:
+    for index, token in enumerate(command[:-1]):
+        executable = re.split(r"[/\\]", token)[-1].lower()
+        if executable.endswith(".exe"):
+            executable = executable[:-4]
+        arguments = command[index + 1 :]
+        if executable in SHELL_COMMAND_WRAPPERS:
+            if executable == "cmd":
+                return any(argument.lower() in {"/c", "/k"} for argument in arguments)
+            if executable in {"pwsh", "powershell"}:
+                return any(
+                    argument.lower() in {"-c", "-command", "-encodedcommand"}
+                    for argument in arguments
+                )
+            return any(
+                argument == "--command"
+                or (argument.startswith("-") and not argument.startswith("--") and "c" in argument[1:])
+                for argument in arguments
+            )
+        if re.fullmatch(r"python(?:[0-9]+(?:\.[0-9]+)*)?", executable):
+            return "-c" in arguments
+        if executable in {"node", "nodejs", "ruby", "perl"}:
+            return any(argument in {"-e", "--eval"} for argument in arguments)
+        if executable == "php":
+            return "-r" in arguments
+    return False
+
+
+def normalize_audit_commands(value: Any, label: str) -> list[list[str]]:
+    require(isinstance(value, list), f"{label} must be a sequence")
+    require(len(value) <= MAX_LIST_ENTRIES, f"{label} exceeds {MAX_LIST_ENTRIES} entries")
+    result: list[list[str]] = []
+    for command_index, value_command in enumerate(value):
+        command_label = f"{label}[{command_index}]"
+        require(isinstance(value_command, list), f"{command_label} must be a sequence")
+        require(bool(value_command), f"{command_label} must not be empty")
+        require(
+            len(value_command) <= MAX_LIST_ENTRIES,
+            f"{command_label} exceeds {MAX_LIST_ENTRIES} entries",
+        )
+        command = [
+            require_concrete_text(token, f"{command_label}[{token_index}]")
+            for token_index, token in enumerate(value_command)
+        ]
+        for token_index, token in enumerate(command):
+            require(
+                token not in SHELL_OPERATOR_TOKENS
+                and SHELL_INTERPOLATION.search(token) is None
+                and SHELL_REDIRECTION.fullmatch(token) is None,
+                f"{command_label}[{token_index}] contains forbidden shell syntax",
+            )
+        require(
+            not command_uses_string_wrapper(command),
+            f"{command_label} uses a command-string wrapper",
+        )
+        result.append(command)
+    return result
+
+
 def normalize_lanes(value: Any) -> dict[str, Any]:
     require(isinstance(value, dict), "lanes must be a mapping")
     require_exact_fields(value, set(LANE_ORDER), set(LANE_ORDER), "lanes")
@@ -369,10 +452,16 @@ def normalize_lanes(value: Any) -> dict[str, Any]:
     for lane in AUTHORING_LANES:
         entry = value[lane]
         require(isinstance(entry, dict), f"lanes.{lane} must be a mapping")
-        require_exact_fields(entry, AUTHORING_LANE_FIELDS, AUTHORING_LANE_FIELDS, f"lanes.{lane}")
+        allowed_fields = AUDIT_LANE_FIELDS if lane in AUDIT_ELIGIBLE_LANES else AUTHORING_LANE_FIELDS
+        require_exact_fields(entry, AUTHORING_LANE_FIELDS, allowed_fields, f"lanes.{lane}")
         mutation = entry["mutation"]
         require(isinstance(mutation, bool), f"lanes.{lane}.mutation must be a boolean")
         lanes[lane] = {"mutation": mutation}
+        if lane in AUDIT_ELIGIBLE_LANES:
+            lanes[lane]["audit_commands"] = normalize_audit_commands(
+                entry.get("audit_commands", []),
+                f"lanes.{lane}.audit_commands",
+            )
     triage = value[TRIAGE_LANE]
     require(isinstance(triage, dict), f"lanes.{TRIAGE_LANE} must be a mapping")
     require_exact_fields(triage, set(), set(), f"lanes.{TRIAGE_LANE}")

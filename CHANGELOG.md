@@ -13,6 +13,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-gardener` can run exact owner-declared audit commands in its five
+  eligible sensing lanes, with evidence-based setup recommendations, bounded
+  direct execution, and existing candidate and reporting rules preserved.
 - `repo-gardener` first-use now writes `.agents/repo-gardener.yaml` and creates
   a gardening tracker the way Managing Issues writes its config. A scheduled or
   manual run uses one Orchestrator that may assign parallel Workers, each with

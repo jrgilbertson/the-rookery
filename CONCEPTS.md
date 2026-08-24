@@ -190,6 +190,13 @@ A Worker may use helpers for scouting, simplification, review, and pull-request
 readiness. Helpers do not own a pull request. One Worker ships at most one
 pull request. Merge remains a later human step.
 
+### Census
+
+A cheap listing of one source population during a Repository Automation Loop,
+such as issues, pull requests, or alerts. Census totals are reported separately
+from candidates. Completing a census is not reading bodies and is not emitting
+candidates.
+
 ### Gardening Tracker
 
 The GitHub issue used as the morning report and append-only run-history surface

@@ -58,10 +58,11 @@ identity. Creating the tracker issue does not start a gardening run. Config
 approval does not approve the first run.
 
 At open, read the durable file from the refreshed default branch and record
-that revision. Mid-run, re-read it only to detect that the file changed. A
-revision change stops further source mutation, push, and PR-open for every
-Worker. Unchanged grants are not re-litigated. If the file still names the
-tracker, the Orchestrator still writes the closed comment. Continue safe
+that revision. Mid-run, re-read it only to detect that the file changed,
+including immediately before each declared audit. A revision change stops all
+remaining declared audits and further source mutation, push, and PR-open for
+every Worker. Unchanged grants are not re-litigated. If the file still names
+the tracker, the Orchestrator still writes the closed comment. Continue safe
 sensing and report the exact gap. Never substitute a bundled, copied, or
 transformed file.
 
@@ -72,7 +73,7 @@ identifier censuses in
 survey the nine lanes. This caller-only branch is the sole exception to the
 opening-before-sensing order. It is not a managed run: mint no managed run ID,
 write neither `run-opened` nor `run-closed`, and make no structural-closure
-claim.
+claim. It, setup, and Scout helpers execute no declared audit.
 
 ## Run the Orchestrator loop
 
@@ -83,7 +84,13 @@ claim.
 2. Write and exactly read back one immutable `run-opened` tracker record,
    including the opening file revision.
 3. Only after that exact readback, complete the list-style identifier
-   censuses in `lane-contracts.md` floor 2, then survey all nine lanes once.
+   censuses in `lane-contracts.md` floor 2, then read checks and configured
+   evidence sources and survey all nine lanes once. In each eligible lane, run
+   only its normalized `audit_commands`, in declaration order, through the
+   direct-argv, capability, ten-minute, private-output, termination, and
+   subject-recheck contract in `policy-and-entry-modes.md` and
+   `reconciliation.md`. Execute before candidate qualification; a command
+   result is evidence, not a verdict.
    Report census totals separately from candidates, and normalized candidates
    separately from both. Native open-PR overlap checks remain native facts,
    not that identifier census. Those overlap checks list current native open
@@ -204,7 +211,9 @@ An eight-hour lease is overlap recovery metadata, not a time, token, or cost
 budget. Close an inactive prior run as `interrupted` only after the caller
 confirms its automation is no longer active. Preserve the original run and
 Orchestrator identities, name the recovering Orchestrator separately, and use
-`unknown` where qualitative evidence cannot be reconstructed. If liveness is
+`unknown` where qualitative evidence or an audit's terminal disposition cannot
+be reconstructed. Never resume or replay a stale run's remaining audit
+commands; a later run starts from a fresh exact opening. If liveness is
 unknown, stop and ask the owner.
 
 A Worker is reported in one of these current states:

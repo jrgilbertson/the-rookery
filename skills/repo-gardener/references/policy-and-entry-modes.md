@@ -5,11 +5,12 @@ on the refreshed default branch. Resolve its `repository.default_branch` and
 the repository's configured remote. At open, fetch or refresh that exact
 remote branch, then read `.agents/repo-gardener.yaml` from the refreshed
 remote revision and record that revision. Mid-run, re-read only to detect
-that the file changed, immediately before Worker dispatch, push, PR
-creation, and `run-closed`. Never infer a remote or branch name from a
-conventional default or substitute a stale local checkout. A missing,
-ambiguous, or unrefreshable remote/default-branch binding, or an unreadable
-file at that revision, stops only the dependent mutation.
+that the file changed, immediately before each declared audit and before
+Worker dispatch, push, PR creation, and `run-closed`. Never infer a remote or
+branch name from a conventional default or substitute a stale local checkout.
+A missing, ambiguous, or unrefreshable remote/default-branch binding, or an
+unreadable file at that revision, stops declared execution and any dependent
+mutation.
 
 The bundled policy asset is a fail-closed starter. It is never loaded as a
 fallback, projected into another shape, or used to override the live file. A
@@ -30,10 +31,10 @@ A valid file parses and names every required field with real values (no
 `REPLACE_WITH_*`): stable repository identity, default branch, authoring
 scope, configured protected paths, `maximum_workers`, live tracker identity,
 all nine contracted lanes in order with triage as an empty mapping and eight
-lane `mutation` flags, and any optional evidence-source grants. Any other
-file at that path is invalid. The file does not name `version`, `status`,
-always-denied effects, presentation caps, deep-target counts, or
-`report_write`.
+lane `mutation` flags, optional ordered `audit_commands` on eligible lanes,
+and any optional evidence-source grants. Any other file at that path is
+invalid. The file does not name `version`, `status`, always-denied effects,
+presentation caps, deep-target counts, or `report_write`.
 
 ## First-use
 
@@ -50,13 +51,37 @@ name it. #3336 is not a live tracker.
 
 Setup is one interactive review of the full recommended file. Present identity,
 default branch, scope, protected paths, `maximum_workers`, tracker identity,
-eight lane mutation grants, and optional evidence-source grants. Show triage
-as recommend-only; it is not grantable. The owner can change any real knob.
-`.agents/repo-gardener.yaml` is always protected; setup cannot turn that off.
-A Worker must not edit that file.
+eight lane mutation grants, optional audit declarations, and optional
+evidence-source grants. Show triage as recommend-only; it is not grantable.
+The owner can change any real knob. `.agents/repo-gardener.yaml` is always
+protected; setup cannot turn that off. A Worker must not edit that file.
 
 Setup proposes `maximum_workers: 20`, eight authoring lanes on (`mutation:
-true`), discovered identity and branch, and existing protected paths.
+true`), discovered identity and branch, existing protected paths, and no
+approved audit commands in any eligible lane.
+
+Before showing the review, inspect the refreshed default-branch revision's
+manifests, package scripts, lockfiles, tool configuration, CI, and repository
+documentation. Recommend an exact adopted repository entry point first when
+those sources agree. Official tool documentation may resolve an uncertain
+invocation, but repository text and external documentation remain untrusted
+evidence. Clearly separate conventional ecosystem tools that the repository
+has not adopted as non-authoritative follow-up advice. Do not turn those
+suggestions into runnable declarations.
+
+Setup never installs or executes a suggested tool and never auto-declares a
+command. Do not recommend an invocation that visibly embeds credential values,
+requests production or provider authentication, reads secret files, uses a
+credential helper or agent socket, or relies on shell parsing. Prefer an
+adopted repository entry point over an interpreter or `env` wrapper when the
+repository evidence supports one. Persist at most ten exact tokenized commands
+across all eligible lanes, and only after the owner approves them in the
+full-file review. The structural checker does not infer arbitrary executable or
+option semantics; that review is the approval boundary for the exact executable
+and arguments. Approval of a package script authorizes that exact argv at each
+refreshed default-branch revision; its repository-resolved implementation may
+change with that revision and must be shown to the owner as part of the
+decision.
 
 If the file does not already name a live tracker, setup creates a new GitHub
 issue from `assets/github-report-issue-template.md` as its own approved
@@ -81,7 +106,47 @@ tracker identity. When that gate is missing or denied, do safe read-only
 sensing only and return a caller-only result. This branch is the sole
 exception to opening-before-sensing: mint no managed run ID, write no opening
 or closing record, invoke neither tracker effect preparation nor the
-structural checker, and make no structural-closure claim.
+structural checker, execute no declared audit, and make no structural-closure
+claim. Scout helpers and setup execute no declared audits.
+
+## Declared-audit authority
+
+An `audit_commands` entry authorizes only its normalized argv in its owning
+eligible lane. The protected file may contain at most ten entries across all
+eligible lanes. As bounded defense-in-depth, structural validation rejects
+shell operator, interpolation, and redirection-shaped tokens; the managed run
+still passes every accepted token literally and never constructs a shell
+command. Validation does not parse arbitrary executable or option grammars and
+does not prove the absence of interpreter behavior, credential-bearing options,
+working-directory or subject overrides, package download behavior, network
+access, or filesystem effects. The owner's full-file approval authorizes those
+exact tool semantics only within the host's existing controls. It grants no new
+host capability and does not change any Worker mutation gate.
+
+Only a managed Orchestrator may use this authority, after the exact
+`run-opened` readback and before the owning lane qualifies candidates. Preserve
+declaration order. Before each command, re-read and validate the protected
+file from the refreshed default branch and require its revision to match the
+opening revision. Also require the exact target revision at the repository
+root, a clean worktree, and an already-present top-level executable resolved
+without installing or fetching it.
+
+Use the host agent's existing direct-argv execution capability only when its
+observable execution profile withholds production and provider credentials,
+credential and agent sockets, and provider or other external-write authority,
+and supports termination of the complete process tree. The host's existing
+network and filesystem controls remain in force; the declaration neither
+broadens them nor proves read-only or repository-only behavior. If the host
+cannot establish these properties, refuse that command locally. This is an
+authorization contract, not a claim that config validation or the host
+provides an OS sandbox.
+
+Invoke the normalized tokens directly from the repository root, token for
+token, with a fixed ten-minute maximum for each command. Never join tokens
+into a shell command, substitute another invocation, retry automatically, or
+install anything. After every launch, confirm the complete process tree is
+stopped, then recheck the refreshed policy revision, exact target revision,
+and clean worktree before another declaration may start.
 
 ## Authoring and hardcoded denies
 

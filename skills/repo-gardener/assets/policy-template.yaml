@@ -53,6 +53,7 @@ lanes:
   # Manifests, advisories, and dependency-update PRs.
   dependency-and-vulnerability:
     mutation: false
+    audit_commands: []
   # Ready, unblocked implementation issues in the issue source.
   issue-implementation:
     mutation: false
@@ -62,17 +63,21 @@ lanes:
   # Tests, dead code, architecture, and a rotating source-slice inspection.
   repository-test-and-code-health:
     mutation: false
+    audit_commands: []
   # Docs and changelog drift against shipped behavior. Not a release.
   documentation-changelog-and-release-note:
     mutation: false
+    audit_commands: []
   # Configured errors or alerts, if a read source exists.
   runtime-error-and-alert:
     mutation: false
   # Risk-scoped QA and regression evidence.
   risk-scoped-qa-and-regression:
     mutation: false
+    audit_commands: []
   # Advisories, secret scanning, static analysis. Never expose or rotate secrets.
   security-secret-and-static-analysis:
     mutation: false
+    audit_commands: []
   # Backlog and feedback triage. Recommend issues only; mutation is not grantable.
   issue-backlog-and-customer-feedback-triage: {}

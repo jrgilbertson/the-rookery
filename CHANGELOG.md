@@ -13,6 +13,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-gardener` can run exact owner-declared audit commands in its five
+  eligible sensing lanes, with evidence-based setup recommendations, bounded
+  direct execution, and existing candidate and reporting rules preserved.
 - `repo-gardener` list-style censuses of issues, pull requests, and alerts
   keep listing while remaining items are knowable and the count is under
   10,000, once per population, rather than stopping at a stated page bound.
@@ -22,7 +25,6 @@ looked" surface. GitHub Releases mirror its entries.
   consumes the issue-source census when that source exists. Overlap rereads
   list current native PRs instead of that sensing census. Scout census
   handoff is compact rows or a per-run temporary file outside the worktree.
-
 - `repo-gardener` first-use now writes `.agents/repo-gardener.yaml` and creates
   a gardening tracker the way Managing Issues writes its config. A scheduled or
   manual run uses one Orchestrator that may assign parallel Workers, each with

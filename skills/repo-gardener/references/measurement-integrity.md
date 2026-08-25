@@ -27,8 +27,13 @@ revenue, or cost definition.
 Confirm the configured reporting project against the repository's canonical
 production-project identity before querying. A mismatch stops only this slice.
 Name a bounded time window and timezone, product surface, expected events or
-metrics, and a query or time budget. Use the repository's existing validation
-commands first. Then, within available read-only roles, check:
+metrics, and a query or time budget. When an execution-eligible lane has
+already completed an applicable declared audit in this managed run, consume
+that owning-lane result at most once as bounded evidence. Do not run or rerun a
+validation command here, create a separate declaration namespace or execution
+pass, or turn measurement integrity into a tenth lane. A successful command
+alone does not establish schema agreement, freshness, reconciliation, or data
+trust. Then, within available read-only roles, check:
 
 - executable schema, generated-reference, and observed event/property
   agreement, including required fields, types, enums, environment or release,
@@ -59,7 +64,13 @@ supplied` for unavailable observed values. Include every `metric contract
 missing` result and state `blank reporting data is not zero product activity`
 whenever the reporting read is blank. Attach each material finding to every
 contributing lane and assign its owning lane from the remediation it actually
-requires.
+requires. Cite any applicable completed declared-audit result through its
+owning lane only once; do not copy it into a second command result or count it
+again as a candidate. A failed or refused result may establish a bounded
+measurement limitation, but its terminal disposition alone does not establish
+a data defect. With no applicable completed result, continue the read-only
+preflight and do not invent missing declared-audit coverage.
+
 When the relevant measurement slice fails, its behavior data cannot support a
 product hypothesis or conclusion. A defect that prevents reconciliation of a
 canonical metric or blocks a critical flow or trusted decision is worth

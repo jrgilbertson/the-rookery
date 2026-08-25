@@ -114,6 +114,15 @@ def expect_error(payload: dict[str, Any], phrase: str) -> None:
     raise CONTRACT.ContractError(f"expected rejection containing {phrase!r}")
 
 
+def expect_lanes_error(path: Path, phrase: str) -> None:
+    try:
+        invoke("lanes-v1", {}, extra=["--policy", str(path)])
+    except CONTRACT.ContractError as error:
+        CONTRACT.require(phrase in str(error), f"expected {phrase!r}, got {error!s}")
+        return
+    raise CONTRACT.ContractError(f"expected lanes-v1 rejection containing {phrase!r}")
+
+
 def main() -> int:
     run_id = "run:synthetic:two-comments"
     base = SNAPSHOTS.empty_tracker()
@@ -288,8 +297,8 @@ def main() -> int:
         f"nine-lane inventory drifted: {lanes!r}",
     )
     flow_policy = POLICY_PATH.read_text(encoding="utf-8").replace(
-        "  dependency-and-vulnerability:\n    mutation: false\n",
-        "  dependency-and-vulnerability: {mutation: false}\n",
+        "  dependency-and-vulnerability:\n    mutation: false\n    audit_commands: []\n",
+        "  dependency-and-vulnerability: {mutation: false, audit_commands: [[npm, run, audit]]}\n",
     )
     with tempfile.TemporaryDirectory() as directory:
         flow_path = Path(directory) / "policy.yaml"
@@ -299,6 +308,41 @@ def main() -> int:
             flow_lanes == {"schema": "repo-gardener-lanes-result/v1", "lanes": list(CONTRACT.RELEASE_A_LANES)},
             f"flow-style lanes inventory drifted: {flow_lanes!r}",
         )
+
+        invalid_policy_cases = {
+            "missing.yaml": (
+                POLICY_PATH.read_text(encoding="utf-8").replace(
+                    "  dependency-and-vulnerability:\n    mutation: false\n    audit_commands: []\n",
+                    "",
+                ),
+                "missing key: dependency-and-vulnerability",
+            ),
+            "extra.yaml": (
+                POLICY_PATH.read_text(encoding="utf-8").replace(
+                    "  issue-backlog-and-customer-feedback-triage: {}\n",
+                    "  issue-backlog-and-customer-feedback-triage: {}\n  extra-lane: {}\n",
+                ),
+                "unexpected key: extra-lane",
+            ),
+            "duplicate.yaml": (
+                POLICY_PATH.read_text(encoding="utf-8").replace(
+                    "  issue-implementation:\n",
+                    "  dependency-and-vulnerability: {mutation: false, audit_commands: []}\n  issue-implementation:\n",
+                ),
+                "duplicate key 'dependency-and-vulnerability'",
+            ),
+            "reordered.yaml": (
+                POLICY_PATH.read_text(encoding="utf-8").replace(
+                    "  dependency-and-vulnerability:\n    mutation: false\n    audit_commands: []\n  # Ready, unblocked implementation issues in the issue source.\n  issue-implementation:\n    mutation: false\n",
+                    "  issue-implementation:\n    mutation: false\n  dependency-and-vulnerability:\n    mutation: false\n    audit_commands: []\n",
+                ),
+                "lanes must name every contracted lane in order",
+            ),
+        }
+        for filename, (text, phrase) in invalid_policy_cases.items():
+            invalid_path = Path(directory) / filename
+            invalid_path.write_text(text, encoding="utf-8")
+            expect_lanes_error(invalid_path, phrase)
         four_space_lines = []
         in_lanes = False
         for line in POLICY_PATH.read_text(encoding="utf-8").splitlines():

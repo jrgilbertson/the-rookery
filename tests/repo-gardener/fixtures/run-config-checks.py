@@ -556,24 +556,31 @@ lanes:
         ]
         expect_valid(same_executable, repo_root, normalized_config(same_executable))
 
-        literal_wrapper_arguments = base_config()
-        literal_wrapper_arguments["lanes"]["repository-test-and-code-health"][
+        ten_declared = base_config()
+        for lane in AUDIT_ELIGIBLE_LANES:
+            ten_declared["lanes"][lane]["audit_commands"] = [
+                ["scanner", lane],
+                ["scanner", "summary", lane],
+            ]
+        expect_valid(ten_declared, repo_root, normalized_config(ten_declared))
+        eleven_declared = copy.deepcopy(ten_declared)
+        eleven_declared["lanes"]["dependency-and-vulnerability"]["audit_commands"].append(
+            ["scanner", "overflow"]
+        )
+        expect_invalid(eleven_declared, repo_root, "exceeds 10 total entries")
+
+        safe_literal_arguments = base_config()
+        safe_literal_arguments["lanes"]["repository-test-and-code-health"][
             "audit_commands"
         ] = [
-            ["printf", "bash", "-c"],
-            ["python3", "scripts/audit.py", "--strict"],
-            ["python3", "/tmp/audit.py", "--strict"],
-            ["node", "scripts/audit.js", "--strict"],
-            ["bash", "scripts/audit.sh", "--strict"],
-            ["env", "printf", "bash", "-c"],
-            ["env", "MODE=audit", "scanner", "--format=json"],
-            ["pwsh", "-File", "scripts/audit.ps1", "-Verbose"],
-            ["pwsh", "-ConfigurationName", "audit-host", "-File", "scripts/audit.ps1"],
+            ["scanner", "scripts/audit.py", "--language=python3"],
+            ["scanner", "bash-like", "-c", "--format=json"],
+            ["scanner", "--secret-scanning=enabled"],
         ]
         expect_valid(
-            literal_wrapper_arguments,
+            safe_literal_arguments,
             repo_root,
-            normalized_config(literal_wrapper_arguments),
+            normalized_config(safe_literal_arguments),
         )
 
         malformed_declarations: tuple[tuple[Any, str], ...] = (
@@ -590,44 +597,36 @@ lanes:
             ([["npm", "${HOME}"]], "contains forbidden shell syntax"),
             ([["npm", ">", "result.txt"]], "contains forbidden shell syntax"),
             ([["npm", "2>result.txt"]], "contains forbidden shell syntax"),
-            ([["sh", "-c", "npm run audit"]], "command-string wrapper"),
-            ([["/bin/bash", "-c", "npm run audit"]], "command-string wrapper"),
-            ([["cmd.exe", "/c", "npm run audit"]], "command-string wrapper"),
-            ([["cmd.exe", "/c:npm run audit"]], "command-string wrapper"),
-            ([["cmd.exe", "/config", "literal"]], "command-string wrapper"),
-            ([["python3", "-c", "print('audit')"]], "command-string wrapper"),
-            ([["python3", "-cprint('audit')"]], "command-string wrapper"),
-            ([["python3", "-Bcprint('audit')"]], "command-string wrapper"),
-            ([["python3", "-W", "ignore", "-cprint('audit')"]], "command-string wrapper"),
-            ([["node", "-e", "console.log('audit')"]], "command-string wrapper"),
-            ([["node", "-econsole.log('audit')"]], "command-string wrapper"),
-            ([["node", "-p1 + 1"]], "command-string wrapper"),
-            ([["node", "--eval=console.log('audit')"]], "command-string wrapper"),
-            ([["node", "-p", "1 + 1"]], "command-string wrapper"),
-            ([["node", "--print=1 + 1"]], "command-string wrapper"),
-            ([["ruby", "-eputs('audit')"]], "command-string wrapper"),
-            ([["ruby", "-we", "puts('audit')"]], "command-string wrapper"),
-            ([["perl", "-Eprint('audit')"]], "command-string wrapper"),
-            ([["perl", "-we", "print('audit')"]], "command-string wrapper"),
-            ([["php", "-recho 'audit';"]], "command-string wrapper"),
-            ([["pwsh", "-Command:Write-Output audit"]], "command-string wrapper"),
-            ([["pwsh", "-Command=Write-Output audit"]], "command-string wrapper"),
-            ([["powershell.exe", "-enc:AAAA"]], "command-string wrapper"),
-            ([["env", "-S", "printf audit"]], "command-string wrapper"),
-            ([["env", "-Sprintf audit"]], "command-string wrapper"),
-            ([["env", "--split-string", "printf audit"]], "command-string wrapper"),
-            ([["env", "--split-string=printf audit"]], "command-string wrapper"),
-            ([["env", "-C", "..", "scanner"]], "changes the audit working directory"),
-            ([["env", "-C..", "scanner"]], "changes the audit working directory"),
-            ([["env", "--chdir", "..", "scanner"]], "changes the audit working directory"),
-            ([["env", "--chdir=..", "scanner"]], "changes the audit working directory"),
-            ([["env", "API_TOKEN=value", "scanner"]], "contains or requests a credential"),
+            ([["sh", "scripts/audit.sh"]], "forbidden interpreter or env wrapper"),
+            ([["/bin/bash", "scripts/audit.sh"]], "forbidden interpreter or env wrapper"),
+            ([["cmd.exe", "/config", "literal"]], "forbidden interpreter or env wrapper"),
+            ([["python3", "scripts/audit.py"]], "forbidden interpreter or env wrapper"),
+            ([["pythonw3.14", "scripts/audit.py"]], "forbidden interpreter or env wrapper"),
+            ([["node", "scripts/audit.js"]], "forbidden interpreter or env wrapper"),
+            ([["ruby", "scripts/audit.rb"]], "forbidden interpreter or env wrapper"),
+            ([["perl", "scripts/audit.pl"]], "forbidden interpreter or env wrapper"),
+            ([["php", "scripts/audit.php"]], "forbidden interpreter or env wrapper"),
+            ([["pwsh", "-File", "scripts/audit.ps1"]], "forbidden interpreter or env wrapper"),
+            ([["fish", "scripts/audit.fish"]], "forbidden interpreter or env wrapper"),
+            ([["env", "MODE=audit", "scanner"]], "forbidden interpreter or env wrapper"),
+            (
+                [["timeout", "30s", "sh", "-c", "printf audit"]],
+                "forbidden interpreter or env wrapper",
+            ),
+            (
+                [["timeout", "30s", "env", "-C", "/tmp", "scanner"]],
+                "forbidden interpreter or env wrapper",
+            ),
+            ([["scanner", "API_TOKEN=value"]], "contains or requests a credential"),
             ([["scanner", "--token=value"]], "contains or requests a credential"),
             ([["scanner", "--api-key", "value"]], "contains or requests a credential"),
-            ([["env", "bash", "-c", "printf audit"]], "command-string wrapper"),
             (
-                [["env", "MODE=audit", "python3", "-cprint('audit')"]],
-                "command-string wrapper",
+                [["curl", "-H", "Authorization: Bearer secret", "https://example.test"]],
+                "contains or requests a credential",
+            ),
+            (
+                [["curl", "--header=X-Api-Key: secret", "https://example.test"]],
+                "contains or requests a credential",
             ),
         )
         for declaration, message in malformed_declarations:

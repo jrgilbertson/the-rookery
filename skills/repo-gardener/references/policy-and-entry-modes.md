@@ -72,11 +72,13 @@ suggestions into runnable declarations.
 Setup never installs or executes a suggested tool and never auto-declares a
 command. Do not recommend or persist an invocation that embeds or requests
 credentials, tokens, provider authentication, secret files, credential
-helpers, or agent sockets. Persist only the exact tokenized commands the owner
-approves in the full-file review. Approval of a package script authorizes that
-exact argv at each refreshed default-branch revision; its repository-resolved
-implementation may change with that revision and must be shown to the owner as
-part of the decision.
+helpers, or agent sockets, or that names an interpreter or `env` executable in
+any argv position. Persist at most ten exact tokenized commands across all
+eligible lanes, and only after the owner approves them in the full-file
+review. Approval of a package script authorizes that exact argv at each
+refreshed default-branch revision; its repository-resolved implementation may
+change with that revision and must be shown to the owner as part of the
+decision.
 
 If the file does not already name a live tracker, setup creates a new GitHub
 issue from `assets/github-report-issue-template.md` as its own approved
@@ -107,10 +109,13 @@ claim. Scout helpers and setup execute no declared audits.
 ## Declared-audit authority
 
 An `audit_commands` entry authorizes only its normalized argv in its owning
-eligible lane. It grants no shell, package installation or download,
-production or provider credential, credential or agent socket, network or
-external-write capability, repository mutation, or unrelated filesystem
-write authority. It does not change any Worker mutation gate.
+eligible lane. The protected file may contain at most ten entries across all
+eligible lanes. A declaration is invalid when any argv token names an
+interpreter or `env` executable; use an adopted tool or package entry point
+instead. It grants no shell, package installation or download, production or
+provider credential, credential or agent socket, network or external-write
+capability, repository mutation, or unrelated filesystem write authority. It
+does not change any Worker mutation gate.
 
 Only a managed Orchestrator may use this authority, after the exact
 `run-opened` readback and before the owning lane qualifies candidates. Preserve

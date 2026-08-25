@@ -18,6 +18,7 @@ MAX_CONFIG_BYTES = 64 * 1024
 MAX_TEXT_LENGTH = 256
 MAX_INTEGER = 2_147_483_647
 MAX_LIST_ENTRIES = 256
+MAX_AUDIT_COMMANDS = 10
 MAX_YAML_DEPTH = 16
 AUTHORING_LANES = (
     "dependency-and-vulnerability",
@@ -64,10 +65,10 @@ SHELL_REDIRECTION = re.compile(r"^(?:[0-9]*|&)(?:>>?|<<?|<>|>&|<&).*$|^(?:>>?|<<
 SHELL_OPERATOR_TOKENS = {"&&", "||", "|", ";", "&"}
 CREDENTIAL_NAME = re.compile(
     r"(?:^|[_-])(?:access[_-]?key|api[_-]?key|auth(?:entication|orization)?|"
-    r"credential|password|passwd|private[_-]?key|secret|token)(?:$|[_-])",
+    r"credential|password|passwd|private[_-]?key|secret|token)$",
     re.IGNORECASE,
 )
-SHELL_COMMAND_WRAPPERS = {
+FORBIDDEN_COMMAND_NAMES = {
     "bash",
     "cmd",
     "csh",
@@ -76,6 +77,13 @@ SHELL_COMMAND_WRAPPERS = {
     "ksh",
     "pwsh",
     "powershell",
+    "env",
+    "node",
+    "nodejs",
+    "perl",
+    "php",
+    "py",
+    "ruby",
     "sh",
     "tcsh",
     "zsh",
@@ -395,100 +403,23 @@ def executable_name(token: str) -> str:
     return executable[:-4] if executable.endswith(".exe") else executable
 
 
-def option_uses_string_wrapper(executable: str, option: str) -> bool:
-    if executable == "cmd":
-        return re.match(r"^/[ck]", option, re.IGNORECASE) is not None
-    if executable in {"pwsh", "powershell"}:
-        return (
-            re.match(
-                r"^-(?:c|command|enc|encodedcommand)(?:$|[=:])",
-                option,
-                re.IGNORECASE,
-            )
-            is not None
-        )
-    if executable in SHELL_COMMAND_WRAPPERS:
-        return (
-            option == "--command"
-            or re.match(r"^-[abefhkmnptuvxBCHP]*c", option) is not None
-        )
-    if re.fullmatch(r"python(?:[0-9]+(?:\.[0-9]+)*)?", executable):
-        return re.match(r"^(?:-c|-[bBdEhiIOPqRsSuvV]*c)", option) is not None
-    if executable in {"node", "nodejs"}:
-        return (
-            re.match(r"^(?:-[ep]|--(?:eval|print)(?:$|[=:]))", option) is not None
-        )
-    if executable == "ruby":
-        return re.match(r"^-[acdlmnpsvwx]*e", option) is not None
-    if executable == "perl":
-        return re.match(r"^-[acdlnpstTuvwxW]*[eE]", option) is not None
-    if executable == "php":
-        return re.match(r"^-[nq]*r", option) is not None
-    return False
-
-
-def parse_env_wrapper(arguments: list[str]) -> tuple[bool, bool, list[str]]:
-    """Locate env options that can reinterpret argv or change the command cwd."""
-    index = 0
-    while index < len(arguments):
-        argument = arguments[index]
-        if argument in {"-S", "--split-string"}:
-            return True, False, []
-        if argument.startswith("-S") and len(argument) > 2:
-            return True, False, []
-        if argument.startswith("--split-string="):
-            return True, False, []
-        if argument in {"-C", "--chdir"}:
-            return False, True, []
-        if (argument.startswith("-C") and len(argument) > 2) or argument.startswith(
-            "--chdir="
-        ):
-            return False, True, []
-        if argument in {"--", "-"}:
-            index += 1
-            break
-        if argument in {"-u", "--unset"}:
-            index += 2
-            continue
-        if argument.startswith("-"):
-            index += 1
-            continue
-        break
-    while index < len(arguments) and re.match(
-        r"^[A-Za-z_][A-Za-z0-9_]*=", arguments[index]
-    ):
-        index += 1
-    return False, False, arguments[index:]
+def token_is_forbidden_command(token: str) -> bool:
+    executable = executable_name(token)
+    return executable in FORBIDDEN_COMMAND_NAMES or (
+        re.fullmatch(r"pythonw?(?:[0-9]+(?:\.[0-9]+)*)?", executable) is not None
+    )
 
 
 def token_contains_or_requests_credential(token: str) -> bool:
     candidate = token.lstrip("-")
-    name, separator, _value = candidate.partition("=")
-    return bool((separator or token.startswith("-")) and CREDENTIAL_NAME.search(name))
-
-
-def command_uses_string_wrapper(command: list[str]) -> bool:
-    executable = executable_name(command[0])
-    arguments = command[1:]
-
-    if executable == "env":
-        uses_split_string, _changes_directory, wrapped_command = parse_env_wrapper(arguments)
-        return uses_split_string or bool(
-            wrapped_command and command_uses_string_wrapper(wrapped_command)
-        )
-    # Reserve wrapper switches anywhere in interpreter argv rather than
-    # duplicating each interpreter's evolving option grammar here.
-    return any(
-        option_uses_string_wrapper(executable, option)
-        for option in arguments
-    )
-
-
-def command_changes_directory(command: list[str]) -> bool:
-    if executable_name(command[0]) != "env":
-        return False
-    _uses_split_string, changes_directory, _wrapped_command = parse_env_wrapper(command[1:])
-    return changes_directory
+    name, separator, value = candidate.partition("=")
+    if (separator or token.startswith("-")) and CREDENTIAL_NAME.search(name):
+        return True
+    header = value if separator else candidate
+    header_name, colon, header_value = header.partition(":")
+    if colon and header_value.strip() and CREDENTIAL_NAME.search(header_name):
+        return True
+    return re.search(r"\b(?:basic|bearer)\s+\S", token, re.IGNORECASE) is not None
 
 
 def normalize_audit_commands(value: Any, label: str) -> list[list[str]]:
@@ -518,14 +449,10 @@ def normalize_audit_commands(value: Any, label: str) -> list[list[str]]:
                 not token_contains_or_requests_credential(token),
                 f"{command_label}[{token_index}] contains or requests a credential",
             )
-        require(
-            not command_changes_directory(command),
-            f"{command_label} changes the audit working directory",
-        )
-        require(
-            not command_uses_string_wrapper(command),
-            f"{command_label} uses a command-string wrapper",
-        )
+            require(
+                not token_is_forbidden_command(token),
+                f"{command_label}[{token_index}] names a forbidden interpreter or env wrapper",
+            )
         result.append(command)
     return result
 
@@ -548,6 +475,11 @@ def normalize_lanes(value: Any) -> dict[str, Any]:
                 entry.get("audit_commands", []),
                 f"lanes.{lane}.audit_commands",
             )
+    require(
+        sum(len(lanes[lane]["audit_commands"]) for lane in AUDIT_ELIGIBLE_LANES)
+        <= MAX_AUDIT_COMMANDS,
+        f"lanes.audit_commands exceeds {MAX_AUDIT_COMMANDS} total entries",
+    )
     triage = value[TRIAGE_LANE]
     require(isinstance(triage, dict), f"lanes.{TRIAGE_LANE} must be a mapping")
     require_exact_fields(triage, set(), set(), f"lanes.{TRIAGE_LANE}")

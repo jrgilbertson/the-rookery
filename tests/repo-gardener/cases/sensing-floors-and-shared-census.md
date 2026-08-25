@@ -12,9 +12,12 @@ batched shell reads, read no source code, and graded its shallowest lanes
 > `skills/repo-gardener/references/lane-contracts.md` (read it and obey it).
 > Current run state: one shared GitHub fetch returned page 1 of the issue
 > list — 100 items, more pages exist but were not requested; 15 of the 100
-> carry a maintenance label. No issue body has been opened. The run's opening
-> plan declared "parallel scout helpers per lane," but sensing so far ran as
-> three batched shell commands; nothing else was executed. The dependency,
+> carry a maintenance label. Listing already stopped at page 1. Do not
+> resume paging. That stop is not a provider failure. No issue body has been
+> opened. The
+> run's opening plan declared "parallel scout helpers per lane," but
+> sensing so far ran as three batched shell commands; nothing else was
+> executed. The job is the table over that already-stopped sensing. The dependency,
 > security, and runtime-error lanes each completed per-item evidence
 > expansion of their own sources and found one candidate between them. The
 > repository's tracked tree has top-level directories `apps` (source), `docs`
@@ -34,10 +37,11 @@ batched shell reads, read no source code, and graded its shallowest lanes
       alone: each either reads the bodies of the five most recent items in
       its lane scope and names which were read, or reports its verdict as
       partial with its own sensing gap named.
-- [ ] The 100-item census with unrequested further pages is reported as a
-      stated bound ("first page of >=100; total unknown") and the affected
-      lane verdicts as partial, never as a bounded, clean, or complete
-      backlog; lane-level partial does not by itself change the run outcome.
+- [ ] The 100-item census with unrequested further pages is reported as an
+      omission, not a stated bound ("first page of >=100; total unknown" is
+      not a valid bound here). Affected lane verdicts are partial, never a
+      bounded, clean, or complete backlog; lane-level partial does not by
+      itself change the run outcome.
 - [ ] "Room for improvement: none" appears on no lane whose evidence is the
       shared fetch or an incomplete census.
 - [ ] The declared scout-helper fan-out is not silently dropped: the report

@@ -40,10 +40,10 @@ checkpoints with release notes; they are not install pins.
 
 ## The workflows
 
-Everything here fits into five core jobs, Research through Ship, plus two feedback loops: Maintain and Learn. The walkthroughs live in [WORKFLOWS.md](WORKFLOWS.md).
+Everything here fits into five core jobs, Research through Ship, plus two feedback loops: Maintain and Learn. The walkthroughs in [WORKFLOWS.md](WORKFLOWS.md) are how I run that loop. The skills in this catalog plug into it and work in other editors and harnesses too.
 
 - [**Research**](WORKFLOWS.md#research). Gather current evidence, test it against opposing views, and curate enough context to plan.
-- [**Plan**](WORKFLOWS.md#plan). Define what to build, how to build it, and how success will be verified.
+- [**Plan**](WORKFLOWS.md#plan). Define what to build, the guardrails execution has to honor, and how success will be verified.
 - [**Design**](WORKFLOWS.md#design). Set the visual direction and written design system for interface work.
 - [**Build**](WORKFLOWS.md#build). Implement the plan in bounded, independently verified slices.
 - [**Ship**](WORKFLOWS.md#ship). Review and verify the finished change before merging and documenting it.
@@ -58,7 +58,7 @@ Everything here fits into five core jobs, Research through Ship, plus two feedba
 - [managing-issues](skills/managing-issues/SKILL.md). Manage GitHub or Linear issues and their native parent and blocker relationships through the repository's canonical tracker. Use it to read, draft, create, or update a single issue or multi-issue graph, and to assess readiness, dependencies, or completion.
 - [managing-personal-crm](skills/managing-personal-crm/SKILL.md). Keep relationship context in one note per person while messages and other raw interactions stay in their original apps. Use it to prepare for someone, capture an interaction, reconnect an overdue relationship, or find who could help with current work.
 - [personal-chief-of-staff](skills/personal-chief-of-staff/SKILL.md). Turn information from your configured sources into a daily, weekly, or quarterly review. Run it when you need to orient, reflect, and decide what to do next across several parts of your life and work.
-- [repo-gardener](skills/repo-gardener/SKILL.md). Check a repository across nine maintenance areas and, when warranted, assign parallel Workers that each leave one unmerged pull request. First-use writes `.agents/repo-gardener.yaml` and a gardening tracker. Run it on a schedule or by hand; a human still merges.
+- [repo-gardener](skills/repo-gardener/SKILL.md). Check a repository across nine maintenance areas and, when warranted, assign parallel workers that each leave one unmerged pull request. Run it on a schedule or by hand; a human still merges.
 - [reviewing-meetings](skills/reviewing-meetings/SKILL.md). Turn completed meetings into draft notes and follow-up actions grounded in the meeting source. Run it after a meeting or during a catch-up when you want to capture outcomes and approve each follow-up before anything is written.
 - [storm-research](skills/storm-research/SKILL.md). Research a hard question through independent perspectives and produce a source-backed briefing that preserves disagreements and blind spots. Reach for it when a decision, investment, or long-form deliverable needs evidence from several perspectives.
 
@@ -75,7 +75,7 @@ This system builds on work by people who share theirs. Use them directly.
 - [Matt Pocock's skills](https://github.com/mattpocock/skills) by Matt Pocock. The targeted grilling and issue-planning patterns that shaped `managing-issues`.
 - [Impeccable](https://github.com/pbakaus/impeccable) by Paul Bakaus ([@pbakaus](https://x.com/pbakaus)). Shapes design direction, critiques interfaces, and keeps design systems coherent.
 - [last30days](https://github.com/mvanhorn/last30days-skill) by Matt Van Horn ([@mvanhorn](https://x.com/mvanhorn)). Recent-signal research across Reddit, X, YouTube, HN, and the web.
-- [Orca](https://github.com/stablyai/orca) by Jinjing Liang ([@JinjingLiang](https://x.com/JinjingLiang)). The agentic IDE all of this runs in.
+- [Orca](https://github.com/stablyai/orca) by Jinjing Liang ([@JinjingLiang](https://x.com/JinjingLiang)). The agentic IDE I use to run this workflow across several harnesses. The skills also work in VS Code, Claude Cowork, Codex, and other compatible tools.
 
 ## Contributing
 

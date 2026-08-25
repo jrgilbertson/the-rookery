@@ -69,7 +69,7 @@ Source-unavailable and empty-complete are census results, not missing
 censuses. A Worker does not survey nine lanes or write tracker comments.
 For every lane retain status, what happened, terminal event, strongest
 bounded evidence, and room for improvement. Each list-style lane's "what
-happened" cell names the parent identifier census versus the lane's own
+happened" cell names the Orchestrator identifier census versus the lane's own
 body or bounded reads.
 
 Keep these measurements distinct:

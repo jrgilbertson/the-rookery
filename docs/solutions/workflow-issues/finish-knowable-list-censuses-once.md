@@ -44,7 +44,7 @@ with remainder, or when the provider cannot continue. Incomplete list-style
 censuses keep the affected lanes partial and do not by themselves change
 `run_outcome`.
 
-Produce one identifier census per those populations per run. The parent
+Produce one identifier census per those populations per run. The Orchestrator
 lists after `run-opened`. Lanes consume that list and do not re-page it. A
 missing census is a sequencing gap, not a license to list.
 Source-unavailable and empty-complete are census results. An empty-complete

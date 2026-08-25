@@ -18,7 +18,7 @@ looked" surface. GitHub Releases mirror its entries.
   10,000, once per population, rather than stopping at a stated page bound.
   A named bound or omission keeps the affected lanes partial. An
   empty-complete census is absence evidence for a zero-item population. The
-  dependency lane consumes the parent open-PR identifier census. The health lane
+  dependency lane consumes the Orchestrator open-PR identifier census. The health lane
   consumes the issue-source census when that source exists. Overlap rereads
   list current native PRs instead of that sensing census. Scout census
   handoff is compact rows or a per-run temporary file outside the worktree.

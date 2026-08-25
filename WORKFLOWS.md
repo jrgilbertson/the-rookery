@@ -4,7 +4,7 @@
 
 # The workflows
 
-My workflow moves through five core jobs: Research, Plan, Design, Build, and Ship. Two feedback loops keep it current: Maintain turns recurring problems into tests, rules, and documented lessons, while Learn turns experience into linked notes and new research questions. Each section explains how I approach the job and which tools and commands I use.
+My workflow moves through five core jobs: Research, Plan, Design, Build, and Ship. Two feedback loops keep it current: Maintain turns recurring problems into tests, rules, and documented lessons, while Learn turns experience into linked notes and new research questions. Each section explains how I approach the job and which tools and commands I use. The Rookery skills in those sections install on their own. Compound Engineering, Impeccable, and Orca are the surrounding stack I run them in.
 
 ## Foundations
 
@@ -12,6 +12,8 @@ The workflows assume two things are in place:
 
 - **Repository-based work.** These workflows lean heavily on repositories such as GitHub for code development and knowledge management. Repos give you branches for parallel work, version control, and backups, which all help when you're running agents and working with others.
 - **A durable personal knowledge source.** Sources such as Obsidian, Notion, plain markdown files, or anything that persists outside an AI provider's memory. Point each agent at that store so every harness reads the same knowledge. Turning off in-tool agent memory is a separate choice that stops knowledge from collecting where only one provider can reach it.
+
+The skills themselves are not tied to one editor. They work in VS Code, Claude Cowork, Cursor, Codex, Gemini CLI, and other compatible tools. I run the loop in [Orca](https://github.com/stablyai/orca) because it is a strong agentic IDE and can drive several of those harnesses side by side in one project.
 
 ## Research
 
@@ -39,28 +41,28 @@ What must be true before moving to Plan:
 
 ## Plan
 
-**Goal:** Write a clear, concise plan covering what to build (product plan) and how to build it (implementation plan).
+**Goal:** Write a clear, concise plan covering what to build and the guardrails execution has to honor.
 
 I usually plan in the same session that produced the curated context. When research needs to remain current and useful after the work ships, I save it as a maintained findings document in `docs/research/` and plan from there. Point-in-time audits and exploratory findings stay with the issue, pull request, or research system instead of becoming repository documentation by default.
 
-The what (product plan) comes first and covers the exact problem, what good looks like, and how I'll know it's solved. The how (implementation plan) follows with the architectural choices and sequencing that shape everything downstream.
+The what comes first: the exact problem, what good looks like, and how I'll know it's solved. That product shape is what `ce-brainstorm` writes down when the outcome is still open. `ce-plan` then captures the decisions, units, files, tests, and risks execution has to honor. It does not pre-write the code; the agent that implements figures out how.
 
-I read the first pass closely and iterate on the product plan more than the implementation detail. A wrong first pass can sound good at a high level but turns into AI slop by the time it's built. I spend more time in planning than I did before AI because it's harder to adapt mid-execution. That tradeoff is worth it because AI makes spikes, research, and prototypes cheap, so I iterate before and during the plan.
+I read the first pass closely and iterate on the product shape more than on implementation detail. A wrong first pass can sound good at a high level but turns into AI slop by the time it's built. I spend more time in planning than I did before AI because it's harder to adapt mid-execution. That tradeoff is worth it because AI makes spikes, research, and prototypes cheap, so I iterate before and during the plan.
 
 Agents that weren't in the planning session review the plan against the current state of the system, recent research, and official documentation. When the same agent reviews its own artifact, especially inside the same context window, the review approves by structure rather than evidence. The reviewer shares the producer's framing and blind spots.
 
 [Compound Engineering](https://github.com/EveryInc/compound-engineering-plugin) drives the planning step. The entry point depends on what research left open.
 
-- `ce-brainstorm`. Turns open intent into clear requirements and a confirmed product direction. Use it when research leaves important questions about what to build.
-- `ce-plan`. Produces a product plan followed by an implementation plan. Use it when the intent and acceptance boundaries are already clear.
+- `ce-brainstorm`. Turns open intent into a requirements-only plan and a confirmed product direction. Use it when research leaves important questions about what to build.
+- `ce-plan`. Turns a clear intent into one plan of decisions, units, files, tests, and risks. It does not write the implementation. Use it when the outcome is clear enough to plan execution.
 - `ce-debug`. Diagnoses a bug before anyone proposes a fix. Use it when the work begins with broken or unexpected behavior.
 - `ce-pov`. Gives a decisive, project-grounded answer to a focused planning question. Use it when one decision is blocking the plan and another research pass would add little.
 
 After ordinary clarification, I sometimes have one coherent decision tree left where the answers depend on each other. I consider a targeted grilling session when at least one decision would be costly to reverse or affect a broad surface, one answer constrains the questions below it, or the agent would otherwise guess at an acceptance boundary. For example, authentication ownership may determine session lifetime and data access, so those decisions benefit from being settled parent-first. Several unrelated unknowns stay in `ce-brainstorm`. Clear requirements and routine, reversible choices go directly to `ce-plan`.
 
-Install `grill-me` and `grilling` separately from [Matt Pocock's skills](https://github.com/mattpocock/skills). The agent asks one question at a time, recommends an answer, and leaves each decision to you. It looks up facts available in the repo or environment instead of asking you for them. The session creates no glossary or ADR and makes no changes to requirements documents.
+Install `grill-me` and `grilling` separately from [Matt Pocock's skills](https://github.com/mattpocock/skills). Each round asks every independent question at once, with a recommended answer for each, then waits. Dependent questions come in later rounds. It looks up facts in the repo or environment instead of asking you for them. The session creates no glossary or ADR and makes no changes to requirements documents.
 
-Once the user confirms shared understanding, the clarified intent returns to the Compound Engineering planning session. For work an agent can own end-to-end, I turn that intent into the following template.
+Once I confirm shared understanding, the clarified intent returns to the Compound Engineering planning session. For work an agent can own end-to-end, I turn that intent into the following template.
 
 ```yaml
 goal: Complete [objective] until [verifiable end state],
@@ -111,11 +113,11 @@ What must be true before moving to Build:
 
 Work can move across several worktrees in parallel. A worktree is a separate working copy of the same repository, so each agent builds on its own branch without overwriting anyone else's work.
 
-Orca is the agentic IDE where all of this runs. A harness is the agent tool itself, like Claude Code, Codex, Hermes, or Grok. Orca runs several of them side by side in one project, so each worktree can use whichever harness suits its work.
+A harness is the agent tool itself, like Claude Code, Codex, Hermes, or Grok. In Orca, each worktree can use whichever one suits its work.
 
 I choose models by how success will be judged. For work with objective checks, I compare the expected cost of a passing result rather than the cost of one attempt. For taste-led work, I use the cheapest model whose output stays close enough to the best. Mixed work clears the objective checks first, then preference decides among the models that pass.
 
-`ce-work` moves through the plan one unit at a time so I can inspect the work as it lands. `lfg` runs from plan to pull request without check-ins. `/goal` in Claude Code and Codex keeps working toward one completion condition across turns. I use autonomous modes only when the goal is clear and verifiable.
+`ce-work` from Compound Engineering moves through the plan one unit at a time so I can inspect the work as it lands. `lfg`, also from Compound Engineering, runs from plan to pull request without check-ins. `/goal` in Claude Code and Codex keeps working toward one completion condition across turns. I use autonomous modes only when the goal is clear and verifiable.
 
 Compound Engineering is the default planner, executor, reviewer, and learning capture inside each worktree. Small changes may stay with one agent. Independent pieces may go to workers, and hard decisions may get a stronger advisor or a separate critic. I add those roles only when the default loop does not cover the work, because a second orchestration stack repeats planning, review, and handoffs.
 
@@ -165,7 +167,7 @@ What must be true before merge:
 
 Repos and systems need tending over time. Maintenance runs throughout the loop, not only after merge.
 
-[`repo-gardener`](skills/repo-gardener/SKILL.md) checks nine areas of repository health and may assign parallel Workers that each leave one unmerged pull request. First-use writes `.agents/repo-gardener.yaml` and a gardening tracker. It runs on a schedule or by hand, leaves one opening and one closing tracker comment, and never merges.
+[`repo-gardener`](skills/repo-gardener/SKILL.md) checks a repository across nine maintenance areas and, when warranted, assigns parallel workers that each leave one unmerged pull request. It runs on a schedule or by hand; a human still merges.
 
 Design maintenance runs through Impeccable. `impeccable extract` finds patterns used three or more times with the same intent and standardizes them into tokens and primitives. `impeccable document` regenerates the design docs from what actually shipped, so the tools read the design language instead of guessing at it.
 
@@ -183,6 +185,8 @@ The prevention strategy decides where the learning lives, and where it lands mat
 | Prose instruction  | A line in a README, a code comment, or an instructions file                             | The floor. Nothing enforces it, so it holds only as long as the model follows it                  |
 
 
+When the reusable-procedure rung is the right home, [`creating-portable-skills`](skills/creating-portable-skills/SKILL.md) creates, revises, migrates, or audits the package and checks its structure, triggers, behavior, and installation. Use it when a repeated gap needs a portable skill rather than a one-off instruction.
+
 In practice that means a reproducible bug becomes a regression test rather than a paragraph asking the model to be careful, and a convention becomes a lint rule. Only learnings with no mechanical home fall to prose, which is often the honest answer for something that can't be automated yet.
 
 This matters more with agents than with people. Agents generate more code faster and don't reliably remember corrections between sessions, so anything resting on memory decays. Reading the learnings back needs no extra machinery, because a capable model planning in a repo finds the decision records and solutions on its own.
@@ -195,9 +199,15 @@ What must be true before moving to Learn:
 
 **Goal:** Capture what I learned as linked notes and name what I don't know yet.
 
-Learn closes the loop, and it's about my knowledge rather than the system's.
+Learn closes the loop, and it's about my knowledge rather than the system's. Some of that knowledge is a topic worth keeping from a change. Some of it is the rest of life and work: reviews, meetings, and people.
 
-I usually capture personal learnings at the pre-PR checkpoint. The approval menu can render an interactive overview of the change with a quiz. When the overview surfaces a topic worth keeping, I turn it into an atomic note with the [`atomic-note`](https://github.com/jrgilbertson/networked-thinking-skills) skill from Networked Thinking and link it to related topics in my knowledge graph. The gaps that note exposes turn into further reading, follow-up issues, or a fresh research question.
+What I reach for depends on the job:
+
+- [`personal-chief-of-staff`](skills/personal-chief-of-staff/SKILL.md). Turns information from configured sources into a daily, weekly, or quarterly review. Run it when you need to orient, reflect, and decide what to do next across several parts of your life and work.
+- [`reviewing-meetings`](skills/reviewing-meetings/SKILL.md). Turns completed meetings into draft notes and follow-up actions grounded in the meeting source. Run it after a meeting or during a catch-up; each follow-up waits for approval before anything is written.
+- [`managing-personal-crm`](skills/managing-personal-crm/SKILL.md). Keeps relationship context in one note per person, while messages and other raw interactions stay in their original apps. Use it to prepare for someone, capture an interaction, reconnect an overdue relationship, or find who could help with current work.
+
+I usually capture software-adjacent learnings at the pre-PR checkpoint. The approval menu can render an interactive overview of the change with a quiz. When the overview surfaces a topic worth keeping, I turn it into an atomic note with the [`atomic-note`](https://github.com/jrgilbertson/networked-thinking-skills) skill from Networked Thinking and link it to related topics in my knowledge graph. The gaps that note exposes turn into further reading, follow-up issues, or a fresh research question.
 
 [Networked Thinking](https://networkedthinking.ai) is the note system behind that. Atomic notes, each holding one idea, connected into a graph rather than filed into folders. I wrote the book and the site, and the notes in this loop follow that method.
 

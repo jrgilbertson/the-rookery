@@ -13,6 +13,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- README and `WORKFLOWS.md` now describe the catalog as a portable skill
+  set inside a personal loop: `repo-gardener` listings stay two sentences,
+  Orca is the IDE this workflow runs in rather than a requirement, `ce-plan`
+  and grilling match their current upstream contracts, and
+  `creating-portable-skills`, `personal-chief-of-staff`, `reviewing-meetings`,
+  and `managing-personal-crm` appear in the walkthrough.
 - `repo-gardener` can run exact owner-declared audit commands in its five
   eligible sensing lanes, with evidence-based setup recommendations, bounded
   direct execution, and existing candidate and reporting rules preserved.

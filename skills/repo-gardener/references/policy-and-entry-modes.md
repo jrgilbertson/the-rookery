@@ -70,12 +70,15 @@ has not adopted as non-authoritative follow-up advice. Do not turn those
 suggestions into runnable declarations.
 
 Setup never installs or executes a suggested tool and never auto-declares a
-command. Do not recommend or persist an invocation that embeds or requests
-credentials, tokens, provider authentication, secret files, credential
-helpers, or agent sockets, or that names an interpreter or `env` executable in
-any argv position. Persist at most ten exact tokenized commands across all
-eligible lanes, and only after the owner approves them in the full-file
-review. Approval of a package script authorizes that exact argv at each
+command. Do not recommend an invocation that visibly embeds credential values,
+requests production or provider authentication, reads secret files, uses a
+credential helper or agent socket, or relies on shell parsing. Prefer an
+adopted repository entry point over an interpreter or `env` wrapper when the
+repository evidence supports one. Persist at most ten exact tokenized commands
+across all eligible lanes, and only after the owner approves them in the
+full-file review. The structural checker does not infer arbitrary executable or
+option semantics; that review is the approval boundary for the exact executable
+and arguments. Approval of a package script authorizes that exact argv at each
 refreshed default-branch revision; its repository-resolved implementation may
 change with that revision and must be shown to the owner as part of the
 decision.
@@ -110,29 +113,33 @@ claim. Scout helpers and setup execute no declared audits.
 
 An `audit_commands` entry authorizes only its normalized argv in its owning
 eligible lane. The protected file may contain at most ten entries across all
-eligible lanes. A declaration is invalid when any argv token names an
-interpreter or `env` executable; use an adopted tool or package entry point
-instead. It grants no shell, package installation or download, production or
-provider credential, credential or agent socket, network or external-write
-capability, repository mutation, or unrelated filesystem write authority. It
-does not change any Worker mutation gate.
+eligible lanes. As bounded defense-in-depth, structural validation rejects
+shell operator, interpolation, and redirection-shaped tokens; the managed run
+still passes every accepted token literally and never constructs a shell
+command. Validation does not parse arbitrary executable or option grammars and
+does not prove the absence of interpreter behavior, credential-bearing options,
+working-directory or subject overrides, package download behavior, network
+access, or filesystem effects. The owner's full-file approval authorizes those
+exact tool semantics only within the host's existing controls. It grants no new
+host capability and does not change any Worker mutation gate.
 
 Only a managed Orchestrator may use this authority, after the exact
 `run-opened` readback and before the owning lane qualifies candidates. Preserve
 declaration order. Before each command, re-read and validate the protected
 file from the refreshed default branch and require its revision to match the
 opening revision. Also require the exact target revision at the repository
-root, a clean worktree, and an already-present executable resolved without a
-package download.
+root, a clean worktree, and an already-present top-level executable resolved
+without installing or fetching it.
 
 Use the host agent's existing direct-argv execution capability only when its
 observable execution profile withholds production and provider credentials,
 credential and agent sockets, and provider or other external-write authority,
 and supports termination of the complete process tree. The host's existing
 network and filesystem controls remain in force; the declaration neither
-broadens them nor proves read-only behavior. If the host cannot establish
-these properties, refuse that command locally. This is an authorization
-contract, not a claim that the host provides an OS sandbox.
+broadens them nor proves read-only or repository-only behavior. If the host
+cannot establish these properties, refuse that command locally. This is an
+authorization contract, not a claim that config validation or the host
+provides an OS sandbox.
 
 Invoke the normalized tokens directly from the repository root, token for
 token, with a fixed ten-minute maximum for each command. Never join tokens

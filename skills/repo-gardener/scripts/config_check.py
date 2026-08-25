@@ -63,31 +63,6 @@ NULL_SCALAR = re.compile(r"^(?:~|null|Null|NULL|)$")
 SHELL_INTERPOLATION = re.compile(r"(?:`|\$(?:[A-Za-z_][A-Za-z0-9_]*|[0-9@*#?!$-]|\(|\{))")
 SHELL_REDIRECTION = re.compile(r"^(?:[0-9]*|&)(?:>>?|<<?|<>|>&|<&).*$|^(?:>>?|<<?|<>).*$")
 SHELL_OPERATOR_TOKENS = {"&&", "||", "|", ";", "&"}
-CREDENTIAL_NAME = re.compile(
-    r"(?:^|[_-])(?:access[_-]?key|api[_-]?key|auth(?:entication|orization)?|"
-    r"credential|password|passwd|private[_-]?key|secret|token)$",
-    re.IGNORECASE,
-)
-FORBIDDEN_COMMAND_NAMES = {
-    "bash",
-    "cmd",
-    "csh",
-    "dash",
-    "fish",
-    "ksh",
-    "pwsh",
-    "powershell",
-    "env",
-    "node",
-    "nodejs",
-    "perl",
-    "php",
-    "py",
-    "ruby",
-    "sh",
-    "tcsh",
-    "zsh",
-}
 
 
 class ConfigError(Exception):
@@ -398,30 +373,6 @@ def normalize_tracker(value: Any) -> dict[str, str]:
     return {"identity": identity}
 
 
-def executable_name(token: str) -> str:
-    executable = re.split(r"[/\\]", token)[-1].lower()
-    return executable[:-4] if executable.endswith(".exe") else executable
-
-
-def token_is_forbidden_command(token: str) -> bool:
-    executable = executable_name(token)
-    return executable in FORBIDDEN_COMMAND_NAMES or (
-        re.fullmatch(r"pythonw?(?:[0-9]+(?:\.[0-9]+)*)?", executable) is not None
-    )
-
-
-def token_contains_or_requests_credential(token: str) -> bool:
-    candidate = token.lstrip("-")
-    name, separator, value = candidate.partition("=")
-    if (separator or token.startswith("-")) and CREDENTIAL_NAME.search(name):
-        return True
-    header = value if separator else candidate
-    header_name, colon, header_value = header.partition(":")
-    if colon and header_value.strip() and CREDENTIAL_NAME.search(header_name):
-        return True
-    return re.search(r"\b(?:basic|bearer)\s+\S", token, re.IGNORECASE) is not None
-
-
 def normalize_audit_commands(value: Any, label: str) -> list[list[str]]:
     require(isinstance(value, list), f"{label} must be a sequence")
     require(len(value) <= MAX_LIST_ENTRIES, f"{label} exceeds {MAX_LIST_ENTRIES} entries")
@@ -444,14 +395,6 @@ def normalize_audit_commands(value: Any, label: str) -> list[list[str]]:
                 and SHELL_INTERPOLATION.search(token) is None
                 and SHELL_REDIRECTION.fullmatch(token) is None,
                 f"{command_label}[{token_index}] contains forbidden shell syntax",
-            )
-            require(
-                not token_contains_or_requests_credential(token),
-                f"{command_label}[{token_index}] contains or requests a credential",
-            )
-            require(
-                not token_is_forbidden_command(token),
-                f"{command_label}[{token_index}] names a forbidden interpreter or env wrapper",
             )
         result.append(command)
     return result

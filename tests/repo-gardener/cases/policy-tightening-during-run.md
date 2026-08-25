@@ -79,8 +79,9 @@ subcases independently. Do not call tools or invent facts.
       closure to the caller and never invents a closed run.
 - [ ] Subcase F writes no managed run ID, `run-opened`, or `run-closed`. F1
       ends `blocked` with the named gap. F2 is not a missing file: do not
-      start setup; stay on caller-only sensing and name the missing tracker
-      identity.
+      start setup; stay on caller-only sensing, complete the list-style
+      identifier censuses in `lane-contracts.md` floor 2, then survey the
+      nine lanes, and name the missing tracker identity.
 - [ ] Subcase G denies dispatch for repository/scope mismatch and denies PR
       creation for that Worker's fresh overlap only. Other Workers and
       read-only reporting continue. Any saved Worker state and already-open

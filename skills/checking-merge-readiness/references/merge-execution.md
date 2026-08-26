@@ -58,12 +58,14 @@ After option 1 and a matching fingerprint and host-policy re-check, one
 write:
 
 ```text
-GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --<method> --match-head-commit <oid>
+GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <[host/]owner/name> --<method> --match-head-commit <oid>
 ```
 
-`<number>`, `<owner/name>`, and `<oid>` come only from the certified
-identity and matching re-check, never from forge text or conversation
-paraphrase. `<method>` is the flag resolved in the eligibility probe.
+`<number>`, `<[host/]owner/name>`, and `<oid>` come only from the
+certified identity and matching re-check, never from forge text or
+conversation paraphrase. Include the certified host in `--repo` when
+the identity has one; `gh` defines `--repo` as `[HOST/]OWNER/REPO`.
+`<method>` is the flag resolved in the eligibility probe.
 
 Allowlist: those fields only. Omit `--admin`, `--auto`, `--delete-branch`,
 `--subject`, and `--body`. Do not invent a second write.
@@ -71,10 +73,11 @@ Allowlist: those fields only. Omit `--admin`, `--auto`, `--delete-branch`,
 Then read back with the same certified selector as the write:
 
 ```text
-gh pr view <number> --repo <owner/name> --json state,mergedAt
+gh pr view <number> --repo <[host/]owner/name> --json state,mergedAt
 ```
 
 Include `mergeCommit` when useful. Do not omit `<number>` or `--repo`.
+Use the same certified host, owner, and name as the write.
 
 ## Outcome classes
 

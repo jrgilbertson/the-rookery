@@ -28,7 +28,7 @@ Contract (deliberately small):
                           --admin/--auto/--delete-branch, extra tokens, and
                           missing method)
       CMR_MERGE_LOG       path to append one JSON object per merge attempt
-                          (JSONL): argv, method, matchHeadCommit
+                          (JSONL): argv and promptDisabled (GH_PROMPT_DISABLED)
       CMR_MERGE_STATE     path written as MERGED on success; pr view reads it.
                           A second merge while this is MERGED is already-merged
       CMR_MERGE_RESULT    merged (default) | failed | indeterminate |
@@ -517,6 +517,19 @@ def rules_branches_payload(forge):
     ]
 
 
+def refuse_unless_repository(requested_owner, requested_name, forge):
+    expected_repository = forge.get("repo", "").removeprefix("github.com/")
+    expected_owner, separator, expected_name = expected_repository.partition("/")
+    if not separator or (
+        requested_owner.lower(), requested_name.lower()
+    ) != (expected_owner.lower(), expected_name.lower()):
+        die(
+            f"no repository {requested_owner}/{requested_name} here; "
+            f"this specimen is {expected_repository}",
+            1,
+        )
+
+
 def eligibility_fields(forge):
     raw = forge.get("mergeEligibility")
     if not isinstance(raw, dict):
@@ -575,10 +588,14 @@ def parse_merge_argv(argv):
             a,
         )
         if m:
+            if want_number is not None:
+                die("`pr merge` accepts at most 1 arg(s), received 2", 2)
             want_repo = want_repo or m.group(1)
             want_number = int(m.group(2))
             continue
         if a.isdigit():
+            if want_number is not None:
+                die("`pr merge` accepts at most 1 arg(s), received 2", 2)
             want_number = int(a)
             continue
         extras.append(a)
@@ -654,7 +671,13 @@ def pr_merge(argv):
     log_path = os.environ.get("CMR_MERGE_LOG")
     if log_path:
         with open(log_path, "a") as fh:
-            json.dump({"argv": list(argv)}, fh)
+            json.dump(
+                {
+                    "argv": list(argv),
+                    "promptDisabled": os.environ.get("GH_PROMPT_DISABLED"),
+                },
+                fh,
+            )
             fh.write("\n")
     forge = load()
     want_number, want_repo, method, match_oid = parse_merge_argv(argv)
@@ -766,20 +789,11 @@ def graphql(argv, forge):
                 2,
             )
         repository_args = connection_args(query, "repository")
-        requested_owner = resolve_named_string(
-            repository_args, "owner", bindings
+        refuse_unless_repository(
+            resolve_named_string(repository_args, "owner", bindings),
+            resolve_named_string(repository_args, "name", bindings),
+            forge,
         )
-        requested_name = resolve_named_string(repository_args, "name", bindings)
-        expected_repository = forge.get("repo", "").removeprefix("github.com/")
-        expected_owner, separator, expected_name = expected_repository.partition("/")
-        if not separator or (
-            requested_owner.lower(), requested_name.lower()
-        ) != (expected_owner.lower(), expected_name.lower()):
-            die(
-                f"no repository {requested_owner}/{requested_name} here; "
-                f"this specimen is {expected_repository}",
-                1,
-            )
         issue_number = resolve_named_integer(
             connection_args(query, "issue"), "number", bindings
         )
@@ -845,6 +859,13 @@ def graphql(argv, forge):
     if served_protection:
         repo["branchProtectionRules"] = branch_protection_payload(forge)
     if served_eligibility:
+        repository_args = connection_args(query, "repository")
+        if re.search(r"\b(?:owner|name)\s*:", repository_args or ""):
+            refuse_unless_repository(
+                resolve_named_string(repository_args, "owner", bindings),
+                resolve_named_string(repository_args, "name", bindings),
+                forge,
+            )
         for key in (
             "mergeCommitAllowed",
             "squashMergeAllowed",

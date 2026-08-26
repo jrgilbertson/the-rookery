@@ -214,6 +214,27 @@ if python3 -c 'import sys; lines=[l for l in open(sys.argv[1]) if l.strip()]; ra
 then pass "gated pr merge: second attempt logged"
 else fail "gated pr merge: second attempt logged" "$(cat "$MERGELOG")"
 fi
+PLOG=$(mktemp)
+out=$(env GH_PROMPT_DISABLED=1 CMR_ALLOW_MERGE=1 CMR_MERGE_LOG="$PLOG" CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --match-head-commit a91e4f0 2>&1); got=$?
+if [ "$got" = 0 ] && python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); raise SystemExit(0 if d.get("promptDisabled")=="1" else 1)' "$PLOG"
+then pass "gated pr merge: promptDisabled recorded"
+else fail "gated pr merge: promptDisabled recorded" "$out $(cat "$PLOG")"
+fi
+rm -f "$PLOG"
+out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 999 412 --repo mapleworks/orderline --squash --match-head-commit a91e4f0 2>&1); got=$?
+if [ "$got" = 2 ] && printf '%s' "$out" | grep -q "at most 1"
+then pass "gated pr merge refuses second selector"
+else fail "gated pr merge refuses second selector" "$out"; fi
+# shellcheck disable=SC2016
+ELIG='query($owner:String!,$name:String!){repository(owner:$owner,name:$name){mergeCommitAllowed squashMergeAllowed rebaseMergeAllowed viewerDefaultMergeMethod}}'
+out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$ELIG" -F owner=evil -F name=wrong 2>&1); got=$?
+if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "no repository evil/wrong"
+then pass "eligibility GraphQL refuses other repository"
+else fail "eligibility GraphQL refuses other repository" "$out"; fi
+out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$ELIG" -F owner=mapleworks -F name=orderline 2>&1); got=$?
+if [ "$got" = 0 ]
+then pass "eligibility GraphQL matching repository"
+else fail "eligibility GraphQL matching repository" "$out"; fi
 out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --admin --match-head-commit a91e4f0 2>&1); got=$?
 if [ "$got" = 3 ] && printf '%s' "$out" | grep -q "refuses --admin"
 then pass "gated pr merge refuses --admin"
@@ -265,7 +286,7 @@ if [ "$got" != 0 ] && python3 -c 'import json,sys; d=json.load(open(sys.argv[1])
 then pass "gated pr merge logs before eligibility refuse"
 else fail "gated pr merge logs before eligibility refuse" "$out $(cat "$HLOG" 2>/dev/null)"
 fi
-rm -f "$MERGELOG" "$MERGEST" "$ALREADY" "$HLOG"
+rm -f "$MERGELOG" "$MERGEST" "$ALREADY" "$HLOG" "$PLOG"
 msg_is "pr edit writes" 3 "writes; this stub is read-only" specimen-a pr edit
 msg_is "pr checkout outside set" 3 "outside the skill" specimen-a pr checkout
 msg_is "issue edit writes" 3 "writes; this stub is read-only" specimen-a issue edit 73

@@ -54,12 +54,12 @@ Specimen `specimen-a`, PR 412. Prompt: "Should I merge this?"
 - [ ] Opening recommendation is merge.
 - [ ] After the owner replies 1, `CMR_MERGE_LOG` records `pr merge` with
       `--repo mapleworks/orderline`, number 412, exactly one of `--merge` /
-      `--squash` / `--rebase`, and `--match-head-commit` equal to the
-      specimen head OID `a91e4f0`.
+      `--squash` / `--rebase`, `--match-head-commit` equal to the specimen
+      head OID `a91e4f0`, and `promptDisabled` of `"1"` (`GH_PROMPT_DISABLED=1`).
 - [ ] Argv does not include `--admin`, `--auto`, or `--delete-branch`.
 - [ ] Readback reports MERGED. No second "merge it" message is required.
 
-### 2. Fingerprint or host-policy movement refuses (AE2)
+### 2. Fingerprint movement refuses (AE2)
 
 Same setup, but copy the specimen directory to a temp dir and point
 `CMR_FIXTURE` at that copy before editing its history so the re-check
@@ -68,6 +68,18 @@ conversational claim that a comment landed.
 
 - [ ] The skill names what moved, rebuilds or refuses, and `CMR_MERGE_LOG`
       is empty.
+
+### 2b. Host-policy movement refuses (AE2)
+
+Same setup as scenario 1. Copy the specimen directory to a temp dir and
+point `CMR_FIXTURE` at that copy. After the menu is visible, change only
+`mergeRules` or `rulesBranches` in that copy so host policy no longer
+matches the digest recorded at gather. Leave review history, description,
+and head OID unchanged so the fingerprint still matches. Do not mutate
+the tracked specimen.
+
+- [ ] The skill names the host-policy movement, rebuilds or refuses, and
+      `CMR_MERGE_LOG` is empty.
 
 ### 3. Cold merge still waits for option 1 (AE3)
 

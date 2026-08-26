@@ -423,7 +423,10 @@ because full mode wraps that object inside the larger payload. Extract
 conversation. Use the same private temporary directory created in step 2 and
 remove it after this comparison and the decision are complete. Then
 re-check live merge state and host signals with
-`gh pr view <number> --repo <[host/]owner/name> --json`, and re-run step 2's policy-resolution chain in the same
+`gh pr view <number> --repo <[host/]owner/name> --json`. Every forge read
+in this re-check uses that same certified host, owner, name, and number,
+including the fingerprint helper, the policy-resolution chain, and
+linked-issue re-fetches. Then re-run step 2's policy-resolution chain in the same
 order, stopping early once requirements are known as there, comparing the
 result against the policy digest recorded at step 2. Live state alone would
 miss a changed required-review, conversation-resolution, or last-push rule,

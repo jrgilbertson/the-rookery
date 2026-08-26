@@ -13,6 +13,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-gardener` policy now requires one owner-approved, normalized direct
+  `setup_command`. First-use review carries it unchanged into later
+  fresh-worktree setup, refuses invalid or unapproved commands locally, and
+  leaves unrelated safe sensing available after an affected audit fails.
 - README and `WORKFLOWS.md` now describe the catalog as a portable skill
   set inside a personal loop: `repo-gardener` listings stay two sentences,
   Orca is the IDE this workflow runs in rather than a requirement, `ce-plan`

@@ -31,10 +31,11 @@ A valid file parses and names every required field with real values (no
 `REPLACE_WITH_*`): stable repository identity, default branch, authoring
 scope, configured protected paths, `maximum_workers`, live tracker identity,
 all nine contracted lanes in order with triage as an empty mapping and eight
-lane `mutation` flags, optional ordered `audit_commands` on eligible lanes,
-and any optional evidence-source grants. Any other file at that path is
-invalid. The file does not name `version`, `status`, always-denied effects,
-presentation caps, deep-target counts, or `report_write`.
+lane `mutation` flags, one nonempty `setup_command` direct argv, optional
+ordered `audit_commands` on eligible lanes, and any optional evidence-source
+grants. Any other file at that path is invalid. The file does not name
+`version`, `status`, always-denied effects, presentation caps, deep-target
+counts, or `report_write`.
 
 ## First-use
 
@@ -51,14 +52,20 @@ name it. #3336 is not a live tracker.
 
 Setup is one interactive review of the full recommended file. Present identity,
 default branch, scope, protected paths, `maximum_workers`, tracker identity,
-eight lane mutation grants, optional audit declarations, and optional
-evidence-source grants. Show triage as recommend-only; it is not grantable.
-The owner can change any real knob. `.agents/repo-gardener.yaml` is always
-protected; setup cannot turn that off. A Worker must not edit that file.
+eight lane mutation grants, one exact `setup_command`, optional audit
+declarations, and optional evidence-source grants. In the same review, state
+that shared-ledger exceptions have no approved patterns and issue refinement
+is denied by default until their dedicated policy controls are available; do
+not imply that either absent control is granted. Show triage as recommend-only;
+it is not grantable. The owner can change any real knob. `.agents/repo-gardener.yaml`
+is always protected; setup cannot turn that off. A Worker must not edit that
+file.
 
 Setup proposes `maximum_workers: 20`, eight authoring lanes on (`mutation:
 true`), discovered identity and branch, existing protected paths, and no
-approved audit commands in any eligible lane.
+approved audit commands in any eligible lane. It also proposes exactly one
+repository-evidenced, direct-token `setup_command`; it does not silently
+substitute a conventional package-manager command when evidence is absent.
 
 Before showing the review, inspect the refreshed default-branch revision's
 manifests, package scripts, lockfiles, tool configuration, CI, and repository
@@ -70,18 +77,20 @@ has not adopted as non-authoritative follow-up advice. Do not turn those
 suggestions into runnable declarations.
 
 Setup never installs or executes a suggested tool and never auto-declares a
-command. Do not recommend an invocation that visibly embeds credential values,
+command. It preserves the approved `setup_command` tokens unchanged for later
+fresh-worktree setup; the Worker-lineage contract owns execution. Do not
+recommend an invocation that visibly embeds credential values,
 requests production or provider authentication, reads secret files, uses a
 credential helper or agent socket, or relies on shell parsing. Prefer an
 adopted repository entry point over an interpreter or `env` wrapper when the
 repository evidence supports one. Persist at most ten exact tokenized commands
-across all eligible lanes, and only after the owner approves them in the
-full-file review. The structural checker does not infer arbitrary executable or
-option semantics; that review is the approval boundary for the exact executable
-and arguments. Approval of a package script authorizes that exact argv at each
-refreshed default-branch revision; its repository-resolved implementation may
-change with that revision and must be shown to the owner as part of the
-decision.
+across all eligible lanes, plus one exact tokenized `setup_command`, and only
+after the owner approves them in the full-file review. The structural checker
+does not infer arbitrary executable or option semantics; that review is the
+approval boundary for the exact executable and arguments. Approval of a
+package script authorizes that exact argv at each refreshed default-branch
+revision; its repository-resolved implementation may change with that revision
+and must be shown to the owner as part of the decision.
 
 If the file does not already name a live tracker, setup creates a new GitHub
 issue from `assets/github-report-issue-template.md` as its own approved

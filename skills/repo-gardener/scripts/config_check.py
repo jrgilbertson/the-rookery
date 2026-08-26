@@ -43,6 +43,7 @@ TOP_LEVEL_REQUIRED = {
     "repository",
     "protected_paths",
     "maximum_workers",
+    "setup_command",
     "tracker",
     "lanes",
 }
@@ -379,25 +380,26 @@ def normalize_audit_commands(value: Any, label: str) -> list[list[str]]:
     result: list[list[str]] = []
     for command_index, value_command in enumerate(value):
         command_label = f"{label}[{command_index}]"
-        require(isinstance(value_command, list), f"{command_label} must be a sequence")
-        require(bool(value_command), f"{command_label} must not be empty")
-        require(
-            len(value_command) <= MAX_LIST_ENTRIES,
-            f"{command_label} exceeds {MAX_LIST_ENTRIES} entries",
-        )
-        command = [
-            require_concrete_text(token, f"{command_label}[{token_index}]")
-            for token_index, token in enumerate(value_command)
-        ]
-        for token_index, token in enumerate(command):
-            require(
-                token not in SHELL_OPERATOR_TOKENS
-                and SHELL_INTERPOLATION.search(token) is None
-                and SHELL_REDIRECTION.fullmatch(token) is None,
-                f"{command_label}[{token_index}] contains forbidden shell syntax",
-            )
-        result.append(command)
+        result.append(normalize_direct_argv(value_command, command_label))
     return result
+
+
+def normalize_direct_argv(value: Any, label: str) -> list[str]:
+    require(isinstance(value, list), f"{label} must be a sequence")
+    require(bool(value), f"{label} must not be empty")
+    require(len(value) <= MAX_LIST_ENTRIES, f"{label} exceeds {MAX_LIST_ENTRIES} entries")
+    command = [
+        require_concrete_text(token, f"{label}[{token_index}]")
+        for token_index, token in enumerate(value)
+    ]
+    for token_index, token in enumerate(command):
+        require(
+            token not in SHELL_OPERATOR_TOKENS
+            and SHELL_INTERPOLATION.search(token) is None
+            and SHELL_REDIRECTION.fullmatch(token) is None,
+            f"{label}[{token_index}] contains forbidden shell syntax",
+        )
+    return command
 
 
 def normalize_lanes(value: Any) -> dict[str, Any]:
@@ -458,6 +460,7 @@ def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
         "repository": normalize_repository(value["repository"]),
         "protected_paths": require_glob_list(value["protected_paths"], "protected_paths", nonempty=False),
         "maximum_workers": workers,
+        "setup_command": normalize_direct_argv(value["setup_command"], "setup_command"),
         "tracker": normalize_tracker(value["tracker"]),
         "lanes": normalize_lanes(value["lanes"]),
     }

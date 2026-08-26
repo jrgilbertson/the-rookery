@@ -42,6 +42,11 @@ protected_paths:
 # Parallel Worker cap. `0` denies Worker dispatch. Setup proposes `20`.
 maximum_workers: 0
 
+# One owner-approved repository setup command. The skill passes these tokens
+# directly, never through a shell. An empty value is invalid for a live policy.
+# Replace it during the same full-file review as every other real setting.
+setup_command: []
+
 tracker:
   # Live gardening-tracker issue identity. #3336 is not a live tracker.
   identity: REPLACE_WITH_TRACKER_IDENTITY

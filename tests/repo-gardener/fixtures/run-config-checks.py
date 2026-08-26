@@ -268,6 +268,7 @@ def base_config() -> dict[str, Any]:
         },
         "protected_paths": ["AGENTS.md", ".github/workflows/**"],
         "maximum_workers": 20,
+        "setup_command": ["npm", "run", "repo-gardener:setup"],
         "tracker": {"identity": "I_kwDOEXAMPLE001"},
         "lanes": authoring_lanes(True),
     }
@@ -350,6 +351,7 @@ def check_starter_shape() -> None:
     require(TEMPLATE.is_file(), "missing policy starter")
     text = TEMPLATE.read_text(encoding="utf-8")
     require("maximum_workers: 0" in text, "starter is not fail-closed on maximum_workers")
+    require("setup_command: []" in text, "starter must show an unapproved setup command")
     require(text.count("mutation: false") == 8, "starter authoring-lane mutation count differs")
     require("mutation: true" not in text, "starter grants an authoring lane")
     require(
@@ -462,6 +464,7 @@ protected_paths:
   - AGENTS.md
   - .github/workflows/**
 maximum_workers: 20
+setup_command: [npm, run, repo-gardener:setup]
 tracker:
   identity: I_kwDOEXAMPLE001
 lanes:
@@ -521,6 +524,30 @@ lanes:
         zero_workers = copy.deepcopy(base_config())
         zero_workers["maximum_workers"] = 0
         expect_valid(zero_workers, repo_root, normalized_config(zero_workers))
+
+        setup_command = base_config()
+        setup_command["setup_command"] = ["npm", "run", "prepare-repository"]
+        expected_setup_command = normalized_config(setup_command)
+        expect_valid(setup_command, repo_root, expected_setup_command)
+        require(
+            expected_setup_command["setup_command"] == ["npm", "run", "prepare-repository"],
+            "setup command tokens changed during normalization",
+        )
+
+        malformed_setup_commands: tuple[tuple[Any, str], ...] = (
+            ("npm run prepare-repository", "setup_command must be a sequence"),
+            ([], "setup_command must not be empty"),
+            (["npm", ""], "setup_command[1] must be nonempty trimmed text"),
+            (["npm", 7], "setup_command[1] must be text"),
+            (["npm", "&&", "prepare-repository"], "setup_command[1] contains forbidden shell syntax"),
+            (["npm", "$(pwd)"], "setup_command[1] contains forbidden shell syntax"),
+            (["npm", ">result.txt"], "setup_command[1] contains forbidden shell syntax"),
+            (["REPLACE_WITH_APPROVED_SETUP"], "setup_command[0] has an unresolved REPLACE_WITH placeholder"),
+        )
+        for command, message in malformed_setup_commands:
+            malformed_setup_command = base_config()
+            malformed_setup_command["setup_command"] = command
+            expect_invalid(malformed_setup_command, repo_root, message)
 
         for lane in AUDIT_ELIGIBLE_LANES:
             declared = base_config()
@@ -726,7 +753,7 @@ lanes:
         )
         expect_valid(flow_lane_comma, repo_root, expected)
 
-        for key in ("repository", "protected_paths", "maximum_workers", "tracker", "lanes"):
+        for key in ("repository", "protected_paths", "maximum_workers", "setup_command", "tracker", "lanes"):
             missing = copy.deepcopy(base_config())
             del missing[key]
             expect_invalid(missing, repo_root, f"missing key: {key}")

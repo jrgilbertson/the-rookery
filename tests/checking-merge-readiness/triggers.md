@@ -23,11 +23,11 @@ descriptions below, exactly as written here.
 - S4. "Should I merge #42?"
 - S5. "After all those review fixes, is this still the change I set out to make?"
 - S6. "Give me a pre-merge readout of this pull request."
+- S7. "Merge this PR."
 
 ## Near miss (expected: the named other skill, or none)
 
 - N1. "Is this branch ready for a PR?" Expected: checking-pr-readiness (pre-PR gate owns branch readiness).
 - N2. "Watch this PR and handle the review feedback as it comes in." Expected: ce-babysit-pr (PR management, excluded).
 - N3. "Review this code before I put up a PR." Expected: ce-code-review (performing review, excluded).
-- N4. "Merge this PR." Expected: none (an action request, not a readiness question; the description names this exclusion).
-- N5. "Write a good PR description for this branch." Expected: ce-commit-push-pr (finishing path, excluded).
+- N4. "Write a good PR description for this branch." Expected: ce-commit-push-pr (finishing path, excluded).

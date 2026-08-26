@@ -13,6 +13,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `managing-personal-crm` can recover one bounded public X read after a
+  sandbox network or session-state denial only with fresh host approval and
+  enforced read-only capabilities. It rejects private-derived query scope,
+  keeps turn exhaustion final, and preserves Partial coverage when X is
+  unavailable.
 - README and `WORKFLOWS.md` now describe the catalog as a portable skill
   set inside a personal loop: `repo-gardener` listings stay two sentences,
   Orca is the IDE this workflow runs in rather than a requirement, `ce-plan`

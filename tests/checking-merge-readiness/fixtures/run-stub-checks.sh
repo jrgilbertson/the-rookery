@@ -222,6 +222,10 @@ out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --s
 if [ "$got" = 2 ] && printf '%s' "$out" | grep -q "requires a PR number"
 then pass "gated pr merge without --repo"
 else fail "gated pr merge without --repo" "$out"; fi
+out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks --squash --match-head-commit a91e4f0 2>&1); got=$?
+if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "mapleworks"
+then pass "gated pr merge owner-only --repo"
+else fail "gated pr merge owner-only --repo" "$out"; fi
 out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge --repo mapleworks/orderline --squash --match-head-commit a91e4f0 2>&1); got=$?
 if [ "$got" = 2 ] && printf '%s' "$out" | grep -q "requires a PR number"
 then pass "gated pr merge without number"

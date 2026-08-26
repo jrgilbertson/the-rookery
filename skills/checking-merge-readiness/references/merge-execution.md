@@ -68,8 +68,13 @@ paraphrase. `<method>` is the flag resolved in the eligibility probe.
 Allowlist: those fields only. Omit `--admin`, `--auto`, `--delete-branch`,
 `--subject`, and `--body`. Do not invent a second write.
 
-Then read back `gh pr view --json state,mergedAt` (and `mergeCommit` when
-useful) bound to the same certified selector.
+Then read back with the same certified selector as the write:
+
+```text
+gh pr view <number> --repo <owner/name> --json state,mergedAt
+```
+
+Include `mergeCommit` when useful. Do not omit `<number>` or `--repo`.
 
 ## Outcome classes
 

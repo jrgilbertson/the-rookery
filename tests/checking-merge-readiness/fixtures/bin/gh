@@ -595,7 +595,6 @@ def require_certified_merge_selector(want_number, want_repo, forge):
     """Number and repo come from argv only; omitted selectors fail closed."""
     number = forge.get("number")
     repo = forge.get("repo", "")
-    owner = repo.split("/")[0] if "/" in repo else repo
     if want_number is None or want_repo is None:
         die(
             "`pr merge` requires a PR number (or URL) and repo; certified "
@@ -610,7 +609,7 @@ def require_certified_merge_selector(want_number, want_repo, forge):
         )
     if want_repo.count("/") == 2:
         want_repo = want_repo.split("/", 1)[1]
-    if want_repo not in (repo, owner):
+    if want_repo != repo:
         die(
             f"no pull request in {want_repo} here; this specimen is {repo}",
             1,

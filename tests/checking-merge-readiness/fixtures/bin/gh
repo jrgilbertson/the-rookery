@@ -791,6 +791,17 @@ def graphql(argv, forge):
         die("`mutation` is a write; this stub serves queries only", 3)
 
     bindings = field_bindings(argv)
+    refuse_unless_api_host(argv, forge)
+    repository_args = connection_args(query, "repository")
+    if re.search(r"\b(?:owner|name)\s*:", repository_args or ""):
+        refuse_unless_repository(
+            resolve_named_string(repository_args, "owner", bindings),
+            resolve_named_string(repository_args, "name", bindings),
+            forge,
+        )
+    pr_args = connection_args(query, "pullRequest")
+    if re.search(r"\bnumber\s*:", pr_args or ""):
+        require_certified_pull_request_number(query, bindings, forge)
     nested_comment_args = connection_args(query, "comments", which="first")
     top_comment_args = connection_args(query, "comments", which="last")
     serves_pull_request = bool(re.search(r"\bpullRequest\b", query))

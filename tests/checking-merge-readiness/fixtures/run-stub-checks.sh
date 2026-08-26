@@ -146,6 +146,15 @@ exit_is "edits without diff snapshot" 2 specimen-a api graphql \
 exit_is "edits without editor" 2 specimen-a api graphql \
   -f 'query=query{repository{pullRequest{userContentEdits(first:1){nodes{editedAt diff}}}}}'
 exit_is "skill-shaped threads query accepted" 0 specimen-a api graphql -f "query=$THREADS"
+out=$(env GH_HOST=evil.example CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$REVIEWS" 2>&1); got=$?
+if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "does not match"
+then pass "history GraphQL refuses other GH_HOST"
+else fail "history GraphQL refuses other GH_HOST" "$out"; fi
+# shellcheck disable=SC2016
+out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f 'query=query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){reviews(first:1){nodes{id author{login} submittedAt state body commit{oid}}}}}}' -F owner=evil -F name=wrong -F n=999 2>&1); got=$?
+if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "no repository evil/wrong"
+then pass "history GraphQL refuses other repository"
+else fail "history GraphQL refuses other repository" "$out"; fi
 exit_is "skill-shaped edits query accepted" 0 specimen-a api graphql -f "query=$EDITS"
 # shellcheck disable=SC2016
 exit_is "issue comments without createdAt refused" 2 specimen-a api graphql \

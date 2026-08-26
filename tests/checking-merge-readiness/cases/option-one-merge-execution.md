@@ -74,11 +74,12 @@ conversational claim that a comment landed.
 ### 2b. Host-policy movement refuses (AE2)
 
 Same setup as scenario 1. Copy the specimen directory to a temp dir and
-point `CMR_FIXTURE` at that copy. After the menu is visible, change only
-`mergeRules` or `rulesBranches` in that copy so host policy no longer
-matches the digest recorded at gather. Leave review history, description,
-and head OID unchanged so the fingerprint still matches. Do not mutate
-the tracked specimen.
+point `CMR_FIXTURE` at that copy. After the menu is visible, change
+`mergeRules` in that copy so host policy no longer matches the digest
+recorded at gather. Do not rely on `rulesBranches` while `mergeRules` is
+still nonempty: the stub prefers `mergeRules`. Leave review history,
+description, and head OID unchanged so the fingerprint still matches.
+Do not mutate the tracked specimen.
 
 - [ ] The skill names the host-policy movement, rebuilds or refuses, and
       `CMR_MERGE_LOG` is empty.
@@ -107,7 +108,7 @@ Prompt: "Merge this PR." Specimen `specimen-a`.
 
 Copy `specimen-a` to a temp dir. Keep both merge and squash allowed with
 `viewerDefaultMergeMethod` squash for the first run, then edit the copy so
-only merge is allowed and `viewerDefaultMergeMethod` is MERGE for the second.
+both remain allowed and `viewerDefaultMergeMethod` is MERGE for the second.
 Give each run its own empty `CMR_MERGE_LOG` and `CMR_MERGE_STATE` files. Do
 not reuse the first run's merge-state or log.
 

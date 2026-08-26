@@ -255,5 +255,6 @@ network beyond the fixture stub).
 - 2026-08-06 | 8a8dd8b (working tree) | skilled s11 live #23 | not run | dispatch no-network-beyond-stub constraint
 - 2026-08-06 | 8a8dd8b (working tree) | full skilled constructed battery | pass (13/13) | s1–s10+s1b+s2b+s8b; digests /tmp/cmr-battery-current/readouts
 - 2026-08-25 | 90a5226 (working tree) | fixture stub checks | pass (147/147) | gated `pr merge` argv + MERGED readback + `--admin` refuse; default `pr merge` still exit 3
+- 2026-08-26 | 1120c01 (working tree) | fixture stub checks | pass (154/154) | require `--repo`/number from argv, JSONL retry log, `--rebase` refuse, extra `--subject`/`--body` refuse, already-merged second attempt
 - 2026-08-25 | 90a5226 (working tree) | fetch helper fixture runs | pass (58/58) | history pagination and fingerprint checks unchanged after eligibility GraphQL
 - 2026-08-25 | 90a5226 (working tree) | trigger S7 / option-1 merge-execution case | not run | matched-pair grading still required; case file and S7 added

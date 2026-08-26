@@ -198,7 +198,7 @@ MERGEST=$(mktemp)
 out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_LOG="$MERGELOG" CMR_MERGE_STATE="$MERGEST" CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --match-head-commit a91e4f0 2>&1); got=$?
 if [ "$got" = 0 ]; then pass "gated pr merge: success"
 else fail "gated pr merge: success" "$out"; fi
-if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); raise SystemExit(0 if d.get("method")=="--squash" and d.get("matchHeadCommit")=="a91e4f0" else 1)' "$MERGELOG"
+if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); a=list(d.get("argv") or []); raise SystemExit(0 if d.get("method")=="--squash" and d.get("matchHeadCommit")=="a91e4f0" and "412" in a and "--repo" in a and a[a.index("--repo")+1]=="mapleworks/orderline" else 1)' "$MERGELOG"
 then pass "gated pr merge: argv recorded"
 else fail "gated pr merge: argv recorded" "$(cat "$MERGELOG")"
 fi
@@ -206,10 +206,38 @@ out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_STATE="$MERGEST" CMR_FIXTURE="$PRS/specime
 if [ "$got" = 0 ] && printf '%s' "$out" | python3 -c 'import json,sys; d=json.load(sys.stdin); raise SystemExit(0 if d.get("state")=="MERGED" and d.get("mergedAt") else 1)'
 then pass "gated pr merge: readback MERGED"
 else fail "gated pr merge: readback MERGED" "$out"; fi
+out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_LOG="$MERGELOG" CMR_MERGE_STATE="$MERGEST" CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --match-head-commit a91e4f0 2>&1); got=$?
+if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "already merged"
+then pass "gated pr merge: already-merged refuse"
+else fail "gated pr merge: already-merged refuse" "$out"; fi
+if python3 -c 'import sys; lines=[l for l in open(sys.argv[1]) if l.strip()]; raise SystemExit(0 if len(lines)==2 else 1)' "$MERGELOG"
+then pass "gated pr merge: second attempt logged"
+else fail "gated pr merge: second attempt logged" "$(cat "$MERGELOG")"
+fi
 out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --admin --match-head-commit a91e4f0 2>&1); got=$?
 if [ "$got" = 3 ] && printf '%s' "$out" | grep -q "refuses --admin"
 then pass "gated pr merge refuses --admin"
 else fail "gated pr merge refuses --admin" "$out"; fi
+out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --squash --match-head-commit a91e4f0 2>&1); got=$?
+if [ "$got" = 2 ] && printf '%s' "$out" | grep -q "requires a PR number"
+then pass "gated pr merge without --repo"
+else fail "gated pr merge without --repo" "$out"; fi
+out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge --repo mapleworks/orderline --squash --match-head-commit a91e4f0 2>&1); got=$?
+if [ "$got" = 2 ] && printf '%s' "$out" | grep -q "requires a PR number"
+then pass "gated pr merge without number"
+else fail "gated pr merge without number" "$out"; fi
+out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --rebase --match-head-commit a91e4f0 2>&1); got=$?
+if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "rebaseMergeAllowed"
+then pass "gated pr merge refuses --rebase"
+else fail "gated pr merge refuses --rebase" "$out"; fi
+out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --match-head-commit a91e4f0 --subject "x" 2>&1); got=$?
+if [ "$got" = 3 ] && printf '%s' "$out" | grep -q "refuses extra token"
+then pass "gated pr merge refuses --subject"
+else fail "gated pr merge refuses --subject" "$out"; fi
+out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --match-head-commit a91e4f0 --body "x" 2>&1); got=$?
+if [ "$got" = 3 ] && printf '%s' "$out" | grep -q "refuses extra token"
+then pass "gated pr merge refuses --body"
+else fail "gated pr merge refuses --body" "$out"; fi
 rm -f "$MERGELOG" "$MERGEST"
 msg_is "pr edit writes" 3 "writes; this stub is read-only" specimen-a pr edit
 msg_is "pr checkout outside set" 3 "outside the skill" specimen-a pr checkout

@@ -25,10 +25,14 @@ Contract (deliberately small):
     which case `pr merge` is recorded and may return a specimen result
   - optional env:
       CMR_ALLOW_MERGE     non-empty → gated `pr merge` (still refuses
-                          --admin/--auto/--delete-branch and missing method)
-      CMR_MERGE_LOG       path to write the merge argv JSON
-      CMR_MERGE_STATE     path written as MERGED on success; pr view reads it
-      CMR_MERGE_RESULT    merged (default) | failed | indeterminate
+                          --admin/--auto/--delete-branch, extra tokens, and
+                          missing method)
+      CMR_MERGE_LOG       path to append one JSON object per merge attempt
+                          (JSONL): argv, method, matchHeadCommit
+      CMR_MERGE_STATE     path written as MERGED on success; pr view reads it.
+                          A second merge while this is MERGED is already-merged
+      CMR_MERGE_RESULT    merged (default) | failed | indeterminate |
+                          already_merged
   - refuse a selector that names another pull request
   - refuse an under-fetch of fields the skill depends on (query-text presence)
   - paginate connections (first / after, including -f/-F variables)
@@ -43,6 +47,14 @@ import sys
 WRITE_VERBS = {
     "merge", "close", "reopen", "edit", "comment", "review", "create",
     "delete", "ready", "lock", "unlock", "transfer", "sync",
+}
+
+MERGE_METHODS = ("--merge", "--squash", "--rebase")
+MERGE_FORBIDDEN = ("--admin", "--auto", "--delete-branch")
+MERGE_METHOD_ELIG = {
+    "--merge": "mergeCommitAllowed",
+    "--squash": "squashMergeAllowed",
+    "--rebase": "rebaseMergeAllowed",
 }
 
 # Cheap under-fetch guard aligned once to SKILL.md step 2's floor.
@@ -506,50 +518,153 @@ def rules_branches_payload(forge):
 def eligibility_fields(forge):
     raw = forge.get("mergeEligibility")
     if not isinstance(raw, dict):
-        raw = {}
-    return {
-        "mergeCommitAllowed": bool(raw.get("mergeCommitAllowed", True)),
-        "squashMergeAllowed": bool(raw.get("squashMergeAllowed", True)),
-        "rebaseMergeAllowed": bool(raw.get("rebaseMergeAllowed", False)),
-        "viewerDefaultMergeMethod": raw.get("viewerDefaultMergeMethod", "SQUASH"),
-        "isMergeQueueEnabled": bool(raw.get("isMergeQueueEnabled", False)),
-        "mergeQueue": raw.get("mergeQueue"),
-    }
+        die(
+            "this specimen has no mergeEligibility; eligibility probes "
+            "fail closed",
+            2,
+        )
+    return raw
+
+
+def eligibility_value(elig, key):
+    if key not in elig:
+        die(
+            f"mergeEligibility is missing `{key}`; fail closed rather than "
+            "inventing a default",
+            2,
+        )
+    return elig[key]
+
+
+def parse_merge_argv(argv):
+    """Allowlist: number or URL, --repo, one method flag, --match-head-commit."""
+    forbidden = [f for f in MERGE_FORBIDDEN if f in argv]
+    if forbidden:
+        die(f"`pr merge` refuses {', '.join(forbidden)}", 3)
+    method_flags = [f for f in MERGE_METHODS if f in argv]
+    if len(method_flags) != 1:
+        die("`pr merge` requires exactly one of --merge, --squash, --rebase", 2)
+
+    want_number = None
+    want_repo = None
+    match_oid = None
+    extras = []
+    skip = False
+    for i, a in enumerate(argv):
+        if skip:
+            skip = False
+            continue
+        if a in MERGE_METHODS:
+            continue
+        if a == "--repo" and i + 1 < len(argv):
+            want_repo = argv[i + 1]
+            skip = True
+            continue
+        if a == "--match-head-commit" and i + 1 < len(argv):
+            match_oid = argv[i + 1]
+            skip = True
+            continue
+        if a.startswith("-"):
+            extras.append(a)
+            continue
+        m = re.match(
+            r"^(?:https?://[^/]+/)?([^/\s]+/[^/\s]+?)(?:\.git)?"
+            r"(?:/pull/|#)(\d+)/?$",
+            a,
+        )
+        if m:
+            want_repo = want_repo or m.group(1)
+            want_number = int(m.group(2))
+            continue
+        if a.isdigit():
+            want_number = int(a)
+            continue
+        extras.append(a)
+    if extras:
+        die(
+            f"`pr merge` refuses extra token(s) {', '.join(extras)}; "
+            "allowlist is number, --repo, one method flag, --match-head-commit",
+            3,
+        )
+    if not match_oid:
+        die("`pr merge` requires --match-head-commit", 2)
+    return want_number, want_repo, method_flags[0], match_oid
+
+
+def require_certified_merge_selector(want_number, want_repo, forge):
+    """Number and repo come from argv only; omitted selectors fail closed."""
+    number = forge.get("number")
+    repo = forge.get("repo", "")
+    owner = repo.split("/")[0] if "/" in repo else repo
+    if want_number is None or want_repo is None:
+        die(
+            "`pr merge` requires a PR number (or URL) and repo; certified "
+            "selectors are not taken from the specimen",
+            2,
+        )
+    if want_number != number:
+        die(
+            f"no pull request {want_number} here; this specimen is "
+            f"{repo}#{number}",
+            1,
+        )
+    if want_repo.count("/") == 2:
+        want_repo = want_repo.split("/", 1)[1]
+    if want_repo not in (repo, owner):
+        die(
+            f"no pull request in {want_repo} here; this specimen is {repo}",
+            1,
+        )
+
+
+def refuse_unless_merge_eligible(method, forge):
+    elig = eligibility_fields(forge)
+    allowed_key = MERGE_METHOD_ELIG[method]
+    if not eligibility_value(elig, allowed_key):
+        die(
+            f"`pr merge` refuses {method}; `{allowed_key}` is not allowed",
+            1,
+        )
+    if eligibility_value(elig, "isMergeQueueEnabled"):
+        die("`pr merge` refuses a merge-queue-governed pull request", 1)
+    if "mergeQueue" in elig and elig["mergeQueue"] is not None:
+        die("`pr merge` refuses a merge-queue-governed pull request", 1)
+
+
+def already_merged_state(state_path):
+    if not state_path:
+        return False
+    try:
+        with open(state_path) as fh:
+            return fh.read().strip() == "MERGED"
+    except FileNotFoundError:
+        return False
 
 
 def pr_merge(argv):
     if not os.environ.get("CMR_ALLOW_MERGE"):
         die("`pr merge` writes; this stub is read-only", 3)
     forge = load()
-    selector_check(argv, forge)
-    method_flags = [f for f in ("--merge", "--squash", "--rebase") if f in argv]
-    if len(method_flags) != 1:
-        die("`pr merge` requires exactly one of --merge, --squash, --rebase", 2)
-    forbidden = [f for f in ("--admin", "--auto", "--delete-branch") if f in argv]
-    if forbidden:
-        die(f"`pr merge` refuses {', '.join(forbidden)}", 3)
-    match_oid = None
-    for i, a in enumerate(argv):
-        if a == "--match-head-commit" and i + 1 < len(argv):
-            match_oid = argv[i + 1]
-    if not match_oid:
-        die("`pr merge` requires --match-head-commit", 2)
+    want_number, want_repo, method, match_oid = parse_merge_argv(argv)
+    require_certified_merge_selector(want_number, want_repo, forge)
     expected = forge.get("headRefOid")
     if match_oid != expected:
         die(f"head OID {match_oid} does not match {expected}", 1)
+    refuse_unless_merge_eligible(method, forge)
     log_path = os.environ.get("CMR_MERGE_LOG")
     if log_path:
         payload = {
             "argv": argv,
-            "method": method_flags[0],
+            "method": method,
             "matchHeadCommit": match_oid,
-            "number": forge.get("number"),
-            "repo": forge.get("repo"),
         }
-        with open(log_path, "w") as fh:
+        with open(log_path, "a") as fh:
             json.dump(payload, fh)
+            fh.write("\n")
     result = os.environ.get("CMR_MERGE_RESULT", "merged")
     state_path = os.environ.get("CMR_MERGE_STATE")
+    if already_merged_state(state_path) or result == "already_merged":
+        die("pull request is already merged", 1)
     if result == "merged":
         if state_path:
             with open(state_path, "w") as fh:
@@ -712,11 +827,13 @@ def graphql(argv, forge):
         )
 
     repo = {}
-    elig = eligibility_fields(forge) if (served_pr or served_eligibility) else None
+    elig = eligibility_fields(forge) if served_eligibility else None
     if served_pr:
         pr.setdefault("number", forge.get("number"))
         if re.search(r"\bisMergeQueueEnabled\b", query):
-            pr["isMergeQueueEnabled"] = elig["isMergeQueueEnabled"]
+            pr["isMergeQueueEnabled"] = eligibility_value(
+                elig, "isMergeQueueEnabled"
+            )
         repo["pullRequest"] = pr
     if served_issue:
         repo["issue"] = issue_payload
@@ -730,12 +847,29 @@ def graphql(argv, forge):
             "viewerDefaultMergeMethod",
         ):
             if re.search(rf"\b{key}\b", query):
-                repo[key] = elig[key]
+                repo[key] = eligibility_value(elig, key)
         if re.search(r"\bmergeQueue\b", query):
-            repo["mergeQueue"] = elig["mergeQueue"]
+            args = connection_args(query, "mergeQueue")
+            if not args:
+                die(
+                    "`mergeQueue` requires branch bound to the specimen "
+                    "baseRefName; fail closed",
+                    2,
+                )
+            branch = resolve_named_string(args, "branch", bindings)
+            base = forge.get("baseRefName")
+            if not base or branch != base:
+                die(
+                    f"`mergeQueue` branch {branch!r} is not this specimen's "
+                    f"base {base!r}; fail closed",
+                    1,
+                )
+            repo["mergeQueue"] = eligibility_value(elig, "mergeQueue")
         if re.search(r"\bisMergeQueueEnabled\b", query) and "pullRequest" not in repo:
             repo["pullRequest"] = {
-                "isMergeQueueEnabled": elig["isMergeQueueEnabled"]
+                "isMergeQueueEnabled": eligibility_value(
+                    elig, "isMergeQueueEnabled"
+                )
             }
     print(json.dumps({"data": {"repository": repo}}, indent=2))
 

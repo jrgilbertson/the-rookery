@@ -160,9 +160,16 @@ def selector_check(argv, forge):
             1,
         )
     if want_repo is not None:
-        if want_repo.count("/") == 2:
-            want_repo = want_repo.split("/", 1)[1]
-        if want_repo not in (repo, owner):
+        check_repo = want_repo
+        if check_repo.count("/") == 2:
+            sel_host, check_repo = check_repo.split("/", 1)
+            forge_host = forge.get("host", "github.com").lower()
+            if sel_host.lower() != forge_host:
+                die(
+                    f"host {sel_host} does not match {forge_host}",
+                    1,
+                )
+        if check_repo not in (repo, owner):
             die(
                 f"no pull request in {want_repo} here; this specimen is {repo}",
                 1,
@@ -517,6 +524,34 @@ def rules_branches_payload(forge):
     ]
 
 
+def requested_api_host(argv):
+    for i, a in enumerate(argv):
+        if a == "--hostname" and i + 1 < len(argv):
+            return argv[i + 1]
+    return os.environ.get("GH_HOST") or "github.com"
+
+
+def refuse_unless_api_host(argv, forge):
+    got = requested_api_host(argv).lower()
+    want = forge.get("host", "github.com").lower()
+    if got != want:
+        die(f"host {got} does not match {want}", 1)
+
+
+def require_certified_pull_request_number(query, bindings, forge):
+    number = resolve_named_integer(
+        connection_args(query, "pullRequest"), "number", bindings
+    )
+    expected = forge.get("number")
+    repo = forge.get("repo", "")
+    if number != expected:
+        die(
+            f"no pull request {number} here; this specimen is "
+            f"{repo}#{expected}",
+            1,
+        )
+
+
 def refuse_unless_repository(requested_owner, requested_name, forge):
     expected_repository = forge.get("repo", "").removeprefix("github.com/")
     expected_owner, separator, expected_name = expected_repository.partition("/")
@@ -859,12 +894,15 @@ def graphql(argv, forge):
     if served_protection:
         repo["branchProtectionRules"] = branch_protection_payload(forge)
     if served_eligibility:
+        refuse_unless_api_host(argv, forge)
         repository_args = connection_args(query, "repository")
         refuse_unless_repository(
             resolve_named_string(repository_args, "owner", bindings),
             resolve_named_string(repository_args, "name", bindings),
             forge,
         )
+        if re.search(r"\bisMergeQueueEnabled\b", query):
+            require_certified_pull_request_number(query, bindings, forge)
         for key in (
             "mergeCommitAllowed",
             "squashMergeAllowed",
@@ -984,7 +1022,7 @@ def main():
 
     if argv[0] == "api":
         forge = load()
-        if "graphql" in argv[:3]:
+        if "graphql" in argv:
             return graphql(argv, forge)
         return api_rest(argv[1:], forge)
 

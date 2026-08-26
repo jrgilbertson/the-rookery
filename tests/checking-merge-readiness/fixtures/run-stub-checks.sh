@@ -239,6 +239,33 @@ out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f 'query=query{reposi
 if [ "$got" = 2 ] && printf '%s' "$out" | grep -q "owner"
 then pass "eligibility GraphQL requires repository arguments"
 else fail "eligibility GraphQL requires repository arguments" "$out"; fi
+out=$(env GH_HOST=evil.example CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$ELIG" -F owner=mapleworks -F name=orderline 2>&1); got=$?
+if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "does not match"
+then pass "eligibility GraphQL refuses other GH_HOST"
+else fail "eligibility GraphQL refuses other GH_HOST" "$out"; fi
+GHE=$(mktemp -d)
+cp -R "$PRS/specimen-a/." "$GHE/"
+python3 -c 'import json,sys; p=sys.argv[1]+"/forge.json"; d=json.load(open(p)); d["host"]="ghe.example"; json.dump(d, open(p,"w"))' "$GHE"
+out=$(env CMR_FIXTURE="$GHE" "$GH" api graphql -f "query=$ELIG" -F owner=mapleworks -F name=orderline 2>&1); got=$?
+if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "does not match"
+then pass "eligibility GraphQL enterprise host without --hostname"
+else fail "eligibility GraphQL enterprise host without --hostname" "$out"; fi
+out=$(env CMR_FIXTURE="$GHE" "$GH" api graphql --hostname ghe.example -f "query=$ELIG" -F owner=mapleworks -F name=orderline 2>&1); got=$?
+if [ "$got" = 0 ]
+then pass "eligibility GraphQL enterprise host with --hostname"
+else fail "eligibility GraphQL enterprise host with --hostname" "$out"; fi
+rm -rf "$GHE"
+# shellcheck disable=SC2016
+QUEUE='query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){isMergeQueueEnabled}}}'
+out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$QUEUE" -F owner=mapleworks -F name=orderline -F n=999 2>&1); got=$?
+if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "no pull request 999"
+then pass "isMergeQueueEnabled refuses other PR number"
+else fail "isMergeQueueEnabled refuses other PR number" "$out"; fi
+# shellcheck disable=SC2016
+out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f 'query=query($owner:String!,$name:String!){repository(owner:$owner,name:$name){isMergeQueueEnabled}}' -F owner=mapleworks -F name=orderline 2>&1); got=$?
+if [ "$got" = 2 ] && printf '%s' "$out" | grep -q "number"
+then pass "isMergeQueueEnabled requires pullRequest number"
+else fail "isMergeQueueEnabled requires pullRequest number" "$out"; fi
 out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --admin --match-head-commit a91e4f0 2>&1); got=$?
 if [ "$got" = 3 ] && printf '%s' "$out" | grep -q "refuses --admin"
 then pass "gated pr merge refuses --admin"
@@ -275,6 +302,10 @@ out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_STATE="$MERGEST" CMR_FIXTURE="$PRS/specime
 if [ "$got" = 2 ] && printf '%s' "$out" | grep -q "certified"
 then pass "merged overlay refuses selectorless pr view"
 else fail "merged overlay refuses selectorless pr view" "$out"; fi
+out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_STATE="$MERGEST" CMR_FIXTURE="$PRS/specimen-a" "$GH" pr view 412 --repo evil.example/mapleworks/orderline --json state,mergedAt 2>&1); got=$?
+if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "does not match"
+then pass "merged overlay refuses other host"
+else fail "merged overlay refuses other host" "$out"; fi
 ALREADY=$(mktemp)
 out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_RESULT=already_merged CMR_MERGE_STATE="$ALREADY" CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --match-head-commit a91e4f0 2>&1); got=$?
 if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "already merged"

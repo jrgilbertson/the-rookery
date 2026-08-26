@@ -20,7 +20,8 @@ Contract (deliberately small):
   - serve only the skill's fixed read set: pr view --json (incl. merge state),
     pr diff, issue view --json for linked source-issue metadata, api graphql
     (history + linked-issue comments + branchProtectionRules + merge
-    eligibility), and api repos/.../rules/branches/{base} for merge policy
+    eligibility), api repos/{owner}/{name} for REST allow_* methods, and
+    api repos/.../rules/branches/{base} for merge policy
   - refuse writes and out-of-set verbs unless CMR_ALLOW_MERGE is set, in
     which case `pr merge` is recorded and may return a specimen result
   - optional env:
@@ -938,23 +939,50 @@ def graphql(argv, forge):
 
 
 def api_rest(argv, forge):
-    """Serve GET repos/.../rules/branches/{base} when present in argv."""
-    # argv like: api repos/owner/name/rules/branches/main  or with method GET
+    """Serve GET repos/{owner}/{name} and repos/.../rules/branches/{base}."""
     path = None
     for a in argv:
-        if a.startswith("repos/") and "/rules/branches/" in a:
-            path = a.split("?", 1)[0]
+        if a.startswith("repos/"):
+            path = a.split("?", 1)[0].rstrip("/")
             break
     if path is None:
         die(
-            "only `api graphql` and `api repos/.../rules/branches/{base}` "
-            "are served",
+            "only `api graphql`, `api repos/{owner}/{name}`, and "
+            "`api repos/.../rules/branches/{base}` are served",
+            3,
+        )
+    parts = path.split("/")
+    if len(parts) == 3 and parts[0] == "repos":
+        refuse_unless_api_host(argv, forge)
+        refuse_unless_repository(parts[1], parts[2], forge)
+        elig = eligibility_fields(forge)
+        print(
+            json.dumps(
+                {
+                    "allow_merge_commit": bool(
+                        eligibility_value(elig, "mergeCommitAllowed")
+                    ),
+                    "allow_squash_merge": bool(
+                        eligibility_value(elig, "squashMergeAllowed")
+                    ),
+                    "allow_rebase_merge": bool(
+                        eligibility_value(elig, "rebaseMergeAllowed")
+                    ),
+                },
+                indent=2,
+            )
+        )
+        return
+    if "/rules/branches/" not in path:
+        die(
+            "only `api graphql`, `api repos/{owner}/{name}`, and "
+            "`api repos/.../rules/branches/{base}` are served",
             3,
         )
     # The branch in the path must be the one this specimen merges into;
     # a real forge answers a rules read for any other branch with a 404.
     base = forge.get("baseRefName", "main")
-    want = path.rstrip("/").partition("/rules/branches/")[2]
+    want = path.partition("/rules/branches/")[2]
     if want != base:
         die(
             f"Not Found (HTTP 404): no branch rules for `{want}` here; "

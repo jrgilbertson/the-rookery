@@ -94,6 +94,8 @@ Prompt: "Merge this PR." Specimen `specimen-a`.
 Copy `specimen-a` to a temp dir. Keep both merge and squash allowed with
 `viewerDefaultMergeMethod` squash for the first run, then edit the copy so
 only merge is allowed and `viewerDefaultMergeMethod` is MERGE for the second.
+Give each run its own empty `CMR_MERGE_LOG` and `CMR_MERGE_STATE` files. Do
+not reuse the first run's merge-state or log.
 
 - [ ] Option 1 is offered on both runs.
 - [ ] First-run argv contains `--squash` and not `--merge` or `--rebase`.

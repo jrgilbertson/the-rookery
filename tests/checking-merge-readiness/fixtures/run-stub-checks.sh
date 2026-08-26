@@ -350,6 +350,12 @@ exit_is "rules for the specimen's base" 0 specimen-a \
   api repos/mapleworks/orderline/rules/branches/main
 msg_is "rules for another base" 1 "Not Found (HTTP 404)" specimen-a \
   api repos/mapleworks/orderline/rules/branches/release-2024
+out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api repos/mapleworks/orderline 2>&1); got=$?
+if [ "$got" = 0 ] && printf '%s' "$out" | python3 -c 'import json,sys; d=json.load(sys.stdin); raise SystemExit(0 if d.get("allow_squash_merge") is True and d.get("allow_merge_commit") is True and d.get("allow_rebase_merge") is False else 1)'
+then pass "REST repo allow_* methods"
+else fail "REST repo allow_* methods" "$out"; fi
+msg_is "REST repo refuses other repository" 1 "no repository evil/wrong" specimen-a \
+  api repos/evil/wrong
 
 echo "== G. unauthenticated forge =="
 AUTHFAIL=1

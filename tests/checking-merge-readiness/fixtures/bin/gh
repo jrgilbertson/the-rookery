@@ -860,12 +860,11 @@ def graphql(argv, forge):
         repo["branchProtectionRules"] = branch_protection_payload(forge)
     if served_eligibility:
         repository_args = connection_args(query, "repository")
-        if re.search(r"\b(?:owner|name)\s*:", repository_args or ""):
-            refuse_unless_repository(
-                resolve_named_string(repository_args, "owner", bindings),
-                resolve_named_string(repository_args, "name", bindings),
-                forge,
-            )
+        refuse_unless_repository(
+            resolve_named_string(repository_args, "owner", bindings),
+            resolve_named_string(repository_args, "name", bindings),
+            forge,
+        )
         for key in (
             "mergeCommitAllowed",
             "squashMergeAllowed",

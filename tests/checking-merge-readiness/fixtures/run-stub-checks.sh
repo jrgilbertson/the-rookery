@@ -235,6 +235,10 @@ out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$ELIG" -F ow
 if [ "$got" = 0 ]
 then pass "eligibility GraphQL matching repository"
 else fail "eligibility GraphQL matching repository" "$out"; fi
+out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f 'query=query{repository{mergeCommitAllowed squashMergeAllowed rebaseMergeAllowed viewerDefaultMergeMethod}}' 2>&1); got=$?
+if [ "$got" = 2 ] && printf '%s' "$out" | grep -q "owner"
+then pass "eligibility GraphQL requires repository arguments"
+else fail "eligibility GraphQL requires repository arguments" "$out"; fi
 out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --admin --match-head-commit a91e4f0 2>&1); got=$?
 if [ "$got" = 3 ] && printf '%s' "$out" | grep -q "refuses --admin"
 then pass "gated pr merge refuses --admin"

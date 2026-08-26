@@ -20,6 +20,11 @@ After step 6 grades merge and before offering option 1, prove all of:
 Withhold and replace option 1 when any of these fail, including when write
 auth is known missing. Do not offer Proceed and then refuse.
 
+Eligibility GraphQL and REST reads use the same certified host, owner, and
+name as the merge selector. When the identity includes a host, pass it
+(`gh api --hostname <host>`). Do not query the CLI default host for a PR
+certified on another host.
+
 **Queue-off.** GraphQL `repository.mergeQueue(branch: <baseRefName>)` is
 null, and/or pull-request `isMergeQueueEnabled` is false when the schema
 provides it. Do not treat `isInMergeQueue == false` alone as queue-off: a

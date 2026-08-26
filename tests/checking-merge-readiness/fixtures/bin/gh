@@ -979,6 +979,15 @@ def api_rest(argv, forge):
             "`api repos/.../rules/branches/{base}` are served",
             3,
         )
+    rule_parts = path.split("/")
+    if len(rule_parts) < 6 or rule_parts[0] != "repos":
+        die(
+            "only `api graphql`, `api repos/{owner}/{name}`, and "
+            "`api repos/.../rules/branches/{base}` are served",
+            3,
+        )
+    refuse_unless_api_host(argv, forge)
+    refuse_unless_repository(rule_parts[1], rule_parts[2], forge)
     # The branch in the path must be the one this specimen merges into;
     # a real forge answers a rules read for any other branch with a 404.
     base = forge.get("baseRefName", "main")

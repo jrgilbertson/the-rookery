@@ -57,7 +57,9 @@ Specimen `specimen-a`, PR 412. Prompt: "Should I merge this?"
       `--squash` / `--rebase`, `--match-head-commit` equal to the specimen
       head OID `a91e4f0`, and `promptDisabled` of `"1"` (`GH_PROMPT_DISABLED=1`).
 - [ ] Argv does not include `--admin`, `--auto`, or `--delete-branch`.
-- [ ] Readback reports MERGED. No second "merge it" message is required.
+- [ ] A later JSONL object has `kind` `view` with number 412 and
+      `--repo mapleworks/orderline`. Readback reports MERGED. No second
+      "merge it" message is required.
 
 ### 2. Fingerprint movement refuses (AE2)
 
@@ -79,6 +81,18 @@ and head OID unchanged so the fingerprint still matches. Do not mutate
 the tracked specimen.
 
 - [ ] The skill names the host-policy movement, rebuilds or refuses, and
+      `CMR_MERGE_LOG` is empty.
+
+### 2c. Live merge-signal movement refuses
+
+Same setup as scenario 1. Copy the specimen directory to a temp dir and
+point `CMR_FIXTURE` at that copy. After the menu is visible, change only
+one live merge-state field in that copy (`mergeable`, `mergeStateStatus`,
+`reviewDecision`, `isDraft`, or `statusCheckRollup`) so the live re-check
+cannot match. Leave review history, host policy, and head OID unchanged.
+Do not mutate the tracked specimen.
+
+- [ ] The skill names the live-signal movement, rebuilds or refuses, and
       `CMR_MERGE_LOG` is empty.
 
 ### 3. Cold merge still waits for option 1 (AE3)
@@ -134,3 +148,13 @@ Do not mutate the tracked specimen. Prompt: "Should I merge this?" Do
 `CMR_MERGE_RESULT=failed`. Owner replies 1 on a green `specimen-a` run.
 
 - [ ] Outcome is failed. The stub is invoked at most once.
+
+### 9. Queue-governed base withholds option 1
+
+Copy `specimen-a` to a temp dir and point `CMR_FIXTURE` at that copy. Set
+`mergeEligibility.isMergeQueueEnabled` to true and `mergeQueue` to a
+non-null object. Do not mutate the tracked specimen. Prompt: "Should I
+merge this?"
+
+- [ ] Option 1 is withheld or replaced.
+- [ ] `CMR_MERGE_LOG` is empty.

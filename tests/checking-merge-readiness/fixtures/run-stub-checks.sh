@@ -198,7 +198,7 @@ MERGEST=$(mktemp)
 out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_LOG="$MERGELOG" CMR_MERGE_STATE="$MERGEST" CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --match-head-commit a91e4f0 2>&1); got=$?
 if [ "$got" = 0 ]; then pass "gated pr merge: success"
 else fail "gated pr merge: success" "$out"; fi
-if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); a=list(d.get("argv") or []); oid=a[a.index("--match-head-commit")+1] if "--match-head-commit" in a else ""; raise SystemExit(0 if "--squash" in a and oid=="a91e4f0" and "412" in a and "--repo" in a and a[a.index("--repo")+1]=="mapleworks/orderline" else 1)' "$MERGELOG"
+if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); a=list(d.get("argv") or []); oid=a[a.index("--match-head-commit")+1] if "--match-head-commit" in a else ""; raise SystemExit(0 if d.get("kind")=="merge" and "--squash" in a and oid=="a91e4f0" and "412" in a and "--repo" in a and a[a.index("--repo")+1]=="mapleworks/orderline" else 1)' "$MERGELOG"
 then pass "gated pr merge: argv recorded"
 else fail "gated pr merge: argv recorded" "$(cat "$MERGELOG")"
 fi
@@ -206,6 +206,13 @@ out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_STATE="$MERGEST" CMR_FIXTURE="$PRS/specime
 if [ "$got" = 0 ] && printf '%s' "$out" | python3 -c 'import json,sys; d=json.load(sys.stdin); raise SystemExit(0 if d.get("state")=="MERGED" and d.get("mergedAt") else 1)'
 then pass "gated pr merge: readback MERGED"
 else fail "gated pr merge: readback MERGED" "$out"; fi
+VLOG=$(mktemp)
+out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_LOG="$VLOG" CMR_MERGE_STATE="$MERGEST" CMR_FIXTURE="$PRS/specimen-a" "$GH" pr view 412 --repo mapleworks/orderline --json state,mergedAt 2>&1); got=$?
+if [ "$got" = 0 ] && python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); a=list(d.get("argv") or []); raise SystemExit(0 if d.get("kind")=="view" and "412" in a and "--repo" in a and a[a.index("--repo")+1]=="mapleworks/orderline" else 1)' "$VLOG"
+then pass "merged overlay logs certified pr view"
+else fail "merged overlay logs certified pr view" "$out $(cat "$VLOG")"
+fi
+rm -f "$VLOG"
 out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_LOG="$MERGELOG" CMR_MERGE_STATE="$MERGEST" CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --match-head-commit a91e4f0 2>&1); got=$?
 if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "already merged"
 then pass "gated pr merge: already-merged refuse"
@@ -227,6 +234,8 @@ then pass "gated pr merge refuses second selector"
 else fail "gated pr merge refuses second selector" "$out"; fi
 # shellcheck disable=SC2016
 ELIG='query($owner:String!,$name:String!){repository(owner:$owner,name:$name){mergeCommitAllowed squashMergeAllowed rebaseMergeAllowed viewerDefaultMergeMethod}}'
+# shellcheck disable=SC2016
+PROT='query($owner:String!,$name:String!){repository(owner:$owner,name:$name){branchProtectionRules(first:1){nodes{pattern requiresConversationResolution}}}}'
 out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$ELIG" -F owner=evil -F name=wrong 2>&1); got=$?
 if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "no repository evil/wrong"
 then pass "eligibility GraphQL refuses other repository"
@@ -235,6 +244,14 @@ out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$ELIG" -F ow
 if [ "$got" = 0 ]
 then pass "eligibility GraphQL matching repository"
 else fail "eligibility GraphQL matching repository" "$out"; fi
+out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$PROT" -F owner=evil -F name=wrong 2>&1); got=$?
+if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "no repository evil/wrong"
+then pass "branchProtectionRules GraphQL refuses other repository"
+else fail "branchProtectionRules GraphQL refuses other repository" "$out"; fi
+out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$PROT" -F owner=mapleworks -F name=orderline 2>&1); got=$?
+if [ "$got" = 0 ]
+then pass "branchProtectionRules GraphQL matching repository"
+else fail "branchProtectionRules GraphQL matching repository" "$out"; fi
 out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f 'query=query{repository{mergeCommitAllowed squashMergeAllowed rebaseMergeAllowed viewerDefaultMergeMethod}}' 2>&1); got=$?
 if [ "$got" = 2 ] && printf '%s' "$out" | grep -q "owner"
 then pass "eligibility GraphQL requires repository arguments"

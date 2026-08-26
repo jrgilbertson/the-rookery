@@ -72,11 +72,12 @@ narrowing it.
 
 Deleting it required a harness where the skill genuinely fetches. The commit
 "refactor(tests): rebuild the battery around a read-only gh stub" added
-`tests/checking-merge-readiness/fixtures/bin/gh`, a read-only stand-in placed
+`tests/checking-merge-readiness/fixtures/bin/gh`, a stand-in placed
 first on `PATH` and pointed at one specimen directory through `CMR_FIXTURE`.
 It answers the skill's fixed read set from `body.md`, `diff.txt`, and
 `forge.json`, and exits non-zero on any write verb and on any verb outside
-that set. The clause is gone. The current step 2 says plainly that no claim
+that set, except when `CMR_ALLOW_MERGE` is set: then `pr merge` is a
+stub-only gated write that records argv and never talks to a live forge. The clause is gone. The current step 2 says plainly that no claim
 the data was already fetched substitutes for fetching it, and that when the
 commands cannot run, the honest path is the degraded mode and its cap rather
 than an assurance from whoever invoked the skill.
@@ -301,14 +302,20 @@ set from a specimen directory instead.
 ```
 
 Its `main` dispatch refuses anything outside the contract. Write verbs get one
-message, unknown reads get another, and both exit non-zero:
+message, unknown reads get another, and both exit non-zero, except the
+explicitly gated stub-only `pr merge` when `CMR_ALLOW_MERGE` is set:
 
 ```python
+if sub == "merge":
+    return pr_merge(argv[2:])
 if sub in WRITE_VERBS:
     die(f"`pr {sub}` writes; this stub is read-only", 3)
 ...
 die(f"`pr {sub}` is outside the skill's fixed read set", 3)
 ```
+
+Default `pr merge` without that gate still exits 3 as a write. The gate is
+test-seam only; it is not shipped in the skill.
 
 Specimens live under opaque names, `fixtures/prs/specimen-a` onward, so a run
 cannot read the expected verdict off a directory path.

@@ -219,6 +219,11 @@ def pr_view(argv, forge):
             marked = ""
         if marked == "MERGED":
             require_certified_merge_selector(want_number, want_repo, forge)
+            log_path = os.environ.get("CMR_MERGE_LOG")
+            if log_path:
+                with open(log_path, "a") as fh:
+                    json.dump({"kind": "view", "argv": list(argv)}, fh)
+                    fh.write("\n")
             full["state"] = "MERGED"
             full["merged"] = True
             full["mergedAt"] = forge.get("mergedAt") or "2026-08-25T00:00:00Z"
@@ -709,6 +714,7 @@ def pr_merge(argv):
         with open(log_path, "a") as fh:
             json.dump(
                 {
+                    "kind": "merge",
                     "argv": list(argv),
                     "promptDisabled": os.environ.get("GH_PROMPT_DISABLED"),
                 },
@@ -893,6 +899,14 @@ def graphql(argv, forge):
     if served_issue:
         repo["issue"] = issue_payload
     if served_protection:
+        refuse_unless_api_host(argv, forge)
+        repository_args = connection_args(query, "repository")
+        if re.search(r"\b(?:owner|name)\s*:", repository_args or ""):
+            refuse_unless_repository(
+                resolve_named_string(repository_args, "owner", bindings),
+                resolve_named_string(repository_args, "name", bindings),
+                forge,
+            )
         repo["branchProtectionRules"] = branch_protection_payload(forge)
     if served_eligibility:
         refuse_unless_api_host(argv, forge)

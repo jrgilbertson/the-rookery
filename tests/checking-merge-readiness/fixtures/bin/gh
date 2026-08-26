@@ -936,12 +936,11 @@ def graphql(argv, forge):
     if served_protection:
         refuse_unless_api_host(argv, forge)
         repository_args = connection_args(query, "repository")
-        if re.search(r"\b(?:owner|name)\s*:", repository_args or ""):
-            refuse_unless_repository(
-                resolve_named_string(repository_args, "owner", bindings),
-                resolve_named_string(repository_args, "name", bindings),
-                forge,
-            )
+        refuse_unless_repository(
+            resolve_named_string(repository_args, "owner", bindings),
+            resolve_named_string(repository_args, "name", bindings),
+            forge,
+        )
         repo["branchProtectionRules"] = branch_protection_payload(forge)
     if served_eligibility:
         refuse_unless_api_host(argv, forge)

@@ -24,10 +24,14 @@ merge log when present.
 ```text
 export CMR_FIXTURE=<repo-root>/tests/checking-merge-readiness/fixtures/prs/<specimen>
 export PATH=<repo-root>/tests/checking-merge-readiness/fixtures/bin:$PATH
+export GH_HOST=github.com
 export CMR_ALLOW_MERGE=1
 export CMR_MERGE_LOG=<temp-file>
 export CMR_MERGE_STATE=<temp-file>
 ```
+
+Pin `GH_HOST=github.com` so an ambient Enterprise `GH_HOST` cannot reject these
+GitHub-hosted specimens.
 
 Use only the fixture `gh` on `PATH`. Do not call a live GitHub CLI, GitHub
 MCP tools, or other forge connectors. This case authorizes a write against

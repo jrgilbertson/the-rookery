@@ -348,6 +348,10 @@ out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f 'query=query{reposi
 if [ "$got" = 2 ] && printf '%s' "$out" | grep -q "owner"
 then pass "eligibility GraphQL requires repository arguments"
 else fail "eligibility GraphQL requires repository arguments" "$out"; fi
+out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f 'query=query{repository{branchProtectionRules(first:1){nodes{pattern requiresConversationResolution}}}}' 2>&1); got=$?
+if [ "$got" = 2 ] && printf '%s' "$out" | grep -q "owner"
+then pass "branchProtectionRules GraphQL requires repository arguments"
+else fail "branchProtectionRules GraphQL requires repository arguments" "$out"; fi
 out=$(env GH_HOST=evil.example CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$ELIG" -F owner=mapleworks -F name=orderline 2>&1); got=$?
 if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "does not match"
 then pass "eligibility GraphQL refuses other GH_HOST"

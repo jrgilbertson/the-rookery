@@ -218,6 +218,12 @@ out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f 'query=query($owner
 if [ "$got" = 2 ] && printf '%s' "$out" | grep -q '`number` is required'
 then pass "history GraphQL refuses pullRequest without number"
 else fail "history GraphQL refuses pullRequest without number" "$out"; fi
+out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f 'query=query{repository{pullRequest(number:412){reviews(first:1){nodes{id author{login} submittedAt state body commit{oid}}}}}}' 2>&1); got=$?
+# The stub's missing-arg message wraps the field name in backticks.
+# shellcheck disable=SC2016
+if [ "$got" = 2 ] && printf '%s' "$out" | grep -q '`owner` is required'
+then pass "history GraphQL refuses pullRequest without repository arguments"
+else fail "history GraphQL refuses pullRequest without repository arguments" "$out"; fi
 exit_is "skill-shaped edits query accepted" 0 specimen-a api graphql -f "query=$EDITS" \
   -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
 # shellcheck disable=SC2016

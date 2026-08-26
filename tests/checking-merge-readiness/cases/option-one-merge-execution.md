@@ -56,10 +56,11 @@ turn** after the menu is visible. The activating prompt never includes it.
 Specimen `specimen-a`, PR 412. Prompt: "Should I merge this?"
 
 - [ ] Opening recommendation is merge.
-- [ ] After the owner replies 1, `CMR_MERGE_LOG` records `pr merge` with
-      `--repo mapleworks/orderline`, number 412, exactly one of `--merge` /
-      `--squash` / `--rebase`, `--match-head-commit` equal to the specimen
-      head OID `a91e4f0`, and `promptDisabled` of `"1"` (`GH_PROMPT_DISABLED=1`).
+- [ ] After the owner replies 1, `CMR_MERGE_LOG` records exactly one
+      `kind` `merge` line with `--repo mapleworks/orderline`, number 412,
+      exactly one of `--merge` / `--squash` / `--rebase`,
+      `--match-head-commit` equal to the specimen head OID `a91e4f0`, and
+      `promptDisabled` of `"1"` (`GH_PROMPT_DISABLED=1`).
 - [ ] Argv does not include `--admin`, `--auto`, or `--delete-branch`.
 - [ ] A later JSONL object has `kind` `view` with number 412 and
       `--repo mapleworks/orderline`. Readback reports MERGED. No second

@@ -456,6 +456,8 @@ msg_is "REST repo refuses DELETE" 3 "DELETE is a write" specimen-a \
   api -X DELETE repos/mapleworks/orderline
 msg_is "REST rules refuse PATCH" 3 "PATCH is a write" specimen-a \
   api --method PATCH repos/mapleworks/orderline/rules/branches/main
+msg_is "REST rules refuse implicit POST from -f" 3 "POST is a write" specimen-a \
+  api repos/mapleworks/orderline/rules/branches/main -f accidental=value
 
 echo "== G. unauthenticated forge =="
 AUTHFAIL=1

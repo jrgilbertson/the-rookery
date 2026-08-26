@@ -43,6 +43,7 @@ import json
 import os
 import re
 import sys
+import tempfile
 
 WRITE_VERBS = {
     "merge", "close", "reopen", "edit", "comment", "review", "create",
@@ -203,19 +204,15 @@ def pr_view(argv, forge):
         "closingIssuesReferences": forge.get("closingIssuesReferences", []),
         "mergeCommit": forge.get("mergeCommit"),
     }
-    merged_overlay = already_merged_state(os.environ.get("CMR_MERGE_STATE"))
+    state_path = os.environ.get("CMR_MERGE_STATE")
+    require_disposable_path(state_path, "CMR_MERGE_STATE")
+    merged_overlay = already_merged_state(state_path)
     if merged_overlay:
         require_certified_merge_selector(want_number, want_repo, forge)
         full["state"] = "MERGED"
         full["merged"] = True
         full["mergedAt"] = forge.get("mergedAt") or "2026-08-25T00:00:00Z"
     log_path = os.environ.get("CMR_MERGE_LOG")
-    if log_path and want_number is not None and (
-        merged_overlay or merge_log_has_attempt(log_path)
-    ):
-        with open(log_path, "a") as fh:
-            json.dump({"kind": "view", "argv": list(argv)}, fh)
-            fh.write("\n")
     if not fields:
         die(
             "`pr view` without --json prints formatted text on real gh; this "
@@ -229,6 +226,13 @@ def pr_view(argv, forge):
             f"{', '.join(unknown)}",
             2,
         )
+    if log_path and want_number is not None and (
+        merged_overlay or merge_log_has_attempt(log_path)
+    ):
+        require_disposable_path(log_path, "CMR_MERGE_LOG")
+        with open(log_path, "a") as fh:
+            json.dump({"kind": "view", "argv": list(argv)}, fh)
+            fh.write("\n")
     print(json.dumps({k: full[k] for k in fields}, indent=2))
 
 
@@ -538,13 +542,38 @@ def requested_api_host(argv):
     )
 
 
+def has_input_fields(argv):
+    for a in argv:
+        if a in ("-f", "--field", "-F", "--raw-field", "--input", "-i"):
+            return True
+        if a.startswith(("--input=", "query=")):
+            return True
+    return False
+
+
 def requested_http_method(argv):
-    return argv_option(
+    got = argv_option(
         argv,
         ("-X", "--method"),
         attached=("--method=", "-X"),
-        default="GET",
-    ).upper()
+        default=None,
+    )
+    if got is not None:
+        return got.upper()
+    if has_input_fields(argv):
+        return "POST"
+    return "GET"
+
+
+def require_disposable_path(path, label):
+    if not path:
+        return
+    if os.path.lexists(path) and os.path.islink(path):
+        die(f"{label} must not be a symlink", 3)
+    tmp = os.path.realpath(tempfile.gettempdir())
+    real = os.path.realpath(os.path.abspath(path))
+    if real != tmp and not real.startswith(tmp + os.sep):
+        die(f"{label} must be a temp-directory path", 3)
 
 
 def split_host_repo(selector, forge):
@@ -760,6 +789,9 @@ def pr_merge(argv):
     if not os.environ.get("CMR_ALLOW_MERGE"):
         die("`pr merge` writes; this stub is read-only", 3)
     log_path = os.environ.get("CMR_MERGE_LOG")
+    state_path = os.environ.get("CMR_MERGE_STATE")
+    require_disposable_path(log_path, "CMR_MERGE_LOG")
+    require_disposable_path(state_path, "CMR_MERGE_STATE")
     if log_path:
         with open(log_path, "a") as fh:
             json.dump(
@@ -779,7 +811,6 @@ def pr_merge(argv):
         die(f"head OID {match_oid} does not match {expected}", 1)
     refuse_unless_merge_eligible(method, forge)
     result = os.environ.get("CMR_MERGE_RESULT", "merged")
-    state_path = os.environ.get("CMR_MERGE_STATE")
     if already_merged_state(state_path) or result == "already_merged":
         if state_path:
             with open(state_path, "w") as fh:

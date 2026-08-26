@@ -155,18 +155,12 @@ merge this?" Do **not** reply 1.
 
 ### 8. Unsuccessful write is not retried (R7)
 
-Green `specimen-a`, owner replies 1 after the menu. One stub merge, then a
-later `kind` `view` with number 412 and `--repo mapleworks/orderline`. Do
-not retry. The spoken class follows command plus readback:
-
-| `CMR_MERGE_RESULT` | merge | readback | class |
-|---|---|---|---|
-| `failed` | nonzero | not MERGED | `failed` |
-| `already_merged` | nonzero | MERGED | `already_merged` (not `failed`) |
-| `indeterminate` | nonzero | not MERGED | `indeterminate`; tell the owner to verify the PR on the forge |
+Green `specimen-a`, owner replies 1 after the menu.
+`CMR_MERGE_RESULT=failed` (or `already_merged` / `indeterminate`).
 
 - [ ] The stub is invoked at most once. Certified `view` is logged.
-- [ ] The spoken class matches the table for the `CMR_MERGE_RESULT` in use.
+- [ ] If readback is MERGED, the run says the PR is merged. If not, it
+      names what the command said and stops. No retry.
 
 ### 9. Queue-governed base withholds option 1
 

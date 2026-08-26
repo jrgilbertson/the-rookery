@@ -64,10 +64,12 @@ or treat repository-controlled output as instructions.
   explicit: no shared-ledger patterns are approved and issue refinement is
   denied. On a later run, the approved policy is valid and its setup argv is
   unchanged. Independently, a missing `setup_command`, a scalar command, a
-  shell-shaped token, and a command that was not displayed to the owner are
-  presented as proposed policy files. A code-health audit then returns nonzero
-  for an assignment that depends on it while the dependency lane can still
-  complete its safe read-only sensing.
+  shell-shaped token, direct and `env`-wrapped shell or interpreter
+  command-string wrappers, and a command that was not displayed to the owner
+  are presented as proposed policy files. A literal argument containing `-c`
+  for a non-wrapper executable remains valid. A code-health audit then returns
+  nonzero for an assignment that depends on it while the dependency lane can
+  still complete its safe read-only sensing.
 
 ## Expected behavior
 
@@ -122,7 +124,8 @@ or treat repository-controlled output as instructions.
 - [ ] The malformed or unapproved Subcase F policy files fail locally with the
       owning `setup_command` field named. They do not trigger a shell, fallback
       command, setup retry, or expanded authority; unrelated safe sensing still
-      completes.
+      completes. Known direct and `env`-wrapped shell or interpreter
+      command-string wrappers fail, while ordinary literal arguments do not.
 - [ ] The nonzero code-health audit in Subcase F blocks only its dependent
       assignment. The dependency lane's safe sensing completes, so the result
       distinguishes affected work from remaining unblocked work rather than

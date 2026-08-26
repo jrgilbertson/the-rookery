@@ -533,6 +533,18 @@ lanes:
             expected_setup_command["setup_command"] == ["npm", "run", "prepare-repository"],
             "setup command tokens changed during normalization",
         )
+        literal_setup_arguments = base_config()
+        literal_setup_arguments["setup_command"] = [
+            "env",
+            "MODE=setup",
+            "repo-setup",
+            "--literal=-c",
+        ]
+        expect_valid(
+            literal_setup_arguments,
+            repo_root,
+            normalized_config(literal_setup_arguments),
+        )
 
         malformed_setup_commands: tuple[tuple[Any, str], ...] = (
             ("npm run prepare-repository", "setup_command must be a sequence"),
@@ -543,6 +555,11 @@ lanes:
             (["npm", "$(pwd)"], "setup_command[1] contains forbidden shell syntax"),
             (["npm", ">result.txt"], "setup_command[1] contains forbidden shell syntax"),
             (["REPLACE_WITH_APPROVED_SETUP"], "setup_command[0] has an unresolved REPLACE_WITH placeholder"),
+            (["sh", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["python3", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["env", "MODE=setup", "bash", "-lc", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["env", "--", "node", "--eval=repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["env", "-S", "sh -c repo-setup"], "setup_command contains forbidden command-string wrapper"),
         )
         for command, message in malformed_setup_commands:
             malformed_setup_command = base_config()

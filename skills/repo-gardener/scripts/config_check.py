@@ -64,6 +64,8 @@ NULL_SCALAR = re.compile(r"^(?:~|null|Null|NULL|)$")
 SHELL_INTERPOLATION = re.compile(r"(?:`|\$(?:[A-Za-z_][A-Za-z0-9_]*|[0-9@*#?!$-]|\(|\{))")
 SHELL_REDIRECTION = re.compile(r"^(?:[0-9]*|&)(?:>>?|<<?|<>|>&|<&).*$|^(?:>>?|<<?|<>).*$")
 SHELL_OPERATOR_TOKENS = {"&&", "||", "|", ";", "&"}
+SHELL_COMMANDS = {"bash", "dash", "fish", "ksh", "sh", "zsh"}
+INTERPRETER_COMMANDS = {"lua", "node", "nodejs", "perl", "php", "ruby"}
 
 
 class ConfigError(Exception):
@@ -402,6 +404,66 @@ def normalize_direct_argv(value: Any, label: str) -> list[str]:
     return command
 
 
+def command_after_env(command: list[str]) -> list[str] | None:
+    if command[0] != "env":
+        return command
+    index = 1
+    while index < len(command):
+        token = command[index]
+        if token == "--":
+            return command[index + 1 :]
+        if token in {"-S", "--split-string"} or token.startswith("--split-string="):
+            return None
+        if token in {"-i", "--ignore-environment", "-0", "--null"} or (
+            "=" in token and not token.startswith("=")
+        ):
+            index += 1
+            continue
+        if token in {"-C", "--chdir", "-u", "--unset"}:
+            index += 2
+            continue
+        if token.startswith(("--chdir=", "--unset=")):
+            index += 1
+            continue
+        return command[index:]
+    return []
+
+
+def is_command_string_wrapper(command: list[str]) -> bool:
+    executable_and_args = command_after_env(command)
+    if executable_and_args is None:
+        return True
+    if not executable_and_args:
+        return False
+    executable = Path(executable_and_args[0]).name.lower()
+    options = executable_and_args[1:]
+    if executable in SHELL_COMMANDS:
+        return any(
+            option == "-c"
+            or (option.startswith("-") and "c" in option[1:])
+            or option == "--command"
+            or option.startswith("--command=")
+            for option in options
+        )
+    is_python = re.fullmatch(r"python(?:\d+(?:\.\d+)*)?", executable) is not None
+    if executable in INTERPRETER_COMMANDS or is_python:
+        return any(
+            option in {"-c", "-e", "--eval"}
+            or option.startswith(("-c", "-e", "--eval="))
+            for option in options
+        )
+    return False
+
+
+def normalize_setup_command(value: Any) -> list[str]:
+    command = normalize_direct_argv(value, "setup_command")
+    require(
+        not is_command_string_wrapper(command),
+        "setup_command contains forbidden command-string wrapper",
+    )
+    return command
+
+
 def normalize_lanes(value: Any) -> dict[str, Any]:
     require(isinstance(value, dict), "lanes must be a mapping")
     require_exact_fields(value, set(LANE_ORDER), set(LANE_ORDER), "lanes")
@@ -460,7 +522,7 @@ def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
         "repository": normalize_repository(value["repository"]),
         "protected_paths": require_glob_list(value["protected_paths"], "protected_paths", nonempty=False),
         "maximum_workers": workers,
-        "setup_command": normalize_direct_argv(value["setup_command"], "setup_command"),
+        "setup_command": normalize_setup_command(value["setup_command"]),
         "tracker": normalize_tracker(value["tracker"]),
         "lanes": normalize_lanes(value["lanes"]),
     }

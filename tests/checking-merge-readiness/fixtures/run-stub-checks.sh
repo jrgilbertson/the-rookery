@@ -198,7 +198,7 @@ MERGEST=$(mktemp)
 out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_LOG="$MERGELOG" CMR_MERGE_STATE="$MERGEST" CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --match-head-commit a91e4f0 2>&1); got=$?
 if [ "$got" = 0 ]; then pass "gated pr merge: success"
 else fail "gated pr merge: success" "$out"; fi
-if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); a=list(d.get("argv") or []); raise SystemExit(0 if d.get("method")=="--squash" and d.get("matchHeadCommit")=="a91e4f0" and "412" in a and "--repo" in a and a[a.index("--repo")+1]=="mapleworks/orderline" else 1)' "$MERGELOG"
+if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); a=list(d.get("argv") or []); oid=a[a.index("--match-head-commit")+1] if "--match-head-commit" in a else ""; raise SystemExit(0 if "--squash" in a and oid=="a91e4f0" and "412" in a and "--repo" in a and a[a.index("--repo")+1]=="mapleworks/orderline" else 1)' "$MERGELOG"
 then pass "gated pr merge: argv recorded"
 else fail "gated pr merge: argv recorded" "$(cat "$MERGELOG")"
 fi
@@ -259,7 +259,13 @@ out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_STATE="$ALREADY" CMR_FIXTURE="$PRS/specime
 if [ "$got" = 0 ] && printf '%s' "$out" | python3 -c 'import json,sys; d=json.load(sys.stdin); raise SystemExit(0 if d.get("state")=="MERGED" and d.get("mergedAt") else 1)'
 then pass "already_merged readback MERGED"
 else fail "already_merged readback MERGED" "$out"; fi
-rm -f "$MERGELOG" "$MERGEST" "$ALREADY"
+HLOG=$(mktemp)
+out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_LOG="$HLOG" CMR_FIXTURE="$PRS/specimen-h" "$GH" pr merge 205 --repo mapleworks/inbox-svc --squash --match-head-commit 4c1b8e2 2>&1); got=$?
+if [ "$got" != 0 ] && python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); raise SystemExit(0 if d.get("argv") else 1)' "$HLOG"
+then pass "gated pr merge logs before eligibility refuse"
+else fail "gated pr merge logs before eligibility refuse" "$out $(cat "$HLOG" 2>/dev/null)"
+fi
+rm -f "$MERGELOG" "$MERGEST" "$ALREADY" "$HLOG"
 msg_is "pr edit writes" 3 "writes; this stub is read-only" specimen-a pr edit
 msg_is "pr checkout outside set" 3 "outside the skill" specimen-a pr checkout
 msg_is "issue edit writes" 3 "writes; this stub is read-only" specimen-a issue edit 73

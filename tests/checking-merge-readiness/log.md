@@ -258,5 +258,6 @@ network beyond the fixture stub).
 - 2026-08-26 | 1120c01 (working tree) | fixture stub checks | pass (154/154) | require `--repo`/number from argv, JSONL retry log, `--rebase` refuse, extra `--subject`/`--body` refuse, already-merged second attempt
 - 2026-08-26 | 7582d2f (working tree) | fixture stub checks | pass (155/155) | owner-only `--repo mapleworks` now refused on gated merge
 - 2026-08-26 | ede6ed5 (working tree) | fixture stub checks | pass (159/159) | host-mismatched `--repo` refuse, already_merged overlay MERGED, selectorless post-merge `pr view` refuse
+- 2026-08-26 | dab818e (working tree) | fixture stub checks | pass (160/160) | gated merge logs argv before eligibility refuse
 - 2026-08-25 | 90a5226 (working tree) | fetch helper fixture runs | pass (58/58) | history pagination and fingerprint checks unchanged after eligibility GraphQL
 - 2026-08-25 | 90a5226 (working tree) | trigger S7 / option-1 merge-execution case | not run | matched-pair grading still required; case file and S7 added

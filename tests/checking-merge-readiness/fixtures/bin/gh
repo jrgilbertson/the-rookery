@@ -651,6 +651,11 @@ def already_merged_state(state_path):
 def pr_merge(argv):
     if not os.environ.get("CMR_ALLOW_MERGE"):
         die("`pr merge` writes; this stub is read-only", 3)
+    log_path = os.environ.get("CMR_MERGE_LOG")
+    if log_path:
+        with open(log_path, "a") as fh:
+            json.dump({"argv": list(argv)}, fh)
+            fh.write("\n")
     forge = load()
     want_number, want_repo, method, match_oid = parse_merge_argv(argv)
     require_certified_merge_selector(want_number, want_repo, forge)
@@ -658,16 +663,6 @@ def pr_merge(argv):
     if match_oid != expected:
         die(f"head OID {match_oid} does not match {expected}", 1)
     refuse_unless_merge_eligible(method, forge)
-    log_path = os.environ.get("CMR_MERGE_LOG")
-    if log_path:
-        payload = {
-            "argv": argv,
-            "method": method,
-            "matchHeadCommit": match_oid,
-        }
-        with open(log_path, "a") as fh:
-            json.dump(payload, fh)
-            fh.write("\n")
     result = os.environ.get("CMR_MERGE_RESULT", "merged")
     state_path = os.environ.get("CMR_MERGE_STATE")
     if already_merged_state(state_path) or result == "already_merged":

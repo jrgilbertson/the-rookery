@@ -83,9 +83,13 @@ recommend an invocation that visibly embeds credential values,
 requests production or provider authentication, reads secret files, uses a
 credential helper or agent socket, or relies on shell parsing. Prefer an
 adopted repository entry point over an interpreter or `env` wrapper when the
-repository evidence supports one. The validator rejects known shell and
-interpreter command-string wrappers, including an `env` wrapper around one;
-ordinary literal arguments remain valid. Persist at most ten exact tokenized commands
+repository evidence supports one. For `setup_command` only, the validator
+compares executable basenames case-insensitively after path and `.exe` suffix
+normalization, rejects POSIX and Windows shell or interpreter command-string
+options, and recognizes direct or path-qualified `env` wrappers (including
+split-string forms). Ordinary literal arguments remain valid under a
+non-wrapper executable; `audit_commands` retain their existing structural
+direct-argv validation. Persist at most ten exact tokenized commands
 across all eligible lanes, plus one exact tokenized `setup_command`, and only
 after the owner approves them in the full-file review. The structural checker
 does not infer arbitrary executable or option semantics; that review is the

@@ -545,6 +545,28 @@ lanes:
             repo_root,
             normalized_config(literal_setup_arguments),
         )
+        ordinary_literal_arguments = base_config()
+        ordinary_literal_arguments["setup_command"] = [
+            "repo-setup",
+            "--literal=-c",
+            "--command",
+            "/c",
+            "--eval",
+        ]
+        expect_valid(
+            ordinary_literal_arguments,
+            repo_root,
+            normalized_config(ordinary_literal_arguments),
+        )
+        audit_wrapper_arguments = base_config()
+        audit_wrapper_arguments["lanes"]["repository-test-and-code-health"][
+            "audit_commands"
+        ] = [["cmd.exe", "/c", "audit"]]
+        expect_valid(
+            audit_wrapper_arguments,
+            repo_root,
+            normalized_config(audit_wrapper_arguments),
+        )
 
         malformed_setup_commands: tuple[tuple[Any, str], ...] = (
             ("npm run prepare-repository", "setup_command must be a sequence"),
@@ -560,6 +582,33 @@ lanes:
             (["env", "MODE=setup", "bash", "-lc", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
             (["env", "--", "node", "--eval=repo-setup"], "setup_command contains forbidden command-string wrapper"),
             (["env", "-S", "sh -c repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["/usr/bin/env", "bash", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            ([r"C:\\Windows\\System32\\ENV.EXE", "bash.exe", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["env", "-Ssh -c repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["ENV.EXE", "--split-string=sh -c repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["/bin/bash", "--command=repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["dash", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["fish", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["ksh", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["zsh", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["csh", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["tcsh", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["cmd", "/c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["cmd.exe", "/k", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["powershell", "-Command", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["powershell.exe", "/COMMAND", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["pwsh", "-EncodedCommand", "c2V0dXA="], "setup_command contains forbidden command-string wrapper"),
+            (["PWSH.EXE", "/encodedcommand", "c2V0dXA="], "setup_command contains forbidden command-string wrapper"),
+            (["bash.exe", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["Python3.EXE", "-c", "print(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["python", "-ic", "print(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["node", "-e", "console.log(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["NODE.EXE", "--eval", "console.log(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["nodejs", "--print=1"], "setup_command contains forbidden command-string wrapper"),
+            (["ruby", "-e", "puts 1"], "setup_command contains forbidden command-string wrapper"),
+            (["perl", "-E", "say 1"], "setup_command contains forbidden command-string wrapper"),
+            (["php", "-r", "echo 1"], "setup_command contains forbidden command-string wrapper"),
+            (["lua", "-e", "print(1)"], "setup_command contains forbidden command-string wrapper"),
         )
         for command, message in malformed_setup_commands:
             malformed_setup_command = base_config()

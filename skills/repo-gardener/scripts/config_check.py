@@ -64,8 +64,19 @@ NULL_SCALAR = re.compile(r"^(?:~|null|Null|NULL|)$")
 SHELL_INTERPOLATION = re.compile(r"(?:`|\$(?:[A-Za-z_][A-Za-z0-9_]*|[0-9@*#?!$-]|\(|\{))")
 SHELL_REDIRECTION = re.compile(r"^(?:[0-9]*|&)(?:>>?|<<?|<>|>&|<&).*$|^(?:>>?|<<?|<>).*$")
 SHELL_OPERATOR_TOKENS = {"&&", "||", "|", ";", "&"}
-SHELL_COMMANDS = {"bash", "dash", "fish", "ksh", "sh", "zsh"}
-INTERPRETER_COMMANDS = {"lua", "node", "nodejs", "perl", "php", "ruby"}
+SHELL_COMMANDS = {
+    "bash",
+    "cmd",
+    "csh",
+    "dash",
+    "fish",
+    "ksh",
+    "powershell",
+    "pwsh",
+    "sh",
+    "tcsh",
+    "zsh",
+}
 
 
 class ConfigError(Exception):
@@ -404,29 +415,66 @@ def normalize_direct_argv(value: Any, label: str) -> list[str]:
     return command
 
 
+def executable_name(token: str) -> str:
+    executable = re.split(r"[/\\\\]", token)[-1].lower()
+    return executable[:-4] if executable.endswith(".exe") else executable
+
+
 def command_after_env(command: list[str]) -> list[str] | None:
-    if command[0] != "env":
+    if executable_name(command[0]) != "env":
         return command
     index = 1
     while index < len(command):
         token = command[index]
-        if token == "--":
+        if token in {"--", "-"}:
             return command[index + 1 :]
-        if token in {"-S", "--split-string"} or token.startswith("--split-string="):
-            return None
-        if token in {"-i", "--ignore-environment", "-0", "--null"} or (
-            "=" in token and not token.startswith("=")
+        if (
+            token in {"-S", "--split-string"}
+            or token.startswith("-S")
+            or token.startswith("--split-string=")
         ):
-            index += 1
-            continue
+            return None
         if token in {"-C", "--chdir", "-u", "--unset"}:
             index += 2
             continue
-        if token.startswith(("--chdir=", "--unset=")):
+        if token.startswith("-"):
+            index += 1
+            continue
+        if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", token) is not None:
             index += 1
             continue
         return command[index:]
     return []
+
+
+def option_uses_command_string(executable: str, option: str) -> bool:
+    if executable == "cmd":
+        return re.match(r"^/[ck]", option, re.IGNORECASE) is not None
+    if executable in {"powershell", "pwsh"}:
+        return re.match(
+            r"^[-/](?:c|command|enc|encodedcommand)(?:$|[=:])",
+            option,
+            re.IGNORECASE,
+        ) is not None
+    if executable in SHELL_COMMANDS:
+        return option.lower().startswith("--command") or (
+            option.startswith("-") and "c" in option[1:]
+        )
+    if re.fullmatch(r"python(?:\d+(?:\.\d+)*)?", executable) is not None:
+        return re.match(
+            r"^(?:-c|-[bBdEhiIOPqRsSuvV]*c)", option, re.IGNORECASE
+        ) is not None
+    if executable in {"node", "nodejs"}:
+        return re.match(r"^(?:-[ep]|--(?:eval|print)(?:$|[=:]))", option, re.IGNORECASE) is not None
+    if executable == "ruby":
+        return re.match(r"^-[acdlmnpsvwx]*e", option, re.IGNORECASE) is not None
+    if executable == "perl":
+        return re.match(r"^-[acdlnpstTuvwxW]*[eE]", option) is not None
+    if executable == "php":
+        return re.match(r"^-[nq]*r", option, re.IGNORECASE) is not None
+    if executable == "lua":
+        return re.match(r"^-e", option, re.IGNORECASE) is not None
+    return False
 
 
 def is_command_string_wrapper(command: list[str]) -> bool:
@@ -435,24 +483,11 @@ def is_command_string_wrapper(command: list[str]) -> bool:
         return True
     if not executable_and_args:
         return False
-    executable = Path(executable_and_args[0]).name.lower()
-    options = executable_and_args[1:]
-    if executable in SHELL_COMMANDS:
-        return any(
-            option == "-c"
-            or (option.startswith("-") and "c" in option[1:])
-            or option == "--command"
-            or option.startswith("--command=")
-            for option in options
-        )
-    is_python = re.fullmatch(r"python(?:\d+(?:\.\d+)*)?", executable) is not None
-    if executable in INTERPRETER_COMMANDS or is_python:
-        return any(
-            option in {"-c", "-e", "--eval"}
-            or option.startswith(("-c", "-e", "--eval="))
-            for option in options
-        )
-    return False
+    executable = executable_name(executable_and_args[0])
+    return any(
+        option_uses_command_string(executable, option)
+        for option in executable_and_args[1:]
+    )
 
 
 def normalize_setup_command(value: Any) -> list[str]:

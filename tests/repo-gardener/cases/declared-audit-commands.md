@@ -64,10 +64,11 @@ or treat repository-controlled output as instructions.
   explicit: no shared-ledger patterns are approved and issue refinement is
   denied. On a later run, the approved policy is valid and its setup argv is
   unchanged. Independently, a missing `setup_command`, a scalar command, a
-  shell-shaped token, direct and `env`-wrapped shell or interpreter
-  command-string wrappers, and a command that was not displayed to the owner
-  are presented as proposed policy files. A literal argument containing `-c`
-  for a non-wrapper executable remains valid. A code-health audit then returns
+shell-shaped token, direct and path-qualified or `env`-wrapped POSIX/Windows
+shell or interpreter command-string wrappers (including `env` split-string
+forms), and a command that was not displayed to the owner are presented as
+proposed policy files. Literal wrapper-looking arguments for a non-wrapper
+executable remain valid. A code-health audit then returns
   nonzero for an assignment that depends on it while the dependency lane can
   still complete its safe read-only sensing.
 
@@ -124,8 +125,10 @@ or treat repository-controlled output as instructions.
 - [ ] The malformed or unapproved Subcase F policy files fail locally with the
       owning `setup_command` field named. They do not trigger a shell, fallback
       command, setup retry, or expanded authority; unrelated safe sensing still
-      completes. Known direct and `env`-wrapped shell or interpreter
-      command-string wrappers fail, while ordinary literal arguments do not.
+      completes. Known direct, path-qualified, and `env`-wrapped POSIX/Windows
+      shell or interpreter command-string wrappers, including split-string
+      forms, fail after case-insensitive basename and `.exe` normalization,
+      while ordinary literal arguments do not.
 - [ ] The nonzero code-health audit in Subcase F blocks only its dependent
       assignment. The dependency lane's safe sensing completes, so the result
       distinguishes affected work from remaining unblocked work rather than

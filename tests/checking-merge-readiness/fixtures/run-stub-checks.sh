@@ -479,6 +479,18 @@ then pass "REST repo allow_* methods"
 else fail "REST repo allow_* methods" "$out"; fi
 msg_is "REST repo refuses other repository" 1 "no repository evil/wrong" specimen-a \
   api repos/evil/wrong
+out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api -X GET repos/mapleworks/orderline 2>&1); got=$?
+if [ "$got" = 0 ]
+then pass "REST repo allows explicit GET"
+else fail "REST repo allows explicit GET" "$out"; fi
+out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api -X DELETE repos/mapleworks/orderline 2>&1); got=$?
+if [ "$got" = 3 ] && printf '%s' "$out" | grep -q "DELETE is a write"
+then pass "REST repo refuses DELETE"
+else fail "REST repo refuses DELETE" "$out"; fi
+out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api --method PATCH repos/mapleworks/orderline/rules/branches/main 2>&1); got=$?
+if [ "$got" = 3 ] && printf '%s' "$out" | grep -q "PATCH is a write"
+then pass "REST rules refuse PATCH"
+else fail "REST rules refuse PATCH" "$out"; fi
 
 echo "== G. unauthenticated forge =="
 AUTHFAIL=1

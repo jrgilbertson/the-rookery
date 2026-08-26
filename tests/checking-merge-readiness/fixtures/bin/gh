@@ -542,6 +542,17 @@ def requested_api_host(argv):
     return os.environ.get("GH_HOST") or "github.com"
 
 
+def requested_http_method(argv):
+    for i, a in enumerate(argv):
+        if a in ("-X", "--method") and i + 1 < len(argv):
+            return argv[i + 1].upper()
+        if a.startswith("--method="):
+            return a.split("=", 1)[1].upper()
+        if a.startswith("-X") and len(a) > 2:
+            return a[2:].upper()
+    return "GET"
+
+
 def refuse_unless_api_host(argv, forge):
     got = requested_api_host(argv).lower()
     want = forge.get("host", "github.com").lower()
@@ -990,6 +1001,12 @@ def graphql(argv, forge):
 
 def api_rest(argv, forge):
     """Serve GET repos/{owner}/{name} and repos/.../rules/branches/{base}."""
+    method = requested_http_method(argv)
+    if method != "GET":
+        die(
+            f"`gh api` REST eligibility reads are GET; {method} is a write",
+            3,
+        )
     path = None
     for a in argv:
         if a.startswith("repos/"):

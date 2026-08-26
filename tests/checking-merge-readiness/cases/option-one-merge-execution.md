@@ -153,6 +153,16 @@ Do not mutate the tracked specimen. Prompt: "Should I merge this?" Do
 - [ ] `CMR_MERGE_LOG` also records a later `kind` `view` with number 412
       and `--repo mapleworks/orderline`.
 
+### 8b. Already-merged readback is distinct (R7)
+
+`CMR_MERGE_RESULT=already_merged`. Owner replies 1 on a green `specimen-a`
+run. The merge command fails; certified readback reports MERGED.
+
+- [ ] Outcome is `already_merged`, not `failed`.
+- [ ] The stub is invoked at most once.
+- [ ] `CMR_MERGE_LOG` also records a later `kind` `view` with number 412
+      and `--repo mapleworks/orderline`. Readback reports MERGED.
+
 ### 9. Queue-governed base withholds option 1
 
 Copy `specimen-a` to a temp dir and point `CMR_FIXTURE` at that copy. Set

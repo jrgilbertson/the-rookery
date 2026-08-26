@@ -73,38 +73,73 @@ print($expr)
 }
 
 # Floor-aligned shapes (SKILL.md step 2); extra fields still allowed.
-THREADS='query{repository{pullRequest{reviewThreads(first:100){pageInfo{hasNextPage endCursor} nodes{id isResolved path line comments(first:100){nodes{id body author{login} pullRequestReview{id submittedAt}}}}}}}}'
-REVIEWS='query{repository{pullRequest{reviews(first:100){pageInfo{hasNextPage endCursor} nodes{id author{login} submittedAt state body commit{oid}}}}}}'
-COMMENTS='query{repository{pullRequest{comments(first:100){pageInfo{hasNextPage endCursor} nodes{id body author{login}}}}}}'
-EDITS='query{repository{pullRequest{userContentEdits(first:100){pageInfo{hasNextPage endCursor} nodes{editedAt editor{login} diff}}}}}'
+# History queries bind repository + pullRequest number like fetch-pr-history.sh.
+# shellcheck disable=SC2016
+THREADS='query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){reviewThreads(first:100){pageInfo{hasNextPage endCursor} nodes{id isResolved path line comments(first:100){nodes{id body author{login} pullRequestReview{id submittedAt}}}}}}}}'
+# shellcheck disable=SC2016
+REVIEWS='query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){reviews(first:100){pageInfo{hasNextPage endCursor} nodes{id author{login} submittedAt state body commit{oid}}}}}}'
+# shellcheck disable=SC2016
+COMMENTS='query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){comments(first:100){pageInfo{hasNextPage endCursor} nodes{id body author{login}}}}}}'
+# shellcheck disable=SC2016
+EDITS='query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){userContentEdits(first:100){pageInfo{hasNextPage endCursor} nodes{editedAt editor{login} diff}}}}}'
 # shellcheck disable=SC2016
 ISSUE_COMMENTS='query($owner:String!,$name:String!,$issueNumber:Int!){repository(owner:$owner,name:$name){issue(number:$issueNumber){number title body state url comments(first:100){pageInfo{hasNextPage endCursor} nodes{id body author{login} createdAt url}}}}}'
 
+specimen_pr_bind() {
+  python3 -c 'import json,sys
+d=json.load(open(sys.argv[1]))
+repo=d["repo"].removeprefix("github.com/")
+owner, name = repo.split("/", 1)
+print(owner)
+print(name)
+print(d["number"])
+' "$PRS/$1/forge.json"
+}
+
+bind_spec() {
+  {
+    IFS= read -r BIND_OWNER
+    IFS= read -r BIND_NAME
+    IFS= read -r BIND_N
+  } < <(specimen_pr_bind "$1")
+}
+
 echo "== A. serve real fixture content =="
+bind_spec specimen-a
 json_is "specimen-a: four resolved threads" \
   specimen-a "str(len(d['reviewThreads']['nodes']))+' '+str(all(t['isResolved'] for t in d['reviewThreads']['nodes']))" \
-  "4 True" api graphql -f "query=$THREADS"
+  "4 True" api graphql -f "query=$THREADS" \
+  -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
+bind_spec specimen-e
 json_is "specimen-e: one unresolved thread" \
   specimen-e "sum(1 for t in d['reviewThreads']['nodes'] if not t['isResolved'])" \
-  "1" api graphql -f "query=$THREADS"
+  "1" api graphql -f "query=$THREADS" \
+  -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
+bind_spec specimen-j
 json_is "specimen-j: page one reports more" \
   specimen-j "str(len(d['reviewThreads']['nodes']))+' '+str(d['reviewThreads']['pageInfo']['hasNextPage'])" \
-  "2 True" api graphql -f "query=$THREADS"
+  "2 True" api graphql -f "query=$THREADS" \
+  -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
+# shellcheck disable=SC2016
 json_is "specimen-j: page two is the third thread" \
   specimen-j "str(len(d['reviewThreads']['nodes']))+' '+str(d['reviewThreads']['pageInfo']['hasNextPage'])" \
   "1 False" api graphql \
-  -f 'query=query{repository{pullRequest{reviewThreads(first:100, after:"reviewThreads:2"){pageInfo{hasNextPage endCursor} nodes{id isResolved path line comments(first:100){nodes{id body author{login} pullRequestReview{id submittedAt}}}}}}}}'
+  -f 'query=query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){reviewThreads(first:100, after:"reviewThreads:2"){pageInfo{hasNextPage endCursor} nodes{id isResolved path line comments(first:100){nodes{id body author{login} pullRequestReview{id submittedAt}}}}}}}}' \
+  -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
 # Variable-bound after (what real skill runs use) — the footgun that forced the greenfield cursor fix.
 # shellcheck disable=SC2016
 json_is "specimen-j: variable after advances reviews" \
   specimen-j "any('invalidat' in (n.get('body') or '').lower() for n in d['reviews']['nodes'])" \
   "True" api graphql \
-  -f 'query=query($cursor:String){repository{pullRequest{reviews(first:100, after:$cursor){pageInfo{hasNextPage endCursor} nodes{id author{login} submittedAt state body commit{oid}}}}}}' \
+  -f 'query=query($owner:String!,$name:String!,$n:Int!,$cursor:String){repository(owner:$owner,name:$name){pullRequest(number:$n){reviews(first:100, after:$cursor){pageInfo{hasNextPage endCursor} nodes{id author{login} submittedAt state body commit{oid}}}}}}' \
+  -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N" \
   -f 'cursor=reviews:2'
+# shellcheck disable=SC2016
 json_is "specimen-j: counters request behind comments cursor" \
   specimen-j "any('hit' in (n.get('body') or '') for n in d['comments']['nodes'])" \
   "True" api graphql \
-  -f 'query=query{repository{pullRequest{comments(first:100, after:"comments:2"){pageInfo{hasNextPage endCursor} nodes{id body author{login}}}}}}'
+  -f 'query=query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){comments(first:100, after:"comments:2"){pageInfo{hasNextPage endCursor} nodes{id body author{login}}}}}}' \
+  -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
 top_json_is "specimen-a: pull request exposes its closing issue" \
   specimen-a "d['closingIssuesReferences'][0]['number']" "73" \
   pr view 412 --repo mapleworks/orderline --json closingIssuesReferences
@@ -131,22 +166,38 @@ top_json_is "specimen-m: second closing issue is served" \
   issue view 81 --repo mapleworks/orderline --json number,title,body,state,url
 
 echo "== B. under-fetch refuses (floor-aligned) =="
+bind_spec specimen-a
+# shellcheck disable=SC2016
 exit_is "reviews without commit" 2 specimen-a api graphql \
-  -f 'query=query{repository{pullRequest{reviews(first:1){nodes{id author{login} submittedAt state body}}}}}'
+  -f 'query=query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){reviews(first:1){nodes{id author{login} submittedAt state body}}}}}' \
+  -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
+# shellcheck disable=SC2016
 exit_is "reviews without id" 2 specimen-a api graphql \
-  -f 'query=query{repository{pullRequest{reviews(first:1){nodes{author{login} submittedAt state body commit{oid}}}}}}'
+  -f 'query=query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){reviews(first:1){nodes{author{login} submittedAt state body commit{oid}}}}}}' \
+  -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
+# shellcheck disable=SC2016
 exit_is "reviews without author" 2 specimen-a api graphql \
-  -f 'query=query{repository{pullRequest{reviews(first:1){nodes{id submittedAt state body commit{oid}}}}}}'
+  -f 'query=query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){reviews(first:1){nodes{id submittedAt state body commit{oid}}}}}}' \
+  -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
+# shellcheck disable=SC2016
 exit_is "threads without isResolved" 2 specimen-a api graphql \
-  -f 'query=query{repository{pullRequest{reviewThreads(first:1){pageInfo{hasNextPage} nodes{id path line comments(first:100){nodes{id body author{login} pullRequestReview{id submittedAt}}}}}}}}'
+  -f 'query=query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){reviewThreads(first:1){pageInfo{hasNextPage} nodes{id path line comments(first:100){nodes{id body author{login} pullRequestReview{id submittedAt}}}}}}}}' \
+  -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
+# shellcheck disable=SC2016
 exit_is "threads without pullRequestReview join" 2 specimen-a api graphql \
-  -f 'query=query{repository{pullRequest{reviewThreads(first:1){nodes{id isResolved path comments(first:100){nodes{id body author{login}}}}}}}}'
+  -f 'query=query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){reviewThreads(first:1){nodes{id isResolved path comments(first:100){nodes{id body author{login}}}}}}}}' \
+  -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
+# shellcheck disable=SC2016
 exit_is "edits without diff snapshot" 2 specimen-a api graphql \
-  -f 'query=query{repository{pullRequest{userContentEdits(first:1){nodes{editedAt editor{login}}}}}}'
+  -f 'query=query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){userContentEdits(first:1){nodes{editedAt editor{login}}}}}}' \
+  -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
+# shellcheck disable=SC2016
 exit_is "edits without editor" 2 specimen-a api graphql \
-  -f 'query=query{repository{pullRequest{userContentEdits(first:1){nodes{editedAt diff}}}}}'
-exit_is "skill-shaped threads query accepted" 0 specimen-a api graphql -f "query=$THREADS"
-out=$(env GH_HOST=evil.example CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$REVIEWS" 2>&1); got=$?
+  -f 'query=query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){userContentEdits(first:1){nodes{editedAt diff}}}}}' \
+  -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
+exit_is "skill-shaped threads query accepted" 0 specimen-a api graphql -f "query=$THREADS" \
+  -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
+out=$(env GH_HOST=evil.example CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$REVIEWS" -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N" 2>&1); got=$?
 if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "does not match"
 then pass "history GraphQL refuses other GH_HOST"
 else fail "history GraphQL refuses other GH_HOST" "$out"; fi
@@ -155,7 +206,20 @@ out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f 'query=query($owner
 if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "no repository evil/wrong"
 then pass "history GraphQL refuses other repository"
 else fail "history GraphQL refuses other repository" "$out"; fi
-exit_is "skill-shaped edits query accepted" 0 specimen-a api graphql -f "query=$EDITS"
+# shellcheck disable=SC2016
+out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$REVIEWS" -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F n=999 2>&1); got=$?
+if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "no pull request 999"
+then pass "history GraphQL refuses other pull request number"
+else fail "history GraphQL refuses other pull request number" "$out"; fi
+# shellcheck disable=SC2016
+out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f 'query=query($owner:String!,$name:String!){repository(owner:$owner,name:$name){pullRequest{reviews(first:1){nodes{id author{login} submittedAt state body commit{oid}}}}}}' -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" 2>&1); got=$?
+# The stub's missing-arg message wraps the field name in backticks.
+# shellcheck disable=SC2016
+if [ "$got" = 2 ] && printf '%s' "$out" | grep -q '`number` is required'
+then pass "history GraphQL refuses pullRequest without number"
+else fail "history GraphQL refuses pullRequest without number" "$out"; fi
+exit_is "skill-shaped edits query accepted" 0 specimen-a api graphql -f "query=$EDITS" \
+  -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
 # shellcheck disable=SC2016
 exit_is "issue comments without createdAt refused" 2 specimen-a api graphql \
   -f 'query=query($owner:String!,$name:String!,$issueNumber:Int!){repository(owner:$owner,name:$name){issue(number:$issueNumber){number title body state url comments(first:100){pageInfo{hasNextPage endCursor} nodes{id body author{login}}}}}}' \
@@ -164,10 +228,15 @@ exit_is "issue comments without createdAt refused" 2 specimen-a api graphql \
 echo "== C. every specimen serves the battery-shaped queries =="
 for d in "$PRS"/specimen-*; do
   s=$(basename "$d")
-  exit_is "specimen $s: threads" 0 "$s" api graphql -f "query=$THREADS"
-  exit_is "specimen $s: reviews" 0 "$s" api graphql -f "query=$REVIEWS"
-  exit_is "specimen $s: comments" 0 "$s" api graphql -f "query=$COMMENTS"
-  exit_is "specimen $s: edits" 0 "$s" api graphql -f "query=$EDITS"
+  bind_spec "$s"
+  exit_is "specimen $s: threads" 0 "$s" api graphql -f "query=$THREADS" \
+    -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
+  exit_is "specimen $s: reviews" 0 "$s" api graphql -f "query=$REVIEWS" \
+    -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
+  exit_is "specimen $s: comments" 0 "$s" api graphql -f "query=$COMMENTS" \
+    -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
+  exit_is "specimen $s: edits" 0 "$s" api graphql -f "query=$EDITS" \
+    -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
   exit_is "specimen $s: description" 0 "$s" pr view --json number,body,state
   exit_is "specimen $s: diff" 0 "$s" pr diff
 done
@@ -401,7 +470,9 @@ echo "== G. unauthenticated forge =="
 AUTHFAIL=1
 exit_is "auth-fail pr view" 4 specimen-a pr view --json number
 exit_is "auth-fail issue view" 4 specimen-a issue view 73 --repo mapleworks/orderline --json number
-exit_is "auth-fail graphql" 4 specimen-a api graphql -f "query=$REVIEWS"
+bind_spec specimen-a
+exit_is "auth-fail graphql" 4 specimen-a api graphql -f "query=$REVIEWS" \
+  -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
 exit_is "auth-fail status" 1 specimen-a auth status
 AUTHFAIL=
 exit_is "authenticated still serves" 0 specimen-a pr view --json number
@@ -410,17 +481,21 @@ if [ "$got" = 4 ]; then pass "no specimen configured"
 else fail "no specimen configured" "expected exit 4, got $got"; fi
 
 echo "== H. unbound variable and mutation refuse =="
+bind_spec specimen-j
 # shellcheck disable=SC2016
 exit_is "unbound after variable" 2 specimen-j api graphql \
-  -f 'query=query($cursor:String){repository{pullRequest{reviews(first:1, after:$cursor){nodes{id author{login} submittedAt state body commit{oid}}}}}}'
+  -f 'query=query($owner:String!,$name:String!,$n:Int!,$cursor:String){repository(owner:$owner,name:$name){pullRequest(number:$n){reviews(first:1, after:$cursor){nodes{id author{login} submittedAt state body commit{oid}}}}}}' \
+  -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
 # Combined query: top-level conversation comments must still be served when
 # reviewThreads is also present (two comments( connections). pageInfo on
 # pullRequest.comments proves the top-level connection was filled, not only
 # nested thread comments.
+# shellcheck disable=SC2016
 json_is "combined query serves top-level comments with threads" \
   specimen-j "str(d.get('comments',{}).get('pageInfo',{}).get('hasNextPage'))+' '+str(len(d.get('comments',{}).get('nodes',[])))" \
   "True 2" api graphql \
-  -f 'query=query{repository{pullRequest{reviewThreads(first:2){pageInfo{hasNextPage endCursor} nodes{id isResolved path line comments(first:2){nodes{id body author{login} pullRequestReview{id submittedAt}}}}} comments(first:2){pageInfo{hasNextPage endCursor} nodes{id body author{login}}}}}}'
+  -f 'query=query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){reviewThreads(first:2){pageInfo{hasNextPage endCursor} nodes{id isResolved path line comments(first:2){nodes{id body author{login} pullRequestReview{id submittedAt}}}}} comments(first:2){pageInfo{hasNextPage endCursor} nodes{id body author{login}}}}}}' \
+  -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
 msg_is "mutation refused" 3 "mutation" specimen-a api graphql \
   -f 'query=mutation{closePullRequest(input:{pullRequestId:"x"}){pullRequest{id}}}'
 

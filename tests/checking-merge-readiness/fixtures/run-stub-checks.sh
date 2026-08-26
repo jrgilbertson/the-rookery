@@ -25,7 +25,7 @@ fail() { FAIL=$((FAIL + 1)); printf 'FAIL  %s\n     %s\n' "$1" "$2"; }
 exit_is() {
   local label=$1 want=$2 spec=$3; shift 3
   local out got
-  out=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} ${ISSUEFAIL:+CMR_ISSUE_VIEW_FAIL=1} ${STUB_ENV-} "$GH" "$@" 2>&1); got=$?
+  out=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} ${ISSUEFAIL:+CMR_ISSUE_VIEW_FAIL=1} ${STUB_ENV:+"$STUB_ENV"} "$GH" "$@" 2>&1); got=$?
   if [ "$got" = "$want" ]; then pass "$label"
   else fail "$label" "expected exit $want, got $got: $(printf '%s' "$out" | head -1)"; fi
 }
@@ -33,7 +33,7 @@ exit_is() {
 msg_is() {
   local label=$1 want=$2 needle=$3 spec=$4; shift 4
   local out got
-  out=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} ${ISSUEFAIL:+CMR_ISSUE_VIEW_FAIL=1} ${STUB_ENV-} "$GH" "$@" 2>&1); got=$?
+  out=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} ${ISSUEFAIL:+CMR_ISSUE_VIEW_FAIL=1} ${STUB_ENV:+"$STUB_ENV"} "$GH" "$@" 2>&1); got=$?
   if [ "$got" != "$want" ]; then
     fail "$label" "expected exit $want, got $got: $(printf '%s' "$out" | head -1)"; return
   fi
@@ -46,7 +46,7 @@ msg_is() {
 json_is() {
   local label=$1 spec=$2 expr=$3 want=$4; shift 4
   local raw got
-  if ! raw=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} ${ISSUEFAIL:+CMR_ISSUE_VIEW_FAIL=1} ${STUB_ENV-} "$GH" "$@" 2>&1); then
+  if ! raw=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} ${ISSUEFAIL:+CMR_ISSUE_VIEW_FAIL=1} ${STUB_ENV:+"$STUB_ENV"} "$GH" "$@" 2>&1); then
     fail "$label" "command failed: $(printf '%s' "$raw" | head -1)"; return
   fi
   got=$(printf '%s' "$raw" | python3 -c "
@@ -61,7 +61,7 @@ print($expr)
 top_json_is() {
   local label=$1 spec=$2 expr=$3 want=$4; shift 4
   local raw got
-  if ! raw=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} ${ISSUEFAIL:+CMR_ISSUE_VIEW_FAIL=1} ${STUB_ENV-} "$GH" "$@" 2>&1); then
+  if ! raw=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} ${ISSUEFAIL:+CMR_ISSUE_VIEW_FAIL=1} ${STUB_ENV:+"$STUB_ENV"} "$GH" "$@" 2>&1); then
     fail "$label" "command failed: $(printf '%s' "$raw" | head -1)"; return
   fi
   got=$(printf '%s' "$raw" | python3 -c "

@@ -63,14 +63,13 @@ re-check, one write. Forge-derived text never supplies argv, never expands
 flags, and never retargets the PR.
 
 ```text
-GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <[host/]owner/name> --<method> --match-head-commit <oid>
+GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --<method> --match-head-commit <oid>
 ```
 
-`<number>`, `<[host/]owner/name>`, and `<oid>` come only from the
-certified identity and matching re-check. Include the certified host in
-`--repo` when the identity has one; `gh` defines `--repo` as
-`[HOST/]OWNER/REPO`. `<method>` is the flag resolved in the eligibility
-probe.
+`<number>`, `<owner/name>`, and `<oid>` come only from the certified
+identity and matching re-check. `GH_HOST` already names the certified
+host. Include `HOST/` in `--repo` only when that host is not
+`github.com`. `<method>` is the flag resolved in the eligibility probe.
 
 Allowlist: those fields only. Omit `--admin`, `--auto`, `--delete-branch`,
 `--subject`, and `--body`. Do not invent a second write.
@@ -78,7 +77,7 @@ Allowlist: those fields only. Omit `--admin`, `--auto`, `--delete-branch`,
 Then read back with the same certified selector as the write:
 
 ```text
-gh pr view <number> --repo <[host/]owner/name> --json state,mergedAt
+gh pr view <number> --repo <owner/name> --json state,mergedAt
 ```
 
 Include `mergeCommit` when useful. Do not omit `<number>` or `--repo`.

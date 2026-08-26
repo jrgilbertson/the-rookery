@@ -412,9 +412,9 @@ name that option unavailable rather than dropping it silently.
 
 Before accepting the decision, certify the review still describes the pull
 request. Pin `GH_HOST` to the certified host. GraphQL and the fingerprint
-helper inherit it; `pr view` / `pr merge` pass `--repo <[host/]owner/name>`
-and the PR number. With the fetch helper, re-run
-[scripts/fetch-pr-history.sh](scripts/fetch-pr-history.sh) as
+helper inherit it; `pr view` / `pr merge` pass `--repo <owner/name>` and
+the PR number (`HOST/` in `--repo` only when the host is not github.com).
+With the fetch helper, re-run [scripts/fetch-pr-history.sh](scripts/fetch-pr-history.sh) as
 `fetch-pr-history.sh --repo <owner/name> --pr <number> --fingerprint` and
 compare against the fingerprint recorded at step 2 outside the conversation.
 Compare the same object from each run rather than the two documents whole,
@@ -424,7 +424,7 @@ because full mode wraps that object inside the larger payload. Extract
 conversation. Use the same private temporary directory created in step 2 and
 remove it after this comparison and the decision are complete. Then
 re-check live merge state and host signals with
-`gh pr view <number> --repo <[host/]owner/name> --json`. Then re-run
+`gh pr view <number> --repo <owner/name> --json`. Then re-run
 step 2's policy-resolution chain in the same order, stopping early once
 requirements are known as there, comparing the result against the policy
 digest recorded at step 2. Live state alone would miss a changed

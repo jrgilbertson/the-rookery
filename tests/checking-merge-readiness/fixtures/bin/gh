@@ -546,7 +546,13 @@ def has_input_fields(argv):
     for a in argv:
         if a in ("-f", "--field", "-F", "--raw-field", "--input", "-i"):
             return True
-        if a.startswith(("--input=", "query=")):
+        if a.startswith(("--field=", "--raw-field=", "--input=", "query=")):
+            return True
+        if a.startswith("-f") and len(a) > 2 and not a.startswith("--"):
+            return True
+        if a.startswith("-F") and len(a) > 2:
+            return True
+        if a.startswith("-i") and len(a) > 2 and not a.startswith("--"):
             return True
     return False
 

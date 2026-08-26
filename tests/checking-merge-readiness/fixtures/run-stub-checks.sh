@@ -458,6 +458,10 @@ msg_is "REST rules refuse PATCH" 3 "PATCH is a write" specimen-a \
   api --method PATCH repos/mapleworks/orderline/rules/branches/main
 msg_is "REST rules refuse implicit POST from -f" 3 "POST is a write" specimen-a \
   api repos/mapleworks/orderline/rules/branches/main -f accidental=value
+msg_is "REST rules refuse attached -f POST" 3 "POST is a write" specimen-a \
+  api repos/mapleworks/orderline/rules/branches/main -faccidental=value
+msg_is "REST rules refuse attached --field= POST" 3 "POST is a write" specimen-a \
+  api repos/mapleworks/orderline/rules/branches/main --field=accidental=value
 
 echo "== G. unauthenticated forge =="
 AUTHFAIL=1

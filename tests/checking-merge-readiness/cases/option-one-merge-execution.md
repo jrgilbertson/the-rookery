@@ -177,6 +177,8 @@ run.
 
 - [ ] Outcome is `indeterminate`, not `failed`.
 - [ ] The stub is invoked at most once.
+- [ ] `CMR_MERGE_LOG` also records a later `kind` `view` with number 412
+      and `--repo mapleworks/orderline`. Readback is not MERGED.
 - [ ] The run tells the owner to verify the PR on the forge.
 
 ### 9. Queue-governed base withholds option 1

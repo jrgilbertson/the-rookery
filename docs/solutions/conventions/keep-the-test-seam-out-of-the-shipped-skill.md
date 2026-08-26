@@ -1,7 +1,7 @@
 ---
 title: "Put the test seam in the environment, not in the shipped skill"
 date: 2026-08-01
-last_updated: 2026-08-11
+last_updated: 2026-08-26
 category: conventions
 module: "skill test harnesses"
 problem_type: convention
@@ -42,11 +42,13 @@ tags:
 
 `skills/checking-merge-readiness/SKILL.md` digests a reviewed pull request
 before its owner merges it. Step 2 fetches the description, the diff, and the
-review history through a fixed read-only verb set, listed in the skill as the
-only forge commands it runs: `gh pr view`, `gh pr diff`, GraphQL queries for
-the `reviewThreads` connection with `isResolved`, review submissions, and the
-description's `userContentEdits` history, plus read-only `gh api` or GraphQL
-lookups for the base branch's host merge policy.
+review history through a fixed read-only verb set: `gh pr view`, `gh pr diff`,
+GraphQL queries for the `reviewThreads` connection with `isResolved`, review
+submissions, and the description's `userContentEdits` history, plus read-only
+`gh api` or GraphQL lookups for the base branch's host merge policy. Gather,
+grade, readout, and menu stay on that read set. After an interactive owner
+choice of option 1 on a green open non-draft PR, the skill may run one
+`gh pr merge` against the certified identity.
 
 When those commands cannot run, the skill is required to degrade rather than
 guess. It marks history-derived themes unavailable, names the gap, and caps

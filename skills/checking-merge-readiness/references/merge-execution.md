@@ -86,19 +86,20 @@ Use the same certified host, owner, and name as the write.
 
 ## Outcome classes
 
-Classify from the one merge attempt plus certified readback. Exit code
-alone is not enough; readback alone is not enough.
+Classify from the one merge attempt plus certified readback. Neither
+alone is enough. Report exactly one class and do not retry.
 
 - `merged` — the merge command succeeded and readback `state` is MERGED
   with `mergedAt` set.
 - `already_merged` — the merge command did not succeed and readback is
   MERGED. MERGED discovered on the pre-write re-check is rebuild and
   replace option 1, not this class.
-- `failed` — 403, 405, 409, method no longer allowed, or a named forge
-  refusal. No retry in this run.
-- `indeterminate` — unclear exit plus mismatched or missing readback. No
-  retry. Tell the owner to verify the PR on the forge. Any later attempt
-  needs a fresh merge-readiness run only if the PR is still open.
+- `failed` — a named forge refusal (403, 405, 409, method no longer
+  allowed).
+- `indeterminate` — the attempt and readback do not jointly prove
+  `merged`, `already_merged`, or `failed`. Tell the owner to verify the
+  PR on the forge. Any later attempt needs a fresh merge-readiness run
+  only if the PR is still open.
 
 Queued or auto-merge enabled is not `merged`. Never `--admin` to force it.
 

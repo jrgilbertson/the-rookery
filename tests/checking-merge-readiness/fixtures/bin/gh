@@ -27,6 +27,7 @@ Contract (deliberately small):
       CMR_ALLOW_MERGE     non-empty → gated `pr merge` (still refuses
                           --admin/--auto/--delete-branch and missing method)
       CMR_MERGE_LOG       path to write the merge argv JSON
+      CMR_MERGE_STATE     path written as MERGED on success; pr view reads it
       CMR_MERGE_RESULT    merged (default) | failed | indeterminate
   - refuse a selector that names another pull request
   - refuse an under-fetch of fields the skill depends on (query-text presence)
@@ -89,10 +90,11 @@ def load():
 
     def read(name):
         path = os.path.join(root, name)
-        if not os.path.exists(path):
+        try:
+            with open(path) as fh:
+                return fh.read()
+        except FileNotFoundError:
             return ""
-        with open(path) as fh:
-            return fh.read()
 
     forge["_body"] = read("body.md")
     forge["_diff"] = read("diff.txt")
@@ -188,9 +190,12 @@ def pr_view(argv, forge):
         "mergeCommit": forge.get("mergeCommit"),
     }
     state_path = os.environ.get("CMR_MERGE_STATE")
-    if state_path and os.path.isfile(state_path):
-        with open(state_path) as fh:
-            marked = fh.read().strip()
+    if state_path:
+        try:
+            with open(state_path) as fh:
+                marked = fh.read().strip()
+        except FileNotFoundError:
+            marked = ""
         if marked == "MERGED":
             full["state"] = "MERGED"
             full["merged"] = True
@@ -707,9 +712,9 @@ def graphql(argv, forge):
         )
 
     repo = {}
+    elig = eligibility_fields(forge) if (served_pr or served_eligibility) else None
     if served_pr:
         pr.setdefault("number", forge.get("number"))
-        elig = eligibility_fields(forge)
         if re.search(r"\bisMergeQueueEnabled\b", query):
             pr["isMergeQueueEnabled"] = elig["isMergeQueueEnabled"]
         repo["pullRequest"] = pr
@@ -718,7 +723,6 @@ def graphql(argv, forge):
     if served_protection:
         repo["branchProtectionRules"] = branch_protection_payload(forge)
     if served_eligibility:
-        elig = eligibility_fields(forge)
         for key in (
             "mergeCommitAllowed",
             "squashMergeAllowed",

@@ -17,6 +17,7 @@ PASS=0
 FAIL=0
 AUTHFAIL=
 ISSUEFAIL=
+STUB_ENV=
 
 pass() { PASS=$((PASS + 1)); printf 'PASS  %s\n' "$1"; }
 fail() { FAIL=$((FAIL + 1)); printf 'FAIL  %s\n     %s\n' "$1" "$2"; }
@@ -24,7 +25,7 @@ fail() { FAIL=$((FAIL + 1)); printf 'FAIL  %s\n     %s\n' "$1" "$2"; }
 exit_is() {
   local label=$1 want=$2 spec=$3; shift 3
   local out got
-  out=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} ${ISSUEFAIL:+CMR_ISSUE_VIEW_FAIL=1} "$GH" "$@" 2>&1); got=$?
+  out=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} ${ISSUEFAIL:+CMR_ISSUE_VIEW_FAIL=1} ${STUB_ENV-} "$GH" "$@" 2>&1); got=$?
   if [ "$got" = "$want" ]; then pass "$label"
   else fail "$label" "expected exit $want, got $got: $(printf '%s' "$out" | head -1)"; fi
 }
@@ -32,7 +33,7 @@ exit_is() {
 msg_is() {
   local label=$1 want=$2 needle=$3 spec=$4; shift 4
   local out got
-  out=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} ${ISSUEFAIL:+CMR_ISSUE_VIEW_FAIL=1} "$GH" "$@" 2>&1); got=$?
+  out=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} ${ISSUEFAIL:+CMR_ISSUE_VIEW_FAIL=1} ${STUB_ENV-} "$GH" "$@" 2>&1); got=$?
   if [ "$got" != "$want" ]; then
     fail "$label" "expected exit $want, got $got: $(printf '%s' "$out" | head -1)"; return
   fi
@@ -45,7 +46,7 @@ msg_is() {
 json_is() {
   local label=$1 spec=$2 expr=$3 want=$4; shift 4
   local raw got
-  if ! raw=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} ${ISSUEFAIL:+CMR_ISSUE_VIEW_FAIL=1} "$GH" "$@" 2>&1); then
+  if ! raw=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} ${ISSUEFAIL:+CMR_ISSUE_VIEW_FAIL=1} ${STUB_ENV-} "$GH" "$@" 2>&1); then
     fail "$label" "command failed: $(printf '%s' "$raw" | head -1)"; return
   fi
   got=$(printf '%s' "$raw" | python3 -c "
@@ -60,7 +61,7 @@ print($expr)
 top_json_is() {
   local label=$1 spec=$2 expr=$3 want=$4; shift 4
   local raw got
-  if ! raw=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} ${ISSUEFAIL:+CMR_ISSUE_VIEW_FAIL=1} "$GH" "$@" 2>&1); then
+  if ! raw=$(env CMR_FIXTURE="$PRS/$spec" ${AUTHFAIL:+CMR_GH_AUTH_FAIL=1} ${ISSUEFAIL:+CMR_ISSUE_VIEW_FAIL=1} ${STUB_ENV-} "$GH" "$@" 2>&1); then
     fail "$label" "command failed: $(printf '%s' "$raw" | head -1)"; return
   fi
   got=$(printf '%s' "$raw" | python3 -c "
@@ -126,7 +127,7 @@ json_is "specimen-j: page two is the third thread" \
   "1 False" api graphql \
   -f 'query=query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){reviewThreads(first:100, after:"reviewThreads:2"){pageInfo{hasNextPage endCursor} nodes{id isResolved path line comments(first:100){nodes{id body author{login} pullRequestReview{id submittedAt}}}}}}}}' \
   -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
-# Variable-bound after (what real skill runs use) — the footgun that forced the greenfield cursor fix.
+# Variable-bound `after` is what skill runs use.
 # shellcheck disable=SC2016
 json_is "specimen-j: variable after advances reviews" \
   specimen-j "any('invalidat' in (n.get('body') or '').lower() for n in d['reviews']['nodes'])" \
@@ -197,37 +198,31 @@ exit_is "edits without editor" 2 specimen-a api graphql \
   -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
 exit_is "skill-shaped threads query accepted" 0 specimen-a api graphql -f "query=$THREADS" \
   -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
-out=$(env GH_HOST=evil.example CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$REVIEWS" -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N" 2>&1); got=$?
-if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "does not match"
-then pass "history GraphQL refuses other GH_HOST"
-else fail "history GraphQL refuses other GH_HOST" "$out"; fi
-out=$(env GH_HOST=github.com CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql --hostname=evil.example -f "query=$REVIEWS" -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N" 2>&1); got=$?
-if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "does not match"
-then pass "history GraphQL refuses --hostname= form"
-else fail "history GraphQL refuses --hostname= form" "$out"; fi
+STUB_ENV=GH_HOST=evil.example
+msg_is "history GraphQL refuses other GH_HOST" 1 "does not match" specimen-a \
+  api graphql -f "query=$REVIEWS" -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
+STUB_ENV=GH_HOST=github.com
+msg_is "history GraphQL refuses --hostname= form" 1 "does not match" specimen-a \
+  api graphql --hostname=evil.example -f "query=$REVIEWS" \
+  -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
+STUB_ENV=
 # shellcheck disable=SC2016
-out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f 'query=query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){reviews(first:1){nodes{id author{login} submittedAt state body commit{oid}}}}}}' -F owner=evil -F name=wrong -F n=999 2>&1); got=$?
-if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "no repository evil/wrong"
-then pass "history GraphQL refuses other repository"
-else fail "history GraphQL refuses other repository" "$out"; fi
+msg_is "history GraphQL refuses other repository" 1 "no repository evil/wrong" specimen-a \
+  api graphql \
+  -f 'query=query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){reviews(first:1){nodes{id author{login} submittedAt state body commit{oid}}}}}}' \
+  -F owner=evil -F name=wrong -F n=999
+msg_is "history GraphQL refuses other pull request number" 1 "no pull request 999" specimen-a \
+  api graphql -f "query=$REVIEWS" -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F n=999
+# Missing-arg messages wrap the field name in backticks.
 # shellcheck disable=SC2016
-out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$REVIEWS" -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F n=999 2>&1); got=$?
-if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "no pull request 999"
-then pass "history GraphQL refuses other pull request number"
-else fail "history GraphQL refuses other pull request number" "$out"; fi
+msg_is "history GraphQL refuses pullRequest without number" 2 '`number` is required' specimen-a \
+  api graphql \
+  -f 'query=query($owner:String!,$name:String!){repository(owner:$owner,name:$name){pullRequest{reviews(first:1){nodes{id author{login} submittedAt state body commit{oid}}}}}}' \
+  -F "owner=$BIND_OWNER" -F "name=$BIND_NAME"
 # shellcheck disable=SC2016
-out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f 'query=query($owner:String!,$name:String!){repository(owner:$owner,name:$name){pullRequest{reviews(first:1){nodes{id author{login} submittedAt state body commit{oid}}}}}}' -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" 2>&1); got=$?
-# The stub's missing-arg message wraps the field name in backticks.
-# shellcheck disable=SC2016
-if [ "$got" = 2 ] && printf '%s' "$out" | grep -q '`number` is required'
-then pass "history GraphQL refuses pullRequest without number"
-else fail "history GraphQL refuses pullRequest without number" "$out"; fi
-out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f 'query=query{repository{pullRequest(number:412){reviews(first:1){nodes{id author{login} submittedAt state body commit{oid}}}}}}' 2>&1); got=$?
-# The stub's missing-arg message wraps the field name in backticks.
-# shellcheck disable=SC2016
-if [ "$got" = 2 ] && printf '%s' "$out" | grep -q '`owner` is required'
-then pass "history GraphQL refuses pullRequest without repository arguments"
-else fail "history GraphQL refuses pullRequest without repository arguments" "$out"; fi
+msg_is "history GraphQL refuses pullRequest without repository arguments" 2 '`owner` is required' specimen-a \
+  api graphql \
+  -f 'query=query{repository{pullRequest(number:412){reviews(first:1){nodes{id author{login} submittedAt state body commit{oid}}}}}}'
 exit_is "skill-shaped edits query accepted" 0 specimen-a api graphql -f "query=$EDITS" \
   -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
 # shellcheck disable=SC2016
@@ -332,34 +327,22 @@ else fail "gated pr merge refuses second selector" "$out"; fi
 ELIG='query($owner:String!,$name:String!){repository(owner:$owner,name:$name){mergeCommitAllowed squashMergeAllowed rebaseMergeAllowed viewerDefaultMergeMethod}}'
 # shellcheck disable=SC2016
 PROT='query($owner:String!,$name:String!){repository(owner:$owner,name:$name){branchProtectionRules(first:1){nodes{pattern requiresConversationResolution}}}}'
-out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$ELIG" -F owner=evil -F name=wrong 2>&1); got=$?
-if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "no repository evil/wrong"
-then pass "eligibility GraphQL refuses other repository"
-else fail "eligibility GraphQL refuses other repository" "$out"; fi
-out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$ELIG" -F owner=mapleworks -F name=orderline 2>&1); got=$?
-if [ "$got" = 0 ]
-then pass "eligibility GraphQL matching repository"
-else fail "eligibility GraphQL matching repository" "$out"; fi
-out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$PROT" -F owner=evil -F name=wrong 2>&1); got=$?
-if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "no repository evil/wrong"
-then pass "branchProtectionRules GraphQL refuses other repository"
-else fail "branchProtectionRules GraphQL refuses other repository" "$out"; fi
-out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$PROT" -F owner=mapleworks -F name=orderline 2>&1); got=$?
-if [ "$got" = 0 ]
-then pass "branchProtectionRules GraphQL matching repository"
-else fail "branchProtectionRules GraphQL matching repository" "$out"; fi
-out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f 'query=query{repository{mergeCommitAllowed squashMergeAllowed rebaseMergeAllowed viewerDefaultMergeMethod}}' 2>&1); got=$?
-if [ "$got" = 2 ] && printf '%s' "$out" | grep -q "owner"
-then pass "eligibility GraphQL requires repository arguments"
-else fail "eligibility GraphQL requires repository arguments" "$out"; fi
-out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f 'query=query{repository{branchProtectionRules(first:1){nodes{pattern requiresConversationResolution}}}}' 2>&1); got=$?
-if [ "$got" = 2 ] && printf '%s' "$out" | grep -q "owner"
-then pass "branchProtectionRules GraphQL requires repository arguments"
-else fail "branchProtectionRules GraphQL requires repository arguments" "$out"; fi
-out=$(env GH_HOST=evil.example CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$ELIG" -F owner=mapleworks -F name=orderline 2>&1); got=$?
-if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "does not match"
-then pass "eligibility GraphQL refuses other GH_HOST"
-else fail "eligibility GraphQL refuses other GH_HOST" "$out"; fi
+msg_is "eligibility GraphQL refuses other repository" 1 "no repository evil/wrong" specimen-a \
+  api graphql -f "query=$ELIG" -F owner=evil -F name=wrong
+exit_is "eligibility GraphQL matching repository" 0 specimen-a \
+  api graphql -f "query=$ELIG" -F owner=mapleworks -F name=orderline
+msg_is "branchProtectionRules GraphQL refuses other repository" 1 "no repository evil/wrong" specimen-a \
+  api graphql -f "query=$PROT" -F owner=evil -F name=wrong
+exit_is "branchProtectionRules GraphQL matching repository" 0 specimen-a \
+  api graphql -f "query=$PROT" -F owner=mapleworks -F name=orderline
+msg_is "eligibility GraphQL requires repository arguments" 2 "owner" specimen-a \
+  api graphql -f 'query=query{repository{mergeCommitAllowed squashMergeAllowed rebaseMergeAllowed viewerDefaultMergeMethod}}'
+msg_is "branchProtectionRules GraphQL requires repository arguments" 2 "owner" specimen-a \
+  api graphql -f 'query=query{repository{branchProtectionRules(first:1){nodes{pattern requiresConversationResolution}}}}'
+STUB_ENV=GH_HOST=evil.example
+msg_is "eligibility GraphQL refuses other GH_HOST" 1 "does not match" specimen-a \
+  api graphql -f "query=$ELIG" -F owner=mapleworks -F name=orderline
+STUB_ENV=
 GHE=$(mktemp -d)
 cp -R "$PRS/specimen-a/." "$GHE/"
 python3 -c 'import json,sys; p=sys.argv[1]+"/forge.json"; d=json.load(open(p)); d["host"]="ghe.example"; json.dump(d, open(p,"w"))' "$GHE"
@@ -374,15 +357,13 @@ else fail "eligibility GraphQL enterprise host with --hostname" "$out"; fi
 rm -rf "$GHE"
 # shellcheck disable=SC2016
 QUEUE='query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){isMergeQueueEnabled}}}'
-out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f "query=$QUEUE" -F owner=mapleworks -F name=orderline -F n=999 2>&1); got=$?
-if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "no pull request 999"
-then pass "isMergeQueueEnabled refuses other PR number"
-else fail "isMergeQueueEnabled refuses other PR number" "$out"; fi
+msg_is "isMergeQueueEnabled refuses other PR number" 1 "no pull request 999" specimen-a \
+  api graphql -f "query=$QUEUE" -F owner=mapleworks -F name=orderline -F n=999
 # shellcheck disable=SC2016
-out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f 'query=query($owner:String!,$name:String!){repository(owner:$owner,name:$name){isMergeQueueEnabled}}' -F owner=mapleworks -F name=orderline 2>&1); got=$?
-if [ "$got" = 2 ] && printf '%s' "$out" | grep -q "number"
-then pass "isMergeQueueEnabled requires pullRequest number"
-else fail "isMergeQueueEnabled requires pullRequest number" "$out"; fi
+msg_is "isMergeQueueEnabled requires pullRequest number" 2 "number" specimen-a \
+  api graphql \
+  -f 'query=query($owner:String!,$name:String!){repository(owner:$owner,name:$name){isMergeQueueEnabled}}' \
+  -F owner=mapleworks -F name=orderline
 out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --admin --match-head-commit a91e4f0 2>&1); got=$?
 if [ "$got" = 3 ] && printf '%s' "$out" | grep -q "refuses --admin"
 then pass "gated pr merge refuses --admin"
@@ -405,12 +386,8 @@ then pass "gated pr merge refuses --rebase"
 else fail "gated pr merge refuses --rebase" "$out"; fi
 out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --match-head-commit a91e4f0 --subject "x" 2>&1); got=$?
 if [ "$got" = 3 ] && printf '%s' "$out" | grep -q "refuses extra token"
-then pass "gated pr merge refuses --subject"
-else fail "gated pr merge refuses --subject" "$out"; fi
-out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --match-head-commit a91e4f0 --body "x" 2>&1); got=$?
-if [ "$got" = 3 ] && printf '%s' "$out" | grep -q "refuses extra token"
-then pass "gated pr merge refuses --body"
-else fail "gated pr merge refuses --body" "$out"; fi
+then pass "gated pr merge refuses extra token"
+else fail "gated pr merge refuses extra token" "$out"; fi
 out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo evil.example/mapleworks/orderline --squash --match-head-commit a91e4f0 2>&1); got=$?
 if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "does not match"
 then pass "gated pr merge refuses other host"
@@ -452,6 +429,8 @@ exit_is "no selector serves specimen" 0 specimen-a pr view --json number
 exit_is "wrong number" 1 specimen-a pr view 999999 --json number
 exit_is "wrong repo" 1 specimen-a pr view 412 --repo entirely/wrong --json number
 exit_is "matching URL" 0 specimen-a pr view https://github.com/mapleworks/orderline/pull/412 --json number
+msg_is "URL from another host" 1 "does not match" specimen-a \
+  pr view https://evil.example/mapleworks/orderline/pull/412 --json number
 exit_is "diff refuses another PR" 1 specimen-a pr diff 999999
 exit_is "linked issue number + repo" 0 specimen-a issue view 73 --repo mapleworks/orderline --json number
 exit_is "linked issue number + canonical repo flag" 0 specimen-a issue view 73 -R github.com/mapleworks/orderline --json number
@@ -469,28 +448,14 @@ msg_is "rules for another base" 1 "Not Found (HTTP 404)" specimen-a \
   api repos/mapleworks/orderline/rules/branches/release-2024
 msg_is "rules refuse other repository" 1 "no repository evil/wrong" specimen-a \
   api repos/evil/wrong/rules/branches/main
-out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api --hostname evil.example repos/mapleworks/orderline/rules/branches/main 2>&1); got=$?
-if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "does not match"
-then pass "rules refuse other host"
-else fail "rules refuse other host" "$out"; fi
-out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api repos/mapleworks/orderline 2>&1); got=$?
-if [ "$got" = 0 ] && printf '%s' "$out" | python3 -c 'import json,sys; d=json.load(sys.stdin); raise SystemExit(0 if d.get("allow_squash_merge") is True and d.get("allow_merge_commit") is True and d.get("allow_rebase_merge") is False else 1)'
-then pass "REST repo allow_* methods"
-else fail "REST repo allow_* methods" "$out"; fi
-msg_is "REST repo refuses other repository" 1 "no repository evil/wrong" specimen-a \
-  api repos/evil/wrong
-out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api -X GET repos/mapleworks/orderline 2>&1); got=$?
-if [ "$got" = 0 ]
-then pass "REST repo allows explicit GET"
-else fail "REST repo allows explicit GET" "$out"; fi
-out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api -X DELETE repos/mapleworks/orderline 2>&1); got=$?
-if [ "$got" = 3 ] && printf '%s' "$out" | grep -q "DELETE is a write"
-then pass "REST repo refuses DELETE"
-else fail "REST repo refuses DELETE" "$out"; fi
-out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api --method PATCH repos/mapleworks/orderline/rules/branches/main 2>&1); got=$?
-if [ "$got" = 3 ] && printf '%s' "$out" | grep -q "PATCH is a write"
-then pass "REST rules refuse PATCH"
-else fail "REST rules refuse PATCH" "$out"; fi
+msg_is "rules refuse other host" 1 "does not match" specimen-a \
+  api --hostname evil.example repos/mapleworks/orderline/rules/branches/main
+msg_is "REST repo GET is outside the set" 3 "are served" specimen-a \
+  api repos/mapleworks/orderline
+msg_is "REST repo refuses DELETE" 3 "DELETE is a write" specimen-a \
+  api -X DELETE repos/mapleworks/orderline
+msg_is "REST rules refuse PATCH" 3 "PATCH is a write" specimen-a \
+  api --method PATCH repos/mapleworks/orderline/rules/branches/main
 
 echo "== G. unauthenticated forge =="
 AUTHFAIL=1

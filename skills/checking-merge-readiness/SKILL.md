@@ -378,13 +378,12 @@ titles.
 Present exactly one decision menu, aligned to the recommendation and to the
 state step 1 named. Each option is terminal:
 
-1. **Proceed to merge.** After the fingerprint and host-policy re-check
-   still match, this skill executes one forge merge per
+1. **Proceed to merge.** After the fingerprint, live-state, and host-policy
+   re-check still match, this skill executes one forge merge per
    [references/merge-execution.md](references/merge-execution.md). Offered
    only on an open, non-draft pull request whose recommendation is merge,
    and only when that reference's eligibility probe passes. Replace it
-   rather than offering it when merge-queue, method, or known-missing
-   write auth blocks the write.
+   rather than offering it when that reference withholds.
 2. **Debug the named system or process concern.** End the run and
    investigate or fix what the recommendation named (global driver, host
    rule, or incomplete review). Offered on debug and on do not merge. Any
@@ -412,7 +411,9 @@ offer it for a graded verdict on the redesign question; when it is absent,
 name that option unavailable rather than dropping it silently.
 
 Before accepting the decision, certify the review still describes the pull
-request. With the fetch helper, re-run
+request. Pin `GH_HOST` to the certified host. GraphQL and the fingerprint
+helper inherit it; `pr view` / `pr merge` pass `--repo <[host/]owner/name>`
+and the PR number. With the fetch helper, re-run
 [scripts/fetch-pr-history.sh](scripts/fetch-pr-history.sh) as
 `fetch-pr-history.sh --repo <owner/name> --pr <number> --fingerprint` and
 compare against the fingerprint recorded at step 2 outside the conversation.
@@ -423,18 +424,17 @@ because full mode wraps that object inside the larger payload. Extract
 conversation. Use the same private temporary directory created in step 2 and
 remove it after this comparison and the decision are complete. Then
 re-check live merge state and host signals with
-`gh pr view <number> --repo <[host/]owner/name> --json`. Every forge read
-in this re-check uses that same certified host, owner, name, and number,
-including the fingerprint helper, the policy-resolution chain, and
-linked-issue re-fetches. Then re-run step 2's policy-resolution chain in the same
-order, stopping early once requirements are known as there, comparing the
-result against the policy digest recorded at step 2. Live state alone would
-miss a changed required-review, conversation-resolution, or last-push rule,
-because host policy comes from that separate chain rather than from
-`gh pr view`. When linked issues were part of the review, re-fetch every one
-through the same reads and compare every digest too. Without the helper,
-re-read and compare against step 2's record, including the opaque body and
-edit-history digests:
+`gh pr view <number> --repo <[host/]owner/name> --json`. Then re-run
+step 2's policy-resolution chain in the same order, stopping early once
+requirements are known as there, comparing the result against the policy
+digest recorded at step 2. Live state alone would miss a changed
+required-review, conversation-resolution, or last-push rule, because host
+policy comes from that separate chain rather than from `gh pr view`. When
+linked issues were part of the review, re-fetch every one through the same
+reads and compare every digest too. Fingerprint, live `pr view`, policy
+chain, and linked-issue re-fetches may run concurrently; compare every
+digest before the write. Without the helper, re-read and compare against
+step 2's record, including the opaque body and edit-history digests:
 
 - the head OID, base ref name, and base commit OID (or re-fetch the PR diff
   and compare identity),
@@ -473,9 +473,10 @@ merge decision. If `managing-issues` is unavailable, name that gap rather than
 editing the issue through this skill.
 
 Completion: the owner made exactly one decision from the menu. When that
-decision was option 1, the run either merged (readback MERGED), reported
-`already_merged` / `failed` / `indeterminate` without retry, or rebuilt
-after a mismatch and did not merge. Otherwise the run did not write.
+decision was option 1, the run followed
+[references/merge-execution.md](references/merge-execution.md): one write,
+one outcome class, no retry; or rebuilt after a mismatch and did not merge.
+Otherwise the run did not write.
 
 ## Gotchas
 

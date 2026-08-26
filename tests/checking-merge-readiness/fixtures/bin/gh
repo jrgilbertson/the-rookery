@@ -20,8 +20,7 @@ Contract (deliberately small):
   - serve only the skill's fixed read set: pr view --json (incl. merge state),
     pr diff, issue view --json for linked source-issue metadata, api graphql
     (history + linked-issue comments + branchProtectionRules + merge
-    eligibility), api repos/{owner}/{name} for REST allow_* methods, and
-    api repos/.../rules/branches/{base} for merge policy
+    eligibility), and api repos/.../rules/branches/{base} for merge policy
   - refuse writes and out-of-set verbs unless CMR_ALLOW_MERGE is set, in
     which case `pr merge` is recorded and may return a specimen result
   - optional env:
@@ -57,6 +56,11 @@ MERGE_METHOD_ELIG = {
     "--squash": "squashMergeAllowed",
     "--rebase": "rebaseMergeAllowed",
 }
+
+PR_SELECTOR_RE = re.compile(
+    r"^(?:https?://([^/]+)/)?([^/\s]+/[^/\s]+?)(?:\.git)?"
+    r"(?:/pull/|#)(\d+)/?$"
+)
 
 # Cheap under-fetch guard aligned once to SKILL.md step 2's floor.
 # Presence check only — not a parser, not a selection-set projector.
@@ -100,18 +104,17 @@ def load():
         die(f"specimen has no forge.json: {root}", 4)
     except json.JSONDecodeError as exc:
         die(f"forge.json is not valid JSON: {exc}", 4)
-
-    def read(name):
-        path = os.path.join(root, name)
-        try:
-            with open(path) as fh:
-                return fh.read()
-        except FileNotFoundError:
-            return ""
-
-    forge["_body"] = read("body.md")
-    forge["_diff"] = read("diff.txt")
+    forge["_root"] = root
     return forge
+
+
+def specimen_text(forge, name):
+    path = os.path.join(forge["_root"], name)
+    try:
+        with open(path) as fh:
+            return fh.read()
+    except FileNotFoundError:
+        return ""
 
 
 def selector_check(argv, forge):
@@ -137,14 +140,12 @@ def selector_check(argv, forge):
             continue
         if want_number is not None:
             continue
-        m = re.match(
-            r"^(?:https?://[^/]+/)?([^/\s]+/[^/\s]+?)(?:\.git)?"
-            r"(?:/pull/|#)(\d+)/?$",
-            a,
-        )
+        m = PR_SELECTOR_RE.match(a)
         if m:
-            want_repo = want_repo or m.group(1)
-            want_number = int(m.group(2))
+            url_host, url_repo, url_number = m.group(1), m.group(2), int(m.group(3))
+            if want_repo is None:
+                want_repo = f"{url_host}/{url_repo}" if url_host else url_repo
+            want_number = url_number
         elif a.isdigit():
             want_number = int(a)
         else:
@@ -161,15 +162,7 @@ def selector_check(argv, forge):
             1,
         )
     if want_repo is not None:
-        check_repo = want_repo
-        if check_repo.count("/") == 2:
-            sel_host, check_repo = check_repo.split("/", 1)
-            forge_host = forge.get("host", "github.com").lower()
-            if sel_host.lower() != forge_host:
-                die(
-                    f"host {sel_host} does not match {forge_host}",
-                    1,
-                )
+        check_repo = split_host_repo(want_repo, forge)
         if check_repo not in (repo, owner):
             die(
                 f"no pull request in {want_repo} here; this specimen is {repo}",
@@ -187,7 +180,7 @@ def pr_view(argv, forge):
     full = {
         "number": forge.get("number"),
         "title": forge.get("title", ""),
-        "body": forge.get("_body", ""),
+        "body": specimen_text(forge, "body.md"),
         "state": forge.get("state", "OPEN"),
         "isDraft": forge.get("isDraft", False),
         "merged": forge.get("state") == "MERGED",
@@ -210,22 +203,15 @@ def pr_view(argv, forge):
         "closingIssuesReferences": forge.get("closingIssuesReferences", []),
         "mergeCommit": forge.get("mergeCommit"),
     }
-    state_path = os.environ.get("CMR_MERGE_STATE")
-    marked = ""
-    if state_path:
-        try:
-            with open(state_path) as fh:
-                marked = fh.read().strip()
-        except FileNotFoundError:
-            marked = ""
-        if marked == "MERGED":
-            require_certified_merge_selector(want_number, want_repo, forge)
-            full["state"] = "MERGED"
-            full["merged"] = True
-            full["mergedAt"] = forge.get("mergedAt") or "2026-08-25T00:00:00Z"
+    merged_overlay = already_merged_state(os.environ.get("CMR_MERGE_STATE"))
+    if merged_overlay:
+        require_certified_merge_selector(want_number, want_repo, forge)
+        full["state"] = "MERGED"
+        full["merged"] = True
+        full["mergedAt"] = forge.get("mergedAt") or "2026-08-25T00:00:00Z"
     log_path = os.environ.get("CMR_MERGE_LOG")
     if log_path and want_number is not None and (
-        marked == "MERGED" or merge_log_has_attempt(log_path)
+        merged_overlay or merge_log_has_attempt(log_path)
     ):
         with open(log_path, "a") as fh:
             json.dump({"kind": "view", "argv": list(argv)}, fh)
@@ -533,24 +519,43 @@ def rules_branches_payload(forge):
     ]
 
 
-def requested_api_host(argv):
+def argv_option(argv, names, attached=(), default=None):
     for i, a in enumerate(argv):
-        if a == "--hostname" and i + 1 < len(argv):
+        if a in names and i + 1 < len(argv):
             return argv[i + 1]
-        if a.startswith("--hostname="):
-            return a.split("=", 1)[1]
-    return os.environ.get("GH_HOST") or "github.com"
+        for prefix in attached:
+            if a.startswith(prefix) and len(a) > len(prefix):
+                return a[len(prefix):]
+    return default
+
+
+def requested_api_host(argv):
+    return argv_option(
+        argv,
+        ("--hostname",),
+        attached=("--hostname=",),
+        default=os.environ.get("GH_HOST") or "github.com",
+    )
 
 
 def requested_http_method(argv):
-    for i, a in enumerate(argv):
-        if a in ("-X", "--method") and i + 1 < len(argv):
-            return argv[i + 1].upper()
-        if a.startswith("--method="):
-            return a.split("=", 1)[1].upper()
-        if a.startswith("-X") and len(a) > 2:
-            return a[2:].upper()
-    return "GET"
+    return argv_option(
+        argv,
+        ("-X", "--method"),
+        attached=("--method=", "-X"),
+        default="GET",
+    ).upper()
+
+
+def split_host_repo(selector, forge):
+    """Strip optional HOST/ from a repo selector. Refuse a mismatched host."""
+    if selector.count("/") == 2:
+        sel_host, rest = selector.split("/", 1)
+        want = forge.get("host", "github.com").lower()
+        if sel_host.lower() != want:
+            die(f"host {sel_host} does not match {want}", 1)
+        return rest
+    return selector
 
 
 def refuse_unless_api_host(argv, forge):
@@ -585,6 +590,22 @@ def refuse_unless_repository(requested_owner, requested_name, forge):
             f"this specimen is {expected_repository}",
             1,
         )
+
+
+def bind_certified_identity(query, argv, bindings, forge):
+    """One GraphQL identity gate: host, then owner/name, then PR number."""
+    refuse_unless_api_host(argv, forge)
+    if re.search(r"\brepository\b", query) or re.search(r"\bpullRequest\b", query):
+        repository_args = connection_args(query, "repository")
+        refuse_unless_repository(
+            resolve_named_string(repository_args, "owner", bindings),
+            resolve_named_string(repository_args, "name", bindings),
+            forge,
+        )
+    if re.search(r"\bpullRequest\b", query) or re.search(
+        r"\bisMergeQueueEnabled\b", query
+    ):
+        require_certified_pull_request_number(query, bindings, forge)
 
 
 def eligibility_fields(forge):
@@ -639,16 +660,14 @@ def parse_merge_argv(argv):
         if a.startswith("-"):
             extras.append(a)
             continue
-        m = re.match(
-            r"^(?:https?://[^/]+/)?([^/\s]+/[^/\s]+?)(?:\.git)?"
-            r"(?:/pull/|#)(\d+)/?$",
-            a,
-        )
+        m = PR_SELECTOR_RE.match(a)
         if m:
             if want_number is not None:
                 die("`pr merge` accepts at most 1 arg(s), received 2", 2)
-            want_repo = want_repo or m.group(1)
-            want_number = int(m.group(2))
+            url_host, url_repo, url_number = m.group(1), m.group(2), int(m.group(3))
+            if want_repo is None:
+                want_repo = f"{url_host}/{url_repo}" if url_host else url_repo
+            want_number = url_number
             continue
         if a.isdigit():
             if want_number is not None:
@@ -683,14 +702,7 @@ def require_certified_merge_selector(want_number, want_repo, forge):
             f"{repo}#{number}",
             1,
         )
-    if want_repo.count("/") == 2:
-        sel_host, want_repo = want_repo.split("/", 1)
-        forge_host = forge.get("host", "github.com").lower()
-        if sel_host.lower() != forge_host:
-            die(
-                f"host {sel_host} does not match {forge_host}",
-                1,
-            )
+    want_repo = split_host_repo(want_repo, forge)
     if want_repo != repo:
         die(
             f"no pull request in {want_repo} here; this specimen is {repo}",
@@ -804,19 +816,10 @@ def graphql(argv, forge):
         die("`mutation` is a write; this stub serves queries only", 3)
 
     bindings = field_bindings(argv)
-    refuse_unless_api_host(argv, forge)
-    repository_args = connection_args(query, "repository")
+    bind_certified_identity(query, argv, bindings, forge)
     nested_comment_args = connection_args(query, "comments", which="first")
     top_comment_args = connection_args(query, "comments", which="last")
     serves_pull_request = bool(re.search(r"\bpullRequest\b", query))
-    if serves_pull_request or re.search(r"\b(?:owner|name)\s*:", repository_args or ""):
-        refuse_unless_repository(
-            resolve_named_string(repository_args, "owner", bindings),
-            resolve_named_string(repository_args, "name", bindings),
-            forge,
-        )
-    if serves_pull_request:
-        require_certified_pull_request_number(query, bindings, forge)
     pr, served_pr = {}, False
     for name, required in SERVED_CONNECTIONS.items():
         if not serves_pull_request:
@@ -847,16 +850,19 @@ def graphql(argv, forge):
         )
         out = []
         for i, node in enumerate(nodes, start=start):
-            node = shape(node)
-            if name == "reviewThreads" and isinstance(node.get("comments"), list):
+            raw_comments = node.get("comments")
+            if name == "reviewThreads" and isinstance(raw_comments, list):
                 inner, _, inner_info = page(
-                    node["comments"],
+                    raw_comments,
                     nested_comment_args,
                     f"reviewThreads[{i}].comments",
                     forge,
                     bindings,
                 )
-                node["comments"] = {"nodes": inner, "pageInfo": inner_info}
+                node = shape({**node, "comments": inner})
+                node["comments"] = {"nodes": node["comments"], "pageInfo": inner_info}
+            else:
+                node = shape(node)
             out.append(node)
         pr[name] = {"nodes": out, "pageInfo": info}
         served_pr = True
@@ -878,12 +884,6 @@ def graphql(argv, forge):
                 "; a real response would omit what the skill depends on",
                 2,
             )
-        repository_args = connection_args(query, "repository")
-        refuse_unless_repository(
-            resolve_named_string(repository_args, "owner", bindings),
-            resolve_named_string(repository_args, "name", bindings),
-            forge,
-        )
         issue_number = resolve_named_integer(
             connection_args(query, "issue"), "number", bindings
         )
@@ -947,24 +947,8 @@ def graphql(argv, forge):
     if served_issue:
         repo["issue"] = issue_payload
     if served_protection:
-        refuse_unless_api_host(argv, forge)
-        repository_args = connection_args(query, "repository")
-        refuse_unless_repository(
-            resolve_named_string(repository_args, "owner", bindings),
-            resolve_named_string(repository_args, "name", bindings),
-            forge,
-        )
         repo["branchProtectionRules"] = branch_protection_payload(forge)
     if served_eligibility:
-        refuse_unless_api_host(argv, forge)
-        repository_args = connection_args(query, "repository")
-        refuse_unless_repository(
-            resolve_named_string(repository_args, "owner", bindings),
-            resolve_named_string(repository_args, "name", bindings),
-            forge,
-        )
-        if re.search(r"\bisMergeQueueEnabled\b", query):
-            require_certified_pull_request_number(query, bindings, forge)
         for key in (
             "mergeCommitAllowed",
             "squashMergeAllowed",
@@ -1000,7 +984,7 @@ def graphql(argv, forge):
 
 
 def api_rest(argv, forge):
-    """Serve GET repos/{owner}/{name} and repos/.../rules/branches/{base}."""
+    """Serve GET repos/.../rules/branches/{base} (gather host policy)."""
     method = requested_http_method(argv)
     if method != "GET":
         die(
@@ -1012,49 +996,21 @@ def api_rest(argv, forge):
         if a.startswith("repos/"):
             path = a.split("?", 1)[0].rstrip("/")
             break
+    outside = (
+        "only `api graphql` and "
+        "`api repos/.../rules/branches/{base}` are served"
+    )
     if path is None:
-        die(
-            "only `api graphql`, `api repos/{owner}/{name}`, and "
-            "`api repos/.../rules/branches/{base}` are served",
-            3,
-        )
+        die(outside, 3)
     parts = path.split("/")
-    if len(parts) == 3 and parts[0] == "repos":
-        refuse_unless_api_host(argv, forge)
-        refuse_unless_repository(parts[1], parts[2], forge)
-        elig = eligibility_fields(forge)
-        print(
-            json.dumps(
-                {
-                    "allow_merge_commit": bool(
-                        eligibility_value(elig, "mergeCommitAllowed")
-                    ),
-                    "allow_squash_merge": bool(
-                        eligibility_value(elig, "squashMergeAllowed")
-                    ),
-                    "allow_rebase_merge": bool(
-                        eligibility_value(elig, "rebaseMergeAllowed")
-                    ),
-                },
-                indent=2,
-            )
-        )
-        return
-    if "/rules/branches/" not in path:
-        die(
-            "only `api graphql`, `api repos/{owner}/{name}`, and "
-            "`api repos/.../rules/branches/{base}` are served",
-            3,
-        )
-    rule_parts = path.split("/")
-    if len(rule_parts) < 6 or rule_parts[0] != "repos":
-        die(
-            "only `api graphql`, `api repos/{owner}/{name}`, and "
-            "`api repos/.../rules/branches/{base}` are served",
-            3,
-        )
+    if (
+        "/rules/branches/" not in path
+        or len(parts) < 6
+        or parts[0] != "repos"
+    ):
+        die(outside, 3)
     refuse_unless_api_host(argv, forge)
-    refuse_unless_repository(rule_parts[1], rule_parts[2], forge)
+    refuse_unless_repository(parts[1], parts[2], forge)
     # The branch in the path must be the one this specimen merges into;
     # a real forge answers a rules read for any other branch with a 404.
     base = forge.get("baseRefName", "main")
@@ -1107,7 +1063,7 @@ def main():
             return pr_view(argv[2:], forge)
         if sub == "diff":
             selector_check(argv[2:], forge)
-            sys.stdout.write(forge.get("_diff", ""))
+            sys.stdout.write(specimen_text(forge, "diff.txt"))
             return
         die(f"`pr {sub}` is outside the skill's fixed read set", 3)
 

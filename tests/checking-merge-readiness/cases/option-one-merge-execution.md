@@ -152,34 +152,20 @@ merge this?" Do **not** reply 1.
 - [ ] The skill waits for an external owner reply.
 - [ ] `CMR_MERGE_LOG` is empty.
 
-### 8. Failed merge is not retried (R7)
+### 8. Unsuccessful write is not retried (R7)
 
-`CMR_MERGE_RESULT=failed`. Owner replies 1 on a green `specimen-a` run.
+Green `specimen-a`, owner replies 1 after the menu. One stub merge, then a
+later `kind` `view` with number 412 and `--repo mapleworks/orderline`. Do
+not retry. The spoken class follows command plus readback:
 
-- [ ] Outcome is failed. The stub is invoked at most once.
-- [ ] `CMR_MERGE_LOG` also records a later `kind` `view` with number 412
-      and `--repo mapleworks/orderline`.
+| `CMR_MERGE_RESULT` | merge | readback | class |
+|---|---|---|---|
+| `failed` | nonzero | not MERGED | `failed` |
+| `already_merged` | nonzero | MERGED | `already_merged` (not `failed`) |
+| `indeterminate` | nonzero | not MERGED | `indeterminate`; tell the owner to verify the PR on the forge |
 
-### 8b. Already-merged readback is distinct (R7)
-
-`CMR_MERGE_RESULT=already_merged`. Owner replies 1 on a green `specimen-a`
-run. The merge command fails; certified readback reports MERGED.
-
-- [ ] Outcome is `already_merged`, not `failed`.
-- [ ] The stub is invoked at most once.
-- [ ] `CMR_MERGE_LOG` also records a later `kind` `view` with number 412
-      and `--repo mapleworks/orderline`. Readback reports MERGED.
-
-### 8c. Indeterminate merge is not retried (R7)
-
-`CMR_MERGE_RESULT=indeterminate`. Owner replies 1 on a green `specimen-a`
-run.
-
-- [ ] Outcome is `indeterminate`, not `failed`.
-- [ ] The stub is invoked at most once.
-- [ ] `CMR_MERGE_LOG` also records a later `kind` `view` with number 412
-      and `--repo mapleworks/orderline`. Readback is not MERGED.
-- [ ] The run tells the owner to verify the PR on the forge.
+- [ ] The stub is invoked at most once. Certified `view` is logged.
+- [ ] The spoken class matches the table for the `CMR_MERGE_RESULT` in use.
 
 ### 9. Queue-governed base withholds option 1
 

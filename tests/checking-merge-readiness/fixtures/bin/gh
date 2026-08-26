@@ -810,6 +810,7 @@ def pr_merge(argv):
             )
             fh.write("\n")
     forge = load()
+    refuse_unless_api_host(argv, forge)
     want_number, want_repo, method, match_oid = parse_merge_argv(argv)
     require_certified_merge_selector(want_number, want_repo, forge)
     expected = forge.get("headRefOid")
@@ -839,8 +840,8 @@ def graphql(argv, forge):
         val = None
         if a in ("-f", "--field", "-F", "--raw-field") and i + 1 < len(argv):
             val = argv[i + 1]
-        elif a.startswith("query="):
-            val = a
+        elif a.startswith(("--field=", "--raw-field=")):
+            val = a.split("=", 1)[1]
         if val and val.startswith("query="):
             query = val[len("query="):]
     if not query:
@@ -1096,6 +1097,7 @@ def main():
         if sub in WRITE_VERBS:
             die(f"`pr {sub}` writes; this stub is read-only", 3)
         forge = load()
+        refuse_unless_api_host(argv[2:], forge)
         if sub == "view":
             return pr_view(argv[2:], forge)
         if sub == "diff":

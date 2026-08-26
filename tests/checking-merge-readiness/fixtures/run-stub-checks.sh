@@ -384,6 +384,13 @@ out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --r
 if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "rebaseMergeAllowed"
 then pass "gated pr merge refuses --rebase"
 else fail "gated pr merge refuses --rebase" "$out"; fi
+out=$(env CMR_ALLOW_MERGE=1 GH_HOST=evil.example CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --match-head-commit a91e4f0 2>&1); got=$?
+if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "does not match"
+then pass "gated pr merge refuses other GH_HOST"
+else fail "gated pr merge refuses other GH_HOST" "$out"; fi
+# shellcheck disable=SC2016
+msg_is "graphql refuses positional query=" 2 "no query= field" specimen-a \
+  api graphql 'query=query($owner:String!,$name:String!){repository(owner:$owner,name:$name){mergeCommitAllowed}}'
 out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --match-head-commit a91e4f0 --subject "x" 2>&1); got=$?
 if [ "$got" = 3 ] && printf '%s' "$out" | grep -q "refuses extra token"
 then pass "gated pr merge refuses extra token"

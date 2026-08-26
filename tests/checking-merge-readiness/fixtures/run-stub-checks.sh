@@ -202,7 +202,7 @@ if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); a=list(d.get("ar
 then pass "gated pr merge: argv recorded"
 else fail "gated pr merge: argv recorded" "$(cat "$MERGELOG")"
 fi
-out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_STATE="$MERGEST" CMR_FIXTURE="$PRS/specimen-a" "$GH" pr view --json state,mergedAt 2>&1); got=$?
+out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_STATE="$MERGEST" CMR_FIXTURE="$PRS/specimen-a" "$GH" pr view 412 --repo mapleworks/orderline --json state,mergedAt 2>&1); got=$?
 if [ "$got" = 0 ] && printf '%s' "$out" | python3 -c 'import json,sys; d=json.load(sys.stdin); raise SystemExit(0 if d.get("state")=="MERGED" and d.get("mergedAt") else 1)'
 then pass "gated pr merge: readback MERGED"
 else fail "gated pr merge: readback MERGED" "$out"; fi
@@ -242,7 +242,24 @@ out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --r
 if [ "$got" = 3 ] && printf '%s' "$out" | grep -q "refuses extra token"
 then pass "gated pr merge refuses --body"
 else fail "gated pr merge refuses --body" "$out"; fi
-rm -f "$MERGELOG" "$MERGEST"
+out=$(env CMR_ALLOW_MERGE=1 CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo evil.example/mapleworks/orderline --squash --match-head-commit a91e4f0 2>&1); got=$?
+if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "does not match"
+then pass "gated pr merge refuses other host"
+else fail "gated pr merge refuses other host" "$out"; fi
+out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_STATE="$MERGEST" CMR_FIXTURE="$PRS/specimen-a" "$GH" pr view --json state,mergedAt 2>&1); got=$?
+if [ "$got" = 2 ] && printf '%s' "$out" | grep -q "certified"
+then pass "merged overlay refuses selectorless pr view"
+else fail "merged overlay refuses selectorless pr view" "$out"; fi
+ALREADY=$(mktemp)
+out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_RESULT=already_merged CMR_MERGE_STATE="$ALREADY" CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --match-head-commit a91e4f0 2>&1); got=$?
+if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "already merged"
+then pass "CMR_MERGE_RESULT=already_merged refuses"
+else fail "CMR_MERGE_RESULT=already_merged refuses" "$out"; fi
+out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_STATE="$ALREADY" CMR_FIXTURE="$PRS/specimen-a" "$GH" pr view 412 --repo mapleworks/orderline --json state,mergedAt 2>&1); got=$?
+if [ "$got" = 0 ] && printf '%s' "$out" | python3 -c 'import json,sys; d=json.load(sys.stdin); raise SystemExit(0 if d.get("state")=="MERGED" and d.get("mergedAt") else 1)'
+then pass "already_merged readback MERGED"
+else fail "already_merged readback MERGED" "$out"; fi
+rm -f "$MERGELOG" "$MERGEST" "$ALREADY"
 msg_is "pr edit writes" 3 "writes; this stub is read-only" specimen-a pr edit
 msg_is "pr checkout outside set" 3 "outside the skill" specimen-a pr checkout
 msg_is "issue edit writes" 3 "writes; this stub is read-only" specimen-a issue edit 73

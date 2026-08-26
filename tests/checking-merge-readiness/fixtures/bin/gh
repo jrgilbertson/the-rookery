@@ -167,10 +167,11 @@ def selector_check(argv, forge):
                 f"no pull request in {want_repo} here; this specimen is {repo}",
                 1,
             )
+    return want_number, want_repo
 
 
 def pr_view(argv, forge):
-    selector_check(argv, forge)
+    want_number, want_repo = selector_check(argv, forge)
     fields = None
     for i, a in enumerate(argv):
         if a == "--json" and i + 1 < len(argv):
@@ -209,6 +210,7 @@ def pr_view(argv, forge):
         except FileNotFoundError:
             marked = ""
         if marked == "MERGED":
+            require_certified_merge_selector(want_number, want_repo, forge)
             full["state"] = "MERGED"
             full["merged"] = True
             full["mergedAt"] = forge.get("mergedAt") or "2026-08-25T00:00:00Z"
@@ -608,7 +610,13 @@ def require_certified_merge_selector(want_number, want_repo, forge):
             1,
         )
     if want_repo.count("/") == 2:
-        want_repo = want_repo.split("/", 1)[1]
+        sel_host, want_repo = want_repo.split("/", 1)
+        forge_host = forge.get("host", "github.com").lower()
+        if sel_host.lower() != forge_host:
+            die(
+                f"host {sel_host} does not match {forge_host}",
+                1,
+            )
     if want_repo != repo:
         die(
             f"no pull request in {want_repo} here; this specimen is {repo}",
@@ -663,6 +671,9 @@ def pr_merge(argv):
     result = os.environ.get("CMR_MERGE_RESULT", "merged")
     state_path = os.environ.get("CMR_MERGE_STATE")
     if already_merged_state(state_path) or result == "already_merged":
+        if state_path:
+            with open(state_path, "w") as fh:
+                fh.write("MERGED\n")
         die("pull request is already merged", 1)
     if result == "merged":
         if state_path:

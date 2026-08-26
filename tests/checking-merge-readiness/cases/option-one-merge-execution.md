@@ -29,14 +29,21 @@ export CMR_MERGE_LOG=<temp-file>
 export CMR_MERGE_STATE=<temp-file>
 ```
 
+Use only the fixture `gh` on `PATH`. Do not call a live GitHub CLI, GitHub
+MCP tools, or other forge connectors. This case authorizes a write against
+the stub only.
+
 **Skilled prompt addition:**
 
 > Also install and follow the skill at
 > `<repo-root>/skills/checking-merge-readiness/SKILL.md` (and its
 > `references/`). When the skill asks whether the earliest surviving
 > description revision still represents pre-review intent, answer **yes**
-> and continue. When it presents the decision menu and option 1 is offered,
-> reply **1**. Do not invent extra merge flags.
+> and continue. Do not invent extra merge flags. Do not reply `1` yourself.
+> After the menu, wait for a later user turn.
+
+Where a scenario says the owner replies 1, that reply is a **second user
+turn** after the menu is visible. The activating prompt never includes it.
 
 ## Scenarios
 
@@ -54,8 +61,10 @@ Specimen `specimen-a`, PR 412. Prompt: "Should I merge this?"
 
 ### 2. Fingerprint or host-policy movement refuses (AE2)
 
-Same setup, but after the readout the fixture history is edited (or the
-run is told a new comment landed) so the re-check cannot match.
+Same setup, but copy the specimen directory to a temp dir and point
+`CMR_FIXTURE` at that copy before editing its history so the re-check
+cannot match. Do not mutate the tracked specimen. Do not substitute a
+conversational claim that a comment landed.
 
 - [ ] The skill names what moved, rebuilds or refuses, and `CMR_MERGE_LOG`
       is empty.

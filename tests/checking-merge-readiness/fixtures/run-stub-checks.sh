@@ -201,6 +201,10 @@ out=$(env GH_HOST=evil.example CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -
 if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "does not match"
 then pass "history GraphQL refuses other GH_HOST"
 else fail "history GraphQL refuses other GH_HOST" "$out"; fi
+out=$(env GH_HOST=github.com CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql --hostname=evil.example -f "query=$REVIEWS" -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N" 2>&1); got=$?
+if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "does not match"
+then pass "history GraphQL refuses --hostname= form"
+else fail "history GraphQL refuses --hostname= form" "$out"; fi
 # shellcheck disable=SC2016
 out=$(env CMR_FIXTURE="$PRS/specimen-a" "$GH" api graphql -f 'query=query($owner:String!,$name:String!,$n:Int!){repository(owner:$owner,name:$name){pullRequest(number:$n){reviews(first:1){nodes{id author{login} submittedAt state body commit{oid}}}}}}' -F owner=evil -F name=wrong -F n=999 2>&1); got=$?
 if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "no repository evil/wrong"

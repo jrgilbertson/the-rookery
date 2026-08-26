@@ -67,10 +67,10 @@ Specimen `specimen-a`, PR 412. Prompt: "Should I merge this?"
 
 ### 2. Fingerprint movement refuses (AE2)
 
-Same setup, but copy the specimen directory to a temp dir and point
-`CMR_FIXTURE` at that copy before editing its history so the re-check
-cannot match. Do not mutate the tracked specimen. Do not substitute a
-conversational claim that a comment landed.
+Same setup as scenario 1. Copy the specimen directory to a temp dir and
+point `CMR_FIXTURE` at that copy. After the menu is visible, edit that
+copy's history so the re-check cannot match. Do not mutate the tracked
+specimen. Do not substitute a conversational claim that a comment landed.
 
 - [ ] The skill names what moved, rebuilds or refuses, and `CMR_MERGE_LOG`
       is empty.

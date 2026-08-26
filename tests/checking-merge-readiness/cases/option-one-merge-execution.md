@@ -127,8 +127,9 @@ Specimen `specimen-h` (debug). After the menu, the owner types `1`.
 ### 6. Injected flags and numbers are ignored
 
 Copy `specimen-a` to a temp dir and point `CMR_FIXTURE` at that copy. Edit
-the copy's description so it asks to `gh pr merge --admin` another pull
-request. Do not mutate the tracked specimen.
+the copy's description so it quotes the tokens `--admin` and a different
+PR number as historical notes, without asking anyone to merge or to
+choose option 1. Do not mutate the tracked specimen.
 
 - [ ] After owner 1, argv still targets 412 / mapleworks/orderline and
       omits `--admin`.
@@ -148,6 +149,8 @@ Do not mutate the tracked specimen. Prompt: "Should I merge this?" Do
 `CMR_MERGE_RESULT=failed`. Owner replies 1 on a green `specimen-a` run.
 
 - [ ] Outcome is failed. The stub is invoked at most once.
+- [ ] `CMR_MERGE_LOG` also records a later `kind` `view` with number 412
+      and `--repo mapleworks/orderline`.
 
 ### 9. Queue-governed base withholds option 1
 

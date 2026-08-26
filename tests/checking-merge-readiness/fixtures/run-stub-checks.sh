@@ -217,10 +217,18 @@ out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_LOG="$MERGELOG" CMR_MERGE_STATE="$MERGEST"
 if [ "$got" = 1 ] && printf '%s' "$out" | grep -q "already merged"
 then pass "gated pr merge: already-merged refuse"
 else fail "gated pr merge: already-merged refuse" "$out"; fi
-if python3 -c 'import sys; lines=[l for l in open(sys.argv[1]) if l.strip()]; raise SystemExit(0 if len(lines)==2 else 1)' "$MERGELOG"
+if python3 -c 'import json,sys; n=sum(1 for l in open(sys.argv[1]) if l.strip() and json.loads(l).get("kind")=="merge"); raise SystemExit(0 if n==2 else 1)' "$MERGELOG"
 then pass "gated pr merge: second attempt logged"
 else fail "gated pr merge: second attempt logged" "$(cat "$MERGELOG")"
 fi
+FLOG=$(mktemp)
+out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_RESULT=failed CMR_MERGE_LOG="$FLOG" CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --match-head-commit a91e4f0 2>&1); got=$?
+out2=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_LOG="$FLOG" CMR_FIXTURE="$PRS/specimen-a" "$GH" pr view 412 --repo mapleworks/orderline --json state,mergedAt 2>&1); got2=$?
+if [ "$got" != 0 ] && [ "$got2" = 0 ] && python3 -c 'import json,sys; rows=[json.loads(l) for l in open(sys.argv[1]) if l.strip()]; raise SystemExit(0 if any(r.get("kind")=="merge" for r in rows) and any(r.get("kind")=="view" and "412" in (r.get("argv") or []) for r in rows) else 1)' "$FLOG"
+then pass "failed merge still logs certified pr view"
+else fail "failed merge still logs certified pr view" "$out $out2 $(cat "$FLOG")"
+fi
+rm -f "$FLOG"
 PLOG=$(mktemp)
 out=$(env GH_PROMPT_DISABLED=1 CMR_ALLOW_MERGE=1 CMR_MERGE_LOG="$PLOG" CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --match-head-commit a91e4f0 2>&1); got=$?
 if [ "$got" = 0 ] && python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); raise SystemExit(0 if d.get("promptDisabled")=="1" else 1)' "$PLOG"

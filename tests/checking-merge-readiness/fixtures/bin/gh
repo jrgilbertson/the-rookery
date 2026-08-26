@@ -211,6 +211,7 @@ def pr_view(argv, forge):
         "mergeCommit": forge.get("mergeCommit"),
     }
     state_path = os.environ.get("CMR_MERGE_STATE")
+    marked = ""
     if state_path:
         try:
             with open(state_path) as fh:
@@ -219,14 +220,16 @@ def pr_view(argv, forge):
             marked = ""
         if marked == "MERGED":
             require_certified_merge_selector(want_number, want_repo, forge)
-            log_path = os.environ.get("CMR_MERGE_LOG")
-            if log_path:
-                with open(log_path, "a") as fh:
-                    json.dump({"kind": "view", "argv": list(argv)}, fh)
-                    fh.write("\n")
             full["state"] = "MERGED"
             full["merged"] = True
             full["mergedAt"] = forge.get("mergedAt") or "2026-08-25T00:00:00Z"
+    log_path = os.environ.get("CMR_MERGE_LOG")
+    if log_path and want_number is not None and (
+        marked == "MERGED" or merge_log_has_attempt(log_path)
+    ):
+        with open(log_path, "a") as fh:
+            json.dump({"kind": "view", "argv": list(argv)}, fh)
+            fh.write("\n")
     if not fields:
         die(
             "`pr view` without --json prints formatted text on real gh; this "
@@ -694,6 +697,28 @@ def refuse_unless_merge_eligible(method, forge):
         die("`pr merge` refuses a merge-queue-governed pull request", 1)
     if "mergeQueue" in elig and elig["mergeQueue"] is not None:
         die("`pr merge` refuses a merge-queue-governed pull request", 1)
+
+
+def merge_log_has_attempt(log_path):
+    if not log_path:
+        return False
+    try:
+        with open(log_path) as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    row = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if row.get("kind") == "merge" or (
+                    row.get("kind") is None and isinstance(row.get("argv"), list)
+                ):
+                    return True
+    except FileNotFoundError:
+        return False
+    return False
 
 
 def already_merged_state(state_path):

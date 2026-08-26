@@ -19,9 +19,15 @@ Optional env:
 Contract (deliberately small):
   - serve only the skill's fixed read set: pr view --json (incl. merge state),
     pr diff, issue view --json for linked source-issue metadata, api graphql
-    (history + linked-issue comments + branchProtectionRules), and api
-    repos/.../rules/branches/{base} for merge policy
-  - refuse writes and out-of-set verbs
+    (history + linked-issue comments + branchProtectionRules + merge
+    eligibility), and api repos/.../rules/branches/{base} for merge policy
+  - refuse writes and out-of-set verbs unless CMR_ALLOW_MERGE is set, in
+    which case `pr merge` is recorded and may return a specimen result
+  - optional env:
+      CMR_ALLOW_MERGE     non-empty → gated `pr merge` (still refuses
+                          --admin/--auto/--delete-branch and missing method)
+      CMR_MERGE_LOG       path to write the merge argv JSON
+      CMR_MERGE_RESULT    merged (default) | failed | indeterminate
   - refuse a selector that names another pull request
   - refuse an under-fetch of fields the skill depends on (query-text presence)
   - paginate connections (first / after, including -f/-F variables)
@@ -179,7 +185,16 @@ def pr_view(argv, forge):
         "reviewDecision": forge.get("reviewDecision", ""),
         "statusCheckRollup": forge.get("statusCheckRollup", []),
         "closingIssuesReferences": forge.get("closingIssuesReferences", []),
+        "mergeCommit": forge.get("mergeCommit"),
     }
+    state_path = os.environ.get("CMR_MERGE_STATE")
+    if state_path and os.path.isfile(state_path):
+        with open(state_path) as fh:
+            marked = fh.read().strip()
+        if marked == "MERGED":
+            full["state"] = "MERGED"
+            full["merged"] = True
+            full["mergedAt"] = forge.get("mergedAt") or "2026-08-25T00:00:00Z"
     if not fields:
         die(
             "`pr view` without --json prints formatted text on real gh; this "
@@ -483,6 +498,64 @@ def rules_branches_payload(forge):
     ]
 
 
+def eligibility_fields(forge):
+    raw = forge.get("mergeEligibility")
+    if not isinstance(raw, dict):
+        raw = {}
+    return {
+        "mergeCommitAllowed": bool(raw.get("mergeCommitAllowed", True)),
+        "squashMergeAllowed": bool(raw.get("squashMergeAllowed", True)),
+        "rebaseMergeAllowed": bool(raw.get("rebaseMergeAllowed", False)),
+        "viewerDefaultMergeMethod": raw.get("viewerDefaultMergeMethod", "SQUASH"),
+        "isMergeQueueEnabled": bool(raw.get("isMergeQueueEnabled", False)),
+        "mergeQueue": raw.get("mergeQueue"),
+    }
+
+
+def pr_merge(argv):
+    if not os.environ.get("CMR_ALLOW_MERGE"):
+        die("`pr merge` writes; this stub is read-only", 3)
+    forge = load()
+    selector_check(argv, forge)
+    method_flags = [f for f in ("--merge", "--squash", "--rebase") if f in argv]
+    if len(method_flags) != 1:
+        die("`pr merge` requires exactly one of --merge, --squash, --rebase", 2)
+    forbidden = [f for f in ("--admin", "--auto", "--delete-branch") if f in argv]
+    if forbidden:
+        die(f"`pr merge` refuses {', '.join(forbidden)}", 3)
+    match_oid = None
+    for i, a in enumerate(argv):
+        if a == "--match-head-commit" and i + 1 < len(argv):
+            match_oid = argv[i + 1]
+    if not match_oid:
+        die("`pr merge` requires --match-head-commit", 2)
+    expected = forge.get("headRefOid")
+    if match_oid != expected:
+        die(f"head OID {match_oid} does not match {expected}", 1)
+    log_path = os.environ.get("CMR_MERGE_LOG")
+    if log_path:
+        payload = {
+            "argv": argv,
+            "method": method_flags[0],
+            "matchHeadCommit": match_oid,
+            "number": forge.get("number"),
+            "repo": forge.get("repo"),
+        }
+        with open(log_path, "w") as fh:
+            json.dump(payload, fh)
+    result = os.environ.get("CMR_MERGE_RESULT", "merged")
+    state_path = os.environ.get("CMR_MERGE_STATE")
+    if result == "merged":
+        if state_path:
+            with open(state_path, "w") as fh:
+                fh.write("MERGED\n")
+        print(f"Merged pull request {forge.get('number')}")
+        return
+    if result == "failed":
+        die("pull request is not mergeable", 1)
+    die("merge result could not be classified", 1)
+
+
 def graphql(argv, forge):
     query = ""
     for i, a in enumerate(argv):
@@ -612,11 +685,23 @@ def graphql(argv, forge):
         }
 
     served_protection = bool(re.search(r"\bbranchProtectionRules\b", query))
-    if not served_pr and not served_issue and not served_protection:
+    served_eligibility = bool(
+        re.search(
+            r"\b(mergeCommitAllowed|squashMergeAllowed|rebaseMergeAllowed|"
+            r"viewerDefaultMergeMethod|isMergeQueueEnabled|mergeQueue)\b",
+            query,
+        )
+    )
+    if (
+        not served_pr
+        and not served_issue
+        and not served_protection
+        and not served_eligibility
+    ):
         die(
             "query names none of reviewThreads, reviews, userContentEdits, "
-            "the top-level comments connection, issue comments, or "
-            "branchProtectionRules; "
+            "the top-level comments connection, issue comments, "
+            "branchProtectionRules, or merge eligibility; "
             "this stub serves only the skill's fixed read set",
             2,
         )
@@ -624,11 +709,30 @@ def graphql(argv, forge):
     repo = {}
     if served_pr:
         pr.setdefault("number", forge.get("number"))
+        elig = eligibility_fields(forge)
+        if re.search(r"\bisMergeQueueEnabled\b", query):
+            pr["isMergeQueueEnabled"] = elig["isMergeQueueEnabled"]
         repo["pullRequest"] = pr
     if served_issue:
         repo["issue"] = issue_payload
     if served_protection:
         repo["branchProtectionRules"] = branch_protection_payload(forge)
+    if served_eligibility:
+        elig = eligibility_fields(forge)
+        for key in (
+            "mergeCommitAllowed",
+            "squashMergeAllowed",
+            "rebaseMergeAllowed",
+            "viewerDefaultMergeMethod",
+        ):
+            if re.search(rf"\b{key}\b", query):
+                repo[key] = elig[key]
+        if re.search(r"\bmergeQueue\b", query):
+            repo["mergeQueue"] = elig["mergeQueue"]
+        if re.search(r"\bisMergeQueueEnabled\b", query) and "pullRequest" not in repo:
+            repo["pullRequest"] = {
+                "isMergeQueueEnabled": elig["isMergeQueueEnabled"]
+            }
     print(json.dumps({"data": {"repository": repo}}, indent=2))
 
 
@@ -689,6 +793,8 @@ def main():
         if len(argv) < 2:
             die("`pr` needs a subcommand", 2)
         sub = argv[1]
+        if sub == "merge":
+            return pr_merge(argv[2:])
         if sub in WRITE_VERBS:
             die(f"`pr {sub}` writes; this stub is read-only", 3)
         forge = load()

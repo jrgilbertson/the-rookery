@@ -198,9 +198,10 @@ MERGEST=$(mktemp)
 out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_LOG="$MERGELOG" CMR_MERGE_STATE="$MERGEST" CMR_FIXTURE="$PRS/specimen-a" "$GH" pr merge 412 --repo mapleworks/orderline --squash --match-head-commit a91e4f0 2>&1); got=$?
 if [ "$got" = 0 ]; then pass "gated pr merge: success"
 else fail "gated pr merge: success" "$out"; fi
-python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); raise SystemExit(0 if d.get("method")=="--squash" and d.get("matchHeadCommit")=="a91e4f0" else 1)' "$MERGELOG" \
-  && pass "gated pr merge: argv recorded" \
-  || fail "gated pr merge: argv recorded" "$(cat "$MERGELOG")"
+if python3 -c 'import json,sys; d=json.load(open(sys.argv[1])); raise SystemExit(0 if d.get("method")=="--squash" and d.get("matchHeadCommit")=="a91e4f0" else 1)' "$MERGELOG"
+then pass "gated pr merge: argv recorded"
+else fail "gated pr merge: argv recorded" "$(cat "$MERGELOG")"
+fi
 out=$(env CMR_ALLOW_MERGE=1 CMR_MERGE_STATE="$MERGEST" CMR_FIXTURE="$PRS/specimen-a" "$GH" pr view --json state,mergedAt 2>&1); got=$?
 if [ "$got" = 0 ] && printf '%s' "$out" | python3 -c 'import json,sys; d=json.load(sys.stdin); raise SystemExit(0 if d.get("state")=="MERGED" and d.get("mergedAt") else 1)'
 then pass "gated pr merge: readback MERGED"

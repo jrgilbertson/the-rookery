@@ -143,6 +143,14 @@ how that classification was decided from the paths in the working surface, and
 surface an uncertain classification for the owner to decide rather than
 resolving it silently.
 
+Before dispatching solution simplicity, resolve the requirements source:
+linked issue or ticket, then the brief, then a repository plan only when the
+repository maintains plans as durable documentation. When none exists, take
+the owner's direct intent attestation now. Extract the
+objective, required behavior, hard constraints, and verification criteria for
+the simplicity reviewer. Step 4 reuses this source and attestation rather than
+resolving them again.
+
 Use this receipt inventory to decide between verified and the honest
 alternatives:
 
@@ -155,18 +163,21 @@ alternatives:
   saved; otherwise it has none.
 - A `checking-simplicity` result counts only when this gate dispatches the
   review after step 1 against the complete surface it just inventoried. Supply
-  the repository, branch, full `HEAD`, and all four path categories in that
-  dispatch and require the result to repeat them. The result must bind the same
-  repository, branch, full `HEAD`, and path inventory,
-  return `PASS`, and say its context had no prior involvement in planning,
-  implementation, earlier review or findings, or review fixes. It must also say
-  `Owner decision required: no`; an open owner decision is failed until it is
-  resolved and the resulting approach is checked again. Keep the dispatch and
-  return uninterrupted by implementation or other surface-changing work. When
-  it returns, re-run step 1 and re-read the full committed, staged, unstaged,
-  and untracked content supplied to the reviewer; any content change makes the
-  result stale and triggers recomposition. Matching paths alone are
-  insufficient. An older result or a same-context result is advisory, never
+  resolved requirements source, objective, required behavior, hard constraints,
+  verification criteria, repository, branch, full `HEAD`, and all four path
+  categories. Require the result to repeat those bindings. It must return
+  `PASS`, say exactly `Review context: independent`, and say
+  `Owner decision required: no`. Accept `independent` only under the provider's
+  no-prior-involvement rule: no planning, authorship, implementation, earlier
+  review or findings, or review fixes that shaped the subject. Any other review
+  context is unverified. An open owner decision is failed until it is resolved
+  and the resulting approach is checked again. Keep the dispatch and return
+  uninterrupted by requirements, implementation, or other surface-changing
+  work. When it returns, re-read the
+  complete requirements and re-run step 1, then re-read the full committed,
+  staged, unstaged, and untracked content supplied to the reviewer. Any content
+  change makes the result stale and triggers recomposition. Matching paths alone
+  are insufficient. An older or same-context result is advisory, never
   verified. `CHANGES_NEEDED` is failed until the approach is revised and
   checked again on the resulting surface.
 - Code review, code simplification, and solution simplicity leave no durable
@@ -190,18 +201,16 @@ stated.
 
 ### 4. Compare intent to what was delivered
 
-Use the linked issue or ticket first, then the brief the work started from. A
-repository plan is optional and counts only when that repository maintains
-plans as durable documentation. An ignored working plan may help the current
-comparison, but it is not a durable source and must not appear in pull-request
-evidence. Compare the source against the working surface. List intended items
-not delivered first, then work delivered beyond the source as intent drift for
-the owner to judge. A linked issue or brief is sufficient; the absence of a
-separate plan is not a finding.
+Use the requirements source and any owner attestation already resolved in step
+3. An ignored working plan may help the current comparison, but it is not a
+durable source and must not appear in pull-request evidence. Compare the source
+against the working surface. List intended items not delivered first, then work
+delivered beyond the source as intent drift for the owner to judge. A linked
+issue or brief is sufficient; the absence of a separate plan is not a finding.
 
-When no issue, brief, or durable repository plan exists, report the comparison
-unavailable, name that absence as a finding, and take the owner's direct
-attestation of what the branch was meant to do, recorded as attested.
+When step 3 found no issue, brief, or durable repository plan, report the
+comparison unavailable, name that absence as a finding, and record the owner's
+direct intent attestation as attested.
 
 Completion: every planned item is marked delivered or not delivered, or the
 comparison is reported unavailable with the owner's attestation of intent

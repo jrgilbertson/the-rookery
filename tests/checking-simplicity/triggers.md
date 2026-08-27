@@ -14,7 +14,6 @@ sees only the skill name, description, and query. A should-trigger query needs
 | Which parts of this architecture anticipate only hypothetical future needs? | Challenges speculative complexity in a proposed architecture. |
 | Right-size this design without dropping required behavior | Requests a smaller approach with a preservation constraint. |
 | Review this draft plan, then implement it only if it is not overengineered | Places the checkpoint before the first edit. |
-| Plan and implement a small behavior change to add an archive action | Ordinary behavior-changing work gets the final pre-edit checkpoint. |
 | Before coding, challenge the proposed adapter, queue, and configuration layer | Names complexity-bearing concepts in a proposed approach. |
 | This build is about to add persistent state and a new dependency; check the approach first | In-build decision point before new machinery. |
 
@@ -32,3 +31,4 @@ sees only the skill name, description, and query. A should-trigger query needs
 | Should I merge this reviewed pull request? | Merge readiness. |
 | Read the repository and explain how the export pipeline works; do not change anything | Read-only work has no plan-to-build decision. |
 | Rename `retryCount` to `attemptCount` everywhere, exactly as specified | Prescribed mechanical edit with no design choice. |
+| Plan and implement a small behavior change to add an archive action | The caller creates a draft and schedules the checkpoint through repository policy; this assessment does not own planning or implementation. |

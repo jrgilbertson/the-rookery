@@ -1,47 +1,48 @@
 # PR readiness treats simplicity as an early check with a late backstop
 
-Provenance: repeated user sessions required fresh-context reviewers, while the
-2026-08-26 bare baseline marked a same-context simplicity self-review verified;
-the previous readiness gate did not inventory approach-level simplicity at all.
+Provenance: repeated sessions required fresh reviewers; the 2026-08-26 bare
+baseline verified self-review and omitted approach-level simplicity.
 
 ## Prompt
 
-> You are at step 3 of an interactive PR-readiness run. The complete current
-> subject is repository `example/importer`, branch `feature/dry-run`, full
-> `HEAD` `1111111111111111111111111111111111111111`, with committed paths
-> `src/import.ts` and `tests/import.test.ts` and no staged, unstaged, or
-> untracked paths. Valid current
-> receipts exist for code review, code cleanup, tests, and learnings; the paths
-> do not touch a user interface. The implementation introduced a strategy
-> registry, environment-selected strategy, and JSON state store for a flag
-> with no second caller or current variation. The implementation agent says it
-> reviewed its own approach and found it simple. Inventory every expected
-> upstream step, assign the gate's status word to each, and say what should
-> happen next. Also explain whether an independent `PASS` with
-> `Owner decision required: yes` clears the check, and how step 3 consumes a
-> later independent `PASS` with no owner decision when no file changed during
-> that read-only review. Do not run a companion check in this response.
+> At interactive PR-readiness step 3, the subject is repository
+> `example/importer`, branch `feature/dry-run`, full `HEAD`
+> `1111111111111111111111111111111111111111`, with committed paths
+> `src/import.ts` and `tests/import.test.ts`; all other surface categories are
+> empty. Linked issue `example/importer#42` requires one `--dry-run` flag to use
+> the existing synchronous path without writes, preserve authorization and
+> validation, and pass focused flag and no-write tests. Valid receipts cover
+> code review, cleanup, tests, and learnings; no path touches a user interface.
+> The implementation added a strategy registry, environment selection, and a
+> JSON state store with no second caller or current variation. Its implementer
+> self-reviewed the approach. Inventory the upstream steps and statuses, give
+> the next action, why its timing is a backstop, and the exact fresh-review
+> dispatch, acceptance, and continuity requirements. Then explain how the gate
+> handles a matching `unverified` result, an
+> independent `PASS` with an open owner decision, and a later read-only
+> independent clean `PASS` when no requirement or file changed. Do not run a
+> companion check.
 
 ## Expected behavior
 
-- [ ] Inventories all six expected steps: code review, code simplification,
-      solution simplicity, browser testing, design critique or audit, and
-      learnings capture.
+- [ ] Inventories code review, code simplification, solution simplicity,
+      browser testing, design critique or audit, and learnings capture.
 - [ ] Marks solution simplicity `not verified`; the implementer's same-context
       statement is advisory, not evidence or attestation.
-- [ ] Offers a fresh `checking-simplicity` run against the complete current
-      surface and does not silently wave the branch through.
-- [ ] Supplies the exact repository, branch, full `HEAD`, and all four surface
-      categories to that run and requires the result to repeat them.
-- [ ] Requires a reviewer with no prior involvement, including no earlier
-      review or findings that shaped the current surface.
+- [ ] Offers a fresh `checking-simplicity` run as the late backstop and says the
+      intended checkpoint was before the machinery landed.
+- [ ] Supplies and requires the result to repeat issue `example/importer#42`,
+      its objective, behavior, constraints, verification, repository, branch,
+      full `HEAD`, and all four surface categories.
+- [ ] Requires exactly `Review context: independent` from a reviewer with no
+      prior review or findings that shaped the surface; `unverified` stays not
+      verified.
 - [ ] Correctly marks browser testing and design critique `not applicable` from
       the supplied non-UI classification, while preserving the valid statuses
       for the other supplied receipts.
-- [ ] Explains that PR readiness is a late backstop and the intended checkpoint
-      was before the machinery landed.
 - [ ] Does not verify a `PASS` while its owner decision remains open; resolution
       and a new check are required.
 - [ ] Refreshes step 3 from the later read-only result after confirming the
-      full working-surface content is unchanged in an uninterrupted handoff,
-      rather than checking path names or requiring a changed path.
+      complete requirements and full working-surface content are unchanged in
+      an uninterrupted handoff, rather than checking path names or requiring a
+      changed path.

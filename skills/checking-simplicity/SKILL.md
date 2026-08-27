@@ -1,6 +1,6 @@
 ---
 name: checking-simplicity
-description: Use as the final checkpoint on a draft software plan or proposed implementation approach before coding a behavior change, including requests to simplify a plan, avoid overengineering, choose the smallest reliable approach, or reuse an existing mechanism. Also use at an in-build decision point before adding abstractions, dependencies, configuration, persisted state, adapters, hooks, or background workflows. Skip read-only work and prescribed mechanical edits with no design choice. Returns a read-only verdict; it does not plan, edit, review correctness, clean up settled code, or decide shipping readiness.
+description: Use when a current draft software plan or proposed implementation approach needs a simplicity check before coding, including requests to simplify a plan, avoid overengineering, choose the smallest reliable approach, or reuse an existing mechanism. Also use at an in-build decision point before adding abstractions, dependencies, configuration, persisted state, adapters, hooks, or background workflows. Skip read-only work and prescribed mechanical edits with no design choice. Returns a read-only verdict; it does not plan, edit, review correctness, clean up settled code, or decide shipping readiness.
 license: MIT
 compatibility: Requires access to the complete requirements and current plan or implementation surface. A verified result requires a fresh context; a caller consuming it as a gate also needs an uninterrupted handoff.
 ---
@@ -18,7 +18,8 @@ decision point before adding another module, interface, dependency, persisted
 state or schema, configuration surface, adapter or provider layer, hook, queue,
 cache, state machine, or background workflow.
 
-For reliable scheduling and explicit invocation patterns, read
+When configuring how a caller schedules this checkpoint, or when the harness
+cannot dispatch a fresh context, read
 [references/activation.md](references/activation.md).
 
 ## Review boundary
@@ -118,7 +119,7 @@ Use this compact shape:
 ```text
 Verdict: PASS | CHANGES_NEEDED
 Review context: independent | same-context (advisory) | unverified
-Subject: <current plan and requirements source, or repository + branch + full HEAD + complete path inventory>
+Subject: <requirements source + current plan, or requirements source + repository + branch + full HEAD + complete path inventory>
 Owner decision required: no | yes — <one exact question>
 
 Findings:
@@ -129,7 +130,9 @@ Findings:
 Protected complexity: <what must remain, or none>
 ```
 
-On a clean pass, keep `Findings` to `none`; do not invent a concern. On
+On a clean pass, keep `Findings` to `none`; do not invent a concern. When reuse
+of an existing mechanism is part of the smallest safe approach, name it under
+`Protected complexity` with the required constraints it preserves. On
 `CHANGES_NEEDED`, every finding needs a pointer to both the proposed mechanism
 and the current requirement it fails to serve. Return the assessment to the
 caller. Do not revise the plan, edit files, configure hooks, commit, or approve

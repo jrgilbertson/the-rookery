@@ -7,9 +7,9 @@ first implementation edit. There are three useful activation levels.
 
 Ask for `checking-simplicity` after a draft approach exists and before coding.
 Use the harness's ordinary skill syntax when it has one, such as
-`$checking-simplicity`, or say the skill name directly. For the strongest
-separation, have a fresh context review the draft and return its assessment to
-the implementation context.
+`$checking-simplicity`, or say the skill name directly. For an independent
+result, have a fresh context review the draft and return its assessment to the
+implementation context.
 
 Examples that should route here include:
 
@@ -19,9 +19,8 @@ Examples that should route here include:
 - "Check whether the existing mechanism already satisfies this request."
 - "Right-size this approach without dropping required behavior."
 
-The skill description makes these semantic requests discoverable. It is not a
-literal keyword scanner, and description routing remains model-selected rather
-than guaranteed.
+Description routing is semantic and model-selected, so these requests are
+discoverable but not guaranteed to activate the skill.
 
 ## Persistent caller policy
 
@@ -39,9 +38,9 @@ is CHANGES_NEEDED, and resolve any owner decision before implementation. Use a
 new uninvolved context for each recheck.
 ```
 
-This policy observes the transition that matters. Complexity words in the
-original prompt do not: the agent often invents the abstraction or workflow
-later, while drafting its approach.
+The policy schedules the checkpoint at the plan-to-build transition, including
+when the original prompt never mentions complexity. The agent often invents
+the abstraction or workflow later while drafting its approach.
 
 ## Caller-owned sequencing
 
@@ -54,8 +53,18 @@ An automated caller can enforce the same boundary as three explicit stages:
    `CHANGES_NEEDED` approach, then check the resulting approach again in a new
    uninvolved context.
 
-This three-stage design makes ordering observable without a harness-specific
-hook.
+These stages make ordering observable without a harness-specific hook.
+
+Use native fresh-context dispatch when the harness provides it. Otherwise stop
+before implementation and prepare a separate-session handoff containing the
+complete requirements and exact plan or implementation subject from the
+skill's `Subject` contract. Keep the checkpoint unverified until that session
+returns the full assessment. Before proceeding, the caller re-reads the
+complete subject and confirms that neither its content nor its binding changed.
+If either changed, the caller sends the updated subject through another
+independent review before implementation.
+
+A same-context assessment remains advisory; it is not the fallback.
 
 ## Why there is no bundled hook
 

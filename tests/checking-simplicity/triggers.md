@@ -10,8 +10,8 @@ sees only the skill name, description, and query. A should-trigger query needs
 | --- | --- |
 | Simplify this implementation plan before we start coding | Explicit plan-to-build simplicity review. |
 | Choose the smallest reliable implementation among these approaches | Right-sizing an approach before implementation. |
-| Before coding this behavior change, does the existing repository mechanism already satisfy it? | Tests reuse before adding a new implementation. |
-| Right-size this design without dropping required behavior | Requests a smaller approach with a preservation constraint. |
+| This completed approach adds a cache. Before coding, check whether existing request memoization already satisfies the requirements. | Tests reuse before adding a new implementation, with a reviewable subject. |
+| Right-size this completed design draft without dropping its required behavior | Requests a smaller approach with a preservation constraint and current subject. |
 | Review this draft plan, then implement it only if it is not overengineered | Places the checkpoint before the first edit. |
 | Before coding, challenge the proposed adapter, queue, and configuration layer | Names complexity-bearing concepts in a proposed approach. |
 | This build is about to add persistent state and a new dependency; check the approach first | In-build decision point before new machinery. |
@@ -33,3 +33,5 @@ sees only the skill name, description, and query. A should-trigger query needs
 | Rename `retryCount` to `attemptCount` everywhere, exactly as specified | Prescribed mechanical edit with no design choice. |
 | Plan and implement a small behavior change to add an archive action | No reviewable plan or approach exists yet; the planning or build workflow may route here after producing one. |
 | We are still brainstorming whether an archive action is needed and what outcome it should produce | Requirements are unfinished; brainstorming owns the current task. |
+| Before coding this behavior change, does the existing repository mechanism already satisfy it? | No completed requirements draft, plan, approach, or concrete in-build decision is present. |
+| The unchanged implementation plan already has an independent PASS with no owner decision. Continue to implementation. | The checkpoint is complete; the executor owns the newly reached task. |

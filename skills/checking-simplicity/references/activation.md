@@ -17,6 +17,9 @@ Description routing is semantic and model-selected. It is a discovery path,
 not deterministic enforcement. In a staged workflow, each caller should route
 the newly reached task against the available skill catalog instead of assuming
 that skill selection from an earlier stage still applies.
+After the current unchanged subject receives an independent `PASS` with
+`Owner decision required: no`, the newly reached task belongs to the next
+planner or executor. Do not route the same subject back through this checkpoint.
 
 ## Explicit invocation
 
@@ -28,11 +31,13 @@ implementation context.
 
 Examples that should route here include:
 
-- "Simplify this plan before we build it."
-- "Choose the smallest reliable implementation."
-- "Which parts of this architecture solve only hypothetical future needs?"
-- "Check whether the existing mechanism already satisfies this request."
-- "Right-size this approach without dropping required behavior."
+- "Simplify this finished implementation plan before we build it."
+- "Choose the smallest reliable implementation for this completed approach."
+- "Which parts of this architecture proposal solve only hypothetical future
+  needs?"
+- "For this completed approach, check whether the existing mechanism already
+  satisfies the requirements."
+- "Right-size this current plan without dropping required behavior."
 - "Check this completed requirements draft before implementation planning,
   without inventing how to build it."
 
@@ -64,6 +69,12 @@ In every branch, state and enforce that the boundary stays blocked until the
 current resulting subject receives an independent `PASS` with
 `Owner decision required: no`. Sending it for another review is not permission
 to proceed.
+
+When an independent clean result already covers the current unchanged subject,
+the checkpoint is complete. Continue with the next planner or executor. A new
+checkpoint is required when required behavior, a protected constraint, or an
+implementation concept under review changes. A caller using the result as a
+gate must also treat any subject-content change as stale, including a copy edit.
 
 Use native fresh-context dispatch when the harness provides it. Otherwise stop
 before implementation and prepare a separate-session handoff containing the

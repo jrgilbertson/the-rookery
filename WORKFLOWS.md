@@ -79,7 +79,7 @@ What must be true before moving on:
 - **Constraints are explicit.** Scope, approval gates, non-goals, and the quality bar.
 - **Inputs and tools are known.** The sources, systems, and repos the work draws on.
 - **The artifact is defined.** The work will produce a merged PR, a findings document, or a decision someone can act on.
-- **The approach passed a simplicity checkpoint.** A fresh context found no avoidable mechanism, or the plan was reduced and checked again before implementation.
+- **The approach passed a simplicity checkpoint.** The current subject has an independent `PASS` with `Owner decision required: no`; any revision was checked again before implementation.
 
 When a plan needs issue structure, [`managing-issues`](skills/managing-issues/SKILL.md) manages parent, sub-issue, and blocker relationships in the repository's GitHub or Linear tracker. It reports which required open issues with no required sub-issues are ready to start now. Build still decides models, worktrees, stacks, and sequencing.
 
@@ -136,7 +136,7 @@ What must be true before moving to Ship:
 
 - **CI is green for the slice.** Every suite the change calls for passes, including browser checks when it touches the UI, and each test exercises the shipped code path rather than a stub.
 - **The slice stayed bounded.** Each agent built what its slice named, and scope changes went back through Plan.
-- **New machinery earned its place.** Material in-build design changes passed the same independent simplicity checkpoint before they landed.
+- **New machinery earned its place.** Each material in-build design change received an independent `PASS` with `Owner decision required: no` before it landed.
 - **Design held.** Interface work stayed inside the design system and the brief.
 
 ## Ship

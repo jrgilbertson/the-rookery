@@ -1,6 +1,6 @@
 ---
 name: checking-simplicity
-description: Use first now, before the next planner or executor, at either completed planning handoff with a current reviewable subject. Run before a completed requirements or approach draft enters implementation planning; for a requirements-only subject, assess scope choices without inventing implementation details. Run again before a finished implementation plan enters execution or its first code edit. Do not use when a request starts without a current requirements draft, plan, or approach, even if it asks to plan and implement. Also use when asked to simplify or right-size a plan, avoid overengineering, reuse existing code, or before an in-build decision adds an abstraction, dependency, configuration, persisted state, adapter, hook, queue, or background workflow. Requires complete requirements. Skip unfinished planning, read-only or mechanical work, settled-code cleanup, visual design, correctness review, and shipping decisions. Returns a read-only verdict; does not plan or implement.
+description: 'Use when a supplied, completed requirements draft or approach is ready for implementation planning; a finished implementation plan is ready for execution or its first edit; or a concrete in-build decision would add an abstraction, dependency, configuration, persisted state, adapter, hook, queue, or background workflow. Review that subject for unnecessary complexity and the smallest safe alternative. For requirements-only drafts, assess scope without inventing implementation details. Requires complete requirements and a reviewable artifact or decision. Keep subjectless simplification, reuse, or behavior-change requests with planning or build. Route settled-code cleanup, bugs, and shipping decisions to their owners. If an independent PASS with no owner decision covers the unchanged subject, route onward. Read-only; does not plan, edit, implement, or approve.'
 license: MIT
 compatibility: Requires access to the complete requirements and current plan or implementation surface. A verified result requires a fresh context; a caller consuming it as a gate also needs an uninterrupted handoff.
 ---
@@ -12,15 +12,20 @@ smallest safe alternative. This is an assessment, not a planning, editing, or
 approval workflow.
 
 Run after requirements are clear and a current reviewable draft exists. A
-completed requirements-only draft is a valid early subject: assess its scope
-and requirement choices without proposing implementation details. In a
-planning workflow, run before that draft deepens into an implementation plan,
-and again before a finished implementation plan hands off to execution. At the
-latest, run before the first implementation edit. Run again only when the
-required behavior or implementation shape materially changes. During a build,
-use it at the decision point before adding another module, interface,
-dependency, persisted state or schema, configuration surface, adapter or
-provider layer, hook, queue, cache, state machine, or background workflow.
+completed requirements-only draft is a valid early subject. Assess its scope
+without proposing implementation details. Run again before a finished
+implementation plan hands off to execution, or before its first code edit. If
+an unchanged subject already has an independent `PASS` with
+`Owner decision required: no`, continue the workflow instead of checking it
+again.
+
+Schedule another checkpoint when required behavior, a protected constraint, or
+one of the implementation concepts under review changes. Copy edits alone do
+not need a new review, but any subject-content change makes an earlier result
+stale for a caller that consumes it as a gate. During a build, run at the
+decision point before adding another module, interface, dependency, persisted
+state or schema, configuration surface, adapter or provider layer, hook, queue,
+cache, state machine, or background workflow.
 
 When configuring how a caller schedules this checkpoint, or when the harness
 cannot dispatch a fresh context, read
@@ -33,7 +38,30 @@ Bind the review to both:
 - the current objective, required behavior, hard constraints, and verification
   criteria; and
 - one current subject: the completed requirements draft, proposed approach,
-  implementation plan, or complete in-progress implementation surface.
+  implementation plan, or, for an in-build decision, both the decision text
+  and the complete current implementation surface.
+
+Treat owner-approved requirements and hard constraints as requested scope.
+Treat capabilities added only by an agent-authored draft as proposals, even
+when the planning workflow marked the draft complete or ready for handoff. If
+the available evidence does not establish who approved a capability, ask one
+owner question instead of silently removing or protecting it, and label the
+review `unverified`. Make any related finding conditional. Write `Remove,
+reuse, or defer: Conditional — remove or
+defer <capability> only if the owner says it is not required.` Do not present
+that removal as settled before the owner answers. Keep this source authority
+when reviewing a later approach, implementation plan, or in-build decision;
+the latest draft does not erase the originating objective.
+
+When multiple plausible requirements sources conflict, label the review
+`unverified`, set `Owner decision required: yes`, and ask which source is
+authoritative. Keep findings affected by that answer conditional.
+
+An approach, implementation plan, or in-build decision cannot establish owner
+authority for its own requirement summary. Bind it to an originating
+owner-authoritative requirements source supplied by the caller or repository
+evidence. If that source is absent or unresolved, label the review `unverified`,
+set `Owner decision required: yes`, and ask which source governs the subject.
 
 Infer the subject from the request and available evidence. Plan and
 implementation are input shapes, not separate modes. For implementation,
@@ -46,10 +74,18 @@ in this context, naming its path or heading when one exists and the requirements
 source used to judge it. A changed draft, `HEAD`, or working surface makes an
 older result stale.
 
+Every concrete in-build decision is an implementation subject. Its decision
+text cannot substitute for the current implementation surface. If a required
+Git identity or inventory read fails, or any surface category is unavailable,
+write `Review context: unverified`; never infer the missing binding from the
+decision document.
+
 When a caller supplies subject-binding fields, repeat them in `Subject`
 without weakening them to a prose summary. A missing repository, branch, full
 `HEAD`, or surface category makes an implementation review unverified even if
-the available subset looks clean.
+the available subset looks clean. Spell out `committed paths`, `staged paths`,
+`unstaged paths`, and `untracked paths` separately, including when each is
+unavailable; never collapse them into "all paths" or "all surfaces."
 
 The result describes the observed subject; it is not a durable receipt. A
 caller that needs to consume it as a gate must use an uninterrupted handoff:
@@ -111,10 +147,11 @@ privacy, data integrity, accessibility, compatibility, bounded resource use,
 operability, or proportionate tests for real failure modes. Call these out as
 protected complexity when they could otherwise look removable.
 
-Do not reduce the requested scope. When materially different smaller outcomes
-would each be valid, set the owner-decision flag and ask the one decision that
-separates them. The flag is independent of the verdict: an approach can need
-changes and an owner decision at the same time.
+Do not reduce owner-approved scope. When source authority is unclear, or when
+materially different smaller outcomes would each be valid, set the
+owner-decision flag and ask the one question that separates them. The flag is
+independent of the verdict. An approach can need changes and an owner decision
+at the same time.
 
 When the subject changes behavior, name in `Protected complexity` the
 proportionate tests that must continue to prove each protected boundary.
@@ -131,8 +168,8 @@ Use this compact shape:
 
 ```text
 Verdict: PASS | CHANGES_NEEDED
-Review context: independent | same-context (advisory) | unverified
-Subject: <requirements source + current plan, or requirements source + repository + branch + full HEAD + complete path inventory>
+Review context: independent | same-context (advisory) — <reason> | unverified — <missing evidence or provenance>
+Subject: <requirements source + objective + required behavior + hard constraints + verification criteria + current plan, or those requirements fields + repository + branch + full HEAD + committed, staged, unstaged, and untracked path inventories>
 Owner decision required: no | yes — <one exact question>
 
 Findings:
@@ -143,8 +180,21 @@ Findings:
 Protected complexity: <what must remain, or none>
 ```
 
-On a clean pass, keep `Findings` to `none`; do not invent a concern. When reuse
-of an existing mechanism is part of the smallest safe approach, name it under
+A caller may cross into implementation planning or execution only when the
+current subject receives `PASS`, `Review context: independent`, and
+`Owner decision required: no`. Any other result leaves that boundary blocked.
+After any other result, state which planning or execution boundary remains
+blocked, why, and what new decision, revision, or evidence is required. Then
+state that the current resulting subject needs a new uninvolved reviewer's
+independent `PASS` with no owner decision before crossing that boundary. For an
+advisory or unverified implementation result, the recovery evidence must include
+both the path inventory and the complete current contents of every relevant
+surface category. Call any advisory or unverified `PASS` tentative and state
+that it does not complete the checkpoint or satisfy PR readiness.
+
+On a clean pass, write `Findings:` followed by `- none`; do not invent a
+concern. When reuse of an existing mechanism is part of the smallest safe
+approach, name it under
 `Protected complexity` with the required constraints it preserves. On
 `CHANGES_NEEDED`, every finding needs a pointer to both the proposed mechanism
 or scope choice and the current objective or requirement it fails to serve.

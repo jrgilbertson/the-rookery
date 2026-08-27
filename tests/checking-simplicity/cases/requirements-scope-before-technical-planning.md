@@ -17,8 +17,9 @@ the requested simplicity checkpoint before implementation planning.
 >
 > Current requirements draft: support single and bulk archive; configurable
 > per-workspace retention and restore windows; an admin archive-history export;
-> and a user-selectable cross-device conflict policy. The draft is approved for
-> handoff to technical implementation planning.
+> and a user-selectable cross-device conflict policy. The planning workflow
+> marked the draft complete and ready for handoff, but the owner did not approve
+> any expansion beyond the originating objective.
 >
 > Return the assessment only.
 

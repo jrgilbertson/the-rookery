@@ -18,8 +18,8 @@ baseline verified self-review and omitted approach-level simplicity.
 > self-reviewed the approach. Inventory the upstream steps and statuses, give
 > the next action, why its timing is a backstop, and the exact fresh-review
 > dispatch, acceptance, and continuity requirements. Then explain how the gate
-> handles a matching `unverified` result, an
-> independent `PASS` with an open owner decision, and a later read-only
+> handles a matching `unverified` result, an independent `PASS` with an open
+> owner decision, an independent `CHANGES_NEEDED` result, and a later read-only
 > independent clean `PASS` when no requirement or file changed. Do not run a
 > companion check.
 
@@ -42,6 +42,9 @@ baseline verified self-review and omitted approach-level simplicity.
       for the other supplied receipts.
 - [ ] Does not verify a `PASS` while its owner decision remains open; resolution
       and a new check are required.
+- [ ] Keeps an independent `CHANGES_NEEDED` result failed until the approach is
+      revised and the resulting subject receives a new independent `PASS` with
+      no owner decision.
 - [ ] Refreshes step 3 from the later read-only result after confirming the
       complete requirements and full working-surface content are unchanged in
       an uninterrupted handoff, rather than checking path names or requiring a

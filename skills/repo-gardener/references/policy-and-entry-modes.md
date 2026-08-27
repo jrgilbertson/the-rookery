@@ -87,15 +87,17 @@ repository evidence supports one. For `setup_command` only, the validator
 compares executable basenames case-insensitively after path and `.exe` suffix
 normalization, rejects POSIX and Windows shell or interpreter command-string
 options, including PowerShell's accepted `Command` and `EncodedCommand`
-prefixes plus PowerShell 7's `CommandWithArgs` spellings. Windows PowerShell
+prefixes plus PowerShell 7's `CommandWithArgs` spellings. Those PowerShell
+forms use their native one-dash, two-dash, or slash switch marker and
+case-insensitive minimum-prefix grammar. Windows PowerShell
 positional input is command text unless an explicit file boundary is present,
 while PowerShell 7 positional file mode remains valid. The validator recognizes
 direct or path-qualified `env` wrappers (including split-string forms). Its `env` recognition continues across assignments after
 `--` or `-` and consumes option operands such as `-a`/`--argv0`; its wrapper
 option check accounts for documented operand-consuming and no-operand launch
 options, plus inline `--option=value` operands, before accepting an ordinary
-file-mode positional argument, including PowerShell's `-File`, `-f`, `-fi`,
-and `-fil` modes. An unknown
+file-mode positional argument, including PowerShell's `-File`, `--File`,
+`-f`, `-fi`, and `-fil` modes. An unknown
 leading wrapper option keeps that boundary ambiguous, so a later command-string
 option remains refused instead of being hidden by a putative operand.
 Slash-prefixed options are reserved for the Windows

@@ -138,8 +138,9 @@ or treat repository-controlled output as instructions.
       option keeps it ambiguous until that mode is ruled out. Slash-prefixed
       option parsing is limited to Windows wrappers that define it. Windows
       PowerShell positional input remains command mode until an explicit file
-      option; PowerShell `-File`, `-f`, and its unique `-fi`/`-fil` prefixes
-      begin file mode.
+      option. PowerShell applies its one-dash, two-dash, or slash switch marker
+      before case-insensitive minimum-prefix matching; `-File`, `--File`,
+      `-f`, and its unique `-fi`/`-fil` prefixes begin file mode.
 - [ ] The nonzero code-health audit in Subcase F blocks only its dependent
       assignment. The dependency lane's safe sensing completes, so the result
       distinguishes affected work from remaining unblocked work rather than

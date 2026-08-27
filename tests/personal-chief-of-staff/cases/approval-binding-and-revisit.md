@@ -98,7 +98,9 @@ temporary directory after the run.
       reports already satisfied after pre-write readback; the calendar
       change stays deferred; every result is reported independently.
 - [ ] 2 → reports the result indeterminate, does not retry blindly or alter
-      the approved target or content, and asks the user how to proceed.
+      the approved target or content, and asks the user how to proceed. The
+      failed post-write readback is a scan-line limitation with the exact
+      access result, distinct from the Indeterminate mutation narrative.
 - [ ] 3 → a scheduled run never supplies approval or writes on the user's
       behalf; its read-only output still includes a Source Access Audit with
       scan lines and the table for the roles actually attempted in that

@@ -210,10 +210,10 @@ Apply these response boundaries:
 - If the same message both decides actions and requests either a new review or
   current cross-source non-mode context, finish the actions first and use one
   Source Access Audit whose recovered table has a **Phase** column. Separate
-  **Action access** from **Review discovery** for a cadence request or from
+  **Action access** from **Review discovery** for a review request or from
   **Context discovery** for a non-mode request. Later discovery cannot
-  reinterpret the earlier decisions, and non-mode discovery never opens a
-  cadence.
+  reinterpret the earlier decisions, and non-mode discovery never opens
+  Wind-down, Weekly, or Quarterly.
 - On resumption, refresh required time-sensitive evidence and report only
   access performed or re-performed for this response. Stable prior-turn
   evidence may remain conversational support only when it is labeled next to

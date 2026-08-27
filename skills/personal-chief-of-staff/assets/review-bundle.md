@@ -14,9 +14,9 @@ Place it before separately approvable actions and before the run ending. Use
 the semantics and relevant-source set in `references/source-behavior.md`. Both
 surfaces below are required. Do not wrap either in HTML disclosure tags.
 
-Under that heading, print scan lines first, then today's table. The table is
-the complete current-response role census. Do not print a spoken caption that
-says so.
+Under that heading, print scan lines first, then the recovered table. The
+table is the complete current-response role census. Do not print a spoken
+caption that says so.
 
 **Scan lines.** For a discovery-bearing response, state overall coverage as
 Sufficient, Partial, or Insufficient. An action-only response has no review
@@ -26,8 +26,8 @@ failures, partial or truncated reads, unconfigured or declined roles, Partial
 or Insufficient coverage, and failed post-write readbacks. Include
 **Accessed — no relevant evidence** only when that empty result is why a claim
 is omitted, qualified, or an absence claim is made. **Not needed** stays in
-the table only. Routine **Accessed — evidence found** discovery stays in the
-table only.
+the table only. Complete, non-truncated **Accessed — evidence found**
+discovery stays in the table only.
 
 Print separate compact lines for the **Pre-write target or destination reread**
 and the **Post-write verification readback** only when those reads ran. A
@@ -36,8 +36,8 @@ scan lines. Successful reread and readback still appear as those compact lines
 and as distinct table rows. Do not add a second mini-table. Do not put Phase
 in the scan lines.
 
-**Table.** The same response still contains today's unwrapped GFM table. It
-reports actual access, not intended retrieval, claim provenance, or action
+**Table.** The same response still contains the recovered unwrapped GFM table.
+It reports actual access, not intended retrieval, claim provenance, or action
 success.
 
 | Source or role | Result | Scope or window | Effect on claim categories |
@@ -59,8 +59,9 @@ private configured names, account identifiers, source URLs, note or event
 titles, sensitive event types, content excerpts, credentials, raw queries, or
 tool telemetry. Use separate safe rows for mixed bounded slices whose results
 differ. Include every source in the relevant-source set, but do not enumerate
-irrelevant connectors. Each relevant role appears exactly once as a table row.
-A scan line may name a role that also has a table row.
+irrelevant connectors. Each relevant discovery role appears once as a table
+row. Pre-write reread and post-write readback stay separate rows even when they
+share a source. A scan line may name a role that also has a table row.
 
 In the effect column, name the category of claim the result supports, narrows,
 or prevents. Do not imply complete coverage from a partial scope and do not use
@@ -71,10 +72,9 @@ For action access, make the access purpose independently recoverable in the
 scope cell. Use one row for the **Pre-write target or destination reread** and,
 when performed, a separate row for the **Post-write verification readback**.
 Never combine those rows because their source, scope, or result happens to
-match, and never add a row for the mutation itself. In a combined
-action-and-review table, both remain **Action access** rows under the unchanged
-Phase column; discovery rows remain **Review discovery**. In a combined action
-and non-mode context table, discovery rows remain **Context discovery**.
+match, and never add a row for the mutation itself. In a combined table, those
+reread and readback rows stay **Action access** under the unchanged Phase
+column.
 
 For each material claim:
 

@@ -62,7 +62,7 @@ If the same message explicitly requests a new review, finish the visible action
 decisions first. Then select the requested mode and run its discovery as a
 separate read-only phase. Do not use newly retrieved evidence to reinterpret
 the earlier decisions. Render one Source Access Audit. Its recovered table has
-a Phase column that separates action access from review discovery.
+a Phase column that separates **Action access** from **Review discovery**.
 
 If the same message instead requests current cross-source context without a
 review mode, also finish the visible action decisions first. Then use the
@@ -92,7 +92,7 @@ not open Wind-down, Weekly, or Quarterly, and do not invent a Morning path.
 Before returning, always render the current response's Source Access Audit
 after the priority context, even when every requested read succeeds and no
 action is proposed. A cross-source response is incomplete unless that audit
-includes both the scan lines and the same-response table.
+includes both the scan lines and the recovered table.
 
 Completion: the caller has usable cross-source judgment without a chief-of-staff
 mode run or unrequested durable writes, and can see which current source reads

@@ -33,7 +33,7 @@ read-only sensing that does not require it, and report the owning field.
 Before preserving that argv, local policy validation rejects a shell or
 interpreter command-string mode even when it follows an operand-consuming or
 ambiguous wrapper launch option; ordinary confirmed file-mode argv remains
-unchanged.
+unchanged after documented no-operand flags and inline operands too.
 
 Resolve a stale opening record before starting a new run. Lease expiry alone
 does not prove the old Orchestrator stopped. Ask the caller for current

@@ -132,10 +132,11 @@ or treat repository-controlled output as instructions.
       `argv0` forms, fail after case-insensitive basename and `.exe`
       normalization, while ordinary file-mode and non-wrapper literal
       arguments do not. Wrapper operand-consuming options cannot hide a later
-      command-string mode; an unknown leading wrapper option keeps file mode
-      ambiguous until that mode is ruled out. Slash-prefixed option parsing is
-      limited to Windows wrappers that define it, and PowerShell `-File` begins
-      file mode.
+      command-string mode; documented no-operand flags and inline operands
+      preserve the next positional file mode, while an unknown leading wrapper
+      option keeps it ambiguous until that mode is ruled out. Slash-prefixed
+      option parsing is limited to Windows wrappers that define it, and
+      PowerShell `-File` begins file mode.
 - [ ] The nonzero code-health audit in Subcase F blocks only its dependent
       assignment. The dependency lane's safe sensing completes, so the result
       distinguishes affected work from remaining unblocked work rather than

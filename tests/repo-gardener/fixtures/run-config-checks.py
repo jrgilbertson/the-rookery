@@ -567,6 +567,18 @@ lanes:
             ["pwsh", "-File", "scripts/setup.ps1", "-Command"],
             ["bash", "--rcfile", "setup.rc", "scripts/setup.sh", "-c"],
             ["bash", "--init-file", "setup.rc", "/tmp/scripts/setup.sh", "-c"],
+            ["bash", "--noprofile", "scripts/setup.sh", "-c"],
+            ["bash", "--norc", "/tmp/scripts/setup.sh", "--command"],
+            ["python3", "-B", "scripts/setup.py", "-c"],
+            ["python3", "-I", "/tmp/scripts/setup.py", "--command"],
+            ["node", "--no-warnings", "scripts/setup.js", "--eval"],
+            ["node", "--trace-warnings", "/tmp/scripts/setup.js", "--print"],
+            ["powershell", "-NoProfile", "scripts/setup.ps1", "-Command"],
+            ["pwsh", "-NonInteractive", "/tmp/scripts/setup.ps1", "-EncodedCommand"],
+            ["powershell", "-NoLogo", "/tmp/scripts/setup.ps1", "-Command"],
+            ["node", "--title=setup0", "scripts/setup.js", "--eval"],
+            ["node", "--conditions=setup", "/tmp/scripts/setup.js", "--print"],
+            ["env", "MODE=setup", "node", "--no-warnings", "scripts/setup.js", "--eval"],
         ):
             file_mode_setup_command = base_config()
             file_mode_setup_command["setup_command"] = file_mode_command

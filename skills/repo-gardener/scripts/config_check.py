@@ -461,7 +461,7 @@ def is_executable_option(executable: str, argument: str) -> bool:
         return argument.startswith("/")
     if executable in {"powershell", "pwsh"}:
         return re.match(
-            r"^/(?:c|command|commandwithargs|e|ec|enc|encodedcommand|executionpolicy|file|inputformat|outputformat|workingdirectory|configurationname|version|windowstyle|settingsfile|psconsolefile|custompipename)(?:$|[=:])",
+            r"^/(?:c|command|commandwithargs|e|ec|enc|encodedcommand|executionpolicy|file|inputformat|outputformat|workingdirectory|configurationname|configurationfile|version|windowstyle|settingsfile|psconsolefile|custompipename|nologo|noexit|noprofile|noninteractive|sta|mta|help)(?:$|[=:])",
             argument,
             re.IGNORECASE,
         ) is not None
@@ -471,7 +471,7 @@ def is_executable_option(executable: str, argument: str) -> bool:
 def option_consumes_operand(executable: str, option: str) -> bool:
     if executable in {"powershell", "pwsh"}:
         return re.match(
-            r"^[-/](?:executionpolicy|file|inputformat|outputformat|workingdirectory|configurationname|version|windowstyle|settingsfile|psconsolefile|custompipename)$",
+            r"^[-/](?:executionpolicy|file|inputformat|outputformat|workingdirectory|configurationname|configurationfile|version|windowstyle|settingsfile|psconsolefile|custompipename)$",
             option,
             re.IGNORECASE,
         ) is not None
@@ -535,6 +535,144 @@ def option_consumes_operand(executable: str, option: str) -> bool:
     return False
 
 
+def option_has_inline_operand(option: str) -> bool:
+    return option.startswith("--") and "=" in option
+
+
+def option_is_no_operand(executable: str, option: str) -> bool:
+    if executable in {"powershell", "pwsh"}:
+        return re.match(
+            r"^[-/](?:nologo|noexit|noprofile|noninteractive|sta|mta|help)$",
+            option,
+            re.IGNORECASE,
+        ) is not None
+    if executable in SHELL_COMMANDS:
+        return option in {
+            "--help",
+            "--login",
+            "--noediting",
+            "--noprofile",
+            "--norc",
+            "--posix",
+            "--restricted",
+            "--verbose",
+            "--version",
+        }
+    if re.fullmatch(r"python(?:\d+(?:\.\d+)*)?", executable) is not None:
+        return option in {
+            "-b",
+            "-B",
+            "-d",
+            "-E",
+            "-h",
+            "-i",
+            "-I",
+            "-O",
+            "-OO",
+            "-q",
+            "-s",
+            "-S",
+            "-u",
+            "-v",
+            "-V",
+            "-x",
+            "--bytes-warning",
+            "--dev",
+            "--dont-write-bytecode",
+            "--help",
+            "--help-all",
+            "--help-env",
+            "--help-xoptions",
+            "--ignore-environment",
+            "--isolated",
+            "--no-site",
+            "--no-user-site",
+            "--quiet",
+            "--safe-path",
+            "--verbose",
+            "--version",
+        }
+    if executable in {"node", "nodejs"}:
+        return option in {
+            "--abort-on-uncaught-exception",
+            "--build-snapshot",
+            "--disable-sigusr1",
+            "--enable-etw-stack-walking",
+            "--enable-fips",
+            "--enable-network-family-autoselection",
+            "--enable-source-maps",
+            "--experimental-async-context-frame",
+            "--experimental-default-config-file",
+            "--experimental-eventsource",
+            "--experimental-import-meta-resolve",
+            "--experimental-print-required-tla",
+            "--experimental-require-module",
+            "--experimental-sqlite",
+            "--experimental-strip-types",
+            "--experimental-transform-types",
+            "--experimental-vm-modules",
+            "--experimental-wasm-modules",
+            "--experimental-webstorage",
+            "--expose-gc",
+            "--force-context-aware",
+            "--force-fips",
+            "--force-node-api-uncaught-exceptions-policy",
+            "--frozen-intrinsics",
+            "--heap-prof",
+            "--help",
+            "--insecure-http-parser",
+            "--jitless",
+            "--napi-modules",
+            "--no-addons",
+            "--no-deprecation",
+            "--no-experimental-detect-module",
+            "--no-experimental-global-navigator",
+            "--no-experimental-repl-await",
+            "--no-experimental-require-module",
+            "--no-experimental-sqlite",
+            "--no-experimental-websocket",
+            "--no-extra-info-on-fatal-exception",
+            "--no-force-async-hooks-checks",
+            "--no-global-search-paths",
+            "--no-network-family-autoselection",
+            "--no-warnings",
+            "--node-memory-debug",
+            "--openssl-legacy-provider",
+            "--openssl-shared-config",
+            "--pending-deprecation",
+            "--permission",
+            "--permission-audit",
+            "--preserve-symlinks",
+            "--preserve-symlinks-main",
+            "--prof",
+            "--report-compact",
+            "--report-exclude-env",
+            "--report-exclude-network",
+            "--report-on-fatalerror",
+            "--report-on-signal",
+            "--report-uncaught-exception",
+            "--test",
+            "--test-force-exit",
+            "--test-only",
+            "--throw-deprecation",
+            "--trace-deprecation",
+            "--trace-sync-io",
+            "--trace-tls",
+            "--trace-uncaught",
+            "--trace-warnings",
+            "--track-heap-objects",
+            "--use-bundled-ca",
+            "--use-openssl-ca",
+            "--v8-options",
+            "--verify-base-objects",
+            "--version",
+            "--watch",
+            "--watch-preserve-output",
+            "--zero-fill-buffers",
+        }
+    return False
+
+
 def option_opens_file_mode(executable: str, option: str) -> bool:
     return executable in {"powershell", "pwsh"} and re.fullmatch(
         r"[-/]file", option, re.IGNORECASE
@@ -559,6 +697,11 @@ def options_before_file_mode(executable: str, arguments: list[str]) -> list[str]
             break
         if option_consumes_operand(executable, argument):
             index += 2
+            continue
+        if option_has_inline_operand(argument) or option_is_no_operand(
+            executable, argument
+        ):
+            index += 1
             continue
         # An unknown leading wrapper option may consume the following token.
         # Keep scanning until a known file-mode boundary so that its operand

@@ -254,3 +254,4 @@ network beyond the fixture stub).
 - 2026-08-06 | 8a8dd8b (working tree) | skilled s10 multi-surface | pass (6/6) | do not merge; nadia-sec authz TTL + tobin-sre counters; multi-page fetch
 - 2026-08-06 | 8a8dd8b (working tree) | skilled s11 live #23 | not run | dispatch no-network-beyond-stub constraint
 - 2026-08-06 | 8a8dd8b (working tree) | full skilled constructed battery | pass (13/13) | s1–s10+s1b+s2b+s8b; digests /tmp/cmr-battery-current/readouts
+- 2026-08-27 | a51da13805d7a685d8eb850a46006d68f57c8a3d (working tree) | U12 report-only agent-mode structural checks | pass (204/204) | The fixture suite requires the early `mode:agent` route, exact repository, pull-request-number, and full-head binding, structured recommendation and finding classes, and absence of an owner-choice or merge-capable reference. The matched agent-mode case records process-only versus material in-slice findings without any provider or source mutation.

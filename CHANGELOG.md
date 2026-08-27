@@ -13,6 +13,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-gardener` now returns safe, actionable readiness findings to the
+  owning Worker in progress-bound repair batches before and after PR creation.
+  Each reassessment is bound to a new exact head, repeated findings keep their
+  fingerprint across irrelevant commits, process-only caps remain recorded,
+  and `checking-merge-readiness mode:agent` returns a report-only structured
+  assessment that cannot present an owner choice or merge.
 - `repo-gardener` now supervises Workers from current native branch, HEAD,
   process, PR, check, and result facts. TUI idle is only a scheduling hint;
   bounded no-progress analysis becomes a local stall, head drift refreshes

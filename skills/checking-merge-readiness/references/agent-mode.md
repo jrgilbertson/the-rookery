@@ -1,0 +1,56 @@
+# Report-only agent mode
+
+Use this entrypoint only when the leading invocation is `mode:agent`. It is an
+assessment for an unattended Worker, not an owner decision. Route here before
+the interactive workflow, then return after the structured output below.
+
+## Exact subject
+
+Require a repository, pull request number, current full head OID, and the
+Worker's assigned path slice. The repository must name one host and
+owner/name pair, the pull request number must be positive, and the head must
+be a full object ID. Read the native pull request for that repository and
+number, then refuse the assessment when its current head does not exactly
+match the supplied current full head OID. Treat an unavailable read or an
+ambiguous identity as `UNKNOWN`; do not infer a subject, reuse evidence, or
+retry a provider write.
+
+Gather and grade the same read-only evidence as the ordinary assessment. Bind
+all evidence to the exact repository, pull request number, and head. A later
+head change discards this result and requires a fresh assessment.
+
+## Structured output
+
+Return one structured result with these fields:
+
+```json
+{
+  "repository": "owner/name",
+  "pull_request_number": 0,
+  "head_oid": "full object ID",
+  "recommendation": "merge | debug | do_not_merge | unknown",
+  "caps": [],
+  "process_only_findings": [],
+  "material_findings": [],
+  "actionable_in_slice_findings": []
+}
+```
+
+Every finding names its stable fingerprint, evidence, classification, and the
+exact head. `process_only_findings` records conditions such as missing human
+approval or incomplete review history; it never requests source work.
+`material_findings` names proven diff, test, intent, or durable-record
+problems. A material finding belongs in `actionable_in_slice_findings` only
+when its repair is safe, does not cross a protected path, and is contained by
+the supplied Worker slice. Do not manufacture an actionable classification
+when the slice is unavailable or a finding crosses its boundary.
+
+The process-only findings are recorded, never chased. The material findings
+are evidence-backed problems. The actionable in-slice findings are the strict
+safe subset the owning Worker may receive after fresh authorization.
+
+This mode is report-only. It cannot present an owner choice, perform a forge
+write, mutate tracker or pull-request state, alter a branch, or modify local
+source. The owning Worker may repair an actionable in-slice finding only after
+the Orchestrator validates a fresh exact-head result and grants that Worker a
+new bounded authorization.

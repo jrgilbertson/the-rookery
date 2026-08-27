@@ -168,11 +168,19 @@ claim. It, setup, and Scout helpers execute no declared audit.
    repository tree. Assessment-only forbids attestation. A later
    re-invocation cannot pass by claiming those steps happened. When an
    owner is present, the interactive menu remains. `pass` may open a PR.
-   Keep the commit as `saved_without_pr` and name the gap when that skill
-   is absent or returns `action-required`, the bundle is missing, or the
-   Worker does not complete the exact-subject and full-OID double-check.
-   Never manufacture approval, attest later, or commit generated readiness
-   artifacts.
+   Keep the commit as `saved_without_pr` and name the gap when that skill is
+   absent, the bundle is missing, or the Worker does not complete the
+   exact-subject and full-OID double-check. On `action-required`, preserve the
+   exact assessment and classify every named finding. The owning Worker fixes
+   every safe, actionable, in-slice finding in one repair batch, then repeats
+   simplification, code review, repository gates, and the exact-head
+   assessment on its new committed head. A finding fingerprint survives head
+   changes: stop the affected Worker on a repeated or reappearing finding, no
+   material finding progress, unrelated scope, protected-path conflict,
+   authority loss, or the caller deadline. Process-only findings are recorded,
+   not chased. A newly exposed in-slice finding attributable to a real repair
+   may begin another bounded cycle. Never manufacture approval, attest later,
+   or commit generated readiness artifacts.
 9. The Worker, not the Orchestrator, owns push and PR creation. Before push or
    PR-open, re-read the durable file only to detect a revision change, and
    check the exact committed paths against identity, include/exclude scope,
@@ -198,18 +206,24 @@ claim. It, setup, and Scout helpers execute no declared audit.
     must close while either remains pending, retain and report the Worker as
     `pending`, and close the run as `partial`; never claim `pr_ready` or
     `completed`. After a Worker reaches `pr_ready`, run installed
-    `checking-merge-readiness` read-only: take the recommendation and named
-    findings, execute nothing, and never select “Proceed to merge.” Material
-    debug or do-not-merge findings (diff, tests, intent, durable records) may
-    get one extra Worker commit and push. That commit repeats the Worker's
-    simplification, code review, and repository gates. After the extra push,
-    wait for freshly read native checks and review on the new head, then
-    re-run merge-readiness once. Process-only caps (empty review history,
-    missing required human approvals) are recorded, not chased. A second
-    rework is refused. If that skill is absent, skip the feedback and
-    name the gap. The in-run review is not the owner's later merge gate.
-    Never merge. The pending Worker does not block completion of the nine-lane
-    report.
+    `checking-merge-readiness mode:agent` against the exact repository, PR,
+    current head, and Worker slice. The report-only result names recommendation,
+    caps, process-only findings, material findings, and actionable in-slice
+    findings; it never presents an owner choice or merge path. A material
+    actionable in-slice finding returns to the owning Worker as one repair
+    batch. That Worker repeats simplification, code review, repository gates,
+    and commits H-prime; the Orchestrator post-reads H-prime, repeats the slice
+    and protected-path checks, and grants a new exact-head authorization before
+    the Worker updates the existing PR. Then post-read the remote head and
+    fresh checks before a fresh agent assessment. Finding fingerprints survive
+    head changes, so a repeated or reappearing finding, irrelevant or empty
+    commit, unchanged native state, scope expansion, protected-path conflict,
+    authority loss, or deadline stops only that Worker. Process-only caps
+    (empty review history or missing required human approvals) are recorded,
+    not chased. A newly exposed in-slice finding after real repair may receive
+    another bounded cycle. If that skill is absent, name the gap. The in-run
+    review is not the owner's later merge gate. Never merge. The pending Worker
+    does not block completion of the nine-lane report.
 11. Immediately before closing, re-read the durable file only to detect a
     revision change from `run-opened`. A revision change alone does not prevent
     the closed comment when the file still names the tracker. If the file no

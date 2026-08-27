@@ -302,11 +302,19 @@ When an owner is present, the interactive `checking-pr-readiness` menu
 remains.
 
 `pass` may open a PR. Do not open the PR when `checking-pr-readiness` is
-absent or returns `action-required`, the bundle is missing, or the Worker
-does not complete the exact-subject and full-OID double-check. Keep the
-commit as `saved_without_pr` and name the gap. Never manufacture approval,
-synthesize evidence, attest, or commit generated readiness artifacts. The
-Orchestrator monitors and helps route questions but does not redo the work.
+absent, the bundle is missing, or the Worker does not complete the
+exact-subject and full-OID double-check. On `action-required`, classify the
+exact-head named findings. The owning Worker applies every safe actionable
+in-slice finding in one repair batch, repeats simplification, code review,
+repository gates, commit, and exact-head assessment, then reassesses.
+Finding fingerprints survive head changes: a repeated or reappearing finding,
+no material progress, irrelevant or empty commit, unrelated scope, protected
+path, authority loss, or caller deadline stops that Worker truthfully.
+Process-only caps are recorded rather than converted to source work. A newly
+exposed in-slice finding after a real repair may start another bounded cycle.
+Never manufacture approval, synthesize evidence, attest, or commit generated
+readiness artifacts. The Orchestrator monitors and helps route questions but
+does not redo the work.
 The Worker must not edit the durable file, automation, protected paths,
 release or deployment surfaces, or any other effect the opening file denies.
 
@@ -367,26 +375,28 @@ Record the repository, PR number, branch, head SHA, state, checks, review
 state, and Worker state.
 
 After a Worker reaches `pr_ready`, the Orchestrator runs installed
-`checking-merge-readiness` read-only. Cite that skill by name; do not fork it
-and do not add assessment-only to it. That skill always has an owner menu;
-this skill wraps the review. Invoke the installed skill's read-only review,
-take the recommendation and named findings, execute nothing, and never select
-“Proceed to merge.”
+`checking-merge-readiness mode:agent` against the exact repository, PR,
+current head, and Worker slice. Cite that skill by name; do not fork it. Its
+structured report contains recommendation, caps, process-only findings,
+material findings, and actionable in-slice findings, and has no owner choice
+or merge route.
 
-Classify findings:
+Return every safe actionable in-slice material finding to the owning Worker as
+one repair batch. The Worker repeats simplification, code review, repository
+gates, and commit on H-prime. The Orchestrator post-reads H-prime, repeats
+slice and protected-path validation, and grants a new exact-head authorization
+before the Worker updates the existing PR. Post-read the remote head and fresh
+checks before another agent assessment. A finding fingerprint survives head
+movement, so repeated or reappearing findings, irrelevant or empty commits,
+unchanged native state, scope expansion, protected-path conflicts, authority
+loss, and caller deadlines stop only the affected Worker. Process-only caps,
+including empty review history and missing required human approvals, are
+recorded rather than chased. A newly exposed in-slice finding after real repair
+may receive another bounded cycle.
 
-- Material debug or do-not-merge findings about the diff, tests, intent, or
-  durable records may get one extra Worker push and one re-run of
-  merge-readiness. A named test failure is material. A second rework is
-  refused.
-- Process-only caps, including empty review history and missing required
-  human approvals, are recorded, not chased. Fresh PRs often cap at debug for
-  empty review; that is process, not rework.
-
-If `checking-merge-readiness` is absent, skip merge-readiness feedback and
-name the gap. The in-run review is not the owner's later merge gate. Never
-merge. Do not create follow-up issues; write issue-ready recommendations
-instead.
+If `checking-merge-readiness` is absent, name the gap. The in-run review is
+not the owner's later merge gate. Never merge. Do not create follow-up issues;
+write issue-ready recommendations instead.
 
 ## Close once
 

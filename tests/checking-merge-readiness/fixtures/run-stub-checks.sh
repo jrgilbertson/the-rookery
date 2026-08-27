@@ -11,6 +11,7 @@
 set -uo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$HERE/../../.." && pwd)"
 GH="$HERE/bin/gh"
 PRS="$HERE/prs"
 PASS=0
@@ -502,6 +503,52 @@ json_is "combined query serves top-level comments with threads" \
   -F "owner=$BIND_OWNER" -F "name=$BIND_NAME" -F "n=$BIND_N"
 msg_is "mutation refused" 3 "mutation" specimen-a api graphql \
   -f 'query=mutation{closePullRequest(input:{pullRequestId:"x"}){pullRequest{id}}}'
+
+echo "== I. unattended agent mode stays structurally assessment-only =="
+AGENT_REF="$REPO_ROOT/skills/checking-merge-readiness/references/agent-mode.md"
+AGENT_SKILL="$REPO_ROOT/skills/checking-merge-readiness/SKILL.md"
+if [ -f "$AGENT_REF" ] && [ -f "$AGENT_SKILL" ]; then
+  pass "agent mode: dedicated reference exists"
+else
+  fail "agent mode: dedicated reference exists" "missing agent-mode reference or skill"
+fi
+for needle in \
+  'mode:agent' \
+  'repository' \
+  'pull request number' \
+  'current full head OID' \
+  'recommendation' \
+  'caps' \
+  'process-only findings' \
+  'material findings' \
+  'actionable in-slice findings'
+do
+  if [ -f "$AGENT_REF" ] && grep -Fq "$needle" "$AGENT_REF"; then
+    pass "agent mode: names $needle"
+  else
+    fail "agent mode: names $needle" "agent-mode reference omitted required contract"
+  fi
+done
+if [ -f "$AGENT_REF" ] && ! grep -Eqi 'merge-execution\.md|Proceed to merge|gh pr merge|decision menu' "$AGENT_REF"; then
+  pass "agent mode: reference has no merge route"
+else
+  fail "agent mode: reference has no merge route" "agent-mode reference exposes an interactive or merge path"
+fi
+if [ -f "$AGENT_SKILL" ] && python3 - "$AGENT_SKILL" <<'PY'
+import sys
+
+text = open(sys.argv[1]).read()
+start = text.find("## Unattended agent mode")
+end = text.find("## Workflow", start)
+section = text[start:end] if start >= 0 and end > start else ""
+required = ["mode:agent", "agent-mode.md", "current full head OID"]
+forbidden = ["merge-execution.md", "Proceed to merge", "gh pr merge", "decision menu"]
+raise SystemExit(0 if section and all(item in section for item in required)
+                 and not any(item in section for item in forbidden) else 1)
+PY
+then pass "agent mode: routes before interactive workflow"
+else fail "agent mode: routes before interactive workflow" "agent-mode route is missing or reaches interactive merge handling"
+fi
 
 printf '\n%d assertions: %d passed, %d failed\n' "$((PASS + FAIL))" "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ] || exit 1

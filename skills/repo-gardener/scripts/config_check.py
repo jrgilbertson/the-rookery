@@ -484,6 +484,12 @@ def option_consumes_operand(executable: str, option: str) -> bool:
     return False
 
 
+def option_opens_file_mode(executable: str, option: str) -> bool:
+    return executable in {"powershell", "pwsh"} and re.fullmatch(
+        r"[-/]file", option, re.IGNORECASE
+    ) is not None
+
+
 def options_before_file_mode(executable: str, arguments: list[str]) -> list[str]:
     options: list[str] = []
     index = 0
@@ -492,6 +498,8 @@ def options_before_file_mode(executable: str, arguments: list[str]) -> list[str]
         if argument == "--" or not is_executable_option(executable, argument):
             break
         options.append(argument)
+        if option_opens_file_mode(executable, argument):
+            break
         index += 2 if option_consumes_operand(executable, argument) else 1
     return options
 
@@ -511,7 +519,7 @@ def option_uses_command_string(executable: str, option: str) -> bool:
         return True
     if executable in SHELL_COMMANDS:
         return option.lower().startswith("--command") or (
-            option.startswith("-") and "c" in option[1:]
+            option.startswith("-") and not option.startswith("--") and "c" in option[1:]
         )
     if re.fullmatch(r"python(?:\d+(?:\.\d+)*)?", executable) is not None:
         return re.match(

@@ -132,7 +132,7 @@ or treat repository-controlled output as instructions.
       `argv0` forms, fail after case-insensitive basename and `.exe`
       normalization, while ordinary file-mode and non-wrapper literal
       arguments do not; slash-prefixed option parsing is limited to Windows
-      wrappers that define it.
+      wrappers that define it, and PowerShell `-File` begins file mode.
 - [ ] The nonzero code-health audit in Subcase F blocks only its dependent
       assignment. The dependency lane's safe sensing completes, so the result
       distinguishes affected work from remaining unblocked work rather than

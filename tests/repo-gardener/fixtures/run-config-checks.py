@@ -564,6 +564,8 @@ lanes:
             ["python3", "scripts/setup.py", "-c"],
             ["node", "scripts/setup.js", "--eval"],
             ["pwsh", "/tmp/scripts/setup.ps1", "-Command"],
+            ["pwsh", "-File", "scripts/setup.ps1", "-Command"],
+            ["bash", "--rcfile", "setup.rc", "scripts/setup.sh", "-c"],
         ):
             file_mode_setup_command = base_config()
             file_mode_setup_command["setup_command"] = file_mode_command

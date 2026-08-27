@@ -22,7 +22,11 @@ follow [references/assessment-mode.md](references/assessment-mode.md) instead
 of the interactive decision path below. The assessment branch reuses steps 1
 through 6, including `surface-report.sh --full`, current gate discovery, helper
 exit/status mapping, and sweep classes. It never substitutes attestation for a
-receipt and never presents the Minto readout or owner menu.
+receipt and never presents the Minto readout or owner menu. One complete
+same-session bundle remains required and binds the exact subject and revision;
+when that evidence is otherwise complete and current, its unpublished per-kind
+schema documentation or outside-tree result transport is packaging, not a
+readiness gap.
 
 The gate is read-only. Companion skills own edits, reviews, and capture; the host
 repository's hooks and task runners own deterministic re-runs. This skill

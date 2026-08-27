@@ -16,6 +16,8 @@ Provenance: Observed failure where stale, cross-boundary, partial, and bypassed 
 > command, outcome, or inspectable result references. Also include a null
 > receipt element, duplicate receipt kinds, a receipt with a non-string kind,
 > a non-string evidence path, and a non-string assessment receipt reference.
+> Include an outside-tree bundle transport with a missing, altered, or
+> cross-revision evidence or result document.
 > Return one assessment receipt per variant without an owner menu.
 
 ## Expected behavior
@@ -28,3 +30,7 @@ Provenance: Observed failure where stale, cross-boundary, partial, and bypassed 
 - [ ] Class 11 is `not applicable` only when discovery proves no automated reviewer is configured; a configured reviewer without a repository-resolved cap fails closed.
 - [ ] Name-only tests, zero-finding review assertions, and owner/status-only gate tuples fail their exact per-kind evidence schemas.
 - [ ] Null receipt elements, duplicate or invalid receipt kinds, invalid evidence paths, and invalid assessment references return normal `action-required` receipts with their exact structural gaps.
+- [ ] Outside-tree transport is accepted only when its complete evidence and
+  result documents are digest-matched and bound to this exact repository,
+  subject, and revision; a missing, altered, stale, or mixed transport fails
+  closed.

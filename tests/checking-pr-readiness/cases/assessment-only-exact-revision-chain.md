@@ -17,6 +17,8 @@ Provenance: Observed failure where a declared receipt chain was accepted without
 - [ ] Reads the emitted checkout path, confirms a clean full working surface, and binds its stable origin repository identity, exact subject, and full HEAD OID without treating the local path as repository identity.
 - [ ] Resolves every `receipt_references` identity exactly once from the versioned bundle while reserving `evidence_references` for exact-commit file/digest objects.
 - [ ] Verifies every required machine-readable receipt and its evidence digest at that exact commit.
+- [ ] Returns the same pass when the caller-selected same-session bundle carries
+  complete, digest-matched evidence and result documents outside the commit.
 - [ ] Verifies observation freshness against the exact commit rather than trusting a timestamp assertion alone.
 - [ ] Returns `pass` with an empty gaps array only after the complete current-main chain and preflight receipt are clean.
 - [ ] Uses assessment-only mode with no Minto readout, owner decision menu, attestation upgrade, or repository write.

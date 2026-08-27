@@ -56,11 +56,22 @@ The bundle has exactly this semantic shape:
 The assessment member uses `receipt_references` only for receipt identities.
 Every element in `receipts` uses the exact
 `checking-pr-readiness-evidence/v1` schema. Each receipt's
-`evidence_references` identifies only exact-commit regular file objects
-containing `path` and `sha256`. The two reference types are never
-interchangeable. Resolve every receipt reference exactly once within the same
+`evidence_references` identifies one complete evidence source: either an
+exact-commit regular file object containing `path` and `sha256`, or the
+complete evidence and result documents carried with their digests in the
+caller-selected same-session bundle. The two reference types are never
+interchangeable. Resolve every receipt reference exactly once within that one
 bundle, reject duplicate receipt identities and unreferenced substitutes, and
-fail closed when any reference does not resolve.
+fail closed when any reference is missing, ambiguous, or cannot be inspected.
+
+For an outside-tree source, the evidence reference carries the literal
+`transport: "bundle-inline"`, the live `exact_revision`, one evidence document
+and one result document, and a SHA-256 digest for each document. The assessment
+accepts that alternate packaging only when both digests match, the receipt and
+transport name the same live revision, and the documents satisfy every
+applicable substantive check. It does not discover a second bundle, combine
+documents from concurrent Workers, or fill missing transport fields from a
+repository path.
 
 ## Assessment envelope
 
@@ -98,30 +109,32 @@ the interactive Minto readout or decision menu.
 Every `verified` claim must name an inspectable machine-readable receipt that
 binds the same repository, subject, and full `exact_revision`. Each receipt
 also names its capability/version, ISO-8601 observation time, outcome/gaps, and
-at least one evidence reference. Every evidence reference identifies an
-existing regular file in the exact commit plus its content digest, and the
-document's substantive fields must support the claimed outcome; a status word
-alone is not evidence. A receipt is fresh only when:
+at least one evidence reference. An evidence reference may identify an
+existing regular file in the exact commit plus its content digest, or complete
+evidence and result documents transported with their digests in that explicit
+same-session bundle. In either form, the document's substantive fields must
+support the claimed outcome; a status word alone is not evidence. A receipt is
+fresh only when:
 
-- the referenced evidence exists with that digest at `exact_revision`;
+- the referenced evidence exists with that digest at `exact_revision`, or the
+  selected bundle carries complete digest-matched evidence and result documents
+  bound to that same `exact_revision`;
 - the receipt observation is not earlier than the exact commit time; and
 - no later edit to the described evidence exists outside `exact_revision`.
 
-Each evidence document uses its exact per-kind
-`checking-pr-readiness-<kind>-evidence/v1` schema. The common fields bind a
-versioned producer, repository/subject/base/full-surface scope, the command or
-check identity and arguments, a verified outcome, and one result reference.
-That reference resolves to the kind's exact-commit regular JSON result file by
-path and SHA-256 digest; the result file repeats the producer, scope, command,
-and outcome bindings, uses the exact
-`checking-pr-readiness-<kind>-result/v1` schema, and carries nonempty structured
-results. The per-kind fields then prove their own substance: gates name owner,
-command, outcome, and result; review and simplification name the reviewed paths
-and findings; tests name executable commands, outcomes, exit results, and
-applicability; the remaining kinds bind their inventory to a referenced
-structured result.
-Missing or additional fields, name-only checks, zero-count assertions without
-review scope, and owner/status tuples without executable gate results are
+Evidence must unambiguously bind a versioned producer,
+repository/subject/base/full-surface scope, the command or check identity and
+arguments, a verified outcome, and nonempty structured results. A result may be
+an exact-commit regular JSON file or a digest-matched document in the selected
+bundle. Its producer, scope, command, and outcome bindings must agree with the
+evidence. Assessment validates those semantics directly; it does not require a
+published per-kind JSON Schema document or one internal result-file path. The
+per-kind substance remains mandatory: gates name owner, command, outcome, and
+result; review and simplification name the reviewed paths and findings; tests
+name executable commands, outcomes, exit results, and applicability; the
+remaining kinds bind their inventory to a structured result. Missing or
+ambiguous bindings, name-only checks, zero-count assertions without review
+scope, and owner/status tuples without executable gate results are
 `action-required`.
 
 Command-backed gate, review, simplification, and test results must also carry
@@ -162,7 +175,7 @@ The chain contains:
 A clean `pass` requires every applicable chain receipt to report a successful
 or `not applicable` result, with no unresolved finding and no bypass. A missing
 receipt, stale receipt, cross-repository, cross-subject, or cross-revision
-binding, empty evidence inventory, missing evidence, digest mismatch,
+binding, empty or mixed bundle evidence inventory, missing evidence, digest mismatch,
 substantively unsupported outcome, unresolved finding, uncertain
 classification, narrative-only claim, attestation, or bypass request yields
 `action-required` with the exact defect named. Never invent or repair evidence

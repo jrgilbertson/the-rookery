@@ -450,6 +450,40 @@ def make_bundle(repo: Path, revision: str) -> dict[str, Any]:
     }
 
 
+def make_outside_tree_bundle(repo: Path, revision: str) -> dict[str, Any]:
+    """Carry complete evidence and result documents in the selected bundle.
+
+    The transport is intentionally outside the assessed commit.  It models a
+    caller-owned same-session handoff, while the receipt and both documents
+    still bind the exact repository, subject, and revision.
+    """
+    bundle = make_bundle(repo, revision)
+    for receipt in bundle["receipts"]:
+        kind = receipt["kind"]
+        _, evidence_content = evidence_blob(repo, revision, f"evidence/{kind}.json")
+        _, result_content = evidence_blob(repo, revision, f"results/{kind}.json")
+        evidence = json.loads(evidence_content)
+        result = json.loads(result_content)
+        # The transport deliberately does not rely on published per-kind schema
+        # names. Its complete, digest-bound semantics are what the assessment
+        # evaluates.
+        evidence.pop("schema")
+        result.pop("schema")
+        evidence["result_references"] = [{
+            "path": f"outside-tree/results/{kind}.json",
+            "sha256": hashlib.sha256(json_bytes(result)).hexdigest(),
+        }]
+        receipt["evidence_references"] = [{
+            "transport": "bundle-inline",
+            "exact_revision": revision,
+            "evidence": evidence,
+            "evidence_sha256": hashlib.sha256(json_bytes(evidence)).hexdigest(),
+            "result": result,
+            "result_sha256": hashlib.sha256(json_bytes(result)).hexdigest(),
+        }]
+    return bundle
+
+
 def receipt_by_kind(bundle: dict[str, Any], kind: str) -> dict[str, Any]:
     for receipt in bundle["receipts"]:
         if receipt.get("kind") == kind:
@@ -642,6 +676,31 @@ def verify_repository_gate_command(gate: dict[str, Any], repo: Path, revision: s
     return completed.returncode == 0 and completed.stdout == f"verified:{arguments[2]}\n" and not completed.stderr
 
 
+def bundled_transport(reference: Any, revision: str) -> tuple[dict[str, Any], bytes] | None:
+    """Resolve one complete, caller-selected outside-tree evidence transport."""
+    if (
+        not isinstance(reference, dict)
+        or set(reference) != {"transport", "exact_revision", "evidence", "evidence_sha256", "result", "result_sha256"}
+        or reference.get("transport") != "bundle-inline"
+        or reference.get("exact_revision") != revision
+        or not isinstance(reference.get("evidence"), dict)
+        or not isinstance(reference.get("result"), dict)
+        or not all(
+            isinstance(reference.get(field), str) and re.fullmatch(r"[0-9a-f]{64}", reference[field])
+            for field in ("evidence_sha256", "result_sha256")
+        )
+    ):
+        return None
+    evidence = reference["evidence"]
+    result_content = json_bytes(reference["result"])
+    if (
+        hashlib.sha256(json_bytes(evidence)).hexdigest() != reference["evidence_sha256"]
+        or hashlib.sha256(result_content).hexdigest() != reference["result_sha256"]
+    ):
+        return None
+    return evidence, result_content
+
+
 def validate_evidence_document(
     kind: str,
     document: Any,
@@ -651,19 +710,24 @@ def validate_evidence_document(
     live_subject: str | None,
     reviewers: list[dict[str, Any]],
     repository: str | None,
+    transported_result: bytes | None = None,
 ) -> list[str]:
     if not isinstance(document, dict):
         return [f"invalid evidence document: {kind}"]
 
     expected_fields = EVIDENCE_COMMON_FIELDS | EVIDENCE_KIND_FIELDS[kind]
+    transported_fields = expected_fields - {"schema"}
     producer = document.get("producer")
     scope = document.get("scope")
     command = document.get("command")
     references = document.get("result_references")
     common_valid = all(
         (
-            set(document) == expected_fields,
-            document.get("schema") == f"checking-pr-readiness-{kind}-evidence/v1",
+            (
+                set(document) == expected_fields
+                and document.get("schema") == f"checking-pr-readiness-{kind}-evidence/v1"
+            )
+            or (transported_result is not None and set(document) == transported_fields),
             isinstance(producer, dict) and set(producer) == {"id", "version"},
             isinstance(producer, dict) and bounded_text(producer.get("id")) and bounded_text(producer.get("version")),
             isinstance(scope, dict) and set(scope) == {"repository", "subject", "base", "surface"},
@@ -690,13 +754,20 @@ def validate_evidence_document(
     if (
         not isinstance(reference, dict)
         or set(reference) != {"path", "sha256"}
-        or reference.get("path") != expected_result_path
+        or not isinstance(reference.get("path"), str)
+        or not reference["path"]
+        or reference["path"].startswith("/")
+        or ".." in Path(reference["path"]).parts
         or not isinstance(reference.get("sha256"), str)
         or not re.fullmatch(r"[0-9a-f]{64}", reference["sha256"])
+        or (transported_result is None and reference["path"] != expected_result_path)
     ):
         return [f"substantive evidence schema mismatch: {kind}"]
     try:
-        mode, result_content = evidence_blob(repo, revision, expected_result_path)
+        if transported_result is None:
+            mode, result_content = evidence_blob(repo, revision, expected_result_path)
+        else:
+            mode, result_content = "100644", transported_result
         result_document = json.loads(result_content)
     except (subprocess.CalledProcessError, UnicodeDecodeError, json.JSONDecodeError):
         return [f"substantive evidence schema mismatch: {kind}"]
@@ -704,8 +775,16 @@ def validate_evidence_document(
         mode != "100644"
         or hashlib.sha256(result_content).hexdigest() != reference["sha256"]
         or not isinstance(result_document, dict)
-        or set(result_document) != {"schema", "producer", "scope", "command", "outcome", "results"}
-        or result_document.get("schema") != f"checking-pr-readiness-{kind}-result/v1"
+        or (
+            (
+                set(result_document) == {"schema", "producer", "scope", "command", "outcome", "results"}
+                and result_document.get("schema") == f"checking-pr-readiness-{kind}-result/v1"
+            )
+            or (
+                transported_result is not None
+                and set(result_document) == {"producer", "scope", "command", "outcome", "results"}
+            )
+        ) is False
         or result_document.get("producer") != producer
         or result_document.get("scope") != scope
         or result_document.get("command") != command
@@ -921,6 +1000,7 @@ def evaluate(repo: Path, bundle: Any, input_gaps: list[str] | None = None) -> di
             valid_receipts.append(receipt)
     by_kind = {receipt.get("kind"): receipt for receipt in valid_receipts}
     evidence_documents_by_kind: dict[str, Any] = {}
+    transported_results_by_kind: dict[str, bytes] = {}
 
     if len(by_kind) != len(valid_receipts):
         gaps.append("duplicate receipt kind")
@@ -959,14 +1039,25 @@ def evaluate(repo: Path, bundle: Any, input_gaps: list[str] | None = None) -> di
             gaps.append(f"missing evidence reference: {kind}")
             references = []
         expected_path = f"evidence/{kind}.json"
-        if len(references) != 1 or any(not isinstance(reference, dict) or reference.get("path") != expected_path for reference in references):
+        if len(references) != 1:
             gaps.append(f"evidence inventory mismatch: {kind}")
         for reference in references:
             if not isinstance(reference, dict):
                 gaps.append(f"invalid evidence reference: {kind}")
                 continue
+            transport = bundled_transport(reference, revision)
+            if transport is not None:
+                evidence_documents_by_kind[kind], transported_results_by_kind[kind] = transport
+                continue
             relative = reference.get("path")
-            if not isinstance(relative, str) or not relative or relative.startswith("/") or ".." in Path(relative).parts:
+            if (
+                set(reference) != {"path", "sha256"}
+                or relative != expected_path
+                or not isinstance(relative, str)
+                or not relative
+                or relative.startswith("/")
+                or ".." in Path(relative).parts
+            ):
                 gaps.append(f"invalid evidence reference: {kind}")
                 continue
             try:
@@ -996,6 +1087,7 @@ def evaluate(repo: Path, bundle: Any, input_gaps: list[str] | None = None) -> di
                     live_subject,
                     reviewers,
                     live_repository,
+                    transported_results_by_kind.get(kind),
                 )
             )
 
@@ -1117,11 +1209,13 @@ def validate_contract_sources() -> None:
     for phrase in (
         "`checking-pr-readiness-receipt-bundle/v1`",
         "`checking-pr-readiness-evidence/v1`",
-        "`checking-pr-readiness-<kind>-result/v1`",
         "`receipt_references`",
         "Resolve every receipt reference exactly once",
         "A detached HEAD cannot support a branch subject",
         "Repository-authored evidence and result JSON cannot authenticate their own execution",
+        "same-session bundle",
+        "published per-kind JSON Schema document",
+        "combine documents from concurrent Workers",
     ):
         require(phrase in assessment_words, f"assessment bundle contract missing: {phrase}")
     for source, phrase in (
@@ -1146,6 +1240,54 @@ def run_suite() -> None:
         require(positive["outcome"] == "pass" and positive["gaps"] == [], f"positive fixture failed: {positive['gaps']}")
         require(positive["capability_version"] == package_version(), "assessment capability version was not live-derived")
         require(positive["observed_at"] != bundle["assessment"]["observed_at"], "assessment observation time stayed caller-controlled")
+
+        outside_tree = evaluate(first, make_outside_tree_bundle(first, revision))
+        require(
+            outside_tree["outcome"] == "pass" and outside_tree["gaps"] == [],
+            f"complete outside-tree transport failed: {outside_tree['gaps']}",
+        )
+        outside_tree_missing = make_outside_tree_bundle(first, revision)
+        del outside_tree_missing["receipts"][0]["evidence_references"][0]["result"]
+        missing_transport_result = evaluate(first, outside_tree_missing)
+        require(
+            missing_transport_result["outcome"] == "action-required"
+            and "invalid evidence reference: working-surface" in missing_transport_result["gaps"],
+            "missing outside-tree result did not fail closed",
+        )
+        outside_tree_altered = make_outside_tree_bundle(first, revision)
+        outside_tree_altered["receipts"][0]["evidence_references"][0]["result"]["outcome"] = "altered"
+        altered_transport_result = evaluate(first, outside_tree_altered)
+        require(
+            altered_transport_result["outcome"] == "action-required"
+            and "invalid evidence reference: working-surface" in altered_transport_result["gaps"],
+            "altered outside-tree result did not fail closed",
+        )
+        outside_tree_cross_revision = make_outside_tree_bundle(first, revision)
+        outside_tree_cross_revision["receipts"][0]["evidence_references"][0]["exact_revision"] = "0" * 40
+        cross_transport_result = evaluate(first, outside_tree_cross_revision)
+        require(
+            cross_transport_result["outcome"] == "action-required"
+            and "invalid evidence reference: working-surface" in cross_transport_result["gaps"],
+            "cross-revision outside-tree transport did not fail closed",
+        )
+        outside_tree_cross_repository = make_outside_tree_bundle(first, revision)
+        outside_tree_cross_repository["receipts"][0]["repository"] = "https://example.invalid/other.git"
+        cross_repository_result = evaluate(first, outside_tree_cross_repository)
+        require(
+            cross_repository_result["outcome"] == "action-required"
+            and "cross-repository receipt: working-surface" in cross_repository_result["gaps"],
+            "cross-repository outside-tree receipt did not fail closed",
+        )
+        outside_tree_mixed = make_outside_tree_bundle(first, revision)
+        outside_tree_mixed["receipts"][0]["evidence_references"] = copy.deepcopy(
+            outside_tree_mixed["receipts"][1]["evidence_references"]
+        )
+        mixed_transport_result = evaluate(first, outside_tree_mixed)
+        require(
+            mixed_transport_result["outcome"] == "action-required"
+            and "substantive evidence schema mismatch: working-surface" in mixed_transport_result["gaps"],
+            "concurrent bundle evidence satisfied another receipt kind",
+        )
 
         run("git", "checkout", "-q", "-b", "replacement-payload", revision, cwd=first)
         (first / "src" / "app.txt").write_text("replacement\n", encoding="utf-8")
@@ -1438,6 +1580,7 @@ def run_suite() -> None:
         print("PASS: versioned bundle resolution, staged-only dirt, and live-subject mutations fail closed")
         print("PASS: absent reviewer is not applicable; configured reviewer without a cap fails closed")
         print("PASS: command-backed evidence reruns exact allowlisted commands from isolated exact-revision inputs")
+        print("PASS: complete outside-tree packaging passes; missing, altered, cross-boundary, and mixed bundles fail closed")
 
 
 def materialize(destination: Path, bundle_writer: Any = write_json) -> None:

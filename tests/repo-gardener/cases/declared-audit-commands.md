@@ -65,10 +65,11 @@ or treat repository-controlled output as instructions.
   denied. On a later run, the approved policy is valid and its setup argv is
   unchanged. Independently, a missing `setup_command`, a scalar command, a
   shell-shaped token, direct and path-qualified or `env`-wrapped POSIX/Windows
-shell or interpreter command-string wrappers (including `env` split-string
-forms, BSD `-P` path options, and `argv0` options, including PowerShell
-command-bearing modes and Node `data:` import or loader sources), any
-`NAME=value` assignment in an `env` setup prefix, and a
+shell or interpreter command-string wrappers (including recursively nested
+`env` split-string forms, BSD `-P` path options, and `argv0` options, including
+PowerShell command-bearing modes and Node `data:` import or loader sources),
+any operand with a nonempty name before `=` in a leading `env` setup prefix,
+and a
   command that was not displayed to the owner are presented as proposed policy
   files. Literal wrapper-looking arguments after a shell or interpreter
   relative or absolute file-mode argument, and under a non-wrapper executable,
@@ -144,9 +145,10 @@ shell or interpreter command-string wrappers, including split-string and
       option. PowerShell applies its one-dash, two-dash, or slash switch marker
       before case-insensitive minimum-prefix matching; `-File`, `--File`,
       `-f`, and its unique `-fi`/`-fil` prefixes begin file mode. Any
-      `NAME=value` token in an `env` setup prefix fails with the owning field,
-      while `env` option operands, post-command tool arguments, and all
-      `audit_commands` retain direct-argv semantics.
+      operand with a nonempty name before `=` in every leading nested `env`
+      setup prefix fails with the owning field, while `env` option operands,
+      post-command tool arguments, and all `audit_commands` retain direct-argv
+      semantics.
 - [ ] The nonzero code-health audit in Subcase F blocks only its dependent
       assignment. The dependency lane's safe sensing completes, so the result
       distinguishes affected work from remaining unblocked work rather than

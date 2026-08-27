@@ -32,9 +32,10 @@ unapproved command blocks only work that depends on setup; continue the safe
 read-only sensing that does not require it, and report the owning field.
 Before preserving that argv, local policy validation rejects a shell or
 interpreter command-string mode even when it follows an operand-consuming or
-ambiguous wrapper launch option, and rejects any `NAME=value` assignment in an
-`env` wrapper prefix. Ordinary confirmed file-mode argv remains unchanged after
-documented no-operand flags and inline operands too.
+ambiguous wrapper launch option, and recursively rejects any leading nested
+`env` operand with a nonempty name before `=`. Ordinary confirmed file-mode
+argv remains unchanged after documented no-operand flags and inline operands
+too.
 
 Resolve a stale opening record before starting a new run. Lease expiry alone
 does not prove the old Orchestrator stopped. Ask the caller for current

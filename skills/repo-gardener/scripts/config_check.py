@@ -420,9 +420,8 @@ def executable_name(token: str) -> str:
     return executable[:-4] if executable.endswith(".exe") else executable
 
 
-def command_after_env(command: list[str]) -> list[str] | None:
-    if executable_name(command[0]) != "env":
-        return command
+def command_after_env_layer(command: list[str]) -> list[str] | None:
+    """Validate one leading env wrapper and return its utility argv."""
     index = 1
     options_ended = False
     while index < len(command):
@@ -447,12 +446,25 @@ def command_after_env(command: list[str]) -> list[str] | None:
             if token.startswith("-"):
                 index += 1
                 continue
-        if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", token) is not None:
+        if "=" in token and token.partition("=")[0]:
             raise ConfigError(
                 "setup_command env wrapper must not carry environment assignments"
             )
         return command[index:]
     return []
+
+
+def command_after_env(command: list[str]) -> list[str] | None:
+    """Recursively unwrap leading normalized env wrappers for setup validation."""
+    remaining = command
+    while remaining and executable_name(remaining[0]) == "env":
+        next_command = command_after_env_layer(remaining)
+        if next_command is None:
+            return None
+        if len(next_command) >= len(remaining):
+            return None
+        remaining = next_command
+    return remaining
 
 
 def powershell_option_name(option: str) -> str:

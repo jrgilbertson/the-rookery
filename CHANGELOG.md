@@ -13,6 +13,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-gardener` now supervises Workers from current native branch, HEAD,
+  process, PR, check, and result facts. TUI idle is only a scheduling hint;
+  bounded no-progress analysis becomes a local stall, head drift refreshes
+  assessment evidence, uncertain pushes reconcile the remote before retry,
+  and unavailable recovery facts remain `UNKNOWN`.
 - Assessment-only `checking-pr-readiness` now separates substantive exact-head
   evidence from receipt packaging. One complete same-session bundle may carry
   digest-matched evidence and results outside the assessed commit, and missing

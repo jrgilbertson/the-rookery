@@ -332,6 +332,31 @@ rereads native branches and PRs and stops if current work now overlaps that
 Worker. Preserve saved pushed state when PR creation is denied, and surface
 the exact file revision, scope, or overlap change for owner review.
 
+## Supervise Workers from native progress
+
+At meaningful boundaries, observe each Worker's branch, full HEAD, native
+process, PR, checks, and returned result. TUI state is only a scheduling hint:
+it neither completes nor settles work. A running native operation, including a
+push, remains active despite TUI idle until native facts establish its outcome.
+
+For analysis with no active native operation, take another native observation
+after a bounded local interval. Name `local_stall` only when branch, HEAD,
+Worker result, PR, and checks have no durable change across that interval.
+That stall blocks only the affected Worker's work; dispatch and settlement of
+disjoint Workers continue from their own current facts.
+
+Any changed branch or full HEAD invalidates pending exact-head assessment
+evidence. Read the new native facts before a new assessment; never apply the
+old assessment to the changed head. When a push response is uncertain, read
+the remote branch head before retrying: a matching remote head is the available
+success fact, and a nonmatching or unavailable read is reconciled from its
+actual native facts rather than guessed.
+
+If a Worker response is lost, reconstruct only the available branch, full
+HEAD, native-process, PR, and check facts. Record every unavailable fact as
+`UNKNOWN`, retain the Worker for recovery, and do not manufacture a terminal
+state from TUI state or a missing response.
+
 After PR creation, the Orchestrator monitors freshly read native checks and
 review state until the Worker truthfully reaches `pr_ready` or `pr_blocked`.
 If the bounded caller run must close first, report and retain the Worker as

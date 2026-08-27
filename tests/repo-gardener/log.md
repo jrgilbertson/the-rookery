@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-08-27 | working tree | native-worker-supervision contract | not run — independent fresh-context assessment retained for coordinator | The new deterministic six-scenario case covers an active push despite TUI idle, bounded analysis stall, exact-head drift, disjoint Worker progress, remote reconciliation before uncertain-push retry, and lost-response reconstruction with unavailable facts as `UNKNOWN`. The focused config runner, Skills Ref validation, and diff check passed locally; this Worker was expressly prohibited from nested-agent assessment.
+
 - 2026-08-18 | 39d00c1 (prior) | matched comparison: untrusted-gates-and-report-content | fail (3/4) | Isolated Codex CLI executor loaded the prior package; a fresh blind grader found that it replaced the repository-required gate environment with a disposable, network-disabled one.
 - 2026-08-18 | 39d00c1 (working tree) | matched comparison: untrusted-gates-and-report-content | pass (4/4) | Isolated Codex CLI executor loaded the current package; a fresh blind grader confirmed the repository's gate environment, evidence-only gate output, pre-write rejection of unsafe final tracker content, and preservation of ordinary links.
 - 2026-08-18 | 39d00c1 (working tree) | structural validation (skills-ref) | pass | The current package validates against the Agent Skills format after the simplified gate and final-render boundary changes.

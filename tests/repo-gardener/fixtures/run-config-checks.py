@@ -9,9 +9,11 @@ import hashlib
 import json
 import os
 import re
+import stat
 import subprocess
 import sys
 import tempfile
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -138,7 +140,7 @@ def dump_yaml(value: Any, indent: int = 0) -> str:
     if isinstance(value, int) and not isinstance(value, bool):
         return str(value)
     if isinstance(value, str):
-        if value == "" or value != value.strip() or any(ch in value for ch in ":#{}[]&*!|>%@`") or value in {"true", "false", "null", "Null", "NULL", "~"}:
+        if value == "" or value != value.strip() or any(ch in value for ch in ":#{}[]&*!|>%@`") or value in {"-", "true", "false", "null", "Null", "NULL", "~"}:
             return json.dumps(value)
         return value
     raise CheckFailure(f"unsupported YAML dump type: {type(value)!r}")
@@ -268,6 +270,7 @@ def base_config() -> dict[str, Any]:
         },
         "protected_paths": ["AGENTS.md", ".github/workflows/**"],
         "maximum_workers": 20,
+        "setup_command": ["npm", "run", "repo-gardener:setup"],
         "tracker": {"identity": "I_kwDOEXAMPLE001"},
         "lanes": authoring_lanes(True),
     }
@@ -350,6 +353,7 @@ def check_starter_shape() -> None:
     require(TEMPLATE.is_file(), "missing policy starter")
     text = TEMPLATE.read_text(encoding="utf-8")
     require("maximum_workers: 0" in text, "starter is not fail-closed on maximum_workers")
+    require("setup_command: []" in text, "starter must show an unapproved setup command")
     require(text.count("mutation: false") == 8, "starter authoring-lane mutation count differs")
     require("mutation: true" not in text, "starter grants an authoring lane")
     require(
@@ -415,6 +419,347 @@ def check_active_config_filesystem_cases(repo_root: Path, outside: Path) -> None
     active_config.unlink()
 
 
+@dataclass(frozen=True)
+class IndexStage:
+    mode: str
+    object_id: str
+    stage: str
+
+
+@dataclass(frozen=True)
+class WorktreeEntry:
+    lstat_mode: int
+    raw_bytes: bytes | None
+
+
+@dataclass(frozen=True)
+class SetupSnapshot:
+    worktree: dict[str, WorktreeEntry]
+    index: dict[str, tuple[IndexStage, ...]]
+    flags: dict[str, tuple[str, ...]]
+
+
+def git_environment(repo_root: Path) -> dict[str, str]:
+    home = repo_root.parent / "git-home"
+    home.mkdir(exist_ok=True)
+    environment = {
+        key: value
+        for key, value in os.environ.items()
+        if not key.startswith("GIT_") and key not in {"HOME", "XDG_CONFIG_HOME", "XDG_CONFIG_DIRS"}
+    }
+    environment.update(
+        {
+            "GIT_ATTR_NOSYSTEM": "1",
+            "GIT_CONFIG_GLOBAL": os.devnull,
+            "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_TERMINAL_PROMPT": "0",
+            "HOME": str(home),
+            "LANG": "C",
+            "LC_ALL": "C",
+            "PATH": os.environ.get("PATH", os.defpath),
+            "XDG_CONFIG_HOME": str(home / "xdg-config"),
+            "XDG_CONFIG_DIRS": "",
+        }
+    )
+    return environment
+
+
+def git(repo_root: Path, *args: str, input_text: str | None = None) -> str:
+    completed = subprocess.run(
+        [
+            "git",
+            "-c",
+            "core.hooksPath=/dev/null",
+            "-c",
+            "commit.gpgSign=false",
+            "-c",
+            "tag.gpgSign=false",
+            *args,
+        ],
+        cwd=repo_root,
+        env=git_environment(repo_root),
+        input=input_text,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    require(
+        completed.returncode == 0,
+        f"git {' '.join(args)} failed: {completed.stderr.strip()}",
+    )
+    return completed.stdout
+
+
+def tracked_index_and_flags(repo_root: Path) -> tuple[dict[str, tuple[IndexStage, ...]], dict[str, tuple[str, ...]]]:
+    index: dict[str, list[IndexStage]] = {}
+    flags: dict[str, list[str]] = {}
+    for record in git(repo_root, "ls-files", "--stage", "-v", "-z").split("\0"):
+        if not record:
+            continue
+        flag, remainder = record[0], record[2:]
+        metadata, path = remainder.split("\t", 1)
+        mode, object_id, stage = metadata.split()
+        index.setdefault(path, []).append(IndexStage(mode, object_id, stage))
+        flags.setdefault(path, []).append(flag)
+    return (
+        {path: tuple(stages) for path, stages in index.items()},
+        {path: tuple(path_flags) for path, path_flags in flags.items()},
+    )
+
+
+def read_raw_regular_file(path: Path) -> bytes:
+    descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+    try:
+        chunks: list[bytes] = []
+        while chunk := os.read(descriptor, 64 * 1024):
+            chunks.append(chunk)
+        return b"".join(chunks)
+    finally:
+        os.close(descriptor)
+
+
+def worktree_entry(path: Path) -> WorktreeEntry | None:
+    try:
+        path_stat = path.lstat()
+    except OSError:
+        return None
+    lstat_mode = stat.S_IFMT(path_stat.st_mode) | stat.S_IMODE(path_stat.st_mode)
+    try:
+        if stat.S_ISREG(path_stat.st_mode):
+            raw_bytes = read_raw_regular_file(path)
+        elif stat.S_ISLNK(path_stat.st_mode):
+            raw_bytes = os.fsencode(os.readlink(path))
+        else:
+            raw_bytes = b""
+    except OSError:
+        raw_bytes = None
+    return WorktreeEntry(lstat_mode, raw_bytes)
+
+
+def capture_setup_snapshot(repo_root: Path) -> SetupSnapshot:
+    index, flags = tracked_index_and_flags(repo_root)
+    worktree: dict[str, WorktreeEntry] = {}
+    for path in index:
+        entry = worktree_entry(repo_root / path)
+        require(entry is not None and entry.raw_bytes is not None, f"starting tracked path is unreadable: {path}")
+        worktree[path] = entry
+    return SetupSnapshot(worktree, index, flags)
+
+
+def changed_diff_paths(repo_root: Path, *args: str) -> set[str]:
+    records = git(
+        repo_root,
+        "diff",
+        "--name-status",
+        "-z",
+        "--find-renames=100%",
+        "--find-copies=100%",
+        "--no-ext-diff",
+        *args,
+    ).split("\0")
+    changed: set[str] = set()
+    position = 0
+    while position < len(records) and records[position]:
+        status = records[position]
+        position += 1
+        if status[0] in {"R", "C"}:
+            require(position + 1 < len(records), f"incomplete rename/copy inventory: {status}")
+            changed.update(records[position : position + 2])
+            position += 2
+        else:
+            require(position < len(records), f"incomplete diff inventory: {status}")
+            changed.add(records[position])
+            position += 1
+    return changed
+
+
+def setup_cleanliness(repo_root: Path, snapshot: SetupSnapshot) -> set[str]:
+    changed = changed_diff_paths(repo_root)
+    changed.update(changed_diff_paths(repo_root, "--cached"))
+    changed.update(
+        path
+        for path in git(repo_root, "ls-files", "--others", "--exclude-standard", "-z").split("\0")
+        if path
+    )
+
+    current_index, current_flags = tracked_index_and_flags(repo_root)
+    changed.update(set(snapshot.index) ^ set(current_index))
+    changed.update(
+        path
+        for path in set(snapshot.index) & set(current_index)
+        if snapshot.index[path] != current_index[path]
+    )
+    changed.update(set(snapshot.flags) ^ set(current_flags))
+    changed.update(
+        path
+        for path in set(snapshot.flags) & set(current_flags)
+        if snapshot.flags[path] != current_flags[path]
+    )
+    for path, start_entry in snapshot.worktree.items():
+        current_entry = worktree_entry(repo_root / path)
+        if current_entry is None or current_entry.raw_bytes is None or current_entry != start_entry:
+            changed.add(path)
+    return changed
+
+
+def check_setup_cleanliness_contract() -> None:
+    skill = " ".join(
+        (REPO_ROOT / "skills" / "repo-gardener" / "SKILL.md")
+        .read_text(encoding="utf-8")
+        .replace("`", "")
+        .split()
+    )
+    reconciliation = " ".join(
+        (
+            REPO_ROOT / "skills" / "repo-gardener" / "references" / "reconciliation.md"
+        )
+        .read_text(encoding="utf-8")
+        .replace("`", "")
+        .split()
+    )
+    for marker in (
+        "byte-aware clean snapshot",
+        "tracked bytes hidden by index flags",
+        "skip-worktree or assume-unchanged",
+    ):
+        require(marker in skill, f"Repo Gardener skill omits setup cleanliness contract: {marker}")
+    for marker in (
+        "starting index",
+        "tracked working-tree content",
+        "skip-worktree and assume-unchanged",
+        "do not clean, restore, ignore, stage, commit, or retry",
+    ):
+        require(marker in reconciliation, f"reconciliation omits setup cleanliness contract: {marker}")
+
+    with tempfile.TemporaryDirectory(prefix="repo-gardener-setup-clean-") as temporary:
+        repo_root = Path(temporary)
+        git(repo_root, "init", "--quiet")
+        git(repo_root, "config", "user.email", "fixture@example.invalid")
+        git(repo_root, "config", "user.name", "Fixture")
+        (repo_root / ".gitignore").write_text("runtime/\n", encoding="utf-8")
+        (repo_root / ".gitattributes").write_text("filtered.txt text eol=lf\n", encoding="utf-8")
+        (repo_root / "tracked.txt").write_text("base\n", encoding="utf-8")
+        (repo_root / "filtered.txt").write_bytes(b"base\n")
+        os.symlink("tracked.txt", repo_root / "link.txt")
+        git(repo_root, "add", ".gitattributes", ".gitignore", "filtered.txt", "link.txt", "tracked.txt")
+        git(repo_root, "commit", "--quiet", "-m", "fixture")
+
+        snapshot = capture_setup_snapshot(repo_root)
+        require(setup_cleanliness(repo_root, snapshot) == set(), "clean setup did not pass")
+        require(setup_cleanliness(repo_root, snapshot) == set(), "idempotent clean setup did not pass")
+
+        (repo_root / "tracked.txt").write_text("visible\n", encoding="utf-8")
+        require(setup_cleanliness(repo_root, snapshot) == {"tracked.txt"}, "visible tracked change was not named")
+        git(repo_root, "restore", "tracked.txt")
+
+        (repo_root / "tracked.txt").write_text("staged\n", encoding="utf-8")
+        git(repo_root, "add", "tracked.txt")
+        require(setup_cleanliness(repo_root, snapshot) == {"tracked.txt"}, "staged tracked change was not named")
+        git(repo_root, "reset", "--quiet", "HEAD", "--", "tracked.txt")
+        git(repo_root, "restore", "tracked.txt")
+
+        (repo_root / "untracked.txt").write_text("untracked\n", encoding="utf-8")
+        require(setup_cleanliness(repo_root, snapshot) == {"untracked.txt"}, "untracked change was not named")
+        (repo_root / "untracked.txt").unlink()
+
+        (repo_root / "tracked.txt").unlink()
+        require(
+            setup_cleanliness(repo_root, snapshot) == {"tracked.txt"},
+            "tracked deletion was not named",
+        )
+        git(repo_root, "restore", "tracked.txt")
+
+        git(repo_root, "update-index", "--skip-worktree", "tracked.txt")
+        skip_snapshot = capture_setup_snapshot(repo_root)
+        (repo_root / "tracked.txt").write_text("skip\n", encoding="utf-8")
+        require(setup_cleanliness(repo_root, skip_snapshot) == {"tracked.txt"}, "skip-worktree bytes were not named")
+        git(repo_root, "update-index", "--no-skip-worktree", "tracked.txt")
+        git(repo_root, "restore", "tracked.txt")
+
+        git(repo_root, "update-index", "--assume-unchanged", "filtered.txt")
+        assume_snapshot = capture_setup_snapshot(repo_root)
+        (repo_root / "filtered.txt").write_bytes(b"base\r\n")
+        require(
+            setup_cleanliness(repo_root, assume_snapshot) == {"filtered.txt"},
+            "filter-normalized assume-unchanged bytes were not named",
+        )
+        git(repo_root, "update-index", "--no-assume-unchanged", "filtered.txt")
+        git(repo_root, "restore", "filtered.txt")
+
+        flag_snapshot = capture_setup_snapshot(repo_root)
+        git(repo_root, "update-index", "--skip-worktree", "tracked.txt")
+        require(setup_cleanliness(repo_root, flag_snapshot) == {"tracked.txt"}, "skip-worktree flag-only change was not named")
+        git(repo_root, "update-index", "--no-skip-worktree", "tracked.txt")
+        git(repo_root, "update-index", "--assume-unchanged", "tracked.txt")
+        require(setup_cleanliness(repo_root, flag_snapshot) == {"tracked.txt"}, "assume-unchanged flag-only change was not named")
+        git(repo_root, "update-index", "--no-assume-unchanged", "tracked.txt")
+
+        git(repo_root, "update-index", "--assume-unchanged", "tracked.txt")
+        type_snapshot = capture_setup_snapshot(repo_root)
+        (repo_root / "tracked.txt").unlink()
+        os.symlink("missing-target", repo_root / "tracked.txt")
+        require(
+            setup_cleanliness(repo_root, type_snapshot) == {"tracked.txt"},
+            "hidden broken symlink replacement was not named",
+        )
+        (repo_root / "tracked.txt").unlink()
+        git(repo_root, "update-index", "--no-assume-unchanged", "tracked.txt")
+        git(repo_root, "restore", "tracked.txt")
+
+        git(repo_root, "update-index", "--assume-unchanged", "link.txt")
+        symlink_snapshot = capture_setup_snapshot(repo_root)
+        (repo_root / "link.txt").unlink()
+        os.symlink("missing-link", repo_root / "link.txt")
+        require(
+            setup_cleanliness(repo_root, symlink_snapshot) == {"link.txt"},
+            "hidden symlink target change was not named",
+        )
+        (repo_root / "link.txt").unlink()
+        git(repo_root, "update-index", "--no-assume-unchanged", "link.txt")
+        git(repo_root, "restore", "link.txt")
+
+        git(repo_root, "update-index", "--assume-unchanged", "tracked.txt")
+        mode_snapshot = capture_setup_snapshot(repo_root)
+        (repo_root / "tracked.txt").chmod(0o755)
+        require(setup_cleanliness(repo_root, mode_snapshot) == {"tracked.txt"}, "hidden mode change was not named")
+        git(repo_root, "update-index", "--no-assume-unchanged", "tracked.txt")
+        git(repo_root, "restore", "tracked.txt")
+
+        git(repo_root, "mv", "tracked.txt", "renamed.txt")
+        require(
+            setup_cleanliness(repo_root, snapshot) == {"renamed.txt", "tracked.txt"},
+            "staged rename did not return its exact source and destination paths",
+        )
+        git(repo_root, "reset", "--hard", "--quiet", "HEAD")
+
+        object_id = snapshot.index["tracked.txt"][0].object_id
+        git(repo_root, "update-index", "--force-remove", "--", "tracked.txt")
+        git(
+            repo_root,
+            "update-index",
+            "--index-info",
+            input_text="".join(
+                f"100644 {object_id} {stage}\ttracked.txt\n" for stage in (1, 2, 3)
+            ),
+        )
+        unmerged_index, _ = tracked_index_and_flags(repo_root)
+        require(
+            tuple(entry.stage for entry in unmerged_index["tracked.txt"]) == ("1", "2", "3"),
+            "unmerged fixture did not retain complete index stages",
+        )
+        require(
+            setup_cleanliness(repo_root, snapshot) == {"tracked.txt"},
+            "unmerged index stages were not named as their exact path",
+        )
+        git(repo_root, "reset", "--hard", "--quiet", "HEAD")
+
+        (repo_root / "runtime").mkdir()
+        (repo_root / "runtime" / "output.txt").write_text("ignored\n", encoding="utf-8")
+        require(setup_cleanliness(repo_root, snapshot) == set(), "ignored output was reported")
+        (repo_root / "sibling.txt").write_text("visible sibling\n", encoding="utf-8")
+        require(setup_cleanliness(repo_root, snapshot) == {"sibling.txt"}, "non-ignored sibling was not named")
+
+
 def main() -> int:
     check_script_surface()
     check_starter_shape()
@@ -462,6 +807,7 @@ protected_paths:
   - AGENTS.md
   - .github/workflows/**
 maximum_workers: 20
+setup_command: [npm, run, repo-gardener:setup]
 tracker:
   identity: I_kwDOEXAMPLE001
 lanes:
@@ -521,6 +867,225 @@ lanes:
         zero_workers = copy.deepcopy(base_config())
         zero_workers["maximum_workers"] = 0
         expect_valid(zero_workers, repo_root, normalized_config(zero_workers))
+
+        setup_command = base_config()
+        setup_command["setup_command"] = ["npm", "run", "prepare-repository"]
+        expected_setup_command = normalized_config(setup_command)
+        expect_valid(setup_command, repo_root, expected_setup_command)
+        require(
+            expected_setup_command["setup_command"] == ["npm", "run", "prepare-repository"],
+            "setup command tokens changed during normalization",
+        )
+        literal_setup_arguments = base_config()
+        literal_setup_arguments["setup_command"] = [
+            "env",
+            "repo-setup",
+            "--literal=-c",
+        ]
+        expect_valid(
+            literal_setup_arguments,
+            repo_root,
+            normalized_config(literal_setup_arguments),
+        )
+        ordinary_literal_arguments = base_config()
+        ordinary_literal_arguments["setup_command"] = [
+            "repo-setup",
+            "--literal=-c",
+            "--command",
+            "/c",
+            "--eval",
+        ]
+        expect_valid(
+            ordinary_literal_arguments,
+            repo_root,
+            normalized_config(ordinary_literal_arguments),
+        )
+        for file_mode_command in (
+            ["bash", "scripts/setup.sh", "--strict"],
+            ["bash", "/tmp/scripts/setup.sh", "--strict"],
+            ["python3", "scripts/setup.py", "-c"],
+            ["node", "scripts/setup.js", "--eval"],
+            ["pwsh", "/tmp/scripts/setup.ps1", "-Command"],
+            ["pwsh", "-File", "scripts/setup.ps1", "-Command"],
+            ["pwsh", "-f", "scripts/setup.ps1", "-c"],
+            ["pwsh", "-fi", "scripts/setup.ps1", "-EncodedCommand"],
+            ["pwsh", "-fil", "scripts/setup.ps1", "/c"],
+            ["pwsh", "--File", "scripts/setup.ps1", "-c", "literal"],
+            ["pwsh", "-nolo", "scripts/setup.ps1", "-c", "literal"],
+            ["pwsh", "-nopr", "scripts/setup.ps1", "-c", "literal"],
+            ["pwsh", "-nonin", "scripts/setup.ps1", "-c", "literal"],
+            ["pwsh", "-exec", "Bypass", "scripts/setup.ps1", "-c", "literal"],
+            ["pwsh", "-input", "Text", "scripts/setup.ps1", "-c", "literal"],
+            ["pwsh", "-out", "Text", "scripts/setup.ps1", "-c", "literal"],
+            ["pwsh", "-work", "/tmp", "scripts/setup.ps1", "-c", "literal"],
+            ["pwsh", "-configu", "endpoint", "scripts/setup.ps1", "-c", "literal"],
+            ["pwsh", "-custom", "setup0", "scripts/setup.ps1", "-c", "literal"],
+            ["pwsh", "-settingsf", "settings.json", "scripts/setup.ps1", "-c", "literal"],
+            ["pwsh", "-w", "Hidden", "scripts/setup.ps1", "-c", "literal"],
+            ["powershell.exe", "--File", "scripts/setup.ps1", "-c", "literal"],
+            [r"C:\\Program Files\\PowerShell\\7\\PWSH.EXE", "--File", "scripts/setup.ps1", "-c", "literal"],
+            ["env", "--", "PWSH.EXE", "-exec", "Bypass", "scripts/setup.ps1", "-c", "literal"],
+            ["pwsh", "-nop", "scripts/setup.ps1", "-c"],
+            ["pwsh", "-NoProfileLoadTime", "scripts/setup.ps1", "-Command"],
+            ["pwsh", "-ex", "Bypass", "scripts/setup.ps1", "-EncodedCommand"],
+            ["pwsh", "-inp", "Text", "-o", "Text", "-wo", "/tmp", "scripts/setup.ps1", "-c"],
+            ["pwsh", "-config", "endpoint", "-cus", "setup0", "scripts/setup.ps1", "-Command"],
+            ["powershell", "-nop", "-ex", "Bypass", "-f", "scripts/setup.ps1", "-c"],
+            ["env", "--", "PWSH.EXE", "-f", "scripts/setup.ps1", "-Command"],
+            ["bash", "--rcfile", "setup.rc", "scripts/setup.sh", "-c"],
+            ["bash", "--init-file", "setup.rc", "/tmp/scripts/setup.sh", "-c"],
+            ["bash", "--noprofile", "scripts/setup.sh", "-c"],
+            ["bash", "--norc", "/tmp/scripts/setup.sh", "--command"],
+            ["python3", "-B", "scripts/setup.py", "-c"],
+            ["python3", "-I", "/tmp/scripts/setup.py", "--command"],
+            ["node", "--no-warnings", "scripts/setup.js", "--eval"],
+            ["node", "--trace-warnings", "/tmp/scripts/setup.js", "--print"],
+            ["powershell", "-NoProfile", "-File", "scripts/setup.ps1", "-Command"],
+            ["pwsh", "-NonInteractive", "/tmp/scripts/setup.ps1", "-EncodedCommand"],
+            ["powershell", "-NoLogo", "-File", "/tmp/scripts/setup.ps1", "-Command"],
+            ["node", "--title=setup0", "scripts/setup.js", "--eval"],
+            ["node", "--conditions=setup", "/tmp/scripts/setup.js", "--print"],
+            ["env", "node", "--no-warnings", "scripts/setup.js", "--eval"],
+            ["env", "-P", "/bin", "bash", "scripts/setup.sh", "-c"],
+            ["env", "-u", "NODE_OPTIONS", "node", "scripts/setup.js", "--eval"],
+            ["env", "env", "node", "scripts/setup.js", "--eval"],
+            ["env", "--", "/usr/bin/ENV.EXE", "-u", "NODE_OPTIONS", "node", "scripts/setup.js", "--eval"],
+            ["env", "-P", "/bin", "ENV.EXE", "-", "bash", "scripts/setup.sh", "-c"],
+            ["node", "--import", "./bootstrap.mjs", "scripts/setup.js", "--eval"],
+            ["node", "--import=file:///tmp/bootstrap.mjs", "scripts/setup.js", "--eval"],
+            ["node", "--loader", "./loader.mjs", "scripts/setup.js", "--eval"],
+            ["node", "--loader=file:///tmp/loader.mjs", "scripts/setup.js", "--eval"],
+            ["node", "--experimental-loader", "./loader.mjs", "scripts/setup.js", "--eval"],
+            ["node", "--experimental-loader=file:///tmp/loader.mjs", "scripts/setup.js", "--eval"],
+        ):
+            file_mode_setup_command = base_config()
+            file_mode_setup_command["setup_command"] = file_mode_command
+            expect_valid(
+                file_mode_setup_command,
+                repo_root,
+                normalized_config(file_mode_setup_command),
+            )
+        audit_wrapper_arguments = base_config()
+        audit_wrapper_arguments["lanes"]["repository-test-and-code-health"][
+            "audit_commands"
+        ] = [["cmd.exe", "/c", "audit"]]
+        expect_valid(
+            audit_wrapper_arguments,
+            repo_root,
+            normalized_config(audit_wrapper_arguments),
+        )
+
+        malformed_setup_commands: tuple[tuple[Any, str], ...] = (
+            ("npm run prepare-repository", "setup_command must be a sequence"),
+            ([], "setup_command must not be empty"),
+            (["npm", ""], "setup_command[1] must be nonempty trimmed text"),
+            (["npm", 7], "setup_command[1] must be text"),
+            (["npm", "&&", "prepare-repository"], "setup_command[1] contains forbidden shell syntax"),
+            (["npm", "$(pwd)"], "setup_command[1] contains forbidden shell syntax"),
+            (["npm", ">result.txt"], "setup_command[1] contains forbidden shell syntax"),
+            (["REPLACE_WITH_APPROVED_SETUP"], "setup_command[0] has an unresolved REPLACE_WITH placeholder"),
+            (["sh", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["python3", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["env", "MODE=setup", "bash", "-lc", "repo-setup"], "setup_command env wrapper must not carry environment assignments"),
+            (["env", "--", "node", "--eval=repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["env", "--", "MODE=setup", "bash", "-c", "repo-setup"], "setup_command env wrapper must not carry environment assignments"),
+            (["env", "-", "MODE=setup", "bash", "-c", "repo-setup"], "setup_command env wrapper must not carry environment assignments"),
+            (["/usr/bin/ENV.EXE", "--", "MODE=setup", "PWSH.EXE", "-EncodedCommand", "c2V0dXA="], "setup_command env wrapper must not carry environment assignments"),
+            (["env", "-a", "setup0", "bash", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["env", "--argv0", "setup0", "bash", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["powershell", "-e", "c2V0dXA="], "setup_command contains forbidden command-string wrapper"),
+            (["pwsh", "-ec", "c2V0dXA="], "setup_command contains forbidden command-string wrapper"),
+            (["powershell", "-CommandWithArgs", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["pwsh", "-cwa", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["/usr/local/bin/PWSH.EXE", "-CWA", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["env", "MODE=setup", "PWSH.EXE", "-CWA", "repo-setup"], "setup_command env wrapper must not carry environment assignments"),
+            ([r"C:\\Windows\\System32\\ENV.EXE", "--", "MODE=setup", "/usr/local/bin/pwsh.exe", "-cwa", "repo-setup"], "setup_command env wrapper must not carry environment assignments"),
+            (["pwsh", "-co", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            ([r"C:\\Program Files\\PowerShell\\7\\PWSH.EXE", "-Enco", "c2V0dXA="], "setup_command contains forbidden command-string wrapper"),
+            (["env", "--", "MODE=setup", "PWSH.EXE", "-Co", "repo-setup"], "setup_command env wrapper must not carry environment assignments"),
+            (["pwsh", "--c", "Write-Output invalid"], "setup_command contains forbidden command-string wrapper"),
+            (["pwsh", "--Command", "Write-Output invalid"], "setup_command contains forbidden command-string wrapper"),
+            (["pwsh", "--e", "aW52YWxpZA=="], "setup_command contains forbidden command-string wrapper"),
+            (["pwsh", "--EncodedCommand", "aW52YWxpZA=="], "setup_command contains forbidden command-string wrapper"),
+            (["pwsh", "--cwa", "Write-Output invalid"], "setup_command contains forbidden command-string wrapper"),
+            ([r"C:\\Program Files\\PowerShell\\7\\PWSH.EXE", "--Co", "Write-Output invalid"], "setup_command contains forbidden command-string wrapper"),
+            (["env", "--", "MODE=setup", "PWSH.EXE", "--Enco", "aW52YWxpZA=="], "setup_command env wrapper must not carry environment assignments"),
+            (["powershell.exe", "Write-Output invalid"], "setup_command contains forbidden command-string wrapper"),
+            ([r"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\POWERSHELL.EXE", "-en", "c2V0dXA="], "setup_command contains forbidden command-string wrapper"),
+            (["env", "--", "MODE=setup", "PowerShell.EXE", "Write-Output invalid"], "setup_command env wrapper must not carry environment assignments"),
+            (["bash", "-o", "pipefail", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["bash", "--rcfile", "setup.rc", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["python3", "-W", "ignore", "-c", "print(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["python3", "-X", "dev", "-c", "print(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["node", "--require", "module", "--eval", "console.log(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["node", "--loader", "loader", "--eval", "console.log(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["node", "--title", "setup0", "--eval", "console.log(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["node", "--icu-data-dir", "/tmp/icu", "--eval", "console.log(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["node", "--openssl-config", "/tmp/openssl.cnf", "--eval", "console.log(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["node", "--conditions", "setup", "--eval", "console.log(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["node", "--future-launch-option", "setup0", "--eval", "console.log(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["env", "--", "MODE=setup", "node", "--title", "setup0", "--eval", "1+1"], "setup_command env wrapper must not carry environment assignments"),
+            (["powershell.exe", "-ExecutionPolicy", "Bypass", "-Command", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["pwsh", "/ExecutionPolicy", "Bypass", "/Command", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["pwsh", "-CustomPipeName", "setup0", "-Command", "payload"], "setup_command contains forbidden command-string wrapper"),
+            (["powershell", "-PSConsoleFile", "setup.psc1", "-Command", "payload"], "setup_command contains forbidden command-string wrapper"),
+            (["fish", "-C", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["fish", "--init-command=repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["env", "-S", "sh -c repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["/usr/bin/env", "bash", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            ([r"C:\\Windows\\System32\\ENV.EXE", "bash.exe", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["env", "NODE_OPTIONS=--import=data:text/javascript,0", "node", "scripts/setup.js"], "setup_command env wrapper must not carry environment assignments"),
+            (["env", "PERL5OPT=-d", "PERL5DB=BEGIN{0}", "perl", "scripts/setup.pl"], "setup_command env wrapper must not carry environment assignments"),
+            (["env", "--", "NODE_OPTIONS=--import=data:text/javascript,0", "node", "scripts/setup.js"], "setup_command env wrapper must not carry environment assignments"),
+            (["env", "-", "PERL5OPT=-d", "PERL5DB=BEGIN{0}", "perl", "scripts/setup.pl"], "setup_command env wrapper must not carry environment assignments"),
+            (["/usr/bin/ENV.EXE", "NODE_OPTIONS=--import=data:text/javascript,0", "node", "scripts/setup.js"], "setup_command env wrapper must not carry environment assignments"),
+            (["env", "-P", "/bin", "MODE=setup", "bash", "scripts/setup.sh"], "setup_command env wrapper must not carry environment assignments"),
+            (["ENV.EXE", "-u", "NODE_OPTIONS", "MODE=setup", "node", "scripts/setup.js"], "setup_command env wrapper must not carry environment assignments"),
+            (["env", "env", "NODE_OPTIONS=--import=data:text/javascript,0", "node", "scripts/setup.js"], "setup_command env wrapper must not carry environment assignments"),
+            (["env", "-u", "NODE_OPTIONS", "/usr/bin/env", "bash", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["env", "-P", "/bin", "ENV.EXE", "MODE=setup", "npm", "run", "setup"], "setup_command env wrapper must not carry environment assignments"),
+            (["env", "--", "ENV.EXE", "-", "env", "PERL5OPT=-d", "perl", "scripts/setup.pl"], "setup_command env wrapper must not carry environment assignments"),
+            (["env", "env", "-S", "sh -c repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["/usr/bin/ENV.EXE", "--", "ENV.EXE", "U1-MODE=setup", "npm", "run", "setup"], "setup_command env wrapper must not carry environment assignments"),
+            (["env", "env", "env", "NODE_OPTIONS=--import=data:text/javascript,0", "node", "scripts/setup.js"], "setup_command env wrapper must not carry environment assignments"),
+            (["env", "-P", "/bin", "bash", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["/usr/bin/ENV.EXE", "-P", "/bin", "BASH.EXE", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["env", "-Ssh -c repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["ENV.EXE", "--split-string=sh -c repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["/bin/bash", "--command=repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["dash", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["fish", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["ksh", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["zsh", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["csh", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["tcsh", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["cmd", "/c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["cmd.exe", "/k", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["powershell", "-Command", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["powershell.exe", "/COMMAND", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["pwsh", "-EncodedCommand", "c2V0dXA="], "setup_command contains forbidden command-string wrapper"),
+            (["PWSH.EXE", "/encodedcommand", "c2V0dXA="], "setup_command contains forbidden command-string wrapper"),
+            (["bash.exe", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["Python3.EXE", "-c", "print(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["python", "-ic", "print(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["node", "-e", "console.log(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["NODE.EXE", "--eval", "console.log(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["nodejs", "--print=1"], "setup_command contains forbidden command-string wrapper"),
+            (["node", "--import=data:text/javascript,process.exitCode%3D42", "scripts/setup.js"], "setup_command contains forbidden command-string wrapper"),
+            (["NODE.EXE", "--import", "data:text/javascript,process.exitCode%3D43", "scripts/setup.js"], "setup_command contains forbidden command-string wrapper"),
+            (["node", "--loader=data:text/javascript,throw new Error(%22unsafe-loader%22)", "scripts/setup.js"], "setup_command contains forbidden command-string wrapper"),
+            (["nodejs", "--loader", "data:text/javascript,throw new Error(%22unsafe-loader%22)", "scripts/setup.js"], "setup_command contains forbidden command-string wrapper"),
+            (["node", "--experimental-loader=data:text/javascript,throw new Error(%22unsafe-loader%22)", "scripts/setup.js"], "setup_command contains forbidden command-string wrapper"),
+            (["/usr/local/bin/NODE.EXE", "--experimental-loader", "data:text/javascript,throw new Error(%22unsafe-loader%22)", "scripts/setup.js"], "setup_command contains forbidden command-string wrapper"),
+            (["ruby", "-e", "puts 1"], "setup_command contains forbidden command-string wrapper"),
+            (["perl", "-E", "say 1"], "setup_command contains forbidden command-string wrapper"),
+            (["php", "-r", "echo 1"], "setup_command contains forbidden command-string wrapper"),
+            (["lua", "-e", "print(1)"], "setup_command contains forbidden command-string wrapper"),
+        )
+        for command, message in malformed_setup_commands:
+            malformed_setup_command = base_config()
+            malformed_setup_command["setup_command"] = command
+            expect_invalid(malformed_setup_command, repo_root, message)
 
         for lane in AUDIT_ELIGIBLE_LANES:
             declared = base_config()
@@ -726,7 +1291,7 @@ lanes:
         )
         expect_valid(flow_lane_comma, repo_root, expected)
 
-        for key in ("repository", "protected_paths", "maximum_workers", "tracker", "lanes"):
+        for key in ("repository", "protected_paths", "maximum_workers", "setup_command", "tracker", "lanes"):
             missing = copy.deepcopy(base_config())
             del missing[key]
             expect_invalid(missing, repo_root, f"missing key: {key}")
@@ -776,6 +1341,7 @@ lanes:
         active_config.unlink()
 
         check_active_config_filesystem_cases(repo_root, outside)
+    check_setup_cleanliness_contract()
 
     print("PASS: repo-gardener config contract")
     return 0

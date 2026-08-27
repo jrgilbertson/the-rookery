@@ -13,8 +13,58 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-gardener` now supervises Workers from current native branch, HEAD,
+  process, PR, check, and result facts. TUI idle is only a scheduling hint;
+  bounded no-progress analysis becomes a local stall, head drift refreshes
+  assessment evidence, uncertain pushes reconcile the remote before retry,
+  unavailable remote-head reads remain `UNKNOWN` without retry or settlement,
+  and other unavailable recovery facts remain `UNKNOWN`.
+- Assessment-only `checking-pr-readiness` now separates substantive exact-head
+  evidence from receipt packaging. One complete same-session bundle may carry
+  digest-matched evidence and results outside the assessed commit, and missing
+  published per-kind schema documentation or an alternate result location is
+  no longer a stop by itself. Inline evidence/result bytes bind the exact
+  repository, subject, revision, bundle, and receipt identity, so missing,
+  stale, mixed, cross-boundary, or unsupported evidence remains
+  `action-required`.
+- `repo-gardener` now carries portable Worker lineage facts: source
+  Orchestrator identity, exact Git base, setup result, Worker branch, and
+  returned native identifiers. Orca records a parent-worktree link when it is
+  available; other harnesses record `lineage capability unavailable` while
+  preserving the same facts, and mismatches stop before implementation.
+- `repo-gardener` now treats declared gate-prerequisite health as a setup
+  outcome. A required unhealthy prerequisite blocks only its dependent gate and
+  work, while an unavailable optional environment blocks only its affected
+  gate; exact-head readiness rechecks the Worker environment without skipping,
+  weakening, or substituting a gate.
+- `repo-gardener` now verifies setup with a byte-aware clean snapshot. It
+  reports exact staged, unstaged, non-ignored untracked, tracked-byte, and
+  `skip-worktree` or `assume-unchanged` flag changes without repairing them;
+  ignored runtime output remains allowed and unrelated safe work continues.
+- `repo-gardener` now runs the exact owner-approved `setup_command` once in
+  every fresh Orchestrator and Worker worktree, after instruction discovery and
+  before repository-dependent audits or implementation. Worker envelopes carry
+  the argv unchanged; setup failure remains local, setup-argv drift stops
+  before execution, and a skipped or failed base-ref refresh is a named host
+  gap rather than authority to substitute a command or base.
+- `repo-gardener` policy now requires one owner-approved, normalized direct
+  `setup_command`. First-use review carries it unchanged into later
+  fresh-worktree setup, refuses invalid or unapproved commands locally, and
+  leaves unrelated safe sensing available after an affected audit fails. Its
+  command-string-wrapper refusal continues past documented or ambiguous
+  wrapper launch operands without treating them as a script boundary, while
+  documented no-operand flags and inline operands preserve script mode;
+  BSD `env -P` is modeled as a path operand, and Node `data:` import or loader
+  sources are refused before their nominal script file. Setup recursively
+  unwraps leading `env` wrappers and rejects every pre-utility operand with a
+  nonempty name before `=` rather than allowing it to configure a runtime
+  before the approved command;
+  PowerShell command-mode aliases and accepted prefixes are refused too across
+  native one-dash, two-dash, and slash switch markers.
+  Windows PowerShell requires explicit file mode, while PowerShell 7 retains
+  positional file mode and recognizes documented file-mode aliases.
 - Interactive `checking-merge-readiness` option 1 (Proceed to merge) now
-  performs the forge merge after the existing fingerprint and host-policy
+  kicks off one forge merge after the existing fingerprint and host-policy
   re-check, using the repository's default merge method. A cold "merge this
   PR" activates the skill but still requires that menu choice. Unattended
   `repo-gardener` runs still never select option 1 and still never merge.

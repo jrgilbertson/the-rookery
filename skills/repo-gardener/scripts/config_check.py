@@ -43,6 +43,7 @@ TOP_LEVEL_REQUIRED = {
     "repository",
     "protected_paths",
     "maximum_workers",
+    "setup_command",
     "tracker",
     "lanes",
 }
@@ -63,6 +64,19 @@ NULL_SCALAR = re.compile(r"^(?:~|null|Null|NULL|)$")
 SHELL_INTERPOLATION = re.compile(r"(?:`|\$(?:[A-Za-z_][A-Za-z0-9_]*|[0-9@*#?!$-]|\(|\{))")
 SHELL_REDIRECTION = re.compile(r"^(?:[0-9]*|&)(?:>>?|<<?|<>|>&|<&).*$|^(?:>>?|<<?|<>).*$")
 SHELL_OPERATOR_TOKENS = {"&&", "||", "|", ";", "&"}
+SHELL_COMMANDS = {
+    "bash",
+    "cmd",
+    "csh",
+    "dash",
+    "fish",
+    "ksh",
+    "powershell",
+    "pwsh",
+    "sh",
+    "tcsh",
+    "zsh",
+}
 
 
 class ConfigError(Exception):
@@ -379,25 +393,489 @@ def normalize_audit_commands(value: Any, label: str) -> list[list[str]]:
     result: list[list[str]] = []
     for command_index, value_command in enumerate(value):
         command_label = f"{label}[{command_index}]"
-        require(isinstance(value_command, list), f"{command_label} must be a sequence")
-        require(bool(value_command), f"{command_label} must not be empty")
-        require(
-            len(value_command) <= MAX_LIST_ENTRIES,
-            f"{command_label} exceeds {MAX_LIST_ENTRIES} entries",
-        )
-        command = [
-            require_concrete_text(token, f"{command_label}[{token_index}]")
-            for token_index, token in enumerate(value_command)
-        ]
-        for token_index, token in enumerate(command):
-            require(
-                token not in SHELL_OPERATOR_TOKENS
-                and SHELL_INTERPOLATION.search(token) is None
-                and SHELL_REDIRECTION.fullmatch(token) is None,
-                f"{command_label}[{token_index}] contains forbidden shell syntax",
-            )
-        result.append(command)
+        result.append(normalize_direct_argv(value_command, command_label))
     return result
+
+
+def normalize_direct_argv(value: Any, label: str) -> list[str]:
+    require(isinstance(value, list), f"{label} must be a sequence")
+    require(bool(value), f"{label} must not be empty")
+    require(len(value) <= MAX_LIST_ENTRIES, f"{label} exceeds {MAX_LIST_ENTRIES} entries")
+    command = [
+        require_concrete_text(token, f"{label}[{token_index}]")
+        for token_index, token in enumerate(value)
+    ]
+    for token_index, token in enumerate(command):
+        require(
+            token not in SHELL_OPERATOR_TOKENS
+            and SHELL_INTERPOLATION.search(token) is None
+            and SHELL_REDIRECTION.fullmatch(token) is None,
+            f"{label}[{token_index}] contains forbidden shell syntax",
+        )
+    return command
+
+
+def executable_name(token: str) -> str:
+    executable = re.split(r"[/\\\\]", token)[-1].lower()
+    return executable[:-4] if executable.endswith(".exe") else executable
+
+
+def command_after_env_layer(command: list[str]) -> list[str] | None:
+    """Validate one leading env wrapper and return its utility argv."""
+    index = 1
+    options_ended = False
+    while index < len(command):
+        token = command[index]
+        if not options_ended:
+            if token in {"--", "-"}:
+                options_ended = True
+                index += 1
+                continue
+            if (
+                token in {"-S", "--split-string"}
+                or token.startswith("-S")
+                or token.startswith("--split-string=")
+            ):
+                return None
+            if token in {"-C", "--chdir", "-P", "-u", "--unset", "-a", "--argv0"}:
+                index += 2
+                continue
+            if token.startswith("--argv0=") or (token.startswith("-a") and token != "-a"):
+                index += 1
+                continue
+            if token.startswith("-"):
+                index += 1
+                continue
+        if "=" in token and token.partition("=")[0]:
+            raise ConfigError(
+                "setup_command env wrapper must not carry environment assignments"
+            )
+        return command[index:]
+    return []
+
+
+def command_after_env(command: list[str]) -> list[str] | None:
+    """Recursively unwrap leading normalized env wrappers for setup validation."""
+    remaining = command
+    while remaining and executable_name(remaining[0]) == "env":
+        next_command = command_after_env_layer(remaining)
+        if next_command is None:
+            return None
+        if len(next_command) >= len(remaining):
+            return None
+        remaining = next_command
+    return remaining
+
+
+def powershell_option_name(option: str) -> str:
+    marker_length = 2 if option.startswith("--") else 1
+    return re.split(r"[=:]", option[marker_length:], maxsplit=1)[0].casefold()
+
+
+def powershell_option_matches(option: str, spelling: str, minimum: int) -> bool:
+    name = powershell_option_name(option)
+    return len(name) >= minimum and spelling.startswith(name)
+
+
+def is_executable_option(executable: str, argument: str) -> bool:
+    if argument.startswith("-"):
+        return True
+    if executable == "cmd":
+        return argument.startswith("/")
+    if executable in {"powershell", "pwsh"}:
+        return (
+            option_uses_command_string(executable, argument)
+            or option_opens_file_mode(executable, argument)
+            or option_consumes_operand(executable, argument)
+            or option_is_no_operand(executable, argument)
+        )
+    return False
+
+
+def option_consumes_operand(executable: str, option: str) -> bool:
+    if executable in {"powershell", "pwsh"}:
+        name = powershell_option_name(option)
+        return (
+            powershell_option_matches(option, "executionpolicy", 2)
+            or name == "ep"
+            or powershell_option_matches(option, "inputformat", 3)
+            or name == "if"
+            or powershell_option_matches(option, "outputformat", 1)
+            or name == "of"
+            or powershell_option_matches(option, "workingdirectory", 2)
+            or name == "wd"
+            or powershell_option_matches(option, "configurationname", 6)
+            or name == "configurationfile"
+            or powershell_option_matches(option, "windowstyle", 1)
+            or powershell_option_matches(option, "settingsfile", 8)
+            or name in {"version", "psconsolefile"}
+            or powershell_option_matches(option, "custompipename", 3)
+        )
+    if executable in SHELL_COMMANDS:
+        return option in {"-o", "-O", "--rcfile", "--init-file"}
+    if re.fullmatch(r"python(?:\d+(?:\.\d+)*)?", executable) is not None:
+        return option in {"-W", "-X", "--check-hash-based"}
+    if executable in {"node", "nodejs"}:
+        return option in {
+            "-C",
+            "-r",
+            "--conditions",
+            "--diagnostic-dir",
+            "--env-file",
+            "--env-file-if-exists",
+            "--experimental-config-file",
+            "--experimental-default-type",
+            "--experimental-loader",
+            "--experimental-sea-config",
+            "--heap-prof-dir",
+            "--heap-prof-interval",
+            "--heap-prof-name",
+            "--heapsnapshot-near-heap-limit",
+            "--heapsnapshot-signal",
+            "--icu-data-dir",
+            "--import",
+            "--input-type",
+            "--inspect-port",
+            "--loader",
+            "--localstorage-file",
+            "--max-http-header-size",
+            "--network-family-autoselection-attempt-timeout",
+            "--openssl-config",
+            "--redirect-warnings",
+            "--report-dir",
+            "--report-directory",
+            "--report-filename",
+            "--report-signal",
+            "--require",
+            "--secure-heap",
+            "--secure-heap-min",
+            "--snapshot-blob",
+            "--test-concurrency",
+            "--test-coverage-branches",
+            "--test-name-pattern",
+            "--test-reporter",
+            "--test-reporter-destination",
+            "--test-shard",
+            "--test-skip-pattern",
+            "--title",
+            "--tls-cipher-list",
+            "--tls-keylog",
+            "--trace-event-categories",
+            "--trace-event-file-pattern",
+            "--unhandled-rejections",
+            "--use-largepages",
+            "--v8-pool-size",
+            "--watch-kill-signal",
+            "--watch-path",
+        }
+    return False
+
+
+def option_has_inline_operand(executable: str, option: str) -> bool:
+    if executable in {"powershell", "pwsh"}:
+        return re.match(r"^[-/][^=:]+[=:]", option) is not None
+    return option.startswith("--") and "=" in option
+
+
+def option_is_no_operand(executable: str, option: str) -> bool:
+    if executable in {"powershell", "pwsh"}:
+        name = powershell_option_name(option)
+        return (
+            powershell_option_matches(option, "login", 1)
+            or powershell_option_matches(option, "noexit", 3)
+            or powershell_option_matches(option, "noprofile", 3)
+            or powershell_option_matches(option, "nologo", 3)
+            or powershell_option_matches(option, "noninteractive", 4)
+            or powershell_option_matches(option, "interactive", 1)
+            or name in {"noprofileloadtime", "sta", "mta", "help"}
+        )
+    if executable in SHELL_COMMANDS:
+        return option in {
+            "--help",
+            "--login",
+            "--noediting",
+            "--noprofile",
+            "--norc",
+            "--posix",
+            "--restricted",
+            "--verbose",
+            "--version",
+        }
+    if re.fullmatch(r"python(?:\d+(?:\.\d+)*)?", executable) is not None:
+        return option in {
+            "-b",
+            "-B",
+            "-d",
+            "-E",
+            "-h",
+            "-i",
+            "-I",
+            "-O",
+            "-OO",
+            "-q",
+            "-s",
+            "-S",
+            "-u",
+            "-v",
+            "-V",
+            "-x",
+            "--bytes-warning",
+            "--dev",
+            "--dont-write-bytecode",
+            "--help",
+            "--help-all",
+            "--help-env",
+            "--help-xoptions",
+            "--ignore-environment",
+            "--isolated",
+            "--no-site",
+            "--no-user-site",
+            "--quiet",
+            "--safe-path",
+            "--verbose",
+            "--version",
+        }
+    if executable in {"node", "nodejs"}:
+        return option in {
+            "--abort-on-uncaught-exception",
+            "--build-snapshot",
+            "--disable-sigusr1",
+            "--enable-etw-stack-walking",
+            "--enable-fips",
+            "--enable-network-family-autoselection",
+            "--enable-source-maps",
+            "--experimental-async-context-frame",
+            "--experimental-default-config-file",
+            "--experimental-eventsource",
+            "--experimental-import-meta-resolve",
+            "--experimental-print-required-tla",
+            "--experimental-require-module",
+            "--experimental-sqlite",
+            "--experimental-strip-types",
+            "--experimental-transform-types",
+            "--experimental-vm-modules",
+            "--experimental-wasm-modules",
+            "--experimental-webstorage",
+            "--expose-gc",
+            "--force-context-aware",
+            "--force-fips",
+            "--force-node-api-uncaught-exceptions-policy",
+            "--frozen-intrinsics",
+            "--heap-prof",
+            "--help",
+            "--insecure-http-parser",
+            "--jitless",
+            "--napi-modules",
+            "--no-addons",
+            "--no-deprecation",
+            "--no-experimental-detect-module",
+            "--no-experimental-global-navigator",
+            "--no-experimental-repl-await",
+            "--no-experimental-require-module",
+            "--no-experimental-sqlite",
+            "--no-experimental-websocket",
+            "--no-extra-info-on-fatal-exception",
+            "--no-force-async-hooks-checks",
+            "--no-global-search-paths",
+            "--no-network-family-autoselection",
+            "--no-warnings",
+            "--node-memory-debug",
+            "--openssl-legacy-provider",
+            "--openssl-shared-config",
+            "--pending-deprecation",
+            "--permission",
+            "--permission-audit",
+            "--preserve-symlinks",
+            "--preserve-symlinks-main",
+            "--prof",
+            "--report-compact",
+            "--report-exclude-env",
+            "--report-exclude-network",
+            "--report-on-fatalerror",
+            "--report-on-signal",
+            "--report-uncaught-exception",
+            "--test",
+            "--test-force-exit",
+            "--test-only",
+            "--throw-deprecation",
+            "--trace-deprecation",
+            "--trace-sync-io",
+            "--trace-tls",
+            "--trace-uncaught",
+            "--trace-warnings",
+            "--track-heap-objects",
+            "--use-bundled-ca",
+            "--use-openssl-ca",
+            "--v8-options",
+            "--verify-base-objects",
+            "--version",
+            "--watch",
+            "--watch-preserve-output",
+            "--zero-fill-buffers",
+        }
+    return False
+
+
+def option_opens_file_mode(executable: str, option: str) -> bool:
+    if executable not in {"powershell", "pwsh"}:
+        return False
+    return powershell_option_matches(option, "file", 1)
+
+
+def options_before_file_mode(executable: str, arguments: list[str]) -> list[str]:
+    options: list[str] = []
+    index = 0
+    ambiguous_option = False
+    while index < len(arguments):
+        argument = arguments[index]
+        if argument == "--":
+            break
+        if not is_executable_option(executable, argument):
+            if not ambiguous_option:
+                break
+            index += 1
+            continue
+        options.append(argument)
+        if option_opens_file_mode(executable, argument):
+            break
+        if option_has_inline_operand(executable, argument) or option_is_no_operand(
+            executable, argument
+        ):
+            index += 1
+            continue
+        if option_consumes_operand(executable, argument):
+            index += 2
+            continue
+        # An unknown leading wrapper option may consume the following token.
+        # Keep scanning until a known file-mode boundary so that its operand
+        # cannot hide a later command-string option.
+        ambiguous_option = True
+        index += 1
+    return options
+
+
+def windows_powershell_uses_positional_command(arguments: list[str]) -> bool:
+    index = 0
+    while index < len(arguments):
+        argument = arguments[index]
+        if argument == "--":
+            return index + 1 < len(arguments)
+        if not is_executable_option("powershell", argument):
+            return True
+        if option_opens_file_mode("powershell", argument):
+            return False
+        if option_has_inline_operand("powershell", argument) or option_is_no_operand(
+            "powershell", argument
+        ):
+            index += 1
+            continue
+        if option_consumes_operand("powershell", argument):
+            index += 2
+            continue
+        # An unknown switch cannot establish a safe script boundary. If it is
+        # followed by positional input before explicit -File, Windows PowerShell
+        # treats that input as command text.
+        index += 1
+    return False
+
+
+def option_uses_command_string(executable: str, option: str) -> bool:
+    if executable == "cmd":
+        return re.match(r"^/[ck]", option, re.IGNORECASE) is not None
+    if executable in {"powershell", "pwsh"}:
+        name = powershell_option_name(option)
+        return (
+            powershell_option_matches(option, "command", 1)
+            or name == "ec"
+            or powershell_option_matches(option, "encodedcommand", 1)
+            or (executable == "pwsh" and name in {"cwa", "commandwithargs"})
+        )
+    if executable == "fish" and (
+        option.startswith("-C") or option.lower().startswith("--init-command")
+    ):
+        return True
+    if executable in SHELL_COMMANDS:
+        return option.lower().startswith("--command") or (
+            option.startswith("-") and not option.startswith("--") and "c" in option[1:]
+        )
+    if re.fullmatch(r"python(?:\d+(?:\.\d+)*)?", executable) is not None:
+        return re.match(
+            r"^(?:-c|-[bBdEhiIOPqRsSuvV]*c)", option, re.IGNORECASE
+        ) is not None
+    if executable in {"node", "nodejs"}:
+        return re.match(r"^(?:-[ep]|--(?:eval|print)(?:$|[=:]))", option, re.IGNORECASE) is not None
+    if executable == "ruby":
+        return re.match(r"^-[acdlmnpsvwx]*e", option, re.IGNORECASE) is not None
+    if executable == "perl":
+        return re.match(r"^-[acdlnpstTuvwxW]*[eE]", option) is not None
+    if executable == "php":
+        return re.match(r"^-[nq]*r", option, re.IGNORECASE) is not None
+    if executable == "lua":
+        return re.match(r"^-e", option, re.IGNORECASE) is not None
+    return False
+
+
+def node_uses_inline_code_source(arguments: list[str]) -> bool:
+    """Return whether Node loads executable JavaScript before its script file."""
+    source_options = {"--experimental-loader", "--import", "--loader"}
+    index = 0
+    ambiguous_option = False
+    while index < len(arguments):
+        argument = arguments[index]
+        if argument == "--":
+            break
+        if not is_executable_option("node", argument):
+            if not ambiguous_option:
+                break
+            index += 1
+            continue
+        for source_option in source_options:
+            attached_prefix = f"{source_option}="
+            if argument.startswith(attached_prefix):
+                if argument[len(attached_prefix) :].casefold().startswith("data:"):
+                    return True
+            if argument == source_option and index + 1 < len(arguments):
+                if arguments[index + 1].casefold().startswith("data:"):
+                    return True
+        if option_has_inline_operand("node", argument) or option_is_no_operand(
+            "node", argument
+        ):
+            index += 1
+            continue
+        if option_consumes_operand("node", argument):
+            index += 2
+            continue
+        ambiguous_option = True
+        index += 1
+    return False
+
+
+def is_command_string_wrapper(command: list[str]) -> bool:
+    executable_and_args = command_after_env(command)
+    if executable_and_args is None:
+        return True
+    if not executable_and_args:
+        return False
+    executable = executable_name(executable_and_args[0])
+    arguments = executable_and_args[1:]
+    return any(
+        option_uses_command_string(executable, option)
+        for option in options_before_file_mode(executable, arguments)
+    ) or (
+        executable in {"node", "nodejs"} and node_uses_inline_code_source(arguments)
+    ) or (
+        executable == "powershell"
+        and windows_powershell_uses_positional_command(arguments)
+    )
+
+
+def normalize_setup_command(value: Any) -> list[str]:
+    command = normalize_direct_argv(value, "setup_command")
+    require(
+        not is_command_string_wrapper(command),
+        "setup_command contains forbidden command-string wrapper",
+    )
+    return command
 
 
 def normalize_lanes(value: Any) -> dict[str, Any]:
@@ -458,6 +936,7 @@ def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
         "repository": normalize_repository(value["repository"]),
         "protected_paths": require_glob_list(value["protected_paths"], "protected_paths", nonempty=False),
         "maximum_workers": workers,
+        "setup_command": normalize_setup_command(value["setup_command"]),
         "tracker": normalize_tracker(value["tracker"]),
         "lanes": normalize_lanes(value["lanes"]),
     }

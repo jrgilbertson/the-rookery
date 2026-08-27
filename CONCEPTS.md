@@ -151,7 +151,7 @@ for intent drift, Risk Drivers, redesign pressure, and follow-up debt.
 
 It recommends merge, debug, or do not merge. Gather, grade, and readout stay
 read-only. On an interactive owner choice of Proceed to merge after a matching
-fingerprint re-check, it performs the forge merge. It still does not mutate
+fingerprint re-check, it kicks off the forge merge. It still does not mutate
 the tracker. Unattended gardening runs never select that option and never
 merge.
 

@@ -12,8 +12,9 @@ recommendation is merge, the base is not merge-queue governed, and a
 method can be resolved without a prompt. Withhold rather than offering
 and then refusing, including when write auth is known missing.
 
-Pin `GH_HOST` to the certified host, then this one GraphQL document. If
-it errors, a field is missing, or the result is ambiguous, withhold.
+Pin `GH_HOST` to the certified host, then this one GraphQL document.
+Pass `-H Graphql-Features: merge_queue` (`gh pr merge` does). If the
+document errors, a field is missing, or the result is ambiguous, withhold.
 
 ```graphql
 query($owner: String!, $name: String!, $n: Int!, $base: String!) {

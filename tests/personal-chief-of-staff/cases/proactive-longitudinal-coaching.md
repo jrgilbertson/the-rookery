@@ -166,8 +166,9 @@ turn in the same live context:
       scheduled run remains read-only until user interaction.
 - [ ] Weekly and Quarterly answers lead with their synthesis, then render a
       response-scoped Source Access Audit. Scan lines sit after the heading
-      and before the first GFM table. Scan lines have no successful discovery
-      rows. The recovered table still lists every material configured journal,
+      and before the first GFM table. Scan lines have no complete,
+      non-truncated **Accessed — evidence found** discovery rows. The recovered
+      table still lists every material configured journal,
       review, strategy, learning, relationship, task, and calendar role
       considered for that response. HTML disclosure tags fail. A named
       available role may not be silently omitted or labeled `Not needed` when

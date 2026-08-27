@@ -60,8 +60,9 @@ titles, sensitive event types, content excerpts, credentials, raw queries, or
 tool telemetry. Use separate safe rows for mixed bounded slices whose results
 differ. Include every source in the relevant-source set, but do not enumerate
 irrelevant connectors. Each relevant discovery role appears once as a table
-row. Pre-write reread and post-write readback stay separate rows even when they
-share a source. A scan line may name a role that also has a table row.
+row unless mixed bounded slices of that role have different results or safe
+scopes, in which case those slices stay separate rows. Pre-write reread and
+post-write readback stay separate rows even when they share a source. A scan line may name a role that also has a table row.
 
 In the effect column, name the category of claim the result supports, narrows,
 or prevents. Do not imply complete coverage from a partial scope and do not use

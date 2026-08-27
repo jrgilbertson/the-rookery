@@ -42,8 +42,8 @@ disclosure tags:
    material limitation with the claim category it limits and the exact
    access result. Promote attempted failures, truncated or partial reads,
    unconfigured or declined roles, Partial or Insufficient coverage, and
-   failed required rereads or readbacks. Complete successful discovery
-   stays out of this surface.
+   failed required rereads or readbacks. Complete, non-truncated
+   **Accessed — evidence found** discovery stays out of this surface.
 2. **Recovered table** immediately after: today's unwrapped GFM census of
    every relevant role, using the skill's exact result labels. Pre-write
    reread and post-write readback stay separate rows even when they share a

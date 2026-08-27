@@ -116,8 +116,7 @@ deliverable. Test those descriptions as a three-sided routing contract:
    not create eligibility by themselves (`tests/checking-simplicity/triggers.md:26-36`).
 3. **Exit.** Name the successful state that moves ownership onward. An unchanged
    subject with an independent `PASS` and no owner decision belongs to the next
-   planner or executor (`skills/checking-simplicity/SKILL.md:18-20`,
-   `skills/checking-simplicity/references/activation.md:20-22`).
+   planner or executor (`skills/checking-simplicity/SKILL.md:17-19`).
 
 Freeze the prior description, run the prior and revised metadata in separate
 fresh contexts, and keep the full positive and near-miss matrix on every run

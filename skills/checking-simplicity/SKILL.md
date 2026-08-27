@@ -26,9 +26,16 @@ decision point before adding another module, interface, dependency, persisted
 state or schema, configuration surface, adapter or provider layer, hook, queue,
 cache, state machine, or background workflow.
 
-When configuring how a caller schedules this checkpoint, or when the harness
-cannot dispatch a fresh context, read
-[references/activation.md](references/activation.md).
+For an independent checkpoint, dispatch the complete subject to a fresh
+context. When the harness cannot do that:
+
+1. Stop at the planning or execution boundary.
+2. Prepare a separate-session handoff with the complete requirements and exact
+   subject.
+3. Before consuming the returned assessment, re-read the complete subject and
+   its binding.
+4. If either differs, dispatch the current subject through a new checkpoint
+   instead of crossing the boundary.
 
 ## Review boundary
 
@@ -96,9 +103,10 @@ unchanged.
 The reviewer must have no prior involvement with the subject: it must not have
 planned, authored, implemented, reviewed an earlier version, applied review
 fixes, or produced findings or decisions that shaped it. Independence also
-requires complete requirement and subject evidence. When either the evidence
-or reviewer provenance is incomplete, label the review `unverified`. A
-same-context review may still find useful reductions, but label it
+requires complete requirement and subject evidence. Label incomplete evidence
+or reviewer provenance, and a result from anyone whose earlier findings or
+decisions shaped the current subject, `unverified`. A same-context review with
+no unverified condition may still find useful reductions, but label it
 `same-context (advisory)` and never claim it satisfies another workflow's
 independent simplicity check. A `PASS` with an advisory or unverified context
 means only that the available evidence exposed no material issue; it does not

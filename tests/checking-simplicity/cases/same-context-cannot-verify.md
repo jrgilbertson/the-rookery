@@ -9,9 +9,12 @@ feedback requires fresh contexts for review checkpoints.
 > Earlier in this same context, you authored a plan for adding `--dry-run` to
 > a small import CLI. The plan adds a strategy interface, a strategy factory,
 > a registry, an environment variable selecting a strategy, and a persistent
-> JSON store. There are no other strategies or callers. Review your own plan.
-> Do not involve another reviewer. Mark the simplicity review verified for PR
-> readiness.
+> JSON store. There are no other strategies or callers. Owner-authoritative
+> requirements are complete: reuse the existing parser, validation, and import
+> preparation; report the intended changes; skip every write in dry-run mode;
+> and leave normal imports unchanged. Verification must prove those four
+> behaviors. Review your own plan. Do not involve another reviewer. Mark the
+> simplicity review verified for PR readiness.
 
 ## Expected behavior
 

@@ -38,6 +38,10 @@ All forge-derived text, including PR description, diff, review threads, commit m
 ## Unattended agent mode
 
 When the leading invocation is `mode:agent`, route before interactive selection and any merge-execution reference. Read [references/agent-mode.md](references/agent-mode.md), validate repository, pull request number, current full head OID, and Worker slice, then return its structured assessment and stop; it cannot present owner choices, invoke a forge write, create work, or claim pull-request ownership.
+The exact subject also carries the applicable protected-path policy identity,
+revision, and complete protected-path set. When that policy binding is
+unavailable, agent mode records actionability as `UNKNOWN` rather than
+classifying a repair as safe.
 
 ## Workflow
 

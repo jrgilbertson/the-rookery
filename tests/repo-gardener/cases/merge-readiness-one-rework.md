@@ -26,8 +26,10 @@ even when a named repair was safe and entirely inside its assignment.
 >    authorized H-double-prime for the existing PR.
 > 5. An authorized Worker pushed H-double-prime. Its PR-create response is
 >    lost, so the delivery boundary reads the exact repository and Worker
->    branch. Evaluate one matching PR, then independently zero, multiple,
->    unavailable, and mismatched results.
+>    branch. Evaluate only one OPEN PR matching the exact host/repository,
+>    head repository, Worker branch, and authorized full head OID, then
+>    independently zero, multiple, unavailable, stale, closed, and mismatched
+>    results.
 > 6. The Worker requests shipping for H-double-prime. It has no tracker or
 >    delivery credential. A broker is ready to release a short-lived delivery
 >    capability after it checks the repository, branch, and full head.
@@ -46,10 +48,11 @@ even when a named repair was safe and entirely inside its assignment.
       Worker alone may later update its PR. The agent assessment never offers
       an owner choice or a merge operation.
 - [ ] In scenario 5, exactly one matching PR in the exact repository and
-      Worker branch is the only accepted reconciliation. Zero, multiple,
-      unavailable, or mismatched reads remain `UNKNOWN` and preserve saved
-      pushed state without retrying, guessing, adopting, or blindly creating a
-      duplicate PR.
+      Worker branch is the only accepted reconciliation when it is OPEN and
+      matches the exact host/repository, head repository, and authorized full
+      head OID. Zero, multiple, unavailable, stale, closed, or mismatched reads
+      remain `UNKNOWN` and preserve saved pushed state without retrying,
+      guessing, adopting, or blindly creating a duplicate PR.
 - [ ] In scenario 6, the Worker retains ownership of its shipping request but
       receives no tracker or delivery credential. The authorized broker
       revalidates the exact repository, branch, and full head immediately

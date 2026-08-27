@@ -6,17 +6,24 @@ the interactive workflow, then return after the structured output below.
 
 ## Exact subject
 
-Require a repository, pull request number, current full head OID, and the
-Worker's assigned path slice. The repository must name one host and
-owner/name pair, the pull request number must be positive, and the head must
-be a full object ID. Read the native pull request for that repository and
-number, then refuse the assessment when its current head does not exactly
-match the supplied current full head OID. Treat an unavailable read or an
-ambiguous identity as `UNKNOWN`; do not infer a subject, reuse evidence, or
-retry a provider write.
+Require a repository, pull request number, current full head OID, the Worker's
+assigned path slice, and the applicable protected-path policy. The repository
+is one certified full host/owner/name identity, the pull request number must be
+positive, and the head must be a full object ID. The protected-path policy must
+carry its identity, policy revision, and complete protected-path set; without
+that binding, actionability is `UNKNOWN`. Read the native pull request for that
+repository and number, then refuse the assessment when its current head does
+not exactly match the supplied current full head OID. Treat an unavailable
+read or an ambiguous identity as `UNKNOWN`; do not infer a subject, reuse
+evidence, or retry a provider write.
 
 Gather and grade the same read-only evidence as the ordinary assessment. Bind
-all evidence to the exact repository, pull request number, and head. A later
+all evidence to the exact repository, pull request number, head, Worker slice,
+and protected-path policy identity and revision. Capture one gathered snapshot
+of the history fingerprint, exact identity, live merge/check state, host
+policy, and linked-issue digests. Immediately before return, read and compare
+those same facts: on movement, rebuild from the new snapshot; an unavailable
+comparison or movement that cannot be rebuilt must return UNKNOWN. A later
 head change discards this result and requires a fresh assessment.
 
 ## Structured output
@@ -25,9 +32,14 @@ Return one structured result with these fields:
 
 ```json
 {
-  "repository": "owner/name",
+  "repository": "host/owner/name",
   "pull_request_number": 0,
   "head_oid": "full object ID",
+  "protected_path_policy": {
+    "identity": "certified policy identity",
+    "revision": "exact policy revision",
+    "paths": []
+  },
   "recommendation": "merge | debug | do_not_merge | unknown",
   "caps": [],
   "process_only_findings": [],
@@ -43,7 +55,8 @@ approval or incomplete review history; it never requests source work.
 problems. A material finding belongs in `actionable_in_slice_findings` only
 when its repair is safe, does not cross a protected path, and is contained by
 the supplied Worker slice. Do not manufacture an actionable classification
-when the slice is unavailable or a finding crosses its boundary.
+when the slice or protected-path policy is unavailable or a finding crosses its
+boundary.
 
 The process-only findings are recorded, never chased. The material findings
 are evidence-backed problems. The actionable in-slice findings are the strict

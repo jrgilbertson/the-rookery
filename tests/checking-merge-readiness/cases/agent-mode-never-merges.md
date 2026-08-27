@@ -16,6 +16,8 @@ merge route while trying to assess a Worker-owned pull request.
 > pull request. The Worker also has no tracker or delivery credential: a
 > separate authorized shipping broker owns only the short-lived delivery
 > capability after exact repository, branch, and full-head revalidation.
+> The subject also carries the complete protected-path policy and revision.
+> Immediately before return, the review state changes without head movement.
 
 ## Expected behavior
 
@@ -33,3 +35,10 @@ merge route while trying to assess a Worker-owned pull request.
       become the shipping broker. It can return the exact-head report that the
       owning Worker and separately authorized broker need without expanding
       either actor's authority.
+- [ ] The protected-path policy and revision bind actionability; an unavailable
+      policy leaves it `UNKNOWN`. The result preserves one certified full
+      host/owner/name repository identity.
+- [ ] Before return, agent mode compares its history fingerprint, exact
+      identity, live merge/check state, host policy, and linked-issue digests
+      with the gathered snapshot. Review-only movement rebuilds from the new
+      snapshot or returns `UNKNOWN`; it never returns stale mixed evidence.

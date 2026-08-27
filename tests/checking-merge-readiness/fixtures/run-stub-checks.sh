@@ -507,6 +507,7 @@ msg_is "mutation refused" 3 "mutation" specimen-a api graphql \
 echo "== I. unattended agent mode stays structurally assessment-only =="
 AGENT_REF="$REPO_ROOT/skills/checking-merge-readiness/references/agent-mode.md"
 AGENT_SKILL="$REPO_ROOT/skills/checking-merge-readiness/SKILL.md"
+AGENT_CASE="$REPO_ROOT/tests/checking-merge-readiness/cases/agent-mode-never-merges.md"
 if [ -f "$AGENT_REF" ] && [ -f "$AGENT_SKILL" ]; then
   pass "agent mode: dedicated reference exists"
 else
@@ -521,7 +522,15 @@ for needle in \
   'caps' \
   'process-only findings' \
   'material findings' \
-  'actionable in-slice findings'
+  'actionable in-slice findings' \
+  'protected-path policy' \
+  'policy revision' \
+  'full host/owner/name' \
+  'history fingerprint' \
+  'live merge/check state' \
+  'linked-issue digests' \
+  'rebuild from the new snapshot' \
+  'return UNKNOWN'
 do
   if [ -f "$AGENT_REF" ] && grep -Fq "$needle" "$AGENT_REF"; then
     pass "agent mode: names $needle"
@@ -549,6 +558,12 @@ PY
 then pass "agent mode: routes before interactive workflow"
 else fail "agent mode: routes before interactive workflow" "agent-mode route is missing or reaches interactive merge handling"
 fi
+if [ -f "$AGENT_CASE" ] && grep -Fq 'review state changes without head movement' "$AGENT_CASE" \
+  && grep -Fq 'protected-path policy and revision' "$AGENT_CASE"; then
+  pass "agent mode: behavioral case covers protected policy and review-only movement"
+else
+  fail "agent mode: behavioral case covers protected policy and review-only movement" "agent-mode case omitted a new subject or final-stability behavior"
+fi
 
 echo "== J. Worker delivery exactness =="
 GARDENER_SKILL="$REPO_ROOT/skills/repo-gardener/SKILL.md"
@@ -559,8 +574,10 @@ for source in "$GARDENER_SKILL" "$RECONCILIATION"; do
   for needle in \
     'uncertain PR-create response' \
     'exact repository and Worker branch' \
+    'exact host/repository, head repository, Worker branch, and authorized full head OID' \
+    'exactly one OPEN pull request' \
     'exactly one matching PR' \
-    'Zero, multiple, unavailable, or mismatched' \
+    'Zero, multiple, unavailable, stale, closed, or mismatched' \
     'UNKNOWN' \
     'saved pushed state' \
     'never retry, guess, adopt, or blindly duplicate' \

@@ -345,10 +345,11 @@ pushed state when PR creation is denied, and surface the exact file revision,
 scope, or overlap change for owner review.
 
 An uncertain PR-create response uses bounded read-only reconciliation
-in the exact repository and Worker branch. Accept exactly one matching PR
-only. Zero, multiple, unavailable, or mismatched results remain `UNKNOWN` and
-preserve saved pushed state: never retry, guess, adopt, or blindly duplicate a
-PR.
+in the exact repository and Worker branch. Accept exactly one matching PR only
+when it is exactly one OPEN pull request matching the exact host/repository,
+head repository, Worker branch, and authorized full head OID. Zero, multiple,
+unavailable, stale, closed, or mismatched results remain `UNKNOWN` and preserve
+saved pushed state: never retry, guess, adopt, or blindly duplicate a PR.
 
 ## Supervise Workers from native progress
 
@@ -386,7 +387,9 @@ state, and Worker state.
 
 After a Worker reaches `pr_ready`, the Orchestrator runs installed
 `checking-merge-readiness mode:agent` against the exact repository, PR,
-current head, and Worker slice. Cite that skill by name; do not fork it. Its
+current head, Worker slice, and the applicable protected-path policy identity,
+revision, and complete set. When that protected-path binding is unavailable,
+actionability is `UNKNOWN`. Cite that skill by name; do not fork it. Its
 structured report contains recommendation, caps, process-only findings,
 material findings, and actionable in-slice findings, and has no owner choice
 or merge route.

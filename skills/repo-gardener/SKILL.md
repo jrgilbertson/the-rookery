@@ -196,7 +196,9 @@ claim. It, setup, and Scout helpers execute no declared audit.
    preserves the local commit.
    An uncertain PR-create response triggers bounded read-only
    reconciliation in the exact repository and Worker branch. Accept exactly
-   one matching PR only. Zero, multiple, unavailable, or mismatched results
+   one matching PR only when it is exactly one OPEN pull request matching the
+   exact host/repository, head repository, Worker branch, and authorized full
+   head OID. Zero, multiple, unavailable, stale, closed, or mismatched results
    remain `UNKNOWN` and preserve saved pushed state: never retry, guess, adopt,
    or blindly duplicate a PR.
    Supervise each Worker from its branch, full HEAD, native process, PR,
@@ -216,9 +218,12 @@ claim. It, setup, and Scout helpers execute no declared audit.
     `pending`, and close the run as `partial`; never claim `pr_ready` or
     `completed`. After a Worker reaches `pr_ready`, run installed
     `checking-merge-readiness mode:agent` against the exact repository, PR,
-    current head, and Worker slice. The report-only result names recommendation,
-    caps, process-only findings, material findings, and actionable in-slice
-    findings; it never presents an owner choice or merge path. A material
+    current head, Worker slice, and the applicable protected-path policy
+    identity, revision, and complete set. If that protected-path binding is
+    unavailable, actionability is `UNKNOWN`. The report-only result names
+    recommendation, caps, process-only findings, material findings, and
+    actionable in-slice findings; it never presents an owner choice or merge
+    path. A material
     actionable in-slice finding returns to the owning Worker as one repair
     batch. That Worker repeats simplification, code review, repository gates,
     and commits H-prime; the Orchestrator post-reads H-prime, repeats the slice

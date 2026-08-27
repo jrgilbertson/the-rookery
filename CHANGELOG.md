@@ -20,8 +20,12 @@ looked" surface. GitHub Releases mirror its entries.
   and `checking-merge-readiness mode:agent` returns a report-only structured
   assessment that cannot present an owner choice or merge. Worker-owned
   shipping now uses a secretless broker that revalidates the exact delivery
-  tuple, while uncertain PR creation accepts only one exact repository-and-
-  branch match and otherwise remains saved pushed state without a retry.
+  tuple, while uncertain PR creation accepts only one OPEN PR matching the
+  exact host/repository, head repository, Worker branch, and authorized full
+  head OID; all stale, closed, unavailable, or mismatched results remain saved
+  pushed state without a retry. Agent-mode actionability now binds the complete
+  protected-path policy identity and revision, preserves the certified full
+  host/owner/name identity, and rechecks its gathered snapshot before return.
 - `repo-gardener` now supervises Workers from current native branch, HEAD,
   process, PR, check, and result facts. TUI idle is only a scheduling hint;
   bounded no-progress analysis becomes a local stall, head drift refreshes

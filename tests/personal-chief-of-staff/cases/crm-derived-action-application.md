@@ -83,10 +83,14 @@ temporary directory after its run.
 - [ ] 7 → reports manual with no write; the effect is not redirected to a
       generic mutation path or another destination.
 - [ ] Every action-only response keeps the chief-of-staff action result
-      separate from its response-scoped Source Access Audit. The audit names
-      only the canonical roles actually reread or verified now, never treats a
-      successful read as an applied mutation, and never treats `Manual`,
-      `Already satisfied`, `Failed`, or `Indeterminate` as an access state.
+      separate from its response-scoped Source Access Audit. The audit has no
+      review coverage verdict. Scan lines sit after the heading and before
+      the recovered GFM table, with compact Pre-write and Post-write lines
+      when those reads ran. Distinct table rows name only the canonical roles
+      actually reread or verified now. HTML disclosure tags fail. The audit
+      never treats a successful read as an applied mutation, and never treats
+      `Manual`, `Already satisfied`, `Failed`, or `Indeterminate` as an access
+      state.
 - [ ] Each applied or already-satisfied durable effect leaves a gradeable
       intention: the current target state comes from the pre-write reread, the
       desired effect remains the user's exact approved effect, and the future

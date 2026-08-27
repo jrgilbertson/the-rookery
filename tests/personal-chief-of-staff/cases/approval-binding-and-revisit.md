@@ -128,14 +128,16 @@ temporary directory after the run.
       column. The action reread and readback are separate **Action access**
       rows; current Weekly, task, calendar, and unresolved required-role rows
       are **Review discovery**. Unresolved required roles appear in the scan
-      lines as **Not configured**. The mutation outcome remains only in the
-      action narrative.
+      lines as **Not configured**. Phase is a table column only, not a scan
+      line. There is no second mini-table. The mutation outcome remains only
+      in the action narrative.
 - [ ] 6 → resolves action 2 first with one pre-write read, one exact write, and
       one readback. Only afterward does it run the two bounded non-mode reads;
       it applies no context-derived effect and opens no review cadence.
 - [ ] 6 → renders one Source Access Audit. Scan lines include compact
       Pre-write and Post-write lines. The recovered table has a **Phase**
       column. The action reread and readback are separate **Action access**
-      rows, while task and calendar are **Context discovery** rows. The action
-      result remains only in the action narrative, and later context does not
-      reinterpret it.
+      rows, while task and calendar are **Context discovery** rows. Phase is a
+      table column only, not a scan line. There is no second mini-table. The
+      action result remains only in the action narrative, and later context
+      does not reinterpret it.

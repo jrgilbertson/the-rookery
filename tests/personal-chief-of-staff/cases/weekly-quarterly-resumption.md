@@ -69,9 +69,10 @@ rendered response and JSONL trace. Remove the temporary directory afterward.
       approvable, and writes nothing merely because a scheduled invocation
       fired.
 - [ ] Scenarios 1 and 2 render a new response-scoped Source Access Audit after
-      the executive synthesis. It distinguishes reads performed for this
-      current review from historical evidence described by an older review and
-      never presents prior-run access as current.
+      the executive synthesis. Scan lines sit after the heading and before the
+      recovered GFM table. HTML disclosure tags fail. It distinguishes reads
+      performed for this current review from historical evidence described by
+      an older review and never presents prior-run access as current.
 - [ ] On any same-conversation resumption, stable evidence retained from the
       prior turn supports a claim only when labeled nearby as **prior-turn
       evidence — not refreshed**. It is excluded from the current Source Access

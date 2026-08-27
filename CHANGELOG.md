@@ -13,6 +13,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-gardener` now runs the exact owner-approved `setup_command` once in
+  every fresh Orchestrator and Worker worktree, after instruction discovery and
+  before repository-dependent audits or implementation. Worker envelopes carry
+  the argv unchanged; setup failure remains local, setup-argv drift stops
+  before execution, and a skipped or failed base-ref refresh is a named host
+  gap rather than authority to substitute a command or base.
 - `repo-gardener` policy now requires one owner-approved, normalized direct
   `setup_command`. First-use review carries it unchanged into later
   fresh-worktree setup, refuses invalid or unapproved commands locally, and

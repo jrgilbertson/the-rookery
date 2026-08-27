@@ -1,7 +1,8 @@
 # Review Bundle
 
 Use this shape as a flexible writing aid, not a fixed form. Omit headings that
-do not improve clarity and do not create actions merely to fill the bundle.
+do not improve clarity, except the required **Source Access Audit** heading, and
+do not create actions merely to fill the bundle.
 
 **State the most important conclusion in a complete, content-first sentence.**
 Follow with the evidence, interpretation, uncertainty, and consequence needed
@@ -10,9 +11,34 @@ separate.
 
 After that synthesis, render the current response's **Source Access Audit**.
 Place it before separately approvable actions and before the run ending. Use
-the semantics and relevant-source set in `references/source-behavior.md`; the
-table reports actual access, not intended retrieval, claim provenance, or
-action success.
+the semantics and relevant-source set in `references/source-behavior.md`. Both
+surfaces below are required. Do not wrap either in HTML disclosure tags.
+
+Under that heading, print scan lines first, then today's table. The table is
+the complete current-response role census. Do not print a spoken caption that
+says so.
+
+**Scan lines.** For a discovery-bearing response, state overall coverage as
+Sufficient, Partial, or Insufficient. An action-only response has no review
+coverage verdict. Then name every material limitation with the claim category
+it limits and the exact access result that produced it. Include attempted
+failures, partial or truncated reads, unconfigured or declined roles, Partial
+or Insufficient coverage, and failed post-write readbacks. Include
+**Accessed — no relevant evidence** only when that empty result is why a claim
+is omitted, qualified, or an absence claim is made. **Not needed** stays in
+the table only. Routine **Accessed — evidence found** discovery stays in the
+table only.
+
+Print separate compact lines for the **Pre-write target or destination reread**
+and the **Post-write verification readback** only when those reads ran. A
+failed or missing required reread or readback is a material limitation in the
+scan lines. Successful reread and readback still appear as those compact lines
+and as distinct table rows. Do not add a second mini-table. Do not put Phase
+in the scan lines.
+
+**Table.** The same response still contains today's unwrapped GFM table. It
+reports actual access, not intended retrieval, claim provenance, or action
+success.
 
 | Source or role | Result | Scope or window | Effect on claim categories |
 | --- | --- | --- | --- |
@@ -33,7 +59,8 @@ private configured names, account identifiers, source URLs, note or event
 titles, sensitive event types, content excerpts, credentials, raw queries, or
 tool telemetry. Use separate safe rows for mixed bounded slices whose results
 differ. Include every source in the relevant-source set, but do not enumerate
-irrelevant connectors.
+irrelevant connectors. Each relevant role appears exactly once as a table row.
+A scan line may name a role that also has a table row.
 
 In the effect column, name the category of claim the result supports, narrows,
 or prevents. Do not imply complete coverage from a partial scope and do not use
@@ -57,9 +84,8 @@ For each material claim:
 - distinguish observed fact from inference;
 - name a source gap only when it limits this claim.
 
-State overall coverage as sufficient, partial, or insufficient. When coverage
-is partial, identify the omitted or qualified conclusions. When it is
-insufficient, stop before presenting a weak conclusion as reliable.
+When coverage is partial, identify the omitted or qualified conclusions. When
+it is insufficient, stop before presenting a weak conclusion as reliable.
 
 Write intentions as natural prose. For each independent future outcome,
 recommendation, priority, plan, coaching intervention, experiment, boundary,

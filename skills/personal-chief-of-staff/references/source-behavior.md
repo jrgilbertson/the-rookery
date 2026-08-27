@@ -123,7 +123,7 @@ Audit**. Treat it as a transient plan-attempt-reconcile cycle:
 1. Assemble the relevant-source set for this response.
 2. Make each needed bounded read through the source's authoritative interface,
    or establish why that read cannot or should not occur now.
-3. Reconcile what actually happened into the table required by
+3. Reconcile what actually happened into the Source Access Audit required by
    `assets/review-bundle.md`.
 
 Assemble the set from all applicable sources in this order: sources required
@@ -209,10 +209,11 @@ Apply these response boundaries:
   access result never implies a mutation outcome.
 - If the same message both decides actions and requests either a new review or
   current cross-source non-mode context, finish the actions first and use one
-  audit table with a **Phase** column. Separate **Action access** from
-  **Review discovery** for a cadence request or from **Context discovery** for
-  a non-mode request. Later discovery cannot reinterpret the earlier
-  decisions, and non-mode discovery never opens a cadence.
+  Source Access Audit whose recovered table has a **Phase** column. Separate
+  **Action access** from **Review discovery** for a cadence request or from
+  **Context discovery** for a non-mode request. Later discovery cannot
+  reinterpret the earlier decisions, and non-mode discovery never opens a
+  cadence.
 - On resumption, refresh required time-sensitive evidence and report only
   access performed or re-performed for this response. Stable prior-turn
   evidence may remain conversational support only when it is labeled next to

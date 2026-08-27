@@ -83,18 +83,31 @@ partial or failed, never complete-empty.
 
 ## Expected behavior
 
-- [ ] Every branch leads with the answer-first synthesis. A compact Source
-      Access Audit follows it and never displaces the principal conclusion.
-- [ ] Every relevant configured source role appears exactly once with a safe,
-      generic label, response-scoped access result, bounded scope, and the
-      claim category that result permits or limits. It exposes no account,
-      endpoint, raw query, note title, excerpt, private identifier, or audit
-      text inside a proposed external artifact.
+- [ ] Every branch leads with the answer-first synthesis. A Source Access
+      Audit follows it and never displaces the principal conclusion. Scan
+      lines sit after the heading and before the first GFM table. The table
+      is still in the same response. HTML disclosure tags fail.
+- [ ] Every relevant configured source role appears exactly once as a table
+      row with a safe, generic label, response-scoped access result, bounded
+      scope, and the claim category that result permits or limits. It exposes
+      no account, endpoint, raw query, note title, excerpt, private
+      identifier, or audit text inside a proposed external artifact. A scan
+      line may name a role that also has a table row.
+- [ ] Branch 1 scan lines state Sufficient and do not require successful
+      discovery rows. The table still lists every relevant role. A grader
+      who sees only that assistant markdown, with no JSONL, recovers every
+      role and exact Result from the table.
 - [ ] A named, available, conclusion-material current-work role in branches 1
       and 10 is actually attempted. Omitting it or labeling it `Not needed`
       fails even if every other row is accurate.
-- [ ] Branches 1–8 implement this complete matrix; the trace, rendered row,
-      claim consequence, and any action outcome are graded as separate fields:
+- [ ] Branches 1–8 implement this complete matrix; the trace, table row,
+      scan-line promotion, claim consequence, and any action outcome are
+      graded as separate fields. Capsule checks use only the scan lines.
+      Attempted failures, truncated or partial reads, **Not configured**,
+      and **Declined** appear in the scan lines. **Not needed** stays
+      table-only. **Accessed — no relevant evidence** appears in the scan
+      lines only when that empty result is why a claim is omitted, qualified,
+      or an absence claim is made:
 
       | Observed result | Required row | Required claim effect |
       | --- | --- | --- |
@@ -114,16 +127,17 @@ partial or failed, never complete-empty.
       supports bounded absence, while the latter is partial or failed access.
 - [ ] One failed source narrows only its dependent conclusions; it does not
       erase independent evidence or become negative evidence.
-- [ ] Branch 10 includes the audit in the scheduled output, remains read-only,
-      and does not treat scheduling as approval.
+- [ ] Branch 10 includes both scan lines and the table in the scheduled
+      output, remains read-only, and does not treat scheduling as approval.
 - [ ] Makes no write without approval and keeps any later journal, task,
       calendar, or message change as its own exact, independently approvable
       action under the shared write-and-readback contract.
 - [ ] In the blinded comprehension check, a fresh reader who sees only the
-      response can identify the principal conclusion, every material access
-      gap and the claim category it limits, and the future observable signal
-      for every proposed intention.
+      response can identify the principal conclusion and the future
+      observable signal for every proposed intention. A reader who uses only
+      the scan lines, ignoring table rows, recovers every material access
+      gap, its claim category, and the exact access result.
 - [ ] Branch 11 stays non-mode and conversation-only, performs both material
       bounded reads, leads with useful priority context, includes the
-      current-response audit, preserves the calling workflow's ownership, and
-      applies no action.
+      current-response audit's scan lines and table, preserves the calling
+      workflow's ownership, and applies no action.

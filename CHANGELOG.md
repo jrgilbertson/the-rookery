@@ -29,6 +29,16 @@ looked" surface. GitHub Releases mirror its entries.
   native one-dash, two-dash, and slash switch markers.
   Windows PowerShell requires explicit file mode, while PowerShell 7 retains
   positional file mode and recognizes documented file-mode aliases.
+- Interactive `checking-merge-readiness` option 1 (Proceed to merge) now
+  kicks off one forge merge after the existing fingerprint and host-policy
+  re-check, using the repository's default merge method. A cold "merge this
+  PR" activates the skill but still requires that menu choice. Unattended
+  `repo-gardener` runs still never select option 1 and still never merge.
+- `managing-personal-crm` can recover one bounded public X read after a
+  sandbox network or session-state denial only with fresh host approval and
+  enforced read-only capabilities. It rejects private-derived query scope,
+  keeps turn exhaustion final, and preserves Partial coverage when X is
+  unavailable.
 - README and `WORKFLOWS.md` now describe the catalog as a portable skill
   set inside a personal loop: `repo-gardener` listings stay two sentences,
   Orca is the IDE this workflow runs in rather than a requirement, `ce-plan`

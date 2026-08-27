@@ -6,9 +6,10 @@
 
 My workflow moves through five core jobs: Research, Plan, Design, Build, and Ship. Two feedback loops keep it current: Maintain turns recurring problems into tests, rules, and documented lessons, while Learn turns experience into linked notes and new research questions. Each section explains how I approach the job and which tools and commands I use. The Rookery skills in those sections install on their own. Compound Engineering, Impeccable, and Orca are the surrounding stack I run them in.
 
-When a request could start in more than one place, [Routing work](ROUTING.md)
-explains how I select the first workflow owner without starting or supervising
-the work.
+[Routing work](ROUTING.md) documents how I select the first workflow owner,
+starting topology, and model profile without starting a downstream workflow. I
+use it when starting new work or deciding whether a proven in-flight owner
+should continue.
 
 ## Foundations
 

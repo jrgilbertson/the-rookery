@@ -18,6 +18,9 @@ Provenance: Observed failure where stale, cross-boundary, partial, and bypassed 
 > a non-string evidence path, and a non-string assessment receipt reference.
 > Include an outside-tree bundle transport with a missing, altered, or
 > cross-revision evidence or result document.
+> Include same-kind evidence/result bytes and their digests copied from an old
+> revision into a new-revision bundle, and from one Worker/session bundle into
+> another bundle at the same head.
 > Return one assessment receipt per variant without an owner menu.
 
 ## Expected behavior
@@ -34,3 +37,6 @@ Provenance: Observed failure where stale, cross-boundary, partial, and bypassed 
   result documents are digest-matched and bound to this exact repository,
   subject, and revision; a missing, altered, stale, or mixed transport fails
   closed.
+- [ ] Same-kind inline evidence/result documents copied from another revision or
+  Worker/session bundle fail even when mutable outer transport labels are
+  changed to the recipient head and bundle.

@@ -17,8 +17,10 @@ looked" surface. GitHub Releases mirror its entries.
   evidence from receipt packaging. One complete same-session bundle may carry
   digest-matched evidence and results outside the assessed commit, and missing
   published per-kind schema documentation or an alternate result location is
-  no longer a stop by itself; missing, stale, mixed, cross-boundary, or
-  unsupported evidence remains `action-required`.
+  no longer a stop by itself. Inline evidence/result bytes bind the exact
+  repository, subject, revision, bundle, and receipt identity, so missing,
+  stale, mixed, cross-boundary, or unsupported evidence remains
+  `action-required`.
 - `repo-gardener` now carries portable Worker lineage facts: source
   Orchestrator identity, exact Git base, setup result, Worker branch, and
   returned native identifiers. Orca records a parent-worktree link when it is

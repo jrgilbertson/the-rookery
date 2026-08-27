@@ -65,13 +65,15 @@ bundle, reject duplicate receipt identities and unreferenced substitutes, and
 fail closed when any reference is missing, ambiguous, or cannot be inspected.
 
 For an outside-tree source, the evidence reference carries the literal
-`transport: "bundle-inline"`, the live `exact_revision`, one evidence document
-and one result document, and a SHA-256 digest for each document. The assessment
-accepts that alternate packaging only when both digests match, the receipt and
-transport name the same live revision, and the documents satisfy every
-applicable substantive check. It does not discover a second bundle, combine
-documents from concurrent Workers, or fill missing transport fields from a
-repository path.
+`transport: "bundle-inline"`, the live `exact_revision`, one nonempty
+same-session `bundle_id`, one evidence document and one result document, and a
+SHA-256 digest for each document. The evidence and result documents each carry
+an identical `transport_identity` inside those digest-covered bytes: exact
+repository, subject, revision, bundle ID, and receipt ID. The assessment accepts
+that alternate packaging only when both digests and both identities match the
+live receipt and checkout, and the documents satisfy every applicable
+substantive check. It does not discover a second bundle, combine documents from
+concurrent Workers, or fill missing transport fields from a repository path.
 
 ## Assessment envelope
 
@@ -117,8 +119,9 @@ support the claimed outcome; a status word alone is not evidence. A receipt is
 fresh only when:
 
 - the referenced evidence exists with that digest at `exact_revision`, or the
-  selected bundle carries complete digest-matched evidence and result documents
-  bound to that same `exact_revision`;
+selected bundle carries complete digest-matched evidence and result documents
+  whose digest-covered identities bind that same repository, subject,
+  `exact_revision`, bundle, and receipt;
 - the receipt observation is not earlier than the exact commit time; and
 - no later edit to the described evidence exists outside `exact_revision`.
 
@@ -175,7 +178,8 @@ The chain contains:
 A clean `pass` requires every applicable chain receipt to report a successful
 or `not applicable` result, with no unresolved finding and no bypass. A missing
 receipt, stale receipt, cross-repository, cross-subject, or cross-revision
-binding, empty or mixed bundle evidence inventory, missing evidence, digest mismatch,
+binding, cross-bundle or cross-receipt transport identity, empty or mixed bundle
+evidence inventory, missing evidence, digest mismatch,
 substantively unsupported outcome, unresolved finding, uncertain
 classification, narrative-only claim, attestation, or bypass request yields
 `action-required` with the exact defect named. Never invent or repair evidence

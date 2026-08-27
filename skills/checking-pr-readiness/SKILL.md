@@ -26,7 +26,8 @@ receipt and never presents the Minto readout or owner menu. One complete
 same-session bundle remains required and binds the exact subject and revision;
 when that evidence is otherwise complete and current, its unpublished per-kind
 schema documentation or outside-tree result transport is packaging, not a
-readiness gap.
+readiness gap. Every inline evidence/result pair must carry that repository,
+subject, revision, bundle, and receipt binding inside its digest-covered bytes.
 
 The gate is read-only. Companion skills own edits, reviews, and capture; the host
 repository's hooks and task runners own deterministic re-runs. This skill

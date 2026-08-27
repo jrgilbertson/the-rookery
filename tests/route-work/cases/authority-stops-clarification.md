@@ -1,7 +1,7 @@
 # Clarification, availability, and authority stop cleanly
 
-Provenance: user feedback — routing asks one focused question at a time until
-the starting setup is clear without performing downstream discovery.
+Provenance: user feedback — routing asks the smallest independent question
+batch that clarifies the starting setup without performing downstream discovery.
 
 ## Prompt
 
@@ -29,11 +29,14 @@ the starting setup is clear without performing downstream discovery.
 > 7. The selected workflow itself is stated unavailable.
 > 8. A grill is requested without document-write authority; separately, an
 >    implementation is authorized but commit and publication are unstated.
+> 9. Two coequal workstreams have no dependency order. The operator requires
+>    Orca involvement but has not chosen supervised coordination or full
+>    ownership handoff.
 
 ## Expected behavior
 
-- [ ] Item 1 asks one focused question per response, asks again after the first
-      answer, then routes the settled unplanned outcome to `ce-plan`.
+- [ ] Item 1 asks only the one currently answerable question in each response,
+      then routes the settled unplanned outcome to `ce-plan`.
 - [ ] Item 2 returns `Insufficient input` because the operator cannot supply
       the required routing fact.
 - [ ] Item 3 returns `Unsupported in v1` with the public workflow-catalog URL
@@ -45,5 +48,7 @@ the starting setup is clear without performing downstream discovery.
 - [ ] Every stop gives a reason and next prerequisite but no executable kickoff.
 - [ ] Item 8 permits only the supplied work: no domain-model or ADR write for
       the grill, and no commit, push, PR, publish, or merge for implementation.
+- [ ] Item 9 returns one clarification with exactly two numbered questions:
+      which workstream starts first and which required Orca mode to use.
 - [ ] No item probes availability, persists state outside the visible
       conversation, performs downstream discovery, or escalates effort.

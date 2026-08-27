@@ -19,15 +19,17 @@ Route only when the operator explicitly asks to route or kick off work. A
 planning, debugging, design, implementation, or issue request without that
 intent proceeds through its normal workflow and does not produce a route card.
 
-One routing attempt may span multiple conversational turns. Ask one focused
-routing question at a time when the supplied evidence and contract defaults do
-not determine the starting setup. Treat each answer as additional supplied
-evidence and continue until the setup is clear, a required artifact is
-unavailable, or the operator cannot supply a required routing fact. Route
-product discovery, diagnosis, planning, and design questions to their owning
-workflow instead of resolving that work here. Each response returns one route,
-continuation, clarification, or stop and persists no routing state outside the
-visible conversation.
+One routing attempt may span multiple conversational turns. Ask the smallest
+complete batch of currently answerable routing questions. Include every
+question needed to determine the starting setup whose answer does not depend on
+another question in the batch. Defer dependent questions until their
+prerequisites are settled. Use supplied evidence and contract defaults before
+asking. Continue until the setup is clear, a required artifact is unavailable,
+or the operator cannot supply a required routing fact.
+Route product discovery, diagnosis, planning, and design questions to their
+owning workflow instead of resolving that work here. Each response returns one
+route, continuation, clarification, or stop and persists no routing state
+outside the visible conversation.
 
 ## Choose the first owner
 
@@ -53,8 +55,8 @@ That stop contains no executable kickoff and links only to the public catalog.
 ### Ambiguity and missing input
 
 - For coequal workstreams with no dependency order, ask which one starts first.
-- Ask one focused question at a time only when its answer can change the
-  workflow, topology, profile, Orca involvement, or placement.
+- Ask only about a choice that can change the workflow, topology, profile, Orca
+  involvement, or placement.
 - When the remaining uncertainty belongs to the downstream work, route to its
   workflow instead of continuing the clarification.
 - Route a self-contained request without demanding an artifact. If a named or
@@ -263,7 +265,7 @@ Resume with: <stable locator, current phase, decisive context, and next action>
 
 ```markdown
 ## Clarification
-<one focused routing question>
+<one unnumbered focused routing question, or a numbered list of related independent routing questions>
 ```
 
 ### Stop

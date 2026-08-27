@@ -13,6 +13,8 @@ question from a ready route without interpreting prose variants.
 ## Expected behavior
 
 - [ ] Returns exactly one response beginning `## Clarification`.
-- [ ] The next nonblank line is one question that distinguishes tracker truth
-      from implementation.
-- [ ] Contains no Owner, Pattern, Kickoff, named stop, or second question.
+- [ ] The next nonblank line is one focused question that distinguishes tracker
+      truth from implementation, and the response ends after it.
+- [ ] Contains no Workflow, Setup, copy/paste kickoff, named stop, second
+      question, or Markdown bold label; a later answer may receive another
+      clarification response.

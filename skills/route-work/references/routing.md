@@ -19,12 +19,15 @@ Route only when the operator explicitly asks to route or kick off work. A
 planning, debugging, design, implementation, or issue request without that
 intent proceeds through its normal workflow and does not produce a route card.
 
-One invocation performs one read-only assessment and returns one route card,
-continuation, clarification question, or stop, then exits. If a clarification
-is necessary, the operator's answer joins the original evidence for the same
-bounded conversational attempt. The next assessment returns a route,
-continuation, or named stop. Use `Insufficient input` when the answer still
-does not resolve an owner. Ask no second question and persist no routing state.
+One routing attempt may span multiple conversational turns. Ask one focused
+routing question at a time when the supplied evidence and contract defaults do
+not determine the starting setup. Treat each answer as additional supplied
+evidence and continue until the setup is clear, a required artifact is
+unavailable, or the operator cannot supply a required routing fact. Route
+product discovery, diagnosis, planning, and design questions to their owning
+workflow instead of resolving that work here. Each response returns one route,
+continuation, clarification, or stop and persists no routing state outside the
+visible conversation.
 
 ## Choose the first owner
 
@@ -50,11 +53,15 @@ That stop contains no executable kickoff and links only to the public catalog.
 ### Ambiguity and missing input
 
 - For coequal workstreams with no dependency order, ask which one starts first.
-- For any other ambiguity, ask the one question that most narrows the possible
-  owner set.
+- Ask one focused question at a time only when its answer can change the
+  workflow, topology, profile, Orca involvement, or placement.
+- When the remaining uncertainty belongs to the downstream work, route to its
+  workflow instead of continuing the clarification.
 - Route a self-contained request without demanding an artifact. If a named or
   required primary artifact is missing or unreadable, return
   `Insufficient input`.
+- Return `Insufficient input` when the operator cannot supply a required
+  routing fact.
 - Never split, rank, or order coequal workstreams on the operator's behalf.
 
 ## Recommend a starting topology
@@ -81,7 +88,7 @@ decisions.
 | Axis | Choice | Meaning |
 |---|---|---|
 | Orca involvement | None | Proceed without Orca coordination |
-| Orca involvement | Supervised `/orchestration` | The current coordinator remains the sole human-facing owner and integrator and loads Orca's installed version-matched contract |
+| Orca involvement | Supervised /orchestration | The current coordinator remains the sole human-facing owner and integrator and loads Orca's installed version-matched contract |
 | Orca involvement | Full ownership handoff | Human-facing ownership transfers to the receiving worktree or agent; the sender gains no monitoring duty |
 | Placement | Current worktree or isolated worktree | Use isolation for concurrent mutation; disjoint write scopes are still required before parallel writes |
 
@@ -203,7 +210,7 @@ The named stops are:
 
 | Stop | Use when | Next prerequisite |
 |---|---|---|
-| `Insufficient input` | The single clarification did not resolve an owner, or a named or required primary artifact is unavailable | Supply the missing discriminating fact or readable artifact |
+| `Insufficient input` | A named or required primary artifact is unavailable, or the operator cannot supply a required routing fact | Supply the missing discriminating fact or readable artifact |
 | `Unsupported in v1` | The first unresolved effect falls outside the seven startup owners | Choose from the public workflow catalog or request a supported startup route |
 | `Owner unavailable` | The selected workflow is confirmed unavailable | Make that workflow available or choose how to proceed outside the router |
 | `Profiles exhausted` | All three profiles for the selected role are stated unavailable | Supply an available profile or updated availability |
@@ -211,65 +218,61 @@ The named stops are:
 Each stop contains its reason and next prerequisite, with no owner, profile, or
 executable kickoff.
 
-## Return one portable card
+## Return one portable response
 
 ### Ready route
 
-```markdown
+````markdown
 ## Route
+Workflow: <one startup workflow>
+Setup: <topology and reason>; <role — provider / model / effort entries>; availability <confirmed or unverified>; Orca <choice>; placement <current worktree or isolated worktrees>
 
-**Owner:** <one startup owner>
+## Copy/paste kickoff
+```text
+Start this work with <startup workflow>.
+Use this setup: <topology>; <role — provider / model / effort entries>; availability <confirmed or unverified>; Orca <choice>; placement <choice>.
 
-**Pattern:** <topology> — <why it fits>; <role>: <provider> / <model> / <effort>
-
-### Kickoff
-
-- **Objective:** <the next job owned by this workflow>
-- **Verifiable end state:** <observable completion condition>
-- **Start here:** <stable artifact locator and first action>
-- **Decisive facts:** <supplied facts that determined the route>
-- **Constraints:** <scope, safety, and supplied authority>
-- **Evidence gaps:** <material unknowns that do not block kickoff, or none>
-- **Authority gates:** <external or durable actions still requiring approval>
+Objective: <the next job owned by this workflow>
+Done when: <observable completion condition>
+Start from: <stable artifact locator and first action>
+Facts: <supplied decisive facts>
+Constraints: <scope, safety, and supplied authority>
+Evidence gaps: <material unknowns that do not block kickoff, or none>
+Authority: <external or durable actions still requiring approval>
 ```
+````
 
-For Lead + bounded workers, `Pattern` names both lead and worker profiles. Add
-advisor use, Orca involvement, placement, conditional handoff, availability,
-or `Active ownership unverified` only when material. A conditional handoff is a
-preview controlled by the active owner; owner-changing evidence requires a new
-explicit routing request, while topology-only evidence stays with the current
-owner. Summarize supplied artifacts rather than copying them.
+For Lead + bounded workers, the setup names both profiles and uses isolated
+worktrees. Add advisor use, conditional handoff, or
+`Active ownership unverified` only when material. A conditional handoff remains
+controlled by the active workflow;
+owner-changing evidence requires a new explicit route. Summarize supplied
+artifacts rather than copying them. The fenced kickoff is an inert portable
+prompt written without Markdown delimiters; the operator, not the router, uses
+it.
 
 ### Continuation
 
 ```markdown
 ## Continuation
-
-**Owner:** <proven active owner>
-
-**Resume with:** <stable locator, current phase, decisive context, and next action>
+Owner: <proven active owner>
+Resume with: <stable locator, current phase, decisive context, and next action>
 ```
-
-A continuation contains no duplicate kickoff.
 
 ### Clarification
 
 ```markdown
 ## Clarification
-
-<the single question that most narrows the owner set>
+<one focused routing question>
 ```
 
 ### Stop
 
 ```markdown
 ## Stop
-
-**Stop:** <named stop>
-
-**Reason:** <why routing cannot proceed>
-
-**Next prerequisite:** <what would permit a new assessment>
+Stop: <named stop>
+Reason: <why routing cannot proceed>
+Next prerequisite: <what would permit a new assessment>
 ```
 
 For `Unsupported in v1`, include the absolute public workflow-catalog URL in

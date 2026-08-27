@@ -14,6 +14,6 @@ its tables here.
 ## Assess, render, stop
 
 1. Assess the request under the reference.
-2. Render exactly one of its Markdown cards without changing the heading or
-   field labels.
+2. Render exactly one of its response templates without changing the heading
+   or field labels.
 3. Stop immediately after the card.

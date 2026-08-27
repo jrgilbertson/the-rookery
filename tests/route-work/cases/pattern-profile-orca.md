@@ -29,8 +29,12 @@ must not become workflow ownership or unbounded fan-out.
       orchestrator/planner profile for the lead, and primary executor profile
       for workers.
 - [ ] Item 2 recommends supervised `/orchestration` and isolated worktrees;
-      Orca is not the owner and no CLI grammar is invented.
+      its copy/paste block includes both lead and worker profiles, Orca is not
+      the owner, and no CLI grammar is invented.
 - [ ] Items 3–4 select Staged delivery and Evaluator loop, respectively; the
       evaluator loop names one round and a stop condition.
 - [ ] No item dispatches agents, creates worktrees, escalates effort, or starts
       the selected workflow.
+- [ ] Every item returns plain labels and a fenced kickoff that names its
+      workflow, complete setup, objective, done condition, and authority, with
+      no Markdown delimiters inside the block.

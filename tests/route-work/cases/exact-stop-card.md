@@ -13,7 +13,7 @@ form without an executable kickoff.
 ## Expected behavior
 
 - [ ] Returns exactly one response beginning `## Stop`.
-- [ ] Uses the exact `Stop`, `Reason`, and `Next prerequisite` labels and names
-      `Unsupported in v1`.
+- [ ] Uses plain `Stop`, `Reason`, and `Next prerequisite` labels without `**`
+      and names `Unsupported in v1`.
 - [ ] Includes the absolute public `WORKFLOWS.md` URL and no owner, profile, or
       executable kickoff.

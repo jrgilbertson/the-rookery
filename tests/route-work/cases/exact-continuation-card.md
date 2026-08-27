@@ -13,6 +13,7 @@ a duplicate kickoff or schema drift.
 ## Expected behavior
 
 - [ ] Returns exactly one response beginning `## Continuation`.
-- [ ] Uses the exact `Owner` and `Resume with` labels, names Jordan, and retains
-      the stable locator and current phase.
-- [ ] Contains no Pattern, Kickoff, clarification question, or named stop.
+- [ ] Uses plain `Owner` and `Resume with` labels without `**`, names Jordan,
+      and retains the stable locator and current phase.
+- [ ] Contains no Setup, copy/paste kickoff, clarification question, or named
+      stop.

@@ -32,3 +32,5 @@ must not displace the first unresolved effect.
 - [ ] Item 8 returns `Unsupported in v1`, includes the absolute public
       `WORKFLOWS.md` URL, and emits no kickoff.
 - [ ] Every supported item uses one owner only and begins no downstream work.
+- [ ] Every supported item includes a plain-text copy/paste kickoff with the
+      selected workflow, complete setup, and preserved authority.

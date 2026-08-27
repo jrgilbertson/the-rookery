@@ -34,3 +34,5 @@ certify readiness, or duplicate a proven phase owner.
 - [ ] Item 7 routes the child's unresolved effect to `ce-plan`; the supplied
       non-blocking family gap does not displace the directly named child.
 - [ ] All conclusions use supplied family and ownership state only.
+- [ ] Every ready route includes a plain-text copy/paste kickoff; continuation
+      remains compact and contains no duplicate kickoff.

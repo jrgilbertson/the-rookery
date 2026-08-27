@@ -64,6 +64,26 @@ refresh needed to establish a fresh worktree names `base-ref refresh host gap`;
 it does not invent a base, substitute a command, or start setup or dependent
 work.
 
+## Preserve Worker worktree lineage
+
+Before dispatch, the Orchestrator records the source Orchestrator identity,
+the exact base revision, and that source worktree's setup result in the Worker
+input envelope. The adapter verifies those facts before implementation and
+returns the same source identity, Worker branch, base, setup result, and native
+repository, full HEAD, PR, and check identifiers in its result envelope. Those
+portable facts are required across harnesses; they are not a policy-level Orca
+field or a second workflow service.
+
+When Orca exposes a native parent-worktree link, its Worker worktree is a child
+of the source Orchestrator worktree and the adapter records that native link.
+When that capability is unavailable, the adapter creates the Worker worktree
+from the same exact Git base and records `lineage capability unavailable`; it
+does not invent a parent link, replace the base, or omit the portable facts.
+A mismatch in the source identity, base revision, or setup result stops that dispatch before implementation.
+Canonical tracker identity remains separate:
+for example, a Corvly Linear issue and its revision are not GitHub branch, PR,
+or check delivery facts and neither substitutes for the other.
+
 Immediately before setup, refresh the protected default-branch policy only to
 detect a change from the opening revision and exact argv. A difference stops
 pre-setup validation before either the opening or changed command executes;

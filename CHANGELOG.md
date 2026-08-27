@@ -13,6 +13,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-gardener` now carries portable Worker lineage facts: source
+  Orchestrator identity, exact Git base, setup result, Worker branch, and
+  returned native identifiers. Orca records a parent-worktree link when it is
+  available; other harnesses record `lineage capability unavailable` while
+  preserving the same facts, and mismatches stop before implementation.
 - `repo-gardener` now treats declared gate-prerequisite health as a setup
   outcome. A required unhealthy prerequisite blocks only its dependent gate and
   work, while an unavailable optional environment blocks only its affected

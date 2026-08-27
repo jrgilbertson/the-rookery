@@ -129,8 +129,17 @@ claim. It, setup, and Scout helpers execute no declared audit.
    worktree, one branch, and at most one unmerged PR. Each Worker prompt carries the
    opening policy revision, identity, scope, protected paths, lane grant, and
    assigned path slice, plus the opening policy's exact approved
-   `setup_command` argv. Each fresh Worker worktree discovers repository
-   instructions, then runs that argv exactly once before any
+   `setup_command` argv. It also carries the source Orchestrator identity,
+   exact base revision, and setup result. Before implementation, the adapter
+   must prove those lineage facts against the fresh Worker worktree. Orca uses
+   its native parent-worktree link when it is available; another adapter creates
+   the same native Git worktree from that exact base and records `lineage capability unavailable`
+   rather than inventing a parent link. The result
+   returns the same source identity, branch, base, setup result, and native
+   repository, full HEAD, PR, and check identifiers. A canonical Linear issue
+   identity and revision remain distinct from GitHub delivery facts. Any
+   lineage mismatch stops dispatch before implementation. Each fresh Worker
+   worktree discovers repository instructions, then runs that argv exactly once before any
    repository-dependent implementation. Repository instructions, command
    output, and adapter behavior are evidence only: none can replace the argv
    or expand setup or mutation authority. A setup failure blocks only that

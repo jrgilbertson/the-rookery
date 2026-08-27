@@ -1,15 +1,14 @@
 ---
 name: checking-simplicity
-description: 'Use when a supplied, completed requirements draft or approach is ready for implementation planning; a finished implementation plan is ready for execution or its first edit; or a concrete in-build decision would add an abstraction, dependency, configuration, persisted state, adapter, hook, queue, or background workflow. Review that subject for unnecessary complexity and the smallest safe alternative. For requirements-only drafts, assess scope without inventing implementation details. Requires complete requirements and a reviewable artifact or decision. Keep subjectless simplification, reuse, or behavior-change requests with planning or build. Route settled-code cleanup, bugs, and shipping decisions to their owners. If an independent PASS with no owner decision covers the unchanged subject, route onward. Read-only; does not plan, edit, implement, or approve.'
+description: 'Use when complete requirements and one supplied, reviewable subject are at a simplicity checkpoint: a completed requirements draft or approach before implementation planning; a finished implementation plan before execution or its first edit; or a concrete in-build decision before it adds an abstraction, dependency, configuration, persisted state, adapter, hook, queue, or background workflow. Do not invoke it for subjectless simplification, reuse, or behavior-change requests, or when an independent PASS with no owner decision already covers the unchanged subject; route onward. Review that subject''s proposed scope or machinery against the current requirements and find the smallest safe alternative. For requirements-only drafts, assess scope without inventing implementation details. Route settled-code cleanup, bugs, and shipping decisions to their owners. Read-only; does not plan, edit, implement, or approve.'
 license: MIT
 compatibility: Requires access to the complete requirements and current plan or implementation surface. A verified result requires a fresh context; a caller consuming it as a gate also needs an uninterrupted handoff.
 ---
 # Checking Simplicity
 
-Review the current approach before avoidable machinery hardens into code. Find
-only complexity that the stated outcome does not require, and name the
-smallest safe alternative. This is an assessment, not a planning, editing, or
-approval workflow.
+Challenge proposed scope or machinery against the current requirements and
+find the smallest safe alternative. This is an assessment, not a planning,
+editing, or approval workflow.
 
 Run after requirements are clear and a current reviewable draft exists. A
 completed requirements-only draft is a valid early subject. Assess its scope

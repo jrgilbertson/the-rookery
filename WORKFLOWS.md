@@ -57,7 +57,7 @@ Agents that weren't in the planning session review the plan against the current 
 - `ce-plan`. Turns a clear intent into one plan of decisions, units, files, tests, and risks. It does not write the implementation. Use it when the outcome is clear enough to plan execution.
 - `ce-debug`. Diagnoses a bug before anyone proposes a fix. Use it when the work begins with broken or unexpected behavior.
 - `ce-pov`. Gives a decisive, project-grounded answer to a focused planning question. Use it when one decision is blocking the plan and another research pass would add little.
-- [`checking-simplicity`](skills/checking-simplicity/SKILL.md). Gives completed requirements and draft approaches an independent, read-only scope check before implementation planning, without inventing technical details. Run it again on the finished implementation plan before execution, and before an in-build decision adds machinery the current requirements may not justify.
+- [`checking-simplicity`](skills/checking-simplicity/SKILL.md). Challenges proposed scope or machinery against the current requirements. Use it before a completed requirements draft or approach enters implementation planning, and again before a finished implementation plan enters execution. When it finds unnecessary complexity, it names the smallest safe alternative without inventing technical details.
 
 After ordinary clarification, I sometimes have one coherent decision tree left where the answers depend on each other. I consider a targeted grilling session when at least one decision would be costly to reverse or affect a broad surface, one answer constrains the questions below it, or the agent would otherwise guess at an acceptance boundary. For example, authentication ownership may determine session lifetime and data access, so those decisions benefit from being settled parent-first. Several unrelated unknowns stay in `ce-brainstorm`. Clear requirements and routine, reversible choices go directly to `ce-plan`.
 
@@ -79,7 +79,7 @@ What must be true before moving on:
 - **Constraints are explicit.** Scope, approval gates, non-goals, and the quality bar.
 - **Inputs and tools are known.** The sources, systems, and repos the work draws on.
 - **The artifact is defined.** The work will produce a merged PR, a findings document, or a decision someone can act on.
-- **The approach passed a simplicity checkpoint.** The current subject has an independent `PASS` with `Owner decision required: no`; any revision was checked again before implementation.
+- **The current subject passed a simplicity checkpoint.** It has an independent `PASS` with `Owner decision required: no`; any revision was checked again before implementation.
 
 When a plan needs issue structure, [`managing-issues`](skills/managing-issues/SKILL.md) manages parent, sub-issue, and blocker relationships in the repository's GitHub or Linear tracker. It reports which required open issues with no required sub-issues are ready to start now. Build still decides models, worktrees, stacks, and sequencing.
 
@@ -130,13 +130,13 @@ The in-build toolkit:
 - [Orca](https://github.com/stablyai/orca). Runs parallel worktrees, delegates to agents across harnesses, and supports element-level browser feedback. Use it when a plan can be split into independent slices or an interface needs direct visual iteration.
 - **Impeccable, mid-build.** Critiques and polishes visual work, audits technical quality, hardens edge cases, and offers three variants for a selected element with the option to apply one to source. Use it while building an interface to keep the implementation aligned with the design brief and production constraints.
 - `ce-test-browser` and `ce-dogfood`. Verify the browser flows a branch touched, with dogfood able to fix small breakages, add regression tests, and commit the changes. Use `ce-test-browser` for a targeted check and `ce-dogfood` for a hands-off repair pass.
-- [`checking-simplicity`](skills/checking-simplicity/SKILL.md). Re-checks the approach before a slice adds another module, interface, dependency, persisted state, configuration surface, adapter, hook, queue, cache, state machine, or background workflow. It returns the smallest safe alternative; the building workflow owns any revision.
+- [`checking-simplicity`](skills/checking-simplicity/SKILL.md). Challenges proposed machinery against the current requirements before a slice adds another module, interface, dependency, persisted state, configuration surface, adapter, hook, queue, cache, state machine, or background workflow. When it finds unnecessary complexity, it names what can be removed, reused, or deferred and the smallest safe alternative; the building workflow owns any revision.
 
 What must be true before moving to Ship:
 
 - **CI is green for the slice.** Every suite the change calls for passes, including browser checks when it touches the UI, and each test exercises the shipped code path rather than a stub.
 - **The slice stayed bounded.** Each agent built what its slice named, and scope changes went back through Plan.
-- **New machinery earned its place.** Each material in-build design change received an independent `PASS` with `Owner decision required: no` before it landed.
+- **New machinery was checked.** Each material in-build design change received an independent `PASS` with `Owner decision required: no` before it landed.
 - **Design held.** Interface work stayed inside the design system and the brief.
 
 ## Ship

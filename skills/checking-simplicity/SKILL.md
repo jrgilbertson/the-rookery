@@ -1,6 +1,6 @@
 ---
 name: checking-simplicity
-description: Use when a current draft software plan or proposed implementation approach needs a simplicity check before coding, including requests to simplify a plan, avoid overengineering, choose the smallest reliable approach, or reuse an existing mechanism. Also use at an in-build decision point before adding abstractions, dependencies, configuration, persisted state, adapters, hooks, or background workflows. Skip read-only work and prescribed mechanical edits with no design choice. Returns a read-only verdict; it does not plan, edit, review correctness, clean up settled code, or decide shipping readiness.
+description: Use first now, before the next planner or executor, at either completed planning handoff with a current reviewable subject. Run before a completed requirements or approach draft enters implementation planning; for a requirements-only subject, assess scope choices without inventing implementation details. Run again before a finished implementation plan enters execution or its first code edit. Do not use when a request starts without a current requirements draft, plan, or approach, even if it asks to plan and implement. Also use when asked to simplify or right-size a plan, avoid overengineering, reuse existing code, or before an in-build decision adds an abstraction, dependency, configuration, persisted state, adapter, hook, queue, or background workflow. Requires complete requirements. Skip unfinished planning, read-only or mechanical work, settled-code cleanup, visual design, correctness review, and shipping decisions. Returns a read-only verdict; does not plan or implement.
 license: MIT
 compatibility: Requires access to the complete requirements and current plan or implementation surface. A verified result requires a fresh context; a caller consuming it as a gate also needs an uninterrupted handoff.
 ---
@@ -11,12 +11,16 @@ only complexity that the stated outcome does not require, and name the
 smallest safe alternative. This is an assessment, not a planning, editing, or
 approval workflow.
 
-Run after requirements are clear and a draft approach exists, before the first
-implementation edit. Run again only when the required behavior or the
-implementation shape materially changes. During a build, use it at the
-decision point before adding another module, interface, dependency, persisted
-state or schema, configuration surface, adapter or provider layer, hook, queue,
-cache, state machine, or background workflow.
+Run after requirements are clear and a current reviewable draft exists. A
+completed requirements-only draft is a valid early subject: assess its scope
+and requirement choices without proposing implementation details. In a
+planning workflow, run before that draft deepens into an implementation plan,
+and again before a finished implementation plan hands off to execution. At the
+latest, run before the first implementation edit. Run again only when the
+required behavior or implementation shape materially changes. During a build,
+use it at the decision point before adding another module, interface,
+dependency, persisted state or schema, configuration surface, adapter or
+provider layer, hook, queue, cache, state machine, or background workflow.
 
 When configuring how a caller schedules this checkpoint, or when the harness
 cannot dispatch a fresh context, read
@@ -28,8 +32,8 @@ Bind the review to both:
 
 - the current objective, required behavior, hard constraints, and verification
   criteria; and
-- one current subject: the draft plan or proposed approach, or the complete
-  in-progress implementation surface.
+- one current subject: the completed requirements draft, proposed approach,
+  implementation plan, or complete in-progress implementation surface.
 
 Infer the subject from the request and available evidence. Plan and
 implementation are input shapes, not separate modes. For implementation,
@@ -94,6 +98,12 @@ Start with what can disappear. Prefer removal, reuse, or deferral over renaming
 the same machinery. Do not turn line count, file count, or a numeric complexity
 budget into the verdict.
 
+At a requirements-only handoff, compare every added capability, variation,
+lifecycle state, policy, and operator control with the originating objective
+and hard constraints. Name a smaller requirements set when speculative scope
+can disappear, and name acceptance tests for that set and every protected
+constraint. Do not choose files, APIs, dependencies, or architecture.
+
 ## Protect essential complexity
 
 Never simplify away required behavior, authorization boundaries, security,
@@ -105,6 +115,9 @@ Do not reduce the requested scope. When materially different smaller outcomes
 would each be valid, set the owner-decision flag and ask the one decision that
 separates them. The flag is independent of the verdict: an approach can need
 changes and an owner decision at the same time.
+
+When the subject changes behavior, name in `Protected complexity` the
+proportionate tests that must continue to prove each protected boundary.
 
 ## Return the assessment
 
@@ -134,9 +147,9 @@ On a clean pass, keep `Findings` to `none`; do not invent a concern. When reuse
 of an existing mechanism is part of the smallest safe approach, name it under
 `Protected complexity` with the required constraints it preserves. On
 `CHANGES_NEEDED`, every finding needs a pointer to both the proposed mechanism
-and the current requirement it fails to serve. Return the assessment to the
-caller. Do not revise the plan, edit files, configure hooks, commit, or approve
-shipping.
+or scope choice and the current objective or requirement it fails to serve.
+Return the assessment to the caller. Do not revise the plan, edit files,
+configure hooks, commit, or approve shipping.
 
 ## Boundaries
 

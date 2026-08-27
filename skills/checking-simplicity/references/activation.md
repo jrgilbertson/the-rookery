@@ -1,7 +1,22 @@
 # Activating the simplicity checkpoint
 
-The checkpoint is most valuable at the plan-to-build boundary, before the
-first implementation edit. There are three useful activation levels.
+The checkpoint is most valuable before complexity hardens: when a completed
+requirements or approach draft moves into implementation planning, when an
+implementation plan moves into execution, and at an in-build decision to add
+machinery.
+
+## Description-owned discovery
+
+The skill description owns normal automatic routing. It names both planning
+handoffs so a harness can select the skill when the current request contains a
+reviewable subject and reaches either transition, even if the user does not say
+"simple." Keep those transition cues in the description rather than in
+always-loaded repository instructions.
+
+Description routing is semantic and model-selected. It is a discovery path,
+not deterministic enforcement. In a staged workflow, each caller should route
+the newly reached task against the available skill catalog instead of assuming
+that skill selection from an earlier stage still applies.
 
 ## Explicit invocation
 
@@ -18,42 +33,37 @@ Examples that should route here include:
 - "Which parts of this architecture solve only hypothetical future needs?"
 - "Check whether the existing mechanism already satisfies this request."
 - "Right-size this approach without dropping required behavior."
+- "Check this completed requirements draft before implementation planning,
+  without inventing how to build it."
 
-Description routing is semantic and model-selected, so these requests are
-discoverable but not guaranteed to activate the skill.
-
-## Persistent caller policy
-
-When the checkpoint must happen even if the user never says "simple," put the
-scheduling rule in the caller's repository instructions. Keep one canonical
-copy and import or mirror it only where a harness cannot read the same file.
-
-```text
-Before the first implementation edit for a behavior change, invoke
-checking-simplicity in a fresh context after requirements are clear and a draft
-approach exists. Skip only read-only work and prescribed mechanical edits with
-no design choice. Re-run it if required behavior or implementation scope
-materially changes. Revise the approach before implementation when the result
-is CHANGES_NEEDED, and resolve any owner decision before implementation. Use a
-new uninvolved context for each recheck.
-```
-
-The policy schedules the checkpoint at the plan-to-build transition, including
-when the original prompt never mentions complexity. The agent often invents
-the abstraction or workflow later while drafting its approach.
+These requests are discoverable but not guaranteed to activate the skill.
 
 ## Caller-owned sequencing
 
-An automated caller can enforce the same boundary as three explicit stages:
+An automated caller can enforce either planning handoff as three explicit
+stages:
 
-1. produce a draft approach without editing implementation files;
+1. produce a reviewable requirements draft, approach, or implementation plan
+   without crossing into the next planning or execution stage;
 2. run `checking-simplicity` in an independent context; and
-3. allow implementation only after `PASS` with
-   `Owner decision required: no`. Resolve any owner decision, or revise a
-   `CHANGES_NEEDED` approach, then check the resulting approach again in a new
-   uninvolved context.
+3. cross that boundary only after `PASS` with `Owner decision required: no`.
+   Resolve any owner decision, or revise a `CHANGES_NEEDED` subject, then check
+   the resulting subject again in a new uninvolved context.
 
 These stages make ordering observable without a harness-specific hook.
+Apply these recheck rules explicitly:
+
+- after an owner decision, check the resulting subject through a new context
+  uninvolved with that decision or any revision;
+- treat a result from anyone whose earlier review shaped the subject as
+  unverified, then use a context with no prior involvement; and
+- after `CHANGES_NEEDED`, revise the subject and use a new context uninvolved
+  with the prior findings or revision.
+
+In every branch, state and enforce that the boundary stays blocked until the
+current resulting subject receives an independent `PASS` with
+`Owner decision required: no`. Sending it for another review is not permission
+to proceed.
 
 Use native fresh-context dispatch when the harness provides it. Otherwise stop
 before implementation and prepare a separate-session handoff containing the
@@ -83,5 +93,5 @@ See the current [Codex Hooks documentation](https://developers.openai.com/codex/
 
 Do not install a prompt scanner, `update_plan` hook, stop hook, or Lefthook AI
 job by default. Revisit a hook adapter only after observed runs show that the
-explicit and policy routes miss material plan-to-build checkpoints, and only
-when the harness exposes a stable semantic event for that transition.
+description, explicit, and caller-owned routes miss material checkpoints, and
+only when the harness exposes a stable semantic event for that transition.

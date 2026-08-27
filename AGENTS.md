@@ -32,22 +32,6 @@ other reporting system. When a source issue exists, record material scope
 changes and follow-up work there before merge; a routine completion summary or
 copy of the plan is unnecessary.
 
-## Simplicity checkpoint
-
-Before the first implementation edit for a behavior change with a design
-choice, apply `checking-simplicity` after the requirements are clear and a
-draft approach exists. Implementation waits for `PASS` from an independent
-context with `Owner decision required: no`. Re-run the checkpoint through a new
-uninvolved context when the required behavior or approach materially changes,
-including before an in-build decision adds a new complexity-bearing mechanism.
-Skip read-only work and prescribed mechanical edits with no design choice.
-
-Read
-[`skills/checking-simplicity/references/activation.md`](skills/checking-simplicity/references/activation.md)
-when scheduling the checkpoint or when native fresh-context dispatch is
-unavailable. That reference owns the detailed caller policy and separate-session
-fallback.
-
 ## Documented solutions and vocabulary
 
 `docs/solutions/` holds documented solutions to past problems, covering bugs,

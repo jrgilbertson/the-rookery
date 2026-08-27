@@ -11,11 +11,13 @@ sees only the skill name, description, and query. A should-trigger query needs
 | Simplify this implementation plan before we start coding | Explicit plan-to-build simplicity review. |
 | Choose the smallest reliable implementation among these approaches | Right-sizing an approach before implementation. |
 | Before coding this behavior change, does the existing repository mechanism already satisfy it? | Tests reuse before adding a new implementation. |
-| Which parts of this architecture anticipate only hypothetical future needs? | Challenges speculative complexity in a proposed architecture. |
 | Right-size this design without dropping required behavior | Requests a smaller approach with a preservation constraint. |
 | Review this draft plan, then implement it only if it is not overengineered | Places the checkpoint before the first edit. |
 | Before coding, challenge the proposed adapter, queue, and configuration layer | Names complexity-bearing concepts in a proposed approach. |
 | This build is about to add persistent state and a new dependency; check the approach first | In-build decision point before new machinery. |
+| Our requirements and approach brief is complete and proposes a queue plus provider adapter. Before deepening it into an implementation plan, continue the workflow. | Completed early-planning handoff with assessable mechanism choices, without explicit simplicity language. |
+| The approved requirements brief is ready. Before creating the technical implementation plan, continue the workflow. | Completed requirements handoff where scope can be checked without inventing implementation details. |
+| The implementation plan is ready at `/tmp/archive-plan.md`. Hand it off to execution. | Completed implementation-plan handoff before the first write, without explicit simplicity language. |
 
 ## Near misses: should not trigger
 
@@ -26,9 +28,8 @@ sees only the skill name, description, and query. A should-trigger query needs
 | Explain this architecture in simpler language | Explanation, not design reduction. |
 | Make the settings page look visually simpler | Interface design. |
 | Debug the failing synchronization test | Debugging. |
-| Reduce the JavaScript bundle size | Metric-driven performance optimization. |
 | Is this branch ready to open a pull request? | PR readiness. |
-| Should I merge this reviewed pull request? | Merge readiness. |
 | Read the repository and explain how the export pipeline works; do not change anything | Read-only work has no plan-to-build decision. |
 | Rename `retryCount` to `attemptCount` everywhere, exactly as specified | Prescribed mechanical edit with no design choice. |
-| Plan and implement a small behavior change to add an archive action | The caller creates a draft and schedules the checkpoint through repository policy; this assessment does not own planning or implementation. |
+| Plan and implement a small behavior change to add an archive action | No reviewable plan or approach exists yet; the planning or build workflow may route here after producing one. |
+| We are still brainstorming whether an archive action is needed and what outcome it should produce | Requirements are unfinished; brainstorming owns the current task. |

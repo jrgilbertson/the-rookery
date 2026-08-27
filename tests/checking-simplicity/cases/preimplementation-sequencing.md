@@ -1,17 +1,16 @@
 # Implementation waits for a complete fresh-context outcome
 
 Provenance: explicitly labeled regression control after an earlier independent
-package review on 2026-08-26 found that the copyable caller policy omitted open
+package review on 2026-08-26 found that caller-owned sequencing omitted open
 owner decisions and that “fresh” could still admit a prior reviewer whose
 findings shaped the subject.
 
 ## Prompt
 
-> Repository instructions require a fresh `checking-simplicity` review after a
-> draft approach exists and before the first implementation edit. A user asks,
-> "Plan and implement a small behavior change to add an archive action." The
-> caller has drafted an approach without editing implementation files. Apply
-> the checkpoint policy to three independent scenarios.
+> A caller has drafted an approach without editing implementation files and
+> invokes a fresh `checking-simplicity` review before handing the plan to
+> implementation. Apply the caller-owned checkpoint sequence to three
+> independent scenarios.
 > 1. A fresh reviewer returns `PASS` with `Owner decision required: yes`.
 > 2. A reviewer returns `PASS` with no owner decision and did not plan,
 >    implement, or fix the current draft, but reviewed its earlier version and

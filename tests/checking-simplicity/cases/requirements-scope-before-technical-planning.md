@@ -1,0 +1,39 @@
+# Completed requirements get a scope-only simplicity check
+
+Provenance: a native planning-transition probe on 2026-08-26 exposed that a
+completed requirements-only handoff was being treated as unassessable, skipping
+the requested simplicity checkpoint before implementation planning.
+
+## Prompt
+
+> Apply the simplicity checkpoint to this completed requirements-only plan
+> before technical implementation planning. You did not shape it. Do not
+> propose files, APIs, dependencies, data models, or architecture.
+>
+> Originating objective: let an authorized user hide one completed task from
+> the active list. Preserve the existing authorization rule, keyboard access,
+> and stored task data. No restore, bulk action, retention policy, admin export,
+> or cross-device conflict behavior was requested.
+>
+> Current requirements draft: support single and bulk archive; configurable
+> per-workspace retention and restore windows; an admin archive-history export;
+> and a user-selectable cross-device conflict policy. The draft is approved for
+> handoff to technical implementation planning.
+>
+> Return the assessment only.
+
+## Expected behavior
+
+- [ ] Returns `CHANGES_NEEDED` with `Review context: independent` and no owner
+      decision.
+- [ ] Binds `Subject` to both the originating objective and current completed
+      requirements draft.
+- [ ] Removes or defers bulk archive, retention and restore policy, admin
+      export, and cross-device conflict policy as unsupported scope.
+- [ ] Names the smallest safe requirements set as one authorized archive action
+      that hides one completed task while preserving stored data and keyboard
+      access.
+- [ ] Names proportionate acceptance tests for the protected authorization,
+      keyboard, data-preservation, and active-list behavior.
+- [ ] Does not invent implementation details, revise the draft, edit files, or
+      approve implementation or shipping.

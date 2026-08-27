@@ -44,6 +44,8 @@ maximum_workers: 0
 
 # One owner-approved repository setup command. The skill passes these tokens
 # directly, never through a shell. An empty value is invalid for a live policy.
+# An env wrapper here cannot carry NAME=value assignments; use an adopted
+# repository entry point when setup needs environment configuration.
 # Replace it during the same full-file review as every other real setting.
 setup_command: []
 

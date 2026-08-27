@@ -92,8 +92,12 @@ forms use their native one-dash, two-dash, or slash switch marker and
 case-insensitive minimum-prefix grammar. Windows PowerShell
 positional input is command text unless an explicit file boundary is present,
 while PowerShell 7 positional file mode remains valid. The validator recognizes
-direct or path-qualified `env` wrappers (including split-string forms). Its `env` recognition continues across assignments after
-`--` or `-` and consumes option operands such as `-P`, `-a`, and `--argv0`; its wrapper
+direct or path-qualified `env` wrappers (including split-string forms). For
+`setup_command`, an `env` wrapper cannot carry any `NAME=value` assignment:
+that rejection applies before or after `--` or `-` and after consumed option
+operands such as `-P`, `-a`, and `--argv0`. Assignment-free `env` wrappers and
+their option operands remain direct argv; an assignment-looking token after
+the actual command is that tool's ordinary argument. Its wrapper
 option check accounts for documented operand-consuming and no-operand launch
 options, plus inline `--option=value` operands, before accepting an ordinary
 file-mode positional argument, including PowerShell's `-File`, `--File`,

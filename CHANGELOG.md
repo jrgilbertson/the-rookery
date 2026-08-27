@@ -21,7 +21,9 @@ looked" surface. GitHub Releases mirror its entries.
   wrapper launch operands without treating them as a script boundary, while
   documented no-operand flags and inline operands preserve script mode;
   BSD `env -P` is modeled as a path operand, and Node `data:` import or loader
-  sources are refused before their nominal script file;
+  sources are refused before their nominal script file. Setup `env` wrappers
+  now also reject every prefix `NAME=value` assignment rather than allowing it
+  to configure a runtime before the approved command;
   PowerShell command-mode aliases and accepted prefixes are refused too across
   native one-dash, two-dash, and slash switch markers.
   Windows PowerShell requires explicit file mode, while PowerShell 7 retains

@@ -448,8 +448,9 @@ def command_after_env(command: list[str]) -> list[str] | None:
                 index += 1
                 continue
         if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", token) is not None:
-            index += 1
-            continue
+            raise ConfigError(
+                "setup_command env wrapper must not carry environment assignments"
+            )
         return command[index:]
     return []
 

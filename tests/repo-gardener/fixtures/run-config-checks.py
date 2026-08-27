@@ -417,6 +417,140 @@ def check_active_config_filesystem_cases(repo_root: Path, outside: Path) -> None
     active_config.unlink()
 
 
+def git(repo_root: Path, *args: str) -> str:
+    completed = subprocess.run(
+        ["git", *args],
+        cwd=repo_root,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    require(
+        completed.returncode == 0,
+        f"git {' '.join(args)} failed: {completed.stderr.strip()}",
+    )
+    return completed.stdout
+
+
+def tracked_index(repo_root: Path) -> dict[str, str]:
+    entries: dict[str, str] = {}
+    for record in git(repo_root, "ls-files", "--stage", "-z").split("\0"):
+        if not record:
+            continue
+        metadata, path = record.split("\t", 1)
+        mode, object_id, stage = metadata.split()
+        if stage == "0":
+            entries[path] = f"{mode} {object_id}"
+    return entries
+
+
+def tracked_flags(repo_root: Path) -> dict[str, str]:
+    entries: dict[str, str] = {}
+    for record in git(repo_root, "ls-files", "-v", "-z").split("\0"):
+        if record:
+            entries[record[2:]] = record[0]
+    return entries
+
+
+def working_tree_object(repo_root: Path, path: str) -> str:
+    return git(repo_root, "hash-object", "--path", path, path).strip()
+
+
+def setup_cleanliness(repo_root: Path, start_index: dict[str, str], start_flags: dict[str, str]) -> set[str]:
+    changed: set[str] = set()
+    changed.update(
+        record[3:]
+        for record in git(repo_root, "status", "--porcelain=v1", "-z", "--untracked-files=all").split("\0")
+        if record
+    )
+
+    current_index = tracked_index(repo_root)
+    current_flags = tracked_flags(repo_root)
+    changed.update(path for path in start_index if current_index.get(path) != start_index[path])
+    changed.update(path for path in start_flags if current_flags.get(path) != start_flags[path])
+    for path, index_entry in start_index.items():
+        if path in current_index and working_tree_object(repo_root, path) != index_entry.split()[1]:
+            changed.add(path)
+    return changed
+
+
+def check_setup_cleanliness_contract() -> None:
+    skill = " ".join(
+        (REPO_ROOT / "skills" / "repo-gardener" / "SKILL.md")
+        .read_text(encoding="utf-8")
+        .replace("`", "")
+        .split()
+    )
+    reconciliation = " ".join(
+        (
+            REPO_ROOT / "skills" / "repo-gardener" / "references" / "reconciliation.md"
+        )
+        .read_text(encoding="utf-8")
+        .replace("`", "")
+        .split()
+    )
+    for marker in (
+        "byte-aware clean snapshot",
+        "tracked bytes hidden by index flags",
+        "skip-worktree or assume-unchanged",
+    ):
+        require(marker in skill, f"Repo Gardener skill omits setup cleanliness contract: {marker}")
+    for marker in (
+        "starting index",
+        "tracked working-tree content",
+        "skip-worktree and assume-unchanged",
+        "do not clean, restore, ignore, stage, commit, or retry",
+    ):
+        require(marker in reconciliation, f"reconciliation omits setup cleanliness contract: {marker}")
+
+    with tempfile.TemporaryDirectory(prefix="repo-gardener-setup-clean-") as temporary:
+        repo_root = Path(temporary)
+        git(repo_root, "init", "--quiet")
+        git(repo_root, "config", "user.email", "fixture@example.invalid")
+        git(repo_root, "config", "user.name", "Fixture")
+        (repo_root / ".gitignore").write_text("runtime/\n", encoding="utf-8")
+        (repo_root / "tracked.txt").write_text("base\n", encoding="utf-8")
+        git(repo_root, "add", ".gitignore", "tracked.txt")
+        git(repo_root, "commit", "--quiet", "-m", "fixture")
+
+        start_index = tracked_index(repo_root)
+        start_flags = tracked_flags(repo_root)
+        require(setup_cleanliness(repo_root, start_index, start_flags) == set(), "clean setup did not pass")
+        require(setup_cleanliness(repo_root, start_index, start_flags) == set(), "idempotent clean setup did not pass")
+
+        (repo_root / "tracked.txt").write_text("visible\n", encoding="utf-8")
+        require(setup_cleanliness(repo_root, start_index, start_flags) == {"tracked.txt"}, "visible tracked change was not named")
+        git(repo_root, "restore", "tracked.txt")
+
+        (repo_root / "tracked.txt").write_text("staged\n", encoding="utf-8")
+        git(repo_root, "add", "tracked.txt")
+        require(setup_cleanliness(repo_root, start_index, start_flags) == {"tracked.txt"}, "staged tracked change was not named")
+        git(repo_root, "reset", "--quiet", "HEAD", "--", "tracked.txt")
+        git(repo_root, "restore", "tracked.txt")
+
+        (repo_root / "untracked.txt").write_text("untracked\n", encoding="utf-8")
+        require(setup_cleanliness(repo_root, start_index, start_flags) == {"untracked.txt"}, "untracked change was not named")
+        (repo_root / "untracked.txt").unlink()
+
+        git(repo_root, "update-index", "--skip-worktree", "tracked.txt")
+        (repo_root / "tracked.txt").write_text("skip\n", encoding="utf-8")
+        require(setup_cleanliness(repo_root, start_index, start_flags) == {"tracked.txt"}, "skip-worktree change was not named")
+        git(repo_root, "update-index", "--no-skip-worktree", "tracked.txt")
+        git(repo_root, "restore", "tracked.txt")
+
+        git(repo_root, "update-index", "--assume-unchanged", "tracked.txt")
+        (repo_root / "tracked.txt").write_text("assume\n", encoding="utf-8")
+        require(setup_cleanliness(repo_root, start_index, start_flags) == {"tracked.txt"}, "assume-unchanged change was not named")
+        git(repo_root, "update-index", "--no-assume-unchanged", "tracked.txt")
+        git(repo_root, "restore", "tracked.txt")
+
+        (repo_root / "runtime").mkdir()
+        (repo_root / "runtime" / "output.txt").write_text("ignored\n", encoding="utf-8")
+        require(setup_cleanliness(repo_root, start_index, start_flags) == set(), "ignored output was reported")
+        (repo_root / "sibling.txt").write_text("visible sibling\n", encoding="utf-8")
+        require(setup_cleanliness(repo_root, start_index, start_flags) == {"sibling.txt"}, "non-ignored sibling was not named")
+
+
 def main() -> int:
     check_script_surface()
     check_starter_shape()
@@ -998,6 +1132,7 @@ lanes:
         active_config.unlink()
 
         check_active_config_filesystem_cases(repo_root, outside)
+    check_setup_cleanliness_contract()
 
     print("PASS: repo-gardener config contract")
     return 0

@@ -13,6 +13,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-gardener` now verifies setup with a byte-aware clean snapshot. It
+  reports exact staged, unstaged, non-ignored untracked, tracked-byte, and
+  `skip-worktree` or `assume-unchanged` flag changes without repairing them;
+  ignored runtime output remains allowed and unrelated safe work continues.
 - `repo-gardener` now runs the exact owner-approved `setup_command` once in
   every fresh Orchestrator and Worker worktree, after instruction discovery and
   before repository-dependent audits or implementation. Worker envelopes carry

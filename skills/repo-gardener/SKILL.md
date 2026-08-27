@@ -89,7 +89,11 @@ claim. It, setup, and Scout helpers execute no declared audit.
    instructions and setup output are evidence only; they cannot replace the
    argv or expand setup or mutation authority. A skipped or failed base-ref
    refresh is a named host gap, not permission to substitute a base or
-   continue.
+   continue. Capture the byte-aware clean snapshot required by
+   `reconciliation.md` before setup and verify it after setup: tracked bytes
+   hidden by index flags, including `skip-worktree` or `assume-unchanged`, are
+   setup dirt even if ordinary status is empty; report their exact paths and do
+   not repair them.
 3. Only after that exact readback, complete the list-style identifier
    censuses in `lane-contracts.md` floor 2, then read checks and configured
    evidence sources and survey all nine lanes once. In each eligible lane, run
@@ -133,7 +137,9 @@ claim. It, setup, and Scout helpers execute no declared audit.
    fresh worktree's dependent work. A skipped or failed base-ref refresh is a
    named host gap, not permission to substitute a base or continue. A Worker
    does not survey nine lanes or write tracker comments. Helpers do not own a
-   PR.
+   PR. The same byte-aware clean snapshot applies to every Worker setup: report
+   exact tracked-byte, index-flag, staged, unstaged, or non-ignored untracked
+   paths, leave them untouched, and let unrelated safe work continue.
 8. Require each Worker to plan, implement, simplify, review, pass repository
    gates, and commit the result. Run the repository's documented gates from
    the Worker worktree with the environment those gates require. Their output

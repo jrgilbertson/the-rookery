@@ -37,6 +37,13 @@ ambiguous wrapper launch option, and recursively rejects any leading nested
 argv remains unchanged after documented no-operand flags and inline operands
 too.
 
+Before setup starts, capture a byte-aware clean snapshot of the starting index:
+the stage records, relevant index flags, and the tracked working-tree content
+that matches those records. A fresh worktree whose starting snapshot is not
+clean does not run setup or claim a clean result. This snapshot is an
+observation boundary, not permission to update the index or repair the
+worktree.
+
 ## Set up each fresh worktree
 
 Every fresh Orchestrator and Worker worktree uses the opening policy's exact
@@ -137,14 +144,22 @@ stop. Raw output never enters repository source, tracker records, logs, or
 recovery state.
 
 After a launch, confirm the complete process tree is stopped, then refresh the
-policy and recheck the exact revision and clean worktree. A zero or nonzero
-exit, launch failure, confirmed timeout with the process tree stopped, or
-command-local capability refusal is lane-local: block only the dependent work,
-record it, and continue unrelated safe sensing and the next safe declaration.
-A policy or subject change, unexpected dirtying, uncertain termination, or
-interruption stops every later declaration. Leave unexpected changes untouched:
-do not clean, revert, retry, resume, or replace the command. These audit stops
-do not widen or bypass the existing Worker mutation gates.
+policy and recheck the exact revision and clean worktree against that starting
+index. Combine ordinary staged, unstaged, and non-ignored untracked status with
+an enumeration of every tracked working-tree content and relevant index flag.
+Report every exact path whose bytes, stage record, `skip-worktree` and
+`assume-unchanged` flags, or non-ignored presence differs from the snapshot;
+hidden tracked-byte changes fail even when ordinary status is empty. Ignored
+runtime output is allowed, but no repository-specific filename is an exception.
+A zero or nonzero exit, launch failure, confirmed timeout with the process tree
+stopped, or command-local capability refusal is lane-local: block only the
+dependent work, record the disjoint `affected_work` and
+`remaining_unblocked_work`, and continue unrelated safe sensing and the next
+safe declaration. A policy or subject change, unexpected dirtying, uncertain
+termination, or interruption stops every later declaration. Leave unexpected
+changes untouched: do not clean, restore, ignore, stage, commit, or retry; do
+not resume or replace the command. These audit stops do not widen or bypass the
+existing Worker mutation gates.
 
 ## Sense all nine lanes
 

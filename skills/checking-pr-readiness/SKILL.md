@@ -24,7 +24,9 @@ through 6, including `surface-report.sh --full`, current gate discovery, helper
 exit/status mapping, and sweep classes. It never substitutes attestation for a
 receipt and never presents the Minto readout or owner menu. One complete
 same-session bundle remains required and binds the exact subject and revision;
-when that evidence is otherwise complete and current, its unpublished per-kind
+its shared identity is derived from, and must agree across, the documented
+inline references rather than an unpublished top-level member. When that
+evidence is otherwise complete and current, its unpublished per-kind
 schema documentation or outside-tree result transport is packaging, not a
 readiness gap. Every inline evidence/result pair must carry that repository,
 subject, revision, bundle, and receipt binding inside its digest-covered bytes.

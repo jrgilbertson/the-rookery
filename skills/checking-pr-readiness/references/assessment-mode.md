@@ -71,9 +71,12 @@ SHA-256 digest for each document. The evidence and result documents each carry
 an identical `transport_identity` inside those digest-covered bytes: exact
 repository, subject, revision, bundle ID, and receipt ID. The assessment accepts
 that alternate packaging only when both digests and both identities match the
-live receipt and checkout, and the documents satisfy every applicable
-substantive check. It does not discover a second bundle, combine documents from
-concurrent Workers, or fill missing transport fields from a repository path.
+live receipt and checkout, every inline reference agrees on its one shared
+bundle ID, and the documents satisfy every applicable substantive check. The
+assessment derives that shared identity from the inline references, not from an
+undocumented top-level member. It does not discover a second bundle, combine
+documents from concurrent Workers, or fill missing transport fields from a
+repository path.
 
 ## Assessment envelope
 

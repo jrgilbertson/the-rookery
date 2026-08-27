@@ -20,12 +20,16 @@ Provenance: Observed failure where a declared receipt chain was accepted without
   file/digest object or one complete digest-matched inline evidence/result pair
   from that selected bundle.
 - [ ] Verifies every required machine-readable receipt and its evidence digest at that exact commit.
-- [ ] Returns the same pass when the caller-selected same-session bundle carries
-  complete, digest-matched evidence and result documents outside the commit.
+- [ ] Returns the same pass when the documented top-level bundle shape contains
+  only `schema`, `assessment`, and `receipts`, while its caller-selected
+  same-session inline references carry complete, digest-matched evidence and
+  result documents outside the commit.
 - [ ] Requires each inline document pair to bind the same repository, subject,
   exact revision, bundle ID, and receipt ID inside its digest-covered identity,
   so an older revision or concurrent Worker bundle cannot be relabeled into a
   valid current assessment.
+- [ ] Derives one shared bundle ID from the documented inline references and
+  rejects any disagreement between those references.
 - [ ] Verifies observation freshness against the exact commit rather than trusting a timestamp assertion alone.
 - [ ] Returns `pass` with an empty gaps array only after the complete current-main chain and preflight receipt are clean.
 - [ ] Uses assessment-only mode with no Minto readout, owner decision menu, attestation upgrade, or repository write.

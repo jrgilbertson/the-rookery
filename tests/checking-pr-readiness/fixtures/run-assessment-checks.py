@@ -124,6 +124,7 @@ RECEIPT_FIELDS = {
     "gaps",
     "observed_at",
 }
+BUNDLE_FIELDS = {"schema", "assessment", "receipts"}
 EVIDENCE_BLOB_CACHE: dict[tuple[str, str, str], tuple[str, bytes]] = {}
 
 # Exact-revision assessment must resolve the recorded objects, never a local
@@ -463,7 +464,6 @@ def make_outside_tree_bundle(
     """
     bundle = make_bundle(repo, revision)
     bundle_id = bundle_id or f"fixture-session:{revision}"
-    bundle["bundle_id"] = bundle_id
     for receipt in bundle["receipts"]:
         kind = receipt["kind"]
         _, evidence_content = evidence_blob(repo, revision, f"evidence/{kind}.json")
@@ -695,17 +695,15 @@ def verify_repository_gate_command(gate: dict[str, Any], repo: Path, revision: s
 def bundled_transport(
     reference: Any,
     revision: str,
-    bundle_id: Any,
     receipt_id: Any,
-) -> tuple[dict[str, Any], bytes] | None:
+) -> tuple[dict[str, Any], bytes, str] | None:
     """Resolve one complete, caller-selected outside-tree evidence transport."""
     if (
         not isinstance(reference, dict)
         or set(reference) != {"transport", "exact_revision", "bundle_id", "evidence", "evidence_sha256", "result", "result_sha256"}
         or reference.get("transport") != "bundle-inline"
         or reference.get("exact_revision") != revision
-        or not bounded_text(bundle_id)
-        or reference.get("bundle_id") != bundle_id
+        or not bounded_text(reference.get("bundle_id"))
         or not bounded_text(receipt_id)
         or not isinstance(reference.get("evidence"), dict)
         or not isinstance(reference.get("result"), dict)
@@ -722,7 +720,7 @@ def bundled_transport(
         or hashlib.sha256(result_content).hexdigest() != reference["result_sha256"]
     ):
         return None
-    return evidence, result_content
+    return evidence, result_content, reference["bundle_id"]
 
 
 def validate_evidence_document(
@@ -1012,7 +1010,8 @@ def evaluate(repo: Path, bundle: Any, input_gaps: list[str] | None = None) -> di
     if not isinstance(bundle, dict):
         gaps.append("receipt bundle is not an object")
         bundle = {}
-    bundle_id = bundle.get("bundle_id")
+    if set(bundle) != BUNDLE_FIELDS:
+        gaps.append("receipt bundle fields mismatch")
     if bundle.get("schema") != "checking-pr-readiness-receipt-bundle/v1":
         gaps.append("receipt bundle schema mismatch")
     supplied_assessment = bundle.get("assessment")
@@ -1035,6 +1034,7 @@ def evaluate(repo: Path, bundle: Any, input_gaps: list[str] | None = None) -> di
     evidence_documents_by_kind: dict[str, Any] = {}
     transported_results_by_kind: dict[str, bytes] = {}
     transport_identities_by_kind: dict[str, dict[str, Any]] = {}
+    inline_bundle_id: str | None = None
 
     if len(by_kind) != len(valid_receipts):
         gaps.append("duplicate receipt kind")
@@ -1079,14 +1079,20 @@ def evaluate(repo: Path, bundle: Any, input_gaps: list[str] | None = None) -> di
             if not isinstance(reference, dict):
                 gaps.append(f"invalid evidence reference: {kind}")
                 continue
-            transport = bundled_transport(reference, revision, bundle_id, receipt.get("receipt_id"))
+            transport = bundled_transport(reference, revision, receipt.get("receipt_id"))
             if transport is not None:
-                evidence_documents_by_kind[kind], transported_results_by_kind[kind] = transport
+                evidence, result_content, reference_bundle_id = transport
+                if inline_bundle_id is None:
+                    inline_bundle_id = reference_bundle_id
+                elif reference_bundle_id != inline_bundle_id:
+                    gaps.append(f"mixed inline bundle identity: {kind}")
+                evidence_documents_by_kind[kind] = evidence
+                transported_results_by_kind[kind] = result_content
                 transport_identities_by_kind[kind] = {
                     "repository": live_repository,
                     "subject": live_subject,
                     "exact_revision": revision,
-                    "bundle_id": bundle_id,
+                    "bundle_id": reference_bundle_id,
                     "receipt_id": receipt.get("receipt_id"),
                 }
                 continue
@@ -1283,10 +1289,23 @@ def run_suite() -> None:
         require(positive["capability_version"] == package_version(), "assessment capability version was not live-derived")
         require(positive["observed_at"] != bundle["assessment"]["observed_at"], "assessment observation time stayed caller-controlled")
 
-        outside_tree = evaluate(first, make_outside_tree_bundle(first, revision))
+        documented_inline_bundle = json.loads(json.dumps(make_outside_tree_bundle(first, revision)))
+        require(
+            set(documented_inline_bundle) == {"schema", "assessment", "receipts"},
+            "documented inline bundle has an unpublished top-level member",
+        )
+        outside_tree = evaluate(first, documented_inline_bundle)
         require(
             outside_tree["outcome"] == "pass" and outside_tree["gaps"] == [],
             f"complete outside-tree transport failed: {outside_tree['gaps']}",
+        )
+        hidden_top_level_bundle = copy.deepcopy(documented_inline_bundle)
+        hidden_top_level_bundle["bundle_id"] = "unpublished"
+        hidden_top_level_result = evaluate(first, hidden_top_level_bundle)
+        require(
+            hidden_top_level_result["outcome"] == "action-required"
+            and "receipt bundle fields mismatch" in hidden_top_level_result["gaps"],
+            "unpublished top-level bundle member was accepted",
         )
         old_bundle = make_outside_tree_bundle(first, revision)
         later = root / "later"
@@ -1296,11 +1315,14 @@ def run_suite() -> None:
         )
         later_revision = run("git", "rev-parse", "HEAD", cwd=later)
         transplanted_revision_bundle = make_outside_tree_bundle(later, later_revision)
+        target_revision_reference = copy.deepcopy(
+            transplanted_revision_bundle["receipts"][2]["evidence_references"][0]
+        )
         transplanted_revision_bundle["receipts"][2]["evidence_references"] = copy.deepcopy(
             old_bundle["receipts"][2]["evidence_references"]
         )
         transplanted_revision_bundle["receipts"][2]["evidence_references"][0]["exact_revision"] = later_revision
-        transplanted_revision_bundle["receipts"][2]["evidence_references"][0]["bundle_id"] = transplanted_revision_bundle["bundle_id"]
+        transplanted_revision_bundle["receipts"][2]["evidence_references"][0]["bundle_id"] = target_revision_reference["bundle_id"]
         transplanted_revision_result = evaluate(later, transplanted_revision_bundle)
         require(
             transplanted_revision_result["outcome"] == "action-required",
@@ -1308,10 +1330,13 @@ def run_suite() -> None:
         )
         first_worker_bundle = make_outside_tree_bundle(first, revision, "fixture-session:worker-one")
         second_worker_bundle = make_outside_tree_bundle(first, revision, "fixture-session:worker-two")
+        second_worker_reference = copy.deepcopy(
+            second_worker_bundle["receipts"][2]["evidence_references"][0]
+        )
         second_worker_bundle["receipts"][2]["evidence_references"] = copy.deepcopy(
             first_worker_bundle["receipts"][2]["evidence_references"]
         )
-        second_worker_bundle["receipts"][2]["evidence_references"][0]["bundle_id"] = second_worker_bundle["bundle_id"]
+        second_worker_bundle["receipts"][2]["evidence_references"][0]["bundle_id"] = second_worker_reference["bundle_id"]
         cross_bundle_result = evaluate(first, second_worker_bundle)
         require(
             cross_bundle_result["outcome"] == "action-required",
@@ -1651,7 +1676,7 @@ def run_suite() -> None:
         print("PASS: versioned bundle resolution, staged-only dirt, and live-subject mutations fail closed")
         print("PASS: absent reviewer is not applicable; configured reviewer without a cap fails closed")
         print("PASS: command-backed evidence reruns exact allowlisted commands from isolated exact-revision inputs")
-        print("PASS: complete outside-tree packaging passes; missing, altered, older-revision, cross-Worker, and mixed bundles fail closed")
+        print("PASS: documented no-top-level inline packaging passes; missing, altered, old-revision, same-head cross-Worker, and mixed bundles fail closed")
 
 
 def materialize(destination: Path, bundle_writer: Any = write_json) -> None:

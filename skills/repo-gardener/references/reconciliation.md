@@ -30,6 +30,10 @@ carried unchanged into later fresh-worktree setup rather than inferred from
 repository text or a host convention. A missing, malformed, shell-shaped, or
 unapproved command blocks only work that depends on setup; continue the safe
 read-only sensing that does not require it, and report the owning field.
+Before preserving that argv, local policy validation rejects a shell or
+interpreter command-string mode even when it follows an operand-consuming or
+ambiguous wrapper launch option; ordinary confirmed file-mode argv remains
+unchanged.
 
 Resolve a stale opening record before starting a new run. Lease expiry alone
 does not prove the old Orchestrator stopped. Ask the caller for current

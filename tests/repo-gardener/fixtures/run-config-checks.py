@@ -566,6 +566,7 @@ lanes:
             ["pwsh", "/tmp/scripts/setup.ps1", "-Command"],
             ["pwsh", "-File", "scripts/setup.ps1", "-Command"],
             ["bash", "--rcfile", "setup.rc", "scripts/setup.sh", "-c"],
+            ["bash", "--init-file", "setup.rc", "/tmp/scripts/setup.sh", "-c"],
         ):
             file_mode_setup_command = base_config()
             file_mode_setup_command["setup_command"] = file_mode_command
@@ -611,8 +612,16 @@ lanes:
             (["python3", "-X", "dev", "-c", "print(1)"], "setup_command contains forbidden command-string wrapper"),
             (["node", "--require", "module", "--eval", "console.log(1)"], "setup_command contains forbidden command-string wrapper"),
             (["node", "--loader", "loader", "--eval", "console.log(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["node", "--title", "setup0", "--eval", "console.log(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["node", "--icu-data-dir", "/tmp/icu", "--eval", "console.log(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["node", "--openssl-config", "/tmp/openssl.cnf", "--eval", "console.log(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["node", "--conditions", "setup", "--eval", "console.log(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["node", "--future-launch-option", "setup0", "--eval", "console.log(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["env", "--", "MODE=setup", "node", "--title", "setup0", "--eval", "1+1"], "setup_command contains forbidden command-string wrapper"),
             (["powershell.exe", "-ExecutionPolicy", "Bypass", "-Command", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
             (["pwsh", "/ExecutionPolicy", "Bypass", "/Command", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["pwsh", "-CustomPipeName", "setup0", "-Command", "payload"], "setup_command contains forbidden command-string wrapper"),
+            (["powershell", "-PSConsoleFile", "setup.psc1", "-Command", "payload"], "setup_command contains forbidden command-string wrapper"),
             (["fish", "-C", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
             (["fish", "--init-command=repo-setup"], "setup_command contains forbidden command-string wrapper"),
             (["env", "-S", "sh -c repo-setup"], "setup_command contains forbidden command-string wrapper"),

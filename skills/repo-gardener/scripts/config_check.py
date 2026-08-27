@@ -461,7 +461,7 @@ def is_executable_option(executable: str, argument: str) -> bool:
         return argument.startswith("/")
     if executable in {"powershell", "pwsh"}:
         return re.match(
-            r"^/(?:c|command|commandwithargs|e|ec|enc|encodedcommand|executionpolicy|file|inputformat|outputformat|workingdirectory|configurationname|version|windowstyle|settingsfile)(?:$|[=:])",
+            r"^/(?:c|command|commandwithargs|e|ec|enc|encodedcommand|executionpolicy|file|inputformat|outputformat|workingdirectory|configurationname|version|windowstyle|settingsfile|psconsolefile|custompipename)(?:$|[=:])",
             argument,
             re.IGNORECASE,
         ) is not None
@@ -471,7 +471,7 @@ def is_executable_option(executable: str, argument: str) -> bool:
 def option_consumes_operand(executable: str, option: str) -> bool:
     if executable in {"powershell", "pwsh"}:
         return re.match(
-            r"^[-/](?:executionpolicy|file|inputformat|outputformat|workingdirectory|configurationname|version|windowstyle|settingsfile)$",
+            r"^[-/](?:executionpolicy|file|inputformat|outputformat|workingdirectory|configurationname|version|windowstyle|settingsfile|psconsolefile|custompipename)$",
             option,
             re.IGNORECASE,
         ) is not None
@@ -480,7 +480,58 @@ def option_consumes_operand(executable: str, option: str) -> bool:
     if re.fullmatch(r"python(?:\d+(?:\.\d+)*)?", executable) is not None:
         return option in {"-W", "-X", "--check-hash-based"}
     if executable in {"node", "nodejs"}:
-        return option in {"-r", "--require", "--loader", "--import"}
+        return option in {
+            "-C",
+            "-r",
+            "--conditions",
+            "--diagnostic-dir",
+            "--env-file",
+            "--env-file-if-exists",
+            "--experimental-config-file",
+            "--experimental-default-type",
+            "--experimental-loader",
+            "--experimental-sea-config",
+            "--heap-prof-dir",
+            "--heap-prof-interval",
+            "--heap-prof-name",
+            "--heapsnapshot-near-heap-limit",
+            "--heapsnapshot-signal",
+            "--icu-data-dir",
+            "--import",
+            "--input-type",
+            "--inspect-port",
+            "--loader",
+            "--localstorage-file",
+            "--max-http-header-size",
+            "--network-family-autoselection-attempt-timeout",
+            "--openssl-config",
+            "--redirect-warnings",
+            "--report-dir",
+            "--report-directory",
+            "--report-filename",
+            "--report-signal",
+            "--require",
+            "--secure-heap",
+            "--secure-heap-min",
+            "--snapshot-blob",
+            "--test-concurrency",
+            "--test-coverage-branches",
+            "--test-name-pattern",
+            "--test-reporter",
+            "--test-reporter-destination",
+            "--test-shard",
+            "--test-skip-pattern",
+            "--title",
+            "--tls-cipher-list",
+            "--tls-keylog",
+            "--trace-event-categories",
+            "--trace-event-file-pattern",
+            "--unhandled-rejections",
+            "--use-largepages",
+            "--v8-pool-size",
+            "--watch-kill-signal",
+            "--watch-path",
+        }
     return False
 
 
@@ -493,14 +544,27 @@ def option_opens_file_mode(executable: str, option: str) -> bool:
 def options_before_file_mode(executable: str, arguments: list[str]) -> list[str]:
     options: list[str] = []
     index = 0
+    ambiguous_option = False
     while index < len(arguments):
         argument = arguments[index]
-        if argument == "--" or not is_executable_option(executable, argument):
+        if argument == "--":
             break
+        if not is_executable_option(executable, argument):
+            if not ambiguous_option:
+                break
+            index += 1
+            continue
         options.append(argument)
         if option_opens_file_mode(executable, argument):
             break
-        index += 2 if option_consumes_operand(executable, argument) else 1
+        if option_consumes_operand(executable, argument):
+            index += 2
+            continue
+        # An unknown leading wrapper option may consume the following token.
+        # Keep scanning until a known file-mode boundary so that its operand
+        # cannot hide a later command-string option.
+        ambiguous_option = True
+        index += 1
     return options
 
 

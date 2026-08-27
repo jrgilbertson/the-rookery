@@ -89,9 +89,11 @@ normalization, rejects POSIX and Windows shell or interpreter command-string
 options, and recognizes direct or path-qualified `env` wrappers (including
 split-string forms). Its `env` recognition continues across assignments after
 `--` or `-` and consumes option operands such as `-a`/`--argv0`; its wrapper
-option check ends when a shell or interpreter reaches an ordinary file-mode
-positional argument, including PowerShell's `-File` mode. Slash-prefixed
-options are reserved for the Windows
+option check accounts for documented operand-consuming launch options before
+accepting an ordinary file-mode positional argument, including PowerShell's
+`-File` mode. An unknown leading wrapper option keeps that boundary ambiguous,
+so a later command-string option remains refused instead of being hidden by a
+putative operand. Slash-prefixed options are reserved for the Windows
 wrappers that define them, so a POSIX absolute script path is file mode.
 Ordinary literal arguments remain valid under a
 non-wrapper executable; `audit_commands` retain their existing structural

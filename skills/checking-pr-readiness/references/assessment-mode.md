@@ -108,14 +108,18 @@ receipt element before field access. Malformed input returns the same normal
 
 `pass` uses an empty `gaps` array. `action-required` names every material gap
 as exactly one object with only a nonempty producer-owned `key` and a
-human-readable nonempty `message`. Keys are equality-only correlation evidence:
-the producer does not parse them or use them as error/status codes, and one
-atomic obligation keeps its key across exact heads and message-only rewrites.
-Distinct atomic obligations use distinct keys; split or combined obligations use
-the keys for the resulting atomic obligations. Missing, empty, duplicate, or
-malformed keys make the assessment invalid with outcome `UNKNOWN`, never an
-absent or successful gap. The inner `checking-pr-readiness-evidence/v1`
-receipt `gaps` arrays remain unchanged.
+human-readable nonempty `message`. At the assessment boundary, validate the
+caller-supplied v2 member's exact field set, outcome, and gaps before using it:
+missing, empty, duplicate, extra-field, or malformed caller keys return a
+normal valid envelope with outcome `UNKNOWN`, never a pass, omission, or
+traceback. Keys are equality-only correlation evidence: fixed semantic names
+remain local to their production sites, are never parsed or mapped to behavior,
+and do not include a list position, path, reference, timestamp, exact head, or
+message content. One atomic obligation keeps its key across exact heads and
+message-only rewrites; repeated details may be combined into that obligation.
+Distinct atomic obligations use distinct keys; split or combined findings use
+the keys for their resulting atomic obligations. The inner
+`checking-pr-readiness-evidence/v1` receipt `gaps` arrays remain unchanged.
 Return the JSON receipt and a short plain-language summary only; do not present
 the interactive Minto readout or decision menu.
 

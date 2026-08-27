@@ -34,7 +34,9 @@ Provenance: Observed failure where a declared receipt chain was accepted without
 - [ ] Returns `checking-pr-readiness-assessment/v2`; `pass` has an empty gaps
   array, and every material gap is exactly a producer-owned nonempty `key` plus
   a human-readable `message`.
-- [ ] Keeps a material obligation's key stable across identical exact heads and
-  message-only rewrites without parsing the key or treating it as a status.
+- [ ] Keeps a material obligation's key stable across different exact heads,
+  receipt timestamps, and real producer message presentations without parsing
+  the key or treating it as a status. Real split and combined findings retain
+  the key of their resulting atomic corrective obligation.
 - [ ] Uses assessment-only mode with no Minto readout, owner decision menu, attestation upgrade, or repository write.
 - [ ] Does not stage, commit, push, or open a pull request.

@@ -21,6 +21,10 @@ Provenance: Observed failure where stale, cross-boundary, partial, and bypassed 
 > Include same-kind evidence/result bytes and their digests copied from an old
 > revision into a new-revision bundle, and from one Worker/session bundle into
 > another bundle at the same head.
+> At the real evaluator boundary, include caller assessment gaps with a missing
+> key, an empty key, duplicate keys, and an extra field. Move the same invalid
+> receipt member from the first list position to the last position, and compare
+> real producer output rather than calling a gap helper directly.
 > Return one assessment receipt per variant without an owner menu.
 
 ## Expected behavior
@@ -41,6 +45,6 @@ Provenance: Observed failure where stale, cross-boundary, partial, and bypassed 
   Worker/session bundle fail even when mutable outer transport labels are
   changed to the recipient head and bundle.
 - [ ] Each material gap uses only a nonempty producer-owned key and a
-  human-readable message. Distinct atomic obligations have distinct keys;
-  malformed, missing, empty, or duplicate keys make the assessment invalid
-  with outcome `UNKNOWN`, rather than disappearing or producing a success.
+  human-readable message. Caller gap keys that are malformed, missing, empty,
+  duplicate, or extra-field return a valid `UNKNOWN` envelope, and a moved
+  finding retains its opaque equality key without relying on its list position.

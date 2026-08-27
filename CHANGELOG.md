@@ -17,8 +17,9 @@ looked" surface. GitHub Releases mirror its entries.
   `checking-pr-readiness-assessment/v2` material gaps as minimal,
   producer-owned `{key, message}` objects. Keys are equality-only correlation
   evidence: they remain stable for an atomic obligation across exact heads and
-  message rewrites, while missing, empty, duplicate, or malformed keys produce
-  `UNKNOWN`; inner evidence receipt gaps remain unchanged.
+  message rewrites, while a caller assessment gap with a missing, empty,
+  duplicate, extra-field, or malformed key produces `UNKNOWN`; inner evidence
+  receipt gaps remain unchanged.
 - Assessment-only `checking-pr-readiness` now separates substantive exact-head
   evidence from receipt packaging. One complete same-session bundle may carry
   digest-matched evidence and results outside the assessed commit, and missing

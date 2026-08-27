@@ -125,6 +125,19 @@ RECEIPT_FIELDS = {
     "observed_at",
 }
 BUNDLE_FIELDS = {"schema", "assessment", "receipts"}
+ASSESSMENT_FIELDS = {
+    "schema",
+    "capability",
+    "capability_version",
+    "repository",
+    "subject",
+    "exact_revision",
+    "receipt_references",
+    "outcome",
+    "gaps",
+    "observed_at",
+    "mode",
+}
 EVIDENCE_BLOB_CACHE: dict[tuple[str, str, str], tuple[str, bytes]] = {}
 MATERIAL_GAP_FIELDS = {"key", "message"}
 
@@ -160,6 +173,18 @@ def material_gaps_are_valid(gaps: Any) -> bool:
     return len(keys) == len(set(keys))
 
 
+def caller_assessment_is_valid(assessment: Any) -> bool:
+    """Validate the caller's v2 claim before using any of its members."""
+    if not isinstance(assessment, dict) or set(assessment) != ASSESSMENT_FIELDS:
+        return False
+    if assessment.get("outcome") not in {"pass", "action-required", "UNKNOWN"}:
+        return False
+    if not material_gaps_are_valid(assessment.get("gaps")):
+        return False
+    gaps = assessment["gaps"]
+    return (assessment["outcome"] == "pass" and not gaps) or (assessment["outcome"] != "pass" and bool(gaps))
+
+
 def gap_messages(assessment: dict[str, Any]) -> set[str]:
     return {
         item["message"]
@@ -168,16 +193,30 @@ def gap_messages(assessment: dict[str, Any]) -> set[str]:
     }
 
 
-def complete_assessment(assessment: dict[str, Any], gaps: list[dict[str, str]]) -> dict[str, Any]:
+def combine_repeated_obligations(gaps: list[dict[str, str]]) -> list[dict[str, str]]:
+    """Keep one producer-defined key when several details share one repair."""
+    combined: list[dict[str, str]] = []
+    for gap in gaps:
+        existing = next((item for item in combined if item["key"] == gap["key"]), None)
+        if existing is None:
+            combined.append(dict(gap))
+        elif gap["message"] not in existing["message"]:
+            existing["message"] = f"{existing['message']}; {gap['message']}"
+    return combined
+
+
+def complete_assessment(
+    assessment: dict[str, Any], gaps: list[dict[str, str]], *, unknown: bool = False
+) -> dict[str, Any]:
     if not material_gaps_are_valid(gaps):
         assessment["outcome"] = "UNKNOWN"
         assessment["gaps"] = [material_gap(
-            "assessment.envelope.gap-integrity",
+            "obligation.producer-gap-integrity",
             "assessment material-gap keys are missing, empty, duplicate, or malformed",
         )]
         return assessment
     assessment["gaps"] = list(gaps)
-    assessment["outcome"] = "pass" if not gaps else "action-required"
+    assessment["outcome"] = "UNKNOWN" if unknown else ("pass" if not gaps else "action-required")
     return assessment
 
 
@@ -238,7 +277,9 @@ def git_env(timestamp: str) -> dict[str, str]:
     return env
 
 
-def evidence_documents(reviewer_mode: str = "configured") -> dict[str, dict[str, Any]]:
+def evidence_documents(
+    reviewer_mode: str = "configured", reviewer_name: str = "fixture-reviewer"
+) -> dict[str, dict[str, Any]]:
     if reviewer_mode == "configured":
         class_11 = "under caps"
     elif reviewer_mode == "none":
@@ -362,7 +403,7 @@ def evidence_documents(reviewer_mode: str = "configured") -> dict[str, dict[str,
             "targeted-sweep",
             [{"result_id": "sweep:summary", "outcome": "clear", "class_count": 11}],
             verdicts=sweep_verdicts,
-            unresolved=[] if reviewer_mode != "missing-cap" else ["automated reviewer cap unresolved: fixture-reviewer"],
+            unresolved=[] if reviewer_mode != "missing-cap" else [f"automated reviewer cap unresolved: {reviewer_name}"],
         ),
         "preflight": evidence(
             "preflight",
@@ -377,6 +418,7 @@ def evidence_documents(reviewer_mode: str = "configured") -> dict[str, dict[str,
 def build_repository(
     path: Path,
     reviewer_mode: str = "configured",
+    reviewer_name: str = "fixture-reviewer",
     evidence_mutator: Callable[[dict[str, dict[str, Any]]], None] | None = None,
     pre_result_mutator: Callable[[dict[str, dict[str, Any]]], None] | None = None,
     validator_source: bytes = FIXTURE_VALIDATION_SOURCE,
@@ -397,16 +439,16 @@ def build_repository(
     (path / "CHANGELOG.md").write_text("# Changelog\n\n- Prepared synthetic assessment.\n", encoding="utf-8")
     (path / "fixture-validation.py").write_bytes(validator_source)
     if reviewer_mode == "configured":
-        reviewer_configuration_document = {"automated_reviewers": [{"name": "fixture-reviewer", "cap": SPEC["reviewer_cap"]}]}
+        reviewer_configuration_document = {"automated_reviewers": [{"name": reviewer_name, "cap": SPEC["reviewer_cap"]}]}
     elif reviewer_mode == "none":
         reviewer_configuration_document = {"automated_reviewers": []}
     elif reviewer_mode == "missing-cap":
-        reviewer_configuration_document = {"automated_reviewers": [{"name": "fixture-reviewer"}]}
+        reviewer_configuration_document = {"automated_reviewers": [{"name": reviewer_name}]}
     else:
         reviewer_configuration_document = {"automated_reviewers": {}}
     write_json(path / ".github" / "automated-reviewers.json", reviewer_configuration_document)
     write_json(path / ".github" / "repository-gates.json", {"gates": REPOSITORY_GATES})
-    documents = evidence_documents(reviewer_mode)
+    documents = evidence_documents(reviewer_mode, reviewer_name)
     if pre_result_mutator is not None:
         pre_result_mutator(documents)
     for kind, document in documents.items():
@@ -612,20 +654,31 @@ def validate_surface(repo: Path, reviewers: list[dict[str, Any]]) -> tuple[list[
         text=True,
     )
     output = completed.stdout
-    gaps = [material_gap(f"assessment.reviewer-cap.{index}", message) for index, message in enumerate(missing_caps)]
+    gaps = []
+    if missing_caps:
+        gaps.append(material_gap(
+            "obligation.reviewer-capability",
+            "; ".join(missing_caps),
+        ))
     changed = set(run("git", "diff", "--name-only", "main...HEAD", cwd=repo).splitlines())
     expected_verdict = "under caps" if reviewers and not missing_caps else "cap unverified"
     if completed.returncode != 0 or not output.startswith(f"verdict: {expected_verdict}\n"):
-        gaps.append(material_gap("assessment.surface.helper-verdict", "working surface helper returned an unexpected verdict"))
+        gaps.append(material_gap("obligation.surface-helper-verdict", "working surface helper returned an unexpected verdict"))
     output_lines = output.splitlines()
     if changed != EXPECTED_CHANGED_PATHS or output_lines.count(f"committed: {len(changed)}") != 1:
-        gaps.append(material_gap("assessment.surface.inventory", "working surface inventory mismatch"))
-    for relative in changed:
-        if f"  {relative}\n" not in f"{output}\n":
-            gaps.append(material_gap(f"assessment.surface.path.{relative}", f"working surface helper omitted path: {relative}"))
-    for category in ("staged", "unstaged", "untracked"):
-        if output_lines.count(f"{category}: 0") != 1:
-            gaps.append(material_gap(f"assessment.surface.dirty.{category}", f"dirty working surface: {category}"))
+        gaps.append(material_gap("obligation.surface-inventory", "working surface inventory mismatch"))
+    omitted_paths = [relative for relative in changed if f"  {relative}\n" not in f"{output}\n"]
+    if omitted_paths:
+        gaps.append(material_gap(
+            "obligation.surface-coverage",
+            f"working surface helper omitted paths: {', '.join(sorted(omitted_paths))}",
+        ))
+    dirty_categories = [category for category in ("staged", "unstaged", "untracked") if output_lines.count(f"{category}: 0") != 1]
+    if dirty_categories:
+        gaps.append(material_gap(
+            "obligation.clean-working-surface",
+            f"dirty working surface categories: {', '.join(dirty_categories)}",
+        ))
     return gaps, changed
 
 
@@ -644,15 +697,15 @@ def verify_command_evidence(kind: str, command: dict[str, Any], repo: Path, revi
     if expected is None:
         return []
     if command != {"id": "python3", "arguments": list(expected)}:
-        return [material_gap(f"assessment.command.{kind}", f"command execution not verified: {kind}")]
+        return [material_gap("obligation.command-execution", f"command execution not verified: {kind}")]
     try:
         validator = git_blob(repo, revision, "fixture-validation.py")
         app_state = git_blob(repo, revision, "src/app.txt")
         changelog = git_blob(repo, revision, "CHANGELOG.md")
     except subprocess.CalledProcessError:
-        return [material_gap(f"assessment.command.{kind}", f"command execution not verified: {kind}")]
+        return [material_gap("obligation.command-execution", f"command execution not verified: {kind}")]
     if validator != FIXTURE_VALIDATION_SOURCE:
-        return [material_gap(f"assessment.command.{kind}", f"command execution not verified: {kind}")]
+        return [material_gap("obligation.command-execution", f"command execution not verified: {kind}")]
     try:
         with tempfile.TemporaryDirectory(prefix="pr-readiness-command-") as temp:
             command_root = Path(temp)
@@ -668,9 +721,9 @@ def verify_command_evidence(kind: str, command: dict[str, Any], repo: Path, revi
                 timeout=10,
             )
     except (OSError, subprocess.TimeoutExpired):
-        return [material_gap(f"assessment.command.{kind}", f"command execution not verified: {kind}")]
+        return [material_gap("obligation.command-execution", f"command execution not verified: {kind}")]
     if completed.returncode != 0 or completed.stdout != f"verified:{expected[1]}\n" or completed.stderr:
-        return [material_gap(f"assessment.command.{kind}", f"command execution not verified: {kind}")]
+        return [material_gap("obligation.command-execution", f"command execution not verified: {kind}")]
     return []
 
 
@@ -781,7 +834,7 @@ def validate_evidence_document(
     transport_identity: dict[str, Any] | None = None,
 ) -> list[dict[str, str]]:
     if not isinstance(document, dict):
-        return [material_gap(f"assessment.evidence.{kind}.document", f"invalid evidence document: {kind}")]
+        return [material_gap("obligation.evidence-document", f"invalid evidence document: {kind}")]
 
     expected_fields = EVIDENCE_COMMON_FIELDS | EVIDENCE_KIND_FIELDS[kind]
     transported_fields = (expected_fields - {"schema"}) | {"transport_identity"}
@@ -820,7 +873,7 @@ def validate_evidence_document(
         )
     )
     if not common_valid:
-        return [material_gap(f"assessment.evidence.{kind}.schema", f"substantive evidence schema mismatch: {kind}")]
+        return [material_gap("obligation.evidence-contract", f"substantive evidence schema mismatch: {kind}")]
 
     reference = references[0]
     expected_result_path = f"results/{kind}.json"
@@ -835,7 +888,7 @@ def validate_evidence_document(
         or not re.fullmatch(r"[0-9a-f]{64}", reference["sha256"])
         or (transported_result is None and reference["path"] != expected_result_path)
     ):
-        return [material_gap(f"assessment.evidence.{kind}.schema", f"substantive evidence schema mismatch: {kind}")]
+        return [material_gap("obligation.evidence-contract", f"substantive evidence schema mismatch: {kind}")]
     try:
         if transported_result is None:
             mode, result_content = evidence_blob(repo, revision, expected_result_path)
@@ -843,7 +896,7 @@ def validate_evidence_document(
             mode, result_content = "100644", transported_result
         result_document = json.loads(result_content)
     except (subprocess.CalledProcessError, UnicodeDecodeError, json.JSONDecodeError):
-        return [material_gap(f"assessment.evidence.{kind}.schema", f"substantive evidence schema mismatch: {kind}")]
+        return [material_gap("obligation.evidence-contract", f"substantive evidence schema mismatch: {kind}")]
     if (
         mode != "100644"
         or hashlib.sha256(result_content).hexdigest() != reference["sha256"]
@@ -865,11 +918,11 @@ def validate_evidence_document(
         or result_document.get("command") != command
         or result_document.get("outcome") != document.get("outcome")
     ):
-        return [material_gap(f"assessment.evidence.{kind}.schema", f"substantive evidence schema mismatch: {kind}")]
+        return [material_gap("obligation.evidence-contract", f"substantive evidence schema mismatch: {kind}")]
 
     results = result_document.get("results")
     if not isinstance(results, list) or not (0 < len(results) <= 64):
-        return [material_gap(f"assessment.evidence.{kind}.schema", f"substantive evidence schema mismatch: {kind}")]
+        return [material_gap("obligation.evidence-contract", f"substantive evidence schema mismatch: {kind}")]
     result_ids: list[str] = []
     for result in results:
         if (
@@ -878,16 +931,16 @@ def validate_evidence_document(
             or not bounded_text(result.get("result_id"))
             or not bounded_text(result.get("outcome"))
         ):
-            return [material_gap(f"assessment.evidence.{kind}.schema", f"substantive evidence schema mismatch: {kind}")]
+            return [material_gap("obligation.evidence-contract", f"substantive evidence schema mismatch: {kind}")]
         result_ids.append(result["result_id"])
     if len(result_ids) != len(set(result_ids)):
-        return [material_gap(f"assessment.evidence.{kind}.schema", f"substantive evidence schema mismatch: {kind}")]
+        return [material_gap("obligation.evidence-contract", f"substantive evidence schema mismatch: {kind}")]
 
     gaps = verify_command_evidence(kind, command, repo, revision)
     if document.get("repository") != repository or document.get("subject") != live_subject:
-        gaps.append(material_gap(f"assessment.evidence.{kind}.identity", f"evidence identity mismatch: {kind}"))
+        gaps.append(material_gap("obligation.evidence-identity", f"evidence identity mismatch: {kind}"))
     if document.get("status") != "verified":
-        gaps.append(material_gap(f"assessment.evidence.{kind}.status", f"evidence status not verified: {kind}"))
+        gaps.append(material_gap("obligation.evidence-verification", f"evidence status not verified: {kind}"))
     result_by_id = {result["result_id"]: result for result in results}
 
     if kind == "working-surface":
@@ -900,9 +953,9 @@ def validate_evidence_document(
             or inventory.get("outcome") != "clean"
             or text_set(inventory.get("paths")) != surface_paths
         ):
-            gaps.append(material_gap("assessment.evidence.working-surface.inventory", "working surface evidence inventory mismatch"))
+            gaps.append(material_gap("obligation.working-surface-evidence", "working surface evidence inventory mismatch"))
         if any(document.get(category) for category in ("staged", "unstaged", "untracked")):
-            gaps.append(material_gap("assessment.evidence.working-surface.cleanliness", "working surface evidence reports dirty categories"))
+            gaps.append(material_gap("obligation.working-surface-cleanliness", "working surface evidence reports dirty categories"))
     elif kind == "repository-gates":
         gates = document.get("gates", [])
         try:
@@ -934,9 +987,9 @@ def validate_evidence_document(
                 for gate in gates
             )
         ):
-            gaps.append(material_gap("assessment.evidence.repository-gates.inventory", "repository gate inventory incomplete"))
+            gaps.append(material_gap("obligation.repository-gate-inventory", "repository gate inventory incomplete"))
         if any(not verify_repository_gate_command(gate, repo, revision) for gate in discovered_gates):
-            gaps.append(material_gap("assessment.evidence.repository-gates.execution", "repository gate command execution not verified"))
+            gaps.append(material_gap("obligation.repository-gate-execution", "repository gate command execution not verified"))
     elif kind in {"code-review", "code-simplification"}:
         summary = results[0]
         if (
@@ -947,7 +1000,7 @@ def validate_evidence_document(
             or summary.get("outcome") != "clear"
             or text_set(summary.get("reviewed_paths")) != surface_paths
         ):
-            gaps.append(material_gap(f"assessment.evidence.{kind}.findings", f"unresolved finding: {kind}"))
+            gaps.append(material_gap("obligation.evidence-findings", f"unresolved finding: {kind}"))
     elif kind == "testing":
         checks = document.get("checks")
         expected_command = " ".join([command["id"], *command["arguments"]])
@@ -980,7 +1033,7 @@ def validate_evidence_document(
             )
             or document.get("ui_classification") not in {"applicable", "not applicable"}
         ):
-            gaps.append(material_gap("assessment.evidence.testing.inventory", "testing evidence incomplete"))
+            gaps.append(material_gap("obligation.testing-evidence", "testing evidence incomplete"))
     elif kind == "plan-versus-delivered":
         planned = document.get("planned")
         not_delivered = document.get("not_delivered")
@@ -995,10 +1048,10 @@ def validate_evidence_document(
             or results[0].get("outcome") != "complete"
             or results[0].get("delivered") != planned
         ):
-            gaps.append(material_gap("assessment.evidence.plan-versus-delivered.inventory", "plan-versus-delivered evidence incomplete"))
+            gaps.append(material_gap("obligation.delivery-evidence", "plan-versus-delivered evidence incomplete"))
     elif kind == "learning-signal":
         if not bounded_text(document.get("signal")) or len(results) != 1 or not bounded_text(results[0].get("summary")):
-            gaps.append(material_gap("assessment.evidence.learning-signal.inventory", "learning-signal evidence incomplete"))
+            gaps.append(material_gap("obligation.learning-signal-evidence", "learning-signal evidence incomplete"))
     elif kind == "targeted-sweep":
         expected_class_11 = "not applicable" if not reviewers else "under caps"
         expected_verdicts = {**BASE_SWEEP_VERDICTS, "11": expected_class_11}
@@ -1011,7 +1064,7 @@ def validate_evidence_document(
             or results[0].get("outcome") != "clear"
             or results[0].get("class_count") != 11
         ):
-            gaps.append(material_gap("assessment.evidence.targeted-sweep.inventory", "pre-PR review checks incomplete"))
+            gaps.append(material_gap("obligation.targeted-sweep-evidence", "pre-PR review checks incomplete"))
     elif kind == "preflight":
         unresolved = document.get("unresolved")
         if (
@@ -1022,7 +1075,7 @@ def validate_evidence_document(
             or results[0].get("outcome") != "converged"
             or results[0].get("unresolved_count") != 0
         ):
-            gaps.append(material_gap("assessment.evidence.preflight.inventory", "preflight evidence incomplete"))
+            gaps.append(material_gap("obligation.preflight-evidence", "preflight evidence incomplete"))
     return gaps
 
 
@@ -1045,43 +1098,64 @@ def evaluate(repo: Path, bundle: Any, input_gaps: list[dict[str, str]] | None = 
     }
     gaps = [
         *(input_gaps or []),
-        *(material_gap("assessment.subject.live", message) for message in subject_gaps),
-        *(material_gap("assessment.repository.live", message) for message in repository_gaps),
+        *(material_gap("obligation.live-subject", message) for message in subject_gaps),
+        *(material_gap("obligation.live-repository", message) for message in repository_gaps),
     ]
     try:
         reviewers = reviewer_configuration(repo, revision)
     except (FixtureError, json.JSONDecodeError, KeyError, TypeError, subprocess.CalledProcessError) as error:
         reviewers = []
         gaps.append(material_gap(
-            "assessment.reviewer-configuration",
+            "obligation.reviewer-configuration",
             f"repository automated-reviewer discovery is invalid: {type(error).__name__}",
         ))
     surface_gaps, surface_paths = validate_surface(repo, reviewers)
     gaps.extend(surface_gaps)
     commit_time = datetime.fromisoformat(run("git", "show", "-s", "--format=%cI", revision, cwd=repo))
     if not isinstance(bundle, dict):
-        gaps.append(material_gap("assessment.bundle.object", "receipt bundle is not an object"))
+        gaps.append(material_gap("obligation.bundle-object", "receipt bundle is not an object"))
         bundle = {}
     if set(bundle) != BUNDLE_FIELDS:
-        gaps.append(material_gap("assessment.bundle.fields", "receipt bundle fields mismatch"))
+        gaps.append(material_gap("obligation.bundle-fields", "receipt bundle fields mismatch"))
     if bundle.get("schema") != "checking-pr-readiness-receipt-bundle/v1":
-        gaps.append(material_gap("assessment.bundle.schema", "receipt bundle schema mismatch"))
+        gaps.append(material_gap("obligation.bundle-schema", "receipt bundle schema mismatch"))
     supplied_assessment = bundle.get("assessment")
     if not isinstance(supplied_assessment, dict):
-        gaps.append(material_gap("assessment.claim.object", "assessment member is not an object"))
+        gaps.append(material_gap("obligation.assessment-member", "assessment member is not an object"))
         supplied_assessment = {}
+    elif not caller_assessment_is_valid(supplied_assessment):
+        return complete_assessment(
+            assessment,
+            [material_gap(
+                "obligation.caller-assessment-integrity",
+                "caller assessment claim must use the complete v2 shape with a valid outcome and unique material-gap keys",
+            )],
+            unknown=True,
+        )
     receipts = bundle.get("receipts", [])
     if not isinstance(receipts, list):
-        gaps.append(material_gap("assessment.bundle.receipts", "receipt bundle did not resolve receipts"))
+        gaps.append(material_gap("obligation.bundle-receipts", "receipt bundle did not resolve receipts"))
         receipts = []
     valid_receipts: list[dict[str, Any]] = []
-    for index, receipt in enumerate(receipts):
+    invalid_receipt_members = 0
+    invalid_receipt_kinds = 0
+    for receipt in receipts:
         if not isinstance(receipt, dict):
-            gaps.append(material_gap(f"assessment.receipt.element.{index}", f"invalid receipt element: {index}"))
+            invalid_receipt_members += 1
         elif not isinstance(receipt.get("kind"), str):
-            gaps.append(material_gap(f"assessment.receipt.kind.{index}", f"invalid receipt kind: {index}"))
+            invalid_receipt_kinds += 1
         else:
             valid_receipts.append(receipt)
+    if invalid_receipt_members:
+        gaps.append(material_gap(
+            "obligation.receipt-members",
+            "receipt bundle contains invalid receipt members",
+        ))
+    if invalid_receipt_kinds:
+        gaps.append(material_gap(
+            "obligation.receipt-kinds",
+            "receipt bundle contains receipts without usable kinds",
+        ))
     by_kind = {receipt.get("kind"): receipt for receipt in valid_receipts}
     evidence_documents_by_kind: dict[str, Any] = {}
     transported_results_by_kind: dict[str, bytes] = {}
@@ -1089,47 +1163,47 @@ def evaluate(repo: Path, bundle: Any, input_gaps: list[dict[str, str]] | None = 
     inline_bundle_id: str | None = None
 
     if len(by_kind) != len(valid_receipts):
-        gaps.append(material_gap("assessment.receipt.kind-uniqueness", "duplicate receipt kind"))
+        gaps.append(material_gap("obligation.receipt-kind-uniqueness", "duplicate receipt kind"))
 
     for kind in SPEC["required_receipts"]:
         receipt = by_kind.get(kind)
         if receipt is None:
-            gaps.append(material_gap(f"assessment.receipt.{kind}.presence", f"missing receipt: {kind}"))
+            gaps.append(material_gap("obligation.required-receipt", f"missing receipt: {kind}"))
             continue
         if set(receipt) != RECEIPT_FIELDS or not isinstance(receipt.get("gaps"), list):
-            gaps.append(material_gap(f"assessment.receipt.{kind}.fields", "invalid receipt fields"))
+            gaps.append(material_gap("obligation.receipt-shape", "invalid receipt fields"))
         if receipt.get("schema") != "checking-pr-readiness-evidence/v1":
-            gaps.append(material_gap(f"assessment.receipt.{kind}.schema", f"invalid receipt schema: {kind}"))
+            gaps.append(material_gap("obligation.receipt-schema", f"invalid receipt schema: {kind}"))
         if receipt.get("receipt_id") != f"receipt:{kind}":
-            gaps.append(material_gap(f"assessment.receipt.{kind}.identity", f"invalid receipt identity: {kind}"))
+            gaps.append(material_gap("obligation.receipt-identity", f"invalid receipt identity: {kind}"))
         if receipt.get("capability") != "checking-pr-readiness" or not receipt.get("capability_version"):
-            gaps.append(material_gap(f"assessment.receipt.{kind}.capability", f"invalid receipt capability: {kind}"))
+            gaps.append(material_gap("obligation.receipt-capability", f"invalid receipt capability: {kind}"))
         if receipt.get("repository") != live_repository:
-            gaps.append(material_gap(f"assessment.receipt.{kind}.repository", f"cross-repository receipt: {kind}"))
+            gaps.append(material_gap("obligation.receipt-repository", f"cross-repository receipt: {kind}"))
         if receipt.get("subject") != live_subject:
-            gaps.append(material_gap(f"assessment.receipt.{kind}.subject", f"cross-subject receipt: {kind}"))
+            gaps.append(material_gap("obligation.receipt-subject", f"cross-subject receipt: {kind}"))
         if receipt.get("exact_revision") != revision:
-            gaps.append(material_gap(f"assessment.receipt.{kind}.revision", f"cross-revision receipt: {kind}"))
+            gaps.append(material_gap("obligation.receipt-revision", f"cross-revision receipt: {kind}"))
         try:
             observed = datetime.fromisoformat(receipt["observed_at"])
             if observed < commit_time:
-                gaps.append(material_gap(f"assessment.receipt.{kind}.freshness", f"stale receipt: {kind}"))
+                gaps.append(material_gap("obligation.receipt-freshness", f"stale receipt: {kind}"))
         except (KeyError, ValueError, TypeError):
-            gaps.append(material_gap(f"assessment.receipt.{kind}.observation", f"invalid observation time: {kind}"))
+            gaps.append(material_gap("obligation.receipt-observation", f"invalid observation time: {kind}"))
         if receipt.get("outcome") == "bypassed" or receipt.get("bypass_requested"):
-            gaps.append(material_gap(f"assessment.receipt.{kind}.bypass", f"bypass request: {kind}"))
+            gaps.append(material_gap("obligation.receipt-bypass", f"bypass request: {kind}"))
         elif receipt.get("outcome") not in {"verified", "not applicable"} or receipt.get("gaps") != []:
-            gaps.append(material_gap(f"assessment.receipt.{kind}.findings", f"unresolved finding: {kind}"))
+            gaps.append(material_gap("obligation.receipt-findings", f"unresolved finding: {kind}"))
         references = receipt.get("evidence_references", [])
         if not isinstance(references, list) or not references:
-            gaps.append(material_gap(f"assessment.receipt.{kind}.evidence-presence", f"missing evidence reference: {kind}"))
+            gaps.append(material_gap("obligation.evidence-reference", f"missing evidence reference: {kind}"))
             references = []
         expected_path = f"evidence/{kind}.json"
         if len(references) != 1:
-            gaps.append(material_gap(f"assessment.receipt.{kind}.evidence-inventory", f"evidence inventory mismatch: {kind}"))
+            gaps.append(material_gap("obligation.evidence-reference-inventory", f"evidence inventory mismatch: {kind}"))
         for reference in references:
             if not isinstance(reference, dict):
-                gaps.append(material_gap(f"assessment.receipt.{kind}.evidence-reference", f"invalid evidence reference: {kind}"))
+                gaps.append(material_gap("obligation.evidence-reference", f"invalid evidence reference: {kind}"))
                 continue
             transport = bundled_transport(reference, revision, receipt.get("receipt_id"))
             if transport is not None:
@@ -1137,7 +1211,7 @@ def evaluate(repo: Path, bundle: Any, input_gaps: list[dict[str, str]] | None = 
                 if inline_bundle_id is None:
                     inline_bundle_id = reference_bundle_id
                 elif reference_bundle_id != inline_bundle_id:
-                    gaps.append(material_gap(f"assessment.receipt.{kind}.inline-bundle", f"mixed inline bundle identity: {kind}"))
+                    gaps.append(material_gap("obligation.inline-bundle-identity", f"mixed inline bundle identity: {kind}"))
                 evidence_documents_by_kind[kind] = evidence
                 transported_results_by_kind[kind] = result_content
                 transport_identities_by_kind[kind] = {
@@ -1157,39 +1231,37 @@ def evaluate(repo: Path, bundle: Any, input_gaps: list[dict[str, str]] | None = 
                 or relative.startswith("/")
                 or ".." in Path(relative).parts
             ):
-                gaps.append(material_gap(f"assessment.receipt.{kind}.evidence-reference", f"invalid evidence reference: {kind}"))
+                gaps.append(material_gap("obligation.evidence-reference", f"invalid evidence reference: {kind}"))
                 continue
             try:
                 mode, content = evidence_blob(repo, revision, relative)
             except (subprocess.CalledProcessError, IndexError):
-                gaps.append(material_gap(f"assessment.receipt.{kind}.evidence", f"missing evidence: {kind}"))
+                gaps.append(material_gap("obligation.evidence-availability", f"missing evidence: {kind}"))
                 continue
             if mode != "100644":
-                gaps.append(material_gap(f"assessment.receipt.{kind}.evidence-file", f"non-regular evidence: {kind}"))
+                gaps.append(material_gap("obligation.evidence-file", f"non-regular evidence: {kind}"))
             if hashlib.sha256(content).hexdigest() != reference.get("sha256"):
-                gaps.append(material_gap(f"assessment.receipt.{kind}.evidence-digest", f"evidence digest mismatch: {kind}"))
+                gaps.append(material_gap("obligation.evidence-digest", f"evidence digest mismatch: {kind}"))
             if relative == expected_path:
                 try:
                     evidence_documents_by_kind[kind] = json.loads(content)
                 except (UnicodeDecodeError, json.JSONDecodeError):
-                    gaps.append(material_gap(f"assessment.receipt.{kind}.evidence-document", f"invalid evidence document: {kind}"))
+                    gaps.append(material_gap("obligation.evidence-document", f"invalid evidence document: {kind}"))
 
     for kind in SPEC["required_receipts"]:
         if kind in evidence_documents_by_kind:
-            gaps.extend(
-                validate_evidence_document(
-                    kind,
-                    evidence_documents_by_kind[kind],
-                    repo,
-                    revision,
-                    surface_paths,
-                    live_subject,
-                    reviewers,
-                    live_repository,
-                    transported_results_by_kind.get(kind),
-                    transport_identities_by_kind.get(kind),
-                )
-            )
+            gaps.extend(validate_evidence_document(
+                kind,
+                evidence_documents_by_kind[kind],
+                repo,
+                revision,
+                surface_paths,
+                live_subject,
+                reviewers,
+                live_repository,
+                transported_results_by_kind.get(kind),
+                transport_identities_by_kind.get(kind),
+            ))
 
     expected_ids = {f"receipt:{kind}" for kind in SPEC["required_receipts"]}
     raw_receipt_references = supplied_assessment.get("receipt_references", [])
@@ -1199,36 +1271,39 @@ def evaluate(repo: Path, bundle: Any, input_gaps: list[dict[str, str]] | None = 
     else:
         receipt_references = [reference for reference in raw_receipt_references if isinstance(reference, str)]
         if len(receipt_references) != len(raw_receipt_references):
-            gaps.append(material_gap("assessment.claim.receipt-reference", "invalid assessment receipt reference"))
+            gaps.append(material_gap("obligation.assessment-receipt-reference", "invalid assessment receipt reference"))
     if set(receipt_references) != expected_ids:
         receipt_inventory_mismatch = True
     if receipt_inventory_mismatch:
-        gaps.append(material_gap("assessment.claim.receipt-inventory", "assessment receipt inventory mismatch"))
+        gaps.append(material_gap("obligation.assessment-receipt-inventory", "assessment receipt inventory mismatch"))
     receipt_ids = [receipt.get("receipt_id") for receipt in valid_receipts]
     if len(receipt_references) != len(set(receipt_references)):
-        gaps.append(material_gap("assessment.claim.receipt-reference-uniqueness", "duplicate assessment receipt reference"))
+        gaps.append(material_gap("obligation.assessment-receipt-reference-uniqueness", "duplicate assessment receipt reference"))
     if set(receipt_ids) - set(receipt_references):
-        gaps.append(material_gap("assessment.bundle.unreferenced-receipt", "receipt bundle contains unreferenced receipt"))
+        gaps.append(material_gap("obligation.unreferenced-receipt", "receipt bundle contains unreferenced receipt"))
     for reference in receipt_references:
         if receipt_ids.count(reference) != 1:
-            gaps.append(material_gap(f"assessment.claim.receipt-reference.{reference}", f"unresolved receipt reference: {reference}"))
+            gaps.append(material_gap(
+                "obligation.assessment-receipt-resolution",
+                f"unresolved receipt reference: {reference}",
+            ))
     if supplied_assessment.get("schema") != "checking-pr-readiness-assessment/v2":
-        gaps.append(material_gap("assessment.claim.schema", "assessment schema mismatch"))
+        gaps.append(material_gap("obligation.assessment-schema", "assessment schema mismatch"))
     if supplied_assessment.get("capability") != "checking-pr-readiness":
-        gaps.append(material_gap("assessment.claim.capability", "assessment capability mismatch"))
+        gaps.append(material_gap("obligation.assessment-capability", "assessment capability mismatch"))
     if supplied_assessment.get("mode") != "assessment-only":
-        gaps.append(material_gap("assessment.claim.mode", "assessment mode mismatch"))
+        gaps.append(material_gap("obligation.assessment-mode", "assessment mode mismatch"))
     if supplied_assessment.get("repository") != live_repository:
-        gaps.append(material_gap("assessment.claim.repository", "assessment repository mismatch"))
+        gaps.append(material_gap("obligation.assessment-repository", "assessment repository mismatch"))
     if supplied_assessment.get("subject") != live_subject:
-        gaps.append(material_gap("assessment.claim.subject", "assessment subject mismatch"))
+        gaps.append(material_gap("obligation.assessment-subject", "assessment subject mismatch"))
     if supplied_assessment.get("exact_revision") != revision:
-        gaps.append(material_gap("assessment.claim.revision", "assessment revision mismatch"))
+        gaps.append(material_gap("obligation.assessment-revision", "assessment revision mismatch"))
     if not OID.fullmatch(revision):
-        gaps.append(material_gap("assessment.live.revision", "assessment revision is not a full Git OID"))
+        gaps.append(material_gap("obligation.live-revision", "assessment revision is not a full Git OID"))
 
     assessment["receipt_references"] = receipt_references
-    return complete_assessment(assessment, gaps)
+    return complete_assessment(assessment, combine_repeated_obligations(gaps))
 
 
 def variants(bundle: dict[str, Any]) -> dict[str, dict[str, Any]]:
@@ -1344,56 +1419,94 @@ def run_suite() -> None:
         require(positive["capability_version"] == package_version(), "assessment capability version was not live-derived")
         require(positive["observed_at"] != bundle["assessment"]["observed_at"], "assessment observation time stayed caller-controlled")
 
+        for malformed_gaps in (
+            [{"message": "missing key"}],
+            [material_gap("", "empty key")],
+            [material_gap("caller-key", "first"), material_gap("caller-key", "second")],
+            [{"key": "caller-key", "message": "extra field", "extra": True}],
+        ):
+            malformed_claim = copy.deepcopy(bundle)
+            malformed_claim["assessment"]["gaps"] = malformed_gaps
+            malformed_result = evaluate(first, malformed_claim)
+            require(
+                malformed_result["outcome"] == "UNKNOWN"
+                and material_gaps_are_valid(malformed_result["gaps"]),
+                "malformed caller assessment gaps did not fail closed at evaluate",
+            )
+
         missing_first = evaluate(first, variants(bundle)["missing-receipt"])
         missing_second = evaluate(second, variants(make_bundle(second, repeated_revision))["missing-receipt"])
-        expected_missing_gap = {
-            "key": "assessment.receipt.code-review.presence",
-            "message": "missing receipt: code-review",
-        }
-        require(expected_missing_gap in missing_first["gaps"], "missing receipt did not emit its key-plus-message gap")
+        require(
+            "missing receipt: code-review" in gap_messages(missing_first)
+            and material_gaps_are_valid(missing_first["gaps"]),
+            "missing receipt did not emit a valid human-readable gap",
+        )
         require(
             {item["key"] for item in missing_first["gaps"]} == {item["key"] for item in missing_second["gaps"]},
             "the same atomic obligation changed keys across identical exact heads",
         )
-        rewritten_message = complete_assessment(
-            {"schema": "checking-pr-readiness-assessment/v2"},
-            [material_gap("assessment.fixture.obligation", "first wording")],
-        )
-        rewritten_message_again = complete_assessment(
-            {"schema": "checking-pr-readiness-assessment/v2"},
-            [material_gap("assessment.fixture.obligation", "rewritten wording")],
-        )
+
+        null_first = copy.deepcopy(bundle)
+        null_first["receipts"][0] = None
+        null_last = copy.deepcopy(bundle)
+        null_last["receipts"].append(null_last["receipts"].pop(0))
+        null_last["receipts"][-1] = None
+        null_first_result = evaluate(first, null_first)
+        null_last_result = evaluate(first, null_last)
         require(
-            rewritten_message["gaps"][0]["key"] == rewritten_message_again["gaps"][0]["key"],
-            "a message-only rewrite changed its correlation key",
+            {item["key"] for item in null_first_result["gaps"]}
+            == {item["key"] for item in null_last_result["gaps"]}
+            and material_gaps_are_valid(null_first_result["gaps"])
+            and material_gaps_are_valid(null_last_result["gaps"]),
+            "moving the same invalid receipt changed its opaque key or envelope shape",
         )
-        split_obligations = complete_assessment(
-            {"schema": "checking-pr-readiness-assessment/v2"},
-            [
-                material_gap("assessment.fixture.obligation-a", "first resulting obligation"),
-                material_gap("assessment.fixture.obligation-b", "second resulting obligation"),
-            ],
-        )
-        combined_obligation = complete_assessment(
-            {"schema": "checking-pr-readiness-assessment/v2"},
-            [material_gap("assessment.fixture.combined-obligation", "combined resulting obligation")],
-        )
+
+        split_receipts = copy.deepcopy(bundle)
+        split_receipts["receipts"] = [
+            receipt for receipt in split_receipts["receipts"]
+            if receipt["kind"] not in {"code-review", "code-simplification"}
+        ]
+        split_receipts["assessment"]["receipt_references"] = [
+            reference for reference in split_receipts["assessment"]["receipt_references"]
+            if reference not in {"receipt:code-review", "receipt:code-simplification"}
+        ]
+        combined_receipts = copy.deepcopy(bundle)
+        combined_receipts["receipts"] = [
+            receipt for receipt in combined_receipts["receipts"] if receipt["kind"] != "code-review"
+        ]
+        combined_receipts["assessment"]["receipt_references"].remove("receipt:code-review")
+        split_result = evaluate(first, split_receipts)
+        combined_result = evaluate(first, combined_receipts)
         require(
-            len({item["key"] for item in split_obligations["gaps"]}) == 2
-            and split_obligations["gaps"][0]["key"] != combined_obligation["gaps"][0]["key"],
-            "split or combined obligations did not retain their resulting atomic keys",
+            {item["key"] for item in split_result["gaps"]}
+            == {item["key"] for item in combined_result["gaps"]}
+            and material_gaps_are_valid(split_result["gaps"])
+            and material_gaps_are_valid(combined_result["gaps"]),
+            "split and combined missing receipts did not retain one atomic corrective obligation",
         )
-        for malformed_gaps in (
-            [{"message": "missing key"}],
-            [material_gap("", "empty key")],
-            [material_gap("assessment.fixture.duplicate", "first"), material_gap("assessment.fixture.duplicate", "second")],
-            [{"key": "assessment.fixture.extra", "message": "extra field", "extra": True}],
-        ):
-            invalid = complete_assessment({"schema": "checking-pr-readiness-assessment/v2"}, malformed_gaps)
-            require(
-                invalid["outcome"] == "UNKNOWN" and material_gaps_are_valid(invalid["gaps"]),
-                "invalid material-gap keys did not produce UNKNOWN",
-            )
+
+        first_missing_cap = root / "first-missing-cap"
+        second_missing_cap = root / "second-missing-cap"
+        first_missing_cap_revision = build_repository(
+            first_missing_cap, "missing-cap", "first-presentation"
+        )
+        second_missing_cap_revision = build_repository(
+            second_missing_cap, "missing-cap", "second-presentation"
+        )
+        first_missing_cap_result = evaluate(
+            first_missing_cap, make_bundle(first_missing_cap, first_missing_cap_revision)
+        )
+        second_missing_cap_result = evaluate(
+            second_missing_cap, make_bundle(second_missing_cap, second_missing_cap_revision)
+        )
+        first_cap_gaps = [gap for gap in first_missing_cap_result["gaps"] if "cap unresolved" in gap["message"]]
+        second_cap_gaps = [gap for gap in second_missing_cap_result["gaps"] if "cap unresolved" in gap["message"]]
+        require(
+            len(first_cap_gaps) == len(second_cap_gaps) == 1
+            and first_cap_gaps[0]["key"] == second_cap_gaps[0]["key"]
+            and first_cap_gaps[0]["message"] != second_cap_gaps[0]["message"],
+            "a real producer message presentation changed an atomic obligation key",
+        )
 
         documented_inline_bundle = json.loads(json.dumps(make_outside_tree_bundle(first, revision)))
         require(
@@ -1538,7 +1651,7 @@ def run_suite() -> None:
         )
         malicious_validator_result = evaluate(first, bundle)
         require(
-            "dirty working surface: unstaged" in gap_messages(malicious_validator_result),
+            "dirty working surface categories: unstaged" in gap_messages(malicious_validator_result),
             "dirty validator did not fail the working-surface check",
         )
         require(not malicious_marker.exists(), "repository-controlled validator was executed")
@@ -1561,7 +1674,7 @@ def run_suite() -> None:
         )
         require(
             committed_malicious_result["outcome"] == "action-required"
-            and "command execution not verified: testing" in gap_messages(committed_malicious_result),
+            and any("command execution not verified: testing" in message for message in gap_messages(committed_malicious_result)),
             "committed non-allowlisted validator was not rejected",
         )
         require(not committed_malicious_marker.exists(), "committed non-allowlisted validator was executed")
@@ -1578,7 +1691,7 @@ def run_suite() -> None:
         (first / "src" / "app.txt").write_text("staged-only\n", encoding="utf-8")
         run("git", "add", "src/app.txt", cwd=first)
         staged_result = evaluate(first, bundle)
-        require("dirty working surface: staged" in gap_messages(staged_result), "staged-only dirt passed exact-line parsing")
+        require("dirty working surface categories: staged" in gap_messages(staged_result), "staged-only dirt passed exact-line parsing")
         run("git", "restore", "--staged", "src/app.txt", cwd=first)
         run("git", "restore", "src/app.txt", cwd=first)
 
@@ -1737,7 +1850,7 @@ def run_suite() -> None:
         forged_result = evaluate(forged_result_repo, make_bundle(forged_result_repo, forged_result_revision))
         require(forged_result["outcome"] == "action-required", "structurally complete forged command result passed")
         require(
-            "command execution not verified: testing" in gap_messages(forged_result),
+            any("command execution not verified: testing" in message for message in gap_messages(forged_result)),
             "structurally complete forged command result did not fail at the owning-runner boundary",
         )
 
@@ -1812,10 +1925,10 @@ def check_materialized(repo: Path, bundle_path: Path) -> int:
         bundle = json.loads(bundle_path.read_text(encoding="utf-8"))
     except OSError:
         bundle = None
-        input_gaps.append(material_gap("assessment.bundle.read", "receipt bundle is unreadable"))
+        input_gaps.append(material_gap("obligation.bundle-read", "receipt bundle is unreadable"))
     except (UnicodeError, json.JSONDecodeError):
         bundle = None
-        input_gaps.append(material_gap("assessment.bundle.parse", "receipt bundle is malformed"))
+        input_gaps.append(material_gap("obligation.bundle-parse", "receipt bundle is malformed"))
     result = evaluate(repo, bundle, input_gaps)
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["outcome"] == "pass" else 1

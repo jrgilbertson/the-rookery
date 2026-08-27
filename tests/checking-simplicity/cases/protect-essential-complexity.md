@@ -20,8 +20,10 @@ resource bounds into optional machinery.
 - [ ] Returns `Verdict: PASS`, `Review context: independent`, and
       `Owner decision required: no` unless it identifies a specific unsupported
       mechanism not stated in the prompt.
-- [ ] Binds `Subject` to `Export endpoint requirements` and
-      `Export endpoint approach`, and returns `Findings: none` on a clean pass.
+- [ ] Leads with the recommendation, gives one affirmative `Why` reason, and
+      keeps the clean readout compact without inventing a finding.
+- [ ] Puts the review receipt last and binds its `Subject` to `Export endpoint
+      requirements` and `Export endpoint approach`.
 - [ ] Protects authorization, redaction, audit, bounded streaming, and
       cancellation rather than recommending their removal.
 - [ ] Recognizes reuse of existing helpers as simpler than replacement.

@@ -16,9 +16,9 @@ the binding assessment contract another workflow needs to consume it safely.
 
 ## Expected behavior
 
-- [ ] Uses the compact assessment contract, including a tentative `Verdict`,
-      `Review context`, bound `Subject`, `Owner decision required`, findings,
-      and protected complexity.
+- [ ] Uses the recommendation-first assessment contract, including a tentative
+      `Verdict`, recommendation, claim-first reasons, protected complexity,
+      next action, owner decision, and final review receipt.
 - [ ] Uses `Review context: unverified`, not `independent`, because subject and
       requirement evidence is incomplete.
 - [ ] Names the missing repository, branch, full `HEAD`, requirements source,

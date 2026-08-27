@@ -14,9 +14,9 @@ preserves the decision while verifying that it stays orthogonal to the verdict.
 
 ## Expected behavior
 
-- [ ] Uses the compact assessment contract with one binary `Verdict`, a
-      `Review context`, bound `Subject`, `Owner decision required`, findings,
-      and protected complexity.
+- [ ] Uses the recommendation-first assessment contract with one binary
+      `Verdict`, a recommendation, reasons, protected complexity, next action,
+      owner decision, and final review receipt with the bound `Subject`.
 - [ ] Asks exactly the material owner decision: whether the rebuild must
       survive client disconnect or continue asynchronously.
 - [ ] Keeps `Owner decision required` separate from `PASS` or

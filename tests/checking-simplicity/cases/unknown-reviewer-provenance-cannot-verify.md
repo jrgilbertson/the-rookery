@@ -20,7 +20,8 @@ complete subject with unknown reviewer history.
 
 ## Expected behavior
 
-- [ ] Uses the compact assessment contract with all required fields.
+- [ ] Uses the recommendation-first assessment contract with all required
+      decision and receipt fields.
 - [ ] Repeats the complete requirements and implementation-surface binding in
       `Subject`.
 - [ ] Uses `Review context: unverified`, not `independent`, because reviewer

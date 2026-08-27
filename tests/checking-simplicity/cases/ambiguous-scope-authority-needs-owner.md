@@ -17,8 +17,8 @@ originating objective and completed draft disagree.
 
 ## Expected behavior
 
-- [ ] Uses the compact assessment contract and binds `Subject` to the
-      originating objective and completed draft.
+- [ ] Uses the recommendation-first assessment contract and binds the final
+      receipt's `Subject` to the originating objective and completed draft.
 - [ ] Uses `Review context: unverified`, not `independent`, because the
       authoritative requirements are unresolved.
 - [ ] Sets `Owner decision required: yes` and asks whether the added

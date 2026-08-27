@@ -21,9 +21,9 @@ source conflicted with the decision document.
 
 ## Expected behavior
 
-- [ ] Uses the compact assessment contract and binds `Subject` to both
-      conflicting requirements sources, the decision text, and the missing
-      implementation-surface fields.
+- [ ] Uses the recommendation-first assessment contract and binds the final
+      receipt's `Subject` to both conflicting requirements sources, the
+      decision text, and the missing implementation-surface fields.
 - [ ] Uses `Review context: unverified`, not `independent`, because Git identity
       and the complete four-category surface inventory are unavailable.
 - [ ] Sets `Owner decision required: yes` and asks which requirements source is

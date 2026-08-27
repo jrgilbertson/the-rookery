@@ -52,12 +52,11 @@ Treat capabilities added only by an agent-authored draft as proposals, even
 when the planning workflow marked the draft complete or ready for handoff. If
 the available evidence does not establish who approved a capability, ask one
 owner question instead of silently removing or protecting it, and label the
-review `unverified`. Make any related finding conditional. Write `Remove,
-reuse, or defer: Conditional — remove or
-defer <capability> only if the owner says it is not required.` Do not present
-that removal as settled before the owner answers. Keep this source authority
-when reviewing a later approach, implementation plan, or in-build decision;
-the latest draft does not erase the originating objective.
+review `unverified`. Make any related recommendation conditional: `Conditional
+— remove or defer <capability> only if the owner says it is not required.` Do
+not present that removal as settled before the owner answers. Keep this source
+authority when reviewing a later approach, implementation plan, or in-build
+decision; the latest draft does not erase the originating objective.
 
 When multiple plausible requirements sources conflict, label the review
 `unverified`, set `Owner decision required: yes`, and ask which source is
@@ -171,21 +170,33 @@ Return exactly one verdict:
 - `CHANGES_NEEDED` when at least one named concept can be removed, reused, or
   deferred while preserving the protected requirements.
 
-Use this compact shape:
+Use a compact Minto-shaped readout: lead with the conclusion and recommended
+action, group the reasons that justify it, and put only the evidence each
+reason needs inline after the claim. Keep the review receipt last so it remains
+available to consuming workflows without burying the decision.
 
 ```text
-Verdict: PASS | CHANGES_NEEDED
-Review context: independent | same-context (advisory) — <reason> | unverified — <missing evidence or provenance>
-Subject: <requirements source + objective + required behavior + hard constraints + verification criteria + current plan, or those requirements fields + repository + branch + full HEAD + committed, staged, unstaged, and untracked path inventories>
+Verdict: PASS | CHANGES_NEEDED — <plain-language conclusion>
+Recommendation: <continue with the current subject or adopt the smallest safe revised subject>
+
+Why:
+- <Remove, reuse, defer, or keep conclusion>. Evidence: <requirement and subject pointer>.
+
+Protected complexity: <required behavior, constraints, and proportionate tests that must remain, or none>
+Next: <boundary crossed, or blocked boundary + recovery + required recheck>
 Owner decision required: no | yes — <one exact question>
-
-Findings:
-- Evidence: <requirement and subject pointer>
-  Remove, reuse, or defer: <unnecessary concept>
-  Smallest safe alternative: <replacement>
-
-Protected complexity: <what must remain, or none>
+Review receipt:
+Review context: independent | same-context (advisory) — <reason> | unverified — <missing evidence or provenance>
+Subject: <requirements source + objective + required behavior + hard constraints + verification criteria + current requirements draft, approach, or plan; for implementation, also include decision text + repository + branch + full HEAD + separate committed, staged, unstaged, and untracked path inventories + supplied current-content summary for every relevant surface category>
 ```
+
+Write verified context exactly as `Review context: independent`, with no
+suffix. Only advisory and unverified values take a reason.
+
+On a clean `PASS`, use one affirmative `Why` reason and keep everything before
+the receipt to about seven nonblank lines. Expand only for decision-driving
+reasons, protected boundaries, or missing-evidence recovery. Do not turn the
+receipt into the opening or repeat its fields elsewhere.
 
 A caller may cross into implementation planning or execution only when the
 current subject receives `PASS`, `Review context: independent`, and
@@ -198,15 +209,16 @@ advisory or unverified implementation result, the recovery evidence must include
 both the path inventory and the complete current contents of every relevant
 surface category. Call any advisory or unverified `PASS` tentative and state
 that it does not complete the checkpoint or satisfy PR readiness.
+For every advisory or unverified result, state in `Next` that any change to the
+reviewed draft, `HEAD`, or working surface makes the result stale.
 
-On a clean pass, write `Findings:` followed by `- none`; do not invent a
-concern. When reuse of an existing mechanism is part of the smallest safe
-approach, name it under
-`Protected complexity` with the required constraints it preserves. On
-`CHANGES_NEEDED`, every finding needs a pointer to both the proposed mechanism
-or scope choice and the current objective or requirement it fails to serve.
-Return the assessment to the caller. Do not revise the plan, edit files,
-configure hooks, commit, or approve shipping.
+On a clean pass, do not invent a concern. When reuse of an existing mechanism
+is part of the smallest safe approach, name it in the recommendation or
+affirmative `Why` reason and state under `Protected complexity` which required
+constraints it preserves. On `CHANGES_NEEDED`, every reason needs a pointer to
+both the proposed mechanism or scope choice and the current objective or
+requirement it fails to serve. Return the assessment to the caller. Do not
+revise the plan, edit files, configure hooks, commit, or approve shipping.
 
 ## Boundaries
 

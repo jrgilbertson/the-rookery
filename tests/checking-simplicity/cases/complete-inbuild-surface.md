@@ -1,9 +1,9 @@
 # A complete in-build surface gets a concrete reduction
 
-Provenance: explicitly labeled regression control after an earlier independent
-package review on 2026-08-26 found that the in-build branch had routing coverage
-and an incomplete-evidence control, but no complete-surface behavioral
-comparison protecting a useful assessment.
+Provenance: an earlier independent review found that the in-build branch needed
+a complete-surface behavioral comparison. The 2026-08-27 output review found
+that receipt fields and evidence appeared before the recommendation, burying
+the decision this assessment exists to support.
 
 ## Prompt
 
@@ -39,12 +39,18 @@ comparison protecting a useful assessment.
 
 ## Expected behavior
 
-- [ ] Uses the compact assessment contract, including `Verdict`, `Review
-      context`, `Subject`, `Owner decision required: no`, and a finding with
-      `Evidence`, `Remove, reuse, or defer`, and `Smallest safe alternative`.
+- [ ] Leads with a plain-language `Verdict` and the smallest safe
+      `Recommendation` before `Why`, protected complexity, next action, owner
+      decision, or receipt details.
+- [ ] Gives claim-first `Why` reasons that remove, reuse, or defer machinery,
+      with the requirement and subject evidence inline after each claim.
 - [ ] Returns `CHANGES_NEEDED` with `Review context: independent`.
 - [ ] Repeats the exact repository, branch, full HEAD, and committed, staged,
-      unstaged, and untracked path inventories in `Subject`.
+      unstaged, and untracked path inventories in the final review receipt's
+      `Subject`.
+- [ ] Repeats the supplied objective, requirements, verification criteria, and
+      current surface content in the final review receipt's `Subject` rather
+      than reducing the binding to Git identity and paths.
 - [ ] Removes or defers the retry engine, event bus, provider/plugin layer,
       runtime retry configuration, and persisted attempt state because no
       current requirement needs them.

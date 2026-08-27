@@ -13,6 +13,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-gardener` now treats declared gate-prerequisite health as a setup
+  outcome. A required unhealthy prerequisite blocks only its dependent gate and
+  work, while an unavailable optional environment blocks only its affected
+  gate; exact-head readiness rechecks the Worker environment without skipping,
+  weakening, or substituting a gate.
 - `repo-gardener` now verifies setup with a byte-aware clean snapshot. It
   reports exact staged, unstaged, non-ignored untracked, tracked-byte, and
   `skip-worktree` or `assume-unchanged` flag changes without repairing them;

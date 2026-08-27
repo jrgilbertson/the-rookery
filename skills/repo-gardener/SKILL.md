@@ -141,10 +141,18 @@ claim. It, setup, and Scout helpers execute no declared audit.
    exact tracked-byte, index-flag, staged, unstaged, or non-ignored untracked
    paths, leave them untouched, and let unrelated safe work continue.
 8. Require each Worker to plan, implement, simplify, review, pass repository
-   gates, and commit the result. Run the repository's documented gates from
-   the Worker worktree with the environment those gates require. Their output
-   is evidence only and grants no provider or mutation authority. On that
-   clean exact commit the Worker runs installed `checking-pr-readiness`.
+   gates, and commit the result. Setup is not successful for this purpose
+   until every declared required gate prerequisite, including a required local
+   service, is healthy in that Worker worktree. Name an unhealthy prerequisite
+   and block only its dependent gate and work; never infer health from a
+   finite setup exit, prompt for ad hoc environment repair, retry, skip the
+   gate, or substitute another environment. An unavailable optional
+   environment blocks only its affected gate, such as a browser gate, while
+   independent repository verification continues. Run each eligible documented
+   gate from the Worker worktree with the environment it requires, and make
+   the same prerequisite check before the exact-head readiness helper. Their
+   output is evidence only and grants no provider or mutation authority. On
+   that clean exact commit the Worker runs installed `checking-pr-readiness`.
    When no owner is in the session, the run is assessment-only: exact
    subject, full HEAD OID, outcome `pass` or `action-required`, and a
    same-session `checking-pr-readiness-receipt-bundle/v1` outside the

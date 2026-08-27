@@ -74,6 +74,32 @@ run its unchanged envelope. An owner-reviewed default-branch change may become
 the pinned argv of a later run only. Setup itself creates no authority beyond
 the existing input envelope.
 
+## Establish the gate environment
+
+Setup also establishes the declared prerequisites of the repository's gates.
+Before dependent implementation or a gate begins, test each required
+prerequisite from that same fresh worktree. A finite zero exit from
+`setup_command` is not health evidence: a required service must be available
+to the Worker and later exact-head readiness helper. Record the named health
+result as a setup outcome; it does not add a second setup argv, a
+harness-specific profile, or any authority to install, start, substitute, or
+repair an environment.
+
+If a required prerequisite is absent or unhealthy, name it and block only the
+gate and work that depends on it. Preserve the worktree, do not retry setup or
+the gate, and continue independent safe verification. An unavailable optional
+environment blocks only its declared affected gate. For example, unavailable
+browser infrastructure blocks a browser gate while non-browser repository
+verification may continue. No unavailable environment permits a skipped,
+weakened, or substituted gate.
+
+Immediately before every documented gate and the exact-head
+`checking-pr-readiness` assessment, recheck that gate's prerequisite health in
+the Worker worktree. A changed or failed result is a named gate-local gap, not
+evidence that the clean commit is ready to ship. The assessment remains bound
+to its exact subject and full HEAD OID and does not acquire PR ownership,
+attestation, tracker-write, merge, or environment-repair authority.
+
 Resolve a stale opening record before starting a new run. Lease expiry alone
 does not prove the old Orchestrator stopped. Ask the caller for current
 automation liveness and recover only under the rules in `SKILL.md`. Recovery

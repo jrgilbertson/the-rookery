@@ -28,6 +28,9 @@ PR and a missing bundle was not a named `saved_without_pr` gap.
 >    the exact-subject and full-OID double-check.
 > 5. An owner is present in the session. The same Worker is on that clean
 >    commit. Installed `checking-pr-readiness` is available.
+> 6. The same unattended Worker has the required readiness environment healthy
+>    for its exact head. Separately, an optional browser environment is
+>    unavailable after setup returns.
 
 ## Expected behavior
 
@@ -44,5 +47,10 @@ PR and a missing bundle was not a named `saved_without_pr` gap.
       or incomplete double-check is `saved_without_pr` with the named gap.
 - [ ] Scenario 5 keeps the interactive `checking-pr-readiness` menu. It does
       not switch that attended run to assessment-only.
+- [ ] In scenario 6, assessment-only rechecks required gate prerequisites for
+      the exact Worker head before it evaluates the receipt bundle. The
+      unavailable optional browser environment names and blocks only its
+      browser gate; it neither substitutes an environment nor prevents
+      independent non-browser verification from continuing.
 - [ ] Every scenario leaves the commit in place when no PR opens, never
       merges, and never creates a follow-up issue.

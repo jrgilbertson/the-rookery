@@ -550,7 +550,7 @@ then pass "agent mode: routes before interactive workflow"
 else fail "agent mode: routes before interactive workflow" "agent-mode route is missing or reaches interactive merge handling"
 fi
 
-echo "== J. Worker delivery stays exact and secretless =="
+echo "== J. Worker delivery exactness =="
 GARDENER_SKILL="$REPO_ROOT/skills/repo-gardener/SKILL.md"
 RECONCILIATION="$REPO_ROOT/skills/repo-gardener/references/reconciliation.md"
 for source in "$GARDENER_SKILL" "$RECONCILIATION"; do

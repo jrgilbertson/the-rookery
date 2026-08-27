@@ -1,6 +1,6 @@
 ---
 name: route-work
-description: Use only when the user explicitly asks to choose a starting workflow, decide whether in-flight work should continue with its proven owner, or produce a routing kickoff card from supplied evidence.
+description: Use only when the user explicitly asks to route a work kickoff to its first workflow owner or decide whether a proven in-flight owner should continue.
 license: MIT
 ---
 
@@ -8,9 +8,8 @@ license: MIT
 
 Read [references/routing.md](references/routing.md) through its
 `route-work-contract-end` marker before classifying the request. It is the
-normative runtime contract. Use its exact owner,
-topology, Orca, placement, role-profile, availability, stop, and card tables;
-do not recreate them here.
+single source of truth for every routing decision and output; do not recreate
+its tables here.
 
 ## Assess, render, stop
 
@@ -37,12 +36,10 @@ does not resolve an owner. Ask no second question and persist no routing state.
 ## Authority boundary
 
 Preserve only authority the operator supplied. The assessment and response are
-read-only. Do not invoke or load a downstream workflow, dispatch work, perform
-discovery, diagnosis, planning, research, implementation, tracker mutation,
-worktree or orchestration operations, scheduling, monitoring, version-control
-or pull-request operations, publication, quota probing, or model-catalog
-probing. Never select a higher effort than the table recommends without the
-operator's approval.
+read-only. Stop after routing and leave discovery, diagnosis, planning,
+research, implementation, and every external or mutating action to a later
+authorized workflow. Do not invoke or load that workflow, probe quota or model
+catalogs, or select a higher effort without the operator's approval.
 
 Workflow names in the card are portable capability labels; using this skill
 does not require those workflow packages to be installed.

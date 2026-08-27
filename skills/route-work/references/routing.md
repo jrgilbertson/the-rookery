@@ -2,8 +2,8 @@
 
 `route-work` turns one explicit routing request and its supplied evidence into
 one supported first workflow owner, a continuation of proven in-flight work, or
-a named stop. It returns a portable kickoff; it does not start or supervise the
-work.
+a named stop. It returns a portable kickoff and leaves execution to the selected
+workflow.
 
 > Maintainer note: The human-edited source for this mirrored contract is root
 > `ROUTING.md`. Copy it byte-for-byte to
@@ -42,7 +42,7 @@ do not determine the owner.
 
 An effect outside these seven owners returns `Unsupported in v1` and points to
 the [public workflow catalog](https://github.com/jrgilbertson/the-rookery/blob/main/WORKFLOWS.md).
-Do not invent a second catalog or include an executable kickoff with that stop.
+That stop contains no executable kickoff and links only to the public catalog.
 
 ### Ambiguity and missing input
 
@@ -65,11 +65,10 @@ Recommend one topology for the selected owner.
 | Evaluator loop | An independent evaluator has explicit criteria or reliable external feedback | Default to one produce-evaluate-revise round with a named stop condition |
 | Lead + bounded workers | Packages are independent, scopes are named, and one lead can integrate them | Bound fan-out and establish conflict-safe writes before concurrent mutation |
 
-Advisor consultation is an optional modifier, not a fifth topology. An advisor
-supplies bounded evidence without taking ownership. The selected owner may
-revise the starting topology when new evidence justifies it. Subagents, forks,
-teams, and background sessions are execution mechanisms rather than additional
-patterns.
+Advisor consultation can modify any topology without transferring ownership.
+An advisor supplies bounded evidence. The selected owner may revise the
+starting topology when new evidence justifies it. Subagents, forks, teams, and
+background sessions are execution mechanisms.
 
 ## Keep Orca and placement separate
 
@@ -83,9 +82,10 @@ decisions.
 | Orca involvement | Full ownership handoff | Human-facing ownership transfers to the receiving worktree or agent; the sender gains no monitoring duty |
 | Placement | Current worktree or isolated worktree | Use isolation for concurrent mutation; disjoint write scopes are still required before parallel writes |
 
-Orca is never the workflow owner. The route does not hardcode Orca command
-grammar. Read-only scouts and fresh-context reviewers do not need isolated
-worktrees merely because they are separate agents.
+The selected startup workflow remains the owner; Orca only coordinates windows
+and worktrees. Load Orca's version-matched contract instead of hardcoding its
+command grammar. Read-only scouts and fresh-context reviewers can work in the
+current worktree.
 
 ## Handle parent, child, and existing work
 
@@ -165,8 +165,9 @@ governing workflow requires it, or supplied evidence shows that the default
 previously failed because of insufficient reasoning depth. The router may
 suggest escalation but never selects it without operator approval.
 
-This table is maintained manually. It does not calculate or publish benchmark
-scores, cost, quota, confidence, automatic rankings, or staleness state.
+Maintainers update this table manually from external evidence. It carries only
+ordered recommendations and the review date; benchmark scores, cost, quota,
+confidence, automatic rankings, and staleness state stay outside the contract.
 
 ## Inspect only supplied evidence
 
@@ -183,11 +184,11 @@ walk an issue graph, or probe external state.
 
 ## Preserve authority and stop cleanly
 
-The router only assesses and renders. It does not invoke a downstream workflow,
-dispatch agents, diagnose, plan, research, implement, mutate issues, create
-worktrees or orchestration state, schedule, supervise, monitor, calculate quota
-or cost, commit, push, operate on pull requests, merge, or publish. It is not a
-state machine.
+The router assesses supplied evidence, renders one card, and exits without
+changing state. It performs no downstream workflow invocation, agent dispatch,
+diagnosis, planning, research, implementation, issue or worktree mutation,
+orchestration, scheduling, monitoring, quota or cost calculation, version-control
+or pull-request operation, merge, or publication.
 
 Copy only authority the operator supplied. An implementation kickoff never
 infers permission to commit, push, open a pull request, publish, merge, or

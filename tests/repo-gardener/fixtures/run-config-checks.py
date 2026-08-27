@@ -9,9 +9,11 @@ import hashlib
 import json
 import os
 import re
+import stat
 import subprocess
 import sys
 import tempfile
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -417,10 +419,66 @@ def check_active_config_filesystem_cases(repo_root: Path, outside: Path) -> None
     active_config.unlink()
 
 
-def git(repo_root: Path, *args: str) -> str:
+@dataclass(frozen=True)
+class IndexStage:
+    mode: str
+    object_id: str
+    stage: str
+
+
+@dataclass(frozen=True)
+class WorktreeEntry:
+    lstat_mode: int
+    raw_bytes: bytes | None
+
+
+@dataclass(frozen=True)
+class SetupSnapshot:
+    worktree: dict[str, WorktreeEntry]
+    index: dict[str, tuple[IndexStage, ...]]
+    flags: dict[str, tuple[str, ...]]
+
+
+def git_environment(repo_root: Path) -> dict[str, str]:
+    home = repo_root.parent / "git-home"
+    home.mkdir(exist_ok=True)
+    environment = {
+        key: value
+        for key, value in os.environ.items()
+        if not key.startswith("GIT_") and key not in {"HOME", "XDG_CONFIG_HOME", "XDG_CONFIG_DIRS"}
+    }
+    environment.update(
+        {
+            "GIT_ATTR_NOSYSTEM": "1",
+            "GIT_CONFIG_GLOBAL": os.devnull,
+            "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_TERMINAL_PROMPT": "0",
+            "HOME": str(home),
+            "LANG": "C",
+            "LC_ALL": "C",
+            "PATH": os.environ.get("PATH", os.defpath),
+            "XDG_CONFIG_HOME": str(home / "xdg-config"),
+            "XDG_CONFIG_DIRS": "",
+        }
+    )
+    return environment
+
+
+def git(repo_root: Path, *args: str, input_text: str | None = None) -> str:
     completed = subprocess.run(
-        ["git", *args],
+        [
+            "git",
+            "-c",
+            "core.hooksPath=/dev/null",
+            "-c",
+            "commit.gpgSign=false",
+            "-c",
+            "tag.gpgSign=false",
+            *args,
+        ],
         cwd=repo_root,
+        env=git_environment(repo_root),
+        input=input_text,
         check=False,
         capture_output=True,
         text=True,
@@ -432,44 +490,114 @@ def git(repo_root: Path, *args: str) -> str:
     return completed.stdout
 
 
-def tracked_index(repo_root: Path) -> dict[str, str]:
-    entries: dict[str, str] = {}
-    for record in git(repo_root, "ls-files", "--stage", "-z").split("\0"):
+def tracked_index_and_flags(repo_root: Path) -> tuple[dict[str, tuple[IndexStage, ...]], dict[str, tuple[str, ...]]]:
+    index: dict[str, list[IndexStage]] = {}
+    flags: dict[str, list[str]] = {}
+    for record in git(repo_root, "ls-files", "--stage", "-v", "-z").split("\0"):
         if not record:
             continue
-        metadata, path = record.split("\t", 1)
+        flag, remainder = record[0], record[2:]
+        metadata, path = remainder.split("\t", 1)
         mode, object_id, stage = metadata.split()
-        if stage == "0":
-            entries[path] = f"{mode} {object_id}"
-    return entries
-
-
-def tracked_flags(repo_root: Path) -> dict[str, str]:
-    entries: dict[str, str] = {}
-    for record in git(repo_root, "ls-files", "-v", "-z").split("\0"):
-        if record:
-            entries[record[2:]] = record[0]
-    return entries
-
-
-def working_tree_object(repo_root: Path, path: str) -> str:
-    return git(repo_root, "hash-object", "--path", path, path).strip()
-
-
-def setup_cleanliness(repo_root: Path, start_index: dict[str, str], start_flags: dict[str, str]) -> set[str]:
-    changed: set[str] = set()
-    changed.update(
-        record[3:]
-        for record in git(repo_root, "status", "--porcelain=v1", "-z", "--untracked-files=all").split("\0")
-        if record
+        index.setdefault(path, []).append(IndexStage(mode, object_id, stage))
+        flags.setdefault(path, []).append(flag)
+    return (
+        {path: tuple(stages) for path, stages in index.items()},
+        {path: tuple(path_flags) for path, path_flags in flags.items()},
     )
 
-    current_index = tracked_index(repo_root)
-    current_flags = tracked_flags(repo_root)
-    changed.update(path for path in start_index if current_index.get(path) != start_index[path])
-    changed.update(path for path in start_flags if current_flags.get(path) != start_flags[path])
-    for path, index_entry in start_index.items():
-        if path in current_index and working_tree_object(repo_root, path) != index_entry.split()[1]:
+
+def read_raw_regular_file(path: Path) -> bytes:
+    descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
+    try:
+        chunks: list[bytes] = []
+        while chunk := os.read(descriptor, 64 * 1024):
+            chunks.append(chunk)
+        return b"".join(chunks)
+    finally:
+        os.close(descriptor)
+
+
+def worktree_entry(path: Path) -> WorktreeEntry | None:
+    try:
+        path_stat = path.lstat()
+    except OSError:
+        return None
+    lstat_mode = stat.S_IFMT(path_stat.st_mode) | stat.S_IMODE(path_stat.st_mode)
+    try:
+        if stat.S_ISREG(path_stat.st_mode):
+            raw_bytes = read_raw_regular_file(path)
+        elif stat.S_ISLNK(path_stat.st_mode):
+            raw_bytes = os.fsencode(os.readlink(path))
+        else:
+            raw_bytes = b""
+    except OSError:
+        raw_bytes = None
+    return WorktreeEntry(lstat_mode, raw_bytes)
+
+
+def capture_setup_snapshot(repo_root: Path) -> SetupSnapshot:
+    index, flags = tracked_index_and_flags(repo_root)
+    worktree: dict[str, WorktreeEntry] = {}
+    for path in index:
+        entry = worktree_entry(repo_root / path)
+        require(entry is not None and entry.raw_bytes is not None, f"starting tracked path is unreadable: {path}")
+        worktree[path] = entry
+    return SetupSnapshot(worktree, index, flags)
+
+
+def changed_diff_paths(repo_root: Path, *args: str) -> set[str]:
+    records = git(
+        repo_root,
+        "diff",
+        "--name-status",
+        "-z",
+        "--find-renames=100%",
+        "--find-copies=100%",
+        "--no-ext-diff",
+        *args,
+    ).split("\0")
+    changed: set[str] = set()
+    position = 0
+    while position < len(records) and records[position]:
+        status = records[position]
+        position += 1
+        if status[0] in {"R", "C"}:
+            require(position + 1 < len(records), f"incomplete rename/copy inventory: {status}")
+            changed.update(records[position : position + 2])
+            position += 2
+        else:
+            require(position < len(records), f"incomplete diff inventory: {status}")
+            changed.add(records[position])
+            position += 1
+    return changed
+
+
+def setup_cleanliness(repo_root: Path, snapshot: SetupSnapshot) -> set[str]:
+    changed = changed_diff_paths(repo_root)
+    changed.update(changed_diff_paths(repo_root, "--cached"))
+    changed.update(
+        path
+        for path in git(repo_root, "ls-files", "--others", "--exclude-standard", "-z").split("\0")
+        if path
+    )
+
+    current_index, current_flags = tracked_index_and_flags(repo_root)
+    changed.update(set(snapshot.index) ^ set(current_index))
+    changed.update(
+        path
+        for path in set(snapshot.index) & set(current_index)
+        if snapshot.index[path] != current_index[path]
+    )
+    changed.update(set(snapshot.flags) ^ set(current_flags))
+    changed.update(
+        path
+        for path in set(snapshot.flags) & set(current_flags)
+        if snapshot.flags[path] != current_flags[path]
+    )
+    for path, start_entry in snapshot.worktree.items():
+        current_entry = worktree_entry(repo_root / path)
+        if current_entry is None or current_entry.raw_bytes is None or current_entry != start_entry:
             changed.add(path)
     return changed
 
@@ -509,46 +637,127 @@ def check_setup_cleanliness_contract() -> None:
         git(repo_root, "config", "user.email", "fixture@example.invalid")
         git(repo_root, "config", "user.name", "Fixture")
         (repo_root / ".gitignore").write_text("runtime/\n", encoding="utf-8")
+        (repo_root / ".gitattributes").write_text("filtered.txt text eol=lf\n", encoding="utf-8")
         (repo_root / "tracked.txt").write_text("base\n", encoding="utf-8")
-        git(repo_root, "add", ".gitignore", "tracked.txt")
+        (repo_root / "filtered.txt").write_bytes(b"base\n")
+        os.symlink("tracked.txt", repo_root / "link.txt")
+        git(repo_root, "add", ".gitattributes", ".gitignore", "filtered.txt", "link.txt", "tracked.txt")
         git(repo_root, "commit", "--quiet", "-m", "fixture")
 
-        start_index = tracked_index(repo_root)
-        start_flags = tracked_flags(repo_root)
-        require(setup_cleanliness(repo_root, start_index, start_flags) == set(), "clean setup did not pass")
-        require(setup_cleanliness(repo_root, start_index, start_flags) == set(), "idempotent clean setup did not pass")
+        snapshot = capture_setup_snapshot(repo_root)
+        require(setup_cleanliness(repo_root, snapshot) == set(), "clean setup did not pass")
+        require(setup_cleanliness(repo_root, snapshot) == set(), "idempotent clean setup did not pass")
 
         (repo_root / "tracked.txt").write_text("visible\n", encoding="utf-8")
-        require(setup_cleanliness(repo_root, start_index, start_flags) == {"tracked.txt"}, "visible tracked change was not named")
+        require(setup_cleanliness(repo_root, snapshot) == {"tracked.txt"}, "visible tracked change was not named")
         git(repo_root, "restore", "tracked.txt")
 
         (repo_root / "tracked.txt").write_text("staged\n", encoding="utf-8")
         git(repo_root, "add", "tracked.txt")
-        require(setup_cleanliness(repo_root, start_index, start_flags) == {"tracked.txt"}, "staged tracked change was not named")
+        require(setup_cleanliness(repo_root, snapshot) == {"tracked.txt"}, "staged tracked change was not named")
         git(repo_root, "reset", "--quiet", "HEAD", "--", "tracked.txt")
         git(repo_root, "restore", "tracked.txt")
 
         (repo_root / "untracked.txt").write_text("untracked\n", encoding="utf-8")
-        require(setup_cleanliness(repo_root, start_index, start_flags) == {"untracked.txt"}, "untracked change was not named")
+        require(setup_cleanliness(repo_root, snapshot) == {"untracked.txt"}, "untracked change was not named")
         (repo_root / "untracked.txt").unlink()
 
+        (repo_root / "tracked.txt").unlink()
+        require(
+            setup_cleanliness(repo_root, snapshot) == {"tracked.txt"},
+            "tracked deletion was not named",
+        )
+        git(repo_root, "restore", "tracked.txt")
+
         git(repo_root, "update-index", "--skip-worktree", "tracked.txt")
+        skip_snapshot = capture_setup_snapshot(repo_root)
         (repo_root / "tracked.txt").write_text("skip\n", encoding="utf-8")
-        require(setup_cleanliness(repo_root, start_index, start_flags) == {"tracked.txt"}, "skip-worktree change was not named")
+        require(setup_cleanliness(repo_root, skip_snapshot) == {"tracked.txt"}, "skip-worktree bytes were not named")
         git(repo_root, "update-index", "--no-skip-worktree", "tracked.txt")
         git(repo_root, "restore", "tracked.txt")
 
+        git(repo_root, "update-index", "--assume-unchanged", "filtered.txt")
+        assume_snapshot = capture_setup_snapshot(repo_root)
+        (repo_root / "filtered.txt").write_bytes(b"base\r\n")
+        require(
+            setup_cleanliness(repo_root, assume_snapshot) == {"filtered.txt"},
+            "filter-normalized assume-unchanged bytes were not named",
+        )
+        git(repo_root, "update-index", "--no-assume-unchanged", "filtered.txt")
+        git(repo_root, "restore", "filtered.txt")
+
+        flag_snapshot = capture_setup_snapshot(repo_root)
+        git(repo_root, "update-index", "--skip-worktree", "tracked.txt")
+        require(setup_cleanliness(repo_root, flag_snapshot) == {"tracked.txt"}, "skip-worktree flag-only change was not named")
+        git(repo_root, "update-index", "--no-skip-worktree", "tracked.txt")
         git(repo_root, "update-index", "--assume-unchanged", "tracked.txt")
-        (repo_root / "tracked.txt").write_text("assume\n", encoding="utf-8")
-        require(setup_cleanliness(repo_root, start_index, start_flags) == {"tracked.txt"}, "assume-unchanged change was not named")
+        require(setup_cleanliness(repo_root, flag_snapshot) == {"tracked.txt"}, "assume-unchanged flag-only change was not named")
+        git(repo_root, "update-index", "--no-assume-unchanged", "tracked.txt")
+
+        git(repo_root, "update-index", "--assume-unchanged", "tracked.txt")
+        type_snapshot = capture_setup_snapshot(repo_root)
+        (repo_root / "tracked.txt").unlink()
+        os.symlink("missing-target", repo_root / "tracked.txt")
+        require(
+            setup_cleanliness(repo_root, type_snapshot) == {"tracked.txt"},
+            "hidden broken symlink replacement was not named",
+        )
+        (repo_root / "tracked.txt").unlink()
         git(repo_root, "update-index", "--no-assume-unchanged", "tracked.txt")
         git(repo_root, "restore", "tracked.txt")
 
+        git(repo_root, "update-index", "--assume-unchanged", "link.txt")
+        symlink_snapshot = capture_setup_snapshot(repo_root)
+        (repo_root / "link.txt").unlink()
+        os.symlink("missing-link", repo_root / "link.txt")
+        require(
+            setup_cleanliness(repo_root, symlink_snapshot) == {"link.txt"},
+            "hidden symlink target change was not named",
+        )
+        (repo_root / "link.txt").unlink()
+        git(repo_root, "update-index", "--no-assume-unchanged", "link.txt")
+        git(repo_root, "restore", "link.txt")
+
+        git(repo_root, "update-index", "--assume-unchanged", "tracked.txt")
+        mode_snapshot = capture_setup_snapshot(repo_root)
+        (repo_root / "tracked.txt").chmod(0o755)
+        require(setup_cleanliness(repo_root, mode_snapshot) == {"tracked.txt"}, "hidden mode change was not named")
+        git(repo_root, "update-index", "--no-assume-unchanged", "tracked.txt")
+        git(repo_root, "restore", "tracked.txt")
+
+        git(repo_root, "mv", "tracked.txt", "renamed.txt")
+        require(
+            setup_cleanliness(repo_root, snapshot) == {"renamed.txt", "tracked.txt"},
+            "staged rename did not return its exact source and destination paths",
+        )
+        git(repo_root, "reset", "--hard", "--quiet", "HEAD")
+
+        object_id = snapshot.index["tracked.txt"][0].object_id
+        git(repo_root, "update-index", "--force-remove", "--", "tracked.txt")
+        git(
+            repo_root,
+            "update-index",
+            "--index-info",
+            input_text="".join(
+                f"100644 {object_id} {stage}\ttracked.txt\n" for stage in (1, 2, 3)
+            ),
+        )
+        unmerged_index, _ = tracked_index_and_flags(repo_root)
+        require(
+            tuple(entry.stage for entry in unmerged_index["tracked.txt"]) == ("1", "2", "3"),
+            "unmerged fixture did not retain complete index stages",
+        )
+        require(
+            setup_cleanliness(repo_root, snapshot) == {"tracked.txt"},
+            "unmerged index stages were not named as their exact path",
+        )
+        git(repo_root, "reset", "--hard", "--quiet", "HEAD")
+
         (repo_root / "runtime").mkdir()
         (repo_root / "runtime" / "output.txt").write_text("ignored\n", encoding="utf-8")
-        require(setup_cleanliness(repo_root, start_index, start_flags) == set(), "ignored output was reported")
+        require(setup_cleanliness(repo_root, snapshot) == set(), "ignored output was reported")
         (repo_root / "sibling.txt").write_text("visible sibling\n", encoding="utf-8")
-        require(setup_cleanliness(repo_root, start_index, start_flags) == {"sibling.txt"}, "non-ignored sibling was not named")
+        require(setup_cleanliness(repo_root, snapshot) == {"sibling.txt"}, "non-ignored sibling was not named")
 
 
 def main() -> int:

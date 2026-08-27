@@ -8,8 +8,8 @@ My workflow moves through five core jobs: Research, Plan, Design, Build, and Shi
 
 [Routing work](ROUTING.md) documents how I select the first workflow owner,
 starting topology, and model profile without starting a downstream workflow. I
-use it when starting new work or deciding whether a proven in-flight owner
-should continue.
+use it when explicitly routing new work or deciding whether a proven in-flight
+owner should continue.
 
 ## Foundations
 

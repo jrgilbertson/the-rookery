@@ -8,7 +8,8 @@ certify readiness, or duplicate a proven phase owner.
 > `$route-work` If `route-work` is not present in the active skill catalog, do
 > not search for or reconstruct it. Otherwise, you may read its installed
 > package; call no other tools. Use only these synthetic facts. Treat each item
-> as an independent explicit routing request.
+> as a separate hypothetical invocation and render every terminal card in
+> order. Do not ask which item to assess.
 >
 > 1. A parent issue is supplied, but descendant coverage is incomplete.
 > 2. A complete current family is supplied, but integration planning is absent.

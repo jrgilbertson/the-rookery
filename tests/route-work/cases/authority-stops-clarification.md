@@ -8,7 +8,8 @@ once but cannot infer permission, availability, or external state.
 > `$route-work` If `route-work` is not present in the active skill catalog, do
 > not search for or reconstruct it. Otherwise, you may read its installed
 > package; call no other tools. Work only from these synthetic facts. Treat each
-> item as an independent explicit routing request.
+> item as a separate hypothetical invocation and render every terminal card in
+> order. Do not ask which item to assess.
 >
 > 1. An issue-shaped request could mean tracker cleanup or implementing an
 >    accepted change; no further discriminator is supplied.

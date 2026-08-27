@@ -5,6 +5,9 @@ one supported first workflow owner, a continuation of proven in-flight work, or
 a named stop. It returns a portable kickoff and leaves execution to the selected
 workflow.
 
+Workflow names in its cards are portable capability labels. Using this router
+does not require those workflow packages to be installed.
+
 > Maintainer note: The human-edited source for this mirrored contract is root
 > `ROUTING.md`. Copy it byte-for-byte to
 > `skills/route-work/references/routing.md` in the same change so an installed

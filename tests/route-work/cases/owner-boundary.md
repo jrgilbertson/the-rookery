@@ -8,8 +8,8 @@ must not displace the first unresolved effect.
 > `$route-work` If `route-work` is not present in the active skill catalog, do
 > not search for or reconstruct it. Otherwise, you may read its installed
 > package; call no other tools. Work only from these synthetic facts. Treat each
-> item as an independent explicit routing request and state its terminal routing
-> result.
+> item as a separate hypothetical invocation and render every terminal card in
+> order. Do not ask which item to assess.
 >
 > 1. A feature issue still disputes the intended user behavior.
 > 2. A supplied decision document needs one dependency-ordered pressure test.

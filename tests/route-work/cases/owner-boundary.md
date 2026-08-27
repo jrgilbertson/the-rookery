@@ -5,8 +5,11 @@ must not displace the first unresolved effect.
 
 ## Prompt
 
-> Work only from these synthetic facts and call no tools. Treat each item as an
-> independent explicit routing request and state its terminal routing result.
+> `$route-work` If `route-work` is not present in the active skill catalog, do
+> not search for or reconstruct it. Otherwise, you may read its installed
+> package; call no other tools. Work only from these synthetic facts. Treat each
+> item as an independent explicit routing request and state its terminal routing
+> result.
 >
 > 1. A feature issue still disputes the intended user behavior.
 > 2. A supplied decision document needs one dependency-ordered pressure test.
@@ -21,7 +24,8 @@ must not displace the first unresolved effect.
 ## Expected behavior
 
 - [ ] Items 1–3 select `ce-brainstorm`, `grill-with-docs`, and `ce-plan`,
-      respectively.
+      respectively; item 2 uses the primary orchestrator/planner profile, not
+      the Critic profile.
 - [ ] Items 4–5 select `ce-debug` and `ce-work`, respectively.
 - [ ] Items 6–7 select `managing-issues` and `impeccable`, despite their issue
       carriers.

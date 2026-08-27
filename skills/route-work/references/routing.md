@@ -80,7 +80,7 @@ decisions.
 | Orca involvement | None | Proceed without Orca coordination |
 | Orca involvement | Supervised `/orchestration` | The current coordinator remains the sole human-facing owner and integrator and loads Orca's installed version-matched contract |
 | Orca involvement | Full ownership handoff | Human-facing ownership transfers to the receiving worktree or agent; the sender gains no monitoring duty |
-| Placement | Current worktree or isolated worktree | Use isolation for concurrent mutation unless disjoint write scopes are proven |
+| Placement | Current worktree or isolated worktree | Use isolation for concurrent mutation; disjoint write scopes are still required before parallel writes |
 
 Orca is never the workflow owner. The route does not hardcode Orca command
 grammar. Read-only scouts and fresh-context reviewers do not need isolated
@@ -111,10 +111,10 @@ responsibility.
 
 | Role | Responsibilities |
 |---|---|
-| Orchestrator/planner | `ce-brainstorm`, `grill-with-docs`, `ce-plan`, `managing-issues`, and a `ce-work` lead coordinating bounded workers |
+| Orchestrator/planner | `ce-brainstorm`, the owning `grill-with-docs` workflow, `ce-plan`, `managing-issues`, and a `ce-work` lead coordinating bounded workers |
 | Executor | Direct `ce-work`, implementation workers, and execution of a diagnosed fix |
 | Reviewer | Independent evaluators and named review or verification gates |
-| Critic | Adversarial pressure tests of assumptions, alternatives, and failure modes |
+| Critic | Independent adversarial pressure-test advisors or evaluators; not the owning `grill-with-docs` route |
 | Researcher | Causal investigation inside `ce-debug` and evidence-backed synthesis |
 | Scout | Bounded evidence gathering and advisor research |
 | Design/taste | `impeccable` and design-quality evaluation |
@@ -279,3 +279,5 @@ the reason or prerequisite.
 | “Resume the implementation phase already owned by this named worker.” | Continuation with the proven owner; no duplicate kickoff |
 | “Use a hands-off delivery workflow to run this end to end.” | `Unsupported in v1` with the public workflow-catalog URL and no kickoff |
 | “Route this plan; the primary orchestrator profile is unavailable.” | Keep the selected owner and use the secondary orchestrator/planner profile |
+
+<!-- route-work-contract-end -->

@@ -5,8 +5,10 @@ once but cannot infer permission, availability, or external state.
 
 ## Prompt
 
-> Work only from these synthetic facts and call no tools. Treat each item as an
-> independent explicit routing request.
+> `$route-work` If `route-work` is not present in the active skill catalog, do
+> not search for or reconstruct it. Otherwise, you may read its installed
+> package; call no other tools. Work only from these synthetic facts. Treat each
+> item as an independent explicit routing request.
 >
 > 1. An issue-shaped request could mean tracker cleanup or implementing an
 >    accepted change; no further discriminator is supplied.

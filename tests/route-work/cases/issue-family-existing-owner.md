@@ -5,15 +5,18 @@ certify readiness, or duplicate a proven phase owner.
 
 ## Prompt
 
-> Use only these synthetic facts and call no tools. Treat each item as an
-> independent explicit routing request.
+> `$route-work` If `route-work` is not present in the active skill catalog, do
+> not search for or reconstruct it. Otherwise, you may read its installed
+> package; call no other tools. Use only these synthetic facts. Treat each item
+> as an independent explicit routing request.
 >
 > 1. A parent issue is supplied, but descendant coverage is incomplete.
 > 2. A complete current family is supplied, but integration planning is absent.
 > 3. The parent has an approved plan with independent units and safe writes.
 > 4. A child is named directly; its accepted outcome lacks an execution plan.
 > 5. The operator says Jordan owns the in-flight implementation phase.
-> 6. A worktree and pull request are named, but no phase owner is identified.
+> 6. An approved implementation is in flight, and its worktree and pull request
+>    are named, but no phase owner is identified.
 
 ## Expected behavior
 

@@ -1,13 +1,14 @@
 ---
 name: route-work
-description: Use only when the user explicitly asks to route work, choose its starting workflow or owner, or produce a routing kickoff from supplied evidence.
+description: Use only when the user explicitly asks to choose a starting workflow, decide whether in-flight work should continue with its proven owner, or produce a routing kickoff card from supplied evidence.
 license: MIT
 ---
 
 # Route Work
 
-Read [references/routing.md](references/routing.md) in full before classifying
-the request. It is the normative runtime contract. Use its exact owner,
+Read [references/routing.md](references/routing.md) through its
+`route-work-contract-end` marker before classifying the request. It is the
+normative runtime contract. Use its exact owner,
 topology, Orca, placement, role-profile, availability, stop, and card tables;
 do not recreate them here.
 
@@ -20,9 +21,9 @@ do not recreate them here.
 2. Apply the reference to decide whether this attempt ends in a ready route,
    continuation, clarification, or named stop. Use the first unresolved effect
    rather than the request's carrier.
-3. Render exactly one of the reference's Markdown cards. Copy stable locators
-   and decisive facts rather than full artifacts, and include only the optional
-   fields that are material.
+3. Render exactly one of the reference's Markdown cards without changing its
+   heading or field labels. Copy stable locators and decisive facts rather than
+   full artifacts, and include only the optional fields that are material.
 4. Stop immediately after the card. The selected owner controls any later
    work, conditional handoff, or topology revision.
 

@@ -5,8 +5,10 @@ must not become workflow ownership or unbounded fan-out.
 
 ## Prompt
 
-> Work only from these synthetic facts and call no tools. Treat each item as an
-> independent routing request.
+> `$route-work` If `route-work` is not present in the active skill catalog, do
+> not search for or reconstruct it. Otherwise, you may read its installed
+> package; call no other tools. Work only from these synthetic facts. Treat each
+> item as an independent routing request.
 >
 > 1. Route a bounded, taste-led interaction redesign. No coordination benefit
 >    or Orca need is supplied.

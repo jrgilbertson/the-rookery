@@ -30,7 +30,9 @@ Provenance: Observed failure where stale, cross-boundary, partial, and bypassed 
 
 ## Expected behavior
 
-- [ ] Every variant returns `action-required`, never `pass`.
+- [ ] Malformed receipt transport and substantive receipt or evidence defects
+  return `action-required`; invalid outer assessment claims return one valid
+  `UNKNOWN` envelope; neither path returns `pass`.
 - [ ] Gaps name missing or unresolved receipts, unreferenced substitutes, missing file evidence, stale evidence, cross-subject/cross-revision bindings, dirty or unresolved live subjects, unresolved findings, and bypass requests.
 - [ ] Narrative completion and owner attestation are not upgraded to exact-revision evidence.
 - [ ] The variants remain independent; a gap or receipt from one is not carried into another.

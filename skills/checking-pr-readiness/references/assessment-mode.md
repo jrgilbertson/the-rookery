@@ -80,19 +80,20 @@ repository path.
 
 ## Assessment envelope
 
-Return one JSON object with exactly this semantic shape:
+Return one `checking-pr-readiness-assessment/v2` JSON object with exactly this
+semantic shape:
 
 ```json
 {
-  "schema": "checking-pr-readiness-assessment/v1",
+  "schema": "checking-pr-readiness-assessment/v2",
   "capability": "checking-pr-readiness",
   "capability_version": "<skill package revision or working-tree>",
   "repository": "<stable repository identity>",
   "subject": "<stable branch or pull-request subject identity>",
   "exact_revision": "<full commit OID>",
   "receipt_references": ["<receipt identity>"],
-  "outcome": "pass | action-required",
-  "gaps": ["<named gap>"],
+  "outcome": "pass | action-required | UNKNOWN",
+  "gaps": [{ "key": "<producer-owned correlation key>", "message": "<human-readable material gap>" }],
   "observed_at": "<ISO-8601 UTC>",
   "mode": "assessment-only"
 }
@@ -105,7 +106,16 @@ provenance fields into the returned envelope. Validate every bundle layer and
 receipt element before field access. Malformed input returns the same normal
 `action-required` envelope with named gaps, never a traceback or partial JSON.
 
-`pass` uses an empty `gaps` array. `action-required` names every material gap.
+`pass` uses an empty `gaps` array. `action-required` names every material gap
+as exactly one object with only a nonempty producer-owned `key` and a
+human-readable nonempty `message`. Keys are equality-only correlation evidence:
+the producer does not parse them or use them as error/status codes, and one
+atomic obligation keeps its key across exact heads and message-only rewrites.
+Distinct atomic obligations use distinct keys; split or combined obligations use
+the keys for the resulting atomic obligations. Missing, empty, duplicate, or
+malformed keys make the assessment invalid with outcome `UNKNOWN`, never an
+absent or successful gap. The inner `checking-pr-readiness-evidence/v1`
+receipt `gaps` arrays remain unchanged.
 Return the JSON receipt and a short plain-language summary only; do not present
 the interactive Minto readout or decision menu.
 

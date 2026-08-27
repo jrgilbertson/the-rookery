@@ -31,6 +31,10 @@ Provenance: Observed failure where a declared receipt chain was accepted without
 - [ ] Derives one shared bundle ID from the documented inline references and
   rejects any disagreement between those references.
 - [ ] Verifies observation freshness against the exact commit rather than trusting a timestamp assertion alone.
-- [ ] Returns `pass` with an empty gaps array only after the complete current-main chain and preflight receipt are clean.
+- [ ] Returns `checking-pr-readiness-assessment/v2`; `pass` has an empty gaps
+  array, and every material gap is exactly a producer-owned nonempty `key` plus
+  a human-readable `message`.
+- [ ] Keeps a material obligation's key stable across identical exact heads and
+  message-only rewrites without parsing the key or treating it as a status.
 - [ ] Uses assessment-only mode with no Minto readout, owner decision menu, attestation upgrade, or repository write.
 - [ ] Does not stage, commit, push, or open a pull request.

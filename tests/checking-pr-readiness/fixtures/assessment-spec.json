@@ -1,5 +1,5 @@
 {
-  "schema": "checking-pr-readiness-assessment-fixture/v1",
+  "schema": "checking-pr-readiness-assessment-fixture/v2",
   "repository": "forge:repository:assessment-synthetic",
   "subject": "branch:assessment-target",
   "reviewer_cap": 40,

@@ -40,3 +40,7 @@ Provenance: Observed failure where stale, cross-boundary, partial, and bypassed 
 - [ ] Same-kind inline evidence/result documents copied from another revision or
   Worker/session bundle fail even when mutable outer transport labels are
   changed to the recipient head and bundle.
+- [ ] Each material gap uses only a nonempty producer-owned key and a
+  human-readable message. Distinct atomic obligations have distinct keys;
+  malformed, missing, empty, or duplicate keys make the assessment invalid
+  with outcome `UNKNOWN`, rather than disappearing or producing a success.

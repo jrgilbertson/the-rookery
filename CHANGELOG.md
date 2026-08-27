@@ -19,8 +19,10 @@ looked" surface. GitHub Releases mirror its entries.
   leaves unrelated safe sensing available after an affected audit fails. Its
   command-string-wrapper refusal continues past documented or ambiguous
   wrapper launch operands without treating them as a script boundary, while
-  documented no-operand flags and inline operands preserve script mode; known
-  PowerShell command-mode aliases are refused too.
+  documented no-operand flags and inline operands preserve script mode;
+  PowerShell command-mode aliases and accepted prefixes are refused too.
+  Windows PowerShell requires explicit file mode, while PowerShell 7 retains
+  positional file mode and recognizes documented file-mode aliases.
 - README and `WORKFLOWS.md` now describe the catalog as a portable skill
   set inside a personal loop: `repo-gardener` listings stay two sentences,
   Orca is the IDE this workflow runs in rather than a requirement, `ce-plan`

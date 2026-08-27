@@ -454,27 +454,66 @@ def command_after_env(command: list[str]) -> list[str] | None:
     return []
 
 
+def powershell_option_name(option: str) -> str:
+    return re.split(r"[=:]", option[1:], maxsplit=1)[0].casefold()
+
+
 def is_executable_option(executable: str, argument: str) -> bool:
     if argument.startswith("-"):
         return True
     if executable == "cmd":
         return argument.startswith("/")
     if executable in {"powershell", "pwsh"}:
-        return re.match(
-            r"^/(?:c|command|commandwithargs|e|ec|enc|encodedcommand|executionpolicy|file|inputformat|outputformat|workingdirectory|configurationname|configurationfile|version|windowstyle|settingsfile|psconsolefile|custompipename|nologo|noexit|noprofile|noninteractive|sta|mta|help)(?:$|[=:])",
-            argument,
-            re.IGNORECASE,
-        ) is not None
+        return (
+            option_uses_command_string(executable, argument)
+            or option_opens_file_mode(executable, argument)
+            or option_consumes_operand(executable, argument)
+            or option_is_no_operand(executable, argument)
+        )
     return False
 
 
 def option_consumes_operand(executable: str, option: str) -> bool:
     if executable in {"powershell", "pwsh"}:
-        return re.match(
-            r"^[-/](?:executionpolicy|file|inputformat|outputformat|workingdirectory|configurationname|configurationfile|version|windowstyle|settingsfile|psconsolefile|custompipename)$",
-            option,
-            re.IGNORECASE,
-        ) is not None
+        name = powershell_option_name(option)
+        if option.startswith("/"):
+            return name in {
+                "executionpolicy",
+                "inputformat",
+                "outputformat",
+                "workingdirectory",
+                "configurationname",
+                "configurationfile",
+                "version",
+                "windowstyle",
+                "settingsfile",
+                "psconsolefile",
+                "custompipename",
+            }
+        return name in {
+            "executionpolicy",
+            "ex",
+            "ep",
+            "inputformat",
+            "inp",
+            "if",
+            "outputformat",
+            "o",
+            "of",
+            "workingdirectory",
+            "wd",
+            "wo",
+            "configurationname",
+            "configurationfile",
+            "config",
+            "version",
+            "windowstyle",
+            "settingsfile",
+            "settings",
+            "psconsolefile",
+            "custompipename",
+            "cus",
+        }
     if executable in SHELL_COMMANDS:
         return option in {"-o", "-O", "--rcfile", "--init-file"}
     if re.fullmatch(r"python(?:\d+(?:\.\d+)*)?", executable) is not None:
@@ -535,17 +574,46 @@ def option_consumes_operand(executable: str, option: str) -> bool:
     return False
 
 
-def option_has_inline_operand(option: str) -> bool:
+def option_has_inline_operand(executable: str, option: str) -> bool:
+    if executable in {"powershell", "pwsh"}:
+        return re.match(r"^[-/][^=:]+[=:]", option) is not None
     return option.startswith("--") and "=" in option
 
 
 def option_is_no_operand(executable: str, option: str) -> bool:
     if executable in {"powershell", "pwsh"}:
-        return re.match(
-            r"^[-/](?:nologo|noexit|noprofile|noninteractive|sta|mta|help)$",
-            option,
-            re.IGNORECASE,
-        ) is not None
+        name = powershell_option_name(option)
+        if option.startswith("/"):
+            return name in {
+                "nologo",
+                "noexit",
+                "noprofile",
+                "noninteractive",
+                "noprofileloadtime",
+                "sta",
+                "mta",
+                "interactive",
+                "login",
+                "help",
+            }
+        return name in {
+            "nologo",
+            "nol",
+            "noexit",
+            "noe",
+            "noprofile",
+            "nop",
+            "noprofileloadtime",
+            "noninteractive",
+            "noni",
+            "sta",
+            "mta",
+            "interactive",
+            "i",
+            "login",
+            "l",
+            "help",
+        }
     if executable in SHELL_COMMANDS:
         return option in {
             "--help",
@@ -674,9 +742,10 @@ def option_is_no_operand(executable: str, option: str) -> bool:
 
 
 def option_opens_file_mode(executable: str, option: str) -> bool:
-    return executable in {"powershell", "pwsh"} and re.fullmatch(
-        r"[-/]file", option, re.IGNORECASE
-    ) is not None
+    if executable not in {"powershell", "pwsh"}:
+        return False
+    name = powershell_option_name(option)
+    return name == "file" if option.startswith("/") else name in {"f", "fi", "fil", "file"}
 
 
 def options_before_file_mode(executable: str, arguments: list[str]) -> list[str]:
@@ -698,7 +767,7 @@ def options_before_file_mode(executable: str, arguments: list[str]) -> list[str]
         if option_consumes_operand(executable, argument):
             index += 2
             continue
-        if option_has_inline_operand(argument) or option_is_no_operand(
+        if option_has_inline_operand(executable, argument) or option_is_no_operand(
             executable, argument
         ):
             index += 1
@@ -711,15 +780,41 @@ def options_before_file_mode(executable: str, arguments: list[str]) -> list[str]
     return options
 
 
+def windows_powershell_uses_positional_command(arguments: list[str]) -> bool:
+    index = 0
+    while index < len(arguments):
+        argument = arguments[index]
+        if argument == "--":
+            return index + 1 < len(arguments)
+        if not is_executable_option("powershell", argument):
+            return True
+        if option_opens_file_mode("powershell", argument):
+            return False
+        if option_consumes_operand("powershell", argument):
+            index += 1 if option_has_inline_operand("powershell", argument) else 2
+            continue
+        if option_has_inline_operand("powershell", argument) or option_is_no_operand(
+            "powershell", argument
+        ):
+            index += 1
+            continue
+        # An unknown switch cannot establish a safe script boundary. If it is
+        # followed by positional input before explicit -File, Windows PowerShell
+        # treats that input as command text.
+        index += 1
+    return False
+
+
 def option_uses_command_string(executable: str, option: str) -> bool:
     if executable == "cmd":
         return re.match(r"^/[ck]", option, re.IGNORECASE) is not None
     if executable in {"powershell", "pwsh"}:
-        return re.match(
-            r"^[-/](?:cwa|c|command|commandwithargs|e|ec|enc|encodedcommand)(?:$|[=:])",
-            option,
-            re.IGNORECASE,
-        ) is not None
+        name = powershell_option_name(option)
+        return (
+            bool(name) and "command".startswith(name)
+        ) or name in {"e", "ec"} or (
+            bool(name) and "encodedcommand".startswith(name)
+        ) or (executable == "pwsh" and name in {"cwa", "commandwithargs"})
     if executable == "fish" and (
         option.startswith("-C") or option.lower().startswith("--init-command")
     ):
@@ -752,9 +847,13 @@ def is_command_string_wrapper(command: list[str]) -> bool:
     if not executable_and_args:
         return False
     executable = executable_name(executable_and_args[0])
+    arguments = executable_and_args[1:]
     return any(
         option_uses_command_string(executable, option)
-        for option in options_before_file_mode(executable, executable_and_args[1:])
+        for option in options_before_file_mode(executable, arguments)
+    ) or (
+        executable == "powershell"
+        and windows_powershell_uses_positional_command(arguments)
     )
 
 

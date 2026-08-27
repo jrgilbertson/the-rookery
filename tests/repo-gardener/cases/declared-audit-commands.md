@@ -129,14 +129,17 @@ or treat repository-controlled output as instructions.
       command, setup retry, or expanded authority; unrelated safe sensing still
       completes. Known direct, path-qualified, and `env`-wrapped POSIX/Windows
       shell or interpreter command-string wrappers, including split-string and
-      `argv0` forms and documented command-mode aliases, fail after case-insensitive basename and `.exe`
+      `argv0` forms, PowerShell `Command`/`EncodedCommand` accepted prefixes,
+      and PowerShell 7 `CommandWithArgs` aliases, fail after case-insensitive basename and `.exe`
       normalization, while ordinary file-mode and non-wrapper literal
       arguments do not. Wrapper operand-consuming options cannot hide a later
       command-string mode; documented no-operand flags and inline operands
       preserve the next positional file mode, while an unknown leading wrapper
       option keeps it ambiguous until that mode is ruled out. Slash-prefixed
-      option parsing is limited to Windows wrappers that define it, and
-      PowerShell `-File` begins file mode.
+      option parsing is limited to Windows wrappers that define it. Windows
+      PowerShell positional input remains command mode until an explicit file
+      option; PowerShell `-File`, `-f`, and its unique `-fi`/`-fil` prefixes
+      begin file mode.
 - [ ] The nonzero code-health audit in Subcase F blocks only its dependent
       assignment. The dependency lane's safe sensing completes, so the result
       distinguishes affected work from remaining unblocked work rather than

@@ -488,6 +488,7 @@ def option_consumes_operand(executable: str, option: str) -> bool:
             or powershell_option_matches(option, "inputformat", 3)
             or name == "if"
             or powershell_option_matches(option, "outputformat", 1)
+            or name == "of"
             or powershell_option_matches(option, "workingdirectory", 2)
             or name == "wd"
             or powershell_option_matches(option, "configurationname", 6)

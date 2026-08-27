@@ -563,6 +563,7 @@ lanes:
             ["bash", "/tmp/scripts/setup.sh", "--strict"],
             ["python3", "scripts/setup.py", "-c"],
             ["node", "scripts/setup.js", "--eval"],
+            ["pwsh", "/tmp/scripts/setup.ps1", "-Command"],
         ):
             file_mode_setup_command = base_config()
             file_mode_setup_command["setup_command"] = file_mode_command
@@ -602,6 +603,16 @@ lanes:
             (["powershell", "-e", "c2V0dXA="], "setup_command contains forbidden command-string wrapper"),
             (["pwsh", "-ec", "c2V0dXA="], "setup_command contains forbidden command-string wrapper"),
             (["powershell", "-CommandWithArgs", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["bash", "-o", "pipefail", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["bash", "--rcfile", "setup.rc", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["python3", "-W", "ignore", "-c", "print(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["python3", "-X", "dev", "-c", "print(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["node", "--require", "module", "--eval", "console.log(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["node", "--loader", "loader", "--eval", "console.log(1)"], "setup_command contains forbidden command-string wrapper"),
+            (["powershell.exe", "-ExecutionPolicy", "Bypass", "-Command", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["pwsh", "/ExecutionPolicy", "Bypass", "/Command", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["fish", "-C", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["fish", "--init-command=repo-setup"], "setup_command contains forbidden command-string wrapper"),
             (["env", "-S", "sh -c repo-setup"], "setup_command contains forbidden command-string wrapper"),
             (["/usr/bin/env", "bash", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
             ([r"C:\\Windows\\System32\\ENV.EXE", "bash.exe", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),

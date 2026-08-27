@@ -454,15 +454,45 @@ def command_after_env(command: list[str]) -> list[str] | None:
     return []
 
 
+def is_executable_option(executable: str, argument: str) -> bool:
+    if argument.startswith("-"):
+        return True
+    if executable == "cmd":
+        return argument.startswith("/")
+    if executable in {"powershell", "pwsh"}:
+        return re.match(
+            r"^/(?:c|command|commandwithargs|e|ec|enc|encodedcommand|executionpolicy|file|inputformat|outputformat|workingdirectory|configurationname|version|windowstyle|settingsfile)(?:$|[=:])",
+            argument,
+            re.IGNORECASE,
+        ) is not None
+    return False
+
+
+def option_consumes_operand(executable: str, option: str) -> bool:
+    if executable in {"powershell", "pwsh"}:
+        return re.match(
+            r"^[-/](?:executionpolicy|file|inputformat|outputformat|workingdirectory|configurationname|version|windowstyle|settingsfile)$",
+            option,
+            re.IGNORECASE,
+        ) is not None
+    if executable in SHELL_COMMANDS:
+        return option in {"-o", "-O", "--rcfile", "--init-file"}
+    if re.fullmatch(r"python(?:\d+(?:\.\d+)*)?", executable) is not None:
+        return option in {"-W", "-X", "--check-hash-based"}
+    if executable in {"node", "nodejs"}:
+        return option in {"-r", "--require", "--loader", "--import"}
+    return False
+
+
 def options_before_file_mode(executable: str, arguments: list[str]) -> list[str]:
     options: list[str] = []
-    uses_slash_options = executable in {"cmd", "powershell", "pwsh"}
-    for argument in arguments:
-        if argument == "--" or not (
-            argument.startswith("-") or (uses_slash_options and argument.startswith("/"))
-        ):
+    index = 0
+    while index < len(arguments):
+        argument = arguments[index]
+        if argument == "--" or not is_executable_option(executable, argument):
             break
         options.append(argument)
+        index += 2 if option_consumes_operand(executable, argument) else 1
     return options
 
 
@@ -475,6 +505,10 @@ def option_uses_command_string(executable: str, option: str) -> bool:
             option,
             re.IGNORECASE,
         ) is not None
+    if executable == "fish" and (
+        option.startswith("-C") or option.lower().startswith("--init-command")
+    ):
+        return True
     if executable in SHELL_COMMANDS:
         return option.lower().startswith("--command") or (
             option.startswith("-") and "c" in option[1:]

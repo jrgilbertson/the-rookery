@@ -697,15 +697,15 @@ def verify_command_evidence(kind: str, command: dict[str, Any], repo: Path, revi
     if expected is None:
         return []
     if command != {"id": "python3", "arguments": list(expected)}:
-        return [material_gap("obligation.command-execution", f"command execution not verified: {kind}")]
+        return [material_gap(f"obligation.command-execution.{kind}", f"command execution not verified: {kind}")]
     try:
         validator = git_blob(repo, revision, "fixture-validation.py")
         app_state = git_blob(repo, revision, "src/app.txt")
         changelog = git_blob(repo, revision, "CHANGELOG.md")
     except subprocess.CalledProcessError:
-        return [material_gap("obligation.command-execution", f"command execution not verified: {kind}")]
+        return [material_gap(f"obligation.command-execution.{kind}", f"command execution not verified: {kind}")]
     if validator != FIXTURE_VALIDATION_SOURCE:
-        return [material_gap("obligation.command-execution", f"command execution not verified: {kind}")]
+        return [material_gap(f"obligation.command-execution.{kind}", f"command execution not verified: {kind}")]
     try:
         with tempfile.TemporaryDirectory(prefix="pr-readiness-command-") as temp:
             command_root = Path(temp)
@@ -721,9 +721,9 @@ def verify_command_evidence(kind: str, command: dict[str, Any], repo: Path, revi
                 timeout=10,
             )
     except (OSError, subprocess.TimeoutExpired):
-        return [material_gap("obligation.command-execution", f"command execution not verified: {kind}")]
+        return [material_gap(f"obligation.command-execution.{kind}", f"command execution not verified: {kind}")]
     if completed.returncode != 0 or completed.stdout != f"verified:{expected[1]}\n" or completed.stderr:
-        return [material_gap("obligation.command-execution", f"command execution not verified: {kind}")]
+        return [material_gap(f"obligation.command-execution.{kind}", f"command execution not verified: {kind}")]
     return []
 
 
@@ -834,7 +834,7 @@ def validate_evidence_document(
     transport_identity: dict[str, Any] | None = None,
 ) -> list[dict[str, str]]:
     if not isinstance(document, dict):
-        return [material_gap("obligation.evidence-document", f"invalid evidence document: {kind}")]
+        return [material_gap(f"obligation.evidence-document.{kind}", f"invalid evidence document: {kind}")]
 
     expected_fields = EVIDENCE_COMMON_FIELDS | EVIDENCE_KIND_FIELDS[kind]
     transported_fields = (expected_fields - {"schema"}) | {"transport_identity"}
@@ -873,7 +873,7 @@ def validate_evidence_document(
         )
     )
     if not common_valid:
-        return [material_gap("obligation.evidence-contract", f"substantive evidence schema mismatch: {kind}")]
+        return [material_gap(f"obligation.evidence-contract.{kind}", f"substantive evidence schema mismatch: {kind}")]
 
     reference = references[0]
     expected_result_path = f"results/{kind}.json"
@@ -888,7 +888,7 @@ def validate_evidence_document(
         or not re.fullmatch(r"[0-9a-f]{64}", reference["sha256"])
         or (transported_result is None and reference["path"] != expected_result_path)
     ):
-        return [material_gap("obligation.evidence-contract", f"substantive evidence schema mismatch: {kind}")]
+        return [material_gap(f"obligation.evidence-contract.{kind}", f"substantive evidence schema mismatch: {kind}")]
     try:
         if transported_result is None:
             mode, result_content = evidence_blob(repo, revision, expected_result_path)
@@ -896,7 +896,7 @@ def validate_evidence_document(
             mode, result_content = "100644", transported_result
         result_document = json.loads(result_content)
     except (subprocess.CalledProcessError, UnicodeDecodeError, json.JSONDecodeError):
-        return [material_gap("obligation.evidence-contract", f"substantive evidence schema mismatch: {kind}")]
+        return [material_gap(f"obligation.evidence-contract.{kind}", f"substantive evidence schema mismatch: {kind}")]
     if (
         mode != "100644"
         or hashlib.sha256(result_content).hexdigest() != reference["sha256"]
@@ -918,11 +918,11 @@ def validate_evidence_document(
         or result_document.get("command") != command
         or result_document.get("outcome") != document.get("outcome")
     ):
-        return [material_gap("obligation.evidence-contract", f"substantive evidence schema mismatch: {kind}")]
+        return [material_gap(f"obligation.evidence-contract.{kind}", f"substantive evidence schema mismatch: {kind}")]
 
     results = result_document.get("results")
     if not isinstance(results, list) or not (0 < len(results) <= 64):
-        return [material_gap("obligation.evidence-contract", f"substantive evidence schema mismatch: {kind}")]
+        return [material_gap(f"obligation.evidence-contract.{kind}", f"substantive evidence schema mismatch: {kind}")]
     result_ids: list[str] = []
     for result in results:
         if (
@@ -931,16 +931,16 @@ def validate_evidence_document(
             or not bounded_text(result.get("result_id"))
             or not bounded_text(result.get("outcome"))
         ):
-            return [material_gap("obligation.evidence-contract", f"substantive evidence schema mismatch: {kind}")]
+            return [material_gap(f"obligation.evidence-contract.{kind}", f"substantive evidence schema mismatch: {kind}")]
         result_ids.append(result["result_id"])
     if len(result_ids) != len(set(result_ids)):
-        return [material_gap("obligation.evidence-contract", f"substantive evidence schema mismatch: {kind}")]
+        return [material_gap(f"obligation.evidence-contract.{kind}", f"substantive evidence schema mismatch: {kind}")]
 
     gaps = verify_command_evidence(kind, command, repo, revision)
     if document.get("repository") != repository or document.get("subject") != live_subject:
-        gaps.append(material_gap("obligation.evidence-identity", f"evidence identity mismatch: {kind}"))
+        gaps.append(material_gap(f"obligation.evidence-identity.{kind}", f"evidence identity mismatch: {kind}"))
     if document.get("status") != "verified":
-        gaps.append(material_gap("obligation.evidence-verification", f"evidence status not verified: {kind}"))
+        gaps.append(material_gap(f"obligation.evidence-verification.{kind}", f"evidence status not verified: {kind}"))
     result_by_id = {result["result_id"]: result for result in results}
 
     if kind == "working-surface":
@@ -1000,7 +1000,7 @@ def validate_evidence_document(
             or summary.get("outcome") != "clear"
             or text_set(summary.get("reviewed_paths")) != surface_paths
         ):
-            gaps.append(material_gap("obligation.evidence-findings", f"unresolved finding: {kind}"))
+            gaps.append(material_gap(f"obligation.evidence-findings.{kind}", f"unresolved finding: {kind}"))
     elif kind == "testing":
         checks = document.get("checks")
         expected_command = " ".join([command["id"], *command["arguments"]])
@@ -1115,23 +1115,22 @@ def evaluate(repo: Path, bundle: Any, input_gaps: list[dict[str, str]] | None = 
     if not isinstance(bundle, dict):
         gaps.append(material_gap("obligation.bundle-object", "receipt bundle is not an object"))
         bundle = {}
+        supplied_assessment: dict[str, Any] = {}
+    else:
+        supplied_assessment = bundle.get("assessment")
+        if not caller_assessment_is_valid(supplied_assessment):
+            return complete_assessment(
+                assessment,
+                [material_gap(
+                    "obligation.caller-assessment-integrity",
+                    "caller assessment claim must use the complete v2 shape with a valid outcome and unique material-gap keys",
+                )],
+                unknown=True,
+            )
     if set(bundle) != BUNDLE_FIELDS:
         gaps.append(material_gap("obligation.bundle-fields", "receipt bundle fields mismatch"))
     if bundle.get("schema") != "checking-pr-readiness-receipt-bundle/v1":
         gaps.append(material_gap("obligation.bundle-schema", "receipt bundle schema mismatch"))
-    supplied_assessment = bundle.get("assessment")
-    if not isinstance(supplied_assessment, dict):
-        gaps.append(material_gap("obligation.assessment-member", "assessment member is not an object"))
-        supplied_assessment = {}
-    elif not caller_assessment_is_valid(supplied_assessment):
-        return complete_assessment(
-            assessment,
-            [material_gap(
-                "obligation.caller-assessment-integrity",
-                "caller assessment claim must use the complete v2 shape with a valid outcome and unique material-gap keys",
-            )],
-            unknown=True,
-        )
     receipts = bundle.get("receipts", [])
     if not isinstance(receipts, list):
         gaps.append(material_gap("obligation.bundle-receipts", "receipt bundle did not resolve receipts"))
@@ -1168,42 +1167,42 @@ def evaluate(repo: Path, bundle: Any, input_gaps: list[dict[str, str]] | None = 
     for kind in SPEC["required_receipts"]:
         receipt = by_kind.get(kind)
         if receipt is None:
-            gaps.append(material_gap("obligation.required-receipt", f"missing receipt: {kind}"))
+            gaps.append(material_gap(f"obligation.required-receipt.{kind}", f"missing receipt: {kind}"))
             continue
         if set(receipt) != RECEIPT_FIELDS or not isinstance(receipt.get("gaps"), list):
-            gaps.append(material_gap("obligation.receipt-shape", "invalid receipt fields"))
+            gaps.append(material_gap(f"obligation.receipt-shape.{kind}", "invalid receipt fields"))
         if receipt.get("schema") != "checking-pr-readiness-evidence/v1":
-            gaps.append(material_gap("obligation.receipt-schema", f"invalid receipt schema: {kind}"))
+            gaps.append(material_gap(f"obligation.receipt-schema.{kind}", f"invalid receipt schema: {kind}"))
         if receipt.get("receipt_id") != f"receipt:{kind}":
-            gaps.append(material_gap("obligation.receipt-identity", f"invalid receipt identity: {kind}"))
+            gaps.append(material_gap(f"obligation.receipt-identity.{kind}", f"invalid receipt identity: {kind}"))
         if receipt.get("capability") != "checking-pr-readiness" or not receipt.get("capability_version"):
-            gaps.append(material_gap("obligation.receipt-capability", f"invalid receipt capability: {kind}"))
+            gaps.append(material_gap(f"obligation.receipt-capability.{kind}", f"invalid receipt capability: {kind}"))
         if receipt.get("repository") != live_repository:
-            gaps.append(material_gap("obligation.receipt-repository", f"cross-repository receipt: {kind}"))
+            gaps.append(material_gap(f"obligation.receipt-repository.{kind}", f"cross-repository receipt: {kind}"))
         if receipt.get("subject") != live_subject:
-            gaps.append(material_gap("obligation.receipt-subject", f"cross-subject receipt: {kind}"))
+            gaps.append(material_gap(f"obligation.receipt-subject.{kind}", f"cross-subject receipt: {kind}"))
         if receipt.get("exact_revision") != revision:
-            gaps.append(material_gap("obligation.receipt-revision", f"cross-revision receipt: {kind}"))
+            gaps.append(material_gap(f"obligation.receipt-revision.{kind}", f"cross-revision receipt: {kind}"))
         try:
             observed = datetime.fromisoformat(receipt["observed_at"])
             if observed < commit_time:
-                gaps.append(material_gap("obligation.receipt-freshness", f"stale receipt: {kind}"))
+                gaps.append(material_gap(f"obligation.receipt-freshness.{kind}", f"stale receipt: {kind}"))
         except (KeyError, ValueError, TypeError):
-            gaps.append(material_gap("obligation.receipt-observation", f"invalid observation time: {kind}"))
+            gaps.append(material_gap(f"obligation.receipt-observation.{kind}", f"invalid observation time: {kind}"))
         if receipt.get("outcome") == "bypassed" or receipt.get("bypass_requested"):
-            gaps.append(material_gap("obligation.receipt-bypass", f"bypass request: {kind}"))
+            gaps.append(material_gap(f"obligation.receipt-bypass.{kind}", f"bypass request: {kind}"))
         elif receipt.get("outcome") not in {"verified", "not applicable"} or receipt.get("gaps") != []:
-            gaps.append(material_gap("obligation.receipt-findings", f"unresolved finding: {kind}"))
+            gaps.append(material_gap(f"obligation.receipt-findings.{kind}", f"unresolved finding: {kind}"))
         references = receipt.get("evidence_references", [])
         if not isinstance(references, list) or not references:
-            gaps.append(material_gap("obligation.evidence-reference", f"missing evidence reference: {kind}"))
+            gaps.append(material_gap(f"obligation.evidence-reference.{kind}", f"missing evidence reference: {kind}"))
             references = []
         expected_path = f"evidence/{kind}.json"
         if len(references) != 1:
-            gaps.append(material_gap("obligation.evidence-reference-inventory", f"evidence inventory mismatch: {kind}"))
+            gaps.append(material_gap(f"obligation.evidence-reference-inventory.{kind}", f"evidence inventory mismatch: {kind}"))
         for reference in references:
             if not isinstance(reference, dict):
-                gaps.append(material_gap("obligation.evidence-reference", f"invalid evidence reference: {kind}"))
+                gaps.append(material_gap(f"obligation.evidence-reference.{kind}", f"invalid evidence reference: {kind}"))
                 continue
             transport = bundled_transport(reference, revision, receipt.get("receipt_id"))
             if transport is not None:
@@ -1211,7 +1210,7 @@ def evaluate(repo: Path, bundle: Any, input_gaps: list[dict[str, str]] | None = 
                 if inline_bundle_id is None:
                     inline_bundle_id = reference_bundle_id
                 elif reference_bundle_id != inline_bundle_id:
-                    gaps.append(material_gap("obligation.inline-bundle-identity", f"mixed inline bundle identity: {kind}"))
+                    gaps.append(material_gap(f"obligation.inline-bundle-identity.{kind}", f"mixed inline bundle identity: {kind}"))
                 evidence_documents_by_kind[kind] = evidence
                 transported_results_by_kind[kind] = result_content
                 transport_identities_by_kind[kind] = {
@@ -1231,22 +1230,22 @@ def evaluate(repo: Path, bundle: Any, input_gaps: list[dict[str, str]] | None = 
                 or relative.startswith("/")
                 or ".." in Path(relative).parts
             ):
-                gaps.append(material_gap("obligation.evidence-reference", f"invalid evidence reference: {kind}"))
+                gaps.append(material_gap(f"obligation.evidence-reference.{kind}", f"invalid evidence reference: {kind}"))
                 continue
             try:
                 mode, content = evidence_blob(repo, revision, relative)
             except (subprocess.CalledProcessError, IndexError):
-                gaps.append(material_gap("obligation.evidence-availability", f"missing evidence: {kind}"))
+                gaps.append(material_gap(f"obligation.evidence-availability.{kind}", f"missing evidence: {kind}"))
                 continue
             if mode != "100644":
-                gaps.append(material_gap("obligation.evidence-file", f"non-regular evidence: {kind}"))
+                gaps.append(material_gap(f"obligation.evidence-file.{kind}", f"non-regular evidence: {kind}"))
             if hashlib.sha256(content).hexdigest() != reference.get("sha256"):
-                gaps.append(material_gap("obligation.evidence-digest", f"evidence digest mismatch: {kind}"))
+                gaps.append(material_gap(f"obligation.evidence-digest.{kind}", f"evidence digest mismatch: {kind}"))
             if relative == expected_path:
                 try:
                     evidence_documents_by_kind[kind] = json.loads(content)
                 except (UnicodeDecodeError, json.JSONDecodeError):
-                    gaps.append(material_gap("obligation.evidence-document", f"invalid evidence document: {kind}"))
+                    gaps.append(material_gap(f"obligation.evidence-document.{kind}", f"invalid evidence document: {kind}"))
 
     for kind in SPEC["required_receipts"]:
         if kind in evidence_documents_by_kind:
@@ -1461,28 +1460,96 @@ def run_suite() -> None:
             "moving the same invalid receipt changed its opaque key or envelope shape",
         )
 
-        split_receipts = copy.deepcopy(bundle)
-        split_receipts["receipts"] = [
-            receipt for receipt in split_receipts["receipts"]
-            if receipt["kind"] not in {"code-review", "code-simplification"}
+        missing_review = copy.deepcopy(bundle)
+        missing_review["receipts"] = [
+            receipt for receipt in missing_review["receipts"] if receipt["kind"] != "code-review"
         ]
-        split_receipts["assessment"]["receipt_references"] = [
-            reference for reference in split_receipts["assessment"]["receipt_references"]
-            if reference not in {"receipt:code-review", "receipt:code-simplification"}
+        missing_review["assessment"]["receipt_references"].remove("receipt:code-review")
+        missing_review_result = evaluate(first, missing_review)
+        missing_review_keys = {
+            item["key"]
+            for item in missing_review_result["gaps"]
+            if item["message"] == "missing receipt: code-review"
+        }
+
+        missing_two = copy.deepcopy(missing_review)
+        missing_two["receipts"] = [
+            receipt for receipt in missing_two["receipts"] if receipt["kind"] != "code-simplification"
         ]
-        combined_receipts = copy.deepcopy(bundle)
-        combined_receipts["receipts"] = [
-            receipt for receipt in combined_receipts["receipts"] if receipt["kind"] != "code-review"
-        ]
-        combined_receipts["assessment"]["receipt_references"].remove("receipt:code-review")
-        split_result = evaluate(first, split_receipts)
-        combined_result = evaluate(first, combined_receipts)
+        missing_two["assessment"]["receipt_references"].remove("receipt:code-simplification")
+        missing_two_result = evaluate(first, missing_two)
+        missing_two_keys = {
+            item["key"]
+            for item in missing_two_result["gaps"]
+            if item["message"] in {"missing receipt: code-review", "missing receipt: code-simplification"}
+        }
         require(
-            {item["key"] for item in split_result["gaps"]}
-            == {item["key"] for item in combined_result["gaps"]}
-            and material_gaps_are_valid(split_result["gaps"])
-            and material_gaps_are_valid(combined_result["gaps"]),
-            "split and combined missing receipts did not retain one atomic corrective obligation",
+            len(missing_review_keys) == 1
+            and len(missing_two_keys) == 2
+            and missing_review_keys <= missing_two_keys
+            and material_gaps_are_valid(missing_two_result["gaps"]),
+            "independent missing receipts did not retain unique atomic obligation keys",
+        )
+
+        reordered_missing_two = copy.deepcopy(missing_two)
+        reordered_missing_two["receipts"].reverse()
+        reordered_missing_two["assessment"]["receipt_references"].reverse()
+        reordered_missing_two_result = evaluate(first, reordered_missing_two)
+        require(
+            missing_two_keys
+            == {
+                item["key"]
+                for item in reordered_missing_two_result["gaps"]
+                if item["message"] in {"missing receipt: code-review", "missing receipt: code-simplification"}
+            },
+            "reordering independent missing receipts changed their opaque keys",
+        )
+
+        one_invalid_reference = copy.deepcopy(bundle)
+        review_receipt = next(
+            receipt for receipt in one_invalid_reference["receipts"] if receipt["kind"] == "code-review"
+        )
+        review_receipt["evidence_references"] = [{}]
+        one_invalid_reference_result = evaluate(first, one_invalid_reference)
+        one_reference_keys = {
+            item["key"]
+            for item in one_invalid_reference_result["gaps"]
+            if item["message"] == "invalid evidence reference: code-review"
+        }
+
+        combined_invalid_references = copy.deepcopy(one_invalid_reference)
+        combined_review_receipt = next(
+            receipt for receipt in combined_invalid_references["receipts"] if receipt["kind"] == "code-review"
+        )
+        combined_review_receipt["evidence_references"] = [{}, {}]
+        combined_invalid_references_result = evaluate(first, combined_invalid_references)
+        combined_reference_keys = {
+            item["key"]
+            for item in combined_invalid_references_result["gaps"]
+            if item["message"] == "invalid evidence reference: code-review"
+        }
+        require(
+            len(one_reference_keys) == len(combined_reference_keys) == 1
+            and one_reference_keys == combined_reference_keys,
+            "split and combined details of one obligation changed its key",
+        )
+
+        combined_with_missing_receipt = copy.deepcopy(combined_invalid_references)
+        combined_with_missing_receipt["receipts"] = [
+            receipt for receipt in combined_with_missing_receipt["receipts"]
+            if receipt["kind"] != "code-simplification"
+        ]
+        combined_with_missing_receipt["assessment"]["receipt_references"].remove(
+            "receipt:code-simplification"
+        )
+        combined_with_missing_receipt_result = evaluate(first, combined_with_missing_receipt)
+        require(
+            combined_reference_keys <= {item["key"] for item in combined_with_missing_receipt_result["gaps"]}
+            and any(
+                item["message"] == "missing receipt: code-simplification"
+                for item in combined_with_missing_receipt_result["gaps"]
+            ),
+            "combining one obligation suppressed another independent obligation",
         )
 
         first_missing_cap = root / "first-missing-cap"
@@ -1683,10 +1750,26 @@ def run_suite() -> None:
         require(malformed_bundle["outcome"] == "action-required", "null bundle did not fail closed")
         require("receipt bundle is not an object" in gap_messages(malformed_bundle), "null bundle returned no normal assessment gap")
 
-        malformed_assessment = copy.deepcopy(bundle)
-        malformed_assessment["assessment"] = None
-        malformed_assessment_result = evaluate(first, malformed_assessment)
-        require("assessment member is not an object" in gap_messages(malformed_assessment_result), "null assessment member did not fail closed")
+        for malformed_outer_assessment in (None, [], "not an assessment"):
+            malformed_assessment = copy.deepcopy(bundle)
+            malformed_assessment["assessment"] = malformed_outer_assessment
+            malformed_assessment_result = evaluate(first, malformed_assessment)
+            require(
+                malformed_assessment_result["outcome"] == "UNKNOWN"
+                and material_gaps_are_valid(malformed_assessment_result["gaps"])
+                and len(malformed_assessment_result["gaps"]) == 1,
+                "non-object caller assessment did not return one valid UNKNOWN envelope",
+            )
+
+        missing_outer_assessment = copy.deepcopy(bundle)
+        del missing_outer_assessment["assessment"]
+        missing_outer_assessment_result = evaluate(first, missing_outer_assessment)
+        require(
+            missing_outer_assessment_result["outcome"] == "UNKNOWN"
+            and material_gaps_are_valid(missing_outer_assessment_result["gaps"])
+            and len(missing_outer_assessment_result["gaps"]) == 1,
+            "missing caller assessment did not return one valid UNKNOWN envelope",
+        )
 
         (first / "src" / "app.txt").write_text("staged-only\n", encoding="utf-8")
         run("git", "add", "src/app.txt", cwd=first)

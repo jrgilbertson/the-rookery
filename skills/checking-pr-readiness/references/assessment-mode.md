@@ -103,22 +103,24 @@ Construct `capability_version`, `repository`, `subject`, `exact_revision`, and
 `observed_at` from the live skill package and checkout. The caller's assessment
 member is a claim to validate, not an output template: never copy its
 provenance fields into the returned envelope. Validate every bundle layer and
-receipt element before field access. Malformed input returns the same normal
-`action-required` envelope with named gaps, never a traceback or partial JSON.
+receipt element before field access. Malformed transport and substantive receipt
+failures return the normal `action-required` envelope with named gaps, never a
+traceback or partial JSON.
 
 `pass` uses an empty `gaps` array. `action-required` names every material gap
 as exactly one object with only a nonempty producer-owned `key` and a
-human-readable nonempty `message`. At the assessment boundary, validate the
-caller-supplied v2 member's exact field set, outcome, and gaps before using it:
-missing, empty, duplicate, extra-field, or malformed caller keys return a
-normal valid envelope with outcome `UNKNOWN`, never a pass, omission, or
-traceback. Keys are equality-only correlation evidence: fixed semantic names
+human-readable nonempty `message`. At the assessment boundary, send every
+outer caller-supplied v2 claim, including a missing, null, or other non-object
+member, through one integrity decision before accessing its fields. An invalid
+outer claim returns the normal valid `UNKNOWN` envelope, never a pass, omission,
+or traceback. Keys are equality-only correlation evidence: fixed semantic names
 remain local to their production sites, are never parsed or mapped to behavior,
 and do not include a list position, path, reference, timestamp, exact head, or
-message content. One atomic obligation keeps its key across exact heads and
-message-only rewrites; repeated details may be combined into that obligation.
-Distinct atomic obligations use distinct keys; split or combined findings use
-the keys for their resulting atomic obligations. The inner
+message content. One atomic corrective obligation keeps its key across exact
+heads, receipt order, and message-only rewrites; repeated details may be
+combined only when they name that same fixed obligation. Independent receipt or
+evidence kinds use distinct fixed keys, so combining details cannot suppress
+another obligation. The inner
 `checking-pr-readiness-evidence/v1` receipt `gaps` arrays remain unchanged.
 Return the JSON receipt and a short plain-language summary only; do not present
 the interactive Minto readout or decision menu.

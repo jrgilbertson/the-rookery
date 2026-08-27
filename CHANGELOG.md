@@ -1,5 +1,9 @@
 # Changelog
 
+- Fix assessment-only v2 gap correlation so independently repairable receipt
+  and evidence obligations retain distinct producer-owned keys, while malformed
+  outer assessment claims consistently return one valid `UNKNOWN` envelope.
+
 All notable changes to The Rookery are documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),

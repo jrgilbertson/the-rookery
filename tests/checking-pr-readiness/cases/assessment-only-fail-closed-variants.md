@@ -22,7 +22,8 @@ Provenance: Observed failure where stale, cross-boundary, partial, and bypassed 
 > revision into a new-revision bundle, and from one Worker/session bundle into
 > another bundle at the same head.
 > At the real evaluator boundary, include caller assessment gaps with a missing
-> key, an empty key, duplicate keys, and an extra field. Move the same invalid
+> key, an empty key, duplicate keys, and an extra field; also supply missing,
+> null, and other non-object outer assessment members. Move the same invalid
 > receipt member from the first list position to the last position, and compare
 > real producer output rather than calling a gap helper directly.
 > Return one assessment receipt per variant without an owner menu.
@@ -45,6 +46,7 @@ Provenance: Observed failure where stale, cross-boundary, partial, and bypassed 
   Worker/session bundle fail even when mutable outer transport labels are
   changed to the recipient head and bundle.
 - [ ] Each material gap uses only a nonempty producer-owned key and a
-  human-readable message. Caller gap keys that are malformed, missing, empty,
-  duplicate, or extra-field return a valid `UNKNOWN` envelope, and a moved
-  finding retains its opaque equality key without relying on its list position.
+  human-readable message. Caller claims with malformed gap keys, or a missing,
+  null, or other non-object outer assessment member, return one valid `UNKNOWN`
+  envelope. A moved finding retains its opaque equality key without relying on
+  its list position.

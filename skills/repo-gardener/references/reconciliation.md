@@ -332,13 +332,23 @@ for every Worker. Unchanged grants are not re-litigated. A live-policy or
 overlap denial on one Worker stops that Worker's dependents only; other
 Workers and read-only sensing continue. Already-open PRs stay native objects.
 
-Each Worker re-reads the file the same way immediately before push and PR
-creation. Before either, check the exact committed paths against repository
-identity, include/exclude scope, protected paths, and the assigned slice.
-Preserve the local commit on denial. Immediately before PR creation it also
-rereads native branches and PRs and stops if current work now overlaps that
-Worker. Preserve saved pushed state when PR creation is denied, and surface
-the exact file revision, scope, or overlap change for owner review.
+Each Worker retains ownership of its shipping invocation and PR-create request,
+but never receives tracker or delivery credentials. It re-reads the file
+immediately before delivery and checks exact committed paths against repository
+identity, include/exclude scope, protected paths, and assigned slice. The
+authorized shipping broker alone releases the short-lived delivery capability:
+immediately before release it revalidates the exact repository, branch, and
+full head, then post-reads and reconciles the same tuple afterward. Preserve
+the local commit on denial. Immediately before PR creation, reread native
+branches and PRs and stop if current work overlaps that Worker. Preserve saved
+pushed state when PR creation is denied, and surface the exact file revision,
+scope, or overlap change for owner review.
+
+An uncertain PR-create response uses bounded read-only reconciliation
+in the exact repository and Worker branch. Accept exactly one matching PR
+only. Zero, multiple, unavailable, or mismatched results remain `UNKNOWN` and
+preserve saved pushed state: never retry, guess, adopt, or blindly duplicate a
+PR.
 
 ## Supervise Workers from native progress
 

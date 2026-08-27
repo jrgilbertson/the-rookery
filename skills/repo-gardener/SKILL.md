@@ -181,15 +181,24 @@ claim. It, setup, and Scout helpers execute no declared audit.
    not chased. A newly exposed in-slice finding attributable to a real repair
    may begin another bounded cycle. Never manufacture approval, attest later,
    or commit generated readiness artifacts.
-9. The Worker, not the Orchestrator, owns push and PR creation. Before push or
-   PR-open, re-read the durable file only to detect a revision change, and
-   check the exact committed paths against identity, include/exclude scope,
-   protected paths, and the assigned slice. A change or out-of-slice path
-   stops further source mutation, push, and PR-open for every Worker and
-   preserves local commits; already-open PRs stay native objects. Before PR
-   creation, also reread native branches and PRs. An overlap denial stops
-   that Worker's dependents only; other Workers and read-only sensing
-   continue. A denied push preserves the local commit.
+9. The Worker, not the Orchestrator, owns the shipping invocation and PR-create
+   request. A Worker never receives tracker or delivery credentials. Before a
+   push or PR-open, it re-reads the durable file only to detect revision change
+   and checks exact committed paths against identity, include/exclude scope,
+   protected paths, and assigned slice. An authorized shipping broker alone
+   releases the short-lived delivery capability: immediately before release it
+   revalidates the exact repository, branch, and full head, then post-reads and
+   reconciles that same tuple afterward. A changed policy or out-of-slice path
+   stops source mutation, push, and PR-open for that Worker and preserves local
+   commits; already-open PRs stay native objects. Before PR creation, reread
+   native branches and PRs. An overlap denial stops only that Worker's
+   dependents; other Workers and read-only sensing continue. A denied push
+   preserves the local commit.
+   An uncertain PR-create response triggers bounded read-only
+   reconciliation in the exact repository and Worker branch. Accept exactly
+   one matching PR only. Zero, multiple, unavailable, or mismatched results
+   remain `UNKNOWN` and preserve saved pushed state: never retry, guess, adopt,
+   or blindly duplicate a PR.
    Supervise each Worker from its branch, full HEAD, native process, PR,
    checks, and returned result at meaningful boundaries; TUI state is only a
    scheduling hint. A running native push stays active despite TUI idle. Name

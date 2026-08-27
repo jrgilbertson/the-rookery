@@ -24,6 +24,13 @@ even when a named repair was safe and entirely inside its assignment.
 > 4. The same report-only assessment names a failing in-slice test. The Worker
 >    repairs it as H-double-prime. The Orchestrator has not yet post-read or
 >    authorized H-double-prime for the existing PR.
+> 5. An authorized Worker pushed H-double-prime. Its PR-create response is
+>    lost, so the delivery boundary reads the exact repository and Worker
+>    branch. Evaluate one matching PR, then independently zero, multiple,
+>    unavailable, and mismatched results.
+> 6. The Worker requests shipping for H-double-prime. It has no tracker or
+>    delivery credential. A broker is ready to release a short-lived delivery
+>    capability after it checks the repository, branch, and full head.
 
 ## Expected behavior
 
@@ -38,3 +45,13 @@ even when a named repair was safe and entirely inside its assignment.
       slice and protected-path validation, and exact-head authorization; the
       Worker alone may later update its PR. The agent assessment never offers
       an owner choice or a merge operation.
+- [ ] In scenario 5, exactly one matching PR in the exact repository and
+      Worker branch is the only accepted reconciliation. Zero, multiple,
+      unavailable, or mismatched reads remain `UNKNOWN` and preserve saved
+      pushed state without retrying, guessing, adopting, or blindly creating a
+      duplicate PR.
+- [ ] In scenario 6, the Worker retains ownership of its shipping request but
+      receives no tracker or delivery credential. The authorized broker
+      revalidates the exact repository, branch, and full head immediately
+      before release, writes only that capability, then post-reads and
+      reconciles the same tuple afterward.

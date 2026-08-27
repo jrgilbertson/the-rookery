@@ -550,5 +550,33 @@ then pass "agent mode: routes before interactive workflow"
 else fail "agent mode: routes before interactive workflow" "agent-mode route is missing or reaches interactive merge handling"
 fi
 
+echo "== J. Worker delivery stays exact and secretless =="
+GARDENER_SKILL="$REPO_ROOT/skills/repo-gardener/SKILL.md"
+RECONCILIATION="$REPO_ROOT/skills/repo-gardener/references/reconciliation.md"
+for source in "$GARDENER_SKILL" "$RECONCILIATION"; do
+  label=$(basename "$source")
+  source_text=$(tr '\n' ' ' < "$source" 2>/dev/null | tr -s ' ')
+  for needle in \
+    'uncertain PR-create response' \
+    'exact repository and Worker branch' \
+    'exactly one matching PR' \
+    'Zero, multiple, unavailable, or mismatched' \
+    'UNKNOWN' \
+    'saved pushed state' \
+    'never retry, guess, adopt, or blindly duplicate' \
+    'never receives tracker or delivery credentials' \
+    'authorized shipping broker' \
+    'exact repository, branch, and full head' \
+    'immediately before' \
+    'post-read'
+  do
+    if [ -f "$source" ] && [[ "$source_text" == *"$needle"* ]]; then
+      pass "delivery contract: $label names $needle"
+    else
+      fail "delivery contract: $label names $needle" "missing exact F1/F2 boundary"
+    fi
+  done
+done
+
 printf '\n%d assertions: %d passed, %d failed\n' "$((PASS + FAIL))" "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ] || exit 1

@@ -18,7 +18,10 @@ looked" surface. GitHub Releases mirror its entries.
   Each reassessment is bound to a new exact head, repeated findings keep their
   fingerprint across irrelevant commits, process-only caps remain recorded,
   and `checking-merge-readiness mode:agent` returns a report-only structured
-  assessment that cannot present an owner choice or merge.
+  assessment that cannot present an owner choice or merge. Worker-owned
+  shipping now uses a secretless broker that revalidates the exact delivery
+  tuple, while uncertain PR creation accepts only one exact repository-and-
+  branch match and otherwise remains saved pushed state without a retry.
 - `repo-gardener` now supervises Workers from current native branch, HEAD,
   process, PR, check, and result facts. TUI idle is only a scheduling hint;
   bounded no-progress analysis becomes a local stall, head drift refreshes

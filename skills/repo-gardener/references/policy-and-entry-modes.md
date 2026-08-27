@@ -87,7 +87,12 @@ repository evidence supports one. For `setup_command` only, the validator
 compares executable basenames case-insensitively after path and `.exe` suffix
 normalization, rejects POSIX and Windows shell or interpreter command-string
 options, and recognizes direct or path-qualified `env` wrappers (including
-split-string forms). Ordinary literal arguments remain valid under a
+split-string forms). Its `env` recognition continues across assignments after
+`--` or `-` and consumes option operands such as `-a`/`--argv0`; its wrapper
+option check ends when a shell or interpreter reaches an ordinary file-mode
+positional argument. Slash-prefixed options are reserved for the Windows
+wrappers that define them, so a POSIX absolute script path is file mode.
+Ordinary literal arguments remain valid under a
 non-wrapper executable; `audit_commands` retain their existing structural
 direct-argv validation. Persist at most ten exact tokenized commands
 across all eligible lanes, plus one exact tokenized `setup_command`, and only

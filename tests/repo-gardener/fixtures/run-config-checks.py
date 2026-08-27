@@ -138,7 +138,7 @@ def dump_yaml(value: Any, indent: int = 0) -> str:
     if isinstance(value, int) and not isinstance(value, bool):
         return str(value)
     if isinstance(value, str):
-        if value == "" or value != value.strip() or any(ch in value for ch in ":#{}[]&*!|>%@`") or value in {"true", "false", "null", "Null", "NULL", "~"}:
+        if value == "" or value != value.strip() or any(ch in value for ch in ":#{}[]&*!|>%@`") or value in {"-", "true", "false", "null", "Null", "NULL", "~"}:
             return json.dumps(value)
         return value
     raise CheckFailure(f"unsupported YAML dump type: {type(value)!r}")
@@ -558,6 +558,19 @@ lanes:
             repo_root,
             normalized_config(ordinary_literal_arguments),
         )
+        for file_mode_command in (
+            ["bash", "scripts/setup.sh", "--strict"],
+            ["bash", "/tmp/scripts/setup.sh", "--strict"],
+            ["python3", "scripts/setup.py", "-c"],
+            ["node", "scripts/setup.js", "--eval"],
+        ):
+            file_mode_setup_command = base_config()
+            file_mode_setup_command["setup_command"] = file_mode_command
+            expect_valid(
+                file_mode_setup_command,
+                repo_root,
+                normalized_config(file_mode_setup_command),
+            )
         audit_wrapper_arguments = base_config()
         audit_wrapper_arguments["lanes"]["repository-test-and-code-health"][
             "audit_commands"
@@ -581,6 +594,14 @@ lanes:
             (["python3", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
             (["env", "MODE=setup", "bash", "-lc", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
             (["env", "--", "node", "--eval=repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["env", "--", "MODE=setup", "bash", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["env", "-", "MODE=setup", "bash", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["/usr/bin/ENV.EXE", "--", "MODE=setup", "PWSH.EXE", "-EncodedCommand", "c2V0dXA="], "setup_command contains forbidden command-string wrapper"),
+            (["env", "-a", "setup0", "bash", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["env", "--argv0", "setup0", "bash", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
+            (["powershell", "-e", "c2V0dXA="], "setup_command contains forbidden command-string wrapper"),
+            (["pwsh", "-ec", "c2V0dXA="], "setup_command contains forbidden command-string wrapper"),
+            (["powershell", "-CommandWithArgs", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
             (["env", "-S", "sh -c repo-setup"], "setup_command contains forbidden command-string wrapper"),
             (["/usr/bin/env", "bash", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),
             ([r"C:\\Windows\\System32\\ENV.EXE", "bash.exe", "-c", "repo-setup"], "setup_command contains forbidden command-string wrapper"),

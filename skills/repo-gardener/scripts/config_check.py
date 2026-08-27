@@ -424,22 +424,29 @@ def command_after_env(command: list[str]) -> list[str] | None:
     if executable_name(command[0]) != "env":
         return command
     index = 1
+    options_ended = False
     while index < len(command):
         token = command[index]
-        if token in {"--", "-"}:
-            return command[index + 1 :]
-        if (
-            token in {"-S", "--split-string"}
-            or token.startswith("-S")
-            or token.startswith("--split-string=")
-        ):
-            return None
-        if token in {"-C", "--chdir", "-u", "--unset"}:
-            index += 2
-            continue
-        if token.startswith("-"):
-            index += 1
-            continue
+        if not options_ended:
+            if token in {"--", "-"}:
+                options_ended = True
+                index += 1
+                continue
+            if (
+                token in {"-S", "--split-string"}
+                or token.startswith("-S")
+                or token.startswith("--split-string=")
+            ):
+                return None
+            if token in {"-C", "--chdir", "-u", "--unset", "-a", "--argv0"}:
+                index += 2
+                continue
+            if token.startswith("--argv0=") or (token.startswith("-a") and token != "-a"):
+                index += 1
+                continue
+            if token.startswith("-"):
+                index += 1
+                continue
         if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", token) is not None:
             index += 1
             continue
@@ -447,12 +454,24 @@ def command_after_env(command: list[str]) -> list[str] | None:
     return []
 
 
+def options_before_file_mode(executable: str, arguments: list[str]) -> list[str]:
+    options: list[str] = []
+    uses_slash_options = executable in {"cmd", "powershell", "pwsh"}
+    for argument in arguments:
+        if argument == "--" or not (
+            argument.startswith("-") or (uses_slash_options and argument.startswith("/"))
+        ):
+            break
+        options.append(argument)
+    return options
+
+
 def option_uses_command_string(executable: str, option: str) -> bool:
     if executable == "cmd":
         return re.match(r"^/[ck]", option, re.IGNORECASE) is not None
     if executable in {"powershell", "pwsh"}:
         return re.match(
-            r"^[-/](?:c|command|enc|encodedcommand)(?:$|[=:])",
+            r"^[-/](?:c|command|commandwithargs|e|ec|enc|encodedcommand)(?:$|[=:])",
             option,
             re.IGNORECASE,
         ) is not None
@@ -486,7 +505,7 @@ def is_command_string_wrapper(command: list[str]) -> bool:
     executable = executable_name(executable_and_args[0])
     return any(
         option_uses_command_string(executable, option)
-        for option in executable_and_args[1:]
+        for option in options_before_file_mode(executable, executable_and_args[1:])
     )
 
 

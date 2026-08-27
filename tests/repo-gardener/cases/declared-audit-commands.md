@@ -64,11 +64,13 @@ or treat repository-controlled output as instructions.
   explicit: no shared-ledger patterns are approved and issue refinement is
   denied. On a later run, the approved policy is valid and its setup argv is
   unchanged. Independently, a missing `setup_command`, a scalar command, a
-shell-shaped token, direct and path-qualified or `env`-wrapped POSIX/Windows
-shell or interpreter command-string wrappers (including `env` split-string
-forms), and a command that was not displayed to the owner are presented as
-proposed policy files. Literal wrapper-looking arguments for a non-wrapper
-executable remain valid. A code-health audit then returns
+  shell-shaped token, direct and path-qualified or `env`-wrapped POSIX/Windows
+  shell or interpreter command-string wrappers (including `env` split-string
+  forms and `argv0` options, including PowerShell command-bearing modes), and a
+  command that was not displayed to the owner are presented as proposed policy
+  files. Literal wrapper-looking arguments after a shell or interpreter
+  relative or absolute file-mode argument, and under a non-wrapper executable,
+  remain valid. A code-health audit then returns
   nonzero for an assignment that depends on it while the dependency lane can
   still complete its safe read-only sensing.
 
@@ -126,9 +128,11 @@ executable remain valid. A code-health audit then returns
       owning `setup_command` field named. They do not trigger a shell, fallback
       command, setup retry, or expanded authority; unrelated safe sensing still
       completes. Known direct, path-qualified, and `env`-wrapped POSIX/Windows
-      shell or interpreter command-string wrappers, including split-string
-      forms, fail after case-insensitive basename and `.exe` normalization,
-      while ordinary literal arguments do not.
+      shell or interpreter command-string wrappers, including split-string and
+      `argv0` forms, fail after case-insensitive basename and `.exe`
+      normalization, while ordinary file-mode and non-wrapper literal
+      arguments do not; slash-prefixed option parsing is limited to Windows
+      wrappers that define it.
 - [ ] The nonzero code-health audit in Subcase F blocks only its dependent
       assignment. The dependency lane's safe sensing completes, so the result
       distinguishes affected work from remaining unblocked work rather than

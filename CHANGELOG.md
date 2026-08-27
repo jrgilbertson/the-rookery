@@ -26,6 +26,11 @@ looked" surface. GitHub Releases mirror its entries.
   pushed state without a retry. Agent-mode actionability now binds the complete
   protected-path policy identity and revision, preserves the certified full
   host/owner/name identity, and rechecks its gathered snapshot before return.
+  Repeated readiness-gap keys are now equality-only correlation evidence, so
+  another bounded repair cycle requires LLM judgment of keyed findings, exact
+  diff, repair explanation, and fresh verification rather than key recurrence;
+  empty, irrelevant, unsafe, unauthorized, unknown, or unverified progress
+  still stops truthfully.
 - `repo-gardener` now supervises Workers from current native branch, HEAD,
   process, PR, check, and result facts. TUI idle is only a scheduling hint;
   bounded no-progress analysis becomes a local stall, head drift refreshes

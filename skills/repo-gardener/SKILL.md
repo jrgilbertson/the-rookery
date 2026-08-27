@@ -174,13 +174,18 @@ claim. It, setup, and Scout helpers execute no declared audit.
    exact assessment and classify every named finding. The owning Worker fixes
    every safe, actionable, in-slice finding in one repair batch, then repeats
    simplification, code review, repository gates, and the exact-head
-   assessment on its new committed head. A finding fingerprint survives head
-   changes: stop the affected Worker on a repeated or reappearing finding, no
-   material finding progress, unrelated scope, protected-path conflict,
-   authority loss, or the caller deadline. Process-only findings are recorded,
-   not chased. A newly exposed in-slice finding attributable to a real repair
-   may begin another bounded cycle. Never manufacture approval, attest later,
-   or commit generated readiness artifacts.
+   assessment on its new committed head. Keys are producer-owned equality-only
+   correlation evidence: use LLM judgment over the prior and current keyed
+   findings, exact diff, Worker repair explanation, and fresh verification.
+   A repeated key may receive another bounded cycle only when that evidence
+   shows concrete attributable material progress; an empty or irrelevant diff,
+   materially unchanged evidence, safety or authority conflict, protected-path
+   conflict, scope conflict, UNKNOWN evidence or effects, or the caller deadline
+   stops the affected Worker truthfully. Judge mixed prior and new keys from
+   that evidence, never a strict set rule; a newly introduced attributable
+   finding may also begin another bounded cycle. Process-only findings are
+   recorded, not chased. Never manufacture approval, attest later, or commit
+   generated readiness artifacts.
 9. The Worker, not the Orchestrator, owns the shipping invocation and PR-create
    request. A Worker never receives tracker or delivery credentials. Before a
    push or PR-open, it re-reads the durable file only to detect revision change
@@ -229,13 +234,17 @@ claim. It, setup, and Scout helpers execute no declared audit.
     and commits H-prime; the Orchestrator post-reads H-prime, repeats the slice
     and protected-path checks, and grants a new exact-head authorization before
     the Worker updates the existing PR. Then post-read the remote head and
-    fresh checks before a fresh agent assessment. Finding fingerprints survive
-    head changes, so a repeated or reappearing finding, irrelevant or empty
-    commit, unchanged native state, scope expansion, protected-path conflict,
-    authority loss, or deadline stops only that Worker. Process-only caps
-    (empty review history or missing required human approvals) are recorded,
-    not chased. A newly exposed in-slice finding after real repair may receive
-    another bounded cycle. If that skill is absent, name the gap. The in-run
+    fresh checks before a fresh agent assessment. Keys remain equality-only
+    correlation evidence; use LLM judgment over the prior/current keyed
+    findings, exact diff, repair explanation, and fresh verification. A repeated
+    key may continue only with concrete attributable material progress; empty
+    or irrelevant commits, materially unchanged evidence, unchanged native
+    state, scope expansion, protected-path conflict, authority loss, UNKNOWN
+    evidence or effects, and deadline stop only that Worker. Judge mixed old and
+    new keys from that evidence, never a strict set rule. Process-only caps
+    (empty review history or missing required human approvals) are recorded, not
+    chased. A newly introduced attributable in-slice finding after real repair
+    may receive another bounded cycle. If that skill is absent, name the gap. The in-run
     review is not the owner's later merge gate. Never merge. The pending Worker
     does not block completion of the nine-lane report.
 11. Immediately before closing, re-read the durable file only to detect a

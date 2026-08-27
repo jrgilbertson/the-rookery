@@ -152,7 +152,7 @@ The shipping sequence, in order:
 
 For unattended verification, its assessment-only mode returns `pass` or `action-required` for a named revision and makes no changes.
 
-After approval, `ce-commit-push-pr` writes the description and opens the pull request, and `ce-babysit-pr` works through CI failures and review feedback. Then [`checking-merge-readiness`](skills/checking-merge-readiness/SKILL.md) reviews the full change for intent drift, unnecessary complexity, unresolved feedback, and failed merge rules. It recommends merge, debug, or do not merge; I still decide and merge. I write the changelog and release notes from the merged pull requests afterward.
+After approval, `ce-commit-push-pr` writes the description and opens the pull request, and `ce-babysit-pr` works through CI failures and review feedback. Then [`checking-merge-readiness`](skills/checking-merge-readiness/SKILL.md) reviews the full change for intent drift, unnecessary complexity, unresolved feedback, and failed merge rules. It recommends merge, debug, or do not merge. Choosing Proceed to merge on a green open pull request is that decision and merges it. I write the changelog and release notes from the merged pull requests afterward.
 
 CI gates the merge on the unit and end-to-end suites, plus passes like performance and link checks in my product repos. GitHub enforces the rest, and each of these is a setting you have to turn on: a PR for every change, review comments resolved before merge, and no direct pushes to main, including for administrators.
 

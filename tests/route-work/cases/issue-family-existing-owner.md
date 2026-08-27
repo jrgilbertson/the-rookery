@@ -17,6 +17,9 @@ certify readiness, or duplicate a proven phase owner.
 > 5. The operator says Jordan owns the in-flight implementation phase.
 > 6. An approved implementation is in flight, and its worktree and pull request
 >    are named, but no phase owner is identified.
+> 7. A child is named directly and its accepted outcome lacks an execution
+>    plan. Family coverage is incomplete, but supplied evidence says that gap
+>    does not block planning this child.
 
 ## Expected behavior
 
@@ -27,4 +30,6 @@ certify readiness, or duplicate a proven phase owner.
 - [ ] Item 5 returns a continuation naming Jordan and no duplicate kickoff.
 - [ ] Item 6 returns the normal route with `Active ownership unverified` and
       performs no ownership discovery or monitoring.
+- [ ] Item 7 routes the child's unresolved effect to `ce-plan`; the supplied
+      non-blocking family gap does not displace the directly named child.
 - [ ] All conclusions use supplied family and ownership state only.

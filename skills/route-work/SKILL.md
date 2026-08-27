@@ -31,8 +31,8 @@ One routing attempt may span the initial turn and one clarification answer.
 When clarification is necessary, the initial turn emits the reference's single
 question and exits. On the answer, combine it with the original evidence still
 visible in the conversation, perform one final assessment, and return a route,
-continuation, or `Insufficient input`. Ask no second question and persist no
-routing state.
+continuation, or named stop. Use `Insufficient input` when the answer still
+does not resolve an owner. Ask no second question and persist no routing state.
 
 ## Authority boundary
 

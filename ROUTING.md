@@ -19,8 +19,9 @@ intent proceeds through its normal workflow and does not produce a route card.
 One invocation performs one read-only assessment and returns one route card,
 continuation, clarification question, or stop, then exits. If a clarification
 is necessary, the operator's answer joins the original evidence for the same
-bounded conversational attempt. The next assessment returns a route or
-`Insufficient input`; it asks no second question and persists no routing state.
+bounded conversational attempt. The next assessment returns a route,
+continuation, or named stop. Use `Insufficient input` when the answer still
+does not resolve an owner. Ask no second question and persist no routing state.
 
 ## Choose the first owner
 
@@ -97,6 +98,12 @@ Use only supplied issue-family and plan state.
 | An approved parent plan is supplied | Route to `ce-work`; use Lead + bounded workers only when independent units, one integrator, and safe write boundaries are proven |
 | A child is named directly | Route from the child's unresolved effect while preserving supplied parent constraints |
 | The requested phase already has a proven active owner | Return continuation context and no duplicate kickoff unless replacement or restart is explicit |
+
+When rows overlap, a proven active owner of the requested phase takes
+precedence. Otherwise, a directly named child routes from its own unresolved
+effect unless supplied evidence says unresolved family state blocks that
+child. All other incomplete or uncertain family-state starts route to
+`managing-issues`.
 
 Active ownership is proven only by an operator statement or supplied artifact
 that names a specific in-flight owner for the requested phase. A stated

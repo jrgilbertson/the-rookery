@@ -19,6 +19,14 @@ looked" surface. GitHub Releases mirror its entries.
   assessment evidence, uncertain pushes reconcile the remote before retry,
   unavailable remote-head reads remain `UNKNOWN` without retry or settlement,
   and other unavailable recovery facts remain `UNKNOWN`.
+- Assessment-only `checking-pr-readiness` now emits
+  `checking-pr-readiness-assessment/v2` material gaps as minimal,
+  producer-owned `{key, message}` objects. Keys are equality-only correlation
+  evidence for atomic, independently repairable receipt and evidence
+  obligations: they remain stable across exact heads and message rewrites,
+  while a malformed outer assessment claim with a missing, empty, duplicate,
+  extra-field, or malformed key produces one valid `UNKNOWN` envelope; inner
+  evidence receipt gaps remain unchanged.
 - Assessment-only `checking-pr-readiness` now separates substantive exact-head
   evidence from receipt packaging. One complete same-session bundle may carry
   digest-matched evidence and results outside the assessed commit, and missing

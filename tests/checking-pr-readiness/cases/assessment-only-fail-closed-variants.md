@@ -21,11 +21,18 @@ Provenance: Observed failure where stale, cross-boundary, partial, and bypassed 
 > Include same-kind evidence/result bytes and their digests copied from an old
 > revision into a new-revision bundle, and from one Worker/session bundle into
 > another bundle at the same head.
+> At the real evaluator boundary, include caller assessment gaps with a missing
+> key, an empty key, duplicate keys, and an extra field; also supply missing,
+> null, and other non-object outer assessment members. Move the same invalid
+> receipt member from the first list position to the last position, and compare
+> real producer output rather than calling a gap helper directly.
 > Return one assessment receipt per variant without an owner menu.
 
 ## Expected behavior
 
-- [ ] Every variant returns `action-required`, never `pass`.
+- [ ] Malformed receipt transport and substantive receipt or evidence defects
+  return `action-required`; invalid outer assessment claims return one valid
+  `UNKNOWN` envelope; neither path returns `pass`.
 - [ ] Gaps name missing or unresolved receipts, unreferenced substitutes, missing file evidence, stale evidence, cross-subject/cross-revision bindings, dirty or unresolved live subjects, unresolved findings, and bypass requests.
 - [ ] Narrative completion and owner attestation are not upgraded to exact-revision evidence.
 - [ ] The variants remain independent; a gap or receipt from one is not carried into another.
@@ -40,3 +47,8 @@ Provenance: Observed failure where stale, cross-boundary, partial, and bypassed 
 - [ ] Same-kind inline evidence/result documents copied from another revision or
   Worker/session bundle fail even when mutable outer transport labels are
   changed to the recipient head and bundle.
+- [ ] Each material gap uses only a nonempty producer-owned key and a
+  human-readable message. Caller claims with malformed gap keys, or a missing,
+  null, or other non-object outer assessment member, return one valid `UNKNOWN`
+  envelope. A moved finding retains its opaque equality key without relying on
+  its list position.

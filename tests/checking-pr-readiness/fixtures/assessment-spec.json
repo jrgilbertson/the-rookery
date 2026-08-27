@@ -1,5 +1,5 @@
 {
-  "schema": "checking-pr-readiness-assessment-fixture/v1",
+  "schema": "checking-pr-readiness-assessment-fixture/v2",
   "repository": "forge:repository:assessment-synthetic",
   "subject": "branch:assessment-target",
   "reviewer_cap": 40,
@@ -25,8 +25,8 @@
     "cross-revision": "cross-revision receipt: plan-versus-delivered",
     "unresolved-finding": "unresolved finding: targeted-sweep",
     "bypass-request": "bypass request: preflight",
-    "null-receipt-element": "invalid receipt element: 0",
-    "invalid-receipt-kind": "invalid receipt kind: 0",
+    "null-receipt-element": "receipt bundle contains invalid receipt members",
+    "invalid-receipt-kind": "receipt bundle contains receipts without usable kinds",
     "invalid-evidence-path": "invalid evidence reference: working-surface",
     "invalid-assessment-reference": "invalid assessment receipt reference"
   }

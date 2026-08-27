@@ -179,11 +179,13 @@ claim. It, setup, and Scout helpers execute no declared audit.
    findings, exact diff, Worker repair explanation, and fresh verification.
    A repeated key may receive another bounded cycle only when that evidence
    shows concrete attributable material progress; an empty or irrelevant diff,
-   materially unchanged evidence, safety or authority conflict, protected-path
-   conflict, scope conflict, UNKNOWN evidence or effects, or the caller deadline
+   materially unchanged evidence, regression, safety or authority conflict,
+   protected-path conflict, scope conflict, invalid or UNKNOWN evidence or
+   effects, or the caller deadline
    stops the affected Worker truthfully. Judge mixed prior and new keys from
    that evidence, never a strict set rule; a newly introduced attributable
-   finding may also begin another bounded cycle. Process-only findings are
+   finding may also begin another bounded cycle only when that evidence still
+   shows concrete attributable material progress. Process-only findings are
    recorded, not chased. Never manufacture approval, attest later, or commit
    generated readiness artifacts.
 9. The Worker, not the Orchestrator, owns the shipping invocation and PR-create
@@ -239,12 +241,13 @@ claim. It, setup, and Scout helpers execute no declared audit.
     findings, exact diff, repair explanation, and fresh verification. A repeated
     key may continue only with concrete attributable material progress; empty
     or irrelevant commits, materially unchanged evidence, unchanged native
-    state, scope expansion, protected-path conflict, authority loss, UNKNOWN
-    evidence or effects, and deadline stop only that Worker. Judge mixed old and
+    state, regression, scope expansion, protected-path conflict, authority loss,
+    invalid or UNKNOWN evidence or effects, and deadline stop only that Worker. Judge mixed old and
     new keys from that evidence, never a strict set rule. Process-only caps
     (empty review history or missing required human approvals) are recorded, not
     chased. A newly introduced attributable in-slice finding after real repair
-    may receive another bounded cycle. If that skill is absent, name the gap. The in-run
+    may receive another bounded cycle only when that evidence shows concrete
+    attributable material progress. If that skill is absent, name the gap. The in-run
     review is not the owner's later merge gate. Never merge. The pending Worker
     does not block completion of the nine-lane report.
 11. Immediately before closing, re-read the durable file only to detect a

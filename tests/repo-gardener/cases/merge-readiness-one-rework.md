@@ -49,7 +49,15 @@ even when a named repair was safe and entirely inside its assignment.
       concrete attributable material progress in the exact diff, explanation,
       and fresh verification.
 - [ ] Scenario 4 judges mixed prior and new keys from that evidence, never a
-      strict set rule; a newly introduced attributable finding may continue.
+      strict set rule; a newly introduced attributable finding may continue only
+      when that evidence shows concrete attributable material progress.
+- [ ] Before and after PR creation, apply the same adaptive judgment: same-key
+      progress may continue; empty or irrelevant work, pure regression,
+      unrelated scope, protected-path conflict, authority loss, invalid or
+      `UNKNOWN` evidence/effects, and caller deadline stop truthfully.
+- [ ] Neither route creates durable gap state, retry counters, registries,
+      consumer taxonomies, error-code dispatch, or parallel ledgers; keys remain
+      producer-owned equality-only evidence, not a deterministic stop algorithm.
 - [ ] Scenario 5 records the missing approval as a process-only cap and stops
       the protected-path conflict without editing either condition.
 - [ ] Scenario 6 preserves H-double-prime locally until a fresh post-read,

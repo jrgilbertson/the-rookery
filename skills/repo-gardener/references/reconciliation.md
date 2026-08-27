@@ -311,12 +311,13 @@ Keys are producer-owned equality-only correlation evidence. Use LLM judgment
 over the prior and current keyed findings, exact diff, Worker repair explanation,
 and fresh verification: a repeated key may start another bounded cycle only
 when those facts show concrete attributable material progress. An empty or
-irrelevant diff, materially unchanged evidence, unrelated scope, protected
-path, safety or authority conflict, invalid or UNKNOWN evidence or effects, or
+irrelevant diff, materially unchanged evidence, regression, unrelated scope,
+protected path, safety or authority conflict, invalid or UNKNOWN evidence or effects, or
 caller deadline stops that Worker truthfully. Judge mixed prior and new keys
 from those facts, never a strict set rule. Process-only caps are recorded rather
 than converted to source work. A newly introduced attributable in-slice finding
-after a real repair may start another bounded cycle.
+after a real repair may start another bounded cycle only when that evidence
+still shows concrete attributable material progress.
 Never manufacture approval, synthesize evidence, attest, or commit generated
 readiness artifacts. The Orchestrator monitors and helps route questions but
 does not redo the work.
@@ -408,13 +409,14 @@ checks before another agent assessment. Keys remain equality-only correlation
 evidence: use LLM judgment over prior/current keyed findings, exact diff, repair
 explanation, and fresh verification. A repeated key may continue only when that
 evidence shows concrete attributable material progress; irrelevant or empty
-commits, materially unchanged evidence, unchanged native state, scope expansion,
-protected-path conflicts, safety or authority loss, invalid or UNKNOWN evidence
+commits, materially unchanged evidence, unchanged native state, regression,
+scope expansion, protected-path conflicts, safety or authority loss, invalid or UNKNOWN evidence
 or effects, and caller deadlines stop only the affected Worker. Judge mixed old
 and new keys from that evidence, never a strict set rule. Process-only caps,
 including empty review history and missing required human approvals, are
 recorded rather than chased. A newly introduced attributable in-slice finding
-after real repair may receive another bounded cycle.
+after real repair may receive another bounded cycle only when that evidence
+shows concrete attributable material progress.
 
 If `checking-merge-readiness` is absent, name the gap. The in-run review is
 not the owner's later merge gate. Never merge. Do not create follow-up issues;

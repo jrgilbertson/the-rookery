@@ -30,7 +30,7 @@ looked" surface. GitHub Releases mirror its entries.
   another bounded repair cycle requires LLM judgment of keyed findings, exact
   diff, repair explanation, and fresh verification rather than key recurrence;
   empty, irrelevant, unsafe, unauthorized, unknown, or unverified progress
-  still stops truthfully.
+  still stops truthfully, including a regression or invalid evidence/effects.
 - `repo-gardener` now supervises Workers from current native branch, HEAD,
   process, PR, check, and result facts. TUI idle is only a scheduling hint;
   bounded no-progress analysis becomes a local stall, head drift refreshes

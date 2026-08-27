@@ -11,8 +11,23 @@ looked" surface. GitHub Releases mirror its entries.
 
 ## [Unreleased]
 
+### Added
+
+- Added `checking-simplicity`, an independent read-only checkpoint that
+  right-sizes draft plans and in-build approaches before avoidable abstractions,
+  dependencies, configuration, persisted state, or orchestration harden into
+  code. Explicit invocation and a portable caller-policy snippet cover the
+  plan-to-build boundary; lifecycle and Git hooks remain deliberately absent.
+
 ### Changed
 
+- Skill test suites may retain a small number of explicitly labeled regression
+  controls for load-bearing behavior that the bare and skilled variants both
+  pass; those controls never count as evidence of improvement.
+- `checking-pr-readiness` now inventories independent solution simplicity as a
+  late backstop without changing its assessment-only v1 receipt chain, and
+  `checking-merge-readiness` requires a fresh whole-change reviewer before it
+  can recommend merge.
 - `managing-personal-crm` can recover one bounded public X read after a
   sandbox network or session-state denial only with fresh host approval and
   enforced read-only capabilities. It rejects private-derived query scope,

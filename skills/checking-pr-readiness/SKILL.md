@@ -19,10 +19,12 @@ finding has a disposition, and the owner has approved that readout.
 When the request explicitly asks for assessment-only, headless, unattended, or
 machine-readable PR readiness bound to one exact subject and full commit OID,
 follow [references/assessment-mode.md](references/assessment-mode.md) instead
-of the interactive decision path below. The assessment branch reuses steps 1
-through 6, including `surface-report.sh --full`, current gate discovery, helper
-exit/status mapping, and sweep classes. It never substitutes attestation for a
-receipt and never presents the Minto readout or owner menu.
+of the interactive decision path below. The assessment branch reuses the
+current surface, gate discovery, intent, learning, helper exit/status mapping,
+and sweep behavior, but its versioned exact-revision chain owns its upstream
+receipt inventory. The interactive simplicity backstop in step 3 is not added
+to or inferred into the v1 receipt chain. Assessment-only never substitutes
+attestation for a receipt and never presents the Minto readout or owner menu.
 
 The gate is read-only. Companion skills own edits, reviews, and capture; the host
 repository's hooks and task runners own deterministic re-runs. This skill
@@ -131,11 +133,15 @@ empty discovery is reported as a named finding.
 ### 3. Verify upstream steps from receipts
 
 Report each expected upstream step with a status word: code review, code
-simplification, browser testing, design critique or audit, and learnings
-capture. Browser testing and design critique apply only to diffs that touch
-user-interface files; record how that classification was decided from the paths
-in the working surface, and surface an uncertain classification for the owner to
-decide rather than resolving it silently.
+simplification, solution simplicity, browser testing, design critique or
+audit, and learnings capture. Solution simplicity is the independent,
+approach-level result from `checking-simplicity`; it should normally have run at
+the plan-to-build boundary or before an in-build design choice. Its presence
+here is a late backstop, not the recommended first checkpoint. Browser testing
+and design critique apply only to diffs that touch user-interface files; record
+how that classification was decided from the paths in the working surface, and
+surface an uncertain classification for the owner to decide rather than
+resolving it silently.
 
 Use this receipt inventory to decide between verified and the honest
 alternatives:
@@ -147,17 +153,38 @@ alternatives:
   not a receipt for it.
 - Browser testing leaves a receipt only when its output or screenshots were
   saved; otherwise it has none.
-- Code review and code simplification leave no durable artifact today, so
-  outside the session that ran them they are attestation-only.
+- A `checking-simplicity` result counts only when this gate dispatches the
+  review after step 1 against the complete surface it just inventoried. Supply
+  the repository, branch, full `HEAD`, and all four path categories in that
+  dispatch and require the result to repeat them. The result must bind the same
+  repository, branch, full `HEAD`, and path inventory,
+  return `PASS`, and say its context had no prior involvement in planning,
+  implementation, earlier review or findings, or review fixes. It must also say
+  `Owner decision required: no`; an open owner decision is failed until it is
+  resolved and the resulting approach is checked again. Keep the dispatch and
+  return uninterrupted by implementation or other surface-changing work. When
+  it returns, re-run step 1 and re-read the full committed, staged, unstaged,
+  and untracked content supplied to the reviewer; any content change makes the
+  result stale and triggers recomposition. Matching paths alone are
+  insufficient. An older result or a same-context result is advisory, never
+  verified. `CHANGES_NEEDED` is failed until the approach is revised and
+  checked again on the resulting surface.
+- Code review, code simplification, and solution simplicity leave no durable
+  artifact today. Outside the session that ran them, code review and code
+  simplification are attestation-only; solution simplicity is not verified by
+  owner attestation because independence and subject binding are part of its
+  result.
 
 Write verified only with the receipt named on the same line. Where no
 receipt exists, report not verified and offer the owner the chance to
-attest; record an attestation as attested. When the companion skill or
-tooling a check depends on is absent (no compound engineering plugin, no
-design-critique tooling), report that check skipped, name what was missing,
-and run the rest of the checklist.
+attest where the check permits it; record an attestation as attested. For
+solution simplicity, offer a fresh-context `checking-simplicity` run instead.
+When the companion skill or tooling a check depends on is absent (no compound
+engineering plugin, no `checking-simplicity`, no design-critique tooling),
+report that check skipped, name what was missing, and run the rest of the
+checklist.
 
-Completion: each of the five steps carries one status word, every verified step
+Completion: each of the six steps carries one status word, every verified step
 names its receipt, and the user-interface classification and its basis are
 stated.
 
@@ -340,8 +367,11 @@ inputs the change touches: the surface report always, and each of steps 2–6
 only where a changed path feeds it (a newly captured solutions document
 re-runs the learning signal, not gate discovery; a changed hook config
 re-runs gate discovery). Re-run all of steps 2–6 when the change's reach is
-unclear. Then present the pyramid readout and menu again. Approval binds to
-the surface the owner was shown.
+unclear. A read-only dispatch can change a check without changing a path; rerun
+the step that consumes its conversational result. In particular, a returned
+`checking-simplicity` result always refreshes step 3 after the surface is
+confirmed unchanged. Then present the pyramid readout and menu again. Approval
+binds to the surface the owner was shown.
 
 On approval, fill
 [assets/evidence-pack-template.md](assets/evidence-pack-template.md) and compose
@@ -372,9 +402,9 @@ carries the composed evidence pack for the finishing path.
 - Verified requires a named receipt on the same line; otherwise not
   verified and offer attestation.
 - Green CI is not evidence that upstream steps ran.
-- Dispatching a missing step from the menu is the one path that changes files,
-  and the dispatched skill owns those changes. The gate itself still writes
-  nothing.
+- A dispatched missing step owns its effects. Most may change files;
+  `checking-simplicity` is read-only and returns its finding to the caller. The
+  gate itself still writes nothing.
 - Findings the owner declines still belong in the evidence pack with their
   disposition.
 - Ignored working plans are allowed. Tracked transient content and durable

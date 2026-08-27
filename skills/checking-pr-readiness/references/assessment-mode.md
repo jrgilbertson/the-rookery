@@ -25,10 +25,14 @@ multiple matches, an unavailable query, or a branch/PR identity mismatch is
 `action-required`. Never infer the subject from receipt prose, a display name,
 or whichever local ref happens to point at the commit.
 
-Run the current skill's steps 1 through 6 against that checkout. Always run the
-surface helper with `--full`. Use current gate discovery, current helper
-verdict/exit-to-status mapping, and every current sweep class. Assessment-only
-does not restore an older gate workflow or redefine helper outcomes.
+Run the current skill's steps 1 through 6 against that checkout, except for the
+interactive-only solution-simplicity backstop in step 3. The v1 chain below is
+closed and unchanged: do not add a tenth receipt, treat code simplification as
+an approach-level simplicity receipt, or infer a separate simplicity pass.
+Always run the surface helper with `--full`. Use current gate discovery,
+current helper verdict/exit-to-status mapping, and every current sweep class.
+Assessment-only does not restore an older gate workflow or redefine helper
+outcomes.
 
 An exact-revision pass requires a clean checkout: no staged, unstaged, or
 untracked path can be represented by the commit OID. A dirty surface returns

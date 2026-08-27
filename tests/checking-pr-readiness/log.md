@@ -2,6 +2,10 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-08-26 | db15238 | matched comparison: simplicity-review-provenance (prior) | fail (8/9) | isolated runner followed the frozen prior skill; a separate blind grader found that its fresh-review wording did not exclude earlier review or findings that shaped the surface
+- 2026-08-26 | db15238 (working tree) | matched comparison: simplicity-review-provenance (candidate) | pass (9/9) | isolated runner followed the final candidate; a separate blind grader confirmed all six steps, exact dispatch binding, same-context refusal, no prior review influence, open-decision handling, full-content freshness, and read-only step-3 refresh
+- 2026-08-26 | db15238 (working tree) | structural and exact-revision regression | pass | official `skills-ref` was unavailable; manual Agent Skills checks passed, and the assessment v1 chain stayed at nine receipts with its deterministic runner unchanged and green
+
 - 2026-08-17 | fb3cc39 (prior) | matched comparison: caller-owned-command-allowlist | fail (2/4) | Isolated Codex CLI executor loaded the prior package; a fresh blind grader found that the allowlist did not have to come from outside the assessed commit and network or external-write capability was not separately authorized.
 - 2026-08-17 | fb3cc39 (working tree) | matched comparison: caller-owned-command-allowlist | pass (4/4) | Isolated Codex CLI executor loaded the current package; a fresh blind grader confirmed caller-owned command authorization, no shell or ambient credentials, no unrelated-file access, and separately authorized network or external writes.
 - 2026-08-17 | fb3cc39 (working tree) | helper fixture runs | pass (183/183) | Regression-first checks cover bounded single-line cap and defer inputs plus symlink and outside-repository evidence paths; all existing helper cases remain green.

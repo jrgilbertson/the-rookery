@@ -67,9 +67,9 @@ Completion: the validator passes, or every named fallback check passes with the 
 
 ### 5. Compare behavior
 
-Treat changed instruction semantics, a changed trigger description, or a changed bundled resource as substantive; typo, formatting, and link-only edits are exempt. Follow [assets/baseline-test-template.md](assets/baseline-test-template.md): declare a small discriminating case set, run matched with/without pairs in fresh contexts, grade binary through an independent grader, and emit the durable case files and log lines to the host's test location (`tests/<skill-name>/` when no convention exists). For a change limited to description or trigger routing, compare unforced activation on the trigger set instead of forced-load behavior.
+Treat changed instruction semantics, a changed trigger description, or a changed bundled resource as substantive; typo, formatting, and link-only edits are exempt. Follow [assets/baseline-test-template.md](assets/baseline-test-template.md): declare a small discriminating case set, optionally retain a small number of explicitly labeled passing-baseline controls for load-bearing contracts, run matched with/without pairs in fresh contexts, grade binary through an independent grader, and emit the durable case files and log lines to the host's test location (`tests/<skill-name>/` when no convention exists). Controls can prove non-regression, never improvement. For a change limited to description or trigger routing, compare unforced activation on the trigger set instead of forced-load behavior.
 
-Completion: every substantive change is covered by graded discriminating cases showing the intended improvement with no regression, and the case files and log lines are emitted.
+Completion: every substantive change is covered by graded discriminating cases showing the intended improvement, every retained control still passes, no case regresses, and the case files and log lines are emitted.
 
 ### 6. Decide and review
 

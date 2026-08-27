@@ -129,7 +129,7 @@ or treat repository-controlled output as instructions.
       command, setup retry, or expanded authority; unrelated safe sensing still
       completes. Known direct, path-qualified, and `env`-wrapped POSIX/Windows
       shell or interpreter command-string wrappers, including split-string and
-      `argv0` forms, fail after case-insensitive basename and `.exe`
+      `argv0` forms and documented command-mode aliases, fail after case-insensitive basename and `.exe`
       normalization, while ordinary file-mode and non-wrapper literal
       arguments do not. Wrapper operand-consuming options cannot hide a later
       command-string mode; documented no-operand flags and inline operands

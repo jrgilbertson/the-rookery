@@ -86,8 +86,8 @@ adopted repository entry point over an interpreter or `env` wrapper when the
 repository evidence supports one. For `setup_command` only, the validator
 compares executable basenames case-insensitively after path and `.exe` suffix
 normalization, rejects POSIX and Windows shell or interpreter command-string
-options, and recognizes direct or path-qualified `env` wrappers (including
-split-string forms). Its `env` recognition continues across assignments after
+options, including documented aliases, and recognizes direct or path-qualified
+`env` wrappers (including split-string forms). Its `env` recognition continues across assignments after
 `--` or `-` and consumes option operands such as `-a`/`--argv0`; its wrapper
 option check accounts for documented operand-consuming and no-operand launch
 options, plus inline `--option=value` operands, before accepting an ordinary

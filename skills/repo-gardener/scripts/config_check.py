@@ -716,7 +716,7 @@ def option_uses_command_string(executable: str, option: str) -> bool:
         return re.match(r"^/[ck]", option, re.IGNORECASE) is not None
     if executable in {"powershell", "pwsh"}:
         return re.match(
-            r"^[-/](?:c|command|commandwithargs|e|ec|enc|encodedcommand)(?:$|[=:])",
+            r"^[-/](?:cwa|c|command|commandwithargs|e|ec|enc|encodedcommand)(?:$|[=:])",
             option,
             re.IGNORECASE,
         ) is not None

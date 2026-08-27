@@ -19,7 +19,8 @@ looked" surface. GitHub Releases mirror its entries.
   leaves unrelated safe sensing available after an affected audit fails. Its
   command-string-wrapper refusal continues past documented or ambiguous
   wrapper launch operands without treating them as a script boundary, while
-  documented no-operand flags and inline operands preserve script mode.
+  documented no-operand flags and inline operands preserve script mode; known
+  PowerShell command-mode aliases are refused too.
 - README and `WORKFLOWS.md` now describe the catalog as a portable skill
   set inside a personal loop: `repo-gardener` listings stay two sentences,
   Orca is the IDE this workflow runs in rather than a requirement, `ce-plan`

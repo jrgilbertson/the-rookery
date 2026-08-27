@@ -20,6 +20,8 @@ looked" surface. GitHub Releases mirror its entries.
   command-string-wrapper refusal continues past documented or ambiguous
   wrapper launch operands without treating them as a script boundary, while
   documented no-operand flags and inline operands preserve script mode;
+  BSD `env -P` is modeled as a path operand, and Node `data:` import or loader
+  sources are refused before their nominal script file;
   PowerShell command-mode aliases and accepted prefixes are refused too across
   native one-dash, two-dash, and slash switch markers.
   Windows PowerShell requires explicit file mode, while PowerShell 7 retains

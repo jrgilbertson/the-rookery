@@ -93,13 +93,16 @@ case-insensitive minimum-prefix grammar. Windows PowerShell
 positional input is command text unless an explicit file boundary is present,
 while PowerShell 7 positional file mode remains valid. The validator recognizes
 direct or path-qualified `env` wrappers (including split-string forms). Its `env` recognition continues across assignments after
-`--` or `-` and consumes option operands such as `-a`/`--argv0`; its wrapper
+`--` or `-` and consumes option operands such as `-P`, `-a`, and `--argv0`; its wrapper
 option check accounts for documented operand-consuming and no-operand launch
 options, plus inline `--option=value` operands, before accepting an ordinary
 file-mode positional argument, including PowerShell's `-File`, `--File`,
 `-f`, `-fi`, and `-fil` modes. An unknown
 leading wrapper option keeps that boundary ambiguous, so a later command-string
 option remains refused instead of being hidden by a putative operand.
+Node `--import`, `--loader`, and `--experimental-loader` forms that name a
+`data:` source are refused because they execute JavaScript before a nominal
+script file; ordinary loader module paths remain direct argv.
 Slash-prefixed options are reserved for the Windows
 wrappers that define them, so a POSIX absolute script path is file mode.
 Ordinary literal arguments remain valid under a

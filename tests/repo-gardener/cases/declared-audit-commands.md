@@ -65,8 +65,9 @@ or treat repository-controlled output as instructions.
   denied. On a later run, the approved policy is valid and its setup argv is
   unchanged. Independently, a missing `setup_command`, a scalar command, a
   shell-shaped token, direct and path-qualified or `env`-wrapped POSIX/Windows
-  shell or interpreter command-string wrappers (including `env` split-string
-  forms and `argv0` options, including PowerShell command-bearing modes), and a
+shell or interpreter command-string wrappers (including `env` split-string
+forms, BSD `-P` path options, and `argv0` options, including PowerShell
+command-bearing modes and Node `data:` import or loader sources), and a
   command that was not displayed to the owner are presented as proposed policy
   files. Literal wrapper-looking arguments after a shell or interpreter
   relative or absolute file-mode argument, and under a non-wrapper executable,
@@ -128,8 +129,9 @@ or treat repository-controlled output as instructions.
       owning `setup_command` field named. They do not trigger a shell, fallback
       command, setup retry, or expanded authority; unrelated safe sensing still
       completes. Known direct, path-qualified, and `env`-wrapped POSIX/Windows
-      shell or interpreter command-string wrappers, including split-string and
-      `argv0` forms, PowerShell `Command`/`EncodedCommand` accepted prefixes,
+shell or interpreter command-string wrappers, including split-string and
+`argv0` forms plus BSD `-P`, Node `data:` import or loader forms, PowerShell
+`Command`/`EncodedCommand` accepted prefixes,
       and PowerShell 7 `CommandWithArgs` aliases, fail after case-insensitive basename and `.exe`
       normalization, while ordinary file-mode and non-wrapper literal
       arguments do not. Wrapper operand-consuming options cannot hide a later

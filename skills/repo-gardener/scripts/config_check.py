@@ -438,7 +438,7 @@ def command_after_env(command: list[str]) -> list[str] | None:
                 or token.startswith("--split-string=")
             ):
                 return None
-            if token in {"-C", "--chdir", "-u", "--unset", "-a", "--argv0"}:
+            if token in {"-C", "--chdir", "-P", "-u", "--unset", "-a", "--argv0"}:
                 index += 2
                 continue
             if token.startswith("--argv0=") or (token.startswith("-a") and token != "-a"):
@@ -802,6 +802,41 @@ def option_uses_command_string(executable: str, option: str) -> bool:
     return False
 
 
+def node_uses_inline_code_source(arguments: list[str]) -> bool:
+    """Return whether Node loads executable JavaScript before its script file."""
+    source_options = {"--experimental-loader", "--import", "--loader"}
+    index = 0
+    ambiguous_option = False
+    while index < len(arguments):
+        argument = arguments[index]
+        if argument == "--":
+            break
+        if not is_executable_option("node", argument):
+            if not ambiguous_option:
+                break
+            index += 1
+            continue
+        for source_option in source_options:
+            attached_prefix = f"{source_option}="
+            if argument.startswith(attached_prefix):
+                if argument[len(attached_prefix) :].casefold().startswith("data:"):
+                    return True
+            if argument == source_option and index + 1 < len(arguments):
+                if arguments[index + 1].casefold().startswith("data:"):
+                    return True
+        if option_has_inline_operand("node", argument) or option_is_no_operand(
+            "node", argument
+        ):
+            index += 1
+            continue
+        if option_consumes_operand("node", argument):
+            index += 2
+            continue
+        ambiguous_option = True
+        index += 1
+    return False
+
+
 def is_command_string_wrapper(command: list[str]) -> bool:
     executable_and_args = command_after_env(command)
     if executable_and_args is None:
@@ -813,6 +848,8 @@ def is_command_string_wrapper(command: list[str]) -> bool:
     return any(
         option_uses_command_string(executable, option)
         for option in options_before_file_mode(executable, arguments)
+    ) or (
+        executable in {"node", "nodejs"} and node_uses_inline_code_source(arguments)
     ) or (
         executable == "powershell"
         and windows_powershell_uses_positional_command(arguments)

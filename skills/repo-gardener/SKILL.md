@@ -188,7 +188,9 @@ claim. It, setup, and Scout helpers execute no declared audit.
    `local_stall` only after a bounded analysis interval has no durable branch,
    HEAD, result, PR, or check change, and let disjoint work continue. A fresh
    head invalidates pending exact-head evidence and requires a fresh read.
-   Reconcile an uncertain push against the remote head before retrying.
+   Reconcile an uncertain push against the remote head before retrying. An
+   unavailable remote-head read is `UNKNOWN`: do not retry or settle that
+   Worker, and retain it for reconciliation.
    Reconstruct a lost Worker response only from available native facts and
    record unavailable facts as `UNKNOWN`.
 10. After PR creation, the Orchestrator monitors freshly read native checks and

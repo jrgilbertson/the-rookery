@@ -22,8 +22,11 @@ be filled in from the interface rather than native facts.
 >    settlement, a fresh native read finds its branch now at `c2`.
 > 4. Worker D has the same bounded no-progress facts as Worker B. Worker E is
 >    disjoint and has a completed result with a passing check on its own HEAD.
-> 5. Worker F's push response was lost after it attempted to publish `f1`.
->    A fresh remote-branch read finds `f1` as the remote head.
+> 5. Evaluate two independent uncertain-push branches. In 5a, Worker F's push
+>    response was lost after it attempted to publish `f1`; a fresh remote-branch
+>    read finds `f1` as the remote head. In 5b, Worker H's push response was
+>    lost after it attempted to publish `h1`, but a fresh remote-branch read is
+>    unavailable.
 > 6. Worker G's response was lost. Fresh native reads find branch `g1`, an open
 >    PR at `g1`, and no running process. Checks and the Worker result are not
 >    available from any native source.
@@ -39,9 +42,12 @@ be filled in from the interface rather than native facts.
       read for `c2`; it does not apply the stale assessment to the new head.
 - [ ] Scenario 4 blocks only Worker D's affected work. Worker E may dispatch
       or settle from its own current native facts.
-- [ ] Scenario 5 reconciles the uncertain push against the remote head before
+- [ ] Scenario 5a reconciles the uncertain push against the remote head before
       any retry and records the matching remote `f1` as the available success
       fact rather than blindly pushing again.
+- [ ] Scenario 5b records the unavailable remote-head fact as `UNKNOWN`. It
+      neither retries nor settles Worker H and retains the Worker for
+      reconciliation rather than manufacturing a push outcome.
 - [ ] Scenario 6 reconstructs only the available branch, PR, process, and
       head facts. It records checks and the Worker result as `UNKNOWN`, retains
       the Worker for recovery, and does not invent a terminal state.

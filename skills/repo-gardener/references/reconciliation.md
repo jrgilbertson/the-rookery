@@ -349,8 +349,9 @@ Any changed branch or full HEAD invalidates pending exact-head assessment
 evidence. Read the new native facts before a new assessment; never apply the
 old assessment to the changed head. When a push response is uncertain, read
 the remote branch head before retrying: a matching remote head is the available
-success fact, and a nonmatching or unavailable read is reconciled from its
-actual native facts rather than guessed.
+success fact, and a nonmatching read is reconciled from its actual native
+facts rather than guessed. An unavailable remote-head read is `UNKNOWN`; do
+not retry or settle that Worker, and retain it for reconciliation.
 
 If a Worker response is lost, reconstruct only the available branch, full
 HEAD, native-process, PR, and check facts. Record every unavailable fact as

@@ -99,11 +99,12 @@ temporary directory after the run.
       change stays deferred; every result is reported independently.
 - [ ] 2 → reports the result indeterminate, does not retry blindly or alter
       the approved target or content, and asks the user how to proceed. The
-      failed post-write readback is a scan-line limitation with the exact
+      failed post-write readback is a capsule limitation with the exact
       access result, distinct from the Indeterminate mutation narrative.
+      Details has `open`.
 - [ ] 3 → a scheduled run never supplies approval or writes on the user's
       behalf; its read-only output still includes a Source Access Audit with
-      scan lines and the table for the roles actually attempted in that
+      the capsule and the table for the roles actually attempted in that
       response and does not inherit access claims from the pending bundle.
 - [ ] 4 → resolves against the exact visible bundle and its originating
       mode, runs no new review discovery, still performs immediate
@@ -115,7 +116,7 @@ temporary directory after the run.
       Source Access Audit has no review coverage verdict. Compact Pre-write
       and Post-write lines and distinct table rows report the current reread
       and readback access; neither field is used to imply the other. A missing
-      required reread or a failed readback is a scan-line limitation.
+      required reread or a failed readback is a capsule limitation.
 - [ ] 4 → a resumed response labels only access performed now. It never claims
       that the original bundle's source access is current, even while binding
       the decision to that bundle.
@@ -123,21 +124,23 @@ temporary directory after the run.
       one readback, then begins the newly requested Weekly discovery. The new
       evidence does not reinterpret the earlier approval and no review-derived
       effect is written.
-- [ ] 5 → renders one Source Access Audit. Scan lines include compact
-      Pre-write and Post-write lines. The recovered table has a **Phase**
+- [ ] 5 → renders one Source Access Audit. Capsule lines include compact
+      Pre-write and Post-write lines and sit before `<details>`. The recovered
+      table is inside HTML details and has a **Phase**
       column. The action reread and readback are separate **Action access**
       rows; current Weekly, task, calendar, and unresolved required-role rows
-      are **Review discovery**. Unresolved required roles appear in the scan
-      lines as **Not configured**. Phase is a table column only, not a scan
-      line. There is no second mini-table. The mutation outcome remains only
-      in the action narrative.
+      are **Review discovery**. Unresolved required roles appear in the
+      capsule as **Not configured**. Details has `open`. Phase is a table
+      column only, not a capsule line. There is no second mini-table. The
+      mutation outcome remains only in the action narrative.
 - [ ] 6 → resolves action 2 first with one pre-write read, one exact write, and
       one readback. Only afterward does it run the two bounded non-mode reads;
       it applies no context-derived effect and opens no review cadence.
-- [ ] 6 → renders one Source Access Audit. Scan lines include compact
-      Pre-write and Post-write lines. The recovered table has a **Phase**
+- [ ] 6 → renders one Source Access Audit. Capsule lines include compact
+      Pre-write and Post-write lines and sit before `<details>`. The recovered
+      table is inside HTML details and has a **Phase**
       column. The action reread and readback are separate **Action access**
       rows, while task and calendar are **Context discovery** rows. Phase is a
-      table column only, not a scan line. There is no second mini-table. The
+      table column only, not a capsule line. There is no second mini-table. The
       action result remains only in the action narrative, and later context
       does not reinterpret it.

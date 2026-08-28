@@ -165,29 +165,30 @@ turn in the same live context:
       causality analysis without a named decision and agreed window, and a
       scheduled run remains read-only until user interaction.
 - [ ] Weekly and Quarterly answers lead with their synthesis, then render a
-      response-scoped Source Access Audit. Scan lines sit after the heading
-      and before the first GFM table. Scan lines have no complete,
+      response-scoped Source Access Audit. Capsule lines sit after the heading
+      and before the first `<details>`. The capsule has no complete,
       non-truncated **Accessed — evidence found** discovery rows. The recovered
-      table still lists every material configured journal,
-      review, strategy, learning, relationship, task, and calendar role
-      considered for that response. HTML disclosure tags fail. A named
-      available role may not be silently omitted or labeled `Not needed` when
-      a conclusion depends on it.
+      table is inside HTML details and still lists every material configured
+      journal, review, strategy, learning, relationship, task, and calendar
+      role considered for that response. A named available role may not be
+      silently omitted or labeled `Not needed` when a conclusion depends on
+      it.
 - [ ] Scenario 2 classifies sparse February journals and absent relationship
       evidence by the reads actually attempted and limits only the affected
       thread, rule-audit, tension, or commitment claims. Claim-limiting sparse,
-      truncated, or empty reads appear in the scan lines with the exact access
-      result. It never converts a failed, truncated, or unknown-completeness
-      read into negative evidence.
+      truncated, or empty reads appear in the capsule with the exact access
+      result. Details has `open`. It never converts a failed, truncated, or
+      unknown-completeness read into negative evidence.
 - [ ] Scenario 4 reports each unresolved canonical role as `Not configured`
-      in the scan lines and as table rows, with the claim category each gap
+      in the capsule and as table rows, with the claim category each gap
       limits, while preserving accessed current task and calendar facts; the
-      access rows neither guess a role owner nor create configuration.
+      access rows neither guess a role owner nor create configuration. Details
+      has `open`.
 - [ ] Every proposed experiment or commitment exposes, in separately gradeable
       response spans, the current supported state, the desired outcome owned or
       accepted by the user, and a future observable signal that could close or
       disconfirm it. Literal intention headings are optional.
-- [ ] A scheduled version of any scenario still includes both scan lines and
+- [ ] A scheduled version of any scenario still includes both the capsule and
       the recovered table, proposes no write, and does not turn the schedule
       into approval. A later same-context resumption reports current access
       only, not access from the prior turn.

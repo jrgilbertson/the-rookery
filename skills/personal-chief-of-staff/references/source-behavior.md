@@ -123,8 +123,9 @@ Audit**. Treat it as a transient plan-attempt-reconcile cycle:
 1. Assemble the relevant-source set for this response.
 2. Make each needed bounded read through the source's authoritative interface,
    or establish why that read cannot or should not occur now.
-3. Reconcile what actually happened into the Source Access Audit required by
-   `assets/review-bundle.md`.
+3. Reconcile what actually happened into both Source Access Audit surfaces
+   required by `assets/review-bundle.md`: the capsule and the same-response
+   table. The table may be inside HTML details.
 
 Assemble the set from all applicable sources in this order: sources required
 by the active invocation or private deployment prompt, especially the roles
@@ -234,8 +235,9 @@ approval or completion state, or become durable memory, telemetry, or a
 ledger.
 
 Completion: the answer-first synthesis is followed by a truthful audit of the
-entire relevant-source set for this response, and each access limit changes
-only the claims that depend on it.
+entire relevant-source set for this response — both the capsule and the
+recovered table — and each access limit changes only the claims that depend
+on it.
 
 ## Make every intention verifiable
 

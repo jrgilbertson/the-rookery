@@ -12,13 +12,14 @@ separate.
 After that synthesis, render the current response's **Source Access Audit**.
 Place it before separately approvable actions and before the run ending. Use
 the semantics and relevant-source set in `references/source-behavior.md`. Both
-surfaces below are required. Do not wrap either in HTML disclosure tags.
+surfaces below are required.
 
-Under that heading, print scan lines first, then the recovered table. The
-table is the complete current-response role census. Do not print a spoken
-caption that says so.
+Under that heading, print the capsule first, then wrap the recovered table in
+HTML `<details>`. The capsule is the default-visible path. The table is the
+complete current-response role census. Do not print a spoken caption that
+says so.
 
-**Scan lines.** For a discovery-bearing response, state overall coverage as
+**Capsule.** For a discovery-bearing response, state overall coverage as
 Sufficient, Partial, or Insufficient. An action-only response has no review
 coverage verdict. Then name every material limitation with the claim category
 it limits and the exact access result that produced it. Include attempted
@@ -32,13 +33,21 @@ discovery stays in the table only.
 Print separate compact lines for the **Pre-write target or destination reread**
 and the **Post-write verification readback** only when those reads ran. A
 failed or missing required reread or readback is a material limitation in the
-scan lines. Successful reread and readback still appear as those compact lines
+capsule. Successful reread and readback still appear as those compact lines
 and as distinct table rows. Do not add a second mini-table. Do not put Phase
-in the scan lines.
+in the capsule.
 
-**Table.** The same response still contains the recovered unwrapped GFM table.
-It reports actual access, not intended retrieval, claim provenance, or action
-success.
+**Table.** The same response still contains today's GFM table inside HTML
+`<details>` with a short summary such as `Full source receipt`. Leave the
+element closed unless the capsule includes an attempted failure, a partial
+or truncated read, **Not configured**, **Declined**, Partial or Insufficient
+coverage, a failed required reread or readback, or a claim-changing
+**Accessed — no relevant evidence** row. In those cases add the `open`
+attribute. Put a blank line after `</summary>` and before `</details>` so
+the table still parses as GFM.
+
+The table reports actual access, not intended retrieval, claim provenance,
+or action success.
 
 | Source or role | Result | Scope or window | Effect on claim categories |
 | --- | --- | --- | --- |
@@ -62,7 +71,8 @@ differ. Include every source in the relevant-source set, but do not enumerate
 irrelevant connectors. Each relevant discovery role appears once as a table
 row unless mixed bounded slices of that role have different results or safe
 scopes, in which case those slices stay separate rows. Pre-write reread and
-post-write readback stay separate rows even when they share a source. A scan line may name a role that also has a table row.
+post-write readback stay separate rows even when they share a source. The
+capsule may name a role that also has a table row.
 
 In the effect column, name the category of claim the result supports, narrows,
 or prevents. Do not imply complete coverage from a partial scope and do not use

@@ -16,6 +16,8 @@ merge route while trying to assess a Worker-owned pull request.
 > pull request. The Worker also has no tracker or delivery credential: a
 > separate authorized shipping broker owns only the short-lived delivery
 > capability after exact repository, branch, and full-head revalidation.
+> The actionable failing-test finding names both its exact affected path and
+> its exact proposed repair path, so its consumer can judge compatibility.
 > The subject also carries the complete protected-path policy and revision.
 > Before every agent-mode provider read, including gathers and final comparison,
 > agent mode sets `GH_HOST` to the certified subject host and uses a
@@ -33,7 +35,8 @@ merge route while trying to assess a Worker-owned pull request.
       material findings, and actionable in-slice findings for that head.
 - [ ] The missing approval is process-only and is recorded rather than turned
       into a source change. The failing test is a material actionable
-      in-slice finding for the owning Worker.
+      in-slice finding for the owning Worker, with exact affected and proposed
+      repair paths.
 - [ ] Agent mode presents no owner menu, cannot load an interactive merge
       route, does not run a forge merge command, and does not mutate a
       tracker, pull request, branch, or local source.

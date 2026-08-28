@@ -171,7 +171,11 @@ claim. It, setup, and Scout helpers execute no declared audit.
    Keep the commit as `saved_without_pr` and name the gap when that skill is
    absent, the bundle is missing, or the Worker does not complete the
    exact-subject and full-OID double-check. On `action-required`, preserve the
-   exact assessment and classify every named finding. The owning Worker batches
+   exact assessment and classify every named finding. Immediately before every
+   pre-PR repair batch begins, freshly read the opening policy identity/revision
+   and applicable path authorization. A revision change stops every Worker's
+   remaining source mutation, push, PR-open, and declared audit work; a changed
+   path authorization denies the affected batch. The owning Worker batches
    together every safe, actionable, in-slice finding that the LLM judges
    mutually compatible, then repeats simplification, code review, repository
    gates, and the exact-head assessment on its new committed head. Keys are
@@ -241,8 +245,12 @@ claim. It, setup, and Scout helpers execute no declared audit.
     name the compatibility gap and stop. The report-only result names
     recommendation, caps, process-only findings, material findings, and
     actionable in-slice findings; it never presents an owner choice or merge
-   path. A material actionable in-slice finding returns to the owning Worker in
-   a repair batch with every safe, actionable, in-slice finding the LLM judges
+   path. Immediately before every post-PR repair batch begins, freshly read the
+   opening policy identity/revision and applicable path authorization. A revision
+   change stops every Worker's remaining source mutation, push, PR-open, and
+   declared audit work; a changed path authorization denies the affected batch.
+   A material actionable in-slice finding returns to the owning Worker in a
+   repair batch with every safe, actionable, in-slice finding the LLM judges
    mutually compatible. If otherwise eligible findings conflict or are mutually
    incompatible, do not force them into one commit or silently discard either:
    return their exact finding identities and paths to the Orchestrator, and

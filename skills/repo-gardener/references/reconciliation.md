@@ -304,7 +304,11 @@ remains.
 `pass` may open a PR. Do not open the PR when `checking-pr-readiness` is
 absent, the bundle is missing, or the Worker does not complete the
 exact-subject and full-OID double-check. On `action-required`, classify the
-exact-head named findings. The owning Worker batches together every safe,
+exact-head named findings. Immediately before every pre-PR repair batch begins,
+freshly read the opening policy identity/revision and applicable path
+authorization. A revision change stops every Worker's remaining source
+mutation, push, PR-open, and declared audit work; a changed path authorization
+denies the affected batch. The owning Worker batches together every safe,
 actionable, in-slice finding that the LLM judges mutually compatible, then
 repeats simplification, code review, repository gates, commit, and exact-head
 assessment. If otherwise eligible findings conflict or are mutually
@@ -409,8 +413,12 @@ structured report contains recommendation, caps, process-only findings,
 material findings, and actionable in-slice findings, and has no owner choice
 or merge route.
 
-Return to the owning Worker one repair batch containing every safe actionable
-in-slice material finding the LLM judges mutually compatible. If otherwise
+Immediately before every post-PR repair batch begins, freshly read the opening
+policy identity/revision and applicable path authorization. A revision change
+stops every Worker's remaining source mutation, push, PR-open, and declared
+audit work; a changed path authorization denies the affected batch. Return to
+the owning Worker one repair batch containing every safe actionable in-slice
+material finding the LLM judges mutually compatible. If otherwise
 eligible findings conflict or are mutually incompatible, do not force them
 into one commit or silently discard either: return their exact finding
 identities and paths to the Orchestrator, and stop the affected repair until a

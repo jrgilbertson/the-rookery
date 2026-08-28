@@ -524,6 +524,7 @@ for needle in \
   'process-only findings' \
   'material findings' \
   'actionable in-slice findings' \
+  'exact affected and proposed repair paths' \
   'protected-path policy' \
   'policy revision' \
   'full host/owner/name' \
@@ -574,10 +575,11 @@ if [ -f "$AGENT_CASE" ] && grep -Fq 'default-host substitution is rejected' "$AG
   && grep -Fq 'protected-path policy' "$AGENT_CASE" \
   && grep -Fq 'revision and complete set change without head movement' "$AGENT_CASE" \
   && grep -Fq 'OPEN/non-draft/unmerged state' "$AGENT_CASE" \
+  && grep -Fq 'exact affected and proposed' "$AGENT_CASE" \
   && grep -Fq 'unverifiable-intent cap and never prompts' "$AGENT_CASE"; then
-  pass "agent mode: behavioral case covers host, state, policy, and intent negatives"
+  pass "agent mode: behavioral case covers host, state, policy, paths, and intent negatives"
 else
-  fail "agent mode: behavioral case covers host, state, policy, and intent negatives" "agent-mode case omitted a required agent-mode negative"
+  fail "agent mode: behavioral case covers host, state, policy, paths, and intent negatives" "agent-mode case omitted a required agent-mode negative"
 fi
 agent_case_has_full_oid() {
   python3 - "$1" "$(git -C "$REPO_ROOT" rev-parse --show-object-format)" <<'PY'
@@ -652,6 +654,22 @@ done
 
 for source in "$GARDENER_SKILL" "$RECONCILIATION"; do
   source_text=$(tr '\n' ' ' < "$source" 2>/dev/null | tr -s ' ')
+  for needle in \
+    'Immediately before every pre-PR repair batch begins, freshly read the opening policy identity/revision and applicable path authorization' \
+    'Immediately before every post-PR repair batch begins, freshly read the opening policy identity/revision and applicable path authorization' \
+    'stops every Worker' \
+    'denies the affected batch'
+  do
+    if [ -f "$source" ] && [[ "$source_text" == *"$needle"* ]]; then
+      pass "repair-batch authorization: $(basename "$source") names $needle"
+    else
+      fail "repair-batch authorization: $(basename "$source") names $needle" "missing fresh repair-batch authorization guard"
+    fi
+  done
+done
+
+for source in "$GARDENER_SKILL" "$RECONCILIATION"; do
+  source_text=$(tr '\n' ' ' < "$source" 2>/dev/null | tr -s ' ')
   if [ -f "$source" ] && [[ "$source_text" == *"installed capability exposes the report-only \`mode:agent\` route"* ]] \
     && [[ "$source_text" == *'compatibility gap and stop'* ]]; then
     pass "agent capability contract: $(basename "$source") fails closed on an incompatible installation"
@@ -673,41 +691,75 @@ GUARD_COPY_DIR=$(mktemp -d)
 cp "$GARDENER_SKILL" "$GUARD_COPY_DIR/gardener.md"
 cp "$AGENT_REF" "$GUARD_COPY_DIR/agent-mode.md"
 for guard in \
-  'opening policy identity/revision' \
+  'policy or path authorization drift denies capability release' \
   'authorized base ref' \
   "report-only \`mode:agent\` route"
 do
   cp "$GARDENER_SKILL" "$GUARD_COPY_DIR/candidate.md"
   python3 - "$GUARD_COPY_DIR/candidate.md" "$guard" <<'PY'
+import re
 import sys
 
 path, needle = sys.argv[1:]
 text = open(path).read()
-if needle not in text:
+pattern = re.escape(needle).replace(r"\ ", r"\s+")
+text, count = re.subn(pattern, "REMOVED", text, count=1)
+if not count:
     raise SystemExit(1)
-open(path, "w").write(text.replace(needle, "REMOVED", 1))
+open(path, "w").write(text)
 PY
-  if ! guard_has_all "$GUARD_COPY_DIR/candidate.md" 'opening policy identity/revision' 'authorized base ref' "report-only \`mode:agent\` route"; then
+  if ! guard_has_all "$GUARD_COPY_DIR/candidate.md" 'policy or path authorization drift denies capability release' 'authorized base ref' "report-only \`mode:agent\` route"; then
     pass "delivery falsification: missing $guard is rejected"
   else
     fail "delivery falsification: missing $guard is rejected" "removed delivery guard still passed"
   fi
 done
-for guard in \
-  'require it to be OPEN, non-draft, and unmerged' \
-  'fail-closed unverifiable-intent cap'
-do
-  cp "$AGENT_REF" "$GUARD_COPY_DIR/candidate.md"
-  python3 - "$GUARD_COPY_DIR/candidate.md" "$guard" <<'PY'
+for source in "$GARDENER_SKILL" "$RECONCILIATION"; do
+  for guard in \
+    'Immediately before every pre-PR repair batch begins' \
+    'Immediately before every post-PR repair batch begins'
+  do
+    cp "$source" "$GUARD_COPY_DIR/candidate.md"
+    python3 - "$GUARD_COPY_DIR/candidate.md" "$guard" <<'PY'
+import re
 import sys
 
 path, needle = sys.argv[1:]
 text = open(path).read()
-if needle not in text:
+pattern = re.escape(needle).replace(r"\ ", r"\s+")
+text, count = re.subn(pattern, "REMOVED", text, count=1)
+if not count:
     raise SystemExit(1)
-open(path, "w").write(text.replace(needle, "REMOVED", 1))
+open(path, "w").write(text)
 PY
-  if ! guard_has_all "$GUARD_COPY_DIR/candidate.md" 'require it to be OPEN, non-draft, and unmerged' 'fail-closed unverifiable-intent cap'; then
+    if ! guard_has_all "$GUARD_COPY_DIR/candidate.md" \
+      'Immediately before every pre-PR repair batch begins' \
+      'Immediately before every post-PR repair batch begins'; then
+      pass "repair-batch falsification: missing $guard in $(basename "$source") is rejected"
+    else
+      fail "repair-batch falsification: missing $guard in $(basename "$source") is rejected" "removed repair-batch guard still passed"
+    fi
+  done
+done
+for guard in \
+  'require it to be OPEN, non-draft, and unmerged' \
+  'fail-closed unverifiable-intent cap' \
+  'exact affected and proposed repair paths'
+do
+  cp "$AGENT_REF" "$GUARD_COPY_DIR/candidate.md"
+  python3 - "$GUARD_COPY_DIR/candidate.md" "$guard" <<'PY'
+import re
+import sys
+
+path, needle = sys.argv[1:]
+text = open(path).read()
+pattern = re.escape(needle).replace(r"\ ", r"\s+")
+text, count = re.subn(pattern, "REMOVED", text, count=1)
+if not count:
+    raise SystemExit(1)
+open(path, "w").write(text)
+PY
+  if ! guard_has_all "$GUARD_COPY_DIR/candidate.md" 'require it to be OPEN, non-draft, and unmerged' 'fail-closed unverifiable-intent cap' 'exact affected and proposed repair paths'; then
     pass "agent falsification: missing $guard is rejected"
   else
     fail "agent falsification: missing $guard is rejected" "removed agent guard still passed"

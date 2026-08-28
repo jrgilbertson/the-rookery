@@ -60,7 +60,8 @@ Return one structured result with these fields:
 ```
 
 Every finding names its stable fingerprint, evidence, classification, and the
-exact head. `process_only_findings` records conditions such as missing human
+exact head. Every actionable in-slice finding also names its exact affected and
+proposed repair paths. `process_only_findings` records conditions such as missing human
 approval or incomplete review history; it never requests source work.
 `material_findings` names proven diff, test, intent, or durable-record
 problems. A material finding belongs in `actionable_in_slice_findings` only

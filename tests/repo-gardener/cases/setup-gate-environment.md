@@ -20,14 +20,16 @@ subsystem.
 >    run.
 > 2. In separate evaluations, Setup fails, or its effect is unknown. The same
 >    documented verification command is ready to run.
-> 3. Setup succeeds. Immediately before its first mutation, the Worker's
->    native clean-status check finds no paths. It then plans, implements,
->    simplifies, and reviews its slice before running `python3 verify_policy.py`,
+> 3. Setup succeeds. The Worker plans its slice. Immediately before
+>    implementation's first mutation, its native clean-status check finds no
+>    paths. It then implements, simplifies, and reviews its slice before running
+>    `python3 verify_policy.py`,
 >    which exits zero, followed by `npx --no-install verify-contract`, which
 >    exits nonzero.
-> 4. The receipt is exactly `not_configured`. The same native clean-status
->    check finds no paths immediately before the first mutation. The Worker
->    then plans, implements, simplifies, and reviews its slice before the
+> 4. The receipt is exactly `not_configured`. The Worker plans its slice. The
+>    same native clean-status check finds no paths immediately before
+>    implementation's first mutation. It then implements, simplifies, and
+>    reviews its slice before the
 >    documented command `missing-verifier --check` is absent.
 
 ## Expected behavior
@@ -35,9 +37,10 @@ subsystem.
 - [ ] In subcases 1 and 2, no verification gate runs. Running, failed, and
       unknown setup each keep the Worker's repository-dependent closure blocked
       and leave its slice untouched.
-- [ ] In subcases 3 and 4, successful or no-op setup first reaches the clean
-      native status immediately before mutation, then planning, implementation,
-      simplification, and review, before the documented PR gates run unchanged.
+- [ ] In subcases 3 and 4, successful or no-op setup permits planning, then
+      reaches the clean native status immediately before implementation's first
+      mutation, then implementation, simplification, and review, before the
+      documented PR gates run unchanged.
 - [ ] In subcase 3, `python3 verify_policy.py` is reported `pass`; `npx
       --no-install verify-contract` is reported `failure`, not as setup or an
       environment problem.

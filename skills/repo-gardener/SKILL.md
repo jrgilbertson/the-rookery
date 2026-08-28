@@ -199,7 +199,9 @@ claim. It, setup, and Scout helpers execute no declared audit.
    and checks exact committed paths against identity, include/exclude scope,
    protected paths, and assigned slice. An authorized shipping broker alone
    releases the short-lived delivery capability: immediately before release it
-   revalidates the exact repository, branch, and full head, then post-reads and
+   revalidates the opening policy identity/revision, applicable path
+   authorization, exact repository, branch, and full head; policy or path
+   authorization drift denies capability release. It then post-reads and
    reconciles that same tuple afterward. A durable policy revision change stops
    every Worker's remaining source mutation, push, PR-open, and declared audit
    work, preserving local commits; already-open PRs stay native objects. Only
@@ -210,8 +212,9 @@ claim. It, setup, and Scout helpers execute no declared audit.
    An uncertain PR-create response triggers bounded read-only
    reconciliation in the exact repository and Worker branch. Accept exactly
    one matching PR only when it is exactly one OPEN pull request matching the
-   exact host/repository, head repository, Worker branch, and authorized full
-   head OID. Zero, multiple, unavailable, stale, closed, or mismatched results
+   exact host/repository, head repository, Worker branch, authorized base ref,
+   and authorized full head OID. Zero, multiple, unavailable, stale, closed,
+   or mismatched results
    remain `UNKNOWN` and preserve saved pushed state: never retry, guess, adopt,
    or blindly duplicate a PR.
    Supervise each Worker from its branch, full HEAD, native process, PR,
@@ -233,7 +236,9 @@ claim. It, setup, and Scout helpers execute no declared audit.
     `checking-merge-readiness mode:agent` against the exact repository, PR,
     current head, Worker slice, and the applicable protected-path policy
     identity, revision, and complete set. If that protected-path binding is
-    unavailable, actionability is `UNKNOWN`. The report-only result names
+    unavailable, actionability is `UNKNOWN`. Before invocation, verify that the
+    installed capability exposes the report-only `mode:agent` route; otherwise
+    name the compatibility gap and stop. The report-only result names
     recommendation, caps, process-only findings, material findings, and
     actionable in-slice findings; it never presents an owner choice or merge
    path. A material actionable in-slice finding returns to the owning Worker in

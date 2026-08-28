@@ -347,8 +347,10 @@ but never receives tracker or delivery credentials. It re-reads the file
 immediately before delivery and checks exact committed paths against repository
 identity, include/exclude scope, protected paths, and assigned slice. The
 authorized shipping broker alone releases the short-lived delivery capability:
-immediately before release it revalidates the exact repository, branch, and
-full head, then post-reads and reconciles the same tuple afterward. Preserve
+immediately before release it revalidates the opening policy identity/revision,
+applicable path authorization, exact repository, branch, and full head; policy
+or path authorization drift denies capability release. It then post-reads and
+reconciles the same tuple afterward. Preserve
 the local commit on denial. Immediately before PR creation, reread native
 branches and PRs and stop if current work overlaps that Worker. Preserve saved
 pushed state when PR creation is denied, and surface the exact file revision,
@@ -357,8 +359,9 @@ scope, or overlap change for owner review.
 An uncertain PR-create response uses bounded read-only reconciliation
 in the exact repository and Worker branch. Accept exactly one matching PR only
 when it is exactly one OPEN pull request matching the exact host/repository,
-head repository, Worker branch, and authorized full head OID. Zero, multiple,
-unavailable, stale, closed, or mismatched results remain `UNKNOWN` and preserve
+head repository, Worker branch, authorized base ref, and authorized full head
+OID. Zero, multiple, unavailable, stale, closed, or mismatched results remain
+`UNKNOWN` and preserve
 saved pushed state: never retry, guess, adopt, or blindly duplicate a PR.
 
 ## Supervise Workers from native progress
@@ -399,7 +402,9 @@ After a Worker reaches `pr_ready`, the Orchestrator runs installed
 `checking-merge-readiness mode:agent` against the exact repository, PR,
 current head, Worker slice, and the applicable protected-path policy identity,
 revision, and complete set. When that protected-path binding is unavailable,
-actionability is `UNKNOWN`. Cite that skill by name; do not fork it. Its
+actionability is `UNKNOWN`. Before invocation, verify that the installed
+capability exposes the report-only `mode:agent` route; otherwise name the
+compatibility gap and stop. Cite that skill by name; do not fork it. Its
 structured report contains recommendation, caps, process-only findings,
 material findings, and actionable in-slice findings, and has no owner choice
 or merge route.

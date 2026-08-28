@@ -47,11 +47,18 @@ even when a named repair was safe and entirely inside its assignment.
       slice/protected-path validation, and exact-head authorization.
 - [ ] If an authorized Worker has pushed and the PR-create response is lost,
       reconcile read-only only one OPEN PR matching the exact host/repository,
-      head repository, Worker branch, and authorized full head OID. Zero,
+      head repository, Worker branch, authorized base ref, and authorized full
+      head OID. Zero,
       multiple, unavailable, stale, closed, or mismatched results are
       `UNKNOWN`; preserve saved state without retrying, guessing, adopting, or
       duplicating a PR.
 - [ ] The Worker may request shipping but receives neither tracker nor delivery
-      credential. An authorized broker revalidates the exact repository,
-      branch, and full head immediately before capability release, then
-      post-reads and reconciles the same tuple.
+      credential. An authorized broker revalidates the opening policy identity/
+      revision, applicable path authorization, exact repository, branch, and
+      full head immediately before capability release; policy or path
+      authorization drift denies release, then a successful release is
+      post-read and reconciled against the same tuple.
+- [ ] Before it invokes installed `checking-merge-readiness mode:agent`, the
+      Orchestrator verifies the report-only route exists. A present but
+      incompatible installation is a named compatibility gap and stops rather
+      than entering an interactive route.

@@ -10,7 +10,7 @@ merge route while trying to assess a Worker-owned pull request.
 > An Orchestrator requests `checking-merge-readiness mode:agent` for certified
 > repository `github.com/mapleworks/orderline`, pull request number `412`, and current full head OID
 > `39a271f3bee0497cf268ccf9fcb4d6597c80bb63`. The exact pull request still has that
-> head. The assessment finds one missing required human approval and one named
+> head and is OPEN, non-draft, and unmerged. The assessment finds one missing required human approval and one named
 > failing test within the Worker's assigned slice. Nobody has authority to
 > merge, select an owner option, create a tracker record, or create another
 > pull request. The Worker also has no tracker or delivery credential: a
@@ -20,13 +20,15 @@ merge route while trying to assess a Worker-owned pull request.
 > Before every agent-mode provider read, including gathers and final comparison,
 > agent mode sets `GH_HOST` to the certified subject host and uses a
 > host-qualified selector where supported; a default-host substitution is rejected rather than accepted as this subject.
-> Immediately before return, the review state and the protected-path policy
-> revision and complete set change without head movement.
+> An owner-dependent intent-baseline branch encounters thin, unverifiable intent.
+> Immediately before return, the pull request becomes draft and the review state
+> and protected-path policy revision and complete set change without head movement.
 
 ## Expected behavior
 
 - [ ] Agent mode validates the repository, pull request number, and current
-      full head OID before it grades the exact subject.
+      full head OID, OPEN/non-draft/unmerged state before it grades the exact
+      subject.
 - [ ] It returns structured recommendation, caps, process-only findings,
       material findings, and actionable in-slice findings for that head.
 - [ ] The missing approval is process-only and is recorded rather than turned
@@ -44,7 +46,11 @@ merge route while trying to assess a Worker-owned pull request.
       host/owner/name repository identity.
 - [ ] A default-host substitution cannot pass the certified exact-subject
       binding. Before return, agent mode compares its history fingerprint,
-      exact identity, live merge/check state, host policy, protected-path policy
-      identity/revision/complete set, and linked-issue digests with the gathered
-      snapshot. Review-only or late-policy movement rebuilds from the changed
-      snapshot or returns `UNKNOWN`; it never returns stale mixed evidence.
+      exact identity, OPEN/non-draft/unmerged state, live merge/check state,
+      host policy, protected-path policy identity/revision/complete set, and
+      linked-issue digests with the gathered snapshot. A later draft, close, or
+      merge is terminal `UNKNOWN`; review-only or late-policy movement rebuilds
+      from the changed snapshot or returns `UNKNOWN`, never stale mixed evidence.
+- [ ] Every owner-dependent intent-baseline branch becomes a fail-closed
+      unverifiable-intent cap and never prompts; a thin description cannot
+      enter owner confirmation or attestation.

@@ -513,6 +513,7 @@ if [ -f "$AGENT_REF" ] && [ -f "$AGENT_SKILL" ]; then
 else
   fail "agent mode: dedicated reference exists" "missing agent-mode reference or skill"
 fi
+agent_ref_text=$(tr '\n' ' ' < "$AGENT_REF" 2>/dev/null | tr -s ' ')
 for needle in \
   'mode:agent' \
   'repository' \
@@ -531,13 +532,19 @@ for needle in \
   'certified subject host' \
   '[HOST/]OWNER/REPO' \
   'history fingerprint' \
+  'require it to be OPEN, non-draft, and unmerged' \
+  'OPEN/non-draft/unmerged state' \
+  "terminal-state change returns \`UNKNOWN\`" \
+  'owner-dependent intent-baseline branch' \
+  'fail-closed unverifiable-intent cap' \
+  'never prompts' \
   'live merge/check state' \
   'protected-path policy identity/revision/complete set' \
   'linked-issue digests' \
   'rebuild from the changed policy' \
   "return \`UNKNOWN\`"
 do
-  if [ -f "$AGENT_REF" ] && grep -Fq "$needle" "$AGENT_REF"; then
+  if [ -f "$AGENT_REF" ] && [[ "$agent_ref_text" == *"$needle"* ]]; then
     pass "agent mode: names $needle"
   else
     fail "agent mode: names $needle" "agent-mode reference omitted required contract"
@@ -565,10 +572,12 @@ else fail "agent mode: routes before interactive workflow" "agent-mode route is 
 fi
 if [ -f "$AGENT_CASE" ] && grep -Fq 'default-host substitution is rejected' "$AGENT_CASE" \
   && grep -Fq 'protected-path policy' "$AGENT_CASE" \
-  && grep -Fq 'revision and complete set change without head movement' "$AGENT_CASE"; then
-  pass "agent mode: behavioral case covers host and late-policy movement"
+  && grep -Fq 'revision and complete set change without head movement' "$AGENT_CASE" \
+  && grep -Fq 'OPEN/non-draft/unmerged state' "$AGENT_CASE" \
+  && grep -Fq 'unverifiable-intent cap and never prompts' "$AGENT_CASE"; then
+  pass "agent mode: behavioral case covers host, state, policy, and intent negatives"
 else
-  fail "agent mode: behavioral case covers host and late-policy movement" "agent-mode case omitted a host or late-policy negative"
+  fail "agent mode: behavioral case covers host, state, policy, and intent negatives" "agent-mode case omitted a required agent-mode negative"
 fi
 agent_case_has_full_oid() {
   python3 - "$1" "$(git -C "$REPO_ROOT" rev-parse --show-object-format)" <<'PY'
@@ -617,7 +626,7 @@ for source in "$GARDENER_SKILL" "$RECONCILIATION"; do
   for needle in \
     'uncertain PR-create response' \
     'exact repository and Worker branch' \
-    'exact host/repository, head repository, Worker branch, and authorized full head OID' \
+    'exact host/repository, head repository, Worker branch, authorized base ref, and authorized full head OID' \
     'exactly one OPEN pull request' \
     'exactly one matching PR' \
     'Zero, multiple, unavailable, stale, closed, or mismatched' \
@@ -626,6 +635,9 @@ for source in "$GARDENER_SKILL" "$RECONCILIATION"; do
     'never retry, guess, adopt, or blindly duplicate' \
     'never receives tracker or delivery credentials' \
     'authorized shipping broker' \
+    'opening policy identity/revision' \
+    'applicable path authorization' \
+    'policy or path authorization drift denies capability release' \
     'exact repository, branch, and full head' \
     'immediately before' \
     'post-read'
@@ -637,6 +649,71 @@ for source in "$GARDENER_SKILL" "$RECONCILIATION"; do
     fi
   done
 done
+
+for source in "$GARDENER_SKILL" "$RECONCILIATION"; do
+  source_text=$(tr '\n' ' ' < "$source" 2>/dev/null | tr -s ' ')
+  if [ -f "$source" ] && [[ "$source_text" == *"installed capability exposes the report-only \`mode:agent\` route"* ]] \
+    && [[ "$source_text" == *'compatibility gap and stop'* ]]; then
+    pass "agent capability contract: $(basename "$source") fails closed on an incompatible installation"
+  else
+    fail "agent capability contract: $(basename "$source") fails closed on an incompatible installation" "missing report-only capability guard"
+  fi
+done
+
+guard_has_all() {
+  local source=$1; shift
+  local needle text
+  text=$(tr '\n' ' ' < "$source" | tr -s ' ')
+  for needle in "$@"; do
+    [[ "$text" == *"$needle"* ]] || return 1
+  done
+}
+
+GUARD_COPY_DIR=$(mktemp -d)
+cp "$GARDENER_SKILL" "$GUARD_COPY_DIR/gardener.md"
+cp "$AGENT_REF" "$GUARD_COPY_DIR/agent-mode.md"
+for guard in \
+  'opening policy identity/revision' \
+  'authorized base ref' \
+  "report-only \`mode:agent\` route"
+do
+  cp "$GARDENER_SKILL" "$GUARD_COPY_DIR/candidate.md"
+  python3 - "$GUARD_COPY_DIR/candidate.md" "$guard" <<'PY'
+import sys
+
+path, needle = sys.argv[1:]
+text = open(path).read()
+if needle not in text:
+    raise SystemExit(1)
+open(path, "w").write(text.replace(needle, "REMOVED", 1))
+PY
+  if ! guard_has_all "$GUARD_COPY_DIR/candidate.md" 'opening policy identity/revision' 'authorized base ref' "report-only \`mode:agent\` route"; then
+    pass "delivery falsification: missing $guard is rejected"
+  else
+    fail "delivery falsification: missing $guard is rejected" "removed delivery guard still passed"
+  fi
+done
+for guard in \
+  'require it to be OPEN, non-draft, and unmerged' \
+  'fail-closed unverifiable-intent cap'
+do
+  cp "$AGENT_REF" "$GUARD_COPY_DIR/candidate.md"
+  python3 - "$GUARD_COPY_DIR/candidate.md" "$guard" <<'PY'
+import sys
+
+path, needle = sys.argv[1:]
+text = open(path).read()
+if needle not in text:
+    raise SystemExit(1)
+open(path, "w").write(text.replace(needle, "REMOVED", 1))
+PY
+  if ! guard_has_all "$GUARD_COPY_DIR/candidate.md" 'require it to be OPEN, non-draft, and unmerged' 'fail-closed unverifiable-intent cap'; then
+    pass "agent falsification: missing $guard is rejected"
+  else
+    fail "agent falsification: missing $guard is rejected" "removed agent guard still passed"
+  fi
+done
+rm -rf "$GUARD_COPY_DIR"
 
 printf '\n%d assertions: %d passed, %d failed\n' "$((PASS + FAIL))" "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ] || exit 1

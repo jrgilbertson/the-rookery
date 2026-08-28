@@ -13,6 +13,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `personal-chief-of-staff` Source Access Audits are now a short paragraph:
+  coverage first, then every relevant role and how the read finished, with a
+  "so" clause only when a result limits a claim. No table and no HTML
+  details. Successful reads may share a sentence.
 - Interactive `checking-merge-readiness` option 1 (Proceed to merge) now
   kicks off one forge merge after the existing fingerprint and host-policy
   re-check, using the repository's default merge method. A cold "merge this

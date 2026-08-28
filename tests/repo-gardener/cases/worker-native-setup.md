@@ -31,6 +31,16 @@ second setup or Git-state subsystem.
 >    before its first edit: `M  docs/guide.md` (staged), ` M docs/guide.md`
 >    (unstaged), and `?? scratch.txt` (untracked non-ignored). Worker B has a
 >    clean receipt and clean status for its disjoint slice.
+> 5. In an otherwise independent Worker A start, Orca returns a usable Worker
+>    immediately and the Orchestrator-owned start receipt proves its configured
+>    Setup terminal is still running. The Worker's existing current-Dispatch
+>    observation (`worker-show`, or Orca's equivalent supplied receipt) keeps
+>    showing setup running before A's repository-dependent planning read,
+>    focused test, or proposed edit.
+> 6. Evaluate two independent attempted Worker A starts: worker-start fails
+>    before a usable Worker exists, or it times out while the
+>    Orchestrator-owned receipt still proves Setup running. Worker B has the
+>    clean `not_configured` receipt from subcase 2 and remains disjoint.
 
 ## Expected behavior
 
@@ -53,6 +63,16 @@ second setup or Git-state subsystem.
       first mutation. Staged, unstaged, and untracked non-ignored paths each
       stop only dependent work, name the observed path, and remain untouched;
       the clean disjoint Worker continues.
+- [ ] In subcase 5, the Orchestrator retains the worker-start receipt. The
+      usable Worker starts immediately but uses the existing current-Dispatch
+      observation as a one-time startup gate, so it does not inspect, test, or
+      mutate repository state while setup remains running.
+- [ ] In subcase 6, a failed or outcome-unknown start before a usable Worker
+      exists remains Orchestrator-owned: it does not pretend a Worker handled
+      the receipt or recovery facts, leaves `docs/guide.md` untouched, and
+      continues Worker B's disjoint safe work. A timeout that still proves
+      setup running is waiting or blocked, never proof of failure or permission
+      to rerun setup.
 - [ ] No subcase adds or invokes manual setup, setup argv or policy,
       classifier, snapshot, saved baseline, index metadata, attribution,
       registry, Git-state subsystem, scheduler, workflow ledger, helper,

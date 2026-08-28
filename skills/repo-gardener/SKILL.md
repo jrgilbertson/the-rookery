@@ -113,10 +113,19 @@ claim. It, setup, and Scout helpers execute no declared audit.
    customer. If simplification or code-review capability is absent, do not
    dispatch Workers; complete the read-only gardening report and name the
    missing capability.
-7. Assign overlap before parallel start. Create every fresh Worker only through
-   supervised Orca dispatch with repository setup enabled once, then start Workers
-   in parallel up to `maximum_workers` from the live file (setup default 20).
-   Each Worker is one worktree, one branch, and at most one unmerged PR. Each Worker prompt carries the
+7. Assign overlap before parallel start. Invoke the existing supervised Orca
+   worker-start for every fresh Worker with repository setup enabled once, and
+   retain its start receipt in the Orchestrator. A usable Worker may start while
+   setup runs, but uses its existing current-Dispatch observation (`worker-show`
+   or an equivalent Orca-supplied receipt) as a one-time gate before any
+   repository-dependent inspection, test, or mutation. If start fails or its
+   outcome is unknown before a usable Worker exists, the Orchestrator retains
+   the receipt and recovery facts, leaves the assigned paths untouched, and
+   continues disjoint safe work; it does not attribute those facts to a Worker.
+   A timeout that still proves setup is running remains waiting or blocked, not
+   failed and never permission to rerun setup. Start Workers in parallel up to
+   `maximum_workers` from the live file (setup default 20). Each Worker is one
+   worktree, one branch, and at most one unmerged PR. Each Worker prompt carries the
    opening policy revision, identity, scope, protected paths, lane grant, and
    assigned path slice. A Worker does not survey nine lanes or write tracker
    comments. Helpers do not own a PR.
@@ -192,17 +201,18 @@ persistent Worker worktree only for work intended to become one PR. Native
 PR facts are authoritative: freshly read repository, PR number, branch, head
 SHA, state, checks, and review status before reporting the Worker result.
 
-Each fresh Worker consumes its own supervised-dispatch worktree setup receipt;
-no Orca parent-child lineage is required. If the receipt identifies a configured
-Setup terminal, wait for it to complete successfully before any
-repository-dependent inspection, test, or mutation. `not_configured` is an
-exact no-op. Failed setup or an unknown setup effect stops that Worker's
-repository-dependent dependency closure, names the cause and assigned slice,
-and leaves its paths untouched while disjoint safe work continues. After a
-successful or no-op receipt, immediately before its first mutation the Worker
-runs ordinary native `git status --porcelain=v1 --untracked-files=all` and
-proceeds only with no staged, unstaged, or untracked non-ignored paths. Dirty
-paths remain untouched, are named, and stop only dependent work.
+Each usable Worker consumes its own supervised-dispatch worktree setup receipt;
+no Orca parent-child lineage is required. While a configured Setup terminal is
+running, it uses the existing current-Dispatch observation and remains blocked
+from repository-dependent inspection, testing, and mutation until setup
+succeeds. `not_configured` is an exact no-op. Failed setup or an unknown setup
+effect stops that Worker's repository-dependent dependency closure, names the
+cause and assigned slice, and leaves its paths untouched while disjoint safe
+work continues. After a successful or no-op receipt, immediately before its
+first mutation the Worker runs ordinary native `git status --porcelain=v1
+--untracked-files=all` and proceeds only with no staged, unstaged, or untracked
+non-ignored paths. Dirty paths remain untouched, are named, and stop only
+dependent work.
 
 No run merges a PR or creates a follow-up issue. Issue-ready recommendations
 belong in the retained Orchestrator report for owner review. Never release,

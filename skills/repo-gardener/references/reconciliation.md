@@ -187,25 +187,32 @@ of zero, or a protected path denies that unit. Do not invent work to fill the
 cap. An honest report with no Worker is successful operation.
 
 The Orchestrator selects a non-overlapping set of independently deliverable
-PR-sized units, then creates every fresh Worker only through supervised Orca
-dispatch with repository setup enabled once, up to `maximum_workers` (setup
-default 20). Overlap is path or scope conflict and is assigned before parallel
-start. Unrelated already-open PRs do not consume the cap. Each Worker is one
-worktree, one branch, and at most one unmerged PR. Each Worker prompt carries the opening
-policy revision, identity, scope, protected paths, lane grant, and assigned
-path slice. Helpers do not own a PR.
+PR-sized units, then invokes the existing supervised Orca worker-start for
+every fresh Worker with repository setup enabled once, retaining each returned
+start receipt, up to `maximum_workers` (setup default 20). Overlap is path or
+scope conflict and is assigned before parallel start. Unrelated already-open
+PRs do not consume the cap. Each Worker is one worktree, one branch, and at
+most one unmerged PR. Each Worker prompt carries the opening policy revision,
+identity, scope, protected paths, lane grant, and assigned path slice. Helpers
+do not own a PR.
 
-Each Worker consumes the setup receipt for its own worktree; do not rely on
-Orca parent-child lineage. When that receipt identifies a configured Setup
-terminal, wait for successful completion before any repository-dependent
-inspection, test, or mutation. Record `not_configured` as the exact no-op and
-do not run setup manually. A failed setup or unknown setup effect stops only
-that Worker's repository-dependent dependency closure: name the cause and
-assigned slice, leave paths untouched, and continue disjoint safe work. After
-a successful or no-op receipt, immediately before the first mutation, run
+A usable Worker may start while setup runs. It consumes the receipt for its own
+worktree, without relying on Orca parent-child lineage, and uses the existing
+current-Dispatch observation (`worker-show` or the equivalent receipt Orca
+already supplied) as a one-time startup gate. While that observation proves a
+configured Setup terminal is running, the Worker remains blocked from
+repository-dependent inspection, testing, and mutation until setup succeeds;
+this is not a new poller, registry, scheduler, state machine, or setup
+subsystem. Record `not_configured` as the exact no-op and do not run setup
+manually. If worker-start fails or its outcome is unknown before a usable Worker
+exists, the Orchestrator owns the existing receipt and recovery facts, does not
+pretend a Worker handled them, leaves the assigned paths untouched, and
+continues disjoint safe work. A timeout that still proves setup is running is
+waiting or blocked, not proof of failure and never permission to rerun setup.
+After a successful or no-op receipt, immediately before the first mutation, run
 ordinary native `git status --porcelain=v1 --untracked-files=all`. Proceed only
-when it has no staged, unstaged, or untracked non-ignored paths. Otherwise
-name the dirty paths, leave them untouched, and stop only their dependent work.
+when it has no staged, unstaged, or untracked non-ignored paths. Otherwise name
+the dirty paths, leave them untouched, and stop only their dependent work.
 Do not add a manual setup, setup argv or policy, classifier, snapshot, saved
 baseline, index metadata, attribution, registry, Git-state subsystem,
 scheduler, workflow ledger, helper, executable, schema, or dependency.

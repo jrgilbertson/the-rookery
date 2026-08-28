@@ -200,11 +200,12 @@ claim. It, setup, and Scout helpers execute no declared audit.
    protected paths, and assigned slice. An authorized shipping broker alone
    releases the short-lived delivery capability: immediately before release it
    revalidates the exact repository, branch, and full head, then post-reads and
-   reconciles that same tuple afterward. A changed policy or out-of-slice path
-   stops source mutation, push, and PR-open for that Worker and preserves local
-   commits; already-open PRs stay native objects. Before PR creation, reread
-   native branches and PRs. An overlap denial stops only that Worker's
-   dependents; other Workers and read-only sensing continue. A denied push
+   reconciles that same tuple afterward. A durable policy revision change stops
+   every Worker's remaining source mutation, push, PR-open, and declared audit
+   work, preserving local commits; already-open PRs stay native objects. Only
+   while that policy is unchanged, an out-of-slice or overlap denial stops the
+   affected Worker's dependents while other Workers and read-only sensing
+   continue. Before PR creation, reread native branches and PRs. A denied push
    preserves the local commit.
    An uncertain PR-create response triggers bounded read-only
    reconciliation in the exact repository and Worker branch. Accept exactly

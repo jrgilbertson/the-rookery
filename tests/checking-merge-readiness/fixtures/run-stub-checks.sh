@@ -526,11 +526,16 @@ for needle in \
   'protected-path policy' \
   'policy revision' \
   'full host/owner/name' \
+  'Before every agent-mode provider read' \
+  'GH_HOST' \
+  'certified subject host' \
+  '[HOST/]OWNER/REPO' \
   'history fingerprint' \
   'live merge/check state' \
+  'protected-path policy identity/revision/complete set' \
   'linked-issue digests' \
-  'rebuild from the new snapshot' \
-  'return UNKNOWN'
+  'rebuild from the changed policy' \
+  "return \`UNKNOWN\`"
 do
   if [ -f "$AGENT_REF" ] && grep -Fq "$needle" "$AGENT_REF"; then
     pass "agent mode: names $needle"
@@ -558,11 +563,12 @@ PY
 then pass "agent mode: routes before interactive workflow"
 else fail "agent mode: routes before interactive workflow" "agent-mode route is missing or reaches interactive merge handling"
 fi
-if [ -f "$AGENT_CASE" ] && grep -Fq 'review state changes without head movement' "$AGENT_CASE" \
-  && grep -Fq 'protected-path policy and revision' "$AGENT_CASE"; then
-  pass "agent mode: behavioral case covers protected policy and review-only movement"
+if [ -f "$AGENT_CASE" ] && grep -Fq 'default-host substitution is rejected' "$AGENT_CASE" \
+  && grep -Fq 'protected-path policy' "$AGENT_CASE" \
+  && grep -Fq 'revision and complete set change without head movement' "$AGENT_CASE"; then
+  pass "agent mode: behavioral case covers host and late-policy movement"
 else
-  fail "agent mode: behavioral case covers protected policy and review-only movement" "agent-mode case omitted a new subject or final-stability behavior"
+  fail "agent mode: behavioral case covers host and late-policy movement" "agent-mode case omitted a host or late-policy negative"
 fi
 agent_case_has_full_oid() {
   python3 - "$1" "$(git -C "$REPO_ROOT" rev-parse --show-object-format)" <<'PY'

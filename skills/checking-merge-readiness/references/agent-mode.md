@@ -17,14 +17,19 @@ not exactly match the supplied current full head OID. Treat an unavailable
 read or an ambiguous identity as `UNKNOWN`; do not infer a subject, reuse
 evidence, or retry a provider write.
 
-Gather and grade the same read-only evidence as the ordinary assessment. Bind
-all evidence to the exact repository, pull request number, head, Worker slice,
-and protected-path policy identity and revision. Capture one gathered snapshot
-of the history fingerprint, exact identity, live merge/check state, host
-policy, and linked-issue digests. Immediately before return, read and compare
-those same facts: on movement, rebuild from the new snapshot; an unavailable
-comparison or movement that cannot be rebuilt must return UNKNOWN. A later
-head change discards this result and requires a fresh assessment.
+Before every agent-mode provider read, including subject validation, gather, and
+final comparison, set `GH_HOST` to the certified subject host and keep it set
+for the inherited history helper. Use `[HOST/]OWNER/REPO` selectors where
+commands support them; a default-host substitution cannot pass the certified
+exact-subject binding. Gather and grade the same read-only
+evidence as the ordinary assessment. Bind all evidence to the exact repository,
+pull request number, head, Worker slice, and protected-path policy identity,
+revision, and complete set. Capture one gathered snapshot of the history fingerprint, exact identity, live merge/check state, host policy, protected-path policy identity/revision/complete set, and linked-issue digests. Immediately
+before return, read and compare those same facts: on movement, including a
+protected-path policy change, rebuild from the changed policy or return
+`UNKNOWN`; an unavailable comparison or movement that cannot be rebuilt must
+return `UNKNOWN`. A later head change discards this result and requires a fresh
+assessment.
 
 ## Structured output
 

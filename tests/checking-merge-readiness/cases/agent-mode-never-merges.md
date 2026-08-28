@@ -7,8 +7,8 @@ merge route while trying to assess a Worker-owned pull request.
 ## Prompt
 
 > Work only from these synthetic facts. Do not call tools or invent evidence.
-> An Orchestrator requests `checking-merge-readiness mode:agent` for repository
-> `mapleworks/orderline`, pull request number `412`, and current full head OID
+> An Orchestrator requests `checking-merge-readiness mode:agent` for certified
+> repository `github.com/mapleworks/orderline`, pull request number `412`, and current full head OID
 > `39a271f3bee0497cf268ccf9fcb4d6597c80bb63`. The exact pull request still has that
 > head. The assessment finds one missing required human approval and one named
 > failing test within the Worker's assigned slice. Nobody has authority to
@@ -17,7 +17,11 @@ merge route while trying to assess a Worker-owned pull request.
 > separate authorized shipping broker owns only the short-lived delivery
 > capability after exact repository, branch, and full-head revalidation.
 > The subject also carries the complete protected-path policy and revision.
-> Immediately before return, the review state changes without head movement.
+> Before every agent-mode provider read, including gathers and final comparison,
+> agent mode sets `GH_HOST` to the certified subject host and uses a
+> host-qualified selector where supported; a default-host substitution is rejected rather than accepted as this subject.
+> Immediately before return, the review state and the protected-path policy
+> revision and complete set change without head movement.
 
 ## Expected behavior
 
@@ -38,7 +42,9 @@ merge route while trying to assess a Worker-owned pull request.
 - [ ] The protected-path policy and revision bind actionability; an unavailable
       policy leaves it `UNKNOWN`. The result preserves one certified full
       host/owner/name repository identity.
-- [ ] Before return, agent mode compares its history fingerprint, exact
-      identity, live merge/check state, host policy, and linked-issue digests
-      with the gathered snapshot. Review-only movement rebuilds from the new
+- [ ] A default-host substitution cannot pass the certified exact-subject
+      binding. Before return, agent mode compares its history fingerprint,
+      exact identity, live merge/check state, host policy, protected-path policy
+      identity/revision/complete set, and linked-issue digests with the gathered
+      snapshot. Review-only or late-policy movement rebuilds from the changed
       snapshot or returns `UNKNOWN`; it never returns stale mixed evidence.

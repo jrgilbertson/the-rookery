@@ -35,6 +35,10 @@ looked" surface. GitHub Releases mirror its entries.
   diff, repair explanation, and fresh verification rather than key recurrence;
   empty, irrelevant, unsafe, unauthorized, unknown, or unverified progress
   still stops truthfully, including a regression or invalid evidence/effects.
+  Its report-only agent subject now also binds the authorized base ref and
+  exact base commit OID at both initial validation and final comparison, so a
+  head-preserving retarget remains `UNKNOWN` rather than grading a different
+  cumulative diff.
 - `repo-gardener` now supervises Workers from current native branch, HEAD,
   process, PR, check, and result facts. TUI idle is only a scheduling hint;
   bounded no-progress analysis becomes a local stall, head drift refreshes

@@ -404,14 +404,14 @@ state, and Worker state.
 
 After a Worker reaches `pr_ready`, the Orchestrator runs installed
 `checking-merge-readiness mode:agent` against the exact repository, PR,
-current head, Worker slice, and the applicable protected-path policy identity,
-revision, and complete set. When that protected-path binding is unavailable,
-actionability is `UNKNOWN`. Before invocation, verify that the installed
-capability exposes the report-only `mode:agent` route; otherwise name the
-compatibility gap and stop. Cite that skill by name; do not fork it. Its
-structured report contains recommendation, caps, process-only findings,
-material findings, and actionable in-slice findings, and has no owner choice
-or merge route.
+current head, the same authorized base ref and exact base commit OID, Worker
+slice, and the applicable protected-path policy identity, revision, and
+complete set. When either binding is unavailable, actionability is `UNKNOWN`.
+Before invocation, verify that the installed capability exposes the report-only
+`mode:agent` route; otherwise name the compatibility gap and stop. Cite that
+skill by name; do not fork it. Its structured report contains recommendation,
+caps, process-only findings, material findings, and actionable in-slice
+findings, and has no owner choice or merge route.
 
 Immediately before every post-PR repair batch begins, freshly read the opening
 policy identity/revision and applicable path authorization. A revision change

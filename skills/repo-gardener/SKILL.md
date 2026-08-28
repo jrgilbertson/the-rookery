@@ -238,11 +238,12 @@ claim. It, setup, and Scout helpers execute no declared audit.
     `pending`, and close the run as `partial`; never claim `pr_ready` or
     `completed`. After a Worker reaches `pr_ready`, run installed
     `checking-merge-readiness mode:agent` against the exact repository, PR,
-    current head, Worker slice, and the applicable protected-path policy
-    identity, revision, and complete set. If that protected-path binding is
-    unavailable, actionability is `UNKNOWN`. Before invocation, verify that the
-    installed capability exposes the report-only `mode:agent` route; otherwise
-    name the compatibility gap and stop. The report-only result names
+    current head, the same authorized base ref and exact base commit OID,
+    Worker slice, and the applicable protected-path policy identity, revision,
+    and complete set. If either binding is unavailable, actionability is
+    `UNKNOWN`. Before invocation, verify that the installed capability exposes
+    the report-only `mode:agent` route; otherwise name the compatibility gap
+    and stop. The report-only result names
     recommendation, caps, process-only findings, material findings, and
     actionable in-slice findings; it never presents an owner choice or merge
    path. Immediately before every post-PR repair batch begins, freshly read the

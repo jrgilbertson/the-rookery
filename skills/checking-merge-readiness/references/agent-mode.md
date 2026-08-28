@@ -6,16 +6,17 @@ the interactive workflow, then return after the structured output below.
 
 ## Exact subject
 
-Require a repository, pull request number, current full head OID, the Worker's
-assigned path slice, and the applicable protected-path policy. The repository
-is one certified full host/owner/name identity, the pull request number must be
-positive, and the head must be a full object ID. The protected-path policy must
+Require a repository, pull request number, current full head OID, authorized
+base ref and exact base commit OID, the Worker's assigned path slice, and the
+applicable protected-path policy. The repository is one certified full
+host/owner/name identity, the pull request number must be positive, and the
+head and base commit must be full object IDs. The protected-path policy must
 carry its identity, policy revision, and complete protected-path set; without
 that binding, actionability is `UNKNOWN`. Read the native pull request for that
 repository and number, then require it to be OPEN, non-draft, and unmerged and
-refuse the assessment when its current head does not exactly match the supplied
-current full head OID. A terminal state, unavailable read, or ambiguous identity
-is `UNKNOWN`; do not infer a subject, reuse evidence, or retry a provider write.
+require its current head and base tuple exactly match the supplied subject. A
+terminal state, unavailable read, or ambiguous identity is `UNKNOWN`; do not
+infer a subject, reuse evidence, or retry a provider write.
 
 Before every agent-mode provider read, including subject validation, gather, and
 final comparison, set `GH_HOST` to the certified subject host and keep it set
@@ -25,13 +26,15 @@ exact-subject binding. Gather and grade the same read-only
 evidence as the ordinary assessment. In agent mode, every owner-dependent
 intent-baseline branch becomes a fail-closed unverifiable-intent cap and never
 prompts. Bind all evidence to the exact repository, pull request number, head,
-Worker slice, and protected-path policy identity, revision, and complete set.
-Capture one gathered snapshot of the history fingerprint, exact identity,
+authorized base tuple, Worker slice, and protected-path policy identity,
+revision, and complete set. Capture one gathered snapshot of the history
+fingerprint, exact identity, authorized base ref and exact base commit OID,
 OPEN/non-draft/unmerged state, live merge/check state, host policy,
 protected-path policy identity/revision/complete set, and linked-issue digests.
-Immediately
-before return, read and compare those same facts and require the PR to remain
-OPEN, non-draft, and unmerged: a terminal-state change returns `UNKNOWN`.
+Immediately before return, read and compare those same facts and require the
+PR to remain OPEN, non-draft, and unmerged and the same base tuple still
+matches the supplied subject: a terminal-state change returns `UNKNOWN`. A base
+mismatch, unavailable read, or unapproved base movement returns `UNKNOWN`.
 On other movement, including a protected-path policy change, rebuild from the
 changed policy or return `UNKNOWN`; an unavailable comparison or movement that
 cannot be rebuilt must return `UNKNOWN`. A later head change discards this

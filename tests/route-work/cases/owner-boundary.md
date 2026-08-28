@@ -33,4 +33,6 @@ must not displace the first unresolved effect.
       `WORKFLOWS.md` URL, and emits no kickoff.
 - [ ] Every supported item uses one owner only and begins no downstream work.
 - [ ] Every supported item includes a plain-text copy/paste kickoff with the
-      selected workflow, complete setup, and preserved authority.
+      selected workflow, model and effort, natural setup, supplied source, and
+      preserved material authority. Default routes use generic worktree
+      language, name no IDE, and do not restate the request as a pseudo-spec.

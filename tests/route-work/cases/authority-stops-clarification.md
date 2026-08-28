@@ -29,9 +29,9 @@ batch that clarifies the starting setup without performing downstream discovery.
 > 7. The selected workflow itself is stated unavailable.
 > 8. A grill is requested without document-write authority; separately, an
 >    implementation is authorized but commit and publication are unstated.
-> 9. Two coequal workstreams have no dependency order. The operator requires
->    Orca involvement but has not chosen supervised coordination or full
->    ownership handoff.
+> 9. Two coequal workstreams have no dependency order. The operator says the
+>    work should move to a separate worktree but has not said whether the
+>    current agent should supervise it through Orca or fully hand off ownership.
 
 ## Expected behavior
 
@@ -43,12 +43,14 @@ batch that clarifies the starting setup without performing downstream discovery.
       and no further question.
 - [ ] Item 4 returns `Insufficient input` with no owner, profile, or kickoff.
 - [ ] Item 5 preserves the owner, selects its secondary profile, and marks
-      that profile's unknown availability `unverified`; item 6 returns
-      `Profiles exhausted`; item 7 returns `Owner unavailable`.
+      the primary profile unavailable without marking the secondary profile
+      `unverified`; item 6 returns `Profiles exhausted`; item 7 returns `Owner
+      unavailable`.
 - [ ] Every stop gives a reason and next prerequisite but no executable kickoff.
 - [ ] Item 8 permits only the supplied work: no domain-model or ADR write for
       the grill, and no commit, push, PR, publish, or merge for implementation.
 - [ ] Item 9 returns one clarification with exactly two numbered questions:
-      which workstream starts first and which required Orca mode to use.
+      which workstream starts first and whether the current agent should
+      supervise through Orca or hand off ownership.
 - [ ] No item probes availability, persists state outside the visible
       conversation, performs downstream discovery, or escalates effort.

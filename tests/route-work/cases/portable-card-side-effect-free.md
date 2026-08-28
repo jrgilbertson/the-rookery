@@ -1,36 +1,37 @@
-# A request-only route produces a pasteable side-effect-free kickoff
+# An issue-backed route produces a concise side-effect-free kickoff
 
 Provenance: user feedback — the route must include a plain-text statement a
-receiver can paste to start work while the router remains side-effect-free.
-
-Input file: [`../fixtures/parser-fix.md`](../fixtures/parser-fix.md), installed
-in the test project as `docs/requirements/parser-fix.md`.
+receiver can paste to start work without duplicating its source artifact or
+making the router perform downstream work.
 
 ## Prompt
 
 > `$route-work` If `route-work` is not present in the active skill catalog, do
 > not search for or reconstruct it. Otherwise, you may read its installed
-> package and the named input file; call no other tools. Route this synthetic
-> request using only the text below.
-> The team has approved requirements for a parser fix but no execution plan.
-> Start from `docs/requirements/parser-fix.md`. The plan may be written in the
-> repository, but no implementation, issue mutation, commit, push, pull
-> request, or publication is authorized. Workflow and model availability are
-> unknown.
+> package; call no other tools. Route this synthetic request using only the
+> text below. GitHub issue
+> `https://github.com/example/parser/issues/97` contains approved requirements
+> for a parser fix but no execution plan. The issue is the source of truth. The
+> plan may be written in the repository, but no implementation, issue mutation,
+> commit, push, pull request, or publication is authorized. Model availability
+> is unknown.
 
 ## Expected behavior
 
 - [ ] Returns exactly one response beginning `## Route`, with plain `Workflow`
       and `Setup` labels and no Markdown bold labels; the workflow is `ce-plan`
       and the topology is Single owner.
-- [ ] Setup includes its reason, the primary orchestrator/planner tuple,
-      availability `unverified`, Orca `None`, and current-worktree placement.
+- [ ] Setup uses natural sentences, names Fable 5 at medium for one planner,
+      and says to continue in the current worktree without structured
+      orchestration. It does not emit `Orca None` or `availability unverified`.
 - [ ] `## Copy/paste kickoff` contains one fenced plain-text block beginning
-      `Start this work with ce-plan.`, repeats the complete selected setup, and
-      contains no Markdown delimiters.
-- [ ] The fenced block gives the objective, done condition, stable supplied
-      locator and first action, facts, constraints, evidence gaps, and authority
-      without copying the artifact or relying on hidden conversation state.
-- [ ] The trace contains only reads of the installed package and named primary
-      artifact: no downstream invocation, planning, mutation, scheduling,
-      monitoring, or persisted route state.
+      with a natural instruction to start `ce-plan` from the supplied GitHub
+      issue, names the selected model and effort, and contains no Markdown
+      delimiters.
+- [ ] The fenced block treats the issue as the source of truth and preserves
+      the supplied planning and authority boundary in one concise sentence. It
+      does not restate the issue or use the old `Objective`, `Done when`,
+      `Facts`, `Constraints`, `Evidence gaps`, or `Authority` field list.
+- [ ] The trace contains only reads of the installed package: no issue fetch,
+      downstream invocation, planning, mutation, scheduling, monitoring, or
+      persisted route state.

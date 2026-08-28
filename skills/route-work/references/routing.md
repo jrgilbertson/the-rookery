@@ -55,8 +55,8 @@ That stop contains no executable kickoff and links only to the public catalog.
 ### Ambiguity and missing input
 
 - For coequal workstreams with no dependency order, ask which one starts first.
-- Ask only about a choice that can change the workflow, topology, profile, Orca
-  involvement, or placement.
+- Ask only about a choice that can change the workflow, topology, profile,
+  structured orchestration, ownership handoff, or placement.
 - When the remaining uncertainty belongs to the downstream work, route to its
   workflow instead of continuing the clarification.
 - Route a self-contained request without demanding an artifact. If a named or
@@ -82,22 +82,23 @@ An advisor supplies bounded evidence. The selected owner may revise the
 starting topology when new evidence justifies it. Subagents, forks, teams, and
 background sessions are execution mechanisms.
 
-## Keep Orca and placement separate
+## Keep orchestration and placement separate
 
-Workflow ownership, Orca involvement, and worktree placement are independent
-decisions.
+Workflow ownership, structured orchestration, ownership handoff, and worktree
+placement are independent decisions.
 
 | Axis | Choice | Meaning |
 |---|---|---|
-| Orca involvement | None | Proceed without Orca coordination |
-| Orca involvement | Supervised /orchestration | The current coordinator remains the sole human-facing owner and integrator and loads Orca's installed version-matched contract |
-| Orca involvement | Full ownership handoff | Human-facing ownership transfers to the receiving worktree or agent; the sender gains no monitoring duty |
+| Structured orchestration | None | Continue without structured orchestration |
+| Structured orchestration | Supervised through Orca | The current coordinator remains the sole human-facing owner and integrator; acting on this recommendation requires Orca's installed version-matched orchestration contract |
+| Ownership | Current owner or full handoff | Full handoff transfers human-facing ownership to the receiving worktree or agent; the sender gains no monitoring duty |
 | Placement | Current worktree or isolated worktree | Use isolation for concurrent mutation; disjoint write scopes are still required before parallel writes |
 
-The selected startup workflow remains the owner; Orca only coordinates windows
-and worktrees. Load Orca's version-matched contract instead of hardcoding its
-command grammar. Read-only scouts and fresh-context reviewers can work in the
-current worktree.
+The selected startup workflow remains the owner. Structured orchestration is
+optional and currently depends on Orca; ordinary worktree placement does not.
+When supervised orchestration is selected, load Orca's version-matched contract
+instead of hardcoding its command grammar. Read-only scouts and fresh-context
+reviewers can work in the current worktree.
 
 ## Handle parent, child, and existing work
 
@@ -159,10 +160,10 @@ Use operator-stated or already-supplied authoritative capability metadata to
 filter unavailable profiles in primary, secondary, then tertiary order. Keep
 the selected owner unchanged. If all three profiles are unavailable, return
 `Profiles exhausted`. If the workflow itself is confirmed unavailable, return
-`Owner unavailable`. When availability is unknown, mark it `unverified`, keep
-the default selection, and return the portable kickoff. Never probe a host,
-provider quota, model catalog, tracker, pull request, worktree, or dispatch
-system.
+`Owner unavailable`. When availability is unknown, keep the default selection
+and omit availability from the response. Mention availability only when it
+changes the selected profile or stops routing. Never probe a host, provider
+quota, model catalog, tracker, pull request, worktree, or dispatch system.
 
 ### Effort escalation
 
@@ -227,31 +228,28 @@ executable kickoff.
 ````markdown
 ## Route
 Workflow: <one startup workflow>
-Setup: <topology and reason>; <role — provider / model / effort entries>; availability <confirmed or unverified>; Orca <choice>; placement <current worktree or isolated worktrees>
+Setup: <natural sentences naming the topology, relevant model and effort, worktree placement, and structured orchestration only when used>
 
 ## Copy/paste kickoff
 ```text
-Start this work with <startup workflow>.
-Use this setup: <topology>; <role — provider / model / effort entries>; availability <confirmed or unverified>; Orca <choice>; placement <choice>.
-
-Objective: <the next job owned by this workflow>
-Done when: <observable completion condition>
-Start from: <stable artifact locator and first action>
-Facts: <supplied decisive facts>
-Constraints: <scope, safety, and supplied authority>
-Evidence gaps: <material unknowns that do not block kickoff, or none>
-Authority: <external or durable actions still requiring approval>
+Start <startup workflow> from <stable artifact locator or concise supplied request>. Use <model> at <effort> for <role>. <Plain-language topology, placement, orchestration, and handoff sentences when material.> Treat <the supplied artifact or request> as the source of truth. <One supplied constraint or authority sentence when material.>
 ```
 ````
 
-For Lead + bounded workers, the setup names both profiles and uses isolated
-worktrees. Add advisor use, conditional handoff, or
-`Active ownership unverified` only when material. A conditional handoff remains
-controlled by the active workflow;
-owner-changing evidence requires a new explicit route. Summarize supplied
-artifacts rather than copying them. The fenced kickoff is an inert portable
-prompt written without Markdown delimiters; the operator, not the router, uses
-it.
+Write the setup and kickoff as concise, natural prose with concrete names. Use
+"Continue in the current worktree without structured orchestration" for the
+default. Render model IDs as ordinary names, such as "Fable 5 at medium" or
+"Grok 4.6 at high." For Single owner, state ownership through the role once
+instead of adding a separate topology sentence. Name Orca only when supervised
+orchestration is selected. For Lead + bounded workers, name both profiles and
+use isolated worktrees. State a profile fallback only when supplied availability
+changed the selection. Add advisor use, conditional handoff,
+`Active ownership unverified`, or supplied authority only when material. A
+conditional handoff remains controlled by the active workflow; owner-changing
+evidence requires a new explicit route. Point to a supplied artifact instead of
+restating it; when none exists, use a concise statement of the supplied request.
+The fenced kickoff is an inert portable prompt written without Markdown
+delimiters; the operator, not the router, uses it.
 
 ### Continuation
 

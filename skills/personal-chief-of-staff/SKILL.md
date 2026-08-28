@@ -62,16 +62,15 @@ If the same message both decides visible actions and requests a new review,
 finish the visible action decisions first. Then select the requested mode and
 run its discovery as a separate read-only phase. Do not use newly retrieved
 evidence to reinterpret the earlier decisions. Render one Source Access Audit.
-Its recovered table has a Phase column that separates **Action access** from
-**Review discovery**.
+The paragraph distinguishes **Action access** from **Review discovery**.
 
 If the same message both decides visible actions and requests current
 cross-source context without a review mode, also finish the visible action
 decisions first. Then use the non-mode path below as a separate read-only
 context-discovery phase; do not open Wind-down, Weekly, or Quarterly, and do
 not let the new context reinterpret the earlier decisions. Render one Source
-Access Audit. Its recovered table has a Phase column that separates **Action
-access** from **Context discovery**.
+Access Audit. The paragraph distinguishes **Action access** from
+**Context discovery**.
 
 Completion: every visible action decision was resolved against its exact
 originating bundle and mode before any separately requested review or non-mode
@@ -94,8 +93,8 @@ not open Wind-down, Weekly, or Quarterly, and do not invent a Morning path.
 Before returning, always render the current response's Source Access Audit
 after the priority context, even when every requested read succeeds and no
 action is proposed. A cross-source response is incomplete unless that audit
-includes both the capsule and the recovered table. Wrap the recovered table
-in HTML details as specified in assets/review-bundle.md.
+names every relevant role in the short paragraph specified in
+assets/review-bundle.md.
 
 Completion: the caller has usable cross-source judgment without a chief-of-staff
 mode run or unrequested durable writes, and can see which current source reads

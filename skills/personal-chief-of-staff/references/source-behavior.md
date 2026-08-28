@@ -123,10 +123,9 @@ Audit**. Treat it as a transient plan-attempt-reconcile cycle:
 1. Assemble the relevant-source set for this response.
 2. Make each needed bounded read through the source's authoritative interface,
    or establish why that read cannot or should not occur now.
-3. Reconcile what actually happened into both Source Access Audit surfaces
-   required by `assets/review-bundle.md`: the capsule and the same-response
-   table. Wrap the recovered table in HTML details as specified in that
-   asset.
+3. Reconcile what actually happened into the Source Access Audit paragraph
+   required by `assets/review-bundle.md`. Name every relevant role and how
+   the read finished.
 
 Assemble the set from all applicable sources in this order: sources required
 by the active invocation or private deployment prompt, especially the roles
@@ -165,7 +164,7 @@ authoritative interface. Connector presence, configured availability, prior
 conversation, cached knowledge, historical access, and narration of a planned
 read do not count. An empty payload without an authoritative completion signal
 is never a complete empty result. When one source supplies mixed bounded
-slices, report separate rows if their results or safe scopes differ.
+slices, report them separately if their results or safe scopes differ.
 
 A user-supplied scenario, hypothetical tool result, policy example, or fixture
 description is also not an authoritative return. When the current response
@@ -178,8 +177,8 @@ turn a premise such as "the reread succeeded" into **Accessed**, and do not
 invent a tool call or trace. Cover every availability, failure, and verification
 branch the user asked to evaluate rather than presenting only the successful
 branch as though it occurred. Keep each user-named or configured material role
-as its own safe, generic row instead of merging it into a broader source-family
-placeholder. A hypothetical empty window may illustrate the no-finding branch
+as its own safe, generic mention instead of merging it into a broader
+source-family placeholder. A hypothetical empty window may illustrate the no-finding branch
 only conditionally; without an actual finite-window completion signal, it
 cannot establish absence or a real no-proposal result for the current response.
 
@@ -203,17 +202,17 @@ Apply these response boundaries:
 - For an action-only response, do no review discovery. Audit only the current
   authoritative target or destination reread and verification readback access,
   including a failed, missing, or declined path. When both the pre-write reread
-  and post-write verification readback occur, render them as two distinct rows
-  even when they use the same source, scope, and access result; one row never
-  summarizes both operations. Keep **Applied**, **Already satisfied**,
+  and post-write verification readback occur, name them as two distinct
+  operations even when they use the same source, scope, and access result;
+  one clause never summarizes both. Keep **Applied**, **Already satisfied**,
   **Failed**, **Indeterminate**, **Manual**, **Deferred**, and **Skipped** solely
-  in the existing action-result narrative; never add a mutation row, and an
+  in the existing action-result narrative; never add a mutation result, and an
   access result never implies a mutation outcome.
 - If the same message both decides actions and requests either a new review or
   current cross-source non-mode context, finish the actions first and use one
-  Source Access Audit whose recovered table has a **Phase** column. Separate
-  **Action access** from **Review discovery** for a review request or from
-  **Context discovery** for a non-mode request. Later discovery cannot
+  Source Access Audit. In that paragraph, separate **Action access** from
+  **Review discovery** for a review request or from **Context discovery**
+  for a non-mode request. Later discovery cannot
   reinterpret the earlier decisions, and non-mode discovery never opens
   Wind-down, Weekly, or Quarterly.
 - On resumption, refresh required time-sensitive evidence and report only
@@ -236,9 +235,8 @@ approval or completion state, or become durable memory, telemetry, or a
 ledger.
 
 Completion: the answer-first synthesis is followed by a truthful audit of the
-entire relevant-source set for this response — both the capsule and the
-recovered table — and each access limit changes only the claims that depend
-on it.
+entire relevant-source set for this response, and each access limit changes
+only the claims that depend on it.
 
 ## Make every intention verifiable
 

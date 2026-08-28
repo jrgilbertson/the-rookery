@@ -11,86 +11,79 @@ separate.
 
 After that synthesis, render the current response's **Source Access Audit**.
 Place it before separately approvable actions and before the run ending. Use
-the semantics and relevant-source set in `references/source-behavior.md`. Both
-surfaces below are required.
+the semantics and relevant-source set in `references/source-behavior.md`.
 
-Under that heading, print the capsule first, then wrap the recovered table in
-HTML `<details>`. The capsule is the default-visible path. The table is the
-complete current-response role census. Do not print a spoken caption that
-says so.
+Under that heading, write a short paragraph of a few sentences. That
+paragraph is the complete current-response role census. Do not use a table,
+HTML details, or em dashes. Do not print a spoken caption that says so.
 
-**Capsule.** For a discovery-bearing response, state overall coverage as
-Sufficient, Partial, or Insufficient. An action-only response has no review
-coverage verdict. Then name every material limitation with the claim category
-it limits and the exact access result that produced it. Include attempted
-failures, partial or truncated reads, unconfigured or declined roles, Partial
-or Insufficient coverage, and failed post-write readbacks. Include
-**Accessed — no relevant evidence** only when that empty result is why a claim
-is omitted, qualified, or an absence claim is made. **Not needed** stays in
-the table only. Complete, non-truncated **Accessed — evidence found**
-discovery stays in the table only.
+Lead with coverage. For a discovery-bearing response, state overall coverage
+as Sufficient, Partial, or Insufficient. An action-only response has no
+review coverage verdict. Then name every relevant role that was in play and
+how the read finished. Use these ordinary-word results: **accessed with
+evidence**, **accessed with no relevant evidence**, **attempted and failed**,
+**not configured**, **declined**, and **not needed**. Successful reads may
+share one sentence. A limit gets its own clause or sentence, with a "so"
+only when that result omits, qualifies, or prevents a claim. If the roster
+is long, use two or three sentences: coverage and limits first, then the
+remaining successes.
 
-Print separate compact lines for the **Pre-write target or destination reread**
-and the **Post-write verification readback** only when those reads ran. A
-failed or missing required reread or readback is a material limitation in the
-capsule. Successful reread and readback still appear as those compact lines
-and as distinct table rows. Do not add a second mini-table. Do not put Phase
-in the capsule.
+Classify internally with the six access results in
+`references/source-behavior.md`. Render them as the ordinary-word forms
+above. **Accessed — evidence found** renders **accessed with evidence**.
+**Accessed — no relevant evidence** renders **accessed with no relevant
+evidence**. **Attempted — unavailable or failed** renders **attempted and
+failed**. **Not configured**, **Declined**, and **Not needed** render as
+**not configured**, **declined**, and **not needed**.
 
-**Table.** The same response still contains today's GFM table inside HTML
-`<details>` with a short summary such as `Full source receipt`. Leave the
-element closed unless the capsule includes an attempted failure, a partial
-or truncated read, **Not configured**, **Declined**, Partial or Insufficient
-coverage, a failed required reread or readback, or a claim-changing
-**Accessed — no relevant evidence** row. In those cases add the `open`
-attribute. Put a blank line after `</summary>` and before `</details>` so
-the table still parses as GFM.
+Include attempted failures, partial or truncated reads, unconfigured or
+declined roles, Partial or Insufficient coverage, and failed post-write
+readbacks as limits. Include **accessed with no relevant evidence** as a
+limit only when that empty result is why a claim is omitted, qualified, or
+an absence claim is made. Complete, non-truncated **accessed with evidence**
+discovery does not get a "so" clause.
 
-The table reports actual access, not intended retrieval, claim provenance,
-or action success.
+When a **Pre-write target or destination reread** or **Post-write
+verification readback** ran, say so in the paragraph. A failed or missing
+required reread or readback is a limit. Keep those two operations as
+separate clauses even when they share a source. Do not add a mini-table.
+For a response combining an action with a review or non-mode context
+request, distinguish action access from review discovery or context
+discovery in the same paragraph. Do not use a Phase column.
 
-<details>
-<summary>Full source receipt</summary>
+The paragraph reports actual access, not intended retrieval, claim
+provenance, or action success. Example:
 
-| Source or role | Result | Scope or window | Effect on claim categories |
-| --- | --- | --- | --- |
-| [generic source family or canonical role] | [exact access result] | [bounded safe scope] | [claim categories supported or limited] |
-
-</details>
-
-Use only these exact results: **Accessed — evidence found**, **Accessed — no
-relevant evidence**, **Attempted — unavailable or failed**, **Not configured**,
-**Declined**, and **Not needed**. For a response combining an action with either
-a review or non-mode context request, add a first **Phase** column. Label action
-rows **Action access**; label discovery rows **Review discovery** for a review
-request or **Context discovery** for a non-mode context request. Do not add the
-Phase column to other responses.
+```text
+Coverage is partial because the mailbox read was attempted and failed, so
+there are no reply-commitment claims from this window. Calendar was accessed
+with evidence for the current day.
+```
 
 Keep source labels generic and role-based. Bound every scope or window, marking
 a returned slice partial when needed and coarsening precision when it could
 identify sensitive activity. Do not expose people, projects, counterparties,
 private configured names, account identifiers, source URLs, note or event
 titles, sensitive event types, content excerpts, credentials, raw queries, or
-tool telemetry. Use separate safe rows for mixed bounded slices whose results
+tool telemetry. Name mixed bounded slices separately when their results
 differ. Include every source in the relevant-source set, but do not enumerate
-irrelevant connectors. Each relevant discovery role appears once as a table
-row unless mixed bounded slices of that role have different results or safe
-scopes, in which case those slices stay separate rows. Pre-write reread and
-post-write readback stay separate rows even when they share a source. The
-capsule may name a role that also has a table row.
+irrelevant connectors. Each relevant discovery role appears once unless mixed
+bounded slices of that role have different results or safe scopes, in which
+case those slices stay separate. Pre-write reread and post-write readback stay
+separate even when they share a source.
 
-In the effect column, name the category of claim the result supports, narrows,
-or prevents. Do not imply complete coverage from a partial scope and do not use
-an access result as evidence that an external action succeeded. Mention a
-source limitation again in prose only where it changes a material conclusion.
+Name the category of claim a result supports, narrows, or prevents only when
+that result limits a claim. Do not imply complete coverage from a partial
+scope and do not use an access result as evidence that an external action
+succeeded. Mention a source limitation again in later prose only where it
+changes a material conclusion.
 
-For action access, make the access purpose independently recoverable in the
-scope cell. Use one row for the **Pre-write target or destination reread** and,
-when performed, a separate row for the **Post-write verification readback**.
-Never combine those rows because their source, scope, or result happens to
-match, and never add a row for the mutation itself. In a combined table, those
-reread and readback rows stay **Action access** under the unchanged Phase
-column.
+For action access, make the access purpose independently recoverable. Name the
+**Pre-write target or destination reread** and, when performed, the
+**Post-write verification readback** as separate operations. Never combine
+them because their source, scope, or result happens to match, and never treat
+the mutation itself as an access result. In a combined paragraph, keep those
+operations as action access, distinct from later discovery.
 
 For each material claim:
 

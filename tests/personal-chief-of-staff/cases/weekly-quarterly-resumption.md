@@ -69,20 +69,19 @@ rendered response and JSONL trace. Remove the temporary directory afterward.
       approvable, and writes nothing merely because a scheduled invocation
       fired.
 - [ ] Scenarios 1 and 2 render a new response-scoped Source Access Audit after
-      the executive synthesis. Capsule lines sit after the heading and before
-      the first `<details>`. The recovered table is inside HTML details. It
-      distinguishes reads performed for this current review from historical
-      evidence described by an older review and never presents prior-run
-      access as current.
+      the executive synthesis. The audit is a short paragraph. HTML details
+      fail. It distinguishes reads performed for this current review from
+      historical evidence described by an older review and never presents
+      prior-run access as current.
 - [ ] On any same-conversation resumption, stable evidence retained from the
       prior turn supports a claim only when labeled nearby as **prior-turn
       evidence — not refreshed**. It is excluded from the current Source Access
       Audit unless reread, and the authoritative source is reread whenever
       current truth matters.
 - [ ] Scenario 2 names incomplete journal coverage and each other material
-      source-role gap in the capsule with the conclusion category it limits.
-      Details has `open`. An unavailable role narrows only dependent
-      conclusions and is not evidence that an event did not occur.
+      source-role gap in the audit paragraph with a "so" clause. An
+      unavailable role narrows only dependent conclusions and is not evidence
+      that an event did not occur.
 - [ ] Every proposed weekly or quarterly outcome makes current state,
       user-owned desired outcome, and future observable closure evidence
       recoverable as distinct response spans without mandatory literal labels.

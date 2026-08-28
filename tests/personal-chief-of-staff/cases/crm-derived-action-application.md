@@ -84,12 +84,10 @@ temporary directory after its run.
       generic mutation path or another destination.
 - [ ] Every action-only response keeps the chief-of-staff action result
       separate from its response-scoped Source Access Audit. The audit has no
-      review coverage verdict. Capsule lines sit after the heading and before
-      the first `<details>`, with compact Pre-write and Post-write lines
-      when those reads ran. Distinct table rows name only the canonical roles
-      actually reread or verified now. The recovered table is inside HTML
-      details. The audit never treats a successful read as an applied
-      mutation, and never treats
+      review coverage verdict. The paragraph names only the canonical roles
+      actually reread or verified now, as separate pre-write and post-write
+      operations when those reads ran. HTML details fail. The audit never
+      treats a successful read as an applied mutation, and never treats
       `Manual`, `Already satisfied`, `Failed`, or `Indeterminate` as an access
       state.
 - [ ] Each applied or already-satisfied durable effect leaves a gradeable

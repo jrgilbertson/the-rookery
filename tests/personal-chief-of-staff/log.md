@@ -6,6 +6,8 @@ Branch-time `git rev` values below are preserved by PR #19 even if the
 branch is squash-merged; the archive pointer's mainline commit stays
 directly reachable.
 
+- 2026-08-28 | 4f2a82f (working tree) | leftover pre-push and skills-ref | pass | `lefthook run pre-push --force` passed. `npx skills-ref validate skills/personal-chief-of-staff` reported Valid skill.
+- 2026-08-28 | 4f2a82f (working tree) | matched check: prose-paragraph audit checklists | not run | Checklists retuned on degraded-source-coverage, approval-binding-and-revisit, proactive-longitudinal-coaching, crm-derived-action-application, weekly-quarterly-resumption, and retrieved-instruction-isolation for a short audit paragraph with ordinary-word results. Candidate and frozen-prior runs not yet recorded.
 - 2026-08-27 | 73820e6 (working tree) | leftover pre-push and skills-ref | pass | Same tree as b539545 leftover pass, plus review-followup instruction edits. `npx skills-ref validate` was not re-run after the wrap-required wording change.
 - 2026-08-27 | 73820e6 (working tree) | case: degraded-source-coverage (candidate branches 3–4) | pass (2/2 run) | Fresh Grok subagents, specimen v8c1. Branch 3 truncated relevant evidence stayed Accessed — evidence found with partial scope in capsule and table; details open. Branch 4 truncated empty was Attempted — unavailable or failed, no absence claim; details open.
 - 2026-08-27 | b539545 (working tree) | leftover pre-push and skills-ref | pass | `lefthook run pre-push --force` passed. `npx skills-ref validate skills/personal-chief-of-staff` reported Valid skill.

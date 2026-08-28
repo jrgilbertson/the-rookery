@@ -208,16 +208,12 @@ SHA, state, checks, and review status before reporting the Worker result.
 Each usable Worker consumes its own supervised-dispatch worktree setup receipt;
 no Orca parent-child lineage is required. While a configured Setup terminal is
 running, it uses the existing current-Dispatch observation and remains blocked
-from repository-dependent inspection, testing, mutation, and verification
-gates until setup succeeds. `not_configured` is an exact no-op. Failed setup
-or an unknown setup effect stops that Worker's repository-dependent dependency
-closure, names the cause and assigned slice, and leaves its paths untouched
-while disjoint safe work continues. After a successful or no-op receipt, the
-Worker runs relevant repository-documented verification commands unchanged as
-ordinary gates and reports each actual `pass`, `failure`, or `unavailable`
-result. It never installs or substitutes prerequisites, synthesizes another
-environment, or relabels a gate result as setup. Immediately before its first
-mutation the Worker runs ordinary native `git status --porcelain=v1
+from repository-dependent inspection, testing, and mutation until setup
+succeeds. `not_configured` is an exact no-op. Failed setup or an unknown setup
+effect stops that Worker's repository-dependent dependency closure, names the
+cause and assigned slice, and leaves its paths untouched while disjoint safe
+work continues. After a successful or no-op receipt, immediately before its
+first mutation the Worker runs ordinary native `git status --porcelain=v1
 --untracked-files=all` and proceeds only with no staged, unstaged, or untracked
 non-ignored paths. Dirty paths remain untouched, are named, and stop only
 dependent work.

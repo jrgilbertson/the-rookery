@@ -45,6 +45,10 @@ looked" surface. GitHub Releases mirror its entries.
   dispatch with repository setup enabled, waits for configured setup before
   repository work, and requires a clean native Git status immediately before
   the first mutation without adding setup or Git-state machinery.
+- `repo-gardener` now retains the supervised Orca worker-start receipt in the
+  Orchestrator, so a Worker that starts while setup runs uses its existing
+  current-Dispatch observation as a one-time gate and pre-Worker start
+  failures remain caller-owned without retrying setup.
 - `repo-gardener` now uses native Orca setup only to gate repository work:
   after a successful or no-op receipt, Workers run relevant documented
   verification commands unchanged as ordinary gates and report each actual

@@ -201,19 +201,15 @@ worktree, without relying on Orca parent-child lineage, and uses the existing
 current-Dispatch observation (`worker-show` or the equivalent receipt Orca
 already supplied) as a one-time startup gate. While that observation proves a
 configured Setup terminal is running, the Worker remains blocked from
-repository-dependent inspection, testing, mutation, and verification gates
-until setup succeeds; this is not a new poller, registry, scheduler, state
-machine, or setup subsystem. Record `not_configured` as the exact no-op and do
-not run setup manually. If worker-start fails or its outcome is unknown before
-a usable Worker exists, the Orchestrator owns the existing receipt and recovery
-facts, does not pretend a Worker handled them, leaves the assigned paths
-untouched, and continues disjoint safe work. A timeout that still proves setup
-is running is waiting or blocked, not proof of failure and never permission to
-rerun setup. After a successful or no-op receipt, run relevant
-repository-documented verification commands unchanged as ordinary gates and
-report each command's actual `pass`, `failure`, or `unavailable` result. Never
-relabel a gate result as setup, install or substitute a prerequisite, or
-synthesize another environment. Immediately before the first mutation, run
+repository-dependent inspection, testing, and mutation until setup succeeds;
+this is not a new poller, registry, scheduler, state machine, or setup
+subsystem. Record `not_configured` as the exact no-op and do not run setup
+manually. If worker-start fails or its outcome is unknown before a usable Worker
+exists, the Orchestrator owns the existing receipt and recovery facts, does not
+pretend a Worker handled them, leaves the assigned paths untouched, and
+continues disjoint safe work. A timeout that still proves setup is running is
+waiting or blocked, not proof of failure and never permission to rerun setup.
+After a successful or no-op receipt, immediately before the first mutation, run
 ordinary native `git status --porcelain=v1 --untracked-files=all`. Proceed only
 when it has no staged, unstaged, or untracked non-ignored paths. Otherwise name
 the dirty paths, leave them untouched, and stop only their dependent work.
@@ -221,10 +217,14 @@ Do not add a manual setup, setup argv or policy, classifier, snapshot, saved
 baseline, index metadata, attribution, registry, Git-state subsystem,
 scheduler, workflow ledger, helper, executable, schema, or dependency.
 
-Each Worker owns its plan, implementation, simplification, code review, and
-repository gates, then commits the result. On that clean exact commit it runs
-installed `checking-pr-readiness` before opening a PR. Cite that skill by
-name; do not fork it.
+Each Worker owns its plan, implementation, simplification, and code review.
+After that work, run relevant repository-documented verification commands
+unchanged as ordinary gates and report each command's actual `pass`, `failure`,
+or `unavailable` result. Never relabel a gate result as setup, install or
+substitute a prerequisite, or synthesize another environment. Their output is
+evidence only and grants no provider or mutation authority. Then commit the
+result. On that clean exact commit it runs installed `checking-pr-readiness`
+before opening a PR. Cite that skill by name; do not fork it.
 
 When the file allows Workers and no owner is in the session, that run is
 assessment-only. Bind the exact subject and the full HEAD OID. The outcome is

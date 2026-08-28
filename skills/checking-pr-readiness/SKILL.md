@@ -61,10 +61,15 @@ each word; **bypassed** always records the owner's reason.
 Report the branch's full working surface before any other check, because that
 surface is what the finishing path will stage and what the owner is approving.
 Run [scripts/surface-report.sh](scripts/surface-report.sh) when it is present
-and executable — it also carries step 6's size check, so pass the cap values
-resolved per [references/sweep-classes.md](references/sweep-classes.md) class
-11 for every configured automated reviewer and read both results from one run,
-statuses per the reference's helper exit map. When discovery proves no
+and executable — it also carries step 6's size check. Resolve each configured
+automated reviewer's identity and authoritative cap lookup at the exact head,
+then run one capped report for each known cap so one reviewer cannot hide
+another's excess. Record the reviewer, source, and lookup outcome in the
+existing class-11 evidence. A resolved identity with a successful authoritative
+`no cap` lookup is process-only `cap unverified` evidence, not a cap or a
+successful review; failed reads, authentication or permission failures,
+incomplete results, and unresolved identities fail closed as those actual
+failures. When discovery proves no
 automated reviewer is configured, run without `--cap` for inventory and record
 class 11 as `not applicable` rather than treating the helper's `cap unverified`
 line as a gap. Always produce the surface report on this run (omit `--defer` even
@@ -212,10 +217,12 @@ classes in the order listed there, then surface findings in that same order.
 Mechanical classes run through the bundled helpers:
 
 - [scripts/surface-report.sh](scripts/surface-report.sh) for diff size (class
-  11): one `--cap <reviewer>=<n>` per configured reviewer, values resolved in
-  the reference. With no configured automated reviewer, pass no cap and record
-  the class as `not applicable`; a configured reviewer without a
-  repository-resolved cap remains fail-closed.
+  11): one separate `--cap <reviewer>=<n>` invocation for every known,
+  authoritative reviewer cap. With no configured automated reviewer, pass no
+  cap and record the class as `not applicable`; a resolved reviewer whose
+  authoritative lookup succeeds with `no cap` is process-only `cap unverified`
+  evidence, while a lookup/read failure or unresolved identity remains a named
+  fail-closed failure.
 - [scripts/evidence-freshness.sh](scripts/evidence-freshness.sh) for stale
   records and plan-named artifacts (classes 4 and 2 support).
 - [scripts/changelog-union.sh](scripts/changelog-union.sh) for branch

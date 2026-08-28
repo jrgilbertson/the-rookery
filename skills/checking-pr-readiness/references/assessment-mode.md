@@ -186,11 +186,16 @@ The chain contains:
 7. learning-signal receipt;
 8. targeted-sweep receipt carrying one verdict from each current class's
    enumerated set; class 11 is `not applicable` when repository discovery
-   proves that no automated reviewer is configured. Every configured automated
-   reviewer must use a repository-resolved cap for a pass, so `cap unverified`
-   remains a gap for that reviewer. Discover reviewer identities and caps from
-   repository workflow, app, gate, or review-tool configuration; the
-   repository-gates evidence document cannot attest its own discovery;
+   proves that no automated reviewer is configured. Resolve every configured
+   reviewer independently from repository workflow, app, gate, or review-tool
+   configuration, and run every known authoritative cap independently. Exact-
+   head evidence for a successful authoritative `no cap` lookup names the
+   resolved reviewer, source, and lookup outcome in the existing unresolved
+   inventory; it is process-only `cap unverified` evidence and cannot satisfy
+   required review. A failed or incomplete lookup, unresolved identity,
+   unmeasurable surface, or unknown effect is a named fail-closed gap, not
+   no-cap evidence. The repository-gates evidence document cannot attest its
+   own discovery;
 9. preflight receipt confirming this exact chain converged with no unresolved
    finding or bypass.
 

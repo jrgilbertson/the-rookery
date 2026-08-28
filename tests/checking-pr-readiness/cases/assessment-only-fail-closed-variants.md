@@ -10,8 +10,11 @@ Provenance: Observed failure where stale, cross-boundary, partial, and bypassed 
 > receipt for another subject; plan receipt for another revision; unresolved
 > receipt reference; staged-only dirt; renamed branch; detached and ambiguous
 > live subjects; unresolved targeted-sweep finding; and preflight bypass request.
-> Also distinguish no configured automated reviewer from a configured reviewer
-> whose cap cannot be resolved. Include self-asserted repository-gate,
+> Also distinguish no configured automated reviewer, known under-cap and
+> over-cap reviewers, a resolved reviewer with a successful authoritative
+> no-cap lookup, an unresolved reviewer identity, and failed or incomplete
+> cap lookups. Verify that a no-cap reviewer cannot hide another reviewer that
+> exceeds its known cap. Include self-asserted repository-gate,
 > code-review, and testing documents that omit producer, scope, executable
 > command, outcome, or inspectable result references. Also include a null
 > receipt element, duplicate receipt kinds, a receipt with a non-string kind,
@@ -37,7 +40,8 @@ Provenance: Observed failure where stale, cross-boundary, partial, and bypassed 
 - [ ] Narrative completion and owner attestation are not upgraded to exact-revision evidence.
 - [ ] The variants remain independent; a gap or receipt from one is not carried into another.
 - [ ] No variant writes to the checkout, presents an owner menu, stages, commits, pushes, or opens a pull request.
-- [ ] Class 11 is `not applicable` only when discovery proves no automated reviewer is configured; a configured reviewer without a repository-resolved cap fails closed.
+- [ ] Class 11 is `not applicable` only when discovery proves no automated reviewer is configured. Each known cap is evaluated independently, a no-cap lookup cannot hide an exceeded cap, and only a resolved identity plus a successful authoritative no-cap lookup is process-only `cap unverified` evidence that names the reviewer, source, and lookup outcome.
+- [ ] Unresolved identities and failed, incomplete, unreadable, or otherwise unknown cap lookups remain named fail-closed gaps rather than successful no-cap evidence.
 - [ ] Name-only tests, zero-finding review assertions, and owner/status-only gate tuples fail their exact per-kind evidence schemas.
 - [ ] Null receipt elements, duplicate or invalid receipt kinds, invalid evidence paths, and invalid assessment references return normal `action-required` receipts with their exact structural gaps.
 - [ ] Outside-tree transport is accepted only when its complete evidence and

@@ -523,6 +523,9 @@ for needle in \
   'exact Worker branch' \
   'authorized base ref' \
   'exact base commit OID' \
+  'authorized_base_ref' \
+  'authorized_base_oid' \
+  'returned assessment tuple' \
   'current head repository exactly matches the authorized head repository' \
   'Worker branch exactly matches the exact Worker branch' \
   'same head repository still matches the authorized head repository' \
@@ -584,15 +587,16 @@ if [ -f "$AGENT_CASE" ] && grep -Fq 'default-host substitution is rejected' "$AG
   && grep -Fq 'protected-path policy' "$AGENT_CASE" \
   && grep -Fq 'revision and complete set change without head movement' "$AGENT_CASE" \
   && grep -Fq 'retargets to a different base ref and exact base commit OID without moving the' "$AGENT_CASE" \
+  && grep -Fq 'exact authorized base ref and base commit OID' "$AGENT_CASE" \
   && grep -Fq 'head repository is a fork' "$AGENT_CASE" \
   && grep -Fq 'Worker branch differs' "$AGENT_CASE" \
   && grep -Fq 'OPEN/non-draft/unmerged state' "$AGENT_CASE" \
   && grep -Fq 'exact affected and proposed' "$AGENT_CASE" \
   && grep -Fq 'unverifiable-intent cap and never prompts' "$AGENT_CASE" \
   && grep -Fq 'cannot pass that initial or final subject comparison' "$AGENT_CASE"; then
-  pass "agent mode: behavioral case covers host, state, policy, base, paths, and intent negatives"
+  pass "agent mode: behavioral case covers host, state, policy, returned base, paths, and intent negatives"
 else
-  fail "agent mode: behavioral case covers host, state, policy, base, paths, and intent negatives" "agent-mode case omitted a required agent-mode negative"
+  fail "agent mode: behavioral case covers host, state, policy, returned base, paths, and intent negatives" "agent-mode case omitted a required agent-mode negative"
 fi
 agent_case_has_full_oid() {
   python3 - "$1" "$(git -C "$REPO_ROOT" rev-parse --show-object-format)" <<'PY'
@@ -756,6 +760,8 @@ PY
   done
 done
 for guard in \
+  'authorized_base_ref' \
+  'authorized_base_oid' \
   'require it to be OPEN, non-draft, and unmerged' \
   'fail-closed unverifiable-intent cap' \
   'exact affected and proposed repair paths' \
@@ -777,7 +783,7 @@ if not count:
     raise SystemExit(1)
 open(path, "w").write(text)
 PY
-  if ! guard_has_all "$GUARD_COPY_DIR/candidate.md" 'require it to be OPEN, non-draft, and unmerged' 'fail-closed unverifiable-intent cap' 'exact affected and proposed repair paths' 'current head repository exactly matches the authorized head repository' 'Worker branch exactly matches the exact Worker branch' 'same head repository still matches the authorized head repository' 'same Worker branch still matches the exact Worker branch'; then
+  if ! guard_has_all "$GUARD_COPY_DIR/candidate.md" 'authorized_base_ref' 'authorized_base_oid' 'require it to be OPEN, non-draft, and unmerged' 'fail-closed unverifiable-intent cap' 'exact affected and proposed repair paths' 'current head repository exactly matches the authorized head repository' 'Worker branch exactly matches the exact Worker branch' 'same head repository still matches the authorized head repository' 'same Worker branch still matches the exact Worker branch'; then
     pass "agent falsification: missing $guard is rejected"
   else
     fail "agent falsification: missing $guard is rejected" "removed agent guard still passed"
@@ -807,6 +813,30 @@ PY
     fail "head-ref caller falsification: missing $guard in $(basename "$source") is rejected" "removed caller head-ref tuple still passed"
   fi
   done
+done
+for source in "$GARDENER_SKILL" "$RECONCILIATION"; do
+  if guard_has_all "$source" 'base tuple to match both the authorized subject and the returned assessment tuple' 'grants no repair authority'; then
+    pass "post-return base contract: $(basename "$source") compares both base tuples before authority"
+  else
+    fail "post-return base contract: $(basename "$source") compares both base tuples before authority" "missing post-return base comparison"
+  fi
+  cp "$source" "$GUARD_COPY_DIR/candidate.md"
+  python3 - "$GUARD_COPY_DIR/candidate.md" <<'PY'
+import re
+import sys
+
+path = sys.argv[1]
+text = open(path).read()
+text, count = re.subn(r"returned assessment\s+tuple", "REMOVED", text, count=1)
+if not count:
+    raise SystemExit(1)
+open(path, "w").write(text)
+PY
+  if ! grep -Fq 'returned assessment tuple' "$GUARD_COPY_DIR/candidate.md"; then
+    pass "post-return base falsification: missing comparison in $(basename "$source") is rejected"
+  else
+    fail "post-return base falsification: missing comparison in $(basename "$source") is rejected" "removed post-return base comparison still passed"
+  fi
 done
 rm -rf "$GUARD_COPY_DIR"
 

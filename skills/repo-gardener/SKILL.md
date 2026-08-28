@@ -252,7 +252,11 @@ claim. It, setup, and Scout helpers execute no declared audit.
    change stops every Worker's remaining source mutation, push, PR-open, and
    declared audit work; a changed path authorization denies the affected batch.
    A material actionable in-slice finding returns to the owning Worker in a
-   repair batch with every safe, actionable, in-slice finding the LLM judges
+   repair batch only after it freshly reads the native pull request and requires
+   its live base tuple to match both the authorized subject and the returned
+   assessment tuple; an unavailable or mismatched identity is `UNKNOWN` and
+   grants no repair authority. The batch contains every safe, actionable,
+   in-slice finding the LLM judges
    mutually compatible. If otherwise eligible findings conflict or are mutually
    incompatible, do not force them into one commit or silently discard either:
    return their exact finding identities and paths to the Orchestrator, and

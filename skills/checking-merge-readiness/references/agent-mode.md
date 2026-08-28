@@ -56,6 +56,8 @@ Return one structured result with these fields:
   "repository": "host/owner/name",
   "pull_request_number": 0,
   "head_oid": "full object ID",
+  "authorized_base_ref": "exact authorized base ref",
+  "authorized_base_oid": "exact authorized base commit OID",
   "protected_path_policy": {
     "identity": "certified policy identity",
     "revision": "exact policy revision",
@@ -69,8 +71,11 @@ Return one structured result with these fields:
 }
 ```
 
-Every finding names its stable fingerprint, evidence, classification, and the
-exact head. Every actionable in-slice finding also names its exact affected and
+The returned authorized base ref and OID are the exact returned assessment
+tuple the subject validated and the final snapshot compared, so a consumer can
+freshly compare the live pull request before those findings grant repair
+authority. Every finding names its stable fingerprint, evidence, classification, and the exact
+head. Every actionable in-slice finding also names its exact affected and
 proposed repair paths. `process_only_findings` records conditions such as missing human
 approval or incomplete review history; it never requests source work.
 `material_findings` names proven diff, test, intent, or durable-record

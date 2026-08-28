@@ -423,7 +423,11 @@ material finding the LLM judges mutually compatible. If otherwise
 eligible findings conflict or are mutually incompatible, do not force them
 into one commit or silently discard either: return their exact finding
 identities and paths to the Orchestrator, and stop the affected repair until a
-new bounded decision is available. The Worker repeats simplification, code
+new bounded decision is available. Before those findings grant repair authority,
+freshly read the native pull request and require its live base tuple to match
+both the authorized subject and the returned assessment tuple; an unavailable
+or mismatched identity is `UNKNOWN` and grants no repair authority. The Worker
+repeats simplification, code
 review, repository gates, and commit on H-prime. The Orchestrator post-reads
 H-prime, repeats slice and protected-path validation, and grants a new
 exact-head authorization before the Worker updates the existing PR. Post-read the remote head and fresh

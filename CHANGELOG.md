@@ -41,6 +41,9 @@ looked" surface. GitHub Releases mirror its entries.
   cumulative diff. It also binds the authorized head repository and exact
   Worker branch at both boundaries, so a same-OID/same-base fork or branch
   cannot contribute another PR's description, issue linkage, or review history.
+  Its structured result now carries the exact validated base tuple, and each
+  post-return repair consumer freshly compares the live PR base to both that
+  returned tuple and its authorized subject before granting repair authority.
 - `repo-gardener` now supervises Workers from current native branch, HEAD,
   process, PR, check, and result facts. TUI idle is only a scheduling hint;
   bounded no-progress analysis becomes a local stall, head drift refreshes

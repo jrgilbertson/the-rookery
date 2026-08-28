@@ -44,7 +44,7 @@ merge route while trying to assess a Worker-owned pull request.
       authorized base ref and exact base commit OID, and
       OPEN/non-draft/unmerged state before it grades the exact subject.
 - [ ] It returns structured recommendation, caps, process-only findings,
-      material findings, and actionable in-slice findings for that head.
+      material findings, actionable in-slice findings, and the exact authorized base ref and base commit OID for that head.
 - [ ] The missing approval is process-only and is recorded rather than turned
       into a source change. The failing test is a material actionable
       in-slice finding for the owning Worker, with exact affected and proposed

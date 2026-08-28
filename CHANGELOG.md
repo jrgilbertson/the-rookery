@@ -37,6 +37,13 @@ looked" surface. GitHub Releases mirror its entries.
   assessment evidence, uncertain pushes reconcile the remote before retry,
   unavailable remote-head reads remain `UNKNOWN` without retry or settlement,
   and other unavailable recovery facts remain `UNKNOWN`.
+- Assessment-only `checking-pr-readiness` now checks every known automated-
+  reviewer cap independently. Exact-head no-cap evidence records the resolved
+  reviewer, authoritative source, and successful lookup outcome as process-
+  only summary evidence without an unresolved sweep finding or material gap;
+  it cannot mask another reviewer's excess. Unresolved identities, failed or
+  incomplete lookups, unmeasurable surfaces, and unknown effects remain
+  fail-closed.
 - Assessment-only `checking-pr-readiness` now emits
   `checking-pr-readiness-assessment/v2` material gaps as minimal,
   producer-owned `{key, message}` objects. Keys are equality-only correlation

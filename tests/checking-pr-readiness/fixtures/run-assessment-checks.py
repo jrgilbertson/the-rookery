@@ -46,6 +46,7 @@ EXPECTED_CHANGED_PATHS = {
     *(f"evidence/{kind}.json" for kind in SPEC["required_receipts"]),
     *(f"results/{kind}.json" for kind in SPEC["required_receipts"]),
 }
+REVIEWER_CONFIG_PATH = ".github/automated-reviewers.json"
 VERIFIED_COMMANDS = {
     "repository-gates": ("fixture-validation.py", "gate"),
     "code-review": ("fixture-validation.py", "review"),
@@ -107,7 +108,7 @@ EVIDENCE_RESULT_FIELDS = {
     "testing": {"result_id", "name", "command", "outcome", "exit_code"},
     "plan-versus-delivered": {"result_id", "outcome", "delivered"},
     "learning-signal": {"result_id", "outcome", "summary"},
-    "targeted-sweep": {"result_id", "outcome", "class_count"},
+    "targeted-sweep": {"result_id", "outcome", "class_count", "summary"},
     "preflight": {"result_id", "outcome", "unresolved_count"},
 }
 RECEIPT_FIELDS = {
@@ -280,14 +281,13 @@ def git_env(timestamp: str) -> dict[str, str]:
 def evidence_documents(
     reviewer_mode: str = "configured", reviewer_name: str = "fixture-reviewer"
 ) -> dict[str, dict[str, Any]]:
-    if reviewer_mode == "configured":
-        class_11 = "under caps"
-    elif reviewer_mode == "none":
-        class_11 = "not applicable"
-    elif reviewer_mode in {"missing-cap", "invalid-shape"}:
-        class_11 = "cap unverified"
-    else:
-        raise FixtureError(f"unknown reviewer mode: {reviewer_mode}")
+    reviewers = reviewer_records(reviewer_mode, reviewer_name)
+    if not isinstance(reviewers, list):
+        reviewers = []
+    class_11, unresolved, process_only_evidence = reviewer_sweep_evidence(
+        reviewers,
+        len(EXPECTED_CHANGED_PATHS),
+    )
     sweep_verdicts = {**BASE_SWEEP_VERDICTS, "11": class_11}
     def evidence(
         kind: str,
@@ -401,9 +401,14 @@ def evidence_documents(
         "targeted-sweep": evidence(
             "targeted-sweep",
             "targeted-sweep",
-            [{"result_id": "sweep:summary", "outcome": "clear", "class_count": 11}],
+            [{
+                "result_id": "sweep:summary",
+                "outcome": "clear" if not unresolved else "finding",
+                "class_count": 11,
+                "summary": targeted_sweep_summary(process_only_evidence),
+            }],
             verdicts=sweep_verdicts,
-            unresolved=[] if reviewer_mode != "missing-cap" else [f"automated reviewer cap unresolved: {reviewer_name}"],
+            unresolved=unresolved,
         ),
         "preflight": evidence(
             "preflight",
@@ -438,15 +443,7 @@ def build_repository(
     (path / "src" / "app.txt").write_text("ready\n", encoding="utf-8")
     (path / "CHANGELOG.md").write_text("# Changelog\n\n- Prepared synthetic assessment.\n", encoding="utf-8")
     (path / "fixture-validation.py").write_bytes(validator_source)
-    if reviewer_mode == "configured":
-        reviewer_configuration_document = {"automated_reviewers": [{"name": reviewer_name, "cap": SPEC["reviewer_cap"]}]}
-    elif reviewer_mode == "none":
-        reviewer_configuration_document = {"automated_reviewers": []}
-    elif reviewer_mode == "missing-cap":
-        reviewer_configuration_document = {"automated_reviewers": [{"name": reviewer_name}]}
-    else:
-        reviewer_configuration_document = {"automated_reviewers": {}}
-    write_json(path / ".github" / "automated-reviewers.json", reviewer_configuration_document)
+    write_json(path / REVIEWER_CONFIG_PATH, {"automated_reviewers": reviewer_records(reviewer_mode, reviewer_name)})
     write_json(path / ".github" / "repository-gates.json", {"gates": REPOSITORY_GATES})
     documents = evidence_documents(reviewer_mode, reviewer_name)
     if pre_result_mutator is not None:
@@ -626,7 +623,7 @@ def resolve_live_repository(repo: Path) -> tuple[str | None, list[str]]:
 
 
 def reviewer_configuration(repo: Path, revision: str) -> list[dict[str, Any]]:
-    _, content = evidence_blob(repo, revision, ".github/automated-reviewers.json")
+    _, content = evidence_blob(repo, revision, REVIEWER_CONFIG_PATH)
     document = json.loads(content)
     reviewers = document.get("automated_reviewers")
     if not isinstance(reviewers, list):
@@ -634,36 +631,126 @@ def reviewer_configuration(repo: Path, revision: str) -> list[dict[str, Any]]:
     return reviewers
 
 
-def validate_surface(repo: Path, reviewers: list[dict[str, Any]]) -> tuple[list[dict[str, str]], set[str]]:
-    command = [str(SURFACE), "--full", "--base", "main"]
-    missing_caps: list[str] = []
+def reviewer_records(reviewer_mode: str, reviewer_name: str) -> Any:
+    if reviewer_mode == "configured":
+        return [{"name": reviewer_name, "cap": SPEC["reviewer_cap"]}]
+    if reviewer_mode == "none":
+        return []
+    if reviewer_mode == "no-cap":
+        return [{"name": "no-cap-reviewer", "cap": None}]
+    if reviewer_mode == "over-and-no-cap":
+        return [
+            {"name": "over-cap-reviewer", "cap": 0},
+            {"name": "no-cap-reviewer", "cap": None},
+        ]
+    if reviewer_mode == "missing-cap":
+        return [{"name": reviewer_name}]
+    if reviewer_mode == "unresolved-identity":
+        return [{"cap": SPEC["reviewer_cap"]}]
+    if reviewer_mode == "failed-lookup":
+        return [{"name": "failed-lookup-reviewer", "cap": "invalid"}]
+    if reviewer_mode == "invalid-shape":
+        return {}
+    raise FixtureError(f"unknown reviewer mode: {reviewer_mode}")
+
+
+def reviewer_cap_lookups(
+    reviewers: list[dict[str, Any]],
+) -> tuple[list[tuple[str, int]], list[str], list[str]]:
+    """Resolve one exact-head reviewer lookup without treating failures as no-cap."""
+    known_caps: list[tuple[str, int]] = []
+    no_cap_evidence: list[str] = []
+    lookup_failures: list[str] = []
+    seen_names: set[str] = set()
     for reviewer in reviewers:
         name = reviewer.get("name") if isinstance(reviewer, dict) else None
-        cap = reviewer.get("cap") if isinstance(reviewer, dict) else None
-        if not isinstance(name, str) or not name:
-            missing_caps.append("automated reviewer identity unresolved")
-        elif not isinstance(cap, int) or cap < 0:
-            missing_caps.append(f"automated reviewer cap unresolved: {name}")
+        if not isinstance(name, str) or not name.strip():
+            lookup_failures.append("automated reviewer identity unresolved")
+            continue
+        if name in seen_names:
+            lookup_failures.append(
+                f"automated reviewer cap lookup failed: {name} (source: {REVIEWER_CONFIG_PATH}; lookup: ambiguous)"
+            )
+            continue
+        seen_names.add(name)
+        if "cap" not in reviewer:
+            lookup_failures.append(
+                f"automated reviewer cap lookup failed: {name} (source: {REVIEWER_CONFIG_PATH}; lookup: incomplete)"
+            )
+        elif reviewer["cap"] is None:
+            no_cap_evidence.append(
+                f"automated reviewer cap unverified: {name} (source: {REVIEWER_CONFIG_PATH}; lookup: no cap)"
+            )
+        elif type(reviewer["cap"]) is int and reviewer["cap"] >= 0:
+            known_caps.append((name, reviewer["cap"]))
         else:
-            command.extend(["--cap", f"{name}={cap}"])
-    completed = subprocess.run(
-        command,
+            lookup_failures.append(
+                f"automated reviewer cap lookup failed: {name} (source: {REVIEWER_CONFIG_PATH}; lookup: invalid)"
+            )
+    return known_caps, no_cap_evidence, lookup_failures
+
+
+def targeted_sweep_summary(process_only_evidence: list[str]) -> str:
+    if not process_only_evidence:
+        return "no process-only reviewer-cap evidence"
+    return "process-only reviewer-cap evidence: " + "; ".join(process_only_evidence)
+
+
+def reviewer_sweep_evidence(
+    reviewers: list[dict[str, Any]], surface_count: int
+) -> tuple[str, list[str], list[str]]:
+    known_caps, no_cap_evidence, lookup_failures = reviewer_cap_lookups(reviewers)
+    exceeded = [name for name, cap in known_caps if surface_count > cap]
+    if not reviewers:
+        class_11 = "not applicable"
+    elif exceeded:
+        class_11 = f"exceeds cap for {exceeded[0]}"
+    elif no_cap_evidence or lookup_failures:
+        class_11 = "cap unverified"
+    else:
+        class_11 = "under caps"
+    return (
+        class_11,
+        [*(f"exceeds cap for {name}" for name in exceeded), *lookup_failures],
+        no_cap_evidence,
+    )
+
+
+def validate_surface(repo: Path, reviewers: list[dict[str, Any]]) -> tuple[list[dict[str, str]], set[str]]:
+    inventory = subprocess.run(
+        [str(SURFACE), "--full", "--base", "main"],
         cwd=repo,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
     )
-    output = completed.stdout
-    gaps = []
-    if missing_caps:
+    output = inventory.stdout
+    known_caps, _, lookup_failures = reviewer_cap_lookups(reviewers)
+    gaps: list[dict[str, str]] = []
+    if lookup_failures:
         gaps.append(material_gap(
             "obligation.reviewer-capability",
-            "; ".join(missing_caps),
+            "; ".join(lookup_failures),
         ))
     changed = set(run("git", "diff", "--name-only", "main...HEAD", cwd=repo).splitlines())
-    expected_verdict = "under caps" if reviewers and not missing_caps else "cap unverified"
-    if completed.returncode != 0 or not output.startswith(f"verdict: {expected_verdict}\n"):
+    if inventory.returncode != 0 or not output.startswith("verdict: cap unverified\n"):
         gaps.append(material_gap("obligation.surface-helper-verdict", "working surface helper returned an unexpected verdict"))
+    for name, cap in known_caps:
+        completed = subprocess.run(
+            [str(SURFACE), "--full", "--base", "main", "--cap", f"{name}={cap}"],
+            cwd=repo,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+        )
+        expected_verdict = f"exceeds cap for {name}" if len(changed) > cap else "under caps"
+        if completed.returncode != 0 or not completed.stdout.startswith(f"verdict: {expected_verdict}\n"):
+            gaps.append(material_gap(
+                "obligation.surface-helper-verdict",
+                f"working surface helper returned an unexpected verdict for {name}",
+            ))
+        elif len(changed) > cap:
+            gaps.append(material_gap("obligation.reviewer-cap-excess", expected_verdict))
     output_lines = output.splitlines()
     if changed != EXPECTED_CHANGED_PATHS or output_lines.count(f"committed: {len(changed)}") != 1:
         gaps.append(material_gap("obligation.surface-inventory", "working surface inventory mismatch"))
@@ -1053,16 +1140,20 @@ def validate_evidence_document(
         if not bounded_text(document.get("signal")) or len(results) != 1 or not bounded_text(results[0].get("summary")):
             gaps.append(material_gap("obligation.learning-signal-evidence", "learning-signal evidence incomplete"))
     elif kind == "targeted-sweep":
-        expected_class_11 = "not applicable" if not reviewers else "under caps"
+        expected_class_11, expected_unresolved, process_only_evidence = reviewer_sweep_evidence(
+            reviewers,
+            len(surface_paths),
+        )
         expected_verdicts = {**BASE_SWEEP_VERDICTS, "11": expected_class_11}
         unresolved = document.get("unresolved")
         if (
             document.get("verdicts") != expected_verdicts
             or not isinstance(unresolved, list)
-            or unresolved
+            or unresolved != expected_unresolved
             or len(results) != 1
-            or results[0].get("outcome") != "clear"
+            or results[0].get("outcome") != ("clear" if not expected_unresolved else "finding")
             or results[0].get("class_count") != 11
+            or results[0].get("summary") != targeted_sweep_summary(process_only_evidence)
         ):
             gaps.append(material_gap("obligation.targeted-sweep-evidence", "pre-PR review checks incomplete"))
     elif kind == "preflight":
@@ -1396,6 +1487,8 @@ def validate_contract_sources() -> None:
     for source, phrase in (
         (sweep_words, "no automated reviewer is configured"),
         (sweep_words, "not applicable"),
+        (sweep_words, "successful authoritative `no cap` lookup"),
+        (assessment_words, "resolved reviewer, source, and lookup outcome"),
         (skill_words, "configured automated reviewer"),
     ):
         require(phrase in source, f"automated-reviewer class contract missing: {phrase}")
@@ -1566,8 +1659,8 @@ def run_suite() -> None:
         second_missing_cap_result = evaluate(
             second_missing_cap, make_bundle(second_missing_cap, second_missing_cap_revision)
         )
-        first_cap_gaps = [gap for gap in first_missing_cap_result["gaps"] if "cap unresolved" in gap["message"]]
-        second_cap_gaps = [gap for gap in second_missing_cap_result["gaps"] if "cap unresolved" in gap["message"]]
+        first_cap_gaps = [gap for gap in first_missing_cap_result["gaps"] if "cap lookup failed" in gap["message"]]
+        second_cap_gaps = [gap for gap in second_missing_cap_result["gaps"] if "cap lookup failed" in gap["message"]]
         require(
             len(first_cap_gaps) == len(second_cap_gaps) == 1
             and first_cap_gaps[0]["key"] == second_cap_gaps[0]["key"]
@@ -1800,12 +1893,90 @@ def run_suite() -> None:
         no_reviewer_result = evaluate(no_reviewer, make_bundle(no_reviewer, no_reviewer_revision))
         require(no_reviewer_result["outcome"] == "pass", f"no-reviewer class 11 was not applicable: {no_reviewer_result['gaps']}")
 
+        under_cap = root / "under-cap-reviewer"
+        under_cap_revision = build_repository(under_cap, "configured", "under-cap-reviewer")
+        under_cap_result = evaluate(under_cap, make_bundle(under_cap, under_cap_revision))
+        require(
+            under_cap_result["outcome"] == "pass",
+            f"a known under-cap reviewer did not pass independently: {under_cap_result['gaps']}",
+        )
+
+        no_cap = root / "resolved-no-cap"
+        no_cap_revision = build_repository(no_cap, "no-cap")
+        no_cap_result = evaluate(no_cap, make_bundle(no_cap, no_cap_revision))
+        require(
+            no_cap_result["outcome"] == "pass" and no_cap_result["gaps"] == [],
+            "a resolved reviewer with an authoritative no-cap result did not remain process-only evidence",
+        )
+        _, no_cap_evidence = evidence_blob(no_cap, no_cap_revision, "evidence/targeted-sweep.json")
+        _, no_cap_summary = evidence_blob(no_cap, no_cap_revision, "results/targeted-sweep.json")
+        no_cap_summary_result = json.loads(no_cap_summary)["results"][0]
+        require(
+            json.loads(no_cap_evidence)["unresolved"] == []
+            and json.loads(no_cap_evidence)["verdicts"]["11"] == "cap unverified"
+            and no_cap_summary_result["outcome"] == "clear"
+            and "automated reviewer cap unverified: no-cap-reviewer (source: .github/automated-reviewers.json; lookup: no cap)" in no_cap_summary_result["summary"],
+            "exact-head no-cap evidence did not remain clear process-only evidence naming the reviewer, source, and lookup outcome",
+        )
+
+        over_and_no_cap = root / "over-and-no-cap"
+        over_and_no_cap_revision = build_repository(over_and_no_cap, "over-and-no-cap")
+        over_and_no_cap_result = evaluate(
+            over_and_no_cap,
+            make_bundle(over_and_no_cap, over_and_no_cap_revision),
+        )
+        over_and_no_cap_messages = gap_messages(over_and_no_cap_result)
+        _, over_and_no_cap_evidence = evidence_blob(
+            over_and_no_cap,
+            over_and_no_cap_revision,
+            "evidence/targeted-sweep.json",
+        )
+        _, over_and_no_cap_summary = evidence_blob(
+            over_and_no_cap,
+            over_and_no_cap_revision,
+            "results/targeted-sweep.json",
+        )
+        over_and_no_cap_summary_result = json.loads(over_and_no_cap_summary)["results"][0]
+        require(
+            "exceeds cap for over-cap-reviewer" in over_and_no_cap_messages
+            and "automated reviewer cap unverified: no-cap-reviewer (source: .github/automated-reviewers.json; lookup: no cap)" not in over_and_no_cap_messages
+            and json.loads(over_and_no_cap_evidence)["unresolved"] == ["exceeds cap for over-cap-reviewer"]
+            and over_and_no_cap_summary_result["outcome"] == "finding"
+            and "automated reviewer cap unverified: no-cap-reviewer (source: .github/automated-reviewers.json; lookup: no cap)" in over_and_no_cap_summary_result["summary"],
+            "a no-cap reviewer did not remain process-only while an independently exceeded known cap blocked readiness",
+        )
+
+        unresolved_identity = root / "unresolved-reviewer-identity"
+        unresolved_identity_revision = build_repository(unresolved_identity, "unresolved-identity")
+        unresolved_identity_result = evaluate(
+            unresolved_identity,
+            make_bundle(unresolved_identity, unresolved_identity_revision),
+        )
+        require(
+            unresolved_identity_result["outcome"] == "action-required"
+            and "automated reviewer identity unresolved" in gap_messages(unresolved_identity_result),
+            "an unresolved reviewer identity was treated as a successful no-cap lookup",
+        )
+
+        failed_lookup = root / "failed-reviewer-cap-lookup"
+        failed_lookup_revision = build_repository(failed_lookup, "failed-lookup")
+        failed_lookup_result = evaluate(
+            failed_lookup,
+            make_bundle(failed_lookup, failed_lookup_revision),
+        )
+        require(
+            failed_lookup_result["outcome"] == "action-required"
+            and "automated reviewer cap lookup failed: failed-lookup-reviewer (source: .github/automated-reviewers.json; lookup: invalid)" in gap_messages(failed_lookup_result),
+            "a failed reviewer-cap lookup was treated as a successful no-cap lookup",
+        )
+
         missing_cap = root / "missing-cap"
         missing_cap_revision = build_repository(missing_cap, "missing-cap")
         missing_cap_result = evaluate(missing_cap, make_bundle(missing_cap, missing_cap_revision))
         require(
-            "automated reviewer cap unresolved: fixture-reviewer" in gap_messages(missing_cap_result),
-            "configured reviewer without a repository-resolved cap did not fail closed",
+            missing_cap_result["outcome"] == "action-required"
+            and "automated reviewer cap lookup failed: fixture-reviewer (source: .github/automated-reviewers.json; lookup: incomplete)" in gap_messages(missing_cap_result),
+            "an incomplete reviewer-cap lookup did not fail closed",
         )
 
         invalid_reviewer_shape = root / "invalid-reviewer-shape"
@@ -1981,7 +2152,7 @@ def run_suite() -> None:
             )
         print("PASS: assessment receipts bind one deterministic exact subject and revision")
         print("PASS: versioned bundle resolution, staged-only dirt, and live-subject mutations fail closed")
-        print("PASS: absent reviewer is not applicable; configured reviewer without a cap fails closed")
+        print("PASS: absent reviewer is not applicable; successful no-cap evidence is process-only, while failed cap lookups fail closed")
         print("PASS: command-backed evidence reruns exact allowlisted commands from isolated exact-revision inputs")
         print("PASS: documented no-top-level inline packaging passes; missing, altered, old-revision, same-head cross-Worker, and mixed bundles fail closed")
 

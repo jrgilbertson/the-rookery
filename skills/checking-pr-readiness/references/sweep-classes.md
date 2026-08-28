@@ -137,29 +137,35 @@ Verdicts: enforced / prose-only invariant found / not applicable.
 The diff touches more files than an automated reviewer will read, so that
 reviewer skips the pull request or truncates its review.
 
-Check by running `scripts/surface-report.sh --cap <reviewer>=<n>` with one
-`--cap` per automated reviewer configured on the host repository, and read the
-verdict line directly; the helper compares the counts itself.
+Resolve each configured reviewer's identity and authoritative cap lookup at the
+exact head. Run `scripts/surface-report.sh --cap <reviewer>=<n>` separately for
+each known cap, and read each verdict line directly; the helper compares the
+counts itself. Do not combine reviewer caps into one result: a reviewer with no
+cap must not hide an exceeded known cap for another reviewer.
 
 First establish whether any automated reviewer is configured from repository
 gate, workflow, app, or review-tool configuration. When no automated reviewer
 is configured, class 11 is explicitly `not applicable`: run the surface helper
 without caps for the full inventory required by step 1, but do not reinterpret
 its mechanical `cap unverified` line as a class-11 gap. Absence of a reviewer is
-not evidence of an unknown cap. Once a reviewer is configured, absence of its
-repository-resolved cap fails closed as `cap unverified`; never fabricate a cap
-to make the class applicable.
+not evidence of an unknown cap. Once a reviewer is configured, only a resolved
+identity plus a successful authoritative `no cap` lookup may remain process-
+only `cap unverified` evidence; never fabricate a cap to make the class
+applicable.
 
 Cap values are repository-specific, never universal: each reviewer's limit
 comes from its configuration in the host repository or from the plan the
 repository runs it on, so resolve the applicable value at run time — the
 reviewer's config file in the repository, or its vendor documentation for the
-plan in use. A finding names the affected reviewer and where its cap value came
-from. The helper itself reports `cap unverified` when no cap was supplied, and
-when the committed category could not be measured, because a cap cannot be
-called met against a count that is unknown. Report it by judgment for the same
-reason when a configured reviewer's applicable cap cannot be confirmed at run
-time.
+plan in use. A resolved reviewer identity plus a successful authoritative
+`no cap` lookup is the only process-only `cap unverified` evidence; name that
+reviewer, source, and lookup outcome in the existing targeted-sweep result
+summary. It does not add an unresolved finding or material gap. Transport,
+authentication, permission, parsing, incomplete-result, or other lookup/read
+failures, unresolved identities, and an unmeasurable surface fail closed as
+those actual failures. The helper itself reports `cap unverified`
+when no cap was supplied, and when the committed category could not be
+measured, because a cap cannot be called met against a count that is unknown.
 
 Verdicts: under caps / `exceeds cap for <reviewer>` / cap unverified /
 no changes on surface / covered by repo gate / not run / not applicable.

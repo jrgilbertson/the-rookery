@@ -13,11 +13,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
-- `personal-chief-of-staff` Source Access Audits now lead with coverage and
-  claim-changing limits, then keep today's role-by-role table in the same
-  response. Routine successful discovery stays in the table. Failures,
-  truncated reads, unconfigured or declined roles, and failed readbacks stay
-  visible without opening anything. HTML disclosure tags are not used.
+- `personal-chief-of-staff` Source Access Audits now lead with a visible
+  capsule of coverage and claim-changing limits. Today's role-by-role table
+  stays in the same response inside HTML details, closed unless a failure,
+  truncated or partial read, unconfigured or declined role, Partial or
+  Insufficient coverage, or failed readback must auto-expand. Routine
+  successful discovery stays in the table.
 - Interactive `checking-merge-readiness` option 1 (Proceed to merge) now
   kicks off one forge merge after the existing fingerprint and host-policy
   re-check, using the repository's default merge method. A cold "merge this

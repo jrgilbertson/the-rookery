@@ -171,12 +171,17 @@ claim. It, setup, and Scout helpers execute no declared audit.
    Keep the commit as `saved_without_pr` and name the gap when that skill is
    absent, the bundle is missing, or the Worker does not complete the
    exact-subject and full-OID double-check. On `action-required`, preserve the
-   exact assessment and classify every named finding. The owning Worker fixes
-   every safe, actionable, in-slice finding in one repair batch, then repeats
-   simplification, code review, repository gates, and the exact-head
-   assessment on its new committed head. Keys are producer-owned equality-only
-   correlation evidence: use LLM judgment over the prior and current keyed
+   exact assessment and classify every named finding. The owning Worker batches
+   together every safe, actionable, in-slice finding that the LLM judges
+   mutually compatible, then repeats simplification, code review, repository
+   gates, and the exact-head assessment on its new committed head. Keys are
+   producer-owned equality-only correlation evidence: use LLM judgment over
+   the prior and current keyed
    findings, exact diff, Worker repair explanation, and fresh verification.
+   If otherwise eligible findings conflict or are mutually incompatible, do not
+   force them into one commit or silently discard either: return their exact
+   finding identities and paths to the Orchestrator, and stop the affected
+   repair until a new bounded decision is available.
    A repeated key may receive another bounded cycle only when that evidence
    shows concrete attributable material progress; an empty or irrelevant diff,
    materially unchanged evidence, regression, safety or authority conflict,
@@ -230,9 +235,13 @@ claim. It, setup, and Scout helpers execute no declared audit.
     unavailable, actionability is `UNKNOWN`. The report-only result names
     recommendation, caps, process-only findings, material findings, and
     actionable in-slice findings; it never presents an owner choice or merge
-    path. A material
-    actionable in-slice finding returns to the owning Worker as one repair
-    batch. That Worker repeats simplification, code review, repository gates,
+   path. A material actionable in-slice finding returns to the owning Worker in
+   a repair batch with every safe, actionable, in-slice finding the LLM judges
+   mutually compatible. If otherwise eligible findings conflict or are mutually
+   incompatible, do not force them into one commit or silently discard either:
+   return their exact finding identities and paths to the Orchestrator, and
+   stop the affected repair until a new bounded decision is available. That
+   Worker repeats simplification, code review, repository gates,
     and commits H-prime; the Orchestrator post-reads H-prime, repeats the slice
     and protected-path checks, and grants a new exact-head authorization before
     the Worker updates the existing PR. Then post-read the remote head and

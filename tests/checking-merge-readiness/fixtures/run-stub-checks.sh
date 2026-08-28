@@ -564,6 +564,43 @@ if [ -f "$AGENT_CASE" ] && grep -Fq 'review state changes without head movement'
 else
   fail "agent mode: behavioral case covers protected policy and review-only movement" "agent-mode case omitted a new subject or final-stability behavior"
 fi
+agent_case_has_full_oid() {
+  python3 - "$1" "$(git -C "$REPO_ROOT" rev-parse --show-object-format)" <<'PY'
+import re
+import sys
+
+text = open(sys.argv[1]).read()
+length = {"sha1": 40, "sha256": 64}.get(sys.argv[2])
+matches = re.findall(r"current full head OID\s*\n> `([0-9a-fA-F]+)`", text)
+raise SystemExit(0 if length and len(matches) == 1 and len(matches[0]) == length else 1)
+PY
+}
+if [ -f "$AGENT_CASE" ] && agent_case_has_full_oid "$AGENT_CASE"; then
+  pass "agent mode: behavioral case binds a full repository-format OID"
+else
+  fail "agent mode: behavioral case binds a full repository-format OID" "agent-mode case omitted a full repository-format OID"
+fi
+AGENT_CASE_COPY_DIR=$(mktemp -d)
+AGENT_CASE_COPY="$AGENT_CASE_COPY_DIR/agent-mode-never-merges.md"
+cp "$AGENT_CASE" "$AGENT_CASE_COPY"
+python3 - "$AGENT_CASE_COPY" <<'PY'
+import re
+import sys
+
+path = sys.argv[1]
+text = open(path).read()
+match = re.search(r"current full head OID\s*\n> `([0-9a-fA-F]+)`", text)
+if not match:
+    raise SystemExit(1)
+text = text[:match.start(1)] + match.group(1)[:-1] + text[match.end(1):]
+open(path, "w").write(text)
+PY
+if ! agent_case_has_full_oid "$AGENT_CASE_COPY"; then
+  pass "agent mode: shortened OID mutation fails"
+else
+  fail "agent mode: shortened OID mutation fails" "shortened OID was accepted"
+fi
+rm -rf "$AGENT_CASE_COPY_DIR"
 
 echo "== J. Worker delivery exactness =="
 GARDENER_SKILL="$REPO_ROOT/skills/repo-gardener/SKILL.md"

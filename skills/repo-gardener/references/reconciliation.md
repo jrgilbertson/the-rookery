@@ -304,9 +304,13 @@ remains.
 `pass` may open a PR. Do not open the PR when `checking-pr-readiness` is
 absent, the bundle is missing, or the Worker does not complete the
 exact-subject and full-OID double-check. On `action-required`, classify the
-exact-head named findings. The owning Worker applies every safe actionable
-in-slice finding in one repair batch, repeats simplification, code review,
-repository gates, commit, and exact-head assessment, then reassesses.
+exact-head named findings. The owning Worker batches together every safe,
+actionable, in-slice finding that the LLM judges mutually compatible, then
+repeats simplification, code review, repository gates, commit, and exact-head
+assessment. If otherwise eligible findings conflict or are mutually
+incompatible, do not force them into one commit or silently discard either:
+return their exact finding identities and paths to the Orchestrator, and stop
+the affected repair until a new bounded decision is available, then reassess.
 Keys are producer-owned equality-only correlation evidence. Use LLM judgment
 over the prior and current keyed findings, exact diff, Worker repair explanation,
 and fresh verification: a repeated key may start another bounded cycle only
@@ -400,11 +404,15 @@ structured report contains recommendation, caps, process-only findings,
 material findings, and actionable in-slice findings, and has no owner choice
 or merge route.
 
-Return every safe actionable in-slice material finding to the owning Worker as
-one repair batch. The Worker repeats simplification, code review, repository
-gates, and commit on H-prime. The Orchestrator post-reads H-prime, repeats
-slice and protected-path validation, and grants a new exact-head authorization
-before the Worker updates the existing PR. Post-read the remote head and fresh
+Return to the owning Worker one repair batch containing every safe actionable
+in-slice material finding the LLM judges mutually compatible. If otherwise
+eligible findings conflict or are mutually incompatible, do not force them
+into one commit or silently discard either: return their exact finding
+identities and paths to the Orchestrator, and stop the affected repair until a
+new bounded decision is available. The Worker repeats simplification, code
+review, repository gates, and commit on H-prime. The Orchestrator post-reads
+H-prime, repeats slice and protected-path validation, and grants a new
+exact-head authorization before the Worker updates the existing PR. Post-read the remote head and fresh
 checks before another agent assessment. Keys remain equality-only correlation
 evidence: use LLM judgment over prior/current keyed findings, exact diff, repair
 explanation, and fresh verification. A repeated key may continue only when that

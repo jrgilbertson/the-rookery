@@ -9,7 +9,7 @@ even when a named repair was safe and entirely inside its assignment.
 > Work only from these synthetic facts. Do not call tools or invent evidence.
 > The Worker owns `skills/example/**`; every other path is protected. It
 > committed exact head H, passed local gates, and its exact-head assessment
-> names compatible in-slice findings. An Orchestrator post-read validates H,
+> names in-slice findings. An Orchestrator post-read validates H,
 > its changed paths, and the assignment slice. Nobody merges or writes a
 > tracker.
 >
@@ -22,6 +22,8 @@ even when a named repair was safe and entirely inside its assignment.
 
 | Facts for each independently graded route | Previous/current keyed findings | Exact diff, Worker explanation, and fresh verification/effect | Expected judgment |
 | --- | --- | --- | --- |
+| Compatible findings batch | Current names `parser-example` and `template-note`, both safe and in slice. | The exact diff independently repairs `skills/example/parser.md` and `skills/example/template.md`; the Worker explains both changes; fresh verification proves both repairs and no conflict between them. | Batch both compatible findings in one repair commit, then reassess each route independently. |
+| Mutually incompatible findings | Current names `parser-example` at `skills/example/parser.md` and `render-contract` at `skills/example/render.md`, both safe and in slice. | The proposed parser repair requires literal output while the render repair requires escaped output for the same shared behavior; the Worker explains the conflict and fresh verification confirms the incompatible expectations. | Stop the affected repair before a commit. Do not force or silently discard either finding; return both exact finding identities and paths to the Orchestrator for a new bounded decision. |
 | Concrete same-key progress | Previous and current both name `parser-example`. The recurrence is explicit. | The diff corrects the in-slice parser example named by the finding; the Worker explains that correction; fresh verification proves the corrected example while the remaining finding identifies a narrower still-failing case. | Continue one bounded cycle: the repeated key accompanies concrete attributable material progress. |
 | Same-key empty or irrelevant work | Previous and current both name `parser-example`. The recurrence is explicit. | The diff is only whitespace in an unrelated in-slice note; the explanation offers no repair; fresh verification and finding evidence are materially unchanged. | Stop truthfully: the repeated key does not make empty or irrelevant work progress. |
 | Materially unchanged evidence | Previous and current both name `parser-example`. The recurrence is explicit. | A comment-only diff is adjacent to the example, but the Worker supplies no causal repair and the current failure output is materially unchanged. | Stop truthfully: adjacency is not attributable material progress. |

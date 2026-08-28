@@ -9,7 +9,7 @@ merge route while trying to assess a Worker-owned pull request.
 > Work only from these synthetic facts. Do not call tools or invent evidence.
 > An Orchestrator requests `checking-merge-readiness mode:agent` for repository
 > `mapleworks/orderline`, pull request number `412`, and current full head OID
-> `a91e4f0a91e4f0a91e4f0a91e4f0a91e4f0`. The exact pull request still has that
+> `39a271f3bee0497cf268ccf9fcb4d6597c80bb63`. The exact pull request still has that
 > head. The assessment finds one missing required human approval and one named
 > failing test within the Worker's assigned slice. Nobody has authority to
 > merge, select an owner option, create a tracker record, or create another

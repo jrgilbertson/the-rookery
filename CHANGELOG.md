@@ -26,6 +26,10 @@ looked" surface. GitHub Releases mirror its entries.
   pushed state without a retry. Agent-mode actionability now binds the complete
   protected-path policy identity and revision, preserves the certified full
   host/owner/name identity, and rechecks its gathered snapshot before return.
+  Repair batches now include only mutually compatible safe findings; conflicting
+  findings return their identities and paths for a new bounded decision rather
+  than being forced together or discarded. The agent-mode behavioral fixture
+  now binds a repository-format full OID and rejects a shortened one.
   Repeated readiness-gap keys are now equality-only correlation evidence, so
   another bounded repair cycle requires LLM judgment of keyed findings, exact
   diff, repair explanation, and fresh verification rather than key recurrence;

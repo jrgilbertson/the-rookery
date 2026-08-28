@@ -37,8 +37,8 @@ second setup or Git-state subsystem.
 >    observation (`worker-show`, or Orca's equivalent supplied receipt) keeps
 >    showing setup running before A's repository-dependent planning read,
 >    focused test, or proposed edit.
-> 6. Evaluate two independent attempted Worker A starts: worker-start fails
->    before a usable Worker exists, or it times out while the
+> 6. Evaluate two independent attempted Worker A starts, both before a usable
+>    Worker exists: worker-start fails, or it times out while the
 >    Orchestrator-owned receipt still proves Setup running. Worker B has the
 >    clean `not_configured` receipt from subcase 2 and remains disjoint.
 

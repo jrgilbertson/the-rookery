@@ -238,7 +238,8 @@ claim. It, setup, and Scout helpers execute no declared audit.
     `pending`, and close the run as `partial`; never claim `pr_ready` or
     `completed`. After a Worker reaches `pr_ready`, run installed
     `checking-merge-readiness mode:agent` against the exact repository, PR,
-    current head, the same authorized base ref and exact base commit OID,
+    current head, the same authorized head repository and exact Worker branch,
+    authorized base ref and exact base commit OID,
     Worker slice, and the applicable protected-path policy identity, revision,
     and complete set. If either binding is unavailable, actionability is
     `UNKNOWN`. Before invocation, verify that the installed capability exposes

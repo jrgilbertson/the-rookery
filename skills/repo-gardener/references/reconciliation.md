@@ -404,8 +404,9 @@ state, and Worker state.
 
 After a Worker reaches `pr_ready`, the Orchestrator runs installed
 `checking-merge-readiness mode:agent` against the exact repository, PR,
-current head, the same authorized base ref and exact base commit OID, Worker
-slice, and the applicable protected-path policy identity, revision, and
+current head, the same authorized head repository and exact Worker branch,
+authorized base ref and exact base commit OID, Worker slice, and the applicable
+protected-path policy identity, revision, and
 complete set. When either binding is unavailable, actionability is `UNKNOWN`.
 Before invocation, verify that the installed capability exposes the report-only
 `mode:agent` route; otherwise name the compatibility gap and stop. Cite that

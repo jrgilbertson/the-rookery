@@ -38,7 +38,9 @@ looked" surface. GitHub Releases mirror its entries.
   Its report-only agent subject now also binds the authorized base ref and
   exact base commit OID at both initial validation and final comparison, so a
   head-preserving retarget remains `UNKNOWN` rather than grading a different
-  cumulative diff.
+  cumulative diff. It also binds the authorized head repository and exact
+  Worker branch at both boundaries, so a same-OID/same-base fork or branch
+  cannot contribute another PR's description, issue linkage, or review history.
 - `repo-gardener` now supervises Workers from current native branch, HEAD,
   process, PR, check, and result facts. TUI idle is only a scheduling hint;
   bounded no-progress analysis becomes a local stall, head drift refreshes

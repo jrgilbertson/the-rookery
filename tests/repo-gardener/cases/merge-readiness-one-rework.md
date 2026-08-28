@@ -64,8 +64,10 @@ even when a named repair was safe and entirely inside its assignment.
       Orchestrator verifies the report-only route exists. A present but
       incompatible installation is a named compatibility gap and stops rather
       than entering an interactive route.
-- [ ] That agent-mode subject carries the same authorized base ref and exact
-      base commit OID as the delivery tuple. A synthetic PR retarget to a
-      different base ref or OID without a head move is `UNKNOWN` at initial
-      validation or final comparison; neither repo-gardener caller may omit the
-      supplied base tuple.
+- [ ] That agent-mode subject carries the same authorized head repository and
+      exact Worker branch plus the authorized base ref and exact base commit OID
+      as the delivery tuple. Synthetic OPEN PR evidence with the same head OID
+      and base tuple but a forked head repository or different Worker branch,
+      as well as a base retarget without a head move, is `UNKNOWN` at initial
+      validation or final comparison; neither repo-gardener caller may omit a
+      supplied head-ref or base tuple.

@@ -67,9 +67,10 @@ then run one capped report for each known cap so one reviewer cannot hide
 another's excess. Record the reviewer, source, and lookup outcome in the
 existing class-11 evidence. A resolved identity with a successful authoritative
 `no cap` lookup is process-only `cap unverified` evidence, not a cap or a
-successful review; failed reads, authentication or permission failures,
-incomplete results, and unresolved identities fail closed as those actual
-failures. When discovery proves no
+successful review. Record it in the targeted-sweep result summary, not as an
+unresolved finding or material gap; failed reads, authentication or permission
+failures, incomplete results, and unresolved identities fail closed as those
+actual failures. When discovery proves no
 automated reviewer is configured, run without `--cap` for inventory and record
 class 11 as `not applicable` rather than treating the helper's `cap unverified`
 line as a gap. Always produce the surface report on this run (omit `--defer` even

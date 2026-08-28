@@ -15,8 +15,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 - Assessment-only `checking-pr-readiness` now checks every known automated-
   reviewer cap independently. Exact-head no-cap evidence records the resolved
-  reviewer, authoritative source, and successful lookup outcome without
-  masking another reviewer's excess; unresolved identities, failed or
+  reviewer, authoritative source, and successful lookup outcome as process-
+  only summary evidence without an unresolved sweep finding or material gap;
+  it cannot mask another reviewer's excess. Unresolved identities, failed or
   incomplete lookups, unmeasurable surfaces, and unknown effects remain
   fail-closed.
 - Assessment-only `checking-pr-readiness` now emits

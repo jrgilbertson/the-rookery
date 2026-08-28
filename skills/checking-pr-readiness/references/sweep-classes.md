@@ -148,9 +148,10 @@ gate, workflow, app, or review-tool configuration. When no automated reviewer
 is configured, class 11 is explicitly `not applicable`: run the surface helper
 without caps for the full inventory required by step 1, but do not reinterpret
 its mechanical `cap unverified` line as a class-11 gap. Absence of a reviewer is
-not evidence of an unknown cap. Once a reviewer is configured, absence of its
-repository-resolved cap fails closed as `cap unverified`; never fabricate a cap
-to make the class applicable.
+not evidence of an unknown cap. Once a reviewer is configured, only a resolved
+identity plus a successful authoritative `no cap` lookup may remain process-
+only `cap unverified` evidence; never fabricate a cap to make the class
+applicable.
 
 Cap values are repository-specific, never universal: each reviewer's limit
 comes from its configuration in the host repository or from the plan the
@@ -158,10 +159,11 @@ repository runs it on, so resolve the applicable value at run time — the
 reviewer's config file in the repository, or its vendor documentation for the
 plan in use. A resolved reviewer identity plus a successful authoritative
 `no cap` lookup is the only process-only `cap unverified` evidence; name that
-reviewer, source, and lookup outcome in the existing unresolved inventory.
-Transport, authentication, permission, parsing, incomplete-result, or other
-lookup/read failures, unresolved identities, and an unmeasurable surface fail
-closed as those actual failures. The helper itself reports `cap unverified`
+reviewer, source, and lookup outcome in the existing targeted-sweep result
+summary. It does not add an unresolved finding or material gap. Transport,
+authentication, permission, parsing, incomplete-result, or other lookup/read
+failures, unresolved identities, and an unmeasurable surface fail closed as
+those actual failures. The helper itself reports `cap unverified`
 when no cap was supplied, and when the committed category could not be
 measured, because a cap cannot be called met against a count that is unknown.
 

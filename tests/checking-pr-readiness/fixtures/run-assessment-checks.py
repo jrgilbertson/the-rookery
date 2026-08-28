@@ -108,7 +108,7 @@ EVIDENCE_RESULT_FIELDS = {
     "testing": {"result_id", "name", "command", "outcome", "exit_code"},
     "plan-versus-delivered": {"result_id", "outcome", "delivered"},
     "learning-signal": {"result_id", "outcome", "summary"},
-    "targeted-sweep": {"result_id", "outcome", "class_count"},
+    "targeted-sweep": {"result_id", "outcome", "class_count", "summary"},
     "preflight": {"result_id", "outcome", "unresolved_count"},
 }
 RECEIPT_FIELDS = {
@@ -284,7 +284,10 @@ def evidence_documents(
     reviewers = reviewer_records(reviewer_mode, reviewer_name)
     if not isinstance(reviewers, list):
         reviewers = []
-    class_11, unresolved = reviewer_sweep_evidence(reviewers, len(EXPECTED_CHANGED_PATHS))
+    class_11, unresolved, process_only_evidence = reviewer_sweep_evidence(
+        reviewers,
+        len(EXPECTED_CHANGED_PATHS),
+    )
     sweep_verdicts = {**BASE_SWEEP_VERDICTS, "11": class_11}
     def evidence(
         kind: str,
@@ -402,6 +405,7 @@ def evidence_documents(
                 "result_id": "sweep:summary",
                 "outcome": "clear" if not unresolved else "finding",
                 "class_count": 11,
+                "summary": targeted_sweep_summary(process_only_evidence),
             }],
             verdicts=sweep_verdicts,
             unresolved=unresolved,
@@ -686,7 +690,15 @@ def reviewer_cap_lookups(
     return known_caps, no_cap_evidence, lookup_failures
 
 
-def reviewer_sweep_evidence(reviewers: list[dict[str, Any]], surface_count: int) -> tuple[str, list[str]]:
+def targeted_sweep_summary(process_only_evidence: list[str]) -> str:
+    if not process_only_evidence:
+        return "no process-only reviewer-cap evidence"
+    return "process-only reviewer-cap evidence: " + "; ".join(process_only_evidence)
+
+
+def reviewer_sweep_evidence(
+    reviewers: list[dict[str, Any]], surface_count: int
+) -> tuple[str, list[str], list[str]]:
     known_caps, no_cap_evidence, lookup_failures = reviewer_cap_lookups(reviewers)
     exceeded = [name for name, cap in known_caps if surface_count > cap]
     if not reviewers:
@@ -697,7 +709,11 @@ def reviewer_sweep_evidence(reviewers: list[dict[str, Any]], surface_count: int)
         class_11 = "cap unverified"
     else:
         class_11 = "under caps"
-    return class_11, [*(f"exceeds cap for {name}" for name in exceeded), *no_cap_evidence, *lookup_failures]
+    return (
+        class_11,
+        [*(f"exceeds cap for {name}" for name in exceeded), *lookup_failures],
+        no_cap_evidence,
+    )
 
 
 def validate_surface(repo: Path, reviewers: list[dict[str, Any]]) -> tuple[list[dict[str, str]], set[str]]:
@@ -709,12 +725,12 @@ def validate_surface(repo: Path, reviewers: list[dict[str, Any]]) -> tuple[list[
         text=True,
     )
     output = inventory.stdout
-    known_caps, no_cap_evidence, lookup_failures = reviewer_cap_lookups(reviewers)
+    known_caps, _, lookup_failures = reviewer_cap_lookups(reviewers)
     gaps: list[dict[str, str]] = []
-    if no_cap_evidence or lookup_failures:
+    if lookup_failures:
         gaps.append(material_gap(
             "obligation.reviewer-capability",
-            "; ".join([*no_cap_evidence, *lookup_failures]),
+            "; ".join(lookup_failures),
         ))
     changed = set(run("git", "diff", "--name-only", "main...HEAD", cwd=repo).splitlines())
     if inventory.returncode != 0 or not output.startswith("verdict: cap unverified\n"):
@@ -1124,7 +1140,10 @@ def validate_evidence_document(
         if not bounded_text(document.get("signal")) or len(results) != 1 or not bounded_text(results[0].get("summary")):
             gaps.append(material_gap("obligation.learning-signal-evidence", "learning-signal evidence incomplete"))
     elif kind == "targeted-sweep":
-        expected_class_11, expected_unresolved = reviewer_sweep_evidence(reviewers, len(surface_paths))
+        expected_class_11, expected_unresolved, process_only_evidence = reviewer_sweep_evidence(
+            reviewers,
+            len(surface_paths),
+        )
         expected_verdicts = {**BASE_SWEEP_VERDICTS, "11": expected_class_11}
         unresolved = document.get("unresolved")
         if (
@@ -1134,6 +1153,7 @@ def validate_evidence_document(
             or len(results) != 1
             or results[0].get("outcome") != ("clear" if not expected_unresolved else "finding")
             or results[0].get("class_count") != 11
+            or results[0].get("summary") != targeted_sweep_summary(process_only_evidence)
         ):
             gaps.append(material_gap("obligation.targeted-sweep-evidence", "pre-PR review checks incomplete"))
     elif kind == "preflight":
@@ -1885,16 +1905,18 @@ def run_suite() -> None:
         no_cap_revision = build_repository(no_cap, "no-cap")
         no_cap_result = evaluate(no_cap, make_bundle(no_cap, no_cap_revision))
         require(
-            no_cap_result["outcome"] == "action-required"
-            and "automated reviewer cap unverified: no-cap-reviewer (source: .github/automated-reviewers.json; lookup: no cap)" in gap_messages(no_cap_result),
-            "a resolved reviewer with an authoritative no-cap result was not recorded as process-only cap-unverified evidence",
+            no_cap_result["outcome"] == "pass" and no_cap_result["gaps"] == [],
+            "a resolved reviewer with an authoritative no-cap result did not remain process-only evidence",
         )
         _, no_cap_evidence = evidence_blob(no_cap, no_cap_revision, "evidence/targeted-sweep.json")
+        _, no_cap_summary = evidence_blob(no_cap, no_cap_revision, "results/targeted-sweep.json")
+        no_cap_summary_result = json.loads(no_cap_summary)["results"][0]
         require(
-            json.loads(no_cap_evidence)["unresolved"] == [
-                "automated reviewer cap unverified: no-cap-reviewer (source: .github/automated-reviewers.json; lookup: no cap)"
-            ],
-            "exact-head no-cap evidence did not name the reviewer, source, and lookup outcome",
+            json.loads(no_cap_evidence)["unresolved"] == []
+            and json.loads(no_cap_evidence)["verdicts"]["11"] == "cap unverified"
+            and no_cap_summary_result["outcome"] == "clear"
+            and "automated reviewer cap unverified: no-cap-reviewer (source: .github/automated-reviewers.json; lookup: no cap)" in no_cap_summary_result["summary"],
+            "exact-head no-cap evidence did not remain clear process-only evidence naming the reviewer, source, and lookup outcome",
         )
 
         over_and_no_cap = root / "over-and-no-cap"
@@ -1904,10 +1926,24 @@ def run_suite() -> None:
             make_bundle(over_and_no_cap, over_and_no_cap_revision),
         )
         over_and_no_cap_messages = gap_messages(over_and_no_cap_result)
+        _, over_and_no_cap_evidence = evidence_blob(
+            over_and_no_cap,
+            over_and_no_cap_revision,
+            "evidence/targeted-sweep.json",
+        )
+        _, over_and_no_cap_summary = evidence_blob(
+            over_and_no_cap,
+            over_and_no_cap_revision,
+            "results/targeted-sweep.json",
+        )
+        over_and_no_cap_summary_result = json.loads(over_and_no_cap_summary)["results"][0]
         require(
             "exceeds cap for over-cap-reviewer" in over_and_no_cap_messages
-            and "automated reviewer cap unverified: no-cap-reviewer (source: .github/automated-reviewers.json; lookup: no cap)" in over_and_no_cap_messages,
-            "a no-cap reviewer hid an independently exceeded known reviewer cap",
+            and "automated reviewer cap unverified: no-cap-reviewer (source: .github/automated-reviewers.json; lookup: no cap)" not in over_and_no_cap_messages
+            and json.loads(over_and_no_cap_evidence)["unresolved"] == ["exceeds cap for over-cap-reviewer"]
+            and over_and_no_cap_summary_result["outcome"] == "finding"
+            and "automated reviewer cap unverified: no-cap-reviewer (source: .github/automated-reviewers.json; lookup: no cap)" in over_and_no_cap_summary_result["summary"],
+            "a no-cap reviewer did not remain process-only while an independently exceeded known cap blocked readiness",
         )
 
         unresolved_identity = root / "unresolved-reviewer-identity"
@@ -2116,7 +2152,7 @@ def run_suite() -> None:
             )
         print("PASS: assessment receipts bind one deterministic exact subject and revision")
         print("PASS: versioned bundle resolution, staged-only dirt, and live-subject mutations fail closed")
-        print("PASS: absent reviewer is not applicable; configured reviewer without a cap fails closed")
+        print("PASS: absent reviewer is not applicable; successful no-cap evidence is process-only, while failed cap lookups fail closed")
         print("PASS: command-backed evidence reruns exact allowlisted commands from isolated exact-revision inputs")
         print("PASS: documented no-top-level inline packaging passes; missing, altered, old-revision, same-head cross-Worker, and mixed bundles fail closed")
 

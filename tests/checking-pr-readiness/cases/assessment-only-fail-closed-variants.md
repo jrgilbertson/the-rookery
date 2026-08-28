@@ -41,6 +41,7 @@ Provenance: Observed failure where stale, cross-boundary, partial, and bypassed 
 - [ ] The variants remain independent; a gap or receipt from one is not carried into another.
 - [ ] No variant writes to the checkout, presents an owner menu, stages, commits, pushes, or opens a pull request.
 - [ ] Class 11 is `not applicable` only when discovery proves no automated reviewer is configured. Each known cap is evaluated independently, a no-cap lookup cannot hide an exceeded cap, and only a resolved identity plus a successful authoritative no-cap lookup is process-only `cap unverified` evidence that names the reviewer, source, and lookup outcome.
+- [ ] A no-cap-only assessment passes with no material gaps: its targeted-sweep unresolved inventory is empty, its result remains clear, and its existing result summary carries the process-only note. A mixed known-over-cap and no-cap assessment remains action-required only for the exceeded known cap.
 - [ ] Unresolved identities and failed, incomplete, unreadable, or otherwise unknown cap lookups remain named fail-closed gaps rather than successful no-cap evidence.
 - [ ] Name-only tests, zero-finding review assertions, and owner/status-only gate tuples fail their exact per-kind evidence schemas.
 - [ ] Null receipt elements, duplicate or invalid receipt kinds, invalid evidence paths, and invalid assessment references return normal `action-required` receipts with their exact structural gaps.

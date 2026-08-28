@@ -190,12 +190,12 @@ The chain contains:
    reviewer independently from repository workflow, app, gate, or review-tool
    configuration, and run every known authoritative cap independently. Exact-
    head evidence for a successful authoritative `no cap` lookup names the
-   resolved reviewer, source, and lookup outcome in the existing unresolved
-   inventory; it is process-only `cap unverified` evidence and cannot satisfy
-   required review. A failed or incomplete lookup, unresolved identity,
-   unmeasurable surface, or unknown effect is a named fail-closed gap, not
-   no-cap evidence. The repository-gates evidence document cannot attest its
-   own discovery;
+   resolved reviewer, source, and lookup outcome in the existing targeted-
+   sweep result summary. It is process-only `cap unverified` evidence, not an
+   unresolved finding or material gap, so a no-cap-only chain may converge.
+   A failed or incomplete lookup, unresolved identity, unmeasurable surface,
+   or unknown effect is a named fail-closed gap, not no-cap evidence. The
+   repository-gates evidence document cannot attest its own discovery;
 9. preflight receipt confirming this exact chain converged with no unresolved
    finding or bypass.
 

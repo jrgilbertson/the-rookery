@@ -41,6 +41,10 @@ looked" surface. GitHub Releases mirror its entries.
   and compatible no-receipt hosts proceed without waiting. They preserve their
   approved argv and record a missing package runner or nested executable
   locally while sensing and independently qualified Worker selection continue.
+- `repo-gardener` now creates each fresh Worker through supervised Orca
+  dispatch with repository setup enabled, waits for configured setup before
+  repository work, and requires a clean native Git status immediately before
+  the first mutation without adding setup or Git-state machinery.
 - `repo-gardener` list-style censuses of issues, pull requests, and alerts
   keep listing while remaining items are knowable and the count is under
   10,000, once per population, rather than stopping at a stated page bound.

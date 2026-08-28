@@ -187,12 +187,28 @@ of zero, or a protected path denies that unit. Do not invent work to fill the
 cap. An honest report with no Worker is successful operation.
 
 The Orchestrator selects a non-overlapping set of independently deliverable
-PR-sized units, then starts Workers in parallel up to `maximum_workers` (setup
+PR-sized units, then creates every fresh Worker only through supervised Orca
+dispatch with repository setup enabled once, up to `maximum_workers` (setup
 default 20). Overlap is path or scope conflict and is assigned before parallel
 start. Unrelated already-open PRs do not consume the cap. Each Worker is one
 worktree, one branch, and at most one unmerged PR. Each Worker prompt carries the opening
 policy revision, identity, scope, protected paths, lane grant, and assigned
 path slice. Helpers do not own a PR.
+
+Each Worker consumes the setup receipt for its own worktree; do not rely on
+Orca parent-child lineage. When that receipt identifies a configured Setup
+terminal, wait for successful completion before any repository-dependent
+inspection, test, or mutation. Record `not_configured` as the exact no-op and
+do not run setup manually. A failed setup or unknown setup effect stops only
+that Worker's repository-dependent dependency closure: name the cause and
+assigned slice, leave paths untouched, and continue disjoint safe work. After
+a successful or no-op receipt, immediately before the first mutation, run
+ordinary native `git status --porcelain=v1 --untracked-files=all`. Proceed only
+when it has no staged, unstaged, or untracked non-ignored paths. Otherwise
+name the dirty paths, leave them untouched, and stop only their dependent work.
+Do not add a manual setup, setup argv or policy, classifier, snapshot, saved
+baseline, index metadata, attribution, registry, Git-state subsystem,
+scheduler, workflow ledger, helper, executable, schema, or dependency.
 
 Each Worker owns its plan, implementation, simplification, code review, and
 repository gates, then commits the result. On that clean exact commit it runs

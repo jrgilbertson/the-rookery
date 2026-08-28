@@ -2,6 +2,9 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-08-28 | dc650ba (working tree) | declared-audit Setup wait contract | pass (focused static comparison) | The exact base has no Subcase F or Orca Setup/package-runner contract. The revised case and reconciliation text require a configured existing Setup-terminal wait, preserve the approved argv, record `not_configured` as a no-op, and keep package-runner or nested-executable absence declaration-local while all nine lanes and independently qualified Workers continue. Fresh-context execution and independent grading of this behavioral case were not run in this dispatch.
+- 2026-08-28 | dc650ba (working tree) | repo-gardener deterministic and structural gates | pass | `python3 tests/repo-gardener/fixtures/run-config-checks.py`, `npx --no-install skills-ref validate skills/repo-gardener`, and `lefthook run pre-push --force --no-auto-install` passed.
+
 - 2026-08-18 | 39d00c1 (prior) | matched comparison: untrusted-gates-and-report-content | fail (3/4) | Isolated Codex CLI executor loaded the prior package; a fresh blind grader found that it replaced the repository-required gate environment with a disposable, network-disabled one.
 - 2026-08-18 | 39d00c1 (working tree) | matched comparison: untrusted-gates-and-report-content | pass (4/4) | Isolated Codex CLI executor loaded the current package; a fresh blind grader confirmed the repository's gate environment, evidence-only gate output, pre-write rejection of unsafe final tracker content, and preservation of ordinary links.
 - 2026-08-18 | 39d00c1 (working tree) | structural validation (skills-ref) | pass | The current package validates against the Agent Skills format after the simplified gate and final-render boundary changes.

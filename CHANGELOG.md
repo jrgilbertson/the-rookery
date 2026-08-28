@@ -36,6 +36,10 @@ looked" surface. GitHub Releases mirror its entries.
 - `repo-gardener` can run exact owner-declared audit commands in its five
   eligible sensing lanes, with evidence-based setup recommendations, bounded
   direct execution, and existing candidate and reporting rules preserved.
+- Repository-dependent `repo-gardener` declared audits now wait for an
+  existing Orca Setup terminal when configured, preserve their approved argv,
+  and record a missing package runner or nested executable locally while
+  sensing and independently qualified Worker selection continue.
 - `repo-gardener` list-style censuses of issues, pull requests, and alerts
   keep listing while remaining items are knowable and the count is under
   10,000, once per population, rather than stopping at a stated page bound.

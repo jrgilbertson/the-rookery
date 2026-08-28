@@ -179,7 +179,7 @@ alternatives:
   question remains, and the continuity checks below pass. `Simplify before
   proceeding.` is failed until the approach is revised and checked again.
   `Decide before proceeding` is failed until the decision is resolved and the
-  resulting approach is checked again. `Cannot verify yet` remains not
+  resulting approach is checked again. `Cannot assess yet` remains not
   verified. Keep the dispatch and return uninterrupted by requirements,
   implementation, or other surface-changing work. When it returns, re-read the
   complete requirements and re-run step 1, then re-read the full committed,

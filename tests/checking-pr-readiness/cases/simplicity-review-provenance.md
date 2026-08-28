@@ -99,7 +99,7 @@ baseline verified self-review and omitted approach-level simplicity.
 > The implementer self-reviewed the approach. Inventory the upstream steps and
 > statuses, give the next action, why its timing is a backstop, and the exact fresh-review
 > dispatch, acceptance, and continuity requirements. Then explain how the gate
-> handles a matching `Cannot verify yet` result, a fresh `Decide before
+> handles a matching `Cannot assess yet` result, a fresh `Decide before
 > proceeding` result, a fresh `Simplify before proceeding` result, and a later
 > read-only `Proceed with the current approach` result when no requirement or
 > file changed. Do not run a companion check.
@@ -118,7 +118,7 @@ baseline verified self-review and omitted approach-level simplicity.
       reviewer without requiring that binding to be replayed in the human
       response.
 - [ ] Requires a fresh reviewer with no prior review or findings that shaped the
-      surface; `Cannot verify yet` stays not verified.
+      surface; `Cannot assess yet` stays not verified.
 - [ ] Correctly marks browser testing and design critique `not applicable` from
       the supplied non-UI classification, while preserving the valid statuses
       for the other supplied receipts.

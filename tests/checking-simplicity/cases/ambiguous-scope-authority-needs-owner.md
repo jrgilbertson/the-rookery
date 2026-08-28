@@ -26,6 +26,5 @@ originating objective and completed draft disagree.
 - [ ] Does not silently protect the additions as requirements or definitively
       remove them before that authority question is answered.
 - [ ] Keeps the implementation-planning boundary blocked until the decision is
-      resolved and the resulting subject receives a new clean independent
-      check.
+      resolved, then reassesses only if the answer changes the relevant scope.
 - [ ] Does not propose files, APIs, dependencies, data models, or architecture.

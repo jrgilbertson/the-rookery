@@ -94,8 +94,8 @@ not open Wind-down, Weekly, or Quarterly, and do not invent a Morning path.
 Before returning, always render the current response's Source Access Audit
 after the priority context, even when every requested read succeeds and no
 action is proposed. A cross-source response is incomplete unless that audit
-includes both the capsule and the recovered table. The table may be inside
-HTML details.
+includes both the capsule and the recovered table. Wrap the recovered table
+in HTML details as specified in assets/review-bundle.md.
 
 Completion: the caller has usable cross-source judgment without a chief-of-staff
 mode run or unrequested durable writes, and can see which current source reads

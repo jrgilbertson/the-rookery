@@ -49,9 +49,14 @@ the table still parses as GFM.
 The table reports actual access, not intended retrieval, claim provenance,
 or action success.
 
+<details>
+<summary>Full source receipt</summary>
+
 | Source or role | Result | Scope or window | Effect on claim categories |
 | --- | --- | --- | --- |
 | [generic source family or canonical role] | [exact access result] | [bounded safe scope] | [claim categories supported or limited] |
+
+</details>
 
 Use only these exact results: **Accessed — evidence found**, **Accessed — no
 relevant evidence**, **Attempted — unavailable or failed**, **Not configured**,

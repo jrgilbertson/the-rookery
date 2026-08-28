@@ -44,7 +44,10 @@ Keep two surfaces in one response, both required:
    non-truncated **Accessed — evidence found** discovery stays out of this
    surface.
 2. **Recovered table** inside HTML `<details>` with a short summary. Leave
-   it closed unless an auto-expand class is present, then add `open`. Put
+   it closed unless an auto-expand class is present, then add `open`:
+   attempted failure, partial or truncated read, **Not configured**,
+   **Declined**, Partial or Insufficient coverage, failed required reread
+   or readback, or claim-changing **Accessed — no relevant evidence**. Put
    a blank line after `</summary>` and before `</details>` so the GFM
    table still parses. Pre-write reread and post-write readback stay
    separate rows even when they share a source.

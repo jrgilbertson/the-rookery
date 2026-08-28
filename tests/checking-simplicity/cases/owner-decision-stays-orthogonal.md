@@ -14,13 +14,10 @@ preserves the decision while verifying that it stays orthogonal to the verdict.
 
 ## Expected behavior
 
-- [ ] Uses the recommendation-first assessment contract with one binary
-      `Verdict`, a recommendation, reasons, protected complexity, next action,
-      owner decision, and final review receipt with the bound `Subject`.
-- [ ] Asks exactly the material owner decision: whether the rebuild must
-      survive client disconnect or continue asynchronously.
-- [ ] Keeps `Owner decision required` separate from `PASS` or
-      `CHANGES_NEEDED`; it does not invent a third verdict.
+- [ ] Opens with `Decide before proceeding:` and asks exactly whether the
+      rebuild must survive client disconnect or continue asynchronously.
+- [ ] Does not print a binary verdict, receipt, subject replay, reviewer context
+      label, or owner-decision field.
 - [ ] If synchronous lifetime is acceptable, names a direct request-scoped
       rebuild as the smallest approach and removes the job system.
 - [ ] If durable asynchronous work is required, protects only the minimum

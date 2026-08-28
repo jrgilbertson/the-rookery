@@ -8,7 +8,7 @@ compatibility: Requires a git worktree and read access to the host repository. C
 
 Check whether a branch is ready to enter the pull request and
 continuous-integration process, then take one owner decision. Internally the
-gate gathers the full working surface, upstream-step receipts,
+gate gathers the full working surface, upstream-step evidence,
 plan-versus-delivered, pre-PR review checks, and learning signal. The spoken readout
 uses a Minto pyramid readout for the ship decision (shape in step 7). A
 branch is ready when every check below carries a status word, every
@@ -40,10 +40,12 @@ is reported as done without evidence named inline.
 Every check reports with one word from this closed set, used consistently and
 without synonyms:
 
-- **verified** — a named receipt supports the claim, and the readout names it.
-- **attested** — the owner states it happened and no receipt exists; recorded
-  as attestation, not as evidence.
-- **not verified** — no receipt exists and no attestation was given.
+- **verified** — the check's defined evidence supports the claim, and the
+  readout names it.
+- **attested** — the owner statement is permitted evidence for that check;
+  record it as attestation, not independent verification.
+- **not verified** — the check's required evidence is absent or insufficient,
+  and no permitted attestation resolves it.
 
 Also in the set (same one-token rule): **failed**, **not run**, **skipped**,
 **unavailable**, **bypassed**, **not applicable**. Use the ordinary meaning of
@@ -130,7 +132,7 @@ deterministic coverage, rather than letting silence read as a pass.
 Completion: every discovered gate carries one status word and its owner, and an
 empty discovery is reported as a named finding.
 
-### 3. Verify upstream steps from receipts
+### 3. Verify upstream steps from evidence
 
 Report each expected upstream step with a status word: code review, code
 simplification, solution simplicity, browser testing, design critique or
@@ -151,7 +153,7 @@ objective, required behavior, hard constraints, and verification criteria for
 the simplicity reviewer. Step 4 reuses this source and attestation rather than
 resolving them again.
 
-Use this receipt inventory to decide between verified and the honest
+Use this evidence inventory to decide between verified and the honest
 alternatives:
 
 - Durable receipts: design-critique snapshots (for example
@@ -165,29 +167,35 @@ alternatives:
   review after step 1 against the complete surface it just inventoried. Supply
   resolved requirements source, objective, required behavior, hard constraints,
   verification criteria, repository, branch, full `HEAD`, and all four path
-  categories. Require the result to repeat those bindings. It must return
-  `PASS`, say exactly `Review context: independent`, and say
-  `Owner decision required: no`. Accept `independent` only under the provider's
-  no-prior-involvement rule: no planning, authorship, implementation, earlier
-  review or findings, or review fixes that shaped the subject. Any other review
-  context is unverified. An open owner decision is failed until it is resolved
-  and the resulting approach is checked again. Keep the dispatch and return
-  uninterrupted by requirements, implementation, or other surface-changing
-  work. When it returns, re-read the
+  categories with their complete current contents. Do not require the reviewer
+  to replay that binding in the human readout; this gate owns it through the
+  dispatch and continuity checks. Use a fresh context with no planning,
+  authorship, implementation, earlier review or findings, or review fixes that
+  shaped the subject. When returning a proposed dispatch instead of executing
+  it, include or attach the literal complete contents in that dispatch; a
+  reference to contents elsewhere in the current conversation is not a
+  fresh-context handoff. A result beginning `Proceed with the current approach.`
+  is verified only when this dispatch meets that independence rule, no owner
+  question remains, and the continuity checks below pass. `Simplify before
+  proceeding.` is failed until the approach is revised and checked again.
+  `Decide before proceeding` is failed until the decision is resolved and the
+  resulting approach is checked again. `Cannot verify yet` remains not
+  verified. Keep the dispatch and return uninterrupted by requirements,
+  implementation, or other surface-changing work. When it returns, re-read the
   complete requirements and re-run step 1, then re-read the full committed,
   staged, unstaged, and untracked content supplied to the reviewer. Any content
   change makes the result stale and triggers recomposition. Matching paths alone
   are insufficient. An older or same-context result is advisory, never
-  verified. `CHANGES_NEEDED` is failed until the approach is revised and
-  checked again on the resulting surface.
+  verified.
 - Code review, code simplification, and solution simplicity leave no durable
   artifact today. Outside the session that ran them, code review and code
   simplification are attestation-only; solution simplicity is not verified by
-  owner attestation because independence and subject binding are part of its
-  result.
+  owner attestation because its fresh dispatch and subject continuity are part
+  of the check.
 
-Write verified only with the receipt named on the same line. Where no
-receipt exists, report not verified and offer the owner the chance to
+Write verified only with its evidence named on the same line: a durable receipt
+where one exists, or the live fresh dispatch and unchanged subject for solution
+simplicity. Otherwise report not verified and offer the owner the chance to
 attest where the check permits it; record an attestation as attested. For
 solution simplicity, offer a fresh-context `checking-simplicity` run instead.
 When the companion skill or tooling a check depends on is absent (no compound
@@ -196,8 +204,8 @@ report that check skipped, name what was missing, and run the rest of the
 checklist.
 
 Completion: each of the six steps carries one status word, every verified step
-names its receipt, and the user-interface classification and its basis are
-stated.
+names its supporting evidence, and the user-interface classification and its
+basis are stated.
 
 ### 4. Compare intent to what was delivered
 
@@ -408,8 +416,9 @@ carries the composed evidence pack for the finishing path.
 
 - Untracked paths ship with finishing tools; include them in what the owner
   approves.
-- Verified requires a named receipt on the same line; otherwise not
-  verified and offer attestation.
+- Verified requires named supporting evidence on the same line. Solution
+  simplicity uses the live fresh dispatch and unchanged subject; other checks
+  use their defined receipt or attestation rules.
 - Green CI is not evidence that upstream steps ran.
 - A dispatched missing step owns its effects. Most may change files;
   `checking-simplicity` is read-only and returns its finding to the caller. The

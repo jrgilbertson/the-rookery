@@ -26,36 +26,144 @@ the decision this assessment exists to support.
 > - unstaged paths: `src/retry-provider.ts`, `src/retry-config.ts`
 > - untracked paths: `src/retry-job-state.ts`
 >
-> Current surface content: committed `src/export.ts` directly authorizes,
-> writes, emits the completion audit event, and returns the terminal write
-> error. The staged edit routes each write through a new retry engine and event
-> bus. The unstaged files add a provider interface, plugin registry, and runtime
-> configuration for retry policy. The untracked file persists attempt state for
-> restart recovery. The standard library already provides bounded in-process
-> retry around a function call.
+> Complete supplied contents follow.
+>
+> Committed `src/auth.ts`:
+>
+> ```ts
+> export function authorize(canExport: boolean): void {
+>   if (!canExport) throw new Error("forbidden");
+> }
+> ```
+>
+> Committed `src/audit.ts`:
+>
+> ```ts
+> export function recordExportCompleted(exportId: string): void {
+>   audit.record("export.completed", { exportId });
+> }
+> ```
+>
+> Committed `src/export.ts` at `HEAD`:
+>
+> ```ts
+> import { authorize } from "./auth";
+> import { recordExportCompleted } from "./audit";
+>
+> export async function runExport(input: ExportInput): Promise<void> {
+>   authorize(input.canExport);
+>   try {
+>     await input.writer.write(input.rows);
+>   } catch {
+>     throw new Error("export write failed");
+>   }
+>   recordExportCompleted(input.exportId);
+> }
+> ```
+>
+> Staged `src/retry-engine.ts`:
+>
+> ```ts
+> export class RetryEngine {
+>   constructor(private events: RetryEventBus, private policy: RetryPolicy) {}
+>
+>   async run(operation: () => Promise<void>): Promise<void> {
+>     this.events.emit("retry.started");
+>     for (let attempt = 1; attempt <= this.policy.attempts; attempt += 1) {
+>       try {
+>         await operation();
+>         this.events.emit("retry.completed");
+>         return;
+>       } catch (error) {
+>         if (attempt === this.policy.attempts) throw error;
+>         this.events.emit("retry.scheduled");
+>       }
+>     }
+>   }
+> }
+>
+> class RetryEventBus {
+>   emit(event: string): void {
+>     retryEvents.publish(event);
+>   }
+> }
+> ```
+>
+> Staged `src/export.ts` in the index:
+>
+> ```ts
+> import { authorize } from "./auth";
+> import { recordExportCompleted } from "./audit";
+> import { retryProvider } from "./retry-provider";
+>
+> export async function runExport(input: ExportInput): Promise<void> {
+>   authorize(input.canExport);
+>   try {
+>     await retryProvider().run(() => input.writer.write(input.rows));
+>   } catch {
+>     throw new Error("export write failed");
+>   }
+>   recordExportCompleted(input.exportId);
+> }
+> ```
+>
+> Unstaged `src/retry-provider.ts`:
+>
+> ```ts
+> import { retryPolicy } from "./retry-config";
+> import { RetryEngine } from "./retry-engine";
+>
+> export interface RetryProvider {
+>   run(operation: () => Promise<void>): Promise<void>;
+> }
+>
+> const providers = new Map<string, () => RetryProvider>();
+> providers.set("default", () => new RetryEngine(retryEvents, retryPolicy));
+>
+> export function retryProvider(): RetryProvider {
+>   return providers.get(process.env.RETRY_PROVIDER ?? "default")!();
+> }
+> ```
+>
+> Unstaged `src/retry-config.ts`:
+>
+> ```ts
+> export const retryPolicy = {
+>   attempts: Number(process.env.RETRY_ATTEMPTS ?? 2),
+>   backoff: process.env.RETRY_BACKOFF ?? "linear",
+> };
+> ```
+>
+> Untracked `src/retry-job-state.ts`:
+>
+> ```ts
+> export async function saveAttempt(exportId: string, attempt: number) {
+>   await stateStore.put(`export:${exportId}`, { attempt });
+> }
+> ```
+>
+> The platform standard library provides `retry(operation, { attempts })` and
+> stops after the first success.
 >
 > Return the assessment only. Do not edit the implementation or decide whether
 > it is ready to ship.
 
 ## Expected behavior
 
-- [ ] Leads with a plain-language `Verdict` and the smallest safe
-      `Recommendation` before `Why`, protected complexity, next action, owner
-      decision, or receipt details.
-- [ ] Gives claim-first `Why` reasons that remove, reuse, or defer machinery,
-      with the requirement and subject evidence inline after each claim.
-- [ ] Returns `CHANGES_NEEDED` with `Review context: independent`.
-- [ ] Repeats the exact repository, branch, full HEAD, and committed, staged,
-      unstaged, and untracked path inventories in the final review receipt's
-      `Subject`.
-- [ ] Repeats the supplied objective, requirements, verification criteria, and
-      current surface content in the final review receipt's `Subject` rather
-      than reducing the binding to Git identity and paths.
+- [ ] Opens with `Simplify before proceeding.`, then gives the smallest safe
+      alternative before its supporting reasons.
+- [ ] Gives at most three grouped, claim-first `Why` reasons that remove, reuse,
+      or defer machinery, with only decision-driving evidence inline.
+- [ ] Uses about eight to twelve short nonblank lines and remains clear as plain
+      text without relying on rendered Markdown.
+- [ ] Does not print a review receipt, subject replay, reviewer context label,
+      internal status code, commit hash, or negative owner-decision field.
 - [ ] Removes or defers the retry engine, event bus, provider/plugin layer,
       runtime retry configuration, and persisted attempt state because no
       current requirement needs them.
 - [ ] Names the smallest safe alternative as the existing direct export path
       using the standard-library bounded retry for at most two total attempts.
-- [ ] Protects authorization, exactly one completion audit event, the attempt
-      bound, terminal-error behavior, and proportionate tests; it neither edits
-      the surface nor approves shipping.
+- [ ] Protects authorization, one completion audit event after success, an
+      immediate stop after a successful first write, at most two total attempts,
+      terminal-error behavior, and proportionate tests; it neither edits the
+      surface nor approves shipping.

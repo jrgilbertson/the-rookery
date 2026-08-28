@@ -16,16 +16,14 @@ the binding assessment contract another workflow needs to consume it safely.
 
 ## Expected behavior
 
-- [ ] Uses the recommendation-first assessment contract, including a tentative
-      `Verdict`, recommendation, claim-first reasons, protected complexity,
-      next action, owner decision, and final review receipt.
-- [ ] Uses `Review context: unverified`, not `independent`, because subject and
-      requirement evidence is incomplete.
+- [ ] Opens with `Cannot verify yet:` because subject and requirement evidence
+      is incomplete.
 - [ ] Names the missing repository, branch, full `HEAD`, requirements source,
       and complete four-category surface inventory.
 - [ ] Refuses to satisfy PR readiness or call the review verified.
 - [ ] Does not invent unnecessary complexity from the partial clean-looking
-      diff; a tentative `PASS` is allowed only with its unverified meaning made
-      explicit.
+      diff; any useful observation is clearly advisory.
 - [ ] Explains that a changed draft, `HEAD`, or working surface makes an older
       result stale.
+- [ ] Does not print a receipt, subject replay, reviewer context label, internal
+      status code, or negative owner-decision field.

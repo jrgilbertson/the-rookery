@@ -1,7 +1,7 @@
 ---
 module: skill-instruction-review
 date: 2026-07-16
-last_updated: 2026-08-26
+last_updated: 2026-08-27
 problem_type: best_practice
 component: documentation
 severity: medium
@@ -115,8 +115,8 @@ deliverable. Test those descriptions as a three-sided routing contract:
    belong to adjacent workflows. Broad words such as “reuse” and “simplify” do
    not create eligibility by themselves (`tests/checking-simplicity/triggers.md:26-36`).
 3. **Exit.** Name the successful state that moves ownership onward. An unchanged
-   subject with an independent `PASS` and no owner decision belongs to the next
-   planner or executor (`skills/checking-simplicity/SKILL.md:17-19`).
+   subject with a clean independent result and no owner question belongs to the
+   next planner or executor (`skills/checking-simplicity/SKILL.md:17-18`).
 
 Freeze the prior description, run the prior and revised metadata in separate
 fresh contexts, and keep the full positive and near-miss matrix on every run
@@ -149,8 +149,8 @@ listing proxy, not proof that every native harness will activate correctly
 A workflow-state skill needs one more boundary: completion. Without an explicit
 exit, a clean review can select itself again and loop instead of handing the
 unchanged subject forward. In the simplicity-checkpoint baseline, adding one
-subjectless reuse near miss and one post-`PASS` continuation near miss exposed
-two failures; the revised description passed all 22 declared trigger cases
+subjectless reuse near miss and one post-clean-result continuation near miss
+exposed two failures; the revised description passed all 22 declared trigger cases
 (`tests/checking-simplicity/log.md:51-52`). The matched suite proves only those
 queries. Native load-path evidence is still required.
 

@@ -7,8 +7,8 @@ outcomes after the reference was reduced to caller mechanics.
 ## Prompt
 
 > Apply the configured simplicity checkpoint to three caller states.
-> 1. The unchanged current plan already has an independent `PASS` with
->    `Owner decision required: no`.
+> 1. The unchanged current plan already has a clean independent result that
+>    begins `Proceed with the current approach.` and no owner question.
 > 2. After that result, required behavior changes materially.
 > 3. Only a copy edit changes the plan, but the earlier result is being consumed
 >    as a gate.

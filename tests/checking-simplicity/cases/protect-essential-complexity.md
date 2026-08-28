@@ -17,13 +17,12 @@ resource bounds into optional machinery.
 
 ## Expected behavior
 
-- [ ] Returns `Verdict: PASS`, `Review context: independent`, and
-      `Owner decision required: no` unless it identifies a specific unsupported
-      mechanism not stated in the prompt.
-- [ ] Leads with the recommendation, gives one affirmative `Why` reason, and
-      keeps the clean readout compact without inventing a finding.
-- [ ] Puts the review receipt last and binds its `Subject` to `Export endpoint
-      requirements` and `Export endpoint approach`.
+- [ ] Opens with `Proceed with the current approach.` unless it identifies a
+      specific unsupported mechanism stated in the prompt.
+- [ ] Keeps the clean readout to three to five short nonblank lines and remains
+      clear as plain text without inventing a finding.
+- [ ] Does not print a review receipt, subject replay, reviewer context label,
+      internal status code, or negative owner-decision field.
 - [ ] Protects authorization, redaction, audit, bounded streaming, and
       cancellation rather than recommending their removal.
 - [ ] Recognizes reuse of existing helpers as simpler than replacement.

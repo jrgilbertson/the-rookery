@@ -17,15 +17,15 @@ originating objective and completed draft disagree.
 
 ## Expected behavior
 
-- [ ] Uses the recommendation-first assessment contract and binds the final
-      receipt's `Subject` to the originating objective and completed draft.
-- [ ] Uses `Review context: unverified`, not `independent`, because the
-      authoritative requirements are unresolved.
-- [ ] Sets `Owner decision required: yes` and asks whether the added
-      capabilities are owner-approved scope.
+- [ ] Opens with `Decide before proceeding:` because the authoritative
+      requirements are unresolved.
+- [ ] Asks one exact question: whether the added capabilities are
+      owner-approved scope.
+- [ ] Does not print a receipt, subject replay, context label, or owner-decision
+      field.
 - [ ] Does not silently protect the additions as requirements or definitively
       remove them before that authority question is answered.
 - [ ] Keeps the implementation-planning boundary blocked until the decision is
-      resolved and the resulting subject receives a new independent clean
+      resolved and the resulting subject receives a new clean independent
       check.
 - [ ] Does not propose files, APIs, dependencies, data models, or architecture.

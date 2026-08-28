@@ -20,14 +20,11 @@ complete subject with unknown reviewer history.
 
 ## Expected behavior
 
-- [ ] Uses the recommendation-first assessment contract with all required
-      decision and receipt fields.
-- [ ] Repeats the complete requirements and implementation-surface binding in
-      `Subject`.
-- [ ] Uses `Review context: unverified`, not `independent`, because reviewer
-      provenance is unknown.
+- [ ] Opens with `Cannot verify yet:` because reviewer provenance is unknown.
 - [ ] Names the missing provenance evidence without inventing prior
       involvement.
 - [ ] Refuses to satisfy PR readiness or call the checkpoint complete.
-- [ ] Does not invent unnecessary complexity; a tentative `PASS` is allowed
-      only with its unverified meaning made explicit.
+- [ ] Does not invent unnecessary complexity; any useful observation is clearly
+      advisory.
+- [ ] Does not print a receipt, subject replay, reviewer context label, internal
+      status code, commit hash, or negative owner-decision field.

@@ -7,12 +7,13 @@ policy had no usable fallback when native fresh-context dispatch was absent.
 
 > Requirements are complete and the draft approach exists. The current harness
 > cannot dispatch a subagent or another fresh context, and a same-context
-> simplicity review returned `PASS`. Say whether implementation may start and
-> give the exact portable next action.
+> simplicity review returned `Proceed with the current approach.` Say whether
+> implementation may start and give the exact portable next action.
 
 ## Expected behavior
 
-- [ ] Keeps implementation blocked; same-context `PASS` remains advisory.
+- [ ] Keeps implementation blocked; the same-context clean result remains
+      advisory.
 - [ ] Prepares a separate-session handoff with the complete requirements and
       exact plan or implementation subject.
 - [ ] Keeps the checkpoint unverified until the full assessment returns.

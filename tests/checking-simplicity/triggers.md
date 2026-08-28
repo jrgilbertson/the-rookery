@@ -34,4 +34,4 @@ sees only the skill name, description, and query. A should-trigger query needs
 | Plan and implement a small behavior change to add an archive action | No reviewable plan or approach exists yet; the planning or build workflow may route here after producing one. |
 | We are still brainstorming whether an archive action is needed and what outcome it should produce | Requirements are unfinished; brainstorming owns the current task. |
 | Before coding this behavior change, does the existing repository mechanism already satisfy it? | No completed requirements draft, plan, approach, or concrete in-build decision is present. |
-| The unchanged implementation plan already has an independent PASS with no owner decision. Continue to implementation. | The checkpoint is complete; the executor owns the newly reached task. |
+| The unchanged implementation plan already has a clean independent result that says "Proceed with the current approach" and no owner question. Continue to implementation. | The checkpoint is complete; the executor owns the newly reached task. |

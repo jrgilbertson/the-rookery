@@ -15,7 +15,9 @@ branch was meant to do>.
 
 **Checks:** one line per check, each `<check name>: <status word> — <result>`.
 Status words come from the gate's closed set (SKILL.md, Status words). A
-verified check names its receipt on its own line.
+verified check names its supporting evidence on its own line. For solution
+simplicity, name the live fresh dispatch and unchanged subject; do not invent a
+receipt.
 
 **Not verified / attested:** the explicit list of checks carrying `not
 verified` and the checks carrying `attested`, named individually. An empty list

@@ -25,10 +25,10 @@ the requested simplicity checkpoint before implementation planning.
 
 ## Expected behavior
 
-- [ ] Returns `CHANGES_NEEDED` with `Review context: independent` and no owner
-      decision.
-- [ ] Binds `Subject` to both the originating objective and current completed
-      requirements draft.
+- [ ] Opens with `Simplify before proceeding.` and names the smallest safe
+      requirements set before the supporting reasons.
+- [ ] Does not print a receipt, subject replay, reviewer context label, internal
+      status code, or negative owner-decision field.
 - [ ] Removes or defers bulk archive, retention and restore policy, admin
       export, and cross-device conflict policy as unsupported scope.
 - [ ] Names the smallest safe requirements set as one authorized archive action

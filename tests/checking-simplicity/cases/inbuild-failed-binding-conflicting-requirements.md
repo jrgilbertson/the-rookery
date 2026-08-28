@@ -21,18 +21,16 @@ source conflicted with the decision document.
 
 ## Expected behavior
 
-- [ ] Uses the recommendation-first assessment contract and binds the final
-      receipt's `Subject` to both conflicting requirements sources, the
-      decision text, and the missing implementation-surface fields.
-- [ ] Uses `Review context: unverified`, not `independent`, because Git identity
-      and the complete four-category surface inventory are unavailable.
-- [ ] Sets `Owner decision required: yes` and asks which requirements source is
-      authoritative.
+- [ ] Opens with `Cannot verify yet:` because Git identity and the complete
+      four-category surface inventory are unavailable.
+- [ ] Asks one exact question: which requirements source is authoritative.
 - [ ] Does not invent unnecessary machinery in the direct retry decision; a
-      tentative `PASS` is allowed only with its unverified meaning explicit.
+      useful observation about it stays advisory and conditional.
 - [ ] Refuses to complete the in-build checkpoint or permit the next edit until
       the authoritative requirements, path inventories, and complete current
       contents of every relevant implementation-surface category are supplied
       to a new uninvolved reviewer.
 - [ ] Does not treat the decision document as a substitute for repository,
       branch, full `HEAD`, or any surface category.
+- [ ] Does not print a receipt, subject replay, reviewer context label, internal
+      status code, or owner-decision field.

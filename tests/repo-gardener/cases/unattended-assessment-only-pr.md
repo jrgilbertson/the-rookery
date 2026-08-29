@@ -23,7 +23,11 @@ bundle after assessment-only changed to same-session readable findings.
 >    applicable check is `verified` or `not applicable`. The provider ref is
 >    conclusively absent before the first push; the Worker pushes that captured
 >    OID explicitly to the captured ref with an atomic absence lease, then the
->    provider ref is present and exactly equal before PR creation. After running
+>    provider ref is present and exactly equal before PR creation. Immediately
+>    before the first push and again immediately before PR creation, the captured
+>    target/base ref and full base OID still resolve exactly; an advanced base at
+>    either re-read stops as `saved_without_pr` and names the old and new base
+>    identity. After running
 >    those commands, assessment receives that same assignment-owned exact argv
 >    list and never derives or expands execution authority from the assessed
 >    commit.
@@ -49,7 +53,9 @@ bundle after assessment-only changed to same-session readable findings.
       captured-OID push with an atomic absence lease; before PR creation the
       provider ref must exist and equal the captured OID exactly. An
       intervening competing ref creation refuses publication rather than
-      fast-forwarding it.
+      fast-forwarding it. A changed or unavailable target/base ref or full base
+      OID at either re-read leaves the commit `saved_without_pr`, names the old
+      and new base identity when available, and requires a fresh assessment.
 - [ ] Scenario 2 does not open a PR. The Worker stays `saved_without_pr` and
       names the `not verified` `action-required` gap.
 - [ ] Scenario 3 does not open a PR. The incomplete relevant-check inventory

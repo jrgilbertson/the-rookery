@@ -280,7 +280,13 @@ identity, include/exclude scope, protected paths, and the assigned slice.
 For an ownerless Worker, immediately before its first push, re-read the current
 local subject and full OID, compare them to the captured subject and OID that
 received `ready`, and never replace or recapture that authorized identity; then
-re-read staged, unstaged, and untracked cleanliness. Read the provider ref: only a
+re-read staged, unstaged, and untracked cleanliness. Immediately before an
+ownerless first push, re-resolve the captured target/base ref and full base OID;
+the ref and OID must both match the captured identity, so same-ref advancement
+is caught. Immediately before PR-open, re-resolve the captured target/base ref
+and full base OID again. Any drift or unavailable or indeterminate base state
+is `saved_without_pr`, names the old and new base identity when available, and
+requires a fresh assessment. Read the provider ref: only a
 conclusive absence or an exact match to the captured OID permits this step; a
 conflicting existing ref, unavailable or indeterminate read, moved local
 subject or OID, or dirt is `saved_without_pr` with the exact gap. When absent,

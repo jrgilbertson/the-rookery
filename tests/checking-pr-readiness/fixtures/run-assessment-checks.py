@@ -280,6 +280,7 @@ def assessment_decision(
     expected_checks: set[str],
     check_results: dict[str, str],
     dirty_paths: dict[str, set[str]],
+    deferred_sweep_evidence: dict[str, tuple[str, str, str]] | None = None,
 ) -> tuple[str, tuple[str, ...]]:
     gaps: list[str] = []
     if captured_subject != current_subject:
@@ -301,6 +302,15 @@ def assessment_decision(
         unexpected = sorted(set(check_results) - expected_checks)
         gaps.append(f"relevant-check inventory mismatch: missing {missing}; unexpected {unexpected}")
     for check, result in sorted(check_results.items()):
+        if result == "skipped" and deferred_sweep_evidence is not None:
+            outcome, deferred_gate, equivalent_gate = deferred_sweep_evidence.get(check, ("", "", ""))
+            if (
+                outcome == "--defer"
+                and deferred_gate == equivalent_gate
+                and equivalent_gate
+                and check_results.get(equivalent_gate) == "verified"
+            ):
+                result = "verified"
         if result not in ACCEPTED_CHECK_RESULTS:
             gaps.append(f"{check}: {result}")
     for category in ("staged", "unstaged", "untracked"):
@@ -315,6 +325,10 @@ def local_publication_gaps(
     current_subject: str | None,
     captured_head: str,
     current_head: str,
+    captured_base_ref: str,
+    current_base_ref: str,
+    captured_base_oid: str,
+    current_base_oid: str,
     dirty_paths: dict[str, set[str]],
 ) -> list[str]:
     gaps: list[str] = []
@@ -323,6 +337,11 @@ def local_publication_gaps(
         gaps.append(f"subject moved: {captured_subject} -> {current_label}")
     if captured_head != current_head:
         gaps.append(f"head moved: {captured_head} -> {current_head}")
+    if (captured_base_ref, captured_base_oid) != (current_base_ref, current_base_oid):
+        gaps.append(
+            "base moved: "
+            f"{captured_base_ref}@{captured_base_oid} -> {current_base_ref}@{current_base_oid}"
+        )
     for category in ("staged", "unstaged", "untracked"):
         for path in sorted(dirty_paths.get(category, set())):
             gaps.append(f"{category} dirty path: {path}")
@@ -335,6 +354,10 @@ def ownerless_first_push_decision(
     current_subject: str | None,
     captured_head: str,
     current_head: str,
+    captured_base_ref: str,
+    current_base_ref: str,
+    captured_base_oid: str,
+    current_base_oid: str,
     dirty_paths: dict[str, set[str]],
     provider_readable: bool,
     provider_head: str | None,
@@ -344,6 +367,10 @@ def ownerless_first_push_decision(
         current_subject=current_subject,
         captured_head=captured_head,
         current_head=current_head,
+        captured_base_ref=captured_base_ref,
+        current_base_ref=current_base_ref,
+        captured_base_oid=captured_base_oid,
+        current_base_oid=current_base_oid,
         dirty_paths=dirty_paths,
     )
     if not provider_readable:
@@ -359,6 +386,10 @@ def pre_pr_decision(
     current_subject: str | None,
     captured_head: str,
     current_head: str,
+    captured_base_ref: str,
+    current_base_ref: str,
+    captured_base_oid: str,
+    current_base_oid: str,
     dirty_paths: dict[str, set[str]],
     provider_readable: bool,
     provider_head: str | None,
@@ -368,6 +399,10 @@ def pre_pr_decision(
         current_subject=current_subject,
         captured_head=captured_head,
         current_head=current_head,
+        captured_base_ref=captured_base_ref,
+        current_base_ref=current_base_ref,
+        captured_base_oid=captured_base_oid,
+        current_base_oid=current_base_oid,
         dirty_paths=dirty_paths,
     )
     if not provider_readable:
@@ -455,6 +490,12 @@ def validate_contract_sources() -> None:
         "inventories return `action-required`",
     ):
         require(phrase in variants_case, f"variants case does not preserve action-required result: {phrase}")
+    for phrase in (
+        "exact named equivalent repository gate",
+        "present and `verified` in the same complete assessment session",
+        "bare, missing, unrelated, mismatched, unavailable, or not verified gate",
+    ):
+        require(phrase in normalized_assessment, f"assessment contract omits deferred-gate safety: {phrase}")
     for source, name in (
         ((REPO_ROOT / "skills" / "repo-gardener" / "SKILL.md").read_text(encoding="utf-8").lower(), "repo-gardener skill"),
         ((REPO_ROOT / "skills" / "repo-gardener" / "references" / "reconciliation.md").read_text(encoding="utf-8").lower(), "reconciliation reference"),
@@ -465,6 +506,15 @@ def validate_contract_sources() -> None:
         require("exact caller-approved verification command argv list" in normalized_source, f"{name} omits the caller-owned argv assignment")
         require("same assignment-owned exact argv list" in normalized_source, f"{name} omits the argv handoff to assessment")
         require("target/base ref" in normalized_source and "full base oid" in normalized_source, f"{name} omits the base binding")
+        require(
+            "immediately before an ownerless first push, re-resolve the captured target/base ref and full base oid"
+            in normalized_source,
+            f"{name} omits the pre-push base re-read",
+        )
+        require(
+            "immediately before pr-open, re-resolve the captured target/base ref and full base oid" in normalized_source,
+            f"{name} omits the pre-PR base re-read",
+        )
         require(
             "persistent state, configuration, schema, receipt, ledger, or audit-command reuse" not in normalized_source,
             f"{name} retains unnecessary assignment denial prose",
@@ -508,6 +558,99 @@ def run_suite() -> None:
             dirty_paths={},
         )
         require(decision == "ready" and not gaps, "stable complete assessment did not return ready")
+
+        deferred_checks = {
+            "fixture-quality": "verified",
+            "changelog": "skipped",
+            "ci-changelog": "verified",
+        }
+        decision, gaps = assessment_decision(
+            captured_subject=captured_subject,
+            current_subject=current_subject(stable_repo),
+            captured_head=captured,
+            current_head=full_head(stable_repo),
+            captured_base_ref=captured_base_ref,
+            current_base_ref=captured_base_ref,
+            captured_base_oid=captured_base_oid,
+            current_base_oid=full_base_oid(stable_repo, captured_base_ref),
+            expected_paths=paths,
+            inspected_paths=paths,
+            expected_checks=set(deferred_checks),
+            check_results=deferred_checks,
+            dirty_paths={},
+            deferred_sweep_evidence={"changelog": ("--defer", "ci-changelog", "ci-changelog")},
+        )
+        require(decision == "ready" and not gaps, "exact verified deferred gate did not normalize to verified evidence")
+        for label, deferred_results, deferred_evidence in (
+            (
+                "bare deferred outcome",
+                {"fixture-quality": "verified", "changelog": "skipped"},
+                None,
+            ),
+            (
+                "missing named gate",
+                {"fixture-quality": "verified", "changelog": "skipped"},
+                {"changelog": ("--defer", "ci-changelog", "ci-changelog")},
+            ),
+            (
+                "unrelated gate",
+                {"fixture-quality": "verified", "changelog": "skipped", "ci-size": "verified"},
+                {"changelog": ("--defer", "ci-changelog", "ci-changelog")},
+            ),
+            (
+                "mismatched gate",
+                {"fixture-quality": "verified", "changelog": "skipped", "ci-size": "verified"},
+                {"changelog": ("--defer", "ci-changelog", "ci-size")},
+            ),
+            (
+                "unavailable gate",
+                {"fixture-quality": "verified", "changelog": "skipped", "ci-changelog": "unavailable"},
+                {"changelog": ("--defer", "ci-changelog", "ci-changelog")},
+            ),
+            (
+                "unverified gate",
+                {"fixture-quality": "verified", "changelog": "skipped", "ci-changelog": "not verified"},
+                {"changelog": ("--defer", "ci-changelog", "ci-changelog")},
+            ),
+        ):
+            decision, gaps = assessment_decision(
+                captured_subject=captured_subject,
+                current_subject=current_subject(stable_repo),
+                captured_head=captured,
+                current_head=full_head(stable_repo),
+                captured_base_ref=captured_base_ref,
+                current_base_ref=captured_base_ref,
+                captured_base_oid=captured_base_oid,
+                current_base_oid=full_base_oid(stable_repo, captured_base_ref),
+                expected_paths=paths,
+                inspected_paths=paths,
+                expected_checks=set(deferred_results),
+                check_results=deferred_results,
+                dirty_paths={},
+                deferred_sweep_evidence=deferred_evidence,
+            )
+            require(decision == "action-required", f"{label} did not fail closed")
+            require("changelog: skipped" in gaps, f"{label} did not leave the deferred class action-required")
+
+        ordinary_skipped_checks = {"fixture-quality": "verified", "ordinary-check": "skipped", "ci-quality": "verified"}
+        decision, gaps = assessment_decision(
+            captured_subject=captured_subject,
+            current_subject=current_subject(stable_repo),
+            captured_head=captured,
+            current_head=full_head(stable_repo),
+            captured_base_ref=captured_base_ref,
+            current_base_ref=captured_base_ref,
+            captured_base_oid=captured_base_oid,
+            current_base_oid=full_base_oid(stable_repo, captured_base_ref),
+            expected_paths=paths,
+            inspected_paths=paths,
+            expected_checks=set(ordinary_skipped_checks),
+            check_results=ordinary_skipped_checks,
+            dirty_paths={},
+            deferred_sweep_evidence={"ordinary-check": ("ordinary skip", "ci-quality", "ci-quality")},
+        )
+        require(decision == "action-required", "ordinary skipped check normalized to verified evidence")
+        require("ordinary-check: skipped" in gaps, "ordinary skipped check did not remain action-required")
 
         nondefault_target_repo = Path(temporary) / "nondefault-target"
         build_nondefault_target_repository(nondefault_target_repo)
@@ -799,6 +942,10 @@ def run_suite() -> None:
             current_subject=provider_subject,
             captured_head=stable_head,
             current_head=stable_head,
+            captured_base_ref=captured_base_ref,
+            current_base_ref=captured_base_ref,
+            captured_base_oid=captured_base_oid,
+            current_base_oid=captured_base_oid,
             dirty_paths={},
             provider_readable=True,
             provider_head=provider_head,
@@ -813,6 +960,10 @@ def run_suite() -> None:
             current_subject=provider_subject,
             captured_head=stable_head,
             current_head=stable_head,
+            captured_base_ref=captured_base_ref,
+            current_base_ref=captured_base_ref,
+            captured_base_oid=captured_base_oid,
+            current_base_oid=captured_base_oid,
             dirty_paths={},
             provider_readable=True,
             provider_head=provider_head,
@@ -823,6 +974,10 @@ def run_suite() -> None:
             current_subject=provider_subject,
             captured_head=stable_head,
             current_head=stable_head,
+            captured_base_ref=captured_base_ref,
+            current_base_ref=captured_base_ref,
+            captured_base_oid=captured_base_oid,
+            current_base_oid=captured_base_oid,
             dirty_paths={},
             provider_readable=True,
             provider_head=None,
@@ -863,6 +1018,10 @@ def run_suite() -> None:
                 "current_subject": provider_subject,
                 "captured_head": stable_head,
                 "current_head": stable_head,
+                "captured_base_ref": captured_base_ref,
+                "current_base_ref": captured_base_ref,
+                "captured_base_oid": captured_base_oid,
+                "current_base_oid": captured_base_oid,
                 "dirty_paths": {},
                 "provider_readable": True,
                 "provider_head": stable_head,
@@ -871,12 +1030,102 @@ def run_suite() -> None:
             decision, gaps = ownerless_first_push_decision(**values)
             require(decision == "action-required", f"{label} did not stop publication")
 
+        pre_push_base_repo = Path(temporary) / "pre-push-base"
+        build_repository(pre_push_base_repo)
+        captured_subject, captured_head, captured_base_ref, captured_base_oid, _, _ = inspect_stable_session(
+            pre_push_base_repo,
+            CALLER_AUTHORIZED_ARGV,
+        )
+        pre_push_provider = Path(temporary) / "pre-push-provider.git"
+        run("git", "init", "-q", "--bare", str(pre_push_provider), cwd=pre_push_base_repo)
+        run("git", "remote", "add", "pre-push-provider", str(pre_push_provider), cwd=pre_push_base_repo)
+        run("git", "checkout", "-q", "main", cwd=pre_push_base_repo)
+        (pre_push_base_repo / "README.md").write_text("base advanced before push\n", encoding="utf-8")
+        run("git", "add", "README.md", cwd=pre_push_base_repo)
+        run(
+            "git",
+            "commit",
+            "-q",
+            "-m",
+            "advance base before first push",
+            cwd=pre_push_base_repo,
+            env=git_env("2026-01-02T00:03:00+00:00"),
+        )
+        moved_base_oid = full_base_oid(pre_push_base_repo, captured_base_ref)
+        run("git", "checkout", "-q", "assessment-subject", cwd=pre_push_base_repo)
+        decision, gaps = ownerless_first_push_decision(
+            captured_subject=captured_subject,
+            current_subject=current_subject(pre_push_base_repo),
+            captured_head=captured_head,
+            current_head=full_head(pre_push_base_repo),
+            captured_base_ref=captured_base_ref,
+            current_base_ref=captured_base_ref,
+            captured_base_oid=captured_base_oid,
+            current_base_oid=moved_base_oid,
+            dirty_paths={},
+            provider_readable=True,
+            provider_head=read_provider_head(pre_push_base_repo, "pre-push-provider", provider_subject),
+        )
+        require(decision == "action-required", "base movement before first push did not stop publication")
+        require(
+            f"base moved: {captured_base_ref}@{captured_base_oid} -> {captured_base_ref}@{moved_base_oid}" in gaps,
+            "base movement before first push did not name old/new base identity",
+        )
+
+        post_push_base_repo = Path(temporary) / "post-push-base"
+        build_repository(post_push_base_repo)
+        captured_subject, captured_head, captured_base_ref, captured_base_oid, _, _ = inspect_stable_session(
+            post_push_base_repo,
+            CALLER_AUTHORIZED_ARGV,
+        )
+        post_push_provider = Path(temporary) / "post-push-provider.git"
+        run("git", "init", "-q", "--bare", str(post_push_provider), cwd=post_push_base_repo)
+        run("git", "remote", "add", "post-push-provider", str(post_push_provider), cwd=post_push_base_repo)
+        require(
+            push_captured_oid(post_push_base_repo, "post-push-provider", provider_subject, captured_head).returncode == 0,
+            "post-push base fixture could not push the captured OID",
+        )
+        run("git", "checkout", "-q", "main", cwd=post_push_base_repo)
+        (post_push_base_repo / "README.md").write_text("base advanced after push\n", encoding="utf-8")
+        run("git", "add", "README.md", cwd=post_push_base_repo)
+        run(
+            "git",
+            "commit",
+            "-q",
+            "-m",
+            "advance base before PR open",
+            cwd=post_push_base_repo,
+            env=git_env("2026-01-02T00:04:00+00:00"),
+        )
+        moved_base_oid = full_base_oid(post_push_base_repo, captured_base_ref)
+        run("git", "checkout", "-q", "assessment-subject", cwd=post_push_base_repo)
+        decision, gaps = pre_pr_decision(
+            captured_subject=captured_subject,
+            current_subject=current_subject(post_push_base_repo),
+            captured_head=captured_head,
+            current_head=full_head(post_push_base_repo),
+            captured_base_ref=captured_base_ref,
+            current_base_ref=captured_base_ref,
+            captured_base_oid=captured_base_oid,
+            current_base_oid=moved_base_oid,
+            dirty_paths={},
+            provider_readable=True,
+            provider_head=read_provider_head(post_push_base_repo, "post-push-provider", provider_subject),
+        )
+        require(decision == "action-required", "base movement before PR open did not stop publication")
+        require(
+            f"base moved: {captured_base_ref}@{captured_base_oid} -> {captured_base_ref}@{moved_base_oid}" in gaps,
+            "base movement before PR open did not name old/new base identity",
+        )
+
     print("PASS: stable session discovered and ran its caller-authorized fixture-quality check, then returned ready")
     print("PASS: captured non-default base inspection includes a committed path omitted by implicit default inspection")
     print("PASS: discovered repository checks outside the caller-authorized argv list remain not verified and action-required")
     print("PASS: stable subject/head with a changed base OID returns action-required and names old/new base identity")
     print("PASS: subject movement, moved head, dirt, incomplete inventories, and all disallowed check results return action-required")
     print("PASS: an absent provider ref permits first push only when its exact captured OID is present before PR creation")
+    print("PASS: only an exact verified equivalent gate normalizes a deferred sweep class to verified evidence")
+    print("PASS: base movement before first push or PR open stops publication and names old/new base identity")
 
 
 def materialize(destination: Path) -> None:

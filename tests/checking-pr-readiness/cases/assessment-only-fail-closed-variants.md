@@ -17,6 +17,10 @@ was narrated as ready.
 > and an incomplete relevant-check inventory. Before Worker mutation, its
 > assignment includes the exact caller-approved verification command argv list;
 > after the Worker runs those commands, assessment receives that same list.
+> Also assess a sweep class with a `--defer` result: an exact named equivalent
+> repository gate is present and `verified` in that same complete assessment
+> session, then repeat with a bare, missing, unrelated, mismatched, unavailable,
+> or not verified gate.
 > Return one readable result per variant without an owner menu.
 
 ## Expected behavior
@@ -36,5 +40,9 @@ was narrated as ready.
       `not verified` and returns `action-required`.
 - [ ] Check-result spelling is canonical: `not verified` and `not run`, never
       `unverified` or `not-run`.
+- [ ] A skipped sweep class becomes `verified` evidence only when its exact
+      named equivalent repository gate is present and `verified` in the same
+      complete assessment session. A bare, missing, unrelated, mismatched,
+      unavailable, or not verified gate leaves that class `action-required`.
 - [ ] The variants remain independent; findings from one are not carried into another.
 - [ ] No variant writes to the checkout, presents an owner menu, stages, commits, pushes, or opens a pull request.

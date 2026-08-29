@@ -2,6 +2,7 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-08-29 | working tree | deferred sweep-class and publication-base fixture | pass | An exact named equivalent repository gate verified in the same complete assessment normalized its deferred class to `verified`; bare, missing, unrelated, mismatched, unavailable, and not verified gates stayed `action-required`, and base movement before first push or PR-open named old/new base identity and stopped publication.
 - 2026-08-29 | working tree | assessment base-binding fixture | pass | A stable native subject/head whose target/base ref advanced to a different full OID returned `action-required`, named old and new base identity, and required a fresh assessment; the accepted check vocabulary is now only `verified` or `not applicable`.
 - 2026-08-29 | working tree | caller-authorized assessment argv and discovered-check fixture | pass | The fixture discovered a second repository check absent from the caller-authorized argv list, proved it did not execute, reported it as `not verified`, and returned `action-required` while the one assigned discovered check still returned `ready`.
 - 2026-08-29 | working tree | same-session assessment decision fixture | pass | A fixture-only pure decision returned `ready` after it executed the repository-owned `fixture-quality` check; moved heads, each dirty category, incomplete inventories, and every disallowed check result returned `action-required` with named gaps. The retired-machinery guard was also falsified against frozen receipt/schema/version vocabulary.

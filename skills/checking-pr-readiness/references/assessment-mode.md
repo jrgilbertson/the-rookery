@@ -65,6 +65,14 @@ is `verified` or proven `not applicable`. Every other canonical check status
 `attested`, or `unresolved`) is `action-required`; name each exact gap. An
 incomplete inventory is also `action-required`, even when its reported checks
 are `verified`.
+
+The sole narrow exception is a sweep-class `--defer` outcome. It may normalize
+from `skipped` to `verified` evidence only when its exact named equivalent
+repository gate is present and `verified` in the same complete assessment
+session. A bare, missing, unrelated, mismatched, unavailable, or not verified
+gate leaves the skipped class `action-required`; do not accept skipped classes
+generally.
+
 A repository-authored check may be rerun only from a caller-authorized exact
 argv list, through the existing constrained direct-argv safety boundary
 without a shell, production credentials, unrelated-file access, or network

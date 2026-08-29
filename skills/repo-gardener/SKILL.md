@@ -162,7 +162,13 @@ claim. It, setup, and Scout helpers execute no declared audit.
    before an ownerless first push, re-read the current local subject and full
    OID, compare them to the captured subject and OID that received `ready`, and
    never replace or recapture that authorized identity; then re-read staged, unstaged, and
-   untracked cleanliness. Read the provider ref: a conclusive absence is
+   untracked cleanliness. Immediately before an ownerless first push, re-resolve
+   the captured target/base ref and full base OID; the ref and OID must both
+   match the captured identity, so same-ref advancement is caught. Immediately
+   before PR-open, re-resolve the captured target/base ref and full base OID
+   again. Any drift or unavailable or indeterminate base state is
+   `saved_without_pr`, names the old and new base identity when available, and
+   requires a fresh assessment. Read the provider ref: a conclusive absence is
    permitted only for that first push; an existing ref must equal the captured
    OID exactly; a conflicting, unavailable, or indeterminate ref stops
    publication. When absent, push the captured OID explicitly to the captured

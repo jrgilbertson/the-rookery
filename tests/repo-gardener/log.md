@@ -2,6 +2,7 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-08-29 | working tree | ownerless publication base re-read contract | pass (static case) | Ownerless first push and PR-open each re-resolve the captured target/base ref and full base OID, catching same-ref advancement; drift or unavailable base state stays `saved_without_pr` and requires fresh assessment.
 - 2026-08-29 | working tree | assessment-only Worker base contract | pass (static case) | The Worker binds subject, head, target/base ref, and full base OID through assessment's read-only boundary; a moved base is action-required before publication, while only `verified` and `not applicable` checks support ready.
 - 2026-08-29 | working tree | Worker assessment argv handoff contract | pass (static case) | Worker assignments now carry caller-approved exact verification argv before mutation, pass that same assignment-owned list to assessment after execution, and preserve the direct-argv boundary against commit-derived authority.
 - 2026-08-29 | working tree | assessment-only Worker caller contract | pass (static case) | Ownerless push and PR-open gates now rebind the assessed subject/OID against current local/provider heads and clean surface, preserving a mismatch as `saved_without_pr`; attended option 1 plus its evidence pack still authorizes normal publication after the same final safety re-read.

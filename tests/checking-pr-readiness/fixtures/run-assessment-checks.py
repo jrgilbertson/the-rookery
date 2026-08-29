@@ -280,7 +280,7 @@ def assessment_decision(
     expected_checks: set[str],
     check_results: dict[str, str],
     dirty_paths: dict[str, set[str]],
-    deferred_sweep_evidence: dict[str, tuple[str, str, str]] | None = None,
+    deferred_sweep_gates: dict[str, str] | None = None,
 ) -> tuple[str, tuple[str, ...]]:
     gaps: list[str] = []
     if captured_subject != current_subject:
@@ -302,14 +302,9 @@ def assessment_decision(
         unexpected = sorted(set(check_results) - expected_checks)
         gaps.append(f"relevant-check inventory mismatch: missing {missing}; unexpected {unexpected}")
     for check, result in sorted(check_results.items()):
-        if result == "skipped" and deferred_sweep_evidence is not None:
-            outcome, deferred_gate, equivalent_gate = deferred_sweep_evidence.get(check, ("", "", ""))
-            if (
-                outcome == "--defer"
-                and deferred_gate == equivalent_gate
-                and equivalent_gate
-                and check_results.get(equivalent_gate) == "verified"
-            ):
+        if result == "skipped" and deferred_sweep_gates is not None:
+            equivalent_gate = deferred_sweep_gates.get(check)
+            if equivalent_gate and check_results.get(equivalent_gate) == "verified":
                 result = "verified"
         if result not in ACCEPTED_CHECK_RESULTS:
             gaps.append(f"{check}: {result}")
@@ -542,116 +537,102 @@ def run_suite() -> None:
             "fixture surface changed unexpectedly",
         )
         require(check_results == {"fixture-quality": "verified"}, "fixture repository check did not verify")
-        decision, gaps = assessment_decision(
-            captured_subject=captured_subject,
-            current_subject=current_subject(stable_repo),
-            captured_head=captured,
-            current_head=full_head(stable_repo),
-            captured_base_ref=captured_base_ref,
-            current_base_ref=captured_base_ref,
-            captured_base_oid=captured_base_oid,
-            current_base_oid=full_base_oid(stable_repo, captured_base_ref),
-            expected_paths=paths,
-            inspected_paths=paths,
-            expected_checks=set(check_results),
-            check_results=check_results,
-            dirty_paths={},
-        )
-        require(decision == "ready" and not gaps, "stable complete assessment did not return ready")
-
-        deferred_checks = {
-            "fixture-quality": "verified",
-            "changelog": "skipped",
-            "ci-changelog": "verified",
+        stable_arguments = {
+            "captured_subject": captured_subject,
+            "current_subject": current_subject(stable_repo),
+            "captured_head": captured,
+            "current_head": full_head(stable_repo),
+            "captured_base_ref": captured_base_ref,
+            "current_base_ref": captured_base_ref,
+            "captured_base_oid": captured_base_oid,
+            "current_base_oid": full_base_oid(stable_repo, captured_base_ref),
+            "expected_paths": paths,
+            "inspected_paths": paths,
+            "dirty_paths": {},
         }
-        decision, gaps = assessment_decision(
-            captured_subject=captured_subject,
-            current_subject=current_subject(stable_repo),
-            captured_head=captured,
-            current_head=full_head(stable_repo),
-            captured_base_ref=captured_base_ref,
-            current_base_ref=captured_base_ref,
-            captured_base_oid=captured_base_oid,
-            current_base_oid=full_base_oid(stable_repo, captured_base_ref),
-            expected_paths=paths,
-            inspected_paths=paths,
-            expected_checks=set(deferred_checks),
-            check_results=deferred_checks,
-            dirty_paths={},
-            deferred_sweep_evidence={"changelog": ("--defer", "ci-changelog", "ci-changelog")},
-        )
-        require(decision == "ready" and not gaps, "exact verified deferred gate did not normalize to verified evidence")
-        for label, deferred_results, deferred_evidence in (
+        for label, deferred_results, deferred_sweep_gates, expected_checks, expected_decision, expected_gap in (
             (
-                "bare deferred outcome",
-                {"fixture-quality": "verified", "changelog": "skipped"},
+                "stable complete assessment",
+                check_results,
+                None,
+                set(check_results),
+                "ready",
+                None,
+            ),
+            (
+                "exact verified deferred gate",
+                {"fixture-quality": "verified", "changelog": "skipped", "ci-changelog": "verified"},
+                {"changelog": "ci-changelog"},
+                {"fixture-quality", "changelog", "ci-changelog"},
+                "ready",
                 None,
             ),
             (
                 "missing named gate",
                 {"fixture-quality": "verified", "changelog": "skipped"},
-                {"changelog": ("--defer", "ci-changelog", "ci-changelog")},
-            ),
-            (
-                "unrelated gate",
-                {"fixture-quality": "verified", "changelog": "skipped", "ci-size": "verified"},
-                {"changelog": ("--defer", "ci-changelog", "ci-changelog")},
+                {"changelog": "ci-changelog"},
+                {"fixture-quality", "changelog"},
+                "action-required",
+                "changelog: skipped",
             ),
             (
                 "mismatched gate",
                 {"fixture-quality": "verified", "changelog": "skipped", "ci-size": "verified"},
-                {"changelog": ("--defer", "ci-changelog", "ci-size")},
+                {"changelog": "ci-changelog"},
+                {"fixture-quality", "changelog", "ci-size"},
+                "action-required",
+                "changelog: skipped",
+            ),
+            (
+                "failed named gate",
+                {"fixture-quality": "verified", "changelog": "skipped", "ci-changelog": "failed"},
+                {"changelog": "ci-changelog"},
+                {"fixture-quality", "changelog", "ci-changelog"},
+                "action-required",
+                "changelog: skipped",
             ),
             (
                 "unavailable gate",
                 {"fixture-quality": "verified", "changelog": "skipped", "ci-changelog": "unavailable"},
-                {"changelog": ("--defer", "ci-changelog", "ci-changelog")},
+                {"changelog": "ci-changelog"},
+                {"fixture-quality", "changelog", "ci-changelog"},
+                "action-required",
+                "changelog: skipped",
             ),
             (
                 "unverified gate",
                 {"fixture-quality": "verified", "changelog": "skipped", "ci-changelog": "not verified"},
-                {"changelog": ("--defer", "ci-changelog", "ci-changelog")},
+                {"changelog": "ci-changelog"},
+                {"fixture-quality", "changelog", "ci-changelog"},
+                "action-required",
+                "changelog: skipped",
+            ),
+            (
+                "incomplete relevant-check inventory",
+                {},
+                None,
+                {"fixture-quality"},
+                "action-required",
+                "missing ['fixture-quality']",
+            ),
+            (
+                "ordinary skipped check",
+                {"fixture-quality": "verified", "ordinary-check": "skipped", "ci-quality": "verified"},
+                {"another-deferred-check": "ci-quality"},
+                {"fixture-quality", "ordinary-check", "ci-quality"},
+                "action-required",
+                "ordinary-check: skipped",
             ),
         ):
             decision, gaps = assessment_decision(
-                captured_subject=captured_subject,
-                current_subject=current_subject(stable_repo),
-                captured_head=captured,
-                current_head=full_head(stable_repo),
-                captured_base_ref=captured_base_ref,
-                current_base_ref=captured_base_ref,
-                captured_base_oid=captured_base_oid,
-                current_base_oid=full_base_oid(stable_repo, captured_base_ref),
-                expected_paths=paths,
-                inspected_paths=paths,
-                expected_checks=set(deferred_results),
+                **stable_arguments,
+                expected_checks=expected_checks,
                 check_results=deferred_results,
-                dirty_paths={},
-                deferred_sweep_evidence=deferred_evidence,
+                deferred_sweep_gates=deferred_sweep_gates,
             )
-            require(decision == "action-required", f"{label} did not fail closed")
-            require("changelog: skipped" in gaps, f"{label} did not leave the deferred class action-required")
-
-        ordinary_skipped_checks = {"fixture-quality": "verified", "ordinary-check": "skipped", "ci-quality": "verified"}
-        decision, gaps = assessment_decision(
-            captured_subject=captured_subject,
-            current_subject=current_subject(stable_repo),
-            captured_head=captured,
-            current_head=full_head(stable_repo),
-            captured_base_ref=captured_base_ref,
-            current_base_ref=captured_base_ref,
-            captured_base_oid=captured_base_oid,
-            current_base_oid=full_base_oid(stable_repo, captured_base_ref),
-            expected_paths=paths,
-            inspected_paths=paths,
-            expected_checks=set(ordinary_skipped_checks),
-            check_results=ordinary_skipped_checks,
-            dirty_paths={},
-            deferred_sweep_evidence={"ordinary-check": ("ordinary skip", "ci-quality", "ci-quality")},
-        )
-        require(decision == "action-required", "ordinary skipped check normalized to verified evidence")
-        require("ordinary-check: skipped" in gaps, "ordinary skipped check did not remain action-required")
-
+            require(decision == expected_decision, f"{label} returned {decision} instead of {expected_decision}")
+            if expected_gap is not None:
+                require(any(expected_gap in gap for gap in gaps), f"{label} did not name its gap")
         nondefault_target_repo = Path(temporary) / "nondefault-target"
         build_nondefault_target_repository(nondefault_target_repo)
         captured_nondefault_base_oid = full_base_oid(nondefault_target_repo, NONDEFAULT_BASE_REF)
@@ -894,24 +875,6 @@ def run_suite() -> None:
         )
         require(decision == "action-required", "incomplete inspected-path inventory did not fail closed")
         require("missing ['src/app.txt']" in gaps[0], "incomplete inspected-path inventory did not name its gap")
-
-        decision, gaps = assessment_decision(
-            captured_subject=captured_subject,
-            current_subject=captured_subject,
-            captured_head=stable_head,
-            current_head=stable_head,
-            captured_base_ref=captured_base_ref,
-            current_base_ref=captured_base_ref,
-            captured_base_oid=captured_base_oid,
-            current_base_oid=full_base_oid(detached_repo, captured_base_ref),
-            expected_paths=paths,
-            inspected_paths=paths,
-            expected_checks=set(check_results),
-            check_results={},
-            dirty_paths={},
-        )
-        require(decision == "action-required", "incomplete relevant-check inventory did not fail closed")
-        require("missing ['fixture-quality']" in gaps[0], "incomplete relevant-check inventory did not name its gap")
 
         for result in FAIL_CLOSED_CHECK_RESULTS:
             decision, gaps = assessment_decision(

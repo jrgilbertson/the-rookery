@@ -1,48 +1,56 @@
 ---
 name: checking-simplicity
-description: 'For a finished implementation plan described as ready and asked to hand off or continue, select this read-only review before execution or its first edit when no clean simplicity result is supplied or an owner question remains. Subjectless reuse stays with planning. If that result covers the unchanged plan and no owner question remains, do not load this review; execution owns the next step. Also use it for a completed requirements brief or approach before implementation planning, or an in-build decision before it adds an abstraction, dependency, configuration, persisted state, adapter, hook, queue, or background workflow. Review the identified subject against complete requirements to find the smallest safe alternative; for requirements-only drafts, assess scope without inventing implementation details. Exclude unfinished behavior changes, settled-code cleanup, bugs, and shipping. It does not plan, edit, implement, approve, or require a workflow checkpoint.'
+description: 'Use for a requested read-only assessment of opportunities to safely simplify a system architecture, design, technical area, plan, code-level approach, or choice among approaches. Also use implicitly when a completed brief or approach is ready for implementation planning, before an in-build decision adds an abstraction, dependency, configuration, persisted state, adapter, hook, queue, or workflow, or on a finished implementation plan''s first handoff to execution. Do not select it again for an unchanged plan already covered by a clean result with no owner question; execution owns that step. During brainstorming, use it only for simplification opportunities in a named direction. A named area or question with inspectable evidence is enough; formal requirements are optional. Prescribed implementation, general brainstorming, settled-code cleanup, explanation, visual or interface design, bugs, and shipping stay elsewhere. It assesses; it does not plan, edit, implement, approve, or require a checkpoint.'
 license: MIT
-compatibility: Requires access to the current requirements and subject under review. An independent gate also requires one reviewer who did not author or implement the subject.
+compatibility: Requires a named area, question, or reviewable subject and enough accessible evidence to identify the current need and protected boundaries. An independent gate also requires a separate-context reviewer who did not author or implement the subject.
 ---
 # Checking Simplicity
 
-Challenge proposed scope or machinery against the current requirements and
-find the smallest safe alternative. This is an assessment, not a planning,
-editing, or approval workflow.
+Find opportunities to safely simplify a system design, architecture, technical
+area, plan, question, or code-level approach against the current need. This is
+a read-only assessment, not a planning, editing, or approval workflow.
 
-Use it when a completed requirements draft or approach is ready for
-implementation planning, a finished implementation plan is ready for
-execution, or an in-build decision would add product or process machinery. An
-unchanged subject with a clean result and no open owner question can continue
-without another check.
+Use it most often when the caller points to an area, question, plan, technical
+choice, or existing implementation and asks for opportunities to simplify it
+safely. The subject may be proposed, already in place, or still being explored.
+During an ordinary workflow, it can also review a finished plan or challenge an
+in-build decision before it adds product or process machinery.
 
 The ordinary assessment can run in the current context. When the caller
-explicitly needs an independent gate, use one reviewer who did not author or
-implement the subject and give that reviewer the current owner-authoritative
-requirements and complete subject. The caller owns any stronger evidence or
-continuity protocol; do not create receipts, reviewer quotas, or proof
-environments for this skill. A reviewer may assess a revision it previously
-reviewed as long as it did not author or implement the revision.
+explicitly needs an independent gate, dispatch one reviewer in a separate
+context, such as a subagent, separate session, or other model invocation. That
+reviewer must not have authored or implemented the subject. Give the reviewer
+the complete subject and available decision frame. Keep the review lightweight:
+do not create receipts, reviewer quotas, or proof environments for this skill.
+A reviewer may assess a revision it previously reviewed as long as it did not
+author or implement the revision. The caller owns any stronger evidence or
+continuity protocol.
 
 ## Review boundary
 
-Review both:
+Build the decision frame from the best available evidence:
 
-- the current objective, required behavior, hard constraints, and verification
-  criteria; and
-- one current subject: the completed requirements draft, proposed approach,
-  implementation plan, or concrete in-build decision and its relevant current
-  implementation.
+- the user's stated goal and desired outcome;
+- explicit requirements, hard constraints, and verification criteria when
+  present;
+- behavior and boundaries that must be preserved; and
+- actual consumers and observed use.
 
-A request that states the relevant requirements and complexity-bearing
-decisions is a complete subject. Do not require a separate document, path, or
-replay of the same information.
+Formal requirements are useful but not required. Ask only when ambiguity would
+change what can safely disappear.
 
-Treat owner-approved requirements and hard constraints as requested scope.
-Treat capabilities added only by an agent-authored draft as proposals, even
-when the draft is marked complete. If available evidence does not establish
-whether the owner approved a capability, ask one owner question and make any
-dependent recommendation conditional. When plausible requirements sources
+Review one named subject. It may be an area or question, a proposed or existing
+architecture, design, or technical choice, a planning or in-build decision, or
+code and its relevant surrounding implementation. A request that supplies the
+decision frame and complexity-bearing decisions is a complete subject; when it
+points to a repository area instead, inspect the relevant current
+implementation. Do not require a separate document, path, or replay.
+
+Treat owner-approved requirements and hard constraints as controlling when
+available. Treat capabilities added only by an agent-authored draft as
+proposals, even when the draft is marked complete. If the evidence does not
+establish whether the owner approved a capability, ask one owner question and
+make any dependent recommendation conditional. When plausible evidence sources
 conflict, ask which source governs the review.
 
 Infer the subject from the request and available evidence. For implementation,
@@ -51,17 +59,24 @@ convenient diff. If missing evidence could change the recommendation, name the
 minimum missing evidence, including the existing mechanism being compared,
 instead of inventing certainty.
 
-The result covers the subject reviewed. Run another check only when the
-requirements or complexity-bearing decisions relevant to the recommendation
-change. Copy edits and implementation changes that merely apply the recommended
-reduction do not require a new assessment unless a caller's independent gate
-sets a stricter rule.
+The result covers the subject reviewed. Do not repeat the assessment when that
+subject already received `Proceed with the current approach.` and no relevant
+goal, protected boundary, consumer, observed use, or complexity-bearing
+decision has changed. Copy edits and implementation changes that merely apply a
+recommended reduction do not require a new assessment unless a caller's
+independent gate sets a stricter rule.
 
 ## Necessity test
 
-Separate the requested outcome from the mechanisms proposed to reach it. Then
+Start with the whole-system shape. Compare viable approaches and ask whether
+each boundary, responsibility, data path, and operating surface serves a
+current consumer or protected constraint. Before accounting for individual
+concepts, summarize the current shape and the smallest viable shape as whole
+systems.
+
+Separate the needed outcome from the mechanisms proposed to reach it. Then
 climb this ladder and stop at the first rung that completely satisfies the
-current requirements:
+current need:
 
 1. Remove the need for a change.
 2. Reuse the codebase's existing mechanism.
@@ -72,15 +87,16 @@ For qualitative agent-facing work, direct model judgment is an existing
 mechanism. Add parsers, schemas, or deterministic protocols only when a current
 machine consumer, enforcement boundary, or observed failure requires them.
 
-Inspect each new complexity-bearing concept, including product code and process
-machinery. It earns its place only when the current requirement, correctness,
-safety, or operating constraint that needs it is named and observable. A
-hypothetical future caller or possible later variation is not current evidence.
-Account for every proposed concept, grouping related concepts when useful.
+Inspect each complexity-bearing concept in the proposed or existing subject,
+including product code and process machinery. It earns its place only when the
+current need or a protected correctness, safety, or operating boundary is named
+and observable. A hypothetical future caller or possible later variation is
+not current evidence. Account for every concept, grouping related concepts when
+useful.
 
 Ask four questions:
 
-1. Which stated requirement or hard constraint requires this concept?
+1. Which part of the current need or protected boundary requires this concept?
 2. What existing mechanism or direct judgment was considered, and why is it
    insufficient?
 3. Does the interface, schema, protocol, option, or proof environment serve a
@@ -91,8 +107,9 @@ Ask four questions:
 Start with what can disappear. Prefer removal, reuse, or deferral over renaming
 the same machinery. Do not turn line count, file count, or a numeric complexity
 budget into the verdict. Do not claim an existing mechanism unless the evidence
-identifies it. Preserve requirement quantifiers: a maximum is an upper bound,
-not required work; a retry capped at two attempts stops after the first success.
+identifies it. Preserve stated sequencing and quantifiers: a completion audit
+occurs only after success; a maximum is an upper bound, not required work; a
+retry capped at two attempts stops after the first success.
 
 At a requirements-only handoff, compare every added capability, variation,
 lifecycle state, policy, and operator control with the originating objective
@@ -113,9 +130,9 @@ that separates them. An approach can need simplification and an owner decision
 at the same time.
 
 Do not treat silence as an answer when two observable behaviors both fit the
-stated requirement but need materially different machinery. Ask which behavior
-is required before choosing between them. Protect only boundaries stated or
-directly implied by current requirements.
+available decision frame but need materially different machinery. Ask which
+behavior is required before choosing between them. Protect only boundaries
+stated or directly supported by the decision frame.
 
 When the subject changes behavior, name the proportionate tests that must
 continue to prove each protected boundary. Name the observable test, not only
@@ -133,15 +150,21 @@ Start with the one line that fits:
 - `Proceed with the current approach.` when no material unnecessary complexity
   is evident.
 - `Simplify before proceeding.` when at least one named concept can be removed,
-  reused, or deferred while preserving the requirements.
+  reused, or deferred while preserving the current need and protected
+  boundaries.
 - `Decide before proceeding: <one exact question>` when owner authority is the
   only blocker.
-- `Cannot assess yet: <minimum missing evidence>` when the requirements or
+- `Cannot assess yet: <minimum missing evidence>` when the decision frame or
   subject cannot support a responsible recommendation.
 
 When evidence and an owner decision are both missing, lead with `Cannot assess
 yet` and include the single exact decision question after the evidence gap.
 Keep any reduction that depends on that answer explicitly conditional.
+
+When unconditional reductions and an owner decision coexist, lead with
+`Simplify before proceeding.`, give those reductions first, then ask the one
+exact question and end with two short sentences: `If no, <smallest safe
+shape>.` and `If yes, <smallest safe shape>.`
 
 ```text
 Simplify before proceeding.
@@ -164,12 +187,15 @@ When simplification is needed, aim for eight to twelve short nonblank lines.
 Give the smallest safe alternative, at most three grouped `Why` reasons, one
 `Keep` sentence for protected behavior and tests, and the next action. Name
 reuse in the recommendation or reasons. Each removal reason must connect the
-proposed machinery or scope to the current requirement it does not serve.
+proposed machinery or scope to the current need it does not serve.
+For a system design or architecture, the alternative must name both the current
+and smaller whole-system shapes and their decision-driving contrast before the
+component reasons.
 
 When the result cannot be assessed, name only the missing evidence that changes
 what the caller can do, the recovery action, and any useful conditional
-reduction. A materially changed requirement or complexity decision warrants a
-new review.
+reduction. A materially changed need, protected boundary, consumer, observed
+use, or complexity decision warrants a new review.
 
 Do not print a review receipt, subject replay, reviewer identity inventory,
 commit hash, context label, negative owner-decision field, or internal status
@@ -179,6 +205,9 @@ approving shipping.
 
 ## Boundaries
 
+- Use general brainstorming or planning when the outcome itself is still open;
+  this skill joins only when the task is to find safe simplification
+  opportunities.
 - Use behavior-preserving code cleanup for settled, recently changed code
   instead of this skill.
 - Use code review for bugs, regressions, tests, and standards.

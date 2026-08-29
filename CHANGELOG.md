@@ -13,12 +13,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
-- Added `checking-simplicity`, a read-only assessment that
-  right-sizes draft plans and in-build approaches before avoidable abstractions,
-  dependencies, configuration, persisted state, or process machinery harden
-  into code. It can serve as an independent caller-owned checkpoint without
-  requiring one for ordinary advisory use; lifecycle and Git hooks remain
-  deliberately absent.
+- Added `checking-simplicity`, a read-only assessment that finds safe
+  simplification opportunities in named technical areas, questions, proposed
+  or existing designs, plans, code-level approaches, and in-build decisions.
+  It can serve as an independent caller-owned checkpoint without requiring one
+  for ordinary advisory use; lifecycle and Git hooks remain deliberately absent.
 
 ### Changed
 

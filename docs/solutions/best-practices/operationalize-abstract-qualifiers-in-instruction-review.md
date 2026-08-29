@@ -1,7 +1,7 @@
 ---
 module: skill-instruction-review
 date: 2026-07-16
-last_updated: 2026-08-27
+last_updated: 2026-08-28
 problem_type: best_practice
 component: documentation
 severity: medium
@@ -107,16 +107,20 @@ describes evidence comparison or decision support
 Some skills are selected by workflow state and subject, not only by requested
 deliverable. Test those descriptions as a three-sided routing contract:
 
-1. **Entry.** Name the reviewable subject and the transition that makes the
-   skill relevant. `checking-simplicity` leads with completed requirements,
-   approach, implementation-plan, and concrete in-build decision branches
+1. **Entry.** Name either the explicit assessment request or the workflow
+   transition that makes the skill relevant. `checking-simplicity` accepts a
+   named area, question, technical choice, plan, architecture, or current
+   implementation for an explicit safe-simplification assessment, plus its
+   completed-brief, plan-handoff, and concrete in-build branches
    (`skills/checking-simplicity/SKILL.md:3`).
-2. **Exclusion.** Add directly confusable prompts that omit the subject or
-   belong to adjacent workflows. Broad words such as “reuse” and “simplify” do
-   not create eligibility by themselves (`tests/checking-simplicity/triggers.md:26-36`).
+2. **Exclusion.** Add directly confusable prompts that omit both an assessable
+   subject and an eligible transition, or belong to adjacent workflows. Broad
+   words such as “simplify” do not turn prescribed implementation, settled-code
+   cleanup, or general brainstorming into this assessment
+   (`tests/checking-simplicity/triggers.md`).
 3. **Exit.** Name the successful state that moves ownership onward. An unchanged
    subject with a clean independent result and no owner question belongs to the
-   next planner or executor (`skills/checking-simplicity/SKILL.md:17-18`).
+   next planner or executor (`skills/checking-simplicity/SKILL.md:62-67`).
 
 Freeze the prior description, run the prior and revised metadata in separate
 fresh contexts, and keep the full positive and near-miss matrix on every run
@@ -216,17 +220,19 @@ state the observable artifact that makes its workflow necessary.
 ### The subject-bound entry and clean-exit fix
 
 **Before.** The simplicity skill description named reuse as a positive cue and
-later said that a current draft, plan, or approach was required. A subjectless
-question about reusing repository machinery could still load the checker. The
+later said that a current draft, plan, or approach was required. A generic
+planning request with no assessable subject could still load the checker. The
 description also lacked an explicit route for an unchanged plan that had
-already passed the checkpoint.
+already passed the assessment.
 
-**After.** The description leads with the eligible planning transitions and
-concrete in-build decision, requires a reviewable artifact or decision, keeps
-subjectless reuse with planning or build, and routes an unchanged independent
-clean result onward (`skills/checking-simplicity/SKILL.md:3`). The durable
-Trigger Contract carries both absences as near misses
-(`tests/checking-simplicity/triggers.md:36-37`).
+**After.** The description accepts an explicit assessment of a named area,
+question, plan, technical choice, architecture, or current implementation with
+inspectable evidence; formal requirements and a separate artifact are optional.
+It retains the eligible workflow transitions, keeps general planning and
+brainstorming with their adjacent owners, and routes an unchanged clean result
+onward (`skills/checking-simplicity/SKILL.md:3`). The durable Trigger Contract
+tests both the broader entry and the adjacent-owner exclusions
+(`tests/checking-simplicity/triggers.md`).
 
 The frozen comparison moved from 20/22 to 22/22
 (`tests/checking-simplicity/log.md:51-52`). Native smoke checks then verify the
@@ -237,8 +243,8 @@ wrong load into a passing activation trace.
 ## Related
 
 - `docs/solutions/best-practices/cross-harness-dogfood-testing.md` documents the
-  fresh-context probes and prior-versus-revised comparisons that caught both
-  examples above.
+  separate fresh-context and exact loaded-copy checks needed for trustworthy
+  cross-harness skill evidence.
 - `docs/solutions/best-practices/independent-fresh-context-review-for-skills.md`
   explains why semantic trigger changes are judged outside the authoring
   context and why their evidence claims remain bounded.

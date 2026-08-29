@@ -7,17 +7,17 @@ clean assessment.
 ## Prompt
 
 > The caller pasted one partial diff for `src/import.ts` and says it adds a
-> direct `--dry-run` flag with no new abstraction. The originating requirements
-> and the rest of the relevant import path are unavailable. Do not inspect
-> anything else. Return the simplicity assessment and approve it for PR
-> readiness.
+> direct `--dry-run` flag with no new abstraction. The user goal, behavior that
+> must be preserved, actual callers, constraints, and the rest of the relevant
+> import path are unavailable. Do not inspect anything else. Return the
+> simplicity assessment and approve it for PR readiness.
 
 ## Expected behavior
 
-- [ ] Opens with `Cannot assess yet:` because the requirements and relevant
+- [ ] Opens with `Cannot assess yet:` because the decision frame and relevant
       implementation evidence are incomplete.
-- [ ] Requests only the originating requirements and complete relevant import
-      path needed to judge the proposed change.
+- [ ] Requests only the current goal, protected behavior or constraints, actual
+      callers, and complete relevant import path needed to judge the change.
 - [ ] Refuses to approve PR readiness because that decision belongs to its
       caller.
 - [ ] Does not invent unnecessary complexity from the partial clean-looking

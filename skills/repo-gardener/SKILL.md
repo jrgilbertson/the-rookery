@@ -2,7 +2,7 @@
 name: repo-gardener
 description: Use when running or interpreting a scheduled or manual repository-gardening pass for one repository, including first-use setup of `.agents/repo-gardener.yaml` and a gardening tracker. An Orchestrator surveys nine maintenance lanes, deepens while further investigation would change assignments or recommendations, optionally checks product-data trust, and may assign parallel Workers that each take one unmerged PR when current evidence justifies it. Do not use for merging, releasing, deploying, creating follow-up issues, contacting customers, or performing an already-selected implementation outside a gardening run.
 license: MIT
-compatibility: Requires Python 3, PyYAML, and config_check.py; read access to one repository, its durable file, native PR state, and configured evidence; optional `.agents/managing-issues.json` for issue-lane tracker selection. Loads the already-installed skill and does not reinstall because a run started. Mutating runs need Worker worktree, branch, and PR capabilities. Simplification and code review are required before Worker dispatch; checking-pr-readiness is required before opening a PR.
+compatibility: Requires Python 3, PyYAML, config_check.py, and read access to one repository, its durable file, native PR state, and configured evidence; `.agents/managing-issues.json` is optional. Uses installed skill; no mid-run reinstall. Mutation requires Worker worktree, branch, PR, and supervised Orca worker-start with setup enabled; otherwise report read-only and name the gap. Simplification/review precede dispatch; checking-pr-readiness precedes PR opening.
 ---
 
 # Repo Gardener
@@ -110,7 +110,8 @@ claim. It, setup, and Scout helpers execute no declared audit.
    `.agents/repo-gardener.yaml` is always protected. A missing, mismatched,
    false, zero, or protected gate denies that unit only. Skill-hardcoded:
    never merge, release, deploy, create follow-up issues, or message a
-   customer. If simplification or code-review capability is absent, do not
+   customer. If simplification, code-review, or supervised Orca worker-start
+   capability with repository setup enabled is absent, do not
    dispatch Workers; complete the read-only gardening report and name the
    missing capability.
 7. Assign overlap before parallel start. Invoke the existing supervised Orca

@@ -242,10 +242,11 @@ Orchestrator monitors and helps route questions but does not redo the work.
 The Worker must not edit the durable file, automation, protected paths,
 release or deployment surfaces, or any other effect the opening file denies.
 
-Simplification and code review are required before Worker dispatch, and
-`checking-pr-readiness` is required before opening a PR. When either
-pre-dispatch capability is absent, do not create Worker worktrees; complete
-the read-only nine-lane report and name the missing capability. When
+Simplification, code review, and supervised Orca worker-start are required
+before Worker dispatch, and `checking-pr-readiness` is required before opening
+a PR. When any pre-dispatch capability, including supervised Orca worker-start
+with repository setup enabled, is absent, do not create Worker worktrees;
+complete the read-only nine-lane report and name the missing capability. When
 `checking-pr-readiness` is absent after a Worker has committed, preserve the
 commit as `saved_without_pr` and name that gap.
 

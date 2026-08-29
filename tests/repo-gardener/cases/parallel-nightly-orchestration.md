@@ -27,9 +27,10 @@ sense-and-recommend run.
 >    touches only billing copy. A PostHog product hypothesis is unsupported
 >    because the configured project identity does not match the repository's
 >    canonical production identity. Fresh native reads show no overlapping
->    work for (a) or (b). Each assigned Worker reaches a clean exact commit
->    and `checking-pr-readiness` returns `pass`. Native checks on any opened
->    PR pass. The Orchestrator worktree remains available for inspection.
+>    work for (a) or (b). Each ownerless Worker reaches a clean exact commit
+>    and receives a same-session readable `ready` result from
+>    `checking-pr-readiness`. Native checks on any opened PR pass. The
+>    Orchestrator worktree remains available for inspection.
 > 2. `maximum_workers: 20`. Two otherwise justified units both touch the same
 >    adapter path slice (`apps/adapter/`). No other units exist. An unrelated
 >    already-open billing PR is present.
@@ -48,9 +49,11 @@ sense-and-recommend run.
 - [ ] Scenario 1 reports all nine lanes and keeps census totals distinct from
       the two normalized candidates.
 - [ ] Scenario 1 assigns two parallel Workers after overlap is decided, and
-      each Worker may open one unmerged PR after readiness. The unrelated
-      already-open billing PR does not consume the Worker cap. The run does
-      not invent work to fill `maximum_workers`.
+      each ownerless Worker may open one unmerged PR only after its
+      same-session readable readiness result and an immediate matching
+      local/provider-head and clean-surface re-read. The unrelated already-open
+      billing PR does not consume the Worker cap. The run does not invent work
+      to fill `maximum_workers`.
 - [ ] Scenario 1 does not assign a Worker to the protected-path unit; it
       reports that unit for owner attention. It stops the PostHog slice at
       project mismatch without treating blank data as zero activity or

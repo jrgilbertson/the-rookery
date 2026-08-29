@@ -13,6 +13,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Assessment-only `checking-pr-readiness` now reports same-session exact-head
+  findings and rejects a moved native head without requiring receipt packaging.
+  An ownerless `repo-gardener` Worker may open one PR only on that readable
+  ready result; otherwise its commit remains `saved_without_pr` with the gap.
 - `personal-chief-of-staff` Source Access Audits are now a short paragraph:
   coverage first, then every relevant role and how the read finished, with a
   "so" clause only when a result limits a claim. No table and no HTML

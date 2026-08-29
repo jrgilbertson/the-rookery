@@ -67,13 +67,14 @@ result before the lane decides whether any evidence qualifies as a candidate.
 The lane's required reads still run when it has no declaration or an execution
 is refused.
 
-Before beginning the declared-audit sequence, use the existing Orca supervised
-dispatch setup receipt. When it identifies the one configured Setup terminal,
-wait for that terminal before executing any declaration. Record a
-`not_configured` receipt as that exact no-op and proceed without running a
-manual setup command. This ordering consumes existing Orca state only; it
-does not add a gardener setup command, setup schema, helper, registry, or
-state machine.
+Before beginning the declared-audit sequence, consume the existing Orca
+supervised-dispatch setup receipt only when the host exposes it. A receipt that
+identifies the one configured Setup terminal requires waiting for that terminal
+before executing any declaration; a `not_configured` receipt is that exact
+no-op. On a compatible host that exposes no setup receipt, proceed without a
+wait. Never fabricate a receipt or run a manual setup command. This ordering
+consumes existing Orca state only; it does not add a gardener setup command,
+setup schema, helper, registry, or state machine.
 
 Immediately before each command, refresh and validate the protected policy
 from the configured default branch. Stop all remaining declared commands if

@@ -2,6 +2,7 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-08-28 | 077c55f (working tree) | portable declared-audit Setup receipt contract | pass | `run-config-checks.py`, effect and run-record fixtures, `skills-ref`, and `git diff --check` passed. Reconciliation and Subcase F now exhaustively distinguish a configured receipt that waits, an exact `not_configured` no-op, and a compatible host with no exposed receipt that proceeds without waiting; the no-receipt path neither fabricates a receipt nor runs setup manually.
 - 2026-08-28 | dc650ba (working tree) | declared-audit Setup wait contract | pass (focused static comparison) | The exact base has no Subcase F or Orca Setup/package-runner contract. The revised case and reconciliation text wait for the one existing configured Setup terminal before the declared-audit sequence, preserve the approved argv, record `not_configured` as an exact no-op, and keep package-runner or nested-executable absence declaration-local while all nine lanes and independently qualified Workers continue. Fresh-context execution and independent grading of this behavioral case were not run in this dispatch.
 - 2026-08-28 | dc650ba (working tree) | repo-gardener deterministic and structural gates | pass | `python3 tests/repo-gardener/fixtures/run-config-checks.py`, `npx --no-install skills-ref validate skills/repo-gardener`, and `lefthook run pre-push --force --no-auto-install` passed.
 

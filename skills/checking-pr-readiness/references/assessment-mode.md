@@ -62,9 +62,10 @@ Say `ready` only when the same session has a complete inspected-path inventory
 and a complete relevant-check inventory, and every applicable required check
 is `verified` or proven `not applicable`. Every other canonical check status
 (`failed`, `unavailable`, `not verified`, `not run`, `skipped`, `bypassed`,
-`attested`, or `unresolved`) is `action-required`; name each exact gap. An
-incomplete inventory is also `action-required`, even when its reported checks
-are `verified`.
+or `attested`) is `action-required`; name each exact gap. An unresolved
+finding is a separately named action-required gap attached to an allowed
+status, for example `code review: not verified`. An incomplete inventory is
+also `action-required`, even when its reported checks are `verified`.
 
 The sole narrow exception is a sweep-class `--defer` outcome. It may normalize
 from `skipped` to `verified` evidence only when its exact named equivalent

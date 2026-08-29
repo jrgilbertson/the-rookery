@@ -29,7 +29,6 @@ FAIL_CLOSED_CHECK_RESULTS = (
     "skipped",
     "bypassed",
     "attested",
-    "unresolved",
 )
 RETIRED_MACHINERY = {
     "versioned readiness schema": re.compile(r"checking-pr-readiness-[a-z-]+/v1"),
@@ -520,6 +519,12 @@ def validate_contract_sources() -> None:
     ):
         require("not verified" in source and "not run" in source, f"{name} omits canonical check statuses")
         require("unverified" not in source and "not-run" not in source, f"{name} retains noncanonical check statuses")
+    require(
+        "an unresolved finding is a separately named action-required gap attached to an allowed status, for example `code review: not verified`."
+        in normalized_assessment,
+        "assessment contract does not distinguish unresolved findings from check statuses",
+    )
+    require("unresolved" not in FAIL_CLOSED_CHECK_RESULTS, "unresolved remains a canonical check status")
 
 
 def run_suite() -> None:
@@ -537,6 +542,7 @@ def run_suite() -> None:
             "fixture surface changed unexpectedly",
         )
         require(check_results == {"fixture-quality": "verified"}, "fixture repository check did not verify")
+        check_results["steps 3-6 judgment checks"] = "not run"
         stable_arguments = {
             "captured_subject": captured_subject,
             "current_subject": current_subject(stable_repo),
@@ -552,74 +558,104 @@ def run_suite() -> None:
         }
         for label, deferred_results, deferred_sweep_gates, expected_checks, expected_decision, expected_gap in (
             (
-                "stable complete assessment",
+                "stable deterministic slice",
                 check_results,
                 None,
                 set(check_results),
-                "ready",
-                None,
+                "action-required",
+                "steps 3-6 judgment checks: not run",
             ),
             (
                 "exact verified deferred gate",
-                {"fixture-quality": "verified", "changelog": "skipped", "ci-changelog": "verified"},
+                {
+                    "fixture-quality": "verified",
+                    "steps 3-6 judgment checks": "not run",
+                    "changelog": "skipped",
+                    "ci-changelog": "verified",
+                },
                 {"changelog": "ci-changelog"},
-                {"fixture-quality", "changelog", "ci-changelog"},
-                "ready",
-                None,
+                {"fixture-quality", "steps 3-6 judgment checks", "changelog", "ci-changelog"},
+                "action-required",
+                "steps 3-6 judgment checks: not run",
             ),
             (
                 "missing named gate",
-                {"fixture-quality": "verified", "changelog": "skipped"},
+                {"fixture-quality": "verified", "steps 3-6 judgment checks": "not run", "changelog": "skipped"},
                 {"changelog": "ci-changelog"},
-                {"fixture-quality", "changelog"},
+                {"fixture-quality", "steps 3-6 judgment checks", "changelog"},
                 "action-required",
                 "changelog: skipped",
             ),
             (
                 "mismatched gate",
-                {"fixture-quality": "verified", "changelog": "skipped", "ci-size": "verified"},
+                {
+                    "fixture-quality": "verified",
+                    "steps 3-6 judgment checks": "not run",
+                    "changelog": "skipped",
+                    "ci-size": "verified",
+                },
                 {"changelog": "ci-changelog"},
-                {"fixture-quality", "changelog", "ci-size"},
+                {"fixture-quality", "steps 3-6 judgment checks", "changelog", "ci-size"},
                 "action-required",
                 "changelog: skipped",
             ),
             (
                 "failed named gate",
-                {"fixture-quality": "verified", "changelog": "skipped", "ci-changelog": "failed"},
+                {
+                    "fixture-quality": "verified",
+                    "steps 3-6 judgment checks": "not run",
+                    "changelog": "skipped",
+                    "ci-changelog": "failed",
+                },
                 {"changelog": "ci-changelog"},
-                {"fixture-quality", "changelog", "ci-changelog"},
+                {"fixture-quality", "steps 3-6 judgment checks", "changelog", "ci-changelog"},
                 "action-required",
                 "changelog: skipped",
             ),
             (
                 "unavailable gate",
-                {"fixture-quality": "verified", "changelog": "skipped", "ci-changelog": "unavailable"},
+                {
+                    "fixture-quality": "verified",
+                    "steps 3-6 judgment checks": "not run",
+                    "changelog": "skipped",
+                    "ci-changelog": "unavailable",
+                },
                 {"changelog": "ci-changelog"},
-                {"fixture-quality", "changelog", "ci-changelog"},
+                {"fixture-quality", "steps 3-6 judgment checks", "changelog", "ci-changelog"},
                 "action-required",
                 "changelog: skipped",
             ),
             (
                 "unverified gate",
-                {"fixture-quality": "verified", "changelog": "skipped", "ci-changelog": "not verified"},
+                {
+                    "fixture-quality": "verified",
+                    "steps 3-6 judgment checks": "not run",
+                    "changelog": "skipped",
+                    "ci-changelog": "not verified",
+                },
                 {"changelog": "ci-changelog"},
-                {"fixture-quality", "changelog", "ci-changelog"},
+                {"fixture-quality", "steps 3-6 judgment checks", "changelog", "ci-changelog"},
                 "action-required",
                 "changelog: skipped",
             ),
             (
                 "incomplete relevant-check inventory",
-                {},
+                {"steps 3-6 judgment checks": "not run"},
                 None,
-                {"fixture-quality"},
+                {"fixture-quality", "steps 3-6 judgment checks"},
                 "action-required",
                 "missing ['fixture-quality']",
             ),
             (
                 "ordinary skipped check",
-                {"fixture-quality": "verified", "ordinary-check": "skipped", "ci-quality": "verified"},
+                {
+                    "fixture-quality": "verified",
+                    "steps 3-6 judgment checks": "not run",
+                    "ordinary-check": "skipped",
+                    "ci-quality": "verified",
+                },
                 {"another-deferred-check": "ci-quality"},
-                {"fixture-quality", "ordinary-check", "ci-quality"},
+                {"fixture-quality", "steps 3-6 judgment checks", "ordinary-check", "ci-quality"},
                 "action-required",
                 "ordinary-check: skipped",
             ),
@@ -633,6 +669,8 @@ def run_suite() -> None:
             require(decision == expected_decision, f"{label} returned {decision} instead of {expected_decision}")
             if expected_gap is not None:
                 require(any(expected_gap in gap for gap in gaps), f"{label} did not name its gap")
+            if label == "exact verified deferred gate":
+                require("changelog: skipped" not in gaps, "exact verified deferred gate did not normalize the skipped changelog")
         nondefault_target_repo = Path(temporary) / "nondefault-target"
         build_nondefault_target_repository(nondefault_target_repo)
         captured_nondefault_base_oid = full_base_oid(nondefault_target_repo, NONDEFAULT_BASE_REF)
@@ -1081,7 +1119,7 @@ def run_suite() -> None:
             "base movement before PR open did not name old/new base identity",
         )
 
-    print("PASS: stable session discovered and ran its caller-authorized fixture-quality check, then returned ready")
+    print("PASS: stable deterministic slice ran fixture-quality but returned action-required for unexecuted steps 3-6 judgment checks")
     print("PASS: captured non-default base inspection includes a committed path omitted by implicit default inspection")
     print("PASS: discovered repository checks outside the caller-authorized argv list remain not verified and action-required")
     print("PASS: stable subject/head with a changed base OID returns action-required and names old/new base identity")

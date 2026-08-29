@@ -26,13 +26,14 @@ certify readiness, or duplicate a proven phase owner.
 
 - [ ] Items 1–3 select `managing-issues`, `ce-plan`, and `ce-work`,
       respectively; item 1 chooses no leaf and certifies no frontier.
-- [ ] Item 4 routes the child's unresolved effect to `ce-plan` while preserving
-      supplied parent constraints.
+- [ ] Item 4 routes the child to `ce-plan` because planning is what needs to
+      happen first, while preserving supplied parent constraints.
 - [ ] Item 5 returns a continuation naming Jordan and no duplicate kickoff.
 - [ ] Item 6 returns the normal route with `Active ownership unverified` and
       performs no ownership discovery or monitoring.
-- [ ] Item 7 routes the child's unresolved effect to `ce-plan`; the supplied
-      non-blocking family gap does not displace the directly named child.
+- [ ] Item 7 routes the child to `ce-plan` because planning is what needs to
+      happen first; the supplied non-blocking family gap does not displace the
+      directly named child.
 - [ ] All conclusions use supplied family and ownership state only.
 - [ ] Every ready route includes a concise, source-led plain-text kickoff with
       natural setup language; continuation remains compact and contains no

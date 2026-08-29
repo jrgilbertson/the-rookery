@@ -16,6 +16,8 @@ must not become workflow ownership or unbounded fan-out.
 > 2. Route an approved parent plan to implementation. It has two independent
 >    packages, named disjoint write scopes, and one integrator. The current
 >    coordinator must remain human-facing while using Orca across windows.
+>    Each package should become one small, coherent PR. Merge authority is not
+>    supplied.
 > 3. Route a sequential release-preparation job whose phases have distinct
 >    permissions and outputs.
 > 4. Route one draft-and-review job with explicit acceptance criteria and one
@@ -32,6 +34,11 @@ must not become workflow ownership or unbounded fan-out.
       worktrees; its copy/paste block includes both lead and worker profiles,
       names Orca only as the current orchestration dependency, and invents no
       CLI grammar.
+- [ ] Item 2's kickoff prefers incremental PRs and merges, calls for fresh
+      `checking-pr-readiness` before opening or updating each PR and fresh
+      `checking-merge-readiness` against the current head immediately before
+      each merge, continues from the updated default branch, and withholds
+      merge authority.
 - [ ] Items 3–4 select Staged delivery and Evaluator loop, respectively; the
       evaluator loop names one round and a stop condition.
 - [ ] No item dispatches agents, creates worktrees, escalates effort, or starts

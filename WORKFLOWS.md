@@ -101,7 +101,7 @@ Design is where visual iteration sharpens both the research and the plan, and it
 
 Design is hard with AI. The AI tends toward recognizable slop, the same gradients, feature cards, and triplets. The counter is a durable design system: a named aesthetic, tokens with purposes and prohibitions, and the components that use them. I use the [DESIGN.md standard](https://github.com/google-labs-code/design.md).
 
-When design is the first unresolved effect, I route to
+When the work needs design first, I route to
 [Impeccable](https://github.com/pbakaus/impeccable) as the umbrella. It chooses
 the internal workflow unless one exact command is already obvious.
 

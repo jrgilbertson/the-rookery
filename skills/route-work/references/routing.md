@@ -31,14 +31,14 @@ owning workflow instead of resolving that work here. Each response returns one
 route, continuation, clarification, or stop and persists no routing state
 outside the visible conversation.
 
-## Choose the first owner
+## Choose what needs to happen first
 
-Choose exactly one owner from the **first unresolved effect**: the earliest
-uncertainty to resolve or durable change to produce before useful work can
-continue. The request's carrier, model, harness, and eventual workflow sequence
-do not determine the owner.
+Choose exactly one owner based on what needs to happen first: the earliest
+question to answer or durable change to make before useful work can continue.
+The request's carrier, model, harness, and eventual workflow sequence do not
+determine the owner.
 
-| First unresolved effect | Owner | Discriminator |
+| What needs to happen first | Owner | Discriminator |
 |---|---|---|
 | Product outcome, behavior, or scope boundary is unsettled | `ce-brainstorm` | Clarify what should be built before planning how |
 | One consequential dependency-ordered decision tree needs pressure-testing against supplied documents | `grill-with-docs` | Run a focused grill; durable document updates require authority and repository-defined locations |
@@ -46,10 +46,10 @@ do not determine the owner.
 | Broken or unexpected behavior still has an unresolved causal chain | `ce-debug` | Diagnose first; an established cause and fix route to `ce-work` |
 | Concrete implementation is ready and authorized, including an already-diagnosed fix | `ce-work` | Execute within the supplied authority |
 | Canonical issue content, relationship graph, coverage, or readiness state must be inspected or changed | `managing-issues` | Keep tracker truth and complete graph claims with the issue workflow |
-| Visual direction, interaction design, or design quality is the first unresolved effect | `impeccable` | Let Impeccable select its internal workflow unless one exact command is already obvious |
+| Visual direction, interaction design, or design quality is unresolved | `impeccable` | Let Impeccable select its internal workflow unless one exact command is already obvious |
 
-An effect outside these seven owners returns `Unsupported in v1` and points to
-the [public workflow catalog](https://github.com/jrgilbertson/the-rookery/blob/main/WORKFLOWS.md).
+Work that needs a different starting owner returns `Unsupported in v1` and
+points to the [public workflow catalog](https://github.com/jrgilbertson/the-rookery/blob/main/WORKFLOWS.md).
 That stop contains no executable kickoff and links only to the public catalog.
 
 ### Ambiguity and missing input
@@ -109,13 +109,13 @@ Use only supplied issue-family and plan state.
 | Family coverage, descendants, blockers, readiness, or topology is incomplete or uncertain | Route to `managing-issues`; do not declare a Ready Frontier or choose a leaf |
 | A complete current family is supplied, but parent integration, sequencing, or shared-surface planning is missing | Route the parent to `ce-plan` |
 | An approved parent plan is supplied | Route to `ce-work`; use Lead + bounded workers only when independent units, one integrator, and safe write boundaries are proven |
-| A child is named directly | Route from the child's unresolved effect while preserving supplied parent constraints |
+| A child is named directly | Route from what needs to happen first for that child while preserving supplied parent constraints |
 | The requested phase already has a proven active owner | Return continuation context and no duplicate kickoff unless replacement or restart is explicit |
 
 When rows overlap, a proven active owner of the requested phase takes
-precedence. Otherwise, a directly named child routes from its own unresolved
-effect unless supplied evidence says unresolved family state blocks that
-child. All other incomplete or uncertain family-state starts route to
+precedence. Otherwise, a directly named child routes from what needs to happen
+first for that child unless supplied evidence says unresolved family state
+blocks it. All other incomplete or uncertain family-state starts route to
 `managing-issues`.
 
 Active ownership is proven only by an operator statement or supplied artifact
@@ -214,7 +214,7 @@ The named stops are:
 | Stop | Use when | Next prerequisite |
 |---|---|---|
 | `Insufficient input` | A named or required primary artifact is unavailable, or the operator cannot supply a required routing fact | Supply the missing discriminating fact or readable artifact |
-| `Unsupported in v1` | The first unresolved effect falls outside the seven startup owners | Choose from the public workflow catalog or request a supported startup route |
+| `Unsupported in v1` | The required starting work falls outside the seven startup owners | Choose from the public workflow catalog or request a supported startup route |
 | `Owner unavailable` | The selected workflow is confirmed unavailable | Make that workflow available or choose how to proceed outside the router |
 | `Profiles exhausted` | All three profiles for the selected role are stated unavailable | Supply an available profile or updated availability |
 
@@ -250,6 +250,8 @@ evidence requires a new explicit route. Point to a supplied artifact instead of
 restating it; when none exists, use a concise statement of the supplied request.
 The fenced kickoff is an inert portable prompt written without Markdown
 delimiters; the operator, not the router, uses it.
+When a lead will coordinate multiple PRs, add: "Prefer small, coherent PRs and
+merge them as they become ready. Run fresh `checking-pr-readiness` before opening or updating each PR and `checking-merge-readiness` against its current head immediately before each merge. After each merge, continue from the updated default branch. Merge only within supplied authority."
 
 ### Continuation
 
@@ -288,7 +290,7 @@ the reason or prerequisite.
 | “This command fails and the cause is unknown.” | `ce-debug`, Researcher profile; a supplied established cause and authorized fix instead routes to `ce-work` |
 | “Route work for this issue family; descendant coverage and blockers are uncertain.” | `managing-issues`; do not select a child or certify readiness |
 | “This approved parent plan has independent packages, one integrator, and disjoint writes.” | `ce-work`, Lead + bounded workers, with orchestrator/planner lead and executor worker profiles |
-| “Route this named child issue under the supplied parent constraints.” | Select from the child's first unresolved effect |
+| “Route this named child issue under the supplied parent constraints.” | Select what needs to happen first for that child |
 | “The interaction direction is unresolved.” | `impeccable`, Single owner, design/taste profile |
 | “Resume the implementation phase already owned by this named worker.” | Continuation with the proven owner; no duplicate kickoff |
 | “Use a hands-off delivery workflow to run this end to end.” | `Unsupported in v1` with the public workflow-catalog URL and no kickoff |

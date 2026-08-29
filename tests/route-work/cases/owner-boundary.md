@@ -1,7 +1,7 @@
-# First unresolved effect selects the startup owner
+# What needs to happen first determines the startup owner
 
 Provenance: explicit routing-safety invariant — a carrier or eventual workflow
-must not displace the first unresolved effect.
+must not displace the work that needs to happen first.
 
 ## Prompt
 

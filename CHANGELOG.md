@@ -17,8 +17,9 @@ looked" surface. GitHub Releases mirror its entries.
   page, a concise source-led startup prompt, generic worktree language, Orca
   only where supervised orchestration currently requires it, minimal batches
   of independent clarification questions when the starting setup is unclear,
-  a manually maintained seven-role model-profile fallback, and an exact parity
-  check for its packaged reference.
+  incremental PR and merge guidance for multi-PR leads, a manually maintained
+  seven-role model-profile fallback, and an exact parity check for its packaged
+  reference.
 - README and `WORKFLOWS.md` now describe the catalog as a portable skill
   set inside a personal loop: `repo-gardener` listings stay two sentences,
   Orca is the IDE this workflow runs in rather than a requirement, `ce-plan`

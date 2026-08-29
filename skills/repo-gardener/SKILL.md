@@ -131,10 +131,13 @@ claim. It, setup, and Scout helpers execute no declared audit.
    assigned path slice. A Worker does not survey nine lanes or write tracker
    comments. Helpers do not own a PR.
 8. Require each Worker to plan, implement, simplify, review, pass repository
-   gates, and commit the result. Run the repository's documented gates from
-   the Worker worktree with the environment those gates require. Their output
-   is evidence only and grants no provider or mutation authority. On that
-   clean exact commit the Worker runs installed `checking-pr-readiness`.
+   gates, and commit the result. After successful or no-op native Orca setup,
+   run relevant repository-documented verification commands unchanged as
+   ordinary gates. Report each command's actual `pass`, `failure`, or
+   `unavailable` result; never relabel a gate as setup, install or substitute
+   a prerequisite, or synthesize another environment. Their output is evidence
+   only and grants no provider or mutation authority. On that clean exact
+   commit the Worker runs installed `checking-pr-readiness`.
    When no owner is in the session, the run is assessment-only: exact
    subject, full HEAD OID, outcome `pass` or `action-required`, and a
    same-session `checking-pr-readiness-receipt-bundle/v1` outside the

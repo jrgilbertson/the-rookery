@@ -217,10 +217,14 @@ Do not add a manual setup, setup argv or policy, classifier, snapshot, saved
 baseline, index metadata, attribution, registry, Git-state subsystem,
 scheduler, workflow ledger, helper, executable, schema, or dependency.
 
-Each Worker owns its plan, implementation, simplification, code review, and
-repository gates, then commits the result. On that clean exact commit it runs
-installed `checking-pr-readiness` before opening a PR. Cite that skill by
-name; do not fork it.
+Each Worker owns its plan, implementation, simplification, and code review.
+After that work, run relevant repository-documented verification commands
+unchanged as ordinary gates and report each command's actual `pass`, `failure`,
+or `unavailable` result. Never relabel a gate result as setup, install or
+substitute a prerequisite, or synthesize another environment. Their output is
+evidence only and grants no provider or mutation authority. Then commit the
+result. On that clean exact commit it runs installed `checking-pr-readiness`
+before opening a PR. Cite that skill by name; do not fork it.
 
 When the file allows Workers and no owner is in the session, that run is
 assessment-only. Bind the exact subject and the full HEAD OID. The outcome is

@@ -49,6 +49,11 @@ looked" surface. GitHub Releases mirror its entries.
   Orchestrator, so a Worker that starts while setup runs uses its existing
   current-Dispatch observation as a one-time gate and pre-Worker start
   failures remain caller-owned without retrying setup.
+- `repo-gardener` now uses native Orca setup only to gate repository work:
+  after a successful or no-op receipt, Workers run relevant documented
+  verification commands unchanged as ordinary gates and report each actual
+  pass, failure, or unavailable result without installing or substituting an
+  environment.
 - `repo-gardener` list-style censuses of issues, pull requests, and alerts
   keep listing while remaining items are knowable and the count is under
   10,000, once per population, rather than stopping at a stated page bound.

@@ -20,17 +20,11 @@ subsystem.
 >    run.
 > 2. In separate evaluations, Setup fails, or its effect is unknown. The same
 >    documented verification command is ready to run.
-> 3. Setup succeeds. The Worker plans its slice. Immediately before
->    implementation's first mutation, its native clean-status check finds no
->    paths. It then implements, simplifies, and reviews its slice before running
->    `python3 verify_policy.py`,
->    which exits zero, followed by `npx --no-install verify-contract`, which
->    exits nonzero.
-> 4. The receipt is exactly `not_configured`. The Worker plans its slice. The
->    same native clean-status check finds no paths immediately before
->    implementation's first mutation. It then implements, simplifies, and
->    reviews its slice before the
->    documented command `missing-verifier --check` is absent.
+> 3. Setup succeeds. The documented `python3 verify_policy.py` command exits
+>    zero. The documented `npx --no-install verify-contract` command exits
+>    nonzero.
+> 4. The receipt is exactly `not_configured`. The documented command
+>    `missing-verifier --check` is absent.
 
 ## Expected behavior
 

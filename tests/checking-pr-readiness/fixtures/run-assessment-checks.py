@@ -542,7 +542,6 @@ def run_suite() -> None:
             "fixture surface changed unexpectedly",
         )
         require(check_results == {"fixture-quality": "verified"}, "fixture repository check did not verify")
-        check_results["steps 3-6 judgment checks"] = "not run"
         stable_arguments = {
             "captured_subject": captured_subject,
             "current_subject": current_subject(stable_repo),
@@ -569,20 +568,19 @@ def run_suite() -> None:
                 "exact verified deferred gate",
                 {
                     "fixture-quality": "verified",
-                    "steps 3-6 judgment checks": "not run",
                     "changelog": "skipped",
                     "ci-changelog": "verified",
                 },
                 {"changelog": "ci-changelog"},
-                {"fixture-quality", "steps 3-6 judgment checks", "changelog", "ci-changelog"},
+                {"fixture-quality", "changelog", "ci-changelog"},
                 "action-required",
                 "steps 3-6 judgment checks: not run",
             ),
             (
                 "missing named gate",
-                {"fixture-quality": "verified", "steps 3-6 judgment checks": "not run", "changelog": "skipped"},
+                {"fixture-quality": "verified", "changelog": "skipped"},
                 {"changelog": "ci-changelog"},
-                {"fixture-quality", "steps 3-6 judgment checks", "changelog"},
+                {"fixture-quality", "changelog"},
                 "action-required",
                 "changelog: skipped",
             ),
@@ -590,12 +588,11 @@ def run_suite() -> None:
                 "mismatched gate",
                 {
                     "fixture-quality": "verified",
-                    "steps 3-6 judgment checks": "not run",
                     "changelog": "skipped",
                     "ci-size": "verified",
                 },
                 {"changelog": "ci-changelog"},
-                {"fixture-quality", "steps 3-6 judgment checks", "changelog", "ci-size"},
+                {"fixture-quality", "changelog", "ci-size"},
                 "action-required",
                 "changelog: skipped",
             ),
@@ -603,12 +600,11 @@ def run_suite() -> None:
                 "failed named gate",
                 {
                     "fixture-quality": "verified",
-                    "steps 3-6 judgment checks": "not run",
                     "changelog": "skipped",
                     "ci-changelog": "failed",
                 },
                 {"changelog": "ci-changelog"},
-                {"fixture-quality", "steps 3-6 judgment checks", "changelog", "ci-changelog"},
+                {"fixture-quality", "changelog", "ci-changelog"},
                 "action-required",
                 "changelog: skipped",
             ),
@@ -616,12 +612,11 @@ def run_suite() -> None:
                 "unavailable gate",
                 {
                     "fixture-quality": "verified",
-                    "steps 3-6 judgment checks": "not run",
                     "changelog": "skipped",
                     "ci-changelog": "unavailable",
                 },
                 {"changelog": "ci-changelog"},
-                {"fixture-quality", "steps 3-6 judgment checks", "changelog", "ci-changelog"},
+                {"fixture-quality", "changelog", "ci-changelog"},
                 "action-required",
                 "changelog: skipped",
             ),
@@ -629,20 +624,19 @@ def run_suite() -> None:
                 "unverified gate",
                 {
                     "fixture-quality": "verified",
-                    "steps 3-6 judgment checks": "not run",
                     "changelog": "skipped",
                     "ci-changelog": "not verified",
                 },
                 {"changelog": "ci-changelog"},
-                {"fixture-quality", "steps 3-6 judgment checks", "changelog", "ci-changelog"},
+                {"fixture-quality", "changelog", "ci-changelog"},
                 "action-required",
                 "changelog: skipped",
             ),
             (
                 "incomplete relevant-check inventory",
-                {"steps 3-6 judgment checks": "not run"},
+                {},
                 None,
-                {"fixture-quality", "steps 3-6 judgment checks"},
+                {"fixture-quality"},
                 "action-required",
                 "missing ['fixture-quality']",
             ),
@@ -650,16 +644,17 @@ def run_suite() -> None:
                 "ordinary skipped check",
                 {
                     "fixture-quality": "verified",
-                    "steps 3-6 judgment checks": "not run",
                     "ordinary-check": "skipped",
                     "ci-quality": "verified",
                 },
                 {"another-deferred-check": "ci-quality"},
-                {"fixture-quality", "steps 3-6 judgment checks", "ordinary-check", "ci-quality"},
+                {"fixture-quality", "ordinary-check", "ci-quality"},
                 "action-required",
                 "ordinary-check: skipped",
             ),
         ):
+            deferred_results["steps 3-6 judgment checks"] = "not run"
+            expected_checks.add("steps 3-6 judgment checks")
             decision, gaps = assessment_decision(
                 **stable_arguments,
                 expected_checks=expected_checks,

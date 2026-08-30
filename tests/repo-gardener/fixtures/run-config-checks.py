@@ -467,6 +467,22 @@ def main() -> int:
         absolute_ledger["shared_ledger_paths"] = ["/CHANGELOG.md"]
         expect_invalid(absolute_ledger, repo_root, "shared_ledger_paths[0] must be a repository-relative path")
 
+        wildcard_ledger = shared_ledger_config()
+        wildcard_ledger["shared_ledger_paths"] = ["**"]
+        expect_invalid(
+            wildcard_ledger,
+            repo_root,
+            "shared_ledger_paths[0] must be a literal repository-relative file path",
+        )
+
+        nested_wildcard_ledger = shared_ledger_config()
+        nested_wildcard_ledger["shared_ledger_paths"] = ["src/**"]
+        expect_invalid(
+            nested_wildcard_ledger,
+            repo_root,
+            "shared_ledger_paths[0] must be a literal repository-relative file path",
+        )
+
         nested_ledger = base_config()
         nested_ledger["shared_ledger"] = {"paths": ["CHANGELOG.md"]}
         expect_invalid(nested_ledger, repo_root, "config has unexpected key: shared_ledger")

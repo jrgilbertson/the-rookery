@@ -203,7 +203,11 @@ do not consume the cap. Each
 Worker is one worktree, one branch, and at most one unmerged PR. Each Worker
 prompt carries the opening policy revision, identity, scope, protected paths,
 lane grant, assigned path slice, and the exact caller-approved verification
-command argv list. Helpers do not own a PR.
+command argv list. For a shared-ledger assignment, it also carries the
+applicable declared ledger path, the identity of the repository proof of
+conflict-safe additive behavior, and the exact base-diff check: add that
+Worker's attributable entry without deleting, replacing, omitting, or editing
+another base ledger entry. Helpers do not own a PR.
 
 A usable Worker may start while setup runs. It consumes the receipt for its own
 worktree, without relying on Orca parent-child lineage, and uses the existing

@@ -139,8 +139,12 @@ claim. It, setup, and Scout helpers execute no declared audit.
    worktree, one branch, and at most one unmerged PR. Each Worker prompt carries the
    opening policy revision, identity, scope, protected paths, lane grant,
    assigned path slice, and the exact caller-approved verification command argv
-   list. A Worker does not survey nine lanes or write tracker comments. Helpers
-   do not own a PR.
+   list. For a shared-ledger assignment, it also carries the applicable declared
+   ledger path, the identity of the repository proof of conflict-safe additive
+   behavior, and the exact base-diff check: add that Worker's attributable entry
+   without deleting, replacing, omitting, or editing another base ledger entry.
+   A Worker does not survey nine lanes or write tracker comments. Helpers do not
+   own a PR.
 8. Require each Worker to plan, implement, simplify, review, pass repository
    gates, and commit the result. After successful or no-op native Orca setup,
    run relevant repository-documented verification commands unchanged as

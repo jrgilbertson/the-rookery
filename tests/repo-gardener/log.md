@@ -2,7 +2,7 @@
 
 Format: `date | git rev | check | result | note`
 
-- 2026-08-30 | working tree | canonical issue-refinement delegation case | pending — fresh-context behavioral review | The strengthened Repo Gardener and Managing Issues cases define the default-off zero-write proposal, exact-envelope and policy-reread gates, the sole canonical-child carve-out, config refusal, and first-stop readback; no fresh-context behavioral grade is claimed here.
+- 2026-08-30 | 80faf7f (working tree) | matched canonical issue-refinement cases | pass (5/5 each) | Four independent fresh contexts passed every item in both revised cases, while the frozen prior scored 0/5 for each; no provider contact or repository write occurred.
 
 - 2026-08-29 | working tree | ownerless publication base re-read contract | pass (static case) | Ownerless first push and PR-open each re-resolve the captured target/base ref and full base OID, catching same-ref advancement; drift or unavailable base state stays `saved_without_pr` and requires fresh assessment.
 - 2026-08-29 | working tree | assessment-only Worker base contract | pass (static case) | The Worker binds subject, head, target/base ref, and full base OID through assessment's read-only boundary; a moved base is action-required before publication, while only `verified` and `not applicable` checks support ready.

@@ -127,9 +127,10 @@ claim. It, setup, and Scout helpers execute no declared audit.
    failed and never permission to rerun setup. Start Workers in parallel up to
    `maximum_workers` from the live file (setup default 20). Each Worker is one
    worktree, one branch, and at most one unmerged PR. Each Worker prompt carries the
-   opening policy revision, identity, scope, protected paths, lane grant, and
-   assigned path slice. A Worker does not survey nine lanes or write tracker
-   comments. Helpers do not own a PR.
+   opening policy revision, identity, scope, protected paths, lane grant,
+   assigned path slice, and the exact caller-approved verification command argv
+   list. A Worker does not survey nine lanes or write tracker comments. Helpers
+   do not own a PR.
 8. Require each Worker to plan, implement, simplify, review, pass repository
    gates, and commit the result. After successful or no-op native Orca setup,
    run relevant repository-documented verification commands unchanged as
@@ -137,26 +138,49 @@ claim. It, setup, and Scout helpers execute no declared audit.
    `unavailable` result; never relabel a gate as setup, install or substitute
    a prerequisite, or synthesize another environment. Their output is evidence
    only and grants no provider or mutation authority. On that clean exact
-   commit the Worker runs installed `checking-pr-readiness`.
-   When no owner is in the session, the run is assessment-only: exact
-   subject, full HEAD OID, outcome `pass` or `action-required`, and a
-   same-session `checking-pr-readiness-receipt-bundle/v1` outside the
-   repository tree. Assessment-only forbids attestation. A later
-   re-invocation cannot pass by claiming those steps happened. When an
-   owner is present, the interactive menu remains. `pass` may open a PR.
-   Keep the commit as `saved_without_pr` and name the gap when that skill
-   is absent or returns `action-required`, the bundle is missing, or the
-   Worker does not complete the exact-subject and full-OID double-check.
-   Never manufacture approval, attest later, or commit generated readiness
-   artifacts.
+   commit the Worker runs installed `checking-pr-readiness`. After running its
+   assigned commands, the Worker gives assessment that same assignment-owned
+   exact argv list; assessment must never derive or expand execution authority
+   from the assessed commit.
+   When no owner is in the session, the run is assessment-only: the exact
+   subject, full HEAD OID, target/base ref, and full base OID receive one
+   same-session, human-readable `ready` or `action-required` result. Only
+   that readable `ready` result may
+   open one unmerged PR. The Worker otherwise remains `saved_without_pr` and
+   names each gap. Assessment-only forbids attestation. A later re-invocation
+   cannot pass by claiming those steps happened. When an owner is present, the
+   interactive menu remains; owner option 1 plus its evidence pack authorizes
+   normal PR publication. Never manufacture approval, attest later, or commit generated
+   readiness artifacts.
 9. The Worker, not the Orchestrator, owns push and PR creation. Before push or
    PR-open, re-read the durable file only to detect a revision change, and
    check the exact committed paths against identity, include/exclude scope,
    protected paths, and the assigned slice. A change or out-of-slice path
    stops further source mutation, push, and PR-open for every Worker and
-   preserves local commits; already-open PRs stay native objects. Before PR
-   creation, also reread native branches and PRs. An overlap denial stops
-   that Worker's dependents only; other Workers and read-only sensing
+   preserves local commits; already-open PRs stay native objects. Immediately
+   before an ownerless first push, re-read the current local subject and full
+   OID, compare them to the captured subject and OID that received `ready`, and
+   never replace or recapture that authorized identity; then re-read staged, unstaged, and
+   untracked cleanliness. Immediately before an ownerless first push, re-resolve
+   the captured target/base ref and full base OID; the ref and OID must both
+   match the captured identity, so same-ref advancement is caught. Immediately
+   before PR-open, re-resolve the captured target/base ref and full base OID
+   again. Any drift or unavailable or indeterminate base state is
+   `saved_without_pr`, names the old and new base identity when available, and
+   requires a fresh assessment. Read the provider ref: a conclusive absence is
+   permitted only for that first push; an existing ref must equal the captured
+   OID exactly; a conflicting, unavailable, or indeterminate ref stops
+   publication. When absent, push the captured OID explicitly to the captured
+   provider ref with `--force-with-lease=<captured-provider-ref>:`; never use
+   an implicitly resolved local name or let a newly created competing ref
+   fast-forward. When already exact, make no push. Immediately before PR-open, repeat
+   the local subject/head and cleanliness re-read and require the provider ref
+   to exist and equal that captured OID exactly. Any moved local subject or
+   OID, dirt, unavailable or indeterminate read, conflicting existing ref,
+   failed absence lease, or post-push mismatch leaves the commit
+   `saved_without_pr` with the exact gap.
+   Before PR creation, also reread native branches and PRs. An overlap denial
+   stops that Worker's dependents only; other Workers and read-only sensing
    continue. A denied push preserves the local commit.
 10. After PR creation, the Orchestrator monitors freshly read native checks and
     review state to a truthful Worker terminal state. If a bounded caller run
@@ -199,11 +223,12 @@ review or PR-readiness work, take “Proceed to merge,” or merge.
 Each selected Worker owns its own planning, implementation, simplification,
 code review, repository gates, commit, `checking-pr-readiness` on a clean
 exact commit, push, and PR creation. When no owner is in the session, that
-Worker produces the assessment receipt bundle in the same session, outside
-the repository tree. Use read-only helpers for scouting and review; create a
-persistent Worker worktree only for work intended to become one PR. Native
-PR facts are authoritative: freshly read repository, PR number, branch, head
-SHA, state, checks, and review status before reporting the Worker result.
+Worker receives the same-session, human-readable assessment-only readiness
+   result for its exact subject, head, target/base ref, and base OID. Use
+   read-only helpers for scouting and review; create a persistent Worker
+   worktree only for work intended to become one PR. Native PR facts are authoritative: freshly read repository, PR number,
+branch, head SHA, state, checks, and review status before reporting the Worker
+result.
 
 Each usable Worker consumes its own supervised-dispatch worktree setup receipt;
 no Orca parent-child lineage is required. While a configured Setup terminal is

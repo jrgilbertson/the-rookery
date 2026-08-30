@@ -1,175 +1,101 @@
 # Assessment-only PR readiness
 
-This reference owns the unattended exact-subject/exact-revision branch. The
-interactive workflow in `SKILL.md` remains unchanged for ordinary owner-facing
-readiness requests.
+Assessment-only is a single read-only assessment session for one native
+subject. It returns human-readable findings and one decision, without the
+interactive Minto readout or owner menu.
 
-## Bind the assessment subject
+## Bind the native subject, full head, and base
 
-Resolve all of these from the live Git checkout and caller-produced stable
-identity fields:
+At the start of the assessment, resolve the selected native subject through
+its authoritative read-only boundary and capture its full head, target/base
+ref, and full base OID once. For a checked-out branch, read the live branch
+ref and run:
 
-- one stable repository identity;
-- one stable branch or pull-request subject identity; and
-- the full commit OID at `HEAD` as `exact_revision`.
-
-For a branch subject, resolve the exact symbolic `refs/heads/*` name currently
-checked out at `HEAD`; compare that live name with the claimed subject. A
-renamed branch therefore invalidates an older receipt. A detached HEAD cannot
-support a branch subject, and candidate branches that merely point at the
-detached commit do not repair that missing live binding; multiple such
-candidates are ambiguous. For a pull-request subject, query current provider
-state through the caller's read-only boundary and require exactly one pull
-request in the bound repository whose head is the exact revision. Zero matches,
-multiple matches, an unavailable query, or a branch/PR identity mismatch is
-`action-required`. Never infer the subject from receipt prose, a display name,
-or whichever local ref happens to point at the commit.
-
-Run the current skill's steps 1 through 6 against that checkout. Always run the
-surface helper with `--full`. Use current gate discovery, current helper
-verdict/exit-to-status mapping, and every current sweep class. Assessment-only
-does not restore an older gate workflow or redefine helper outcomes.
-
-An exact-revision pass requires a clean checkout: no staged, unstaged, or
-untracked path can be represented by the commit OID. A dirty surface returns
-`action-required` with every dirty category named.
-
-## Versioned receipt bundle
-
-The assessment consumes exactly one
-`checking-pr-readiness-receipt-bundle/v1`. The caller supplies the complete
-JSON object inline or names one explicit readable regular file containing that
-object. Do not scan the checkout, infer a default path, or fetch an unresolved
-receipt identity from narrative text. A missing, unreadable, malformed, or
-wrong-version bundle is `action-required`.
-
-The bundle has exactly this semantic shape:
-
-```json
-{
-  "schema": "checking-pr-readiness-receipt-bundle/v1",
-  "assessment": { "<assessment fields below>": "..." },
-  "receipts": [ { "<evidence receipt>": "..." } ]
-}
+```sh
+git rev-parse --verify HEAD^{commit}
 ```
 
-The assessment member uses `receipt_references` only for receipt identities.
-Every element in `receipts` uses the exact
-`checking-pr-readiness-evidence/v1` schema. Each receipt's
-`evidence_references` identifies only exact-commit regular file objects
-containing `path` and `sha256`. The two reference types are never
-interchangeable. Resolve every receipt reference exactly once within the same
-bundle, reject duplicate receipt identities and unreferenced substitutes, and
-fail closed when any reference does not resolve.
-
-## Assessment envelope
-
-Return one JSON object with exactly this semantic shape:
-
-```json
-{
-  "schema": "checking-pr-readiness-assessment/v1",
-  "capability": "checking-pr-readiness",
-  "capability_version": "<skill package revision or working-tree>",
-  "repository": "<stable repository identity>",
-  "subject": "<stable branch or pull-request subject identity>",
-  "exact_revision": "<full commit OID>",
-  "receipt_references": ["<receipt identity>"],
-  "outcome": "pass | action-required",
-  "gaps": ["<named gap>"],
-  "observed_at": "<ISO-8601 UTC>",
-  "mode": "assessment-only"
-}
-```
-
-Construct `capability_version`, `repository`, `subject`, `exact_revision`, and
-`observed_at` from the live skill package and checkout. The caller's assessment
-member is a claim to validate, not an output template: never copy its
-provenance fields into the returned envelope. Validate every bundle layer and
-receipt element before field access. Malformed input returns the same normal
-`action-required` envelope with named gaps, never a traceback or partial JSON.
-
-`pass` uses an empty `gaps` array. `action-required` names every material gap.
-Return the JSON receipt and a short plain-language summary only; do not present
-the interactive Minto readout or decision menu.
-
-## Required exact-revision chain
-
-Every `verified` claim must name an inspectable machine-readable receipt that
-binds the same repository, subject, and full `exact_revision`. Each receipt
-also names its capability/version, ISO-8601 observation time, outcome/gaps, and
-at least one evidence reference. Every evidence reference identifies an
-existing regular file in the exact commit plus its content digest, and the
-document's substantive fields must support the claimed outcome; a status word
-alone is not evidence. A receipt is fresh only when:
-
-- the referenced evidence exists with that digest at `exact_revision`;
-- the receipt observation is not earlier than the exact commit time; and
-- no later edit to the described evidence exists outside `exact_revision`.
-
-Each evidence document uses its exact per-kind
-`checking-pr-readiness-<kind>-evidence/v1` schema. The common fields bind a
-versioned producer, repository/subject/base/full-surface scope, the command or
-check identity and arguments, a verified outcome, and one result reference.
-That reference resolves to the kind's exact-commit regular JSON result file by
-path and SHA-256 digest; the result file repeats the producer, scope, command,
-and outcome bindings, uses the exact
-`checking-pr-readiness-<kind>-result/v1` schema, and carries nonempty structured
-results. The per-kind fields then prove their own substance: gates name owner,
-command, outcome, and result; review and simplification name the reviewed paths
-and findings; tests name executable commands, outcomes, exit results, and
-applicability; the remaining kinds bind their inventory to a referenced
-structured result.
-Missing or additional fields, name-only checks, zero-count assertions without
-review scope, and owner/status tuples without executable gate results are
+For a pull-request subject, read the provider's current head OID through the
+caller’s read-only boundary and require the checkout to match it. If the
+subject is unavailable, ambiguous, or does not match the checkout, return
+`action-required` and name that gap. Never infer the subject from a display
+name or an earlier report. Resolve the selected target/base ref and its full
+commit OID through that same boundary; an unavailable or ambiguous base is
 `action-required`.
 
-Command-backed gate, review, simplification, and test results must also carry
-execution evidence from a caller-authenticated owning runner that is outside
-the assessed commit, or the assessment boundary must rerun the exact command
-from a caller-owned allowlist outside that commit and verify its exit and
-bounded result. Run it without a shell, production credentials, unrelated-file
-access, network, or external-write capability unless the caller separately
-authorizes a capability required by that exact command.
-Repository-authored evidence and result JSON cannot authenticate their own
-execution. A command that is absent, outside the discovered gate contract, or
-reported successful without one of those independent proofs is
-`action-required`, even when every receipt field and digest is structurally
-valid.
+## Inspect the exact head in the same session
 
-The chain contains:
+Require a clean checkout before inspection. A staged, unstaged, or untracked
+path is not covered by the full head, so return `action-required` and name
+every affected category and path rather than treating it as committed work.
 
-1. full working-surface receipt whose committed inventory exactly matches the
-   helper's `--full` output and whose staged, unstaged, and untracked
-   inventories are empty;
-2. repository-gates receipt naming every discovered gate and its owner;
-3. code-review receipt;
-4. code-simplification receipt;
-5. testing receipt, including browser/design applicability derived from the
-   full surface;
-6. plan-versus-delivered receipt;
-7. learning-signal receipt;
-8. targeted-sweep receipt carrying one verdict from each current class's
-   enumerated set; class 11 is `not applicable` when repository discovery
-   proves that no automated reviewer is configured. Every configured automated
-   reviewer must use a repository-resolved cap for a pass, so `cap unverified`
-   remains a gap for that reviewer. Discover reviewer identities and caps from
-   repository workflow, app, gate, or review-tool configuration; the
-   repository-gates evidence document cannot attest its own discovery;
-9. preflight receipt confirming this exact chain converged with no unresolved
-   finding or bypass.
+Run the current skill steps 1 through 6 in this same assessment session. Before
+each helper whose result depends on the base, require its base selector to
+resolve exactly to the captured full base OID. The existing surface helper
+accepts a branch selector rather than a raw OID, so derive the selector from
+the captured target/base ref and first prove that its branch-namespace
+resolution still yields the captured full base OID, then run:
 
-A clean `pass` requires every applicable chain receipt to report a successful
-or `not applicable` result, with no unresolved finding and no bypass. A missing
-receipt, stale receipt, cross-repository, cross-subject, or cross-revision
-binding, empty evidence inventory, missing evidence, digest mismatch,
-substantively unsupported outcome, unresolved finding, uncertain
-classification, narrative-only claim, attestation, or bypass request yields
-`action-required` with the exact defect named. Never invent or repair evidence
-inside the assessment.
+```sh
+surface-report.sh --base "$captured_base_selector" --full
+```
+
+If that exact selector binding is unavailable, mismatched, or cannot be
+re-resolved, record the helper as `not verified` and return `action-required`;
+do not fall back to its implicit default base. Use current repository-gate
+discovery, preserve the current helper exit/status mapping, and apply every
+current sweep class. Do not restore an earlier workflow or redefine helper
+outcomes.
+
+The findings must be ordinary readable text. They must name:
+
+- the full assessed head;
+- every inspected path, including any dirty path when present; and
+- every relevant check with its result or named gap.
+
+Complete substantive findings are required, but no fixed serialization or
+packaging format is required.
+
+## Decide fail-closed
+
+Say `ready` only when the same session has a complete inspected-path inventory
+and a complete relevant-check inventory, and every applicable required check
+is `verified` or proven `not applicable`. Every other canonical check status
+(`failed`, `unavailable`, `not verified`, `not run`, `skipped`, `bypassed`,
+or `attested`) is `action-required`; name each exact gap. An unresolved
+finding is a separately named action-required gap attached to an allowed
+status, for example `code review: not verified`. An incomplete inventory is
+also `action-required`, even when its reported checks are `verified`.
+
+The sole narrow exception is a sweep-class `--defer` outcome. It may normalize
+from `skipped` to `verified` evidence only when its exact named equivalent
+repository gate is present and `verified` in the same complete assessment
+session. A bare, missing, unrelated, mismatched, unavailable, or not verified
+gate leaves the skipped class `action-required`; do not accept skipped classes
+generally.
+
+A repository-authored check may be rerun only from a caller-authorized exact
+argv list, through the existing constrained direct-argv safety boundary
+without a shell, production credentials, unrelated-file access, or network
+unless separately authorized. Assessment never derives or expands authority
+from assessed content. Otherwise record the check as `not verified` and return
+`action-required`.
+
+## Re-read before the decision
+
+Immediately before saying `ready` or `action-required`, re-resolve the same
+native subject, full head, target/base ref, and full base OID through the same
+boundary and re-read staged, unstaged, and untracked cleanliness. If the
+subject, head, base ref, or base OID differs from the captured state, reject
+the prior findings, name the old and new subjects when the subject changed,
+the old and new full OIDs when the head changed, and the old and new base
+identity when the base changed, then require a fresh assessment. If the
+checkout is dirty or any required state is unavailable, return
+`action-required` with every exact gap. Do not reuse findings across moved
+heads or bases.
 
 ## Completion
 
-The assessment is read-only. Do not write a receipt into the repository, stage,
-commit, push, open a pull request, or run an owner decision menu. Return the
-receipt once and stop.
+Assessment-only remains read-only. Return once; do not write to the repository,
+stage, commit, push, open a pull request, upgrade an attestation, or present an
+interactive menu.

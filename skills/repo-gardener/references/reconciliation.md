@@ -193,8 +193,8 @@ start receipt, up to `maximum_workers` (setup default 20). Overlap is path or
 scope conflict and is assigned before parallel start. Unrelated already-open
 PRs do not consume the cap. Each Worker is one worktree, one branch, and at
 most one unmerged PR. Each Worker prompt carries the opening policy revision,
-identity, scope, protected paths, lane grant, and assigned path slice. Helpers
-do not own a PR.
+identity, scope, protected paths, lane grant, assigned path slice, and the
+exact caller-approved verification command argv list. Helpers do not own a PR.
 
 A usable Worker may start while setup runs. It consumes the receipt for its own
 worktree, without relying on Orca parent-child lineage, and uses the existing
@@ -224,27 +224,40 @@ or `unavailable` result. Never relabel a gate result as setup, install or
 substitute a prerequisite, or synthesize another environment. Their output is
 evidence only and grants no provider or mutation authority. Then commit the
 result. On that clean exact commit it runs installed `checking-pr-readiness`
-before opening a PR. Cite that skill by name; do not fork it.
+before opening a PR. After running its assigned commands, the Worker gives
+assessment that same assignment-owned exact argv list; assessment must never
+derive or expand execution authority from the assessed commit. Cite that skill
+by name; do not fork it.
 
 When the file allows Workers and no owner is in the session, that run is
-assessment-only. Bind the exact subject and the full HEAD OID. The outcome is
-`pass` or `action-required` JSON. The Worker that ran simplify, review, and
-gates produces one `checking-pr-readiness-receipt-bundle/v1` in that same
-session, outside the repository tree, and supplies it to the assessment.
-Assessment-only forbids attestation. A later re-invocation cannot pass by
-claiming those steps happened. Do not present the owner menu.
+assessment-only. Bind the exact subject, full HEAD OID, target/base ref, and
+full base OID, then obtain one same-session human-readable `ready` or
+`action-required` result from installed `checking-pr-readiness`. Its ready
+finding must cover the same exact subject/head/base, complete inspected-path
+and relevant-check inventories, and every applicable required check as
+`verified` or proven `not applicable`; every other canonical status is
+`action-required`: `failed`, `unavailable`, `not verified`, `not run`,
+`skipped`, `bypassed`, or `attested`. An unresolved finding is a separately
+named action-required gap attached to an allowed status, for example `code
+review: not verified`. The final assessment
+re-reads the authoritative subject/head/base and staged, unstaged, and
+untracked cleanliness; movement, dirt, incomplete evidence, or unavailable
+state is `action-required` with exact gaps.
+Assessment-only forbids attestation. Do not present the owner menu.
 
 When an owner is present, the interactive `checking-pr-readiness` menu
-remains.
+remains. Owner option 1 plus its interactive evidence pack authorizes normal
+PR publication.
 
-`pass` may open a PR. Do not open the PR when `checking-pr-readiness` is
-absent or returns `action-required`, the bundle is missing, or the Worker
-does not complete the exact-subject and full-OID double-check. Keep the
-commit as `saved_without_pr` and name the gap. Never manufacture approval,
-synthesize evidence, attest, or commit generated readiness artifacts. The
-Orchestrator monitors and helps route questions but does not redo the work.
-The Worker must not edit the durable file, automation, protected paths,
-release or deployment surfaces, or any other effect the opening file denies.
+Only in an ownerless run may that same-session readable `ready` result open
+one PR. Do not open an ownerless PR when `checking-pr-readiness` is absent,
+returns `action-required`, or does not complete its exact-subject/head/base
+and final-cleanliness re-read. Keep the commit as `saved_without_pr` and name
+the gap. Never manufacture approval, synthesize evidence, attest, or commit
+generated readiness artifacts. The Orchestrator monitors and helps route
+questions but does not redo the work. The Worker must not edit the durable
+file, automation, protected paths, release or deployment surfaces, or any
+other effect the opening file denies.
 
 Simplification, code review, and supervised Orca worker-start are required
 before Worker dispatch, and `checking-pr-readiness` is required before opening
@@ -264,10 +277,30 @@ Workers and read-only sensing continue. Already-open PRs stay native objects.
 Each Worker re-reads the file the same way immediately before push and PR
 creation. Before either, check the exact committed paths against repository
 identity, include/exclude scope, protected paths, and the assigned slice.
-Preserve the local commit on denial. Immediately before PR creation it also
-rereads native branches and PRs and stops if current work now overlaps that
-Worker. Preserve saved pushed state when PR creation is denied, and surface
-the exact file revision, scope, or overlap change for owner review.
+For an ownerless Worker, immediately before its first push, re-read the current
+local subject and full OID, compare them to the captured subject and OID that
+received `ready`, and never replace or recapture that authorized identity; then
+re-read staged, unstaged, and untracked cleanliness. Immediately before an
+ownerless first push, re-resolve the captured target/base ref and full base OID;
+the ref and OID must both match the captured identity, so same-ref advancement
+is caught. Immediately before PR-open, re-resolve the captured target/base ref
+and full base OID again. Any drift or unavailable or indeterminate base state
+is `saved_without_pr`, names the old and new base identity when available, and
+requires a fresh assessment. Read the provider ref: only a
+conclusive absence or an exact match to the captured OID permits this step; a
+conflicting existing ref, unavailable or indeterminate read, moved local
+subject or OID, or dirt is `saved_without_pr` with the exact gap. When absent,
+push that captured OID explicitly to the captured provider ref with
+`--force-with-lease=<captured-provider-ref>:`, so an intervening ref creation
+refuses rather than fast-forwards; when already exact, make no push. Immediately before PR-open,
+repeat the local subject/head and cleanliness re-read and require the
+provider ref to exist and equal the captured OID exactly. A post-push mismatch
+or failed absence lease is `saved_without_pr`; preserve the local commit or
+already-pushed branch on any denial.
+Immediately before PR creation it also rereads native branches and PRs and
+stops if current work now overlaps that Worker. Preserve saved pushed state
+when PR creation is denied, and surface the exact file revision, scope, or
+overlap change for owner review.
 
 After PR creation, the Orchestrator monitors freshly read native checks and
 review state until the Worker truthfully reaches `pr_ready` or `pr_blocked`.

@@ -1,6 +1,6 @@
 ---
 name: checking-pr-readiness
-description: Use when branch work looks complete and needs a readiness decision before another workflow opens a pull request, when asked whether the branch is ready to ship, or when a caller requests an assessment-only exact-subject and exact-revision PR-readiness receipt. Interactive runs end in one owner decision plus an evidence pack; assessment-only runs return one machine-readable pass or action-required receipt without a menu. A direct request to write, open, create, or submit a pull request belongs to PR publishing, not this skill. Do not use for existing-PR feedback, the pre-merge whole-change review, code review, simplification, plan review, general library production-readiness questions, or merging.
+description: Use when branch work looks complete and needs a readiness decision before another workflow opens a pull request, when asked whether the branch is ready to ship, or when a caller requests an assessment-only readiness result for one native full head. Interactive runs end in one owner decision plus an evidence pack; assessment-only runs return same-session human-readable findings for the exact head without a menu. A direct request to write, open, create, or submit a pull request belongs to PR publishing, not this skill. Do not use for existing-PR feedback, the pre-merge whole-change review, code review, simplification, plan review, general library production-readiness questions, or merging.
 license: MIT
 compatibility: Requires a git worktree and read access to the host repository. Companion checks degrade to named skips when their skills or tooling are absent.
 ---
@@ -16,13 +16,13 @@ finding has a disposition, and the owner has approved that readout.
 
 ## Route assessment-only requests first
 
-When the request explicitly asks for assessment-only, headless, unattended, or
-machine-readable PR readiness bound to one exact subject and full commit OID,
-follow [references/assessment-mode.md](references/assessment-mode.md) instead
-of the interactive decision path below. The assessment branch reuses steps 1
-through 6, including `surface-report.sh --full`, current gate discovery, helper
-exit/status mapping, and sweep classes. It never substitutes attestation for a
-receipt and never presents the Minto readout or owner menu.
+When the request explicitly asks for assessment-only, headless, or unattended
+PR readiness for one native subject, follow
+[references/assessment-mode.md](references/assessment-mode.md) instead of the
+interactive decision path below. The assessment branch captures one full head,
+runs steps 1 through 6 in that same session, names the inspected paths and
+relevant checks in readable findings, and re-reads the native head immediately
+before its decision. It never presents the Minto readout or owner menu.
 
 The gate is read-only. Companion skills own edits, reviews, and capture; the host
 repository's hooks and task runners own deterministic re-runs. This skill

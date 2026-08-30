@@ -150,7 +150,9 @@ The shipping sequence, in order:
 
 `checking-pr-readiness` compares the finished branch with the plan, verifies the named evidence, and surfaces unresolved risks before the pull request opens. It waits for me to approve the exact revision shown, then puts the evidence in the pull request description so later reviewers see the same record. Before approving, I can also ask for an explanation of the change or a concept it introduced.
 
-For unattended verification, its assessment-only mode returns `pass` or `action-required` for a named revision and makes no changes.
+For unattended verification, its assessment-only mode returns a
+human-readable same-session exact-head `ready` or `action-required` result and
+makes no changes.
 
 After approval, `ce-commit-push-pr` writes the description and opens the pull request, and `ce-babysit-pr` works through CI failures and review feedback. Then [`checking-merge-readiness`](skills/checking-merge-readiness/SKILL.md) reviews the full change for intent drift, unnecessary complexity, unresolved feedback, and failed merge rules. It recommends merge, debug, or do not merge. Choosing Proceed to merge on a green open pull request is that decision and merges it. I write the changelog and release notes from the merged pull requests afterward.
 

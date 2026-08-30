@@ -206,6 +206,12 @@ claim. It, setup, and Scout helpers execute no declared audit.
     returns merge, debug, or do not merge with ordinary prose findings; the
     report-only form never presents a menu or invokes a merge.
 
+    Immediately after either assessment and before sending an actionable
+    finding, freshly reread the native branch and full HEAD and current Worker
+    authority. Send the finding only when those facts still match the assessed
+    head and the Worker remains authorized; exact-head drift, unavailable or
+    unknown authority, or an authority denial stops only the affected action,
+    without redirecting the stale finding to a new head or guessing authority.
     When current Worker head and authority expose one actionable diff, test,
     intent, or durable-record finding, send that finding in plain prose to the
     same Worker. Tell the Worker to hold its existing PR update. After its

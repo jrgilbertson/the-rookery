@@ -332,16 +332,22 @@ name and do not fork it. Both paths return merge, debug, or do not merge and
 ordinary human-readable findings. The report-only form never shows an owner
 menu or invokes a merge.
 
-When current Worker head and authority expose one specific actionable finding
-about the diff, tests, intent, or durable records, send it in plain prose to
-the same Worker and require the Worker to hold its existing PR update. After
-the response, freshly reread native branch and full HEAD, diff, checks, PR,
-and relevant tracker facts. Revalidate the repaired exact head against the
-assigned slice and protected paths, then authorize that exact head before the
-same Worker updates its existing PR. Stop the affected action only for safety,
-authority, protected-path, exact-head-drift, or unknown-provider-effect facts.
-When no focused repair can help, stop truthfully in plain prose. Process-only
-caps, including empty review history and missing required human approvals, are
+Immediately after either assessment and before sending an actionable finding,
+freshly reread the native branch and full HEAD and current Worker authority.
+Send the finding only when those facts still match the assessed head and the
+Worker remains authorized; exact-head drift, unavailable or unknown authority,
+or an authority denial stops only the affected action, without redirecting the
+stale finding to a new head or guessing authority. When current Worker head
+and authority expose one specific actionable finding about the diff, tests,
+intent, or durable records, send it in plain prose to the same Worker and
+require the Worker to hold its existing PR update. After the response, freshly
+reread native branch and full HEAD, diff, checks, PR, and relevant tracker
+facts. Revalidate the repaired exact head against the assigned slice and
+protected paths, then authorize that exact head before the same Worker updates
+its existing PR. Stop the affected action only for safety, authority,
+protected-path, exact-head-drift, or unknown-provider-effect facts. When no
+focused repair can help, stop truthfully in plain prose. Process-only caps,
+including empty review history and missing required human approvals, are
 recorded rather than chased.
 
 If `checking-merge-readiness` is absent, assess directly and name the gap only

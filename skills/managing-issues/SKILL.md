@@ -215,20 +215,21 @@ state that the provider path preserves each field as structured data; an Orca
 command uses a structured argument vector and sends multiline body content
 through stdin so the content remains literal.
 
-Every non-empty mutating batch requires one direct operator approval of the
-complete visible batch. In policy-authorized delegation, only an
-already-validated caller envelope that exactly matches this complete visible
-batch is that direct approval; it binds only the displayed order and effects.
-Approval binds only the displayed order and effects.
-Any new target, field, ordering, content, or side effect needs a fresh complete
-preview and approval. Never truncate a batch or hide tracker content that
-affects it. Every non-empty mutating batch preview must end with exactly
+Every non-empty interactive batch requires one direct operator approval of the
+complete visible batch. In policy-authorized delegation, render that complete
+batch as evidence, but do not ask a second live approval question: only an
+already-validated caller envelope that exactly matches it is the direct
+approval, and it binds only the displayed order and effects. Any new target,
+field, ordering, content, or side effect needs a fresh complete preview and
+approval, or a fresh matching caller envelope. Never truncate a batch or hide
+tracker content that affects it. Every non-empty interactive batch preview must
+end with exactly
 `Do you approve this exact N-effect batch?`, replacing `N` with the displayed
 effect count. An empty batch requires no approval. The request to prepare a
 batch is not approval to apply it.
 
 Completion: every intended effect has one exact visible interpretation and the
-complete batch has a direct operator decision.
+complete batch has a direct approval decision.
 
 ## 4. Revalidate, apply once, and read back
 

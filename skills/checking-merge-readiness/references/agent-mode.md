@@ -9,6 +9,10 @@ Run the ordinary read-only assessment through step 6. Return one of `merge`,
 human-readable findings that explain the recommendation. Keep the report
 plain prose rather than a receipt or machine protocol.
 
+If step 4 would require owner confirmation or attestation, do not prompt the
+owner. Record intent as unverifiable, apply the ordinary debug cap, and
+continue the read-only assessment through step 6.
+
 Stop before step 7. Do not show a decision menu, prepare a merge action, or
 invoke a forge write. This report never changes the pull request; its caller
 decides whether a named finding warrants a focused Worker instruction.

@@ -17,10 +17,12 @@ and current facts.
 >    empty and required human approval is absent.
 > 2. A report-only assessment of current head `b1` reports `debug` with a named
 >    failing test in the diff. Worker W still has the opening authority. W fixes
->    it without updating its existing PR and responds with repaired head `b2`.
->    The fresh branch/full-HEAD, diff, checks, PR, and tracker reads agree on
->    `b2`; the repaired paths remain inside W's slice and outside protected
->    paths.
+>    it without updating its existing PR, reruns its assigned local verification,
+>    and responds with repaired head `b2`. The hosted PR remains at `b1` before
+>    authorization. The fresh branch/full-HEAD, diff, checks, PR, and tracker
+>    reads agree on `b2`; the repaired paths remain inside W's slice and outside
+>    protected paths. After exact `b2` authorization, W updates its existing PR;
+>    native reads confirm hosted `b2` and fresh checks before reassessment.
 > 3. A report-only assessment names an actionable test failure on head `c1`,
 >    but a fresh read before the Worker instruction finds full HEAD `c2`.
 > 4. A report-only assessment names a concern, but the fresh facts after the
@@ -32,9 +34,13 @@ and current facts.
 
 - [ ] Scenario 1 records the process caps and does not chase either one.
 - [ ] Scenario 2 sends the named test finding in plain prose to Worker W,
-      rereads all five native fact classes after W responds, revalidates W's
-      slice and protected paths, and authorizes exact head `b2` before W
-      updates its existing PR. The report neither shows a menu nor merges.
+      only after local branch/full-HEAD, hosted PR head, and W's authority
+      still match assessed `b1`. W holds the PR update and reruns assigned
+      local verification before returning `b2`. The Orchestrator then rereads
+      all five native fact classes, revalidates W's slice and protected paths,
+      and authorizes exact head `b2` before W
+      updates its existing PR. Native reads then confirm hosted `b2` and fresh
+      checks before reassessment. The report neither shows a menu nor merges.
 - [ ] Scenario 3 stops the affected action for exact-head drift; it does not
       redirect the finding, act on `c2`, or guess that W remains authorized.
 - [ ] Scenario 4 closes truthfully in plain prose because no focused repair can

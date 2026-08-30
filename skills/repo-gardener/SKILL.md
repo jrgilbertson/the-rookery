@@ -207,21 +207,24 @@ claim. It, setup, and Scout helpers execute no declared audit.
     report-only form never presents a menu or invokes a merge.
 
     Immediately after either assessment and before sending an actionable
-    finding, freshly reread the native branch and full HEAD and current Worker
-    authority. Send the finding only when those facts still match the assessed
-    head and the Worker remains authorized; exact-head drift, unavailable or
-    unknown authority, or an authority denial stops only the affected action,
-    without redirecting the stale finding to a new head or guessing authority.
+    finding, freshly reread the local branch and full HEAD, hosted PR head,
+    and current Worker authority. Send the finding only when all still match
+    the assessed full head and the Worker remains authorized; exact-head
+    drift, unavailable or unknown provider state, or an authority denial stops
+    only the affected action, without redirecting the stale finding to a new
+    head or guessing authority.
     When current Worker head and authority expose one actionable diff, test,
     intent, or durable-record finding, send that finding in plain prose to the
-    same Worker. Tell the Worker to hold its existing PR update. After its
-    response, freshly reread the native branch and full HEAD, diff, checks, PR,
-    and relevant tracker facts. Revalidate the repaired exact head against the
-    assigned slice and protected paths, then authorize that exact head before
-    the same Worker updates its existing PR. Exact-head drift, a safety or
-    authority denial, protected-path work, or an unknown provider effect stops
-    the affected action. When no focused repair can help, stop truthfully in
-    plain prose instead of manufacturing another instruction. Process-only
+    same Worker. Tell the Worker to hold its existing PR update and rerun the
+    assigned local verification before returning the repaired exact head; do
+    not require another formal review pipeline. After its response, freshly
+    reread the native branch and full HEAD, diff, checks, PR, and relevant
+    tracker facts. Revalidate the repaired exact head against the assigned
+    slice and protected paths, then authorize that exact head before the same
+    Worker updates its existing PR. Exact-head drift, a safety or authority
+    denial, protected-path work, or an unknown provider effect stops the
+    affected action. When no focused repair can help, stop truthfully in plain
+    prose instead of manufacturing another instruction. Process-only
     caps (empty review history, missing required human approvals) are recorded,
     not chased. If that skill is absent, assess directly and name the gap only
     when it limits the result. The in-run review is not the owner's later merge

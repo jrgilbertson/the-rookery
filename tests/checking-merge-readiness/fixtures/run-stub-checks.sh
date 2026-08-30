@@ -110,7 +110,19 @@ bind_spec() {
 echo "== 0. report-only agent mode =="
 if grep -Fq 'Run the ordinary read-only assessment through step 6.' "$AGENT_MODE" \
   && grep -Fq 'full current head OID' "$AGENT_MODE" \
-  && grep -Fq 'human-readable findings' "$AGENT_MODE"; then
+  && grep -Fq 'human-readable findings' "$AGENT_MODE" \
+  && python3 - "$AGENT_MODE" <<'PY'
+import re
+import sys
+
+text = " ".join(open(sys.argv[1]).read().split())
+raise SystemExit(not re.search(
+    r"step 4.*(?:confirmation|attestation).*do not prompt.*unverifiable.*debug cap.*step 6",
+    text,
+    re.IGNORECASE,
+))
+PY
+then
   pass "agent report: prose recommendation and exact head"
 else
   fail "agent report: prose recommendation and exact head" "report-only contract is incomplete"

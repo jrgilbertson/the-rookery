@@ -333,14 +333,16 @@ ordinary human-readable findings. The report-only form never shows an owner
 menu or invokes a merge.
 
 Immediately after either assessment and before sending an actionable finding,
-freshly reread the native branch and full HEAD and current Worker authority.
-Send the finding only when those facts still match the assessed head and the
-Worker remains authorized; exact-head drift, unavailable or unknown authority,
-or an authority denial stops only the affected action, without redirecting the
-stale finding to a new head or guessing authority. When current Worker head
-and authority expose one specific actionable finding about the diff, tests,
-intent, or durable records, send it in plain prose to the same Worker and
-require the Worker to hold its existing PR update. After the response, freshly
+freshly reread the local branch and full HEAD, hosted PR head, and current
+Worker authority. Send the finding only when all still match the assessed full
+head and the Worker remains authorized; exact-head drift, unavailable or
+unknown provider state, or an authority denial stops only the affected action,
+without redirecting the stale finding to a new head or guessing authority.
+When current Worker head and authority expose one specific actionable finding
+about the diff, tests, intent, or durable records, send it in plain prose to
+the same Worker and require the Worker to hold its existing PR update and
+rerun the assigned local verification before returning the repaired exact head;
+do not require another formal review pipeline. After the response, freshly
 reread native branch and full HEAD, diff, checks, PR, and relevant tracker
 facts. Revalidate the repaired exact head against the assigned slice and
 protected paths, then authorize that exact head before the same Worker updates

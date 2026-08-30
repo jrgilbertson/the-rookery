@@ -182,23 +182,33 @@ claim. It, setup, and Scout helpers execute no declared audit.
    Before PR creation, also reread native branches and PRs. An overlap denial
    stops that Worker's dependents only; other Workers and read-only sensing
    continue. A denied push preserves the local commit.
-10. After PR creation, the Orchestrator monitors freshly read native checks and
+10. After every Worker response, the Orchestrator freshly reads the current
+    native branch and full HEAD, current diff, checks, any PR, and relevant
+    tracker facts. It compares those facts with the assigned leaf and prior
+    response context without retaining a progress record. When they expose one
+    specific actionable gap that a focused instruction could improve, it sends
+    that instruction and returns to Orca's existing rolling wait; after the
+    next response, it repeats the same native reads and judgment. Otherwise,
+    it stops directing that Worker and explains in plain prose which observed
+    facts make another focused instruction unhelpful. Unknown provider effects
+    and their waits or recovery remain Orca behavior. TUI idle has no deciding
+    role. This judgment adds no timer, interval, commit or response count,
+    progress schema, stable progress ID, registry, workflow state, or native
+    process-observation requirement.
+
+    After PR creation, the Orchestrator monitors freshly read native checks and
     review state to a truthful Worker terminal state. If a bounded caller run
     must close while either remains pending, retain and report the Worker as
     `pending`, and close the run as `partial`; never claim `pr_ready` or
     `completed`. After a Worker reaches `pr_ready`, run installed
     `checking-merge-readiness` read-only: take the recommendation and named
-    findings, execute nothing, and never select “Proceed to merge.” Material
-    debug or do-not-merge findings (diff, tests, intent, durable records) may
-    get one extra Worker commit and push. That commit repeats the Worker's
-    simplification, code review, and repository gates. After the extra push,
-    wait for freshly read native checks and review on the new head, then
-    re-run merge-readiness once. Process-only caps (empty review history,
-    missing required human approvals) are recorded, not chased. A second
-    rework is refused. If that skill is absent, skip the feedback and
-    name the gap. The in-run review is not the owner's later merge gate.
-    Never merge. The pending Worker does not block completion of the nine-lane
-    report.
+    findings, execute nothing, and never select “Proceed to merge.” A material
+    finding can identify the specific actionable gap for the same qualitative
+    post-response judgment; process-only caps (empty review history, missing
+    required human approvals) are recorded, not chased. If that skill is
+    absent, skip the feedback and name the gap. The in-run review is not the
+    owner's later merge gate. Never merge. The pending Worker does not block
+    completion of the nine-lane report.
 11. Immediately before closing, re-read the durable file only to detect a
     revision change from `run-opened`. A revision change alone does not prevent
     the closed comment when the file still names the tracker. If the file no

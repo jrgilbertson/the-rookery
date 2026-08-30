@@ -302,6 +302,21 @@ stops if current work now overlaps that Worker. Preserve saved pushed state
 when PR creation is denied, and surface the exact file revision, scope, or
 overlap change for owner review.
 
+After every Worker response, before applying the post-PR monitoring rules, the
+Orchestrator freshly reads the current native branch and full HEAD, current
+diff, checks, any PR, and relevant canonical tracker state. Compare those
+facts with the assigned leaf and the prior response context without storing a
+Repo Gardener progress record. If the facts expose one specific actionable gap
+that another focused Worker instruction could improve, send that instruction
+and return to Orca's existing rolling wait. After the next response, make the
+same five reads and qualitative judgment again. If no focused instruction can
+help, stop directing that Worker and explain the observed facts and reason in
+plain prose. An unresolved provider effect remains with Orca's existing wait
+or recovery path; Repo Gardener does not independently retry it, add a Worker
+state, timer, interval, commit or response count, tracker progress record,
+progress schema, stable progress ID, or registry. TUI idle has no deciding
+role, and this judgment does not require native process observability.
+
 After PR creation, the Orchestrator monitors freshly read native checks and
 review state until the Worker truthfully reaches `pr_ready` or `pr_blocked`.
 If the bounded caller run must close first, report and retain the Worker as
@@ -320,9 +335,10 @@ take the recommendation and named findings, execute nothing, and never select
 Classify findings:
 
 - Material debug or do-not-merge findings about the diff, tests, intent, or
-  durable records may get one extra Worker push and one re-run of
-  merge-readiness. A named test failure is material. A second rework is
-  refused.
+  durable records may identify a specific actionable gap for one focused
+  Worker instruction. A named test failure is material. After that Worker
+  response, re-read the same native branch/full-HEAD, diff, checks, PR, and
+  tracker facts before deciding whether another focused instruction can help.
 - Process-only caps, including empty review history and missing required
   human approvals, are recorded, not chased. Fresh PRs often cap at debug for
   empty review; that is process, not rework.

@@ -379,8 +379,9 @@ recorded rather than chased.
 
 If `checking-merge-readiness` is absent, assess directly and name the gap only
 when it limits the result. The in-run review is not the owner's later merge
-gate. Never merge. Do not create follow-up issues; write issue-ready
-recommendations instead.
+gate. Never merge. Do not create follow-up issues outside the one
+policy-authorized canonical-child refinement in
+`policy-and-entry-modes.md`; write issue-ready recommendations instead.
 
 ## Close once
 

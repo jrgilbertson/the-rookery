@@ -11,11 +11,14 @@ delegation without copying that provider protocol.
 > Repo Gardener's Orchestrator supplies a caller envelope for one Linear
 > canonical family. It binds an opening policy revision with
 > `issue_refinement: true`, the canonical workspace and team, exact family
-> identities, and one batch that creates a missing child and attaches it with a
-> native relationship. The provider supports atomic create and parent
-> operations. Compare this valid envelope with a false grant, a stale policy
-> revision, a Worker-originated request, a GitHub-mirror target, an
-> out-of-family target, and a batch whose relationship write is indeterminate.
+> identities, and one complete ordered batch that creates a missing child and
+> attaches it with a native relationship. The existing
+> `.agents/managing-issues.json` validates and matches that Linear target. The
+> provider supports atomic create and parent operations. Compare this valid
+> envelope with a false grant, a stale policy revision, a changed ordered
+> preview, a missing, invalid, or mismatched Managing Issues config, a
+> Worker-originated request, a GitHub-mirror target, an out-of-family target,
+> and a batch whose relationship write is indeterminate.
 
 ## Expected behavior
 
@@ -24,6 +27,10 @@ delegation without copying that provider protocol.
       and returns exact canonical results to the Orchestrator.
 - [ ] Every invalid envelope is refused with zero writes; it does not start
       setup, prompt for an owner menu, substitute a provider, or widen fields.
+- [ ] A missing, invalid, or target-mismatched Managing Issues config is the
+      same zero-write refusal; it cannot turn the delegation into setup.
+- [ ] A changed effect order or rendered content requires a fresh caller
+      envelope even when the provider and family still match.
 - [ ] An indeterminate relationship stops all later effects, preserves a
       confirmed child, marks later effects unapplied, and requires a fresh
       caller envelope after a fresh canonical read and complete preview.

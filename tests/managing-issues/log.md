@@ -2,7 +2,7 @@
 
 Format: `date | git rev | check | result | note`
 
-- 2026-08-30 | working tree | policy-authorized refinement case | pass (static case) | Matched Managing Issues and Repo Gardener cases cover default-off refusal, one enabled canonical-family batch, envelope and mirror refusal, and first-stop with exact readback without duplicating the provider lifecycle.
+- 2026-08-30 | working tree | policy-authorized refinement case | pending — fresh-context behavioral review | The strengthened Managing Issues and Repo Gardener cases define default-off and config zero-write refusal, exact-envelope matching, the sole canonical-child carve-out, and first-stop exact readback; no fresh-context behavioral grade is claimed here.
 
 - 2026-08-19 | 70a58e9 | first-use Linear group case | pass | Independent fresh-context grader scored all 13 checklist items PASS against the current skill package (Linear accept, prefixed-config skip, missing group-create stop, GitHub first-use unchanged).
 - 2026-08-19 | 27ee5e6 (working tree) | Linear missing-children recut fixtures | pass | After the recut locked create-only-missing-children, leftover-cleanup off the empty-workspace happy path, and phrase locks for MCP tools plus the SKILL exclusive-group sentence, `run-config-checks.py`, `run-provider-checks.py`, and `run-graph-checks.py` passed. `npx skills-ref validate skills/managing-issues` reported `Valid skill`. `lefthook run pre-push --force --no-auto-install` passed. SKILL.md is 250 lines.

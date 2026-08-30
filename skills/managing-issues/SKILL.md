@@ -24,6 +24,13 @@ unsupported-field request as refused with zero writes. The envelope is a
 narrow substitute for this skill's direct-operator approval; it never enables
 setup, a new target, or another batch.
 
+Before accepting that exception, validate the existing
+`.agents/managing-issues.json` and require its canonical provider and target to
+match the envelope. A missing, invalid, or mismatched config is a zero-write
+refusal, not a reason to start setup. The envelope must also match the complete
+ordered effect preview after the immediate current-state reads; a changed
+target, field, order, content, or effect needs a fresh caller envelope.
+
 After that gate, use the existing canonical resolution and sections 2 through
 4 unchanged. They own the immediate pre-write read, provider capability check,
 atomic graph operation, apply-once, first-stop, and exact readback. Do not
@@ -209,9 +216,10 @@ command uses a structured argument vector and sends multiline body content
 through stdin so the content remains literal.
 
 Every non-empty mutating batch requires one direct operator approval of the
-complete visible batch. In policy-authorized delegation, the already-validated
-caller envelope is that direct approval and binds only its displayed order and
-effects. Approval binds only the displayed order and effects.
+complete visible batch. In policy-authorized delegation, only an
+already-validated caller envelope that exactly matches this complete visible
+batch is that direct approval; it binds only the displayed order and effects.
+Approval binds only the displayed order and effects.
 Any new target, field, ordering, content, or side effect needs a fresh complete
 preview and approval. Never truncate a batch or hide tracker content that
 affects it. Every non-empty mutating batch preview must end with exactly

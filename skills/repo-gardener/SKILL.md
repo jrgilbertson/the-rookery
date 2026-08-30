@@ -1,6 +1,6 @@
 ---
 name: repo-gardener
-description: Use when running or interpreting a scheduled or manual repository-gardening pass for one repository, including first-use setup of `.agents/repo-gardener.yaml` and a gardening tracker. An Orchestrator surveys nine maintenance lanes, deepens while further investigation would change assignments or recommendations, optionally checks product-data trust, and may assign parallel Workers that each take one unmerged PR when current evidence justifies it. Do not use for merging, releasing, deploying, creating follow-up issues, contacting customers, or performing an already-selected implementation outside a gardening run.
+description: Use when running or interpreting a scheduled or manual repository-gardening pass for one repository, including first-use setup of `.agents/repo-gardener.yaml` and a gardening tracker. An Orchestrator surveys nine maintenance lanes, deepens while further investigation would change assignments or recommendations, optionally checks product-data trust, and may assign parallel Workers that each take one unmerged PR when current evidence justifies it. Do not use for merging, releasing, deploying, creating follow-up issues outside one caller-authorized canonical-child refinement, contacting customers, or performing an already-selected implementation outside a gardening run.
 license: MIT
 compatibility: Requires Python 3, PyYAML, config_check.py, and read access to one repository, its durable file, native PR state, and configured evidence; `.agents/managing-issues.json` is optional. Uses installed skill; no mid-run reinstall. Mutation requires Worker worktree, branch, PR, and supervised Orca worker-start with setup enabled; otherwise report read-only and name the gap. Simplification/review precede dispatch; checking-pr-readiness precedes PR opening.
 ---
@@ -127,8 +127,10 @@ claim. It, setup, and Scout helpers execute no declared audit.
    than zero, owning lane `mutation: true`, and no protected path.
    `.agents/repo-gardener.yaml` is always protected. A missing, mismatched,
    false, zero, or protected gate denies that unit only. Skill-hardcoded:
-   never merge, release, deploy, create follow-up issues, or message a
-   customer. If simplification, code-review, or supervised Orca worker-start
+   never merge, release, deploy, create follow-up issues outside the one
+   policy-authorized canonical-child refinement in
+   `policy-and-entry-modes.md`, or message a customer. If simplification,
+   code-review, or supervised Orca worker-start
    capability with repository setup enabled is absent, do not
    dispatch Workers; complete the read-only gardening report and name the
    missing capability.
@@ -309,8 +311,10 @@ first mutation the Worker runs ordinary native `git status --porcelain=v1
 non-ignored paths. Dirty paths remain untouched, are named, and stop only
 dependent work.
 
-No run merges a PR or creates a follow-up issue. Issue-ready recommendations
-belong in the retained Orchestrator report for owner review. Never release,
+No run merges a PR or creates a follow-up issue outside the one
+policy-authorized canonical-child refinement in `policy-and-entry-modes.md`.
+Issue-ready recommendations belong in the retained Orchestrator report for
+owner review. Never release,
 deploy, publish, weaken validation, mutate production data, expose secrets,
 persist customer-level analytics, or message a customer. The in-run
 merge-readiness review is not the owner's later merge gate.

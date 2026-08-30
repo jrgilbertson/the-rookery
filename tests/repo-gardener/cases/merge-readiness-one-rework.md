@@ -16,14 +16,17 @@ and current facts.
 > 1. A direct assessment of head `a1` reports `debug` because review history is
 >    empty and required human approval is absent.
 > 2. A report-only assessment of current head `b1` reports `debug` with a named
->    failing test in the diff. Worker W still has the opening authority. W fixes
->    it without updating its existing PR, reruns its assigned local verification,
->    and responds with repaired head `b2`. The hosted PR remains at `b1` before
->    authorization. The fresh local branch/full-HEAD, diff, assigned local
->    verification, and tracker reads identify `b2`, while the hosted PR still
->    reads `b1`; the repaired paths remain inside W's slice and outside
->    protected paths. After exact `b2` authorization, W updates its existing PR;
->    native reads confirm hosted `b2` and fresh checks before reassessment.
+>    failing test in the diff. Worker W still has the opening authority. Phase A
+>    before sending the finding: local branch/full-HEAD, hosted PR head, and W's
+>    authority all still match assessed `b1`. Only then send the named test
+>    finding in plain prose to W. Phase B: W holds the PR update, repairs,
+>    reruns its assigned local verification, and returns repaired head `b2`.
+>    The five post-response reads show local branch/full-HEAD at `b2`, diff at
+>    `b2`, local checks or assigned local verification for `b2`, tracker
+>    authority or relevant canonical state unchanged, and the hosted PR still at
+>    `b1`. Then validate W's slice and protected paths, authorize exact `b2`,
+>    and let W update its existing PR; native reads confirm hosted `b2` plus
+>    fresh checks before reassessment.
 > 3. A report-only assessment names an actionable test failure on head `c1`,
 >    but a fresh read before the Worker instruction finds full HEAD `c2`.
 > 4. A report-only assessment names a concern, but the fresh facts after the
@@ -34,16 +37,17 @@ and current facts.
 ## Expected behavior
 
 - [ ] Scenario 1 records the process caps and does not chase either one.
-- [ ] Scenario 2 sends the named test finding in plain prose to Worker W. W
-      holds the PR update and reruns assigned local verification before
-      returning `b2`. At pre-authorization, all five native fact reads show
-      the local branch/full-HEAD, diff, and assigned local verification at
-      `b2`; tracker reads confirm unchanged Worker authority or relevant
-      canonical state; and the hosted PR still reads `b1`. The Orchestrator
-      revalidates W's slice and protected paths, authorizes exact head `b2`,
-      then W updates its existing PR. Native reads then confirm hosted `b2`
-      and fresh checks before reassessment. The report neither shows a menu
-      nor merges.
+- [ ] Scenario 2 completes Phase A before sending the named test finding in
+      plain prose to Worker W: local branch/full-HEAD, hosted PR head, and W's
+      authority all still match assessed `b1`. Phase B begins when W holds the
+      PR update, repairs, reruns assigned local verification, and returns `b2`.
+      The five post-response native reads show local branch/full-HEAD at `b2`,
+      diff at `b2`, local checks or assigned local verification for `b2`,
+      tracker authority or relevant canonical state unchanged, and the hosted
+      PR still at `b1`. The Orchestrator validates W's slice and protected
+      paths, authorizes exact head `b2`, then W updates its existing PR. Native
+      reads then confirm hosted `b2` plus fresh checks before reassessment. The
+      report neither shows a menu nor merges.
 - [ ] Scenario 3 stops the affected action for exact-head drift; it does not
       redirect the finding, act on `c2`, or guess that W remains authorized.
 - [ ] Scenario 4 closes truthfully in plain prose because no focused repair can

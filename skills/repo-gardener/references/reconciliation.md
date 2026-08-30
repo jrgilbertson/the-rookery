@@ -190,11 +190,26 @@ The Orchestrator selects a non-overlapping set of independently deliverable
 PR-sized units, then invokes the existing supervised Orca worker-start for
 every fresh Worker with repository setup enabled once, retaining each returned
 start receipt, up to `maximum_workers` (setup default 20). Overlap is path or
-scope conflict and is assigned before parallel start. Unrelated already-open
-PRs do not consume the cap. Each Worker is one worktree, one branch, and at
-most one unmerged PR. Each Worker prompt carries the opening policy revision,
-identity, scope, protected paths, lane grant, assigned path slice, and the
-exact caller-approved verification command argv list. Helpers do not own a PR.
+scope conflict and is assigned before parallel start. A `shared_ledger_paths`
+match is ignored only for that assignment-conflict decision and only between
+Workers selected together in the same assignment decision, when the valid
+opening file declares it and the repository has proved conflict-safe additive
+merge behavior and an additive-entry gate. It never exempts unrelated existing
+native branches or PRs.
+Every non-ledger shared path still conflicts. Each Worker using the exception
+must add its own attributable entry without deleting or replacing base ledger
+material; the Orchestrator never adds ledger material to an integration or
+coordination branch. Later native merge or rebase conflicts are surfaced for
+human handling and never hidden or auto-resolved. Unrelated already-open PRs
+do not consume the cap. Each
+Worker is one worktree, one branch, and at most one unmerged PR. Each Worker
+prompt carries the opening policy revision, identity, scope, protected paths,
+lane grant, assigned path slice, and the exact caller-approved verification
+command argv list. For a shared-ledger assignment, it also carries the
+applicable declared ledger path, the identity of the repository proof of
+conflict-safe additive behavior, and the exact base-diff check: add that
+Worker's attributable entry without deleting, replacing, omitting, or editing
+another base ledger entry. Helpers do not own a PR.
 
 A usable Worker may start while setup runs. It consumes the receipt for its own
 worktree, without relying on Orca parent-child lineage, and uses the existing
@@ -276,7 +291,12 @@ Workers and read-only sensing continue. Already-open PRs stay native objects.
 
 Each Worker re-reads the file the same way immediately before push and PR
 creation. Before either, check the exact committed paths against repository
-identity, include/exclude scope, protected paths, and the assigned slice.
+identity, include/exclude scope, protected paths, and the assigned slice. A
+Worker assigned a shared-ledger path also compares that path to its base: its
+own attributable entry must be additive, while omission, replacement, or an
+edit to another entry stops that Worker and never transfers ledger authorship
+to the Orchestrator. Later native merge or rebase conflicts are surfaced for
+human handling and never hidden or auto-resolved.
 For an ownerless Worker, immediately before its first push, re-read the current
 local subject and full OID, compare them to the captured subject and OID that
 received `ready`, and never replace or recapture that authorized identity; then
@@ -297,8 +317,13 @@ repeat the local subject/head and cleanliness re-read and require the
 provider ref to exist and equal the captured OID exactly. A post-push mismatch
 or failed absence lease is `saved_without_pr`; preserve the local commit or
 already-pushed branch on any denial.
-Immediately before PR creation it also rereads native branches and PRs and
-stops if current work now overlaps that Worker. Preserve saved pushed state
+Immediately before PR creation it also rereads native branches and PRs. Carry
+the approved shared-ledger exemption through that reread only for the same
+sibling selected in that assignment decision, identified by its live current-run
+Orca dispatch and native branch, using both Workers' original assigned slices:
+the overlap must be exactly the same configured, proven ledger path and those
+non-ledger slices must remain disjoint. Unrelated native work and any newly
+introduced path or scope overlap deny PR creation. Preserve saved pushed state
 when PR creation is denied, and surface the exact file revision, scope, or
 overlap change for owner review.
 

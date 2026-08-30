@@ -102,8 +102,20 @@ claim. It, setup, and Scout helpers execute no declared audit.
    look is allowed only when it would change assignment or recommendation.
    Reassess after each result and coalesce a shared cause.
 5. Select a non-overlapping set of independently deliverable PR-sized units.
-   Overlap is path or scope conflict. Unrelated open PRs do not consume the
-   Worker cap. Do not invent work to fill the cap.
+   Overlap is path or scope conflict. A matching `shared_ledger_paths` path is
+   exempt only between Workers selected together in the same assignment decision,
+   and only from assignment-conflict detection when the valid opening file
+   declares it and the repository owner has proved conflict-safe additive
+   merge behavior and an additive-entry check. It never exempts unrelated
+   existing native branches or PRs.
+   The exception never applies to another shared path, authoring scope, or
+   protected-path validation. Each Worker whose assignment uses the exception
+   must add its own attributable ledger entry without deleting or replacing
+   base ledger material; the Orchestrator never writes a ledger entry on an
+   integration or coordination branch. Later native merge or rebase conflicts
+   are surfaced for human handling and never hidden or auto-resolved.
+   Unrelated open PRs do not consume the Worker cap. Do not invent work to
+   fill the cap.
 6. Authoring uses the opening file: exact `repository.identity` match, planned
    paths inside the effective include/exclude scope, `maximum_workers` greater
    than zero, owning lane `mutation: true`, and no protected path.
@@ -129,8 +141,12 @@ claim. It, setup, and Scout helpers execute no declared audit.
    worktree, one branch, and at most one unmerged PR. Each Worker prompt carries the
    opening policy revision, identity, scope, protected paths, lane grant,
    assigned path slice, and the exact caller-approved verification command argv
-   list. A Worker does not survey nine lanes or write tracker comments. Helpers
-   do not own a PR.
+   list. For a shared-ledger assignment, it also carries the applicable declared
+   ledger path, the identity of the repository proof of conflict-safe additive
+   behavior, and the exact base-diff check: add that Worker's attributable entry
+   without deleting, replacing, omitting, or editing another base ledger entry.
+   A Worker does not survey nine lanes or write tracker comments. Helpers do not
+   own a PR.
 8. Require each Worker to plan, implement, simplify, review, pass repository
    gates, and commit the result. After successful or no-op native Orca setup,
    run relevant repository-documented verification commands unchanged as
@@ -155,9 +171,15 @@ claim. It, setup, and Scout helpers execute no declared audit.
 9. The Worker, not the Orchestrator, owns push and PR creation. Before push or
    PR-open, re-read the durable file only to detect a revision change, and
    check the exact committed paths against identity, include/exclude scope,
-   protected paths, and the assigned slice. A change or out-of-slice path
-   stops further source mutation, push, and PR-open for every Worker and
-   preserves local commits; already-open PRs stay native objects. Immediately
+   protected paths, and the assigned slice. For a shared-ledger assignment,
+   check the Worker diff against its base: it must add that Worker's
+   attributable entry and must not delete or replace base ledger material.
+   An omitted, replacement, or other-entry edit stops that Worker; it never
+   becomes an Orchestrator ledger edit. A later native merge or rebase conflict
+   is surfaced for human handling, never hidden or auto-resolved. A change or
+   out-of-slice path stops further source mutation, push, and PR-open for
+   every Worker and preserves local commits; already-open PRs stay native
+   objects. Immediately
    before an ownerless first push, re-read the current local subject and full
    OID, compare them to the captured subject and OID that received `ready`, and
    never replace or recapture that authorized identity; then re-read staged, unstaged, and
@@ -179,9 +201,16 @@ claim. It, setup, and Scout helpers execute no declared audit.
    OID, dirt, unavailable or indeterminate read, conflicting existing ref,
    failed absence lease, or post-push mismatch leaves the commit
    `saved_without_pr` with the exact gap.
-   Before PR creation, also reread native branches and PRs. An overlap denial
-   stops that Worker's dependents only; other Workers and read-only sensing
-   continue. A denied push preserves the local commit.
+   Before PR creation, also reread native branches and PRs. Carry the approved
+   shared-ledger exemption through that reread only for the same sibling
+   selected in that assignment decision, identified by its live current-run Orca
+   dispatch and native branch, using both Workers' original assigned slices: the
+   overlap must be exactly the same configured, proven ledger path and those
+   non-ledger slices must remain disjoint.
+   Unrelated native work and any newly introduced path or scope overlap are
+   denials. An overlap denial stops that Worker's dependents only; other Workers
+   and read-only sensing continue. A denial preserves saved pushed state and
+   reports the exact overlap.
 10. After every Worker response, the Orchestrator freshly reads the current
     native branch and full HEAD, current diff, checks, any PR, and relevant
     tracker facts. It compares those facts with the assigned leaf and prior

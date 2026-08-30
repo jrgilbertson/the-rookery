@@ -13,6 +13,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Repo Gardener can treat configured ledger paths as an assignment-only overlap
+  exception after repository proof of conflict-safe additive merging, while
+  requiring each Worker to retain base entries and add its own attributable
+  entry; the Orchestrator never writes the shared ledger or resolves later
+  native merge or rebase conflicts.
 - Repo Gardener now assesses PR readiness directly or through a report-only
   merge-readiness review, then can return a current, actionable finding to the
   same Worker without exposing a merge path.

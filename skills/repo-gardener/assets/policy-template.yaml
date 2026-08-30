@@ -42,6 +42,14 @@ protected_paths:
 # Parallel Worker cap. `0` denies Worker dispatch. Setup proposes `20`.
 maximum_workers: 0
 
+# Optional overlap exception for accumulating files. Add repository-relative
+# paths only after the repository has proved conflict-safe additive merge
+# behavior and each Worker diff is checked for its own additive entry. These
+# paths relax assignment-conflict detection only; they never authorize an
+# Orchestrator ledger write or automatic merge/rebase conflict resolution.
+# shared_ledger_paths:
+#   - REPLACE_WITH_REPOSITORY_RELATIVE_LEDGER_PATH
+
 tracker:
   # Live gardening-tracker issue identity. #3336 is not a live tracker.
   identity: REPLACE_WITH_TRACKER_IDENTITY

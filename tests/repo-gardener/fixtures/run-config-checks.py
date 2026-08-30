@@ -280,6 +280,12 @@ def normalized_config(value: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
+def shared_ledger_config() -> dict[str, Any]:
+    config = base_config()
+    config["shared_ledger_paths"] = ["CHANGELOG.md"]
+    return config
+
+
 def check_script_surface() -> None:
     require(PRODUCTION.is_file(), "missing config validator")
     require(os.access(PRODUCTION, os.X_OK), "config validator is not executable")
@@ -449,6 +455,37 @@ def main() -> int:
         first = expect_valid(base_config(), repo_root, expected)
         second = expect_valid(base_config(), repo_root, expected)
         require(first == second, "valid config normalization is not deterministic")
+
+        ledger = shared_ledger_config()
+        expect_valid(ledger, repo_root, normalized_config(ledger))
+
+        empty_ledger = shared_ledger_config()
+        empty_ledger["shared_ledger_paths"] = []
+        expect_valid(empty_ledger, repo_root, normalized_config(empty_ledger))
+
+        absolute_ledger = shared_ledger_config()
+        absolute_ledger["shared_ledger_paths"] = ["/CHANGELOG.md"]
+        expect_invalid(absolute_ledger, repo_root, "shared_ledger_paths[0] must be a repository-relative path")
+
+        wildcard_ledger = shared_ledger_config()
+        wildcard_ledger["shared_ledger_paths"] = ["**"]
+        expect_invalid(
+            wildcard_ledger,
+            repo_root,
+            "shared_ledger_paths[0] must be a literal repository-relative file path",
+        )
+
+        nested_wildcard_ledger = shared_ledger_config()
+        nested_wildcard_ledger["shared_ledger_paths"] = ["src/**"]
+        expect_invalid(
+            nested_wildcard_ledger,
+            repo_root,
+            "shared_ledger_paths[0] must be a literal repository-relative file path",
+        )
+
+        nested_ledger = base_config()
+        nested_ledger["shared_ledger"] = {"paths": ["CHANGELOG.md"]}
+        expect_invalid(nested_ledger, repo_root, "config has unexpected key: shared_ledger")
 
         commented = """# Live gardener file
 repository:

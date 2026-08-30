@@ -46,7 +46,7 @@ TOP_LEVEL_REQUIRED = {
     "tracker",
     "lanes",
 }
-TOP_LEVEL_ALLOWED = TOP_LEVEL_REQUIRED | {"evidence_sources"}
+TOP_LEVEL_ALLOWED = TOP_LEVEL_REQUIRED | {"evidence_sources", "shared_ledger_paths"}
 REPOSITORY_FIELDS = {"identity", "default_branch", "scope"}
 SCOPE_FIELDS = {"include", "exclude"}
 TRACKER_FIELDS = {"identity"}
@@ -463,6 +463,16 @@ def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
     }
     if "evidence_sources" in value:
         normalized["evidence_sources"] = normalize_evidence_sources(value["evidence_sources"])
+    if "shared_ledger_paths" in value:
+        shared_ledger_paths = require_glob_list(
+            value["shared_ledger_paths"], "shared_ledger_paths", nonempty=False
+        )
+        for index, path in enumerate(shared_ledger_paths):
+            require(
+                not any(character in path for character in "*?["),
+                f"shared_ledger_paths[{index}] must be a literal repository-relative file path",
+            )
+        normalized["shared_ledger_paths"] = shared_ledger_paths
     return normalized
 
 

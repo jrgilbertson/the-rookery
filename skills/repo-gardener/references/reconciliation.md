@@ -237,7 +237,9 @@ finding must cover the same exact subject/head/base, complete inspected-path
 and relevant-check inventories, and every applicable required check as
 `verified` or proven `not applicable`; every other canonical status is
 `action-required`: `failed`, `unavailable`, `not verified`, `not run`,
-`skipped`, `bypassed`, `attested`, or `unresolved`. The final assessment
+`skipped`, `bypassed`, or `attested`. An unresolved finding is a separately
+named action-required gap attached to an allowed status, for example `code
+review: not verified`. The final assessment
 re-reads the authoritative subject/head/base and staged, unstaged, and
 untracked cleanliness; movement, dirt, incomplete evidence, or unavailable
 state is `action-required` with exact gaps.

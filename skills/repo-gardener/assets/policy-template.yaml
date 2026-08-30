@@ -11,9 +11,10 @@
 # REPLACE_WITH_* value with a real one during setup.
 #
 # Skill-hardcoded, not file knobs: never merge, release, deploy, create
-# follow-up issues, or message customers; `.agents/repo-gardener.yaml` is
-# always protected; presentation cap is 7; there is no depth quota in this
-# file. Triage is recommend-only and is not grantable.
+# follow-up issues outside the sole policy-authorized canonical-child exception,
+# or message customers; `.agents/repo-gardener.yaml` is always protected;
+# presentation cap is 7; there is no depth quota in this file. Triage is
+# recommend-only and is not grantable.
 #
 # Optional evidence-source grants are omitted here. If present they are a
 # mapping at `evidence_sources.<name>.identity`. Absence is valid.

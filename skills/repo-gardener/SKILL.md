@@ -102,16 +102,18 @@ claim. It, setup, and Scout helpers execute no declared audit.
    look is allowed only when it would change assignment or recommendation.
    Reassess after each result and coalesce a shared cause.
 5. Select a non-overlapping set of independently deliverable PR-sized units.
-   Overlap is path or scope conflict. A matching `shared_ledger.paths` path is
+   Overlap is path or scope conflict. A matching `shared_ledger_paths` path is
    exempt only from assignment-conflict detection when the valid opening file
-   declares `shared_ledger.additive_merge_strategy: union` and the repository
-   owner has proved that union merge behavior and an additive-entry check.
+   declares it and the repository owner has proved conflict-safe additive
+   merge behavior and an additive-entry check.
    The exception never applies to another shared path, authoring scope, or
    protected-path validation. Each Worker whose assignment uses the exception
    must add its own attributable ledger entry without deleting or replacing
    base ledger material; the Orchestrator never writes a ledger entry on an
-   integration or coordination branch. Unrelated open PRs do not consume the
-   Worker cap. Do not invent work to fill the cap.
+   integration or coordination branch. Later native merge or rebase conflicts
+   are surfaced for human handling and never hidden or auto-resolved.
+   Unrelated open PRs do not consume the Worker cap. Do not invent work to
+   fill the cap.
 6. Authoring uses the opening file: exact `repository.identity` match, planned
    paths inside the effective include/exclude scope, `maximum_workers` greater
    than zero, owning lane `mutation: true`, and no protected path.
@@ -167,9 +169,11 @@ claim. It, setup, and Scout helpers execute no declared audit.
    check the Worker diff against its base: it must add that Worker's
    attributable entry and must not delete or replace base ledger material.
    An omitted, replacement, or other-entry edit stops that Worker; it never
-   becomes an Orchestrator ledger edit. A change or out-of-slice path
-   stops further source mutation, push, and PR-open for every Worker and
-   preserves local commits; already-open PRs stay native objects. Immediately
+   becomes an Orchestrator ledger edit. A later native merge or rebase conflict
+   is surfaced for human handling, never hidden or auto-resolved. A change or
+   out-of-slice path stops further source mutation, push, and PR-open for
+   every Worker and preserves local commits; already-open PRs stay native
+   objects. Immediately
    before an ownerless first push, re-read the current local subject and full
    OID, compare them to the captured subject and OID that received `ready`, and
    never replace or recapture that authorized identity; then re-read staged, unstaged, and

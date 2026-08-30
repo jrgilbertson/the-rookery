@@ -11,15 +11,17 @@ a fourth look that would change assignment was refused.
 > A managed repo-gardener run has finished the nine-lane survey. The durable
 > file has `maximum_workers: 20`, matching identity, in-scope paths, and
 > `mutation: true` for code-health and documentation. Opening revision is
-> `policy:1`. Its valid `shared_ledger` names `CHANGELOG.md` with the
-> repository-proven `union` strategy. Two independently deliverable units
+> `policy:1`. Its optional `shared_ledger_paths` includes `CHANGELOG.md`, and
+> the repository has already proved conflict-safe additive merge behavior and
+> an additive-entry check. Two independently deliverable units
 > overlap only on that ledger and not on an unrelated already-open billing PR:
 > (1) dead-code removal in an adapter plus its own changelog entry, (2)
 > documentation drift plus its own changelog entry. A third unit would
 > touch a protected path. A fourth seam's next look would change which unit
 > to assign; after that look, further investigation would not change
-> assignments or recommendations. Produce the Orchestrator's assignment and
-> depth decision.
+> assignments or recommendations. Variant: use the same proposed assignments
+> and path list but omit the repository proof. Produce separate assignment and
+> depth decisions for the proved and missing-proof variants.
 
 ## Expected behavior
 

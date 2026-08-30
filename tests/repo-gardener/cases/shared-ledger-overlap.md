@@ -9,14 +9,16 @@ check.
 
 > Work only from these synthetic facts. Do not call tools.
 >
-> The opening policy is valid and has `shared_ledger.paths: [CHANGELOG.md]`
-> with `additive_merge_strategy: union`. The repository has already proved its
-> union merge behavior and additive-entry gate. Worker A owns `src/a.py` plus
-> an Unreleased entry; Worker B owns `docs/b.md` plus an Unreleased entry.
+> The opening policy is valid and has `shared_ledger_paths: [CHANGELOG.md]`.
+> The repository has already proved conflict-safe additive merge behavior and
+> an additive-entry gate. Worker A owns `src/a.py` plus an Unreleased entry;
+> Worker B owns `docs/b.md` plus an Unreleased entry.
 > Their only shared path is `CHANGELOG.md`. A third Worker shares `src/a.py`
 > with A. Worker A's proposed diff removes B's existing changelog entry before
 > adding A's. A coordinator branch has no assigned implementation and proposes
-> a changelog line. Produce the assignment and validation decision.
+> a changelog line. Variant: the same path list exists but the repository proof
+> is missing. Produce separate decisions for the proved and missing-proof
+> variants, including the handling of any later native merge or rebase conflict.
 
 ## Expected behavior
 
@@ -27,5 +29,7 @@ check.
       preserves every base ledger entry.
 - [ ] Rejects the coordinator-branch ledger line: the Orchestrator never owns
       integration or coordination ledger material.
-- [ ] Serializes instead of exempting an otherwise matching path when the
-      opening policy lacks the proven `union` strategy.
+- [ ] Serializes the otherwise matching ledger path when repository proof is
+      missing.
+- [ ] Surfaces a later native merge or rebase conflict for human handling; it
+      never hides or auto-resolves that conflict.

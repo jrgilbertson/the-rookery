@@ -282,10 +282,7 @@ def normalized_config(value: dict[str, Any]) -> dict[str, Any]:
 
 def shared_ledger_config() -> dict[str, Any]:
     config = base_config()
-    config["shared_ledger"] = {
-        "paths": ["CHANGELOG.md"],
-        "additive_merge_strategy": "union",
-    }
+    config["shared_ledger_paths"] = ["CHANGELOG.md"]
     return config
 
 
@@ -462,21 +459,17 @@ def main() -> int:
         ledger = shared_ledger_config()
         expect_valid(ledger, repo_root, normalized_config(ledger))
 
-        missing_strategy = shared_ledger_config()
-        del missing_strategy["shared_ledger"]["additive_merge_strategy"]
-        expect_invalid(missing_strategy, repo_root, "shared_ledger missing key: additive_merge_strategy")
-
         empty_ledger = shared_ledger_config()
-        empty_ledger["shared_ledger"]["paths"] = []
-        expect_invalid(empty_ledger, repo_root, "shared_ledger.paths must not be empty")
-
-        unsafe_ledger = shared_ledger_config()
-        unsafe_ledger["shared_ledger"]["additive_merge_strategy"] = "ours"
-        expect_invalid(unsafe_ledger, repo_root, "shared_ledger.additive_merge_strategy must be union")
+        empty_ledger["shared_ledger_paths"] = []
+        expect_valid(empty_ledger, repo_root, normalized_config(empty_ledger))
 
         absolute_ledger = shared_ledger_config()
-        absolute_ledger["shared_ledger"]["paths"] = ["/CHANGELOG.md"]
-        expect_invalid(absolute_ledger, repo_root, "shared_ledger.paths[0] must be a repository-relative path")
+        absolute_ledger["shared_ledger_paths"] = ["/CHANGELOG.md"]
+        expect_invalid(absolute_ledger, repo_root, "shared_ledger_paths[0] must be a repository-relative path")
+
+        nested_ledger = base_config()
+        nested_ledger["shared_ledger"] = {"paths": ["CHANGELOG.md"]}
+        expect_invalid(nested_ledger, repo_root, "config has unexpected key: shared_ledger")
 
         commented = """# Live gardener file
 repository:

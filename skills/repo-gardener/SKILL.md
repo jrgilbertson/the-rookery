@@ -150,8 +150,7 @@ claim. It, setup, and Scout helpers execute no declared audit.
    names each gap. Assessment-only forbids attestation. A later re-invocation
    cannot pass by claiming those steps happened. When an owner is present, the
    interactive menu remains; owner option 1 plus its evidence pack authorizes
-   normal PR publication after the same final exact-subject/head/base and
-   cleanliness re-read. Never manufacture approval, attest later, or commit generated
+   normal PR publication. Never manufacture approval, attest later, or commit generated
    readiness artifacts.
 9. The Worker, not the Orchestrator, owns push and PR creation. Before push or
    PR-open, re-read the durable file only to detect a revision change, and

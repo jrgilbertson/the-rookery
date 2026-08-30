@@ -247,9 +247,7 @@ Assessment-only forbids attestation. Do not present the owner menu.
 
 When an owner is present, the interactive `checking-pr-readiness` menu
 remains. Owner option 1 plus its interactive evidence pack authorizes normal
-PR publication. Immediately before that publication, make the same final
-exact-subject/full-OID and staged, unstaged, and untracked cleanliness re-read
-required for an ownerless run.
+PR publication.
 
 Only in an ownerless run may that same-session readable `ready` result open
 one PR. Do not open an ownerless PR when `checking-pr-readiness` is absent,
@@ -298,8 +296,7 @@ refuses rather than fast-forwards; when already exact, make no push. Immediately
 repeat the local subject/head and cleanliness re-read and require the
 provider ref to exist and equal the captured OID exactly. A post-push mismatch
 or failed absence lease is `saved_without_pr`; preserve the local commit or
-already-pushed branch on any denial. An attended Worker makes the same final exact-head and cleanliness
-re-read after owner option 1 and its evidence pack, before normal publication.
+already-pushed branch on any denial.
 Immediately before PR creation it also rereads native branches and PRs and
 stops if current work now overlaps that Worker. Preserve saved pushed state
 when PR creation is denied, and surface the exact file revision, scope, or

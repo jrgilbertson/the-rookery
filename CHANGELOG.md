@@ -13,6 +13,8 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Repo Gardener now rereads native state after Worker responses and either
+  gives a focused next instruction or explains why it stops.
 - Assessment-only `checking-pr-readiness` now reports same-session exact-head
   findings and rejects a moved native head without requiring receipt packaging.
   An ownerless `repo-gardener` Worker may open one PR only on that readable

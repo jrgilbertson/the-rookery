@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-08-30 | working tree | canonical issue-refinement delegation case | pass (static case) | Matched Repo Gardener and Managing Issues cases cover the default-off zero-write proposal, one enabled in-family canonical delegation, caller-envelope refusal, and failed or indeterminate first-stop with exact readback and no retry.
+
 - 2026-08-29 | working tree | ownerless publication base re-read contract | pass (static case) | Ownerless first push and PR-open each re-resolve the captured target/base ref and full base OID, catching same-ref advancement; drift or unavailable base state stays `saved_without_pr` and requires fresh assessment.
 - 2026-08-29 | working tree | assessment-only Worker base contract | pass (static case) | The Worker binds subject, head, target/base ref, and full base OID through assessment's read-only boundary; a moved base is action-required before publication, while only `verified` and `not applicable` checks support ready.
 - 2026-08-29 | working tree | Worker assessment argv handoff contract | pass (static case) | Worker assignments now carry caller-approved exact verification argv before mutation, pass that same assignment-owned list to assessment after execution, and preserve the direct-argv boundary against commit-derived authority.

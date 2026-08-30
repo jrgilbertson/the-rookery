@@ -101,7 +101,13 @@ claim. It, setup, and Scout helpers execute no declared audit.
    must close. There is no deep-target number in the file or skill. A fourth
    look is allowed only when it would change assignment or recommendation.
    Reassess after each result and coalesce a shared cause.
-5. Select a non-overlapping set of independently deliverable PR-sized units.
+5. When a candidate in the caller-approved owned issue family needs scoped
+   canonical refinement, use the default-off grant in
+   `policy-and-entry-modes.md`. Only the Orchestrator may delegate one such
+   batch to installed `managing-issues`; Workers and helpers cannot write an
+   issue, and GitHub mirrors remain read-only. Recompute the Ready Frontier
+   from the returned exact readback before selecting work.
+6. Select a non-overlapping set of independently deliverable PR-sized units.
    Overlap is path or scope conflict. A matching `shared_ledger_paths` path is
    exempt only between Workers selected together in the same assignment decision,
    and only from assignment-conflict detection when the valid opening file
@@ -116,7 +122,7 @@ claim. It, setup, and Scout helpers execute no declared audit.
    are surfaced for human handling and never hidden or auto-resolved.
    Unrelated open PRs do not consume the Worker cap. Do not invent work to
    fill the cap.
-6. Authoring uses the opening file: exact `repository.identity` match, planned
+7. Authoring uses the opening file: exact `repository.identity` match, planned
    paths inside the effective include/exclude scope, `maximum_workers` greater
    than zero, owning lane `mutation: true`, and no protected path.
    `.agents/repo-gardener.yaml` is always protected. A missing, mismatched,
@@ -126,7 +132,7 @@ claim. It, setup, and Scout helpers execute no declared audit.
    capability with repository setup enabled is absent, do not
    dispatch Workers; complete the read-only gardening report and name the
    missing capability.
-7. Assign overlap before parallel start. Invoke the existing supervised Orca
+8. Assign overlap before parallel start. Invoke the existing supervised Orca
    worker-start for every fresh Worker with repository setup enabled once, and
    retain its start receipt in the Orchestrator. A usable Worker may start while
    setup runs, but uses its existing current-Dispatch observation (`worker-show`
@@ -147,7 +153,7 @@ claim. It, setup, and Scout helpers execute no declared audit.
    without deleting, replacing, omitting, or editing another base ledger entry.
    A Worker does not survey nine lanes or write tracker comments. Helpers do not
    own a PR.
-8. Require each Worker to plan, implement, simplify, review, pass repository
+9. Require each Worker to plan, implement, simplify, review, pass repository
    gates, and commit the result. After successful or no-op native Orca setup,
    run relevant repository-documented verification commands unchanged as
    ordinary gates. Report each command's actual `pass`, `failure`, or
@@ -168,7 +174,7 @@ claim. It, setup, and Scout helpers execute no declared audit.
    interactive menu remains; owner option 1 plus its evidence pack authorizes
    normal PR publication. Never manufacture approval, attest later, or commit generated
    readiness artifacts.
-9. The Worker, not the Orchestrator, owns push and PR creation. Before push or
+10. The Worker, not the Orchestrator, owns push and PR creation. Before push or
    PR-open, re-read the durable file only to detect a revision change, and
    check the exact committed paths against identity, include/exclude scope,
    protected paths, and the assigned slice. For a shared-ledger assignment,
@@ -211,7 +217,7 @@ claim. It, setup, and Scout helpers execute no declared audit.
    denials. An overlap denial stops that Worker's dependents only; other Workers
    and read-only sensing continue. A denial preserves saved pushed state and
    reports the exact overlap.
-10. After every Worker response, the Orchestrator freshly reads the current
+11. After every Worker response, the Orchestrator freshly reads the current
     native branch and full HEAD, current diff, checks, any PR, and relevant
     tracker facts. It compares those facts with the assigned leaf and prior
     response context without retaining a progress record. When they expose one

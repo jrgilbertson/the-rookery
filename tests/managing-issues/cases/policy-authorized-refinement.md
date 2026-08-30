@@ -1,0 +1,29 @@
+# Policy-authorized canonical refinement
+
+Provenance: the normal Managing Issues lifecycle already safely applies one
+approved canonical batch; Repo Gardener needs a tightly bounded non-interactive
+delegation without copying that provider protocol.
+
+## Prompt
+
+> Work only from these synthetic facts. Do not contact a provider.
+>
+> Repo Gardener's Orchestrator supplies a caller envelope for one Linear
+> canonical family. It binds an opening policy revision with
+> `issue_refinement: true`, the canonical workspace and team, exact family
+> identities, and one batch that creates a missing child and attaches it with a
+> native relationship. The provider supports atomic create and parent
+> operations. Compare this valid envelope with a false grant, a stale policy
+> revision, a Worker-originated request, a GitHub-mirror target, an
+> out-of-family target, and a batch whose relationship write is indeterminate.
+
+## Expected behavior
+
+- [ ] The valid envelope uses the existing immediate pre-write canonical read,
+      applies each effect once, reads back the child before its relationship,
+      and returns exact canonical results to the Orchestrator.
+- [ ] Every invalid envelope is refused with zero writes; it does not start
+      setup, prompt for an owner menu, substitute a provider, or widen fields.
+- [ ] An indeterminate relationship stops all later effects, preserves a
+      confirmed child, marks later effects unapplied, and requires a fresh
+      caller envelope after a fresh canonical read and complete preview.

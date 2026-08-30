@@ -12,6 +12,24 @@ repository's canonical tracker. The durable result is useful issue context and
 a native dependency graph. Implementation plans, worktrees, pull requests, and
 delivery orchestration belong to the workflows that consume those issues.
 
+## Policy-authorized delegation
+
+Repo Gardener may invoke this non-interactive mode only from its Orchestrator
+with one caller envelope that proves its opening policy has
+`issue_refinement: true`, identifies the canonical provider and target, binds
+the exact owned issue family, and lists one approved batch of Problem, Scope,
+Verification, estimate, readiness, child, or blocker changes. Treat every
+missing, stale, mismatched, mirrored, out-of-family, Worker, helper, or
+unsupported-field request as refused with zero writes. The envelope is a
+narrow substitute for this skill's direct-operator approval; it never enables
+setup, a new target, or another batch.
+
+After that gate, use the existing canonical resolution and sections 2 through
+4 unchanged. They own the immediate pre-write read, provider capability check,
+atomic graph operation, apply-once, first-stop, and exact readback. Do not
+retry or compensate for `failed` or `indeterminate`; return the complete
+effect inventory to the Orchestrator, which alone recomputes its frontier.
+
 ## 1. Shape the work into useful issues
 
 Use this step for a draft, create, or requested decomposition. For a read,
@@ -191,7 +209,9 @@ command uses a structured argument vector and sends multiline body content
 through stdin so the content remains literal.
 
 Every non-empty mutating batch requires one direct operator approval of the
-complete visible batch. Approval binds only the displayed order and effects.
+complete visible batch. In policy-authorized delegation, the already-validated
+caller envelope is that direct approval and binds only its displayed order and
+effects. Approval binds only the displayed order and effects.
 Any new target, field, ordering, content, or side effect needs a fresh complete
 preview and approval. Never truncate a batch or hide tracker content that
 affects it. Every non-empty mutating batch preview must end with exactly

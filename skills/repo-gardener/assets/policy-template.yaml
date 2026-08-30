@@ -42,6 +42,11 @@ protected_paths:
 # Parallel Worker cap. `0` denies Worker dispatch. Setup proposes `20`.
 maximum_workers: 0
 
+# Allows the Orchestrator to delegate one caller-authorized canonical issue
+# refinement batch to installed Managing Issues. It never authorizes a Worker,
+# mirror, or out-of-graph write.
+issue_refinement: false
+
 # Optional overlap exception for accumulating files. Add repository-relative
 # paths only after the repository has proved conflict-safe additive merge
 # behavior and each Worker diff is checked for its own additive entry. These

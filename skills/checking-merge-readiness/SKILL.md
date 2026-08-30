@@ -14,7 +14,9 @@ point fixes) clear the queue; this skill asks whether the accumulated change is
 still the right system to put on main.
 
 Print a short Minto pyramid readout for the merge decision (shape in step
-6). Recommendations are merge, debug, or do not merge.
+6). Recommendations are merge, debug, or do not merge. A noninteractive
+[agent report](references/agent-mode.md) uses the same assessment without an
+owner decision or merge path.
 
 Thin checks run first: whether the review loop is quiet enough to grade and
 whether host merge rules pass (for example required conversation resolution).

@@ -13,6 +13,8 @@ set -uo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GH="$HERE/bin/gh"
 PRS="$HERE/prs"
+ROOT="$(cd "$HERE/../../.." && pwd)"
+AGENT_MODE="$ROOT/skills/checking-merge-readiness/references/agent-mode.md"
 PASS=0
 FAIL=0
 AUTHFAIL=
@@ -104,6 +106,32 @@ bind_spec() {
     IFS= read -r BIND_N
   } < <(specimen_pr_bind "$1")
 }
+
+echo "== 0. report-only agent mode =="
+if grep -Fq 'Run the ordinary read-only assessment through step 6.' "$AGENT_MODE" \
+  && grep -Fq 'full current head OID' "$AGENT_MODE" \
+  && grep -Fq 'human-readable findings' "$AGENT_MODE" \
+  && python3 - "$AGENT_MODE" <<'PY'
+import re
+import sys
+
+text = " ".join(open(sys.argv[1]).read().split())
+raise SystemExit(not re.search(
+    r"step 4.*(?:confirmation|attestation).*do not prompt.*unverifiable.*debug cap.*step 6",
+    text,
+    re.IGNORECASE,
+))
+PY
+then
+  pass "agent report: prose recommendation and exact head"
+else
+  fail "agent report: prose recommendation and exact head" "report-only contract is incomplete"
+fi
+if ! grep -Eq 'gh[[:space:]]+pr[[:space:]]+merge|merge-execution\\.md|Proceed to merge' "$AGENT_MODE"; then
+  pass "agent report: merge invocation structurally absent"
+else
+  fail "agent report: merge invocation structurally absent" "agent report contains a merge path"
+fi
 
 echo "== A. serve real fixture content =="
 bind_spec specimen-a

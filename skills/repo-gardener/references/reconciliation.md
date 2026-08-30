@@ -325,28 +325,37 @@ If the bounded caller run must close first, report and retain the Worker as
 Record the repository, PR number, branch, head SHA, state, checks, review
 state, and Worker state.
 
-After a Worker reaches `pr_ready`, the Orchestrator runs installed
-`checking-merge-readiness` read-only. Cite that skill by name; do not fork it
-and do not add assessment-only to it. That skill always has an owner menu;
-this skill wraps the review. Invoke the installed skill's read-only review,
-take the recommendation and named findings, execute nothing, and never select
-“Proceed to merge.”
+After a Worker reaches `pr_ready`, assess the exact current head directly or,
+when a whole-change review would help, use installed
+`checking-merge-readiness` in its report-only agent form. Cite that skill by
+name and do not fork it. Both paths return merge, debug, or do not merge and
+ordinary human-readable findings. The report-only form never shows an owner
+menu or invokes a merge.
 
-Classify findings:
+Immediately after either assessment and before sending an actionable finding,
+freshly reread the local branch and full HEAD, hosted PR head, and current
+Worker authority. Send the finding only when all still match the assessed full
+head and the Worker remains authorized; exact-head drift, unavailable or
+unknown provider state, or an authority denial stops only the affected action,
+without redirecting the stale finding to a new head or guessing authority.
+When current Worker head and authority expose one specific actionable finding
+about the diff, tests, intent, or durable records, send it in plain prose to
+the same Worker and require the Worker to hold its existing PR update and
+rerun the assigned local verification before returning the repaired exact head;
+do not require another formal review pipeline. After the response, freshly
+reread native branch and full HEAD, diff, checks, PR, and relevant tracker
+facts. Revalidate the repaired exact head against the assigned slice and
+protected paths, then authorize that exact head before the same Worker updates
+its existing PR. Stop the affected action only for safety, authority,
+protected-path, exact-head-drift, or unknown-provider-effect facts. When no
+focused repair can help, stop truthfully in plain prose. Process-only caps,
+including empty review history and missing required human approvals, are
+recorded rather than chased.
 
-- Material debug or do-not-merge findings about the diff, tests, intent, or
-  durable records may identify a specific actionable gap for one focused
-  Worker instruction. A named test failure is material. After that Worker
-  response, re-read the same native branch/full-HEAD, diff, checks, PR, and
-  tracker facts before deciding whether another focused instruction can help.
-- Process-only caps, including empty review history and missing required
-  human approvals, are recorded, not chased. Fresh PRs often cap at debug for
-  empty review; that is process, not rework.
-
-If `checking-merge-readiness` is absent, skip merge-readiness feedback and
-name the gap. The in-run review is not the owner's later merge gate. Never
-merge. Do not create follow-up issues; write issue-ready recommendations
-instead.
+If `checking-merge-readiness` is absent, assess directly and name the gap only
+when it limits the result. The in-run review is not the owner's later merge
+gate. Never merge. Do not create follow-up issues; write issue-ready
+recommendations instead.
 
 ## Close once
 

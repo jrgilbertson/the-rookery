@@ -103,9 +103,11 @@ claim. It, setup, and Scout helpers execute no declared audit.
    Reassess after each result and coalesce a shared cause.
 5. Select a non-overlapping set of independently deliverable PR-sized units.
    Overlap is path or scope conflict. A matching `shared_ledger_paths` path is
-   exempt only from assignment-conflict detection when the valid opening file
+   exempt only between Workers selected together in the same assignment decision,
+   and only from assignment-conflict detection when the valid opening file
    declares it and the repository owner has proved conflict-safe additive
-   merge behavior and an additive-entry check.
+   merge behavior and an additive-entry check. It never exempts unrelated
+   existing native branches or PRs.
    The exception never applies to another shared path, authoring scope, or
    protected-path validation. Each Worker whose assignment uses the exception
    must add its own attributable ledger entry without deleting or replacing
@@ -200,9 +202,11 @@ claim. It, setup, and Scout helpers execute no declared audit.
    failed absence lease, or post-push mismatch leaves the commit
    `saved_without_pr` with the exact gap.
    Before PR creation, also reread native branches and PRs. Carry the approved
-   shared-ledger exemption through that reread only for a sibling Worker selected
-   in the same assignment decision, when its overlap is exactly the same
-   configured, proven ledger path and the non-ledger slices remain disjoint.
+   shared-ledger exemption through that reread only for the same sibling
+   selected in that assignment decision, identified by its live current-run Orca
+   dispatch and native branch, using both Workers' original assigned slices: the
+   overlap must be exactly the same configured, proven ledger path and those
+   non-ledger slices must remain disjoint.
    Unrelated native work and any newly introduced path or scope overlap are
    denials. An overlap denial stops that Worker's dependents only; other Workers
    and read-only sensing continue. A denial preserves saved pushed state and

@@ -191,9 +191,11 @@ PR-sized units, then invokes the existing supervised Orca worker-start for
 every fresh Worker with repository setup enabled once, retaining each returned
 start receipt, up to `maximum_workers` (setup default 20). Overlap is path or
 scope conflict and is assigned before parallel start. A `shared_ledger_paths`
-match is ignored only for that assignment-conflict decision, only when the
-valid opening file declares it, and only after the repository has proved
-conflict-safe additive merge behavior and an additive-entry gate.
+match is ignored only for that assignment-conflict decision and only between
+Workers selected together in the same assignment decision, when the valid
+opening file declares it and the repository has proved conflict-safe additive
+merge behavior and an additive-entry gate. It never exempts unrelated existing
+native branches or PRs.
 Every non-ledger shared path still conflicts. Each Worker using the exception
 must add its own attributable entry without deleting or replacing base ledger
 material; the Orchestrator never adds ledger material to an integration or
@@ -316,12 +318,14 @@ provider ref to exist and equal the captured OID exactly. A post-push mismatch
 or failed absence lease is `saved_without_pr`; preserve the local commit or
 already-pushed branch on any denial.
 Immediately before PR creation it also rereads native branches and PRs. Carry
-the approved shared-ledger exemption through that reread only for a sibling
-Worker selected in the same assignment decision, when its overlap is exactly
-the same configured, proven ledger path and the non-ledger slices remain
-disjoint. Unrelated native work and any newly introduced path or scope overlap
-deny PR creation. Preserve saved pushed state when PR creation is denied, and
-surface the exact file revision, scope, or overlap change for owner review.
+the approved shared-ledger exemption through that reread only for the same
+sibling selected in that assignment decision, identified by its live current-run
+Orca dispatch and native branch, using both Workers' original assigned slices:
+the overlap must be exactly the same configured, proven ledger path and those
+non-ledger slices must remain disjoint. Unrelated native work and any newly
+introduced path or scope overlap deny PR creation. Preserve saved pushed state
+when PR creation is denied, and surface the exact file revision, scope, or
+overlap change for owner review.
 
 After every Worker response, before applying the post-PR monitoring rules, the
 Orchestrator freshly reads the current native branch and full HEAD, current

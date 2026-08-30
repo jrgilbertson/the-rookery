@@ -13,6 +13,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Repo Gardener now assesses PR readiness directly or through a report-only
+  merge-readiness review, then can return a current, actionable finding to the
+  same Worker without exposing a merge path.
 - Repo Gardener now rereads native state after Worker responses and either
   gives a focused next instruction or explains why it stops.
 - Assessment-only `checking-pr-readiness` now reports same-session exact-head

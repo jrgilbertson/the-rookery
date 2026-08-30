@@ -7,6 +7,9 @@ rounds of harness churn on an earlier PR. The product skill is the same
 design; the test surface is thinner. Load-bearing ship claims rest on live
 GitHub and the non-thread trap, not on stub assertion count.
 
+- 2026-08-28 | b7524f37a569c187e85eda7bf6fec7c313ed1463 (baseline) | matched case: agent-mode-never-merges | fail | A fresh read-only Codex context found no agent report path; the normal review reached the owner menu and its merge action.
+- 2026-08-28 | revised U12 candidate | matched case: agent-mode-never-merges | pass | A separate fresh read-only Codex context found a step-6-only report with a merge/debug/do-not-merge recommendation, current head, human-readable findings, and no menu or forge write.
+
 ## Evidence hierarchy
 
 1. **Live GitHub (scenario 11)** — does the skill's fetch contract work?

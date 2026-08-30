@@ -200,15 +200,27 @@ claim. It, setup, and Scout helpers execute no declared audit.
     review state to a truthful Worker terminal state. If a bounded caller run
     must close while either remains pending, retain and report the Worker as
     `pending`, and close the run as `partial`; never claim `pr_ready` or
-    `completed`. After a Worker reaches `pr_ready`, run installed
-    `checking-merge-readiness` read-only: take the recommendation and named
-    findings, execute nothing, and never select “Proceed to merge.” A material
-    finding can identify the specific actionable gap for the same qualitative
-    post-response judgment; process-only caps (empty review history, missing
-    required human approvals) are recorded, not chased. If that skill is
-    absent, skip the feedback and name the gap. The in-run review is not the
-    owner's later merge gate. Never merge. The pending Worker does not block
-    completion of the nine-lane report.
+    `completed`. After a Worker reaches `pr_ready`, assess the exact current
+    head directly or, when a whole-change review would help, use installed
+    `checking-merge-readiness` in its report-only agent form. Either assessment
+    returns merge, debug, or do not merge with ordinary prose findings; the
+    report-only form never presents a menu or invokes a merge.
+
+    When current Worker head and authority expose one actionable diff, test,
+    intent, or durable-record finding, send that finding in plain prose to the
+    same Worker. Tell the Worker to hold its existing PR update. After its
+    response, freshly reread the native branch and full HEAD, diff, checks, PR,
+    and relevant tracker facts. Revalidate the repaired exact head against the
+    assigned slice and protected paths, then authorize that exact head before
+    the same Worker updates its existing PR. Exact-head drift, a safety or
+    authority denial, protected-path work, or an unknown provider effect stops
+    the affected action. When no focused repair can help, stop truthfully in
+    plain prose instead of manufacturing another instruction. Process-only
+    caps (empty review history, missing required human approvals) are recorded,
+    not chased. If that skill is absent, assess directly and name the gap only
+    when it limits the result. The in-run review is not the owner's later merge
+    gate. Never merge. The pending Worker does not block completion of the
+    nine-lane report.
 11. Immediately before closing, re-read the durable file only to detect a
     revision change from `run-opened`. A revision change alone does not prevent
     the closed comment when the file still names the tracker. If the file no

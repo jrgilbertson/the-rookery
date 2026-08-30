@@ -32,7 +32,9 @@ A valid file parses and names every required field with real values (no
 scope, configured protected paths, `maximum_workers`, live tracker identity,
 all nine contracted lanes in order with triage as an empty mapping and eight
 lane `mutation` flags, optional ordered `audit_commands` on eligible lanes,
-and any optional evidence-source grants. Any other file at that path is
+optional evidence-source grants, and an optional `shared_ledger_paths`
+declaration only after the repository has proved conflict-safe additive merge
+behavior and the additive-entry gate applies. Any other file at that path is
 invalid. The file does not name `version`, `status`, always-denied effects,
 presentation caps, deep-target counts, or `report_write`.
 
@@ -52,9 +54,11 @@ name it. #3336 is not a live tracker.
 Setup is one interactive review of the full recommended file. Present identity,
 default branch, scope, protected paths, `maximum_workers`, tracker identity,
 eight lane mutation grants, optional audit declarations, and optional
-evidence-source grants. Show triage as recommend-only; it is not grantable.
-The owner can change any real knob. `.agents/repo-gardener.yaml` is always
-protected; setup cannot turn that off. A Worker must not edit that file.
+evidence-source grants, plus an optional `shared_ledger_paths` declaration
+only after the repository has proved conflict-safe additive merge behavior and
+the additive-entry gate applies. Show triage as recommend-only; it is not
+grantable. The owner can change any real knob. `.agents/repo-gardener.yaml` is
+always protected; setup cannot turn that off. A Worker must not edit that file.
 
 Setup proposes `maximum_workers: 20`, eight authoring lanes on (`mutation:
 true`), discovered identity and branch, existing protected paths, and no

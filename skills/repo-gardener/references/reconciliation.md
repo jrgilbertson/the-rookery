@@ -315,10 +315,13 @@ repeat the local subject/head and cleanliness re-read and require the
 provider ref to exist and equal the captured OID exactly. A post-push mismatch
 or failed absence lease is `saved_without_pr`; preserve the local commit or
 already-pushed branch on any denial.
-Immediately before PR creation it also rereads native branches and PRs and
-stops if current work now overlaps that Worker. Preserve saved pushed state
-when PR creation is denied, and surface the exact file revision, scope, or
-overlap change for owner review.
+Immediately before PR creation it also rereads native branches and PRs. Carry
+the approved shared-ledger exemption through that reread only for a sibling
+Worker selected in the same assignment decision, when its overlap is exactly
+the same configured, proven ledger path and the non-ledger slices remain
+disjoint. Unrelated native work and any newly introduced path or scope overlap
+deny PR creation. Preserve saved pushed state when PR creation is denied, and
+surface the exact file revision, scope, or overlap change for owner review.
 
 After every Worker response, before applying the post-PR monitoring rules, the
 Orchestrator freshly reads the current native branch and full HEAD, current

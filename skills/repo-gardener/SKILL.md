@@ -199,9 +199,14 @@ claim. It, setup, and Scout helpers execute no declared audit.
    OID, dirt, unavailable or indeterminate read, conflicting existing ref,
    failed absence lease, or post-push mismatch leaves the commit
    `saved_without_pr` with the exact gap.
-   Before PR creation, also reread native branches and PRs. An overlap denial
-   stops that Worker's dependents only; other Workers and read-only sensing
-   continue. A denied push preserves the local commit.
+   Before PR creation, also reread native branches and PRs. Carry the approved
+   shared-ledger exemption through that reread only for a sibling Worker selected
+   in the same assignment decision, when its overlap is exactly the same
+   configured, proven ledger path and the non-ledger slices remain disjoint.
+   Unrelated native work and any newly introduced path or scope overlap are
+   denials. An overlap denial stops that Worker's dependents only; other Workers
+   and read-only sensing continue. A denial preserves saved pushed state and
+   reports the exact overlap.
 10. After every Worker response, the Orchestrator freshly reads the current
     native branch and full HEAD, current diff, checks, any PR, and relevant
     tracker facts. It compares those facts with the assigned leaf and prior

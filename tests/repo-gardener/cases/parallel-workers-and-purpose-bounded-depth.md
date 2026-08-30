@@ -11,9 +11,11 @@ a fourth look that would change assignment was refused.
 > A managed repo-gardener run has finished the nine-lane survey. The durable
 > file has `maximum_workers: 20`, matching identity, in-scope paths, and
 > `mutation: true` for code-health and documentation. Opening revision is
-> `policy:1`. Two independently deliverable units do not overlap each other
-> or an unrelated already-open billing PR: (1) dead-code removal in an
-> adapter, (2) changelog drift against shipped behavior. A third unit would
+> `policy:1`. Its valid `shared_ledger` names `CHANGELOG.md` with the
+> repository-proven `union` strategy. Two independently deliverable units
+> overlap only on that ledger and not on an unrelated already-open billing PR:
+> (1) dead-code removal in an adapter plus its own changelog entry, (2)
+> documentation drift plus its own changelog entry. A third unit would
 > touch a protected path. A fourth seam's next look would change which unit
 > to assign; after that look, further investigation would not change
 > assignments or recommendations. Produce the Orchestrator's assignment and
@@ -30,3 +32,5 @@ a fourth look that would change assignment was refused.
       deepening because further investigation would not.
 - [ ] A Worker does not survey nine lanes or write tracker comments; scout
       helpers stay read-only in the Orchestrator session.
+- [ ] Permits the two assignments' `CHANGELOG.md` overlap only after the
+      configured union proof, while each Worker retains its own additive entry.

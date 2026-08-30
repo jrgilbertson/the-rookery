@@ -46,13 +46,14 @@ TOP_LEVEL_REQUIRED = {
     "tracker",
     "lanes",
 }
-TOP_LEVEL_ALLOWED = TOP_LEVEL_REQUIRED | {"evidence_sources"}
+TOP_LEVEL_ALLOWED = TOP_LEVEL_REQUIRED | {"evidence_sources", "shared_ledger"}
 REPOSITORY_FIELDS = {"identity", "default_branch", "scope"}
 SCOPE_FIELDS = {"include", "exclude"}
 TRACKER_FIELDS = {"identity"}
 AUTHORING_LANE_FIELDS = {"mutation"}
 AUDIT_LANE_FIELDS = AUTHORING_LANE_FIELDS | {"audit_commands"}
 EVIDENCE_SOURCE_FIELDS = {"identity"}
+SHARED_LEDGER_FIELDS = {"paths", "additive_merge_strategy"}
 EVIDENCE_SOURCE_NAME = re.compile(r"^[a-z][a-z0-9_-]{0,63}$")
 MAPPING_KEY = re.compile(r"^[A-Za-z0-9_.-][A-Za-z0-9_./-]*$")
 ROOTED_OR_DRIVE_PATH = re.compile(r"^(?:[A-Za-z]:[/\\]|[/\\])")
@@ -447,6 +448,19 @@ def normalize_evidence_sources(value: Any) -> dict[str, dict[str, str]]:
     return result
 
 
+def normalize_shared_ledger(value: Any) -> dict[str, Any]:
+    require(isinstance(value, dict), "shared_ledger must be a mapping")
+    require_exact_fields(value, SHARED_LEDGER_FIELDS, SHARED_LEDGER_FIELDS, "shared_ledger")
+    strategy = require_concrete_text(
+        value["additive_merge_strategy"], "shared_ledger.additive_merge_strategy"
+    )
+    require(strategy == "union", "shared_ledger.additive_merge_strategy must be union")
+    return {
+        "paths": require_glob_list(value["paths"], "shared_ledger.paths", nonempty=True),
+        "additive_merge_strategy": strategy,
+    }
+
+
 def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
     require_exact_fields(value, TOP_LEVEL_REQUIRED, TOP_LEVEL_ALLOWED, "config")
     workers = value["maximum_workers"]
@@ -463,6 +477,8 @@ def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
     }
     if "evidence_sources" in value:
         normalized["evidence_sources"] = normalize_evidence_sources(value["evidence_sources"])
+    if "shared_ledger" in value:
+        normalized["shared_ledger"] = normalize_shared_ledger(value["shared_ledger"])
     return normalized
 
 

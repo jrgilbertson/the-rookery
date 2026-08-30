@@ -280,6 +280,15 @@ def normalized_config(value: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
+def shared_ledger_config() -> dict[str, Any]:
+    config = base_config()
+    config["shared_ledger"] = {
+        "paths": ["CHANGELOG.md"],
+        "additive_merge_strategy": "union",
+    }
+    return config
+
+
 def check_script_surface() -> None:
     require(PRODUCTION.is_file(), "missing config validator")
     require(os.access(PRODUCTION, os.X_OK), "config validator is not executable")
@@ -449,6 +458,25 @@ def main() -> int:
         first = expect_valid(base_config(), repo_root, expected)
         second = expect_valid(base_config(), repo_root, expected)
         require(first == second, "valid config normalization is not deterministic")
+
+        ledger = shared_ledger_config()
+        expect_valid(ledger, repo_root, normalized_config(ledger))
+
+        missing_strategy = shared_ledger_config()
+        del missing_strategy["shared_ledger"]["additive_merge_strategy"]
+        expect_invalid(missing_strategy, repo_root, "shared_ledger missing key: additive_merge_strategy")
+
+        empty_ledger = shared_ledger_config()
+        empty_ledger["shared_ledger"]["paths"] = []
+        expect_invalid(empty_ledger, repo_root, "shared_ledger.paths must not be empty")
+
+        unsafe_ledger = shared_ledger_config()
+        unsafe_ledger["shared_ledger"]["additive_merge_strategy"] = "ours"
+        expect_invalid(unsafe_ledger, repo_root, "shared_ledger.additive_merge_strategy must be union")
+
+        absolute_ledger = shared_ledger_config()
+        absolute_ledger["shared_ledger"]["paths"] = ["/CHANGELOG.md"]
+        expect_invalid(absolute_ledger, repo_root, "shared_ledger.paths[0] must be a repository-relative path")
 
         commented = """# Live gardener file
 repository:

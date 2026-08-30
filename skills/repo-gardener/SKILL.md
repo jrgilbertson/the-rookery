@@ -102,7 +102,15 @@ claim. It, setup, and Scout helpers execute no declared audit.
    look is allowed only when it would change assignment or recommendation.
    Reassess after each result and coalesce a shared cause.
 5. Select a non-overlapping set of independently deliverable PR-sized units.
-   Overlap is path or scope conflict. Unrelated open PRs do not consume the
+   Overlap is path or scope conflict. A matching `shared_ledger.paths` path is
+   exempt only from assignment-conflict detection when the valid opening file
+   declares `shared_ledger.additive_merge_strategy: union` and the repository
+   owner has proved that union merge behavior and an additive-entry check.
+   The exception never applies to another shared path, authoring scope, or
+   protected-path validation. Each Worker whose assignment uses the exception
+   must add its own attributable ledger entry without deleting or replacing
+   base ledger material; the Orchestrator never writes a ledger entry on an
+   integration or coordination branch. Unrelated open PRs do not consume the
    Worker cap. Do not invent work to fill the cap.
 6. Authoring uses the opening file: exact `repository.identity` match, planned
    paths inside the effective include/exclude scope, `maximum_workers` greater
@@ -155,7 +163,11 @@ claim. It, setup, and Scout helpers execute no declared audit.
 9. The Worker, not the Orchestrator, owns push and PR creation. Before push or
    PR-open, re-read the durable file only to detect a revision change, and
    check the exact committed paths against identity, include/exclude scope,
-   protected paths, and the assigned slice. A change or out-of-slice path
+   protected paths, and the assigned slice. For a shared-ledger assignment,
+   check the Worker diff against its base: it must add that Worker's
+   attributable entry and must not delete or replace base ledger material.
+   An omitted, replacement, or other-entry edit stops that Worker; it never
+   becomes an Orchestrator ledger edit. A change or out-of-slice path
    stops further source mutation, push, and PR-open for every Worker and
    preserves local commits; already-open PRs stay native objects. Immediately
    before an ownerless first push, re-read the current local subject and full

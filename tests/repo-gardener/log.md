@@ -2,6 +2,7 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-08-30 | fcc5afef (working tree) | Worker-owned shared ledger | pass (static cases) | Config fixture validates the optional repository-relative ledger list and its required `union` strategy. The two fresh-context cases require ledger-only overlap to remain assignment-only, demand each Worker's additive attributable entry, preserve base entries, serialize every non-ledger overlap, and forbid an Orchestrator ledger writer.
 - 2026-08-29 | working tree | ownerless publication base re-read contract | pass (static case) | Ownerless first push and PR-open each re-resolve the captured target/base ref and full base OID, catching same-ref advancement; drift or unavailable base state stays `saved_without_pr` and requires fresh assessment.
 - 2026-08-29 | working tree | assessment-only Worker base contract | pass (static case) | The Worker binds subject, head, target/base ref, and full base OID through assessment's read-only boundary; a moved base is action-required before publication, while only `verified` and `not applicable` checks support ready.
 - 2026-08-29 | working tree | Worker assessment argv handoff contract | pass (static case) | Worker assignments now carry caller-approved exact verification argv before mutation, pass that same assignment-owned list to assessment after execution, and preserve the direct-argv boundary against commit-derived authority.

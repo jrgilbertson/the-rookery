@@ -190,11 +190,18 @@ The Orchestrator selects a non-overlapping set of independently deliverable
 PR-sized units, then invokes the existing supervised Orca worker-start for
 every fresh Worker with repository setup enabled once, retaining each returned
 start receipt, up to `maximum_workers` (setup default 20). Overlap is path or
-scope conflict and is assigned before parallel start. Unrelated already-open
-PRs do not consume the cap. Each Worker is one worktree, one branch, and at
-most one unmerged PR. Each Worker prompt carries the opening policy revision,
-identity, scope, protected paths, lane grant, assigned path slice, and the
-exact caller-approved verification command argv list. Helpers do not own a PR.
+scope conflict and is assigned before parallel start. A `shared_ledger.paths`
+match is ignored only for that assignment-conflict decision, only when the
+valid opening file declares `additive_merge_strategy: union`, and only after
+the repository has proved its union merge behavior and additive-entry gate.
+Every non-ledger shared path still conflicts. Each Worker using the exception
+must add its own attributable entry without deleting or replacing base ledger
+material; the Orchestrator never adds ledger material to an integration or
+coordination branch. Unrelated already-open PRs do not consume the cap. Each
+Worker is one worktree, one branch, and at most one unmerged PR. Each Worker
+prompt carries the opening policy revision, identity, scope, protected paths,
+lane grant, assigned path slice, and the exact caller-approved verification
+command argv list. Helpers do not own a PR.
 
 A usable Worker may start while setup runs. It consumes the receipt for its own
 worktree, without relying on Orca parent-child lineage, and uses the existing
@@ -276,7 +283,11 @@ Workers and read-only sensing continue. Already-open PRs stay native objects.
 
 Each Worker re-reads the file the same way immediately before push and PR
 creation. Before either, check the exact committed paths against repository
-identity, include/exclude scope, protected paths, and the assigned slice.
+identity, include/exclude scope, protected paths, and the assigned slice. A
+Worker assigned a shared-ledger path also compares that path to its base: its
+own attributable entry must be additive, while omission, replacement, or an
+edit to another entry stops that Worker and never transfers ledger authorship
+to the Orchestrator.
 For an ownerless Worker, immediately before its first push, re-read the current
 local subject and full OID, compare them to the captured subject and OID that
 received `ready`, and never replace or recapture that authorized identity; then

@@ -35,4 +35,7 @@ a fourth look that would change assignment was refused.
 - [ ] A Worker does not survey nine lanes or write tracker comments; scout
       helpers stay read-only in the Orchestrator session.
 - [ ] Permits the two assignments' `CHANGELOG.md` overlap only after the
-      configured union proof, while each Worker retains its own additive entry.
+      repository proof of conflict-safe additive behavior, while each Worker
+      retains its own additive entry.
+- [ ] Serializes the otherwise matching `CHANGELOG.md` overlap when that
+      repository proof is missing.

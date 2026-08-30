@@ -19,8 +19,9 @@ and current facts.
 >    failing test in the diff. Worker W still has the opening authority. W fixes
 >    it without updating its existing PR, reruns its assigned local verification,
 >    and responds with repaired head `b2`. The hosted PR remains at `b1` before
->    authorization. The fresh branch/full-HEAD, diff, checks, PR, and tracker
->    reads agree on `b2`; the repaired paths remain inside W's slice and outside
+>    authorization. The fresh local branch/full-HEAD, diff, assigned local
+>    verification, and tracker reads identify `b2`, while the hosted PR still
+>    reads `b1`; the repaired paths remain inside W's slice and outside
 >    protected paths. After exact `b2` authorization, W updates its existing PR;
 >    native reads confirm hosted `b2` and fresh checks before reassessment.
 > 3. A report-only assessment names an actionable test failure on head `c1`,

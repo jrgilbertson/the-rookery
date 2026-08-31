@@ -1,9 +1,8 @@
 # Merge Execution
 
 A kickoff, not a merge state machine. Load after grading when option 1
-might be offered. The write still waits for an interactive owner choice
-of option 1 plus a matching fingerprint, live-state, and host-policy
-re-check.
+might be offered. The write still waits for a numbered reply of option 1
+plus a matching fingerprint, live-state, and host-policy re-check.
 
 ## When to offer option 1
 

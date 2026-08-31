@@ -105,8 +105,8 @@ here until the oracle lives outside the checkout.
 > `<repo-root>/skills/checking-merge-readiness/SKILL.md` (and its
 > `references/`). When the skill asks whether the earliest surviving
 > description revision still represents pre-review intent, answer **yes**
-> and continue. When it presents the decision menu, choose the option that
-> matches its recommendation and stop. Never merge or write.
+> and continue. When it presents the decision menu, stop. Do not pick.
+> Never merge or write.
 
 The scenario 4 exception below overrides the confirmation clause (show the
 open attestation question; do not invent a purpose; no attestation supplied).

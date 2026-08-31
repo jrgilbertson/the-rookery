@@ -33,7 +33,7 @@ was treated as ready to approve.
       prior findings, and requires a fresh run before any Approve.
 - [ ] The branch-rename variant omits Approve even when its OID is unchanged, names both subjects, rejects its prior findings, and requires a fresh run before any Approve.
 - [ ] The detached-head variant omits Approve even when its OID is unchanged, names the captured subject and detached HEAD, rejects its prior findings, and requires a fresh run before any Approve.
-- [ ] Dirty-surface variants name every staged, unstaged, or untracked path and category as part of the working surface.
+- [ ] Dirty-surface variants name every staged, unstaged, or untracked path and category in the gather as part of the working surface. The spoken brief names them only when they drive the recommendation.
 - [ ] Incomplete inspected-path or relevant-check inventories omit Approve with the missing inventory named.
 - [ ] A repository-authored check reruns only from the caller-supplied
       assignment-owned exact argv list. Assessment never derives or expands

@@ -351,10 +351,11 @@ Brief in continuous prose without analysis-bucket titles.
   verified, not applicable, or named as next work. Incomplete gather cannot
   recommend merge.
 
-### 7. Take the one owner decision
+### 7. Wait for a numbered reply
 
 Present exactly one decision menu, aligned to the recommendation and to the
-state step 1 named. Each option is terminal:
+state step 1 named, then wait. This turn ends when the menu is on screen.
+Each option is terminal once a later turn picks it:
 
 1. **Proceed to merge.** After the matching re-check, kick off one forge
    merge per
@@ -427,10 +428,10 @@ update, run merge readiness again against the current pull request before any
 merge decision. If `managing-issues` is unavailable, name that gap rather than
 editing the issue through this skill.
 
-Completion: the owner made exactly one decision from the menu. When that
-decision was option 1, the run kicked off one `gh pr merge` and reported
-the forge result, or rebuilt after a mismatch and did not write.
-Otherwise the run did not write.
+Completion of this turn: the brief and numbered live options are on screen,
+and the run is waiting. It did not pick. When a later turn replies option 1,
+the run kicked off one `gh pr merge` and reported the forge result, or
+rebuilt after a mismatch and did not write. Otherwise the run did not write.
 
 ## Gotchas
 

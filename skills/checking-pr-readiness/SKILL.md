@@ -307,6 +307,9 @@ plan. When step 4 found no durable source, summarize the recorded intent
 attestation instead. Do not copy ignored-plan paths or contents, local-only
 paths, credentials, or unnecessary personal data.
 
+Completion of this turn: the brief and numbered live options are on screen,
+and the run is waiting. It did not pick.
+
 ## Gotchas
 
 - Untracked paths ship with finishing tools; include them in what option 1

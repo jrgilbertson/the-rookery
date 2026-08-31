@@ -8,5 +8,5 @@ whether a description revision still represents pre-review intent, ask.
 If intent is unverifiable, apply the ordinary debug cap and continue through
 the step 6 readout.
 
-Stop before any forge write until a later turn replies with a live option 1.
-This file contains no merge path.
+A later numbered reply is handled by SKILL.md. This reference does not name a
+forge command.

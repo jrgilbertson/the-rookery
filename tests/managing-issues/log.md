@@ -2,7 +2,7 @@
 
 Format: `date | git rev | check | result | note`
 
-- 2026-08-30 | 80faf7f (working tree) | matched policy-authorized refinement cases | pass (5/5 each) | Four independent fresh contexts passed every item in both revised cases, while the frozen prior scored 0/5 for each; no provider contact or repository write occurred.
+- 2026-08-30 | 3c9064c (pre-log head) | matched policy-authorized refinement cases | pass (5/5 final; 0/5 prior) | Four revision-specific read-only contexts scored the frozen prior 0/5 for each case and final Managing Issues 5/5; a fifth fresh combined-package review also passed the final Repo Gardener delegation case 5/5. No provider contact or repository write occurred; report: `/tmp/rookery-u7-final.N2dLrn/u7-final-matched-comparison.md`.
 
 - 2026-08-19 | 70a58e9 | first-use Linear group case | pass | Independent fresh-context grader scored all 13 checklist items PASS against the current skill package (Linear accept, prefixed-config skip, missing group-create stop, GitHub first-use unchanged).
 - 2026-08-19 | 27ee5e6 (working tree) | Linear missing-children recut fixtures | pass | After the recut locked create-only-missing-children, leftover-cleanup off the empty-workspace happy path, and phrase locks for MCP tools plus the SKILL exclusive-group sentence, `run-config-checks.py`, `run-provider-checks.py`, and `run-graph-checks.py` passed. `npx skills-ref validate skills/managing-issues` reported `Valid skill`. `lefthook run pre-push --force --no-auto-install` passed. SKILL.md is 250 lines.

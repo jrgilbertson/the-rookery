@@ -20,7 +20,8 @@ looked" surface. GitHub Releases mirror its entries.
   per-class census. There is one process: wait for a numbered reply from
   whoever is talking. A later reply of 1 is Approve or Proceed. The skill
   does not pick an option in the same turn. Matching identity compares stay
-  silent; a moved head or working-tree content change rebuilds.
+  silent; a moved head or working-tree content change rebuilds. Captured as
+  `docs/solutions/conventions/do-not-split-human-and-agent-skill-products.md`.
 
 
 - Repo Gardener now completes its issue identifier census before every

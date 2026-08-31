@@ -134,24 +134,33 @@ file from the authoritative default branch and require its revision to match
 the opening revision. A mismatch, unavailable or unknown refresh/read stops
 that publication action and preserves the authored work.
 The assessment records `not verified` and `not run` rather than inventing
-success. Immediately before an ownerless first push, compare them to the
-captured subject and OID that received `ready`; never replace or recapture that
-authorized identity. Immediately before an ownerless first push, re-resolve
-the captured target/base ref and full base OID. Immediately before PR-open,
-re-resolve the captured target/base ref and full base OID.
+success. Immediately before every ownerless publication push, including a
+repaired-head update, compare them to the captured subject and OID that
+received `ready`; for a coordinator-authorized repair, compare the current
+local subject and full head OID to its exact authorized repaired subject and
+OID. Never replace or recapture that authorized identity. Immediately before an
+ownerless first push, re-resolve the captured target/base ref and full base OID.
+The same target/base reread is required immediately before every repaired-head
+update. Reread `git status --porcelain=v1 --untracked-files=all` immediately
+before every such push; a failed read or any staged, unstaged, or untracked
+non-ignored path stops publication. Immediately before PR-open, re-resolve the
+captured target/base ref and full base OID and reread that porcelain status.
+Before every push and PR opening,
+validate the committed paths against the assignment, identity, scope, protected
+paths, and, where relevant, the ledger base diff, then reconcile the current
+local head, exact target/base, and native branch and PR overlap. Permit a ledger
+overlap only under the same-assignment binding above.
 
-Immediately before an ownerless first push and immediately before PR creation,
-reread `git status --porcelain=v1 --untracked-files=all`; a failed read or any
-staged, unstaged, or untracked non-ignored path stops publication. Immediately
-before push and before PR opening, validate the committed paths against the
-assignment, identity, scope, protected paths, and, where relevant, the ledger
-base diff. Reconcile the current local head, exact target/base, native branch
-and PR overlap, and provider branch. A provider branch may be absent for the
-first push or must match the authorized OID exactly; permit a ledger overlap
-only under the same-assignment binding above. After observing an absent provider
-ref, atomically create it only with an explicitly absent expected ref, using
-Git's `--force-with-lease=<ref>:` form or a proven equivalent, then read back
-the exact provider OID. Never advance a competing branch implicitly.
+After those gates pass, provider state is exhaustive: an absent provider ref
+may be atomically created at the exact authorized head only under an absent-ref
+lease, such as Git's `--force-with-lease=<ref>:` form or a proven equivalent;
+a provider ref already equal to that head needs no push; and only a
+coordinator-authorized repair of the same Worker's PR may atomically update its
+exact previously observed hosted head to the exact authorized repaired head,
+under a lease expecting that old OID. Refuse unavailable or unknown provider
+state, any other provider OID, or a lease failure. After a create or update,
+read back and require the exact authorized provider OID. Never advance
+competing movement implicitly.
 
 Any mismatch, base movement, unauthorized path, native overlap, provider
 conflict, unavailable fact, or unknown provider effect stops publication and

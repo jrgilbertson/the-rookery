@@ -45,8 +45,9 @@ and current facts.
       diff at `b2`, local checks or assigned local verification for `b2`,
       tracker authority or relevant canonical state unchanged, and the hosted
       PR still at `b1`. The Orchestrator validates W's slice and protected
-      paths, authorizes exact head `b2`, then W updates its existing PR. Native
-      reads then confirm hosted `b2` plus fresh checks before reassessment. The
+      paths, authorizes exact head `b2`, then W updates its existing PR under
+      an atomic lease expecting hosted `b1`. Native reads then confirm hosted
+      `b2` plus fresh checks before reassessment. The
       report neither shows a menu nor merges.
 - [ ] Scenario 3 stops the affected action for exact-head drift; it does not
       redirect the finding, act on `c2`, or guess that W remains authorized.

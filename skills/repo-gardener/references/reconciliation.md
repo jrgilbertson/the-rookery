@@ -81,6 +81,14 @@ recovery path, progress record, registry, schema, or state machine. If the
 host cannot safely provide the interface, do not mutate; finish the read-only
 report and name the unavailable capability.
 
+Wait for any host-provided repository setup to succeed before
+repository-dependent inspection, tests, or mutation. Immediately before the
+first mutation, run ordinary native `git status --porcelain=v1
+--untracked-files=all`. A failed read or any staged, unstaged, or untracked
+non-ignored path stops only dependent work, names the affected paths (or the
+assigned slice when status is unreadable), and leaves unexpected material
+untouched without restoring, staging, or committing it.
+
 The Worker brief names the authoritative base, policy revision, identity,
 scope, protected paths, lane grant, assigned slice, and exact caller-approved
 verification command argv list. Include the ledger proof and base-diff rule only when
@@ -91,9 +99,14 @@ policy, or write tracker records.
 
 Each Worker owns planning, implementation, simplification, review, repository
 verification, its coherent commit, and its branch/PR. It reports each assigned
-gate as passed, failed, or unavailable. Run `checking-pr-readiness` on the
-clean exact commit before opening a PR; its same assignment-owned exact argv
-list cannot add authority.
+gate as passed, failed, or unavailable. Assess the clean exact commit directly
+by default. When a compatible readiness helper is available and useful, use it
+only noninteractively for a report; it never adds execution or publication
+authority. Either path produces the same-session, human-readable `ready` or
+`action-required` result for the exact subject, full head OID, target/base ref
+and OID, inspected paths, relevant checks, and final cleanliness. The
+assessment uses the same assignment-owned exact argv list and cannot expand
+execution authority.
 
 For ownerless publication, bind the exact subject, full head OID, target/base
 ref, and full base OID to one same-session readable `ready` or

@@ -79,68 +79,29 @@ enabled owning lane, and no protected path. `.agents/repo-gardener.yaml` is
 always protected. A missing, false, mismatched, or protected condition denies
 that unit; it does not authorize a workaround.
 
-The core host interface is deliberately small. Before dispatch, the host must
-be able to provide all of the following:
-
-- an isolated Worker worktree created from the authoritative base;
-- repository-native setup when the host provides it;
-- supervised completion for that Worker; and
-- a Worker-owned branch that can hold at most one unmerged PR.
-
-If any capability needed for safe mutation is unavailable, do not dispatch or
-invent a substitute. Complete the read-only report and name the gap. The host
-owns its own setup, lifecycle, waiting, recovery, and progress mechanics. Repo
-Gardener neither defines nor invokes a second setup command, adapter protocol,
-receipt format, registry, schema, or state machine.
+The portable Worker interface, pre-work gate, completion, publication, and
+supervision rules are owned by
+[reconciliation.md](references/reconciliation.md). It keeps host setup and
+lifecycle mechanics host-owned, preserves exact-head and protected-path gates,
+and requires a truthful read-only result when safe mutation is unavailable.
 
 Give each Worker the authoritative base, opening policy revision, repository
-identity, scope, protected paths, lane grant, assigned path slice, and the
-exact caller-approved verification command argv list. A shared-ledger assignment also names
-the proven ledger path and requires an additive entry without deleting,
-replacing, omitting, or editing any base entry. Workers do not survey lanes or
-write tracker records.
+identity, scope, protected paths, lane grant, assigned path slice, and exact
+caller-approved verification command argv list. A direct assessment or an
+optional report-only helper uses the same assignment-owned exact argv list and
+cannot add authority.
 
-Each Worker plans, implements, simplifies, reviews, runs the relevant native
-repository gates, and makes one coherent commit. Report every gate as passed,
-failed, or unavailable; a gate result is evidence and never grants authority
-or an invented environment. On its clean exact commit, the Worker runs
-installed `checking-pr-readiness` before opening a PR. Its assessment uses the
-same assignment-owned exact argv list and cannot expand execution authority.
-
-In an ownerless run, only a same-session, human-readable `ready` assessment
-for the exact subject, full Worker head, target/base ref, and full base OID may
-open one PR. Every failed, unavailable, skipped, bypassed, unattested, or
-incomplete result is `action-required`; preserve the commit as
-`saved_without_pr`. With an owner present, normal publication still requires
-the owner's interactive authorization. Never manufacture approval or evidence.
-Immediately before an ownerless first push, compare them to the captured
-subject and OID that received `ready`; never replace or recapture that
-authorized identity. Immediately before an ownerless first push, re-resolve
-the captured target/base ref and full base OID. Immediately before PR-open,
-re-resolve the captured target/base ref and full base OID.
-
-Before push or PR opening, validate the exact committed paths against the
-assignment, identity, scope, protected paths, and any ledger base-diff rule.
-Re-read the current head, target/base identity, native overlap, and provider
-branch. Publish only the assessed exact head against the assessed exact base.
-Drift, a conflicting path or branch, missing authority, unavailable state, or
-an unknown provider effect stops that Worker and preserves its local or pushed
-commit for owner review. Never redirect a stale approval to a new head. Never
-merge, release, deploy, or create unapproved follow-up issues.
-
-After supervised completion or a Worker response, reconcile current native
-facts: branch and full head, diff, checks, PR state, and relevant authority.
-Give the same Worker one focused follow-up only when those facts expose a
-specific actionable gap. Otherwise stop direction and explain the observed
-reason. The host handles any wait, recovery, or unknown provider operation;
-unknown is never success. A pending PR or check is reported as pending or
-partial, never completed.
-
-After a Worker reaches a reviewable state, assess the exact current head
-directly or use `checking-merge-readiness` in its report-only form when useful.
-Before forwarding any resulting finding, re-read the Worker head, hosted PR
-head, and authority. Send it only when all remain exact; otherwise stop the
-affected action. In-run review is not the owner's merge gate.
+For ownerless publication, only a same-session readable `ready` assessment for
+the exact subject, full head OID, target/base ref, and full base OID may open
+one PR. Otherwise preserve `saved_without_pr`. Immediately before an ownerless
+first push, compare them to the captured subject and OID that received `ready`;
+never replace or recapture that authorized identity. Immediately before an
+ownerless first push, re-resolve the captured target/base ref and full base
+OID. Immediately before PR-open, re-resolve the captured target/base ref and
+full base OID. Publish only the assessed exact head against the assessed exact
+base; drift, a conflicting path or branch, missing authority, unavailable
+state, or an unknown provider effect stops that Worker. Never merge, release,
+deploy, or create unapproved follow-up issues.
 
 ## Close once
 

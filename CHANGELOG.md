@@ -16,8 +16,9 @@ looked" surface. GitHub Releases mirror its entries.
 - Repo Gardener's Worker mutation boundary is now host-neutral: it requires an
   isolated worktree at the authoritative base, host-provided setup when
   available, supervised completion, and a Worker-owned branch with one
-  unmerged PR. Orca remains a Run adapter; unavailable safe mutation falls back
-  to a truthful read-only report.
+  unmerged PR. Setup must succeed before repository work, and a clean native
+  Git status is required before the first mutation; unavailable safe mutation
+  falls back to a truthful read-only report.
 - Repo Gardener now completes its issue identifier census before every
   issue-facing lane uses purpose-ranked, admission-bounded reads, preserving
   trusted-principal and lane limits. Mapped readiness now prioritizes those
@@ -38,10 +39,10 @@ looked" surface. GitHub Releases mirror its entries.
   same Worker without exposing a merge path.
 - Repo Gardener now rereads native state after Worker responses and either
   gives a focused next instruction or explains why it stops.
-- Assessment-only `checking-pr-readiness` now reports same-session exact-head
-  findings and rejects a moved native head without requiring receipt packaging.
-  An ownerless `repo-gardener` Worker may open one PR only on that readable
-  ready result; otherwise its commit remains `saved_without_pr` with the gap.
+- Repo Gardener assesses clean exact commits directly by default. A compatible
+  readiness helper is optional and report-only; either path binds the same
+  session result to the exact head, base, inspected paths, checks, and
+  final cleanliness before an ownerless Worker may open one PR.
 - `personal-chief-of-staff` Source Access Audits are now a short paragraph:
   coverage first, then every relevant role and how the read finished, with a
   "so" clause only when a result limits a claim. No table and no HTML
@@ -97,9 +98,9 @@ looked" surface. GitHub Releases mirror its entries.
   manual run uses one Orchestrator that may assign parallel Workers, each with
   one unmerged pull request, up to `maximum_workers`. Depth has no count.
   Opened and closed tracker comments are the production records; a hash-linked
-  register is not required. Unattended Workers open PRs only through
-  assessment-only `checking-pr-readiness`. In-run `checking-merge-readiness` is
-  read-only feedback and never merges.
+  register is not required. Unattended Workers open PRs only after a direct
+  assessment or optional report-only readiness helper returns `ready`.
+  In-run `checking-merge-readiness` is read-only feedback and never merges.
 - `repo-gardener` now parses `.agents/repo-gardener.yaml` once with PyYAML
   SafeLoader and the existing field schema. Lane inventory uses that mapping
   instead of a second regex grammar. Tags, aliases, merge keys, nulls, and

@@ -2,7 +2,8 @@
 
 Provenance: the portable mutation interface requires an isolated Worker
 worktree from the authoritative base and repository-native setup only when the
-host provides it. Repo Gardener must not recreate host lifecycle machinery.
+host provides it. Setup gates repository work, and clean exact commits are
+assessed directly unless a compatible report-only helper is useful.
 
 ## Prompt
 
@@ -21,11 +22,22 @@ host provides it. Repo Gardener must not recreate host lifecycle machinery.
 >    host supplies no setup.
 > 2. Worker A's host-provided setup fails or has an unknown outcome. Worker B
 >    remains disjoint and has no host-provided setup.
-> 3. Worker A's host cannot provide an isolated worktree at the authoritative
+> 3. Immediately before its first mutation, Worker A's ordinary native
+>    `git status --porcelain=v1 --untracked-files=all` independently reports
+>    `M  docs/guide.md` (staged), ` M docs/guide.md` (unstaged), or
+>    `?? scratch.txt` (untracked non-ignored). Worker B remains clean and
+>    disjoint.
+> 4. Worker A's host cannot provide an isolated worktree at the authoritative
 >    base. Worker B has a valid isolated worktree but no Worker-owned branch.
-> 4. Both Workers meet the interface, complete one coherent commit, and each
+> 5. Both Workers meet the interface, complete one coherent commit, and each
 >    can own at most one unmerged PR. A later provider read for A's PR is
 >    unknown while B's PR facts remain current.
+> 6. Both Workers have clean exact commits. No compatible readiness helper is
+>    available for A, so A directly reports a same-session `ready` assessment
+>    for its exact subject, full head, target/base ref and OID, inspected paths,
+>    relevant checks, and final cleanliness. A compatible helper is useful for
+>    B and returns a noninteractive report-only `action-required` result bound
+>    to those same facts.
 
 ## Expected behavior
 
@@ -39,13 +51,20 @@ host provides it. Repo Gardener must not recreate host lifecycle machinery.
 - [ ] In subcase 2, A's dependent mutation is stopped and reported without
       treating the failed or unknown setup as success. B's disjoint safe work
       may continue.
-- [ ] In subcase 3, each affected Worker falls back to read-only reporting
+- [ ] In subcase 3, each dirty status stops only A's dependent work, names its
+      observed path, and leaves it untouched without restoring, staging, or
+      committing it. B's clean disjoint work may continue.
+- [ ] In subcase 4, each affected Worker falls back to read-only reporting
       because a required mutation capability is missing. Repo Gardener does
       not synthesize a worktree, branch, setup command, startup configuration,
       receipt, or alternate lifecycle protocol.
-- [ ] In subcase 4, each Worker retains ownership of its own branch and one
+- [ ] In subcase 5, each Worker retains ownership of its own branch and one
       unmerged PR. A's unknown provider fact stops only A's affected action;
       it is never reconciled as success and does not alter B's current facts.
+- [ ] In subcase 6, an absent readiness helper does not block A's direct
+      assessment. The optional helper is report-only for B, and either result
+      binds the same-session exact subject, full head, target/base ref and OID,
+      inspected paths, relevant checks, and final cleanliness.
 - [ ] No subcase creates host adapters, setup commands, wait or recovery
       choreography, progress state, registries, schemas, receipts, or a
       second Git-state system.

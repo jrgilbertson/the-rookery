@@ -17,8 +17,9 @@ delivery orchestration belong to the workflows that consume those issues.
 Repo Gardener may invoke this non-interactive mode only from its Orchestrator
 with one caller envelope that proves its opening policy has
 `issue_refinement: true`, identifies the canonical provider and target, binds
-the exact owned issue family, and lists one approved batch of Problem, Scope,
-Verification, estimate, readiness, child, or blocker changes. Treat every
+the exact owned issue family, and lists one approved batch of a child title
+(only for child creation), Problem, Scope, Verification, estimate, readiness,
+child, or blocker changes. Treat every
 missing, stale, mismatched, mirrored, out-of-family, Worker, helper, or
 unsupported-field request as refused with zero writes. The envelope is a
 narrow substitute for this skill's direct-operator approval; it never enables

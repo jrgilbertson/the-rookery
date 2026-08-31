@@ -129,8 +129,9 @@ Immediately before that invocation, re-read and validate the live policy from
 the refreshed default branch; its revision must equal the envelope's opening
 revision and still grant refinement. Its caller envelope must bind that exact
 revision, canonical provider and target, exact owned-family identities, and
-the complete ordered Problem, Scope, Verification, estimate, readiness, child,
-or blocker batch. A GitHub mirror, another provider, an unsupported field, a
+the complete ordered child title (only for child creation), Problem, Scope,
+Verification, estimate, readiness, child, or blocker batch. A GitHub mirror,
+another provider, an unsupported field, a
 stale policy revision, or any mismatch is refused before a write. The
 delegation is not Managing Issues setup and never grants a Worker or helper
 tracker credentials.

@@ -215,14 +215,14 @@ remove, skip, or suppress validation.
 
 Consume the Orchestrator identifier census of the issue source. Do not re-page
 that population. When that source is unavailable, this lane still senses
-its other signals and names the missing issue portion. Floor 3 still owns
-the five-body sample when this lane is issue-facing. Then read
-repository-native maintenance, test-health, code-health, dead-code, and
-architecture signals. Require a stable finding or exact revision, bounded
-scope, measurable impact, conflict surface, and verification path. Exclude
-unrelated refactors and unverified external measurements. Run approved
-declarations and/or read existing audit evidence under the shared
-declared-audit evidence contract.
+its other signals and names the missing issue portion. For its issue-facing
+component, apply the shared complete-census, purpose-bounded issue evidence
+rule instead of a fixed body count. Then read repository-native maintenance,
+test-health, code-health, dead-code, and architecture signals. Require a
+stable finding or exact revision, bounded scope, measurable impact, conflict
+surface, and verification path. Exclude unrelated refactors and unverified
+external measurements. Run approved declarations and/or read existing audit
+evidence under the shared declared-audit evidence contract.
 
 External signals miss what only reading code reveals, so each run this lane
 also reads one bounded source slice — a module, flow, or directory — chosen by

@@ -66,24 +66,6 @@ looked" surface. GitHub Releases mirror its entries.
 - `repo-gardener` can run exact owner-declared audit commands in its five
   eligible sensing lanes, with evidence-based setup recommendations, bounded
   direct execution, and existing candidate and reporting rules preserved.
-- `repo-gardener` declared audits now consume an Orca Setup receipt only when
-  the host exposes one: configured terminals wait, `not_configured` is a no-op,
-  and compatible no-receipt hosts proceed without waiting. They preserve their
-  approved argv and record a missing package runner or nested executable
-  locally while sensing and independently qualified Worker selection continue.
-- `repo-gardener` now creates each fresh Worker through supervised Orca
-  dispatch with repository setup enabled, waits for configured setup before
-  repository work, and requires a clean native Git status immediately before
-  the first mutation without adding setup or Git-state machinery.
-- `repo-gardener` now retains the supervised Orca worker-start receipt in the
-  Orchestrator, so a Worker that starts while setup runs uses its existing
-  current-Dispatch observation as a one-time gate and pre-Worker start
-  failures remain caller-owned without retrying setup.
-- `repo-gardener` now uses native Orca setup only to gate repository work:
-  after a successful or no-op receipt, Workers run relevant documented
-  verification commands unchanged as ordinary gates and report each actual
-  pass, failure, or unavailable result without installing or substituting an
-  environment.
 - `repo-gardener` list-style censuses of issues, pull requests, and alerts
   keep listing while remaining items are knowable and the count is under
   10,000, once per population, rather than stopping at a stated page bound.

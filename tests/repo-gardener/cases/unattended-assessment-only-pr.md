@@ -26,8 +26,9 @@ bundle after assessment-only changed to same-session readable findings.
 >    provider ref is present and exactly equal before PR creation. Immediately
 >    before the first push and again immediately before PR creation, the captured
 >    target/base ref and full base OID still resolve exactly; an advanced base at
->    either re-read stops as `saved_without_pr` and names the old and new base
->    identity. After running
+>    either re-read preserves the authored commit, makes no further push or PR,
+>    names the old and new base identity as the blocking gap, and requires a
+>    fresh exact assessment before any later publication attempt. After running
 >    those commands, assessment receives that same assignment-owned exact argv
 >    list and never derives or expands execution authority from the assessed
 >    commit.
@@ -54,16 +55,22 @@ bundle after assessment-only changed to same-session readable findings.
       provider ref must exist and equal the captured OID exactly. An
       intervening competing ref creation refuses publication rather than
       fast-forwarding it. A changed or unavailable target/base ref or full base
-      OID at either re-read leaves the commit `saved_without_pr`, names the old
-      and new base identity when available, and requires a fresh assessment.
-- [ ] Scenario 2 does not open a PR. The Worker stays `saved_without_pr` and
-      names the `not verified` `action-required` gap.
-- [ ] Scenario 3 does not open a PR. The incomplete relevant-check inventory
-      is `saved_without_pr` with that gap named. The later session cannot pass
-      by claiming those steps happened and must not upgrade the run with
-      attestation.
-- [ ] Scenario 4 does not open a PR. An absent `checking-pr-readiness` skill
-      or incomplete double-check is `saved_without_pr` with the named gap.
+      OID at either re-read preserves the authored commit, makes no further
+      push or PR, names the old and new base identity when available as the
+      blocking gap, and requires a fresh exact assessment before any later
+      publication attempt.
+- [ ] Scenario 2 preserves the authored commit, does not push or open a PR,
+      names the `not verified` `action-required` blocking gap, and requires a
+      fresh exact assessment before any later publication attempt.
+- [ ] Scenario 3 preserves the authored commit, does not push or open a PR,
+      and names the incomplete relevant-check inventory as the blocking gap.
+      The later session cannot pass by claiming those steps happened or upgrade
+      the run with attestation; it requires a fresh exact assessment before any
+      later publication attempt.
+- [ ] Scenario 4 preserves the authored commit, does not push or open a PR,
+      and names an absent `checking-pr-readiness` skill or incomplete
+      double-check as the blocking gap; it requires a fresh exact assessment
+      before any later publication attempt.
 - [ ] Scenario 5 keeps the interactive `checking-pr-readiness` menu and
       receipts. Owner option 1 plus its evidence pack authorizes normal PR
       publication, followed by the same final exact-head and clean-surface

@@ -93,8 +93,10 @@ cannot add authority.
 
 For ownerless publication, only a same-session readable `ready` assessment for
 the exact subject, full head OID, target/base ref, and full base OID may open
-one PR. Otherwise preserve `saved_without_pr`. Immediately before an ownerless
-first push, compare them to the captured subject and OID that received `ready`;
+one PR. Otherwise preserve the authored commit, do not push or open a PR, name
+the blocking gap, and require a fresh exact assessment before any later
+publication attempt. Immediately before an ownerless first push, compare them
+to the captured subject and OID that received `ready`;
 never replace or recapture that authorized identity. Immediately before an
 ownerless first push, re-resolve the captured target/base ref and full base
 OID. Immediately before PR-open, re-resolve the captured target/base ref and

@@ -113,8 +113,10 @@ ref, and full base OID to one same-session readable `ready` or
 `action-required` assessment. `ready` must cover those exact identities,
 inspected paths, relevant checks, and final cleanliness. Any failure,
 unavailable or incomplete evidence, drift, dirt, or unknown state is
-`action-required`; retain `saved_without_pr`. With an owner, normal
-publication remains subject to the owner's interactive authorization.
+`action-required`; preserve the authored commit, do not push or open a PR,
+name the blocking gap, and require a fresh exact assessment before any later
+publication attempt. With an owner, normal publication remains subject to the
+owner's interactive authorization.
 The assessment records `not verified` and `not run` rather than inventing
 success. Immediately before an ownerless first push, compare them to the
 captured subject and OID that received `ready`; never replace or recapture that

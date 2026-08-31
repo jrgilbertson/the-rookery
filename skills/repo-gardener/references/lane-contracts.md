@@ -161,7 +161,9 @@ from those facts for its own purpose, rather than by recency alone. Issue
 implementation uses mapped readiness as a prioritization hint and gives
 priority to records that can still satisfy its numeric estimate and blocker
 gates; triage gives priority to records whose current evidence could change
-its report or recommendation.
+its report or recommendation. Each non-empty issue-facing lane performs its
+own purpose-ranked current body or relationship read; it may consume the
+shared identifier census but not another lane's item read as its floor.
 
 Read one ranked record at a time and stop that record as soon as current
 evidence decides its admission or exclusion. Continue only while an unread
@@ -171,20 +173,28 @@ estimate-2 record outside a newest-record sample to be read. A record that
 needs an owner decision remains excluded; the Orchestrator neither guesses
 that decision nor speculatively refines it.
 
-The readiness and estimate mappings must come from a trusted repository owner
-or collaborator, unless the caller explicitly placed the record in the owned
-graph. An external author, Worker, or agent may supply evidence but cannot
-self-qualify a record. Mapped readiness is a prioritization hint, not an
-admission gate: a `needs-planning` record with an estimate at most 2 may be
-admitted when current repository evidence resolves its uncertainty into a
-complete, low-risk Worker brief with one independently deliverable PR scope,
-assigned paths, objective verification, no conflicting native work, and every
-ordinary policy and authority gate satisfied. A U7 refinement may clarify an
-owned record only under its existing grant and cannot manufacture that record's
-readiness, estimate, or trusted-principal eligibility. After an exact
-refinement readback, derive the Ready Frontier fresh from the complete census
-and current candidate evidence, including current blocker relationships; do
-not update a stored frontier or queue.
+Mapped readiness and estimate provenance is positive proof from a complete
+provider-native metadata history or audit read that identifies the current
+effective setter as a trusted repository owner or collaborator, unless the
+caller explicitly placed the record in the owned graph. For GitHub label
+mappings, read the supported paginated issue-event history to completion and
+reconstruct the current mapping labels: the effective setter is the actor of
+the final `labeled` event that leaves each current mapped label effective
+after later `unlabeled` events. A current label alone is not provenance. When
+that history is unavailable, incomplete, ambiguous, or its actor cannot be
+proven trusted, provenance is unknown and the record is excluded unless it is
+explicitly caller-owned. An external author, Worker, or agent may supply
+evidence but cannot self-qualify a record. Mapped readiness is a
+prioritization hint, not an admission gate: a `needs-planning` record with an
+estimate at most 2 may be admitted when current repository evidence resolves
+its uncertainty into a complete, low-risk Worker brief with one independently
+deliverable PR scope, assigned paths, objective verification, no conflicting
+native work, and every ordinary policy and authority gate satisfied. A U7
+refinement may clarify an owned record only under its existing grant and
+cannot manufacture that record's readiness, estimate, or trusted-principal
+eligibility. After an exact refinement readback, derive the Ready Frontier
+fresh from the complete census and current candidate evidence, including
+current blocker relationships; do not update a stored frontier or queue.
 
 ## Issue implementation
 

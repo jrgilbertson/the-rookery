@@ -13,6 +13,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Repo Gardener's Worker mutation boundary is now host-neutral: it requires an
+  isolated worktree at the authoritative base, host-provided setup when
+  available, supervised completion, and a Worker-owned branch with one
+  unmerged PR. Orca remains a Run adapter; unavailable safe mutation falls back
+  to a truthful read-only report.
 - Repo Gardener now completes its issue identifier census before every
   issue-facing lane uses purpose-ranked, admission-bounded reads, preserving
   trusted-principal and lane limits. Mapped readiness now prioritizes those

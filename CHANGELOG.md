@@ -13,6 +13,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Repo Gardener now completes its issue identifier census before using
+  purpose-ranked, admission-bounded reads, preserving trusted-principal and
+  lane limits and deriving the Ready Frontier fresh after an authorized issue
+  refinement.
 - Repo Gardener now has a default-off `issue_refinement` policy grant that can
   delegate one caller-authorized canonical issue batch to Managing Issues while
   preserving its existing pre-read, apply-once, first-stop, and exact-readback

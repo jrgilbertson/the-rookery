@@ -92,7 +92,10 @@ claim. It, setup, and Scout helpers execute no declared audit.
    `reconciliation.md`. Execute before candidate qualification; a command
    result is evidence, not a verdict.
    Report census totals separately from candidates, and normalized candidates
-   separately from both. Native open-PR overlap checks remain native facts,
+   separately from both. For issue lanes, use the complete census to rank
+   purpose-bounded candidate reads as `lane-contracts.md` directs; never
+   substitute a fixed newest-body sample for admission evidence. Native open-PR
+   overlap checks remain native facts,
    not that identifier census. Those overlap checks list current native open
    PRs and branches at each gate. Scout helpers stay read-only in the
    Orchestrator session.
@@ -106,7 +109,8 @@ claim. It, setup, and Scout helpers execute no declared audit.
    `policy-and-entry-modes.md`. Only the Orchestrator may delegate one such
    batch to installed `managing-issues`; Workers and helpers cannot write an
    issue, and GitHub mirrors remain read-only. Recompute the Ready Frontier
-   from the returned exact readback before selecting work.
+   fresh from the complete census, current candidate evidence, and returned
+   exact readback before selecting work; do not update or retain a queue.
 6. Select a non-overlapping set of independently deliverable PR-sized units.
    Overlap is path or scope conflict. A matching `shared_ledger_paths` path is
    exempt only between Workers selected together in the same assignment decision,

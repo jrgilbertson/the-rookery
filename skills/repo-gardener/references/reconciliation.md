@@ -132,7 +132,12 @@ censuses. A Worker does not survey nine lanes or write tracker comments.
 For every lane retain status, what happened, terminal event, strongest
 bounded evidence, and room for improvement. Each list-style lane's "what
 happened" cell names the Orchestrator identifier census versus the lane's own
-body or bounded reads.
+body or bounded reads. For issue-facing lanes, rank and consume candidate
+reads under the purpose-bounded rule in `lane-contracts.md`; do not restore
+fixed newest-body sampling. If a policy-authorized U7 refinement returns an
+exact readback, derive the Ready Frontier fresh from the complete census and
+current candidate and blocker evidence before selection, rather than retaining
+or updating a queue.
 
 Keep these measurements distinct:
 

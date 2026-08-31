@@ -1,8 +1,9 @@
 # Orchestrator and Worker workflow
 
 This reference reconciles repository, provider, and Worker facts during a
-managed run. It complements the policy and lane contracts; it does not create
-a host adapter. Orca may supply the Run interface, but any host that satisfies
+managed run. It complements the policy and lane contracts; Repo Gardener
+creates neither a host adapter nor a second Git-state system. Orca may supply
+the Run interface, but any host that satisfies
 the mutation boundary in `SKILL.md` is suitable.
 
 ## Pre-open facts
@@ -72,10 +73,10 @@ Before dispatch, require the portable mutation interface:
 
 1. an isolated Worker worktree at the authoritative base;
 2. repository-native setup when the host supplies it;
-3. supervised Worker completion; and
+3. supervision before mutation and through Worker completion; and
 4. a Worker-owned branch with at most one unmerged PR.
 
-The host adapter owns how it provisions setup and supervision. Do not add a
+The host owns how it provisions setup and supervision. Do not add a
 Repo Gardener setup command, startup configuration, receipt, waiting loop,
 recovery path, progress record, registry, schema, or state machine. If the
 host cannot safely provide the interface, do not mutate; finish the read-only

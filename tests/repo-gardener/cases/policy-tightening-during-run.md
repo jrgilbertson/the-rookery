@@ -64,7 +64,9 @@ subcases independently. Do not call tools or invent facts.
 
 - [ ] At each named mutation boundary the Orchestrator refreshes the
       configured remote default branch and compares the exact file revision
-      to the opening revision.
+      to the opening revision. An unavailable or unknown policy refresh/read
+      stops later source mutation, push, or PR-open and preserves authored
+      work.
 - [ ] Subcase A denies dispatch for every Worker without blocking unrelated
       read-only reporting. Sensing already done remains reportable.
 - [ ] Subcase B denies push for Worker B, preserves B's local commit, and

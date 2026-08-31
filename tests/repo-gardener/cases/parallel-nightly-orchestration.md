@@ -36,6 +36,8 @@ sense-and-recommend run.
 >    already-open billing PR is present.
 > 3. `maximum_workers: 0`. The same two non-overlapping justified units from
 >    scenario 1 exist. The file is otherwise valid and names the tracker.
+> 4. `maximum_workers: 1`. The same two non-overlapping justified units from
+>    scenario 1 exist. The file is otherwise valid and names the tracker.
 >
 > Produce the Orchestrator's run actions and morning-report outline for each
 > scenario.
@@ -67,6 +69,8 @@ sense-and-recommend run.
 - [ ] Scenario 3 senses and recommends both units. It creates no Worker
       worktree, opens no Worker PR, and still writes the two tracker
       comments when the file names the tracker.
+- [ ] Scenario 4 selects and dispatches no more than one Worker; the
+      unselected justified unit remains a recommendation for owner attention.
 - [ ] Every scenario leaves already-open unrelated PRs in place, never
       merges, never creates a follow-up issue, and keeps generated reports
       out of repository source. Worker facts are reported only after a

@@ -67,6 +67,8 @@ units small enough for one coherent PR. Author only when the opening policy
 still has the exact repository identity, allowed path scope, positive
 `maximum_workers`, enabled lane mutation, and no protected path. A denial
 stops that unit; an honest read-only result is successful operation.
+Selection and dispatch for the run never exceed the opening policy's
+`maximum_workers` cap; unrelated existing PRs do not consume that cap.
 
 `shared_ledger_paths` is an assignment-only exception for the same originally
 approved siblings, and only when the opening policy and repository proof
@@ -127,6 +129,10 @@ unavailable or incomplete evidence, drift, dirt, or unknown state is
 name the blocking gap, and require a fresh exact assessment before any later
 publication attempt. With an owner, normal publication remains subject to the
 owner's interactive authorization.
+Immediately before every push and every PR opening, refresh the durable policy
+file from the authoritative default branch and require its revision to match
+the opening revision. A mismatch, unavailable or unknown refresh/read stops
+that publication action and preserves the authored work.
 The assessment records `not verified` and `not run` rather than inventing
 success. Immediately before an ownerless first push, compare them to the
 captured subject and OID that received `ready`; never replace or recapture that

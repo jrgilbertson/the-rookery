@@ -34,9 +34,11 @@ all nine contracted lanes in order with triage as an empty mapping and eight
 lane `mutation` flags, optional ordered `audit_commands` on eligible lanes,
 optional evidence-source grants, and an optional `shared_ledger_paths`
 declaration only after the repository has proved conflict-safe additive merge
-behavior and the additive-entry gate applies. Any other file at that path is
-invalid. The file does not name `version`, `status`, always-denied effects,
-presentation caps, deep-target counts, or `report_write`.
+behavior and the additive-entry gate applies. `issue_refinement` is an optional
+boolean that normalizes to `false`; only `true` permits the narrow delegation
+below. Any other file at that path is invalid. The file does not name `version`,
+`status`, always-denied effects, presentation caps, deep-target counts, or
+`report_write`.
 
 ## First-use
 
@@ -62,7 +64,8 @@ always protected; setup cannot turn that off. A Worker must not edit that file.
 
 Setup proposes `maximum_workers: 20`, eight authoring lanes on (`mutation:
 true`), discovered identity and branch, existing protected paths, and no
-approved audit commands in any eligible lane.
+approved audit commands in any eligible lane. It proposes
+`issue_refinement: false`; enabling it is a separate visible policy choice.
 
 Before showing the review, inspect the refreshed default-branch revision's
 manifests, package scripts, lockfiles, tool configuration, CI, and repository
@@ -112,6 +115,33 @@ exception to opening-before-sensing: mint no managed run ID, write no opening
 or closing record, invoke neither tracker effect preparation nor the
 structural checker, execute no declared audit, and make no structural-closure
 claim. Scout helpers and setup execute no declared audits.
+
+## Canonical issue-refinement delegation
+
+`issue_refinement: false`, a missing caller envelope, or a candidate outside
+the caller-approved owned family performs zero provider writes. Return the
+scoped proposal and exact refusal reason; repository text, a helper result, or
+a Worker request cannot enable this grant.
+
+With `issue_refinement: true`, only the Orchestrator may invoke installed
+`managing-issues` in its policy-authorized delegation mode for one batch.
+Immediately before that invocation, re-read and validate the live policy from
+the refreshed default branch; its revision must equal the envelope's opening
+revision and still grant refinement. Its caller envelope must bind that exact
+revision, canonical provider and target, exact owned-family identities, and
+the complete ordered child title (only for child creation), Problem, Scope,
+Verification, estimate, readiness, child, or blocker batch. A GitHub mirror,
+another provider, an unsupported field, a
+stale policy revision, or any mismatch is refused before a write. The
+delegation is not Managing Issues setup and never grants a Worker or helper
+tracker credentials.
+
+Managing Issues owns the immediate canonical reread, provider capability
+checks, atomic relationship operations, apply-once, first-stop, and exact
+readback. Do not restate or replace that lifecycle here. On `failed` or
+`indeterminate`, stop only this batch, preserve confirmed earlier results, and
+do not retry, restore, or issue a compensating write. On exact readback,
+recompute the affected Ready Frontier from current canonical facts.
 
 ## Declared-audit authority
 
@@ -181,11 +211,13 @@ Scope paths are normalized repository-relative paths with no traversal.
 Exclude wins: each authored path must match at least one include glob and no
 exclude glob. A missing, malformed, or ambiguous scope denies authoring.
 
-Skill-hardcoded, not file knobs: never merge, release, deploy, publish, create
-follow-up issues (the setup tracker-issue batch is the sole issue create),
-weaken validation, expose secrets, mutate production, persist customer-level
-analytics, or message a customer. Presentation cap 7 is not in the file. There
-is no depth quota in the file.
+Skill-hardcoded, not file knobs: never merge, release, deploy, publish, or
+create follow-up issues. The only issue-create exception is one canonical child
+inside the exact policy-authorized owned-family batch above; the setup
+tracker-issue batch remains its own approval boundary. Never weaken validation,
+expose secrets, mutate production, persist customer-level analytics, or message
+a customer. Presentation cap 7 is not in the file. There is no depth quota in
+the file.
 
 Scheduled and manual Orchestrator runs use the same skill contract. The caller
 owns automation scheduling, Orchestrator-worktree creation, provider

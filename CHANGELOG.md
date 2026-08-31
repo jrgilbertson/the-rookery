@@ -13,6 +13,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Repo Gardener now has a default-off `issue_refinement` policy grant that can
+  delegate one caller-authorized canonical issue batch to Managing Issues while
+  preserving its existing pre-read, apply-once, first-stop, and exact-readback
+  safeguards.
 - Repo Gardener can treat configured ledger paths as an assignment-only overlap
   exception after repository proof of conflict-safe additive merging, while
   requiring each Worker to retain base entries and add its own attributable

@@ -46,7 +46,11 @@ TOP_LEVEL_REQUIRED = {
     "tracker",
     "lanes",
 }
-TOP_LEVEL_ALLOWED = TOP_LEVEL_REQUIRED | {"evidence_sources", "shared_ledger_paths"}
+TOP_LEVEL_ALLOWED = TOP_LEVEL_REQUIRED | {
+    "evidence_sources",
+    "issue_refinement",
+    "shared_ledger_paths",
+}
 REPOSITORY_FIELDS = {"identity", "default_branch", "scope"}
 SCOPE_FIELDS = {"include", "exclude"}
 TRACKER_FIELDS = {"identity"}
@@ -458,9 +462,14 @@ def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
         "repository": normalize_repository(value["repository"]),
         "protected_paths": require_glob_list(value["protected_paths"], "protected_paths", nonempty=False),
         "maximum_workers": workers,
+        "issue_refinement": value.get("issue_refinement", False),
         "tracker": normalize_tracker(value["tracker"]),
         "lanes": normalize_lanes(value["lanes"]),
     }
+    require(
+        isinstance(normalized["issue_refinement"], bool),
+        "issue_refinement must be a boolean",
+    )
     if "evidence_sources" in value:
         normalized["evidence_sources"] = normalize_evidence_sources(value["evidence_sources"])
     if "shared_ledger_paths" in value:

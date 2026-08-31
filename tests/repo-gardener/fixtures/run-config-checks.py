@@ -275,6 +275,7 @@ def base_config() -> dict[str, Any]:
 
 def normalized_config(value: dict[str, Any]) -> dict[str, Any]:
     result = copy.deepcopy(value)
+    result.setdefault("issue_refinement", False)
     for lane in AUDIT_ELIGIBLE_LANES:
         result["lanes"][lane].setdefault("audit_commands", [])
     return result
@@ -358,6 +359,7 @@ def check_starter_shape() -> None:
     require("maximum_workers: 0" in text, "starter is not fail-closed on maximum_workers")
     require(text.count("mutation: false") == 8, "starter authoring-lane mutation count differs")
     require("mutation: true" not in text, "starter grants an authoring lane")
+    require("issue_refinement: false" in text, "starter enables issue refinement")
     require(
         text.count("audit_commands: []") == len(AUDIT_ELIGIBLE_LANES),
         "starter must show an empty audit declaration only on each eligible lane",
@@ -458,6 +460,14 @@ def main() -> int:
 
         ledger = shared_ledger_config()
         expect_valid(ledger, repo_root, normalized_config(ledger))
+
+        refinement_enabled = base_config()
+        refinement_enabled["issue_refinement"] = True
+        expect_valid(refinement_enabled, repo_root, normalized_config(refinement_enabled))
+
+        refinement_text = base_config()
+        refinement_text["issue_refinement"] = "true"
+        expect_invalid(refinement_text, repo_root, "issue_refinement must be a boolean")
 
         empty_ledger = shared_ledger_config()
         empty_ledger["shared_ledger_paths"] = []

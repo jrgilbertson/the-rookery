@@ -2,6 +2,10 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-08-30 | 4d37a3b (pre-log head) | exact child-title refinement comparison | pass (5/5 candidate; 4/5 prior) | Four fresh read-only contexts found that the published baseline lacked the explicit caller-envelope child-title field (item 2), while the candidate passed all five combined Repo Gardener and Managing Issues items. No provider contact or repository write occurred.
+
+- 2026-08-30 | 3c9064c (pre-log head) | matched canonical issue-refinement cases | pass (5/5 final cross-skill; 0/5 prior) | Four revision-specific read-only contexts scored the frozen prior 0/5 for each case and final Managing Issues 5/5; a fifth fresh combined-package review correctly followed Repo Gardener's installed Managing Issues delegation and passed its final case 5/5. No provider contact or repository write occurred.
+
 - 2026-08-29 | working tree | ownerless publication base re-read contract | pass (static case) | Ownerless first push and PR-open each re-resolve the captured target/base ref and full base OID, catching same-ref advancement; drift or unavailable base state stays `saved_without_pr` and requires fresh assessment.
 - 2026-08-29 | working tree | assessment-only Worker base contract | pass (static case) | The Worker binds subject, head, target/base ref, and full base OID through assessment's read-only boundary; a moved base is action-required before publication, while only `verified` and `not applicable` checks support ready.
 - 2026-08-29 | working tree | Worker assessment argv handoff contract | pass (static case) | Worker assignments now carry caller-approved exact verification argv before mutation, pass that same assignment-owned list to assessment after execution, and preserve the direct-argv boundary against commit-derived authority.

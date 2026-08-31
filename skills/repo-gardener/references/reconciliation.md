@@ -31,8 +31,14 @@ does not claim managed closure.
 For each eligible lane, run only its normalized `audit_commands`, in policy
 order, using the approved direct argv. Check capability, protected policy,
 subject revision, and clean worktree immediately before the command. Keep
-private output private. A command result is evidence, not an admission verdict
-or mutation grant.
+raw stdout and stderr in bounded private capture. When files are needed, use a
+fresh canonical non-symlink per-run temporary directory outside the repository
+with mode `0700` and regular files with mode `0600` only; drain and discard
+excess.
+Sanitize and redact only bounded inert evidence, promptly delete captures, and
+best-effort clean them up on interruption. Raw output never enters repository
+source, trackers, reports, logs, or recovery state. A command result is
+evidence, not an admission verdict or mutation grant.
 
 A finished command, ordinary failure, missing runner, missing nested
 executable, or command-local capability refusal is lane-local: report it and
@@ -62,12 +68,15 @@ still has the exact repository identity, allowed path scope, positive
 `maximum_workers`, enabled lane mutation, and no protected path. A denial
 stops that unit; an honest read-only result is successful operation.
 
-`shared_ledger_paths` is an assignment-only exception between siblings selected
-together, and only when the opening policy and repository proof establish a
-conflict-safe additive merge check. It does not exempt another path, protected
-path, authoring scope, or a native branch or PR. Every Worker using it adds only
-its attributable entry and retains all base entries; later native conflicts are
-for human handling.
+`shared_ledger_paths` is an assignment-only exception for the same originally
+approved siblings, and only when the opening policy and repository proof
+establish a conflict-safe additive merge check. Their Worker briefs bind the
+same Worker identity, branch, and disjoint slices: a native branch or PR
+overlap may proceed only when those facts still prove that binding and the same
+ledger path. It does not exempt another path, protected path, authoring scope,
+or a new or unrelated overlap, which stops publication. Every Worker using it
+adds only its attributable entry and retains all base entries; later native
+conflicts are for human handling.
 
 Before dispatch, require the portable mutation interface:
 
@@ -90,11 +99,11 @@ non-ignored path stops only dependent work, names the affected paths (or the
 assigned slice when status is unreadable), and leaves unexpected material
 untouched without restoring, staging, or committing it.
 
-The Worker brief names the authoritative base, policy revision, identity,
-scope, protected paths, lane grant, assigned slice, and exact caller-approved
-verification command argv list. Include the ledger proof and base-diff rule only when
-that exception applies. Workers do not run the nine lanes, change the durable
-policy, or write tracker records.
+The Worker brief names the authoritative base, policy revision, Worker identity
+and branch, scope, protected paths, lane grant, assigned slice, and exact
+caller-approved verification command argv list. Include the ledger proof and
+base-diff rule only when that exception applies. Workers do not run the nine
+lanes, change the durable policy, or write tracker records.
 
 ## Worker completion and publication
 
@@ -125,13 +134,18 @@ authorized identity. Immediately before an ownerless first push, re-resolve
 the captured target/base ref and full base OID. Immediately before PR-open,
 re-resolve the captured target/base ref and full base OID.
 
-Immediately before push and before PR opening, validate the committed paths
-against the assignment, identity, scope, protected paths, and, where relevant,
-the ledger base diff. Reconcile the current local head, exact target/base,
-native branch and PR overlap, and provider branch. A provider branch may be
-absent for the first push or must match the authorized OID exactly. Push the
-captured OID explicitly with a lease when absence was observed; never advance a
-competing branch implicitly.
+Immediately before an ownerless first push and immediately before PR creation,
+reread `git status --porcelain=v1 --untracked-files=all`; a failed read or any
+staged, unstaged, or untracked non-ignored path stops publication. Immediately
+before push and before PR opening, validate the committed paths against the
+assignment, identity, scope, protected paths, and, where relevant, the ledger
+base diff. Reconcile the current local head, exact target/base, native branch
+and PR overlap, and provider branch. A provider branch may be absent for the
+first push or must match the authorized OID exactly; permit a ledger overlap
+only under the same-assignment binding above. After observing an absent provider
+ref, atomically create it only with an explicitly absent expected ref, using
+Git's `--force-with-lease=<ref>:` form or a proven equivalent, then read back
+the exact provider OID. Never advance a competing branch implicitly.
 
 Any mismatch, base movement, unauthorized path, native overlap, provider
 conflict, unavailable fact, or unknown provider effect stops publication and

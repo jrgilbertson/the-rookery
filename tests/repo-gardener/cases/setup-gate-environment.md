@@ -1,8 +1,7 @@
-# Native setup gates repository verification
+# Host-provided setup gates repository work
 
-Provenance: issue #89 requires native Orca setup to gate repository-dependent
-work without turning verification gates into setup or creating an environment
-subsystem.
+Provenance: host-provided repository setup must gate dependent work without
+turning verification into setup or creating an environment subsystem.
 
 ## Prompt
 
@@ -10,15 +9,16 @@ subsystem.
 > these synthetic facts: do not inspect a live repository or provider, run
 > commands, or change state. Evaluate each subcase independently.
 >
-> One authorized Worker slice. A fresh supervised Orca dispatch has setup
-> enabled once. Policy authorizes only source change. Verification documents
-> contain only named commands.
+> One authorized Worker slice. Policy authorizes only source change.
+> Verification documents contain only named commands.
 >
-> 1. Setup succeeds. Implementation, simplification, and review are complete.
+> 1. The host provides setup and it succeeds. Implementation, simplification,
+>    and review are complete.
 >    `python3 verify_policy.py` exits zero. `npx --no-install verify-contract`
 >    exits nonzero.
-> 2. The receipt is exactly `not_configured`. Implementation, simplification,
->    and review are complete. Starting `missing-verifier --check` returns
+> 2. The host provides setup and it fails before repository-dependent work.
+> 3. The host provides no setup. Implementation, simplification, and review
+>    are complete. Starting `missing-verifier --check` returns
 >    `executable-not-found` before it runs.
 >
 > Provide a table with one row per command and these columns: subcase, setup
@@ -27,8 +27,8 @@ subsystem.
 
 ## Expected behavior
 
-- [ ] Separate subcase-1 rows report the Python command as `pass` and the npx
+- [ ] Subcase 1 reports the Python command as `pass` and the npx
       command as `failure`, unchanged and not setup or environment outcomes.
-- [ ] Subcase 2 keeps `not_configured` as the exact no-op and reports the
-      missing command as unavailable, with no install, replacement, or
-      environment synthesis.
+- [ ] Subcase 2 stops dependent work without running a repository command.
+- [ ] Subcase 3 reports the missing command as unavailable, with no setup task,
+      install, replacement, or environment synthesis.

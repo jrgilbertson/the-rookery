@@ -173,15 +173,17 @@ estimate-2 record outside a newest-record sample to be read. A record that
 needs an owner decision remains excluded; the Orchestrator neither guesses
 that decision nor speculatively refines it.
 
-Mapped readiness and estimate provenance is positive proof from a complete
-provider-native metadata history or audit read that identifies the current
-effective setter as a trusted repository owner or collaborator, unless the
-caller explicitly placed the record in the owned graph. For GitHub label
-mappings, read the supported paginated issue-event history to completion and
+Mapped readiness and estimate provenance is positive proof from supported
+provider reads, unless the caller explicitly placed the record in the owned
+graph. For GitHub label mappings, read
+`repos/OWNER/REPO/issues/NUMBER/events` to pagination completion and
 reconstruct the current mapping labels: the effective setter is the actor of
 the final `labeled` event that leaves each current mapped label effective
-after later `unlabeled` events. A current label alone is not provenance. When
-that history is unavailable, incomplete, ambiguous, or its actor cannot be
+after later `unlabeled` events. Then read
+`repos/OWNER/REPO/collaborators/LOGIN/permission` for that actor and prove it
+is the repository owner or has trusted collaborator permission. A current
+label alone is not provenance. When either read is unavailable, incomplete,
+ambiguous, or indeterminate, including an actor or permission that cannot be
 proven trusted, provenance is unknown and the record is excluded unless it is
 explicitly caller-owned. An external author, Worker, or agent may supply
 evidence but cannot self-qualify a record. Mapped readiness is a

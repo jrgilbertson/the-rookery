@@ -123,12 +123,12 @@ execution authority.
 For ownerless publication, bind the exact subject, full head OID, target/base
 ref, and full base OID to one same-session readable `ready` or
 `action-required` assessment. `ready` must cover those exact identities,
-inspected paths, relevant checks, and final cleanliness. Any failure,
-unavailable or incomplete evidence, drift, dirt, or unknown state is
-`action-required`; preserve the authored commit, do not push or open a PR,
-name the blocking gap, and require a fresh exact assessment before any later
-publication attempt. With an owner, normal publication remains subject to the
-owner's interactive authorization.
+inspected paths, relevant checks, and final cleanliness. Every relevant check
+must have actually passed or be proven unnecessary; every other outcome is
+incomplete evidence and `action-required`. Preserve the authored commit, do
+not push or open a PR, name the blocking gap, and require a fresh exact
+assessment before any later publication attempt. With an owner, normal
+publication remains subject to the owner's interactive authorization.
 Immediately before every push and every PR opening, refresh the durable policy
 file from the authoritative default branch and require its revision to match
 the opening revision. A mismatch, unavailable or unknown refresh/read stops

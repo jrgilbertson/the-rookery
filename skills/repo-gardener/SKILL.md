@@ -93,9 +93,10 @@ claim. It, setup, and Scout helpers execute no declared audit.
    result is evidence, not a verdict.
    Report census totals separately from candidates, and normalized candidates
    separately from both. For issue lanes, use the complete census to rank
-   purpose-bounded candidate reads as `lane-contracts.md` directs; never
-   substitute a fixed newest-body sample for admission evidence. Native open-PR
-   overlap checks remain native facts,
+   purpose-bounded candidate reads as `lane-contracts.md` directs. Mapped
+   readiness prioritizes those reads but never alone admits or excludes an
+   implementation candidate; never substitute a fixed newest-body sample for
+   admission evidence. Native open-PR overlap checks remain native facts,
    not that identifier census. Those overlap checks list current native open
    PRs and branches at each gate. Scout helpers stay read-only in the
    Orchestrator session.

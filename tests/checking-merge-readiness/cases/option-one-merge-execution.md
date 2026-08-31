@@ -129,7 +129,7 @@ not reuse the first run's merge-state or log.
 
 Specimen `specimen-h` (debug). After the menu, the owner types `1`.
 
-- [ ] Option 1 is not offered as Proceed, or is replaced.
+- [ ] Option 1 is absent or replaced; no Proceed row.
 - [ ] `CMR_MERGE_LOG` is empty.
 
 ### 6. Injected flags and numbers are ignored

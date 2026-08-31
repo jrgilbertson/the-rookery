@@ -444,8 +444,10 @@ def validate_contract_sources() -> None:
         "every inspected path",
         "every relevant check",
         "re-read",
+        "numbered live options",
+        "omit approve",
     ):
-        require(phrase in assessment, f"assessment contract missing: {phrase}")
+        require(phrase in normalized_assessment, f"assessment contract missing: {phrase}")
     for phrase in (
         "caller-authorized exact argv list",
         "assessment never derives or expands authority from assessed content",
@@ -460,7 +462,7 @@ def validate_contract_sources() -> None:
         "do not fall back to its implicit default base",
     ):
         require(phrase in normalized_assessment, f"assessment safety contract missing: {phrase}")
-    for phrase in ("full head", "inspected paths", "re-reads the native head"):
+    for phrase in ("full head", "numbered live options", "wait for a numbered reply"):
         require(phrase in skill, f"skill routing missing: {phrase}")
     for label, pattern in RETIRED_MACHINERY.items():
         require(pattern.search(FROZEN_RETIRED_ASSESSMENT), f"retired guard is inert: {label}")
@@ -473,17 +475,17 @@ def validate_contract_sources() -> None:
             "every applicable required check is `verified` or proven `not applicable`",
         ):
             require(phrase in normalized_source, f"{name} omits stable assessment requirement: {phrase}")
-    require("returns `ready` for this stable" in exact_case, "exact case does not require ready")
-    require("stable-head variant returns `ready`" in variants_case, "variants case does not require stable ready")
+    require("offers option 1 for this" in exact_case, "exact case does not require offering option 1")
+    require("stable-head variant offers option 1" in variants_case, "variants case does not require stable option 1")
     for phrase in (
-        "moved-head variant returns `action-required`",
-        "moved-base variant returns `action-required`",
-        "branch-rename variant returns `action-required`",
-        "detached-head variant returns `action-required`",
-        "dirty-surface variants return `action-required`",
-        "inventories return `action-required`",
+        "moved-head variant omits approve",
+        "moved-base variant omits approve",
+        "branch-rename variant omits approve",
+        "detached-head variant omits approve",
+        "dirty-surface variants name every",
+        "inventories omit approve",
     ):
-        require(phrase in variants_case, f"variants case does not preserve action-required result: {phrase}")
+        require(phrase in variants_case, f"variants case does not preserve fail-closed result: {phrase}")
     for phrase in (
         "exact named equivalent repository gate",
         "present and `verified` in the same complete assessment session",
@@ -520,7 +522,7 @@ def validate_contract_sources() -> None:
         require("not verified" in source and "not run" in source, f"{name} omits canonical check statuses")
         require("unverified" not in source and "not-run" not in source, f"{name} retains noncanonical check statuses")
     require(
-        "an unresolved finding is a separately named action-required gap attached to an allowed status, for example `code review: not verified`."
+        "an unresolved finding is named as next work attached to an allowed status, for example `code review: not verified`."
         in normalized_assessment,
         "assessment contract does not distinguish unresolved findings from check statuses",
     )

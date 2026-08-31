@@ -149,8 +149,7 @@ it must **not** alone force debug or "tag a human" as the only menu path.
 - [ ] Tip after last forge review does **not** alone remove merge or force
       debug; optional brief tip residual is allowed when merge is still green.
 - [ ] Decision menu offers proceed to merge; does not present "tag a human
-      non-author re-review" as the sole path. Unavailable options use plain
-      words (not offered).
+      non-author re-review" as the sole path. Unavailable options are omitted.
 - [ ] Fixed-differently filename judgment appears under a support with a
       pointer when themes expand; pure fixed-as-suggested may stay aggregate.
 - [ ] Final readout plus menu is at most about 12 non-blank short lines when
@@ -175,8 +174,7 @@ rule. Do not use specimen-e here (that is plan AE6 / high race).
       a full clean global inventory tour.
 - [ ] The open nit thread is not graded high as a correctness race.
 - [ ] Decision menu offers debug of the process/host concern, not solely
-      "tag a human non-author re-review." Merge is not offered (or is plain
-      not offered).
+      "tag a human non-author re-review." Merge is omitted.
 
 ## Scenario 2: defensive accretion (discriminating; plan AE3 shape)
 
@@ -238,8 +236,8 @@ must treat it as the baseline candidate for this scenario's purpose check.
       (read-through cache for GET /products), not only the current body.
 - [ ] Intent drift is named as a purpose change, distinct from mere scope
       growth, among producers and in Why.
-- [ ] Recommendation is do not merge; menu offers pull back for redesign
-      (ce-pov offered or named unavailable, not silently dropped).
+- [ ] Recommendation is do not merge; menu offers pull back for redesign.
+      Offer `ce-pov` only when that skill is installed; omit it when absent.
 
 ## Scenario 4: thin description (discriminating; AE6)
 
@@ -439,8 +437,8 @@ out of the run log. Only the judgment survives.
 - [ ] Shared presentation contract holds (continuous prose; no analysis-bucket
       headers).
 - [ ] The review history is read to exhaustion, or the run discloses
-      sampled-versus-total counts and withholds merge. A thread count the
-      grader can check against a re-fetch appears in the readout.
+      sampled-versus-total counts and withholds merge. Do not require a
+      thread count in the spoken brief.
 - [ ] The grader re-fetches the pull request and spot-checks at least five
       specific factual claims against it and the merged tree. All five hold.
 - [ ] Decision-relevant claims carry thread or round pointers; diff-verified

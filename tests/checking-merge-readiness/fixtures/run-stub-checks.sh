@@ -107,30 +107,22 @@ bind_spec() {
   } < <(specimen_pr_bind "$1")
 }
 
-echo "== 0. report-only agent mode =="
-if grep -Fq 'Run the ordinary read-only assessment through step 6.' "$AGENT_MODE" \
-  && grep -Fq 'full current head OID' "$AGENT_MODE" \
-  && grep -Fq 'human-readable findings' "$AGENT_MODE" \
-  && python3 - "$AGENT_MODE" <<'PY'
-import re
-import sys
-
-text = " ".join(open(sys.argv[1]).read().split())
-raise SystemExit(not re.search(
-    r"step 4.*(?:confirmation|attestation).*do not prompt.*unverifiable.*debug cap.*step 6",
-    text,
-    re.IGNORECASE,
-))
-PY
+echo "== 0. no separate agent form =="
+SKILL="$ROOT/skills/checking-merge-readiness/SKILL.md"
+if grep -Fq 'There is no report-only path' "$AGENT_MODE" \
+  && grep -Fq 'wait for a numbered reply' "$AGENT_MODE" \
+  && grep -Fq 'Do not pick an option in the same turn' "$AGENT_MODE" \
+  && grep -Fq 'Do not pick an option in the same turn' "$SKILL" \
+  && grep -Fq 'activating utterance never authorizes merge' "$SKILL"
 then
-  pass "agent report: prose recommendation and exact head"
+  pass "one process: wait for a numbered reply, never self-select"
 else
-  fail "agent report: prose recommendation and exact head" "report-only contract is incomplete"
+  fail "one process: wait for a numbered reply, never self-select" "wait/self-select contract is incomplete"
 fi
 if ! grep -Eq 'gh[[:space:]]+pr[[:space:]]+merge|merge-execution\\.md|Proceed to merge' "$AGENT_MODE"; then
-  pass "agent report: merge invocation structurally absent"
+  pass "agent-mode file: merge invocation structurally absent"
 else
-  fail "agent report: merge invocation structurally absent" "agent report contains a merge path"
+  fail "agent-mode file: merge invocation structurally absent" "agent-mode file contains a merge path"
 fi
 
 echo "== A. serve real fixture content =="

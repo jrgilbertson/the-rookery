@@ -1,6 +1,6 @@
-# Assessment-only same-session exact head
+# Same-session exact head
 
-Provenance: Observed failure where an unattended decision accepted findings from
+Provenance: Observed failure where a decision accepted findings from
 an older native head instead of inspecting the live checkout in one session.
 
 ## Prompt
@@ -8,7 +8,7 @@ an older native head instead of inspecting the live checkout in one session.
 > From the repository root, create a disposable fixture outside the repository
 > by running `python3 tests/checking-pr-readiness/fixtures/run-assessment-checks.py
 > --materialize <new-temporary-path>`. Use the emitted checkout for one
-> assessment-only PR-readiness session. Capture its native full head and
+> checking-pr-readiness session. Capture its native full head and
 > target/base ref plus full base OID, inspect
 > the complete clean surface and current checks in that same session, establish
 > a complete inspected-path inventory and a complete relevant-check inventory,
@@ -18,8 +18,8 @@ an older native head instead of inspecting the live checkout in one session.
 > run its repository-owned `checks/fixture-quality.sh` command and record its
 > actual `verified` result, and establish that every applicable required check
 > is `verified` or proven `not applicable`. Re-read that unchanged native
-> subject, head, and base immediately before deciding, then return readable
-> findings and the resulting decision.
+> subject, head, and base immediately before offering Approve, then brief
+> the recommendation plus numbered live options and wait for a numbered reply.
 
 ## Expected behavior
 
@@ -30,13 +30,16 @@ an older native head instead of inspecting the live checkout in one session.
       `surface-report.sh --base <captured-base-selector> --full`, current
       gate discovery, helper status mapping, and current sweep classes; if the
       selector cannot be proven to resolve to the captured full base OID, it
-      returns `action-required` instead of falling back to the implicit base.
+      omits Approve instead of falling back to the implicit base.
 - [ ] Executes the fixture repository's `checks/fixture-quality.sh` command
       and records its `verified` result; a workflow name alone is not a
       verified check.
-- [ ] Returns readable findings that name the full head, every inspected path, and every relevant check with its result or gap.
+- [ ] Returns the executive brief and numbered live options, names the full
+      head, offers option 1, and includes a coverage close. It does not list
+      every inspected path or every sweep class.
 - [ ] Re-reads the same native branch, full head, target/base ref, and full
-      base OID immediately before deciding; returns `ready` for this stable
-      complete case without external packaging or JSON.
-- [ ] Uses assessment-only mode with no Minto readout, owner decision menu, attestation upgrade, or repository write.
+      base OID immediately before offering Approve; offers option 1 for this
+      stable complete case without external packaging or JSON.
+- [ ] Waits for a numbered pick. Does not pick an option in the same turn,
+      upgrade an attestation, or write to the repository.
 - [ ] Does not stage, commit, push, or open a pull request.

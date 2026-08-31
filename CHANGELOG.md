@@ -13,6 +13,16 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `checking-pr-readiness` and `checking-merge-readiness` now split gather from
+  the spoken brief. Helper inventories go to an owner-only temp directory.
+  The readout is an executive recommendation plus numbered live options, a
+  coverage close, and named next work instead of a receipt-vouch or a
+  per-class census. There is one process: wait for a numbered reply from
+  whoever is talking. A later reply of 1 is Approve or Proceed. The skill
+  does not pick an option in the same turn. Matching identity compares stay
+  silent; a moved head or working-tree content change rebuilds.
+
+
 - Repo Gardener now completes its issue identifier census before every
   issue-facing lane uses purpose-ranked, admission-bounded reads, preserving
   trusted-principal and lane limits. Mapped readiness now prioritizes those

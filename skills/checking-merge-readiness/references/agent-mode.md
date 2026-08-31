@@ -1,18 +1,12 @@
-# Report-only agent assessment
+# No separate agent form
 
-Use this form when a supervising agent needs a readiness assessment for the
-current pull request, not an owner decision. It may be useful after a Worker
-response; a supervisor may instead assess the freshly read facts directly.
+Follow [SKILL.md](../SKILL.md). There is no report-only path and no
+disposition token.
 
-Run the ordinary read-only assessment through step 6. Return one of `merge`,
-`debug`, or `do not merge`, the full current head OID, and ordinary
-human-readable findings that explain the recommendation. Keep the report
-plain prose rather than a receipt or machine protocol.
+After the brief, wait for a numbered reply from whoever is talking. Do not pick an option in the same turn that wrote the menu. If step 4 would ask
+whether a description revision still represents pre-review intent, ask.
+If intent is unverifiable, apply the ordinary debug cap and continue through
+the step 6 readout.
 
-If step 4 would require owner confirmation or attestation, do not prompt the
-owner. Record intent as unverifiable, apply the ordinary debug cap, and
-continue the read-only assessment through step 6.
-
-Stop before step 7. Do not show a decision menu, prepare a merge action, or
-invoke a forge write. This report never changes the pull request; its caller
-decides whether a named finding warrants a focused Worker instruction.
+Stop before any forge write until a later turn replies with a live option 1.
+This file contains no merge path.

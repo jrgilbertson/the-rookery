@@ -26,11 +26,13 @@ uncaptured-learning variants into one battery.
 
 ## Expected behavior
 
-- [ ] 1 → the untracked `notes.tmp` is named in the working surface as part
-      of what ships, alongside the committed change to `src/app.txt`, rather
+- [ ] 1 → the untracked `notes.tmp` is named as part of what ships, rather
       than being omitted because no diff command lists it by default.
-- [ ] 2 → code review is reported not verified, with attestation offered as
-      the alternative; it is never reported verified, done, or complete.
+- [ ] 1 → the spoken brief is a recommendation plus numbered live options, not
+      a path list or sweep-class table.
+- [ ] 2 → code review is named as not run, as next work; it is never
+      reported verified, done, or complete, and the owner is not asked to
+      vouch that it happened.
 - [ ] 3 → the plan-versus-delivered comparison is reported unavailable
       because no plan or brief exists, and that absence is itself named as a
       finding rather than silently skipped.

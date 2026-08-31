@@ -1,13 +1,12 @@
 # Sweep Classes
 
-Step 6 of the gate reads this file and works the classes below in the order
-they appear, which is observed-frequency order from the pull request forensics
-behind this gate. Surface findings in that same order, so the class that most
-often drives another automated-review round is read first. Every class carries
-one verdict from its own enumerated set, and a class that fired names where it
-fired — the file and line for a line-scoped finding, the file alone for a
-file-level one, and the repository surface for a repository-level finding such
-as a missing changelog entry or an aggregate file-cap excess.
+Step 6 of the gate reads this file and works the classes below in the listed
+order. Every class carries one verdict from its own enumerated set in the
+captured gather. A class that fired names where it fired — the file and line
+for a line-scoped finding, the file alone for a file-level one, and the
+repository surface for a repository-level finding such as a missing changelog
+entry or an aggregate file-cap excess. The spoken brief names only classes
+that drive the recommendation.
 
 ## 1. Underspecified rules in prose and instruction files
 
@@ -144,7 +143,7 @@ verdict line directly; the helper compares the counts itself.
 First establish whether any automated reviewer is configured from repository
 gate, workflow, app, or review-tool configuration. When no automated reviewer
 is configured, class 11 is explicitly `not applicable`: run the surface helper
-without caps for the full inventory required by step 1, but do not reinterpret
+without caps so step 1 can capture the inventory, but do not reinterpret
 its mechanical `cap unverified` line as a class-11 gap. Absence of a reviewer is
 not evidence of an unknown cap. Once a reviewer is configured, absence of its
 repository-resolved cap fails closed as `cap unverified`; never fabricate a cap
@@ -183,5 +182,5 @@ verdicts; this table maps execution).
 
 A helper that is absent, not executable, or exits without producing its output
 does not remove its class from the sweep. Check that class by judgment against
-the class description above, and report it as `not run → judgment` so the
-readout shows which verdicts came from the helper and which came from reading.
+the class description above, and record it as `not run → judgment` in the
+captured gather so helper verdicts stay distinct from judgment verdicts.

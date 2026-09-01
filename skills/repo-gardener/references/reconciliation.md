@@ -153,7 +153,7 @@ When a brief names Worker-owned gaps, the Orchestrator sends every named
 Worker-owned gap from that brief to the same Worker. Send those Worker-owned
 gaps even when the same brief also names owner work. After a repair of an
 existing PR, publish the repaired exact head under the existing lease before
-the next helper gather. Then re-run that helper on the new exact head. Stop
+the next helper gather. Then re-run that helper on the current exact head. Stop
 when only owner-needed work remains or a further turn cannot help. For
 ownerless publication, an unavailable checking skill, moved identity, or a
 later-session claim must preserve the authored commit without push or PR

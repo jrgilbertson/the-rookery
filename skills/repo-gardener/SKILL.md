@@ -99,7 +99,7 @@ hands its evidence pack to this finishing path.
 
 When a brief names Worker-owned gaps, the Orchestrator sends every named
 Worker-owned gap to the same Worker, then that Worker re-runs the helper on
-the new exact head. Send those Worker-owned gaps even when the same brief
+the current exact head. Send those Worker-owned gaps even when the same brief
 also names owner work. Stop when only owner-needed work remains or a further
 turn cannot help. An unavailable checking skill, moved identity, or a claim
 from a later session must preserve the authored commit without push or PR

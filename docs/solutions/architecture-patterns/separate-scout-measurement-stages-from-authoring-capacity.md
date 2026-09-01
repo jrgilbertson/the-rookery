@@ -129,21 +129,21 @@ Never fall back to the bundled starter. It is fail-closed:
 Create a persistent Worker worktree only for work intended to become one PR.
 The Worker owns planning, implementation, simplification, review, repository
 verification, its coherent commit, and its branch through at most one unmerged
-PR. Every unattended Worker invokes `checking-pr-readiness` normally, then
-stops after its menu reply. Only the same Worker's distinct later option-1
-choice, when that option was offered with an approve-and-proceed recommendation,
-continues after the checking skill's identity reread. Any other result preserves
-the commit without push or PR creation
-(`skills/repo-gardener/references/reconciliation.md:124-158`,
-`skills/repo-gardener/SKILL.md:82-112`).
+PR. Every unattended Worker invokes `checking-pr-readiness` on its exact head,
+then stops after its menu reply. The Orchestrator authorizes option 1 only
+when Approve was offered and recommended for that head. Named Worker-owned
+gaps from that brief all go back to the same Worker; owner-needed briefs stop
+without a PR
+(`skills/repo-gardener/references/reconciliation.md`,
+`skills/repo-gardener/SKILL.md`).
 
 The Orchestrator owns breadth, depth, selection, tracker writes, supervision,
 and the morning report. After PR creation, it reports native PR, check, and
 review facts; required pending work makes closure partial. The ownerless
-scheduled run never invokes `checking-merge-readiness`, leaving its normal
-menu to later owner interaction
-(`skills/repo-gardener/references/reconciliation.md:185-207`,
-`skills/repo-gardener/references/register-and-report.md:74-95`).
+scheduled run invokes `checking-merge-readiness` and never selects Proceed to
+merge
+(`skills/repo-gardener/references/reconciliation.md`,
+`skills/repo-gardener/references/register-and-report.md`).
 
 Freshly read the native repository, PR number, branch, head SHA, state,
 checks, and review status before reporting the Worker. Do not mirror that

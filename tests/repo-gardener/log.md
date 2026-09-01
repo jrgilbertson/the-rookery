@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-01 | ecf9748 (working tree) | repo-gardener deterministic and structural gates | pass | `npx --no-install skills-ref validate skills/repo-gardener` and `lefthook run pre-push --force` passed after the unattended helper-menu contract rewrite. Fresh-context behavioral cases were not run in this dispatch.
+
 - 2026-08-30 | 4d37a3b (pre-log head) | exact child-title refinement comparison | pass (5/5 candidate; 4/5 prior) | Four fresh read-only contexts found that the published baseline lacked the explicit caller-envelope child-title field (item 2), while the candidate passed all five combined Repo Gardener and Managing Issues items. No provider contact or repository write occurred.
 
 - 2026-08-30 | 3c9064c (pre-log head) | matched canonical issue-refinement cases | pass (5/5 final cross-skill; 0/5 prior) | Four revision-specific read-only contexts scored the frozen prior 0/5 for each case and final Managing Issues 5/5; a fifth fresh combined-package review correctly followed Repo Gardener's installed Managing Issues delegation and passed its final case 5/5. No provider contact or repository write occurred.

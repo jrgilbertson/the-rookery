@@ -58,9 +58,9 @@ brief, numbered options, and later reply.
       unmerged PR. A's unknown provider fact stops only A's affected action;
       it is never reconciled as success and does not alter B's current facts.
 - [ ] In subcase 6, A cannot publish in its menu turn and may continue only on
-      a distinct later option-1 reply after the checking skill's identity
-      reread. B preserves its commit without a fallback and names unavailable
-      checking as the blocking gap.
+      an Orchestrator-authorized option-1 reply after the checking skill's
+      identity reread. B preserves its commit without a fallback and names
+      unavailable checking as the blocking gap.
 - [ ] No subcase creates host adapters, setup commands, wait or recovery
       choreography, progress state, registries, schemas, receipts, or a
       second Git-state system.

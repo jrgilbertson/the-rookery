@@ -58,7 +58,7 @@ sense-and-recommend run.
       the two normalized candidates.
 - [ ] Scenario 1 assigns two parallel Workers after overlap is decided. Each
       ownerless Worker stops on its PR-readiness menu, then may open one
-      unmerged PR only after its distinct later option-1 reply, matching
+      unmerged PR only after Orchestrator-authorized option 1, matching
       identity reread, and the immediate matching local/provider-head and
       clean-surface re-read. The unrelated already-open billing PR does not
       consume the Worker cap. The run does not invent work to fill
@@ -85,7 +85,8 @@ sense-and-recommend run.
       for the host liveness lookup. It adds no state machine or per-Worker
       tracker records, then starts any later run fresh with its own run ID and
       opening sequence.
-- [ ] Every scenario leaves already-open unrelated PRs in place, never invokes
-      merge readiness in the ownerless scheduled run, never merges, never
-      creates a follow-up issue, and keeps generated reports out of repository
-      source. Worker facts are reported only after a fresh native read.
+- [ ] Every scenario leaves already-open unrelated PRs in place. After a
+      Worker PR exists, merge-readiness is invoked and Proceed to merge is
+      not selected. No scenario merges, creates a follow-up issue, or keeps
+      generated reports in repository source. Worker facts are reported only
+      after a fresh native read.

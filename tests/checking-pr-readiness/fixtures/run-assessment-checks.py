@@ -542,7 +542,8 @@ def validate_contract_sources() -> None:
             "persistent state, configuration, schema, receipt, ledger, or audit-command reuse" not in normalized_source,
             f"{name} retains unnecessary assignment denial prose",
         )
-        require("never invokes `checking-merge-readiness`" in normalized_source, f"{name} permits ownerless merge checking")
+        require("invoke `checking-merge-readiness`" in normalized_source, f"{name} omits ownerless merge checking")
+        require("never authorizes proceed to merge" in normalized_source, f"{name} can select proceed to merge")
     require("not verified" in assessment and "not run" in assessment, "assessment contract omits canonical check statuses")
     require("unverified" not in assessment and "not-run" not in assessment, "assessment contract retains noncanonical check statuses")
     require(

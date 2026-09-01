@@ -544,6 +544,10 @@ def validate_contract_sources() -> None:
         )
         require("invoke `checking-merge-readiness`" in normalized_source, f"{name} omits ownerless merge checking")
         require("never authorizes proceed to merge" in normalized_source, f"{name} can select proceed to merge")
+        require("the worker never chooses option 1 on its own" in normalized_source, f"{name} still lets the Worker choose option 1")
+        require("authorizes that worker to reply 1" in normalized_source, f"{name} omits Orchestrator-authorized option 1")
+        require("sends every named worker-owned gap" in normalized_source, f"{name} omits the whole-list rework loop")
+        require("never invokes `checking-merge-readiness`" not in normalized_source, f"{name} still forbids ownerless merge checking")
     require("not verified" in assessment and "not run" in assessment, "assessment contract omits canonical check statuses")
     require("unverified" not in assessment and "not-run" not in assessment, "assessment contract retains noncanonical check statuses")
     require(

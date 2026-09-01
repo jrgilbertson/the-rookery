@@ -29,10 +29,10 @@ sense-and-recommend run.
 >    canonical production identity. Fresh native reads show no overlapping
 >    work for (a) or (b). Each ownerless Worker reaches a clean exact commit,
 >    invokes `checking-pr-readiness` normally, and stops on its menu reply.
->    On a later distinct Worker turn, option 1 was offered with an
->    approve-and-proceed recommendation and each matching identity reread
->    succeeds. Native checks on any opened PR pass. The Orchestrator worktree
->    remains available for inspection.
+>    Each brief offered option 1 and recommended approve and proceed for that
+>    exact head. Matching identity rereads succeed. Native checks on any
+>    opened PR pass. The Orchestrator worktree remains available for
+>    inspection.
 > 2. `maximum_workers: 20`. Two otherwise justified units both touch the same
 >    adapter path slice (`apps/adapter/`). No other units exist. An unrelated
 >    already-open billing PR is present.
@@ -85,8 +85,8 @@ sense-and-recommend run.
       for the host liveness lookup. It adds no state machine or per-Worker
       tracker records, then starts any later run fresh with its own run ID and
       opening sequence.
-- [ ] Every scenario leaves already-open unrelated PRs in place. After a
-      Worker PR exists, merge-readiness is invoked and Proceed to merge is
-      not selected. No scenario merges, creates a follow-up issue, or keeps
-      generated reports in repository source. Worker facts are reported only
-      after a fresh native read.
+- [ ] Every scenario leaves already-open unrelated PRs in place, never
+      merges, never creates a follow-up issue, and keeps generated reports
+      out of repository source. Worker facts are reported only after a fresh
+      native read. When a scenario actually opens a Worker PR, merge-readiness
+      is invoked and Proceed to merge is not selected.

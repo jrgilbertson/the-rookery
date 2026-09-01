@@ -355,9 +355,10 @@ Brief in continuous prose without analysis-bucket titles.
 ### 7. Wait for a numbered reply
 
 Present exactly one decision menu, aligned to the recommendation and to the
-state step 1 named, then wait. A turn is one reply. This reply writes the
-menu, then stops. The next message in the conversation, from whoever is
-talking, is the pick. This turn ends when the menu is on screen.
+state step 1 named, then wait. A turn is one reply. Print only the brief and
+the numbered options, then stop. Do not explain turns, later `1`, or the
+identity re-read in the brief. The next message in the conversation, from
+whoever is talking, is the pick. This turn ends when the menu is on screen.
 Each option is terminal once a later turn picks it:
 
 1. **Proceed to merge.** After the matching re-check, kick off one forge

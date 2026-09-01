@@ -255,7 +255,7 @@ both copies together. -->
 
 #### Decision menu
 
-Present exactly one decision menu, then wait for a numbered reply. Do not pick an option in the same turn that wrote the menu. A turn is one reply. This reply writes the brief and the menu, then stops. The next message in the conversation, from whoever is talking, is the pick. A reply of `1`,
+Present exactly one decision menu, then wait for a numbered reply. Do not pick an option in the same turn that wrote the menu. A turn is one reply. Print only the brief and the numbered options, then stop. Do not explain turns, later `1`, or the identity re-read in the brief. The next message in the conversation, from whoever is talking, is the pick. A reply of `1`,
 "Approve", or "approve and proceed" after the menu has offered option 1
 counts as that choice. The activating utterance never authorizes Approve.
 

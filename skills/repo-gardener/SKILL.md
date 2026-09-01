@@ -92,8 +92,9 @@ caller-approved verification command argv list. Every unattended Worker invokes
 numbered menu. On a distinct later turn, that same Worker may choose option 1
 only when the menu actually offered it and the recommendation was approve and
 proceed.
-The checking skill then performs its identity reread and hands its evidence pack
-to this finishing path.
+The checking skill then performs its identity reread, instantiates its
+evidence pack as silent pull-request-body input, and continues into this
+finishing path. Do not also dispatch an owner publisher.
 
 All other outcomes, including an absent option 1, a non-approving
 recommendation, incomplete gather, unavailable checking skill, moved identity,

@@ -47,4 +47,5 @@ was treated as ready to approve.
       unavailable, or not verified gate leaves that class unable to support
       Approve.
 - [ ] The variants remain independent; findings from one are not carried into another.
-- [ ] No variant writes to the checkout, picks an option in the same turn, stages, commits, pushes, or opens a pull request.
+- [ ] No variant writes to the checkout or picks an option in the same turn.
+      This skill does not itself stage, commit, push, or open a pull request.

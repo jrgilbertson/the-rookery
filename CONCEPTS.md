@@ -141,8 +141,9 @@ readiness review. It is an actionable brief: the recommendation, material next
 work, a coverage close, and the learning signal, not a census of every sweep
 class or inspected path.
 
-The review assembles it in conversation. It becomes durable only when the
-finishing workflow adds it to the pull request description.
+The review instantiates it on later 1 as silent pull-request-body input.
+It becomes durable only when the finishing workflow writes it into the
+pull request description.
 
 ### Merge Readiness Review
 

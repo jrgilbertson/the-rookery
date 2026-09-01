@@ -324,21 +324,39 @@ Approve and did not fill an evidence pack.
 ### On a later reply of 1
 
 If the menu printed a withheld option-1 row, do not approve. Name that
-Approve cannot be taken and wait again.
+Approve cannot be taken and wait again. Do not enter the later-1 finishing
+path.
 
 Before accepting Approve, re-read HEAD, the merge-base, and staged, unstaged,
 and untracked content per
 [references/identity-and-argv.md](references/identity-and-argv.md). If any of
-those moved, name what moved, rebuild, and do not hand a pack as if the old
-surface were still current. A matching re-read is silent.
+those moved, name what moved, rebuild, and do not continue as if the old
+surface were still current. The already-typed 1 does not approve the rebuilt
+gather. A matching re-read is silent.
 
-On approval, fill
-[assets/evidence-pack-template.md](assets/evidence-pack-template.md) and
-compose it into the handoff for the finishing path: the recommendation,
-material next work, a coverage close, and the learning signal with any
-recorded override. Hand the pack to the finishing path so that path renders
-it into the pull request body. Write nothing to the repository tree and open
-no pull request.
+Choose the finishing path from this conversation's role, not from whether
+`repo-gardener` happens to be installed on disk:
+
+- A run already following repo-gardener Worker completion continues into
+  gardener first-publication. Do not also dispatch an owner publisher.
+- Any other conversation continues into the installed skill that owns
+  opening a pull request here, discovered the same way `ce-explain` is:
+  when that skill is present. WORKFLOWS.md's example is `ce-commit-push-pr`.
+
+If this conversation has no finishing path, name that once and stop. Do not
+re-ask Approve. Do not fill or print a pack. Option 1 accepted readiness;
+publishing still needs an installed finishing companion.
+
+When finishing is present, instantiate
+[assets/evidence-pack-template.md](assets/evidence-pack-template.md)
+in-process as unpublished pull-request-body input: the recommendation,
+material next work after the pull request exists (or `none`), a coverage
+close, and the learning signal with any recorded override. Do not write the
+filled pack back to that asset. Do not print `## Evidence pack` as a
+readout. Pass the filled pack to the selected finishing path so that path
+writes it into the pull request description. Continue into that path in
+this same conversation. That path must not re-ask the same Approve. This
+skill still does not itself stage, commit, push, or open a pull request.
 
 Sanitize the pack for durable use. Summarize intent from the selected durable
 intent source: a linked issue or ticket, a brief, or a maintained repository
@@ -346,21 +364,22 @@ plan. When step 4 found no durable source, summarize the recorded intent
 attestation instead. Do not copy ignored-plan paths or contents, local-only
 paths, credentials, or unnecessary personal data.
 
-Completion: a matching silent re-read, then the pack in the finishing-path
-handoff, or a named rebuild with no pack. The run wrote nothing to the
-repository. Remove the step 1 temp directory after this later turn, when a
-non-1 later turn ends the run, or on failure.
+Completion: a matching silent re-read, then silent pack plus continue into
+finishing, a named missing-path stop with no pack, or a named rebuild with
+no pack. This skill wrote nothing to the repository. Remove the step 1 temp
+directory after this later turn, when a non-1 later turn ends the run, or on
+failure.
 
 ## Gotchas
 
 - Untracked paths ship with finishing tools; include them in what option 1
   approves.
 - Green CI is not evidence that upstream steps ran.
-- Dispatching a missing step from the menu is the one path that changes
-  files, and the dispatched skill owns those changes. The gate itself still
-  writes nothing.
-- The pack reaches the finishing path only through conversation. If the
-  session breaks before PR creation, recompose or supply the pack again.
+- Companion dispatch that may change files is limited to a missing-step
+  pick from the live menu and later-1 finishing dispatch. The dispatched
+  skill owns those writes. The gate itself still does not stage, commit,
+  push, or open a pull request.
+- A dead session needs a fresh gate. There is no pasteable pack to restock.
 - When `checking-merge-readiness` is also installed, this gate owns entry to
   review; merge-readiness owns the pre-merge whole-change review. Neither
   requires the other at runtime.

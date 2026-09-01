@@ -143,7 +143,9 @@ gate as pass, failure, or unavailable. Every unattended Worker invokes
 The activating utterance is never approval. Only on a distinct later turn may
 that same Worker choose option 1, and only if the menu offered option 1 and the
 recommendation was approve and proceed. The checking skill performs its
-identity reread before handing its evidence pack to the publication path.
+identity reread, instantiates its evidence pack as silent
+pull-request-body input, and continues into the publication path. Do not
+also dispatch an owner publisher.
 
 For ownerless publication, all other outcomes fail closed: absent option 1,
 non-approving recommendation, incomplete gather, unavailable checking skill,

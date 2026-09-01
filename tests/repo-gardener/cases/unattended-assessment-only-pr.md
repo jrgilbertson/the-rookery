@@ -17,8 +17,10 @@ an owner: gather, brief, numbered live options, then wait.
 >    is complete, its brief recommends approve and proceed, and it offers option
 >    1. The menu reply ends the turn.
 > 2. On the same Worker's distinct later turn, it replies `1`. The checking
->    skill rereads its identity and hands its evidence pack to the existing
->    first-publication path. The exact subject, full head, target/base ref and full
+>    skill rereads its identity, passes a silent evidence pack as
+>    pull-request-body input, and continues into the existing
+>    first-publication path without a spoken pack wait or a second publisher.
+>    The exact subject, full head, target/base ref and full
 >    base OID still match. Assigned paths, final cleanliness, policy revision,
 >    overlap, provider reads, an absent-ref lease, and the one-unmerged-PR limit
 >    all pass before push and PR opening.
@@ -44,8 +46,10 @@ an owner: gather, brief, numbered live options, then wait.
 - [ ] Scenario 1 writes the normal brief and numbered menu, then stops. It
       neither pushes nor opens a PR in the menu turn.
 - [ ] Scenario 2 may continue only after the later `1` and matching identity
-      reread. It retains every existing policy, exact-head/base, assigned-path,
-      cleanliness, overlap, provider-read, lease, and one-unmerged-PR gate.
+      reread. The pack is not a spoken wait and no second publisher is
+      dispatched. It retains every existing policy, exact-head/base,
+      assigned-path, cleanliness, overlap, provider-read, lease, and
+      one-unmerged-PR gate.
 - [ ] Scenario 3 preserves the authored commit without push or PR creation and
       names the absent option, non-approving recommendation, or incomplete
       gather as the blocking gap.

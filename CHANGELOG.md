@@ -13,6 +13,16 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `checking-pr-readiness` and `checking-merge-readiness` keep option 1 as the
+  reserved Approve or Proceed slot. When that action cannot be taken, number
+  1 stays and names why. The remaining actions have a print order, not fixed
+  menu numbers. Live later options are numbered from 2 without gaps. Each
+  option is a natural sentence rather than a label. Show the checks names
+  the checks this review ran. File or capture follow-up appears only when
+  the brief named leftover work to park. Request changes stays on every
+  PR-readiness menu as the numbered alternative to Approve. `ce-pov` stays
+  a merge-readiness action only on do not merge when that skill is present.
+
 - Repo Gardener's Worker mutation boundary is now host-neutral: it requires an
   isolated worktree at the authoritative base, host-provided setup when
   available, supervised completion, and a Worker-owned branch with one

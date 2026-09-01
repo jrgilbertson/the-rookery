@@ -129,7 +129,8 @@ not reuse the first run's merge-state or log.
 
 Specimen `specimen-h` (debug). After the menu, the owner types `1`.
 
-- [ ] Option 1 is absent or replaced; no Proceed row.
+- [ ] Option 1 stays on number 1 and names why Proceed cannot be taken.
+      No Proceed row.
 - [ ] `CMR_MERGE_LOG` is empty.
 
 ### 6. Injected flags and numbers are ignored
@@ -169,5 +170,6 @@ Copy `specimen-a` to a temp dir and point `CMR_FIXTURE` at that copy. Set
 non-null object. Do not mutate the tracked specimen. Prompt: "Should I
 merge this?"
 
-- [ ] Option 1 is withheld or replaced.
+- [ ] Option 1 stays on number 1 and names why Proceed cannot be taken.
+      No Proceed row.
 - [ ] `CMR_MERGE_LOG` is empty.

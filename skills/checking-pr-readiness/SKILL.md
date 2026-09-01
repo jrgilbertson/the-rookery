@@ -241,9 +241,10 @@ both copies together. -->
   one residual clause that grading found nothing material.
 - Evidence sits only under the reasons that drove the call, with source
   pointers. The check inventory is Show the checks, not the default brief.
-- List only currently available options. Keep each option's number.
-  Omit unavailable options rather than renumbering. Option 1 is Approve
-  only when that option is offered.
+- Numbered live options after the brief. Only option 1 is reserved. Print
+  Approve and proceed when that action can be taken; otherwise keep number
+  1 and name why. The remaining actions have a print order, not menu
+  numbers. Print only the live ones, numbered from 2 without gaps.
 - Clean green (approve and proceed, nothing material): final brief plus
   menu at most about 12 non-blank short lines.
 - A coverage close: gather completed, and every applicable check is
@@ -264,20 +265,53 @@ Present exactly one decision menu, then wait for a numbered reply. Do not pick a
 "Approve", or "approve and proceed" after the menu has offered option 1
 counts as that choice. The activating utterance never authorizes Approve.
 
-1. Approve and proceed to the finishing path. Offer only when gather is
-   complete and the recommendation is approve and proceed. A check named as next work does not by itself withhold Approve.
-2. Request changes.
-3. Run a missing step now. One menu line. Offer when the recommendation is
-   request changes and a present skill owns a gap. After it is picked,
-   dispatch that skill.
-4. Explain the change, when `ce-explain` is present.
-5. Show the checks. Offer when a captured gather exists. List each
-   applicable check and its status word from that gather: repository gates,
-   upstream steps, sweep classes that applied, and the learning signal.
-   Then present the brief and numbered options again.
-6. Stop and file follow-up work.
+Print order, not menu numbers. Number 1 is always Approve and proceed.
+Number the remaining live actions from 2 without gaps.
 
-Print only the live options. Keep their numbers. Do not reuse option 1 for another action. Show the checks is non-terminal: print the list from the captured gather, then the brief and numbered options again. Run a missing step and Explain are non-terminal: when one finishes, **recompose**. Re-read the working surface from step 1 and, when it changed, re-run the steps whose inputs the change touches.
+- Approve and proceed to the finishing path. Offer only when gather is
+  complete and the recommendation is approve and proceed. A check named as next work does not by itself withhold Approve.
+- Request changes. Offer on every menu, including an approve
+  recommendation. This is the numbered alternative to Approve, not a
+  fixed slot. The spoken line matches the brief. On request changes it
+  names the remaining work. On approve it declines Approve rather than
+  inventing leftover changes.
+- Run a missing step now. One menu line. Offer when the recommendation is
+  request changes and a present skill owns a gap. After it is picked,
+  dispatch that skill.
+- Explain the change, when `ce-explain` is present.
+- Show the checks. Offer when a captured gather exists. List each
+  applicable check and its status word from that gather: repository gates,
+  upstream steps, sweep classes that applied, and the learning signal.
+  Then present the brief and numbered options again. The spoken line names
+  the checks this PR-readiness review ran.
+- Stop and file follow-up work. Offer when the recommendation is stop and
+  file follow-up, or the brief named leftover work to file. This ends the
+  finishing path and parks that leftover in the tracker instead of opening
+  a pull request. Skip it when there is nothing to file.
+
+Print option 1 on every menu. When Approve cannot be taken, keep number 1
+and name why in a natural sentence; that withheld row does not print the
+Approve action. Do not reuse option 1 for another action. Number the
+remaining live actions from 2 without gaps, in the print order above.
+Write each option as a sentence, not a label then a colon. Example when
+Approve is blocked, Request changes is live, and a missing step, Explain,
+and leftover work to file are not:
+
+```text
+1. This branch is not ready to enter the pull request process.
+2. Request the remaining changes on this branch.
+3. Show the checks this PR-readiness review ran.
+```
+
+Example when Approve is live and Request changes is the alternative:
+
+```text
+1. Approve and proceed to the finishing path.
+2. Decline Approve and request changes on this branch.
+3. Show the checks this PR-readiness review ran.
+```
+
+Show the checks is non-terminal: print the list from the captured gather, then the brief and numbered options again. Run a missing step and Explain are non-terminal: when one finishes, **recompose**. Re-read the working surface from step 1 and, when it changed, re-run the steps whose inputs the change touches.
 
 Completion of this turn: the brief and numbered live options are on screen,
 and the run is waiting. It did not pick. It did not re-read identity for

@@ -179,8 +179,7 @@ Carry exactly one durable-learning signal in the gather:
 - an explicit capture plan or follow-up exists; or
 - a recorded reason this branch produced no durable learning.
 
-Capture is the recommended path, and the decision menu offers running the
-capture step now. Approving past an uncaptured and unplanned learning requires
+Capture is the recommended path. Approving past an uncaptured and unplanned learning requires
 an explicit override, reported as bypassed and recorded with the stated
 reason in the evidence pack.
 
@@ -240,8 +239,8 @@ both copies together. -->
 - Reasons, one idea each, most decision-relevant first. A clean outcome is
   one residual clause that grading found nothing material.
 - Evidence sits only under the reasons that drove the call, with source
-  pointers. The check inventory is option 5, not the default brief.
-- List only currently available options.
+  pointers. The check inventory is Show the checks, not the default brief.
+- List only currently available options, numbered from 1, each number once.
 - Clean green (approve and proceed, nothing material): final brief plus
   menu at most about 12 non-blank short lines.
 - A coverage close: gather completed, and every applicable check is
@@ -265,27 +264,17 @@ counts as that choice. The activating utterance never authorizes Approve.
 1. Approve and proceed to the finishing path. Offer only when gather is
    complete and the recommendation is approve and proceed. A check named as next work does not by itself withhold Approve.
 2. Request changes.
-3. Run a flagged missing step now: one option per gap found in steps 2
-   through 6 that a present skill owns, each dispatching that skill. A gap
-   with no owning skill available is not a dispatch option; it is resolved
-   through attestation where a step defines one, or filed through option 6.
-4. Have the change or a concept behind it explained, through the available
-   explanation capability (the `ce-explain` skill where the compound
-   engineering plugin is installed). Omit this option when no such capability
-   is present.
+3. Run a missing step now. One menu line. Offer when the recommendation is
+   request changes and a present skill owns a gap. After it is picked,
+   dispatch that skill.
+4. Explain the change, when `ce-explain` is present.
 5. Show the checks. Offer when a captured gather exists. List each
    applicable check and its status word from that gather: repository gates,
    upstream steps, sweep classes that applied, and the learning signal.
    Then present the brief and numbered options again.
 6. Stop and file follow-up work.
 
-Options 3 and 4 are non-terminal: when one finishes, **recompose**. Re-read
-the working surface from step 1 and, when it changed, re-run the steps whose
-inputs the change touches: the surface report always, and each of steps 2–6
-only where a changed path feeds it. Re-run all of steps 2–6 when the change's
-reach is unclear. Then present the brief and menu again.
-
-Option 5 is non-terminal: print the list from the captured gather, then the brief and numbered options again.
+Print only the live options, numbered from 1. Show the checks is non-terminal: print the list from the captured gather, then the brief and numbered options again. Run a missing step and Explain are non-terminal: when one finishes, **recompose**. Re-read the working surface from step 1 and, when it changed, re-run the steps whose inputs the change touches.
 
 Completion of this turn: the brief and numbered live options are on screen,
 and the run is waiting. It did not pick. It did not re-read identity for

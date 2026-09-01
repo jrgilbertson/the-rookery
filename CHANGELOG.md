@@ -29,7 +29,9 @@ looked" surface. GitHub Releases mirror its entries.
   review with no receipt, does not by itself withhold Approve. Spoken next
   work is remaining owner work after the decision. On approve that is
   opening the pull request and babysitting it, not unrun review or
-  simplify. Captured as
+  simplify. Live options are numbered from 1, each number once. On
+  approve, Run a missing step is omitted rather than listed once per gap.
+  Captured as
   `docs/solutions/conventions/do-not-split-human-and-agent-skill-products.md`.
 
 

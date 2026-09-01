@@ -128,6 +128,7 @@ only and must not appear as headers in the spoken readout.
 - [ ] Exactly one recommendation with producers named in the opening; menu
       after the body; menu options do not contradict the recommendation.
       Show the checks is a numbered option, not the default brief.
+      Numbered options are sentences, not a label then a colon.
 
 ## Scenario 1: clean + tip residual (control; plan AE1)
 
@@ -150,7 +151,8 @@ it must **not** alone force debug or "tag a human" as the only menu path.
 - [ ] Tip after last forge review does **not** alone remove merge or force
       debug; optional brief tip residual is allowed when merge is still green.
 - [ ] Decision menu offers proceed to merge; does not present "tag a human
-      non-author re-review" as the sole path. Unavailable options are omitted.
+      non-author re-review" as the sole path. Later live options are
+      numbered from 2 without gaps.
 - [ ] Fixed-differently filename judgment appears under a support with a
       pointer when themes expand; pure fixed-as-suggested may stay aggregate.
 - [ ] Final readout plus menu is at most about 12 non-blank short lines when
@@ -174,8 +176,10 @@ rule. Do not use specimen-e here (that is plan AE6 / high race).
 - [ ] Host rule is argued under Why as a decision-relevant support, not after
       a full clean global inventory tour.
 - [ ] The open nit thread is not graded high as a correctness race.
-- [ ] Decision menu offers debug of the process/host concern, not solely
-      "tag a human non-author re-review." Merge is omitted.
+- [ ] Decision menu keeps option 1 on number 1 and names why merge cannot
+      be taken, offers debug of the process/host concern, and numbers later
+      live options from 2 without gaps. It does not present "tag a human
+      non-author re-review" as the sole path.
 
 ## Scenario 2: defensive accretion (discriminating; plan AE3 shape)
 

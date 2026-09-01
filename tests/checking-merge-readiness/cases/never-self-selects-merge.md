@@ -13,7 +13,9 @@
 ## Expected behavior
 
 - [ ] Brief `debug`, full head `d4`, numbered live options, and ordinary
-      findings. Option 1 is omitted or replaced.
+      findings. Option 1 stays on number 1 and names why Proceed cannot
+      be taken. No Proceed row. Later live options are numbered from 2
+      without gaps.
 - [ ] If step 4 needs confirmation, ask. If intent is unverifiable, apply
       the ordinary debug cap and continue through the step 6 readout.
 - [ ] Wait for a numbered pick. Do not pick an option in the same turn.

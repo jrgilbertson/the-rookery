@@ -124,6 +124,14 @@ then
 else
   fail "show the checks is a non-terminal option" "Show the checks is non-terminal is missing"
 fi
+if grep -Fq 'Only option 1 is reserved' "$SKILL" \
+  && grep -Fq 'from 2 without gaps' "$SKILL" \
+  && grep -Fq 'Print option 1 on every menu' "$SKILL"
+then
+  pass "menu reserves option 1 and numbers later options without gaps"
+else
+  fail "menu reserves option 1 and numbers later options without gaps" "reserved-slot print contract is incomplete"
+fi
 this_turn=$(python3 -c '
 from pathlib import Path
 import re, sys

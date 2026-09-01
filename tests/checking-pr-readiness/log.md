@@ -3,7 +3,7 @@
 Format: `date | git rev | check | result | note`
 
 - 2026-09-01 | ecf9748 (working tree) | gardener ownerless merge-readiness pin | pass | `run-assessment-checks.py` now requires ownerless gardener to invoke merge-readiness and never authorize Proceed to merge; the remaining publication-base and exact-head assertions still pass.
-
+- 2026-09-01 | ecf974879 (working tree) | assessment fixture | pass | Contract grep now requires reserved option 1 and numbering from 2 without gaps; existing fail-closed and dirt-still-offers-option-1 cases stayed green. `skills-ref validate` passed.
 - 2026-08-29 | working tree | deferred sweep-class and publication-base fixture | pass | An exact named equivalent repository gate verified in the same complete assessment normalized its deferred class to `verified`; bare, missing, unrelated, mismatched, unavailable, and not verified gates stayed `action-required`, and base movement before first push or PR-open named old/new base identity and stopped publication.
 - 2026-08-29 | working tree | assessment base-binding fixture | pass | A stable native subject/head whose target/base ref advanced to a different full OID returned `action-required`, named old and new base identity, and required a fresh assessment; the accepted check vocabulary is now only `verified` or `not applicable`.
 - 2026-08-29 | working tree | caller-authorized assessment argv and discovered-check fixture | pass | The fixture discovered a second repository check absent from the caller-authorized argv list, proved it did not execute, reported it as `not verified`, and returned `action-required`; the assigned `fixture-quality` check verified.

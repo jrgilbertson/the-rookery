@@ -13,12 +13,13 @@ symptoms:
   - "Medium risk is labeled pause, so the owner idles instead of investigating"
   - "Em dashes and section headers (Themes / Intent / Risk) make prose feel like a form"
   - "Redundant PR state labels such as (open) on every pre-merge review"
+  - "Decision menus print blank (not offered) rows or keep catalog numbers so the menu reads 1, 2, 5"
 root_cause: inadequate_documentation
 resolution_type: documentation_update
 related_components:
   - testing_framework
   - checking-pr-readiness
-last_updated: 2026-08-31
+last_updated: 2026-09-01
 tags:
   - skill-authoring
   - owner-facing-readouts
@@ -70,13 +71,21 @@ When a skill briefs an owner at a decision point:
    decision. When the recommendation is approve, unrun code review or
    simplify do not appear in that brief as leftover work. Do not print a
    status-word inventory or a sweep-class table.
-6. **List only live options.** Print currently available options. Keep
-   each option's number. Omit unavailable options rather than renumbering.
-   Option 1 is Approve or Proceed only when that option is offered. Name a
+6. **Reserve option 1; number the rest without gaps.** Only option 1 is
+   reserved. Print Approve or Proceed when that action can be taken;
+   otherwise keep number 1 and name why, without printing the Approve or
+   Proceed action. The remaining actions have a print order, not menu
+   numbers. Print only the live ones, numbered from 2 without gaps. Write
+   each option as a natural sentence, not a label then a colon. Name a
    check or path in the brief only when it drives the recommendation. Show
-   the checks lists each applicable check and its status from the captured
-   gather, then the brief and menu again. Omit it when there is no captured
-   gather. On approve, do not add one menu line per unrun step.
+   the checks names the checks this review ran and lists each applicable
+   check and its status from the captured gather, then the brief and menu
+   again. Skip it when there is no captured gather. File or capture
+   follow-up only when the brief named leftover work to park. Request
+   changes stays live on every PR-readiness menu as the alternative to
+   Approve. `ce-pov` is a merge-readiness redesign action, offered only on
+   do not merge when that skill is present. On approve, do not add one menu
+   line per unrun step.
 
 The end-of-run API (menu, wait, later `1`) is a separate contract. See
 [Do not split human and agent skill products](../conventions/do-not-split-human-and-agent-skill-products.md).

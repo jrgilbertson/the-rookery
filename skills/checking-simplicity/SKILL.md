@@ -1,6 +1,6 @@
 ---
 name: checking-simplicity
-description: 'Use for a requested read-only assessment of opportunities to safely simplify a system architecture, design, technical area, plan, code-level approach, or choice among approaches. Also use implicitly when a completed brief or approach is ready for implementation planning, before an in-build decision adds an abstraction, dependency, configuration, persisted state, adapter, hook, queue, or workflow, or on a finished implementation plan''s first handoff to execution. Do not select it again for an unchanged plan already covered by a clean result with no owner question; execution owns that step. During brainstorming, use it only for simplification opportunities in a named direction. A named area or question with inspectable evidence is enough; formal requirements are optional. Prescribed implementation, general brainstorming, settled-code cleanup, explanation, visual or interface design, bugs, and shipping stay elsewhere. It assesses; it does not plan, edit, implement, approve, or require a checkpoint.'
+description: 'Use when the user explicitly requests a simplicity assessment of a named system architecture, system design, technical area, plan, technical choice, or code-level approach by asking to simplify, right-size, identify overengineering, compare with a stated smaller alternative, choose the smallest viable approach, or test whether reuse removes the need for change. General architecture comparison or product brainstorming without that simplification intent stays with planning. Without that request, use only when an approach, plan, or immediate build decision adds durable machinery without tying it to the user''s stated need and is about to enter implementation planning, execution, or continued building. Completion of a brief or plan alone is not a trigger. Direct behavior-preserving cleanup of settled code stays with implementation. An unchanged subject with a clean result continues without another check. It assesses; it does not plan, edit, implement, approve, or require a checkpoint.'
 license: MIT
 compatibility: Requires a named area, question, or reviewable subject and enough accessible evidence to identify the current need and protected boundaries. An independent gate also requires a separate-context reviewer who did not author or implement the subject.
 ---
@@ -9,12 +9,6 @@ compatibility: Requires a named area, question, or reviewable subject and enough
 Find opportunities to safely simplify a system design, architecture, technical
 area, plan, question, or code-level approach against the current need. This is
 a read-only assessment, not a planning, editing, or approval workflow.
-
-Use it most often when the caller points to an area, question, plan, technical
-choice, or existing implementation and asks for opportunities to simplify it
-safely. The subject may be proposed, already in place, or still being explored.
-During an ordinary workflow, it can also review a finished plan or challenge an
-in-build decision before it adds product or process machinery.
 
 The ordinary assessment can run in the current context. When the caller
 explicitly needs an independent gate, dispatch one reviewer in a separate
@@ -111,11 +105,12 @@ identifies it. Preserve stated sequencing and quantifiers: a completion audit
 occurs only after success; a maximum is an upper bound, not required work; a
 retry capped at two attempts stops after the first success.
 
-At a requirements-only handoff, compare every added capability, variation,
-lifecycle state, policy, and operator control with the originating objective
-and hard constraints. Name a smaller requirements set when speculative scope
-can disappear, and name acceptance tests for that set and every protected
-constraint. Do not choose files, APIs, dependencies, or architecture.
+When reviewing a requirements-only subject, compare every added capability,
+variation, lifecycle state, policy, and operator control with the originating
+objective and hard constraints. Name a smaller requirements set when
+speculative scope can disappear, and name acceptance tests for that set and
+every protected constraint. Do not choose files, APIs, dependencies, or
+architecture.
 
 ## Protect essential complexity
 

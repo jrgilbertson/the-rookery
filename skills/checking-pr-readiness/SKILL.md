@@ -137,9 +137,10 @@ empty discovery is reported as a named finding.
 Report each expected upstream step with a status word: code review, code
 simplification, solution simplicity, browser testing, design critique or
 audit, and learnings capture. Solution simplicity is the independent,
-approach-level result from `checking-simplicity`; it should normally have run at
-the plan-to-build boundary or before an in-build design choice. Its presence
-here is a late backstop, not the recommended first checkpoint. Browser testing
+approach-level result from `checking-simplicity`; it is primarily user-requested
+and may also run before ungrounded durable machinery enters implementation.
+Its presence here is a late backstop, not the recommended first checkpoint.
+Browser testing
 and design critique apply only to diffs that touch user-interface files; record
 how that classification was decided from the paths in the working surface, and
 surface an uncertain classification for the owner to decide rather than

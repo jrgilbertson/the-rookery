@@ -1,7 +1,7 @@
 ---
 module: skill-instruction-review
 date: 2026-07-16
-last_updated: 2026-08-28
+last_updated: 2026-08-31
 problem_type: best_practice
 component: documentation
 severity: medium
@@ -107,11 +107,12 @@ describes evidence comparison or decision support
 Some skills are selected by workflow state and subject, not only by requested
 deliverable. Test those descriptions as a three-sided routing contract:
 
-1. **Entry.** Name either the explicit assessment request or the workflow
-   transition that makes the skill relevant. `checking-simplicity` accepts a
-   named area, question, technical choice, plan, architecture, or current
-   implementation for an explicit safe-simplification assessment, plus its
-   completed-brief, plan-handoff, and concrete in-build branches
+1. **Entry.** Name either the explicit assessment request or the narrow
+   workflow transition that makes the skill relevant. `checking-simplicity`
+   accepts a named area, question, technical choice, plan, architecture, or
+   current implementation for an explicit safe-simplification assessment. Its
+   automatic branch requires a decision that is about to carry durable
+   machinery ungrounded in the stated need into implementation
    (`skills/checking-simplicity/SKILL.md:3`).
 2. **Exclusion.** Add directly confusable prompts that omit both an assessable
    subject and an eligible transition, or belong to adjacent workflows. Broad
@@ -119,8 +120,8 @@ deliverable. Test those descriptions as a three-sided routing contract:
    cleanup, or general brainstorming into this assessment
    (`tests/checking-simplicity/triggers.md`).
 3. **Exit.** Name the successful state that moves ownership onward. An unchanged
-   subject with a clean independent result and no owner question belongs to the
-   next planner or executor (`skills/checking-simplicity/SKILL.md:62-67`).
+   subject with a clean result and no owner question belongs to the
+   next planner or executor (`skills/checking-simplicity/SKILL.md:56-61`).
 
 Freeze the prior description, run the prior and revised metadata in separate
 fresh contexts, and keep the full positive and near-miss matrix on every run
@@ -228,10 +229,11 @@ already passed the assessment.
 **After.** The description accepts an explicit assessment of a named area,
 question, plan, technical choice, architecture, or current implementation with
 inspectable evidence; formal requirements and a separate artifact are optional.
-It retains the eligible workflow transitions, keeps general planning and
-brainstorming with their adjacent owners, and routes an unchanged clean result
-onward (`skills/checking-simplicity/SKILL.md:3`). The durable Trigger Contract
-tests both the broader entry and the adjacent-owner exclusions
+It retains one automatic backstop for durable machinery ungrounded in the
+stated need, keeps ordinary planning and brainstorming with their adjacent
+owners, and routes an unchanged clean result onward
+(`skills/checking-simplicity/SKILL.md:3`). The durable Trigger Contract tests
+both the broader entry and the adjacent-owner exclusions
 (`tests/checking-simplicity/triggers.md`).
 
 The frozen comparison moved from 20/22 to 22/22

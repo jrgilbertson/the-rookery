@@ -130,10 +130,12 @@ Create a persistent Worker worktree only for work intended to become one PR.
 The Worker owns planning, implementation, simplification, review, repository
 verification, its coherent commit, and its branch through at most one unmerged
 PR. Every unattended Worker invokes `checking-pr-readiness` on its exact head,
-then stops after its menu reply. The Orchestrator authorizes option 1 only
-when Approve was offered and recommended for that head. Named Worker-owned
-gaps from that brief all go back to the same Worker; owner-needed briefs stop
-without a PR
+then stops after its menu reply. On a distinct later turn, the Orchestrator
+authorizes the Worker to reply 1 only when Approve was offered and recommended
+for that exact head. The checking skill then performs its identity reread
+before the evidence enters the publication path. Named Worker-owned gaps from
+that brief all go back to the same Worker; owner-needed briefs stop without a
+PR
 (`skills/repo-gardener/references/reconciliation.md`,
 `skills/repo-gardener/SKILL.md`).
 

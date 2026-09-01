@@ -15,7 +15,8 @@ leaves host waiting, recovery, and progress mechanics to the host adapter.
 >
 > 1. A completion event follows a changed assigned slice. Fresh native reads
 >    show a new full head and diff, updated checks, current PR state, and
->    current issue authority. Those facts reveal one missing check command.
+>    current issue authority. Those facts reveal one missing check command
+>    that Worker A owns.
 > 2. A completion event follows repeated analysis. Fresh reads of A's branch,
 >    full head, diff, checks, PR, and authority are unchanged and expose no
 >    actionable gap.

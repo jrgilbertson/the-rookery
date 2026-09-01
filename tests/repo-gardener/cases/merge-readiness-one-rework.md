@@ -52,8 +52,9 @@ never selects Proceed to merge.
 - [ ] Scenario 6 stops and leaves merge to the owner. Proceed to merge is not
       selected.
 - [ ] Scenario 7 sends both named Worker-owned findings to that Worker,
-      publishes the repaired exact head under the existing lease, then runs
-      merge-readiness again. Nothing merges.
+      publishes the repaired exact head under the existing lease, then that
+      same Worker invokes merge-readiness again on the repaired exact head.
+      Nothing merges.
 - [ ] No scenario assigns finding identities, fingerprints, reviewer caps,
       JSON or envelope formats, schemas, counters, registries, state machines,
       progress records, or a parallel workflow ledger.

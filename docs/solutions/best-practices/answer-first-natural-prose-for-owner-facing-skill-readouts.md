@@ -63,9 +63,12 @@ When a skill briefs an owner at a decision point:
    re-grade so presentation contracts are not author-graded only.
 5. **Close coverage without a census.** After the reasons, say gather
    completed and every applicable check is verified, not applicable, or
-   named as next work. Incomplete gather cannot offer Approve or recommend
-   merge. A check named as next work does not by itself withhold Approve.
-   Do not print a status-word inventory or a sweep-class table.
+   recorded without a receipt. Incomplete gather cannot offer Approve or
+   recommend merge. A check named as next work does not by itself withhold
+   Approve. Spoken next work is owner work that still remains after this
+   decision. When the recommendation is approve, unrun code review or
+   simplify do not appear in that brief as leftover work. Do not print a
+   status-word inventory or a sweep-class table.
 6. **List only live options.** Print currently available numbered options
    after the brief. Name a check or path in the brief only when it drives
    the recommendation. A non-terminal Show the checks option lists each

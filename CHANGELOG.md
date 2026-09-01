@@ -26,7 +26,10 @@ looked" surface. GitHub Releases mirror its entries.
   untracked content for PR readiness.
   Matching identity compares stay silent; a moved head or working-tree
   content change rebuilds. A check named as next work, including code
-  review with no receipt, does not by itself withhold Approve. Captured as
+  review with no receipt, does not by itself withhold Approve. Spoken next
+  work is remaining owner work after the decision. On approve that is
+  opening the pull request and babysitting it, not unrun review or
+  simplify. Captured as
   `docs/solutions/conventions/do-not-split-human-and-agent-skill-products.md`.
 
 

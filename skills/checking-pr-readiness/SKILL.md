@@ -245,13 +245,16 @@ both copies together. -->
 - Clean green (approve and proceed, nothing material): final brief plus
   menu at most about 12 non-blank short lines.
 - A coverage close: gather completed, and every applicable check is
-  verified, not applicable, or named as next work. Incomplete gather cannot
+  verified, not applicable, or recorded without a receipt. Incomplete gather cannot
   offer Approve.
-- Name a check in the brief only when it drives the recommendation: a
-  finding, an incomplete check, or next work. Untracked or blocking paths
-  appear the same way. Paths touching authentication, authorization,
-  payments, data migrations, secrets handling, or a published API contract
-  stay visible when they have a finding or an incomplete check.
+- Name a check in the brief only when it drives the recommendation.
+  Spoken next work is owner work that still remains after this decision.
+  When the recommendation is approve, that remaining path is opening the
+  pull request and babysitting it. When the recommendation is approve, unrun code review or simplify do not appear in that brief as leftover work.
+  Untracked or blocking paths appear when they drive the call. Paths
+  touching authentication, authorization, payments, data migrations,
+  secrets handling, or a published API contract stay visible when they
+  have a finding or an incomplete check.
 
 #### Decision menu
 

@@ -11,11 +11,12 @@ headings without restructuring them.
 **Recommendation:** approve and proceed / request changes / stop and file
 follow-up — <one-sentence cause>.
 
-**Next work:** named gaps only, one line each (`<check>: not run — <what to
-do>`). Write `none` when gather found no material gap.
+**Next work:** remaining owner work after this decision. On approve, that
+is opening the pull request and babysitting it. Write `none` when nothing
+else remains. Do not list unrun code review or simplify as leftover work.
 
 **Coverage close:** gather completed. Every applicable check is verified, not
-applicable, or named above. Incomplete gather cannot recommend approve.
+applicable, or recorded without a receipt. Incomplete gather cannot recommend approve.
 
 **Intent:** <durable source and one-sentence outcome>. When the branch has no
 linked issue or ticket, brief, or durable repository plan: comparison

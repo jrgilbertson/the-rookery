@@ -474,6 +474,8 @@ def validate_contract_sources() -> None:
         "do not pick an option in the same turn",
         "a turn is one reply",
         "a check named as next work does not by itself withhold approve",
+        "spoken next work is owner work that still remains after this decision",
+        "when the recommendation is approve, unrun code review or simplify do not appear in that brief as leftover work",
         "show the checks",
         "option 5 is non-terminal",
         "mktemp -d",

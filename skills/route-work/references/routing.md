@@ -59,11 +59,9 @@ That stop contains no executable kickoff and links only to the public catalog.
   structured orchestration, ownership handoff, or placement.
 - When the remaining uncertainty belongs to the downstream work, route to its
   workflow instead of continuing the clarification.
-- Route a self-contained request without demanding an artifact. If a named or
-  required primary artifact is missing or unreadable, return
-  `Insufficient input`.
-- Return `Insufficient input` when the operator cannot supply a required
-  routing fact.
+- Route a self-contained request without demanding an artifact. Return
+  `Insufficient input` only when a named or required primary artifact is
+  missing or unreadable, or the operator cannot supply a required routing fact.
 - Never split, rank, or order coequal workstreams on the operator's behalf.
 
 ## Recommend a starting topology
@@ -228,7 +226,7 @@ executable kickoff.
 ````markdown
 ## Route
 Workflow: <one startup workflow>
-Setup: <natural sentences naming the topology, relevant model and effort, worktree placement, and structured orchestration only when used>
+Setup: <natural sentences naming the topology, relevant model and effort, worktree placement, and whether structured orchestration is used>
 
 ## Copy/paste kickoff
 ```text

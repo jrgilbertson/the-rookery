@@ -80,7 +80,10 @@ sense-and-recommend run.
       unselected justified unit remains a recommendation for owner attention.
 - [ ] Scenario 5 treats lease expiry as insufficient evidence, blocks a new
       opening and new Workers until the prior tracker effect is truthfully
-      reconciled, then starts any later run fresh with its own run ID and
+      reconciled, and uses the bounded, stable original-Orchestrator and
+      caller-or-automation identities persisted in that `run-opened` payload
+      for the host liveness lookup. It adds no state machine or per-Worker
+      tracker records, then starts any later run fresh with its own run ID and
       opening sequence.
 - [ ] Every scenario leaves already-open unrelated PRs in place, never invokes
       merge readiness in the ownerless scheduled run, never merges, never

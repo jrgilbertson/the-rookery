@@ -35,6 +35,11 @@ sequence. This liveness gate is additional to, not a replacement for or
 authorization from, applying-effects exclusive-writer or atomic-serialization
 requirements.
 
+Each `run-opened` payload persists bounded, stable original Orchestrator identity
+and caller or automation identity for the host liveness lookup. This remains
+host-neutral: use the existing payload and caller-owned recovery mechanisms,
+never a Repo Gardener state machine or per-Worker tracker records.
+
 Write and exactly read back `run-opened` before managed sensing. The
 caller-only branch performs only the required identifier census and nine-lane
 read-only survey. It writes no run records, executes no declared audits, and
@@ -146,7 +151,7 @@ the opening revision. A mismatch, unavailable or unknown refresh/read stops
 that publication action and preserves the authored work.
 Immediately before every ownerless publication push, including a repaired-head
 update, compare the local subject and OID to the subject and OID the checking
-skill re-read; for a coordinator-authorized repair, compare the current local
+skill re-read; for an Orchestrator-authorized repair, compare the current local
 subject and full head OID to its exact authorized repaired subject and OID.
 Never replace or recapture that authorized identity. Immediately before an
 ownerless first push, re-resolve the captured target/base ref and full base OID.
@@ -164,8 +169,8 @@ overlap only under the same-assignment binding above.
 After those gates pass, provider state is exhaustive: an absent provider ref
 may be atomically created at the exact authorized head only under an absent-ref
 lease, such as Git's `--force-with-lease=<ref>:` form or a proven equivalent;
-a provider ref already equal to that head needs no push; and only a
-coordinator-authorized repair of the same Worker's PR may atomically update its
+a provider ref already equal to that head needs no push; and only an
+Orchestrator-authorized repair of the same Worker's PR may atomically update its
 exact previously observed hosted head to the exact authorized repaired head,
 under a lease expecting that old OID. Refuse unavailable or unknown provider
 state, any other provider OID, or a lease failure. After a create or update,

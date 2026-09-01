@@ -34,15 +34,13 @@ looked" surface. GitHub Releases mirror its entries.
   requiring each Worker to retain base entries and add its own attributable
   entry; the Orchestrator never writes the shared ledger or resolves later
   native merge or rebase conflicts.
-- Repo Gardener now assesses PR readiness directly or through a report-only
-  merge-readiness review, then can return a current, actionable finding to the
-  same Worker without exposing a merge path.
-- Repo Gardener now rereads native state after Worker responses and either
-  gives a focused next instruction or explains why it stops.
-- Repo Gardener assesses clean exact commits directly by default. A compatible
-  readiness helper is optional and report-only; either path binds the same
-  session result to the exact head, base, inspected paths, checks, and
-  final cleanliness before an ownerless Worker may open one PR.
+- Repo Gardener now gives every unattended Worker the normal
+  `checking-pr-readiness` process: its menu reply ends that turn, and only the
+  same Worker's distinct later option-1 choice may continue after the skill's
+  identity reread. Missing or non-approving options, incomplete evidence,
+  unavailable checking, or moved identity preserve the authored commit without
+  publication. The scheduled ownerless run reports native PR, check, and review
+  facts for later owner merge review; it never invokes merge readiness or merges.
 - `personal-chief-of-staff` Source Access Audits are now a short paragraph:
   coverage first, then every relevant role and how the read finished, with a
   "so" clause only when a result limits a claim. No table and no HTML
@@ -50,8 +48,7 @@ looked" surface. GitHub Releases mirror its entries.
 - Interactive `checking-merge-readiness` option 1 (Proceed to merge) now
   kicks off one forge merge after the existing fingerprint and host-policy
   re-check, using the repository's default merge method. A cold "merge this
-  PR" activates the skill but still requires that menu choice. Unattended
-  `repo-gardener` runs still never select option 1 and still never merge.
+  PR" activates the skill but still requires that menu choice.
 - `managing-personal-crm` can recover one bounded public X read after a
   sandbox network or session-state denial only with fresh host approval and
   enforced read-only capabilities. It rejects private-derived query scope,
@@ -80,9 +77,11 @@ looked" surface. GitHub Releases mirror its entries.
   manual run uses one Orchestrator that may assign parallel Workers, each with
   one unmerged pull request, up to `maximum_workers`. Depth has no count.
   Opened and closed tracker comments are the production records; a hash-linked
-  register is not required. Unattended Workers open PRs only after a direct
-  assessment or optional report-only readiness helper returns `ready`.
-  In-run `checking-merge-readiness` is read-only feedback and never merges.
+  register is not required. An unattended Worker stops after the normal
+  `checking-pr-readiness` menu and may continue only on its distinct later
+  option-1 choice after the identity reread. The scheduled ownerless run reports
+  native PR, check, and review facts for later owner merge review and never
+  invokes merge readiness or merges.
 - `repo-gardener` now parses `.agents/repo-gardener.yaml` once with PyYAML
   SafeLoader and the existing field schema. Lane inventory uses that mapping
   instead of a second regex grammar. Tags, aliases, merge keys, nulls, and

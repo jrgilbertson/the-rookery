@@ -27,10 +27,12 @@ sense-and-recommend run.
 >    touches only billing copy. A PostHog product hypothesis is unsupported
 >    because the configured project identity does not match the repository's
 >    canonical production identity. Fresh native reads show no overlapping
->    work for (a) or (b). Each ownerless Worker reaches a clean exact commit
->    and receives a same-session readable `ready` result from
->    `checking-pr-readiness`. Native checks on any opened PR pass. The
->    Orchestrator worktree remains available for inspection.
+>    work for (a) or (b). Each ownerless Worker reaches a clean exact commit,
+>    invokes `checking-pr-readiness` normally, and stops on its menu reply.
+>    On a later distinct Worker turn, option 1 was offered with an
+>    approve-and-proceed recommendation and each matching identity reread
+>    succeeds. Native checks on any opened PR pass. The Orchestrator worktree
+>    remains available for inspection.
 > 2. `maximum_workers: 20`. Two otherwise justified units both touch the same
 >    adapter path slice (`apps/adapter/`). No other units exist. An unrelated
 >    already-open billing PR is present.
@@ -54,12 +56,13 @@ sense-and-recommend run.
       never comment on the tracker.
 - [ ] Scenario 1 reports all nine lanes and keeps census totals distinct from
       the two normalized candidates.
-- [ ] Scenario 1 assigns two parallel Workers after overlap is decided, and
-      each ownerless Worker may open one unmerged PR only after its
-      same-session readable readiness result and an immediate matching
-      local/provider-head and clean-surface re-read. The unrelated already-open
-      billing PR does not consume the Worker cap. The run does not invent work
-      to fill `maximum_workers`.
+- [ ] Scenario 1 assigns two parallel Workers after overlap is decided. Each
+      ownerless Worker stops on its PR-readiness menu, then may open one
+      unmerged PR only after its distinct later option-1 reply, matching
+      identity reread, and the immediate matching local/provider-head and
+      clean-surface re-read. The unrelated already-open billing PR does not
+      consume the Worker cap. The run does not invent work to fill
+      `maximum_workers`.
 - [ ] Scenario 1 does not assign a Worker to the protected-path unit; it
       reports that unit for owner attention. It stops the PostHog slice at
       project mismatch without treating blank data as zero activity or
@@ -79,7 +82,7 @@ sense-and-recommend run.
       opening and new Workers until the prior tracker effect is truthfully
       reconciled, then starts any later run fresh with its own run ID and
       opening sequence.
-- [ ] Every scenario leaves already-open unrelated PRs in place, never
-      merges, never creates a follow-up issue, and keeps generated reports
-      out of repository source. Worker facts are reported only after a
-      fresh native read.
+- [ ] Every scenario leaves already-open unrelated PRs in place, never invokes
+      merge readiness in the ownerless scheduled run, never merges, never
+      creates a follow-up issue, and keeps generated reports out of repository
+      source. Worker facts are reported only after a fresh native read.

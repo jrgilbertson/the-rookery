@@ -125,34 +125,30 @@ lanes, change the durable policy, or write tracker records.
 
 Each Worker owns planning, implementation, simplification, review, repository
 verification, its coherent commit, and its branch/PR. It reports each assigned
-gate as passed, failed, or unavailable. Assess the clean exact commit directly
-by default. When a compatible readiness helper is available and useful, use it
-only noninteractively for a report; it never adds execution or publication
-authority. Either path produces the same-session, human-readable `ready` or
-`action-required` result for the exact subject, full head OID, target/base ref
-and OID, inspected paths, relevant checks, and final cleanliness. The
-assessment uses the same assignment-owned exact argv list and cannot expand
-execution authority.
+gate as passed, failed, or unavailable. Every unattended Worker invokes
+`checking-pr-readiness` normally and stops after its brief and numbered menu.
+The activating utterance is never approval. Only on a distinct later turn may
+that same Worker choose option 1, and only if the menu offered option 1 and the
+recommendation was approve and proceed. The checking skill performs its
+identity reread before handing its evidence pack to the publication path.
 
-For ownerless publication, bind the exact subject, full head OID, target/base
-ref, and full base OID to one same-session readable `ready` or
-`action-required` assessment. `ready` must cover those exact identities,
-inspected paths, relevant checks, and final cleanliness. Every relevant check
-must have actually passed or be proven unnecessary; every other outcome is
-incomplete evidence and `action-required`. Preserve the authored commit, do
-not push or open a PR, name the blocking gap, and require a fresh exact
-assessment before any later publication attempt. With an owner, normal
-publication remains subject to the owner's interactive authorization.
+For ownerless publication, all other outcomes fail closed: absent option 1,
+non-approving recommendation, incomplete gather, unavailable checking skill,
+moved identity, or a later-session claim must preserve the authored commit
+without push or PR creation and name the blocking gap. With an owner, normal
+publication remains subject to the owner's interactive authorization. After the
+later approval, keep the exact head/base, assigned-path, cleanliness, policy,
+overlap, provider-read, lease, and one-unmerged-PR gates below; the checking
+skill does not replace them.
 Immediately before every push and every PR opening, refresh the durable policy
 file from the authoritative default branch and require its revision to match
 the opening revision. A mismatch, unavailable or unknown refresh/read stops
 that publication action and preserves the authored work.
-The assessment records `not verified` and `not run` rather than inventing
-success. Immediately before every ownerless publication push, including a
-repaired-head update, compare them to the captured subject and OID that
-received `ready`; for a coordinator-authorized repair, compare the current
-local subject and full head OID to its exact authorized repaired subject and
-OID. Never replace or recapture that authorized identity. Immediately before an
+Immediately before every ownerless publication push, including a repaired-head
+update, compare the local subject and OID to the subject and OID the checking
+skill re-read; for a coordinator-authorized repair, compare the current local
+subject and full head OID to its exact authorized repaired subject and OID.
+Never replace or recapture that authorized identity. Immediately before an
 ownerless first push, re-resolve the captured target/base ref and full base OID.
 The same target/base reread is required immediately before every repaired-head
 update. Reread `git status --porcelain=v1 --untracked-files=all` immediately
@@ -191,18 +187,18 @@ stop direction and explain why. Do not infer success from a missing or unknown
 provider fact. The host handles waiting, recovery, and process progress; Repo
 Gardener records only the current facts needed to report truthfully.
 
-After PR creation, report current checks and review as ready, blocked, or
-pending. If the run must close while they are pending, close partial and retain
-the Worker; never call it complete. For an actionable review finding, first
+After PR creation, report current native check and review facts. If required
+checks or review are pending when the run closes, close partial and retain the
+Worker; never call it complete. For an actionable review finding, first
 re-read local head, hosted PR head, and Worker authority. Forward it only when
 they still match the assessed exact head. The Worker holds its PR update,
 reruns assigned verification, and returns a repaired exact head for the same
 validation. Safety, authority, protected-path, exact-head, or unknown-provider
 facts stop only the affected action.
 
-Use `checking-merge-readiness` only in report-only form when a whole-change
-review helps. Its result informs the Worker and owner; it never merges or
-replaces the owner's later gate.
+The scheduled ownerless run never invokes `checking-merge-readiness`. It leaves
+that normal menu and its later owner decision to an owner interaction; Repo
+Gardener never merges.
 
 ## Close
 

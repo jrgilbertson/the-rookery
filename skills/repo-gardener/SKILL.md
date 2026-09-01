@@ -87,23 +87,30 @@ and requires a truthful read-only result when safe mutation is unavailable.
 
 Give each Worker the authoritative base, opening policy revision, repository
 identity, scope, protected paths, lane grant, assigned path slice, and exact
-caller-approved verification command argv list. A direct assessment or an
-optional report-only helper uses the same assignment-owned exact argv list and
-cannot add authority.
+caller-approved verification command argv list. Every unattended Worker invokes
+`checking-pr-readiness` normally and stops when that skill writes its brief and
+numbered menu. On a distinct later turn, that same Worker may choose option 1
+only when the menu actually offered it and the recommendation was approve and
+proceed.
+The checking skill then performs its identity reread and hands its evidence pack
+to this finishing path.
 
-For ownerless publication, only a same-session readable `ready` assessment for
-the exact subject, full head OID, target/base ref, and full base OID may open
-one PR. Otherwise preserve the authored commit, do not push or open a PR, name
-the blocking gap, and require a fresh exact assessment before any later
-publication attempt. Immediately before an ownerless first push, compare them
-to the captured subject and OID that received `ready`;
-never replace or recapture that authorized identity. Immediately before an
-ownerless first push, re-resolve the captured target/base ref and full base
-OID. Immediately before PR-open, re-resolve the captured target/base ref and
-full base OID. Publish only the assessed exact head against the assessed exact
-base; drift, a conflicting path or branch, missing authority, unavailable
-state, or an unknown provider effect stops that Worker. Never merge, release,
-deploy, or create unapproved follow-up issues.
+All other outcomes, including an absent option 1, a non-approving
+recommendation, incomplete gather, unavailable checking skill, moved identity,
+or a claim from a later session, preserve the authored commit without push or
+PR creation and name the blocking gap. After that later approval, retain every
+durable-policy, exact head/base, assigned-path, cleanliness, overlap,
+provider-read, lease, and at-most-one-unmerged-PR gate. Immediately before an
+ownerless first push, compare the local subject and OID to the subject and OID
+the checking skill re-read; never replace or recapture that identity. Immediately
+before an ownerless first push, re-resolve the captured target/base ref and full
+base OID. Immediately before PR-open, re-resolve the captured target/base ref
+and full base OID. Publish only the approved exact head against the approved
+exact base; drift, a conflicting path or branch, missing authority, unavailable
+state, or an unknown provider effect stops that Worker. The
+scheduled ownerless run never invokes `checking-merge-readiness`: it reports
+native PR, check, and review facts for later owner interaction and never merges,
+releases, deploys, or creates unapproved follow-up issues.
 
 ## Close once
 

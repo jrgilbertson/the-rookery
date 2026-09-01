@@ -2,8 +2,8 @@
 
 Provenance: the portable mutation interface requires an isolated Worker
 worktree from the authoritative base and repository-native setup only when the
-host provides it. Setup gates repository work, and clean exact commits are
-assessed directly unless a compatible report-only helper is useful.
+host provides it. Setup gates repository work; PR readiness uses its normal
+brief, numbered options, and later reply.
 
 ## Prompt
 
@@ -32,12 +32,8 @@ assessed directly unless a compatible report-only helper is useful.
 > 5. Both Workers meet the interface, complete one coherent commit, and each
 >    can own at most one unmerged PR. A later provider read for A's PR is
 >    unknown while B's PR facts remain current.
-> 6. Both Workers have clean exact commits. No compatible readiness helper is
->    available for A, so A directly reports a same-session `ready` assessment
->    for its exact subject, full head, target/base ref and OID, inspected paths,
->    relevant checks, and final cleanliness. A compatible helper is useful for
->    B and returns a noninteractive report-only `action-required` result bound
->    to those same facts.
+> 6. Both Workers have clean exact commits. A invokes `checking-pr-readiness`
+>    normally and stops at its menu. B's checker is unavailable.
 
 ## Expected behavior
 
@@ -61,10 +57,10 @@ assessed directly unless a compatible report-only helper is useful.
 - [ ] In subcase 5, each Worker retains ownership of its own branch and one
       unmerged PR. A's unknown provider fact stops only A's affected action;
       it is never reconciled as success and does not alter B's current facts.
-- [ ] In subcase 6, an absent readiness helper does not block A's direct
-      assessment. The optional helper is report-only for B, and either result
-      binds the same-session exact subject, full head, target/base ref and OID,
-      inspected paths, relevant checks, and final cleanliness.
+- [ ] In subcase 6, A cannot publish in its menu turn and may continue only on
+      a distinct later option-1 reply after the checking skill's identity
+      reread. B preserves its commit without a fallback and names unavailable
+      checking as the blocking gap.
 - [ ] No subcase creates host adapters, setup commands, wait or recovery
       choreography, progress state, registries, schemas, receipts, or a
       second Git-state system.

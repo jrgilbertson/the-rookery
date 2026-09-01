@@ -129,20 +129,21 @@ Never fall back to the bundled starter. It is fail-closed:
 Create a persistent Worker worktree only for work intended to become one PR.
 The Worker owns planning, implementation, simplification, review, repository
 verification, its coherent commit, and its branch through at most one unmerged
-PR. Direct assessment of the exact commit is the default. When useful, a
-compatible readiness helper is noninteractive and report-only; it adds no
-authority. Ownerless publication requires a same-session exact `ready`
-assessment; otherwise preserve the commit and do not push or open a PR
-(`skills/repo-gardener/references/reconciliation.md:124-145`,
-`skills/repo-gardener/SKILL.md:82-106`).
+PR. Every unattended Worker invokes `checking-pr-readiness` normally, then
+stops after its menu reply. Only the same Worker's distinct later option-1
+choice, when that option was offered with an approve-and-proceed recommendation,
+continues after the checking skill's identity reread. Any other result preserves
+the commit without push or PR creation
+(`skills/repo-gardener/references/reconciliation.md:124-158`,
+`skills/repo-gardener/SKILL.md:82-112`).
 
 The Orchestrator owns breadth, depth, selection, tracker writes, supervision,
-and the morning report. After PR creation, it reports native checks and review
-as `ready`, `blocked`, or `pending`; closing while they are pending is
-`partial`. `checking-merge-readiness` is optional, report-only review when
-useful, and never replaces the owner's later merge gate
-(`skills/repo-gardener/references/reconciliation.md:185-205`,
-`skills/repo-gardener/references/register-and-report.md:74-98`).
+and the morning report. After PR creation, it reports native PR, check, and
+review facts; required pending work makes closure partial. The ownerless
+scheduled run never invokes `checking-merge-readiness`, leaving its normal
+menu to later owner interaction
+(`skills/repo-gardener/references/reconciliation.md:185-207`,
+`skills/repo-gardener/references/register-and-report.md:74-95`).
 
 Freshly read the native repository, PR number, branch, head SHA, state,
 checks, and review status before reporting the Worker. Do not mirror that

@@ -90,7 +90,7 @@ identity, scope, protected paths, lane grant, assigned path slice, and exact
 caller-approved verification command argv list. Every unattended Worker invokes
 `checking-pr-readiness` normally on the exact head in its worktree and stops
 when that skill writes its brief and numbered menu. After a Worker PR exists, the scheduled ownerless run has that Worker
-invoke `checking-merge-readiness` on that PR and stops at the numbered brief. The Orchestrator reads each brief. On a distinct later turn,
+invoke `checking-merge-readiness` on that PR and stops after its brief and numbered menu. The Orchestrator reads each brief. On a distinct later turn,
 it authorizes that Worker to reply 1 only when the menu offered option 1 and
 the recommendation was approve and proceed for that same exact head. The
 Worker never chooses option 1 on its own. The Orchestrator never authorizes

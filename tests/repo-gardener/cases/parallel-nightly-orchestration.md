@@ -30,7 +30,8 @@ sense-and-recommend run.
 >    work for (a) or (b). Each ownerless Worker reaches a clean exact commit,
 >    invokes `checking-pr-readiness` normally, and stops on its menu reply.
 >    Each brief offered option 1 and recommended approve and proceed for that
->    exact head. Matching identity rereads succeed. Native checks on any
+>    exact head. On a distinct later turn the Orchestrator authorizes reply 1.
+>    Matching identity rereads succeed. Native checks on any
 >    opened PR pass. The Orchestrator worktree remains available for
 >    inspection.
 > 2. `maximum_workers: 20`. Two otherwise justified units both touch the same

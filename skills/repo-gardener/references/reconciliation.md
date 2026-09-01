@@ -141,7 +141,7 @@ verification, its coherent commit, and its branch/PR. It reports each assigned
 gate as pass, failure, or unavailable. Every unattended Worker invokes
 `checking-pr-readiness` normally on the exact head in its worktree and stops
 after its brief and numbered menu. After a Worker PR exists, the scheduled ownerless run has that Worker
-invoke `checking-merge-readiness` on that PR and stops at the numbered brief.
+invoke `checking-merge-readiness` on that PR and stops after its brief and numbered menu.
 The activating utterance is never approval. On a distinct later turn, the
 Orchestrator authorizes that Worker to reply 1 only when the menu offered
 option 1 and the recommendation was approve and proceed for that same exact

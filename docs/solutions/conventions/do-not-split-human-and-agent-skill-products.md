@@ -46,12 +46,11 @@ expected a token hung on a menu. A caller that expected a menu treated a token
 as approval. Maintainers then had two APIs to keep in lockstep, plus special
 cases for unattended ready bars that the interactive path did not use.
 
-This work is pending on branch `jrgilbertson/Checking-feels-overcomplicated`.
-It is unmerged. The Unreleased changelog already names the contract: one
-process, wait for a numbered reply from whoever is talking, later `1` is
-Approve or Proceed, and the skill does not pick in the same turn.
+The Unreleased changelog names the contract: one process, wait for a numbered
+reply from whoever is talking, later `1` is Approve or Proceed, and the skill
+does not pick in the same turn.
 
-The current skills encode that one process. PR readiness briefs, then waits.
+The skills encode that one process. PR readiness briefs, then waits.
 Merge readiness does the same. Identity bind lives in
 `identity-and-argv.md`. The skill never self-selects merge.
 
@@ -138,18 +137,16 @@ that identity immediately before option 1. The fail-closed case expects the
 one process: brief each variant with numbered live options and wait. The
 skill does not name a forge command until a later reply of 1.
 
-**Caller leftover, not a second skill product.** An ownerless gardener
-Worker still asks installed `checking-pr-readiness` for a same-session
-`ready` or `action-required` result, and still tells merge readiness to run
-in a report-only agent form with no menu. Those lines are caller policy on
-this pending branch. They are not a license to keep dual modes in the
-checking skills. Follow up the gardener so it consumes the one process. Do
-not put the token API back into the gate.
+**Caller adaptation, not a second skill product.** A caller that needs to
+operate unattended still consumes the normal menu and wait. Any rule for
+whether that caller may choose a later option belongs to the caller. It is
+not a license to keep dual modes in the checking skills or put a token API
+back into the gate.
 
 ## Related
 
 - [Answer-first natural prose for owner-facing skill readouts](../best-practices/answer-first-natural-prose-for-owner-facing-skill-readouts.md) — pyramid print shape, not the end-of-run API
 - [Put the test seam in the environment, not in the shipped skill](keep-the-test-seam-out-of-the-shipped-skill.md) — numbered option 1 is a later write, not a second product
 - Skills: `skills/checking-pr-readiness/SKILL.md`, `skills/checking-merge-readiness/SKILL.md`
-- Caller leftover: `skills/repo-gardener/SKILL.md` (ownerless `ready` / `action-required` and report-only merge form)
+- Caller adapter owner: `skills/repo-gardener/SKILL.md`
 - Related issue: [keep helper skills from presenting owner menus in unattended Workers](https://github.com/jrgilbertson/the-rookery/issues/88)

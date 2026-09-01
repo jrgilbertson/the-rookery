@@ -88,6 +88,10 @@ still has the exact repository identity, allowed path scope, positive
 stops that unit; an honest read-only result is successful operation.
 Selection and dispatch for the run never exceed the opening policy's
 `maximum_workers` cap; unrelated existing PRs do not consume that cap.
+Immediately before every Worker dispatch, refresh the durable policy from the
+authoritative default branch and require its exact opening revision. An
+unavailable, unknown, or changed policy stops that dispatch and later source
+mutation.
 
 `shared_ledger_paths` is an assignment-only exception for the same originally
 approved siblings, and only when the opening policy and repository proof
@@ -149,11 +153,10 @@ Immediately before every push and every PR opening, refresh the durable policy
 file from the authoritative default branch and require its revision to match
 the opening revision. A mismatch, unavailable or unknown refresh/read stops
 that publication action and preserves the authored work.
-Immediately before every ownerless publication push, including a repaired-head
-update, compare the local subject and OID to the subject and OID the checking
-skill re-read; for an Orchestrator-authorized repair, compare the current local
-subject and full head OID to its exact authorized repaired subject and OID.
-Never replace or recapture that authorized identity. Immediately before an
+An ownerless first publication push must match the subject and OID the checking
+skill re-read; a repaired-head update must instead match only its exact
+Orchestrator-authorized repaired subject and OID. Never replace or recapture
+that authorized identity. Immediately before an
 ownerless first push, re-resolve the captured target/base ref and full base OID.
 The same target/base reread is required immediately before every repaired-head
 update. Reread `git status --porcelain=v1 --untracked-files=all` immediately

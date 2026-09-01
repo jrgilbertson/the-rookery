@@ -18,7 +18,7 @@ an owner: gather, brief, numbered live options, then wait.
 >    1. The menu reply ends the turn.
 > 2. On the same Worker's distinct later turn, it replies `1`. The checking
 >    skill rereads its identity and hands its evidence pack to the existing
->    publication path. The exact subject, full head, target/base ref and full
+>    first-publication path. The exact subject, full head, target/base ref and full
 >    base OID still match. Assigned paths, final cleanliness, policy revision,
 >    overlap, provider reads, an absent-ref lease, and the one-unmerged-PR limit
 >    all pass before push and PR opening.
@@ -30,9 +30,10 @@ an owner: gather, brief, numbered live options, then wait.
 >    before the later option-1 turn.
 > 5. The Worker receives an actionable native PR review finding, makes one
 >    focused repair on its own PR, reruns its assigned verification, and returns
->    `b2`. The local and hosted heads, assigned paths, policy, and provider
->    lease are reread before the existing-PR update; a changed head or provider
->    fact stops only that update.
+>    `b2`. Its current subject and full head OID exactly match the
+>    Orchestrator-authorized repaired subject and OID. The local and hosted
+>    heads, assigned paths, policy, and provider lease are reread before the
+>    existing-PR update; a changed head or provider fact stops only that update.
 > 6. An owner starts the same normal checking conversation for the clean exact
 >    commit. The activating request is not approval. After the menu offers
 >    option 1 with an approve-and-proceed recommendation, the owner's distinct
@@ -51,8 +52,10 @@ an owner: gather, brief, numbered live options, then wait.
 - [ ] Scenario 4 preserves the authored commit without a direct-assessment or
       token fallback. It names unavailable checking, the later-session claim,
       or the moved identity and requires a fresh normal checking conversation.
-- [ ] Scenario 5 preserves same-Worker repair and exact-head drift protections;
-      it never treats a newer head or unknown provider effect as authorized.
+- [ ] Scenario 5 permits the repaired-head update only for the exact
+      Orchestrator-authorized repaired subject and OID, retaining the existing
+      provider old-OID lease and all other gates; it never treats a newer head
+      or unknown provider effect as authorized.
 - [ ] Scenario 6 demonstrates the same two-turn contract for an attended
       interaction: the activating utterance is not approval and only the later
       option-1 reply can proceed after the identity reread.

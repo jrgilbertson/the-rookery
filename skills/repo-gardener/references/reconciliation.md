@@ -21,6 +21,20 @@ does not relitigate unchanged grants or erase already-authored work. Continue
 safe sensing and make a truthful close only when the remaining authority still
 permits it.
 
+Before another run opens, reconcile any complete tracker `run-opened` without
+its matching `run-closed`. For the exact original Orchestrator and its
+Workers, require current caller or host liveness, or proven termination; an
+expired lease alone proves neither termination nor loss of mutation ability.
+Unknown, unavailable, or still-live state blocks a new opening and new
+Workers. Recovery may only verify or finish the original uncertain tracker
+effect and prepare one truthful close from retained verifiable facts, recording
+unknown dispositions. It never resumes or replays stale declared audits or
+Worker mutation, and it preserves pending worktrees and authored state for
+inspection. Every later run starts fresh with its own run ID and opening
+sequence. This liveness gate is additional to, not a replacement for or
+authorization from, applying-effects exclusive-writer or atomic-serialization
+requirements.
+
 Write and exactly read back `run-opened` before managed sensing. The
 caller-only branch performs only the required identifier census and nine-lane
 read-only survey. It writes no run records, executes no declared audits, and

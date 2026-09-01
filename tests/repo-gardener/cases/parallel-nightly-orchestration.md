@@ -38,6 +38,10 @@ sense-and-recommend run.
 >    scenario 1 exist. The file is otherwise valid and names the tracker.
 > 4. `maximum_workers: 1`. The same two non-overlapping justified units from
 >    scenario 1 exist. The file is otherwise valid and names the tracker.
+> 5. Before a new run opens, the tracker has a complete prior `run-opened` but
+>    no matching `run-closed`; its lease expired, while the exact original
+>    Orchestrator and Worker liveness is unknown. Their pending worktrees and
+>    authored state remain available for inspection.
 >
 > Produce the Orchestrator's run actions and morning-report outline for each
 > scenario.
@@ -71,6 +75,10 @@ sense-and-recommend run.
       comments when the file names the tracker.
 - [ ] Scenario 4 selects and dispatches no more than one Worker; the
       unselected justified unit remains a recommendation for owner attention.
+- [ ] Scenario 5 treats lease expiry as insufficient evidence, blocks a new
+      opening and new Workers until the prior tracker effect is truthfully
+      reconciled, then starts any later run fresh with its own run ID and
+      opening sequence.
 - [ ] Every scenario leaves already-open unrelated PRs in place, never
       merges, never creates a follow-up issue, and keeps generated reports
       out of repository source. Worker facts are reported only after a

@@ -17,6 +17,8 @@ root_cause: inadequate_documentation
 resolution_type: documentation_update
 related_components:
   - testing_framework
+  - checking-pr-readiness
+last_updated: 2026-08-31
 tags:
   - skill-authoring
   - owner-facing-readouts
@@ -44,7 +46,8 @@ and re-ran the skilled battery with a blind re-grade.
 When a skill briefs an owner at a decision point:
 
 1. **Pyramid as logic, not labels.** Lead with the recommendation. Follow
-   with the reasons that support it in continuous sentences. Put evidence
+   with the reasons that support it in continuous sentences. Reasons are
+   about the change under review, not how the skill runs. Put evidence
    only under concerns that drove the call. Do not print section headers
    such as Themes, Intent, Risk, or Drivers.
 2. **Name next work, not idle states.** Prefer **debug** (investigate or fix
@@ -59,10 +62,30 @@ When a skill briefs an owner at a decision point:
 4. **Prove with the production path.** Update battery checklists for the
    new shape, run skilled digests through the real fetch path, then blind
    re-grade so presentation contracts are not author-graded only.
+5. **Close coverage without a census.** After the reasons, say gather
+   completed and every applicable check is verified, not applicable, or
+   recorded without a receipt. Incomplete gather cannot offer Approve or
+   recommend merge. A check named as next work does not by itself withhold
+   Approve. Spoken next work is owner work that still remains after this
+   decision. When the recommendation is approve, unrun code review or
+   simplify do not appear in that brief as leftover work. Do not print a
+   status-word inventory or a sweep-class table.
+6. **List only live options.** Print currently available options. Keep
+   each option's number. Omit unavailable options rather than renumbering.
+   Option 1 is Approve or Proceed only when that option is offered. Name a
+   check or path in the brief only when it drives the recommendation. Show
+   the checks lists each applicable check and its status from the captured
+   gather, then the brief and menu again. Omit it when there is no captured
+   gather. On approve, do not add one menu line per unrun step.
+
+The end-of-run API (menu, wait, later `1`) is a separate contract. See
+[Do not split human and agent skill products](../conventions/do-not-split-human-and-agent-skill-products.md).
 
 ## Related
 
 - Implementation: [pull request #33](https://github.com/jrgilbertson/the-rookery/pull/33)
-- Skill: `skills/checking-merge-readiness/SKILL.md` step 5
+- Skills: `skills/checking-merge-readiness/SKILL.md` step 6,
+  `skills/checking-pr-readiness/SKILL.md` step 7
+- [Do not split human and agent skill products](../conventions/do-not-split-human-and-agent-skill-products.md) — end-of-run API (menu and wait), not pyramid shape
 - Battery log: `tests/checking-merge-readiness/log.md` (conciseness and
   blind re-grade sections)

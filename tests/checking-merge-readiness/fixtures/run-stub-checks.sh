@@ -14,7 +14,6 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GH="$HERE/bin/gh"
 PRS="$HERE/prs"
 ROOT="$(cd "$HERE/../../.." && pwd)"
-AGENT_MODE="$ROOT/skills/checking-merge-readiness/references/agent-mode.md"
 PASS=0
 FAIL=0
 AUTHFAIL=
@@ -107,32 +106,55 @@ bind_spec() {
   } < <(specimen_pr_bind "$1")
 }
 
-echo "== 0. report-only agent mode =="
-if grep -Fq 'Run the ordinary read-only assessment through step 6.' "$AGENT_MODE" \
-  && grep -Fq 'full current head OID' "$AGENT_MODE" \
-  && grep -Fq 'human-readable findings' "$AGENT_MODE" \
-  && python3 - "$AGENT_MODE" <<'PY'
-import re
-import sys
-
-text = " ".join(open(sys.argv[1]).read().split())
-raise SystemExit(not re.search(
-    r"step 4.*(?:confirmation|attestation).*do not prompt.*unverifiable.*debug cap.*step 6",
-    text,
-    re.IGNORECASE,
-))
-PY
+echo "== 0. no separate agent form =="
+SKILL="$ROOT/skills/checking-merge-readiness/SKILL.md"
+if grep -Fq 'wait for a numbered reply' "$SKILL" \
+  && grep -Fq 'Do not pick an option in the same turn' "$SKILL" \
+  && grep -Fq 'activating utterance never authorizes merge' "$SKILL" \
+  && grep -Fq 'On a later reply of 1' "$SKILL"
 then
-  pass "agent report: prose recommendation and exact head"
+  pass "one process: wait for a numbered reply, never self-select"
 else
-  fail "agent report: prose recommendation and exact head" "report-only contract is incomplete"
+  fail "one process: wait for a numbered reply, never self-select" "wait/self-select contract is incomplete"
 fi
-if ! grep -Eq 'gh[[:space:]]+pr[[:space:]]+merge|merge-execution\\.md|Proceed to merge' "$AGENT_MODE"; then
-  pass "agent report: merge invocation structurally absent"
+if grep -Fq 'Show the checks' "$SKILL" \
+  && grep -Fq 'Show the checks is non-terminal' "$SKILL"
+then
+  pass "show the checks is a non-terminal option"
 else
-  fail "agent report: merge invocation structurally absent" "agent report contains a merge path"
+  fail "show the checks is a non-terminal option" "Show the checks is non-terminal is missing"
 fi
-
+this_turn=$(python3 -c '
+from pathlib import Path
+import re, sys
+text = Path(sys.argv[1]).read_text()
+i = text.find("Completion of this turn:")
+if i < 0:
+    sys.exit(2)
+rest = text[i:]
+m = re.search(r"\n### ", rest)
+sys.stdout.write(rest if m is None else rest[: m.start()])
+' "$SKILL")
+extract_status=$?
+if [ "$extract_status" -ne 0 ]; then
+  fail "this-turn completion excludes merge write" "Completion of this turn block is missing"
+elif printf '%s' "$this_turn" | grep -Eq 'gh[[:space:]]+pr[[:space:]]+merge|kicked off'; then
+  fail "this-turn completion excludes merge write" "Completion of this turn still mentions merge kickoff"
+else
+  pass "this-turn completion excludes merge write"
+fi
+later=$(python3 -c '
+from pathlib import Path
+import sys
+text = Path(sys.argv[1]).read_text()
+i = text.find("### On a later reply of 1")
+sys.stdout.write(text[i:] if i >= 0 else "")
+' "$SKILL")
+if printf '%s' "$later" | grep -Eq 'gh[[:space:]]+pr[[:space:]]+merge'; then
+  pass "later option 1 still names merge kickoff"
+else
+  fail "later option 1 still names merge kickoff" "On a later reply of 1 does not mention gh pr merge"
+fi
 echo "== A. serve real fixture content =="
 bind_spec specimen-a
 json_is "specimen-a: four resolved threads" \

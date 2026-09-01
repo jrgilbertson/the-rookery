@@ -10,8 +10,10 @@
 # submissions, review threads with all nested comments, top-level conversation
 # comments, and description edit history — plus PR identity fields, per-surface
 # counts, and a `fingerprint` block. Every connection is paginated to observed
-# exhaustion (hasNextPage false) inside this script, so the conversation
-# receives one payload instead of one raw page per call, and only floor fields.
+# exhaustion (hasNextPage false) inside this script, so the caller captures
+# one payload on stdout instead of one raw page per call, and only floor
+# fields. The skill redirects that stdout into an owner-only temp directory
+# and does not echo it into chat.
 #
 # --fingerprint prints only the identity and fingerprint block: each node's
 # stable id plus an opaque sha-256 digest over its floor fields. No PR body

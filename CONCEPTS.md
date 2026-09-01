@@ -136,9 +136,10 @@ existing one.
 
 ### Evidence Pack
 
-A record added to the pull request description after the owner approves a
-readiness review. It summarizes plan fit, checks and evidence, unresolved gaps,
-review findings, and any learning worth keeping.
+A record added to the pull request description after option 1 approves a
+readiness review. It is an actionable brief: the recommendation, material next
+work, a coverage close, and the learning signal, not a census of every sweep
+class or inspected path.
 
 The review assembles it in conversation. It becomes durable only when the
 finishing workflow adds it to the pull request description.
@@ -149,11 +150,12 @@ The pre-merge review produced by `checking-merge-readiness`. It checks whether
 review is complete and merge rules pass, then examines the full pull request
 for intent drift, Risk Drivers, redesign pressure, and follow-up debt.
 
-It recommends merge, debug, or do not merge. Gather, grade, and readout stay
-read-only. On an interactive owner choice of Proceed to merge after a matching
-fingerprint re-check, it kicks off the forge merge. It still does not mutate
-the tracker. Unattended gardening runs never select that option and never
-merge.
+It recommends merge, debug, or do not merge, then waits for a numbered reply.
+Gather, grade, and readout stay read-only. Option 1 is Proceed to merge.
+Before merging, it confirms the pull request has not moved, then kicks off
+the forge merge. A match is silent; a mismatch names what moved and rebuilds
+rather than merging. It still does not mutate the tracker. The skill does
+not pick option 1 in the same turn that wrote the menu.
 
 ### Risk Driver
 

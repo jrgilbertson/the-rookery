@@ -5,12 +5,40 @@ stopped instead of opening a pull request.
 
 ## Protocol
 
-Matched pair per tests/README.md. The skilled prompt installs
-`checking-pr-readiness` from current source. Do not reply `1` yourself.
-After the menu, wait for a later user turn. Owner `1` is a second user
-turn. The activating prompt never includes it.
+Matched pair per tests/README.md. Do not reply `1` yourself. After the
+menu, wait for a later user turn. Owner `1` is a second user turn. The
+activating prompt never includes it.
 
-A blind independent grader sees one run's output and this checklist.
+A blind independent grader sees one run's output, this checklist, and the
+publisher log when present.
+
+## Shared setup
+
+`<repo-root>` is the absolute path of this repository checkout.
+
+**Every skilled scenario** installs `checking-pr-readiness` from current
+source:
+
+```text
+<repo-root>/skills/checking-pr-readiness/SKILL.md
+```
+
+**AE1 only.** Also install the fixture publisher and set its log. Do not
+rely on an ambient `ce-commit-push-pr` or any other live publisher.
+
+```text
+export FIXTURE_PR_PUBLISHER_LOG=<temp-file>
+```
+
+Skilled prompt addition for AE1:
+
+> Also install and follow the skill at
+> `<repo-root>/tests/checking-pr-readiness/fixtures/pr-publisher/SKILL.md`.
+> Do not call a live GitHub CLI, GitHub MCP tools, or other forge
+> connectors.
+
+**AE2, AE3, and AE4.** Do not install that publisher. AE2 is the missing
+finishing path.
 
 ## Scenarios
 
@@ -19,16 +47,16 @@ for a PR."
 
 ### 1. Live Approve continues (AE1)
 
-An owner publisher is present. Gather is complete and the menu offered
-Approve.
+The fixture publisher is installed as above. Gather is complete and the
+menu offered Approve.
 
 - [ ] After the owner replies 1, identity re-read is silent when unchanged.
 - [ ] The spoken reply is not an evidence-pack wait or a second numbered
       Approve.
-- [ ] The same conversation continues into that publisher. This skill does
-      not itself stage, commit, push, or open a pull request.
-- [ ] The publisher receives the filled pack as unpublished pull-request-body
-      input. The pull request that opens is the identity option 1 accepted.
+- [ ] The same conversation continues into the fixture publisher. This
+      skill does not itself stage, commit, push, or open a pull request.
+- [ ] The publisher log records `pack_received` true and the identity
+      option 1 accepted. `opened` is false. No live forge write.
 
 ### 2. Missing finishing names once (AE2)
 

@@ -140,22 +140,23 @@ Each Worker owns planning, implementation, simplification, review, repository
 verification, its coherent commit, and its branch/PR. It reports each assigned
 gate as pass, failure, or unavailable. Every unattended Worker invokes
 `checking-pr-readiness` normally on the exact head in its worktree and stops
-after its brief and numbered menu. The activating utterance is never approval.
-On a distinct later turn, the Orchestrator authorizes that Worker to reply 1
-only when the menu offered option 1 and the recommendation was approve and
-proceed for that same exact head. The Worker never chooses option 1 on its
-own. The checking skill performs its identity reread before handing its
-evidence pack to the publication path.
+after its brief and numbered menu. After a Worker PR exists, the scheduled ownerless run has that Worker
+invoke `checking-merge-readiness` on that PR and stops at the numbered brief.
+The activating utterance is never approval. On a distinct later turn, the
+Orchestrator authorizes that Worker to reply 1 only when the menu offered
+option 1 and the recommendation was approve and proceed for that same exact
+head. The Worker never chooses option 1 on its own. The Orchestrator never
+authorizes Proceed to merge. The checking skill performs its identity reread
+before handing its evidence pack to the publication path.
 
-When that brief withholds Approve or does not recommend approve, and it names
-Worker-owned gaps, the Orchestrator sends every named Worker-owned gap from
-that brief to the same Worker. The Worker produces a new exact head and runs
-PR-readiness again. There is no one-repair quota. Stop that loop without a PR
-when the brief needs owner attestation, a product decision, or incomplete
-gather that is not a Worker-owned gap. For ownerless publication, an
-unavailable checking skill, moved identity, or a later-session claim must
-preserve the authored commit without push or PR creation and name the
-blocking gap.
+When a brief names Worker-owned gaps, the Orchestrator sends every named
+Worker-owned gap from that brief to the same Worker. After a repair of an
+existing PR, publish the repaired exact head under the existing lease before
+the next helper gather. Then re-run that helper on the new exact head. Stop
+when the remaining work needs the owner or a further turn cannot help. For
+ownerless publication, an unavailable checking skill, moved identity, or a
+later-session claim must preserve the authored commit without push or PR
+creation and name the blocking gap.
 Direct assessment of native facts is not a publish path. With an owner, normal
 publication remains subject to the owner's interactive authorization. After
 Orchestrator authorization, keep the exact head/base, assigned-path,
@@ -210,22 +211,10 @@ Gardener records only the current facts needed to report truthfully.
 
 After PR creation, report current native check and review facts. If required
 checks or review are pending when the run closes, close partial and retain the
-Worker; never call it complete. For an actionable review finding, first
-re-read local head, hosted PR head, and Worker authority. Forward it only when
-they still match the assessed exact head. The Worker holds its PR update,
-reruns assigned verification, and returns a repaired exact head for the same
-validation. Safety, authority, protected-path, exact-head, or unknown-provider
-facts stop only the affected action.
-
-After a Worker PR exists, the scheduled ownerless run has that Worker invoke
-`checking-merge-readiness` on that PR and stops at the numbered brief. The
-Orchestrator never authorizes Proceed to merge. If the brief recommends merge,
-stop and leave merge to the owner. If it recommends debug and names
-Worker-owned findings, send every named Worker-owned finding to the same
-Worker, publish the repaired exact head under the existing lease, then run
-merge-readiness again. Stop when that brief needs the owner, including empty
-review the Worker cannot close, or when a further Worker turn cannot improve
-it. Repo Gardener never merges.
+Worker; never call it complete. Forward a named Worker-owned gap only when
+local head, hosted PR head, and Worker authority still match the assessed
+exact head. Safety, authority, protected-path, exact-head, or unknown-provider
+facts stop only the affected action. Repo Gardener never merges.
 
 ## Close
 

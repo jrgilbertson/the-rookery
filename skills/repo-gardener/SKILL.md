@@ -89,22 +89,21 @@ Give each Worker the authoritative base, opening policy revision, repository
 identity, scope, protected paths, lane grant, assigned path slice, and exact
 caller-approved verification command argv list. Every unattended Worker invokes
 `checking-pr-readiness` normally on the exact head in its worktree and stops
-when that skill writes its brief and numbered menu. The Orchestrator reads that
-brief. On a distinct later turn, it authorizes that Worker to reply 1 only when
-the menu offered option 1 and the recommendation was approve and proceed for
-that same exact head. The Worker never chooses option 1 on its own. The
-checking skill then performs its identity reread and hands its evidence pack
-to this finishing path.
+when that skill writes its brief and numbered menu. After a Worker PR exists, the scheduled ownerless run has that Worker
+invoke `checking-merge-readiness` on that PR and stops at the numbered brief. The Orchestrator reads each brief. On a distinct later turn,
+it authorizes that Worker to reply 1 only when the menu offered option 1 and
+the recommendation was approve and proceed for that same exact head. The
+Worker never chooses option 1 on its own. The Orchestrator never authorizes
+Proceed to merge. The checking skill then performs its identity reread and
+hands its evidence pack to this finishing path.
 
-When the brief withholds Approve or does not recommend approve, and it names
-Worker-owned gaps, the Orchestrator sends every named Worker-owned gap from
-that brief to the same Worker. The Worker produces a new exact head and runs
-PR-readiness again. Stop that loop without a PR when the brief needs owner
-attestation, a product decision, or incomplete gather that is not a
-Worker-owned gap. An unavailable checking skill, moved identity, or a claim
-from a later session must preserve the authored commit without push or PR creation
-and names the blocking gap. Direct assessment of native facts is not a publish
-path.
+When a brief names Worker-owned gaps, the Orchestrator sends every named
+Worker-owned gap to the same Worker, then that Worker re-runs the helper on
+the new exact head. Stop when the remaining work needs the owner or a further
+turn cannot help. An unavailable checking skill, moved identity, or a claim
+from a later session must preserve the authored commit without push or PR
+creation and name the blocking gap. Direct assessment of native facts is not
+a publish path.
 
 With an owner, normal publication remains subject to the owner's interactive
 authorization. After Orchestrator authorization, retain every durable-policy,
@@ -116,18 +115,9 @@ ownerless first push, re-resolve the captured target/base ref and full base OID.
 Immediately before PR-open, re-resolve the captured target/base ref and full
 base OID. Publish only the approved exact head against the approved exact
 base; drift, a conflicting path or branch, missing authority, unavailable
-state, or an unknown provider effect stops that Worker.
-
-After a Worker PR exists, the scheduled ownerless run has that Worker invoke
-`checking-merge-readiness` on that PR and stops at the numbered brief. The
-Orchestrator never authorizes Proceed to merge. If the brief recommends merge,
-stop and leave merge to the owner. If it recommends debug and names
-Worker-owned findings, send every named Worker-owned finding to the same
-Worker, publish the repaired exact head under the existing lease, then run
-merge-readiness again. Stop when that brief needs the owner, including empty
-review the Worker cannot close, or when a further Worker turn cannot improve
-it. Report native PR, check, and review facts. Never merge, release, deploy,
-or create unapproved follow-up issues.
+state, or an unknown provider effect stops that Worker. Report native PR,
+check, and review facts. Never merge, release, deploy, or create unapproved
+follow-up issues.
 
 ## Close once
 

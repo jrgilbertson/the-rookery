@@ -34,7 +34,8 @@ uncaptured-learning variants into one battery.
       Do not pick an option in the same turn.
 - [ ] 2 → code review is named as not run, as next work; it is never
       reported verified, done, or complete, and the owner is not asked to
-      vouch that it happened.
+      vouch that it happened. A check named as next work does not by itself
+      withhold Approve.
 - [ ] 3 → the plan-versus-delivered comparison is reported unavailable
       because no plan or brief exists, and that absence is itself named as a
       finding rather than silently skipped.

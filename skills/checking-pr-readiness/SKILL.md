@@ -260,7 +260,7 @@ Present exactly one decision menu, then wait for a numbered reply. Do not pick a
 counts as that choice. The activating utterance never authorizes Approve.
 
 1. Approve and proceed to the finishing path. Offer only when gather is
-   complete and the recommendation is approve and proceed.
+   complete and the recommendation is approve and proceed. A check named as next work does not by itself withhold Approve.
 2. Request changes.
 3. Run a flagged missing step now: one option per gap found in steps 2
    through 6 that a present skill owns, each dispatching that skill. A gap

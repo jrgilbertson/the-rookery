@@ -473,6 +473,7 @@ def validate_contract_sources() -> None:
         "wait for a numbered reply",
         "do not pick an option in the same turn",
         "a turn is one reply",
+        "a check named as next work does not by itself withhold approve",
         "mktemp -d",
         "outside the target repository",
         "on a later reply of 1",

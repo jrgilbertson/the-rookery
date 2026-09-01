@@ -64,7 +64,8 @@ When a skill briefs an owner at a decision point:
 5. **Close coverage without a census.** After the reasons, say gather
    completed and every applicable check is verified, not applicable, or
    named as next work. Incomplete gather cannot offer Approve or recommend
-   merge. Do not print a status-word inventory or a sweep-class table.
+   merge. A check named as next work does not by itself withhold Approve.
+   Do not print a status-word inventory or a sweep-class table.
 6. **List only live options.** Print currently available numbered options
    after the brief. Name a check or path in the brief only when it drives
    the recommendation.

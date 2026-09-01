@@ -23,7 +23,8 @@ looked" surface. GitHub Releases mirror its entries.
   when the menu is on screen. A later reply of 1 is Approve or Proceed after identity re-read,
   including staged, unstaged, and untracked content for PR readiness.
   Matching identity compares stay silent; a moved head or working-tree
-  content change rebuilds. Captured as
+  content change rebuilds. A check named as next work, including code
+  review with no receipt, does not by itself withhold Approve. Captured as
   `docs/solutions/conventions/do-not-split-human-and-agent-skill-products.md`.
 
 

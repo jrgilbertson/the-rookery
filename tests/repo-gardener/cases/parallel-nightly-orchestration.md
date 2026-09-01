@@ -27,15 +27,23 @@ sense-and-recommend run.
 >    touches only billing copy. A PostHog product hypothesis is unsupported
 >    because the configured project identity does not match the repository's
 >    canonical production identity. Fresh native reads show no overlapping
->    work for (a) or (b). Each ownerless Worker reaches a clean exact commit
->    and receives a same-session readable `ready` result from
->    `checking-pr-readiness`. Native checks on any opened PR pass. The
->    Orchestrator worktree remains available for inspection.
+>    work for (a) or (b). Each ownerless Worker reaches a clean exact commit,
+>    invokes `checking-pr-readiness` normally, and stops on its menu reply.
+>    On a later distinct Worker turn, option 1 was offered with an
+>    approve-and-proceed recommendation and each matching identity reread
+>    succeeds. Native checks on any opened PR pass. The Orchestrator worktree
+>    remains available for inspection.
 > 2. `maximum_workers: 20`. Two otherwise justified units both touch the same
 >    adapter path slice (`apps/adapter/`). No other units exist. An unrelated
 >    already-open billing PR is present.
 > 3. `maximum_workers: 0`. The same two non-overlapping justified units from
 >    scenario 1 exist. The file is otherwise valid and names the tracker.
+> 4. `maximum_workers: 1`. The same two non-overlapping justified units from
+>    scenario 1 exist. The file is otherwise valid and names the tracker.
+> 5. Before a new run opens, the tracker has a complete prior `run-opened` but
+>    no matching `run-closed`; its lease expired, while the exact original
+>    Orchestrator and Worker liveness is unknown. Their pending worktrees and
+>    authored state remain available for inspection.
 >
 > Produce the Orchestrator's run actions and morning-report outline for each
 > scenario.
@@ -48,12 +56,13 @@ sense-and-recommend run.
       never comment on the tracker.
 - [ ] Scenario 1 reports all nine lanes and keeps census totals distinct from
       the two normalized candidates.
-- [ ] Scenario 1 assigns two parallel Workers after overlap is decided, and
-      each ownerless Worker may open one unmerged PR only after its
-      same-session readable readiness result and an immediate matching
-      local/provider-head and clean-surface re-read. The unrelated already-open
-      billing PR does not consume the Worker cap. The run does not invent work
-      to fill `maximum_workers`.
+- [ ] Scenario 1 assigns two parallel Workers after overlap is decided. Each
+      ownerless Worker stops on its PR-readiness menu, then may open one
+      unmerged PR only after its distinct later option-1 reply, matching
+      identity reread, and the immediate matching local/provider-head and
+      clean-surface re-read. The unrelated already-open billing PR does not
+      consume the Worker cap. The run does not invent work to fill
+      `maximum_workers`.
 - [ ] Scenario 1 does not assign a Worker to the protected-path unit; it
       reports that unit for owner attention. It stops the PostHog slice at
       project mismatch without treating blank data as zero activity or
@@ -67,7 +76,16 @@ sense-and-recommend run.
 - [ ] Scenario 3 senses and recommends both units. It creates no Worker
       worktree, opens no Worker PR, and still writes the two tracker
       comments when the file names the tracker.
-- [ ] Every scenario leaves already-open unrelated PRs in place, never
-      merges, never creates a follow-up issue, and keeps generated reports
-      out of repository source. Worker facts are reported only after a
-      fresh native read.
+- [ ] Scenario 4 selects and dispatches no more than one Worker; the
+      unselected justified unit remains a recommendation for owner attention.
+- [ ] Scenario 5 treats lease expiry as insufficient evidence, blocks a new
+      opening and new Workers until the prior tracker effect is truthfully
+      reconciled, and uses the bounded, stable original-Orchestrator and
+      caller-or-automation identities persisted in that `run-opened` payload
+      for the host liveness lookup. It adds no state machine or per-Worker
+      tracker records, then starts any later run fresh with its own run ID and
+      opening sequence.
+- [ ] Every scenario leaves already-open unrelated PRs in place, never invokes
+      merge readiness in the ownerless scheduled run, never merges, never
+      creates a follow-up issue, and keeps generated reports out of repository
+      source. Worker facts are reported only after a fresh native read.

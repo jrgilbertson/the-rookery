@@ -13,6 +13,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Repo Gardener's Worker mutation boundary is now host-neutral: it requires an
+  isolated worktree at the authoritative base, host-provided setup when
+  available, supervised completion, and a Worker-owned branch with one
+  unmerged PR. Setup must succeed before repository work, and a clean native
+  Git status is required before the first mutation; unavailable safe mutation
+  falls back to a truthful read-only report.
+
 - `checking-pr-readiness` and `checking-merge-readiness` now split gather from
   the spoken brief. Helper inventories go to an owner-only temp directory
   outside the target repository. The brief is an executive recommendation
@@ -34,8 +41,6 @@ looked" surface. GitHub Releases mirror its entries.
   Reasons in the brief are about the change under review, not how the gate
   runs. Captured as
   `docs/solutions/conventions/do-not-split-human-and-agent-skill-products.md`.
-
-
 - Repo Gardener now completes its issue identifier census before every
   issue-facing lane uses purpose-ranked, admission-bounded reads, preserving
   trusted-principal and lane limits. Mapped readiness now prioritizes those
@@ -51,15 +56,13 @@ looked" surface. GitHub Releases mirror its entries.
   requiring each Worker to retain base entries and add its own attributable
   entry; the Orchestrator never writes the shared ledger or resolves later
   native merge or rebase conflicts.
-- Repo Gardener now assesses PR readiness directly or through a report-only
-  merge-readiness review, then can return a current, actionable finding to the
-  same Worker without exposing a merge path.
-- Repo Gardener now rereads native state after Worker responses and either
-  gives a focused next instruction or explains why it stops.
-- Assessment-only `checking-pr-readiness` now reports same-session exact-head
-  findings and rejects a moved native head without requiring receipt packaging.
-  An ownerless `repo-gardener` Worker may open one PR only on that readable
-  ready result; otherwise its commit remains `saved_without_pr` with the gap.
+- Repo Gardener now gives every unattended Worker the normal
+  `checking-pr-readiness` process: its menu reply ends that turn, and only the
+  same Worker's distinct later option-1 choice may continue after the skill's
+  identity reread. Missing or non-approving options, incomplete evidence,
+  unavailable checking, or moved identity preserve the authored commit without
+  publication. The scheduled ownerless run reports native PR, check, and review
+  facts for later owner merge review; it never invokes merge readiness or merges.
 - `personal-chief-of-staff` Source Access Audits are now a short paragraph:
   coverage first, then every relevant role and how the read finished, with a
   "so" clause only when a result limits a claim. No table and no HTML
@@ -67,8 +70,7 @@ looked" surface. GitHub Releases mirror its entries.
 - Interactive `checking-merge-readiness` option 1 (Proceed to merge) now
   kicks off one forge merge after the existing fingerprint and host-policy
   re-check, using the repository's default merge method. A cold "merge this
-  PR" activates the skill but still requires that menu choice. Unattended
-  `repo-gardener` runs still never select option 1 and still never merge.
+  PR" activates the skill but still requires that menu choice.
 - `managing-personal-crm` can recover one bounded public X read after a
   sandbox network or session-state denial only with fresh host approval and
   enforced read-only capabilities. It rejects private-derived query scope,
@@ -83,24 +85,6 @@ looked" surface. GitHub Releases mirror its entries.
 - `repo-gardener` can run exact owner-declared audit commands in its five
   eligible sensing lanes, with evidence-based setup recommendations, bounded
   direct execution, and existing candidate and reporting rules preserved.
-- `repo-gardener` declared audits now consume an Orca Setup receipt only when
-  the host exposes one: configured terminals wait, `not_configured` is a no-op,
-  and compatible no-receipt hosts proceed without waiting. They preserve their
-  approved argv and record a missing package runner or nested executable
-  locally while sensing and independently qualified Worker selection continue.
-- `repo-gardener` now creates each fresh Worker through supervised Orca
-  dispatch with repository setup enabled, waits for configured setup before
-  repository work, and requires a clean native Git status immediately before
-  the first mutation without adding setup or Git-state machinery.
-- `repo-gardener` now retains the supervised Orca worker-start receipt in the
-  Orchestrator, so a Worker that starts while setup runs uses its existing
-  current-Dispatch observation as a one-time gate and pre-Worker start
-  failures remain caller-owned without retrying setup.
-- `repo-gardener` now uses native Orca setup only to gate repository work:
-  after a successful or no-op receipt, Workers run relevant documented
-  verification commands unchanged as ordinary gates and report each actual
-  pass, failure, or unavailable result without installing or substituting an
-  environment.
 - `repo-gardener` list-style censuses of issues, pull requests, and alerts
   keep listing while remaining items are knowable and the count is under
   10,000, once per population, rather than stopping at a stated page bound.
@@ -115,9 +99,11 @@ looked" surface. GitHub Releases mirror its entries.
   manual run uses one Orchestrator that may assign parallel Workers, each with
   one unmerged pull request, up to `maximum_workers`. Depth has no count.
   Opened and closed tracker comments are the production records; a hash-linked
-  register is not required. Unattended Workers open PRs only through
-  assessment-only `checking-pr-readiness`. In-run `checking-merge-readiness` is
-  read-only feedback and never merges.
+  register is not required. An unattended Worker stops after the normal
+  `checking-pr-readiness` menu and may continue only on its distinct later
+  option-1 choice after the identity reread. The scheduled ownerless run reports
+  native PR, check, and review facts for later owner merge review and never
+  invokes merge readiness or merges.
 - `repo-gardener` now parses `.agents/repo-gardener.yaml` once with PyYAML
   SafeLoader and the existing field schema. Lane inventory uses that mapping
   instead of a second regex grammar. Tags, aliases, merge keys, nulls, and

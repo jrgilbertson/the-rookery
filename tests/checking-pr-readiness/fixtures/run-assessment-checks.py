@@ -521,10 +521,13 @@ def validate_contract_sources() -> None:
         ((REPO_ROOT / "skills" / "repo-gardener" / "references" / "reconciliation.md").read_text(encoding="utf-8").lower(), "reconciliation reference"),
     ):
         normalized_source = " ".join(source.split())
-        require("compare them to the captured subject and oid that received `ready`" in normalized_source, f"{name} can rebind the ready identity")
-        require("never replace or recapture that authorized identity" in normalized_source, f"{name} can replace the ready identity")
+        require("every unattended worker invokes `checking-pr-readiness` normally" in normalized_source, f"{name} omits the normal checking invocation")
+        require("distinct later turn" in normalized_source, f"{name} can approve from the menu turn")
+        require("option 1" in normalized_source and "approve and proceed" in normalized_source, f"{name} does not constrain later option 1")
+        require("identity reread" in normalized_source, f"{name} omits the later identity reread")
+        require("preserve the authored commit" in normalized_source, f"{name} lacks the fail-closed publication outcome")
+        require("never replace or recapture that" in normalized_source, f"{name} can replace the approved identity")
         require("exact caller-approved verification command argv list" in normalized_source, f"{name} omits the caller-owned argv assignment")
-        require("same assignment-owned exact argv list" in normalized_source, f"{name} omits the argv handoff to assessment")
         require("target/base ref" in normalized_source and "full base oid" in normalized_source, f"{name} omits the base binding")
         require(
             "immediately before an ownerless first push, re-resolve the captured target/base ref and full base oid"
@@ -539,12 +542,9 @@ def validate_contract_sources() -> None:
             "persistent state, configuration, schema, receipt, ledger, or audit-command reuse" not in normalized_source,
             f"{name} retains unnecessary assignment denial prose",
         )
-    for source, name in (
-        (assessment, "assessment contract"),
-        ((REPO_ROOT / "skills" / "repo-gardener" / "references" / "reconciliation.md").read_text(encoding="utf-8").lower(), "reconciliation reference"),
-    ):
-        require("not verified" in source and "not run" in source, f"{name} omits canonical check statuses")
-        require("unverified" not in source and "not-run" not in source, f"{name} retains noncanonical check statuses")
+        require("never invokes `checking-merge-readiness`" in normalized_source, f"{name} permits ownerless merge checking")
+    require("not verified" in assessment and "not run" in assessment, "assessment contract omits canonical check statuses")
+    require("unverified" not in assessment and "not-run" not in assessment, "assessment contract retains noncanonical check statuses")
     require(
         "an unresolved finding is named as next work attached to an allowed status, for example `code review: not verified`."
         in normalized_assessment,

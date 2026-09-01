@@ -1,80 +1,66 @@
-# Native setup for Worker worktrees
+# Portable Worker preparation
 
-Provenance: issue #87 requires every fresh Repo Gardener Worker to consume the
-existing Orca worktree-setup result before repository work, without inventing a
-second setup or Git-state subsystem.
+Provenance: the portable mutation interface requires an isolated Worker
+worktree from the authoritative base and repository-native setup only when the
+host provides it. Setup gates repository work; PR readiness uses its normal
+brief, numbered options, and later reply.
 
 ## Prompt
 
-> Work only from these synthetic facts. Do not call tools, execute setup, or
-> mutate a repository. Evaluate each subcase independently.
+> Work only from these synthetic facts. Do not call tools, prepare a worktree,
+> or mutate a repository. Evaluate each subcase independently.
 >
-> Every subcase begins after a managed run selected two non-overlapping,
-> in-scope, low-risk, testable Worker slices under an unchanged valid policy.
-> The slices are `docs/guide.md` for Worker A and `src/adapter.js` for Worker
-> B. Each fresh Worker is created through supervised Orca dispatch with
-> repository setup enabled once. Neither Worker has a usable Orca
-> parent-child-lineage relation, so each must use the setup receipt for its own
-> worktree. No policy grants a setup command or Git-state helper.
+> A managed run selected two non-overlapping, in-scope, low-risk, testable
+> slices: `docs/guide.md` for Worker A and `src/adapter.js` for Worker B. The
+> opening policy is valid and unchanged. The host can supervise Workers and
+> reports the authoritative base, each isolated worktree, each Worker branch,
+> and whether repository-native setup is supplied.
 >
-> 1. Worker A's receipt identifies one configured Setup terminal. Before that
->    terminal completes, its repository-dependent planning read, focused test,
->    and proposed edit are ready to run. The terminal later completes
->    successfully. Immediately before A's first edit, ordinary native
->    `git status --porcelain=v1 --untracked-files=all` has no output.
-> 2. Worker B's receipt is exactly `not_configured`. Immediately before B's
->    first edit, the same ordinary native Git status has no output.
-> 3. Evaluate two independent Worker A situations: its configured Setup
->    terminal fails, or its setup effect is unknown. Worker B has the clean
->    `not_configured` receipt from subcase 2 and remains disjoint.
-> 4. After successful setup, evaluate three independent Worker A states just
->    before its first edit: `M  docs/guide.md` (staged), ` M docs/guide.md`
->    (unstaged), and `?? scratch.txt` (untracked non-ignored). Worker B has a
->    clean receipt and clean status for its disjoint slice.
-> 5. In an otherwise independent Worker A start, Orca returns a usable Worker
->    immediately and the Orchestrator-owned start receipt proves its configured
->    Setup terminal is still running. The Worker's existing current-Dispatch
->    observation (`worker-show`, or Orca's equivalent supplied receipt) keeps
->    showing setup running before A's repository-dependent planning read,
->    focused test, or proposed edit.
-> 6. Evaluate two independent attempted Worker A starts. No usable Worker
->    exists when `worker-start` returns failure or times out. In the timeout
->    case, the Orchestrator-owned receipt still proves Setup running. Worker B
->    has the clean `not_configured` receipt from subcase 2 and remains disjoint.
+> 1. Worker A has an isolated worktree at the authoritative base, a
+>    Worker-owned branch, and host-provided repository setup that completes
+>    successfully. Worker B has the same worktree and branch facts, and its
+>    host supplies no setup.
+> 2. Worker A's host-provided setup fails or has an unknown outcome. Worker B
+>    remains disjoint and has no host-provided setup.
+> 3. Immediately before its first mutation, Worker A's ordinary native
+>    `git status --porcelain=v1 --untracked-files=all` independently reports
+>    `M  docs/guide.md` (staged), ` M docs/guide.md` (unstaged), or
+>    `?? scratch.txt` (untracked non-ignored). Worker B remains clean and
+>    disjoint.
+> 4. Worker A's host cannot provide an isolated worktree at the authoritative
+>    base. Worker B has a valid isolated worktree but no Worker-owned branch.
+> 5. Both Workers meet the interface, complete one coherent commit, and each
+>    can own at most one unmerged PR. A later provider read for A's PR is
+>    unknown while B's PR facts remain current.
+> 6. Both Workers have clean exact commits. A invokes `checking-pr-readiness`
+>    normally and stops at its menu. B's checker is unavailable.
 
 ## Expected behavior
 
-- [ ] Every fresh Worker is created through supervised Orca dispatch with
-      repository setup enabled once. The contract consumes that Worker's
-      worktree receipt and does not depend on Orca parent-child lineage.
-- [ ] In subcase 1, Worker A waits for successful configured Setup completion
-      before repository-dependent inspection, testing, or mutation. Only then
-      may it inspect, test, and, after the clean native Git-status check,
-      mutate its assigned slice.
-- [ ] In subcase 2, `not_configured` is recorded as the exact no-op. Worker B
-      runs no manual setup and may proceed after its clean native Git-status
-      check.
-- [ ] In subcase 3, failed setup and an unknown setup effect each stop only
-      Worker A's repository-dependent dependency closure, name the setup cause
-      and `docs/guide.md` slice, and leave its paths untouched. Worker B's
-      disjoint safe work continues.
-- [ ] In subcase 4, the Worker runs exactly ordinary native
-      `git status --porcelain=v1 --untracked-files=all` immediately before its
-      first mutation. Staged, unstaged, and untracked non-ignored paths each
-      stop only dependent work, name the observed path, and remain untouched;
-      the clean disjoint Worker continues.
-- [ ] In subcase 5, the Orchestrator retains the worker-start receipt. The
-      usable Worker starts immediately but uses the existing current-Dispatch
-      observation as a one-time startup gate, so it does not inspect, test, or
-      mutate repository state while setup remains running.
-- [ ] In subcase 6, a failed or outcome-unknown start before a usable Worker
-      exists remains Orchestrator-owned: it does not pretend a Worker handled
-      the receipt or recovery facts, leaves `docs/guide.md` untouched, and
-      continues Worker B's disjoint safe work. A timeout that still proves
-      setup running is waiting or blocked, never proof of failure or permission
-      to rerun setup.
-- [ ] No subcase adds or invokes manual setup, setup argv or policy,
-      classifier, snapshot, saved baseline, index metadata, attribution,
-      registry, Git-state subsystem, scheduler, workflow ledger, helper,
-      executable, schema, or dependency. Existing declared-audit and parallel
-      Worker contracts remain unchanged.
+- [ ] A Worker mutates only after the host provides its isolated worktree from
+      the authoritative base, any host-provided repository setup is complete,
+      supervision is available, and the Worker owns a branch and at most one
+      unmerged PR.
+- [ ] In subcase 1, A may proceed after the supplied setup succeeds. B may
+      proceed without setup because its host does not provide one; Repo
+      Gardener does not add a manual setup step for either Worker.
+- [ ] In subcase 2, A's dependent mutation is stopped and reported without
+      treating the failed or unknown setup as success. B's disjoint safe work
+      may continue.
+- [ ] In subcase 3, each dirty status stops only A's dependent work, names its
+      observed path, and leaves it untouched without restoring, staging, or
+      committing it. B's clean disjoint work may continue.
+- [ ] In subcase 4, each affected Worker falls back to read-only reporting
+      because a required mutation capability is missing. Repo Gardener does
+      not synthesize a worktree, branch, setup command, startup configuration,
+      receipt, or alternate lifecycle protocol.
+- [ ] In subcase 5, each Worker retains ownership of its own branch and one
+      unmerged PR. A's unknown provider fact stops only A's affected action;
+      it is never reconciled as success and does not alter B's current facts.
+- [ ] In subcase 6, A cannot publish in its menu turn and may continue only on
+      a distinct later option-1 reply after the checking skill's identity
+      reread. B preserves its commit without a fallback and names unavailable
+      checking as the blocking gap.
+- [ ] No subcase creates host adapters, setup commands, wait or recovery
+      choreography, progress state, registries, schemas, receipts, or a
+      second Git-state system.

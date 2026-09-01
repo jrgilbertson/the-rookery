@@ -14,13 +14,14 @@ check.
 > an additive-entry gate. Worker A owns `src/a.py` plus an Unreleased entry;
 > Worker B owns `docs/b.md` plus an Unreleased entry.
 > Their only shared path is `CHANGELOG.md`, and the same assignment decision
-> selected both Workers. B's live current-run Orca dispatch and native branch
-> identify B's original `docs/b.md` slice. After A has saved its pushed branch
-> but immediately before creating its PR, the mandatory native branch/PR reread
-> finds that B branch or PR with exactly B's known `docs/b.md` slice plus the
-> same additive `CHANGELOG.md` entry. Variants: an unrelated native branch or
-> PR has the same `docs/b.md` plus `CHANGELOG.md` path shape but is not B's live
-> dispatch or branch; B newly overlaps A's `src/a.py` path or scope; a third
+> selected both Workers. Their original approved briefs bind each Worker
+> identity, branch, and slice. After A has saved its pushed branch but
+> immediately before creating its PR, the mandatory native branch/PR reread
+> finds B's same branch or PR under B's same brief identity, with exactly B's
+> known `docs/b.md` slice plus the same additive `CHANGELOG.md` entry. Variants:
+> an unrelated native branch or PR has the same `docs/b.md` plus `CHANGELOG.md`
+> path shape but is not B's approved branch or PR; B newly overlaps A's
+> `src/a.py` path or scope; a third
 > Worker shares `src/a.py` with A; a coordinator branch has no assigned
 > implementation and proposes a changelog line; the same path list is empty;
 > and the same path list exists but repository proof is missing. Worker A's
@@ -33,11 +34,12 @@ check.
 - [ ] Allows A and B to run concurrently because their only overlap is the
       configured, proven ledger path.
 - [ ] Allows A to reach PR creation after the mandatory native reread when B is
-      identified by B's live current-run Orca dispatch and native branch, and
-      comparison against both original assigned slices shows B has only its
-      known disjoint slice plus that same configured, proven ledger path.
+      identified by B's original approved brief identity and same native branch
+      or PR, and comparison against both original assigned slices shows B has
+      only its known disjoint slice plus that same configured, proven ledger
+      path.
 - [ ] Denies the unrelated branch or PR with that same path shape because it
-      is not B's selected live dispatch or native branch; preserves A's saved
+      is not B's originally approved branch or PR; preserves A's saved
       pushed state while reporting that exact overlap.
 - [ ] Denies PR creation and preserves A's saved pushed state when B newly
       overlaps A's path or scope; reports the exact new overlap rather than

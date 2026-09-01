@@ -34,9 +34,13 @@ subcases independently. Do not call tools or invent facts.
   `maximum_workers`, and eight lane grants but does not name
   `tracker.identity`; an owner asks for a managed run.
 - Subcase G: before dispatch, the file's `repository.identity` does not match
-  the target or the planned path is excluded. Separately, before PR creation,
-  a fresh native read finds another PR overlapping Worker B's exact committed
-  diff. Worker A does not overlap that PR.
+  the target or the planned path is excluded. Separately, immediately before
+  Worker B's dispatch, native branch or PR reads are unavailable or unknown,
+  or a current native branch or PR overlaps B's planned assignment slice; none
+  meets the same-assignment `shared_ledger_paths` exception. Worker A does not
+  overlap. Separately, before PR creation, a fresh native read finds another
+  PR overlapping Worker B's exact committed diff. Worker A does not overlap
+  that PR.
 - Subcase H: after exact `run-opened` readback at `policy:1`, one eligible lane
   has two normalized declarations. The exact target revision and root are
   clean, both executables are already present, and an observable host profile
@@ -84,10 +88,12 @@ subcases independently. Do not call tools or invent facts.
       start setup; stay on caller-only sensing, complete the list-style
       identifier censuses in `lane-contracts.md` floor 2, then survey the
       nine lanes, and name the missing tracker identity.
-- [ ] Subcase G denies dispatch for repository/scope mismatch and denies PR
-      creation for that Worker's fresh overlap only. Other Workers and
-      read-only reporting continue. Any saved Worker state and already-open
-      PRs stay.
+- [ ] Subcase G denies dispatch for repository/scope mismatch and, separately,
+      denies only Worker B's dispatch and dependents when native branch or PR
+      reads are unavailable or unknown, or show a current overlap outside the
+      same-assignment shared-ledger exception. It denies PR creation for that
+      Worker's fresh overlap only. Other Workers and read-only reporting
+      continue. Any saved Worker state and already-open PRs stay.
 - [ ] A file revision change stops later source mutation, push, and PR-open
       across every Worker. Unchanged grants are not re-litigated. Never
       substitute the bundled starter, a transformed copy, or the opening

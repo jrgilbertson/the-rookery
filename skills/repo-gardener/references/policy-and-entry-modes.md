@@ -194,10 +194,12 @@ identity, out-of-scope path, missing or `false` lane value,
 `maximum_workers` of zero, or protected path denies that unit. The bundled
 starter remains denied and grants nothing.
 
-Assign overlap before parallel start. Check planned paths at dispatch against
-the opening file and the assigned path slice. A live-policy or overlap denial
-on one Worker stops that Worker's dependents only; other Workers and
-read-only sensing continue. Already-open PRs stay native objects.
+Assign overlap before parallel start. Immediately before every Worker dispatch,
+freshly read native branches and PRs for overlap with that Worker's planned
+assignment slice. An unavailable or unknown read, or a current overlap, denies
+only that dispatch and its dependents, unless the same-assignment
+`shared_ledger_paths` exception applies; other Workers and read-only sensing
+continue. Already-open PRs stay native objects.
 
 Mid-run, re-read the file only to detect that its revision changed. Unchanged
 grants are not re-litigated. A revision change stops further source mutation,

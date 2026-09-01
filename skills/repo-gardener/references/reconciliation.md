@@ -92,6 +92,10 @@ Immediately before every Worker dispatch, refresh the durable policy from the
 authoritative default branch and require its exact opening revision. An
 unavailable, unknown, or changed policy stops that dispatch and later source
 mutation.
+Immediately before every Worker dispatch, freshly read native branches and PRs
+for overlap with that Worker's planned assignment slice. An unavailable or
+unknown read, or a current overlap, stops only that dispatch and its dependents,
+unless the same-assignment `shared_ledger_paths` exception below applies.
 
 `shared_ledger_paths` is an assignment-only exception for the same originally
 approved siblings, and only when the opening policy and repository proof

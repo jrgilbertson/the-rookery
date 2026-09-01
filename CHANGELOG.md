@@ -73,11 +73,11 @@ looked" surface. GitHub Releases mirror its entries.
   native merge or rebase conflicts.
 - Repo Gardener now gives every unattended Worker the normal
   `checking-pr-readiness` process: its menu reply ends that turn, and only the
-  same Worker's distinct later option-1 choice may continue after the skill's
-  identity reread. Missing or non-approving options, incomplete evidence,
-  unavailable checking, or moved identity preserve the authored commit without
-  publication. The scheduled ownerless run reports native PR, check, and review
-  facts for later owner merge review; it never invokes merge readiness or merges.
+  Orchestrator may authorize option 1 when Approve was offered and recommended
+  for that exact head. Named Worker-owned gaps from one brief all go back to
+  that Worker; owner-needed briefs stop without a PR. After a PR exists, the
+  scheduled ownerless run invokes merge-readiness and never selects Proceed to
+  merge.
 - `personal-chief-of-staff` Source Access Audits are now a short paragraph:
   coverage first, then every relevant role and how the read finished, with a
   "so" clause only when a result limits a claim. No table and no HTML
@@ -115,10 +115,10 @@ looked" surface. GitHub Releases mirror its entries.
   one unmerged pull request, up to `maximum_workers`. Depth has no count.
   Opened and closed tracker comments are the production records; a hash-linked
   register is not required. An unattended Worker stops after the normal
-  `checking-pr-readiness` menu and may continue only on its distinct later
-  option-1 choice after the identity reread. The scheduled ownerless run reports
-  native PR, check, and review facts for later owner merge review and never
-  invokes merge readiness or merges.
+  `checking-pr-readiness` menu; the Orchestrator authorizes option 1 only from
+  an approve brief for that exact head, or sends named Worker-owned gaps back.
+  After a PR exists, the scheduled ownerless run invokes merge-readiness and
+  never selects Proceed to merge.
 - `repo-gardener` now parses `.agents/repo-gardener.yaml` once with PyYAML
   SafeLoader and the existing field schema. Lane inventory uses that mapping
   instead of a second regex grammar. Tags, aliases, merge keys, nulls, and

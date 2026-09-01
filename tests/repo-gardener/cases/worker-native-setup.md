@@ -33,7 +33,9 @@ brief, numbered options, and later reply.
 >    can own at most one unmerged PR. A later provider read for A's PR is
 >    unknown while B's PR facts remain current.
 > 6. Both Workers have clean exact commits. A invokes `checking-pr-readiness`
->    normally and stops at its menu. B's checker is unavailable.
+>    normally, stops at its menu, and the brief offered option 1 with an
+>    approve-and-proceed recommendation for that exact head. A later turn
+>    occurs. B's checker is unavailable.
 
 ## Expected behavior
 
@@ -57,10 +59,10 @@ brief, numbered options, and later reply.
 - [ ] In subcase 5, each Worker retains ownership of its own branch and one
       unmerged PR. A's unknown provider fact stops only A's affected action;
       it is never reconciled as success and does not alter B's current facts.
-- [ ] In subcase 6, A cannot publish in its menu turn and may continue only on
-      a distinct later option-1 reply after the checking skill's identity
-      reread. B preserves its commit without a fallback and names unavailable
-      checking as the blocking gap.
+- [ ] In subcase 6, A cannot publish in its menu turn and does not choose
+      option 1. It may continue only if the Orchestrator authorizes option 1;
+      the checking skill then rereads identity. B preserves its commit
+      without a fallback and names unavailable checking as the blocking gap.
 - [ ] No subcase creates host adapters, setup commands, wait or recovery
       choreography, progress state, registries, schemas, receipts, or a
       second Git-state system.

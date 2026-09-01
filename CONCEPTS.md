@@ -192,9 +192,9 @@ work is an issue, that issue is an Implementation Leaf.
 
 *Avoid:* child, gardener child
 
-A Worker may use helpers for scouting, simplification, review, and pull-request
-readiness. Helpers do not own a pull request. One Worker ships at most one
-pull request. Merge remains a later human step.
+A Worker may use helpers for scouting, simplification, review, pull-request
+readiness, and merge readiness. Helpers do not own a pull request. One Worker
+ships at most one pull request. Merge remains a later human step.
 
 ### Census
 

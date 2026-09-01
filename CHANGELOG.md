@@ -19,6 +19,28 @@ looked" surface. GitHub Releases mirror its entries.
   unmerged PR. Setup must succeed before repository work, and a clean native
   Git status is required before the first mutation; unavailable safe mutation
   falls back to a truthful read-only report.
+
+- `checking-pr-readiness` and `checking-merge-readiness` now split gather from
+  the spoken brief. Helper inventories go to an owner-only temp directory
+  outside the target repository. The brief is an executive recommendation
+  plus numbered live options, a coverage close, and named next work instead
+  of a receipt-vouch or a per-class census. A non-terminal Show the checks
+  option lists each applicable check and its status on request. There is
+  one process: wait for a numbered reply from whoever is talking. A turn is one reply: this reply
+  writes the menu and stops; the next message is the pick. This turn ends
+  when the menu is on screen. Option 1 is Approve or Proceed. Before that
+  choice is accepted, identity is re-read, including staged, unstaged, and
+  untracked content for PR readiness.
+  Matching identity compares stay silent; a moved head or working-tree
+  content change rebuilds. A check named as next work, including code
+  review with no receipt, does not by itself withhold Approve. Spoken next
+  work is remaining owner work after the decision. On approve that is
+  opening the pull request and babysitting it, not unrun review or
+  simplify. Live options are numbered from 1, each number once. On
+  approve, Run a missing step is omitted rather than listed once per gap.
+  Reasons in the brief are about the change under review, not how the gate
+  runs. Captured as
+  `docs/solutions/conventions/do-not-split-human-and-agent-skill-products.md`.
 - Repo Gardener now completes its issue identifier census before every
   issue-facing lane uses purpose-ranked, admission-bounded reads, preserving
   trusted-principal and lane limits. Mapped readiness now prioritizes those

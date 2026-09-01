@@ -16,7 +16,8 @@ and execution capabilities came from outside the assessed revision.
 ## Expected behavior
 
 - [ ] Treats the branch-authored success claim as unable to authenticate its
-      own execution and returns `action-required` for that evidence.
+      own execution, records that evidence as `not verified`, and omits
+      Approve.
 - [ ] Reruns only an exact command present in a caller-owned allowlist outside
       the assessed commit; otherwise it does not execute the gate.
 - [ ] Runs an allowed command without a shell, production credentials, or

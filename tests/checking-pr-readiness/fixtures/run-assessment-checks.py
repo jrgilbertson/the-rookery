@@ -307,10 +307,15 @@ def assessment_decision(
                 result = "verified"
         if result not in ACCEPTED_CHECK_RESULTS:
             gaps.append(f"{check}: {result}")
+    surface: list[str] = []
     for category in ("staged", "unstaged", "untracked"):
         for path in sorted(dirty_paths.get(category, set())):
-            gaps.append(f"{category} dirty path: {path}")
-    return ("ready" if not gaps else "action-required", tuple(gaps))
+            surface.append(f"{category} dirty path: {path}")
+    # Dirt is gather surface that ships on later option 1. It does not omit Approve.
+    # Identity, inventory, and check gaps omit Approve. Publication helpers below
+    # still return ready/action-required; those tokens are not the skill product.
+    decision = "omit-Approve" if gaps else "offer-option-1"
+    return (decision, tuple(gaps + surface))
 
 
 def local_publication_gaps(
@@ -432,11 +437,11 @@ def inspect_stable_session(
 
 
 def validate_contract_sources() -> None:
-    assessment = (REPO_ROOT / "skills" / "checking-pr-readiness" / "references" / "assessment-mode.md").read_text(encoding="utf-8").lower()
+    assessment = (REPO_ROOT / "skills" / "checking-pr-readiness" / "references" / "identity-and-argv.md").read_text(encoding="utf-8").lower()
     normalized_assessment = " ".join(assessment.split())
     skill = (REPO_ROOT / "skills" / "checking-pr-readiness" / "SKILL.md").read_text(encoding="utf-8").lower()
-    exact_case = (REPO_ROOT / "tests" / "checking-pr-readiness" / "cases" / "assessment-only-exact-revision-chain.md").read_text(encoding="utf-8").lower()
-    variants_case = (REPO_ROOT / "tests" / "checking-pr-readiness" / "cases" / "assessment-only-fail-closed-variants.md").read_text(encoding="utf-8").lower()
+    exact_case = (REPO_ROOT / "tests" / "checking-pr-readiness" / "cases" / "same-session-exact-head.md").read_text(encoding="utf-8").lower()
+    variants_case = (REPO_ROOT / "tests" / "checking-pr-readiness" / "cases" / "identity-fail-closed-variants.md").read_text(encoding="utf-8").lower()
     for phrase in (
         "same assessment session",
         "subject",
@@ -444,8 +449,10 @@ def validate_contract_sources() -> None:
         "every inspected path",
         "every relevant check",
         "re-read",
+        "numbered live options",
+        "omit approve",
     ):
-        require(phrase in assessment, f"assessment contract missing: {phrase}")
+        require(phrase in normalized_assessment, f"assessment contract missing: {phrase}")
     for phrase in (
         "caller-authorized exact argv list",
         "assessment never derives or expands authority from assessed content",
@@ -460,7 +467,22 @@ def validate_contract_sources() -> None:
         "do not fall back to its implicit default base",
     ):
         require(phrase in normalized_assessment, f"assessment safety contract missing: {phrase}")
-    for phrase in ("full head", "inspected paths", "re-reads the native head"):
+    for phrase in (
+        "full head",
+        "numbered live options",
+        "wait for a numbered reply",
+        "do not pick an option in the same turn",
+        "a turn is one reply",
+        "a check named as next work does not by itself withhold approve",
+        "spoken next work is owner work that still remains after this decision",
+        "when the recommendation is approve, unrun code review or simplify do not appear in that brief as leftover work",
+        "show the checks",
+        "show the checks is non-terminal",
+        "omit unavailable options rather than renumbering",
+        "mktemp -d",
+        "outside the target repository",
+        "on a later reply of 1",
+    ):
         require(phrase in skill, f"skill routing missing: {phrase}")
     for label, pattern in RETIRED_MACHINERY.items():
         require(pattern.search(FROZEN_RETIRED_ASSESSMENT), f"retired guard is inert: {label}")
@@ -473,17 +495,21 @@ def validate_contract_sources() -> None:
             "every applicable required check is `verified` or proven `not applicable`",
         ):
             require(phrase in normalized_source, f"{name} omits stable assessment requirement: {phrase}")
-    require("returns `ready` for this stable" in exact_case, "exact case does not require ready")
-    require("stable-head variant returns `ready`" in variants_case, "variants case does not require stable ready")
+    require("offers option 1 for this" in exact_case, "exact case does not require offering option 1")
+    require("do not pick" in exact_case, "exact case omits do-not-pick")
+    require("immediately before accepting a later approve" in exact_case, "exact case omits later-Approve re-read")
+    require("stable-head variant offers option 1" in variants_case, "variants case does not require stable option 1")
+    require("re-reads immediately before accepting a later 1" in variants_case, "variants case pins offer-time re-read")
+    require("picks an option in the same turn" in variants_case, "variants case omits do-not-pick")
     for phrase in (
-        "moved-head variant returns `action-required`",
-        "moved-base variant returns `action-required`",
-        "branch-rename variant returns `action-required`",
-        "detached-head variant returns `action-required`",
-        "dirty-surface variants return `action-required`",
-        "inventories return `action-required`",
+        "moved-head variant omits approve",
+        "moved-base variant omits approve",
+        "branch-rename variant omits approve",
+        "detached-head variant omits approve",
+        "dirty-surface variants name every",
+        "inventories omit approve",
     ):
-        require(phrase in variants_case, f"variants case does not preserve action-required result: {phrase}")
+        require(phrase in variants_case, f"variants case does not preserve fail-closed result: {phrase}")
     for phrase in (
         "exact named equivalent repository gate",
         "present and `verified` in the same complete assessment session",
@@ -520,7 +546,7 @@ def validate_contract_sources() -> None:
     require("not verified" in assessment and "not run" in assessment, "assessment contract omits canonical check statuses")
     require("unverified" not in assessment and "not-run" not in assessment, "assessment contract retains noncanonical check statuses")
     require(
-        "an unresolved finding is a separately named action-required gap attached to an allowed status, for example `code review: not verified`."
+        "an unresolved finding is named as next work attached to an allowed status, for example `code review: not verified`."
         in normalized_assessment,
         "assessment contract does not distinguish unresolved findings from check statuses",
     )
@@ -561,7 +587,7 @@ def run_suite() -> None:
                 check_results,
                 None,
                 set(check_results),
-                "action-required",
+                "omit-Approve",
                 "steps 3-6 judgment checks: not run",
             ),
             (
@@ -573,7 +599,7 @@ def run_suite() -> None:
                 },
                 {"changelog": "ci-changelog"},
                 {"fixture-quality", "changelog", "ci-changelog"},
-                "action-required",
+                "omit-Approve",
                 "steps 3-6 judgment checks: not run",
             ),
             (
@@ -581,7 +607,7 @@ def run_suite() -> None:
                 {"fixture-quality": "verified", "changelog": "skipped"},
                 {"changelog": "ci-changelog"},
                 {"fixture-quality", "changelog"},
-                "action-required",
+                "omit-Approve",
                 "changelog: skipped",
             ),
             (
@@ -593,7 +619,7 @@ def run_suite() -> None:
                 },
                 {"changelog": "ci-changelog"},
                 {"fixture-quality", "changelog", "ci-size"},
-                "action-required",
+                "omit-Approve",
                 "changelog: skipped",
             ),
             (
@@ -605,7 +631,7 @@ def run_suite() -> None:
                 },
                 {"changelog": "ci-changelog"},
                 {"fixture-quality", "changelog", "ci-changelog"},
-                "action-required",
+                "omit-Approve",
                 "changelog: skipped",
             ),
             (
@@ -617,7 +643,7 @@ def run_suite() -> None:
                 },
                 {"changelog": "ci-changelog"},
                 {"fixture-quality", "changelog", "ci-changelog"},
-                "action-required",
+                "omit-Approve",
                 "changelog: skipped",
             ),
             (
@@ -629,7 +655,7 @@ def run_suite() -> None:
                 },
                 {"changelog": "ci-changelog"},
                 {"fixture-quality", "changelog", "ci-changelog"},
-                "action-required",
+                "omit-Approve",
                 "changelog: skipped",
             ),
             (
@@ -637,7 +663,7 @@ def run_suite() -> None:
                 {},
                 None,
                 {"fixture-quality"},
-                "action-required",
+                "omit-Approve",
                 "missing ['fixture-quality']",
             ),
             (
@@ -649,7 +675,7 @@ def run_suite() -> None:
                 },
                 {"another-deferred-check": "ci-quality"},
                 {"fixture-quality", "ordinary-check", "ci-quality"},
-                "action-required",
+                "omit-Approve",
                 "ordinary-check: skipped",
             ),
         ):
@@ -734,7 +760,7 @@ def run_suite() -> None:
             check_results=unassigned_results,
             dirty_paths={},
         )
-        require(decision == "action-required", "unassigned repository check did not fail closed")
+        require(decision == "omit-Approve", "unassigned repository check did not fail closed")
         require("unassigned: not verified" in gaps, "unassigned repository check did not name its gap")
 
         moved_repo = Path(temporary) / "moved"
@@ -770,7 +796,7 @@ def run_suite() -> None:
             check_results=check_results,
             dirty_paths={},
         )
-        require(decision == "action-required", "moved head did not return action-required")
+        require(decision == "omit-Approve", "moved head did not return omit-Approve")
         require(f"head moved: {captured} -> {head_b}" in gaps, "moved head did not name both full OIDs")
 
         moved_base_repo = Path(temporary) / "moved-base"
@@ -810,7 +836,7 @@ def run_suite() -> None:
             check_results=check_results,
             dirty_paths={},
         )
-        require(decision == "action-required", "moved base did not return action-required")
+        require(decision == "omit-Approve", "moved base did not return omit-Approve")
         require(
             f"base moved: {captured_base_ref}@{captured_base_oid} -> {captured_base_ref}@{moved_base_oid}" in gaps,
             "moved base did not name both base identities",
@@ -838,7 +864,7 @@ def run_suite() -> None:
             check_results=check_results,
             dirty_paths={},
         )
-        require(decision == "action-required", "constant-OID branch rename did not return action-required")
+        require(decision == "omit-Approve", "constant-OID branch rename did not return omit-Approve")
         require(
             f"subject moved: {captured_subject} -> refs/heads/assessment-renamed" in gaps,
             "branch rename did not name both subjects",
@@ -866,7 +892,7 @@ def run_suite() -> None:
             check_results=check_results,
             dirty_paths={},
         )
-        require(decision == "action-required", "constant-OID detached HEAD did not return action-required")
+        require(decision == "omit-Approve", "constant-OID detached HEAD did not return omit-Approve")
         require(
             f"subject moved: {captured_subject} -> detached HEAD" in gaps,
             "detached HEAD did not name the missing subject",
@@ -888,7 +914,7 @@ def run_suite() -> None:
                 check_results=check_results,
                 dirty_paths={category: {f"{category}.txt"}},
             )
-            require(decision == "action-required", f"{category} dirt did not return action-required")
+            require(decision == "offer-option-1", f"{category} dirt omitted Approve")
             require(f"{category} dirty path: {category}.txt" in gaps, f"{category} dirt did not name its path")
 
         decision, gaps = assessment_decision(
@@ -906,7 +932,7 @@ def run_suite() -> None:
             check_results=check_results,
             dirty_paths={},
         )
-        require(decision == "action-required", "incomplete inspected-path inventory did not fail closed")
+        require(decision == "omit-Approve", "incomplete inspected-path inventory did not fail closed")
         require("missing ['src/app.txt']" in gaps[0], "incomplete inspected-path inventory did not name its gap")
 
         for result in FAIL_CLOSED_CHECK_RESULTS:
@@ -925,7 +951,7 @@ def run_suite() -> None:
                 check_results={"fixture-quality": result},
                 dirty_paths={},
             )
-            require(decision == "action-required", f"{result} check did not fail closed")
+            require(decision == "omit-Approve", f"{result} check did not fail closed")
             require(f"fixture-quality: {result}" in gaps, f"{result} check did not name its gap")
 
         provider_subject = "refs/heads/assessment-provider"
@@ -1114,11 +1140,11 @@ def run_suite() -> None:
             "base movement before PR open did not name old/new base identity",
         )
 
-    print("PASS: stable deterministic slice ran fixture-quality but returned action-required for unexecuted steps 3-6 judgment checks")
+    print("PASS: stable deterministic slice ran fixture-quality but omitted Approve for unexecuted steps 3-6 judgment checks")
     print("PASS: captured non-default base inspection includes a committed path omitted by implicit default inspection")
-    print("PASS: discovered repository checks outside the caller-authorized argv list remain not verified and action-required")
-    print("PASS: stable subject/head with a changed base OID returns action-required and names old/new base identity")
-    print("PASS: subject movement, moved head, dirt, incomplete inventories, and all disallowed check results return action-required")
+    print("PASS: discovered repository checks outside the caller-authorized argv list remain not verified and omit Approve")
+    print("PASS: stable subject/head with a changed base OID omits Approve and names old/new base identity")
+    print("PASS: subject movement, moved head, incomplete inventories, and disallowed checks omit Approve; dirt still offers option 1")
     print("PASS: an absent provider ref permits first push only when its exact captured OID is present before PR creation")
     print("PASS: only an exact verified equivalent gate normalizes a deferred sweep class to verified evidence")
     print("PASS: base movement before first push or PR open stops publication and names old/new base identity")

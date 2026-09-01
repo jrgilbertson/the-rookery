@@ -17,8 +17,8 @@ name + description + query only, binary judgment, any near-miss `yes` fails.
 | Check whether everything I planned actually got delivered before I ship | Plan-versus-delivered comparison inside the shipping gate. |
 | Did the review and simplify steps actually run on this branch? | Verifying upstream shipping steps from receipts. |
 | Gate this change before it goes out | Gating a branch before it leaves the worktree. |
-| Assess this exact branch head for PR readiness and return same-session findings | Explicit exact-head assessment without an owner menu. |
-| Headlessly assess this commit for PR readiness and return ready or action-required | Unattended same-session result rather than an owner menu. |
+| Assess this exact branch head for PR readiness | Explicit exact-head readiness check. |
+| Headlessly assess this commit for PR readiness | Same skill, same brief, numbered options, and wait. |
 
 ## Near misses: should not trigger
 

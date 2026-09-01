@@ -3,8 +3,8 @@
 The review grades each driver class below low, medium, or high against the
 accumulated review history and the final diff. Every anchor is a criterion
 the grading agent self-applies honestly ("can I name it, can I trace it"),
-never a severity label to reach for. A class with nothing to grade is reported
-as such, never invented, and counts as low in the roll-up. The principle-tension classes cite
+never a severity label to reach for. A class with nothing to grade does not
+fire, is never invented, and counts as low in the roll-up. The principle-tension classes cite
 first-principles.md for their canon rather than restating it here.
 
 Grades map to the recommendation by the fixed rule in SKILL.md step 6: all low

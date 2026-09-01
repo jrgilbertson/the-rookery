@@ -30,6 +30,8 @@ uncaptured-learning variants into one battery.
       than being omitted because no diff command lists it by default.
 - [ ] 1 → the spoken brief is a recommendation plus numbered live options, not
       a path list or sweep-class table.
+- [ ] 1 → after the brief, wait for a numbered reply. A turn is one reply.
+      Do not pick an option in the same turn.
 - [ ] 2 → code review is named as not run, as next work; it is never
       reported verified, done, or complete, and the owner is not asked to
       vouch that it happened.

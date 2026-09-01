@@ -14,7 +14,6 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GH="$HERE/bin/gh"
 PRS="$HERE/prs"
 ROOT="$(cd "$HERE/../../.." && pwd)"
-AGENT_MODE="$ROOT/skills/checking-merge-readiness/references/agent-mode.md"
 PASS=0
 FAIL=0
 AUTHFAIL=
@@ -146,16 +145,6 @@ if printf '%s' "$later" | grep -Eq 'gh[[:space:]]+pr[[:space:]]+merge'; then
 else
   fail "later option 1 still names merge kickoff" "On a later reply of 1 does not mention gh pr merge"
 fi
-if grep -Fq 'Follow' "$AGENT_MODE" \
-  && grep -Fq 'SKILL.md' "$AGENT_MODE" \
-  && grep -Fq 'This reference does not name a forge command' "$AGENT_MODE" \
-  && ! grep -Eq 'gh[[:space:]]+pr[[:space:]]+merge|merge-execution\.md|Proceed to merge' "$AGENT_MODE"
-then
-  pass "agent-mode file: merge invocation structurally absent"
-else
-  fail "agent-mode file: merge invocation structurally absent" "agent-mode file is not a pointer, or contains a merge path"
-fi
-
 echo "== A. serve real fixture content =="
 bind_spec specimen-a
 json_is "specimen-a: four resolved threads" \

@@ -51,11 +51,9 @@ It is unmerged. The Unreleased changelog already names the contract: one
 process, wait for a numbered reply from whoever is talking, later `1` is
 Approve or Proceed, and the skill does not pick in the same turn.
 
-The current skills encode that one process. PR readiness briefs, then waits;
-there is no separate assessment-only form. Merge readiness does the same;
-there is no separate agent form. The former dual-mode files are not products.
-`assessment-mode.md` is exact-head identity and caller argv.
-`agent-mode.md` is a pointer back to `SKILL.md`.
+The current skills encode that one process. PR readiness briefs, then waits.
+Merge readiness does the same. Identity bind lives in
+`identity-and-argv.md`. The skill never self-selects merge.
 
 This is the end-of-run API. The spoken brief's shape is a separate contract:
 answer first, then reasons, then only the evidence those reasons need.
@@ -134,13 +132,11 @@ the matching re-check, and a bare merge request still waits. The stub
 fixture now greps that one-process contract rather than a report-only merge
 path (`tests/checking-merge-readiness/fixtures/run-stub-checks.sh`).
 
-**Identity is not a second product.** `assessment-mode.md` used to name a
-mode. It now binds one native subject, full head, target/base ref, and full
-base OID, then re-reads that identity immediately before option 1. The
-fail-closed case that still carries an old "assessment-only" filename
-expects the one process: brief each variant with numbered live options and
-wait. `agent-mode.md` does not name a forge command and does not offer a
-disposition token.
+**Identity is not a second product.** `identity-and-argv.md` binds one
+native subject, full head, target/base ref, and full base OID, then re-reads
+that identity immediately before option 1. The fail-closed case expects the
+one process: brief each variant with numbered live options and wait. The
+skill does not name a forge command until a later reply of 1.
 
 **Caller leftover, not a second skill product.** An ownerless gardener
 Worker still asks installed `checking-pr-readiness` for a same-session

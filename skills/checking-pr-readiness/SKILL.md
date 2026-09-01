@@ -36,7 +36,7 @@ each word; **bypassed** always records the owner's reason.
 ## Workflow
 
 Bind identity first. Read
-[references/assessment-mode.md](references/assessment-mode.md) when capturing
+[references/identity-and-argv.md](references/identity-and-argv.md) when capturing
 the native subject, full head, target/base ref, and full base OID, when
 proving helper `--base` binding, when rerunning a repository-authored check,
 and immediately before accepting option 1.
@@ -286,7 +286,7 @@ Approve and did not fill an evidence pack.
 
 Before accepting Approve, re-read HEAD, the merge-base, and staged, unstaged,
 and untracked content per
-[references/assessment-mode.md](references/assessment-mode.md). If any of
+[references/identity-and-argv.md](references/identity-and-argv.md). If any of
 those moved, name what moved, rebuild, and do not hand a pack as if the old
 surface were still current. A matching re-read is silent.
 

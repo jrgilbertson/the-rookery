@@ -437,11 +437,11 @@ def inspect_stable_session(
 
 
 def validate_contract_sources() -> None:
-    assessment = (REPO_ROOT / "skills" / "checking-pr-readiness" / "references" / "assessment-mode.md").read_text(encoding="utf-8").lower()
+    assessment = (REPO_ROOT / "skills" / "checking-pr-readiness" / "references" / "identity-and-argv.md").read_text(encoding="utf-8").lower()
     normalized_assessment = " ".join(assessment.split())
     skill = (REPO_ROOT / "skills" / "checking-pr-readiness" / "SKILL.md").read_text(encoding="utf-8").lower()
-    exact_case = (REPO_ROOT / "tests" / "checking-pr-readiness" / "cases" / "assessment-only-exact-revision-chain.md").read_text(encoding="utf-8").lower()
-    variants_case = (REPO_ROOT / "tests" / "checking-pr-readiness" / "cases" / "assessment-only-fail-closed-variants.md").read_text(encoding="utf-8").lower()
+    exact_case = (REPO_ROOT / "tests" / "checking-pr-readiness" / "cases" / "same-session-exact-head.md").read_text(encoding="utf-8").lower()
+    variants_case = (REPO_ROOT / "tests" / "checking-pr-readiness" / "cases" / "identity-fail-closed-variants.md").read_text(encoding="utf-8").lower()
     for phrase in (
         "same assessment session",
         "subject",

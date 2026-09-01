@@ -17,6 +17,8 @@ root_cause: inadequate_documentation
 resolution_type: documentation_update
 related_components:
   - testing_framework
+  - checking-pr-readiness
+last_updated: 2026-08-31
 tags:
   - skill-authoring
   - owner-facing-readouts
@@ -59,10 +61,22 @@ When a skill briefs an owner at a decision point:
 4. **Prove with the production path.** Update battery checklists for the
    new shape, run skilled digests through the real fetch path, then blind
    re-grade so presentation contracts are not author-graded only.
+5. **Close coverage without a census.** After the reasons, say gather
+   completed and every applicable check is verified, not applicable, or
+   named as next work. Incomplete gather cannot offer Approve or recommend
+   merge. Do not print a status-word inventory or a sweep-class table.
+6. **List only live options.** Print currently available numbered options
+   after the brief. Name a check or path in the brief only when it drives
+   the recommendation.
+
+The end-of-run API (menu, wait, later `1`) is a separate contract. See
+[Do not split human and agent skill products](../conventions/do-not-split-human-and-agent-skill-products.md).
 
 ## Related
 
 - Implementation: [pull request #33](https://github.com/jrgilbertson/the-rookery/pull/33)
-- Skill: `skills/checking-merge-readiness/SKILL.md` step 5
+- Skills: `skills/checking-merge-readiness/SKILL.md` step 6,
+  `skills/checking-pr-readiness/SKILL.md` step 7
+- [Do not split human and agent skill products](../conventions/do-not-split-human-and-agent-skill-products.md) — end-of-run API (menu and wait), not pyramid shape
 - Battery log: `tests/checking-merge-readiness/log.md` (conciseness and
   blind re-grade sections)

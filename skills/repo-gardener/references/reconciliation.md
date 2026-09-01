@@ -201,18 +201,12 @@ deployment, protected path, or unapproved follow-up issue.
 ## Supervision and review
 
 After each supervised completion or Worker response, reread the current branch
-and full head, diff, checks, PR, and relevant authority. Native check, review,
-and head facts that show one specific actionable gap get a focused instruction
-to that same Worker. If those native facts show no such gap, stop native
-direction and explain why. Do not infer success from a missing or unknown
+and full head, diff, checks, PR, helper brief, and relevant authority. Send
+that same Worker every named Worker-owned gap those facts show. If none
+remain, the remaining work needs the owner, or a further turn cannot help,
+stop direction and explain why. Do not infer success from a missing or unknown
 provider fact. The host handles waiting, recovery, and process progress; Repo
 Gardener records only the current facts needed to report truthfully.
-
-A helper brief is not under that native one-gap cap. After a helper brief, if
-it names Worker-owned gaps or findings, send every named item from that brief
-to the same Worker even when native facts are not exactly one gap, then re-run
-that helper on the new exact head. If the remaining brief is only owner-needed
-work a Worker cannot close, stop direction and name the need.
 
 After PR creation, report current native check and review facts. If required
 checks or review are pending when the run closes, close partial and retain the

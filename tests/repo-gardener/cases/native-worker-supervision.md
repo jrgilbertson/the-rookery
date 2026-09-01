@@ -24,9 +24,8 @@ leaves host waiting, recovery, and progress mechanics to the host adapter.
 
 ## Expected behavior
 
-- [ ] In scenario 1, the Orchestrator recognizes the specific current gap and
-      gives A one focused instruction. It bases that instruction on the fresh
-      facts, not a response count or synthetic progress state.
+- [ ] In scenario 1, the Orchestrator sends A the named Worker-owned gap
+      from the fresh facts, not a response count or synthetic progress state.
 - [ ] In scenario 2, the Orchestrator does not call unchanged facts progress
       or manufacture a status. It stops direction for A and plainly explains
       why another instruction would not help.

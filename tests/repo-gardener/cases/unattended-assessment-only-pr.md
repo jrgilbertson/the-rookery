@@ -22,10 +22,9 @@ gaps.
 >    Assigned paths, final cleanliness, policy revision, overlap, provider
 >    reads, an absent-ref lease, and the one-unmerged-PR limit all pass. The
 >    Worker does not choose option 1 on its own.
-> 3. The brief withholds Approve and names two Worker-owned gaps. Native
->    check and review facts show no single actionable gap. In a separate
->    variant, option 1 is offered but the recommendation is not approve and
->    proceed, and the brief names those same two gaps.
+> 3. The brief withholds Approve and names two Worker-owned gaps. In a
+>    separate variant, option 1 is offered but the recommendation is not
+>    approve and proceed, and the brief names those same two gaps.
 > 4. The checking skill is unavailable. A later session claims the earlier
 >    checks passed, or the local subject, head, target/base, or base OID moves
 >    before any authorized reply.
@@ -53,8 +52,8 @@ gaps.
       assigned-path, cleanliness, overlap, provider-read, lease, and
       one-unmerged-PR gate.
 - [ ] Scenario 3 does not open a PR. The Orchestrator sends both named
-      Worker-owned gaps to that Worker even though native facts are not one
-      gap. After a new exact head, PR-readiness runs again.
+      Worker-owned gaps to that Worker. After a new exact head, PR-readiness
+      runs again.
 - [ ] Scenario 4 preserves the authored commit without a direct-assessment or
       token fallback. It names unavailable checking, the later-session claim,
       or the moved identity and requires a fresh normal checking conversation.

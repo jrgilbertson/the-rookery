@@ -1,6 +1,6 @@
 ---
 name: checking-pr-readiness
-description: Use when branch work looks complete and needs a readiness decision before another workflow opens a pull request, or when asked to assess a specific head for PR readiness. Gathers the working surface and checks, then briefs a recommendation plus numbered live options and waits for a numbered reply. A later reply of 1 is Approve. A request to write, open, create, or submit a pull request belongs to PR publishing. For an existing PR about to merge, use checking-merge-readiness.
+description: Use when branch work looks complete and needs a readiness decision before another workflow opens a pull request, or when asked to assess a specific head for PR readiness. Gathers the working surface and checks, then briefs a recommendation plus numbered live options and waits for a numbered reply. Option 1 is Approve. A request to write, open, create, or submit a pull request belongs to PR publishing. For an existing PR about to merge, use checking-merge-readiness.
 license: MIT
 compatibility: Requires a git worktree and read access to the host repository. Companion checks degrade to named skips when their skills or tooling are absent.
 ---

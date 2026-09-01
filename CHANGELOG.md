@@ -22,6 +22,7 @@ looked" surface. GitHub Releases mirror its entries.
   the brief named leftover work to park. Request changes stays on every
   PR-readiness menu as the numbered alternative to Approve. `ce-pov` stays
   a merge-readiness action only on do not merge when that skill is present.
+  A typed 1 on a withheld option-1 row is not Proceed or Approve.
 
 - Repo Gardener's Worker mutation boundary is now host-neutral: it requires an
   isolated worktree at the authoritative base, host-provided setup when

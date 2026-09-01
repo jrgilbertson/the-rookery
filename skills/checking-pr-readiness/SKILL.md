@@ -262,11 +262,15 @@ both copies together. -->
 #### Decision menu
 
 Present exactly one decision menu, then wait for a numbered reply. Do not pick an option in the same turn that wrote the menu. A turn is one reply. Print only the brief and the numbered options, then stop. Do not explain turns, later `1`, or the identity re-read in the brief. The next message in the conversation, from whoever is talking, is the pick. A reply of `1`,
-"Approve", or "approve and proceed" after the menu has offered option 1
-counts as that choice. The activating utterance never authorizes Approve.
+"Approve", or "approve and proceed" counts as that choice only after the
+menu offered Approve, not after it printed a withheld option-1 row. A `1`
+on a withheld row is not Approve. Name that the action cannot be taken and
+wait again. Do not enter the later-1 finishing path. The activating
+utterance never authorizes Approve.
 
-Print order, not menu numbers. Number 1 is always Approve and proceed.
-Number the remaining live actions from 2 without gaps.
+Print order, not menu numbers. Number 1 is the reserved Approve-and-proceed
+slot. When that action can be taken, print it. When it cannot, keep number
+1 and name why. Number the remaining live actions from 2 without gaps.
 
 - Approve and proceed to the finishing path. Offer only when gather is
   complete and the recommendation is approve and proceed. A check named as next work does not by itself withhold Approve.
@@ -318,6 +322,9 @@ and the run is waiting. It did not pick. It did not re-read identity for
 Approve and did not fill an evidence pack.
 
 ### On a later reply of 1
+
+If the menu printed a withheld option-1 row, do not approve. Name that
+Approve cannot be taken and wait again.
 
 Before accepting Approve, re-read HEAD, the merge-base, and staged, unstaged,
 and untracked content per

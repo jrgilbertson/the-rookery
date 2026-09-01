@@ -340,8 +340,9 @@ Brief in continuous prose without analysis-bucket titles.
   apply; omit a bare "open" label on ordinary pre-merge reviews.
 - Reasons, one idea each, most decision-relevant first (high drivers, intent
   drift, and redesign; then host or process caps; tip residual last and only
-  when merge is still green). A clean outcome is one residual clause that
-  grading found nothing material.
+  when merge is still green). Reasons are about the change under review, not
+  how this gate runs. A clean outcome is one residual clause that grading
+  found nothing material.
 - Evidence sits only under the reasons that drove the call, with source
   pointers (thread, round, or file). The check inventory is Show the
   checks, not the default brief.

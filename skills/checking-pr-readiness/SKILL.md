@@ -236,7 +236,8 @@ both copies together. -->
 
 - One recommendation (approve and proceed; request changes; or stop and file
   follow-up). Open on the decision, not the working-surface inventory.
-- Reasons, one idea each, most decision-relevant first. A clean outcome is
+- Reasons, one idea each, most decision-relevant first. Reasons are about
+  the change under review, not how this gate runs. A clean outcome is
   one residual clause that grading found nothing material.
 - Evidence sits only under the reasons that drove the call, with source
   pointers. The check inventory is Show the checks, not the default brief.

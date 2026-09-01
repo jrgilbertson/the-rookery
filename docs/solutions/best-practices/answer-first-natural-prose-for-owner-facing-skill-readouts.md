@@ -46,7 +46,8 @@ and re-ran the skilled battery with a blind re-grade.
 When a skill briefs an owner at a decision point:
 
 1. **Pyramid as logic, not labels.** Lead with the recommendation. Follow
-   with the reasons that support it in continuous sentences. Put evidence
+   with the reasons that support it in continuous sentences. Reasons are
+   about the change under review, not how the skill runs. Put evidence
    only under concerns that drove the call. Do not print section headers
    such as Themes, Intent, Risk, or Drivers.
 2. **Name next work, not idle states.** Prefer **debug** (investigate or fix

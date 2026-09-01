@@ -31,7 +31,8 @@ looked" surface. GitHub Releases mirror its entries.
   opening the pull request and babysitting it, not unrun review or
   simplify. Live options are numbered from 1, each number once. On
   approve, Run a missing step is omitted rather than listed once per gap.
-  Captured as
+  Reasons in the brief are about the change under review, not how the gate
+  runs. Captured as
   `docs/solutions/conventions/do-not-split-human-and-agent-skill-products.md`.
 
 

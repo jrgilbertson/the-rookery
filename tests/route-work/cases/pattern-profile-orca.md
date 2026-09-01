@@ -18,8 +18,8 @@ must not become workflow ownership or unbounded fan-out.
 >    coordinator must remain human-facing while using Orca across windows.
 >    Each package should become one small, coherent PR. Merge authority is not
 >    supplied.
-> 3. Route a sequential release-preparation job whose phases have distinct
->    permissions and outputs.
+> 3. Route authorized implementation of a sequential release-preparation job
+>    whose phases have distinct permissions and outputs.
 > 4. Route one draft-and-review job with explicit acceptance criteria and one
 >    permitted produce-evaluate-revise round.
 
@@ -27,9 +27,9 @@ must not become workflow ownership or unbounded fan-out.
 
 - [ ] Item 1 selects `impeccable`, Single owner, and the primary design/taste
       profile: Anthropic / `claude-fable-5` / medium.
-- [ ] Item 2 selects `ce-work` with Lead + bounded workers, the primary
-      orchestrator/planner profile for the lead, and primary executor profile
-      for workers.
+- [ ] Item 2 selects `ce-work` with Orchestrator/planner + Executors, the
+      primary orchestrator/planner profile for the lead, and primary executor
+      profile for workers.
 - [ ] Item 2 recommends supervised orchestration through Orca and isolated
       worktrees; its copy/paste block includes both lead and worker profiles,
       names Orca only as the current orchestration dependency, and invents no
@@ -39,8 +39,9 @@ must not become workflow ownership or unbounded fan-out.
       `checking-merge-readiness` against the current head immediately before
       each merge, continues from the updated default branch, and withholds
       merge authority.
-- [ ] Items 3–4 select Staged delivery and Evaluator loop, respectively; the
-      evaluator loop names one round and a stop condition.
+- [ ] Item 3 stays Single owner: sequential phases of the same owner, no
+      parallel workers. Item 4 selects Executor + Reviewer, names two cycling
+      workers, one round, and a stop condition.
 - [ ] No item dispatches agents, creates worktrees, escalates effort, or starts
       the selected workflow.
 - [ ] Every item returns plain labels, a natural setup, and a concise fenced

@@ -39,7 +39,7 @@ batch that clarifies the starting setup without performing downstream discovery.
       then routes the settled unplanned outcome to `ce-plan`.
 - [ ] Item 2 returns `Insufficient input` because the operator cannot supply
       the required routing fact.
-- [ ] Item 3 returns `Unsupported in v1` with the public workflow-catalog URL
+- [ ] Item 3 returns `Unsupported in the current version` with the public workflow-catalog URL
       and no further question.
 - [ ] Item 4 returns `Insufficient input` with no owner, profile, or kickoff.
 - [ ] Item 5 preserves the owner, selects its secondary profile, and marks

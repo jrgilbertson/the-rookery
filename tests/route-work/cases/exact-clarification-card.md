@@ -14,7 +14,8 @@ question from a ready route without interpreting prose variants.
 
 - [ ] Returns exactly one response beginning `## Clarification`.
 - [ ] The next nonblank line is one focused question that distinguishes tracker
-      truth from implementation, and the response ends after it.
+      truth from implementation, and the response ends after it with no
+      recommended owner.
 - [ ] Contains no Workflow, Setup, copy/paste kickoff, named stop, second
       question, or Markdown bold label; a later answer may receive another
       clarification response.

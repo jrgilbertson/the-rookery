@@ -126,7 +126,7 @@ I choose models by how success will be judged. For work with objective checks, I
 
 `ce-work` from Compound Engineering moves through the plan one unit at a time so I can inspect the work as it lands. `lfg`, also from Compound Engineering, runs from plan to pull request without check-ins. `/goal` in Claude Code and Codex keeps working toward one completion condition across turns. I use autonomous modes only when the goal is clear and verifiable.
 
-Compound Engineering is the default planner, executor, reviewer, and learning capture inside each worktree. Small changes may stay with one agent. Independent pieces may go to workers, and hard decisions may get a stronger advisor or a separate critic. I add those roles only when the default loop does not cover the work, because a second orchestration stack repeats planning, review, and handoffs.
+Compound Engineering is the default planner, executor, reviewer, and learning capture inside each worktree. Routing starts from Single owner. Independent slices use Orchestrator/planner + Executors. A named review gate is Executor + Reviewer. Hard decisions may get an advisor without a handoff; a separate critic sits in the Reviewer seat. I add those seats only when Single owner does not cover the work, because a second orchestration stack repeats planning, review, and handoffs.
 
 I enforce quality in tiers. Tests, linters, CI gates, and the design system enforce proactively, and prose instructions sit at the bottom. See the Maintain section for the full ladder.
 

@@ -29,7 +29,7 @@ must not displace the work that needs to happen first.
 - [ ] Items 4–5 select `ce-debug` and `ce-work`, respectively.
 - [ ] Items 6–7 select `managing-issues` and `impeccable`, despite their issue
       carriers.
-- [ ] Item 8 returns `Unsupported in v1`, includes the absolute public
+- [ ] Item 8 returns `Unsupported in the current version`, includes the absolute public
       `WORKFLOWS.md` URL, and emits no kickoff.
 - [ ] Every supported item uses one owner only and begins no downstream work.
 - [ ] Every supported item includes a plain-text copy/paste kickoff with the

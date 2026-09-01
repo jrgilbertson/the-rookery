@@ -48,9 +48,11 @@ gaps.
       choose option 1 on its own.
 - [ ] Scenario 2 continues only if the Orchestrator authorizes reply `1`.
       The Worker does not choose option 1. The checking skill then rereads
-      identity. It retains every existing policy, exact-head/base,
-      assigned-path, cleanliness, overlap, provider-read, lease, and
-      one-unmerged-PR gate.
+      identity, passes a silent evidence pack as pull-request-body input,
+      and continues into the existing first-publication path without a
+      spoken pack wait or a second publisher. It retains every existing
+      policy, exact-head/base, assigned-path, cleanliness, overlap,
+      provider-read, lease, and one-unmerged-PR gate.
 - [ ] Scenario 3 does not open a PR. The Orchestrator sends both named
       Worker-owned gaps to that Worker. After a new exact head, PR-readiness
       runs again.

@@ -84,6 +84,6 @@ If any required state is unavailable, name every exact gap and omit Approve.
 Do not reuse findings across moved heads or bases. A matching re-read is
 silent.
 
-This skill remains read-only except for dispatching a present companion skill
-from the live menu. It does not write to the repository, stage, commit, push,
-or open a pull request.
+This skill remains read-only except for dispatching a present companion
+skill from the live menu and later-1 finishing dispatch. It does not itself
+write to the repository, stage, commit, push, or open a pull request.

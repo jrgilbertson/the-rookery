@@ -2,6 +2,7 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-01 | 8c70d39 (working tree) | matched comparison: option-one-finishing-continuation | pass — prior fail (pack-stop) vs skilled pass | Independent fresh-context grader of the later-1 contract: continue, missing-finishing, withheld 1, and moved-identity items passed against current source; a frozen pack-stop completion would fail AE1 and AE2. Assessment fixtures and `skills-ref validate` stayed green.
 - 2026-09-01 | ecf9748 (working tree) | gardener ownerless merge-readiness pin | pass | `run-assessment-checks.py` now requires ownerless gardener to invoke merge-readiness and never authorize Proceed to merge; the remaining publication-base and exact-head assertions still pass.
 - 2026-09-01 | ecf974879 (working tree) | assessment fixture | pass | Contract grep now requires reserved option 1 and numbering from 2 without gaps; existing fail-closed and dirt-still-offers-option-1 cases stayed green. `skills-ref validate` passed.
 - 2026-08-29 | working tree | deferred sweep-class and publication-base fixture | pass | An exact named equivalent repository gate verified in the same complete assessment normalized its deferred class to `verified`; bare, missing, unrelated, mismatched, unavailable, and not verified gates stayed `action-required`, and base movement before first push or PR-open named old/new base identity and stopped publication.

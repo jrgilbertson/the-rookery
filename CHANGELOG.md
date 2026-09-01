@@ -13,6 +13,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `checking-pr-readiness` later 1 on an Approve menu continues into the
+  installed finishing path in the same conversation. The evidence pack is
+  silent pull-request-body input, not another wait. If no finishing path is
+  installed, the run names that once and stops without re-asking Approve.
 - `checking-pr-readiness` and `checking-merge-readiness` keep option 1 as the
   reserved Approve or Proceed slot. When that action cannot be taken, number
   1 stays and names why. The remaining actions have a print order, not fixed

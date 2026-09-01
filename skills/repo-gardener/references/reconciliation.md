@@ -146,8 +146,9 @@ The activating utterance is never approval. On a distinct later turn, the
 Orchestrator authorizes that Worker to reply 1 only when the menu offered
 option 1 and the recommendation was approve and proceed for that same exact
 head. The Worker never chooses option 1 on its own. The Orchestrator never
-authorizes Proceed to merge. The checking skill performs its identity reread
-before handing its evidence pack to the publication path.
+authorizes Proceed to merge. The checking skill performs its identity reread,
+instantiates its evidence pack as silent pull-request-body input, and
+continues into the publication path. Do not also dispatch an owner publisher.
 
 When a brief names Worker-owned gaps, the Orchestrator sends every named
 Worker-owned gap from that brief to the same Worker. Send those Worker-owned

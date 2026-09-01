@@ -2,6 +2,7 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-01 | 8c70d39 (working tree) | unattended later-1 publication wording | pass (static case) | Worker later 1 now continues into first-publication with a silent pack and no second publisher; extra publication gates remain. No provider contact or repository write occurred.
 - 2026-09-01 | ecf9748 (working tree) | repo-gardener deterministic and structural gates | pass | `npx --no-install skills-ref validate skills/repo-gardener` and `lefthook run pre-push --force` passed after the unattended helper-menu contract rewrite. Fresh-context behavioral cases were not run in this dispatch.
 
 - 2026-08-30 | 4d37a3b (pre-log head) | exact child-title refinement comparison | pass (5/5 candidate; 4/5 prior) | Four fresh read-only contexts found that the published baseline lacked the explicit caller-envelope child-title field (item 2), while the candidate passed all five combined Repo Gardener and Managing Issues items. No provider contact or repository write occurred.

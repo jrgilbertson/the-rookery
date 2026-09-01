@@ -1,6 +1,7 @@
 ---
 title: Do not split human and agent skill products
 date: 2026-08-31
+last_updated: 2026-09-01
 category: conventions
 module: checking-pr-readiness
 problem_type: convention
@@ -71,6 +72,8 @@ Keep one end-of-run API for every caller of a checking skill.
    merge-base, and staged, unstaged, and untracked content. For merge
    readiness that is the fingerprint, live merge state, host policy, and
    linked-issue re-check. The activating utterance never authorizes option 1.
+   On PR readiness, later 1 continues into the finishing path for this
+   conversation without presenting the pack as a wait.
 3. **Do not keep a second product in the checking skill.** Do not add
    assessment-only, agent-mode, report-only, disposition tokens, "don't
    wait," or a stricter unattended ready bar as a parallel print contract.

@@ -94,8 +94,9 @@ invoke `checking-merge-readiness` on that PR and stops after its brief and numbe
 it authorizes that Worker to reply 1 only when the menu offered option 1 and
 the recommendation was approve and proceed for that same exact head. The
 Worker never chooses option 1 on its own. The Orchestrator never authorizes
-Proceed to merge. The checking skill then performs its identity reread and
-hands its evidence pack to this finishing path.
+Proceed to merge. The checking skill then performs its identity reread,
+instantiates its evidence pack as silent pull-request-body input, and
+continues into this finishing path. Do not also dispatch an owner publisher.
 
 When a brief names Worker-owned gaps, the Orchestrator sends every named
 Worker-owned gap to the same Worker, then that Worker re-runs the helper on

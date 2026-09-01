@@ -135,7 +135,9 @@ marked unavailable / incomplete with its cap recorded; the head OID and
 fingerprints are recorded, with the payload's fingerprint block and a digest of
 the resolved host policy and every linked issue, when present, written to files
 now so a later option-1 re-check has something to compare against. Store those
-files in an owner-only `mktemp -d` directory outside the target repository. Do
+files in an owner-only `mktemp -d` directory outside the target repository.
+While waiting, that directory holds fingerprints and digests, not raw forge
+JSON. Do
 not remove that directory while the run is waiting for a numbered reply.
 Remove it after a later-turn
 option 1 compare finishes, when a non-1 later turn ends the run, or on
@@ -416,18 +418,15 @@ helper, re-run [scripts/fetch-pr-history.sh](scripts/fetch-pr-history.sh) as
 `fetch-pr-history.sh --repo <owner/name> --pr <number> --fingerprint` and
 compare against the fingerprint recorded at step 2 outside the conversation.
 Keep both outputs in the owner-only temp directory created in step 2. Do not
-echo jq, diff, or fingerprint JSON into chat. A matching compare is silent.
-On mismatch, name what moved and rebuild. Then re-check live merge state with
-`gh pr view <number> --repo <owner/name> --json` and re-run step 2's
-policy-resolution chain, comparing against the policy digest recorded at
-step 2. Live state alone would miss a changed required-review,
-conversation-resolution, or last-push rule. When linked issues were part of
-the review, re-fetch every one and compare those digests too. Fingerprint,
-live `pr view`, policy chain, and linked-issue re-fetches may run
-concurrently; compare every digest before the write. Without the helper,
-load [references/fetch-floor.md](references/fetch-floor.md) and compare
-against step 2's fingerprint record. Any movement means rebuild rather than
-merge.
+echo jq, diff, or fingerprint JSON into chat. Before every merge write,
+compare the fingerprint, re-check live merge state with
+`gh pr view <number> --repo <owner/name> --json`, re-run step 2's
+policy-resolution chain against the policy digest recorded at step 2, and
+re-fetch linked issues when they were part of the review. Those compares may
+run concurrently. A matching fingerprint compare is silent. Any movement
+means rebuild rather than merge. Without the helper, load
+[references/fetch-floor.md](references/fetch-floor.md) and compare against
+step 2's fingerprint record.
 
 Option 1 is the only write: matching re-check, then the merge kickoff in
 merge-execution.md, then a short status (whether the PR is MERGED, or what

@@ -174,13 +174,14 @@ verdicts; this table maps execution).
 | --- | --- | --- |
 | 0 | Class carried a verdict from its enumerated set | **verified** with the verdict line as named evidence, or **failed** when the verdict is a finding |
 | 2 with absent-input verdict (`no changelog`, `no records`) | Input missing | **unavailable** |
-| 2 with `not run` / usage error | Helper could not run as invoked | **not run** → fall back to the class's model-instruction check |
+| 2 with `not run` / usage error | Helper could not run as invoked | **not run**. Fall back to the class's model-instruction check and record that judgment as the class verdict. |
 | 3 | `--defer` to a repository gate | **skipped**, naming that gate |
-| 4 | Helper hard failure | **not run** → fall back to model-instruction check |
+| 4 | Helper hard failure | **not run**. Fall back to the class's model-instruction check and record that judgment as the class verdict. |
 
 ## When a helper cannot run
 
 A helper that is absent, not executable, or exits without producing its output
 does not remove its class from the sweep. Check that class by judgment against
-the class description above, and record it as `not run → judgment` in the
-captured gather so helper verdicts stay distinct from judgment verdicts.
+the class description above. Record the status as `not run` and store the
+model judgment as the class verdict, so helper verdicts stay distinct from
+judgment verdicts.

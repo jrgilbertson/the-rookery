@@ -125,7 +125,7 @@ lanes, change the durable policy, or write tracker records.
 
 Each Worker owns planning, implementation, simplification, review, repository
 verification, its coherent commit, and its branch/PR. It reports each assigned
-gate as passed, failed, or unavailable. Every unattended Worker invokes
+gate as pass, failure, or unavailable. Every unattended Worker invokes
 `checking-pr-readiness` normally and stops after its brief and numbered menu.
 The activating utterance is never approval. Only on a distinct later turn may
 that same Worker choose option 1, and only if the menu offered option 1 and the

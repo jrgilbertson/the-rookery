@@ -109,20 +109,51 @@ bind_spec() {
 
 echo "== 0. no separate agent form =="
 SKILL="$ROOT/skills/checking-merge-readiness/SKILL.md"
-if grep -Fq 'There is no report-only path' "$AGENT_MODE" \
-  && grep -Fq 'wait for a numbered reply' "$AGENT_MODE" \
-  && grep -Fq 'Do not pick an option in the same turn' "$AGENT_MODE" \
+if grep -Fq 'wait for a numbered reply' "$SKILL" \
   && grep -Fq 'Do not pick an option in the same turn' "$SKILL" \
-  && grep -Fq 'activating utterance never authorizes merge' "$SKILL"
+  && grep -Fq 'activating utterance never authorizes merge' "$SKILL" \
+  && grep -Fq 'On a later reply of 1' "$SKILL"
 then
   pass "one process: wait for a numbered reply, never self-select"
 else
   fail "one process: wait for a numbered reply, never self-select" "wait/self-select contract is incomplete"
 fi
-if ! grep -Eq 'gh[[:space:]]+pr[[:space:]]+merge|merge-execution\\.md|Proceed to merge' "$AGENT_MODE"; then
+this_turn=$(python3 -c '
+from pathlib import Path
+import re, sys
+text = Path(sys.argv[1]).read_text()
+i = text.find("Completion of this turn:")
+if i < 0:
+    sys.exit(2)
+rest = text[i:]
+m = re.search(r"\n### ", rest)
+sys.stdout.write(rest if m is None else rest[: m.start()])
+' "$SKILL") || this_turn=""
+if printf '%s' "$this_turn" | grep -Eq 'gh[[:space:]]+pr[[:space:]]+merge|kicked off'; then
+  fail "this-turn completion excludes merge write" "Completion of this turn still mentions merge kickoff"
+else
+  pass "this-turn completion excludes merge write"
+fi
+later=$(python3 -c '
+from pathlib import Path
+import sys
+text = Path(sys.argv[1]).read_text()
+i = text.find("### On a later reply of 1")
+sys.stdout.write(text[i:] if i >= 0 else "")
+' "$SKILL")
+if printf '%s' "$later" | grep -Eq 'gh[[:space:]]+pr[[:space:]]+merge'; then
+  pass "later option 1 still names merge kickoff"
+else
+  fail "later option 1 still names merge kickoff" "On a later reply of 1 does not mention gh pr merge"
+fi
+if grep -Fq 'Follow' "$AGENT_MODE" \
+  && grep -Fq 'SKILL.md' "$AGENT_MODE" \
+  && grep -Fq 'This reference does not name a forge command' "$AGENT_MODE" \
+  && ! grep -Eq 'gh[[:space:]]+pr[[:space:]]+merge|merge-execution\.md|Proceed to merge' "$AGENT_MODE"
+then
   pass "agent-mode file: merge invocation structurally absent"
 else
-  fail "agent-mode file: merge invocation structurally absent" "agent-mode file contains a merge path"
+  fail "agent-mode file: merge invocation structurally absent" "agent-mode file is not a pointer, or contains a merge path"
 fi
 
 echo "== A. serve real fixture content =="

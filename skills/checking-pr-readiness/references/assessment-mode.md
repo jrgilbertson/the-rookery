@@ -1,8 +1,8 @@
 # Exact-head identity and caller argv
 
 Every run of this skill binds one native subject in the same assessment session.
-There is no separate assessment-only form. SKILL.md owns the brief, numbered live
-options, and the wait for a numbered reply.
+SKILL.md owns the brief, numbered live options, and the wait for a numbered
+reply.
 
 ## Bind the native subject, full head, and base
 
@@ -39,8 +39,8 @@ run:
 surface-report.sh --base "$captured_base_selector" --full
 ```
 
-Capture helper stdout into the owner-only temp directory from SKILL.md step
-1. Do not echo it. If that exact selector binding is unavailable, mismatched,
+Capture helper stdout into the owner-only `mktemp -d` directory outside the
+target repository from SKILL.md step 1. Do not echo it. If that exact selector binding is unavailable, mismatched,
 or cannot be re-resolved, record the helper as `not verified` and omit
 Approve; do not fall back to its implicit default base. Use current
 repository-gate discovery, preserve the current helper exit/status mapping,
@@ -75,12 +75,14 @@ for example `code review: not verified`. Check-result spelling is canonical:
 Immediately before accepting Approve, re-resolve the same native subject,
 full head, target/base ref, and full base OID through the same boundary and
 re-read staged, unstaged, and untracked content. If the subject, head, base
-ref, or base OID differs from the captured state, reject the prior findings,
-name the old and new subjects when the subject changed, the old and new full
-OIDs when the head changed, and the old and new base identity when the base
-changed, then require a fresh run. If any required state is unavailable, name
-every exact gap and omit Approve. Do not reuse findings across moved heads or
-bases. A matching re-read is silent.
+ref, base OID, or staged, unstaged, or untracked content differs from the
+captured state, reject the prior findings. Name the old and new subjects when
+the subject changed, the old and new full OIDs when the head changed, the
+old and new base identity when the base changed, and the old and new paths
+and categories when working-tree content changed, then require a fresh run.
+If any required state is unavailable, name every exact gap and omit Approve.
+Do not reuse findings across moved heads or bases. A matching re-read is
+silent.
 
 This skill remains read-only except for dispatching a present companion skill
 from the live menu. It does not write to the repository, stage, commit, push,

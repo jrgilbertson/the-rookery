@@ -14,13 +14,15 @@ looked" surface. GitHub Releases mirror its entries.
 ### Changed
 
 - `checking-pr-readiness` and `checking-merge-readiness` now split gather from
-  the spoken brief. Helper inventories go to an owner-only temp directory.
-  The readout is an executive recommendation plus numbered live options, a
-  coverage close, and named next work instead of a receipt-vouch or a
-  per-class census. There is one process: wait for a numbered reply from
-  whoever is talking. A later reply of 1 is Approve or Proceed. The skill
-  does not pick an option in the same turn. Matching identity compares stay
-  silent; a moved head or working-tree content change rebuilds. Captured as
+  the spoken brief. Helper inventories go to an owner-only temp directory
+  outside the target repository. The brief is an executive recommendation
+  plus numbered live options, a coverage close, and named next work instead
+  of a receipt-vouch or a per-class census. There is one process: wait for a
+  numbered reply from whoever is talking. This turn ends when the menu is on
+  screen. A later reply of 1 is Approve or Proceed after identity re-read,
+  including staged, unstaged, and untracked content for PR readiness.
+  Matching identity compares stay silent; a moved head or working-tree
+  content change rebuilds. Captured as
   `docs/solutions/conventions/do-not-split-human-and-agent-skill-products.md`.
 
 

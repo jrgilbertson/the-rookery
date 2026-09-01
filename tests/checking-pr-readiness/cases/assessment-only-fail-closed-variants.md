@@ -26,7 +26,7 @@ was treated as ready to approve.
 
 ## Expected behavior
 
-- [ ] The stable-head variant offers option 1 only after a final native-head re-read matches the captured full head and the complete inventories and required-check results remain unchanged.
+- [ ] The stable-head variant offers option 1 from gather; re-reads immediately before accepting a later 1. Inventories and required-check results must still match.
 - [ ] The moved-head variant omits Approve, names both old and new full OIDs, rejects its prior findings, and requires a fresh run before any Approve.
 - [ ] The moved-base variant omits Approve while its subject and
       head remain stable, names the old and new base identity, rejects its

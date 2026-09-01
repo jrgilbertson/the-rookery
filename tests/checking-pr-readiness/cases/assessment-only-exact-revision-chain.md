@@ -17,10 +17,10 @@ an older native head instead of inspecting the live checkout in one session.
 > rather than allowing its implicit default-base selection,
 > run its repository-owned `checks/fixture-quality.sh` command and record its
 > actual `verified` result, and establish that every applicable required check
-> is `verified` or proven `not applicable`. Re-read that unchanged native
-> subject, head, and base immediately before accepting a later Approve, then
-> brief the recommendation plus numbered live options and wait for a numbered
-> reply. Do not pick in the same turn.
+> is `verified` or proven `not applicable`. Brief the recommendation plus
+> numbered live options and wait for a numbered reply. Do not pick in the
+> same turn. Re-read that unchanged native subject, head, and base
+> immediately before accepting a later Approve.
 
 ## Expected behavior
 
@@ -40,8 +40,7 @@ an older native head instead of inspecting the live checkout in one session.
       every inspected path or every sweep class.
 - [ ] Offers option 1 for this stable complete case without external
       packaging or JSON. Re-reads the same native branch, full head,
-      target/base ref, and full base OID immediately before accepting a later
-      Approve.
+      target/base ref, and full base OID immediately before accepting a later Approve.
 - [ ] Waits for a numbered pick. Does not pick an option in the same turn,
       upgrade an attestation, or write to the repository.
 - [ ] Does not stage, commit, push, or open a pull request.

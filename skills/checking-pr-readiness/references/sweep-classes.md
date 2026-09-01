@@ -5,8 +5,8 @@ order. Every class carries one verdict from its own enumerated set in the
 captured gather. A class that fired names where it fired — the file and line
 for a line-scoped finding, the file alone for a file-level one, and the
 repository surface for a repository-level finding such as a missing changelog
-entry or an aggregate file-cap excess. The spoken brief names only classes
-that drive the recommendation.
+entry or an aggregate file-cap excess. Record every class in the gather. The brief in SKILL.md step 7 names only
+classes that drive the recommendation.
 
 ## 1. Underspecified rules in prose and instruction files
 

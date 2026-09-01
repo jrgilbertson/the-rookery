@@ -472,6 +472,7 @@ def validate_contract_sources() -> None:
         "numbered live options",
         "wait for a numbered reply",
         "do not pick an option in the same turn",
+        "a turn is one reply",
         "mktemp -d",
         "outside the target repository",
         "on a later reply of 1",

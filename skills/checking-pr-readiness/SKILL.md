@@ -45,8 +45,8 @@ and immediately before accepting option 1.
 
 The finishing path will stage this surface. Create an owner-only `mktemp -d`
 directory outside the target repository first; capture helper stdout there and
-do not echo the inventory into chat. Do not remove that directory while this
-turn waits. Run
+do not echo the inventory into chat. Do not remove that directory while the
+run is waiting for a numbered reply. Run
 [scripts/surface-report.sh](scripts/surface-report.sh) when it is present and
 executable. It also carries step 6's size check, so pass the cap values
 resolved per [references/sweep-classes.md](references/sweep-classes.md) class
@@ -255,7 +255,7 @@ both copies together. -->
 
 #### Decision menu
 
-Present exactly one decision menu, then wait for a numbered reply. Do not pick an option in the same turn that wrote the menu. A reply of `1`,
+Present exactly one decision menu, then wait for a numbered reply. Do not pick an option in the same turn that wrote the menu. A turn is one reply. This reply writes the brief and the menu, then stops. The next message in the conversation, from whoever is talking, is the pick. A reply of `1`,
 "Approve", or "approve and proceed" after the menu has offered option 1
 counts as that choice. The activating utterance never authorizes Approve.
 

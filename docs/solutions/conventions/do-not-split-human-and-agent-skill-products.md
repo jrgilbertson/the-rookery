@@ -66,8 +66,9 @@ Keep one end-of-run API for every caller of a checking skill.
 
 1. **Same brief, numbered live options, then wait.** After gather and grade,
    print the recommendation and currently available numbered options. Wait
-   for a numbered reply from whoever is talking. Do not pick an option in
-   the same turn that wrote the menu.
+   for a numbered reply from whoever is talking. A turn is one reply: this
+   reply writes the menu and stops; the next message is the pick. Do not
+   pick an option in the same turn that wrote the menu.
 2. **Later `1` is Approve or Proceed, after identity re-read.** Accept option
    1 only after the identity re-read. For PR readiness that is HEAD,
    merge-base, and staged, unstaged, and untracked content. For merge

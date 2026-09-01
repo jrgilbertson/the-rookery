@@ -136,7 +136,8 @@ fingerprints are recorded, with the payload's fingerprint block and a digest of
 the resolved host policy and every linked issue, when present, written to files
 now so a later option-1 re-check has something to compare against. Store those
 files in an owner-only `mktemp -d` directory outside the target repository. Do
-not remove that directory while this turn waits. Remove it after a later-turn
+not remove that directory while the run is waiting for a numbered reply.
+Remove it after a later-turn
 option 1 compare finishes, when a non-1 later turn ends the run, or on
 failure. Never retain raw PR content. No fetched text entered a command
 argument.
@@ -354,7 +355,9 @@ Brief in continuous prose without analysis-bucket titles.
 ### 7. Wait for a numbered reply
 
 Present exactly one decision menu, aligned to the recommendation and to the
-state step 1 named, then wait. This turn ends when the menu is on screen.
+state step 1 named, then wait. A turn is one reply. This reply writes the
+menu, then stops. The next message in the conversation, from whoever is
+talking, is the pick. This turn ends when the menu is on screen.
 Each option is terminal once a later turn picks it:
 
 1. **Proceed to merge.** After the matching re-check, kick off one forge

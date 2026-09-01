@@ -18,8 +18,9 @@ looked" surface. GitHub Releases mirror its entries.
   outside the target repository. The brief is an executive recommendation
   plus numbered live options, a coverage close, and named next work instead
   of a receipt-vouch or a per-class census. There is one process: wait for a
-  numbered reply from whoever is talking. This turn ends when the menu is on
-  screen. A later reply of 1 is Approve or Proceed after identity re-read,
+  numbered reply from whoever is talking. A turn is one reply: this reply
+  writes the menu and stops; the next message is the pick. This turn ends
+  when the menu is on screen. A later reply of 1 is Approve or Proceed after identity re-read,
   including staged, unstaged, and untracked content for PR readiness.
   Matching identity compares stay silent; a moved head or working-tree
   content change rebuilds. Captured as

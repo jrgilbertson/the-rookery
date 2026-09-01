@@ -117,6 +117,13 @@ then
 else
   fail "one process: wait for a numbered reply, never self-select" "wait/self-select contract is incomplete"
 fi
+if grep -Fq 'Show the checks' "$SKILL" \
+  && grep -Fq 'Option 5 is non-terminal' "$SKILL"
+then
+  pass "show the checks is a non-terminal option"
+else
+  fail "show the checks is a non-terminal option" "Show the checks / Option 5 is non-terminal is missing"
+fi
 this_turn=$(python3 -c '
 from pathlib import Path
 import re, sys

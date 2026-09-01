@@ -68,7 +68,9 @@ When a skill briefs an owner at a decision point:
    Do not print a status-word inventory or a sweep-class table.
 6. **List only live options.** Print currently available numbered options
    after the brief. Name a check or path in the brief only when it drives
-   the recommendation.
+   the recommendation. A non-terminal Show the checks option lists each
+   applicable check and its status from the captured gather, then the
+   brief and menu again. Omit it when there is no captured gather.
 
 The end-of-run API (menu, wait, later `1`) is a separate contract. See
 [Do not split human and agent skill products](../conventions/do-not-split-human-and-agent-skill-products.md).

@@ -474,6 +474,8 @@ def validate_contract_sources() -> None:
         "do not pick an option in the same turn",
         "a turn is one reply",
         "a check named as next work does not by itself withhold approve",
+        "show the checks",
+        "option 5 is non-terminal",
         "mktemp -d",
         "outside the target repository",
         "on a later reply of 1",

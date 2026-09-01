@@ -240,7 +240,7 @@ both copies together. -->
 - Reasons, one idea each, most decision-relevant first. A clean outcome is
   one residual clause that grading found nothing material.
 - Evidence sits only under the reasons that drove the call, with source
-  pointers. Do not print a status-word inventory.
+  pointers. The check inventory is option 5, not the default brief.
 - List only currently available options.
 - Clean green (approve and proceed, nothing material): final brief plus
   menu at most about 12 non-blank short lines.
@@ -265,18 +265,24 @@ counts as that choice. The activating utterance never authorizes Approve.
 3. Run a flagged missing step now: one option per gap found in steps 2
    through 6 that a present skill owns, each dispatching that skill. A gap
    with no owning skill available is not a dispatch option; it is resolved
-   through attestation where a step defines one, or filed through option 5.
+   through attestation where a step defines one, or filed through option 6.
 4. Have the change or a concept behind it explained, through the available
    explanation capability (the `ce-explain` skill where the compound
    engineering plugin is installed). Omit this option when no such capability
    is present.
-5. Stop and file follow-up work.
+5. Show the checks. Offer when a captured gather exists. List each
+   applicable check and its status word from that gather: repository gates,
+   upstream steps, sweep classes that applied, and the learning signal.
+   Then present the brief and numbered options again.
+6. Stop and file follow-up work.
 
 Options 3 and 4 are non-terminal: when one finishes, **recompose**. Re-read
 the working surface from step 1 and, when it changed, re-run the steps whose
 inputs the change touches: the surface report always, and each of steps 2–6
 only where a changed path feeds it. Re-run all of steps 2–6 when the change's
 reach is unclear. Then present the brief and menu again.
+
+Option 5 is non-terminal: print the list from the captured gather, then the brief and numbered options again.
 
 Completion of this turn: the brief and numbered live options are on screen,
 and the run is waiting. It did not pick. It did not re-read identity for

@@ -17,8 +17,9 @@ looked" surface. GitHub Releases mirror its entries.
   the spoken brief. Helper inventories go to an owner-only temp directory
   outside the target repository. The brief is an executive recommendation
   plus numbered live options, a coverage close, and named next work instead
-  of a receipt-vouch or a per-class census. There is one process: wait for a
-  numbered reply from whoever is talking. A turn is one reply: this reply
+  of a receipt-vouch or a per-class census. A non-terminal Show the checks
+  option lists each applicable check and its status on request. There is
+  one process: wait for a numbered reply from whoever is talking. A turn is one reply: this reply
   writes the menu and stops; the next message is the pick. This turn ends
   when the menu is on screen. A later reply of 1 is Approve or Proceed after identity re-read,
   including staged, unstaged, and untracked content for PR readiness.

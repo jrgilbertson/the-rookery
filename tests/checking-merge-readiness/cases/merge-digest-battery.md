@@ -127,6 +127,7 @@ only and must not appear as headers in the spoken readout.
       Host, Answer, Why, Evidence) and no printed bracket labels.
 - [ ] Exactly one recommendation with producers named in the opening; menu
       after the body; menu options do not contradict the recommendation.
+      Show the checks is a numbered option, not the default brief.
 
 ## Scenario 1: clean + tip residual (control; plan AE1)
 

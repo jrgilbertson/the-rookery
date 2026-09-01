@@ -343,7 +343,8 @@ Brief in continuous prose without analysis-bucket titles.
   when merge is still green). A clean outcome is one residual clause that
   grading found nothing material.
 - Evidence sits only under the reasons that drove the call, with source
-  pointers (thread, round, or file).
+  pointers (thread, round, or file). The check inventory is option 5, not
+  the default brief.
 - Numbered live options after the brief. List only currently available
   options.
 - Clean green (recommend merge, nothing material): final brief plus menu at
@@ -359,7 +360,7 @@ state step 1 named, then wait. A turn is one reply. Print only the brief and
 the numbered options, then stop. Do not explain turns, later `1`, or the
 identity re-read in the brief. The next message in the conversation, from
 whoever is talking, is the pick. This turn ends when the menu is on screen.
-Each option is terminal once a later turn picks it:
+Options 1 through 4 are terminal once a later turn picks them. Option 5 is non-terminal.
 
 1. **Proceed to merge.** After the matching re-check, kick off one forge
    merge per
@@ -376,12 +377,16 @@ Each option is terminal once a later turn picks it:
 3. **Pull back for redesign.** Offered when the recommendation is do not
    merge. Stronger than debug: the change as scoped should not proceed.
 4. **Capture follow-up work.** Offered when step 5 listed follow-up debt.
-   May attach to any of the other options.
+   May attach to option 1, 2, or 3.
+5. **Show the checks.** Offer when a captured gather exists. List each
+   applicable check and its status from that gather: drivers, host rules,
+   history completeness, and the intent baseline. Then present the brief
+   and numbered options again.
 
 A state that cannot be merged from replaces option 1 rather than offering it
 falsely. On a merged or closed pull request the review is retrospective:
 there is no merge to proceed to, so the menu offers only what is still open
-(debug follow-up, redesign, or filing work). On a draft, merging first
+(debug follow-up, redesign, filing work, or Show the checks). On a draft, merging first
 requires marking it ready, which changes the pull request and takes a fresh
 review; say that in place of the merge option. Step 6's recommendation reads
 the same way on a state that cannot merge: it describes what the evidence

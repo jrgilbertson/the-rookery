@@ -29,7 +29,8 @@ uncaptured-learning variants into one battery.
 - [ ] 1 → the untracked `notes.tmp` is named as part of what ships, rather
       than being omitted because no diff command lists it by default.
 - [ ] 1 → the spoken brief is a recommendation plus numbered live options, not
-      a path list or sweep-class table.
+      a path list or sweep-class table. Show the checks is a numbered option,
+      not the default brief.
 - [ ] 1 → after the brief, wait for a numbered reply. A turn is one reply.
       Do not pick an option in the same turn.
 - [ ] 2 → code review is named as not run, as next work; it is never

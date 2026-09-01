@@ -37,7 +37,8 @@ an older native head instead of inspecting the live checkout in one session.
       verified check.
 - [ ] Returns the executive brief and numbered live options, names the full
       head, offers option 1, and includes a coverage close. It does not list
-      every inspected path or every sweep class.
+      every inspected path or every sweep class. Show the checks is a
+      numbered option, not the default brief.
 - [ ] Offers option 1 for this stable complete case without external
       packaging or JSON. Re-reads the same native branch, full head,
       target/base ref, and full base OID immediately before accepting a later Approve.

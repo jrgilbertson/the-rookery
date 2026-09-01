@@ -478,7 +478,7 @@ def validate_contract_sources() -> None:
         "when the recommendation is approve, unrun code review or simplify do not appear in that brief as leftover work",
         "show the checks",
         "show the checks is non-terminal",
-        "numbered from 1, each number once",
+        "omit unavailable options rather than renumbering",
         "mktemp -d",
         "outside the target repository",
         "on a later reply of 1",

@@ -347,7 +347,9 @@ Brief in continuous prose without analysis-bucket titles.
   pointers (thread, round, or file). The check inventory is Show the
   checks, not the default brief.
 - Numbered live options after the brief. List only currently available
-  options, numbered from 1, each number once.
+  options. Keep each option's number. Omit unavailable options rather
+  than renumbering. Option 1 is Proceed to merge only when that option
+  is offered.
 - Clean green (recommend merge, nothing material): final brief plus menu at
   most about 12 non-blank short lines.
 - A coverage close: gather completed, and every applicable check is
@@ -379,8 +381,8 @@ Show the checks is non-terminal. The other live options are terminal once picked
    history completeness, and the intent baseline. Then present the brief
    and numbered options again.
 
-A state that cannot be merged from replaces option 1 rather than offering it
-falsely. On a merged or closed pull request the review is retrospective:
+Omit option 1 when Proceed to merge is not available. Do not give its
+number to another action. On a merged or closed pull request the review is retrospective:
 there is no merge to proceed to, so the menu offers only what is still open
 (debug follow-up, redesign, filing work, or Show the checks). On a draft, merging first
 requires marking it ready, which changes the pull request and takes a fresh

@@ -137,7 +137,7 @@ existing one.
 ### Evidence Pack
 
 A record added to the pull request description after option 1 approves a
-readiness review. It is an actable brief: the recommendation, material next
+readiness review. It is an actionable brief: the recommendation, material next
 work, a coverage close, and the learning signal, not a census of every sweep
 class or inspected path.
 

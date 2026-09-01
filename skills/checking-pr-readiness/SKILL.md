@@ -241,7 +241,9 @@ both copies together. -->
   one residual clause that grading found nothing material.
 - Evidence sits only under the reasons that drove the call, with source
   pointers. The check inventory is Show the checks, not the default brief.
-- List only currently available options, numbered from 1, each number once.
+- List only currently available options. Keep each option's number.
+  Omit unavailable options rather than renumbering. Option 1 is Approve
+  only when that option is offered.
 - Clean green (approve and proceed, nothing material): final brief plus
   menu at most about 12 non-blank short lines.
 - A coverage close: gather completed, and every applicable check is
@@ -275,7 +277,7 @@ counts as that choice. The activating utterance never authorizes Approve.
    Then present the brief and numbered options again.
 6. Stop and file follow-up work.
 
-Print only the live options, numbered from 1. Show the checks is non-terminal: print the list from the captured gather, then the brief and numbered options again. Run a missing step and Explain are non-terminal: when one finishes, **recompose**. Re-read the working surface from step 1 and, when it changed, re-run the steps whose inputs the change touches.
+Print only the live options. Keep their numbers. Do not reuse option 1 for another action. Show the checks is non-terminal: print the list from the captured gather, then the brief and numbered options again. Run a missing step and Explain are non-terminal: when one finishes, **recompose**. Re-read the working surface from step 1 and, when it changed, re-run the steps whose inputs the change touches.
 
 Completion of this turn: the brief and numbered live options are on screen,
 and the run is waiting. It did not pick. It did not re-read identity for

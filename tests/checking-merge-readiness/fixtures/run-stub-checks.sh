@@ -134,8 +134,11 @@ if i < 0:
 rest = text[i:]
 m = re.search(r"\n### ", rest)
 sys.stdout.write(rest if m is None else rest[: m.start()])
-' "$SKILL") || this_turn=""
-if printf '%s' "$this_turn" | grep -Eq 'gh[[:space:]]+pr[[:space:]]+merge|kicked off'; then
+' "$SKILL")
+extract_status=$?
+if [ "$extract_status" -ne 0 ]; then
+  fail "this-turn completion excludes merge write" "Completion of this turn block is missing"
+elif printf '%s' "$this_turn" | grep -Eq 'gh[[:space:]]+pr[[:space:]]+merge|kicked off'; then
   fail "this-turn completion excludes merge write" "Completion of this turn still mentions merge kickoff"
 else
   pass "this-turn completion excludes merge write"

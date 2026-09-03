@@ -403,11 +403,15 @@ touches. Propose exactly one independently approvable action for every record
 the window's evidence shows is now wrong or now needs a decision, and list
 nothing that is healthy. Zero rows is a valid result and is reported as such.
 
-Reporting the sweep's coverage is not the same as listing what it cleared. Say
-which records the sweep covered and that none qualified. Do not name, date, or
-enumerate the healthy records to show the work, and do not describe them one by
-one as a way of proving the window was read. The Source Access Audit already
-carries how far coverage reached.
+Reporting the sweep's coverage is not the same as listing what it cleared. Name
+the record kinds the sweep covered and say that none qualified. Then stop.
+
+A healthy record's title, due date, or count is not evidence the sweep ran, and
+including it is the task-list dump this rule exists to prevent. "Open tasks and
+the calendar were covered and nothing qualified" is the whole report. "The three
+open tasks are due 2026-09-24, 2026-10-02, and 2026-10-15, none overdue" names
+three healthy records and is the failure, however brief it looks. The Source
+Access Audit already carries how far coverage reached.
 
 The mode supplies the window as two dates: a closing day and a target day.
 Read the row definitions below against those two dates as the window's start

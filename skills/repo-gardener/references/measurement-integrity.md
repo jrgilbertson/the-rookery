@@ -1,8 +1,8 @@
 # Cross-cutting measurement integrity
 
 Use this preflight during reconciliation when the repository has product or
-operating metrics and a configured provider-enforced read role can inspect a
-reporting sink. It contributes evidence to the nine lanes; it is not a tenth
+operating metrics and the host can read a reporting sink with a read-only
+role. It contributes evidence to the nine lanes; it is not a tenth
 lane, a separate schedule, or an authority to mutate either source.
 
 ## Establish the contract
@@ -24,7 +24,7 @@ revenue, or cost definition.
 
 ## Run the bounded preflight
 
-Confirm the configured reporting project against the repository's canonical
+Confirm the reporting project the host reads against the repository's canonical
 production-project identity before querying. A mismatch stops only this slice.
 Name a bounded time window and timezone, product surface, expected events or
 metrics, and a query or time budget. When an execution-eligible lane has

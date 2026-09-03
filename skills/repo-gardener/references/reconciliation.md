@@ -26,7 +26,9 @@ its matching `run-closed`. For the exact original Orchestrator and its
 Workers, require current caller or host liveness, or proven termination; an
 expired lease alone proves neither termination nor loss of mutation ability.
 Unknown, unavailable, or still-live state blocks a new opening and new
-Workers. Recovery may only verify or finish the original uncertain tracker
+Workers; the run still performs caller-only sensing and returns that result to
+the caller with the stale `run-opened` as owner attention item 1. Recovery may
+only verify or finish the original uncertain tracker
 effect and prepare one truthful close from retained verifiable facts, recording
 unknown dispositions. It never resumes or replays stale declared audits or
 Worker mutation, and it preserves pending worktrees and authored state for
@@ -93,23 +95,46 @@ authoritative default branch and require its exact opening revision. An
 unavailable, unknown, or changed policy stops that dispatch and later source
 mutation.
 Immediately before every Worker dispatch, freshly read native branches and PRs
-for overlap with that Worker's planned assignment slice. An unavailable or
-unknown read, or a current overlap, stops only that dispatch and its dependents,
-unless the same-assignment `shared_ledger_paths` exception below applies.
+for changed-path overlap with that Worker's planned slice, as defined in
+policy-and-entry-modes. An unavailable or unknown read, or a current overlap,
+stops only that dispatch and its dependents.
 
-`shared_ledger_paths` is an assignment-only exception for the same originally
-approved siblings, and only when the opening policy and repository proof
-establish a conflict-safe additive merge check. Their Worker briefs bind the
-same Worker identity, branch, and disjoint slices: a native branch or PR
-overlap may proceed only when those facts still prove that binding and the same
-ledger path. It does not exempt another path, protected path, authoring scope,
-or a new or unrelated overlap, which stops publication. Every Worker using it
-adds only its attributable entry and retains all base entries; later native
-conflicts are for human handling.
+A candidate unit may be an existing open PR that the Worker adopts. Adopt only
+when: the head branch lives in the target repository (on GitHub,
+`isCrossRepository: false`); the native read gives head ref, full head OID,
+base ref, and changed paths; the PR is not a draft and every commit on its head
+beyond the base is authored by a provider-marked bot or app account; and
+current native facts (a failing check, a missing changelog entry, pin-mirror
+drift, a review finding) name a gap the Worker can close inside scope and
+outside protected paths. A PR failing any condition is a recommendation, never
+adopted. Adoption consumes one Worker of `maximum_workers`; no two Workers
+adopt the same PR. After the first Worker push an update bot treats the branch
+as edited and stops rebasing or updating it, so adopt only when the named gap
+is worth that trade (a failing repository gate, not a stale version). Author,
+title, and branch prefix prove nothing about the PR's content; the provider's
+account type and draft flag bound only who the gardener may push to. The PR
+number, head ref, head OID, and changed paths are the identity.
+
+A shared ledger path is the one overlap exception, keyed on
+`git check-attr --source=<full base OID> merge -- <path>` reporting `union`,
+read by the Orchestrator at assignment and by the Worker before publication.
+The `--source` form reads the attribute at the base revision regardless of the
+worktree's checkout; a git without it is an unavailable read that denies the
+exception. The attribute proves git-local union merge only: hosts that merge
+PRs server-side ignore merge drivers, so when two Workers share the path the
+second PR to merge may conflict on the host, and that conflict is owner work
+named in the brief and morning report. The exception covers only additive
+entries: every Worker using it adds only its attributable entry and retains
+all base entries; the Orchestrator never writes a ledger line. It does not
+exempt another path, protected path, authoring scope, or a new or unrelated
+overlap, which stops publication. Later native conflicts are for human
+handling.
 
 Before dispatch, require the portable mutation interface:
 
-1. an isolated Worker worktree at the authoritative base;
+1. an isolated Worker worktree at the authoritative base (for an adopted PR:
+   that PR's head branch checked out at the hosted head OID captured at
+   dispatch);
 2. repository-native setup when the host supplies it;
 3. supervision before mutation and through Worker completion; and
 4. a Worker-owned branch with at most one unmerged PR.
@@ -126,12 +151,19 @@ first mutation, run ordinary native `git status --porcelain=v1
 --untracked-files=all`. A failed read or any staged, unstaged, or untracked
 non-ignored path stops only dependent work, names the affected paths (or the
 assigned slice when status is unreadable), and leaves unexpected material
-untouched without restoring, staging, or committing it.
+untouched without restoring, staging, or committing it. For an adopted PR,
+also require local HEAD to equal the captured hosted head OID, and re-read
+every named gap from native facts immediately before authoring and again
+before publication; if a gap is gone, changed, or ambiguous, stop that unit
+and report it without publishing.
 
 The Worker brief names the authoritative base, policy revision, Worker identity
 and branch, scope, protected paths, lane grant, assigned slice, and exact
-caller-approved verification command argv list. Include the ledger proof and
-base-diff rule only when that exception applies. Workers do not run the nine
+caller-approved verification command argv list. For an adopted PR it also
+names the PR number, head ref, captured head OID, base ref and full base OID,
+the named gap(s), and that the update bot will stop maintaining the branch
+after the first Worker push. Include the ledger attribute read and base-diff
+rule only when that exception applies. Workers do not run the nine
 lanes, change the durable policy, or write tracker records.
 
 ## Worker completion and publication
@@ -149,6 +181,11 @@ head. The Worker never chooses option 1 on its own. The Orchestrator never
 authorizes Proceed to merge. The checking skill performs its identity reread,
 instantiates its evidence pack as silent pull-request-body input, and
 continues into the publication path. Do not also dispatch an owner publisher.
+For an adopted PR the Worker still invokes `checking-pr-readiness` on its
+exact head with the PR base passed as `--base`; after Orchestrator-authorized
+1, the publication path is the existing-PR update below, not an absent-ref
+create; then the Worker invokes `checking-merge-readiness` on that PR as
+contracted. The first Worker push to an adopted PR is its first publication.
 
 When a brief names Worker-owned gaps, the Orchestrator sends every named
 Worker-owned gap from that brief to the same Worker. Send those Worker-owned
@@ -181,19 +218,25 @@ captured target/base ref and full base OID and reread that porcelain status.
 Before every push and PR opening,
 validate the committed paths against the assignment, identity, scope, protected
 paths, and, where relevant, the ledger base diff, then reconcile the current
-local head, exact target/base, and native branch and PR overlap. Permit a ledger
-overlap only under the same-assignment binding above.
+local head, exact target/base, and native branch and PR overlap. For an
+adopted PR the committed paths are the Worker-authored diff from the captured
+hosted OID. Permit a ledger overlap only under the attribute exception above.
 
 After those gates pass, provider state is exhaustive: an absent provider ref
 may be atomically created at the exact authorized head only under an absent-ref
 lease, such as Git's `--force-with-lease=<ref>:` form or a proven equivalent;
 a provider ref already equal to that head needs no push; and only an
-Orchestrator-authorized repair of the same Worker's PR may atomically update its
-exact previously observed hosted head to the exact authorized repaired head,
-under a lease expecting that old OID. Refuse unavailable or unknown provider
-state, any other provider OID, or a lease failure. After a create or update,
-read back and require the exact authorized provider OID. Never advance
-competing movement implicitly.
+Orchestrator-authorized update of the same Worker's PR, including the first
+push to an adopted PR, may atomically update its exact previously observed
+hosted head to the exact authorized head, under a lease expecting that old OID
+(for an adopted PR, the OID captured at dispatch). A moved hosted head, for
+example a bot rebase, fails the lease, stops that publication, preserves the
+local commit, and is named; never recapture and retry. Refuse unavailable or
+unknown provider state, any other provider OID, or a lease failure. After a
+create or update, read back and require the exact authorized provider OID.
+After a successful first push to an adopted PR, the morning report names that
+PR as owner-maintained from that push ("adopted; bot automation may no longer
+update this branch"). Never advance competing movement implicitly.
 
 Any mismatch, base movement, unauthorized path, native overlap, provider
 conflict, unavailable fact, or unknown provider effect stops publication and

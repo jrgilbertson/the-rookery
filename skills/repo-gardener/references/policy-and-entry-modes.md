@@ -31,10 +31,8 @@ A valid file parses and names every required field with real values (no
 `REPLACE_WITH_*`): stable repository identity, default branch, authoring
 scope, configured protected paths, `maximum_workers`, live tracker identity,
 all nine contracted lanes in order with triage as an empty mapping and eight
-lane `mutation` flags, optional ordered `audit_commands` on eligible lanes,
-optional evidence-source grants, and an optional `shared_ledger_paths`
-declaration only after the repository has proved conflict-safe additive merge
-behavior and the additive-entry gate applies. `issue_refinement` is an optional
+lane `mutation` flags, and optional ordered `audit_commands` on eligible
+lanes. `issue_refinement` is an optional
 boolean that normalizes to `false`; only `true` permits the narrow delegation
 below. Any other file at that path is invalid. The file does not name `version`,
 `status`, always-denied effects, presentation caps, deep-target counts, or
@@ -51,14 +49,12 @@ sensing-only and does not start setup. An unattended caller with a missing or
 invalid file ends `blocked` and names the gap. A file that parses but does
 not name a live tracker identity is the narrower exception: do not start
 setup, do not end `blocked` for that gap, stay on caller-only sensing, and
-name it. #3336 is not a live tracker.
+name it.
 
 Setup is one interactive review of the full recommended file. Present identity,
 default branch, scope, protected paths, `maximum_workers`, tracker identity,
-eight lane mutation grants, optional audit declarations, and optional
-evidence-source grants, plus an optional `shared_ledger_paths` declaration
-only after the repository has proved conflict-safe additive merge behavior and
-the additive-entry gate applies. Show triage as recommend-only; it is not
+eight lane mutation grants, and optional audit declarations. Show triage as
+recommend-only; it is not
 grantable. The owner can change any real knob. `.agents/repo-gardener.yaml` is
 always protected; setup cannot turn that off. A Worker must not edit that file.
 
@@ -192,14 +188,21 @@ boundary, `maximum_workers` is greater than zero, the owning
 `.agents/repo-gardener.yaml` is always protected. A missing or mismatched
 identity, out-of-scope path, missing or `false` lane value,
 `maximum_workers` of zero, or protected path denies that unit. The bundled
-starter remains denied and grants nothing.
+starter remains denied and grants nothing. For an adopted PR, "planned or
+committed path" means the paths changed by the Worker's own commits after the
+captured hosted head.
 
-Assign overlap before parallel start. Immediately before every Worker dispatch,
-freshly read native branches and PRs for overlap with that Worker's planned
-assignment slice. An unavailable or unknown read, or a current overlap, denies
-only that dispatch and its dependents, unless the same-assignment
-`shared_ledger_paths` exception applies; other Workers and read-only sensing
-continue. Already-open PRs stay native objects.
+Assign overlap before parallel start. Overlap is the intersection of the
+Worker's planned changed paths with the changed paths of other current native
+branches and PRs; a PR elsewhere in the same directory, lane, or package
+manager is not overlap. An adopted PR is excluded from its own Worker's
+overlap read; no two Workers adopt the same PR. A path whose git `merge`
+attribute is `union` at the authoritative base is the only shared-path
+exception, and only for additive entries. Immediately before every Worker
+dispatch, freshly read native branches and PRs for that overlap. An
+unavailable or unknown read, or a current overlap, denies only that dispatch
+and its dependents; other Workers and read-only sensing continue. Already-open
+PRs stay native objects.
 
 Mid-run, re-read the file only to detect that its revision changed. Unchanged
 grants are not re-litigated. A revision change stops further source mutation,
@@ -218,8 +221,7 @@ create follow-up issues. The only issue-create exception is one canonical child
 inside the exact policy-authorized owned-family batch above; the setup
 tracker-issue batch remains its own approval boundary. Never weaken validation,
 expose secrets, mutate production, persist customer-level analytics, or message
-a customer. Presentation cap 7 is not in the file. There is no depth quota in
-the file.
+a customer.
 
 Scheduled and manual Orchestrator runs use the same skill contract. The caller
 owns automation scheduling, Orchestrator-worktree creation, provider

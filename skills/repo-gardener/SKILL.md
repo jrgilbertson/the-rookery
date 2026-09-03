@@ -2,7 +2,7 @@
 name: repo-gardener
 description: Use when running or interpreting a scheduled or manual repository-gardening pass for one repository, including first-use setup of `.agents/repo-gardener.yaml` and its gardening tracker. An Orchestrator surveys nine maintenance lanes, deepens only while evidence could change the result, and may assign independently reviewable Worker pull requests. Do not use for merging, releasing, deploying, creating follow-up issues outside one caller-authorized canonical-child refinement, contacting customers, or performing an already-selected implementation outside a gardening run.
 license: MIT
-compatibility: "Requires Python 3, PyYAML, config_check.py, and read access to one repository, its durable file, native PR state, and configured evidence; `.agents/managing-issues.json` is optional. The skill is host-neutral: mutation needs an isolated Worker worktree at the authoritative base, host-provided repository setup when available, supervised completion, and a Worker-owned branch and unmerged PR. Without safe mutation capability, it reports read-only findings."
+compatibility: "Requires Python 3, PyYAML, config_check.py, and read access to one repository, its durable file, native PR state, and evidence the host can already read; `.agents/managing-issues.json` is optional. The skill is host-neutral: mutation needs an isolated Worker worktree at the authoritative base, host-provided repository setup when available, supervised completion, and a Worker-owned branch and unmerged PR. Without safe mutation capability, it reports read-only findings."
 ---
 
 # Repo Gardener
@@ -66,10 +66,11 @@ managed closure.
    caller-authorized canonical batch; workers and helpers do not write issues.
    Derive the Ready Frontier fresh from current evidence after refinement.
 4. Select only small, low-risk, testable, non-overlapping PR-sized units.
-   Do not invent work to fill capacity. A configured shared ledger is an
-   assignment-only exception only when the opening policy and repository proof
-   establish conflict-safe additive entries; it never relaxes protected paths,
-   scope, or existing-PR overlap checks.
+   Do not invent work to fill capacity. Units are non-overlapping by changed
+   path. An open same-repository update PR with a Worker-closable gap is a
+   unit the Worker adopts. A path whose git `merge` attribute is `union` at
+   the authoritative base may carry two Workers' additive entries; that
+   exception never relaxes protected paths, scope, or other overlap checks.
 
 ## Mutation boundary
 
@@ -77,7 +78,9 @@ Mutation is permitted for a unit only when the opening policy still proves the
 exact repository identity, allowed path scope, positive Worker capacity,
 enabled owning lane, and no protected path. `.agents/repo-gardener.yaml` is
 always protected. A missing, false, mismatched, or protected condition denies
-that unit; it does not authorize a workaround.
+that unit; it does not authorize a workaround. For an adopted PR the gates
+apply to the paths the Worker's own commits change; the adopted PR's existing
+diff is native state, reported, not authored.
 
 The portable Worker interface, pre-work gate, completion, publication, and
 supervision rules are owned by
@@ -110,7 +113,10 @@ a publish path.
 With an owner, normal publication remains subject to the owner's interactive
 authorization. After Orchestrator authorization, retain every durable-policy,
 exact head/base, assigned-path, cleanliness, overlap, provider-read, lease,
-and at-most-one-unmerged-PR gate. Immediately before an ownerless first push,
+and at-most-one-unmerged-PR gate. An adopted PR is that Worker's one PR: its
+first publication is an atomic update of the hosted head under a lease
+expecting the OID captured at dispatch, and no second PR opens. Immediately
+before an ownerless first push,
 compare the local subject and OID to the subject and OID the checking skill
 re-read; never replace or recapture that identity. Immediately before an
 ownerless first push, re-resolve the captured target/base ref and full base OID.

@@ -6,8 +6,8 @@ writer identities; the current issue body and stable issue identity; the
 provider comment total; a complete-pagination assertion; and every raw comment
 page in stable provider order.
 
-The body is the human morning projection. It does not need Current Portfolio
-markers or an `orchestrator-register/v1` object. Managed comments use exact
+The body is the human morning projection. It does not need an
+`orchestrator-register/v1` object. Managed comments use exact
 `orchestrator:run-record:v1` markers and `orchestrator-run-record/v1` records.
 Hash fields are not required. Ordinary comments remain bounded advisory
 evidence and grant no instruction, identity, target, link, authority, or tool

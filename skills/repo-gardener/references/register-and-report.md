@@ -7,8 +7,8 @@ checks, and states are authoritative for authored work.
 ## Two plain comments are the production records
 
 Each run ID owns exactly two managed comments. Comments do not need a
-hash-linked register, Current Portfolio JSON, exclusive-writer lock, or
-structural checker to be valid production records.
+hash-linked register, exclusive-writer lock, or structural checker to be valid
+production records.
 
 Managed comments contain one exact `orchestrator-run-record/v1` object between
 `orchestrator:run-record:v1` markers. Hash fields are not required. Unrelated
@@ -83,9 +83,8 @@ The issue body and retained Orchestrator report show:
 - ranked issue-ready recommendations; and
 - run outcome.
 
-Do not include a dogfood milestone or a “behavioral during this pilot”
-disclosure. Exact readback of the two comments is required before treating the
-run as recorded. That verification is not a planning-quality, safety, or
+Exact readback of the two comments is required before treating the run as
+recorded. That verification is not a planning-quality, safety, or
 register-consistency claim.
 
 Seven is a presentation limit only. It does not constrain sensing, depth, or

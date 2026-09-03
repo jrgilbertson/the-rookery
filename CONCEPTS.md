@@ -187,8 +187,10 @@ units, then starts Workers in parallel up to that run's ceiling.
 ### Worker
 
 An isolated worktree agent assigned one independently deliverable, reviewable
-pull request. It owns that work through an unmerged pull request. When the
-work is an issue, that issue is an Implementation Leaf.
+pull request. It owns that work through an unmerged pull request. The pull
+request may be an existing one the run adopts; the Worker then owns that PR's
+branch for the run. When the work is an issue, that issue is an Implementation
+Leaf.
 
 *Avoid:* child, gardener child
 
@@ -209,13 +211,6 @@ The GitHub issue used as the morning report and append-only run-history surface
 for one repository. Each Repository Maintenance Run writes one opened comment
 and one closed comment. Native pull requests remain authoritative for authored
 work.
-
-### Current Portfolio
-
-A legacy report projection retained on archived dogfood tracker history.
-New gardening trackers do not use it. It is not a queue or ownership database.
-Native pull requests, branches, heads, checks, and states are authoritative
-for authored work.
 
 ### Run History
 

@@ -175,16 +175,17 @@ alternatives:
   shaped the subject. When returning a proposed dispatch instead of executing
   it, include or attach the literal complete contents in that dispatch; a
   reference to contents elsewhere in the current conversation is not a
-  fresh-context handoff. A result beginning `Proceed with the current approach.`
-  is verified only when this dispatch meets that independence rule, no owner
-  question remains, and the continuity checks below pass. `Simplify before
-  proceeding.` is failed until the approach is revised and checked again.
-  `Decide before proceeding` is failed until the decision is resolved and the
-  resulting approach is checked again. `Cannot assess yet` remains not
-  verified. Keep the dispatch and return uninterrupted by requirements,
-  implementation, or other surface-changing work. When it returns, re-read the
-  complete requirements and re-run step 1, then re-read the full committed,
-  staged, unstaged, and untracked content supplied to the reviewer. Any content
+  fresh-context handoff. A result that recommends keeping the current approach
+  is verified only when this dispatch meets that independence rule, no user
+  question remains, and the continuity checks below pass. A result that
+  recommends simplifying first is failed until the approach is revised and
+  checked again. A result that needs a user decision is failed until the
+  decision is resolved and the resulting approach is checked again. A result
+  that cannot assess yet remains not verified. Keep the dispatch and return
+  uninterrupted by requirements, implementation, or other surface-changing
+  work. When it returns, re-read the complete requirements and re-run step 1,
+  then re-read the full committed, staged, unstaged, and untracked content
+  supplied to the reviewer. Any content
   change makes the result stale and triggers recomposition. Matching paths alone
   are insufficient. An older or same-context result is advisory, never
   verified.

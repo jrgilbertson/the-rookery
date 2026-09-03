@@ -99,9 +99,9 @@ baseline verified self-review and omitted approach-level simplicity.
 > The implementer self-reviewed the approach. Inventory the upstream steps and
 > statuses, give the next action, why its timing is a backstop, and the exact fresh-review
 > dispatch, acceptance, and continuity requirements. Then explain how the gate
-> handles a matching `Cannot assess yet` result, a fresh `Decide before
-> proceeding` result, a fresh `Simplify before proceeding` result, and a later
-> read-only `Proceed with the current approach` result when no requirement or
+> handles a matching cannot-assess result, a fresh result that needs a user
+> decision, a fresh result that recommends simplifying first, and a later
+> read-only result that the current approach is fine when no requirement or
 > file changed. Do not run a companion check.
 
 ## Expected behavior
@@ -118,14 +118,15 @@ baseline verified self-review and omitted approach-level simplicity.
       reviewer without requiring that binding to be replayed in the human
       response.
 - [ ] Requires a fresh reviewer with no prior review or findings that shaped the
-      surface; `Cannot assess yet` stays not verified.
+      surface; a cannot-assess result stays not verified.
 - [ ] Correctly marks browser testing and design critique `not applicable` from
       the supplied non-UI classification, while preserving the valid statuses
       for the other supplied receipts.
-- [ ] Keeps `Decide before proceeding` failed until the owner decision is
+- [ ] Keeps a result that needs a user decision failed until that decision is
       resolved and the resulting subject is checked again.
-- [ ] Keeps `Simplify before proceeding` failed until the approach is revised
-      and the resulting subject receives a new clean independent check.
+- [ ] Keeps a result that recommends simplifying first failed until the
+      approach is revised and the resulting subject receives a new clean
+      independent check.
 - [ ] Refreshes step 3 from the later read-only result after confirming the
       complete requirements and full working-surface content are unchanged in
       an uninterrupted handoff, rather than checking path names or requiring a

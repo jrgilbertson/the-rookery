@@ -1,7 +1,7 @@
 ---
 module: skill-instruction-review
 date: 2026-07-16
-last_updated: 2026-08-31
+last_updated: 2026-09-01
 problem_type: best_practice
 component: documentation
 severity: medium
@@ -121,7 +121,7 @@ deliverable. Test those descriptions as a three-sided routing contract:
    (`tests/checking-simplicity/triggers.md`).
 3. **Exit.** Name the successful state that moves ownership onward. An unchanged
    subject with a clean result and no owner question belongs to the
-   next planner or executor (`skills/checking-simplicity/SKILL.md:56-61`).
+   next planner or executor (`skills/checking-simplicity/SKILL.md:3`).
 
 Freeze the prior description, run the prior and revised metadata in separate
 fresh contexts, and keep the full positive and near-miss matrix on every run

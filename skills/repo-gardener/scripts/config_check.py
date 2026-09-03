@@ -46,18 +46,12 @@ TOP_LEVEL_REQUIRED = {
     "tracker",
     "lanes",
 }
-TOP_LEVEL_ALLOWED = TOP_LEVEL_REQUIRED | {
-    "evidence_sources",
-    "issue_refinement",
-    "shared_ledger_paths",
-}
+TOP_LEVEL_ALLOWED = TOP_LEVEL_REQUIRED | {"issue_refinement"}
 REPOSITORY_FIELDS = {"identity", "default_branch", "scope"}
 SCOPE_FIELDS = {"include", "exclude"}
 TRACKER_FIELDS = {"identity"}
 AUTHORING_LANE_FIELDS = {"mutation"}
 AUDIT_LANE_FIELDS = AUTHORING_LANE_FIELDS | {"audit_commands"}
-EVIDENCE_SOURCE_FIELDS = {"identity"}
-EVIDENCE_SOURCE_NAME = re.compile(r"^[a-z][a-z0-9_-]{0,63}$")
 MAPPING_KEY = re.compile(r"^[A-Za-z0-9_.-][A-Za-z0-9_./-]*$")
 ROOTED_OR_DRIVE_PATH = re.compile(r"^(?:[A-Za-z]:[/\\]|[/\\])")
 ISSUE_NUMBER_SELECTOR = re.compile(r"^#\d+$")
@@ -434,23 +428,6 @@ def normalize_lanes(value: Any) -> dict[str, Any]:
     return lanes
 
 
-def normalize_evidence_sources(value: Any) -> dict[str, dict[str, str]]:
-    require(isinstance(value, dict), "evidence_sources must be a mapping")
-    require(len(value) <= MAX_LIST_ENTRIES, f"evidence_sources exceeds {MAX_LIST_ENTRIES} entries")
-    result: dict[str, dict[str, str]] = {}
-    for name, source in value.items():
-        require(
-            isinstance(name, str) and EVIDENCE_SOURCE_NAME.fullmatch(name) is not None,
-            f"evidence_sources.{name} has an invalid name",
-        )
-        require(isinstance(source, dict), f"evidence_sources.{name} must be a mapping")
-        require_exact_fields(source, EVIDENCE_SOURCE_FIELDS, EVIDENCE_SOURCE_FIELDS, f"evidence_sources.{name}")
-        result[name] = {
-            "identity": require_concrete_text(source["identity"], f"evidence_sources.{name}.identity")
-        }
-    return result
-
-
 def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
     require_exact_fields(value, TOP_LEVEL_REQUIRED, TOP_LEVEL_ALLOWED, "config")
     workers = value["maximum_workers"]
@@ -470,18 +447,6 @@ def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
         isinstance(normalized["issue_refinement"], bool),
         "issue_refinement must be a boolean",
     )
-    if "evidence_sources" in value:
-        normalized["evidence_sources"] = normalize_evidence_sources(value["evidence_sources"])
-    if "shared_ledger_paths" in value:
-        shared_ledger_paths = require_glob_list(
-            value["shared_ledger_paths"], "shared_ledger_paths", nonempty=False
-        )
-        for index, path in enumerate(shared_ledger_paths):
-            require(
-                not any(character in path for character in "*?["),
-                f"shared_ledger_paths[{index}] must be a literal repository-relative file path",
-            )
-        normalized["shared_ledger_paths"] = shared_ledger_paths
     return normalized
 
 

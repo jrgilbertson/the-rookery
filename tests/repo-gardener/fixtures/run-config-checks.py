@@ -95,6 +95,8 @@ REMOVED_FILE_KNOBS = (
     "maximum_deep_targets",
     "maximum_new_child_prs",
     "source_mutation",
+    "evidence_sources",
+    "shared_ledger_paths",
 )
 
 
@@ -281,12 +283,6 @@ def normalized_config(value: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
-def shared_ledger_config() -> dict[str, Any]:
-    config = base_config()
-    config["shared_ledger_paths"] = ["CHANGELOG.md"]
-    return config
-
-
 def check_script_surface() -> None:
     require(PRODUCTION.is_file(), "missing config validator")
     require(os.access(PRODUCTION, os.X_OK), "config validator is not executable")
@@ -321,6 +317,10 @@ def check_script_surface() -> None:
     )
     require(not non_standard, f"config validator imports non-standard modules: {non_standard}")
     require("yaml" in imported, "config validator must use PyYAML")
+    require(
+        "evidence_sources" not in source and "shared_ledger_paths" not in source,
+        "config validator must not know evidence_sources or shared_ledger_paths",
+    )
     require(
         not imported & FORBIDDEN_PROCESS_OR_NETWORK_IMPORTS,
         f"config validator imports process/network modules: {sorted(imported & FORBIDDEN_PROCESS_OR_NETWORK_IMPORTS)}",
@@ -458,9 +458,6 @@ def main() -> int:
         second = expect_valid(base_config(), repo_root, expected)
         require(first == second, "valid config normalization is not deterministic")
 
-        ledger = shared_ledger_config()
-        expect_valid(ledger, repo_root, normalized_config(ledger))
-
         refinement_enabled = base_config()
         refinement_enabled["issue_refinement"] = True
         expect_valid(refinement_enabled, repo_root, normalized_config(refinement_enabled))
@@ -469,29 +466,9 @@ def main() -> int:
         refinement_text["issue_refinement"] = "true"
         expect_invalid(refinement_text, repo_root, "issue_refinement must be a boolean")
 
-        empty_ledger = shared_ledger_config()
-        empty_ledger["shared_ledger_paths"] = []
-        expect_valid(empty_ledger, repo_root, normalized_config(empty_ledger))
-
-        absolute_ledger = shared_ledger_config()
-        absolute_ledger["shared_ledger_paths"] = ["/CHANGELOG.md"]
-        expect_invalid(absolute_ledger, repo_root, "shared_ledger_paths[0] must be a repository-relative path")
-
-        wildcard_ledger = shared_ledger_config()
-        wildcard_ledger["shared_ledger_paths"] = ["**"]
-        expect_invalid(
-            wildcard_ledger,
-            repo_root,
-            "shared_ledger_paths[0] must be a literal repository-relative file path",
-        )
-
-        nested_wildcard_ledger = shared_ledger_config()
-        nested_wildcard_ledger["shared_ledger_paths"] = ["src/**"]
-        expect_invalid(
-            nested_wildcard_ledger,
-            repo_root,
-            "shared_ledger_paths[0] must be a literal repository-relative file path",
-        )
+        ledger_grant = base_config()
+        ledger_grant["shared_ledger_paths"] = ["CHANGELOG.md"]
+        expect_invalid(ledger_grant, repo_root, "config has unexpected key: shared_ledger_paths")
 
         nested_ledger = base_config()
         nested_ledger["shared_ledger"] = {"paths": ["CHANGELOG.md"]}
@@ -534,8 +511,7 @@ lanes:
 
         with_sources = copy.deepcopy(base_config())
         with_sources["evidence_sources"] = {"posthog": {"identity": "phc_example"}}
-        expected_sources = normalized_config(with_sources)
-        expect_valid(with_sources, repo_root, expected_sources)
+        expect_invalid(with_sources, repo_root, "config has unexpected key: evidence_sources")
 
         marker = repo_root / "read-only-marker"
         marker.write_text("unchanged\n", encoding="utf-8")

@@ -13,11 +13,7 @@
 # Skill-hardcoded, not file knobs: never merge, release, deploy, create
 # follow-up issues outside the sole policy-authorized canonical-child exception,
 # or message customers; `.agents/repo-gardener.yaml` is always protected;
-# presentation cap is 7; there is no depth quota in this file. Triage is
-# recommend-only and is not grantable.
-#
-# Optional evidence-source grants are omitted here. If present they are a
-# mapping at `evidence_sources.<name>.identity`. Absence is valid.
+# Triage is recommend-only and is not grantable.
 
 repository:
   # Stable provider identity for this repository, not the slug. On GitHub this
@@ -49,16 +45,8 @@ maximum_workers: 0
 # out-of-graph write.
 issue_refinement: false
 
-# Optional overlap exception for accumulating files. Add repository-relative
-# paths only after the repository has proved conflict-safe additive merge
-# behavior and each Worker diff is checked for its own additive entry. These
-# paths relax assignment-conflict detection only; they never authorize an
-# Orchestrator ledger write or automatic merge/rebase conflict resolution.
-# shared_ledger_paths:
-#   - REPLACE_WITH_REPOSITORY_RELATIVE_LEDGER_PATH
-
 tracker:
-  # Live gardening-tracker issue identity. #3336 is not a live tracker.
+  # Live gardening-tracker issue identity (a node id, never an issue number).
   identity: REPLACE_WITH_TRACKER_IDENTITY
 
 # Eight authoring lanes plus recommend-only triage. An authoring grant allows
@@ -83,7 +71,7 @@ lanes:
   documentation-changelog-and-release-note:
     mutation: false
     audit_commands: []
-  # Configured errors or alerts, if a read source exists.
+  # Errors or alerts the host can already read for this repository.
   runtime-error-and-alert:
     mutation: false
   # Risk-scoped QA and regression evidence.

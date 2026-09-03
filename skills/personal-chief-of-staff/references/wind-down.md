@@ -25,6 +25,14 @@ non-journal correction the day's evidence supports. Phase 2 plans tomorrow,
 coaches, records meaningful commitments, and drafts the journal from the state
 Phase 1 left behind.
 
+One rule governs the boundary, and reaching for a source is the way it is
+usually broken. Once Phase 1 has proposed its bundle, open no further source
+until every approved action is applied and read back or classified as
+unapplied. This binds the first move of a resumed or continued run too: when
+the reconstruction and reflection already happened, the next act is resolving
+Phase 1, not re-reading a source to orient. A source opened early returns the
+state Phase 1 was about to correct, and every later judgment inherits it.
+
 ## Establish the day
 
 Resolve the local date and review window. If the run time or the user's wording

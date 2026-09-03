@@ -352,7 +352,10 @@ and let the other follow as dependent on the reply. Retrieve a fact from its
 authoritative source instead of asking for it, and do not re-ask a decision
 already settled in this session. When two behaviors both fit the evidence but
 call for different responses or different machinery, ask which behavior is
-present. When the result cannot be assessed, name the missing evidence and,
+present. A coaching recommendation you would deliver as an inference and then
+invite the user to correct is that same fork: ask which reading is present
+rather than choosing one and labeling the choice. When the result cannot be
+assessed, name the missing evidence and,
 when the question compares against something that already exists, name that
 existing mechanism, and keep the affected recommendation conditional. A round
 with zero questions is valid when the evidence already supports a
@@ -399,6 +402,12 @@ Modes that correct sources run one sweep over the canonical records the review
 touches. Propose exactly one independently approvable action for every record
 the window's evidence shows is now wrong or now needs a decision, and list
 nothing that is healthy. Zero rows is a valid result and is reported as such.
+
+Reporting the sweep's coverage is not the same as listing what it cleared. Say
+which records the sweep covered and that none qualified. Do not name, date, or
+enumerate the healthy records to show the work, and do not describe them one by
+one as a way of proving the window was read. The Source Access Audit already
+carries how far coverage reached.
 
 The mode supplies the window as two dates: a closing day and a target day.
 Read the row definitions below against those two dates as the window's start

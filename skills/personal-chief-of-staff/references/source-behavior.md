@@ -337,8 +337,10 @@ meaning, causality, commitments, strategy, learning, and durable changes.
 
 ## Ask on the evidence frontier
 
-Follow-up questions arrive as rounds. Wind-down runs a round after the broad
-reflection. Weekly and Quarterly run one after the initial evidence synthesis.
+Follow-up questions arrive as rounds. Wind-down asks its first round after the
+broad reflection. Weekly and Quarterly ask theirs after the initial evidence
+synthesis. A mode may need more than one round, because the cap and the
+carry-over rule below hold questions back.
 
 A question enters a round only when its answer could materially change the
 recommendation, plan, or interpretation, and when every question it depends on

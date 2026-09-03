@@ -35,6 +35,23 @@ It attributes interactions to known people and proposes only supported contact
 updates or useful context. A short gap expands the date window; it does not
 start a full CRM catch-up.
 
+### Administrative Sweep
+
+The first phase of a wind-down or weekly review, which proposes exactly one
+independently approvable action for every canonical record the evidence shows
+is now wrong or needs a decision, including overdue, due-tomorrow,
+follow-up-due, and at-risk tasks. Approved actions are applied and read back
+before coaching or journal drafting begins. It lists nothing that is healthy
+and never creates a second task list.
+
+### Frontier Round
+
+One numbered batch of at most five independent coaching questions, each with
+a recommended answer, presented in plain chat and answered in one reply. A
+question enters only when its answer could change the recommendation and its
+prerequisites are settled; dependent questions wait for the next round. A
+round with zero questions is valid.
+
 ## Workflow processes
 
 ### Delivery Sequence

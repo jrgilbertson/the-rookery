@@ -25,12 +25,14 @@ backfill skipped weeks or reconstruct subjective history the sources cannot
 show.
 
 While reconstructing, run the Administrative Sweep from `source-behavior.md`
-under "Run the Administrative Sweep". Weekly's two dates are the review window
-and the coming week, so the sweep covers tasks overdue at review time plus
-tasks due within the coming week. Feed its rows into open loops and next-week
-outcomes. Zero rows is a valid result and is reported as such. Every sweep row
-becomes a separate action in the review bundle described under "Review and
-write back", never part of the weekly-review note action.
+under "Run the Administrative Sweep". Weekly's two dates are the closing day,
+the last day of the review window, and the target day, the last day of the
+coming week, so the sweep covers tasks overdue at review time plus tasks due
+within the coming week. Feed its rows into open loops and next-week outcomes.
+Zero rows is a valid result and is reported as such. Every sweep row that
+proposes a resolution becomes a separate action in the review bundle described
+under "Review and write back", never part of the weekly-review note action. A
+row that only feeds next-week planning stays inside that plan instead.
 
 Completion: the available period and material coverage gaps are clear, the
 sweep has covered the review window and the coming week, and no source was
@@ -72,14 +74,18 @@ Frontier Round using the shared contract in `source-behavior.md` under "Ask on
 the evidence frontier". Apply its entry bar, dependency rule, numbered
 plain-chat format, cap, and reply handling without restating them.
 
-This is the only question step in a Weekly run. A recurring-thread candidate
-from the next section enters this same round whenever it clears the shared
-entry bar, so coaching never opens a second round of its own. Ask the round
-before the coaching judgment and use the user's answers when classifying
-threads and choosing an intervention. Whether an overdue task is still relevant
-belongs to the sweep as a row with a proposed resolution, not to this round.
+Exactly one round runs before the coaching judgment. Any further round follows
+only from the shared contract's own carry-over rule, when a reply leaves a
+question open or the cap holds one back for later. A recurring-thread
+candidate from the next section enters this pre-coaching round whenever it
+clears the shared entry bar; coaching itself never opens a second, independent
+question step. Ask the round before the coaching judgment and use the user's
+answers when classifying threads and choosing an intervention. Whether an
+overdue task is still relevant belongs to the sweep as a row with a proposed
+resolution, not to this round.
 
-Completion: exactly one round ran before coaching, it carried any qualifying
+Completion: one round ran before coaching, any later round came only from the
+shared contract's carry-over, the pre-coaching round carried any qualifying
 recurring-thread candidate, and its answers were available to the coaching
 judgment.
 
@@ -87,8 +93,9 @@ judgment.
 
 After the Frontier Round and before next-week commitments, perform the
 longitudinal coaching judgment from `source-behavior.md`. Use the round's
-answers in that judgment, and send any candidate question this section raises
-to that same round rather than asking it here. Apply its recurrence
+answers in that judgment, and raise any candidate question this section
+surfaces as a carry-over question in the next round rather than opening a
+question step here. Apply its recurrence
 and evidence-chain rules, surface zero to three supported recurring threads,
 and classify each as:
 

@@ -107,11 +107,14 @@ and evidence-chain rules. Include material counterevidence, changed behavior,
 or alternate explanations. Do not force a master theory. Surface at most one
 central tension and one compounding strength, and only when the durable evidence
 supports those interpretations. Present the thread map, the central tension,
-the compounding strength, and the rule-audit dispositions as one round under
+the compounding strength, and the rule-audit dispositions as questions under
 "Ask on the evidence frontier" in `source-behavior.md`, each interpretation
 labeled as an inference with a recommended disposition to accept, revise, or
-reject. Stop and wait for the response. Draft inference-shaped commitments only
-after that response, using only accepted or user-revised interpretations. Do
+reject. When the item count exceeds the shared round's five-question cap,
+spread them across as many rounds as that cap and its carry-over rule
+require, in the order listed above. Stop and wait for each round's response.
+Draft inference-shaped commitments only after every round is answered, using
+only accepted or user-revised interpretations. Do
 not turn rule-audit findings into additional commitments unless the user
 separately accepts them as a basis for action. The draft must not introduce a
 subject, boundary, exception, or obligation that appears only in an unaccepted

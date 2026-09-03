@@ -37,20 +37,25 @@ start a full CRM catch-up.
 
 ### Administrative Sweep
 
-The first phase of a wind-down or weekly review, which proposes exactly one
-independently approvable action for every canonical record the evidence shows
-is now wrong or needs a decision, including overdue, due-tomorrow,
-follow-up-due, and at-risk tasks. Approved actions are applied and read back
-before coaching or journal drafting begins. It lists nothing that is healthy
-and never creates a second task list.
+A sweep of canonical records, run during a wind-down or weekly review, that
+proposes exactly one independently approvable action for every record the
+evidence shows is now wrong or needs a decision, including overdue,
+follow-up-due, and at-risk tasks. A due-tomorrow task ordinarily feeds the
+next-day plan instead; the sweep proposes an action for it only when that plan
+cannot hold it. Wind-down runs the sweep as its first phase and applies and
+reads back approved actions before coaching or journal drafting begins.
+Weekly runs the sweep while reconstructing the week and carries its rows into
+the single review bundle presented at the end of the run. It lists nothing
+that is healthy and never creates a second task list.
 
 ### Frontier Round
 
-One numbered batch of at most five independent coaching questions, each with
-a recommended answer, presented in plain chat and answered in one reply. A
-question enters only when its answer could change the recommendation and its
-prerequisites are settled; dependent questions wait for the next round. A
-round with zero questions is valid.
+One numbered batch of at most five independent questions, each with a
+recommended answer, presented in plain chat and answered in one reply. A
+question enters only when its answer could materially change the
+recommendation, plan, or interpretation and its prerequisites are settled;
+dependent questions wait for the next round. A round with zero questions is
+valid.
 
 ## Workflow processes
 

@@ -595,10 +595,16 @@ fi
 pcos-action read role=task_note >/dev/null
 pcos-action write role=task_note content=vendor_invoice_done >/dev/null
 pcos-action readback role=task_note >/dev/null
+if pcos-source read role=journal_state >/dev/null 2>&1; then
+  fail "multi-action specimen source discovery was accepted after only the first of three approved actions resolved"
+fi
 pcos-action read role=calendar_event >/dev/null
 pcos-action write role=calendar_event content=design_review_shortened >/dev/null
 output=$(pcos-action readback role=calendar_event)
 [[ "$output" == *"30-minute duration"* ]] || fail "second action readback output"
+if pcos-source read role=journal_state >/dev/null 2>&1; then
+  fail "multi-action specimen source discovery was accepted after only two of three approved actions resolved"
+fi
 pcos-action read role=mailbox_draft >/dev/null
 output=$(pcos-action write role=mailbox_draft content=vendor_invoice_reply)
 [[ "$output" == success ]] || fail "third action write output"

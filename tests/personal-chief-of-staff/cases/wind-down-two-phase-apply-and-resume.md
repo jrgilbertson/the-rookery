@@ -37,13 +37,17 @@ The CRM companion is unavailable in every scenario.
 | 3 | `w2p3` | none | `tasks`, `calendar` |
 | 4 | `w2p4` | `task_note` with `vendor_invoice_done`, `calendar_event` with `design_review_shortened`, `mailbox_draft` with `vendor_invoice_reply` | `journal_state`, `journal_template`, `calendar` |
 
-Specimens `w2p1` and `w2p4` make every canonical role read unavailable until
-the `task_note` readback completes, so the trace itself records whether Phase 2
-discovery followed the Phase 1 apply. In scenarios 1 and 4 the approved actions
-resolve first, and only after the `task_note` readback resolves are the listed
-canonical roles read. Specimen `w2p3` exposes no action target at all. In
-scenario 4 the `mailbox_draft` readback fails as scripted; never repeat that
-write.
+Specimen `w2p1` makes every canonical role read unavailable until its one
+approved action's readback completes, and specimen `w2p4` makes every
+canonical role read unavailable until all three approved actions' readbacks
+have resolved -- the `task_note` and `calendar_event` readbacks by succeeding,
+the `mailbox_draft` readback by hitting its scripted failure -- so the trace
+itself records whether Phase 2 discovery followed the full Phase 1 apply, not
+just its first action. In scenarios 1 and 4 the approved actions resolve
+first, and only after every approved action's readback has resolved are the
+listed canonical roles read. Specimen `w2p3` exposes no action target at all.
+In scenario 4 the `mailbox_draft` readback fails as scripted; never repeat
+that write.
 
 No scenario approves a journal write, so one read per canonical role covers the
 whole run and no role is reread.

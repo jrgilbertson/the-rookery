@@ -344,7 +344,9 @@ A question enters a round only when its answer could materially change the
 recommendation, plan, or interpretation, and when every question it depends on
 is already answered. A question is dependent when its recommended answer would
 differ depending on the answer to another question still open; hold it for the
-round after its prerequisite is answered. Retrieve a fact from its
+round after its prerequisite is answered. When two candidates depend on each
+other this way, ask the one whose answer would change the recommendation more
+and let the other follow as dependent on the reply. Retrieve a fact from its
 authoritative source instead of asking for it, and do not re-ask a decision
 already settled in this session. When two behaviors both fit the evidence but
 call for different responses or different machinery, ask which behavior is
@@ -396,9 +398,11 @@ touches. Propose exactly one independently approvable action for every record
 the window's evidence shows is now wrong or now needs a decision, and list
 nothing that is healthy. Zero rows is a valid result and is reported as such.
 
-The mode supplies the window as two dates. Wind-down uses the closing day and
-the target day. Weekly uses the review window and the coming week. Read
-"closing day" and "target day" below as the running mode's two dates.
+The mode supplies the window as two dates: a closing day and a target day.
+Read the row definitions below against those two dates as the window's start
+and end. A mode whose window spans a range still supplies a single closing
+day and a single target day for that range; it is not forced to pretend the
+range is a single closing moment.
 
 Cover these records:
 
@@ -656,10 +660,12 @@ coverage for that conclusion.
 
 When resuming the same conversation, refresh time-sensitive evidence before
 continuing. A bundle resumed on a later local day than the one it was composed
-on is recomputed and presented again before any of its actions apply, because
-per-action revalidation cannot detect that the bundle's membership is stale. A
-bundle resumed on the same local day applies under the existing per-action
-revalidation. Stable prior-turn evidence may support the conversation only when
+on has the mode re-resolve its window before anything recomputes: the mode
+re-establishes its two dates as it would for a fresh run, and the sweep
+recomputes against that new pair, not the pair the paused bundle carried.
+Recomputing against the original dates only reproduces the same stale
+membership. A bundle resumed on the same local day applies under the existing
+per-action revalidation. Stable prior-turn evidence may support the conversation only when
 the dependent claim labels it nearby as **prior-turn evidence — not
 refreshed**; it does not enter the current-access audit unless reread, and it
 must be reread whenever current truth matters. In a new conversation,

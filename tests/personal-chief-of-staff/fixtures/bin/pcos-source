@@ -52,17 +52,25 @@ done
 [[ $matches -eq 1 ]] || reject "unknown or ambiguous role fixture" "$role"
 
 if [[ -f "$phase_metadata" ]]; then
-  phase_role=$(<"$phase_metadata")
-  [[ "$phase_role" =~ ^[a-z][a-z0-9_]*$ ]] ||
-    reject "unsafe source-discovery phase role" "$role"
-  phase_file="$fixture_root/action-$phase_role/source-phase-complete"
-  if [[ ! -f "$phase_file" || -L "$phase_file" ]]; then
-    reject "source discovery requires completed action read/write/readback" "$role"
-  fi
-  fixture_require_single_link \
-    "$phase_file" "source-discovery phase must not have multiple hard links"
-  [[ "$(<"$phase_file")" == complete ]] ||
-    reject "source discovery requires completed action read/write/readback" "$role"
+  # One approved action role per line. Every listed role's readback must
+  # have resolved -- successfully ("complete") or via its scripted failure
+  # ("failed") -- before any canonical role read is permitted. A role whose
+  # readback never runs (phase file absent) still blocks discovery.
+  while IFS= read -r phase_role || [[ -n "$phase_role" ]]; do
+    [[ -n "$phase_role" ]] || continue
+    [[ "$phase_role" =~ ^[a-z][a-z0-9_]*$ ]] ||
+      reject "unsafe source-discovery phase role" "$role"
+    phase_file="$fixture_root/action-$phase_role/source-phase-complete"
+    if [[ ! -f "$phase_file" || -L "$phase_file" ]]; then
+      reject "source discovery requires completed action read/write/readback" "$role"
+    fi
+    fixture_require_single_link \
+      "$phase_file" "source-discovery phase must not have multiple hard links"
+    case "$(<"$phase_file")" in
+      complete|failed) ;;
+      *) reject "source discovery requires completed action read/write/readback" "$role" ;;
+    esac
+  done < "$phase_metadata"
 fi
 
 state_dir="$fixture_root/source-$role"

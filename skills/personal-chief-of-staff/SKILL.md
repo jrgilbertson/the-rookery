@@ -62,8 +62,19 @@ A wind-down run presents a Phase 1 bundle and a Phase 2 bundle, so a reply
 deciding a Phase 1 bundle is not an action-only response. Resolve those action
 decisions, then continue the same wind-down into Phase 2 under
 [references/wind-down.md](references/wind-down.md). Continuing is the rest of
-one run, not new review discovery, so it needs no separate review request. A
-reply deciding a Phase 2 bundle decides only those actions and ends the run.
+one run, not new review discovery, so it needs no separate review request.
+Render one Source Access Audit that separates the Phase 1 action access from
+Phase 2's discovery reads, reusing the **Action access** and **Review
+discovery** labels below. A reply deciding a Phase 2 bundle decides only those
+actions and ends the run.
+
+A reply that answers a round's numbered questions under "Ask on the evidence
+frontier" in `references/source-behavior.md` is neither a bundle-action
+response nor new review discovery. Recognize it by the round most recently
+presented in this conversation, not by a bundle. Route it back into the same
+mode and phase that asked the round, and use the answers in the coaching or
+planning judgment that follows the round, rather than resolving bundle
+actions or selecting a mode.
 
 If the same message both decides visible actions and requests a new review,
 finish the visible action decisions first. When those decisions belong to a

@@ -90,8 +90,9 @@ coverage for wind-down, separate from prepare-tomorrow's cadence exceptions.
    (calendar, meetings, journal-observed interactions). One group may produce
    effects for some people and none for others.
 4. **Bundle.** Zero effects is valid. Novel contact-date, Person prose, Task,
-   and communication effects are separate actions in the existing wind-down
-   bundle. Report Already satisfied in coverage when the canonical date is equal
+   and communication effects are separate actions in the Phase 1 bundle. The
+   contact-date, Person, and communication effects are that bundle's CRM and
+   communication sweep rows, so one record still gets one action. Report Already satisfied in coverage when the canonical date is equal
    or newer; do not invent a duplicate Person write. Keep raw history in the
    source. Write nothing while preparing.
 
@@ -129,16 +130,18 @@ resolutions each row proposes, and the degraded behavior when the canonical
 task workflow is unavailable.
 
 Do not hide a sweep correction inside the journal or create a second task list.
-Every sweep row stays independently approvable, and the journal is a Phase 2
-action rather than a member of this sweep.
+A sweep row that proposes a resolution stays independently approvable. A
+due-tomorrow row is context that feeds the next-day plan, and it becomes its own
+action only when that plan cannot hold it. The journal is a Phase 2 action
+rather than a member of this sweep.
 
 For one active sequential critical path, a precise restart cue may be useful.
 Capture only the next concrete operation and keep it with the canonical task or
 approved next-day plan. Do not add restart metadata to every task.
 
-Completion: every record the closing day and target day show is wrong or
-undecided has exactly one proposed Phase 1 action, nothing healthy is listed,
-and a zero-row sweep or an unavailable task workflow is reported honestly.
+Completion: Phase 1 has produced the sweep over the closing day and the target
+day, and its rows satisfy the completion stated under "Run the Administrative
+Sweep" in `references/source-behavior.md`.
 
 ## Phase 1: Review, apply, and read back
 
@@ -153,10 +156,15 @@ continue.
 A scheduled run with the user absent stops here and ends **Paused** with
 nothing applied, as that reference's scheduled-run rule requires. When the user
 replies later, apply the day-change recompute rule in "End and resume honestly"
-before any action applies, then continue into Phase 2.
+before any action applies, then continue into Phase 2. On that resume the
+journal's closing date stays the day originally being closed, while the sweep
+window and the target day re-resolve to the current local date and the following
+local date, so the recompute cannot recompute the stale window to itself.
 
 A zero-row sweep needs no bundle ceremony. Say the sweep found nothing and
-continue.
+continue. On a scheduled run with the user absent the stop above still wins,
+because Phase 2 cannot plan, coach, or draft without the user's reflection and
+decisions. Report the empty sweep and end **Paused**.
 
 Completion: every approved Phase 1 action has a readback-backed outcome or an
 indeterminate stop, every unapplied action is named, and Phase 2 begins from
@@ -258,7 +266,8 @@ plain-chat format and its cap, the ordering, and how a reply is read. The
 broad reflection above always comes first and is never replaced by a round.
 
 Ask only what the next-day plan, the coaching judgment, or tomorrow's
-commitments would actually turn on. A round with zero questions is valid.
+commitments would actually turn on. A round with zero questions is valid. An
+answer that changes the next-day plan produces a revised plan before coaching.
 
 Completion: every question asked could have changed the plan, the coaching
 judgment, or a commitment, and an unanswered question stayed open rather than
@@ -364,9 +373,11 @@ without an invented journal write.
 ## Phase 2: Complete the existing journal together
 
 Draft from the state Phase 1 left behind. A task, calendar, CRM, or repository
-fact the journal reports comes from the re-read result of an applied action,
-and an action the user skipped, deferred, or that failed is described as it
-actually stands.
+fact the journal reports comes from the re-read result of an applied action.
+An action carrying any other outcome under "Revalidate, apply, and read back" in
+`references/source-behavior.md` is described as it actually stands, and an
+outcome that section leaves unknown is described as unconfirmed rather than as
+applied or unapplied.
 
 Follow the configured daily-journal template rather than inventing a recap
 format. The agent may draft substantial objective material from verified

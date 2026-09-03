@@ -42,7 +42,7 @@ only authority, and a copied starter was never distinguished from adoption.
 - [ ] Setup is one interactive review of the full recommended file. It
       includes identity, default branch, scope, protected paths,
       `maximum_workers`, tracker identity, eight lane mutation grants, and
-      optional audit declarations and evidence-source grants. Triage is shown
+      optional audit declarations. Triage is shown
       as recommend-only and is not grantable. `.agents/repo-gardener.yaml`
       stays protected; setup cannot turn that off.
 - [ ] Setup proposes `maximum_workers: 20`, eight authoring lanes on, the
@@ -73,7 +73,7 @@ only authority, and a copied starter was never distinguished from adoption.
       mapping.
 - [ ] Creating the tracker issue does not start a gardening run. Config
       approval does not approve the first run. No `run-opened` comment is
-      written before that readback. #3336 is not a live tracker.
+      written before that readback.
 - [ ] Scenario 3 treats the copied starter as invalid, not as adoption, and
       starts setup because an owner wants a managed run.
 - [ ] Scenario 4 ends `blocked` and names the missing-file gap. It does not

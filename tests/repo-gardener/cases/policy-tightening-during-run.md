@@ -37,7 +37,7 @@ subcases independently. Do not call tools or invent facts.
   the target or the planned path is excluded. Separately, immediately before
   Worker B's dispatch, native branch or PR reads are unavailable or unknown,
   or a current native branch or PR overlaps B's planned assignment slice; none
-  meets the same-assignment `shared_ledger_paths` exception. Worker A does not
+  is a path with the git `merge` attribute `union` at the base. Worker A does not
   overlap. Separately, before PR creation, a fresh native read finds another
   PR overlapping Worker B's exact committed diff. Worker A does not overlap
   that PR.

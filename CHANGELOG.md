@@ -13,6 +13,15 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-gardener` adopts an open same-repository update PR with a
+  Worker-closable gap as a Worker unit: the Worker checks out the PR head at
+  the captured OID, pushes under the existing old-OID lease, keeps one
+  unmerged PR, and never merges. Only non-draft PRs whose head commits are
+  bot- or app-authored qualify. Overlap is changed-path intersection with
+  other native branches and PRs; a lockfile-only intersection is a
+  recommendation. The runtime lane reads any error or alert source the host
+  can already read and confirms identity from repository facts. A blocked
+  opening still senses and reports.
 - `checking-pr-readiness` later 1 on an Approve menu continues into the
   installed finishing path in the same conversation. The evidence pack is
   silent pull-request-body input, not another wait. If no finishing path is
@@ -145,6 +154,14 @@ looked" surface. GitHub Releases mirror its entries.
   Cross-tracker requests require one exact provider-native link, and the skill
   writes only the canonical tracker. Linear uses connected MCP tools when
   available and keeps Orca as an explicit session choice.
+
+### Removed
+
+- `repo-gardener` no longer accepts `evidence_sources` or `shared_ledger_paths`
+  in `.agents/repo-gardener.yaml`; both are unexpected keys. The shared-ledger
+  overlap exception is keyed on the git `merge` attribute being `union` at the
+  authoritative base. Pilot residue (`#3336`, Current Portfolio, presentation
+  cap prose) is gone.
 
 ## [0.2.0] - 2026-08-14
 

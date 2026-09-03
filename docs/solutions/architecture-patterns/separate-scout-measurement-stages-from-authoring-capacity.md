@@ -1,7 +1,7 @@
 ---
 title: Separate scout measurement stages from authoring capacity
 date: 2026-08-12
-last_updated: 2026-08-31
+last_updated: 2026-09-02
 category: architecture-patterns
 module: skills/repo-gardener/reconciliation
 problem_type: architecture_pattern
@@ -135,7 +135,10 @@ authorizes the Worker to reply 1 only when Approve was offered and recommended
 for that exact head. The checking skill then performs its identity reread
 before the evidence enters the publication path. Named Worker-owned gaps from
 that brief all go back to the same Worker; owner-needed briefs stop without a
-PR
+PR. An existing same-repository update PR with a Worker-owned gap is itself a
+unit: the Worker adopts its branch at the captured head, pushes under the
+old-OID lease, and keeps one unmerged PR. Overlap is changed-path
+intersection; an open PR in the same directory or lane reserves nothing
 (`skills/repo-gardener/references/reconciliation.md`,
 `skills/repo-gardener/SKILL.md`).
 
@@ -240,7 +243,9 @@ If nine lanes inspect 107 records, emit two evidence-qualified candidates, and
 deduplicate them to one underlying problem, report all three values. If
 `maximum_workers` is zero or unrelated PRs already exist, the run may still
 sense, deepen, and recommend; those leftover PRs do not consume the Worker
-cap.
+cap. Evidence the host can already read needs no file grant: a runtime lane
+that reports `unavailable` because the durable file lacks a key has invented
+a permission system on top of a fact the host holds.
 
 ## Related
 

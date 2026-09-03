@@ -14,6 +14,6 @@ its tables here.
 ## Assess, render, stop
 
 1. Assess the request under the reference.
-2. Render exactly one of its response templates without changing the heading
-   or field labels.
+2. Render exactly one of its response templates without changing its
+   plain first line or the Copy/paste kickoff label.
 3. Stop immediately after the card.

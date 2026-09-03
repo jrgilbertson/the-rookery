@@ -18,20 +18,18 @@ making the router perform downstream work.
 
 ## Expected behavior
 
-- [ ] Returns exactly one response beginning `## Route`, with plain `Workflow`
-      and `Setup` labels and no Markdown bold labels; the workflow is `ce-plan`
-      and the topology is Single owner.
-- [ ] Setup uses natural sentences, names Fable 5 at medium for one planner,
+- [ ] Returns exactly one response beginning with the plain line `Route`. The
+      workflow is `ce-plan` and the topology is Single owner. No Markdown.
+- [ ] The route uses natural sentences, names Fable 5.1 at medium for one planner,
       and says to continue in the current worktree without structured
       orchestration. It does not emit `Orca None` or `availability unverified`.
-- [ ] `## Copy/paste kickoff` contains one fenced plain-text block beginning
-      with a natural instruction to start `ce-plan` from the supplied GitHub
-      issue, names the selected model and effort, and contains no Markdown
-      delimiters.
-- [ ] The fenced block treats the issue as the source of truth and preserves
-      the supplied planning and authority boundary in one concise sentence. It
-      does not restate the issue or use the old `Objective`, `Done when`,
-      `Facts`, `Constraints`, `Evidence gaps`, or `Authority` field list.
+- [ ] A `Copy/paste kickoff` section follows as plain text, not a fence,
+      beginning with a natural instruction to start `ce-plan` from the supplied
+      GitHub issue, and names the selected model and effort.
+- [ ] The kickoff treats the issue as the source of truth and preserves the
+      supplied planning and authority boundary in one concise sentence. It does
+      not restate the issue or use the old `Objective`, `Done when`, `Facts`,
+      `Constraints`, `Evidence gaps`, or `Authority` field list.
 - [ ] The trace contains only reads of the installed package: no issue fetch,
       downstream invocation, planning, mutation, scheduling, monitoring, or
       persisted route state.

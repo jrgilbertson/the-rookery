@@ -26,7 +26,7 @@ must not become workflow ownership or unbounded fan-out.
 ## Expected behavior
 
 - [ ] Item 1 selects `impeccable`, Single owner, and the primary design/taste
-      profile: Anthropic / `claude-fable-5` / medium.
+      profile: Anthropic / `claude-fable-5-1` / medium.
 - [ ] Item 2 selects `ce-work` with Orchestrator/planner + Executors, the
       primary orchestrator/planner profile for the lead, and primary executor
       profile for workers.
@@ -44,7 +44,7 @@ must not become workflow ownership or unbounded fan-out.
       workers, one round, and a stop condition.
 - [ ] No item dispatches agents, creates worktrees, escalates effort, or starts
       the selected workflow.
-- [ ] Every item returns plain labels, a natural setup, and a concise fenced
+- [ ] Every item returns plain text, a natural setup, and a concise unfenced
       kickoff that names its workflow, selected model and effort, source
       request, placement, and structured orchestration. Orca appears only in
       item 2, and no item emits the old pseudo-spec field list or

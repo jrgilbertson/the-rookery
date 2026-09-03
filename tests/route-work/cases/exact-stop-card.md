@@ -12,8 +12,8 @@ form without an executable kickoff.
 
 ## Expected behavior
 
-- [ ] Returns exactly one response beginning `## Stop`.
-- [ ] Uses plain `Stop`, `Reason`, and `Next prerequisite` labels without `**`
-      and names `Unsupported in the current version`.
+- [ ] Returns exactly one response beginning with the plain line `Stop`.
+- [ ] Names `Unsupported in the current version` in a short sentence, then a
+      reason and a next step, with no Markdown.
 - [ ] Includes the absolute public `WORKFLOWS.md` URL and no owner, profile, or
       executable kickoff.

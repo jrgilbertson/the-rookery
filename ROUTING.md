@@ -126,7 +126,7 @@ Design/taste as the judge only when the finish line is taste.
 
 An advisor only gathers bounded evidence. Do not count it as a topology worker
 and do not give it ownership. If the operator asked for an advisor, mention it
-in Setup. Subagents, forks, teams, and background sessions are how work runs,
+in the route. Subagents, forks, teams, and background sessions are how work runs,
 not which topology to recommend. The selected owner may change the starting
 topology when new evidence justifies it.
 
@@ -144,8 +144,8 @@ placement are independent decisions.
 
 The selected startup workflow remains the owner. Structured orchestration is
 optional and currently depends on Orca; ordinary worktree placement does not.
-If the operator asked for supervised orchestration, say so in Setup and the
-kickoff, and tell the operator to follow Orca's installed contract. Do not copy
+If the operator asked for supervised orchestration, say so in the route and
+the kickoff, and tell the operator to follow Orca's installed contract. Do not copy
 Orca commands into the card. Read-only scouts and fresh-context reviewers can
 work in the current worktree.
 
@@ -192,40 +192,42 @@ selects it without operator approval.
 
 ## Model and effort recommendations
 
-**Last reviewed: 2026-08-26**
+**Last reviewed: 2026-09-02**
 
 | Role | Primary | Secondary | Tertiary |
 |---|---|---|---|
-| Orchestrator/planner | Anthropic / `claude-fable-5` / medium | OpenAI / `gpt-5.6-sol` / high | xAI / `grok-4.6` / high |
+| Orchestrator/planner | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-5.6-sol` / high | xAI / `grok-4.6` / high |
 | Executor | xAI / `grok-4.6` / high | Anthropic / `claude-opus-5` / medium | OpenAI / `gpt-5.6-terra` / high |
 | Reviewer | OpenAI / `gpt-5.6-sol` / high | Anthropic / `claude-opus-5` / medium | xAI / `grok-4.6` / high |
 | Critic | OpenAI / `gpt-5.6-sol` / xhigh | Anthropic / `claude-opus-5` / medium | xAI / `grok-4.6` / high |
 | Researcher | OpenAI / `gpt-5.6-sol` / high | xAI / `grok-4.6` / high | Anthropic / `claude-opus-5` / medium |
 | Scout | xAI / `grok-4.6` / high | OpenAI / `gpt-5.6-terra` / high | Anthropic / `claude-opus-5` / medium |
-| Design/taste | Anthropic / `claude-fable-5` / medium | OpenAI / `gpt-5.6-sol` / high | xAI / `grok-4.6` / high |
+| Design/taste | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-5.6-sol` / high | xAI / `grok-4.6` / high |
 
 The table carries only ordered recommendations and the review date.
 
 ## Return one portable response
 
+Render the card as plain text. Do not use Markdown. No `#` headings, bold,
+fences, or backticks. The first line is exactly `Route`, `Continuation`,
+`Clarification`, or `Stop`.
+
 ### Ready route
 
-````markdown
-## Route
-Workflow: <one startup workflow>
-Setup: <natural sentences naming the topology, relevant model and effort, worktree placement, and whether structured orchestration is used>
+    Route
 
-## Copy/paste kickoff
-```text
-Start <startup workflow> from <stable artifact locator or concise supplied request>. Use <model> at <effort> for <role>. <Plain-language topology, placement, orchestration, and handoff sentences when material.> Treat <the supplied artifact or request> as the source of truth. <One supplied constraint or authority sentence when material.>
-```
-````
+    Start with <startup workflow>.
+    <natural sentences naming the topology, relevant model and effort, worktree placement, and whether structured orchestration is used>
 
-Write the setup and kickoff as concise, natural prose with concrete names.
+    Copy/paste kickoff
+
+    Start <startup workflow> from <stable artifact locator or concise supplied request>. Use <model> at <effort> for <role>. <Plain-language topology, placement, orchestration, and handoff sentences when they apply.> Treat <the supplied artifact or request> as the source of truth. <One supplied constraint or authority sentence when it applies.>
+
+Write the route and kickoff as short natural sentences with concrete names.
 
 - Use "Continue in the current worktree without structured orchestration" for
   the default.
-- Render model IDs as ordinary names, such as "Fable 5 at medium" or
+- Render model IDs as ordinary names, such as "Fable 5.1 at medium" or
   "Grok 4.6 at high."
 - For Single owner, state the role once instead of adding a separate topology
   sentence.
@@ -236,43 +238,39 @@ Write the setup and kickoff as concise, natural prose with concrete names.
 - Name Orca only when supervised orchestration is selected.
 - State a profile fallback only when supplied availability changed the
   selection.
-- Mention an advisor, conditional handoff, `Active ownership unverified`, or
+- Mention an advisor, a conditional handoff, Active ownership unverified, or
   supplied authority only when it applies.
-- Point to a supplied artifact instead of restating it; when none exists, use a
+- Point to a supplied artifact instead of restating it. When none exists, use a
   concise statement of the supplied request.
-- The fenced kickoff is an inert portable prompt written without Markdown
-  delimiters; the operator, not the router, uses it.
-- A conditional handoff remains controlled by the active workflow;
-  owner-changing evidence requires a new explicit route.
+- The kickoff is inert plain text. The operator, not the router, uses it.
+- A conditional handoff remains controlled by the active workflow.
+  Owner-changing evidence requires a new explicit route.
 - When a lead will coordinate multiple PRs, add: "Prefer small, coherent PRs
-  and merge them as they become ready. Run fresh `checking-pr-readiness`
-  before opening or updating each PR and `checking-merge-readiness` against
-  its current head immediately before each merge. After each merge, continue
-  from the updated default branch. Merge only within supplied authority."
+  and merge them as they become ready. Run fresh checking-pr-readiness before
+  opening or updating each PR and checking-merge-readiness against its current
+  head immediately before each merge. After each merge, continue from the
+  updated default branch. Merge only within supplied authority."
 
 ### Continuation
 
-```markdown
-## Continuation
-Owner: <proven active owner>
-Resume with: <stable locator, current phase, decisive context, and next action>
-```
+    Continuation
+
+    <proven active owner> owns this work.
+    Resume at <stable locator> for <current phase>. <decisive context and next action>
 
 ### Clarification
 
-```markdown
-## Clarification
-<one unnumbered focused routing question, or a numbered list of related independent routing questions>
-```
+    Clarification
+
+    <one unnumbered focused routing question, or a numbered list of related independent routing questions>
 
 ### Stop
 
-```markdown
-## Stop
-Stop: <named stop>
-Reason: <why routing cannot proceed>
-Next prerequisite: <what would permit a new assessment>
-```
+    Stop
+
+    This stop is <named stop>.
+    <why routing cannot proceed>
+    To try again, <what would permit a new assessment>
 
 | Stop | Use when | Next prerequisite |
 |---|---|---|

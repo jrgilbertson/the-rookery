@@ -12,8 +12,7 @@ a duplicate kickoff or schema drift.
 
 ## Expected behavior
 
-- [ ] Returns exactly one response beginning `## Continuation`.
-- [ ] Uses plain `Owner` and `Resume with` labels without `**`, names Jordan,
-      and retains the stable locator and current phase.
-- [ ] Contains no Setup, copy/paste kickoff, clarification question, or named
-      stop.
+- [ ] Returns exactly one response beginning with the plain line `Continuation`.
+- [ ] Says Jordan owns this work, keeps `worktrees/parser-fix` and the current
+      phase, and uses no Markdown.
+- [ ] Contains no copy/paste kickoff, clarification question, or named stop.

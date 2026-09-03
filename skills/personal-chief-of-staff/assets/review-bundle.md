@@ -129,6 +129,11 @@ When action is warranted, append one numbered proposal per independent effect:
 > Closure evidence: [future observable readback or other finish line for this
 > effect]
 
+A mode may present more than one bundle in a run, under the rules in
+"Prepare one review bundle" in `references/source-behavior.md`. Render a later
+bundle's actions in the same numbered shape, continuing the numbering from the
+run's earlier bundles rather than restarting at 1.
+
 Invite the user to approve, edit, defer, or skip each number independently.
 Each action needs its own closure evidence. Changing that evidence after
 approval creates a revised proposal that needs new approval.

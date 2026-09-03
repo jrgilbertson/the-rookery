@@ -58,10 +58,19 @@ separate from the Source Access Audit, which reports only current target or
 destination reread and verification readback access. It does not repeat access
 from the originating bundle.
 
+A wind-down run presents a Phase 1 bundle and a Phase 2 bundle, so a reply
+deciding a Phase 1 bundle is not an action-only response. Resolve those action
+decisions, then continue the same wind-down into Phase 2 under
+[references/wind-down.md](references/wind-down.md). Continuing is the rest of
+one run, not new review discovery, so it needs no separate review request. A
+reply deciding a Phase 2 bundle decides only those actions and ends the run.
+
 If the same message both decides visible actions and requests a new review,
-finish the visible action decisions first. Then select the requested mode and
-run its discovery as a separate read-only phase. Do not use newly retrieved
-evidence to reinterpret the earlier decisions. Render one Source Access Audit.
+finish the visible action decisions first. When those decisions belong to a
+Phase 1 bundle, finish Phase 2 as well so the wind-down run ends before the new
+review begins. Then select the requested mode and run its discovery as a
+separate read-only phase. Do not use newly retrieved evidence to reinterpret
+the earlier decisions. Render one Source Access Audit.
 The paragraph distinguishes **Action access** from **Review discovery**.
 
 If the same message both decides visible actions and requests current
@@ -162,7 +171,9 @@ when available; otherwise reconstruct from canonical sources, disclose that
 uncommitted conversational input is unavailable, and ask only for the missing
 human judgment.
 
-Close with a short recap of what changed and what remains unapplied.
+Close with a short recap of what changed and what remains unapplied. When the
+run presented more than one bundle, the recap covers the actions from every
+bundle in the run, naming each one that was not applied.
 
 Completion: the ending is explicit, accurate, and consistent with the durable
 artifacts that now exist.

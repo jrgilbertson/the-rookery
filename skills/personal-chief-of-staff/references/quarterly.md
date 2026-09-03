@@ -106,14 +106,20 @@ Present a small map of supported recurring threads using the shared recurrence
 and evidence-chain rules. Include material counterevidence, changed behavior,
 or alternate explanations. Do not force a master theory. Surface at most one
 central tension and one compounding strength, and only when the durable evidence
-supports those interpretations. Label each as an inference and ask the user to
-accept, revise, or reject it, then stop and wait for the response. Draft
-inference-shaped commitments only after that response, using only accepted or
-user-revised interpretations. Do not turn rule-audit findings into additional
-commitments unless the user separately accepts them as a basis for action. The
-draft must not introduce a subject, boundary, exception, or obligation that
-appears only in an unaccepted audit finding. Zero supported threads is a valid
-result.
+supports those interpretations. Present the thread map, the central tension,
+the compounding strength, and the rule-audit dispositions as one round under
+"Ask on the evidence frontier" in `source-behavior.md`, each interpretation
+labeled as an inference with a recommended disposition to accept, revise, or
+reject. Stop and wait for the response. Draft inference-shaped commitments only
+after that response, using only accepted or user-revised interpretations. Do
+not turn rule-audit findings into additional commitments unless the user
+separately accepts them as a basis for action. The draft must not introduce a
+subject, boundary, exception, or obligation that appears only in an unaccepted
+audit finding. Zero supported threads is a valid result.
+
+Quarterly runs no Administrative Sweep. "Run the Administrative Sweep" in
+`source-behavior.md` does not apply to this mode. A source correction this
+audit surfaces still becomes its own action under "Review and write back".
 
 Audit a bounded selection of canonical coaching rules: explicit, dated
 principles, boundaries, or heuristics resolved from a configured strategy or

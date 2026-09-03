@@ -10,13 +10,20 @@ chief-of-staff path.
 - [Establish the day](#establish-the-day)
 - [Daily CRM Scan](#daily-crm-scan)
 - [Begin with one broad reflection](#begin-with-one-broad-reflection)
-- [Complete the existing journal together](#complete-the-existing-journal-together)
-- [Reconcile what changed elsewhere](#reconcile-what-changed-elsewhere)
-- [Prepare tomorrow](#prepare-tomorrow)
-- [Coach lightly](#coach-lightly)
-- [Record tomorrow's meaningful commitments](#record-tomorrows-meaningful-commitments)
-- [Promote only durable signal](#promote-only-durable-signal)
-- [Review, write, and verify](#review-write-and-verify)
+- [Phase 1: Run the Administrative Sweep](#phase-1-run-the-administrative-sweep)
+- [Phase 1: Review, apply, and read back](#phase-1-review-apply-and-read-back)
+- [Phase 2: Prepare tomorrow](#phase-2-prepare-tomorrow)
+- [Phase 2: Ask on the evidence frontier](#phase-2-ask-on-the-evidence-frontier)
+- [Phase 2: Coach](#phase-2-coach)
+- [Phase 2: Record tomorrow's meaningful commitments](#phase-2-record-tomorrows-meaningful-commitments)
+- [Phase 2: Complete the existing journal together](#phase-2-complete-the-existing-journal-together)
+- [Phase 2: Promote only durable signal](#phase-2-promote-only-durable-signal)
+- [Phase 2: Review, write, and verify](#phase-2-review-write-and-verify)
+
+Wind-down runs in two visible phases. Phase 1 presents and resolves every
+non-journal correction the day's evidence supports. Phase 2 plans tomorrow,
+coaches, records meaningful commitments, and drafts the journal from the state
+Phase 1 left behind.
 
 ## Establish the day
 
@@ -109,57 +116,58 @@ keep their wording.
 If reflection names a substantive direct interaction the scan and other day
 evidence missed, evaluate it through the companion with the same rules.
 
-Completion: the user's account of the day is in hand before subjective drafts,
-and any reflection-only contacts have been evaluated.
+Completion: the user's free-form account of the day is in hand before Phase 1
+composes the sweep and before any round is asked, and any reflection-only
+contacts have been evaluated.
 
-## Complete the existing journal together
+## Phase 1: Run the Administrative Sweep
 
-Follow the configured daily-journal template rather than inventing a recap
-format. The agent may draft substantial objective material from verified
-evidence and the user's free-form thoughts. The user supplies or explicitly
-approves:
+Run the sweep described in "Run the Administrative Sweep" in
+`references/source-behavior.md`. The Wind-down window is the closing day and
+the target day. That contract owns sweep membership, the task rows, the
+resolutions each row proposes, and the degraded behavior when the canonical
+task workflow is unavailable.
 
-- what felt difficult and why;
-- gratitude;
-- meaning and causal interpretation;
-- the key learning; and
-- any other statement that claims an internal experience or personal judgment.
-
-Treat optional pulse or rating fields as aids to noticing, not grades, streaks,
-or required feedback. Keep objective evidence distinct from interpretation.
-Prefer a few meaningful outcomes and frictions over a chronological activity
-dump. Preserve the template's existing vault-activity views instead of copying
-their contents into prose.
-
-When the closing-date journal already contains manual writing, propose a narrow
-merge that preserves it. Never replace the whole note with a cleaner
-agent-authored version.
-
-Completion: the proposed journal follows the live template, preserves existing
-content, and clearly identifies every subjective statement awaiting approval.
-
-## Reconcile what changed elsewhere
-
-Compare the day's evidence with the systems that own the resulting truth.
-When needed, propose separate actions for:
-
-- a canonical task's status, next step, due date, or waiting context;
-- relationship or follow-up context in the canonical CRM;
-- a decision, project, repository, or issue record;
-- a calendar commitment or next-day time block; or
-- another authoritative source whose current record is now inaccurate.
-
-Do not hide these changes inside the journal or create a second task list. A
-journal proposal and every source update remain independently approvable.
+Do not hide a sweep correction inside the journal or create a second task list.
+Every sweep row stays independently approvable, and the journal is a Phase 2
+action rather than a member of this sweep.
 
 For one active sequential critical path, a precise restart cue may be useful.
 Capture only the next concrete operation and keep it with the canonical task or
 approved next-day plan. Do not add restart metadata to every task.
 
-Completion: each changed fact has one proposed canonical destination, or is
-explicitly left unchanged.
+Completion: every record the closing day and target day show is wrong or
+undecided has exactly one proposed Phase 1 action, nothing healthy is listed,
+and a zero-row sweep or an unavailable task workflow is reported honestly.
 
-## Prepare tomorrow
+## Phase 1: Review, apply, and read back
+
+Present the sweep as the Phase 1 review bundle under "Prepare one review
+bundle" in `references/source-behavior.md`, then wait for the user's decisions.
+Apply each approved action under "Revalidate, apply, and read back" in that
+same reference, classify each outcome there, and name every action the user
+edited, deferred, or skipped. A **Failed**, **Indeterminate**, or **Manual**
+outcome blocks only its own action; the rest of Phase 1 and all of Phase 2
+continue.
+
+A scheduled run with the user absent stops here and ends **Paused** with
+nothing applied, as that reference's scheduled-run rule requires. When the user
+replies later, apply the day-change recompute rule in "End and resume honestly"
+before any action applies, then continue into Phase 2.
+
+A zero-row sweep needs no bundle ceremony. Say the sweep found nothing and
+continue.
+
+Completion: every approved Phase 1 action has a readback-backed outcome or an
+indeterminate stop, every unapplied action is named, and Phase 2 begins from
+the re-read state rather than from the pre-sweep evidence.
+
+## Phase 2: Prepare tomorrow
+
+Plan from the state Phase 1 left behind, not from the pre-sweep evidence, and
+re-read a source rather than reusing a value an approved action changed. A
+due-tomorrow row the sweep surfaced enters this plan instead of becoming its
+own action.
 
 Read each visible personal and work calendar separately for the next day,
 retaining its calendar identity, along with relevant active tasks, strategy,
@@ -238,11 +246,25 @@ limit and route any proposed effect through the shared bundle. When the
 companion is unavailable, omit the relationship conclusion and mention reduced
 coverage only when material.
 
-Completion: the next-day proposal reflects current sources, makes its
-tradeoffs visible without writing to them, and contains zero to three
+Completion: the next-day proposal reflects the sources as Phase 1 left them,
+makes its tradeoffs visible without writing to them, and contains zero to three
 defensible tomorrow judgment items with no filler.
 
-## Coach lightly
+## Phase 2: Ask on the evidence frontier
+
+Ask the round described in "Ask on the evidence frontier" in
+`references/source-behavior.md`. That contract owns the entry bar, the numbered
+plain-chat format and its cap, the ordering, and how a reply is read. The
+broad reflection above always comes first and is never replaced by a round.
+
+Ask only what the next-day plan, the coaching judgment, or tomorrow's
+commitments would actually turn on. A round with zero questions is valid.
+
+Completion: every question asked could have changed the plan, the coaching
+judgment, or a commitment, and an unanswered question stayed open rather than
+being resolved by assumption.
+
+## Phase 2: Coach
 
 After evidence, user reflection, and prepare-tomorrow inputs are available—and
 **before** Meaningful Commitments are finalized—deliver one short coaching
@@ -258,12 +280,14 @@ observations, the agent's inference, material uncertainty, and the user's
 subjective judgment distinct. Do not supply the user's judgment; ask them to
 confirm or correct the evidence and interpretation.
 
-When the evidence supports an intervention, recommend the smallest useful
-change to the proposed plan, commitment, or boundary. An evidence-backed
-recommendation to keep the current plan qualifies when it resolves the live
-choice; generic task restatement does not. Focus, stop, more, and less may be
-useful lenses, but they are not required slots. Prefer insight over lecture and
-do not score, grade, or invent a streak.
+When the evidence supports an intervention, give it the shape required by
+"Ground longitudinal coaching in durable evidence" in
+`references/source-behavior.md`, tied to tomorrow's actual choice of plan,
+commitment, or boundary. An evidence-backed recommendation to keep the current
+plan qualifies when it resolves the live choice; generic task restatement does
+not. Focus, stop, more, and less may be useful lenses, but they are not
+required slots. Prefer insight over lecture and do not score, grade, or invent
+a streak.
 
 Apply the shared intention contract whether the recommendation changes the
 plan or deliberately preserves it. An honest no-material-intervention result
@@ -279,7 +303,7 @@ Completion: before commitments lock, the user has received either one
 evidence-grounded recommendation tied to tomorrow's actual choice or a concise
 no-material-intervention result, with an invitation to correct the judgment.
 
-## Record tomorrow's meaningful commitments
+## Phase 2: Record tomorrow's meaningful commitments
 
 When the live daily-journal template contains a `Tomorrow’s Meaningful
 Commitments` section, use it as the configured place for reviewed next-day
@@ -337,7 +361,39 @@ nonconforming in the proposal, and is not claimed as a complete three-element
 commitment. When the section is absent, ordinary next-day planning continues
 without an invented journal write.
 
-## Promote only durable signal
+## Phase 2: Complete the existing journal together
+
+Draft from the state Phase 1 left behind. A task, calendar, CRM, or repository
+fact the journal reports comes from the re-read result of an applied action,
+and an action the user skipped, deferred, or that failed is described as it
+actually stands.
+
+Follow the configured daily-journal template rather than inventing a recap
+format. The agent may draft substantial objective material from verified
+evidence and the user's free-form thoughts. The user supplies or explicitly
+approves:
+
+- what felt difficult and why;
+- gratitude;
+- meaning and causal interpretation;
+- the key learning; and
+- any other statement that claims an internal experience or personal judgment.
+
+Treat optional pulse or rating fields as aids to noticing, not grades, streaks,
+or required feedback. Keep objective evidence distinct from interpretation.
+Prefer a few meaningful outcomes and frictions over a chronological activity
+dump. Preserve the template's existing vault-activity views instead of copying
+their contents into prose.
+
+When the closing-date journal already contains manual writing, propose a narrow
+merge that preserves it. Never replace the whole note with a cleaner
+agent-authored version.
+
+Completion: the proposed journal follows the live template, preserves existing
+content, reflects the applied Phase 1 state, and clearly identifies every
+subjective statement awaiting approval.
+
+## Phase 2: Promote only durable signal
 
 When a high-signal insight may help an audience, offer one writing seed without
 creating a quota, draft, or publication action automatically. Keep central
@@ -348,9 +404,11 @@ when the user explicitly requests it or when the day (including the coaching
 beat) adds evidence to a repeated, behavior-changing pattern. By default, a
 one-day observation stays in the daily journal. For a user-requested learning
 or strategy update, propose a separately numbered action that labels the
-observation as isolated and does not claim recurrence. Never auto-write
-strategy or learnings; the user must approve the exact durable update
-independently.
+observation as isolated and does not claim recurrence. A learning or strategy
+update the day's dated evidence already supported belongs to the Phase 1 sweep
+and was proposed there; one that arises from the Phase 2 coaching beat is a
+separate action in the Phase 2 bundle. Never auto-write strategy or learnings;
+the user must approve the exact durable update independently.
 
 Apply the shared intention contract to each learning or strategy proposal. Do
 not promote an inferred outcome to the user's intention.
@@ -358,11 +416,15 @@ not promote an inferred outcome to the user's intention.
 Completion: optional writing, learning, and strategy proposals are selective,
 sourced, and independently reviewable.
 
-## Review, write, and verify
+## Phase 2: Review, write, and verify
 
-Present the journal and all source changes in one review bundle with separate
-numbered actions. Apply only approved actions under the shared source rules.
-Each action uses the bundle's intention shape; another action cannot close it.
+Present the Phase 2 review bundle. It carries the journal, any learning or
+strategy action the coaching beat produced, the meaningful-commitments edit,
+and any other Phase 2 effect. It does not repeat a Phase 1 action, and its
+action numbers continue from Phase 1 under "Prepare one review bundle" in
+`references/source-behavior.md`. Apply only approved actions under the shared
+source rules. Each action uses the bundle's intention shape; another action
+cannot close it.
 
 For an approved journal action, re-read the target through the Obsidian CLI.
 Re-read the configured template as well when the action adds or changes the
@@ -375,8 +437,11 @@ revised proposal instead of applying stale content.
 
 End explicitly using the core run endings. A completed wind-down normally ends
 in the reviewed daily journal plus any independently approved source changes,
-not in a generated brief or internal run record.
+not in a generated brief or internal run record. The closing recap names the
+actions from both bundles, including every action that was edited, deferred,
+skipped, or left unapplied in either phase.
 
 Completion: the reviewed journal is visible in its canonical note, every other
-action has an independent outcome, tomorrow's plan reflects the final sources,
-and no unapproved or unverifiable change is reported as complete.
+action from both phases has an independent outcome, tomorrow's plan reflects
+the final sources, and no unapproved or unverifiable change is reported as
+complete.

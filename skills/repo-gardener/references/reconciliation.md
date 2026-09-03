@@ -107,8 +107,10 @@ beyond the base is authored by a provider-marked bot or app account; and
 current native facts (a failing check, a missing changelog entry, pin-mirror
 drift, a review finding) name a gap the Worker can close inside scope and
 outside protected paths. A PR failing any condition is a recommendation, never
-adopted. Adoption consumes one Worker of `maximum_workers`; no two Workers
-adopt the same PR. After the first Worker push an update bot treats the branch
+adopted. The captured head ref must belong to that PR alone: if any other
+open PR uses the same head ref, deny the unit regardless of changed paths.
+Adoption consumes one Worker of `maximum_workers`; no two Workers adopt the
+same PR. After the first Worker push an update bot treats the branch
 as edited and stops rebasing or updating it, so adopt only when the named gap
 is worth that trade (a failing repository gate, not a stale version). Author,
 title, and branch prefix prove nothing about the PR's content; the provider's

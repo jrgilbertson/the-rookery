@@ -29,7 +29,9 @@ same-repository update PR with a Worker-closable gap is a unit.
 > unrelated advisory would change `package-lock.json`; another new unit
 > changes only `apps/web/src/` files. (8) A variant PR is authored by a human
 > collaborator and fails the same check. (9) Immediately before authoring,
-> a fresh native read shows the changelog gate now passes.
+> a fresh native read shows the changelog gate now passes. (10) A variant PR's
+> only failing check is a runner timeout unrelated to its diff. (11) A second
+> open PR targets a different base from the same head branch.
 
 ## Expected behavior
 
@@ -55,5 +57,9 @@ same-repository update PR with a Worker-closable gap is a unit.
       adopted.
 - [ ] Situation 9 stops the unit and reports the closed gap without
       authoring or publishing.
+- [ ] Situation 10 yields a recommendation; a transient provider failure is
+      not a Worker-closable gap.
+- [ ] Situation 11 denies adoption because the head ref is not exclusive to
+      the PR, regardless of changed paths.
 - [ ] The existence of an open PR is never given as a reason to skip a unit.
 - [ ] At most one unmerged PR per Worker; the run never merges.

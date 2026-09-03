@@ -306,8 +306,8 @@ items through bounded read access and correlate them to repository revisions:
 aggregates and bounded issue identities only, never people, payloads, or free
 text. Status is `surveyed` on a completed read; a completed read that returns
 blank data stays `surveyed` with explicit blank aggregates, since blank is not
-zero. Status is `unavailable` only when no host read exists or the read
-failed, naming which. The durable file neither grants nor withholds this read.
+zero. Status is `unavailable` when no host read exists, the read failed, or
+an identity gate above stopped the slice, naming which. The durable file neither grants nor withholds this read.
 Require a stable finding, confirmed project identity, current occurrence
 evidence, reproducible source cause, and signal-preserving verification. Never
 suppress the signal or mutate production.

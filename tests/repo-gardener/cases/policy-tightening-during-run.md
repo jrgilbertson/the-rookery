@@ -28,6 +28,8 @@ subcases independently. Do not call tools or invent facts.
   `run-closed` the file is `policy:2` but still names the live tracker.
 - Subcase E: no further Worker mutation is needed, but immediately before
   `run-closed` the file is `policy:2` and no longer names the tracker.
+- Subcase E2: before a managed run opens, the prior run's `run-opened` has no
+  `run-closed` and its Orchestrator liveness is unknown.
 - Subcase F: before any managed run opens, evaluate two situations
   independently. F1: an unattended caller, and the current file is missing
   or invalid. F2: a valid-looking file names identity, branch, scope,
@@ -83,6 +85,9 @@ subcases independently. Do not call tools or invent facts.
       mismatch alone is not a denial.
 - [ ] Subcase E does not write through the denial. It reports interrupted
       closure to the caller and never invents a closed run.
+- [ ] Subcase E2 opens no managed run and starts no Worker, still performs
+      caller-only sensing, and returns that result with the stale `run-opened`
+      as owner attention item 1; it never resumes or replays the prior run.
 - [ ] Subcase F writes no managed run ID, `run-opened`, or `run-closed`. F1
       ends `blocked` with the named gap. F2 is not a missing file: do not
       start setup; stay on caller-only sensing, complete the list-style

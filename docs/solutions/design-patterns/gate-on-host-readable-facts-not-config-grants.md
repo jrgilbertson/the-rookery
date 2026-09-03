@@ -1,6 +1,8 @@
 ---
 title: Gate on host-readable facts, not config grants
 category: design-patterns
+module: skills/repo-gardener
+problem_type: design_pattern
 date: 2026-09-02
 last_updated: 2026-09-02
 tags: [repo-gardener, policy, permissions, simplicity]

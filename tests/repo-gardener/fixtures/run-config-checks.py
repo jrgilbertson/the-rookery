@@ -317,10 +317,8 @@ def check_script_surface() -> None:
     )
     require(not non_standard, f"config validator imports non-standard modules: {non_standard}")
     require("yaml" in imported, "config validator must use PyYAML")
-    require(
-        "evidence_sources" not in source and "shared_ledger_paths" not in source,
-        "config validator must not know evidence_sources or shared_ledger_paths",
-    )
+    for knob in REMOVED_FILE_KNOBS:
+        require(knob not in source, f"config validator must not know removed file knob {knob}")
     require(
         not imported & FORBIDDEN_PROCESS_OR_NETWORK_IMPORTS,
         f"config validator imports process/network modules: {sorted(imported & FORBIDDEN_PROCESS_OR_NETWORK_IMPORTS)}",
@@ -466,9 +464,9 @@ def main() -> int:
         refinement_text["issue_refinement"] = "true"
         expect_invalid(refinement_text, repo_root, "issue_refinement must be a boolean")
 
-        ledger_grant = base_config()
-        ledger_grant["shared_ledger_paths"] = ["CHANGELOG.md"]
-        expect_invalid(ledger_grant, repo_root, "config has unexpected key: shared_ledger_paths")
+        ledger_paths_key = base_config()
+        ledger_paths_key["shared_ledger_paths"] = ["CHANGELOG.md"]
+        expect_invalid(ledger_paths_key, repo_root, "config has unexpected key: shared_ledger_paths")
 
         nested_ledger = base_config()
         nested_ledger["shared_ledger"] = {"paths": ["CHANGELOG.md"]}

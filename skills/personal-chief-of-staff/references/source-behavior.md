@@ -10,6 +10,7 @@ it.
 - [Audit the current response's source access](#audit-the-current-responses-source-access)
 - [Make every intention verifiable](#make-every-intention-verifiable)
 - [Ground longitudinal coaching in durable evidence](#ground-longitudinal-coaching-in-durable-evidence)
+- [Ask on the evidence frontier](#ask-on-the-evidence-frontier)
 - [Decide what deserves attention](#decide-what-deserves-attention)
 - [Run the Administrative Sweep](#run-the-administrative-sweep)
 - [Use relationship judgment as a companion](#use-relationship-judgment-as-a-companion)
@@ -317,10 +318,14 @@ the remaining evidence supports a more precise claim.
 
 For each material coaching claim, distinguish the dated observations, the
 agent's inference, relevant counterevidence or alternate explanation, and
-subjective judgment that remains the user's. When the available evidence does
-not support a material pattern or intervention, return an honest null. Sparse
-history intentionally produces narrower coaching or no longitudinal claim;
-never fill the gap with novelty, causality, generic advice, or a questionnaire.
+subjective judgment that remains the user's. When the evidence supports an
+intervention, state the observed pattern, what it costs the user, the
+recommended boundary or decision, the smallest intervention worth trying, and
+the future evidence that would show whether it worked. When the available
+evidence does not support a material pattern or intervention, return an honest
+null. Sparse history intentionally produces narrower coaching or no
+longitudinal claim; never fill the gap with novelty, causality, generic advice,
+or a questionnaire.
 
 Keep these analytical checks internal and surface only evidence or limits that
 change interpretation or choice, plus any coverage statement required by the
@@ -329,6 +334,43 @@ coverage rules above and the approval, scheduled-run, Obsidian CLI, and
 write-readback rules below. This evidence contract does not narrow current
 native-source coverage, the Daily CRM Scan, or the user's authority over
 meaning, causality, commitments, strategy, learning, and durable changes.
+
+## Ask on the evidence frontier
+
+Follow-up questions arrive as rounds. Wind-down runs a round after the broad
+reflection. Weekly and Quarterly run one after the initial evidence synthesis.
+
+A question enters a round only when its answer could materially change the
+recommendation, plan, or interpretation, and when every question it depends on
+is already answered. A question is dependent when its recommended answer would
+differ depending on the answer to another question still open; hold it for the
+round after its prerequisite is answered. Retrieve a fact from its
+authoritative source instead of asking for it, and do not re-ask a decision
+already settled in this session. When two behaviors both fit the evidence but
+call for different responses or different machinery, ask which behavior is
+present. When the result cannot be assessed, name the missing evidence and,
+when the question compares against something that already exists, name that
+existing mechanism, and keep the affected recommendation conditional. A round
+with zero questions is valid when the evidence already supports a
+recommendation or an honest null. Whether an overdue task is still relevant is
+a sweep row with a proposed resolution under "Run the Administrative Sweep",
+not a question for a round.
+
+Present the round as a numbered list in plain chat, at most five questions,
+each with its recommended answer on the line beneath it and the bounded options
+when that question has them. Order the questions by how much the answer would
+change the recommendation. Ask for one reply covering the whole round and read
+that reply by number. Hold questions beyond the cap for the next round. Use no
+host question tool, so the round behaves the same on agents that do not share
+one.
+
+A question the reply leaves unanswered stays open and returns in the next
+round. A new question the reply raises enters a round only when it passes the
+entry bar above.
+
+Completion: every question asked could have changed a recommendation, its
+prerequisites were settled, and an unanswered question stayed open rather than
+being resolved by assumption.
 
 ## Decide what deserves attention
 

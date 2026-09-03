@@ -13,6 +13,25 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `personal-chief-of-staff` wind-down now runs in two visible phases. Phase 1
+  sweeps the day's corrections and applies the approved ones with readback
+  before anything else happens. Phase 2 then plans tomorrow, coaches, records
+  commitments, and drafts the journal from the state Phase 1 left behind, so
+  the journal describes the sources as they now stand. A scheduled run stops
+  at the Phase 1 bundle and ends Paused with nothing applied.
+- `personal-chief-of-staff` wind-down and weekly reviews now sweep the task
+  source. An open task that is overdue, past its follow-up date, due on the
+  target day, at risk against the remaining capacity, or holding a due date
+  that precedes its own earliest-begin date becomes one approvable row with a
+  proposed resolution. Zero rows is a valid result, and an unreachable task
+  workflow reports the rows Manual rather than stalling the review.
+- `personal-chief-of-staff` coaching follow-ups now arrive as a Frontier Round:
+  a numbered plain-chat batch of at most five independent questions, each with
+  a recommended answer, ordered by how much the answer would change the
+  recommendation. Dependent questions wait for a later round. Weekly asks one
+  round rather than two, Quarterly presents its dispositions the same way, and
+  a supported coaching claim names the pattern, its cost, the recommended
+  boundary, the smallest intervention, and the evidence that would settle it.
 - `checking-pr-readiness` later 1 on an Approve menu continues into the
   installed finishing path in the same conversation. The evidence pack is
   silent pull-request-body input, not another wait. If no finishing path is

@@ -576,6 +576,42 @@ if obsidian vault=fixture-vault append path=Roles/current.md content=unexpected 
 fi
 assert_trace '"operation":"append","target":"current_role","result":"rejected"'
 
+new_run s7e5
+if pcos-source read role=tasks >/dev/null 2>&1; then
+  fail "scripted canonical task-workflow failure was accepted"
+fi
+assert_trace '"target":"tasks","result":"failure","completeness":"unknown","evidence":"task_workflow_failure"'
+output=$(pcos-source read role=calendar)
+[[ "$output" == *"customer review is still on the calendar"* ]] ||
+  fail "sweep degraded specimen calendar evidence"
+pcos-source read role=meeting_notes >/dev/null
+pcos-source read role=relationships >/dev/null
+assert_trace '"target":"relationships","result":"success","completeness":"complete"'
+
+new_run w2p4
+if pcos-source read role=journal_state >/dev/null 2>&1; then
+  fail "multi-action specimen source discovery before the gating action was accepted"
+fi
+pcos-action read role=task_note >/dev/null
+pcos-action write role=task_note content=vendor_invoice_done >/dev/null
+pcos-action readback role=task_note >/dev/null
+pcos-action read role=calendar_event >/dev/null
+pcos-action write role=calendar_event content=design_review_shortened >/dev/null
+output=$(pcos-action readback role=calendar_event)
+[[ "$output" == *"30-minute duration"* ]] || fail "second action readback output"
+pcos-action read role=mailbox_draft >/dev/null
+output=$(pcos-action write role=mailbox_draft content=vendor_invoice_reply)
+[[ "$output" == success ]] || fail "third action write output"
+if pcos-action readback role=mailbox_draft >/dev/null 2>&1; then
+  fail "scripted readback failure among multiple action roles was accepted"
+fi
+assert_trace '"operation":"readback","target":"mailbox_draft","result":"failure","completeness":"unknown"'
+pcos-source read role=journal_state >/dev/null
+pcos-source read role=journal_template >/dev/null
+pcos-source read role=calendar >/dev/null
+assert_trace '"operation":"readback","target":"calendar_event","result":"success","completeness":"complete"'
+assert_trace '"operation":"read","target":"journal_state","result":"success","completeness":"complete"'
+
 for adapter in pcos-source pcos-action imsg obsidian; do
   if env -u PCOS_FIXTURE_ROOT -u PCOS_FIXTURE_SPECIMEN -u PCOS_FIXTURE_TRACE \
     PATH="$fixture_bin:$PATH" "$adapter" --version >/dev/null 2>&1; then

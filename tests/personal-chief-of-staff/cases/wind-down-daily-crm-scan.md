@@ -51,7 +51,7 @@ temporary directory afterward.
 ## Prompt
 
 > For each scenario, state whether a Daily CRM Scan runs before the initial
-> reconstruction, what CRM effects if any enter the wind-down bundle, and
+> reconstruction, what CRM effects if any enter the Phase 1 review bundle, and
 > whether catch-up mode starts. Synthetic only; no real phone numbers.
 >
 > Configured vault timezone is `America/Los_Angeles`. The CRM companion is
@@ -79,8 +79,8 @@ temporary directory afterward.
 
 - [ ] 1 → Daily CRM Scan runs before the initial reconstruction; proposes
       contact-date outcome for Alex Rivers from the group thread (novel or
-      Already satisfied); effects are independently approvable in the existing
-      wind-down bundle; no nested CRM bundle; no write during preparation;
+      Already satisfied); effects are independently approvable actions in the
+      Phase 1 review bundle; no nested CRM bundle; no write during preparation;
       `+12135550199` stays unresolved with no Person effect.
 - [ ] 2 → Daily CRM Scan runs; reports no CRM proposal; invents no contact date,
       Person prose, or Task.

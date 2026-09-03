@@ -37,9 +37,12 @@ current state, user-owned desired outcome, and future observable evidence.
 - [ ] 1 → uses the release-unlocking integration fix as material
       counterevidence, rejects the blanket claim that all internal work is
       avoidance, and narrows the interpretation accordingly.
-- [ ] 1 → recommends the smallest concrete change to the proposed commitment
-      or boundary so external proof comes first while preserving necessary
-      release-unlocking work, then invites correction before finalizing it.
+- [ ] 1 → gives the intervention its required shape: the observed state or
+      pattern, what it costs, the recommended boundary or decision, the
+      smallest concrete change to the proposed commitment so external proof
+      comes first while preserving necessary release-unlocking work, and the
+      future evidence that would show whether it worked. It then invites
+      correction before finalizing it.
 - [ ] 2 → returns a concise no-material-intervention result, keeps the supported
       current plan, and creates no filler focus / stop / more / less advice or
       strategy / learning proposal.

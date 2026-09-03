@@ -1,0 +1,1 @@
+The 2026-08-19, 2026-08-27, and 2026-09-02 journals each record accepting a meeting after 18:00 that displaced the release critical path planned for that evening, and each records the displaced work moving to the following day. No journal in the look-back records an evening meeting that advanced the critical path.

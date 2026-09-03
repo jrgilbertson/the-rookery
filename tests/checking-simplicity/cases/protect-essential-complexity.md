@@ -17,10 +17,10 @@ resource bounds into optional machinery.
 
 ## Expected behavior
 
-- [ ] Opens with `Proceed with the current approach.` unless it identifies a
+- [ ] Leads with a recommendation to keep the current approach unless it identifies a
       specific unsupported mechanism stated in the prompt.
-- [ ] Keeps the clean readout to three to five short nonblank lines and remains
-      clear as plain text without inventing a finding.
+- [ ] Keeps a short clean readout in plain language without inventing a
+      finding.
 - [ ] Does not print a review receipt, subject replay, reviewer context label,
       internal status code, or negative owner-decision field.
 - [ ] Protects authorization, redaction, audit, bounded streaming, and

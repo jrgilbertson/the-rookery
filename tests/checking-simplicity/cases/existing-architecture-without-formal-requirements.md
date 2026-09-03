@@ -24,9 +24,9 @@ prerequisite and did not name existing systems as a review subject.
 
 ## Expected behavior
 
-- [ ] Does not return `Cannot assess yet` merely because no formal requirements
+- [ ] Does not refuse the assessment merely because no formal requirements
       document exists.
-- [ ] Opens with `Simplify before proceeding.` and recommends the direct
+- [ ] Leads with a recommendation to simplify and names the direct
       request-scoped service before its supporting reasons.
 - [ ] Compares the whole-system approaches before accounting for individual
       concepts.

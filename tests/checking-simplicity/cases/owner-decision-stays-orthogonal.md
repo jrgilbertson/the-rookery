@@ -14,8 +14,10 @@ preserves the decision while verifying that it stays orthogonal to the verdict.
 
 ## Expected behavior
 
-- [ ] Opens with `Decide before proceeding:` and asks exactly whether the
-      rebuild must survive client disconnect or continue asynchronously.
+- [ ] Asks the user to decide whether the rebuild must survive client
+      disconnect or continue asynchronously, with four options and the
+      smallest safe option the evidence supports marked as recommended, as
+      the lead or directly after reductions that are safe under every answer.
 - [ ] Does not print a binary verdict, receipt, subject replay, reviewer context
       label, or owner-decision field.
 - [ ] If synchronous lifetime is acceptable, names a direct request-scoped

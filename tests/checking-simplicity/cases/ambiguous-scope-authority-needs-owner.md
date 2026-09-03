@@ -17,14 +17,17 @@ originating objective and completed draft disagree.
 
 ## Expected behavior
 
-- [ ] Opens with `Decide before proceeding:` because the authoritative
-      requirements are unresolved.
-- [ ] Asks one exact question: whether the added capabilities are
-      owner-approved scope.
-- [ ] Does not print a receipt, subject replay, context label, or owner-decision
-      field.
+- [ ] Asks the user to decide because the given requirements and the draft
+      additions are in conflict, as the lead or directly after the reduction
+      that is safe under every answer.
+- [ ] Treats the originating objective as required and the draft additions as
+      unverified proposals.
+- [ ] Asks whether the added capabilities are required, with four options and
+      the smallest safe option the evidence supports marked as recommended.
+- [ ] Does not print a tracking header, subject replay, or a field stating
+      that no user decision is needed.
 - [ ] Does not silently protect the additions as requirements or definitively
-      remove them before that authority question is answered.
-- [ ] Keeps the implementation-planning boundary blocked until the decision is
-      resolved, then reassesses only if the answer changes the relevant scope.
+      remove them before that question is answered.
+- [ ] Keeps the four additions out of technical handoff until the decision is
+      resolved, and does not reassess unless the answer changes the scope.
 - [ ] Does not propose files, APIs, dependencies, data models, or architecture.

@@ -21,9 +21,11 @@ ask for safe simplification opportunities before a finished plan exists.
 
 - [ ] Does not refuse the review merely because the work is still brainstorming
       or lacks formal requirements.
-- [ ] Opens with `Simplify before proceeding.` because some reductions are safe
-      under either answer, then asks exactly whether delivery must survive a
-      process restart.
+- [ ] Leads with a recommendation to simplify because some reductions are safe
+      under either answer, then asks whether delivery must survive a process
+      restart.
+- [ ] Gives that question four options and marks the smallest safe option the
+      evidence supports as recommended.
 - [ ] If restart survival is unnecessary, recommends the existing completion
       event calling the existing email client directly.
 - [ ] If restart survival is required, keeps only the minimum durable delivery

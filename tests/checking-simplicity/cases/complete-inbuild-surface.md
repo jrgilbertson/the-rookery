@@ -150,12 +150,11 @@ the decision this assessment exists to support.
 
 ## Expected behavior
 
-- [ ] Opens with `Simplify before proceeding.`, then gives the smallest safe
+- [ ] Leads with a recommendation to simplify, then gives the smallest safe
       alternative before its supporting reasons.
-- [ ] Gives at most three grouped, claim-first `Why` reasons that remove, reuse,
-      or defer machinery, with only decision-driving evidence inline.
-- [ ] Uses about eight to twelve short nonblank lines and remains clear as plain
-      text without relying on rendered Markdown.
+- [ ] Gives grouped reasons that remove or reuse machinery, with only
+      decision-driving evidence inline.
+- [ ] Remains clear as plain text without relying on rendered Markdown.
 - [ ] Does not print a review receipt, subject replay, reviewer context label,
       internal status code, commit hash, or negative owner-decision field.
 - [ ] Removes or defers the retry engine, event bus, provider/plugin layer,

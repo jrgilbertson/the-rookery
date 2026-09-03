@@ -16,8 +16,8 @@ looked" surface. GitHub Releases mirror its entries.
 - Added `checking-simplicity`, a read-only assessment that finds safe
   simplification opportunities in named technical areas, questions, proposed
   or existing designs, plans, code-level approaches, and in-build decisions.
-  It can serve as an independent caller-owned checkpoint without requiring one
-  for ordinary advisory use; lifecycle and Git hooks remain deliberately absent.
+  The assessment runs in one dispatched subagent that did not author or
+  implement the subject. Lifecycle and Git hooks remain deliberately absent.
 
 ### Changed
 

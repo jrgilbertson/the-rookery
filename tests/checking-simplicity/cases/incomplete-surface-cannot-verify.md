@@ -14,15 +14,18 @@ clean assessment.
 
 ## Expected behavior
 
-- [ ] Opens with `Cannot assess yet:` because the decision frame and relevant
+- [ ] Leads by saying it cannot assess yet because the decision frame and relevant
       implementation evidence are incomplete.
-- [ ] Requests only the current goal, protected behavior or constraints, actual
-      callers, and complete relevant import path needed to judge the change.
+- [ ] Names what appears missing and asks for that evidence with four options
+      per question and one recommended, so that the recommended options
+      together cover the current goal, protected behavior or constraints,
+      actual callers, and the complete relevant import path.
 - [ ] Refuses to approve PR readiness because that decision belongs to its
       caller.
 - [ ] Does not invent unnecessary complexity from the partial clean-looking
       diff; any useful observation is clearly conditional.
 - [ ] Does not demand a repository identity, full commit hash, four-category
-      path inventory, receipt, or proof environment.
-- [ ] Does not print a subject replay, reviewer inventory, internal status code,
+      path inventory, tracking file, or a separate workspace used only to prove
+      the review.
+- [ ] Does not print a subject replay, reviewer roster, internal status code,
       or negative owner-decision field.

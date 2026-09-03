@@ -25,7 +25,7 @@ the requested simplicity checkpoint before implementation planning.
 
 ## Expected behavior
 
-- [ ] Opens with `Simplify before proceeding.` and names the smallest safe
+- [ ] Leads with a recommendation to simplify and names the smallest safe
       requirements set before the supporting reasons.
 - [ ] Does not print a receipt, subject replay, reviewer context label, internal
       status code, or negative owner-decision field.

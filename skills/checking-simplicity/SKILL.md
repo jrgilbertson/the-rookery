@@ -124,7 +124,8 @@ Write in plain language that reads well as unrendered text. Use a short
 list when it makes the readout easier to scan. Use a colon for a label and
 its description. Do not use em dashes. Do not narrate the process: do not
 mention the ladder, a rung, this skill, whether a decision was needed, or
-whether a page was produced.
+your reasons for producing or omitting a comparison page. When you produce
+one, give its path and nothing more.
 
 When the two shapes differ in structure and not only in part count, produce
 an HTML page of them in a temporary folder outside the repository so it is

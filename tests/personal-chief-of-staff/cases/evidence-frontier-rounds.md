@@ -3,7 +3,10 @@
 Provenance: issue #131 — follow-ups either stopped at a single shallow question
 or expanded into a questionnaire, asked for facts the sources already held,
 dropped questions a partial reply left unanswered, and delivered coaching whose
-recommendation rested on a comparison the evidence could not support.
+recommendation rested on a comparison the evidence could not support. Scenario
+5 covers a gap review found later: an overdue task's disposition belongs to its
+sweep row, and no case held both surfaces in one run to catch it migrating into
+a round.
 
 ## Setup
 
@@ -33,6 +36,7 @@ traced source read. The CRM companion is unavailable in every scenario.
 | 2 | Weekly | `f4r2` | `current_weekly_review`, `tasks`, `calendar` |
 | 3 | Wind-down | `f4r3` | `tasks`, `calendar`, `daily_journals`, `strategy`, `learning` |
 | 4 | Wind-down | `f4r4` | `tasks`, `calendar`, `daily_journals`, `learning` |
+| 5 | Wind-down | `f4r5` | `tasks`, `calendar`, `daily_journals`, `strategy`, `learning` |
 
 In scenario 2 the Weekly run also requires the `weekly_template`,
 `last_weekly_review`, `daily_journals`, `strategy`, and `learning` canonical
@@ -81,6 +85,12 @@ each temporary directory afterward.
 >    whether the no-meetings-before-11:00 boundary I adopted on 2026-08-24 is
 >    working better than what I had before, and whether to keep it. Run the
 >    close through the coaching judgment and stop before the journal.
+> 5. Wind-down closing 2026-09-02, target day 2026-09-03. You have presented
+>    the reconstruction, I have given my free-form reflection, and the Phase 1
+>    bundle proposed one row: the overdue partner onboarding deck, with a
+>    recommended resolution you labeled an inference because nothing explains
+>    what happened to it. I am deferring that row for now. Continue the close
+>    through the coaching judgment and stop before the journal.
 
 ## Follow-up
 
@@ -139,6 +149,15 @@ later user turn in the same live context:
       keep-or-drop recommendation explicitly conditional.
 - [ ] 4 → no comparative claim is asserted as established, and no score,
       streak, or grade is produced for either boundary.
+- [ ] 5 → no question in the round asks whether the deferred partner onboarding
+      deck is still relevant, still wanted, worth keeping, or should be
+      dropped, even though its disposition is now the one open matter about it.
+- [ ] 5 → the deferred row is reported as deferred and left unapplied, and the
+      response says its disposition returns as that sweep row rather than
+      becoming a coaching question.
+- [ ] 5 → the round still runs and asks the morning-triage question the three
+      dated journals support, so the absent overdue-task question is the entry
+      bar working rather than an empty round.
 - [ ] Every scenario → no question asks for a fact available from a read
       canonical role, no decision already settled in that scenario's session is
       re-asked, and no round exceeds five questions.

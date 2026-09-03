@@ -24,8 +24,17 @@ authoritative evidence. Prepare one review for the current period. Do not
 backfill skipped weeks or reconstruct subjective history the sources cannot
 show.
 
-Completion: the available period and material coverage gaps are clear, without
-creating another history or changing a source.
+While reconstructing, run the Administrative Sweep from `source-behavior.md`
+under "Run the Administrative Sweep". Weekly's two dates are the review window
+and the coming week, so the sweep covers tasks overdue at review time plus
+tasks due within the coming week. Feed its rows into open loops and next-week
+outcomes. Zero rows is a valid result and is reported as such. Every sweep row
+becomes a separate action in the review bundle described under "Review and
+write back", never part of the weekly-review note action.
+
+Completion: the available period and material coverage gaps are clear, the
+sweep has covered the review window and the coming week, and no source was
+changed while reconstructing.
 
 ## Lead with the executive synthesis
 
@@ -56,10 +65,30 @@ item-by-item reconciliation, or create another source of task state.
 Completion: the user can understand the week and its implications before
 opening the supporting detail.
 
+## Ask one round after the synthesis
+
+After the executive synthesis and before recurring-thread coaching, ask one
+Frontier Round using the shared contract in `source-behavior.md` under "Ask on
+the evidence frontier". Apply its entry bar, dependency rule, numbered
+plain-chat format, cap, and reply handling without restating them.
+
+This is the only question step in a Weekly run. A recurring-thread candidate
+from the next section enters this same round whenever it clears the shared
+entry bar, so coaching never opens a second round of its own. Ask the round
+before the coaching judgment and use the user's answers when classifying
+threads and choosing an intervention. Whether an overdue task is still relevant
+belongs to the sweep as a row with a proposed resolution, not to this round.
+
+Completion: exactly one round ran before coaching, it carried any qualifying
+recurring-thread candidate, and its answers were available to the coaching
+judgment.
+
 ## Coach on recurring threads
 
-After the executive synthesis and before next-week commitments, perform the
-longitudinal coaching judgment from `source-behavior.md`. Apply its recurrence
+After the Frontier Round and before next-week commitments, perform the
+longitudinal coaching judgment from `source-behavior.md`. Use the round's
+answers in that judgment, and send any candidate question this section raises
+to that same round rather than asking it here. Apply its recurrence
 and evidence-chain rules, surface zero to three supported recurring threads,
 and classify each as:
 
@@ -178,9 +207,11 @@ week, not an agent-authored theory of the user's life.
 Present the completed conversational draft and any related changes as one
 review bundle. The canonical weekly-review note is one proposed action. Task,
 calendar, CRM, repository, writing, or other source changes are separate
-actions with their own identities, targets, effects, and approval.
-Each separate action uses the bundle's intention shape. Approval binds to its
-unchanged action fields, including its closure evidence.
+actions with their own identities, targets, effects, and approval. Each
+Administrative Sweep row is one of those separate actions, including its
+drafted resolution content. Each separate action uses the bundle's intention
+shape. Approval binds to its unchanged action fields, including its closure
+evidence.
 
 After approval, create or update only the current canonical weekly review
 through the Obsidian CLI with explicit vault targeting. Re-read the note first,

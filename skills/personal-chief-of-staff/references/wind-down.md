@@ -154,7 +154,10 @@ outcome blocks only its own action; the rest of Phase 1 and all of Phase 2
 continue.
 
 A scheduled run with the user absent stops here and ends **Paused** with
-nothing applied, as that reference's scheduled-run rule requires. When the user
+nothing applied, as that reference's scheduled-run rule requires. It composes
+the bundle from canonical role reads only. Do not touch a proposed target's own
+write interface while waiting, not even to re-read it; that re-read belongs to
+the approved action and happens after the user replies. When the user
 replies later, apply the day-change recompute rule in "End and resume honestly"
 before any action applies, then continue into Phase 2. On that resume the
 journal's closing date stays the day originally being closed, while the sweep
@@ -171,6 +174,13 @@ indeterminate stop, every unapplied action is named, and Phase 2 begins from
 the re-read state rather than from the pre-sweep evidence.
 
 ## Phase 2: Prepare tomorrow
+
+Phase 2 opens the sources it needs only after every approved Phase 1 action has
+been applied and read back, or classified as unapplied. Do not read a Phase 2
+source before that, even to orient. A source read early returns the state the
+sweep was about to correct, and a plan or journal built on it describes a day
+the sources no longer agree with. Establishing the day and running the Daily
+CRM Scan happen before Phase 1 and are unaffected.
 
 Plan from the state Phase 1 left behind, not from the pre-sweep evidence, and
 re-read a source rather than reusing a value an approved action changed. A

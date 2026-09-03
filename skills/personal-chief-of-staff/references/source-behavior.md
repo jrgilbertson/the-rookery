@@ -564,11 +564,22 @@ relying on conversational inference.
 
 ## Revalidate, apply, and read back
 
+Run these steps for one action, start to finish, before beginning the next
+approved action. Do not re-read every target, then write every target, then
+read every target back. Batching that way separates an action's revalidation
+from its own write, which is the drift this sequence exists to prevent.
+
+Touch a target's write interface only after that exact action is approved. A
+run that has not yet been approved, including a scheduled run waiting for the
+user, prepares its proposal from canonical role reads alone.
+
 Immediately before each approved action:
 
 1. For an update, re-read the current target through the same authoritative
    interface. For a create, re-read the authoritative destination, parent, or
-   thread where the new target will be created.
+   thread where the new target will be created. A re-read that fails, is
+   refused, or returns nothing you can compare is not a completed re-read;
+   step 3 applies.
 2. Revalidate the acting identity, destination or recipients, exact target,
    visibility when relevant, approved content or effect, and closure evidence
    against the exact approved proposal. For a create, confirm the proposed
@@ -577,7 +588,9 @@ Immediately before each approved action:
 3. If any approved action field, including closure evidence, changed, cannot
    be distinguished, or became ambiguous, stop and present a revised proposal
    for new approval. Never redirect an approval to a different account or
-   target.
+   target. Stopping is the required outcome here, not a preference: applying
+   the write anyway and disclosing that you skipped this step is still a
+   violation, because the approval no longer rests on a verified target.
 4. If readback shows the approved effect already exists, report **already
    satisfied** and do not duplicate it.
 5. Otherwise apply the approved action once through the supported interface.

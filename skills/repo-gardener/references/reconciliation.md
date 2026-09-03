@@ -125,9 +125,12 @@ PRs server-side ignore merge drivers, so when two Workers share the path the
 second PR to merge may conflict on the host, and that conflict is owner work
 named in the brief and morning report. The exception covers only additive
 entries: every Worker using it adds only its attributable entry and retains
-all base entries; the Orchestrator never writes a ledger line. It does not
-exempt another path, protected path, authoring scope, or a new or unrelated
-overlap, which stops publication. Later native conflicts are for human
+all base entries; the Orchestrator never writes a ledger line. The exception
+applies only between Workers selected in the same assignment decision,
+identified by their approved brief identity and branch; any other native
+branch or PR touching that path is ordinary overlap. It does not exempt
+another path, protected path, authoring scope, or a new or unrelated overlap,
+which stops publication. Later native conflicts are for human
 handling.
 
 Before dispatch, require the portable mutation interface:

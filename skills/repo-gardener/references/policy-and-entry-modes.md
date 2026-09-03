@@ -34,7 +34,8 @@ all nine contracted lanes in order with triage as an empty mapping and eight
 lane `mutation` flags, and optional ordered `audit_commands` on eligible
 lanes. `issue_refinement` is an optional
 boolean that normalizes to `false`; only `true` permits the narrow delegation
-below. Any other file at that path is invalid. The file does not name `version`,
+below. Any key the field schema does not define makes the file invalid. Any
+other file at that path is invalid. The file does not name `version`,
 `status`, always-denied effects, presentation caps, deep-target counts, or
 `report_write`.
 

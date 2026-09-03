@@ -406,12 +406,12 @@ nothing that is healthy. Zero rows is a valid result and is reported as such.
 Reporting the sweep's coverage is not the same as listing what it cleared. Name
 the record kinds the sweep covered and say that none qualified. Then stop.
 
-A healthy record's title, due date, or count is not evidence the sweep ran, and
-including it is the task-list dump this rule exists to prevent. "Open tasks and
-the calendar were covered and nothing qualified" is the whole report. "The three
-open tasks are due 2026-09-24, 2026-10-02, and 2026-10-15, none overdue" names
-three healthy records and is the failure, however brief it looks. The Source
-Access Audit already carries how far coverage reached.
+How many records the sweep covered is useful and may be said. Which ones they
+were is the task-list dump this rule exists to prevent. "None of the three open
+tasks qualified" reports coverage. "The three open tasks are due 2026-09-24,
+2026-10-02, and 2026-10-15, none overdue" identifies each healthy record and is
+the failure, however brief it looks. A healthy record's title, date, or other
+identifying detail belongs in neither the sweep nor the bundle.
 
 The mode supplies the window as two dates: a closing day and a target day.
 Read the row definitions below against those two dates as the window's start

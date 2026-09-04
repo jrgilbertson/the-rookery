@@ -22,9 +22,7 @@ Query native sources selectively to confirm important outcomes, commitments,
 customer or product evidence, financial or operating changes, and other facts
 that could alter strategic judgment. Keep source identities distinct. Use both
 personal and work calendars when visible: query each separately and retain its
-calendar identity in the evidence. Treat the available personal mailbox as
-personal-email evidence only; calendar visibility supplies no work-email
-coverage.
+calendar identity in the evidence.
 
 A lapsed practice does not create a reconstruction project. Synthesize the
 period the evidence can support, name consequential gaps, and prepare one
@@ -81,11 +79,9 @@ question. Cover supported sections across:
 - execution patterns, blind spots, and next-quarter outcomes.
 
 Do not infer causality from coincidence. Describe verified high-level health or
-recovery patterns only when they help the review. Do not begin causal or
-correlation analysis unless the user names a decision to improve, agrees on an
-observation window, and the available evidence could change an action. Stop
-when additional analysis no longer affects the decision. Do not diagnose or
-synthesize a readiness score.
+recovery patterns only when they help the review. Health evidence and any
+causal or correlation analysis follow "Decide what deserves attention" in
+`source-behavior.md`.
 
 When a consequential release, customer-proof attempt, incident, loss, or
 repeatedly blocked critical path needs reflection, include a short
@@ -110,9 +106,9 @@ supports those interpretations. Present the thread map, the central tension,
 the compounding strength, and the rule-audit dispositions as questions under
 "Ask on the evidence frontier" in `source-behavior.md`, each interpretation
 labeled as an inference with a recommended disposition to accept, revise, or
-reject. When the item count exceeds the shared round's five-question cap,
-spread them across as many rounds as that cap and its carry-over rule
-require, in the order listed above. Stop and wait for each round's response.
+reject. Present them in the order listed above, across as many rounds as that
+contract's cap and carry-over rule require. Stop and wait for each round's
+response.
 Draft inference-shaped commitments only after every round is answered, using
 only accepted or user-revised interpretations. Do
 not turn rule-audit findings into additional commitments unless the user
@@ -203,14 +199,11 @@ review bundle. The canonical quarterly-review note is one proposed action.
 Changes to strategy, learnings, tasks, calendars, CRM, repositories, writing,
 or other sources are separate actions with their own identities, targets,
 effects, and approval.
-Each separate action uses the bundle's intention shape. Approval binds to its
-unchanged action fields, including its closure evidence.
+Each separate action uses the bundle's intention shape.
 
-After approval, create or update only the canonical quarterly review for the
-selected period through the Obsidian CLI with explicit vault targeting. Re-read
-the note first, preserve existing manual content, frontmatter, links, embeds,
-and vault views, apply only the approved content, and read it back through the
-CLI. Do not lint the vault.
+Apply an approved action under "Use Obsidian only through its CLI" in
+`source-behavior.md`. The target for the review-note action is the canonical
+quarterly review for the selected period.
 
 End explicitly using the core run endings. A partial quarter can still end
 Complete when the reviewed note truthfully records its evidence limits; use

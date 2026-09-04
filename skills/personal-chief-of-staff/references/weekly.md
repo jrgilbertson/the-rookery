@@ -15,9 +15,7 @@ understand active projects, relationships, meetings, decisions, and writing.
 
 Query live calendars and selected native sources when they can confirm an
 outcome, commitment, risk, or material operating change. Use both personal and
-work calendars when visible and keep their identities distinct. Treat the
-available personal mailbox as personal-email evidence only; do not infer work
-mail coverage from a shared work calendar.
+work calendars when visible and keep their identities distinct.
 
 When reviews or journals are missing, use the last existing review plus current
 authoritative evidence. Prepare one review for the current period. Do not
@@ -74,18 +72,12 @@ Frontier Round using the shared contract in `source-behavior.md` under "Ask on
 the evidence frontier". Apply its entry bar, dependency rule, numbered
 plain-chat format, cap, and reply handling without restating them.
 
-Exactly one round runs before the coaching judgment. Any further round follows
-only from the shared contract's own carry-over rule, when a reply leaves a
-question open or the cap holds one back for later. A recurring-thread
-candidate from the next section enters this pre-coaching round whenever it
-clears the shared entry bar; coaching itself never opens a second, independent
-question step. Ask the round before the coaching judgment and use the user's
-answers when classifying threads and choosing an intervention.
+One round runs before the coaching judgment, and a recurring-thread candidate
+from the next section joins that round rather than opening a question step of
+its own. Use the answers when classifying threads and choosing an intervention.
 
-Completion: one round ran before coaching, any later round came only from the
-shared contract's carry-over, the pre-coaching round carried any qualifying
-recurring-thread candidate, and its answers were available to the coaching
-judgment.
+Completion: the pre-coaching round carried any qualifying recurring-thread
+candidate, and its answers were available to the coaching judgment.
 
 ## Coach on recurring threads
 
@@ -150,9 +142,9 @@ only the sections supported by the available week, drawing selectively from:
 - health evidence for longer patterns relevant to a current decision; and
 - writing and reference notes for ideas that have enough signal to advance.
 
-Do not turn source counts into performance scores. Do not diagnose health or
-begin a correlation analysis without a decision the user is trying to improve,
-an agreed observation window, and evidence likely to change an action.
+Do not turn source counts into performance scores. Health evidence and any
+correlation analysis follow "Decide what deserves attention" in
+`source-behavior.md`.
 
 For a consequential release, customer-proof attempt, incident, loss, or
 repeatedly blocked critical path, offer a short after-action discussion inside
@@ -215,14 +207,11 @@ calendar, CRM, repository, writing, or other source changes are separate
 actions with their own identities, targets, effects, and approval. Each
 Administrative Sweep row is one of those separate actions, including its
 drafted resolution content. Each separate action uses the bundle's intention
-shape. Approval binds to its unchanged action fields, including its closure
-evidence.
+shape.
 
-After approval, create or update only the current canonical weekly review
-through the Obsidian CLI with explicit vault targeting. Re-read the note first,
-preserve existing manual content, frontmatter, links, embeds, and vault views,
-apply only the approved content, and read it back through the CLI. Do not lint
-the vault.
+Apply an approved action under "Use Obsidian only through its CLI" in
+`source-behavior.md`. The target for the review-note action is the current
+canonical weekly review.
 
 End explicitly using the core run endings. When a useful interactive review has
 a named material evidence gap and is otherwise finished, end **Partial**; open

@@ -391,7 +391,10 @@ Interpret calendar evidence through the event's purpose, participants,
 flexibility, and surrounding commitments. Do not assume every event is fixed or
 freely movable. Use health evidence as context with uncertainty; do not
 diagnose, reproduce a synthetic readiness score, or let one signal
-mechanically control the calendar.
+mechanically control the calendar. Begin a causal or correlation analysis only
+when the user names a decision to improve, agrees on an observation window,
+and the available evidence could change an action. Stop when further analysis
+can no longer change that decision.
 
 Completion: each foreground item explains why it matters now and why the
 user's attention could improve the outcome.

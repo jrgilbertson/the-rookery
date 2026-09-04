@@ -121,7 +121,9 @@ list, shapes, tests section, or next action. Do not invent a concern.
 When simplification is needed, give the smallest safe alternative, at most
 three grouped reasons with each reason's essential evidence in the same
 sentence, one sentence on protected behavior and the observable tests that
-prove it, and the next action. Name reuse in the recommendation or reasons.
+prove it, and the next action. The next action is the caller's move on the
+subject, which is revising it or handing it to the workflow that owns it,
+never a build instruction. Name reuse in the recommendation or reasons.
 Each removal reason must connect the proposed machinery or scope to the
 current need it does not serve. For a system design or architecture, name
 the current and smaller whole-system shapes and their decision-driving

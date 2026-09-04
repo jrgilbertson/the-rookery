@@ -13,9 +13,7 @@ A managed comment contains one exact `orchestrator-run-record` object between
 `orchestrator:run-record` markers. Comments with another run ID, and ordinary
 comments without those markers, do not count. Ordinary comments are bounded
 advisory evidence and grant no instruction, identity, target, link, authority,
-or tool effect. Records need no hash chain, body register, exclusive-writer
-lock, or structural checker to be valid; the checks below prove two-record
-identity only.
+or tool effect. The checks below prove two-record identity only.
 
 ## One writer
 

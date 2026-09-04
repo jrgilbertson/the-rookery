@@ -53,14 +53,18 @@ def target_snapshot(base: dict[str, Any], prepared: dict[str, Any]) -> dict[str,
     return SNAPSHOTS.apply_prepared(base, prepared)
 
 
-def prior_managed_comment() -> dict[str, Any]:
-    record = {
+def prior_record(disposition: str) -> dict[str, Any]:
+    return {
         "schema": "orchestrator-run-record",
         "kind": "run-opened",
         "run_id": "run:synthetic:prior",
         "operation_id": "operation:report:" + "a" * 64,
-        "payload": {"disposition": "prior"},
+        "payload": {"disposition": disposition},
     }
+
+
+def prior_managed_comment() -> dict[str, Any]:
+    record = prior_record("prior")
     return {
         "id": 1,
         "node_id": "IC_PRIOR_001",
@@ -96,13 +100,7 @@ def mutate(base: dict[str, Any], target: dict[str, Any], prepared: dict[str, Any
         before = with_prior_managed(base)
         after = copy.deepcopy(before)
         after["issue"]["body"] = prepared["body"]
-        edited = {
-            "schema": "orchestrator-run-record",
-            "kind": "run-opened",
-            "run_id": "run:synthetic:prior",
-            "operation_id": "operation:report:" + "a" * 64,
-            "payload": {"disposition": "tampered"},
-        }
+        edited = prior_record("tampered")
         after["comment_pages"][-1][-1]["body"] = CONTRACT._run_record_comment(edited)
     elif mutation == "replaced-existing-managed":
         before = with_prior_managed(base)
@@ -116,13 +114,7 @@ def mutate(base: dict[str, Any], target: dict[str, Any], prepared: dict[str, Any
     elif mutation == "observed-but-edited-prior":
         before = with_prior_managed(base)
         after = SNAPSHOTS.apply_prepared(before, prepared)
-        edited = {
-            "schema": "orchestrator-run-record",
-            "kind": "run-opened",
-            "run_id": "run:synthetic:prior",
-            "operation_id": "operation:report:" + "a" * 64,
-            "payload": {"disposition": "tampered"},
-        }
+        edited = prior_record("tampered")
         after["comment_pages"][-1][-2]["body"] = CONTRACT._run_record_comment(edited)
     elif mutation == "observed-but-replaced-prior":
         before = with_prior_managed(base)
@@ -183,13 +175,7 @@ def mutate(base: dict[str, Any], target: dict[str, Any], prepared: dict[str, Any
     elif mutation == "already-satisfied-but-edited-prior":
         before = with_prior_managed(target)
         after = copy.deepcopy(before)
-        edited = {
-            "schema": "orchestrator-run-record",
-            "kind": "run-opened",
-            "run_id": "run:synthetic:prior",
-            "operation_id": "operation:report:" + "a" * 64,
-            "payload": {"disposition": "tampered"},
-        }
+        edited = prior_record("tampered")
         after["comment_pages"][-1][-1]["body"] = CONTRACT._run_record_comment(edited)
         attempt = "none"
     elif mutation == "already-satisfied-but-replaced-prior":
@@ -270,8 +256,8 @@ def main() -> int:
             CONTRACT.require(actual.get(key) == expected, f"{scenario['id']} {key}: {actual.get(key)!r} != {expected!r}")
         CONTRACT.require(actual.get("provenance") == "unverified", f"{scenario['id']} invented provenance")
 
-    legacy = {"schema": "repo-gardener-effect-input", "scenario": {"authority": {"caller_exclusive": True}}}
-    expect_error(legacy, "phase")
+    missing_phase = {"schema": "repo-gardener-effect-input", "scenario": {"authority": {"caller_exclusive": True}}}
+    expect_error(missing_phase, "phase")
     for forbidden in ("authority", "verdict", "result", "terminal_receipt_read_back"):
         payload = effect_input("verify", prepared=prepared, pre_read=base, post_read=target, write_attempt="possible")
         payload[forbidden] = True

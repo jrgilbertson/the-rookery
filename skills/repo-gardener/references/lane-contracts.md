@@ -94,9 +94,8 @@ lane's ordinary qualification.
 
 ## Dependency and vulnerability
 
-Consume the Orchestrator identifier census of current open native pull requests.
-Do not re-page that population. Then read manifests, configured advisories,
-and the update-PR rows from that list. An open same-repository update PR
+Consume the census of current open native pull requests, then read
+manifests, configured advisories, and the update-PR rows from that list. An open same-repository update PR
 whose current checks, changelog, or pin mirrors show a Worker-closable gap is a
 candidate whose unit is adopting that PR under the reconciliation admission
 conditions; an alert with no open PR is a candidate for a new unit. An open PR
@@ -173,9 +172,8 @@ current blocker relationships; do not update a stored frontier or queue.
 
 ## Issue implementation
 
-Consume the Orchestrator identifier census of the issue source. Do not re-page
-that population. Apply the purpose-bounded issue evidence rule. A candidate
-is an issue whose mapped leaf-estimate key is a number at most 2 and whose
+Consume the census of the issue source and apply the purpose-bounded issue
+evidence rule. A candidate is an issue whose mapped leaf-estimate key is a number at most 2 and whose
 current native relationships show no open blocker; the estimate comes from
 the config's mappings and the blocker check from the issue itself, never from
 a label. Mapped readiness ranks reads but is not an admission gate. When the
@@ -196,21 +194,18 @@ check, reproducibility, bounded failure evidence, ownership, and a distinction
 between repository defects and transient provider failure. A failing check on
 an open same-repository PR with a Worker-closable cause is likewise an
 adoption candidate under the same admission conditions (not a draft,
-bot-authored head); a transient provider failure is not. Never weaken, remove,
-skip, or suppress validation.
+bot-authored head); a transient provider failure is not.
 
 ## Repository, test, and code health
 
-Consume the Orchestrator identifier census of the issue source. Do not re-page
-that population. When that source is unavailable, this lane still senses
+Consume the census of the issue source. When that source is unavailable, this lane still senses
 its other signals and names the missing issue portion. For its issue-facing
 component, apply the shared complete-census, purpose-bounded issue evidence
 rule instead of a fixed body count. Then read repository-native maintenance,
 test-health, code-health, dead-code, and architecture signals. Require a
 stable finding or exact revision, bounded scope, measurable impact, conflict
 surface, and verification path. Exclude unrelated refactors and unverified
-external measurements. Run approved declarations and/or read existing audit
-evidence under the shared declared-audit evidence contract.
+external measurements.
 
 External signals miss what only reading code reveals, so each run this lane
 also reads one bounded source slice — a module, flow, or directory — chosen by
@@ -219,9 +214,8 @@ that contain source, configuration, or test files — excluding generated,
 vendored, and pure-asset trees — plus one final slice of root-level source,
 configuration, and test files, ordered lexicographically (descending into a
 directory's own subdirectories before advancing). A repository whose eligible
-set is empty records that limitation in the cell and the lane senses its
-other signals only; an empty set is a recorded limitation, never license to
-fabricate a slice or inspect excluded trees. Authoring scope never filters sensing:
+set is empty records that limitation in the cell and senses its other
+signals only. Authoring scope never filters sensing:
 read-only inspection covers protected and non-mutable code too; scope gates
 only what a repair may later touch. Selection is deterministic and keeps no
 cross-night state: the slice index is the UTC day of year modulo the eligible
@@ -242,15 +236,12 @@ partially read with the exact boundary reached.
 
 Compare documentation and changelog material with authoritative shipped
 behavior. Require the exact shipped revision, affected audience, and stable
-source identity. Run approved declarations and/or read existing audit evidence
-under the shared declared-audit evidence contract. Publishing and release
-execution remain unavailable.
+source identity. Publishing and release execution remain unavailable.
 
 ## Runtime error and alert
 
 Consume the Orchestrator identifier census of current errors or alerts from
-any source the host can already read for this repository. Do not re-page that
-population. Confirm the source's project identity against the repository's
+any source the host can already read for this repository. Confirm the source's project identity against the repository's
 canonical production identity from repository facts (config, env manifests,
 deploy config); a mismatch stops the slice and names it. When no repository
 fact names a canonical production identity, or more than one readable source
@@ -288,8 +279,8 @@ contract; command output never relaxes the redaction or qualification rules.
 
 ## Issue, backlog, and customer-feedback triage
 
-Consume the Orchestrator identifier census of the issue source. Do not re-page
-that population. Apply the purpose-bounded issue evidence rule. Require stable
+Consume the census of the issue source and apply the purpose-bounded issue
+evidence rule. Require stable
 identity and revision, a bounded redacted quote or bounded evidence reference,
 deduplication against current native work, expected impact, confidence, and
 verified repository relation. Never persist raw customer identities or

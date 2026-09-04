@@ -33,8 +33,8 @@ Name a bounded time window and timezone, product surface, expected events or
 metrics, and a query or time budget. When an execution-eligible lane has
 already completed an applicable declared audit in this managed run, consume
 that owning-lane result at most once as bounded evidence. Do not run or rerun a
-validation command here, create a separate declaration namespace or execution
-pass, or turn measurement integrity into a tenth lane. A successful command
+validation command here or create a separate declaration namespace or
+execution pass. A successful command
 alone does not establish schema agreement, freshness, reconciliation, or data
 trust. Then, within available read-only roles, check:
 
@@ -59,8 +59,7 @@ hypotheses with their sample size, denominator, window, and uncertainty.
 
 ## Feed reconciliation
 
-Return one cross-cutting result inside the Orchestrator decision evidence, not a
-tenth lane or another tracker comment. For every inspected metric, report its disposition,
+Return one cross-cutting result inside the Orchestrator decision evidence. For every inspected metric, report its disposition,
 authority, window and timezone, grain, numerator, denominator, exclusions,
 uncertainty, reconciliation result, and bounded evidence references; use `not
 supplied` for unavailable observed values. Include every `metric contract

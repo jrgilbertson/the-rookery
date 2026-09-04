@@ -16,9 +16,7 @@ Before dispatch the host provides:
 3. supervision before mutation and through Worker completion; and
 4. a Worker-owned branch with at most one unmerged PR.
 
-The host owns how it provisions setup and supervision. Repo Gardener adds no
-setup command, startup configuration, receipt, waiting loop, recovery path,
-progress record, registry, schema, or state machine. If the host cannot
+The host owns how it provisions setup and supervision. If the host cannot
 safely provide the interface, the Worker does not mutate; it finishes a
 read-only report naming the unavailable capability.
 
@@ -43,9 +41,7 @@ hosted head OID, and re-read every named gap from native facts now and again
 before publication; if a gap is gone, changed, or ambiguous, stop the unit
 and report it without publishing.
 
-Authoring is allowed only inside the gates in `policy-and-entry-modes.md`:
-exact repository identity, scope, positive capacity, enabled lane, and no
-protected path. For an adopted PR the gates apply to the paths the Worker's
+Authoring is allowed only inside the five gates in `policy-and-entry-modes.md`. For an adopted PR the gates apply to the paths the Worker's
 own commits change; the adopted PR's existing diff is native state, reported,
 not authored. A rename counts both its old and new path.
 

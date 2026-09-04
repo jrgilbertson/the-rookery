@@ -123,7 +123,11 @@ def expect_lanes_error(path: Path, phrase: str) -> None:
     raise CONTRACT.ContractError(f"expected lanes rejection containing {phrase!r}")
 
 
+EXPECTED_LANES = {"schema": "repo-gardener-lanes-result", "lanes": list(CONTRACT.RELEASE_A_LANES)}
+
+
 def main() -> int:
+    policy_text = POLICY_PATH.read_text(encoding="utf-8")
     run_id = "run:synthetic:two-comments"
     base = SNAPSHOTS.empty_tracker()
     opened = prepare(base, "run-opened", run_id)
@@ -293,10 +297,10 @@ def main() -> int:
 
     lanes = invoke("lanes", {}, extra=["--policy", str(POLICY_PATH)])
     CONTRACT.require(
-        lanes == {"schema": "repo-gardener-lanes-result", "lanes": list(CONTRACT.RELEASE_A_LANES)},
+        lanes == EXPECTED_LANES,
         f"nine-lane inventory drifted: {lanes!r}",
     )
-    flow_policy = POLICY_PATH.read_text(encoding="utf-8").replace(
+    flow_policy = policy_text.replace(
         "  dependency-and-vulnerability:\n    mutation: false\n    audit_commands: []\n",
         "  dependency-and-vulnerability: {mutation: false, audit_commands: [[npm, run, audit]]}\n",
     )
@@ -305,34 +309,34 @@ def main() -> int:
         flow_path.write_text(flow_policy, encoding="utf-8")
         flow_lanes = invoke("lanes", {}, extra=["--policy", str(flow_path)])
         CONTRACT.require(
-            flow_lanes == {"schema": "repo-gardener-lanes-result", "lanes": list(CONTRACT.RELEASE_A_LANES)},
+            flow_lanes == EXPECTED_LANES,
             f"flow-style lanes inventory drifted: {flow_lanes!r}",
         )
 
         invalid_policy_cases = {
             "missing.yaml": (
-                POLICY_PATH.read_text(encoding="utf-8").replace(
+                policy_text.replace(
                     "  dependency-and-vulnerability:\n    mutation: false\n    audit_commands: []\n",
                     "",
                 ),
                 "missing key: dependency-and-vulnerability",
             ),
             "extra.yaml": (
-                POLICY_PATH.read_text(encoding="utf-8").replace(
+                policy_text.replace(
                     "  issue-backlog-and-customer-feedback-triage: {}\n",
                     "  issue-backlog-and-customer-feedback-triage: {}\n  extra-lane: {}\n",
                 ),
                 "unexpected key: extra-lane",
             ),
             "duplicate.yaml": (
-                POLICY_PATH.read_text(encoding="utf-8").replace(
+                policy_text.replace(
                     "  issue-implementation:\n",
                     "  dependency-and-vulnerability: {mutation: false, audit_commands: []}\n  issue-implementation:\n",
                 ),
                 "duplicate key 'dependency-and-vulnerability'",
             ),
             "reordered.yaml": (
-                POLICY_PATH.read_text(encoding="utf-8").replace(
+                policy_text.replace(
                     "  dependency-and-vulnerability:\n    mutation: false\n    audit_commands: []\n  # Ready, unblocked implementation issues in the issue source.\n  issue-implementation:\n    mutation: false\n",
                     "  issue-implementation:\n    mutation: false\n  dependency-and-vulnerability:\n    mutation: false\n    audit_commands: []\n",
                 ),
@@ -345,7 +349,7 @@ def main() -> int:
             expect_lanes_error(invalid_path, phrase)
         four_space_lines = []
         in_lanes = False
-        for line in POLICY_PATH.read_text(encoding="utf-8").splitlines():
+        for line in policy_text.splitlines():
             if line.startswith("lanes:"):
                 in_lanes = True
                 four_space_lines.append(line)
@@ -357,19 +361,11 @@ def main() -> int:
         four_space_path.write_text("\n".join(four_space_lines) + "\n", encoding="utf-8")
         four_space_lanes = invoke("lanes", {}, extra=["--policy", str(four_space_path)])
         CONTRACT.require(
-            four_space_lanes == {"schema": "repo-gardener-lanes-result", "lanes": list(CONTRACT.RELEASE_A_LANES)},
+            four_space_lanes == EXPECTED_LANES,
             f"four-space lanes inventory drifted: {four_space_lanes!r}",
         )
 
-    removed = subprocess.run(
-        [sys.executable, str(CONTRACT_PATH), "normalize-github-register", "--input", "-"],
-        input="{}",
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    CONTRACT.require(removed.returncode != 0 and "invalid choice" in removed.stderr, "normalize-github-register remains public")
-    for obsolete in ("completion-v1", "gates-v1", "capacity-v1", "reconciliation-v2", "effect-v1", "run-records-v1", "lanes-v1"):
+    for obsolete in ("normalize-github-register", "completion-v1", "gates-v1", "capacity-v1", "reconciliation-v2", "effect-v1", "run-records-v1", "lanes-v1"):
         completed = subprocess.run(
             [sys.executable, str(CONTRACT_PATH), obsolete, "--input", "-"],
             input="{}",

@@ -83,9 +83,8 @@ issue-ready next action.
 
 Select only non-overlapping, independently deliverable, low-risk, testable
 units small enough for one coherent PR. Author only when the opening policy
-still has the exact repository identity, allowed path scope, positive
-`maximum_workers`, enabled lane mutation, and no protected path. A denial
-stops that unit; an honest read-only result is successful operation.
+still proves the five gates in `policy-and-entry-modes.md`. A denial stops
+that unit; an honest read-only result is successful operation.
 Selection and dispatch for the run never exceed the opening policy's
 `maximum_workers` cap; unrelated existing PRs do not consume that cap.
 Immediately before every Worker dispatch, pass the revision check point and
@@ -150,9 +149,6 @@ facts stop only the affected action. Repo Gardener never merges.
 
 ## Close
 
-Pass the revision check point. When the tracker is still authorized, write and exactly read back one
-`run-closed` record with every lane, depth decision, measurement result or gap,
-Worker PR facts or no-Worker reason, owner attention, recommendations, policy
-revision, and blocker scope. Otherwise report the interrupted close. Keep the
-Orchestrator workspace and any pending Worker worktree available for owner
-inspection.
+Pass the revision check point, then close exactly as `SKILL.md` directs: one
+`run-closed` record written and exactly read back when the tracker is still
+authorized, otherwise the interrupted close.

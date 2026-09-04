@@ -53,6 +53,9 @@ GITHUB_SNAPSHOT_FIELDS = {
     "comment_pages_complete",
     "comment_pages",
 }
+RUN_RECORD_SCHEMA = "orchestrator-run-record"
+PREPARED_EFFECT_SCHEMA = "repo-gardener-prepared-tracker-effect"
+EFFECT_INPUT_SCHEMA = "repo-gardener-effect-input"
 RUN_RECORD_FIELDS = {"schema", "kind", "run_id", "operation_id", "payload"}
 RUN_RECORD_FIELD_ORDER = ("schema", "kind", "run_id", "operation_id", "payload")
 RUN_RECORD_KINDS = {"run-opened", "run-closed"}
@@ -214,7 +217,7 @@ def _extract_marked_json(body: str, begin: str, end: str, label: str) -> tuple[s
 def _validate_run_record(record: dict[str, Any], label: str) -> dict[str, Any]:
     require_exact_fields(record, RUN_RECORD_FIELDS, label)
     require(tuple(record) == RUN_RECORD_FIELD_ORDER, f"{label} field order mismatch")
-    require(record.get("schema") == "orchestrator-run-record", f"{label} schema mismatch")
+    require(record.get("schema") == RUN_RECORD_SCHEMA, f"{label} schema mismatch")
     kind = require_identity(record.get("kind"), f"{label} kind")
     require(kind in RUN_RECORD_KINDS, f"{label} kind is invalid")
     require_identity(record.get("run_id"), f"{label} run_id")
@@ -408,7 +411,7 @@ def prepare_report_effect(pre_read: Any, operation: Any) -> dict[str, Any]:
         operation=operation,
     )
     record = {
-        "schema": "orchestrator-run-record",
+        "schema": RUN_RECORD_SCHEMA,
         "kind": operation["kind"],
         "run_id": operation["run_id"],
         "operation_id": operation_id,
@@ -421,7 +424,7 @@ def prepare_report_effect(pre_read: Any, operation: Any) -> dict[str, Any]:
     _validate_report_rendering(body)
     _validate_report_rendering(comment)
     return {
-        "schema": "repo-gardener-prepared-tracker-effect",
+        "schema": PREPARED_EFFECT_SCHEMA,
         "repository_id": view["repository_id"],
         "report_issue_id": view["report_issue_id"],
         "writer_id": view["writer_id"],
@@ -436,7 +439,7 @@ def prepare_report_effect(pre_read: Any, operation: Any) -> dict[str, Any]:
 def _prepared_effect(prepared: Any) -> dict[str, Any]:
     prepared = require_object(prepared, "prepared tracker effect")
     require_exact_fields(prepared, EFFECT_PREPARED_FIELDS, "prepared tracker effect")
-    require(prepared.get("schema") == "repo-gardener-prepared-tracker-effect", "prepared tracker effect schema mismatch")
+    require(prepared.get("schema") == PREPARED_EFFECT_SCHEMA, "prepared tracker effect schema mismatch")
     operation = _effect_operation(prepared.get("operation"))
     require_identity(prepared.get("repository_id"), "prepared repository_id")
     require_identity(prepared.get("report_issue_id"), "prepared report issue_id")
@@ -633,7 +636,7 @@ def _load_input(source: str) -> Any:
     return _load(Path(source))
 
 
-def _versioned_input(value: Any, schema: str, fields: set[str]) -> dict[str, Any]:
+def _schema_input(value: Any, schema: str, fields: set[str]) -> dict[str, Any]:
     value = require_object(value, f"{schema} input")
     require_exact_fields(value, {"schema", *fields}, f"{schema} input")
     require(value.get("schema") == schema, f"input schema mismatch: expected {schema}")
@@ -663,7 +666,7 @@ def main() -> int:
         phase = data.get("phase")
         if phase == "prepare":
             require_exact_fields(data, {"schema", "phase", "pre_read", "operation"}, "effect input")
-            require(data.get("schema") == "repo-gardener-effect-input", "effect input schema mismatch")
+            require(data.get("schema") == EFFECT_INPUT_SCHEMA, "effect input schema mismatch")
             result = prepare_report_effect(data["pre_read"], data["operation"])
         elif phase == "verify":
             require_exact_fields(
@@ -671,14 +674,14 @@ def main() -> int:
                 {"schema", "phase", "prepared", "pre_read", "post_read", "write_attempt"},
                 "effect input",
             )
-            require(data.get("schema") == "repo-gardener-effect-input", "effect input schema mismatch")
+            require(data.get("schema") == EFFECT_INPUT_SCHEMA, "effect input schema mismatch")
             result = verify_report_effect(
                 data["prepared"], data["pre_read"], data["post_read"], data["write_attempt"]
             )
         else:
             raise ContractError("effect input phase must be prepare or verify")
     elif args.command == "run-records":
-        data = _versioned_input(
+        data = _schema_input(
             _load_input(args.input),
             "repo-gardener-run-records-input",
             {"run_id", "closed", "post_read"},

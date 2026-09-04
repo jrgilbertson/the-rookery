@@ -2,7 +2,7 @@
 name: repo-gardener
 description: Use when running or interpreting a scheduled or manual repository-gardening pass for one repository, including first-use setup of `.agents/repo-gardener.yaml` and its gardening tracker. An Orchestrator surveys nine maintenance lanes, deepens only while evidence could change the result, and may assign independently reviewable Worker pull requests. Do not use for merging, releasing, deploying, creating follow-up issues outside one caller-authorized canonical-child refinement, contacting customers, or performing an already-selected implementation outside a gardening run.
 license: MIT
-compatibility: "Requires Python 3, PyYAML, config_check.py, and read access to one repository, its durable file, native PR state, and evidence the host can already read; `.agents/managing-issues.json` is optional. The skill is host-neutral: mutation needs an isolated Worker worktree at the authoritative base, host-provided repository setup when available, supervised completion, and a Worker-owned branch and unmerged PR. Without safe mutation capability, it reports read-only findings."
+compatibility: "Requires Python 3, PyYAML, config_check.py, and read access to one repository, its durable file, native PR state, and evidence the host can already read; `.agents/managing-issues.json` is optional. Without safe mutation capability, it reports read-only findings."
 ---
 
 # Repo Gardener
@@ -44,10 +44,7 @@ python3 scripts/release_a_contract.py run-records --input RUN_RECORDS.json
 `lanes` lists the installed lanes; `normalize-github-tracker` structurally
 normalizes a raw tracker snapshot; `effect` prepares (`phase: prepare`) and
 verifies (`phase: verify`) one tracker write; `run-records` checks two-record
-identity for one run ID. Input schema names are `repo-gardener-effect-input`,
-`repo-gardener-run-records-input`, and
-`repo-gardener-github-tracker-snapshot`; `tracker-records.md` says when each
-runs.
+identity for one run ID. `tracker-records.md` says when each runs.
 
 Follow the entry modes in `policy-and-entry-modes.md`. A missing or invalid
 file may enter interactive first-use setup only with an owner. An unattended
@@ -83,6 +80,8 @@ managed closure.
    unit the Worker adopts. A path whose git `merge` attribute is `union` at
    the authoritative base may carry two Workers' additive entries; that
    exception never relaxes protected paths, scope, or other overlap checks.
+   Selection is done when every remaining candidate is denied by a gate,
+   overlaps an assigned unit, or exceeds `maximum_workers`.
 
 ## Mutation boundary
 

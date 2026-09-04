@@ -464,13 +464,14 @@ def main() -> int:
         refinement_text["issue_refinement"] = "true"
         expect_invalid(refinement_text, repo_root, "issue_refinement must be a boolean")
 
-        ledger_paths_key = base_config()
-        ledger_paths_key["shared_ledger_paths"] = ["CHANGELOG.md"]
-        expect_invalid(ledger_paths_key, repo_root, "config has unexpected key: shared_ledger_paths")
-
-        nested_ledger = base_config()
-        nested_ledger["shared_ledger"] = {"paths": ["CHANGELOG.md"]}
-        expect_invalid(nested_ledger, repo_root, "config has unexpected key: shared_ledger")
+        for key, value in (
+            ("shared_ledger_paths", ["CHANGELOG.md"]),
+            ("shared_ledger", {"paths": ["CHANGELOG.md"]}),
+            ("evidence_sources", {"posthog": {"identity": "phc_example"}}),
+        ):
+            rejected = base_config()
+            rejected[key] = value
+            expect_invalid(rejected, repo_root, f"config has unexpected key: {key}")
 
         commented = """# Live gardener file
 repository:
@@ -507,10 +508,6 @@ lanes:
 """
         expect_valid(commented, repo_root, expected)
 
-        with_sources = copy.deepcopy(base_config())
-        with_sources["evidence_sources"] = {"posthog": {"identity": "phc_example"}}
-        expect_invalid(with_sources, repo_root, "config has unexpected key: evidence_sources")
-
         marker = repo_root / "read-only-marker"
         marker.write_text("unchanged\n", encoding="utf-8")
         before = file_digest(marker)
@@ -519,27 +516,27 @@ lanes:
 
         expect_invalid(TEMPLATE, repo_root, "REPLACE_WITH")
 
-        missing_tracker = copy.deepcopy(base_config())
+        missing_tracker = base_config()
         del missing_tracker["tracker"]
         expect_invalid(missing_tracker, repo_root, "missing key: tracker")
-        missing_tracker_identity = copy.deepcopy(base_config())
+        missing_tracker_identity = base_config()
         del missing_tracker_identity["tracker"]["identity"]
         expect_invalid(missing_tracker_identity, repo_root, "tracker missing key: identity")
 
-        wrong_section = copy.deepcopy(base_config())
+        wrong_section = base_config()
         del wrong_section["maximum_workers"]
         wrong_section["repository"]["maximum_workers"] = 20
         expect_invalid(wrong_section, repo_root, "maximum_workers")
 
-        nested_workers = copy.deepcopy(base_config())
+        nested_workers = base_config()
         nested_workers["repository"]["maximum_workers"] = 20
         expect_invalid(nested_workers, repo_root, "repository has unexpected key: maximum_workers")
 
-        bool_workers = copy.deepcopy(base_config())
+        bool_workers = base_config()
         bool_workers["maximum_workers"] = True
         expect_invalid(bool_workers, repo_root, "maximum_workers must be a nonnegative integer")
 
-        zero_workers = copy.deepcopy(base_config())
+        zero_workers = base_config()
         zero_workers["maximum_workers"] = 0
         expect_valid(zero_workers, repo_root, normalized_config(zero_workers))
 
@@ -642,24 +639,24 @@ lanes:
             ineligible["lanes"][lane]["audit_commands"] = [["npm", "run", "audit"]]
             expect_invalid(ineligible, repo_root, f"lanes.{lane} has unexpected key: audit_commands")
 
-        placeholder = copy.deepcopy(base_config())
+        placeholder = base_config()
         placeholder["repository"]["identity"] = "REPLACE_WITH_STABLE_REPOSITORY_IDENTITY"
         expect_invalid(placeholder, repo_root, "unresolved REPLACE_WITH placeholder")
 
-        triage_mutation = copy.deepcopy(base_config())
+        triage_mutation = base_config()
         triage_mutation["lanes"][TRIAGE_LANE] = {"mutation": True}
         expect_invalid(triage_mutation, repo_root, f"lanes.{TRIAGE_LANE} has unexpected key: mutation")
 
-        reordered_lanes = copy.deepcopy(base_config())
+        reordered_lanes = base_config()
         lane_items = list(reordered_lanes["lanes"].items())
         lane_items[0], lane_items[1] = lane_items[1], lane_items[0]
         reordered_lanes["lanes"] = dict(lane_items)
         expect_invalid(reordered_lanes, repo_root, "lanes must name every contracted lane in order")
 
-        absolute_protected = copy.deepcopy(base_config())
+        absolute_protected = base_config()
         absolute_protected["protected_paths"] = ["/etc/**"]
         expect_invalid(absolute_protected, repo_root, "must be a repository-relative path")
-        drive_protected = copy.deepcopy(base_config())
+        drive_protected = base_config()
         drive_protected["protected_paths"] = [r"C:\outside\**"]
         expect_invalid(drive_protected, repo_root, "must be a repository-relative path")
 
@@ -719,7 +716,7 @@ lanes:
             )
             expect_invalid(null_identity, repo_root, "YAML null values are not allowed")
 
-        issue_selector = copy.deepcopy(base_config())
+        issue_selector = base_config()
         issue_selector["tracker"]["identity"] = "#3336"
         expect_invalid(issue_selector, repo_root, "tracker.identity must be a live tracker identity")
         quoted_issue_selector = dump_yaml(base_config()).replace(
@@ -748,21 +745,21 @@ lanes:
         expect_valid(flow_lane_comma, repo_root, expected)
 
         for key in ("repository", "protected_paths", "maximum_workers", "tracker", "lanes"):
-            missing = copy.deepcopy(base_config())
+            missing = base_config()
             del missing[key]
             expect_invalid(missing, repo_root, f"missing key: {key}")
 
         for key in ("identity", "default_branch", "scope"):
-            missing = copy.deepcopy(base_config())
+            missing = base_config()
             del missing["repository"][key]
             expect_invalid(missing, repo_root, f"repository missing key: {key}")
 
         for key in ("version", "status", "authority", "boundaries", "caller_roles"):
-            invalid = copy.deepcopy(base_config())
+            invalid = base_config()
             invalid[key] = "unexpected"
             expect_invalid(invalid, repo_root, f"config has unexpected key: {key}")
 
-        alias = copy.deepcopy(base_config())
+        alias = base_config()
         alias_text = dump_yaml(alias).replace(
             "identity: R_kgDOEXAMPLE001",
             "identity: &id R_kgDOEXAMPLE001",

@@ -136,12 +136,14 @@ existing one.
 
 ### Evidence Pack
 
-A record added to the pull request description after the owner approves a
-readiness review. It summarizes plan fit, checks and evidence, unresolved gaps,
-review findings, and any learning worth keeping.
+A record added to the pull request description after option 1 approves a
+readiness review. It is an actionable brief: the recommendation, material next
+work, a coverage close, and the learning signal, not a census of every sweep
+class or inspected path.
 
-The review assembles it in conversation. It becomes durable only when the
-finishing workflow adds it to the pull request description.
+The review instantiates it on later 1 as silent pull-request-body input.
+It becomes durable only when the finishing workflow writes it into the
+pull request description.
 
 ### Merge Readiness Review
 
@@ -149,8 +151,12 @@ The pre-merge review produced by `checking-merge-readiness`. It checks whether
 review is complete and merge rules pass, then examines the full pull request
 for intent drift, Risk Drivers, redesign pressure, and follow-up debt.
 
-It recommends merge, debug, or do not merge. It makes no changes; the owner
-still decides and merges.
+It recommends merge, debug, or do not merge, then waits for a numbered reply.
+Gather, grade, and readout stay read-only. Option 1 is Proceed to merge.
+Before merging, it confirms the pull request has not moved, then kicks off
+the forge merge. A match is silent; a mismatch names what moved and rebuilds
+rather than merging. It still does not mutate the tracker. The skill does
+not pick option 1 in the same turn that wrote the menu.
 
 ### Risk Driver
 
@@ -186,9 +192,9 @@ work is an issue, that issue is an Implementation Leaf.
 
 *Avoid:* child, gardener child
 
-A Worker may use helpers for scouting, simplification, review, and pull-request
-readiness. Helpers do not own a pull request. One Worker ships at most one
-pull request. Merge remains a later human step.
+A Worker may use helpers for scouting, simplification, review, pull-request
+readiness, and merge readiness. Helpers do not own a pull request. One Worker
+ships at most one pull request. Merge remains a later human step.
 
 ### Census
 

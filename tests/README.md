@@ -10,7 +10,7 @@ to it inside this repository.
 Run the same deterministic door used by CI before pushing:
 
 ```bash
-lefthook run pre-push --force --no-auto-install
+lefthook run pre-push --force
 ```
 
 The group validates the published catalog, repository text and configuration,

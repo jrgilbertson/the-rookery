@@ -12,6 +12,32 @@ repository's canonical tracker. The durable result is useful issue context and
 a native dependency graph. Implementation plans, worktrees, pull requests, and
 delivery orchestration belong to the workflows that consume those issues.
 
+## Policy-authorized delegation
+
+Repo Gardener may invoke this non-interactive mode only from its Orchestrator
+with one caller envelope that proves its opening policy has
+`issue_refinement: true`, identifies the canonical provider and target, binds
+the exact owned issue family, and lists one approved batch of a child title
+(only for child creation), Problem, Scope, Verification, estimate, readiness,
+child, or blocker changes. Treat every
+missing, stale, mismatched, mirrored, out-of-family, Worker, helper, or
+unsupported-field request as refused with zero writes. The envelope is a
+narrow substitute for this skill's direct-operator approval; it never enables
+setup, a new target, or another batch.
+
+Before accepting that exception, validate the existing
+`.agents/managing-issues.json` and require its canonical provider and target to
+match the envelope. A missing, invalid, or mismatched config is a zero-write
+refusal, not a reason to start setup. The envelope must also match the complete
+ordered effect preview after the immediate current-state reads; a changed
+target, field, order, content, or effect needs a fresh caller envelope.
+
+After that gate, use the existing canonical resolution and sections 2 through
+4 unchanged. They own the immediate pre-write read, provider capability check,
+atomic graph operation, apply-once, first-stop, and exact readback. Do not
+retry or compensate for `failed` or `indeterminate`; return the complete
+effect inventory to the Orchestrator, which alone recomputes its frontier.
+
 ## 1. Shape the work into useful issues
 
 Use this step for a draft, create, or requested decomposition. For a read,
@@ -190,17 +216,21 @@ state that the provider path preserves each field as structured data; an Orca
 command uses a structured argument vector and sends multiline body content
 through stdin so the content remains literal.
 
-Every non-empty mutating batch requires one direct operator approval of the
-complete visible batch. Approval binds only the displayed order and effects.
-Any new target, field, ordering, content, or side effect needs a fresh complete
-preview and approval. Never truncate a batch or hide tracker content that
-affects it. Every non-empty mutating batch preview must end with exactly
+Every non-empty interactive batch requires one direct operator approval of the
+complete visible batch. In policy-authorized delegation, render that complete
+batch as evidence, but do not ask a second live approval question: only an
+already-validated caller envelope that exactly matches it is the direct
+approval, and it binds only the displayed order and effects. Any new target,
+field, ordering, content, or side effect needs a fresh complete preview and
+approval, or a fresh matching caller envelope. Never truncate a batch or hide
+tracker content that affects it. Every non-empty interactive batch preview must
+end with exactly
 `Do you approve this exact N-effect batch?`, replacing `N` with the displayed
 effect count. An empty batch requires no approval. The request to prepare a
 batch is not approval to apply it.
 
 Completion: every intended effect has one exact visible interpretation and the
-complete batch has a direct operator decision.
+complete batch has a direct approval decision.
 
 ## 4. Revalidate, apply once, and read back
 

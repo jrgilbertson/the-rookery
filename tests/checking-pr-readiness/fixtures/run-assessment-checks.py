@@ -1,134 +1,55 @@
 #!/usr/bin/env python3
-"""Build and grade exact-revision PR-readiness receipt fixtures."""
+"""Exercise same-session exact-head assessment facts in disposable Git repos."""
 
 from __future__ import annotations
 
 import argparse
-import copy
-import hashlib
-import json
 import os
 import re
-import shutil
 import subprocess
 import sys
 import tempfile
-from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable
 
 
 HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parents[2]
-SPEC = json.loads((HERE / "assessment-spec.json").read_text(encoding="utf-8"))
 SURFACE = REPO_ROOT / "skills" / "checking-pr-readiness" / "scripts" / "surface-report.sh"
-COMMIT_TIME = "2026-01-02T00:00:00+00:00"
-OBSERVED_TIME = "2026-01-02T00:00:10+00:00"
 OID = re.compile(r"^[0-9a-f]{40,64}$")
-BASE_SWEEP_VERDICTS = {
-    "1": "clear",
-    "2": "consistent",
-    "3": "present",
-    "4": "fresh",
-    "5": "single-sourced",
-    "6": "handled",
-    "7": "truthful",
-    "8": "exercises production artifact",
-    "9": "clean",
-    "10": "enforced",
+COMMIT_TIME = "2026-01-02T00:00:00+00:00"
+ACCEPTED_CHECK_RESULTS = {"verified", "not applicable"}
+CALLER_AUTHORIZED_ARGV = (("checks/fixture-quality.sh",),)
+BASE_REF = "refs/heads/main"
+NONDEFAULT_BASE_REF = "refs/heads/assessment-target"
+FAIL_CLOSED_CHECK_RESULTS = (
+    "failed",
+    "unavailable",
+    "not verified",
+    "not run",
+    "skipped",
+    "bypassed",
+    "attested",
+)
+RETIRED_MACHINERY = {
+    "versioned readiness schema": re.compile(r"checking-pr-readiness-[a-z-]+/v1"),
+    "receipt identity": re.compile(r"\breceipt_id\b"),
+    "receipt reference": re.compile(r"\breceipt_references\b"),
+    "receipt bundle": re.compile(r"\breceipt bundle\b"),
+    "receipt artifact": re.compile(r"\bassessment-receipts\.json\b"),
+    "capability version": re.compile(r"\bcapability_version\b"),
+    "JSON schema field": re.compile(r'"schema"\s*:'),
 }
-EXPECTED_CHANGED_PATHS = {
-    ".github/automated-reviewers.json",
-    ".github/repository-gates.json",
-    "CHANGELOG.md",
-    "fixture-validation.py",
-    "src/app.txt",
-    *(f"evidence/{kind}.json" for kind in SPEC["required_receipts"]),
-    *(f"results/{kind}.json" for kind in SPEC["required_receipts"]),
-}
-VERIFIED_COMMANDS = {
-    "repository-gates": ("fixture-validation.py", "gate"),
-    "code-review": ("fixture-validation.py", "review"),
-    "code-simplification": ("fixture-validation.py", "simplify"),
-    "testing": ("fixture-validation.py", "test"),
-}
-REPOSITORY_GATES = [
-    {
-        "name": "fixture-validation",
-        "owner": "fixture task runner",
-        "command": ["python3", "fixture-validation.py", "gate"],
-    },
-    {
-        "name": "fixture-regression",
-        "owner": "fixture task runner",
-        "command": ["python3", "fixture-validation.py", "test"],
-    },
-]
-FIXTURE_VALIDATION_SOURCE = b"""#!/usr/bin/env python3
-import pathlib
-import sys
-
-mode = sys.argv[1] if len(sys.argv) == 2 else ""
-if mode not in {"gate", "review", "simplify", "test"}:
-    raise SystemExit(2)
-if pathlib.Path("src/app.txt").read_text(encoding="utf-8") != "ready\\n":
-    raise SystemExit(1)
-if "Prepared synthetic assessment." not in pathlib.Path("CHANGELOG.md").read_text(encoding="utf-8"):
-    raise SystemExit(1)
-print(f"verified:{mode}")
+FROZEN_RETIRED_ASSESSMENT = """
+checking-pr-readiness-gates-evidence/v1
+checking-pr-readiness-testing-result/v1
+checking-pr-readiness-receipt-bundle/v1
+receipt_id
+receipt_references
+receipt bundle
+assessment-receipts.json
+capability_version
+"schema": "checking-pr-readiness-receipt-bundle/v1"
 """
-EVIDENCE_COMMON_FIELDS = {
-    "schema",
-    "repository",
-    "subject",
-    "status",
-    "producer",
-    "scope",
-    "command",
-    "outcome",
-    "result_references",
-}
-EVIDENCE_KIND_FIELDS = {
-    "working-surface": {"committed", "staged", "unstaged", "untracked"},
-    "repository-gates": {"gates"},
-    "code-review": {"finding_count", "findings"},
-    "code-simplification": {"finding_count", "findings"},
-    "testing": {"checks", "ui_classification"},
-    "plan-versus-delivered": {"planned", "not_delivered"},
-    "learning-signal": {"signal"},
-    "targeted-sweep": {"verdicts", "unresolved"},
-    "preflight": {"unresolved", "bypass_requested"},
-}
-EVIDENCE_RESULT_FIELDS = {
-    "working-surface": {"result_id", "outcome", "paths"},
-    "repository-gates": {"result_id", "outcome", "summary"},
-    "code-review": {"result_id", "outcome", "reviewed_paths"},
-    "code-simplification": {"result_id", "outcome", "reviewed_paths"},
-    "testing": {"result_id", "name", "command", "outcome", "exit_code"},
-    "plan-versus-delivered": {"result_id", "outcome", "delivered"},
-    "learning-signal": {"result_id", "outcome", "summary"},
-    "targeted-sweep": {"result_id", "outcome", "class_count"},
-    "preflight": {"result_id", "outcome", "unresolved_count"},
-}
-RECEIPT_FIELDS = {
-    "schema",
-    "receipt_id",
-    "kind",
-    "capability",
-    "capability_version",
-    "repository",
-    "subject",
-    "exact_revision",
-    "evidence_references",
-    "outcome",
-    "gaps",
-    "observed_at",
-}
-EVIDENCE_BLOB_CACHE: dict[tuple[str, str, str], tuple[str, bytes]] = {}
-
-# Exact-revision assessment must resolve the recorded objects, never a local
-# replacement namespace. Child processes inherit this for every Git read.
-os.environ["GIT_NO_REPLACE_OBJECTS"] = "1"
 
 
 class FixtureError(Exception):
@@ -152,31 +73,7 @@ def run(*command: str, cwd: Path, env: dict[str, str] | None = None) -> str:
     return completed.stdout.strip()
 
 
-def write_json(path: Path, value: Any) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(json_bytes(value))
-
-
-def json_bytes(value: Any) -> bytes:
-    return (json.dumps(value, indent=2, sort_keys=True) + "\n").encode("utf-8")
-
-
-def package_version() -> str:
-    skill_root = REPO_ROOT / "skills" / "checking-pr-readiness"
-    digest = hashlib.sha256()
-    for path in sorted(item for item in skill_root.rglob("*") if item.is_file()):
-        digest.update(path.relative_to(skill_root).as_posix().encode("utf-8"))
-        digest.update(b"\0")
-        digest.update(path.read_bytes())
-        digest.update(b"\0")
-    return f"working-tree@{digest.hexdigest()}"
-
-
-def observed_now() -> str:
-    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
-
-
-def git_env(timestamp: str) -> dict[str, str]:
+def git_env(timestamp: str = COMMIT_TIME) -> dict[str, str]:
     env = os.environ.copy()
     env.update(
         {
@@ -192,1290 +89,1089 @@ def git_env(timestamp: str) -> dict[str, str]:
     return env
 
 
-def evidence_documents(reviewer_mode: str = "configured") -> dict[str, dict[str, Any]]:
-    if reviewer_mode == "configured":
-        class_11 = "under caps"
-    elif reviewer_mode == "none":
-        class_11 = "not applicable"
-    elif reviewer_mode in {"missing-cap", "invalid-shape"}:
-        class_11 = "cap unverified"
-    else:
-        raise FixtureError(f"unknown reviewer mode: {reviewer_mode}")
-    sweep_verdicts = {**BASE_SWEEP_VERDICTS, "11": class_11}
-    def evidence(
-        kind: str,
-        command_id: str,
-        results: list[dict[str, Any]],
-        command_arguments: list[str] | None = None,
-        **substantive: Any,
-    ) -> dict[str, Any]:
-        return {
-            "schema": f"checking-pr-readiness-{kind}-evidence/v1",
-            "repository": SPEC["repository"],
-            "subject": SPEC["subject"],
-            "status": "verified",
-            "producer": {"id": f"fixture:{kind}", "version": "fixture-v1"},
-            "scope": {
-                "repository": SPEC["repository"],
-                "subject": SPEC["subject"],
-                "base": "main",
-                "surface": "full",
-            },
-            "command": {"id": command_id, "arguments": command_arguments or []},
-            "outcome": "verified",
-            "results": results,
-            "result_references": [],
-            **substantive,
-        }
-
-    changed_paths = sorted(EXPECTED_CHANGED_PATHS)
-    return {
-        "working-surface": evidence(
-            "working-surface",
-            "surface-report",
-            [{"result_id": "surface:inventory", "outcome": "clean", "paths": changed_paths}],
-            committed=changed_paths,
-            staged=[],
-            unstaged=[],
-            untracked=[],
-        ),
-        "repository-gates": evidence(
-            "repository-gates",
-            "python3",
-            [
-                {
-                    "result_id": f"gate:{gate['name']}",
-                    "outcome": "verified",
-                    "summary": f"{gate['name']} passed",
-                }
-                for gate in REPOSITORY_GATES
-            ],
-            ["fixture-validation.py", "gate"],
-            gates=[
-                {
-                    "name": gate["name"],
-                    "owner": gate["owner"],
-                    "command": " ".join(gate["command"]),
-                    "outcome": "verified",
-                    "status": "verified",
-                    "result_reference": f"gate:{gate['name']}",
-                }
-                for gate in REPOSITORY_GATES
-            ],
-        ),
-        "code-review": evidence(
-            "code-review",
-            "python3",
-            [{"result_id": "review:summary", "outcome": "clear", "reviewed_paths": changed_paths}],
-            ["fixture-validation.py", "review"],
-            finding_count=0,
-            findings=[],
-        ),
-        "code-simplification": evidence(
-            "code-simplification",
-            "python3",
-            [{"result_id": "simplification:summary", "outcome": "clear", "reviewed_paths": changed_paths}],
-            ["fixture-validation.py", "simplify"],
-            finding_count=0,
-            findings=[],
-        ),
-        "testing": evidence(
-            "testing",
-            "python3",
-            [{
-                "result_id": "test:fixture-validation",
-                "name": "fixture-validation",
-                "command": "python3 fixture-validation.py test",
-                "outcome": "passed",
-                "exit_code": 0,
-            }],
-            ["fixture-validation.py", "test"],
-            checks=[{
-                "name": "fixture-validation",
-                "command": "python3 fixture-validation.py test",
-                "outcome": "passed",
-                "result_reference": "test:fixture-validation",
-            }],
-            ui_classification="not applicable",
-        ),
-        "plan-versus-delivered": evidence(
-            "plan-versus-delivered",
-            "plan-delivery-comparison",
-            [{"result_id": "delivery:summary", "outcome": "complete", "delivered": ["change synthetic app state"]}],
-            planned=["change synthetic app state"],
-            not_delivered=[],
-        ),
-        "learning-signal": evidence(
-            "learning-signal",
-            "learning-signal-assessment",
-            [{"result_id": "learning:summary", "outcome": "no-learning", "summary": "synthetic change only"}],
-            signal="no durable learning; synthetic change only",
-        ),
-        "targeted-sweep": evidence(
-            "targeted-sweep",
-            "targeted-sweep",
-            [{"result_id": "sweep:summary", "outcome": "clear", "class_count": 11}],
-            verdicts=sweep_verdicts,
-            unresolved=[] if reviewer_mode != "missing-cap" else ["automated reviewer cap unresolved: fixture-reviewer"],
-        ),
-        "preflight": evidence(
-            "preflight",
-            "checking-pr-readiness-preflight",
-            [{"result_id": "preflight:summary", "outcome": "converged", "unresolved_count": 0}],
-            unresolved=[],
-            bypass_requested=False,
-        ),
-    }
+def full_head(repo: Path) -> str:
+    head = run("git", "rev-parse", "--verify", "HEAD^{commit}", cwd=repo)
+    require(bool(OID.fullmatch(head)), f"Git did not return a full commit OID: {head!r}")
+    return head
 
 
-def build_repository(
-    path: Path,
-    reviewer_mode: str = "configured",
-    evidence_mutator: Callable[[dict[str, dict[str, Any]]], None] | None = None,
-    pre_result_mutator: Callable[[dict[str, dict[str, Any]]], None] | None = None,
-    validator_source: bytes = FIXTURE_VALIDATION_SOURCE,
-) -> str:
-    path.mkdir(parents=True)
-    run("git", "init", "-q", "-b", "main", cwd=path)
-    run("git", "config", "user.name", "Synthetic Fixture", cwd=path)
-    run("git", "config", "user.email", "fixture@example.invalid", cwd=path)
-    run("git", "config", "commit.gpgsign", "false", cwd=path)
-    run("git", "remote", "add", "origin", SPEC["repository"], cwd=path)
-    (path / "src").mkdir()
-    (path / "src" / "app.txt").write_text("seed\n", encoding="utf-8")
-    (path / "CHANGELOG.md").write_text("# Changelog\n", encoding="utf-8")
-    run("git", "add", "src/app.txt", "CHANGELOG.md", cwd=path)
-    run("git", "commit", "-q", "-m", "seed", cwd=path, env=git_env("2026-01-01T00:00:00+00:00"))
-    run("git", "checkout", "-q", "-b", "assessment-target", cwd=path)
-    (path / "src" / "app.txt").write_text("ready\n", encoding="utf-8")
-    (path / "CHANGELOG.md").write_text("# Changelog\n\n- Prepared synthetic assessment.\n", encoding="utf-8")
-    (path / "fixture-validation.py").write_bytes(validator_source)
-    if reviewer_mode == "configured":
-        reviewer_configuration_document = {"automated_reviewers": [{"name": "fixture-reviewer", "cap": SPEC["reviewer_cap"]}]}
-    elif reviewer_mode == "none":
-        reviewer_configuration_document = {"automated_reviewers": []}
-    elif reviewer_mode == "missing-cap":
-        reviewer_configuration_document = {"automated_reviewers": [{"name": "fixture-reviewer"}]}
-    else:
-        reviewer_configuration_document = {"automated_reviewers": {}}
-    write_json(path / ".github" / "automated-reviewers.json", reviewer_configuration_document)
-    write_json(path / ".github" / "repository-gates.json", {"gates": REPOSITORY_GATES})
-    documents = evidence_documents(reviewer_mode)
-    if pre_result_mutator is not None:
-        pre_result_mutator(documents)
-    for kind, document in documents.items():
-        results = document.pop("results")
-        result_document = {
-            "schema": f"checking-pr-readiness-{kind}-result/v1",
-            "producer": document["producer"],
-            "scope": document["scope"],
-            "command": document["command"],
-            "outcome": document["outcome"],
-            "results": results,
-        }
-        relative = f"results/{kind}.json"
-        content = json_bytes(result_document)
-        write_json(path / relative, result_document)
-        document["result_references"] = [{"path": relative, "sha256": hashlib.sha256(content).hexdigest()}]
-    if evidence_mutator is not None:
-        evidence_mutator(documents)
-    for kind, document in documents.items():
-        write_json(path / "evidence" / f"{kind}.json", document)
-    run("git", "add", "src/app.txt", "CHANGELOG.md", "fixture-validation.py", ".github", "evidence", "results", cwd=path)
-    run("git", "commit", "-q", "-m", "prepare synthetic assessment", cwd=path, env=git_env(COMMIT_TIME))
-    revision = run("git", "rev-parse", "HEAD", cwd=path)
-    require(bool(OID.fullmatch(revision)), "fixture did not produce a full Git OID")
-    require(run("git", "status", "--porcelain", cwd=path) == "", "fixture checkout is dirty")
-    return revision
+def full_base_oid(repo: Path, base_ref: str) -> str:
+    base_oid = run("git", "rev-parse", "--verify", f"{base_ref}^{{commit}}", cwd=repo)
+    require(bool(OID.fullmatch(base_oid)), f"Git did not return a full base OID: {base_oid!r}")
+    return base_oid
 
 
-def git_blob(repo: Path, revision: str, relative: str) -> bytes:
+def base_selector(base_ref: str) -> str:
+    for prefix in ("refs/remotes/origin/", "refs/heads/"):
+        if base_ref.startswith(prefix):
+            selector = base_ref.removeprefix(prefix)
+            require(selector, f"captured base ref has no branch selector: {base_ref!r}")
+            return selector
+    raise FixtureError(f"captured base ref is not a supported branch namespace: {base_ref!r}")
+
+
+def current_subject(repo: Path) -> str | None:
     completed = subprocess.run(
-        ["git", "show", f"{revision}:{relative}"],
+        ("git", "symbolic-ref", "-q", "HEAD"),
         cwd=repo,
-        check=True,
-        capture_output=True,
-    )
-    return completed.stdout
-
-
-def evidence_blob(repo: Path, revision: str, relative: str) -> tuple[str, bytes]:
-    key = (str(repo.resolve()), revision, relative)
-    if key not in EVIDENCE_BLOB_CACHE:
-        tree_entry = run("git", "ls-tree", revision, "--", relative, cwd=repo).split()
-        if not tree_entry:
-            raise subprocess.CalledProcessError(1, ["git", "ls-tree", revision, "--", relative])
-        EVIDENCE_BLOB_CACHE[key] = (tree_entry[0], git_blob(repo, revision, relative))
-    return EVIDENCE_BLOB_CACHE[key]
-
-
-def make_bundle(repo: Path, revision: str) -> dict[str, Any]:
-    receipts = []
-    for kind in SPEC["required_receipts"]:
-        relative = f"evidence/{kind}.json"
-        _, content = evidence_blob(repo, revision, relative)
-        digest = hashlib.sha256(content).hexdigest()
-        receipts.append(
-            {
-                "schema": "checking-pr-readiness-evidence/v1",
-                "receipt_id": f"receipt:{kind}",
-                "kind": kind,
-                "capability": "checking-pr-readiness",
-                "capability_version": "fixture-v1",
-                "repository": SPEC["repository"],
-                "subject": SPEC["subject"],
-                "exact_revision": revision,
-                "evidence_references": [{"path": relative, "sha256": digest}],
-                "outcome": "verified",
-                "gaps": [],
-                "observed_at": OBSERVED_TIME,
-            }
-        )
-    return {
-        "schema": "checking-pr-readiness-receipt-bundle/v1",
-        "assessment": {
-            "schema": "checking-pr-readiness-assessment/v1",
-            "capability": "checking-pr-readiness",
-            "capability_version": "fixture-v1",
-            "repository": SPEC["repository"],
-            "subject": SPEC["subject"],
-            "exact_revision": revision,
-            "receipt_references": [receipt["receipt_id"] for receipt in receipts],
-            "outcome": "pass",
-            "gaps": [],
-            "observed_at": OBSERVED_TIME,
-            "mode": "assessment-only",
-        },
-        "receipts": receipts,
-    }
-
-
-def receipt_by_kind(bundle: dict[str, Any], kind: str) -> dict[str, Any]:
-    for receipt in bundle["receipts"]:
-        if receipt.get("kind") == kind:
-            return receipt
-    raise FixtureError(f"missing fixture receipt: {kind}")
-
-
-def resolve_live_subject(repo: Path) -> tuple[str | None, list[str]]:
-    completed = subprocess.run(
-        ["git", "symbolic-ref", "--quiet", "--short", "HEAD"],
-        cwd=repo,
+        check=False,
         capture_output=True,
         text=True,
     )
-    if completed.returncode == 0:
-        branch = completed.stdout.strip()
-        if branch:
-            return f"branch:{branch}", []
-    branches = [
-        line
-        for line in run("git", "for-each-ref", "--format=%(refname:short)", "--points-at", "HEAD", "refs/heads", cwd=repo).splitlines()
-        if line
-    ]
-    if len(branches) > 1:
-        return None, ["ambiguous live subject: detached HEAD points at multiple branches"]
-    return None, ["live subject unavailable: detached HEAD"]
-
-
-def resolve_live_repository(repo: Path) -> tuple[str | None, list[str]]:
-    try:
-        repository = run("git", "remote", "get-url", "origin", cwd=repo)
-    except subprocess.CalledProcessError:
-        return None, ["live repository identity unavailable: origin remote missing"]
-    if not repository:
-        return None, ["live repository identity unavailable: origin remote empty"]
-    return repository, []
-
-
-def reviewer_configuration(repo: Path, revision: str) -> list[dict[str, Any]]:
-    _, content = evidence_blob(repo, revision, ".github/automated-reviewers.json")
-    document = json.loads(content)
-    reviewers = document.get("automated_reviewers")
-    if not isinstance(reviewers, list):
-        raise FixtureError("repository automated-reviewer discovery is invalid")
-    return reviewers
-
-
-def validate_surface(repo: Path, reviewers: list[dict[str, Any]]) -> tuple[list[str], set[str]]:
-    command = [str(SURFACE), "--full", "--base", "main"]
-    missing_caps: list[str] = []
-    for reviewer in reviewers:
-        name = reviewer.get("name") if isinstance(reviewer, dict) else None
-        cap = reviewer.get("cap") if isinstance(reviewer, dict) else None
-        if not isinstance(name, str) or not name:
-            missing_caps.append("automated reviewer identity unresolved")
-        elif not isinstance(cap, int) or cap < 0:
-            missing_caps.append(f"automated reviewer cap unresolved: {name}")
-        else:
-            command.extend(["--cap", f"{name}={cap}"])
-    completed = subprocess.run(
-        command,
-        cwd=repo,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True,
-    )
-    output = completed.stdout
-    gaps: list[str] = list(missing_caps)
-    changed = set(run("git", "diff", "--name-only", "main...HEAD", cwd=repo).splitlines())
-    expected_verdict = "under caps" if reviewers and not missing_caps else "cap unverified"
-    if completed.returncode != 0 or not output.startswith(f"verdict: {expected_verdict}\n"):
-        gaps.append("working surface helper returned an unexpected verdict")
-    output_lines = output.splitlines()
-    if changed != EXPECTED_CHANGED_PATHS or output_lines.count(f"committed: {len(changed)}") != 1:
-        gaps.append("working surface inventory mismatch")
-    for relative in changed:
-        if f"  {relative}\n" not in f"{output}\n":
-            gaps.append(f"working surface helper omitted path: {relative}")
-    for category in ("staged", "unstaged", "untracked"):
-        if output_lines.count(f"{category}: 0") != 1:
-            gaps.append(f"dirty working surface: {category}")
-    return gaps, changed
-
-
-def bounded_text(value: Any, limit: int = 512) -> bool:
-    return isinstance(value, str) and bool(value.strip()) and len(value) <= limit
-
-
-def text_set(value: Any) -> set[str] | None:
-    if not isinstance(value, list) or any(not isinstance(item, str) for item in value):
+    require(completed.returncode in {0, 1}, f"Git could not read the current subject: {completed.stderr!r}")
+    if completed.returncode == 1:
         return None
-    return set(value)
+    subject = completed.stdout.strip()
+    require(subject.startswith("refs/heads/"), f"Git did not return a branch subject: {subject!r}")
+    return subject
 
 
-def verify_command_evidence(kind: str, command: dict[str, Any], repo: Path, revision: str) -> list[str]:
-    expected = VERIFIED_COMMANDS.get(kind)
-    if expected is None:
-        return []
-    if command != {"id": "python3", "arguments": list(expected)}:
-        return [f"command execution not verified: {kind}"]
-    try:
-        validator = git_blob(repo, revision, "fixture-validation.py")
-        app_state = git_blob(repo, revision, "src/app.txt")
-        changelog = git_blob(repo, revision, "CHANGELOG.md")
-    except subprocess.CalledProcessError:
-        return [f"command execution not verified: {kind}"]
-    if validator != FIXTURE_VALIDATION_SOURCE:
-        return [f"command execution not verified: {kind}"]
-    try:
-        with tempfile.TemporaryDirectory(prefix="pr-readiness-command-") as temp:
-            command_root = Path(temp)
-            (command_root / "src").mkdir()
-            (command_root / "fixture-validation.py").write_bytes(validator)
-            (command_root / "src" / "app.txt").write_bytes(app_state)
-            (command_root / "CHANGELOG.md").write_bytes(changelog)
-            completed = subprocess.run(
-                [sys.executable, *expected],
-                cwd=command_root,
-                capture_output=True,
-                text=True,
-                timeout=10,
-            )
-    except (OSError, subprocess.TimeoutExpired):
-        return [f"command execution not verified: {kind}"]
-    if completed.returncode != 0 or completed.stdout != f"verified:{expected[1]}\n" or completed.stderr:
-        return [f"command execution not verified: {kind}"]
-    return []
-
-
-def discover_repository_gates(repo: Path, revision: str) -> list[dict[str, Any]]:
-    try:
-        document = json.loads(git_blob(repo, revision, ".github/repository-gates.json"))
-    except (subprocess.CalledProcessError, UnicodeDecodeError, json.JSONDecodeError):
-        raise FixtureError("repository gate discovery is invalid")
-    gates = document.get("gates") if isinstance(document, dict) and set(document) == {"gates"} else None
-    if (
-        not isinstance(gates, list)
-        or not gates
-        or any(
-            not isinstance(gate, dict)
-            or set(gate) != {"name", "owner", "command"}
-            or not bounded_text(gate.get("name"))
-            or not bounded_text(gate.get("owner"))
-            or not isinstance(gate.get("command"), list)
-            or not gate["command"]
-            or any(not bounded_text(argument) for argument in gate["command"])
-            for gate in gates
-        )
-    ):
-        raise FixtureError("repository gate discovery is invalid")
-    identities = [(gate["name"], gate["owner"], tuple(gate["command"])) for gate in gates]
-    if len(identities) != len(set(identities)):
-        raise FixtureError("repository gate discovery is invalid")
-    return gates
-
-
-def verify_repository_gate_command(gate: dict[str, Any], repo: Path, revision: str) -> bool:
-    arguments = gate["command"]
-    if (
-        len(arguments) != 3
-        or arguments[0] != "python3"
-        or arguments[1] != "fixture-validation.py"
-        or arguments[2] not in {"gate", "test"}
-    ):
-        return False
-    try:
-        validator = git_blob(repo, revision, "fixture-validation.py")
-        app_state = git_blob(repo, revision, "src/app.txt")
-        changelog = git_blob(repo, revision, "CHANGELOG.md")
-    except subprocess.CalledProcessError:
-        return False
-    if validator != FIXTURE_VALIDATION_SOURCE:
-        return False
-    try:
-        with tempfile.TemporaryDirectory(prefix="pr-readiness-gate-") as temp:
-            command_root = Path(temp)
-            (command_root / "src").mkdir()
-            (command_root / "fixture-validation.py").write_bytes(validator)
-            (command_root / "src" / "app.txt").write_bytes(app_state)
-            (command_root / "CHANGELOG.md").write_bytes(changelog)
-            completed = subprocess.run(
-                [sys.executable, *arguments[1:]],
-                cwd=command_root,
-                capture_output=True,
-                text=True,
-                timeout=10,
-            )
-    except (OSError, subprocess.TimeoutExpired):
-        return False
-    return completed.returncode == 0 and completed.stdout == f"verified:{arguments[2]}\n" and not completed.stderr
-
-
-def validate_evidence_document(
-    kind: str,
-    document: Any,
-    repo: Path,
-    revision: str,
-    surface_paths: set[str],
-    live_subject: str | None,
-    reviewers: list[dict[str, Any]],
-    repository: str | None,
-) -> list[str]:
-    if not isinstance(document, dict):
-        return [f"invalid evidence document: {kind}"]
-
-    expected_fields = EVIDENCE_COMMON_FIELDS | EVIDENCE_KIND_FIELDS[kind]
-    producer = document.get("producer")
-    scope = document.get("scope")
-    command = document.get("command")
-    references = document.get("result_references")
-    common_valid = all(
-        (
-            set(document) == expected_fields,
-            document.get("schema") == f"checking-pr-readiness-{kind}-evidence/v1",
-            isinstance(producer, dict) and set(producer) == {"id", "version"},
-            isinstance(producer, dict) and bounded_text(producer.get("id")) and bounded_text(producer.get("version")),
-            isinstance(scope, dict) and set(scope) == {"repository", "subject", "base", "surface"},
-            isinstance(scope, dict)
-            and scope.get("repository") == repository
-            and scope.get("subject") == live_subject
-            and scope.get("base") == "main"
-            and scope.get("surface") == "full",
-            isinstance(command, dict) and set(command) == {"id", "arguments"},
-            isinstance(command, dict) and bounded_text(command.get("id")),
-            isinstance(command, dict)
-            and isinstance(command.get("arguments"), list)
-            and len(command["arguments"]) <= 32
-            and all(bounded_text(argument) for argument in command["arguments"]),
-            document.get("outcome") == "verified",
-            isinstance(references, list) and len(references) == 1,
-        )
+def read_provider_head(repo: Path, remote: str, subject: str) -> str | None:
+    completed = subprocess.run(
+        ("git", "ls-remote", "--exit-code", remote, subject),
+        cwd=repo,
+        check=False,
+        capture_output=True,
+        text=True,
     )
-    if not common_valid:
-        return [f"substantive evidence schema mismatch: {kind}"]
+    require(completed.returncode in {0, 2}, f"provider ref read failed: {completed.stderr!r}")
+    if completed.returncode == 2:
+        return None
+    fields = completed.stdout.strip().split("\t")
+    require(len(fields) == 2 and fields[1] == subject, f"provider ref read was ambiguous: {completed.stdout!r}")
+    require(bool(OID.fullmatch(fields[0])), f"provider ref did not return a full OID: {fields[0]!r}")
+    return fields[0]
 
-    reference = references[0]
-    expected_result_path = f"results/{kind}.json"
-    if (
-        not isinstance(reference, dict)
-        or set(reference) != {"path", "sha256"}
-        or reference.get("path") != expected_result_path
-        or not isinstance(reference.get("sha256"), str)
-        or not re.fullmatch(r"[0-9a-f]{64}", reference["sha256"])
-    ):
-        return [f"substantive evidence schema mismatch: {kind}"]
-    try:
-        mode, result_content = evidence_blob(repo, revision, expected_result_path)
-        result_document = json.loads(result_content)
-    except (subprocess.CalledProcessError, UnicodeDecodeError, json.JSONDecodeError):
-        return [f"substantive evidence schema mismatch: {kind}"]
-    if (
-        mode != "100644"
-        or hashlib.sha256(result_content).hexdigest() != reference["sha256"]
-        or not isinstance(result_document, dict)
-        or set(result_document) != {"schema", "producer", "scope", "command", "outcome", "results"}
-        or result_document.get("schema") != f"checking-pr-readiness-{kind}-result/v1"
-        or result_document.get("producer") != producer
-        or result_document.get("scope") != scope
-        or result_document.get("command") != command
-        or result_document.get("outcome") != document.get("outcome")
-    ):
-        return [f"substantive evidence schema mismatch: {kind}"]
 
-    results = result_document.get("results")
-    if not isinstance(results, list) or not (0 < len(results) <= 64):
-        return [f"substantive evidence schema mismatch: {kind}"]
-    result_ids: list[str] = []
-    for result in results:
-        if (
-            not isinstance(result, dict)
-            or set(result) != EVIDENCE_RESULT_FIELDS[kind]
-            or not bounded_text(result.get("result_id"))
-            or not bounded_text(result.get("outcome"))
-        ):
-            return [f"substantive evidence schema mismatch: {kind}"]
-        result_ids.append(result["result_id"])
-    if len(result_ids) != len(set(result_ids)):
-        return [f"substantive evidence schema mismatch: {kind}"]
+def push_captured_oid(repo: Path, remote: str, subject: str, captured_head: str) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(
+        (
+            "git",
+            "push",
+            "--porcelain",
+            f"--force-with-lease={subject}:",
+            remote,
+            f"{captured_head}:{subject}",
+        ),
+        cwd=repo,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
 
-    gaps: list[str] = verify_command_evidence(kind, command, repo, revision)
-    if document.get("repository") != repository or document.get("subject") != live_subject:
-        gaps.append(f"evidence identity mismatch: {kind}")
-    if document.get("status") != "verified":
-        gaps.append(f"evidence status not verified: {kind}")
-    result_by_id = {result["result_id"]: result for result in results}
 
-    if kind == "working-surface":
-        committed = document.get("committed")
-        inventory = result_by_id.get("surface:inventory", {})
-        if (
-            not isinstance(committed, list)
-            or any(not isinstance(item, str) for item in committed)
-            or set(committed) != surface_paths
-            or inventory.get("outcome") != "clean"
-            or text_set(inventory.get("paths")) != surface_paths
-        ):
-            gaps.append("working surface evidence inventory mismatch")
-        if any(document.get(category) for category in ("staged", "unstaged", "untracked")):
-            gaps.append("working surface evidence reports dirty categories")
-    elif kind == "repository-gates":
-        gates = document.get("gates", [])
-        try:
-            discovered_gates = discover_repository_gates(repo, revision)
-        except FixtureError:
-            discovered_gates = []
-        discovered_inventory = {
-            (gate["name"], gate["owner"], " ".join(gate["command"])) for gate in discovered_gates
-        }
-        supplied_inventory = {
-            (gate.get("name"), gate.get("owner"), gate.get("command"))
-            for gate in gates
-            if isinstance(gate, dict)
-        } if isinstance(gates, list) else set()
-        if (
-            not isinstance(gates, list)
-            or not gates
-            or supplied_inventory != discovered_inventory
-            or len(gates) != len(discovered_inventory)
-            or not discovered_gates
-            or any(
-                not isinstance(gate, dict)
-                or set(gate) != {"name", "owner", "command", "outcome", "status", "result_reference"}
-                or not all(bounded_text(gate.get(field)) for field in ("name", "owner", "command", "result_reference"))
-                or gate.get("outcome") != "verified"
-                or gate.get("status") != "verified"
-                or gate.get("result_reference") not in result_by_id
-                or result_by_id[gate["result_reference"]].get("outcome") != "verified"
-                for gate in gates
-            )
-        ):
-            gaps.append("repository gate inventory incomplete")
-        if any(not verify_repository_gate_command(gate, repo, revision) for gate in discovered_gates):
-            gaps.append("repository gate command execution not verified")
-    elif kind in {"code-review", "code-simplification"}:
-        summary = results[0]
-        if (
-            type(document.get("finding_count")) is not int
-            or document["finding_count"] != 0
-            or document.get("findings") != []
-            or len(results) != 1
-            or summary.get("outcome") != "clear"
-            or text_set(summary.get("reviewed_paths")) != surface_paths
-        ):
-            gaps.append(f"unresolved finding: {kind}")
-    elif kind == "testing":
-        checks = document.get("checks")
-        expected_command = " ".join([command["id"], *command["arguments"]])
-        check_references = [
-            check.get("result_reference")
-            for check in checks
-            if isinstance(check, dict)
-        ] if isinstance(checks, list) else []
-        if (
-            not isinstance(checks, list)
-            or not checks
-            or len(checks) != len(results)
-            or len(check_references) != len(set(check_references))
-            or any(
-                not isinstance(check, dict)
-                or set(check) != {"name", "command", "outcome", "result_reference"}
-                or not bounded_text(check.get("name"))
-                or not bounded_text(check.get("command"))
-                or check.get("outcome") != "passed"
-                or check.get("result_reference") not in result_by_id
-                or result_by_id[check["result_reference"]] != {
-                    "result_id": check.get("result_reference"),
-                    "name": check.get("name"),
-                    "command": check.get("command"),
-                    "outcome": "passed",
-                    "exit_code": 0,
-                }
-                or check.get("command") != expected_command
-                for check in checks
-            )
-            or document.get("ui_classification") not in {"applicable", "not applicable"}
-        ):
-            gaps.append("testing evidence incomplete")
-    elif kind == "plan-versus-delivered":
-        planned = document.get("planned")
-        not_delivered = document.get("not_delivered")
-        if (
-            not isinstance(planned, list)
-            or not planned
-            or text_set(planned) is None
-            or len(planned) != len(set(planned))
-            or not isinstance(not_delivered, list)
-            or not_delivered
-            or len(results) != 1
-            or results[0].get("outcome") != "complete"
-            or results[0].get("delivered") != planned
-        ):
-            gaps.append("plan-versus-delivered evidence incomplete")
-    elif kind == "learning-signal":
-        if not bounded_text(document.get("signal")) or len(results) != 1 or not bounded_text(results[0].get("summary")):
-            gaps.append("learning-signal evidence incomplete")
-    elif kind == "targeted-sweep":
-        expected_class_11 = "not applicable" if not reviewers else "under caps"
-        expected_verdicts = {**BASE_SWEEP_VERDICTS, "11": expected_class_11}
-        unresolved = document.get("unresolved")
-        if (
-            document.get("verdicts") != expected_verdicts
-            or not isinstance(unresolved, list)
-            or unresolved
-            or len(results) != 1
-            or results[0].get("outcome") != "clear"
-            or results[0].get("class_count") != 11
-        ):
-            gaps.append("pre-PR review checks incomplete")
-    elif kind == "preflight":
-        unresolved = document.get("unresolved")
-        if (
-            not isinstance(unresolved, list)
-            or unresolved
-            or document.get("bypass_requested") is not False
-            or len(results) != 1
-            or results[0].get("outcome") != "converged"
-            or results[0].get("unresolved_count") != 0
-        ):
-            gaps.append("preflight evidence incomplete")
+def build_repository(repo: Path, *, include_unassigned_check: bool = False) -> str:
+    repo.mkdir()
+    run("git", "init", "-q", cwd=repo)
+    (repo / "README.md").write_text("fixture base\n", encoding="utf-8")
+    run("git", "add", "README.md", cwd=repo)
+    run("git", "commit", "-q", "-m", "fixture base", cwd=repo, env=git_env())
+    run("git", "branch", "-M", "main", cwd=repo)
+    run("git", "checkout", "-q", "-b", "assessment-subject", cwd=repo)
+
+    (repo / ".github" / "workflows").mkdir(parents=True)
+    (repo / ".github" / "workflows" / "quality.yml").write_text(
+        "name: fixture-quality\non: [push]\n",
+        encoding="utf-8",
+    )
+    (repo / "checks").mkdir()
+    check = repo / "checks" / "fixture-quality.sh"
+    check.write_text("#!/bin/sh\nprintf 'fixture-quality: verified\\n'\n", encoding="utf-8")
+    check.chmod(0o755)
+    if include_unassigned_check:
+        unassigned = repo / "checks" / "unassigned.sh"
+        unassigned.write_text(
+            "#!/bin/sh\nprintf 'unassigned executed\\n' > unassigned-executed.txt\nprintf 'unassigned: verified\\n'\n",
+            encoding="utf-8",
+        )
+        unassigned.chmod(0o755)
+    (repo / "CHANGELOG.md").write_text("# Fixture changelog\n", encoding="utf-8")
+    (repo / "src").mkdir()
+    (repo / "src" / "app.txt").write_text("ready\n", encoding="utf-8")
+    run("git", "add", ".", cwd=repo)
+    run(
+        "git",
+        "commit",
+        "-q",
+        "-m",
+        "fixture assessment subject",
+        cwd=repo,
+        env=git_env("2026-01-02T00:01:00+00:00"),
+    )
+    return full_head(repo)
+
+
+def build_nondefault_target_repository(repo: Path) -> str:
+    build_repository(repo)
+    run("git", "branch", base_selector(NONDEFAULT_BASE_REF), "main", cwd=repo)
+    run("git", "checkout", "-q", "main", cwd=repo)
+    (repo / "src").mkdir()
+    (repo / "src" / "inherited-from-default.txt").write_text("inherited\n", encoding="utf-8")
+    run("git", "add", "src/inherited-from-default.txt", cwd=repo)
+    run(
+        "git",
+        "commit",
+        "-q",
+        "-m",
+        "advance default branch",
+        cwd=repo,
+        env=git_env("2026-01-02T00:01:30+00:00"),
+    )
+    run("git", "checkout", "-q", "assessment-subject", cwd=repo)
+    run("git", "rebase", "-q", "main", cwd=repo, env=git_env("2026-01-02T00:02:00+00:00"))
+    return full_head(repo)
+
+
+def listed_paths(report: str, category: str) -> set[str]:
+    lines = report.splitlines()
+    header = next((index for index, line in enumerate(lines) if line.startswith(f"{category}: ")), None)
+    require(header is not None, f"surface report omitted {category} inventory")
+    paths: set[str] = set()
+    for line in lines[header + 1 :]:
+        if re.match(r"^(committed|staged|unstaged|untracked): ", line):
+            break
+        if line.startswith("  "):
+            paths.add(line[2:])
+    return paths
+
+
+def discover_relevant_checks(repo: Path) -> dict[str, tuple[str, ...]]:
+    checks = {
+        path.stem: (path.relative_to(repo).as_posix(),)
+        for path in sorted((repo / "checks").glob("*.sh"))
+    }
+    require(checks, "repository check discovery found no relevant checks")
+    return checks
+
+
+def run_assigned_checks(
+    repo: Path,
+    discovered_checks: dict[str, tuple[str, ...]],
+    caller_authorized_argv: tuple[tuple[str, ...], ...],
+) -> dict[str, str]:
+    results: dict[str, str] = {}
+    for argv in caller_authorized_argv:
+        check = next((name for name, discovered_argv in discovered_checks.items() if argv == discovered_argv), None)
+        require(check is not None, f"caller-authorized argv is not a discovered repository check: {argv!r}")
+        output = run(*argv, cwd=repo)
+        name, separator, result = output.partition(": ")
+        require(separator and name == check and result, f"assigned check result was malformed: {output!r}")
+        results[check] = result
+    return results
+
+
+def report_check_results(discovered_checks: dict[str, tuple[str, ...]], executed_checks: dict[str, str]) -> dict[str, str]:
+    return {check: executed_checks.get(check, "not verified") for check in discovered_checks}
+
+
+def assessment_decision(
+    *,
+    captured_subject: str,
+    current_subject: str | None,
+    captured_head: str,
+    current_head: str,
+    captured_base_ref: str,
+    current_base_ref: str,
+    captured_base_oid: str,
+    current_base_oid: str,
+    expected_paths: set[str],
+    inspected_paths: set[str],
+    expected_checks: set[str],
+    check_results: dict[str, str],
+    dirty_paths: dict[str, set[str]],
+    deferred_sweep_gates: dict[str, str] | None = None,
+) -> tuple[str, tuple[str, ...]]:
+    gaps: list[str] = []
+    if captured_subject != current_subject:
+        current_label = current_subject if current_subject is not None else "detached HEAD"
+        gaps.append(f"subject moved: {captured_subject} -> {current_label}")
+    if captured_head != current_head:
+        gaps.append(f"head moved: {captured_head} -> {current_head}")
+    if (captured_base_ref, captured_base_oid) != (current_base_ref, current_base_oid):
+        gaps.append(
+            "base moved: "
+            f"{captured_base_ref}@{captured_base_oid} -> {current_base_ref}@{current_base_oid}"
+        )
+    if inspected_paths != expected_paths:
+        missing = sorted(expected_paths - inspected_paths)
+        unexpected = sorted(inspected_paths - expected_paths)
+        gaps.append(f"inspected-path inventory mismatch: missing {missing}; unexpected {unexpected}")
+    if set(check_results) != expected_checks:
+        missing = sorted(expected_checks - set(check_results))
+        unexpected = sorted(set(check_results) - expected_checks)
+        gaps.append(f"relevant-check inventory mismatch: missing {missing}; unexpected {unexpected}")
+    for check, result in sorted(check_results.items()):
+        if result == "skipped" and deferred_sweep_gates is not None:
+            equivalent_gate = deferred_sweep_gates.get(check)
+            if equivalent_gate and check_results.get(equivalent_gate) == "verified":
+                result = "verified"
+        if result not in ACCEPTED_CHECK_RESULTS:
+            gaps.append(f"{check}: {result}")
+    surface: list[str] = []
+    for category in ("staged", "unstaged", "untracked"):
+        for path in sorted(dirty_paths.get(category, set())):
+            surface.append(f"{category} dirty path: {path}")
+    # Dirt is gather surface that ships on later option 1. It does not omit Approve.
+    # Identity, inventory, and check gaps omit Approve. Publication helpers below
+    # still return ready/action-required; those tokens are not the skill product.
+    decision = "omit-Approve" if gaps else "offer-option-1"
+    return (decision, tuple(gaps + surface))
+
+
+def local_publication_gaps(
+    *,
+    captured_subject: str,
+    current_subject: str | None,
+    captured_head: str,
+    current_head: str,
+    captured_base_ref: str,
+    current_base_ref: str,
+    captured_base_oid: str,
+    current_base_oid: str,
+    dirty_paths: dict[str, set[str]],
+) -> list[str]:
+    gaps: list[str] = []
+    if captured_subject != current_subject:
+        current_label = current_subject if current_subject is not None else "detached HEAD"
+        gaps.append(f"subject moved: {captured_subject} -> {current_label}")
+    if captured_head != current_head:
+        gaps.append(f"head moved: {captured_head} -> {current_head}")
+    if (captured_base_ref, captured_base_oid) != (current_base_ref, current_base_oid):
+        gaps.append(
+            "base moved: "
+            f"{captured_base_ref}@{captured_base_oid} -> {current_base_ref}@{current_base_oid}"
+        )
+    for category in ("staged", "unstaged", "untracked"):
+        for path in sorted(dirty_paths.get(category, set())):
+            gaps.append(f"{category} dirty path: {path}")
     return gaps
 
 
-def evaluate(repo: Path, bundle: Any, input_gaps: list[str] | None = None) -> dict[str, Any]:
-    revision = run("git", "rev-parse", "HEAD", cwd=repo)
-    live_subject, subject_gaps = resolve_live_subject(repo)
-    live_repository, repository_gaps = resolve_live_repository(repo)
-    assessment = {
-        "schema": "checking-pr-readiness-assessment/v1",
-        "capability": "checking-pr-readiness",
-        "capability_version": package_version(),
-        "repository": live_repository,
-        "subject": live_subject,
-        "exact_revision": revision,
-        "receipt_references": [],
-        "outcome": "action-required",
-        "gaps": [],
-        "observed_at": observed_now(),
-        "mode": "assessment-only",
-    }
-    gaps: list[str] = [*(input_gaps or []), *subject_gaps, *repository_gaps]
-    try:
-        reviewers = reviewer_configuration(repo, revision)
-    except (FixtureError, json.JSONDecodeError, KeyError, TypeError, subprocess.CalledProcessError) as error:
-        reviewers = []
-        gaps.append(f"repository automated-reviewer discovery is invalid: {type(error).__name__}")
-    surface_gaps, surface_paths = validate_surface(repo, reviewers)
-    gaps.extend(surface_gaps)
-    commit_time = datetime.fromisoformat(run("git", "show", "-s", "--format=%cI", revision, cwd=repo))
-    if not isinstance(bundle, dict):
-        gaps.append("receipt bundle is not an object")
-        bundle = {}
-    if bundle.get("schema") != "checking-pr-readiness-receipt-bundle/v1":
-        gaps.append("receipt bundle schema mismatch")
-    supplied_assessment = bundle.get("assessment")
-    if not isinstance(supplied_assessment, dict):
-        gaps.append("assessment member is not an object")
-        supplied_assessment = {}
-    receipts = bundle.get("receipts", [])
-    if not isinstance(receipts, list):
-        gaps.append("receipt bundle did not resolve receipts")
-        receipts = []
-    valid_receipts: list[dict[str, Any]] = []
-    for index, receipt in enumerate(receipts):
-        if not isinstance(receipt, dict):
-            gaps.append(f"invalid receipt element: {index}")
-        elif not isinstance(receipt.get("kind"), str):
-            gaps.append(f"invalid receipt kind: {index}")
-        else:
-            valid_receipts.append(receipt)
-    by_kind = {receipt.get("kind"): receipt for receipt in valid_receipts}
-    evidence_documents_by_kind: dict[str, Any] = {}
-
-    if len(by_kind) != len(valid_receipts):
-        gaps.append("duplicate receipt kind")
-
-    for kind in SPEC["required_receipts"]:
-        receipt = by_kind.get(kind)
-        if receipt is None:
-            gaps.append(f"missing receipt: {kind}")
-            continue
-        if set(receipt) != RECEIPT_FIELDS or not isinstance(receipt.get("gaps"), list):
-            gaps.append("invalid receipt fields")
-        if receipt.get("schema") != "checking-pr-readiness-evidence/v1":
-            gaps.append(f"invalid receipt schema: {kind}")
-        if receipt.get("receipt_id") != f"receipt:{kind}":
-            gaps.append(f"invalid receipt identity: {kind}")
-        if receipt.get("capability") != "checking-pr-readiness" or not receipt.get("capability_version"):
-            gaps.append(f"invalid receipt capability: {kind}")
-        if receipt.get("repository") != live_repository:
-            gaps.append(f"cross-repository receipt: {kind}")
-        if receipt.get("subject") != live_subject:
-            gaps.append(f"cross-subject receipt: {kind}")
-        if receipt.get("exact_revision") != revision:
-            gaps.append(f"cross-revision receipt: {kind}")
-        try:
-            observed = datetime.fromisoformat(receipt["observed_at"])
-            if observed < commit_time:
-                gaps.append(f"stale receipt: {kind}")
-        except (KeyError, ValueError, TypeError):
-            gaps.append(f"invalid observation time: {kind}")
-        if receipt.get("outcome") == "bypassed" or receipt.get("bypass_requested"):
-            gaps.append(f"bypass request: {kind}")
-        elif receipt.get("outcome") not in {"verified", "not applicable"} or receipt.get("gaps") != []:
-            gaps.append(f"unresolved finding: {kind}")
-        references = receipt.get("evidence_references", [])
-        if not isinstance(references, list) or not references:
-            gaps.append(f"missing evidence reference: {kind}")
-            references = []
-        expected_path = f"evidence/{kind}.json"
-        if len(references) != 1 or any(not isinstance(reference, dict) or reference.get("path") != expected_path for reference in references):
-            gaps.append(f"evidence inventory mismatch: {kind}")
-        for reference in references:
-            if not isinstance(reference, dict):
-                gaps.append(f"invalid evidence reference: {kind}")
-                continue
-            relative = reference.get("path")
-            if not isinstance(relative, str) or not relative or relative.startswith("/") or ".." in Path(relative).parts:
-                gaps.append(f"invalid evidence reference: {kind}")
-                continue
-            try:
-                mode, content = evidence_blob(repo, revision, relative)
-            except (subprocess.CalledProcessError, IndexError):
-                gaps.append(f"missing evidence: {kind}")
-                continue
-            if mode != "100644":
-                gaps.append(f"non-regular evidence: {kind}")
-            if hashlib.sha256(content).hexdigest() != reference.get("sha256"):
-                gaps.append(f"evidence digest mismatch: {kind}")
-            if relative == expected_path:
-                try:
-                    evidence_documents_by_kind[kind] = json.loads(content)
-                except (UnicodeDecodeError, json.JSONDecodeError):
-                    gaps.append(f"invalid evidence document: {kind}")
-
-    for kind in SPEC["required_receipts"]:
-        if kind in evidence_documents_by_kind:
-            gaps.extend(
-                validate_evidence_document(
-                    kind,
-                    evidence_documents_by_kind[kind],
-                    repo,
-                    revision,
-                    surface_paths,
-                    live_subject,
-                    reviewers,
-                    live_repository,
-                )
-            )
-
-    expected_ids = {f"receipt:{kind}" for kind in SPEC["required_receipts"]}
-    raw_receipt_references = supplied_assessment.get("receipt_references", [])
-    if not isinstance(raw_receipt_references, list):
-        gaps.append("assessment receipt inventory mismatch")
-        receipt_references: list[str] = []
-    else:
-        receipt_references = [reference for reference in raw_receipt_references if isinstance(reference, str)]
-        if len(receipt_references) != len(raw_receipt_references):
-            gaps.append("invalid assessment receipt reference")
-    if set(receipt_references) != expected_ids:
-        gaps.append("assessment receipt inventory mismatch")
-    receipt_ids = [receipt.get("receipt_id") for receipt in valid_receipts]
-    if len(receipt_references) != len(set(receipt_references)):
-        gaps.append("duplicate assessment receipt reference")
-    if set(receipt_ids) - set(receipt_references):
-        gaps.append("receipt bundle contains unreferenced receipt")
-    for reference in receipt_references:
-        if receipt_ids.count(reference) != 1:
-            gaps.append(f"unresolved receipt reference: {reference}")
-    if supplied_assessment.get("schema") != "checking-pr-readiness-assessment/v1":
-        gaps.append("assessment schema mismatch")
-    if supplied_assessment.get("capability") != "checking-pr-readiness":
-        gaps.append("assessment capability mismatch")
-    if supplied_assessment.get("mode") != "assessment-only":
-        gaps.append("assessment mode mismatch")
-    if supplied_assessment.get("repository") != live_repository:
-        gaps.append("assessment repository mismatch")
-    if supplied_assessment.get("subject") != live_subject:
-        gaps.append("assessment subject mismatch")
-    if supplied_assessment.get("exact_revision") != revision:
-        gaps.append("assessment revision mismatch")
-    if not OID.fullmatch(revision):
-        gaps.append("assessment revision is not a full Git OID")
-
-    assessment["receipt_references"] = receipt_references
-    assessment["gaps"] = sorted(set(gaps))
-    assessment["outcome"] = "pass" if not assessment["gaps"] else "action-required"
-    return assessment
+def ownerless_first_push_decision(
+    *,
+    captured_subject: str,
+    current_subject: str | None,
+    captured_head: str,
+    current_head: str,
+    captured_base_ref: str,
+    current_base_ref: str,
+    captured_base_oid: str,
+    current_base_oid: str,
+    dirty_paths: dict[str, set[str]],
+    provider_readable: bool,
+    provider_head: str | None,
+) -> tuple[str, tuple[str, ...]]:
+    publication_gaps = local_publication_gaps(
+        captured_subject=captured_subject,
+        current_subject=current_subject,
+        captured_head=captured_head,
+        current_head=current_head,
+        captured_base_ref=captured_base_ref,
+        current_base_ref=current_base_ref,
+        captured_base_oid=captured_base_oid,
+        current_base_oid=current_base_oid,
+        dirty_paths=dirty_paths,
+    )
+    if not provider_readable:
+        publication_gaps.append("provider ref is unavailable or indeterminate")
+    elif provider_head is not None and provider_head != captured_head:
+        publication_gaps.append(f"provider ref conflicts: {provider_head} != {captured_head}")
+    return ("ready" if not publication_gaps else "action-required", tuple(publication_gaps))
 
 
-def variants(bundle: dict[str, Any]) -> dict[str, dict[str, Any]]:
-    result: dict[str, dict[str, Any]] = {}
-    missing = copy.deepcopy(bundle)
-    missing["receipts"] = [receipt for receipt in missing["receipts"] if receipt["kind"] != "code-review"]
-    result["missing-receipt"] = missing
+def pre_pr_decision(
+    *,
+    captured_subject: str,
+    current_subject: str | None,
+    captured_head: str,
+    current_head: str,
+    captured_base_ref: str,
+    current_base_ref: str,
+    captured_base_oid: str,
+    current_base_oid: str,
+    dirty_paths: dict[str, set[str]],
+    provider_readable: bool,
+    provider_head: str | None,
+) -> tuple[str, tuple[str, ...]]:
+    publication_gaps = local_publication_gaps(
+        captured_subject=captured_subject,
+        current_subject=current_subject,
+        captured_head=captured_head,
+        current_head=current_head,
+        captured_base_ref=captured_base_ref,
+        current_base_ref=current_base_ref,
+        captured_base_oid=captured_base_oid,
+        current_base_oid=current_base_oid,
+        dirty_paths=dirty_paths,
+    )
+    if not provider_readable:
+        publication_gaps.append("provider ref is unavailable or indeterminate")
+    elif provider_head != captured_head:
+        publication_gaps.append(f"provider ref does not equal captured OID: {provider_head} != {captured_head}")
+    return ("ready" if not publication_gaps else "action-required", tuple(publication_gaps))
 
-    unresolved_reference = copy.deepcopy(bundle)
-    unresolved_reference["assessment"]["receipt_references"][0] = "receipt:does-not-exist"
-    result["missing-receipt-resolution"] = unresolved_reference
 
-    unreferenced = copy.deepcopy(bundle)
-    extra_receipt = copy.deepcopy(unreferenced["receipts"][0])
-    extra_receipt["receipt_id"] = "receipt:unreferenced"
-    extra_receipt["kind"] = "unreferenced"
-    unreferenced["receipts"].append(extra_receipt)
-    result["unreferenced-receipt"] = unreferenced
-
-    duplicate_kind = copy.deepcopy(bundle)
-    duplicate = copy.deepcopy(duplicate_kind["receipts"][0])
-    duplicate["receipt_id"] = "receipt:duplicate-kind"
-    duplicate_kind["receipts"].append(duplicate)
-    duplicate_kind["assessment"]["receipt_references"].append(duplicate["receipt_id"])
-    result["duplicate-receipt-kind"] = duplicate_kind
-
-    missing_reference = copy.deepcopy(bundle)
-    receipt_by_kind(missing_reference, "code-review")["evidence_references"] = []
-    result["missing-evidence-reference"] = missing_reference
-
-    stale = copy.deepcopy(bundle)
-    receipt_by_kind(stale, "code-simplification")["observed_at"] = "2025-01-01T00:00:00+00:00"
-    result["stale-receipt"] = stale
-
-    cross_subject = copy.deepcopy(bundle)
-    receipt_by_kind(cross_subject, "testing")["subject"] = "branch:another-subject"
-    result["cross-subject"] = cross_subject
-
-    cross_revision = copy.deepcopy(bundle)
-    receipt_by_kind(cross_revision, "plan-versus-delivered")["exact_revision"] = "0" * 40
-    result["cross-revision"] = cross_revision
-
-    unresolved = copy.deepcopy(bundle)
-    receipt_by_kind(unresolved, "targeted-sweep")["outcome"] = "failed"
-    receipt_by_kind(unresolved, "targeted-sweep")["gaps"] = ["class finding remains"]
-    result["unresolved-finding"] = unresolved
-
-    bypass = copy.deepcopy(bundle)
-    receipt_by_kind(bypass, "preflight")["outcome"] = "bypassed"
-    receipt_by_kind(bypass, "preflight")["bypass_requested"] = True
-    result["bypass-request"] = bypass
-
-    null_receipt = copy.deepcopy(bundle)
-    null_receipt["receipts"][0] = None
-    result["null-receipt-element"] = null_receipt
-
-    invalid_kind = copy.deepcopy(bundle)
-    invalid_kind["receipts"][0]["kind"] = []
-    result["invalid-receipt-kind"] = invalid_kind
-
-    invalid_path = copy.deepcopy(bundle)
-    invalid_path["receipts"][0]["evidence_references"][0]["path"] = []
-    result["invalid-evidence-path"] = invalid_path
-
-    invalid_assessment_reference = copy.deepcopy(bundle)
-    invalid_assessment_reference["assessment"]["receipt_references"][0] = {}
-    result["invalid-assessment-reference"] = invalid_assessment_reference
-    return result
+def inspect_stable_session(
+    repo: Path,
+    caller_authorized_argv: tuple[tuple[str, ...], ...],
+    base_ref: str = BASE_REF,
+) -> tuple[str, str, str, str, set[str], dict[str, str]]:
+    subject = current_subject(repo)
+    require(subject is not None, "fixture checkout is detached")
+    captured = full_head(repo)
+    captured_base_ref = base_ref
+    captured_base_selector = base_selector(captured_base_ref)
+    base_oid = full_base_oid(repo, captured_base_ref)
+    require(not run("git", "status", "--porcelain", cwd=repo), "fixture checkout is dirty")
+    report = run(str(SURFACE), "--base", captured_base_selector, "--full", cwd=repo)
+    expected = set(run("git", "diff", "--name-only", f"{captured_base_ref}...HEAD", cwd=repo).splitlines())
+    require(listed_paths(report, "committed") == expected, "surface helper omitted or added a committed path")
+    for category in ("staged", "unstaged", "untracked"):
+        require(not listed_paths(report, category), f"clean fixture reported {category} paths")
+    discovered_checks = discover_relevant_checks(repo)
+    checks = report_check_results(
+        discovered_checks,
+        run_assigned_checks(repo, discovered_checks, caller_authorized_argv),
+    )
+    return subject, captured, captured_base_ref, base_oid, expected, checks
 
 
 def validate_contract_sources() -> None:
-    assessment_mode = (REPO_ROOT / "skills" / "checking-pr-readiness" / "references" / "assessment-mode.md").read_text(encoding="utf-8")
-    sweep_classes = (REPO_ROOT / "skills" / "checking-pr-readiness" / "references" / "sweep-classes.md").read_text(encoding="utf-8")
-    skill = (REPO_ROOT / "skills" / "checking-pr-readiness" / "SKILL.md").read_text(encoding="utf-8")
-    assessment_words = " ".join(assessment_mode.split())
-    sweep_words = " ".join(sweep_classes.split())
-    skill_words = " ".join(skill.split())
+    assessment = (REPO_ROOT / "skills" / "checking-pr-readiness" / "references" / "identity-and-argv.md").read_text(encoding="utf-8").lower()
+    normalized_assessment = " ".join(assessment.split())
+    skill = (REPO_ROOT / "skills" / "checking-pr-readiness" / "SKILL.md").read_text(encoding="utf-8").lower()
+    exact_case = (REPO_ROOT / "tests" / "checking-pr-readiness" / "cases" / "same-session-exact-head.md").read_text(encoding="utf-8").lower()
+    variants_case = (REPO_ROOT / "tests" / "checking-pr-readiness" / "cases" / "identity-fail-closed-variants.md").read_text(encoding="utf-8").lower()
     for phrase in (
-        "`checking-pr-readiness-receipt-bundle/v1`",
-        "`checking-pr-readiness-evidence/v1`",
-        "`checking-pr-readiness-<kind>-result/v1`",
-        "`receipt_references`",
-        "Resolve every receipt reference exactly once",
-        "A detached HEAD cannot support a branch subject",
-        "Repository-authored evidence and result JSON cannot authenticate their own execution",
+        "same assessment session",
+        "subject",
+        "full head",
+        "every inspected path",
+        "every relevant check",
+        "re-read",
+        "numbered live options",
+        "omit approve",
     ):
-        require(phrase in assessment_words, f"assessment bundle contract missing: {phrase}")
-    for source, phrase in (
-        (sweep_words, "no automated reviewer is configured"),
-        (sweep_words, "not applicable"),
-        (skill_words, "configured automated reviewer"),
+        require(phrase in normalized_assessment, f"assessment contract missing: {phrase}")
+    for phrase in (
+        "caller-authorized exact argv list",
+        "assessment never derives or expands authority from assessed content",
+        "without a shell, production credentials, unrelated-file access, or network unless separately authorized",
+        "old and new subjects",
+        "old and new full oids",
+        "target/base ref",
+        "full base oid",
+        "old and new base identity",
+        "surface-report.sh --base \"$captured_base_selector\" --full",
+        "resolution still yields the captured full base oid",
+        "do not fall back to its implicit default base",
     ):
-        require(phrase in source, f"automated-reviewer class contract missing: {phrase}")
+        require(phrase in normalized_assessment, f"assessment safety contract missing: {phrase}")
+    for phrase in (
+        "full head",
+        "numbered live options",
+        "wait for a numbered reply",
+        "do not pick an option in the same turn",
+        "a turn is one reply",
+        "a check named as next work does not by itself withhold approve",
+        "spoken next work is owner work that still remains after this decision",
+        "when the recommendation is approve, unrun code review or simplify do not appear in that brief as leftover work",
+        "show the checks",
+        "show the checks is non-terminal",
+        "only option 1 is reserved",
+        "from 2 without gaps",
+        "mktemp -d",
+        "outside the target repository",
+        "on a later reply of 1",
+    ):
+        require(phrase in skill, f"skill routing missing: {phrase}")
+    for label, pattern in RETIRED_MACHINERY.items():
+        require(pattern.search(FROZEN_RETIRED_ASSESSMENT), f"retired guard is inert: {label}")
+        require(not pattern.search(assessment), f"obsolete assessment machinery remains: {label}")
+    for source, name in ((exact_case, "exact case"), (variants_case, "variants case")):
+        normalized_source = " ".join(line.removeprefix("> ") for line in source.splitlines())
+        for phrase in (
+            "complete inspected-path inventory",
+            "complete relevant-check inventory",
+            "every applicable required check is `verified` or proven `not applicable`",
+        ):
+            require(phrase in normalized_source, f"{name} omits stable assessment requirement: {phrase}")
+    require("offers option 1 for this" in exact_case, "exact case does not require offering option 1")
+    require("do not pick" in exact_case, "exact case omits do-not-pick")
+    require("immediately before accepting a later approve" in exact_case, "exact case omits later-Approve re-read")
+    require("stable-head variant offers option 1" in variants_case, "variants case does not require stable option 1")
+    require("re-reads immediately before accepting a later 1" in variants_case, "variants case pins offer-time re-read")
+    require("picks an option in the same turn" in variants_case, "variants case omits do-not-pick")
+    for phrase in (
+        "moved-head variant omits approve",
+        "moved-base variant omits approve",
+        "branch-rename variant omits approve",
+        "detached-head variant omits approve",
+        "dirty-surface variants name every",
+        "inventories omit approve",
+    ):
+        require(phrase in variants_case, f"variants case does not preserve fail-closed result: {phrase}")
+    for phrase in (
+        "exact named equivalent repository gate",
+        "present and `verified` in the same complete assessment session",
+        "bare, missing, unrelated, mismatched, unavailable, or not verified gate",
+    ):
+        require(phrase in normalized_assessment, f"assessment contract omits deferred-gate safety: {phrase}")
+    for source, name in (
+        ((REPO_ROOT / "skills" / "repo-gardener" / "SKILL.md").read_text(encoding="utf-8").lower(), "repo-gardener skill"),
+        ((REPO_ROOT / "skills" / "repo-gardener" / "references" / "reconciliation.md").read_text(encoding="utf-8").lower(), "reconciliation reference"),
+    ):
+        normalized_source = " ".join(source.split())
+        require("every unattended worker invokes `checking-pr-readiness` normally" in normalized_source, f"{name} omits the normal checking invocation")
+        require("distinct later turn" in normalized_source, f"{name} can approve from the menu turn")
+        require("option 1" in normalized_source and "approve and proceed" in normalized_source, f"{name} does not constrain later option 1")
+        require("identity reread" in normalized_source, f"{name} omits the later identity reread")
+        require("preserve the authored commit" in normalized_source, f"{name} lacks the fail-closed publication outcome")
+        require("never replace or recapture that" in normalized_source, f"{name} can replace the approved identity")
+        require("exact caller-approved verification command argv list" in normalized_source, f"{name} omits the caller-owned argv assignment")
+        require("target/base ref" in normalized_source and "full base oid" in normalized_source, f"{name} omits the base binding")
+        require(
+            "immediately before an ownerless first push, re-resolve the captured target/base ref and full base oid"
+            in normalized_source,
+            f"{name} omits the pre-push base re-read",
+        )
+        require(
+            "immediately before pr-open, re-resolve the captured target/base ref and full base oid" in normalized_source,
+            f"{name} omits the pre-PR base re-read",
+        )
+        require(
+            "persistent state, configuration, schema, receipt, ledger, or audit-command reuse" not in normalized_source,
+            f"{name} retains unnecessary assignment denial prose",
+        )
+        require("invoke `checking-merge-readiness`" in normalized_source, f"{name} omits ownerless merge checking")
+        require("never authorizes proceed to merge" in normalized_source, f"{name} can select proceed to merge")
+        require("the worker never chooses option 1 on its own" in normalized_source, f"{name} still lets the Worker choose option 1")
+        require("authorizes that worker to reply 1" in normalized_source, f"{name} omits Orchestrator-authorized option 1")
+        require("sends every named worker-owned gap" in normalized_source, f"{name} omits the whole-list rework loop")
+        require("never invokes `checking-merge-readiness`" not in normalized_source, f"{name} still forbids ownerless merge checking")
+    require("not verified" in assessment and "not run" in assessment, "assessment contract omits canonical check statuses")
+    require("unverified" not in assessment and "not-run" not in assessment, "assessment contract retains noncanonical check statuses")
+    require(
+        "an unresolved finding is named as next work attached to an allowed status, for example `code review: not verified`."
+        in normalized_assessment,
+        "assessment contract does not distinguish unresolved findings from check statuses",
+    )
+    require("unresolved" not in FAIL_CLOSED_CHECK_RESULTS, "unresolved remains a canonical check status")
 
 
 def run_suite() -> None:
     validate_contract_sources()
-    with tempfile.TemporaryDirectory(prefix="pr-readiness-assessment-") as temp:
-        root = Path(temp)
-        first = root / "first"
-        second = root / "second"
-        revision = build_repository(first)
-        repeated_revision = build_repository(second)
-        require(revision == repeated_revision, "fixed fixture did not reproduce the same revision")
-        bundle = make_bundle(first, revision)
-        positive = evaluate(first, bundle)
-        require(positive["outcome"] == "pass" and positive["gaps"] == [], f"positive fixture failed: {positive['gaps']}")
-        require(positive["capability_version"] == package_version(), "assessment capability version was not live-derived")
-        require(positive["observed_at"] != bundle["assessment"]["observed_at"], "assessment observation time stayed caller-controlled")
-
-        run("git", "checkout", "-q", "-b", "replacement-payload", revision, cwd=first)
-        (first / "src" / "app.txt").write_text("replacement\n", encoding="utf-8")
-        run("git", "add", "src/app.txt", cwd=first)
-        run("git", "commit", "-q", "-m", "create replacement payload", cwd=first, env=git_env(COMMIT_TIME))
-        replacement_revision = run("git", "rev-parse", "HEAD", cwd=first)
-        run("git", "checkout", "-q", "assessment-target", cwd=first)
-        run("git", "replace", revision, replacement_revision, cwd=first)
-        replacement_enabled_env = os.environ.copy()
-        replacement_enabled_env.pop("GIT_NO_REPLACE_OBJECTS")
+    with tempfile.TemporaryDirectory(prefix="pr-readiness-assessment-") as temporary:
+        stable_repo = Path(temporary) / "stable"
+        stable_head = build_repository(stable_repo)
+        captured_subject, captured, captured_base_ref, captured_base_oid, paths, check_results = inspect_stable_session(
+            stable_repo,
+            CALLER_AUTHORIZED_ARGV,
+        )
+        require(captured == stable_head == full_head(stable_repo), "stable native head changed during assessment")
         require(
-            run("git", "show", f"{revision}:src/app.txt", cwd=first, env=replacement_enabled_env) == "replacement",
-            "fixture replacement object did not override the assessed commit",
+            paths == {".github/workflows/quality.yml", "CHANGELOG.md", "checks/fixture-quality.sh", "src/app.txt"},
+            "fixture surface changed unexpectedly",
         )
-        replacement_result = evaluate(first, bundle)
-        require(
-            replacement_result["outcome"] == "pass" and replacement_result["exact_revision"] == revision,
-            f"replacement object changed exact-revision assessment: {replacement_result['gaps']}",
-        )
-        run("git", "replace", "-d", revision, cwd=first)
-
-        spoofed_provenance = copy.deepcopy(bundle)
-        spoofed_provenance["assessment"]["capability_version"] = "caller-controlled-spoof"
-        spoofed_provenance["assessment"]["observed_at"] = "1900-01-01T00:00:00Z"
-        spoofed_result = evaluate(first, spoofed_provenance)
-        require(spoofed_result["outcome"] == "pass", f"ignored caller provenance changed the outcome: {spoofed_result['gaps']}")
-        require(spoofed_result["capability_version"] != "caller-controlled-spoof", "caller controlled assessment capability version")
-        require(spoofed_result["observed_at"] != "1900-01-01T00:00:00Z", "caller controlled assessment observation time")
-        for name, variant in variants(bundle).items():
-            result = evaluate(first, variant)
-            expected_gap = SPEC["negative_variants"][name]
-            require(result["outcome"] == "action-required", f"{name} did not fail closed")
-            require(expected_gap in result["gaps"], f"{name} missing exact gap: {expected_gap}")
-
-        malicious_marker = first / "malicious-validator-executed"
-        (first / "fixture-validation.py").write_text(
-            "import pathlib, sys\n"
-            f"pathlib.Path({str(malicious_marker)!r}).write_text('executed')\n"
-            "print(f'verified:{sys.argv[1]}')\n",
-            encoding="utf-8",
-        )
-        malicious_validator_result = evaluate(first, bundle)
-        require(
-            "dirty working surface: unstaged" in malicious_validator_result["gaps"],
-            "dirty validator did not fail the working-surface check",
-        )
-        require(not malicious_marker.exists(), "repository-controlled validator was executed")
-        run("git", "restore", "fixture-validation.py", cwd=first)
-
-        committed_malicious_repo = root / "committed-malicious-validator"
-        committed_malicious_marker = root / "committed-malicious-validator-executed"
-        committed_malicious_source = (
-            "import pathlib, sys\n"
-            f"pathlib.Path({str(committed_malicious_marker)!r}).write_text('executed')\n"
-            "print(f'verified:{sys.argv[1]}')\n"
-        ).encode("utf-8")
-        committed_malicious_revision = build_repository(
-            committed_malicious_repo,
-            validator_source=committed_malicious_source,
-        )
-        committed_malicious_result = evaluate(
-            committed_malicious_repo,
-            make_bundle(committed_malicious_repo, committed_malicious_revision),
-        )
-        require(
-            committed_malicious_result["outcome"] == "action-required"
-            and "command execution not verified: testing" in committed_malicious_result["gaps"],
-            "committed non-allowlisted validator was not rejected",
-        )
-        require(not committed_malicious_marker.exists(), "committed non-allowlisted validator was executed")
-
-        malformed_bundle = evaluate(first, None)
-        require(malformed_bundle["outcome"] == "action-required", "null bundle did not fail closed")
-        require("receipt bundle is not an object" in malformed_bundle["gaps"], "null bundle returned no normal assessment gap")
-
-        malformed_assessment = copy.deepcopy(bundle)
-        malformed_assessment["assessment"] = None
-        malformed_assessment_result = evaluate(first, malformed_assessment)
-        require("assessment member is not an object" in malformed_assessment_result["gaps"], "null assessment member did not fail closed")
-
-        (first / "src" / "app.txt").write_text("staged-only\n", encoding="utf-8")
-        run("git", "add", "src/app.txt", cwd=first)
-        staged_result = evaluate(first, bundle)
-        require("dirty working surface: staged" in staged_result["gaps"], "staged-only dirt passed exact-line parsing")
-        run("git", "restore", "--staged", "src/app.txt", cwd=first)
-        run("git", "restore", "src/app.txt", cwd=first)
-
-        run("git", "branch", "-m", "renamed-target", cwd=first)
-        renamed_result = evaluate(first, bundle)
-        require("assessment subject mismatch" in renamed_result["gaps"], "renamed branch retained a passing subject")
-        run("git", "branch", "-m", "assessment-target", cwd=first)
-
-        run("git", "checkout", "--detach", "-q", cwd=first)
-        detached_result = evaluate(first, bundle)
-        require("live subject unavailable: detached HEAD" in detached_result["gaps"], "detached HEAD retained a passing subject")
-        run("git", "branch", "ambiguous-target", cwd=first)
-        ambiguous_result = evaluate(first, bundle)
-        require(
-            "ambiguous live subject: detached HEAD points at multiple branches" in ambiguous_result["gaps"],
-            "ambiguous live branch state retained a passing subject",
-        )
-        run("git", "checkout", "-q", "assessment-target", cwd=first)
-        run("git", "branch", "-D", "ambiguous-target", cwd=first)
-
-        no_reviewer = root / "no-reviewer"
-        no_reviewer_revision = build_repository(no_reviewer, "none")
-        no_reviewer_result = evaluate(no_reviewer, make_bundle(no_reviewer, no_reviewer_revision))
-        require(no_reviewer_result["outcome"] == "pass", f"no-reviewer class 11 was not applicable: {no_reviewer_result['gaps']}")
-
-        missing_cap = root / "missing-cap"
-        missing_cap_revision = build_repository(missing_cap, "missing-cap")
-        missing_cap_result = evaluate(missing_cap, make_bundle(missing_cap, missing_cap_revision))
-        require(
-            "automated reviewer cap unresolved: fixture-reviewer" in missing_cap_result["gaps"],
-            "configured reviewer without a repository-resolved cap did not fail closed",
-        )
-
-        invalid_reviewer_shape = root / "invalid-reviewer-shape"
-        invalid_reviewer_revision = build_repository(invalid_reviewer_shape, "invalid-shape")
-        invalid_reviewer_result = evaluate(
-            invalid_reviewer_shape,
-            make_bundle(invalid_reviewer_shape, invalid_reviewer_revision),
-        )
-        require(
-            invalid_reviewer_result["outcome"] == "action-required"
-            and "repository automated-reviewer discovery is invalid: FixtureError" in invalid_reviewer_result["gaps"],
-            "invalid automated-reviewers shape did not return a normal action-required envelope",
-        )
-
-        _, no_reviewer_evidence = evidence_blob(
-            no_reviewer,
-            no_reviewer_revision,
-            "evidence/targeted-sweep.json",
-        )
-        require(
-            json.loads(no_reviewer_evidence)["verdicts"]["11"] == "not applicable",
-            "no-reviewer profile did not anchor class 11 as not applicable",
-        )
-
-        omitted_gate_repo = root / "omitted-discovered-gate"
-        omitted_gate_revision = build_repository(
-            omitted_gate_repo,
-            evidence_mutator=lambda documents: documents["repository-gates"]["gates"].pop(),
-        )
-        omitted_gate_result = evaluate(
-            omitted_gate_repo,
-            make_bundle(omitted_gate_repo, omitted_gate_revision),
-        )
-        require(
-            omitted_gate_result["outcome"] == "action-required"
-            and "repository gate inventory incomplete" in omitted_gate_result["gaps"],
-            "evidence omitted one of multiple independently discovered repository gates",
-        )
-
-        reused_test_result_repo = root / "reused-test-result"
-        def reuse_test_result(documents: dict[str, dict[str, Any]]) -> None:
-            documents["testing"]["checks"].append({
-                "name": "unexecuted-browser-test",
-                "command": "browser test",
-                "outcome": "passed",
-                "result_reference": "test:fixture-validation",
-            })
-
-        reused_test_result_revision = build_repository(
-            reused_test_result_repo,
-            evidence_mutator=reuse_test_result,
-        )
-        reused_test_result = evaluate(
-            reused_test_result_repo,
-            make_bundle(reused_test_result_repo, reused_test_result_revision),
-        )
-        require(
-            reused_test_result["outcome"] == "action-required"
-            and "testing evidence incomplete" in reused_test_result["gaps"],
-            "testing check reused unrelated passing execution evidence",
-        )
-
-        missing_receipt_gaps_repo = root / "missing-receipt-gaps"
-        missing_receipt_gaps_revision = build_repository(missing_receipt_gaps_repo)
-        missing_receipt_gaps_bundle = make_bundle(
-            missing_receipt_gaps_repo,
-            missing_receipt_gaps_revision,
-        )
-        for receipt in missing_receipt_gaps_bundle["receipts"]:
-            del receipt["gaps"]
-        missing_receipt_gaps = evaluate(
-            missing_receipt_gaps_repo,
-            missing_receipt_gaps_bundle,
-        )
-        require(
-            missing_receipt_gaps["outcome"] == "action-required"
-            and "invalid receipt fields" in missing_receipt_gaps["gaps"],
-            "receipts without an explicit gaps inventory passed",
-        )
-
-        weak_documents = {
-            "repository-gates": {
-                "repository": SPEC["repository"],
-                "subject": SPEC["subject"],
-                "status": "verified",
-                "gates": [{"name": "fixture-validation", "owner": "fixture task runner", "status": "verified"}],
-            },
-            "code-review": {
-                "repository": SPEC["repository"],
-                "subject": SPEC["subject"],
-                "status": "verified",
-                "finding_count": 0,
-            },
-            "testing": {
-                "repository": SPEC["repository"],
-                "subject": SPEC["subject"],
-                "status": "verified",
-                "checks": ["fixture-validation"],
-                "ui_classification": "not applicable",
-            },
+        require(check_results == {"fixture-quality": "verified"}, "fixture repository check did not verify")
+        stable_arguments = {
+            "captured_subject": captured_subject,
+            "current_subject": current_subject(stable_repo),
+            "captured_head": captured,
+            "current_head": full_head(stable_repo),
+            "captured_base_ref": captured_base_ref,
+            "current_base_ref": captured_base_ref,
+            "captured_base_oid": captured_base_oid,
+            "current_base_oid": full_base_oid(stable_repo, captured_base_ref),
+            "expected_paths": paths,
+            "inspected_paths": paths,
+            "dirty_paths": {},
         }
-        for kind, weak_document in weak_documents.items():
-            weak_repo = root / f"weak-{kind}"
-            weak_revision = build_repository(
-                weak_repo,
-                evidence_mutator=lambda documents, kind=kind, weak_document=weak_document: documents.__setitem__(
-                    kind, weak_document
-                ),
-            )
-            weak_result = evaluate(weak_repo, make_bundle(weak_repo, weak_revision))
-            require(
-                f"substantive evidence schema mismatch: {kind}" in weak_result["gaps"],
-                f"self-asserted {kind} evidence passed without producer, scope, command, outcome, and result references",
-            )
-
-        forged_result_repo = root / "forged-command-result"
-        def forge_unrun_command(documents: dict[str, dict[str, Any]]) -> None:
-            documents["testing"]["command"] = {"id": "python3", "arguments": ["does-not-exist.py"]}
-            documents["testing"]["checks"][0]["command"] = "python3 does-not-exist.py"
-
-        forged_result_revision = build_repository(
-            forged_result_repo,
-            pre_result_mutator=forge_unrun_command,
-        )
-        forged_result = evaluate(forged_result_repo, make_bundle(forged_result_repo, forged_result_revision))
-        require(forged_result["outcome"] == "action-required", "structurally complete forged command result passed")
-        require(
-            "command execution not verified: testing" in forged_result["gaps"],
-            "structurally complete forged command result did not fail at the owning-runner boundary",
-        )
-
-        bad_result_reference_repo = root / "bad-result-reference"
-        bad_result_reference_revision = build_repository(
-            bad_result_reference_repo,
-            evidence_mutator=lambda documents: documents["code-review"]["result_references"][0].__setitem__(
-                "sha256", "0" * 64
+        for label, deferred_results, deferred_sweep_gates, expected_checks, expected_decision, expected_gap in (
+            (
+                "stable deterministic slice",
+                check_results,
+                None,
+                set(check_results),
+                "omit-Approve",
+                "steps 3-6 judgment checks: not run",
             ),
+            (
+                "exact verified deferred gate",
+                {
+                    "fixture-quality": "verified",
+                    "changelog": "skipped",
+                    "ci-changelog": "verified",
+                },
+                {"changelog": "ci-changelog"},
+                {"fixture-quality", "changelog", "ci-changelog"},
+                "omit-Approve",
+                "steps 3-6 judgment checks: not run",
+            ),
+            (
+                "missing named gate",
+                {"fixture-quality": "verified", "changelog": "skipped"},
+                {"changelog": "ci-changelog"},
+                {"fixture-quality", "changelog"},
+                "omit-Approve",
+                "changelog: skipped",
+            ),
+            (
+                "mismatched gate",
+                {
+                    "fixture-quality": "verified",
+                    "changelog": "skipped",
+                    "ci-size": "verified",
+                },
+                {"changelog": "ci-changelog"},
+                {"fixture-quality", "changelog", "ci-size"},
+                "omit-Approve",
+                "changelog: skipped",
+            ),
+            (
+                "failed named gate",
+                {
+                    "fixture-quality": "verified",
+                    "changelog": "skipped",
+                    "ci-changelog": "failed",
+                },
+                {"changelog": "ci-changelog"},
+                {"fixture-quality", "changelog", "ci-changelog"},
+                "omit-Approve",
+                "changelog: skipped",
+            ),
+            (
+                "unavailable gate",
+                {
+                    "fixture-quality": "verified",
+                    "changelog": "skipped",
+                    "ci-changelog": "unavailable",
+                },
+                {"changelog": "ci-changelog"},
+                {"fixture-quality", "changelog", "ci-changelog"},
+                "omit-Approve",
+                "changelog: skipped",
+            ),
+            (
+                "unverified gate",
+                {
+                    "fixture-quality": "verified",
+                    "changelog": "skipped",
+                    "ci-changelog": "not verified",
+                },
+                {"changelog": "ci-changelog"},
+                {"fixture-quality", "changelog", "ci-changelog"},
+                "omit-Approve",
+                "changelog: skipped",
+            ),
+            (
+                "incomplete relevant-check inventory",
+                {},
+                None,
+                {"fixture-quality"},
+                "omit-Approve",
+                "missing ['fixture-quality']",
+            ),
+            (
+                "ordinary skipped check",
+                {
+                    "fixture-quality": "verified",
+                    "ordinary-check": "skipped",
+                    "ci-quality": "verified",
+                },
+                {"another-deferred-check": "ci-quality"},
+                {"fixture-quality", "ordinary-check", "ci-quality"},
+                "omit-Approve",
+                "ordinary-check: skipped",
+            ),
+        ):
+            deferred_results["steps 3-6 judgment checks"] = "not run"
+            expected_checks.add("steps 3-6 judgment checks")
+            decision, gaps = assessment_decision(
+                **stable_arguments,
+                expected_checks=expected_checks,
+                check_results=deferred_results,
+                deferred_sweep_gates=deferred_sweep_gates,
+            )
+            require(decision == expected_decision, f"{label} returned {decision} instead of {expected_decision}")
+            if expected_gap is not None:
+                require(any(expected_gap in gap for gap in gaps), f"{label} did not name its gap")
+            if label == "exact verified deferred gate":
+                require("changelog: skipped" not in gaps, "exact verified deferred gate did not normalize the skipped changelog")
+        nondefault_target_repo = Path(temporary) / "nondefault-target"
+        build_nondefault_target_repository(nondefault_target_repo)
+        captured_nondefault_base_oid = full_base_oid(nondefault_target_repo, NONDEFAULT_BASE_REF)
+        implicit_report = run(str(SURFACE), "--full", cwd=nondefault_target_repo)
+        bound_report = run(
+            str(SURFACE),
+            "--base",
+            base_selector(NONDEFAULT_BASE_REF),
+            "--full",
+            cwd=nondefault_target_repo,
         )
-        bad_result_reference = evaluate(
-            bad_result_reference_repo,
-            make_bundle(bad_result_reference_repo, bad_result_reference_revision),
+        implicit_paths = listed_paths(implicit_report, "committed")
+        bound_paths = listed_paths(bound_report, "committed")
+        expected_bound_paths = set(
+            run("git", "diff", "--name-only", f"{NONDEFAULT_BASE_REF}...HEAD", cwd=nondefault_target_repo).splitlines()
+        )
+        inherited_default_path = "src/inherited-from-default.txt"
+        require(
+            inherited_default_path not in implicit_paths,
+            "implicit default-base surface did not omit the inherited default path",
         )
         require(
-            "substantive evidence schema mismatch: code-review" in bad_result_reference["gaps"],
-            "unresolvable code-review result reference passed as inspectable evidence",
+            inherited_default_path in bound_paths,
+            "captured non-default-base surface did not include the inherited default path",
+        )
+        require(bound_paths == expected_bound_paths, "captured-base surface inventory did not match the selected target")
+        require(
+            f"default branch: {NONDEFAULT_BASE_REF} (from --base)" in bound_report,
+            "surface helper did not consume the captured non-default base selector",
+        )
+        require(
+            full_base_oid(nondefault_target_repo, NONDEFAULT_BASE_REF) == captured_nondefault_base_oid,
+            "captured non-default base OID changed during surface inspection",
         )
 
-        partial_destination = root / "partial-materialization"
-        def fail_bundle_write(path: Path, value: Any) -> None:
-            raise OSError("forced bundle write failure")
-        try:
-            materialize(partial_destination, fail_bundle_write)
-            raise FixtureError("forced materialization failure unexpectedly succeeded")
-        except OSError:
-            require(not partial_destination.exists(), "partial materialization destination survived failure")
+        unassigned_repo = Path(temporary) / "unassigned"
+        build_repository(unassigned_repo, include_unassigned_check=True)
+        unassigned_subject, unassigned_head, unassigned_base_ref, unassigned_base_oid, unassigned_paths, unassigned_results = inspect_stable_session(
+            unassigned_repo,
+            CALLER_AUTHORIZED_ARGV,
+        )
+        require(
+            set(unassigned_results) == set(discover_relevant_checks(unassigned_repo)),
+            "unassigned repository check was not independently discovered",
+        )
+        require(
+            unassigned_results == {"fixture-quality": "verified", "unassigned": "not verified"},
+            "discovered unassigned check was not reported as not verified",
+        )
+        require(
+            not (unassigned_repo / "unassigned-executed.txt").exists(),
+            "unassigned repository check executed outside the caller-authorized argv list",
+        )
+        decision, gaps = assessment_decision(
+            captured_subject=unassigned_subject,
+            current_subject=current_subject(unassigned_repo),
+            captured_head=unassigned_head,
+            current_head=full_head(unassigned_repo),
+            captured_base_ref=unassigned_base_ref,
+            current_base_ref=unassigned_base_ref,
+            captured_base_oid=unassigned_base_oid,
+            current_base_oid=full_base_oid(unassigned_repo, unassigned_base_ref),
+            expected_paths=unassigned_paths,
+            inspected_paths=unassigned_paths,
+            expected_checks=set(unassigned_results),
+            check_results=unassigned_results,
+            dirty_paths={},
+        )
+        require(decision == "omit-Approve", "unassigned repository check did not fail closed")
+        require("unassigned: not verified" in gaps, "unassigned repository check did not name its gap")
 
-        malformed_bundle_path = root / "malformed-bundle.json"
-        malformed_bundle_path.write_text("{", encoding="utf-8")
-        for label, bundle_path, expected_gap in (
-            ("malformed", malformed_bundle_path, "receipt bundle is malformed"),
-            ("unreadable", root / "missing-bundle.json", "receipt bundle is unreadable"),
+        moved_repo = Path(temporary) / "moved"
+        build_repository(moved_repo)
+        captured_subject, captured, captured_base_ref, captured_base_oid, paths, check_results = inspect_stable_session(
+            moved_repo,
+            CALLER_AUTHORIZED_ARGV,
+        )
+        (moved_repo / "src" / "app.txt").write_text("moved\n", encoding="utf-8")
+        run("git", "add", "src/app.txt", cwd=moved_repo)
+        run(
+            "git",
+            "commit",
+            "-q",
+            "-m",
+            "advance native head",
+            cwd=moved_repo,
+            env=git_env("2026-01-02T00:02:00+00:00"),
+        )
+        head_b = full_head(moved_repo)
+        decision, gaps = assessment_decision(
+            captured_subject=captured_subject,
+            current_subject=current_subject(moved_repo),
+            captured_head=captured,
+            current_head=head_b,
+            captured_base_ref=captured_base_ref,
+            current_base_ref=captured_base_ref,
+            captured_base_oid=captured_base_oid,
+            current_base_oid=full_base_oid(moved_repo, captured_base_ref),
+            expected_paths=paths,
+            inspected_paths=paths,
+            expected_checks=set(check_results),
+            check_results=check_results,
+            dirty_paths={},
+        )
+        require(decision == "omit-Approve", "moved head did not return omit-Approve")
+        require(f"head moved: {captured} -> {head_b}" in gaps, "moved head did not name both full OIDs")
+
+        moved_base_repo = Path(temporary) / "moved-base"
+        build_repository(moved_base_repo)
+        captured_subject, captured, captured_base_ref, captured_base_oid, paths, check_results = inspect_stable_session(
+            moved_base_repo,
+            CALLER_AUTHORIZED_ARGV,
+        )
+        run("git", "checkout", "-q", "main", cwd=moved_base_repo)
+        (moved_base_repo / "README.md").write_text("fixture base advanced\n", encoding="utf-8")
+        run("git", "add", "README.md", cwd=moved_base_repo)
+        run(
+            "git",
+            "commit",
+            "-q",
+            "-m",
+            "advance fixture base",
+            cwd=moved_base_repo,
+            env=git_env("2026-01-02T00:02:00+00:00"),
+        )
+        run("git", "checkout", "-q", "assessment-subject", cwd=moved_base_repo)
+        moved_base_oid = full_base_oid(moved_base_repo, captured_base_ref)
+        require(current_subject(moved_base_repo) == captured_subject, "base movement changed the native subject")
+        require(full_head(moved_base_repo) == captured, "base movement changed the native head")
+        decision, gaps = assessment_decision(
+            captured_subject=captured_subject,
+            current_subject=current_subject(moved_base_repo),
+            captured_head=captured,
+            current_head=full_head(moved_base_repo),
+            captured_base_ref=captured_base_ref,
+            current_base_ref=captured_base_ref,
+            captured_base_oid=captured_base_oid,
+            current_base_oid=moved_base_oid,
+            expected_paths=paths,
+            inspected_paths=paths,
+            expected_checks=set(check_results),
+            check_results=check_results,
+            dirty_paths={},
+        )
+        require(decision == "omit-Approve", "moved base did not return omit-Approve")
+        require(
+            f"base moved: {captured_base_ref}@{captured_base_oid} -> {captured_base_ref}@{moved_base_oid}" in gaps,
+            "moved base did not name both base identities",
+        )
+
+        renamed_repo = Path(temporary) / "renamed"
+        build_repository(renamed_repo)
+        captured_subject, captured, captured_base_ref, captured_base_oid, paths, check_results = inspect_stable_session(
+            renamed_repo,
+            CALLER_AUTHORIZED_ARGV,
+        )
+        run("git", "branch", "-m", "assessment-renamed", cwd=renamed_repo)
+        decision, gaps = assessment_decision(
+            captured_subject=captured_subject,
+            current_subject=current_subject(renamed_repo),
+            captured_head=captured,
+            current_head=full_head(renamed_repo),
+            captured_base_ref=captured_base_ref,
+            current_base_ref=captured_base_ref,
+            captured_base_oid=captured_base_oid,
+            current_base_oid=full_base_oid(renamed_repo, captured_base_ref),
+            expected_paths=paths,
+            inspected_paths=paths,
+            expected_checks=set(check_results),
+            check_results=check_results,
+            dirty_paths={},
+        )
+        require(decision == "omit-Approve", "constant-OID branch rename did not return omit-Approve")
+        require(
+            f"subject moved: {captured_subject} -> refs/heads/assessment-renamed" in gaps,
+            "branch rename did not name both subjects",
+        )
+
+        detached_repo = Path(temporary) / "detached"
+        build_repository(detached_repo)
+        captured_subject, captured, captured_base_ref, captured_base_oid, paths, check_results = inspect_stable_session(
+            detached_repo,
+            CALLER_AUTHORIZED_ARGV,
+        )
+        run("git", "checkout", "-q", "--detach", captured, cwd=detached_repo)
+        decision, gaps = assessment_decision(
+            captured_subject=captured_subject,
+            current_subject=current_subject(detached_repo),
+            captured_head=captured,
+            current_head=full_head(detached_repo),
+            captured_base_ref=captured_base_ref,
+            current_base_ref=captured_base_ref,
+            captured_base_oid=captured_base_oid,
+            current_base_oid=full_base_oid(detached_repo, captured_base_ref),
+            expected_paths=paths,
+            inspected_paths=paths,
+            expected_checks=set(check_results),
+            check_results=check_results,
+            dirty_paths={},
+        )
+        require(decision == "omit-Approve", "constant-OID detached HEAD did not return omit-Approve")
+        require(
+            f"subject moved: {captured_subject} -> detached HEAD" in gaps,
+            "detached HEAD did not name the missing subject",
+        )
+
+        for category in ("staged", "unstaged", "untracked"):
+            decision, gaps = assessment_decision(
+                captured_subject=captured_subject,
+                current_subject=captured_subject,
+                captured_head=stable_head,
+                current_head=stable_head,
+                captured_base_ref=captured_base_ref,
+                current_base_ref=captured_base_ref,
+                captured_base_oid=captured_base_oid,
+                current_base_oid=full_base_oid(detached_repo, captured_base_ref),
+                expected_paths=paths,
+                inspected_paths=paths,
+                expected_checks=set(check_results),
+                check_results=check_results,
+                dirty_paths={category: {f"{category}.txt"}},
+            )
+            require(decision == "offer-option-1", f"{category} dirt omitted Approve")
+            require(f"{category} dirty path: {category}.txt" in gaps, f"{category} dirt did not name its path")
+
+        decision, gaps = assessment_decision(
+            captured_subject=captured_subject,
+            current_subject=captured_subject,
+            captured_head=stable_head,
+            current_head=stable_head,
+            captured_base_ref=captured_base_ref,
+            current_base_ref=captured_base_ref,
+            captured_base_oid=captured_base_oid,
+            current_base_oid=full_base_oid(detached_repo, captured_base_ref),
+            expected_paths=paths,
+            inspected_paths=paths - {"src/app.txt"},
+            expected_checks=set(check_results),
+            check_results=check_results,
+            dirty_paths={},
+        )
+        require(decision == "omit-Approve", "incomplete inspected-path inventory did not fail closed")
+        require("missing ['src/app.txt']" in gaps[0], "incomplete inspected-path inventory did not name its gap")
+
+        for result in FAIL_CLOSED_CHECK_RESULTS:
+            decision, gaps = assessment_decision(
+                captured_subject=captured_subject,
+                current_subject=captured_subject,
+                captured_head=stable_head,
+                current_head=stable_head,
+                captured_base_ref=captured_base_ref,
+                current_base_ref=captured_base_ref,
+                captured_base_oid=captured_base_oid,
+                current_base_oid=full_base_oid(detached_repo, captured_base_ref),
+                expected_paths=paths,
+                inspected_paths=paths,
+                expected_checks=set(check_results),
+                check_results={"fixture-quality": result},
+                dirty_paths={},
+            )
+            require(decision == "omit-Approve", f"{result} check did not fail closed")
+            require(f"fixture-quality: {result}" in gaps, f"{result} check did not name its gap")
+
+        provider_subject = "refs/heads/assessment-provider"
+        provider = Path(temporary) / "provider.git"
+        run("git", "init", "-q", "--bare", str(provider), cwd=stable_repo)
+        run("git", "remote", "add", "provider", str(provider), cwd=stable_repo)
+        provider_head = read_provider_head(stable_repo, "provider", provider_subject)
+        decision, gaps = ownerless_first_push_decision(
+            captured_subject=provider_subject,
+            current_subject=provider_subject,
+            captured_head=stable_head,
+            current_head=stable_head,
+            captured_base_ref=captured_base_ref,
+            current_base_ref=captured_base_ref,
+            captured_base_oid=captured_base_oid,
+            current_base_oid=captured_base_oid,
+            dirty_paths={},
+            provider_readable=True,
+            provider_head=provider_head,
+        )
+        require(decision == "ready" and not gaps, "absent provider ref did not permit the first push")
+        pushed = push_captured_oid(stable_repo, "provider", provider_subject, stable_head)
+        require(pushed.returncode == 0, f"captured-OID first push failed: {pushed.stderr!r}")
+        provider_head = read_provider_head(stable_repo, "provider", provider_subject)
+        require(provider_head == stable_head, "first push did not create the exact captured provider ref")
+        decision, gaps = pre_pr_decision(
+            captured_subject=provider_subject,
+            current_subject=provider_subject,
+            captured_head=stable_head,
+            current_head=stable_head,
+            captured_base_ref=captured_base_ref,
+            current_base_ref=captured_base_ref,
+            captured_base_oid=captured_base_oid,
+            current_base_oid=captured_base_oid,
+            dirty_paths={},
+            provider_readable=True,
+            provider_head=provider_head,
+        )
+        require(decision == "ready" and not gaps, "post-push provider ref did not match the captured OID")
+        decision, gaps = pre_pr_decision(
+            captured_subject=provider_subject,
+            current_subject=provider_subject,
+            captured_head=stable_head,
+            current_head=stable_head,
+            captured_base_ref=captured_base_ref,
+            current_base_ref=captured_base_ref,
+            captured_base_oid=captured_base_oid,
+            current_base_oid=captured_base_oid,
+            dirty_paths={},
+            provider_readable=True,
+            provider_head=None,
+        )
+        require(decision == "action-required", "absent provider ref permitted PR creation")
+
+        raced_provider = Path(temporary) / "raced-provider.git"
+        run("git", "init", "-q", "--bare", str(raced_provider), cwd=stable_repo)
+        run("git", "remote", "add", "raced-provider", str(raced_provider), cwd=stable_repo)
+        require(
+            read_provider_head(stable_repo, "raced-provider", provider_subject) is None,
+            "race fixture provider ref was not initially absent",
+        )
+        base_head = run("git", "rev-parse", "HEAD^", cwd=stable_repo)
+        seeded = subprocess.run(
+            ("git", "push", "--porcelain", "raced-provider", f"{base_head}:{provider_subject}"),
+            cwd=stable_repo,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        require(seeded.returncode == 0, f"race fixture could not create competing provider ref: {seeded.stderr!r}")
+        raced_push = push_captured_oid(stable_repo, "raced-provider", provider_subject, stable_head)
+        require(raced_push.returncode != 0, "absence lease allowed an intervening provider ref to fast-forward")
+        require(
+            read_provider_head(stable_repo, "raced-provider", provider_subject) == base_head,
+            "failed absence lease changed the competing provider ref",
+        )
+        for label, overrides in (
+            ("conflicting provider ref", {"provider_head": "0" * 40}),
+            ("unavailable provider ref", {"provider_readable": False}),
+            ("moved local subject", {"current_subject": "refs/heads/other"}),
+            ("moved local OID", {"current_head": "1" * 40}),
+            ("dirty local surface", {"dirty_paths": {"unstaged": {"changed.txt"}}}),
         ):
-            completed = subprocess.run(
-                [sys.executable, str(Path(__file__).resolve()), "--check", str(first), str(bundle_path)],
-                capture_output=True,
-                text=True,
-            )
-            require(completed.returncode == 1 and not completed.stderr, f"{label} bundle did not fail through the normal envelope")
-            envelope = json.loads(completed.stdout)
-            require(
-                envelope["outcome"] == "action-required" and expected_gap in envelope["gaps"],
-                f"{label} bundle did not name its normal assessment gap",
-            )
-        print("PASS: assessment receipts bind one deterministic exact subject and revision")
-        print("PASS: versioned bundle resolution, staged-only dirt, and live-subject mutations fail closed")
-        print("PASS: absent reviewer is not applicable; configured reviewer without a cap fails closed")
-        print("PASS: command-backed evidence reruns exact allowlisted commands from isolated exact-revision inputs")
+            values = {
+                "captured_subject": provider_subject,
+                "current_subject": provider_subject,
+                "captured_head": stable_head,
+                "current_head": stable_head,
+                "captured_base_ref": captured_base_ref,
+                "current_base_ref": captured_base_ref,
+                "captured_base_oid": captured_base_oid,
+                "current_base_oid": captured_base_oid,
+                "dirty_paths": {},
+                "provider_readable": True,
+                "provider_head": stable_head,
+            }
+            values.update(overrides)
+            decision, gaps = ownerless_first_push_decision(**values)
+            require(decision == "action-required", f"{label} did not stop publication")
+
+        pre_push_base_repo = Path(temporary) / "pre-push-base"
+        build_repository(pre_push_base_repo)
+        captured_subject, captured_head, captured_base_ref, captured_base_oid, _, _ = inspect_stable_session(
+            pre_push_base_repo,
+            CALLER_AUTHORIZED_ARGV,
+        )
+        pre_push_provider = Path(temporary) / "pre-push-provider.git"
+        run("git", "init", "-q", "--bare", str(pre_push_provider), cwd=pre_push_base_repo)
+        run("git", "remote", "add", "pre-push-provider", str(pre_push_provider), cwd=pre_push_base_repo)
+        run("git", "checkout", "-q", "main", cwd=pre_push_base_repo)
+        (pre_push_base_repo / "README.md").write_text("base advanced before push\n", encoding="utf-8")
+        run("git", "add", "README.md", cwd=pre_push_base_repo)
+        run(
+            "git",
+            "commit",
+            "-q",
+            "-m",
+            "advance base before first push",
+            cwd=pre_push_base_repo,
+            env=git_env("2026-01-02T00:03:00+00:00"),
+        )
+        moved_base_oid = full_base_oid(pre_push_base_repo, captured_base_ref)
+        run("git", "checkout", "-q", "assessment-subject", cwd=pre_push_base_repo)
+        decision, gaps = ownerless_first_push_decision(
+            captured_subject=captured_subject,
+            current_subject=current_subject(pre_push_base_repo),
+            captured_head=captured_head,
+            current_head=full_head(pre_push_base_repo),
+            captured_base_ref=captured_base_ref,
+            current_base_ref=captured_base_ref,
+            captured_base_oid=captured_base_oid,
+            current_base_oid=moved_base_oid,
+            dirty_paths={},
+            provider_readable=True,
+            provider_head=read_provider_head(pre_push_base_repo, "pre-push-provider", provider_subject),
+        )
+        require(decision == "action-required", "base movement before first push did not stop publication")
+        require(
+            f"base moved: {captured_base_ref}@{captured_base_oid} -> {captured_base_ref}@{moved_base_oid}" in gaps,
+            "base movement before first push did not name old/new base identity",
+        )
+
+        post_push_base_repo = Path(temporary) / "post-push-base"
+        build_repository(post_push_base_repo)
+        captured_subject, captured_head, captured_base_ref, captured_base_oid, _, _ = inspect_stable_session(
+            post_push_base_repo,
+            CALLER_AUTHORIZED_ARGV,
+        )
+        post_push_provider = Path(temporary) / "post-push-provider.git"
+        run("git", "init", "-q", "--bare", str(post_push_provider), cwd=post_push_base_repo)
+        run("git", "remote", "add", "post-push-provider", str(post_push_provider), cwd=post_push_base_repo)
+        require(
+            push_captured_oid(post_push_base_repo, "post-push-provider", provider_subject, captured_head).returncode == 0,
+            "post-push base fixture could not push the captured OID",
+        )
+        run("git", "checkout", "-q", "main", cwd=post_push_base_repo)
+        (post_push_base_repo / "README.md").write_text("base advanced after push\n", encoding="utf-8")
+        run("git", "add", "README.md", cwd=post_push_base_repo)
+        run(
+            "git",
+            "commit",
+            "-q",
+            "-m",
+            "advance base before PR open",
+            cwd=post_push_base_repo,
+            env=git_env("2026-01-02T00:04:00+00:00"),
+        )
+        moved_base_oid = full_base_oid(post_push_base_repo, captured_base_ref)
+        run("git", "checkout", "-q", "assessment-subject", cwd=post_push_base_repo)
+        decision, gaps = pre_pr_decision(
+            captured_subject=captured_subject,
+            current_subject=current_subject(post_push_base_repo),
+            captured_head=captured_head,
+            current_head=full_head(post_push_base_repo),
+            captured_base_ref=captured_base_ref,
+            current_base_ref=captured_base_ref,
+            captured_base_oid=captured_base_oid,
+            current_base_oid=moved_base_oid,
+            dirty_paths={},
+            provider_readable=True,
+            provider_head=read_provider_head(post_push_base_repo, "post-push-provider", provider_subject),
+        )
+        require(decision == "action-required", "base movement before PR open did not stop publication")
+        require(
+            f"base moved: {captured_base_ref}@{captured_base_oid} -> {captured_base_ref}@{moved_base_oid}" in gaps,
+            "base movement before PR open did not name old/new base identity",
+        )
+
+    print("PASS: stable deterministic slice ran fixture-quality but omitted Approve for unexecuted steps 3-6 judgment checks")
+    print("PASS: captured non-default base inspection includes a committed path omitted by implicit default inspection")
+    print("PASS: discovered repository checks outside the caller-authorized argv list remain not verified and omit Approve")
+    print("PASS: stable subject/head with a changed base OID omits Approve and names old/new base identity")
+    print("PASS: subject movement, moved head, incomplete inventories, and disallowed checks omit Approve; dirt still offers option 1")
+    print("PASS: an absent provider ref permits first push only when its exact captured OID is present before PR creation")
+    print("PASS: only an exact verified equivalent gate normalizes a deferred sweep class to verified evidence")
+    print("PASS: base movement before first push or PR open stops publication and names old/new base identity")
 
 
-def materialize(destination: Path, bundle_writer: Any = write_json) -> None:
-    try:
-        destination.mkdir(parents=True, exist_ok=False)
-    except FileExistsError as error:
-        raise FixtureError(f"destination already exists: {destination}") from error
-    try:
-        repo = destination / "repo"
-        revision = build_repository(repo)
-        bundle_path = destination / "assessment-receipts.json"
-        bundle_writer(bundle_path, make_bundle(repo, revision))
-    except Exception:
-        shutil.rmtree(destination)
-        raise
-    print(json.dumps({"checkout": str(repo), "repository": SPEC["repository"], "receipt_bundle": str(bundle_path), "subject": SPEC["subject"], "exact_revision": revision}, sort_keys=True))
-
-
-def check_materialized(repo: Path, bundle_path: Path) -> int:
-    input_gaps: list[str] = []
-    try:
-        bundle = json.loads(bundle_path.read_text(encoding="utf-8"))
-    except OSError:
-        bundle = None
-        input_gaps.append("receipt bundle is unreadable")
-    except (UnicodeError, json.JSONDecodeError):
-        bundle = None
-        input_gaps.append("receipt bundle is malformed")
-    result = evaluate(repo, bundle, input_gaps)
-    print(json.dumps(result, indent=2, sort_keys=True))
-    return 0 if result["outcome"] == "pass" else 1
+def materialize(destination: Path) -> None:
+    destination.mkdir(parents=True, exist_ok=False)
+    repo = destination / "checkout"
+    head = build_repository(repo)
+    _, _, base_ref, base_oid, paths, check_results = inspect_stable_session(repo, CALLER_AUTHORIZED_ARGV)
+    print(f"checkout: {repo}")
+    print("subject: assessment-subject")
+    print(f"full head: {head}")
+    print(f"base: {base_ref}@{base_oid}")
+    print(f"inspected paths: {', '.join(sorted(paths))}")
+    print(f"relevant checks: {', '.join(f'{check}: {result}' for check, result in sorted(check_results.items()))}")
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument("--materialize", type=Path)
-    group.add_argument("--check", nargs=2, metavar=("REPO", "RECEIPT_BUNDLE"), type=Path)
+    parser.add_argument("--materialize", type=Path)
     return parser.parse_args()
 
 
@@ -1483,16 +1179,14 @@ def main() -> int:
     args = parse_args()
     if args.materialize:
         materialize(args.materialize)
-        return 0
-    if args.check:
-        return check_materialized(args.check[0], args.check[1])
-    run_suite()
+    else:
+        run_suite()
     return 0
 
 
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except (FixtureError, KeyError, TypeError, json.JSONDecodeError, subprocess.CalledProcessError) as error:
+    except (FixtureError, OSError, subprocess.CalledProcessError) as error:
         print(f"FAIL: {error}", file=sys.stderr)
         raise SystemExit(1)

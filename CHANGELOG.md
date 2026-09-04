@@ -24,10 +24,83 @@ looked" surface. GitHub Releases mirror its entries.
 - Skill test suites may retain a small number of explicitly labeled regression
   controls for load-bearing behavior that the bare and skilled variants both
   pass; those controls never count as evidence of improvement.
-- `checking-pr-readiness` now inventories independent solution simplicity as a
-  late backstop without changing its assessment-only v1 receipt chain, and
-  `checking-merge-readiness` requires a fresh whole-change reviewer before it
-  can recommend merge.
+- `checking-pr-readiness` now inventories solution simplicity, the
+  independent approach-level result from `checking-simplicity`, as a sixth
+  upstream step and late backstop, and `checking-merge-readiness` requires a
+  fresh whole-change reviewer before it can recommend merge.
+- `checking-pr-readiness` later 1 on an Approve menu continues into the
+  installed finishing path in the same conversation. The evidence pack is
+  silent pull-request-body input, not another wait. If no finishing path is
+  installed, the run names that once and stops without re-asking Approve.
+- `checking-pr-readiness` and `checking-merge-readiness` keep option 1 as the
+  reserved Approve or Proceed slot. When that action cannot be taken, number
+  1 stays and names why. The remaining actions have a print order, not fixed
+  menu numbers. Live later options are numbered from 2 without gaps. Each
+  option is a natural sentence rather than a label. Show the checks names
+  the checks this review ran. File or capture follow-up appears only when
+  the brief named leftover work to park. Request changes stays on every
+  PR-readiness menu as the numbered alternative to Approve. `ce-pov` stays
+  a merge-readiness action only on do not merge when that skill is present.
+  A typed 1 on a withheld option-1 row is not Proceed or Approve.
+
+- Repo Gardener's Worker mutation boundary is now host-neutral: it requires an
+  isolated worktree at the authoritative base, host-provided setup when
+  available, supervised completion, and a Worker-owned branch with one
+  unmerged PR. Setup must succeed before repository work, and a clean native
+  Git status is required before the first mutation; unavailable safe mutation
+  falls back to a truthful read-only report.
+
+- `checking-pr-readiness` and `checking-merge-readiness` now split gather from
+  the spoken brief. Helper inventories go to an owner-only temp directory
+  outside the target repository. The brief is an executive recommendation
+  plus numbered live options, a coverage close, and named next work instead
+  of a receipt-vouch or a per-class census. A non-terminal Show the checks
+  option lists each applicable check and its status on request. There is
+  one process: wait for a numbered reply from whoever is talking. A turn is one reply: this reply
+  writes the menu and stops; the next message is the pick. This turn ends
+  when the menu is on screen. Option 1 is Approve or Proceed. Before that
+  choice is accepted, identity is re-read, including staged, unstaged, and
+  untracked content for PR readiness.
+  Matching identity compares stay silent; a moved head or working-tree
+  content change rebuilds. A check named as next work, including code
+  review with no receipt, does not by itself withhold Approve. Spoken next
+  work is remaining owner work after the decision. On approve that is
+  opening the pull request and babysitting it, not unrun review or
+  simplify. Live options are numbered from 1, each number once. On
+  approve, Run a missing step is omitted rather than listed once per gap.
+  Reasons in the brief are about the change under review, not how the gate
+  runs. Captured as
+  `docs/solutions/conventions/do-not-split-human-and-agent-skill-products.md`.
+- Repo Gardener now completes its issue identifier census before every
+  issue-facing lane uses purpose-ranked, admission-bounded reads, preserving
+  trusted-principal and lane limits. Mapped readiness now prioritizes those
+  reads rather than excluding a `needs-planning` estimate-2 issue whose
+  repository evidence supports a safe Worker brief, and the Ready Frontier
+  remains fresh after an authorized issue refinement.
+- Repo Gardener now has a default-off `issue_refinement` policy grant that can
+  delegate one caller-authorized canonical issue batch to Managing Issues while
+  preserving its existing pre-read, apply-once, first-stop, and exact-readback
+  safeguards.
+- Repo Gardener can treat configured ledger paths as an assignment-only overlap
+  exception after repository proof of conflict-safe additive merging, while
+  requiring each Worker to retain base entries and add its own attributable
+  entry; the Orchestrator never writes the shared ledger or resolves later
+  native merge or rebase conflicts.
+- Repo Gardener now gives every unattended Worker the normal
+  `checking-pr-readiness` process: its menu reply ends that turn, and only the
+  Orchestrator may authorize option 1 when Approve was offered and recommended
+  for that exact head. Named Worker-owned gaps from one brief all go back to
+  that Worker; owner-needed briefs stop without a PR. After a PR exists, the
+  scheduled ownerless run invokes merge-readiness and never selects Proceed to
+  merge.
+- `personal-chief-of-staff` Source Access Audits are now a short paragraph:
+  coverage first, then every relevant role and how the read finished, with a
+  "so" clause only when a result limits a claim. No table and no HTML
+  details. Successful reads may share a sentence.
+- Interactive `checking-merge-readiness` option 1 (Proceed to merge) now
+  kicks off one forge merge after the existing fingerprint and host-policy
+  re-check, using the repository's default merge method. A cold "merge this
+  PR" activates the skill but still requires that menu choice.
 - `managing-personal-crm` can recover one bounded public X read after a
   sandbox network or session-state denial only with fresh host approval and
   enforced read-only capabilities. It rejects private-derived query scope,
@@ -56,9 +129,11 @@ looked" surface. GitHub Releases mirror its entries.
   manual run uses one Orchestrator that may assign parallel Workers, each with
   one unmerged pull request, up to `maximum_workers`. Depth has no count.
   Opened and closed tracker comments are the production records; a hash-linked
-  register is not required. Unattended Workers open PRs only through
-  assessment-only `checking-pr-readiness`. In-run `checking-merge-readiness` is
-  read-only feedback and never merges.
+  register is not required. An unattended Worker stops after the normal
+  `checking-pr-readiness` menu; the Orchestrator authorizes option 1 only from
+  an approve brief for that exact head, or sends named Worker-owned gaps back.
+  After a PR exists, the scheduled ownerless run invokes merge-readiness and
+  never selects Proceed to merge.
 - `repo-gardener` now parses `.agents/repo-gardener.yaml` once with PyYAML
   SafeLoader and the existing field schema. Lane inventory uses that mapping
   instead of a second regex grammar. Tags, aliases, merge keys, nulls, and

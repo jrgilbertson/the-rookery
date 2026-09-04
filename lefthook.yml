@@ -1,4 +1,6 @@
 min_version: 2.1.10
+# leftover run grades the tree; it must not install git hooks as a side effect.
+no_auto_install: true
 
 pre-push:
   parallel: true

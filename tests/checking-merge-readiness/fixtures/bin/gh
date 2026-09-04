@@ -19,9 +19,20 @@ Optional env:
 Contract (deliberately small):
   - serve only the skill's fixed read set: pr view --json (incl. merge state),
     pr diff, issue view --json for linked source-issue metadata, api graphql
-    (history + linked-issue comments + branchProtectionRules), and api
-    repos/.../rules/branches/{base} for merge policy
-  - refuse writes and out-of-set verbs
+    (history + linked-issue comments + branchProtectionRules + merge
+    eligibility), and api repos/.../rules/branches/{base} for merge policy
+  - refuse writes and out-of-set verbs unless CMR_ALLOW_MERGE is set, in
+    which case `pr merge` is recorded and may return a specimen result
+  - optional env:
+      CMR_ALLOW_MERGE     non-empty → gated `pr merge` (still refuses
+                          --admin/--auto/--delete-branch, extra tokens, and
+                          missing method)
+      CMR_MERGE_LOG       path to append one JSON object per merge attempt
+                          (JSONL): argv and promptDisabled (GH_PROMPT_DISABLED)
+      CMR_MERGE_STATE     path written as MERGED on success; pr view reads it.
+                          A second merge while this is MERGED is already-merged
+      CMR_MERGE_RESULT    merged (default) | failed | indeterminate |
+                          already_merged
   - refuse a selector that names another pull request
   - refuse an under-fetch of fields the skill depends on (query-text presence)
   - paginate connections (first / after, including -f/-F variables)
@@ -32,11 +43,25 @@ import json
 import os
 import re
 import sys
+import tempfile
 
 WRITE_VERBS = {
     "merge", "close", "reopen", "edit", "comment", "review", "create",
     "delete", "ready", "lock", "unlock", "transfer", "sync",
 }
+
+MERGE_METHODS = ("--merge", "--squash", "--rebase")
+MERGE_FORBIDDEN = ("--admin", "--auto", "--delete-branch")
+MERGE_METHOD_ELIG = {
+    "--merge": "mergeCommitAllowed",
+    "--squash": "squashMergeAllowed",
+    "--rebase": "rebaseMergeAllowed",
+}
+
+PR_SELECTOR_RE = re.compile(
+    r"^(?:https?://([^/]+)/)?([^/\s]+/[^/\s]+?)(?:\.git)?"
+    r"(?:/pull/|#)(\d+)/?$"
+)
 
 # Cheap under-fetch guard aligned once to SKILL.md step 2's floor.
 # Presence check only — not a parser, not a selection-set projector.
@@ -80,17 +105,17 @@ def load():
         die(f"specimen has no forge.json: {root}", 4)
     except json.JSONDecodeError as exc:
         die(f"forge.json is not valid JSON: {exc}", 4)
+    forge["_root"] = root
+    return forge
 
-    def read(name):
-        path = os.path.join(root, name)
-        if not os.path.exists(path):
-            return ""
+
+def specimen_text(forge, name):
+    path = os.path.join(forge["_root"], name)
+    try:
         with open(path) as fh:
             return fh.read()
-
-    forge["_body"] = read("body.md")
-    forge["_diff"] = read("diff.txt")
-    return forge
+    except FileNotFoundError:
+        return ""
 
 
 def selector_check(argv, forge):
@@ -116,14 +141,12 @@ def selector_check(argv, forge):
             continue
         if want_number is not None:
             continue
-        m = re.match(
-            r"^(?:https?://[^/]+/)?([^/\s]+/[^/\s]+?)(?:\.git)?"
-            r"(?:/pull/|#)(\d+)/?$",
-            a,
-        )
+        m = PR_SELECTOR_RE.match(a)
         if m:
-            want_repo = want_repo or m.group(1)
-            want_number = int(m.group(2))
+            url_host, url_repo, url_number = m.group(1), m.group(2), int(m.group(3))
+            if want_repo is None:
+                want_repo = f"{url_host}/{url_repo}" if url_host else url_repo
+            want_number = url_number
         elif a.isdigit():
             want_number = int(a)
         else:
@@ -140,17 +163,17 @@ def selector_check(argv, forge):
             1,
         )
     if want_repo is not None:
-        if want_repo.count("/") == 2:
-            want_repo = want_repo.split("/", 1)[1]
-        if want_repo not in (repo, owner):
+        check_repo = split_host_repo(want_repo, forge)
+        if check_repo not in (repo, owner):
             die(
                 f"no pull request in {want_repo} here; this specimen is {repo}",
                 1,
             )
+    return want_number, want_repo
 
 
 def pr_view(argv, forge):
-    selector_check(argv, forge)
+    want_number, want_repo = selector_check(argv, forge)
     fields = None
     for i, a in enumerate(argv):
         if a == "--json" and i + 1 < len(argv):
@@ -158,7 +181,7 @@ def pr_view(argv, forge):
     full = {
         "number": forge.get("number"),
         "title": forge.get("title", ""),
-        "body": forge.get("_body", ""),
+        "body": specimen_text(forge, "body.md"),
         "state": forge.get("state", "OPEN"),
         "isDraft": forge.get("isDraft", False),
         "merged": forge.get("state") == "MERGED",
@@ -179,7 +202,17 @@ def pr_view(argv, forge):
         "reviewDecision": forge.get("reviewDecision", ""),
         "statusCheckRollup": forge.get("statusCheckRollup", []),
         "closingIssuesReferences": forge.get("closingIssuesReferences", []),
+        "mergeCommit": forge.get("mergeCommit"),
     }
+    state_path = os.environ.get("CMR_MERGE_STATE")
+    require_disposable_path(state_path, "CMR_MERGE_STATE")
+    merged_overlay = already_merged_state(state_path)
+    if merged_overlay:
+        require_certified_merge_selector(want_number, want_repo, forge)
+        full["state"] = "MERGED"
+        full["merged"] = True
+        full["mergedAt"] = forge.get("mergedAt") or "2026-08-25T00:00:00Z"
+    log_path = os.environ.get("CMR_MERGE_LOG")
     if not fields:
         die(
             "`pr view` without --json prints formatted text on real gh; this "
@@ -193,6 +226,13 @@ def pr_view(argv, forge):
             f"{', '.join(unknown)}",
             2,
         )
+    if log_path and want_number is not None and (
+        merged_overlay or merge_log_has_attempt(log_path)
+    ):
+        require_disposable_path(log_path, "CMR_MERGE_LOG")
+        with open(log_path, "a") as fh:
+            json.dump({"kind": "view", "argv": list(argv)}, fh)
+            fh.write("\n")
     print(json.dumps({k: full[k] for k in fields}, indent=2))
 
 
@@ -483,14 +523,325 @@ def rules_branches_payload(forge):
     ]
 
 
+def argv_option(argv, names, attached=(), default=None):
+    for i, a in enumerate(argv):
+        if a in names and i + 1 < len(argv):
+            return argv[i + 1]
+        for prefix in attached:
+            if a.startswith(prefix) and len(a) > len(prefix):
+                return a[len(prefix):]
+    return default
+
+
+def requested_api_host(argv):
+    return argv_option(
+        argv,
+        ("--hostname",),
+        attached=("--hostname=",),
+        default=os.environ.get("GH_HOST") or "github.com",
+    )
+
+
+def has_input_fields(argv):
+    for a in argv:
+        if a in ("-f", "--field", "-F", "--raw-field", "--input", "-i"):
+            return True
+        if a.startswith(("--field=", "--raw-field=", "--input=", "query=")):
+            return True
+        if a.startswith("-f") and len(a) > 2 and not a.startswith("--"):
+            return True
+        if a.startswith("-F") and len(a) > 2:
+            return True
+        if a.startswith("-i") and len(a) > 2 and not a.startswith("--"):
+            return True
+    return False
+
+
+def requested_http_method(argv):
+    got = argv_option(
+        argv,
+        ("-X", "--method"),
+        attached=("--method=", "-X"),
+        default=None,
+    )
+    if got is not None:
+        return got.upper()
+    if has_input_fields(argv):
+        return "POST"
+    return "GET"
+
+
+def require_disposable_path(path, label):
+    if not path:
+        return
+    if os.path.lexists(path) and os.path.islink(path):
+        die(f"{label} must not be a symlink", 3)
+    tmp = os.path.realpath(tempfile.gettempdir())
+    real = os.path.realpath(os.path.abspath(path))
+    if real != tmp and not real.startswith(tmp + os.sep):
+        die(f"{label} must be a temp-directory path", 3)
+
+
+def split_host_repo(selector, forge):
+    """Strip optional HOST/ from a repo selector. Refuse a mismatched host."""
+    if selector.count("/") == 2:
+        sel_host, rest = selector.split("/", 1)
+        want = forge.get("host", "github.com").lower()
+        if sel_host.lower() != want:
+            die(f"host {sel_host} does not match {want}", 1)
+        return rest
+    return selector
+
+
+def refuse_unless_api_host(argv, forge):
+    got = requested_api_host(argv).lower()
+    want = forge.get("host", "github.com").lower()
+    if got != want:
+        die(f"host {got} does not match {want}", 1)
+
+
+def require_certified_pull_request_number(query, bindings, forge):
+    number = resolve_named_integer(
+        connection_args(query, "pullRequest"), "number", bindings
+    )
+    expected = forge.get("number")
+    repo = forge.get("repo", "")
+    if number != expected:
+        die(
+            f"no pull request {number} here; this specimen is "
+            f"{repo}#{expected}",
+            1,
+        )
+
+
+def refuse_unless_repository(requested_owner, requested_name, forge):
+    expected_repository = forge.get("repo", "").removeprefix("github.com/")
+    expected_owner, separator, expected_name = expected_repository.partition("/")
+    if not separator or (
+        requested_owner.lower(), requested_name.lower()
+    ) != (expected_owner.lower(), expected_name.lower()):
+        die(
+            f"no repository {requested_owner}/{requested_name} here; "
+            f"this specimen is {expected_repository}",
+            1,
+        )
+
+
+def bind_certified_identity(query, argv, bindings, forge):
+    """One GraphQL identity gate: host, then owner/name, then PR number."""
+    refuse_unless_api_host(argv, forge)
+    if re.search(r"\brepository\b", query) or re.search(r"\bpullRequest\b", query):
+        repository_args = connection_args(query, "repository")
+        refuse_unless_repository(
+            resolve_named_string(repository_args, "owner", bindings),
+            resolve_named_string(repository_args, "name", bindings),
+            forge,
+        )
+    if re.search(r"\bpullRequest\b", query) or re.search(
+        r"\bisMergeQueueEnabled\b", query
+    ):
+        require_certified_pull_request_number(query, bindings, forge)
+
+
+def eligibility_fields(forge):
+    raw = forge.get("mergeEligibility")
+    if not isinstance(raw, dict):
+        die(
+            "this specimen has no mergeEligibility; eligibility probes "
+            "fail closed",
+            2,
+        )
+    return raw
+
+
+def eligibility_value(elig, key):
+    if key not in elig:
+        die(
+            f"mergeEligibility is missing `{key}`; fail closed rather than "
+            "inventing a default",
+            2,
+        )
+    return elig[key]
+
+
+def parse_merge_argv(argv):
+    """Allowlist: number or URL, --repo, one method flag, --match-head-commit."""
+    forbidden = [f for f in MERGE_FORBIDDEN if f in argv]
+    if forbidden:
+        die(f"`pr merge` refuses {', '.join(forbidden)}", 3)
+    method_flags = [f for f in MERGE_METHODS if f in argv]
+    if len(method_flags) != 1:
+        die("`pr merge` requires exactly one of --merge, --squash, --rebase", 2)
+
+    want_number = None
+    want_repo = None
+    match_oid = None
+    extras = []
+    skip = False
+    for i, a in enumerate(argv):
+        if skip:
+            skip = False
+            continue
+        if a in MERGE_METHODS:
+            continue
+        if a == "--repo" and i + 1 < len(argv):
+            want_repo = argv[i + 1]
+            skip = True
+            continue
+        if a == "--match-head-commit" and i + 1 < len(argv):
+            match_oid = argv[i + 1]
+            skip = True
+            continue
+        if a.startswith("-"):
+            extras.append(a)
+            continue
+        m = PR_SELECTOR_RE.match(a)
+        if m:
+            if want_number is not None:
+                die("`pr merge` accepts at most 1 arg(s), received 2", 2)
+            url_host, url_repo, url_number = m.group(1), m.group(2), int(m.group(3))
+            if want_repo is None:
+                want_repo = f"{url_host}/{url_repo}" if url_host else url_repo
+            want_number = url_number
+            continue
+        if a.isdigit():
+            if want_number is not None:
+                die("`pr merge` accepts at most 1 arg(s), received 2", 2)
+            want_number = int(a)
+            continue
+        extras.append(a)
+    if extras:
+        die(
+            f"`pr merge` refuses extra token(s) {', '.join(extras)}; "
+            "allowlist is number, --repo, one method flag, --match-head-commit",
+            3,
+        )
+    if not match_oid:
+        die("`pr merge` requires --match-head-commit", 2)
+    return want_number, want_repo, method_flags[0], match_oid
+
+
+def require_certified_merge_selector(want_number, want_repo, forge):
+    """Number and repo come from argv only; omitted selectors fail closed."""
+    number = forge.get("number")
+    repo = forge.get("repo", "")
+    if want_number is None or want_repo is None:
+        die(
+            "`pr merge` requires a PR number (or URL) and repo; certified "
+            "selectors are not taken from the specimen",
+            2,
+        )
+    if want_number != number:
+        die(
+            f"no pull request {want_number} here; this specimen is "
+            f"{repo}#{number}",
+            1,
+        )
+    want_repo = split_host_repo(want_repo, forge)
+    if want_repo != repo:
+        die(
+            f"no pull request in {want_repo} here; this specimen is {repo}",
+            1,
+        )
+
+
+def refuse_unless_merge_eligible(method, forge):
+    elig = eligibility_fields(forge)
+    allowed_key = MERGE_METHOD_ELIG[method]
+    if not eligibility_value(elig, allowed_key):
+        die(
+            f"`pr merge` refuses {method}; `{allowed_key}` is not allowed",
+            1,
+        )
+    if eligibility_value(elig, "isMergeQueueEnabled"):
+        die("`pr merge` refuses a merge-queue-governed pull request", 1)
+    if "mergeQueue" in elig and elig["mergeQueue"] is not None:
+        die("`pr merge` refuses a merge-queue-governed pull request", 1)
+
+
+def merge_log_has_attempt(log_path):
+    if not log_path:
+        return False
+    try:
+        with open(log_path) as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    row = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if row.get("kind") == "merge" or (
+                    row.get("kind") is None and isinstance(row.get("argv"), list)
+                ):
+                    return True
+    except FileNotFoundError:
+        return False
+    return False
+
+
+def already_merged_state(state_path):
+    if not state_path:
+        return False
+    try:
+        with open(state_path) as fh:
+            return fh.read().strip() == "MERGED"
+    except FileNotFoundError:
+        return False
+
+
+def pr_merge(argv):
+    if not os.environ.get("CMR_ALLOW_MERGE"):
+        die("`pr merge` writes; this stub is read-only", 3)
+    log_path = os.environ.get("CMR_MERGE_LOG")
+    state_path = os.environ.get("CMR_MERGE_STATE")
+    require_disposable_path(log_path, "CMR_MERGE_LOG")
+    require_disposable_path(state_path, "CMR_MERGE_STATE")
+    if log_path:
+        with open(log_path, "a") as fh:
+            json.dump(
+                {
+                    "kind": "merge",
+                    "argv": list(argv),
+                    "promptDisabled": os.environ.get("GH_PROMPT_DISABLED"),
+                },
+                fh,
+            )
+            fh.write("\n")
+    forge = load()
+    refuse_unless_api_host(argv, forge)
+    want_number, want_repo, method, match_oid = parse_merge_argv(argv)
+    require_certified_merge_selector(want_number, want_repo, forge)
+    expected = forge.get("headRefOid")
+    if match_oid != expected:
+        die(f"head OID {match_oid} does not match {expected}", 1)
+    refuse_unless_merge_eligible(method, forge)
+    result = os.environ.get("CMR_MERGE_RESULT", "merged")
+    if already_merged_state(state_path) or result == "already_merged":
+        if state_path:
+            with open(state_path, "w") as fh:
+                fh.write("MERGED\n")
+        die("pull request is already merged", 1)
+    if result == "merged":
+        if state_path:
+            with open(state_path, "w") as fh:
+                fh.write("MERGED\n")
+        print(f"Merged pull request {forge.get('number')}")
+        return
+    if result == "failed":
+        die("pull request is not mergeable", 1)
+    die("merge result could not be classified", 1)
+
+
 def graphql(argv, forge):
     query = ""
     for i, a in enumerate(argv):
         val = None
         if a in ("-f", "--field", "-F", "--raw-field") and i + 1 < len(argv):
             val = argv[i + 1]
-        elif a.startswith("query="):
-            val = a
+        elif a.startswith(("--field=", "--raw-field=")):
+            val = a.split("=", 1)[1]
         if val and val.startswith("query="):
             query = val[len("query="):]
     if not query:
@@ -503,6 +854,7 @@ def graphql(argv, forge):
         die("`mutation` is a write; this stub serves queries only", 3)
 
     bindings = field_bindings(argv)
+    bind_certified_identity(query, argv, bindings, forge)
     nested_comment_args = connection_args(query, "comments", which="first")
     top_comment_args = connection_args(query, "comments", which="last")
     serves_pull_request = bool(re.search(r"\bpullRequest\b", query))
@@ -536,16 +888,19 @@ def graphql(argv, forge):
         )
         out = []
         for i, node in enumerate(nodes, start=start):
-            node = shape(node)
-            if name == "reviewThreads" and isinstance(node.get("comments"), list):
+            raw_comments = node.get("comments")
+            if name == "reviewThreads" and isinstance(raw_comments, list):
                 inner, _, inner_info = page(
-                    node["comments"],
+                    raw_comments,
                     nested_comment_args,
                     f"reviewThreads[{i}].comments",
                     forge,
                     bindings,
                 )
-                node["comments"] = {"nodes": inner, "pageInfo": inner_info}
+                node = shape({**node, "comments": inner})
+                node["comments"] = {"nodes": node["comments"], "pageInfo": inner_info}
+            else:
+                node = shape(node)
             out.append(node)
         pr[name] = {"nodes": out, "pageInfo": info}
         served_pr = True
@@ -566,21 +921,6 @@ def graphql(argv, forge):
                 "`issue` is requested without " + ", ".join(missing) +
                 "; a real response would omit what the skill depends on",
                 2,
-            )
-        repository_args = connection_args(query, "repository")
-        requested_owner = resolve_named_string(
-            repository_args, "owner", bindings
-        )
-        requested_name = resolve_named_string(repository_args, "name", bindings)
-        expected_repository = forge.get("repo", "").removeprefix("github.com/")
-        expected_owner, separator, expected_name = expected_repository.partition("/")
-        if not separator or (
-            requested_owner.lower(), requested_name.lower()
-        ) != (expected_owner.lower(), expected_name.lower()):
-            die(
-                f"no repository {requested_owner}/{requested_name} here; "
-                f"this specimen is {expected_repository}",
-                1,
             )
         issue_number = resolve_named_integer(
             connection_args(query, "issue"), "number", bindings
@@ -612,44 +952,107 @@ def graphql(argv, forge):
         }
 
     served_protection = bool(re.search(r"\bbranchProtectionRules\b", query))
-    if not served_pr and not served_issue and not served_protection:
+    served_eligibility = bool(
+        re.search(
+            r"\b(mergeCommitAllowed|squashMergeAllowed|rebaseMergeAllowed|"
+            r"viewerDefaultMergeMethod|isMergeQueueEnabled|mergeQueue)\b",
+            query,
+        )
+    )
+    if (
+        not served_pr
+        and not served_issue
+        and not served_protection
+        and not served_eligibility
+    ):
         die(
             "query names none of reviewThreads, reviews, userContentEdits, "
-            "the top-level comments connection, issue comments, or "
-            "branchProtectionRules; "
+            "the top-level comments connection, issue comments, "
+            "branchProtectionRules, or merge eligibility; "
             "this stub serves only the skill's fixed read set",
             2,
         )
 
     repo = {}
+    elig = eligibility_fields(forge) if served_eligibility else None
     if served_pr:
         pr.setdefault("number", forge.get("number"))
+        if re.search(r"\bisMergeQueueEnabled\b", query):
+            pr["isMergeQueueEnabled"] = eligibility_value(
+                elig, "isMergeQueueEnabled"
+            )
         repo["pullRequest"] = pr
     if served_issue:
         repo["issue"] = issue_payload
     if served_protection:
         repo["branchProtectionRules"] = branch_protection_payload(forge)
+    if served_eligibility:
+        for key in (
+            "mergeCommitAllowed",
+            "squashMergeAllowed",
+            "rebaseMergeAllowed",
+            "viewerDefaultMergeMethod",
+        ):
+            if re.search(rf"\b{key}\b", query):
+                repo[key] = eligibility_value(elig, key)
+        if re.search(r"\bmergeQueue\b", query):
+            args = connection_args(query, "mergeQueue")
+            if not args:
+                die(
+                    "`mergeQueue` requires branch bound to the specimen "
+                    "baseRefName; fail closed",
+                    2,
+                )
+            branch = resolve_named_string(args, "branch", bindings)
+            base = forge.get("baseRefName")
+            if not base or branch != base:
+                die(
+                    f"`mergeQueue` branch {branch!r} is not this specimen's "
+                    f"base {base!r}; fail closed",
+                    1,
+                )
+            repo["mergeQueue"] = eligibility_value(elig, "mergeQueue")
+        if re.search(r"\bisMergeQueueEnabled\b", query) and "pullRequest" not in repo:
+            repo["pullRequest"] = {
+                "isMergeQueueEnabled": eligibility_value(
+                    elig, "isMergeQueueEnabled"
+                )
+            }
     print(json.dumps({"data": {"repository": repo}}, indent=2))
 
 
 def api_rest(argv, forge):
-    """Serve GET repos/.../rules/branches/{base} when present in argv."""
-    # argv like: api repos/owner/name/rules/branches/main  or with method GET
-    path = None
-    for a in argv:
-        if a.startswith("repos/") and "/rules/branches/" in a:
-            path = a.split("?", 1)[0]
-            break
-    if path is None:
+    """Serve GET repos/.../rules/branches/{base} (gather host policy)."""
+    method = requested_http_method(argv)
+    if method != "GET":
         die(
-            "only `api graphql` and `api repos/.../rules/branches/{base}` "
-            "are served",
+            f"`gh api` REST eligibility reads are GET; {method} is a write",
             3,
         )
+    path = None
+    for a in argv:
+        if a.startswith("repos/"):
+            path = a.split("?", 1)[0].rstrip("/")
+            break
+    outside = (
+        "only `api graphql` and "
+        "`api repos/.../rules/branches/{base}` are served"
+    )
+    if path is None:
+        die(outside, 3)
+    parts = path.split("/")
+    if (
+        "/rules/branches/" not in path
+        or len(parts) < 6
+        or parts[0] != "repos"
+    ):
+        die(outside, 3)
+    refuse_unless_api_host(argv, forge)
+    refuse_unless_repository(parts[1], parts[2], forge)
     # The branch in the path must be the one this specimen merges into;
     # a real forge answers a rules read for any other branch with a 404.
     base = forge.get("baseRefName", "main")
-    want = path.rstrip("/").partition("/rules/branches/")[2]
+    want = path.partition("/rules/branches/")[2]
     if want != base:
         die(
             f"Not Found (HTTP 404): no branch rules for `{want}` here; "
@@ -689,14 +1092,17 @@ def main():
         if len(argv) < 2:
             die("`pr` needs a subcommand", 2)
         sub = argv[1]
+        if sub == "merge":
+            return pr_merge(argv[2:])
         if sub in WRITE_VERBS:
             die(f"`pr {sub}` writes; this stub is read-only", 3)
         forge = load()
+        refuse_unless_api_host(argv[2:], forge)
         if sub == "view":
             return pr_view(argv[2:], forge)
         if sub == "diff":
             selector_check(argv[2:], forge)
-            sys.stdout.write(forge.get("_diff", ""))
+            sys.stdout.write(specimen_text(forge, "diff.txt"))
             return
         die(f"`pr {sub}` is outside the skill's fixed read set", 3)
 
@@ -715,7 +1121,7 @@ def main():
 
     if argv[0] == "api":
         forge = load()
-        if "graphql" in argv[:3]:
+        if "graphql" in argv:
             return graphql(argv, forge)
         return api_rest(argv[1:], forge)
 

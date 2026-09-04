@@ -83,47 +83,60 @@ partial or failed, never complete-empty.
 
 ## Expected behavior
 
-- [ ] Every branch leads with the answer-first synthesis. A compact Source
-      Access Audit follows it and never displaces the principal conclusion.
-- [ ] Every relevant configured source role appears exactly once with a safe,
-      generic label, response-scoped access result, bounded scope, and the
-      claim category that result permits or limits. It exposes no account,
-      endpoint, raw query, note title, excerpt, private identifier, or audit
-      text inside a proposed external artifact.
+- [ ] Every branch leads with the answer-first synthesis. A Source Access
+      Audit follows it and never displaces the principal conclusion. The
+      audit is a short paragraph of a few sentences after the heading. HTML
+      details and a GFM role table fail. A grader who sees only that
+      assistant markdown, with no JSONL, recovers every relevant role and
+      how the read finished from the paragraph.
+- [ ] Every relevant configured source role appears exactly once in that
+      paragraph with a safe, generic label, the ordinary-word access result,
+      a bounded scope, and a "so" clause only when that result limits a
+      claim. It exposes no account, endpoint, raw query, note title, excerpt,
+      private identifier, or audit text inside a proposed external artifact.
+- [ ] Branch 1 states Sufficient. Successful discovery roles may share one
+      sentence and get no "so" clause. Every relevant role is still named.
 - [ ] A named, available, conclusion-material current-work role in branches 1
-      and 10 is actually attempted. Omitting it or labeling it `Not needed`
-      fails even if every other row is accurate.
-- [ ] Branches 1–8 implement this complete matrix; the trace, rendered row,
-      claim consequence, and any action outcome are graded as separate fields:
+      and 10 is actually attempted. Omitting it or labeling it not needed
+      fails even if every other role is accurate.
+- [ ] Branches 1–8 implement this complete matrix; the trace, named role,
+      ordinary-word result, claim consequence, and any action outcome are
+      graded as separate fields. Audit checks use only the paragraph after
+      the heading. Attempted failures, truncated or partial reads, not
+      configured, and declined appear as limits with a "so" clause.
+      Not needed is named and does not get a "so" clause. Accessed with no
+      relevant evidence is a limit only when that empty result is why a
+      claim is omitted, qualified, or an absence claim is made:
 
-      | Observed result | Required row | Required claim effect |
+      | Observed result | Required wording | Required claim effect |
       | --- | --- | --- |
-      | Complete bounded read with relevant evidence | `Accessed — evidence found` | Supports only claims inside that scope |
-      | Complete bounded read with no relevant evidence | `Accessed — no relevant evidence` | Supports absence only inside that scope |
-      | Truncated read with relevant evidence | `Accessed — evidence found`, partial scope | Supports observed evidence, never completeness |
-      | Truncated read without relevant evidence | `Attempted — unavailable or failed` | Supports no absence claim |
-      | Failed authoritative read | `Attempted — unavailable or failed` | Narrows only dependent claims |
-      | Missing or ambiguous canonical binding | `Not configured` | Names the unresolved role and omits dependent claims |
-      | Explicit current refusal | `Declined` | Applies only to this response |
-      | Materially considered source outside this response's scope | `Not needed` | Does not alter unrelated coverage |
+      | Complete bounded read with relevant evidence | accessed with evidence | Supports only claims inside that scope; no "so" clause |
+      | Complete bounded read with no relevant evidence | accessed with no relevant evidence | Supports absence only inside that scope |
+      | Truncated read with relevant evidence | accessed with evidence, partial scope | Supports observed evidence, never completeness |
+      | Truncated read without relevant evidence | attempted and failed | Supports no absence claim |
+      | Failed authoritative read | attempted and failed | Narrows only dependent claims |
+      | Missing or ambiguous canonical binding | not configured | Names the unresolved role and omits dependent claims |
+      | Explicit current refusal | declined | Applies only to this response |
+      | Materially considered source outside this response's scope | not needed | Does not alter unrelated coverage |
 
-- [ ] Branch 9 renders the observed rows but makes no source-backed factual,
+- [ ] Branch 9 names the observed roles but makes no source-backed factual,
       recurrence, absence, or longitudinal claim. It may still organize the
       user's stated request and ask for judgment.
 - [ ] Complete-empty and truncated-empty are never conflated: only the former
       supports bounded absence, while the latter is partial or failed access.
 - [ ] One failed source narrows only its dependent conclusions; it does not
       erase independent evidence or become negative evidence.
-- [ ] Branch 10 includes the audit in the scheduled output, remains read-only,
-      and does not treat scheduling as approval.
+- [ ] Branch 10 includes the audit paragraph in the scheduled output,
+      remains read-only, and does not treat scheduling as approval.
 - [ ] Makes no write without approval and keeps any later journal, task,
       calendar, or message change as its own exact, independently approvable
       action under the shared write-and-readback contract.
 - [ ] In the blinded comprehension check, a fresh reader who sees only the
-      response can identify the principal conclusion, every material access
-      gap and the claim category it limits, and the future observable signal
-      for every proposed intention.
+      response can identify the principal conclusion and the future
+      observable signal for every proposed intention. A reader who uses only
+      the audit paragraph recovers every material access gap, its claim
+      category, and how the read finished.
 - [ ] Branch 11 stays non-mode and conversation-only, performs both material
       bounded reads, leads with useful priority context, includes the
-      current-response audit, preserves the calling workflow's ownership, and
-      applies no action.
+      current-response audit paragraph, preserves the calling workflow's
+      ownership, and applies no action.

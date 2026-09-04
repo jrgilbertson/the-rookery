@@ -11,6 +11,10 @@ rounds of harness churn on an earlier PR. The product skill is the same
 design; the test surface is thinner. Load-bearing ship claims rest on live
 GitHub and the non-thread trap, not on stub assertion count.
 
+- 2026-09-01 | ecf974879 (working tree) | stub self-check | pass (197/197) | Reserved-slot print contract: option 1 stays on the menu and names why when Proceed cannot be taken; later live options number from 2 without gaps. `skills-ref validate` passed.
+- 2026-08-28 | b7524f37a569c187e85eda7bf6fec7c313ed1463 (baseline) | matched case: agent-mode-never-merges | fail | A fresh read-only Codex context found no agent report path; the normal review reached the owner menu and its merge action.
+- 2026-08-28 | revised U12 candidate | matched case: agent-mode-never-merges | pass | A separate fresh read-only Codex context found a step-6-only report with a merge/debug/do-not-merge recommendation, current head, human-readable findings, and no menu or forge write.
+
 ## Evidence hierarchy
 
 1. **Live GitHub (scenario 11)** — does the skill's fetch contract work?
@@ -258,3 +262,4 @@ network beyond the fixture stub).
 - 2026-08-06 | 8a8dd8b (working tree) | skilled s10 multi-surface | pass (6/6) | do not merge; nadia-sec authz TTL + tobin-sre counters; multi-page fetch
 - 2026-08-06 | 8a8dd8b (working tree) | skilled s11 live #23 | not run | dispatch no-network-beyond-stub constraint
 - 2026-08-06 | 8a8dd8b (working tree) | full skilled constructed battery | pass (13/13) | s1–s10+s1b+s2b+s8b; digests /tmp/cmr-battery-current/readouts
+- 2026-08-29 | working tree | report-only ownerless intent cap | pass (194/194) | The stub fixture verifies that report-only assessment records an unverifiable step-4 intent baseline, applies the ordinary debug cap, and completes the step-6 readout without an owner prompt or forge write.

@@ -55,4 +55,4 @@ jobs:
         run: lefthook validate
 
       - name: Run shared verification group
-        run: lefthook run pre-push --force --no-auto-install --no-tty
+        run: lefthook run pre-push --force --no-tty

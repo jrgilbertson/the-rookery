@@ -1,8 +1,8 @@
 # Declared audit commands across eligible lanes
 
-Provenance: GitHub issue 79 requires owner-declared repository audits to
-produce useful recurring evidence without becoming a general command runner,
-a tenth lane, or an automatic finding path.
+Provenance: GitHub issues 79 and 83 require owner-declared repository audits
+to produce useful recurring evidence without becoming a general command
+runner, a tenth lane, or an automatic finding path.
 
 Use only the installed repo-gardener skill and the synthetic facts below.
 Evaluate all subcases independently. Do not call tools, execute the commands,

@@ -84,13 +84,19 @@ creation and name the blocking gap.
 Immediately before an ownerless first push, re-resolve the captured
 target/base ref and full base OID. Immediately before PR-open, re-resolve the
 captured target/base ref and full base OID; the same reread precedes every
-repaired-head update. At each of those points also pass the revision check
-point (`policy-and-entry-modes.md`), reread the porcelain status above, and
-validate the committed paths against the assignment, identity,
-scope, protected paths, and, where relevant, the ledger base diff. For an
-adopted PR the committed paths are the Worker-authored diff from the captured
-hosted OID. Then reconcile the current local head, exact target/base, and
-native branch and PR overlap as `policy-and-entry-modes.md` defines. An
+repaired-head update. At each of those points also: re-read `.agents/repo-gardener.yaml` from
+the refreshed default branch and require the opening policy revision from the
+brief (a changed, unavailable, or unknown revision stops the action); reread
+the porcelain status above; and validate the committed paths against the
+assignment, identity, scope, and protected paths. Scope is exclude-wins: each
+committed path must match at least one include glob and no exclude glob, and
+no path may be protected. For an adopted PR the committed paths are the
+Worker-authored diff from the captured hosted OID. Then read overlap: the
+intersection of the committed paths with the changed paths of every other
+current native branch and open PR, excluding the Worker's own adopted PR; a
+shared path is permitted only when the brief names it as a union-merged
+ledger and the Worker's diff adds only its own entry while retaining every
+base entry. Any other intersection stops the action. An
 ownerless first push must match the subject and OID the checking skill
 re-read; a repaired-head update must match only its exact
 Orchestrator-authorized repaired subject and OID. Never replace or recapture

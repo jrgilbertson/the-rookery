@@ -27,7 +27,8 @@ instructions, then [policy-and-entry-modes.md](references/policy-and-entry-modes
 [worker-contract.md](references/worker-contract.md), plus
 [measurement-integrity.md](references/measurement-integrity.md) when the
 repository has metrics the host can read. A Worker reads only
-[worker-contract.md](references/worker-contract.md) and its brief.
+[worker-contract.md](references/worker-contract.md), its brief, and the
+target repository's own agent and contribution instructions.
 
 The bundled [policy template](assets/policy-template.yaml) is a fail-closed
 starter, never authority. The only durable repository setup file is

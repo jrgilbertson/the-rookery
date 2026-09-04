@@ -151,13 +151,12 @@ estimate-2 record outside a newest-record sample to be read. A record that
 needs an owner decision remains excluded; the Orchestrator neither guesses
 that decision nor speculatively refines it.
 
-Admission rests on the record's current body, never on a label. Label
-provenance is required only when the mapped estimate is the sole reason a
-record is admitted (the body does not itself bound the change): then read the
-issue events to completion, take the actor of the final `labeled` event that
-leaves that label effective, and prove that actor is the repository owner or
-a trusted collaborator; an unavailable, incomplete, or unproven read excludes
-the record unless it is explicitly caller-owned. An external author, Worker,
+Admission needs the record's current body and, when a mapped label such as
+the estimate contributes to the admission decision, trusted provenance for
+that label: read the issue events to completion, take the actor of the final
+`labeled` event that leaves the label effective, and prove that actor is the
+repository owner or a trusted collaborator. An unavailable, incomplete, or
+unproven read excludes the record unless it is explicitly caller-owned. An external author, Worker,
 or agent may supply evidence but cannot self-qualify a record. Mapped
 readiness is a prioritization hint, not an admission gate: a `needs-planning` record with an
 estimate at most 2 may be admitted when current repository evidence resolves

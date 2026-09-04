@@ -23,7 +23,9 @@ offer Approve.
 Every check reports with one word from this closed set, used consistently and
 without synonyms:
 
-- **verified** — a named receipt supports the claim in the captured gather.
+- **verified** — a named receipt supports the claim in the captured gather,
+  or, for solution simplicity only, this gate's own live fresh dispatch
+  against an unchanged subject does.
 - **attested** — the owner states missing intent (step 4) and no durable
   source exists; recorded as attestation, not as evidence. Do not use this
   word to vouch that a missing review or simplify step happened.
@@ -123,11 +125,17 @@ an empty discovery is a named finding in the gather.
 ### 3. Verify upstream steps from receipts
 
 Record each expected upstream step with a status word in the gather: code
-review, code simplification, browser testing, design critique or audit, and
-learnings capture. Browser testing and design critique apply only to diffs
-that touch user-interface files; record how that classification was decided
-from the paths in the working surface, and surface an uncertain classification
-rather than resolving it silently.
+review, code simplification, solution simplicity, browser testing, design
+critique or audit, and learnings capture. Solution simplicity is the
+independent, approach-level result from `checking-simplicity`. It is primarily
+user-requested and may also run before ungrounded durable machinery enters
+implementation; its place here is a late backstop, not the recommended first
+checkpoint. Before dispatching it, resolve the intent source step 4 uses and
+supply the reviewer with the objective, required behavior, hard constraints,
+and verification criteria. Browser testing and design critique apply only to
+diffs that touch user-interface files; record how that classification was
+decided from the paths in the working surface, and surface an uncertain
+classification rather than resolving it silently.
 
 Use this receipt inventory to decide between verified and the honest
 alternatives:
@@ -139,18 +147,36 @@ alternatives:
   work is not a receipt for it.
 - Browser testing leaves a receipt only when its output or screenshots were
   saved; otherwise it has none.
-- Code review and code simplification leave no durable artifact today, so
-  outside the session that ran them they are not verified.
+- Solution simplicity is verified by this gate's own dispatch, not by a
+  receipt. After step 1, dispatch `checking-simplicity` with the resolved
+  intent source, the repository, branch, and full `HEAD`, and all four path
+  categories with their complete current contents, read from the index or as
+  link objects so a symlink is transferred as its link text and never
+  followed; that skill owns the reviewer's independence and how it reads the
+  subject. The result is verified only when it recommends keeping the current
+  approach, no user question remains, and nothing on the surface changed after
+  the dispatch, confirmed by re-reading the intent source and the full contents
+  of all four path categories rather than comparing path names. A result that
+  recommends simplifying first, or that needs a
+  user decision, is failed until the subject is revised or the decision made
+  and the dispatch repeated. A result that cannot assess yet, or that came
+  from an older or same-context run, is not verified.
+- Code review, code simplification, and solution simplicity leave no durable
+  artifact today, so outside the session that ran them they are not verified.
+  Solution simplicity is never verified by attestation, because its fresh
+  dispatch and unchanged subject are part of the check.
 
-Write verified only with the receipt named in the gather. Where no receipt
-exists, record not verified. Do not ask anyone to vouch that it happened.
-When the companion skill or tooling a check depends on is absent (no compound
-engineering plugin, no design-critique tooling), record that check skipped,
-name what was missing, and run the rest of the checks.
+Write verified only with the receipt named in the gather, or for solution
+simplicity with the live dispatch and unchanged subject named. Where neither
+exists, record not verified. Do not ask anyone to vouch that it happened. When
+the companion skill or tooling a check depends on is absent (no compound
+engineering plugin, no `checking-simplicity`, no design-critique tooling),
+record that check skipped, name what was missing, and run the rest of the
+checks.
 
-Completion: each of the five steps carries one status word in the captured
-gather, every verified step names its receipt, and the user-interface
-classification and its basis are stated.
+Completion: each of the six steps carries one status word in the captured
+gather, every verified step names its receipt or its live dispatch, and the
+user-interface classification and its basis are stated.
 
 ### 4. Compare intent to what was delivered
 
@@ -315,7 +341,7 @@ Example when Approve is live and Request changes is the alternative:
 3. Show the checks this PR-readiness review ran.
 ```
 
-Show the checks is non-terminal: print the list from the captured gather, then the brief and numbered options again. Run a missing step and Explain are non-terminal: when one finishes, **recompose**. Re-read the working surface from step 1 and, when it changed, re-run the steps whose inputs the change touches.
+Show the checks is non-terminal: print the list from the captured gather, then the brief and numbered options again. Run a missing step and Explain are non-terminal: when one finishes, **recompose**. Re-read the working surface from step 1 and, when it changed, re-run the steps whose inputs the change touches. A returned `checking-simplicity` result refreshes step 3 even when no path changed; that skill is read-only and returns its finding to this gate. When that result is a question for the user, print the question with its options and wait; the next reply answers it and goes back to the same reviewer, and only the readout that follows refreshes step 3 and recomposes this menu.
 
 Completion of this turn: the brief and numbered live options are on screen,
 and the run is waiting. It did not pick. It did not re-read identity for

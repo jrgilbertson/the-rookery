@@ -37,7 +37,10 @@ sequence. This liveness gate is additional to the caller's single-writer
 declaration in `tracker-records.md`, never a substitute for it.
 
 Each `run-opened` payload persists bounded, stable original Orchestrator identity
-and caller or automation identity for the host liveness lookup. This remains
+and caller or automation identity for the host liveness lookup; the host's
+own dispatch records, reached through that caller identity, are how recovery
+enumerates the run's Workers. A run whose Workers cannot be enumerated from
+those records has unknown state and keeps later runs caller-only. This remains
 host-neutral: use the existing payload and caller-owned recovery mechanisms,
 never a Repo Gardener state machine or per-Worker tracker records.
 

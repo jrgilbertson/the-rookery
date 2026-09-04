@@ -90,11 +90,11 @@ looked" surface. GitHub Releases mirror its entries.
   delegate one caller-authorized canonical issue batch to Managing Issues while
   preserving its existing pre-read, apply-once, first-stop, and exact-readback
   safeguards.
-- Repo Gardener can treat configured ledger paths as an assignment-only overlap
-  exception after repository proof of conflict-safe additive merging, while
-  requiring each Worker to retain base entries and add its own attributable
-  entry; the Orchestrator never writes the shared ledger or resolves later
-  native merge or rebase conflicts.
+- Repo Gardener treats a shared ledger path as an assignment-only overlap
+  exception (now keyed on the git `merge=union` attribute at the base, per
+  the Removed entry below), while requiring each Worker to retain base
+  entries and add its own attributable entry; the Orchestrator never writes
+  the shared ledger or resolves later native merge or rebase conflicts.
 - Repo Gardener now gives every unattended Worker the normal
   `checking-pr-readiness` process: its menu reply ends that turn, and only the
   Orchestrator may authorize option 1 when Approve was offered and recommended

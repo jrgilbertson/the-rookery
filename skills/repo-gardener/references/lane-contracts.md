@@ -192,8 +192,9 @@ Read current checks, runs, and failure evidence. Require the exact revision and
 check, reproducibility, bounded failure evidence, ownership, and a distinction
 between repository defects and transient provider failure. A failing check on
 an open same-repository PR with a Worker-closable cause is likewise an
-adoption candidate under the same admission conditions (not a draft,
-bot-authored head); a transient provider failure is not.
+adoption candidate under the same admission conditions (not a draft, every
+head commit beyond the base by a provider-marked bot or app account); a
+transient provider failure is not.
 
 ## Repository, test, and code health
 

@@ -177,7 +177,11 @@ child environment built from nothing: exactly `PATH` as the host resolved it,
 `HOME` set to a fresh empty directory inside the private per-run temporary
 area, `TMPDIR` inside that same area, `LANG` and `LC_ALL` as the host has
 them, and `GIT_CONFIG_NOSYSTEM=1`. No other variable is passed, so no token,
-socket, credential helper, or credential file reaches the child. Refuse the
+socket, credential helper, or credential file reaches the child through its
+environment. That guarantee covers the environment only: the argv is passed
+literally, and a credential written into an approved argv is the owner's
+full-file approval decision, which the review above asks the owner to refuse.
+Refuse the
 command locally when the agent cannot build that environment, cannot
 terminate the process group, or the host still grants the child
 external-write authority by another route it can observe. The host's existing network and

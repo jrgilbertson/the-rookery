@@ -118,7 +118,8 @@ After those gates pass, provider state is exhaustive:
 
 - an absent provider ref may be atomically created at the exact authorized
   head only under an absent-ref lease (`--force-with-lease=<ref>:` or a
-  proven equivalent);
+  proven equivalent), and only for a new PR; for an adopted PR an absent
+  hosted head ref is a moved head that stops the unit and is never created;
 - a provider ref already equal to that head needs no push;
 - only an Orchestrator-authorized update of the same Worker's PR, including
   the first push to an adopted PR, may atomically update its exact previously

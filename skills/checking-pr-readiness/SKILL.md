@@ -23,7 +23,9 @@ offer Approve.
 Every check reports with one word from this closed set, used consistently and
 without synonyms:
 
-- **verified** — a named receipt supports the claim in the captured gather.
+- **verified** — a named receipt supports the claim in the captured gather,
+  or, for solution simplicity only, this gate's own live fresh dispatch
+  against an unchanged subject does.
 - **attested** — the owner states missing intent (step 4) and no durable
   source exists; recorded as attestation, not as evidence. Do not use this
   word to vouch that a missing review or simplify step happened.
@@ -163,7 +165,8 @@ alternatives:
   Solution simplicity is never verified by attestation, because its fresh
   dispatch and unchanged subject are part of the check.
 
-Write verified only with the receipt named in the gather. Where no receipt
+Write verified only with the receipt named in the gather, or for solution
+simplicity with the live dispatch and unchanged subject named. Where neither
 exists, record not verified. Do not ask anyone to vouch that it happened. When
 the companion skill or tooling a check depends on is absent (no compound
 engineering plugin, no `checking-simplicity`, no design-critique tooling),

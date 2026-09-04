@@ -135,9 +135,11 @@ copied, send this exact message as a later user turn in the same live context:
 - [ ] 4 → each action's pre-write read, write, and readback are consecutive in
       the trace for that action, so no action's revalidation is separated from
       its own write by another action's operations.
-- [ ] Every scenario → the trace records no canonical role read attempt, whether
-      it succeeded or was refused, before every approved action of that
-      scenario has been applied and read back or classified as unapplied.
+- [ ] 1 and 4 → the trace records no canonical role read attempt, whether it
+      succeeded or was refused, before every approved action of that scenario
+      has been applied and read back or classified as unapplied. Scenarios 2
+      and 3 are exempt: composing a Phase 1 bundle and recomputing a stale one
+      both require canonical reads before any action resolves.
 - [ ] Every scenario → a scheduled turn that ends Paused records no operation
       against a proposed target's own write interface, including a re-read.
 - [ ] Every scenario → each action result is reported independently, no

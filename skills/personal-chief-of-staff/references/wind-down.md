@@ -457,7 +457,13 @@ sourced, and independently reviewable.
 
 Present the Phase 2 review bundle. It carries the journal, any learning or
 strategy action the coaching beat produced, the meaningful-commitments edit,
-and any other Phase 2 effect. It does not repeat a Phase 1 action, and its
+and any other Phase 2 effect.
+
+A run that applied Phase 1 actions and then read Phase 2 sources renders one
+Source Access Audit covering both, separating the action access from the
+discovery reads as SKILL.md requires. Reporting only the pre-write reread and
+post-write readback would describe this as an action-only response and leave
+every source Phase 2 actually opened unnamed. It does not repeat a Phase 1 action, and its
 action numbers continue from Phase 1 under "Prepare one review bundle" in
 `references/source-behavior.md`. Apply only approved actions under the shared
 source rules. Each action uses the bundle's intention shape; another action

@@ -33,8 +33,10 @@ helper read that mapping.
 
 Gardener now does that with PyYAML `SafeLoader` plus an allowlist: boolean
 `true`/`false` only, decimal integers, fail-closed tags, aliases, merge keys,
-nulls, and duplicate keys. `installed_lanes_from_text` calls
-`parse_yaml_mapping` instead of scanning the text. SafeLoader is not the
+nulls, and duplicate keys. The second reader is gone: the `lanes`
+subcommand was removed and the config fixture pins the flow-style,
+deeper-indent, and duplicate-key grammar cases against the validator
+itself. SafeLoader is not the
 schema; `yes`, `0x10`, and overwrite-on-duplicate still have to be refused
 in code.
 

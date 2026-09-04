@@ -16,7 +16,6 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[4]
 FIXTURES = Path(__file__).resolve().parent
 CONTRACT_PATH = ROOT / "skills/repo-gardener/scripts/release_a_contract.py"
-POLICY_PATH = ROOT / "skills/repo-gardener/assets/policy-template.yaml"
 SNAPSHOT_HELPER = FIXTURES.parent / "tracker_snapshots.py"
 sys.dont_write_bytecode = True
 
@@ -114,20 +113,7 @@ def expect_error(payload: dict[str, Any], phrase: str) -> None:
     raise CONTRACT.ContractError(f"expected rejection containing {phrase!r}")
 
 
-def expect_lanes_error(path: Path, phrase: str) -> None:
-    try:
-        invoke("lanes", {}, extra=["--policy", str(path)])
-    except CONTRACT.ContractError as error:
-        CONTRACT.require(phrase in str(error), f"expected {phrase!r}, got {error!s}")
-        return
-    raise CONTRACT.ContractError(f"expected lanes rejection containing {phrase!r}")
-
-
-EXPECTED_LANES = {"schema": "repo-gardener-lanes-result", "lanes": list(CONTRACT.RELEASE_A_LANES)}
-
-
 def main() -> int:
-    policy_text = POLICY_PATH.read_text(encoding="utf-8")
     run_id = "run:synthetic:two-comments"
     base = SNAPSHOTS.empty_tracker()
     opened = prepare(base, "run-opened", run_id)
@@ -295,79 +281,9 @@ def main() -> int:
         poisoned[forbidden] = True
         expect_error(poisoned, "unexpected")
 
-    lanes = invoke("lanes", {}, extra=["--policy", str(POLICY_PATH)])
-    CONTRACT.require(
-        lanes == EXPECTED_LANES,
-        f"nine-lane inventory drifted: {lanes!r}",
-    )
-    flow_policy = policy_text.replace(
-        "  dependency-and-vulnerability:\n    mutation: false\n    audit_commands: []\n",
-        "  dependency-and-vulnerability: {mutation: false, audit_commands: [[npm, run, audit]]}\n",
-    )
-    with tempfile.TemporaryDirectory() as directory:
-        flow_path = Path(directory) / "policy.yaml"
-        flow_path.write_text(flow_policy, encoding="utf-8")
-        flow_lanes = invoke("lanes", {}, extra=["--policy", str(flow_path)])
-        CONTRACT.require(
-            flow_lanes == EXPECTED_LANES,
-            f"flow-style lanes inventory drifted: {flow_lanes!r}",
-        )
-
-        invalid_policy_cases = {
-            "missing.yaml": (
-                policy_text.replace(
-                    "  dependency-and-vulnerability:\n    mutation: false\n    audit_commands: []\n",
-                    "",
-                ),
-                "missing key: dependency-and-vulnerability",
-            ),
-            "extra.yaml": (
-                policy_text.replace(
-                    "  issue-backlog-and-customer-feedback-triage: {}\n",
-                    "  issue-backlog-and-customer-feedback-triage: {}\n  extra-lane: {}\n",
-                ),
-                "unexpected key: extra-lane",
-            ),
-            "duplicate.yaml": (
-                policy_text.replace(
-                    "  issue-implementation:\n",
-                    "  dependency-and-vulnerability: {mutation: false, audit_commands: []}\n  issue-implementation:\n",
-                ),
-                "duplicate key 'dependency-and-vulnerability'",
-            ),
-            "reordered.yaml": (
-                policy_text.replace(
-                    "  dependency-and-vulnerability:\n    mutation: false\n    audit_commands: []\n  # Ready, unblocked implementation issues in the issue source.\n  issue-implementation:\n    mutation: false\n",
-                    "  issue-implementation:\n    mutation: false\n  dependency-and-vulnerability:\n    mutation: false\n    audit_commands: []\n",
-                ),
-                "lanes must name every contracted lane in order",
-            ),
-        }
-        for filename, (text, phrase) in invalid_policy_cases.items():
-            invalid_path = Path(directory) / filename
-            invalid_path.write_text(text, encoding="utf-8")
-            expect_lanes_error(invalid_path, phrase)
-        four_space_lines = []
-        in_lanes = False
-        for line in policy_text.splitlines():
-            if line.startswith("lanes:"):
-                in_lanes = True
-                four_space_lines.append(line)
-                continue
-            if in_lanes and line and not line[0].isspace():
-                in_lanes = False
-            four_space_lines.append("  " + line if in_lanes and line else line)
-        four_space_path = Path(directory) / "four-space-policy.yaml"
-        four_space_path.write_text("\n".join(four_space_lines) + "\n", encoding="utf-8")
-        four_space_lanes = invoke("lanes", {}, extra=["--policy", str(four_space_path)])
-        CONTRACT.require(
-            four_space_lanes == EXPECTED_LANES,
-            f"four-space lanes inventory drifted: {four_space_lanes!r}",
-        )
-
     CONTRACT.require(CONTRACT.RUN_RECORD_BEGIN == "<!-- orchestrator:run-record:begin -->", "run-record begin marker drifted")
     CONTRACT.require(CONTRACT.RUN_RECORD_END == "<!-- orchestrator:run-record:end -->", "run-record end marker drifted")
-    for obsolete in ("normalize-github-register", "completion-v1", "gates-v1", "capacity-v1", "reconciliation-v2", "effect-v1", "run-records-v1", "lanes-v1"):
+    for obsolete in ("normalize-github-register", "completion-v1", "gates-v1", "capacity-v1", "reconciliation-v2", "effect-v1", "run-records-v1", "lanes-v1", "lanes", "validate-body"):
         completed = subprocess.run(
             [sys.executable, str(CONTRACT_PATH), obsolete, "--input", "-"],
             input="{}",
@@ -449,20 +365,6 @@ def main() -> int:
         oversized.returncode == 1 and "standard input exceeds" in oversized.stderr,
         "oversized provider input was not rejected before JSON parsing",
     )
-    with tempfile.TemporaryDirectory(prefix="repo-gardener-input-limit-") as temporary:
-        oversized_body = Path(temporary) / "oversized-body.md"
-        oversized_body.write_text("x" * (CONTRACT.BODY_LIMIT + 1), encoding="utf-8")
-        body_file = subprocess.run(
-            [sys.executable, str(CONTRACT_PATH), "validate-body", "--body", str(oversized_body)],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        CONTRACT.require(
-            body_file.returncode == 1 and "managed body exceeds" in body_file.stderr,
-            "oversized managed body was not rejected before decoding",
-        )
-
     print("PASS: exact two-comment run identity without hash fields")
     print("PASS: denied close cannot mint a closed run")
     print("PASS: mention-free identity, pagination, count, duplicate, reversed, and interrupted records fail closed")

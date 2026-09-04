@@ -23,7 +23,8 @@ The Orchestrator reads the target repository's durable file and
 instructions, then [policy-and-entry-modes.md](references/policy-and-entry-modes.md),
 [reconciliation.md](references/reconciliation.md),
 [lane-contracts.md](references/lane-contracts.md), and
-[tracker-records.md](references/tracker-records.md), plus
+[tracker-records.md](references/tracker-records.md), and
+[worker-contract.md](references/worker-contract.md), plus
 [measurement-integrity.md](references/measurement-integrity.md) when the
 repository has metrics the host can read. A Worker reads only
 [worker-contract.md](references/worker-contract.md) and its brief.
@@ -35,14 +36,12 @@ checks; nothing else in the skill is executable:
 
 ```text
 python3 scripts/config_check.py --repo-root ROOT --config .agents/repo-gardener.yaml
-python3 scripts/release_a_contract.py lanes --policy .agents/repo-gardener.yaml
 python3 scripts/release_a_contract.py normalize-github-tracker --input SNAPSHOT.json
 python3 scripts/release_a_contract.py effect --input EFFECT.json
 python3 scripts/release_a_contract.py run-records --input RUN_RECORDS.json
 ```
 
-`lanes` lists the installed lanes; `normalize-github-tracker` structurally
-normalizes a raw tracker snapshot; `effect` prepares (`phase: prepare`) and
+`normalize-github-tracker` structurally normalizes a raw tracker snapshot; `effect` prepares (`phase: prepare`) and
 verifies (`phase: verify`) one tracker write; `run-records` checks two-record
 identity for one run ID. `tracker-records.md` says when each runs.
 

@@ -172,18 +172,15 @@ and an already-present top-level executable resolved without installing or
 fetching it.
 
 Run the command as a direct argv child process from the repository root, in
-its own process group, with a fixed ten-minute maximum, and with a child
-environment that holds no provider or production credential: remove
-`GITHUB_TOKEN`, `GH_TOKEN`, `SSH_AUTH_SOCK`, `GPG_AGENT_INFO`,
-`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`, and every
-variable whose name ends in `_TOKEN`, `_SECRET`, `_KEY`, or `_PASSWORD`; and
-point file-based credential lookups at an empty directory (`HOME`,
-`XDG_CONFIG_HOME`, `GH_CONFIG_DIR`, `NPM_CONFIG_USERCONFIG`,
-`AWS_SHARED_CREDENTIALS_FILE`, `AWS_CONFIG_FILE`) with
-`GIT_CONFIG_GLOBAL=/dev/null` and `GIT_CONFIG_NOSYSTEM=1`. Refuse the command
-locally when the agent cannot set that child environment, cannot terminate
-the process group, or the host still grants the child external-write
-authority by another route it can observe. The host's existing network and
+its own process group, with a fixed ten-minute maximum, and with an explicit
+child environment built from nothing: exactly `PATH` as the host resolved it,
+`HOME` set to a fresh empty directory inside the private per-run temporary
+area, `TMPDIR` inside that same area, `LANG` and `LC_ALL` as the host has
+them, and `GIT_CONFIG_NOSYSTEM=1`. No other variable is passed, so no token,
+socket, credential helper, or credential file reaches the child. Refuse the
+command locally when the agent cannot build that environment, cannot
+terminate the process group, or the host still grants the child
+external-write authority by another route it can observe. The host's existing network and
 filesystem controls remain in force; the declaration neither broadens them
 nor proves read-only behavior, and this is not an OS sandbox. Never join tokens into a shell command, substitute another
 invocation, retry automatically, or install anything. After every launch,
@@ -206,23 +203,16 @@ captured hosted head. A rename counts both its old and new path.
 
 ## Overlap
 
-Overlap is the intersection of the Worker's planned (or, at publication,
-committed) changed paths with the changed paths of other current native
-branches and PRs. A PR's changed paths are its native file list. A branch
-without an open PR contributes `git diff --name-only $(git merge-base <base
-OID> <branch>) <branch>`; a branch with no merge-base or an unreadable diff is
-an unknown read, and a branch already merged into the base contributes no
-paths. A PR elsewhere in the same directory, lane, or package manager is not
-overlap. A Worker's own branch and its adopted PR's head branch are excluded
-from its overlap read, and no
-two Workers adopt the same PR. The only shared-path exception is a path whose
-git `merge` attribute is `union` at the authoritative base, for additive
-entries, between Workers selected in the same assignment decision;
-`reconciliation.md` owns that read. Read overlap immediately before every
-Worker dispatch and again at every publication gate. An unavailable or
-unknown read, or a current overlap, denies only that dispatch or publication
-and its dependents; other Workers and read-only sensing continue.
-Already-open PRs stay native objects.
+`worker-contract.md` defines overlap: changed-path intersection with every
+other current native branch and open PR, how each contributes its paths, and
+the one union-ledger exception, whose attribute read `reconciliation.md`
+owns. The Orchestrator applies that same definition to the Worker's planned
+paths immediately before every dispatch; the Worker applies it to its
+committed paths at every publication gate. A PR elsewhere in the same
+directory, lane, or package manager is not overlap, and no two Workers adopt
+the same PR. An unavailable or unknown read, or a current overlap, denies
+only that dispatch or publication and its dependents; other Workers and
+read-only sensing continue. Already-open PRs stay native objects.
 
 Scope paths are normalized repository-relative paths with no traversal.
 Exclude wins: each authored path must match at least one include glob and no

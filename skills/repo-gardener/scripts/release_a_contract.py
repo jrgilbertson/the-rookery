@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import importlib.util
 import json
 import re
 import sys
@@ -22,17 +21,6 @@ IDENTITY_LIMIT = 128
 RECEIPT_LIMIT = 16 * 1024
 BODY_LIMIT = 48 * 1024
 INPUT_LIMIT = 8 * 1024 * 1024
-RELEASE_A_LANES = (
-    "dependency-and-vulnerability",
-    "issue-implementation",
-    "ci-and-failing-test",
-    "repository-test-and-code-health",
-    "documentation-changelog-and-release-note",
-    "runtime-error-and-alert",
-    "risk-scoped-qa-and-regression",
-    "security-secret-and-static-analysis",
-    "issue-backlog-and-customer-feedback-triage",
-)
 TRIAGE_LANE = "issue-backlog-and-customer-feedback-triage"
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 NOTIFICATION_CAPABLE_MENTION = re.compile(
@@ -72,7 +60,6 @@ EFFECT_PREPARED_FIELDS = {
     "comment",
 }
 RESERVED_REPORT_SEQUENCES = (RUN_RECORD_BEGIN, RUN_RECORD_END)
-_CONFIG_CHECK: Any = None
 
 
 class ContractError(Exception):
@@ -156,34 +143,6 @@ def validate_body(body: Any) -> int:
     size = len(body.encode("utf-8"))
     require(size <= BODY_LIMIT, f"managed body exceeds {BODY_LIMIT} UTF-8 bytes")
     return size
-
-
-def _config_check_module() -> Any:
-    global _CONFIG_CHECK
-    if _CONFIG_CHECK is None:
-        path = Path(__file__).resolve().parent / "config_check.py"
-        spec = importlib.util.spec_from_file_location("repo_gardener_config_check", path)
-        require(spec is not None and spec.loader is not None, "config validator is missing")
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        _CONFIG_CHECK = module
-    return _CONFIG_CHECK
-
-
-def installed_lanes_from_text(text: str) -> list[str]:
-    require(isinstance(text, str), "policy must be text")
-    config_check = _config_check_module()
-    try:
-        mapping = config_check.parse_yaml_mapping(text)
-        require("lanes" in mapping, "policy must define top-level lanes exactly once")
-        lanes = config_check.normalize_lanes(mapping["lanes"])
-    except config_check.ConfigError as error:
-        raise ContractError(str(error)) from error
-    result = list(lanes)
-    require(bool(result), "policy installed lane inventory is empty")
-    require(len(result) == len(set(result)), "policy installed lane inventory contains duplicates")
-    require(tuple(result) == RELEASE_A_LANES, "policy installed lane inventory differs from the public nine-lane contract")
-    return result
 
 
 def _extract_marked_json(body: str, begin: str, end: str, label: str) -> tuple[str, dict[str, Any]]:
@@ -646,20 +605,13 @@ def _schema_input(value: Any, schema: str, fields: set[str]) -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="command", required=True)
-    body_parser = subparsers.add_parser("validate-body")
-    body_parser.add_argument("--body", type=Path, required=True)
     snapshot_parser = subparsers.add_parser("normalize-github-tracker")
     snapshot_parser.add_argument("--input", required=True)
     for command in ("effect", "run-records"):
         input_parser = subparsers.add_parser(command)
         input_parser.add_argument("--input", required=True)
-    lanes_parser = subparsers.add_parser("lanes")
-    lanes_parser.add_argument("--policy", type=Path, required=True)
     args = parser.parse_args()
-    if args.command == "validate-body":
-        body = read_bounded_text(args.body, "managed body", BODY_LIMIT)
-        result = {"body_bytes": validate_body(body)}
-    elif args.command == "normalize-github-tracker":
+    if args.command == "normalize-github-tracker":
         result = normalize_github_tracker_snapshot(_load_input(args.input))
     elif args.command == "effect":
         data = require_object(_load_input(args.input), "effect input")
@@ -687,11 +639,6 @@ def main() -> int:
             {"run_id", "closed", "post_read"},
         )
         result = verify_run_records(data["run_id"], data["closed"], data["post_read"])
-    elif args.command == "lanes":
-        result = {
-            "schema": "repo-gardener-lanes-result",
-            "lanes": installed_lanes_from_text(read_bounded_text(args.policy, "policy")),
-        }
     else:
         raise ContractError(f"unknown command: {args.command}")
     print(json.dumps(result, sort_keys=True))

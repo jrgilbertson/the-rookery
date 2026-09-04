@@ -176,6 +176,13 @@ looked" surface. GitHub Releases mirror its entries.
   paths, adoption denies a head ref shared by another open PR, status values
   are one table, and setup proposes `.agents/**`, `.github/**`, and gate
   configuration as protected paths.
+- `repo-gardener` scripts expose three subcommands (`normalize-github-tracker`,
+  `effect`, `run-records`); `lanes` and `validate-body` duplicated checks the
+  validator and `effect` already make, and the one-parser grammar pins now
+  live in the config fixture. Declared audits run in an explicit child
+  environment built from nothing rather than a credential deny-list. Overlap
+  is defined once, in `worker-contract.md`, which the Orchestrator now loads
+  too.
 - `repo-gardener` no longer accepts `evidence_sources` or `shared_ledger_paths`
   in `.agents/repo-gardener.yaml`; both are unexpected keys. The shared-ledger
   overlap exception is keyed on the git `merge` attribute being `union` at the

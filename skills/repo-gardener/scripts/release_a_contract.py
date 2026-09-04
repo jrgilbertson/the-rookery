@@ -58,7 +58,11 @@ EFFECT_PREPARED_FIELDS = {
     "body",
     "comment",
 }
-RESERVED_REPORT_SEQUENCES = (RUN_RECORD_BEGIN, RUN_RECORD_END)
+# The pre-version marker pair is still read by the liveness gate, so prepared
+# report text may not embed it either.
+LEGACY_RUN_RECORD_BEGIN = "<!-- orchestrator:run-record:v1:begin -->"
+LEGACY_RUN_RECORD_END = "<!-- orchestrator:run-record:v1:end -->"
+RESERVED_REPORT_SEQUENCES = (RUN_RECORD_BEGIN, RUN_RECORD_END, LEGACY_RUN_RECORD_BEGIN, LEGACY_RUN_RECORD_END)
 
 
 class ContractError(Exception):

@@ -1,81 +1,62 @@
 # Administrative Sweep
 
-Wind-down and Weekly read this before composing their sweep. Quarterly does
-not run a sweep and does not read this file.
+Wind-down and Weekly sweep the canonical records their review touches.
+Quarterly runs no sweep. Surface records that evidence shows need correction
+or a decision, plus tasks due in the planning window. Keep healthy records out
+of the sweep: "None of three open tasks qualified" reports coverage; listing
+their titles or dates adds a task dump. Zero findings is valid.
 
-Modes that correct sources run one sweep over the canonical records the review
-touches. Propose exactly one independently approvable action for every record
-the window's evidence shows is now wrong or now needs a decision, and list
-nothing that is healthy. Zero rows is a valid result and is reported as such.
+## Set the dates
 
-Reporting the sweep's coverage is not the same as listing what it cleared. Name
-the record kinds the sweep covered and say that none qualified. Then stop.
+| Mode | Closing day | Planning window, inclusive |
+| --- | --- | --- |
+| Wind-down | Local day being closed | Following local day |
+| Weekly | Last day of the reviewed week | Following day through the last day of the coming week |
 
-How many records the sweep covered is useful and may be said. Which ones they
-were is a task-list dump. "None of the three open
-tasks qualified" reports coverage. "The three open tasks are due 2026-09-24,
-2026-10-02, and 2026-10-15, none overdue" identifies each healthy record and is
-the failure. A healthy record's title, date, or other
-identifying detail belongs in neither the sweep nor the bundle.
+Use the planning window's last day as the target day. When a later-day resume
+requires recomputing the bundle under "End and resume honestly" in
+`source-behavior.md`, re-establish these dates before recomputing membership.
+Wind-down retains its original journal date as its mode reference requires.
 
-The mode supplies the window as two dates: a closing day and a target day.
-Read the row definitions below against those two dates as the window's start
-and end. A mode whose window spans a range still supplies a single closing
-day and a single target day for that range; it is not forced to pretend the
-range is a single closing moment.
+## Find corrections and planning context
 
-Cover these records:
+Cover task state, calendar drift (time, participants, or existence), CRM contact
+dates and Person effects through the companion, owed or incorrect
+communication text, repository or issue state, and strategy or learning
+updates already supported by dated durable evidence.
 
-- Tasks, as the rows defined below.
-- Calendar drift, where an event's time, participants, or existence no longer
-  matches the evidence.
-- CRM contact dates and Person effects, routed through the companion below.
-- Communication text the evidence shows is owed or now wrong.
-- Repository and issue records whose state no longer matches observed work.
-- Strategy or learning updates that dated durable evidence already supports.
+Read open tasks through the configured canonical task or issue workflow:
 
-Read open tasks through the caller's configured canonical task or issue
-workflow, and cover:
+| Task finding | Condition | Treatment |
+| --- | --- | --- |
+| Due-date conflict | Due date has passed but earliest-begin (`not_before`) is still future | Propose a resolution instead of an ordinary overdue row. |
+| Overdue | Due before the closing day | Propose a resolution. |
+| Follow-up due | Follow-up date on or before the closing day | Treat as overdue and propose a resolution. |
+| Upcoming | Due anywhere in the inclusive planning window | Feed the plan; propose an action only when the plan cannot hold it. |
+| At risk | Due after the planning window, but remaining work cannot fit the free calendar capacity from the window's first day through the due date | State that capacity evidence and propose a resolution. |
 
-- open tasks due before the closing day;
-- open tasks due on the target day;
-- tasks whose follow-up date falls on or before the closing day, treated like
-  overdue tasks;
-- later-dated tasks that are at risk, meaning the task's remaining work cannot
-  fit the free capacity between the target day and its due date as read from
-  the calendars. State that calendar or capacity evidence in the row;
-- an open task whose due date has passed while its earliest-begin property
-  (`not_before` in that workflow) is still in the future. This is a
-  due-date-conflict row with its own proposed resolution, not an ordinary
-  overdue row.
+For each correction, propose one independently approvable action per record.
+Combine overlapping task findings into that row. For an overdue, follow-up-due,
+due-date-conflict, or at-risk task, choose a new due date, mark done, cancel,
+remove the due date, or record waiting context. Cite evidence explaining the
+choice; when it does not settle the choice, label the recommendation as an
+inference awaiting approval.
 
-Each overdue, follow-up-due, or due-date-conflict row proposes one resolution:
-a new due date, mark done, cancel, remove the due date, or record waiting
-context. Cite the window's evidence when it explains the choice, and label the
-resolution as the agent's inference when no evidence explains it. A
-due-tomorrow row feeds the next-day plan instead; propose an action for it only
-when that plan cannot hold it.
+Include content required by the canonical workflow in the proposed effect:
+completion needs a completed definition of done and result or deliverables;
+cancellation needs a reason; waiting needs a party and follow-up date. Draft
+and write are one proposed record change, not separate actions. Never invent
+source state to fill these fields.
 
-Some resolutions need content the canonical task workflow requires before it
-accepts the write: a completed definition of done plus a result or deliverables
-section to close a task, a cancellation reason to cancel one, and both a
-waiting party and a follow-up date to record waiting. Draft that content inside
-the row's proposed effect so the user approves the exact content before the
-write. Do not split the row into a draft action and a separate write action;
-one record still gets one action.
+## Apply through the owning workflow
 
-Read and write task state only through that configured canonical workflow.
-Never create a second task list. If the workflow, the exact target, or its
-write or readback path is unavailable or ambiguous, report the task rows
-**Manual**, name the gap, treat coverage for task-dependent conclusions as
-**Partial**, and continue the rest of the mode from the evidence that remains.
-Never invent a due date, status, or waiting context as a substitute.
+Task reads and approved writes use the configured canonical workflow; create
+no second task list. If that workflow, exact target, write, or readback path is
+unavailable or ambiguous, report affected task actions **Manual**, name the
+gap, mark task-dependent coverage **Partial**, and continue with the remaining
+evidence. Relationship effects use the shared companion rules. All effects
+retain the shared exact-approval and readback requirements.
 
-When a paused bundle is resumed under "End and resume honestly" in
-`source-behavior.md`, the mode re-establishes its two dates as it would for a
-fresh run, and the sweep recomputes against that new pair. Recomputing against
-the pair the paused bundle carried only reproduces the same stale membership.
-
-Completion: every record the window's evidence shows is wrong or undecided has
-exactly one proposed action, nothing healthy is listed, and a zero-row sweep or
-an unavailable task workflow is reported honestly.
+Completion: every qualifying correction has one proposed action, upcoming
+context feeds the plan, healthy records remain unlisted, and coverage gaps or
+zero findings are reported honestly.

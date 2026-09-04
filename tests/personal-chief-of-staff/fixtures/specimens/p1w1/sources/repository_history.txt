@@ -1,1 +1,2 @@
 Repository history confirms the 2026-08-05 integration stream cleared a release-critical blocker.
+Work history independently confirms that urgent internal requests displaced the planned proof blocks on 2026-08-03, 2026-08-04, and 2026-08-06.

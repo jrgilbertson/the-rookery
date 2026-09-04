@@ -40,10 +40,11 @@ start a full CRM catch-up.
 A sweep of canonical records, run during a wind-down or weekly review, that
 proposes exactly one independently approvable action for every record the
 evidence shows is now wrong or needs a decision, including overdue,
-follow-up-due, and at-risk tasks. A due-tomorrow task ordinarily feeds the
-next-day plan instead; the sweep proposes an action for it only when that plan
-cannot hold it. Wind-down runs the sweep as its first phase and applies and
-reads back approved actions before coaching or journal drafting begins.
+follow-up-due, and at-risk tasks. Upcoming tasks, due tomorrow in Wind-down
+or anywhere in the coming week in Weekly, ordinarily feed the plan instead;
+the sweep proposes an action for one only when that plan cannot hold it.
+Wind-down runs the sweep as its first phase and applies and reads back approved
+actions before coaching or journal drafting begins.
 Weekly runs the sweep while reconstructing the week and carries its rows into
 the single review bundle presented at the end of the run. It lists nothing
 that is healthy and never creates a second task list.

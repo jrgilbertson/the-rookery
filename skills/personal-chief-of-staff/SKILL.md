@@ -7,174 +7,77 @@ compatibility: Requires access to the user's chosen authoritative sources. Obsid
 
 # Personal Chief of Staff
 
-Turn live personal and work evidence into an interactive review that helps the
-user orient, act, reflect, and learn. The user's existing systems remain
-authoritative; this skill adds no database, run ledger, cache, or generated
-brief archive.
+Help the user review current evidence, correct their sources, and choose what
+comes next. Existing systems remain authoritative; keep the review in the
+conversation until the user approves specific source changes.
 
-## Resolve visible action responses first
+## Route the current message
 
-Before selecting a mode, determine whether the current message approves, edits,
-defers, skips, declines, revisits, or otherwise decides actions from a visible
-chief-of-staff bundle. Resolve the response against that exact bundle and its
-originating mode. Do not infer an action from a bare number when the visible
-context does not identify it.
+Read [source-behavior.md](references/source-behavior.md) and
+[review-bundle.md](assets/review-bundle.md) before source access on every path.
+Then resolve the message in this order:
 
-For each decided action, use its displayed identity, target, effect, and
-approval state. Read both shared resources,
-[references/source-behavior.md](references/source-behavior.md) and
-[assets/review-bundle.md](assets/review-bundle.md), plus the originating mode
-reference, then follow their existing shared and mode-specific application
-rules. For an approved Person-note, relationship Task, CRM-derived unrelated
-work, or CRM-derived writing-backlog effect, use the available
-`managing-personal-crm` companion in embedded mode and follow its
-`references/applying-approved-actions.md` semantics. Route CRM-derived
-unrelated work through the caller's configured canonical task or issue
-workflow and exact displayed destination; route a writing-backlog effect only
-through the configured canonical writing workflow and exact displayed
-destination. For either, search that destination for complete-meaning
-equivalence immediately before mutation. Report an equivalent that has
-appeared as **Already satisfied**; otherwise apply once and read the exact
-target back through the same authoritative interface. The chief-of-staff
-workflow keeps the action number, approval flow, result, and completion state;
-the companion creates no nested bundle. If the companion or the required
-canonical workflow, exact destination, search, write, or readback path is
-unavailable or ambiguous, report that relationship-derived action **Manual**
-rather than applying it under generic source rules or another destination.
+1. **Visible action decisions:** bind approvals, edits, deferrals, and skips to
+   the exact displayed bundle and its originating mode. Load that mode's
+   reference and follow the shared application rules, including the CRM
+   companion rules for relationship-derived effects. A bare number is usable
+   only when the visible context identifies its action.
+2. **Answers to a Frontier Round:** interpret numbers against the most recent
+   question round and continue the mode and phase that asked it.
+3. **A new review:** select one mode below. An explicit mode wins.
+4. **Cross-source context for another workflow:** retrieve only what the
+   caller's decision needs, return the context with its Source Access Audit,
+   and leave the narrower operation with the caller. This path opens no mode.
 
-For CRM-derived communication text, keep the exact displayed text in the
-conversation only. Never send it, create a draft, or create another artifact.
-If approved unchanged, report the chief-of-staff action **Already satisfied**
-because the editable text is already visible. An edit produces a revised
-proposal under the same chief-of-staff action number and requires a new exact
-approval. Keep its result and completion state with this workflow; do not use a
-generic mutation fallback or let the companion create a nested bundle.
+An action-only reply performs the current pre-write checks and readback without
+new review discovery. A reply to an earlier bundle in an unfinished run
+continues that run: Wind-down Phase 1 decisions lead into Phase 2 without a new
+review request.
 
-An action-only response does not run new review discovery or prepare another
-review. It still performs every immediate pre-write target and destination
-re-read, equivalence, drift, dependency, and post-write readback check required
-by the loaded application rules. Its answer-first action-result narrative stays
-separate from the Source Access Audit, which reports only current target or
-destination reread and verification readback access. It does not repeat access
-from the originating bundle.
+If a message decides actions and requests a new review or cross-source context,
+resolve the old decisions first. Finish Phase 2 when the decisions belong to a
+Wind-down Phase 1 bundle. Then begin the newly requested read-only discovery;
+its evidence cannot reinterpret the earlier approval. Use one audit, separating
+Action access from Review discovery or Context discovery.
 
-A run may present more than one bundle, so a reply deciding an earlier one is
-not an action-only response. Resolve those decisions, then continue that run
-under its own mode reference, which owns what follows and how the audit reads.
+| Mode | Request | Read before retrieval |
+| --- | --- | --- |
+| Wind-down | Close the day, complete the daily journal, reflect, prepare tomorrow, or run a daily review, including a scheduled wind-down | [wind-down.md](references/wind-down.md) |
+| Weekly | Complete or discuss a weekly review | [weekly.md](references/weekly.md) |
+| Quarterly | Complete or discuss a quarterly review | [quarterly.md](references/quarterly.md) |
 
-A reply answering a round's numbered questions is a third kind of response.
-Recognize it by the round most recently presented in this conversation rather
-than by a bundle, and route it back to the mode and phase that asked it.
+Generic daily review wording selects Wind-down. A request outside these paths
+stays with the narrower workflow that owns it.
 
-If the same message both decides visible actions and requests a new review,
-finish the visible action decisions first. When those decisions belong to a
-Phase 1 bundle, finish Phase 2 as well so the wind-down run ends before the new
-review begins. Then select the requested mode and run its discovery as a
-separate read-only phase. Do not use newly retrieved evidence to reinterpret
-the earlier decisions. Render one Source Access Audit.
-The paragraph distinguishes **Action access** from **Review discovery**.
+Completion: the current reply is bound to its visible action or question
+context, or one new mode or caller-context path is selected with its required
+references loaded.
 
-If the same message both decides visible actions and requests current
-cross-source context without a review mode, also finish the visible action
-decisions first. Then use the non-mode path below as a separate read-only
-context-discovery phase; do not open Wind-down, Weekly, or Quarterly, and do
-not let the new context reinterpret the earlier decisions. Render one Source
-Access Audit. The paragraph distinguishes **Action access** from
-**Context discovery**.
+## Review together
 
-Completion: every visible action decision was resolved against its exact
-originating bundle and mode before any separately requested review or non-mode
-context discovery began.
+Follow the selected path interactively. Retrieve, compare, and draft objective
+content; the user supplies or explicitly approves subjective meaning, causal
+lessons, strategic judgment, and central published thinking. Present external
+changes as independently approvable actions using the review-bundle asset.
 
-## Supply cross-source context without a review mode
-
-When another workflow explicitly requests current cross-source chief-of-staff
-priority or context—and the message does not request wind-down, weekly, or
-quarterly review—do not select a review mode. If that message also decides
-visible actions, enter this path only after resolving them under the phase
-boundary above. Read
-[references/source-behavior.md](references/source-behavior.md) and
-[assets/review-bundle.md](assets/review-bundle.md). Retrieve only the evidence
-needed for the caller's judgment, distinguish fact from inference, and return
-priority context in the conversation with the answer-first Source Access
-Audit. The calling workflow retains ownership of its narrower operation. Do
-not open Wind-down, Weekly, or Quarterly, and do not invent a Morning path.
-
-Before returning, always render the current response's Source Access Audit
-after the priority context, even when every requested read succeeds and no
-action is proposed. A cross-source response is incomplete unless that audit
-names every relevant role in the short paragraph specified in
-assets/review-bundle.md.
-
-Completion: the caller has usable cross-source judgment without a chief-of-staff
-mode run or unrequested durable writes, and can see which current source reads
-did and did not succeed.
-
-## Select the mode
-
-Choose exactly one mode from the request:
-
-- **Wind-down:** The user asks to close the day, complete the daily journal,
-  reflect, prepare tomorrow, run a daily chief-of-staff review, or invokes the
-  scheduled wind-down mode. Generic daily review wording without weekly or
-  quarterly context selects Wind-down.
-- **Weekly:** The user asks to complete or discuss a weekly review.
-- **Quarterly:** The user asks to complete or discuss a quarterly review.
-
-An explicit mode wins. When the request does not identify one of these review
-contexts and is not a cross-source context request above, leave it with the
-narrower workflow that owns it.
-
-Read both shared resources for every mode:
-
-- [references/source-behavior.md](references/source-behavior.md)
-- [assets/review-bundle.md](assets/review-bundle.md)
-
-Then read only the selected mode reference:
-
-- Wind-down: [references/wind-down.md](references/wind-down.md)
-- Weekly: [references/weekly.md](references/weekly.md)
-- Quarterly: [references/quarterly.md](references/quarterly.md)
-
-Completion: one mode and all required shared and mode-specific resources are
-selected before source retrieval begins, or the cross-source non-mode path was
-used instead.
-
-## Collaborate on judgment
-
-Continue interactively rather than publishing a report and ending. The agent
-may retrieve, organize, compare, and draft substantial objective content. The
-user owns or explicitly approves subjective meaning, causal lessons, strategic
-judgment, and central published thinking.
-
-Use the shared source behavior and review-bundle shape throughout the
-conversation. Present proposed external changes as one bundle with
-independently approvable actions.
-
-Completion: the user has had a clear opportunity to correct the review and to
-approve, edit, defer, or skip every proposed action independently.
+Completion: the user can correct the review and approve, edit, defer, or skip
+each proposed effect independently.
 
 ## End explicitly
 
-End the run as exactly one of:
+Use exactly one run ending:
 
-- **Complete:** The review and all approved actions finished.
-- **Nothing material:** The evidence supported the review and no attention or
-  action was warranted.
-- **Partial:** A useful review completed with named evidence limits.
-- **Unable to prepare reliably:** Evidence was insufficient for a trustworthy
-  review.
-- **Paused:** The user intends to continue later.
-- **Skipped:** The user chose not to conduct the review.
+- **Complete:** the review and all approved actions finished.
+- **Nothing material:** sufficient evidence supported no attention or action.
+- **Partial:** a useful review finished with named material evidence limits.
+- **Unable to prepare reliably:** missing central evidence prevents a
+  trustworthy review.
+- **Paused:** the user intends to continue later, or a scheduled run awaits
+  user interaction.
+- **Skipped:** the user chose not to conduct the review.
 
-When resuming, refresh time-sensitive evidence. Resume in the same conversation
-when available; otherwise reconstruct from canonical sources, disclose that
-uncommitted conversational input is unavailable, and ask only for the missing
-human judgment.
+Close with what changed and every action still unapplied, across all bundles
+in the run. Apply the shared resumption rules when continuing later.
 
-Close with a short recap of what changed and what remains unapplied. When the
-run presented more than one bundle, the recap covers the actions from every
-bundle in the run, naming each one that was not applied.
-
-Completion: the ending is explicit, accurate, and consistent with the durable
-artifacts that now exist.
+Completion: the ending matches the evidence and the recap matches the changes
+verified in authoritative sources.

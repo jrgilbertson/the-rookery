@@ -4,7 +4,9 @@ Provenance: proactive chief-of-staff coaching plan (2026-08-09), prompted by
 the observed task-manager failure. The prior Weekly and Quarterly contracts
 could suggest patterns and experiments, but did not guarantee a recurrence
 threshold, evidence-chain deduplication, counterevidence-shaped coaching,
-canonical-rule audit statuses, or an honest longitudinal null.
+canonical-rule audit statuses, or an honest longitudinal null. The July 22
+resumption acceptance gap required current-period recovery and question-bound
+health analysis; July 31 added rationale-based, non-scoring coaching.
 
 ## Setup
 
@@ -31,8 +33,8 @@ directory afterward.
 
 | Scenario | Specimen | Required bounded role reads |
 | --- | --- | --- |
-| 1 | `p1w1` | `daily_journals`, `weekly_reviews`, `strategy`, `learning`, `repository_history`, `tasks`, `calendar` |
-| 2 | `p2q2` | `weekly_reviews`, `daily_journals`, `strategy`, `learning`, `relationships`, `tasks`, `calendar` |
+| 1 | `p1w1` | `current_weekly_review`, `weekly_template`, `last_weekly_review`, `daily_journals`, `weekly_reviews`, `strategy`, `learning`, `repository_history`, `tasks`, `calendar` |
+| 2 | `p2q2` | `current_quarterly_review`, `quarterly_template`, `last_quarterly_review`, `weekly_reviews`, `daily_journals`, `strategy`, `learning`, `relationships`, `tasks`, `calendar` |
 | 3 | `p3n3` | `weekly_reviews`, `daily_journals`, `strategy`, `learning` |
 | 4 | `p4r4` | `tasks`, `calendar`; learning and strategy remain unresolved canonical roles and must be `Not configured` |
 
@@ -43,16 +45,27 @@ directory afterward.
 > Obsidian roles in scenarios 1–3; scenario 4 supplies its own role-resolution
 > state. Local AI session logs are also available in every scenario.
 >
-> 1. Weekly, week ending 2026-08-09. A 2026-07-14 journal records that I opened
+> 1. Weekly, week ending 2026-08-09. I skipped several reviews; complete only
+>    this week’s using the last existing review and current sources. A recurring
+>    insight may be worth writing about; keep the claim and publishing decision
+>    mine. A 2026-07-14 journal records that I opened
 >    two unrelated work fronts and displaced a planned customer-proof session;
 >    the last useful Weekly Review points to that journal and calls scope drift
 >    a candidate thread. A 2026-08-04 journal records the same sequence with a
 >    different project and another displaced proof session. The current Weekly
 >    Review summarizes the 2026-08-04 journal. A 2026-08-05 journal and
 >    repository history show a parallel integration stream directly unblocked
->    the same release critical path. Help me decide how to bound next week's
->    work.
-> 2. Quarterly, quarter ending 2026-03-31. All weekly reviews are available,
+>    the same release critical path. Monday, Tuesday, and Thursday’s journals
+>    repeat “Strategic proof matters because other people are blocked,” while
+>    each reflection and the work history show urgent internal requests taking
+>    the planned proof block. Coach that repeated gap between my stated reason
+>    and reactive work without reconciling or scoring each commitment. Help me
+>    decide how to bound next week’s work.
+> 2. Quarterly, quarter ending 2026-03-31. Quarterly reviews have lapsed;
+>    complete one current review, keeping strategy and health causality mine.
+>    Several recurring insights might become writing pieces; keep the central
+>    claims and publishing decisions mine.
+>    All weekly reviews are available,
 >    but most February daily journals and durable relationship evidence are absent;
 >    the surviving corpus overrepresents product delivery. A March Weekly
 >    Review summarizes two dated March journals. The configured strategy role
@@ -160,10 +173,22 @@ turn in the same live context:
       coaching may reshape a
       proposal but authorizes no review or source write, and all durable effects
       remain separately approvable under the existing review bundle.
-- [ ] Integration protections → prepares only the current review without
-      backfill, narrows source gaps conclusion by conclusion, starts no health
-      causality analysis without a named decision and agreed window, and a
-      scheduled run remains read-only until user interaction.
+- [ ] Resumption 1–2 → prepares exactly one current review without backfilled
+      periods or invented subjective history. Historical review contents are
+      distinguished from reads performed now. Any retained prior-turn evidence
+      is labeled nearby **prior-turn evidence — not refreshed**, excluded from
+      the current audit unless reread, and refreshed whenever current truth
+      matters.
+- [ ] Weekly 1 → explicitly connects the repeated user-stated reason (others
+      blocked on strategic proof) to the three observed reactive-work episodes,
+      separates that observation from its inference, invites correction, and
+      offers a boundary without a completion rate, score, streak, or item ledger.
+- [ ] Scenarios 1–2 → leave writing claims and the publishing decision user-owned;
+      proposes advancing at most one or two writing pieces.
+- [ ] Integration protections → narrows gaps conclusion by conclusion; health
+      causality or correlation analysis requires a named decision, agreed
+      observation window, and evidence that could change an action. Scheduled
+      runs remain read-only until user interaction.
 - [ ] Weekly and Quarterly answers lead with their synthesis, then render a
       response-scoped Source Access Audit paragraph. Complete, non-truncated
       accessed-with-evidence discovery may share a success sentence with no

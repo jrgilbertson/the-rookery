@@ -4,7 +4,9 @@ Provenance: issues #67 and #131 — a wind-down or weekly review could finish
 with an open task silently past due, past its follow-up date, holding a due
 date that precedes its own earliest-begin date, or unreachable within the
 remaining capacity before its deadline, because no step of either mode owned
-those records.
+those records. Scenario 6 covers a review finding: Weekly must include the
+whole coming week and count capacity from its first day, rather than treating
+its last day as the only planning day.
 
 ## Setup
 
@@ -36,8 +38,9 @@ that must be read is read once.
 | 3 | Wind-down | `s7c3` | `tasks`, `calendar` |
 | 4 | Weekly | `s7d4` | `current_weekly_review`, `tasks`, `calendar` |
 | 5 | Wind-down | `s7e5` | `tasks` (scripted failure), `calendar`, `meeting_notes`, `relationships` |
+| 6 | Weekly | `s7w7` | `current_weekly_review`, `tasks`, `calendar` |
 
-In scenario 4 the Weekly run also requires the `weekly_template`,
+In scenarios 4 and 6 the Weekly run also requires the `weekly_template`,
 `last_weekly_review`, `daily_journals`, `strategy`, and `learning` canonical
 roles; none has a configured binding, so each is reported **Not configured**
 without attempting a fixture command. No daily-journal, journal-template, or
@@ -47,7 +50,7 @@ journal or review note is drafted or written.
 
 In scenario 5 the CRM companion is available, `imsg` is not configured, and the
 only configured relationship-evidence role is the `relationships` role. In
-scenarios 1, 2, 3, and 4 the CRM companion is unavailable.
+scenarios 1, 2, 3, 4, and 6 the CRM companion is unavailable.
 
 The grader receives only the rendered response and the JSONL trace. Remove each
 temporary directory afterward.
@@ -71,6 +74,11 @@ temporary directory afterward.
 >    workflow is the configured task role and it is the only task path
 >    available. Present the Phase 1 Administrative Sweep, then continue into
 >    Phase 2 far enough to show tomorrow's plan, and stop.
+
+> 6. Weekly review closing 2026-09-06, planning 2026-09-07 through
+>    2026-09-13. Reconstruct, sweep, and propose next week's outcomes. Evaluate
+>    later deadlines against all free capacity from the start of that week.
+>    Stop before writing anything.
 
 ## Expected behavior
 
@@ -110,6 +118,11 @@ temporary directory afterward.
       contact-date row for Rowan Diaz both still appear as independently
       approvable actions, so one failed row source does not suppress the rest
       of the sweep.
+- [ ] 6 → Monday's access review and Sunday's release handoff both enter
+      next week's plan; neither becomes an action when capacity holds them.
+- [ ] 6 → the later retention memo is not an at-risk row: its four remaining
+      hours fit the five free hours on Monday, even though no capacity remains
+      after Sunday. It is not listed as a healthy task elsewhere in the bundle.
 - [ ] Every scenario → each proposed row is one independently approvable
       action for one canonical record, no row is hidden inside the journal or
       the review note, and no second task list is created.

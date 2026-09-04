@@ -11,9 +11,8 @@ of January, April, July, or October reviews the quarter that just ended and
 prepares commitments for the new quarter. A manual run honors an explicitly
 requested period; without one, use the current available quarter. Through the
 Obsidian CLI, find the canonical quarterly review for that period when one
-exists, the configured
-quarterly-review template, and the last completed review that provides useful
-continuity. Read available weekly reviews, selected daily journals, the
+exists, the configured template, and the last completed review that provides
+useful continuity. Read available weekly reviews, selected daily journals, the
 canonical strategy note, relevant canonical learning notes, current tasks, and
 only the additional notes needed to understand material projects, decisions,
 relationships, health, and writing.
@@ -51,37 +50,24 @@ The synthesis should clarify, where evidence supports it:
 Distinguish facts, inference, uncertainty, and the strategic judgment that only
 the user can supply. Do not turn a partial quarter into a confident story.
 
-Apply the shared intention contract when the agent first surfaces any candidate
-priority, outcome, experiment, boundary, strategy edit, or learning proposal.
-Ground its current basis in authoritative observed evidence or an explicitly
-labeled user-supplied, unverified premise, phrase the desired outcome
-conditionally, name observable closure evidence, and label it **agent-proposed,
-not user-owned** until the user accepts or revises it. The user-disposition
-gate still controls whether the candidate becomes a commitment or action.
+Apply [Make every intention verifiable](source-behavior.md#make-every-intention-verifiable)
+when any candidate priority, outcome, experiment, boundary, strategy edit, or
+learning proposal first appears. The user-disposition gate below controls
+whether it becomes a commitment or action.
 
 Completion: the user can evaluate the quarter's implications before reviewing
 the supporting evidence.
 
 ## Prefill the selected review progressively
 
-Map verified evidence into the configured quarterly-review template as a
-conversational draft. Use weekly reviews and authoritative native sources for
-compression, then inspect lower-level evidence only to resolve a material
-question. Cover supported sections across:
+Draft supported sections of the configured quarterly-review template in the
+conversation. Compress through weekly reviews and authoritative native sources;
+inspect lower-level evidence only to resolve a material question. Cover the
+quarter's outcomes, losses, capacity, strategy, decisions, operating evidence,
+relationships, health, writing, learning, and next-quarter choices where useful.
 
-- outcomes, losses, progress, friction, and capacity;
-- strategy, objectives, tradeoffs, and work to stop;
-- decisions made, deferred, revisited, or still missing;
-- customer, product, reliability, financial, and operating evidence;
-- relationships, commitments, and important conversations;
-- health and recovery patterns relevant to a current choice;
-- writing, learning, and ideas that became durable; and
-- execution patterns, blind spots, and next-quarter outcomes.
-
-Do not infer causality from coincidence. Describe verified high-level health or
-recovery patterns only when they help the review. Health evidence and any
-causal or correlation analysis follow "Decide what deserves attention" in
-`source-behavior.md`.
+Use [Decide what deserves attention](source-behavior.md#decide-what-deserves-attention)
+for health patterns and causal or correlation analysis.
 
 When a consequential release, customer-proof attempt, incident, loss, or
 repeatedly blocked critical path needs reflection, include a short
@@ -92,123 +78,97 @@ and missing evidence narrows only the conclusions that depend on it.
 
 ## Audit the quarter's durable coaching evidence
 
-Before final commitments, perform the longitudinal coaching judgment from
-`source-behavior.md`. Always begin this part of the review with one compact
-line stating durable-corpus coverage for the selected quarter. Expand on a gap
-or source skew only when it materially limits or biases a conclusion; keep the
-effect tied to that conclusion rather than downgrading the whole review.
+Use [Ground longitudinal coaching in durable evidence](source-behavior.md#ground-longitudinal-coaching-in-durable-evidence)
+for recurrence, evidence chains, and counterevidence. Begin with one compact
+line stating durable-corpus coverage for the selected quarter. Explain a gap
+or source skew only beside the conclusion it limits or biases.
 
-Present a small map of supported recurring threads using the shared recurrence
-and evidence-chain rules. Include material counterevidence, changed behavior,
-or alternate explanations. Do not force a master theory. Surface at most one
-central tension and one compounding strength, and only when the durable evidence
-supports those interpretations. Present the thread map, the central tension,
-the compounding strength, and the rule-audit dispositions as questions under
-"Ask on the evidence frontier" in `source-behavior.md`, each interpretation
-labeled as an inference with a recommended disposition to accept, revise, or
-reject. Present them in the order listed above, across as many rounds as that
-contract's cap and carry-over rule require. Stop and wait for each round's
-response.
-Draft inference-shaped commitments only after every round is answered, using
-only accepted or user-revised interpretations. Do
-not turn rule-audit findings into additional commitments unless the user
-separately accepts them as a basis for action. The draft must not introduce a
-subject, boundary, exception, or obligation that appears only in an unaccepted
-audit finding. Zero supported threads is a valid result.
+### Build the thread map and rule audit
 
-Quarterly runs no Administrative Sweep, so it does not read
-`references/administrative-sweep.md`. A source correction this
-audit surfaces still becomes its own action under "Review and write back".
+Map supported recurring threads, including material counterevidence, changed
+behavior, or alternate explanations. Surface at most one central tension and
+one compounding strength, only when supported. Zero threads is valid.
 
-Audit a bounded selection of canonical coaching rules: explicit, dated
-principles, boundaries, or heuristics resolved from a configured strategy or
-learning role, effective on or before the selected quarter's end, that
-materially bear on a supported thread, central tension, compounding strength,
-or named next-quarter choice. State the selection slice inspected and any
-material exclusions; do not build a rule ledger or audit every rule. Durable
-journals, reviews, and optional decision notes within the selected quarter and
-after the rule's effective date may evidence later behavior or support a
-cautious inference about it. Exclude records outside that review window from
-the quarter's audit. Identify the configured owning role and the rule's explicit
-or effective date in each audit entry. Give each audited rule exactly one status
-by using the first match in this precedence order:
+Select a bounded set of canonical coaching rules that materially bear on a
+thread, tension, strength, or named next-quarter choice. A rule qualifies only
+when it is an explicit principle, boundary, or heuristic from a configured
+strategy or learning role, with an explicit or effective date on or before the
+quarter's end. State the selection slice and material exclusions; do not audit
+every rule or create a ledger.
 
-1. Use **repeated without observed behavior change** when later durable
-   reflection restates the rule while covered behavior stays unchanged without
-   enacting it, even if that behavior conflicts with the rule.
-2. Otherwise use **contradicted** when any covered later episode directly
-   conflicts with the rule; mixed enactment and conflict remains contradicted.
-3. Otherwise use **applied** when later durable evidence shows enactment.
-4. Otherwise use **not observed** only when adequate later coverage shows
-   neither enactment nor a directly conflicting action. Absence of enactment,
-   by itself, is not a contradiction.
-5. Use **inconclusive** when relevant later coverage for the dated rule cannot
-   support one of the preceding results.
+For each qualifying rule, identify its owning role and date. Inspect durable
+journals, reviews, and optional decision notes **within the selected quarter
+and after the rule's effective date** for later behavior or cautious inferences
+about it. Assign exactly one status, taking the first matching row:
 
-A statement without configured role ownership or an explicit or effective date
-does not qualify as a canonical rule. Keep it outside the formal audit and
-assign it no status. If it matters enough to mention, identify the provenance
-limit and say why it was excluded.
-Statuses describe the inspected evidence, not the user's intent. Stronger
-meanings such as ignored, abandoned, ineffective, or stale require the user's
-confirmation.
+| Order | Status | Evidence required |
+|---|---|---|
+| 1 | **repeated without observed behavior change** | Later durable reflection restates the rule while covered behavior stays unchanged without enacting it, even if that behavior conflicts with the rule. |
+| 2 | **contradicted** | Any covered later episode directly conflicts with the rule, including mixed enactment and conflict. |
+| 3 | **applied** | Later durable evidence shows enactment. |
+| 4 | **not observed** | Adequate later coverage shows neither enactment nor a directly conflicting action. Absence of enactment alone is not contradiction. |
+| 5 | **inconclusive** | Relevant later coverage cannot support an earlier status. |
 
-When coverage cannot support a thread, tension, strength, or rule result,
-preserve the compact coverage line and return an empty thread map or an empty
-or inconclusive audit without filler coaching. Keep any proposed commitment,
-strategy edit, or learning promotion inside the existing separately
-approvable review flow.
+Exclude statements missing configured role ownership or a rule date; assign no
+status. Mention an exclusion only if material, with its provenance limit.
+Statuses describe inspected evidence. Claims that a rule was ignored,
+abandoned, ineffective, or stale require user confirmation.
 
-Keep any resulting commitment, strategy edit, or learning proposal conditional
-and explicitly unowned under the shared intention contract until the user
-accepts its interpretation or separately accepts an audit finding as a basis
-for action.
+When coverage is too sparse, keep the coverage line and return an empty thread
+map, empty audit, or inconclusive rule result as warranted. Add no filler
+coaching.
 
-Completion: the quarter has an honest coverage statement, a bounded thread map
-and rule audit where evidence permits, and every surfaced tension or strength
-has a user disposition before it shapes a commitment.
+### Resolve interpretations before commitments
+
+Present interpretations as inference-labeled questions under
+[Ask on the evidence frontier](source-behavior.md#ask-on-the-evidence-frontier),
+each with a recommended disposition to accept, revise, or reject. Use this
+order across as many bounded rounds as needed:
+
+1. Thread map.
+2. Central tension.
+3. Compounding strength.
+4. Rule-audit dispositions.
+
+Wait for each round's response. Draft inference-shaped commitments only after
+every round is answered, using accepted or user-revised interpretations. A
+rule-audit finding needs separate acceptance as a basis for action before it
+can shape a commitment. The draft must introduce no subject, boundary,
+exception, or obligation found only in an unaccepted audit finding. Keep
+candidate commitments and durable edits conditional under the shared intention
+contract until accepted; approving an interpretation does not approve a write.
+
+Quarterly runs no Administrative Sweep and does not read its reference. Any
+source correction found here remains a separate action in the final bundle.
+
+Completion: coverage and the bounded thread map and rule audit are explicit;
+every interpretation that shapes a commitment has a user disposition.
 
 ## Collaborate on strategy
 
-Invite the user's interpretation before finalizing causal lessons, strategy,
-or commitments. The agent may compare evidence, expose contradictions, test
-assumptions, and propose language. The user supplies or explicitly approves
-what the period meant, which tradeoffs to make, and what to pursue next.
+Invite the user's interpretation and approval of causal lessons, tradeoffs,
+and commitments. Test proposed outcomes against strategy, calendar and capacity,
+obligations, relationships, health, recovery, opportunity cost, and this
+quarter's evidence.
 
-Pressure-test proposed outcomes against personal strategy, calendar and
-capacity reality, current obligations, relationships, health and recovery,
-opportunity cost, and the evidence gained this quarter. Optimize for durable
-value across the user's life and work, not a local increase in output.
-
-Keep the next quarter focused. Prefer a few observable outcomes, supporting
-principles or experiments, and explicit boundaries over a broad task list. A
-writing idea may advance only when it supports real thinking or a real
-audience; central claims and publication remain the user's decisions.
-
-The shared intention shape applies when each independent next-quarter outcome,
-strategy or learning proposal, experiment, or boundary first appears. The
-user-disposition gate determines when it may become a user-owned commitment.
+Choose a few observable outcomes, supporting principles or experiments, and
+explicit boundaries. Advance a writing idea only when it supports real
+thinking or an audience; the user owns its central claim and publication.
 
 Completion: strategic conclusions and forward commitments are user-owned,
 evidence-backed, and specific enough to guide later reviews.
 
 ## Review and write back
 
-Present the completed conversational draft and any related changes as one
-review bundle. The canonical quarterly-review note is one proposed action.
-Changes to strategy, learnings, tasks, calendars, CRM, repositories, writing,
-or other sources are separate actions with their own identities, targets,
-effects, and approval.
-Each separate action uses the bundle's intention shape.
-
-Apply an approved action under "Use Obsidian only through its CLI" in
-`source-behavior.md`. The target for the review-note action is the canonical
-quarterly review for the selected period.
+Present one [review bundle](source-behavior.md#prepare-one-review-bundle).
+The canonical quarterly review for the selected period is one action; each
+related source change is independently approvable. Apply approved actions
+through the shared [application rules](source-behavior.md#revalidate-apply-and-read-back)
+and [Obsidian CLI rules](source-behavior.md#use-obsidian-only-through-its-cli).
 
 End explicitly using the core run endings. A partial quarter can still end
 Complete when the reviewed note truthfully records its evidence limits; use
 Partial when an unresolved source gap still prevents a material conclusion.
-Recap what changed and every action that remains unapplied.
 
 Completion: one current reviewed quarterly review exists when approved, its
 limits are honest, and no missing period was backfilled.

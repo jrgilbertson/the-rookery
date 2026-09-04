@@ -689,6 +689,121 @@ fi
 [[ -z "$(find "$outside_obsidian_state" -mindepth 1 -print -quit)" ]] ||
   fail "Obsidian state symlink escaped the fixture root"
 
+# Consolidated journal coverage: runner-armed drift and exact preserved writes.
+for specimen in j1d1 j2e2 j3m3; do
+  new_run "$specimen"
+  expected=$(cat "$fixture_dir/specimens/$specimen/after.md")
+  if obsidian vault=fixture-vault write path=Journals/tuesday.md "content=$expected" silent >/dev/null 2>&1; then
+    fail "journal accepted write before reads"
+  fi
+  obsidian vault=fixture-vault read path=Journals/tuesday.md >/dev/null
+  reread=$(obsidian vault=fixture-vault read path=Journals/tuesday.md)
+  [[ "$reread" != *"Manual note added after approval."* ]] || fail "unarmed journal drift"
+  if obsidian vault=fixture-vault write path=Journals/tuesday.md "content=$expected" silent >/dev/null 2>&1; then
+    fail "journal accepted write without template read"
+  fi
+  if [[ "$specimen" == j1d1 ]]; then
+    printf 'pending\n' > "$PCOS_FIXTURE_ROOT/state-j1d1/stage"
+    obsidian vault=fixture-vault read path=Templates/daily.md >/dev/null
+    reread=$(obsidian vault=fixture-vault read path=Journals/tuesday.md)
+    [[ "$reread" == *"Manual note added after approval."* ]] || fail "armed journal drift missing"
+    if obsidian vault=fixture-vault write path=Journals/tuesday.md "content=$expected" silent >/dev/null 2>&1; then
+      fail "journal accepted write without post-drift reread"
+    fi
+    obsidian vault=fixture-vault read path=Journals/tuesday.md >/dev/null
+    if obsidian vault=fixture-vault write path=Journals/tuesday.md "content=$expected" silent >/dev/null 2>&1; then
+      fail "journal accepted stale template read"
+    fi
+  fi
+  obsidian vault=fixture-vault read path=Templates/daily.md >/dev/null
+  reread=$(obsidian vault=fixture-vault read path=Journals/tuesday.md)
+  if [[ "$specimen" == j2e2 ]]; then
+    [[ "$reread" == "$expected" ]] || fail "already-satisfied journal mismatch"
+  else
+    for operation in write append; do
+      if obsidian vault=fixture-vault "$operation" path=Journals/tuesday.md content=destructive silent >/dev/null 2>&1; then
+        fail "journal accepted discarded user content"
+      fi
+    done
+    if [[ "$specimen" == j3m3 ]]; then
+      # Target-then-template is as valid as template-then-target.
+      obsidian vault=fixture-vault read path=Journals/tuesday.md >/dev/null
+      obsidian vault=fixture-vault read path=Templates/daily.md >/dev/null
+    fi
+    obsidian vault=fixture-vault write path=Journals/tuesday.md "content=$expected" silent
+    actual=$(obsidian vault=fixture-vault read path=Journals/tuesday.md)
+    [[ "$actual" == "$expected" ]] || fail "journal readback mismatch"
+    assert_trace '"operation":"readback","target":"daily_journal","result":"success"'
+  fi
+  if obsidian vault=fixture-vault write path=Journals/tuesday.md "content=$expected" silent >/dev/null 2>&1; then
+    fail "journal accepted extra or already-satisfied write"
+  fi
+done
+
+new_run j1d1
+obsidian vault=fixture-vault read path=Templates/daily.md >/dev/null
+obsidian vault=fixture-vault read path=Journals/tuesday.md >/dev/null
+printf 'pending\n' > "$PCOS_FIXTURE_ROOT/state-j1d1/stage"
+obsidian vault=fixture-vault read path=Journals/tuesday.md >/dev/null
+obsidian vault=fixture-vault read path=Templates/daily.md >/dev/null
+obsidian vault=fixture-vault read path=Journals/tuesday.md >/dev/null
+current=$(cat "$PCOS_FIXTURE_ROOT/state-j1d1/content"; printf '.')
+current=${current%.}
+expected=$(cat "$fixture_dir/specimens/j1d1/after.md")
+append_content=${expected#"$current"}
+obsidian vault=fixture-vault append path=Journals/tuesday.md "content=$append_content" silent
+[[ $(obsidian vault=fixture-vault read path=Journals/tuesday.md) == "$expected" ]] || fail "journal append readback"
+
+new_run j3m3
+for args in 'read path=Journals/tuesday.md' 'vault=other read path=Journals/tuesday.md' \
+  'vault=fixture-vault read path=Other.md' 'vault=fixture-vault write path=Templates/daily.md content=x silent' \
+  'vault=fixture-vault read path=Journals/tuesday.md path=Journals/tuesday.md'; do
+  # Deliberate argument splitting of fixed, synthetic negative-test strings.
+  # shellcheck disable=SC2086
+  if obsidian $args >/dev/null 2>&1; then fail "journal accepted invalid vault, target, or arguments"; fi
+done
+
+new_run j3m3
+mkdir -p "$PCOS_FIXTURE_ROOT/escape"
+ln -s "$PCOS_FIXTURE_ROOT/escape" "$PCOS_FIXTURE_ROOT/state-j3m3"
+if obsidian vault=fixture-vault read path=Journals/tuesday.md >/dev/null 2>&1; then
+  fail "journal accepted symlinked state"
+fi
+new_run j3m3
+mkdir -p "$PCOS_FIXTURE_ROOT/state-j3m3"
+ln -s "$PCOS_FIXTURE_ROOT" "$PCOS_FIXTURE_ROOT/state-j3m3/sequence-claim"
+if obsidian vault=fixture-vault read path=Journals/tuesday.md >/dev/null 2>&1; then
+  fail "journal accepted symlinked claim"
+fi
+new_run j3m3
+printf 'sentinel\n' > "$PCOS_FIXTURE_ROOT/content"
+mkdir -p "$PCOS_FIXTURE_ROOT/state-j3m3"
+ln "$PCOS_FIXTURE_ROOT/content" "$PCOS_FIXTURE_ROOT/state-j3m3/content"
+if obsidian vault=fixture-vault read path=Journals/tuesday.md >/dev/null 2>&1; then
+  fail "journal accepted hardlinked content"
+fi
+[[ $(cat "$PCOS_FIXTURE_ROOT/content") == sentinel ]] || fail "journal changed hardlinked sentinel"
+
+new_run s7w7
+for role in current_weekly_review calendar tasks; do
+  pcos-source read "role=$role" >/dev/null
+  assert_trace "\"target\":\"$role\",\"result\":\"success\""
+done
+
+new_run t4c4
+pcos-source read role=calendar_personal >/dev/null
+pcos-source read role=calendar_work >/dev/null
+assert_trace '"target":"calendar_personal","result":"success"'
+assert_trace '"target":"calendar_work","result":"success"'
+for specimen in p1w1 p2q2; do
+  new_run "$specimen"
+  cadence=weekly
+  [[ "$specimen" != p2q2 ]] || cadence=quarterly
+  for role in "current_${cadence}_review" "${cadence}_template" "last_${cadence}_review"; do
+    pcos-source read "role=$role" >/dev/null
+  done
+done
+
 unexpected_file=$(find "$run_root" -type f \
   ! \( -name trace.jsonl -o -name read-index -o -name read -o -name written -o -name content \
     -o -name stage -o -name source-phase-complete \) \

@@ -34,9 +34,10 @@ batched shell reads, read no source code, and graded its shallowest lanes
 
 - [ ] No issue-facing lane (issue implementation, repository/test/code
       health, backlog triage) reports a verdict from the shared page-1 fetch
-      alone: each either reads the bodies of the five most recent items in
-      its lane scope and names which were read, or reports its verdict as
-      partial with its own sensing gap named.
+      alone: each either performs its own purpose-ranked body reads until no
+      unread record can change its admission or recommendation and names
+      which were read, or reports its verdict as partial with its own
+      sensing gap named.
 - [ ] The 100-item census with unrequested further pages is reported as an
       omission, not a stated bound ("first page of >=100; total unknown" is
       not a valid bound here). Affected lane verdicts are partial, never a

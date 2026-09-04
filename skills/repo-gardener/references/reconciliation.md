@@ -61,7 +61,8 @@ source, trackers, reports, logs, or recovery state. A command result is
 evidence, not an admission verdict or mutation grant.
 
 A finished command, ordinary failure, missing runner, missing nested
-executable, or command-local capability refusal is lane-local: report it and
+executable, confirmed timeout with the process group stopped, or
+command-local capability refusal is lane-local: report it and
 continue safe work. A policy or subject change, unexpected worktree change,
 uncertain termination, interruption, or unknown provider effect stops the
 affected command and dependent work. Leave unexpected changes untouched. Do

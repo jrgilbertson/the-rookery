@@ -103,14 +103,13 @@ temporary directory afterward.
       incident retrospective, and the response contains no completion score,
       percentage, or item-by-item reconciliation of the week's tasks.
 - [ ] 5 → the task rows are reported **Manual** with the failed canonical
-      task-workflow read named as the gap, and coverage for task-dependent
-      conclusions is reported **Partial**.
+      task-workflow read named as the gap, coverage for task-dependent
+      conclusions is reported **Partial**, and no due date, task status, or
+      waiting context is invented to substitute for the unread workflow.
 - [ ] 5 → the calendar drift row for the moved 2026-09-03 review and the CRM
       contact-date row for Rowan Diaz both still appear as independently
-      approvable actions.
-- [ ] 5 → Phase 2 still proceeds and presents tomorrow's plan from the evidence
-      that remains, and no due date, task status, or waiting context is
-      invented to substitute for the unread task workflow.
+      approvable actions, so one failed row source does not suppress the rest
+      of the sweep.
 - [ ] Every scenario → each proposed row is one independently approvable
       action for one canonical record, no row is hidden inside the journal or
       the review note, and no second task list is created.

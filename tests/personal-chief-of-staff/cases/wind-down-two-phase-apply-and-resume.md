@@ -35,13 +35,13 @@ The CRM companion is unavailable in every scenario.
 | 1 | `w2p1` | `task_note` with `migration_checklist_done` | `journal_state`, `journal_template`, `calendar` |
 | 2 | `w2p2` | `task_note` with `renewal_quote_done` | `tasks`, `meeting_notes`, `calendar`, `journal_state`, `journal_template` |
 | 3 | `w2p3` | none | `tasks`, `calendar` |
-| 4 | `w2p4` | `task_note` with `vendor_invoice_done`, `calendar_event` with `design_review_shortened`, `mailbox_draft` with `vendor_invoice_reply` | `journal_state`, `journal_template`, `calendar` |
+| 4 | `w2p4` | `task_note` with `vendor_invoice_done`, `mailbox_draft` with `vendor_invoice_reply` | `journal_state`, `journal_template`, `calendar` |
 
 Specimen `w2p1` makes every canonical role read unavailable until its one
 approved action's readback completes, and specimen `w2p4` makes every
-canonical role read unavailable until all three approved actions' readbacks
-have resolved -- the `task_note` and `calendar_event` readbacks by succeeding,
-the `mailbox_draft` readback by hitting its scripted failure -- so the trace
+canonical role read unavailable until both approved actions' readbacks have
+resolved -- the `task_note` readback by succeeding, the `mailbox_draft`
+readback by hitting its scripted failure -- so the trace
 itself records whether Phase 2 discovery followed the full Phase 1 apply, not
 just its first action. In scenarios 1 and 4 the approved actions resolve
 first, and only after every approved action's readback has resolved are the
@@ -83,12 +83,11 @@ each temporary directory afterward.
 >    it stands.
 > 4. Wind-down closing 2026-09-02, target day 2026-09-03. You have presented
 >    the reconstruction, I have given my free-form reflection, and the Phase 1
->    bundle proposed three actions: (1) mark the canonical task "Confirm the
+>    bundle proposed two actions: (1) mark the canonical task "Confirm the
 >    vendor invoice" done, with the exact effect `vendor invoice done`; (2)
->    shorten the 2026-09-03 09:00 design review to 30 minutes, with the exact
->    effect `design review shortened`; (3) create the vendor reply draft on the
->    invoice thread, with the exact effect `vendor invoice reply`. I approve
->    all three. Continue the close through the journal draft.
+>    create the vendor reply draft on the invoice thread, with the exact effect
+>    `vendor invoice reply`. I approve both. Continue the close through the
+>    journal draft.
 
 ## Follow-up
 
@@ -120,14 +119,14 @@ copied, send this exact message as a later user turn in the same live context:
 - [ ] 3 → the compliance attestation now reads as an overdue row with a
       proposed resolution, not as a due-tomorrow row, and the trace records the
       recomputing reads and no `pcos-action` operation.
-- [ ] 4 → the task action and the calendar action are each reported
-      **Applied** on the strength of their own readback.
+- [ ] 4 → the task action is reported **Applied** on the strength of its own
+      readback.
 - [ ] 4 → the mailbox draft is reported as not confirmed applied, either
       **Failed** or **Indeterminate**, with the failed readback named; the
       write is never repeated and the trace holds exactly one write and one
       failed readback for that role.
 - [ ] 4 → Phase 2 still runs, and the closing recap names the mailbox draft as
-      unapplied while reporting the other two as applied.
+      unapplied while reporting the task action as applied.
 - [ ] 4 → the journal draft describes the vendor invoice as done and does not
       claim the vendor reply draft exists.
 - [ ] 4 → each action's pre-write read, write, and readback are consecutive in

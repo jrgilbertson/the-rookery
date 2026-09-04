@@ -22,8 +22,9 @@ authoritative evidence. Prepare one review for the current period. Do not
 backfill skipped weeks or reconstruct subjective history the sources cannot
 show.
 
-While reconstructing, run the Administrative Sweep from `source-behavior.md`
-under "Run the Administrative Sweep". Weekly's two dates are the closing day,
+While reconstructing, read
+[references/administrative-sweep.md](administrative-sweep.md) and run the sweep
+it describes. Weekly's two dates are the closing day,
 the last day of the review window, and the target day, the last day of the
 coming week, so the sweep covers tasks overdue at review time plus tasks due
 within the coming week. Feed its rows into open loops and next-week outcomes.

@@ -131,11 +131,11 @@ contacts have been evaluated.
 
 ## Phase 1: Run the Administrative Sweep
 
-Run the sweep described in "Run the Administrative Sweep" in
-`references/source-behavior.md`. The Wind-down window is the closing day and
-the target day. That contract owns sweep membership, the task rows, the
-resolutions each row proposes, and the degraded behavior when the canonical
-task workflow is unavailable.
+Read [references/administrative-sweep.md](administrative-sweep.md) and run the
+sweep it describes. The Wind-down window is the closing day and the target day.
+That file owns sweep membership, the task rows, the resolutions each row
+proposes, and the degraded behavior when the canonical task workflow is
+unavailable.
 
 Do not hide a sweep correction inside the journal or create a second task list.
 A sweep row that proposes a resolution stays independently approvable. A

@@ -116,8 +116,8 @@ separately accepts them as a basis for action. The draft must not introduce a
 subject, boundary, exception, or obligation that appears only in an unaccepted
 audit finding. Zero supported threads is a valid result.
 
-Quarterly runs no Administrative Sweep. "Run the Administrative Sweep" in
-`source-behavior.md` does not apply to this mode. A source correction this
+Quarterly runs no Administrative Sweep, so it does not read
+`references/administrative-sweep.md`. A source correction this
 audit surfaces still becomes its own action under "Review and write back".
 
 Audit a bounded selection of canonical coaching rules: explicit, dated

@@ -467,6 +467,8 @@ redirected or retried blindly.
 
 Use the Obsidian CLI with explicit vault targeting for every Obsidian read,
 search, create, move, rename, and edit. Never manipulate vault files directly.
+Discover commands and parameters through `obsidian help`; use the installed
+CLI's interface instead of reconstructing commands from memory.
 Before an approved edit, read the current note, preserve manual content and
 wiki links, make only the approved change, and read the note back through the
 CLI. Do not run linting as part of this workflow.

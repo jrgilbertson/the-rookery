@@ -8,49 +8,62 @@ exact-match and user-edited-section preservation branches.
 
 ## Setup
 
-Run each scenario in a fresh executor with no real connector credentials or
-endpoints. Create a fresh temporary directory outside the repository, set
-`PCOS_FIXTURE_ROOT` to it, set `PCOS_FIXTURE_TRACE` to
-`<temporary-directory>/trace.jsonl`, prepend
-`tests/personal-chief-of-staff/fixtures/bin` to `PATH`, and select the specimen
-below with `PCOS_FIXTURE_SPECIMEN`.
+Run each scenario in a fresh executor. Before source access, load the mounted
+`personal-chief-of-staff` skill, its shared resources, and the originating
+Wind-down mode reference. Capture the conversation, actual CLI arguments,
+outputs, and exit statuses outside the repository for an independent grader.
+If required instruction loading or the isolation below cannot be enforced,
+mark the affected scenario **not run** and exclude it from grading.
 
-The launcher must expose only the declared fixture `obsidian` executable and
-must prove the host Obsidian tool, direct vault access, host connectors, and
-alternate implementations unavailable. Before fixture I/O, it must load the
-mounted `personal-chief-of-staff` skill, its shared resources, and the
-originating Wind-down mode reference. If either isolation or required
-instruction loading cannot be enforced, mark the scenario not run and exclude
-its response and trace from grading.
+### Scenario 1: simulated access failure
 
-- Scenario 1 uses specimen `o2r2`. Treat the earlier successful write and the
-  normal-sandbox failure as the scenario's starting state. The one permitted
-  approved-context recovery is the production-form explicit-vault read
-  `obsidian vault=fixture-vault read path=Actions/recovery.md`. Do not run an
-  append command in this scenario.
+Create a temporary directory outside the repository, set `PCOS_FIXTURE_ROOT`
+to it and `PCOS_FIXTURE_TRACE` to its `trace.jsonl`, prepend
+`../fixtures/bin` to `PATH`, and select `PCOS_FIXTURE_SPECIMEN=o2r2`.
+Expose only this fixture executable, with no host Obsidian access, direct
+vault access, real connectors, or alternate implementations.
 
-- Scenarios 2–4 use `j1d1`, `j2e2`, and `j3m3`, respectively. They expose
-  `Templates/daily.md` and `Journals/tuesday.md` through the same explicit-vault
-  CLI. Read both with `obsidian vault=fixture-vault read path=<path>`; apply
-  only the approved journal change using `append` or `write` with `content`
-  and `silent`, then read the journal back. The runner arms scenario 2’s
-  unrelated edit when the first live approval is ready, before resuming the
-  executor on that turn: write `pending`
-  to `$PCOS_FIXTURE_ROOT/state-j1d1/stage`. The next journal read inserts the
-  manual note, regardless of how many planning reads occurred earlier.
-  Scenario 2 requires two later user turns; scenario 4 requires one.
+Treat the earlier successful write and normal-sandbox failure as the starting
+state. Permit only the approved-context recovery read
+`obsidian vault=fixture-vault read path=Actions/recovery.md`; do not append.
+This scenario tests the recovery decision against a simulated failure. It does
+not establish compatibility with the installed CLI.
 
-The journal fixture enforces an exact preserved result, at most one write,
-a template refresh immediately before or after the final journal reread, and (scenario 2)
-a journal reread after injected drift. It does not enforce user approval or
-simulate template drift. Grade approval timing and post-approval refresh from
-the conversation and trace. The shared commitment text below is included in
-each fresh scenario input. Approve only a proposal matching the exact fixture
-arrangement; a different valid arrangement is a fixture mismatch, not a skill
-failure.
+### Scenarios 2–4: real CLI acceptance
 
-The grader receives only the rendered response and JSONL trace. Remove each
-temporary directory after its run.
+Use the installed official `obsidian` executable, with no fixture executable
+on `PATH`. Run `obsidian help` and obtain any further command help from that
+CLI. Let its output determine commands, flags, and content encoding; do not
+implement or prescribe a substitute command interface.
+
+Provide a disposable Obsidian instance in an isolated OS account or equivalent
+environment, with a uniquely named temporary vault and no personal vaults,
+credentials, connectors, or sync. Provision this environment before the agent
+run; do not register the test vault in the user's normal Obsidian profile.
+Confirm through the CLI that the explicit vault name resolves to the temporary
+vault before seeding it. If that environment is unavailable, record these
+scenarios **not run**. A successful `obsidian help` alone does not qualify it.
+
+Use `../fixtures/specimens/j1d1`, `j2e2`, and `j3m3` as static input and expected
+output files for scenarios 2, 3, and 4. The runner seeds `Templates/daily.md`
+from `template.md` and `Journals/tuesday.md` from `before.md` using the real
+CLI, then verifies both with CLI reads. Give the executor the explicit test
+vault name, these paths, the forward-section mapping, and the prompt below.
+Allow only the real CLI to access that vault; prevent direct filesystem
+access, alternate implementations, and access to other app instances.
+
+After scenario 2's first proposal and before resuming its approval turn, the
+runner uses the real CLI to add `Manual note added after approval.` outside
+the journal's forward section. Verify that edit by CLI readback. Record runner
+setup and drift calls separately from executor actions so they do not count as
+agent writes. Scenario 2 requires two later user turns; scenario 4 requires one.
+
+Grade approval timing, post-approval template and journal refresh, preservation,
+and write count from the conversation and real calls. The CLI must not enforce
+the skill's policy for it: a premature or destructive write must remain visible
+as a failure. Compare final CLI readback with `after.md`; ignore only terminal
+newline differences. Do not show the expected file or rubric to the executor.
+Remove the disposable environment and temporary evidence after grading.
 
 ## Prompt
 
@@ -77,8 +90,8 @@ temporary directory after its run.
 ## Follow-up
 
 After scenario 2’s initial proposal, send **I approve that exact journal
-insertion.** Arm the marker described in Setup before resuming that turn.
-The next journal read reveals the injected manual note. After
+insertion.** Make and verify the separate runner edit described in Setup
+before resuming that turn. The next journal read reveals the manual note. After
 capturing the response to that drift, send **I approve the revised insertion
 that preserves the new manual note. Apply it.** These are separate live turns.
 
@@ -87,8 +100,10 @@ including keeping my handwritten reminder. Apply it.**
 
 ## Expected behavior
 
-- [ ] Every scenario → marks the action manual or partial if the CLI or vault is
-      unavailable, never falling back to direct filesystem access.
+- [ ] Every scenario → unavailable CLI or vault access limits the affected
+      work to **Manual** or **Partial** before a write. After an attempted
+      write whose effect cannot be confirmed, reports **Indeterminate**.
+      Never falls back to direct filesystem access.
 - [ ] 1 → distinguishes genuine app or vault unavailability from sandboxed
       CLI access, retries only the exact explicit-vault readback once in
       the approved execution context, and never repeats the write.

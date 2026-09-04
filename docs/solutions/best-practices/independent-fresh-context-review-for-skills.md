@@ -193,9 +193,11 @@ sequence. That was a bounded narration check, not executable acceptance
 evidence. The current suite keeps journal meaning and no-approval drafting in
 `tests/personal-chief-of-staff/cases/meaningful-commitment-capture.md` and puts
 observable journal drift, insertion, and readback in
-`tests/personal-chief-of-staff/cases/obsidian-canonical-access.md`. Its fixtures
-make the operations observable; a behavioral pass still requires a fresh
-executor and independent grading of the actual response and trace. The
+`tests/personal-chief-of-staff/cases/obsidian-canonical-access.md`. Its journal
+scenarios require the real CLI in a disposable isolated vault, with command
+syntax obtained from that CLI's help. Static files supply inputs and expected
+content; they do not implement the CLI. A behavioral pass still requires a
+fresh executor and independent grading of the actual response and trace. The
 production order remains in "Revalidate, apply, and read back" in
 `skills/personal-chief-of-staff/references/source-behavior.md`. A separate
 pressure case asks the agent to keep a one-day failure labeled as isolated even

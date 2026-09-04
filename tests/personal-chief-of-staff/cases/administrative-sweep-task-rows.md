@@ -97,16 +97,17 @@ temporary directory afterward.
 - [ ] 2 → the onboarding checklist appears in tomorrow's plan and gets no
       separate proposed action, because the plan has room for it.
 - [ ] 2 → the board narrative appears as an at-risk row that states the
-      calendar evidence, namely that 2026-09-04 through 2026-09-07 hold no free
-      working capacity before its due date.
+      calendar evidence: only two working hours remain on 2026-09-03, one is
+      needed for onboarding, and 2026-09-04 through 2026-09-07 have no capacity
+      for the six-hour narrative before its due date.
 - [ ] 2 → the support macros appear in no row, because free capacity exists
       before their due date.
 - [ ] 3 → the sweep reports zero task rows explicitly and lists no healthy
       task, and it proposes no task action.
-- [ ] 4 → the renewal paperwork, the hiring plan, and the incident
-      retrospective all appear as sweep rows; only the renewal paperwork
-      carries a proposed resolution, and the twelve later tasks appear in no
-      row.
+- [ ] 4 → only the overdue renewal paperwork becomes a task action with a
+      proposed resolution. The hiring plan and incident retrospective fit
+      next week's capacity and appear only in planning context; the twelve
+      later tasks appear in no row.
 - [ ] 4 → next week's proposed outcomes account for the hiring plan and the
       incident retrospective, and the response contains no completion score,
       percentage, or item-by-item reconciliation of the week's tasks.

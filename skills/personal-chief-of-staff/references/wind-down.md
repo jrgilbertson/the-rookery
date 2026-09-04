@@ -27,12 +27,11 @@ non-journal correction the day's evidence supports. Phase 2 plans tomorrow,
 coaches, records meaningful commitments, and drafts the journal from the state
 Phase 1 left behind.
 
-Once Phase 1 has proposed its bundle, open no further discovery source until
-every approved action is applied and read back or classified as unapplied. This binds
-the first move of a resumed or continued run: when the reconstruction and
-reflection already happened, the next act is resolving Phase 1. A source opened
-early returns the state Phase 1 was about to correct, and every later judgment
-inherits it.
+Once Phase 1 has proposed its bundle, resolve it before opening sources for
+Phase 2. The only discovery exception is recomputing a bundle resumed on a
+later local day under [the resume rule](source-behavior.md#end-and-resume-honestly).
+Per-action revalidation and readback still run. Early Phase 2 reads would
+return the state Phase 1 was about to correct.
 
 ## Establish the day
 
@@ -138,8 +137,10 @@ own.
 
 Present the sweep as the Phase 1 [review bundle](source-behavior.md#prepare-one-review-bundle)
 and wait for decisions. Use the shared [application rules](source-behavior.md#revalidate-apply-and-read-back)
-for each approved action and its outcome. A blocked action does not block the
-remaining actions or Phase 2.
+for each approved action and its outcome. Apply independently approved rows
+even when another row is blocked or undecided. Ask for a decision on undecided
+rows before Phase 2; silence is not deferral. A blocked action with a reported
+outcome does not block Phase 2.
 
 A zero-row sweep needs only a brief report before continuing. A scheduled run
 with the user absent instead ends **Paused**, even with zero rows, and applies
@@ -147,12 +148,13 @@ nothing. Prepare from canonical role reads; target write-interface rereads
 wait for exact action approval.
 
 When the user replies, apply [the resume rule](source-behavior.md#end-and-resume-honestly)
-before applying actions, then continue into Phase 2. Keep the journal's original
-closing date; re-resolve only the sweep window and target day.
+before applying actions, then continue into Phase 2. On a later-day resume,
+use the current local day for the sweep and its following day as the planning
+target. Keep the journal's original closing date.
 
-Completion: every approved Phase 1 action has a readback-backed outcome or an
-indeterminate stop, every unapplied action is named, and Phase 2 begins from
-the re-read state rather than from the pre-sweep evidence.
+Completion: every Phase 1 row is explicitly deferred or skipped by the user,
+or has an approved action with a reported outcome. Name unapplied and
+unconfirmed actions separately. Phase 2 begins from the re-read state.
 
 ## Phase 2: Prepare tomorrow
 

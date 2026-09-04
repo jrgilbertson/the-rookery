@@ -14,17 +14,20 @@ looked" surface. GitHub Releases mirror its entries.
 ### Changed
 
 - `personal-chief-of-staff` wind-down now runs in two visible phases. Phase 1
-  sweeps the day's corrections and applies the approved ones with readback
-  before anything else happens. Phase 2 then plans tomorrow, coaches, records
+  sweeps the day's corrections and resolves each row, applying approved
+  actions with readback, before Phase 2 begins. Phase 2 plans tomorrow, coaches, records
   commitments, and drafts the journal from the state Phase 1 left behind, so
   the journal describes the sources as they now stand. A scheduled run stops
   at the Phase 1 bundle and ends Paused with nothing applied.
 - `personal-chief-of-staff` wind-down and weekly reviews now sweep the task
-  source. An open task that is overdue, past its follow-up date, due on the
-  target day, at risk against the remaining capacity, or holding a due date
+  source. An open task that is overdue, past its follow-up date,
+  at risk against the remaining capacity, or holding a due date
   that precedes its own earliest-begin date becomes one approvable row with a
   proposed resolution. Zero rows is a valid result, and an unreachable task
-  workflow reports the rows Manual rather than stalling the review.
+  workflow reports the rows Manual rather than stalling the review. Upcoming
+  tasks enter tomorrow's plan or the whole coming week's plan, including its
+  first and last days; they need correction rows only when capacity cannot
+  hold them. Capacity checks start on the first planning day.
 - `personal-chief-of-staff` coaching follow-ups now arrive as a Frontier Round:
   a numbered plain-chat batch of at most five independent questions, each with
   a recommended answer, ordered by how much the answer would change the

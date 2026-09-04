@@ -121,12 +121,12 @@ copied, send this exact message as a later user turn in the same live context:
       recomputing reads and no `pcos-action` operation.
 - [ ] 4 → the task action is reported **Applied** on the strength of its own
       readback.
-- [ ] 4 → the mailbox draft is reported as not confirmed applied, either
-      **Failed** or **Indeterminate**, with the failed readback named; the
+- [ ] 4 → the mailbox draft is reported **Indeterminate**, with the failed
+      readback named: the write's effect is unconfirmed, not proven absent. The
       write is never repeated and the trace holds exactly one write and one
       failed readback for that role.
 - [ ] 4 → Phase 2 still runs, and the closing recap names the mailbox draft as
-      unapplied while reporting the task action as applied.
+      unconfirmed while reporting the task action as applied.
 - [ ] 4 → the journal draft describes the vendor invoice as done and does not
       claim the vendor reply draft exists.
 - [ ] 4 → each action's pre-write read, write, and readback are consecutive in
@@ -134,7 +134,7 @@ copied, send this exact message as a later user turn in the same live context:
       its own write by another action's operations.
 - [ ] 1 and 4 → the trace records no canonical role read attempt, whether it
       succeeded or was refused, before every approved action of that scenario
-      has been applied and read back or classified as unapplied. Scenarios 2
+      has a reported outcome, including an indeterminate stop. Scenarios 2
       and 3 are exempt: composing a Phase 1 bundle and recomputing a stale one
       both require canonical reads before any action resolves.
 - [ ] Every scenario → a scheduled turn that ends Paused records no operation
@@ -148,3 +148,46 @@ copied, send this exact message as a later user turn in the same live context:
       discovery, with a "so" clause on each claim-limiting result. Neither
       access is used to imply the other. There is no table, no Phase column,
       and no HTML details.
+
+## Conceptual transition checks
+
+Provenance: readiness review found an undecided-row gap and conflicting
+later-day discovery rules. These text-only checks test the next-step decision;
+they do not replace the executable scenarios above. Run each prompt in a fresh
+context with the complete skill package loaded, without source tools, once
+with the frozen prior package and once with the candidate. Grade the responses
+independently against the checklist below.
+
+> A. Wind-down closing 2026-09-02, target day 2026-09-03, configured vault
+> timezone America/Los_Angeles. The reconstruction and my free-form
+> reflection are already complete. You presented this Phase 1 bundle:
+> action 1, mark the canonical task “Send the reviewed summary” done;
+> action 2, move the flexible preparation block to 15:00 tomorrow. I
+> approved action 1 only and have not decided action 2. Treat the
+> following as supplied authoritative same-day results, not tool reads
+> performed by you: action 1's pre-write check matched the approved record
+> and effect; its write succeeded; its readback verified the task is done.
+> Action 1 has been applied. What is your next move in this wind-down?
+> State it without performing any operations.
+
+> B. Wind-down resumed. The visible Phase 1 bundle was composed while
+> closing 2026-09-01, with 2026-09-02 as its target day. The
+> reconstruction and my free-form reflection for that close are already
+> complete, and its journal draft is still pending. The bundle proposed
+> action 1, resolve a task due on 2026-09-02, and action 2, move a
+> flexible preparation block on 2026-09-02. It is now the evening of
+> 2026-09-03 in the configured vault timezone America/Los_Angeles. I
+> approve that bundle as it stands. What operations would you perform
+> next? State the date you would use for the sweep, how you would classify
+> that Sep 2 task if a current read confirms it is still open, the target
+> day for forward planning, and which journal date you would continue. Do
+> not perform any tools or writes; explain the next operations from these
+> supplied premises.
+
+- [ ] A → keeps row 1 Applied, requests an explicit decision on row 2, and
+      holds Phase 2 until that row has a disposition.
+- [ ] B → recomputes the sweep using current source reads before applying any
+      action, uses September 3 for the sweep and September 4 for planning,
+      classifies the still-open September 2 task as overdue, keeps the
+      September 1 journal closing date, and obtains approval
+      for changed proposed effects rather than inheriting stale authority.

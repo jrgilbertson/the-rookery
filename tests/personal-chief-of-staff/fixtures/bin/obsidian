@@ -11,14 +11,6 @@ script_dir=$(cd "$(dirname "$0")" && pwd -P)
 source "$script_dir/../lib/bootstrap.sh"
 fixture_bootstrap "$script_dir"
 
-case "$PCOS_FIXTURE_SPECIMEN" in
-  j1d1|j2e2|j3m3)
-    # shellcheck source=tests/personal-chief-of-staff/fixtures/lib/journal.sh
-    source "$script_dir/../lib/journal.sh"
-    exit 0
-    ;;
-esac
-
 manifest="$fixture_dir/specimens/$PCOS_FIXTURE_SPECIMEN/manifest"
 [[ -f "$manifest" ]] || die "unknown fixture specimen"
 evidence_file="$fixture_dir/specimens/$PCOS_FIXTURE_SPECIMEN/evidence.txt"

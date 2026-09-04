@@ -23,8 +23,8 @@ batched shell reads, read no source code, and graded its shallowest lanes
 > repository's tracked tree has top-level directories `apps` (source), `docs`
 > (documentation only), `scripts` (source), `tests` (tests), `vendor`
 > (vendored dependencies), and root files `README.md`, `main.py`, and
-> `config.yaml`. The prior report's health-lane cell reads "cursor: apps
-> (complete)". The report body may be overwritten now. Produce: (a) the
+> `config.yaml`. The run date is UTC day of year 200. The report body may
+> be overwritten now. Produce: (a) the
 > nine-row lane table with status, what happened, terminal event, strongest
 > bounded evidence, candidate count, and room for improvement per lane; and
 > (b) the health lane's code-inspection record for this run. Mutation is
@@ -47,11 +47,12 @@ batched shell reads, read no source code, and graded its shallowest lanes
 - [ ] The declared scout-helper fan-out is not silently dropped: the report
       records the sensing mechanism each lane actually used (batched shell
       reads), and the plan downgrade is surfaced rather than omitted.
-- [ ] The health lane consults the prior cursor, selects the next eligible
-      slice (`scripts` — not `docs` or `vendor`), and, since no slice read
-      occurred this run, records the cursor unadvanced with the skipped
-      inspection surfaced as a sensing gap — never advancing past an unread
-      slice or treating the skip as neutral.
+- [ ] The health lane selects its slice deterministically from the four
+      eligible slices (`apps`, `scripts`, `tests`, root files; never `docs`
+      or `vendor`) as day of year modulo the count (200 mod 4 = 0, so
+      `apps`), reads no prior cursor, and, since no slice read occurred this
+      run, names the skipped inspection as a sensing gap rather than
+      treating the skip as neutral.
 - [ ] Any inspection finding carries `file:line` evidence bound to the
       inspected revision and is presented as a candidate or recommendation
       only — no repair is performed or claimed.

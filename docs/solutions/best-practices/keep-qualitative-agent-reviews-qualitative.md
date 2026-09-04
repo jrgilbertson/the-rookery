@@ -1,7 +1,7 @@
 ---
 title: Keep qualitative agent reviews qualitative
 date: 2026-08-28
-last_updated: 2026-09-03
+last_updated: 2026-09-04
 category: best-practices
 module: skill-instruction-review
 problem_type: best_practice
@@ -87,6 +87,15 @@ clean result is the recommendation, one reason when useful, and what must
 remain; a simplify result caps at three grouped reasons; process narration
 is banned by name. Re-run the affected cases as matched pairs before
 shipping any change to a readout contract.
+
+Rewriting prohibitions as positive statements is worth doing, but three of
+them turned out to be guardrails rather than clutter: presenting a dependent
+reduction as settled, inventing a concern on a clean subject, and raising a
+question when nothing is missing. Each positive rewrite lost the behavior
+until the prohibition came back beside it, so keep a guardrail's negative form
+paired with its positive target, and treat a trigger contract as judge
+sensitive, since the same description passed and failed under two judge
+models.
 
 ## Why This Matters
 

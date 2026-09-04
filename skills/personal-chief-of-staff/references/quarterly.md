@@ -57,8 +57,8 @@ Apply the shared intention contract when the agent first surfaces any candidate
 priority, outcome, experiment, boundary, strategy edit, or learning proposal.
 Ground its current basis in authoritative observed evidence or an explicitly
 labeled user-supplied, unverified premise, phrase the desired outcome
-conditionally, name observable closure evidence, and label it **agent-proposed
-— not user-owned** until the user accepts or revises it. The user-disposition
+conditionally, name observable closure evidence, and label it **agent-proposed,
+not user-owned** until the user accepts or revises it. The user-disposition
 gate still controls whether the candidate becomes a commitment or action.
 
 Completion: the user can evaluate the quarter's implications before reviewing

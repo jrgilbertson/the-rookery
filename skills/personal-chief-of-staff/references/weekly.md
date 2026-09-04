@@ -50,7 +50,7 @@ The synthesis should answer, when evidence supports it:
 - what materially advanced or regressed;
 - where current behavior and commitments diverged from strategy;
 - which open loop, relationship, or operating risk now matters;
-- what the evidence suggests about sustainable personal leverage; and
+- where the user's effort compounded and where it did not; and
 - which one to three outcomes deserve priority next week.
 
 Separate observed evidence from inference and from judgments that still need
@@ -80,9 +80,7 @@ question open or the cap holds one back for later. A recurring-thread
 candidate from the next section enters this pre-coaching round whenever it
 clears the shared entry bar; coaching itself never opens a second, independent
 question step. Ask the round before the coaching judgment and use the user's
-answers when classifying threads and choosing an intervention. Whether an
-overdue task is still relevant belongs to the sweep as a row with a proposed
-resolution, not to this round.
+answers when classifying threads and choosing an intervention.
 
 Completion: one round ran before coaching, any later round came only from the
 shared contract's carry-over, the pre-coaching round carried any qualifying

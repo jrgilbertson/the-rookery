@@ -25,13 +25,12 @@ non-journal correction the day's evidence supports. Phase 2 plans tomorrow,
 coaches, records meaningful commitments, and drafts the journal from the state
 Phase 1 left behind.
 
-One rule governs the boundary, and reaching for a source is the way it is
-usually broken. Once Phase 1 has proposed its bundle, open no further source
-until every approved action is applied and read back or classified as
-unapplied. This binds the first move of a resumed or continued run too: when
-the reconstruction and reflection already happened, the next act is resolving
-Phase 1, not re-reading a source to orient. A source opened early returns the
-state Phase 1 was about to correct, and every later judgment inherits it.
+Once Phase 1 has proposed its bundle, open no further source until every
+approved action is applied and read back or classified as unapplied. This binds
+the first move of a resumed or continued run: when the reconstruction and
+reflection already happened, the next act is resolving Phase 1. A source opened
+early returns the state Phase 1 was about to correct, and every later judgment
+inherits it.
 
 ## Establish the day
 
@@ -53,7 +52,7 @@ Query only sources that can clarify what happened or what changed: meetings,
 active tasks, project or repository state, available capacity evidence, the
 canonical strategy note, and relevant canonical learning notes. When the
 companion is available, do **not** treat relationship interaction sources
-(Messages, relationship mailboxes, X) as this generic pass—route them through
+(Messages, relationship mailboxes, X) as this generic pass. Route them through
 the **Daily CRM Scan** below. Query each visible personal and work calendar
 separately for the day and retain its calendar identity in the evidence.
 Calendar visibility supplies no work-email coverage. Separate:
@@ -92,17 +91,19 @@ coverage for wind-down, separate from prepare-tomorrow's cadence exceptions.
 3. **Evaluate.** Use embedded companion mode. Attribute messages by sender
    handle. Evaluate substantive direct contact (including targeted group
    participation and unanswered outgoing directed attempts) for each bindable
-   person under the companion relationship contract—not ambient activity,
-   reactions, or broadcasts. Unknown handles stay unresolved. Also evaluate
-   substantive direct contacts already named by non-scan day evidence
+   person under the companion relationship contract. Ambient activity,
+   reactions, and broadcasts stay out of scope, and unknown handles stay
+   unresolved. Also evaluate substantive direct contacts already named by
+   non-scan day evidence
    (calendar, meetings, journal-observed interactions). One group may produce
    effects for some people and none for others.
 4. **Bundle.** Zero effects is valid. Novel contact-date, Person prose, Task,
    and communication effects are separate actions in the Phase 1 bundle. The
    contact-date, Person, and communication effects are that bundle's CRM and
-   communication sweep rows, so one record still gets one action. Report Already satisfied in coverage when the canonical date is equal
-   or newer; do not invent a duplicate Person write. Keep raw history in the
-   source. Write nothing while preparing.
+   communication sweep rows, so one record still gets one action. Report
+   Already satisfied in coverage when the canonical date is equal or newer.
+   Keep one Person write per record and keep raw history in the source. Write
+   nothing while preparing.
 
 Completion: scan window set; each configured relationship source for the window
 covered or marked Partial; every bindable substantive direct contact from the
@@ -147,9 +148,9 @@ For one active sequential critical path, a precise restart cue may be useful.
 Capture only the next concrete operation and keep it with the canonical task or
 approved next-day plan. Do not add restart metadata to every task.
 
-Completion: Phase 1 has produced the sweep over the closing day and the target
-day, and its rows satisfy the completion stated under "Run the Administrative
-Sweep" in `references/source-behavior.md`.
+Completion: the sweep has run over the closing day and the target day, and
+every row it proposes is one the user can approve, edit, defer, or skip on its
+own.
 
 ## Phase 1: Review, apply, and read back
 
@@ -184,10 +185,8 @@ the re-read state rather than from the pre-sweep evidence.
 ## Phase 2: Prepare tomorrow
 
 Phase 2 opens the sources it needs only after every approved Phase 1 action has
-been applied and read back, or classified as unapplied. Do not read a Phase 2
-source before that, even to orient. A source read early returns the state the
-sweep was about to correct, and a plan or journal built on it describes a day
-the sources no longer agree with.
+been applied and read back, or classified as unapplied. The boundary rule at the
+top of this file governs, including the case where orienting is the temptation.
 
 Establishing the day and the Daily CRM Scan run before Phase 1 and keep their
 own reads. Those reads happen once, at the top of the run. Establishing the day
@@ -463,8 +462,10 @@ A run that applied Phase 1 actions and then read Phase 2 sources renders one
 Source Access Audit covering both, separating the action access from the
 discovery reads as SKILL.md requires. Reporting only the pre-write reread and
 post-write readback would describe this as an action-only response and leave
-every source Phase 2 actually opened unnamed. It does not repeat a Phase 1 action, and its
-action numbers continue from Phase 1 under "Prepare one review bundle" in
+every source Phase 2 actually opened unnamed.
+
+The bundle does not repeat a Phase 1 action, and its action numbers continue
+from Phase 1 under "Prepare one review bundle" in
 `references/source-behavior.md`. Apply only approved actions under the shared
 source rules. Each action uses the bundle's intention shape; another action
 cannot close it.

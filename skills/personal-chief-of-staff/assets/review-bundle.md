@@ -15,7 +15,8 @@ the semantics and relevant-source set in `references/source-behavior.md`.
 
 Under that heading, write a short paragraph of a few sentences. That
 paragraph is the complete current-response role census. Do not use a table,
-HTML details, or em dashes. Do not print a spoken caption that says so.
+HTML details, or em dashes. Write the paragraph itself, with no heading or
+label announcing that a census follows.
 
 Lead with coverage. For a discovery-bearing response, state overall coverage
 as Sufficient, Partial, or Insufficient. An action-only response has no

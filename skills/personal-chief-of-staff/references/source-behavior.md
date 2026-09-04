@@ -59,7 +59,7 @@ Use each source for its native role:
   supports concluding that no exchange happened. Person-note, contact-date,
   and dated relationship Task effects still go through the CRM
   companion below, not from X alone. Do not use X to find posts to read or
-  reply to (issue #12).
+  reply to.
 - Repositories and issue trackers supply project decisions, implementation
   state, and work commitments.
 - Product, infrastructure, payment, and analytics services supply native
@@ -180,8 +180,8 @@ invent a tool call or trace. Cover every availability, failure, and verification
 branch the user asked to evaluate rather than presenting only the successful
 branch as though it occurred. Keep each user-named or configured material role
 as its own safe, generic mention instead of merging it into a broader
-source-family placeholder. A hypothetical empty window may illustrate the no-finding branch
-only conditionally; without an actual finite-window completion signal, it
+source-family placeholder. A hypothetical empty window may illustrate the
+no-finding branch only conditionally; without an actual finite-window completion signal, it
 cannot establish absence or a real no-proposal result for the current response.
 
 Keep access results separate from conclusion coverage. **Sufficient**,
@@ -189,7 +189,7 @@ Keep access results separate from conclusion coverage. **Sufficient**,
 supports a conclusion; they are not access results. A failed, missing,
 declined, or incomplete source narrows only the claims that depend on it and
 never becomes negative evidence. The zero-source rule applies only when no
-authoritative source read succeeds: in that case, make no source-backed
+authoritative source read succeeds. In that case, make no source-backed
 factual, absence, recurrence, or longitudinal claim. Successful calendar,
 task, repository, CRM, or other authoritative native-source reads still
 support current facts inside their observed scope when no durable
@@ -407,10 +407,10 @@ Reporting the sweep's coverage is not the same as listing what it cleared. Name
 the record kinds the sweep covered and say that none qualified. Then stop.
 
 How many records the sweep covered is useful and may be said. Which ones they
-were is the task-list dump this rule exists to prevent. "None of the three open
+were is a task-list dump. "None of the three open
 tasks qualified" reports coverage. "The three open tasks are due 2026-09-24,
 2026-10-02, and 2026-10-15, none overdue" identifies each healthy record and is
-the failure, however brief it looks. A healthy record's title, date, or other
+the failure. A healthy record's title, date, or other
 identifying detail belongs in neither the sweep nor the bundle.
 
 The mode supplies the window as two dates: a closing day and a target day.
@@ -579,8 +579,8 @@ relying on conversational inference.
 
 Run these steps for one action, start to finish, before beginning the next
 approved action. Do not re-read every target, then write every target, then
-read every target back. Batching that way separates an action's revalidation
-from its own write, which is the drift this sequence exists to prevent.
+read every target back. Batching that way lets the target drift between an action's
+revalidation and its own write.
 
 Touch a target's write interface only after that exact action is approved. A
 run that has not yet been approved, including a scheduled run waiting for the
@@ -601,9 +601,9 @@ Immediately before each approved action:
 3. If any approved action field, including closure evidence, changed, cannot
    be distinguished, or became ambiguous, stop and present a revised proposal
    for new approval. Never redirect an approval to a different account or
-   target. Stopping is the required outcome here, not a preference: applying
-   the write anyway and disclosing that you skipped this step is still a
-   violation, because the approval no longer rests on a verified target.
+   target. Stopping is the required outcome. Apply the write anyway and
+   disclose the skip, and it is still a violation, because the approval no
+   longer rests on a verified target.
 4. If readback shows the approved effect already exists, report **already
    satisfied** and do not duplicate it.
 5. Otherwise apply the approved action once through the supported interface.

@@ -71,6 +71,11 @@ write or readback path is unavailable or ambiguous, report the task rows
 **Partial**, and continue the rest of the mode from the evidence that remains.
 Never invent a due date, status, or waiting context as a substitute.
 
+When a paused bundle is resumed under "End and resume honestly" in
+`source-behavior.md`, the mode re-establishes its two dates as it would for a
+fresh run, and the sweep recomputes against that new pair. Recomputing against
+the pair the paused bundle carried only reproduces the same stale membership.
+
 Completion: every record the window's evidence shows is wrong or undecided has
 exactly one proposed action, nothing healthy is listed, and a zero-row sweep or
 an unavailable task workflow is reported honestly.

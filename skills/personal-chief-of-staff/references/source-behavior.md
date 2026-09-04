@@ -612,12 +612,8 @@ coverage for that conclusion.
 
 When resuming the same conversation, refresh time-sensitive evidence before
 continuing. A bundle resumed on a later local day than the one it was composed
-on has the mode re-resolve its window before anything recomputes: the mode
-re-establishes its two dates as it would for a fresh run, and the sweep
-recomputes against that new pair, not the pair the paused bundle carried.
-Recomputing against the original dates only reproduces the same stale
-membership. A bundle resumed on the same local day applies under the existing
-per-action revalidation. Stable prior-turn evidence may support the conversation only when
+on is recomputed before any of its actions apply; a bundle resumed on the same
+local day applies under the existing per-action revalidation. Stable prior-turn evidence may support the conversation only when
 the dependent claim labels it nearby as **prior-turn evidence — not
 refreshed**; it does not enter the current-access audit unless reread, and it
 must be reread whenever current truth matters. In a new conversation,

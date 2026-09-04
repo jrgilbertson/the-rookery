@@ -157,20 +157,19 @@ Present the sweep as the Phase 1 review bundle under "Prepare one review
 bundle" in `references/source-behavior.md`, then wait for the user's decisions.
 Apply each approved action under "Revalidate, apply, and read back" in that
 same reference, classify each outcome there, and name every action the user
-edited, deferred, or skipped. A **Failed**, **Indeterminate**, or **Manual**
-outcome blocks only its own action; the rest of Phase 1 and all of Phase 2
-continue.
+edited, deferred, or skipped. An outcome that blocks its own action under
+"Revalidate, apply, and read back" blocks only that action; the rest of Phase 1
+and all of Phase 2 continue.
 
 A scheduled run with the user absent stops here and ends **Paused** with
 nothing applied, as that reference's scheduled-run rule requires. It composes
 the bundle from canonical role reads only. Do not touch a proposed target's own
 write interface while waiting, not even to re-read it; that re-read belongs to
 the approved action and happens after the user replies. When the user
-replies later, apply the day-change recompute rule in "End and resume honestly"
-before any action applies, then continue into Phase 2. On that resume the
-journal's closing date stays the day originally being closed, while the sweep
-window and the target day re-resolve to the current local date and the following
-local date, so the recompute cannot recompute the stale window to itself.
+replies later, apply the resume rule in "End and resume honestly" before any
+action applies, then continue into Phase 2. Wind-down's journal keeps the
+closing date it originally had; only the sweep window and the target day
+re-resolve.
 
 A zero-row sweep needs no bundle ceremony. Say the sweep found nothing and
 continue. On a scheduled run with the user absent the stop above still wins,
@@ -455,9 +454,13 @@ Present the Phase 2 review bundle. It carries the journal, any learning or
 strategy action the coaching beat produced, the meaningful-commitments edit,
 and any other Phase 2 effect.
 
+A reply deciding the Phase 1 bundle resolves those actions and then continues
+this run into Phase 2. It is not an action-only response and needs no separate
+review request. A reply deciding this Phase 2 bundle ends the run.
+
 A run that applied Phase 1 actions and then read Phase 2 sources renders one
-Source Access Audit covering both, separating the action access from the
-discovery reads as SKILL.md requires. Reporting only the pre-write reread and
+Source Access Audit covering both, separating the **Action access** from the
+**Review discovery** reads. Reporting only the pre-write reread and
 post-write readback would describe this as an action-only response and leave
 every source Phase 2 actually opened unnamed.
 

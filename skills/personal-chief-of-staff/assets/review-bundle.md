@@ -37,9 +37,8 @@ evidence**. **Attempted — unavailable or failed** renders **attempted and
 failed**. **Not configured**, **Declined**, and **Not needed** render as
 **not configured**, **declined**, and **not needed**.
 
-Include attempted failures, partial or truncated reads, unconfigured or
-declined roles, Partial or Insufficient coverage, and failed post-write
-readbacks as limits. Include **accessed with no relevant evidence** as a
+Render as limits the results "Audit the current response's source access" in
+`references/source-behavior.md` defines as limiting. Include **accessed with no relevant evidence** as a
 limit only when that empty result is why a claim is omitted, qualified, or
 an absence claim is made. Complete, non-truncated **accessed with evidence**
 discovery does not get a "so" clause.

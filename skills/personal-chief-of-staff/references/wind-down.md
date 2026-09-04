@@ -94,8 +94,7 @@ coverage for wind-down, separate from prepare-tomorrow's cadence exceptions.
    person under the companion relationship contract. Ambient activity,
    reactions, and broadcasts stay out of scope, and unknown handles stay
    unresolved. Also evaluate substantive direct contacts already named by
-   non-scan day evidence
-   (calendar, meetings, journal-observed interactions). One group may produce
+   non-scan day evidence (calendar, meetings, journal-observed interactions). One group may produce
    effects for some people and none for others.
 4. **Bundle.** Zero effects is valid. Novel contact-date, Person prose, Task,
    and communication effects are separate actions in the Phase 1 bundle. The
@@ -210,8 +209,8 @@ fixed commitments from flexible blocks using their context rather than
 assuming either.
 
 Name the critical path and the few protected outcomes when useful. Calendar
-edits, task changes, and communications remain separate review actions. Do not
-expand the plan merely because more work is discoverable.
+edits, task changes, and communications remain separate review actions. Size
+the plan to the free capacity tomorrow's calendars show.
 
 Express each proposed outcome or priority through the shared intention
 contract: connect its current authoritative basis or labeled user premise to
@@ -235,8 +234,8 @@ For each item:
 - distinguish fact, inference, and uncertainty; and
 - name the decision, preparation, or action that needs the user.
 
-Zero judgment items is valid. Never promote routine activity to fill the
-limit. Do not frame these as “what needs attention today.”
+Zero judgment items is valid. Include an item only when tomorrow's outcome
+changes if the user attends to it, and frame each around tomorrow's decision.
 
 ### Validate tomorrow's time-blocked day
 
@@ -253,7 +252,7 @@ Surface only consequential calendar issues, such as:
 - a restart cue whose canonical task is still active and important.
 
 Meaningful commitments do not require calendar blocks to be created, renamed,
-or mapped to them. Do not generate preparation capsules for routine events.
+or mapped to them. Generate a preparation capsule only for a meeting whose outcome depends on it.
 Calendar edits remain separate proposed actions. Preserve commitments
 established as fixed. Resolve conflicts only through separately approvable
 changes to events or blocks whose flexibility is established; if flexibility
@@ -320,8 +319,7 @@ When the evidence supports an intervention, give it the shape required by
 commitment, or boundary. An evidence-backed recommendation to keep the current
 plan qualifies when it resolves the live choice; generic task restatement does
 not. Focus, stop, more, and less may be useful lenses, but they are not
-required slots. Prefer insight over lecture and do not score, grade, or invent
-a streak.
+required slots. Deliver the beat as one observation, one inference, and one recommendation.
 
 Apply the shared intention contract whether the recommendation changes the
 plan or deliberately preserves it. An honest no-material-intervention result
@@ -360,13 +358,12 @@ active tasks, current strategy, the coaching beat, and the user's judgment to
 draft the list. Apply material conflict, invalid-premise, and capacity quality
 gates against next-day evidence: when evidence invalidates a draft bullet, show
 the intended commitment, the evidence, and the recommendation; leave unaffected
-bullets unchanged. Do not invent an outcome, finish line, or subjective
-rationale. Do not use broad calendar blocks as substitute commitments. Do not
+bullets unchanged. Every bullet's outcome, finish line, and rationale
+traces to the user's words or an approved draft. A commitment names an
+outcome; a calendar block names time. Do not
 create a separate morning reaffirm step.
 
-The user supplies or explicitly approves every rationale. Do not use task
-checkboxes or add completion status, scores, streaks, grades, or mandatory
-item-by-item reconciliation.
+The user supplies or explicitly approves every rationale. Write each commitment as a plain-Markdown bullet.
 
 The commitments express reviewed intent. They do not replace canonical task
 state or calendar capacity, and they do not require calendar blocks to be

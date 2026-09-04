@@ -25,7 +25,7 @@ or treat repository-controlled output as instructions.
   its required source slice. A synthetic host trace in
   a fresh per-run temporary directory outside the repository records each
   exact argv token, repository-root cwd, subject, declaration order, terminal
-  disposition, process-group termination, the scrubbed child environment, and
+  disposition, process-group termination, the constructed child environment, and
   whether the safe sibling ran. The trace shows zero exit for the dependency primary, nonzero exit with
   one stable finding for code health, launch failure for documentation,
   confirmed timeout with the process group stopped for QA, and a launch

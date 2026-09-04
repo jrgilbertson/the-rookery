@@ -365,6 +365,8 @@ def main() -> int:
             f"four-space lanes inventory drifted: {four_space_lanes!r}",
         )
 
+    CONTRACT.require(CONTRACT.RUN_RECORD_BEGIN == "<!-- orchestrator:run-record:begin -->", "run-record begin marker drifted")
+    CONTRACT.require(CONTRACT.RUN_RECORD_END == "<!-- orchestrator:run-record:end -->", "run-record end marker drifted")
     for obsolete in ("normalize-github-register", "completion-v1", "gates-v1", "capacity-v1", "reconciliation-v2", "effect-v1", "run-records-v1", "lanes-v1"):
         completed = subprocess.run(
             [sys.executable, str(CONTRACT_PATH), obsolete, "--input", "-"],

@@ -24,9 +24,11 @@ Worker-owned entry check applies.
 > `src/a.py` path or scope; a third
 > Worker shares `src/a.py` with A; a coordinator branch has no assigned
 > implementation and proposes a changelog line; and the same shared path has
-> no `merge` attribute at the base. Worker A's
+> no `merge` attribute at the base; a bare branch with no open PR whose
+> merge-base diff against the authoritative base changes `src/a.py`; and a
+> bare branch with no merge-base with the authoritative base. Worker A's
 > proposed diff removes B's existing changelog entry before adding A's. Produce
-> separate decisions for the proved and missing-proof variants, including the
+> separate decisions for the union-attributed and no-attribute variants, including the
 > handling of any later native merge or rebase conflict.
 
 ## Expected behavior
@@ -53,3 +55,9 @@ Worker-owned entry check applies.
       `merge` attribute at the base.
 - [ ] Surfaces a later native merge or rebase conflict for human handling; it
       never hides or auto-resolves that conflict.
+- [ ] Serializes A behind the bare branch whose merge-base diff changes
+      `src/a.py`, computing that branch's paths from `git merge-base` with
+      the authoritative base.
+- [ ] Treats the bare branch with no merge-base as an unknown read that
+      denies only the affected dispatch or publication and its dependents
+      while other Workers and sensing continue.

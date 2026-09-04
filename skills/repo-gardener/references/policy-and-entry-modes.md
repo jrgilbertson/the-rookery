@@ -171,16 +171,21 @@ require the exact target revision at the repository root, a clean worktree,
 and an already-present top-level executable resolved without installing or
 fetching it.
 
-Run the command as a direct argv child process from the repository root with
-a child environment from which provider and production credentials, credential
-helpers, and agent sockets are removed (at least `GITHUB_TOKEN`, `GH_TOKEN`,
-`SSH_AUTH_SOCK`, `GPG_AGENT_INFO`, and any variable whose name ends in
-`_TOKEN`, `_SECRET`, `_KEY`, or `_PASSWORD`), in its own process group, with a
-fixed ten-minute maximum. Refuse the command locally only when the agent
-cannot set the child environment or cannot terminate the process group. The
-host's existing network and filesystem controls remain in force; the
-declaration neither broadens them nor proves read-only behavior, and this is
-not an OS sandbox. Never join tokens into a shell command, substitute another
+Run the command as a direct argv child process from the repository root, in
+its own process group, with a fixed ten-minute maximum, and with a child
+environment that holds no provider or production credential: remove
+`GITHUB_TOKEN`, `GH_TOKEN`, `SSH_AUTH_SOCK`, `GPG_AGENT_INFO`,
+`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_SESSION_TOKEN`, and every
+variable whose name ends in `_TOKEN`, `_SECRET`, `_KEY`, or `_PASSWORD`; and
+point file-based credential lookups at an empty directory (`HOME`,
+`XDG_CONFIG_HOME`, `GH_CONFIG_DIR`, `NPM_CONFIG_USERCONFIG`,
+`AWS_SHARED_CREDENTIALS_FILE`, `AWS_CONFIG_FILE`) with
+`GIT_CONFIG_GLOBAL=/dev/null` and `GIT_CONFIG_NOSYSTEM=1`. Refuse the command
+locally when the agent cannot set that child environment, cannot terminate
+the process group, or the host still grants the child external-write
+authority by another route it can observe. The host's existing network and
+filesystem controls remain in force; the declaration neither broadens them
+nor proves read-only behavior, and this is not an OS sandbox. Never join tokens into a shell command, substitute another
 invocation, retry automatically, or install anything. After every launch,
 confirm the process group is stopped, then recheck the revision check point,
 exact target revision, and clean worktree before another declaration starts.
@@ -208,7 +213,8 @@ without an open PR contributes `git diff --name-only $(git merge-base <base
 OID> <branch>) <branch>`; a branch with no merge-base or an unreadable diff is
 an unknown read, and a branch already merged into the base contributes no
 paths. A PR elsewhere in the same directory, lane, or package manager is not
-overlap. An adopted PR is excluded from its own Worker's overlap read, and no
+overlap. A Worker's own branch and its adopted PR's head branch are excluded
+from its overlap read, and no
 two Workers adopt the same PR. The only shared-path exception is a path whose
 git `merge` attribute is `union` at the authoritative base, for additive
 entries, between Workers selected in the same assignment decision;

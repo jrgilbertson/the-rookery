@@ -41,7 +41,9 @@ hosted head OID, and re-read every named gap from native facts now and again
 before publication; if a gap is gone, changed, or ambiguous, stop the unit
 and report it without publishing.
 
-Authoring is allowed only inside the five gates in `policy-and-entry-modes.md`. For an adopted PR the gates apply to the paths the Worker's
+Authoring is allowed only inside the five gates, all proved by the opening
+policy named in the brief: exact repository identity, the authoring scope,
+positive Worker capacity, an enabled owning lane, and no protected path. For an adopted PR the gates apply to the paths the Worker's
 own commits change; the adopted PR's existing diff is native state, reported,
 not authored. A rename counts both its old and new path.
 
@@ -50,9 +52,10 @@ not authored. A rename counts both its old and new path.
 The Worker owns planning, implementation, simplification, review, repository
 verification, its coherent commit, and its branch/PR. It reports each assigned
 gate as pass, failure, or unavailable. Every unattended Worker invokes
-`checking-pr-readiness` normally on the exact head in its worktree (for an
-adopted PR, with the PR base passed as `--base`) and stops after its brief and
-numbered menu. After a Worker PR exists, the scheduled ownerless run has that
+`checking-pr-readiness` normally on the exact head in its worktree and stops
+after its brief and numbered menu. For an adopted PR the assessment must be
+bound to the PR's base ref and full base OID from the brief; if the checking
+skill resolves a different base, stop the unit and name it. After a Worker PR exists, the scheduled ownerless run has that
 Worker invoke `checking-merge-readiness` on that PR and stops after its brief
 and numbered menu. The activating utterance is never approval. On a distinct
 later turn, the Orchestrator authorizes that Worker to reply 1 only when the
@@ -89,8 +92,12 @@ committed path must match at least one include glob and no exclude glob, and
 no path may be protected. For an adopted PR the committed paths are the
 Worker-authored diff from the captured hosted OID. Then read overlap: the
 intersection of the committed paths with the changed paths of every other
-current native branch and open PR, excluding the Worker's own adopted PR; a
-shared path is permitted only when the brief names it as a union-merged
+current native branch and open PR, excluding the Worker's own branch and its
+adopted PR's head branch. A PR contributes its native file list; a branch
+without an open PR contributes `git diff --name-only $(git merge-base <base
+OID> <branch>) <branch>`; a branch with no merge-base or an unreadable diff
+is an unknown read; a branch already merged into the base contributes no
+paths. A shared path is permitted only when the brief names it as a union-merged
 ledger and the Worker's diff adds only its own entry while retaining every
 base entry. Any other intersection stops the action. An
 ownerless first push must match the subject and OID the checking skill

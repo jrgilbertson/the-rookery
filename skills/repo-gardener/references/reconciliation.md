@@ -21,7 +21,8 @@ sensing and make a truthful close only when the remaining authority still
 permits it.
 
 Before another run opens, reconcile any complete tracker `run-opened` without
-its matching `run-closed`. For the exact original Orchestrator and its
+its matching `run-closed`, including a legacy record under the pre-version
+markers named in `tracker-records.md`. For the exact original Orchestrator and its
 Workers, require current caller or host liveness, or proven termination; an
 expired lease alone proves neither termination nor loss of mutation ability.
 Unknown, unavailable, or still-live state blocks a new opening and new
@@ -110,7 +111,7 @@ number, head ref, head OID, and changed paths are the identity.
 
 A shared ledger path is the one overlap exception, keyed on
 `git check-attr --source=<full base OID> merge -- <path>` reporting `union`,
-read by the Orchestrator at assignment and by the Worker before publication.
+read by the Orchestrator at assignment and carried to the Worker in its brief.
 The `--source` form reads the attribute at the base revision regardless of the
 worktree's checkout; a git without it is an unavailable read that denies the
 exception. The attribute proves git-local union merge only: hosts that merge

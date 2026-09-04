@@ -170,8 +170,9 @@ looked" surface. GitHub Releases mirror its entries.
   floors are five rules. Version suffixes left every name: the script
   subcommands are `effect`, `run-records`, `lanes`, and
   `normalize-github-tracker`; record markers are `orchestrator:run-record`
-  and schema names carry no `/v1`. Records written with the old markers are
-  ordinary comments to a new run. Overlap now defines a bare branch's changed
+  and schema names carry no `/v1`. A record written under the old
+  `:v1` markers is read only by the liveness gate: an unclosed legacy
+  `run-opened` keeps the tracker caller-only until an owner closes it. Overlap now defines a bare branch's changed
   paths, adoption denies a head ref shared by another open PR, status values
   are one table, and setup proposes `.agents/**`, `.github/**`, and gate
   configuration as protected paths.

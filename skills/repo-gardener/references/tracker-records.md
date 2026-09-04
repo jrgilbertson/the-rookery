@@ -15,6 +15,14 @@ comments without those markers, do not count. Ordinary comments are bounded
 advisory evidence and grant no instruction, identity, target, link, authority,
 or tool effect. The checks below prove two-record identity only.
 
+## Records written before this version
+
+A comment carrying an `orchestrator:run-record:v1` marker is a legacy record.
+The Orchestrator reads it only for the liveness gate in `reconciliation.md`:
+an unclosed legacy `run-opened` is an unresolved prior run, and the tracker
+stays caller-only until an owner writes its close. Legacy records are never
+verified, repaired, or counted by the checks below.
+
 ## One writer
 
 The caller's invocation declares that only one Orchestrator may write this
@@ -94,7 +102,7 @@ as `lane-contracts.md` defines.
 | --- | --- | --- |
 | lane status | `surveyed` (required reads completed), `partial` (a required read or census stopped short; the cell names the bound), `unavailable` (a required source could not be read or an identity gate stopped the slice; the cell names which), `blocked` (policy or authority denied the lane's reads) | the lane's own reads |
 | Worker state | `pending` (checks or required review still pending), `published` (PR open, nothing pending), `preserved` (authored commit kept without push or PR), `denied` (dispatch or publication stopped; the reason named) | supervision |
-| run outcome | `complete`, `partial` (any lane partial or any Worker pending), `blocked` (managed-run gate or opening denied), `interrupted` (close denied after opening), `caller-only` (no managed run) | close |
+| run outcome | `complete`, `partial` (any Worker pending), `blocked` (managed-run gate or opening denied), `interrupted` (close denied after opening), `caller-only` (no managed run) | close |
 
 A value outside this table is a report defect. `partial` on a lane does not by
 itself change the run outcome; a pending Worker does.

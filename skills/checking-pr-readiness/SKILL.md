@@ -343,7 +343,7 @@ Example when Approve is live and Request changes is the alternative:
 3. Show the checks this PR-readiness review ran.
 ```
 
-Show the checks is non-terminal: print the list from the captured gather, then the brief and numbered options again. Run a missing step and Explain are non-terminal: when one finishes, **recompose**. Re-read the working surface from step 1 and, when it changed, re-run the steps whose inputs the change touches. A returned `checking-simplicity` result refreshes step 3 even when no path changed; that skill is read-only and returns its finding to this gate.
+Show the checks is non-terminal: print the list from the captured gather, then the brief and numbered options again. Run a missing step and Explain are non-terminal: when one finishes, **recompose**. Re-read the working surface from step 1 and, when it changed, re-run the steps whose inputs the change touches. A returned `checking-simplicity` result refreshes step 3 even when no path changed; that skill is read-only and returns its finding to this gate. When that result is a question for the user, print the question with its options and wait; the next reply answers it and goes back to the same reviewer, and only the readout that follows refreshes step 3 and recomposes this menu.
 
 Completion of this turn: the brief and numbered live options are on screen,
 and the run is waiting. It did not pick. It did not re-read identity for

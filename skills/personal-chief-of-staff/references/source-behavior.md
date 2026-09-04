@@ -145,8 +145,7 @@ Use exactly one of these access results for each relevant source slice:
 
 - **Accessed — evidence found:** a bounded authoritative read succeeded and
   returned relevant evidence. If the result was truncated, label the returned
-  scope as partial and use only the evidence actually observed; do not imply
-  completeness.
+  scope as partial and use only the evidence actually observed.
 - **Accessed — no relevant evidence:** a bounded authoritative read succeeded,
   returned no relevant evidence, and exposed an explicit completion signal for
   the displayed scope. This supports absence only inside that scope.
@@ -175,8 +174,7 @@ mapping conditionally and classify the audit from this response's real access,
 as **Not configured** when no authoritative execution path was supplied or
 resolved. **Attempted — unavailable or failed** requires a real call through a
 resolved authoritative interface; resolving no path is not an attempt. Do not
-turn a premise such as "the reread succeeded" into **Accessed**, and do not
-invent a tool call or trace. Cover every availability, failure, and verification
+turn a premise such as "the reread succeeded" into **Accessed**. Cover every availability, failure, and verification
 branch the user asked to evaluate rather than presenting only the successful
 branch as though it occurred. Keep each user-named or configured material role
 as its own safe, generic mention instead of merging it into a broader
@@ -187,8 +185,7 @@ cannot establish absence or a real no-proposal result for the current response.
 Keep access results separate from conclusion coverage. **Sufficient**,
 **Partial**, and **Insufficient** describe whether the available evidence
 supports a conclusion; they are not access results. A failed, missing,
-declined, or incomplete source narrows only the claims that depend on it and
-never becomes negative evidence. The zero-source rule applies only when no
+declined, or incomplete source narrows only the claims that depend on it. The zero-source rule applies only when no
 authoritative source read succeeds. In that case, make no source-backed
 factual, absence, recurrence, or longitudinal claim. Successful calendar,
 task, repository, CRM, or other authoritative native-source reads still
@@ -206,10 +203,10 @@ Apply these response boundaries:
   including a failed, missing, or declined path. When both the pre-write reread
   and post-write verification readback occur, name them as two distinct
   operations even when they use the same source, scope, and access result;
-  one clause never summarizes both. Keep **Applied**, **Already satisfied**,
+  Give each its own clause. Keep **Applied**, **Already satisfied**,
   **Failed**, **Indeterminate**, **Manual**, **Deferred**, and **Skipped** solely
-  in the existing action-result narrative; never add a mutation result, and an
-  access result never implies a mutation outcome.
+  in the existing action-result narrative, which is where a mutation outcome
+  is reported.
 - If the same message both decides actions and requests either a new review or
   current cross-source non-mode context, finish the actions first and use one
   Source Access Audit. In that paragraph, separate **Action access** from
@@ -388,8 +385,7 @@ formula. Optimize for durable value across the review horizon rather than the
 largest count of completed tasks.
 
 Interpret calendar evidence through the event's purpose, participants,
-flexibility, and surrounding commitments. Do not assume every event is fixed or
-freely movable. Use health evidence as context with uncertainty; do not
+flexibility, and surrounding commitments. Use health evidence as context with uncertainty; do not
 diagnose, reproduce a synthetic readiness score, or let one signal
 mechanically control the calendar. Begin a causal or correlation analysis only
 when the user names a decision to improve, agrees on an observation window,

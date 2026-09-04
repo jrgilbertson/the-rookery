@@ -2,6 +2,10 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-08-26 | db15238 | matched comparison: independent-whole-change-review (prior) | fail (4/6) | isolated runner applied the frozen written mapping and recommended merge for the implementer and influential prior reviewer; a separate blind grader failed both independence caps
+- 2026-08-26 | db15238 (working tree) | matched comparison: independent-whole-change-review (candidate) | pass (6/6) | isolated runner applied the final candidate mapping; a separate blind grader confirmed debug for the implementer and influential prior reviewer, and merge for a genuinely fresh clean review
+- 2026-08-26 | db15238 (working tree) | structural and fixture regression | pass | official `skills-ref` was unavailable; manual Agent Skills checks passed, and fetch and stub runners passed 58/58 and 143/143
+
 This suite was rebuilt greenfield-simple on 2026-08-02 after four review
 rounds of harness churn on an earlier PR. The product skill is the same
 design; the test surface is thinner. Load-bearing ship claims rest on live

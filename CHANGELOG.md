@@ -11,9 +11,24 @@ looked" surface. GitHub Releases mirror its entries.
 
 ## [Unreleased]
 
+### Added
+
+- Added `checking-simplicity`, a read-only assessment that finds safe
+  simplification opportunities in named technical areas, questions, proposed
+  or existing designs, plans, code-level approaches, and in-build decisions.
+  The assessment runs in one dispatched subagent that did not author or
+  implement the subject. Lifecycle and Git hooks remain deliberately absent.
+
 ### Changed
 
-- `checking-pr-readiness` later 1 on an Approve menu continues into the
+- Skill test suites may retain a small number of explicitly labeled regression
+  controls for load-bearing behavior that the bare and skilled variants both
+  pass; those controls never count as evidence of improvement.
+- `checking-pr-readiness` now inventories solution simplicity, the
+  independent approach-level result from `checking-simplicity`, as a sixth
+  upstream step and late backstop, and `checking-merge-readiness` requires a
+  fresh whole-change reviewer before it can recommend merge.
+- A later reply of 1 on a `checking-pr-readiness` Approve menu continues into the
   installed finishing path in the same conversation. The evidence pack is
   silent pull-request-body input, not another wait. If no finishing path is
   installed, the run names that once and stops without re-asking Approve.
@@ -21,7 +36,7 @@ looked" surface. GitHub Releases mirror its entries.
   reserved Approve or Proceed slot. When that action cannot be taken, number
   1 stays and names why. The remaining actions have a print order, not fixed
   menu numbers. Live later options are numbered from 2 without gaps. Each
-  option is a natural sentence rather than a label. Show the checks names
+  option is a natural sentence rather than a label. Show the checks lists
   the checks this review ran. File or capture follow-up appears only when
   the brief named leftover work to park. Request changes stays on every
   PR-readiness menu as the numbered alternative to Approve. `ce-pov` stays

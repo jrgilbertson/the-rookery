@@ -2,6 +2,10 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-08-26 | db15238 | matched comparison: passing-baseline-regression-control (prior) | fail (2/5) | isolated runner allowed the control and limited its claim, but omitted the separate-discrimination requirement, matched-control regression blocking, and bounded-use guidance; separate blind grader
+- 2026-08-26 | db15238 (working tree) | matched comparison: passing-baseline-regression-control (candidate) | pass (5/5) | fresh runner applied the candidate protocol; a separate blind grader confirmed explicit control labeling, separate discrimination, matched regression blocking, bounded use, and honest claims
+- 2026-08-26 | db15238 (working tree) | structural validation | pass | official `skills-ref` was unavailable; manual Agent Skills field, length, name, and package checks passed with the repository validator, catalog, and relative-link checks
+
 - 2026-08-17 | b8fbafb + terminology diff | trigger suite: generic skill terminology | pass (10/10 should-trigger; 11/11 near misses) | Twenty-one isolated ephemeral Codex CLI 0.147.0 contexts each saw only the current name, description, and one query; every first judgment was categorical, including `no` for the added role-playing-game near miss.
 
 Branch-time `git rev` values below are preserved by PR #19 even if the

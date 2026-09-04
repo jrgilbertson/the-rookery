@@ -35,7 +35,8 @@ input files:
 - `cases/<case-name>.md` — one runnable behavioral case: the full prompt, any
   input files by relative path, a binary expected-behavior checklist, and one
   provenance line naming the observed failure or baseline gap that motivated
-  the case.
+  the case, or the load-bearing contract protected by a labeled regression
+  control.
 - `log.md` — one line per run or check: `date | git rev | check | result |
 note`. The `git rev` field names the commit the run's working tree was
   based on — the parent commit when the change under test is not yet
@@ -52,10 +53,13 @@ note`. The `git rev` field names the commit the run's working tree was
 
 - Binary pass/fail everywhere. A case fails if any checklist item fails.
   Trigger judgments are yes or no.
-- A case enters a suite only when a baseline run showed the bare model failing
-  the behavior, or an observed failure motivated it — named in the provenance
-  line. Exception: a safety or privacy invariant may keep one case even when
-  the bare model currently passes it.
+- A case enters a suite when a baseline run showed the bare model failing the
+  behavior or an observed failure motivated it — named in the provenance line.
+  A case that both variants pass stays only as an explicitly labeled
+  regression control, whether it guards a safety or privacy invariant or
+  another load-bearing contract, and a suite keeps only a small number of
+  them. Labeled controls never count as discriminating evidence for a new
+  skill or behavior change.
 - Roughly 10–15 active cases per skill is a ceiling for initial mining, not a
   target; steady-state suites grown by the observed-failure rule are expected
   to stay smaller.

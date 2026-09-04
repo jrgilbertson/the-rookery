@@ -57,6 +57,7 @@ Agents that weren't in the planning session review the plan against the current 
 - `ce-plan`. Turns a clear intent into one plan of decisions, units, files, tests, and risks. It does not write the implementation. Use it when the outcome is clear enough to plan execution.
 - `ce-debug`. Diagnoses a bug before anyone proposes a fix. Use it when the work begins with broken or unexpected behavior.
 - `ce-pov`. Gives a decisive, project-grounded answer to a focused planning question. Use it when one decision is blocking the plan and another research pass would add little.
+- [`checking-simplicity`](skills/checking-simplicity/SKILL.md). Find opportunities to safely simplify a design, plan, or approach against the current need. Use it when you ask to simplify something, or when a plan is about to add durable machinery that isn't tied to that need.
 
 After ordinary clarification, I sometimes have one coherent decision tree left where the answers depend on each other. I consider a targeted grilling session when at least one decision would be costly to reverse or affect a broad surface, one answer constrains the questions below it, or the agent would otherwise guess at an acceptance boundary. For example, authentication ownership may determine session lifetime and data access, so those decisions benefit from being settled parent-first. Several unrelated unknowns stay in `ce-brainstorm`. Clear requirements and routine, reversible choices go directly to `ce-plan`.
 
@@ -128,6 +129,7 @@ The in-build toolkit:
 - [Orca](https://github.com/stablyai/orca). Runs parallel worktrees, delegates to agents across harnesses, and supports element-level browser feedback. Use it when a plan can be split into independent slices or an interface needs direct visual iteration.
 - **Impeccable, mid-build.** Critiques and polishes visual work, audits technical quality, hardens edge cases, and offers three variants for a selected element with the option to apply one to source. Use it while building an interface to keep the implementation aligned with the design brief and production constraints.
 - `ce-test-browser` and `ce-dogfood`. Verify the browser flows a branch touched, with dogfood able to fix small breakages, add regression tests, and commit the changes. Use `ce-test-browser` for a targeted check and `ce-dogfood` for a hands-off repair pass.
+- [`checking-simplicity`](skills/checking-simplicity/SKILL.md). Ask it to challenge a concrete design decision or reassess an existing system. It may also activate before a build decision advances durable machinery without tying it to the current need.
 
 What must be true before moving to Ship:
 

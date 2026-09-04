@@ -147,22 +147,20 @@ alternatives:
   work is not a receipt for it.
 - Browser testing leaves a receipt only when its output or screenshots were
   saved; otherwise it has none.
-- A `checking-simplicity` result counts only when this gate dispatched the
-  review after step 1 against the complete surface it just inventoried, in a
-  fresh context that did not plan, author, or implement the subject and
-  produced no earlier findings or review fixes that shaped it; having
-  reviewed an earlier revision alone is not involvement. The dispatch
-  supplies the resolved intent source, repository, branch, full `HEAD`, and
-  all four path categories with their complete current contents, read from
-  the index or as link objects so a symlink is transferred as its link text
-  and never followed. A result that recommends
-  keeping the current approach is verified only when that dispatch met the
-  independence rule, no user question remains, and the subject is unchanged.
-  A result that recommends simplifying first, or that needs a user decision,
-  is failed until the approach is revised or the decision resolved and the
-  subject checked again. A result that cannot assess yet is not verified. Any
-  content change after the dispatch makes the result stale; an older or
-  same-context result is advisory, never verified.
+- Solution simplicity is verified by this gate's own dispatch, not by a
+  receipt. After step 1, dispatch `checking-simplicity` with the resolved
+  intent source, the repository, branch, and full `HEAD`, and all four path
+  categories with their complete current contents, read from the index or as
+  link objects so a symlink is transferred as its link text and never
+  followed; that skill owns the reviewer's independence and how it reads the
+  subject. The result is verified only when it recommends keeping the current
+  approach, no user question remains, and nothing on the surface changed after
+  the dispatch, confirmed by re-reading the intent source and the full contents
+  of all four path categories rather than comparing path names. A result that
+  recommends simplifying first, or that needs a
+  user decision, is failed until the subject is revised or the decision made
+  and the dispatch repeated. A result that cannot assess yet, or that came
+  from an older or same-context run, is not verified.
 - Code review, code simplification, and solution simplicity leave no durable
   artifact today, so outside the session that ran them they are not verified.
   Solution simplicity is never verified by attestation, because its fresh

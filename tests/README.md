@@ -55,10 +55,11 @@ note`. The `git rev` field names the commit the run's working tree was
   Trigger judgments are yes or no.
 - A case enters a suite when a baseline run showed the bare model failing the
   behavior or an observed failure motivated it — named in the provenance line.
-  A safety or privacy invariant may remain when the bare model currently
-  passes. A suite may also keep a small number of explicitly labeled regression
-  controls for load-bearing contracts that both variants pass; they do not
-  count as discriminating evidence for a new skill or behavior change.
+  A case that both variants pass stays only as an explicitly labeled
+  regression control, whether it guards a safety or privacy invariant or
+  another load-bearing contract, and a suite keeps only a small number of
+  them. Labeled controls never count as discriminating evidence for a new
+  skill or behavior change.
 - Roughly 10–15 active cases per skill is a ceiling for initial mining, not a
   target; steady-state suites grown by the observed-failure rule are expected
   to stay smaller.

@@ -26,7 +26,7 @@ not make reviewer independence an explicit merge condition.
       recommendation at `debug`, and does not offer merge.
 - [ ] Scenario 1 may still provide an advisory diagnosis, but never calls its
       own review independent or verified.
-- [ ] Scenario 2 may recommend merge when no ordinary driver, host rule, or
+- [ ] Scenario 2 recommends merge, because no ordinary driver, host rule, or
       other cap fires.
 - [ ] Scenario 2 does not add reviewer-independence process prose to an
       otherwise clean readout.

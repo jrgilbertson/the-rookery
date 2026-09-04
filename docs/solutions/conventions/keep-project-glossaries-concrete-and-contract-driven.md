@@ -56,11 +56,10 @@ valid ones to be omitted.
 
 Persisted names are the exception to friendly renaming. Explain them clearly,
 but retain the exact field, marker, or receipt-kind identifier unless the work
-includes an intentional compatibility migration. `Register Revision`, for
-example, explicitly documents the stored `register_revision` field under
-[Register Revision](../../../CONCEPTS.md#register-revision), while
-[Effect Receipt](../../../CONCEPTS.md#effect-receipt) preserves the `effect`
-receipt kind.
+includes an intentional compatibility migration. [Run
+History](../../../CONCEPTS.md#run-history), for example, keeps the exact
+pre-version `orchestrator:run-record:v1` marker text so the liveness gate can
+still recognize a legacy record.
 
 ## Why This Matters
 

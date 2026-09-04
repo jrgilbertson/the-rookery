@@ -218,43 +218,10 @@ The append-only comment history on the Gardening Tracker. Each Repository
 Maintenance Run adds one opened record and one closed record. History supplies
 visibility, not a lock, queue, authority grant, or planning-quality verdict.
 
-Legacy dogfood history may also contain a structurally hash-linked receipt
-chain. Those kinds remain readable: `decision`, `effect`, `evidence`,
-`manifest`, `release`, `run`, `run-opened`, `run-closed`, and `scout`.
-
-### Scout Receipt
-
-A legacy per-lane terminal record retained in older history. Current runs place
-all nine lane results in the consolidated closing record instead of writing
-nine separate managed comments.
-
-### Register Revision
-
-A legacy monotonic body version stored as `register_revision` on archived
-hash-linked tracker history. New gardening runs do not require it. It is not
-an atomic provider precondition, compare-and-swap, or distributed lock.
-
-### Effect Receipt
-
-The intended-effect and terminal-outcome evidence for one stable,
-repository-qualified logical report operation, stored with the `effect` receipt
-kind. Its identity is the pair `(repository_id, operation_id)`, not the
-operation ID alone. The intended receipt is read back before invoke; the
-terminal receipt is read back after the authoritative post-read. Ambiguity
-blocks blind retry.
-
-### Attention State
-
-The report projection `Action required`, `Merge-ready`, `Watching`, or
-`Routine`. Attention communicates current handling; it is not a persisted work
-state or authority grant.
-
-### Completion Partition
-
-The disjoint, exhaustive pair `affected_work` and
-`remaining_unblocked_work`. Every named item appears exactly once, and every
-unblocked remainder is continued, durably delegated, or gated by its own named
-prerequisite.
+A record written under the pre-version `orchestrator:run-record:v1` markers
+is read only by the liveness gate: an unclosed legacy `run-opened` keeps the
+tracker caller-only until an owner closes it. Legacy records are never
+verified, repaired, or counted.
 
 ## Research synthesis
 

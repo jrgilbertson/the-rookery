@@ -21,7 +21,6 @@ IDENTITY_LIMIT = 128
 RECEIPT_LIMIT = 16 * 1024
 BODY_LIMIT = 48 * 1024
 INPUT_LIMIT = 8 * 1024 * 1024
-TRIAGE_LANE = "issue-backlog-and-customer-feedback-triage"
 SHA256 = re.compile(r"^[0-9a-f]{64}$")
 NOTIFICATION_CAPABLE_MENTION = re.compile(
     r"(?<![A-Za-z0-9_])"

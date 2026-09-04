@@ -508,24 +508,13 @@ lanes:
 """
         expect_valid(commented, repo_root, expected)
 
-        # One parser, one grammar: flow-style and deeper-indented lane mappings
-        # normalize identically, and a duplicated lane key fails closed.
+        # One parser, one grammar: a flow-style lane mapping normalizes identically
+        # and a duplicated lane key fails closed (deeper indent is pinned below).
         flow_style = commented.replace(
             "  dependency-and-vulnerability:\n    mutation: true\n",
             "  dependency-and-vulnerability: {mutation: true}\n",
         )
         expect_valid(flow_style, repo_root, expected)
-        four_space_lines = []
-        in_lanes = False
-        for line in commented.splitlines():
-            if line.startswith("lanes:"):
-                in_lanes = True
-                four_space_lines.append(line)
-                continue
-            if in_lanes and line and not line[0].isspace():
-                in_lanes = False
-            four_space_lines.append("  " + line if in_lanes and line else line)
-        expect_valid("\n".join(four_space_lines) + "\n", repo_root, expected)
         duplicate_lane = commented.replace(
             "  issue-implementation:\n",
             "  dependency-and-vulnerability: {mutation: true}\n  issue-implementation:\n",

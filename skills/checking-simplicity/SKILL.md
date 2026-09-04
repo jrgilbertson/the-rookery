@@ -109,8 +109,10 @@ said the decision stays open.
 
 For each question, including a yes or no question, give four options and
 mark one as recommended. For a decision, recommend the smallest safe option
-the evidence supports. For missing evidence, recommend the smallest set of
-evidence that would settle the question.
+the evidence supports. For missing evidence, recommend the smallest set
+that completes the decision frame: the stated goal, the behavior and
+constraints that must be preserved, the actual callers, and the relevant
+current code.
 
 Keep the readout compact and concrete. A clean result is the recommendation,
 one affirmative reason when useful, and what must remain. It has no reasons

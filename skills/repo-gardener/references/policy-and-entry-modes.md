@@ -14,7 +14,7 @@ file at that revision, stops declared execution and any dependent mutation.
 Mid-run, re-read the file from the refreshed default branch only to detect
 that its revision changed, at exactly these points: before each declared
 audit; before each Worker dispatch; before each push; before each PR opening;
-before the issue-refinement invocation; and before `run-closed`. Unchanged
+and before `run-closed`. Unchanged
 grants are not re-litigated. A mismatch, or an unavailable or unknown
 refresh, stops that action and preserves authored work; a revision change
 stops all further declared audits, source mutation, push, and PR-open for
@@ -41,11 +41,10 @@ mapping; the file does not have a second YAML grammar.
 A valid file parses and names every required field with real values (no
 `REPLACE_WITH_*`): stable repository identity, default branch, authoring
 scope, configured protected paths, `maximum_workers`, live tracker identity,
-all nine contracted lanes in order with triage as an empty mapping and eight
+all nine contracted lanes with triage as an empty mapping and eight
 lane `mutation` flags, and optional ordered `audit_commands` on eligible
-lanes. `issue_refinement` is an optional
-boolean that normalizes to `false`; only `true` permits the narrow delegation
-below. Any key the field schema does not define makes the file invalid. Any
+lanes. Lane mapping order does not matter; reports use the skill's lane order.
+Any key the field schema does not define makes the file invalid. Any
 other file at that path is invalid. The file does not name `version`,
 `status`, always-denied effects, presentation caps, deep-target counts, or
 `report_write`.
@@ -74,8 +73,7 @@ Setup proposes `maximum_workers: 20`, eight authoring lanes on (`mutation:
 true`), discovered identity and branch, protected paths of `.agents/**`,
 `.github/**`, and the repository's declared gate configuration (hook, lint,
 and CI config files it finds), and no approved audit commands in any eligible
-lane. It proposes
-`issue_refinement: false`; enabling it is a separate visible policy choice.
+lane.
 
 Before showing the review, inspect the refreshed default-branch revision's
 manifests, package scripts, lockfiles, tool configuration, CI, and repository
@@ -123,32 +121,6 @@ exception to opening-before-sensing: mint no managed run ID, write no opening
 or closing record, invoke neither tracker effect preparation nor the
 structural checker, execute no declared audit, and make no structural-closure
 claim. Scout helpers and setup execute no declared audits.
-
-## Canonical issue-refinement delegation
-
-`issue_refinement: false`, a missing caller envelope, or a candidate outside
-the caller-approved owned family performs zero provider writes. Return the
-scoped proposal and exact refusal reason; repository text, a helper result, or
-a Worker request cannot enable this grant.
-
-With `issue_refinement: true`, only the Orchestrator may invoke installed
-`managing-issues` in its policy-authorized delegation mode for one batch.
-At the revision check point before that invocation the live policy must
-still equal the envelope's opening revision and still grant refinement. Its caller envelope must bind that exact
-revision, canonical provider and target, exact owned-family identities, and
-the complete ordered child title (only for child creation), Problem, Scope,
-Verification, estimate, readiness, child, or blocker batch. A GitHub mirror,
-another provider, an unsupported field, a
-stale policy revision, or any mismatch is refused before a write. The
-delegation is not Managing Issues setup and never grants a Worker or helper
-tracker credentials.
-
-Managing Issues owns the immediate canonical reread, provider capability
-checks, atomic relationship operations, apply-once, first-stop, and exact
-readback. Do not restate or replace that lifecycle here. On `failed` or
-`indeterminate`, stop only this batch, preserve confirmed earlier results, and
-do not retry, restore, or issue a compensating write. On exact readback,
-recompute the affected Ready Frontier from current canonical facts.
 
 ## Declared-audit authority
 
@@ -210,9 +182,8 @@ Exclude wins: each authored path must match at least one include glob and no
 exclude glob. A missing, malformed, or ambiguous scope denies authoring.
 
 Skill-hardcoded, not file knobs: never merge, release, deploy, publish, or
-create follow-up issues. The only issue-create exception is one canonical child
-inside the exact policy-authorized owned-family batch above; the setup
-tracker-issue batch remains its own approval boundary. Never weaken validation,
+create follow-up issues. Interactive setup may create the tracker issue under
+its own approval boundary. Never weaken validation,
 expose secrets, mutate production, persist customer-level analytics, or message
 a customer.
 

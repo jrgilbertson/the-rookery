@@ -70,7 +70,7 @@ def prepare(
                 "kind": kind,
                 "run_id": run_id,
                 "payload": payload,
-                "projection": (
+                "report": (
                     f"\n# Synthetic morning report\n\nLatest record: `{kind}`."
                     f" Variant: `{variant or 'default'}`.\n"
                 ),
@@ -128,10 +128,6 @@ def main() -> int:
             set(record) == set(CONTRACT.RUN_RECORD_FIELDS),
             f"production comment fields drifted: {sorted(record)}",
         )
-        CONTRACT.require(
-            "orchestrator:current-portfolio:v1" not in prepared["body"],
-            "production body still embedded Current Portfolio JSON",
-        )
 
     expected = {
         "schema": "repo-gardener-run-records-result",
@@ -139,8 +135,6 @@ def main() -> int:
         "report_issue_id": opened["report_issue_id"],
         "writer_id": opened["writer_id"],
         "run_id": run_id,
-        "opened_operation_id": opened["operation_id"],
-        "closed_operation_id": closed["operation_id"],
     }
     actual = invoke("run-records", run_input(run_id, closed, exact_post))
     CONTRACT.require(actual == expected, f"exact closure result mismatch: {actual!r}")
@@ -149,17 +143,14 @@ def main() -> int:
     expect_error(run_input(run_id, closed, after_open), "exactly two")
     expect_error(run_input(run_id, closed, base), "exactly two")
 
-    reversed_first = prepare(base, "run-closed", run_id)
-    after_reversed_first = apply_prepared(base, reversed_first)
-    reversed_second = prepare(after_reversed_first, "run-opened", run_id)
-    reversed_post = apply_prepared(after_reversed_first, reversed_second)
-    expect_error(run_input(run_id, reversed_first, reversed_post), "run-opened")
+    reversed_post = copy.deepcopy(exact_post)
+    reversed_post["comment_pages"][0].reverse()
+    expect_error(run_input(run_id, closed, reversed_post), "run-opened")
 
-    other_closed = prepare(after_open, "run-closed", "run:synthetic:other")
-    expect_error(
-        run_input(run_id, other_closed, apply_prepared(after_open, other_closed)),
-        "closing material run_id mismatch",
-    )
+    other_closed = copy.deepcopy(closed)
+    other_closed["operation"]["run_id"] = "run:synthetic:other"
+    other_closed["comment"] = other_closed["comment"].replace(run_id, "run:synthetic:other")
+    expect_error(run_input(run_id, other_closed, exact_post), "closing material run_id mismatch")
 
     alternate_base = SNAPSHOTS.empty_tracker(repository_id="R_SYNTHETIC_REPOSITORY_002")
     alternate_opened = prepare(alternate_base, "run-opened", run_id)
@@ -172,8 +163,6 @@ def main() -> int:
             "repository_id": alternate_opened["repository_id"],
             "report_issue_id": alternate_opened["report_issue_id"],
             "writer_id": alternate_opened["writer_id"],
-            "opened_operation_id": alternate_opened["operation_id"],
-            "closed_operation_id": alternate_closed["operation_id"],
         }
     )
     alternate_actual = invoke("run-records", run_input(run_id, alternate_closed, alternate_post))
@@ -184,41 +173,18 @@ def main() -> int:
     after_different_open = apply_prepared(base, different_opened)
     different_closed = prepare(after_different_open, "run-closed", run_id)
     different_post = apply_prepared(after_different_open, different_closed)
-    different_expected = dict(expected)
-    different_expected.update(
-        {
-            "opened_operation_id": different_opened["operation_id"],
-            "closed_operation_id": different_closed["operation_id"],
-        }
-    )
     different_actual = invoke("run-records", run_input(run_id, different_closed, different_post))
-    CONTRACT.require(different_actual == different_expected, "durable opening variant was not accepted")
-    expect_error(run_input(run_id, closed, different_post), "run-closed operation_id mismatch")
-
-    stale_closed = prepare(base, "run-closed", run_id)
-    expect_error(run_input(run_id, stale_closed, exact_post), "run-closed operation_id mismatch")
+    CONTRACT.require(different_actual == expected, "durable opening variant was not accepted")
 
     changed_body = copy.deepcopy(after_open)
-    changed_body["issue"]["body"] += "\nOwner-only projection note.\n"
+    changed_body["issue"]["body"] += "\nOwner-only tracker description.\n"
     changed_body_closed = prepare(changed_body, "run-closed", run_id)
-    CONTRACT.require(
-        changed_body_closed["expected_pre_body_fingerprint"]
-        != closed["expected_pre_body_fingerprint"],
-        "recovery fixture did not change the opening-state body fingerprint",
-    )
-    changed_body_actual = invoke(
-        "run-records",
-        run_input(run_id, changed_body_closed, apply_prepared(changed_body, changed_body_closed)),
-    )
-    changed_body_expected = dict(expected)
-    changed_body_expected["closed_operation_id"] = changed_body_closed["operation_id"]
-    CONTRACT.require(
-        changed_body_actual == changed_body_expected,
-        "recovery closure incorrectly depended on the ephemeral opening body",
-    )
-
-    duplicate = prepare(exact_post, "run-closed", run_id)
-    expect_error(run_input(run_id, closed, apply_prepared(exact_post, duplicate)), "exactly two")
+    CONTRACT.require(changed_body_closed == closed, "static issue body altered comment preparation")
+    CONTRACT.require(exact_post["issue"]["body"] == base["issue"]["body"], "run mutated static issue body")
+    expect_error(run_input(run_id, closed, apply_prepared(exact_post, closed)), "exactly two")
+    altered_report = copy.deepcopy(exact_post)
+    altered_report["comment_pages"][0][-1]["body"] += "Changed morning report."
+    expect_error(run_input(run_id, closed, altered_report), "comment material mismatch")
 
     reformatted = copy.deepcopy(exact_post)
     for page in reformatted["comment_pages"]:
@@ -258,7 +224,7 @@ def main() -> int:
     expect_error(run_input(run_id, closed, incomplete_pages), "pagination is incomplete")
 
     interrupted = copy.deepcopy(after_open)
-    interrupted["issue"]["body"] = closed["body"]
+    interrupted["issue"]["body"] += closed["operation"]["report"]
     expect_error(run_input(run_id, closed, interrupted), "exactly two")
     expect_error(run_input(run_id, closed, None), "must be an object")
 

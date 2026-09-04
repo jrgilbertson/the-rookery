@@ -207,10 +207,10 @@ census is not reading bodies and is not emitting candidates.
 
 ### Gardening Tracker
 
-The GitHub issue used as the morning report and append-only run-history surface
-for one repository. Each Repository Maintenance Run writes one opened comment
-and one closed comment. Native pull requests remain authoritative for authored
-work.
+The GitHub issue holding append-only run history for one repository. Its body
+is setup information; each Repository Maintenance Run writes one opened comment
+and one closed comment containing the morning report. Native pull requests
+remain authoritative for authored work.
 
 ### Run History
 

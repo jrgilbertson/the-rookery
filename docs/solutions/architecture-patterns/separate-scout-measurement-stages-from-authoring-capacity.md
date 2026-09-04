@@ -1,7 +1,7 @@
 ---
 title: Separate scout measurement stages from authoring capacity
 date: 2026-08-12
-last_updated: 2026-09-02
+last_updated: 2026-09-04
 category: architecture-patterns
 module: skills/repo-gardener/reconciliation
 problem_type: architecture_pattern
@@ -152,9 +152,9 @@ merge
 
 Freshly read the native repository, PR number, branch, head SHA, state,
 checks, and review status before reporting the Worker. Do not mirror that
-lifecycle into a custom ownership ledger. A Worker never creates follow-up
-issues; the Orchestrator retains the one policy-authorized canonical
-issue-refinement exception. The run never merges, and the retained
+lifecycle into a custom ownership ledger. Follow-up issues stay outside the
+gardening run as owner proposals for Managing Issues. The run never merges,
+and the retained
 Orchestrator report carries issue-ready recommendations for owner review
 (`skills/repo-gardener/SKILL.md:63-67`,
 `skills/repo-gardener/references/policy-and-entry-modes.md:119-145`).

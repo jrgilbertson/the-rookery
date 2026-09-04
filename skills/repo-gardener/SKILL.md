@@ -1,6 +1,6 @@
 ---
 name: repo-gardener
-description: Use when running or interpreting a scheduled or manual repository-gardening pass for one repository, including first-use setup of `.agents/repo-gardener.yaml` and its gardening tracker. An Orchestrator surveys nine maintenance lanes, deepens only while evidence could change the result, and may assign independently reviewable Worker pull requests. Do not use for merging, releasing, deploying, creating follow-up issues outside one caller-authorized canonical-child refinement, contacting customers, or performing an already-selected implementation outside a gardening run.
+description: Use when running or interpreting a scheduled or manual repository-gardening pass for one repository, including first-use setup of `.agents/repo-gardener.yaml` and its gardening tracker. An Orchestrator surveys nine maintenance lanes, deepens only while evidence could change the result, and may assign independently reviewable Worker pull requests. Do not use for merging, releasing, deploying, creating follow-up issues, contacting customers, or performing an already-selected implementation outside a gardening run.
 license: MIT
 compatibility: "Requires Python 3, PyYAML, config_check.py, and read access to one repository, its durable file, native PR state, and evidence the host can already read; `.agents/managing-issues.json` is optional. Without safe mutation capability, it reports read-only findings."
 ---
@@ -71,9 +71,8 @@ managed closure.
    candidates, and normalized candidates distinct. Scouts remain read-only.
 3. Deepen only while another investigation could change an assignment or
    recommendation. Reassess after every result and coalesce a shared cause.
-   Use the default-off issue-refinement grant only for the one
-   caller-authorized canonical batch; workers and helpers do not write issues.
-   Derive the Ready Frontier fresh from current evidence after refinement.
+   Derive the Ready Frontier fresh from current evidence. Return issue-ready
+   proposals for the owner to take through Managing Issues outside the run.
 4. Select only small, low-risk, testable, non-overlapping PR-sized units.
    Do not invent work to fill capacity. Units are non-overlapping by changed
    path. An open same-repository update PR with a Worker-closable gap is a

@@ -26,8 +26,8 @@ The brief names the authoritative base, policy revision, Worker identity and
 branch, scope, protected paths, lane grant, assigned slice, and the exact
 caller-approved verification command argv list. For an adopted PR it also
 names the PR number, head ref, captured head OID, base ref and full base OID,
-the named gap(s), and that the update bot will stop maintaining the branch
-after the first Worker push. It includes the ledger attribute read and
+the named gap(s), and the maintenance risk: a Worker push may stop bot updates,
+while later bot or manual rebases may overwrite Worker edits. It includes the ledger attribute read and
 base-diff rule only when that exception applies.
 
 ## Before the first mutation
@@ -132,8 +132,8 @@ After those gates pass, provider state is exhaustive:
 Refuse unavailable or unknown provider state, any other provider OID, or a
 lease failure. After a create or update, read back and require the exact
 authorized provider OID. After a successful first push to an adopted PR, the
-report names that PR as owner-maintained from that push ("adopted; bot
-automation may no longer update this branch"). Never advance competing
+report names the adopted PR and its maintenance risk ("adopted; bot updates
+may stop, and later bot rebases may overwrite Worker edits"). Never advance competing
 movement implicitly, never merge, and never write a release, deployment,
 protected path, or unapproved follow-up issue. Report native PR, check, and
 review facts.

@@ -19,10 +19,12 @@ must neither grant nor withhold a read the host already has.
 > identity does not match the repository's production identity. (4) The host
 > session has no provider read at all. (5) The durable file additionally
 > contains an `evidence_sources` mapping. (6) The host read exists, but no
-> tracked repository fact names a production identity, or two readable
-> projects both match it. (7) The read completes and returns no error groups
-> and no alerts for the window. Report the runtime lane status and reason for
-> each situation.
+> tracked repository fact names a production identity. (7) The read completes and returns no error groups
+> and no alerts for the window. (8) Two projects independently match tracked
+> repository project/environment bindings and both reads complete. (9) One
+> verified source succeeds and another has an ambiguous binding. (10) The
+> provider returns a missing result rather than a complete empty list.
+> Report the runtime lane status and reason for each situation.
 
 ## Expected behavior
 
@@ -33,12 +35,19 @@ must neither grant nor withhold a read the host already has.
 - [ ] Situation 4 reports `unavailable` naming the absence of a host read, not
       a gap in the durable file.
 - [ ] Situation 5 treats the file as invalid at open with the unexpected-key
-      reason; it does not read the provider under that file.
+      reason; no managed run opens under that file. Separately authorized
+      caller-only sensing may still use existing host reads.
 - [ ] Situation 6 stops before reading and reports `unavailable` naming the
-      missing or ambiguous identity and the repository places consulted; it
+      missing identity and the repository places consulted; it
       never selects among readable projects by name, token scope, or guess.
-- [ ] Situation 7 reports `surveyed` with explicit blank aggregates, not
-      zeros presented as activity and not `unavailable`.
+- [ ] Situation 7 reports `surveyed` with zero returned errors and alerts for
+      the query/window, without concluding zero product activity.
+- [ ] Situation 8 reads both verified sources, keeps their identities, and
+      coalesces the same underlying finding rather than double-counting it.
+- [ ] Situation 9 reads the verified source, stops only the ambiguous source,
+      and reports the lane `partial` with its coverage limitation.
+- [ ] Situation 10 names missing data as a limitation, never an empty result
+      or zero errors.
 - [ ] No situation names the durable file as the reason the lane is
       unavailable.
 - [ ] No output includes people, payloads, or free-text error content.

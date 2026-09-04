@@ -24,11 +24,11 @@ revenue, or cost definition.
 
 ## Run the bounded preflight
 
-Bind the reporting project to the repository's canonical production
-identity under the same identity rule as the runtime error and alert lane in
-`lane-contracts.md` (exactly one identity from repository facts, exactly one
-matching host-readable project, otherwise `unavailable` naming which); a
-failure stops only this slice.
+Bind each reporting project and environment independently to repository
+facts under the runtime source identity rule in `lane-contracts.md`. Multiple
+verified sources are allowed; an uncertain binding stops only that slice.
+Keep source identity with every comparison and avoid double-counting shared
+observations.
 Name a bounded time window and timezone, product surface, expected events or
 metrics, and a query or time budget. When an execution-eligible lane has
 already completed an applicable declared audit in this managed run, consume

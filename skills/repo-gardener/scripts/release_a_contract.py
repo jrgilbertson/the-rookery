@@ -3,13 +3,12 @@
 
 The skill owns judgment. This module owns the mechanical invariants that still
 have one executable source of truth: mention and image rejection, exact
-opened/closed identity for one run ID, and the public nine-lane inventory.
+opened/closed identity for one run ID, and append-only comment readback.
 """
 
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import re
 import sys
@@ -21,7 +20,6 @@ IDENTITY_LIMIT = 128
 RECEIPT_LIMIT = 16 * 1024
 BODY_LIMIT = 48 * 1024
 INPUT_LIMIT = 8 * 1024 * 1024
-SHA256 = re.compile(r"^[0-9a-f]{64}$")
 NOTIFICATION_CAPABLE_MENTION = re.compile(
     r"(?<![A-Za-z0-9_])"
     r"@[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?"
@@ -43,19 +41,16 @@ GITHUB_SNAPSHOT_FIELDS = {
 RUN_RECORD_SCHEMA = "orchestrator-run-record"
 PREPARED_EFFECT_SCHEMA = "repo-gardener-prepared-tracker-effect"
 EFFECT_INPUT_SCHEMA = "repo-gardener-effect-input"
-RUN_RECORD_FIELDS = {"schema", "kind", "run_id", "operation_id", "payload"}
-RUN_RECORD_FIELD_ORDER = ("schema", "kind", "run_id", "operation_id", "payload")
+RUN_RECORD_FIELDS = {"schema", "kind", "run_id", "payload"}
+RUN_RECORD_FIELD_ORDER = ("schema", "kind", "run_id", "payload")
 RUN_RECORD_KINDS = {"run-opened", "run-closed"}
-EFFECT_OPERATION_FIELDS = {"kind", "run_id", "payload", "projection"}
+EFFECT_OPERATION_FIELDS = {"kind", "run_id", "payload", "report"}
 EFFECT_PREPARED_FIELDS = {
     "schema",
     "repository_id",
     "report_issue_id",
     "writer_id",
     "operation",
-    "operation_id",
-    "expected_pre_body_fingerprint",
-    "body",
     "comment",
 }
 RESERVED_REPORT_SEQUENCES = (RUN_RECORD_BEGIN, RUN_RECORD_END)
@@ -128,19 +123,14 @@ def require_identity(value: Any, label: str) -> str:
     return value
 
 
-def require_sha256(value: Any, label: str) -> str:
-    require(isinstance(value, str) and SHA256.fullmatch(value) is not None, f"{label} must be a lowercase SHA-256 digest")
-    return value
-
-
 def require_payload(value: Any, limit: int, label: str) -> None:
     require(len(canonical_bytes(value)) <= limit, f"{label} exceeds {limit} canonical UTF-8 bytes")
 
 
 def validate_body(body: Any) -> int:
-    require(isinstance(body, str), "managed body must be text")
+    require(isinstance(body, str), "tracker body must be text")
     size = len(body.encode("utf-8"))
-    require(size <= BODY_LIMIT, f"managed body exceeds {BODY_LIMIT} UTF-8 bytes")
+    require(size <= BODY_LIMIT, f"tracker body exceeds {BODY_LIMIT} UTF-8 bytes")
     return size
 
 
@@ -150,7 +140,7 @@ def _extract_marked_json(body: str, begin: str, end: str, label: str) -> tuple[s
     finish = body.find(end)
     require(start < finish, f"{label} markers are reordered")
     terminal = body[finish + len(end) :]
-    require(start == 0 and terminal in {"", "\n"}, f"{label} contains surrounding text")
+    require(start == 0 and (terminal in {"", "\n"} or terminal.startswith("\n\n")), f"{label} contains surrounding text")
     raw = body[start + len(begin) : finish]
     require(raw.startswith("\n") and raw.endswith("\n"), f"{label} must contain canonical JSON on one bounded block")
     raw_json = raw[1:-1]
@@ -179,7 +169,6 @@ def _validate_run_record(record: dict[str, Any], label: str) -> dict[str, Any]:
     kind = require_identity(record.get("kind"), f"{label} kind")
     require(kind in RUN_RECORD_KINDS, f"{label} kind is invalid")
     require_identity(record.get("run_id"), f"{label} run_id")
-    require_identity(record.get("operation_id"), f"{label} operation_id")
     require_object(record.get("payload"), f"{label} payload")
     require_payload(record, RECEIPT_LIMIT, label)
     return record
@@ -315,122 +304,64 @@ def _effect_operation(operation: Any) -> dict[str, Any]:
     require(kind in RUN_RECORD_KINDS, "effect kind is invalid")
     require_identity(operation.get("run_id"), "effect run_id")
     require_object(operation.get("payload"), "effect payload")
-    require(isinstance(operation.get("projection"), str), "effect projection must be text")
+    require(isinstance(operation.get("report"), str) and operation["report"].strip(), "effect report must be nonempty text")
     require_payload(operation, BODY_LIMIT, "effect operation")
     _reject_reserved_report_content(operation, "effect operation")
-    return {
-        "kind": operation["kind"],
-        "run_id": operation["run_id"],
-        "payload": operation["payload"],
-        "projection": operation["projection"],
-    }
+    return operation
 
 
-def _effect_operation_id(
-    *,
-    repository_id: str,
-    report_issue_id: str,
-    writer_id: str,
-    expected_pre_body_fingerprint: str,
-    operation: dict[str, Any],
-) -> str:
-    identity_material = {
-        "repository_id": repository_id,
-        "report_issue_id": report_issue_id,
-        "writer_id": writer_id,
-        "expected_pre_body_fingerprint": expected_pre_body_fingerprint,
-        "kind": operation["kind"],
-        "payload": operation["payload"],
-    }
-    return f"operation:report:{hashlib.sha256(canonical_bytes(identity_material)).hexdigest()}"
-
-
-def _run_record_comment(record: dict[str, Any]) -> str:
-    return (
+def _run_record_comment(record: dict[str, Any], report: str = "") -> str:
+    marked = (
         f"{RUN_RECORD_BEGIN}\n"
         f"{json.dumps(record, ensure_ascii=False, separators=(',', ':'))}\n"
         f"{RUN_RECORD_END}"
     )
+    return f"{marked}\n\n{report}" if report else marked
 
 
 def _comment_bodies_equal(actual: str, expected: str) -> bool:
     return actual == expected or actual == f"{expected}\n"
 
 
-def prepare_report_effect(pre_read: Any, operation: Any) -> dict[str, Any]:
-    view = normalize_github_tracker_snapshot(pre_read)
+def _prepared_material(identity_source: dict[str, Any], operation: Any) -> dict[str, Any]:
     operation = _effect_operation(operation)
-    expected_pre_body_fingerprint = hashlib.sha256(view["body"].encode("utf-8")).hexdigest()
-    operation_id = _effect_operation_id(
-        repository_id=view["repository_id"],
-        report_issue_id=view["report_issue_id"],
-        writer_id=view["writer_id"],
-        expected_pre_body_fingerprint=expected_pre_body_fingerprint,
-        operation=operation,
-    )
     record = {
         "schema": RUN_RECORD_SCHEMA,
         "kind": operation["kind"],
         "run_id": operation["run_id"],
-        "operation_id": operation_id,
         "payload": operation["payload"],
     }
     _validate_run_record(record, "prepared run record")
-    body = operation["projection"]
-    validate_body(body)
-    comment = _run_record_comment(record)
-    _validate_report_rendering(body)
+    comment = _run_record_comment(record, operation["report"])
+    require(len(comment.encode("utf-8")) <= BODY_LIMIT, f"prepared comment exceeds {BODY_LIMIT} UTF-8 bytes")
     _validate_report_rendering(comment)
     return {
         "schema": PREPARED_EFFECT_SCHEMA,
-        "repository_id": view["repository_id"],
-        "report_issue_id": view["report_issue_id"],
-        "writer_id": view["writer_id"],
+        "repository_id": identity_source["repository_id"],
+        "report_issue_id": identity_source["report_issue_id"],
+        "writer_id": identity_source["writer_id"],
         "operation": operation,
-        "operation_id": operation_id,
-        "expected_pre_body_fingerprint": expected_pre_body_fingerprint,
-        "body": body,
         "comment": comment,
     }
+
+
+def prepare_report_effect(pre_read: Any, operation: Any) -> dict[str, Any]:
+    view = normalize_github_tracker_snapshot(pre_read)
+    prepared = _prepared_material(view, operation)
+    require(
+        _run_state_matches(view, prepared, present=False) or _run_state_matches(view, prepared, present=True),
+        "run records conflict with the prepared event or lack its opening",
+    )
+    return prepared
 
 
 def _prepared_effect(prepared: Any) -> dict[str, Any]:
     prepared = require_object(prepared, "prepared tracker effect")
     require_exact_fields(prepared, EFFECT_PREPARED_FIELDS, "prepared tracker effect")
-    require(prepared.get("schema") == PREPARED_EFFECT_SCHEMA, "prepared tracker effect schema mismatch")
-    operation = _effect_operation(prepared.get("operation"))
-    require_identity(prepared.get("repository_id"), "prepared repository_id")
-    require_identity(prepared.get("report_issue_id"), "prepared report issue_id")
-    require_identity(prepared.get("writer_id"), "prepared writer_id")
-    require_identity(prepared.get("operation_id"), "prepared operation_id")
-    require_sha256(prepared.get("expected_pre_body_fingerprint"), "prepared pre body fingerprint")
-    validate_body(prepared.get("body"))
-    require(isinstance(prepared.get("comment"), str), "prepared comment must be text")
-    require(prepared["body"] == operation["projection"], "prepared body material mismatch")
-    _validate_report_rendering(prepared["body"])
-    _validate_report_rendering(prepared["comment"])
-    expected_operation_id = _effect_operation_id(
-        repository_id=prepared["repository_id"],
-        report_issue_id=prepared["report_issue_id"],
-        writer_id=prepared["writer_id"],
-        expected_pre_body_fingerprint=prepared["expected_pre_body_fingerprint"],
-        operation=operation,
-    )
-    require(prepared["operation_id"] == expected_operation_id, "prepared operation_id mismatch")
-    _, record = _extract_marked_json(
-        prepared["comment"],
-        RUN_RECORD_BEGIN,
-        RUN_RECORD_END,
-        "prepared run-record comment",
-    )
-    _validate_run_record(record, "prepared run record")
-    require(record.get("operation_id") == prepared["operation_id"], "prepared record operation_id mismatch")
-    require(record.get("kind") == operation["kind"] and record.get("run_id") == operation["run_id"], "prepared record metadata mismatch")
-    require(
-        canonical_bytes(record.get("payload")) == canonical_bytes(operation["payload"]),
-        "prepared record payload mismatch",
-    )
-    require(prepared["comment"] == _run_record_comment(record), "prepared comment material mismatch")
+    for field in ("repository_id", "report_issue_id", "writer_id"):
+        require_identity(prepared.get(field), f"prepared {field}")
+    expected = _prepared_material(prepared, prepared.get("operation"))
+    require(canonical_bytes(prepared) == canonical_bytes(expected), "prepared comment material mismatch")
     return prepared
 
 
@@ -442,25 +373,16 @@ def _identities_match(view: dict[str, Any], prepared: dict[str, Any]) -> bool:
     )
 
 
-def _view_matches_pre(view: dict[str, Any], prepared: dict[str, Any]) -> bool:
+def _run_state_matches(view: dict[str, Any], prepared: dict[str, Any], *, present: bool) -> bool:
+    operation = prepared["operation"]
+    records = [item for item in view["managed_records"] if item["record"]["run_id"] == operation["run_id"]]
+    expected_kinds = [] if operation["kind"] == "run-opened" else ["run-opened"]
+    if present:
+        expected_kinds.append(operation["kind"])
     return (
-        _identities_match(view, prepared)
-        and hashlib.sha256(view["body"].encode("utf-8")).hexdigest()
-        == prepared["expected_pre_body_fingerprint"]
-        and not _prepared_comment_present(view, prepared)
+        [item["record"]["kind"] for item in records] == expected_kinds
+        and (not present or _comment_bodies_equal(records[-1]["comment_body"], prepared["comment"]))
     )
-
-
-def _prepared_comment_count(view: dict[str, Any], prepared: dict[str, Any]) -> int:
-    return sum(
-        1
-        for item in view["managed_records"]
-        if _comment_bodies_equal(item["comment_body"], prepared["comment"])
-    )
-
-
-def _prepared_comment_present(view: dict[str, Any], prepared: dict[str, Any]) -> bool:
-    return _prepared_comment_count(view, prepared) > 0
 
 
 def _managed_record_lists_equal(left: list[dict[str, Any]], right: list[dict[str, Any]]) -> bool:
@@ -484,22 +406,10 @@ def _history_matches_prepared_transition(
     prepared: dict[str, Any],
 ) -> bool:
     after_records = after["managed_records"]
-    before_records = before["managed_records"]
-    if len(after_records) != len(before_records) + 1:
-        return False
-    remaining = [
-        item
-        for item in after_records
-        if not _comment_bodies_equal(item["comment_body"], prepared["comment"])
-    ]
-    return _managed_record_lists_equal(before_records, remaining)
-
-
-def _view_matches_post(view: dict[str, Any], prepared: dict[str, Any]) -> bool:
     return (
-        _identities_match(view, prepared)
-        and view["body"] == prepared["body"]
-        and _prepared_comment_count(view, prepared) == 1
+        bool(after_records)
+        and _comment_bodies_equal(after_records[-1]["comment_body"], prepared["comment"])
+        and _managed_record_lists_equal(before["managed_records"], after_records[:-1])
     )
 
 
@@ -517,71 +427,38 @@ def verify_run_records(run_id: Any, closed: Any, post_read: Any) -> dict[str, An
     require(len(matching) == 2, "run_id must have exactly two managed records")
     opened_item, closed_item = matching
     opened_record = opened_item["record"]
-    closed_record = closed_item["record"]
     require(opened_record["kind"] == "run-opened", "run record order must be run-opened")
-    require(closed_record["kind"] == "run-closed", "run record order must be run-closed")
-    require(closed_record["operation_id"] == closed["operation_id"], "run-closed operation_id mismatch")
+    require(closed_item["record"]["kind"] == "run-closed", "run record order must be run-closed")
     require(_comment_bodies_equal(closed_item["comment_body"], closed["comment"]), "run-closed comment material mismatch")
-    require(_view_matches_post(view, closed), "closing body and comment were not read back exactly")
     return {
         "schema": "repo-gardener-run-records-result",
         "repository_id": view["repository_id"],
         "report_issue_id": view["report_issue_id"],
         "writer_id": view["writer_id"],
         "run_id": run_id,
-        "opened_operation_id": opened_record["operation_id"],
-        "closed_operation_id": closed["operation_id"],
     }
 
 
 def verify_report_effect(prepared: Any, pre_read: Any, post_read: Any, write_attempt: Any) -> dict[str, Any]:
     prepared = _prepared_effect(prepared)
     require(write_attempt in {"none", "denied-before-write", "possible"}, "write_attempt is invalid")
+    outcome = "ambiguous"
     try:
         before = normalize_github_tracker_snapshot(pre_read)
-    except ContractError:
-        return {"terminal_outcome": "ambiguous", "matched_parts": None, "repair": "none", "provenance": "unverified"}
-    if post_read is None:
-        return {"terminal_outcome": "ambiguous", "matched_parts": None, "repair": "none", "provenance": "unverified"}
-    try:
         after = normalize_github_tracker_snapshot(post_read)
     except ContractError:
-        return {"terminal_outcome": "ambiguous", "matched_parts": None, "repair": "none", "provenance": "unverified"}
-    before_is_base = _view_matches_pre(before, prepared)
-    before_is_target = _view_matches_post(before, prepared)
-    after_is_target = _view_matches_post(after, prepared)
-    if (
-        write_attempt == "none"
-        and before_is_target
-        and after_is_target
-        and _managed_records_unchanged(before, after)
-    ):
-        return {"terminal_outcome": "already satisfied", "matched_parts": 2, "repair": "none", "provenance": "unverified"}
-    if write_attempt == "denied-before-write":
-        if before_is_base and pre_read == post_read:
-            return {"terminal_outcome": "failed", "matched_parts": 0, "repair": "none", "provenance": "unverified"}
-        return {"terminal_outcome": "ambiguous", "matched_parts": None, "repair": "none", "provenance": "unverified"}
-    if (
-        write_attempt == "possible"
-        and before_is_base
-        and after_is_target
-        and _history_matches_prepared_transition(before, after, prepared)
-    ):
-        return {"terminal_outcome": "observed", "matched_parts": 2, "repair": "none", "provenance": "unverified"}
-    body_only = (
-        write_attempt == "possible"
-        and before_is_base
-        and _identities_match(after, prepared)
-        and after["body"] == prepared["body"]
-        and not _prepared_comment_present(after, prepared)
-        and _managed_records_unchanged(before, after)
-    )
-    return {
-        "terminal_outcome": "ambiguous",
-        "matched_parts": 1 if body_only else None,
-        "repair": "append-exact-prepared-comment" if body_only else "none",
-        "provenance": "unverified",
-    }
+        return {"terminal_outcome": outcome, "provenance": "unverified"}
+    if _identities_match(before, prepared) and _identities_match(after, prepared):
+        before_is_base = _run_state_matches(before, prepared, present=False)
+        before_is_target = _run_state_matches(before, prepared, present=True)
+        after_is_target = _run_state_matches(after, prepared, present=True)
+        if write_attempt == "none" and before_is_target and after_is_target and _managed_records_unchanged(before, after):
+            outcome = "already satisfied"
+        elif write_attempt == "denied-before-write" and before_is_base and pre_read == post_read:
+            outcome = "failed"
+        elif write_attempt == "possible" and before_is_base and after_is_target and _history_matches_prepared_transition(before, after, prepared):
+            outcome = "observed"
+    return {"terminal_outcome": outcome, "provenance": "unverified"}
 
 
 def _load(path: Path) -> Any:

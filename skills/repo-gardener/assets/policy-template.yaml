@@ -11,9 +11,8 @@
 # REPLACE_WITH_* value with a real one during setup.
 #
 # Skill-hardcoded, not file knobs: never merge, release, deploy, create
-# follow-up issues outside the sole policy-authorized canonical-child exception,
-# or message customers; `.agents/repo-gardener.yaml` is always protected;
-# Triage is recommend-only and is not grantable.
+# follow-up issues, or message customers. `.agents/repo-gardener.yaml` is always
+# protected; Triage is recommend-only and is not grantable.
 
 repository:
   # Stable provider identity for this repository, not the slug. On GitHub this
@@ -38,12 +37,6 @@ protected_paths:
 
 # Parallel Worker cap. `0` denies Worker dispatch. Setup proposes `20`.
 maximum_workers: 0
-
-# Sole exception to the follow-up issue ban: lets the Orchestrator delegate one
-# caller-authorized canonical child in an owned-family refinement batch to
-# installed Managing Issues. It never authorizes a Worker, mirror, or
-# out-of-graph write.
-issue_refinement: false
 
 tracker:
   # Live gardening-tracker issue identity (a node id, never an issue number).

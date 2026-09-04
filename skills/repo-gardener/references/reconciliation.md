@@ -108,9 +108,10 @@ outside protected paths. A PR failing any condition is a recommendation, never
 adopted. The captured head ref must belong to that PR alone: if any other
 open PR uses the same head ref, deny the unit regardless of changed paths.
 Adoption consumes one Worker of `maximum_workers`; no two Workers adopt the
-same PR. After the first Worker push an update bot treats the branch
-as edited and stops rebasing or updating it, so adopt only when the named gap
-is worth that trade (a failing repository gate, not a stale version). Author,
+same PR. A Worker push may stop automatic bot maintenance, and some bots or
+manual rebase requests can overwrite Worker edits. Name that maintenance risk
+in the brief and report; adopt only when the gap is worth owner attention
+(a failing repository gate, not a stale version). Author,
 title, and branch prefix prove nothing about the PR's content; the provider's
 account type and draft flag bound only who the gardener may push to. The PR
 number, head ref, head OID, and changed paths are the identity.

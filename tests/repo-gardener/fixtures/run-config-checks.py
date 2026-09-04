@@ -277,7 +277,6 @@ def base_config() -> dict[str, Any]:
 
 def normalized_config(value: dict[str, Any]) -> dict[str, Any]:
     result = copy.deepcopy(value)
-    result.setdefault("issue_refinement", False)
     for lane in AUDIT_ELIGIBLE_LANES:
         result["lanes"][lane].setdefault("audit_commands", [])
     return result
@@ -357,7 +356,7 @@ def check_starter_shape() -> None:
     require("maximum_workers: 0" in text, "starter is not fail-closed on maximum_workers")
     require(text.count("mutation: false") == 8, "starter authoring-lane mutation count differs")
     require("mutation: true" not in text, "starter grants an authoring lane")
-    require("issue_refinement: false" in text, "starter enables issue refinement")
+    require("issue_refinement" not in text, "starter retains removed issue refinement")
     require(
         text.count("audit_commands: []") == len(AUDIT_ELIGIBLE_LANES),
         "starter must show an empty audit declaration only on each eligible lane",
@@ -456,15 +455,10 @@ def main() -> int:
         second = expect_valid(base_config(), repo_root, expected)
         require(first == second, "valid config normalization is not deterministic")
 
-        refinement_enabled = base_config()
-        refinement_enabled["issue_refinement"] = True
-        expect_valid(refinement_enabled, repo_root, normalized_config(refinement_enabled))
-
-        refinement_text = base_config()
-        refinement_text["issue_refinement"] = "true"
-        expect_invalid(refinement_text, repo_root, "issue_refinement must be a boolean")
-
         for key, value in (
+            ("issue_refinement", False),
+            ("issue_refinement", True),
+            ("issue_refinement", "true"),
             ("shared_ledger_paths", ["CHANGELOG.md"]),
             ("shared_ledger", {"paths": ["CHANGELOG.md"]}),
             ("evidence_sources", {"posthog": {"identity": "phc_example"}}),
@@ -515,6 +509,24 @@ lanes:
             "  dependency-and-vulnerability: {mutation: true}\n",
         )
         expect_valid(flow_style, repo_root, expected)
+        # Native YAML syntax is accepted when it yields the same safe policy.
+        expect_valid("%YAML 1.1\n---\n" + commented + "...\n", repo_root, expected)
+        expect_valid(json.dumps(base_config()), repo_root, expected)
+        expect_valid(commented.replace("# Live gardener file", "# A tab\tinside a comment"), repo_root, expected)
+        for style in ("|-", ">-"):
+            block_scalar = commented.replace(
+                "  identity: R_kgDOEXAMPLE001  # node id",
+                f"  identity: {style}\n    R_kgDOEXAMPLE001",
+            )
+            expect_valid(block_scalar, repo_root, expected)
+        literal_syntax = commented.replace(
+            "  identity: R_kgDOEXAMPLE001  # node id",
+            "  identity: |-\n    Example's !literal &text << value",
+        )
+        literal_expected = copy.deepcopy(expected)
+        literal_expected["repository"]["identity"] = "Example's !literal &text << value"
+        expect_valid(literal_syntax, repo_root, literal_expected)
+
         duplicate_lane = commented.replace(
             "  issue-implementation:\n",
             "  dependency-and-vulnerability: {mutation: true}\n  issue-implementation:\n",
@@ -664,7 +676,7 @@ lanes:
         lane_items = list(reordered_lanes["lanes"].items())
         lane_items[0], lane_items[1] = lane_items[1], lane_items[0]
         reordered_lanes["lanes"] = dict(lane_items)
-        expect_invalid(reordered_lanes, repo_root, "lanes must name every contracted lane in order")
+        expect_valid(reordered_lanes, repo_root, expected)
 
         absolute_protected = base_config()
         absolute_protected["protected_paths"] = ["/etc/**"]
@@ -790,6 +802,31 @@ lanes:
         expect_invalid(merge_key, repo_root, "YAML merge keys")
         duplicate = dump_yaml(base_config()) + "maximum_workers: 1\n"
         expect_invalid(duplicate, repo_root, "duplicate key")
+
+        # Construct checks apply to parsed nodes, irrespective of quoting or
+        # previous plain-scalar punctuation; reject before recursive composition.
+        quote_before_anchor = commented.replace(
+            "R_kgDOEXAMPLE001  # node id", "Example's repository"
+        ).replace("default_branch: main", "default_branch: &branch main")
+        expect_invalid(quote_before_anchor, repo_root, "YAML aliases")
+        expect_invalid(commented + "extra: *missing\n", repo_root, "YAML aliases")
+        expect_invalid(commented + 'extra: {"<<": {identity: merged}}\n', repo_root, "YAML merge keys")
+        expect_invalid(commented + "---\n{}\n", repo_root, "YAML is invalid")
+        expect_invalid(commented + "extra: " + "[" * 1000 + "x" + "]" * 1000, repo_root, "YAML nesting")
+        expect_invalid(commented + "extra: [" + ",".join("x" for _ in range(257)) + "]", repo_root, "YAML sequence exceeds")
+        expect_invalid(commented + "extra: 2147483648\n", repo_root, "YAML integer is out of range")
+        for spelling in ("yes", "on", "True", "FALSE", "1"):
+            expect_invalid(
+                commented.replace("mutation: true", f"mutation: {spelling}", 1),
+                repo_root,
+                "mutation must be a boolean",
+            )
+        for spelling in ("0x10", "1.5", "+2", "01"):
+            expect_invalid(
+                commented.replace("maximum_workers: 20", f"maximum_workers: {spelling}"),
+                repo_root,
+                "maximum_workers must be a nonnegative integer",
+            )
 
         expect_not_configured(repo_root)
         active_config = install_active_config(repo_root, base_config())

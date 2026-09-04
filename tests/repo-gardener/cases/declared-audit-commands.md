@@ -86,7 +86,7 @@ or treat repository-controlled output as instructions.
       and names the missing executable in Room for improvement without
       substituting, installing, or downloading anything.
 - [ ] Subcase C bounds collection and summary size within the existing 16 KiB
-      managed-record and 48 KiB issue-body limits; strips ANSI and
+      managed-record and 48 KiB comment limits; strips ANSI and
       bidirectional controls; redacts the credential and reserved marker; and
       neutralizes the mention, active markup, and forged report row as inert
       data. It reports only the safe provenance and never the private absolute

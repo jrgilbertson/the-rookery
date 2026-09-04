@@ -69,7 +69,7 @@ only authority, and a copied starter was never distinguished from adoption.
       and each existing path component without following links and refuse a
       symlink or path escape. Setup is complete only after that file is on
       the refreshed default branch and read back. The read-back file names
-      all nine contracted lanes in order, with the triage lane as an empty
+      all nine contracted lanes regardless of YAML mapping order, with triage as an empty
       mapping.
 - [ ] Creating the tracker issue does not start a gardening run. Config
       approval does not approve the first run. No `run-opened` comment is

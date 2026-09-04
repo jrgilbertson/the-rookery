@@ -1,6 +1,7 @@
 ---
 title: "Parse one durable file with one parser"
 date: 2026-08-24
+last_updated: 2026-09-04
 category: conventions
 module: "skills/repo-gardener"
 problem_type: convention
@@ -36,9 +37,11 @@ Gardener now does that with PyYAML `SafeLoader` plus an allowlist: boolean
 nulls, and duplicate keys. The second reader is gone: the `lanes`
 subcommand was removed and the config fixture pins the flow-style,
 deeper-indent, and duplicate-key grammar cases against the validator
-itself. SafeLoader is not the
-schema; `yes`, `0x10`, and overwrite-on-duplicate still have to be refused
-in code.
+itself. Syntax restrictions use PyYAML composition events, rather than a
+character scanner that must rediscover YAML quoting, comments, and scalar
+rules. The field schema accepts lane mappings in any order and normalizes the
+result for consumers. SafeLoader is not the schema; `yes`, `0x10`, and
+overwrite-on-duplicate still have to be refused in code.
 
 Developer-installed skills may take a library when the alternative is a
 second grammar. Do not add PyYAML to helpers that still ship JSON.
@@ -61,9 +64,10 @@ Before: `config_check.py` accepted any consistent indent; `lanes` required
 exactly two spaces on lane keys. A valid four-space `lanes:` mapping failed
 inventory.
 
-After: both paths load through `parse_yaml_mapping`
+After: the validator's `parse_yaml_mapping` is the only parser
 (`skills/repo-gardener/scripts/config_check.py`). Fixtures cover four-space
-indent, flow mappings, `yes` as a non-boolean, and duplicate keys.
+indent, flow mappings, block scalars, reordered lanes, `yes` as a non-boolean,
+and duplicate keys.
 
 ## Related
 

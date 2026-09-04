@@ -1,7 +1,7 @@
 ---
 title: "Keep project glossaries concrete and contract-driven"
 date: 2026-08-17
-last_updated: 2026-08-17
+last_updated: 2026-09-04
 category: conventions
 module: "CONCEPTS.md glossary"
 problem_type: convention
@@ -56,10 +56,9 @@ valid ones to be omitted.
 
 Persisted names are the exception to friendly renaming. Explain them clearly,
 but retain the exact field, marker, or receipt-kind identifier unless the work
-includes an intentional compatibility migration. [Run
-History](../../../CONCEPTS.md#run-history), for example, keeps the exact
-pre-version `orchestrator:run-record:v1` marker text so the liveness gate can
-still recognize a legacy record.
+includes an intentional migration. For a disposable test install, an explicit
+reset can remove old formats instead of keeping compatibility code. The
+upgrade must stop old writers before a new tracker starts.
 
 ## Why This Matters
 

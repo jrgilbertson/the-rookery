@@ -10,7 +10,7 @@ REPOSITORY_ID = "R_SYNTHETIC_REPOSITORY_001"
 REPORT_ID = "I_SYNTHETIC_REPORT_001"
 WRITER_ID = "U_SYNTHETIC_WRITER_001"
 OTHER_WRITER_ID = "U_SYNTHETIC_OTHER_001"
-DEFAULT_PROJECTION = "# Synthetic morning projection\n"
+DEFAULT_BODY = "# Repository gardening history\n\nRead the latest run-closed comment for the morning report.\n"
 
 
 def empty_tracker(
@@ -18,7 +18,7 @@ def empty_tracker(
     repository_id: str = REPOSITORY_ID,
     report_issue_id: str = REPORT_ID,
     writer_id: str = WRITER_ID,
-    projection: str = DEFAULT_PROJECTION,
+    body: str = DEFAULT_BODY,
 ) -> dict[str, Any]:
     return {
         "schema": "repo-gardener-github-tracker-snapshot",
@@ -28,7 +28,7 @@ def empty_tracker(
         "issue": {
             "id": 4242,
             "node_id": report_issue_id,
-            "body": projection,
+            "body": body,
             "state": "open",
             "comments": 0,
         },
@@ -43,7 +43,6 @@ def _next_comment_id(comments: list[dict[str, Any]]) -> int:
 
 def apply_prepared(snapshot: dict[str, Any], prepared: dict[str, Any]) -> dict[str, Any]:
     result = copy.deepcopy(snapshot)
-    result["issue"]["body"] = prepared["body"]
     comments = [item for page in result["comment_pages"] for item in page]
     numeric_id = _next_comment_id(comments)
     result["comment_pages"][-1].append(

@@ -21,9 +21,18 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
-- `repo-gardener` no longer recognizes versioned run-record markers. Before
-  upgrading, stop the old scheduler, confirm its Orchestrator and Workers
-  have terminated, and close any old run or start with a fresh tracker.
+- `repo-gardener` writes append-only opening and closing comments; the closing
+  comment contains the morning report and the issue body remains setup text.
+  Tracker writes no longer coordinate a body update with a comment or carry
+  operation hashes. Before upgrading a test install, stop its scheduler,
+  confirm old Orchestrators and Workers have terminated, and use a fresh
+  tracker if its records use the retired format.
+- `repo-gardener` accepts lane mappings in any YAML order and uses PyYAML's
+  native parser for syntax checks. Issue admission rests on trusted ownership,
+  current blockers, and a small, low-risk, verifiable PR scope; estimates and
+  readiness labels are hints. Runtime reads verify each source independently
+  and distinguish empty results from missing data. Bot adoption reports the
+  risk of stopped updates or overwritten edits without promising bot behavior.
 - `repo-gardener` adopts an open same-repository update PR with a
   Worker-closable gap as a Worker unit: the Worker checks out the PR head at
   the captured OID, pushes under the existing old-OID lease, keeps one
@@ -83,16 +92,10 @@ looked" surface. GitHub Releases mirror its entries.
   Reasons in the brief are about the change under review, not how the gate
   runs. Captured as
   `docs/solutions/conventions/do-not-split-human-and-agent-skill-products.md`.
-- Repo Gardener now completes its issue identifier census before every
+- Repo Gardener completes its issue identifier census before every
   issue-facing lane uses purpose-ranked, admission-bounded reads, preserving
-  trusted-principal and lane limits. Mapped readiness now prioritizes those
-  reads rather than excluding a `needs-planning` estimate-2 issue whose
-  repository evidence supports a safe Worker brief, and the Ready Frontier
-  remains fresh after an authorized issue refinement.
-- Repo Gardener now has a default-off `issue_refinement` policy grant that can
-  delegate one caller-authorized canonical issue batch to Managing Issues while
-  preserving its existing pre-read, apply-once, first-stop, and exact-readback
-  safeguards.
+  trusted-principal and lane limits. The Ready Frontier comes from current
+  evidence, including fresh native blocker reads.
 - Repo Gardener treats a shared ledger path as an assignment-only overlap
   exception (now keyed on the git `merge=union` attribute at the base, per
   the Removed entry below), while requiring each Worker to retain base
@@ -160,9 +163,8 @@ looked" surface. GitHub Releases mirror its entries.
   against the final delivered scope without requiring a completion diary.
 - `repo-gardener` issue lanes now read their tracker from the repository's
   `.agents/managing-issues.json` when the managing-issues validator accepts it,
-  and the issue-implementation lane limits candidates to issues whose mapped
-  readiness is `ready`, whose mapped leaf estimate is a number at most 2, and
-  which have no open native blocker. With no config file the lanes read the
+  and the issue-implementation lane requires trusted ownership, a safe Worker
+  brief, and no open native blocker. With no config file the lanes read the
   repository's own issues unmapped and name the absent config as their room
   for improvement; a config the run cannot validate, or a provider it cannot
   read, makes the lanes unavailable rather than substituting another tracker.
@@ -175,8 +177,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Removed
 
-- `repo-gardener` no longer accepts `evidence_sources` or `shared_ledger_paths`
-  in `.agents/repo-gardener.yaml`; both are unexpected keys, and the
+- `repo-gardener` no longer accepts `issue_refinement`, `evidence_sources`, or
+  `shared_ledger_paths` in `.agents/repo-gardener.yaml`. Remove those keys on
+  upgrade. Follow-up issues remain owner proposals for Managing Issues outside
+  the nightly run. The
   shared-ledger overlap exception is keyed on the git `merge` attribute being
   `union` at the authoritative base. The references are one owner per rule:
   `applying-effects.md`, `github-reference-adapter.md`, and
@@ -184,8 +188,8 @@ looked" surface. GitHub Releases mirror its entries.
   follows lives in `worker-contract.md`, which also defines overlap; revision
   check points are listed once. `release_a_contract.py` exposes three
   subcommands (`normalize-github-tracker`, `effect`, `run-records`) with no
-  version suffix in any name; record markers are `orchestrator:run-record`,
-  and a record under the old `:v1` markers is read only by the liveness gate.
+  version suffix in any name; only the unversioned `orchestrator:run-record`
+  markers are recognized.
   Gone: the external recovery-state persistence before a tracker write, the
   host execution-profile test (declared audits now run in an explicit child
   environment built from nothing), the code-health rotation cursor,

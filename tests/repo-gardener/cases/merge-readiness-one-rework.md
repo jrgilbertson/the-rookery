@@ -47,7 +47,7 @@ never selects Proceed to merge.
 - [ ] Scenario 4 closes truthfully because no focused repair can help. It does
       not create a follow-up issue or add a retry rule.
 - [ ] Scenario 5 invokes the merge-checking skill in the ownerless scheduled
-      run after the PR exists. The morning projection still contains native
+      run after the PR exists. The closing comment still contains native
       PR, check, review, and owner-attention facts.
 - [ ] Scenario 6 stops and leaves merge to the owner. Proceed to merge is not
       selected.

@@ -1,33 +1,88 @@
 {
-  "schema": "repo-gardener-effect-scenarios",
   "scenarios": [
-    {"id":"observed","mutation":"exact-post-read"},
-    {"id":"already-satisfied","mutation":"preexisting"},
-    {"id":"body-only","mutation":"body-only"},
-    {"id":"body-only-no-write","mutation":"body-only-no-write"},
-    {"id":"edited-existing-managed","mutation":"edited-existing-managed"},
-    {"id":"replaced-existing-managed","mutation":"replaced-existing-managed"},
-    {"id":"observed-with-prior","mutation":"observed-with-prior"},
-    {"id":"observed-but-edited-prior","mutation":"observed-but-edited-prior"},
-    {"id":"observed-but-replaced-prior","mutation":"observed-but-replaced-prior"},
-    {"id":"body-only-foreign-tracker","mutation":"body-only-foreign-tracker"},
-    {"id":"definitive-failure","mutation":"denied-unchanged"},
-    {"id":"unavailable-readback","mutation":"unavailable"},
-    {"id":"comment-ahead","mutation":"comment-only"},
-    {"id":"comment-ahead-pre","mutation":"comment-ahead-pre"},
-    {"id":"duplicate-prepared-comment","mutation":"duplicate-prepared-comment"},
-    {"id":"already-satisfied-but-edited-prior","mutation":"already-satisfied-but-edited-prior"},
-    {"id":"already-satisfied-but-replaced-prior","mutation":"already-satisfied-but-replaced-prior"},
-    {"id":"already-satisfied-but-removed-prior","mutation":"already-satisfied-but-removed-prior"},
-    {"id":"already-satisfied-but-added-other","mutation":"already-satisfied-but-added-other"},
-    {"id":"changed-projection","mutation":"changed-projection"},
-    {"id":"changed-pre-read-projection","mutation":"changed-pre-read-projection"},
-    {"id":"changed-pre-read-body","mutation":"changed-pre-read-body"},
-    {"id":"changed-identity","mutation":"changed-identity"},
-    {"id":"foreign-author","mutation":"foreign-author"},
-    {"id":"replayed-comment-id","mutation":"replayed-comment-id"},
-    {"id":"incomplete-pagination","mutation":"incomplete-pagination"},
-    {"id":"truncated-tail","mutation":"truncated-tail"},
-    {"id":"altered-material","mutation":"altered-material"}
+    {
+      "id": "exact-post-read",
+      "mutation": "exact-post-read"
+    },
+    {
+      "id": "preexisting",
+      "mutation": "preexisting"
+    },
+    {
+      "id": "missing-comment",
+      "mutation": "missing-comment"
+    },
+    {
+      "id": "observed-with-prior",
+      "mutation": "observed-with-prior"
+    },
+    {
+      "id": "observed-but-edited-prior",
+      "mutation": "observed-but-edited-prior"
+    },
+    {
+      "id": "observed-but-replaced-prior",
+      "mutation": "observed-but-replaced-prior"
+    },
+    {
+      "id": "foreign-tracker",
+      "mutation": "foreign-tracker"
+    },
+    {
+      "id": "denied-unchanged",
+      "mutation": "denied-unchanged"
+    },
+    {
+      "id": "unavailable",
+      "mutation": "unavailable"
+    },
+    {
+      "id": "changed-static-body",
+      "mutation": "changed-static-body"
+    },
+    {
+      "id": "changed-identity",
+      "mutation": "changed-identity"
+    },
+    {
+      "id": "foreign-author",
+      "mutation": "foreign-author"
+    },
+    {
+      "id": "replayed-comment-id",
+      "mutation": "replayed-comment-id"
+    },
+    {
+      "id": "incomplete-pagination",
+      "mutation": "incomplete-pagination"
+    },
+    {
+      "id": "truncated-tail",
+      "mutation": "truncated-tail"
+    },
+    {
+      "id": "altered-material",
+      "mutation": "altered-material"
+    },
+    {
+      "id": "duplicate-prepared-comment",
+      "mutation": "duplicate-prepared-comment"
+    },
+    {
+      "id": "already-satisfied-but-edited-prior",
+      "mutation": "already-satisfied-but-edited-prior"
+    },
+    {
+      "id": "already-satisfied-but-replaced-prior",
+      "mutation": "already-satisfied-but-replaced-prior"
+    },
+    {
+      "id": "already-satisfied-but-removed-prior",
+      "mutation": "already-satisfied-but-removed-prior"
+    },
+    {
+      "id": "already-satisfied-but-added-other",
+      "mutation": "already-satisfied-but-added-other"
+    }
   ]
 }

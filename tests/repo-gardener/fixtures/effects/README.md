@@ -1,14 +1,9 @@
-# Synthetic tracker-effect matrix
+# Append-only tracker effects
 
-These fixtures grade two-comment preparation and verification. The checker
-passes complete synthetic GitHub snapshots through the shipped `effect`
-prepare/verify interface, then compares results with the separate expectation
-file. It mutates load-bearing readback and identity fields and proves mention
-and image rejection. Caller authority and verdict fields are rejected rather
-than trusted. Hash fields and Current Portfolio JSON are not required.
-
-Run from the repository root:
-
-```bash
-python3 tests/repo-gardener/fixtures/effects/check_effects.py
-```
+`check_effects.py` drives the production CLI with complete synthetic GitHub
+snapshots. Scenarios cover one comment append, unchanged static issue body,
+lost-response readback without another write, denied and missing writes,
+mutated or replaced history, duplicate records and provider IDs, foreign
+identity, and incomplete pagination. Prepared Markdown rejects mentions,
+images, reserved markers, and oversized content. Closing requires a durable
+opening; verification never authorizes a repair or invents provider provenance.

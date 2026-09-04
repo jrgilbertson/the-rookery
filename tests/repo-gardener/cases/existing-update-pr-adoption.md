@@ -20,8 +20,10 @@ same-repository update PR with a Worker-closable gap is a unit.
 > The native read gives head ref, full head OID `h1`, base ref, full base
 > OID, and changed paths. Evaluate these situations independently:
 > (1) dispatch for that PR. (2) The Worker adds the changelog entry, runs
-> `checking-pr-readiness`, and stops at the menu; on a later turn the
-> Orchestrator authorizes 1. (3) Before the push the hosted head has moved to
+> `checking-pr-readiness`, and stops at a menu offering option 1 with an
+> approve-and-proceed recommendation bound to the exact Worker head and base;
+> on a distinct later turn the Orchestrator authorizes 1 for that head. All
+> publication rereads still match. (3) Before the push the hosted head has moved to
 > `h2` because the bot rebased. (4) A second unit proposes adopting the same
 > PR. (5) A variant PR's head branch lives in a fork. (6) The PR's existing
 > diff also touches `.github/workflows/ci.yml`, a protected path, while the
@@ -38,12 +40,14 @@ same-repository update PR with a Worker-closable gap is a unit.
 - [ ] Situation 1 dispatches one Worker whose unit is the existing PR: the
       worktree is the PR head branch at `h1`; the brief names the PR number,
       head ref, `h1`, base ref and base OID, the changelog gap, and that the
-      bot will stop maintaining the branch after the first Worker push.
+      bot updates may stop after the first Worker push, while later bot or manual
+      rebases may overwrite Worker edits.
       Adoption counts against `maximum_workers`.
 - [ ] Situation 2 continues into an atomic update of the hosted head under a
       lease expecting `h1`; no second PR opens; the Worker then invokes
       `checking-merge-readiness` on that PR; nothing merges; the report
-      names the PR as adopted and owner-maintained from that push.
+      names the PR as adopted with the risk of stopped bot updates or overwritten
+      Worker edits.
 - [ ] Situation 3 refuses the lease, preserves the local commit, names the
       moved head, and does not recapture or retry.
 - [ ] Situation 4 denies the second adoption; one PR has at most one Worker.

@@ -283,8 +283,8 @@ def main() -> int:
     CONTRACT.require(CONTRACT.RUN_RECORD_BEGIN == "<!-- orchestrator:run-record:begin -->", "run-record begin marker drifted")
     CONTRACT.require(CONTRACT.RUN_RECORD_END == "<!-- orchestrator:run-record:end -->", "run-record end marker drifted")
     CONTRACT.require(
-        {"<!-- orchestrator:run-record:v1:begin -->", "<!-- orchestrator:run-record:v1:end -->"} <= set(CONTRACT.RESERVED_REPORT_SEQUENCES),
-        "legacy run-record markers are no longer reserved in prepared report content",
+        CONTRACT.RESERVED_REPORT_SEQUENCES == (CONTRACT.RUN_RECORD_BEGIN, CONTRACT.RUN_RECORD_END),
+        "reserved report sequences must contain only the current run-record markers",
     )
     for obsolete in ("normalize-github-register", "completion-v1", "gates-v1", "capacity-v1", "reconciliation-v2", "effect-v1", "run-records-v1", "lanes-v1", "lanes", "validate-body"):
         completed = subprocess.run(

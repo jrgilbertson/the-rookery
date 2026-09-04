@@ -21,6 +21,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-gardener` no longer recognizes versioned run-record markers. Before
+  upgrading, stop the old scheduler, confirm its Orchestrator and Workers
+  have terminated, and close any old run or start with a fresh tracker.
 - `repo-gardener` adopts an open same-repository update PR with a
   Worker-closable gap as a Worker unit: the Worker checks out the PR head at
   the captured OID, pushes under the existing old-OID lease, keeps one

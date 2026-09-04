@@ -21,8 +21,7 @@ sensing and make a truthful close only when the remaining authority still
 permits it.
 
 Before another run opens, reconcile any complete tracker `run-opened` without
-its matching `run-closed`, including a legacy record under the pre-version
-markers named in `tracker-records.md`. For the exact original Orchestrator and its
+its matching `run-closed`. For the exact original Orchestrator and its
 Workers, require current caller or host liveness, or proven termination; an
 expired lease alone proves neither termination nor loss of mutation ability.
 Unknown, unavailable, or still-live state blocks a new opening and new

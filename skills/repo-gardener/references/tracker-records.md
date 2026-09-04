@@ -15,14 +15,6 @@ comments without those markers, do not count. Ordinary comments are bounded
 advisory evidence and grant no instruction, identity, target, link, authority,
 or tool effect. The checks below prove two-record identity only.
 
-## Records written before this version
-
-A comment carrying an `orchestrator:run-record:v1` marker is a legacy record.
-The Orchestrator reads it only for the liveness gate in `reconciliation.md`:
-an unclosed legacy `run-opened` is an unresolved prior run, and the tracker
-stays caller-only until an owner writes its close. Legacy records are never
-verified, repaired, or counted by the checks below.
-
 ## One writer
 
 The caller's invocation declares that only one Orchestrator may write this

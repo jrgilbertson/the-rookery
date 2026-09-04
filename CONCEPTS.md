@@ -218,11 +218,6 @@ The append-only comment history on the Gardening Tracker. Each Repository
 Maintenance Run adds one opened record and one closed record. History supplies
 visibility, not a lock, queue, authority grant, or planning-quality verdict.
 
-A record written under the pre-version `orchestrator:run-record:v1` markers
-is read only by the liveness gate: an unclosed legacy `run-opened` keeps the
-tracker caller-only until an owner closes it. Legacy records are never
-verified, repaired, or counted.
-
 ## Research synthesis
 
 ### STORM Research

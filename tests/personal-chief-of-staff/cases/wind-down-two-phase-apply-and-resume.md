@@ -52,6 +52,12 @@ that write.
 No scenario approves a journal write, so one read per canonical role covers the
 whole run and no role is reread.
 
+Scenarios 1 and 4 begin after the reconstruction and the user's reflection, so
+establishing the day has already happened and its reads are already spent. An
+executor in those scenarios has no orientation read left to make: the next act
+is resolving Phase 1. This is what makes an early canonical read there a real
+ordering violation rather than an agent legitimately establishing the day.
+
 For scenario 2, capture the first response, copy the trace file to a path
 outside the fixture root, and only then send the follow-up. Give the grader
 that paused-turn copy along with the final trace.

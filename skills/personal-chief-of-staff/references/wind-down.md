@@ -187,8 +187,16 @@ Phase 2 opens the sources it needs only after every approved Phase 1 action has
 been applied and read back, or classified as unapplied. Do not read a Phase 2
 source before that, even to orient. A source read early returns the state the
 sweep was about to correct, and a plan or journal built on it describes a day
-the sources no longer agree with. Establishing the day and running the Daily
-CRM Scan happen before Phase 1 and are unaffected.
+the sources no longer agree with.
+
+Establishing the day and the Daily CRM Scan run before Phase 1 and keep their
+own reads. Those reads happen once, at the top of the run. Establishing the day
+opens the journal to learn whether it exists and what manual content it holds,
+not to supply values for drafting. A run that resumes or continues after the
+reflection has already established the day, so it does not repeat those reads
+to orient; it resolves Phase 1 first. The journal's own target is re-read again
+immediately before its write, under "Revalidate, apply, and read back" in
+`references/source-behavior.md`.
 
 Plan from the state Phase 1 left behind, not from the pre-sweep evidence, and
 re-read a source rather than reusing a value an approved action changed. A

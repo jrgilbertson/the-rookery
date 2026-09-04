@@ -119,6 +119,8 @@ baseline verified self-review and omitted approach-level simplicity.
       response.
 - [ ] Requires a fresh reviewer with no prior review or findings that shaped the
       surface; a cannot-assess result stays not verified.
+- [ ] Dispatches `checking-simplicity` exactly once and runs no companion
+      check.
 - [ ] Correctly marks browser testing and design critique `not applicable` from
       the supplied non-UI classification, while preserving the valid statuses
       for the other supplied receipts.

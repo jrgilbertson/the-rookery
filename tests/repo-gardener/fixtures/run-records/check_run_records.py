@@ -63,9 +63,9 @@ def prepare(
     if variant is not None:
         payload["variant"] = variant
     return invoke(
-        "effect-v1",
+        "effect",
         {
-            "schema": "repo-gardener-effect-input/v2",
+            "schema": "repo-gardener-effect-input",
             "phase": "prepare",
             "pre_read": snapshot,
             "operation": {
@@ -98,7 +98,7 @@ def run_input(
     post_read: Any,
 ) -> dict[str, Any]:
     return {
-        "schema": "repo-gardener-run-records-input/v1",
+        "schema": "repo-gardener-run-records-input",
         "run_id": run_id,
         "closed": closed,
         "post_read": post_read,
@@ -107,7 +107,7 @@ def run_input(
 
 def expect_error(payload: dict[str, Any], phrase: str) -> None:
     try:
-        invoke("run-records-v1", payload)
+        invoke("run-records", payload)
     except CONTRACT.ContractError as error:
         CONTRACT.require(phrase in str(error), f"expected {phrase!r}, got {error!s}")
         return
@@ -116,11 +116,11 @@ def expect_error(payload: dict[str, Any], phrase: str) -> None:
 
 def expect_lanes_error(path: Path, phrase: str) -> None:
     try:
-        invoke("lanes-v1", {}, extra=["--policy", str(path)])
+        invoke("lanes", {}, extra=["--policy", str(path)])
     except CONTRACT.ContractError as error:
         CONTRACT.require(phrase in str(error), f"expected {phrase!r}, got {error!s}")
         return
-    raise CONTRACT.ContractError(f"expected lanes-v1 rejection containing {phrase!r}")
+    raise CONTRACT.ContractError(f"expected lanes rejection containing {phrase!r}")
 
 
 def main() -> int:
@@ -145,7 +145,7 @@ def main() -> int:
         )
 
     expected = {
-        "schema": "repo-gardener-run-records-result/v1",
+        "schema": "repo-gardener-run-records-result",
         "repository_id": opened["repository_id"],
         "report_issue_id": opened["report_issue_id"],
         "writer_id": opened["writer_id"],
@@ -153,7 +153,7 @@ def main() -> int:
         "opened_operation_id": opened["operation_id"],
         "closed_operation_id": closed["operation_id"],
     }
-    actual = invoke("run-records-v1", run_input(run_id, closed, exact_post))
+    actual = invoke("run-records", run_input(run_id, closed, exact_post))
     CONTRACT.require(actual == expected, f"exact closure result mismatch: {actual!r}")
     CONTRACT.require("register_closed_consistently" not in actual, "closure still returned a register-quality claim")
 
@@ -187,7 +187,7 @@ def main() -> int:
             "closed_operation_id": alternate_closed["operation_id"],
         }
     )
-    alternate_actual = invoke("run-records-v1", run_input(run_id, alternate_closed, alternate_post))
+    alternate_actual = invoke("run-records", run_input(run_id, alternate_closed, alternate_post))
     CONTRACT.require(alternate_actual == alternate_expected, "snapshot identity was not bound durably")
     expect_error(run_input(run_id, closed, alternate_post), "post-read repository_id mismatch")
 
@@ -202,7 +202,7 @@ def main() -> int:
             "closed_operation_id": different_closed["operation_id"],
         }
     )
-    different_actual = invoke("run-records-v1", run_input(run_id, different_closed, different_post))
+    different_actual = invoke("run-records", run_input(run_id, different_closed, different_post))
     CONTRACT.require(different_actual == different_expected, "durable opening variant was not accepted")
     expect_error(run_input(run_id, closed, different_post), "run-closed operation_id mismatch")
 
@@ -218,7 +218,7 @@ def main() -> int:
         "recovery fixture did not change the opening-state body fingerprint",
     )
     changed_body_actual = invoke(
-        "run-records-v1",
+        "run-records",
         run_input(run_id, changed_body_closed, apply_prepared(changed_body, changed_body_closed)),
     )
     changed_body_expected = dict(expected)
@@ -274,7 +274,7 @@ def main() -> int:
     expect_error(run_input(run_id, closed, None), "must be an object")
 
     unrelated_after = SNAPSHOTS.add_ordinary_comment(exact_post)
-    actual = invoke("run-records-v1", run_input(run_id, closed, unrelated_after))
+    actual = invoke("run-records", run_input(run_id, closed, unrelated_after))
     CONTRACT.require(actual == expected, "unrelated comments changed mechanical closure")
 
     for forbidden in (
@@ -291,9 +291,9 @@ def main() -> int:
         poisoned[forbidden] = True
         expect_error(poisoned, "unexpected")
 
-    lanes = invoke("lanes-v1", {}, extra=["--policy", str(POLICY_PATH)])
+    lanes = invoke("lanes", {}, extra=["--policy", str(POLICY_PATH)])
     CONTRACT.require(
-        lanes == {"schema": "repo-gardener-lanes-result/v1", "lanes": list(CONTRACT.RELEASE_A_LANES)},
+        lanes == {"schema": "repo-gardener-lanes-result", "lanes": list(CONTRACT.RELEASE_A_LANES)},
         f"nine-lane inventory drifted: {lanes!r}",
     )
     flow_policy = POLICY_PATH.read_text(encoding="utf-8").replace(
@@ -303,9 +303,9 @@ def main() -> int:
     with tempfile.TemporaryDirectory() as directory:
         flow_path = Path(directory) / "policy.yaml"
         flow_path.write_text(flow_policy, encoding="utf-8")
-        flow_lanes = invoke("lanes-v1", {}, extra=["--policy", str(flow_path)])
+        flow_lanes = invoke("lanes", {}, extra=["--policy", str(flow_path)])
         CONTRACT.require(
-            flow_lanes == {"schema": "repo-gardener-lanes-result/v1", "lanes": list(CONTRACT.RELEASE_A_LANES)},
+            flow_lanes == {"schema": "repo-gardener-lanes-result", "lanes": list(CONTRACT.RELEASE_A_LANES)},
             f"flow-style lanes inventory drifted: {flow_lanes!r}",
         )
 
@@ -355,9 +355,9 @@ def main() -> int:
             four_space_lines.append("  " + line if in_lanes and line else line)
         four_space_path = Path(directory) / "four-space-policy.yaml"
         four_space_path.write_text("\n".join(four_space_lines) + "\n", encoding="utf-8")
-        four_space_lanes = invoke("lanes-v1", {}, extra=["--policy", str(four_space_path)])
+        four_space_lanes = invoke("lanes", {}, extra=["--policy", str(four_space_path)])
         CONTRACT.require(
-            four_space_lanes == {"schema": "repo-gardener-lanes-result/v1", "lanes": list(CONTRACT.RELEASE_A_LANES)},
+            four_space_lanes == {"schema": "repo-gardener-lanes-result", "lanes": list(CONTRACT.RELEASE_A_LANES)},
             f"four-space lanes inventory drifted: {four_space_lanes!r}",
         )
 
@@ -369,7 +369,7 @@ def main() -> int:
         check=False,
     )
     CONTRACT.require(removed.returncode != 0 and "invalid choice" in removed.stderr, "normalize-github-register remains public")
-    for obsolete in ("completion-v1", "gates-v1", "capacity-v1", "reconciliation-v2"):
+    for obsolete in ("completion-v1", "gates-v1", "capacity-v1", "reconciliation-v2", "effect-v1", "run-records-v1", "lanes-v1"):
         completed = subprocess.run(
             [sys.executable, str(CONTRACT_PATH), obsolete, "--input", "-"],
             input="{}",

@@ -1,7 +1,7 @@
 # Synthetic tracker-effect matrix
 
 These fixtures grade two-comment preparation and verification. The checker
-passes complete synthetic GitHub snapshots through the shipped `effect-v1`
+passes complete synthetic GitHub snapshots through the shipped `effect`
 prepare/verify interface, then compares results with the separate expectation
 file. It mutates load-bearing readback and identity fields and proves mention
 and image rejection. Caller authority and verdict fields are rejected rather

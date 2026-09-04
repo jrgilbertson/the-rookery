@@ -157,6 +157,24 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Removed
 
+- `repo-gardener` references were consolidated for one owner per rule:
+  `applying-effects.md`, `github-reference-adapter.md`, and
+  `register-and-report.md` are now one `tracker-records.md`; the Worker's
+  interface, brief, completion, and publication gates moved from
+  `reconciliation.md` into `worker-contract.md`, which is the only reference
+  a Worker loads; `SKILL.md` keeps the boundary sentences and points at the
+  owners. Revision check points are listed once. The external
+  recovery-state persistence before a tracker write, the unobservable host
+  execution-profile test for declared audits, the code-health rotation
+  cursor, and per-candidate label-provenance reads are gone; the census
+  floors are five rules. Version suffixes left every name: the script
+  subcommands are `effect`, `run-records`, `lanes`, and
+  `normalize-github-tracker`; record markers are `orchestrator:run-record`
+  and schema names carry no `/v1`. Records written with the old markers are
+  ordinary comments to a new run. Overlap now defines a bare branch's changed
+  paths, adoption denies a head ref shared by another open PR, status values
+  are one table, and setup proposes `.agents/**`, `.github/**`, and gate
+  configuration as protected paths.
 - `repo-gardener` no longer accepts `evidence_sources` or `shared_ledger_paths`
   in `.agents/repo-gardener.yaml`; both are unexpected keys. The shared-ledger
   overlap exception is keyed on the git `merge` attribute being `union` at the

@@ -83,7 +83,7 @@ Persist exactly two managed records for each run ID: one `run-opened` before
 sensing and one consolidated `run-closed` after supervision or an honest
 no-Worker close. Do not add managed manifest, lane, decision, checker, or
 per-Worker comments
-(`skills/repo-gardener/references/register-and-report.md:24-43`).
+(`skills/repo-gardener/references/tracker-records.md:24-43`).
 
 After closing, deterministic code may verify only structural facts: the two
 records are unique and ordered, their identities agree, and the complete
@@ -95,7 +95,7 @@ and register-quality claims as checker outputs
 `register_closed_consistently` is not a production result. Never present a
 two-comment check as a quality, safety, permission, or readiness verdict
 (`tests/repo-gardener/fixtures/run-records/check_run_records.py:147-158`,
-`skills/repo-gardener/references/register-and-report.md:89-92`).
+`skills/repo-gardener/references/tracker-records.md:89-92`).
 
 ### Reread live policy at mutation boundaries
 
@@ -148,7 +148,7 @@ review facts; required pending work makes closure partial. The ownerless
 scheduled run invokes `checking-merge-readiness` and never selects Proceed to
 merge
 (`skills/repo-gardener/references/reconciliation.md`,
-`skills/repo-gardener/references/register-and-report.md`).
+`skills/repo-gardener/references/tracker-records.md`).
 
 Freshly read the native repository, PR number, branch, head SHA, state,
 checks, and review status before reporting the Worker. Do not mirror that

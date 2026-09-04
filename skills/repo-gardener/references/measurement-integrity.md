@@ -24,12 +24,11 @@ revenue, or cost definition.
 
 ## Run the bounded preflight
 
-Confirm the reporting project the host reads against the repository's canonical
-production-project identity before querying: exactly one identity from
-repository facts and exactly one matching host-readable project. A mismatch,
-no identity, or more than one match stops only this slice as `unavailable`,
-naming which; never select among readable projects by name, token scope, or
-guess.
+Bind the reporting project to the repository's canonical production
+identity under the same identity rule as the runtime error and alert lane in
+`lane-contracts.md` (exactly one identity from repository facts, exactly one
+matching host-readable project, otherwise `unavailable` naming which); a
+failure stops only this slice.
 Name a bounded time window and timezone, product surface, expected events or
 metrics, and a query or time budget. When an execution-eligible lane has
 already completed an applicable declared audit in this managed run, consume

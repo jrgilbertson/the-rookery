@@ -4,13 +4,24 @@ The target repository's only policy authority is `.agents/repo-gardener.yaml`
 on the refreshed default branch. Resolve its `repository.default_branch` and
 the repository's configured remote. At open, fetch or refresh that exact
 remote branch, then read `.agents/repo-gardener.yaml` from the refreshed
-remote revision and record that revision. Mid-run, re-read only to detect
-that the file changed, immediately before each declared audit and before
-Worker dispatch, push, PR creation, and `run-closed`. Never infer a remote or
-branch name from a conventional default or substitute a stale local checkout.
-A missing, ambiguous, or unrefreshable remote/default-branch binding, or an
-unreadable file at that revision, stops declared execution and any dependent
-mutation.
+remote revision and record that revision. Never infer a remote or branch name
+from a conventional default or substitute a stale local checkout. A missing,
+ambiguous, or unrefreshable remote/default-branch binding, or an unreadable
+file at that revision, stops declared execution and any dependent mutation.
+
+## Revision check points
+
+Mid-run, re-read the file from the refreshed default branch only to detect
+that its revision changed, at exactly these points: before each declared
+audit; before each Worker dispatch; before each push; before each PR opening;
+before the issue-refinement invocation; and before `run-closed`. Unchanged
+grants are not re-litigated. A mismatch, or an unavailable or unknown
+refresh, stops that action and preserves authored work; a revision change
+stops all further declared audits, source mutation, push, and PR-open for
+every Worker. If the file still names the tracker, the Orchestrator still
+writes the closed record; otherwise report the interrupted close and do not
+write through the denial. Other references say "at the revision check point"
+and mean this list.
 
 The bundled policy asset is a fail-closed starter. It is never loaded as a
 fallback, projected into another shape, or used to override the live file. A
@@ -60,8 +71,10 @@ grantable. The owner can change any real knob. `.agents/repo-gardener.yaml` is
 always protected; setup cannot turn that off. A Worker must not edit that file.
 
 Setup proposes `maximum_workers: 20`, eight authoring lanes on (`mutation:
-true`), discovered identity and branch, existing protected paths, and no
-approved audit commands in any eligible lane. It proposes
+true`), discovered identity and branch, protected paths of `.agents/**`,
+`.github/**`, and the repository's declared gate configuration (hook, lint,
+and CI config files it finds), and no approved audit commands in any eligible
+lane. It proposes
 `issue_refinement: false`; enabling it is a separate visible policy choice.
 
 Before showing the review, inspect the refreshed default-branch revision's
@@ -122,9 +135,8 @@ a Worker request cannot enable this grant.
 
 With `issue_refinement: true`, only the Orchestrator may invoke installed
 `managing-issues` in its policy-authorized delegation mode for one batch.
-Immediately before that invocation, re-read and validate the live policy from
-the refreshed default branch; its revision must equal the envelope's opening
-revision and still grant refinement. Its caller envelope must bind that exact
+At the revision check point before that invocation the live policy must
+still equal the envelope's opening revision and still grant refinement. Its caller envelope must bind that exact
 revision, canonical provider and target, exact owned-family identities, and
 the complete ordered child title (only for child creation), Problem, Scope,
 Verification, estimate, readiness, child, or blocker batch. A GitHub mirror,
@@ -156,28 +168,24 @@ host capability and does not change any Worker mutation gate.
 
 Only a managed Orchestrator may use this authority, after the exact
 `run-opened` readback and before the owning lane qualifies candidates. Preserve
-declaration order. Before each command, re-read and validate the protected
-file from the refreshed default branch and require its revision to match the
-opening revision. Also require the exact target revision at the repository
-root, a clean worktree, and an already-present top-level executable resolved
-without installing or fetching it.
+declaration order. Before each command, pass the revision check point and
+require the exact target revision at the repository root, a clean worktree,
+and an already-present top-level executable resolved without installing or
+fetching it.
 
-Use the host agent's existing direct-argv execution capability only when its
-observable execution profile withholds production and provider credentials,
-credential and agent sockets, and provider or other external-write authority,
-and supports termination of the complete process tree. The host's existing
-network and filesystem controls remain in force; the declaration neither
-broadens them nor proves read-only or repository-only behavior. If the host
-cannot establish these properties, refuse that command locally. This is an
-authorization contract, not a claim that config validation or the host
-provides an OS sandbox.
-
-Invoke the normalized tokens directly from the repository root, token for
-token, with a fixed ten-minute maximum for each command. Never join tokens
-into a shell command, substitute another invocation, retry automatically, or
-install anything. After every launch, confirm the complete process tree is
-stopped, then recheck the refreshed policy revision, exact target revision,
-and clean worktree before another declaration may start.
+Run the command as a direct argv child process from the repository root with
+a child environment from which provider and production credentials, credential
+helpers, and agent sockets are removed (at least `GITHUB_TOKEN`, `GH_TOKEN`,
+`SSH_AUTH_SOCK`, `GPG_AGENT_INFO`, and any variable whose name ends in
+`_TOKEN`, `_SECRET`, `_KEY`, or `_PASSWORD`), in its own process group, with a
+fixed ten-minute maximum. Refuse the command locally only when the agent
+cannot set the child environment or cannot terminate the process group. The
+host's existing network and filesystem controls remain in force; the
+declaration neither broadens them nor proves read-only behavior, and this is
+not an OS sandbox. Never join tokens into a shell command, substitute another
+invocation, retry automatically, or install anything. After every launch,
+confirm the process group is stopped, then recheck the revision check point,
+exact target revision, and clean worktree before another declaration starts.
 
 ## Authoring and hardcoded denies
 
@@ -191,27 +199,26 @@ identity, out-of-scope path, missing or `false` lane value,
 `maximum_workers` of zero, or protected path denies that unit. The bundled
 starter remains denied and grants nothing. For an adopted PR, "planned or
 committed path" means the paths changed by the Worker's own commits after the
-captured hosted head.
+captured hosted head. A rename counts both its old and new path.
 
-Assign overlap before parallel start. Overlap is the intersection of the
-Worker's planned changed paths with the changed paths of other current native
-branches and PRs; a PR elsewhere in the same directory, lane, or package
-manager is not overlap. An adopted PR is excluded from its own Worker's
-overlap read; no two Workers adopt the same PR. A path whose git `merge`
-attribute is `union` at the authoritative base is the only shared-path
-exception, and only for additive entries. Immediately before every Worker
-dispatch, freshly read native branches and PRs for that overlap. An
-unavailable or unknown read, or a current overlap, denies only that dispatch
-and its dependents; other Workers and read-only sensing continue. Already-open
-PRs stay native objects.
+## Overlap
 
-Mid-run, re-read the file only to detect that its revision changed. Unchanged
-grants are not re-litigated. A revision change stops further source mutation,
-push, and PR-open for every Worker. Preserve the local commit when push is
-denied. If the file still names the tracker, the Orchestrator still writes the
-closed comment. If the file no longer names the tracker or the write is
-otherwise denied, report interrupted closure and do not write through the
-denial.
+Overlap is the intersection of the Worker's planned (or, at publication,
+committed) changed paths with the changed paths of other current native
+branches and PRs. A PR's changed paths are its native file list. A branch
+without an open PR contributes `git diff --name-only $(git merge-base <base
+OID> <branch>) <branch>`; a branch with no merge-base or an unreadable diff is
+an unknown read, and a branch already merged into the base contributes no
+paths. A PR elsewhere in the same directory, lane, or package manager is not
+overlap. An adopted PR is excluded from its own Worker's overlap read, and no
+two Workers adopt the same PR. The only shared-path exception is a path whose
+git `merge` attribute is `union` at the authoritative base, for additive
+entries, between Workers selected in the same assignment decision;
+`reconciliation.md` owns that read. Read overlap immediately before every
+Worker dispatch and again at every publication gate. An unavailable or
+unknown read, or a current overlap, denies only that dispatch or publication
+and its dependents; other Workers and read-only sensing continue.
+Already-open PRs stay native objects.
 
 Scope paths are normalized repository-relative paths with no traversal.
 Exclude wins: each authored path must match at least one include glob and no

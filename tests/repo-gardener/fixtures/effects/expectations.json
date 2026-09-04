@@ -1,5 +1,5 @@
 {
-  "schema": "repo-gardener-effect-expectations/v2",
+  "schema": "repo-gardener-effect-expectations",
   "expectations": {
     "observed":{"terminal_outcome":"observed","matched_parts":2,"repair":"none"},
     "already-satisfied":{"terminal_outcome":"already satisfied","matched_parts":2,"repair":"none"},

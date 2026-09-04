@@ -1,6 +1,6 @@
 # Run record fixtures
 
-`check_run_records.py` exercises the public `effect-v1` and `run-records-v1`
+`check_run_records.py` exercises the public `effect` and `run-records`
 interfaces against synthetic GitHub issue snapshots. It proves that one run ID
 owns exactly two managed comments, opened then closed, after exact readback.
 Comments remain valid without hash fields. Current Portfolio JSON is not

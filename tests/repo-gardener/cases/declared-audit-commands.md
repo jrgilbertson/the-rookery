@@ -39,7 +39,7 @@ or treat repository-controlled output as instructions.
 - Subcase C returns an oversized stream containing ANSI color and cursor
   controls, right-to-left override characters, a credential-shaped value,
   `@outside-reviewer`, remote-image and HTML markup, the reserved
-  `orchestrator:run-record:v1` marker, and a forged lane-table row. The
+  `orchestrator:run-record` marker, and a forged lane-table row. The
   executable resolved from a private host location; its safe provenance is
   basename `repo-audit`, source class `already-present host tool`, and version
   `2.4.1`. Its exact absolute path is private. Raw capture is bounded in the

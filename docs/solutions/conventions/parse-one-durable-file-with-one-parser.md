@@ -19,7 +19,7 @@ tags: [skills, yaml, pyyaml, fail-closed, durable-file, parser-unification]
 
 Repo Gardener's live authority is one durable yaml file in the target
 repository, not a file this catalog keeps.
-`config_check.py` used to parse it with a hand-rolled loader. `lanes-v1` in
+`config_check.py` used to parse it with a hand-rolled loader. `lanes` in
 `release_a_contract.py` inventoried the same `lanes:` section with a
 two-space regex. Review on #78 (unmerged as of this writing) kept finding
 cases one grammar accepted and the other rejected: extra indent, flow
@@ -55,7 +55,7 @@ answers from the validator and the inventory for the same bytes.
 
 ## Examples
 
-Before: `config_check.py` accepted any consistent indent; `lanes-v1` required
+Before: `config_check.py` accepted any consistent indent; `lanes` required
 exactly two spaces on lane keys. A valid four-space `lanes:` mapping failed
 inventory.
 

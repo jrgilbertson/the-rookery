@@ -21,7 +21,7 @@ def empty_tracker(
     projection: str = DEFAULT_PROJECTION,
 ) -> dict[str, Any]:
     return {
-        "schema": "repo-gardener-github-tracker-snapshot/v1",
+        "schema": "repo-gardener-github-tracker-snapshot",
         "configured_repository_id": repository_id,
         "configured_report_issue_id": report_issue_id,
         "configured_writer_id": writer_id,

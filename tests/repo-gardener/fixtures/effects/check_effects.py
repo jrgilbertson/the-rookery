@@ -35,7 +35,7 @@ SNAPSHOTS = load_module(SNAPSHOT_HELPER, "repo_gardener_tracker_snapshots_for_ef
 
 def cli(payload: dict[str, Any]) -> dict[str, Any]:
     completed = subprocess.run(
-        [sys.executable, str(CONTRACT_PATH), "effect-v1", "--input", "-"],
+        [sys.executable, str(CONTRACT_PATH), "effect", "--input", "-"],
         input=json.dumps(payload),
         capture_output=True,
         text=True,
@@ -46,7 +46,7 @@ def cli(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 def effect_input(phase: str, **values: Any) -> dict[str, Any]:
-    return {"schema": "repo-gardener-effect-input/v2", "phase": phase, **values}
+    return {"schema": "repo-gardener-effect-input", "phase": phase, **values}
 
 
 def target_snapshot(base: dict[str, Any], prepared: dict[str, Any]) -> dict[str, Any]:
@@ -55,7 +55,7 @@ def target_snapshot(base: dict[str, Any], prepared: dict[str, Any]) -> dict[str,
 
 def prior_managed_comment() -> dict[str, Any]:
     record = {
-        "schema": "orchestrator-run-record/v1",
+        "schema": "orchestrator-run-record",
         "kind": "run-opened",
         "run_id": "run:synthetic:prior",
         "operation_id": "operation:report:" + "a" * 64,
@@ -97,7 +97,7 @@ def mutate(base: dict[str, Any], target: dict[str, Any], prepared: dict[str, Any
         after = copy.deepcopy(before)
         after["issue"]["body"] = prepared["body"]
         edited = {
-            "schema": "orchestrator-run-record/v1",
+            "schema": "orchestrator-run-record",
             "kind": "run-opened",
             "run_id": "run:synthetic:prior",
             "operation_id": "operation:report:" + "a" * 64,
@@ -117,7 +117,7 @@ def mutate(base: dict[str, Any], target: dict[str, Any], prepared: dict[str, Any
         before = with_prior_managed(base)
         after = SNAPSHOTS.apply_prepared(before, prepared)
         edited = {
-            "schema": "orchestrator-run-record/v1",
+            "schema": "orchestrator-run-record",
             "kind": "run-opened",
             "run_id": "run:synthetic:prior",
             "operation_id": "operation:report:" + "a" * 64,
@@ -184,7 +184,7 @@ def mutate(base: dict[str, Any], target: dict[str, Any], prepared: dict[str, Any
         before = with_prior_managed(target)
         after = copy.deepcopy(before)
         edited = {
-            "schema": "orchestrator-run-record/v1",
+            "schema": "orchestrator-run-record",
             "kind": "run-opened",
             "run_id": "run:synthetic:prior",
             "operation_id": "operation:report:" + "a" * 64,
@@ -270,7 +270,7 @@ def main() -> int:
             CONTRACT.require(actual.get(key) == expected, f"{scenario['id']} {key}: {actual.get(key)!r} != {expected!r}")
         CONTRACT.require(actual.get("provenance") == "unverified", f"{scenario['id']} invented provenance")
 
-    legacy = {"schema": "repo-gardener-effect-input/v1", "scenario": {"authority": {"caller_exclusive": True}}}
+    legacy = {"schema": "repo-gardener-effect-input", "scenario": {"authority": {"caller_exclusive": True}}}
     expect_error(legacy, "phase")
     for forbidden in ("authority", "verdict", "result", "terminal_receipt_read_back"):
         payload = effect_input("verify", prepared=prepared, pre_read=base, post_read=target, write_attempt="possible")

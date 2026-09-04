@@ -42,8 +42,8 @@ NOTIFICATION_CAPABLE_MENTION = re.compile(
 )
 HTTP_URL = re.compile(r"https?://[^\s<>\"')\]]+", re.IGNORECASE)
 HTML_IMAGE = re.compile(r"<\s*img\b", re.IGNORECASE)
-RUN_RECORD_BEGIN = "<!-- orchestrator:run-record:v1:begin -->"
-RUN_RECORD_END = "<!-- orchestrator:run-record:v1:end -->"
+RUN_RECORD_BEGIN = "<!-- orchestrator:run-record:begin -->"
+RUN_RECORD_END = "<!-- orchestrator:run-record:end -->"
 GITHUB_SNAPSHOT_FIELDS = {
     "schema",
     "configured_repository_id",
@@ -214,7 +214,7 @@ def _extract_marked_json(body: str, begin: str, end: str, label: str) -> tuple[s
 def _validate_run_record(record: dict[str, Any], label: str) -> dict[str, Any]:
     require_exact_fields(record, RUN_RECORD_FIELDS, label)
     require(tuple(record) == RUN_RECORD_FIELD_ORDER, f"{label} field order mismatch")
-    require(record.get("schema") == "orchestrator-run-record/v1", f"{label} schema mismatch")
+    require(record.get("schema") == "orchestrator-run-record", f"{label} schema mismatch")
     kind = require_identity(record.get("kind"), f"{label} kind")
     require(kind in RUN_RECORD_KINDS, f"{label} kind is invalid")
     require_identity(record.get("run_id"), f"{label} run_id")
@@ -228,7 +228,7 @@ def normalize_github_tracker_snapshot(snapshot: Any) -> dict[str, Any]:
     """Normalize supplied GitHub bytes; do not claim freshness or provenance."""
     snapshot = require_object(snapshot, "GitHub tracker snapshot")
     require_exact_fields(snapshot, GITHUB_SNAPSHOT_FIELDS, "GitHub tracker snapshot")
-    require(snapshot.get("schema") == "repo-gardener-github-tracker-snapshot/v1", "GitHub tracker snapshot schema mismatch")
+    require(snapshot.get("schema") == "repo-gardener-github-tracker-snapshot", "GitHub tracker snapshot schema mismatch")
     repository_id = require_identity(snapshot.get("configured_repository_id"), "configured repository_id")
     report_issue_id = require_identity(snapshot.get("configured_report_issue_id"), "configured report issue_id")
     writer_id = require_identity(snapshot.get("configured_writer_id"), "configured writer_id")
@@ -308,7 +308,7 @@ def normalize_github_tracker_snapshot(snapshot: Any) -> dict[str, Any]:
         "comment pagination count does not match provider total",
     )
     return {
-        "schema": "repo-gardener-github-tracker-view/v1",
+        "schema": "repo-gardener-github-tracker-view",
         "repository_id": repository_id,
         "report_issue_id": report_issue_id,
         "writer_id": writer_id,
@@ -408,7 +408,7 @@ def prepare_report_effect(pre_read: Any, operation: Any) -> dict[str, Any]:
         operation=operation,
     )
     record = {
-        "schema": "orchestrator-run-record/v1",
+        "schema": "orchestrator-run-record",
         "kind": operation["kind"],
         "run_id": operation["run_id"],
         "operation_id": operation_id,
@@ -421,7 +421,7 @@ def prepare_report_effect(pre_read: Any, operation: Any) -> dict[str, Any]:
     _validate_report_rendering(body)
     _validate_report_rendering(comment)
     return {
-        "schema": "repo-gardener-prepared-tracker-effect/v1",
+        "schema": "repo-gardener-prepared-tracker-effect",
         "repository_id": view["repository_id"],
         "report_issue_id": view["report_issue_id"],
         "writer_id": view["writer_id"],
@@ -436,7 +436,7 @@ def prepare_report_effect(pre_read: Any, operation: Any) -> dict[str, Any]:
 def _prepared_effect(prepared: Any) -> dict[str, Any]:
     prepared = require_object(prepared, "prepared tracker effect")
     require_exact_fields(prepared, EFFECT_PREPARED_FIELDS, "prepared tracker effect")
-    require(prepared.get("schema") == "repo-gardener-prepared-tracker-effect/v1", "prepared tracker effect schema mismatch")
+    require(prepared.get("schema") == "repo-gardener-prepared-tracker-effect", "prepared tracker effect schema mismatch")
     operation = _effect_operation(prepared.get("operation"))
     require_identity(prepared.get("repository_id"), "prepared repository_id")
     require_identity(prepared.get("report_issue_id"), "prepared report issue_id")
@@ -563,7 +563,7 @@ def verify_run_records(run_id: Any, closed: Any, post_read: Any) -> dict[str, An
     require(_comment_bodies_equal(closed_item["comment_body"], closed["comment"]), "run-closed comment material mismatch")
     require(_view_matches_post(view, closed), "closing body and comment were not read back exactly")
     return {
-        "schema": "repo-gardener-run-records-result/v1",
+        "schema": "repo-gardener-run-records-result",
         "repository_id": view["repository_id"],
         "report_issue_id": view["report_issue_id"],
         "writer_id": view["writer_id"],
@@ -647,10 +647,10 @@ def main() -> int:
     body_parser.add_argument("--body", type=Path, required=True)
     snapshot_parser = subparsers.add_parser("normalize-github-tracker")
     snapshot_parser.add_argument("--input", required=True)
-    for command in ("effect-v1", "run-records-v1"):
+    for command in ("effect", "run-records"):
         input_parser = subparsers.add_parser(command)
         input_parser.add_argument("--input", required=True)
-    lanes_parser = subparsers.add_parser("lanes-v1")
+    lanes_parser = subparsers.add_parser("lanes")
     lanes_parser.add_argument("--policy", type=Path, required=True)
     args = parser.parse_args()
     if args.command == "validate-body":
@@ -658,12 +658,12 @@ def main() -> int:
         result = {"body_bytes": validate_body(body)}
     elif args.command == "normalize-github-tracker":
         result = normalize_github_tracker_snapshot(_load_input(args.input))
-    elif args.command == "effect-v1":
+    elif args.command == "effect":
         data = require_object(_load_input(args.input), "effect input")
         phase = data.get("phase")
         if phase == "prepare":
             require_exact_fields(data, {"schema", "phase", "pre_read", "operation"}, "effect input")
-            require(data.get("schema") == "repo-gardener-effect-input/v2", "effect input schema mismatch")
+            require(data.get("schema") == "repo-gardener-effect-input", "effect input schema mismatch")
             result = prepare_report_effect(data["pre_read"], data["operation"])
         elif phase == "verify":
             require_exact_fields(
@@ -671,22 +671,22 @@ def main() -> int:
                 {"schema", "phase", "prepared", "pre_read", "post_read", "write_attempt"},
                 "effect input",
             )
-            require(data.get("schema") == "repo-gardener-effect-input/v2", "effect input schema mismatch")
+            require(data.get("schema") == "repo-gardener-effect-input", "effect input schema mismatch")
             result = verify_report_effect(
                 data["prepared"], data["pre_read"], data["post_read"], data["write_attempt"]
             )
         else:
             raise ContractError("effect input phase must be prepare or verify")
-    elif args.command == "run-records-v1":
+    elif args.command == "run-records":
         data = _versioned_input(
             _load_input(args.input),
-            "repo-gardener-run-records-input/v1",
+            "repo-gardener-run-records-input",
             {"run_id", "closed", "post_read"},
         )
         result = verify_run_records(data["run_id"], data["closed"], data["post_read"])
-    elif args.command == "lanes-v1":
+    elif args.command == "lanes":
         result = {
-            "schema": "repo-gardener-lanes-result/v1",
+            "schema": "repo-gardener-lanes-result",
             "lanes": installed_lanes_from_text(read_bounded_text(args.policy, "policy")),
         }
     else:

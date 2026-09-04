@@ -1,5 +1,5 @@
 {
-  "schema": "repo-gardener-effect-scenarios/v2",
+  "schema": "repo-gardener-effect-scenarios",
   "scenarios": [
     {"id":"observed","mutation":"exact-post-read"},
     {"id":"already-satisfied","mutation":"preexisting"},

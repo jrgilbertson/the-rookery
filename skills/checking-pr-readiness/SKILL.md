@@ -149,10 +149,13 @@ alternatives:
   saved; otherwise it has none.
 - A `checking-simplicity` result counts only when this gate dispatched the
   review after step 1 against the complete surface it just inventoried, in a
-  fresh context with no planning, authorship, implementation, earlier review
-  or findings, or review fixes that shaped the subject, and supplied the
-  resolved intent source, repository, branch, full `HEAD`, and all four path
-  categories with their complete current contents. A result that recommends
+  fresh context that did not plan, author, or implement the subject and
+  produced no earlier findings or review fixes that shaped it; having
+  reviewed an earlier revision alone is not involvement. The dispatch
+  supplies the resolved intent source, repository, branch, full `HEAD`, and
+  all four path categories with their complete current contents, read from
+  the index or as link objects so a symlink is transferred as its link text
+  and never followed. A result that recommends
   keeping the current approach is verified only when that dispatch met the
   independence rule, no user question remains, and the subject is unchanged.
   A result that recommends simplifying first, or that needs a user decision,

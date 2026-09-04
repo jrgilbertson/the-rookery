@@ -114,8 +114,8 @@ parts the subject contains. Do not invent a concern.
 
 When simplification is needed, the readout is the smallest safe alternative,
 at most three grouped reasons with each reason's essential evidence in the
-same sentence, one sentence on protected behavior and the observable tests
-that prove it, and the next action. Each removal reason connects the
+same sentence, one sentence on protected behavior with one observable test
+for each protected behavior, and the next action. Each removal reason connects the
 machinery or scope to the current need it does not serve, and names reuse
 where it applies. For a system design or architecture, name the current and
 smaller whole-system shapes and their decision-driving contrast before the

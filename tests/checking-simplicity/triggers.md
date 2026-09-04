@@ -43,7 +43,7 @@ sees only the skill name, description, and query. A should-trigger query needs
 | Implement the decided refactor now: replace the existing queue with a direct call while preserving behavior. Do not reassess the approach. | Prescribed implementation after the simplicity decision is settled. |
 | The unchanged implementation plan already has a clean simplicity result recommending it proceed as written, with no open user question. Continue to implementation. | The assessment is complete; the executor owns the newly reached task. |
 | The approved requirements brief is ready. Before creating the technical implementation plan, continue the workflow. | The planner owns an ordinary completed-brief handoff. |
-| The implementation plan is ready at `/tmp/archive-plan.md`. Hand it off to execution. | The executor owns an ordinary finished-plan handoff. |
+| The implementation plan is ready at `docs/plans/archive-plan.md`. Hand it off to execution. | The executor owns an ordinary finished-plan handoff. |
 | Walk me through the tradeoffs between queues and direct calls for export systems. We are discussing the architecture, not deciding or implementing it yet. | Architecture explanation or brainstorming owns a discussion without simplification intent or an imminent implementation decision. |
 | The approved design requires an audit log and a queue for regulated delivery, and the implementation plan maps those requirements directly. Hand it off to execution. | The executor owns implementation of owner-approved durable machinery. |
 | While implementing the approved archive action, extract a small local helper for the existing validation call. | Ordinary implementation owns a non-durable code-level choice. |

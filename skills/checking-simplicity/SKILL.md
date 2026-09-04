@@ -79,6 +79,9 @@ boundary that requires it. Do not keep it for a hypothetical future caller.
 Do not keep a variation nobody has asked for. Cover every part; group related
 ones when that makes the comparison clearer.
 
+Make the recommended shape as elegant, simple, and correct as possible. No
+weird wiring. No needless abstractions.
+
 Start with what can be removed. Prefer removal or reuse over renaming the
 same machinery. Recommend a smaller working slice, not a backlog of deferred
 follow-ups. Judge simplicity by the ladder, not by line count, file count, or

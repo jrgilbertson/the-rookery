@@ -172,37 +172,22 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Removed
 
-- `repo-gardener` references were consolidated for one owner per rule:
-  `applying-effects.md`, `github-reference-adapter.md`, and
-  `register-and-report.md` are now one `tracker-records.md`; the Worker's
-  interface, brief, completion, and publication gates moved from
-  `reconciliation.md` into `worker-contract.md`, which is the only reference
-  a Worker loads; `SKILL.md` keeps the boundary sentences and points at the
-  owners. Revision check points are listed once. The external
-  recovery-state persistence before a tracker write, the unobservable host
-  execution-profile test for declared audits, the code-health rotation
-  cursor, and per-candidate label-provenance reads are gone; the census
-  floors are five rules. Version suffixes left every name: the script
-  subcommands are `effect`, `run-records`, `lanes`, and
-  `normalize-github-tracker`; record markers are `orchestrator:run-record`
-  and schema names carry no `/v1`. A record written under the old
-  `:v1` markers is read only by the liveness gate: an unclosed legacy
-  `run-opened` keeps the tracker caller-only until an owner closes it. Overlap now defines a bare branch's changed
-  paths, adoption denies a head ref shared by another open PR, status values
-  are one table, and setup proposes `.agents/**`, `.github/**`, and gate
-  configuration as protected paths.
-- `repo-gardener` scripts expose three subcommands (`normalize-github-tracker`,
-  `effect`, `run-records`); `lanes` and `validate-body` duplicated checks the
-  validator and `effect` already make, and the one-parser grammar pins now
-  live in the config fixture. Declared audits run in an explicit child
-  environment built from nothing rather than a credential deny-list. Overlap
-  is defined once, in `worker-contract.md`, which the Orchestrator now loads
-  too.
 - `repo-gardener` no longer accepts `evidence_sources` or `shared_ledger_paths`
-  in `.agents/repo-gardener.yaml`; both are unexpected keys. The shared-ledger
-  overlap exception is keyed on the git `merge` attribute being `union` at the
-  authoritative base. Pilot residue (`#3336`, Current Portfolio, presentation
-  cap prose) is gone.
+  in `.agents/repo-gardener.yaml`; both are unexpected keys, and the
+  shared-ledger overlap exception is keyed on the git `merge` attribute being
+  `union` at the authoritative base. The references are one owner per rule:
+  `applying-effects.md`, `github-reference-adapter.md`, and
+  `register-and-report.md` became `tracker-records.md`; everything a Worker
+  follows lives in `worker-contract.md`, which also defines overlap; revision
+  check points are listed once. `release_a_contract.py` exposes three
+  subcommands (`normalize-github-tracker`, `effect`, `run-records`) with no
+  version suffix in any name; record markers are `orchestrator:run-record`,
+  and a record under the old `:v1` markers is read only by the liveness gate.
+  Gone: the external recovery-state persistence before a tracker write, the
+  host execution-profile test (declared audits now run in an explicit child
+  environment built from nothing), the code-health rotation cursor,
+  per-candidate label-provenance reads, and the `#3336`, Current Portfolio,
+  and presentation-cap pilot residue. Census floors are five rules.
 
 ## [0.2.0] - 2026-08-14
 

@@ -201,19 +201,6 @@ starter remains denied and grants nothing. For an adopted PR, "planned or
 committed path" means the paths changed by the Worker's own commits after the
 captured hosted head. A rename counts both its old and new path.
 
-## Overlap
-
-`worker-contract.md` defines overlap: changed-path intersection with every
-other current native branch and open PR, how each contributes its paths, and
-the one union-ledger exception, whose attribute read `reconciliation.md`
-owns. The Orchestrator applies that same definition to the Worker's planned
-paths immediately before every dispatch; the Worker applies it to its
-committed paths at every publication gate. A PR elsewhere in the same
-directory, lane, or package manager is not overlap, and no two Workers adopt
-the same PR. An unavailable or unknown read, or a current overlap, denies
-only that dispatch or publication and its dependents; other Workers and
-read-only sensing continue. Already-open PRs stay native objects.
-
 Scope paths are normalized repository-relative paths with no traversal.
 Exclude wins: each authored path must match at least one include glob and no
 exclude glob. A missing, malformed, or ambiguous scope denies authoring.

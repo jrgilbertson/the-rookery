@@ -97,9 +97,11 @@ adopted PR's head branch. A PR contributes its native file list; a branch
 without an open PR contributes `git diff --name-only $(git merge-base <base
 OID> <branch>) <branch>`; a branch with no merge-base or an unreadable diff
 is an unknown read; a branch already merged into the base contributes no
-paths. A shared path is permitted only when the brief names it as a union-merged
-ledger and the Worker's diff adds only its own entry while retaining every
-base entry. Any other intersection stops the action. An
+paths. A PR elsewhere in the same directory, lane, or package manager is
+not overlap. A shared path is permitted only when the brief names it as a
+union-merged ledger and the Worker's diff adds only its own entry while
+retaining every base entry. Any other intersection stops the action. The
+Orchestrator applies this same definition to planned paths before dispatch. An
 ownerless first push must match the subject and OID the checking skill
 re-read; a repaired-head update must match only its exact
 Orchestrator-authorized repaired subject and OID. Never replace or recapture

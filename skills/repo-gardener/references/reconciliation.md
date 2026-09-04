@@ -90,7 +90,10 @@ that unit; an honest read-only result is successful operation.
 Selection and dispatch for the run never exceed the opening policy's
 `maximum_workers` cap; unrelated existing PRs do not consume that cap.
 Immediately before every Worker dispatch, pass the revision check point and
-read overlap as `policy-and-entry-modes.md` defines.
+read overlap as `worker-contract.md` defines, against the Worker's planned
+paths; an unavailable or unknown read, or a current overlap, denies only that
+dispatch and its dependents while other Workers and read-only sensing
+continue.
 
 A candidate unit may be an existing open PR that the Worker adopts. Adopt only
 when: the head branch lives in the target repository (on GitHub,

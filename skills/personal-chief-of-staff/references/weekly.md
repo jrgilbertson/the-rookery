@@ -2,7 +2,8 @@
 
 Use this mode to turn the available week into an executive review and a
 credible plan for the next one. Scheduled and manual invocations follow the
-same interactive workflow.
+same interactive workflow. Apply [Make every intention verifiable](source-behavior.md#make-every-intention-verifiable)
+when an outcome, priority, intervention, or durable proposal first appears.
 
 ## Reconstruct the available week
 
@@ -15,17 +16,22 @@ understand active projects, relationships, meetings, decisions, and writing.
 
 Query live calendars and selected native sources when they can confirm an
 outcome, commitment, risk, or material operating change. Use both personal and
-work calendars when visible and keep their identities distinct. Treat the
-available personal mailbox as personal-email evidence only; do not infer work
-mail coverage from a shared work calendar.
+work calendars when visible and keep their identities distinct.
 
 When reviews or journals are missing, use the last existing review plus current
 authoritative evidence. Prepare one review for the current period. Do not
 backfill skipped weeks or reconstruct subjective history the sources cannot
 show.
 
-Completion: the available period and material coverage gaps are clear, without
-creating another history or changing a source.
+While reconstructing, run [Administrative Sweep](administrative-sweep.md).
+The closing day is the review window's final day. The planning interval runs
+from the following day through the coming week's final day, inclusive. Feed
+upcoming-task context into next-week planning and put each proposed correction
+in its own review action, as the sweep specifies. Report zero rows when empty.
+
+Completion: the available period and material coverage gaps are clear, the
+sweep has covered overdue tasks and the coming planning interval, and no source was
+changed while reconstructing.
 
 ## Lead with the executive synthesis
 
@@ -39,7 +45,7 @@ The synthesis should answer, when evidence supports it:
 - what materially advanced or regressed;
 - where current behavior and commitments diverged from strategy;
 - which open loop, relationship, or operating risk now matters;
-- what the evidence suggests about sustainable personal leverage; and
+- where the user's effort compounded and where it did not; and
 - which one to three outcomes deserve priority next week.
 
 Separate observed evidence from inference and from judgments that still need
@@ -56,12 +62,23 @@ item-by-item reconciliation, or create another source of task state.
 Completion: the user can understand the week and its implications before
 opening the supporting detail.
 
+## Ask one round after the synthesis
+
+After the synthesis and before coaching, ask one
+[Frontier Round](source-behavior.md#ask-on-the-evidence-frontier), including any
+qualifying recurring-thread candidate. Use the answers to classify threads and
+choose an intervention. Questions discovered during coaching carry over to the
+next round.
+
+Completion: the pre-coaching round carried any qualifying recurring-thread
+candidate, and its answers were available to the coaching judgment.
+
 ## Coach on recurring threads
 
-After the executive synthesis and before next-week commitments, perform the
-longitudinal coaching judgment from `source-behavior.md`. Apply its recurrence
-and evidence-chain rules, surface zero to three supported recurring threads,
-and classify each as:
+After the Frontier Round and before commitments, use
+[Ground longitudinal coaching in durable evidence](source-behavior.md#ground-longitudinal-coaching-in-durable-evidence)
+and the round's answers to assess zero to three supported recurring threads.
+Classify each as:
 
 - **new** when it clears the recurrence bar for the first time;
 - **already known** when an earlier review identified it and the bounded current
@@ -86,9 +103,8 @@ Review, and a signal that would support or disconfirm the interpretation. The
 intervention may reshape the proposed plan, but it does not approve that plan
 or any durable action.
 
-Apply the shared intention contract to that intervention. A supported
-recommendation to keep the current plan is in scope when it resolves the live
-choice; an honest finding that no intervention is warranted is not.
+A supported recommendation to keep the plan qualifies when it resolves the
+live choice.
 
 When no candidate clears the recurrence bar, close the coaching step with zero
 supported threads and any material evidence limit. Offer no coaching
@@ -103,22 +119,16 @@ finalized.
 
 ## Prefill the current review progressively
 
-Map verified evidence into the configured weekly-review template without
-flattening it into a source dump. Build a conversational draft first. Cover
-only the sections supported by the available week, drawing selectively from:
+Draft supported sections of the configured weekly-review template in the
+conversation. Use journals and calendars for outcomes and capacity; tasks and
+project sources for execution and open loops; relationship evidence for
+commitments; operating sources for material changes; and writing notes for
+ideas worth advancing. Leave unsupported sections blank, uncertain, or open
+for discussion.
 
-- journals and calendar for outcomes, capacity, and use of time;
-- tasks, projects, repositories, and issue trackers for execution and open
-  loops;
-- meetings, contacts, and relationship notes for commitments and follow-up;
-- product, customer, reliability, payment, and cost sources for material
-  operating evidence;
-- health evidence for longer patterns relevant to a current decision; and
-- writing and reference notes for ideas that have enough signal to advance.
-
-Do not turn source counts into performance scores. Do not diagnose health or
-begin a correlation analysis without a decision the user is trying to improve,
-an agreed observation window, and evidence likely to change an action.
+Do not turn source counts into performance scores. Use
+[Decide what deserves attention](source-behavior.md#decide-what-deserves-attention)
+for health patterns and correlation analysis.
 
 For a consequential release, customer-proof attempt, incident, loss, or
 repeatedly blocked critical path, offer a short after-action discussion inside
@@ -129,19 +139,11 @@ sections remain blank, uncertain, or open for discussion.
 
 ## Review relationship opportunities in context
 
-When the companion relationship capability is available, deliberately inspect
-active cadence exceptions and connect the week's current work, decisions,
-writing, reading, and planned commitments to relevant people. This is part of
-the weekly synthesis, not a standalone CRM ritual or the start of catch-up.
-
-Surface an overdue relationship only when there is a useful current reason and
-plausible action. Surface a contextual person only when the evidence explains
-why that person matters to current work or to the relationship. One clearly
-separated broader connection may be mentioned without creating a Task, draft,
-or Person-note effect unless the user promotes it.
-
-Keep every resulting effect independently reviewable within the existing
-weekly bundle. Return no relationship suggestion when none is warranted.
+When the companion is available, use the shared
+[relationship judgment rules](source-behavior.md#use-relationship-judgment-as-a-companion)
+to inspect active cadence exceptions and connect the week's work, decisions,
+writing, reading, and planned commitments to relevant people. Keep one optional
+broader connection separate, with no action unless the user promotes it.
 
 Completion: the weekly review identifies only useful relationship exceptions
 and opportunities, without taking ownership of CRM maintenance or catch-up.
@@ -157,12 +159,6 @@ Test proposed outcomes against strategy, calendar reality, active obligations,
 relationships, health and recovery, and opportunity cost. Optimize for
 sustainable value across the whole system rather than maximizing task volume.
 Keep experiments small enough to learn from and specific enough to revisit.
-Apply the shared intention contract as soon as each independent next-week
-outcome, priority, experiment, or boundary is proposed. For an agent-originated
-candidate, show its current basis as authoritative observed evidence or an
-explicitly labeled user-supplied, unverified premise, frame its desired outcome
-conditionally for the user's acceptance, and name its observable closure
-evidence; keep it explicitly unowned until the user accepts it.
 
 When a repeated insight could help a real audience, suggest advancing no more
 than one or two worthwhile writing pieces. Preserve the user's authorship of
@@ -175,28 +171,18 @@ week, not an agent-authored theory of the user's life.
 
 ## Review and write back
 
-Present the completed conversational draft and any related changes as one
-review bundle. The canonical weekly-review note is one proposed action. Task,
-calendar, CRM, repository, writing, or other source changes are separate
-actions with their own identities, targets, effects, and approval.
-Each separate action uses the bundle's intention shape. Approval binds to its
-unchanged action fields, including its closure evidence.
+Present one [review bundle](source-behavior.md#prepare-one-review-bundle).
+The current canonical weekly-review note is one action; each related source
+change, including each Administrative Sweep resolution and its drafted content,
+is independently approvable. Apply approved actions through the shared
+[application rules](source-behavior.md#revalidate-apply-and-read-back) and
+[Obsidian CLI rules](source-behavior.md#use-obsidian-only-through-its-cli).
 
-After approval, create or update only the current canonical weekly review
-through the Obsidian CLI with explicit vault targeting. Re-read the note first,
-preserve existing manual content, frontmatter, links, embeds, and vault views,
-apply only the approved content, and read it back through the CLI. Do not lint
-the vault.
-
-End explicitly using the core run endings. When a useful interactive review has
-a named material evidence gap and is otherwise finished, end **Partial**; open
-approvals alone do not make it Paused. When the user intends to reconnect a
-source or otherwise continue the unfinished review later, end **Paused** and
-name the evidence gap in the recap. A scheduled run with the user absent also
-ends **Paused** even when evidence coverage is partial; name the gap and the
-conclusions it limits. Name any evidence gap only where it limits a conclusion,
-and recap the reviewed note plus every applied, unapplied, manual, or
-indeterminate action.
+Use the core ending and recap rules. An otherwise finished useful review with
+a material evidence gap ends **Partial**; open approvals alone do not make it
+Paused. Use **Paused** when the user intends to continue later, or when the
+scheduled user is absent, including with partial coverage. Tie each gap to the
+conclusion it limits.
 
 Completion: one current reviewed weekly review exists when approved, related
 changes remain independently controlled, and no skipped week was backfilled.

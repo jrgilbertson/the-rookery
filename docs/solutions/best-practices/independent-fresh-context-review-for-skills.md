@@ -187,16 +187,20 @@ Its first prompt correctly authorized no journal write, but the test and log
 also claimed approval, write, and readback safety. No approved action existed,
 so the post-approval path could not occur.
 
-The repaired case keeps that no-approval turn, then adds a separate synthetic
-follow-up with exact approval that asks the agent to state the required
-authoritative re-read, revalidation, one-write, and CLI-readback sequence
-(`tests/personal-chief-of-staff/cases/wind-down-journal-ownership.md:12`). It is
-a bounded narration check, not executable acceptance evidence; the case says no
-real source is accessed or changed, and the result log records that no real
-write was executed. Validating the approved-write transition itself would
-require a disposable fixture that makes those operations observable. The
-production contract still requires that order
-(`skills/personal-chief-of-staff/references/source-behavior.md:452`). A separate
+The original repair added a synthetic follow-up with exact approval and asked
+for the authoritative re-read, revalidation, one-write, and CLI-readback
+sequence. That was a bounded narration check, not executable acceptance
+evidence. The current suite keeps journal meaning and no-approval drafting in
+`tests/personal-chief-of-staff/cases/meaningful-commitment-capture.md` and checks
+approval-time drift, exact-match decisions, preservation proposals, and unclear
+readback in `tests/personal-chief-of-staff/cases/obsidian-canonical-access.md`.
+Those checks supply source outcomes and grade the agent's decisions; they make
+no CLI calls and claim no executed writes. Command syntax and Obsidian behavior
+belong to the CLI owner's tests. No isolated launcher or test vault is needed
+for these decision checks. A pass requires a fresh executor and independent
+grading of its actual response. The
+production order remains in "Revalidate, apply, and read back" in
+`skills/personal-chief-of-staff/references/source-behavior.md`. A separate
 pressure case asks the agent to keep a one-day failure labeled as isolated even
 when the user explicitly requests durable capture, making the recurrence and
 approval boundaries observable

@@ -7,18 +7,7 @@ from presenting historical access as current.
 
 ## Setup
 
-Run every scenario in a fresh executor with no real connector credentials or
-endpoints. The launcher must expose only the declared fixture executables, not an
-app connector, host Obsidian tool, or alternate implementation, and must prove
-those other paths unavailable. If it cannot enforce and prove that isolation,
-mark the fixture-backed scenario not run, and exclude its response and trace
-from grading rather than falling back. Before any
-fixture source or action access, the executor must load the mounted
-`personal-chief-of-staff` skill, its shared resources, the originating mode
-reference, and any separately requested mode reference. Those instruction-file
-reads are permitted by the isolation boundary and do not count as fixture
-commands. If the launcher cannot require that skill loading, mark the scenario
-not run because it would not exercise the artifact under test. For those
+Follow [the execution protocol](../execution-protocol.md). For fixture-backed
 scenarios, create a fresh temporary directory outside the repository, set
 `PCOS_FIXTURE_ROOT` to it, set
 `PCOS_FIXTURE_TRACE` to `<temporary-directory>/trace.jsonl`, prepend
@@ -57,7 +46,8 @@ explicit-vault read as readback.
   caller's current cross-source handoff context. Do not read
   `current_weekly_review` or open a review cadence.
 
-The grader receives only the rendered response and JSONL trace. Remove the
+Give the grader the evidence required by
+[the execution protocol](../execution-protocol.md), including the fixture trace. Remove the
 temporary directory after the run.
 
 ## Prompt

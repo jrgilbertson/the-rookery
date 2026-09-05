@@ -576,6 +576,40 @@ if obsidian vault=fixture-vault append path=Roles/current.md content=unexpected 
 fi
 assert_trace '"operation":"append","target":"current_role","result":"rejected"'
 
+new_run s7e5
+if pcos-source read role=tasks >/dev/null 2>&1; then
+  fail "scripted canonical task-workflow failure was accepted"
+fi
+assert_trace '"target":"tasks","result":"failure","completeness":"unknown","evidence":"task_workflow_failure"'
+output=$(pcos-source read role=calendar)
+[[ "$output" == *"customer review is still on the calendar"* ]] ||
+  fail "sweep degraded specimen calendar evidence"
+pcos-source read role=meeting_notes >/dev/null
+pcos-source read role=relationships >/dev/null
+assert_trace '"target":"relationships","result":"success","completeness":"complete"'
+
+new_run w2p4
+if pcos-source read role=journal_state >/dev/null 2>&1; then
+  fail "multi-action specimen source discovery before the gating action was accepted"
+fi
+pcos-action read role=task_note >/dev/null
+pcos-action write role=task_note content=vendor_invoice_done >/dev/null
+pcos-action readback role=task_note >/dev/null
+if pcos-source read role=journal_state >/dev/null 2>&1; then
+  fail "multi-action specimen source discovery was accepted after only the first of two approved actions resolved"
+fi
+pcos-action read role=mailbox_draft >/dev/null
+output=$(pcos-action write role=mailbox_draft content=vendor_invoice_reply)
+[[ "$output" == success ]] || fail "second action write output"
+if pcos-action readback role=mailbox_draft >/dev/null 2>&1; then
+  fail "scripted readback failure among multiple action roles was accepted"
+fi
+assert_trace '"operation":"readback","target":"mailbox_draft","result":"failure","completeness":"unknown"'
+pcos-source read role=journal_state >/dev/null
+pcos-source read role=journal_template >/dev/null
+pcos-source read role=calendar >/dev/null
+assert_trace '"operation":"read","target":"journal_state","result":"success","completeness":"complete"'
+
 for adapter in pcos-source pcos-action imsg obsidian; do
   if env -u PCOS_FIXTURE_ROOT -u PCOS_FIXTURE_SPECIMEN -u PCOS_FIXTURE_TRACE \
     PATH="$fixture_bin:$PATH" "$adapter" --version >/dev/null 2>&1; then
@@ -654,6 +688,26 @@ if obsidian vault=fixture-vault read path=Actions/current.md >/dev/null 2>&1; th
 fi
 [[ -z "$(find "$outside_obsidian_state" -mindepth 1 -print -quit)" ]] ||
   fail "Obsidian state symlink escaped the fixture root"
+
+new_run s7w7
+for role in current_weekly_review calendar tasks; do
+  pcos-source read "role=$role" >/dev/null
+  assert_trace "\"target\":\"$role\",\"result\":\"success\""
+done
+
+new_run t4c4
+pcos-source read role=calendar_personal >/dev/null
+pcos-source read role=calendar_work >/dev/null
+assert_trace '"target":"calendar_personal","result":"success"'
+assert_trace '"target":"calendar_work","result":"success"'
+for specimen in p1w1 p2q2; do
+  new_run "$specimen"
+  cadence=weekly
+  [[ "$specimen" != p2q2 ]] || cadence=quarterly
+  for role in "current_${cadence}_review" "${cadence}_template" "last_${cadence}_review"; do
+    pcos-source read "role=$role" >/dev/null
+  done
+done
 
 unexpected_file=$(find "$run_root" -type f \
   ! \( -name trace.jsonl -o -name read-index -o -name read -o -name written -o -name content \

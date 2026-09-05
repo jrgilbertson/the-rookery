@@ -109,7 +109,12 @@ drift, a review finding) name a gap the Worker can close inside scope and
 outside protected paths. A failed, unavailable, or unknown eligibility fact
 makes the PR a recommendation, never adopted. The captured head ref must
 belong to that PR alone: if any other open PR uses the same head ref, deny
-the unit regardless of changed paths.
+the unit regardless of changed paths. Before dispatch, use the host's existing
+dispatch and supervision records to prove no other live Worker can mutate that
+head, including a retained Worker from an earlier closed run. Proven termination
+of a prior Worker permits adoption; historical Worker authorship alone does not
+reserve the PR. Unknown ownership or liveness makes only that candidate a
+recommendation. Do not create a separate ownership registry.
 Adoption consumes one Worker of `maximum_workers`; no two Workers adopt the
 same PR. A Worker push may stop automatic bot maintenance, and some bots or
 manual rebase requests can overwrite Worker edits. Name that maintenance risk

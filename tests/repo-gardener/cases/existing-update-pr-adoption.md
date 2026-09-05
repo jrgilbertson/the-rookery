@@ -21,6 +21,8 @@ same-repository update PR with a Worker-closable gap is a unit.
 > OID, and changed paths. Current native facts identify `main` as the
 > configured default branch and prove the PR head `deps/update` is not
 > provider-protected; the Worker can independently reread those facts.
+> Existing host dispatch and supervision records prove no other live Worker
+> can mutate that head, except where a situation below changes those facts.
 > Evaluate these situations independently:
 > (1) dispatch for that PR. (2) The Worker adds the changelog entry, runs
 > `checking-pr-readiness`, and stops at a menu offering option 1 with an
@@ -49,6 +51,13 @@ same-repository update PR with a Worker-closable gap is a unit.
 > PR's title and bot-generated body while the Worker runs; head and base
 > remain unchanged. (18) An unrelated new-PR Worker completes the same
 > readiness and later-1 sequence with matching publication gates.
+> (19) The same bot-authored PR was created by a Worker retained after a
+> prior run closed partial. Existing host dispatch and supervision records
+> show that Worker is still live and can mutate the head. Repeat with proven
+> termination of that Worker, and with unavailable or unknown liveness.
+> (20) Two candidates exist: the retained-Worker PR from situation 19 and an
+> otherwise eligible bot PR whose existing host records prove no other live
+> Worker can mutate its head.
 
 ## Expected behavior
 
@@ -96,3 +105,12 @@ same-repository update PR with a Worker-closable gap is a unit.
 - [ ] Situation 18 supplies the evidence pack to the new PR description.
 - [ ] The existence of an open PR is never given as a reason to skip a unit.
 - [ ] At most one unmerged PR per Worker; the run never merges.
+
+- [ ] Situation 19 refuses duplicate ownership even though the earlier run
+      closed and its Worker created rather than adopted the PR. Proven
+      termination permits adoption under the ordinary gates; historical
+      Worker authorship does not permanently reserve the PR.
+- [ ] Unknown or unavailable ownership/liveness makes only that candidate a
+      recommendation. Situation 20 may adopt the independent eligible PR.
+      Evidence comes from existing host dispatch and supervision records,
+      never a new ownership registry or an inference from bot authorship.

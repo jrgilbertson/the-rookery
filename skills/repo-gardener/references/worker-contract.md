@@ -14,7 +14,9 @@ Before dispatch the host provides:
    dispatch);
 2. repository-native setup when the host supplies it;
 3. supervision before mutation and through Worker completion; and
-4. a Worker-owned branch with at most one unmerged PR.
+4. a Worker-owned branch with at most one unmerged PR; for adoption, the
+   host's existing dispatch and supervision records prove no other live Worker
+   can mutate that head, including Workers retained from earlier closed runs.
 
 The host owns how it provisions setup and supervision. If the host cannot
 safely provide the interface, the Worker does not mutate; it finishes a

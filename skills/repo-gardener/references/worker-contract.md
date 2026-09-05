@@ -75,9 +75,11 @@ later turn, the Orchestrator authorizes that Worker to reply 1 only when the
 menu offered option 1 and the recommendation was approve and proceed for that
 same exact head. The Worker never chooses option 1 on its own. The
 Orchestrator never authorizes Proceed to merge. The checking skill then
-performs its identity reread, instantiates its evidence pack as silent
-pull-request-body input, and continues into the publication path below; for
-an adopted PR that path is the existing-PR update, not an absent-ref create.
+performs its identity reread, instantiates its evidence pack silently, and
+continues into the publication path below. For a new PR, the pack is
+pull-request-body input. Adopted-PR publication changes only the leased head,
+preserves the existing title and body, and returns the pack to the
+Orchestrator for its report.
 Do not also dispatch an owner publisher. Direct assessment of native facts is
 not a publish path. With an owner, publication remains subject to the owner's
 interactive authorization.

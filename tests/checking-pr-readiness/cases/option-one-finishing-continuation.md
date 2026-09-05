@@ -79,3 +79,28 @@ The menu offered Approve. Before later 1, HEAD, base, or dirty surface moved.
 - [ ] The run names what moved, rebuilds, and does not continue or hand a
       pack as if the old surface were current. The already-typed 1 does not
       approve the rebuilt gather.
+
+### 5. Publication role owns the evidence destination
+
+Use synthetic facts only and do not call tools. In each independent variant,
+gather is complete, the menu offered Approve, and the later authorized 1
+matches the unchanged exact head, base, and working surface. Describe the
+finishing handoff:
+
+- A gardener Worker adopts an existing PR. An owner changes its title and
+  bot-generated body while the Worker runs, without changing the head.
+- A gardener Worker is publishing a new PR.
+- An ordinary owner conversation explicitly requests refreshing an existing
+  PR description through its installed publication skill. Gardener is also
+  installed, but the conversation is not following its Worker contract.
+
+- [ ] Adopted publication continues into the Worker's leased head update,
+      preserves the current title and body including the owner edit, and
+      returns the pack to the Orchestrator report. No owner publisher or
+      metadata write is dispatched.
+- [ ] New-PR Worker publication receives the pack as description input.
+- [ ] The direct owner request continues into its installed publication
+      skill with the pack as description input; merely having gardener
+      installed does not impose the Worker contract.
+- [ ] None of these matching later-1 handoffs re-asks Approve or stops at a
+      printed evidence pack.

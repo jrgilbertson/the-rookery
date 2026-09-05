@@ -43,7 +43,8 @@ looked" surface. GitHub Releases mirror its entries.
   the captured OID, pushes under the existing old-OID lease, keeps one
   unmerged PR, and never merges. Only non-draft PRs whose head commits are
   bot- or app-authored qualify; default and provider-protected heads cannot
-  be adopted. Overlap is changed-path intersection with
+  be adopted. Adopted PR titles and descriptions stay unchanged; readiness
+  evidence goes into the run report. Overlap is changed-path intersection with
   other native branches and PRs; a lockfile-only intersection is a
   recommendation. The runtime lane reads any error or alert source the host
   can already read and confirms identity from repository facts. A blocked

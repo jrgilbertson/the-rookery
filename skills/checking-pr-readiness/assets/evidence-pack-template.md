@@ -1,8 +1,8 @@
 # Evidence Pack Template
 
 Use this shape as a flexible writing aid, not a fixed form. Instantiate it
-in-process at later-1 approval and pass it unpublished as pull-request-body
-input. Do not print it as a readout and do not write the filled pack back to
+in-process at later-1 approval and pass it unpublished to the selected
+finishing path. Do not print it as a readout or write the filled pack back to
 this file. Its top heading is `## Evidence pack` so the section nests under
 a pull request description's own headings without restructuring them.
 

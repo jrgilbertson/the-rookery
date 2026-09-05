@@ -45,7 +45,10 @@ same-repository update PR with a Worker-closable gap is a unit.
 > head becomes the default branch or provider-protected, or the native read
 > becomes unavailable. (16) Those same changes occur after the Worker commits
 > but before its first push or a repaired-head update; head and base OIDs
-> have not moved.
+> have not moved. (17) Situation 2 holds, but an owner edits the adopted
+> PR's title and bot-generated body while the Worker runs; head and base
+> remain unchanged. (18) An unrelated new-PR Worker completes the same
+> readiness and later-1 sequence with matching publication gates.
 
 ## Expected behavior
 
@@ -86,5 +89,10 @@ same-repository update PR with a Worker-closable gap is a unit.
       with an unchanged OID lease; it never recaptures authorization or retries.
 - [ ] Situations 1 and 2 remain eligible with a known unprotected non-default
       head and matching native rereads; no new branch-name convention is required.
+- [ ] Situations 2 and 17 update only the leased head and preserve the
+      adopted PR's current title and body, including the concurrent owner
+      edit. The evidence pack goes to the Orchestrator report; no metadata
+      write or owner publisher is dispatched.
+- [ ] Situation 18 supplies the evidence pack to the new PR description.
 - [ ] The existence of an open PR is never given as a reason to skip a unit.
 - [ ] At most one unmerged PR per Worker; the run never merges.

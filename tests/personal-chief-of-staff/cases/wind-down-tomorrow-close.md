@@ -10,13 +10,14 @@ established flexibility before edits.
 Scenarios 1–3 and 5 are policy-only synthetic prompts; they execute no source
 access. For scenario 4, create a fresh temporary directory outside the repo,
 set `PCOS_FIXTURE_ROOT` there, `PCOS_FIXTURE_TRACE` to its `trace.jsonl`, and
-`PCOS_FIXTURE_SPECIMEN=t4c4`. Expose only the fixture `pcos-source` command
-from `../fixtures/bin` on `PATH`, with host connectors unavailable. Load the
+`PCOS_FIXTURE_SPECIMEN=t4c4`. Use the fixture `pcos-source` command
+from `../fixtures/bin` on `PATH`. Load the
 current skill and Wind-down reference, then read the separately configured
 `calendar_personal` and `calendar_work` roles through
 `pcos-source read role=<role>`. Those are the only configured source roles;
-other required roles are not configured. Grade the response and trace together;
-if isolation or skill loading cannot be enforced, mark scenario 4 not run.
+other required roles are not configured. Follow
+[the execution protocol](../execution-protocol.md) and grade the response and
+trace together.
 Remove the temporary directory afterward.
 
 ## Prompt

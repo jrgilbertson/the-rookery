@@ -191,13 +191,14 @@ The original repair added a synthetic follow-up with exact approval and asked
 for the authoritative re-read, revalidation, one-write, and CLI-readback
 sequence. That was a bounded narration check, not executable acceptance
 evidence. The current suite keeps journal meaning and no-approval drafting in
-`tests/personal-chief-of-staff/cases/meaningful-commitment-capture.md` and puts
-observable journal drift, insertion, and readback in
-`tests/personal-chief-of-staff/cases/obsidian-canonical-access.md`. Its journal
-scenarios require the real CLI in a disposable isolated vault, with command
-syntax obtained from that CLI's help. Static files supply inputs and expected
-content; they do not implement the CLI. A behavioral pass still requires a
-fresh executor and independent grading of the actual response and trace. The
+`tests/personal-chief-of-staff/cases/meaningful-commitment-capture.md` and checks
+approval-time drift, exact-match decisions, preservation proposals, and unclear
+readback in `tests/personal-chief-of-staff/cases/obsidian-canonical-access.md`.
+Those checks supply source outcomes and grade the agent's decisions; they make
+no CLI calls and claim no executed writes. Command syntax and Obsidian behavior
+belong to the CLI owner's tests. No isolated launcher or test vault is needed
+for these decision checks. A pass requires a fresh executor and independent
+grading of its actual response. The
 production order remains in "Revalidate, apply, and read back" in
 `skills/personal-chief-of-staff/references/source-behavior.md`. A separate
 pressure case asks the agent to keep a one-day failure labeled as isolated even

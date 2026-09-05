@@ -10,21 +10,15 @@ a round.
 
 ## Setup
 
-Run each scenario in a fresh executor with no real connector credentials or
-endpoints. Create a fresh temporary directory outside the repository, set
+Run each scenario in a fresh executor using only the supplied test sources. Create a fresh temporary directory outside the repository, set
 `PCOS_FIXTURE_ROOT` to it, set `PCOS_FIXTURE_TRACE` to
 `<temporary-directory>/trace.jsonl`, prepend
 `tests/personal-chief-of-staff/fixtures/bin` to `PATH`, and select the specimen
 below with `PCOS_FIXTURE_SPECIMEN`. Scenarios 1 and 2 continue in their
 original live executors after each response is captured.
 
-The launcher must expose only the declared `pcos-source` fixture executable and
-must prove host connectors, host question or form tools, and alternate role
-implementations unavailable. Before fixture I/O, it must load the mounted
-`personal-chief-of-staff` skill, its shared resources, and the Wind-down or
-Weekly mode reference the scenario names. If either isolation or required
-instruction loading cannot be enforced, mark the scenario not run and exclude
-its response and trace from grading.
+Follow [the execution protocol](../execution-protocol.md) for skill loading,
+fixture use, and independent response/trace grading.
 
 Canonical roles are read through `pcos-source read role=<role>`, exactly once
 per role per run, before the round is composed. Prompt premises are not a
@@ -47,7 +41,8 @@ or Obsidian binding is configured in any scenario, so each such canonical role
 is reported **Not configured** without attempting a fixture command, and no
 journal is drafted or written.
 
-The grader receives only the rendered responses and the JSONL traces. Remove
+Give the grader the evidence required by
+[the execution protocol](../execution-protocol.md), including the fixture trace. Remove
 each temporary directory afterward.
 
 ## Prompt

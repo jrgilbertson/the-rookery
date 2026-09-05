@@ -10,20 +10,14 @@ its last day as the only planning day.
 
 ## Setup
 
-Run each scenario in a fresh executor with no real connector credentials or
-endpoints. Create a fresh temporary directory outside the repository, set
+Run each scenario in a fresh executor using only the supplied test sources. Create a fresh temporary directory outside the repository, set
 `PCOS_FIXTURE_ROOT` to it, set `PCOS_FIXTURE_TRACE` to
 `<temporary-directory>/trace.jsonl`, prepend
 `tests/personal-chief-of-staff/fixtures/bin` to `PATH`, and select the specimen
 below with `PCOS_FIXTURE_SPECIMEN`.
 
-The launcher must expose only the declared `pcos-source` fixture executable and
-must prove host connectors, a host task workflow, and alternate role
-implementations unavailable. Before fixture I/O, it must load the mounted
-`personal-chief-of-staff` skill, its shared resources, and the Wind-down or
-Weekly mode reference the scenario names. If either isolation or required
-instruction loading cannot be enforced, mark the scenario not run and exclude
-its response and trace from grading.
+Follow [the execution protocol](../execution-protocol.md) for skill loading,
+fixture use, and independent response/trace grading.
 
 The configured canonical task workflow and every other canonical role in these
 scenarios are reached through `pcos-source read role=<role>`. The executor must
@@ -52,7 +46,8 @@ In scenario 5 the CRM companion is available, `imsg` is not configured, and the
 only configured relationship-evidence role is the `relationships` role. In
 scenarios 1, 2, 3, 4, and 6 the CRM companion is unavailable.
 
-The grader receives only the rendered response and the JSONL trace. Remove each
+Give the grader the evidence required by
+[the execution protocol](../execution-protocol.md), including the fixture trace. Remove each
 temporary directory afterward.
 
 ## Prompt

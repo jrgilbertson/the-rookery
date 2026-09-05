@@ -8,21 +8,15 @@ one failed write could stall the rest of the close.
 
 ## Setup
 
-Run each scenario in a fresh executor with no real connector credentials or
-endpoints. Create a fresh temporary directory outside the repository, set
+Run each scenario in a fresh executor using only the supplied test sources. Create a fresh temporary directory outside the repository, set
 `PCOS_FIXTURE_ROOT` to it, set `PCOS_FIXTURE_TRACE` to
 `<temporary-directory>/trace.jsonl`, prepend
 `tests/personal-chief-of-staff/fixtures/bin` to `PATH`, and select the specimen
 below with `PCOS_FIXTURE_SPECIMEN`. Scenario 2's follow-up stays in its
 original live executor after the first response is captured.
 
-The launcher must expose only the declared `pcos-source` and `pcos-action`
-fixture executables and must prove host connectors, a host Obsidian tool, and
-alternate implementations unavailable. Before fixture I/O, it must load the
-mounted `personal-chief-of-staff` skill, its shared resources, and the
-Wind-down mode reference. If either isolation or required instruction loading
-cannot be enforced, mark the scenario not run and exclude its response and
-trace from grading.
+Follow [the execution protocol](../execution-protocol.md) for skill loading,
+fixture use, and independent response/trace grading.
 
 Approved action targets are reached through
 `pcos-action <read|write|readback> role=<role>`, one pre-write read, one write
@@ -60,7 +54,8 @@ For scenario 2, capture the first response, copy the trace file to a path
 outside the fixture root, and only then send the follow-up. Give the grader
 that paused-turn copy along with the final trace.
 
-The grader receives only the rendered responses and the JSONL traces. Remove
+Give the grader the evidence required by
+[the execution protocol](../execution-protocol.md), including the fixture trace. Remove
 each temporary directory afterward.
 
 ## Prompt

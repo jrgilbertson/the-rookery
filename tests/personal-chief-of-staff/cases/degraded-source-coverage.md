@@ -17,18 +17,14 @@ temporary directory outside the repository, sets `PCOS_FIXTURE_ROOT` to it,
 sets `PCOS_FIXTURE_TRACE` to `<temporary-directory>/trace.jsonl`, selects the
 opaque `PCOS_FIXTURE_SPECIMEN` named below, and prepends
 `tests/personal-chief-of-staff/fixtures/bin` to `PATH`. It then launches a fresh
-executor with no real connector credentials or endpoints. The executor may
+executor using only the supplied test sources. The executor may
 read only the selected specimen through the declared fixture interface; the
-grader receives only the rendered response and JSONL trace. Remove the
+grader receives the conversation, loading record, actual tool calls/results,
+and fixture trace under [the execution protocol](../execution-protocol.md). Remove the
 temporary directory after the run.
 
-The launcher must expose only the declared fixture `obsidian` and
-`pcos-source` executables and must prove host connectors, the host Obsidian
-tool, and alternate implementations unavailable. Before fixture I/O, it must
-load the mounted `personal-chief-of-staff` skill, its shared resources, and the
-applicable mode reference when the branch selects a mode. If either isolation
-or required instruction loading cannot be enforced, mark the branch not run
-and exclude its response and trace from grading.
+Follow [the execution protocol](../execution-protocol.md) for skill loading,
+fixture use, and independent response/trace grading.
 
 | Branch | Specimen | Exact permitted read | Exercised result |
 | --- | --- | --- | --- |

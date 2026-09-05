@@ -17,20 +17,14 @@ themselves count as a traced source read.
 
 ## Setup
 
-Run each scenario in a fresh executor with no real connector credentials or
-endpoints. Create a fresh temporary directory outside the repository, set
+Run each scenario in a fresh executor using only the supplied test sources. Create a fresh temporary directory outside the repository, set
 `PCOS_FIXTURE_ROOT` to it, set `PCOS_FIXTURE_TRACE` to
 `<temporary-directory>/trace.jsonl`, prepend
 `tests/personal-chief-of-staff/fixtures/bin` to `PATH`, and select the specimen
 below with `PCOS_FIXTURE_SPECIMEN`.
 
-The launcher must expose only the declared fixture `imsg` and `pcos-source`
-executables and must prove host connectors, the real Messages interface, and
-alternate implementations unavailable. Before fixture I/O, it must load the
-mounted `personal-chief-of-staff` skill, its shared resources, the Wind-down
-mode reference, and the applicable embedded CRM companion resources. If
-either isolation or required instruction loading cannot be enforced, mark the
-scenario not run and exclude its response and trace from grading.
+Follow [the execution protocol](../execution-protocol.md) for skill loading,
+fixture use, and independent response/trace grading.
 
 For every scenario, prove the substituted Messages path with `imsg --version`,
 enumerate it with `imsg chats --limit 10 --json`, then run the exact bounded
@@ -45,7 +39,8 @@ signal.
 | 3 | `d3j3` | `pcos-source read role=journal_state`; `imsg history --chat-id direct-1 --start 2026-08-04T00:00:00-07:00 --end 2026-08-06T00:00:00-07:00 --limit 100 --json`; `pcos-source read role=person_jordan` |
 | 4 | `d4g4` | `imsg history --chat-id group-1 --start 2026-08-05T00:00:00-07:00 --end 2026-08-06T00:00:00-07:00 --limit 100 --json`; `pcos-source read role=person_alex`; `pcos-source read role=identity_unresolved` |
 
-The grader receives only the rendered response and JSONL trace. Remove each
+Give the grader the evidence required by
+[the execution protocol](../execution-protocol.md), including the fixture trace. Remove each
 temporary directory afterward.
 
 ## Prompt

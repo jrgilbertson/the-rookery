@@ -26,9 +26,10 @@ The brief names the target stable repository identity, authoritative base,
 policy revision, Worker identity and branch, scope, protected paths, lane
 grant, assigned slice, and the exact caller-approved verification command argv
 list. For an adopted PR it also names the PR number, head ref, captured head
-OID, base ref and full base OID,
-the named gap(s), and the maintenance risk: a Worker push may stop bot updates,
-while later bot or manual rebases may overwrite Worker edits. It includes the ledger attribute read and
+OID, base ref and full base OID, the current configured default branch ref,
+native proof that the head is not provider-protected, the named gap(s), and
+the maintenance risk: a Worker push may stop bot updates, while later bot or
+manual rebases may overwrite Worker edits. It includes the ledger attribute read and
 base-diff rule only when that exception applies.
 
 ## Before the first mutation
@@ -43,9 +44,13 @@ Wait for host setup to succeed. Run `git status --porcelain=v1
 non-ignored path stops dependent work, names the affected paths (or the
 assigned slice when status is unreadable), and leaves unexpected material
 untouched. For an adopted PR, also require local HEAD to equal the captured
-hosted head OID, and re-read every named gap from native facts now and again
-before publication; if a gap is gone, changed, or ambiguous, stop the unit
-and report it without publishing.
+hosted head OID, and independently re-read native facts now and before every
+publication to prove the captured head ref is neither the current configured
+default branch nor provider-protected (including applicable rulesets); a
+failed, unavailable, or unknown read stops the unit without mutation or
+publication. Re-read every named gap from
+native facts now and again before publication; if a gap is gone, changed, or
+ambiguous, stop the unit and report it without publishing.
 
 Authoring is allowed only when all five gates pass using the opening policy
 named in the brief: the checkout and policy repository identities both

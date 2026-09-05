@@ -12,8 +12,8 @@ Read the target repository's durable file from the refreshed default branch,
 the complete tracker, repository instructions, and the native identities needed
 to open safely. Validate the durable file without changing it. A missing,
 invalid, or unapproved file takes the entry mode in
-`policy-and-entry-modes.md`: interactive first use with an owner, or blocked
-or read-only sensing otherwise.
+`policy-and-entry-modes.md`: interactive first use with an owner, or
+caller-only sensing otherwise.
 
 At opening, preserve the exact policy revision; the revision check points
 in `policy-and-entry-modes.md` govern every later re-read. Continue safe
@@ -99,14 +99,17 @@ continue.
 
 A candidate unit may be an existing open PR that the Worker adopts. Adopt only
 when: the head branch lives in the target repository (on GitHub,
-`isCrossRepository: false`); the native read gives head ref, full head OID,
-base ref, and changed paths; the PR is not a draft and every commit on its head
-beyond the base is authored by a provider-marked bot or app account; and
+`isCrossRepository: false`); current native facts prove the head is neither
+the repository's configured default branch nor a provider-protected branch
+(including applicable rulesets); the native read gives head ref, full head
+OID, base ref, and changed paths; the PR is not a draft and every commit on
+its head beyond the base is authored by a provider-marked bot or app account; and
 current native facts (a failing check, a missing changelog entry, pin-mirror
 drift, a review finding) name a gap the Worker can close inside scope and
-outside protected paths. A PR failing any condition is a recommendation, never
-adopted. The captured head ref must belong to that PR alone: if any other
-open PR uses the same head ref, deny the unit regardless of changed paths.
+outside protected paths. A failed, unavailable, or unknown eligibility fact
+makes the PR a recommendation, never adopted. The captured head ref must
+belong to that PR alone: if any other open PR uses the same head ref, deny
+the unit regardless of changed paths.
 Adoption consumes one Worker of `maximum_workers`; no two Workers adopt the
 same PR. A Worker push may stop automatic bot maintenance, and some bots or
 manual rebase requests can overwrite Worker edits. Name that maintenance risk

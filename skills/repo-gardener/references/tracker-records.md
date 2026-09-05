@@ -103,7 +103,7 @@ as `lane-contracts.md` defines.
 | --- | --- | --- |
 | lane status | `surveyed` (required reads completed), `partial` (a required read or census stopped short; the cell names the bound), `unavailable` (a required source could not be read or an identity gate stopped the slice; the cell names which), `blocked` (policy or authority denied the lane's reads) | the lane's own reads |
 | Worker state | `pending` (checks or required review still pending), `published` (PR open, nothing pending), `preserved` (authored commit kept without push or PR), `denied` (dispatch or publication stopped; the reason named) | supervision |
-| run outcome | `complete`, `partial` (any Worker pending), `blocked` (managed-run gate or opening denied), `interrupted` (close denied after opening), `caller-only` (no managed run) | close |
+| run outcome | `complete`, `partial` (any Worker pending), `interrupted` (close denied after opening), `caller-only` (no managed run opened) | opening or close |
 
 A value outside this table is a report defect. `partial` on a lane does not by
 itself change the run outcome; a pending Worker does.

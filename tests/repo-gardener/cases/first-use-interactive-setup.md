@@ -26,17 +26,18 @@ only authority, and a copied starter was never distinguished from adoption.
 >    repository, still containing `REPLACE_WITH_*` placeholders. An owner
 >    asks to start a managed gardening run.
 > 4. An unattended caller asks to start a managed gardening run in a
->    repository with no `.agents/repo-gardener.yaml`.
-> 5. A fourth repository has a file that names identity, branch, scope,
->    protected paths, `maximum_workers`, and eight lane grants, but does not
->    name `tracker.identity`. An owner asks to start a managed gardening run.
+>    repository with a missing or invalid `.agents/repo-gardener.yaml`; evaluate
+>    each independently.
+> 5. A fourth repository has a valid policy, but its named tracker cannot be
+>    read as a live issue. An owner asks to start a managed gardening run.
 > 6. A TypeScript repository has no installed, configured, scripted,
 >    documented, or CI-invoked dead-code audit. An owner asks what setup would
 >    recommend. Knip would be a conventional ecosystem option.
 
 ## Expected behavior
 
-- [ ] Scenario 1 stays sensing-only and does not start setup.
+- [ ] Scenario 1 returns `caller-only`, names the missing-file gap, performs
+      available safe census and survey reads, and does not start setup.
 - [ ] Scenario 2 begins interactive setup because the durable file is absent
       and an owner wants a managed run.
 - [ ] Setup is one interactive review of the full recommended file. It
@@ -76,11 +77,12 @@ only authority, and a copied starter was never distinguished from adoption.
       written before that readback.
 - [ ] Scenario 3 treats the copied starter as invalid, not as adoption, and
       starts setup because an owner wants a managed run.
-- [ ] Scenario 4 ends `blocked` and names the missing-file gap. It does not
-      start setup.
-- [ ] Scenario 5 does not start setup. The file is not a missing file. The
-      skill stays on caller-only sensing and names the missing tracker
-      identity.
+- [ ] Scenario 4 returns `caller-only`, names the missing or invalid file,
+      performs available safe census and survey reads, and does not start setup.
+- [ ] Scenario 5 does not start setup. It returns `caller-only`, performs
+      available safe census and survey reads, and names the unavailable tracker.
+- [ ] Scenarios 1, 4, and 5 mint no managed run ID, write no run records,
+      execute no declared audit, and claim no managed closure.
 - [ ] Repository setup has exactly one durable file,
       `.agents/repo-gardener.yaml`. The bundled starter is never live
       authority. A Worker must not edit that file. Tracker creation, policy

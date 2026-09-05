@@ -55,12 +55,8 @@ Repository setup has exactly one durable file: `.agents/repo-gardener.yaml`.
 Later runs look only there for policy authority and tracker identity.
 
 Before a managed gardening run without a valid file, run interactive setup
-when an owner is present. A read-only ask with a missing file stays
-sensing-only and does not start setup. An unattended caller with a missing or
-invalid file ends `blocked` and names the gap. A file that parses but does
-not name a live tracker identity is the narrower exception: do not start
-setup, do not end `blocked` for that gap, stay on caller-only sensing, and
-name it.
+when an owner is present. Unattended and read-only requests do not start
+setup; follow the managed-run gate below and name the policy gap.
 
 Setup is one interactive review of the full recommended file. Present identity,
 default branch, scope, protected paths, `maximum_workers`, tracker identity,
@@ -115,10 +111,11 @@ read-back file with its own complete preview and direct approval.
 ## Managed-run gate
 
 A managed run opens only when the current file is valid and names a live
-tracker identity. When that gate is missing or denied, do safe read-only
-sensing only and return a caller-only result. This branch is the sole
-exception to opening-before-sensing: mint no managed run ID, write no opening
-or closing record, invoke neither tracker effect preparation nor the
+tracker identity. Any run that never opens returns `caller-only`, naming the
+opening gap and performing only available safe read-only census and survey
+reads. This branch is the sole exception to opening-before-sensing: mint no
+managed run ID, write no opening or closing record, invoke neither tracker
+effect preparation nor the
 structural checker, execute no declared audit, and make no structural-closure
 claim. Scout helpers and setup execute no declared audits.
 

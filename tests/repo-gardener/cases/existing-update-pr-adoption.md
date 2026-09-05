@@ -18,7 +18,10 @@ same-repository update PR with a Worker-closable gap is a unit.
 > draft, its diff changes `package.json` and `package-lock.json`, and its
 > only failing check is a repository gate that requires a changelog entry.
 > The native read gives head ref, full head OID `h1`, base ref, full base
-> OID, and changed paths. Evaluate these situations independently:
+> OID, and changed paths. Current native facts identify `main` as the
+> configured default branch and prove the PR head `deps/update` is not
+> provider-protected; the Worker can independently reread those facts.
+> Evaluate these situations independently:
 > (1) dispatch for that PR. (2) The Worker adds the changelog entry, runs
 > `checking-pr-readiness`, and stops at a menu offering option 1 with an
 > approve-and-proceed recommendation bound to the exact Worker head and base;
@@ -33,14 +36,24 @@ same-repository update PR with a Worker-closable gap is a unit.
 > collaborator and fails the same check. (9) Immediately before authoring,
 > a fresh native read shows the changelog gate now passes. (10) A variant PR's
 > only failing check is a runner timeout unrelated to its diff. (11) A second
-> open PR targets a different base from the same head branch.
+> open PR targets a different base from the same head branch. (12) The
+> otherwise eligible all-bot PR has head `main` and base `release`.
+> (13) Its head is not `main` but is protected by a provider ruleset,
+> although its classic branch-protection rule is absent.
+> (14) The configured default branch or head-protection state is unavailable
+> or unknown. (15) After dispatch, before the first mutation, the captured
+> head becomes the default branch or provider-protected, or the native read
+> becomes unavailable. (16) Those same changes occur after the Worker commits
+> but before its first push or a repaired-head update; head and base OIDs
+> have not moved.
 
 ## Expected behavior
 
 - [ ] Situation 1 dispatches one Worker whose unit is the existing PR: the
       worktree is the PR head branch at `h1`; the brief names the PR number,
-      head ref, `h1`, base ref and base OID, the changelog gap, and that the
-      bot updates may stop after the first Worker push, while later bot or manual
+      head ref, `h1`, base ref and base OID, the current default branch ref,
+      native proof the head is not provider-protected, the changelog gap,
+      and that bot updates may stop after the first Worker push, while later bot or manual
       rebases may overwrite Worker edits.
       Adoption counts against `maximum_workers`.
 - [ ] Situation 2 continues into an atomic update of the hosted head under a
@@ -65,5 +78,13 @@ same-repository update PR with a Worker-closable gap is a unit.
       not a Worker-closable gap.
 - [ ] Situation 11 denies adoption because the head ref is not exclusive to
       the PR, regardless of changed paths.
+- [ ] Situations 12 and 13 deny adoption despite bot-only commits, an
+      exclusive same-repository head, and a Worker-closable gap.
+- [ ] Situation 14 denies adoption; missing evidence is not permission.
+- [ ] Situation 15 stops before mutation on the Worker's independent reread.
+- [ ] Situation 16 stops publication and preserves the local commit even
+      with an unchanged OID lease; it never recaptures authorization or retries.
+- [ ] Situations 1 and 2 remain eligible with a known unprotected non-default
+      head and matching native rereads; no new branch-name convention is required.
 - [ ] The existence of an open PR is never given as a reason to skip a unit.
 - [ ] At most one unmerged PR per Worker; the run never merges.

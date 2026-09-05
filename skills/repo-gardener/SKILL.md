@@ -48,14 +48,14 @@ identity for one run ID. `tracker-records.md` says when each runs.
 
 Follow the entry modes in `policy-and-entry-modes.md`. A missing or invalid
 file may enter interactive first-use setup only with an owner. An unattended
-or read-only request stays blocked or sensing-only as that reference directs.
+or read-only request stays caller-only as that reference directs.
 A copied template is not adoption, and tracker creation does not authorize a
 run. Read the approved file from the refreshed default branch at opening. A
 later revision change stops remaining audits and all mutation, push, and PR
 opening; safe sensing and a truthful close may continue when still authorized.
 
-When the managed-run gate is unavailable, perform safe read-only sensing only:
-complete the required identifier censuses and survey the nine lanes. Do not
+When no managed run opens, return `caller-only`: perform the required
+identifier censuses and nine-lane survey using only available safe reads. Do not
 mint a managed run ID, write run records, execute declared audits, or claim a
 managed closure.
 

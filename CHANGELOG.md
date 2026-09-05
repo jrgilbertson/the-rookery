@@ -40,11 +40,12 @@ looked" surface. GitHub Releases mirror its entries.
   Worker-closable gap as a Worker unit: the Worker checks out the PR head at
   the captured OID, pushes under the existing old-OID lease, keeps one
   unmerged PR, and never merges. Only non-draft PRs whose head commits are
-  bot- or app-authored qualify. Overlap is changed-path intersection with
+  bot- or app-authored qualify; default and provider-protected heads cannot
+  be adopted. Overlap is changed-path intersection with
   other native branches and PRs; a lockfile-only intersection is a
   recommendation. The runtime lane reads any error or alert source the host
   can already read and confirms identity from repository facts. A blocked
-  opening still senses and reports.
+  opening still senses and reports with one `caller-only` run outcome.
 - Skill test suites may retain a small number of explicitly labeled regression
   controls for load-bearing behavior that the bare and skilled variants both
   pass; those controls never count as evidence of improvement.

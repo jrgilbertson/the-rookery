@@ -30,7 +30,7 @@ Every lane verdict, every run. Status values are defined in
    population (issues, pull requests, alerts) and runs it to completion: keep
    listing while another page exists or the listed count is below a
    provider-reported total, stopping early only when the provider cannot
-   continue or the count passes 10,000, and always state the bound. An
+   continue or the count reaches 10,000, and always state the bound. An
    incomplete census keeps the consuming lanes `partial`. Lanes consume the
    census and never re-page it; other censuses (file trees, CI runs, event
    streams) likewise enumerate or name their bound.

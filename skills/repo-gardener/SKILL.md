@@ -112,7 +112,7 @@ target/base ref and full base OID. Immediately before PR-open, re-resolve the
 captured target/base ref and full base OID. Publication stops and must
 preserve the authored commit on any drift, unavailable state, or unknown
 provider effect, and the run must never replace or recapture that authorized
-identity. Never merge, release, deploy, or create unapproved follow-up
+identity. Never merge, release, deploy, or create follow-up
 issues.
 
 ## Close once

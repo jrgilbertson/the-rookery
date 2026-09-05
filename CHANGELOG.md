@@ -33,6 +33,8 @@ looked" surface. GitHub Releases mirror its entries.
   readiness labels are hints. Runtime reads verify each source independently
   and distinguish empty results from missing data. Bot adoption reports the
   risk of stopped updates or overwritten edits without promising bot behavior.
+  Worker briefs bind the expected repository identity, and identifier censuses
+  stop at 10,000 records with partial coverage when more remain.
 - `repo-gardener` adopts an open same-repository update PR with a
   Worker-closable gap as a Worker unit: the Worker checks out the PR head at
   the captured OID, pushes under the existing old-OID lease, keeps one
@@ -180,9 +182,9 @@ looked" surface. GitHub Releases mirror its entries.
 - `repo-gardener` no longer accepts `issue_refinement`, `evidence_sources`, or
   `shared_ledger_paths` in `.agents/repo-gardener.yaml`. Remove those keys on
   upgrade. Follow-up issues remain owner proposals for Managing Issues outside
-  the nightly run. The
-  shared-ledger overlap exception is keyed on the git `merge` attribute being
-  `union` at the authoritative base. The references are one owner per rule:
+  the nightly run; Managing Issues no longer accepts gardening delegation
+  envelopes as approval. The shared-ledger overlap exception is keyed on the
+  git `merge` attribute being `union` at the authoritative base. The references are one owner per rule:
   `applying-effects.md`, `github-reference-adapter.md`, and
   `register-and-report.md` became `tracker-records.md`; everything a Worker
   follows lives in `worker-contract.md`, which also defines overlap; revision

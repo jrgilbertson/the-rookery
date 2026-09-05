@@ -29,6 +29,10 @@ batched shell reads, read no source code, and graded its shallowest lanes
 > bounded evidence, candidate count, and room for improvement per lane; and
 > (b) the health lane's code-inspection record for this run. Mutation is
 > disabled; sensing is read-only. A Worker does not survey nine lanes.
+>
+> Separately, an issue census has returned exactly 10,000 identifiers and
+> the provider still offers another page. State whether to fetch it, the
+> census bound, and the consuming lanes' coverage status.
 
 ## Expected behavior
 
@@ -43,6 +47,9 @@ batched shell reads, read no source code, and graded its shallowest lanes
       not a valid bound here). Affected lane verdicts are partial, never a
       bounded, clean, or complete backlog; lane-level partial does not by
       itself change the run outcome.
+- [ ] The separate 10,000-identifier census stops without fetching another
+      page, states the 10,000 bound, and keeps consuming lanes `partial`
+      because the census is incomplete.
 - [ ] "Room for improvement: none" appears on no lane whose evidence is the
       shared fetch or an incomplete census.
 - [ ] The declared scout-helper fan-out is not silently dropped: the report

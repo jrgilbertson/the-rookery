@@ -22,10 +22,11 @@ read-only report naming the unavailable capability.
 
 ## The brief
 
-The brief names the authoritative base, policy revision, Worker identity and
-branch, scope, protected paths, lane grant, assigned slice, and the exact
-caller-approved verification command argv list. For an adopted PR it also
-names the PR number, head ref, captured head OID, base ref and full base OID,
+The brief names the target stable repository identity, authoritative base,
+policy revision, Worker identity and branch, scope, protected paths, lane
+grant, assigned slice, and the exact caller-approved verification command argv
+list. For an adopted PR it also names the PR number, head ref, captured head
+OID, base ref and full base OID,
 the named gap(s), and the maintenance risk: a Worker push may stop bot updates,
 while later bot or manual rebases may overwrite Worker edits. It includes the ledger attribute read and
 base-diff rule only when that exception applies.
@@ -46,10 +47,12 @@ hosted head OID, and re-read every named gap from native facts now and again
 before publication; if a gap is gone, changed, or ambiguous, stop the unit
 and report it without publishing.
 
-Authoring is allowed only inside the five gates, all proved by the opening
-policy named in the brief: exact repository identity, the authoring scope,
-positive Worker capacity, an enabled owning lane, and no protected path. For an adopted PR the gates apply to the paths the Worker's
-own commits change; the adopted PR's existing diff is native state, reported,
+Authoring is allowed only when all five gates pass using the opening policy
+named in the brief: the checkout and policy repository identities both
+match the target stable repository identity in the brief, the authoring scope
+permits the change, Worker capacity is positive, the owning lane is enabled,
+and no path is protected. For an adopted PR the gates apply to the paths the
+Worker's own commits change; the adopted PR's existing diff is native state, reported,
 not authored. A rename counts both its old and new path.
 
 ## Completion
@@ -135,5 +138,5 @@ authorized provider OID. After a successful first push to an adopted PR, the
 report names the adopted PR and its maintenance risk ("adopted; bot updates
 may stop, and later bot rebases may overwrite Worker edits"). Never advance competing
 movement implicitly, never merge, and never write a release, deployment,
-protected path, or unapproved follow-up issue. Report native PR, check, and
+protected path, or follow-up issue. Report native PR, check, and
 review facts.

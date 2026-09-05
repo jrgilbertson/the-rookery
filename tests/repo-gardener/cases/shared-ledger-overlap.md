@@ -30,6 +30,12 @@ Worker-owned entry check applies.
 > proposed diff removes B's existing changelog entry before adding A's. Produce
 > separate decisions for the union-attributed and no-attribute variants, including the
 > handling of any later native merge or rebase conflict.
+> Independently, a competing bare branch purely renames `src/a.py` to
+> `src/moved.py` while A edits either the old or new path. Repeat as an open
+> PR whose complete native file list includes the rename source and
+> destination; compare a missing file-list page or missing rename source.
+> Repeat the bare-branch rename with spaces and a newline in its paths and
+> with deletion alone. A disjoint rename is the positive non-overlap control.
 
 ## Expected behavior
 
@@ -61,3 +67,10 @@ Worker-owned entry check applies.
 - [ ] Treats the bare branch with no merge-base as an unknown read that
       denies only the affected dispatch or publication and its dependents
       while other Workers and sensing continue.
+
+- [ ] Rename overlap includes both old and new paths for a bare branch or PR,
+      denying either intersection. Git uses `--no-renames --name-only -z`
+      and NUL-separated paths, preserving spaces/newlines and deletions.
+- [ ] Incomplete PR file pages or missing rename information are unknown
+      reads; a disjoint rename permits the ordinary path. The original
+      approved additive union-ledger exception remains valid.

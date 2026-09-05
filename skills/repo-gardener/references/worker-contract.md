@@ -48,10 +48,12 @@ assigned slice when status is unreadable), and leaves unexpected material
 untouched. For an adopted PR, also require local HEAD to equal the captured
 hosted head OID, and independently re-read native facts now and before every
 publication to prove the captured head ref is neither the current configured
-default branch nor provider-protected (including applicable rulesets); a
-failed, unavailable, or unknown read stops the unit without mutation or
-publication. Re-read every named gap from
-native facts now and again before publication; if a gap is gone, changed, or
+default branch nor provider-protected (including applicable rulesets), and a
+complete current native open-PR read proves no PR other than the adopted PR
+uses that head ref. Another PR using it stops the unit regardless of path
+overlap or unchanged OID; a failed, unavailable, unknown, or incomplete read
+also stops the unit without mutation or publication. Re-read every named gap
+from native facts now and again before publication; if a gap is gone, changed, or
 ambiguous, stop the unit and report it without publishing.
 
 Authoring is allowed only when all five gates pass using the opening policy
@@ -110,12 +112,16 @@ no path may be protected. For an adopted PR the committed paths are the
 Worker-authored diff from the captured hosted OID. Then read overlap: the
 intersection of the committed paths with the changed paths of every other
 current native branch and open PR, excluding the Worker's own branch and its
-adopted PR's head branch. A PR contributes its native file list; a branch
-without an open PR contributes `git diff --name-only $(git merge-base <base
-OID> <branch>) <branch>`; a branch with no merge-base or an unreadable diff
-is an unknown read; a branch already merged into the base contributes no
-paths. A PR elsewhere in the same directory, lane, or package manager is
-not overlap. A shared path is permitted only when the brief names it as a
+adopted PR's head branch. Every changed-path set includes both the old and
+new paths of a rename. A PR contributes its complete native file list,
+including rename source and destination; missing pages or rename information
+make that read unknown. A branch without an open PR contributes the
+NUL-delimited paths from `git diff --no-renames --name-only -z $(git merge-base <base OID>
+<branch>) <branch>`: disabling rename detection exposes both the deleted source
+and added destination without parsing rename records. A branch with no
+merge-base or an unreadable diff is an unknown read; a branch already merged
+into the base contributes no paths. A PR elsewhere in the same directory,
+lane, or package manager is not overlap. A shared path is permitted only when the brief names it as a
 union-merged ledger and the Worker's diff adds only its own entry while
 retaining every base entry. Any other intersection stops the action. The
 Orchestrator applies this same definition to planned paths before dispatch. An

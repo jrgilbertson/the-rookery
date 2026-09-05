@@ -58,6 +58,12 @@ same-repository update PR with a Worker-closable gap is a unit.
 > (20) Two candidates exist: the retained-Worker PR from situation 19 and an
 > otherwise eligible bot PR whose existing host records prove no other live
 > Worker can mutate its head.
+> (21) Situation 2 holds, but after dispatch another open PR begins using
+> the adopted head against another base. The hosted OID stays `h1` and that
+> PR's native file list does not intersect the Worker's changelog repair.
+> Repeat immediately before the first mutation, first publication, and a
+> repaired-head update; compare a complete read showing only the adopted PR
+> with an incomplete or failed current open-PR read.
 
 ## Expected behavior
 
@@ -114,3 +120,8 @@ same-repository update PR with a Worker-closable gap is a unit.
       recommendation. Situation 20 may adopt the independent eligible PR.
       Evidence comes from existing host dispatch and supervision records,
       never a new ownership registry or an inference from bot authorship.
+
+- [ ] Situation 21 stops the affected adopted unit at each boundary despite
+      unchanged OID and disjoint paths; it excludes only the adopted PR itself
+      when proving head-ref exclusivity. Complete exclusive read permits the
+      ordinary path; an incomplete or failed read stops only that unit.

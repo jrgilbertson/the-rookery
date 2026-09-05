@@ -121,9 +121,9 @@ later user turn in the same live context:
 - [ ] 2 → the round contains exactly five of the six matters, ordered by how
       much each answer would change next week's recommendation, and names the
       sixth as carried to the next round.
-- [ ] 2 → after the partial reply, the next round returns the two questions the
-      reply left unanswered, re-asks neither the billing restart nor the Friday
-      block, and either admits the new question about handing off the partner
+- [ ] 2 → after the partial reply, the next round asks or explicitly carries
+      forward every unanswered question and previously over-cap matter, re-asks
+      neither the billing restart nor the Friday block, and either admits the new question about handing off the partner
       sync with a stated reason it could change the recommendation or holds it
       out with a stated reason it does not clear the bar.
 - [ ] 2 → exactly one question step runs before coaching, and any recurring

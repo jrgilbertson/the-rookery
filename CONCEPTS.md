@@ -136,14 +136,16 @@ existing one.
 
 ### Evidence Pack
 
-A record added to the pull request description after option 1 approves a
-readiness review. It is an actionable brief: the recommendation, material next
-work, a coverage close, and the learning signal, not a census of every sweep
-class or inspected path.
+A record of readiness approval after option 1. It is an actionable brief:
+the recommendation, material next work, a coverage close, and the learning
+signal, not a census of every sweep class or inspected path.
 
-The review instantiates it on later 1 as silent pull-request-body input.
-It becomes durable only when the finishing workflow writes it into the
-pull request description.
+The review instantiates it on later 1 as silent input to the selected
+finishing workflow. Ordinary publication writes it into the pull request
+description. For an adopted gardening PR, the Worker returns it to the
+Orchestrator for the run report and preserves the PR's existing title and
+body. The pack becomes durable only when written to that workflow's approved
+destination; an in-process handoff alone is not persistence.
 
 ### Merge Readiness Review
 

@@ -12,6 +12,8 @@ Scenarios 1 and 6 also exercise future due-date conflicts and capacity that
 occurs before a task can begin.
 September 4 fixture runs also exposed healthy-task listings in scenarios 2
 and 6, including a task promoted into next week's outcomes despite not qualifying.
+Scenario 2 uses individually feasible tasks whose combined work exceeds capacity;
+Phase 1 scenarios stop before their undecided actions can lead into Phase 2.
 
 ## Setup
 
@@ -64,7 +66,7 @@ temporary directory afterward.
 > 1. Wind-down closing 2026-09-02, target day 2026-09-03. Present the Phase 1
 >    Administrative Sweep and stop for my decisions.
 > 2. Wind-down closing 2026-09-02, target day 2026-09-03. Present the Phase 1
->    Administrative Sweep together with the shape of tomorrow's plan, then stop.
+>    Administrative Sweep with tomorrow's upcoming-task context, then stop.
 > 3. Wind-down closing 2026-09-02, target day 2026-09-03. Present the Phase 1
 >    Administrative Sweep and stop.
 > 4. Weekly review for the week ending 2026-09-06, with the coming week
@@ -72,8 +74,8 @@ temporary directory afterward.
 >    week's outcomes. Stop before writing anything.
 > 5. Wind-down closing 2026-09-02, target day 2026-09-03. The canonical task
 >    workflow is the configured task role and it is the only task path
->    available. Present the Phase 1 Administrative Sweep, then continue into
->    Phase 2 far enough to show tomorrow's plan, and stop.
+>    available. Present the Phase 1 Administrative Sweep and stop for my
+>    decisions on its proposed actions.
 > 6. Weekly review closing 2026-09-06, planning 2026-09-07 through
 >    2026-09-13. Reconstruct, sweep, and propose next week's outcomes. Evaluate
 >    later deadlines against all free capacity from the start of that week.
@@ -98,12 +100,13 @@ temporary directory afterward.
       the incompatible dates and proposes an independent resolution.
 - [ ] 1 → the quarterly budget review and the closed expense report appear in
       no row, and the response lists no healthy task anywhere.
-- [ ] 2 → the onboarding checklist appears in tomorrow's plan and gets no
-      separate proposed action, because the plan has room for it.
+- [ ] 2 → the onboarding checklist appears as upcoming context for tomorrow
+      and gets no separate proposed action, because the plan has room for it.
 - [ ] 2 → the board narrative appears as an at-risk row that states the
       calendar evidence: only two working hours remain on 2026-09-03, one is
       needed for onboarding, and 2026-09-04 through 2026-09-07 have no capacity
-      for the six-hour narrative before its due date.
+      for the ninety-minute narrative before its due date. Each task fits the two
+      hours alone, but their combined work does not.
 - [ ] 2 → the healthy support macros appear nowhere in the response, including
       explanations of which tasks did not qualify. Their later deadline has
       sufficient capacity and is outside tomorrow's planning window.
@@ -123,7 +126,8 @@ temporary directory afterward.
 - [ ] 5 → the calendar drift row for the moved 2026-09-03 review and the CRM
       contact-date row for Rowan Diaz both still appear as independently
       approvable actions, so one failed row source does not suppress the rest
-      of the sweep.
+      of the sweep. The response stops at Phase 1 for decisions on those rows
+      rather than entering Phase 2 with undecided actions.
 - [ ] 6 → Monday's access review and Sunday's release handoff both enter
       next week's plan; neither becomes an action when capacity holds them.
 - [ ] 6 → the later retention memo is not an at-risk row: its four remaining

@@ -21,6 +21,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-gardener` carries approved shared-ledger peers in Worker briefs and
+  uses one overlap rule for dispatch and publication. An unrelated branch
+  cannot qualify merely by changing the same union-merged changelog path.
+
 - `repo-gardener` writes append-only opening and closing comments; the closing
   comment contains the morning report and the issue body remains setup text.
   Tracker writes no longer coordinate a body update with a comment or carry

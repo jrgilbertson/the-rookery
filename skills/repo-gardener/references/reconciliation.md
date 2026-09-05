@@ -124,22 +124,9 @@ title, and branch prefix prove nothing about the PR's content; the provider's
 account type and draft flag bound only who the gardener may push to. The PR
 number, head ref, head OID, and changed paths are the identity.
 
-A shared ledger path is the one overlap exception, keyed on
-`git check-attr --source=<full base OID> merge -- <path>` reporting `union`,
-read by the Orchestrator at assignment and carried to the Worker in its brief.
-The `--source` form reads the attribute at the base revision regardless of the
-worktree's checkout; a git without it is an unavailable read that denies the
-exception. The attribute proves git-local union merge only: hosts that merge
-PRs server-side ignore merge drivers, so when two Workers share the path the
-second PR to merge may conflict on the host, and that conflict is owner work
-named in the brief and morning report. The exception covers only additive
-entries: every Worker using it adds only its attributable entry and retains
-all base entries; the Orchestrator never writes a ledger line. The exception
-applies only between Workers selected in the same assignment decision,
-identified by their approved brief identity and branch; any other native
-branch or PR touching that path is ordinary overlap. It does not exempt
-another path, protected path, authoring scope, or a new or unrelated overlap,
-which stops publication. Later native conflicts are for human handling.
+For shared-ledger overlap, populate each affected brief and apply the Shared
+ledger exception in `worker-contract.md`; that section owns the rule for both
+dispatch and publication.
 
 Dispatch requires the portable interface and brief in `worker-contract.md`;
 that file owns everything the Worker does from setup through publication. The

@@ -31,8 +31,8 @@ list. For an adopted PR it also names the PR number, head ref, captured head
 OID, base ref and full base OID, the current configured default branch ref,
 native proof that the head is not provider-protected, the named gap(s), and
 the maintenance risk: a Worker push may stop bot updates, while later bot or
-manual rebases may overwrite Worker edits. It includes the ledger attribute read and
-base-diff rule only when that exception applies.
+manual rebases may overwrite Worker edits. When shared-ledger overlap applies,
+include the facts required by the Shared ledger exception below.
 
 ## Before the first mutation
 
@@ -121,9 +121,8 @@ NUL-delimited paths from `git diff --no-renames --name-only -z $(git merge-base 
 and added destination without parsing rename records. A branch with no
 merge-base or an unreadable diff is an unknown read; a branch already merged
 into the base contributes no paths. A PR elsewhere in the same directory,
-lane, or package manager is not overlap. A shared path is permitted only when the brief names it as a
-union-merged ledger and the Worker's diff adds only its own entry while
-retaining every base entry. Any other intersection stops the action. The
+lane, or package manager is not overlap. Only the Shared ledger exception
+below permits an intersection; any other intersection stops the action. The
 Orchestrator applies this same definition to planned paths before dispatch. An
 ownerless first push must match the subject and OID the checking skill
 re-read; a repaired-head update must match only its exact
@@ -158,3 +157,39 @@ may stop, and later bot rebases may overwrite Worker edits"). Never advance comp
 movement implicitly, never merge, and never write a release, deployment,
 protected path, or follow-up issue. Report native PR, check, and
 review facts.
+
+## Shared ledger exception
+
+This is the one overlap exception: qualifying Workers may run concurrently.
+Apply it to planned paths at dispatch and recheck current native branches and
+PRs at each publication gate. A failed check stops only the affected action
+and its dependents, preserves authored work, and reports the exact blocking
+paths or unavailable facts; other Workers and safe sensing continue.
+When it applies, the original approved brief carries the ledger path, the
+base-revision attribute read, and each peer's Worker identity, native branch,
+assigned paths, and captured existing PR paths for an adopted peer, all from
+the same assignment decision. Use those fixed facts
+with the host's existing dispatch records; missing or ambiguous peer facts
+deny the exception. A matching path shape, author, or branch prefix is not
+peer identity, and later branches cannot join the assignment implicitly.
+
+Allow the shared path only when all of these hold:
+
+- `git check-attr --source=<full base OID> merge -- <path>` reports `union` at
+  the authoritative base. The Orchestrator reads it for the brief; an
+  unavailable read, including Git without `--source`, denies the exception.
+- Every overlapping branch or PR belongs to a named peer's original branch
+  and Worker identity. Its complete current changed paths remain within its
+  original assigned paths plus any captured existing PR paths for adoption,
+  and the only intersection is the named ledger path.
+  An unrelated branch or PR touching that ledger is ordinary overlap.
+- Each participating Worker's ledger diff adds only its attributable entry
+  and preserves every base entry. At dispatch, require this in each assignment;
+  before publication, verify it from the current diffs of all participating
+  branches. Missing or unreadable evidence denies the exception.
+
+Scope and protected-path gates still apply. The Orchestrator never writes a
+ledger line. The attribute provides Git-local text merging, not a guarantee
+that integration will be conflict-free or entries correctly ordered. Name
+that limitation in the brief and report; later merge or rebase conflicts
+remain owner work, without automatic resolution or merging.

@@ -136,14 +136,16 @@ existing one.
 
 ### Evidence Pack
 
-A record added to the pull request description after option 1 approves a
-readiness review. It is an actionable brief: the recommendation, material next
-work, a coverage close, and the learning signal, not a census of every sweep
-class or inspected path.
+A record of readiness approval after option 1. It is an actionable brief:
+the recommendation, material next work, a coverage close, and the learning
+signal, not a census of every sweep class or inspected path.
 
-The review instantiates it on later 1 as silent pull-request-body input.
-It becomes durable only when the finishing workflow writes it into the
-pull request description.
+The review instantiates it on later 1 as silent input to the selected
+finishing workflow. Ordinary publication writes it into the pull request
+description. For an adopted gardening PR, the Worker returns it to the
+Orchestrator for the run report and preserves the PR's existing title and
+body. The pack becomes durable only when written to that workflow's approved
+destination; an in-process handoff alone is not persistence.
 
 ### Merge Readiness Review
 
@@ -187,8 +189,10 @@ units, then starts Workers in parallel up to that run's ceiling.
 ### Worker
 
 An isolated worktree agent assigned one independently deliverable, reviewable
-pull request. It owns that work through an unmerged pull request. When the
-work is an issue, that issue is an Implementation Leaf.
+pull request. It owns that work through an unmerged pull request. The pull
+request may be an existing one the run adopts; the Worker then owns that PR's
+branch for the run. When the work is an issue, that issue is an Implementation
+Leaf.
 
 *Avoid:* child, gardener child
 
@@ -205,61 +209,16 @@ census is not reading bodies and is not emitting candidates.
 
 ### Gardening Tracker
 
-The GitHub issue used as the morning report and append-only run-history surface
-for one repository. Each Repository Maintenance Run writes one opened comment
-and one closed comment. Native pull requests remain authoritative for authored
-work.
-
-### Current Portfolio
-
-A legacy report projection retained on archived dogfood tracker history.
-New gardening trackers do not use it. It is not a queue or ownership database.
-Native pull requests, branches, heads, checks, and states are authoritative
-for authored work.
+The GitHub issue holding append-only run history for one repository. Its body
+is setup information; each Repository Maintenance Run writes one opened comment
+and one closed comment containing the morning report. Native pull requests
+remain authoritative for authored work.
 
 ### Run History
 
 The append-only comment history on the Gardening Tracker. Each Repository
 Maintenance Run adds one opened record and one closed record. History supplies
 visibility, not a lock, queue, authority grant, or planning-quality verdict.
-
-Legacy dogfood history may also contain a structurally hash-linked receipt
-chain. Those kinds remain readable: `decision`, `effect`, `evidence`,
-`manifest`, `release`, `run`, `run-opened`, `run-closed`, and `scout`.
-
-### Scout Receipt
-
-A legacy per-lane terminal record retained in older history. Current runs place
-all nine lane results in the consolidated closing record instead of writing
-nine separate managed comments.
-
-### Register Revision
-
-A legacy monotonic body version stored as `register_revision` on archived
-hash-linked tracker history. New gardening runs do not require it. It is not
-an atomic provider precondition, compare-and-swap, or distributed lock.
-
-### Effect Receipt
-
-The intended-effect and terminal-outcome evidence for one stable,
-repository-qualified logical report operation, stored with the `effect` receipt
-kind. Its identity is the pair `(repository_id, operation_id)`, not the
-operation ID alone. The intended receipt is read back before invoke; the
-terminal receipt is read back after the authoritative post-read. Ambiguity
-blocks blind retry.
-
-### Attention State
-
-The report projection `Action required`, `Merge-ready`, `Watching`, or
-`Routine`. Attention communicates current handling; it is not a persisted work
-state or authority grant.
-
-### Completion Partition
-
-The disjoint, exhaustive pair `affected_work` and
-`remaining_unblocked_work`. Every named item appears exactly once, and every
-unblocked remainder is continued, durably delegated, or gated by its own named
-prerequisite.
 
 ## Research synthesis
 

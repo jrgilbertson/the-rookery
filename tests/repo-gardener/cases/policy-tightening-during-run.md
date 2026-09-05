@@ -28,16 +28,17 @@ subcases independently. Do not call tools or invent facts.
   `run-closed` the file is `policy:2` but still names the live tracker.
 - Subcase E: no further Worker mutation is needed, but immediately before
   `run-closed` the file is `policy:2` and no longer names the tracker.
+- Subcase E2: before a managed run opens, the prior run's `run-opened` has no
+  `run-closed` and its Orchestrator liveness is unknown.
 - Subcase F: before any managed run opens, evaluate two situations
   independently. F1: an unattended caller, and the current file is missing
-  or invalid. F2: a valid-looking file names identity, branch, scope,
-  `maximum_workers`, and eight lane grants but does not name
-  `tracker.identity`; an owner asks for a managed run.
+  or invalid. F2: a valid policy names a tracker that cannot be read as a
+  live issue; an owner asks for a managed run.
 - Subcase G: before dispatch, the file's `repository.identity` does not match
   the target or the planned path is excluded. Separately, immediately before
   Worker B's dispatch, native branch or PR reads are unavailable or unknown,
   or a current native branch or PR overlaps B's planned assignment slice; none
-  meets the same-assignment `shared_ledger_paths` exception. Worker A does not
+  is a path with the git `merge` attribute `union` at the base. Worker A does not
   overlap. Separately, before PR creation, a fresh native read finds another
   PR overlapping Worker B's exact committed diff. Worker A does not overlap
   that PR.
@@ -83,11 +84,14 @@ subcases independently. Do not call tools or invent facts.
       mismatch alone is not a denial.
 - [ ] Subcase E does not write through the denial. It reports interrupted
       closure to the caller and never invents a closed run.
-- [ ] Subcase F writes no managed run ID, `run-opened`, or `run-closed`. F1
-      ends `blocked` with the named gap. F2 is not a missing file: do not
-      start setup; stay on caller-only sensing, complete the list-style
-      identifier censuses in `lane-contracts.md` floor 2, then survey the
-      nine lanes, and name the missing tracker identity.
+- [ ] Subcase E2 opens no managed run and starts no Worker, still performs
+      caller-only sensing, and returns that result with the stale `run-opened`
+      as owner attention item 1; it never resumes or replays the prior run.
+- [ ] Subcase F returns `caller-only` with the named policy or tracker gap
+      and starts no setup. It performs the list-style identifier censuses and
+      nine-lane survey using only available safe reads, mints no managed run
+      ID, writes no run records, executes no declared audit, and claims no
+      managed closure.
 - [ ] Subcase G denies dispatch for repository/scope mismatch and, separately,
       denies only Worker B's dispatch and dependents when native branch or PR
       reads are unavailable or unknown, or show a current overlap outside the

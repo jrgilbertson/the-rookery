@@ -519,7 +519,7 @@ def validate_contract_sources() -> None:
         require(phrase in normalized_assessment, f"assessment contract omits deferred-gate safety: {phrase}")
     for source, name in (
         ((REPO_ROOT / "skills" / "repo-gardener" / "SKILL.md").read_text(encoding="utf-8").lower(), "repo-gardener skill"),
-        ((REPO_ROOT / "skills" / "repo-gardener" / "references" / "reconciliation.md").read_text(encoding="utf-8").lower(), "reconciliation reference"),
+        ((REPO_ROOT / "skills" / "repo-gardener" / "references" / "worker-contract.md").read_text(encoding="utf-8").lower(), "worker contract reference"),
     ):
         normalized_source = " ".join(source.split())
         require("every unattended worker invokes `checking-pr-readiness` normally" in normalized_source, f"{name} omits the normal checking invocation")

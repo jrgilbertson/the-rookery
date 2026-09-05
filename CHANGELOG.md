@@ -21,6 +21,34 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `repo-gardener` writes append-only opening and closing comments; the closing
+  comment contains the morning report and the issue body remains setup text.
+  Tracker writes no longer coordinate a body update with a comment or carry
+  operation hashes. Run IDs use a fresh UUID instead of a minute-resolution
+  timestamp. A full tracker stops new openings before verification input
+  capacity is exhausted and requires owner-managed replacement. Before
+  upgrading a test install, stop its scheduler,
+  confirm old Orchestrators and Workers have terminated, and use a fresh
+  tracker if its records use the retired format.
+- `repo-gardener` accepts lane mappings in any YAML order and uses PyYAML's
+  native parser for syntax checks. Issue admission rests on trusted ownership,
+  current blockers, and a small, low-risk, verifiable PR scope; estimates and
+  readiness labels are hints. Runtime reads verify each source independently
+  and distinguish empty results from missing data. Bot adoption reports the
+  risk of stopped updates or overwritten edits without promising bot behavior.
+  Worker briefs bind the expected repository identity, and identifier censuses
+  stop at 10,000 records with partial coverage when more remain.
+- `repo-gardener` adopts an open same-repository update PR with a
+  Worker-closable gap as a Worker unit: the Worker checks out the PR head at
+  the captured OID, pushes under the existing old-OID lease, keeps one
+  unmerged PR, and never merges. Only non-draft PRs whose head commits are
+  bot- or app-authored qualify; default and provider-protected heads cannot
+  be adopted. Adopted PR titles and descriptions stay unchanged; readiness
+  evidence goes into the run report. Overlap is changed-path intersection with
+  other native branches and PRs; a lockfile-only intersection is a
+  recommendation. The runtime lane reads any error or alert source the host
+  can already read and confirms identity from repository facts. A blocked
+  opening still senses and reports with one `caller-only` run outcome.
 - Skill test suites may retain a small number of explicitly labeled regression
   controls for load-bearing behavior that the bare and skilled variants both
   pass; those controls never count as evidence of improvement.
@@ -71,21 +99,15 @@ looked" surface. GitHub Releases mirror its entries.
   Reasons in the brief are about the change under review, not how the gate
   runs. Captured as
   `docs/solutions/conventions/do-not-split-human-and-agent-skill-products.md`.
-- Repo Gardener now completes its issue identifier census before every
+- Repo Gardener completes its issue identifier census before every
   issue-facing lane uses purpose-ranked, admission-bounded reads, preserving
-  trusted-principal and lane limits. Mapped readiness now prioritizes those
-  reads rather than excluding a `needs-planning` estimate-2 issue whose
-  repository evidence supports a safe Worker brief, and the Ready Frontier
-  remains fresh after an authorized issue refinement.
-- Repo Gardener now has a default-off `issue_refinement` policy grant that can
-  delegate one caller-authorized canonical issue batch to Managing Issues while
-  preserving its existing pre-read, apply-once, first-stop, and exact-readback
-  safeguards.
-- Repo Gardener can treat configured ledger paths as an assignment-only overlap
-  exception after repository proof of conflict-safe additive merging, while
-  requiring each Worker to retain base entries and add its own attributable
-  entry; the Orchestrator never writes the shared ledger or resolves later
-  native merge or rebase conflicts.
+  trusted-principal and lane limits. The Ready Frontier comes from current
+  evidence, including fresh native blocker reads.
+- Repo Gardener treats a shared ledger path as an assignment-only overlap
+  exception (now keyed on the git `merge=union` attribute at the base, per
+  the Removed entry below), while requiring each Worker to retain base
+  entries and add its own attributable entry; the Orchestrator never writes
+  the shared ledger or resolves later native merge or rebase conflicts.
 - Repo Gardener now gives every unattended Worker the normal
   `checking-pr-readiness` process: its menu reply ends that turn, and only the
   Orchestrator may authorize option 1 when Approve was offered and recommended
@@ -148,9 +170,8 @@ looked" surface. GitHub Releases mirror its entries.
   against the final delivered scope without requiring a completion diary.
 - `repo-gardener` issue lanes now read their tracker from the repository's
   `.agents/managing-issues.json` when the managing-issues validator accepts it,
-  and the issue-implementation lane limits candidates to issues whose mapped
-  readiness is `ready`, whose mapped leaf estimate is a number at most 2, and
-  which have no open native blocker. With no config file the lanes read the
+  and the issue-implementation lane requires trusted ownership, a safe Worker
+  brief, and no open native blocker. With no config file the lanes read the
   repository's own issues unmapped and name the absent config as their room
   for improvement; a config the run cannot validate, or a provider it cannot
   read, makes the lanes unavailable rather than substituting another tracker.
@@ -160,6 +181,27 @@ looked" surface. GitHub Releases mirror its entries.
   Cross-tracker requests require one exact provider-native link, and the skill
   writes only the canonical tracker. Linear uses connected MCP tools when
   available and keeps Orca as an explicit session choice.
+
+### Removed
+
+- `repo-gardener` no longer accepts `issue_refinement`, `evidence_sources`, or
+  `shared_ledger_paths` in `.agents/repo-gardener.yaml`. Remove those keys on
+  upgrade. Follow-up issues remain owner proposals for Managing Issues outside
+  the nightly run; Managing Issues no longer accepts gardening delegation
+  envelopes as approval. The shared-ledger overlap exception is keyed on the
+  git `merge` attribute being `union` at the authoritative base. The references are one owner per rule:
+  `applying-effects.md`, `github-reference-adapter.md`, and
+  `register-and-report.md` became `tracker-records.md`; everything a Worker
+  follows lives in `worker-contract.md`, which also defines overlap; revision
+  check points are listed once. `release_a_contract.py` exposes three
+  subcommands (`normalize-github-tracker`, `effect`, `run-records`) with no
+  version suffix in any name; only the unversioned `orchestrator:run-record`
+  markers are recognized.
+  Gone: the external recovery-state persistence before a tracker write, the
+  host execution-profile test (declared audits now run in an explicit child
+  environment built from nothing), the code-health rotation cursor,
+  per-candidate label-provenance reads, and the `#3336`, Current Portfolio,
+  and presentation-cap pilot residue. Census floors are five rules.
 
 ## [0.2.0] - 2026-08-14
 

@@ -375,13 +375,16 @@ publishing still needs an installed finishing companion.
 
 When finishing is present, instantiate
 [assets/evidence-pack-template.md](assets/evidence-pack-template.md)
-in-process as unpublished pull-request-body input: the recommendation,
-material next work after the pull request exists (or `none`), a coverage
-close, and the learning signal with any recorded override. Do not write the
+in-process: the recommendation, material next work after the pull request
+exists (or `none`), a coverage close, and the learning signal with any
+recorded override. Do not write the
 filled pack back to that asset. Do not print `## Evidence pack` as a
-readout. Pass the filled pack to the selected finishing path so that path
-writes it into the pull request description. Continue into that path in
-this same conversation. That path must not re-ask the same Approve. This
+readout. Pass the pack to the selected finishing path, which owns its
+destination: ordinary
+publication writes it into the pull request description; gardener Worker
+completion follows its publication contract, which returns adopted-PR
+evidence to the Orchestrator and preserves that PR's title and body.
+Continue into that path in this same conversation. That path must not re-ask the same Approve. This
 skill still does not itself stage, commit, push, or open a pull request.
 
 Sanitize the pack for durable use. Summarize intent from the selected durable

@@ -46,18 +46,11 @@ TOP_LEVEL_REQUIRED = {
     "tracker",
     "lanes",
 }
-TOP_LEVEL_ALLOWED = TOP_LEVEL_REQUIRED | {
-    "evidence_sources",
-    "issue_refinement",
-    "shared_ledger_paths",
-}
 REPOSITORY_FIELDS = {"identity", "default_branch", "scope"}
 SCOPE_FIELDS = {"include", "exclude"}
 TRACKER_FIELDS = {"identity"}
 AUTHORING_LANE_FIELDS = {"mutation"}
 AUDIT_LANE_FIELDS = AUTHORING_LANE_FIELDS | {"audit_commands"}
-EVIDENCE_SOURCE_FIELDS = {"identity"}
-EVIDENCE_SOURCE_NAME = re.compile(r"^[a-z][a-z0-9_-]{0,63}$")
 MAPPING_KEY = re.compile(r"^[A-Za-z0-9_.-][A-Za-z0-9_./-]*$")
 ROOTED_OR_DRIVE_PATH = re.compile(r"^(?:[A-Za-z]:[/\\]|[/\\])")
 ISSUE_NUMBER_SELECTOR = re.compile(r"^#\d+$")
@@ -203,74 +196,6 @@ def yaml_error_message(error: yaml.YAMLError) -> str:
     return "YAML is invalid"
 
 
-def reject_unsupported_yaml(text: str) -> None:
-    require("\t" not in text, "YAML tabs are not allowed")
-    index = 0
-    in_single = False
-    in_double = False
-    at_line_start = True
-    while index < len(text):
-        char = text[index]
-        prev = text[index - 1] if index else "\n"
-        if in_single:
-            if char == "'" and index + 1 < len(text) and text[index + 1] == "'":
-                index += 2
-                continue
-            if char == "'":
-                in_single = False
-            index += 1
-            continue
-        if in_double:
-            if char == "\\" and index + 1 < len(text):
-                index += 2
-                continue
-            if char == '"':
-                in_double = False
-            index += 1
-            continue
-        if char == "\n":
-            at_line_start = True
-            index += 1
-            continue
-        if at_line_start and char in " ":
-            index += 1
-            continue
-        if at_line_start and char == "%":
-            raise ConfigError("YAML documents and directives are not allowed")
-        if at_line_start and text.startswith(("---", "..."), index):
-            end = index + 3
-            nxt = text[end] if end < len(text) else "\n"
-            if nxt in " \n":
-                raise ConfigError("YAML documents and directives are not allowed")
-        at_line_start = False
-        if char == "#" and prev.isspace():
-            newline = text.find("\n", index)
-            index = len(text) if newline < 0 else newline
-            continue
-        if char == "'":
-            in_single = True
-            index += 1
-            continue
-        if char == '"':
-            in_double = True
-            index += 1
-            continue
-        boundary = prev.isspace() or prev in ":,[]{}"
-        if char == "!" and (index == 0 or boundary):
-            raise ConfigError("YAML tags are not allowed")
-        if char == "&" and (index == 0 or boundary):
-            raise ConfigError("YAML aliases and anchors are not allowed")
-        if char == "*" and (index == 0 or boundary):
-            nxt = text[index + 1] if index + 1 < len(text) else ""
-            if nxt.isalnum() or nxt == "_":
-                raise ConfigError("YAML aliases and anchors are not allowed")
-        if text.startswith("<<", index) and (index == 0 or prev.isspace() or prev in "{,"):
-            end = index + 2
-            if end == len(text) or text[end] in " :},\n":
-                raise ConfigError("YAML merge keys are not allowed")
-        index += 1
-
-
 def reject_disallowed_values(value: Any, *, depth: int = 0) -> None:
     require(depth <= MAX_YAML_DEPTH, "YAML nesting exceeds the allowed depth")
     if value is None:
@@ -291,8 +216,8 @@ def reject_disallowed_values(value: Any, *, depth: int = 0) -> None:
         require(len(value) <= MAX_LIST_ENTRIES, f"YAML mapping exceeds {MAX_LIST_ENTRIES} entries")
         for key, item in value.items():
             require(isinstance(key, str) and bool(key), "YAML mapping key must be text")
-            require(MAPPING_KEY.fullmatch(key) is not None, f"YAML mapping key {key!r} is invalid")
             require(key != "<<", "YAML merge keys are not allowed")
+            require(MAPPING_KEY.fullmatch(key) is not None, f"YAML mapping key {key!r} is invalid")
             reject_disallowed_values(item, depth=depth + 1)
         return
     raise ConfigError("YAML value type is not allowed")
@@ -303,17 +228,21 @@ class PolicyLoader(yaml.SafeLoader):
 
     def __init__(self, stream: Any) -> None:
         super().__init__(stream)
-        self._policy_depth = 0
+        self._policy_depth = -1  # The root node has depth zero.
 
-    def construct_object(self, node: Any, deep: bool = False) -> Any:
-        if isinstance(node, (yaml.MappingNode, yaml.SequenceNode)):
-            self._policy_depth += 1
-            try:
-                require(self._policy_depth <= MAX_YAML_DEPTH, "YAML nesting exceeds the allowed depth")
-                return super().construct_object(node, deep=deep)
-            finally:
-                self._policy_depth -= 1
-        return super().construct_object(node, deep=deep)
+    def compose_node(self, parent: Any, index: Any) -> Any:
+        event = self.peek_event()
+        require(
+            not isinstance(event, yaml.events.AliasEvent) and event.anchor is None,
+            "YAML aliases and anchors are not allowed",
+        )
+        require(event.tag is None, "YAML tags are not allowed")
+        self._policy_depth += 1
+        try:
+            require(self._policy_depth <= MAX_YAML_DEPTH, "YAML nesting exceeds the allowed depth")
+            return super().compose_node(parent, index)
+        finally:
+            self._policy_depth -= 1
 
     def construct_mapping(self, node: Any, deep: bool = False) -> dict[str, Any]:
         if not isinstance(node, yaml.MappingNode):
@@ -322,8 +251,8 @@ class PolicyLoader(yaml.SafeLoader):
         for key_node, value_node in node.value:
             key = self.construct_object(key_node, deep=deep)
             require(isinstance(key, str) and bool(key), "YAML mapping key must be text")
-            require(MAPPING_KEY.fullmatch(key) is not None, f"YAML mapping key {key!r} is invalid")
             require(key != "<<", "YAML merge keys are not allowed")
+            require(MAPPING_KEY.fullmatch(key) is not None, f"YAML mapping key {key!r} is invalid")
             require(key not in result, f"duplicate key {key!r}")
             result[key] = self.construct_object(value_node, deep=deep)
         return result
@@ -335,13 +264,10 @@ PolicyLoader.add_implicit_resolver("tag:yaml.org,2002:null", NULL_SCALAR, ["~", 
 
 
 def parse_yaml_mapping(text: str) -> dict[str, Any]:
-    reject_unsupported_yaml(text)
     try:
-        documents = list(yaml.load_all(text, Loader=PolicyLoader))
+        value = yaml.load(text, Loader=PolicyLoader)
     except yaml.YAMLError as error:
         raise ConfigError(yaml_error_message(error)) from error
-    require(len(documents) == 1, "YAML documents and directives are not allowed")
-    value = documents[0]
     require(isinstance(value, dict), "config must be a mapping")
     reject_disallowed_values(value)
     return value
@@ -407,7 +333,6 @@ def normalize_audit_commands(value: Any, label: str) -> list[list[str]]:
 def normalize_lanes(value: Any) -> dict[str, Any]:
     require(isinstance(value, dict), "lanes must be a mapping")
     require_exact_fields(value, set(LANE_ORDER), set(LANE_ORDER), "lanes")
-    require(tuple(value) == LANE_ORDER, "lanes must name every contracted lane in order")
     lanes: dict[str, Any] = {}
     for lane in AUTHORING_LANES:
         entry = value[lane]
@@ -434,25 +359,8 @@ def normalize_lanes(value: Any) -> dict[str, Any]:
     return lanes
 
 
-def normalize_evidence_sources(value: Any) -> dict[str, dict[str, str]]:
-    require(isinstance(value, dict), "evidence_sources must be a mapping")
-    require(len(value) <= MAX_LIST_ENTRIES, f"evidence_sources exceeds {MAX_LIST_ENTRIES} entries")
-    result: dict[str, dict[str, str]] = {}
-    for name, source in value.items():
-        require(
-            isinstance(name, str) and EVIDENCE_SOURCE_NAME.fullmatch(name) is not None,
-            f"evidence_sources.{name} has an invalid name",
-        )
-        require(isinstance(source, dict), f"evidence_sources.{name} must be a mapping")
-        require_exact_fields(source, EVIDENCE_SOURCE_FIELDS, EVIDENCE_SOURCE_FIELDS, f"evidence_sources.{name}")
-        result[name] = {
-            "identity": require_concrete_text(source["identity"], f"evidence_sources.{name}.identity")
-        }
-    return result
-
-
 def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
-    require_exact_fields(value, TOP_LEVEL_REQUIRED, TOP_LEVEL_ALLOWED, "config")
+    require_exact_fields(value, TOP_LEVEL_REQUIRED, TOP_LEVEL_REQUIRED, "config")
     workers = value["maximum_workers"]
     require(
         isinstance(workers, int) and not isinstance(workers, bool) and 0 <= workers <= MAX_INTEGER,
@@ -462,26 +370,9 @@ def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
         "repository": normalize_repository(value["repository"]),
         "protected_paths": require_glob_list(value["protected_paths"], "protected_paths", nonempty=False),
         "maximum_workers": workers,
-        "issue_refinement": value.get("issue_refinement", False),
         "tracker": normalize_tracker(value["tracker"]),
         "lanes": normalize_lanes(value["lanes"]),
     }
-    require(
-        isinstance(normalized["issue_refinement"], bool),
-        "issue_refinement must be a boolean",
-    )
-    if "evidence_sources" in value:
-        normalized["evidence_sources"] = normalize_evidence_sources(value["evidence_sources"])
-    if "shared_ledger_paths" in value:
-        shared_ledger_paths = require_glob_list(
-            value["shared_ledger_paths"], "shared_ledger_paths", nonempty=False
-        )
-        for index, path in enumerate(shared_ledger_paths):
-            require(
-                not any(character in path for character in "*?["),
-                f"shared_ledger_paths[{index}] must be a literal repository-relative file path",
-            )
-        normalized["shared_ledger_paths"] = shared_ledger_paths
     return normalized
 
 

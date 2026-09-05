@@ -12,13 +12,12 @@ Read the target repository's durable file from the refreshed default branch,
 the complete tracker, repository instructions, and the native identities needed
 to open safely. Validate the durable file without changing it. A missing,
 invalid, or unapproved file takes the entry mode in
-`policy-and-entry-modes.md`: interactive first use with an owner, or blocked
-or read-only sensing otherwise.
+`policy-and-entry-modes.md`: interactive first use with an owner, or
+caller-only sensing otherwise.
 
-At opening, preserve the exact policy revision. A later policy change stops
-all remaining declared audits and source mutation, push, and PR opening. It
-does not relitigate unchanged grants or erase already-authored work. Continue
-safe sensing and make a truthful close only when the remaining authority still
+At opening, preserve the exact policy revision; the revision check points
+in `policy-and-entry-modes.md` govern every later re-read. Continue safe
+sensing and make a truthful close only when the remaining authority still
 permits it.
 
 Before another run opens, reconcile any complete tracker `run-opened` without
@@ -26,17 +25,21 @@ its matching `run-closed`. For the exact original Orchestrator and its
 Workers, require current caller or host liveness, or proven termination; an
 expired lease alone proves neither termination nor loss of mutation ability.
 Unknown, unavailable, or still-live state blocks a new opening and new
-Workers. Recovery may only verify or finish the original uncertain tracker
+Workers; the run still performs caller-only sensing and returns that result to
+the caller with the stale `run-opened` as owner attention item 1. Recovery may
+only verify or finish the original uncertain tracker
 effect and prepare one truthful close from retained verifiable facts, recording
 unknown dispositions. It never resumes or replays stale declared audits or
 Worker mutation, and it preserves pending worktrees and authored state for
 inspection. Every later run starts fresh with its own run ID and opening
-sequence. This liveness gate is additional to, not a replacement for or
-authorization from, applying-effects exclusive-writer or atomic-serialization
-requirements.
+sequence. This liveness gate is additional to the caller's single-writer
+declaration in `tracker-records.md`, never a substitute for it.
 
 Each `run-opened` payload persists bounded, stable original Orchestrator identity
-and caller or automation identity for the host liveness lookup. This remains
+and caller or automation identity for the host liveness lookup; the host's
+own dispatch records, reached through that caller identity, are how recovery
+enumerates the run's Workers. A run whose Workers cannot be enumerated from
+those records has unknown state and keeps later runs caller-only. This remains
 host-neutral: use the existing payload and caller-owned recovery mechanisms,
 never a Repo Gardener state machine or per-Worker tracker records.
 
@@ -60,7 +63,8 @@ source, trackers, reports, logs, or recovery state. A command result is
 evidence, not an admission verdict or mutation grant.
 
 A finished command, ordinary failure, missing runner, missing nested
-executable, or command-local capability refusal is lane-local: report it and
+executable, confirmed timeout with the process group stopped, or
+command-local capability refusal is lane-local: report it and
 continue safe work. A policy or subject change, unexpected worktree change,
 uncertain termination, interruption, or unknown provider effect stops the
 affected command and dependent work. Leave unexpected changes untouched. Do
@@ -83,123 +87,64 @@ issue-ready next action.
 
 Select only non-overlapping, independently deliverable, low-risk, testable
 units small enough for one coherent PR. Author only when the opening policy
-still has the exact repository identity, allowed path scope, positive
-`maximum_workers`, enabled lane mutation, and no protected path. A denial
-stops that unit; an honest read-only result is successful operation.
+still proves the five gates in `policy-and-entry-modes.md`. A denial stops
+that unit; an honest read-only result is successful operation.
 Selection and dispatch for the run never exceed the opening policy's
 `maximum_workers` cap; unrelated existing PRs do not consume that cap.
-Immediately before every Worker dispatch, refresh the durable policy from the
-authoritative default branch and require its exact opening revision. An
-unavailable, unknown, or changed policy stops that dispatch and later source
-mutation.
-Immediately before every Worker dispatch, freshly read native branches and PRs
-for overlap with that Worker's planned assignment slice. An unavailable or
-unknown read, or a current overlap, stops only that dispatch and its dependents,
-unless the same-assignment `shared_ledger_paths` exception below applies.
+Immediately before every Worker dispatch, pass the revision check point and
+read overlap as `worker-contract.md` defines, against the Worker's planned
+paths; an unavailable or unknown read, or a current overlap, denies only that
+dispatch and its dependents while other Workers and read-only sensing
+continue.
 
-`shared_ledger_paths` is an assignment-only exception for the same originally
-approved siblings, and only when the opening policy and repository proof
-establish a conflict-safe additive merge check. Their Worker briefs bind the
-same Worker identity, branch, and disjoint slices: a native branch or PR
-overlap may proceed only when those facts still prove that binding and the same
-ledger path. It does not exempt another path, protected path, authoring scope,
-or a new or unrelated overlap, which stops publication. Every Worker using it
-adds only its attributable entry and retains all base entries; later native
-conflicts are for human handling.
+A candidate unit may be an existing open PR that the Worker adopts. Adopt only
+when: the head branch lives in the target repository (on GitHub,
+`isCrossRepository: false`); current native facts prove the head is neither
+the repository's configured default branch nor a provider-protected branch
+(including applicable rulesets); the native read gives head ref, full head
+OID, base ref, and changed paths; the PR is not a draft and every commit on
+its head beyond the base is authored by a provider-marked bot or app account; and
+current native facts (a failing check, a missing changelog entry, pin-mirror
+drift, a review finding) name a gap the Worker can close inside scope and
+outside protected paths. A failed, unavailable, or unknown eligibility fact
+makes the PR a recommendation, never adopted. The captured head ref must
+belong to that PR alone: if any other open PR uses the same head ref, deny
+the unit regardless of changed paths. Before dispatch, use the host's existing
+dispatch and supervision records to prove no other live Worker can mutate that
+head, including a retained Worker from an earlier closed run. Proven termination
+of a prior Worker permits adoption; historical Worker authorship alone does not
+reserve the PR. Unknown ownership or liveness makes only that candidate a
+recommendation. Do not create a separate ownership registry.
+Adoption consumes one Worker of `maximum_workers`; no two Workers adopt the
+same PR. A Worker push may stop automatic bot maintenance, and some bots or
+manual rebase requests can overwrite Worker edits. Name that maintenance risk
+in the brief and report; adopt only when the gap is worth owner attention
+(a failing repository gate, not a stale version). Author,
+title, and branch prefix prove nothing about the PR's content; the provider's
+account type and draft flag bound only who the gardener may push to. The PR
+number, head ref, head OID, and changed paths are the identity.
 
-Before dispatch, require the portable mutation interface:
+A shared ledger path is the one overlap exception, keyed on
+`git check-attr --source=<full base OID> merge -- <path>` reporting `union`,
+read by the Orchestrator at assignment and carried to the Worker in its brief.
+The `--source` form reads the attribute at the base revision regardless of the
+worktree's checkout; a git without it is an unavailable read that denies the
+exception. The attribute proves git-local union merge only: hosts that merge
+PRs server-side ignore merge drivers, so when two Workers share the path the
+second PR to merge may conflict on the host, and that conflict is owner work
+named in the brief and morning report. The exception covers only additive
+entries: every Worker using it adds only its attributable entry and retains
+all base entries; the Orchestrator never writes a ledger line. The exception
+applies only between Workers selected in the same assignment decision,
+identified by their approved brief identity and branch; any other native
+branch or PR touching that path is ordinary overlap. It does not exempt
+another path, protected path, authoring scope, or a new or unrelated overlap,
+which stops publication. Later native conflicts are for human handling.
 
-1. an isolated Worker worktree at the authoritative base;
-2. repository-native setup when the host supplies it;
-3. supervision before mutation and through Worker completion; and
-4. a Worker-owned branch with at most one unmerged PR.
-
-The host owns how it provisions setup and supervision. Do not add a
-Repo Gardener setup command, startup configuration, receipt, waiting loop,
-recovery path, progress record, registry, schema, or state machine. If the
-host cannot safely provide the interface, do not mutate; finish the read-only
-report and name the unavailable capability.
-
-Wait for any host-provided repository setup to succeed before
-repository-dependent inspection, tests, or mutation. Immediately before the
-first mutation, run ordinary native `git status --porcelain=v1
---untracked-files=all`. A failed read or any staged, unstaged, or untracked
-non-ignored path stops only dependent work, names the affected paths (or the
-assigned slice when status is unreadable), and leaves unexpected material
-untouched without restoring, staging, or committing it.
-
-The Worker brief names the authoritative base, policy revision, Worker identity
-and branch, scope, protected paths, lane grant, assigned slice, and exact
-caller-approved verification command argv list. Include the ledger proof and
-base-diff rule only when that exception applies. Workers do not run the nine
-lanes, change the durable policy, or write tracker records.
-
-## Worker completion and publication
-
-Each Worker owns planning, implementation, simplification, review, repository
-verification, its coherent commit, and its branch/PR. It reports each assigned
-gate as pass, failure, or unavailable. Every unattended Worker invokes
-`checking-pr-readiness` normally on the exact head in its worktree and stops
-after its brief and numbered menu. After a Worker PR exists, the scheduled ownerless run has that Worker
-invoke `checking-merge-readiness` on that PR and stops after its brief and numbered menu.
-The activating utterance is never approval. On a distinct later turn, the
-Orchestrator authorizes that Worker to reply 1 only when the menu offered
-option 1 and the recommendation was approve and proceed for that same exact
-head. The Worker never chooses option 1 on its own. The Orchestrator never
-authorizes Proceed to merge. The checking skill performs its identity reread,
-instantiates its evidence pack as silent pull-request-body input, and
-continues into the publication path. Do not also dispatch an owner publisher.
-
-When a brief names Worker-owned gaps, the Orchestrator sends every named
-Worker-owned gap from that brief to the same Worker. Send those Worker-owned
-gaps even when the same brief also names owner work. After a repair of an
-existing PR, publish the repaired exact head under the existing lease before
-the next helper gather. Then re-run that helper on the current exact head. Stop
-when only owner-needed work remains or a further turn cannot help. For
-ownerless publication, an unavailable checking skill, moved identity, or a
-later-session claim must preserve the authored commit without push or PR
-creation and name the blocking gap.
-Direct assessment of native facts is not a publish path. With an owner, normal
-publication remains subject to the owner's interactive authorization. After
-Orchestrator authorization, keep the exact head/base, assigned-path,
-cleanliness, policy, overlap, provider-read, lease, and one-unmerged-PR gates
-below; the checking skill does not replace them.
-Immediately before every push and every PR opening, refresh the durable policy
-file from the authoritative default branch and require its revision to match
-the opening revision. A mismatch, unavailable or unknown refresh/read stops
-that publication action and preserves the authored work.
-An ownerless first publication push must match the subject and OID the checking
-skill re-read; a repaired-head update must instead match only its exact
-Orchestrator-authorized repaired subject and OID. Never replace or recapture
-that authorized identity. Immediately before an
-ownerless first push, re-resolve the captured target/base ref and full base OID.
-The same target/base reread is required immediately before every repaired-head
-update. Reread `git status --porcelain=v1 --untracked-files=all` immediately
-before every such push; a failed read or any staged, unstaged, or untracked
-non-ignored path stops publication. Immediately before PR-open, re-resolve the
-captured target/base ref and full base OID and reread that porcelain status.
-Before every push and PR opening,
-validate the committed paths against the assignment, identity, scope, protected
-paths, and, where relevant, the ledger base diff, then reconcile the current
-local head, exact target/base, and native branch and PR overlap. Permit a ledger
-overlap only under the same-assignment binding above.
-
-After those gates pass, provider state is exhaustive: an absent provider ref
-may be atomically created at the exact authorized head only under an absent-ref
-lease, such as Git's `--force-with-lease=<ref>:` form or a proven equivalent;
-a provider ref already equal to that head needs no push; and only an
-Orchestrator-authorized repair of the same Worker's PR may atomically update its
-exact previously observed hosted head to the exact authorized repaired head,
-under a lease expecting that old OID. Refuse unavailable or unknown provider
-state, any other provider OID, or a lease failure. After a create or update,
-read back and require the exact authorized provider OID. Never advance
-competing movement implicitly.
-
-Any mismatch, base movement, unauthorized path, native overlap, provider
-conflict, unavailable fact, or unknown provider effect stops publication and
-preserves the authored commit. Never recapture, substitute, or redirect an
-assessment to a later head. Never merge; no Worker may write a release,
-deployment, protected path, or unapproved follow-up issue.
+Dispatch requires the portable interface and brief in `worker-contract.md`;
+that file owns everything the Worker does from setup through publication. The
+Orchestrator reads each checking-skill brief and, on a distinct later turn,
+authorizes reply 1 only under the boundary sentences in `SKILL.md`.
 
 ## Supervision and review
 
@@ -220,10 +165,6 @@ facts stop only the affected action. Repo Gardener never merges.
 
 ## Close
 
-Immediately before closing, detect whether the durable-file revision changed.
-When the tracker is still authorized, write and exactly read back one
-`run-closed` record with every lane, depth decision, measurement result or gap,
-Worker PR facts or no-Worker reason, owner attention, recommendations, policy
-revision, and blocker scope. Otherwise report the interrupted close. Keep the
-Orchestrator workspace and any pending Worker worktree available for owner
-inspection.
+Pass the revision check point, then close exactly as `SKILL.md` directs: one
+`run-closed` record written and exactly read back when the tracker is still
+authorized, otherwise the interrupted close.

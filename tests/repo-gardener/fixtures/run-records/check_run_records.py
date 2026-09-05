@@ -8,7 +8,6 @@ import importlib.util
 import json
 import subprocess
 import sys
-import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -16,7 +15,6 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[4]
 FIXTURES = Path(__file__).resolve().parent
 CONTRACT_PATH = ROOT / "skills/repo-gardener/scripts/release_a_contract.py"
-POLICY_PATH = ROOT / "skills/repo-gardener/assets/policy-template.yaml"
 SNAPSHOT_HELPER = FIXTURES.parent / "tracker_snapshots.py"
 sys.dont_write_bytecode = True
 
@@ -63,16 +61,16 @@ def prepare(
     if variant is not None:
         payload["variant"] = variant
     return invoke(
-        "effect-v1",
+        "effect",
         {
-            "schema": "repo-gardener-effect-input/v2",
+            "schema": "repo-gardener-effect-input",
             "phase": "prepare",
             "pre_read": snapshot,
             "operation": {
                 "kind": kind,
                 "run_id": run_id,
                 "payload": payload,
-                "projection": (
+                "report": (
                     f"\n# Synthetic morning report\n\nLatest record: `{kind}`."
                     f" Variant: `{variant or 'default'}`.\n"
                 ),
@@ -98,7 +96,7 @@ def run_input(
     post_read: Any,
 ) -> dict[str, Any]:
     return {
-        "schema": "repo-gardener-run-records-input/v1",
+        "schema": "repo-gardener-run-records-input",
         "run_id": run_id,
         "closed": closed,
         "post_read": post_read,
@@ -107,20 +105,11 @@ def run_input(
 
 def expect_error(payload: dict[str, Any], phrase: str) -> None:
     try:
-        invoke("run-records-v1", payload)
+        invoke("run-records", payload)
     except CONTRACT.ContractError as error:
         CONTRACT.require(phrase in str(error), f"expected {phrase!r}, got {error!s}")
         return
     raise CONTRACT.ContractError(f"expected rejection containing {phrase!r}")
-
-
-def expect_lanes_error(path: Path, phrase: str) -> None:
-    try:
-        invoke("lanes-v1", {}, extra=["--policy", str(path)])
-    except CONTRACT.ContractError as error:
-        CONTRACT.require(phrase in str(error), f"expected {phrase!r}, got {error!s}")
-        return
-    raise CONTRACT.ContractError(f"expected lanes-v1 rejection containing {phrase!r}")
 
 
 def main() -> int:
@@ -139,38 +128,29 @@ def main() -> int:
             set(record) == set(CONTRACT.RUN_RECORD_FIELDS),
             f"production comment fields drifted: {sorted(record)}",
         )
-        CONTRACT.require(
-            "orchestrator:current-portfolio:v1" not in prepared["body"],
-            "production body still embedded Current Portfolio JSON",
-        )
 
     expected = {
-        "schema": "repo-gardener-run-records-result/v1",
+        "schema": "repo-gardener-run-records-result",
         "repository_id": opened["repository_id"],
         "report_issue_id": opened["report_issue_id"],
         "writer_id": opened["writer_id"],
         "run_id": run_id,
-        "opened_operation_id": opened["operation_id"],
-        "closed_operation_id": closed["operation_id"],
     }
-    actual = invoke("run-records-v1", run_input(run_id, closed, exact_post))
+    actual = invoke("run-records", run_input(run_id, closed, exact_post))
     CONTRACT.require(actual == expected, f"exact closure result mismatch: {actual!r}")
     CONTRACT.require("register_closed_consistently" not in actual, "closure still returned a register-quality claim")
 
     expect_error(run_input(run_id, closed, after_open), "exactly two")
     expect_error(run_input(run_id, closed, base), "exactly two")
 
-    reversed_first = prepare(base, "run-closed", run_id)
-    after_reversed_first = apply_prepared(base, reversed_first)
-    reversed_second = prepare(after_reversed_first, "run-opened", run_id)
-    reversed_post = apply_prepared(after_reversed_first, reversed_second)
-    expect_error(run_input(run_id, reversed_first, reversed_post), "run-opened")
+    reversed_post = copy.deepcopy(exact_post)
+    reversed_post["comment_pages"][0].reverse()
+    expect_error(run_input(run_id, closed, reversed_post), "run-opened")
 
-    other_closed = prepare(after_open, "run-closed", "run:synthetic:other")
-    expect_error(
-        run_input(run_id, other_closed, apply_prepared(after_open, other_closed)),
-        "closing material run_id mismatch",
-    )
+    other_closed = copy.deepcopy(closed)
+    other_closed["operation"]["run_id"] = "run:synthetic:other"
+    other_closed["comment"] = other_closed["comment"].replace(run_id, "run:synthetic:other")
+    expect_error(run_input(run_id, other_closed, exact_post), "closing material run_id mismatch")
 
     alternate_base = SNAPSHOTS.empty_tracker(repository_id="R_SYNTHETIC_REPOSITORY_002")
     alternate_opened = prepare(alternate_base, "run-opened", run_id)
@@ -183,11 +163,9 @@ def main() -> int:
             "repository_id": alternate_opened["repository_id"],
             "report_issue_id": alternate_opened["report_issue_id"],
             "writer_id": alternate_opened["writer_id"],
-            "opened_operation_id": alternate_opened["operation_id"],
-            "closed_operation_id": alternate_closed["operation_id"],
         }
     )
-    alternate_actual = invoke("run-records-v1", run_input(run_id, alternate_closed, alternate_post))
+    alternate_actual = invoke("run-records", run_input(run_id, alternate_closed, alternate_post))
     CONTRACT.require(alternate_actual == alternate_expected, "snapshot identity was not bound durably")
     expect_error(run_input(run_id, closed, alternate_post), "post-read repository_id mismatch")
 
@@ -195,41 +173,18 @@ def main() -> int:
     after_different_open = apply_prepared(base, different_opened)
     different_closed = prepare(after_different_open, "run-closed", run_id)
     different_post = apply_prepared(after_different_open, different_closed)
-    different_expected = dict(expected)
-    different_expected.update(
-        {
-            "opened_operation_id": different_opened["operation_id"],
-            "closed_operation_id": different_closed["operation_id"],
-        }
-    )
-    different_actual = invoke("run-records-v1", run_input(run_id, different_closed, different_post))
-    CONTRACT.require(different_actual == different_expected, "durable opening variant was not accepted")
-    expect_error(run_input(run_id, closed, different_post), "run-closed operation_id mismatch")
-
-    stale_closed = prepare(base, "run-closed", run_id)
-    expect_error(run_input(run_id, stale_closed, exact_post), "run-closed operation_id mismatch")
+    different_actual = invoke("run-records", run_input(run_id, different_closed, different_post))
+    CONTRACT.require(different_actual == expected, "durable opening variant was not accepted")
 
     changed_body = copy.deepcopy(after_open)
-    changed_body["issue"]["body"] += "\nOwner-only projection note.\n"
+    changed_body["issue"]["body"] += "\nOwner-only tracker description.\n"
     changed_body_closed = prepare(changed_body, "run-closed", run_id)
-    CONTRACT.require(
-        changed_body_closed["expected_pre_body_fingerprint"]
-        != closed["expected_pre_body_fingerprint"],
-        "recovery fixture did not change the opening-state body fingerprint",
-    )
-    changed_body_actual = invoke(
-        "run-records-v1",
-        run_input(run_id, changed_body_closed, apply_prepared(changed_body, changed_body_closed)),
-    )
-    changed_body_expected = dict(expected)
-    changed_body_expected["closed_operation_id"] = changed_body_closed["operation_id"]
-    CONTRACT.require(
-        changed_body_actual == changed_body_expected,
-        "recovery closure incorrectly depended on the ephemeral opening body",
-    )
-
-    duplicate = prepare(exact_post, "run-closed", run_id)
-    expect_error(run_input(run_id, closed, apply_prepared(exact_post, duplicate)), "exactly two")
+    CONTRACT.require(changed_body_closed == closed, "static issue body altered comment preparation")
+    CONTRACT.require(exact_post["issue"]["body"] == base["issue"]["body"], "run mutated static issue body")
+    expect_error(run_input(run_id, closed, apply_prepared(exact_post, closed)), "exactly two")
+    altered_report = copy.deepcopy(exact_post)
+    altered_report["comment_pages"][0][-1]["body"] += "Changed morning report."
+    expect_error(run_input(run_id, closed, altered_report), "comment material mismatch")
 
     reformatted = copy.deepcopy(exact_post)
     for page in reformatted["comment_pages"]:
@@ -269,12 +224,12 @@ def main() -> int:
     expect_error(run_input(run_id, closed, incomplete_pages), "pagination is incomplete")
 
     interrupted = copy.deepcopy(after_open)
-    interrupted["issue"]["body"] = closed["body"]
+    interrupted["issue"]["body"] += closed["operation"]["report"]
     expect_error(run_input(run_id, closed, interrupted), "exactly two")
     expect_error(run_input(run_id, closed, None), "must be an object")
 
     unrelated_after = SNAPSHOTS.add_ordinary_comment(exact_post)
-    actual = invoke("run-records-v1", run_input(run_id, closed, unrelated_after))
+    actual = invoke("run-records", run_input(run_id, closed, unrelated_after))
     CONTRACT.require(actual == expected, "unrelated comments changed mechanical closure")
 
     for forbidden in (
@@ -291,85 +246,13 @@ def main() -> int:
         poisoned[forbidden] = True
         expect_error(poisoned, "unexpected")
 
-    lanes = invoke("lanes-v1", {}, extra=["--policy", str(POLICY_PATH)])
+    CONTRACT.require(CONTRACT.RUN_RECORD_BEGIN == "<!-- orchestrator:run-record:begin -->", "run-record begin marker drifted")
+    CONTRACT.require(CONTRACT.RUN_RECORD_END == "<!-- orchestrator:run-record:end -->", "run-record end marker drifted")
     CONTRACT.require(
-        lanes == {"schema": "repo-gardener-lanes-result/v1", "lanes": list(CONTRACT.RELEASE_A_LANES)},
-        f"nine-lane inventory drifted: {lanes!r}",
+        CONTRACT.RESERVED_REPORT_SEQUENCES == (CONTRACT.RUN_RECORD_BEGIN, CONTRACT.RUN_RECORD_END),
+        "reserved report sequences must contain only the current run-record markers",
     )
-    flow_policy = POLICY_PATH.read_text(encoding="utf-8").replace(
-        "  dependency-and-vulnerability:\n    mutation: false\n    audit_commands: []\n",
-        "  dependency-and-vulnerability: {mutation: false, audit_commands: [[npm, run, audit]]}\n",
-    )
-    with tempfile.TemporaryDirectory() as directory:
-        flow_path = Path(directory) / "policy.yaml"
-        flow_path.write_text(flow_policy, encoding="utf-8")
-        flow_lanes = invoke("lanes-v1", {}, extra=["--policy", str(flow_path)])
-        CONTRACT.require(
-            flow_lanes == {"schema": "repo-gardener-lanes-result/v1", "lanes": list(CONTRACT.RELEASE_A_LANES)},
-            f"flow-style lanes inventory drifted: {flow_lanes!r}",
-        )
-
-        invalid_policy_cases = {
-            "missing.yaml": (
-                POLICY_PATH.read_text(encoding="utf-8").replace(
-                    "  dependency-and-vulnerability:\n    mutation: false\n    audit_commands: []\n",
-                    "",
-                ),
-                "missing key: dependency-and-vulnerability",
-            ),
-            "extra.yaml": (
-                POLICY_PATH.read_text(encoding="utf-8").replace(
-                    "  issue-backlog-and-customer-feedback-triage: {}\n",
-                    "  issue-backlog-and-customer-feedback-triage: {}\n  extra-lane: {}\n",
-                ),
-                "unexpected key: extra-lane",
-            ),
-            "duplicate.yaml": (
-                POLICY_PATH.read_text(encoding="utf-8").replace(
-                    "  issue-implementation:\n",
-                    "  dependency-and-vulnerability: {mutation: false, audit_commands: []}\n  issue-implementation:\n",
-                ),
-                "duplicate key 'dependency-and-vulnerability'",
-            ),
-            "reordered.yaml": (
-                POLICY_PATH.read_text(encoding="utf-8").replace(
-                    "  dependency-and-vulnerability:\n    mutation: false\n    audit_commands: []\n  # Ready, unblocked implementation issues in the issue source.\n  issue-implementation:\n    mutation: false\n",
-                    "  issue-implementation:\n    mutation: false\n  dependency-and-vulnerability:\n    mutation: false\n    audit_commands: []\n",
-                ),
-                "lanes must name every contracted lane in order",
-            ),
-        }
-        for filename, (text, phrase) in invalid_policy_cases.items():
-            invalid_path = Path(directory) / filename
-            invalid_path.write_text(text, encoding="utf-8")
-            expect_lanes_error(invalid_path, phrase)
-        four_space_lines = []
-        in_lanes = False
-        for line in POLICY_PATH.read_text(encoding="utf-8").splitlines():
-            if line.startswith("lanes:"):
-                in_lanes = True
-                four_space_lines.append(line)
-                continue
-            if in_lanes and line and not line[0].isspace():
-                in_lanes = False
-            four_space_lines.append("  " + line if in_lanes and line else line)
-        four_space_path = Path(directory) / "four-space-policy.yaml"
-        four_space_path.write_text("\n".join(four_space_lines) + "\n", encoding="utf-8")
-        four_space_lanes = invoke("lanes-v1", {}, extra=["--policy", str(four_space_path)])
-        CONTRACT.require(
-            four_space_lanes == {"schema": "repo-gardener-lanes-result/v1", "lanes": list(CONTRACT.RELEASE_A_LANES)},
-            f"four-space lanes inventory drifted: {four_space_lanes!r}",
-        )
-
-    removed = subprocess.run(
-        [sys.executable, str(CONTRACT_PATH), "normalize-github-register", "--input", "-"],
-        input="{}",
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    CONTRACT.require(removed.returncode != 0 and "invalid choice" in removed.stderr, "normalize-github-register remains public")
-    for obsolete in ("completion-v1", "gates-v1", "capacity-v1", "reconciliation-v2"):
+    for obsolete in ("normalize-github-register", "completion-v1", "gates-v1", "capacity-v1", "reconciliation-v2", "effect-v1", "run-records-v1", "lanes-v1", "lanes", "validate-body"):
         completed = subprocess.run(
             [sys.executable, str(CONTRACT_PATH), obsolete, "--input", "-"],
             input="{}",
@@ -451,20 +334,6 @@ def main() -> int:
         oversized.returncode == 1 and "standard input exceeds" in oversized.stderr,
         "oversized provider input was not rejected before JSON parsing",
     )
-    with tempfile.TemporaryDirectory(prefix="repo-gardener-input-limit-") as temporary:
-        oversized_body = Path(temporary) / "oversized-body.md"
-        oversized_body.write_text("x" * (CONTRACT.BODY_LIMIT + 1), encoding="utf-8")
-        body_file = subprocess.run(
-            [sys.executable, str(CONTRACT_PATH), "validate-body", "--body", str(oversized_body)],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        CONTRACT.require(
-            body_file.returncode == 1 and "managed body exceeds" in body_file.stderr,
-            "oversized managed body was not rejected before decoding",
-        )
-
     print("PASS: exact two-comment run identity without hash fields")
     print("PASS: denied close cannot mint a closed run")
     print("PASS: mention-free identity, pagination, count, duplicate, reversed, and interrupted records fail closed")

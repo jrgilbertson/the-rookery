@@ -143,8 +143,9 @@ stop direction and explain why. Do not infer success from a missing or unknown
 provider fact. The host handles waiting, recovery, and process progress; Repo
 Gardener records only the current facts needed to report truthfully.
 
-After PR creation, report current native check and review facts. If required
-checks or review are pending when the run closes, close partial and retain the
+After PR creation, report current native PR, check, and review facts. If the
+PR is still open and required checks or review are pending when the run
+closes, close partial and retain the
 Worker; never call it complete. Forward a named Worker-owned gap only when
 local head, hosted PR head, and Worker authority still match the assessed
 exact head. Safety, authority, protected-path, exact-head, or unknown-provider

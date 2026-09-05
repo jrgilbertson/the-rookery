@@ -44,6 +44,11 @@ never selects Proceed to merge.
 > 10. The first repair changes a forbidden path relative to the original
 >     scope baseline. The second repair changes only an allowed path relative
 >     to `a1`, leaving the forbidden change in its cumulative diff.
+> 11. The Worker's publication was exactly verified. Before the morning
+>     report, an owner closes the PR without merging, or a bot merges it.
+>     An old check still shows pending. Compare an open PR with required
+>     checks or review pending and an open PR with nothing pending. All other
+>     Workers are finished and all other closure facts permit completion.
 
 ## Expected behavior
 
@@ -89,3 +94,11 @@ never selects Proceed to merge.
 - [ ] Scenario 10 stops on the cumulative forbidden path. The original base
       or adoption-dispatch OID remains the scope baseline across every repair;
       the advancing lease expectation never replaces it.
+
+- [ ] Scenario 11 reports `published` with the exact native closed or merged
+      state and the observed check facts, without claiming the gardener
+      performed that action or inventing another Worker state. An old pending
+      check on that non-open PR does not by itself make the run partial.
+- [ ] The open PR awaiting checks or review remains `pending` and makes the
+      run `partial`; the open settled PR is `published`. All variants retain
+      the no-merge boundary and use fresh native facts.

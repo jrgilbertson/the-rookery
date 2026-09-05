@@ -24,7 +24,8 @@ looked" surface. GitHub Releases mirror its entries.
 - `repo-gardener` writes append-only opening and closing comments; the closing
   comment contains the morning report and the issue body remains setup text.
   Tracker writes no longer coordinate a body update with a comment or carry
-  operation hashes. Before upgrading a test install, stop its scheduler,
+  operation hashes. Run IDs use a fresh UUID instead of a minute-resolution
+  timestamp. Before upgrading a test install, stop its scheduler,
   confirm old Orchestrators and Workers have terminated, and use a fresh
   tracker if its records use the retired format.
 - `repo-gardener` accepts lane mappings in any YAML order and uses PyYAML's

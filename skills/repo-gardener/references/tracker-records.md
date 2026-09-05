@@ -82,8 +82,9 @@ state, never an empty tracker.
 ## Bounds and content
 
 Machine identities are bounded ASCII, not prose, titles, URLs, or elapsed
-time. The run ID is `run:<repository slug>:<UTC timestamp YYYYMMDDTHHMM>:<tracker
-number>`. Record JSON stays within 16 KiB and the whole comment within
+time. Generate a fresh native UUIDv4 once per run as `run:<UUIDv4>` and retain
+it unchanged throughout the run and uncertain-write recovery. Record JSON
+stays within 16 KiB and the whole comment within
 48 KiB; the script enforces both. Keep raw customer identities, event
 payloads, free text, secrets, transcripts, recordings, and exported datasets
 out of tracker comments. Before either comment is prepared, strip ANSI

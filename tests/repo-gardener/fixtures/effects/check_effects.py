@@ -182,7 +182,7 @@ def main() -> int:
     base = SNAPSHOTS.empty_tracker()
     operation = {
         "kind": "run-opened",
-        "run_id": "run:synthetic:002",
+        "run_id": "run:5b43f68f-7892-4872-a72a-4865412a25a7",
         "payload": {"disposition": "synthetic", "url": "https://example.test/?x=$(inert)"},
         "report": (
             "\n# Synthetic morning projection\n\n"
@@ -223,6 +223,18 @@ def main() -> int:
     CONTRACT.require(observed_close["terminal_outcome"] == "observed", "closing comment was not verified")
     lost_response = cli(effect_input("verify", prepared=closed, pre_read=after_close, post_read=after_close, write_attempt="none"))
     CONTRACT.require(lost_response["terminal_outcome"] == "already satisfied", "lost response demanded another comment")
+    # A second run on the same tracker needs no clock tick, but cannot reuse a closed ID.
+    expect_error(effect_input("prepare", pre_read=after_close, operation=operation), "conflict")
+    next_snapshot = after_close
+    for next_operation in (operation, closing_operation):
+        next_operation = dict(next_operation, run_id="run:ab1898d2-34e1-49a8-b068-c5858a32a2d9")
+        next_prepared = cli(effect_input("prepare", pre_read=next_snapshot, operation=next_operation))
+        next_post_read = target_snapshot(next_snapshot, next_prepared)
+        next_result = cli(effect_input("verify", prepared=next_prepared, pre_read=next_snapshot, post_read=next_post_read, write_attempt="possible"))
+        CONTRACT.require(next_result["terminal_outcome"] == "observed", "sequential run did not verify")
+        next_snapshot = next_post_read
+    for run_id, closing in ((operation["run_id"], closed), (next_operation["run_id"], next_prepared)):
+        CONTRACT.verify_run_records(run_id, closing, next_snapshot)
     for conflicting in (dict(operation, report="Changed opening"), dict(closing_operation, report="Changed closing")):
         expect_error(effect_input("prepare", pre_read=after_close, operation=conflicting), "conflict")
     for over_limit in (dict(operation, report="x" * CONTRACT.BODY_LIMIT), dict(operation, payload={"text": "x" * CONTRACT.RECEIPT_LIMIT})):

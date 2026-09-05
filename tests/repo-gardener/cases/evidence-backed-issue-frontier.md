@@ -41,7 +41,7 @@ initial and refreshed Ready Frontier and the next action for exclusions.
    records; an unread identifier is not an exclusion.
 2. Admit D, F, G, and H only after all trusted-principal, safe-brief, blocker,
    native-conflict, and policy gates pass. No numeric estimate threshold,
-   readiness requirement, or label-event history is necessary; H's trusted
+   readiness-label requirement, or label-event history is necessary; H's trusted
    native endorsement is sufficient ownership evidence.
 3. Exclude A for actual risk and missing verification, B for its open blocker,
    C for unproven ownership despite its labels, E for its unresolved

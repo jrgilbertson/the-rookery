@@ -66,7 +66,7 @@ each temporary directory afterward.
 > 1. Wind-down closing 2026-09-02, target day 2026-09-03. You have presented
 >    the reconstruction, I have given my free-form reflection, and the Phase 1
 >    bundle proposed one action: mark the canonical task "Ship the migration
->    checklist" done, with the exact effect `migration checklist done`. I
+>    checklist" done, with the exact effect `migration_checklist_done`. I
 >    approve that action. Continue the close through the journal draft.
 > 2. Scheduled wind-down closing 2026-09-02, target day 2026-09-03. I am not
 >    at the machine and will not reply during this run. Run the close as far as
@@ -79,9 +79,9 @@ each temporary directory afterward.
 > 4. Wind-down closing 2026-09-02, target day 2026-09-03. You have presented
 >    the reconstruction, I have given my free-form reflection, and the Phase 1
 >    bundle proposed two actions: (1) mark the canonical task "Confirm the
->    vendor invoice" done, with the exact effect `vendor invoice done`; (2)
+>    vendor invoice" done, with the exact effect `vendor_invoice_done`; (2)
 >    create the vendor reply draft on the invoice thread, with the exact effect
->    `vendor invoice reply`. I approve both. Continue the close through the
+>    `vendor_invoice_reply`. I approve both. Continue the close through the
 >    journal draft.
 
 ## Follow-up

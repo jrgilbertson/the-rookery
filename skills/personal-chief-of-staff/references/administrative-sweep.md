@@ -31,11 +31,11 @@ Read open tasks through the configured canonical task or issue workflow:
 
 | Task finding | Condition | Treatment |
 | --- | --- | --- |
-| Due-date conflict | Due date has passed but earliest-begin (`not_before`) is still future | Propose a resolution instead of an ordinary overdue row. |
-| Overdue | Due before the closing day | Propose a resolution. |
+| Due-date conflict | Due date precedes earliest-begin (`not_before`) | Propose a resolution instead of an ordinary overdue row. |
+| Overdue | Due on or before the closing day | Propose a resolution. |
 | Follow-up due | Follow-up date on or before the closing day | Treat as overdue and propose a resolution. |
 | Upcoming | Due anywhere in the inclusive planning window | Feed the plan; propose an action only when the plan cannot hold it. |
-| At risk | Due after the planning window, but remaining work cannot fit the free calendar capacity from the window's first day through the due date | State that capacity evidence and propose a resolution. |
+| At risk | Due after the planning window, but remaining work cannot fit the free calendar capacity from the later of the window's first day and earliest-begin (`not_before`, when set) through the due date | State that capacity evidence and propose a resolution. |
 
 For each correction, propose one independently approvable action per record.
 Combine overlapping task findings into that row. For an overdue, follow-up-due,

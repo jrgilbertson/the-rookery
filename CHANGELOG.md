@@ -28,14 +28,16 @@ looked" surface. GitHub Releases mirror its entries.
   the journal describes the sources as they now stand. A scheduled run stops
   at the Phase 1 bundle and ends Paused with nothing applied.
 - `personal-chief-of-staff` wind-down and weekly reviews now sweep the task
-  source. An open task that is overdue, past its follow-up date,
+  source. An open task due on or before the closing day, past its follow-up date,
   at risk against the remaining capacity, or holding a due date
   that precedes its own earliest-begin date becomes one approvable row with a
   proposed resolution. Zero rows is a valid result, and an unreachable task
   workflow reports the rows Manual rather than stalling the review. Upcoming
   tasks enter tomorrow's plan or the whole coming week's plan, including its
   first and last days; they need correction rows only when capacity cannot
-  hold them. Capacity checks start on the first planning day.
+  hold them. Capacity checks start on the first planning day or the task's
+  later earliest-begin date. Due-date conflicts qualify even before either date
+  has passed.
 - `personal-chief-of-staff` coaching follow-ups now arrive as a Frontier Round:
   a numbered plain-chat batch of at most five independent questions, each with
   a recommended answer, ordered by how much the answer would change the

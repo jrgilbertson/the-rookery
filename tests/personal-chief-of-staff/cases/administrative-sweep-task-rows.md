@@ -6,7 +6,10 @@ date that precedes its own earliest-begin date, or unreachable within the
 remaining capacity before its deadline, because no step of either mode owned
 those records. Scenario 6 covers a review finding: Weekly must include the
 whole coming week and count capacity from its first day, rather than treating
-its last day as the only planning day.
+its last day as the only planning day. Scenarios 1 and 4 also cover PR #138: an
+open task due on the closing day must not fall between overdue and upcoming.
+Scenarios 1 and 6 also exercise future due-date conflicts and capacity that
+occurs before a task can begin.
 September 4 fixture runs also exposed healthy-task listings in scenarios 2
 and 6, including a task promoted into next week's outcomes despite not qualifying.
 
@@ -71,7 +74,6 @@ temporary directory afterward.
 >    workflow is the configured task role and it is the only task path
 >    available. Present the Phase 1 Administrative Sweep, then continue into
 >    Phase 2 far enough to show tomorrow's plan, and stop.
-
 > 6. Weekly review closing 2026-09-06, planning 2026-09-07 through
 >    2026-09-13. Reconstruct, sweep, and propose next week's outcomes. Evaluate
 >    later deadlines against all free capacity from the start of that week.
@@ -81,14 +83,19 @@ temporary directory afterward.
 
 - [ ] 1 → the pricing summary appears as one overdue row proposing mark done,
       citing the 2026-09-01 client sync note as the evidence for that choice.
-- [ ] 1 → the vendor comparison appears as one overdue row whose proposed
-      resolution is labeled the agent's inference rather than evidence-backed,
-      and it awaits the user's choice instead of being applied or assumed.
+- [ ] 1 → the vendor comparison, due on the closing day, appears as one overdue
+      row whose proposed resolution is labeled the agent's inference rather than
+      evidence-backed, and it awaits the user's choice instead of being applied
+      or assumed.
 - [ ] 1 → the venue contract appears as a row alongside the overdue rows
       because its follow-up date lapsed, with its own proposed resolution.
 - [ ] 1 → the release notes appear as a distinct due-date-conflict row that
       names the passed due date and the still-future earliest-begin date and
-      proposes a corrected due date, separate from the ordinary overdue rows.
+      proposes a new due date or removal of the invalid due date, separate from
+      the ordinary overdue rows.
+- [ ] 1 → the procurement summary appears as a due-date-conflict row even
+      though its due date and earliest-begin date are both future; it names
+      the incompatible dates and proposes an independent resolution.
 - [ ] 1 → the quarterly budget review and the closed expense report appear in
       no row, and the response lists no healthy task anywhere.
 - [ ] 2 → the onboarding checklist appears in tomorrow's plan and gets no
@@ -102,9 +109,9 @@ temporary directory afterward.
       sufficient capacity and is outside tomorrow's planning window.
 - [ ] 3 → the sweep reports zero task rows explicitly and lists no healthy
       task, and it proposes no task action.
-- [ ] 4 → only the overdue renewal paperwork becomes a task action with a
-      proposed resolution. The hiring plan and incident retrospective fit
-      next week's capacity and appear only in planning context; the twelve
+- [ ] 4 → only the renewal paperwork, due on the closing day, becomes a task
+      action with a proposed resolution. The hiring plan and incident retrospective
+      fit next week's capacity and appear only in planning context; the twelve
       later tasks appear in no row.
 - [ ] 4 → next week's proposed outcomes account for the hiring plan and the
       incident retrospective, and the response contains no completion score,
@@ -122,6 +129,9 @@ temporary directory afterward.
 - [ ] 6 → the later retention memo is not an at-risk row: its four remaining
       hours fit the five free hours on Monday, even though no capacity remains
       after Sunday. It is not listed as a healthy task elsewhere in the bundle.
+- [ ] 6 → the compliance packet appears as an at-risk row: its two hours
+      cannot fit the zero capacity from its September 14 earliest-begin date
+      through its September 15 deadline. Earlier free hours do not count.
 - [ ] Every scenario → each proposed row is one independently approvable
       action for one canonical record, no row is hidden inside the journal or
       the review note, and no second task list is created.

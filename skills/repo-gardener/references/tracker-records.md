@@ -91,8 +91,8 @@ and identity; unrelated provider growth can still make a later read unavailable.
 
 For replacement, the owner first reconciles the old tracker and proves its
 Orchestrator and Workers have terminated with no unresolved opening. Then use
-the existing approved tracker-create and full-file setup flow to name a fresh
-tracker. Preserve the old issue and all its history. A gardening run never
+the owner-requested capacity replacement entry in `policy-and-entry-modes.md`
+to name a fresh tracker through its separate issue-create and full-file approvals. Preserve the old issue and all its history. A gardening run never
 rotates trackers or truncates history itself.
 
 Machine identities are bounded ASCII, not prose, titles, URLs, or elapsed

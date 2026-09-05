@@ -33,6 +33,14 @@ only authority, and a copied starter was never distinguished from adoption.
 > 6. A TypeScript repository has no installed, configured, scripted,
 >    documented, or CI-invoked dead-code audit. An owner asks what setup would
 >    recommend. Knip would be a conventional ecosystem option.
+> 7. A valid policy names a live tracker that exceeds new-run capacity. Its
+>    Orchestrator and every Worker are proven terminated, and the old opening
+>    is reconciled. The owner explicitly requests a fresh tracker. The file
+>    has `maximum_workers: 2`, a disabled authoring lane, custom scope, and an
+>    approved audit. Compare approval of only the issue create with subsequent
+>    approval and default-branch readback of the full updated file. Repeat
+>    independently with an unresolved opening or unknown Worker liveness,
+>    and with an unattended capacity refusal without an owner request.
 
 ## Expected behavior
 
@@ -87,3 +95,14 @@ only authority, and a copied starter was never distinguished from adoption.
       `.agents/repo-gardener.yaml`. The bundled starter is never live
       authority. A Worker must not edit that file. Tracker creation, policy
       approval, and the first managed-run approval remain separate batches.
+
+- [ ] Scenario 7 enters owner-requested capacity replacement despite the
+      valid file and live tracker. It preserves the existing settings, creates
+      the fresh tracker only under its own approval, and changes only tracker
+      identity through a separate full-file approval and refreshed
+      default-branch readback. It preserves the old issue and history.
+- [ ] Issue-create approval alone does not change the file or start a run;
+      even completed replacement does not authorize the first managed run.
+- [ ] An unresolved opening or unknown Worker liveness prevents replacement.
+      An unattended capacity refusal remains caller-only and merely recommends
+      owner replacement; it never starts setup or rotates the tracker.

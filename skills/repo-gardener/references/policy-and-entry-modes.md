@@ -58,6 +58,14 @@ Before a managed gardening run without a valid file, run interactive setup
 when an owner is present. Unattended and read-only requests do not start
 setup; follow the managed-run gate below and name the policy gap.
 
+An owner may also explicitly request replacing a capacity-blocked tracker
+outside a gardening run, even when the file is valid and names a live tracker.
+First satisfy the old-run reconciliation and termination conditions in
+`tracker-records.md`. Review the existing full file with only the tracker
+identity changing; do not reset its grants, scope, or audit declarations to
+first-use defaults. Use the same separate tracker-create and file approvals
+below. Capacity refusal alone never starts setup or authorizes replacement.
+
 Setup is one interactive review of the full recommended file. Present identity,
 default branch, scope, protected paths, `maximum_workers`, tracker identity,
 eight lane mutation grants, and optional audit declarations. Show triage as
@@ -92,9 +100,9 @@ refreshed default-branch revision; its repository-resolved implementation may
 change with that revision and must be shown to the owner as part of the
 decision.
 
-If the file does not already name a live tracker, setup creates a new GitHub
-issue from `assets/github-report-issue-template.md` as its own approved
-provider batch, then writes the durable file as a separate approved batch.
+If the file does not already name a live tracker, or the owner explicitly
+requested the capacity replacement above, setup creates a new GitHub issue
+from `assets/github-report-issue-template.md` as its own approved provider batch, then writes the durable file as a separate approved batch.
 Before that write, inspect the displayed repository-relative destination and
 each existing path component without following links; refuse a symlink or
 path escape. Setup is complete only after the approved file is on the

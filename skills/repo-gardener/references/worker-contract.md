@@ -25,9 +25,9 @@ read-only report naming the unavailable capability.
 ## The brief
 
 The brief names the target stable repository identity, authoritative base,
-policy revision, Worker identity and branch, scope, protected paths, lane
-grant, assigned slice, and the exact caller-approved verification command argv
-list. For an adopted PR it also names the PR number, head ref, captured head
+opening policy revision and its `repository.identity` and `maximum_workers`
+values, Worker identity and branch, scope, protected paths, lane grant,
+assigned slice, and the exact caller-approved verification command argv list. For an adopted PR it also names the PR number, head ref, captured head
 OID, base ref and full base OID, the current configured default branch ref,
 native proof that the head is not provider-protected, the named gap(s), and
 the maintenance risk: a Worker push may stop bot updates, while later bot or

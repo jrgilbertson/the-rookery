@@ -7,6 +7,8 @@ remaining capacity before its deadline, because no step of either mode owned
 those records. Scenario 6 covers a review finding: Weekly must include the
 whole coming week and count capacity from its first day, rather than treating
 its last day as the only planning day.
+September 4 fixture runs also exposed healthy-task listings in scenarios 2
+and 6, including a task promoted into next week's outcomes despite not qualifying.
 
 ## Setup
 
@@ -95,8 +97,9 @@ temporary directory afterward.
       calendar evidence: only two working hours remain on 2026-09-03, one is
       needed for onboarding, and 2026-09-04 through 2026-09-07 have no capacity
       for the six-hour narrative before its due date.
-- [ ] 2 → the support macros appear in no row, because free capacity exists
-      before their due date.
+- [ ] 2 → the healthy support macros appear nowhere in the response, including
+      explanations of which tasks did not qualify. Their later deadline has
+      sufficient capacity and is outside tomorrow's planning window.
 - [ ] 3 → the sweep reports zero task rows explicitly and lists no healthy
       task, and it proposes no task action.
 - [ ] 4 → only the overdue renewal paperwork becomes a task action with a

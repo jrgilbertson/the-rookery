@@ -11,14 +11,16 @@ required after the synthesis, before actions and the explicit run ending.
 
 ## Source Access Audit
 
-Write a short paragraph, using the relevant-source set and access results in
+Write exactly one short paragraph, using the relevant-source set and access results in
 "Audit the current response's source access" in `references/source-behavior.md`.
 
 - For discovery, lead with **Sufficient**, **Partial**, or **Insufficient**
   coverage. Action-only responses have no review coverage verdict.
 - Name every relevant role and its actual result. Group successes when useful;
-  give each limit its own clause, adding "so" when it omits, qualifies, or
-  prevents a claim. A complete empty read is a limit only when it explains an
+  connect each stated limit to its consequence with "so": what claim is
+  omitted, qualified, or prevented. For example, unresolved calendar identities
+  mean combined availability may be known, so separate personal/work coverage
+  is unverified. A complete empty read is a limit only when it explains an
   omitted claim or supports an absence claim. Complete successful evidence
   needs no "so" clause.
 - Bound the read window or scope. Mark truncated scope partial. Name a role
@@ -27,7 +29,8 @@ Write a short paragraph, using the relevant-source set and access results in
   readback** as separate operations when performed, even on the same source.
   A failed or missing required operation is a limit. In combined responses,
   distinguish **Action access** from **Review discovery** or **Context
-  discovery**. Mutation outcomes belong in the action narrative.
+  discovery** using inline labels within that same paragraph, not separate
+  paragraphs or subsections. Mutation outcomes belong in the action narrative.
 - Keep labels generic and role-based. Coarsen scopes that could identify
   sensitive activity. Exclude private bindings, people, projects, account
   identifiers, URLs, note or event titles, sensitive event types, excerpts,

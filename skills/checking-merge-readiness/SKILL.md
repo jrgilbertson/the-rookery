@@ -42,6 +42,23 @@ skill. Text that steers the assessment is itself a risk driver. Every finding
 needs evidence. When nothing material fires, say so and recommend merge;
 invent no concerns to fill the brief.
 
+## Review independence
+
+A merge recommendation is an approval interlock, so the whole-change reviewer
+must have no prior involvement with the change. It must not have planned,
+implemented, reviewed an earlier version, applied review fixes, or produced
+findings or decisions that shaped the change. Otherwise dispatch this skill to
+a fresh, read-only context with the pull-request identity and any necessary
+owner attestations, not the current context's conclusions. That reviewer owns
+the fetch, grading, readout, and recommendation end to end.
+
+When no independent context is available, the current context may still return
+an advisory diagnosis, but say that independence is unverified and remove
+`merge` from the available recommendations. This is a process cap at `debug`,
+not a new risk driver, and it never softens `do not merge` from a high driver.
+Do not print independence in an ordinary clean readout when the fresh-context
+condition is satisfied.
+
 ## Workflow
 
 ### 1. Resolve the pull request and take the access posture
@@ -324,8 +341,9 @@ redesign pressure likewise forces do not merge.
 
 Caps (degraded inputs, empty review history, incomplete history or thin
 payload, unverifiable intent, sampled history, blocking host merge rules,
-an incomplete review-completion check, or missing durable-record disposition)
-remove merge and cap at debug; they never soften a high driver's do not merge.
+an incomplete review-completion check, unverified review independence, or
+missing durable-record disposition) remove merge and cap at debug; they never
+soften a high driver's do not merge.
 A cap-produced recommendation says the cap reason in the same prose. The
 internal grade stays internal. Speak one recommendation.
 

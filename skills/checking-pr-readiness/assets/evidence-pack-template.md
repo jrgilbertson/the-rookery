@@ -17,7 +17,9 @@ follow-up — <one-sentence cause>.
 as leftover work. Do not list opening the pull request.
 
 **Coverage close:** gather completed. Every applicable check is verified, not
-applicable, or recorded without a receipt. Incomplete gather cannot recommend approve.
+applicable, or recorded without a receipt. Incomplete gather cannot recommend approve. Solution simplicity is verified only by
+naming its live fresh dispatch and unchanged subject; never invent a receipt
+for it.
 
 **Intent:** <durable source and one-sentence outcome>. When the branch has no
 linked issue or ticket, brief, or durable repository plan: comparison

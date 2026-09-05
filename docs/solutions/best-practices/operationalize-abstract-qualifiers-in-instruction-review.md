@@ -1,7 +1,7 @@
 ---
 module: skill-instruction-review
 date: 2026-07-16
-last_updated: 2026-08-02
+last_updated: 2026-09-01
 problem_type: best_practice
 component: documentation
 severity: medium
@@ -10,14 +10,17 @@ applies_when:
   - "Instructions lean on abstract qualifiers such as \"thorough\", \"clean\", \"punchier\", or \"borderline\""
   - "Running a delete-test pass on skill or prompt wording during review"
   - "Defining a positive skill activation boundary that must exclude smaller tasks sharing words such as \"deep\" or \"source-backed\""
+  - "A checkpoint skill must stop owning an unchanged subject after a verified clean result"
 symptoms:
   - "A qualifier passes the delete test (removing it changes behavior) yet remains undefined, so each model interprets it differently"
   - "A gate probe caught the word \"borderline\" undefined in the authoring workflow's then-current step 8, despite passing the standard delete test"
   - "A fresh trigger judge activates a large research workflow for a targeted official-documentation lookup"
+  - "A subjectless request loads a review skill before its body routes the work back to planning"
 root_cause: inadequate_documentation
 resolution_type: documentation_update
 related_components:
   - tooling
+  - testing_framework
 tags:
   - instruction-prose
   - skill-authoring
@@ -52,9 +55,9 @@ The same defect can make a positive skill description over-trigger. A skill
 description is an activation API, not a summary of every desirable quality the
 skill can produce. Words such as "deep" and "source-backed" also describe
 smaller tasks, so they do not distinguish a full multi-perspective research
-briefing from one authoritative lookup. A Storm Research review caught exactly
-that boundary failure: a request to find an API rate limit in official
-documentation and cite the page still activated the five-lens workflow.
+briefing from one authoritative lookup. The listing-level trigger judge still
+said that a request to find an API rate limit in official documentation and
+cite the page would activate Storm Research.
 The near-miss regression contract for that query lives in
 `tests/storm-research/triggers.md` (API rate-limit near miss). The run log
 records the failed first correction and the later 17/17 result
@@ -101,6 +104,34 @@ deliverable is...` and names the qualifying research artifacts before it
 describes evidence comparison or decision support
 (`skills/storm-research/SKILL.md:3`).
 
+Some skills are selected by workflow state and subject, not only by requested
+deliverable. Test those descriptions as a three-sided routing contract:
+
+1. **Entry.** Name either the explicit assessment request or the narrow
+   workflow transition that makes the skill relevant. `checking-simplicity`
+   accepts a named area, question, technical choice, plan, architecture, or
+   current implementation for an explicit safe-simplification assessment. Its
+   automatic branch requires a decision that is about to carry durable
+   machinery ungrounded in the stated need into implementation
+   (`skills/checking-simplicity/SKILL.md:3`).
+2. **Exclusion.** Add directly confusable prompts that omit both an assessable
+   subject and an eligible transition, or belong to adjacent workflows. Broad
+   words such as “simplify” do not turn prescribed implementation, settled-code
+   cleanup, or general brainstorming into this assessment
+   (`tests/checking-simplicity/triggers.md`).
+3. **Exit.** Name the successful state that moves ownership onward. An unchanged
+   subject with a clean result and no owner question belongs to the
+   next planner or executor (`skills/checking-simplicity/SKILL.md:3`).
+
+Freeze the prior description, run the prior and revised metadata in separate
+fresh contexts, and keep the full positive and near-miss matrix on every run
+(`tests/README.md:83-100`). Then install the exact candidate beside its adjacent
+skills in a disposable project. Inspect the native trace for the first
+`SKILL.md` loaded. If the wrong skill loads and its body later routes away, the
+activation still failed; the body repaired a metadata error after paying its
+cost (session history). Keep this native evidence separate from the trigger
+suite, which remains a listing proxy (`tests/README.md:101-116`).
+
 ## Why This Matters
 
 An undefined qualifier costs tokens and changes behavior, but each model may
@@ -118,7 +149,15 @@ into a slower, costlier workflow and take work away from a better-matched tool.
 A deliverable is categorical enough to test: the request asks for the
 qualifying artifact or it does not. The resulting trigger-suite pass remains a
 listing proxy, not proof that every native harness will activate correctly
-(`tests/README.md:82-86`).
+(`tests/README.md:113-116`).
+
+A workflow-state skill needs one more boundary: completion. Without an explicit
+exit, a clean review can select itself again and loop instead of handing the
+unchanged subject forward. In the simplicity-checkpoint baseline, adding one
+subjectless reuse near miss and one post-clean-result continuation near miss
+exposed two failures; the revised description passed all 22 declared trigger cases
+(`tests/checking-simplicity/log.md:51-52`). The matched suite proves only those
+queries. Native load-path evidence is still required.
 
 ## When to Apply
 
@@ -128,6 +167,8 @@ listing proxy, not proof that every native harness will activate correctly
 - Gate-probing a revised skill, where the check applies to the skill's own text, not just the skills it reviews (see the borderline example below, caught exactly this way).
 - Writing a positive skill description for an expensive workflow whose methods or qualities overlap with routine requests.
 - A near miss shares the same sources or subject matter but asks for a materially smaller deliverable.
+- A review or checkpoint has a clean terminal state after which another
+  workflow should own the unchanged subject.
 
 ## Examples
 
@@ -147,7 +188,8 @@ adoption pass").
 
 Same day, a gate probe applied this lens to the adopting skill's then-current step 8 and caught "borderline" undefined. A 50/50 trigger judgment could pass by luck, with nothing forcing a re-sample.
 
-**Before.** The then-current step 8 draft told the reviewer to re-judge "on a miss or a borderline call" without defining borderline (an in-session draft state; the definition and the surrounding protocol shipped together in one commit, so git history holds only the After text), and accepted free-form activation judgments.
+**Before.** The retained run summary says the probe caught "borderline"
+undefined. The exact prior draft was not preserved.
 
 **After.** The listing-judgment protocol now lives in
 `skills/creating-portable-skills/assets/trigger-queries-template.md`; it
@@ -176,11 +218,35 @@ This is the checkable-criterion fix shape applied to activation. It does not
 mean every skill needs the same words; it means the positive description should
 state the observable artifact that makes its workflow necessary.
 
+### The subject-bound entry and clean-exit fix
+
+**Before.** The simplicity skill description named reuse as a positive cue and
+later said that a current draft, plan, or approach was required. A generic
+planning request with no assessable subject could still load the checker. The
+description also lacked an explicit route for an unchanged plan that had
+already passed the assessment.
+
+**After.** The description accepts an explicit assessment of a named area,
+question, plan, technical choice, architecture, or current implementation with
+inspectable evidence; formal requirements and a separate artifact are optional.
+It retains one automatic backstop for durable machinery ungrounded in the
+stated need, keeps ordinary planning and brainstorming with their adjacent
+owners, and routes an unchanged clean result onward
+(`skills/checking-simplicity/SKILL.md:3`). The durable Trigger Contract tests
+both the broader entry and the adjacent-owner exclusions
+(`tests/checking-simplicity/triggers.md`).
+
+The frozen comparison moved from 20/22 to 22/22
+(`tests/checking-simplicity/log.md:51-52`). Native smoke checks then verify the
+stronger claim: the intended adjacent owner, rather than the checker, is the
+first skill whose instructions load. A later correction cannot turn an initial
+wrong load into a passing activation trace.
+
 ## Related
 
 - `docs/solutions/best-practices/cross-harness-dogfood-testing.md` documents the
-  fresh-context probes and prior-versus-revised comparisons that caught both
-  examples above.
+  separate fresh-context and exact loaded-copy checks needed for trustworthy
+  cross-harness skill evidence.
 - `docs/solutions/best-practices/independent-fresh-context-review-for-skills.md`
   explains why semantic trigger changes are judged outside the authoring
   context and why their evidence claims remain bounded.

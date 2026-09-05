@@ -160,13 +160,18 @@ literally, and a credential written into an approved argv is the owner's
 full-file approval decision, which the review above asks the owner to refuse.
 Refuse the
 command locally when the agent cannot build that environment, cannot
-terminate the process group, or the host still grants the child
+terminate the complete audit process tree through existing host controls
+(including descendants that change process group or session), or the host
+still grants the child
 external-write authority by another route it can observe. The host's existing network and
 filesystem controls remain in force; the declaration neither broadens them
 nor proves read-only behavior, and this is not an OS sandbox. Never join tokens into a shell command, substitute another
 invocation, retry automatically, or install anything. After every launch,
-confirm the process group is stopped, then recheck the revision check point,
-exact target revision, and clean worktree before another declaration starts.
+confirm the complete audit process tree is stopped; the original process
+or group exiting alone is insufficient. Unknown descendant termination stops
+dependent work as `reconciliation.md` directs. Only then recheck the revision
+check point, exact target revision, and clean worktree before another
+declaration starts. Do not build a new containment mechanism for the run.
 
 ## Authoring and hardcoded denies
 

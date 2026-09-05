@@ -132,24 +132,27 @@ that authorized identity. A mismatch, unavailable or unknown read, base
 movement, unauthorized path, or native overlap stops that action and
 preserves the authored work.
 
-After those gates pass, provider state is exhaustive:
+Use one publication rule for new and adopted PRs. Keep the original scope
+baseline fixed across repairs: the authoritative base OID for a new PR, or
+the hosted OID captured at dispatch for adoption. Separately, the expected
+remote OID starts as absent for a new branch or as that captured hosted OID
+for adoption. Before publication, require the current provider ref to match
+that expectation. Any competing movement, including a rewind or unexpected
+absence, stops publication without recapturing or retrying, even if the ref
+now equals the desired head.
 
-- an absent provider ref may be atomically created at the exact authorized
-  head only under an absent-ref lease (`--force-with-lease=<ref>:` or a
-  proven equivalent), and only for a new PR; for an adopted PR an absent
-  hosted head ref is a moved head that stops the unit and is never created;
-- a provider ref already equal to that head needs no push;
-- only an Orchestrator-authorized update of the same Worker's PR, including
-  the first push to an adopted PR, may atomically update its exact previously
-  observed hosted head to the exact authorized head under a lease expecting
-  that old OID (for an adopted PR, the OID captured at dispatch). A moved
-  hosted head, for example a bot rebase, fails the lease, stops that
-  publication, preserves the local commit, and is named; never recapture and
-  retry.
+If the expected remote OID already equals the exact authorized Worker head,
+no push is needed and the expectation stays unchanged. Otherwise push only
+that authorized head under an explicit atomic lease
+(`--force-with-lease=<ref>:<expected-OID>`, with an empty expectation for the
+initial new-branch create, or a proven equivalent). Advance the expectation
+only after this Worker's authorized push succeeds and an exact provider
+readback confirms that head. A failed push or failed, unavailable, ambiguous,
+or mismatched readback stops dependent publication without advancing the
+expectation. Never reset the scope baseline or infer a successful own push
+from a later matching provider OID.
 
-Refuse unavailable or unknown provider state, any other provider OID, or a
-lease failure. After a create or update, read back and require the exact
-authorized provider OID. After a successful first push to an adopted PR, the
+After a successful first push to an adopted PR, the
 report names the adopted PR and its maintenance risk ("adopted; bot updates
 may stop, and later bot rebases may overwrite Worker edits"). Never advance competing
 movement implicitly, never merge, and never write a release, deployment,

@@ -14,7 +14,8 @@ never selects Proceed to merge.
 >
 > 1. The PR's review history is empty and a required human approval is absent.
 >    Merge-readiness would cap at debug because of that empty review.
-> 2. A native current-head check identifies a named failing test at `b1`.
+> 2. A native current-head check identifies a named failing test at `b1`,
+>    this Worker's last authorized successful push with exact readback.
 >    Phase A verifies local branch/full-HEAD, hosted PR head, and Worker
 >    authority still match `b1` before forwarding the finding. In Phase B, the
 >    Worker repairs, reruns assigned local verification, and returns `b2`. The
@@ -31,6 +32,18 @@ never selects Proceed to merge.
 >    menu for this PR.
 > 6. That brief recommends merge and offers Proceed to merge.
 > 7. That brief recommends debug and names two Worker-owned findings.
+> 8. Compare a new PR whose initial remote ref is absent with an adopted PR
+>    captured at `a0`. The same Worker receives exact authorization for `a1`,
+>    pushes with the appropriate explicit lease, and reads back `a1` exactly.
+>    A later repair is authorized at `a2`. All other publication gates pass.
+>    Independently vary the remote before the second push: unchanged `a1`,
+>    a divergent competing commit, a rewind to `a0`, or unexpected absence.
+> 9. The first authorized push reports success, but readback fails, is
+>    unavailable, or returns another OID. A later read happens to show `a1`.
+>    Compare this with an exact initial readback and with an unapproved `a2`.
+> 10. The first repair changes a forbidden path relative to the original
+>     scope baseline. The second repair changes only an allowed path relative
+>     to `a1`, leaving the forbidden change in its cumulative diff.
 
 ## Expected behavior
 
@@ -60,3 +73,19 @@ never selects Proceed to merge.
       progress records, or a parallel workflow ledger.
 - [ ] No scenario merges, releases, deploys, creates a follow-up issue, or
       messages a customer.
+
+- [ ] Scenario 8 applies one rule to both PR kinds: only after successful own
+      push and exact readback does the expected remote OID become `a1`; the
+      authorized second push leases `a1` and advances to `a2` only after its
+      own successful push and exact readback.
+- [ ] Divergent movement, rewind, or unexpected absence stops the affected
+      publication without recapture or retry. A complete unchanged `a1`
+      read permits the authorized second push; an already verified expected
+      OID equal to the authorized head needs no push and does not advance.
+- [ ] Scenario 9 never advances the expectation after uncertain readback,
+      infers successful own publication from a later matching OID, or pushes
+      unapproved `a2`. Exact readback advances only the successful authorized
+      push it verifies.
+- [ ] Scenario 10 stops on the cumulative forbidden path. The original base
+      or adoption-dispatch OID remains the scope baseline across every repair;
+      the advancing lease expectation never replaces it.

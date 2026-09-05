@@ -240,6 +240,42 @@ def main() -> int:
     for over_limit in (dict(operation, report="x" * CONTRACT.BODY_LIMIT), dict(operation, payload={"text": "x" * CONTRACT.RECEIPT_LIMIT})):
         expect_error(effect_input("prepare", pre_read=base, operation=over_limit), "exceeds")
 
+    # Full escaped snapshots must leave room for both reads and our remaining comments.
+    capacity = CONTRACT.INPUT_LIMIT // 4
+    capacity_base = with_prior_managed(base)
+    while len(json.dumps(capacity_base).encode("ascii")) < capacity - CONTRACT.BODY_LIMIT:
+        capacity_base = SNAPSHOTS.add_ordinary_comment(capacity_base, body="\x01" * 8000)
+    capacity_base = SNAPSHOTS.add_ordinary_comment(capacity_base, body="")
+    capacity_base["comment_pages"][-1][-1]["body"] = "x" * (capacity - len(json.dumps(capacity_base).encode("ascii")))
+    CONTRACT.require(len(json.dumps(capacity_base).encode("ascii")) == capacity, "capacity fixture missed exact boundary")
+    oversized_base = copy.deepcopy(capacity_base)
+    oversized_base["comment_pages"][-1][-1]["body"] += "x"
+    expect_error(effect_input("prepare", pre_read=oversized_base, operation=operation), "new-run capacity")
+    capacity_before = capacity_base
+    capacity_sizes = []
+    for kind in ("run-opened", "run-closed"):
+        maximal_operation = dict(operation, kind=kind, payload={}, report="x")
+        minimal = cli(effect_input("prepare", pre_read=capacity_before, operation=maximal_operation))
+        report_bytes = CONTRACT.BODY_LIMIT - len(minimal["comment"].encode("utf-8")) + 1
+        maximal_operation["report"] = "\x7f" * report_bytes
+        maximal = cli(effect_input("prepare", pre_read=capacity_before, operation=maximal_operation))
+        CONTRACT.require(len(maximal["comment"].encode("utf-8")) == CONTRACT.BODY_LIMIT, "capacity comment is not maximal")
+        capacity_after = target_snapshot(capacity_before, maximal)
+        verified_input = effect_input("verify", prepared=maximal, pre_read=capacity_before, post_read=capacity_after, write_attempt="possible")
+        capacity_sizes.append(len(json.dumps(verified_input).encode("ascii")))
+        CONTRACT.require(capacity_sizes[-1] < CONTRACT.INPUT_LIMIT, "admitted run exhausted verification input capacity")
+        CONTRACT.require(cli(verified_input)["terminal_outcome"] == "observed", "capacity boundary append did not verify")
+        CONTRACT.require(cli(effect_input("prepare", pre_read=capacity_after, operation=maximal_operation)) == maximal, "capacity guard blocked existing-event recovery")
+        recovery_input = effect_input("verify", prepared=maximal, pre_read=capacity_after, post_read=capacity_after, write_attempt="none")
+        capacity_sizes.append(len(json.dumps(recovery_input).encode("ascii")))
+        CONTRACT.require(cli(recovery_input)["terminal_outcome"] == "already satisfied", "capacity boundary recovery failed")
+        if kind == "run-opened":
+            expect_error(effect_input("prepare", pre_read=capacity_after, operation=dict(operation, run_id="run:capacity:new")), "new-run capacity")
+        capacity_before = capacity_after
+    CONTRACT.verify_run_records(operation["run_id"], maximal, capacity_after)
+    CONTRACT.require(capacity_after["comment_pages"][-1][:-2] == capacity_base["comment_pages"][-1], "capacity handling changed existing history")
+    print(f"PASS: {capacity}-byte admission boundary; maximum-comment open/close and recovery inputs {capacity_sizes}")
+
     missing_phase = {"schema": "repo-gardener-effect-input", "scenario": {"authority": {"caller_exclusive": True}}}
     expect_error(missing_phase, "phase")
     for forbidden in ("authority", "verdict", "result", "terminal_receipt_read_back"):

@@ -81,6 +81,20 @@ state, never an empty tracker.
 
 ## Bounds and content
 
+Serialize executable inputs as compact JSON. Each complete input is limited
+to 8 MiB. A new opening requires the full snapshot to fit one quarter of that
+budget (2 MiB, measured with JSON escaping), leaving room for both verification
+snapshots, the run's bounded comments, and its prepared close. A capacity
+refusal stays caller-only and recommends owner replacement of the tracker.
+Existing openings and uncertain-write recovery retain their original tracker
+and identity; unrelated provider growth can still make a later read unavailable.
+
+For replacement, the owner first reconciles the old tracker and proves its
+Orchestrator and Workers have terminated with no unresolved opening. Then use
+the existing approved tracker-create and full-file setup flow to name a fresh
+tracker. Preserve the old issue and all its history. A gardening run never
+rotates trackers or truncates history itself.
+
 Machine identities are bounded ASCII, not prose, titles, URLs, or elapsed
 time. Generate a fresh native UUIDv4 once per run as `run:<UUIDv4>` and retain
 it unchanged throughout the run and uncertain-write recovery. Record JSON

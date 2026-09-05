@@ -352,6 +352,11 @@ def prepare_report_effect(pre_read: Any, operation: Any) -> dict[str, Any]:
         _run_state_matches(view, prepared, present=False) or _run_state_matches(view, prepared, present=True),
         "run records conflict with the prepared event or lack its opening",
     )
+    if operation["kind"] == "run-opened" and _run_state_matches(view, prepared, present=False):
+        require(
+            len(json.dumps(pre_read, ensure_ascii=True).encode("ascii")) <= INPUT_LIMIT // 4,
+            "tracker exceeds new-run capacity; remain caller-only until the owner configures a fresh tracker",
+        )
     return prepared
 
 

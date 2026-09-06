@@ -97,32 +97,9 @@ paths; an unavailable or unknown read, or a current overlap, denies only that
 dispatch and its dependents while other Workers and read-only sensing
 continue.
 
-A candidate unit may be an existing open PR that the Worker adopts. Adopt only
-when: the head branch lives in the target repository (on GitHub,
-`isCrossRepository: false`); current native facts prove the head is neither
-the repository's configured default branch nor a provider-protected branch
-(including applicable rulesets); the native read gives head ref, full head
-OID, base ref, and changed paths; the PR is not a draft and every commit on
-its head beyond the base is authored by a provider-marked bot or app account; and
-current native facts (a failing check, a missing changelog entry, pin-mirror
-drift, a review finding) name a gap the Worker can close inside scope and
-outside protected paths. A failed, unavailable, or unknown eligibility fact
-makes the PR a recommendation, never adopted. The captured head ref must
-belong to that PR alone: if any other open PR uses the same head ref, deny
-the unit regardless of changed paths. Before dispatch, use the host's existing
-dispatch and supervision records to prove no other live Worker can mutate that
-head, including a retained Worker from an earlier closed run. Proven termination
-of a prior Worker permits adoption; historical Worker authorship alone does not
-reserve the PR. Unknown ownership or liveness makes only that candidate a
-recommendation. Do not create a separate ownership registry.
-Adoption consumes one Worker of `maximum_workers`; no two Workers adopt the
-same PR. A Worker push may stop automatic bot maintenance, and some bots or
-manual rebase requests can overwrite Worker edits. Name that maintenance risk
-in the brief and report; adopt only when the gap is worth owner attention
-(a failing repository gate, not a stale version). Author,
-title, and branch prefix prove nothing about the PR's content; the provider's
-account type and draft flag bound only who the gardener may push to. The PR
-number, head ref, head OID, and changed paths are the identity.
+An existing PR may be a candidate unit. Apply the Adoption section in
+`worker-contract.md` and populate its brief before dispatch; that section owns
+initial eligibility and continuing permission for the standalone Worker.
 
 For shared-ledger overlap, populate each affected brief and apply the Shared
 ledger exception in `worker-contract.md`; that section owns the rule for both

@@ -14,9 +14,7 @@ Before dispatch the host provides:
    dispatch);
 2. repository-native setup when the host supplies it;
 3. supervision before mutation and through Worker completion; and
-4. a Worker-owned branch with at most one unmerged PR; for adoption, the
-   host's existing dispatch and supervision records prove no other live Worker
-   can mutate that head, including Workers retained from earlier closed runs.
+4. a Worker-owned branch with at most one unmerged PR.
 
 The host owns how it provisions setup and supervision. If the host cannot
 safely provide the interface, the Worker does not mutate; it finishes a
@@ -45,16 +43,8 @@ Wait for host setup to succeed. Run `git status --porcelain=v1
 --untracked-files=all`; a failed read or any staged, unstaged, or untracked
 non-ignored path stops dependent work, names the affected paths (or the
 assigned slice when status is unreadable), and leaves unexpected material
-untouched. For an adopted PR, also require local HEAD to equal the captured
-hosted head OID, and independently re-read native facts now and before every
-publication to prove the captured head ref is neither the current configured
-default branch nor provider-protected (including applicable rulesets), and a
-complete current native open-PR read proves no PR other than the adopted PR
-uses that head ref. Another PR using it stops the unit regardless of path
-overlap or unchanged OID; a failed, unavailable, unknown, or incomplete read
-also stops the unit without mutation or publication. Re-read every named gap
-from native facts now and again before publication; if a gap is gone, changed, or
-ambiguous, stop the unit and report it without publishing.
+untouched. For adoption, require local HEAD to equal the hosted OID captured
+at dispatch, then apply the Adoption section below.
 
 Authoring is allowed only when all five gates pass using the opening policy
 named in the brief: the checkout and policy repository identities both
@@ -63,6 +53,48 @@ permits the change, Worker capacity is positive, the owning lane is enabled,
 and no path is protected. For an adopted PR the gates apply to the paths the
 Worker's own commits change; the adopted PR's existing diff is native state, reported,
 not authored. A rename counts both its old and new path.
+
+## Adoption
+
+This section owns adoption at dispatch and throughout Worker execution.
+The Orchestrator captures the target repository, PR number, head ref/full OID,
+base ref/full OID, and existing changed paths. Initial admission requires every
+captured head commit beyond that base to be authored by a provider-marked bot
+or app account, plus a current concrete gap worth owner attention that the
+Worker can close within scope (a failing gate, missing changelog entry,
+pin-mirror drift, or review finding, not merely a stale version). Bot authorship
+qualifies the captured PR only; title and branch prefix prove nothing.
+Adoption consumes one Worker of `maximum_workers`; no two Workers adopt one PR.
+Name the risk that a Worker push may stop bot updates and later bot rebases or
+manual rebase requests may overwrite the repair.
+
+At dispatch, before authoring each repair, and immediately before each
+publication, read the exact PR itself from the native provider. Require it
+still open and non-draft, with its captured repository, same-repository head
+ref, and base ref/full OID unchanged. Its hosted head OID must match the
+current expected remote OID defined under Publication gates. The head must
+remain non-default and
+unprotected (including applicable rulesets). A complete current open-PR read
+must show no other PR using that head ref, regardless of path overlap. Existing
+host dispatch and supervision records must prove no other live Worker can
+mutate it, including retained Workers from closed runs; proven termination
+permits takeover, and historical Worker authorship reserves nothing.
+
+Before authoring, confirm the current Worker-owned gap from native facts;
+before publication, confirm the authorized repair still addresses that gap.
+A gap resolved externally or no longer supported by native evidence stops
+that repair; the Worker's own local fix is the intended repair, not a reason
+to reject publication. After a verified repair, subsequent
+supervision may name a new gap: neither the original gap nor bot-only authorship
+of the Worker's new commits is required for later authorized repairs.
+All repairs retain the original scope baseline and use the advancing expected
+remote OID under Publication gates; never recapture either identity.
+A failed or unknown eligibility read stops only the affected unit and preserves
+its work for reporting. Do not create an ownership registry.
+
+These metadata reads are boundary checks, not an atomic condition on the push.
+The Git lease checks only the remote OID; a PR may close or change draft state
+after the metadata reread. Never claim the lease prevents that race.
 
 ## Completion
 

@@ -1,8 +1,8 @@
 ---
 name: repo-gardener
-description: Use when running or interpreting a scheduled or manual repository-gardening pass for one repository, including first-use setup of `.agents/repo-gardener.yaml` and its gardening tracker. An Orchestrator surveys nine maintenance lanes, deepens only while evidence could change the result, and may assign independently reviewable Worker pull requests. Do not use for merging, releasing, deploying, creating follow-up issues outside one caller-authorized canonical-child refinement, contacting customers, or performing an already-selected implementation outside a gardening run.
+description: Use when running or interpreting a scheduled or manual repository-gardening pass for one repository, including first-use setup of `.agents/repo-gardener.yaml` and its gardening tracker. An Orchestrator surveys nine maintenance lanes, deepens only while evidence could change the result, and may assign independently reviewable Worker pull requests. Do not use for merging, releasing, deploying, creating follow-up issues, contacting customers, or performing an already-selected implementation outside a gardening run.
 license: MIT
-compatibility: "Requires Python 3, PyYAML, config_check.py, and read access to one repository, its durable file, native PR state, and configured evidence; `.agents/managing-issues.json` is optional. The skill is host-neutral: mutation needs an isolated Worker worktree at the authoritative base, host-provided repository setup when available, supervised completion, and a Worker-owned branch and unmerged PR. Without safe mutation capability, it reports read-only findings."
+compatibility: "Requires Python 3, PyYAML, config_check.py, and read access to one repository, its durable file, native PR state, and evidence the host can already read; `.agents/managing-issues.json` is optional. Without safe mutation capability, it reports read-only findings."
 ---
 
 # Repo Gardener
@@ -19,34 +19,43 @@ adapter, not a requirement of this skill.
 
 ## Load the run contract
 
-Read the target repository's durable file and instructions, then
-[policy-and-entry-modes.md](references/policy-and-entry-modes.md),
+The Orchestrator reads the target repository's durable file and
+instructions, then [policy-and-entry-modes.md](references/policy-and-entry-modes.md),
 [reconciliation.md](references/reconciliation.md),
 [lane-contracts.md](references/lane-contracts.md), and
-[register-and-report.md](references/register-and-report.md). When applicable,
-also read [measurement-integrity.md](references/measurement-integrity.md).
-Before preparing tracker records, read
-[applying-effects.md](references/applying-effects.md) and
-[github-reference-adapter.md](references/github-reference-adapter.md).
+[tracker-records.md](references/tracker-records.md), and
+[worker-contract.md](references/worker-contract.md), plus
+[measurement-integrity.md](references/measurement-integrity.md) when the
+repository has metrics the host can read. A Worker reads only
+[worker-contract.md](references/worker-contract.md), its brief, and the
+target repository's own agent and contribution instructions.
 
 The bundled [policy template](assets/policy-template.yaml) is a fail-closed
 starter, never authority. The only durable repository setup file is
-`.agents/repo-gardener.yaml`; validate it with:
+`.agents/repo-gardener.yaml`. Two bundled scripts are the deterministic
+checks; nothing else in the skill is executable:
 
 ```text
 python3 scripts/config_check.py --repo-root ROOT --config .agents/repo-gardener.yaml
+python3 scripts/release_a_contract.py normalize-github-tracker --input SNAPSHOT.json
+python3 scripts/release_a_contract.py effect --input EFFECT.json
+python3 scripts/release_a_contract.py run-records --input RUN_RECORDS.json
 ```
+
+`normalize-github-tracker` structurally normalizes a raw tracker snapshot; `effect` prepares (`phase: prepare`) and
+verifies (`phase: verify`) one tracker write; `run-records` checks two-record
+identity for one run ID. `tracker-records.md` says when each runs.
 
 Follow the entry modes in `policy-and-entry-modes.md`. A missing or invalid
 file may enter interactive first-use setup only with an owner. An unattended
-or read-only request stays blocked or sensing-only as that reference directs.
+or read-only request stays caller-only as that reference directs.
 A copied template is not adoption, and tracker creation does not authorize a
 run. Read the approved file from the refreshed default branch at opening. A
 later revision change stops remaining audits and all mutation, push, and PR
 opening; safe sensing and a truthful close may continue when still authorized.
 
-When the managed-run gate is unavailable, perform safe read-only sensing only:
-complete the required identifier censuses and survey the nine lanes. Do not
+When no managed run opens, return `caller-only`: perform the required
+identifier censuses and nine-lane survey using only available safe reads. Do not
 mint a managed run ID, write run records, execute declared audits, or claim a
 managed closure.
 
@@ -62,64 +71,49 @@ managed closure.
    candidates, and normalized candidates distinct. Scouts remain read-only.
 3. Deepen only while another investigation could change an assignment or
    recommendation. Reassess after every result and coalesce a shared cause.
-   Use the default-off issue-refinement grant only for the one
-   caller-authorized canonical batch; workers and helpers do not write issues.
-   Derive the Ready Frontier fresh from current evidence after refinement.
+   Derive the Ready Frontier fresh from current evidence. Return issue-ready
+   proposals for the owner to take through Managing Issues outside the run.
 4. Select only small, low-risk, testable, non-overlapping PR-sized units.
-   Do not invent work to fill capacity. A configured shared ledger is an
-   assignment-only exception only when the opening policy and repository proof
-   establish conflict-safe additive entries; it never relaxes protected paths,
-   scope, or existing-PR overlap checks.
+   Do not invent work to fill capacity. Units are non-overlapping by changed
+   path. An open same-repository update PR with a Worker-closable gap is a
+   unit the Worker adopts. A path whose git `merge` attribute is `union` at
+   the authoritative base may carry two Workers' additive entries; that
+   exception never relaxes protected paths, scope, or other overlap checks.
+   Selection is done when every remaining candidate is denied by a gate,
+   overlaps an assigned unit, or exceeds `maximum_workers`.
 
 ## Mutation boundary
 
 Mutation is permitted for a unit only when the opening policy still proves the
-exact repository identity, allowed path scope, positive Worker capacity,
-enabled owning lane, and no protected path. `.agents/repo-gardener.yaml` is
-always protected. A missing, false, mismatched, or protected condition denies
-that unit; it does not authorize a workaround.
+five gates in `policy-and-entry-modes.md`: exact repository identity, allowed
+path scope, positive Worker capacity, enabled owning lane, and no protected
+path. `.agents/repo-gardener.yaml` is always protected. A missing, false,
+mismatched, or protected condition denies that unit; it does not authorize a
+workaround. Dispatch preconditions, adoption, and supervision are owned by
+[reconciliation.md](references/reconciliation.md); the brief, pre-mutation
+gate, completion, publication gates, and leases are owned by
+[worker-contract.md](references/worker-contract.md).
 
-The portable Worker interface, pre-work gate, completion, publication, and
-supervision rules are owned by
-[reconciliation.md](references/reconciliation.md). It keeps host setup and
-lifecycle mechanics host-owned, preserves exact-head and protected-path gates,
-and requires a truthful read-only result when safe mutation is unavailable.
-
-Give each Worker the authoritative base, opening policy revision, repository
-identity, scope, protected paths, lane grant, assigned path slice, and exact
-caller-approved verification command argv list. Every unattended Worker invokes
-`checking-pr-readiness` normally on the exact head in its worktree and stops
-when that skill writes its brief and numbered menu. After a Worker PR exists, the scheduled ownerless run has that Worker
-invoke `checking-merge-readiness` on that PR and stops after its brief and numbered menu. The Orchestrator reads each brief. On a distinct later turn,
-it authorizes that Worker to reply 1 only when the menu offered option 1 and
-the recommendation was approve and proceed for that same exact head. The
-Worker never chooses option 1 on its own. The Orchestrator never authorizes
-Proceed to merge. The checking skill then performs its identity reread,
-instantiates its evidence pack as silent pull-request-body input, and
-continues into this finishing path. Do not also dispatch an owner publisher.
-
-When a brief names Worker-owned gaps, the Orchestrator sends every named
-Worker-owned gap to the same Worker, then that Worker re-runs the helper on
-the current exact head. Send those Worker-owned gaps even when the same brief
-also names owner work. Stop when only owner-needed work remains or a further
-turn cannot help. An unavailable checking skill, moved identity, or a claim
-from a later session must preserve the authored commit without push or PR
-creation and name the blocking gap. Direct assessment of native facts is not
-a publish path.
-
-With an owner, normal publication remains subject to the owner's interactive
-authorization. After Orchestrator authorization, retain every durable-policy,
-exact head/base, assigned-path, cleanliness, overlap, provider-read, lease,
-and at-most-one-unmerged-PR gate. Immediately before an ownerless first push,
-compare the local subject and OID to the subject and OID the checking skill
-re-read; never replace or recapture that identity. Immediately before an
-ownerless first push, re-resolve the captured target/base ref and full base OID.
-Immediately before PR-open, re-resolve the captured target/base ref and full
-base OID. Publish only the approved exact head against the approved exact
-base; drift, a conflicting path or branch, missing authority, unavailable
-state, or an unknown provider effect stops that Worker. Report native PR,
-check, and review facts. Never merge, release, deploy, or create unapproved
-follow-up issues.
+The boundary sentences, which no reference may weaken: each Worker receives
+the authoritative base, opening policy revision, assigned slice, and exact
+caller-approved verification command argv list. Every unattended Worker
+invokes `checking-pr-readiness` normally on the exact head in its worktree
+and stops at its numbered menu; after a Worker PR exists, the ownerless run
+has that Worker invoke `checking-merge-readiness` on that PR and stop at its
+menu. On a distinct later turn the Orchestrator authorizes that Worker to
+reply 1 only when the menu offered option 1 and the recommendation was
+approve and proceed for that same exact head; the Worker never chooses option
+1 on its own; the Orchestrator never authorizes Proceed to merge. The
+checking skill then performs its identity reread and continues into the
+publication path. The Orchestrator sends every named Worker-owned gap back to
+the same Worker. A Worker owns at most one unmerged PR; an adopted PR is that
+one PR. Immediately before an ownerless first push, re-resolve the captured
+target/base ref and full base OID. Immediately before PR-open, re-resolve the
+captured target/base ref and full base OID. Publication stops and must
+preserve the authored commit on any drift, unavailable state, or unknown
+provider effect, and the run must never replace or recapture that authorized
+identity. Never merge, release, deploy, or create follow-up
+issues.
 
 ## Close once
 

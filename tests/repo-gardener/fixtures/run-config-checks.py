@@ -95,6 +95,8 @@ REMOVED_FILE_KNOBS = (
     "maximum_deep_targets",
     "maximum_new_child_prs",
     "source_mutation",
+    "evidence_sources",
+    "shared_ledger_paths",
 )
 
 
@@ -275,16 +277,9 @@ def base_config() -> dict[str, Any]:
 
 def normalized_config(value: dict[str, Any]) -> dict[str, Any]:
     result = copy.deepcopy(value)
-    result.setdefault("issue_refinement", False)
     for lane in AUDIT_ELIGIBLE_LANES:
         result["lanes"][lane].setdefault("audit_commands", [])
     return result
-
-
-def shared_ledger_config() -> dict[str, Any]:
-    config = base_config()
-    config["shared_ledger_paths"] = ["CHANGELOG.md"]
-    return config
 
 
 def check_script_surface() -> None:
@@ -321,6 +316,8 @@ def check_script_surface() -> None:
     )
     require(not non_standard, f"config validator imports non-standard modules: {non_standard}")
     require("yaml" in imported, "config validator must use PyYAML")
+    for knob in REMOVED_FILE_KNOBS:
+        require(knob not in source, f"config validator must not know removed file knob {knob}")
     require(
         not imported & FORBIDDEN_PROCESS_OR_NETWORK_IMPORTS,
         f"config validator imports process/network modules: {sorted(imported & FORBIDDEN_PROCESS_OR_NETWORK_IMPORTS)}",
@@ -359,7 +356,7 @@ def check_starter_shape() -> None:
     require("maximum_workers: 0" in text, "starter is not fail-closed on maximum_workers")
     require(text.count("mutation: false") == 8, "starter authoring-lane mutation count differs")
     require("mutation: true" not in text, "starter grants an authoring lane")
-    require("issue_refinement: false" in text, "starter enables issue refinement")
+    require("issue_refinement" not in text, "starter retains removed issue refinement")
     require(
         text.count("audit_commands: []") == len(AUDIT_ELIGIBLE_LANES),
         "starter must show an empty audit declaration only on each eligible lane",
@@ -458,44 +455,17 @@ def main() -> int:
         second = expect_valid(base_config(), repo_root, expected)
         require(first == second, "valid config normalization is not deterministic")
 
-        ledger = shared_ledger_config()
-        expect_valid(ledger, repo_root, normalized_config(ledger))
-
-        refinement_enabled = base_config()
-        refinement_enabled["issue_refinement"] = True
-        expect_valid(refinement_enabled, repo_root, normalized_config(refinement_enabled))
-
-        refinement_text = base_config()
-        refinement_text["issue_refinement"] = "true"
-        expect_invalid(refinement_text, repo_root, "issue_refinement must be a boolean")
-
-        empty_ledger = shared_ledger_config()
-        empty_ledger["shared_ledger_paths"] = []
-        expect_valid(empty_ledger, repo_root, normalized_config(empty_ledger))
-
-        absolute_ledger = shared_ledger_config()
-        absolute_ledger["shared_ledger_paths"] = ["/CHANGELOG.md"]
-        expect_invalid(absolute_ledger, repo_root, "shared_ledger_paths[0] must be a repository-relative path")
-
-        wildcard_ledger = shared_ledger_config()
-        wildcard_ledger["shared_ledger_paths"] = ["**"]
-        expect_invalid(
-            wildcard_ledger,
-            repo_root,
-            "shared_ledger_paths[0] must be a literal repository-relative file path",
-        )
-
-        nested_wildcard_ledger = shared_ledger_config()
-        nested_wildcard_ledger["shared_ledger_paths"] = ["src/**"]
-        expect_invalid(
-            nested_wildcard_ledger,
-            repo_root,
-            "shared_ledger_paths[0] must be a literal repository-relative file path",
-        )
-
-        nested_ledger = base_config()
-        nested_ledger["shared_ledger"] = {"paths": ["CHANGELOG.md"]}
-        expect_invalid(nested_ledger, repo_root, "config has unexpected key: shared_ledger")
+        for key, value in (
+            ("issue_refinement", False),
+            ("issue_refinement", True),
+            ("issue_refinement", "true"),
+            ("shared_ledger_paths", ["CHANGELOG.md"]),
+            ("shared_ledger", {"paths": ["CHANGELOG.md"]}),
+            ("evidence_sources", {"posthog": {"identity": "phc_example"}}),
+        ):
+            rejected = base_config()
+            rejected[key] = value
+            expect_invalid(rejected, repo_root, f"config has unexpected key: {key}")
 
         commented = """# Live gardener file
 repository:
@@ -532,10 +502,36 @@ lanes:
 """
         expect_valid(commented, repo_root, expected)
 
-        with_sources = copy.deepcopy(base_config())
-        with_sources["evidence_sources"] = {"posthog": {"identity": "phc_example"}}
-        expected_sources = normalized_config(with_sources)
-        expect_valid(with_sources, repo_root, expected_sources)
+        # One parser, one grammar: a flow-style lane mapping normalizes identically
+        # and a duplicated lane key fails closed (deeper indent is pinned below).
+        flow_style = commented.replace(
+            "  dependency-and-vulnerability:\n    mutation: true\n",
+            "  dependency-and-vulnerability: {mutation: true}\n",
+        )
+        expect_valid(flow_style, repo_root, expected)
+        # Native YAML syntax is accepted when it yields the same safe policy.
+        expect_valid("%YAML 1.1\n---\n" + commented + "...\n", repo_root, expected)
+        expect_valid(json.dumps(base_config()), repo_root, expected)
+        expect_valid(commented.replace("# Live gardener file", "# A tab\tinside a comment"), repo_root, expected)
+        for style in ("|-", ">-"):
+            block_scalar = commented.replace(
+                "  identity: R_kgDOEXAMPLE001  # node id",
+                f"  identity: {style}\n    R_kgDOEXAMPLE001",
+            )
+            expect_valid(block_scalar, repo_root, expected)
+        literal_syntax = commented.replace(
+            "  identity: R_kgDOEXAMPLE001  # node id",
+            "  identity: |-\n    Example's !literal &text << value",
+        )
+        literal_expected = copy.deepcopy(expected)
+        literal_expected["repository"]["identity"] = "Example's !literal &text << value"
+        expect_valid(literal_syntax, repo_root, literal_expected)
+
+        duplicate_lane = commented.replace(
+            "  issue-implementation:\n",
+            "  dependency-and-vulnerability: {mutation: true}\n  issue-implementation:\n",
+        )
+        expect_invalid(duplicate_lane, repo_root, "duplicate key 'dependency-and-vulnerability'")
 
         marker = repo_root / "read-only-marker"
         marker.write_text("unchanged\n", encoding="utf-8")
@@ -545,27 +541,27 @@ lanes:
 
         expect_invalid(TEMPLATE, repo_root, "REPLACE_WITH")
 
-        missing_tracker = copy.deepcopy(base_config())
+        missing_tracker = base_config()
         del missing_tracker["tracker"]
         expect_invalid(missing_tracker, repo_root, "missing key: tracker")
-        missing_tracker_identity = copy.deepcopy(base_config())
+        missing_tracker_identity = base_config()
         del missing_tracker_identity["tracker"]["identity"]
         expect_invalid(missing_tracker_identity, repo_root, "tracker missing key: identity")
 
-        wrong_section = copy.deepcopy(base_config())
+        wrong_section = base_config()
         del wrong_section["maximum_workers"]
         wrong_section["repository"]["maximum_workers"] = 20
         expect_invalid(wrong_section, repo_root, "maximum_workers")
 
-        nested_workers = copy.deepcopy(base_config())
+        nested_workers = base_config()
         nested_workers["repository"]["maximum_workers"] = 20
         expect_invalid(nested_workers, repo_root, "repository has unexpected key: maximum_workers")
 
-        bool_workers = copy.deepcopy(base_config())
+        bool_workers = base_config()
         bool_workers["maximum_workers"] = True
         expect_invalid(bool_workers, repo_root, "maximum_workers must be a nonnegative integer")
 
-        zero_workers = copy.deepcopy(base_config())
+        zero_workers = base_config()
         zero_workers["maximum_workers"] = 0
         expect_valid(zero_workers, repo_root, normalized_config(zero_workers))
 
@@ -668,24 +664,24 @@ lanes:
             ineligible["lanes"][lane]["audit_commands"] = [["npm", "run", "audit"]]
             expect_invalid(ineligible, repo_root, f"lanes.{lane} has unexpected key: audit_commands")
 
-        placeholder = copy.deepcopy(base_config())
+        placeholder = base_config()
         placeholder["repository"]["identity"] = "REPLACE_WITH_STABLE_REPOSITORY_IDENTITY"
         expect_invalid(placeholder, repo_root, "unresolved REPLACE_WITH placeholder")
 
-        triage_mutation = copy.deepcopy(base_config())
+        triage_mutation = base_config()
         triage_mutation["lanes"][TRIAGE_LANE] = {"mutation": True}
         expect_invalid(triage_mutation, repo_root, f"lanes.{TRIAGE_LANE} has unexpected key: mutation")
 
-        reordered_lanes = copy.deepcopy(base_config())
+        reordered_lanes = base_config()
         lane_items = list(reordered_lanes["lanes"].items())
         lane_items[0], lane_items[1] = lane_items[1], lane_items[0]
         reordered_lanes["lanes"] = dict(lane_items)
-        expect_invalid(reordered_lanes, repo_root, "lanes must name every contracted lane in order")
+        expect_valid(reordered_lanes, repo_root, expected)
 
-        absolute_protected = copy.deepcopy(base_config())
+        absolute_protected = base_config()
         absolute_protected["protected_paths"] = ["/etc/**"]
         expect_invalid(absolute_protected, repo_root, "must be a repository-relative path")
-        drive_protected = copy.deepcopy(base_config())
+        drive_protected = base_config()
         drive_protected["protected_paths"] = [r"C:\outside\**"]
         expect_invalid(drive_protected, repo_root, "must be a repository-relative path")
 
@@ -745,7 +741,7 @@ lanes:
             )
             expect_invalid(null_identity, repo_root, "YAML null values are not allowed")
 
-        issue_selector = copy.deepcopy(base_config())
+        issue_selector = base_config()
         issue_selector["tracker"]["identity"] = "#3336"
         expect_invalid(issue_selector, repo_root, "tracker.identity must be a live tracker identity")
         quoted_issue_selector = dump_yaml(base_config()).replace(
@@ -774,21 +770,21 @@ lanes:
         expect_valid(flow_lane_comma, repo_root, expected)
 
         for key in ("repository", "protected_paths", "maximum_workers", "tracker", "lanes"):
-            missing = copy.deepcopy(base_config())
+            missing = base_config()
             del missing[key]
             expect_invalid(missing, repo_root, f"missing key: {key}")
 
         for key in ("identity", "default_branch", "scope"):
-            missing = copy.deepcopy(base_config())
+            missing = base_config()
             del missing["repository"][key]
             expect_invalid(missing, repo_root, f"repository missing key: {key}")
 
         for key in ("version", "status", "authority", "boundaries", "caller_roles"):
-            invalid = copy.deepcopy(base_config())
+            invalid = base_config()
             invalid[key] = "unexpected"
             expect_invalid(invalid, repo_root, f"config has unexpected key: {key}")
 
-        alias = copy.deepcopy(base_config())
+        alias = base_config()
         alias_text = dump_yaml(alias).replace(
             "identity: R_kgDOEXAMPLE001",
             "identity: &id R_kgDOEXAMPLE001",
@@ -806,6 +802,31 @@ lanes:
         expect_invalid(merge_key, repo_root, "YAML merge keys")
         duplicate = dump_yaml(base_config()) + "maximum_workers: 1\n"
         expect_invalid(duplicate, repo_root, "duplicate key")
+
+        # Construct checks apply to parsed nodes, irrespective of quoting or
+        # previous plain-scalar punctuation; reject before recursive composition.
+        quote_before_anchor = commented.replace(
+            "R_kgDOEXAMPLE001  # node id", "Example's repository"
+        ).replace("default_branch: main", "default_branch: &branch main")
+        expect_invalid(quote_before_anchor, repo_root, "YAML aliases")
+        expect_invalid(commented + "extra: *missing\n", repo_root, "YAML aliases")
+        expect_invalid(commented + 'extra: {"<<": {identity: merged}}\n', repo_root, "YAML merge keys")
+        expect_invalid(commented + "---\n{}\n", repo_root, "YAML is invalid")
+        expect_invalid(commented + "extra: " + "[" * 1000 + "x" + "]" * 1000, repo_root, "YAML nesting")
+        expect_invalid(commented + "extra: [" + ",".join("x" for _ in range(257)) + "]", repo_root, "YAML sequence exceeds")
+        expect_invalid(commented + "extra: 2147483648\n", repo_root, "YAML integer is out of range")
+        for spelling in ("yes", "on", "True", "FALSE", "1"):
+            expect_invalid(
+                commented.replace("mutation: true", f"mutation: {spelling}", 1),
+                repo_root,
+                "mutation must be a boolean",
+            )
+        for spelling in ("0x10", "1.5", "+2", "01"):
+            expect_invalid(
+                commented.replace("maximum_workers: 20", f"maximum_workers: {spelling}"),
+                repo_root,
+                "maximum_workers must be a nonnegative integer",
+            )
 
         expect_not_configured(repo_root)
         active_config = install_active_config(repo_root, base_config())

@@ -13,8 +13,10 @@ brief, numbered options, and later reply.
 > A managed run selected two non-overlapping, in-scope, low-risk, testable
 > slices: `docs/guide.md` for Worker A and `src/adapter.js` for Worker B. The
 > opening policy is valid and unchanged. The host can supervise Workers and
-> reports the authoritative base, each isolated worktree, each Worker branch,
-> and whether repository-native setup is supplied.
+> reports the target stable repository identity, authoritative base, each
+> isolated worktree, each Worker branch, and whether repository-native setup
+> is supplied. The checkout and policy identities match the brief unless a
+> subcase says otherwise.
 >
 > 1. Worker A has an isolated worktree at the authoritative base, a
 >    Worker-owned branch, and host-provided repository setup that completes
@@ -36,6 +38,10 @@ brief, numbered options, and later reply.
 >    normally, stops at its menu, and the brief offered option 1 with an
 >    approve-and-proceed recommendation for that exact head. A later turn
 >    occurs. B's checker is unavailable.
+> 7. A's brief targets stable repository identity R1, but its clean checkout
+>    and valid opening policy both identify R2. Its base, branch, setup,
+>    supervision, scope, and lane gates otherwise pass. B's checkout and
+>    policy both identify the R1 target in its brief and all other gates pass.
 
 ## Expected behavior
 
@@ -63,6 +69,9 @@ brief, numbered options, and later reply.
       option 1. It may continue only if the Orchestrator authorizes option 1;
       the checking skill then rereads identity. B preserves its commit
       without a fallback and names unavailable checking as the blocking gap.
+- [ ] In subcase 7, A refuses mutation and reports the repository mismatch;
+      a valid R2 policy cannot authorize work dispatched for R1. B may
+      proceed because both identities match its brief's target.
 - [ ] No subcase creates host adapters, setup commands, wait or recovery
       choreography, progress state, registries, schemas, receipts, or a
       second Git-state system.

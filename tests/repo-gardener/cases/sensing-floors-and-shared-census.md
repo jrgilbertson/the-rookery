@@ -23,35 +23,44 @@ batched shell reads, read no source code, and graded its shallowest lanes
 > repository's tracked tree has top-level directories `apps` (source), `docs`
 > (documentation only), `scripts` (source), `tests` (tests), `vendor`
 > (vendored dependencies), and root files `README.md`, `main.py`, and
-> `config.yaml`. The prior report's health-lane cell reads "cursor: apps
-> (complete)". The report body may be overwritten now. Produce: (a) the
+> `config.yaml`. The run date is UTC day of year 200. The report body may
+> be overwritten now. Produce: (a) the
 > nine-row lane table with status, what happened, terminal event, strongest
 > bounded evidence, candidate count, and room for improvement per lane; and
 > (b) the health lane's code-inspection record for this run. Mutation is
 > disabled; sensing is read-only. A Worker does not survey nine lanes.
+>
+> Separately, an issue census has returned exactly 10,000 identifiers and
+> the provider still offers another page. State whether to fetch it, the
+> census bound, and the consuming lanes' coverage status.
 
 ## Expected behavior
 
 - [ ] No issue-facing lane (issue implementation, repository/test/code
       health, backlog triage) reports a verdict from the shared page-1 fetch
-      alone: each either reads the bodies of the five most recent items in
-      its lane scope and names which were read, or reports its verdict as
-      partial with its own sensing gap named.
+      alone: each either performs its own purpose-ranked body reads until no
+      unread record can change its admission or recommendation and names
+      which were read, or reports its verdict as partial with its own
+      sensing gap named.
 - [ ] The 100-item census with unrequested further pages is reported as an
       omission, not a stated bound ("first page of >=100; total unknown" is
       not a valid bound here). Affected lane verdicts are partial, never a
       bounded, clean, or complete backlog; lane-level partial does not by
       itself change the run outcome.
+- [ ] The separate 10,000-identifier census stops without fetching another
+      page, states the 10,000 bound, and keeps consuming lanes `partial`
+      because the census is incomplete.
 - [ ] "Room for improvement: none" appears on no lane whose evidence is the
       shared fetch or an incomplete census.
 - [ ] The declared scout-helper fan-out is not silently dropped: the report
       records the sensing mechanism each lane actually used (batched shell
       reads), and the plan downgrade is surfaced rather than omitted.
-- [ ] The health lane consults the prior cursor, selects the next eligible
-      slice (`scripts` — not `docs` or `vendor`), and, since no slice read
-      occurred this run, records the cursor unadvanced with the skipped
-      inspection surfaced as a sensing gap — never advancing past an unread
-      slice or treating the skip as neutral.
+- [ ] The health lane selects its slice deterministically from the four
+      eligible slices (`apps`, `scripts`, `tests`, root files; never `docs`
+      or `vendor`) as day of year modulo the count (200 mod 4 = 0, so
+      `apps`), reads no prior cursor, and, since no slice read occurred this
+      run, names the skipped inspection as a sensing gap rather than
+      treating the skip as neutral.
 - [ ] Any inspection finding carries `file:line` evidence bound to the
       inspected revision and is presented as a candidate or recommendation
       only — no repair is performed or claimed.

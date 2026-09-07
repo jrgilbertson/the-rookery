@@ -1,4 +1,4 @@
-# An issue-backed route produces a concise side-effect-free kickoff
+# A plan-only authorization produces a lead-alone route without side effects
 
 Provenance: user feedback — the route must include a plain-text statement a
 receiver can paste to start work without duplicating its source artifact or
@@ -7,29 +7,26 @@ making the router perform downstream work.
 ## Prompt
 
 > `$route-work` If `route-work` is not present in the active skill catalog, do
-> not search for or reconstruct it. Otherwise, you may read its installed
-> package; call no other tools. Route this synthetic request using only the
-> text below. GitHub issue
+> not search for or reconstruct it. Route this synthetic request from the
+> supplied facts. GitHub issue
 > `https://github.com/example/parser/issues/97` contains approved requirements
-> for a parser fix but no execution plan. The issue is the source of truth. The
-> plan may be written in the repository, but no implementation, issue mutation,
-> commit, push, pull request, or publication is authorized. Model availability
-> is unknown.
+> for a parser fix but no execution plan. The issue is the source of truth.
+> Planning is authorized. No implementation, issue mutation, commit, push, pull
+> request, or publication is authorized. Model availability is unknown.
 
 ## Expected behavior
 
-- [ ] Returns exactly one response beginning with the plain line `Route`. The
-      workflow is `ce-plan` and the topology is Single owner. No Markdown.
-- [ ] The route uses natural sentences, names Fable 5.1 at medium for one planner,
-      and says to continue in the current worktree without structured
-      orchestration. It does not emit `Orca None` or `availability unverified`.
-- [ ] A `Copy/paste kickoff` section follows as plain text, not a fence,
-      beginning with a natural instruction to start `ce-plan` from the supplied
-      GitHub issue, and names the selected model and effort.
-- [ ] The kickoff treats the issue as the source of truth and preserves the
-      supplied planning and authority boundary in one concise sentence. It does
-      not restate the issue or use the old `Objective`, `Done when`, `Facts`,
-      `Constraints`, `Evidence gaps`, or `Authority` field list.
-- [ ] The trace contains only reads of the installed package: no issue fetch,
+- [ ] The final answer is exactly one card beginning with the bold line `**Route**`.
+      The decision line is "Start with ce-plan on Fable 5.1 at medium" and
+      names no role. Bold `**Why**`, `**Setup**`, and `**Copy/paste kickoff**`
+      labels follow, each with a blank line after it; no headings or fences.
+- [ ] Setup lists the Lead on Fable 5.1 at medium and no other role, since
+      implementation is not authorized, and states that boundary. It mentions
+      no worktree, orchestration, availability, or plan storage.
+- [ ] The kickoff starts ce-plan from the supplied issue URL, states the lead's
+      model and effort, treats the issue as the source of truth, and withholds
+      implementation, issue mutation, commit, push, pull request, and
+      publication in one sentence. It does not restate the issue.
+- [ ] The trace contains only reads of the installed package: no attempted issue fetch,
       downstream invocation, planning, mutation, scheduling, monitoring, or
       persisted route state.

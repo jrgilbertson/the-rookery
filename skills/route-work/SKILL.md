@@ -15,5 +15,5 @@ its tables here.
 
 1. Assess the request under the reference.
 2. Render exactly one of its response templates without changing its
-   plain first line or the Copy/paste kickoff label.
+   bold first line or section labels.
 3. Stop immediately after the card.

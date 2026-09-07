@@ -6,10 +6,10 @@
 
 My workflow moves through five core jobs: Research, Plan, Design, Build, and Ship. Two feedback loops keep it current: Maintain turns recurring problems into tests, rules, and documented lessons, while Learn turns experience into linked notes and new research questions. Each section explains how I approach the job and which tools and commands I use. The Rookery skills in those sections install on their own. Compound Engineering, Impeccable, and Orca are the surrounding stack I run them in.
 
-[Routing work](ROUTING.md) documents how I select the first workflow owner,
-starting topology, and model profile without starting a downstream workflow. I
-use it when explicitly routing new work or deciding whether a proven in-flight
-owner should continue.
+[Routing work](ROUTING.md) documents how I select the first workflow, the
+lead, the pattern, and the roster of roles with models and effort without
+starting a downstream workflow. I use it when explicitly routing new work or
+deciding whether a proven in-flight owner should continue.
 
 ## Foundations
 
@@ -126,7 +126,7 @@ I choose models by how success will be judged. For work with objective checks, I
 
 `ce-work` from Compound Engineering moves through the plan one unit at a time so I can inspect the work as it lands. `lfg`, also from Compound Engineering, runs from plan to pull request without check-ins. `/goal` in Claude Code and Codex keeps working toward one completion condition across turns. I use autonomous modes only when the goal is clear and verifiable.
 
-Compound Engineering is the default planner, executor, reviewer, and learning capture inside each worktree. Routing starts from Single owner. Independent slices use Orchestrator/planner + Executors. A named review gate is Executor + Reviewer. Hard decisions may get an advisor without a handoff; a separate critic sits in the Reviewer seat. I add those seats only when Single owner does not cover the work, because a second orchestration stack repeats planning, review, and handoffs.
+Compound Engineering is the default planner, executor, reviewer, and learning capture inside each worktree. Every route has a lead, with a roster sized for the expected end of the run. I add Executors for independent implementation units and a Reviewer for explicit acceptance criteria or requested review. The routing contract owns the pattern and model recommendations. Hard decisions may get an advisor without a handoff; a separate critic sits in the Reviewer seat.
 
 I enforce quality in tiers. Tests, linters, CI gates, and the design system enforce proactively, and prose instructions sit at the bottom. See the Maintain section for the full ladder.
 

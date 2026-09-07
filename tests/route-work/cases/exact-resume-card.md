@@ -1,4 +1,4 @@
-# Continuation uses the exact portable card
+# Proven in-flight ownership uses the exact Resume card
 
 Provenance: exact-output invariant — proven active ownership must resume without
 a duplicate kickoff or schema drift.
@@ -12,7 +12,7 @@ a duplicate kickoff or schema drift.
 
 ## Expected behavior
 
-- [ ] Returns exactly one response beginning with the plain line `Continuation`.
-- [ ] Says Jordan owns this work, keeps `worktrees/parser-fix` and the current
-      phase, and uses no Markdown.
-- [ ] Contains no copy/paste kickoff, clarification question, or named stop.
+- [ ] The final answer is exactly one card beginning with the bold line `**Resume**`.
+- [ ] Says Jordan owns this work and keeps `worktrees/parser-fix` and the
+      current phase, with no headings, fences, or field labels.
+- [ ] Contains no copy/paste kickoff, question, or roster.

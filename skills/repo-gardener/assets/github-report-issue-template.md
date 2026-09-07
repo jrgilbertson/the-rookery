@@ -1,7 +1,7 @@
 # Repository gardening history
 
 Read the latest `run-closed` comment for the morning report, Worker pull
-requests, owner attention, lane coverage, and recommendations. Native pull
+requests, owner attention, area coverage, and recommendations. Native pull
 requests are authoritative for authored work.
 
 Each run appends one `run-opened` comment before sensing and one `run-closed`

@@ -311,12 +311,20 @@ def _effect_operation(operation: Any) -> dict[str, Any]:
 
 
 def _run_record_comment(record: dict[str, Any], report: str = "") -> str:
+    # Preserve the public outer field order while canonicalizing nested payloads.
+    ordered = dict(record, payload=json.loads(canonical_bytes(record["payload"])))
     marked = (
         f"{RUN_RECORD_BEGIN}\n"
-        f"{json.dumps(record, ensure_ascii=False, separators=(',', ':'))}\n"
+        f"{json.dumps(ordered, ensure_ascii=False, separators=(',', ':'))}\n"
         f"{RUN_RECORD_END}"
     )
-    return f"{marked}\n\n{report}" if report else marked
+    # Only the prefix needs mention/image checks; the report is fenced literal text.
+    _validate_report_rendering(marked)
+    if not report:
+        return marked
+    # Empty-info, top-level fences cannot be closed by any report backtick run.
+    fence = "`" * max(3, max((len(run) + 1 for run in re.findall(r"`+", report)), default=0))
+    return f"{marked}\n\n{fence}\n{report}\n{fence}\n"
 
 
 def _comment_bodies_equal(actual: str, expected: str) -> bool:
@@ -334,7 +342,6 @@ def _prepared_material(identity_source: dict[str, Any], operation: Any) -> dict[
     _validate_run_record(record, "prepared run record")
     comment = _run_record_comment(record, operation["report"])
     require(len(comment.encode("utf-8")) <= BODY_LIMIT, f"prepared comment exceeds {BODY_LIMIT} UTF-8 bytes")
-    _validate_report_rendering(comment)
     return {
         "schema": PREPARED_EFFECT_SCHEMA,
         "repository_id": identity_source["repository_id"],

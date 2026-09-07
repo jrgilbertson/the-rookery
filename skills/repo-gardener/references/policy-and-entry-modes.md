@@ -35,19 +35,42 @@ python3 scripts/config_check.py --repo-root ROOT --config .agents/repo-gardener.
 
 The validator parses that file once with PyYAML SafeLoader, then applies the
 field schema. Tags, aliases, merge keys, nulls, and duplicate keys fail
-closed. Booleans are `true`/`false` only. Lane inventory reads the same
+closed. Booleans are `true`/`false` only. Area inventory reads the same
 mapping; the file does not have a second YAML grammar.
 
 A valid file parses and names every required field with real values (no
 `REPLACE_WITH_*`): stable repository identity, default branch, authoring
 scope, configured protected paths, `maximum_workers`, live tracker identity,
-all nine contracted lanes with triage as an empty mapping and eight
-lane `mutation` flags, and optional ordered `audit_commands` on eligible
-lanes. Lane mapping order does not matter; reports use the skill's lane order.
+the exact five-area `areas` mapping (`dependency-maintenance`,
+`engineering-health`, `issues-and-feedback`, `documentation`, and
+`runtime-reliability`), each with an explicit boolean `mutation` flag, and
+optional ordered `audit_commands` only on dependency maintenance, engineering
+health, and documentation. Area mapping order does not matter.
 Any key the field schema does not define makes the file invalid. Any
 other file at that path is invalid. The file does not name `version`,
 `status`, always-denied effects, presentation caps, deep-target counts, or
 `report_write`.
+
+## Replacing a retired policy
+
+A top-level `lanes` mapping is invalid, including when supplied alongside
+`areas`. There are no retired-key aliases or inferred grants: never combine
+old booleans with OR or AND to authorize a new area. An invalid retired file
+permits only the managed-run gate's caller-only reads until replacement.
+
+Prepare a concrete preview of the entire replacement file using five explicit
+area grants and the existing full-file review procedure below. Show scope,
+protected paths, Worker capacity, tracker identity, and every exact audit argv
+as well as the new grants. Approval of the source contract does not approve
+this repository's replacement policy. Preserve tracker history; replacing the
+policy does not authorize tracker replacement.
+
+Activate the displayed replacement only after its separate owner approval and
+verification that the installed skill matches the exact published source
+revision. Then confirm the approved file on the refreshed default branch and
+read it back. Installation, a manual run, and scheduler enablement retain their
+separate authority; leave a disabled scheduler disabled unless separately
+authorized. A valid replacement alone does not start a run.
 
 ## First-use
 
@@ -68,16 +91,17 @@ below. Capacity refusal alone never starts setup or authorizes replacement.
 
 Setup is one interactive review of the full recommended file. Present identity,
 default branch, scope, protected paths, `maximum_workers`, tracker identity,
-eight lane mutation grants, and optional audit declarations. Show triage as
-recommend-only; it is not
-grantable. The owner can change any real knob. `.agents/repo-gardener.yaml` is
-always protected; setup cannot turn that off. A Worker must not edit that file.
+five area mutation grants, and optional audit declarations. Triage is a
+read-only, recommend-only operation within issues and feedback. Its
+recommendations need no mutation grant, and triage mutation is not grantable.
+The owner can change any real knob. `.agents/repo-gardener.yaml` is always
+protected; setup cannot turn that off. A Worker must not edit that file.
 
-Setup proposes `maximum_workers: 20`, eight authoring lanes on (`mutation:
+Setup proposes `maximum_workers: 20`, five areas on (`mutation:
 true`), discovered identity and branch, protected paths of `.agents/**`,
 `.github/**`, and the repository's declared gate configuration (hook, lint,
 and CI config files it finds), and no approved audit commands in any eligible
-lane.
+area.
 
 Before showing the review, inspect the refreshed default-branch revision's
 manifests, package scripts, lockfiles, tool configuration, CI, and repository
@@ -92,7 +116,7 @@ requests production or provider authentication, reads secret files, uses a
 credential helper or agent socket, or relies on shell parsing. Prefer an
 adopted repository entry point over an interpreter or `env` wrapper when the
 repository evidence supports one. Persist at most ten exact tokenized commands
-across all eligible lanes, and only after the owner approves them in the
+across all eligible areas, and only after the owner approves them in the
 full-file review. The structural checker does not infer arbitrary executable or
 option semantics; that review is the approval boundary for the exact executable
 and arguments. Approval of a package script authorizes that exact argv at each
@@ -120,8 +144,8 @@ read-back file with its own complete preview and direct approval.
 
 A managed run opens only when the current file is valid and names a live
 tracker identity. Any run that never opens returns `caller-only`, naming the
-opening gap and performing only available safe read-only census and survey
-reads. This branch is the sole exception to opening-before-sensing: mint no
+opening gap and performing only available safe filtered read-only discovery
+and survey reads. This branch is the sole exception to opening-before-sensing: mint no
 managed run ID, write no opening or closing record, invoke neither tracker
 effect preparation nor the
 structural checker, execute no declared audit, and make no structural-closure
@@ -130,8 +154,8 @@ claim. Scout helpers and setup execute no declared audits.
 ## Declared-audit authority
 
 An `audit_commands` entry authorizes only its normalized argv in its owning
-eligible lane. The protected file may contain at most ten entries across all
-eligible lanes. As bounded defense-in-depth, structural validation rejects
+eligible area. The protected file may contain at most ten entries across all
+eligible areas. As bounded defense-in-depth, structural validation rejects
 shell operator, interpolation, and redirection-shaped tokens; the managed run
 still passes every accepted token literally and never constructs a shell
 command. Validation does not parse arbitrary executable or option grammars and
@@ -142,7 +166,7 @@ exact tool semantics only within the host's existing controls. It grants no new
 host capability and does not change any Worker mutation gate.
 
 Only a managed Orchestrator may use this authority, after the exact
-`run-opened` readback and before the owning lane qualifies candidates. Preserve
+`run-opened` readback and before the owning area qualifies candidates. Preserve
 declaration order. Before each command, pass the revision check point and
 require the exact target revision at the repository root, a clean worktree,
 and an already-present top-level executable resolved without installing or
@@ -179,9 +203,9 @@ Worker authoring is allowed only when, on the opening file,
 `repository.identity` exactly matches the target repository, every planned or
 committed path is inside the effective `repository.scope.include`/`exclude`
 boundary, `maximum_workers` is greater than zero, the owning
-`lanes.<lane>.mutation` value is `true`, and the path is not protected.
+`areas.<area>.mutation` value is `true`, and the path is not protected.
 `.agents/repo-gardener.yaml` is always protected. A missing or mismatched
-identity, out-of-scope path, missing or `false` lane value,
+identity, out-of-scope path, missing or `false` area value,
 `maximum_workers` of zero, or protected path denies that unit. The bundled
 starter remains denied and grants nothing. For an adopted PR, "planned or
 committed path" means the paths changed by the Worker's own commits after the

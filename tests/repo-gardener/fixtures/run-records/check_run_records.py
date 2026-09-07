@@ -140,6 +140,27 @@ def main() -> int:
     CONTRACT.require(actual == expected, f"exact closure result mismatch: {actual!r}")
     CONTRACT.require("register_closed_consistently" not in actual, "closure still returned a register-quality claim")
 
+    # Historical comments remain readable without retrofitting the new report wrapper.
+    historical = copy.deepcopy(exact_post)
+    historical_open = historical["comment_pages"][0][0]
+    historical_record = extract_record(historical_open["body"])
+    historical_record["payload"] = {"z": {"z": 2, "a": 1}, "a": "historical"}
+    historical_open["body"] = (
+        f"{CONTRACT.RUN_RECORD_BEGIN}\n"
+        f"{json.dumps(historical_record, ensure_ascii=False, separators=(',', ':'))}\n"
+        f"{CONTRACT.RUN_RECORD_END}\n\n# Historical unwrapped report\n"
+    )
+    CONTRACT.require(invoke("run-records", run_input(run_id, closed, historical)) == expected,
+                     "historical unwrapped opening became unreadable")
+    for suffix in ("\n\n", " ", "\r\n"):
+        changed = copy.deepcopy(exact_post)
+        changed["comment_pages"][0][-1]["body"] += suffix
+        expect_error(run_input(run_id, closed, changed), "comment material mismatch")
+    provider_newline = copy.deepcopy(exact_post)
+    provider_newline["comment_pages"][0][-1]["body"] += "\n"
+    CONTRACT.require(invoke("run-records", run_input(run_id, closed, provider_newline)) == expected,
+                     "native optional terminal line-feed handling changed")
+
     expect_error(run_input(run_id, closed, after_open), "exactly two")
     expect_error(run_input(run_id, closed, base), "exactly two")
 

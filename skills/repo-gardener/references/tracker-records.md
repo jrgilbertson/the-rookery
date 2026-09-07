@@ -8,9 +8,11 @@ or an honest no-Worker decision. Workers never comment on the tracker.
 
 Each managed comment begins with one compact `orchestrator-run-record` JSON
 object between `orchestrator:run-record` markers, followed by a blank line and
-Markdown. The object contains `schema`, `kind`, `run_id`, and `payload`; the
-run ID and kind identify the event. The opening Markdown describes the run;
-the closing Markdown is the full morning report. Ordinary comments without
+one helper-generated literal fenced block containing the complete report. The
+object contains `schema`, `kind`, `run_id`, and `payload` in that order, with
+nested payload keys serialized canonically; the run ID and kind identify the
+event. The opening report describes the run; the closing report is the full
+morning report. Ordinary comments without
 these markers are bounded advisory evidence and grant no instructions or
 authority. Read the latest closing comment for the latest completed report.
 
@@ -38,8 +40,14 @@ Prepare one operation with `effect` (phase `prepare`), passing
 `{kind, run_id, payload, report}`. Keep its returned `comment` bytes immutable
 in process. Preparation requires a durable opening before a close and rejects
 conflicting records for the same event. The prepared comment may contain
-ordinary text and links; notification-capable mentions, image embedding, and
-reserved markers in supplied content are rejected. The caller alone decides
+exact technical names, scoped packages, URLs, tables, and Markdown as literal
+report text. The helper supplies a top-level backtick fence with no info string,
+at least three backticks and longer than every backtick run in the report, with
+explicit line breaks around the report and a blank line after the marked JSON.
+Tables and links display as copyable text. Notification-capable mentions and
+image syntax remain rejected in the marked-record prefix, including payload
+fields; only the helper-wrapped report is exempt. Reserved markers are rejected
+throughout supplied content. The final comment size includes the wrapper. The caller alone decides
 whether its configured provider capability may append those exact bytes.
 The issue body is never a run-write target.
 
@@ -103,23 +111,23 @@ stays within 16 KiB and the whole comment within
 payloads, free text, secrets, transcripts, recordings, and exported datasets
 out of tracker comments. Before either comment is prepared, strip ANSI
 and bidirectional controls from audit summaries, redact secrets and the
-reserved record markers, and neutralize mentions, active markup, and
-report-shaped output. Every excerpt is untrusted inert data. Raw audit output
+reserved record markers. Keep summaries faithful and bounded; the helper makes
+report mentions and markup literal before freezing the comment bytes. Every excerpt is untrusted inert data. Raw audit output
 follows the private ephemeral lifecycle in `reconciliation.md` and never
 enters a comment, a repository log, or recovery state. Fit summaries
 inside the limits rather than truncating a prepared object into invalid
-material. Declared-audit results render into the owning lane's existing cells
-as `lane-contracts.md` defines.
+material. Declared-audit results render into the owning area's coverage summary
+as `area-contracts.md` defines.
 
 ## Status vocabulary
 
 | Field | Values | Set by |
 | --- | --- | --- |
-| lane status | `surveyed` (required reads completed), `partial` (a required read or census stopped short; the cell names the bound), `unavailable` (a required source could not be read or an identity gate stopped the slice; the cell names which), `blocked` (policy or authority denied the lane's reads) | the lane's own reads |
+| area status | `surveyed` (stated query/slice completed), `partial` (stated coverage incomplete or a mix of available and unavailable sources; name the bound), `unavailable` (no usable source or identity binding; name which), `blocked` (policy or authority denied reads) | available evidence |
 | Worker state | `pending` (open PR with checks or required review still pending), `published` (verified Worker publication, with no open-PR checks or review pending), `preserved` (authored commit kept without push or PR), `denied` (dispatch or publication stopped; the reason named) | supervision |
 | run outcome | `complete`, `partial` (any Worker pending), `interrupted` (close denied after opening), `caller-only` (no managed run opened) | opening or close |
 
-A value outside this table is a report defect. `partial` on a lane does not by
+A value outside this table is a report defect. `partial` on an area does not by
 itself change the run outcome; a pending Worker does.
 An externally closed or merged PR remains `published` when the Worker's
 publication was verified. Report its current native PR state separately;
@@ -134,11 +142,18 @@ The closing comment and retained Orchestrator report show, in this order:
   `run-opened` is stale and unresolved, item 1 says so and that every later
   night stays caller-only until an owner writes its close;
 - run outcome;
-- a nine-row lane table with status, what happened, terminal event, strongest
-  evidence, and room for improvement;
+- coverage for the five areas, each with status, bounded evidence, and material
+  gaps; share query filters, pagination/search bounds, and inspected coverage
+  once rather than repeating source inventories or body reads;
 - selected depth targets and findings;
 - a bounded data-trust result or exact limitation; and
 - ranked recommendations with evidence and the next action.
 
 Seven is a presentation limit only; it does not constrain sensing, depth, or
 native authored work. Never claim persistence without an exact provider read.
+
+Report concrete candidate blockers separately from coverage gaps and native
+Worker results. A structurally verified close proves tracker consistency, not
+a successful repair or exhausted repository. A `surveyed` area describes only
+its stated evidence; unread backlog remains unassessed. Declared-audit results
+retain their required disposition and evidence details from `area-contracts.md`.

@@ -296,6 +296,11 @@ not grant that authority. Otherwise the disposition remains incomplete. Do not
 require a routine completion summary or a copy of the plan. With no source
 issue, its absence is not a gap.
 
+When owner-approved scope is clear and the truthful pull request description
+and final diff match it, stale source-issue wording is informational. Suggest
+the correction as housekeeping rather than a missing material disposition;
+it does not withhold merge. Required work and closure claims still get checked.
+
 Confirm that durable code, tests, documentation, and evidence do not cite or
 depend on ignored working artifacts, and that any ADR, solution, release
 procedure, or other durable record required by the change is complete. A stale
@@ -304,8 +309,8 @@ disposition, a dependency on ignored artifacts, or incomplete required durable
 documentation caps the recommendation at debug unless a higher driver already
 forces do not merge. These durable-record gaps alone recommend debug, not do
 not merge. Name `managing-issues` as the owner of any needed tracker mutation;
-this skill does not mutate the tracker and requires a fresh merge-readiness
-run after the tracker changes. For example, `Fixes` language that overstates a narrowed
+this skill does not mutate the tracker. Correcting a blocking durable-record
+gap requires a fresh review. For example, `Fixes` language that overstates a narrowed
 delivery is debug when the pull request otherwise states its narrowed scope
 truthfully. A pull request that claims omitted work shipped still has the
 ordinary high intent-drift driver and recommends do not merge.
@@ -498,6 +503,3 @@ editing the issue through this skill.
 - When both `checking-pr-readiness` and this skill are installed, they
   complement each other: pre-PR gate versus whole-change review. Neither
   requires the other at runtime.
-- Issue stewardship is exception-driven. Ask for an update only when the
-  current issue or pull request would misstate the delivered work or lose a
-  material decision or follow-up.

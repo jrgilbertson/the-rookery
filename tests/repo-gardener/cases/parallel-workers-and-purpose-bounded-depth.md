@@ -8,9 +8,9 @@ a fourth look that would change assignment was refused.
 
 > Work only from these synthetic facts. Do not call tools.
 >
-> A managed repo-gardener run has finished the nine-lane survey. The durable
+> A managed repo-gardener run has finished the quick available-input pass across five areas. The durable
 > file has `maximum_workers: 20`, matching identity, in-scope paths, and
-> `mutation: true` for code-health and documentation. Opening revision is
+> `mutation: true` for engineering health and documentation. Opening revision is
 > `policy:1`. `CHANGELOG.md` has the git `merge` attribute `union` at the
 > authoritative base and an additive-entry check applies. Two independently
 > deliverable units
@@ -30,9 +30,10 @@ a fourth look that would change assignment was refused.
 - [ ] The unrelated already-open PR does not consume the Worker cap.
 - [ ] Does not assign a Worker to the protected-path unit; reports it for
       owner attention.
-- [ ] Takes the fourth look because it would change assignment, then stops
+- [ ] Deepens the fourth seam while independent selected Workers progress because
+      it would change assignment, then stops
       deepening because further investigation would not.
-- [ ] A Worker does not survey nine lanes or write tracker comments; scout
+- [ ] A Worker does not perform the five-area breadth pass or write tracker comments; scout
       helpers stay read-only in the Orchestrator session.
 - [ ] Permits the two assignments' `CHANGELOG.md` overlap only because the
       path carries `merge=union` at the base, while each Worker retains its

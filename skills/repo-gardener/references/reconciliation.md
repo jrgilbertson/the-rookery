@@ -1,7 +1,7 @@
 # Orchestrator and Worker workflow
 
 This reference reconciles repository, provider, and Worker facts during a
-managed run. It complements the policy and lane contracts; Repo Gardener
+managed run. It complements the policy and area contracts; Repo Gardener
 creates neither a host adapter nor a second Git-state system. Orca may supply
 the Run interface, but any host that satisfies
 the mutation boundary in `SKILL.md` is suitable.
@@ -44,13 +44,13 @@ host-neutral: use the existing payload and caller-owned recovery mechanisms,
 never a Repo Gardener state machine or per-Worker tracker records.
 
 Write and exactly read back `run-opened` before managed sensing. The
-caller-only branch performs only the required identifier census and nine-lane
-read-only survey. It writes no run records, executes no declared audits, and
+caller-only branch performs only the quick five-area
+read-only pass. It writes no run records, executes no declared audits, and
 does not claim managed closure.
 
 ## Declared audits and sensing
 
-For each eligible lane, run only its normalized `audit_commands`, in policy
+For each eligible area, run only its normalized `audit_commands`, in policy
 order, using the approved direct argv. Check capability, protected policy,
 subject revision, and clean worktree immediately before the command. Keep
 raw stdout and stderr in bounded private capture. When files are needed, use a
@@ -64,24 +64,23 @@ evidence, not an admission verdict or mutation grant.
 
 A finished command, ordinary failure, missing runner, missing nested
 executable, confirmed timeout with the complete audit process tree stopped, or
-command-local capability refusal is lane-local: report it and
+command-local capability refusal is area-local: report it and
 continue safe work. A policy or subject change, unexpected worktree change,
 uncertain termination, interruption, or unknown provider effect stops the
 affected command and dependent work. Leave unexpected changes untouched. Do
 not clean, restore, retry, resume, or replace a command automatically.
 
-Complete every installed lane once after its required census. Separate source
-census, evidence-qualified lane candidates, and normalized candidates. For
-issue lanes, use purpose-bounded reads and derive the Ready Frontier fresh from
-the complete census and current evidence; mapped readiness ranks reads but
-does not decide admission. Scouts are read-only and never own a PR.
+Complete the quick available-input pass across the five areas before first
+dispatch, following `area-contracts.md` for filtered discovery, shared inputs,
+remedy ownership, and qualification. Keep source counts and query coverage
+separate from qualified candidates. Scouts are read-only and never own a PR.
 
-Deepen while another investigation could change an assignment or
-recommendation, then stop. Prefer credible critical-flow risks, independent
-corroboration, measurement defects, overdue coverage with a current signal,
-and then the strongest remaining finding. For each investigation, state the
-evidence, bounded slice, questions, checks, findings, uncertainty, and
-issue-ready next action.
+After that pass, deepen while another investigation could change an assignment
+or recommendation, including while selected Workers progress. Prefer credible
+critical-flow risks, independent corroboration, and measurement defects.
+Retain bounded evidence, findings, uncertainty, and the next useful action;
+stop when further investigation cannot change a decision, without claiming
+unread work excluded.
 
 ## Decide whether to author
 
@@ -92,10 +91,10 @@ that unit; an honest read-only result is successful operation.
 Selection and dispatch for the run never exceed the opening policy's
 `maximum_workers` cap; unrelated existing PRs do not consume that cap.
 Immediately before every Worker dispatch, pass the revision check point and
-read overlap as `worker-contract.md` defines, against the Worker's planned
-paths; an unavailable or unknown read, or a current overlap, denies only that
-dispatch and its dependents while other Workers and read-only sensing
-continue.
+read the complete overlap inventory as `worker-contract.md` defines, against
+the Worker's planned paths, regardless of discovery filters or pagination
+bounds. An unavailable or unknown read, or a current overlap, denies only that
+dispatch and its dependents while other Workers and read-only sensing continue.
 
 An existing PR may be a candidate unit. Apply the Adoption section in
 `worker-contract.md` and populate its brief before dispatch; that section owns

@@ -194,7 +194,7 @@ the named risks to recommend merge, debug, or do not merge.
 ### Repository Maintenance Run
 
 One `repo-gardener` pass through `Sense -> Decide -> Act -> Verify -> Learn`.
-An Orchestrator surveys nine maintenance areas and may assign multiple
+An Orchestrator surveys five maintenance areas and may assign multiple
 Workers, each taking one independently deliverable, reviewable pull request.
 When that work is an issue, it is an Implementation Leaf.
 
@@ -225,10 +225,11 @@ ships at most one pull request. Merge remains a later human step.
 
 ### Census
 
-A cheap listing of one source population, such as issues, pull requests, or
-alerts. It runs during a Repository Maintenance Run and during caller-only
-sensing. Census totals are reported separately from candidates. Completing a
-census is not reading bodies and is not emitting candidates.
+A cheap inventory for a stated source query and window, such as filtered
+issues, pull requests, or alerts. Its filters, pagination limits, and inspected
+coverage bound the claim; a complete filtered query does not establish backlog
+exhaustion. Census totals stay separate from body reads and qualified
+candidates. Areas reuse shared source results.
 
 ### Gardening Tracker
 

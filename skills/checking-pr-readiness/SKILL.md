@@ -50,17 +50,12 @@ directory outside the target repository first; capture helper stdout there and
 do not echo the inventory into chat. Do not remove that directory while the
 run is waiting for a numbered reply. Run
 [scripts/surface-report.sh](scripts/surface-report.sh) when it is present and
-executable. It also carries step 6's size check, so pass the cap values
-resolved per [references/sweep-classes.md](references/sweep-classes.md) class
-11 for every configured automated reviewer and read both results from one run,
-statuses per the reference's helper exit map. Pass `--full` so the listing
-written to temp is not capped. Resolve caps per class 11; one surface-report
-run.
-
-When discovery proves no automated reviewer is configured, run without
-`--cap` for inventory and record class 11 as `not applicable`. Always produce
-the surface report on this run (omit `--defer` even when step 6 later treats
-size as covered by a repository gate).
+executable. Pass `--full` so the listing written to temp includes every path.
+The same run supplies step 6's informational size diagnostics; optional
+`--cap` values and their interpretation live in
+[references/sweep-classes.md](references/sweep-classes.md) class 11. Always
+produce the surface report on this run (omit `--defer` even when a repository
+gate owns a size check).
 
 Otherwise gather the same four categories directly with git: committed on this
 branch against the merge base with the default branch the pull request will
@@ -71,7 +66,9 @@ List untracked paths with the same weight as tracked ones. Finishing tools
 stage them, so they ship with the change even though no diff command shows
 them by default. If the working tree is not a git repository, or git is
 unavailable, stop rather than composing a brief from a surface you could
-not read.
+not read. An unresolved base, unmeasurable committed category, failed git
+enumeration, or omitted path leaves the gather incomplete and withholds
+Approve, regardless of any size verdict.
 
 Completion: every path in all four categories is in the captured surface
 report, or the run stopped because the working surface could not be read from
@@ -221,7 +218,8 @@ that order.
 Mechanical classes run through the bundled helpers:
 
 - [scripts/surface-report.sh](scripts/surface-report.sh) for diff size (class
-  11): reuse step 1's run. Caps and the no-reviewer case live in class 11.
+  11): reuse step 1's run. Class 11 owns optional cap diagnostics and their
+  distinction from actual review coverage.
 - [scripts/evidence-freshness.sh](scripts/evidence-freshness.sh) for stale
   records and plan-named artifacts (classes 4 and 2 support).
 - [scripts/changelog-union.sh](scripts/changelog-union.sh) for branch
@@ -230,8 +228,8 @@ Mechanical classes run through the bundled helpers:
 `changelog-union.sh` and `evidence-freshness.sh` defer when the host
 repository owns an equivalent check: invoke them as `<helper> --defer
 <gate-name>` with the gate step 2 found, and record that class as covered by
-that gate. When a repository gate owns the size check, pass no `--cap` for
-the reviewers that gate covers and record class 11 as covered by that gate.
+that gate. When a repository gate owns the size check, record class 11 as
+covered by that gate; its actual result remains in step 2.
 When step 1 already resolved the target branch or merge base, pass it through
 to `surface-report.sh` and `changelog-union.sh` (`--base <ref>` or
 `--merge-base <sha>`). `evidence-freshness.sh` resolves no base and accepts

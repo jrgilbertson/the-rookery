@@ -8,7 +8,6 @@ import copy
 import hashlib
 import json
 import os
-import re
 import subprocess
 import sys
 import tempfile
@@ -22,22 +21,25 @@ PRODUCTION = REPO_ROOT / "skills" / "repo-gardener" / "scripts" / "config_check.
 TEMPLATE = REPO_ROOT / "skills" / "repo-gardener" / "assets" / "policy-template.yaml"
 ACTIVE_CONFIG_RELATIVE = Path(".agents") / "repo-gardener.yaml"
 MAX_BYTES = 64 * 1024
-AUTHORING_LANES = (
+AREAS = (
+    "dependency-maintenance",
+    "engineering-health",
+    "issues-and-feedback",
+    "documentation",
+    "runtime-reliability",
+)
+AUDIT_ELIGIBLE_AREAS = (
+    "dependency-maintenance",
+    "engineering-health",
+    "documentation",
+)
+RETIRED_LANES = (
     "dependency-and-vulnerability",
     "issue-implementation",
     "ci-and-failing-test",
     "repository-test-and-code-health",
     "documentation-changelog-and-release-note",
     "runtime-error-and-alert",
-    "risk-scoped-qa-and-regression",
-    "security-secret-and-static-analysis",
-)
-TRIAGE_LANE = "issue-backlog-and-customer-feedback-triage"
-LANES = (*AUTHORING_LANES, TRIAGE_LANE)
-AUDIT_ELIGIBLE_LANES = (
-    "dependency-and-vulnerability",
-    "repository-test-and-code-health",
-    "documentation-changelog-and-release-note",
     "risk-scoped-qa-and-regression",
     "security-secret-and-static-analysis",
 )
@@ -255,10 +257,8 @@ def file_digest(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def authoring_lanes(mutation: bool) -> dict[str, Any]:
-    lanes: dict[str, Any] = {lane: {"mutation": mutation} for lane in AUTHORING_LANES}
-    lanes[TRIAGE_LANE] = {}
-    return lanes
+def authoring_areas(mutation: bool) -> dict[str, Any]:
+    return {area: {"mutation": mutation} for area in AREAS}
 
 
 def base_config() -> dict[str, Any]:
@@ -271,14 +271,14 @@ def base_config() -> dict[str, Any]:
         "protected_paths": ["AGENTS.md", ".github/workflows/**"],
         "maximum_workers": 20,
         "tracker": {"identity": "I_kwDOEXAMPLE001"},
-        "lanes": authoring_lanes(True),
+        "areas": authoring_areas(True),
     }
 
 
 def normalized_config(value: dict[str, Any]) -> dict[str, Any]:
     result = copy.deepcopy(value)
-    for lane in AUDIT_ELIGIBLE_LANES:
-        result["lanes"][lane].setdefault("audit_commands", [])
+    for area in AUDIT_ELIGIBLE_AREAS:
+        result["areas"][area].setdefault("audit_commands", [])
     return result
 
 
@@ -354,22 +354,14 @@ def check_starter_shape() -> None:
     require(TEMPLATE.is_file(), "missing policy starter")
     text = TEMPLATE.read_text(encoding="utf-8")
     require("maximum_workers: 0" in text, "starter is not fail-closed on maximum_workers")
-    require(text.count("mutation: false") == 8, "starter authoring-lane mutation count differs")
-    require("mutation: true" not in text, "starter grants an authoring lane")
+    require(text.count("mutation: false") == 5, "starter authoring-area mutation count differs")
+    require("mutation: true" not in text, "starter grants an authoring area")
     require("issue_refinement" not in text, "starter retains removed issue refinement")
     require(
-        text.count("audit_commands: []") == len(AUDIT_ELIGIBLE_LANES),
-        "starter must show an empty audit declaration only on each eligible lane",
+        text.count("audit_commands: []") == len(AUDIT_ELIGIBLE_AREAS),
+        "starter must show an empty audit declaration only on each eligible area",
     )
-    require(
-        re.search(
-            r"issue-backlog-and-customer-feedback-triage:\s*\{\}\s*(?:#.*)?$",
-            text,
-            re.MULTILINE,
-        )
-        is not None,
-        "starter triage lane must be an empty mapping with no mutation key",
-    )
+    require("\nareas:\n" in text and "\nlanes:" not in text, "starter must use areas only")
     require("REPLACE_WITH_STABLE_REPOSITORY_IDENTITY" in text, "starter identity placeholder missing")
     require("REPLACE_WITH_DEFAULT_BRANCH" in text, "starter branch placeholder missing")
     require("REPLACE_WITH_PROTECTED_PATH" in text, "starter protected-path placeholder missing")
@@ -422,7 +414,6 @@ def check_active_config_filesystem_cases(repo_root: Path, outside: Path) -> None
 
 def main() -> int:
     check_script_surface()
-    check_starter_shape()
     with tempfile.TemporaryDirectory(prefix="repo-gardener-config-") as temporary:
         temporary_root = Path(temporary)
         repo_root = temporary_root / "repo"
@@ -453,6 +444,7 @@ def main() -> int:
         expected = normalized_config(base_config())
         first = expect_valid(base_config(), repo_root, expected)
         second = expect_valid(base_config(), repo_root, expected)
+        check_starter_shape()
         require(first == second, "valid config normalization is not deterministic")
 
         for key, value in (
@@ -481,32 +473,25 @@ protected_paths:
 maximum_workers: 20
 tracker:
   identity: I_kwDOEXAMPLE001
-lanes:
-  dependency-and-vulnerability:
+areas:
+  dependency-maintenance:
     mutation: true
-  issue-implementation:
+  issues-and-feedback:
     mutation: true
-  ci-and-failing-test:
+  engineering-health:
     mutation: true
-  repository-test-and-code-health:
+  documentation:
     mutation: true
-  documentation-changelog-and-release-note:
+  runtime-reliability:
     mutation: true
-  runtime-error-and-alert:
-    mutation: true
-  risk-scoped-qa-and-regression:
-    mutation: true
-  security-secret-and-static-analysis:
-    mutation: true
-  issue-backlog-and-customer-feedback-triage: {}
 """
         expect_valid(commented, repo_root, expected)
 
-        # One parser, one grammar: a flow-style lane mapping normalizes identically
-        # and a duplicated lane key fails closed (deeper indent is pinned below).
+        # One parser, one grammar: a flow-style area mapping normalizes identically
+        # and a duplicated area key fails closed (deeper indent is pinned below).
         flow_style = commented.replace(
-            "  dependency-and-vulnerability:\n    mutation: true\n",
-            "  dependency-and-vulnerability: {mutation: true}\n",
+            "  dependency-maintenance:\n    mutation: true\n",
+            "  dependency-maintenance: {mutation: true}\n",
         )
         expect_valid(flow_style, repo_root, expected)
         # Native YAML syntax is accepted when it yields the same safe policy.
@@ -527,11 +512,11 @@ lanes:
         literal_expected["repository"]["identity"] = "Example's !literal &text << value"
         expect_valid(literal_syntax, repo_root, literal_expected)
 
-        duplicate_lane = commented.replace(
-            "  issue-implementation:\n",
-            "  dependency-and-vulnerability: {mutation: true}\n  issue-implementation:\n",
+        duplicate_area = commented.replace(
+            "  issues-and-feedback:\n",
+            "  dependency-maintenance: {mutation: true}\n  issues-and-feedback:\n",
         )
-        expect_invalid(duplicate_lane, repo_root, "duplicate key 'dependency-and-vulnerability'")
+        expect_invalid(duplicate_area, repo_root, "duplicate key 'dependency-maintenance'")
 
         marker = repo_root / "read-only-marker"
         marker.write_text("unchanged\n", encoding="utf-8")
@@ -540,6 +525,19 @@ lanes:
         require(file_digest(marker) == before, "validator changed repository content")
 
         expect_invalid(TEMPLATE, repo_root, "REPLACE_WITH")
+        concrete_starter = TEMPLATE.read_text(encoding="utf-8")
+        for placeholder, concrete in (
+            ("REPLACE_WITH_STABLE_REPOSITORY_IDENTITY", "R_kgDOEXAMPLE001"),
+            ("REPLACE_WITH_DEFAULT_BRANCH", "main"),
+            ("REPLACE_WITH_PROTECTED_PATH", "AGENTS.md"),
+            ("REPLACE_WITH_TRACKER_IDENTITY", "I_kwDOEXAMPLE001"),
+        ):
+            concrete_starter = concrete_starter.replace(placeholder, concrete)
+        starter_expected = base_config()
+        starter_expected["maximum_workers"] = 0
+        starter_expected["protected_paths"] = ["AGENTS.md"]
+        starter_expected["areas"] = authoring_areas(False)
+        expect_valid(concrete_starter, repo_root, normalized_config(starter_expected))
 
         missing_tracker = base_config()
         del missing_tracker["tracker"]
@@ -565,27 +563,27 @@ lanes:
         zero_workers["maximum_workers"] = 0
         expect_valid(zero_workers, repo_root, normalized_config(zero_workers))
 
-        for lane in AUDIT_ELIGIBLE_LANES:
+        for area in AUDIT_ELIGIBLE_AREAS:
             declared = base_config()
-            declared["lanes"][lane]["audit_commands"] = [["npm", "run", "audit"]]
+            declared["areas"][area]["audit_commands"] = [["npm", "run", "audit"]]
             expect_valid(declared, repo_root, normalized_config(declared))
-            declared["lanes"][lane]["audit_commands"].append(
+            declared["areas"][area]["audit_commands"].append(
                 ["npm", "run", "audit", "--", "--strict"]
             )
             expected_declared = normalized_config(declared)
             expect_valid(declared, repo_root, expected_declared)
             require(
-                expected_declared["lanes"][lane]["audit_commands"]
+                expected_declared["areas"][area]["audit_commands"]
                 == [
                     ["npm", "run", "audit"],
                     ["npm", "run", "audit", "--", "--strict"],
                 ],
-                f"{lane} declaration order changed",
+                f"{area} declaration order changed",
             )
 
         explicit_empty = base_config()
-        for lane in AUDIT_ELIGIBLE_LANES:
-            explicit_empty["lanes"][lane]["audit_commands"] = []
+        for area in AUDIT_ELIGIBLE_AREAS:
+            explicit_empty["areas"][area]["audit_commands"] = []
         require(
             expect_valid(explicit_empty, repo_root, normalized_config(explicit_empty))
             == expect_valid(base_config(), repo_root, expected),
@@ -593,27 +591,27 @@ lanes:
         )
 
         same_executable = base_config()
-        same_executable["lanes"]["repository-test-and-code-health"]["audit_commands"] = [
+        same_executable["areas"]["engineering-health"]["audit_commands"] = [
             ["npm", "run", "lint"],
             ["npm", "run", "test"],
         ]
         expect_valid(same_executable, repo_root, normalized_config(same_executable))
 
         ten_declared = base_config()
-        for lane in AUDIT_ELIGIBLE_LANES:
-            ten_declared["lanes"][lane]["audit_commands"] = [
-                ["scanner", lane],
-                ["scanner", "summary", lane],
-            ]
+        for index in range(10):
+            area = AUDIT_ELIGIBLE_AREAS[index % len(AUDIT_ELIGIBLE_AREAS)]
+            ten_declared["areas"][area].setdefault("audit_commands", []).append(
+                ["scanner", f"check-{index}"]
+            )
         expect_valid(ten_declared, repo_root, normalized_config(ten_declared))
         eleven_declared = copy.deepcopy(ten_declared)
-        eleven_declared["lanes"]["dependency-and-vulnerability"]["audit_commands"].append(
+        eleven_declared["areas"]["dependency-maintenance"]["audit_commands"].append(
             ["scanner", "overflow"]
         )
         expect_invalid(eleven_declared, repo_root, "exceeds 10 total entries")
 
         owner_approved_tool_semantics = base_config()
-        owner_approved_tool_semantics["lanes"]["repository-test-and-code-health"][
+        owner_approved_tool_semantics["areas"]["engineering-health"][
             "audit_commands"
         ] = [
             ["scanner", "scripts/audit.py", "--language=python3"],
@@ -648,35 +646,71 @@ lanes:
         )
         for declaration, message in malformed_declarations:
             malformed = base_config()
-            malformed["lanes"]["dependency-and-vulnerability"]["audit_commands"] = declaration
+            malformed["areas"]["dependency-maintenance"]["audit_commands"] = declaration
             expect_invalid(malformed, repo_root, message)
 
         one_bad_among_valid = base_config()
-        one_bad_among_valid["lanes"]["dependency-and-vulnerability"]["audit_commands"] = [
+        one_bad_among_valid["areas"]["dependency-maintenance"]["audit_commands"] = [
             ["npm", "run", "audit"],
             ["npm", "&&", "other"],
             ["npm", "run", "audit", "--", "--strict"],
         ]
         expect_invalid(one_bad_among_valid, repo_root, "contains forbidden shell syntax")
 
-        for lane in set(LANES) - set(AUDIT_ELIGIBLE_LANES):
-            ineligible = base_config()
-            ineligible["lanes"][lane]["audit_commands"] = [["npm", "run", "audit"]]
-            expect_invalid(ineligible, repo_root, f"lanes.{lane} has unexpected key: audit_commands")
+        for area in set(AREAS) - set(AUDIT_ELIGIBLE_AREAS):
+            for commands in ([], [["npm", "run", "audit"]]):
+                ineligible = base_config()
+                ineligible["areas"][area]["audit_commands"] = commands
+                expect_invalid(ineligible, repo_root, f"areas.{area} has unexpected key: audit_commands")
 
         placeholder = base_config()
         placeholder["repository"]["identity"] = "REPLACE_WITH_STABLE_REPOSITORY_IDENTITY"
         expect_invalid(placeholder, repo_root, "unresolved REPLACE_WITH placeholder")
 
-        triage_mutation = base_config()
-        triage_mutation["lanes"][TRIAGE_LANE] = {"mutation": True}
-        expect_invalid(triage_mutation, repo_root, f"lanes.{TRIAGE_LANE} has unexpected key: mutation")
+        # Triage is read-only within issues and feedback, even when authoring is denied.
+        triage_only = base_config()
+        triage_only["areas"]["issues-and-feedback"]["mutation"] = False
+        expect_valid(triage_only, repo_root, normalized_config(triage_only))
 
-        reordered_lanes = base_config()
-        lane_items = list(reordered_lanes["lanes"].items())
-        lane_items[0], lane_items[1] = lane_items[1], lane_items[0]
-        reordered_lanes["lanes"] = dict(lane_items)
-        expect_valid(reordered_lanes, repo_root, expected)
+        for area in AREAS:
+            missing_area = base_config()
+            del missing_area["areas"][area]
+            expect_invalid(missing_area, repo_root, f"areas missing key: {area}")
+            missing_grant = base_config()
+            del missing_grant["areas"][area]["mutation"]
+            expect_invalid(missing_grant, repo_root, f"areas.{area} missing key: mutation")
+            for implicit_grant in (1, "true", {"any": [True, False]}, {"all": [True, False]}):
+                implicit = base_config()
+                implicit["areas"][area]["mutation"] = implicit_grant
+                expect_invalid(implicit, repo_root, f"areas.{area}.mutation must be a boolean")
+
+        for unknown_area in ("unknown", "triage", *RETIRED_LANES,
+                             "issue-backlog-and-customer-feedback-triage"):
+            unknown = base_config()
+            unknown["areas"][unknown_area] = {"mutation": False}
+            expect_invalid(unknown, repo_root, f"areas has unexpected key: {unknown_area}")
+
+        # Different retired grants cannot be ORed, ANDed, or aliased into authority.
+        for offset in (0, 1):
+            retired = base_config()
+            del retired["areas"]
+            retired["lanes"] = {
+                lane: {"mutation": bool((index + offset) % 2)}
+                for index, lane in enumerate(RETIRED_LANES)
+            }
+            retired["lanes"]["issue-backlog-and-customer-feedback-triage"] = {}
+            expect_invalid(retired, repo_root, "config missing key: areas")
+            mixed = base_config()
+            mixed["lanes"] = retired["lanes"]
+            expect_invalid(mixed, repo_root, "config has unexpected key: lanes")
+            mixed["areas"] = {}
+            expect_invalid(mixed, repo_root, "config has unexpected key: lanes")
+
+        reordered_areas = base_config()
+        area_items = list(reordered_areas["areas"].items())
+        area_items[0], area_items[1] = area_items[1], area_items[0]
+        reordered_areas["areas"] = dict(area_items)
+        expect_valid(reordered_areas, repo_root, expected)
 
         absolute_protected = base_config()
         absolute_protected["protected_paths"] = ["/etc/**"]
@@ -695,15 +729,15 @@ lanes:
         expect_invalid(yes_mutation, repo_root, "mutation must be a boolean")
 
         four_space_lines = []
-        in_lanes = False
+        in_areas = False
         for line in dump_yaml(base_config()).splitlines():
-            if line.startswith("lanes:"):
-                in_lanes = True
+            if line.startswith("areas:"):
+                in_areas = True
                 four_space_lines.append(line)
                 continue
-            if in_lanes and line and not line[0].isspace():
-                in_lanes = False
-            four_space_lines.append("  " + line if in_lanes and line else line)
+            if in_areas and line and not line[0].isspace():
+                in_areas = False
+            four_space_lines.append("  " + line if in_areas and line else line)
         expect_valid("\n".join(four_space_lines) + "\n", repo_root, expected)
 
         mapping_path = dump_yaml(base_config()).replace(
@@ -758,18 +792,18 @@ lanes:
         expected_trailing["repository"]["scope"]["exclude"] = ["tmp/**"]
         expect_valid(trailing_exclude, repo_root, expected_trailing)
 
-        flow_lane = dump_yaml(base_config()).replace(
-            "  dependency-and-vulnerability:\n    mutation: true\n",
-            "  dependency-and-vulnerability: {mutation: true}\n",
+        flow_area = dump_yaml(base_config()).replace(
+            "  dependency-maintenance:\n    mutation: true\n",
+            "  dependency-maintenance: {mutation: true}\n",
         )
-        expect_valid(flow_lane, repo_root, expected)
-        flow_lane_comma = dump_yaml(base_config()).replace(
-            "  dependency-and-vulnerability:\n    mutation: true\n",
-            "  dependency-and-vulnerability: {mutation: true,}\n",
+        expect_valid(flow_area, repo_root, expected)
+        flow_area_comma = dump_yaml(base_config()).replace(
+            "  dependency-maintenance:\n    mutation: true\n",
+            "  dependency-maintenance: {mutation: true,}\n",
         )
-        expect_valid(flow_lane_comma, repo_root, expected)
+        expect_valid(flow_area_comma, repo_root, expected)
 
-        for key in ("repository", "protected_paths", "maximum_workers", "tracker", "lanes"):
+        for key in ("repository", "protected_paths", "maximum_workers", "tracker", "areas"):
             missing = base_config()
             del missing[key]
             expect_invalid(missing, repo_root, f"missing key: {key}")

@@ -21,6 +21,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `checking-merge-readiness` treats stale source-issue wording as
+  informational when owner-approved scope, the PR description, and delivered
+  work agree. Missing required work, incorrect closure claims, and authority
+  or verification gaps still block merge.
 - `checking-pr-readiness` treats reviewer file limits as informational.
   Unknown or exceeded limits alone no longer block PR approval or require
   vendor-plan research. Complete change inventory, actual required-review

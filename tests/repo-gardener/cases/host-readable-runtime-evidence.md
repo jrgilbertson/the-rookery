@@ -24,11 +24,11 @@ must neither grant nor withhold a read the host already has.
 > repository project/environment bindings and both reads complete. (9) One
 > verified source succeeds and another has an ambiguous binding. (10) The
 > provider returns a missing result rather than a complete empty list.
-> Report the runtime lane status and reason for each situation.
+> Report the runtime reliability area status and reason for each situation.
 
 ## Expected behavior
 
-- [ ] Situation 1 reports the lane `surveyed` with aggregate counts and
+- [ ] Situation 1 reports the area `surveyed` with aggregate counts and
       bounded issue identities only.
 - [ ] Situation 2 reports `unavailable` naming the failed provider read.
 - [ ] Situation 3 stops the slice and names the identity mismatch.
@@ -45,9 +45,9 @@ must neither grant nor withhold a read the host already has.
 - [ ] Situation 8 reads both verified sources, keeps their identities, and
       coalesces the same underlying finding rather than double-counting it.
 - [ ] Situation 9 reads the verified source, stops only the ambiguous source,
-      and reports the lane `partial` with its coverage limitation.
+      and reports the area `partial` with its coverage limitation.
 - [ ] Situation 10 names missing data as a limitation, never an empty result
       or zero errors.
-- [ ] No situation names the durable file as the reason the lane is
+- [ ] No situation names the durable file as the reason the area is
       unavailable.
 - [ ] No output includes people, payloads, or free-text error content.

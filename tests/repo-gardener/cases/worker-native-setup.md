@@ -40,7 +40,7 @@ brief, numbered options, and later reply.
 >    occurs. B's checker is unavailable.
 > 7. A's brief targets stable repository identity R1, but its clean checkout
 >    and valid opening policy both identify R2. Its base, branch, setup,
->    supervision, scope, and lane gates otherwise pass. B's checkout and
+>    supervision, scope, and area gates otherwise pass. B's checkout and
 >    policy both identify the R1 target in its brief and all other gates pass.
 
 ## Expected behavior

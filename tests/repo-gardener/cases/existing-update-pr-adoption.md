@@ -11,7 +11,7 @@ same-repository update PR with a Worker-closable gap is a unit.
 >
 > A managed repo-gardener run opens on a valid durable file with
 > `maximum_workers: 20`, matching identity, in-scope paths, and
-> `mutation: true` for the dependency lane. `CHANGELOG.md` has the git
+> `mutation: true` for dependency maintenance. `CHANGELOG.md` has the git
 > `merge` attribute `union` at the authoritative base. One open pull request
 > was created by a provider-marked bot account; its head branch lives in this
 > repository, every head commit beyond the base is by that bot, it is not a

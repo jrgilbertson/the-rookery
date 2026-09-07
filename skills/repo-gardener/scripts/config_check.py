@@ -20,37 +20,30 @@ MAX_INTEGER = 2_147_483_647
 MAX_LIST_ENTRIES = 256
 MAX_AUDIT_COMMANDS = 10
 MAX_YAML_DEPTH = 16
-AUTHORING_LANES = (
-    "dependency-and-vulnerability",
-    "issue-implementation",
-    "ci-and-failing-test",
-    "repository-test-and-code-health",
-    "documentation-changelog-and-release-note",
-    "runtime-error-and-alert",
-    "risk-scoped-qa-and-regression",
-    "security-secret-and-static-analysis",
+AREA_ORDER = (
+    "dependency-maintenance",
+    "engineering-health",
+    "issues-and-feedback",
+    "documentation",
+    "runtime-reliability",
 )
-TRIAGE_LANE = "issue-backlog-and-customer-feedback-triage"
-LANE_ORDER = (*AUTHORING_LANES, TRIAGE_LANE)
-AUDIT_ELIGIBLE_LANES = (
-    "dependency-and-vulnerability",
-    "repository-test-and-code-health",
-    "documentation-changelog-and-release-note",
-    "risk-scoped-qa-and-regression",
-    "security-secret-and-static-analysis",
+AUDIT_ELIGIBLE_AREAS = (
+    "dependency-maintenance",
+    "engineering-health",
+    "documentation",
 )
 TOP_LEVEL_REQUIRED = {
     "repository",
     "protected_paths",
     "maximum_workers",
     "tracker",
-    "lanes",
+    "areas",
 }
 REPOSITORY_FIELDS = {"identity", "default_branch", "scope"}
 SCOPE_FIELDS = {"include", "exclude"}
 TRACKER_FIELDS = {"identity"}
-AUTHORING_LANE_FIELDS = {"mutation"}
-AUDIT_LANE_FIELDS = AUTHORING_LANE_FIELDS | {"audit_commands"}
+AREA_FIELDS = {"mutation"}
+AUDIT_AREA_FIELDS = AREA_FIELDS | {"audit_commands"}
 MAPPING_KEY = re.compile(r"^[A-Za-z0-9_.-][A-Za-z0-9_./-]*$")
 ROOTED_OR_DRIVE_PATH = re.compile(r"^(?:[A-Za-z]:[/\\]|[/\\])")
 ISSUE_NUMBER_SELECTOR = re.compile(r"^#\d+$")
@@ -330,33 +323,29 @@ def normalize_audit_commands(value: Any, label: str) -> list[list[str]]:
     return result
 
 
-def normalize_lanes(value: Any) -> dict[str, Any]:
-    require(isinstance(value, dict), "lanes must be a mapping")
-    require_exact_fields(value, set(LANE_ORDER), set(LANE_ORDER), "lanes")
-    lanes: dict[str, Any] = {}
-    for lane in AUTHORING_LANES:
-        entry = value[lane]
-        require(isinstance(entry, dict), f"lanes.{lane} must be a mapping")
-        allowed_fields = AUDIT_LANE_FIELDS if lane in AUDIT_ELIGIBLE_LANES else AUTHORING_LANE_FIELDS
-        require_exact_fields(entry, AUTHORING_LANE_FIELDS, allowed_fields, f"lanes.{lane}")
+def normalize_areas(value: Any) -> dict[str, Any]:
+    require(isinstance(value, dict), "areas must be a mapping")
+    require_exact_fields(value, set(AREA_ORDER), set(AREA_ORDER), "areas")
+    areas: dict[str, Any] = {}
+    for area in AREA_ORDER:
+        entry = value[area]
+        require(isinstance(entry, dict), f"areas.{area} must be a mapping")
+        allowed_fields = AUDIT_AREA_FIELDS if area in AUDIT_ELIGIBLE_AREAS else AREA_FIELDS
+        require_exact_fields(entry, AREA_FIELDS, allowed_fields, f"areas.{area}")
         mutation = entry["mutation"]
-        require(isinstance(mutation, bool), f"lanes.{lane}.mutation must be a boolean")
-        lanes[lane] = {"mutation": mutation}
-        if lane in AUDIT_ELIGIBLE_LANES:
-            lanes[lane]["audit_commands"] = normalize_audit_commands(
+        require(isinstance(mutation, bool), f"areas.{area}.mutation must be a boolean")
+        areas[area] = {"mutation": mutation}
+        if area in AUDIT_ELIGIBLE_AREAS:
+            areas[area]["audit_commands"] = normalize_audit_commands(
                 entry.get("audit_commands", []),
-                f"lanes.{lane}.audit_commands",
+                f"areas.{area}.audit_commands",
             )
     require(
-        sum(len(lanes[lane]["audit_commands"]) for lane in AUDIT_ELIGIBLE_LANES)
+        sum(len(areas[area]["audit_commands"]) for area in AUDIT_ELIGIBLE_AREAS)
         <= MAX_AUDIT_COMMANDS,
-        f"lanes.audit_commands exceeds {MAX_AUDIT_COMMANDS} total entries",
+        f"areas.audit_commands exceeds {MAX_AUDIT_COMMANDS} total entries",
     )
-    triage = value[TRIAGE_LANE]
-    require(isinstance(triage, dict), f"lanes.{TRIAGE_LANE} must be a mapping")
-    require_exact_fields(triage, set(), set(), f"lanes.{TRIAGE_LANE}")
-    lanes[TRIAGE_LANE] = {}
-    return lanes
+    return areas
 
 
 def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
@@ -371,7 +360,7 @@ def normalize_config(value: dict[str, Any]) -> dict[str, Any]:
         "protected_paths": require_glob_list(value["protected_paths"], "protected_paths", nonempty=False),
         "maximum_workers": workers,
         "tracker": normalize_tracker(value["tracker"]),
-        "lanes": normalize_lanes(value["lanes"]),
+        "areas": normalize_areas(value["areas"]),
     }
     return normalized
 

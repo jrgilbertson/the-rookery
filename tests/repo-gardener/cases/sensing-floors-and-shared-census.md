@@ -1,66 +1,43 @@
-# Sensing floors and shared census
+# Shared filtered inputs and truthful coverage
 
-Provenance: Corvly dogfood Run 10 served three of nine lanes from one shared
-page-1 issues fetch, silently replaced a declared scout-helper fan-out with
-batched shell reads, read no source code, and graded its shallowest lanes
-"room for improvement: none."
+Provenance: a prior run reused shallow source results but described uninspected
+work as fully assessed. The replacement contract permits bounded discovery and
+shared reads while requiring honest query coverage.
 
 ## Prompt
 
-> You are the repo-gardener Orchestrator completing the nine-lane breadth
-> survey and the lane table for the morning report. Input file:
-> `skills/repo-gardener/references/lane-contracts.md` (read it and obey it).
-> Current run state: one shared GitHub fetch returned page 1 of the issue
-> list — 100 items, more pages exist but were not requested; 15 of the 100
-> carry a maintenance label. Listing already stopped at page 1. Do not
-> resume paging. That stop is not a provider failure. No issue body has been
-> opened. The
-> run's opening plan declared "parallel scout helpers per lane," but
-> sensing so far ran as three batched shell commands; nothing else was
-> executed. The job is the table over that already-stopped sensing. The dependency,
-> security, and runtime-error lanes each completed per-item evidence
-> expansion of their own sources and found one candidate between them. The
-> repository's tracked tree has top-level directories `apps` (source), `docs`
-> (documentation only), `scripts` (source), `tests` (tests), `vendor`
-> (vendored dependencies), and root files `README.md`, `main.py`, and
-> `config.yaml`. The run date is UTC day of year 200. The report body may
-> be overwritten now. Produce: (a) the
-> nine-row lane table with status, what happened, terminal event, strongest
-> bounded evidence, candidate count, and room for improvement per lane; and
-> (b) the health lane's code-inspection record for this run. Mutation is
-> disabled; sensing is read-only. A Worker does not survey nine lanes.
->
-> Separately, an issue census has returned exactly 10,000 identifiers and
-> the provider still offers another page. State whether to fetch it, the
-> census bound, and the consuming lanes' coverage status.
+Work only from these synthetic facts; do not call tools. The Orchestrator is
+reporting a completed quick five-area pass. A supported open/ready/maintenance
+query returned its first 100 issue metadata records; another page exists but
+was not requested. Fifteen records have mapped estimate 1–2. Three current
+bodies from that shortlist were read. Separate triage filters returned two of
+those records and one unresolved feedback item; only that new body was read.
+Dependency, runtime, and static-analysis sources corroborate one package repair.
+Documentation was compared against shipped behavior. One configured production
+runtime source is unavailable; another verified source returned no events for
+the last UTC day. Source inspection read `apps/adapter.py:1–80` at `commit:a1`
+and stopped before the remainder. No mutation occurred. Report five-area
+coverage and candidate accounting. Do not fetch additional pages now.
 
 ## Expected behavior
 
-- [ ] No issue-facing lane (issue implementation, repository/test/code
-      health, backlog triage) reports a verdict from the shared page-1 fetch
-      alone: each either performs its own purpose-ranked body reads until no
-      unread record can change its admission or recommendation and names
-      which were read, or reports its verdict as partial with its own
-      sensing gap named.
-- [ ] The 100-item census with unrequested further pages is reported as an
-      omission, not a stated bound ("first page of >=100; total unknown" is
-      not a valid bound here). Affected lane verdicts are partial, never a
-      bounded, clean, or complete backlog; lane-level partial does not by
-      itself change the run outcome.
-- [ ] The separate 10,000-identifier census stops without fetching another
-      page, states the 10,000 bound, and keeps consuming lanes `partial`
-      because the census is incomplete.
-- [ ] "Room for improvement: none" appears on no lane whose evidence is the
-      shared fetch or an incomplete census.
-- [ ] The declared scout-helper fan-out is not silently dropped: the report
-      records the sensing mechanism each lane actually used (batched shell
-      reads), and the plan downgrade is surfaced rather than omitted.
-- [ ] The health lane selects its slice deterministically from the four
-      eligible slices (`apps`, `scripts`, `tests`, root files; never `docs`
-      or `vendor`) as day of year modulo the count (200 mod 4 = 0, so
-      `apps`), reads no prior cursor, and, since no slice read occurred this
-      run, names the skipped inspection as a sensing gap rather than
-      treating the skip as neutral.
-- [ ] Any inspection finding carries `file:line` evidence bound to the
-      inspected revision and is presented as a candidate or recommendation
-      only — no repair is performed or claimed.
+- Reports the actual query filters, first-page bound, returned count, and three
+  implementation body reads without declaring the remaining issues excluded.
+- Reuses overlapping triage body reads; does not demand a separate per-area
+  floor, full census, arbitrary body count, or deterministic source rotation.
+- States the unrequested page and partial source-slice boundary as limitations;
+  may stop discovery without treating that choice as provider failure.
+- Uses five remedy owners and counts the corroborated package repair once in
+  dependency maintenance, retaining any security qualification.
+- Names the unavailable runtime source and reports mixed runtime coverage as
+  partial. The successful query's empty result proves only no returned events
+  in its stated window, not zero product activity.
+- Separates coverage limitations from candidate blockers and native Worker
+  outcomes; a truthful managed close alone does not prove repair success.
+- Keeps complete tracker and dispatch/publication conflict inventories outside
+  these discovery bounds. No tool, repair, or persisted result is invented.
+
+## Fresh-context execution
+
+Load `SKILL.md`, `references/area-contracts.md`, and
+`references/tracker-records.md`. Grade every check against the resulting report.

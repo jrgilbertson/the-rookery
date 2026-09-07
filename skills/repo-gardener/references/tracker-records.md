@@ -116,18 +116,18 @@ report mentions and markup literal before freezing the comment bytes. Every exce
 follows the private ephemeral lifecycle in `reconciliation.md` and never
 enters a comment, a repository log, or recovery state. Fit summaries
 inside the limits rather than truncating a prepared object into invalid
-material. Declared-audit results render into the owning lane's existing cells
-as `lane-contracts.md` defines.
+material. Declared-audit results render into the owning area's coverage summary
+as `area-contracts.md` defines.
 
 ## Status vocabulary
 
 | Field | Values | Set by |
 | --- | --- | --- |
-| lane status | `surveyed` (required reads completed), `partial` (a required read or census stopped short; the cell names the bound), `unavailable` (a required source could not be read or an identity gate stopped the slice; the cell names which), `blocked` (policy or authority denied the lane's reads) | the lane's own reads |
+| area status | `surveyed` (stated query/slice completed), `partial` (stated coverage incomplete or a mix of available and unavailable sources; name the bound), `unavailable` (no usable source or identity binding; name which), `blocked` (policy or authority denied reads) | available evidence |
 | Worker state | `pending` (open PR with checks or required review still pending), `published` (verified Worker publication, with no open-PR checks or review pending), `preserved` (authored commit kept without push or PR), `denied` (dispatch or publication stopped; the reason named) | supervision |
 | run outcome | `complete`, `partial` (any Worker pending), `interrupted` (close denied after opening), `caller-only` (no managed run opened) | opening or close |
 
-A value outside this table is a report defect. `partial` on a lane does not by
+A value outside this table is a report defect. `partial` on an area does not by
 itself change the run outcome; a pending Worker does.
 An externally closed or merged PR remains `published` when the Worker's
 publication was verified. Report its current native PR state separately;
@@ -142,11 +142,18 @@ The closing comment and retained Orchestrator report show, in this order:
   `run-opened` is stale and unresolved, item 1 says so and that every later
   night stays caller-only until an owner writes its close;
 - run outcome;
-- a nine-row lane table with status, what happened, terminal event, strongest
-  evidence, and room for improvement;
+- coverage for the five areas, each with status, bounded evidence, and material
+  gaps; share query filters, pagination/search bounds, and inspected coverage
+  once rather than repeating source inventories or body reads;
 - selected depth targets and findings;
 - a bounded data-trust result or exact limitation; and
 - ranked recommendations with evidence and the next action.
 
 Seven is a presentation limit only; it does not constrain sensing, depth, or
 native authored work. Never claim persistence without an exact provider read.
+
+Report concrete candidate blockers separately from coverage gaps and native
+Worker results. A structurally verified close proves tracker consistency, not
+a successful repair or exhausted repository. A `surveyed` area describes only
+its stated evidence; unread backlog remains unassessed. Declared-audit results
+retain their required disposition and evidence details from `area-contracts.md`.

@@ -12,14 +12,14 @@ sense-and-recommend run.
 > A managed repo-gardener run is requested. `.agents/repo-gardener.yaml` is
 > valid, names a live tracker identity, matches repository identity and
 > scope, and keeps that revision unchanged at open, dispatch, push, PR
-> creation, and close. Code-health and documentation lanes have
+> creation, and close. Engineering-health and documentation areas have
 > `mutation: true`. Skill-hardcoded denies remain: never merge, create
 > follow-up issues, release, deploy, or message a customer. The tracker has
 > no managed comments for this run yet. Evaluate each scenario independently.
 >
-> 1. `maximum_workers: 20`. Nine-lane census totals are 90 issues, 17
->    repository-health signals, and 12 alerts. After evidence qualification
->    and cross-lane deduplication, two normalized current candidates remain:
+> 1. `maximum_workers: 20`. A quick available-input pass covers all five areas; bounded
+>    queries returned 90 issues, 17 repository-health signals, and 12 alerts.
+>    After evidence qualification and deduplication, two normalized current candidates remain:
 >    (a) dead-code removal in a developer-only adapter, in-scope, with a
 >    focused unit-test path; (b) changelog drift against shipped behavior,
 >    in-scope, on documentation paths. A third unit would touch a protected
@@ -55,9 +55,10 @@ sense-and-recommend run.
       `run-opened` before sensing, then one `run-closed` after the run, each
       with exact readback. Comments are valid without hash fields. Workers
       never comment on the tracker.
-- [ ] Scenario 1 reports all nine lanes and keeps census totals distinct from
+- [ ] Scenario 1 reports all five areas and keeps bounded source counts distinct from
       the two normalized candidates.
-- [ ] Scenario 1 assigns two parallel Workers after overlap is decided. Each
+- [ ] Scenario 1 assigns two parallel Workers after the quick five-area pass and
+      complete overlap inventory are decided. Each
       ownerless Worker stops on its PR-readiness menu, then may open one
       unmerged PR only after Orchestrator-authorized option 1, matching
       identity reread, and the immediate matching local/provider-head and

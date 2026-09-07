@@ -6,6 +6,7 @@ from __future__ import annotations
 import copy
 import importlib.util
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -190,11 +191,30 @@ def main() -> int:
             "Source: [approved provider issue](https://github.com/octo/example/issues/42).\n"
         ),
     }
+    # Real CLI output sorts object keys: stored prepared material must survive it.
+    reordered_operation = dict(operation, payload={
+        "z": {"z": 2, "a": {"z": 3, "a": 1}},
+        "a": [{"z": 4, "a": 2}],
+    })
+    reordered = cli(effect_input("prepare", pre_read=base, operation=reordered_operation))
+    stored = json.loads(json.dumps(reordered, sort_keys=True))
+    sorted_operation = json.loads(json.dumps(reordered_operation, sort_keys=True))
+    CONTRACT.require(cli(effect_input("prepare", pre_read=base, operation=sorted_operation)) == reordered,
+                     "payload insertion order changed prepared bytes")
+    _, reordered_record = CONTRACT._extract_marked_json(
+        reordered["comment"], CONTRACT.RUN_RECORD_BEGIN, CONTRACT.RUN_RECORD_END, "nested record")
+    CONTRACT.require(tuple(reordered_record) == CONTRACT.RUN_RECORD_FIELD_ORDER, "outer record order changed")
+    round_trip = cli(effect_input(
+        "verify", prepared=stored, pre_read=base,
+        post_read=target_snapshot(base, stored), write_attempt="possible",
+    ))
+    CONTRACT.require(round_trip["terminal_outcome"] == "observed", "serialized nested payload did not round-trip")
+    print("PASS: real CLI reversed and nested payload order survives serialized storage and exact readback")
     prepared = cli(effect_input("prepare", pre_read=base, operation=operation))
     prepared_again = cli(effect_input("prepare", pre_read=base, operation=operation))
     CONTRACT.require(prepared == prepared_again, "preparation is not deterministic")
     CONTRACT.require(set(prepared) == {"schema", "repository_id", "report_issue_id", "writer_id", "operation", "comment"}, "prepared effect contains body or transaction machinery")
-    CONTRACT.require(prepared["comment"].endswith(operation["report"]), "report is absent from the comment")
+    CONTRACT.require(f"\n{operation['report']}\n" in prepared["comment"], "report is absent from the comment")
     target = target_snapshot(base, prepared)
     CONTRACT.require(target["issue"]["body"] == base["issue"]["body"], "append changed the static issue body")
 
@@ -239,6 +259,11 @@ def main() -> int:
         expect_error(effect_input("prepare", pre_read=after_close, operation=conflicting), "conflict")
     for over_limit in (dict(operation, report="x" * CONTRACT.BODY_LIMIT), dict(operation, payload={"text": "x" * CONTRACT.RECEIPT_LIMIT})):
         expect_error(effect_input("prepare", pre_read=base, operation=over_limit), "exceeds")
+
+    # Fence growth counts toward the final comment budget, not only report bytes.
+    expect_error(effect_input("prepare", pre_read=base,
+                              operation=dict(operation, report="`" * (CONTRACT.BODY_LIMIT // 2))),
+                 "prepared comment exceeds")
 
     # Full escaped snapshots must leave room for both reads and our remaining comments.
     capacity = CONTRACT.INPUT_LIMIT // 4
@@ -310,7 +335,7 @@ def main() -> int:
                 poisoned["report"] = marker
             expect_error(effect_input("prepare", pre_read=base, operation=poisoned), "reserved report sequence")
 
-    for unsafe_report, phrase in (
+    for literal_report, _ in (
         ("\nOwner: @octocat\n", "notification-capable mention"),
         ("\nReviewers: @octo-org/security-team\n", "notification-capable mention"),
         ("\nDependency: @types/node\n", "notification-capable mention"),
@@ -328,10 +353,21 @@ def main() -> int:
             "image embedding",
         ),
         ('\n<img src="https://attacker.example/pixel.png" alt="">\n', "image embedding"),
+        ("```\n@octocat\n``````\n<img src='https://attacker.example/pixel'>", "fence injection"),
+        ("~~~\n</pre></code><script>alert(1)</script>\n~~~", "HTML injection"),
+        ("| Package | Source |\n| --- | --- |\n| @types/node | https://example.test/@alice |", "technical names"),
+        ("\r\n````\r@octocat\r<img src=x>\r````", "line ending injection"),
     ):
-        unsafe_operation = copy.deepcopy(operation)
-        unsafe_operation["report"] = unsafe_report
-        expect_error(effect_input("prepare", pre_read=base, operation=unsafe_operation), phrase)
+        literal_operation = dict(operation, report=literal_report)
+        literal = cli(effect_input("prepare", pre_read=base, operation=literal_operation))
+        suffix = literal["comment"].split(CONTRACT.RUN_RECORD_END, 1)[1]
+        fence = suffix.split("\n")[2]
+        CONTRACT.require(re.fullmatch(r"`{3,}", fence) is not None, "report fence has info or indentation")
+        CONTRACT.require(all(len(run) < len(fence) for run in re.findall(r"`+", literal_report)), "report can close its fence")
+        CONTRACT.require(suffix == f"\n\n{fence}\n{literal_report}\n{fence}\n", "literal wrapper changed report bytes")
+        literal_post = target_snapshot(base, literal)
+        result = cli(effect_input("verify", prepared=literal, pre_read=base, post_read=literal_post, write_attempt="possible"))
+        CONTRACT.require(result["terminal_outcome"] == "observed", "literal report failed exact verification")
 
     for unsafe_payload, phrase in (
         ("@octocat", "notification-capable mention"),
@@ -342,6 +378,13 @@ def main() -> int:
         unsafe_operation = copy.deepcopy(operation)
         unsafe_operation["payload"]["text"] = unsafe_payload
         expect_error(effect_input("prepare", pre_read=base, operation=unsafe_operation), phrase)
+        for prefix_field in ("run_id", "payload-key"):
+            prefix_operation = copy.deepcopy(operation)
+            if prefix_field == "run_id":
+                prefix_operation["run_id"] = unsafe_payload
+            else:
+                prefix_operation["payload"] = {unsafe_payload: "value"}
+            expect_error(effect_input("prepare", pre_read=base, operation=prefix_operation), phrase)
 
     unsafe_comment_operation = copy.deepcopy(operation)
     unsafe_comment_operation["payload"]["package"] = "@types/node"
@@ -363,8 +406,16 @@ def main() -> int:
     changed_run["run_id"] = "run:synthetic:restart"
     restarted = cli(effect_input("prepare", pre_read=base, operation=changed_run))
     CONTRACT.require(restarted["comment"] != prepared["comment"], "run_id was not bound into the comment")
+    for suffix in ("\n\n", " ", "\r\n"):
+        tampered_post = copy.deepcopy(target)
+        tampered_post["comment_pages"][-1][-1]["body"] += suffix
+        result = cli(effect_input("verify", prepared=prepared, pre_read=base, post_read=tampered_post, write_attempt="possible"))
+        CONTRACT.require(result["terminal_outcome"] == "ambiguous", "changed terminal bytes were accepted")
+
     for field, value in (
         ("comment", prepared["comment"].replace('"kind":"run-opened"', '"kind":"run-closed"')),
+        ("comment", prepared["comment"] + "\n"),
+        ("comment", prepared["comment"].replace("Treat", "Treat differently")),
     ):
         altered = copy.deepcopy(prepared)
         altered[field] = value
@@ -438,7 +489,7 @@ def main() -> int:
     expect_error(effect_input("prepare", pre_read=register_snapshot, operation=operation), "tracker snapshot schema")
 
     print(f"PASS: {len(scenarios)} exact two-comment prepare/verify scenarios")
-    print("PASS: mention and image embedding in prepared tracker content fail closed")
+    print("PASS: reports wrap literally; notification and image syntax in the marked prefix fail closed")
     print("PASS: one immutable comment contains the report; the issue body stays unchanged")
     print("PASS: denied or mutated readback cannot mint observed closure")
     return 0

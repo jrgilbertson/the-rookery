@@ -335,28 +335,19 @@ def main() -> int:
                 poisoned["report"] = marker
             expect_error(effect_input("prepare", pre_read=base, operation=poisoned), "reserved report sequence")
 
-    for literal_report, _ in (
-        ("\nOwner: @octocat\n", "notification-capable mention"),
-        ("\nReviewers: @octo-org/security-team\n", "notification-capable mention"),
-        ("\nDependency: @types/node\n", "notification-capable mention"),
-        (
-            "\nOwner: [@octocat](https://github.com/octocat)\n",
-            "notification-capable mention",
-        ),
-        (
-            "\nSee [notes](https://example.com)(@octocat)\n",
-            "notification-capable mention",
-        ),
-        ("\n![tracking pixel](https://attacker.example/pixel.png)\n", "image embedding"),
-        (
-            "\n![tracking pixel][pixel]\n\n[pixel]: https://attacker.example/pixel.png\n",
-            "image embedding",
-        ),
-        ('\n<img src="https://attacker.example/pixel.png" alt="">\n', "image embedding"),
-        ("```\n@octocat\n``````\n<img src='https://attacker.example/pixel'>", "fence injection"),
-        ("~~~\n</pre></code><script>alert(1)</script>\n~~~", "HTML injection"),
-        ("| Package | Source |\n| --- | --- |\n| @types/node | https://example.test/@alice |", "technical names"),
-        ("\r\n````\r@octocat\r<img src=x>\r````", "line ending injection"),
+    for literal_report in (
+        "\nOwner: @octocat\n",
+        "\nReviewers: @octo-org/security-team\n",
+        "\nDependency: @types/node\n",
+        "\nOwner: [@octocat](https://github.com/octocat)\n",
+        "\nSee [notes](https://example.com)(@octocat)\n",
+        "\n![tracking pixel](https://attacker.example/pixel.png)\n",
+        "\n![tracking pixel][pixel]\n\n[pixel]: https://attacker.example/pixel.png\n",
+        "\n<img src=\"https://attacker.example/pixel.png\" alt=\"\">\n",
+        "```\n@octocat\n``````\n<img src='https://attacker.example/pixel'>",
+        "~~~\n</pre></code><script>alert(1)</script>\n~~~",
+        "| Package | Source |\n| --- | --- |\n| @types/node | https://example.test/@alice |",
+        "\r\n````\r@octocat\r<img src=x>\r````",
     ):
         literal_operation = dict(operation, report=literal_report)
         literal = cli(effect_input("prepare", pre_read=base, operation=literal_operation))

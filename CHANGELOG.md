@@ -21,6 +21,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `checking-pr-readiness` treats reviewer file limits as informational.
+  Unknown or exceeded limits alone no longer block PR approval or require
+  vendor-plan research. Complete change inventory, actual required-review
+  coverage, and exact identity checks still govern readiness.
 - `repo-gardener` requires five explicit maintenance areas: dependency
   maintenance, engineering health, issues and feedback, documentation, and
   runtime reliability. Each repair has one owner by its intended remedy;

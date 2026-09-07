@@ -318,6 +318,7 @@ def _run_record_comment(record: dict[str, Any], report: str = "") -> str:
         f"{json.dumps(ordered, ensure_ascii=False, separators=(',', ':'))}\n"
         f"{RUN_RECORD_END}"
     )
+    # Only the prefix needs mention/image checks; the report is fenced literal text.
     _validate_report_rendering(marked)
     if not report:
         return marked

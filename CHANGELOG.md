@@ -21,12 +21,25 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
-- `repo-gardener` carries approved shared-ledger peers in Worker briefs and
-  uses one overlap rule for dispatch and publication. An unrelated branch
-  cannot qualify merely by changing the same union-merged changelog path.
+- `repo-gardener` requires five explicit maintenance areas: dependency
+  maintenance, engineering health, issues and feedback, documentation, and
+  runtime reliability. Each repair has one owner by its intended remedy;
+  security and measurement remain cross-cutting evidence. Retired `lanes`
+  policies are rejected, with no inferred grants. Replacement requires review
+  of the complete policy and its five mutation grants, preserving tracker history.
+- `repo-gardener` permits concurrent independent additions to shared ledger-like
+  files marked `merge=union` at the captured base, including unrelated branches
+  and assignments. Complete native branch/PR inventories and overlapping diffs
+  must prove every base entry is preserved at dispatch and each publication
+  gate. No peer registry is required; ownership, adoption authority, scope,
+  and publication leases remain unchanged. The Orchestrator never writes the
+  shared ledger; later integration conflicts remain owner work.
 
 - `repo-gardener` writes append-only opening and closing comments; the closing
   comment contains the morning report and the issue body remains setup text.
+  The complete report renders literally in a helper-generated fence, preserving
+  technical names and inert markup. Canonical nested JSON payloads survive
+  serialization and exact readback.
   Tracker writes no longer coordinate a body update with a comment or carry
   operation hashes. Run IDs use a fresh UUID instead of a minute-resolution
   timestamp. A full tracker stops new openings before verification input
@@ -34,24 +47,25 @@ looked" surface. GitHub Releases mirror its entries.
   upgrading a test install, stop its scheduler,
   confirm old Orchestrators and Workers have terminated, and use a fresh
   tracker if its records use the retired format.
-- `repo-gardener` accepts lane mappings in any YAML order and uses PyYAML's
+- `repo-gardener` accepts area mappings in any YAML order and uses PyYAML's
   native parser for syntax checks. Issue admission rests on trusted ownership,
   current blockers, and a small, low-risk, verifiable PR scope; estimates and
   readiness labels are hints. Runtime reads verify each source independently
   and distinguish empty results from missing data. Bot adoption reports the
   risk of stopped updates or overwritten edits without promising bot behavior.
-  Worker briefs bind the expected repository identity, and identifier censuses
-  stop at 10,000 records with partial coverage when more remain.
+  Worker briefs bind the expected repository identity.
 - `repo-gardener` adopts an open same-repository update PR with a
   Worker-closable gap as a Worker unit: the Worker checks out the PR head at
-  the captured OID, pushes under the existing old-OID lease, keeps one
-  unmerged PR, and never merges. Only non-draft PRs whose head commits are
-  bot- or app-authored qualify; default and provider-protected heads cannot
-  be adopted. Adopted PR titles and descriptions stay unchanged; readiness
+  the captured OID, pushes under an expected-remote-OID lease, keeps one
+  unmerged PR, and never merges. Initial adoption requires a non-draft PR with
+  bot- or app-authored head commits; default and provider-protected heads cannot
+  be adopted. Authorized Worker pushes advance the lease expectation after
+  exact readback while the original scope baseline stays fixed. Adopted PR titles and descriptions stay unchanged; readiness
   evidence goes into the run report. Overlap is changed-path intersection with
-  other native branches and PRs; a lockfile-only intersection is a
-  recommendation. The runtime lane reads any error or alert source the host
-  can already read and confirms identity from repository facts. A blocked
+  other native branches and PRs; an intersection that fails the shared-ledger
+  exception, including substantive lockfile overlap, stops the dependent action.
+  The runtime reliability area reads any error or alert source the host can
+  already read and confirms identity from repository facts. A blocked
   opening still senses and reports with one `caller-only` run outcome.
 - `personal-chief-of-staff` wind-down now runs in two visible phases. Phase 1
   sweeps the day's corrections and resolves each row, applying approved
@@ -127,15 +141,15 @@ looked" surface. GitHub Releases mirror its entries.
   Reasons in the brief are about the change under review, not how the gate
   runs. Captured as
   `docs/solutions/conventions/do-not-split-human-and-agent-skill-products.md`.
-- Repo Gardener completes its issue identifier census before every
-  issue-facing lane uses purpose-ranked, admission-bounded reads, preserving
-  trusted-principal and lane limits. The Ready Frontier comes from current
-  evidence, including fresh native blocker reads.
-- Repo Gardener treats a shared ledger path as an assignment-only overlap
-  exception (now keyed on the git `merge=union` attribute at the base, per
-  the Removed entry below), while requiring each Worker to retain base
-  entries and add its own attributable entry; the Orchestrator never writes
-  the shared ledger or resolves later native merge or rebase conflicts.
+- Repo Gardener completes a quick available-input pass across all five areas
+  before dispatch, using native filters and selective body reads, then deepens
+  decision-relevant investigations while Workers progress. Issue discovery
+  starts with open, ready work at mapped estimates 1–2 and broadens when useful;
+  missing estimates or readiness mappings do not permanently exclude work.
+  Reports state query filters, windows, limits, counts, and inspected coverage
+  without claiming backlog exhaustion. The Ready Frontier uses current evidence
+  and fresh native blocker reads. Tracker reads and conflict inventories remain
+  complete at their required gates.
 - Repo Gardener now gives every unattended Worker the normal
   `checking-pr-readiness` process: its menu reply ends that turn, and only the
   Orchestrator may authorize option 1 when Approve was offered and recommended
@@ -162,18 +176,10 @@ looked" surface. GitHub Releases mirror its entries.
   and grilling match their current upstream contracts, and
   `creating-portable-skills`, `personal-chief-of-staff`, `reviewing-meetings`,
   and `managing-personal-crm` appear in the walkthrough.
-- `repo-gardener` can run exact owner-declared audit commands in its five
-  eligible sensing lanes, with evidence-based setup recommendations, bounded
-  direct execution, and existing candidate and reporting rules preserved.
-- `repo-gardener` list-style censuses of issues, pull requests, and alerts
-  keep listing while remaining items are knowable and the count is under
-  10,000, once per population, rather than stopping at a stated page bound.
-  A named bound or omission keeps the affected lanes partial. An
-  empty-complete census is absence evidence for a zero-item population. The
-  dependency lane consumes the Orchestrator open-PR identifier census. The health lane
-  consumes the issue-source census when that source exists. Overlap rereads
-  list current native PRs instead of that sensing census. Scout census
-  handoff is compact rows or a per-run temporary file outside the worktree.
+- `repo-gardener` can run exact owner-declared audit commands in dependency
+  maintenance, engineering health, and documentation, with evidence-based setup
+  recommendations, bounded direct execution, and existing candidate and reporting
+  rules preserved.
 - `repo-gardener` first-use now writes `.agents/repo-gardener.yaml` and creates
   a gardening tracker the way Managing Issues writes its config. A scheduled or
   manual run uses one Orchestrator that may assign parallel Workers, each with
@@ -185,7 +191,7 @@ looked" surface. GitHub Releases mirror its entries.
   After a PR exists, the scheduled ownerless run invokes merge-readiness and
   never selects Proceed to merge.
 - `repo-gardener` now parses `.agents/repo-gardener.yaml` once with PyYAML
-  SafeLoader and the existing field schema. Lane inventory uses that mapping
+  SafeLoader and the existing field schema. Area inventory uses that mapping
   instead of a second regex grammar. Tags, aliases, merge keys, nulls, and
   duplicate keys still fail closed. Developer installs need PyYAML.
 - `managing-issues` first-use now recommends a Linear exclusive readiness group
@@ -196,13 +202,13 @@ looked" surface. GitHub Releases mirror its entries.
   stay as ignored worktree artifacts. PR readiness rejects tracked or durably
   cited transient material, and merge readiness verifies issue stewardship
   against the final delivered scope without requiring a completion diary.
-- `repo-gardener` issue lanes now read their tracker from the repository's
+- `repo-gardener` issue discovery now reads its tracker from the repository's
   `.agents/managing-issues.json` when the managing-issues validator accepts it,
-  and the issue-implementation lane requires trusted ownership, a safe Worker
-  brief, and no open native blocker. With no config file the lanes read the
-  repository's own issues unmapped and name the absent config as their room
-  for improvement; a config the run cannot validate, or a provider it cannot
-  read, makes the lanes unavailable rather than substituting another tracker.
+  and issue-requested implementation requires trusted ownership, a safe Worker
+  brief, and no open native blocker. With no config file it reads the
+  repository's own issues unmapped and names the absent config as a limitation;
+  a config the run cannot validate, or a provider it cannot read, makes
+  issue-source coverage unavailable rather than substituting another tracker.
 - `managing-issues` now handles authenticated GitHub and Linear creates, updates,
   relationships, readiness, and completion through one canonical tracker.
   First-use setup records only the provider, target, and metadata vocabulary.
@@ -229,7 +235,7 @@ looked" surface. GitHub Releases mirror its entries.
   host execution-profile test (declared audits now run in an explicit child
   environment built from nothing), the code-health rotation cursor,
   per-candidate label-provenance reads, and the `#3336`, Current Portfolio,
-  and presentation-cap pilot residue. Census floors are five rules.
+  and presentation-cap pilot residue.
 
 ## [0.2.0] - 2026-08-14
 

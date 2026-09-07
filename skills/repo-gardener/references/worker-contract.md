@@ -1,7 +1,7 @@
 # Worker contract
 
 A Worker owns one unit: an isolated worktree, one branch, and at most one
-unmerged pull request. It does not survey lanes, change the durable policy,
+unmerged pull request. It does not survey areas, change the durable policy,
 or write tracker records. Everything below is the whole of what a Worker must
 follow; the Orchestrator's brief supplies the facts.
 
@@ -24,7 +24,7 @@ read-only report naming the unavailable capability.
 
 The brief names the target stable repository identity, authoritative base,
 opening policy revision and its `repository.identity` and `maximum_workers`
-values, Worker identity and branch, scope, protected paths, lane grant,
+values, Worker identity and branch, scope, protected paths, area grant,
 assigned slice, and the exact caller-approved verification command argv list. For an adopted PR it also names the PR number, head ref, captured head
 OID, base ref and full base OID, the current configured default branch ref,
 native proof that the head is not provider-protected, the named gap(s), and
@@ -49,7 +49,7 @@ at dispatch, then apply the Adoption section below.
 Authoring is allowed only when all five gates pass using the opening policy
 named in the brief: the checkout and policy repository identities both
 match the target stable repository identity in the brief, the authoring scope
-permits the change, Worker capacity is positive, the owning lane is enabled,
+permits the change, Worker capacity is positive, the owning area is enabled,
 and no path is protected. For an adopted PR the gates apply to the paths the
 Worker's own commits change; the adopted PR's existing diff is native state, reported,
 not authored. A rename counts both its old and new path.
@@ -153,7 +153,7 @@ NUL-delimited paths from `git diff --no-renames --name-only -z $(git merge-base 
 and added destination without parsing rename records. A branch with no
 merge-base or an unreadable diff is an unknown read; a branch already merged
 into the base contributes no paths. A PR elsewhere in the same directory,
-lane, or package manager is not overlap. Only the Shared ledger exception
+area, or package manager is not overlap. Only the Shared ledger exception
 below permits an intersection; any other intersection stops the action. The
 Orchestrator applies this same definition to planned paths before dispatch. An
 ownerless first push must match the subject and OID the checking skill
@@ -197,31 +197,42 @@ Apply it to planned paths at dispatch and recheck current native branches and
 PRs at each publication gate. A failed check stops only the affected action
 and its dependents, preserves authored work, and reports the exact blocking
 paths or unavailable facts; other Workers and safe sensing continue.
-When it applies, the original approved brief carries the ledger path, the
-base-revision attribute read, and each peer's Worker identity, native branch,
-assigned paths, and captured existing PR paths for an adopted peer, all from
-the same assignment decision. Use those fixed facts
-with the host's existing dispatch records; missing or ambiguous peer facts
-deny the exception. A matching path shape, author, or branch prefix is not
-peer identity, and later branches cannot join the assignment implicitly.
+The original approved brief names each shared path, its captured full base
+OID and attribute evidence, and the requirement that the Worker's own planned
+entry be independently additive and preserve every base entry. Discover the
+file and contribution requirement from the target repository; do not assume
+a filename, extension, or obligation in a repository without that convention.
+No ledger policy key, peer registry, or same-assignment binding is required.
 
-Allow the shared path only when all of these hold:
+Allow each shared path only when all of these hold:
 
 - `git check-attr --source=<full base OID> merge -- <path>` reports `union` at
-  the authoritative base. The Orchestrator reads it for the brief; an
-  unavailable read, including Git without `--source`, denies the exception.
-- Every overlapping branch or PR belongs to a named peer's original branch
-  and Worker identity. Its complete current changed paths remain within its
-  original assigned paths plus any captured existing PR paths for adoption,
-  and the only intersection is the named ledger path.
-  An unrelated branch or PR touching that ledger is ordinary overlap.
-- Each participating Worker's ledger diff adds only its attributable entry
-  and preserves every base entry. At dispatch, require this in each assignment;
-  before publication, verify it from the current diffs of all participating
-  branches. Missing or unreadable evidence denies the exception.
+  the captured authoritative base. The Orchestrator reads it for the brief;
+  an unavailable read, including Git without `--source`, denies the exception.
+- The complete current native branch and open-PR inventory and changed-path
+  evidence defined under Publication gates are available. Bounded discovery
+  does not bound this inventory, including PRs targeting other bases. Read
+  the complete diffs for every overlapping branch and PR; missing pages,
+  rename information, merge-base, or readable diff evidence deny the
+  dependent action. An unrelated author, branch, or assignment is not a
+  reason to deny otherwise qualifying overlap.
+- For each shared path, every overlapping diff proves independent additions
+  of ledger-like entries preserving every entry at the captured base. The attribute alone is not
+  sufficient: deletions, edits to base entries, ambiguous independence, and
+  substantive code or lockfile overlap do not qualify, even with `union`.
+  Every shared path must qualify; disjoint changes need no exception.
+- At dispatch, prove these conditions for all existing overlapping diffs and
+  put the additive-entry constraint in the new Worker's brief before dispatch.
+  At every publication gate, recheck all current overlapping diffs, including
+  later competing work, and verify the Worker's actual diff meets that same
+  constraint. Missing or unreadable evidence denies the exception.
+
+Passing this check grants no authority to adopt or mutate another actor's
+branch. Adoption, ownership, fixed scope baseline, and publication lease
+requirements above remain unchanged.
 
 Scope and protected-path gates still apply. The Orchestrator never writes a
-ledger line. The attribute provides Git-local text merging, not a guarantee
-that integration will be conflict-free or entries correctly ordered. Name
+ledger line. The attribute provides Git-local text merging; integration may
+still conflict, and combined ordering and correctness require review. Name
 that limitation in the brief and report; later merge or rebase conflicts
 remain owner work, without automatic resolution or merging.

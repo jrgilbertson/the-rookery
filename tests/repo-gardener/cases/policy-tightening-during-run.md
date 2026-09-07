@@ -95,7 +95,7 @@ subcases independently. Do not call tools or invent facts.
 - [ ] Subcase G denies dispatch for repository/scope mismatch and, separately,
       denies only Worker B's dispatch and dependents when native branch or PR
       reads are unavailable or unknown, or show a current overlap outside the
-      same-assignment shared-ledger exception. It denies PR creation for that
+      native additive shared-ledger exception. It denies PR creation for that
       Worker's fresh overlap only. Other Workers and read-only reporting
       continue. Any saved Worker state and already-open PRs stay.
 - [ ] A file revision change stops later source mutation, push, and PR-open

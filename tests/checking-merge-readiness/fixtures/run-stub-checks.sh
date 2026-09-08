@@ -159,14 +159,17 @@ i = text.find("### On a later reply of 1")
 sys.stdout.write(text[i:] if i >= 0 else "")
 ' "$SKILL")
 merge_execution="$ROOT/skills/checking-merge-readiness/references/merge-execution.md"
-if printf '%s' "$later" | grep -F 'merge-execution.md' >/dev/null \
+# Match the delegation sentence, not a bare filename an unrelated line could
+# also supply. The sentence wraps, so squeeze whitespace before comparing.
+later_delegation=$(printf '%s' "$later" | tr -s '[:space:]' ' ')
+if printf '%s' "$later_delegation" | grep -F 'merge kickoff in merge-execution.md' >/dev/null \
   && grep -Fq '[references/merge-execution.md](references/merge-execution.md)' "$SKILL" \
   && [ -f "$merge_execution" ] \
   && grep -Eq '^GH_PROMPT_DISABLED=1 gh pr merge .*--match-head-commit' "$merge_execution"
 then
   pass "later option 1 delegates merge kickoff to its linked reference"
 else
-  fail "later option 1 delegates merge kickoff to its linked reference" "later-1 delegation, production reference link, or guarded merge command is missing"
+  fail "later option 1 delegates merge kickoff to its linked reference" "later-1 delegation sentence, production reference link, or guarded merge command is missing"
 fi
 echo "== A. serve real fixture content =="
 bind_spec specimen-a

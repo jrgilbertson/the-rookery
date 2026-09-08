@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-08 | abc6cef | remaining-work-one-option contract (prior) | fail | `run-assessment-checks.py` reported `skill routing missing: address remaining changes` on the frozen parent skill, which still printed Request changes and Run a missing step as sibling leftover-work rows
+- 2026-09-08 | abc6cef (working tree) | remaining-work-one-option contract (candidate) | pass | routing greps for address remaining changes, pick-does-not-start-work, and the follow-up question wait passed; `skills-ref validate` passed. Isolated matched behavioral execution of `remaining-work-one-option` is not yet logged. `checking-merge-readiness` was left unchanged: Debug is already one remaining-work option, and redesign, capture, and `ce-pov` stay distinct action types
 - 2026-08-26 | db15238 | matched comparison: simplicity-review-provenance (prior) | fail (8/9) | isolated runner followed the frozen prior skill; a separate blind grader found that its fresh-review wording did not exclude earlier review or findings that shaped the surface
 - 2026-08-26 | db15238 (working tree) | matched comparison: simplicity-review-provenance (candidate) | pass (9/9) | isolated runner followed the final candidate; a separate blind grader confirmed all six steps, exact dispatch binding, same-context refusal, no prior review influence, open-decision handling, full-content freshness, and read-only step-3 refresh
 - 2026-08-26 | db15238 (working tree) | structural and exact-revision regression | pass | official `skills-ref` was unavailable; manual Agent Skills checks passed, and the assessment v1 chain stayed at nine receipts with its deterministic runner unchanged and green

@@ -2,9 +2,11 @@
 
 Provenance: PR review found approval routed to implementation without authority
 and owner-only Resume required an unsupplied locator. A later run treated
-unnamed units as a bounded piece and unknown ownership as vacant. Regression
-controls cover supplied family state, direct implementation authority, and
-proven ownership.
+unnamed units as a bounded piece and unknown ownership as vacant. Independent
+review then found an approved, authorized parent plan that proves no units,
+integrator, or write boundaries had no selectable pattern, so item 9 covers
+that gap. Regression controls cover supplied family state, direct
+implementation authority, and proven ownership.
 
 ## Prompt
 
@@ -28,6 +30,9 @@ proven ownership.
 >    does not block planning this child.
 > 8. The parent has an approved plan with independent units, one integrator,
 >    and safe writes. The operator says: "Route the kickoff to implement it."
+> 9. The parent has an approved plan and the operator says: "Implementation is
+>    authorized; route the kickoff." Nothing names units, an integrator, or
+>    write scopes.
 
 ## Expected behavior
 
@@ -45,6 +50,12 @@ proven ownership.
       Fable 5.1 at medium and Executors on Grok 4.6 at high, up to three since
       the prompt names no
       unit count.
+- [ ] Item 9 starts with `ce-work` and uses the same default Lead + Executors
+      roster: Lead on Fable 5.1 at medium, up to three Executors on Grok 4.6 at
+      high. Unproven units, integrator, and write scopes do not block the
+      pattern, are not invented, and do not collapse the route to a single
+      owner. The card leaves scoping to the run by requiring a separate write
+      path per Executor before parallel writes.
 - [ ] Item 4 starts the child with `ce-plan` because planning is what needs to
       happen first.
 - [ ] Item 5 returns a `**Resume**` card naming Jordan with no kickoff or
@@ -60,7 +71,7 @@ proven ownership.
       gap does not displace the directly named child.
 - [ ] All conclusions use supplied family and ownership state only. Missing
       owner evidence leaves ownership unknown; it does not prove a vacant phase.
-- [ ] Only items 6 and 8 carry implementation authority, supplied by their
+- [ ] Only items 6, 8, and 9 carry implementation authority, supplied by their
       direct implementation requests. Their Setup and standalone kickoff
       preserve it without adding commit, push, PR, or other external authority.
       Artifact approval alone never becomes permission to implement.

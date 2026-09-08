@@ -21,6 +21,8 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- CI tool installation now runs from a shell script, avoiding actionlint
+  deadlocks when local pipe buffers cannot hold the inline bootstrap code.
 - `route-work` now returns one Route, Resume, or Questions card for an
   explicit routing request. Route cards select the first workflow, size a
   roster of roles, models, and effort for the expected run, and provide a

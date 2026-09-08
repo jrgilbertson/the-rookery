@@ -484,6 +484,7 @@ def validate_contract_sources() -> None:
         "picking it does not start work",
         "that follow-up is a question, not the decision",
         "option 1 does all recommended remaining items",
+        "names them in that sentence",
         "grouped by similar work, ordered by impact",
         "unrun code review or simplify appear here only when they drove",
         "mktemp -d",

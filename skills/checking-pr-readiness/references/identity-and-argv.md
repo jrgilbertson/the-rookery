@@ -85,5 +85,6 @@ Do not reuse findings across moved heads or bases. A matching re-read is
 silent.
 
 This skill remains read-only except for remaining-changes follow-up
-picks and later-1 finishing dispatch. It does not itself stage, commit,
-push, or open a pull request.
+picks and later-1 finishing dispatch. A companion skill or repository
+gate owns those writes. It does not itself stage, commit, push, or
+open a pull request.

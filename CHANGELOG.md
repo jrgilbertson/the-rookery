@@ -24,7 +24,8 @@ looked" surface. GitHub Releases mirror its entries.
 - `checking-pr-readiness` keeps one first-menu option for remaining work.
   Picking it does not start work. The follow-up's first action does all
   remaining items named in the brief; later actions are those items grouped
-  by similar work and ordered by impact; leave is last. Unrun code review
+  by similar work and ordered by impact; leave is last and ends that
+  wait. Unrun code review
   or simplify appear there only when they drove the recommendation. Run a
   missing step is no longer a sibling leftover-work row.
   `checking-merge-readiness` already uses one remaining-work option

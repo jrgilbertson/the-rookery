@@ -306,11 +306,11 @@ slot. When that action can be taken, print it. When it cannot, keep number
   follow-up. That follow-up is a question, not the decision menu: a reply
   of 1 is not Approve. Follow-up actions are that remaining work.
   Unrun code review or simplify appear here only when they drove the
-  recommendation. Option 1 does all recommended remaining items and names
-  them in that sentence. Later options are the same items as individual
-  actions, grouped by similar work, ordered by impact. Skip an individual
-  option that would repeat option 1. Offer leaving the remaining changes
-  last. Picking a follow-up action starts that work. If nothing remains
+  recommendation. Option 1 does all recommended remaining items and
+  names them in that sentence. Later options are the same items as
+  individual actions, grouped by similar work, ordered by impact. Skip
+  an individual option that would repeat option 1. Offer leaving the
+  remaining changes last. Picking a follow-up action starts that work. If nothing remains
   to do in this session, the remaining work is the outcome and this gate
   ends.
 - Explain the change, when `ce-explain` is present.
@@ -333,7 +333,7 @@ Approve is blocked, Address remaining changes is live, and Explain and
 leftover work to file are not:
 
 ```text
-1. This branch is not ready to enter the pull request process.
+1. This branch is not ready because remaining source findings still block it.
 2. Address the remaining changes on this branch.
 3. Show the checks this PR-readiness review ran.
 ```
@@ -343,7 +343,7 @@ alternative:
 
 ```text
 1. Approve and proceed to the finishing path.
-2. Decline Approve and request changes on this branch.
+2. Address the remaining changes on this branch.
 3. Show the checks this PR-readiness review ran.
 ```
 
@@ -361,7 +361,7 @@ terminology with CHANGELOG.md:20, and finish the stopped actionlint check.
 4. Leave these remaining changes for a later fix.
 ```
 
-Show the checks is non-terminal: print the list from the captured gather, then the brief and numbered options again. A remaining-changes follow-up pick and Explain are non-terminal: when one finishes, **recompose**. Re-read the working surface from step 1 and, when it changed, re-run the steps whose inputs the change touches. A returned `checking-simplicity` result refreshes step 3 even when no path changed; that skill is read-only and returns its finding to this gate. When that result is a question for the user, print the question with its options and wait; the next reply answers it and goes back to the same reviewer, and only the readout that follows refreshes step 3 and recomposes this menu.
+Show the checks is non-terminal: print the list from the captured gather, then the brief and numbered options again. Starting remaining work from the follow-up, and Explain, are non-terminal: when one finishes, **recompose**. Re-read the working surface from step 1 and, when it changed, re-run the steps whose inputs the change touches. A returned `checking-simplicity` result refreshes step 3 even when no path changed; that skill is read-only and returns its finding to this gate. When that result is a question for the user, print the question with its options and wait; the next reply answers it and goes back to the same reviewer, and only the readout that follows refreshes step 3 and recomposes this menu.
 
 Completion of this turn: the brief and numbered live options are on screen,
 and the run is waiting. It did not pick. It did not re-read identity for

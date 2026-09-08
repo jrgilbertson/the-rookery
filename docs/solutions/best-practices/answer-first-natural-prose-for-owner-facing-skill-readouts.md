@@ -19,7 +19,7 @@ resolution_type: documentation_update
 related_components:
   - testing_framework
   - checking-pr-readiness
-last_updated: 2026-09-01
+last_updated: 2026-09-08
 tags:
   - skill-authoring
   - owner-facing-readouts
@@ -81,11 +81,15 @@ When a skill briefs an owner at a decision point:
    the checks names the checks this review ran and lists each applicable
    check and its status from the captured gather, then the brief and menu
    again. Skip it when there is no captured gather. File or capture
-   follow-up only when the brief named leftover work to park. Request
-   changes stays live on every PR-readiness menu as the alternative to
-   Approve. `ce-pov` is a merge-readiness redesign action, offered only on
-   do not merge when that skill is present. On approve, do not add one menu
-   line per unrun step.
+   follow-up when the recommendation is stop and file follow-up, or the
+   brief named leftover work to park. Address remaining changes stays
+   live on every PR-readiness menu as the alternative to Approve.
+   Picking it tees up remaining items. The follow-up's first action
+   does all of them; later actions are those items grouped by similar
+   work and ordered by impact; leaving remaining changes is last.
+   `ce-pov` is a merge-readiness redesign action, offered only on do
+   not merge when that skill is present. On approve, do not add one
+   menu line per unrun step.
 
 The end-of-run API (menu, wait, later `1`) is a separate contract. See
 [Do not split human and agent skill products](../conventions/do-not-split-human-and-agent-skill-products.md).

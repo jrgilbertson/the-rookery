@@ -21,6 +21,16 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `checking-pr-readiness` keeps one first-menu option for remaining work.
+  Picking it does not start work. The follow-up's first action does all
+  remaining items named in the brief; later actions are those items grouped
+  by similar work and ordered by impact; leave is last and ends that
+  wait. Unrun code review
+  or simplify appear there only when they drove the recommendation. Run a
+  missing step is no longer a sibling leftover-work row.
+  `checking-merge-readiness` already uses one remaining-work option
+  (Debug); Debug, redesign, and capture stay distinct action types, not
+  item slots.
 - `checking-merge-readiness` treats stale source-issue wording as
   informational when owner-approved scope, the PR description, and delivered
   work agree. Missing required work, incorrect closure claims, and authority

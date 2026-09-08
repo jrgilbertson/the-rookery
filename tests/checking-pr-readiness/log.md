@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-08 | 004ad87 | matched comparison: remaining-work-one-option (prior d4eadc4) | fail (3/5) | isolated general-purpose executor and a separate blind grader; first-menu items passed; follow-up offered only the stopped actionlint check and leave, with no do-all and no action for the CHANGELOG or terminology work
+- 2026-09-08 | 004ad87 | matched comparison: remaining-work-one-option (candidate) | pass (5/5) | isolated general-purpose executor and a separate blind grader; first menu had one remaining-work option; follow-up did all remaining items, then grouped source findings, then actionlint, then leave
 - 2026-09-08 | abc6cef | remaining-work-one-option contract (prior) | fail | `run-assessment-checks.py` reported `skill routing missing: address remaining changes` on the frozen parent skill, which still printed Request changes and Run a missing step as sibling leftover-work rows
 - 2026-09-08 | abc6cef (working tree) | remaining-work-one-option contract (candidate) | pass | routing greps for address remaining changes, pick-does-not-start-work, and the follow-up question wait passed; `skills-ref validate` passed. Isolated matched behavioral execution of `remaining-work-one-option` is not yet logged. `checking-merge-readiness` was left unchanged: Debug is already one remaining-work option, and redesign, capture, and `ce-pov` stay distinct action types
 - 2026-08-26 | db15238 | matched comparison: simplicity-review-provenance (prior) | fail (8/9) | isolated runner followed the frozen prior skill; a separate blind grader found that its fresh-review wording did not exclude earlier review or findings that shaped the surface

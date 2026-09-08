@@ -2,6 +2,8 @@
 
 Provenance: user feedback — cards over-indexed on the immediate next step; a
 brainstorm or debug that implementation will follow must staff the whole run.
+PR feedback reproduced an implementation forecast becoming a carry-forward
+promise without a grant; items 5 and 6 retain withheld/granted authority controls.
 
 ## Prompt
 
@@ -17,6 +19,14 @@ brainstorm or debug that implementation will follow must staff the whole run.
 >    opening a pull request is authorized once the cause is established.
 > 3. A feature issue still disputes the intended user behavior. Nothing is
 >    said about implementation.
+> 4. Route planning for a feature whose outcome and acceptance boundary are
+>    settled but whose execution plan is missing. Implementation is expected
+>    after planning. Right now the operator is requesting the execution plan.
+> 5. Route planning for the same settled feature. Implementation is expected
+>    after planning, but the operator explicitly authorizes planning only and
+>    withholds implementation authority.
+> 6. Route planning for the same settled feature. The operator authorizes
+>    planning and then implementing the plan.
 
 ## Expected behavior
 
@@ -36,4 +46,16 @@ brainstorm or debug that implementation will follow must staff the whole run.
       Executors and nothing about authority.
 - [ ] Items 1 and 2 state the supplied merge or pull-request authority in one
       sentence and enumerate no other prohibitions.
+- [ ] Items 4–6 start with `ce-plan` on Fable 5.1 at medium. Expected
+      implementation may size a Lead + Executors roster without granting
+      permission to implement; defaults are labeled and no concrete units,
+      owners or write scopes are invented.
+- [ ] Item 4 does not promise unconditional implementation by this lead or
+      instruct a receiver to implement without a grant. It adds no authority
+      sentence, invented permission or limit when authority is unstated.
+- [ ] Item 5 preserves planning-only authority and withheld implementation
+      in Setup and the standalone kickoff, with no unconditional carry-forward.
+- [ ] Item 6 preserves planning and implementation authority in Setup and the
+      standalone kickoff and permits carry-forward into implementation.
+- [ ] Every card follows the Route template without extra section labels.
 - [ ] The trace contains only reads of the installed package.

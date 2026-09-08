@@ -83,8 +83,9 @@ When a skill briefs an owner at a decision point:
    again. Skip it when there is no captured gather. File or capture
    follow-up only when the brief named leftover work to park. Address
    remaining changes stays live on every PR-readiness menu as the
-   alternative to Approve. Picking it tees up remaining items and asks; it
-   does not add one first-menu line per gap. `ce-pov` is a merge-readiness
+   alternative to Approve. Picking it tees up remaining items. The
+   follow-up's first action does all of them; later actions are those
+   items grouped by similar work and ordered by impact. `ce-pov` is a merge-readiness
    redesign action, offered only on do not merge when that skill is
    present. On approve, do not add one menu line per unrun step.
 

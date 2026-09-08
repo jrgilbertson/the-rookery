@@ -22,11 +22,14 @@ outstanding validation and review steps."
       sentences. The quoted live pairing would fail this item.
 - [ ] Later first-menu actions stay action types (explain, show checks,
       file follow-up), not one numbered row per finding.
-- [ ] After the remaining-work pick, the run names those items once and
-      waits. It does not start the conflict fix or the terminology edit.
+- [ ] After the remaining-work pick, the run names those brief-named
+      items once and waits. It does not start the conflict fix or the
+      terminology edit. Unrun code review or simplify are absent unless
+      they drove the recommendation.
 - [ ] The follow-up is a question, not the decision menu: a reply of 1
-      is not Approve. Dispatchable companions are numbered actions, at
-      most one per pick. Source findings stay in the question prose.
-- [ ] A leave-the-remaining-changes choice is offered on that follow-up.
-      The first menu's remaining-work line is an action, not a recap that
-      says the run will skip the work.
+      is not Approve. Option 1 does all remaining items and names them.
+      Later options are those items grouped by similar work, ordered by
+      impact. Leave remaining changes is last.
+- [ ] The first menu's remaining-work line is an action. The follow-up
+      includes a way to do the named remaining work, not only a leave
+      choice or unrelated receipt-less companions.

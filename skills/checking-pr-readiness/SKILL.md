@@ -302,13 +302,17 @@ slot. When that action can be taken, print it. When it cannot, keep number
   recommendation. This is the numbered alternative to Approve, not a
   fixed slot. On approve it declines Approve rather than inventing
   leftover changes. On request changes, picking it does not start work.
-  Tee up every remaining item from the brief in one follow-up. If a
-  present skill owns a gap, that follow-up is a question, not the decision
-  menu: a reply of 1 is not Approve. Number the dispatchable companions as
-  actions, one per pick, and offer leaving the remaining changes. Name
-  source findings in that question's prose, not as extra first-menu rows.
-  If no present skill owns a gap, the remaining work is the outcome and
-  this gate ends.
+  Tee up every remaining item that drove that recommendation in one
+  follow-up. That follow-up is a question, not the decision menu: a reply
+  of 1 is not Approve. Follow-up actions are that remaining work.
+  Unrun code review or simplify appear here only when they drove the
+  recommendation. Option 1 does all recommended remaining items and names
+  them in that sentence. Later options are the same items as individual
+  actions, grouped by similar work, ordered by impact. Skip an individual
+  option that would repeat option 1. Offer leaving the remaining changes
+  last. Picking a follow-up action starts that work. If nothing remains
+  to do in this session, the remaining work is the outcome and this gate
+  ends.
 - Explain the change, when `ce-explain` is present.
 - Show the checks. Offer when a captured gather exists. List each
   applicable check and its status word from that gather: repository gates,
@@ -343,19 +347,21 @@ alternative:
 3. Show the checks this PR-readiness review ran.
 ```
 
-Example after option 2 on a request-changes recommendation, when a
-present skill owns a gap. This wait is the follow-up question, not the
-decision menu:
+Example after option 2 on a request-changes recommendation. This wait is
+the follow-up question, not the decision menu:
 
 ```text
 Remaining work: resolve the CHANGELOG conflict with main, align README
 terminology with CHANGELOG.md:20, and finish the stopped actionlint check.
 
-1. Run the stopped actionlint check now.
-2. Leave these remaining changes for a later fix.
+1. Do all remaining work: resolve the CHANGELOG conflict, align README
+   terminology, and finish the stopped actionlint check.
+2. Resolve the CHANGELOG conflict and README terminology mismatch.
+3. Finish the stopped actionlint check now.
+4. Leave these remaining changes for a later fix.
 ```
 
-Show the checks is non-terminal: print the list from the captured gather, then the brief and numbered options again. A remaining-changes companion dispatch and Explain are non-terminal: when one finishes, **recompose**. Re-read the working surface from step 1 and, when it changed, re-run the steps whose inputs the change touches. A returned `checking-simplicity` result refreshes step 3 even when no path changed; that skill is read-only and returns its finding to this gate. When that result is a question for the user, print the question with its options and wait; the next reply answers it and goes back to the same reviewer, and only the readout that follows refreshes step 3 and recomposes this menu.
+Show the checks is non-terminal: print the list from the captured gather, then the brief and numbered options again. A remaining-changes follow-up pick and Explain are non-terminal: when one finishes, **recompose**. Re-read the working surface from step 1 and, when it changed, re-run the steps whose inputs the change touches. A returned `checking-simplicity` result refreshes step 3 even when no path changed; that skill is read-only and returns its finding to this gate. When that result is a question for the user, print the question with its options and wait; the next reply answers it and goes back to the same reviewer, and only the readout that follows refreshes step 3 and recomposes this menu.
 
 Completion of this turn: the brief and numbered live options are on screen,
 and the run is waiting. It did not pick. It did not re-read identity for
@@ -364,8 +370,8 @@ Approve and did not fill an evidence pack.
 ### On a later reply of 1
 
 If the run is waiting on the remaining-changes follow-up, a reply of 1 is
-that question's first action, not Approve. Do not apply the withheld-1
-rule to that wait.
+do-all remaining work, not Approve. Do not apply the withheld-1 rule to
+that wait.
 
 If the menu printed a withheld option-1 row, do not approve. Name that
 Approve cannot be taken and wait again. Do not enter the later-1 finishing
@@ -422,10 +428,10 @@ failure.
 - Untracked paths ship with finishing tools; include them in what option 1
   approves.
 - Green CI is not evidence that upstream steps ran.
-- Companion dispatch that may change files is limited to a remaining-changes
-  follow-up pick and later-1 finishing dispatch. The dispatched skill owns
-  those writes. The gate itself still does not stage, commit, push, or open
-  a pull request.
+- Work that may change files is limited to a remaining-changes follow-up
+  pick and later-1 finishing dispatch. A companion skill or repository gate
+  owns those writes. The gate itself still does not stage, commit, push, or
+  open a pull request.
 - A dead session needs a fresh gate. There is no pasteable pack to restock.
 - When `checking-merge-readiness` is also installed, this gate owns entry to
   review; merge-readiness owns the pre-merge whole-change review. Neither

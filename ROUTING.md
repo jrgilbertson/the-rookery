@@ -68,7 +68,8 @@ or switch the card to Resume; apply it before the owner table.
 |---|---|
 | Family coverage, descendants, blockers, readiness, or structure is incomplete or uncertain | Route to `managing-issues`. Do not pick a child or call the family ready. |
 | A complete current family is supplied, but parent integration, sequencing, or shared-surface planning is missing | Route the parent to `ce-plan` |
-| An approved parent plan is supplied | Route to `ce-work`; use Lead + Executors only when independent units, one integrator, and safe write boundaries are proven |
+| An approved parent plan and implementation authorization are supplied | Route to `ce-work`; use Lead + Executors only when independent units, one integrator, and safe write boundaries are proven |
+| An approved parent plan is supplied, but implementation authorization is absent | Return Questions to establish implementation authority |
 | A child is named directly | Route from what needs to happen first for that child while preserving supplied parent constraints |
 | The requested phase already has a proven active owner | Return a Resume card and no duplicate kickoff unless replacement or restart is explicit |
 
@@ -259,7 +260,7 @@ authority, and any `Active ownership unverified` marker.
     **Resume**
 
     <proven active owner> owns this work.
-    Resume at <stable locator> for <current phase>. <decisive context and next action>
+    Continue with <proven active owner> for <current phase>. <supplied locator, when present; decisive context and next action>
 
 A Resume card carries no kickoff.
 

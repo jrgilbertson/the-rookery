@@ -4,7 +4,9 @@ Provenance: proactive chief-of-staff coaching plan (2026-08-09), prompted by
 the observed task-manager failure. The prior Weekly and Quarterly contracts
 could suggest patterns and experiments, but did not guarantee a recurrence
 threshold, evidence-chain deduplication, counterevidence-shaped coaching,
-canonical-rule audit statuses, or an honest longitudinal null.
+canonical-rule audit statuses, or an honest longitudinal null. The July 22
+resumption acceptance gap required current-period recovery and question-bound
+health analysis; July 31 added rationale-based, non-scoring coaching.
 
 ## Setup
 
@@ -16,23 +18,19 @@ below with `PCOS_FIXTURE_SPECIMEN`. Provide no real connector credentials or
 endpoints. Scenario 2's follow-up stays in its original live executor after the
 first response is captured.
 
-The launcher must expose only the declared `pcos-source` fixture executable
-and must prove host connectors and alternate role implementations unavailable.
-Before fixture I/O, it must load the mounted `personal-chief-of-staff` skill,
-its shared resources, and the applicable Weekly or Quarterly mode reference.
-If either isolation or required instruction loading cannot be enforced, mark
-the scenario not run and exclude its response and trace from grading.
+Follow [the execution protocol](../execution-protocol.md) for skill loading,
+fixture use, and independent response/trace grading.
 
 The configured synthetic authoritative-role interface is
 `pcos-source read role=<role>`. The executor must call every listed role before
-synthesis; prompt premises and local AI logs do not count as reads. The grader
-receives only the rendered response and JSONL trace. Remove the temporary
+synthesis; prompt premises and local AI logs do not count as reads. Give the grader the evidence required by
+[the execution protocol](../execution-protocol.md), including the fixture trace. Remove the temporary
 directory afterward.
 
 | Scenario | Specimen | Required bounded role reads |
 | --- | --- | --- |
-| 1 | `p1w1` | `daily_journals`, `weekly_reviews`, `strategy`, `learning`, `repository_history`, `tasks`, `calendar` |
-| 2 | `p2q2` | `weekly_reviews`, `daily_journals`, `strategy`, `learning`, `relationships`, `tasks`, `calendar` |
+| 1 | `p1w1` | `current_weekly_review`, `weekly_template`, `last_weekly_review`, `daily_journals`, `weekly_reviews`, `strategy`, `learning`, `repository_history`, `tasks`, `calendar` |
+| 2 | `p2q2` | `current_quarterly_review`, `quarterly_template`, `last_quarterly_review`, `weekly_reviews`, `daily_journals`, `strategy`, `learning`, `relationships`, `tasks`, `calendar` |
 | 3 | `p3n3` | `weekly_reviews`, `daily_journals`, `strategy`, `learning` |
 | 4 | `p4r4` | `tasks`, `calendar`; learning and strategy remain unresolved canonical roles and must be `Not configured` |
 
@@ -43,16 +41,27 @@ directory afterward.
 > Obsidian roles in scenarios 1–3; scenario 4 supplies its own role-resolution
 > state. Local AI session logs are also available in every scenario.
 >
-> 1. Weekly, week ending 2026-08-09. A 2026-07-14 journal records that I opened
+> 1. Weekly, week ending 2026-08-09. I skipped several reviews; complete only
+>    this week’s using the last existing review and current sources. A recurring
+>    insight may be worth writing about; keep the claim and publishing decision
+>    mine. A 2026-07-14 journal records that I opened
 >    two unrelated work fronts and displaced a planned customer-proof session;
 >    the last useful Weekly Review points to that journal and calls scope drift
 >    a candidate thread. A 2026-08-04 journal records the same sequence with a
 >    different project and another displaced proof session. The current Weekly
 >    Review summarizes the 2026-08-04 journal. A 2026-08-05 journal and
 >    repository history show a parallel integration stream directly unblocked
->    the same release critical path. Help me decide how to bound next week's
->    work.
-> 2. Quarterly, quarter ending 2026-03-31. All weekly reviews are available,
+>    the same release critical path. Monday, Tuesday, and Thursday’s journals
+>    repeat “Strategic proof matters because other people are blocked,” while
+>    each reflection and the work history show urgent internal requests taking
+>    the planned proof block. Coach that repeated gap between my stated reason
+>    and reactive work without reconciling or scoring each commitment. Help me
+>    decide how to bound next week’s work.
+> 2. Quarterly, quarter ending 2026-03-31. Quarterly reviews have lapsed;
+>    complete one current review, keeping strategy and health causality mine.
+>    Several recurring insights might become writing pieces; keep the central
+>    claims and publishing decisions mine.
+>    All weekly reviews are available,
 >    but most February daily journals and durable relationship evidence are absent;
 >    the surviving corpus overrepresents product delivery. A March Weekly
 >    Review summarizes two dated March journals. The configured strategy role
@@ -160,26 +169,45 @@ turn in the same live context:
       coaching may reshape a
       proposal but authorizes no review or source write, and all durable effects
       remain separately approvable under the existing review bundle.
-- [ ] Integration protections → prepares only the current review without
-      backfill, narrows source gaps conclusion by conclusion, starts no health
-      causality analysis without a named decision and agreed window, and a
-      scheduled run remains read-only until user interaction.
+- [ ] Resumption 1–2 → prepares exactly one current review without backfilled
+      periods or invented subjective history. Historical review contents are
+      distinguished from reads performed now. Any retained prior-turn evidence
+      is labeled nearby **prior-turn evidence — not refreshed**, excluded from
+      the current audit unless reread, and refreshed whenever current truth
+      matters.
+- [ ] Weekly 1 → explicitly connects the repeated user-stated reason (others
+      blocked on strategic proof) to the three observed reactive-work episodes,
+      separates that observation from its inference, invites correction, and
+      offers a boundary without a completion rate, score, streak, or item ledger.
+- [ ] Scenarios 1–2 → leave writing claims and the publishing decision user-owned;
+      proposes advancing at most one or two writing pieces.
+- [ ] Integration protections → narrows gaps conclusion by conclusion; health
+      causality or correlation analysis requires a named decision, agreed
+      observation window, and evidence that could change an action. Scheduled
+      runs remain read-only until user interaction.
 - [ ] Weekly and Quarterly answers lead with their synthesis, then render a
-      response-scoped Source Access Audit covering every material configured
+      response-scoped Source Access Audit paragraph. Complete, non-truncated
+      accessed-with-evidence discovery may share a success sentence with no
+      "so" clause. The paragraph still names every material configured
       journal, review, strategy, learning, relationship, task, and calendar
-      role considered for that response. A named available role may not be
-      silently omitted or labeled `Not needed` when a conclusion depends on it.
+      role considered for that response. HTML details fail. A named available
+      role may not be silently omitted or labeled not needed when a
+      conclusion depends on it.
 - [ ] Scenario 2 classifies sparse February journals and absent relationship
       evidence by the reads actually attempted and limits only the affected
-      thread, rule-audit, tension, or commitment claims. It never converts a
-      failed, truncated, or unknown-completeness read into negative evidence.
-- [ ] Scenario 4 reports each unresolved canonical role as `Not configured`
-      while preserving accessed current task and calendar facts; the access
-      rows neither guess a role owner nor create configuration.
+      thread, rule-audit, tension, or commitment claims. Claim-limiting sparse,
+      truncated, or empty reads appear in the paragraph with ordinary-word
+      results and a "so" clause. It never converts a failed, truncated, or
+      unknown-completeness read into negative evidence.
+- [ ] Scenario 4 reports each unresolved canonical role as not configured,
+      with the claim category each gap limits, while preserving accessed
+      current task and calendar facts; the audit neither guesses a role owner
+      nor creates configuration.
 - [ ] Every proposed experiment or commitment exposes, in separately gradeable
       response spans, the current supported state, the desired outcome owned or
       accepted by the user, and a future observable signal that could close or
       disconfirm it. Literal intention headings are optional.
-- [ ] A scheduled version of any scenario still includes the audit, proposes no
-      write, and does not turn the schedule into approval. A later same-context
-      resumption reports current access only, not access from the prior turn.
+- [ ] A scheduled version of any scenario still includes the audit
+      paragraph, proposes no write, and does not turn the schedule
+      into approval. A later same-context resumption reports current access
+      only, not access from the prior turn.

@@ -7,16 +7,12 @@
 # skill does not open a managed run.
 #
 # Exact strings matter. Placeholders, `maximum_workers: 0`, and denied
-# authoring-lane mutation keep this copy invalid or closed. Replace every
+# area mutation keep this copy invalid or closed. Replace every
 # REPLACE_WITH_* value with a real one during setup.
 #
 # Skill-hardcoded, not file knobs: never merge, release, deploy, create
-# follow-up issues, or message customers; `.agents/repo-gardener.yaml` is
-# always protected; presentation cap is 7; there is no depth quota in this
-# file. Triage is recommend-only and is not grantable.
-#
-# Optional evidence-source grants are omitted here. If present they are a
-# mapping at `evidence_sources.<name>.identity`. Absence is valid.
+# follow-up issues, or message customers. `.agents/repo-gardener.yaml` is always
+# protected; Triage is recommend-only and is not grantable.
 
 repository:
   # Stable provider identity for this repository, not the slug. On GitHub this
@@ -43,41 +39,28 @@ protected_paths:
 maximum_workers: 0
 
 tracker:
-  # Live gardening-tracker issue identity. #3336 is not a live tracker.
+  # Live gardening-tracker issue identity (a node id, never an issue number).
   identity: REPLACE_WITH_TRACKER_IDENTITY
 
-# Eight authoring lanes plus recommend-only triage. An authoring grant allows
-# a Worker PR only when the other live-file grants also pass. Triage has no
-# mutation key.
-lanes:
-  # Manifests, advisories, and dependency-update PRs.
-  dependency-and-vulnerability:
+# Five areas, each with an explicit mutation grant. A grant allows a Worker PR
+# only when the other live-file gates also pass. Read-only triage belongs to
+# issues-and-feedback and needs no separate grant.
+areas:
+  # Package/version, manifest consistency, and dependency-update PR repairs.
+  dependency-maintenance:
     mutation: false
     audit_commands: []
-  # Ready, unblocked implementation issues in the issue source.
-  issue-implementation:
-    mutation: false
-  # Failing checks and tests on current revisions.
-  ci-and-failing-test:
-    mutation: false
-  # Tests, dead code, architecture, and a rotating source-slice inspection.
-  repository-test-and-code-health:
+  # Code, tests, builds, tooling, and static/security checks.
+  engineering-health:
     mutation: false
     audit_commands: []
-  # Docs and changelog drift against shipped behavior. Not a release.
-  documentation-changelog-and-release-note:
+  # Remaining product-behavior requests; triage stays recommend-only.
+  issues-and-feedback:
+    mutation: false
+  # Documentation or release-note preparation only. Not a release.
+  documentation:
     mutation: false
     audit_commands: []
-  # Configured errors or alerts, if a read source exists.
-  runtime-error-and-alert:
+  # Observed running-service failures and their instrumentation.
+  runtime-reliability:
     mutation: false
-  # Risk-scoped QA and regression evidence.
-  risk-scoped-qa-and-regression:
-    mutation: false
-    audit_commands: []
-  # Advisories, secret scanning, static analysis. Never expose or rotate secrets.
-  security-secret-and-static-analysis:
-    mutation: false
-    audit_commands: []
-  # Backlog and feedback triage. Recommend issues only; mutation is not grantable.
-  issue-backlog-and-customer-feedback-triage: {}

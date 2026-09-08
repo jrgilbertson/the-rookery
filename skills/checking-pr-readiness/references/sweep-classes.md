@@ -1,13 +1,12 @@
 # Sweep Classes
 
-Step 6 of the gate reads this file and works the classes below in the order
-they appear, which is observed-frequency order from the pull request forensics
-behind this gate. Surface findings in that same order, so the class that most
-often drives another automated-review round is read first. Every class carries
-one verdict from its own enumerated set, and a class that fired names where it
-fired — the file and line for a line-scoped finding, the file alone for a
-file-level one, and the repository surface for a repository-level finding such
-as a missing changelog entry or an aggregate file-cap excess.
+Step 6 of the gate reads this file and works the classes below in the listed
+order. Every class carries one verdict from its own enumerated set in the
+captured gather. A class that fired names where it fired — the file and line
+for a line-scoped finding, the file alone for a file-level one, and the
+repository surface for a repository-level finding such as a missing changelog
+entry or a review-coverage gap. Record every class in the gather. The brief in SKILL.md step 7 names only
+classes that drive the recommendation.
 
 ## 1. Underspecified rules in prose and instruction files
 
@@ -134,32 +133,27 @@ Verdicts: enforced / prose-only invariant found / not applicable.
 
 ## 11. Diff size against automated-reviewer file caps
 
-The diff touches more files than an automated reviewer will read, so that
-reviewer skips the pull request or truncates its review.
+File counts and known reviewer limits identify potential review-coverage risk.
+Read them from step 1's full surface report. When a limit is already available
+from repository configuration or supplied evidence, optionally pass
+`--cap <reviewer>=<n>`; record its source and read the helper's comparison.
+Numeric caps are optional diagnostics. There is no required vendor or plan
+research, or new cap configuration, to complete this class.
 
-Check by running `scripts/surface-report.sh --cap <reviewer>=<n>` with one
-`--cap` per automated reviewer configured on the host repository, and read the
-verdict line directly; the helper compares the counts itself.
+When no automated reviewer is configured, record `not applicable`. Otherwise
+retain the helper's size verdict, including `cap unverified` when no cap was
+supplied. With a complete inventory, unknown or exceeded caps alone are
+informational: they neither fail the check nor withhold Approve, require a
+split, or prove that review ran. Assess actual review coverage from the
+required reviews and their receipts in steps 2 and 3. An actual required-review
+failure or omission without replacement coverage remains a named unresolved
+finding; complete independent required coverage can coexist with an optional
+reviewer's exceeded cap.
 
-First establish whether any automated reviewer is configured from repository
-gate, workflow, app, or review-tool configuration. When no automated reviewer
-is configured, class 11 is explicitly `not applicable`: run the surface helper
-without caps for the full inventory required by step 1, but do not reinterpret
-its mechanical `cap unverified` line as a class-11 gap. Absence of a reviewer is
-not evidence of an unknown cap. Once a reviewer is configured, absence of its
-repository-resolved cap fails closed as `cap unverified`; never fabricate a cap
-to make the class applicable.
-
-Cap values are repository-specific, never universal: each reviewer's limit
-comes from its configuration in the host repository or from the plan the
-repository runs it on, so resolve the applicable value at run time — the
-reviewer's config file in the repository, or its vendor documentation for the
-plan in use. A finding names the affected reviewer and where its cap value came
-from. The helper itself reports `cap unverified` when no cap was supplied, and
-when the committed category could not be measured, because a cap cannot be
-called met against a count that is unknown. Report it by judgment for the same
-reason when a configured reviewer's applicable cap cannot be confirmed at run
-time.
+Read the inventory detail as well as the size verdict. `cap unverified` can
+also accompany an unmeasurable committed category, and `exceeds cap` may
+compare only a measured subset. Missing or failed git inventory and unresolved
+base identity remain step 1 blockers, even when the helper exits zero.
 
 Verdicts: under caps / `exceeds cap for <reviewer>` / cap unverified /
 no changes on surface / covered by repo gate / not run / not applicable.
@@ -173,15 +167,16 @@ verdicts; this table maps execution).
 
 | Exit | Meaning | Status word |
 | --- | --- | --- |
-| 0 | Class carried a verdict from its enumerated set | **verified** with the verdict line as named evidence, or **failed** when the verdict is a finding |
+| 0 | Class carried a verdict from its enumerated set | **verified** with the verdict line as named evidence, or **failed** when the verdict is a finding. Class 11's informational cap verdicts follow its coverage and inventory rules above; they do not verify that a review ran. |
 | 2 with absent-input verdict (`no changelog`, `no records`) | Input missing | **unavailable** |
-| 2 with `not run` / usage error | Helper could not run as invoked | **not run** → fall back to the class's model-instruction check |
+| 2 with `not run` / usage error | Helper could not run as invoked | **not run**. Fall back to the class's model-instruction check and record that judgment as the class verdict. |
 | 3 | `--defer` to a repository gate | **skipped**, naming that gate |
-| 4 | Helper hard failure | **not run** → fall back to model-instruction check |
+| 4 | Helper hard failure | **not run**. Fall back to the class's model-instruction check and record that judgment as the class verdict. |
 
 ## When a helper cannot run
 
 A helper that is absent, not executable, or exits without producing its output
 does not remove its class from the sweep. Check that class by judgment against
-the class description above, and report it as `not run → judgment` so the
-readout shows which verdicts came from the helper and which came from reading.
+the class description above. Record the status as `not run` and store the
+model judgment as the class verdict, so helper verdicts stay distinct from
+judgment verdicts.

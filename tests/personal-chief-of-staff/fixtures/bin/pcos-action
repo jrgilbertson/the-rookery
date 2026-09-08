@@ -48,11 +48,16 @@ action_dir="$fixture_dir/specimens/$PCOS_FIXTURE_SPECIMEN/actions/$role"
 [[ -f "$action_dir/before.txt" && -f "$action_dir/after.txt" && -f "$action_dir/write-token" ]] ||
   reject "$operation" "incomplete action fixture" "$role"
 phase_metadata="$fixture_dir/specimens/$PCOS_FIXTURE_SPECIMEN/actions/source-discovery-after-readback"
-phase_role=""
+phase_role_gated=0
 if [[ -f "$phase_metadata" ]]; then
-  phase_role=$(<"$phase_metadata")
-  [[ "$phase_role" =~ ^[a-z][a-z0-9_]*$ ]] ||
-    reject "$operation" "unsafe source-discovery phase role" "$role"
+  # One approved action role per line; this action's role is gated if it
+  # appears anywhere in the list.
+  while IFS= read -r candidate_role || [[ -n "$candidate_role" ]]; do
+    [[ -n "$candidate_role" ]] || continue
+    [[ "$candidate_role" =~ ^[a-z][a-z0-9_]*$ ]] ||
+      reject "$operation" "unsafe source-discovery phase role" "$role"
+    [[ "$candidate_role" != "$role" ]] || phase_role_gated=1
+  done < "$phase_metadata"
 fi
 
 state_dir="$fixture_root/action-$role"
@@ -122,11 +127,14 @@ case "$operation" in
       reject readback "an extra readback attempt is not permitted" "$role"
     if [[ -f "$action_dir/readback.failure" ]]; then
       trace readback "$role" failure unknown
+      if [[ "$phase_role_gated" -eq 1 ]]; then
+        printf 'failed\n' > "$phase_file"
+      fi
       die "scripted authoritative readback failure" 69
     fi
     sed -n '1,$p' "$state_file"
     trace readback "$role" success complete
-    if [[ -n "$phase_role" && "$role" == "$phase_role" ]]; then
+    if [[ "$phase_role_gated" -eq 1 ]]; then
       printf 'complete\n' > "$phase_file"
     fi
     ;;

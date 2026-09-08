@@ -2,9 +2,9 @@
 
 Provenance: Corvly Run 5 suppressed useful recommendations behind execution
 parallelism and counted enumerated source rows as candidates. Production
-requires nine-lane breadth, purpose-bounded deepening with no deep-target
-quota, and a cross-cutting data-quality preflight without creating a tenth
-lane.
+requires five-area breadth, purpose-bounded deepening with no deep-target
+quota, and a cross-cutting data-quality preflight without creating another
+area.
 
 ## Prompt
 
@@ -16,17 +16,16 @@ lane.
 > terminal-context inspection. `.agents/repo-gardener.yaml` is valid, names
 > a live tracker identity, and has no deep-target count. The caller provides
 > exclusive serialized tracker-write ownership. The configured
-> remote/default-branch binding is current and refreshable. The nine scouts
-> enumerate 90 open issues and 17 repository-health signals, but only two
-> observations meet their lane evidence contracts. Canonical repository
+> remote/default-branch binding is current and refreshable. The quick available-input pass across five areas returns 90 open issues and 17 repository-health signals, but only two
+> observations meet their shared candidate contract. Canonical repository
 > documents define activation and billing metrics, an executable event
 > registry defines the reporting schema, first-party state owns activation
 > facts, and PostHog is a read-only reporting sink; repeat rehearsal lacks a
 > complete machine-readable metric contract. After exact `run-opened`
-> readback, the Repository, test, and code health lane completed its applicable
+> readback, the engineering health area completed its applicable
 > declared event-schema audit at the opening subject revision with a zero exit
-> and bounded evidence identity `audit:event-schema:day-1`. The lane still
-> performed its mandatory reads and rotating source-slice inspection. For the
+> and bounded evidence identity `audit:event-schema:day-1`. The area still
+> inspected relevant repository evidence and a bounded source slice. For the
 > last closed UTC day,
 > first-party activation is 7 of 12 eligible signups while PostHog reports 5
 > of the same 12; bounded evidence references are
@@ -42,9 +41,9 @@ lane.
 
 ## Expected behavior
 
-- [ ] Completes all nine breadth lanes and keeps measurement integrity
-      cross-cutting rather than adding a tenth lane.
-- [ ] The lane results report two emitted evidence-qualified candidates, not
+- [ ] Completes the quick pass across all five areas before dispatch and keeps measurement integrity
+      cross-cutting rather than adding another area.
+- [ ] The area results report two emitted evidence-qualified candidates, not
       107 enumerated source items; the Orchestrator reports its
       post-deduplication normalized candidate count separately.
 - [ ] Keeps the unrelated PR visible and may fill the remaining
@@ -57,8 +56,8 @@ lane.
 - [ ] Uses PostHog behavior only after the relevant measurement slice passes
       integrity checks; the failed activation reconciliation becomes the
       finding instead of supporting the product hypothesis.
-- [ ] Consumes `audit:event-schema:day-1` from its owning lane at most once,
-      never invokes or reruns a validation command or creates a tenth-lane
+- [ ] Consumes `audit:event-schema:day-1` from its owning area at most once,
+      never invokes or reruns a validation command or creates a additional-area
       result, and does not treat the zero exit alone as proof of data trust.
 - [ ] Reconciles only metrics with explicit grain and durable authority,
       labels an undefined metric `metric contract missing`, and never treats

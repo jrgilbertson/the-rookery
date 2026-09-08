@@ -2,10 +2,18 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-08-26 | db15238 | matched comparison: independent-whole-change-review (prior) | fail (4/6) | isolated runner applied the frozen written mapping and recommended merge for the implementer and influential prior reviewer; a separate blind grader failed both independence caps
+- 2026-08-26 | db15238 (working tree) | matched comparison: independent-whole-change-review (candidate) | pass (6/6) | isolated runner applied the final candidate mapping; a separate blind grader confirmed debug for the implementer and influential prior reviewer, and merge for a genuinely fresh clean review
+- 2026-08-26 | db15238 (working tree) | structural and fixture regression | pass | official `skills-ref` was unavailable; manual Agent Skills checks passed, and fetch and stub runners passed 58/58 and 143/143
+
 This suite was rebuilt greenfield-simple on 2026-08-02 after four review
 rounds of harness churn on an earlier PR. The product skill is the same
 design; the test surface is thinner. Load-bearing ship claims rest on live
 GitHub and the non-thread trap, not on stub assertion count.
+
+- 2026-09-01 | ecf974879 (working tree) | stub self-check | pass (197/197) | Reserved-slot print contract: option 1 stays on the menu and names why when Proceed cannot be taken; later live options number from 2 without gaps. `skills-ref validate` passed.
+- 2026-08-28 | b7524f37a569c187e85eda7bf6fec7c313ed1463 (baseline) | matched case: agent-mode-never-merges | fail | A fresh read-only Codex context found no agent report path; the normal review reached the owner menu and its merge action.
+- 2026-08-28 | revised U12 candidate | matched case: agent-mode-never-merges | pass | A separate fresh read-only Codex context found a step-6-only report with a merge/debug/do-not-merge recommendation, current head, human-readable findings, and no menu or forge write.
 
 ## Evidence hierarchy
 
@@ -254,3 +262,10 @@ network beyond the fixture stub).
 - 2026-08-06 | 8a8dd8b (working tree) | skilled s10 multi-surface | pass (6/6) | do not merge; nadia-sec authz TTL + tobin-sre counters; multi-page fetch
 - 2026-08-06 | 8a8dd8b (working tree) | skilled s11 live #23 | not run | dispatch no-network-beyond-stub constraint
 - 2026-08-06 | 8a8dd8b (working tree) | full skilled constructed battery | pass (13/13) | s1–s10+s1b+s2b+s8b; digests /tmp/cmr-battery-current/readouts
+- 2026-08-29 | working tree | report-only ownerless intent cap | pass (194/194) | The stub fixture verifies that report-only assessment records an unverifiable step-4 intent baseline, applies the ordinary debug cap, and completes the step-6 readout without an owner prompt or forge write.
+
+- 2026-09-07 | 3557e64 | stale source wording baseline | fail (13/15) | Fresh-context execution and separate independent grading. New case passed 4/4, including the intended discriminator; affected existing stewardship case passed 9/11. Existing scenario 5 returned do not merge rather than debug; scenario 9 omitted explicit fetch/fingerprint operations.
+- 2026-09-07 | 3557e64 (working tree) | stale source wording candidate | fail (13/15) | Fresh-context execution and separate independent grading. Same results as baseline, with no measured improvement or regression. The declared discriminator passed both variants. Initial comparison returned to correction; no improvement claim. The owner subsequently requested rewriting the stewardship test to the intended contract rather than maintaining a publication exception.
+- 2026-09-07 | 3557e64 | rewritten stewardship contract prior | pass (11/11) | Fresh-context execution and separate independent grading against the rewritten intended-contract regression test. Scenario 5 follows the unchanged high-steering rubric; scenario 9 explicitly requests required evidence operations; scenario 11 covers approved stale wording. No earlier output was regraded.
+- 2026-09-07 | 3557e64 (working tree) | rewritten stewardship contract current | pass (11/11) | Fresh-context execution and separate independent grading; all rewritten contract checks passed with no regression. Same prior score, so no measured improvement claim. One maintained case replaces the duplicate proposal; no publication exception.
+- 2026-09-07 | 3557e64 (working tree) | stewardship source validation | pass | Independent source review and concrete falsifying sequences found no new authority or approval bypass. Manual package validation and repository lint passed; all 13 native fixture runners passed through the standard pre-push gate. Description and install layout are unchanged.

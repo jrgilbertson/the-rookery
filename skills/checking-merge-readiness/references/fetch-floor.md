@@ -1,8 +1,9 @@
 # Fetch Floor
 
-Load when building the forge fetch, certifying history completeness, or
-recording the step-7 stability fingerprint. Step 2 of SKILL.md owns the verb
-set and the completion bound; this file owns the payload rules.
+Load when the fetch helper is missing or exits 4, when hand-building the
+GraphQL fetch, or when comparing identity without the helper. Step 2 of
+SKILL.md owns the verb set and the completion bound; this file owns the
+payload rules. A successful helper run already paginated and fingerprinted.
 
 **Incomplete history** is the leading token for any thin or partial payload on
 a required surface: name the gap and **cap at debug** (remove merge). Never

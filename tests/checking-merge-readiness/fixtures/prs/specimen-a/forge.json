@@ -17,6 +17,14 @@
     "requireLastPushApproval": false,
     "dismissStaleReviewsOnPush": false
   },
+  "mergeEligibility": {
+    "mergeCommitAllowed": true,
+    "squashMergeAllowed": true,
+    "rebaseMergeAllowed": false,
+    "viewerDefaultMergeMethod": "SQUASH",
+    "isMergeQueueEnabled": false,
+    "mergeQueue": null
+  },
   "files": [
     "api/invoices/export.py",
     "api/invoices/csv_rows.py",

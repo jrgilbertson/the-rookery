@@ -1,82 +1,54 @@
 # Review Bundle
 
-Use this shape as a flexible writing aid, not a fixed form. Omit headings that
-do not improve clarity and do not create actions merely to fill the bundle.
+Lead with the most important conclusion in a complete sentence. Group evidence
+under the claim it supports, distinguish fact from inference and uncertainty,
+and explain why it matters now. Cite the authoritative source and native
+timestamp, or the current response and query time when no native timestamp
+exists. Name a gap beside a claim only when it limits that claim.
 
-**State the most important conclusion in a complete, content-first sentence.**
-Follow with the evidence, interpretation, uncertainty, and consequence needed
-to support it. Group related claims together and keep unrelated claims
-separate.
+Use headings when they improve clarity. The **Source Access Audit** heading is
+required after the synthesis, before actions and the explicit run ending.
 
-After that synthesis, render the current response's **Source Access Audit**.
-Place it before separately approvable actions and before the run ending. Use
-the semantics and relevant-source set in `references/source-behavior.md`; the
-table reports actual access, not intended retrieval, claim provenance, or
-action success.
+## Source Access Audit
 
-| Source or role | Result | Scope or window | Effect on claim categories |
-| --- | --- | --- | --- |
-| [generic source family or canonical role] | [exact access result] | [bounded safe scope] | [claim categories supported or limited] |
+Write exactly one short paragraph, using the relevant-source set and access results in
+"Audit the current response's source access" in `references/source-behavior.md`.
 
-Use only these exact results: **Accessed — evidence found**, **Accessed — no
-relevant evidence**, **Attempted — unavailable or failed**, **Not configured**,
-**Declined**, and **Not needed**. For a response combining an action with either
-a review or non-mode context request, add a first **Phase** column. Label action
-rows **Action access**; label discovery rows **Review discovery** for a review
-request or **Context discovery** for a non-mode context request. Do not add the
-Phase column to other responses.
+- For discovery, lead with **Sufficient**, **Partial**, or **Insufficient**
+  coverage. Action-only responses have no review coverage verdict.
+- Name every relevant role and its actual result. Group successes when useful;
+  connect each stated limit to its consequence with "so": what claim is
+  omitted, qualified, or prevented. For example, unresolved calendar identities
+  mean combined availability may be known, so separate personal/work coverage
+  is unverified. A complete empty read is a limit only when it explains an
+  omitted claim or supports an absence claim. Complete successful evidence
+  needs no "so" clause.
+- Bound the read window or scope. Mark truncated scope partial. Name a role
+  once unless its bounded slices have different results or safe scopes.
+- Name **Pre-write target or destination reread** and **Post-write verification
+  readback** as separate operations when performed, even on the same source.
+  A failed or missing required operation is a limit. In combined responses,
+  distinguish **Action access** from **Review discovery** or **Context
+  discovery** using inline labels within that same paragraph, not separate
+  paragraphs or subsections. Mutation outcomes belong in the action narrative.
+- Keep labels generic and role-based. Coarsen scopes that could identify
+  sensitive activity. Exclude private bindings, people, projects, account
+  identifiers, URLs, note or event titles, sensitive event types, excerpts,
+  credentials, queries, and tool telemetry.
 
-Keep source labels generic and role-based. Bound every scope or window, marking
-a returned slice partial when needed and coarsening precision when it could
-identify sensitive activity. Do not expose people, projects, counterparties,
-private configured names, account identifiers, source URLs, note or event
-titles, sensitive event types, content excerpts, credentials, raw queries, or
-tool telemetry. Use separate safe rows for mixed bounded slices whose results
-differ. Include every source in the relevant-source set, but do not enumerate
-irrelevant connectors.
+Use ordinary prose, no table, HTML details, extra census label, or em dashes.
+For example:
 
-In the effect column, name the category of claim the result supports, narrows,
-or prevents. Do not imply complete coverage from a partial scope and do not use
-an access result as evidence that an external action succeeded. Mention a
-source limitation again in prose only where it changes a material conclusion.
+> Coverage is partial because the mailbox read was attempted and failed, so
+> there are no reply-commitment claims from this window. Calendar was accessed
+> with evidence for the current day.
 
-For action access, make the access purpose independently recoverable in the
-scope cell. Use one row for the **Pre-write target or destination reread** and,
-when performed, a separate row for the **Post-write verification readback**.
-Never combine those rows because their source, scope, or result happens to
-match, and never add a row for the mutation itself. In a combined
-action-and-review table, both remain **Action access** rows under the unchanged
-Phase column; discovery rows remain **Review discovery**. In a combined action
-and non-mode context table, discovery rows remain **Context discovery**.
+## Proposed actions
 
-For each material claim:
-
-- state why it matters now;
-- point to the authoritative source and its native timestamp when available,
-  otherwise the current response and query time;
-- distinguish observed fact from inference;
-- name a source gap only when it limits this claim.
-
-State overall coverage as sufficient, partial, or insufficient. When coverage
-is partial, identify the omitted or qualified conclusions. When it is
-insufficient, stop before presenting a weak conclusion as reliable.
-
-Write intentions as natural prose. For each independent future outcome,
-recommendation, priority, plan, coaching intervention, experiment, boundary,
-strategy or learning proposal, action effect, or recommendation to preserve
-the current state, let a reader recover the current authoritative basis (or an
-explicitly user-supplied, unverified premise), the outcome the user owns or has
-approved, and the future observable evidence that would show closure. These
-meanings may be woven into one or two sentences; use literal `Current`,
-`Desired`, or `Evidence` labels only when they materially improve clarity. Do
-not turn factual synthesis, procedural acknowledgment, or an honest null into
-an intention, and do not invent a missing outcome or finish line to fill the
-shape. Preserve exact incomplete user wording only as visibly nonconforming
-input. When the agent proposes a new outcome, phrase it as a candidate for the
-user's approval rather than as the user's Desired; call it user-owned or
-complete only after acceptance.
-
-When action is warranted, append one numbered proposal per independent effect:
+Apply "Make every intention verifiable" in `references/source-behavior.md` to
+recommendations as they appear and to each independent effect. Keep the basis,
+outcome, and closure evidence in natural prose; use the following shape when
+it helps the user review an external change:
 
 > **1. [Complete sentence describing the proposed effect.]**
 >
@@ -85,18 +57,17 @@ When action is warranted, append one numbered proposal per independent effect:
 > Destination and exact target: [authoritative system and record, recipients,
 > event, note, or repository target]
 >
-> Visibility: [include for repository actions when relevant]
+> Visibility: [repository visibility when relevant]
 >
-> Proposed content or effect: [the full content or precise change]
+> Proposed content or effect: [complete content or precise change]
 >
-> Evidence and reason: [why this change follows from the review]
+> Evidence and reason: [current basis and why this matters]
 >
-> Closure evidence: [future observable readback or other finish line for this
-> effect]
+> Closure evidence: [future observable finish line for this effect]
 
-Invite the user to approve, edit, defer, or skip each number independently.
-Each action needs its own closure evidence. Changing that evidence after
-approval creates a revised proposal that needs new approval.
-After any approved action, report its result as applied, already satisfied,
-failed, indeterminate, manual, deferred, or skipped. Close with one explicit
-run ending and a short recap of what changed and what remains unapplied.
+Give each proposed source change its own action number, including a draft
+awaiting canonical access; numbers inside its content do not number the action.
+Continue action numbering across bundles in the same run. Invite the user to approve, edit, defer, or skip each number. Follow
+"Bind approval to the exact action" and "Revalidate, apply, and read back" in
+the shared reference, including its action-result labels. End with one run
+ending and a recap of what changed and every action still unapplied.

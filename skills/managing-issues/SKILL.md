@@ -190,17 +190,16 @@ state that the provider path preserves each field as structured data; an Orca
 command uses a structured argument vector and sends multiline body content
 through stdin so the content remains literal.
 
-Every non-empty mutating batch requires one direct operator approval of the
-complete visible batch. Approval binds only the displayed order and effects.
-Any new target, field, ordering, content, or side effect needs a fresh complete
-preview and approval. Never truncate a batch or hide tracker content that
-affects it. Every non-empty mutating batch preview must end with exactly
+Every non-empty batch requires one direct operator approval of the complete
+visible batch. Any new target, field, ordering, content, or side effect needs
+a fresh complete preview and approval. Never truncate a batch or hide tracker
+content that affects it. Every non-empty batch preview must end with exactly
 `Do you approve this exact N-effect batch?`, replacing `N` with the displayed
 effect count. An empty batch requires no approval. The request to prepare a
 batch is not approval to apply it.
 
 Completion: every intended effect has one exact visible interpretation and the
-complete batch has a direct operator decision.
+complete batch has a direct approval decision.
 
 ## 4. Revalidate, apply once, and read back
 

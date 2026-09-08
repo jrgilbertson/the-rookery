@@ -8,21 +8,14 @@ owned by the managing-personal-crm suite.
 
 ## Setup
 
-Run every scenario in a fresh executor with no real connector credentials or
-endpoints. For fixture-backed scenarios, create a fresh temporary directory
+Run every scenario in a fresh executor using only the supplied test sources. For fixture-backed scenarios, create a fresh temporary directory
 outside the repository, set `PCOS_FIXTURE_ROOT` to it, set
 `PCOS_FIXTURE_TRACE` to `<temporary-directory>/trace.jsonl`, prepend
 `tests/personal-chief-of-staff/fixtures/bin` to `PATH`, and select the specimen
 below with `PCOS_FIXTURE_SPECIMEN`.
 
-For fixture-backed scenarios, the launcher must expose only the declared
-`pcos-action` and `pcos-source` fixture executables and must prove host
-connectors and alternate implementations unavailable. Before fixture I/O, it
-must load the mounted `personal-chief-of-staff` skill, its shared resources,
-the originating mode reference, and the applicable embedded CRM companion
-resources. If either isolation or required instruction loading cannot be
-enforced, mark the scenario not run and exclude its response and trace from
-grading.
+Follow [the execution protocol](../execution-protocol.md) for skill loading,
+fixture use, and independent response/trace grading.
 
 - Scenario 1, specimen `c1p1`: run `pcos-action read role=person_note`, the
   single exact mutation
@@ -41,7 +34,8 @@ grading.
 - Scenarios 2, 6, and 7 require no fixture call because their unavailable,
   conversation-only, or unresolved canonical path is the behavior under test.
 
-The grader receives only the rendered response and JSONL trace. Remove each
+Give the grader the evidence required by
+[the execution protocol](../execution-protocol.md), including the fixture trace. Remove each
 temporary directory after its run.
 
 ## Prompt
@@ -83,10 +77,13 @@ temporary directory after its run.
 - [ ] 7 → reports manual with no write; the effect is not redirected to a
       generic mutation path or another destination.
 - [ ] Every action-only response keeps the chief-of-staff action result
-      separate from its response-scoped Source Access Audit. The audit names
-      only the canonical roles actually reread or verified now, never treats a
-      successful read as an applied mutation, and never treats `Manual`,
-      `Already satisfied`, `Failed`, or `Indeterminate` as an access state.
+      separate from its response-scoped Source Access Audit. The audit has no
+      review coverage verdict. The paragraph names only the canonical roles
+      actually reread or verified now, as separate pre-write and post-write
+      operations when those reads ran. HTML details fail. The audit never
+      treats a successful read as an applied mutation, and never treats
+      `Manual`, `Already satisfied`, `Failed`, or `Indeterminate` as an access
+      state.
 - [ ] Each applied or already-satisfied durable effect leaves a gradeable
       intention: the current target state comes from the pre-write reread, the
       desired effect remains the user's exact approved effect, and the future

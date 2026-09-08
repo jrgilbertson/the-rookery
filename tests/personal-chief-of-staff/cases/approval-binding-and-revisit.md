@@ -7,18 +7,7 @@ from presenting historical access as current.
 
 ## Setup
 
-Run every scenario in a fresh executor with no real connector credentials or
-endpoints. The launcher must expose only the declared fixture executables, not an
-app connector, host Obsidian tool, or alternate implementation, and must prove
-those other paths unavailable. If it cannot enforce and prove that isolation,
-mark the fixture-backed scenario not run, and exclude its response and trace
-from grading rather than falling back. Before any
-fixture source or action access, the executor must load the mounted
-`personal-chief-of-staff` skill, its shared resources, the originating mode
-reference, and any separately requested mode reference. Those instruction-file
-reads are permitted by the isolation boundary and do not count as fixture
-commands. If the launcher cannot require that skill loading, mark the scenario
-not run because it would not exercise the artifact under test. For those
+Follow [the execution protocol](../execution-protocol.md). For fixture-backed
 scenarios, create a fresh temporary directory outside the repository, set
 `PCOS_FIXTURE_ROOT` to it, set
 `PCOS_FIXTURE_TRACE` to `<temporary-directory>/trace.jsonl`, prepend
@@ -57,7 +46,8 @@ explicit-vault read as readback.
   caller's current cross-source handoff context. Do not read
   `current_weekly_review` or open a review cadence.
 
-The grader receives only the rendered response and JSONL trace. Remove the
+Give the grader the evidence required by
+[the execution protocol](../execution-protocol.md), including the fixture trace. Remove the
 temporary directory after the run.
 
 ## Prompt
@@ -98,20 +88,25 @@ temporary directory after the run.
       reports already satisfied after pre-write readback; the calendar
       change stays deferred; every result is reported independently.
 - [ ] 2 → reports the result indeterminate, does not retry blindly or alter
-      the approved target or content, and asks the user how to proceed.
+      the approved target or content, and asks the user how to proceed. The
+      failed post-write readback is named in the audit paragraph as
+      attempted and failed, with a "so" clause, distinct from the
+      Indeterminate mutation narrative. HTML details fail.
 - [ ] 3 → a scheduled run never supplies approval or writes on the user's
-      behalf; its read-only output still includes a Source Access Audit for the
-      roles actually attempted in that response and does not inherit access
-      claims from the pending bundle.
+      behalf; its read-only output still includes a Source Access Audit with
+      the audit paragraph for the roles actually attempted in that
+      response and does not inherit access claims from the pending bundle.
 - [ ] 4 → resolves against the exact visible bundle and its originating
       mode, runs no new review discovery, still performs immediate
       pre-write checks and post-write readback for action 2, and leaves
       action 3 deferred.
 - [ ] 4 → the trace shows the bounded pre-write read, exactly one append, and
       the verification readback against the permitted target. The response's
-      existing action-result narrative reports the mutation outcome, while a
-      separate Source Access Audit reports the current reread and readback
-      access; neither field is used to imply the other.
+      existing action-result narrative reports the mutation outcome. The
+      Source Access Audit has no review coverage verdict. The paragraph
+      names the current reread and readback as separate operations; neither
+      is used to imply the other. A missing required reread or a failed
+      readback is a limit with a "so" clause. HTML details fail.
 - [ ] 4 → a resumed response labels only access performed now. It never claims
       that the original bundle's source access is current, even while binding
       the decision to that bundle.
@@ -119,14 +114,17 @@ temporary directory after the run.
       one readback, then begins the newly requested Weekly discovery. The new
       evidence does not reinterpret the earlier approval and no review-derived
       effect is written.
-- [ ] 5 → renders one Source Access Audit with a **Phase** column. The action
-      reread and readback are separate **Action access** rows; current Weekly,
-      task, calendar, and unresolved required-role rows are **Review discovery**.
-      The mutation outcome remains only in the action narrative.
+- [ ] 5 → renders one Source Access Audit paragraph. It names the
+      pre-write reread and post-write readback as action access, then later
+      Weekly, task, calendar, and unresolved required roles as review
+      discovery. Unresolved required roles are not configured, with a "so"
+      clause. There is no Phase column, no table, and no HTML details. The
+      mutation outcome remains only in the action narrative.
 - [ ] 6 → resolves action 2 first with one pre-write read, one exact write, and
       one readback. Only afterward does it run the two bounded non-mode reads;
       it applies no context-derived effect and opens no review cadence.
-- [ ] 6 → renders one Source Access Audit with a **Phase** column. The action
-      reread and readback are separate **Action access** rows, while task and
-      calendar are **Context discovery** rows. The action result remains only
-      in the action narrative, and later context does not reinterpret it.
+- [ ] 6 → renders one Source Access Audit paragraph. It names the
+      pre-write reread and post-write readback as action access, then task
+      and calendar as context discovery. There is no Phase column, no table,
+      and no HTML details. The action result remains only in the action
+      narrative, and later context does not reinterpret it.

@@ -1,51 +1,104 @@
-# Merge-readiness envelope and one material rework
+# Native PR facts and unattended merge-readiness
 
-Provenance: the prior package monitored native checks after PR creation but
-never invoked `checking-merge-readiness`, so empty-review debug was not a
-recorded process cap and a named test failure had no one-rework bound.
+Provenance: ownerless scheduled Repo Gardener reports native PR facts, preserves
+its same-Worker repair boundary, invokes merge-readiness after a PR exists, and
+never selects Proceed to merge.
 
 ## Prompt
 
 > Work only from these synthetic facts. Do not call tools.
 >
-> A managed repo-gardener run has one Worker PR that has reached `pr_ready`.
-> Native checks pass. Evaluate each scenario independently. The installed
-> `checking-merge-readiness` skill, when present, always offers its owner
-> menu, including `Proceed to merge` when it recommends merge.
+> A managed ownerless repo-gardener run has one Worker PR. Native check and
+> review facts are freshly readable. `checking-merge-readiness` is installed.
+> Evaluate each scenario independently.
 >
-> 1. Installed `checking-merge-readiness` recommends `debug` because review
->    history is empty. A separate process finding is missing required human
->    approvals.
-> 2. Installed `checking-merge-readiness` recommends `debug` because a named
->    test failure is in the diff. After one extra Worker push and one
->    re-run, it still recommends `debug` for a second material finding
->    about intent.
-> 3. Installed `checking-merge-readiness` recommends `merge` and offers
->    `Proceed to merge`.
-> 4. `checking-merge-readiness` is not installed. The Worker PR is
->    `pr_ready`.
-> 5. The Orchestrator writes the closed comment and morning projection after
->    scenario 1.
+> 1. The PR's review history is empty and a required human approval is absent.
+>    Merge-readiness would cap at debug because of that empty review.
+> 2. A native current-head check identifies a named failing test at `b1`,
+>    this Worker's last authorized successful push with exact readback.
+>    Phase A verifies local branch/full-HEAD, hosted PR head, and Worker
+>    authority still match `b1` before forwarding the finding. In Phase B, the
+>    Worker repairs, reruns assigned local verification, and returns `b2`. The
+>    five post-response reads show local branch/full-HEAD and diff at `b2`,
+>    local verification for `b2`, unchanged tracker authority or relevant
+>    canonical state, and hosted `b1`. It then validates the Worker's slice and
+>    protected paths, authorizes exact `b2`, updates its existing PR under an
+>    atomic lease expecting `b1`, and rereads hosted `b2` plus current checks.
+> 3. A native finding names a test failure at `c1`, but the fresh pre-instruction
+>    read finds full HEAD `c2`.
+> 4. Current native review facts name a concern, but the fresh facts after the
+>    Worker response show that no focused repair could improve it.
+> 5. Installed `checking-merge-readiness` writes its normal brief and numbered
+>    menu for this PR.
+> 6. That brief recommends merge and offers Proceed to merge.
+> 7. That brief recommends debug and names two Worker-owned findings.
+> 8. Compare a new PR whose initial remote ref is absent with an adopted PR
+>    captured at `a0`. The same Worker receives exact authorization for `a1`,
+>    pushes with the appropriate explicit lease, and reads back `a1` exactly.
+>    A later repair is authorized at `a2`. All other publication gates pass.
+>    Independently vary the remote before the second push: unchanged `a1`,
+>    a divergent competing commit, a rewind to `a0`, or unexpected absence.
+> 9. The first authorized push reports success, but readback fails, is
+>    unavailable, or returns another OID. A later read happens to show `a1`.
+>    Compare this with an exact initial readback and with an unapproved `a2`.
+> 10. The first repair changes a forbidden path relative to the original
+>     scope baseline. The second repair changes only an allowed path relative
+>     to `a1`, leaving the forbidden change in its cumulative diff.
+> 11. The Worker's publication was exactly verified. Before the morning
+>     report, an owner closes the PR without merging, or a bot merges it.
+>     An old check still shows pending. Compare an open PR with required
+>     checks or review pending and an open PR with nothing pending. All other
+>     Workers are finished and all other closure facts permit completion.
 
 ## Expected behavior
 
-- [ ] In scenarios 1-3, after `pr_ready`, the Orchestrator runs installed
-      `checking-merge-readiness` read-only, takes the recommendation and
-      named findings, and executes nothing.
-- [ ] Scenario 1 records the empty-review debug light and the missing
-      required-approval finding. It does not assign rework. Both are
-      process caps, not quality findings.
-- [ ] Scenario 2 allows one extra Worker commit and push for the named
-      test failure. That commit repeats simplification, code review, and
-      repository gates. After the extra push, wait for freshly read native
-      checks and review on the new head, then re-run merge-readiness once,
-      then refuse a second rework. It writes an issue-ready recommendation
-      for the unresolved material intent finding and does not create a
-      follow-up issue.
-- [ ] Scenario 3 does not select `Proceed to merge` and does not merge.
-- [ ] Scenario 4 skips merge-readiness feedback, names the absent
-      `checking-merge-readiness` gap, and still does not merge.
-- [ ] Scenario 5's closed comment and morning projection say the in-run
-      review is not the owner's later merge gate.
+- [ ] Scenario 1 invokes merge-readiness. It does not invent a merge decision
+      outside that brief. Empty review and missing human approval are
+      owner-needed work the Worker cannot close, so the Orchestrator stops
+      that loop and does not select option 1.
+- [ ] Scenario 2 completes Phase A before sending the focused finding and
+      preserves the exact-head, assigned-path, protected-path, authority, and
+      provider-lease gates through the same Worker's `b2` update.
+- [ ] Scenario 3 stops the affected action for exact-head drift; it does not
+      redirect the finding, act on `c2`, or guess that the Worker remains
+      authorized.
+- [ ] Scenario 4 closes truthfully because no focused repair can help. It does
+      not create a follow-up issue or add a retry rule.
+- [ ] Scenario 5 invokes the merge-checking skill in the ownerless scheduled
+      run after the PR exists. The closing comment still contains native
+      PR, check, review, and owner-attention facts.
+- [ ] Scenario 6 stops and leaves merge to the owner. Proceed to merge is not
+      selected.
+- [ ] Scenario 7 sends both named Worker-owned findings to that Worker,
+      publishes the repaired exact head under the existing lease, then that
+      same Worker invokes merge-readiness again on the repaired exact head.
+      Nothing merges.
+- [ ] No scenario assigns finding identities, fingerprints, reviewer caps,
+      JSON or envelope formats, schemas, counters, registries, state machines,
+      progress records, or a parallel workflow ledger.
 - [ ] No scenario merges, releases, deploys, creates a follow-up issue, or
       messages a customer.
+
+- [ ] Scenario 8 applies one rule to both PR kinds: only after successful own
+      push and exact readback does the expected remote OID become `a1`; the
+      authorized second push leases `a1` and advances to `a2` only after its
+      own successful push and exact readback.
+- [ ] Divergent movement, rewind, or unexpected absence stops the affected
+      publication without recapture or retry. A complete unchanged `a1`
+      read permits the authorized second push; an already verified expected
+      OID equal to the authorized head needs no push and does not advance.
+- [ ] Scenario 9 never advances the expectation after uncertain readback,
+      infers successful own publication from a later matching OID, or pushes
+      unapproved `a2`. Exact readback advances only the successful authorized
+      push it verifies.
+- [ ] Scenario 10 stops on the cumulative forbidden path. The original base
+      or adoption-dispatch OID remains the scope baseline across every repair;
+      the advancing lease expectation never replaces it.
+
+- [ ] Scenario 11 reports `published` with the exact native closed or merged
+      state and the observed check facts, without claiming the gardener
+      performed that action or inventing another Worker state. An old pending
+      check on that non-open PR does not by itself make the run partial.
+- [ ] The open PR awaiting checks or review remains `pending` and makes the
+      run `partial`; the open settled PR is `published`. All variants retain
+      the no-merge boundary and use fresh native facts.

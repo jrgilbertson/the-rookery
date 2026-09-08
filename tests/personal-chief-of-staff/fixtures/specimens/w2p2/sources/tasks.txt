@@ -1,0 +1,1 @@
+The only open canonical task with a lapsed date is "Send the renewal quote", due 2026-08-31. Every other open task is due after 2026-10-01.

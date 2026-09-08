@@ -1,9 +1,9 @@
 # Cross-cutting measurement integrity
 
 Use this preflight during reconciliation when the repository has product or
-operating metrics and a configured provider-enforced read role can inspect a
-reporting sink. It contributes evidence to the nine lanes; it is not a tenth
-lane, a separate schedule, or an authority to mutate either source.
+operating metrics and the host can read a reporting sink with a read-only
+role. It contributes evidence to the five areas; it is not another
+area, a separate schedule, or an authority to mutate either source.
 
 ## Establish the contract
 
@@ -24,14 +24,17 @@ revenue, or cost definition.
 
 ## Run the bounded preflight
 
-Confirm the configured reporting project against the repository's canonical
-production-project identity before querying. A mismatch stops only this slice.
+Bind each reporting project and environment independently to repository
+facts under the runtime source identity rule in `area-contracts.md`. Multiple
+verified sources are allowed; an uncertain binding stops only that slice.
+Keep source identity with every comparison and avoid double-counting shared
+observations.
 Name a bounded time window and timezone, product surface, expected events or
-metrics, and a query or time budget. When an execution-eligible lane has
+metrics, and a query or time budget. When an execution-eligible area has
 already completed an applicable declared audit in this managed run, consume
-that owning-lane result at most once as bounded evidence. Do not run or rerun a
-validation command here, create a separate declaration namespace or execution
-pass, or turn measurement integrity into a tenth lane. A successful command
+that owning-area result at most once as bounded evidence. Do not run or rerun a
+validation command here or create a separate declaration namespace or
+execution pass. A successful command
 alone does not establish schema agreement, freshness, reconciliation, or data
 trust. Then, within available read-only roles, check:
 
@@ -56,16 +59,14 @@ hypotheses with their sample size, denominator, window, and uncertainty.
 
 ## Feed reconciliation
 
-Return one cross-cutting result inside the Orchestrator decision evidence, not a
-tenth lane or another tracker comment. For every inspected metric, report its disposition,
+Return one cross-cutting result inside the Orchestrator decision evidence. For every inspected metric, report its disposition,
 authority, window and timezone, grain, numerator, denominator, exclusions,
 uncertainty, reconciliation result, and bounded evidence references; use `not
 supplied` for unavailable observed values. Include every `metric contract
 missing` result and state `blank reporting data is not zero product activity`
-whenever the reporting read is blank. Attach each material finding to every
-contributing lane and assign its owning lane from the remediation it actually
-requires. Cite any applicable completed declared-audit result through its
-owning lane only once; do not copy it into a second command result or count it
+whenever the reporting read is blank. Share each material finding with relevant areas and assign one owner by the
+remedy precedence in `area-contracts.md`. Cite any applicable completed declared-audit result through its
+owning area only once; do not copy it into a second command result or count it
 again as a candidate. A failed or refused result may establish a bounded
 measurement limitation, but its terminal disposition alone does not establish
 a data defect. With no applicable completed result, continue the read-only

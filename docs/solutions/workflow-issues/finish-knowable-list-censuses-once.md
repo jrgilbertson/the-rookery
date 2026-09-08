@@ -1,26 +1,25 @@
 ---
-title: Finish a knowable list census once per population
+title: Share query-scoped inventories with truthful coverage
 date: 2026-08-24
+last_updated: 2026-09-07
 category: workflow-issues
 module: "skills/repo-gardener"
 problem_type: workflow_issue
 component: development_workflow
 severity: high
 applies_when:
-  - "An agent skill lists issues, pull requests, or alerts and may stop at a page bound"
-  - "Several lanes would otherwise page the same provider list"
-  - "A size threshold is being written as a stand-in for finishing cheap listing"
+  - "Several maintenance areas need overlapping provider results"
+  - "A filtered or paginated read may be mistaken for backlog exhaustion"
 tags:
   - census
   - repo-gardener
-  - sensing-floors
-  - continue-until
+  - filtered-discovery
   - identifier-listing
 ---
 
-# Finish a knowable list census once per population
+# Share query-scoped inventories with truthful coverage
 
-## Context
+## Historical context
 
 A Corvly dogfood run stopped its open-issue census at four pages of 100 with
 446 open issues still knowable. Floor 2 treated that named page bound as
@@ -34,64 +33,52 @@ sentence still allowed an unknown-size stop when only `hasNextPage` was
 known. Raising the cap without owning the list once would also let three
 issue-facing lanes each page Linear or GitHub to completion.
 
-## Guidance
+That repair required whole-population completion and fixed body-read floors.
+The current workflow replaces those obligations with bounded, filtered
+discovery. The reusable lesson is to share source reads and describe their
+coverage accurately, not to enumerate every backlog before useful work.
 
-Keep listing a list-style population of issues, pull requests, or alerts
-while the count is under the named backstop and either another page exists
-or the listed count is below a provider-reported total. Stopping then is an
-omission, not a stated bound. A named bound is allowed only at the backstop
-with remainder, or when the provider cannot continue. Incomplete list-style
-censuses keep the affected lanes partial and do not by themselves change
-`run_outcome`.
+## Current guidance
 
-Produce one identifier census per those populations per run. The Orchestrator
-lists after `run-opened`. Lanes consume that list and do not re-page it. A
-missing census is a sequencing gap, not a license to list.
-Source-unavailable and empty-complete are census results. An empty-complete
-census establishes absence for a zero-candidate verdict; the five-body
-sample is complete at zero.
+Use the discovery sequence in
+[area-contracts.md](../../../skills/repo-gardener/references/area-contracts.md).
+A Census describes one stated query and window. Record its filters, returned
+counts, pagination or search limits, and inspected coverage. Reuse results
+and body reads across areas when queries overlap.
 
-Do not treat a size threshold as the meaning of the rule. The backstop is
-only a stop when remainder remains. The continue-until loop must require a
-reason to fetch another page (another page exists, or listed count is below
-the provider total). A loop that continues merely because a total is known
-never exits after a finished 446-item census.
+Start implementation discovery with supported open/ready filters and a
+preference for mapped estimates 1–2. Narrow metadata locally when the native
+interface lacks an estimate filter; if estimates are absent from metadata,
+inspect the supported-filter shortlist. Missing estimates or readiness mappings
+remain eligible for selective broadening. Triage uses its own relevant query.
 
-Body reads stay a separate floor. Cheap listing is identities plus cheap
-list fields the endpoint already returns.
+Complete the quick available-input pass across all five areas before dispatch,
+then deepen where another read could change an assignment or recommendation.
+Fetch further pages when they serve that decision, and state any remaining
+coverage limit. A completed filtered query proves only its own population and
+window. An empty result does not establish that the repository has no work.
+Source unavailability limits dependent coverage while independent work proceeds.
 
-## Why This Matters
+Keep returned records, inspected bodies, qualified candidates, and authored
+work distinct. There is no fixed body-read count or full-backlog prerequisite.
+Discovery bounds do not relax the complete tracker read or current conflict
+inventory required by the tracker and Worker contracts.
 
-An honest partial on a knowable cheap list looks like integrity and still
-leaves the owner without the census. A size cap papers over the same stop.
-Per-lane listing multiplies provider cost without giving each lane a
-verdict. A continue-until sentence that keys only on "total is known" hangs
-after completion.
+## Example
 
-## When to Apply
+A provider reports 446 open issues. An open/ready query returns 12 records,
+of which six have mapped estimates 1–2. Inspect that shortlist first. A separate
+triage query may reveal older feedback; reuse any overlapping records. Broaden
+when an unestimated request or another page could change the recommendation.
+Report the actual filters and reads, leaving the rest unassessed.
 
-- Rewriting sensing floors or other list-style census rules in an agent skill
-- Seeing a run stop one page short of a provider total or `hasNextPage`
-- Adding a numeric cap to force "small" lists to finish
-- Splitting one provider population across parallel scouts
-
-## Examples
-
-Before: "first page of >=100; total unknown" counted as a stated bound, so
-446 open issues stopped at 400 and both issue lanes reported partial.
-
-After: keep listing while another page exists or listed count is below the
-provider total, under the backstop; issue, health, and triage consume that
-identifier list and read five bodies; an omission keeps those lanes partial
-without failing the run.
-
-A loop written as "keep listing while a total is known and count < 10,000"
-does not stop at 446/446. Require another page or listed count below the
-provider total.
+When a query is complete at 12/12, a known total is no reason to fetch again.
+When another page exists but remains unread, report that limit rather than
+claiming query completion or backlog exhaustion.
 
 ## Related
 
-- Pull request 69 on `jrgilbertson/the-rookery` (unmerged at time of writing)
-- `skills/repo-gardener/references/lane-contracts.md` sensing floors
-- `docs/solutions/workflow-issues/make-agent-skill-safe-stops-local-and-observable.md`
-- `docs/solutions/best-practices/cross-harness-dogfood-testing.md`
+- Historical motivation: pull request 69 on `jrgilbertson/the-rookery`
+- [Five maintenance areas](../../../skills/repo-gardener/references/area-contracts.md)
+- [Make skill safe stops local and observable](make-skill-safe-stops-local-and-observable.md)
+- [Cross-harness dogfood testing](../best-practices/cross-harness-dogfood-testing.md)

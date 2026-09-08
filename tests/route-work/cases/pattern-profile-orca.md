@@ -24,6 +24,12 @@ must not become workflow ownership or unbounded fan-out.
 >    produce-evaluate-revise round. Acceptance: the existing parser fixtures
 >    pass with the diagnosed failure corrected.
 
+> 5. Repeat item 4 with adversarial judgment requested.
+> 6. Route a bounded, taste-led interaction redesign. Use Executor + Reviewer
+>    for one permitted produce-evaluate-revise round. The judge evaluates
+>    design quality; the finish line is taste. No structured orchestration
+>    need is supplied.
+
 ## Expected behavior
 
 - [ ] The final answer contains only the requested cards, in item order,
@@ -46,6 +52,11 @@ must not become workflow ownership or unbounded fan-out.
       the Reviewer is on GPT-5.6 Sol at high. No third lead or third model
       assignment. It hands the Reviewer the criteria and names one round
       with a stop condition.
+- [ ] Items 5–6 retain exactly two workers and one round in Setup and kickoff.
+      Item 5 uses Critic for the Reviewer, GPT-5.6 Sol at xhigh. Item 6 starts
+      with `impeccable` and uses Design/taste for both workers, Fable 5.1 at
+      medium. These are passing-baseline regression controls alongside the
+      ordinary Reviewer in item 4, not evidence of a judge-profile repair.
 - [ ] No item dispatches agents, creates worktrees, escalates effort, or starts
       the selected workflow.
 - [ ] Every item has a bold first line, one decision sentence, bold Why, Setup,

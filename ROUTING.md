@@ -102,8 +102,8 @@ supplied authority.
 | Visual direction, interaction design, or design quality is unresolved | `impeccable` | Let Impeccable select its internal workflow unless one exact command is already obvious |
 
 Work that needs a starting owner outside these seven gets a Questions card
-that names no owner and points to the public workflow catalog at
-https://github.com/jrgilbertson/the-rookery/blob/main/WORKFLOWS.md.
+that names no owner and points to the supported starting owners in the table at
+https://github.com/jrgilbertson/the-rookery/blob/main/ROUTING.md#choose-what-needs-to-happen-first.
 
 ## Ambiguity and missing input
 
@@ -281,9 +281,8 @@ for the operator to apply. Use the contract default where one exists; where
 the operator holds the fact, recommend the answer that lets routing proceed
 under the defaults. Never write "no default". A Questions card
 names no workflow, model, role profile, or kickoff. When the starting owner falls outside the
-seven, the recommendation is to choose from the absolute public
-workflow-catalog URL; that pointer is the concrete answer there, since the
-card may name no workflow.
+seven, recommend choosing from the supported-owner table linked above; that
+pointer is the concrete answer there, since the card may name no workflow.
 
 <!-- route-work-contract-end -->
 

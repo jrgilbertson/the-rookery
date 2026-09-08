@@ -38,7 +38,8 @@ must not displace the work that needs to happen first.
 - [ ] Items 6–7 start with `managing-issues` and `impeccable`, despite their
       issue carriers, each as the lead alone.
 - [ ] Item 8 returns a `**Questions**` card that includes the absolute public
-      `WORKFLOWS.md` URL, names no workflow, and emits no kickoff.
+      supported-owner table URL from `ROUTING.md`, names no workflow, and emits
+      no kickoff.
 - [ ] Every supported item begins no downstream work and names one starting
       workflow.
 - [ ] Every supported item has a bold first line, one decision sentence, and

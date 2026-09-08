@@ -80,8 +80,8 @@ state blocks it.
 Active ownership is proven only by an operator statement or supplied artifact
 that names a specific in-flight owner for the requested phase. A stated
 worktree, branch, pull request, worker, or parallel effort without that phase
-owner adds `Active ownership unverified` to the normal kickoff. The router does
-not discover or monitor ownership.
+owner adds `Active ownership unverified` to the normal kickoff: ownership is
+unknown, not vacant. The router does not discover or monitor ownership.
 
 ## Choose what needs to happen first
 
@@ -127,15 +127,18 @@ https://github.com/jrgilbertson/the-rookery/blob/main/WORKFLOWS.md.
 Every route has a lead. Name the role for each worker, and count workers, not
 steps.
 
+When implementation is expected, start with Lead + Executors. Use Single
+owner only when supplied evidence establishes one bounded piece or sequential
+work for one owner. Unnamed units are not evidence of a bounded piece.
+
 | Pattern | Roles | Use when | Guardrail |
 |---|---|---|---|
 | Single owner | The lead alone, in the selected owner's role. | The run ends with the starting workflow, the work is one bounded piece, or it is sequential phases of one owner | One worker covers later stages of the same owner. |
 | Executor + Reviewer | Two workers: the lead writes and revises; the Reviewer only judges. | Explicit acceptance criteria exist or the operator asks for review | One round. Stop when the Reviewer's stated criteria pass or fail. Hand the Reviewer the criteria. The Reviewer does not write the artifact. This is not advisor consultation. |
 | Lead + Executors | Lead plans and dispatches; Executor workers implement units. Scout or Researcher workers only for search slices. | Implementation is expected, from supplied authority or an operator statement that implementation follows, and the work has or will yield independent units, whichever workflow starts | Give each worker a separate write path before parallel writes. |
 
-Size the roster for where the run ends, not where it starts. Lead + Executors
-is the default estimate whenever implementation is expected, including a
-brainstorm, grill, debug, or plan that implementation will follow; the lead's
+Size the roster for where the run ends, not where it starts, including a
+brainstorm, grill, debug, or plan that implementation will follow. The lead's
 profile still comes from the starting workflow. Do not ask whether
 implementation follows; when nothing says so, size for the starting workflow
 and invite the override in Why. Add a Reviewer when the input carries explicit

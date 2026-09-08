@@ -13,6 +13,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- Added `route-work`, which returns one Route, Resume, or Questions card for an
+  explicit routing request. Route cards select the first workflow, size a
+  roster of roles, models, and effort for the expected run, and provide a
+  standalone kickoff that preserves supplied authority. A public routing
+  contract owns the behavior, with an exact parity check for its packaged
+  reference.
 - Added `checking-simplicity`, a read-only assessment that finds safe
   simplification opportunities in named technical areas, questions, proposed
   or existing designs, plans, code-level approaches, and in-build decisions.
@@ -23,12 +29,6 @@ looked" surface. GitHub Releases mirror its entries.
 
 - CI tool installation now runs from a shell script, avoiding actionlint
   deadlocks when local pipe buffers cannot hold the inline bootstrap code.
-- `route-work` now returns one Route, Resume, or Questions card for an
-  explicit routing request. Route cards select the first workflow, size a
-  roster of roles, models, and effort for the expected run, and provide a
-  standalone kickoff that preserves supplied authority. A public routing
-  contract owns the behavior, with an exact parity check for its packaged
-  reference.
 - `checking-merge-readiness` treats stale source-issue wording as
   informational when owner-approved scope, the PR description, and delivered
   work agree. Missing required work, incorrect closure claims, and authority

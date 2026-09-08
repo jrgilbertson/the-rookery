@@ -80,6 +80,13 @@ names the gap that remains, and returns a better question to Research. It is
 distinct from the Repository Learning Loop because it improves the operator's
 understanding rather than the repository's safeguards and procedures.
 
+### Owning Workflow
+
+The one existing workflow responsible for resolving a request's current
+uncertainty or producing its requested durable effect. A route assessment names
+exactly one first owner from the work itself rather than its carrier. Later
+workflows remain conditional handoffs and do not share current ownership.
+
 ## Issue management
 
 ### Canonical Tracker

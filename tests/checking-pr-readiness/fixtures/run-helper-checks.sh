@@ -73,20 +73,21 @@ exits() { # exits <state> <expected-exit>
 	fi
 }
 
+# Drain piped output: grep -q can close early and make printf fail under pipefail.
 says() { # says <state> <exact line>
-	if printf '%s\n' "$run_out" | grep -qFx -- "$2"; then ok "$1"; else
+	if printf '%s\n' "$run_out" | grep -Fx -- "$2" >/dev/null; then ok "$1"; else
 		no "$1" "no line [$2]"
 	fi
 }
 
 mentions_text() { # mentions_text <state> <substring>
-	if printf '%s\n' "$run_out" | grep -qF -- "$2"; then ok "$1"; else
+	if printf '%s\n' "$run_out" | grep -F -- "$2" >/dev/null; then ok "$1"; else
 		no "$1" "output does not carry [$2]"
 	fi
 }
 
 omits() { # omits <state> <substring that must not appear>
-	if printf '%s\n' "$run_out" | grep -qF -- "$2"; then
+	if printf '%s\n' "$run_out" | grep -F -- "$2" >/dev/null; then
 		no "$1" "output carries [$2] and should not"
 	else ok "$1"; fi
 }
@@ -755,7 +756,7 @@ $(class_block "$n")"
 		} | grep -v '^%s$' | sed 's/ for \$.*/ for/' | sort -u)
 		while IFS= read -r v; do
 			[ -n "$v" ] || continue
-			if printf '%s\n' "$block" | grep -qF -- "$v"; then
+			if printf '%s\n' "$block" | grep -F -- "$v" >/dev/null; then
 				printf 'PASS %s: class(es) %s list verdict: %s\n' "$label" "$classes" "$v"
 				passed=$((passed + 1))
 			else
@@ -810,7 +811,7 @@ if [ -f "$ref" ]; then
 			;;
 		2)
 			if [ "$verdict" = "not run" ] ||
-				printf '%s\n' "$absent_verdicts" | grep -qFx -- "$verdict"; then
+				printf '%s\n' "$absent_verdicts" | grep -Fx -- "$verdict" >/dev/null; then
 				ok "$label"
 			else
 				no "$label" "exit 2 is a usage error ('not run') or an absent-input verdict the table names"
@@ -836,7 +837,7 @@ MAP
 	# A pin over pairs that never occurred proves nothing, so every mapped exit
 	# has to have been exercised above.
 	for want in 0 2 3 4; do
-		if printf '%s\n' "$observed" | grep -q "|${want}\$"; then
+		if printf '%s\n' "$observed" | grep "|${want}\$" >/dev/null; then
 			ok "exit map: exit $want was exercised"
 		else
 			no "exit map: exit $want was exercised" "no helper run in this suite returned it"

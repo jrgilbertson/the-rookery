@@ -6,6 +6,11 @@
 
 My workflow moves through five core jobs: Research, Plan, Design, Build, and Ship. Two feedback loops keep it current: Maintain turns recurring problems into tests, rules, and documented lessons, while Learn turns experience into linked notes and new research questions. Each section explains how I approach the job and which tools and commands I use. The Rookery skills in those sections install on their own. Compound Engineering, Impeccable, and Orca are the surrounding stack I run them in.
 
+[Routing work](ROUTING.md) documents how I select the first workflow, the
+lead, the pattern, and the roster of roles with models and effort without
+starting a downstream workflow. I use it when explicitly routing new work or
+deciding whether a proven in-flight owner should continue.
+
 ## Foundations
 
 The workflows assume two things are in place:
@@ -61,7 +66,7 @@ Agents that weren't in the planning session review the plan against the current 
 
 After ordinary clarification, I sometimes have one coherent decision tree left where the answers depend on each other. I consider a targeted grilling session when at least one decision would be costly to reverse or affect a broad surface, one answer constrains the questions below it, or the agent would otherwise guess at an acceptance boundary. For example, authentication ownership may determine session lifetime and data access, so those decisions benefit from being settled parent-first. Several unrelated unknowns stay in `ce-brainstorm`. Clear requirements and routine, reversible choices go directly to `ce-plan`.
 
-Install `grill-me` and `grilling` separately from [Matt Pocock's skills](https://github.com/mattpocock/skills). Each round asks every independent question at once, with a recommended answer for each, then waits. Dependent questions come in later rounds. It looks up facts in the repo or environment instead of asking you for them. The session creates no glossary or ADR and makes no changes to requirements documents.
+Install `grill-me` and `grilling` separately from [Matt Pocock's skills](https://github.com/mattpocock/skills). Each round asks every independent question at once, with a recommended answer for each, then waits. Dependent questions come in later rounds. It looks up facts in the repo or environment instead of asking you for them. The session clarifies decisions; the planning workflow records them in the repository's documents.
 
 Once I confirm shared understanding, the clarified intent returns to the Compound Engineering planning session. For work an agent can own end-to-end, I turn that intent into the following template.
 
@@ -97,7 +102,9 @@ Design is where visual iteration sharpens both the research and the plan, and it
 
 Design is hard with AI. The AI tends toward recognizable slop, the same gradients, feature cards, and triplets. The counter is a durable design system: a named aesthetic, tokens with purposes and prohibitions, and the components that use them. I use the [DESIGN.md standard](https://github.com/google-labs-code/design.md).
 
-[Impeccable](https://github.com/pbakaus/impeccable) drives the design process.
+When the work needs design first, I route to
+[Impeccable](https://github.com/pbakaus/impeccable) as the umbrella. It chooses
+the internal workflow unless one exact command is already obvious.
 
 - `impeccable shape`. Turns discovery about the audience, desired feel, and visual constraints into a design brief. Use it before planning or building an interface that lacks a clear visual direction.
 - `impeccable audit` and `impeccable critique`. Audit checks the interface's technical quality, while critique reviews its visual design. Use them during design and after implementation to find concrete problems.
@@ -120,7 +127,7 @@ I choose models by how success will be judged. For work with objective checks, I
 
 `ce-work` from Compound Engineering moves through the plan one unit at a time so I can inspect the work as it lands. `lfg`, also from Compound Engineering, runs from plan to pull request without check-ins. `/goal` in Claude Code and Codex keeps working toward one completion condition across turns. I use autonomous modes only when the goal is clear and verifiable.
 
-Compound Engineering is the default planner, executor, reviewer, and learning capture inside each worktree. Small changes may stay with one agent. Independent pieces may go to workers, and hard decisions may get a stronger advisor or a separate critic. I add those roles only when the default loop does not cover the work, because a second orchestration stack repeats planning, review, and handoffs.
+Compound Engineering is the default planner, executor, reviewer, and learning capture inside each worktree. Every route has a lead, with a roster sized for the expected end of the run. I add Executors for independent implementation units and a Reviewer for explicit acceptance criteria or requested review. The routing contract owns the pattern and model recommendations. Hard decisions may get an advisor without a handoff; a separate critic sits in the Reviewer seat.
 
 I enforce quality in tiers. Tests, linters, CI gates, and the design system enforce proactively, and prose instructions sit at the bottom. See the Maintain section for the full ladder.
 

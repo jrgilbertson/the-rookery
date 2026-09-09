@@ -50,57 +50,59 @@ and no path is protected. A rename counts both its old and new path.
 
 The Worker owns planning, implementation, simplification, review, repository
 verification, its coherent commit, and its branch/PR. It reports each assigned
-gate as pass, failure, or unavailable. Every unattended Worker invokes
-`checking-pr-readiness` normally on the exact head in its worktree and stops
-after its brief and numbered menu. The activating utterance is never approval.
-The Worker never chooses option 1 on its own. The Orchestrator never
-authorizes Proceed to merge.
+gate as pass, failure, or unavailable. Exclude edits to protected paths and to
+paths outside the assigned scope. `.agents/repo-gardener.yaml` is always
+protected. Direct assessment of native facts is not a publish path. The
+activating utterance is never approval. The Worker never chooses option 1 on
+its own. The Orchestrator never authorizes Proceed to merge.
 
-On a distinct later turn, before authorizing reply 1, the Orchestrator
-re-reads identity and validates the Worker's committed paths against the
-assignment, identity, scope, and protected paths. `.agents/repo-gardener.yaml`
-is always protected. A violation, a moved head or base, a dirty unexpected
-surface, or a policy-revision change stops the unit, preserves the authored
-commit, and does not authorize 1. Authorize 1 only when the menu offered
-option 1 and the recommendation was approve and proceed for that same exact
-head.
+Every unattended Worker invokes `checking-pr-readiness` normally on the exact
+head in its worktree and stops after its brief and numbered menu. On a
+distinct later turn, before authorizing reply 1, the Orchestrator re-reads
+identity and validates the Worker's committed paths against the assignment,
+identity, scope, and protected paths. A violation, a moved head or base, a
+dirty unexpected surface, or a policy-revision change stops the unit,
+preserves the authored commit, and does not authorize 1. Authorize 1 only
+when the menu offered option 1 and the recommendation was approve and proceed
+for that same exact head.
 
 The checking skill then performs its identity reread, instantiates its
 evidence pack silently as pull-request-body input, and continues into
-`checking-pr-readiness` finishing. This run is a Worker. That finishing
-file branches on that fact. Do not restate babysit here. Immediately
-before the installed publisher pushes or opens a PR, pass the revision
-check point; a mismatch stops the unit, preserves the authored commit,
-and does not retry. A push that refuses a moved remote stops the unit,
-preserves the local commit, and does not retry. Direct assessment of
-native facts is not a publish path.
+`checking-pr-readiness` finishing. This run is a Worker. That finishing file
+branches on that fact. Do not restate babysit here.
 
-Exclude edits to protected paths and to paths outside the assigned scope.
-Before a looks merge-ready or cautiously looks ready report, a protected
-or out-of-scope path on the PR stops the unit and is named as owner
-attention.
-
-After babysit reports looks merge-ready or cautiously looks ready, the
-Orchestrator dispatches `checking-merge-readiness` to a fresh, read-only
-helper with no prior involvement, passing only the pull-request identity.
-That helper prints its brief and numbered merge menu and waits. Nobody in
-the run picks option 1. If babysit is skipped, missing, blocked,
-budget-stopped, needs-human, or anything other than looks merge-ready or
-cautiously looks ready, stop. Do not dispatch merge-readiness. Name the
-residual as owner attention. Babysit runs on the Worker terminal, not inside the scheduled
-Orchestrator session. While babysit owns the head, the Orchestrator does
-not forward Worker-owned gaps for that PR. Babysit's residuals when it
-stops are that gap list.
+The installed publisher pushes only an Orchestrator-authorized exact head.
+Immediately before that push or PR-open, pass the revision check point; a
+mismatch stops the unit, preserves the authored commit, and does not retry.
+On first create the remote may be absent. After that, divergent movement,
+rewind, or unexpected absence is a refused push: stop, preserve the local
+commit, and do not retry. A push succeeds only after an exact provider
+readback of that authorized head. An uncertain, unavailable, or mismatched
+result is not success and does not authorize a later update.
 
 When a brief names Worker-owned gaps and babysit does not own the head, the
 Orchestrator sends every named Worker-owned gap to the same Worker, even when
-the brief also names owner work. If that Worker already has an open PR, the
-installed publisher updates that existing PR after the repair. A refused push
-of a moved remote stops that update, preserves the local commit, and does not
-retry. Stop when only owner-needed work remains or a further turn cannot help.
-An unavailable checking skill, moved identity, or a later-session claim must
-preserve the authored commit without push or PR creation and name the blocking
-gap.
+the brief also names owner work. After the Worker repairs and reruns assigned
+verification, the Orchestrator authorizes that repaired exact head against
+assignment, identity, scope, protected paths, and revision. If that Worker
+already has an open PR, the installed publisher then updates it. Stop when
+only owner-needed work remains or a further turn cannot help. An unavailable
+checking skill, moved identity, or a later-session claim must preserve the
+authored commit without push or PR creation and name the blocking gap.
+
+Before a looks merge-ready or cautiously looks ready report, a protected or
+out-of-scope path on the PR stops the unit and is named as owner attention.
+Babysit runs on the Worker terminal, not inside the scheduled Orchestrator
+session. While babysit owns the head, the Orchestrator does not forward
+Worker-owned gaps for that PR. After babysit reports looks merge-ready or
+cautiously looks ready, the Orchestrator dispatches `checking-merge-readiness`
+to a fresh, read-only helper with no prior involvement, passing only the
+pull-request identity. That helper prints its brief and numbered merge menu
+and waits. Nobody in the run picks option 1. If babysit is skipped, missing,
+blocked, budget-stopped, needs-human, or anything other than looks
+merge-ready or cautiously looks ready, stop. Do not dispatch merge-readiness.
+Name the residual as owner attention. Babysit's residuals when it stops are
+that gap list.
 
 ## Ship
 

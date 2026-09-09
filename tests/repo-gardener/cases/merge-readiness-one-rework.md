@@ -58,10 +58,11 @@ babysit looks-ready, the Orchestrator dispatches a fresh merge-readiness helper.
       work the Worker cannot close, so the Orchestrator stops that loop and
       does not select option 1.
 - [ ] Scenario 2 completes Phase A before sending the focused finding only
-      when babysit does not own the head. After a repair, the installed
-      publisher updates the existing PR. A refused push of a moved remote
-      stops that update without retry. Assigned and protected paths still
-      bind the Worker's `b2` update.
+      when babysit does not own the head. After a repair, the Orchestrator
+      authorizes exact `b2` against assignment, identity, scope, and
+      protected paths, then the installed publisher updates the existing
+      PR. A refused push of a moved remote stops that update without retry.
+      Assigned and protected paths still bind the Worker's `b2` update.
 - [ ] Scenario 3 stops the affected action for exact-head drift; it does not
       redirect the finding, act on `c2`, or guess that the Worker remains
       authorized.

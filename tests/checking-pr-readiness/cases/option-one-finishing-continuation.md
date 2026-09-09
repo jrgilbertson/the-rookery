@@ -118,8 +118,9 @@ publisher's do-not-fire cases apply. `ce-babysit-pr` and
       It writes no `/` or `$` host invocation prefix.
 - [ ] After that babysit reports looks merge-ready, `checking-merge-readiness`
       runs in a fresh uninvolved context with only the pull-request identity.
-- [ ] The merge menu is a new wait. The earlier Approve 1 does not select
-      Proceed to merge. This skill does not pick the merge menu.
+- [ ] The merge menu is a new wait owned by that reviewer, including later
+      numbered replies. The earlier Approve 1 does not select Proceed to
+      merge. This skill does not pick or continue the merge menu.
 
 ### 7. Non-Worker babysit is nested under the publisher
 
@@ -131,8 +132,9 @@ scenario 6, except the installed PR-opening skill already started
       posture and land path unchanged.
 - [ ] After that babysit reports looks merge-ready, `checking-merge-readiness`
       runs in a fresh uninvolved context with only the pull-request identity.
-- [ ] The merge menu is a new wait. The earlier Approve 1 does not select
-      Proceed to merge. This skill does not pick the merge menu.
+- [ ] The merge menu is a new wait owned by that reviewer, including later
+      numbered replies. The earlier Approve 1 does not select Proceed to
+      merge. This skill does not pick or continue the merge menu.
 
 ### 8. Skipped or missing babysit does not reach merge-readiness
 

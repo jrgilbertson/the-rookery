@@ -64,9 +64,13 @@ gaps.
 - [ ] Scenario 5 preserves the authored commit without a PR, names the owner
       need, and does not authorize option 1.
 - [ ] Scenario 6 sends the named Worker-owned review finding back to that
-      Worker. After the repair, the installed publisher updates the existing
-      PR. A refused push of a moved remote stops that update, preserves the
-      local commit, and does not retry. The Worker still does not pick merge.
+      Worker. After the repair, the Orchestrator authorizes that exact
+      repaired head against identity, assignment, scope, and protected
+      paths, then the installed publisher updates the existing PR. This is
+      not a second checking-pr-readiness menu. A refused push of a moved
+      remote (divergent movement, rewind, or unexpected absence) stops that
+      update, preserves the local commit, and does not retry. The Worker
+      still does not pick merge.
 - [ ] Scenario 7 demonstrates the attended two-turn contract: the activating
       utterance is not approval and only the later option-1 reply can proceed
       after the identity reread.

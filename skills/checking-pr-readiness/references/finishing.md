@@ -64,8 +64,9 @@ If babysit reports looks merge-ready or cautiously looks ready:
   `checking-merge-readiness` from this conversation.
 - Not a Worker: dispatch `checking-merge-readiness` to a fresh, read-only
   context with no prior involvement. Pass only the pull-request identity.
-  Return that reviewer's brief and numbered merge menu unchanged. This
-  skill does not pick it.
+  That reviewer owns the brief, numbered merge menu, wait, and later
+  numbered replies. Return that menu unchanged. This skill does not pick
+  it and does not continue it.
 
 If `checking-merge-readiness` is absent after babysit on a non-Worker run,
 name that once and stop. If a fresh uninvolved context cannot be opened, name
@@ -81,4 +82,5 @@ pull request, a named stop after a babysit skip, missing babysit skill, or
 non-ready report, a Worker looks merge-ready or cautiously looks ready
 report to the Orchestrator, a named missing merge-readiness or missing
 independent reviewer on a non-Worker run, or the independent merge-readiness
-menu on screen with no pick from this skill.
+menu on screen, with later numbered replies belonging to that reviewer and
+no pick from this skill.

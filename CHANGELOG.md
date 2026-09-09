@@ -36,10 +36,13 @@ looked" surface. GitHub Releases mirror its entries.
   then `ce-babysit-pr mode:pipeline`. A non-Worker uses the default publisher.
   Title and body follow Compound Engineering. After babysit looks
   merge-ready or cautiously looks ready, a non-Worker run starts
-  `checking-merge-readiness` in a fresh helper; a Worker reports to the
-  Orchestrator, which starts that helper. Approve 1 does not merge. This slice does not dispatch adopted
-  units, does not inventory publication-time overlap, and does not keep a
-  gardener-only publisher.
+  `checking-merge-readiness` in a fresh helper that owns the merge menu
+  wait; a Worker reports to the Orchestrator, which starts that helper.
+  Approve 1 does not merge. A Worker push is only an authorized exact head:
+  first create may see an absent remote; later diverge, rewind, or unexpected
+  absence refuses, and success needs exact readback. This slice does not
+  dispatch adopted units, does not inventory publication-time overlap, and
+  does not keep a gardener-only publisher.
 - `checking-simplicity` now treats "check for simplicity as well" and
   unsolicited mid-build durable machinery as first-class triggers, instead of
   waiting for an explicit simplify request.

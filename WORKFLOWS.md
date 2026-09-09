@@ -57,7 +57,7 @@ Agents that weren't in the planning session review the plan against the current 
 - `ce-plan`. Turns a clear intent into one plan of decisions, units, files, tests, and risks. It does not write the implementation. Use it when the outcome is clear enough to plan execution.
 - `ce-debug`. Diagnoses a bug before anyone proposes a fix. Use it when the work begins with broken or unexpected behavior.
 - `ce-pov`. Gives a decisive, project-grounded answer to a focused planning question. Use it when one decision is blocking the plan and another research pass would add little.
-- [`checking-simplicity`](skills/checking-simplicity/SKILL.md). Find opportunities to safely simplify a design, plan, or approach against the current need. Use it when you ask to simplify something, or when a plan is about to add durable machinery that isn't tied to that need.
+- [`checking-simplicity`](skills/checking-simplicity/SKILL.md). Find opportunities to safely simplify a design, plan, or approach against the current need. Use it when you ask to simplify something, including during a build, or when the next step adds durable machinery that isn't tied to that need.
 
 After ordinary clarification, I sometimes have one coherent decision tree left where the answers depend on each other. I consider a targeted grilling session when at least one decision would be costly to reverse or affect a broad surface, one answer constrains the questions below it, or the agent would otherwise guess at an acceptance boundary. For example, authentication ownership may determine session lifetime and data access, so those decisions benefit from being settled parent-first. Several unrelated unknowns stay in `ce-brainstorm`. Clear requirements and routine, reversible choices go directly to `ce-plan`.
 
@@ -129,7 +129,7 @@ The in-build toolkit:
 - [Orca](https://github.com/stablyai/orca). Runs parallel worktrees, delegates to agents across harnesses, and supports element-level browser feedback. Use it when a plan can be split into independent slices or an interface needs direct visual iteration.
 - **Impeccable, mid-build.** Critiques and polishes visual work, audits technical quality, hardens edge cases, and offers three variants for a selected element with the option to apply one to source. Use it while building an interface to keep the implementation aligned with the design brief and production constraints.
 - `ce-test-browser` and `ce-dogfood`. Verify the browser flows a branch touched, with dogfood able to fix small breakages, add regression tests, and commit the changes. Use `ce-test-browser` for a targeted check and `ce-dogfood` for a hands-off repair pass.
-- [`checking-simplicity`](skills/checking-simplicity/SKILL.md). Ask it to challenge a concrete design decision or reassess an existing system. It may also activate before a build decision advances durable machinery without tying it to the current need.
+- [`checking-simplicity`](skills/checking-simplicity/SKILL.md). Ask it to challenge a concrete design decision or reassess an existing system. Activate it before a build decision advances durable machinery that the current need does not name, including when nobody asked to simplify.
 
 What must be true before moving to Ship:
 
@@ -148,11 +148,11 @@ The shipping sequence, in order:
 1. `ce-simplify-code`. Tightens what was built without changing behavior.
 2. `ce-code-review`. An independent review before any PR exists.
 3. `ce-test-browser` or `ce-dogfood`. Browser verification when the change touches the UI, either a test run or hands-off dogfooding that fixes and commits as it goes.
-4. [`checking-pr-readiness`](skills/checking-pr-readiness/SKILL.md). The final checkpoint.
+4. [`no-ai-slop`](https://github.com/petergyang/no-ai-slop) when the change includes human-facing prose. Sharpens the draft and keeps the writer's voice.
+5. [`writing-for-agents`](https://github.com/mattpocock/skills/tree/main/skills/productivity/writing-for-agents) when the change includes a document whose primary consumer is an AI agent.
+6. [`checking-pr-readiness`](skills/checking-pr-readiness/SKILL.md). The final checkpoint.
 
-`checking-pr-readiness` compares the finished branch with the plan, verifies the named evidence, and surfaces unresolved risks before the pull request opens. It briefs a recommendation plus numbered live options and waits for a numbered reply. A reply of 1 approves the exact revision shown and continues into the installed finishing path in the same conversation, for example `ce-commit-push-pr`, which writes the evidence into the pull request description and opens the pull request. That reply is the last owner go-ahead. Before approving, I can also ask for an explanation of the change or a concept it introduced.
-
-`ce-babysit-pr` then works through CI failures and review feedback. Then [`checking-merge-readiness`](skills/checking-merge-readiness/SKILL.md) reviews the full change for intent drift, unnecessary complexity, unresolved feedback, and failed merge rules. It recommends merge, debug, or do not merge, then waits for a numbered reply. A reply of 1 on an open, non-draft pull request whose recommendation is merge is Proceed to merge and merges it. I write the changelog and release notes from the merged pull requests afterward.
+I can also ask for an explanation of the change or a concept it introduced. Then `ce-commit-push-pr` opens the pull request, `ce-babysit-pr` works through CI failures and review feedback, and [`checking-merge-readiness`](skills/checking-merge-readiness/SKILL.md) reviews the full change. I still choose whether to merge. I write the changelog and release notes from the merged pull requests afterward.
 
 CI gates the merge on the unit and end-to-end suites, plus passes like performance and link checks in my product repos. GitHub enforces the rest, and each of these is a setting you have to turn on: a PR for every change, review comments resolved before merge, and no direct pushes to main, including for administrators.
 
@@ -167,7 +167,7 @@ What must be true before merge:
 
 Repos and systems need tending over time. Maintenance runs throughout the loop, not only after merge.
 
-[`repo-gardener`](skills/repo-gardener/SKILL.md) checks a repository across five maintenance areas and, when warranted, assigns parallel workers that each leave one unmerged pull request. It runs on a schedule or by hand; a human still merges.
+[`repo-gardener`](skills/repo-gardener/SKILL.md) checks a repository across five maintenance areas and, when warranted, assigns parallel workers that each leave one unmerged pull request. Those workers follow the same Ship path as owner work. It runs on a schedule or by hand; a human still merges.
 
 Design maintenance runs through Impeccable. `impeccable extract` finds patterns used three or more times with the same intent and standardizes them into tokens and primitives. `impeccable document` regenerates the design docs from what actually shipped, so the tools read the design language instead of guessing at it.
 

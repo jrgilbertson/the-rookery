@@ -132,19 +132,18 @@ authorizes the Worker to reply 1 only when Approve was offered and recommended
 for that exact head. The checking skill then performs its identity reread
 before the evidence enters the publication path. Named Worker-owned gaps from
 that brief all go back to the same Worker; owner-needed briefs stop without a
-PR. An existing same-repository update PR with a Worker-owned gap is itself a
-unit: the Worker adopts its branch at the captured head, pushes under the
-advancing expected-remote lease, and keeps one unmerged PR. An open PR in
-the same directory or area reserves nothing. The complete current overlap
-inventory and native additive-file exception remain governed by
-[worker-contract.md](../../../skills/repo-gardener/references/worker-contract.md);
-bounded discovery does not narrow that safety inventory.
+PR. An existing same-repository update PR with a Worker-owned gap stays a
+recommendation; this slice does not dispatch it. Assignment names the files
+each Worker will touch, including any shared convention file, so two Workers
+are not assigned the same one. The Orchestrator does not run a
+publication-time overlap inventory
+([worker-contract.md](../../../skills/repo-gardener/references/worker-contract.md)).
 
 The Orchestrator owns breadth, depth, selection, tracker writes, supervision,
 and the morning report. After PR creation, it reports native PR, check, and
-review facts; required pending work makes closure partial. The ownerless
-scheduled run invokes `checking-merge-readiness` and never selects Proceed to
-merge
+review facts; required pending work makes closure partial. After looks
+merge-ready, the Orchestrator dispatches `checking-merge-readiness` to a
+fresh uninvolved helper and never selects Proceed to merge
 (`skills/repo-gardener/references/reconciliation.md`,
 `skills/repo-gardener/references/tracker-records.md`).
 

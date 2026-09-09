@@ -10,8 +10,9 @@ Provenance: the prior nine-lane contract repeated evidence collection and assign
 
 - [ ] Uses exactly five areas and the dependency, documentation, runtime,
       engineering, remaining issues/feedback precedence.
-- [ ] Produces one dependency adoption candidate from update/CI/advisory evidence,
-      retaining the existing PR and all adoption gates; no duplicate assignments.
+- [ ] Produces one dependency recommendation naming the existing update PR
+      from update/CI/advisory evidence; this slice does not dispatch that
+      unit; no duplicate assignments.
 - [ ] Assigns documentation-only correction to documentation, verified service
       crash to runtime reliability, test/tooling defect to engineering health,
       and the remaining product-behavior request to issues and feedback.

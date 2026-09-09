@@ -90,19 +90,11 @@ still proves the five gates in `policy-and-entry-modes.md`. A denial stops
 that unit; an honest read-only result is successful operation.
 Selection and dispatch for the run never exceed the opening policy's
 `maximum_workers` cap; unrelated existing PRs do not consume that cap.
-Immediately before every Worker dispatch, pass the revision check point and
-read the complete overlap inventory as `worker-contract.md` defines, against
-the Worker's planned paths, regardless of discovery filters or pagination
-bounds. An unavailable or unknown read, or a current overlap, denies only that
-dispatch and its dependents while other Workers and read-only sensing continue.
-
-An existing PR may be a candidate unit. Apply the Adoption section in
-`worker-contract.md` and populate its brief before dispatch; that section owns
-initial eligibility and continuing permission for the standalone Worker.
-
-For shared-ledger overlap, populate each affected brief and apply the Shared
-ledger exception in `worker-contract.md`; that section owns the rule for both
-dispatch and publication.
+Immediately before every Worker dispatch, pass the revision check point.
+Assignment names the files each Worker will touch, including any shared
+convention file, so two Workers are not assigned the same one. This slice
+does not dispatch adopted units; an eligible existing update PR stays a
+recommendation.
 
 Dispatch requires the portable interface and brief in `worker-contract.md`;
 that file owns everything the Worker does from setup through publication. The

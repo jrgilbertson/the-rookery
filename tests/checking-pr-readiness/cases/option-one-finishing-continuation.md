@@ -54,9 +54,11 @@ menu offered Approve.
 - [ ] The spoken reply is not an evidence-pack wait or a second numbered
       Approve.
 - [ ] The same conversation continues into the fixture publisher. This
-      skill does not itself stage, commit, push, or open a pull request.
+      skill does not itself stage, commit, push, open, or merge a pull request.
 - [ ] The publisher log records `pack_received` true and the identity
       option 1 accepted. `opened` is false. No live forge write.
+- [ ] Because the fixture created no pull request, the run does not start
+      `ce-babysit-pr` or dispatch `checking-merge-readiness`.
 
 ### 2. Missing finishing names once (AE2)
 
@@ -74,7 +76,7 @@ Option 1 named why Approve cannot be taken.
 
 ### 4. Moved identity rebuilds
 
-The menu offered Approve. Before later 1, HEAD, base, or dirty surface moved.
+The menu offered Approve. Before the option-1 reply, HEAD, base, or dirty surface moved.
 
 - [ ] The run names what moved, rebuilds, and does not continue or hand a
       pack as if the old surface were current. The already-typed 1 does not
@@ -87,20 +89,74 @@ gather is complete, the menu offered Approve, and the later authorized 1
 matches the unchanged exact head, base, and working surface. Describe the
 finishing handoff:
 
-- A gardener Worker adopts an existing PR. An owner changes its title and
-  bot-generated body while the Worker runs, without changing the head.
-- A gardener Worker is publishing a new PR.
-- An ordinary owner conversation explicitly requests refreshing an existing
+- A gardener Worker is publishing a new PR. The Orchestrator authorized
+  the option-1 reply. Assigned and protected paths still pass.
+- An owner conversation explicitly requests refreshing an existing
   PR description through its installed publication skill. Gardener is also
   installed, but the conversation is not following its Worker contract.
 
-- [ ] Adopted publication continues into the Worker's leased head update,
-      preserves the current title and body including the owner edit, and
-      returns the pack to the Orchestrator report. No owner publisher or
-      metadata write is dispatched.
-- [ ] New-PR Worker publication receives the pack as description input.
+- [ ] New-PR Worker option-1 continues into `ce-commit-push-pr` with
+      `mode:pipeline`, pack as description input, then invokes
+      `ce-babysit-pr mode:pipeline`. It does not dispatch
+      `checking-merge-readiness` from that option-1 reply.
 - [ ] The direct owner request continues into its installed publication
       skill with the pack as description input; merely having gardener
       installed does not impose the Worker contract.
-- [ ] None of these matching later-1 handoffs re-asks Approve or stops at a
+- [ ] None of these matching option-1 handoffs re-asks Approve or stops at a
       printed evidence pack.
+
+### 6. Non-Worker option-1 invokes babysit (AE5)
+
+Use synthetic facts only and do not call tools. Gather is complete, the menu
+offered Approve, and the later authorized 1 matches. The conversation is not
+a Worker run. The installed PR-opening skill reports a newly created
+GitHub pull request and did not start `ce-babysit-pr`. None of that
+publisher's do-not-fire cases apply. `ce-babysit-pr` and
+`checking-merge-readiness` are installed.
+
+- [ ] This skill invokes `ce-babysit-pr` by skill name for that pull request.
+      It writes no `/` or `$` host invocation prefix.
+- [ ] After that babysit reports looks merge-ready, `checking-merge-readiness`
+      runs in a fresh uninvolved context with only the pull-request identity.
+- [ ] The merge menu is a new wait. The earlier Approve 1 does not select
+      Proceed to merge. This skill does not pick the merge menu.
+
+### 7. Non-Worker babysit is nested under the publisher
+
+Use synthetic facts only and do not call tools. Same non-Worker option-1 setup as
+scenario 6, except the installed PR-opening skill already started
+`ce-babysit-pr`.
+
+- [ ] The run does not start a second babysit. It leaves that publisher's
+      posture and land path unchanged.
+- [ ] After that babysit reports looks merge-ready, `checking-merge-readiness`
+      runs in a fresh uninvolved context with only the pull-request identity.
+- [ ] The merge menu is a new wait. The earlier Approve 1 does not select
+      Proceed to merge. This skill does not pick the merge menu.
+
+### 8. Skipped or missing babysit does not reach merge-readiness
+
+Use synthetic facts only. Independent variants after a matching non-Worker option-1 reply:
+
+- The publisher created a draft pull request and its completion gate says
+  not to fire babysit.
+- The publisher is description-only, or created no pull request.
+- Babysit reports blocked, budget-stopped, or needs-human.
+- The publisher created a pull request, did not start babysit, and
+  `ce-babysit-pr` cannot be loaded.
+
+- [ ] None of these variants start a second watch, emulate babysit, or poll
+      the forge.
+- [ ] None dispatch `checking-merge-readiness`.
+- [ ] Each names the stop and ends finishing.
+
+### 9. Missing independent merge reviewer stops
+
+Use synthetic facts only. Non-Worker option-1 reply, publisher created a pull request,
+babysit reports looks merge-ready.
+
+- [ ] If `checking-merge-readiness` is absent, the run names that once and
+      stops. It does not invent a merge recommendation.
+- [ ] If a fresh uninvolved context cannot be opened, the run names that
+      once and stops. It does not grade merge in the conversation that
+      built, published, or babysat.

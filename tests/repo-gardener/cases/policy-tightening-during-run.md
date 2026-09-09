@@ -92,12 +92,9 @@ subcases independently. Do not call tools or invent facts.
       using filtered inputs and only available safe reads, mints no managed run
       ID, writes no run records, executes no declared audit, and claims no
       managed closure.
-- [ ] Subcase G denies dispatch for repository/scope mismatch and, separately,
-      denies only Worker B's dispatch and dependents when native branch or PR
-      reads are unavailable or unknown, or show a current overlap outside the
-      native additive shared-ledger exception. It denies PR creation for that
-      Worker's fresh overlap only. Other Workers and read-only reporting
-      continue. Any saved Worker state and already-open PRs stay.
+- [ ] Subcase G denies dispatch for repository/scope mismatch. Other Workers
+      and read-only reporting continue. Any saved Worker state and already-open
+      PRs stay. There is no publication-time overlap inventory.
 - [ ] A file revision change stops later source mutation, push, and PR-open
       across every Worker. Unchanged grants are not re-litigated. Never
       substitute the bundled starter, a transformed copy, or the opening

@@ -13,7 +13,7 @@ file at that revision, stops declared execution and any dependent mutation.
 
 Mid-run, re-read the file from the refreshed default branch only to detect
 that its revision changed, at exactly these points: before each declared
-audit; before each Worker dispatch; before each push; before each PR opening;
+audit; before each Worker dispatch; before authorizing a Worker's reply 1;
 and before `run-closed`. Unchanged
 grants are not re-litigated. A mismatch, or an unavailable or unknown
 refresh, stops that action and preserves authored work; a revision change
@@ -207,9 +207,8 @@ boundary, `maximum_workers` is greater than zero, the owning
 `.agents/repo-gardener.yaml` is always protected. A missing or mismatched
 identity, out-of-scope path, missing or `false` area value,
 `maximum_workers` of zero, or protected path denies that unit. The bundled
-starter remains denied and grants nothing. For an adopted PR, "planned or
-committed path" means the paths changed by the Worker's own commits after the
-captured hosted head. A rename counts both its old and new path.
+starter remains denied and grants nothing. A rename counts both its old and
+new path.
 
 Scope paths are normalized repository-relative paths with no traversal.
 Exclude wins: each authored path must match at least one include glob and no

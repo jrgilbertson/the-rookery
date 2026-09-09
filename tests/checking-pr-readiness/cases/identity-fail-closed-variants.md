@@ -26,7 +26,7 @@ was treated as ready to approve.
 
 ## Expected behavior
 
-- [ ] The stable-head variant offers option 1 from gather; re-reads immediately before accepting a later 1. Inventories and required-check results must still match.
+- [ ] The stable-head variant offers option 1 from gather; re-reads immediately before accepting an option-1 reply. Inventories and required-check results must still match.
 - [ ] The moved-head variant omits Approve, names both old and new full OIDs, rejects its prior findings, and requires a fresh run before any Approve.
 - [ ] The moved-base variant omits Approve while its subject and
       head remain stable, names the old and new base identity, rejects its
@@ -48,4 +48,4 @@ was treated as ready to approve.
       Approve.
 - [ ] The variants remain independent; findings from one are not carried into another.
 - [ ] No variant writes to the checkout or picks an option in the same turn.
-      This skill does not itself stage, commit, push, or open a pull request.
+      This skill does not itself stage, commit, push, open, or merge a pull request.

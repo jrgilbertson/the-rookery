@@ -157,24 +157,40 @@ existing one.
 
 ## Readiness checkpoints
 
+### Option-1 reply
+
+The next message after a readiness menu, when that message is `1` or the
+spoken equivalent (`Approve`, `approve and proceed`, `Proceed to merge`,
+`merge it`). It is the only way Approve or Proceed is accepted.
+
+The turn that printed the menu cannot pick. The request that started the
+review never counts as 1. A `1` on a withheld row is not approval. In
+gardener, only the Orchestrator may send that reply, and only when the menu
+offered Approve.
+
+Do not call this "later-1". That name hid the two turns: menu, then reply.
+
 ### Evidence Pack
 
 A record of readiness approval after option 1. It is an actionable brief:
 the recommendation, material next work, a coverage close, and the learning
 signal, not a census of every sweep class or inspected path.
 
-The review instantiates it on later 1 as silent input to the selected
-finishing workflow. Ordinary publication writes it into the pull request
-description. For an adopted gardening PR, the Worker returns it to the
-Orchestrator for the run report and preserves the PR's existing title and
-body. The pack becomes durable only when written to that workflow's approved
-destination; an in-process handoff alone is not persistence.
+The review instantiates it on the option-1 reply as silent input to the
+selected finishing workflow. Ordinary publication writes it into the pull
+request description. The pack becomes durable only when written to that
+workflow's approved destination; an in-process handoff alone is not
+persistence.
 
 ### Merge Readiness Review
 
 The pre-merge review produced by `checking-merge-readiness`. It checks whether
 review is complete and merge rules pass, then examines the full pull request
 for intent drift, Risk Drivers, redesign pressure, and follow-up debt.
+
+It is not `ce-babysit-pr`'s looks-merge-ready stop. That Compound Engineering
+report means babysit settled. Settled is not merged, and it is not this
+review. Looks merge-ready is the trigger to start this review.
 
 It recommends merge, debug, or do not merge, then waits for a numbered reply.
 Gather, grade, and readout stay read-only. Option 1 is Proceed to merge.
@@ -212,10 +228,8 @@ units, then starts Workers in parallel up to that run's ceiling.
 ### Worker
 
 An isolated worktree agent assigned one independently deliverable, reviewable
-pull request. It owns that work through an unmerged pull request. The pull
-request may be an existing one the run adopts; the Worker then owns that PR's
-branch for the run. When the work is an issue, that issue is an Implementation
-Leaf.
+pull request. It owns that work through an unmerged pull request it authors.
+When the work is an issue, that issue is an Implementation Leaf.
 
 *Avoid:* child, gardener child
 

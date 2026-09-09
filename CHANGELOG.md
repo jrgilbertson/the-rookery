@@ -21,6 +21,27 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- After a `checking-pr-readiness` Approve, the option-1 reply continues into
+  the installed PR-opening skill, then `references/finishing.md`. A Worker
+  is a run already executing the Worker contract; that file branches on
+  that fact. A Worker uses `mode:pipeline` on the publisher, then
+  `ce-babysit-pr mode:pipeline`. A non-Worker uses the default publisher.
+  Title and body follow Compound Engineering. After babysit looks
+  merge-ready, a non-Worker run starts `checking-merge-readiness` in a
+  fresh helper; a Worker reports to the Orchestrator, which starts that
+  helper. Approve 1 does not merge. This slice does not dispatch adopted
+  units, does not inventory publication-time overlap, and does not keep a
+  gardener-only publisher.
+- `checking-simplicity` now treats "check for simplicity as well" and
+  unsolicited mid-build durable machinery as first-class triggers, instead of
+  waiting for an explicit simplify request.
+- `creating-portable-skills` also covers edits to an existing skill's
+  `SKILL.md`, evals, graders, and trigger queries. Gotchas now keep host-repo
+  rules out of portable skills and require evals and cases to shrink with the
+  skill's intent.
+- Ship workflow documents `no-ai-slop` and `writing-for-agents` in the
+  finishing sequence, with credit. Merge still waits for a human.
+
 - `checking-pr-readiness` keeps one first-menu option for remaining work.
   Picking it does not start work. The follow-up's first action does all
   remaining items named in the brief; later actions are those items grouped
@@ -45,14 +66,6 @@ looked" surface. GitHub Releases mirror its entries.
   security and measurement remain cross-cutting evidence. Retired `lanes`
   policies are rejected, with no inferred grants. Replacement requires review
   of the complete policy and its five mutation grants, preserving tracker history.
-- `repo-gardener` permits concurrent independent additions to shared ledger-like
-  files marked `merge=union` at the captured base, including unrelated branches
-  and assignments. Complete native branch/PR inventories and overlapping diffs
-  must prove every base entry is preserved at dispatch and each publication
-  gate. No peer registry is required; ownership, adoption authority, scope,
-  and publication leases remain unchanged. The Orchestrator never writes the
-  shared ledger; later integration conflicts remain owner work.
-
 - `repo-gardener` writes append-only opening and closing comments; the closing
   comment contains the morning report and the issue body remains setup text.
   The complete report renders literally in a helper-generated fence, preserving
@@ -69,22 +82,13 @@ looked" surface. GitHub Releases mirror its entries.
   native parser for syntax checks. Issue admission rests on trusted ownership,
   current blockers, and a small, low-risk, verifiable PR scope; estimates and
   readiness labels are hints. Runtime reads verify each source independently
-  and distinguish empty results from missing data. Bot adoption reports the
-  risk of stopped updates or overwritten edits without promising bot behavior.
+  and distinguish empty results from missing data.
   Worker briefs bind the expected repository identity.
-- `repo-gardener` adopts an open same-repository update PR with a
-  Worker-closable gap as a Worker unit: the Worker checks out the PR head at
-  the captured OID, pushes under an expected-remote-OID lease, keeps one
-  unmerged PR, and never merges. Initial adoption requires a non-draft PR with
-  bot- or app-authored head commits; default and provider-protected heads cannot
-  be adopted. Authorized Worker pushes advance the lease expectation after
-  exact readback while the original scope baseline stays fixed. Adopted PR titles and descriptions stay unchanged; readiness
-  evidence goes into the run report. Overlap is changed-path intersection with
-  other native branches and PRs; an intersection that fails the shared-ledger
-  exception, including substantive lockfile overlap, stops the dependent action.
-  The runtime reliability area reads any error or alert source the host can
-  already read and confirms identity from repository facts. A blocked
-  opening still senses and reports with one `caller-only` run outcome.
+- `repo-gardener` does not dispatch an eligible open same-repository update
+  PR; it stays a recommendation. The runtime
+  reliability area reads any error or alert source the host can already read
+  and confirms identity from repository facts. A blocked opening still senses
+  and reports with one `caller-only` run outcome.
 - `personal-chief-of-staff` wind-down now runs in two visible phases. Phase 1
   sweeps the day's corrections and resolves each row, applying approved
   actions with readback, before Phase 2 begins. Phase 2 plans tomorrow, coaches, records
@@ -240,11 +244,10 @@ looked" surface. GitHub Releases mirror its entries.
   `shared_ledger_paths` in `.agents/repo-gardener.yaml`. Remove those keys on
   upgrade. Follow-up issues remain owner proposals for Managing Issues outside
   the nightly run; Managing Issues no longer accepts gardening delegation
-  envelopes as approval. The shared-ledger overlap exception is keyed on the
-  git `merge` attribute being `union` at the authoritative base. The references are one owner per rule:
+  envelopes as approval. The references are one owner per rule:
   `applying-effects.md`, `github-reference-adapter.md`, and
   `register-and-report.md` became `tracker-records.md`; everything a Worker
-  follows lives in `worker-contract.md`, which also defines overlap; revision
+  follows lives in `worker-contract.md`; revision
   check points are listed once. `release_a_contract.py` exposes three
   subcommands (`normalize-github-tracker`, `effect`, `run-records`) with no
   version suffix in any name; only the unversioned `orchestrator:run-record`

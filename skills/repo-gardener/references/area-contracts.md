@@ -49,8 +49,7 @@ inspected coverage truthfully. A complete filtered query proves only its stated
 population and window; a bounded or failed read cannot establish backlog
 exhaustion. Share these source facts once and keep source counts distinct from
 qualified candidates. This bounded discovery does not bound the complete tracker
-read or the complete conflict inventory required by the tracker and Worker
-contracts at dispatch and every publication gate.
+read required by the tracker contract.
 
 ## Shared candidate qualification
 
@@ -108,7 +107,8 @@ or writes its config. Other available evidence remains usable.
 open native update PRs. Require the exact package/version relation, revision,
 affected scope, and applicable security evidence. A same-repository bot/app
 update PR with a concrete repairable check, required change-record, or pin-mirror
-gap is one adoption candidate under `worker-contract.md`, retaining its PR.
+gap stays a recommendation naming that open PR; this slice does not dispatch
+it as a Worker unit.
 CI and advisory evidence strengthen that candidate, not separate assignments.
 Titles and branch prefixes prove no trusted identity. An open PR for package X
 overlaps a new unit changing X's pin. A new unit intersecting update PRs only
@@ -137,8 +137,8 @@ risk surface, expected behavior, and correction verification. Distinguish
 repository defects from transient provider failures, and retain flaky or
 partial evidence's uncertainty. Read-only inspection may include protected or
 non-mutable code; scope gates constrain repairs. Exclude unrelated refactors
-and unverified external measurements. A repairable existing PR uses the same
-adoption contract; dependency update repairs follow the precedence above.
+and unverified external measurements. A repairable existing PR stays a recommendation in this slice;
+dependency update repairs follow the precedence above.
 
 **Issues and feedback:** Apply the shared issue authority and qualification
 rules to remaining product requests. For recommend-only triage, require stable

@@ -507,7 +507,7 @@ def validate_contract_sources() -> None:
     require("do not pick" in exact_case, "exact case omits do-not-pick")
     require("immediately before accepting a later approve" in exact_case, "exact case omits later-Approve re-read")
     require("stable-head variant offers option 1" in variants_case, "variants case does not require stable option 1")
-    require("re-reads immediately before accepting a later 1" in variants_case, "variants case pins offer-time re-read")
+    require("re-reads immediately before accepting an option-1 reply" in variants_case, "variants case pins offer-time re-read")
     require("picks an option in the same turn" in variants_case, "variants case omits do-not-pick")
     for phrase in (
         "moved-head variant omits approve",
@@ -524,38 +524,44 @@ def validate_contract_sources() -> None:
         "bare, missing, unrelated, mismatched, unavailable, or not verified gate",
     ):
         require(phrase in normalized_assessment, f"assessment contract omits deferred-gate safety: {phrase}")
-    for source, name in (
-        ((REPO_ROOT / "skills" / "repo-gardener" / "SKILL.md").read_text(encoding="utf-8").lower(), "repo-gardener skill"),
-        ((REPO_ROOT / "skills" / "repo-gardener" / "references" / "worker-contract.md").read_text(encoding="utf-8").lower(), "worker contract reference"),
-    ):
-        normalized_source = " ".join(source.split())
-        require("every unattended worker invokes `checking-pr-readiness` normally" in normalized_source, f"{name} omits the normal checking invocation")
-        require("distinct later turn" in normalized_source, f"{name} can approve from the menu turn")
-        require("option 1" in normalized_source and "approve and proceed" in normalized_source, f"{name} does not constrain later option 1")
-        require("identity reread" in normalized_source, f"{name} omits the later identity reread")
-        require("preserve the authored commit" in normalized_source, f"{name} lacks the fail-closed publication outcome")
-        require("never replace or recapture that" in normalized_source, f"{name} can replace the approved identity")
-        require("exact caller-approved verification command argv list" in normalized_source, f"{name} omits the caller-owned argv assignment")
-        require("target/base ref" in normalized_source and "full base oid" in normalized_source, f"{name} omits the base binding")
+    gardener_skill = " ".join(
+        (REPO_ROOT / "skills" / "repo-gardener" / "SKILL.md").read_text(encoding="utf-8").lower().split()
+    )
+    worker_contract = " ".join(
+        (REPO_ROOT / "skills" / "repo-gardener" / "references" / "worker-contract.md")
+        .read_text(encoding="utf-8")
+        .lower()
+        .split()
+    )
+    finishing = " ".join(
+        (REPO_ROOT / "skills" / "checking-pr-readiness" / "references" / "finishing.md")
+        .read_text(encoding="utf-8")
+        .lower()
+        .split()
+    )
+    for source, name in ((gardener_skill, "repo-gardener skill"), (worker_contract, "worker contract reference")):
+        require("every unattended worker invokes `checking-pr-readiness` normally" in source, f"{name} omits the normal checking invocation")
+        require("distinct later turn" in source, f"{name} can approve from the menu turn")
+        require("option 1" in source and "approve and proceed" in source, f"{name} does not constrain later option 1")
+        require("authored commit" in source, f"{name} lacks the fail-closed publication outcome")
+        require("exact caller-approved verification command argv list" in source, f"{name} omits the caller-owned argv assignment")
         require(
-            "immediately before an ownerless first push, re-resolve the captured target/base ref and full base oid"
-            in normalized_source,
-            f"{name} omits the pre-push base re-read",
-        )
-        require(
-            "immediately before pr-open, re-resolve the captured target/base ref and full base oid" in normalized_source,
-            f"{name} omits the pre-PR base re-read",
-        )
-        require(
-            "persistent state, configuration, schema, receipt, ledger, or audit-command reuse" not in normalized_source,
+            "persistent state, configuration, schema, receipt, ledger, or audit-command reuse" not in source,
             f"{name} retains unnecessary assignment denial prose",
         )
-        require("invoke `checking-merge-readiness`" in normalized_source, f"{name} omits ownerless merge checking")
-        require("never authorizes proceed to merge" in normalized_source, f"{name} can select proceed to merge")
-        require("the worker never chooses option 1 on its own" in normalized_source, f"{name} still lets the Worker choose option 1")
-        require("authorizes that worker to reply 1" in normalized_source, f"{name} omits Orchestrator-authorized option 1")
-        require("sends every named worker-owned gap" in normalized_source, f"{name} omits the whole-list rework loop")
-        require("never invokes `checking-merge-readiness`" not in normalized_source, f"{name} still forbids ownerless merge checking")
+        require("`checking-merge-readiness`" in source, f"{name} omits ownerless merge checking")
+        require("never authorizes proceed to merge" in source, f"{name} can select proceed to merge")
+        require("the worker never chooses option 1 on its own" in source, f"{name} still lets the Worker choose option 1")
+        require(
+            "authorizes that worker to reply 1" in source or "authorize 1 only when" in source,
+            f"{name} omits Orchestrator-authorized option 1",
+        )
+        require("named worker-owned gap" in source, f"{name} omits the whole-list rework loop")
+        require("never invokes `checking-merge-readiness`" not in source, f"{name} still forbids ownerless merge checking")
+    require("identity reread" in worker_contract, "worker contract omits the later identity reread")
+    require("this run is a worker" in finishing, "finishing.md does not branch on Worker")
+    require("`mode:pipeline`" in finishing, "finishing.md omits Worker pipeline publish")
+    require("ce-babysit-pr mode:pipeline" in finishing, "finishing.md omits LFG babysit invoke")
     require("not verified" in assessment and "not run" in assessment, "assessment contract omits canonical check statuses")
     require("unverified" not in assessment and "not-run" not in assessment, "assessment contract retains noncanonical check statuses")
     require(

@@ -16,7 +16,7 @@ a fourth look that would change assignment was refused.
 > deliverable units
 > overlap only on that ledger and not on an unrelated already-open billing PR:
 > (1) dead-code removal in an adapter plus its own changelog entry, (2)
-> documentation drift plus its own changelog entry. A third unit would
+> documentation drift. A third unit would
 > touch a protected path. A fourth seam's next look would change which unit
 > to assign; after that look, further investigation would not change
 > assignments or recommendations. Variant: use the same proposed assignments
@@ -35,8 +35,7 @@ a fourth look that would change assignment was refused.
       deepening because further investigation would not.
 - [ ] A Worker does not perform the five-area breadth pass or write tracker comments; scout
       helpers stay read-only in the Orchestrator session.
-- [ ] Permits the two assignments' `CHANGELOG.md` overlap only because the
-      path carries `merge=union` at the base, while each Worker retains its
-      own additive entry.
-- [ ] Serializes the otherwise matching `CHANGELOG.md` overlap when that
-      path has no `merge` attribute at the base.
+- [ ] Does not assign two Workers the same `CHANGELOG.md` file. Assignment
+      names that shared convention file on at most one Worker.
+- [ ] A later merge collision on that file is owner work at merge-readiness,
+      not a publication-time exception.

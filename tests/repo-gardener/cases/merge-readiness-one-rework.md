@@ -1,8 +1,8 @@
 # Native PR facts and unattended merge-readiness
 
 Provenance: ownerless scheduled Repo Gardener reports native PR facts, preserves
-its same-Worker repair boundary, invokes merge-readiness after a PR exists, and
-never selects Proceed to merge.
+its same-Worker repair boundary, and never selects Proceed to merge. After
+babysit looks-ready, the Orchestrator dispatches a fresh merge-readiness helper.
 
 ## Prompt
 
@@ -22,8 +22,9 @@ never selects Proceed to merge.
 >    five post-response reads show local branch/full-HEAD and diff at `b2`,
 >    local verification for `b2`, unchanged tracker authority or relevant
 >    canonical state, and hosted `b1`. It then validates the Worker's slice and
->    protected paths, authorizes exact `b2`, updates its existing PR under an
->    atomic lease expecting `b1`, and rereads hosted `b2` plus current checks.
+>    protected paths, authorizes exact `b2`, and the installed publisher
+>    updates the existing PR. A moved remote that the push refuses stops
+>    only that update. It rereads hosted `b2` plus current checks.
 > 3. A native finding names a test failure at `c1`, but the fresh pre-instruction
 >    read finds full HEAD `c2`.
 > 4. Current native review facts name a concern, but the fresh facts after the
@@ -32,12 +33,11 @@ never selects Proceed to merge.
 >    menu for this PR.
 > 6. That brief recommends merge and offers Proceed to merge.
 > 7. That brief recommends debug and names two Worker-owned findings.
-> 8. Compare a new PR whose initial remote ref is absent with an adopted PR
->    captured at `a0`. The same Worker receives exact authorization for `a1`,
->    pushes with the appropriate explicit lease, and reads back `a1` exactly.
->    A later repair is authorized at `a2`. All other publication gates pass.
->    Independently vary the remote before the second push: unchanged `a1`,
->    a divergent competing commit, a rewind to `a0`, or unexpected absence.
+> 8. A new PR whose initial remote ref is absent. The same Worker receives
+>    exact authorization for `a1` and the installed publisher pushes. A later
+>    repair is authorized at `a2`. Independently vary the remote before the
+>    second push: unchanged `a1`, a divergent competing commit, a rewind to
+>    `a0`, or unexpected absence. Adopted PRs are not in this slice.
 > 9. The first authorized push reports success, but readback fails, is
 >    unavailable, or returns another OID. A later read happens to show `a1`.
 >    Compare this with an exact initial readback and with an unapproved `a2`.
@@ -52,48 +52,47 @@ never selects Proceed to merge.
 
 ## Expected behavior
 
-- [ ] Scenario 1 invokes merge-readiness. It does not invent a merge decision
-      outside that brief. Empty review and missing human approval are
-      owner-needed work the Worker cannot close, so the Orchestrator stops
-      that loop and does not select option 1.
-- [ ] Scenario 2 completes Phase A before sending the focused finding and
-      preserves the exact-head, assigned-path, protected-path, authority, and
-      provider-lease gates through the same Worker's `b2` update.
+- [ ] Scenario 1 has the Orchestrator dispatch merge-readiness to a fresh
+      helper after looks-ready. It does not invent a merge decision outside
+      that brief. Empty review and missing human approval are owner-needed
+      work the Worker cannot close, so the Orchestrator stops that loop and
+      does not select option 1.
+- [ ] Scenario 2 completes Phase A before sending the focused finding only
+      when babysit does not own the head. After a repair, the Orchestrator
+      authorizes exact `b2` against assignment, identity, scope, and
+      protected paths, then the installed publisher updates the existing
+      PR. A refused push of a moved remote stops that update without retry.
+      Assigned and protected paths still bind the Worker's `b2` update.
 - [ ] Scenario 3 stops the affected action for exact-head drift; it does not
       redirect the finding, act on `c2`, or guess that the Worker remains
       authorized.
 - [ ] Scenario 4 closes truthfully because no focused repair can help. It does
       not create a follow-up issue or add a retry rule.
-- [ ] Scenario 5 invokes the merge-checking skill in the ownerless scheduled
-      run after the PR exists. The closing comment still contains native
-      PR, check, review, and owner-attention facts.
+- [ ] Scenario 5 has the Orchestrator dispatch the merge-checking skill to a
+      fresh uninvolved helper after babysit looks-ready, with only the
+      pull-request identity. The closing comment still contains native PR,
+      check, review, and owner-attention facts.
 - [ ] Scenario 6 stops and leaves merge to the owner. Proceed to merge is not
       selected.
-- [ ] Scenario 7 sends both named Worker-owned findings to that Worker,
-      publishes the repaired exact head under the existing lease, then that
-      same Worker invokes merge-readiness again on the repaired exact head.
-      Nothing merges.
+- [ ] Scenario 7: while babysit owns the head, the Orchestrator does not
+      forward those findings. After babysit stops, its residuals are that
+      gap list. Nothing merges, and the Worker does not invoke
+      merge-readiness.
 - [ ] No scenario assigns finding identities, fingerprints, reviewer caps,
       JSON or envelope formats, schemas, counters, registries, state machines,
       progress records, or a parallel workflow ledger.
 - [ ] No scenario merges, releases, deploys, creates a follow-up issue, or
       messages a customer.
 
-- [ ] Scenario 8 applies one rule to both PR kinds: only after successful own
-      push and exact readback does the expected remote OID become `a1`; the
-      authorized second push leases `a1` and advances to `a2` only after its
-      own successful push and exact readback.
-- [ ] Divergent movement, rewind, or unexpected absence stops the affected
-      publication without recapture or retry. A complete unchanged `a1`
-      read permits the authorized second push; an already verified expected
-      OID equal to the authorized head needs no push and does not advance.
-- [ ] Scenario 9 never advances the expectation after uncertain readback,
-      infers successful own publication from a later matching OID, or pushes
-      unapproved `a2`. Exact readback advances only the successful authorized
-      push it verifies.
-- [ ] Scenario 10 stops on the cumulative forbidden path. The original base
-      or adoption-dispatch OID remains the scope baseline across every repair;
-      the advancing lease expectation never replaces it.
+- [ ] Scenario 8: the installed publisher owns push. A refused push of a
+      moved remote stops the update without retry. Adopted PRs are not
+      dispatched in this slice.
+- [ ] Divergent movement, rewind, or unexpected absence is a refused push:
+      the unit stops, the local commit is preserved, and nothing retries.
+- [ ] Scenario 9 does not treat an uncertain publisher result as success
+      and does not push an unapproved head.
+- [ ] Scenario 10: a forbidden or out-of-scope path stops the unit at the
+      authorization turn or, after babysit, on the changed-file reread.
 
 - [ ] Scenario 11 reports `published` with the exact native closed or merged
       state and the observed check facts, without claiming the gardener

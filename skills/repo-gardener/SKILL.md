@@ -71,9 +71,9 @@ managed closure.
    claims or counting source records as candidates.
 3. Qualify small, low-risk, testable PR-sized units using the shared candidate
    checks. Select independent work within `maximum_workers`; do not invent
-   work to fill capacity. An eligible existing update PR is a unit the Worker
-   adopts. Complete conflict evidence and the native additive-file exception
-   are governed by `worker-contract.md`, independently of discovery bounds.
+   work to fill capacity. An eligible existing update PR stays a recommendation
+   in this slice. Assignment names the files each Worker will touch, including
+   any shared convention file, so two Workers are not assigned the same one.
 4. Dispatch after the quick pass, then deepen investigations that could change
    an assignment or recommendation while supervising Workers. Coalesce shared
    causes and derive the Ready Frontier from current evidence. Stop when no
@@ -87,31 +87,29 @@ five gates in `policy-and-entry-modes.md`: exact repository identity, allowed
 path scope, positive Worker capacity, explicit mutation grant for the owning area, and no protected
 path. `.agents/repo-gardener.yaml` is always protected. A missing, false,
 mismatched, or protected condition denies that unit; it does not authorize a
-workaround. Dispatch preconditions, adoption, and supervision are owned by
+workaround. Dispatch preconditions and supervision are owned by
 [reconciliation.md](references/reconciliation.md); the brief, pre-mutation
-gate, completion, publication gates, and leases are owned by
+gate, completion, and ship path are owned by
 [worker-contract.md](references/worker-contract.md).
 
 The boundary sentences, which no reference may weaken: each Worker receives
 the authoritative base, opening policy revision, assigned slice, and exact
 caller-approved verification command argv list. Every unattended Worker
 invokes `checking-pr-readiness` normally on the exact head in its worktree
-and stops at its numbered menu; after a Worker PR exists, the ownerless run
-has that Worker invoke `checking-merge-readiness` on that PR and stop at its
-menu. On a distinct later turn the Orchestrator authorizes that Worker to
-reply 1 only when the menu offered option 1 and the recommendation was
-approve and proceed for that same exact head; the Worker never chooses option
-1 on its own; the Orchestrator never authorizes Proceed to merge. The
-checking skill then performs its identity reread and continues into the
-publication path. The Orchestrator sends every named Worker-owned gap back to
-the same Worker. A Worker owns at most one unmerged PR; an adopted PR is that
-one PR. Immediately before an ownerless first push, re-resolve the captured
-target/base ref and full base OID. Immediately before PR-open, re-resolve the
-captured target/base ref and full base OID. Publication stops and must
-preserve the authored commit on any drift, unavailable state, or unknown
-provider effect, and the run must never replace or recapture that authorized
-identity. Never merge, release, deploy, or create follow-up
-issues.
+and stops at its numbered menu. On a distinct later turn the Orchestrator
+authorizes that Worker to reply 1 only when the menu offered option 1 and the
+recommendation was approve and proceed for that same exact head, after
+re-reading identity and confirming assigned and protected paths; the Worker
+never chooses option 1 on its own; the Orchestrator never authorizes Proceed
+to merge. The checking skill then continues into `checking-pr-readiness`
+finishing; this run is a Worker, and that file branches on that fact. After
+looks merge-ready or cautiously looks ready, the Orchestrator dispatches
+`checking-merge-readiness` to a fresh uninvolved helper and stops on that
+menu. The Orchestrator sends every
+named Worker-owned gap back to the same Worker. A Worker owns at most one
+unmerged PR. This slice does not dispatch adopted units. A push that refuses
+a moved remote stops the unit and preserves the authored commit. Never merge,
+release, deploy, or create follow-up issues.
 
 ## Close once
 

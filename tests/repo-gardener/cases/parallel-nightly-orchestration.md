@@ -57,8 +57,9 @@ sense-and-recommend run.
       never comment on the tracker.
 - [ ] Scenario 1 reports all five areas and keeps bounded source counts distinct from
       the two normalized candidates.
-- [ ] Scenario 1 assigns two parallel Workers after the quick five-area pass and
-      complete overlap inventory are decided. Each
+- [ ] Scenario 1 assigns two Workers after the quick five-area pass.
+      Assignment names the files each Worker will touch, including any shared
+      convention file, so they are not assigned the same one. Each
       ownerless Worker stops on its PR-readiness menu, then may open one
       unmerged PR only after Orchestrator-authorized option 1, matching
       identity reread, and the immediate matching local/provider-head and

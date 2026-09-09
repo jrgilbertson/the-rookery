@@ -44,5 +44,5 @@ an older native head instead of inspecting the live checkout in one session.
       target/base ref, and full base OID immediately before accepting a later Approve.
 - [ ] Waits for a numbered pick. Does not pick an option in the same turn,
       upgrade an attestation, or write to the repository.
-- [ ] On the menu turn, this skill does not stage, commit, push, or open a
+- [ ] On the menu turn, this skill does not stage, commit, push, open, or merge a
       pull request.

@@ -2,6 +2,9 @@
 
 Archive: git history is the run archive. Current evidence is appended below.
 
+- 2026-09-08 | b075928 (working tree) | structural validation | pass | official `skills-ref` was unavailable; manual Agent Skills field, length, name, and package checks passed with the repository validator, catalog, and relative-link checks
+- 2026-09-08 | b075928 (working tree) | trigger sample after mid-build retune | pass (3/3) | three isolated fresh-context judges saw only the name, candidate description, and one query; `check for simplicity as well` activated; the bare plan-and-implement near miss and the local-helper near miss stayed inactive. Complete trigger suite not rerun in this session.
+
 - 2026-08-26 | db15238 | matched comparison: same-context-cannot-verify (bare) | pass (5/5) | persistent isolated rerun and separate blind grader; the historically observed same-context certification failure did not recur, so this run is a regression guard rather than improvement evidence
 - 2026-08-26 | db15238 | matched comparison: owner-decision-stays-orthogonal (bare) | fail (4/5) | persistent isolated rerun found the client-lifetime decision but omitted the binding compact contract; separate blind grader
 - 2026-08-26 | db15238 | matched comparison: protect-essential-complexity (bare) | fail (2/4) | persistent isolated rerun returned only `PASS`; a separate blind grader found that it did not explicitly protect the required boundaries or recognize existing-helper reuse

@@ -24,6 +24,7 @@ sees only the skill name, description, and query. A should-trigger query needs
 | The owner asked for a direct export. The agent-authored requirements brief instead adds a queue, job table, provider adapter, and operator configuration that no approved requirement names. Before technical design or implementation planning begins, continue the workflow. | Narrow automatic backstop before agent-authored scope expansion enters technical planning. |
 | The owner asked for a direct export. The agent-authored implementation plan newly adds a queue, persistent job table, and operator configuration that no approved requirement names. Hand it off to execution. | Narrow automatic backstop before unapproved durable machinery in a finished plan enters execution. |
 | While implementing a direct owner-requested archive action, the agent newly proposes a dependency, persistent state, and a background worker as its next edit; none appears in the approved scope. Continue with that step. | Narrow automatic backstop immediately before unapproved agent-authored machinery is built. |
+| We're implementing the archive action. Check for simplicity as well while you continue. | Explicit mid-build add-on phrase. |
 | Before coding this behavior change, does the existing repository mechanism already satisfy it? | Concrete reuse question on an inspectable technical area. |
 
 ## Near misses: should not trigger

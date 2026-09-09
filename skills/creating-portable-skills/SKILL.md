@@ -1,6 +1,6 @@
 ---
 name: creating-portable-skills
-description: Use when creating, updating, or migrating a skill, or when finding problems in its description, triggers, structure, portability, or evidence. Produces prioritized findings or a portable, installable skill package. Explanation-only requests stay with general reasoning.
+description: Use when creating, updating, or migrating a skill, when editing a skill's SKILL.md, evals, graders, or trigger queries, or when finding problems in its description, triggers, structure, portability, or evidence. Produces prioritized findings or a portable, installable skill package. Explanation-only requests stay with general reasoning.
 license: MIT
 compatibility: Requires isolated agent contexts or separate sessions for agent grading and review.
 ---
@@ -102,6 +102,8 @@ Completion: the source validates, and every roster harness has a logged smoke re
 - The description carries the triggering burden. State its owned trigger branches and reserve workflow details for the body.
 - A later substantive edit invalidates the affected comparison even when an earlier draft passed.
 - Check the target collection and system-provided skills for name collisions. Verb-led gerund names (`creating-portable-skills`, not `skill-creator`) are usually more specific.
+- Do not encode a host repository's local rules into a portable skill. Changelog policy, tracker choice, and CI vendor stay in that repository.
+- When the skill's intent shrinks, update evals, cases, and trigger queries in the same change rather than leaving a one-off exception.
 
 ## Credits
 

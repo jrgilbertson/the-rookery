@@ -17,6 +17,8 @@ name + description + query only, binary judgment, any near-miss `yes` fails.
 | Turn this prompt I keep pasting into a proper reusable skill | Converting a repeated prompt into a skill. |
 | Is my skill's SKILL.md structured right? Audit it | Structural audit of a skill package. |
 | Make this skill work in Codex too, not just Claude Code | Cross-harness portability request. |
+| Update the evals for this skill now that we simplified its intent | Eval update after the skill's intent shrank. |
+| I'm editing SKILL.md and the graders after shrinking what the skill does | Direct edit of an existing skill package and its graders. |
 
 ## Near misses: should not trigger
 

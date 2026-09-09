@@ -2,6 +2,9 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-08 | b075928 (working tree) | structural validation | pass | official `skills-ref` was unavailable; manual Agent Skills field, length, name, and package checks passed with the repository validator, catalog, and relative-link checks
+- 2026-09-08 | b075928 (working tree) | trigger sample after SKILL.md/eval routing | pass (3/3) | three isolated fresh-context judges saw only the name, candidate description, and one query; eval update and SKILL.md/grader edit activated; standalone grader/rubric near miss stayed inactive. Complete trigger suite not rerun in this session.
+
 - 2026-08-26 | db15238 | matched comparison: passing-baseline-regression-control (prior) | fail (2/5) | isolated runner allowed the control and limited its claim, but omitted the separate-discrimination requirement, matched-control regression blocking, and bounded-use guidance; separate blind grader
 - 2026-08-26 | db15238 (working tree) | matched comparison: passing-baseline-regression-control (candidate) | pass (5/5) | fresh runner applied the candidate protocol; a separate blind grader confirmed explicit control labeling, separate discrimination, matched regression blocking, bounded use, and honest claims
 - 2026-08-26 | db15238 (working tree) | structural validation | pass | official `skills-ref` was unavailable; manual Agent Skills field, length, name, and package checks passed with the repository validator, catalog, and relative-link checks

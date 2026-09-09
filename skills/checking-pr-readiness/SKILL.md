@@ -289,7 +289,7 @@ Present exactly one decision menu, then wait for a numbered reply. Do not pick a
 "Approve", or "approve and proceed" counts as that choice only after the
 menu offered Approve, not after it printed a withheld option-1 row. A `1`
 on a withheld row is not Approve. Name that the action cannot be taken and
-wait again. Do not enter the later-1 finishing path. The activating
+wait again. Do not enter the finishing path. The activating
 utterance never authorizes Approve.
 
 Print order, not menu numbers. Number 1 is the reserved Approve-and-proceed
@@ -374,8 +374,7 @@ do-all remaining work, not Approve. Do not apply the withheld-1 rule to
 that wait.
 
 If the menu printed a withheld option-1 row, do not approve. Name that
-Approve cannot be taken and wait again. Do not enter the later-1 finishing
-path.
+Approve cannot be taken and wait again. Do not enter the finishing path.
 
 Before accepting Approve, re-read HEAD, the merge-base, and staged, unstaged,
 and untracked content per
@@ -384,14 +383,13 @@ those moved, name what moved, rebuild, and do not continue as if the old
 surface were still current. The already-typed 1 does not approve the rebuilt
 gather. A matching re-read is silent.
 
-Choose the finishing path from this conversation's role, not from whether
-`repo-gardener` happens to be installed on disk:
-
-- A run already following repo-gardener Worker completion continues into
-  gardener first-publication. Do not also dispatch an owner publisher.
-- Any other conversation continues into the installed skill that owns
-  opening a pull request here, discovered the same way `ce-explain` is:
-  when that skill is present. WORKFLOWS.md's example is `ce-commit-push-pr`.
+Discover the installed skill that owns opening a pull request the same way
+`ce-explain` is: when that skill is present. WORKFLOWS.md's example is
+`ce-commit-push-pr`. Then follow
+[references/finishing.md](references/finishing.md), which invokes that skill
+once. A Worker is a run already executing the `repo-gardener` Worker
+contract; that file branches on that fact. Do not keep a second
+gardener-only publisher.
 
 If this conversation has no finishing path, name that once and stop. Do not
 re-ask Approve. Do not fill or print a pack. Option 1 accepted readiness;
@@ -405,11 +403,10 @@ recorded override. Do not write the
 filled pack back to that asset. Do not print `## Evidence pack` as a
 readout. Pass the pack to the selected finishing path, which owns its
 destination: ordinary
-publication writes it into the pull request description; gardener Worker
-completion follows its publication contract, which returns adopted-PR
-evidence to the Orchestrator and preserves that PR's title and body.
+publication writes it into the pull request description.
 Continue into that path in this same conversation. That path must not re-ask the same Approve. This
-skill still does not itself stage, commit, push, or open a pull request.
+skill still does not itself stage, commit, push, open, or merge a pull request.
+The Approve 1 is consumed when finishing starts. It never selects Proceed to merge.
 
 Sanitize the pack for durable use. Summarize intent from the selected durable
 intent source: a linked issue or ticket, a brief, or a maintained repository
@@ -418,10 +415,10 @@ attestation instead. Do not copy ignored-plan paths or contents, local-only
 paths, credentials, or unnecessary personal data.
 
 Completion: a matching silent re-read, then silent pack plus continue into
-finishing, a named missing-path stop with no pack, or a named rebuild with
-no pack. This skill wrote nothing to the repository. Remove the step 1 temp
-directory after this later turn, when a non-1 later turn ends the run, or on
-failure.
+finishing, including finishing.md, a named missing-path stop with no pack,
+or a named rebuild with no pack. This skill wrote nothing to the
+repository. Remove the step 1 temp directory after this later turn, when a
+non-1 later turn ends the run, or on failure.
 
 ## Gotchas
 
@@ -429,10 +426,14 @@ failure.
   approves.
 - Green CI is not evidence that upstream steps ran.
 - Work that may change files is limited to a remaining-changes follow-up
-  pick and later-1 finishing dispatch. A companion skill or repository gate
-  owns those writes. The gate itself still does not stage, commit, push, or
-  open a pull request.
+  pick and the option-1 finishing dispatch. A companion skill or repository gate
+  owns those writes. The gate itself still does not stage, commit, push, open,
+  or merge a pull request.
 - A dead session needs a fresh gate. There is no pasteable pack to restock.
-- When `checking-merge-readiness` is also installed, this gate owns entry to
-  review; merge-readiness owns the pre-merge whole-change review. Neither
-  requires the other at runtime.
+- When `checking-merge-readiness` is also installed, a non-Worker option-1
+  reply continues into it only after babysit looks merge-ready or cautiously
+  looks ready, in a fresh uninvolved context. A Worker option-1 reply does
+  not dispatch it; the Orchestrator starts that helper after looks
+  merge-ready or cautiously looks ready. This gate still does not merge. If
+  merge-readiness is absent after babysit on a non-Worker run, name that
+  once and stop.

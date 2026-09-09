@@ -47,6 +47,18 @@ def require(condition: bool, message: str) -> None:
         raise AssertionError(message)
 
 
+def require_routing_failure(
+    result: subprocess.CompletedProcess[str],
+    condition: str,
+) -> None:
+    require(
+        result.returncode == 1
+        and "ROUTING.md" in result.stderr
+        and "skills/route-work/references/routing.md" in result.stderr,
+        f"repository checker accepted {condition}: {result.stderr}",
+    )
+
+
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="rookery-repository-check-") as temporary:
         temporary_root = Path(temporary)
@@ -65,8 +77,32 @@ def main() -> int:
             '{"large": ' + "9" * 5000 + "}\n",
             encoding="utf-8",
         )
+        root_routing = repository / "ROUTING.md"
+        packaged_routing = repository / "skills/route-work/references/routing.md"
+        packaged_routing.parent.mkdir(parents=True)
+        routing_contents = b"# Routing\n"
+        root_routing.write_bytes(routing_contents)
+        packaged_routing.write_bytes(routing_contents)
         clean = run_checker(repository)
         require(clean.returncode == 0, f"clean repository failed: {clean.stderr}")
+
+        root_routing.unlink()
+        require_routing_failure(run_checker(repository), "a missing root routing page")
+        root_routing.write_bytes(routing_contents)
+
+        packaged_routing.unlink()
+        require_routing_failure(run_checker(repository), "a missing packaged routing page")
+        packaged_routing.write_bytes(routing_contents)
+
+        root_routing.unlink()
+        packaged_routing.unlink()
+        require_routing_failure(run_checker(repository), "both missing routing pages")
+        root_routing.write_bytes(routing_contents)
+        packaged_routing.write_bytes(routing_contents)
+
+        packaged_routing.write_bytes(routing_contents + b"\n")
+        require_routing_failure(run_checker(repository), "routing-page byte drift")
+        packaged_routing.write_bytes(routing_contents)
 
         for regular_name in (
             "plans",

@@ -13,6 +13,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- Added `route-work`, which returns one Route, Resume, or Questions card for an
+  explicit routing request. Route cards select the first workflow, size a
+  roster of roles, models, and effort for the expected run, and provide a
+  standalone kickoff that preserves supplied authority. A public routing
+  contract owns the behavior, with an exact parity check for its packaged
+  reference.
 - Added `checking-simplicity`, a read-only assessment that finds safe
   simplification opportunities in named technical areas, questions, proposed
   or existing designs, plans, code-level approaches, and in-build decisions.
@@ -21,6 +27,8 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- CI tool installation now runs from a shell script, avoiding actionlint
+  deadlocks when local pipe buffers cannot hold the inline bootstrap code.
 - After a `checking-pr-readiness` Approve, the option-1 reply follows
   `references/finishing.md`, which invokes the installed PR-opening skill
   once. A Worker is a run already executing the Worker contract; that file
@@ -41,7 +49,6 @@ looked" surface. GitHub Releases mirror its entries.
   skill's intent.
 - Ship workflow documents `no-ai-slop` and `writing-for-agents` in the
   finishing sequence, with credit. Merge still waits for a human.
-
 - `checking-pr-readiness` keeps one first-menu option for remaining work.
   Picking it does not start work. The follow-up's first action does all
   remaining items named in the brief; later actions are those items grouped

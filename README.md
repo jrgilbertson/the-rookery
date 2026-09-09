@@ -61,6 +61,7 @@ Everything here fits into five core jobs, Research through Ship, plus two feedba
 - [personal-chief-of-staff](skills/personal-chief-of-staff/SKILL.md). Turn information from your configured sources into a daily, weekly, or quarterly review. Run it when you need to orient, reflect, and decide what to do next across several parts of your life and work.
 - [repo-gardener](skills/repo-gardener/SKILL.md). Check a repository across five maintenance areas and, when warranted, assign workers that each leave one unmerged pull request. Run it on a schedule or by hand; a human still merges.
 - [reviewing-meetings](skills/reviewing-meetings/SKILL.md). Turn completed meetings into draft notes and follow-up actions grounded in the meeting source. Run it after a meeting or during a catch-up when you want to capture outcomes and approve each follow-up before anything is written.
+- [route-work](skills/route-work/SKILL.md). Select the first workflow, work pattern, and roster of roles, models, and effort for one kickoff without starting a downstream workflow. Use it when explicitly routing new work or deciding whether a proven in-flight owner should continue.
 - [storm-research](skills/storm-research/SKILL.md). Research a hard question through independent perspectives and produce a source-backed briefing that preserves disagreements and blind spots. Reach for it when a decision, investment, or long-form deliverable needs evidence from several perspectives.
 
 ## My other projects

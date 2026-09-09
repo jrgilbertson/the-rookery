@@ -146,7 +146,7 @@ sys.stdout.write(rest if m is None else rest[: m.start()])
 extract_status=$?
 if [ "$extract_status" -ne 0 ]; then
   fail "this-turn completion excludes merge write" "Completion of this turn block is missing"
-elif printf '%s' "$this_turn" | grep -Eq 'gh[[:space:]]+pr[[:space:]]+merge|kicked off'; then
+elif printf '%s' "$this_turn" | grep -E 'gh[[:space:]]+pr[[:space:]]+merge|kicked off' >/dev/null; then
   fail "this-turn completion excludes merge write" "Completion of this turn still mentions merge kickoff"
 else
   pass "this-turn completion excludes merge write"
@@ -158,10 +158,18 @@ text = Path(sys.argv[1]).read_text()
 i = text.find("### On a later reply of 1")
 sys.stdout.write(text[i:] if i >= 0 else "")
 ' "$SKILL")
-if printf '%s' "$later" | grep -Eq 'gh[[:space:]]+pr[[:space:]]+merge'; then
-  pass "later option 1 still names merge kickoff"
+merge_execution="$ROOT/skills/checking-merge-readiness/references/merge-execution.md"
+# Match the delegation sentence, not a bare filename an unrelated line could
+# also supply. The sentence wraps, so squeeze whitespace before comparing.
+later_delegation=$(printf '%s' "$later" | tr -s '[:space:]' ' ')
+if printf '%s' "$later_delegation" | grep -F 'merge kickoff in merge-execution.md' >/dev/null \
+  && grep -Fq '[references/merge-execution.md](references/merge-execution.md)' "$SKILL" \
+  && [ -f "$merge_execution" ] \
+  && grep -Eq '^GH_PROMPT_DISABLED=1 gh pr merge .*--match-head-commit' "$merge_execution"
+then
+  pass "later option 1 delegates merge kickoff to its linked reference"
 else
-  fail "later option 1 still names merge kickoff" "On a later reply of 1 does not mention gh pr merge"
+  fail "later option 1 delegates merge kickoff to its linked reference" "later-1 delegation sentence, production reference link, or guarded merge command is missing"
 fi
 echo "== A. serve real fixture content =="
 bind_spec specimen-a

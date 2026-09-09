@@ -159,9 +159,10 @@ existing one.
 
 ### Option-1 reply
 
-The next message after a readiness menu, when that message is `1` or the
-spoken equivalent (`Approve`, `approve and proceed`, `Proceed to merge`,
-`merge it`). It is the only way Approve or Proceed is accepted.
+The next message after a readiness menu, when that message is `1` or that
+menu's spoken equivalent. After an Approve menu: `Approve`, `approve and
+proceed`. After a Proceed-to-merge menu: `Proceed to merge`, `merge it`.
+It is the only way Approve or Proceed is accepted.
 
 The turn that printed the menu cannot pick. The request that started the
 review never counts as 1. A `1` on a withheld row is not approval. In

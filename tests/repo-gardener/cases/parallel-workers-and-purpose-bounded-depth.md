@@ -16,7 +16,7 @@ a fourth look that would change assignment was refused.
 > deliverable units
 > overlap only on that ledger and not on an unrelated already-open billing PR:
 > (1) dead-code removal in an adapter plus its own changelog entry, (2)
-> documentation drift plus its own changelog entry. A third unit would
+> documentation drift. A third unit would
 > touch a protected path. A fourth seam's next look would change which unit
 > to assign; after that look, further investigation would not change
 > assignments or recommendations. Variant: use the same proposed assignments

@@ -1,7 +1,7 @@
-# Finishing after the PR-opening skill
+# Finishing after Approve
 
-Read this after the option-1 reply continues into the installed PR-opening
-skill.
+Read this when the option-1 reply continues into finishing. This file
+invokes the installed PR-opening skill once.
 
 The Approve 1 that entered finishing is already consumed. It never selects
 Proceed to merge.
@@ -11,13 +11,18 @@ an assigned unit. Installing gardener does not make this a Worker.
 
 ## Publisher
 
-If this run is a Worker, invoke the installed PR-opening skill with
-`mode:pipeline`. Otherwise invoke it without pipeline. WORKFLOWS.md's
+If this run is a Worker, pass the revision check point immediately before
+invoking the publisher. A changed, unavailable, or unknown revision stops
+without push or PR creation.
+
+If this run is a Worker, invoke the installed PR-opening skill once with
+`mode:pipeline`. Otherwise invoke it once without pipeline. WORKFLOWS.md's
 example is `ce-commit-push-pr`.
 
 Title and body follow Compound Engineering: a new PR writes them;
 `mode:pipeline` on an existing PR does not rewrite; `ce-babysit-pr` may
-refresh a drifted description before looks-ready.
+refresh a drifted description before looks merge-ready or cautiously looks
+ready.
 
 Wait only on that skill's own report. Follow its completion gate. Do not
 copy a skip list here.
@@ -73,7 +78,7 @@ not dispatch `checking-merge-readiness`.
 
 Completion: a named stop after a publisher that did not create or update a
 pull request, a named stop after a babysit skip, missing babysit skill, or
-non-ready report, a Worker looks-ready report to the Orchestrator, a named
-missing merge-readiness or missing independent reviewer on a non-Worker run,
-or the independent merge-readiness menu on screen with no pick from this
-skill.
+non-ready report, a Worker looks merge-ready or cautiously looks ready
+report to the Orchestrator, a named missing merge-readiness or missing
+independent reviewer on a non-Worker run, or the independent merge-readiness
+menu on screen with no pick from this skill.

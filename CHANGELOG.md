@@ -21,15 +21,15 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
-- After a `checking-pr-readiness` Approve, the option-1 reply continues into
-  the installed PR-opening skill, then `references/finishing.md`. A Worker
-  is a run already executing the Worker contract; that file branches on
-  that fact. A Worker uses `mode:pipeline` on the publisher, then
-  `ce-babysit-pr mode:pipeline`. A non-Worker uses the default publisher.
+- After a `checking-pr-readiness` Approve, the option-1 reply follows
+  `references/finishing.md`, which invokes the installed PR-opening skill
+  once. A Worker is a run already executing the Worker contract; that file
+  branches on that fact. A Worker uses `mode:pipeline` on the publisher,
+  then `ce-babysit-pr mode:pipeline`. A non-Worker uses the default publisher.
   Title and body follow Compound Engineering. After babysit looks
-  merge-ready, a non-Worker run starts `checking-merge-readiness` in a
-  fresh helper; a Worker reports to the Orchestrator, which starts that
-  helper. Approve 1 does not merge. This slice does not dispatch adopted
+  merge-ready or cautiously looks ready, a non-Worker run starts
+  `checking-merge-readiness` in a fresh helper; a Worker reports to the
+  Orchestrator, which starts that helper. Approve 1 does not merge. This slice does not dispatch adopted
   units, does not inventory publication-time overlap, and does not keep a
   gardener-only publisher.
 - `checking-simplicity` now treats "check for simplicity as well" and

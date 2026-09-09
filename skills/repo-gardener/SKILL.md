@@ -103,8 +103,9 @@ re-reading identity and confirming assigned and protected paths; the Worker
 never chooses option 1 on its own; the Orchestrator never authorizes Proceed
 to merge. The checking skill then continues into `checking-pr-readiness`
 finishing; this run is a Worker, and that file branches on that fact. After
-looks merge-ready, the Orchestrator dispatches `checking-merge-readiness` to
-a fresh uninvolved helper and stops on that menu. The Orchestrator sends every
+looks merge-ready or cautiously looks ready, the Orchestrator dispatches
+`checking-merge-readiness` to a fresh uninvolved helper and stops on that
+menu. The Orchestrator sends every
 named Worker-owned gap back to the same Worker. A Worker owns at most one
 unmerged PR. This slice does not dispatch adopted units. A push that refuses
 a moved remote stops the unit and preserves the authored commit. Never merge,

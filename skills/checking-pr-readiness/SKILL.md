@@ -383,12 +383,13 @@ those moved, name what moved, rebuild, and do not continue as if the old
 surface were still current. The already-typed 1 does not approve the rebuilt
 gather. A matching re-read is silent.
 
-Continue into the installed skill that owns opening a pull request here,
-discovered the same way `ce-explain` is: when that skill is present.
-WORKFLOWS.md's example is `ce-commit-push-pr`. After that skill, follow
-[references/finishing.md](references/finishing.md). A Worker is a run
-already executing the `repo-gardener` Worker contract; that file branches on
-that fact. Do not keep a second gardener-only publisher.
+Discover the installed skill that owns opening a pull request the same way
+`ce-explain` is: when that skill is present. WORKFLOWS.md's example is
+`ce-commit-push-pr`. Then follow
+[references/finishing.md](references/finishing.md), which invokes that skill
+once. A Worker is a run already executing the `repo-gardener` Worker
+contract; that file branches on that fact. Do not keep a second
+gardener-only publisher.
 
 If this conversation has no finishing path, name that once and stop. Do not
 re-ask Approve. Do not fill or print a pack. Option 1 accepted readiness;
@@ -430,8 +431,9 @@ non-1 later turn ends the run, or on failure.
   or merge a pull request.
 - A dead session needs a fresh gate. There is no pasteable pack to restock.
 - When `checking-merge-readiness` is also installed, a non-Worker option-1
-  reply continues into it only after babysit looks merge-ready, in a fresh
-  uninvolved context. A Worker option-1 reply does not dispatch it; the
-  Orchestrator starts that helper after looks-ready. This gate still does
-  not merge. If merge-readiness is absent after babysit on a non-Worker
-  run, name that once and stop.
+  reply continues into it only after babysit looks merge-ready or cautiously
+  looks ready, in a fresh uninvolved context. A Worker option-1 reply does
+  not dispatch it; the Orchestrator starts that helper after looks
+  merge-ready or cautiously looks ready. This gate still does not merge. If
+  merge-readiness is absent after babysit on a non-Worker run, name that
+  once and stop.

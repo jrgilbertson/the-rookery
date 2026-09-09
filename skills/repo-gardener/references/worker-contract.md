@@ -68,22 +68,26 @@ head.
 The checking skill then performs its identity reread, instantiates its
 evidence pack silently as pull-request-body input, and continues into
 `checking-pr-readiness` finishing. This run is a Worker. That finishing
-file branches on that fact. Do not restate babysit here. A push that
-refuses a moved remote stops the unit, preserves the local commit, and
-does not retry. Direct assessment of native facts is not a publish path.
+file branches on that fact. Do not restate babysit here. Immediately
+before the installed publisher pushes or opens a PR, pass the revision
+check point; a mismatch stops the unit, preserves the authored commit,
+and does not retry. A push that refuses a moved remote stops the unit,
+preserves the local commit, and does not retry. Direct assessment of
+native facts is not a publish path.
 
 Exclude edits to protected paths and to paths outside the assigned scope.
-Before a looks-ready report, a protected or out-of-scope path on the PR
-stops the unit and is named as owner attention.
+Before a looks merge-ready or cautiously looks ready report, a protected
+or out-of-scope path on the PR stops the unit and is named as owner
+attention.
 
 After babysit reports looks merge-ready or cautiously looks ready, the
 Orchestrator dispatches `checking-merge-readiness` to a fresh, read-only
 helper with no prior involvement, passing only the pull-request identity.
 That helper prints its brief and numbered merge menu and waits. Nobody in
 the run picks option 1. If babysit is skipped, missing, blocked,
-budget-stopped, needs-human, or anything other than looks merge-ready,
-stop. Do not dispatch merge-readiness. Name the residual as owner
-attention. Babysit runs on the Worker terminal, not inside the scheduled
+budget-stopped, needs-human, or anything other than looks merge-ready or
+cautiously looks ready, stop. Do not dispatch merge-readiness. Name the
+residual as owner attention. Babysit runs on the Worker terminal, not inside the scheduled
 Orchestrator session. While babysit owns the head, the Orchestrator does
 not forward Worker-owned gaps for that PR. Babysit's residuals when it
 stops are that gap list.

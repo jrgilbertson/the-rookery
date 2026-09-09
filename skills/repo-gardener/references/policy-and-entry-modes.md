@@ -14,7 +14,7 @@ file at that revision, stops declared execution and any dependent mutation.
 Mid-run, re-read the file from the refreshed default branch only to detect
 that its revision changed, at exactly these points: before each declared
 audit; before each Worker dispatch; before authorizing a Worker's reply 1;
-and before `run-closed`. Unchanged
+before each push; before each PR opening; and before `run-closed`. Unchanged
 grants are not re-litigated. A mismatch, or an unavailable or unknown
 refresh, stops that action and preserves authored work; a revision change
 stops all further declared audits, source mutation, push, and PR-open for

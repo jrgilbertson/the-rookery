@@ -204,6 +204,12 @@ unchanged. When availability is unknown, keep the default selection and omit
 availability from the response. Mention availability only when it changes a
 selected profile.
 
+### Subscription billing
+
+Every Route kickoff includes this execution constraint: use the assigned providers’ official CLIs with subscription authentication.
+Do not use API-key billing or switch to it as a fallback. If subscription access cannot be established or its usage limit is reached, report the blocker.
+The executing workflow verifies authentication; the router does not probe credentials.
+
 ### Effort escalation
 
 Use the table's listed effort by default. The router may suggest a higher
@@ -211,11 +217,11 @@ effort, but selects one only when the operator approves it.
 
 ## Model and effort recommendations
 
-**Last reviewed: 2026-09-02**
+**Last reviewed: 2026-09-09**
 
 | Role | Primary | Secondary | Tertiary |
 |---|---|---|---|
-| Lead | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-5.6-sol` / high | xAI / `grok-4.6` / high |
+| Lead | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-6-astra` / low | xAI / `grok-4.6` / high |
 | Executor | xAI / `grok-4.6` / high | Anthropic / `claude-opus-5` / medium | OpenAI / `gpt-5.6-terra` / high |
 | Reviewer | OpenAI / `gpt-5.6-sol` / high | Anthropic / `claude-opus-5` / medium | xAI / `grok-4.6` / high |
 | Critic | OpenAI / `gpt-5.6-sol` / xhigh | Anthropic / `claude-opus-5` / medium | xAI / `grok-4.6` / high |
@@ -248,7 +254,7 @@ IDs as ordinary names, such as "Fable 5.1 at medium".
 
     **Copy/paste kickoff**
 
-    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the lead on [model] at [effort]. [Each other role with its model, effort, and count.] [Orchestration and placement sentences only when they differ from the default.] Treat [the supplied artifact or request] as the source of truth. [Supplied authority in one sentence, only when the operator supplied it.]
+    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the lead on [model] at [effort]. [Each other role with its model, effort, and count.] [Subscription billing constraint.] [Orchestration and placement sentences only when they differ from the default.] Treat [the supplied artifact or request] as the source of truth. [Supplied authority in one sentence, only when the operator supplied it.]
 
 The decision line never names a role; roles live in Setup. A single-owner
 Setup omits placement and orchestration when they are the default. The

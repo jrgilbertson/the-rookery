@@ -27,6 +27,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Route kickoffs now require official provider CLIs with subscription
+  authentication and report a blocker instead of using API-key billing.
+  Astra at low replaces Sol at high as the secondary Lead profile.
+
 - Routing templates now use square-bracket placeholders so Orca can open the
   routing contract in its rich Markdown editor.
 

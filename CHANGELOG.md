@@ -31,6 +31,7 @@ looked" surface. GitHub Releases mirror its entries.
   authentication and report a blocker instead of using API-key billing.
   Astra at low replaces Sol at high as the secondary Lead profile.
   Sol at medium replaces Terra at high as the tertiary Executor profile.
+  Astra at low replaces Sol at high as the secondary Design/taste profile.
 
 - Routing templates now use square-bracket placeholders so Orca can open the
   routing contract in its rich Markdown editor.

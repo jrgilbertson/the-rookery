@@ -45,12 +45,20 @@ tracker:
 # Five areas, each with an explicit mutation grant. A grant allows a Worker PR
 # only when the other live-file gates also pass. Read-only triage belongs to
 # issues-and-feedback and needs no separate grant.
+#
+# audit_commands is optional and only legal on the three areas below. Each
+# item is one process argv: executable first, then its arguments. `npm run`
+# only launches a package.json script; the scan is the script name that
+# follows (knip, audit:python), not `npm` or `run`. Empty means none. Setup
+# does not copy these illustrations into the live file.
 areas:
   # Package/version, manifest consistency, and dependency-update PR repairs.
+  # Illustration, not a grant: ["cargo", "audit"] or ["npm", "run", "audit:python"]
   dependency-maintenance:
     mutation: false
     audit_commands: []
   # Code, tests, builds, tooling, and static/security checks.
+  # Illustration, not a grant: ["npm", "run", "knip"]
   engineering-health:
     mutation: false
     audit_commands: []
@@ -58,6 +66,7 @@ areas:
   issues-and-feedback:
     mutation: false
   # Documentation or release-note preparation only. Not a release.
+  # Illustration, not a grant: ["npm", "run", "validate:doc-links"]
   documentation:
     mutation: false
     audit_commands: []

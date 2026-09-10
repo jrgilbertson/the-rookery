@@ -27,6 +27,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Repo Gardener policy docs now show audit-command argv as one process per
+  item, with the actual scan named (knip, cargo audit, documentation-link
+  checks) so `npm run` is visible as the launcher, not the example.
+
 - Route kickoffs now require official provider CLIs with subscription
   authentication and report a blocker instead of using API-key billing.
   Astra at low replaces Sol at high as the secondary Lead profile.

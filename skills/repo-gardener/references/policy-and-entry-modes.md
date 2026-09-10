@@ -155,7 +155,18 @@ claim. Scout helpers and setup execute no declared audits.
 
 An `audit_commands` entry authorizes only its normalized argv in its owning
 eligible area. The protected file may contain at most ten entries across all
-eligible areas. As bounded defense-in-depth, structural validation rejects
+eligible areas. Each item is one process, not a list of tool names. The first
+token is the executable already on `PATH`. Later tokens are its arguments.
+`npm` then `run` then a script name launches a `package.json` script; the
+scan is that script, such as `knip` or `audit:python`, not `npm` or `run`.
+These shapes are illustrations, not grants and not a catalog to copy:
+
+```yaml
+audit_commands:
+  - ["npm", "run", "knip"] # unused JS/TS (knip)
+  - ["cargo", "audit"] # Rust crate advisories
+  - ["npm", "run", "validate:doc-links"] # broken documentation links
+``` As bounded defense-in-depth, structural validation rejects
 shell operator, interpolation, and redirection-shaped tokens; the managed run
 still passes every accepted token literally and never constructs a shell
 command. Validation does not parse arbitrary executable or option grammars and

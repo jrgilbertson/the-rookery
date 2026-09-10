@@ -108,9 +108,7 @@ It stops the unit on a `status: blocked` return or a plan that is not
 `artifact_readiness: implementation-ready` with `execution: code`. It
 invokes `ce-work mode:return-to-caller <plan-path>` and stops the unit
 if the return is not `status: complete` with verification evidence.
-Before readiness, it moves the plan file ce-plan wrote into the per-run
-directory outside the repository so the plan never counts as a changed
-path. It invokes `ce-simplify-code` unless the diff is docs-only or
+It invokes `ce-simplify-code` unless the diff is docs-only or
 under ten lines. It invokes `ce-code-review mode:agent`, applies each
 finding whose fix stays inside the allowed files, lists the rest for
 the report, and commits. It invokes `ce-test-browser mode:pipeline`.

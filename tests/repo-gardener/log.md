@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-10 | working tree | plan file stays where ce-plan writes it | not run | The skill no longer moves the plan file; the repository's own ignore rules decide what ships, as AGENTS.md working-artifact policy already says. No fresh-context grade is claimed.
+
 - 2026-09-10 | working tree | Executor front half fits the installed skills | not run | ce-debug narrowed to diagnosis with no push, ce-plan gets directives not settled decisions, the plan file moves out of the worktree before readiness, case cap raised to 4. No fresh-context grade is claimed.
 
 - 2026-09-10 | working tree | Executors run the lfg front half | not run | ce-debug when the cause is open, ce-plan, ce-work return-to-caller, simplify, review, ce-test-browser, then checking-pr-readiness. Case executor-readiness-loop gains Executor D. No fresh-context grade is claimed.

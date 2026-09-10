@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-10 | working tree | hard-denies case drops the scope.exclude mention | not run | The policy no longer has scope.exclude; the case prompt names only scope.include and protected_paths. No fresh-context grade is claimed.
+
 - 2026-09-10 | working tree | simplicity trims after review | not run | scope.exclude removed in favor of protected_paths, post-verdict rework round removed, Census concept and two trigger rows retired, report case gains areas and gaps. No fresh-context grade is claimed.
 
 - 2026-09-10 | working tree | rewrite: cases replaced for the one-file skill | not run | Twenty-four managed-run cases removed; five cases now pin hard denies, the readiness loop, scope and overlap, sense-only runs, and the report. No fresh-context grade is claimed.

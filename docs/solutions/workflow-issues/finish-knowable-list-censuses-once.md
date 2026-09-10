@@ -40,8 +40,9 @@ coverage accurately, not to enumerate every backlog before useful work.
 
 ## Reusable guidance
 
-Repo Gardener no longer runs censuses or tracker reads; its Sense
-section reads each source with what the host can reach and names gaps.
+Repo Gardener no longer runs censuses or Gardening Tracker record reads;
+its Sense section reads each source with what the host can reach and
+names gaps.
 The lesson below applies to any skill that shares paginated provider
 reads.
 A Census describes one stated query and window. Record its filters, returned

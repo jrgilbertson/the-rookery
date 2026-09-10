@@ -250,14 +250,6 @@ a fresh uninvolved Reviewer for merge readiness. Scouts and Reviewers
 do not own a pull request. One Executor ships at most one pull
 request. Merge remains a later human step.
 
-### Census
-
-A cheap inventory for a stated source query and window, such as filtered
-issues, pull requests, or alerts. Its filters, pagination limits, and inspected
-coverage bound the claim; a complete filtered query does not establish backlog
-exhaustion. Census totals stay separate from body reads and qualified
-candidates. Areas reuse shared source results.
-
 ### Gardening Tracker
 
 The optional GitHub issue (`report_issue`) that receives one plain report

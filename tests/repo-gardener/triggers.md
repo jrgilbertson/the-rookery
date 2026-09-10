@@ -16,7 +16,7 @@ maintenance, CI, or issues do not activate it.
 | Set up repo-gardener on this repository | Names the skill for first-use. |
 | Continue last night's repo-gardener run and post its report | Names the skill for recovery. |
 | Why did last night's repo-gardener run skip an Executor PR? | Names the skill for interpreting a run. |
-| Check product-data trust as part of this repo-gardener run | Names the skill; measurement stays in-run. |
+| Run repo-gardener now and post the report to issue 3521 | Names the skill with a report target. |
 
 ## Near misses: should not trigger
 
@@ -24,7 +24,7 @@ maintenance, CI, or issues do not activate it.
 | --- | --- |
 | Run tonight's repository gardening automation | Topic match; no skill name. |
 | Let the nightly gardener open unmerged PRs if current evidence warrants it | Topic match; no skill name. |
-| Do the nine-lane repository-health pass and deepen the strongest current findings | Topic match; no skill name. |
+| Do a repository-health pass and deepen the strongest findings | Topic match; no skill name. |
 | Reconcile the tracker and inspect all maintenance lanes | Topic match; no skill name. |
 | Implement issue 123 in a new worktree | General implementation workflow. |
 | Review this branch for bugs | Code review. |

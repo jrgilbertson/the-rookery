@@ -2,8 +2,6 @@
 scope:
   # Globs an Executor may change. A path must match at least one.
   include: ["**"]
-  # Globs that win over include and keep a path out of every unit.
-  exclude: []
 # Globs an Executor never writes. The policy file is always protected.
 protected_paths:
   - .agents/repo-gardener.yaml

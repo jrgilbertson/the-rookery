@@ -9,8 +9,8 @@ Work only from these synthetic facts. Do not call tools. Treat each
 unit decision as independent except where overlap is named.
 
 > Run repo-gardener on this repository. Policy is valid.
-> `scope.include` is `**`. `scope.exclude` is `vendor/**`.
-> `protected_paths` includes `.agents/repo-gardener.yaml`.
+> `scope.include` is `**`.
+> `protected_paths` includes `.agents/repo-gardener.yaml` and `vendor/**`.
 > `maximum_workers` is 4. `verify` lists `["npm", "test"]`.
 >
 > Open PR 3596 changes `CHANGELOG.md` and `package.json`. It is not a
@@ -35,10 +35,10 @@ unit decision as independent except where overlap is named.
 
 - [ ] U1 is dispatched. Changelog overlap with open PR 3596 never
       blocks it.
-- [ ] U2 is not dispatched, because it changes the same source file
+- [ ] U2 is not dispatched, because it changes the same file
       `package.json` as an open PR. U2 is a recommendation.
-- [ ] U3 is out of scope because `vendor/**` exclude wins, and U3 is a
-      recommendation.
+- [ ] U3 touches the protected path `vendor/**`, so U3 is a
+      recommendation, not a unit.
 - [ ] Only one of U4 and U5 is dispatched, or they are merged into one
       unit. Both are not dispatched as overlapping units.
 - [ ] `CHANGELOG.md` is assigned to at most one Executor.

@@ -23,8 +23,8 @@ run that authors nothing but reports as a complete run.
 
 Read `.agents/repo-gardener.yaml` on the refreshed default branch once at
 the start. Treat that file as the only durable policy. Read `scope.include`
-and `scope.exclude` as globs, with exclude winning. Read `protected_paths`
-as globs an Executor never writes. Treat the policy file itself as always
+as globs a unit's files must match. Read `protected_paths` as globs an
+Executor never writes. Treat the policy file itself as always
 protected. Read `maximum_workers` as the parallel Executor cap, with 0
 meaning sense and report only. Read `scans` as a list of argv lists, each
 one process run from the repository root. Read `verify` as the argv lists
@@ -70,10 +70,10 @@ each area even when the area is empty.
 
 Pick up to `maximum_workers` units. Choose units that are small, testable,
 and independently deliverable. Prefer issues that already name the files
-to change. Keep every file in a unit inside `scope.include`, outside
-`scope.exclude`, and outside `protected_paths`. Give every unit disjoint
-files. Assign a shared convention file such as a changelog or lockfile to
-at most one unit. Select zero units when `maximum_workers` is 0.
+to change. Keep every file in a unit inside `scope.include` and outside
+`protected_paths`. Give every unit disjoint files. Assign a shared
+convention file such as a changelog or lockfile to at most one unit.
+Select zero units when `maximum_workers` is 0.
 Select zero units when `verify` is empty, and say so in the report.
 
 Block a unit with an open PR only when both change the same file
@@ -133,13 +133,10 @@ For each PR whose Executor reported a ready babysit result, the Lead
 dispatches `checking-merge-readiness` to a fresh, read-only Reviewer
 with no prior involvement. Pass only the pull-request identity. Put its
 recommendation (merge, debug, or do not merge) and risk drivers into the
-report. Send a debug recommendation with Executor-owned findings back to
-that Executor once. The Executor fixes them inside its allowed files,
-commits and pushes to its PR branch, and reruns
-`ce-babysit-pr mode:pipeline`. On a ready result, dispatch one more
-fresh Reviewer and report its verdict without another round. Babysit is
-a local optimization; merge readiness is the global verdict. Do not pick
-any option on the merge-readiness menu, including Proceed to merge.
+report. A debug or do-not-merge verdict goes into the report with its
+findings; the owner decides in the morning. Babysit is a local
+optimization; merge readiness is the global verdict. Do not pick any
+option on the merge-readiness menu, including Proceed to merge.
 
 ## Report
 

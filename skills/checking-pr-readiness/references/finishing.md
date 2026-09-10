@@ -11,10 +11,6 @@ an assigned unit. Installing gardener does not make this an Executor.
 
 ## Publisher
 
-If this run is an Executor, confirm immediately before invoking the publisher
-that every committed path is inside the brief's allowed files and touches no
-protected path. A violation stops without push or PR creation.
-
 If this run is an Executor, invoke the installed PR-opening skill once with
 `mode:pipeline`. Otherwise invoke it once without pipeline. WORKFLOWS.md's
 example is `ce-commit-push-pr`.

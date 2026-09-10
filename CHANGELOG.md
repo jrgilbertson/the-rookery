@@ -61,9 +61,10 @@ looked" surface. GitHub Releases mirror its entries.
   file branches on that fact. An Executor uses `mode:pipeline` on the
   publisher, then `ce-babysit-pr mode:pipeline`. A non-Executor uses the
   default publisher. Title and body follow Compound Engineering. After
-  babysit looks merge-ready or cautiously looks ready, a non-Executor run
-  starts `checking-merge-readiness` in a fresh Reviewer that owns the merge
-  menu wait; an Executor reports to the Lead, which starts that Reviewer.
+  babysit looks merge-ready, cautiously looks ready, or pipeline `success`,
+  a non-Executor run starts `checking-merge-readiness` in a fresh Reviewer
+  that owns the merge menu wait; an Executor reports to the Lead, which
+  starts that Reviewer.
   Approve 1 does not merge. Before publishing, an Executor confirms every
   committed path is inside its brief's allowed files and outside
   protected paths. There is no gardener-only publisher.

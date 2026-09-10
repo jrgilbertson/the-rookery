@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-10 | working tree | finishing keeps only mode:pipeline and report-to-Lead for Executors | not run | The allowed-files check lives in the gardener Lead's reply-1 authorization; run-assessment-checks.py passes.
+
 - 2026-09-10 | working tree | fixture pins follow the rewritten gardener skill | pass | run-assessment-checks.py reads only skills/repo-gardener/SKILL.md and finishing.md; the worker-contract source is gone.
 
 - 2026-09-10 | f878892 (working tree) | fixture publisher uses Executor | not run | `fixtures/pr-publisher/SKILL.md` now continues when the conversation is not a gardener Executor.

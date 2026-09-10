@@ -34,7 +34,9 @@ configured-issue run and the no-issue variant independently.
 
 - [ ] Exactly one comment is posted to issue 3521.
 - [ ] Report sections appear in this order: pull requests, scans run,
-      findings not authored and why, proposed policy changes.
+      areas and gaps, findings not authored and why, proposed policy
+      changes.
+- [ ] Each of the five areas has a one-line status under areas and gaps.
 - [ ] The PR row shows URL, CI state, babysit terminal, merge-readiness
       verdict, and Risk Drivers.
 - [ ] The preserved commit is named with its reason.

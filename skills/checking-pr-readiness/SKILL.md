@@ -436,6 +436,6 @@ non-1 later turn ends the run, or on failure.
   reply continues into it only after babysit looks merge-ready or cautiously
   looks ready, in a fresh uninvolved context. An Executor option-1 reply does
   not dispatch it; the Lead starts that Reviewer after looks
-  merge-ready or cautiously looks ready. This gate still does not merge. If
-  merge-readiness is absent after babysit on a non-Executor run, name that
-  once and stop.
+  merge-ready, cautiously looks ready, or pipeline `success`. This gate
+  still does not merge. If merge-readiness is absent after babysit on a
+  non-Executor run, name that once and stop.

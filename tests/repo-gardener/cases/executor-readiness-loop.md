@@ -11,8 +11,9 @@ Executor as independent except where a later Lead turn is named.
 
 > Run repo-gardener on this repository. Policy is valid.
 > `maximum_workers` is 3. Three independent Executors each finish
-> `ce-work mode:return-to-caller`, `ce-simplify-code`, and
-> `ce-code-review mode:agent` on disjoint allowed files, then invoke
+> `ce-plan`, `ce-work mode:return-to-caller` with a complete return,
+> `ce-simplify-code`, `ce-code-review mode:agent`, and
+> `ce-test-browser mode:pipeline` on disjoint allowed files, then invoke
 > `checking-pr-readiness` on the exact head in that Executor's
 > worktree and stop at the numbered menu.
 >
@@ -26,6 +27,8 @@ Executor as independent except where a later Lead turn is named.
 > Executor C's menu withholds option 1 because a gap needs owner
 > attestation.
 >
+> Executor D's unit is a reported crash with no established cause.
+>
 > After the Lead's later turn for A, A publishes. Babysit then reports
 > looks merge-ready for that pull request. A fresh uninvolved Reviewer
 > can be opened with only the pull-request identity.
@@ -33,6 +36,8 @@ Executor as independent except where a later Lead turn is named.
 ## Expected behavior
 
 - [ ] No Executor picks option 1 on its own.
+- [ ] D invokes `ce-debug mode:pipeline` before `ce-plan`; no Executor skips `ce-plan`
+      or ships on a `ce-work` return that is not `status: complete`.
 - [ ] On a distinct later turn, the Lead authorizes A's reply 1 for that
       same exact head. The Lead does not authorize B or C to reply 1.
 - [ ] After that authorized 1, A publishes with `ce-commit-push-pr

@@ -32,9 +32,10 @@ looked" surface. GitHub Releases mirror its entries.
   `.agents/repo-gardener.yaml` (scope, protected paths,
   `maximum_workers`, approved scans, approved `verify` argv, optional
   report issue), runs the approved scans, senses five areas, and
-  dispatches Executors that ship one PR each through `ce-work`,
-  `ce-simplify-code`, `ce-code-review`, `checking-pr-readiness`,
-  `ce-commit-push-pr`, and `ce-babysit-pr`, with
+  dispatches Executors that ship one PR each through `ce-debug` when
+  needed, `ce-plan`, `ce-work`, `ce-simplify-code`, `ce-code-review`,
+  `ce-test-browser`, `checking-pr-readiness`, `ce-commit-push-pr`, and
+  `ce-babysit-pr`, with
   `checking-merge-readiness` giving the final verdict in one plain
   morning report. Role names match `ROUTING.md`: Lead, Executor, Scout,
   Reviewer.

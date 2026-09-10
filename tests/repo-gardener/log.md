@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-10 | working tree | Executors run the lfg front half | not run | ce-debug when the cause is open, ce-plan, ce-work return-to-caller, simplify, review, ce-test-browser, then checking-pr-readiness. Case executor-readiness-loop gains Executor D. No fresh-context grade is claimed.
+
 - 2026-09-10 | working tree | hard-denies case drops the scope.exclude mention | not run | The policy no longer has scope.exclude; the case prompt names only scope.include and protected_paths. No fresh-context grade is claimed.
 
 - 2026-09-10 | working tree | simplicity trims after review | not run | scope.exclude removed in favor of protected_paths, post-verdict rework round removed, Census concept and two trigger rows retired, report case gains areas and gaps. No fresh-context grade is claimed.

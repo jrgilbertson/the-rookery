@@ -92,15 +92,22 @@ branch `garden/<unit>` from the refreshed default branch: an Orca child
 worktree when available, otherwise the harness's worktree-isolated
 subagent. The Lead writes a brief as a Markdown file in a per-run
 directory outside the repository. The brief names the unit's goal, the
-allowed files, the protected paths, the policy's `verify` lists as the
-exact caller-approved verification command argv list, and the rules in
-this section.
+Lead's settled decisions for the unit, the allowed files, the protected
+paths, the policy's `verify` lists as the exact caller-approved
+verification command argv list, and the rules in this section.
 
-In its worktree, the Executor invokes `ce-work mode:return-to-caller
-<brief-path>`. It invokes `ce-simplify-code` unless the diff is
-docs-only or under ten lines. It invokes `ce-code-review mode:agent`,
-applies each finding whose fix stays inside the allowed files, lists the
-rest for the report, and commits.
+In its worktree, the Executor follows the front half of the `lfg`
+pipeline. When the unit is broken behavior whose cause is not yet
+established, it invokes `ce-debug mode:pipeline` first and carries the diagnosis into
+the plan. It invokes `ce-plan` with the brief and the Lead's settled
+decisions so those choices are not re-asked, and stops the unit if the
+plan is not implementation-ready code. It invokes `ce-work
+mode:return-to-caller <plan-path>` and stops the unit if the return is
+not `status: complete` with verification evidence. It invokes
+`ce-simplify-code` unless the diff is docs-only or under ten lines. It
+invokes `ce-code-review mode:agent`, applies each finding whose fix
+stays inside the allowed files, lists the rest for the report, and
+commits. It invokes `ce-test-browser mode:pipeline`.
 Every unattended Executor invokes `checking-pr-readiness` normally on
 the exact head in its worktree and stops at its numbered menu.
 
@@ -122,7 +129,9 @@ file follow-up work.
 
 After reply 1, the Executor continues into checking-pr-readiness
 finishing, which takes its Executor branch: `ce-commit-push-pr
-mode:pipeline`, then `ce-babysit-pr mode:pipeline`. When babysit returns
+mode:pipeline`, then `ce-babysit-pr mode:pipeline`. Babysit repairs CI
+through `ce-debug` and answers review comments through
+`ce-resolve-pr-feedback` on its own. When babysit returns
 success, looks merge-ready, or cautiously looks ready, the Executor
 reports the PR URL and that result to the Lead and stops. On any other
 result it reports that result and stops.

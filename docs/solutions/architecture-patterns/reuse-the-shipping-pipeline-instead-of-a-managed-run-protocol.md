@@ -47,14 +47,15 @@ file of about 1,300 words plus a policy template:
   protected paths, the Executor cap, approved scan argv, approved verify
   argv, and an optional report issue. A missing file means a sense-only run
   whose report proposes a file; it does not mean a no-op.
-- Executors run `ce-work mode:return-to-caller <brief-path>`,
-  `ce-simplify-code`, `ce-code-review mode:agent`, then
-  `checking-pr-readiness`, and stop at its menu. The Lead answers option 1
-  on a later turn. Finishing publishes with `ce-commit-push-pr
-  mode:pipeline` and watches with `ce-babysit-pr mode:pipeline`. The Lead
-  then dispatches `checking-merge-readiness` to a fresh Reviewer for the
-  verdict. Babysit is a local optimization; merge readiness is the global
-  one.
+- Executors run the `lfg` front half: `ce-debug` when the cause is open,
+  `ce-plan` from the brief, `ce-work mode:return-to-caller <plan-path>`,
+  `ce-simplify-code`, `ce-code-review mode:agent`, `ce-test-browser
+  mode:pipeline`, then `checking-pr-readiness`, and stop at its menu. The
+  Lead answers option 1 on a later turn. Finishing publishes with
+  `ce-commit-push-pr mode:pipeline` and watches with `ce-babysit-pr
+  mode:pipeline`. The Lead then dispatches `checking-merge-readiness` to
+  a fresh Reviewer for the verdict. Babysit is a local optimization;
+  merge readiness is the global one.
 - An open pull request blocks a unit only when both change the same source
   file. Changelog and lockfile overlap is resolved at merge time.
 - Scans run with the host's command tool and a timeout. Output is captured

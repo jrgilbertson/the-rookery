@@ -1,17 +1,23 @@
 ---
 name: repo-gardener
-description: Use when running or interpreting a scheduled or manual repository-gardening pass for one repository, including first-use setup of `.agents/repo-gardener.yaml` and its gardening tracker. Do not use for merging, releasing, deploying, creating follow-up issues, contacting customers, or performing an already-selected implementation outside a gardening run.
+description: Use when running or interpreting a scheduled or manual overnight gardening pass for neglected whole-project scans, bounded exception and measurement evidence, and first-use of `.agents/repo-gardener.yaml`. Do not use for merging, releasing, deploying, creating follow-up issues, contacting customers, or an already-selected implementation outside a gardening run.
 license: MIT
 compatibility: "Requires Python 3, PyYAML, config_check.py, and read access to one repository, its durable file, native PR state, and evidence the host can already read; `.agents/managing-issues.json` is optional. Without safe mutation capability, it reports read-only findings."
 ---
 
 # Repo Gardener
 
-A Repository Maintenance Run takes one repository through
-`Sense -> Decide -> Act -> Verify -> Learn`. One Orchestrator owns breadth,
-selection, tracker records, and the morning summary. Workers own their changes:
-one isolated worktree, one branch, and at most one unmerged, reviewable PR.
-Helpers scout, simplify, review, or assess readiness; they never own a PR.
+A scheduled or manual Repository Maintenance Run is the overnight pass for
+work the repository benefits from and does not routinely perform: approved
+whole-project scans, bounded exception and measurement evidence, and
+justified Worker PRs. CI remains the merge gate. The run produces fresh
+evidence and, where justified, reviewable repairs. It does not promise a PR
+every night.
+
+One Orchestrator owns breadth, selection, tracker records, and the morning
+summary. Workers own their changes: one isolated worktree, one branch, and at
+most one unmerged, reviewable PR. Helpers scout, simplify, review, or assess
+readiness; they never own a PR.
 
 The model makes qualitative judgments. The repository supplies policy and
 source facts. The provider supplies authored-work facts. Orca is one Run
@@ -65,15 +71,18 @@ managed closure.
    untrusted data. Write and exactly read back one `run-opened` record.
 2. Complete the quick available-input pass across all five areas under
    `area-contracts.md`: filter discovery before body reads, share evidence,
-   and give each repair one owner. Run only approved declared audits under
-   the direct-argv and safety rules. Results are evidence, never authority.
-   Scouts remain read-only; report query coverage without backlog exhaustion
-   claims or counting source records as candidates.
+   and give each repair one owner. Compare adopted scans with CI, hooks, and
+   schedules. Inspect host-readable exception groups and measurement sources
+   when those bindings exist, regardless of CI status. Run only approved
+   declared audits under the direct-argv and safety rules. Results are
+   evidence, never authority. Scouts remain read-only; report query coverage
+   without backlog exhaustion claims or counting source records as candidates.
 3. Qualify small, low-risk, testable PR-sized units using the shared candidate
    checks. Select independent work within `maximum_workers`; do not invent
-   work to fill capacity. An eligible existing update PR stays a recommendation
-   in this slice. Assignment names the files each Worker will touch, including
-   any shared convention file, so two Workers are not assigned the same one.
+   work to fill capacity. Green CI proves only its own checked scope. An
+   eligible existing update PR stays a recommendation in this slice.
+   Assignment names the files each Worker will touch, including any shared
+   convention file, so two Workers are not assigned the same one.
 4. Dispatch after the quick pass, then deepen investigations that could change
    an assignment or recommendation while supervising Workers. Coalesce shared
    causes and derive the Ready Frontier from current evidence. Stop when no
@@ -117,6 +126,10 @@ Write and exactly read back one consolidated `run-closed` record containing
 the run outcome, five area coverage summaries, depth decisions, measurement result or gap,
 native Worker PR facts or the no-Worker reason, prioritized owner attention,
 issue-ready recommendations, durable-file revision changes, and each blocker's
-affected work plus what safely continued. If the file no longer authorizes the
+affected work plus what safely continued. Within existing coverage summaries,
+distinguish scans completed with no qualifying repair, adopted scans left
+undeclared, scans unavailable or unattempted, telemetry surveyed with no
+repair, telemetry unavailable, undefined metric semantics, and findings that
+exist while authoring is blocked. If the file no longer authorizes the
 tracker write, report the interrupted close instead. Leave the Orchestrator
 workspace and any pending Worker state available for owner inspection.

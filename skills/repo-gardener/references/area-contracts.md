@@ -23,9 +23,14 @@ Workers own repairs; they do not perform the Orchestrator's breadth pass.
 Complete a quick pass across all five areas using available inputs before
 first dispatch. Share source results and body reads across areas; investigate
 a common cause once. Use native repository and provider filters before deep
-reads. This pass establishes priorities and conflicts, not an obligation to
-finish every audit, read every body, or enumerate the entire backlog.
-An unavailable input limits only dependent coverage; continue independent work.
+reads. Inspect repository evidence for adopted maintenance scans and compare
+their scope with CI, hooks, and schedules. When host-readable exception or
+measurement sources exist and bind to repository facts, include them in this
+pass regardless of CI status. This pass establishes priorities and conflicts,
+not an obligation to finish every undeclared investigation, read every body,
+or enumerate the entire backlog. An unavailable input limits only dependent
+coverage; continue independent work. Attempt each approved declared audit
+under `reconciliation.md`, or record why it could not run.
 
 Resolve the issue source below, then start implementation discovery with open,
 ready work at mapped estimates 1–2. Apply supported repository/project/team,
@@ -125,15 +130,23 @@ ambiguous binding stops only that source and names the facts consulted; never
 substitute development data for production. Use bounded identities and
 aggregates with source identity and query window, excluding people, raw
 payloads, and free-text errors. Correlate current occurrences with repository
-revisions and a reproducible source cause. Verification must preserve the
-signal. Empty results mean no returned events in that query/window, not zero
-product activity. The durable file neither grants nor withholds these reads.
+revisions and a reproducible source cause. Expected instrumentation can fail
+while the customer flow succeeds: a missing canonical event, duplicate
+capture, or schema mismatch is a runtime finding, not a requirement that the
+service crash. Verification must preserve the signal; do not suppress errors
+to make dashboards look healthier. Empty results mean no returned events in
+that query/window, not zero product activity. The durable file neither grants
+nor withholds these reads. No `audit_commands` on this area does not mean no
+provider reads.
 
 **Engineering health:** Read relevant current CI/check failures, repository
 maintenance, test-health, code-health, QA, and static/security evidence, plus
-bounded source inspection where it can reveal a useful defect. Bind findings
-to exact revisions and source locations, reproducibility, measurable impact,
-risk surface, expected behavior, and correction verification. Distinguish
+bounded source inspection where it can reveal a useful defect. Green CI
+establishes only its own checked scope. Bind findings to exact revisions and
+source locations, reproducibility, measurable impact, risk surface, expected
+behavior, and correction verification. A declared unused-export or
+whole-project code-health finding may qualify without a red merge gate when
+those checks hold; a score increase alone is not a useful repair. Distinguish
 repository defects from transient provider failures, and retain flaky or
 partial evidence's uncertainty. Read-only inspection may include protected or
 non-mutable code; scope gates constrain repairs. Exclude unrelated refactors
@@ -141,9 +154,13 @@ and unverified external measurements. A repairable existing PR stays a recommend
 dependency update repairs follow the precedence above.
 
 **Issues and feedback:** Apply the shared issue authority and qualification
-rules to remaining product requests. For recommend-only triage, require stable
+rules to remaining product requests. A currently endorsed, bounded product
+request can become a Worker PR under the live mutation gates. Triage and
+unapproved growth hypotheses stay recommend-only: require stable
 identity/revision, bounded redacted evidence, deduplication against native work,
-expected impact, confidence, and verified repository relation. Never persist
+expected impact, confidence, and verified repository relation. A verified
+exception or instrumentation defect keeps its own evidence and remedy owner;
+do not reclassify it to evade issue endorsement. Never persist
 raw customer identities or unrestricted free text, create issues, or contact
 customers. Return issue-ready proposals for the owner outside the run.
 
@@ -158,8 +175,11 @@ reuse an applicable completed owning-area result as described in
 
 Execution supplements rather than replaces available source reads. An eligible area with no declaration still inspects
 its available evidence. It names missing declared-audit coverage only when repository evidence
-establishes an adopted or configured audit; the mere absence of a declaration
-is not a gap.
+establishes an adopted or configured audit with relevant uncovered scope,
+and proposes exact argv when supportable; do not execute that argv without
+live-file authority. The mere absence of a declaration is not a gap. An
+on-demand script or staged-only hook is not the same coverage as a
+whole-project overnight scan.
 
 Map each completed or refused declaration into the owning area's coverage summary, without adding a command-result or qualification schema:
 

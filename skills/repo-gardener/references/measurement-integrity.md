@@ -16,11 +16,17 @@ mechanically establishes otherwise.
 
 For each metric inspected, require an explicit purpose, grain, entity identity,
 time window and timezone, exclusions, durable authority, reporting
-representation, and late-arrival or freshness rule. Run reconciliation only
-when these are sufficient for a like-for-like comparison. Otherwise return
+representation, and late-arrival or freshness rule. Run like-for-like
+reconciliation only when these are sufficient. Otherwise return
 `metric contract missing` with the exact missing fields and an issue-ready
 recommendation; do not guess a denominator, cohort, conversion, retention,
-revenue, or cost definition.
+revenue, or cost definition. A missing conversion-rate contract stops that
+comparison and any product conclusion that depends on it. Continue
+independently supported schema, delivery, privacy, or duplication checks.
+Route a proven instrumentation defect to qualification. Route an undefined
+metric purpose, ambiguous consent expectation, or proposed new tracking
+purpose to owner attention. Expected privacy exclusions are not missing-event
+bugs.
 
 ## Run the bounded preflight
 

@@ -55,7 +55,9 @@ area.
       file or skill.
 - [ ] Uses PostHog behavior only after the relevant measurement slice passes
       integrity checks; the failed activation reconciliation becomes the
-      finding instead of supporting the product hypothesis.
+      finding instead of supporting the product hypothesis. A missing
+      repeat-rehearsal metric contract stops only that comparison; it does
+      not stop independently supported schema or delivery checks.
 - [ ] Consumes `audit:event-schema:day-1` from its owning area at most once,
       never invokes or reruns a validation command or creates a additional-area
       result, and does not treat the zero exit alone as proof of data trust.

@@ -157,3 +157,7 @@ Worker results. A structurally verified close proves tracker consistency, not
 a successful repair or exhausted repository. A `surveyed` area describes only
 its stated evidence; unread backlog remains unassessed. Declared-audit results
 retain their required disposition and evidence details from `area-contracts.md`.
+Name, when they apply: scans completed with no qualifying repair, adopted
+scans left undeclared, scans unavailable or unattempted, telemetry surveyed
+with no repair, telemetry unavailable, undefined metric semantics, and
+findings that exist while authoring is blocked.

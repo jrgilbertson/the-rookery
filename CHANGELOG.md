@@ -27,6 +27,16 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Repo Gardener now states the overnight job in the skill: neglected
+  whole-project scans and bounded exception or measurement evidence, with
+  CI remaining the merge gate. First-use recommends evidenced deferred
+  scans instead of treating empty audit lists as a useful default, and
+  sensing distinguishes staged hooks from full-project coverage.
+
+- Runtime reliability and measurement integrity now treat missing expected
+  instrumentation on a successful customer flow as a repair path, while
+  missing metric contracts stop only the dependent comparison.
+
 - Repo Gardener policy docs now show audit-command argv as one process per
   item, with the actual scan named (knip, cargo audit, documentation-link
   checks) so `npm run` is visible as the launcher, not the example.

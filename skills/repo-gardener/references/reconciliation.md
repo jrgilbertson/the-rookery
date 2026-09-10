@@ -51,7 +51,10 @@ does not claim managed closure.
 ## Declared audits and sensing
 
 For each eligible area, run only its normalized `audit_commands`, in policy
-order, using the approved direct argv. Check capability, protected policy,
+order, using the approved direct argv. The quick-pass limit on undeclared
+investigation does not waive those declarations: attempt each one or record
+why it could not run or remained unattempted. Interpret every result
+regardless of exit status. Check capability, protected policy,
 subject revision, and clean worktree immediately before the command. Keep
 raw stdout and stderr in bounded private capture. When files are needed, use a
 fresh canonical non-symlink per-run temporary directory outside the repository

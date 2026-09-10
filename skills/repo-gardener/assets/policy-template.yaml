@@ -49,8 +49,11 @@ tracker:
 # audit_commands is optional and only legal on the three areas below. Each
 # item is one process argv: executable first, then its arguments. `npm run`
 # only launches a package.json script; the scan is the script name that
-# follows (knip, audit:python), not `npm` or `run`. Empty means none. Setup
-# does not copy these illustrations into the live file.
+# follows (knip, audit:python), not `npm` or `run`. Empty means none: this
+# starter grants no scans even when mutation and Worker capacity are later
+# enabled. Setup recommends evidenced neglected overnight scans in the
+# owner review and persists only approved argv. Illustrations are not a
+# catalog to copy.
 areas:
   # Package/version, manifest consistency, and dependency-update PR repairs.
   # Illustration, not a grant: ["cargo", "audit"] or ["npm", "run", "audit:python"]

@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-10 | working tree | fixture pins follow the rewritten gardener skill | not run | run-assessment-checks.py reads only skills/repo-gardener/SKILL.md and finishing.md; the worker-contract source is gone.
+
 - 2026-09-10 | f878892 (working tree) | fixture publisher uses Executor | not run | `fixtures/pr-publisher/SKILL.md` now continues when the conversation is not a gardener Executor.
 
 - 2026-09-10 | 31121ab (working tree) | finishing case and pin use Lead and Executor | not run | `option-one-finishing-continuation` and the assessment pin now match live finishing. Matched regrade not run this session.

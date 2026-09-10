@@ -27,6 +27,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Routing templates now use square-bracket placeholders so Orca can open the
+  routing contract in its rich Markdown editor.
+
 - CI tool installation now runs from a shell script, avoiding actionlint
   deadlocks when local pipe buffers cannot hold the inline bootstrap code.
 - After a `checking-pr-readiness` Approve, the option-1 reply follows

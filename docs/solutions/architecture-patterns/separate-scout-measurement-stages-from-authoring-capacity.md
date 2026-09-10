@@ -1,7 +1,7 @@
 ---
 title: Separate scout measurement stages from authoring capacity
 date: 2026-08-12
-last_updated: 2026-09-07
+last_updated: 2026-09-10
 category: architecture-patterns
 module: skills/repo-gardener/reconciliation
 problem_type: architecture_pattern
@@ -41,8 +41,8 @@ readback. It cannot prove that a candidate matters or a plan is good.
 The same category error appears in measurement and capacity accounting. Source
 records inspected, evidence-qualified candidates, and deduplicated
 repairs are different populations. Read-only sensing and depth
-are not authored work, so unrelated already-open PRs do not consume the Worker
-cap ([Decide whether to author](../../../skills/repo-gardener/references/reconciliation.md#decide-whether-to-author)).
+are not authored work, so unrelated already-open PRs do not consume the
+Executor cap ([Decide whether to author](../../../skills/repo-gardener/references/reconciliation.md#decide-whether-to-author)).
 
 Assign each kind of truth to the system that can own it: the model owns
 qualitative judgment, the live repository file owns mutation permission, the
@@ -59,7 +59,7 @@ Use filtered discovery and share evidence, assigning each repair one owner
 under [area-contracts.md](../../../skills/repo-gardener/references/area-contracts.md).
 Let the model compare qualified candidates without manufacturing work to
 consume capacity
-([Run the Orchestrator](../../../skills/repo-gardener/SKILL.md#run-the-orchestrator) and
+([Lead the run](../../../skills/repo-gardener/SKILL.md#lead-the-run) and
 [Declared audits and sensing](../../../skills/repo-gardener/references/reconciliation.md#declared-audits-and-sensing)).
 
 Depth is also a judgment, with no count. After breadth, deepen while further
@@ -77,8 +77,8 @@ zero activity
 
 Persist exactly two managed records for each run ID: one `run-opened` before
 sensing and one consolidated `run-closed` after supervision or an honest
-no-Worker close. Do not add managed manifest, area, decision, checker, or
-per-Worker comments
+no-Executor close. Do not add managed manifest, area, decision, checker, or
+per-Executor comments
 ([Tracker records](../../../skills/repo-gardener/references/tracker-records.md)).
 
 After closing, deterministic code may verify only structural facts: the two
@@ -98,7 +98,7 @@ two-comment check as a quality, safety, permission, or readiness verdict
 
 ### Reread live policy at mutation boundaries
 
-Worker authoring requires, on the opening file, exact
+Executor authoring requires, on the opening file, exact
 `repository.identity` match, every planned path inside the effective
 include/exclude scope, `maximum_workers` greater than zero, owning area
 `mutation: true`, and no protected path. The live gardener file that first-use
@@ -108,11 +108,11 @@ permission, scope mismatch, or a disallowed current overlap denies that unit
 
 At open, read the durable file from the refreshed default branch and record
 that revision. Mid-run, re-read it only to detect that it changed,
-immediately before each declared audit, Worker dispatch, push, PR creation,
+immediately before each declared audit, Executor dispatch, push, PR creation,
 and `run-closed`. A revision change stops further source mutation, push, and
-PR-open for every Worker. In contrast, an unchanged-policy authoring or
-overlap denial remains local to that Worker's dependents. If the file still
-names the tracker, the Orchestrator still writes the closed comment
+PR-open for every Executor. In contrast, an unchanged-policy authoring or
+overlap denial remains local to that Executor's dependents. If the file still
+names the tracker, the Lead still writes the closed comment
 ([Revision check points](../../../skills/repo-gardener/references/policy-and-entry-modes.md#revision-check-points) and
 [Decide whether to author](../../../skills/repo-gardener/references/reconciliation.md#decide-whether-to-author)).
 
@@ -123,37 +123,37 @@ Never fall back to the bundled starter. It is fail-closed:
 
 ### Let native artifacts own authored work
 
-Create a persistent Worker worktree only for work intended to become one PR.
-The Worker owns planning, implementation, simplification, review, repository
+Create a persistent Executor worktree only for work intended to become one PR.
+The Executor owns planning, implementation, simplification, review, repository
 verification, its coherent commit, and its branch through at most one unmerged
-PR. Every unattended Worker invokes `checking-pr-readiness` on its exact head,
-then stops after its menu reply. On a distinct later turn, the Orchestrator
-authorizes the Worker to reply 1 only when Approve was offered and recommended
-for that exact head. The checking skill then performs its identity reread
-before the evidence enters the publication path. Named Worker-owned gaps from
-that brief all go back to the same Worker; owner-needed briefs stop without a
-PR. An existing same-repository update PR with a Worker-owned gap stays a
-recommendation; this slice does not dispatch it. Assignment names the files
-each Worker will touch, including any shared convention file, so two Workers
-are not assigned the same one. The Orchestrator does not run a
-publication-time overlap inventory
+PR. Every unattended Executor invokes `checking-pr-readiness` on its exact
+head, then stops after its menu reply. On a distinct later turn, the Lead
+authorizes the Executor to reply 1 only when Approve was offered and
+recommended for that exact head. The checking skill then performs its
+identity reread before the evidence enters the publication path. Named
+Executor-owned gaps from that brief all go back to the same Executor;
+owner-needed briefs stop without a PR. An existing same-repository update
+PR with an Executor-owned gap stays a recommendation; this slice does not
+dispatch it. Assignment names the files each Executor will touch,
+including any shared convention file, so two Executors are not assigned
+the same one. The Lead does not run a publication-time overlap inventory
 ([worker-contract.md](../../../skills/repo-gardener/references/worker-contract.md)).
 
-The Orchestrator owns breadth, depth, selection, tracker writes, supervision,
+The Lead owns breadth, depth, selection, tracker writes, supervision,
 and the morning report. After PR creation, it reports native PR, check, and
 review facts; required pending work makes closure partial. After looks
-merge-ready, the Orchestrator dispatches `checking-merge-readiness` to a
+merge-ready, the Lead dispatches `checking-merge-readiness` to a
 fresh uninvolved helper and never selects Proceed to merge
 (`skills/repo-gardener/references/reconciliation.md`,
 `skills/repo-gardener/references/tracker-records.md`).
 
 Freshly read the native repository, PR number, branch, head SHA, state,
-checks, and review status before reporting the Worker. Do not mirror that
+checks, and review status before reporting the Executor. Do not mirror that
 lifecycle into a custom ownership ledger. Follow-up issues stay outside the
 gardening run as owner proposals for Managing Issues. The run never merges,
 and the retained
-Orchestrator report carries issue-ready recommendations for owner review
-([Run the Orchestrator](../../../skills/repo-gardener/SKILL.md#run-the-orchestrator) and
+Lead report carries issue-ready recommendations for owner review
+([Lead the run](../../../skills/repo-gardener/SKILL.md#lead-the-run) and
 [Authoring and hardcoded denies](../../../skills/repo-gardener/references/policy-and-entry-modes.md#authoring-and-hardcoded-denies)).
 
 ## Why This Matters
@@ -205,18 +205,18 @@ representations elsewhere.
 ```text
 run-opened
   -> model completes the quick five-area pass using filtered inputs
-  -> Orchestrator assigns non-overlapping Workers in parallel up to maximum_workers
-  -> model deepens decision-relevant investigations while Workers progress
-  -> each Worker owns one PR-sized unit through at most one unmerged PR
+  -> Lead assigns non-overlapping Executors in parallel up to maximum_workers
+  -> model deepens decision-relevant investigations while Executors progress
+  -> each Executor owns one PR-sized unit through at most one unmerged PR
 run-closed
   -> deterministic two-comment identity check
   -> no register-quality claim
 ```
 
 The close still contains five area coverage summaries, depth results, bounded
-data-trust evidence, native Worker facts or a no-Worker reason, owner attention,
-recommendations, and run outcome. Less durable ceremony does not mean less
-operating coverage.
+data-trust evidence, native Executor facts or a no-Executor reason, owner
+attention, recommendations, and run outcome. Less durable ceremony does not
+mean less operating coverage.
 
 ### Stop only the mutation whose permission changed
 
@@ -224,8 +224,8 @@ If a run opens against revision A of the durable file and the default branch
 later holds a different revision:
 
 - an opening-policy denial, such as a disabled owning area or
-  `maximum_workers: 0`, prevents that Worker but not unrelated reporting;
-- a later revision change before PR creation preserves saved Worker work
+  `maximum_workers: 0`, prevents that Executor but not unrelated reporting;
+- a later revision change before PR creation preserves saved Executor work
   without opening the PR across the affected run; and
 - a denied tracker write before close prevents a false structural-closure
   claim and becomes an interrupted caller handoff.
@@ -241,7 +241,7 @@ If filtered queries return 107 records, 12 are inspected, and two findings
 resolve to one qualified repair, keep those counts distinct. State the query
 filters and pagination limits; unread work remains unassessed. If
 `maximum_workers` is zero or unrelated PRs already exist, the run may still
-sense, deepen, and recommend; those leftover PRs do not consume the Worker
+sense, deepen, and recommend; those leftover PRs do not consume the Executor
 cap. Evidence the host can already read needs no file grant: the runtime
 reliability area that reports `unavailable` because the durable file lacks a key has invented
 a permission system on top of a fact the host holds.

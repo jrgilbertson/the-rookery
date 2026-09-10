@@ -166,7 +166,9 @@ audit_commands:
   - ["npm", "run", "knip"] # unused JS/TS (knip)
   - ["cargo", "audit"] # Rust crate advisories
   - ["npm", "run", "validate:doc-links"] # broken documentation links
-``` As bounded defense-in-depth, structural validation rejects
+```
+
+As bounded defense-in-depth, structural validation rejects
 shell operator, interpolation, and redirection-shaped tokens; the managed run
 still passes every accepted token literally and never constructs a shell
 command. Validation does not parse arbitrary executable or option grammars and

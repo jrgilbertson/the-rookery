@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-10 | 87b8eeb (working tree) | Lead/Executor terminology in cases and triggers | not run | Cases and triggers now use ROUTING.md Lead, Executor, Scout, and Reviewer. No fresh-context grade is claimed for that rename.
+
 - 2026-09-08 | b075928 (working tree) | matched comparison: unattended Worker option-1 finishing (scenarios 2, 8, 9) | pass — prior fail vs skilled pass | Isolated general-purpose executors and a separate blind grader. Prior used gardener-only first-publication; the same Worker later invoked merge-readiness. Candidate uses `mode:pipeline` publisher and babysit; Orchestrator starts a fresh merge-readiness helper after looks merge-ready; blocked babysit does not dispatch merge-readiness.
 - 2026-09-08 | b075928 (working tree) | advisor review of implemented CE ship path | CLEAR WITH FIXES applied | Finishing collapsed to one `finishing.md` branched on Worker-or-not; title/body follow Compound Engineering; parked adoption eligibility deleted. Independent matched-pair of the Worker option-1 path logged above.
 - 2026-09-01 | 8c70d39 (working tree) | unattended later-1 publication wording | pass (static case) | Worker later 1 now continues into first-publication with a silent pack and no second publisher; extra publication gates remain. No provider contact or repository write occurred.

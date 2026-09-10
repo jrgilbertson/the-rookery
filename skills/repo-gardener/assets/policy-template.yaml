@@ -13,5 +13,8 @@ maximum_workers: 3
 # Each item is one process argv run from the repository root.
 scans: []
 # Example: - ["npm", "run", "knip"]
+# Argv lists an Executor may run to verify its unit, from the worktree root.
+verify: []
+# Example: - ["npm", "test"]
 # GitHub issue number that receives one report comment per run.
 # report_issue: 1

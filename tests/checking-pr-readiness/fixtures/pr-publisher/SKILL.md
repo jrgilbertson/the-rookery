@@ -7,7 +7,7 @@ description: Use when asked to write, open, create, or submit a pull request, or
 
 Test-only finishing companion for `checking-pr-readiness` later 1. Continue
 here when this skill is installed and the conversation is not a gardener
-Worker. Do not call `gh`, GitHub MCP tools, or any other forge.
+Executor. Do not call `gh`, GitHub MCP tools, or any other forge.
 
 ## On invoke
 

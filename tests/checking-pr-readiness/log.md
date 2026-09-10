@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-10 | f878892 (working tree) | fixture publisher uses Executor | not run | `fixtures/pr-publisher/SKILL.md` now continues when the conversation is not a gardener Executor.
+
 - 2026-09-10 | 31121ab (working tree) | finishing case and pin use Lead and Executor | not run | `option-one-finishing-continuation` and the assessment pin now match live finishing. Matched regrade not run this session.
 
 - 2026-09-10 | 87b8eeb (working tree) | Executor finishing path after gardener role rename | not run | `SKILL.md` and `finishing.md` now say Executor and Lead. Matched `option-one-finishing-continuation` regrade not run this session.

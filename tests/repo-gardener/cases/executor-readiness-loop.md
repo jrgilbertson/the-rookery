@@ -1,7 +1,8 @@
 # Executor readiness loop
 
-Provenance: the readiness and merge-readiness gates are the speed bumps
-that catch what the shipping pipeline misses.
+Provenance: regression control. Guards the Lead-answered option 1 and
+the fresh merge-readiness verdict that the shipping pipeline alone does
+not provide.
 
 ## Prompt
 

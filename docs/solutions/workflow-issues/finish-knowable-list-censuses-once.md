@@ -38,10 +38,12 @@ The current workflow replaces those obligations with bounded, filtered
 discovery. The reusable lesson is to share source reads and describe their
 coverage accurately, not to enumerate every backlog before useful work.
 
-## Current guidance
+## Reusable guidance
 
-Use the sensing guidance in the Sense section of
-[Repo Gardener](../../../skills/repo-gardener/SKILL.md).
+Repo Gardener no longer runs censuses or tracker reads; its Sense
+section reads each source with what the host can reach and names gaps.
+The lesson below applies to any skill that shares paginated provider
+reads.
 A Census describes one stated query and window. Record its filters, returned
 counts, pagination or search limits, and inspected coverage. Reuse results
 and body reads across areas when queries overlap.
@@ -61,8 +63,6 @@ Source unavailability limits dependent coverage while independent work proceeds.
 
 Keep returned records, inspected bodies, qualified candidates, and authored
 work distinct. There is no fixed body-read count or full-backlog prerequisite.
-Discovery bounds do not relax the complete tracker read or current conflict
-inventory required by the tracker and Worker contracts.
 
 ## Example
 

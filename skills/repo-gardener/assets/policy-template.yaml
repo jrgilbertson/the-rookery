@@ -14,6 +14,7 @@ maximum_workers: 3
 scans: []
 # Example: - ["npm", "run", "knip"]
 # Argv lists an Executor may run to verify its unit, from the worktree root.
+# Empty means no unit is dispatched; copy the commands CI already runs.
 verify: []
 # Example: - ["npm", "test"]
 # GitHub issue number that receives one report comment per run.

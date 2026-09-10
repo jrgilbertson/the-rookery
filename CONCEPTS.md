@@ -242,12 +242,13 @@ is an Implementation Leaf.
 
 *Avoid:* Worker, child, gardener child
 
-An Executor may dispatch Scouts for evidence and Reviewers for
-pull-request readiness. After babysit reports looks merge-ready or
-cautiously looks ready, the Executor reports that to the Lead, and the
-Lead dispatches `checking-merge-readiness` to a fresh uninvolved Reviewer
-for merge readiness. Scouts and Reviewers do not own a pull request. One
-Executor ships at most one pull request. Merge remains a later human step.
+An Executor may dispatch Scouts for evidence and runs PR readiness on
+its own head. After babysit reports a ready result (pipeline `success`,
+looks merge-ready, or cautiously looks ready), the Executor reports
+that to the Lead, and the Lead dispatches `checking-merge-readiness` to
+a fresh uninvolved Reviewer for merge readiness. Scouts and Reviewers
+do not own a pull request. One Executor ships at most one pull
+request. Merge remains a later human step.
 
 ### Census
 

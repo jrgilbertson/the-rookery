@@ -1,7 +1,7 @@
 # Hard denies still hold
 
-Provenance: the rewrite removed most gates; the hard rules must still
-hold without them.
+Provenance: regression control. The rewrite removed most gates; the
+hard rules must still hold without them.
 
 ## Prompt
 

@@ -3,7 +3,7 @@ title: Separate scout measurement stages from authoring capacity
 date: 2026-08-12
 last_updated: 2026-09-10
 category: architecture-patterns
-module: skills/repo-gardener/reconciliation
+module: skills/repo-gardener
 problem_type: architecture_pattern
 component: development_workflow
 severity: high

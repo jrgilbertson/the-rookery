@@ -35,9 +35,10 @@ withheld. Read optional `report_issue` as a GitHub issue number that
 receives one report comment per run.
 
 Treat a missing or unreadable file as a sense-only run. Put a proposed
-complete policy file in that report for the owner to commit. Use the
-bundled [policy template](assets/policy-template.yaml) as that proposed
-file. Do not validate the file with a script. Name any field you could
+complete policy file in that report for the owner to commit. Start from
+the bundled [policy template](assets/policy-template.yaml) and fill
+`scans` and `verify` with the commands the repository's CI already
+runs. Do not validate the file with a script. Name any field you could
 not interpret in the report.
 
 ## Sense
@@ -73,9 +74,11 @@ to change. Keep every file in a unit inside `scope.include`, outside
 `scope.exclude`, and outside `protected_paths`. Give every unit disjoint
 files. Assign a shared convention file such as a changelog or lockfile to
 at most one unit. Select zero units when `maximum_workers` is 0.
+Select zero units when `verify` is empty, and say so in the report.
 
-Block a unit with an open PR only when both change the same source file.
-Never block a unit because a changelog or lockfile appears in an open PR.
+Block a unit with an open PR only when both change the same file
+other than a changelog or lockfile. Never block a unit because a
+changelog or lockfile appears in an open PR.
 Resolve merge conflicts on those files at merge time. Record a bot
 dependency-update PR with a fixable failing check as a recommendation in
 the report, not as a unit. Record anything that touches authentication,
@@ -131,7 +134,8 @@ dispatches `checking-merge-readiness` to a fresh, read-only Reviewer
 with no prior involvement. Pass only the pull-request identity. Put its
 recommendation (merge, debug, or do not merge) and risk drivers into the
 report. Send a debug recommendation with Executor-owned findings back to
-that Executor once. The Executor fixes them on its PR branch and reruns
+that Executor once. The Executor fixes them inside its allowed files,
+commits and pushes to its PR branch, and reruns
 `ce-babysit-pr mode:pipeline`. On a ready result, dispatch one more
 fresh Reviewer and report its verdict without another round. Babysit is
 a local optimization; merge readiness is the global verdict. Do not pick
@@ -141,15 +145,19 @@ any option on the merge-readiness menu, including Proceed to merge.
 
 Post one plain-Markdown comment on `report_issue` when configured.
 Otherwise write the same Markdown as the run's final output. Use these
-sections in order. Under pull requests, list each URL, CI state, babysit
-terminal, merge-readiness verdict, and risk drivers. Under scans run,
-list each argv, exit status, and one-line summary. Under findings not
-authored and why, list recommendations, including bot update PRs to adopt
-and the protected-path items. Under proposed policy changes, include the
-whole proposed file on a sense-only run. Name a sense-only run as
-complete. Keep each scan summary to one line. Omit a section only when it
-has no items. Never paste raw scan output, secrets, customer identities,
-or `@` mentions into the report.
+sections in order: pull requests, scans run, areas and gaps, findings
+not authored and why, proposed policy changes. Under pull requests,
+list each URL, CI state, babysit terminal, merge-readiness verdict, and
+risk drivers. Under scans run, list each argv, exit status, and
+one-line summary. Under areas and gaps, give each of the five areas a
+one-line status and name each unavailable source. Under findings not
+authored and why, list recommendations, including bot update PRs to
+adopt, the protected-path items, and blocked units with preserved
+commits and why. Under proposed policy changes, include the whole
+proposed file on a sense-only run. Name a sense-only run as complete.
+Keep each scan summary to one line. Omit a section only when it has no
+items. Never paste raw scan output, secrets, customer identities, or
+`@` mentions into the report.
 
 ## Hard rules
 

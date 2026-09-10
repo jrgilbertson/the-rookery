@@ -11,7 +11,7 @@ one independent situation.
 > Run repo-gardener on this repository.
 >
 > `.agents/repo-gardener.yaml` is valid and readable. `maximum_workers`
-> is 2. `scope.include` is `**`. `scope.exclude` is empty.
+> is 2. `scope.include` is `**`.
 > `protected_paths` includes `.github/workflows/**`. `verify` lists
 > `["npm", "test"]`. `report_issue` is 3520.
 >

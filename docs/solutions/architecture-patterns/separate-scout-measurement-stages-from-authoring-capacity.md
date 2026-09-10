@@ -127,7 +127,7 @@ Create a persistent Executor worktree only for work intended to become one PR.
 The Executor owns planning, implementation, simplification, review, repository
 verification, its coherent commit, and its branch through at most one unmerged
 PR. Every unattended Executor invokes `checking-pr-readiness` on its exact
-head, then stops after its menu reply. On a distinct later turn, the Lead
+head, then stops at its numbered menu. On a distinct later turn, the Lead
 authorizes the Executor to reply 1 only when Approve was offered and
 recommended for that exact head. The checking skill then performs its
 identity reread before the evidence enters the publication path. Named
@@ -142,8 +142,9 @@ the same one. The Lead does not run a publication-time overlap inventory
 The Lead owns breadth, depth, selection, tracker writes, supervision,
 and the morning report. After PR creation, it reports native PR, check, and
 review facts; required pending work makes closure partial. After looks
-merge-ready, the Lead dispatches `checking-merge-readiness` to a
-fresh uninvolved helper and never selects Proceed to merge
+merge-ready or cautiously looks ready, the Lead dispatches
+`checking-merge-readiness` to a fresh uninvolved Reviewer and never
+selects Proceed to merge
 (`skills/repo-gardener/references/reconciliation.md`,
 `skills/repo-gardener/references/tracker-records.md`).
 

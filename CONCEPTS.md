@@ -217,10 +217,11 @@ the named risks to recommend merge, debug, or do not merge.
 
 ### Repository Maintenance Run
 
-One `repo-gardener` pass through `Sense -> Decide -> Act -> Verify -> Learn`.
-An Orchestrator surveys five maintenance areas and may assign multiple
-Workers, each taking one independently deliverable, reviewable pull request.
-When that work is an issue, it is an Implementation Leaf.
+One overnight `repo-gardener` pass through
+`Sense -> Decide -> Act -> Verify -> Learn`. CI remains the merge gate. The
+run covers neglected whole-project scans, bounded exception and measurement
+evidence, and, where justified, independently deliverable Worker pull
+requests. When that work is an issue, it is an Implementation Leaf.
 
 ### Orchestrator
 

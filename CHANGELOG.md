@@ -33,6 +33,9 @@ looked" surface. GitHub Releases mirror its entries.
   scans instead of treating empty audit lists as a useful default, and
   sensing distinguishes staged hooks from full-project coverage.
 
+- Repo Gardener's always-loaded description now leads with overnight
+  gardening, and the close catalog lives only in the tracker contract.
+
 - Runtime reliability and measurement integrity now treat missing expected
   instrumentation on a successful customer flow as a repair path, while
   missing metric contracts stop only the dependent comparison.

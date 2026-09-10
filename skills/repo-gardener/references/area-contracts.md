@@ -135,9 +135,9 @@ while the customer flow succeeds: a missing canonical event, duplicate
 capture, or schema mismatch is a runtime finding, not a requirement that the
 service crash. Verification must preserve the signal; do not suppress errors
 to make dashboards look healthier. Empty results mean no returned events in
-that query/window, not zero product activity. The durable file neither grants
-nor withholds these reads. No `audit_commands` on this area does not mean no
-provider reads.
+that query/window, not zero product activity. Runtime and measurement reads
+use the host's existing read-only access. The durable file neither grants
+nor withholds those reads.
 
 **Engineering health:** Read relevant current CI/check failures, repository
 maintenance, test-health, code-health, QA, and static/security evidence, plus

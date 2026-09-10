@@ -36,6 +36,11 @@ looked" surface. GitHub Releases mirror its entries.
 - Routing templates now use square-bracket placeholders so Orca can open the
   routing contract in its rich Markdown editor.
 
+- `checking-pr-readiness` and `checking-merge-readiness` spoken answers
+  are the brief and numbered options only. The wait still happens; the
+  owner no longer hears a closing paragraph about the skill, its headings,
+  or why work has not started. The remaining-work follow-up uses the same
+  bound.
 - CI tool installation now runs from a shell script, avoiding actionlint
   deadlocks when local pipe buffers cannot hold the inline bootstrap code.
 - After a `checking-pr-readiness` Approve, the option-1 reply follows

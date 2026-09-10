@@ -111,7 +111,9 @@ SKILL="$ROOT/skills/checking-merge-readiness/SKILL.md"
 if grep -Fq 'wait for a numbered reply' "$SKILL" \
   && grep -Fq 'Do not pick an option in the same turn' "$SKILL" \
   && grep -Fq 'activating utterance never authorizes merge' "$SKILL" \
-  && grep -Fq 'On a later reply of 1' "$SKILL"
+  && grep -Fq 'On a later reply of 1' "$SKILL" \
+  && grep -Fq 'Nothing follows the last option' "$SKILL" \
+  && grep -Fq 'its headings, its file path' "$SKILL"
 then
   pass "one process: wait for a numbered reply, never self-select"
 else

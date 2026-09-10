@@ -27,6 +27,15 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Route kickoffs now require official provider CLIs with subscription
+  authentication and report a blocker instead of using API-key billing.
+  Astra at low replaces Sol at high as the secondary Lead profile.
+  Sol at medium replaces Terra at high as the tertiary Executor profile.
+  Astra at low replaces Sol at high as the secondary Design/taste profile.
+
+- Routing templates now use square-bracket placeholders so Orca can open the
+  routing contract in its rich Markdown editor.
+
 - `checking-pr-readiness` and `checking-merge-readiness` spoken answers
   are the brief and numbered options only. The wait still happens; the
   owner no longer hears a closing paragraph about the skill, its headings,

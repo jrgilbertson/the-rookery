@@ -204,6 +204,12 @@ unchanged. When availability is unknown, keep the default selection and omit
 availability from the response. Mention availability only when it changes a
 selected profile.
 
+### Subscription billing
+
+Every Route kickoff includes this execution constraint: use the assigned providers’ official CLIs with subscription authentication.
+Do not use API-key billing or switch to it as a fallback. If subscription access cannot be established or its usage limit is reached, report the blocker.
+The executing workflow verifies authentication; the router does not probe credentials.
+
 ### Effort escalation
 
 Use the table's listed effort by default. The router may suggest a higher
@@ -211,17 +217,17 @@ effort, but selects one only when the operator approves it.
 
 ## Model and effort recommendations
 
-**Last reviewed: 2026-09-02**
+**Last reviewed: 2026-09-09**
 
 | Role | Primary | Secondary | Tertiary |
 |---|---|---|---|
-| Lead | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-5.6-sol` / high | xAI / `grok-4.6` / high |
-| Executor | xAI / `grok-4.6` / high | Anthropic / `claude-opus-5` / medium | OpenAI / `gpt-5.6-terra` / high |
+| Lead | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-6-astra` / low | xAI / `grok-4.6` / high |
+| Executor | xAI / `grok-4.6` / high | Anthropic / `claude-opus-5` / medium | OpenAI / `gpt-5.6-sol` / medium |
 | Reviewer | OpenAI / `gpt-5.6-sol` / high | Anthropic / `claude-opus-5` / medium | xAI / `grok-4.6` / high |
 | Critic | OpenAI / `gpt-5.6-sol` / xhigh | Anthropic / `claude-opus-5` / medium | xAI / `grok-4.6` / high |
 | Researcher | OpenAI / `gpt-5.6-sol` / high | xAI / `grok-4.6` / high | Anthropic / `claude-opus-5` / medium |
 | Scout | xAI / `grok-4.6` / high | OpenAI / `gpt-5.6-terra` / high | Anthropic / `claude-opus-5` / medium |
-| Design/taste | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-5.6-sol` / high | xAI / `grok-4.6` / high |
+| Design/taste | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-6-astra` / low | xAI / `grok-4.6` / high |
 
 ## Return one portable response
 
@@ -236,19 +242,19 @@ IDs as ordinary names, such as "Fable 5.1 at medium".
 
     **Route**
 
-    Start with <starting workflow> on <lead model> at <effort>.
+    Start with [starting workflow] on [lead model] at [effort].
 
     **Why**
 
-    <One or two sentences on what needs to happen first and why this pattern fits. Name where the run is expected to end, which the roster was sized for, and when implementation is authorized say that the lead carries the work into it. Name any pattern or roster default the route relied on instead of supplied evidence, so the operator can override it in one reply; availability stays out of the card when it is unknown.>
+    [One or two sentences on what needs to happen first and why this pattern fits. Name where the run is expected to end, which the roster was sized for, and when implementation is authorized say that the lead carries the work into it. Name any pattern or roster default the route relied on instead of supplied evidence, so the operator can override it in one reply; availability stays out of the card when it is unknown.]
 
     **Setup**
 
-    <The roster: every role in the pattern with its model and effort, stated even when it repeats the decision line. The Executor count. The pattern, named in a sentence, when it is not Single owner. Orchestration and placement only when they differ from the default. Authority only when the operator supplied it. An advisor, Active ownership unverified, or a profile fallback only when it applies.>
+    [The roster: every role in the pattern with its model and effort, stated even when it repeats the decision line. The Executor count. The pattern, named in a sentence, when it is not Single owner. Orchestration and placement only when they differ from the default. Authority only when the operator supplied it. An advisor, Active ownership unverified, or a profile fallback only when it applies.]
 
     **Copy/paste kickoff**
 
-    Start <starting workflow> from <stable artifact locator or concise supplied request>. You are the lead on <model> at <effort>. <Each other role with its model, effort, and count.> <Orchestration and placement sentences only when they differ from the default.> Treat <the supplied artifact or request> as the source of truth. <Supplied authority in one sentence, only when the operator supplied it.>
+    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the lead on [model] at [effort]. [Each other role with its model, effort, and count.] [Subscription billing constraint.] [Orchestration and placement sentences only when they differ from the default.] Treat [the supplied artifact or request] as the source of truth. [Supplied authority in one sentence, only when the operator supplied it.]
 
 The decision line never names a role; roles live in Setup. A single-owner
 Setup omits placement and orchestration when they are the default. The
@@ -259,8 +265,8 @@ authority, and any `Active ownership unverified` marker.
 
     **Resume**
 
-    <proven active owner> owns this work.
-    Continue with <proven active owner> for <current phase>. <supplied locator, when present; decisive context and next action>
+    [proven active owner] owns this work.
+    Continue with [proven active owner] for [current phase]. [supplied locator, when present; decisive context and next action]
 
 A Resume card carries no kickoff.
 
@@ -268,10 +274,10 @@ A Resume card carries no kickoff.
 
     **Questions**
 
-    1. <question>
-    Recommended: <one concrete answer the operator can accept in a word>. <One-line reason.>
-    2. <question>
-    Recommended: <one concrete answer the operator can accept in a word>. <One-line reason.>
+    1. [question]
+    Recommended: [one concrete answer the operator can accept in a word]. [One-line reason.]
+    2. [question]
+    Recommended: [one concrete answer the operator can accept in a word]. [One-line reason.]
 
 Order questions by routing impact: owner, then pattern, then profile, then
 orchestration and placement. Batch only independent questions; a dependent

@@ -14,7 +14,7 @@ maintenance, CI, or issues do not activate it.
 | /repo-gardener | Named skill invoke. |
 | Run repo-gardener on this repository | Names the skill. |
 | Set up repo-gardener on this repository | Names the skill for first-use. |
-| Continue the interrupted repo-gardener Lead and close its run | Names the skill for recovery. |
+| Continue last night's repo-gardener run and post its report | Names the skill for recovery. |
 | Why did last night's repo-gardener run skip an Executor PR? | Names the skill for interpreting a run. |
 | Check product-data trust as part of this repo-gardener run | Names the skill; measurement stays in-run. |
 

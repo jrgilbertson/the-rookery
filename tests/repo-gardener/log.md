@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-10 | working tree | rewrite: cases replaced for the one-file skill | not run | Twenty-four managed-run cases removed; five cases now pin hard denies, the readiness loop, scope and overlap, sense-only runs, and the report. No fresh-context grade is claimed.
+
 - 2026-09-10 | fd732d6 (working tree) | explicit-invoke trigger contract | not run | Description is now "Use only when the user explicitly invokes repo-gardener." Topic-match queries moved to near misses. No fresh-context trigger-suite grade is claimed.
 
 - 2026-09-10 | 87b8eeb (working tree) | Lead/Executor terminology in cases and triggers | not run | Cases and triggers now use ROUTING.md Lead, Executor, Scout, and Reviewer. No fresh-context grade is claimed for that rename.

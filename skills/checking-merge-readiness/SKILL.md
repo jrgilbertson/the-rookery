@@ -375,7 +375,7 @@ Brief in continuous prose without analysis-bucket titles.
   Proceed to merge when that action can be taken; otherwise keep number 1
   and name why. The remaining actions have a print order, not menu
   numbers. Print only the live ones, numbered from 2 without gaps. The
-  spoken answer on every wait is that prose and those options. This skill,
+  spoken answer on every wait is that wait's own prose and numbered options. This skill,
   its headings, its file path, and why the run is waiting stay out of it. Nothing follows the last option.
 - Clean green (recommend merge, nothing material): final brief plus menu at
   most about 12 non-blank short lines.

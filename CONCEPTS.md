@@ -245,9 +245,11 @@ is an Implementation Leaf.
 *Avoid:* Worker, child, gardener child
 
 An Executor may dispatch Scouts for evidence and Reviewers for
-pull-request readiness and merge readiness. Scouts and Reviewers do not own
-a pull request. One Executor ships at most one pull request. Merge remains
-a later human step.
+pull-request readiness. After babysit reports looks merge-ready or
+cautiously looks ready, the Executor reports that to the Lead, and the
+Lead dispatches `checking-merge-readiness` to a fresh uninvolved Reviewer
+for merge readiness. Scouts and Reviewers do not own a pull request. One
+Executor ships at most one pull request. Merge remains a later human step.
 
 ### Census
 

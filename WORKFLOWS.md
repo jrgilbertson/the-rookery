@@ -155,7 +155,7 @@ The shipping sequence, in order:
 1. `ce-simplify-code`. Tightens what was built without changing behavior.
 2. `ce-code-review`. An independent review before any PR exists.
 3. `ce-test-browser` or `ce-dogfood`. Browser verification when the change touches the UI, either a test run or hands-off dogfooding that fixes and commits as it goes.
-4. [`no-ai-slop`](https://github.com/petergyang/no-ai-slop) when the change includes human-facing prose. Sharpens the draft and keeps the writer's voice.
+4. [`no-ai-slop`](https://github.com/petergyang/no-ai-slop) and [`humanize`](https://github.com/harshaneel/humanize) (`ai-check`) when the change includes human-facing prose. `no-ai-slop` sharpens the draft and keeps the writer's voice; `ai-check` flags AI-sounding writing.
 5. [`writing-for-agents`](https://github.com/mattpocock/skills/tree/main/skills/productivity/writing-for-agents) when the change includes a document whose primary consumer is an AI agent.
 6. [`checking-pr-readiness`](skills/checking-pr-readiness/SKILL.md). The final checkpoint.
 

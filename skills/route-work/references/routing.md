@@ -222,7 +222,7 @@ effort, but selects one only when the operator approves it.
 | Role | Primary | Secondary | Tertiary |
 |---|---|---|---|
 | Lead | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-6-astra` / low | xAI / `grok-4.6` / high |
-| Executor | xAI / `grok-4.6` / high | Anthropic / `claude-opus-5` / medium | OpenAI / `gpt-5.6-terra` / high |
+| Executor | xAI / `grok-4.6` / high | Anthropic / `claude-opus-5` / medium | OpenAI / `gpt-5.6-sol` / medium |
 | Reviewer | OpenAI / `gpt-5.6-sol` / high | Anthropic / `claude-opus-5` / medium | xAI / `grok-4.6` / high |
 | Critic | OpenAI / `gpt-5.6-sol` / xhigh | Anthropic / `claude-opus-5` / medium | xAI / `grok-4.6` / high |
 | Researcher | OpenAI / `gpt-5.6-sol` / high | xAI / `grok-4.6` / high | Anthropic / `claude-opus-5` / medium |

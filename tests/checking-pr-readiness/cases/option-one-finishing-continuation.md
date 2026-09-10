@@ -89,27 +89,27 @@ gather is complete, the menu offered Approve, and the later authorized 1
 matches the unchanged exact head, base, and working surface. Describe the
 finishing handoff:
 
-- A gardener Worker is publishing a new PR. The Orchestrator authorized
+- A gardener Executor is publishing a new PR. The Lead authorized
   the option-1 reply. Assigned and protected paths still pass.
 - An owner conversation explicitly requests refreshing an existing
   PR description through its installed publication skill. Gardener is also
-  installed, but the conversation is not following its Worker contract.
+  installed, but the conversation is not following its Executor contract.
 
-- [ ] New-PR Worker option-1 continues into `ce-commit-push-pr` with
+- [ ] New-PR Executor option-1 continues into `ce-commit-push-pr` with
       `mode:pipeline`, pack as description input, then invokes
       `ce-babysit-pr mode:pipeline`. It does not dispatch
       `checking-merge-readiness` from that option-1 reply.
 - [ ] The direct owner request continues into its installed publication
       skill with the pack as description input; merely having gardener
-      installed does not impose the Worker contract.
+      installed does not impose the Executor contract.
 - [ ] None of these matching option-1 handoffs re-asks Approve or stops at a
       printed evidence pack.
 
-### 6. Non-Worker option-1 invokes babysit (AE5)
+### 6. Non-Executor option-1 invokes babysit (AE5)
 
 Use synthetic facts only and do not call tools. Gather is complete, the menu
 offered Approve, and the later authorized 1 matches. The conversation is not
-a Worker run. The installed PR-opening skill reports a newly created
+an Executor run. The installed PR-opening skill reports a newly created
 GitHub pull request and did not start `ce-babysit-pr`. None of that
 publisher's do-not-fire cases apply. `ce-babysit-pr` and
 `checking-merge-readiness` are installed.
@@ -122,9 +122,9 @@ publisher's do-not-fire cases apply. `ce-babysit-pr` and
       numbered replies. The earlier Approve 1 does not select Proceed to
       merge. This skill does not pick or continue the merge menu.
 
-### 7. Non-Worker babysit is nested under the publisher
+### 7. Non-Executor babysit is nested under the publisher
 
-Use synthetic facts only and do not call tools. Same non-Worker option-1 setup as
+Use synthetic facts only and do not call tools. Same non-Executor option-1 setup as
 scenario 6, except the installed PR-opening skill already started
 `ce-babysit-pr`.
 
@@ -138,7 +138,7 @@ scenario 6, except the installed PR-opening skill already started
 
 ### 8. Skipped or missing babysit does not reach merge-readiness
 
-Use synthetic facts only. Independent variants after a matching non-Worker option-1 reply:
+Use synthetic facts only. Independent variants after a matching non-Executor option-1 reply:
 
 - The publisher created a draft pull request and its completion gate says
   not to fire babysit.
@@ -154,7 +154,7 @@ Use synthetic facts only. Independent variants after a matching non-Worker optio
 
 ### 9. Missing independent merge reviewer stops
 
-Use synthetic facts only. Non-Worker option-1 reply, publisher created a pull request,
+Use synthetic facts only. Non-Executor option-1 reply, publisher created a pull request,
 babysit reports looks merge-ready.
 
 - [ ] If `checking-merge-readiness` is absent, the run names that once and

@@ -542,7 +542,7 @@ def validate_contract_sources() -> None:
         .split()
     )
     for source, name in ((gardener_skill, "repo-gardener skill"), (worker_contract, "worker contract reference")):
-        require("every unattended worker invokes `checking-pr-readiness` normally" in source, f"{name} omits the normal checking invocation")
+        require("every unattended executor invokes `checking-pr-readiness` normally" in source, f"{name} omits the normal checking invocation")
         require("distinct later turn" in source, f"{name} can approve from the menu turn")
         require("option 1" in source and "approve and proceed" in source, f"{name} does not constrain later option 1")
         require("authored commit" in source, f"{name} lacks the fail-closed publication outcome")
@@ -553,16 +553,16 @@ def validate_contract_sources() -> None:
         )
         require("`checking-merge-readiness`" in source, f"{name} omits ownerless merge checking")
         require("never authorizes proceed to merge" in source, f"{name} can select proceed to merge")
-        require("the worker never chooses option 1 on its own" in source, f"{name} still lets the Worker choose option 1")
+        require("the executor never chooses option 1 on its own" in source, f"{name} still lets the Executor choose option 1")
         require(
-            "authorizes that worker to reply 1" in source or "authorize 1 only when" in source,
-            f"{name} omits Orchestrator-authorized option 1",
+            "authorizes that executor to reply 1" in source or "authorize 1 only when" in source,
+            f"{name} omits Lead-authorized option 1",
         )
-        require("named worker-owned gap" in source, f"{name} omits the whole-list rework loop")
+        require("named executor-owned gap" in source, f"{name} omits the whole-list rework loop")
         require("never invokes `checking-merge-readiness`" not in source, f"{name} still forbids ownerless merge checking")
     require("identity reread" in worker_contract, "worker contract omits the later identity reread")
-    require("this run is a worker" in finishing, "finishing.md does not branch on Worker")
-    require("`mode:pipeline`" in finishing, "finishing.md omits Worker pipeline publish")
+    require("this run is an executor" in finishing, "finishing.md does not branch on Executor")
+    require("`mode:pipeline`" in finishing, "finishing.md omits Executor pipeline publish")
     require("ce-babysit-pr mode:pipeline" in finishing, "finishing.md omits LFG babysit invoke")
     require("not verified" in assessment and "not run" in assessment, "assessment contract omits canonical check statuses")
     require("unverified" not in assessment and "not-run" not in assessment, "assessment contract retains noncanonical check statuses")

@@ -2,7 +2,7 @@
 name: repo-gardener
 description: Use only when the user explicitly invokes repo-gardener.
 license: MIT
-compatibility: Needs git, the GitHub CLI, the installed compound-engineering skills ce-work, ce-simplify-code, ce-code-review, ce-commit-push-pr, ce-babysit-pr, and the rookery skills checking-pr-readiness and checking-merge-readiness; without write access it senses and reports only.
+compatibility: Needs git, the GitHub CLI, the installed compound-engineering skills ce-debug, ce-plan, ce-work, ce-simplify-code, ce-code-review, ce-test-browser, ce-commit-push-pr, ce-babysit-pr, and the rookery skills checking-pr-readiness and checking-merge-readiness; without write access it senses and reports only.
 ---
 # Repo Gardener
 
@@ -92,22 +92,28 @@ branch `garden/<unit>` from the refreshed default branch: an Orca child
 worktree when available, otherwise the harness's worktree-isolated
 subagent. The Lead writes a brief as a Markdown file in a per-run
 directory outside the repository. The brief names the unit's goal, the
-Lead's settled decisions for the unit, the allowed files, the protected
+Lead's directives for the unit, the allowed files, the protected
 paths, the policy's `verify` lists as the exact caller-approved
 verification command argv list, and the rules in this section.
 
 In its worktree, the Executor follows the front half of the `lfg`
 pipeline. When the unit is broken behavior whose cause is not yet
-established, it invokes `ce-debug mode:pipeline` first and carries the diagnosis into
-the plan. It invokes `ce-plan` with the brief and the Lead's settled
-decisions so those choices are not re-asked, and stops the unit if the
-plan is not implementation-ready code. It invokes `ce-work
-mode:return-to-caller <plan-path>` and stops the unit if the return is
-not `status: complete` with verification evidence. It invokes
-`ce-simplify-code` unless the diff is docs-only or under ten lines. It
-invokes `ce-code-review mode:agent`, applies each finding whose fix
-stays inside the allowed files, lists the rest for the report, and
-commits. It invokes `ce-test-browser mode:pipeline`.
+established, it invokes `ce-debug mode:pipeline` first with its envelope
+narrowed to diagnosis: defer every fix, and never commit or push. It
+carries the `root_cause` of a `diagnosed-no-fix` return into the plan
+and stops the unit on any other status. It invokes `ce-plan` with the
+brief, passing the Lead's choices as directives rather than settled
+decisions, since only the owner can mint settled-decision provenance.
+It stops the unit on a `status: blocked` return or a plan that is not
+`artifact_readiness: implementation-ready` with `execution: code`. It
+invokes `ce-work mode:return-to-caller <plan-path>` and stops the unit
+if the return is not `status: complete` with verification evidence.
+Before readiness, it moves the plan file ce-plan wrote into the per-run
+directory outside the repository so the plan never counts as a changed
+path. It invokes `ce-simplify-code` unless the diff is docs-only or
+under ten lines. It invokes `ce-code-review mode:agent`, applies each
+finding whose fix stays inside the allowed files, lists the rest for
+the report, and commits. It invokes `ce-test-browser mode:pipeline`.
 Every unattended Executor invokes `checking-pr-readiness` normally on
 the exact head in its worktree and stops at its numbered menu.
 
@@ -153,8 +159,8 @@ Post one plain-Markdown comment on `report_issue` when configured.
 Otherwise write the same Markdown as the run's final output. Use these
 sections in order: pull requests, scans run, areas and gaps, findings
 not authored and why, proposed policy changes. Under pull requests,
-list each URL, CI state, babysit terminal, merge-readiness verdict, and
-risk drivers. Under scans run, list each argv, exit status, and
+list each URL, CI state, babysit terminal, merge-readiness verdict, its
+findings, and risk drivers. Under scans run, list each argv, exit status, and
 one-line summary. Under areas and gaps, give each of the five areas a
 one-line status and name each unavailable source. Under findings not
 authored and why, list recommendations, including bot update PRs to

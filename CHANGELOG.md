@@ -66,9 +66,9 @@ looked" surface. GitHub Releases mirror its entries.
   a non-Executor run starts `checking-merge-readiness` in a fresh Reviewer
   that owns the merge menu wait; an Executor reports to the Lead, which
   starts that Reviewer.
-  Approve 1 does not merge. Before publishing, an Executor confirms every
-  committed path is inside its brief's allowed files and outside
-  protected paths. There is no gardener-only publisher.
+  Approve 1 does not merge. The Lead authorizes an Executor's reply 1
+  only when every changed path is inside the unit's allowed files.
+  There is no gardener-only publisher.
 - `checking-simplicity` now treats "check for simplicity as well" and
   unsolicited mid-build durable machinery as first-class triggers, instead of
   waiting for an explicit simplify request.

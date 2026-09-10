@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-10 | working tree | Executor front half fits the installed skills | not run | ce-debug narrowed to diagnosis with no push, ce-plan gets directives not settled decisions, the plan file moves out of the worktree before readiness, case cap raised to 4. No fresh-context grade is claimed.
+
 - 2026-09-10 | working tree | Executors run the lfg front half | not run | ce-debug when the cause is open, ce-plan, ce-work return-to-caller, simplify, review, ce-test-browser, then checking-pr-readiness. Case executor-readiness-loop gains Executor D. No fresh-context grade is claimed.
 
 - 2026-09-10 | working tree | hard-denies case drops the scope.exclude mention | not run | The policy no longer has scope.exclude; the case prompt names only scope.include and protected_paths. No fresh-context grade is claimed.

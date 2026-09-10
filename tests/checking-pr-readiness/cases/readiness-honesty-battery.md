@@ -31,7 +31,9 @@ uncaptured-learning variants into one battery.
 - [ ] 1 → the spoken brief is a recommendation plus numbered live options, not
       a path list or sweep-class table. Show the checks is a numbered option,
       not the default brief. When the recommendation is approve, unrun code
-      review or simplify are not spoken as leftover work.
+      review or simplify are not spoken as leftover work. Nothing follows
+      the last option: no skill path, skill heading, or closing paragraph
+      about waiting, later 1, or why work has not started.
 - [ ] 1 → after the brief, wait for a numbered reply. A turn is one reply.
       Do not pick an option in the same turn.
 - [ ] 2 → code review is named as not run; it is never reported verified,

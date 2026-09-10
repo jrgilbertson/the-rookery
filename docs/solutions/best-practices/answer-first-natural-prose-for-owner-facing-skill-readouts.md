@@ -14,12 +14,13 @@ symptoms:
   - "Em dashes and section headers (Themes / Intent / Risk) make prose feel like a form"
   - "Redundant PR state labels such as (open) on every pre-merge review"
   - "Decision menus print blank (not offered) rows or keep catalog numbers so the menu reads 1, 2, 5"
+  - "A closing paragraph cites the skill path, quotes a wait heading, or explains why work has not started"
 root_cause: inadequate_documentation
 resolution_type: documentation_update
 related_components:
   - testing_framework
   - checking-pr-readiness
-last_updated: 2026-09-08
+last_updated: 2026-09-09
 tags:
   - skill-authoring
   - owner-facing-readouts
@@ -50,7 +51,11 @@ When a skill briefs an owner at a decision point:
    with the reasons that support it in continuous sentences. Reasons are
    about the change under review, not how the skill runs. Put evidence
    only under concerns that drove the call. Do not print section headers
-   such as Themes, Intent, Risk, or Drivers.
+   such as Themes, Intent, Risk, or Drivers. The spoken answer ends at
+   the last numbered option. A closing paragraph that cites the skill,
+   quotes a heading, or explains why the run is waiting is process, not
+   a reason. The remaining-work follow-up is the same bound: remaining
+   work plus numbered options, nothing after the last option.
 2. **Name next work, not idle states.** Prefer **debug** (investigate or fix
    the named concern) over **pause** when medium risk or a cap removes
    merge. Keep **do not merge** as a hard stop on shipping; that path still

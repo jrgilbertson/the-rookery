@@ -248,7 +248,7 @@ names where it fired: the file and line for a line-scoped finding, the file
 alone for a file-level one, and the repository surface for a repository-level
 one.
 
-### 7. Brief, then wait for a numbered reply
+### 7. Present the recommendation
 
 Complete steps 1 through 6 fully first. Then brief in continuous prose:
 recommendation first, then only the reasons that make it true, then evidence
@@ -268,7 +268,9 @@ both copies together. -->
 - Numbered live options after the brief. Only option 1 is reserved. Print
   Approve and proceed when that action can be taken; otherwise keep number
   1 and name why. The remaining actions have a print order, not menu
-  numbers. Print only the live ones, numbered from 2 without gaps.
+  numbers. Print only the live ones, numbered from 2 without gaps. The
+  spoken answer on every wait is that wait's own prose and numbered options. This skill,
+  its headings, its file path, and why the run is waiting stay out of it. Nothing follows the last option.
 - Clean green (approve and proceed, nothing material): final brief plus
   menu at most about 12 non-blank short lines.
 - A coverage close: gather completed, and every applicable check is
@@ -285,7 +287,7 @@ both copies together. -->
 
 #### Decision menu
 
-Present exactly one decision menu, then wait for a numbered reply. Do not pick an option in the same turn that wrote the menu. A turn is one reply. Print only the brief and the numbered options, then stop. Do not explain turns, later `1`, or the identity re-read in the brief. The next message in the conversation, from whoever is talking, is the pick. A reply of `1`,
+Present exactly one decision menu, then wait for a numbered reply. Do not pick an option in the same turn that wrote the menu. A turn is one reply. Print only the brief and the numbered options, then stop. The next message in the conversation, from whoever is talking, is the pick. A reply of `1`,
 "Approve", or "approve and proceed" counts as that choice only after the
 menu offered Approve, not after it printed a withheld option-1 row. A `1`
 on a withheld row is not Approve. Name that the action cannot be taken and
@@ -302,7 +304,7 @@ slot. When that action can be taken, print it. When it cannot, keep number
   recommendation. This is the numbered alternative to Approve, not a
   fixed slot. On approve it declines Approve rather than inventing
   leftover changes. On request changes, picking it does not start work.
-  Tee up every remaining item that drove that recommendation in one
+  Print every remaining item that drove that recommendation in one
   follow-up. That follow-up is a question, not the decision menu: a reply
   of 1 is not Approve. Follow-up actions are that remaining work.
   Unrun code review or simplify appear here only when they drove the
@@ -364,8 +366,8 @@ terminology with CHANGELOG.md:20, and finish the stopped actionlint check.
 Show the checks is non-terminal: print the list from the captured gather, then the brief and numbered options again. Starting remaining work from the follow-up, and Explain, are non-terminal: when one finishes, **recompose**. Re-read the working surface from step 1 and, when it changed, re-run the steps whose inputs the change touches. A returned `checking-simplicity` result refreshes step 3 even when no path changed; that skill is read-only and returns its finding to this gate. When that result is a question for the user, print the question with its options and wait; the next reply answers it and goes back to the same reviewer, and only the readout that follows refreshes step 3 and recomposes this menu.
 
 Completion of this turn: the brief and numbered live options are on screen,
-and the run is waiting. It did not pick. It did not re-read identity for
-Approve and did not fill an evidence pack.
+and the run is waiting. Identity re-read and the evidence pack belong to a
+later reply of 1.
 
 ### On a later reply of 1
 

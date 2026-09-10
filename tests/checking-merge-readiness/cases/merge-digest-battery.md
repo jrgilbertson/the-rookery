@@ -129,6 +129,9 @@ only and must not appear as headers in the spoken readout.
       after the body; menu options do not contradict the recommendation.
       Show the checks is a numbered option, not the default brief.
       Numbered options are sentences, not a label then a colon.
+      Nothing follows the last option: no skill path, skill heading, or
+      closing paragraph about waiting, later 1, or why merge has not
+      started.
 
 ## Scenario 1: clean + tip residual (control; plan AE1)
 

@@ -483,6 +483,8 @@ def validate_contract_sources() -> None:
         "address remaining changes",
         "picking it does not start work",
         "that follow-up is a question, not the decision",
+        "nothing follows the last option",
+        "its headings, its file path",
         "option 1 does all recommended remaining items",
         "names them in that sentence",
         "grouped by similar work, ordered by impact",

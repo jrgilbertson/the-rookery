@@ -3,7 +3,9 @@
 Provenance: issue 140, a withheld-Approve menu where Request changes and
 Run a missing step both read as leftover work. The quoted pairing was
 "Request the Rookery fixes and recheck readiness" next to "Run the
-outstanding validation and review steps."
+outstanding validation and review steps." A 2026-09-09 live remaining-work
+follow-up also cited the skill path and quoted the tee-up instruction as
+why work had not started.
 
 ## Prompt
 
@@ -25,7 +27,10 @@ outstanding validation and review steps."
 - [ ] After the remaining-work pick, the run names those brief-named
       items once and waits. It does not start the conflict fix or the
       terminology edit. Unrun code review or simplify are absent unless
-      they drove the recommendation.
+      they drove the recommendation. The follow-up spoken answer is
+      remaining work plus numbered options only. It does not cite this
+      skill, quote a skill heading, or explain that Address remaining
+      changes must be selected before work starts.
 - [ ] The follow-up is a question, not the decision menu: a reply of 1
       is not Approve. Option 1 does all remaining items and names them.
       Later options are those items grouped by similar work, ordered by

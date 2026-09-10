@@ -1,7 +1,7 @@
-# Parallel Workers and purpose-bounded depth
+# Parallel Executors and purpose-bounded depth
 
 Provenance: the prior package dispatched at most one child and capped depth at
-three, so two non-overlapping justified units could not both get a Worker and
+three, so two non-overlapping justified units could not both get an Executor and
 a fourth look that would change assignment was refused.
 
 ## Prompt
@@ -25,17 +25,17 @@ a fourth look that would change assignment was refused.
 
 ## Expected behavior
 
-- [ ] Assigns two parallel Workers after overlap is decided, one worktree and
+- [ ] Assigns two parallel Executors after overlap is decided, one worktree and
       one unmerged PR each, without inventing work to fill `maximum_workers`.
-- [ ] The unrelated already-open PR does not consume the Worker cap.
-- [ ] Does not assign a Worker to the protected-path unit; reports it for
+- [ ] The unrelated already-open PR does not consume the Executor cap.
+- [ ] Does not assign an Executor to the protected-path unit; reports it for
       owner attention.
-- [ ] Deepens the fourth seam while independent selected Workers progress because
+- [ ] Deepens the fourth seam while independent selected Executors progress because
       it would change assignment, then stops
       deepening because further investigation would not.
-- [ ] A Worker does not perform the five-area breadth pass or write tracker comments; scout
-      helpers stay read-only in the Orchestrator session.
-- [ ] Does not assign two Workers the same `CHANGELOG.md` file. Assignment
-      names that shared convention file on at most one Worker.
+- [ ] An Executor does not perform the five-area breadth pass or write tracker comments; scout
+      helpers stay read-only in the Lead session.
+- [ ] Does not assign two Executors the same `CHANGELOG.md` file. Assignment
+      names that shared convention file on at most one Executor.
 - [ ] A later merge collision on that file is owner work at merge-readiness,
       not a publication-time exception.

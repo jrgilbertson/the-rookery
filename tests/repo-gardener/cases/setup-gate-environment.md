@@ -9,7 +9,7 @@ turning verification into setup or creating an environment subsystem.
 > these synthetic facts: do not inspect a live repository or provider, run
 > commands, or change state. Evaluate each subcase independently.
 >
-> One authorized Worker slice. Policy authorizes only source change.
+> One authorized Executor slice. Policy authorizes only source change.
 > Verification documents contain only named commands.
 >
 > 1. The host provides setup and it succeeds. Implementation, simplification,
@@ -22,7 +22,7 @@ turning verification into setup or creating an environment subsystem.
 >    `executable-not-found` before it runs.
 >
 > Provide a table with one row per command and these columns: subcase, setup
-> disposition, command, reported result, additional action, and next Worker
+> disposition, command, reported result, additional action, and next Executor
 > step. Use installed skill terms and do not assume facts not given here.
 
 ## Expected behavior

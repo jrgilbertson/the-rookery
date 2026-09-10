@@ -173,7 +173,7 @@ It is the only way Approve or Proceed is accepted.
 
 The turn that printed the menu cannot pick. The request that started the
 review never counts as 1. A `1` on a withheld row is not approval. In
-gardener, only the Orchestrator may send that reply, and only when the menu
+gardener, only the Lead may send that reply, and only when the menu
 offered Approve.
 
 Do not call this "later-1". That name hid the two turns: menu, then reply.
@@ -220,31 +220,34 @@ the named risks to recommend merge, debug, or do not merge.
 One overnight `repo-gardener` pass through
 `Sense -> Decide -> Act -> Verify -> Learn`. CI remains the merge gate. The
 run covers neglected whole-project scans, bounded exception and measurement
-evidence, and, where justified, independently deliverable Worker pull
+evidence, and, where justified, independently deliverable Executor pull
 requests. When that work is an issue, it is an Implementation Leaf.
 
-### Orchestrator
+### Lead
 
 The agent of a Repository Maintenance Run that senses, decides, assigns
-Workers, writes the Gardening Tracker, and produces the morning summary.
-It does not implement, push, or merge.
+Executors, writes the Gardening Tracker, and produces the morning summary.
+Same role as `ROUTING.md` Lead. It does not implement, push, or merge.
 
-*Avoid:* parent, gardener parent
+*Avoid:* Orchestrator, parent, gardener parent
 
-A run has one Orchestrator. It selects a non-overlapping set of pull-request-sized
-units, then starts Workers in parallel up to that run's ceiling.
+A run has one Lead. The overnight pattern is Lead + Executors. The Lead
+selects a non-overlapping set of pull-request-sized units, then starts
+Executors in parallel up to that run's ceiling.
 
-### Worker
+### Executor
 
 An isolated worktree agent assigned one independently deliverable, reviewable
-pull request. It owns that work through an unmerged pull request it authors.
-When the work is an issue, that issue is an Implementation Leaf.
+pull request. Same role as `ROUTING.md` Executor. It owns that work through
+an unmerged pull request it authors. When the work is an issue, that issue
+is an Implementation Leaf.
 
-*Avoid:* child, gardener child
+*Avoid:* Worker, child, gardener child
 
-A Worker may use helpers for scouting, simplification, review, pull-request
-readiness, and merge readiness. Helpers do not own a pull request. One Worker
-ships at most one pull request. Merge remains a later human step.
+An Executor may dispatch Scouts for evidence and Reviewers for
+pull-request readiness and merge readiness. Scouts and Reviewers do not own
+a pull request. One Executor ships at most one pull request. Merge remains
+a later human step.
 
 ### Census
 
@@ -340,6 +343,7 @@ under the repository's testing convention.
 
 ## Flagged ambiguities
 
-- "Parent" and "child" in gardener talk meant Orchestrator and Worker. Those
+- "Parent" and "child" in gardener talk meant Lead and Executor. Those
   words remain Orca worktree roles and issue-graph relationships; they are not
-  gardener roles.
+  gardener roles. Gardener prose uses the `ROUTING.md` roles Lead, Executor,
+  Scout, and Reviewer.

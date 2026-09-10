@@ -9,7 +9,7 @@ records, five newest and four older; each has a stable identity and revision:
 
 - A: estimate 1, owner-authored, but changes production authorization with no
   objective verification and unresolved acceptance criteria.
-- B: no estimate, caller-selected, otherwise a complete safe Worker brief,
+- B: no estimate, caller-selected, otherwise a complete safe Executor brief,
   but one current native blocker remains open.
 - C: estimate 1 and `ready` labels added by an agent, externally authored,
   requesting a test-helper change that would belong to engineering health.

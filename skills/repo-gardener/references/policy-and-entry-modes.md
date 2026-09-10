@@ -13,12 +13,12 @@ file at that revision, stops declared execution and any dependent mutation.
 
 Mid-run, re-read the file from the refreshed default branch only to detect
 that its revision changed, at exactly these points: before each declared
-audit; before each Worker dispatch; before authorizing a Worker's reply 1;
+audit; before each Executor dispatch; before authorizing an Executor's reply 1;
 before each push; before each PR opening; and before `run-closed`. Unchanged
 grants are not re-litigated. A mismatch, or an unavailable or unknown
 refresh, stops that action and preserves authored work; a revision change
 stops all further declared audits, source mutation, push, and PR-open for
-every Worker. If the file still names the tracker, the Orchestrator still
+every Executor. If the file still names the tracker, the Lead still
 writes the closed record; otherwise report the interrupted close and do not
 write through the denial. Other references say "at the revision check point"
 and mean this list.
@@ -60,7 +60,7 @@ permits only the managed-run gate's caller-only reads until replacement.
 
 Prepare a concrete preview of the entire replacement file using five explicit
 area grants and the existing full-file review procedure below. Show scope,
-protected paths, Worker capacity, tracker identity, and every exact audit argv
+protected paths, Executor capacity, tracker identity, and every exact audit argv
 as well as the new grants. Approval of the source contract does not approve
 this repository's replacement policy. Preserve tracker history; replacing the
 policy does not authorize tracker replacement.
@@ -95,14 +95,14 @@ five area mutation grants, and optional audit declarations. Triage is a
 read-only, recommend-only operation within issues and feedback. Its
 recommendations need no mutation grant, and triage mutation is not grantable.
 The owner can change any real knob. `.agents/repo-gardener.yaml` is always
-protected; setup cannot turn that off. A Worker must not edit that file.
+protected; setup cannot turn that off. An Executor must not edit that file.
 
 Setup proposes `maximum_workers: 20`, five areas on (`mutation:
 true`), discovered identity and branch, protected paths of `.agents/**`,
 `.github/**`, and the repository's declared gate configuration (hook, lint,
 and CI config files it finds). Empty `audit_commands` lists are the
 fail-closed default until the owner approves exact argv. Mutation grants and
-Worker capacity do not run scans.
+Executor capacity do not run scans.
 
 Before showing the review, inspect the refreshed default-branch revision's
 manifests, package scripts, lockfiles, tool configuration, CI, hooks, and
@@ -124,7 +124,7 @@ workaround.
 
 Show proposed declarations in the full-file review with purpose, repository
 evidence, existing coverage, and execution prerequisites. If the owner keeps
-empty lists, say so in that same review: no Orchestrator audit scans will run;
+empty lists, say so in that same review: no Lead audit scans will run;
 gardening will still inspect available source, issue, PR, and runtime
 evidence; name the evidenced omitted scans. Empty lists remain valid when
 chosen. Setup never installs or executes a suggested tool and never
@@ -166,7 +166,7 @@ and survey reads. This branch is the sole exception to opening-before-sensing: m
 managed run ID, write no opening or closing record, invoke neither tracker
 effect preparation nor the
 structural checker, execute no declared audit, and make no structural-closure
-claim. Scout helpers and setup execute no declared audits.
+claim. Scouts and setup execute no declared audits.
 
 ## Declared-audit authority
 
@@ -193,9 +193,9 @@ does not prove the absence of interpreter behavior, credential-bearing options,
 working-directory or subject overrides, package download behavior, network
 access, or filesystem effects. The owner's full-file approval authorizes those
 exact tool semantics only within the host's existing controls. It grants no new
-host capability and does not change any Worker mutation gate.
+host capability and does not change any Executor mutation gate.
 
-Only a managed Orchestrator may use this authority, after the exact
+Only a managed Lead may use this authority, after the exact
 `run-opened` readback and before the owning area qualifies candidates. Preserve
 declaration order. Before each command, pass the revision check point and
 require the exact target revision at the repository root, a clean worktree,
@@ -229,7 +229,7 @@ declaration starts. Do not build a new containment mechanism for the run.
 
 ## Authoring and hardcoded denies
 
-Worker authoring is allowed only when, on the opening file,
+Executor authoring is allowed only when, on the opening file,
 `repository.identity` exactly matches the target repository, every planned or
 committed path is inside the effective `repository.scope.include`/`exclude`
 boundary, `maximum_workers` is greater than zero, the owning
@@ -250,8 +250,8 @@ its own approval boundary. Never weaken validation,
 expose secrets, mutate production, persist customer-level analytics, or message
 a customer.
 
-Scheduled and manual Orchestrator runs use the same skill contract. The caller
-owns automation scheduling, Orchestrator-worktree creation, provider
+Scheduled and manual Lead runs use the same skill contract. The caller
+owns automation scheduling, Lead-worktree creation, provider
 authentication, and tool availability. The skill does not infer exact model or
 effort settings from provider defaults. It records observed values or
 `unavailable`.

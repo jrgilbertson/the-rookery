@@ -23,26 +23,26 @@ repository:
   # Branch the run refreshes and reads this file from. Do not infer `main`.
   default_branch: REPLACE_WITH_DEFAULT_BRANCH
 
-  # Paths a Worker may change. Repository-relative globs, no `..`. Exclude
+  # Paths an Executor may change. Repository-relative globs, no `..`. Exclude
   # wins: a path must match at least one include and no exclude.
   scope:
     include:
       - "**"
     exclude: []
 
-# Extra globs a Worker must not write. The live `.agents/repo-gardener.yaml`
+# Extra globs an Executor must not write. The live `.agents/repo-gardener.yaml`
 # is always protected even if omitted here; setup cannot turn that off.
 protected_paths:
   - REPLACE_WITH_PROTECTED_PATH
 
-# Parallel Worker cap. `0` denies Worker dispatch. Setup proposes `20`.
+# Parallel Executor cap. `0` denies Executor dispatch. Setup proposes `20`.
 maximum_workers: 0
 
 tracker:
   # Live gardening-tracker issue identity (a node id, never an issue number).
   identity: REPLACE_WITH_TRACKER_IDENTITY
 
-# Five areas, each with an explicit mutation grant. A grant allows a Worker PR
+# Five areas, each with an explicit mutation grant. A grant allows an Executor PR
 # only when the other live-file gates also pass. Read-only triage belongs to
 # issues-and-feedback and needs no separate grant.
 #
@@ -50,7 +50,7 @@ tracker:
 # item is one process argv: executable first, then its arguments. `npm run`
 # only launches a package.json script; the scan is the script name that
 # follows (knip, audit:python), not `npm` or `run`. Empty means none: this
-# starter grants no scans even when mutation and Worker capacity are later
+# starter grants no scans even when mutation and Executor capacity are later
 # enabled. Setup recommends evidenced neglected overnight scans in the
 # owner review and persists only approved argv. Illustrations are not a
 # catalog to copy.

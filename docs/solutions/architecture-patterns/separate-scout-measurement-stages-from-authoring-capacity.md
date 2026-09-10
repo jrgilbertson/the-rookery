@@ -174,10 +174,10 @@ several areas converged on one problem. Separating read-only capacity from
 authoring capacity lets the gardener keep finding and explaining useful work
 when unrelated PRs already exist.
 
-Finally, giving each justified unit its own Worker makes responsibility
-legible. One Worker owns one PR-sized unit through at most one unmerged PR;
-the Orchestrator coordinates and reports. Helpers scout, simplify, review, and
-assess readiness; they do not own a PR. The durable morning summary stays in
+Finally, giving each justified unit its own Executor makes responsibility
+legible. One Executor owns one PR-sized unit through at most one unmerged PR;
+the Lead coordinates and reports. Scouts gather evidence. Reviewers judge
+readiness. They do not own a PR. The durable morning summary stays in
 the tracker or a caller-approved destination, not in public repository source.
 
 ## When to Apply

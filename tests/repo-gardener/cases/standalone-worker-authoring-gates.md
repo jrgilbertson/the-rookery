@@ -1,17 +1,17 @@
-# Standalone Worker authoring gates
+# Standalone Executor authoring gates
 
 Provenance: the standalone brief omitted opening-policy identity and capacity
-although the Worker had to prove both before mutation.
+although the Executor had to prove both before mutation.
 
 ## Prompt
 
-> Use synthetic facts only. Read the Worker contract and produce its required
-> brief for a new-PR Worker. Target and checkout identity are `repo:A`. The
+> Use synthetic facts only. Read the Executor contract and produce its required
+> brief for a new-PR Executor. Target and checkout identity are `repo:A`. The
 > opening policy at `p1` has `repository.identity: repo:A`, `maximum_workers: 2`,
 > scope allowing `src/**`, protected path `src/secret.py`, and the assigned
 > area enabled. The assigned change touches only `src/safe.py`; all other
 > required host, setup, verification, and overlap facts are available and pass.
-> Then act as the Worker using only that brief and its contract. Compare the
+> Then act as the Executor using only that brief and its contract. Compare the
 > complete brief with independent variants: policy identity `repo:B`, missing
 > policy identity, capacity zero, missing capacity, disabled owning area,
 > assigned path outside scope, and assigned protected path. Do not call tools.

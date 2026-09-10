@@ -12,7 +12,7 @@ area.
 >
 > Reconcile a repository with one unrelated Merge-ready PR and room for
 > additional owner-attention items. The tracker holds the morning summary;
-> the Orchestrator worktree remains available only for source, diff, and
+> the Lead worktree remains available only for source, diff, and
 > terminal-context inspection. `.agents/repo-gardener.yaml` is valid, names
 > a live tracker identity, and has no deep-target count. The caller provides
 > exclusive serialized tracker-write ownership. The configured
@@ -44,7 +44,7 @@ area.
 - [ ] Completes the quick pass across all five areas before dispatch and keeps measurement integrity
       cross-cutting rather than adding another area.
 - [ ] The area results report two emitted evidence-qualified candidates, not
-      107 enumerated source items; the Orchestrator reports its
+      107 enumerated source items; the Lead reports its
       post-deduplication normalized candidate count separately.
 - [ ] Keeps the unrelated PR visible and may fill the remaining
       owner-attention display with eligible recommendations; existing work
@@ -69,6 +69,6 @@ area.
       identities, raw analytics payloads, outreach, issue creation, or source
       implementation.
 - [ ] Keeps the durable morning summary in the tracker while leaving the
-      Orchestrator worktree only for source, diff, and terminal-context
+      Lead worktree only for source, diff, and terminal-context
       inspection; the two tracker comments remain durable run history. The
       report includes no dogfood milestone.

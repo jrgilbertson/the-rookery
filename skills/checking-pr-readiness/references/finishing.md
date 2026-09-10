@@ -6,16 +6,16 @@ invokes the installed PR-opening skill once.
 The Approve 1 that entered finishing is already consumed. It never selects
 Proceed to merge.
 
-A Worker is a run already executing the `repo-gardener` Worker contract for
-an assigned unit. Installing gardener does not make this a Worker.
+An Executor is a run already executing the `repo-gardener` Executor contract for
+an assigned unit. Installing gardener does not make this an Executor.
 
 ## Publisher
 
-If this run is a Worker, pass the revision check point immediately before
+If this run is an Executor, pass the revision check point immediately before
 invoking the publisher. A changed, unavailable, or unknown revision stops
 without push or PR creation.
 
-If this run is a Worker, invoke the installed PR-opening skill once with
+If this run is an Executor, invoke the installed PR-opening skill once with
 `mode:pipeline`. Otherwise invoke it once without pipeline. WORKFLOWS.md's
 example is `ce-commit-push-pr`.
 
@@ -46,7 +46,7 @@ poll the forge. Do not dispatch `checking-merge-readiness`.
 If the publisher already started `ce-babysit-pr`, do not start a second
 babysit.
 
-Otherwise, if this run is a Worker, invoke `ce-babysit-pr mode:pipeline` for
+Otherwise, if this run is an Executor, invoke `ce-babysit-pr mode:pipeline` for
 that pull request.
 
 Otherwise invoke `ce-babysit-pr` by skill name for that pull request. Do not
@@ -60,15 +60,15 @@ They are not a Merge Readiness Review. They are the trigger to start
 
 If babysit reports looks merge-ready or cautiously looks ready:
 
-- Worker: stop and report that to the Orchestrator. Do not dispatch
+- Executor: stop and report that to the Lead. Do not dispatch
   `checking-merge-readiness` from this conversation.
-- Not a Worker: dispatch `checking-merge-readiness` to a fresh, read-only
+- Not an Executor: dispatch `checking-merge-readiness` to a fresh, read-only
   context with no prior involvement. Pass only the pull-request identity.
   That reviewer owns the brief, numbered merge menu, wait, and later
   numbered replies. Return that menu unchanged. This skill does not pick
   it and does not continue it.
 
-If `checking-merge-readiness` is absent after babysit on a non-Worker run,
+If `checking-merge-readiness` is absent after babysit on a non-Executor run,
 name that once and stop. If a fresh uninvolved context cannot be opened, name
 that once and stop. Do not grade merge in the conversation that built,
 published, or babysat.
@@ -79,8 +79,8 @@ not dispatch `checking-merge-readiness`.
 
 Completion: a named stop after a publisher that did not create or update a
 pull request, a named stop after a babysit skip, missing babysit skill, or
-non-ready report, a Worker looks merge-ready or cautiously looks ready
-report to the Orchestrator, a named missing merge-readiness or missing
-independent reviewer on a non-Worker run, or the independent merge-readiness
+non-ready report, an Executor looks merge-ready or cautiously looks ready
+report to the Lead, a named missing merge-readiness or missing
+independent reviewer on a non-Executor run, or the independent merge-readiness
 menu on screen, with later numbered replies belonging to that reviewer and
 no pick from this skill.

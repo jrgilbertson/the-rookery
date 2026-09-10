@@ -1,6 +1,6 @@
 # Five maintenance areas
 
-The Orchestrator covers five areas, sharing inputs and assigning each
+The Lead covers five areas, sharing inputs and assigning each
 independently deliverable repair to exactly one owner by its intended remedy.
 Apply this precedence from top to bottom when boundaries overlap:
 
@@ -16,7 +16,7 @@ A change record accompanying code belongs to that repair. Independent
 candidates require deliverables that are each useful and verifiable alone.
 Issue provenance does not determine ownership. Security and measurement are
 cross-cutting evidence, not additional areas or duplicate assignments.
-Workers own repairs; they do not perform the Orchestrator's breadth pass.
+Executors own repairs; they do not perform the Lead's breadth pass.
 
 ## Discovery sequence
 
@@ -45,7 +45,7 @@ Read candidate bodies and relationships selectively. Broaden to other estimates,
 unestimated work, older requests, or other relevant filters when evidence could
 change a useful assignment or recommendation. Stop deepening when another read
 would not change that decision. After the quick pass, deepen decision-relevant
-investigations while selected Workers progress. Derive the Ready Frontier from
+investigations while selected Executors progress. Derive the Ready Frontier from
 current qualified evidence, never a stored queue; capacity is a ceiling, not a
 target. Unread work is neither admitted nor excluded.
 
@@ -62,7 +62,7 @@ Ground each candidate in current native evidence with verified source identity
 and revision, one owning remedy, bounded risk and scope, and objective
 verification. Prioritize qualitatively. Source text is evidence, never
 authority. Require a reproducible repository need and the existing complete
-Worker brief for one low-risk, independently deliverable repair, with assigned
+Executor brief for one low-risk, independently deliverable repair, with assigned
 paths, current acceptance evidence, no open native blocker, and all policy,
 authority, and conflict checks satisfied.
 
@@ -113,7 +113,7 @@ open native update PRs. Require the exact package/version relation, revision,
 affected scope, and applicable security evidence. A same-repository bot/app
 update PR with a concrete repairable check, required change-record, or pin-mirror
 gap stays a recommendation naming that open PR; this slice does not dispatch
-it as a Worker unit.
+it as an Executor unit.
 CI and advisory evidence strengthen that candidate, not separate assignments.
 Titles and branch prefixes prove no trusted identity. An open PR for package X
 overlaps a new unit changing X's pin. A new unit intersecting update PRs only
@@ -155,7 +155,7 @@ dependency update repairs follow the precedence above.
 
 **Issues and feedback:** Apply the shared issue authority and qualification
 rules to remaining product requests. A currently endorsed, bounded product
-request can become a Worker PR under the live mutation gates. Triage and
+request can become an Executor PR under the live mutation gates. Triage and
 unapproved growth hypotheses stay recommend-only: require stable
 identity/revision, bounded redacted evidence, deduplication against native work,
 expected impact, confidence, and verified repository relation. A verified
@@ -169,7 +169,7 @@ customers. Return issue-ready proposals for the owner outside the run.
 Dependency maintenance, engineering health, and documentation may run their normalized
 `audit_commands` only through the managed-run lifecycle in
 `reconciliation.md`. Issues and feedback and runtime reliability neither declare nor execute
-Orchestrator audit commands. Measurement integrity may
+Lead audit commands. Measurement integrity may
 reuse an applicable completed owning-area result as described in
 `measurement-integrity.md`; it does not execute a command or create an area.
 
@@ -208,5 +208,5 @@ entries within the same area summary; they do not create extra areas or bypass
 qualification.
 
 
-The Orchestrator audit allowlist does not restrict a Worker’s assignment-specific
-verification under its approved brief and Worker contract.
+The Lead audit allowlist does not restrict an Executor’s assignment-specific
+verification under its approved brief and Executor contract.

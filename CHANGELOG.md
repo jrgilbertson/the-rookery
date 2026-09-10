@@ -36,6 +36,10 @@ looked" surface. GitHub Releases mirror its entries.
 - Repo Gardener's always-loaded description now leads with overnight
   gardening, and the close catalog lives only in the tracker contract.
 
+- Repo Gardener role names now match `ROUTING.md`: Lead, Executor, Scout,
+  and Reviewer. The overnight pattern is Lead + Executors. The durable
+  `maximum_workers` key is unchanged.
+
 - Runtime reliability and measurement integrity now treat missing expected
   instrumentation on a successful customer flow as a repair path, while
   missing metric contracts stop only the dependent comparison.

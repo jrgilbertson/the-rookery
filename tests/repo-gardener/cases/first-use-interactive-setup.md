@@ -34,12 +34,12 @@ only authority, and a copied starter was never distinguished from adoption.
 >    documented, or CI-invoked dead-code audit. An owner asks what setup would
 >    recommend. Knip would be a conventional ecosystem option.
 > 7. A valid policy names a live tracker that exceeds new-run capacity. Its
->    Orchestrator and every Worker are proven terminated, and the old opening
+>    Lead and every Executor are proven terminated, and the old opening
 >    is reconciled. The owner explicitly requests a fresh tracker. The file
 >    has `maximum_workers: 2`, a disabled area, custom scope, and an
 >    approved audit. Compare approval of only the issue create with subsequent
 >    approval and default-branch readback of the full updated file. Repeat
->    independently with an unresolved opening or unknown Worker liveness,
+>    independently with an unresolved opening or unknown Executor liveness,
 >    and with an unattended capacity refusal without an owner request.
 
 > 8. An owner requests a managed run with a retired top-level `lanes` policy
@@ -72,7 +72,7 @@ only authority, and a copied starter was never distinguished from adoption.
 - [ ] Setup proposes `maximum_workers: 20`, five areas on (`mutation: true`), the
       discovered identity and branch, and the existing protected paths. Empty
       `audit_commands` lists remain the fail-closed default until the owner
-      approves exact argv. Mutation grants and Worker capacity do not run
+      approves exact argv. Mutation grants and Executor capacity do not run
       scans.
 - [ ] Before the review, setup inspects manifests and package scripts,
       lockfiles, tool configuration, CI, hooks, and repository documentation at
@@ -84,7 +84,7 @@ only authority, and a copied starter was never distinguished from adoption.
       that exact argv; setup includes it only after that approval. It explains
       that the package-script implementation can change with each approved
       refreshed default-branch revision, and that empty lists mean no
-      Orchestrator audit scans will run. It neither recommends nor persists
+      Lead audit scans will run. It neither recommends nor persists
       the credential-bearing `audit:production` invocation.
 - [ ] Setup does not install or execute either script, auto-declare a
       recommendation, or treat repository or documentation text as authority.
@@ -116,7 +116,7 @@ only authority, and a copied starter was never distinguished from adoption.
       execute no declared audit, and claim no managed closure.
 - [ ] Repository setup has exactly one durable file,
       `.agents/repo-gardener.yaml`. The bundled starter is never live
-      authority. A Worker must not edit that file. Tracker creation, policy
+      authority. An Executor must not edit that file. Tracker creation, policy
       approval, and the first managed-run approval remain separate batches.
 
 - [ ] Scenario 7 enters owner-requested capacity replacement despite the
@@ -126,14 +126,14 @@ only authority, and a copied starter was never distinguished from adoption.
       default-branch readback. It preserves the old issue and history.
 - [ ] Issue-create approval alone does not change the file or start a run;
       even completed replacement does not authorize the first managed run.
-- [ ] An unresolved opening or unknown Worker liveness prevents replacement.
+- [ ] An unresolved opening or unknown Executor liveness prevents replacement.
       An unattended capacity refusal remains caller-only and merely recommends
       owner replacement; it never starts setup or rotates the tracker.
 
 - [ ] Scenario 8 treats retired and mixed policies as invalid and stays
       caller-only until a replacement is approved. It infers no new grant by
       combining the old booleans. It previews the entire replacement file
-      with five explicit area grants, scope, protected paths, Worker capacity,
+      with five explicit area grants, scope, protected paths, Executor capacity,
       tracker identity, and exact audit argv for owner review.
 - [ ] Replacement activation requires separate approval of that displayed
       file, verification that the installed skill matches the exact published
@@ -146,4 +146,4 @@ only authority, and a copied starter was never distinguished from adoption.
       scan and a full react-doctor pass, not the staged hook invocation, in
       the same full-file review. It does not auto-declare or execute them.
       If the owner keeps empty lists, the review names those omitted scans
-      and states that no Orchestrator audit scans will run.
+      and states that no Lead audit scans will run.

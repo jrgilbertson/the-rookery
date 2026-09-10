@@ -3,8 +3,8 @@
 The tracker is one issue with a static description and append-only comments.
 Native pull requests, branches, heads, checks, and states are authoritative
 for authored work. Each run writes one `run-opened` comment before sensing and
-one `run-closed` comment containing the morning report after Worker supervision
-or an honest no-Worker decision. Workers never comment on the tracker.
+one `run-closed` comment containing the morning report after Executor supervision
+or an honest no-Executor decision. Executors never comment on the tracker.
 
 Each managed comment begins with one compact `orchestrator-run-record` JSON
 object between `orchestrator:run-record` markers, followed by a blank line and
@@ -18,7 +18,7 @@ authority. Read the latest closing comment for the latest completed report.
 
 ## One writer
 
-The caller's invocation declares that only one Orchestrator may write this
+The caller's invocation declares that only one Lead may write this
 tracker during the run (single-writer scheduling or atomic serialization).
 Absent that declaration, the run is caller-only and writes nothing. This skill
 ships no lock or exclusive-writer checker, and the liveness gate in
@@ -98,7 +98,7 @@ Existing openings and uncertain-write recovery retain their original tracker
 and identity; unrelated provider growth can still make a later read unavailable.
 
 For replacement, the owner first reconciles the old tracker and proves its
-Orchestrator and Workers have terminated with no unresolved opening. Then use
+Lead and Executors have terminated with no unresolved opening. Then use
 the owner-requested capacity replacement entry in `policy-and-entry-modes.md`
 to name a fresh tracker through its separate issue-create and full-file approvals. Preserve the old issue and all its history. A gardening run never
 rotates trackers or truncates history itself.
@@ -124,20 +124,20 @@ as `area-contracts.md` defines.
 | Field | Values | Set by |
 | --- | --- | --- |
 | area status | `surveyed` (stated query/slice completed), `partial` (stated coverage incomplete or a mix of available and unavailable sources; name the bound), `unavailable` (no usable source or identity binding; name which), `blocked` (policy or authority denied reads) | available evidence |
-| Worker state | `pending` (open PR with checks or required review still pending), `published` (verified Worker publication, with no open-PR checks or review pending), `preserved` (authored commit kept without push or PR), `denied` (dispatch or publication stopped; the reason named) | supervision |
-| run outcome | `complete`, `partial` (any Worker pending), `interrupted` (close denied after opening), `caller-only` (no managed run opened) | opening or close |
+| Executor state | `pending` (open PR with checks or required review still pending), `published` (verified Executor publication, with no open-PR checks or review pending), `preserved` (authored commit kept without push or PR), `denied` (dispatch or publication stopped; the reason named) | supervision |
+| run outcome | `complete`, `partial` (any Executor pending), `interrupted` (close denied after opening), `caller-only` (no managed run opened) | opening or close |
 
 A value outside this table is a report defect. `partial` on an area does not by
-itself change the run outcome; a pending Worker does.
-An externally closed or merged PR remains `published` when the Worker's
+itself change the run outcome; a pending Executor does.
+An externally closed or merged PR remains `published` when the Executor's
 publication was verified. Report its current native PR state separately;
 this does not claim the gardener closed or merged it.
 
 ## Render the morning report
 
-The closing comment and retained Orchestrator report show, in this order:
+The closing comment and retained Lead report show, in this order:
 
-- native Worker PR facts, checks, review state, current Worker state, and
+- native Executor PR facts, checks, review state, current Executor state, and
   owner attention (up to seven items plus overflow count); when a prior run's
   `run-opened` is stale and unresolved, item 1 says so and that every later
   night stays caller-only until an owner writes its close;
@@ -153,7 +153,7 @@ Seven is a presentation limit only; it does not constrain sensing, depth, or
 native authored work. Never claim persistence without an exact provider read.
 
 Report concrete candidate blockers separately from coverage gaps and native
-Worker results. A structurally verified close proves tracker consistency, not
+Executor results. A structurally verified close proves tracker consistency, not
 a successful repair or exhausted repository. A `surveyed` area describes only
 its stated evidence; unread backlog remains unassessed. Declared-audit results
 retain their required disposition and evidence details from `area-contracts.md`.

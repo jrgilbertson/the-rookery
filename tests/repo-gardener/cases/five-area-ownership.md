@@ -17,7 +17,7 @@ Provenance: the prior nine-lane contract repeated evidence collection and assign
       crash to runtime reliability, test/tooling defect to engineering health,
       and the remaining product-behavior request to issues and feedback.
 - [ ] Completes a quick available-input pass before dispatch, then deepens useful
-      investigations while independent selected Workers progress.
+      investigations while independent selected Executors progress.
 - [ ] Preserves trusted current issue endorsement or caller authority irrespective
       of remedy owner; a source label cannot confer authority.
 - [ ] Leaves the engineering security finding unassigned because required

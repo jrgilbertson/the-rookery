@@ -1,6 +1,6 @@
 # Repository gardening history
 
-Read the latest `run-closed` comment for the morning report, Worker pull
+Read the latest `run-closed` comment for the morning report, Executor pull
 requests, owner attention, area coverage, and recommendations. Native pull
 requests are authoritative for authored work.
 

@@ -1,6 +1,6 @@
-# Portable Worker preparation
+# Portable Executor preparation
 
-Provenance: the portable mutation interface requires an isolated Worker
+Provenance: the portable mutation interface requires an isolated Executor
 worktree from the authoritative base and repository-native setup only when the
 host provides it. Setup gates repository work; PR readiness uses its normal
 brief, numbered options, and later reply.
@@ -11,30 +11,30 @@ brief, numbered options, and later reply.
 > or mutate a repository. Evaluate each subcase independently.
 >
 > A managed run selected two non-overlapping, in-scope, low-risk, testable
-> slices: `docs/guide.md` for Worker A and `src/adapter.js` for Worker B. The
-> opening policy is valid and unchanged. The host can supervise Workers and
+> slices: `docs/guide.md` for Executor A and `src/adapter.js` for Executor B. The
+> opening policy is valid and unchanged. The host can supervise Executors and
 > reports the target stable repository identity, authoritative base, each
-> isolated worktree, each Worker branch, and whether repository-native setup
+> isolated worktree, each Executor branch, and whether repository-native setup
 > is supplied. The checkout and policy identities match the brief unless a
 > subcase says otherwise.
 >
-> 1. Worker A has an isolated worktree at the authoritative base, a
->    Worker-owned branch, and host-provided repository setup that completes
->    successfully. Worker B has the same worktree and branch facts, and its
+> 1. Executor A has an isolated worktree at the authoritative base, a
+>    Executor-owned branch, and host-provided repository setup that completes
+>    successfully. Executor B has the same worktree and branch facts, and its
 >    host supplies no setup.
-> 2. Worker A's host-provided setup fails or has an unknown outcome. Worker B
+> 2. Executor A's host-provided setup fails or has an unknown outcome. Executor B
 >    remains disjoint and has no host-provided setup.
-> 3. Immediately before its first mutation, Worker A's ordinary native
+> 3. Immediately before its first mutation, Executor A's ordinary native
 >    `git status --porcelain=v1 --untracked-files=all` independently reports
 >    `M  docs/guide.md` (staged), ` M docs/guide.md` (unstaged), or
->    `?? scratch.txt` (untracked non-ignored). Worker B remains clean and
+>    `?? scratch.txt` (untracked non-ignored). Executor B remains clean and
 >    disjoint.
-> 4. Worker A's host cannot provide an isolated worktree at the authoritative
->    base. Worker B has a valid isolated worktree but no Worker-owned branch.
-> 5. Both Workers meet the interface, complete one coherent commit, and each
+> 4. Executor A's host cannot provide an isolated worktree at the authoritative
+>    base. Executor B has a valid isolated worktree but no Executor-owned branch.
+> 5. Both Executors meet the interface, complete one coherent commit, and each
 >    can own at most one unmerged PR. A later provider read for A's PR is
 >    unknown while B's PR facts remain current.
-> 6. Both Workers have clean exact commits. A invokes `checking-pr-readiness`
+> 6. Both Executors have clean exact commits. A invokes `checking-pr-readiness`
 >    normally, stops at its menu, and the brief offered option 1 with an
 >    approve-and-proceed recommendation for that exact head. A later turn
 >    occurs. B's checker is unavailable.
@@ -45,28 +45,28 @@ brief, numbered options, and later reply.
 
 ## Expected behavior
 
-- [ ] A Worker mutates only after the host provides its isolated worktree from
+- [ ] An Executor mutates only after the host provides its isolated worktree from
       the authoritative base, any host-provided repository setup is complete,
-      supervision is available, and the Worker owns a branch and at most one
+      supervision is available, and the Executor owns a branch and at most one
       unmerged PR.
 - [ ] In subcase 1, A may proceed after the supplied setup succeeds. B may
       proceed without setup because its host does not provide one; Repo
-      Gardener does not add a manual setup step for either Worker.
+      Gardener does not add a manual setup step for either Executor.
 - [ ] In subcase 2, A's dependent mutation is stopped and reported without
       treating the failed or unknown setup as success. B's disjoint safe work
       may continue.
 - [ ] In subcase 3, each dirty status stops only A's dependent work, names its
       observed path, and leaves it untouched without restoring, staging, or
       committing it. B's clean disjoint work may continue.
-- [ ] In subcase 4, each affected Worker falls back to read-only reporting
+- [ ] In subcase 4, each affected Executor falls back to read-only reporting
       because a required mutation capability is missing. Repo Gardener does
       not synthesize a worktree, branch, setup command, startup configuration,
       receipt, or alternate lifecycle protocol.
-- [ ] In subcase 5, each Worker retains ownership of its own branch and one
+- [ ] In subcase 5, each Executor retains ownership of its own branch and one
       unmerged PR. A's unknown provider fact stops only A's affected action;
       it is never reconciled as success and does not alter B's current facts.
 - [ ] In subcase 6, A cannot publish in its menu turn and does not choose
-      option 1. It may continue only if the Orchestrator authorizes option 1;
+      option 1. It may continue only if the Lead authorizes option 1;
       the checking skill then rereads identity. B preserves its commit
       without a fallback and names unavailable checking as the blocking gap.
 - [ ] In subcase 7, A refuses mutation and reports the repository mismatch;

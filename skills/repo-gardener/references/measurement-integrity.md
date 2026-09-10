@@ -65,7 +65,7 @@ hypotheses with their sample size, denominator, window, and uncertainty.
 
 ## Feed reconciliation
 
-Return one cross-cutting result inside the Orchestrator decision evidence. For every inspected metric, report its disposition,
+Return one cross-cutting result inside the Lead decision evidence. For every inspected metric, report its disposition,
 authority, window and timezone, grain, numerator, denominator, exclusions,
 uncertainty, reconciliation result, and bounded evidence references; use `not
 supplied` for unavailable observed values. Include every `metric contract

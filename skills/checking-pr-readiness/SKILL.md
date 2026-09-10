@@ -389,7 +389,7 @@ Discover the installed skill that owns opening a pull request the same way
 `ce-explain` is: when that skill is present. WORKFLOWS.md's example is
 `ce-commit-push-pr`. Then follow
 [references/finishing.md](references/finishing.md), which invokes that skill
-once. A Worker is a run already executing the `repo-gardener` Worker
+once. An Executor is a run already executing the `repo-gardener` Executor
 contract; that file branches on that fact. Do not keep a second
 gardener-only publisher.
 
@@ -432,10 +432,10 @@ non-1 later turn ends the run, or on failure.
   owns those writes. The gate itself still does not stage, commit, push, open,
   or merge a pull request.
 - A dead session needs a fresh gate. There is no pasteable pack to restock.
-- When `checking-merge-readiness` is also installed, a non-Worker option-1
+- When `checking-merge-readiness` is also installed, a non-Executor option-1
   reply continues into it only after babysit looks merge-ready or cautiously
-  looks ready, in a fresh uninvolved context. A Worker option-1 reply does
-  not dispatch it; the Orchestrator starts that helper after looks
+  looks ready, in a fresh uninvolved context. An Executor option-1 reply does
+  not dispatch it; the Lead starts that Reviewer after looks
   merge-ready or cautiously looks ready. This gate still does not merge. If
-  merge-readiness is absent after babysit on a non-Worker run, name that
+  merge-readiness is absent after babysit on a non-Executor run, name that
   once and stop.

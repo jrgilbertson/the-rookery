@@ -10,5 +10,5 @@ Provenance: this slice removed the shared-ledger publication exception.
 
 ## Expected behavior
 
-- [ ] Assignment names the shared file on at most one Worker.
+- [ ] Assignment names the shared file on at most one Executor.
 - [ ] No publication-time union-merge exception is applied.

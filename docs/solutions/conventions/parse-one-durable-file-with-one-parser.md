@@ -18,6 +18,8 @@ tags: [skills, yaml, pyyaml, fail-closed, durable-file, parser-unification]
 
 ## Context
 
+The gardener scripts described here were later removed; the learning still
+applies to any skill that parses a durable file.
 Repo Gardener's live authority is one durable yaml file in the target
 repository, not a file this catalog keeps.
 `config_check.py` used to parse it with a hand-rolled loader. `lanes` in
@@ -72,4 +74,3 @@ and duplicate keys.
 ## Related
 
 - [Ship bundled skill helpers with an executable falsifiability contract](../workflow-issues/falsifiability-contracts-need-executable-tests.md)
-- [policy-and-entry-modes.md](../../../skills/repo-gardener/references/policy-and-entry-modes.md)

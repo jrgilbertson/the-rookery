@@ -217,16 +217,14 @@ the named risks to recommend merge, debug, or do not merge.
 
 ### Repository Maintenance Run
 
-One overnight `repo-gardener` pass through
-`Sense -> Decide -> Act -> Verify -> Learn`. CI remains the merge gate. The
-run covers neglected whole-project scans, bounded exception and measurement
-evidence, and, where justified, independently deliverable Executor pull
-requests. When that work is an issue, it is an Implementation Leaf.
+One unattended `repo-gardener` pass that senses one repository, dispatches
+Executors, and reports. CI remains the merge gate. A report with no
+Executor is a complete run.
 
 ### Lead
 
 The agent of a Repository Maintenance Run that senses, decides, assigns
-Executors, writes the Gardening Tracker, and produces the morning summary.
+Executors, and produces the morning summary.
 Same role as `ROUTING.md` Lead. It does not implement, push, or merge.
 
 *Avoid:* Orchestrator, parent, gardener parent
@@ -261,16 +259,9 @@ candidates. Areas reuse shared source results.
 
 ### Gardening Tracker
 
-The GitHub issue holding append-only run history for one repository. Its body
-is setup information; each Repository Maintenance Run writes one opened comment
-and one closed comment containing the morning report. Native pull requests
-remain authoritative for authored work.
-
-### Run History
-
-The append-only comment history on the Gardening Tracker. Each Repository
-Maintenance Run adds one opened record and one closed record. History supplies
-visibility, not a lock, queue, authority grant, or planning-quality verdict.
+The optional GitHub issue (`report_issue`) that receives one plain report
+comment per Repository Maintenance Run. It holds no managed records or
+markers. Native pull requests remain authoritative for authored work.
 
 ## Research synthesis
 

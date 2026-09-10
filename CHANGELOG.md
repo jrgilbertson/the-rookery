@@ -27,28 +27,16 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
-- Repo Gardener now starts only on an explicit invoke of the skill by name.
-  Topic matches about overnight maintenance, CI, or issues do not activate
-  it. The overnight job remains in the skill body: neglected whole-project
-  scans and bounded exception or measurement evidence, with CI remaining
-  the merge gate. First-use recommends evidenced deferred scans instead of
-  treating empty audit lists as a useful default, and sensing distinguishes
-  staged hooks from full-project coverage.
-
-- Repo Gardener's close catalog lives only in the tracker contract. The
-  always-loaded description no longer topic-matches overnight gardening.
-
-- Repo Gardener role names now match `ROUTING.md`: Lead, Executor, Scout,
-  and Reviewer. The overnight pattern is Lead + Executors. The durable
-  `maximum_workers` key is unchanged.
-
-- Runtime reliability and measurement integrity now treat missing expected
-  instrumentation on a successful customer flow as a repair path, while
-  missing metric contracts stop only the dependent comparison.
-
-- Repo Gardener policy docs now show audit-command argv as one process per
-  item, with the actual scan named (knip, cargo audit, documentation-link
-  checks) so `npm run` is visible as the launcher, not the example.
+- Repo Gardener is rewritten as one short skill for unattended runs. It
+  starts only on an explicit invoke by name, reads a small
+  `.agents/repo-gardener.yaml` (scope, protected paths,
+  `maximum_workers`, approved scans, optional report issue), runs the
+  approved scans, senses five areas, and dispatches Executors that ship
+  one PR each through `ce-work`, `ce-code-review`,
+  `checking-pr-readiness`, `ce-commit-push-pr`, and `ce-babysit-pr`, with
+  `checking-merge-readiness` giving the final verdict in one plain
+  morning report. Role names match `ROUTING.md`: Lead, Executor, Scout,
+  Reviewer.
 
 - Route kickoffs now require official provider CLIs with subscription
   authentication and report a blocker instead of using API-key billing.
@@ -288,6 +276,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Removed
 
+- Repo Gardener's managed-run machinery: the two-record tracker protocol
+  and its scripts, caller-only mode, liveness reconciliation, revision
+  check points, per-area mutation grants, the declared-audit sandbox, and
+  the separate Executor contract. Existing `.agents/repo-gardener.yaml`
+  files need the new keys.
 - `repo-gardener` no longer accepts `issue_refinement`, `evidence_sources`, or
   `shared_ledger_paths` in `.agents/repo-gardener.yaml`. Remove those keys on
   upgrade. Follow-up issues remain owner proposals for Managing Issues outside

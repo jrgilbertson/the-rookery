@@ -40,8 +40,8 @@ coverage accurately, not to enumerate every backlog before useful work.
 
 ## Current guidance
 
-Use the discovery sequence in
-[area-contracts.md](../../../skills/repo-gardener/references/area-contracts.md).
+Use the sensing guidance in the Sense section of
+[Repo Gardener](../../../skills/repo-gardener/SKILL.md).
 A Census describes one stated query and window. Record its filters, returned
 counts, pagination or search limits, and inspected coverage. Reuse results
 and body reads across areas when queries overlap.
@@ -79,6 +79,6 @@ claiming query completion or backlog exhaustion.
 ## Related
 
 - Historical motivation: pull request 69 on `jrgilbertson/the-rookery`
-- [Five maintenance areas](../../../skills/repo-gardener/references/area-contracts.md)
+- [Repo Gardener](../../../skills/repo-gardener/SKILL.md)
 - [Make skill safe stops local and observable](make-skill-safe-stops-local-and-observable.md)
 - [Cross-harness dogfood testing](../best-practices/cross-harness-dogfood-testing.md)

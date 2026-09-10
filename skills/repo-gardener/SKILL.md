@@ -1,11 +1,15 @@
 ---
 name: repo-gardener
-description: Overnight gardening — scheduled or manual repository maintenance, first-use of `.agents/repo-gardener.yaml`, or interpreting a gardener run. Covers neglected whole-project scans, bounded exception and measurement evidence, and reviewable Executor PRs.
+description: Use only when the user explicitly invokes repo-gardener.
 license: MIT
 compatibility: "Requires Python 3, PyYAML, config_check.py, and read access to one repository, its durable file, native PR state, and evidence the host can already read; `.agents/managing-issues.json` is optional. Without safe mutation capability, it reports read-only findings."
 ---
 
 # Repo Gardener
+
+Start only on an explicit invoke of this skill by name. A request about
+maintenance, CI, issues, or overnight work that does not name repo-gardener
+is not this skill.
 
 A scheduled or manual Repository Maintenance Run is the overnight pass for
 work the repository benefits from and does not routinely perform: approved

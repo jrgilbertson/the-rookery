@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-10 | fd732d6 (working tree) | explicit-invoke trigger contract | not run | Description is now "Use only when the user explicitly invokes repo-gardener." Topic-match queries moved to near misses. No fresh-context trigger-suite grade is claimed.
+
 - 2026-09-10 | 87b8eeb (working tree) | Lead/Executor terminology in cases and triggers | not run | Cases and triggers now use ROUTING.md Lead, Executor, Scout, and Reviewer. No fresh-context grade is claimed for that rename.
 
 - 2026-09-08 | b075928 (working tree) | matched comparison: unattended Worker option-1 finishing (scenarios 2, 8, 9) | pass — prior fail vs skilled pass | Isolated general-purpose executors and a separate blind grader. Prior used gardener-only first-publication; the same Worker later invoked merge-readiness. Candidate uses `mode:pipeline` publisher and babysit; Orchestrator starts a fresh merge-readiness helper after looks merge-ready; blocked babysit does not dispatch merge-readiness.

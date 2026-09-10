@@ -3,24 +3,29 @@
 Judged under [`tests/README.md`](../README.md): name + description + one query,
 fresh context, binary judgment.
 
+This skill starts only on an explicit invoke. Topic matches about overnight
+maintenance, CI, or issues do not activate it.
+
 ## Should trigger
 
 | Query | Reason |
 | --- | --- |
-| Run tonight's repository gardening automation | Explicit scheduled run. |
-| Set up repo-gardener on this repository | First-use setup of the durable file and tracker. |
-| Reconcile the repo gardener tracker and inspect all maintenance lanes | Core manual run. |
-| Continue the interrupted repo-gardener Lead and close its run | Recovery of the same workflow. |
-| Why did last night's repository-gardener run skip an Executor PR? | Interpret a run decision. |
-| Do the nine-lane repository-health pass and deepen the strongest current findings | Legacy user wording for the maintenance pass; activation does not retain the retired nine-lane contract. |
-| Let the nightly gardener open unmerged PRs if current evidence warrants it | Bounded Executor-authoring workflow. |
-| Check product-data trust as part of this repo-gardener run | Cross-cutting measurement path. |
-| Prepare the morning report from the retained repository-gardener Lead | Explicit run handoff. |
+| $repo-gardener | Named skill invoke. |
+| /repo-gardener | Named skill invoke. |
+| Run repo-gardener on this repository | Names the skill. |
+| Set up repo-gardener on this repository | Names the skill for first-use. |
+| Continue the interrupted repo-gardener Lead and close its run | Names the skill for recovery. |
+| Why did last night's repo-gardener run skip an Executor PR? | Names the skill for interpreting a run. |
+| Check product-data trust as part of this repo-gardener run | Names the skill; measurement stays in-run. |
 
 ## Near misses: should not trigger
 
 | Query | Expected owner |
 | --- | --- |
+| Run tonight's repository gardening automation | Topic match; no skill name. |
+| Let the nightly gardener open unmerged PRs if current evidence warrants it | Topic match; no skill name. |
+| Do the nine-lane repository-health pass and deepen the strongest current findings | Topic match; no skill name. |
+| Reconcile the tracker and inspect all maintenance lanes | Topic match; no skill name. |
 | Implement issue 123 in a new worktree | General implementation workflow. |
 | Review this branch for bugs | Code review. |
 | Is this branch ready for a PR? | `checking-pr-readiness`. |

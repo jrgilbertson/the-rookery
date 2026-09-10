@@ -27,14 +27,16 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
-- Repo Gardener now states the overnight job in the skill: neglected
-  whole-project scans and bounded exception or measurement evidence, with
-  CI remaining the merge gate. First-use recommends evidenced deferred
-  scans instead of treating empty audit lists as a useful default, and
-  sensing distinguishes staged hooks from full-project coverage.
+- Repo Gardener now starts only on an explicit invoke of the skill by name.
+  Topic matches about overnight maintenance, CI, or issues do not activate
+  it. The overnight job remains in the skill body: neglected whole-project
+  scans and bounded exception or measurement evidence, with CI remaining
+  the merge gate. First-use recommends evidenced deferred scans instead of
+  treating empty audit lists as a useful default, and sensing distinguishes
+  staged hooks from full-project coverage.
 
-- Repo Gardener's always-loaded description now leads with overnight
-  gardening, and the close catalog lives only in the tracker contract.
+- Repo Gardener's close catalog lives only in the tracker contract. The
+  always-loaded description no longer topic-matches overnight gardening.
 
 - Repo Gardener role names now match `ROUTING.md`: Lead, Executor, Scout,
   and Reviewer. The overnight pattern is Lead + Executors. The durable

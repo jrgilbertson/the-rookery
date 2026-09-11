@@ -3,8 +3,9 @@
 Judged under [`tests/README.md`](../README.md): name + description + one query,
 fresh context, binary judgment.
 
-This skill starts only on an explicit invoke. Topic matches about overnight
-maintenance, CI, or issues do not activate it.
+This skill starts only when named: the skill name, its slash or dollar
+form, or a plain request to run the repository gardening automation. Topic
+matches about maintenance, CI, health, trackers, or issues do not activate it.
 
 ## Should trigger
 
@@ -17,13 +18,13 @@ maintenance, CI, or issues do not activate it.
 | Continue last night's repo-gardener run and post its report | Names the skill for recovery. |
 | Why did last night's repo-gardener run skip an Executor PR? | Names the skill for interpreting a run. |
 | Run repo-gardener now and post the report to issue 3521 | Names the skill with a report target. |
+| Run tonight's repository gardening automation | Names the gardening automation in plain words. |
+| Let the nightly gardener run and open its pull requests | Names the gardener as the thing to run. |
 
 ## Near misses: should not trigger
 
 | Query | Expected owner |
 | --- | --- |
-| Run tonight's repository gardening automation | Topic match; no skill name. |
-| Let the nightly gardener open unmerged PRs if current evidence warrants it | Topic match; no skill name. |
 | Do a repository-health pass and deepen the strongest findings | Topic match; no skill name. |
 | Reconcile the tracker and inspect all maintenance lanes | Topic match; no skill name. |
 | Implement issue 123 in a new worktree | General implementation workflow. |

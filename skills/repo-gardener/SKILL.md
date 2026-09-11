@@ -1,6 +1,6 @@
 ---
 name: repo-gardener
-description: Use only when the user explicitly invokes repo-gardener by name, including the /repo-gardener and $repo-gardener forms. A message that says gardening, gardener, or gardening automation without the exact token repo-gardener is not an invoke and must not activate this skill. Requests about nightly or scheduled maintenance, repository health, trackers, or maintenance lanes that do not say repo-gardener belong to other skills.
+description: Use only when the user explicitly invokes repo-gardener by name, including the /repo-gardener and $repo-gardener forms, or asks to run, continue, set up, or explain the repository gardening automation or the nightly gardener. Requests about maintenance, CI, repository health, trackers, maintenance lanes, or issues that do not name repo-gardener or the gardening automation belong to other skills.
 license: MIT
 compatibility: Needs git, the GitHub CLI, the installed compound-engineering skills ce-debug, ce-plan, ce-work, ce-simplify-code, ce-code-review, ce-test-browser, ce-commit-push-pr, ce-babysit-pr, and the rookery skills checking-pr-readiness and checking-merge-readiness; without write access it senses and reports only.
 ---

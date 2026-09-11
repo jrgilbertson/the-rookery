@@ -6,6 +6,16 @@
 
 My workflow moves through five core jobs: Research, Plan, Design, Build, and Ship. Two feedback loops keep it current: Maintain turns recurring problems into tests, rules, and documented lessons, while Learn turns experience into linked notes and new research questions. Each section explains how I approach the job and which tools and commands I use. The Rookery skills in those sections install on their own. Compound Engineering, Impeccable, and Orca are the surrounding stack I run them in.
 
+| Job | Goal | Key tools | Move on when |
+|---|---|---|---|
+| [Research](#research) | Curate enough context to plan from | Deep research, `ce-ideate`, `storm-research`, `ce-pov` | Intent stated, findings current and contested, context curated |
+| [Plan](#plan) | Write what to build and the guardrails execution must honor | `ce-brainstorm`, `ce-plan`, `grilling` | Objective, verifiable end state, constraints, and artifact named |
+| [Design](#design) | Set a design brief and a written design system | `impeccable shape`, `impeccable audit` and `critique`, `DESIGN.md` | Design brief exists and taste is written down |
+| [Build](#build) | Build the plan in bounded slices and verify each one | `ce-work`, `lfg`, Orca worktrees | CI green, slice bounded, design held |
+| [Ship](#ship) | Review and verify the change, then merge it | `ce-simplify-code`, `ce-code-review`, `checking-pr-readiness` | A human read the work and the explanation makes sense |
+| [Maintain](#maintain) | Tend the repo and encode every learning where it holds | `repo-gardener`, `ce-compound`, `impeccable extract` | Learning landed on the strongest rung that holds it |
+| [Learn](#learn) | Capture learning as linked notes and name the gaps | `atomic-note`, `personal-chief-of-staff`, `reviewing-meetings` | Learning is in the graph and gaps are named |
+
 [Routing work](ROUTING.md) documents how I select the first workflow, the
 lead, the pattern, and the roster of roles with models and effort without
 starting a downstream workflow. I use it when explicitly routing new work or

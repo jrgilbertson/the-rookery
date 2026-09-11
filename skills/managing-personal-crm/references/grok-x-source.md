@@ -8,13 +8,13 @@ Finding posts to read or contribute to is out of scope (repository issue #12).
 
 ## Prove read access
 
-This check applies when this skill needs its own X query. Prefer the installed
-Grok CLI for public X reads. Discover its supported search and fetch tools from
-the installed interface. If the CLI is absent, use a configured read-only X API
-or host X tool only when the caller permits that provider and its cost. A caller
-prohibition on paid API use rules out that fallback when it is paid or its cost
-is unknown. Do not provision credentials or claim Grok usage is free without
-billing evidence. A failed query follows the rules below; changing providers
+This check applies when this skill needs its own X query. Discover the installed
+Grok CLI's supported search and fetch tools from its interface. Prefer Grok when
+it provides the required public X read capability; otherwise use a configured
+read-only X API or host X tool only when the caller permits that provider and
+its cost. A caller prohibition on paid API use rules out that fallback when it
+is paid or its cost is unknown. Do not provision credentials or claim Grok usage
+is free without billing evidence. A failed query follows the rules below; changing providers
 must not bypass a final failure, exhaustion, or recovery restriction.
 
 Resolve the user's public handle from explicit user confirmation or trusted

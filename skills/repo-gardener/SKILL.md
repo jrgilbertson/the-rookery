@@ -63,7 +63,9 @@ not count.
 ## Sense
 
 Read the policy `scans` list as the approved scans. Run every approved
-scan from the repository root with the host's command tool. Give each
+scan with the host's command tool from the root of a clean worktree at
+the exact default-branch revision the policy was read from, never from
+a topic branch or a dirty checkout. Give each
 scan a 15-minute timeout, or the host command tool's maximum when that
 is lower. Capture each scan's output outside the repository. Summarize
 each scan for the report. Report a scan by its findings; a nonzero exit
@@ -199,7 +201,9 @@ one-line status and name each unavailable source. Under findings not
 authored and why, list recommendations, including bot update PRs to
 adopt, the protected-path items, and blocked units with preserved
 commits and why. Under proposed policy changes, include the whole
-proposed file on a sense-only run. Name a sense-only run as complete.
+proposed file only when the policy was missing or unreadable; a valid
+policy that chose sense-only gets no proposal. Name a sense-only run as
+complete.
 Keep each scan summary to one line. Always print the pull requests
 section, writing none when no pull request was opened; omit another
 section only when it has no items. Never paste raw scan output, secrets,

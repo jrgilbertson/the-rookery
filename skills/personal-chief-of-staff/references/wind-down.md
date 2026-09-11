@@ -73,7 +73,7 @@ coverage for wind-down, separate from prepare-tomorrow's cadence exceptions.
 2. **Sources.** Require the companion to cover each configured relationship
    interaction source for that window: Apple Messages when `imsg` is configured
    (companion loads its Messages adapter before any Messages query), each
-   authorized mailbox within its identity boundary, authenticated X under its
+   authorized mailbox within its identity boundary, public X under its
    current source contract when available. Calendar visibility is not mailbox
    coverage. Unavailable sources are Partial for dependent conclusions only. Do
    not invoke `imsg` as CoS-owned tooling outside the companion path.

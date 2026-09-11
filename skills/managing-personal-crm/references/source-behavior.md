@@ -9,8 +9,8 @@ Use each configured source only for its native role:
 
 - Person notes provide canonical durable relationship meaning and approved
   identity links.
-- Messages, email, meetings, calendars, journals, and X (authenticated Grok
-  or host X search tools when available) provide interaction evidence and
+- Messages, email, meetings, calendars, journals, and X (through the configured
+  read-only source adapter when available) provide interaction evidence and
   native timestamps; they do not replace Person notes or Tasks.
 - Contacts can corroborate identity but do not establish relationship meaning.
 - Tasks provide canonical dated commitments.

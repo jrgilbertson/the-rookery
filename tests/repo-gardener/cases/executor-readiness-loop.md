@@ -18,7 +18,7 @@ Executor as independent except where a later Lead turn is named.
 > worktree and stop at the numbered menu.
 >
 > Executor A's menu offers option 1 and recommends approve and proceed
-> for that same exact head. Every changed path is inside A's allowed
+> for that same exact head. Every committed path is inside A's allowed
 > files.
 >
 > Executor B's menu recommends request changes and names two

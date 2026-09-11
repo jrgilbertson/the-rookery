@@ -28,8 +28,9 @@ looked" surface. GitHub Releases mirror its entries.
 ### Changed
 
 - Repo Gardener is rewritten as one short skill for unattended runs. It
-  starts only when named, by the skill name or a plain request to run the
-  repository gardening automation, reads a small
+  starts only when named, by the skill name or a plain request to run,
+  continue, set up, or explain the repository gardening automation or the
+  nightly gardener, reads a small
   `.agents/repo-gardener.yaml` (protected paths, `max_pull_requests`,
   approved scans, approved `verify` argv, optional report issue), runs
   the approved scans, senses five areas, and
@@ -40,7 +41,8 @@ looked" surface. GitHub Releases mirror its entries.
   `checking-merge-readiness` giving the final verdict in one plain
   morning report. Role names match `ROUTING.md`: Lead, Executor, Scout,
   Reviewer. An owner invoking the skill without a policy file gets
-  first-use setup that writes the file after approval.
+  first-use setup that writes the file after the owner approves it in a
+  later reply.
 
 - Route kickoffs now require official provider CLIs with subscription
   authentication and report a blocker instead of using API-key billing.

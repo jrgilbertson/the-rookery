@@ -8,9 +8,28 @@ Finding posts to read or contribute to is out of scope (repository issue #12).
 
 ## Prove read access
 
-This check applies when this skill needs its own X query. Confirm the host can
-run authenticated read-only X search before treating X as available. Use the
-Grok CLI or host X tools the runtime already exposes.
+This check applies when this skill needs its own X query. Discover the installed
+Grok CLI's supported search and fetch tools from its interface. Prefer Grok when
+it provides the required public X read capability; otherwise use a configured
+read-only X API or host X tool only when the caller permits that provider and
+its cost. A caller prohibition on paid API use rules out that fallback when it
+is paid or its cost is unknown. Do not provision credentials or claim Grok usage
+is free without billing evidence. A failed query follows the rules below; changing providers
+must not bypass a final failure, exhaustion, or recovery restriction.
+
+Resolve the user's public handle from explicit user confirmation or trusted
+caller configuration. Authentication to Grok proves provider access, not X
+account ownership; a confirmed handle needs no authenticated-X identity lookup.
+A name-search match or a retrieved post claiming ownership is insufficient.
+Keep personal handles and provider preferences in private caller configuration,
+not in the published skill. Existing identity-collision rules still apply.
+
+For a confirmed handle, a bounded public-profile fetch can retrieve posts even
+when general search misses the handle or a page-opening tool rejects X URLs.
+Use supported public search/fetch within the chosen budget; inspect returned
+content, authorship, timestamps, and completeness before using it. A login wall
+alone does not establish failure if the requested public content is present;
+a profile result does not establish complete reply history or DM access.
 
 For a Grok CLI read that uses tools, choose a finite turn budget that can
 accommodate search, fetch, and final synthesis. Set and report the chosen value
@@ -42,7 +61,8 @@ errors. It does not retry missing or rejected authentication, rate limits,
 invalid queries, provider errors, or ordinary incomplete reads. A successful
 recovery proves access; a failed recovery is final for the current run.
 
-If tools are missing, auth fails, or the query errors, mark X **unavailable**.
+If no permitted read path is available, auth fails, or the query errors, mark
+X **unavailable**.
 Apply **Partial** coverage only to conclusions that need X.
 
 X evidence a caller already retrieved needs no local X tool. Judge it under the
@@ -77,8 +97,9 @@ contract. Leave unmatched or ambiguous people unlinked. Ask only when the
 ambiguity changes the result.
 
 Likes, passive follows, broadcasts, and watching someone else's update do not
-count as contact. Direct replies, DMs, and targeted exchanges may count when
-identity and time are reliable.
+count as contact. Direct replies and targeted exchanges may count when
+identity and time are reliable. DMs require separate authorized evidence;
+public-profile retrieval does not provide them.
 
 For each kept interaction, separate **observed** facts from **inference**. Keep
 handle or profile URL when known, direction, native timestamp, a short meaning

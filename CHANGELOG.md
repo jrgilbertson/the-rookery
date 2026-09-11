@@ -44,6 +44,11 @@ looked" surface. GitHub Releases mirror its entries.
   first-use setup that writes the file after the owner approves it in a
   later reply.
 
+- Public X reads in personal CRM and chief-of-staff prefer Grok CLI when it
+  provides the required public X read capability and accept user-confirmed
+  handles without authenticated X identity discovery. Otherwise a configured
+  read-only API remains available when the caller permits its cost; existing
+  read and recovery limits remain.
 - Route kickoffs now require official provider CLIs with subscription
   authentication and report a blocker instead of using API-key billing.
   Astra at low replaces Sol at high as the secondary Lead profile.

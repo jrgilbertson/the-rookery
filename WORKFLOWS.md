@@ -9,7 +9,7 @@ My workflow moves through five core jobs: Research, Plan, Design, Build, and Shi
 | Job | Goal | Key tools | Move on when |
 |---|---|---|---|
 | [Research](#research) | Curate enough context to plan from | Deep research, `ce-ideate`, `storm-research`, `ce-pov` | Intent stated, findings current and contested, context curated |
-| [Plan](#plan) | Write what to build and the guardrails execution must honor | `ce-brainstorm`, `ce-plan`, `grilling` | Objective, verifiable end state, constraints, and artifact named |
+| [Plan](#plan) | Write what to build and the guardrails execution must honor | `ce-brainstorm`, `ce-plan`, `grilling` | Objective, verifiable end state, constraints, inputs and tools, and artifact named |
 | [Design](#design) | Set a design brief and a written design system | `impeccable shape`, `impeccable audit` and `critique`, `DESIGN.md` | Design brief exists and taste is written down |
 | [Build](#build) | Build the plan in bounded slices and verify each one | `ce-work`, `lfg`, Orca worktrees | CI green, slice bounded, design held |
 | [Ship](#ship) | Review and verify the change, then merge it | `ce-simplify-code`, `ce-code-review`, `checking-pr-readiness` | A human read the work and the explanation makes sense |

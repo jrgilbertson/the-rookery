@@ -24,8 +24,10 @@ run that authors nothing but reports as a complete run.
 ## Read the policy
 
 Read `.agents/repo-gardener.yaml` on the refreshed default branch once at
-the start. If the default branch cannot be refreshed, read the local
-checkout and name that in the report. Treat that file as the only durable
+the start. If the default branch cannot be refreshed, read the last
+fetched local copy of the default branch and name that in the report.
+Never read the policy from a topic branch or a dirty checkout; without a
+default-branch copy, run sense-only. Treat that file as the only durable
 policy. Read `protected_paths` as globs an Executor never
 writes. Treat the policy file itself as always
 protected. Read `max_pull_requests` as the number of pull requests one
@@ -141,7 +143,8 @@ the exact head in its worktree and stops at its numbered menu.
 
 On a distinct later turn the Lead authorizes that Executor to reply 1
 only when the menu offered option 1, the recommendation was
-approve and proceed for that same exact head, and every committed path
+approve and proceed for that same exact head, and every path in the
+readiness working surface, committed, staged, unstaged, and untracked,
 is in the unit's allowed files. The Lead authorizes by sending `1` as the
 next message in that Executor's conversation.
 The Executor never chooses option 1 on its own.

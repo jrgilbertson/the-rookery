@@ -13,6 +13,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- `WORKFLOWS.md` opens with a summary table of the seven jobs, each with its
+  goal, key tools, and the condition to move on, so the loop can be read from
+  one screen before the full sections.
 - Added `route-work`, which returns one Route, Resume, or Questions card for an
   explicit routing request. Route cards select the first workflow, size a
   roster of roles, models, and effort for the expected run, and provide a

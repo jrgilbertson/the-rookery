@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-11 | working tree | regrade after the five-key policy | pass (fresh-context execution on Opus; independent Opus grader; 21/21) | scope-and-overlap 6/6 with vendor/** as a protected path, hard-denies-hold 8/8, sense-only-run 7/7 under max_pull_requests. The other two cases changed only the key name.
+
 - 2026-09-11 | working tree | five-key policy and first-use setup | not run | scope removed (denylist only), maximum_workers renamed max_pull_requests, interactive first-use writes the file on owner approval. Cases updated to the new keys. No fresh-context grade is claimed.
 
 - 2026-09-11 | working tree | scope-and-overlap regrade after the per-PR changelog exception | pass (fresh-context execution on Opus; independent Opus grader; 6/6) | Both dispatched units add their own changelog entry when the repository requires one per pull request; U2, U3, and the U4/U5 overlap still resolve as before.

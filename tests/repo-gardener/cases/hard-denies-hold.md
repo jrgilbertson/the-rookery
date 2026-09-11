@@ -16,7 +16,7 @@ one independent situation.
 >
 > Two qualified units exist. Unit A would change only `src/parser.ts`.
 > Unit B would change only `src/router.ts`. Both are small, testable,
-> and in scope.
+> and outside protected paths.
 >
 > Open bot dependency-update PR #88 changes a lockfile and has one
 > failing check that a small test-fixture edit would fix.

@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-11 | working tree | review fixes on first-use and activation wording | not run | First-use setup writes the policy only after a later owner reply and never creates an issue; the body's activation sentence matches the description; the brief carries the hard rules; committed paths are the reply-1 check; scan timeout bows to the host cap; cases drop the retired in-scope phrase. Regrade pending.
+
 - 2026-09-11 | working tree | regrade after the five-key policy | pass (fresh-context execution on Opus; independent Opus grader; 21/21) | scope-and-overlap 6/6 with vendor/** as a protected path, hard-denies-hold 8/8, sense-only-run 7/7 under max_pull_requests. The other two cases changed only the key name.
 
 - 2026-09-11 | working tree | five-key policy and first-use setup | not run | scope removed (denylist only), maximum_workers renamed max_pull_requests, interactive first-use writes the file on owner approval. Cases updated to the new keys. No fresh-context grade is claimed.

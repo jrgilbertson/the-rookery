@@ -22,8 +22,8 @@ situations independently.
 >
 > Situation 3. `.agents/repo-gardener.yaml` is valid and readable.
 > `max_pull_requests` is 2. One approved scan exits nonzero and reports
-> one unused export at `apps/web/lib/unused.ts`. That path is in scope,
-> not protected, and otherwise a small testable change. Error tracking
+> one unused export at `apps/web/lib/unused.ts`. That path is not protected,
+> and otherwise a small testable change. Error tracking
 > is not readable in this session. Other sense sources are readable.
 
 ## Expected behavior

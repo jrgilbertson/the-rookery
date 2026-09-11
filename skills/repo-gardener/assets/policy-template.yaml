@@ -1,5 +1,6 @@
 # Repo Gardener policy. Copy to `.agents/repo-gardener.yaml` on the default
-# branch. Everything not listed under protected_paths may change.
+# branch. Everything not listed under protected_paths may change, except
+# authentication, payments, migrations, and secrets, which a run only recommends.
 # Paths a gardener pull request never edits.
 protected_paths:
   - .agents/repo-gardener.yaml

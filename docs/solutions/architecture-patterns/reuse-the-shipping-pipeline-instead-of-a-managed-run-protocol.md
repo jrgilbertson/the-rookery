@@ -41,7 +41,7 @@ every unit. Weeks of scheduled nights produced no work and no clear reason.
 
 Treat pull requests and the morning report as the product, and let the
 installed skills own the gates they already own. The rewritten skill is one
-file of about 1,300 words plus a policy template:
+file of about 1,800 words plus a policy template:
 
 - The policy file carries only what the host cannot know on its own:
   protected paths, a pull-request cap, approved scan argv, approved verify
@@ -87,9 +87,9 @@ Before: a unit that needed a changelog line was denied because an unrelated
 open pull request also touched `CHANGELOG.md`; the run closed complete with
 zero Executors.
 
-After: the unit ships; the changelog file is assigned to at most one
-Executor per run, and a merge conflict on it is the owner's morning work at
-merge readiness.
+After: the unit ships; when the repository requires a changelog entry on
+every pull request, each Executor adds its own, and a merge conflict on
+it is the owner's morning work at merge readiness.
 
 ## Related
 

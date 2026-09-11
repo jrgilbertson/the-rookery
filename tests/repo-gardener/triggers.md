@@ -4,7 +4,8 @@ Judged under [`tests/README.md`](../README.md): name + description + one query,
 fresh context, binary judgment.
 
 This skill starts only when named: the skill name, its slash or dollar
-form, or a plain request to run the repository gardening automation. Topic
+form, or a plain request to run, continue, set up, or explain the
+repository gardening automation or the nightly gardener. Topic
 matches about maintenance, CI, health, trackers, or issues do not activate it.
 
 ## Should trigger

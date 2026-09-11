@@ -17,8 +17,8 @@ unit decision as independent except where overlap is named.
 > The repository requires a changelog entry on every pull request.
 >
 > Candidate unit U1 would change `apps/web/lib/parser.ts` plus one
-> changelog line in `CHANGELOG.md`. The parser change is small,
-> testable, and in scope.
+> changelog line in `CHANGELOG.md`. The parser change is small and
+> testable.
 >
 > Candidate unit U2 would change `package.json` overrides plus one
 > changelog line in `CHANGELOG.md`.
@@ -26,7 +26,7 @@ unit decision as independent except where overlap is named.
 > Candidate unit U3 would change `vendor/x.js`.
 >
 > Candidate units U4 and U5 both want `apps/api/router.ts` and no other
-> shared file. Each change is otherwise small and in scope.
+> shared file. Each change is otherwise small and testable.
 >
 > No candidate needs to edit `.agents/repo-gardener.yaml` in order to
 > ship.

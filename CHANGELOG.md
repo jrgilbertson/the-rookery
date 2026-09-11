@@ -27,6 +27,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `route-work` occupancy copy on Route Setup and the kickoff last sentence now
+  says a named owner was not proven and that this start is still allowed. The
+  old status noun `Active ownership unverified` is gone. Resume, unknown-not-vacant
+  occupancy, and inspect-only routing are unchanged.
+
 - Repo Gardener is rewritten as one short skill for unattended runs. It
   starts only when named, by the skill name or a plain request to run,
   continue, set up, or explain the repository gardening automation or the

@@ -77,11 +77,13 @@ A proven active owner of the requested phase takes precedence. A directly named
 child uses the owner table unless supplied evidence says unresolved family
 state blocks it.
 
-Active ownership is proven only by an operator statement or supplied artifact
-that names a specific in-flight owner for the requested phase. A stated
+A named in-flight owner is proven only by an operator statement or supplied
+artifact that names a specific owner for the requested phase. A stated
 worktree, branch, pull request, worker, or parallel effort without that phase
-owner adds `Active ownership unverified` to the normal kickoff: ownership is
-unknown, not vacant. The router does not discover or monitor ownership.
+owner still uses the normal Route. Setup and the kickoff last sentence then
+each include: No named owner was proven for this phase; this start is still
+allowed. Occupancy is unknown, not vacant. The router does not discover or
+monitor ownership.
 
 ## Choose what needs to happen first
 
@@ -250,7 +252,7 @@ IDs as ordinary names, such as "Fable 5.1 at medium".
 
     **Setup**
 
-    [The roster: every role in the pattern with its model and effort, stated even when it repeats the decision line. The Executor count. The pattern, named in a sentence, when it is not Single owner. Orchestration and placement only when they differ from the default. Authority only when the operator supplied it. An advisor, Active ownership unverified, or a profile fallback only when it applies.]
+    [The roster: every role in the pattern with its model and effort, stated even when it repeats the decision line. The Executor count. The pattern, named in a sentence, when it is not Single owner. Orchestration and placement only when they differ from the default. Authority only when the operator supplied it. An advisor, the occupancy sentence, or a profile fallback only when it applies.]
 
     **Copy/paste kickoff**
 
@@ -259,7 +261,7 @@ IDs as ordinary names, such as "Fable 5.1 at medium".
 The decision line never names a role; roles live in Setup. A single-owner
 Setup omits placement and orchestration when they are the default. The
 kickoff must stand alone when pasted, so it repeats the roster, supplied
-authority, and any `Active ownership unverified` marker.
+authority, and any occupancy sentence.
 
 ### Resume
 

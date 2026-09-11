@@ -27,6 +27,23 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Repo Gardener is rewritten as one short skill for unattended runs. It
+  starts only when named, by the skill name or a plain request to run,
+  continue, set up, or explain the repository gardening automation or the
+  nightly gardener, reads a small
+  `.agents/repo-gardener.yaml` (protected paths, `max_pull_requests`,
+  approved scans, approved `verify` argv, optional report issue), runs
+  the approved scans, senses five areas, and
+  dispatches Executors that ship one PR each through `ce-debug` when
+  needed, `ce-plan`, `ce-work`, `ce-simplify-code`, `ce-code-review`,
+  `ce-test-browser`, `checking-pr-readiness`, `ce-commit-push-pr`, and
+  `ce-babysit-pr`, with
+  `checking-merge-readiness` giving the final verdict in one plain
+  morning report. Role names match `ROUTING.md`: Lead, Executor, Scout,
+  Reviewer. An owner invoking the skill without a policy file gets
+  first-use setup that writes the file after the owner approves it in a
+  later reply.
+
 - Public X reads in personal CRM and chief-of-staff prefer Grok CLI when it
   provides the required public X read capability and accept user-confirmed
   handles without authenticated X identity discovery. Otherwise a configured
@@ -50,18 +67,17 @@ looked" surface. GitHub Releases mirror its entries.
   deadlocks when local pipe buffers cannot hold the inline bootstrap code.
 - After a `checking-pr-readiness` Approve, the option-1 reply follows
   `references/finishing.md`, which invokes the installed PR-opening skill
-  once. A Worker is a run already executing the Worker contract; that file
-  branches on that fact. A Worker uses `mode:pipeline` on the publisher,
-  then `ce-babysit-pr mode:pipeline`. A non-Worker uses the default publisher.
-  Title and body follow Compound Engineering. After babysit looks
-  merge-ready or cautiously looks ready, a non-Worker run starts
-  `checking-merge-readiness` in a fresh helper that owns the merge menu
-  wait; a Worker reports to the Orchestrator, which starts that helper.
-  Approve 1 does not merge. A Worker push is only an authorized exact head:
-  first create may see an absent remote; later diverge, rewind, or unexpected
-  absence refuses, and success needs exact readback. This slice does not
-  dispatch adopted units, does not inventory publication-time overlap, and
-  does not keep a gardener-only publisher.
+  once. An Executor is a run already executing the Executor contract; that
+  file branches on that fact. An Executor uses `mode:pipeline` on the
+  publisher, then `ce-babysit-pr mode:pipeline`. A non-Executor uses the
+  default publisher. Title and body follow Compound Engineering. After
+  babysit looks merge-ready, cautiously looks ready, or pipeline `success`,
+  a non-Executor run starts `checking-merge-readiness` in a fresh Reviewer
+  that owns the merge menu wait; an Executor reports to the Lead, which
+  starts that Reviewer.
+  Approve 1 does not merge. The Lead authorizes an Executor's reply 1
+  only when every changed path is inside the unit's allowed files.
+  There is no gardener-only publisher.
 - `checking-simplicity` now treats "check for simplicity as well" and
   unsolicited mid-build durable machinery as first-class triggers, instead of
   waiting for an explicit simplify request.
@@ -90,35 +106,6 @@ looked" surface. GitHub Releases mirror its entries.
   Unknown or exceeded limits alone no longer block PR approval or require
   vendor-plan research. Complete change inventory, actual required-review
   coverage, and exact identity checks still govern readiness.
-- `repo-gardener` requires five explicit maintenance areas: dependency
-  maintenance, engineering health, issues and feedback, documentation, and
-  runtime reliability. Each repair has one owner by its intended remedy;
-  security and measurement remain cross-cutting evidence. Retired `lanes`
-  policies are rejected, with no inferred grants. Replacement requires review
-  of the complete policy and its five mutation grants, preserving tracker history.
-- `repo-gardener` writes append-only opening and closing comments; the closing
-  comment contains the morning report and the issue body remains setup text.
-  The complete report renders literally in a helper-generated fence, preserving
-  technical names and inert markup. Canonical nested JSON payloads survive
-  serialization and exact readback.
-  Tracker writes no longer coordinate a body update with a comment or carry
-  operation hashes. Run IDs use a fresh UUID instead of a minute-resolution
-  timestamp. A full tracker stops new openings before verification input
-  capacity is exhausted and requires owner-managed replacement. Before
-  upgrading a test install, stop its scheduler,
-  confirm old Orchestrators and Workers have terminated, and use a fresh
-  tracker if its records use the retired format.
-- `repo-gardener` accepts area mappings in any YAML order and uses PyYAML's
-  native parser for syntax checks. Issue admission rests on trusted ownership,
-  current blockers, and a small, low-risk, verifiable PR scope; estimates and
-  readiness labels are hints. Runtime reads verify each source independently
-  and distinguish empty results from missing data.
-  Worker briefs bind the expected repository identity.
-- `repo-gardener` does not dispatch an eligible open same-repository update
-  PR; it stays a recommendation. The runtime
-  reliability area reads any error or alert source the host can already read
-  and confirms identity from repository facts. A blocked opening still senses
-  and reports with one `caller-only` run outcome.
 - `personal-chief-of-staff` wind-down now runs in two visible phases. Phase 1
   sweeps the day's corrections and resolves each row, applying approved
   actions with readback, before Phase 2 begins. Phase 2 plans tomorrow, coaches, records
@@ -165,13 +152,6 @@ looked" surface. GitHub Releases mirror its entries.
   a merge-readiness action only on do not merge when that skill is present.
   A typed 1 on a withheld option-1 row is not Proceed or Approve.
 
-- Repo Gardener's Worker mutation boundary is now host-neutral: it requires an
-  isolated worktree at the authoritative base, host-provided setup when
-  available, supervised completion, and a Worker-owned branch with one
-  unmerged PR. Setup must succeed before repository work, and a clean native
-  Git status is required before the first mutation; unavailable safe mutation
-  falls back to a truthful read-only report.
-
 - `checking-pr-readiness` and `checking-merge-readiness` now split gather from
   the spoken brief. Helper inventories go to an owner-only temp directory
   outside the target repository. The brief is an executive recommendation
@@ -193,22 +173,6 @@ looked" surface. GitHub Releases mirror its entries.
   Reasons in the brief are about the change under review, not how the gate
   runs. Captured as
   `docs/solutions/conventions/do-not-split-human-and-agent-skill-products.md`.
-- Repo Gardener completes a quick available-input pass across all five areas
-  before dispatch, using native filters and selective body reads, then deepens
-  decision-relevant investigations while Workers progress. Issue discovery
-  starts with open, ready work at mapped estimates 1–2 and broadens when useful;
-  missing estimates or readiness mappings do not permanently exclude work.
-  Reports state query filters, windows, limits, counts, and inspected coverage
-  without claiming backlog exhaustion. The Ready Frontier uses current evidence
-  and fresh native blocker reads. Tracker reads and conflict inventories remain
-  complete at their required gates.
-- Repo Gardener now gives every unattended Worker the normal
-  `checking-pr-readiness` process: its menu reply ends that turn, and only the
-  Orchestrator may authorize option 1 when Approve was offered and recommended
-  for that exact head. Named Worker-owned gaps from one brief all go back to
-  that Worker; owner-needed briefs stop without a PR. After a PR exists, the
-  scheduled ownerless run invokes merge-readiness and never selects Proceed to
-  merge.
 - `personal-chief-of-staff` Source Access Audits are now a short paragraph:
   coverage first, then every relevant role and how the read finished, with a
   "so" clause only when a result limits a claim. No table and no HTML
@@ -228,24 +192,6 @@ looked" surface. GitHub Releases mirror its entries.
   and grilling match their current upstream contracts, and
   `creating-portable-skills`, `personal-chief-of-staff`, `reviewing-meetings`,
   and `managing-personal-crm` appear in the walkthrough.
-- `repo-gardener` can run exact owner-declared audit commands in dependency
-  maintenance, engineering health, and documentation, with evidence-based setup
-  recommendations, bounded direct execution, and existing candidate and reporting
-  rules preserved.
-- `repo-gardener` first-use now writes `.agents/repo-gardener.yaml` and creates
-  a gardening tracker the way Managing Issues writes its config. A scheduled or
-  manual run uses one Orchestrator that may assign parallel Workers, each with
-  one unmerged pull request, up to `maximum_workers`. Depth has no count.
-  Opened and closed tracker comments are the production records; a hash-linked
-  register is not required. An unattended Worker stops after the normal
-  `checking-pr-readiness` menu; the Orchestrator authorizes option 1 only from
-  an approve brief for that exact head, or sends named Worker-owned gaps back.
-  After a PR exists, the scheduled ownerless run invokes merge-readiness and
-  never selects Proceed to merge.
-- `repo-gardener` now parses `.agents/repo-gardener.yaml` once with PyYAML
-  SafeLoader and the existing field schema. Area inventory uses that mapping
-  instead of a second regex grammar. Tags, aliases, merge keys, nulls, and
-  duplicate keys still fail closed. Developer installs need PyYAML.
 - `managing-issues` first-use now recommends a Linear exclusive readiness group
   (`readiness` / `needs-discovery` / `needs-planning` / `ready`) and keeps
   GitHub prefixed flats. The config schema is unchanged. Already-configured
@@ -254,13 +200,6 @@ looked" surface. GitHub Releases mirror its entries.
   stay as ignored worktree artifacts. PR readiness rejects tracked or durably
   cited transient material, and merge readiness verifies issue stewardship
   against the final delivered scope without requiring a completion diary.
-- `repo-gardener` issue discovery now reads its tracker from the repository's
-  `.agents/managing-issues.json` when the managing-issues validator accepts it,
-  and issue-requested implementation requires trusted ownership, a safe Worker
-  brief, and no open native blocker. With no config file it reads the
-  repository's own issues unmapped and names the absent config as a limitation;
-  a config the run cannot validate, or a provider it cannot read, makes
-  issue-source coverage unavailable rather than substituting another tracker.
 - `managing-issues` now handles authenticated GitHub and Linear creates, updates,
   relationships, readiness, and completion through one canonical tracker.
   First-use setup records only the provider, target, and metadata vocabulary.
@@ -270,23 +209,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Removed
 
-- `repo-gardener` no longer accepts `issue_refinement`, `evidence_sources`, or
-  `shared_ledger_paths` in `.agents/repo-gardener.yaml`. Remove those keys on
-  upgrade. Follow-up issues remain owner proposals for Managing Issues outside
-  the nightly run; Managing Issues no longer accepts gardening delegation
-  envelopes as approval. The references are one owner per rule:
-  `applying-effects.md`, `github-reference-adapter.md`, and
-  `register-and-report.md` became `tracker-records.md`; everything a Worker
-  follows lives in `worker-contract.md`; revision
-  check points are listed once. `release_a_contract.py` exposes three
-  subcommands (`normalize-github-tracker`, `effect`, `run-records`) with no
-  version suffix in any name; only the unversioned `orchestrator:run-record`
-  markers are recognized.
-  Gone: the external recovery-state persistence before a tracker write, the
-  host execution-profile test (declared audits now run in an explicit child
-  environment built from nothing), the code-health rotation cursor,
-  per-candidate label-provenance reads, and the `#3336`, Current Portfolio,
-  and presentation-cap pilot residue.
+- Repo Gardener's managed-run machinery: the two-record tracker protocol
+  and its scripts, caller-only mode, liveness reconciliation, revision
+  check points, per-area mutation grants, the declared-audit sandbox, and
+  the separate Executor contract. Existing `.agents/repo-gardener.yaml`
+  files need the new keys. `maximum_workers` is now `max_pull_requests`.
 
 ## [0.2.0] - 2026-08-14
 

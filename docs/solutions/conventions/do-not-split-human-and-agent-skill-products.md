@@ -1,7 +1,7 @@
 ---
 title: Do not split human and agent skill products
 date: 2026-08-31
-last_updated: 2026-09-01
+last_updated: 2026-09-11
 category: conventions
 module: checking-pr-readiness
 problem_type: convention
@@ -74,9 +74,10 @@ Keep one end-of-run API for every caller of a checking skill.
    linked-issue re-check. The activating utterance never authorizes option 1.
    On PR readiness, the option-1 reply continues into the finishing path for
    this conversation without presenting the pack as a wait. Finishing may
-   then babysit. A non-Worker run returns a fresh-context merge-readiness
-   menu; a Worker option-1 reply does not pick merge and does not dispatch
-   that helper.
+   then babysit. A run that is not a gardener Executor returns a
+   fresh-context merge-readiness menu; an Executor's option-1 reply does
+   not pick merge and does not dispatch that Reviewer, and reports the
+   ready babysit result to the Lead instead.
 3. **Do not keep a second product in the checking skill.** Do not add
    assessment-only, agent-mode, report-only, disposition tokens, "don't
    wait," or a stricter unattended ready bar as a parallel print contract.

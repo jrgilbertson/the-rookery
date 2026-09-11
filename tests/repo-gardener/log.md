@@ -2,6 +2,40 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-11 | working tree | reviewer wording pass on two case prompts | not run | executor-readiness-loop says committed path, sense-only-run rewraps one sentence; behavior unchanged from the 38/38 regrade one commit earlier, no fresh grade claimed for the wording.
+
+- 2026-09-11 | working tree | full regrade after the first-use and activation fixes | pass (five cases 38/38 on Opus with an independent Opus grader; trigger suite 19/19, three categorical votes per query on Sonnet) | The body's activation sentence now matches the description; first-use setup writes only after a later owner reply; cases no longer say in scope.
+
+- 2026-09-11 | working tree | review fixes on first-use and activation wording | not run | First-use setup writes the policy only after a later owner reply and never creates an issue; the body's activation sentence matches the description; the brief carries the hard rules; committed paths are the reply-1 check; scan timeout bows to the host cap; cases drop the retired in-scope phrase. Regrade pending.
+
+- 2026-09-11 | working tree | regrade after the five-key policy | pass (fresh-context execution on Opus; independent Opus grader; 21/21) | scope-and-overlap 6/6 with vendor/** as a protected path, hard-denies-hold 8/8, sense-only-run 7/7 under max_pull_requests. The other two cases changed only the key name.
+
+- 2026-09-11 | working tree | five-key policy and first-use setup | not run | scope removed (denylist only), maximum_workers renamed max_pull_requests, interactive first-use writes the file on owner approval. Cases updated to the new keys. No fresh-context grade is claimed.
+
+- 2026-09-11 | working tree | scope-and-overlap regrade after the per-PR changelog exception | pass (fresh-context execution on Opus; independent Opus grader; 6/6) | Both dispatched units add their own changelog entry when the repository requires one per pull request; U2, U3, and the U4/U5 overlap still resolve as before.
+
+- 2026-09-11 | working tree | read-only dry run on jrgilbertson/corvly | pass (fresh-context Lead, no writes) | With the old-format live policy the run was sense-only and proposed a migrated file; under the migrated policy it selected two disjoint units (an ESLint import restriction and a knip config fix) and left the third slot empty. Both scans ran read-only. Eight wording gaps found and fixed: per-PR changelog exception, verify subset rule, issue candidate filter, missing scope default, unrefreshable branch fallback, always-present pull-requests section, scan timeout wording, findings-not-exit-codes.
+
+- 2026-09-10 | working tree | behavioral cases, five-case suite | pass (fresh-context execution on Opus; independent Opus grader; 38/38 checks) | hard-denies-hold 8/8, executor-readiness-loop 10/10, scope-and-overlap 6/6, sense-only-run 7/7, morning-report 7/7. Each case ran in a fresh context with only SKILL.md, the policy template, and the case prompt; a separate fresh grader scored the checklist. Synthetic facts only, no tools.
+
+- 2026-09-10 | working tree | trigger suite | pass (19/19 fresh-context listing judgments, three categorical votes per query on Sonnet) | The description now names the /repo-gardener and $repo-gardener forms and a plain request to run, continue, set up, or explain the repository gardening automation or the nightly gardener; topic matches about maintenance, CI, health, trackers, and issues stay near misses. Two gardening-phrased queries moved from near miss to should-trigger by owner decision. The query "Let the nightly gardener open unmerged PRs if current evidence warrants it" flipped across five three-vote runs under every wording and was replaced by "Let the nightly gardener run and open its pull requests" (5/5 yes). Listing proxy only, not native harness activation.
+
+- 2026-09-10 | working tree | plan file stays where ce-plan writes it | not run | The skill no longer moves the plan file; the repository's own ignore rules decide what ships, as AGENTS.md working-artifact policy already says. No fresh-context grade is claimed.
+
+- 2026-09-10 | working tree | Executor front half fits the installed skills | not run | ce-debug narrowed to diagnosis with no push, ce-plan gets directives not settled decisions, the plan file moves out of the worktree before readiness, case cap raised to 4. No fresh-context grade is claimed.
+
+- 2026-09-10 | working tree | Executors run the lfg front half | not run | ce-debug when the cause is open, ce-plan, ce-work return-to-caller, simplify, review, ce-test-browser, then checking-pr-readiness. Case executor-readiness-loop gains Executor D. No fresh-context grade is claimed.
+
+- 2026-09-10 | working tree | hard-denies case drops the scope.exclude mention | not run | The policy no longer has scope.exclude; the case prompt names only scope.include and protected_paths. No fresh-context grade is claimed.
+
+- 2026-09-10 | working tree | simplicity trims after review | not run | scope.exclude removed in favor of protected_paths, post-verdict rework round removed, Census concept and two trigger rows retired, report case gains areas and gaps. No fresh-context grade is claimed.
+
+- 2026-09-10 | working tree | rewrite: cases replaced for the one-file skill | not run | Twenty-four managed-run cases removed; five cases now pin hard denies, the readiness loop, scope and overlap, sense-only runs, and the report. No fresh-context grade is claimed.
+
+- 2026-09-10 | fd732d6 (working tree) | explicit-invoke trigger contract | not run | Description is now "Use only when the user explicitly invokes repo-gardener." Topic-match queries moved to near misses. No fresh-context trigger-suite grade is claimed.
+
+- 2026-09-10 | 87b8eeb (working tree) | Lead/Executor terminology in cases and triggers | not run | Cases and triggers now use ROUTING.md Lead, Executor, Scout, and Reviewer. No fresh-context grade is claimed for that rename.
+
 - 2026-09-08 | b075928 (working tree) | matched comparison: unattended Worker option-1 finishing (scenarios 2, 8, 9) | pass — prior fail vs skilled pass | Isolated general-purpose executors and a separate blind grader. Prior used gardener-only first-publication; the same Worker later invoked merge-readiness. Candidate uses `mode:pipeline` publisher and babysit; Orchestrator starts a fresh merge-readiness helper after looks merge-ready; blocked babysit does not dispatch merge-readiness.
 - 2026-09-08 | b075928 (working tree) | advisor review of implemented CE ship path | CLEAR WITH FIXES applied | Finishing collapsed to one `finishing.md` branched on Worker-or-not; title/body follow Compound Engineering; parked adoption eligibility deleted. Independent matched-pair of the Worker option-1 path logged above.
 - 2026-09-01 | 8c70d39 (working tree) | unattended later-1 publication wording | pass (static case) | Worker later 1 now continues into first-publication with a silent pack and no second publisher; extra publication gates remain. No provider contact or repository write occurred.

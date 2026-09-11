@@ -1,66 +1,22 @@
-# Repo Gardener durable file (starter)
-#
-# This asset is a fail-closed starter, not live authority. A run never loads it
-# as the repository's policy. Copying it to `.agents/repo-gardener.yaml` is not
-# adoption. Interactive setup writes the live file after one owner review.
-# Until that live file exists, is valid, and names a live tracker identity, the
-# skill does not open a managed run.
-#
-# Exact strings matter. Placeholders, `maximum_workers: 0`, and denied
-# area mutation keep this copy invalid or closed. Replace every
-# REPLACE_WITH_* value with a real one during setup.
-#
-# Skill-hardcoded, not file knobs: never merge, release, deploy, create
-# follow-up issues, or message customers. `.agents/repo-gardener.yaml` is always
-# protected; Triage is recommend-only and is not grantable.
-
-repository:
-  # Stable provider identity for this repository, not the slug. On GitHub this
-  # is the repo node id (for example `R_kgDO…` from `gh api repos/OWNER/NAME
-  # --jq .node_id`).
-  identity: REPLACE_WITH_STABLE_REPOSITORY_IDENTITY
-
-  # Branch the run refreshes and reads this file from. Do not infer `main`.
-  default_branch: REPLACE_WITH_DEFAULT_BRANCH
-
-  # Paths a Worker may change. Repository-relative globs, no `..`. Exclude
-  # wins: a path must match at least one include and no exclude.
-  scope:
-    include:
-      - "**"
-    exclude: []
-
-# Extra globs a Worker must not write. The live `.agents/repo-gardener.yaml`
-# is always protected even if omitted here; setup cannot turn that off.
+# Repo Gardener policy. Copy to `.agents/repo-gardener.yaml` on the default
+# branch. Everything not listed under protected_paths may change, except
+# authentication, payments, migrations, and secrets, which a run only
+# recommends.
+# Paths a gardener pull request never edits.
 protected_paths:
-  - REPLACE_WITH_PROTECTED_PATH
-
-# Parallel Worker cap. `0` denies Worker dispatch. Setup proposes `20`.
-maximum_workers: 0
-
-tracker:
-  # Live gardening-tracker issue identity (a node id, never an issue number).
-  identity: REPLACE_WITH_TRACKER_IDENTITY
-
-# Five areas, each with an explicit mutation grant. A grant allows a Worker PR
-# only when the other live-file gates also pass. Read-only triage belongs to
-# issues-and-feedback and needs no separate grant.
-areas:
-  # Package/version, manifest consistency, and dependency-update PR repairs.
-  dependency-maintenance:
-    mutation: false
-    audit_commands: []
-  # Code, tests, builds, tooling, and static/security checks.
-  engineering-health:
-    mutation: false
-    audit_commands: []
-  # Remaining product-behavior requests; triage stays recommend-only.
-  issues-and-feedback:
-    mutation: false
-  # Documentation or release-note preparation only. Not a release.
-  documentation:
-    mutation: false
-    audit_commands: []
-  # Observed running-service failures and their instrumentation.
-  runtime-reliability:
-    mutation: false
+  - .agents/repo-gardener.yaml
+  - .github/workflows/**
+# Pull requests one run may open. One Executor per pull request. 0 means
+# sense and report only.
+max_pull_requests: 10
+# Nightly whole-project checks, read-only, one process argv each, run from
+# the repository root. Findings become candidate work. Not merge-gate CI.
+scans: []
+# Example: - ["npm", "run", "knip"]
+# Commands an Executor must pass before it asks for PR readiness, run from
+# its worktree root. Use the smallest gating subset CI runs on pull
+# requests; never a watch-mode command. Empty means no pull request opens.
+verify: []
+# Example: - ["npm", "test"]
+# GitHub issue number that receives one morning report comment per run.
+# report_issue: 1

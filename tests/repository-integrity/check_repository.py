@@ -26,9 +26,6 @@ FIXTURE_RUNNERS = (
     "tests/personal-chief-of-staff/fixtures/run-fixture-checks.sh",
     "tests/repository-integrity/check_catalog.py",
     "tests/repository-integrity/check_repository.py",
-    "tests/repo-gardener/fixtures/effects/check_effects.py",
-    "tests/repo-gardener/fixtures/run-config-checks.py",
-    "tests/repo-gardener/fixtures/run-records/check_run_records.py",
 )
 
 

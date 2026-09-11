@@ -2,6 +2,16 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-10 | working tree | finishing keeps only mode:pipeline and report-to-Lead for Executors | not run | The allowed-files check lives in the gardener Lead's reply-1 authorization; run-assessment-checks.py passes.
+
+- 2026-09-10 | working tree | fixture pins follow the rewritten gardener skill | pass | run-assessment-checks.py reads only skills/repo-gardener/SKILL.md and finishing.md; the worker-contract source is gone.
+
+- 2026-09-10 | f878892 (working tree) | fixture publisher uses Executor | not run | `fixtures/pr-publisher/SKILL.md` now continues when the conversation is not a gardener Executor.
+
+- 2026-09-10 | 31121ab (working tree) | finishing case and pin use Lead and Executor | not run | `option-one-finishing-continuation` and the assessment pin now match live finishing. Matched regrade not run this session.
+
+- 2026-09-10 | 87b8eeb (working tree) | Executor finishing path after gardener role rename | not run | `SKILL.md` and `finishing.md` now say Executor and Lead. Matched `option-one-finishing-continuation` regrade not run this session.
+
 - 2026-09-09 | 3dd176b (working tree) | spoken-answer contract | pass | `run-assessment-checks.py` now requires nothing-follows-the-last-option and the headings/file-path bound. Package validation passed. Matched remaining-work and honesty-battery regrades not run this session.
 - 2026-09-08 | b075928 (working tree) | matched comparison: option-one-finishing-continuation Worker option-1 finishing | pass — prior fail (scenarios 5–9) vs skilled pass | Isolated general-purpose executors and a separate blind grader. Prior used gardener-only first-publication and did not invoke babysit or dispatch merge-readiness from option-1. Candidate uses `ce-commit-push-pr mode:pipeline` then `ce-babysit-pr mode:pipeline`, non-Worker looks-ready starts `checking-merge-readiness` in a fresh helper, Worker looks-ready reports to the Orchestrator. Scenario 5 owner-with-gardener-installed control held on both sides.
 - 2026-09-08 | b075928 (working tree) | matched comparison: option-one-finishing-continuation owner auto-continue | pass — prior fail (scenarios 6–9) vs skilled pass | Isolated general-purpose executors and a separate blind grader. Scenario 5 held on both sides. Candidate invokes `ce-babysit-pr` then a fresh-context merge-readiness menu, does not start a second babysit, stops when babysit is skipped or missing, and names a missing independent merge reviewer. Official `skills-ref` unavailable; `ruby scripts/checks/skill_packages.rb` and `python3 scripts/checks/repository.py` passed.

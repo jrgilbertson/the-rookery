@@ -47,8 +47,9 @@ with whole-project scans nothing else runs on a schedule, and `verify`
 with the smallest gating subset CI runs on pull requests, never a
 watch-mode command. Do not validate the file with a script. Treat a
 readable file in which `protected_paths`, `max_pull_requests`, `scans`,
-or `verify` is missing, misspelled, or not of its expected type as
-unreadable: run sense-only and name that field in the report.
+or `verify` is missing, misspelled, repeated as a duplicate top-level
+key, or not of its expected type as unreadable: run sense-only and name
+that field in the report.
 
 When the file is missing, run sense-only as above. If an owner is in the
 conversation, end by offering first-use setup: draft the five-key file
@@ -157,6 +158,9 @@ approve and proceed for that same exact head, and every path in the
 readiness working surface, committed, staged, unstaged, and untracked,
 is in the unit's allowed files. The Lead authorizes by sending `1` as the
 next message in that Executor's conversation.
+When the menu offered option 1 but a path in that surface is outside
+the allowed files, the Lead does not reply 1: the Executor stops with
+its commit preserved and no PR, and the report names the paths.
 The Executor never chooses option 1 on its own.
 The Lead never authorizes Proceed to merge.
 

@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-11 | working tree | full regrade after the first-use and activation fixes | pass (five cases 38/38 on Opus with an independent Opus grader; trigger suite 19/19, three categorical votes per query on Sonnet) | The body's activation sentence now matches the description; first-use setup writes only after a later owner reply; cases no longer say in scope.
+
 - 2026-09-11 | working tree | review fixes on first-use and activation wording | not run | First-use setup writes the policy only after a later owner reply and never creates an issue; the body's activation sentence matches the description; the brief carries the hard rules; committed paths are the reply-1 check; scan timeout bows to the host cap; cases drop the retired in-scope phrase. Regrade pending.
 
 - 2026-09-11 | working tree | regrade after the five-key policy | pass (fresh-context execution on Opus; independent Opus grader; 21/21) | scope-and-overlap 6/6 with vendor/** as a protected path, hard-denies-hold 8/8, sense-only-run 7/7 under max_pull_requests. The other two cases changed only the key name.

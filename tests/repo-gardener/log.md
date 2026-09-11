@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-11 | working tree | scope-and-overlap regrade after the per-PR changelog exception | pass (fresh-context execution on Opus; independent Opus grader; 6/6) | Both dispatched units add their own changelog entry when the repository requires one per pull request; U2, U3, and the U4/U5 overlap still resolve as before.
+
 - 2026-09-11 | working tree | read-only dry run on jrgilbertson/corvly | pass (fresh-context Lead, no writes) | With the old-format live policy the run was sense-only and proposed a migrated file; under the migrated policy it selected two disjoint units (an ESLint import restriction and a knip config fix) and left the third slot empty. Both scans ran read-only. Eight wording gaps found and fixed: per-PR changelog exception, verify subset rule, issue candidate filter, missing scope default, unrefreshable branch fallback, always-present pull-requests section, scan timeout wording, findings-not-exit-codes.
 
 - 2026-09-10 | working tree | behavioral cases, five-case suite | pass (fresh-context execution on Opus; independent Opus grader; 38/38 checks) | hard-denies-hold 8/8, executor-readiness-loop 10/10, scope-and-overlap 6/6, sense-only-run 7/7, morning-report 7/7. Each case ran in a fresh context with only SKILL.md, the policy template, and the case prompt; a separate fresh grader scored the checklist. Synthetic facts only, no tools.

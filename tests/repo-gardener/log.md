@@ -2,6 +2,10 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-10 | working tree | behavioral cases, five-case suite | pass (fresh-context execution on Opus; independent Opus grader; 38/38 checks) | hard-denies-hold 8/8, executor-readiness-loop 10/10, scope-and-overlap 6/6, sense-only-run 7/7, morning-report 7/7. Each case ran in a fresh context with only SKILL.md, the policy template, and the case prompt; a separate fresh grader scored the checklist. Synthetic facts only, no tools.
+
+- 2026-09-10 | working tree | trigger suite | fail (18/19 fresh-context listing judgments, three votes per query on Sonnet) | All seven should-trigger queries and eleven near misses were categorical after the description named the /repo-gardener and $repo-gardener forms and said gardening or gardener alone is not an invoke. Near miss "Run tonight's repository gardening automation" still drew one yes in three; the phrase is the skill's name in plain words. Owner decision pending on that query.
+
 - 2026-09-10 | working tree | plan file stays where ce-plan writes it | not run | The skill no longer moves the plan file; the repository's own ignore rules decide what ships, as AGENTS.md working-artifact policy already says. No fresh-context grade is claimed.
 
 - 2026-09-10 | working tree | Executor front half fits the installed skills | not run | ce-debug narrowed to diagnosis with no push, ce-plan gets directives not settled decisions, the plan file moves out of the worktree before readiness, case cap raised to 4. No fresh-context grade is claimed.

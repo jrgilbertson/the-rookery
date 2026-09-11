@@ -81,9 +81,9 @@ A named in-flight owner is proven only by an operator statement or supplied
 artifact that names a specific owner for the requested phase. A stated
 worktree, branch, pull request, worker, or parallel effort without that phase
 owner still uses the normal Route. Setup and the kickoff last sentence then
-each include: No named owner was proven for this phase; this start is still
-allowed. Occupancy is unknown, not vacant. The router does not discover or
-monitor ownership.
+each include the occupancy sentence: No named owner was proven for this
+phase; this start is still allowed. Occupancy is unknown, not vacant. The
+router does not discover or monitor ownership.
 
 ## Choose what needs to happen first
 
@@ -237,7 +237,8 @@ The card is the entire final answer, with no preamble, narration, or closing rem
 around it. Its first line is exactly `**Route**`, `**Resume**`, or
 `**Questions**`. Bold marks that line and the section labels, with a blank
 line after each; use no `#` headings, and never fence the kickoff. Write every
-section as natural prose, not a string of stock sentences, and render model
+section as natural prose, not a string of stock sentences, except the
+occupancy sentence, which is emitted exactly when it applies. Render model
 IDs as ordinary names, such as "Fable 5.1 at medium".
 
 ### Route
@@ -256,7 +257,7 @@ IDs as ordinary names, such as "Fable 5.1 at medium".
 
     **Copy/paste kickoff**
 
-    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the lead on [model] at [effort]. [Each other role with its model, effort, and count.] [Subscription billing constraint.] [Orchestration and placement sentences only when they differ from the default.] Treat [the supplied artifact or request] as the source of truth. [Supplied authority in one sentence, only when the operator supplied it.]
+    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the lead on [model] at [effort]. [Each other role with its model, effort, and count.] [Subscription billing constraint.] [Orchestration and placement sentences only when they differ from the default.] Treat [the supplied artifact or request] as the source of truth. [Supplied authority in one sentence, only when the operator supplied it.] [Occupancy sentence last, only when it applies.]
 
 The decision line never names a role; roles live in Setup. A single-owner
 Setup omits placement and orchestration when they are the default. The

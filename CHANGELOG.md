@@ -28,7 +28,8 @@ looked" surface. GitHub Releases mirror its entries.
 ### Changed
 
 - Repo Gardener is rewritten as one short skill for unattended runs. It
-  starts only on an explicit invoke by name, reads a small
+  starts only when named, by the skill name or a plain request to run the
+  repository gardening automation, reads a small
   `.agents/repo-gardener.yaml` (scope, protected paths,
   `maximum_workers`, approved scans, approved `verify` argv, optional
   report issue), runs the approved scans, senses five areas, and

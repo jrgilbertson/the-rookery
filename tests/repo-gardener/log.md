@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-11 | working tree | reviewer wording pass on two case prompts | not run | executor-readiness-loop says committed path, sense-only-run rewraps one sentence; behavior unchanged from the 38/38 regrade one commit earlier, no fresh grade claimed for the wording.
+
 - 2026-09-11 | working tree | full regrade after the first-use and activation fixes | pass (five cases 38/38 on Opus with an independent Opus grader; trigger suite 19/19, three categorical votes per query on Sonnet) | The body's activation sentence now matches the description; first-use setup writes only after a later owner reply; cases no longer say in scope.
 
 - 2026-09-11 | working tree | review fixes on first-use and activation wording | not run | First-use setup writes the policy only after a later owner reply and never creates an issue; the body's activation sentence matches the description; the brief carries the hard rules; committed paths are the reply-1 check; scan timeout bows to the host cap; cases drop the retired in-scope phrase. Regrade pending.

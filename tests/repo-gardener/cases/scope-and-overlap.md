@@ -1,4 +1,4 @@
-# Scope and overlap
+# Protected paths and overlap
 
 Provenance: the one real run authored nothing because an unrelated open
 PR touched CHANGELOG.md and every unit needed a changelog line.
@@ -9,9 +9,8 @@ Work only from these synthetic facts. Do not call tools. Treat each
 unit decision as independent except where overlap is named.
 
 > Run repo-gardener on this repository. Policy is valid.
-> `scope.include` is `**`.
 > `protected_paths` includes `.agents/repo-gardener.yaml` and `vendor/**`.
-> `maximum_workers` is 4. `verify` lists `["npm", "test"]`.
+> `max_pull_requests` is 4. `verify` lists `["npm", "test"]`.
 >
 > Open PR 3596 changes `CHANGELOG.md` and `package.json`. It is not a
 > bot update PR.

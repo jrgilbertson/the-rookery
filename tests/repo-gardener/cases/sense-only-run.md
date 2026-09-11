@@ -15,13 +15,13 @@ situations independently.
 > file is present.
 >
 > Situation 2. `.agents/repo-gardener.yaml` exists and is readable.
-> `maximum_workers` is 0. Two approved scans are listed:
+> `max_pull_requests` is 0. Two approved scans are listed:
 > `["npm", "run", "knip"]` and `["python3", "scripts/lint.py"]`. Both
 > scans can run from the repository root. Two otherwise qualified units
 > exist.
 >
 > Situation 3. `.agents/repo-gardener.yaml` is valid and readable.
-> `maximum_workers` is 2. One approved scan exits nonzero and reports
+> `max_pull_requests` is 2. One approved scan exits nonzero and reports
 > one unused export at `apps/web/lib/unused.ts`. That path is in scope,
 > not protected, and otherwise a small testable change. Error tracking
 > is not readable in this session. Other sense sources are readable.

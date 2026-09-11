@@ -43,8 +43,8 @@ Treat pull requests and the morning report as the product, and let the
 installed skills own the gates they already own. The rewritten skill is one
 file of about 1,300 words plus a policy template:
 
-- The policy file carries only what the host cannot know on its own: scope,
-  protected paths, the Executor cap, approved scan argv, approved verify
+- The policy file carries only what the host cannot know on its own:
+  protected paths, a pull-request cap, approved scan argv, approved verify
   argv, and an optional report issue. A missing file means a sense-only run
   whose report proposes a file; it does not mean a no-op.
 - Executors run the `lfg` front half: `ce-debug` when the cause is open,

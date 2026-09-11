@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-11 | working tree | five-key policy and first-use setup | not run | scope removed (denylist only), maximum_workers renamed max_pull_requests, interactive first-use writes the file on owner approval. Cases updated to the new keys. No fresh-context grade is claimed.
+
 - 2026-09-11 | working tree | scope-and-overlap regrade after the per-PR changelog exception | pass (fresh-context execution on Opus; independent Opus grader; 6/6) | Both dispatched units add their own changelog entry when the repository requires one per pull request; U2, U3, and the U4/U5 overlap still resolve as before.
 
 - 2026-09-11 | working tree | read-only dry run on jrgilbertson/corvly | pass (fresh-context Lead, no writes) | With the old-format live policy the run was sense-only and proposed a migrated file; under the migrated policy it selected two disjoint units (an ESLint import restriction and a knip config fix) and left the third slot empty. Both scans ran read-only. Eight wording gaps found and fixed: per-PR changelog exception, verify subset rule, issue candidate filter, missing scope default, unrefreshable branch fallback, always-present pull-requests section, scan timeout wording, findings-not-exit-codes.

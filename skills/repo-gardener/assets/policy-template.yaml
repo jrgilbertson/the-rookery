@@ -1,21 +1,20 @@
-# Copy to `.agents/repo-gardener.yaml` on the default branch.
-scope:
-  # Globs an Executor may change. A path must match at least one.
-  include: ["**"]
-# Globs an Executor never writes. The policy file is always protected.
+# Repo Gardener policy. Copy to `.agents/repo-gardener.yaml` on the default
+# branch. Everything not listed under protected_paths may change.
+# Paths a gardener pull request never edits.
 protected_paths:
   - .agents/repo-gardener.yaml
   - .github/workflows/**
-# Parallel Executor cap. 0 means sense and report only.
-maximum_workers: 3
-# Each item is one process argv run from the repository root.
-# Whole-project scans nothing else runs on a schedule; not merge-gate CI.
+# Pull requests one run may open. One Executor per pull request. 0 means
+# sense and report only.
+max_pull_requests: 10
+# Nightly whole-project checks, read-only, one process argv each, run from
+# the repository root. Findings become candidate work. Not merge-gate CI.
 scans: []
 # Example: - ["npm", "run", "knip"]
-# Argv lists an Executor may run to verify its unit, from the worktree root.
-# Empty means no unit is dispatched. Use the smallest gating subset CI
-# runs on PRs; never a watch-mode command.
+# Commands an Executor must pass before it asks for PR readiness, run from
+# its worktree root. Use the smallest gating subset CI runs on pull
+# requests; never a watch-mode command. Empty means no pull request opens.
 verify: []
 # Example: - ["npm", "test"]
-# GitHub issue number that receives one report comment per run.
+# GitHub issue number that receives one morning report comment per run.
 # report_issue: 1

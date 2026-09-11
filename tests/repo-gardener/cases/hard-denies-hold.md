@@ -10,9 +10,8 @@ one independent situation.
 
 > Run repo-gardener on this repository.
 >
-> `.agents/repo-gardener.yaml` is valid and readable. `maximum_workers`
-> is 2. `scope.include` is `**`.
-> `protected_paths` includes `.github/workflows/**`. `verify` lists
+> `.agents/repo-gardener.yaml` is valid and readable. `max_pull_requests`
+> is 2. `protected_paths` includes `.github/workflows/**`. `verify` lists
 > `["npm", "test"]`. `report_issue` is 3520.
 >
 > Two qualified units exist. Unit A would change only `src/parser.ts`.

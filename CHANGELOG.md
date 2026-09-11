@@ -30,16 +30,17 @@ looked" surface. GitHub Releases mirror its entries.
 - Repo Gardener is rewritten as one short skill for unattended runs. It
   starts only when named, by the skill name or a plain request to run the
   repository gardening automation, reads a small
-  `.agents/repo-gardener.yaml` (scope, protected paths,
-  `maximum_workers`, approved scans, approved `verify` argv, optional
-  report issue), runs the approved scans, senses five areas, and
+  `.agents/repo-gardener.yaml` (protected paths, `max_pull_requests`,
+  approved scans, approved `verify` argv, optional report issue), runs
+  the approved scans, senses five areas, and
   dispatches Executors that ship one PR each through `ce-debug` when
   needed, `ce-plan`, `ce-work`, `ce-simplify-code`, `ce-code-review`,
   `ce-test-browser`, `checking-pr-readiness`, `ce-commit-push-pr`, and
   `ce-babysit-pr`, with
   `checking-merge-readiness` giving the final verdict in one plain
   morning report. Role names match `ROUTING.md`: Lead, Executor, Scout,
-  Reviewer.
+  Reviewer. An owner invoking the skill without a policy file gets
+  first-use setup that writes the file after approval.
 
 - Route kickoffs now require official provider CLIs with subscription
   authentication and report a blocker instead of using API-key billing.
@@ -205,7 +206,7 @@ looked" surface. GitHub Releases mirror its entries.
   and its scripts, caller-only mode, liveness reconciliation, revision
   check points, per-area mutation grants, the declared-audit sandbox, and
   the separate Executor contract. Existing `.agents/repo-gardener.yaml`
-  files need the new keys.
+  files need the new keys. `maximum_workers` is now `max_pull_requests`.
 
 ## [0.2.0] - 2026-08-14
 

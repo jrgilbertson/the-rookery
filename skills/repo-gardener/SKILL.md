@@ -24,11 +24,11 @@ run that authors nothing but reports as a complete run.
 Read `.agents/repo-gardener.yaml` on the refreshed default branch once at
 the start. If the default branch cannot be refreshed, read the local
 checkout and name that in the report. Treat that file as the only durable
-policy. Read `scope.include` as globs a unit's files must match. A missing
-`scope` means `**`. Read `protected_paths` as globs an Executor never
+policy. Read `protected_paths` as globs an Executor never
 writes. Treat the policy file itself as always
-protected. Read `maximum_workers` as the parallel Executor cap, with 0
-meaning sense and report only. Read `scans` as a list of argv lists, each
+protected. Read `max_pull_requests` as the number of pull requests one
+run may open, one Executor each, with 0 meaning sense and report only.
+Read `scans` as a list of argv lists, each
 one process run from the repository root. Read `verify` as the argv lists
 the owner approves for an Executor to verify its unit, each run from the
 worktree root; this is the exact caller-approved verification command argv
@@ -43,6 +43,14 @@ with whole-project scans nothing else runs on a schedule, and `verify`
 with the smallest gating subset CI runs on pull requests, never a
 watch-mode command. Do not validate the file with a script. Name any
 field you could not interpret in the report.
+
+When an owner invokes the skill and the file is missing, offer first-use
+setup: sense the repository, draft the five-key file from its CI, package
+scripts, and protected surfaces, show the whole file, and write it to
+`.agents/repo-gardener.yaml` only after the owner approves it in that
+conversation. Offer, in the same way, to create the report issue. An
+unattended run never writes the file; it stays sense-only and proposes
+the file in its report.
 
 ## Sense
 
@@ -75,15 +83,15 @@ each area even when the area is empty.
 
 ## Select units
 
-Pick up to `maximum_workers` units. Choose units that are small, testable,
+Pick up to `max_pull_requests` units. Choose units that are small, testable,
 and independently deliverable. Prefer issues that already name the files
-to change. Keep every file in a unit inside `scope.include` and outside
-`protected_paths`. Give every unit disjoint files, with one exception:
+to change. Keep every file in a unit outside `protected_paths`. Give
+every unit disjoint files, with one exception:
 when the repository requires a changelog entry on every pull request,
 each unit adds its own entry and the conflict is resolved at merge
 time. Assign any other shared convention file, such as a lockfile, to
 at most one unit.
-Select zero units when `maximum_workers` is 0.
+Select zero units when `max_pull_requests` is 0.
 Select zero units when `verify` is empty, and say so in the report.
 
 Block a unit with an open PR only when both change the same file

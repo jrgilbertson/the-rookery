@@ -10,7 +10,7 @@ Work only from these synthetic facts. Do not call tools. Treat each
 Executor as independent except where a later Lead turn is named.
 
 > Run repo-gardener on this repository. Policy is valid.
-> `maximum_workers` is 4. Executors A, B, and C each finish
+> `max_pull_requests` is 4. Executors A, B, and C each finish
 > `ce-plan`, `ce-work mode:return-to-caller` with a complete return,
 > `ce-simplify-code`, `ce-code-review mode:agent`, and
 > `ce-test-browser mode:pipeline` on disjoint allowed files, then invoke

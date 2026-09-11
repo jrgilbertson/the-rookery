@@ -15,6 +15,7 @@ unit decision as independent except where overlap is named.
 >
 > Open PR 3596 changes `CHANGELOG.md` and `package.json`. It is not a
 > bot update PR.
+> The repository requires a changelog entry on every pull request.
 >
 > Candidate unit U1 would change `apps/web/lib/parser.ts` plus one
 > changelog line in `CHANGELOG.md`. The parser change is small,
@@ -41,5 +42,7 @@ unit decision as independent except where overlap is named.
       recommendation, not a unit.
 - [ ] Only one of U4 and U5 is dispatched, or they are merged into one
       unit. Both are not dispatched as overlapping units.
-- [ ] `CHANGELOG.md` is assigned to at most one Executor.
+- [ ] Both dispatched units add their own `CHANGELOG.md` entry because
+      the repository requires one per pull request; conflicts resolve
+      at merge time.
 - [ ] No unit edits `.agents/repo-gardener.yaml`.

@@ -9,10 +9,12 @@ protected_paths:
 # Parallel Executor cap. 0 means sense and report only.
 maximum_workers: 3
 # Each item is one process argv run from the repository root.
+# Whole-project scans nothing else runs on a schedule; not merge-gate CI.
 scans: []
 # Example: - ["npm", "run", "knip"]
 # Argv lists an Executor may run to verify its unit, from the worktree root.
-# Empty means no unit is dispatched; copy the commands CI already runs.
+# Empty means no unit is dispatched. Use the smallest gating subset CI
+# runs on PRs; never a watch-mode command.
 verify: []
 # Example: - ["npm", "test"]
 # GitHub issue number that receives one report comment per run.

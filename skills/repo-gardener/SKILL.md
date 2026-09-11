@@ -22,9 +22,11 @@ run that authors nothing but reports as a complete run.
 ## Read the policy
 
 Read `.agents/repo-gardener.yaml` on the refreshed default branch once at
-the start. Treat that file as the only durable policy. Read `scope.include`
-as globs a unit's files must match. Read `protected_paths` as globs an
-Executor never writes. Treat the policy file itself as always
+the start. If the default branch cannot be refreshed, read the local
+checkout and name that in the report. Treat that file as the only durable
+policy. Read `scope.include` as globs a unit's files must match. A missing
+`scope` means `**`. Read `protected_paths` as globs an Executor never
+writes. Treat the policy file itself as always
 protected. Read `maximum_workers` as the parallel Executor cap, with 0
 meaning sense and report only. Read `scans` as a list of argv lists, each
 one process run from the repository root. Read `verify` as the argv lists
@@ -36,26 +38,31 @@ receives one report comment per run.
 
 Treat a missing or unreadable file as a sense-only run. Put a proposed
 complete policy file in that report for the owner to commit. Start from
-the bundled [policy template](assets/policy-template.yaml) and fill
-`scans` and `verify` with the commands the repository's CI already
-runs. Do not validate the file with a script. Name any field you could
-not interpret in the report.
+the bundled [policy template](assets/policy-template.yaml). Fill `scans`
+with whole-project scans nothing else runs on a schedule, and `verify`
+with the smallest gating subset CI runs on pull requests, never a
+watch-mode command. Do not validate the file with a script. Name any
+field you could not interpret in the report.
 
 ## Sense
 
 Read the policy `scans` list as the approved scans. Run every approved
 scan from the repository root with the host's command tool. Give each
-scan a 15-minute timeout. Capture each scan's output outside the
-repository. Summarize each scan for the report. Treat a nonzero exit as
-evidence, not as a candidate by itself.
+scan a 15-minute timeout through the host's command tool. Capture each
+scan's output outside the repository. Summarize each scan for the
+report. Report a scan by its findings; a nonzero exit is evidence, not
+a candidate by itself, and some scans exit nonzero whenever they find
+anything.
 
 Read, with what the host can already reach, these sources. Read
 default-branch CI status and recent failing runs. Read open PRs,
 including bot update PRs and their failing checks. Read open issues
 through the managing-issues config when `.agents/managing-issues.json`
-exists, else `gh issue list`. Prefer small, clearly specified issues
-authored or endorsed by the repository owner or a collaborator (author
-association OWNER, MEMBER, or COLLABORATOR). Read dependency manifests
+exists, else `gh issue list`. Take as candidates the issues in the
+ready state or label the managing-issues config maps, else open issues
+that are small and clearly specified, and in both cases authored or
+endorsed by the repository owner or a collaborator (author association
+OWNER, MEMBER, or COLLABORATOR). Read dependency manifests
 and open security advisories. Read error tracking or analytics only
 through access the session already has.
 
@@ -71,8 +78,11 @@ each area even when the area is empty.
 Pick up to `maximum_workers` units. Choose units that are small, testable,
 and independently deliverable. Prefer issues that already name the files
 to change. Keep every file in a unit inside `scope.include` and outside
-`protected_paths`. Give every unit disjoint files. Assign a shared
-convention file such as a changelog or lockfile to at most one unit.
+`protected_paths`. Give every unit disjoint files, with one exception:
+when the repository requires a changelog entry on every pull request,
+each unit adds its own entry and the conflict is resolved at merge
+time. Assign any other shared convention file, such as a lockfile, to
+at most one unit.
 Select zero units when `maximum_workers` is 0.
 Select zero units when `verify` is empty, and say so in the report.
 
@@ -165,9 +175,10 @@ authored and why, list recommendations, including bot update PRs to
 adopt, the protected-path items, and blocked units with preserved
 commits and why. Under proposed policy changes, include the whole
 proposed file on a sense-only run. Name a sense-only run as complete.
-Keep each scan summary to one line. Omit a section only when it has no
-items. Never paste raw scan output, secrets, customer identities, or
-`@` mentions into the report.
+Keep each scan summary to one line. Always print the pull requests
+section, writing none when no pull request was opened; omit another
+section only when it has no items. Never paste raw scan output, secrets,
+customer identities, or `@` mentions into the report.
 
 ## Hard rules
 

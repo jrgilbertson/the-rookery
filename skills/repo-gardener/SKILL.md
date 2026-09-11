@@ -45,8 +45,10 @@ complete policy file in that report for the owner to commit. Start from
 the bundled [policy template](assets/policy-template.yaml). Fill `scans`
 with whole-project scans nothing else runs on a schedule, and `verify`
 with the smallest gating subset CI runs on pull requests, never a
-watch-mode command. Do not validate the file with a script. Name any
-field you could not interpret in the report.
+watch-mode command. Do not validate the file with a script. Treat a
+readable file in which `protected_paths`, `max_pull_requests`, `scans`,
+or `verify` is missing, misspelled, or not of its expected type as
+unreadable: run sense-only and name that field in the report.
 
 When the file is missing, run sense-only as above. If an owner is in the
 conversation, end by offering first-use setup: draft the five-key file
@@ -72,7 +74,9 @@ Read, with what the host can already reach, these sources. Read
 default-branch CI status and recent failing runs. Read open PRs,
 including bot update PRs and their failing checks. Read open issues
 through the managing-issues config when `.agents/managing-issues.json`
-exists, else `gh issue list`. Take as candidates the issues in the
+exists, else `gh issue list --state open --limit 500`, and report that
+limit and the count returned when the count reaches it. Take as
+candidates the issues in the
 ready state or label the managing-issues config maps, else open issues
 that are small and clearly specified, and in both cases authored or
 endorsed by the repository owner or a collaborator (on GitHub, author
@@ -113,8 +117,10 @@ not as a unit. Leave unused Executor slots empty.
 ## Dispatch Executors
 
 For each selected unit, the Lead creates an isolated worktree on a fresh
-branch `garden/<unit>` from the default branch the policy was read from:
-an Orca child worktree when available, otherwise the harness's
+branch `garden/<unit>` from the default branch the policy was read from.
+When that branch already exists, an earlier run preserved work there:
+skip the unit and name the branch in the report. Create the worktree as
+an Orca child worktree when available, otherwise as the harness's
 worktree-isolated subagent. The Lead writes a brief as a Markdown file
 in a per-run directory outside the repository. The brief names the
 unit's goal, the Lead's directives for the unit, the allowed files, the
@@ -138,6 +144,8 @@ It invokes `ce-simplify-code` unless the diff is docs-only or
 under ten lines. It invokes `ce-code-review mode:agent`, applies each
 finding whose fix stays inside the allowed files, lists the rest for
 the report, and commits. It invokes `ce-test-browser mode:pipeline`.
+After the last change to the worktree, it runs every policy `verify`
+argv from the worktree root and stops the unit on any failure.
 Every unattended Executor invokes `checking-pr-readiness` normally on
 the exact head in its worktree and stops at its numbered menu.
 

@@ -44,12 +44,13 @@ Use sources for their native roles:
 | Reading, reference, and writing | Background and candidate ideas, not proof of current importance. |
 
 X supplies optional read-only interaction evidence, timestamps, and public
-posts through authenticated Grok or host X search. Outside the Daily CRM Scan,
+posts through the CRM companion's X source contract, which owns provider
+selection, handle confirmation, and access recovery. Outside the Daily CRM Scan,
 query only for a material conclusion, preferably from a known URL, handle, or
 person. During that scan, include a short finite slice of the user's directed
 posts and replies under the companion's current source contract, after
-confirming the authenticated account belongs to the user. A shared or secondary
-account is not evidence of the user's activity. Use pointers or bounded slices,
+resolving the user's confirmed public handle under that contract. A shared or
+secondary account is not evidence of the user's activity. Use pointers or bounded slices,
 not exhaustive history or searches for posts to read or reply to. Never perform
 X writes, whatever the tool exposes. Missing or incomplete reads narrow only
 X-dependent conclusions; truncated history cannot prove no exchange occurred.

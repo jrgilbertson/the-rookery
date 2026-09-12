@@ -63,10 +63,12 @@ implementation authority, and proven ownership.
       locator.
 - [ ] Item 6 starts with `ce-work` and the default Lead + Executors roster:
       Lead on Fable 5.1 at medium, up to three Executors on Grok 4.6 at high.
-      No supplied evidence establishes a single bounded piece. The kickoff
-      carries `Active ownership unverified`. A kickoff may tell the receiver
-      to verify ownership before writing. The shared side-effect-free case owns
-      the package-read-only trace check.
+      No supplied evidence establishes a single bounded piece. Setup and the
+      kickoff last sentence each include: No named owner was proven for this
+      phase; this start is still allowed. They do not emit a stored-status
+      occupancy label or a halt. A kickoff may tell the receiver to verify
+      ownership before writing. The shared side-effect-free case owns the
+      package-read-only trace check.
 - [ ] Item 7 starts the child with `ce-plan`; the supplied non-blocking family
       gap does not displace the directly named child.
 - [ ] All conclusions use supplied family and ownership state only. Missing

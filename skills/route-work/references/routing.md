@@ -48,7 +48,10 @@ The router assesses supplied evidence, renders one card, and exits without
 changing state.
 
 Copy only authority the operator supplied. Artifact approval is task state,
-not an authority grant. An implementation kickoff never
+not an authority grant. An operator request to implement the work, including
+a request to route the kickoff to implement it, is implementation
+authorization. When asking whether implementation is authorized, do not treat
+artifact approval as that grant. An implementation kickoff never
 infers permission to commit, push, open a pull request, publish, merge, or
 change external state. Authorized document writes use repository-defined
 locations. Supplied authority is the only thing that bounds how far the lead
@@ -77,11 +80,13 @@ A proven active owner of the requested phase takes precedence. A directly named
 child uses the owner table unless supplied evidence says unresolved family
 state blocks it.
 
-Active ownership is proven only by an operator statement or supplied artifact
-that names a specific in-flight owner for the requested phase. A stated
+A named in-flight owner is proven only by an operator statement or supplied
+artifact that names a specific owner for the requested phase. A stated
 worktree, branch, pull request, worker, or parallel effort without that phase
-owner adds `Active ownership unverified` to the normal kickoff: ownership is
-unknown, not vacant. The router does not discover or monitor ownership.
+owner still uses the normal Route. Setup and the kickoff last sentence then
+each include the occupancy sentence: No named owner was proven for this
+phase; this start is still allowed. Occupancy is unknown, not vacant. The
+router does not discover or monitor ownership.
 
 ## Choose what needs to happen first
 
@@ -129,7 +134,9 @@ steps.
 
 When implementation is expected, start with Lead + Executors. Use Single
 owner only when supplied evidence establishes one bounded piece or sequential
-work for one owner. Unnamed units are not evidence of a bounded piece.
+work for one owner. Unnamed units are not evidence of a bounded piece. A
+stated worktree, branch, pull request, worker, or parallel effort is occupancy
+evidence, not evidence of a bounded piece.
 
 | Pattern | Roles | Use when | Guardrail |
 |---|---|---|---|
@@ -235,7 +242,8 @@ The card is the entire final answer, with no preamble, narration, or closing rem
 around it. Its first line is exactly `**Route**`, `**Resume**`, or
 `**Questions**`. Bold marks that line and the section labels, with a blank
 line after each; use no `#` headings, and never fence the kickoff. Write every
-section as natural prose, not a string of stock sentences, and render model
+section as natural prose, not a string of stock sentences, except the
+occupancy sentence, which is emitted exactly when it applies. Render model
 IDs as ordinary names, such as "Fable 5.1 at medium".
 
 ### Route
@@ -250,16 +258,16 @@ IDs as ordinary names, such as "Fable 5.1 at medium".
 
     **Setup**
 
-    [The roster: every role in the pattern with its model and effort, stated even when it repeats the decision line. The Executor count. The pattern, named in a sentence, when it is not Single owner. Orchestration and placement only when they differ from the default. Authority only when the operator supplied it. An advisor, Active ownership unverified, or a profile fallback only when it applies.]
+    [The roster: every role in the pattern with its model and effort, stated even when it repeats the decision line. The Executor count. The pattern, named in a sentence, when it is not Single owner. Orchestration and placement only when they differ from the default. Authority only when the operator supplied it. An advisor, the occupancy sentence, or a profile fallback only when it applies.]
 
     **Copy/paste kickoff**
 
-    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the lead on [model] at [effort]. [Each other role with its model, effort, and count.] [Subscription billing constraint.] [Orchestration and placement sentences only when they differ from the default.] Treat [the supplied artifact or request] as the source of truth. [Supplied authority in one sentence, only when the operator supplied it.]
+    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the lead on [model] at [effort]. [Each other role with its model, effort, and count.] [Subscription billing constraint.] [Orchestration and placement sentences only when they differ from the default.] Treat [the supplied artifact or request] as the source of truth. [Supplied authority in one sentence, only when the operator supplied it.] [Occupancy sentence last, only when it applies.]
 
 The decision line never names a role; roles live in Setup. A single-owner
 Setup omits placement and orchestration when they are the default. The
 kickoff must stand alone when pasted, so it repeats the roster, supplied
-authority, and any `Active ownership unverified` marker.
+authority, and any occupancy sentence.
 
 ### Resume
 

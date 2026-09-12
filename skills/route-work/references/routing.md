@@ -48,7 +48,10 @@ The router assesses supplied evidence, renders one card, and exits without
 changing state.
 
 Copy only authority the operator supplied. Artifact approval is task state,
-not an authority grant. An implementation kickoff never
+not an authority grant. An operator request to implement the work, including
+a request to route the kickoff to implement it, is implementation
+authorization. When asking whether implementation is authorized, do not treat
+artifact approval as that grant. An implementation kickoff never
 infers permission to commit, push, open a pull request, publish, merge, or
 change external state. Authorized document writes use repository-defined
 locations. Supplied authority is the only thing that bounds how far the lead
@@ -131,7 +134,9 @@ steps.
 
 When implementation is expected, start with Lead + Executors. Use Single
 owner only when supplied evidence establishes one bounded piece or sequential
-work for one owner. Unnamed units are not evidence of a bounded piece.
+work for one owner. Unnamed units are not evidence of a bounded piece. A
+stated worktree, branch, pull request, worker, or parallel effort is occupancy
+evidence, not evidence of a bounded piece.
 
 | Pattern | Roles | Use when | Guardrail |
 |---|---|---|---|

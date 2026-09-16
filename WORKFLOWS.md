@@ -154,7 +154,7 @@ The in-build toolkit:
 
 What must be true before moving to Ship:
 
-- **CI is green for the slice.** Every suite the change calls for passes, including browser checks when it touches the UI, and each test exercises the shipped code path rather than a stub.
+- **Verification passes for the slice.** Selected CI requirements and required local checks pass, including browser checks for UI changes where the project assigns them. Each test exercises the shipped code path rather than a stub.
 - **The slice stayed bounded.** Each agent built what its slice named, and scope changes went back through Plan.
 - **Design held.** Interface work stayed inside the design system and the brief.
 

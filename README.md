@@ -50,6 +50,10 @@ Everything here fits into five core jobs, Research through Ship, plus two feedba
 - [**Maintain**](WORKFLOWS.md#maintain). Keep repositories healthy by turning recurring problems into durable safeguards.
 - [**Learn**](WORKFLOWS.md#learn). Turn experience into linked knowledge and new questions for Research.
 
+[Testing with agents](TESTING.md) explains project-owned verification for
+polyglot monorepos and smaller projects. Use it when choosing local, merge, and
+release checks, dependency-based selection, or cache policy across harnesses.
+
 ## The skills
 
 - [checking-merge-readiness](skills/checking-merge-readiness/SKILL.md). Review a pull request after its review cycle for intent drift, unnecessary complexity, failed merge rules, and unresolved risks. Run it immediately before merging to decide whether the finished change belongs on `main`.

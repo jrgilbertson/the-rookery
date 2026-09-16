@@ -141,6 +141,10 @@ Compound Engineering is the default planner, executor, reviewer, and learning ca
 
 I enforce quality in tiers. Tests, linters, CI gates, and the design system enforce proactively, and prose instructions sit at the bottom. See the Maintain section for the full ladder.
 
+[Testing with agents](TESTING.md) covers verification for polyglot monorepos
+and smaller projects. Use it to allocate local, merge, and release checks and
+keep selection and caching owned by the project across harnesses.
+
 The in-build toolkit:
 
 - [Orca](https://github.com/stablyai/orca). Runs parallel worktrees, delegates to agents across harnesses, and supports element-level browser feedback. Use it when a plan can be split into independent slices or an interface needs direct visual iteration.
@@ -171,7 +175,7 @@ The shipping sequence, in order:
 
 I can also ask for an explanation of the change or a concept it introduced. Then `ce-commit-push-pr` opens the pull request, `ce-babysit-pr` works through CI failures and review feedback, and [`checking-merge-readiness`](skills/checking-merge-readiness/SKILL.md) reviews the full change. I still choose whether to merge. I write the changelog and release notes from the merged pull requests afterward.
 
-CI gates the merge on the unit and end-to-end suites, plus passes like performance and link checks in my product repos. GitHub enforces the rest, and each of these is a setting you have to turn on: a PR for every change, review comments resolved before merge, and no direct pushes to main, including for administrators.
+CI gates the merge on the project's selected requirements; [Testing with agents](TESTING.md#local-merge-and-release-responsibilities) explains how to allocate broader checks across local work and release. GitHub enforces the rest, and each of these is a setting you have to turn on: a PR for every change, review comments resolved before merge, and no direct pushes to main, including for administrators.
 
 What must be true before merge:
 

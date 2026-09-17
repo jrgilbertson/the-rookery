@@ -35,6 +35,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `route-work` kickoffs that select supervised orchestration now say "Orca
+  orchestration" in those words and tell the lead to use Orca's
+  `orchestration` skill when it is installed, so the receiving session
+  invokes that skill. Cards still carry no Orca commands.
+
 - `route-work` occupancy copy on Route Setup and the kickoff last sentence now
   says a named owner was not proven and that this start is still allowed. The
   old status noun `Active ownership unverified` is gone. Resume, unknown-not-vacant

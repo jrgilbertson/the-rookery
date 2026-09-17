@@ -181,8 +181,11 @@ optional and currently depends on Orca; ordinary worktree placement does not.
 When supervised orchestration is selected, say so in Setup and the kickoff,
 tell the operator to follow Orca's installed contract, and add to Setup: once
 orchestration is running, continue with the lead in its terminal and close
-this session. Do not copy Orca commands into the card. Read-only scouts and
-fresh-context reviewers can work in the current worktree.
+this session. The kickoff's orchestration sentence says "Orca orchestration"
+in those words and tells the lead to use Orca's `orchestration` skill when it
+is installed, because the receiving session matches that phrase to the skill.
+Do not copy Orca commands into the card. Read-only scouts and fresh-context
+reviewers can work in the current worktree.
 
 ## Select the role profile
 
@@ -262,7 +265,7 @@ IDs as ordinary names, such as "Fable 5.1 at medium".
 
     **Copy/paste kickoff**
 
-    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the lead on [model] at [effort]. [Each other role with its model, effort, and count.] [Subscription billing constraint.] [Orchestration and placement sentences only when they differ from the default.] Treat [the supplied artifact or request] as the source of truth. [Supplied authority in one sentence, only when the operator supplied it.] [Occupancy sentence last, only when it applies.]
+    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the lead on [model] at [effort]. [Each other role with its model, effort, and count.] [Subscription billing constraint.] [Orchestration and placement sentences only when they differ from the default; supervised orchestration reads "Supervise the workers through Orca orchestration, using the `orchestration` skill when it is installed."] Treat [the supplied artifact or request] as the source of truth. [Supplied authority in one sentence, only when the operator supplied it.] [Occupancy sentence last, only when it applies.]
 
 The decision line never names a role; roles live in Setup. A single-owner
 Setup omits placement and orchestration when they are the default. The

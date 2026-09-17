@@ -42,8 +42,9 @@ must not become workflow ownership or unbounded fan-out.
 - [ ] Item 2's Setup names supervised orchestration through Orca, isolated
       worktrees, and tells the operator to continue with the lead in its
       terminal and close this session once orchestration is running. Its
-      kickoff names both profiles, names Orca only as the orchestration
-      dependency, and invents no CLI grammar.
+      kickoff names both profiles, says "Orca orchestration" in those words,
+      tells the lead to use the `orchestration` skill when it is installed,
+      and invents no CLI grammar.
 - [ ] Item 2 withholds merge authority in one sentence and narrates no PR
       cadence.
 - [ ] Item 3 stays the lead alone on Grok 4.6 at high: sequential phases of one

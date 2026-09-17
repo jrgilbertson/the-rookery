@@ -13,6 +13,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- `TESTING.md` explains project-owned verification for polyglot monorepos and
+  smaller projects, with local, merge, and release responsibilities, conservative
+  selection, cache boundaries, and an embedded policy outline. README and
+  workflow links make the guide discoverable.
+
 - `WORKFLOWS.md` opens with a summary table of the seven jobs, each with its
   goal, key tools, and the condition to move on, so the loop can be read from
   one screen before the full sections.

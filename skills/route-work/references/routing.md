@@ -181,8 +181,11 @@ optional and currently depends on Orca; ordinary worktree placement does not.
 When supervised orchestration is selected, say so in Setup and the kickoff,
 tell the operator to follow Orca's installed contract, and add to Setup: once
 orchestration is running, continue with the lead in its terminal and close
-this session. Do not copy Orca commands into the card. Read-only scouts and
-fresh-context reviewers can work in the current worktree.
+this session. The kickoff's orchestration sentence says "Orca orchestration"
+in those words and tells the lead to use Orca's `orchestration` skill when it
+is installed, because the receiving session matches that phrase to the skill.
+Do not copy Orca commands into the card. Read-only scouts and fresh-context
+reviewers can work in the current worktree.
 
 ## Select the role profile
 

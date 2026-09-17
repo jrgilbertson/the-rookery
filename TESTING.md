@@ -6,6 +6,58 @@ CI, and put broader validation before the point where a change reaches users.
 Each repository owns the commands and the division of work between those
 stages.
 
+## How this works in practice
+
+The coordinator decides what needs checking and in what order. Test runners
+such as Vitest, pytest, and Playwright execute the checks. For a polyglot
+monorepo with explicit releases, the flow can look like this:
+
+```mermaid
+flowchart TD
+    A[Agent edits code] --> B[Focused tests during development]
+    B --> C[Before push: select affected projects]
+    C --> D[Local checks and applicable full browser suites]
+    D --> E[PR: independent selected CI checks]
+    E --> F[Merge: release candidate]
+    F --> G[Release: full fresh validation]
+    G --> H[Production promotion]
+```
+
+A passing PR means all required checks selected for that change passed. It does
+not mean every test in the monorepo ran. Full release validation covers the
+broader candidate before production mutation. This allocation assumes merge
+and deployment are separate; projects that deploy on merge must put their
+release guarantees there.
+
+Consider a repository with a web application, a realtime service, and shared
+database contracts:
+
+- A web change selects the web project's required suites.
+- A realtime change also selects web when web declares that dependency.
+- Ordinary documentation selects documentation policy when it has no runtime
+  consumers. A document read by the application is an application input.
+- Unknown ownership or dependency metadata changes broaden verification;
+  failed discovery blocks it rather than silently selecting nothing.
+
+Selection starts with whole affected-project suites. Runners discover new tests
+by convention, so adding a test does not require a second test list. New
+projects still need verification targets, and service or database relationships
+need explicit edges when the tooling cannot infer them. Running pytest through
+Nx does not itself provide Python import-level dependency inference.
+
+Selection asks whether a project needs checking. Caching then asks whether a
+matching computation has already succeeded. An eligible task may reuse that
+result; a changed input invalidates it. Browser and stateful checks stay fresh,
+as does full release validation. A reported cache hit is prior evidence, not a
+new execution.
+
+Give agents three discoverable operations: inspect selection without starting
+services, run selected verification, and run full verification freshly. The
+project chooses their command names. If a normal push already runs the selected
+gate, agents need not run that same gate immediately before pushing. They can
+use focused runner checks while editing, then let the push enforce the complete
+selected gate. The sections below explain the ownership and failure rules.
+
 ## Polyglot monorepos
 
 A monorepo can give a team shared company context: code in several languages,

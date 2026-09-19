@@ -31,7 +31,7 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 
 ## Mechanical pre-check
 
-Run [scripts/signal-scan.sh](../scripts/signal-scan.sh) on the package, or make the same searches by hand where no shell is available, and record the count it reports for each signal, zeros included. The script owns the patterns and names the item that judges each signal.
+Run [scripts/signal-scan.sh](../scripts/signal-scan.sh) on the package, which reads `SKILL.md` and `references/`, or make the same searches by hand where no shell is available. Read `assets/` by hand, because templates quote patterns on purpose. Record the count it reports for each signal, zeros included. The script owns the patterns and names the item that judges each signal.
 
 A hit is a candidate. It fails only when its named item fails: description text may carry calibrated emphasis for routing, a System-Owned Invariant keeps its exact steps and prohibitions, and ordinary domain prose may use a flagged phrase.
 

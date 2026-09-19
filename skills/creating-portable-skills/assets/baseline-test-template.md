@@ -22,8 +22,8 @@ convention; this template restates it for portable use.
    Confirm the intended variant is actually loaded for with-skill runs. For a
    change limited to the description, compare unforced activation on the
    trigger set instead of forced-load behavior. Record tokens and duration
-   for each run where the harness reports them, and `not available` where it
-   does not.
+   for each run where the harness reports them, and `cost not available`
+   where it does not.
 3. **Grade binary.** A separate fresh-context agent that did not author the
    change grades each run against the case's expected-behavior checklist —
    pass or fail per item, a case fails if any item fails. Deterministic

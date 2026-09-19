@@ -19,7 +19,7 @@ Creating a new skill starts at step 1. Auditing, updating, or migrating an exist
 
 ### 0. Audit an existing skill
 
-Have a separate fresh-context agent that has not participated in the current authoring work read the whole package and the host repository's instructions. Give it the skill, the review checklist, and the stated intent without the author's conclusions. Have it apply [references/review-checklist.md](references/review-checklist.md) top to bottom, then present a prioritized fix list where each item names the problem, impact, and change risk.
+Have a separate fresh-context agent that has not participated in the current authoring work read the whole package and the host repository's instructions. Give it the skill, the review checklist, and the stated intent without the author's conclusions. Have it apply [references/review-checklist.md](references/review-checklist.md) top to bottom, starting with the mechanical pre-check that [scripts/signal-scan.sh](scripts/signal-scan.sh) performs, then present a prioritized fix list where each item names the problem, impact, and change risk.
 
 Read-only completion: deliver the evidence-backed review, prioritized recommendations, and final verdict without changing files. The execution ends there. Revision begins only in a separate user-authorized request.
 

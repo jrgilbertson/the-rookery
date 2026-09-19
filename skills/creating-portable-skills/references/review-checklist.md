@@ -29,6 +29,14 @@ them here.
 
 Pass: every prescriptive instruction protects a named invariant, responds to observed evidence, or covers a named fragile operation; every relaxation satisfies the baseline comparison's decision rule.
 
+## Mechanical pre-check
+
+Run [scripts/signal-scan.sh](../scripts/signal-scan.sh) on the package, or make the same searches by hand where no shell is available, and record the count it reports for each signal, zeros included. The script owns the patterns and names the item that judges each signal.
+
+A hit is a candidate. It fails only when its named item fails: description text may carry calibrated emphasis for routing, a System-Owned Invariant keeps its exact steps and prohibitions, and ordinary domain prose may use a flagged phrase.
+
+Pass: every signal has a recorded count, and every hit is a fix-list item or has a one-line reason it stands.
+
 ## Invocation and triggering
 
 - The description says when to use the skill, not how it works. Pass: no body step is restated in the description; without the body, an agent would know when to activate but not the process.
@@ -51,8 +59,9 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 
 ## Instruction economy
 
-- Every line survives the delete test. Pass: removing it would plausibly lose required behavior; text that only restates default reasoning is cut.
-- Guidance is grounded. Pass: domain rules and gotchas trace to real project evidence, observed execution, or a named hard constraint rather than generic model knowledge.
+- Every line survives the delete test. Ask of each line whether the model could already know it. Pass: what stays is what only the author knows (the audience, environment facts, the quality bar, resource contracts, hard judgment calls, and the reasons behind constraints) or text whose removal would plausibly lose required behavior; text that only restates default reasoning is cut, and length alone never justifies a cut.
+- Guidance is grounded. Pass: domain rules and gotchas trace to real project evidence, observed execution, or a named hard constraint rather than generic model knowledge, and a rule learned from one run's stumble would have helped most runs.
+- Facts are durable. Pass: each hardcoded path, flag, version, and interface claim points to its source of truth or was verified against that source during this review.
 - Steering is positive. Pass: instructions state the target behavior, with prohibitions reserved for hard guardrails and paired with the safe alternative where useful.
 - Specificity matches fragility. Pass: fragile operations retain exact steps or commands; open-ended work names the required outcome and only its hard constraints instead of prescribing a cognitive cadence.
 - Tool and approach selection is clear. Pass: when the skill names several tools or approaches, it gives a default or a selection rule rather than an equal menu; otherwise it leaves the implementation choice open.
@@ -64,7 +73,7 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 
 - Premature completion. Pass: no completion condition can be satisfied by declaring success without the required artifact or observable state.
 - Duplication. Pass: no sentence restates another sentence's meaning in the description, body, or bundled files.
-- Sediment. Pass: superseded behavior is removed instead of being surrounded by new caveats.
+- Sediment. Pass: the instructions read as if the current rules are the only rules that ever existed. Superseded behavior is removed instead of being surrounded by new caveats, and instructions carry no migration-relative phrasing, past-tense history, incident or pull-request identifiers, workarounds for a named model, or pinned model names. Evidence logs and reference tables that state their review date are records, not instructions.
 - Sprawl. Pass: the skill's job fits one sentence without joining two independent jobs.
 - No-ops. Pass: each sentence changes behavior versus the default or protects a System-Owned Invariant.
 
@@ -85,3 +94,4 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 - Environment requirements are explicit. Pass: no absolute owner path, personal identifier, private-repository assumption, local alias, or undeclared credential is required.
 - Package behavior matches its stated intent. Pass: bundled content, side effects, requested access, and authority remain within the job described to the user.
 - Claims match evidence. Pass: canonical structure and successful installation are not presented as equivalent behavior across untested models or harnesses; proxy and native checks remain distinct.
+- Vendor-specific advice stays labeled. Pass: guidance that rests on one vendor's model or harness behavior is marked vendor-specific, scoped to that target, and kept out of the portable rules; the canonical instructions name no model.

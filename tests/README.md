@@ -40,7 +40,8 @@ input files:
 - `log.md` — one line per run or check: `date | git rev | check | result |
 note`. The `git rev` field names the commit the run's working tree was
   based on — the parent commit when the change under test is not yet
-  committed. An archive-pointer line identifies where prior history lives,
+  committed. A behavioral run's note carries its tokens and duration when the
+  harness reports them, and `cost not available` when it does not. An archive-pointer line identifies where prior history lives,
   so git remains the archive.
 - optional `<name>-protocol.md` — a per-suite scoring or measurement protocol
   for recurring checks the suite runs against external or machine-local
@@ -52,7 +53,9 @@ note`. The `git rev` field names the commit the run's working tree was
 ## Rules
 
 - Binary pass/fail everywhere. A case fails if any checklist item fails.
-  Trigger judgments are yes or no.
+  Trigger judgments are yes or no. A quality that binary items cannot carry
+  goes to human feedback or a blind comparison of two versions with the labels
+  hidden, and is logged as a note, never as a pass or a fail.
 - A case enters a suite when a baseline run showed the bare model failing the
   behavior or an observed failure motivated it — named in the provenance line.
   A case that both variants pass stays only as an explicitly labeled

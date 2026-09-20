@@ -4,8 +4,7 @@ Use this protocol when creating a new skill or making a substantive revision
 (changed instruction semantics, trigger description, or bundled resource;
 typo, formatting, and link-only edits are exempt). It compares behavior with
 and without the change on a small case set and produces the suite's durable
-artifacts. Within this repository, `tests/README.md` is the canonical
-convention; this template restates it for portable use.
+artifacts.
 
 ## Protocol
 
@@ -24,8 +23,8 @@ convention; this template restates it for portable use.
    trigger set instead of forced-load behavior. Record tokens and duration
    for each run where the harness reports them, and `cost not available`
    where it does not.
-3. **Grade binary.** A separate fresh-context agent that did not author the
-   change grades each run against the case's expected-behavior checklist —
+3. **Grade binary.** An independent grader, as the skill workflow defines one,
+   grades each run against the case's expected-behavior checklist —
    pass or fail per item, a case fails if any item fails. Deterministic
    scripts may grade mechanical items.
 4. **Decide.** Ship only when every discriminating case shows the intended

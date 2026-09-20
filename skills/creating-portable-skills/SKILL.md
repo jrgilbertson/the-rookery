@@ -7,11 +7,11 @@ compatibility: Requires isolated agent contexts or separate sessions for agent g
 
 # Creating Skills
 
-Create, revise, migrate, or audit a skill from its intent, required outcome, and only the hard constraints that define acceptable completion or remain under user authority. The result is either a prioritized read-only audit or a self-contained skill package with structural validation, appropriately scoped behavioral evidence, and separate trigger and installation checks.
+Create, revise, migrate, or audit a skill from its intent, required outcome, and only the hard constraints that define acceptable completion or remain under user authority. The result is either a prioritized read-only audit or a self-contained skill package with structural validation, behavioral evidence, and separate trigger and installation checks.
 
-Skills produced here follow the [Agent Skills format](https://agentskills.io/specification): a directory with a `SKILL.md` (frontmatter plus body) and optional `references/`, `assets/`, and `scripts/`. Canonical frontmatter uses only `name`, `description`, `license`, `compatibility`, and `metadata`. Read [references/portability.md](references/portability.md) when authoring frontmatter, choosing an install location, or making a harness-specific claim.
+Skills produced here follow the [Agent Skills format](https://agentskills.io/specification): a directory with a `SKILL.md` (frontmatter plus body) and optional `references/`, `assets/`, and `scripts/`. Read [references/portability.md](references/portability.md) for the canonical frontmatter fields and their limits, and when choosing an install location or making a harness-specific claim.
 
-An independent reviewer must not have participated in the authoring discussion or produced the artifact under review. One independent grader inspects each matched case; a different fresh-context reviewer performs the final package review. If the current environment cannot start those independent contexts, prepare a self-contained handoff for a separate session and keep the affected grade or review unverified until that session completes it. Do not substitute the author's own review.
+An independent reviewer must not have participated in the authoring discussion or produced the artifact under review. One independent grader inspects each matched case; a different independent reviewer performs the final package review, each in a fresh context. If the current environment cannot start those contexts, prepare a self-contained handoff for a separate session; the affected grade or review stays unverified and blocks completion until that session completes it. No checklist exception covers this rule, and the author's own review never substitutes.
 
 ## Workflow
 
@@ -19,7 +19,7 @@ Creating a new skill starts at step 1. Auditing, updating, or migrating an exist
 
 ### 0. Audit an existing skill
 
-Have a separate fresh-context agent that has not participated in the current authoring work read the whole package and the host repository's instructions. Give it the skill, the review checklist, and the stated intent without the author's conclusions. Have it apply [references/review-checklist.md](references/review-checklist.md) top to bottom, starting with the mechanical pre-check that [scripts/signal-scan.sh](scripts/signal-scan.sh) performs, then present a prioritized fix list where each item names the problem, impact, and change risk.
+Have an independent reviewer read the whole package and the host repository's instructions. Give it the skill, the review checklist, and the stated intent. Have it apply [references/review-checklist.md](references/review-checklist.md) top to bottom, starting with the mechanical pre-check that [scripts/signal-scan.sh](scripts/signal-scan.sh) performs, then present its prioritized fix list.
 
 Read-only completion: deliver the evidence-backed review, prioritized recommendations, and final verdict without changing files. The execution ends there. Revision begins only in a separate user-authorized request.
 
@@ -29,7 +29,7 @@ Change completion: the user has approved the material fix scope, including any a
 
 Use the conversation, existing package, repository context, and examples already available. Ground the reusable guidance in real work: user corrections, successful task history, input and output examples, project documentation, schemas, review comments, issues, version history, and resolved failures. Establish the skill's one job, triggering conditions and near-misses, intended outcome, and observable done state, including any required artifact or handoff. Name only the hard constraints, including decisions that remain with the user; identify real environment requirements and representative examples. When a missing decision could materially change the result, scope, or authority, ask one focused question at a time; do not re-ask what the available context resolves.
 
-Completion: the job fits one sentence, and the triggers, near-misses, outcome, done state, hard constraints, requirements, and examples are known or explicitly not applicable.
+Completion: the job is written as one sentence, and the triggers, near-misses, outcome, done state, hard constraints, requirements, and examples are each written down with a value or `not applicable`.
 
 ### 2. Scope targets and resources
 
@@ -43,11 +43,11 @@ Completion: the target set and applicable host conventions are recorded, with a 
 
 For a new skill, copy [assets/skill-template.md](assets/skill-template.md) to the host's skill discovery path or documented skill location. For a revision, preserve a loadable prior version before editing; the last commit is sufficient in a versioned repository. For a migration, copy the source package to the destination collection and revise the copy without changing the source.
 
-Use the least-prescriptive instruction that reaches the required outcome within its hard constraints. Read the System-Owned Invariants and candidate qualifier rules in [references/review-checklist.md](references/review-checklist.md) before relaxing an existing instruction. Preserve exact formats, deterministic checks, authority boundaries, reusable resources, and genuinely fragile ordering. Let the agent choose its reasoning and implementation path elsewhere. If the skill names several tools or approaches, give a default or a selection rule instead of an equal menu. Add a concise example only when it resolves a real ambiguity or demonstrates an exact format.
+Use the least-prescriptive instruction that reaches the required outcome within its hard constraints. Read the System-Owned Invariants and candidate qualifier rules in [references/review-checklist.md](references/review-checklist.md) before relaxing an existing instruction. Preserve exact formats, deterministic checks, authority boundaries, reusable resources, and genuinely fragile ordering. Let the agent choose its reasoning and implementation path elsewhere.
 
-Before drafting, read the **Information hierarchy** and **Portability** sections of [references/review-checklist.md](references/review-checklist.md) and apply them as authoring constraints.
+Before drafting, read the **Information hierarchy**, **Instruction economy**, and **Portability** sections of [references/review-checklist.md](references/review-checklist.md) and apply them as authoring constraints.
 
-Completion: the draft and every planned resource implement the intent and required outcome with every System-Owned Invariant protected.
+Completion: every file in step 2's list exists, and each hard constraint from step 1 appears in the draft.
 
 ### 4. Validate structure
 
@@ -56,46 +56,38 @@ record its version and source. Do not use the similarly named npm package; it
 is not the official reference validator. If the official validator is not
 already available, either use the manual checks below or ask before downloading
 the official Python implementation from a pinned `agentskills/agentskills`
-commit. Manually check: `name` is at most 64 characters, lowercase kebab-case,
-has no leading, trailing, or consecutive hyphens, and matches the directory;
-`description` is 1 to 1024 characters; the body is at most 500 lines;
-frontmatter uses only the canonical fields; `compatibility`, when present, is
-at most 500 characters; and `metadata`, when present, contains string values
-only.
+commit. Manually check every field against the table in
+[references/portability.md](references/portability.md), that no other field
+appears, that `metadata` holds string values only, and that the body is at
+most 500 lines.
 
 Completion: the validator passes, or every named fallback check passes with the tool limitation recorded.
 
 ### 5. Compare behavior
 
-Treat changed instruction semantics, a changed trigger description, or a changed bundled resource as substantive; typo, formatting, and link-only edits are exempt. Follow [assets/baseline-test-template.md](assets/baseline-test-template.md): declare a small discriminating case set, optionally retain a small number of explicitly labeled passing-baseline controls for load-bearing contracts, run matched with/without pairs in fresh contexts, grade binary through an independent grader, and emit the durable case files and log lines to the host's test location (`tests/<skill-name>/` when no convention exists). Controls can prove non-regression, never improvement. For a change limited to description or trigger routing, compare unforced activation on the trigger set instead of forced-load behavior.
+Follow [assets/baseline-test-template.md](assets/baseline-test-template.md) for every change it defines as substantive, and emit the case files and log lines to the host's test location (`tests/<skill-name>/` when no convention exists).
 
 Completion: every substantive change is covered by graded discriminating cases showing the intended improvement, every retained control still passes, no case regresses, and the case files and log lines are emitted.
 
 ### 6. Decide and review
 
-Have a separate fresh-context agent apply the baseline comparison's decision rule, then run [references/review-checklist.md](references/review-checklist.md) top to bottom. Give the reviewer the skill, intended outcome, hard constraints, artifacts, traces, and graded case results without the author's conclusions. Use its findings to identify wasted paths, ambiguous or unused instructions, recurring corrections that belong in `Gotchas`, and helper logic repeatedly reinvented across runs that belongs in `scripts/`. Any substantive follow-up edit returns through structural validation and the affected cases before shipping.
-
-The general checklist-exception path does not apply to independent grader or final reviewer availability or context independence. If either role is unavailable or cannot run in an independent context, its state remains unverified and blocks completion until a separate context completes it.
+Have an independent reviewer apply the baseline comparison's decision rule, then run [references/review-checklist.md](references/review-checklist.md) top to bottom. Give the reviewer the skill, intended outcome, hard constraints, artifacts, traces, and graded case results, and revise from its findings. Any substantive follow-up edit returns through structural validation and the affected cases before shipping.
 
 Completion: the baseline comparison has a ship or return-to-correction decision, and every checklist item passes or has a user-approved deliberate exception where the checklist permits one.
 
 ### 7. Test the description
 
-For a new skill, or whenever the description changed, follow [assets/trigger-queries-template.md](assets/trigger-queries-template.md): build the should-trigger and near-miss query set, record it in `tests/<skill-name>/triggers.md`, and judge it through separate fresh-context agents using the template's protocol and thresholds. When a revision leaves the description untouched, the existing trigger contract stands — skip the rerun; the routing contract did not change.
+For a new skill, or whenever the description changed, follow [assets/trigger-queries-template.md](assets/trigger-queries-template.md). A revision that leaves the description untouched skips the run.
 
-After any description edit, rerun the complete query set and the affected behavioral comparison.
-
-Completion: for a new or description-changed skill, every should-trigger query passes and no near miss activates, with results logged (a judgment that cannot be run is recorded as not run, never counted as a pass); otherwise the existing trigger contract is confirmed unchanged.
+Completion: for a new or description-changed skill, the template's thresholds are met and the results are logged, with a judgment that cannot be run recorded as not run and never counted as a pass; otherwise a diff of the description against the preserved prior version is empty.
 
 ### 8. Package and install
 
-Recheck the host conventions from step 2 and confirm the canonical directory is self-contained. Run the smoke check from [assets/trigger-queries-template.md](assets/trigger-queries-template.md): install from the current local source into a disposable project on each roster harness — the harness target set declared in step 2 — ask one should-trigger query, confirm the skill activates, and record one log line per harness. Using a user-level skill location or overwriting an existing same-name installation requires explicit user approval.
-
-When a roster harness is unavailable, log it as not run rather than guessing; a failed smoke check returns to correction.
+For a new package, or a change to packaging or the install path, recheck the host conventions from step 2, confirm the canonical directory is self-contained, and run the smoke check from [assets/trigger-queries-template.md](assets/trigger-queries-template.md) on each harness in step 2's target set. Using a user-level skill location or overwriting an existing same-name installation requires explicit user approval.
 
 If packaging exposes a defect that changes the package, apply step 6's re-entry rule before completing this step.
 
-Completion: the source validates, and every roster harness has a logged smoke result of pass or not run, with no failure outstanding.
+Completion: the source validates, and every roster harness has a logged smoke result of pass or not run. A fail or inconclusive result blocks completion until it is corrected and rerun. A revision that changes neither packaging nor the install path completes on validation alone.
 
 ## Gotchas
 

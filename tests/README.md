@@ -2,8 +2,8 @@
 
 Conventions for every `tests/<skill-name>/` directory. This file is the
 canonical statement of the testing convention; the templates in
-`skills/creating-portable-skills/assets/` restate it for portable use and defer
-to it inside this repository.
+`skills/creating-portable-skills/assets/` restate it for portable use. Inside
+this repository, this file governs.
 
 ## Repository checks
 

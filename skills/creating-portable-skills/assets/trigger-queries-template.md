@@ -2,8 +2,7 @@
 
 The description is a tested activation API: at the fire-or-skip decision the
 agent sees only the skill's name and description. This template tests that
-metadata. Within this repository, `tests/README.md` is the canonical
-convention; this template restates the protocol for portable use.
+metadata.
 
 ## Build the query set
 
@@ -19,8 +18,8 @@ convention; this template restates the protocol for portable use.
 
 ## Judge
 
-- Judge each query in a fresh context through a separate agent that did not
-  author the description. Show it only the skill name, description, and one
+- Judge each query in a fresh context through an independent grader, as the
+  skill workflow defines one. Show it only the skill name, description, and one
   query; require a plain yes or no.
 - One run per query. A first judgment that is `unsure` or hedged is
   borderline: run that query twice more. `unsure` counts as neither vote — a
@@ -41,16 +40,15 @@ convention; this template restates the protocol for portable use.
 ## Smoke check (packaging or install-path changes)
 
 - The roster is the harness target set declared in step 2 of the skill
-  workflow — the harnesses the skill is expected to install into (in the
-  home repository of this template: Claude Code and Codex CLI).
+  workflow — the harnesses the skill is expected to install into.
 - Install the skill from the current local source into a disposable project
   on each roster harness, ask one should-trigger query, and confirm from the
   run's trace that the copy which activated is the just-installed one (its
   path or base directory). When a same-name copy exists in a user or system
   location and the activated copy's provenance cannot be confirmed, log the
   result as inconclusive rather than pass.
-- Record one log line per harness in `tests/<skill-name>/log.md` (line
-  format: `date | git rev | check | result | note`); when a roster harness
+- Record one log line per harness in `tests/<skill-name>/log.md`, in the
+  baseline comparison template's line format; when a roster harness
   is unavailable, log `not run — harness unavailable`.
 - After a packaging change merges to the branch installers pull from, repeat
   the probe once against that published state — local-source success does

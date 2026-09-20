@@ -2,6 +2,28 @@
 
 Format: `date | git rev | check | result | note`
 
+Second round on 2026-09-19, after 77bd796 sharpened the step 5, 7, and 8 pointers, defined the description-only matched pair, and added the grader blinding rule. Same method as the block below, with two changes: run folders carry neutral names, and every packet was scrubbed of variant names before a blind Opus subagent graded it. These lines supersede the c2b4c81 Claude Code lines below. The Codex lines below tested c2b4c81 and stand as history until Codex reruns on this text.
+
+- 2026-09-19 | 77bd796 | structural validation | pass | `agentskills validate` from the official `skills-ref` package through uvx; description unchanged from 15abed3
+- 2026-09-19 | 77bd796 | fixture runner: signal scan | pass (37/37) | unchanged script
+- 2026-09-19 | 15abed3 (prior) | matched comparison: baseline-before-shipping, Claude Code Opus 5 | fail (4/5), fail (4/5) | two runs, 70k to 75k tokens, 43 to 45 s; both tested the revised description alone
+- 2026-09-19 | 77bd796 | matched comparison: baseline-before-shipping, Claude Code Opus 5 | pass (5/5) three times | 91k to 100k tokens, 44 to 47 s; each named the prior description against the revised one; this existing case now discriminates for the description-only pair
+- 2026-09-19 | 77bd796 | matched comparison: baseline-before-shipping, Claude Code Fable 5.1 | pass (5/5) | 62k tokens, 24 s; no prior-side Fable run, so this shows no improvement on its own
+- 2026-09-19 | 15abed3 (prior) | matched comparison: planted-rot-review, Claude Code Opus 5 | fail (2/6) | 63k tokens, 85 s
+- 2026-09-19 | 77bd796 | matched comparison: planted-rot-review, Claude Code Opus 5 | fail (5/6), pass (6/6), pass (6/6) | 81k to 82k tokens, 58 to 66 s; the failing run offered to keep or cut the column-order line, and a later grader passed a similar branching fix, so the item is grader-sensitive
+- 2026-09-19 | 15abed3 (prior) | matched comparison: planted-rot-review, Claude Code Fable 5.1 | fail (5/6) | 72k tokens, 112 s; no signal counts
+- 2026-09-19 | 77bd796 | matched comparison: planted-rot-review, Claude Code Fable 5.1 | pass (6/6) | 56k tokens, 50 s
+- 2026-09-19 | 77bd796 | matched comparison: cost-and-check-pruning, Claude Code Opus 5 | pass (6/6) | 93k tokens, 63 s; the prior package also passes on this target, so it does not discriminate here
+- 2026-09-19 | 77bd796 | matched comparison: cost-and-check-pruning, Claude Code Fable 5.1 | pass (6/6) | 75k tokens, 57 s; the prior package fails 5/6 on this target (47k tokens, 35 s)
+- 2026-09-19 | 77bd796 | control: passing-baseline-regression-control | pass (5/5) three times on Opus 5, pass (5/5) on Fable 5.1 | 30k to 48k tokens, 16 to 46 s
+- 2026-09-19 | 77bd796 | control: vendor-specific-advice-stays-out, Claude Code Opus 5 | fail (4/5), pass (5/5), pass (5/5) | 83k to 85k tokens; the prior package passed all three of its runs; the failing run never said what evidence a removal would need, and the grader called that two-part item the loosest in the case, so a regression is not established
+- 2026-09-19 | 77bd796 | control: fixture-review-prioritized-findings, Claude Code Opus 5 | pass (5/5) | 82k tokens, 61 s
+- 2026-09-19 | 77bd796 | control: independent-fresh-context-review, Claude Code Opus 5 | pass (3/3) | 67k tokens, 46 s
+- 2026-09-19 | 77bd796 | control: lightweight-artifacts-and-no-ceremony, Claude Code Opus 5 | pass (4/4) | 59k tokens, 59 s
+- 2026-09-19 | 77bd796 | all cases on Codex CLI | not run — harness usage limit | 
+- 2026-09-19 | 77bd796 | smoke: Claude Code, Codex CLI | not run | the c2b4c81 Claude Code smoke pass below predates this text; packaging is unchanged since, and the probe is rerun with Codex
+- 2026-09-19 | 77bd796 | final checklist review | not run | after the Codex runs
+
 Method for the 2026-09-19 lines: forced-load runs in disposable projects, one per variant, with the skill read from an explicit path and harness skill discovery disabled, so no same-name user-level copy could load. Claude Code 2.1.278 ran Opus 5 and Fable 5.1 at medium effort; Codex CLI 0.154.0 ran Sol at medium effort. Blind Opus subagent grader against the case checklists at c951057, variant and run folder hidden. Codex reports no duration, so its notes carry wall-clock seconds and input/cached/output tokens.
 
 - 2026-09-19 | c2b4c81 | structural validation | pass | `agentskills validate` from the official `skills-ref` package through uvx: valid skill, scripts directory included

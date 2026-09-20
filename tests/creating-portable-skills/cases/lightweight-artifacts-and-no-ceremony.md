@@ -19,10 +19,11 @@ grades their removal.
 
 - [ ] (a) asks no verification-mode or tier question; any remaining
       questions concern content or scope, not a verification ceremony.
-- [ ] (b) the durable artifacts are exactly the suite's thin set — case
-      files under `tests/expense-notes/cases/` and one log line per graded
-      run in `tests/expense-notes/log.md` — with no completed comparison
-      record kept as its own evidence document.
+- [ ] (b) names the case files under `tests/expense-notes/cases/` and one
+      log line per graded run in `tests/expense-notes/log.md` as what the
+      comparison leaves behind, and keeps no completed comparison record as
+      its own evidence document. Also naming the trigger contract file or
+      the commit message does not fail this item.
 - [ ] (c) an unrunnable judgment is logged as not run; it is never waived
       into shipment, assigned an evidence label, or capped with a Claim
       Ceiling.

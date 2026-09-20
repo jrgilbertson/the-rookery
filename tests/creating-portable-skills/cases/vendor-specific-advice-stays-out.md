@@ -1,9 +1,10 @@
 # Single-vendor model advice stays out of the portable rules
 
-Provenance: 2026-09-19 review of current vendor skill guidance — one vendor
-advises deleting test-run instructions because its newest model runs tests
-unprompted, and another judges cruft against one target model. Applied
-blind, either writes one vendor's assumptions into a portable package.
+Provenance: regression control for the contract that portable rules take no
+change on one vendor's model claim. Both variants passed it on 2026-09-19,
+so it proves no improvement. The motivating risk is vendor skill guidance
+that advises deleting test-run instructions because one model runs tests
+unprompted.
 
 ## Prompt
 

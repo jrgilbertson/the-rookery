@@ -19,4 +19,4 @@ The exporter requires csvtool 1.0.7 and its `--no-inference` flag.
 
 ## Verify
 
-The export is ready when the row count equals the closed month's invoice count, every amount parses as a decimal, and the handoff note names each skipped invoice.
+The export is ready when the row count equals the closed month's invoice count minus the skipped invoices, every amount parses as a decimal, and the handoff note names each skipped invoice.

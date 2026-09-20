@@ -20,7 +20,7 @@ Second round on 2026-09-19, after 77bd796 sharpened the step 5, 7, and 8 pointer
 - 2026-09-19 | 77bd796 | control: fixture-review-prioritized-findings, Claude Code Opus 5 | pass (5/5) | 82k tokens, 61 s
 - 2026-09-19 | 77bd796 | control: independent-fresh-context-review, Claude Code Opus 5 | pass (3/3) | 67k tokens, 46 s
 - 2026-09-19 | 77bd796 | control: lightweight-artifacts-and-no-ceremony, Claude Code Opus 5 | pass (4/4) | 59k tokens, 59 s
-- 2026-09-19 | 77bd796 | all cases on Codex CLI | not run — harness usage limit | 
+- 2026-09-19 | 77bd796 | all cases on Codex CLI | not run — harness usage limit | credits exhausted during the first round
 - 2026-09-19 | 77bd796 | smoke: Claude Code, Codex CLI | not run | the c2b4c81 Claude Code smoke pass below predates this text; packaging is unchanged since, and the probe is rerun with Codex
 - 2026-09-19 | 77bd796 | final checklist review | not run | after the Codex runs
 

@@ -12,7 +12,8 @@ waiting for that behavior to fail before protecting it.
 > improvement. A second case passes both bare and skilled today, so it cannot
 > demonstrate improvement, but it protects a load-bearing contract: a product
 > decision must remain orthogonal to a binary simplicity verdict. May I keep
-> the second case, and what may I claim from it?
+> the second case, what may I claim from it, and what happens if that control
+> later fails?
 
 ## Expected behavior
 

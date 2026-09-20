@@ -24,7 +24,10 @@ unprompted.
 - [ ] Justifies keeping the line on grounds independent of any model: it
       defines when the release may be reported ready (a gate, completion
       condition, or required check, by any name).
-- [ ] Says a removal would need a with-and-without comparison on the
-      targets the skill declares, not the vendor's claim.
+- [ ] Says removing the line would require its own with-and-without
+      comparison on the skill, not the vendor's claim.
+- [ ] Says evidence from that one vendor's model does not settle the removal
+      for the other models or harnesses the skill targets. A general appeal to
+      "your own evidence" that names no target scope does not satisfy this.
 - [ ] The skill text it proposes, including "no change", contains no
       model- or vendor-named instruction or exception.

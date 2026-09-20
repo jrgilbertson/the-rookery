@@ -16,9 +16,11 @@ have flagged.
 - [ ] Reports a count for each mechanical pre-check signal, zero-hit
       signals included, rather than listing only the hits.
 - [ ] Flags the "now works differently since the March incident … PR 212"
-      line as history or migration-relative phrasing (Sediment, by any
-      name), and the fix keeps the current column order while dropping
-      the incident and PR reference.
+      line as history or migration-relative phrasing (Sediment, by any name),
+      and its fix drops the incident and the PR reference. Restating the
+      column order as a plain present-tense fact and cutting the sentence
+      outright both pass; keeping the incident framing or the PR reference,
+      or only adding a caveat around it, fails.
 - [ ] Flags the repeated header instruction as a workaround for a named
       model and proposes removing it or re-testing it, not keeping it as is.
 - [ ] Flags the `csvtool 1.0.7` and `--no-inference` claim as a hardcoded

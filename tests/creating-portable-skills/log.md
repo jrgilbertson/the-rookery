@@ -2,6 +2,21 @@
 
 Format: `date | git rev | check | result | note`
 
+Codex round on 2026-09-20 against the same text as the second Claude round: Codex CLI 0.154.0, Sol at medium effort, forced-load runs in neutrally named disposable projects, scrubbed packets, blind Opus subagent grader. Codex reports no duration, so notes carry wall-clock seconds and input/cached/output tokens. No run read the same-name user-level copy. These lines supersede the c2b4c81 Codex lines in the first-round block.
+
+- 2026-09-20 | 15abed3 (prior) | matched comparison: planted-rot-review, Codex Sol | fail (4/6) | 218 s; 219k/191k/4.3k tokens; no signal counts, and listed the ordinary-prose sentence as the top defect
+- 2026-09-20 | 77bd796 | matched comparison: planted-rot-review, Codex Sol | fail (5/6) | 201 s; 206k/178k/3.9k tokens; reported every signal count and said the ordinary-prose hit stands, then opened its fix list with resolving that same sentence, so the case shows more items passed and no pass on this target
+- 2026-09-20 | 77bd796 | matched comparison: cost-and-check-pruning, Codex Sol | pass (6/6) | 65 s; 74k/47k/2.5k tokens; the prior package's first-round output regrades at 5/6 (105k/75k/2.1k tokens), failing the taste-routing item
+- 2026-09-20 | 77bd796 | matched comparison: baseline-before-shipping, Codex Sol | fail (2/5) | 68 s; 168k/140k/2.3k tokens; the prior package also fails 2/5; both runs stopped on the missing example package and never specified test content, so the description-only fix shows no effect on this target
+- 2026-09-20 | 77bd796 | control: passing-baseline-regression-control, Codex Sol | fail (4/5), fail (4/5) | 25 to 26 s; 73k/50k/0.7k tokens each; both kept the control, denied it improvement credit, and ran it matched, and neither said a regression on it fails the comparison. With the c2b4c81 run the revised package is 0 of 3 on this target against 1 of 2 for the prior package. The grader notes the failing item bundles two requirements
+- 2026-09-20 | 77bd796 | control: vendor-specific-advice-stays-out, Codex Sol | pass (5/5) | 125 s; 203k/175k/2.6k tokens
+- 2026-09-20 | 77bd796 | control: fixture-review-prioritized-findings, Codex Sol | pass (5/5) | 174 s; 201k/187k/2.6k tokens
+- 2026-09-20 | 77bd796 | control: independent-fresh-context-review, Codex Sol | pass (3/3) | 46 s; 104k/95k/1.5k tokens
+- 2026-09-20 | 77bd796 | control: lightweight-artifacts-and-no-ceremony, Codex Sol | pass (4/4) | 73 s; 107k/82k/3.1k tokens
+- 2026-09-20 | 77bd796 | smoke: Codex CLI 0.154.0, Sol | pass | installed from local source into a disposable project with skills CLI 1.7.0 in copy mode; files identical to source and `scripts/signal-scan.sh` kept its executable bit; on the contract query "Help me create a new skill for formatting SQL queries" the trace shows Codex reading the copy under the disposable project's `.agents/skills/` and running its scan script, and never the same-name user-level copy that exists on this machine. The run was stopped at a five-minute cap while it was still drafting
+- 2026-09-20 | 77bd796 | smoke: Claude Code | not run on this text | packaging is unchanged since the c2b4c81 pass logged below
+- 2026-09-20 | 77bd796 | final checklist review | not run | pending the owner's decision on the Codex results
+
 Second round on 2026-09-19, after 77bd796 sharpened the step 5, 7, and 8 pointers, defined the description-only matched pair, and added the grader blinding rule. Same method as the block below, with two changes: run folders carry neutral names, and every packet was scrubbed of variant names before a blind Opus subagent graded it. These lines supersede the c2b4c81 Claude Code lines below. The Codex lines below tested c2b4c81 and stand as history until Codex reruns on this text.
 
 - 2026-09-19 | 77bd796 | structural validation | pass | `agentskills validate` from the official `skills-ref` package through uvx; description unchanged from 15abed3

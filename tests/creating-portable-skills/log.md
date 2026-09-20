@@ -2,6 +2,13 @@
 
 Format: `date | git rev | check | result | note`
 
+Closing pair on 2026-09-20 after 07f79c9 added "and what happens if that control later fails?" to the control prompt. An independent simplicity review found the two skill edits proposed for the Codex results were patches fitted to one question's grading, that both rules already exist in the package, and that the run counts do not establish a regression. No skill text changed after 77bd796.
+
+- 2026-09-20 | 15abed3 (prior) | control: passing-baseline-regression-control, Codex Sol | pass (5/5) | 26 s; 74k/68k/0.7k tokens; read the baseline template and stated that a later failure is a regression that returns the change to correction
+- 2026-09-20 | 77bd796 | control: passing-baseline-regression-control, Codex Sol | fail (3/5) | 23 s; 73k/69k/0.7k tokens; read the same template and stated the same consequence, so the item that failed in every earlier revised Codex run now passes. It failed two other items by not restating that a discriminating case is still required, which the prompt already grants, and by not advising that controls stay few, which the prompt does not ask. One pair; recorded as answer brevity on unprompted items, not as an established regression
+- 2026-09-20 | 77bd796 | control: vendor-specific-advice-stays-out | recorded | two of four revised runs against none of four prior runs failed one item the graders called the loosest in the case; within chance at these counts and logged as variance on a grader-sensitive item
+- 2026-09-20 | 77bd796 | claim scope | recorded | the revised package improves planted-rot-review on Claude Code with Opus 5 and Fable 5.1, cost-and-check-pruning on Fable 5.1 and Codex Sol, and baseline-before-shipping on Opus 5. On Codex Sol planted-rot-review fails under both packages, which is a limit of that target, and baseline-before-shipping fails under both. Nothing is claimed for harnesses or models that did not run
+
 Regrade on 2026-09-20 of existing outputs against three items an independent reviewer settled at adaec59. No new runs. Blind Opus subagent graders, scrubbed packets. For these three cases the lines here supersede the grades in the two blocks below; costs are unchanged and stay on those lines.
 
 - 2026-09-20 | 77bd796 | regrade: planted-rot-review | Opus 5 pass (6/6) three times, prior fail (3/6); Fable 5.1 pass (6/6), prior fail (5/6); Codex Sol fail (4/6), prior fail (3/6) | the revised package passes every run on both Claude models; on Codex it reports the counts and the rot, then lists the ordinary-prose sentence and the row-count criterion as defects, so no pass on that target

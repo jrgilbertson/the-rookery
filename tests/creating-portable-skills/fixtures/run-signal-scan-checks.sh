@@ -102,6 +102,10 @@ fails "assets file scanned" has "$planted" 'assets/template.md'
 slashed=$(sh "$scan" "$fixtures/planted/")
 holds "trailing slash changes the counts" [ "$(printf '%s\n' "$slashed" | grep '^## ')" = "$(printf '%s\n' "$planted" | grep '^## ')" ]
 
+# The scan writes nothing, so it runs in a read-only sandbox.
+code=$(grep -v '^[[:space:]]*#' "$scan")
+fails "scan writes a file" has "$code" 'mktemp\|>>\|> *"\|> *[$/a-z]'
+
 # Two consecutive prohibitions are not a run.
 two=$(sh "$scan" "$fixtures/two-prohibitions")
 expect_count two-prohibitions "$two" "prohibition run" 0

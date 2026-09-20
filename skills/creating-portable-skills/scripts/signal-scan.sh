@@ -6,19 +6,29 @@
 # Scans SKILL.md and references/*.md in each package and prints, per signal,
 # a header "## <signal> (<count>) -> <checklist item>" followed by the hits as
 # file:line:text. Hits are review candidates, not failures, so a completed scan
-# exits 0. A directory without a SKILL.md is the only error exit.
+# exits 0. A directory without a SKILL.md is the only error exit. The scan
+# writes nothing, so it runs in a read-only sandbox.
 
 [ "$#" -gt 0 ] || { echo "usage: $0 <skill-directory>..." >&2; exit 2; }
 
-list=$(mktemp) || exit 2
-trap 'rm -f "$list"' EXIT
-
+list=""
 for dir in "$@"; do
 	dir=${dir%/}
 	[ -f "$dir/SKILL.md" ] || { echo "no SKILL.md in $dir" >&2; exit 2; }
-	printf '%s\n' "$dir/SKILL.md" >>"$list"
-	[ -d "$dir/references" ] && find "$dir/references" -type f -name '*.md' | LC_ALL=C sort >>"$list"
+	list="$list$dir/SKILL.md
+"
+	if [ -d "$dir/references" ]; then
+		list="$list$(find "$dir/references" -type f -name '*.md' | LC_ALL=C sort)
+"
+	fi
 done
+
+# each_file <command...> runs the command once per scanned file, appending the path.
+each_file() {
+	printf '%s' "$list" | while IFS= read -r file; do
+		[ -n "$file" ] && "$@" "$file"
+	done
+}
 
 report() { # report <signal> <checklist item> <hits>
 	if [ -n "$3" ]; then count=$(printf '%s\n' "$3" | grep -c .); else count=0; fi
@@ -27,9 +37,7 @@ report() { # report <signal> <checklist item> <hits>
 }
 
 scan() { # scan <signal> <checklist item> <grep flags> <pattern>
-	hits=$(while IFS= read -r file; do
-		grep -nH"$3"E -e "$4" "$file"
-	done <"$list")
+	hits=$(each_file grep -nH"$3"E -e "$4")
 	report "$1" "$2" "$hits"
 }
 
@@ -56,12 +64,12 @@ scan 'history identifier' 'Sediment' '' \
 scan 'pinned model name' 'Sediment' i \
 	'(claude|gpt|gemini|grok|llama|opus|sonnet|haiku)[- ][0-9]'
 
-runs=$(while IFS= read -r file; do
-	awk -v f="$file" '{
-		if ($0 ~ /^(- |[0-9]+\. )?(Do not|Never|Avoid) /) { n++; if (n == 3) print f ":" NR ":" $0 }
-		else n = 0
-	}' "$file"
-done <"$list")
+# shellcheck disable=SC2016
+runs=$(each_file awk '{
+	if (FNR == 1) n = 0
+	if ($0 ~ /^(- |[0-9]+\. )?(Do not|Never|Avoid) /) { n++; if (n == 3) print FILENAME ":" FNR ":" $0 }
+	else n = 0
+}')
 report 'prohibition run' 'Steering is positive' "$runs"
 
 scan 'numbered workflow heading' 'Specificity matches fragility' '' \

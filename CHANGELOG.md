@@ -35,6 +35,20 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `creating-portable-skills` reviews now open with a bundled signal scan that
+  counts pressure language, thinking scaffolds, output clamps, history
+  phrasing, pinned model names, and similar mechanical signals, and names the
+  checklist item that judges each hit. The checklist makes its sediment check
+  runnable, tests that hardcoded facts point to a source of truth, asks of
+  each line whether the model could already know it, and keeps advice that
+  rests on one vendor's model out of the portable rules. A baseline
+  comparison now records what a skill costs in tokens and time beside what it
+  buys, drops checklist items that pass with and without the change, and can
+  compare two versions blind. Each rule has one owning file, four workflow
+  stages close on a checkable state, the install smoke check runs for a new
+  package or a packaging change, and an inconclusive smoke result blocks
+  completion until it is rerun.
+
 - `route-work` kickoffs that select supervised orchestration now say "Orca
   orchestration" in those words and tell the lead to use Orca's
   `orchestration` skill when it is installed, so the receiving session

@@ -1,5 +1,5 @@
 ---
-name: exporting-invoice-tables
+name: rot-review-target
 description: Use when exporting the monthly invoice table to CSV for the finance handoff, or when checking an export before it is sent. Synthetic fixture.
 ---
 

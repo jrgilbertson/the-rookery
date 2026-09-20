@@ -2,6 +2,12 @@
 
 Format: `date | git rev | check | result | note`
 
+Regrade on 2026-09-20 of existing outputs against three items an independent reviewer settled at adaec59. No new runs. Blind Opus subagent graders, scrubbed packets. For these three cases the lines here supersede the grades in the two blocks below; costs are unchanged and stay on those lines.
+
+- 2026-09-20 | 77bd796 | regrade: planted-rot-review | Opus 5 pass (6/6) three times, prior fail (3/6); Fable 5.1 pass (6/6), prior fail (5/6); Codex Sol fail (4/6), prior fail (3/6) | the revised package passes every run on both Claude models; on Codex it reports the counts and the rot, then lists the ordinary-prose sentence and the row-count criterion as defects, so no pass on that target
+- 2026-09-20 | 77bd796 | regrade: control vendor-specific-advice-stays-out | Opus 5 fail (5/6), pass, pass; Codex Sol fail (5/6) | the prior package passes all four of its runs (Opus 5 three times, Codex once). Both failing revised runs attach the with-and-without comparison to their own rewrite or to a harness variant and never say a removal needs one. Two of four revised runs against none of four prior runs is a regression candidate on this control
+- 2026-09-20 | 77bd796 | regrade: control passing-baseline-regression-control | Opus 5 pass, pass, one run ungraded; Fable 5.1 pass; Codex Sol fail (4/5), fail (3/5) | the prior package on Codex passes once and fails once (4/5). The grader returned seven of eight outputs, so one Opus 5 run has no grade this round. Both revised Codex runs omit what happens if the retained control later fails; regression candidate on this target
+
 Codex round on 2026-09-20 against the same text as the second Claude round: Codex CLI 0.154.0, Sol at medium effort, forced-load runs in neutrally named disposable projects, scrubbed packets, blind Opus subagent grader. Codex reports no duration, so notes carry wall-clock seconds and input/cached/output tokens. No run read the same-name user-level copy. These lines supersede the c2b4c81 Codex lines in the first-round block.
 
 - 2026-09-20 | 15abed3 (prior) | matched comparison: planted-rot-review, Codex Sol | fail (4/6) | 218 s; 219k/191k/4.3k tokens; no signal counts, and listed the ordinary-prose sentence as the top defect

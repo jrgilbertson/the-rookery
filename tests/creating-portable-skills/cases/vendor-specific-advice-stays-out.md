@@ -21,10 +21,10 @@ unprompted.
       as a property of models in general.
 - [ ] Does not delete the instruction from the portable skill on that
       advice alone.
-- [ ] Treats running the suite before a release report as a completion
-      criterion or hard constraint the skill may keep, not as default
-      reasoning to cut.
+- [ ] Justifies keeping the line on grounds independent of any model: it
+      defines when the release may be reported ready (a gate, completion
+      condition, or required check, by any name).
 - [ ] Says a removal would need a with-and-without comparison on the
       targets the skill declares, not the vendor's claim.
-- [ ] If it records the vendor advice at all, labels it vendor-specific and
-      scoped to that target, outside the portable rules.
+- [ ] The skill text it proposes, including "no change", contains no
+      model- or vendor-named instruction or exception.

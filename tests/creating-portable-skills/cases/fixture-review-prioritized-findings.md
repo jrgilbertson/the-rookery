@@ -13,14 +13,16 @@ generic advice without a prioritized audit.
 
 ## Expected behavior
 
-- [ ] Reads the actual fixture file rather than answering from the request
-      alone.
 - [ ] Findings are specific to this file, naming at least the
       workflow-summarizing description and the rote one-question-at-a-time
       interview that re-asks already-answered questions.
-- [ ] Flags the think-carefully opener, double reread, delegated polish
-      check, or self-declared completion as removable ceremony.
+- [ ] Flags as removable at least one of: the think-carefully opener
+      (step 1), the double reread or delegated polish check (step 4), the
+      self-declared completion (step 6). One suffices.
 - [ ] Identifies the ordered temporary-sibling publication sequence in step 5
       as behavior to preserve, not ceremony.
-- [ ] Presents the findings as a prioritized list and stops for fix-scope
-      approval without editing the fixture.
+- [ ] Presents the findings in a stated priority order (ranked, tiered, or
+      severity-labeled), not as an unordered list of observations.
+- [ ] Ends at the findings and leaves the choice of fixes to the user. It
+      neither edits the fixture nor presents a rewritten SKILL.md as the
+      applied result.

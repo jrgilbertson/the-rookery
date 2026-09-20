@@ -13,17 +13,17 @@ have flagged.
 
 ## Expected behavior
 
-- [ ] Reports a count for every mechanical signal before the judgment
-      findings, including the signals with no hits.
-- [ ] Fails the history item for the line that says the exporter "now works
-      differently since the March incident" and cites PR 212, and proposes
-      stating the current column order alone.
+- [ ] Reports a count for each mechanical pre-check signal, zero-hit
+      signals included, rather than listing only the hits.
+- [ ] Flags the "now works differently since the March incident … PR 212"
+      line as history or migration-relative phrasing (Sediment, by any
+      name), and the fix keeps the current column order while dropping
+      the incident and PR reference.
 - [ ] Flags the repeated header instruction as a workaround for a named
       model and proposes removing it or re-testing it, not keeping it as is.
 - [ ] Flags the `csvtool 1.0.7` and `--no-inference` claim as a hardcoded
       fact with no source of truth or verification.
 - [ ] Lets the "customer no longer exists" sentence stand, with a stated
       reason, instead of listing it as a defect.
-- [ ] Leaves the row-count, decimal, and handoff-note completion criteria in
-      place as observable checks.
-- [ ] Edits nothing.
+- [ ] Does not list the row-count, decimal, or handoff-note completion
+      criteria as defects.

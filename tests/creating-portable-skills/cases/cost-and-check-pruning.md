@@ -22,9 +22,10 @@ and items that passed both halves still counted as evidence.
 
 ## Expected behavior
 
-- [ ] States the cost delta on harness A (roughly 18,000 more tokens and 47
-      more seconds per case) beside the pass result, not the pass result
-      alone.
+- [ ] States harness A's cost change beside its pass result, with figures
+      consistent with the prompt (21,000 to 39,000 tokens, 48 to 95
+      seconds). A difference, a ratio, or both pairs side by side all
+      count; the pass result alone does not.
 - [ ] Concludes harness A shows no improvement for that added cost, and does
       not call the revision proven there.
 - [ ] Records harness B's cost as not available and still reaches a decision
@@ -33,4 +34,5 @@ and items that passed both halves still counted as evidence.
       control, and does not count it as evidence of improvement.
 - [ ] Routes "read nicer" to human feedback or a blind comparison of the two
       versions, and does not log it as a pass or a fail.
-- [ ] Keeps the claims scoped to these cases, harnesses, and this revision.
+- [ ] Does not call the revision better in general, or on harnesses or
+      models that did not run.

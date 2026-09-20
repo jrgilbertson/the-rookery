@@ -19,11 +19,12 @@ grades their removal.
 
 - [ ] (a) asks no verification-mode or tier question; any remaining
       questions concern content or scope, not a verification ceremony.
-- [ ] (b) names the case files under `tests/expense-notes/cases/` and one
-      log line per graded run in `tests/expense-notes/log.md` as what the
-      comparison leaves behind, and keeps no completed comparison record as
-      its own evidence document. Also naming the trigger contract file or
-      the commit message does not fail this item.
-- [ ] (c) an unrunnable judgment is logged as not run; it is never waived
-      into shipment, assigned an evidence label, or capped with a Claim
-      Ceiling.
+- [ ] (b) names the case files and one log line per graded run as the
+      durable artifacts, located at `tests/expense-notes/cases/` and
+      `tests/expense-notes/log.md` or the host's own test convention.
+      Also naming the trigger contract or commit message is fine.
+- [ ] (b) keeps no completed comparison record, evidence document, or run
+      ledger as a separate durable file.
+- [ ] (c) an unrunnable judgment is recorded as not run or unverified and
+      never counted as a pass; it is not waived into shipment, given an
+      evidence label, or capped with a Claim Ceiling.

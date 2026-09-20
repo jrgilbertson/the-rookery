@@ -53,7 +53,10 @@ note`. The `git rev` field names the commit the run's working tree was
 ## Rules
 
 - Binary pass/fail everywhere. A case fails if any checklist item fails.
-  Trigger judgments are yes or no. A quality that binary items cannot carry
+  Trigger judgments are yes or no. A behavioral case whose repeated runs of
+  one variant disagree is `unsettled` on that target rather than a pass or a
+  fail, and the baseline comparison protocol owns that state and what may
+  ship under it. A quality that binary items cannot carry
   goes to human feedback or a blind comparison of two versions with the labels
   hidden, and is logged as a note, never as a pass or a fail.
 - A case enters a suite when a baseline run showed the bare model failing the

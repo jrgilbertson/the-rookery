@@ -38,6 +38,18 @@ artifacts.
    change costs against what it buys. A checklist item that passes in both
    halves proves nothing: remove it, or keep its case only as a labeled
    control.
+   **Settle a case that varies.** One matched pair per case stays the default.
+   A variant is settled when every run of it on one named target (model and
+   harness) agrees, and mixed once two of its runs there disagree; further
+   runs confirm a settled variant and never unmix a mixed one. Accept a
+   failing control or an unimproved discriminating case as that case's
+   result, or rerun both variants and read every run together. A case with a
+   mixed variant is `unsettled` on that target, neither a pass nor a
+   regression: it shows no improvement, and a control mixed without the
+   change detects no regression. Fix a checklist item that grades what its
+   prompt never asks for, reduce ambiguity in the instructions under test, or
+   ship with that target's claim withheld and one `unsettled` log line
+   naming the withheld claim.
 5. **Emit the durable artifacts.** One case file per kept case in
    `tests/<skill-name>/cases/` and one log line per graded run in
    `tests/<skill-name>/log.md` (line format: `date | git rev | check |

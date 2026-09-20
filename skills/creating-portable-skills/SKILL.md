@@ -51,8 +51,9 @@ Completion: every file in step 2's list exists, and each hard constraint from st
 
 ### 4. Validate structure
 
-Run a trusted, already-installed `skills-ref validate <skill-directory>` and
-record its version and source. Do not use the similarly named npm package; it
+Run a trusted, already-installed `agentskills validate <skill-directory>`, the
+command the official `skills-ref` package provides, and record its version and
+source. Do not use the similarly named npm package; it
 is not the official reference validator. If the official validator is not
 already available, either use the manual checks below or ask before downloading
 the official Python implementation from a pinned `agentskills/agentskills`

@@ -61,6 +61,7 @@ scan 'migration-relative phrasing' 'Sediment' i \
 	'no longer|now works|also counts|previously|used to be'
 scan 'history identifier' 'Sediment' '' \
 	'#[0-9]{2,}|PR [0-9]+|20[0-9]{2}-[0-9]{2}-[0-9]{2}'
+# A maintained list: add a family name when a new one appears in reviewed skills.
 scan 'pinned model name' 'Sediment' i \
 	'(claude|gpt|gemini|grok|llama|opus|sonnet|haiku)[- ][0-9]'
 

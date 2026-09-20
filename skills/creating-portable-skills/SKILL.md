@@ -65,7 +65,7 @@ Completion: the validator passes, or every named fallback check passes with the 
 
 ### 5. Compare behavior
 
-Follow [assets/baseline-test-template.md](assets/baseline-test-template.md) for every change it defines as substantive, and emit the case files and log lines to the host's test location (`tests/<skill-name>/` when no convention exists).
+Follow [assets/baseline-test-template.md](assets/baseline-test-template.md) for every change it defines as substantive, a description-only change included. It owns case construction, regression controls, the matched pair, grading, cost, and the ship decision. Emit the case files and log lines to the host's test location (`tests/<skill-name>/` when no convention exists).
 
 Completion: every substantive change is covered by graded discriminating cases showing the intended improvement, every retained control still passes, no case regresses, and the case files and log lines are emitted.
 
@@ -77,13 +77,13 @@ Completion: the baseline comparison has a ship or return-to-correction decision,
 
 ### 7. Test the description
 
-For a new skill, or whenever the description changed, follow [assets/trigger-queries-template.md](assets/trigger-queries-template.md). A revision that leaves the description untouched skips the run.
+For a new skill, or whenever the description changed, follow [assets/trigger-queries-template.md](assets/trigger-queries-template.md) for the query set, judging, thresholds, and tuning. A revision that leaves the description untouched skips the run.
 
 Completion: for a new or description-changed skill, the template's thresholds are met and the results are logged, with a judgment that cannot be run recorded as not run and never counted as a pass; otherwise a diff of the description against the preserved prior version is empty.
 
 ### 8. Package and install
 
-For a new package, or a change to packaging or the install path, recheck the host conventions from step 2, confirm the canonical directory is self-contained, and run the smoke check from [assets/trigger-queries-template.md](assets/trigger-queries-template.md) on each harness in step 2's target set. Using a user-level skill location or overwriting an existing same-name installation requires explicit user approval.
+For a new package, or a change to packaging or the install path, recheck the host conventions from step 2, confirm the canonical directory is self-contained, and run the smoke check from [assets/trigger-queries-template.md](assets/trigger-queries-template.md), which owns the install, the proof of which copy activated, and the result states, on each harness in step 2's target set. Using a user-level skill location or overwriting an existing same-name installation requires explicit user approval.
 
 If packaging exposes a defect that changes the package, apply step 6's re-entry rule before completing this step.
 

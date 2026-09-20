@@ -19,14 +19,17 @@ artifacts.
 2. **Run matched pairs in fresh contexts.** Each case runs without the change
    (bare model, or the frozen prior version for a revision) and with it.
    Confirm the intended variant is actually loaded for with-skill runs. For a
-   change limited to the description, compare unforced activation on the
-   trigger set instead of forced-load behavior. Record tokens and duration
-   for each run where the harness reports them, and `cost not available`
-   where it does not.
+   change limited to the description, the matched pair is the prior
+   description against the revised one: judge unforced activation on the
+   trigger set under each, instead of forced-load behavior. Record tokens
+   and duration for each run where the harness reports them, and
+   `cost not available` where it does not.
 3. **Grade binary.** An independent grader, as the skill workflow defines one,
    grades each run against the case's expected-behavior checklist —
    pass or fail per item, a case fails if any item fails. Deterministic
-   scripts may grade mechanical items.
+   scripts may grade mechanical items. Hide the variant from the grader:
+   label outputs neutrally and remove variant names from paths and text the
+   outputs quote.
 4. **Decide.** Ship only when every discriminating case shows the intended
    improvement and no case, including a regression control, regresses. A
    regression, or a same-as-baseline result on a required discriminating case,

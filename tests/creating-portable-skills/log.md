@@ -2,6 +2,16 @@
 
 Format: `date | git rev | check | result | note`
 
+Settling round on 2026-09-20 after 225b388 added the unsettled-state rule to the baseline template. A fresh Opus subagent that saw no results drafted the rule; the author returned its first draft because two-of-three agreement made the state unreachable. Both variants of the contested control were rerun at the 07f79c9 prompt and read together with the closing pair below, as the rule requires. Blind Opus subagent grader, scrubbed packets.
+
+- 2026-09-20 | 15abed3 (prior) | control: passing-baseline-regression-control, Codex Sol | pass (5/5) | 30 s; 74k/47k/0.9k tokens; with the closing pair the prior variant is settled pass on this target, two of two
+- 2026-09-20 | 225b388 | control: passing-baseline-regression-control, Codex Sol | fail (3/5) | 33 s; 73k/46k/1.1k tokens; with the closing pair the revised variant is settled fail on this target, two of two, on the same two items both times: it never says a discriminating case is still required and never advises keeping controls few. Settled pass without the change against settled fail with it is a regression on this target under the template's rule. The change returns to correction
+- 2026-09-20 | 15abed3 (prior) | control: passing-baseline-regression-control, Claude Code Opus 5 | pass (5/5) | 49k tokens, 36 s
+- 2026-09-20 | 225b388 | control: passing-baseline-regression-control, Claude Code Opus 5 | pass (5/5) | 35k tokens, 50 s; no regression on this target
+- 2026-09-20 | 225b388 | matched comparison: cost-and-check-pruning, revised on the new template text | pass (6/6) on Opus 5, Fable 5.1, and Codex Sol | 113k tokens 67 s, 78k tokens 52 s, and 55 s 73k/53k/2.1k tokens; the template edit did not disturb the case that exercises its decision step
+- 2026-09-20 | 77bd796 | control: vendor-specific-advice-stays-out, Claude Code Opus 5 | unsettled | revised variant mixed across three runs (pass, fail, pass), prior variant settled pass across three; under the rule further runs cannot unmix it, so none were bought. The claim that this revision holds the vendor-advice contract on this target is withheld
+- 2026-09-20 | 77bd796 | control: vendor-specific-advice-stays-out, Codex Sol | fail (5/6), one run | prior passed its one run; a single pair, accepted as the result until both variants are rerun
+
 Final review and record corrections on 2026-09-20.
 
 - 2026-09-20 | b0f542f | final checklist review | return to correction, narrow scope | fresh-context Opus subagent that saw none of the authoring. It found the package sound: description unchanged, 102 lines, body estimate 2,566 tokens, script read-only, all links internal, no model named in the instructions, more restatement removed than added. It returns the change because two labeled controls show revised-side failures that the template's rule calls regressions and that have not been rerun, and because the template has no vocabulary for an intermittently failing control, so the variance readings logged below are the author's judgment and not the package's rule. It also found the validator command named in step 4 was not the one that ran, fixed at ae44ab5

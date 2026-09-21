@@ -2,6 +2,14 @@
 
 Format: `date | git rev | check | result | note`
 
+Co-location round on 2026-09-20 after dd43427 gathered the regression-control rules under one heading in the baseline template, moved and not copied. The owner chose this fix over an inline restatement in step 5 because it names no harness. Blind Opus subagent grader, scrubbed packets.
+
+- 2026-09-20 | dd43427 | control: passing-baseline-regression-control, Claude Code Opus 5 | pass (5/5) | 36k tokens, 43 s; no regression on this target
+- 2026-09-20 | dd43427 | control: passing-baseline-regression-control, Claude Code Fable 5.1 | pass (5/5) | 31k tokens, 23 s
+- 2026-09-20 | dd43427 | matched comparison: cost-and-check-pruning, Claude Code Opus 5 | pass (6/6) | 35k tokens, 56 s; moving the control rules did not disturb the decision step
+- 2026-09-20 | dd43427 | matched comparison: planted-rot-review, Claude Code Opus 5 | pass (6/6) | 81k tokens, 55 s
+- 2026-09-20 | dd43427 | control: passing-baseline-regression-control, Codex Sol | not run — harness usage limit | the settling pair that would show whether co-location closes the settled regression logged below. Until it runs, that regression stands on this target and the change is not cleared to ship there
+
 Settling round on 2026-09-20 after 225b388 added the unsettled-state rule to the baseline template. A fresh Opus subagent that saw no results drafted the rule; the author returned its first draft because two-of-three agreement made the state unreachable. Both variants of the contested control were rerun at the 07f79c9 prompt and read together with the closing pair below, as the rule requires. Blind Opus subagent grader, scrubbed packets.
 
 - 2026-09-20 | 15abed3 (prior) | control: passing-baseline-regression-control, Codex Sol | pass (5/5) | 30 s; 74k/47k/0.9k tokens; with the closing pair the prior variant is settled pass on this target, two of two

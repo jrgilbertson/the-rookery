@@ -2,6 +2,14 @@
 
 Format: `date | git rev | check | result | note`
 
+Codex settling round on 2026-09-21 against the co-located template text. Codex CLI 0.154.0, Sol at medium effort, forced-load runs, scrubbed packets, blind Opus subagent grader. Every run is read together with the earlier runs of the same variant on this target, as the template's rule requires.
+
+- 2026-09-21 | dd43427 | control: passing-baseline-regression-control, Codex Sol | fail (4/5), fail (4/5) | 44 s and 64 s; 73k/52k/0.9k and 73k/52k/1.4k tokens; co-location recovered one of the two missing facts, since both runs now say a discriminating case is still required. Both still omit advice to keep controls few, which the prompt does not ask about and the prior package volunteers on every run (three of three, settled pass). Revised is settled fail on this target, so the regression stands, narrowed to that one item
+- 2026-09-21 | 15abed3 (prior) | control: vendor-specific-advice-stays-out, Codex Sol | pass (6/6) | 182 s; 165k/134k/1.5k tokens; settled pass across two runs
+- 2026-09-21 | dd43427 | control: vendor-specific-advice-stays-out, Codex Sol | pass (6/6) | 215 s; 240k/209k/3.0k tokens; read with the 77bd796 fail the revised variant is mixed, so the case is unsettled on this target and the claim that the revision holds this contract there is withheld
+- 2026-09-21 | dd43427 | matched comparison: cost-and-check-pruning, Codex Sol | fail (5/6) | 111 s; 101k/73k/2.6k tokens; dismissed the taste comment without routing it to human feedback or a blind comparison. The revised variant passed this case on this target at 77bd796 and 225b388, so it is now mixed: unsettled, and the improvement claimed for this target in the 2026-09-20 claim-scope line is withdrawn
+- 2026-09-21 | dd43427 | claim scope | recorded | supersedes the 2026-09-20 claim-scope line. Settled improvement: planted-rot-review on Claude Code with Opus 5 and Fable 5.1, cost-and-check-pruning on Fable 5.1, baseline-before-shipping on Opus 5. On Codex Sol nothing is claimed: planted-rot-review and baseline-before-shipping fail under both packages, cost-and-check-pruning and the vendor-advice control are unsettled, and passing-baseline-regression-control is a settled regression on one item. The vendor-advice control is also unsettled on Opus 5
+
 Co-location round on 2026-09-20 after dd43427 gathered the regression-control rules under one heading in the baseline template, moved and not copied. The owner chose this fix over an inline restatement in step 5 because it names no harness. Blind Opus subagent grader, scrubbed packets.
 
 - 2026-09-20 | dd43427 | control: passing-baseline-regression-control, Claude Code Opus 5 | pass (5/5) | 36k tokens, 43 s; no regression on this target

@@ -11,11 +11,9 @@ artifacts.
 1. **Declare cases before running.** For a new skill: realistic prompts where
    the skill should change execution or output, each named for the observed
    failure or baseline gap that motivates it. For a revision: the existing
-   cases the change affects, plus new cases for new behavior. A small number of
-   explicitly labeled regression controls may protect load-bearing contracts
-   that the baseline already passes; they do not prove improvement. Keep the
-   set small — discriminating cases prove the change, while controls prevent a
-   named regression rather than enumerating desirable behavior.
+   cases the change affects, plus new cases for new behavior. Keep the set
+   small: discriminating cases prove the change, and the section on
+   regression controls covers a case the baseline already passes.
 2. **Run matched pairs in fresh contexts.** Each case runs without the change
    (bare model, or the frozen prior version for a revision) and with it.
    Confirm the intended variant is actually loaded for with-skill runs. For a
@@ -31,12 +29,12 @@ artifacts.
    label outputs neutrally and remove variant names from paths and text the
    outputs quote.
 4. **Decide.** Ship only when every discriminating case shows the intended
-   improvement and no case, including a regression control, regresses. A
+   improvement and no case regresses. A
    regression, or a same-as-baseline result on a required discriminating case,
    returns the change to correction; rerun the affected cases after fixing.
    State the cost delta beside the pass delta, so the decision shows what the
    change costs against what it buys. A checklist item that passes in both
-   halves proves nothing: remove it, or keep its case only as a labeled
+   halves proves nothing: remove it, or keep its case only as a regression
    control.
    **Settle a case that varies.** One matched pair per case stays the default.
    A variant is settled when every run of it on one named target (model and
@@ -53,9 +51,20 @@ artifacts.
 5. **Emit the durable artifacts.** One case file per kept case in
    `tests/<skill-name>/cases/` and one log line per graded run in
    `tests/<skill-name>/log.md` (line format: `date | git rev | check |
-   result | note`, with the run's cost in the note). This completed template is working scratch —
-   its content lives on in the case files, log lines, and the commit message;
-   do not keep it as a separate record.
+   result | note`, with the run's cost in the note). This completed template
+   is working scratch — its content lives on in the case files, log lines,
+   and the commit message; do not keep it as a separate record.
+
+## Regression controls
+
+A regression control is a case the baseline already passes, kept because it
+protects one named load-bearing contract. Its `Provenance:` line names that
+contract and labels the case a regression control. It proves the contract did
+not regress and never that the change improved anything, so a discriminating
+case still has to carry the improvement. It runs in the matched pair like
+every case, and a control that passes without the change and fails with it is
+a regression under step 4. Keep controls few: each prevents one named
+regression, and none exists to enumerate desirable behavior.
 
 ## Blind version comparison (optional)
 
@@ -68,8 +77,8 @@ fail.
 ## Case file shape
 
 Each case file: a title, one `Provenance:` line naming the motivating failure
-or baseline gap — or naming the load-bearing contract and labeling a passing
-baseline case as a regression control — a self-contained `## Prompt`
+or baseline gap, or a regression control's contract, a self-contained
+`## Prompt`
 (blockquote, synthetic data only), and `## Expected behavior` as binary
 `- [ ]` checklist items. Fold near-duplicate variants into one battery case
 (numbered scenarios in the prompt, one checklist item per scenario). Keep each

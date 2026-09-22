@@ -237,7 +237,7 @@ effort, but selects one only when the operator approves it.
 | Critic | OpenAI / `gpt-6-sol` / max | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
 | Researcher | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
 | Scout | xAI / `grok-4.7` / high | OpenAI / `gpt-6-sol` / high | — |
-| Design/taste | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-6-astra` / low | — |
+| Design/taste | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-6-astra` / medium | — |
 
 ## Return one portable response
 
@@ -320,6 +320,9 @@ low effort fails on hard tasks and so always makes low effort look cheapest.
 Take the pass rate from evidence that matches the role. The Executor row
 needs coding-agent boards such as FrontierCode, CursorBench, Terminal-Bench,
 or a coding-agent index, and Design/taste needs human-preference boards.
+Confirm each effort choice on at least two independent boards that report
+every effort level, such as the Artificial Analysis Intelligence Index,
+Zapier's AutomationBench, and VulcanBench, instead of relying on one index.
 A row lists only profiles that earn a place, so some rows have fewer than
 three. A profile may rank by a capability the others lack, as xAI does for
 Scout with X search. A subscription already paid for may keep an otherwise

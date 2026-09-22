@@ -1,4 +1,4 @@
-# An implementation-bound issue gets a lead, executors, and only supplied bounds
+# An implementation-bound issue with named modules gets a coordinator, executors, and only supplied bounds
 
 Provenance: user feedback — a plan-only route was too limiting; the card must
 estimate the pattern and roster for the whole approach and let supplied
@@ -30,20 +30,20 @@ that adding a Reviewer could exceed the five-worker concurrency ceiling.
       task fact that the prompt did not supply.
 - [ ] All items return a `**Route**` card whose decision line is "Start with
       ce-plan on Opus 5.5 at high" and names no role. Why says planning
-      comes first and the lead carries the work into implementation.
-- [ ] Item 1's Setup lists a Lead on Opus 5.5 at high and two Executors on
+      comes first and the coordinator carries the work into implementation.
+- [ ] Item 1's Setup lists a coordinator on Opus 5.5 at high and two Executors on
       Opus 5.5 at medium, one per named module, and no Reviewer. It states that
       merge authority was not supplied and mentions no orchestration or plan
       storage. Isolation may be named for concurrent Executor writes.
 - [ ] Item 2's Setup adds a Reviewer on GPT-6 Sol at high, hands it the
       acceptance criteria, and keeps the rest of item 1's roster.
-- [ ] Item 3 budgets at most five concurrent workers including the Lead and
+- [ ] Item 3 budgets at most five concurrent workers including the coordinator and
       Reviewer: at most three Executors, with the remaining modules queued
       rather than dropped. Setup and kickoff agree on the complete roster.
-- [ ] Each kickoff starts ce-plan from the issue URL, states the lead's model
+- [ ] Each kickoff starts ce-plan from the issue URL, states the coordinator's model
       and effort, repeats every other role with model, effort, and count,
       treats the issue as the source of truth, and withholds merge in one
       sentence. No kickoff narrates phases, checkpoints, PR cadence, or a
-      stopping point for the lead's work; the Reviewer's one-round guardrail
+      stopping point for the coordinator's work; the Reviewer's one-round guardrail
       is expected, not a stopping point.
 - [ ] The trace contains only reads of the installed package.

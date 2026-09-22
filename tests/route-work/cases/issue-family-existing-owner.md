@@ -6,7 +6,9 @@ unnamed units as a bounded piece and unknown ownership as vacant. Independent
 review then found an approved, authorized parent plan that proves no units,
 integrator, or write boundaries had no selectable pattern, so item 9 covers
 that gap. Regression controls cover supplied family state, direct
-implementation authority, and proven ownership.
+implementation authority, and proven ownership. On 2026-09-22 the default
+changed to Single owner, so items 6 and 9 now guard that occupancy or bare
+implementation authority does not add Executors.
 
 ## Prompt
 
@@ -46,24 +48,23 @@ implementation authority, and proven ownership.
       item 1 chooses no leaf and certifies no frontier. Item 3 returns Questions
       asking whether implementation is authorized, with a concrete recommendation
       and no workflow, model, role profile, or kickoff.
-- [ ] Item 8 starts with `ce-work` and uses Lead + Executors with a Lead on
-      Opus 5.5 at high and Executors on Opus 5.5 at medium, up to three since
-      the prompt names no
+- [ ] Item 8 starts with `ce-work` and uses Coordinator + Executors, because
+      the approved plan states independent units: a coordinator on Opus 5.5 at
+      medium (the Executor profile, which dispatching does not change) and
+      Executors on Opus 5.5 at medium, up to three since the prompt names no
       unit count.
-- [ ] Item 9 starts with `ce-work` and uses the same default Lead + Executors
-      roster: Lead on Opus 5.5 at high, up to three Executors on Opus 5.5 at
-      medium. Unproven units, integrator, and write scopes do not block the
-      pattern, are not invented, and do not collapse the route to a single
-      owner. The card leaves scoping to the run by requiring a separate write
-      path per Executor before parallel writes.
+- [ ] Item 9 starts with `ce-work` as Single owner: the coordinator alone on
+      Opus 5.5 at medium. Nothing establishes independent units, so the card
+      adds no Executors, invents no units, integrator, or write scopes, and
+      invites adding Executors if the plan names independent units.
 - [ ] Item 4 starts the child with `ce-plan` because planning is what needs to
       happen first.
 - [ ] Item 5 returns a `**Resume**` card naming Jordan with no kickoff or
       roster, continues the implementation phase, and requests or invents no
       locator.
-- [ ] Item 6 starts with `ce-work` and the default Lead + Executors roster:
-      Lead on Opus 5.5 at high, up to three Executors on Opus 5.5 at medium.
-      No supplied evidence establishes a single bounded piece. Setup and the
+- [ ] Item 6 starts with `ce-work` as Single owner: the coordinator alone on
+      Opus 5.5 at medium. A named worktree and pull request are occupancy
+      evidence, not independent units. Setup and the
       kickoff last sentence each include: No named owner was proven for this
       phase; this start is still allowed. They do not emit a stored-status
       occupancy label or a halt. A kickoff may tell the receiver to verify
@@ -78,7 +79,7 @@ implementation authority, and proven ownership.
       preserve it without adding commit, push, PR, or other external authority.
       Artifact approval alone never becomes permission to implement.
 - [ ] Every route has a bold first line, one decision sentence naming the
-      starting workflow and the lead's model and effort, and bold Why, Setup,
+      starting workflow and the coordinator's model and effort, and bold Why, Setup,
       and Copy/paste kickoff labels. Setup lists every role with model and
       effort. Default routes name no IDE and no availability, and name a
       worktree only where parallel Executors write concurrently.

@@ -77,7 +77,7 @@ Keep one end-of-run API for every caller of a checking skill.
    then babysit. A run that is not a gardener Executor returns a
    fresh-context merge-readiness menu; an Executor's option-1 reply does
    not pick merge and does not dispatch that Reviewer, and reports the
-   ready babysit result to the Lead instead.
+   ready babysit result to the Coordinator instead.
 3. **Do not keep a second product in the checking skill.** Do not add
    assessment-only, agent-mode, report-only, disposition tokens, "don't
    wait," or a stricter unattended ready bar as a parallel print contract.

@@ -57,7 +57,7 @@ They are not a Merge Readiness Review. They are the trigger to start
 If babysit reports looks merge-ready, cautiously looks ready, or
 `success` under `mode:pipeline`:
 
-- Executor: stop and report that to the Lead. Do not dispatch
+- Executor: stop and report that to the Coordinator. Do not dispatch
   `checking-merge-readiness` from this conversation.
 - Not an Executor: dispatch `checking-merge-readiness` to a fresh, read-only
   context with no prior involvement. Pass only the pull-request identity.
@@ -77,7 +77,7 @@ pipeline `success`, stop. Do not dispatch `checking-merge-readiness`.
 Completion: a named stop after a publisher that did not create or update a
 pull request, a named stop after a babysit skip, missing babysit skill, or
 non-ready report, an Executor ready report (looks merge-ready, cautiously
-looks ready, or pipeline `success`) to the Lead, a named missing
+looks ready, or pipeline `success`) to the Coordinator, a named missing
 merge-readiness or missing independent reviewer on a non-Executor run, or
 the independent merge-readiness menu on screen, with later numbered replies
 belonging to that reviewer and no pick from this skill.

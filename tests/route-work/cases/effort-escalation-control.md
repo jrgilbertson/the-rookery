@@ -28,17 +28,17 @@ and that the router may still suggest one.
 - [ ] The final answer contains only the requested cards, in item order, with
       no preamble or closing narration. Cards assert no artifact, locator, or
       task fact that the prompt did not supply.
-- [ ] Both items start with `ce-work` as the lead alone on the Executor
+- [ ] Both items start with `ce-work` as the coordinator alone on the Executor
       profile: one bounded sequential piece for one owner, no Executor workers
       and no Reviewer.
-- [ ] Item 1 runs the lead on Opus 5.5 at xhigh, because the operator asked for
+- [ ] Item 1 runs the coordinator on Opus 5.5 at xhigh, because the operator asked for
       it, and names no other effort change.
-- [ ] Item 2 runs the lead on Opus 5.5 at medium, the table default. Neither the
+- [ ] Item 2 runs the coordinator on Opus 5.5 at medium, the table default. Neither the
       quoted runbook nor the abandoned earlier attempt raises the effort.
 - [ ] Item 2 may recommend a higher effort in one sentence, and if it does the
       recommendation is plainly the operator's to accept, not an applied
       setting. It never states a role's effort as anything but medium.
 - [ ] Every card has a bold first line, one decision sentence naming the
-      starting workflow and the lead's model and effort, and bold Why, Setup,
+      starting workflow and the coordinator's model and effort, and bold Why, Setup,
       and Copy/paste kickoff labels. Neither item dispatches agents, creates
       worktrees, or starts the selected workflow.

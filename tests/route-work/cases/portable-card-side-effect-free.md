@@ -1,4 +1,4 @@
-# A plan-only authorization produces a lead-alone route without side effects
+# A plan-only authorization produces a coordinator-alone route without side effects
 
 Provenance: user feedback — the route must include a plain-text statement a
 receiver can paste to start work without duplicating its source artifact or
@@ -20,10 +20,10 @@ making the router perform downstream work.
       The decision line is "Start with ce-plan on Opus 5.5 at high" and
       names no role. Bold `**Why**`, `**Setup**`, and `**Copy/paste kickoff**`
       labels follow, each with a blank line after it; no headings or fences.
-- [ ] Setup lists the Lead on Opus 5.5 at high and no other role, since
+- [ ] Setup lists the coordinator on Opus 5.5 at high and no other role, since
       implementation is not authorized, and states that boundary. It mentions
       no worktree, orchestration, availability, or plan storage.
-- [ ] The kickoff starts ce-plan from the supplied issue URL, states the lead's
+- [ ] The kickoff starts ce-plan from the supplied issue URL, states the coordinator's
       model and effort, treats the issue as the source of truth, and withholds
       implementation, issue mutation, commit, push, pull request, and
       publication in one sentence. It does not restate the issue.

@@ -1,10 +1,10 @@
 # Routing work
 
 `route-work` turns one explicit routing request and its supplied evidence into
-one recommended way to start the work: a first workflow, a lead, a pattern, a
-roster of roles with models and effort, and a copy/paste kickoff. When work
-already has a proven owner it says where to resume. When it lacks a routing
-fact it asks. It leaves execution to the selected workflow.
+one recommended way to start the work: a first workflow, a coordinator, a
+pattern, a roster of roles with models and effort, and a copy/paste kickoff.
+When work already has a proven owner it says where to resume. When it lacks a
+routing fact it asks. It leaves execution to the selected workflow.
 
 Workflow names in its cards are portable capability labels. Using this router
 does not require those workflow packages to be installed.
@@ -54,7 +54,7 @@ authorization. When asking whether implementation is authorized, do not treat
 artifact approval as that grant. An implementation kickoff never
 infers permission to commit, push, open a pull request, publish, merge, or
 change external state. Authorized document writes use repository-defined
-locations. Supplied authority is the only thing that bounds how far the lead
+locations. Supplied authority is the only thing that bounds how far the coordinator
 carries the work; the card never narrates phases, checkpoints, or stopping points beyond it, and never says where plans are
 stored. When the operator supplied a grant or an explicit limit, state it on
 the card in one sentence; an operator saying some authority is withheld or
@@ -93,7 +93,7 @@ router does not discover or monitor ownership.
 Choose exactly one starting workflow based on what needs to happen first: the
 earliest question to answer or durable change to make before useful work can
 continue. Choose it from this table, not from the host, model, or later steps.
-The lead runs it, and the lead carries the work forward from there within
+The coordinator runs it and carries the work forward from there within
 supplied authority.
 
 | What needs to happen first | Owner | Discriminator |
@@ -129,31 +129,38 @@ https://github.com/jrgilbertson/the-rookery/blob/main/ROUTING.md#choose-what-nee
 
 ## Estimate the pattern and roster
 
-Every route has a lead. Name the role for each worker, and count workers, not
+Every route has a coordinator: the session that runs the starting workflow and
+owns the human-facing conversation. It integrates results and judges
+completion within supplied authority. The coordinator is a seat, not a profile
+or an extra worker. Name the role for each worker, and count workers, not
 steps.
 
-When implementation is expected, start with Lead + Executors. Use Single
-owner only when supplied evidence establishes one bounded piece or sequential
-work for one owner. Unnamed units are not evidence of a bounded piece. A
-stated worktree, branch, pull request, worker, or parallel effort is occupancy
-evidence, not evidence of a bounded piece.
+Start with Single owner, including when implementation is expected. Use
+Coordinator + Executors only when supplied evidence establishes independent
+units that need separate write paths, such as named modules or a plan that
+states its units are independent. Expected implementation alone is not
+evidence of independent units. A stated worktree, branch, pull request,
+worker, or parallel effort is occupancy evidence, not evidence of independent
+units. An Executor may start its own subagents or workers through its harness
+or workflow; they belong to that Executor and are not routed workers.
 
 | Pattern | Roles | Use when | Guardrail |
 |---|---|---|---|
-| Single owner | The lead alone, in the selected owner's role. | The run ends with the starting workflow, the work is one bounded piece, or it is sequential phases of one owner | One worker covers later stages of the same owner. |
-| Executor + Reviewer | Two workers: the lead writes and revises; the Reviewer only judges. | Explicit acceptance criteria exist or the operator asks for review | One round. Stop when the Reviewer's stated criteria pass or fail. Hand the Reviewer the criteria. The Reviewer does not write the artifact. This is not advisor consultation. |
-| Lead + Executors | Lead plans and dispatches; Executor workers implement units. Scout or Researcher workers only for search slices. | Implementation is expected, from supplied authority or an operator statement that implementation follows, and the work has or will yield independent units, whichever workflow starts | Give each worker a separate write path before parallel writes. |
+| Single owner | The coordinator alone, on the selected owner's profile. It writes the work itself. | The default, unless supplied evidence establishes independent units, or explicit acceptance criteria or a review request call for a Reviewer | One worker covers later stages of the same owner. |
+| Executor + Reviewer | Two workers: the coordinator writes and revises; the Reviewer only judges. | Explicit acceptance criteria exist or the operator asks for review | One round. Stop when the Reviewer's stated criteria pass or fail. Hand the Reviewer the criteria. The Reviewer does not write the artifact. This is not advisor consultation. |
+| Coordinator + Executors | The coordinator plans, dispatches, and integrates; it does not write unit changes. Executor workers implement the units. Scout or Researcher workers only for search slices. | Implementation is expected, from supplied authority or an operator statement that implementation follows, and supplied evidence establishes independent units, whichever workflow starts | Give each worker a separate write path before parallel writes, and give the coordinator none. The coordinator keeps the plan, unit list, status, and briefs in files a fresh coordinator session can resume from. |
 
 Size the roster for where the run ends, not where it starts, including a
-brainstorm, grill, debug, or plan that implementation will follow. The lead's
-profile still comes from the starting workflow. Do not ask whether
-implementation follows; when nothing says so, size for the starting workflow
-and invite the override in Why. Add a Reviewer when the input carries explicit
-acceptance criteria or the operator asks.
+brainstorm, grill, debug, or plan that implementation will follow. The
+coordinator's profile still comes from the starting workflow. Do not ask
+whether implementation follows; when nothing says so, size for the starting
+workflow and invite the override in Why. Add a Reviewer when the input carries
+explicit acceptance criteria or the operator asks.
 
-Budget five concurrent workers total, including the lead and Reviewer. Use
-one Executor per named unit, or up to three when units are unnamed, capped by
-the remaining slots. Queue units that do not fit; keep all requested work.
+Budget five concurrent workers total, including the coordinator and Reviewer.
+Use one Executor per named or counted unit, or up to three when evidence
+establishes independent units without naming or counting them, capped by the
+remaining slots. Queue units that do not fit; keep all requested work.
 
 Use Critic in the Reviewer role only when the judgment is adversarial. Use
 Design/taste as the judge only when the finish line is taste.
@@ -161,8 +168,8 @@ Design/taste as the judge only when the finish line is taste.
 An advisor only gathers bounded evidence. Do not count it as a worker and do
 not give it ownership. If the operator asked for an advisor, mention it in
 Setup. Subagents, forks, teams, and background sessions are how work runs, not
-which pattern to recommend. The lead may change the pattern when new evidence
-justifies it.
+which pattern to recommend. The coordinator may change the pattern when new
+evidence justifies it.
 
 ## Keep orchestration and placement separate
 
@@ -180,25 +187,26 @@ The selected starting workflow remains the owner. Structured orchestration is
 optional and currently depends on Orca; ordinary worktree placement does not.
 When supervised orchestration is selected, say so in Setup and the kickoff,
 tell the operator to follow Orca's installed contract, and add to Setup: once
-orchestration is running, continue with the lead in its terminal and close
-this session. The kickoff's orchestration sentence says "Orca orchestration"
-in those words and tells the lead to use Orca's `orchestration` skill when it
-is installed, because the receiving session matches that phrase to the skill.
-Do not copy Orca commands into the card. Read-only scouts and fresh-context
-reviewers can work in the current worktree.
+orchestration is running, continue with the coordinator in its terminal and
+close this session. The kickoff's orchestration sentence says "Orca
+orchestration" in those words and tells the coordinator to use Orca's
+`orchestration` skill when it is installed, because the receiving session
+matches that phrase to the skill. Do not copy Orca commands into the card.
+Read-only scouts and fresh-context reviewers can work in the current worktree.
 
 ## Select the role profile
 
 Pick each role's profile from the pattern:
 
-- The lead uses Lead, except that a `ce-work` lead uses Executor unless it
-  coordinates separate Executor workers, a `ce-debug` lead uses Researcher, and
-  an `impeccable` lead uses Design/taste.
+- The coordinator uses its starting workflow's profile: Planner for
+  `ce-brainstorm`, `grill-with-docs`, `ce-plan`, and `managing-issues`;
+  Executor for `ce-work`; Researcher for `ce-debug`; and Design/taste for
+  `impeccable`. Dispatching workers does not change it.
 - Executor workers use Executor. Reviewer workers use Reviewer.
 
 | Role | Responsibilities |
 |---|---|
-| Lead | Runs the starting workflow, plans, dispatches workers, and revises the plan from their results |
+| Planner | Brainstorming, grilling, planning, and issue-graph work that decides what happens next |
 | Executor | Implements the assigned change and revises it |
 | Reviewer | Independent evaluators and named review or verification gates |
 | Critic | Independent adversarial pressure-test advisors or evaluators; not the owning `grill-with-docs` route |
@@ -231,7 +239,7 @@ effort, but selects one only when the operator approves it.
 
 | Role | Primary | Secondary | Tertiary |
 |---|---|---|---|
-| Lead | Anthropic / `claude-opus-5-5` / high | OpenAI / `gpt-6-astra` / high | — |
+| Planner | Anthropic / `claude-opus-5-5` / high | OpenAI / `gpt-6-astra` / high | — |
 | Executor | Anthropic / `claude-opus-5-5` / medium | OpenAI / `gpt-6-sol` / high | xAI / `grok-4.7` / high |
 | Reviewer | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
 | Critic | OpenAI / `gpt-6-sol` / max | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
@@ -253,11 +261,11 @@ IDs as ordinary names, such as "Fable 5.1 at medium".
 
     **Route**
 
-    Start with [starting workflow] on [lead model] at [effort].
+    Start with [starting workflow] on [coordinator model] at [effort].
 
     **Why**
 
-    [One or two sentences on what needs to happen first and why this pattern fits. Name where the run is expected to end, which the roster was sized for, and when implementation is authorized say that the lead carries the work into it. Name any pattern or roster default the route relied on instead of supplied evidence, so the operator can override it in one reply; availability stays out of the card when it is unknown.]
+    [One or two sentences on what needs to happen first and why this pattern fits. Name where the run is expected to end, which the roster was sized for, and when implementation is authorized say that the coordinator carries the work into it. Name any pattern or roster default the route relied on instead of supplied evidence, so the operator can override it in one reply; availability stays out of the card when it is unknown.]
 
     **Setup**
 
@@ -265,9 +273,11 @@ IDs as ordinary names, such as "Fable 5.1 at medium".
 
     **Copy/paste kickoff**
 
-    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the lead on [model] at [effort]. [Each other role with its model, effort, and count.] [Subscription billing constraint.] [Orchestration and placement sentences only when they differ from the default.] Treat [the supplied artifact or request] as the source of truth. [Supplied authority in one sentence, only when the operator supplied it.] [Occupancy sentence last, only when it applies.]
+    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the coordinator on [model] at [effort]. [Each other role with its model, effort, and count.] [Subscription billing constraint.] [Orchestration and placement sentences only when they differ from the default.] Treat [the supplied artifact or request] as the source of truth. [Supplied authority in one sentence, only when the operator supplied it.] [Occupancy sentence last, only when it applies.]
 
-The decision line never names a role; roles live in Setup. A single-owner
+The decision line never names a role; roles live in Setup. The kickoff states
+each worker's model and effort as settings to apply, because some harnesses
+otherwise give workers the coordinator's effort. A single-owner
 Setup omits placement and orchestration when they are the default. The
 kickoff must stand alone when pasted, so it repeats the roster, supplied
 authority, and any occupancy sentence.
@@ -327,7 +337,10 @@ For coding roles, Cognition's FrontierCode leaderboard publishes a pass rate
 and a cost per rollout for every effort level in each model's native harness,
 usually on launch day, in
 https://cognition.com/data/frontiercode-leaderboard/data.json.
-A row lists only profiles that earn a place, so some rows have fewer than
+No public benchmark scores planning or coordination work, so the Planner row
+is a judgment call. It follows vendor practice of giving planning more
+reasoning effort than execution; revisit it when a planning benchmark reports
+every effort level. A row lists only profiles that earn a place, so some rows have fewer than
 three. A profile may rank by a capability the others lack, as xAI does for
 Scout with X search. A subscription already paid for may keep an otherwise
 dominated model in a last slot where it still does the role's work well.

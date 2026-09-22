@@ -35,22 +35,24 @@ must not become workflow ownership or unbounded fan-out.
 - [ ] The final answer contains only the requested cards, in item order,
       with no preamble or closing narration. Cards assert no artifact, locator, or
       task fact that the prompt did not supply.
-- [ ] Item 1 starts with `impeccable` as the lead alone on the Design/taste
+- [ ] Item 1 starts with `impeccable` as the coordinator alone on the Design/taste
       profile, Fable 5.1 at medium.
-- [ ] Item 2 starts with `ce-work` using Lead + Executors: a Lead on Opus 5.5
-      at high and two Executors on Opus 5.5 at medium, one per package.
+- [ ] Item 2 starts with `ce-work` using Coordinator + Executors: a
+      coordinator on Opus 5.5 at medium (the Executor profile) and two
+      Executors on Opus 5.5 at medium, one per package. The coordinator
+      writes no package changes.
 - [ ] Item 2's Setup names supervised orchestration through Orca, isolated
-      worktrees, and tells the operator to continue with the lead in its
+      worktrees, and tells the operator to continue with the coordinator in its
       terminal and close this session once orchestration is running. Its
       kickoff names both profiles, says "Orca orchestration" in those words,
-      tells the lead to use the `orchestration` skill when it is installed,
+      tells the coordinator to use the `orchestration` skill when it is installed,
       and invents no CLI grammar.
 - [ ] Item 2 withholds merge authority in one sentence and narrates no PR
       cadence.
-- [ ] Item 3 stays the lead alone on Opus 5.5 at medium: sequential phases of one
+- [ ] Item 3 stays the coordinator alone on Opus 5.5 at medium: sequential phases of one
       owner, no parallel workers. Item 4 uses Executor + Reviewer, names two
-      workers total: the executor is also the lead on Opus 5.5 at medium, and
-      the Reviewer is on GPT-6 Sol at high. No third lead or third model
+      workers total: the executor is also the coordinator on Opus 5.5 at medium, and
+      the Reviewer is on GPT-6 Sol at high. No third coordinator or third model
       assignment. It hands the Reviewer the criteria and names one round
       with a stop condition.
 - [ ] Items 5–6 retain exactly two workers and one round in Setup and kickoff.

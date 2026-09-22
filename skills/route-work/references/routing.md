@@ -123,7 +123,7 @@ https://github.com/jrgilbertson/the-rookery/blob/main/ROUTING.md#choose-what-nee
   Handle parent, child, and existing work first.
 - If a named or required primary artifact cannot be read, the operator says
   they cannot answer a required routing question, the selected workflow is
-  confirmed unavailable, or all three profiles for a role are stated
+  confirmed unavailable, or every listed profile for a role is stated
   unavailable, return a Questions card asking for what would let routing
   proceed. Name no workflow in it, not even as an example.
 
@@ -209,7 +209,7 @@ Pick each role's profile from the pattern:
 ### Availability fallback
 
 Use operator-stated or already-supplied availability to filter unavailable
-profiles in primary, secondary, then tertiary order. Keep the selected owner
+profiles in listed order. Keep the selected owner
 unchanged. When availability is unknown, keep the default selection and omit
 availability from the response. Mention availability only when it changes a
 selected profile.
@@ -227,17 +227,17 @@ effort, but selects one only when the operator approves it.
 
 ## Model and effort recommendations
 
-**Last reviewed: 2026-09-09**
+**Last reviewed: 2026-09-22**
 
 | Role | Primary | Secondary | Tertiary |
 |---|---|---|---|
-| Lead | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-6-astra` / low | xAI / `grok-4.6` / high |
-| Executor | xAI / `grok-4.6` / high | Anthropic / `claude-opus-5` / medium | OpenAI / `gpt-5.6-sol` / medium |
-| Reviewer | OpenAI / `gpt-5.6-sol` / high | Anthropic / `claude-opus-5` / medium | xAI / `grok-4.6` / high |
-| Critic | OpenAI / `gpt-5.6-sol` / xhigh | Anthropic / `claude-opus-5` / medium | xAI / `grok-4.6` / high |
-| Researcher | OpenAI / `gpt-5.6-sol` / high | xAI / `grok-4.6` / high | Anthropic / `claude-opus-5` / medium |
-| Scout | xAI / `grok-4.6` / high | OpenAI / `gpt-5.6-terra` / high | Anthropic / `claude-opus-5` / medium |
-| Design/taste | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-6-astra` / low | xAI / `grok-4.6` / high |
+| Lead | Anthropic / `claude-opus-5-5` / high | OpenAI / `gpt-6-astra` / low | — |
+| Executor | Anthropic / `claude-opus-5-5` / high | OpenAI / `gpt-6-sol` / high | xAI / `grok-4.7` / high |
+| Reviewer | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
+| Critic | OpenAI / `gpt-6-sol` / max | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
+| Researcher | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
+| Scout | xAI / `grok-4.7` / high | OpenAI / `gpt-6-sol` / medium | — |
+| Design/taste | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-6-astra` / low | — |
 
 ## Return one portable response
 
@@ -309,3 +309,18 @@ pointer is the concrete answer there, since the card may name no workflow.
 Maintainers update the model table manually from external evidence. Benchmark
 scores, cost, quota, confidence, automatic rankings, and staleness state stay
 outside the contract.
+
+Each row lists a role's profiles in order of cost of pass: cost per attempt
+divided by pass rate, measured on work like that role's. Choose each
+profile's effort the same way: the cheapest effort whose pass rate on the
+role's work is close to that model's ceiling. That is where its curve of
+cost per extra point bends upward. A composite index across effort levels
+shows the curve's shape, but its average is not a pass rate: it hides how
+low effort fails on hard tasks and so always makes low effort look cheapest.
+Take the pass rate from evidence that matches the role. The Executor row
+needs coding-agent boards such as FrontierCode, CursorBench, Terminal-Bench,
+or a coding-agent index, and Design/taste needs human-preference boards.
+A row lists only profiles that earn a place, so some rows have fewer than
+three. A profile may rank by a capability the others lack, as xAI does for
+Scout with X search. A subscription already paid for may keep an otherwise
+dominated model in a last slot where it still does the role's work well.

@@ -24,7 +24,7 @@ authority.
 > 4. A named primary plan cannot be read.
 > 5. `ce-plan` is selected and available. Its primary Lead profile is stated
 >    unavailable; availability of the other profiles is unknown.
-> 6. All three Lead profiles are stated unavailable.
+> 6. Every listed Lead profile is stated unavailable.
 > 7. The selected workflow itself is stated unavailable.
 > 8. Two separate invocations. First, a grill of a supplied decision document
 >    is requested without document-write authority. Second, an implementation
@@ -41,8 +41,8 @@ authority.
       task fact that the prompt did not supply.
 - [ ] Item 1 returns a Questions card with exactly one question, whether the
       product outcome is settled, and no route.
-- [ ] Item 2 returns a Route starting with ce-plan on Fable 5.1 at medium with
-      a roster of Lead plus up to three Executors on Grok 4.6 at high.
+- [ ] Item 2 returns a Route starting with ce-plan on Opus 5.5 at high with
+      a roster of Lead plus up to three Executors on Opus 5.5 at high.
 - [ ] Items 3, 4, 6, and 7 each return a Questions card that asks for the
       missing fact, artifact, profile, or workflow with a recommended answer
       and names no workflow, model, role profile, or kickoff, including in

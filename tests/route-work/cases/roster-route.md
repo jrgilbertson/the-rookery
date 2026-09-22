@@ -29,13 +29,13 @@ that adding a Reviewer could exceed the five-worker concurrency ceiling.
       with no preamble or closing narration. Cards assert no artifact, locator, or
       task fact that the prompt did not supply.
 - [ ] All items return a `**Route**` card whose decision line is "Start with
-      ce-plan on Fable 5.1 at medium" and names no role. Why says planning
+      ce-plan on Opus 5.5 at high" and names no role. Why says planning
       comes first and the lead carries the work into implementation.
-- [ ] Item 1's Setup lists a Lead on Fable 5.1 at medium and two Executors on
-      Grok 4.6 at high, one per named module, and no Reviewer. It states that
+- [ ] Item 1's Setup lists a Lead on Opus 5.5 at high and two Executors on
+      Opus 5.5 at high, one per named module, and no Reviewer. It states that
       merge authority was not supplied and mentions no orchestration or plan
       storage. Isolation may be named for concurrent Executor writes.
-- [ ] Item 2's Setup adds a Reviewer on GPT-5.6 Sol at high, hands it the
+- [ ] Item 2's Setup adds a Reviewer on GPT-6 Sol at high, hands it the
       acceptance criteria, and keeps the rest of item 1's roster.
 - [ ] Item 3 budgets at most five concurrent workers including the Lead and
       Reviewer: at most three Executors, with the remaining modules queued

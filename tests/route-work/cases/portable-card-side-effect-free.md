@@ -17,10 +17,10 @@ making the router perform downstream work.
 ## Expected behavior
 
 - [ ] The final answer is exactly one card beginning with the bold line `**Route**`.
-      The decision line is "Start with ce-plan on Fable 5.1 at medium" and
+      The decision line is "Start with ce-plan on Opus 5.5 at high" and
       names no role. Bold `**Why**`, `**Setup**`, and `**Copy/paste kickoff**`
       labels follow, each with a blank line after it; no headings or fences.
-- [ ] Setup lists the Lead on Fable 5.1 at medium and no other role, since
+- [ ] Setup lists the Lead on Opus 5.5 at high and no other role, since
       implementation is not authorized, and states that boundary. It mentions
       no worktree, orchestration, availability, or plan storage.
 - [ ] The kickoff starts ce-plan from the supplied issue URL, states the lead's

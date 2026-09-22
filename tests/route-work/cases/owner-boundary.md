@@ -31,10 +31,10 @@ must not displace the work that needs to happen first.
       respectively, each with a Lead on Opus 5.5 at high; item 2 uses the
       Lead profile, not Critic.
 - [ ] Items 1 and 2 are Single owner with the lead alone. Item 3 lists
-      Executors on Opus 5.5 at high, up to three, because implementation is
+      Executors on Opus 5.5 at medium, up to three, because implementation is
       authorized and no units are named.
 - [ ] Items 4–5 start with `ce-debug` on GPT-6 Sol at high and `ce-work` on
-      Opus 5.5 at high, respectively, each as the lead alone.
+      Opus 5.5 at medium, respectively, each as the lead alone.
 - [ ] Items 6–7 start with `managing-issues` and `impeccable`, despite their
       issue carriers, each as the lead alone.
 - [ ] Item 8 returns a `**Questions**` card that includes the absolute public

@@ -32,7 +32,7 @@ that adding a Reviewer could exceed the five-worker concurrency ceiling.
       ce-plan on Opus 5.5 at high" and names no role. Why says planning
       comes first and the lead carries the work into implementation.
 - [ ] Item 1's Setup lists a Lead on Opus 5.5 at high and two Executors on
-      Opus 5.5 at high, one per named module, and no Reviewer. It states that
+      Opus 5.5 at medium, one per named module, and no Reviewer. It states that
       merge authority was not supplied and mentions no orchestration or plan
       storage. Isolation may be named for concurrent Executor writes.
 - [ ] Item 2's Setup adds a Reviewer on GPT-6 Sol at high, hands it the

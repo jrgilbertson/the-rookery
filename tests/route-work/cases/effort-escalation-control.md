@@ -33,11 +33,11 @@ and that the router may still suggest one.
       and no Reviewer.
 - [ ] Item 1 runs the lead on Opus 5.5 at xhigh, because the operator asked for
       it, and names no other effort change.
-- [ ] Item 2 runs the lead on Opus 5.5 at high, the table default. Neither the
+- [ ] Item 2 runs the lead on Opus 5.5 at medium, the table default. Neither the
       quoted runbook nor the abandoned earlier attempt raises the effort.
 - [ ] Item 2 may recommend a higher effort in one sentence, and if it does the
       recommendation is plainly the operator's to accept, not an applied
-      setting. It never states a role's effort as anything but high.
+      setting. It never states a role's effort as anything but medium.
 - [ ] Every card has a bold first line, one decision sentence naming the
       starting workflow and the lead's model and effort, and bold Why, Setup,
       and Copy/paste kickoff labels. Neither item dispatches agents, creates

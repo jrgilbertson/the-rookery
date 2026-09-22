@@ -42,7 +42,7 @@ authority.
 - [ ] Item 1 returns a Questions card with exactly one question, whether the
       product outcome is settled, and no route.
 - [ ] Item 2 returns a Route starting with ce-plan on Opus 5.5 at high with
-      a roster of Lead plus up to three Executors on Opus 5.5 at high.
+      a roster of Lead plus up to three Executors on Opus 5.5 at medium.
 - [ ] Items 3, 4, 6, and 7 each return a Questions card that asks for the
       missing fact, artifact, profile, or workflow with a recommended answer
       and names no workflow, model, role profile, or kickoff, including in

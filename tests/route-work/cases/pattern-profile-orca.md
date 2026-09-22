@@ -38,7 +38,7 @@ must not become workflow ownership or unbounded fan-out.
 - [ ] Item 1 starts with `impeccable` as the lead alone on the Design/taste
       profile, Fable 5.1 at medium.
 - [ ] Item 2 starts with `ce-work` using Lead + Executors: a Lead on Opus 5.5
-      at high and two Executors on Opus 5.5 at high, one per package.
+      at high and two Executors on Opus 5.5 at medium, one per package.
 - [ ] Item 2's Setup names supervised orchestration through Orca, isolated
       worktrees, and tells the operator to continue with the lead in its
       terminal and close this session once orchestration is running. Its
@@ -47,9 +47,9 @@ must not become workflow ownership or unbounded fan-out.
       and invents no CLI grammar.
 - [ ] Item 2 withholds merge authority in one sentence and narrates no PR
       cadence.
-- [ ] Item 3 stays the lead alone on Opus 5.5 at high: sequential phases of one
+- [ ] Item 3 stays the lead alone on Opus 5.5 at medium: sequential phases of one
       owner, no parallel workers. Item 4 uses Executor + Reviewer, names two
-      workers total: the executor is also the lead on Opus 5.5 at high, and
+      workers total: the executor is also the lead on Opus 5.5 at medium, and
       the Reviewer is on GPT-6 Sol at high. No third lead or third model
       assignment. It hands the Reviewer the criteria and names one round
       with a stop condition.

@@ -232,7 +232,7 @@ effort, but selects one only when the operator approves it.
 | Role | Primary | Secondary | Tertiary |
 |---|---|---|---|
 | Lead | Anthropic / `claude-opus-5-5` / high | OpenAI / `gpt-6-astra` / high | — |
-| Executor | Anthropic / `claude-opus-5-5` / high | OpenAI / `gpt-6-sol` / high | xAI / `grok-4.7` / high |
+| Executor | Anthropic / `claude-opus-5-5` / medium | OpenAI / `gpt-6-sol` / high | xAI / `grok-4.7` / high |
 | Reviewer | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
 | Critic | OpenAI / `gpt-6-sol` / max | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
 | Researcher | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
@@ -323,6 +323,10 @@ or a coding-agent index, and Design/taste needs human-preference boards.
 Confirm each effort choice on at least two independent boards that report
 every effort level, such as the Artificial Analysis Intelligence Index,
 Zapier's AutomationBench, and VulcanBench, instead of relying on one index.
+For coding roles, Cognition's FrontierCode leaderboard publishes a pass rate
+and a cost per rollout for every effort level in each model's native harness,
+usually on launch day, in
+https://cognition.com/data/frontiercode-leaderboard/data.json.
 A row lists only profiles that earn a place, so some rows have fewer than
 three. A profile may rank by a capability the others lack, as xAI does for
 Scout with X search. A subscription already paid for may keep an otherwise

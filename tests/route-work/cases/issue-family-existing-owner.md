@@ -47,12 +47,12 @@ implementation authority, and proven ownership.
       asking whether implementation is authorized, with a concrete recommendation
       and no workflow, model, role profile, or kickoff.
 - [ ] Item 8 starts with `ce-work` and uses Lead + Executors with a Lead on
-      Opus 5.5 at high and Executors on Opus 5.5 at high, up to three since
+      Opus 5.5 at high and Executors on Opus 5.5 at medium, up to three since
       the prompt names no
       unit count.
 - [ ] Item 9 starts with `ce-work` and uses the same default Lead + Executors
       roster: Lead on Opus 5.5 at high, up to three Executors on Opus 5.5 at
-      high. Unproven units, integrator, and write scopes do not block the
+      medium. Unproven units, integrator, and write scopes do not block the
       pattern, are not invented, and do not collapse the route to a single
       owner. The card leaves scoping to the run by requiring a separate write
       path per Executor before parallel writes.
@@ -62,7 +62,7 @@ implementation authority, and proven ownership.
       roster, continues the implementation phase, and requests or invents no
       locator.
 - [ ] Item 6 starts with `ce-work` and the default Lead + Executors roster:
-      Lead on Opus 5.5 at high, up to three Executors on Opus 5.5 at high.
+      Lead on Opus 5.5 at high, up to three Executors on Opus 5.5 at medium.
       No supplied evidence establishes a single bounded piece. Setup and the
       kickoff last sentence each include: No named owner was proven for this
       phase; this start is still allowed. They do not emit a stored-status

@@ -34,12 +34,12 @@ promise without a grant; items 5 and 6 retain withheld/granted authority control
       with no preamble or closing narration. Cards assert no artifact, locator, or
       task fact that the prompt did not supply.
 - [ ] Item 1 starts with `ce-brainstorm` on Opus 5.5 at high and its Setup
-      lists a Lead on Opus 5.5 at high plus Executors on Opus 5.5 at high,
+      lists a Lead on Opus 5.5 at high plus Executors on Opus 5.5 at medium,
       up to three, with the pattern Lead + Executors. Why says the lead carries
       the work from discovery into implementation, so the roster covers that
       work rather than only the brainstorm.
 - [ ] Item 2 starts with `ce-debug` on GPT-6 Sol at high as the lead and
-      its Setup lists up to three Executors on Opus 5.5 at high. No supplied
+      its Setup lists up to three Executors on Opus 5.5 at medium. No supplied
       evidence establishes a single bounded fix. Why names the expected end
       of the run and that the lead carries the fix through.
 - [ ] Item 3 starts with `ce-brainstorm` and stays the lead alone, with no

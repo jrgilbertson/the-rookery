@@ -36,8 +36,9 @@ looked" surface. GitHub Releases mirror its entries.
 ### Changed
 
 - `route-work` model recommendations now use the September 21–22 releases.
-  Claude Opus 5.5 at high leads and executes, replacing Fable 5.1 as Lead
-  and Grok as the primary Executor. GPT-6 Sol at high replaces GPT-5.6 Sol,
+  Claude Opus 5.5 leads at high and executes at medium, where FrontierCode
+  shows its coding pass rate peaks, replacing Fable 5.1 as Lead and Grok as
+  the primary Executor. GPT-6 Sol at high replaces GPT-5.6 Sol,
   and the Critic moves to Sol at max because xhigh adds little for its cost.
   The Lead fallback moves from Astra at low to Astra at high, the
   Design/taste fallback to Astra at medium, and the Scout fallback is Sol
@@ -47,7 +48,8 @@ looked" surface. GitHub Releases mirror its entries.
   place, so a stated-unavailable check covers every listed profile rather
   than three. A maintainer note records how to rank profiles and pick effort
   by cost of pass on role-matched evidence, confirmed on at least two
-  independent boards that report every effort level.
+  independent boards that report every effort level, with FrontierCode's
+  per-effort data as the coding source for the Executor row.
 
 - `route-work` kickoffs that select supervised orchestration now say "Orca
   orchestration" in those words and tell the lead to use Orca's

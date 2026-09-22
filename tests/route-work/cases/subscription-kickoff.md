@@ -11,7 +11,7 @@ Provenance: The prior contract omitted a subscription-only execution constraint 
 
 ## Expected behavior
 
-- [ ] Starts ce-plan with Astra at low as secondary Lead and three GPT-6 Sol high Executors, the secondary Executor profile.
+- [ ] Starts ce-plan with Astra at high as secondary Lead and three GPT-6 Sol high Executors, the secondary Executor profile.
 - [ ] Copy/paste kickoff requires assigned providers' official CLIs with subscription authentication and prohibits API-key billing, including fallback.
 - [ ] Kickoff requires reporting a blocker if subscription access cannot be established or quota is exhausted.
 - [ ] Does not probe credentials or availability, invoke orchestration, or begin execution.

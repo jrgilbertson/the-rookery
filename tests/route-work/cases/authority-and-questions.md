@@ -48,7 +48,7 @@ authority.
       and names no workflow, model, role profile, or kickoff, including in
       its recommendation.
 - [ ] Item 5 keeps ce-plan, selects the secondary Lead profile, Astra at
-      low, and says the primary is unavailable without calling the secondary
+      high, and says the primary is unavailable without calling the secondary
       unverified.
 - [ ] Item 8 renders two Route cards. The grill states its supplied
       document-write limit; the implementation grants implementation only and

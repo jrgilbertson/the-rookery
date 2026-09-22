@@ -231,12 +231,12 @@ effort, but selects one only when the operator approves it.
 
 | Role | Primary | Secondary | Tertiary |
 |---|---|---|---|
-| Lead | Anthropic / `claude-opus-5-5` / high | OpenAI / `gpt-6-astra` / low | — |
+| Lead | Anthropic / `claude-opus-5-5` / high | OpenAI / `gpt-6-astra` / high | — |
 | Executor | Anthropic / `claude-opus-5-5` / high | OpenAI / `gpt-6-sol` / high | xAI / `grok-4.7` / high |
 | Reviewer | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
 | Critic | OpenAI / `gpt-6-sol` / max | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
 | Researcher | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
-| Scout | xAI / `grok-4.7` / high | OpenAI / `gpt-6-sol` / medium | — |
+| Scout | xAI / `grok-4.7` / high | OpenAI / `gpt-6-sol` / high | — |
 | Design/taste | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-6-astra` / low | — |
 
 ## Return one portable response

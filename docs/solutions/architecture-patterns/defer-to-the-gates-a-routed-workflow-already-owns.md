@@ -51,37 +51,34 @@ lines that define that behavior. Then pick one of three outcomes:
    against source. If it is false, remove the clause and put the real
    behavior in front of the operator for a decision.
 
-The workflow gates that the route-work contract had restated, with their
-defining lines. These paths are inside the installed Compound Engineering
-plugin's `skills/` directory (version 3.28.1), not this repository, so line
-numbers drift with plugin releases:
+The workflow gates that the route-work contract had restated, with the
+Compound Engineering skill file that defines each:
 
 - **`ce-plan` never implements.** "Research, decide, and write the plan —
   never implement. Do not write production code, run tests..."
-  (`ce-plan/SKILL.md:15`). Implementation starts only through its handoff to
-  `ce-work` (`ce-plan/SKILL.md:31`, `:60`).
+  (`ce-plan/SKILL.md`). Implementation starts only through its handoff to
+  `ce-work` (`ce-plan/SKILL.md`).
 - **`ce-work` derives and schedules units.** Parallel dispatch of independent
   dependency layers is its default, driven by the plan's `Dependencies` and
-  `Files` (`ce-work/references/execution-strategy.md:5`), gated by its
-  Parallel Safety Check (`:13-22`), which also caps concurrency at a bounded batch (`:20`).
+  `Files` (`ce-work/references/execution-strategy.md`), gated by its Parallel
+  Safety Check, which also caps concurrency at a bounded batch.
 - **`ce-work` picks isolation.** "Isolation for native workers is the
-  harness's job" (`execution-strategy.md:24-27`), with a shared-workspace
-  wave contract for the fallback (`:49-55`).
-- **`ce-work` owns canonical commits.** Shared-workspace workers never
-  commit, and worktree-isolated workers commit only on their own branch,
-  which the orchestrator merges; "the orchestrator owns staging, committing,
-  and the authoritative test runs" (`execution-strategy.md:43`, `:46`, `:53`,
-  `:65`; `ce-work/SKILL.md:14`).
-- **`ce-work` runs its own review.** It reviews the diff with
-  `ce-code-review` as the single path and cannot finish shipping without a
-  completed review receipt or an explicit skip phrase
-  (`ce-work/references/shipping-workflow.md:29-31`), then applies justified
-  fixes itself (`:39`).
+  harness's job" (`execution-strategy.md`), with a shared-workspace wave
+  contract for the fallback.
+- **`ce-work` owns canonical commits.** Shared-workspace workers never commit,
+  and worktree-isolated workers commit only on their own branch, which the
+  orchestrator merges; "the orchestrator owns staging, committing, and the
+  authoritative test runs" (`execution-strategy.md`; `ce-work/SKILL.md`).
+- **`ce-work` runs its own review.** It reviews the diff with `ce-code-review`
+  as the single path and cannot finish shipping without a completed review
+  receipt or an explicit skip phrase
+  (`ce-work/references/shipping-workflow.md`), then applies justified fixes
+  itself.
 - **`ce-work` opens the PR.** The shipping phase loads `ce-commit-push-pr` to
-  commit, push, and open the PR without asking (`shipping-workflow.md:85`),
-  unless the project names its own shipping process (`:83`). The one
-  exception is a branch carrying unpublished commits no open PR covers,
-  where it only commits locally (`:81`).
+  commit, push, and open the PR without asking (`shipping-workflow.md`),
+  unless the project names its own shipping process. The one exception is a
+  branch carrying unpublished commits no open PR covers, where it only commits
+  locally.
 
 What stays in the contract is what no workflow supplies: which model and
 effort each seat runs on, the subscription-billing constraint, the operator's
@@ -107,7 +104,7 @@ as soon as either changes. It fails in three concrete ways:
 - **A false rationale hides a real decision.** A draft rule justified dropping
   grants with "the workflows ask before each step," but `ce-work` opens the PR
   without asking. Checking the claim against source put that behavior in front
-  of the operator, who accepted it.
+  of the operator for a decision.
 
 ## When to Apply
 
@@ -139,7 +136,7 @@ Two checks catch a restated gate before it ships:
 
 1. **Fresh falsification pass.** Give a fresh-context agent the contract and
    the workflow sources and ask it to break one invariant with a concrete
-   sequence. This is how the false "workflows ask first" rationale surfaced.
+   sequence.
 2. **Probe prompt through a fresh runner.** Write a prompt that hits exactly
    the rule's edge, run it through a fresh subagent that loads only the
    package, and have a separate grader read the card against a prediction

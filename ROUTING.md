@@ -263,7 +263,7 @@ as ordinary names, such as "Fable 5.1 at medium".
 
     **Copy/paste kickoff**
 
-    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the coordinator on [model] at [effort]. [Each other role with its model, effort, and count.] [Subscription billing constraint.] [In Coordinator + Executors: you write no unit changes and keep the plan, unit list, status, and briefs in files a fresh coordinator session can resume from.] [Orchestration and placement sentences only when they differ from the default.] Treat [the supplied artifact or request] as the source of truth. [Supplied authority in one sentence, only when the operator supplied it.] [Occupancy sentence last, only when it applies.]
+    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the coordinator on [model] at [effort]. [Each other role with its model, effort, and count.] [Subscription billing constraint.] [In Coordinator + Executors: you write no unit changes.] [Orchestration and placement sentences only when they differ from the default.] Treat [the supplied artifact or request] as the source of truth. [Supplied authority in one sentence, only when the operator supplied it.] [Occupancy sentence last, only when it applies.]
 
 The decision line never names a role; roles live in Setup. The kickoff states
 each worker's model and effort as settings to apply. Where a harness makes

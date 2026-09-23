@@ -35,21 +35,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
-- `route-work` model recommendations now use the September 21–22 releases.
-  Claude Opus 5.5 plans at high and executes at medium, where FrontierCode
-  shows its coding pass rate peaks, replacing Fable 5.1 for planning and Grok
-  as the primary Executor. GPT-6 Sol at high replaces GPT-5.6 Sol,
-  and the Critic moves to Sol at max because xhigh adds little for its cost.
-  The planning fallback moves from Astra at low to Astra at high, the
-  Design/taste fallback to Astra at medium, and the Scout fallback is Sol
-  at high.
-  Grok 4.7 stays the primary Scout for X search and keeps a last slot only
-  where it still does the work. Rows now list only the profiles that earn a
-  place, so a stated-unavailable check covers every listed profile rather
-  than three. A maintainer note records how to rank profiles and pick effort
-  by cost of pass on role-matched evidence, confirmed on at least two
-  independent boards that report every effort level, with FrontierCode's
-  per-effort data as the coding source for the Executor row.
+- `route-work` model recommendations now use the September 21–22 releases:
+  Claude Opus 5.5, GPT-6 Sol and Astra, and Grok 4.7, with rows that list only
+  the models that earn a place. A maintainer note in `ROUTING.md` records the
+  method: order by cost of pass and pick the cheapest effort near each model's
+  ceiling, confirmed on at least two independent boards.
 
 - `route-work` replaces the lead with a coordinator seat and the Lead profile
   with a Planner profile. The coordinator runs the starting workflow, owns the
@@ -59,18 +49,17 @@ looked" surface. GitHub Releases mirror its entries.
   Researcher for `ce-debug`; Design/taste for `impeccable`. Dispatching
   workers no longer changes that profile. Routes now start as Single owner,
   and Coordinator + Executors applies only when supplied evidence establishes
-  independent units. In that pattern the coordinator writes no unit changes
-  and keeps resumable plan and status files. Subagents an Executor starts
-  through its harness or workflow are not routed workers. Kickoffs state each
-  worker's effort, and a worker whose effort differs from the coordinator's
-  starts as a subagent or separate session, because Claude Code agent-team
-  teammates always follow the coordinator's effort. The
-  Planner row is labeled a judgment call until a planning benchmark exists.
-  `repo-gardener`, PR readiness, and CONCEPTS now use Coordinator for the
-  seat once called Lead.
+  independent units. In that pattern the coordinator writes no unit changes.
+  Subagents an Executor starts through its harness or workflow are not routed
+  workers. Kickoffs state each worker's effort, and a worker whose effort
+  differs from the coordinator's starts as a subagent or separate session,
+  because Claude Code agent-team teammates always follow the coordinator's
+  effort. The Planner row is labeled a judgment call until a planning
+  benchmark exists. `repo-gardener`, PR readiness, and CONCEPTS now use
+  Coordinator for the seat once called Lead.
 
 - `route-work` kickoffs that select supervised orchestration now say "Orca
-  orchestration" in those words and tell the lead to use Orca's
+  orchestration" in those words and tell the coordinator to use Orca's
   `orchestration` skill when it is installed, so the receiving session
   invokes that skill. Cards still carry no Orca commands.
 

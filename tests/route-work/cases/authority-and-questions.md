@@ -52,8 +52,9 @@ authority.
       high, and says the primary is unavailable without calling the secondary
       unverified.
 - [ ] Item 8 renders two Route cards. The grill states its supplied
-      document-write limit; the implementation grants implementation only and
-      lists no unsupplied permissions.
+      document-write limit and has no merge line. The `ce-work` card states no
+      implementation grant, ends its kickoff with "Don't merge without human approval."
+      and lists no other permissions.
 - [ ] Item 9 returns one Questions card with exactly two numbered questions,
       owner order first and orchestration versus handoff second, each with a
       concrete recommended answer that names a workstream or a choice.

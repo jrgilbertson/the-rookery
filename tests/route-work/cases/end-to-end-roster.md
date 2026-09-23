@@ -47,8 +47,9 @@ are established.
       through.
 - [ ] Item 3 starts with `ce-brainstorm` and stays the coordinator alone, with no
       Executors and nothing about authority.
-- [ ] Items 1 and 2 state the supplied merge or pull-request authority in one
-      sentence and enumerate no other prohibitions.
+- [ ] Items 1 and 2 state the supplied implementation and pull-request grant in
+      one sentence, end the kickoff's authority text with
+      "Don't merge without human approval.", and enumerate no other prohibitions.
 - [ ] Items 4–6 start with `ce-plan` on Opus 5.5 at high. Expected
       implementation alone adds no Executors and grants no permission to
       implement; defaults are labeled and no concrete units, owners or write

@@ -58,6 +58,13 @@ looked" surface. GitHub Releases mirror its entries.
   benchmark exists. `repo-gardener`, PR readiness, and CONCEPTS now use
   Coordinator for the seat once called Lead.
 
+- `route-work` kickoffs are shorter. A kickoff whose run implements ends with
+  "Don't merge without human approval." unless the operator granted merge,
+  cards leave off grants the starting workflow already implies, and stated
+  limits stay. Every worker runs in the current worktree, with separate write
+  paths for parallel Executors. The Coordinator + Executors kickoff says in
+  plain words that the Executors write the units' code.
+
 - `route-work` kickoffs that select supervised orchestration now say "Orca
   orchestration" in those words and tell the coordinator to use Orca's
   `orchestration` skill when it is installed, so the receiving session

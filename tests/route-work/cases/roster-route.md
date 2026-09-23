@@ -32,9 +32,8 @@ that adding a Reviewer could exceed the five-worker concurrency ceiling.
       ce-plan on Opus 5.5 at high" and names no role. Why says planning
       comes first and the coordinator carries the work into implementation.
 - [ ] Item 1's Setup lists a coordinator on Opus 5.5 at high and two Executors on
-      Opus 5.5 at medium, one per named module, and no Reviewer. It states that
-      merge authority was not supplied and mentions no orchestration or plan
-      storage. Isolation may be named for concurrent Executor writes.
+      Opus 5.5 at medium, one per named module, and no Reviewer. It mentions no
+      orchestration, worktree isolation, or plan storage.
 - [ ] Item 2's Setup adds a Reviewer on GPT-6 Sol at high, hands it the
       acceptance criteria, and keeps the rest of item 1's roster.
 - [ ] Item 3 budgets at most five concurrent workers including the coordinator and
@@ -42,8 +41,8 @@ that adding a Reviewer could exceed the five-worker concurrency ceiling.
       rather than dropped. Setup and kickoff agree on the complete roster.
 - [ ] Each kickoff starts ce-plan from the issue URL, states the coordinator's model
       and effort, repeats every other role with model, effort, and count,
-      treats the issue as the source of truth, and withholds merge in one
-      sentence. No kickoff narrates phases, checkpoints, PR cadence, or a
+      treats the issue as the source of truth, and ends its authority text with
+      "Don't merge without human approval." No kickoff narrates phases, checkpoints, PR cadence, or a
       stopping point for the coordinator's work; the Reviewer's one-round guardrail
       is expected, not a stopping point.
 - [ ] The trace contains only reads of the installed package.

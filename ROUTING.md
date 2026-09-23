@@ -20,8 +20,8 @@ planning, debugging, design, implementation, or issue request without that
 intent proceeds through its normal workflow and does not produce a card.
 
 One routing attempt may span multiple conversational turns. Ask only questions
-that change the owner, pattern, profile, structured orchestration, ownership
-handoff, or placement. Use supplied evidence and contract defaults before
+that change the owner, pattern, profile, structured orchestration, or ownership
+handoff. Use supplied evidence and contract defaults before
 asking. Stop asking once no open question would change the card.
 
 Put product discovery, diagnosis, planning, and design on those owners' route
@@ -51,21 +51,25 @@ itself as the kickoff's source of truth.
 The router assesses supplied evidence, renders one card, and exits without
 changing state.
 
-Copy only authority the operator supplied. Artifact approval is task state,
-not an authority grant. An operator request to implement the work, including a
+Copy only authority the operator supplied. Artifact approval is task state, not
+an authority grant. An operator request to implement the work, including a
 request to route the kickoff to implement it, is implementation authorization.
 When asking whether implementation is authorized, do not treat artifact
 approval as that grant. An implementation kickoff never infers permission to
 commit, push, open a pull request, publish, merge, or change external state.
-Authorized document writes use repository-defined locations. Supplied
-authority is the only thing that bounds how far the coordinator carries the
-work; the card never narrates phases, checkpoints, or stopping points beyond
-it, and never says where plans are stored. Never list permissions the operator
-did not mention, even to say they are not inferred. When the operator supplied
-a grant or an explicit limit, state it on the card in one sentence; an
-operator saying some authority is withheld or not supplied is an explicit
-limit, and it is never dropped. When the operator said nothing about
-authority, say nothing about it.
+Authorized document writes use repository-defined locations. Supplied authority
+is the only thing that bounds how far the coordinator carries the work; the
+card never narrates phases, checkpoints, or stopping points beyond it, and
+never says where plans are stored. Unless the operator granted merge, every
+kickoff whose run implements ends its authority text with "Don't merge without
+human approval." When the operator withheld merge, that line is the limit's one
+sentence. Beyond it, never list permissions the operator did not mention, even
+to say they are not inferred. Leave off a grant the starting workflow already
+implies, such as implementation on a `ce-work` start (no other start implies
+it); state any other supplied grant in one sentence. When the operator states a
+limit, including saying some authority is withheld or not supplied, such as a
+grill without document-write authority, state it on the card in one sentence
+and never drop it. Otherwise say nothing about authority.
 
 ## Handle parent, child, and existing work
 
@@ -170,20 +174,20 @@ not give it ownership. If the operator asked for an advisor, mention it in
 Setup. Subagents, forks, teams, and background sessions are how work runs, not
 which pattern to recommend.
 
-## Keep orchestration and placement separate
+## Keep orchestration and ownership separate
 
-Workflow ownership, structured orchestration, ownership handoff, and worktree
-placement are independent decisions.
+Workflow ownership, structured orchestration, and ownership handoff are
+independent decisions.
 
 | Axis | Choice | Meaning |
 |---|---|---|
 | Structured orchestration | None | Continue without structured orchestration |
 | Structured orchestration | Supervised through Orca | The current coordinator remains the sole human-facing owner and integrator; acting on this recommendation requires Orca's installed version-matched orchestration contract |
 | Ownership | Current owner or full handoff | Full handoff transfers human-facing ownership to the receiving worktree or agent; the sender gains no monitoring duty |
-| Placement | Current worktree or isolated worktree | Use isolation for concurrent mutation; disjoint write scopes are still required before parallel writes |
 
 The selected starting workflow remains the owner. Structured orchestration is
-optional and currently depends on Orca; ordinary worktree placement does not.
+optional and currently depends on Orca. Every worker runs in the current
+worktree, and separate write paths keep parallel writes apart.
 When supervised orchestration is selected, say so in Setup and the kickoff,
 tell the operator to follow Orca's installed contract, and add to Setup: once
 orchestration is running, continue with the coordinator in its terminal and
@@ -191,7 +195,6 @@ close this session. The kickoff's orchestration sentence says "Orca
 orchestration" in those words and tells the coordinator to use Orca's
 `orchestration` skill when it is installed, because the receiving session
 matches that phrase to the skill. Do not copy Orca commands into the card.
-Read-only scouts and fresh-context reviewers can work in the current worktree.
 
 ## Select profiles
 
@@ -259,20 +262,20 @@ as ordinary names, such as "Fable 5.1 at medium".
 
     **Setup**
 
-    [The roster: every role in the pattern with its model and effort, stated even when it repeats the decision line. The Executor count. The pattern, named in a sentence, when it is not Single owner. Orchestration and placement only when they differ from the default. Authority only when the operator supplied it. An advisor, the occupancy sentence, or a profile fallback only when it applies.]
+    [The roster: every role in the pattern with its model and effort, stated even when it repeats the decision line. The Executor count. The pattern, named in a sentence, when it is not Single owner. Orchestration only when it differs from the default. Authority only as the authority rules require. An advisor, the occupancy sentence, or a profile fallback only when it applies.]
 
     **Copy/paste kickoff**
 
-    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the coordinator on [model] at [effort]. [Each other role with its model, effort, and count.] [Subscription billing constraint.] [In Coordinator + Executors: you write no unit changes.] [Orchestration and placement sentences only when they differ from the default.] Treat [the supplied artifact or request] as the source of truth. [Supplied authority in one sentence, only when the operator supplied it.] [Occupancy sentence last, only when it applies.]
+    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the coordinator on [model] at [effort]. [Each other role with its model, effort, and count.] [Subscription billing constraint.] [In Coordinator + Executors: leave the units' code to the Executors; you plan, dispatch, and integrate.] [Orchestration sentence only when it differs from the default.] Treat [the supplied artifact or request] as the source of truth. [Authority as the authority rules require, ending with the no-merge line when the run implements.] [Occupancy sentence last, only when it applies.]
 
 The decision line never names a role; roles live in Setup. The kickoff states
 each worker's model and effort as settings to apply. Where a harness makes
 workers follow the coordinator's effort, as Claude Code agent-team teammates
 do, and a worker's effort differs from the coordinator's, the kickoff has the
 coordinator start that worker as a subagent or a separate session instead. A
-single-owner Setup omits placement and orchestration when they are the
-default. The kickoff must stand alone when pasted, so it repeats the roster,
-supplied authority, and any occupancy sentence.
+single-owner Setup omits orchestration when it is the default. The kickoff
+must stand alone when pasted, so it repeats the roster, authority, and any
+occupancy sentence.
 
 ### Resume
 
@@ -293,7 +296,7 @@ A Resume card carries no kickoff.
     Recommended: [one concrete answer the operator can accept in a word]. [One-line reason.]
 
 Order questions by routing impact: owner, then pattern, then profile, then
-orchestration and placement. Batch only independent questions; a dependent
+orchestration and ownership handoff. Batch only independent questions; a dependent
 question waits for its prerequisite. Every question carries a recommendation
 on its own line: one concrete answer, the way a grill recommends, never a test
 for the operator to apply. Use the contract default where one exists; where

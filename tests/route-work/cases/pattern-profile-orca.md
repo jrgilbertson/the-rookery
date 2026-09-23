@@ -41,14 +41,15 @@ must not become workflow ownership or unbounded fan-out.
       coordinator on Opus 5.5 at medium (the Executor profile) and two
       Executors on Opus 5.5 at medium, one per package. The coordinator
       writes no package changes.
-- [ ] Item 2's Setup names supervised orchestration through Orca, isolated
-      worktrees, and tells the operator to continue with the coordinator in its
+- [ ] Item 2's Setup names supervised orchestration through Orca, names no
+      worktree isolation, and tells the operator to continue with the coordinator in its
       terminal and close this session once orchestration is running. Its
       kickoff names both roles, says "Orca orchestration" in those words,
       tells the coordinator to use the `orchestration` skill when it is installed,
       and invents no CLI grammar.
-- [ ] Item 2 withholds merge authority in one sentence and narrates no PR
-      cadence.
+- [ ] Item 2's kickoff ends its authority text with "Don't merge without human approval."
+      It adds no separate merge sentence and narrates no PR cadence. Items 3
+      and 4 state no implementation grant, since `ce-work` implies it.
 - [ ] Item 3 stays the coordinator alone on Opus 5.5 at medium: sequential phases of one
       owner, no parallel workers. Item 4 uses Executor + Reviewer, names two
       workers total: the executor is also the coordinator on Opus 5.5 at medium, and

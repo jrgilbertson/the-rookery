@@ -74,12 +74,13 @@ implementation authority does not add Executors.
       gap does not displace the directly named child.
 - [ ] All conclusions use supplied family and ownership state only. Missing
       owner evidence leaves ownership unknown; it does not prove a vacant phase.
-- [ ] Only items 6, 8, and 9 carry implementation authority, supplied by their
-      direct implementation requests. Their Setup and standalone kickoff
-      preserve it without adding commit, push, PR, or other external authority.
-      Artifact approval alone never becomes permission to implement.
+- [ ] Only items 6, 8, and 9 implement, from their direct implementation
+      requests. As `ce-work` starts they state no implementation grant, end the
+      kickoff's authority text with "Don't merge without human approval.", and add
+      no commit, push, PR, or other external authority. Artifact approval alone
+      never becomes permission to implement.
 - [ ] Every route has a bold first line, one decision sentence naming the
       starting workflow and the coordinator's model and effort, and bold Why, Setup,
       and Copy/paste kickoff labels. Setup lists every role with model and
-      effort. Default routes name no IDE and no availability, and name a
-      worktree only where parallel Executors write concurrently.
+      effort. Default routes name no IDE and no availability, and name no
+      worktree isolation.

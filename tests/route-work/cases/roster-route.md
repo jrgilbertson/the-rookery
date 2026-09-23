@@ -2,7 +2,7 @@
 
 Provenance: user feedback — a plan-only route was too limiting; the card must
 estimate the pattern and roster for the whole approach and let supplied
-authority alone bound how far the lead carries it. A later review found
+authority alone bound how far the coordinator carries it. A later review found
 that adding a Reviewer could exceed the five-worker concurrency ceiling.
 
 ## Prompt

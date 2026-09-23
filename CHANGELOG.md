@@ -62,7 +62,9 @@ looked" surface. GitHub Releases mirror its entries.
   independent units. In that pattern the coordinator writes no unit changes
   and keeps resumable plan and status files. Subagents an Executor starts
   through its harness or workflow are not routed workers. Kickoffs state each
-  worker's effort so workers don't silently inherit the coordinator's. The
+  worker's effort, and a worker whose effort differs from the coordinator's
+  starts as a subagent or separate session, because Claude Code agent-team
+  teammates always follow the coordinator's effort. The
   Planner row is labeled a judgment call until a planning benchmark exists.
   `repo-gardener`, PR readiness, and CONCEPTS now use Coordinator for the
   seat once called Lead.
@@ -91,8 +93,8 @@ looked" surface. GitHub Releases mirror its entries.
   `ce-test-browser`, `checking-pr-readiness`, `ce-commit-push-pr`, and
   `ce-babysit-pr`, with
   `checking-merge-readiness` giving the final verdict in one plain
-  morning report. Role names match `ROUTING.md`: Lead, Executor, Scout,
-  Reviewer. An owner invoking the skill without a policy file gets
+  morning report. Role names match `ROUTING.md`: Coordinator, Executor,
+  Scout, Reviewer. An owner invoking the skill without a policy file gets
   first-use setup that writes the file after the owner approves it in a
   later reply.
 
@@ -103,9 +105,6 @@ looked" surface. GitHub Releases mirror its entries.
   read and recovery limits remain.
 - Route kickoffs now require official provider CLIs with subscription
   authentication and report a blocker instead of using API-key billing.
-  Astra at low replaces Sol at high as the secondary Lead profile.
-  Sol at medium replaces Terra at high as the tertiary Executor profile.
-  Astra at low replaces Sol at high as the secondary Design/taste profile.
 
 - Routing templates now use square-bracket placeholders so Orca can open the
   routing contract in its rich Markdown editor.
@@ -125,9 +124,9 @@ looked" surface. GitHub Releases mirror its entries.
   default publisher. Title and body follow Compound Engineering. After
   babysit looks merge-ready, cautiously looks ready, or pipeline `success`,
   a non-Executor run starts `checking-merge-readiness` in a fresh Reviewer
-  that owns the merge menu wait; an Executor reports to the Lead, which
-  starts that Reviewer.
-  Approve 1 does not merge. The Lead authorizes an Executor's reply 1
+  that owns the merge menu wait; an Executor reports to the Coordinator,
+  which starts that Reviewer.
+  Approve 1 does not merge. The Coordinator authorizes an Executor's reply 1
   only when every changed path is inside the unit's allowed files.
   There is no gardener-only publisher.
 - `checking-simplicity` now treats "check for simplicity as well" and

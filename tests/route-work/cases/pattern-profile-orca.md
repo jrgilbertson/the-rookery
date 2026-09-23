@@ -66,4 +66,6 @@ must not become workflow ownership or unbounded fan-out.
       and Copy/paste kickoff labels, and a kickoff naming the starting
       workflow, every role with model and effort, the source request, and
       orchestration only when it differs from the default. Orca appears only
-      in item 2, and no item mentions availability or plan storage.
+      in item 2, and no item mentions availability or names where plans are
+      stored. Item 2 may tell the coordinator to keep resumable plan and
+      status files, as the Coordinator + Executors pattern requires.

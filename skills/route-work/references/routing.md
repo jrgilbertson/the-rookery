@@ -276,11 +276,13 @@ IDs as ordinary names, such as "Fable 5.1 at medium".
     Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the coordinator on [model] at [effort]. [Each other role with its model, effort, and count.] [Subscription billing constraint.] [Orchestration and placement sentences only when they differ from the default.] Treat [the supplied artifact or request] as the source of truth. [Supplied authority in one sentence, only when the operator supplied it.] [Occupancy sentence last, only when it applies.]
 
 The decision line never names a role; roles live in Setup. The kickoff states
-each worker's model and effort as settings to apply, because some harnesses
-otherwise give workers the coordinator's effort. A single-owner
-Setup omits placement and orchestration when they are the default. The
-kickoff must stand alone when pasted, so it repeats the roster, supplied
-authority, and any occupancy sentence.
+each worker's model and effort as settings to apply. Where a harness makes
+workers follow the coordinator's effort, as Claude Code agent-team teammates
+do, and a worker's effort differs from the coordinator's, the kickoff has the
+coordinator start that worker as a subagent or a separate session instead. A
+single-owner Setup omits placement and orchestration when they are the
+default. The kickoff must stand alone when pasted, so it repeats the roster,
+supplied authority, and any occupancy sentence.
 
 ### Resume
 

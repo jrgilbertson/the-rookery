@@ -36,9 +36,8 @@ that adding a Reviewer could exceed the five-worker concurrency ceiling.
       orchestration, worktree isolation, or plan storage.
 - [ ] Item 2's Setup adds a Reviewer on GPT-6 Sol at high, hands it the
       acceptance criteria, and keeps the rest of item 1's roster.
-- [ ] Item 3 budgets at most five concurrent workers including the coordinator and
-      Reviewer: at most three Executors, with the remaining modules queued
-      rather than dropped in Setup.
+- [ ] Item 3's Setup lists one Executor per named module, five in all, plus the
+      Reviewer, with no concurrency cap or queue.
 - [ ] Each kickoff starts ce-plan from the issue URL, states the coordinator's model
       and effort, repeats the Reviewer's model and effort where there is one,
       gives the implementation workers' model and effort without a count or

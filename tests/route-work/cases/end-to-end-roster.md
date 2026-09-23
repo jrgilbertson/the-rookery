@@ -55,8 +55,9 @@ are established.
       implementation alone adds no Executors and grants no permission to
       implement; defaults are labeled and no concrete units, owners or write
       scopes are invented.
-- [ ] Item 4 does not promise unconditional implementation by this coordinator or
-      instruct a receiver to implement without a grant. Because the run may
+- [ ] Item 4's kickoff does not instruct the receiver to implement; ce-plan's
+      own handoff gates implementation, so Why may say the coordinator carries
+      the work into it. Because the run may
       reach implementation, its kickoff ends with "Don't merge without human
       approval." and adds no other authority sentence, invented permission, or
       limit.

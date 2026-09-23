@@ -20,9 +20,8 @@ planning, debugging, design, implementation, or issue request without that
 intent proceeds through its normal workflow and does not produce a card.
 
 One routing attempt may span multiple conversational turns. Ask only questions
-that change the owner, pattern, profile, structured orchestration, or ownership
-handoff. Use supplied evidence and contract defaults before asking. Stop asking
-once no open question would change the card.
+that would change the card, and use supplied evidence and contract defaults
+first.
 
 ## Inspect only supplied evidence
 
@@ -50,12 +49,11 @@ changing state or persisting routing state outside the visible conversation.
 Never add authority the operator did not supply. An operator request to
 implement the work, including a request to route the kickoff to implement it,
 is implementation authorization. Artifact approval is task state, not an
-authority grant, including when asking whether implementation is authorized.
+authority grant.
 
 Never list permissions the operator did not mention, even to say they are not
-inferred. Supplied authority is the only thing that bounds how far the
-coordinator carries the work; the card never narrates phases, checkpoints, or
-stopping points beyond it, and never says where plans are stored.
+inferred. The card never narrates phases, checkpoints, or stopping points, and
+never says where plans are stored.
 
 Leave supplied grants off the card. When the operator states a limit, including
 saying some authority is withheld or not supplied, such as a grill without
@@ -77,12 +75,8 @@ or switch the card to Resume; apply it before the owner table.
 | A complete current family is supplied, but parent integration, sequencing, or shared-surface planning is missing | Route the parent to `ce-plan` |
 | An approved parent plan and implementation authorization are supplied | Route to `ce-work` |
 | An approved parent plan is supplied, but implementation authorization is absent | Return Questions to establish implementation authority |
-| A child is named directly | Route from what needs to happen first for that child while preserving supplied parent constraints |
+| A child is named directly | Route from what needs to happen first for that child while preserving supplied parent constraints, unless supplied evidence says unresolved family state blocks it |
 | The requested phase already has a proven active owner | Return a Resume card and no duplicate kickoff unless replacement or restart is explicit |
-
-A proven active owner of the requested phase takes precedence. A directly named
-child uses the owner table unless supplied evidence says unresolved family
-state blocks it.
 
 A named in-flight owner is proven only by an operator statement or supplied
 artifact that names a specific owner for the requested phase. A stated
@@ -132,9 +126,8 @@ Name the role for each worker, and count workers, not steps.
 Start with Single owner, including when implementation is expected. Supplied
 evidence establishes independent units when it names units that need separate
 write paths, such as named modules, or when a plan states its units are
-independent. Expected implementation alone is not evidence of independent
-units. A stated worktree, branch, pull request, worker, or parallel effort is
-occupancy evidence, not evidence of independent units.
+independent. A stated worktree, branch, pull request, worker, or parallel
+effort is occupancy evidence, not evidence of independent units.
 
 | Pattern | Roles | Use when | Guardrail |
 |---|---|---|---|
@@ -147,13 +140,8 @@ brainstorm, grill, debug, or plan that implementation will follow. Do not ask
 whether implementation follows; when nothing says so, size for the starting
 workflow and invite the override in Why.
 
-Budget five concurrent workers total, including the coordinator and Reviewer.
 Use one Executor per named or counted unit, or up to three when evidence
-establishes independent units without naming or counting them, capped by the
-remaining slots. Queue units that do not fit; keep all requested work.
-
-Use Critic in the Reviewer role only when the judgment is adversarial. Use
-Design/taste as the judge only when the finish line is taste.
+establishes independent units without naming or counting them.
 
 An advisor only gathers bounded evidence. Do not count it as a worker and do
 not give it ownership.
@@ -163,11 +151,11 @@ not give it ownership.
 Workflow ownership, structured orchestration, and ownership handoff are
 independent decisions.
 
-| Axis | Choice | Meaning |
-|---|---|---|
-| Structured orchestration | None | Continue without structured orchestration |
-| Structured orchestration | Supervised through Orca | The current coordinator remains the sole human-facing owner and integrator; acting on this recommendation requires Orca's installed version-matched orchestration contract |
-| Ownership | Current owner or full handoff | Full handoff transfers human-facing ownership to the receiving worktree or agent; the sender gains no monitoring duty |
+Supervised orchestration through Orca keeps the current coordinator as the sole
+human-facing owner and integrator, and acting on it requires Orca's installed
+version-matched orchestration contract. A full handoff transfers human-facing
+ownership to the receiving worktree or agent and leaves the sender no
+monitoring duty.
 
 When supervised orchestration is selected, say so in Setup and the kickoff,
 tell the operator to follow Orca's installed contract, and add to Setup: once
@@ -214,10 +202,10 @@ effort, but selects one only when the operator approves it.
 | Planner | Brainstorming, grilling, planning, and issue-graph work that decides what happens next | Anthropic / `claude-opus-5-5` / high | OpenAI / `gpt-6-astra` / high | — |
 | Executor | Implements the assigned change and revises it | Anthropic / `claude-opus-5-5` / medium | OpenAI / `gpt-6-sol` / high | xAI / `grok-4.7` / high |
 | Reviewer | Independent evaluators and named review or verification gates | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
-| Critic | Independent adversarial pressure-test advisors or evaluators; not the owning `grill-with-docs` route | OpenAI / `gpt-6-sol` / max | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
+| Critic | Reviewer or advisor only when the judgment is adversarial; not the owning `grill-with-docs` route | OpenAI / `gpt-6-sol` / max | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
 | Researcher | Causal investigation inside `ce-debug` and evidence-backed synthesis | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
 | Scout | Bounded evidence gathering and advisor research | xAI / `grok-4.7` / high | OpenAI / `gpt-6-sol` / high | — |
-| Design/taste | `impeccable` and design-quality evaluation | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-6-astra` / medium | — |
+| Design/taste | `impeccable`, and the judge when the finish line is taste | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-6-astra` / medium | — |
 
 ## Return one portable response
 
@@ -237,7 +225,7 @@ ordinary names, such as "Fable 5.1 at medium".
 
     **Why**
 
-    [One or two sentences on what needs to happen first and why this pattern fits. Name where the run is expected to end, which the roster was sized for, and say when the coordinator carries the work into implementation. Name any pattern or roster default the route relied on instead of supplied evidence, so the operator can override it in one reply.]
+    [One or two sentences on what needs to happen first and why this pattern fits. Name where the run is expected to end, which the roster was sized for; when the run reaches implementation, say that the coordinator carries the work into it. When the route relies on a pattern or roster default instead of supplied evidence, name the default and invite the override in one reply, such as naming independent units to add Executors.]
 
     **Setup**
 
@@ -250,9 +238,9 @@ ordinary names, such as "Fable 5.1 at medium".
 The decision line never names a role; roles live in Setup. The kickoff states
 each worker's model and effort as settings to apply and leaves how workers are
 started to the workflow and harness. The implementation-workers sentence keeps
-its template wording exactly; the Executor count, cap, queue, and units stay in
-Setup. The kickoff must stand alone when pasted, so it repeats every role's
-model and effort, authority, and any occupancy sentence.
+its template wording exactly; the Executor count and units stay in Setup. The
+kickoff must stand alone when pasted, so it repeats every role's model and
+effort, authority, and any occupancy sentence.
 
 ### Resume
 
@@ -274,14 +262,12 @@ A Resume card carries no kickoff.
 
 Order questions by routing impact: owner, then pattern, then profile, then
 orchestration and ownership handoff. Batch only independent questions; a
-dependent question waits for its prerequisite. Every question carries a
-recommendation on its own line: one concrete answer, the way a grill
-recommends, never a test for the operator to apply. Use the contract default
-where one exists; where the operator holds the fact, recommend the answer that
-lets routing proceed under the defaults. A Questions card names no workflow,
-model, profile, or kickoff. When the starting owner falls outside the seven,
-recommend choosing from the supported-owner table linked above; that pointer is
-the concrete answer there, since the card may name no workflow.
+dependent question waits for its prerequisite. Every question carries one
+concrete recommendation, never a test for the operator to apply. Use the
+contract default where one exists; where the operator holds the fact, recommend
+the answer that lets routing proceed under the defaults. A Questions card names
+no workflow, model, profile, or kickoff. When the starting owner falls outside
+the seven, the recommendation is the supported-owner table link.
 
 <!-- route-work-contract-end -->
 

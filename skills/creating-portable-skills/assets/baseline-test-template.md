@@ -22,12 +22,18 @@ artifacts.
    trigger set under each, instead of forced-load behavior. Record tokens
    and duration for each run where the harness reports them, and
    `cost not available` where it does not.
-3. **Grade binary.** An independent grader, as the skill workflow defines one,
-   grades each run against the case's expected-behavior checklist —
-   pass or fail per item, a case fails if any item fails. Deterministic
-   scripts may grade mechanical items. Hide the variant from the grader:
-   label outputs neutrally and remove variant names from paths and text the
-   outputs quote.
+3. **Grade binary.** Deterministic scripts grade mechanical items. An
+   independent grader, as the skill workflow defines one, grades the rest
+   against the case's expected-behavior checklist — pass or fail per item, a
+   case fails if any item fails, and each verdict quotes the output span it
+   rests on. One grader scores both variants of a case on a target, so the
+   comparison holds the grader constant. When a second model is available,
+   the grader is a different model from the one that wrote the outputs;
+   otherwise name the grader in the log. Give the grader the final answer
+   only, and hide the variant: label outputs neutrally and remove variant
+   names from paths and text the outputs quote. A second grader is an
+   optional spot-check on a contested item and never decides a pass; when
+   the two disagree, the item is soft and gets fixed.
 4. **Decide.** Ship only when every discriminating case shows the intended
    improvement and no case regresses. A
    regression, or a same-as-baseline result on a required discriminating case,
@@ -80,7 +86,7 @@ Each case file: a title, one `Provenance:` line naming the motivating failure
 or baseline gap, or a regression control's contract, a self-contained
 `## Prompt`
 (blockquote, synthetic data only), and `## Expected behavior` as binary
-`- [ ]` checklist items. Fold near-duplicate variants into one battery case
+`- [ ]` checklist items, each grading only what the prompt asks for. Fold near-duplicate variants into one battery case
 (numbered scenarios in the prompt, one checklist item per scenario). Keep each
 file under ~45 lines.
 

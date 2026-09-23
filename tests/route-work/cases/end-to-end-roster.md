@@ -7,8 +7,8 @@ promise without a grant; items 5 and 6 retain withheld/granted authority control
 On 2026-09-22 the default changed to Single owner: a run that ends in
 implementation is carried by the coordinator alone unless independent units
 are established. On 2026-09-23 issue #162 made a predicted implementation the
-default: a COM-2128 route needed "size to include implementation" before its
-card matched the run, so item 3 now expects the labeled prediction.
+default, because operators had to reply "size to include implementation"
+before a card matched the run, so item 3 now expects the labeled prediction.
 
 ## Prompt
 

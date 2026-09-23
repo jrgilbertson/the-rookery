@@ -6,9 +6,12 @@ pattern, a roster of roles with models and effort, and a copy/paste kickoff.
 When work already has a proven owner it says where to resume. When it lacks a
 routing fact it asks. It leaves execution to the selected workflow.
 
-The coordinator is the session that runs the starting workflow and owns the
-human-facing conversation. It integrates results and judges completion within
-supplied authority. It is a seat, not a profile or an extra worker.
+The coordinator is not an added worker. It is the session the operator pastes
+the kickoff into, and it runs on the starting workflow's profile: the Planner on
+a planning start, the Executor on a `ce-work` start. It owns the human-facing
+conversation. In Single owner, the default, it does all the work itself. When a
+route adds workers, it also dispatches them and integrates their results. It
+judges completion within supplied authority.
 
 Workflow names in its cards are portable capability labels. Using this router
 does not require those workflow packages to be installed.

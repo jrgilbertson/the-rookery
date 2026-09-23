@@ -36,7 +36,8 @@ must not become workflow ownership or unbounded fan-out.
       with no preamble or closing narration. Cards assert no artifact, locator, or
       task fact that the prompt did not supply.
 - [ ] Item 1 starts with `impeccable` as the coordinator alone on the Design/taste
-      profile, Fable 5.1 at medium.
+      profile, Fable 5.1 at medium. Items 1 and 6 end their kickoffs with
+      "Don't merge without human approval."
 - [ ] Item 2 starts with `ce-work` using Coordinator + Executors: a
       coordinator on Opus 5.5 at medium (the Executor profile) and two
       Executors on Opus 5.5 at medium, one per package, in Setup. The kickoff

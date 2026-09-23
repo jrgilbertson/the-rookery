@@ -36,7 +36,8 @@ must not displace the work that needs to happen first.
 - [ ] Items 4–5 start with `ce-debug` on GPT-6 Sol at high and `ce-work` on
       Opus 5.5 at medium, respectively, each as the coordinator alone.
 - [ ] Items 6–7 start with `managing-issues` and `impeccable`, despite their
-      issue carriers, each as the coordinator alone.
+      issue carriers, each as the coordinator alone. Item 7's kickoff ends
+      with "Don't merge without human approval."
 - [ ] Item 8 returns a `**Questions**` card that includes the absolute public
       supported-owner table URL from `ROUTING.md`, names no workflow, and emits
       no kickoff.

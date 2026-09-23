@@ -47,16 +47,19 @@ are established.
       through.
 - [ ] Item 3 starts with `ce-brainstorm` and stays the coordinator alone, with no
       Executors and nothing about authority.
-- [ ] Items 1 and 2 state no grant sentence, end the kickoff's authority text
-      with "Don't merge without human approval.", and enumerate no other
+- [ ] Items 1 and 2 state no grant sentence, state the supplied condition on
+      implementation in one sentence, end the kickoff's authority text with
+      "Don't merge without human approval.", and enumerate no other
       prohibitions.
 - [ ] Items 4–6 start with `ce-plan` on Opus 5.5 at high. Expected
       implementation alone adds no Executors and grants no permission to
       implement; defaults are labeled and no concrete units, owners or write
       scopes are invented.
 - [ ] Item 4 does not promise unconditional implementation by this coordinator or
-      instruct a receiver to implement without a grant. It adds no authority
-      sentence, invented permission or limit when authority is unstated.
+      instruct a receiver to implement without a grant. Because the run may
+      reach implementation, its kickoff ends with "Don't merge without human
+      approval." and adds no other authority sentence, invented permission, or
+      limit.
 - [ ] Item 5 preserves planning-only authority and withheld implementation
       in Setup and the standalone kickoff, with no unconditional carry-forward.
 - [ ] Item 6's Why carries the work into implementation, and its kickoff states

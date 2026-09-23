@@ -28,8 +28,7 @@ handoff. Use supplied evidence and contract defaults before
 asking. Stop asking once no open question would change the card.
 
 Put product discovery, diagnosis, planning, and design on those owners' route
-cards. Each response returns one Route, Resume, or Questions card and persists
-no routing state outside the visible conversation.
+cards. Each response returns one Route, Resume, or Questions card.
 
 ## Inspect only supplied evidence
 
@@ -52,27 +51,26 @@ itself as the kickoff's source of truth.
 ## Preserve authority
 
 The router assesses supplied evidence, renders one card, and exits without
-changing state.
+changing state or persisting routing state outside the visible conversation.
 
-Never add authority the operator did not supply. Artifact approval is task
-state, not an authority grant. An operator request to implement the work,
-including a request to route the kickoff to implement it, is implementation
-authorization. When asking whether implementation is authorized, do not treat
-artifact approval as that grant. An implementation kickoff never infers
-permission to commit, push, open a pull request, publish, merge, or change
-external state. Authorized document writes use repository-defined locations.
-Supplied authority is the only thing that bounds how far the coordinator
-carries the work; the card never narrates phases, checkpoints, or stopping
-points beyond it, and never says where plans are stored. Unless the operator
-granted merge, every kickoff whose run may reach implementation ends its
-authority text with "Don't merge without human approval." When the operator
-withheld merge, that line is the limit's one sentence. Beyond it, never list
-permissions the operator did not mention, even to say they are not inferred.
-Leave supplied grants off the card, but a condition or scope the operator
-attaches to a grant is a limit. When the operator states a limit, including
+Never add authority the operator did not supply. An operator request to
+implement the work, including a request to route the kickoff to implement it,
+is implementation authorization. Artifact approval is task state, not an
+authority grant, including when asking whether implementation is authorized.
+
+Never list permissions the operator did not mention, even to say they are not
+inferred. Supplied authority is the only thing that bounds how far the
+coordinator carries the work; the card never narrates phases, checkpoints, or
+stopping points beyond it, and never says where plans are stored.
+
+Leave supplied grants off the card. When the operator states a limit, including
 saying some authority is withheld or not supplied, such as a grill without
-document-write authority, state it on the card in one sentence and never drop
-it. Otherwise say nothing about authority.
+document-write authority, or attaches a condition or scope to a grant, state it
+on the card in one sentence and never drop it. Unless the operator granted
+merge, every kickoff whose run may reach implementation, including `impeccable`
+design and front-end work, ends its authority text with "Don't merge without
+human approval." When the operator withheld merge, that line is the limit's one
+sentence. Otherwise say nothing about authority.
 
 ## Handle parent, child, and existing work
 
@@ -95,10 +93,10 @@ state blocks it.
 A named in-flight owner is proven only by an operator statement or supplied
 artifact that names a specific owner for the requested phase. A stated
 worktree, branch, pull request, worker, or parallel effort without that phase
-owner still uses the normal Route. Setup and the kickoff last sentence then
-each include the occupancy sentence: No named owner was proven for this
-phase; this start is still allowed. Occupancy is unknown, not vacant. The
-router does not discover or monitor ownership.
+owner still uses the normal Route. Setup and the kickoff then each end with the
+occupancy sentence, exactly "No named owner was proven for this phase; this
+start is still allowed." Treat occupancy as unknown, not vacant. The router
+does not discover or monitor ownership.
 
 ## Choose what needs to happen first
 
@@ -141,8 +139,7 @@ https://github.com/jrgilbertson/the-rookery/blob/main/ROUTING.md#choose-what-nee
 
 ## Estimate the pattern and roster
 
-Every route has a coordinator. Name the role for each worker, and count
-workers, not steps.
+Name the role for each worker, and count workers, not steps.
 
 Start with Single owner, including when implementation is expected. Supplied
 evidence establishes independent units when it names units that need separate
@@ -174,8 +171,7 @@ Design/taste as the judge only when the finish line is taste.
 
 An advisor only gathers bounded evidence. Do not count it as a worker and do
 not give it ownership. If the operator asked for an advisor, mention it in
-Setup. Subagents, forks, teams, and background sessions are how work runs, not
-which pattern to recommend.
+Setup.
 
 ## Keep orchestration and ownership separate
 
@@ -189,15 +185,14 @@ independent decisions.
 | Ownership | Current owner or full handoff | Full handoff transfers human-facing ownership to the receiving worktree or agent; the sender gains no monitoring duty |
 
 The selected starting workflow remains the owner. Structured orchestration is
-optional and currently depends on Orca. Every worker runs in the current
-worktree, and separate write paths keep parallel writes apart.
-When supervised orchestration is selected, say so in Setup and the kickoff,
-tell the operator to follow Orca's installed contract, and add to Setup: once
-orchestration is running, continue with the coordinator in its terminal and
-close this session. The kickoff's orchestration sentence says "Orca
-orchestration" in those words and tells the coordinator to use Orca's
-`orchestration` skill when it is installed, because the receiving session
-matches that phrase to the skill. Do not copy Orca commands into the card.
+optional and currently depends on Orca. When supervised orchestration is
+selected, say so in Setup and the kickoff, tell the operator to follow Orca's
+installed contract, and add to Setup: once orchestration is running, continue
+with the coordinator in its terminal and close this session. The kickoff's
+orchestration sentence says "Orca orchestration" in those words and tells the
+coordinator to use Orca's `orchestration` skill when it is installed, because
+the receiving session matches that phrase to the skill. Do not copy Orca
+commands into the card.
 
 ## Select profiles
 
@@ -261,7 +256,7 @@ as ordinary names, such as "Fable 5.1 at medium".
 
     **Why**
 
-    [One or two sentences on what needs to happen first and why this pattern fits. Name where the run is expected to end, which the roster was sized for, and when implementation is authorized say that the coordinator carries the work into it. Name any pattern or roster default the route relied on instead of supplied evidence, so the operator can override it in one reply; availability stays out of the card when it is unknown.]
+    [One or two sentences on what needs to happen first and why this pattern fits. Name where the run is expected to end, which the roster was sized for, and say when the coordinator carries the work into implementation. Name any pattern or roster default the route relied on instead of supplied evidence, so the operator can override it in one reply; availability stays out of the card when it is unknown.]
 
     **Setup**
 
@@ -313,31 +308,43 @@ answer there, since the card may name no workflow.
 > Maintainer note: root `ROUTING.md` is the human-edited source. Copy it
 > byte-for-byte to `skills/route-work/references/routing.md` in the same change.
 
-Maintainers update the model table manually from external evidence. Benchmark
+## Maintaining the model table
+
+Maintainers update the table manually from external evidence. Benchmark
 scores, cost, quota, confidence, automatic rankings, and staleness state stay
 outside the contract.
 
-Each row lists a profile's models in order of cost of pass: cost per attempt
-divided by pass rate, measured on work like that role's. Choose each model's
-effort the same way: the cheapest effort whose pass rate on the role's work is
-close to that model's ceiling. That is where its curve of cost per extra point
-bends upward. A composite index across effort levels shows the curve's shape,
-but its average is not a pass rate: it hides how low effort fails on hard
-tasks and so always makes low effort look cheapest. Take the pass rate from
-evidence that matches the role. The Executor row needs coding-agent boards
-such as FrontierCode, CursorBench, Terminal-Bench, or a coding-agent index,
-and Design/taste needs human-preference boards. Confirm each effort choice on
-at least two independent boards that report every effort level, such as the
-Artificial Analysis Intelligence Index, Zapier's AutomationBench, and
-VulcanBench, instead of relying on one index. For coding roles, Cognition's
-FrontierCode leaderboard publishes a pass rate and a cost per rollout for
-every effort level in each model's native harness, usually on launch day, in
-https://cognition.com/data/frontiercode-leaderboard/data.json. No public
-benchmark scores planning or coordination work, so the Planner row is a
-judgment call. It follows vendor practice of giving planning more reasoning
-effort than execution; revisit it when a planning benchmark reports every
-effort level. A row lists only models that earn a place, so some rows have
-fewer than three. A model may rank by a capability the others lack, as xAI
-does for Scout with X search. A subscription already paid for may keep an
-otherwise dominated model in a last slot where it still does the role's work
-well.
+### Order models by cost of pass
+
+- Order each row by cost of pass: cost per attempt divided by pass rate,
+  measured on work like that role's.
+- A row lists only models that earn a place, so some rows have fewer than
+  three.
+- A model may rank by a capability the others lack, as xAI does for Scout
+  with X search.
+- A subscription already paid for may keep an otherwise dominated model in a
+  last slot where it still does the role's work well.
+
+### Pick effort where the curve bends
+
+- Choose the cheapest effort whose pass rate on the role's work is close to
+  that model's ceiling. That is where its cost per extra point bends upward.
+- A composite index across effort levels shows the curve's shape, but its
+  average is not a pass rate. It hides how low effort fails on hard tasks, so
+  low effort always looks cheapest.
+- Confirm each effort choice on at least two independent boards that report
+  every effort level, such as the Artificial Analysis Intelligence Index,
+  Zapier's AutomationBench, and VulcanBench.
+
+### Use evidence that matches the role
+
+- Executor: coding-agent boards such as FrontierCode, CursorBench,
+  Terminal-Bench, or a coding-agent index. Cognition's FrontierCode
+  leaderboard publishes a pass rate and a cost per rollout for every effort
+  level in each model's native harness, usually on launch day, in
+  https://cognition.com/data/frontiercode-leaderboard/data.json.
+- Design/taste: human-preference boards.
+- Planner: no public benchmark scores planning or coordination work, so this
+  row is a judgment call. It follows vendor practice of giving planning more
+  reasoning effort than execution; revisit it when a planning benchmark
+  reports every effort level.

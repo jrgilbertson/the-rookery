@@ -62,6 +62,9 @@ looked" surface. GitHub Releases mirror its entries.
   parallel Executors. The Coordinator + Executors kickoff names only the
   implementation workers' model and effort and leaves their count and
   scheduling to the workflow, which already decides how to dispatch them.
+  Executor + Reviewer applies when the operator asks for a separate Reviewer
+  or when acceptance criteria exist for a run that does not implement through
+  `ce-work`, which runs its own review.
 
 - `route-work` kickoffs that select supervised orchestration now say "Orca
   orchestration" in those words and tell the coordinator to use Orca's

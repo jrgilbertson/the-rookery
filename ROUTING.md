@@ -132,7 +132,7 @@ effort is occupancy evidence, not evidence of independent units.
 | Pattern | Roles | Use when | Guardrail |
 |---|---|---|---|
 | Single owner | The coordinator alone, on the selected owner's profile. It writes the work itself. | The default when neither other pattern applies | One worker covers later stages of the same owner. |
-| Executor + Reviewer | Two workers: the coordinator writes and revises; the Reviewer only judges. | Explicit acceptance criteria exist or the operator asks for review | One round. Stop when the Reviewer's stated criteria pass or fail. Hand the Reviewer the criteria. The Reviewer does not write the artifact. |
+| Executor + Reviewer | Two workers: the coordinator writes and revises; the Reviewer only judges. | The operator asks for a separate Reviewer, or explicit acceptance criteria exist for a run that does not implement through `ce-work`, which runs its own review | One round. Stop when the Reviewer's stated criteria pass or fail. Hand the Reviewer the criteria. The Reviewer does not write the artifact. |
 | Coordinator + Executors | The coordinator runs the starting workflow, which dispatches Executor workers to implement the units. Scout or Researcher workers only for search slices. | Implementation is expected and supplied evidence establishes independent units, whichever workflow starts | The kickoff names the Executors' model and effort; the workflow decides how many run and when. |
 
 Size the roster for where the run ends, not where it starts, including a

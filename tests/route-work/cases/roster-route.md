@@ -34,8 +34,8 @@ that adding a Reviewer could exceed the five-worker concurrency ceiling.
 - [ ] Item 1's Setup lists a coordinator on Opus 5.5 at high and two Executors on
       Opus 5.5 at medium, one per named module, and no Reviewer. It mentions no
       orchestration, worktree isolation, or plan storage.
-- [ ] Item 2's Setup adds a Reviewer on GPT-6 Sol at high, hands it the
-      acceptance criteria, and keeps the rest of item 1's roster.
+- [ ] Item 2 adds no Reviewer, because the run implements through `ce-work`,
+      which runs its own review, and keeps item 1's roster.
 - [ ] Item 3's Setup lists one Executor per named module, five in all, plus the
       Reviewer, with no concurrency cap or queue.
 - [ ] Each kickoff starts ce-plan from the issue URL, states the coordinator's model

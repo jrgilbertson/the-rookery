@@ -58,7 +58,8 @@ must not become workflow ownership or unbounded fan-out.
       the Reviewer is on GPT-6 Sol at high. No third coordinator or third model
       assignment. It hands the Reviewer the criteria and names one round
       with a stop condition.
-- [ ] Items 5–6 retain exactly two workers and one round in Setup and kickoff.
+- [ ] Items 5–6 retain exactly two workers in Setup and one round with its
+      stop condition in the kickoff.
       Item 5 uses Critic for the Reviewer, GPT-6 Sol at max. Item 6 starts
       with `impeccable` and uses Design/taste for both workers, Fable 5.1 at
       medium. These are passing-baseline regression controls alongside the

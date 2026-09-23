@@ -7,11 +7,11 @@ When work already has a proven owner it says where to resume. When it lacks a
 routing fact it asks. It leaves execution to the selected workflow.
 
 The coordinator is not an added worker. It is the session the operator pastes
-the kickoff into, and it runs on the starting workflow's profile: the Planner
-on a planning start, the Executor on a `ce-work` start. It owns the
-human-facing conversation. In Single owner, the default, it does all the work
-itself. When a route adds workers, it also dispatches them and integrates their
-results. It judges completion within supplied authority.
+the kickoff into, and it runs on the profile the model table names for its
+starting workflow. It owns the human-facing conversation. In Single owner, the
+default, it does all the work itself. When a route adds workers, it also
+dispatches them and integrates their results. It judges completion within
+supplied authority.
 
 ## Activation boundary
 
@@ -91,7 +91,7 @@ Choose exactly one starting workflow based on what needs to happen first: the
 earliest question to answer or durable change to make before useful work can
 continue. Choose it from this table, not from the host, model, or later steps.
 
-| What needs to happen first | Owner | Discriminator |
+| What needs to happen first | Owner | Focus |
 |---|---|---|
 | Product outcome, behavior, or scope boundary is unsettled | `ce-brainstorm` | Clarify what should be built before planning how |
 | A supplied decision document needs a focused, dependency-ordered pressure test | `grill-with-docs` | Run a focused grill |
@@ -107,7 +107,7 @@ https://github.com/jrgilbertson/the-rookery/blob/main/ROUTING.md#choose-what-nee
 
 ## Ambiguity and missing input
 
-- If one request could be two different owners, ask the discriminator.
+- If one request could fit two owners, ask which owner's focus comes first.
 - For two separate workstreams that could both start and neither blocks the
   other, ask which starts first. A recommended order is allowed; the operator
   still chooses. The Route card names exactly one starting workflow.
@@ -167,13 +167,7 @@ matches that phrase to the skill. Do not copy Orca commands into the card.
 
 ## Select profiles
 
-Pick each seat's and worker's profile:
-
-- The coordinator uses its starting workflow's profile: Planner for
-  `ce-brainstorm`, `grill-with-docs`, `ce-plan`, and `managing-issues`;
-  Executor for `ce-work`; Researcher for `ce-debug`; and Design/taste for
-  `impeccable`.
-- Executor workers use Executor. Reviewer workers use Reviewer.
+Each seat and worker uses the profile whose row in the model table names it.
 
 ### Availability fallback
 
@@ -197,15 +191,15 @@ effort, but selects one only when the operator approves it.
 
 **Last reviewed: 2026-09-22**
 
-| Profile | Used for | Primary | Secondary | Tertiary |
+| Profile | Seat or worker | Primary | Secondary | Tertiary |
 |---|---|---|---|---|
-| Planner | Brainstorming, grilling, planning, and issue-graph work that decides what happens next | Anthropic / `claude-opus-5-5` / high | OpenAI / `gpt-6-astra` / high | — |
-| Executor | Implements the assigned change and revises it | Anthropic / `claude-opus-5-5` / medium | OpenAI / `gpt-6-sol` / high | xAI / `grok-4.7` / high |
-| Reviewer | Independent evaluators and named review or verification gates | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
-| Critic | Reviewer or advisor only when the judgment is adversarial; not the owning `grill-with-docs` route | OpenAI / `gpt-6-sol` / max | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
-| Researcher | Causal investigation inside `ce-debug` and evidence-backed synthesis | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
-| Scout | Bounded evidence gathering and advisor research | xAI / `grok-4.7` / high | OpenAI / `gpt-6-sol` / high | — |
-| Design/taste | `impeccable`, and the judge when the finish line is taste | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-6-astra` / medium | — |
+| Planner | The coordinator on `ce-brainstorm`, `grill-with-docs`, `ce-plan`, or `managing-issues` | Anthropic / `claude-opus-5-5` / high | OpenAI / `gpt-6-astra` / high | — |
+| Executor | The coordinator on `ce-work`, and Executor workers | Anthropic / `claude-opus-5-5` / medium | OpenAI / `gpt-6-sol` / high | xAI / `grok-4.7` / high |
+| Reviewer | Reviewer workers and named review or verification gates | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
+| Critic | The Reviewer or an advisor only when the judgment is adversarial; never the coordinator on `grill-with-docs` | OpenAI / `gpt-6-sol` / max | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
+| Researcher | The coordinator on `ce-debug`, and Researcher workers for evidence-backed synthesis | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
+| Scout | Scout workers and advisors that gather bounded evidence | xAI / `grok-4.7` / high | OpenAI / `gpt-6-sol` / high | — |
+| Design/taste | The coordinator on `impeccable`, and the Reviewer when the finish line is taste | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-6-astra` / medium | — |
 
 ## Return one portable response
 
@@ -233,7 +227,7 @@ ordinary names, such as "Fable 5.1 at medium".
 
     **Copy/paste kickoff**
 
-    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the coordinator on [model] at [effort]. [Each Reviewer, advisor, Scout, or Researcher worker with its model and effort.] [Subscription billing constraint.] [In Coordinator + Executors: When the work reaches implementation, run implementation workers on [Executor model] at [effort]; [the implementing workflow] decides how many and how to schedule them.] [Orchestration sentence only when it differs from the default.] Treat [the supplied artifact or request] as the source of truth. [Authority as the authority rules require, ending with the no-merge line when the run may reach implementation.] [Occupancy sentence last, only when it applies.]
+    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the coordinator on [model] at [effort]. [Each Reviewer, advisor, Scout, or Researcher worker with its model and effort. In Executor + Reviewer: hand the Reviewer the criteria and stop after one round, when they pass or fail.] [Subscription billing constraint.] [In Coordinator + Executors: When the work reaches implementation, run implementation workers on [Executor model] at [effort]; [the implementing workflow] decides how many and how to schedule them.] [Orchestration sentence only when it differs from the default.] Treat [the supplied artifact or request] as the source of truth. [Authority as the authority rules require, ending with the no-merge line when the run may reach implementation.] [Occupancy sentence last, only when it applies.]
 
 The decision line never names a role; roles live in Setup. The kickoff states
 each worker's model and effort as settings to apply and leaves how workers are
@@ -263,11 +257,12 @@ A Resume card carries no kickoff.
 Order questions by routing impact: owner, then pattern, then profile, then
 orchestration and ownership handoff. Batch only independent questions; a
 dependent question waits for its prerequisite. Every question carries one
-concrete recommendation, never a test for the operator to apply. Use the
-contract default where one exists; where the operator holds the fact, recommend
-the answer that lets routing proceed under the defaults. A Questions card names
-no workflow, model, profile, or kickoff. When the starting owner falls outside
-the seven, the recommendation is the supported-owner table link.
+concrete recommendation, never a test for the operator to apply, and its reason
+cites only supplied facts or contract defaults. Use the contract default where
+one exists; where the operator holds the fact, recommend the answer that lets
+routing proceed under the defaults. A Questions card names no workflow, model,
+profile, or kickoff. When the starting owner falls outside the seven, the
+recommendation is the supported-owner table link.
 
 <!-- route-work-contract-end -->
 

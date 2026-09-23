@@ -157,12 +157,12 @@ that Executor and are not routed workers.
 |---|---|---|---|
 | Single owner | The coordinator alone, on the selected owner's profile. It writes the work itself. | The default when neither other pattern applies | One worker covers later stages of the same owner. |
 | Executor + Reviewer | Two workers: the coordinator writes and revises; the Reviewer only judges. | Explicit acceptance criteria exist or the operator asks for review | One round. Stop when the Reviewer's stated criteria pass or fail. Hand the Reviewer the criteria. The Reviewer does not write the artifact. |
-| Coordinator + Executors | The coordinator plans, dispatches, and integrates; it does not write unit changes. Executor workers implement the units. Scout or Researcher workers only for search slices. | Implementation is expected, from supplied authority or an operator statement that implementation follows, and supplied evidence establishes independent units, whichever workflow starts | Give each worker a separate write path before parallel writes, and give the coordinator none. |
+| Coordinator + Executors | The coordinator plans, dispatches, and integrates; it does not write unit changes. Executor workers implement the units. Scout or Researcher workers only for search slices. | Implementation is authorized and supplied evidence establishes independent units, whichever workflow starts | Give each worker a separate write path before parallel writes, and give the coordinator none. |
 
 Size the roster for where the run ends, not where it starts, including a
-brainstorm, grill, debug, or plan that implementation will follow. Do not ask
-whether implementation follows; when nothing says so, size for the starting
-workflow and invite the override in Why.
+brainstorm, grill, debug, or plan that authorized implementation will follow.
+Do not ask whether implementation follows; when nothing says so, size for the
+starting workflow and invite the override in Why.
 
 Budget five concurrent workers total, including the coordinator and Reviewer.
 Use one Executor per named or counted unit, or up to three when evidence

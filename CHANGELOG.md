@@ -64,7 +64,11 @@ looked" surface. GitHub Releases mirror its entries.
   scheduling to the workflow, which already decides how to dispatch them.
   Executor + Reviewer applies when the operator asks for a separate Reviewer
   or when acceptance criteria exist for a run that does not implement through
-  `ce-work`, which runs its own review.
+  `ce-work`, which runs its own review. Setup keeps one Executor per named
+  unit without a concurrency cap, since the workflow decides concurrency. The
+  model table's column now names the seat or worker that uses each profile, as
+  the single source for that mapping, and the owner table's last column is now
+  Focus.
 
 - `route-work` kickoffs that select supervised orchestration now say "Orca
   orchestration" in those words and tell the coordinator to use Orca's

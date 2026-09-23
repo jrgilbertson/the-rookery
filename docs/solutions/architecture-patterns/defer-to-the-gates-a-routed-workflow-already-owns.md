@@ -25,17 +25,12 @@ tags:
 
 `route-work` renders one card that starts work in a development framework:
 Compound Engineering's `ce-brainstorm`, `ce-plan`, `ce-work`, or `ce-debug`,
-`grill-with-docs`, `managing-issues`, or `impeccable`. The contract lives in root `ROUTING.md`,
-and `skills/route-work/references/routing.md` is its byte-identical copy.
-
-Over time the contract picked up rules that restated what those workflows
-already decide: how many workers to start and how, a concurrency cap and queue,
-when to add a reviewer, which grants to spell out, where workers run, and why a
-grant was safe to omit. On 2026-09-23, on the unmerged branch
-`jrgilbertson/New-models` (no PR opened yet), each of these restated rules
-either conflicted with the workflow it sat in front of or leaked into the cards
-runners produced. The 2026-09-23 entries in `tests/route-work/log.md` record the
-evals behind each change.
+`grill-with-docs`, `managing-issues`, or `impeccable`. The contract lives in
+root `ROUTING.md`. It had picked up rules that restated what those workflows
+already decide: how many workers to start and how, a concurrency cap, when to
+add a reviewer, which grants to spell out, where workers run, and why a grant
+was safe to omit. Each one either conflicted with the workflow it sat in front
+of or leaked into the cards runners produced.
 
 ## Guidance
 
@@ -98,133 +93,57 @@ the step the operator holds for a human.
 ## Why This Matters
 
 A restated gate is a second source of truth, and it disagrees with the first
-as soon as either changes. It also fails in two concrete ways here.
+as soon as either changes. It fails in three concrete ways:
 
-**It conflicts with the workflow it wraps.** A kickoff that says "start three
-Executors" is an instruction to the session running the starting workflow. On
-a `ce-plan` start, that session is told to dispatch implementers inside a
-workflow that forbids implementation. On a `ce-work` start, it overrides the
-unit derivation, Parallel Safety Check, isolation choice, and commit ownership
-that `ce-work` already performs.
-
-**It leaks into cards.** Runners copy what the contract says. In one
-eval run logged on 2026-09-23, runners copied Setup's Executor count,
-the concurrency cap, or a write scope into three of the kickoffs even after the
-contract stopped asking for them. Only pinning the sentence to fixed template
-wording stopped the leak: the revised candidate matched all five Coordinator +
-Executors kickoffs word for word.
-
-**A false rationale hides a real decision.** A draft of the authority rule
-justified dropping grants with "the workflows ask before each step." A
-fresh-context falsification pass showed that `ce-work`'s shipping phase
-commits, pushes, and opens the PR through `ce-commit-push-pr` without asking.
-The clause would have let an operator believe a PR required a second
-approval. Removing it put the real behavior in front of the operator, who
-accepted `ce-work` opening PRs. The no-merge line stays because it is the only
-stop the operator actually gets.
-
-The deferral also made the contract shorter. The five-worker budget and
-queue, the subagent-or-session instruction, the worktree placement, the grant
-sentences, and the acceptance-criteria Reviewer all came out on the branch.
-The eval checklists moved with them: the `roster-route` checklist line for
-prompt item 3 now expects one Executor per named module with no cap, and the
-line for prompt item 2 expects no Reviewer from acceptance criteria alone.
+- **It conflicts with the workflow it wraps.** "Start three Executors" on a
+  `ce-plan` start tells the session to dispatch implementers inside a workflow
+  that forbids implementation. On a `ce-work` start it overrides the unit
+  derivation, safety check, isolation choice, and commit ownership `ce-work`
+  already performs.
+- **It leaks into cards.** Runners copy what the contract says, including
+  Setup values such as an Executor count, into the part of the card the
+  receiving session executes. A sentence that must reach the card exactly has
+  to be pinned in the template, with the values that belong elsewhere named.
+- **A false rationale hides a real decision.** A draft rule justified dropping
+  grants with "the workflows ask before each step," but `ce-work` opens the PR
+  without asking. Checking the claim against source put that behavior in front
+  of the operator, who accepted it.
 
 ## When to Apply
 
-- Writing or reviewing any router, kickoff template, wrapper skill, or
+- Writing or reviewing a router, kickoff template, wrapper skill, or
   orchestrator prompt that hands work to another workflow.
 - A contract line mentions worker counts, concurrency, scheduling, isolation,
   worktrees, commits, review, PRs, or authority, and the receiving workflow
   has its own rule for that topic.
-- A contract sentence explains *why* a rule is safe by describing another
-  workflow ("the workflow asks first", "the workers do not commit").
-- An eval shows runners copying a Setup value (a count, a cap, a scope) into
-  the part of the card the receiving session executes.
+- A contract sentence explains why a rule is safe by describing another
+  workflow.
 
-It does not apply when the receiving workflow has no gate for the topic. The
-route-work Reviewer rule still adds a Reviewer for a run that does not
-implement through `ce-work`, because nothing else reviews a plan or grill
-output against the operator's criteria.
+It does not apply when the receiving workflow has no gate for the topic. For
+example, route-work still adds a Reviewer to a run that does not implement
+through `ce-work`, because nothing else reviews a plan or grill output against
+the operator's criteria.
 
 ## Examples
 
-### Kickoff implementation sentence
-
-Before, a Coordinator + Executors kickoff told the coordinator how to staff
-and run the units. This is condensed from a probe card and the contract text
-behind it:
-
-> Start three Executors … give each its module as a separate write path …
-> start each Executor as a subagent or a separate session.
-
-The contract behind it budgeted "five concurrent workers total, including the
-coordinator and Reviewer", queued units that did not fit, and told the
-coordinator to start differing-effort workers "as a subagent or a separate
-session."
-
-After, the kickoff carries one pinned sentence, and the count stays in Setup
-(`ROUTING.md:230`, `:235-236`):
+A Coordinator + Executors kickoff once told the coordinator to start a fixed
+number of Executors, give each a write path, and start them as subagents or
+separate sessions. It now carries one pinned sentence and leaves the rest to
+the workflow:
 
 > When the work reaches implementation, run implementation workers on
 > [Executor model] at [effort]; [the implementing workflow] decides how many
 > and how to schedule them.
 
-The pattern row's guardrail now reads "The kickoff names the Executors' model
-and effort; the workflow decides how many run and when" (`ROUTING.md:136`).
-The five-worker cap and queue were deleted, because `ce-work` decides
-concurrency. Isolated-worktree placement was deleted, because `ce-work` and
-the harness choose isolation.
-
-### Reviewer rule
-
-Before, acceptance criteria alone added a Reviewer, even on a `ce-work` run:
-
-| Pattern | Use when |
-|---|---|
-| Executor + Reviewer | Explicit acceptance criteria exist or the operator asks for review |
-
-After (`ROUTING.md:135`):
-
-| Pattern | Use when |
-|---|---|
-| Executor + Reviewer | The operator asks for a separate Reviewer, or explicit acceptance criteria exist for a run that does not implement through `ce-work`, which runs its own review |
-
-Probes on the new rule: a `ce-work` fix with criteria only added no Reviewer;
-"have GPT-6 Sol review Opus's work" added a Sol high Reviewer with the
-one-round stop; a planning-only run with listed criteria added a Sol high
-Reviewer on the plan and no no-merge line.
-
-### Grants and limits
-
-Before, cards carried grant sentences such as "Implementation is authorized"
-or "Implementation through an open pull request is authorized." After, cards
-leave supplied grants off, keep every operator-stated limit in one sentence
-(a condition or scope attached to a grant counts as a limit), and end any
-kickoff whose run may reach implementation with "Don't merge without human
-approval." unless merge was granted (`ROUTING.md:58-65`).
-
-### Testing a restated rule
-
 Two checks catch a restated gate before it ships:
 
 1. **Fresh falsification pass.** Give a fresh-context agent the contract and
    the workflow sources and ask it to break one invariant with a concrete
-   sequence. This is how the "workflows ask before each step" rationale was
-   shown false: the pass traced `ce-work`'s shipping phase straight into
-   `ce-commit-push-pr`. Self-review had not caught it.
+   sequence. This is how the false "workflows ask first" rationale surfaced.
 2. **Probe prompt through a fresh runner.** Write a prompt that hits exactly
-   the rule's edge, such as criteria on a `ce-work` fix, a conditional grant,
-   or "plan the refactor of modules A, B and C… implementation follows". Run
-   it through a fresh subagent that loads only the candidate package, and
-   have a separate grader read the card against a prediction written in
-   advance. A probe that misses its prediction is a finding either way. In
-   one logged run, the "implementation follows" probe routed three
-   Executors on a conditional grant, which surfaced an operator-wording
-   decision rather than a contract bug.
-
-Log each run in `tests/route-work/log.md` as one execution, not a
-reliability estimate.
+   the rule's edge, run it through a fresh subagent that loads only the
+   package, and have a separate grader read the card against a prediction
+   written in advance. The route-work eval log records these runs.
 
 ## Related
 

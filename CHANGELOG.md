@@ -37,38 +37,24 @@ looked" surface. GitHub Releases mirror its entries.
 
 - `route-work` model recommendations now use the September 21–22 releases:
   Claude Opus 5.5, GPT-6 Sol and Astra, and Grok 4.7, with rows that list only
-  the models that earn a place. A maintainer note in `ROUTING.md` records the
-  method: order by cost of pass and pick the cheapest effort near each model's
-  ceiling, confirmed on at least two independent boards.
+  the models that earn a place. A maintainer section in `ROUTING.md` records
+  how rows are ordered by cost of pass and how effort is chosen.
 
-- `route-work` replaces the lead with a coordinator seat and the Lead profile
-  with a Planner profile. The coordinator runs the starting workflow, owns the
-  human-facing conversation, integrates results, and judges completion within
-  supplied authority. It runs on its starting workflow's profile: Planner for
-  brainstorm, grill, plan, and managing-issues; Executor for `ce-work`;
-  Researcher for `ce-debug`; Design/taste for `impeccable`. Dispatching
-  workers no longer changes that profile. Routes now start as Single owner,
-  and Coordinator + Executors applies only when supplied evidence establishes
-  independent units. Subagents an Executor starts through its harness or
-  workflow are not routed workers. The Planner row is labeled a judgment call
-  until a planning benchmark exists. `repo-gardener`, PR readiness, and
-  CONCEPTS now use Coordinator for the seat once called Lead.
+- `route-work` replaces the Lead with a coordinator: the session the kickoff
+  is pasted into, running on the profile the model table names for its
+  starting workflow. The Lead profile becomes a Planner profile. Routes start
+  as Single owner, and Coordinator + Executors applies only when supplied
+  evidence establishes independent units. `repo-gardener`, PR readiness, and
+  CONCEPTS use Coordinator for the seat once called Lead.
 
-- `route-work` kickoffs are shorter. A kickoff whose run may reach
-  implementation ends with "Don't merge without human approval." unless the
-  operator granted merge, cards leave supplied grants to the workflows, and
-  stated limits stay, including conditions or scopes attached to a grant.
-  Every worker runs in the current worktree, with separate write paths for
-  parallel Executors. The Coordinator + Executors kickoff names only the
-  implementation workers' model and effort and leaves their count and
-  scheduling to the workflow, which already decides how to dispatch them.
-  Executor + Reviewer applies when the operator asks for a separate Reviewer
-  or when acceptance criteria exist for a run that does not implement through
-  `ce-work`, which runs its own review. Setup keeps one Executor per named
-  unit without a concurrency cap, since the workflow decides concurrency. The
-  model table's column now names the seat or worker that uses each profile, as
-  the single source for that mapping, and the owner table's last column is now
-  Focus.
+- `route-work` cards leave worker dispatch, scheduling, isolation, commits,
+  pull requests, and code review to the starting workflow. Kickoffs name each
+  seat's model and effort, leave supplied grants off, keep operator-stated
+  limits including conditions or scopes on a grant, and end with "Don't merge
+  without human approval." when the run may reach implementation, unless merge
+  was granted. A separate Reviewer joins only when the operator asks, or when
+  acceptance criteria exist for a run that does not implement through
+  `ce-work`.
 
 - `route-work` kickoffs that select supervised orchestration now say "Orca
   orchestration" in those words and tell the coordinator to use Orca's

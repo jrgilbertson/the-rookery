@@ -133,7 +133,7 @@ effort is occupancy evidence, not evidence of independent units.
 |---|---|---|---|
 | Single owner | The coordinator alone, on the selected owner's profile. It writes the work itself. | The default when neither other pattern applies | One worker covers later stages of the same owner. |
 | Executor + Reviewer | Two workers: the coordinator writes and revises; the Reviewer only judges. | The operator asks for a separate Reviewer, or explicit acceptance criteria exist for a run that does not implement through `ce-work`, which runs its own review | One round. Stop when the Reviewer's stated criteria pass or fail. Hand the Reviewer the criteria. The Reviewer does not write the artifact. |
-| Coordinator + Executors | The coordinator runs the starting workflow, which dispatches Executor workers to implement the units. Scout or Researcher workers only for search slices. | Implementation is expected and supplied evidence establishes independent units, whichever workflow starts | The kickoff names the Executors' model and effort; the workflow decides how many run and when. |
+| Coordinator + Executors | The coordinator runs the starting workflow, which dispatches Executor workers to implement the units. | Implementation is expected and supplied evidence establishes independent units, whichever workflow starts | The kickoff names the Executors' model and effort; the workflow decides how many run and when. |
 
 Size the roster for where the run ends, not where it starts, including a
 brainstorm, grill, debug, or plan that implementation will follow. Do not ask
@@ -197,8 +197,8 @@ effort, but selects one only when the operator approves it.
 | Executor | The coordinator on `ce-work`, and Executor workers | Anthropic / `claude-opus-5-5` / medium | OpenAI / `gpt-6-sol` / high | xAI / `grok-4.7` / high |
 | Reviewer | Reviewer workers and named review or verification gates | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
 | Critic | The Reviewer or an advisor only when the judgment is adversarial; never the coordinator on `grill-with-docs` | OpenAI / `gpt-6-sol` / max | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
-| Researcher | The coordinator on `ce-debug`, and Researcher workers for evidence-backed synthesis | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
-| Scout | Scout workers and advisors that gather bounded evidence | xAI / `grok-4.7` / high | OpenAI / `gpt-6-sol` / high | — |
+| Researcher | The coordinator on `ce-debug` | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
+| Scout | Advisors that gather bounded evidence | xAI / `grok-4.7` / high | OpenAI / `gpt-6-sol` / high | — |
 | Design/taste | The coordinator on `impeccable`, and the Reviewer when the finish line is taste | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-6-astra` / medium | — |
 
 ## Return one portable response
@@ -223,11 +223,11 @@ ordinary names, such as "Fable 5.1 at medium".
 
     **Setup**
 
-    [The roster: every role in the pattern with its model and effort, stated even when it repeats the decision line. The Executor count. The pattern, named in a sentence, when it is not Single owner. Orchestration only when it differs from the default. Authority only as the authority rules require. An advisor, the occupancy sentence, or a profile fallback only when it applies.]
+    [The roster: every role in the pattern with its model and effort, stated even when it repeats the decision line. The Executor count. The pattern, named in a sentence, when it is not Single owner. Orchestration only when supervised orchestration is selected. Authority only as the authority rules require. An advisor, the occupancy sentence, or a profile fallback only when it applies.]
 
     **Copy/paste kickoff**
 
-    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the coordinator on [model] at [effort]. [Each Reviewer, advisor, Scout, or Researcher worker with its model and effort. In Executor + Reviewer: hand the Reviewer the criteria and stop after one round, when they pass or fail.] [Subscription billing constraint.] [In Coordinator + Executors: When the work reaches implementation, run implementation workers on [Executor model] at [effort]; [the implementing workflow] decides how many and how to schedule them.] [Orchestration sentence only when it differs from the default.] Treat [the supplied artifact or request] as the source of truth. [Authority as the authority rules require, ending with the no-merge line when the run may reach implementation.] [Occupancy sentence last, only when it applies.]
+    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the coordinator on [model] at [effort]. [Each Reviewer or advisor with its model and effort. In Executor + Reviewer: hand the Reviewer the criteria and stop after one round, when they pass or fail.] [Subscription billing constraint.] [In Coordinator + Executors: When the work reaches implementation, run implementation workers on [Executor model] at [effort]; [the implementing workflow] decides how many and how to schedule them.] [Orchestration sentence only when supervised orchestration is selected.] Treat [the supplied artifact or request] as the source of truth. [Authority as the authority rules require, ending with the no-merge line when the run may reach implementation.] [Occupancy sentence last, only when it applies.]
 
 The decision line never names a role; roles live in Setup. The kickoff states
 each worker's model and effort as settings to apply and leaves how workers are

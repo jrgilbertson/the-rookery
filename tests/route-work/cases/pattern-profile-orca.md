@@ -44,7 +44,7 @@ must not become workflow ownership or unbounded fan-out.
 - [ ] Item 2's Setup names supervised orchestration through Orca, isolated
       worktrees, and tells the operator to continue with the coordinator in its
       terminal and close this session once orchestration is running. Its
-      kickoff names both profiles, says "Orca orchestration" in those words,
+      kickoff names both roles, says "Orca orchestration" in those words,
       tells the coordinator to use the `orchestration` skill when it is installed,
       and invents no CLI grammar.
 - [ ] Item 2 withholds merge authority in one sentence and narrates no PR

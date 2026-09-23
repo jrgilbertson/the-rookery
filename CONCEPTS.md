@@ -173,7 +173,7 @@ It is the only way Approve or Proceed is accepted.
 
 The turn that printed the menu cannot pick. The request that started the
 review never counts as 1. A `1` on a withheld row is not approval. In
-gardener, only the Lead may send that reply, and only when the menu
+gardener, only the Coordinator may send that reply, and only when the menu
 offered Approve.
 
 Do not call this "later-1". That name hid the two turns: menu, then reply.
@@ -221,31 +221,30 @@ One unattended `repo-gardener` pass that senses one repository, dispatches
 Executors, and reports. CI remains the merge gate. A report with no
 Executor is a complete run.
 
-### Lead
+### Coordinator
 
 The agent of a Repository Maintenance Run that senses, decides, assigns
-Executors, and produces the morning summary.
-Same role as `ROUTING.md` Lead. It does not implement, push, or merge.
+Executors, and produces the morning summary. It does not implement, push, or
+merge.
 
 *Avoid:* Orchestrator, parent, gardener parent
 
-A run has one Lead. The overnight pattern is Lead + Executors. The Lead
-selects a non-overlapping set of pull-request-sized units, then starts
+A run has one Coordinator. The overnight pattern is Coordinator + Executors.
+The Coordinator selects a non-overlapping set of pull-request-sized units, then starts
 Executors in parallel up to that run's ceiling.
 
 ### Executor
 
 An isolated worktree agent assigned one independently deliverable, reviewable
-pull request. Same role as `ROUTING.md` Executor. It owns that work through
-an unmerged pull request it authors. When the work is an issue, that issue
-is an Implementation Leaf.
+pull request. It owns that work through an unmerged pull request it authors.
+When the work is an issue, that issue is an Implementation Leaf.
 
 *Avoid:* Worker, child, gardener child
 
 An Executor may dispatch Scouts for evidence and runs PR readiness on
 its own head. After babysit reports a ready result (pipeline `success`,
 looks merge-ready, or cautiously looks ready), the Executor reports
-that to the Lead, and the Lead dispatches `checking-merge-readiness` to
+that to the Coordinator, and the Coordinator dispatches `checking-merge-readiness` to
 a fresh uninvolved Reviewer for merge readiness. Scouts and Reviewers
 do not own a pull request. One Executor ships at most one pull
 request. Merge remains a later human step.
@@ -329,7 +328,7 @@ under the repository's testing convention.
 
 ## Flagged ambiguities
 
-- "Parent" and "child" in gardener talk meant Lead and Executor. Those
+- "Parent" and "child" in gardener talk meant Coordinator and Executor. Those
   words remain Orca worktree roles and issue-graph relationships; they are not
-  gardener roles. Gardener prose uses the `ROUTING.md` roles Lead, Executor,
-  Scout, and Reviewer.
+  gardener roles. Gardener prose uses the `ROUTING.md` names Coordinator,
+  Executor, Scout, and Reviewer.

@@ -22,9 +22,9 @@ authority.
 > 3. The same initial request, but the operator says they cannot determine
 >    whether tracker truth or source implementation must change.
 > 4. A named primary plan cannot be read.
-> 5. `ce-plan` is selected and available. Its primary Lead profile is stated
+> 5. `ce-plan` is selected and available. Its primary Planner model is stated
 >    unavailable; availability of the other profiles is unknown.
-> 6. All three Lead profiles are stated unavailable.
+> 6. Every listed Planner model is stated unavailable.
 > 7. The selected workflow itself is stated unavailable.
 > 8. Two separate invocations. First, a grill of a supplied decision document
 >    is requested without document-write authority. Second, an implementation
@@ -41,18 +41,20 @@ authority.
       task fact that the prompt did not supply.
 - [ ] Item 1 returns a Questions card with exactly one question, whether the
       product outcome is settled, and no route.
-- [ ] Item 2 returns a Route starting with ce-plan on Fable 5.1 at medium with
-      a roster of Lead plus up to three Executors on Grok 4.6 at high.
+- [ ] Item 2 returns a Route starting with ce-plan on Opus 5.5 at high as
+      Single owner: the coordinator alone on the Planner profile, because no
+      independent units are established. Why invites adding Executors.
 - [ ] Items 3, 4, 6, and 7 each return a Questions card that asks for the
       missing fact, artifact, profile, or workflow with a recommended answer
-      and names no workflow, model, role profile, or kickoff, including in
+      and names no workflow, model, profile, or kickoff, including in
       its recommendation.
-- [ ] Item 5 keeps ce-plan, selects the secondary Lead profile, Astra at
-      low, and says the primary is unavailable without calling the secondary
+- [ ] Item 5 keeps ce-plan, selects the secondary Planner model, Astra at
+      high, and says the primary is unavailable without calling the secondary
       unverified.
 - [ ] Item 8 renders two Route cards. The grill states its supplied
-      document-write limit; the implementation grants implementation only and
-      lists no unsupplied permissions.
+      document-write limit and has no merge line. The `ce-work` card states no
+      implementation grant, ends its kickoff with "Don't merge without human approval."
+      and lists no other permissions.
 - [ ] Item 9 returns one Questions card with exactly two numbered questions,
       owner order first and orchestration versus handoff second, each with a
       concrete recommended answer that names a workstream or a choice.

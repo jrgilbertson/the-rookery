@@ -35,8 +35,29 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `route-work` model recommendations now use the September 21–22 releases:
+  Claude Opus 5.5, GPT-6 Sol and Astra, and Grok 4.7, with rows that list only
+  the models that earn a place. A maintainer section in `ROUTING.md` records
+  how rows are ordered by cost of pass and how effort is chosen.
+
+- `route-work` replaces the Lead with a coordinator: the session the kickoff
+  is pasted into, running on the profile the model table names for its
+  starting workflow. The Lead profile becomes a Planner profile. Routes start
+  as Single owner, and Coordinator + Executors applies only when supplied
+  evidence establishes independent units. `repo-gardener`, PR readiness, and
+  CONCEPTS use Coordinator for the seat once called Lead.
+
+- `route-work` cards leave worker dispatch, scheduling, isolation, commits,
+  pull requests, and code review to the starting workflow. Kickoffs name each
+  seat's model and effort, leave supplied grants off, keep operator-stated
+  limits including conditions or scopes on a grant, and end with "Don't merge
+  without human approval." when the run may reach implementation, unless merge
+  was granted. A separate Reviewer joins only when the operator asks, or when
+  acceptance criteria exist for a run that does not implement through
+  `ce-work`.
+
 - `route-work` kickoffs that select supervised orchestration now say "Orca
-  orchestration" in those words and tell the lead to use Orca's
+  orchestration" in those words and tell the coordinator to use Orca's
   `orchestration` skill when it is installed, so the receiving session
   invokes that skill. Cards still carry no Orca commands.
 
@@ -59,8 +80,8 @@ looked" surface. GitHub Releases mirror its entries.
   `ce-test-browser`, `checking-pr-readiness`, `ce-commit-push-pr`, and
   `ce-babysit-pr`, with
   `checking-merge-readiness` giving the final verdict in one plain
-  morning report. Role names match `ROUTING.md`: Lead, Executor, Scout,
-  Reviewer. An owner invoking the skill without a policy file gets
+  morning report. Role names match `ROUTING.md`: Coordinator, Executor,
+  Scout, Reviewer. An owner invoking the skill without a policy file gets
   first-use setup that writes the file after the owner approves it in a
   later reply.
 
@@ -71,9 +92,6 @@ looked" surface. GitHub Releases mirror its entries.
   read and recovery limits remain.
 - Route kickoffs now require official provider CLIs with subscription
   authentication and report a blocker instead of using API-key billing.
-  Astra at low replaces Sol at high as the secondary Lead profile.
-  Sol at medium replaces Terra at high as the tertiary Executor profile.
-  Astra at low replaces Sol at high as the secondary Design/taste profile.
 
 - Routing templates now use square-bracket placeholders so Orca can open the
   routing contract in its rich Markdown editor.
@@ -93,9 +111,9 @@ looked" surface. GitHub Releases mirror its entries.
   default publisher. Title and body follow Compound Engineering. After
   babysit looks merge-ready, cautiously looks ready, or pipeline `success`,
   a non-Executor run starts `checking-merge-readiness` in a fresh Reviewer
-  that owns the merge menu wait; an Executor reports to the Lead, which
-  starts that Reviewer.
-  Approve 1 does not merge. The Lead authorizes an Executor's reply 1
+  that owns the merge menu wait; an Executor reports to the Coordinator,
+  which starts that Reviewer.
+  Approve 1 does not merge. The Coordinator authorizes an Executor's reply 1
   only when every changed path is inside the unit's allowed files.
   There is no gardener-only publisher.
 - `checking-simplicity` now treats "check for simplicity as well" and

@@ -89,7 +89,7 @@ gather is complete, the menu offered Approve, and the later authorized 1
 matches the unchanged exact head, base, and working surface. Describe the
 finishing handoff:
 
-- A gardener Executor is publishing a new PR. The Lead authorized
+- A gardener Executor is publishing a new PR. The Coordinator authorized
   the option-1 reply. Assigned and protected paths still pass.
 - An owner conversation explicitly requests refreshing an existing
   PR description through its installed publication skill. Gardener is also

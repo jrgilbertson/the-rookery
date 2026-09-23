@@ -35,26 +35,32 @@ must not become workflow ownership or unbounded fan-out.
 - [ ] The final answer contains only the requested cards, in item order,
       with no preamble or closing narration. Cards assert no artifact, locator, or
       task fact that the prompt did not supply.
-- [ ] Item 1 starts with `impeccable` as the lead alone on the Design/taste
-      profile, Fable 5.1 at medium.
-- [ ] Item 2 starts with `ce-work` using Lead + Executors: a Lead on Fable 5.1
-      at medium and two Executors on Grok 4.6 at high, one per package.
-- [ ] Item 2's Setup names supervised orchestration through Orca, isolated
-      worktrees, and tells the operator to continue with the lead in its
+- [ ] Item 1 starts with `impeccable` as the coordinator alone on the Design/taste
+      profile, Fable 5.1 at medium. Items 1 and 6 end their kickoffs with
+      "Don't merge without human approval."
+- [ ] Item 2 starts with `ce-work` using Coordinator + Executors: a
+      coordinator on Opus 5.5 at medium (the Executor profile) and two
+      Executors on Opus 5.5 at medium, one per package, in Setup. The kickoff
+      names the implementation workers' model and effort and leaves their
+      count and scheduling to the workflow.
+- [ ] Item 2's Setup names supervised orchestration through Orca, names no
+      worktree isolation, and tells the operator to continue with the coordinator in its
       terminal and close this session once orchestration is running. Its
-      kickoff names both profiles, says "Orca orchestration" in those words,
-      tells the lead to use the `orchestration` skill when it is installed,
+      kickoff names both roles, says "Orca orchestration" in those words,
+      tells the coordinator to use the `orchestration` skill when it is installed,
       and invents no CLI grammar.
-- [ ] Item 2 withholds merge authority in one sentence and narrates no PR
-      cadence.
-- [ ] Item 3 stays the lead alone on Grok 4.6 at high: sequential phases of one
+- [ ] Item 2's kickoff ends its authority text with "Don't merge without human approval."
+      It adds no separate merge sentence and narrates no PR cadence. Items 3
+      and 4 state no grant sentence.
+- [ ] Item 3 stays the coordinator alone on Opus 5.5 at medium: sequential phases of one
       owner, no parallel workers. Item 4 uses Executor + Reviewer, names two
-      workers total: the executor is also the lead on Grok 4.6 at high, and
-      the Reviewer is on GPT-5.6 Sol at high. No third lead or third model
+      workers total: the executor is also the coordinator on Opus 5.5 at medium, and
+      the Reviewer is on GPT-6 Sol at high. No third coordinator or third model
       assignment. It hands the Reviewer the criteria and names one round
       with a stop condition.
-- [ ] Items 5–6 retain exactly two workers and one round in Setup and kickoff.
-      Item 5 uses Critic for the Reviewer, GPT-5.6 Sol at xhigh. Item 6 starts
+- [ ] Items 5–6 retain exactly two workers in Setup and one round with its
+      stop condition in the kickoff.
+      Item 5 uses Critic for the Reviewer, GPT-6 Sol at max. Item 6 starts
       with `impeccable` and uses Design/taste for both workers, Fable 5.1 at
       medium. These are passing-baseline regression controls alongside the
       ordinary Reviewer in item 4, not evidence of a judge-profile repair.
@@ -64,4 +70,5 @@ must not become workflow ownership or unbounded fan-out.
       and Copy/paste kickoff labels, and a kickoff naming the starting
       workflow, every role with model and effort, the source request, and
       orchestration only when it differs from the default. Orca appears only
-      in item 2, and no item mentions availability or plan storage.
+      in item 2, and no item mentions availability or names where plans are
+      stored.

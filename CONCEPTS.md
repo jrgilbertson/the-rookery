@@ -224,9 +224,8 @@ Executor is a complete run.
 ### Coordinator
 
 The agent of a Repository Maintenance Run that senses, decides, assigns
-Executors, and produces the morning summary.
-Same seat as the `ROUTING.md` coordinator in Coordinator + Executors. It does
-not implement, push, or merge.
+Executors, and produces the morning summary. It does not implement, push, or
+merge.
 
 *Avoid:* Orchestrator, parent, gardener parent
 
@@ -237,9 +236,8 @@ Executors in parallel up to that run's ceiling.
 ### Executor
 
 An isolated worktree agent assigned one independently deliverable, reviewable
-pull request. Same role as `ROUTING.md` Executor. It owns that work through
-an unmerged pull request it authors. When the work is an issue, that issue
-is an Implementation Leaf.
+pull request. It owns that work through an unmerged pull request it authors.
+When the work is an issue, that issue is an Implementation Leaf.
 
 *Avoid:* Worker, child, gardener child
 

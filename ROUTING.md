@@ -7,14 +7,11 @@ When work already has a proven owner it says where to resume. When it lacks a
 routing fact it asks. It leaves execution to the selected workflow.
 
 The coordinator is not an added worker. It is the session the operator pastes
-the kickoff into, and it runs on the starting workflow's profile: the Planner on
-a planning start, the Executor on a `ce-work` start. It owns the human-facing
-conversation. In Single owner, the default, it does all the work itself. When a
-route adds workers, it also dispatches them and integrates their results. It
-judges completion within supplied authority.
-
-Workflow names in its cards are portable capability labels. Using this router
-does not require those workflow packages to be installed.
+the kickoff into, and it runs on the starting workflow's profile: the Planner
+on a planning start, the Executor on a `ce-work` start. It owns the
+human-facing conversation. In Single owner, the default, it does all the work
+itself. When a route adds workers, it also dispatches them and integrates their
+results. It judges completion within supplied authority.
 
 ## Activation boundary
 
@@ -24,11 +21,8 @@ intent proceeds through its normal workflow and does not produce a card.
 
 One routing attempt may span multiple conversational turns. Ask only questions
 that change the owner, pattern, profile, structured orchestration, or ownership
-handoff. Use supplied evidence and contract defaults before
-asking. Stop asking once no open question would change the card.
-
-Put product discovery, diagnosis, planning, and design on those owners' route
-cards. Each response returns one Route, Resume, or Questions card.
+handoff. Use supplied evidence and contract defaults before asking. Stop asking
+once no open question would change the card.
 
 ## Inspect only supplied evidence
 
@@ -95,16 +89,13 @@ artifact that names a specific owner for the requested phase. A stated
 worktree, branch, pull request, worker, or parallel effort without that phase
 owner still uses the normal Route. Setup and the kickoff then each end with the
 occupancy sentence, exactly "No named owner was proven for this phase; this
-start is still allowed." Treat occupancy as unknown, not vacant. The router
-does not discover or monitor ownership.
+start is still allowed." Treat occupancy as unknown, not vacant.
 
 ## Choose what needs to happen first
 
 Choose exactly one starting workflow based on what needs to happen first: the
 earliest question to answer or durable change to make before useful work can
 continue. Choose it from this table, not from the host, model, or later steps.
-The coordinator runs it and carries the work forward from there within
-supplied authority.
 
 | What needs to happen first | Owner | Discriminator |
 |---|---|---|
@@ -116,8 +107,8 @@ supplied authority.
 | Canonical issue content, relationship graph, coverage, or readiness state must be inspected or changed | `managing-issues` | The first need is to inspect or edit issues, links, coverage, or ready-or-not state |
 | Visual direction, interaction design, or design quality is unresolved | `impeccable` | Let Impeccable select its internal workflow unless one exact command is already obvious |
 
-Work that needs a starting owner outside these seven gets a Questions card
-that names no owner and points to the supported starting owners in the table at
+Work that needs a starting owner outside these seven gets a Questions card that
+names no owner and points to the supported starting owners in the table at
 https://github.com/jrgilbertson/the-rookery/blob/main/ROUTING.md#choose-what-needs-to-happen-first.
 
 ## Ambiguity and missing input
@@ -126,11 +117,8 @@ https://github.com/jrgilbertson/the-rookery/blob/main/ROUTING.md#choose-what-nee
 - For two separate workstreams that could both start and neither blocks the
   other, ask which starts first. A recommended order is allowed; the operator
   still chooses. The Route card names exactly one starting workflow.
-- When the remaining uncertainty belongs to the downstream work, route to its
-  workflow instead of continuing to ask.
 - If the request already names the work, route it. Do not require a plan file,
-  issue, or other artifact first. When issue-family state is supplied, use
-  Handle parent, child, and existing work first.
+  issue, or other artifact first.
 - If a named or required primary artifact cannot be read, the operator says
   they cannot answer a required routing question, the selected workflow is
   confirmed unavailable, or every listed model for a profile is stated
@@ -146,9 +134,7 @@ evidence establishes independent units when it names units that need separate
 write paths, such as named modules, or when a plan states its units are
 independent. Expected implementation alone is not evidence of independent
 units. A stated worktree, branch, pull request, worker, or parallel effort is
-occupancy evidence, not evidence of independent units. An Executor may start
-its own subagents or workers through its harness or workflow; they belong to
-that Executor and are not routed workers.
+occupancy evidence, not evidence of independent units.
 
 | Pattern | Roles | Use when | Guardrail |
 |---|---|---|---|
@@ -170,8 +156,7 @@ Use Critic in the Reviewer role only when the judgment is adversarial. Use
 Design/taste as the judge only when the finish line is taste.
 
 An advisor only gathers bounded evidence. Do not count it as a worker and do
-not give it ownership. If the operator asked for an advisor, mention it in
-Setup.
+not give it ownership.
 
 ## Keep orchestration and ownership separate
 
@@ -184,15 +169,13 @@ independent decisions.
 | Structured orchestration | Supervised through Orca | The current coordinator remains the sole human-facing owner and integrator; acting on this recommendation requires Orca's installed version-matched orchestration contract |
 | Ownership | Current owner or full handoff | Full handoff transfers human-facing ownership to the receiving worktree or agent; the sender gains no monitoring duty |
 
-The selected starting workflow remains the owner. Structured orchestration is
-optional and currently depends on Orca. When supervised orchestration is
-selected, say so in Setup and the kickoff, tell the operator to follow Orca's
-installed contract, and add to Setup: once orchestration is running, continue
-with the coordinator in its terminal and close this session. The kickoff's
-orchestration sentence says "Orca orchestration" in those words and tells the
-coordinator to use Orca's `orchestration` skill when it is installed, because
-the receiving session matches that phrase to the skill. Do not copy Orca
-commands into the card.
+When supervised orchestration is selected, say so in Setup and the kickoff,
+tell the operator to follow Orca's installed contract, and add to Setup: once
+orchestration is running, continue with the coordinator in its terminal and
+close this session. The kickoff's orchestration sentence says "Orca
+orchestration" in those words and tells the coordinator to use Orca's
+`orchestration` skill when it is installed, because the receiving session
+matches that phrase to the skill. Do not copy Orca commands into the card.
 
 ## Select profiles
 
@@ -201,23 +184,21 @@ Pick each seat's and worker's profile:
 - The coordinator uses its starting workflow's profile: Planner for
   `ce-brainstorm`, `grill-with-docs`, `ce-plan`, and `managing-issues`;
   Executor for `ce-work`; Researcher for `ce-debug`; and Design/taste for
-  `impeccable`. Dispatching workers does not change it.
+  `impeccable`.
 - Executor workers use Executor. Reviewer workers use Reviewer.
 
 ### Availability fallback
 
 Use operator-stated or already-supplied availability to filter unavailable
-models in listed order. Keep the selected owner unchanged. When availability
-is unknown, keep the default selection and omit availability from the
-response. Mention availability only when it changes a selected profile.
+models in listed order. Keep the selected owner unchanged. When availability is
+unknown, keep the default selection and omit availability from the response.
 
 ### Subscription billing
 
 Every Route kickoff includes this execution constraint: use the assigned
 providers’ official CLIs with subscription authentication. Do not use API-key
 billing or switch to it as a fallback. If subscription access cannot be
-established or its usage limit is reached, report the blocker. The executing
-workflow verifies authentication; the router does not probe credentials.
+established or its usage limit is reached, report the blocker.
 
 ### Effort escalation
 
@@ -242,11 +223,11 @@ effort, but selects one only when the operator approves it.
 
 The card is the entire final answer, with no preamble, narration, or closing
 remark around it. Its first line is exactly `**Route**`, `**Resume**`, or
-`**Questions**`. Bold marks that line and the section labels, with a blank
-line after each; use no `#` headings, and never fence the kickoff. Write every
-section as natural prose, not a string of stock sentences, except the
-occupancy sentence, which is emitted exactly when it applies. Render model IDs
-as ordinary names, such as "Fable 5.1 at medium".
+`**Questions**`. Bold marks that line and the section labels, with a blank line
+after each; use no `#` headings, and never fence the kickoff. Write every
+section as natural prose, not a string of stock sentences, except the occupancy
+sentence, which is emitted exactly when it applies. Render model IDs as
+ordinary names, such as "Fable 5.1 at medium".
 
 ### Route
 
@@ -256,7 +237,7 @@ as ordinary names, such as "Fable 5.1 at medium".
 
     **Why**
 
-    [One or two sentences on what needs to happen first and why this pattern fits. Name where the run is expected to end, which the roster was sized for, and say when the coordinator carries the work into implementation. Name any pattern or roster default the route relied on instead of supplied evidence, so the operator can override it in one reply; availability stays out of the card when it is unknown.]
+    [One or two sentences on what needs to happen first and why this pattern fits. Name where the run is expected to end, which the roster was sized for, and say when the coordinator carries the work into implementation. Name any pattern or roster default the route relied on instead of supplied evidence, so the operator can override it in one reply.]
 
     **Setup**
 
@@ -270,9 +251,8 @@ The decision line never names a role; roles live in Setup. The kickoff states
 each worker's model and effort as settings to apply and leaves how workers are
 started to the workflow and harness. The implementation-workers sentence keeps
 its template wording exactly; the Executor count, cap, queue, and units stay in
-Setup. A single-owner Setup omits orchestration when it is the default. The
-kickoff must stand alone when pasted, so it repeats every role's model and
-effort, authority, and any occupancy sentence.
+Setup. The kickoff must stand alone when pasted, so it repeats every role's
+model and effort, authority, and any occupancy sentence.
 
 ### Resume
 
@@ -293,15 +273,15 @@ A Resume card carries no kickoff.
     Recommended: [one concrete answer the operator can accept in a word]. [One-line reason.]
 
 Order questions by routing impact: owner, then pattern, then profile, then
-orchestration and ownership handoff. Batch only independent questions; a dependent
-question waits for its prerequisite. Every question carries a recommendation
-on its own line: one concrete answer, the way a grill recommends, never a test
-for the operator to apply. Use the contract default where one exists; where
-the operator holds the fact, recommend the answer that lets routing proceed
-under the defaults. A Questions card names no workflow, model, profile, or
-kickoff. When the starting owner falls outside the seven, recommend choosing
-from the supported-owner table linked above; that pointer is the concrete
-answer there, since the card may name no workflow.
+orchestration and ownership handoff. Batch only independent questions; a
+dependent question waits for its prerequisite. Every question carries a
+recommendation on its own line: one concrete answer, the way a grill
+recommends, never a test for the operator to apply. Use the contract default
+where one exists; where the operator holds the fact, recommend the answer that
+lets routing proceed under the defaults. A Questions card names no workflow,
+model, profile, or kickoff. When the starting owner falls outside the seven,
+recommend choosing from the supported-owner table linked above; that pointer is
+the concrete answer there, since the card may name no workflow.
 
 <!-- route-work-contract-end -->
 
@@ -310,9 +290,9 @@ answer there, since the card may name no workflow.
 
 ## Maintaining the model table
 
-Maintainers update the table manually from external evidence. Benchmark
-scores, cost, quota, confidence, automatic rankings, and staleness state stay
-outside the contract.
+Maintainers update the table manually from external evidence. Benchmark scores,
+cost, quota, confidence, automatic rankings, and staleness state stay outside
+the contract.
 
 ### Order models by cost of pass
 

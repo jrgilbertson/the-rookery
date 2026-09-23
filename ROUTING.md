@@ -54,25 +54,25 @@ itself as the kickoff's source of truth.
 The router assesses supplied evidence, renders one card, and exits without
 changing state.
 
-Copy only authority the operator supplied. Artifact approval is task state, not
-an authority grant. An operator request to implement the work, including a
-request to route the kickoff to implement it, is implementation authorization.
-When asking whether implementation is authorized, do not treat artifact
-approval as that grant. An implementation kickoff never infers permission to
-commit, push, open a pull request, publish, merge, or change external state.
-Authorized document writes use repository-defined locations. Supplied authority
-is the only thing that bounds how far the coordinator carries the work; the
-card never narrates phases, checkpoints, or stopping points beyond it, and
-never says where plans are stored. Unless the operator granted merge, every
-kickoff whose run implements ends its authority text with "Don't merge without
-human approval." When the operator withheld merge, that line is the limit's one
-sentence. Beyond it, never list permissions the operator did not mention, even
-to say they are not inferred. Leave off a grant the starting workflow already
-implies, such as implementation on a `ce-work` start (no other start implies
-it); state any other supplied grant in one sentence. When the operator states a
-limit, including saying some authority is withheld or not supplied, such as a
-grill without document-write authority, state it on the card in one sentence
-and never drop it. Otherwise say nothing about authority.
+Never add authority the operator did not supply. Artifact approval is task
+state, not an authority grant. An operator request to implement the work,
+including a request to route the kickoff to implement it, is implementation
+authorization. When asking whether implementation is authorized, do not treat
+artifact approval as that grant. An implementation kickoff never infers
+permission to commit, push, open a pull request, publish, merge, or change
+external state. Authorized document writes use repository-defined locations.
+Supplied authority is the only thing that bounds how far the coordinator
+carries the work; the card never narrates phases, checkpoints, or stopping
+points beyond it, and never says where plans are stored. Unless the operator
+granted merge, every kickoff whose run may reach implementation ends its
+authority text with "Don't merge without human approval." When the operator
+withheld merge, that line is the limit's one sentence. Beyond it, never list
+permissions the operator did not mention, even to say they are not inferred.
+Leave supplied grants off the card, but a condition or scope the operator
+attaches to a grant is a limit. When the operator states a limit, including
+saying some authority is withheld or not supplied, such as a grill without
+document-write authority, state it on the card in one sentence and never drop
+it. Otherwise say nothing about authority.
 
 ## Handle parent, child, and existing work
 
@@ -269,7 +269,7 @@ as ordinary names, such as "Fable 5.1 at medium".
 
     **Copy/paste kickoff**
 
-    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the coordinator on [model] at [effort]. [Each Reviewer, advisor, Scout, or Researcher worker with its model and effort.] [Subscription billing constraint.] [In Coordinator + Executors: When the work reaches implementation, run implementation workers on [Executor model] at [effort]; [the implementing workflow] decides how many and how to schedule them.] [Orchestration sentence only when it differs from the default.] Treat [the supplied artifact or request] as the source of truth. [Authority as the authority rules require, ending with the no-merge line when the run implements.] [Occupancy sentence last, only when it applies.]
+    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the coordinator on [model] at [effort]. [Each Reviewer, advisor, Scout, or Researcher worker with its model and effort.] [Subscription billing constraint.] [In Coordinator + Executors: When the work reaches implementation, run implementation workers on [Executor model] at [effort]; [the implementing workflow] decides how many and how to schedule them.] [Orchestration sentence only when it differs from the default.] Treat [the supplied artifact or request] as the source of truth. [Authority as the authority rules require, ending with the no-merge line when the run may reach implementation.] [Occupancy sentence last, only when it applies.]
 
 The decision line never names a role; roles live in Setup. The kickoff states
 each worker's model and effort as settings to apply and leaves how workers are

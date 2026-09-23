@@ -50,7 +50,7 @@ must not become workflow ownership or unbounded fan-out.
       and invents no CLI grammar.
 - [ ] Item 2's kickoff ends its authority text with "Don't merge without human approval."
       It adds no separate merge sentence and narrates no PR cadence. Items 3
-      and 4 state no implementation grant, since `ce-work` implies it.
+      and 4 state no grant sentence.
 - [ ] Item 3 stays the coordinator alone on Opus 5.5 at medium: sequential phases of one
       owner, no parallel workers. Item 4 uses Executor + Reviewer, names two
       workers total: the executor is also the coordinator on Opus 5.5 at medium, and

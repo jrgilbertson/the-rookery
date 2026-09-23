@@ -75,7 +75,7 @@ implementation authority does not add Executors.
 - [ ] All conclusions use supplied family and ownership state only. Missing
       owner evidence leaves ownership unknown; it does not prove a vacant phase.
 - [ ] Only items 6, 8, and 9 implement, from their direct implementation
-      requests. As `ce-work` starts they state no implementation grant, end the
+      requests. They state no grant sentence, end the
       kickoff's authority text with "Don't merge without human approval.", and add
       no commit, push, PR, or other external authority. Artifact approval alone
       never becomes permission to implement.

@@ -47,9 +47,9 @@ are established.
       through.
 - [ ] Item 3 starts with `ce-brainstorm` and stays the coordinator alone, with no
       Executors and nothing about authority.
-- [ ] Items 1 and 2 state the supplied implementation and pull-request grant in
-      one sentence, end the kickoff's authority text with
-      "Don't merge without human approval.", and enumerate no other prohibitions.
+- [ ] Items 1 and 2 state no grant sentence, end the kickoff's authority text
+      with "Don't merge without human approval.", and enumerate no other
+      prohibitions.
 - [ ] Items 4–6 start with `ce-plan` on Opus 5.5 at high. Expected
       implementation alone adds no Executors and grants no permission to
       implement; defaults are labeled and no concrete units, owners or write
@@ -59,7 +59,7 @@ are established.
       sentence, invented permission or limit when authority is unstated.
 - [ ] Item 5 preserves planning-only authority and withheld implementation
       in Setup and the standalone kickoff, with no unconditional carry-forward.
-- [ ] Item 6 preserves planning and implementation authority in Setup and the
-      standalone kickoff and permits carry-forward into implementation.
+- [ ] Item 6's Why carries the work into implementation, and its kickoff states
+      no grant sentence and ends with "Don't merge without human approval."
 - [ ] Every card follows the Route template without extra section labels.
 - [ ] The trace contains only reads of the installed package.

@@ -54,12 +54,13 @@ looked" surface. GitHub Releases mirror its entries.
   until a planning benchmark exists. `repo-gardener`, PR readiness, and
   CONCEPTS now use Coordinator for the seat once called Lead.
 
-- `route-work` kickoffs are shorter. A kickoff whose run implements ends with
-  "Don't merge without human approval." unless the operator granted merge,
-  cards leave off grants the starting workflow already implies, and stated
-  limits stay. Every worker runs in the current worktree, with separate write
-  paths for parallel Executors. The Coordinator + Executors kickoff names only
-  the implementation workers' model and effort and leaves their count and
+- `route-work` kickoffs are shorter. A kickoff whose run may reach
+  implementation ends with "Don't merge without human approval." unless the
+  operator granted merge, cards leave supplied grants to the workflows, and
+  stated limits stay, including conditions or scopes attached to a grant.
+  Every worker runs in the current worktree, with separate write paths for
+  parallel Executors. The Coordinator + Executors kickoff names only the
+  implementation workers' model and effort and leaves their count and
   scheduling to the workflow, which already decides how to dispatch them.
 
 - `route-work` kickoffs that select supervised orchestration now say "Orca

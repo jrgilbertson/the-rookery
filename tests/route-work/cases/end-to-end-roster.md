@@ -6,7 +6,9 @@ PR feedback reproduced an implementation forecast becoming a carry-forward
 promise without a grant; items 5 and 6 retain withheld/granted authority controls.
 On 2026-09-22 the default changed to Single owner: a run that ends in
 implementation is carried by the coordinator alone unless independent units
-are established.
+are established. On 2026-09-23 issue #162 made a predicted implementation the
+default: a COM-2128 route needed "size to include implementation" before its
+card matched the run, so item 3 now expects the labeled prediction.
 
 ## Prompt
 
@@ -46,7 +48,10 @@ are established.
       the expected end of the run and that the coordinator carries the fix
       through.
 - [ ] Item 3 starts with `ce-brainstorm` and stays the coordinator alone, with no
-      Executors and nothing about authority.
+      Executors. Why names implementation as the predicted end and says the
+      coordinator can adjust the roster as the work unfolds. The kickoff gives
+      no instruction to implement, states no grant, and ends with "Don't merge
+      without human approval."
 - [ ] Items 1 and 2 state no grant sentence, state the supplied condition on
       implementation in one sentence, end the kickoff's authority text with
       "Don't merge without human approval.", and enumerate no other

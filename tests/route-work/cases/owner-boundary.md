@@ -1,7 +1,9 @@
 # What needs to happen first determines the starting workflow
 
 Provenance: explicit routing-safety invariant — a carrier or eventual workflow
-must not displace the work that needs to happen first.
+must not displace the work that needs to happen first. Issue #162 added the
+prediction check: a start that says nothing about implementation predicts it,
+except a grill or issue-tracker start whose need ends earlier.
 
 ## Prompt
 
@@ -38,6 +40,11 @@ must not displace the work that needs to happen first.
 - [ ] Items 6–7 start with `managing-issues` and `impeccable`, despite their
       issue carriers, each as the coordinator alone. Item 7's kickoff ends
       with "Don't merge without human approval."
+- [ ] Items 1, 4, and 7 say nothing about implementation, so each Why names
+      implementation as the predicted end and says the coordinator can adjust
+      the roster. Each kickoff states no grant, gives no instruction to
+      implement, and ends with "Don't merge without human approval." Items 2
+      and 6 carry no prediction and no merge line.
 - [ ] Item 8 returns a `**Questions**` card that includes the absolute public
       supported-owner table URL from `ROUTING.md`, names no workflow, and emits
       no kickoff.

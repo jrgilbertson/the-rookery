@@ -2,7 +2,8 @@
 
 Provenance: user feedback — routing asks the smallest independent question
 batch, ordered by impact with recommended answers, and copies only supplied
-authority.
+authority. Issue #162 added a labeled prediction check to item 5, which says
+nothing about implementation.
 
 ## Prompt
 
@@ -50,7 +51,9 @@ authority.
       its recommendation.
 - [ ] Item 5 keeps ce-plan, selects the secondary Planner model, Astra at
       high, and says the primary is unavailable without calling the secondary
-      unverified.
+      unverified. Nothing is said about implementation, so Why names it as the
+      predicted end, and the kickoff states no grant and ends with "Don't merge
+      without human approval."
 - [ ] Item 8 renders two Route cards. The grill states its supplied
       document-write limit and has no merge line. The `ce-work` card states no
       implementation grant, ends its kickoff with "Don't merge without human approval."

@@ -56,6 +56,14 @@ looked" surface. GitHub Releases mirror its entries.
   acceptance criteria exist for a run that does not implement through
   `ce-work`.
 
+- `route-work` now predicts that a run reaches implementation when nothing
+  says otherwise and sizes the roster for it, so operators no longer reply
+  "size to include implementation" before using the card. Why labels the
+  prediction and says the coordinator can adjust the roster. A run limited to
+  planning, one with implementation withheld, and a tracker-only or grill-only
+  start keep their earlier end. The prediction grants nothing, and the kickoff
+  still ends with "Don't merge without human approval."
+
 - `route-work` kickoffs that select supervised orchestration now say "Orca
   orchestration" in those words and tell the coordinator to use Orca's
   `orchestration` skill when it is installed, so the receiving session

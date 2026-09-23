@@ -6,6 +6,10 @@ pattern, a roster of roles with models and effort, and a copy/paste kickoff.
 When work already has a proven owner it says where to resume. When it lacks a
 routing fact it asks. It leaves execution to the selected workflow.
 
+The coordinator is the session that runs the starting workflow and owns the
+human-facing conversation. It integrates results and judges completion within
+supplied authority. It is a seat, not a profile or an extra worker.
+
 Workflow names in its cards are portable capability labels. Using this router
 does not require those workflow packages to be installed.
 
@@ -18,7 +22,7 @@ intent proceeds through its normal workflow and does not produce a card.
 One routing attempt may span multiple conversational turns. Ask only questions
 that change the owner, pattern, profile, structured orchestration, ownership
 handoff, or placement. Use supplied evidence and contract defaults before
-asking. Continue until the setup is clear.
+asking. Stop asking once no open question would change the card.
 
 Put product discovery, diagnosis, planning, and design on those owners' route
 cards. Each response returns one Route, Resume, or Questions card and persists
@@ -48,19 +52,20 @@ The router assesses supplied evidence, renders one card, and exits without
 changing state.
 
 Copy only authority the operator supplied. Artifact approval is task state,
-not an authority grant. An operator request to implement the work, including
-a request to route the kickoff to implement it, is implementation
-authorization. When asking whether implementation is authorized, do not treat
-artifact approval as that grant. An implementation kickoff never
-infers permission to commit, push, open a pull request, publish, merge, or
-change external state. Authorized document writes use repository-defined
-locations. Supplied authority is the only thing that bounds how far the coordinator
-carries the work; the card never narrates phases, checkpoints, or stopping points beyond it, and never says where plans are
-stored. When the operator supplied a grant or an explicit limit, state it on
-the card in one sentence; an operator saying some authority is withheld or
-not supplied is an explicit limit, and it is never dropped. When the operator
-said nothing about authority, say nothing about it. Never list
-unsupplied permissions on a card, even to say they are not inferred.
+not an authority grant. An operator request to implement the work, including a
+request to route the kickoff to implement it, is implementation authorization.
+When asking whether implementation is authorized, do not treat artifact
+approval as that grant. An implementation kickoff never infers permission to
+commit, push, open a pull request, publish, merge, or change external state.
+Authorized document writes use repository-defined locations. Supplied
+authority is the only thing that bounds how far the coordinator carries the
+work; the card never narrates phases, checkpoints, or stopping points beyond
+it, and never says where plans are stored. Never list permissions the operator
+did not mention, even to say they are not inferred. When the operator supplied
+a grant or an explicit limit, state it on the card in one sentence; an
+operator saying some authority is withheld or not supplied is an explicit
+limit, and it is never dropped. When the operator said nothing about
+authority, say nothing about it.
 
 ## Handle parent, child, and existing work
 
@@ -123,39 +128,34 @@ https://github.com/jrgilbertson/the-rookery/blob/main/ROUTING.md#choose-what-nee
   Handle parent, child, and existing work first.
 - If a named or required primary artifact cannot be read, the operator says
   they cannot answer a required routing question, the selected workflow is
-  confirmed unavailable, or every listed profile for a role is stated
+  confirmed unavailable, or every listed model for a profile is stated
   unavailable, return a Questions card asking for what would let routing
-  proceed. Name no workflow in it, not even as an example.
+  proceed.
 
 ## Estimate the pattern and roster
 
-Every route has a coordinator: the session that runs the starting workflow and
-owns the human-facing conversation. It integrates results and judges
-completion within supplied authority. The coordinator is a seat, not a profile
-or an extra worker. Name the role for each worker, and count workers, not
-steps.
+Every route has a coordinator. Name the role for each worker, and count
+workers, not steps.
 
-Start with Single owner, including when implementation is expected. Use
-Coordinator + Executors only when supplied evidence establishes independent
-units that need separate write paths, such as named modules or a plan that
-states its units are independent. Expected implementation alone is not
-evidence of independent units. A stated worktree, branch, pull request,
-worker, or parallel effort is occupancy evidence, not evidence of independent
-units. An Executor may start its own subagents or workers through its harness
-or workflow; they belong to that Executor and are not routed workers.
+Start with Single owner, including when implementation is expected. Supplied
+evidence establishes independent units when it names units that need separate
+write paths, such as named modules, or when a plan states its units are
+independent. Expected implementation alone is not evidence of independent
+units. A stated worktree, branch, pull request, worker, or parallel effort is
+occupancy evidence, not evidence of independent units. An Executor may start
+its own subagents or workers through its harness or workflow; they belong to
+that Executor and are not routed workers.
 
 | Pattern | Roles | Use when | Guardrail |
 |---|---|---|---|
-| Single owner | The coordinator alone, on the selected owner's profile. It writes the work itself. | The default, unless supplied evidence establishes independent units, or explicit acceptance criteria or a review request call for a Reviewer | One worker covers later stages of the same owner. |
-| Executor + Reviewer | Two workers: the coordinator writes and revises; the Reviewer only judges. | Explicit acceptance criteria exist or the operator asks for review | One round. Stop when the Reviewer's stated criteria pass or fail. Hand the Reviewer the criteria. The Reviewer does not write the artifact. This is not advisor consultation. |
-| Coordinator + Executors | The coordinator plans, dispatches, and integrates; it does not write unit changes. Executor workers implement the units. Scout or Researcher workers only for search slices. | Implementation is expected, from supplied authority or an operator statement that implementation follows, and supplied evidence establishes independent units, whichever workflow starts | Give each worker a separate write path before parallel writes, and give the coordinator none. The coordinator keeps the plan, unit list, status, and briefs in files a fresh coordinator session can resume from. |
+| Single owner | The coordinator alone, on the selected owner's profile. It writes the work itself. | The default when neither other pattern applies | One worker covers later stages of the same owner. |
+| Executor + Reviewer | Two workers: the coordinator writes and revises; the Reviewer only judges. | Explicit acceptance criteria exist or the operator asks for review | One round. Stop when the Reviewer's stated criteria pass or fail. Hand the Reviewer the criteria. The Reviewer does not write the artifact. |
+| Coordinator + Executors | The coordinator plans, dispatches, and integrates; it does not write unit changes. Executor workers implement the units. Scout or Researcher workers only for search slices. | Implementation is expected, from supplied authority or an operator statement that implementation follows, and supplied evidence establishes independent units, whichever workflow starts | Give each worker a separate write path before parallel writes, and give the coordinator none. |
 
 Size the roster for where the run ends, not where it starts, including a
-brainstorm, grill, debug, or plan that implementation will follow. The
-coordinator's profile still comes from the starting workflow. Do not ask
+brainstorm, grill, debug, or plan that implementation will follow. Do not ask
 whether implementation follows; when nothing says so, size for the starting
-workflow and invite the override in Why. Add a Reviewer when the input carries
-explicit acceptance criteria or the operator asks.
+workflow and invite the override in Why.
 
 Budget five concurrent workers total, including the coordinator and Reviewer.
 Use one Executor per named or counted unit, or up to three when evidence
@@ -168,8 +168,7 @@ Design/taste as the judge only when the finish line is taste.
 An advisor only gathers bounded evidence. Do not count it as a worker and do
 not give it ownership. If the operator asked for an advisor, mention it in
 Setup. Subagents, forks, teams, and background sessions are how work runs, not
-which pattern to recommend. The coordinator may change the pattern when new
-evidence justifies it.
+which pattern to recommend.
 
 ## Keep orchestration and placement separate
 
@@ -194,9 +193,9 @@ orchestration" in those words and tells the coordinator to use Orca's
 matches that phrase to the skill. Do not copy Orca commands into the card.
 Read-only scouts and fresh-context reviewers can work in the current worktree.
 
-## Select the role profile
+## Select profiles
 
-Pick each role's profile from the pattern:
+Pick each seat's and worker's profile:
 
 - The coordinator uses its starting workflow's profile: Planner for
   `ce-brainstorm`, `grill-with-docs`, `ce-plan`, and `managing-issues`;
@@ -204,29 +203,20 @@ Pick each role's profile from the pattern:
   `impeccable`. Dispatching workers does not change it.
 - Executor workers use Executor. Reviewer workers use Reviewer.
 
-| Role | Responsibilities |
-|---|---|
-| Planner | Brainstorming, grilling, planning, and issue-graph work that decides what happens next |
-| Executor | Implements the assigned change and revises it |
-| Reviewer | Independent evaluators and named review or verification gates |
-| Critic | Independent adversarial pressure-test advisors or evaluators; not the owning `grill-with-docs` route |
-| Researcher | Causal investigation inside `ce-debug` and evidence-backed synthesis |
-| Scout | Bounded evidence gathering and advisor research |
-| Design/taste | `impeccable` and design-quality evaluation |
-
 ### Availability fallback
 
 Use operator-stated or already-supplied availability to filter unavailable
-profiles in listed order. Keep the selected owner
-unchanged. When availability is unknown, keep the default selection and omit
-availability from the response. Mention availability only when it changes a
-selected profile.
+models in listed order. Keep the selected owner unchanged. When availability
+is unknown, keep the default selection and omit availability from the
+response. Mention availability only when it changes a selected profile.
 
 ### Subscription billing
 
-Every Route kickoff includes this execution constraint: use the assigned providers’ official CLIs with subscription authentication.
-Do not use API-key billing or switch to it as a fallback. If subscription access cannot be established or its usage limit is reached, report the blocker.
-The executing workflow verifies authentication; the router does not probe credentials.
+Every Route kickoff includes this execution constraint: use the assigned
+providers’ official CLIs with subscription authentication. Do not use API-key
+billing or switch to it as a fallback. If subscription access cannot be
+established or its usage limit is reached, report the blocker. The executing
+workflow verifies authentication; the router does not probe credentials.
 
 ### Effort escalation
 
@@ -237,25 +227,25 @@ effort, but selects one only when the operator approves it.
 
 **Last reviewed: 2026-09-22**
 
-| Role | Primary | Secondary | Tertiary |
-|---|---|---|---|
-| Planner | Anthropic / `claude-opus-5-5` / high | OpenAI / `gpt-6-astra` / high | — |
-| Executor | Anthropic / `claude-opus-5-5` / medium | OpenAI / `gpt-6-sol` / high | xAI / `grok-4.7` / high |
-| Reviewer | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
-| Critic | OpenAI / `gpt-6-sol` / max | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
-| Researcher | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
-| Scout | xAI / `grok-4.7` / high | OpenAI / `gpt-6-sol` / high | — |
-| Design/taste | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-6-astra` / medium | — |
+| Profile | Used for | Primary | Secondary | Tertiary |
+|---|---|---|---|---|
+| Planner | Brainstorming, grilling, planning, and issue-graph work that decides what happens next | Anthropic / `claude-opus-5-5` / high | OpenAI / `gpt-6-astra` / high | — |
+| Executor | Implements the assigned change and revises it | Anthropic / `claude-opus-5-5` / medium | OpenAI / `gpt-6-sol` / high | xAI / `grok-4.7` / high |
+| Reviewer | Independent evaluators and named review or verification gates | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
+| Critic | Independent adversarial pressure-test advisors or evaluators; not the owning `grill-with-docs` route | OpenAI / `gpt-6-sol` / max | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
+| Researcher | Causal investigation inside `ce-debug` and evidence-backed synthesis | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
+| Scout | Bounded evidence gathering and advisor research | xAI / `grok-4.7` / high | OpenAI / `gpt-6-sol` / high | — |
+| Design/taste | `impeccable` and design-quality evaluation | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-6-astra` / medium | — |
 
 ## Return one portable response
 
-The card is the entire final answer, with no preamble, narration, or closing remark
-around it. Its first line is exactly `**Route**`, `**Resume**`, or
+The card is the entire final answer, with no preamble, narration, or closing
+remark around it. Its first line is exactly `**Route**`, `**Resume**`, or
 `**Questions**`. Bold marks that line and the section labels, with a blank
 line after each; use no `#` headings, and never fence the kickoff. Write every
 section as natural prose, not a string of stock sentences, except the
-occupancy sentence, which is emitted exactly when it applies. Render model
-IDs as ordinary names, such as "Fable 5.1 at medium".
+occupancy sentence, which is emitted exactly when it applies. Render model IDs
+as ordinary names, such as "Fable 5.1 at medium".
 
 ### Route
 
@@ -273,7 +263,7 @@ IDs as ordinary names, such as "Fable 5.1 at medium".
 
     **Copy/paste kickoff**
 
-    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the coordinator on [model] at [effort]. [Each other role with its model, effort, and count.] [Subscription billing constraint.] [Orchestration and placement sentences only when they differ from the default.] Treat [the supplied artifact or request] as the source of truth. [Supplied authority in one sentence, only when the operator supplied it.] [Occupancy sentence last, only when it applies.]
+    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the coordinator on [model] at [effort]. [Each other role with its model, effort, and count.] [Subscription billing constraint.] [In Coordinator + Executors: you write no unit changes and keep the plan, unit list, status, and briefs in files a fresh coordinator session can resume from.] [Orchestration and placement sentences only when they differ from the default.] Treat [the supplied artifact or request] as the source of truth. [Supplied authority in one sentence, only when the operator supplied it.] [Occupancy sentence last, only when it applies.]
 
 The decision line never names a role; roles live in Setup. The kickoff states
 each worker's model and effort as settings to apply. Where a harness makes
@@ -308,10 +298,10 @@ question waits for its prerequisite. Every question carries a recommendation
 on its own line: one concrete answer, the way a grill recommends, never a test
 for the operator to apply. Use the contract default where one exists; where
 the operator holds the fact, recommend the answer that lets routing proceed
-under the defaults. Never write "no default". A Questions card
-names no workflow, model, role profile, or kickoff. When the starting owner falls outside the
-seven, recommend choosing from the supported-owner table linked above; that
-pointer is the concrete answer there, since the card may name no workflow.
+under the defaults. A Questions card names no workflow, model, profile, or
+kickoff. When the starting owner falls outside the seven, recommend choosing
+from the supported-owner table linked above; that pointer is the concrete
+answer there, since the card may name no workflow.
 
 <!-- route-work-contract-end -->
 
@@ -322,27 +312,27 @@ Maintainers update the model table manually from external evidence. Benchmark
 scores, cost, quota, confidence, automatic rankings, and staleness state stay
 outside the contract.
 
-Each row lists a role's profiles in order of cost of pass: cost per attempt
-divided by pass rate, measured on work like that role's. Choose each
-profile's effort the same way: the cheapest effort whose pass rate on the
-role's work is close to that model's ceiling. That is where its curve of
-cost per extra point bends upward. A composite index across effort levels
-shows the curve's shape, but its average is not a pass rate: it hides how
-low effort fails on hard tasks and so always makes low effort look cheapest.
-Take the pass rate from evidence that matches the role. The Executor row
-needs coding-agent boards such as FrontierCode, CursorBench, Terminal-Bench,
-or a coding-agent index, and Design/taste needs human-preference boards.
-Confirm each effort choice on at least two independent boards that report
-every effort level, such as the Artificial Analysis Intelligence Index,
-Zapier's AutomationBench, and VulcanBench, instead of relying on one index.
-For coding roles, Cognition's FrontierCode leaderboard publishes a pass rate
-and a cost per rollout for every effort level in each model's native harness,
-usually on launch day, in
-https://cognition.com/data/frontiercode-leaderboard/data.json.
-No public benchmark scores planning or coordination work, so the Planner row
-is a judgment call. It follows vendor practice of giving planning more
-reasoning effort than execution; revisit it when a planning benchmark reports
-every effort level. A row lists only profiles that earn a place, so some rows have fewer than
-three. A profile may rank by a capability the others lack, as xAI does for
-Scout with X search. A subscription already paid for may keep an otherwise
-dominated model in a last slot where it still does the role's work well.
+Each row lists a profile's models in order of cost of pass: cost per attempt
+divided by pass rate, measured on work like that role's. Choose each model's
+effort the same way: the cheapest effort whose pass rate on the role's work is
+close to that model's ceiling. That is where its curve of cost per extra point
+bends upward. A composite index across effort levels shows the curve's shape,
+but its average is not a pass rate: it hides how low effort fails on hard
+tasks and so always makes low effort look cheapest. Take the pass rate from
+evidence that matches the role. The Executor row needs coding-agent boards
+such as FrontierCode, CursorBench, Terminal-Bench, or a coding-agent index,
+and Design/taste needs human-preference boards. Confirm each effort choice on
+at least two independent boards that report every effort level, such as the
+Artificial Analysis Intelligence Index, Zapier's AutomationBench, and
+VulcanBench, instead of relying on one index. For coding roles, Cognition's
+FrontierCode leaderboard publishes a pass rate and a cost per rollout for
+every effort level in each model's native harness, usually on launch day, in
+https://cognition.com/data/frontiercode-leaderboard/data.json. No public
+benchmark scores planning or coordination work, so the Planner row is a
+judgment call. It follows vendor practice of giving planning more reasoning
+effort than execution; revisit it when a planning benchmark reports every
+effort level. A row lists only models that earn a place, so some rows have
+fewer than three. A model may rank by a capability the others lack, as xAI
+does for Scout with X search. A subscription already paid for may keep an
+otherwise dominated model in a last slot where it still does the role's work
+well.

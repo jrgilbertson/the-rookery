@@ -47,7 +47,7 @@ implementation authority does not add Executors.
 - [ ] Items 1 and 2 start with `managing-issues` and `ce-plan`, respectively;
       item 1 chooses no leaf and certifies no frontier. Item 3 returns Questions
       asking whether implementation is authorized, with a concrete recommendation
-      and no workflow, model, role profile, or kickoff.
+      and no workflow, model, profile, or kickoff.
 - [ ] Item 8 starts with `ce-work` and uses Coordinator + Executors, because
       the approved plan states independent units: a coordinator on Opus 5.5 at
       medium (the Executor profile, which dispatching does not change) and

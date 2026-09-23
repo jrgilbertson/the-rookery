@@ -49,21 +49,18 @@ looked" surface. GitHub Releases mirror its entries.
   Researcher for `ce-debug`; Design/taste for `impeccable`. Dispatching
   workers no longer changes that profile. Routes now start as Single owner,
   and Coordinator + Executors applies only when supplied evidence establishes
-  independent units. In that pattern the coordinator writes no unit changes.
-  Subagents an Executor starts through its harness or workflow are not routed
-  workers. Kickoffs state each worker's effort, and a worker whose effort
-  differs from the coordinator's starts as a subagent or separate session,
-  because Claude Code agent-team teammates always follow the coordinator's
-  effort. The Planner row is labeled a judgment call until a planning
-  benchmark exists. `repo-gardener`, PR readiness, and CONCEPTS now use
-  Coordinator for the seat once called Lead.
+  independent units. Subagents an Executor starts through its harness or
+  workflow are not routed workers. The Planner row is labeled a judgment call
+  until a planning benchmark exists. `repo-gardener`, PR readiness, and
+  CONCEPTS now use Coordinator for the seat once called Lead.
 
 - `route-work` kickoffs are shorter. A kickoff whose run implements ends with
   "Don't merge without human approval." unless the operator granted merge,
   cards leave off grants the starting workflow already implies, and stated
   limits stay. Every worker runs in the current worktree, with separate write
-  paths for parallel Executors. The Coordinator + Executors kickoff says in
-  plain words that the Executors write the units' code.
+  paths for parallel Executors. The Coordinator + Executors kickoff names only
+  the implementation workers' model and effort and leaves their count and
+  scheduling to the workflow, which already decides how to dispatch them.
 
 - `route-work` kickoffs that select supervised orchestration now say "Orca
   orchestration" in those words and tell the coordinator to use Orca's

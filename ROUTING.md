@@ -157,7 +157,7 @@ that Executor and are not routed workers.
 |---|---|---|---|
 | Single owner | The coordinator alone, on the selected owner's profile. It writes the work itself. | The default when neither other pattern applies | One worker covers later stages of the same owner. |
 | Executor + Reviewer | Two workers: the coordinator writes and revises; the Reviewer only judges. | Explicit acceptance criteria exist or the operator asks for review | One round. Stop when the Reviewer's stated criteria pass or fail. Hand the Reviewer the criteria. The Reviewer does not write the artifact. |
-| Coordinator + Executors | The coordinator plans, dispatches, and integrates; it does not write unit changes. Executor workers implement the units. Scout or Researcher workers only for search slices. | Implementation is expected and supplied evidence establishes independent units, whichever workflow starts | Give each worker a separate write path before parallel writes, and give the coordinator none. |
+| Coordinator + Executors | The coordinator runs the starting workflow, which dispatches Executor workers to implement the units. Scout or Researcher workers only for search slices. | Implementation is expected and supplied evidence establishes independent units, whichever workflow starts | The kickoff names the Executors' model and effort; the workflow decides how many run and when. |
 
 Size the roster for where the run ends, not where it starts, including a
 brainstorm, grill, debug, or plan that implementation will follow. Do not ask
@@ -269,16 +269,15 @@ as ordinary names, such as "Fable 5.1 at medium".
 
     **Copy/paste kickoff**
 
-    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the coordinator on [model] at [effort]. [Each other role with its model, effort, and count.] [Subscription billing constraint.] [In Coordinator + Executors: leave the units' code to the Executors; you plan, dispatch, and integrate.] [Orchestration sentence only when it differs from the default.] Treat [the supplied artifact or request] as the source of truth. [Authority as the authority rules require, ending with the no-merge line when the run implements.] [Occupancy sentence last, only when it applies.]
+    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the coordinator on [model] at [effort]. [Each Reviewer, advisor, Scout, or Researcher worker with its model and effort.] [Subscription billing constraint.] [In Coordinator + Executors: When the work reaches implementation, run implementation workers on [Executor model] at [effort]; [the implementing workflow] decides how many and how to schedule them.] [Orchestration sentence only when it differs from the default.] Treat [the supplied artifact or request] as the source of truth. [Authority as the authority rules require, ending with the no-merge line when the run implements.] [Occupancy sentence last, only when it applies.]
 
 The decision line never names a role; roles live in Setup. The kickoff states
-each worker's model and effort as settings to apply. Where a harness makes
-workers follow the coordinator's effort, as Claude Code agent-team teammates
-do, and a worker's effort differs from the coordinator's, the kickoff has the
-coordinator start that worker as a subagent or a separate session instead. A
-single-owner Setup omits orchestration when it is the default. The kickoff
-must stand alone when pasted, so it repeats the roster, authority, and any
-occupancy sentence.
+each worker's model and effort as settings to apply and leaves how workers are
+started to the workflow and harness. The implementation-workers sentence keeps
+its template wording exactly; the Executor count, cap, queue, and units stay in
+Setup. A single-owner Setup omits orchestration when it is the default. The
+kickoff must stand alone when pasted, so it repeats every role's model and
+effort, authority, and any occupancy sentence.
 
 ### Resume
 

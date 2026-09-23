@@ -38,9 +38,11 @@ that adding a Reviewer could exceed the five-worker concurrency ceiling.
       acceptance criteria, and keeps the rest of item 1's roster.
 - [ ] Item 3 budgets at most five concurrent workers including the coordinator and
       Reviewer: at most three Executors, with the remaining modules queued
-      rather than dropped. Setup and kickoff agree on the complete roster.
+      rather than dropped in Setup.
 - [ ] Each kickoff starts ce-plan from the issue URL, states the coordinator's model
-      and effort, repeats every other role with model, effort, and count,
+      and effort, repeats the Reviewer's model and effort where there is one,
+      gives the implementation workers' model and effort without a count or
+      scheduling,
       treats the issue as the source of truth, and ends its authority text with
       "Don't merge without human approval." No kickoff narrates phases, checkpoints, PR cadence, or a
       stopping point for the coordinator's work; the Reviewer's one-round guardrail

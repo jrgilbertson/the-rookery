@@ -39,8 +39,9 @@ must not become workflow ownership or unbounded fan-out.
       profile, Fable 5.1 at medium.
 - [ ] Item 2 starts with `ce-work` using Coordinator + Executors: a
       coordinator on Opus 5.5 at medium (the Executor profile) and two
-      Executors on Opus 5.5 at medium, one per package. The coordinator
-      writes no package changes.
+      Executors on Opus 5.5 at medium, one per package, in Setup. The kickoff
+      names the implementation workers' model and effort and leaves their
+      count and scheduling to the workflow.
 - [ ] Item 2's Setup names supervised orchestration through Orca, names no
       worktree isolation, and tells the operator to continue with the coordinator in its
       terminal and close this session once orchestration is running. Its

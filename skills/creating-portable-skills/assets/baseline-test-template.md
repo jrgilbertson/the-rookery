@@ -45,15 +45,18 @@ artifacts.
    **Settle a case that varies.** One matched pair per case stays the default.
    A variant is settled when every run of it on one named target (model and
    harness) agrees, and mixed once two of its runs there disagree; further
-   runs confirm a settled variant and never unmix a mixed one. Accept a
-   failing control or an unimproved discriminating case as that case's
-   result, or rerun both variants and read every run together. A case with a
+   runs confirm a settled variant and never unmix a mixed one. When a run
+   fails, either take that failure as the case's result under the rule
+   above, so a failing control is a regression, or rerun both variants and
+   read every run together. A case with a
    mixed variant is `unsettled` on that target, neither a pass nor a
    regression: it shows no improvement, and a control mixed without the
    change detects no regression. Fix a checklist item that grades what its
    prompt never asks for, reduce ambiguity in the instructions under test, or
    ship with that target's claim withheld and one `unsettled` log line
-   naming the withheld claim.
+   naming the withheld claim. Withholding a claim applies only to an
+   unsettled case: a control settled as passing without the change and
+   failing with it blocks shipping.
 5. **Emit the durable artifacts.** One case file per kept case in
    `tests/<skill-name>/cases/` and one log line per graded run in
    `tests/<skill-name>/log.md` (line format: `date | git rev | check |
@@ -78,7 +81,8 @@ Use this for qualities binary items cannot carry, such as organization or
 polish. Give a fresh-context judge the outputs of two versions with the labels
 hidden and ask which serves the case's intended outcome better, and why. Log
 the preference as a note. It informs revision and never counts as a pass or a
-fail.
+fail. A preference from someone who knew which version they read is not this
+comparison: route it to specific human feedback, or run the comparison.
 
 ## Case file shape
 

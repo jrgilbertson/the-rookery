@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Read and narrowly update the user-global chief-of-staff source map."""
 
+import fcntl
 import hashlib
 import json
 import os
@@ -13,6 +14,7 @@ from pathlib import Path
 
 PARTS = (".config", "the-rookery", "personal-chief-of-staff")
 NAME = "sources.json"
+REVIEW_MODES = {"wind-down", "weekly", "quarterly"}
 
 
 def object_without_duplicates(pairs):
@@ -61,12 +63,12 @@ def validate(data):
                 raise ValueError(f"{role}: invalid read condition")
             modes = entry["modes"]
             if not isinstance(modes, list) or not modes or any(
-                not isinstance(mode, str) or mode not in {"wind-down", "weekly", "quarterly"}
+                not isinstance(mode, str) or mode not in REVIEW_MODES
                 for mode in modes
             ) or len(set(modes)) != len(modes):
                 raise ValueError(f"{role}: invalid modes")
             if role in {"strategy", "learning", "tasks"} and (
-                entry["condition"] != "baseline" or set(modes) != {"wind-down", "weekly", "quarterly"}
+                entry["condition"] != "baseline" or set(modes) != REVIEW_MODES
             ):
                 raise ValueError(f"{role}: required baseline must cover all review modes")
 
@@ -145,12 +147,16 @@ def write_map(payload):
     validate({"version": 1, "roles": {role: bindings}})
     parent_fd = open_parent(create=True)
     lock_name = NAME + ".lock"
-    locked = False
+    lock_fd = None
     temp_name = None
     try:
-        lock_fd = os.open(lock_name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600, dir_fd=parent_fd)
-        locked = True
-        os.close(lock_fd)
+        lock_fd = os.open(lock_name, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600, dir_fd=parent_fd)
+        lock_metadata = os.fstat(lock_fd)
+        if not stat.S_ISREG(lock_metadata.st_mode):
+            raise ValueError("lock is not a regular file")
+        if stat.S_IMODE(lock_metadata.st_mode) & 0o077:
+            raise PermissionError("lock is not private")
+        fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
         current, actual = map_state(parent_fd)
         if actual != expected:
             raise ValueError("source map changed since preview")
@@ -174,11 +180,13 @@ def write_map(payload):
             raise ValueError("source map readback differs from approved replacement")
         return saved
     finally:
-        if temp_name is not None:
-            os.unlink(temp_name, dir_fd=parent_fd)
-        if locked:
-            os.unlink(lock_name, dir_fd=parent_fd)
-        os.close(parent_fd)
+        try:
+            if temp_name is not None:
+                os.unlink(temp_name, dir_fd=parent_fd)
+        finally:
+            if lock_fd is not None:
+                os.close(lock_fd)
+            os.close(parent_fd)
 
 
 def reject_constant(value):

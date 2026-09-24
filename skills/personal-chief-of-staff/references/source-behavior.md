@@ -154,6 +154,11 @@ bindings. A required source cannot be **not needed**.
 Read each relevant source through its authoritative interface, or establish
 why it cannot or should not be read now. Assign each bounded slice one result:
 
+Classify each slice from the content and completion signal actually returned
+before grouping equal results in the audit. A successful exit with empty
+output cannot join **accessed with evidence**; use the completion signal to
+distinguish a complete empty slice from an unverified read.
+
 | Result | Required evidence |
 | --- | --- |
 | **accessed with evidence** | A successful bounded authoritative read returned relevant evidence. Mark truncated scope partial and use only what was observed. |

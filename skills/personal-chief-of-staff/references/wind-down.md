@@ -41,10 +41,11 @@ resolve the intended journal date before querying the bounded day slice or
 drafting. For a new review, apply
 [source coverage](source-behavior.md#establish-source-coverage) and the
 configured baseline before the first recommendation. Treat the following local
-date as the commitment target day. Through the Obsidian CLI, read the configured
-daily-journal template and the closing-date journal, if one exists. Read the
-existing journal before drafting so manual content, frontmatter, links, embeds,
-and unresolved thoughts remain intact.
+date as the commitment target day. Read the configured daily-journal template
+and the closing-date journal, if one exists, through each binding's native
+interface under [source bindings](source-bindings.md#resolve-before-recommending).
+Read the existing journal before drafting so manual content, frontmatter,
+links, embeds, and unresolved thoughts remain intact.
 
 If a missing journal could supply useful context, offer at most one interactive
 catch-up and continue today's close by default. Never reconstruct a backlog
@@ -366,19 +367,21 @@ Continue action numbering from Phase 1 and omit actions already proposed there.
 Use the shared [bundle](source-behavior.md#prepare-one-review-bundle) and
 [application rules](source-behavior.md#revalidate-apply-and-read-back).
 
-For an approved journal action, re-read the target through the Obsidian CLI.
-Re-read the configured template as well when the action adds or changes the
-meaningful-commitments section. Create from the current template or edit the
-existing journal through the CLI with explicit configured-vault targeting.
-Preserve manual content, frontmatter, links, embeds, and views, do not lint, and
-read the result back through the CLI before reporting it as applied. If the
-template or any content in the target journal changed after approval, present a
-revised proposal instead of applying stale content.
+For an approved journal action, re-read the target through its configured
+native interface. Re-read the configured template through its own interface
+when the action adds or changes the meaningful-commitments section. Create
+from the current template or edit the existing journal through the target's
+interface. For an Obsidian-owned journal, follow the
+[Obsidian CLI rules](source-behavior.md#use-obsidian-only-through-its-cli).
+Preserve manual content, frontmatter, links, embeds, and views, do not lint,
+and read the result back through the target's interface before reporting it as
+applied. If the template or any content in the target journal changed after
+approval, present a revised proposal instead of applying stale content.
 
 Use the core ending and recap rules across both bundles. The durable result is
 the canonical daily journal plus independently approved source changes.
 
-Completion: the reviewed journal is visible in its canonical note, every other
-action from both phases has an independent outcome, tomorrow's plan reflects
+Completion: the reviewed journal is visible in its canonical record, every
+other action from both phases has an independent outcome, tomorrow's plan reflects
 the final sources, and no unapproved or unverifiable change is reported as
 complete.

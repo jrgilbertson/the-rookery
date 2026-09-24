@@ -2,11 +2,15 @@
 """Exercise the shipped map helper against disposable user homes."""
 
 import contextlib
+import fcntl
 import io
 import json
 import os
 import runpy
+import select
+import signal
 import stat
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -115,9 +119,83 @@ class SetupChecks(unittest.TestCase):
         self.assertFalse(self.map_path.exists())
         self.map_path.parent.mkdir(parents=True)
         lock_path = self.map_path.with_name("sources.json.lock")
-        lock_path.write_text("another writer")
-        self.assertNotEqual(self.write("strategy", self.strategy, expected)[0], 0)
+        lock_fd = os.open(lock_path, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
+        try:
+            fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            self.assertNotEqual(self.write("strategy", self.strategy, expected)[0], 0)
+        finally:
+            os.close(lock_fd)
         self.assertFalse(self.map_path.exists())
+        lock_path.unlink()
+        target = lock_path.with_name("lock-target")
+        target.write_text("keep")
+        lock_path.symlink_to(target)
+        self.assertNotEqual(self.write("strategy", self.strategy, expected)[0], 0)
+        self.assertEqual(target.read_text(), "keep")
+        self.assertFalse(self.map_path.exists())
+
+    def test_killed_writer_releases_lock_for_later_approved_write(self):
+        self.assertEqual(self.write("strategy", self.strategy, self.snapshot())[0], 0)
+        before = self.map_path.read_bytes()
+        expected = self.snapshot()
+        payload = json.dumps({"role": "learning", "bindings": self.learning, "expected": expected})
+        lock_line = next(
+            number for number, line in enumerate(HELPER.read_text().splitlines(), 1)
+            if line.strip() == "current, actual = map_state(parent_fd)"
+        )
+        # The trace hook lives only in this external process, after the real helper takes its lock.
+        child_code = """
+import io
+import runpy
+import signal
+import sys
+from pathlib import Path
+
+helper, payload, lock_line, test_home = sys.argv[1:]
+Path.home = classmethod(lambda cls: cls(test_home))
+def stop_after_lock(frame, event, arg):
+    if (event == "line" and frame.f_code.co_filename == helper
+            and frame.f_code.co_name == "write_map" and frame.f_lineno == int(lock_line)):
+        print("LOCKED", flush=True)
+        while True:
+            signal.pause()
+    return stop_after_lock
+
+sys.argv = [helper, "write"]
+sys.stdin = io.StringIO(payload)
+sys.settrace(stop_after_lock)
+runpy.run_path(helper, run_name="__main__")
+"""
+        process = subprocess.Popen(
+            [sys.executable, "-c", child_code, str(HELPER), payload, str(lock_line), str(self.test_home)],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+        )
+        try:
+            ready, _, _ = select.select([process.stdout], [], [], 5)
+            self.assertTrue(ready, "writer did not reach its held lock")
+            self.assertEqual(process.stdout.readline().strip(), "LOCKED")
+            probe_fd = os.open(self.map_path.with_name("sources.json.lock"), os.O_RDWR | os.O_NOFOLLOW)
+            try:
+                with self.assertRaises(BlockingIOError):
+                    fcntl.flock(probe_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            finally:
+                os.close(probe_fd)
+        finally:
+            if process.poll() is None:
+                process.kill()
+            process.communicate(timeout=5)
+        self.assertEqual(process.returncode, -signal.SIGKILL)
+        self.assertEqual(self.map_path.read_bytes(), before)
+        lock_path = self.map_path.with_name("sources.json.lock")
+        lock_inode = lock_path.stat().st_ino
+        code, _, errors = self.write("learning", self.learning, expected)
+        self.assertEqual((code, errors), (0, ""))
+        self.assertEqual(json.loads(self.map_path.read_text())["roles"], {
+            "strategy": self.strategy, "learning": self.learning,
+        })
+        self.assertTrue(lock_path.is_file())
+        self.assertEqual(lock_path.stat().st_ino, lock_inode)
+        self.assertEqual(stat.S_IMODE(lock_path.stat().st_mode), 0o600)
 
 
 if __name__ == "__main__":

@@ -11,12 +11,14 @@ of January, April, July, or October reviews the quarter that just ended and
 prepares commitments for the new quarter. A manual run honors an explicitly
 requested period; without one, use the current available quarter. For a new
 review, apply [source coverage](source-behavior.md#establish-source-coverage).
-Through the Obsidian CLI, read the configured quarterly review for that period
-when one exists, the configured template, and the last completed review that
-provides useful continuity. Read available weekly reviews, selected daily journals,
-the bound strategy and learning roles, a bounded current slice from the
-canonical task owner, and only the additional notes needed to understand
-material projects, decisions, relationships, health, and writing.
+Through each configured binding's native interface under
+[source bindings](source-bindings.md#resolve-before-recommending), read the
+quarterly review for that period when one exists, the configured template,
+and the last completed review that provides useful continuity. Read available
+weekly reviews, selected daily journals, the bound strategy and learning
+roles, a bounded current slice from the canonical task owner, and only the
+additional notes needed to understand material projects, decisions,
+relationships, health, and writing.
 
 Query native sources selectively to confirm important outcomes, commitments,
 customer or product evidence, financial or operating changes, and other facts
@@ -166,10 +168,10 @@ Present one [review bundle](source-behavior.md#prepare-one-review-bundle).
 The canonical quarterly review for the selected period is one action; each
 related source change is independently approvable. Apply approved actions
 through the shared [application rules](source-behavior.md#revalidate-apply-and-read-back)
-and [Obsidian CLI rules](source-behavior.md#use-obsidian-only-through-its-cli).
+and, for Obsidian-owned notes, the [Obsidian CLI rules](source-behavior.md#use-obsidian-only-through-its-cli).
 
 End explicitly using the core run endings. A partial quarter can still end
-Complete when the reviewed note truthfully records its evidence limits; use
+Complete when the reviewed record truthfully states its evidence limits; use
 Partial when an unresolved source gap still prevents a material conclusion.
 
 Completion: one current reviewed quarterly review exists when approved, its

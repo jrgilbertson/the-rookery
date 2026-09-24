@@ -89,14 +89,16 @@ of the source identity and new locator.
 After approval, send one JSON object to `python3 scripts/source-bindings.py write` on
 standard input: `{"role":"strategy","bindings":[...],"expected":"<snapshot>"}`.
 Use the exact approved entries and the snapshot from the preview. The helper
-validates the map, rejects a changed target or concurrent writer, updates
+validates the map, rejects a stale preview or concurrent helper writer, updates
 only that role with user-only permissions on newly created directories and
 the file, replaces atomically, and reads the result back. It does not grant
 approval; the user's approval of the preview is the authority to invoke it.
 If the target changed, inspect the new state and obtain approval for a fresh
 preview. An invalid or unreadable map requires user-directed repair outside
 this narrow write path; preserve its bytes. Do not use `write` as a general
-JSON editor.
+JSON editor. Serialize setup writes through this helper; finish any direct
+manual repair before approving another setup write, since direct editors do
+not participate in its lock.
 
 After the saved binding reads back, use its native interface to read the
 approved bounded source and report that result separately. A successful map
@@ -119,7 +121,12 @@ window. Apply the mode reference for its own record, template, and continuity
 reads. A caller-context request resolves only roles needed for that caller's
 decision.
 
-An absent map or role starts an ownership question, not a title search. A
+An absent map or role starts an ownership question, not a title search. In the
+current response, ask the user to designate each unresolved baseline owner
+unless they already deferred that role for this review. Combine missing
+baseline roles into one question when useful; questions about review records
+do not replace the strategy, learning, or task-owner question. Offer deferral
+and continue only the conclusions supported by available evidence. A
 malformed, duplicate-key, unsupported, unreadable, or symlinked map is
 unresolved as a whole; report the precise state and leave it intact. An
 unambiguous role in a valid map stays bound when its native read fails: audit

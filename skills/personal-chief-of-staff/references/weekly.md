@@ -8,12 +8,13 @@ when an outcome, priority, intervention, or durable proposal first appears.
 ## Reconstruct the available week
 
 Resolve the local review window. Apply [source coverage](source-behavior.md#establish-source-coverage)
-for a new review. Through the Obsidian CLI, read the configured current weekly
-review when one already exists, the weekly-review template, and the last
-completed review that can provide useful continuity. Read the week's daily
-journals, the bound strategy and learning roles, a bounded current slice from
-the canonical task owner, and only the additional notes needed to understand
-active projects, relationships, meetings, decisions, and writing.
+for a new review. Through each configured binding's native interface under
+[source bindings](source-bindings.md#resolve-before-recommending), read the
+current weekly review when one already exists, the weekly-review template,
+and the last completed review that can provide useful continuity. Read the
+week's daily journals, the bound strategy and learning roles, a bounded current
+slice from the canonical task owner, and only the additional notes needed to
+understand active projects, relationships, meetings, decisions, and writing.
 
 Query live calendars and selected native sources when they can confirm an
 outcome, commitment, risk, or material operating change. Use both personal and
@@ -175,11 +176,11 @@ week, not an agent-authored theory of the user's life.
 ## Review and write back
 
 Present one [review bundle](source-behavior.md#prepare-one-review-bundle).
-The current canonical weekly-review note is one action; each related source
+The current canonical weekly-review record is one action; each related source
 change, including each Administrative Sweep resolution and its drafted content,
 is independently approvable. Apply approved actions through the shared
-[application rules](source-behavior.md#revalidate-apply-and-read-back) and
-[Obsidian CLI rules](source-behavior.md#use-obsidian-only-through-its-cli).
+[application rules](source-behavior.md#revalidate-apply-and-read-back) and, for
+Obsidian-owned notes, the [Obsidian CLI rules](source-behavior.md#use-obsidian-only-through-its-cli).
 
 Use the core ending and recap rules. An otherwise finished useful review with
 a material evidence gap ends **Partial**; open approvals alone do not make it

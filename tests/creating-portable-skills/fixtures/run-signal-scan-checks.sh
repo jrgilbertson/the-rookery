@@ -98,9 +98,48 @@ fails "assets file scanned" has "$planted" 'assets/template.md'
 slashed=$(sh "$scan" "$fixtures/planted/")
 holds "trailing slash changes the counts" [ "$(printf '%s\n' "$slashed" | grep '^## ')" = "$(printf '%s\n' "$planted" | grep '^## ')" ]
 
-# A directory with no SKILL.md is the only error exit.
+# Invalid inputs must fail.
 fails "missing SKILL.md should exit non-zero" quiet sh "$scan" "$fixtures"
 fails "no arguments should exit non-zero" quiet sh "$scan"
+
+# Inject dependency failures so error handling is tested even as root, where
+# chmod 000 cannot reliably make a file unreadable. The production scan runs.
+scratch=$(mktemp -d)
+trap 'rm -rf "$scratch"' EXIT
+real_grep=$(command -v grep)
+real_find=$(command -v find)
+mkdir "$scratch/grep-bin" "$scratch/find-bin"
+cat >"$scratch/grep-bin/grep" <<'SH'
+#!/bin/sh
+for file do :; done
+if [ "$file" = "$SCAN_TEST_BAD_FILE" ]; then
+	printf 'injected read failure: %s\n' "$file" >&2
+	exit 2
+fi
+exec "$SCAN_TEST_REAL_GREP" "$@"
+SH
+cat >"$scratch/find-bin/find" <<'SH'
+#!/bin/sh
+"$SCAN_TEST_REAL_FIND" "$@" || exit
+echo 'injected traversal failure after partial results' >&2
+exit 1
+SH
+chmod +x "$scratch/grep-bin/grep" "$scratch/find-bin/find"
+
+# A later readable reference must not hide an earlier file's read error.
+PATH="$scratch/grep-bin:$PATH" SCAN_TEST_REAL_GREP="$real_grep" \
+	SCAN_TEST_BAD_FILE="$fixtures/planted/SKILL.md" \
+	sh "$scan" "$fixtures/planted" >"$scratch/read.out" 2>"$scratch/read.err"
+read_code=$?
+holds "read failure must exit non-zero, got $read_code" [ "$read_code" -ne 0 ]
+holds "read failure diagnostic is preserved" has "$(cat "$scratch/read.err")" 'injected read failure'
+
+# Sorting a partial file list must not hide find's failure.
+PATH="$scratch/find-bin:$PATH" SCAN_TEST_REAL_FIND="$real_find" \
+	sh "$scan" "$fixtures/planted" >"$scratch/find.out" 2>"$scratch/find.err"
+find_code=$?
+holds "traversal failure must exit non-zero, got $find_code" [ "$find_code" -ne 0 ]
+holds "traversal failure diagnostic is preserved" has "$(cat "$scratch/find.err")" 'injected traversal failure'
 
 printf 'signal-scan: %s passed, %s failed\n' "$passed" "$failed"
 [ "$failed" -eq 0 ]

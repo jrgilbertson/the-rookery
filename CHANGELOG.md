@@ -11,6 +11,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 ## [Unreleased]
 
+### Fixed
+
+- The `creating-portable-skills` signal scan returns an error when it cannot
+  read an input file or traverse references, instead of reporting a successful
+  scan with incomplete results. Matches and completed scans without matches
+  still succeed.
+
 ### Added
 
 - `TESTING.md` explains project-owned verification for polyglot monorepos and

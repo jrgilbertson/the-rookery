@@ -6,8 +6,10 @@
 # Scans SKILL.md and references/*.md in each package and prints, per signal,
 # a header "## <signal> (<count>) -> <checklist item>" followed by the hits as
 # file:line:text. Hits are review candidates, not failures, so a completed scan
-# exits 0. A directory without a SKILL.md is the only error exit. The scan
+# exits 0. Invalid inputs and scan errors exit nonzero. The scan
 # writes nothing, so it runs in a read-only sandbox.
+
+set -e
 
 [ "$#" -gt 0 ] || { echo "usage: $0 <skill-directory>..." >&2; exit 2; }
 
@@ -18,15 +20,22 @@ for dir in "$@"; do
 	list="$list$dir/SKILL.md
 "
 	if [ -d "$dir/references" ]; then
-		list="$list$(find "$dir/references" -type f -name '*.md' | LC_ALL=C sort)
+		references=$(find "$dir/references" -type f -name '*.md')
+		list="$list$(printf '%s\n' "$references" | LC_ALL=C sort)
 "
 	fi
 done
 
-# each_file <command...> runs the command once per scanned file, appending the path.
+# Run grep per file; status 1 means no matches, while other failures abort.
 each_file() {
 	printf '%s' "$list" | while IFS= read -r file; do
-		[ -n "$file" ] && "$@" "$file"
+		[ -n "$file" ] || continue
+		if "$@" "$file"; then
+			:
+		else
+			status=$?
+			[ "$status" -eq 1 ] || exit "$status"
+		fi
 	done
 }
 

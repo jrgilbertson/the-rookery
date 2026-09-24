@@ -2,6 +2,32 @@
 
 Format: `date | git rev | check | result | note`
 
+## Scanner error propagation on 2026-09-24
+
+The scanner correction changes only operational error handling. The production
+fixture runner injects a read failure followed by a readable reference and a
+traversal failure after partial results. Against `b46e4de`, both exit-status
+assertions fail (33 passed, 2 failed). With the correction, all 35 assertions
+pass, including existing matching and no-match controls. A separate real
+unreadable-file reproduction exits 2 with no misleading zero-hit output.
+
+This deterministic comparison covers the changed helper. The model evaluations
+below retain their recorded source revisions; no new model execution or native
+activation claim is made for this shell-only correction.
+
+| Date | Git rev | Check | Result | Note |
+| --- | --- | --- | --- | --- |
+| 2026-09-24 | b46e4de, with new regression assertions | Production scanner fixtures | 33 passed, 2 failed | Both injected operational errors incorrectly returned success. |
+| 2026-09-24 | b46e4de working-tree scanner correction | Production scanner fixtures | 35 passed, 0 failed | Read and traversal failures return nonzero; matching and no-match controls pass. |
+| 2026-09-24 | b46e4de working-tree scanner correction | Real unreadable input | pass | Exit 2, empty stdout, permission diagnostic retained. |
+| 2026-09-24 | b46e4de working-tree scanner correction | Official skill validator | pass | Cached skills-ref validator; no native activation claim. |
+| 2026-09-24 | b46e4de working-tree scanner correction | Independent source review | pass | No findings; reviewer reran 35 assertions, shell syntax and dash no-match control. |
+| 2026-09-24 | b46e4de working-tree scanner correction | Independent package review and simplification | pass | Helper qualification accepted; three simplification reviewers found no changes needed. |
+| 2026-09-24 | b46e4de working-tree scanner correction | Repository pre-push gates | pass | Catalog, integrity, secrets and fixtures passed; elapsed 292 seconds. |
+
+No model evaluation calls were made; dollar cost was not recorded for these
+local checks. Elapsed time was not recorded except for the repository gates.
+
 ## Vendor-scope correction on 2026-09-24
 
 The approved simplicity review reduced the correction to one reporting clause:

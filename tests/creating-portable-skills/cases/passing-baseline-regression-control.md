@@ -20,9 +20,9 @@ waiting for that behavior to fail before protecting it.
 - [ ] Allows the case to remain as an explicitly labeled regression control.
 - [ ] Does not count the control as evidence that the new skill improves on the
       baseline.
-- [ ] Still requires at least one discriminating case to prove the intended
-      behavior change.
-- [ ] Treats a later failure of the control with the change as a regression
-      that returns the change to correction, or as grounds to rerun both
-      variants and read every run together, and never waives it because the
+- [ ] Says any claim of improvement must rest on a discriminating case, such
+      as the separate failing-baseline case, not on the control.
+- [ ] Treats a failure of the control in any run with the change as a
+      regression: fix the instruction or the item and rerun, rather than
+      averaging it against passing runs, and never waive it because the
       control proves no improvement.

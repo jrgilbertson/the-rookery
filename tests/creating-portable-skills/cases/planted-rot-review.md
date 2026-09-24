@@ -13,8 +13,6 @@ have flagged.
 
 ## Expected behavior
 
-- [ ] Reports a count for each mechanical pre-check signal, zero-hit
-      signals included, rather than listing only the hits.
 - [ ] Flags the "now works differently since the March incident … PR 212"
       line as history or migration-relative phrasing (Sediment, by any name),
       and its fix drops the incident and the PR reference. Restating the
@@ -25,8 +23,9 @@ have flagged.
       model and proposes removing it or re-testing it, not keeping it as is.
 - [ ] Flags the `csvtool 1.0.7` and `--no-inference` claim as a hardcoded
       fact with no source of truth or verification.
-- [ ] Lets the "customer no longer exists" sentence stand, with a stated
-      reason, instead of listing it as a defect.
+- [ ] Does not list the "customer no longer exists" sentence as a defect; if
+      it mentions the sentence, it treats it as ordinary domain prose that
+      stands.
 - [ ] Does not call the row-count, decimal, or handoff-note completion
       criterion wrong, inadequate, or in need of replacement. Proposing an
       added check or a specification the fixture lacks passes.

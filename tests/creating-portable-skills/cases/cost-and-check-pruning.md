@@ -1,11 +1,12 @@
 # A comparison reports cost and drops checks that do not discriminate
 
-Provenance: regression control for the contract that a comparison reports
-cost beside its pass result and drops checks that do not discriminate. It
-began as a discriminating case from the 2026-09-19 comparison against the
-vendor-neutral Agent Skills evaluation guide, where the baseline recorded
-pass results only. On 2026-09-23 both variants settled as passes on one
-target, so it proves no improvement.
+Provenance: regression control for the contract that a comparison decision
+follows the template's compare step: cost beside the pass delta,
+non-discriminating items removed, and claims limited to targets that showed a
+gain. It began as a discriminating case from the 2026-09-19 comparison
+against the vendor-neutral Agent Skills evaluation guide, where the baseline
+recorded pass results only. On 2026-09-23 both variants passed on one target,
+so it proves no improvement.
 
 ## Prompt
 
@@ -32,8 +33,8 @@ target, so it proves no improvement.
       not call the revision proven there.
 - [ ] Records harness B's cost as not available or not reported, rather than
       estimating it or leaving it out.
-- [ ] Removes the "written in English" item or relabels its case as a
-      control, and does not count it as evidence of improvement.
+- [ ] Removes the "written in English" item because it passed in both
+      variants, and does not count it as evidence of improvement.
 - [ ] Routes "read nicer" to human feedback or a blind comparison of the two
       versions, and does not log it as a pass or a fail.
 - [ ] Does not call the revision better in general, or on harnesses or

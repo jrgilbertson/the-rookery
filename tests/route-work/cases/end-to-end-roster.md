@@ -52,8 +52,8 @@ before a card matched the run, so item 3 now expects the labeled prediction.
       coordinator can adjust the roster as the work unfolds. The kickoff gives
       no instruction to implement, states no grant, and ends with "Don't merge
       without human approval."
-- [ ] Items 1 and 2 state no grant sentence, state the supplied condition on
-      implementation in one sentence, end the kickoff's authority text with
+- [ ] Items 1 and 2 may repeat the supplied grant without widening it, keep
+      its condition on implementation, list no other permission, end the kickoff's authority text with
       "Don't merge without human approval.", and enumerate no other
       prohibitions.
 - [ ] Items 4–6 start with `ce-plan` on Opus 5.5 at high. Expected
@@ -68,7 +68,8 @@ before a card matched the run, so item 3 now expects the labeled prediction.
       limit.
 - [ ] Item 5 preserves planning-only authority and withheld implementation
       in Setup and the standalone kickoff, with no unconditional carry-forward.
-- [ ] Item 6's Why carries the work into implementation, and its kickoff states
-      no grant sentence and ends with "Don't merge without human approval."
+- [ ] Item 6's Why carries the work into implementation, and its kickoff may
+      repeat the supplied grant without widening it, lists no other permission,
+      and ends with "Don't merge without human approval."
 - [ ] Every card follows the Route template without extra section labels.
 - [ ] The trace contains only reads of the installed package.

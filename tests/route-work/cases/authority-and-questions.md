@@ -55,8 +55,8 @@ nothing about implementation.
       predicted end, and the kickoff states no grant and ends with "Don't merge
       without human approval."
 - [ ] Item 8 renders two Route cards. The grill states its supplied
-      document-write limit and has no merge line. The `ce-work` card states no
-      implementation grant, ends its kickoff with "Don't merge without human approval."
+      document-write limit and has no merge line. The `ce-work` card may repeat
+      the supplied implementation grant, ends its kickoff with "Don't merge without human approval."
       and lists no other permissions.
 - [ ] Item 9 returns one Questions card with exactly two numbered questions,
       owner order first and orchestration versus handoff second, each with a

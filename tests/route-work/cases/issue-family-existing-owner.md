@@ -76,7 +76,7 @@ and 7, which say nothing about implementation, expect a labeled prediction.
 - [ ] All conclusions use supplied family and ownership state only. Missing
       owner evidence leaves ownership unknown; it does not prove a vacant phase.
 - [ ] Only items 6, 8, and 9 request implementation, and they implement from
-      those direct requests. They state no grant sentence, end the
+      those direct requests. They may repeat the supplied grant, end the
       kickoff's authority text with "Don't merge without human approval.", and add
       no commit, push, PR, or other external authority. Artifact approval alone
       never becomes permission to implement.

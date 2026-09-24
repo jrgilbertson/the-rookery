@@ -49,7 +49,7 @@ looked" surface. GitHub Releases mirror its entries.
 
 - `route-work` cards leave worker dispatch, scheduling, isolation, commits,
   pull requests, and code review to the starting workflow. Kickoffs name each
-  seat's model and effort, leave supplied grants off, keep operator-stated
+  seat's model and effort, may repeat supplied grants, keep operator-stated
   limits including conditions or scopes on a grant, and end with "Don't merge
   without human approval." when the run may reach implementation, unless merge
   was granted. A separate Reviewer joins only when the operator asks, or when
@@ -60,8 +60,8 @@ looked" surface. GitHub Releases mirror its entries.
   says otherwise and sizes the roster for it, so operators no longer reply
   "size to include implementation" before using the card. Why labels the
   prediction and says the coordinator can adjust the roster. A run limited to
-  planning, one with implementation withheld, and a tracker-only or grill-only
-  start keep their earlier end. The prediction grants nothing, and the kickoff
+  planning, one with implementation withheld, and a `managing-issues` or
+  `grill-with-docs` start keep their earlier end. The prediction grants nothing, and the kickoff
   still ends with "Don't merge without human approval."
 
 - `route-work` kickoffs that select supervised orchestration now say "Orca

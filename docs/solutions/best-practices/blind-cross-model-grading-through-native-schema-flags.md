@@ -1,7 +1,7 @@
 ---
 title: "Run blind cross-model grading through each CLI's native JSON schema flag"
 date: 2026-09-23
-last_updated: 2026-09-23
+last_updated: 2026-09-24
 category: best-practices
 module: "creating-portable-skills skill verification"
 problem_type: best_practice
@@ -17,7 +17,7 @@ symptoms:
   - "A schema-constrained grade came back as invalid JSON with trailing characters"
   - "A test run launched nested agent sessions from the shell and hung until the wall-clock cap"
   - "A machine restart wiped every raw run output kept under /tmp"
-tags: [cross-model-grading, blind-grading, structured-output, json-schema, grok-cli, claude-code, codex-cli, isolation, timeouts, skill-evals]
+tags: [cross-model-grading, blind-grading, structured-output, json-schema, grok-cli, claude-code, codex-cli, skill-evals]
 related_components:
   - development_workflow
   - tooling
@@ -31,7 +31,9 @@ The `creating-portable-skills` baseline protocol asks for an independent
 grader in step 3 ("Grade binary") of
 `skills/creating-portable-skills/assets/baseline-test-template.md`. One grader scores both variants of a case on a target. When a
 second model is available, the grader is a different model from the one that
-wrote the outputs. It sees final answers only, with variant names removed.
+wrote the outputs. It sees final answers and the artifact or tool observations
+needed to verify execution, with variant names removed and private reasoning
+excluded.
 `tests/README.md` ("Matched comparison") points the repo's suites at that
 template.
 
@@ -112,6 +114,15 @@ Each grade carries one entry per checklist item and quoted evidence:
 Drop any regex that pulls JSON out of prose. Read the structured field.
 The earlier object-keyed schema remains historical evidence; use the array
 contract above for new cross-CLI runs.
+
+**Preserve command meaning when anonymizing evidence.** Replace private
+absolute roots with consistent neutral absolute roots such as `/workspace/`
+and `/package/`; `./` changes path resolution after `cd`. Distinguish added
+paths from modifications to existing files. Before/after snapshots cannot rule
+out intermediate writes followed by restoration. If packet preparation corrupts
+evidence, correct and regrade whole affected packets with unchanged executions
+and checklists; retain earlier packets, grades, and costs. The evidence
+corrections in `tests/creating-portable-skills/log.md` demonstrate these limits.
 
 **Validate every grade before counting it.** A schema flag does not guarantee a
 valid grade. Check three things against the packet, and treat any failure as

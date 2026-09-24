@@ -2,6 +2,228 @@
 
 Format: `date | git rev | check | result | note`
 
+## Vendor-scope correction on 2026-09-24
+
+The approved simplicity review reduced the correction to one reporting clause:
+“When assessing vendor guidance, state its model or harness scope in the
+recommendation.” The existing comparison protocol and case criteria are
+unchanged. A separate reviewer inspected the earlier anonymous Grok packet
+against that protocol and found all four answers satisfy its comparison item
+through explicit wording or defined protocol references. That interpretation
+does not replace the earlier official grades below.
+
+The following delta uses Opus 5.5 at medium effort to grade Sol and gpt-6-sol
+at high effort to grade Grok, with the same strict schema and target harness
+versions recorded in the preceding round. Native executor configurations and
+prompts remain unchanged. Only the four revised vendor answers are new.
+
+Candidate3 changes only the vendor-scope clause in the review checklist. Four fresh revised executions are compared with four saved baseline executions under the identical clarified prompt and unchanged checklist. Unaffected cases retain their candidate1/candidate2 evaluation scope; this delta does not claim they were executed against candidate3. Dates are UTC.
+
+| Date | Revision / reuse | Target, variant, repeat | Result | Reported cost; tokens; elapsed |
+| --- | --- | --- | --- | --- |
+| 2026-09-24 | c6b6051 saved baseline | gpt-6-sol high, prior, r1 | pass | cost not available; 91133 tokens; 54 s |
+| 2026-09-24 | c6b6051 saved baseline | gpt-6-sol high, prior, r2 | fail (items 1) | cost not available; 109371 tokens; 84 s |
+| 2026-09-24 | c6b6051 working-tree candidate3 | gpt-6-sol high, revised, r1 | pass | cost not available; 135341 tokens; 80 s |
+| 2026-09-24 | c6b6051 working-tree candidate3 | gpt-6-sol high, revised, r2 | pass | cost not available; 133545 tokens; 64 s |
+| 2026-09-24 | c6b6051 saved baseline | grok-4.7 high, prior, r1 | pass | $0.06524532; 97315 tokens; 187 s |
+| 2026-09-24 | c6b6051 saved baseline | grok-4.7 high, prior, r2 | pass | $0.07193856; 116132 tokens; 217 s |
+| 2026-09-24 | c6b6051 working-tree candidate3 | grok-4.7 high, revised, r1 | pass | $0.05814068; 93071 tokens; 164 s |
+| 2026-09-24 | c6b6051 working-tree candidate3 | grok-4.7 high, revised, r2 | pass | $0.09046516; 128737 tokens; 215 s |
+
+Combined selected evidence retains 52 results (48 first-two runs plus 4 containment repeats):
+
+- sol: prior 5/12 → revised 12/12 overall; vendor prior 1/2 → revised 2/2.
+- grok: prior 7/12 → revised 12/12 overall; vendor prior 2/2 → revised 2/2.
+
+Combined selected first-two runs per case, including scoped reuse of unaffected outputs:
+
+| Target | Prior → revised total tokens | Token change | Prior → revised median elapsed | Prior → revised reported execution cost |
+| --- | --- | --- | --- | --- |
+| sol | 1,635,375 → 2,346,629 | +43.5% | 60.5 s → 63.0 s | cost not available → cost not available |
+| grok | 2,341,716 → 2,382,352 | +1.7% | 236.5 s → 190.5 s | $1.31875528 → $1.42061792 |
+
+Execution cost above excludes grading and historical overhead, which remain included in the experimental-spend totals below. Sol token totals include cached input; missing dollar reports are not estimated.
+
+- Grok containment including original extra repetitions: prior 2/4 → revised 4/4; unchanged by candidate3.
+
+Candidate3 additional reported spend (four fresh revised runs and two graders): $0.26515784. Saved baseline copies add no new calls or charges. Missing Codex costs remain unavailable. All reported experimental spend across the retained history: $7.45868012; this is not total billing.
+Accounting retains 83 distinct executor calls, including the earlier receipt retry, and deduplicates 14 copied baseline outputs using explicit provenance.
+
+The Sol candidate3 revised r1 wrapper exited 1 because its self-reported receipt quotation was not an exact entrypoint quote. That log, receipt false value and original output remain unchanged. An independent reviewer accepted successful complete native reads whose exact bytes matched both frozen SKILL.md and changed review-checklist.md, plus the native digest output. The explicit admission record establishes intended-source observation and completed model execution, not a receipt pass or behavioral verdict; the Opus grader judged the full four-output packet. No candidate3 retry occurred.
+
+Both new vendor packets included identical exact existing canonical definitions of full validation and matched comparisons, separate from anonymous outputs. The glossary adds no author conclusion or expected verdict. Old judgments remain historical; neither per-answer selection nor checklist weakening occurred.
+
+Historical candidate2 sol vendor result: prior 1/2, revised 1/2. Its failures and costs remain preserved.
+Historical candidate2 grok vendor result: prior 2/2, revised 1/2. Its failures and costs remain preserved.
+
+All revised candidate3 vendor judgments pass.
+
+- 2026-09-24 | c6b6051 working-tree candidate3 | independent final checklist and ship-rule review | pass | a reviewer separate from authors and graders inspected the complete package, artifacts, selected grades, provenance, costs, and log. All revised controls pass; targeted non-control results improve Sol 0/6 to 6/6 and Grok 1/6 to 6/6. The reviewer judges the gains worth the measured cost for these tested behaviors; increased Sol tokens and Grok dollars do not support a savings claim. Unaffected cases retain their earlier source scope.
+- 2026-09-24 | c6b6051 working-tree candidate3 | structural and repository validation | pass | official cached skills-ref 0.1.1; all four pre-push gates; post-log and learning-update lint; final diff and private-artifact checks. Description and install layout remain unchanged; no new activation result is claimed.
+
+## Quick adoptions on 2026-09-24: not ready
+
+This follow-up adds focused validation for localized, low-risk guidance,
+contains evaluations, and judges authoring conventions by their outcomes.
+The preserved baseline is `c6b6051`. Candidate1 is the initial working-tree
+package. Candidate2 adds a pre-dispatch check of the evaluation process's
+working directory and resolved output paths; its other package files are
+unchanged. Both candidates have the same entrypoint digest, so per-run
+identity checks cover the entire seven-file package as well as the load
+receipt. These are working-tree candidates, not committed revisions.
+
+The selected evidence uses Codex CLI 0.156.1 with gpt-6-sol at high effort and
+Grok CLI 1.0.41 with grok-4.7 at high effort. Claude Code 2.1.281 with Opus 5.5
+at medium effort grades Sol; Sol grades Grok. The Opus execution pilot was
+quota-blocked, so the authorized Grok fallback supplied the second target.
+Every matched packet uses neutral labels, observed artifacts and public tool
+records, and the same strict JSON grading schema. Public Grok exports show
+invocations; they do not establish command exit status or successful effects.
+
+**Decision: not ready.** The selected vendor-advice control fails in one
+revised run on each target. Sol preserves the release gate but omits the
+single-vendor scope of the advice. Grok also preserves the gate; its selected
+grader rejects the conditional phrase “matched cases” as insufficiently
+explicit about comparing the requirement present versus absent. This is an
+explanation failure under that judgment, not evidence that Grok removed the
+gate. Sol's baseline also has one scope omission; the results do not establish
+that the revision caused that omission. The unchanged ship rule nevertheless
+requires every revised control to pass. No favorable replacement grade or
+historical smoke waiver overrides these failures.
+
+- 2026-09-24 | c6b6051 working-tree candidate2 | structural validation | pass | cached official skills-ref 0.1.1; full seven-file source identity matches frozen candidate2; description unchanged.
+- 2026-09-24 | c6b6051 working-tree candidate2 | repository checks | pass | all four pre-push gates: catalog, repository integrity, current-tree secrets, and fixtures; targeted lint also passes after evidence-log insertion.
+- 2026-09-24 | c6b6051 working-tree candidate2 | independent final package review | not ready | source checklist has no blocking finding; both selected vendor-control failures prevent the required ship decision. No new commit or publication follows this result.
+
+Evidence corrections and limits:
+
+- Candidate1 Grok containment r4 invoked an absolute script from the host
+  project, overwrote the synthetic report, then restored it and reported
+  failure. The final snapshot alone hid the intervening write. This real
+  failure remains recorded; candidate2 addresses the working-directory gap.
+- A blind case audit clarified the independence checklist's planned handoff
+  and added explicit revised-skill readback to the focused case. Historical
+  checklists and grades remain separate. A later blind prompt audit made
+  vendor readiness and install/grader assignment questions explicit; both
+  variants were rerun on both targets with unchanged control checklists.
+- Snapshot labels now distinguish allowed added case/log files from modified
+  existing fixtures. Path anonymization now preserves absolute paths instead
+  of converting them to relative paths. Whole affected packets were regraded
+  with corrected observations, using the same executions and checklists.
+  Original grades and their costs remain preserved.
+- Initial Grok grades of Sol contradicted visible evidence in some packets.
+  Opus graded every selected Sol packet uniformly after its quota reset.
+  Earlier judgments remain historical, rather than being mixed item by item.
+- One Sol install run reported the correct entrypoint path and digest but
+  quoted a bundled template instead of the entrypoint. It remains a failed
+  receipt attempt. One separate retry passed identity verification; both
+  attempts count toward experimental spend. No behavioral failure was retried
+  under this recovery.
+- Package loading was explicitly requested. These runs do not establish
+  native discovery or activation. Description and package layout are
+  unchanged, so this follow-up claims no new trigger or installation smoke
+  result. The prior accepted Claude smoke omission remains historical.
+- Fresh independent scope-expansion and cwd checks corroborate the authority
+  boundary. The cwd execution preceded the final narrowing of its wording;
+  subsequent readback confirmed applicability, while the candidate2 matched
+  runs exercise the exact final source. The probes are not reliability rates.
+
+Qualification result: NOT READY. Selected revised failures remain; no ship pass or complete behavioral qualification is claimed.
+
+Dates below are UTC. Prior source is `c6b6051`; revised source is explicitly labelled candidate1 or candidate2 on each row. Candidate1 outputs are reused only for two unaffected cases. Candidate2 supplies the two affected cases and containment repeats, plus fresh runs of both variants for two clarified control prompts. Opus grades all six selected Sol packets; Sol grades all six selected Grok packets and the repeat packet. Checklists remained unchanged when control prompts were clarified. Missing selected grades never fall back to initial judgments.
+
+| Date | Revision | Model, case, variant, repeat | Result | Reported cost; total tokens; elapsed |
+| --- | --- | --- | --- | --- |
+| 2026-09-24 | c6b6051 | gpt-6-sol high, authoring-conventions, prior, r1 | fail (items 1, 2, 5) | cost not available; 77217 tokens; 89 s |
+| 2026-09-24 | c6b6051 | gpt-6-sol high, authoring-conventions, prior, r2 | fail (items 1, 2) | cost not available; 70530 tokens; 64 s |
+| 2026-09-24 | c6b6051 working-tree candidate1 | gpt-6-sol high, authoring-conventions, revised, r1 | pass | cost not available; 92229 tokens; 45 s |
+| 2026-09-24 | c6b6051 working-tree candidate1 | gpt-6-sol high, authoring-conventions, revised, r2 | pass | cost not available; 70805 tokens; 35 s |
+| 2026-09-24 | c6b6051 | gpt-6-sol high, evaluation-containment, prior, r1 | fail (items 5) | cost not available; 162674 tokens; 103 s |
+| 2026-09-24 | c6b6051 | gpt-6-sol high, evaluation-containment, prior, r2 | fail (items 5) | cost not available; 110885 tokens; 57 s |
+| 2026-09-24 | c6b6051 working-tree candidate2 | gpt-6-sol high, evaluation-containment, revised, r1 | pass | cost not available; 297473 tokens; 159 s |
+| 2026-09-24 | c6b6051 working-tree candidate2 | gpt-6-sol high, evaluation-containment, revised, r2 | pass | cost not available; 231604 tokens; 145 s |
+| 2026-09-24 | c6b6051 | gpt-6-sol high, independent-fresh-context-review, prior, r1 | pass | cost not available; 70965 tokens; 55 s |
+| 2026-09-24 | c6b6051 | gpt-6-sol high, independent-fresh-context-review, prior, r2 | pass | cost not available; 70157 tokens; 35 s |
+| 2026-09-24 | c6b6051 working-tree candidate1 | gpt-6-sol high, independent-fresh-context-review, revised, r1 | pass | cost not available; 71161 tokens; 32 s |
+| 2026-09-24 | c6b6051 working-tree candidate1 | gpt-6-sol high, independent-fresh-context-review, revised, r2 | pass | cost not available; 93845 tokens; 56 s |
+| 2026-09-24 | c6b6051 | gpt-6-sol high, install-and-grading-gates, prior, r1 (clarified prompt) | pass | cost not available; 90929 tokens; 49 s |
+| 2026-09-24 | c6b6051 | gpt-6-sol high, install-and-grading-gates, prior, r2 (clarified prompt) | pass | cost not available; 71692 tokens; 46 s |
+| 2026-09-24 | c6b6051 working-tree candidate2 | gpt-6-sol high, install-and-grading-gates, revised, r1 (clarified prompt) | pass | cost not available; 121571 tokens; 62 s |
+| 2026-09-24 | c6b6051 working-tree candidate2 | gpt-6-sol high, install-and-grading-gates, revised, r2-receipt-retry (clarified prompt) | pass | cost not available; 72699 tokens; 50 s |
+| 2026-09-24 | c6b6051 | gpt-6-sol high, proportionate-validation, prior, r1 | fail (items 1, 2, 3, 4) | cost not available; 291911 tokens; 214 s |
+| 2026-09-24 | c6b6051 | gpt-6-sol high, proportionate-validation, prior, r2 | fail (items 1, 2, 3) | cost not available; 417911 tokens; 198 s |
+| 2026-09-24 | c6b6051 working-tree candidate2 | gpt-6-sol high, proportionate-validation, revised, r1 | pass | cost not available; 557320 tokens; 188 s |
+| 2026-09-24 | c6b6051 working-tree candidate2 | gpt-6-sol high, proportionate-validation, revised, r2 | pass | cost not available; 469036 tokens; 164 s |
+| 2026-09-24 | c6b6051 | gpt-6-sol high, vendor-specific-advice-stays-out, prior, r1 (clarified prompt) | pass | cost not available; 91133 tokens; 54 s |
+| 2026-09-24 | c6b6051 | gpt-6-sol high, vendor-specific-advice-stays-out, prior, r2 (clarified prompt) | fail (items 1) | cost not available; 109371 tokens; 84 s |
+| 2026-09-24 | c6b6051 working-tree candidate2 | gpt-6-sol high, vendor-specific-advice-stays-out, revised, r1 (clarified prompt) | fail (items 1) | cost not available; 97159 tokens; 75 s |
+| 2026-09-24 | c6b6051 working-tree candidate2 | gpt-6-sol high, vendor-specific-advice-stays-out, revised, r2 (clarified prompt) | pass | cost not available; 122072 tokens; 83 s |
+| 2026-09-24 | c6b6051 | grok-4.7 high, authoring-conventions, prior, r1 | fail (items 1, 2) | $0.06853584; 103326 tokens; 256 s |
+| 2026-09-24 | c6b6051 | grok-4.7 high, authoring-conventions, prior, r2 | fail (items 1, 2) | $0.1182112; 135036 tokens; 344 s |
+| 2026-09-24 | c6b6051 working-tree candidate1 | grok-4.7 high, authoring-conventions, revised, r1 | pass | $0.088672; 112392 tokens; 288 s |
+| 2026-09-24 | c6b6051 working-tree candidate1 | grok-4.7 high, authoring-conventions, revised, r2 | pass | $0.06499916; 92459 tokens; 164 s |
+| 2026-09-24 | c6b6051 | grok-4.7 high, evaluation-containment, prior, r1 | fail (items 2, 4) | $0.1887918; 460295 tokens; 311 s |
+| 2026-09-24 | c6b6051 | grok-4.7 high, evaluation-containment, prior, r2 | pass | $0.21351592; 433522 tokens; 392 s |
+| 2026-09-24 | c6b6051 working-tree candidate2 | grok-4.7 high, evaluation-containment, revised, r1 | pass | $0.16763768; 335546 tokens; 336 s |
+| 2026-09-24 | c6b6051 working-tree candidate2 | grok-4.7 high, evaluation-containment, revised, r2 | pass | $0.22878804; 393777 tokens; 265 s |
+| 2026-09-24 | c6b6051 | grok-4.7 high, independent-fresh-context-review, prior, r1 | pass | $0.05329704; 85562 tokens; 157 s |
+| 2026-09-24 | c6b6051 | grok-4.7 high, independent-fresh-context-review, prior, r2 | pass | $0.09191152; 136516 tokens; 172 s |
+| 2026-09-24 | c6b6051 working-tree candidate1 | grok-4.7 high, independent-fresh-context-review, revised, r1 | pass | $0.07475036; 110901 tokens; 153 s |
+| 2026-09-24 | c6b6051 working-tree candidate1 | grok-4.7 high, independent-fresh-context-review, revised, r2 | pass | $0.04796584; 89892 tokens; 145 s |
+| 2026-09-24 | c6b6051 | grok-4.7 high, install-and-grading-gates, prior, r1 (clarified prompt) | pass | $0.04095708; 77757 tokens; 114 s |
+| 2026-09-24 | c6b6051 | grok-4.7 high, install-and-grading-gates, prior, r2 (clarified prompt) | pass | $0.07409756; 120379 tokens; 181 s |
+| 2026-09-24 | c6b6051 working-tree candidate2 | grok-4.7 high, install-and-grading-gates, revised, r1 (clarified prompt) | pass | $0.04874376; 64818 tokens; 133 s |
+| 2026-09-24 | c6b6051 working-tree candidate2 | grok-4.7 high, install-and-grading-gates, revised, r2 (clarified prompt) | pass | $0.05299648; 82478 tokens; 166 s |
+| 2026-09-24 | c6b6051 | grok-4.7 high, proportionate-validation, prior, r1 | fail (items 1, 3) | $0.115583; 210743 tokens; 451 s |
+| 2026-09-24 | c6b6051 | grok-4.7 high, proportionate-validation, prior, r2 | fail (items 1, 3) | $0.21667044; 365133 tokens; 599 s |
+| 2026-09-24 | c6b6051 working-tree candidate2 | grok-4.7 high, proportionate-validation, revised, r1 | pass | $0.27688444; 551433 tokens; 471 s |
+| 2026-09-24 | c6b6051 working-tree candidate2 | grok-4.7 high, proportionate-validation, revised, r2 | pass | $0.22057432; 326848 tokens; 475 s |
+| 2026-09-24 | c6b6051 | grok-4.7 high, vendor-specific-advice-stays-out, prior, r1 (clarified prompt) | pass | $0.06524532; 97315 tokens; 187 s |
+| 2026-09-24 | c6b6051 | grok-4.7 high, vendor-specific-advice-stays-out, prior, r2 (clarified prompt) | pass | $0.07193856; 116132 tokens; 217 s |
+| 2026-09-24 | c6b6051 working-tree candidate2 | grok-4.7 high, vendor-specific-advice-stays-out, revised, r1 (clarified prompt) | fail (items 4) | $0.1171164; 150426 tokens; 221 s |
+| 2026-09-24 | c6b6051 working-tree candidate2 | grok-4.7 high, vendor-specific-advice-stays-out, revised, r2 (clarified prompt) | pass | $0.09547608; 114896 tokens; 225 s |
+| 2026-09-24 | c6b6051 | grok-4.7 high, evaluation-containment, prior, r3 | pass | $0.18410524; 335097 tokens; 385 s |
+| 2026-09-24 | c6b6051 | grok-4.7 high, evaluation-containment, prior, r4 | fail (items 2) | $0.19240804; 338571 tokens; 341 s |
+| 2026-09-24 | c6b6051 working-tree candidate2 | grok-4.7 high, evaluation-containment, revised, r3 | pass | $0.1946466; 370237 tokens; 415 s |
+| 2026-09-24 | c6b6051 working-tree candidate2 | grok-4.7 high, evaluation-containment, revised, r4 | pass | $0.22471008; 440656 tokens; 404 s |
+
+First two runs per variant, across all six cases:
+
+| Target | Prior passes | Revised passes | Prior → revised tokens | Prior → revised median seconds | Prior → revised reported execution cost |
+| --- | --- | --- | --- | --- | --- |
+| gpt-6-sol high | 5/12 | 11/12 | 1635375 → 2296974 | 60.5 → 68.5 | cost not available → cost not available |
+| grok-4.7 high | 7/12 | 11/12 | 2341716 → 2425866 | 236.5 → 223.0 | $1.31875528 → $1.48460456 |
+
+Grok containment added repeats r3/r4: prior 1/2, revised 2/2. Combined r1–r4 containment: prior 2/4, revised 4/4. These counts select candidate2 revised outputs with reused baseline priors. Original candidate1 outcomes remain historical evidence.
+
+gpt-6-sol high prior control failures: sol.prior.vendor-specific-advice-stays-out.r2.
+gpt-6-sol high revised control failures: sol.revised.vendor-specific-advice-stays-out.r1.
+grok-4.7 high prior control failures: none.
+grok-4.7 high revised control failures: grok.revised.vendor-specific-advice-stays-out.r1.
+
+Reported spend on completed main runs and selected grading: $3.58210984. Separate completed containment-repeat runs and grading: $0.79586996.
+All reported experimental spend, including all original candidate1 executions, ten new candidate2 affected-case executions, sixteen fresh clarified-control executions, one authorized unchanged-config receipt retry, all initial/selected/superseded grades and the zero-dollar quota-blocked Opus pilot: $7.19352228. This is a sum of reported amounts, not total billing. Codex does not report dollar costs here; those costs remain unavailable. The two advisory local blind audits have no available API cost.
+
+Initial and superseded judgments are retained as evidence of disagreement. They do not replace selected grades:
+
+- Initial Grok grade of Sol, authoring-conventions: 0/4 pass; 2 verdict/item disagreements on unchanged outputs with selected Opus judgment; candidate2 revised outputs and changed-prompt outputs excluded from same-output disagreement counts. Reported cost $0.01397808.
+- Initial Grok grade of Sol, evaluation-containment: 2/4 pass; 1 verdict/item disagreements on unchanged outputs with selected Opus judgment; candidate2 revised outputs and changed-prompt outputs excluded from same-output disagreement counts. Reported cost $0.13419596.
+- Initial Grok grade of Sol, independent-fresh-context-review: 4/4 pass; 0 verdict/item disagreements on unchanged outputs with selected Opus judgment; candidate2 revised outputs and changed-prompt outputs excluded from same-output disagreement counts. Reported cost $0.01015512.
+- Initial Grok grade of Sol, install-and-grading-gates: unavailable judgment (no pass count); 0 verdict/item disagreements on unchanged outputs with selected Opus judgment; candidate2 revised outputs and changed-prompt outputs excluded from same-output disagreement counts. Cost not available.
+- Initial Grok grade of Sol, proportionate-validation: 1/4 pass; 0 verdict/item disagreements on unchanged outputs with selected Opus judgment; candidate2 revised outputs and changed-prompt outputs excluded from same-output disagreement counts. Reported cost $0.08689652.
+- Initial Grok grade of Sol, vendor-specific-advice-stays-out: 2/4 pass; 0 verdict/item disagreements on unchanged outputs with selected Opus judgment; candidate2 revised outputs and changed-prompt outputs excluded from same-output disagreement counts. Reported cost $0.06369356.
+- Superseded checklist grade, superseded-independence-checklist-v1: 0/4 pass under its historical checklist; Reported cost $0.01623228. Historical criteria are not substituted into current results.
+- Superseded checklist grade, superseded-proportionate-checklist-v1: 2/4 pass under its historical checklist; Reported cost $0.0286178. Historical criteria are not substituted into current results.
+
+Historical failing judgments and failed executions for prior/candidate1 affected cases and repeats remain preserved: sol.prior.evaluation-containment.r2, sol.revised.evaluation-containment.r1, sol.prior.proportionate-validation.r1, sol.prior.proportionate-validation.r2, sol.revised.proportionate-validation.r2, grok.prior.evaluation-containment.r1, grok.prior.proportionate-validation.r1, grok.prior.proportionate-validation.r2, grok.prior.evaluation-containment.r3, grok.prior.evaluation-containment.r4, grok.revised.evaluation-containment.r4. Each retains its original source, checklist, and packet; baseline executions reused in the selected comparison retain their original provenance.
+Initial Sol grade of Grok install control: 3/4 pass. That grade and the subsequent whole-packet Opus adjudication are historical after the prompt clarification. Final control results use fresh matched packets with unchanged checklists; no old verdict is substituted.
+Historical Opus adjudication of the original install-control prompt: 4/4 pass. Its reported cost remains included.
+Original-prompt control outputs remain preserved separately; the clarified prompts explicitly request the previously under-specified evidence, with byte-identical checklists.
+Historical Sol containment Opus grade before factual snapshot-label clarification: 0/4 pass. The selected whole corrected-fact packet uses the same executions and checklist, distinguishing added paths from modifications to existing files. The earlier verdicts and cost remain preserved; no executor rerun was caused by this label correction.
+Absolute-path evidence correction: anonymization now preserves absolute workspace/package paths as /workspace/ and /package/. All affected proportionate and containment packets, including repeats, use complete regrades; earlier relative-path packets and grades remain historical. No executor rerun was caused by this correction.
+One authorized receipt retry selected: sol.revised.install-and-grading-gates.r2-receipt-retry replaces sol.revised.install-and-grading-gates.r2. Original metadata failure and retry both remain in reported spend; the original is not treated as a behavioral result.
+Spend provenance counts 79 distinct executor runs. 10 copied prior outputs map back to their original calls and add no duplicate spend.
+
 ## Completed recovery on 2026-09-23
 
 Six retained cases, two runs per variant on each target. Targets: Claude Code

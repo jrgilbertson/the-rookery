@@ -1,6 +1,6 @@
 # Review Checklist
 
-Use this rubric for an existing-skill audit, a final review, and every proposed instruction relaxation. An independent reviewer, as `SKILL.md` defines one, performs the review. Give it the intended outcome, hard constraints, skill package, evidence record, actual artifacts, and relevant traces without the author's conclusions. Work top to bottom. A failure becomes a fix-list item that names the problem, impact, and change risk. Review is complete when every item passes.
+Use this rubric for an existing-skill audit, a final review, and every proposed instruction relaxation. `SKILL.md` owns route selection and reviewer independence: audits and full validation use the whole rubric; focused validation uses the applicable items for direct artifact inspection. Give it the intended outcome, hard constraints, skill package, evidence record, actual artifacts, and relevant traces without the author's conclusions. For a whole-package review, work top to bottom. A failure becomes a fix-list item that names the problem, impact, and change risk. Review is complete when every applicable item passes.
 
 ## Mechanical pre-check
 
@@ -24,22 +24,22 @@ A **System-Owned Invariant** is a hard constraint that must remain explicit beca
 An instruction is not a System-Owned Invariant merely because it uses words such as "must" or "always." Generic reminders about thinking, checking, or narrating work are candidate choreography when the intended outcome and its deterministic check are already explicit.
 
 Before changing one candidate instruction group, use the hard constraint,
-required outcome, and cases declared in the baseline comparison. Use these
+required outcome, and cases declared for the selected validation route. Use these
 qualifiers consistently:
 
 - **Material** means capable of changing a required outcome, trigger boundary, user authority, exact output format, deterministic check, package installability, or fragile sequence.
 - An **invariant loss** is an observed violation of the named required outcome or hard constraint. Different wording, reasoning style, or implementation approach is not a loss by itself.
-- **Available evidence** comes from a fresh context with the intended variant confirmed loaded. A substitute, contaminated context, or listing judgment does not qualify.
+- **Available evidence** meets the selected validation route's execution and inspection requirements with the intended variant confirmed loaded. A substitute or listing judgment does not qualify as behavioral evidence.
 
-The baseline comparison template owns case construction, grading, and the
-ship rule; apply it rather than restating it here.
+The baseline comparison template owns the selected route's behavior checks;
+apply it rather than restating it here.
 
-Pass: every prescriptive instruction protects a named invariant, responds to observed evidence, or covers a named fragile operation; every relaxation satisfies the baseline comparison's ship rule.
+Pass: every prescriptive instruction protects a named invariant, responds to observed evidence, or covers a named fragile operation; every relaxation meets its selected route's verification requirements.
 
 ## Invocation and triggering
 
 - The description says when to use the skill, not how it works. Pass: no body step is restated in the description; without the body, an agent would know when to activate but not the process.
-- Triggering conditions lead. Pass: the first clause is a "Use when..." trigger, not an identity statement or feature list.
+- Triggering conditions are clear. Pass: the description identifies its owned capability and when to activate without requiring a particular opening phrase.
 - Trigger keywords are front-loaded. Pass: words a user would type appear in the description's first sentence.
 - The trigger boundary is positive. Pass: the description names the work the skill owns; adjacent jobs live in near-miss queries unless a positive destination is needed to resolve harmful ambiguity.
 - Each trigger is a distinct branch. Pass: no two trigger phrases are synonyms whose collapse would preserve the same cases.
@@ -50,9 +50,9 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 ## Information hierarchy
 
 - The body fits its budget. Pass: `SKILL.md` is at most 500 lines, with every line beyond the concise core earning its place.
-- The body respects the context target. Pass: its character count divided by four is below 5,000. Tokenizers vary, so this is an authoring estimate and not a portable validation claim.
-- Branch-specific detail is disclosed one level deep. Pass: material needed only on some runs lives in a bundled file behind an explicit read-trigger, and that file does not disclose another layer.
-- Long references are navigable. Pass: a reference longer than 300 lines has a table of contents.
+- Context use is justified. Pass: required context fits declared host limits and each instruction earns its load. Character count divided by four below 5,000 is an authoring target, not a failure threshold; justified required content may exceed the estimate.
+- Branch-specific detail is discoverable. Pass: conditional material has an explicit read-trigger, including at each further reference link; nesting serves the task rather than hiding required instructions.
+- Long references are navigable. Pass: headings, search terms, an index, or a table of contents let the agent locate relevant material without loading unrelated content; length alone does not dictate the mechanism.
 - Inline content is universal. Pass: everything left in the body is needed by every path.
 - Completion criteria are observable. Pass: each workflow stage closes on an exhaustive, checkable state where early completion would be visible.
 
@@ -78,7 +78,7 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 
 ## Evidence integrity
 
-- Review context is independent. Pass: each matched case was graded, and the final checklist review performed, by independent reviewers as `SKILL.md` defines them. Deterministic scripts may perform mechanical checks.
+- Review context matches the route. Pass: full validation has independent case grading and a different independent final reviewer as `SKILL.md` requires; focused artifact inspection is identified as such and makes no independent-review claim. Deterministic scripts may perform mechanical checks.
 - Artifacts are inspected directly. Pass: the reviewer opens the relevant outputs instead of relying on the executor's summary or claimed filenames.
 - Every pass has substance. Pass: each judgment cites concrete artifact or trace evidence that demonstrates the outcome, not a heading, filename, or other surface compliance.
 - Checks are reviewed too. Pass: no objective check is trivial, unverifiable from the available evidence, or missing a material part of the required outcome.
@@ -93,4 +93,4 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 - Environment requirements are explicit. Pass: no absolute owner path, personal identifier, private-repository assumption, local alias, or undeclared credential is required.
 - Package behavior matches its stated intent. Pass: bundled content, side effects, requested access, and authority remain within the job described to the user.
 - Claims match evidence. Pass: canonical structure and successful installation are not presented as equivalent behavior across untested models or harnesses; proxy and native checks remain distinct.
-- Vendor-specific advice stays labeled. Pass: guidance that rests on one vendor's model or harness behavior is marked vendor-specific, scoped to that target, and kept out of the portable rules; the canonical instructions name no model.
+- Vendor-specific advice stays labeled. Pass: guidance that rests on one vendor's model or harness behavior is marked vendor-specific, scoped to that target, and kept out of the portable rules; the canonical instructions name no model. When assessing vendor guidance, state its model or harness scope in the recommendation.

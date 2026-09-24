@@ -276,10 +276,12 @@ A Baseline Comparison checks whether a skill changes agent behavior in the
 intended direction. New skills run realistic prompts with and without the skill;
 revisions compare the frozen prior and revised versions, each in a fresh
 context with the intended variant confirmed loaded. Cases are binary
-pass/fail, graded blind by an agent that did not write the answers. A
-substantive revision ships when it raises the pass count on the cases it
-targets, no Regression Control fails with it, and the gain is worth its cost.
-The repository's testing convention owns the protocol.
+pass/fail, graded blind by an agent that did not write the answers. A revision
+on the full validation route ships when it raises the pass count on the cases
+it targets, no Regression Control fails with it, and the gain is worth its cost.
+The repository's testing convention owns the protocol. The creator's workflow
+owns route eligibility; focused validation supplies an affected behavior check
+and direct artifact inspection without a comparative improvement claim.
 
 ### Regression Control
 
@@ -293,9 +295,10 @@ change returns to correction.
 An Independent Review Context is a fresh session in which the reviewing agent
 neither saw the artifact's authoring discussion nor produced the artifact.
 
-One context may grade a matched case while another performs the final review.
-If no independent context is available, the result remains unverified until a
-separate session can review a self-contained handoff.
+Full validation requires one independent context to grade a matched case and
+a different one for the final review. If a required independent context is
+unavailable, the result remains unverified until a separate session can review
+a self-contained handoff.
 
 ### Degradation Path
 

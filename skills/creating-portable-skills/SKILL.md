@@ -2,7 +2,7 @@
 name: creating-portable-skills
 description: Use when creating, updating, or migrating a skill, when editing a skill's SKILL.md, evals, graders, or trigger queries, or when finding problems in its description, triggers, structure, portability, or evidence. Produces prioritized findings or a portable, installable skill package. Explanation-only requests stay with general reasoning.
 license: MIT
-compatibility: Requires isolated agent contexts or separate sessions for agent grading and review.
+compatibility: Full validation requires isolated agent contexts or separate sessions for agent grading and review.
 ---
 
 # Creating Skills
@@ -11,11 +11,16 @@ Create, revise, migrate, or audit a skill from its intent, required outcome, and
 
 Skills produced here follow the [Agent Skills format](https://agentskills.io/specification): a directory with a `SKILL.md` (frontmatter plus body) and optional `references/`, `assets/`, and `scripts/`. Read [references/portability.md](references/portability.md) for the canonical frontmatter fields and their limits, and when choosing an install location or making a harness-specific claim.
 
-An independent reviewer is any agent that took no part in the authoring discussion and did not produce the artifact under review; an agent auditing a skill it did not write already qualifies and needs no separate context. For a new skill or a substantive change, an independent grader grades the matched cases and a different independent reviewer performs the final package review. When only the author's context is available, prepare a self-contained handoff for a separate session; that grade or review stays unverified until the session completes it, because the author's own review never substitutes.
+An independent reviewer is any agent that took no part in the authoring discussion and did not produce the artifact under review; an agent auditing a skill it did not write already qualifies and needs no separate context. For full validation, an independent grader grades the matched cases and a different independent reviewer performs the final package review. When a required independent context is unavailable, prepare a self-contained handoff for a separate session; that grade or review stays unverified until the session completes it, because the author's own review never substitutes.
 
 ## Workflow
 
-Creating a new skill starts at step 1. Auditing, updating, or migrating an existing skill starts at step 0. A read-only audit ends at step 0; approved changes continue through the remaining workflow.
+Select the validation route before entering the workflow:
+
+- **Focused validation** applies only to a localized, low-risk guidance revision with unchanged task scope, activation boundary, required outcomes, System-Owned Invariants, executable helpers, and evaluation/review policy. An optional method hint can qualify; a one-line approval or output-schema change cannot.
+- **Full validation** applies to new skills, all other substantive changes, and ambiguous eligibility. Substantive means changed instruction semantics, trigger description, or bundled resource; typo, formatting, and link-only edits remain exempt from behavioral evaluation.
+
+A read-only audit starts and ends at step 0. Authorized focused revisions start at step 1; other existing-skill work starts at step 0, and new skills start at step 1. Existing authorization for the material fix scope carries forward.
 
 ### 0. Audit an existing skill
 
@@ -23,7 +28,7 @@ Have an independent reviewer apply [references/review-checklist.md](references/r
 
 Read-only completion: deliver the evidence-backed review, prioritized recommendations, and final verdict without changing files. The execution ends there. Revision begins only in a separate user-authorized request.
 
-Change completion: the user has approved the material fix scope, including any authority or taste decisions that stay with them. Continue at step 1.
+Change completion: the material fix scope is authorized, including any authority or taste decisions that stay with the user. Continue at step 1 without requesting authorization already supplied.
 
 ### 1. Resolve the intent
 
@@ -62,17 +67,21 @@ most 500 lines.
 
 Completion: the validator passes, or every named fallback check passes with the tool limitation recorded.
 
-### 5. Compare behavior
+### 5. Check behavior
 
-Follow [assets/baseline-test-template.md](assets/baseline-test-template.md) for every change it defines as substantive. It owns case construction, regression controls, the matched pair, grading, cost, and the ship rule that step 6 applies. Emit the case files and log lines to the host's test location (`tests/<skill-name>/` when no convention exists).
+Follow the selected route in [assets/baseline-test-template.md](assets/baseline-test-template.md). It owns the focused check and the full comparison protocol, including case construction, regression controls, grading, cost, and the ship rule. Emit case files and log lines to the host's test location (`tests/<skill-name>/` when no convention exists).
 
-Completion: the template's compare step has run for every substantive change, and the case files and log lines are emitted.
+Completion: the selected route's checks have run and its case files and log lines are emitted; cosmetic-only edits record behavioral evaluation as not applicable.
 
 ### 6. Decide and review
 
-Have an independent reviewer apply the template's ship rule to the graded results, then apply [references/review-checklist.md](references/review-checklist.md) with the inputs it names, and revise from its findings. Any substantive follow-up edit returns through step 4 and the affected cases before shipping.
+For focused validation, directly inspect the changed guidance and actual check output against the intended outcome and hard constraints, using the applicable items in [references/review-checklist.md](references/review-checklist.md). The author may do this inspection; it is not independent evidence. A whole-package audit, matched improvement experiment, and separate final reviewer are not required.
 
-Completion: the baseline comparison has a ship or return-to-correction decision, and every checklist item passes.
+For full validation, have the independent final reviewer apply the template's ship rule to the graded results, then apply the whole checklist with the inputs it names, and revise from its findings. Required independent grading or review remains unverified and blocks completion when unavailable; a checklist exception cannot replace it.
+
+Any substantive follow-up edit reselects its route and returns through step 4 and the affected cases before shipping.
+
+Completion: focused validation has passing structural and affected behavior checks, direct artifact inspection, and a claim limited to what was exercised; full validation has a ship decision and every checklist item passes.
 
 ### 7. Test the description
 

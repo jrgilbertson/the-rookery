@@ -1,7 +1,7 @@
 ---
 module: skill evaluation
 date: 2026-07-27
-last_updated: 2026-08-17
+last_updated: 2026-09-23
 problem_type: best_practice
 component: testing_framework
 severity: high
@@ -28,14 +28,16 @@ tags:
 
 Agent-authored skill changes need two kinds of verification. Deterministic
 tools can check structural facts such as frontmatter, file identity, line
-counts, and links. Behavioral grading and final package review require
-judgment, so the author or artifact producer should not perform them.
+counts, and links. Full validation requires independent behavioral grading and final package
+review. The focused route permits author inspection of the affected artifact;
+that inspection supplies no independent evidence.
 
 The distinction matters because a plausible executor summary can hide an
 incomplete artifact. A filename or heading can satisfy a weak check while the
 actual output misses the required outcome. The workflow in
 `skills/creating-portable-skills/SKILL.md` therefore gives judgment work to
-fresh agent contexts and leaves mechanical checks to scripts.
+fresh agent contexts when the selected route requires independent evidence
+and leaves mechanical checks to scripts.
 
 ## Guidance
 
@@ -44,16 +46,16 @@ Keep three evidence layers separate:
 | Layer | What it establishes | Suitable mechanism |
 | --- | --- | --- |
 | Provenance | Which package, model, harness, and configuration ran | Hashes, runtime metadata, load traces, and deterministic comparisons |
-| Outcome evidence | Whether the output met the required outcome and hard constraints | Independent inspection of actual artifacts and relevant traces |
-| Coverage | Which changed behaviors were tested and how far the conclusion reaches | Declared cases, limitations, and an independent final review |
+| Outcome evidence | Whether the output met the required outcome and hard constraints | Inspection of actual artifacts and relevant traces; independent grading for full validation, with author inspection permitted for eligible focused checks |
+| Coverage | Which changed behaviors were tested and how far the conclusion reaches | Declared cases and limitations; a different independent final reviewer for full validation, or direct inspection limited to the affected behavior for focused validation |
 
 Keep the durable record small: self-contained case files contain the prompt and
 binary checklist, while the log keeps one bounded line per run or check
-(`tests/README.md:16`). Behavioral revisions use matched prior/candidate runs in
+(`tests/README.md:35`). Full-validation revisions use matched prior/candidate runs in
 fresh contexts and ship only when discriminating cases improve without
-regression (`tests/README.md:70`).
+regression (`skills/creating-portable-skills/assets/baseline-test-template.md:56`).
 
-For a substantive skill change:
+For a skill change on the full validation route:
 
 1. Run matched variants in fresh contexts and confirm the intended version was
    loaded.
@@ -70,12 +72,13 @@ For a substantive skill change:
    and keep the affected result unverified. Author self-review does not replace
    the missing context.
 7. Record the result at the narrowest level the artifact supports. A log line
-   states only what its run actually checked (`tests/README.md:82`).
+   states only what its run actually checked (`tests/README.md:130`).
 
 Treat a source edit as an evidence boundary. Preserve earlier artifacts with
 their original revision labels, then identify which checks crossed the changed
 instruction, case, or resource. Reinstall the new package before rerunning
-affected behavior, and give each new artifact to an independent grader. Do not
+affected behavior, and give each new artifact to an independent grader when
+the selected route requires one. Do not
 rename or summarize an older output as though the new bytes produced it.
 
 Package identity has two independent links:
@@ -138,8 +141,10 @@ run contained.
 
 ## When to Apply
 
-Apply this pattern when instruction semantics, trigger descriptions, or
-bundled resources change. It is especially useful when success depends on
+Use `skills/creating-portable-skills/SKILL.md` to select the validation route.
+Apply this independent-review pattern when full validation is required. A
+focused check establishes only its exercised behavior and does not establish
+comparative improvement. Independent review is especially useful when success depends on
 qualitative completeness, evidence use, authority boundaries, or execution
 trace interpretation.
 

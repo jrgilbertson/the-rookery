@@ -82,6 +82,15 @@ note`. The `git rev` field names the commit the run's working tree was
 
 ## Running
 
+Both focused checks and matched comparisons use the baseline template's
+Evaluation boundary: declare permitted resources, effects, and budget; use
+synthetic inputs in isolated temporary workspaces; preserve existing authority
+and ask for any additional authority or substantial unapproved cost. Keep raw
+outputs outside the repository, including partial outputs from failed runs.
+Execution claims require the relevant artifact or tool observations alongside
+the final answer in the blinded grading packet, without private reasoning or
+author conclusions.
+
 - **Trigger suite.** Judge each query in a fresh context that sees only the
   skill name, description, and that query; require yes or no. One run per
   query. A first judgment that is `unsure` or hedged is borderline: run that
@@ -94,10 +103,13 @@ note`. The `git rev` field names the commit the run's working tree was
   source, no other conversation state. The case file is self-contained: run
   its prompt, resolve fixture paths relative to the case file, grade each
   checklist item pass or fail, and record one log line.
-- **Matched comparison (new skills and behavior-changing revisions).** A
-  single-variant run only regression-checks an unchanged skill. A new skill
-  or substantive revision runs its affected cases as matched pairs — without
-  the skill (or the frozen prior version) and with the revised version, each
+- **Validation route.** `skills/creating-portable-skills/SKILL.md` owns focused
+  versus full validation eligibility. Focused revisions run an affected case
+  on the revised skill, with structural validation and direct artifact
+  inspection; author inspection is labeled as such, not independent grading.
+  Record its case and a log line, limiting the claim to the behavior exercised.
+- **Matched comparison (full validation).** Run affected cases as matched
+  pairs — without the skill (or the frozen prior version) and with the revised version, each
   in a fresh context. The baseline comparison template in
   `skills/creating-portable-skills/assets/` owns grading and the ship
   rule. Log one line per graded variant.

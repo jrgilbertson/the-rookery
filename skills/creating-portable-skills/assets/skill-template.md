@@ -2,8 +2,8 @@
 # Delete every "#" comment line when instantiating this template.
 name: skill-name-here
 # name: lowercase kebab-case, at most 64 characters, matching the directory.
-description: Use when [owned triggering conditions and user phrasings, including a non-obvious one]. [What it does, in one clause.]
-# description: at most 1024 characters. Put trigger language first. Describe
+description: "[Owned capability and triggering conditions, including a non-obvious user phrasing.]"
+# description: at most 1024 characters. Make activation clear early. Describe
 # when to use the skill, not a summary of the workflow. Keep adjacent jobs in
 # near-miss tests unless a positive destination resolves harmful ambiguity.
 license: "[choose a license, or delete this field if the host collection declares one]"
@@ -36,7 +36,7 @@ when order matters; for open-ended work, organize around outcomes and
 completion criteria. When naming several tools or approaches, give a default or
 selection rule. For destructive or batch work, confirm the exact targets and
 planned action against the system that owns those targets before execution. Put
-branch-specific detail one level deep behind an explicit read-trigger. -->
+branch-specific detail behind an explicit read-trigger at each reference link. -->
 
 <!-- Delete this comment. When invocation leads to distinct runtime branches,
 route among them beside the corresponding branch instructions instead of

@@ -1,10 +1,34 @@
 # Baseline comparison: [skill-name]
 
-Use this protocol when creating a new skill or making a substantive revision
-(changed instruction semantics, trigger description, or bundled resource;
-typo, formatting, and link-only edits are exempt). It compares behavior with
-and without the change on a small case set and produces the suite's durable
-artifacts.
+Use the validation route selected in [SKILL.md](../SKILL.md#workflow).
+Both routes record the actual target and confirm the intended package is loaded.
+
+## Evaluation boundary
+
+For either route, state the permitted inputs, resources, side effects, and run
+budget before dispatch. Execute with synthetic inputs in an isolated temporary
+workspace; keep generated raw outputs outside the host project. For a
+file-writing evaluation, verify its process working directory and resolved
+output paths are inside that workspace before dispatch. Existing authorization
+carries forward. Ask before accessing additional resources,
+affecting a live system, or spending substantial unapproved time or money.
+Retain failed runs and partial outputs as isolated evidence and record their
+failure; only curated cases and bounded result logs enter the host test location.
+
+## Focused check
+
+Declare an affected behavior case and its binary expected outcome. Exercise
+it with the revised skill and inspect the actual output against that outcome
+and the unchanged hard constraints. Record the case and result in the host's
+test location using the artifact format below, with available tokens and
+duration or `cost not available`. This check supports only the behavior it
+exercised, not a comparative improvement claim. The author may inspect it;
+label that inspection honestly rather than calling it independent grading.
+
+## Matched comparison
+
+Full validation compares behavior with and without the change on a small case
+set using the following protocol.
 
 ## Protocol
 
@@ -28,8 +52,9 @@ artifacts.
    any item fails. One grader scores both variants of a case on a target.
    When a second model is available, the grader is a different model from the
    one that wrote the outputs; otherwise name the grader in the log. Give the
-   grader final answers only, labeled neutrally, with variant names removed
-   from paths and quoted text.
+   grader final answers and the artifact or tool observations needed to check
+   execution, labeled neutrally, with variant names removed from paths and
+   quoted text. Exclude private reasoning and the author's conclusions.
 4. **Compare against the ship rule.** For each target, count passing cases per variant
    and state the token and time delta beside the pass delta. The change ships
    when it raises the pass count on the cases it targets, no regression

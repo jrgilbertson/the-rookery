@@ -35,6 +35,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `creating-portable-skills` uses focused validation for localized, low-risk
+  guidance revisions while keeping independent comparison and review for
+  consequential changes. Behavioral evaluations use bounded temporary
+  workspaces, and authoring checks judge activation and discoverability instead
+  of requiring a fixed description opening or reference depth.
+
 - `creating-portable-skills` reviews can open with a bundled signal scan that
   finds pressure language, thinking scaffolds, output clamps, history
   phrasing, pinned model names, and similar mechanical signals, and names the

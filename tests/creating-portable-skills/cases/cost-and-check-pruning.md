@@ -31,8 +31,9 @@ so it proves no improvement.
       count; the pass result alone does not.
 - [ ] Concludes harness A shows no improvement for that added cost, and does
       not call the revision proven there.
-- [ ] Records harness B's cost as not available or not reported, rather than
-      estimating it or leaving it out.
+- [ ] Records harness B's cost as not available, in any wording, in the log
+      lines it writes for harness B, rather than estimating a figure or
+      omitting it.
 - [ ] Does not count the "written in English" item, which passed in both
       variants, as evidence of improvement.
 - [ ] Routes "read nicer" to human feedback or a blind comparison of the two

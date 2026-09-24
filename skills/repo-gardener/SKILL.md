@@ -13,11 +13,11 @@ trackers, issues, or overnight work that names none of these as not this
 skill.
 
 Sense one repository, dispatch Executors that each ship one reviewable PR,
-and post one morning report. Run as Lead plus Executors. As Lead, sense,
-select, dispatch, answer readiness menus, and report. Never implement,
-push, or merge as Lead. Give each Executor one worktree, one branch, and
-one unmerged PR. Use Scouts for read-only evidence. Each Executor runs
-PR readiness on its own head. Use a fresh Reviewer to judge merge
+and post one morning report. Run as Coordinator plus Executors. As
+Coordinator, sense, select, dispatch, answer readiness menus, and report.
+Never implement, push, or merge as Coordinator. Give each Executor one
+worktree, one branch, and one unmerged PR. Use Scouts for read-only
+evidence. Each Executor runs PR readiness on its own head. Use a fresh Reviewer to judge merge
 readiness. Keep CI as the merge gate. Leave merge to a human. Treat a
 run that authors nothing but reports as a complete run.
 
@@ -119,14 +119,14 @@ not as a unit. Leave unused Executor slots empty.
 
 ## Dispatch Executors
 
-For each selected unit, the Lead creates an isolated worktree on a fresh
+For each selected unit, the Coordinator creates an isolated worktree on a fresh
 branch `garden/<unit>` from the default branch the policy was read from.
 When that branch already exists, an earlier run preserved work there:
 skip the unit and name the branch in the report. Create the worktree as
 an Orca child worktree when available, otherwise as the harness's
-worktree-isolated subagent. The Lead writes a brief as a Markdown file
+worktree-isolated subagent. The Coordinator writes a brief as a Markdown file
 in a per-run directory outside the repository. The brief names the
-unit's goal, the Lead's directives for the unit, the allowed files, the
+unit's goal, the Coordinator's directives for the unit, the allowed files, the
 protected paths, the policy's `verify` lists as the exact
 caller-approved verification command argv list, the rules in this
 section, and the hard rules below.
@@ -137,7 +137,7 @@ established, it invokes `ce-debug mode:pipeline` first with its envelope
 narrowed to diagnosis: defer every fix, and never commit or push. It
 carries the `root_cause` of a `diagnosed-no-fix` return into the plan
 and stops the unit on any other status. It invokes `ce-plan` with the
-brief, passing the Lead's choices as directives rather than settled
+brief, passing the Coordinator's choices as directives rather than settled
 decisions, since only the owner can mint settled-decision provenance.
 It stops the unit on a `status: blocked` return or a plan that is not
 `artifact_readiness: implementation-ready` with `execution: code`. It
@@ -152,24 +152,24 @@ argv from the worktree root and stops the unit on any failure.
 Every unattended Executor invokes `checking-pr-readiness` normally on
 the exact head in its worktree and stops at its numbered menu.
 
-On a distinct later turn the Lead authorizes that Executor to reply 1
+On a distinct later turn the Coordinator authorizes that Executor to reply 1
 only when the menu offered option 1, the recommendation was
 approve and proceed for that same exact head, and every path in the
 readiness working surface, committed, staged, unstaged, and untracked,
-is in the unit's allowed files. The Lead authorizes by sending `1` as the
+is in the unit's allowed files. The Coordinator authorizes by sending `1` as the
 next message in that Executor's conversation.
 When the menu offered option 1 but a path in that surface is outside
-the allowed files, the Lead does not reply 1: the Executor stops with
+the allowed files, the Coordinator does not reply 1: the Executor stops with
 its commit preserved and no PR, and the report names the paths.
 The Executor never chooses option 1 on its own.
-The Lead never authorizes Proceed to merge.
+The Coordinator never authorizes Proceed to merge.
 
-When the readiness recommendation is request changes, the Lead replies
+When the readiness recommendation is request changes, the Coordinator replies
 with Address remaining changes and then its do-all option. That sends
 every named Executor-owned gap back to the same Executor for one rework
 round, and readiness recomposes on the new head. If that menu still
 withholds option 1, or a gap needs the owner, the Executor stops with
-the authored commit preserved and no PR. The Lead never picks Stop and
+the authored commit preserved and no PR. The Coordinator never picks Stop and
 file follow-up work.
 
 After reply 1, the Executor continues into checking-pr-readiness
@@ -178,12 +178,12 @@ mode:pipeline`, then `ce-babysit-pr mode:pipeline`. Babysit repairs CI
 through `ce-debug` and answers review comments through
 `ce-resolve-pr-feedback` on its own. When babysit returns
 success, looks merge-ready, or cautiously looks ready, the Executor
-reports the PR URL and that result to the Lead and stops. On any other
+reports the PR URL and that result to the Coordinator and stops. On any other
 result it reports that result and stops.
 
 ## Judge merge readiness
 
-For each PR whose Executor reported a ready babysit result, the Lead
+For each PR whose Executor reported a ready babysit result, the Coordinator
 dispatches `checking-merge-readiness` to a fresh, read-only Reviewer
 with no prior involvement. Pass only the pull-request identity. Put its
 recommendation (merge, debug, or do not merge) and risk drivers into the

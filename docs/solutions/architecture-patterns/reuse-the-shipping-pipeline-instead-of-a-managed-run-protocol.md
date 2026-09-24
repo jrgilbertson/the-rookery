@@ -51,9 +51,9 @@ file of about 1,800 words plus a policy template:
   `ce-plan` from the brief, `ce-work mode:return-to-caller <plan-path>`,
   `ce-simplify-code`, `ce-code-review mode:agent`, `ce-test-browser
   mode:pipeline`, then `checking-pr-readiness`, and stop at its menu. The
-  Lead answers option 1 on a later turn. Finishing publishes with
+  Coordinator answers option 1 on a later turn. Finishing publishes with
   `ce-commit-push-pr mode:pipeline` and watches with `ce-babysit-pr
-  mode:pipeline`. The Lead then dispatches `checking-merge-readiness` to
+  mode:pipeline`. The Coordinator then dispatches `checking-merge-readiness` to
   a fresh Reviewer for the verdict. Babysit is a local optimization;
   merge readiness is the global one.
 - An open pull request blocks a unit only when both change the same source

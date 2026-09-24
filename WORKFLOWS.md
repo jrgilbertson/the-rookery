@@ -17,7 +17,7 @@ My workflow moves through five core jobs: Research, Plan, Design, Build, and Shi
 | [Learn](#learn) | Capture learning as linked notes and name the gaps | `atomic-note`, `personal-chief-of-staff`, `reviewing-meetings` | Learning is in the graph and gaps are named |
 
 [Routing work](ROUTING.md) documents how I select the first workflow, the
-lead, the pattern, and the roster of roles with models and effort without
+coordinator, the pattern, and the roster of roles with models and effort without
 starting a downstream workflow. I use it when explicitly routing new work or
 deciding whether a proven in-flight owner should continue.
 
@@ -137,7 +137,7 @@ I choose models by how success will be judged. For work with objective checks, I
 
 `ce-work` from Compound Engineering moves through the plan one unit at a time so I can inspect the work as it lands. `lfg`, also from Compound Engineering, runs from plan to pull request without check-ins. `/goal` in Claude Code and Codex keeps working toward one completion condition across turns. I use autonomous modes only when the goal is clear and verifiable.
 
-Compound Engineering is the default planner, executor, reviewer, and learning capture inside each worktree. Every route has a lead, with a roster sized for the expected end of the run. I add Executors for independent implementation units and a Reviewer for explicit acceptance criteria or requested review. The routing contract owns the pattern and model recommendations. Hard decisions may get an advisor without a handoff; a separate critic sits in the Reviewer seat.
+Compound Engineering is the default planner, executor, reviewer, and learning capture inside each worktree. Every route has a coordinator, and most runs start as a single owner. The routing contract owns the pattern and model recommendations. Hard decisions may get an advisor without a handoff; a separate critic sits in the Reviewer seat.
 
 I enforce quality in tiers. Tests, linters, CI gates, and the design system enforce proactively, and prose instructions sit at the bottom. See the Maintain section for the full ladder.
 

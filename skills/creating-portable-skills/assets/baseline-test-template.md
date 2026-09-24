@@ -37,9 +37,9 @@ artifacts.
    improvement only on the targets that showed it. When a discriminating
    case passes on some runs and fails on others, run each variant a few more times and compare
    pass rates rather than counting one lucky run; if it stays inconsistent,
-   tighten the ambiguous instruction or the item. Remove an item that passes
-   in both variants, fix one that fails in both, and stop iterating when
-   another revision no longer improves the result.
+   tighten the ambiguous instruction or the item. In a discriminating case,
+   remove an item that passes in both variants and fix one that fails in
+   both. Stop iterating when another revision no longer improves the result.
 5. **Emit the durable artifacts.** One case file per kept case in
    `tests/<skill-name>/cases/` and one log line per graded run in
    `tests/<skill-name>/log.md` (line format: `date | git rev | check |
@@ -76,9 +76,3 @@ or baseline gap, or a regression control's contract, a self-contained
 `- [ ]` checklist items, each grading only what the prompt asks for. Fold near-duplicate variants into one battery case
 (numbered scenarios in the prompt, one checklist item per scenario). Keep each
 file under ~45 lines.
-
-## Honest claims
-
-A graded pass shows that case, in that context, at that revision — not
-reliability across models, harnesses, or untested behavior. Record what
-actually ran and nothing more.

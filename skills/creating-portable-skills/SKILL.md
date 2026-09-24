@@ -33,7 +33,7 @@ Completion: the job is written as one sentence, and the triggers, near-misses, o
 
 ### 2. Scope targets and resources
 
-Use the caller-declared model and harness target set. When none is declared, use the current model and harness as one target; structural portability alone does not require expanding the set. The declared harnesses scope the step 8 smoke roster; behavioral comparisons run as single matched pairs on the current model rather than iterating declared targets. Record actual target identities and material configuration when available.
+Use the caller-declared model and harness target set. When none is declared, use the current model and harness as one target; structural portability alone does not require expanding the set. The declared harnesses scope the step 8 smoke roster; behavioral comparisons run on the current model and on any other target the caller names. Record actual target identities and material configuration when available.
 
 Choose only resources with repeatable value. Outputs copied by the workflow belong in `assets/`. Reference material needed only for one branch belongs in `references/`. Deterministic helpers belong in `scripts/` when prose cannot reliably protect the result. Keep the package standalone. Check the host repository's contribution docs, agent instructions, changelog policy, skill discovery path, and validators.
 
@@ -68,13 +68,13 @@ Completion: the validator passes, or every named fallback check passes with the 
 
 Follow [assets/baseline-test-template.md](assets/baseline-test-template.md) for every change it defines as substantive, a description-only change included. It owns case construction, regression controls, the matched pair, grading, cost, and the ship decision. Emit the case files and log lines to the host's test location (`tests/<skill-name>/` when no convention exists).
 
-Completion: the template's decision rule is met for every substantive change, and the case files and log lines are emitted.
+Completion: the template's compare step has run for every substantive change, and the case files and log lines are emitted.
 
 ### 6. Decide and review
 
 Have an independent reviewer apply the baseline comparison's decision rule, then run [references/review-checklist.md](references/review-checklist.md) top to bottom. Give the reviewer the skill, intended outcome, hard constraints, artifacts, traces, and graded case results, and revise from its findings. Any substantive follow-up edit returns through structural validation and the affected cases before shipping.
 
-Completion: the baseline comparison has a ship or return-to-correction decision, and every checklist item passes or has a user-approved deliberate exception where the checklist permits one.
+Completion: the baseline comparison has a ship or return-to-correction decision, and every checklist item passes.
 
 ### 7. Test the description
 

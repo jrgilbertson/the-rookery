@@ -1,6 +1,6 @@
 # Review Checklist
 
-Use this rubric for an existing-skill audit, a final review, and every proposed instruction relaxation. An independent reviewer, as `SKILL.md` defines one, performs the review. Give it the intended outcome, hard constraints, skill package, evidence record, actual artifacts, and relevant traces without the author's conclusions. Work top to bottom. A failure becomes a fix-list item that names the problem, impact, and change risk. Review is complete when every item passes or has a recorded, user-approved exception where this checklist permits one.
+Use this rubric for an existing-skill audit, a final review, and every proposed instruction relaxation. An independent reviewer, as `SKILL.md` defines one, performs the review. Give it the intended outcome, hard constraints, skill package, evidence record, actual artifacts, and relevant traces without the author's conclusions. Work top to bottom. A failure becomes a fix-list item that names the problem, impact, and change risk. Review is complete when every item passes.
 
 ## System-Owned Invariants
 

@@ -32,8 +32,7 @@ metadata.
 ## Tune
 
 - Fix failures by front-loading trigger words and describing when to use the
-  skill. Do not summarize the workflow in the description — agents follow the
-  summary and skip the body.
+  skill, as the review checklist's description items require.
 - After any description edit, rerun the complete query set; an edit that
   fixes one query can activate a near miss.
 

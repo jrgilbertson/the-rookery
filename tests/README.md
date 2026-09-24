@@ -100,7 +100,7 @@ note`. The `git rev` field names the commit the run's working tree was
   the skill (or the frozen prior version) and with the revised version, each
   in a fresh context. The baseline comparison template in
   `skills/creating-portable-skills/assets/` owns grading and the ship
-  decision. Log one line per graded variant.
+  rule. Log one line per graded variant.
 - **Smoke check.** Install the skill from source into a disposable project on
   each roster harness — Claude Code and Codex CLI — ask one trigger query, and
   confirm from the run's trace that the copy which activated is the

@@ -7,7 +7,7 @@ compatibility: Requires isolated agent contexts or separate sessions for agent g
 
 # Creating Skills
 
-Create, revise, migrate, or audit a skill from its intent, required outcome, and only the hard constraints that define acceptable completion or remain under user authority. The result is either a prioritized read-only audit or a self-contained skill package with structural validation, behavioral evidence, and separate trigger and installation checks.
+Create, revise, migrate, or audit a skill from its intent, required outcome, and only the hard constraints that define acceptable completion or remain under user authority.
 
 Skills produced here follow the [Agent Skills format](https://agentskills.io/specification): a directory with a `SKILL.md` (frontmatter plus body) and optional `references/`, `assets/`, and `scripts/`. Read [references/portability.md](references/portability.md) for the canonical frontmatter fields and their limits, and when choosing an install location or making a harness-specific claim.
 
@@ -19,7 +19,7 @@ Creating a new skill starts at step 1. Auditing, updating, or migrating an exist
 
 ### 0. Audit an existing skill
 
-Have an independent reviewer read the whole package and the host repository's instructions. Give it the skill, the review checklist, and the stated intent. Have it apply [references/review-checklist.md](references/review-checklist.md) top to bottom, starting with the mechanical pre-check that [scripts/signal-scan.sh](scripts/signal-scan.sh) performs, then present its prioritized fix list.
+Have an independent reviewer apply [references/review-checklist.md](references/review-checklist.md) to the whole package and the host repository's instructions, with the inputs the checklist names, and present its prioritized fix list.
 
 Read-only completion: deliver the evidence-backed review, prioritized recommendations, and final verdict without changing files. The execution ends there. Revision begins only in a separate user-authorized request.
 
@@ -43,9 +43,7 @@ Completion: the target set and applicable host conventions are recorded, with a 
 
 For a new skill, copy [assets/skill-template.md](assets/skill-template.md) to the host's skill discovery path or documented skill location. For a revision, preserve a loadable prior version before editing; the last commit is sufficient in a versioned repository. For a migration, copy the source package to the destination collection and revise the copy without changing the source.
 
-Use the least-prescriptive instruction that reaches the required outcome within its hard constraints. Read the System-Owned Invariants and candidate qualifier rules in [references/review-checklist.md](references/review-checklist.md) before relaxing an existing instruction. Preserve exact formats, deterministic checks, authority boundaries, reusable resources, and genuinely fragile ordering. Let the agent choose its reasoning and implementation path elsewhere.
-
-Before drafting, read the **Information hierarchy**, **Instruction economy**, and **Portability** sections of [references/review-checklist.md](references/review-checklist.md) and apply them as authoring constraints.
+Use the least-prescriptive instruction that reaches the required outcome within its hard constraints. Preserve exact formats, deterministic checks, authority boundaries, reusable resources, and genuinely fragile ordering. Let the agent choose its reasoning and implementation path elsewhere. Before drafting, read the **System-Owned Invariants**, **Information hierarchy**, **Instruction economy**, and **Portability** sections of [references/review-checklist.md](references/review-checklist.md) and apply them as authoring constraints; they also govern relaxing an existing instruction.
 
 Completion: every file in step 2's list exists, and each hard constraint from step 1 appears in the draft.
 
@@ -66,13 +64,13 @@ Completion: the validator passes, or every named fallback check passes with the 
 
 ### 5. Compare behavior
 
-Follow [assets/baseline-test-template.md](assets/baseline-test-template.md) for every change it defines as substantive, a description-only change included. It owns case construction, regression controls, the matched pair, grading, cost, and the ship decision. Emit the case files and log lines to the host's test location (`tests/<skill-name>/` when no convention exists).
+Follow [assets/baseline-test-template.md](assets/baseline-test-template.md) for every change it defines as substantive. It owns case construction, regression controls, the matched pair, grading, cost, and the ship rule that step 6 applies. Emit the case files and log lines to the host's test location (`tests/<skill-name>/` when no convention exists).
 
 Completion: the template's compare step has run for every substantive change, and the case files and log lines are emitted.
 
 ### 6. Decide and review
 
-Have an independent reviewer apply the baseline comparison's decision rule, then run [references/review-checklist.md](references/review-checklist.md) top to bottom. Give the reviewer the skill, intended outcome, hard constraints, artifacts, traces, and graded case results, and revise from its findings. Any substantive follow-up edit returns through structural validation and the affected cases before shipping.
+Have an independent reviewer apply the template's ship rule to the graded results, then apply [references/review-checklist.md](references/review-checklist.md) with the inputs it names, and revise from its findings. Any substantive follow-up edit returns through step 4 and the affected cases before shipping.
 
 Completion: the baseline comparison has a ship or return-to-correction decision, and every checklist item passes.
 
@@ -93,7 +91,7 @@ Completion: the source validates, and each roster harness logs a smoke pass, or 
 ## Gotchas
 
 - Check the target collection and system-provided skills for name collisions. Verb-led gerund names (`creating-portable-skills`, not `skill-creator`) are usually more specific.
-- Do not encode a host repository's local rules into a portable skill. Changelog policy, tracker choice, and CI vendor stay in that repository.
+- Keep a host repository's local rules, such as changelog policy, tracker choice, and CI vendor, in that repository rather than in the portable skill.
 - When the skill's intent shrinks, update evals, cases, and trigger queries in the same change rather than leaving a one-off exception.
 
 ## Credits

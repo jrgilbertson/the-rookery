@@ -2,6 +2,14 @@
 
 Use this rubric for an existing-skill audit, a final review, and every proposed instruction relaxation. An independent reviewer, as `SKILL.md` defines one, performs the review. Give it the intended outcome, hard constraints, skill package, evidence record, actual artifacts, and relevant traces without the author's conclusions. Work top to bottom. A failure becomes a fix-list item that names the problem, impact, and change risk. Review is complete when every item passes.
 
+## Mechanical pre-check
+
+Where a shell is available, run [scripts/signal-scan.sh](../scripts/signal-scan.sh) on the package as a first pass; it reads `SKILL.md` and `references/`, owns the patterns, and names the item that judges each signal. Read `assets/` by hand, because templates quote patterns on purpose.
+
+A hit is a candidate. It fails only when its named item fails: description text may carry calibrated emphasis for routing, a System-Owned Invariant keeps its exact steps and prohibitions, and ordinary domain prose may use a flagged phrase.
+
+Pass: every hit is a fix-list item or has a one-line reason it stands.
+
 ## System-Owned Invariants
 
 A **System-Owned Invariant** is a hard constraint that must remain explicit because the surrounding system or the user, rather than model judgment, owns it. The complete categories are:
@@ -24,18 +32,9 @@ qualifiers consistently:
 - **Available evidence** comes from a fresh context with the intended variant confirmed loaded. A substitute, contaminated context, or listing judgment does not qualify.
 
 The baseline comparison template owns case construction, grading, and the
-ship or return-to-correction decision. Apply its rules rather than restating
-them here.
+ship rule; apply it rather than restating it here.
 
-Pass: every prescriptive instruction protects a named invariant, responds to observed evidence, or covers a named fragile operation; every relaxation satisfies the baseline comparison's decision rule.
-
-## Mechanical pre-check
-
-Where a shell is available, run [scripts/signal-scan.sh](../scripts/signal-scan.sh) on the package as a first pass; it reads `SKILL.md` and `references/`, owns the patterns, and names the item that judges each signal. Read `assets/` by hand, because templates quote patterns on purpose.
-
-A hit is a candidate. It fails only when its named item fails: description text may carry calibrated emphasis for routing, a System-Owned Invariant keeps its exact steps and prohibitions, and ordinary domain prose may use a flagged phrase.
-
-Pass: every hit is a fix-list item or has a one-line reason it stands.
+Pass: every prescriptive instruction protects a named invariant, responds to observed evidence, or covers a named fragile operation; every relaxation satisfies the baseline comparison's ship rule.
 
 ## Invocation and triggering
 

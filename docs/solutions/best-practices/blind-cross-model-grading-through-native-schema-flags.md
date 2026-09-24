@@ -27,18 +27,18 @@ related_components:
 ## Context
 
 The `creating-portable-skills` baseline protocol asks for an independent
-grader in step 3 of `skills/creating-portable-skills/assets/baseline-test-template.md`
-(lines 25-36). One grader scores both variants of a case on a target. When a
+grader in step 3 ("Grade binary") of
+`skills/creating-portable-skills/assets/baseline-test-template.md`. One grader scores both variants of a case on a target. When a
 second model is available, the grader is a different model from the one that
 wrote the outputs. It sees final answers only, with variant names removed.
-`tests/README.md` (lines 102-111, "Matched comparison") repeats that rule for
-the repo's suites.
+`tests/README.md` ("Matched comparison") points the repo's suites at that
+template.
 
 The issue #134 refresh ran that protocol across two harnesses: Claude Code
 2.1.281 with Opus 5.5 at medium effort, and Grok CLI 1.0.41 with Grok 4.7 at
 high effort. The two models cross-graded each other. Grok graded the Opus
 outputs, and Opus graded the Grok outputs. `tests/creating-portable-skills/log.md`
-records the setup in the lead-model round header (line 29).
+records the setup in its lead-model round header.
 
 Earlier rounds on the same issue graded with Claude subagents only, and the
 log found grader noise, not the skill, behind most flipped verdicts. Outputs
@@ -107,9 +107,10 @@ no grade:
 If the structured field is missing, the CLI reported an error, or a check
 fails, rerun that grade. Never record a missing or malformed grade as a pass or
 a fail. The log notes these reruns: "One Grok grade returned invalid JSON and
-was rerun" (`tests/creating-portable-skills/log.md:21`), and "Grok returned no
-grade on some calls (empty answer, stopped as cancelled); those calls were
-rerun and never counted as verdicts" (line 29).
+was rerun" (the correction-rerun header in
+`tests/creating-portable-skills/log.md`), and "Grok returned no grade on some
+calls (empty answer, stopped as cancelled); those calls were rerun and never
+counted as verdicts" (the lead-model round header).
 
 **Prefer `--prompt-file` plus `--json-schema` for Grok.** In this session's
 runs, plain `grok -p` grading of long packets at high effort returned empty
@@ -181,7 +182,8 @@ The hard timeout matters because a skill can tell the agent to do something
 the harness cannot support. One Grok run had subagents disabled while the skill
 told it to use a fresh-context reviewer. It launched nested Grok sessions from
 the shell, and those hung until the 25-minute cap
-(`tests/creating-portable-skills/log.md:10`). Counting that run as a fail with
+(the suite-round planted-rot-review line for Grok 4.7 in
+`tests/creating-portable-skills/log.md`). Counting that run as a fail with
 no answer kept the case honest: the log recorded the failure instead of
 letting the run quietly drop out of the record.
 

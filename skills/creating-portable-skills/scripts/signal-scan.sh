@@ -65,12 +65,4 @@ scan 'history identifier' 'Sediment' '' \
 scan 'pinned model name' 'Sediment' i \
 	'(claude|gpt|gemini|grok|llama|opus|sonnet|haiku)[- ][0-9]'
 
-# shellcheck disable=SC2016
-runs=$(each_file awk '{
-	if (FNR == 1) n = 0
-	if ($0 ~ /^(- |[0-9]+\. )?(Do not|Never|Avoid) /) { n++; if (n == 3) print FILENAME ":" FNR ":" $0 }
-	else n = 0
-}')
-report 'prohibition run' 'Steering is positive' "$runs"
-
 exit 0

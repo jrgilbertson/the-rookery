@@ -30,7 +30,7 @@ artifacts.
    one that wrote the outputs; otherwise name the grader in the log. Give the
    grader final answers only, labeled neutrally, with variant names removed
    from paths and quoted text.
-4. **Compare and decide.** For each target, count passing cases per variant
+4. **Compare against the ship rule.** For each target, count passing cases per variant
    and state the token and time delta beside the pass delta. The change ships
    when it raises the pass count on the cases it targets, no regression
    control fails with it, and the gain is worth its cost. Claim an

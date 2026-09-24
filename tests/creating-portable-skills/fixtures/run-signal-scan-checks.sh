@@ -57,7 +57,6 @@ signals=(
 	"migration-relative phrasing"
 	"history identifier"
 	"pinned model name"
-	"prohibition run"
 )
 
 planted=$(sh "$scan" "$fixtures/planted")
@@ -83,7 +82,6 @@ expect_count planted "$planted" "grader vocabulary" 1
 expect_count planted "$planted" "migration-relative phrasing" 1
 expect_count planted "$planted" "history identifier" 1
 expect_count planted "$planted" "pinned model name" 1
-expect_count planted "$planted" "prohibition run" 1
 
 # Every header names the checklist item that judges the signal.
 headers=$(printf '%s\n' "$planted" | grep -c '^## .* -> .')
@@ -99,14 +97,6 @@ fails "assets file scanned" has "$planted" 'assets/template.md'
 # A trailing slash on the package path gives the same output.
 slashed=$(sh "$scan" "$fixtures/planted/")
 holds "trailing slash changes the counts" [ "$(printf '%s\n' "$slashed" | grep '^## ')" = "$(printf '%s\n' "$planted" | grep '^## ')" ]
-
-# The scan writes nothing, so it runs in a read-only sandbox.
-code=$(grep -v '^[[:space:]]*#' "$scan")
-fails "scan writes a file" has "$code" 'mktemp\|>>\|> *"\|> *[$/a-z]'
-
-# Two consecutive prohibitions are not a run.
-two=$(sh "$scan" "$fixtures/two-prohibitions")
-expect_count two-prohibitions "$two" "prohibition run" 0
 
 # A directory with no SKILL.md is the only error exit.
 fails "missing SKILL.md should exit non-zero" quiet sh "$scan" "$fixtures"

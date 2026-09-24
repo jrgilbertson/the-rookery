@@ -28,7 +28,3 @@ See PR 42 for the background.
 Tuned against claude-3 behavior.
 
 Restrict the retry to the failed rows.
-
-- Do not rename the file.
-- Never reorder the columns.
-- Avoid trailing whitespace.

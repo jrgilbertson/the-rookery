@@ -95,7 +95,7 @@ user-supplied, approved, or clearly conditional outcome.
 
 ## Ground longitudinal coaching in durable evidence
 
-Use dated durable evidence from configured canonical Obsidian roles for
+Use dated durable evidence from configured canonical roles for
 recurrence, coaching rules, and other longitudinal personal claims. Current
 native sources can establish current facts and constraints; current user input
 can guide this review. Neither substitutes for durable recurrence evidence.

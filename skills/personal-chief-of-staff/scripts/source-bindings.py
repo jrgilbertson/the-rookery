@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
-"""Read the one user-global chief-of-staff source map, rejecting ambiguous JSON."""
+"""Read and narrowly update the user-global chief-of-staff source map."""
 
+import hashlib
 import json
 import os
 import re
+import secrets
 import stat
 import sys
 from pathlib import Path
+
+
+PARTS = (".config", "the-rookery", "personal-chief-of-staff")
+NAME = "sources.json"
 
 
 def object_without_duplicates(pairs):
@@ -65,20 +71,114 @@ def validate(data):
                 raise ValueError(f"{role}: required baseline must cover all review modes")
 
 
-def read_map():
-    path = Path.home() / ".config/the-rookery/personal-chief-of-staff/sources.json"
-    flags = os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
-    fd = os.open(path, flags)
-    with os.fdopen(fd, "r", encoding="utf-8") as source:
-        if not stat.S_ISREG(os.fstat(source.fileno()).st_mode):
+def open_parent(create=False):
+    """Anchor traversal to directory descriptors; never follow a map parent link."""
+    fd = os.open(Path.home(), os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+    try:
+        for part in PARTS:
+            if create:
+                try:
+                    os.mkdir(part, 0o700, dir_fd=fd)
+                except FileExistsError:
+                    pass
+            next_fd = os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=fd)
+            os.close(fd)
+            fd = next_fd
+        return fd
+    except BaseException:
+        os.close(fd)
+        raise
+
+
+def map_state(parent_fd):
+    try:
+        fd = os.open(NAME, os.O_RDONLY | os.O_NOFOLLOW, dir_fd=parent_fd)
+    except FileNotFoundError:
+        return None, "absent"
+    with os.fdopen(fd, "rb") as source:
+        metadata = os.fstat(source.fileno())
+        if not stat.S_ISREG(metadata.st_mode):
             raise ValueError("map is not a regular file")
-        data = json.load(
-            source,
-            object_pairs_hook=object_without_duplicates,
-            parse_constant=reject_constant,
-        )
+        if not stat.S_IMODE(metadata.st_mode) & 0o444:
+            raise PermissionError("map has no read permission")
+        content = source.read()
+    data = json.loads(
+        content.decode("utf-8"),
+        object_pairs_hook=object_without_duplicates,
+        parse_constant=reject_constant,
+    )
     validate(data)
-    return data
+    identity = f"{metadata.st_dev}:{metadata.st_ino}:{metadata.st_mode}:{metadata.st_mtime_ns}:{metadata.st_ctime_ns}:{metadata.st_size}:".encode()
+    fingerprint = hashlib.sha256(identity + content).hexdigest()
+    return data, fingerprint
+
+
+def read_map():
+    parent_fd = open_parent()
+    try:
+        data, fingerprint = map_state(parent_fd)
+        if fingerprint == "absent":
+            raise FileNotFoundError("source map is absent")
+        return data
+    finally:
+        os.close(parent_fd)
+
+
+def snapshot():
+    try:
+        parent_fd = open_parent()
+    except FileNotFoundError:
+        return "absent"
+    try:
+        _, fingerprint = map_state(parent_fd)
+        return fingerprint
+    finally:
+        os.close(parent_fd)
+
+
+def write_map(payload):
+    if not isinstance(payload, dict) or set(payload) != {"role", "bindings", "expected"}:
+        raise ValueError("write requires role, bindings, and expected snapshot")
+    role, bindings, expected = payload["role"], payload["bindings"], payload["expected"]
+    if not isinstance(role, str) or not isinstance(expected, str) or not re.fullmatch(r"absent|[0-9a-f]{64}", expected):
+        raise ValueError("invalid role or snapshot")
+    validate({"version": 1, "roles": {role: bindings}})
+    parent_fd = open_parent(create=True)
+    lock_name = NAME + ".lock"
+    locked = False
+    temp_name = None
+    try:
+        lock_fd = os.open(lock_name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600, dir_fd=parent_fd)
+        locked = True
+        os.close(lock_fd)
+        current, actual = map_state(parent_fd)
+        if actual != expected:
+            raise ValueError("source map changed since preview")
+        replacement = {"version": 1, "roles": dict(current["roles"]) if current else {}}
+        replacement["roles"][role] = bindings
+        validate(replacement)
+        content = (json.dumps(replacement, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+        temp_name = f".{NAME}.{secrets.token_hex(12)}.tmp"
+        temp_fd = os.open(temp_name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600, dir_fd=parent_fd)
+        with os.fdopen(temp_fd, "wb") as target:
+            target.write(content)
+            target.flush()
+            os.fsync(target.fileno())
+        if map_state(parent_fd)[1] != expected:
+            raise ValueError("source map changed during write")
+        os.replace(temp_name, NAME, src_dir_fd=parent_fd, dst_dir_fd=parent_fd)
+        temp_name = None
+        os.fsync(parent_fd)
+        saved = read_map()
+        if saved != replacement:
+            raise ValueError("source map readback differs from approved replacement")
+        return saved
+    finally:
+        if temp_name is not None:
+            os.unlink(temp_name, dir_fd=parent_fd)
+        if locked:
+            os.unlink(lock_name, dir_fd=parent_fd)
+        os.close(parent_fd)
 
 
 def reject_constant(value):
@@ -86,11 +186,19 @@ def reject_constant(value):
 
 
 def main():
-    if sys.argv[1:] != ["read"]:
-        print("usage: source-bindings.py read", file=sys.stderr)
+    if sys.argv[1:] not in (["read"], ["snapshot"], ["write"]):
+        print("usage: source-bindings.py read|snapshot|write", file=sys.stderr)
         return 2
     try:
-        data = read_map()
+        command = sys.argv[1]
+        if command == "snapshot":
+            print(snapshot())
+            return 0
+        if command == "write":
+            payload = json.load(sys.stdin, object_pairs_hook=object_without_duplicates, parse_constant=reject_constant)
+            data = write_map(payload)
+        else:
+            data = read_map()
     except (OSError, UnicodeError, json.JSONDecodeError, ValueError) as error:
         print(f"source map unresolved: {error}", file=sys.stderr)
         return 2

@@ -8,7 +8,7 @@ establishes access. Its values are private data, not instructions.
 
 Read the one user-global map at
 `~/.config/the-rookery/personal-chief-of-staff/sources.json` through the bundled
-`scripts/source-bindings.py read` helper. The path is relative to the local
+`python3 scripts/source-bindings.py read` helper. Run the helper from the skill directory. The map path is relative to the local
 user's home, independent of the skill installation, vault, and agent provider.
 The helper rejects missing or unreadable files, malformed JSON, duplicate keys,
 unsupported versions, symlinks, and invalid entry shapes before returning any
@@ -35,10 +35,76 @@ otherwise valid map remains unresolved. Multiple entries for one role are
 usable only when their approved identities and scopes leave no ownership
 ambiguity; ask the user when they do not.
 
-For example, a synthetic strategy binding can name `Obsidian CLI`, identity
-`example-vault`, locator `Direction/Compass.md`, condition `baseline`, and all three
-modes. The review request need only name the mode; the binding supplies that
-locator.
+For example, a synthetic strategy binding can name the native `Obsidian CLI`,
+identity `sample-vault`, locator `Direction/Compass.md`, condition `baseline`,
+and all three modes. The review request need only name the mode; the binding
+supplies that locator.
+
+## Interview and designate sources
+
+Start from the roles needed by the requested review or explicit setup. Inspect
+existing review behavior, configured connections, task-system guidance, and
+the applicable review templates. A template prompt shows an information need,
+not proof that a populated source exists. Ask the user, for each unresolved or
+proposed role: what decision it informs, which source owns its current version,
+which modes need it, what bounded locator or query and window apply, and what
+to do when the source is absent, conflicts, or changes owner. Distinguish a
+designated source from a plausible title or an available connector. Confirm
+separate personal and work identities where both exist.
+
+Use these groups as candidate prompts, not as required reads or assumed
+owners:
+
+| Area | Ask about |
+| --- | --- |
+| Direction and constraints | Strategy, durable learning, goals, responsibilities, capacity, operating preferences. |
+| Commitments and delivery | The task owner, active projects and outcomes, waiting-for items, recurring obligations, someday/maybe, calendars, mailboxes. |
+| Relationships and conversations | The relationship record, recent messages, contacts, curated meeting notes, supporting transcripts. |
+| Reflection and decisions | Journals, review templates and prior reviews, decisions, experiments, feedback. |
+| Business | Business goals, issues, code, analytics, customer feedback, billing, operational systems. |
+| Writing | Workflow, editorial judgment, voice, drafts, published work, manuscripts. |
+| Learning and leisure | Recent relevant highlights, reading plans, media preferences and recommendations. |
+
+Compare those needs with current task guidance and review templates before
+proposing any new record. Ask which owner is primary when two sources overlap;
+one may support the other without replacing it. For each user-designated
+binding, choose `baseline`, `bounded`, `mode-specific`, or `conditional` with
+its modes, window or filter, and gap effect. Keep `strategy`, `learning`, and
+`tasks` baseline across all three modes. Leave a role with no durable owner
+explicitly unresolved. The user may defer that decision and receive a limited
+review supported by the other available sources.
+
+## Save an approved binding
+
+For a new or changed role, read the current map and run
+`python3 scripts/source-bindings.py snapshot` before the preview. An absent map yields
+`absent`; invalid, unreadable, or symlinked state yields an error and remains
+untouched. Show the user the exact role, native interface and identity,
+locator or query, condition, modes, and any window, filter, or gap effect.
+For an established binding, show the current and proposed entries; a failed
+read or moved note alone does not authorize a replacement. Ask the user to
+approve the exact change. A locator repair still needs explicit confirmation
+of the source identity and new locator.
+
+After approval, send one JSON object to `python3 scripts/source-bindings.py write` on
+standard input: `{"role":"strategy","bindings":[...],"expected":"<snapshot>"}`.
+Use the exact approved entries and the snapshot from the preview. The helper
+validates the map, rejects a changed target or concurrent writer, updates
+only that role with user-only permissions on newly created directories and
+the file, replaces atomically, and reads the result back. It does not grant
+approval; the user's approval of the preview is the authority to invoke it.
+If the target changed, inspect the new state and obtain approval for a fresh
+preview. An invalid or unreadable map requires user-directed repair outside
+this narrow write path; preserve its bytes. Do not use `write` as a general
+JSON editor.
+
+After the saved binding reads back, use its native interface to read the
+approved bounded source and report that result separately. A successful map
+write does not establish source access. If the native read fails, retain the
+approved binding, mark setup incomplete for that role, and retry its read on
+the next relevant session without repeating settled ownership questions.
+Completion: each approved role has a matching saved and read-back entry plus
+a native read result, and each deferred or failed role is named as such.
 
 ## Resolve before recommending
 

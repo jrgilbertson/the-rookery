@@ -2,7 +2,7 @@
 name: personal-chief-of-staff
 description: Use when the user wants to complete a daily journal or wind down, requests a daily chief-of-staff review, requests a weekly or quarterly review, later revisits, resumes, approves, edits, defers, skips, or otherwise decides visible chief-of-staff actions, or another workflow requests current cross-source chief-of-staff context. Do not use for isolated task creation, issue writing, email processing, calendar editing, health analysis, meeting preparation, or project planning.
 license: MIT
-compatibility: Requires Python 3 and access to the user's chosen authoritative sources. Obsidian workflows require a running Obsidian app and its CLI.
+compatibility: Requires Python 3.8+ on a POSIX system and access to the user's chosen authoritative sources. Obsidian workflows require a running Obsidian app and its CLI.
 ---
 
 # Personal Chief of Staff
@@ -17,7 +17,7 @@ Read [source-behavior.md](references/source-behavior.md) and
 [review-bundle.md](assets/review-bundle.md) before source access on every path.
 Then resolve the message in this order:
 
-1. **Visible action decisions:** bind approvals, edits, deferrals, and skips to
+1. **Visible review action decisions:** bind approvals, edits, deferrals, and skips to
    the exact displayed bundle and its originating mode. Load that mode's
    reference and follow the shared application rules, including the CRM
    companion rules for relationship-derived effects. A bare number is usable
@@ -25,6 +25,7 @@ Then resolve the message in this order:
 2. **Answers to a Frontier Round:** interpret numbers against the most recent
    question round and continue the mode and phase that asked it.
 3. **Source setup:** when asked to establish or repair review source ownership,
+   or when replying to its binding preview,
    load [source-bindings.md](references/source-bindings.md) and resolve the
    requested roles with the user.
 4. **A new review:** select one mode below. An explicit mode wins. Load

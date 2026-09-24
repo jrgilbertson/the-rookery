@@ -182,9 +182,8 @@ the harness cannot support. One Grok run had subagents disabled while the skill
 told it to use a fresh-context reviewer. It launched nested Grok sessions from
 the shell, and those hung until the 25-minute cap
 (`tests/creating-portable-skills/log.md:10`). Counting that run as a fail with
-no answer kept the case honest: the variant became mixed and so unsettled on
-that target, and the log withheld the claim. It did not quietly drop out of
-the record.
+no answer kept the case honest: the log recorded the failure instead of
+letting the run quietly drop out of the record.
 
 ## When to Apply
 

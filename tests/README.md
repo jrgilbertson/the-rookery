@@ -53,19 +53,14 @@ note`. The `git rev` field names the commit the run's working tree was
 ## Rules
 
 - Binary pass/fail everywhere. A case fails if any checklist item fails.
-  Trigger judgments are yes or no. A behavioral case whose repeated runs of
-  one variant disagree is `unsettled` on that target rather than a pass or a
-  fail, and the baseline comparison protocol owns that state and what may
-  ship under it. A quality that binary items cannot carry
+  Trigger judgments are yes or no. A quality that binary items cannot carry
   goes to human feedback or a blind comparison of two versions with the labels
   hidden, and is logged as a note, never as a pass or a fail.
 - A case enters a suite when a baseline run showed the bare model failing the
   behavior or an observed failure motivated it — named in the provenance line.
   A case that both variants pass stays only as an explicitly labeled
   regression control, whether it guards a safety or privacy invariant or
-  another load-bearing contract, and a suite keeps only a small number of
-  them. Labeled controls never count as discriminating evidence for a new
-  skill or behavior change.
+  another load-bearing contract.
 - Roughly 10–15 active cases per skill is a ceiling for initial mining, not a
   target; steady-state suites grown by the observed-failure rule are expected
   to stay smaller.
@@ -103,13 +98,9 @@ note`. The `git rev` field names the commit the run's working tree was
   single-variant run only regression-checks an unchanged skill. A new skill
   or substantive revision runs its affected cases as matched pairs — without
   the skill (or the frozen prior version) and with the revised version, each
-  in a fresh context — and ships only when no case regresses and each
-  discriminating case shows the intended improvement on at least one target,
-  with the claim withheld on any other. Log one line per graded variant.
-  One blind grader in a fresh context scores both variants of a case on a
-  target from their final answers, quotes the evidence for each verdict, and
-  is a different model from the one that wrote the answers when a second
-  model is available.
+  in a fresh context. The baseline comparison template in
+  `skills/creating-portable-skills/assets/` owns grading and the ship
+  decision. Log one line per graded variant.
 - **Smoke check.** Install the skill from source into a disposable project on
   each roster harness — Claude Code and Codex CLI — ask one trigger query, and
   confirm from the run's trace that the copy which activated is the

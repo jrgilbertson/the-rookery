@@ -276,25 +276,17 @@ A Baseline Comparison checks whether a skill changes agent behavior in the
 intended direction. New skills run realistic prompts with and without the skill;
 revisions compare the frozen prior and revised versions, each in a fresh
 context with the intended variant confirmed loaded. Cases are binary
-pass/fail. One blind grader scores both variants of a case on a target, and it
-is a different model from the one that wrote the answers when a second model
-is available. A substantive revision ships only when no case regresses and each
-discriminating case shows the intended improvement on at least one target. The repository's testing
-convention owns the protocol.
+pass/fail, graded blind by an agent that did not write the answers. A
+substantive revision ships when it raises the pass count on the cases it
+targets, no Regression Control fails with it, and the gain is worth its cost.
+The repository's testing convention owns the protocol.
 
 ### Regression Control
 
 A Regression Control is a Baseline Comparison case that the baseline already
 passes, kept to protect one named load-bearing contract. It never proves an
-improvement. When it passes without the change and fails with it, that is a
-regression and the change returns to correction.
-
-### Unsettled
-
-A case is Unsettled on a target when the repeated runs of one of its variants
-there disagree. It counts as neither a pass nor a regression, so it supports no
-improvement claim on that target, and further runs never turn it back into a
-settled result.
+improvement. A failure in any run with the change is a regression, and the
+change returns to correction.
 
 ### Independent Review Context
 

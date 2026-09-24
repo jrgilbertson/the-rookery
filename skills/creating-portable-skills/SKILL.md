@@ -11,7 +11,7 @@ Create, revise, migrate, or audit a skill from its intent, required outcome, and
 
 Skills produced here follow the [Agent Skills format](https://agentskills.io/specification): a directory with a `SKILL.md` (frontmatter plus body) and optional `references/`, `assets/`, and `scripts/`. Read [references/portability.md](references/portability.md) for the canonical frontmatter fields and their limits, and when choosing an install location or making a harness-specific claim.
 
-An independent reviewer must not have participated in the authoring discussion or produced the artifact under review. One independent grader inspects each matched case; a different independent reviewer performs the final package review, each in a fresh context. If the current environment cannot start those contexts, prepare a self-contained handoff for a separate session; the affected grade or review stays unverified and blocks completion until that session completes it. No checklist exception covers this rule, and the author's own review never substitutes.
+An independent reviewer is any agent that took no part in the authoring discussion and did not produce the artifact under review; an agent auditing a skill it did not write already qualifies and needs no separate context. For a new skill or a substantive change, an independent grader grades the matched cases and a different independent reviewer performs the final package review. When only the author's context is available, prepare a self-contained handoff for a separate session; that grade or review stays unverified until the session completes it, because the author's own review never substitutes.
 
 ## Workflow
 
@@ -51,13 +51,13 @@ Completion: every file in step 2's list exists, and each hard constraint from st
 
 ### 4. Validate structure
 
-Run a trusted, already-installed `agentskills validate <skill-directory>`, the
-command the official `skills-ref` package provides, and record its version and
-source. Do not use the similarly named npm package; it
-is not the official reference validator. If the official validator is not
-already available, either use the manual checks below or ask before downloading
-the official Python implementation from a pinned `agentskills/agentskills`
-commit. Manually check every field against the table in
+Run the Agent Skills reference validator, `skills-ref validate
+<skill-directory>` ([specification](https://agentskills.io/specification#validation)),
+from a trusted install, and record its version and source; some published
+builds name the same command `agentskills validate`. Do not use the similarly
+named npm package; it is not the reference validator. If the reference
+validator is not already available, either use the manual checks below or ask
+before installing it from a pinned `agentskills/agentskills` commit. Manually check every field against the table in
 [references/portability.md](references/portability.md), that no other field
 appears, that `metadata` holds string values only, and that the body is at
 most 500 lines.
@@ -88,7 +88,7 @@ For a new package, or a change to packaging or the install path, recheck the hos
 
 If packaging exposes a defect that changes the package, apply step 6's re-entry rule before completing this step.
 
-Completion: the source validates, and every roster harness has a logged smoke result of pass. A fail or inconclusive result blocks completion until it is corrected and rerun. A harness whose smoke check cannot run is logged as not run and blocks completion until the user decides whether to ship without it; log that decision. A revision that changes neither packaging nor the install path completes on validation alone.
+Completion: the source validates, and each roster harness logs a smoke pass, or a not run with the user's logged decision to ship without it.
 
 ## Gotchas
 

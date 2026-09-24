@@ -31,11 +31,11 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 
 ## Mechanical pre-check
 
-Run [scripts/signal-scan.sh](../scripts/signal-scan.sh) on the package, which reads `SKILL.md` and `references/`, or make the same searches by hand where no shell is available. Read `assets/` by hand, because templates quote patterns on purpose. Record the count it reports for each signal, zeros included. The script owns the patterns and names the item that judges each signal.
+Where a shell is available, run [scripts/signal-scan.sh](../scripts/signal-scan.sh) on the package as a first pass; it reads `SKILL.md` and `references/`, owns the patterns, and names the item that judges each signal. Read `assets/` by hand, because templates quote patterns on purpose.
 
 A hit is a candidate. It fails only when its named item fails: description text may carry calibrated emphasis for routing, a System-Owned Invariant keeps its exact steps and prohibitions, and ordinary domain prose may use a flagged phrase.
 
-Pass: every signal has a recorded count, and every hit is a fix-list item or has a one-line reason it stands.
+Pass: every hit is a fix-list item or has a one-line reason it stands.
 
 ## Invocation and triggering
 
@@ -79,7 +79,7 @@ Pass: every signal has a recorded count, and every hit is a fix-list item or has
 
 ## Evidence integrity
 
-- Review context is independent. Pass: each matched case was graded, and the final checklist review performed, by independent reviewers as `SKILL.md` defines them, in separate contexts. Deterministic scripts may perform mechanical checks. This item takes no exception.
+- Review context is independent. Pass: each matched case was graded, and the final checklist review performed, by independent reviewers as `SKILL.md` defines them. Deterministic scripts may perform mechanical checks.
 - Artifacts are inspected directly. Pass: the reviewer opens the relevant outputs instead of relying on the executor's summary or claimed filenames.
 - Every pass has substance. Pass: each judgment cites concrete artifact or trace evidence that demonstrates the outcome, not a heading, filename, or other surface compliance.
 - Checks are reviewed too. Pass: no objective check is trivial, unverifiable from the available evidence, or missing a material part of the required outcome.

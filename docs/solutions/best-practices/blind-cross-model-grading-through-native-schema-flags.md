@@ -1,6 +1,7 @@
 ---
 title: "Run blind cross-model grading through each CLI's native JSON schema flag"
 date: 2026-09-23
+last_updated: 2026-09-23
 category: best-practices
 module: "creating-portable-skills skill verification"
 problem_type: best_practice
@@ -38,7 +39,7 @@ The issue #134 refresh ran that protocol across two harnesses: Claude Code
 2.1.281 with Opus 5.5 at medium effort, and Grok CLI 1.0.41 with Grok 4.7 at
 high effort. The two models cross-graded each other. Grok graded the Opus
 outputs, and Opus graded the Grok outputs. `tests/creating-portable-skills/log.md`
-records the setup in its lead-model round header.
+records the setup in its lead-model round header and the later Sol recovery.
 
 Earlier rounds on the same issue graded with Claude subagents only, and the
 log found grader noise, not the skill, behind most flipped verdicts. Outputs
@@ -79,29 +80,46 @@ grok --prompt-file packet.txt -m grok-4.7 --effort high \
 codex exec --output-schema grade-schema.json -o grade.json - < packet.txt
 ```
 
-The Claude and Grok forms ran in this session. The Codex form follows the same
-contract but did not grade a logged round, so confirm Codex accepts the schema
-before relying on it.
-
-A schema that worked for both graders keys grades by output letter, with one
-entry per checklist item and quoted evidence:
+The recovery round also exercised Codex CLI 0.155.1 with gpt-6-sol at high
+effort. Codex required a strict schema: every object declares
+`additionalProperties: false` and lists all its properties as required.
+An array of grades with an explicit `letter` field works across the three
+CLIs; an object with arbitrary letter keys does not satisfy that contract.
+Each grade carries one entry per checklist item and quoted evidence:
 
 ```json
-{"type":"object","required":["grades"],"properties":{"grades":{"type":"object",
- "additionalProperties":{"type":"object","required":["items","pass"],"properties":{
-  "items":{"type":"array","items":{"type":"object","required":["n","verdict","evidence"],
-   "properties":{"n":{"type":"integer"},"verdict":{"enum":["pass","fail"]},"evidence":{"type":"string"}}}},
-  "pass":{"type":"boolean"}}}}}}
+{
+  "type": "object", "additionalProperties": false, "required": ["grades"],
+  "properties": {"grades": {"type": "array", "items": {
+    "type": "object", "additionalProperties": false,
+    "required": ["letter", "items", "pass"],
+    "properties": {
+      "letter": {"type": "string"}, "pass": {"type": "boolean"},
+      "items": {"type": "array", "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["n", "verdict", "evidence"],
+        "properties": {
+          "n": {"type": "integer"},
+          "verdict": {"type": "string", "enum": ["pass", "fail"]},
+          "evidence": {"type": "string"}
+        }
+      }}
+    }
+  }}}
+}
 ```
 
 Drop any regex that pulls JSON out of prose. Read the structured field.
+The earlier object-keyed schema remains historical evidence; use the array
+contract above for new cross-CLI runs.
 
 **Validate every grade before counting it.** A schema flag does not guarantee a
 valid grade. Check three things against the packet, and treat any failure as
 no grade:
 
-1. The set of output letters equals the letters in the packet key.
-2. Each output has exactly as many items as the case checklist has `- [ ]` lines.
+1. Output letters are unique and their set equals the letters in the packet key.
+2. Each output has exactly one item for every checklist number, with no duplicate
+   or missing numbers. An item-count check alone can accept the same item twice.
 3. Each output's `pass` flag equals "every item passed".
 
 If the structured field is missing, the CLI reported an error, or a check
@@ -111,6 +129,21 @@ was rerun" (the correction-rerun header in
 `tests/creating-portable-skills/log.md`), and "Grok returned no grade on some
 calls (empty answer, stopped as cancelled); those calls were rerun and never
 counted as verdicts" (the lead-model round header).
+
+**Preserve execution failure separately from artifact validation.** In the
+recovery round, the model command failed or produced nothing, but a successful
+JSON wrapper replaced its exit status with zero. Claude also returned
+`is_error: true` and a session-limit message inside a result marked
+`subtype: "success"`. Neither a shell exit nor that subtype proves a usable
+answer. Save the model command's exit status before wrapping its output,
+reject error or empty answers, and require a validated grade for every expected
+packet before declaring a batch complete. Retry missing execution or grading;
+do not silently omit it from the denominator. A valid answer that fails the
+checklist remains a behavioral failure.
+
+**Keep missing costs missing.** Codex's bare grade object has no price field.
+Record `cost not available`; a default of zero falsely claims a free run.
+Use reported token counts and wall time to compare those runs.
 
 **Prefer `--prompt-file` plus `--json-schema` for Grok.** In this session's
 runs, plain `grok -p` grading of long packets at high effort returned empty
@@ -168,10 +201,9 @@ scored a case against the wrong checklist. The step 3 rule in the baseline
 template holds only if every counted verdict came from a complete, well-formed
 grade.
 
-One schema across CLIs also keeps the grader the only moving part. The packet,
-checklist, and output format stay the same whichever model grades, so a
-difference between targets reflects the outputs rather than the extraction
-code. Each CLI names the structured field differently (`structured_output`,
+One schema across CLIs holds the output contract fixed. The packet,
+checklist, and output format stay the same whichever model grades, which reduces extraction differences; grader disagreement can still change
+verdicts and must not be mistaken for target behavior. Each CLI names the structured field differently (`structured_output`,
 `structuredOutput`, or the `-o` file), and only the reader has to know that.
 
 Isolation matters because the operator's machine carries skills, hooks, and
@@ -218,6 +250,7 @@ applies all three checks:
 import json, re, sys
 def grade_obj(path):
     d = json.load(open(path))
+    assert not d.get("is_error"), "grader reported an error"
     for k in ("structured_output", "structuredOutput"):
         if isinstance(d.get(k), dict):
             return d[k]["grades"]
@@ -225,12 +258,15 @@ def grade_obj(path):
         return d["grades"]
     sys.exit(f"no grade; stopReason={d.get('stopReason') or d.get('subtype')}")
 
-g = grade_obj("grade.json")
+grades = grade_obj("grade.json")
+assert len({v["letter"] for v in grades}) == len(grades), "duplicate letters"
+g = {v["letter"]: v for v in grades}
 key = json.load(open("packet.key.json"))
 n = len(re.findall(r"^- \[ \]", open("case.md").read(), re.M))
 assert set(g) == set(key), "letters differ from packet"
 for L, v in g.items():
-    assert len(v["items"]) == n, f"{L}: item count"
+    assert sorted(i["n"] for i in v["items"]) == list(range(1, n + 1)), f"{L}: item numbers"
+    assert all(i["verdict"] in ("pass", "fail") for i in v["items"]), f"{L}: verdict"
     assert v["pass"] == all(i["verdict"] == "pass" for i in v["items"]), f"{L}: pass flag"
 ```
 

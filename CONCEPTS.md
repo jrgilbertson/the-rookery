@@ -277,8 +277,8 @@ intended direction. New skills run realistic prompts with and without the skill;
 revisions compare the frozen prior and revised versions, each in a fresh
 context with the intended variant confirmed loaded. Cases are binary
 pass/fail, graded blind by an agent that did not write the answers. A revision
-on the full validation route ships when it raises the pass count on the cases
-it targets, no Regression Control blocks it, and the gain is worth its cost.
+on the full validation route ships when it meets the ship rule in the
+repository's testing convention.
 The repository's testing convention owns the protocol. The creator's workflow
 owns route eligibility; focused validation supplies an affected behavior check
 and direct artifact inspection without a comparative improvement claim.
@@ -293,8 +293,9 @@ with more runs.
 
 ### Independent Review Context
 
-An Independent Review Context is a fresh session in which the reviewing agent
-neither saw the artifact's authoring discussion nor produced the artifact.
+An Independent Review Context is the context of any agent that took no part in
+the artifact's authoring discussion and did not produce the artifact; a fresh
+session is one way to get one.
 
 Full validation requires one independent context to grade a matched case and
 a different one for the final review. If a required independent context is

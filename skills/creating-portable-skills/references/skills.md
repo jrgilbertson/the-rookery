@@ -175,11 +175,16 @@ when the changed arm passes fewer runs than the baseline. At 3 runs, a gap of
 exactly one run extends both arms once, to 8 runs each, and the 8-run counts
 decide. A control whose baseline passes fewer than 2 of 3 runs is not a valid
 control, and it gets fixed in the workflow's review before any paid run, not
-after the runs.
+after the runs. If a control's baseline still passes fewer than 2 of 3 runs in
+the round, the control neither blocks nor counts; the benchmark notes it, and
+the control is fixed before the next round.
 
 A change ships when every targeted eval meets its minimum, no regression
 control blocks it, and the gain is worth its measured token and time cost.
-Claim an improvement only on the targets that showed it.
+The change is worth its cost when the mean tokens and the mean time on the
+targeted evals each rise by at most 30% on each target; a larger rise needs a
+written reason from the independent final reviewer. Claim an improvement only
+on the targets that showed it.
 
 ## Targets
 
@@ -216,11 +221,10 @@ Each run's `grading.json` uses the standard's shape:
   from the executor when one is available. The grader sees final outputs and
   tool observations with arm names removed, and never the author's reasoning
   or conclusions.
-- An independent reviewer took no part in the authoring discussion and did not
-  produce the artifact. Full validation needs an independent grader and a
-  different independent final reviewer. The `creating-portable-skills`
-  workflow says when that reviewer acts and what happens when a required
-  independent context is unavailable.
+- The `creating-portable-skills` workflow defines an independent reviewer,
+  requires an independent grader and a different independent final reviewer
+  for full validation, and says when that reviewer acts and what happens when
+  a required independent context is unavailable.
 - Qualities that binary assertions cannot carry go to specific human
   feedback or a blind comparison of two outputs. Record the result as a note,
   never as a pass or a fail.

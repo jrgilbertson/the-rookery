@@ -60,8 +60,10 @@ set using this protocol.
 5. **Apply the ship rule.** For each target, build the benchmark and apply
    the ship rule and the regression-control rule in
    [references/skills.md](../references/skills.md), with the token and time
-   delta beside the pass-rate delta. If a targeted eval passes on some runs
-   and fails on others, tighten the ambiguous instruction or assertion. In a
+   delta beside the pass-rate delta. If a targeted eval's changed arm passes
+   some runs but misses its minimum in
+   [references/skills.md](../references/skills.md), tighten the ambiguous
+   instruction or assertion. In a
    targeted eval, remove an assertion that passes in both arms and fix one
    that fails in both. Stop iterating when another revision no longer
    improves the result.

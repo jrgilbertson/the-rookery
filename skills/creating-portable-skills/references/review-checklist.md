@@ -87,7 +87,7 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 
 ## Portability
 
-- Frontmatter is canonical. Pass: only the fields in the `portability.md` table appear.
+- Frontmatter is canonical. Pass: only the fields in the **Package format** table of `skills.md` appear, less any that the `portability.md` canonical-package rule leaves out.
 - Prose is capability-based. Pass: the canonical body names capabilities rather than vendor products or proprietary tools.
 - The package is self-contained. Pass: every referenced template, reference, asset, and script resolves inside the skill directory, with no requirement that another skill be installed. Host-project files the skill operates on are allowed.
 - Environment requirements are explicit. Pass: no absolute owner path, personal identifier, private-repository assumption, local alias, or undeclared credential is required.

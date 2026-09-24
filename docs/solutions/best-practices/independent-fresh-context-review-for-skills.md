@@ -205,7 +205,7 @@ belong to the CLI owner's tests. No isolated launcher or test vault is needed
 for these decision checks. A pass requires a fresh executor and independent
 grading of its actual response. The
 production order remains in "Revalidate, apply, and read back" in
-`skills/personal-chief-of-staff/references/source-behavior.md`. A separate
+`skills/personal-chief-of-staff/references/action-application.md`. A separate
 pressure case asks the agent to keep a one-day failure labeled as isolated even
 when the user explicitly requests durable capture, making the recurrence and
 approval boundaries observable

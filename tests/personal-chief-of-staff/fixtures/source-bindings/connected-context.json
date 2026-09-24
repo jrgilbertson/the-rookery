@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "roles": {
+    "strategy": [{"area":"direction","interface":"pcos-source","identity":"synthetic-vault","locator":"strategy","condition":"baseline","modes":["wind-down","weekly","quarterly"]}],
+    "learning": [{"area":"direction","interface":"pcos-source","identity":"synthetic-vault","locator":"learning","condition":"baseline","modes":["wind-down","weekly","quarterly"]}],
+    "tasks": [{"area":"commitments","interface":"pcos-source","identity":"synthetic-task-owner","locator":"tasks","condition":"baseline","modes":["wind-down","weekly","quarterly"],"window":"active as of 2026-09-20","filter":"open commitments"}],
+    "weekly_review": [{"area":"reflection","interface":"pcos-source","identity":"synthetic-vault","locator":"weekly_review","condition":"mode-specific","modes":["weekly"]}],
+    "weekly_template": [{"area":"reflection","interface":"pcos-source","identity":"synthetic-vault","locator":"weekly_template","condition":"mode-specific","modes":["weekly"]}],
+    "last_weekly_review": [{"area":"reflection","interface":"pcos-source","identity":"synthetic-vault","locator":"last_weekly_review","condition":"mode-specific","modes":["weekly"]}],
+    "daily_journals": [{"area":"reflection","interface":"pcos-source","identity":"synthetic-vault","locator":"daily_journals","condition":"mode-specific","modes":["weekly"],"window":"2026-09-14 through 2026-09-20"}],
+    "calendar_personal": [{"area":"commitments","interface":"pcos-source","identity":"synthetic-personal-calendar","locator":"calendar_personal","condition":"bounded","modes":["weekly"],"window":"2026-09-14 through 2026-09-27","filter":"events and protected time"}],
+    "calendar_work": [{"area":"commitments","interface":"pcos-source","identity":"synthetic-work-calendar","locator":"calendar_work","condition":"bounded","modes":["weekly"],"window":"2026-09-14 through 2026-09-27","filter":"events and deadlines"}],
+    "mailbox_personal": [{"area":"commitments","interface":"pcos-source","identity":"synthetic-personal-mailbox","locator":"mailbox_personal","condition":"bounded","modes":["weekly"],"window":"2026-09-14 through 2026-09-20","filter":"commitments and replies relevant to review"}],
+    "mailbox_work": [{"area":"commitments","interface":"pcos-source","identity":"synthetic-work-mailbox","locator":"mailbox_work","condition":"bounded","modes":["weekly"],"window":"2026-09-14 through 2026-09-20","filter":"commitments and replies relevant to review"}],
+    "messages": [{"area":"relationships","interface":"pcos-source","identity":"synthetic-messages-account","locator":"messages","condition":"bounded","modes":["weekly"],"window":"2026-09-14 through 2026-09-20","filter":"recent interactions and follow-ups","gap_effect":"cannot establish Messages follow-up coverage"}],
+    "crm": [{"area":"relationships","interface":"pcos-source","identity":"synthetic-people-vault","locator":"crm","condition":"bounded","modes":["weekly"],"window":"changes and due follow-ups as of 2026-09-20","filter":"active relationships"}],
+    "meeting_notes": [{"area":"relationships","interface":"pcos-source","identity":"synthetic-curated-meeting-vault","locator":"meeting_notes","condition":"bounded","modes":["weekly"],"window":"2026-09-14 through 2026-09-20","filter":"meetings relevant to active proof work"}],
+    "meeting_transcript": [{"area":"relationships","interface":"pcos-source","identity":"synthetic-transcript-service","locator":"meeting_transcript","condition":"conditional","modes":["weekly"],"window":"2026-09-18 proof meeting only","filter":"verify wording of dataset request in curated note"}],
+    "readwise_recent": [{"area":"learning","interface":"pcos-source","identity":"synthetic-readwise-account","locator":"readwise_recent","condition":"conditional","modes":["weekly"],"window":"2026-09-14 through 2026-09-20","filter":"recent highlights relevant to customer proof"}],
+    "readwise_archive": [{"area":"learning","interface":"pcos-source","identity":"synthetic-readwise-account","locator":"readwise_archive","condition":"conditional","modes":["weekly"],"window":"2023 archive","filter":"gardening question only"}],
+    "capacity": [{"area":"direction","interface":"pcos-source","identity":"synthetic-vault","locator":"capacity","condition":"conditional","modes":["weekly"],"filter":"before new deadline or commitment"}]
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "roles": {
+    "strategy": [{
+      "area": "direction",
+      "interface": "pcos-source",
+      "identity": "synthetic-vault",
+      "locator": "northstar",
+      "condition": "baseline",
+      "modes": ["wind-down", "weekly", "quarterly"]
+    }],
+    "learning": [{
+      "area": "learning",
+      "interface": "pcos-source",
+      "identity": "synthetic-vault",
+      "locator": "fieldnotes",
+      "condition": "baseline",
+      "modes": ["wind-down", "weekly", "quarterly"]
+    }],
+    "tasks": [{
+      "area": "commitments",
+      "interface": "pcos-source",
+      "identity": "synthetic-task-owner",
+      "locator": "tasks",
+      "condition": "baseline",
+      "modes": ["wind-down", "weekly", "quarterly"],
+      "window": "current",
+      "filter": "active"
+    }]
+  }
+}

@@ -1,0 +1,1 @@
+{"version":1,"roles":{"strategy":[{"area":"direction","interface":"pcos-source","identity":"synthetic-vault","locator":"northstar","condition":"baseline","modes":["wind-down","weekly","quarterly"]}],"strategy":[{"area":"direction","interface":"pcos-source","identity":"synthetic-vault","locator":"decoy","condition":"baseline","modes":["wind-down","weekly","quarterly"]}]}}

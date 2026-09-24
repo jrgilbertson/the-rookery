@@ -17,7 +17,7 @@ aggregate: "None of three open tasks qualified." Zero findings is valid.
 
 Use the planning window's last day as the target day. When a later-day resume
 requires recomputing the bundle under "End and resume honestly" in
-`source-behavior.md`, re-establish these dates before recomputing membership.
+`source-access.md`, re-establish these dates before recomputing membership.
 Wind-down retains its original journal date as its mode reference requires.
 
 ## Find corrections and planning context
@@ -56,8 +56,8 @@ Task reads and approved writes use the configured canonical workflow; create
 no second task list. If that workflow, exact target, write, or readback path is
 unavailable or ambiguous, report affected task actions **Manual**, name the
 gap, mark task-dependent coverage **Partial**, and continue with the remaining
-evidence. Relationship effects use the shared companion rules. All effects
-retain the shared exact-approval and readback requirements.
+evidence. Relationship effects use the [companion rules](crm-companion.md).
+All effects retain the [exact-approval and readback requirements](action-application.md).
 
 Completion: every qualifying correction has one proposed action, upcoming
 context feeds the plan, healthy records remain unlisted, and coverage gaps or

@@ -22,7 +22,18 @@ For decision-only cases, supply the named source results as premises and perform
 no operations. Grade what the agent proposes, permits, refuses, or reports.
 These checks cannot establish executed writes or provider compatibility.
 
+For source-binding cases, install each frozen skill copy in a disposable project
+and keep the synthetic user home outside the repository. An external test adapter
+may substitute `Path.home()` only in the bundled map helper's process. Do not
+change `HOME`, add test controls to the shipped helper, or expose the map location
+in a discovery prompt. Record the adapter and loaded package with the original
+session and native-source traces. A native discovery smoke omits any skill path
+from the request; a forced-load case proves behavior after loading only.
+
 Record each result at the scope actually exercised. Fixture behavior, conceptual
-decisions, and provider implementation are distinct claims. A missing environment
-for testing a provider is not a skill-readiness blocker; a demonstrated wrong
-approval, ordering, or reporting decision in the skill remains a defect.
+decisions, and provider implementation are distinct claims. A demonstrated wrong
+approval, ordering, or reporting decision remains a defect. When the accepted
+change explicitly requires a provider, its unavailable test environment leaves
+that acceptance requirement incomplete; neither another provider nor fixture
+success substitutes for it. Run official provider CLIs through subscription
+authentication when required by the test session; never fall back to API billing.

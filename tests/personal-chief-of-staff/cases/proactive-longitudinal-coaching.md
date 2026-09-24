@@ -156,8 +156,9 @@ turn in the same live context:
       learning role before selecting either, asks the user to identify the
       authoritative strategy source without guessing from titles, narrows only
       the role-dependent longitudinal conclusions, continues the current review
-      using the task-manager and calendar facts, and creates no private role
-      schema or new configuration.
+      using the task-manager and calendar facts. It may propose a
+      binding in the established private map after the user designates
+      an owner; it makes no unapproved configuration write.
 - [ ] Every scenario → excludes AI logs and conversation memory from
       longitudinal evidence, creates no score, fixed questionnaire, run ledger,
       portrait, or new durable artifact, and preserves current native sources
@@ -202,7 +203,7 @@ turn in the same live context:
 - [ ] Scenario 4 reports each unresolved canonical role as not configured,
       with the claim category each gap limits, while preserving accessed
       current task and calendar facts; the audit neither guesses a role owner
-      nor creates configuration.
+      nor reports a proposed binding as saved.
 - [ ] Every proposed experiment or commitment exposes, in separately gradeable
       response spans, the current supported state, the desired outcome owned or
       accepted by the user, and a future observable signal that could close or

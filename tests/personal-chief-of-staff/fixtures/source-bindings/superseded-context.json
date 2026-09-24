@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "roles": {
+    "strategy": [{"area":"direction","interface":"pcos-source","identity":"synthetic-vault","locator":"strategy","condition":"baseline","modes":["wind-down","weekly","quarterly"]}],
+    "learning": [{"area":"direction","interface":"pcos-source","identity":"synthetic-vault","locator":"learning","condition":"baseline","modes":["wind-down","weekly","quarterly"]}],
+    "tasks": [{"area":"commitments","interface":"pcos-source","identity":"synthetic-task-owner","locator":"tasks","condition":"baseline","modes":["wind-down","weekly","quarterly"],"window":"active as of 2026-09-20","filter":"open commitments"}],
+    "weekly_review": [{"area":"reflection","interface":"pcos-source","identity":"synthetic-vault","locator":"weekly_review","condition":"mode-specific","modes":["weekly"]}],
+    "weekly_template": [{"area":"reflection","interface":"pcos-source","identity":"synthetic-vault","locator":"weekly_template","condition":"mode-specific","modes":["weekly"]}],
+    "last_weekly_review": [{"area":"reflection","interface":"pcos-source","identity":"synthetic-vault","locator":"last_weekly_review","condition":"mode-specific","modes":["weekly"]}],
+    "daily_journals": [{"area":"reflection","interface":"pcos-source","identity":"synthetic-vault","locator":"daily_journals","condition":"mode-specific","modes":["weekly"],"window":"2026-09-14 through 2026-09-20"}]
+  }
+}

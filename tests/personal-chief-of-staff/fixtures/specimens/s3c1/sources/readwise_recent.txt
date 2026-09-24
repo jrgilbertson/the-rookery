@@ -1,0 +1,1 @@
+Synthetic Readwise query, 2026-09-14 through 2026-09-20, filtered to customer-proof highlights, complete. Highlight saved 2026-09-19: a small executable example can expose whether a claimed result is reproducible. Relevant as an idea for the proof session, not proof that this pilot works.

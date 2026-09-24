@@ -1,0 +1,1 @@
+{"version":1,"roles":{"tasks":[{"area":"commitments","interface":"Obsidian CLI","identity":"sample-vault","query":"active tasks due this week","condition":"baseline","modes":["wind-down","weekly","quarterly"],"window":"current week","filter":"active"}]}}

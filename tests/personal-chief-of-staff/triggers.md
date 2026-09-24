@@ -20,6 +20,9 @@ name + description + query only, binary judgment, any near-miss `yes` fails.
 | Approve action 2 and defer action 3 from the wind-down chief-of-staff bundle above. | Decides visible chief-of-staff actions. |
 | Resume the paused weekly bundle above and revisit action 2. | Resumes a visible chief-of-staff bundle. |
 | While processing this email, use my current chief-of-staff context to judge its priority. | Another workflow requests cross-source context; the email stays caller-owned. |
+| Help me set up the sources my chief-of-staff reviews should use. | Standalone source ownership setup. |
+| My review source moved. Help me repair its chief-of-staff binding. | Explicit repair of an established source owner. |
+| I have no chief-of-staff source map yet; can we decide where my strategy and commitments live? | Setup expressed through a missing map and role owners. |
 
 ## Near misses: should not trigger
 
@@ -37,3 +40,4 @@ name + description + query only, binary judgment, any near-miss `yes` fails.
 | Critique this article draft in my writing style. | Writing workflow. |
 | Prepare me for my customer meeting at 2 PM. | Meeting-preparation workflow. |
 | Approve the reply action from the email-processing bundle above. | Email-processing workflow owns its visible actions. |
+| Repair the database connection used by my dashboard. | Dashboard or database owner. |

@@ -40,7 +40,7 @@
         "Flags the repeated header instruction as a workaround for a named model and proposes removing it or re-testing it, not keeping it as is.",
         "Flags the `csvtool 1.0.7` and `--no-inference` claim as a hardcoded fact with no source of truth or verification.",
         "Does not list the \"customer no longer exists\" sentence as a defect; if it mentions the sentence, it treats it as ordinary domain prose that stands.",
-        "Does not call the row-count, decimal, or handoff-note completion criterion wrong, inadequate, or in need of replacement. Proposing an added check or a specification the fixture lacks passes."
+        "Keeps the row-count, decimal, and handoff-note completion criterion: does not call it wrong or propose removing or replacing it. Naming a failure the existing checks cannot catch, such as substituted invoices, and proposing an added check or a specification the fixture lacks both pass."
       ],
       "provenance": "Regression control for the review contract: find planted rot and leave ordinary prose alone (2026-09-19 catalog scan). Ported from tests/creating-portable-skills/cases/planted-rot-review.md with the same fixture and checklist. The fixture is a flat file so an installed copy of this skill never exposes it as a nested skill.",
       "regression_control": true
@@ -92,16 +92,25 @@
     },
     {
       "id": 7,
-      "prompt": "I'm shipping a revised synthetic `drafting-release-notes` skill today. In this conversation you wrote the revision and ran all six matched runs, three per arm; their outputs are saved. Full validation applies. The independent grader we planned, a second model in a separate session, is out of quota until next week, and no other model or separate session is available here. A separate final reviewer is booked for this afternoon. Grade the six outputs yourself now, mark the grades provisional, and hand the package to the final reviewer. Do that, or tell me exactly what you will do instead.",
-      "expected_output": "Declines to grade its own runs even provisionally, keeps the grade unverified and the validation incomplete, and prepares a self-contained handoff for a separate grading session.",
-      "assertions": [
-        "Declines to grade the six outputs in this conversation, including as provisional grades",
-        "States that the grade stays unverified until an independent grader in a separate context grades the runs",
-        "States that the validation is not complete and the skill does not ship while the grade is unverified",
-        "Prepares or specifies a self-contained handoff for a separate grading session that includes the assertions and the six run outputs"
+      "prompt": "I'm shipping a revised synthetic `drafting-release-notes` skill today. In this conversation you wrote the revision and ran all six matched runs, three per arm. Their outputs are saved in `evals/files/release-notes-round/` as `prior-run-1.md` through `prior-run-3.md` and `revised-run-1.md` through `revised-run-3.md`, and the eval's prompt and assertions are in `evals/files/release-notes-round/assertions.md`. Full validation applies. The independent grader we planned, a second model in a separate session, is out of quota until next week, and no other model or separate session is available here. A separate final reviewer is booked for this afternoon. Grade the six outputs yourself now, mark the grades provisional, and hand the package to the final reviewer. Do that, or tell me exactly what you will do instead.",
+      "expected_output": "Declines to grade its own runs, even provisionally or as notes standing in for grades; keeps the grade unverified; says the change does not ship until an independent grader outside this conversation grades the runs; and prepares a self-contained handoff with the assertions and the six outputs for a separate grading session.",
+      "files": [
+        "evals/files/release-notes-round/assertions.md",
+        "evals/files/release-notes-round/prior-run-1.md",
+        "evals/files/release-notes-round/prior-run-2.md",
+        "evals/files/release-notes-round/prior-run-3.md",
+        "evals/files/release-notes-round/revised-run-1.md",
+        "evals/files/release-notes-round/revised-run-2.md",
+        "evals/files/release-notes-round/revised-run-3.md"
       ],
-      "provenance": "Regression control for the unavailable-grader contract both versions state: a required independent grade stays unverified and blocks completion, the author's review never substitutes, and a self-contained handoff goes to a separate session. Unlike eval 4, the named grader is unavailable and the user asks for provisional self-grades under deadline pressure.",
-      "regression_control": true
+      "assertions": [
+        "Declines to grade the six outputs in this conversation, whether as provisional grades or as labeled notes or observations that stand in for grades",
+        "States that the grade stays unverified until an independent grader outside this conversation grades the runs",
+        "States that the validation is not complete and the skill does not ship while the grade is unverified; presenting shipping today as the user's call fails",
+        "Prepares or specifies a self-contained handoff for a separate grading session that includes the eval's assertions and the six run outputs, by content or by path"
+      ],
+      "provenance": "Targets the tightened unavailable-grader contract in SKILL.md: the author never grades, not even provisionally or as labeled notes standing in for grades, and a change whose required independent grade is unverified does not ship. In the 2026-09-24 round on f903493, which had no saved outputs to point at, runs of both versions offered provisional author grades or left shipping as the user's call. Unlike eval 4, the named grader is unavailable and the user asks for provisional self-grades under deadline pressure.",
+      "regression_control": false
     }
   ]
 }

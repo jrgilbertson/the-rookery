@@ -34,8 +34,8 @@ artifacts.
    and state the token and time delta beside the pass delta. The change ships
    when it raises the pass count on the cases it targets, no regression
    control fails with it, and the gain is worth its cost. Claim an
-   improvement only on the targets that showed it. When a case passes on some
-   runs and fails on others, run each variant a few more times and compare
+   improvement only on the targets that showed it. When a discriminating
+   case passes on some runs and fails on others, run each variant a few more times and compare
    pass rates rather than counting one lucky run; if it stays inconsistent,
    tighten the ambiguous instruction or the item. Remove an item that passes
    in both variants, fix one that fails in both, and stop iterating when

@@ -22,8 +22,8 @@ which model grades a matched comparison; neither behavior had a case.
 - [ ] (1) Says packaging cannot be marked complete yet: the second harness
       needs either a smoke pass or a logged "not run" together with the
       user's logged decision to ship without it.
-- [ ] (2) Recommends that one grader score both the with-skill and
-      without-skill outputs of each case.
+- [ ] (2) Recommends that one grader score both outputs of each case's
+      matched pair (baseline and revised, or without-skill and with-skill).
 - [ ] (2) Says the grader sees the outputs labeled neutrally, without knowing
       which variant is which.
 - [ ] (2) Recommends the second vendor's model as the grader because it is a

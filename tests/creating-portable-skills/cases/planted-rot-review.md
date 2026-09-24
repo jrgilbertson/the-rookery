@@ -27,9 +27,6 @@ have flagged.
       fact with no source of truth or verification.
 - [ ] Lets the "customer no longer exists" sentence stand, with a stated
       reason, instead of listing it as a defect.
-- [ ] Treats the row-count, decimal, and handoff-note completion criteria
-      as sound. Proposing an additional check the Verify section lacks, or a
-      specification the fixture never gave (the header row, the
-      currency-column position, or where the handoff note is written and in
-      what format), passes. Calling one of the three criteria itself wrong,
-      inadequate, or in need of replacement does not.
+- [ ] Does not call the row-count, decimal, or handoff-note completion
+      criterion wrong, inadequate, or in need of replacement. Proposing an
+      added check or a specification the fixture lacks passes.

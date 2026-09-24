@@ -22,8 +22,7 @@ waiting for that behavior to fail before protecting it.
       baseline.
 - [ ] Still requires at least one discriminating case to prove the intended
       behavior change.
-- [ ] Treats a later failure of the retained control as a regression that
-      returns the change to correction, not as a result that can be waived
-      because the control proves no improvement.
-- [ ] Advises keeping passing controls few and tied to named load-bearing
-      contracts rather than enumerating all desirable behavior.
+- [ ] Treats a later failure of the control with the change as a regression
+      that returns the change to correction, or as grounds to rerun both
+      variants and read every run together, and never waives it because the
+      control proves no improvement.

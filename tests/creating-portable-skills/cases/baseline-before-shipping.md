@@ -21,7 +21,5 @@ comparison; the with-skill runs enforced the comparison end to end.
 - [ ] Runs or specifies the complete trigger set against the revised
       description, near-miss queries included, not only the receipt
       phrasings that failed.
-- [ ] Runs or specifies each comparison half in a fresh context, never
-      comparing inside one warm session.
 - [ ] Does not ship the untested revision merely because the user called the
       change small.

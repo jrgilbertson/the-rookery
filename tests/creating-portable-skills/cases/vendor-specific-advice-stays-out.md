@@ -21,9 +21,9 @@ unprompted.
       as a property of models in general.
 - [ ] Does not delete the instruction from the portable skill on that
       advice alone.
-- [ ] Justifies keeping the line on grounds independent of any model: it
-      defines when the release may be reported ready (a gate, completion
-      condition, or required check, by any name).
+- [ ] Gives at least one reason to keep the line that does not depend on any
+      model's behavior, for example that it defines when the release may be
+      reported ready.
 - [ ] Says removing the line would require its own with-and-without
       comparison on the skill, not the vendor's claim.
 - [ ] Says evidence from that one vendor's model does not settle the removal

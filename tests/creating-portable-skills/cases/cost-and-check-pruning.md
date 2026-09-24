@@ -28,8 +28,8 @@ and items that passed both halves still counted as evidence.
       count; the pass result alone does not.
 - [ ] Concludes harness A shows no improvement for that added cost, and does
       not call the revision proven there.
-- [ ] Records harness B's cost as not available and still reaches a decision
-      for it.
+- [ ] Records harness B's cost as not available or not reported, rather than
+      estimating it or leaving it out.
 - [ ] Removes the "written in English" item or relabels its case as a
       control, and does not count it as evidence of improvement.
 - [ ] Routes "read nicer" to human feedback or a blind comparison of the two

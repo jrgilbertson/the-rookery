@@ -2,6 +2,14 @@
 
 Format: `date | git rev | check | result | note`
 
+Correction rerun on 2026-09-23 after 7d6d913 closed the two loopholes the lead-model round found. Same targets, isolation, schema, and graders. Only the fixed package ran, twice per case per target; the prior runs from the round below were reused, and each case was regraded as a whole packet with the superseded 51304b7 runs removed. One Grok grade returned invalid JSON and was rerun.
+
+- 2026-09-23 | 7d6d913 | matched comparison: cost-and-check-pruning, Grok 4.7 | pass (6/6), fail (5/6) | $0.15 and $0.18; both runs now route "read nicer" to human feedback or a blind comparison, so the taste-routing regression is gone. The failing run misjudged harness B's decision (item 3). Mixed against the prior's settled pass: unsettled on this target, not a regression
+- 2026-09-23 | 7d6d913 | matched comparison: cost-and-check-pruning, Opus 5.5 | pass (6/6), pass (6/6) | $0.14 and $0.16. Settled pass; the prior is mixed, so the case stays unsettled on this target
+- 2026-09-23 | 7d6d913 | control: passing-baseline-regression-control, Opus 5.5 | pass (5/5), fail (4/5) | $0.10 each; one run now says a failed control returns the change to correction; the other held that a control failing in both halves is not a regression the change caused, which the checklist item does not allow for. Mixed against the prior's settled pass: unsettled on this target, not a regression
+- 2026-09-23 | 7d6d913 | control: passing-baseline-regression-control, Grok 4.7 | pass (5/5), fail (4/5) | $0.04 and $0.05; the failing run never advised keeping controls few, which the prompt does not ask about. Mixed against the prior's settled pass: unsettled on this target
+- 2026-09-23 | 7d6d913 | claim scope | recorded | supersedes the 51304b7 claim-scope line for these two cases. No settled regression remains on either target. Settled improvement: planted-rot-review on Grok 4.7. Unsettled, claims withheld: planted-rot-review on Opus 5.5, cost-and-check-pruning on both targets, and the passing-baseline control on both targets
+
 Lead-model round on 2026-09-23. Targets: Claude Code 2.1.281 with Opus 5.5 at medium effort, and Grok CLI 1.0.41 with Grok 4.7 at high effort, each the harness default. Forced-load runs in neutrally named throwaway projects, two runs per variant per case, all cases frozen before the first run. Cross-graded and blind to variant: Grok 4.7 graded the Opus outputs and Opus 5.5 graded the Grok outputs, one grader per case per target, final answers only, every verdict constrained to a fixed JSON grade schema with quoted evidence. Grok returned no grade on some calls (empty answer, stopped as cancelled); those calls were rerun and never counted as verdicts. Costs are per run as each harness reported them.
 
 - 2026-09-23 | 15abed3 (prior) | matched comparison: planted-rot-review, Grok 4.7 | fail (5/6), fail (2/6) | $0.08 and $0.10; neither reported signal counts. Settled fail

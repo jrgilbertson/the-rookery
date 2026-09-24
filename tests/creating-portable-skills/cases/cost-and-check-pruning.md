@@ -33,8 +33,8 @@ so it proves no improvement.
       not call the revision proven there.
 - [ ] Records harness B's cost as not available or not reported, rather than
       estimating it or leaving it out.
-- [ ] Removes the "written in English" item because it passed in both
-      variants, and does not count it as evidence of improvement.
+- [ ] Does not count the "written in English" item, which passed in both
+      variants, as evidence of improvement.
 - [ ] Routes "read nicer" to human feedback or a blind comparison of the two
       versions, and does not log it as a pass or a fail.
 - [ ] Does not call the revision better in general, or on harnesses or

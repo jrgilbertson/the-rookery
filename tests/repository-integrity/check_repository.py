@@ -20,6 +20,7 @@ FIXTURE_RUNNERS = (
     "tests/checking-merge-readiness/fixtures/run-stub-checks.sh",
     "tests/checking-pr-readiness/fixtures/run-assessment-checks.py",
     "tests/checking-pr-readiness/fixtures/run-helper-checks.sh",
+    "tests/creating-portable-skills/fixtures/run-signal-scan-checks.sh",
     "tests/managing-issues/fixtures/run-graph-checks.py",
     "tests/managing-issues/fixtures/run-config-checks.py",
     "tests/managing-issues/fixtures/run-provider-checks.py",
@@ -348,8 +349,11 @@ def main() -> int:
             check=False,
         )
         require(
-            fixture_result.returncode != 0 and not marker.exists(),
-            "fixture check executed a symbolic-link runner",
+            fixture_result.returncode != 0
+            and "fixtures: symbolic-link runner is not allowed:" in fixture_result.stderr
+            and not marker.exists(),
+            "fixture check did not reject the symbolic-link runner before execution: "
+            f"{fixture_result.stderr}",
         )
 
     print(

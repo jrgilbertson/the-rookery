@@ -2,8 +2,8 @@
 
 Conventions for every `tests/<skill-name>/` directory. This file is the
 canonical statement of the testing convention; the templates in
-`skills/creating-portable-skills/assets/` restate it for portable use and defer
-to it inside this repository.
+`skills/creating-portable-skills/assets/` restate it for portable use. Inside
+this repository, this file governs.
 
 ## Repository checks
 
@@ -40,7 +40,8 @@ input files:
 - `log.md` — one line per run or check: `date | git rev | check | result |
 note`. The `git rev` field names the commit the run's working tree was
   based on — the parent commit when the change under test is not yet
-  committed. An archive-pointer line identifies where prior history lives,
+  committed. A behavioral run's note carries its tokens and duration when the
+  harness reports them, and `cost not available` when it does not. An archive-pointer line identifies where prior history lives,
   so git remains the archive.
 - optional `<name>-protocol.md` — a per-suite scoring or measurement protocol
   for recurring checks the suite runs against external or machine-local
@@ -52,14 +53,14 @@ note`. The `git rev` field names the commit the run's working tree was
 ## Rules
 
 - Binary pass/fail everywhere. A case fails if any checklist item fails.
-  Trigger judgments are yes or no.
+  Trigger judgments are yes or no. A quality that binary items cannot carry
+  goes to human feedback or a blind comparison of two versions with the labels
+  hidden, and is logged as a note, never as a pass or a fail.
 - A case enters a suite when a baseline run showed the bare model failing the
   behavior or an observed failure motivated it — named in the provenance line.
   A case that both variants pass stays only as an explicitly labeled
   regression control, whether it guards a safety or privacy invariant or
-  another load-bearing contract, and a suite keeps only a small number of
-  them. Labeled controls never count as discriminating evidence for a new
-  skill or behavior change.
+  another load-bearing contract.
 - Roughly 10–15 active cases per skill is a ceiling for initial mining, not a
   target; steady-state suites grown by the observed-failure rule are expected
   to stay smaller.
@@ -81,6 +82,15 @@ note`. The `git rev` field names the commit the run's working tree was
 
 ## Running
 
+Both focused checks and matched comparisons use the baseline template's
+Evaluation boundary: declare permitted resources, effects, and budget; use
+synthetic inputs in isolated temporary workspaces; preserve existing authority
+and ask for any additional authority or substantial unapproved cost. Keep raw
+outputs outside the repository, including partial outputs from failed runs.
+Execution claims require the relevant artifact or tool observations alongside
+the final answer in the blinded grading packet, without private reasoning or
+author conclusions.
+
 - **Trigger suite.** Judge each query in a fresh context that sees only the
   skill name, description, and that query; require yes or no. One run per
   query. A first judgment that is `unsure` or hedged is borderline: run that
@@ -93,12 +103,16 @@ note`. The `git rev` field names the commit the run's working tree was
   source, no other conversation state. The case file is self-contained: run
   its prompt, resolve fixture paths relative to the case file, grade each
   checklist item pass or fail, and record one log line.
-- **Matched comparison (new skills and behavior-changing revisions).** A
-  single-variant run only regression-checks an unchanged skill. A new skill
-  or substantive revision runs its affected cases as matched pairs — without
-  the skill (or the frozen prior version) and with the revised version, each
-  in a fresh context — and ships only when the discriminating cases show the
-  intended improvement with no regression. Log one line per graded variant.
+- **Validation route.** `skills/creating-portable-skills/SKILL.md` owns focused
+  versus full validation eligibility. Focused revisions run an affected case
+  on the revised skill, with structural validation and direct artifact
+  inspection; author inspection is labeled as such, not independent grading.
+  Record its case and a log line, limiting the claim to the behavior exercised.
+- **Matched comparison (full validation).** Run affected cases as matched
+  pairs — without the skill (or the frozen prior version) and with the revised version, each
+  in a fresh context. The baseline comparison template in
+  `skills/creating-portable-skills/assets/` owns grading and the ship
+  rule. Log one line per graded variant.
 - **Smoke check.** Install the skill from source into a disposable project on
   each roster harness — Claude Code and Codex CLI — ask one trigger query, and
   confirm from the run's trace that the copy which activated is the

@@ -29,9 +29,6 @@ Keep these conclusions separate:
 | A smoke check passes | That package revision installed and activated in that harness, on that query | Other harnesses, queries, or task behavior |
 | Graded behavioral cases pass | Those cases, in those contexts, at that revision | Reliability, non-regression, causal improvement, or universal compatibility |
 
-The baseline comparison template owns case construction and grading; the
-trigger contract owns the query set and smoke-check protocol.
-
 ## Optional harness metadata
 
 The canonical package must not require vendor extensions. A harness-local copy may add optional metadata supported by that harness, but resulting claims stay scoped to observed checks.
@@ -52,12 +49,6 @@ Codex budgets the initial skill listing, so put the key use case and trigger wor
 
 Use the host repository's documented path first. These are common project and user locations; confirm the installed harness version before relying on them.
 
-A harness may discover the same skill name in several locations with
-version-specific precedence. A smoke check therefore uses a disposable
-project so the copy that activates is the copy just installed; when a
-same-name copy exists in a user or system location, confirm the activated
-copy's path before logging the pass, or log the result as inconclusive.
-
 | Harness | Project-level | User-level | Source |
 | --- | --- | --- | --- |
 | Claude Code | `.claude/skills/` | `~/.claude/skills/` | [docs](https://code.claude.com/docs/en/skills) |
@@ -65,7 +56,3 @@ copy's path before logging the pass, or log the result as inconclusive.
 | Gemini CLI | `.gemini/skills/` and `.agents/skills/` | `~/.gemini/skills/` and `~/.agents/skills/` | [docs](https://geminicli.com/docs/cli/skills/) |
 | OpenCode | `.opencode/skills/`, `.claude/skills/`, `.agents/skills/` | `~/.config/opencode/skills/`, `~/.claude/skills/`, `~/.agents/skills/` | [docs](https://opencode.ai/docs/skills/) |
 | Grok CLI | `.grok/skills/` | `~/.grok/skills/` and `~/.claude/skills/` | Confirm with the README bundled by the installed CLI |
-
-## Rule
-
-A canonical package passes without optional harness metadata. Structural validation establishes canonical form; a passing smoke check establishes installability and activation only for that harness. Describe behavioral support only at the evidence level earned by separately graded cases.

@@ -11,6 +11,16 @@ looked" surface. GitHub Releases mirror its entries.
 
 ## [Unreleased]
 
+### Fixed
+
+- The `creating-portable-skills` signal scan detects attached pressure markers
+  such as `Do this!!`, preserves whole-word matching for textual pressure
+  signals, and counts each matching line once.
+- The `creating-portable-skills` signal scan returns an error when it cannot
+  read an input file or traverse references, instead of reporting a successful
+  scan with incomplete results. Matches and completed scans without matches
+  still succeed.
+
 ### Added
 
 - `TESTING.md` explains project-owned verification for polyglot monorepos and
@@ -34,6 +44,30 @@ looked" surface. GitHub Releases mirror its entries.
   implement the subject. Lifecycle and Git hooks remain deliberately absent.
 
 ### Changed
+
+- `creating-portable-skills` uses focused validation for localized, low-risk
+  guidance revisions while keeping independent comparison and review for
+  consequential changes. Behavioral evaluations use bounded temporary
+  workspaces, and authoring checks judge activation and discoverability instead
+  of requiring a fixed description opening or reference depth.
+
+- `creating-portable-skills` reviews can open with a bundled signal scan that
+  finds pressure language, thinking scaffolds, output clamps, history
+  phrasing, pinned model names, and similar mechanical signals, and names the
+  checklist item that judges each hit. The checklist makes its sediment check
+  runnable, tests that hardcoded facts point to a source of truth, asks of
+  each line whether the model could already know it, and keeps advice that
+  rests on one vendor's model out of the portable rules. The baseline
+  comparison follows the Agent Skills evaluation loop: it compares pass
+  counts and the token and time cost of each variant, reruns a case that
+  varies, drops checklist items that pass with and without the change, and
+  stops when another revision no longer helps. One blind grader, from a
+  different model than the author when one is available, scores both
+  variants and quotes its evidence, and any failure of a regression control
+  with the change blocks shipping. An agent auditing a skill it did not
+  write counts as an independent reviewer, the validator step names the
+  reference `skills-ref validate` command, and an install smoke check that
+  cannot run needs the user's decision before the change completes.
 
 - `route-work` model recommendations now use the September 21–22 releases:
   Claude Opus 5.5, GPT-6 Sol and Astra, and Grok 4.7, with rows that list only

@@ -1,0 +1,1 @@
+Incident-bound deployment record: the synthetic rollback check has not been verified.

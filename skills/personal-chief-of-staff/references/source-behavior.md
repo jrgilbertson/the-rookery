@@ -23,14 +23,58 @@ it.
 
 ## Establish source coverage
 
-Start with the mode's time window and likely decisions. Read the configured
-baseline roles for every new review as specified in
-[source-bindings.md](source-bindings.md). Query other sources only when they
-can confirm a candidate item, reveal a material conflict, or supply context
-needed for judgment. Wind-down's Daily CRM Scan is the exception: when
-the companion is available, cover configured relationship interaction sources
-for the scan window through the companion before the initial reconstruction,
-even without a named candidate person.
+For each new Wind-down, Weekly, or Quarterly review, resolve the private map
+through [source-bindings.md](source-bindings.md), then read its configured
+strategy, durable learning, and bounded current task commitments before making
+recommendations. Read the mode's current record, template, and useful prior
+review as directed by [Wind-down](wind-down.md#establish-the-day),
+[Weekly](weekly.md#reconstruct-the-available-week), or
+[Quarterly](quarterly.md#establish-the-available-period). A current record that
+does not exist is different from a failed read. Keep the configured task owner
+as the source of task state; neither the review nor this map is a second task
+store.
+
+Use returned content, its effective date and scope, and the designated owner
+to decide whether it supports a conclusion. Current authoritative strategy
+supersedes an older review or preference where their guidance conflicts. Keep
+an older learning rule when it remains applicable; age alone does not void it.
+Ask the user about a material conflict whose authority or applicability remains
+unclear. A readable but empty strategy source, or one explicitly superseded by
+an unavailable successor, cannot support strategy-dependent advice. An empty
+learning source cannot support dependent coaching. A complete bounded task
+query with no active items can establish no commitments *within that slice*;
+an incomplete or failed query cannot establish absence. Report the access
+result separately from these sufficiency limits in the Source Access Audit.
+
+After the baseline, use the mode's time window, likely decisions, and each
+binding's read condition to select bounded changes or due items, mode-specific
+sources, and conditional sources. Query a group member when its configured
+condition applies or it could change a material conclusion. State briefly why
+additional groups were checked; a considered source outside the decision's
+scope is **not needed**, not a failed read. Keep personal and work identities
+distinct and use the designated source for each; a readable second account or
+synced copy does not replace an unavailable owner. For a relevant learning
+question, read only recent highlights tied to current priorities rather than
+the full reading library. Daily reviews do not require weekly analytics;
+operational incident evidence is queried when an incident or decision calls
+for it. Wind-down's Daily CRM Scan remains the exception to candidate-driven
+retrieval: when the companion is available, cover configured interaction
+sources for its window before the initial reconstruction, even without a named
+person.
+
+Before proposing a new commitment or deadline in any mode, read the relevant
+calendar and capacity evidence alongside existing promises. A free slot alone
+does not establish spare capacity: account for energy, recovery, boundaries,
+and fixed obligations. If capacity evidence is unavailable, name that gap and
+keep the proposed commitment or date conditional.
+
+An action-only reply with a resolved exact target follows its pre-write and
+readback checks without loading the map or new-review baseline. If resolving
+that target needs a bound role, load only that binding; stop the action and ask
+for its owner if it remains unresolved. A caller-context
+request resolves only roles needed for the caller's decision. A Frontier Round
+reply resumes its current phase; it does not begin a new review merely because
+the user answered a question.
 
 Use sources for their native roles:
 
@@ -59,13 +103,12 @@ X-dependent conclusions; truncated history cannot prove no exchange occurred.
 Route Person-note, contact-date, and relationship Task effects through the CRM
 companion, never directly from X evidence.
 
-Resolve canonical roles through [source-bindings.md](source-bindings.md). A
-source title is evidence for an ownership interview, not a binding. When a
-role is missing or ambiguous, ask the user to designate its authoritative
-owner. When a configured source read fails, retain its owner; a plausible
-replacement title does not authorize a changed binding. Continue with
-supported current conclusions while limiting every claim that depends on the
-unresolved or unavailable role.
+The map resolves roles, not access. A source title is evidence for an ownership
+interview, not a binding. When a role is missing or ambiguous, ask the user to
+designate its authoritative owner. When a configured source read fails, retain
+its owner; a plausible replacement title does not authorize a changed binding.
+Continue with supported current conclusions while limiting every claim that
+depends on the unresolved or unavailable role.
 
 When the same evidence is synced into a configured canonical source, use one
 copy for the conclusion rather than counting it twice. Prefer the canonical

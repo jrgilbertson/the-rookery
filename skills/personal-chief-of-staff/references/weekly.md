@@ -7,12 +7,13 @@ when an outcome, priority, intervention, or durable proposal first appears.
 
 ## Reconstruct the available week
 
-Resolve the local review window. Through the Obsidian CLI, find the current
-canonical weekly review when one already exists, the configured weekly-review
-template, and the last completed review that can provide useful continuity.
-Read the week's daily journals, current tasks, the canonical strategy note,
-relevant canonical learning notes, and only the additional notes needed to
-understand active projects, relationships, meetings, decisions, and writing.
+Resolve the local review window. Apply [source coverage](source-behavior.md#establish-source-coverage)
+for a new review. Through the Obsidian CLI, read the configured current weekly
+review when one already exists, the weekly-review template, and the last
+completed review that can provide useful continuity. Read the week's daily
+journals, the bound strategy and learning roles, a bounded current slice from
+the canonical task owner, and only the additional notes needed to understand
+active projects, relationships, meetings, decisions, and writing.
 
 Query live calendars and selected native sources when they can confirm an
 outcome, commitment, risk, or material operating change. Use both personal and
@@ -155,6 +156,8 @@ patterns, tradeoffs, blind spots, experiments, and ranked outcomes. The agent
 may propose a synthesis, but the user supplies or explicitly approves the
 lesson, strategic judgment, and forward commitment.
 
+Before proposing a new commitment or deadline, read relevant calendar and
+capacity evidence alongside current obligations under the shared source rule.
 Test proposed outcomes against strategy, calendar reality, active obligations,
 relationships, health and recovery, and opportunity cost. Optimize for
 sustainable value across the whole system rather than maximizing task volume.

@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "roles": {
+    "strategy": [{"area":"direction","interface":"pcos-source","identity":"synthetic-vault","locator":"strategy","condition":"baseline","modes":["wind-down","weekly","quarterly"]}],
+    "learning": [{"area":"direction","interface":"pcos-source","identity":"synthetic-vault","locator":"learning","condition":"baseline","modes":["wind-down","weekly","quarterly"]}],
+    "tasks": [{"area":"commitments","interface":"pcos-source","identity":"synthetic-task-owner","locator":"tasks","condition":"baseline","modes":["wind-down","weekly","quarterly"],"window":"current","filter":"active"}],
+    "daily_journal": [{"area":"reflection","interface":"pcos-source","identity":"synthetic-vault","locator":"daily_journal","condition":"mode-specific","modes":["wind-down"]}],
+    "daily_template": [{"area":"reflection","interface":"pcos-source","identity":"synthetic-vault","locator":"daily_template","condition":"mode-specific","modes":["wind-down"]}],
+    "daily_journals": [{"area":"reflection","interface":"pcos-source","identity":"synthetic-vault","locator":"daily_journals","condition":"mode-specific","modes":["weekly","quarterly"],"window":"selected review period"}],
+    "weekly_review": [{"area":"reflection","interface":"pcos-source","identity":"synthetic-vault","locator":"weekly_review","condition":"mode-specific","modes":["weekly"]}],
+    "weekly_template": [{"area":"reflection","interface":"pcos-source","identity":"synthetic-vault","locator":"weekly_template","condition":"mode-specific","modes":["weekly"]}],
+    "last_weekly_review": [{"area":"reflection","interface":"pcos-source","identity":"synthetic-vault","locator":"last_weekly_review","condition":"mode-specific","modes":["weekly"]}],
+    "quarterly_review": [{"area":"reflection","interface":"pcos-source","identity":"synthetic-vault","locator":"quarterly_review","condition":"mode-specific","modes":["quarterly"]}],
+    "quarterly_template": [{"area":"reflection","interface":"pcos-source","identity":"synthetic-vault","locator":"quarterly_template","condition":"mode-specific","modes":["quarterly"]}],
+    "last_quarterly_review": [{"area":"reflection","interface":"pcos-source","identity":"synthetic-vault","locator":"last_quarterly_review","condition":"mode-specific","modes":["quarterly"]}],
+    "weekly_reviews": [{"area":"reflection","interface":"pcos-source","identity":"synthetic-vault","locator":"weekly_reviews","condition":"mode-specific","modes":["quarterly"],"window":"selected quarter"}],
+    "calendar_personal": [{"area":"commitments","interface":"pcos-source","identity":"synthetic-personal","locator":"calendar_personal","condition":"conditional","modes":["wind-down","weekly","quarterly"],"window":"planning interval"}],
+    "calendar_work": [{"area":"commitments","interface":"pcos-source","identity":"synthetic-work","locator":"calendar_work","condition":"conditional","modes":["wind-down","weekly","quarterly"],"window":"planning interval"}],
+    "capacity": [{"area":"direction","interface":"pcos-source","identity":"synthetic-vault","locator":"capacity","condition":"conditional","modes":["wind-down","weekly","quarterly"]}],
+    "weekly_analytics": [{"area":"business","interface":"pcos-source","identity":"synthetic-business","locator":"weekly_analytics","condition":"mode-specific","modes":["weekly"]}],
+    "deployment": [{"area":"business","interface":"pcos-source","identity":"synthetic-business","locator":"deployment","condition":"conditional","modes":["wind-down","weekly","quarterly"],"filter":"relevant incident"}],
+    "recent_highlights": [{"area":"learning","interface":"pcos-source","identity":"synthetic-reading","locator":"recent_highlights","condition":"conditional","modes":["wind-down","weekly","quarterly"],"window":"recent","filter":"current priorities"}]
+  }
+}

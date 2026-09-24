@@ -1,0 +1,1 @@
+Effective 2026-09-01: protect customer proof before optional internal polish. This replaces the older review's suggestion to polish first.

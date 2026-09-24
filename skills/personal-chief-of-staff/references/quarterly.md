@@ -9,13 +9,14 @@ invocations follow the same interactive workflow.
 Resolve the local quarter and query time. A scheduled run on the first Saturday
 of January, April, July, or October reviews the quarter that just ended and
 prepares commitments for the new quarter. A manual run honors an explicitly
-requested period; without one, use the current available quarter. Through the
-Obsidian CLI, find the canonical quarterly review for that period when one
-exists, the configured template, and the last completed review that provides
-useful continuity. Read available weekly reviews, selected daily journals, the
-canonical strategy note, relevant canonical learning notes, current tasks, and
-only the additional notes needed to understand material projects, decisions,
-relationships, health, and writing.
+requested period; without one, use the current available quarter. For a new
+review, apply [source coverage](source-behavior.md#establish-source-coverage).
+Through the Obsidian CLI, read the configured quarterly review for that period
+when one exists, the configured template, and the last completed review that
+provides useful continuity. Read available weekly reviews, selected daily journals,
+the bound strategy and learning roles, a bounded current slice from the
+canonical task owner, and only the additional notes needed to understand
+material projects, decisions, relationships, health, and writing.
 
 Query native sources selectively to confirm important outcomes, commitments,
 customer or product evidence, financial or operating changes, and other facts
@@ -147,8 +148,9 @@ every interpretation that shapes a commitment has a user disposition.
 ## Collaborate on strategy
 
 Invite the user's interpretation and approval of causal lessons, tradeoffs,
-and commitments. Test proposed outcomes against strategy, calendar and capacity,
-obligations, relationships, health, recovery, opportunity cost, and this
+and commitments. Read relevant calendar and capacity evidence alongside current
+obligations before proposing a new commitment or deadline, then test outcomes
+against strategy, relationships, health, recovery, opportunity cost, and this
 quarter's evidence.
 
 Choose a few observable outcomes, supporting principles or experiments, and

@@ -37,8 +37,11 @@ return the state Phase 1 was about to correct.
 
 Resolve the local date and review window. If the run time or the user's wording
 makes the day being closed ambiguous, as can happen just after midnight,
-resolve the intended journal date before drafting. Treat the following local
-date as the commitment target day. Through the Obsidian CLI, find the configured
+resolve the intended journal date before querying the bounded day slice or
+drafting. For a new review, apply
+[source coverage](source-behavior.md#establish-source-coverage) and the
+configured baseline before the first recommendation. Treat the following local
+date as the commitment target day. Through the Obsidian CLI, read the configured
 daily-journal template and the closing-date journal, if one exists. Read the
 existing journal before drafting so manual content, frontmatter, links, embeds,
 and unresolved thoughts remain intact.
@@ -47,10 +50,11 @@ If a missing journal could supply useful context, offer at most one interactive
 catch-up and continue today's close by default. Never reconstruct a backlog
 or treat a missing journal as evidence that nothing happened.
 
-Read meetings, active tasks, project state, capacity, strategy, and learning
-notes only where they clarify the day. Query each visible personal and work
-calendar separately and retain its identity. Keep observed evidence, inference,
-and subjective meaning distinct.
+Read the bound strategy and learning roles and the current slice from the
+canonical task owner. Expand into meetings, project state, or capacity when
+the day or a proposed choice needs them. Query each relevant visible personal
+and work calendar separately and retain its identity. Keep observed evidence,
+inference, and subjective meaning distinct.
 
 When the relationship companion is available, route Messages, relationship
 mailboxes, and X through the Daily CRM Scan below. Finish it before the initial
@@ -162,8 +166,10 @@ Plan from Phase 1's resulting state, re-reading values its actions changed.
 The initial journal and Daily CRM Scan reads are already complete; the top
 phase boundary governs resumption as well.
 
-Read each visible personal and work calendar separately for the next day,
-retaining its identity, plus relevant active tasks, strategy, and learnings.
+Read each relevant visible personal and work calendar separately for the next
+day, retaining its identity, plus relevant active tasks, strategy, and
+learnings. Apply the shared capacity check before adding a new commitment or
+deadline.
 Fit the plan to free capacity, actual outcomes, unresolved commitments, and
 current constraints. Identify the critical path and protected outcomes where
 useful. Distinguish fixed commitments from flexible blocks through evidence.

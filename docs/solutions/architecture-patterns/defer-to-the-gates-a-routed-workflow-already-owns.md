@@ -81,11 +81,13 @@ Compound Engineering skill file that defines each:
   locally.
 
 What stays in the contract is what no workflow supplies: which model and
-effort each seat runs on, the subscription-billing constraint, the operator's
-stated limits (including a condition or scope attached to a grant), and the
-closing "Don't merge without human approval." line for any run that may reach
-implementation, since the shipping workflow ends at an open PR and merge is
-the step the operator holds for a human.
+effort each seat runs on, the subscription-billing constraint, and the
+operator's stated grants, limits, and conditions, carried unchanged. The
+contract once also appended "Don't merge without human approval." to any run
+that might reach implementation and asked before starting `ce-work` on work
+nobody had asked to build. Both were removed (issue #164): the shipping
+workflow already ends at an open PR, and pasting the kickoff is the operator's
+approval to start.
 
 ## Why This Matters
 

@@ -10,8 +10,7 @@ The coordinator is not an added worker. It is the session the operator pastes
 the kickoff into, and it runs on the profile the model table names for its
 starting workflow. It owns the human-facing conversation. In Single owner, the
 default, it does all the work itself. When a route adds workers, it also
-dispatches them and integrates their results. It judges completion within
-supplied authority.
+dispatches them and integrates their results. It judges completion.
 
 ## Activation boundary
 
@@ -45,26 +44,14 @@ itself as the kickoff's source of truth.
 
 The router assesses supplied evidence, renders one card, and exits without
 changing state or persisting routing state outside the visible conversation.
+Pasting the kickoff is the operator's approval to start the work.
 
-Never add authority the operator did not supply. An operator request to
-implement the work, including a request to route the kickoff to implement it,
-is implementation authorization. Naming or describing the work, even as a
-command inside a routing request such as "route this: add X", is not a request
-to implement it. Artifact approval is task state, not an authority grant.
-
-Never list permissions the operator did not mention, even to say they are not
-inferred. The card never narrates phases, checkpoints, or stopping points, and
-never says where plans are stored.
-
-A card may repeat a grant the operator supplied, since the operator pastes the
-kickoff to act on it. When the operator states a limit, including saying some
-authority is withheld or not supplied, such as a grill without document-write
-authority, or attaches a condition or scope to a grant, state it on the card in
-one sentence and never drop it. Unless the operator granted
-merge, every kickoff whose run may reach implementation, including `impeccable`
-design and front-end work, ends its authority text with "Don't merge without
-human approval." When the operator withheld merge, that line is the limit's one
-sentence. Add nothing else about authority.
+Carry each grant, limit, and condition the operator stated into Setup and the
+kickoff once, without widening or dropping it, and add no other authority. A
+statement that some authority is withheld or not supplied is a limit. A
+predicted end grants nothing, so the starting workflow's own gates decide when
+to move to the next phase. The card never narrates phases, checkpoints, or
+stopping points, and never says where plans are stored.
 
 ## Handle parent, child, and existing work
 
@@ -75,17 +62,14 @@ or switch the card to Resume; apply it before the owner table.
 |---|---|
 | Family coverage, descendants, blockers, readiness, or structure is incomplete or uncertain | Route to `managing-issues`. Do not pick a child or call the family ready. |
 | A complete current family is supplied, but parent integration, sequencing, or shared-surface planning is missing | Route the parent to `ce-plan` |
-| An approved parent plan and implementation authorization are supplied | Route to `ce-work` |
-| An approved parent plan is supplied, but implementation authorization is absent | Return Questions to establish implementation authority |
+| An approved parent plan is supplied | Route to `ce-work` |
 | A child is named directly | Route from what needs to happen first for that child while preserving supplied parent constraints, unless supplied evidence says unresolved family state blocks it |
 | The requested phase already has a proven active owner | Return a Resume card and no duplicate kickoff unless replacement or restart is explicit |
 
 A named in-flight owner is proven only by an operator statement or supplied
 artifact that names a specific owner for the requested phase. A stated
 worktree, branch, pull request, worker, or parallel effort without that phase
-owner still uses the normal Route. Setup and the kickoff then each end with the
-occupancy sentence, exactly "No named owner was proven for this phase; this
-start is still allowed." Treat occupancy as unknown, not vacant.
+owner still uses the normal Route.
 
 ## Choose what needs to happen first
 
@@ -99,7 +83,7 @@ continue. Choose it from this table, not from the host, model, or later steps.
 | A supplied decision document needs a focused, dependency-ordered pressure test | `grill-with-docs` | Run a focused grill |
 | Outcome and acceptance boundary are settled, but the execution plan is missing | `ce-plan` | Plan without reopening settled product choices |
 | Broken or unexpected behavior still has an unresolved causal chain | `ce-debug` | Diagnose first; an established cause and fix route to `ce-work` |
-| Concrete implementation is ready and authorized, including an already-diagnosed fix | `ce-work` | Execute within the supplied authority |
+| Concrete implementation is ready, including an already-diagnosed fix | `ce-work` | Execute the ready work |
 | Canonical issue content, relationship graph, coverage, or readiness state must be inspected or changed | `managing-issues` | The first need is to inspect or edit issues, links, coverage, or ready-or-not state |
 | Visual direction, interaction design, or design quality is unresolved | `impeccable` | Let Impeccable select its internal workflow unless one exact command is already obvious |
 
@@ -113,11 +97,8 @@ https://github.com/jrgilbertson/the-rookery/blob/main/ROUTING.md#choose-what-nee
 - For two separate workstreams that could both start and neither blocks the
   other, ask which starts first. A recommended order is allowed; the operator
   still chooses. The Route card names exactly one starting workflow.
-- If the request already names the work, do not require a plan file, issue, or
-  other artifact first. When concrete implementation is ready, including an
-  already-diagnosed fix, but the operator has not asked to implement it, return
-  a Questions card asking whether implementation is authorized. When unsure
-  whether they asked, ask.
+- If the request already names the work, route it. Do not require a plan file,
+  issue, or other artifact first.
 - If a named or required primary artifact cannot be read, the operator says
   they cannot answer a required routing question, the selected workflow is
   confirmed unavailable, or every listed model for a profile is stated
@@ -148,9 +129,7 @@ brainstorm, grill, debug, or plan that implementation will follow. Do not ask
 whether implementation follows. When nothing says so, predict that the run
 reaches implementation and size for it. Skip the prediction when the operator
 limits the run to planning or withholds implementation, or when the run starts
-with `managing-issues` or `grill-with-docs`. A predicted implementation is not
-authorization. The kickoff's implementation-workers sentence sets a profile and
-is not an instruction to implement.
+with `managing-issues` or `grill-with-docs`.
 
 Use one Executor per named or counted unit, or up to three when evidence
 establishes independent units without naming or counting them.
@@ -219,8 +198,7 @@ The card is the entire final answer, with no preamble, narration, or closing
 remark around it. Its first line is exactly `**Route**`, `**Resume**`, or
 `**Questions**`. Bold marks that line and the section labels, with a blank line
 after each; use no `#` headings, and never fence the kickoff. Write every
-section as natural prose, not a string of stock sentences, except the occupancy
-sentence, which is emitted exactly when it applies. Render model IDs as
+section as natural prose, not a string of stock sentences. Render model IDs as
 ordinary names, such as "Fable 5.1 at medium".
 
 ### Route
@@ -235,18 +213,18 @@ ordinary names, such as "Fable 5.1 at medium".
 
     **Setup**
 
-    [The roster: every role in the pattern with its model and effort, stated even when it repeats the decision line. The Executor count. The pattern, named in a sentence, when it is not Single owner. Orchestration only when supervised orchestration is selected. Authority only as the authority rules require. An advisor, the occupancy sentence, or a profile fallback only when it applies.]
+    [The roster: every role in the pattern with its model and effort, stated even when it repeats the decision line. The Executor count. The pattern, named in a sentence, when it is not Single owner. Orchestration only when supervised orchestration is selected. The operator's stated grants, limits, and conditions, when any. An advisor or a profile fallback only when it applies.]
 
     **Copy/paste kickoff**
 
-    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the coordinator on [model] at [effort]. [Each Reviewer or advisor with its model and effort. In Executor + Reviewer: hand the Reviewer the criteria and stop after one round, when they pass or fail.] [Subscription billing constraint.] [In Coordinator + Executors: When the work reaches implementation, run implementation workers on [Executor model] at [effort]; [the implementing workflow] decides how many and how to schedule them.] [Orchestration sentence only when supervised orchestration is selected.] Treat [the supplied artifact or request] as the source of truth. [Authority as the authority rules require, ending with the no-merge line when the run may reach implementation.] [Occupancy sentence last, only when it applies.]
+    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the coordinator on [model] at [effort]. [Each Reviewer or advisor with its model and effort. In Executor + Reviewer: hand the Reviewer the criteria and stop after one round, when they pass or fail.] [Subscription billing constraint.] [In Coordinator + Executors: When the work reaches implementation, run implementation workers on [Executor model] at [effort]; [the implementing workflow] decides how many and how to schedule them.] [Orchestration sentence only when supervised orchestration is selected.] Treat [the supplied artifact or request] as the source of truth. [The operator's stated grants, limits, and conditions, when any.]
 
 The decision line never names a role; roles live in Setup. The kickoff states
 each worker's model and effort as settings to apply and leaves how workers are
 started to the workflow and harness. The implementation-workers sentence keeps
 its template wording exactly; the Executor count and units stay in Setup. The
 kickoff must stand alone when pasted, so it repeats every role's model and
-effort, authority, and any occupancy sentence.
+effort and the operator's stated grants, limits, and conditions.
 
 ### Resume
 

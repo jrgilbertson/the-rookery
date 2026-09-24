@@ -48,40 +48,30 @@ looked" surface. GitHub Releases mirror its entries.
   CONCEPTS use Coordinator for the seat once called Lead.
 
 - `route-work` cards leave worker dispatch, scheduling, isolation, commits,
-  pull requests, and code review to the starting workflow. Kickoffs name each
-  seat's model and effort, may repeat supplied grants, keep operator-stated
-  limits including conditions or scopes on a grant, and end with "Don't merge
-  without human approval." when the run may reach implementation, unless merge
-  was granted. A separate Reviewer joins only when the operator asks, or when
-  acceptance criteria exist for a run that does not implement through
-  `ce-work`.
+  pull requests, code review, and movement between phases to the starting
+  workflow. Pasting the kickoff is the operator's approval to start. Kickoffs
+  name each seat's model and effort and carry the operator's stated grants,
+  limits, and conditions unchanged, adding no other authority. A separate
+  Reviewer joins only when the operator asks, or when acceptance criteria exist
+  for a run that does not implement through `ce-work`.
 
 - `route-work` now predicts that a run reaches implementation when nothing
   says otherwise and sizes the roster for it, so operators no longer reply
   "size to include implementation" before using the card. Why labels the
   prediction and says the coordinator can adjust the roster. A run limited to
   planning, one with implementation withheld, and a `managing-issues` or
-  `grill-with-docs` start keep their earlier end. The prediction grants nothing, and the kickoff
-  still ends with "Don't merge without human approval."
-
-- `route-work` now asks before starting `ce-work` on concrete work nobody
-  asked to implement, such as a diagnosed fix or a bare "route this: add X".
-  The Questions card asks whether implementation is authorized and recommends
-  "Yes". Naming or describing the work is not a request to implement it; a
-  request such as "route the kickoff to implement it" still routes to
-  `ce-work`.
+  `grill-with-docs` start keep their earlier end. The prediction grants
+  nothing.
 
 - `route-work` kickoffs that select supervised orchestration now say "Orca
   orchestration" in those words and tell the coordinator to use Orca's
   `orchestration` skill when it is installed, so the receiving session
   invokes that skill. Cards still carry no Orca commands.
 
-- `route-work` occupancy copy on Route Setup and the kickoff last sentence now
-  says a named owner was not proven and that this start is still allowed. The
-  old status noun `Active ownership unverified` is gone. Resume, unknown-not-vacant
-  occupancy, and inspect-only routing are unchanged. An operator request to
-  implement is implementation authorization. A named worktree or pull request
-  is occupancy evidence, not a bounded piece.
+- `route-work` no longer adds occupancy copy to Route cards; the old status
+  noun `Active ownership unverified` is gone. A named worktree or pull request
+  without a proven phase owner still routes normally and is not a bounded
+  piece. Resume and inspect-only routing are unchanged.
 
 - Repo Gardener is rewritten as one short skill for unattended runs. It
   starts only when named, by the skill name or a plain request to run,

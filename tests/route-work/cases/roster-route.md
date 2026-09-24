@@ -4,6 +4,8 @@ Provenance: user feedback — a plan-only route was too limiting; the card must
 estimate the pattern and roster for the whole approach and let supplied
 authority alone bound how far the coordinator carries it. A later review found
 that adding a Reviewer could exceed the five-worker concurrency ceiling.
+Issue #162 added item 4: a predicted implementation adds Executors for named
+modules but grants nothing.
 
 ## Prompt
 
@@ -22,6 +24,8 @@ that adding a Reviewer could exceed the five-worker concurrency ceiling.
 > 3. The same authority and criteria, but the issue names five independent
 >    modules: tokenizer, error reporting, serializer, diagnostics, and CLI.
 >    All five must be implemented; a Reviewer joins the roster.
+> 4. The same issue and the same two modules as item 1, with no acceptance
+>    criteria. Nothing is said about implementation, authority, or merge.
 
 ## Expected behavior
 
@@ -38,6 +42,13 @@ that adding a Reviewer could exceed the five-worker concurrency ceiling.
       which runs its own review, and keeps item 1's roster.
 - [ ] Item 3's Setup lists one Executor per named module, five in all, plus the
       Reviewer, with no concurrency cap or queue.
+- [ ] Item 4 keeps item 1's roster: a coordinator on Opus 5.5 at high and two
+      Executors on Opus 5.5 at medium. Why names implementation as the
+      predicted end and says the coordinator can adjust the roster. Setup and
+      the kickoff state no grant sentence. The kickoff's only implementation
+      mention is the template's implementation-workers sentence, verbatim; it
+      adds no other implement condition or instruction, such as "Implement only
+      after the plan is approved."
 - [ ] Each kickoff starts ce-plan from the issue URL, states the coordinator's model
       and effort, repeats the Reviewer's model and effort where there is one,
       gives the implementation workers' model and effort without a count or

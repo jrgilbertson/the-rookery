@@ -6,7 +6,9 @@ PR feedback reproduced an implementation forecast becoming a carry-forward
 promise without a grant; items 5 and 6 retain withheld/granted authority controls.
 On 2026-09-22 the default changed to Single owner: a run that ends in
 implementation is carried by the coordinator alone unless independent units
-are established.
+are established. On 2026-09-23 issue #162 made a predicted implementation the
+default, because operators had to reply "size to include implementation"
+before a card matched the run, so item 3 now expects the labeled prediction.
 
 ## Prompt
 
@@ -46,9 +48,12 @@ are established.
       the expected end of the run and that the coordinator carries the fix
       through.
 - [ ] Item 3 starts with `ce-brainstorm` and stays the coordinator alone, with no
-      Executors and nothing about authority.
-- [ ] Items 1 and 2 state no grant sentence, state the supplied condition on
-      implementation in one sentence, end the kickoff's authority text with
+      Executors. Why names implementation as the predicted end and says the
+      coordinator can adjust the roster as the work unfolds. The kickoff gives
+      no instruction to implement, states no grant, and ends with "Don't merge
+      without human approval."
+- [ ] Items 1 and 2 may repeat the supplied grant without widening it, keep
+      its condition on implementation, list no other permission, end the kickoff's authority text with
       "Don't merge without human approval.", and enumerate no other
       prohibitions.
 - [ ] Items 4–6 start with `ce-plan` on Opus 5.5 at high. Expected
@@ -63,7 +68,8 @@ are established.
       limit.
 - [ ] Item 5 preserves planning-only authority and withheld implementation
       in Setup and the standalone kickoff, with no unconditional carry-forward.
-- [ ] Item 6's Why carries the work into implementation, and its kickoff states
-      no grant sentence and ends with "Don't merge without human approval."
+- [ ] Item 6's Why carries the work into implementation, and its kickoff may
+      repeat the supplied grant without widening it, lists no other permission,
+      and ends with "Don't merge without human approval."
 - [ ] Every card follows the Route template without extra section labels.
 - [ ] The trace contains only reads of the installed package.

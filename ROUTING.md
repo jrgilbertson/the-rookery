@@ -55,14 +55,15 @@ Never list permissions the operator did not mention, even to say they are not
 inferred. The card never narrates phases, checkpoints, or stopping points, and
 never says where plans are stored.
 
-Leave supplied grants off the card. When the operator states a limit, including
-saying some authority is withheld or not supplied, such as a grill without
-document-write authority, or attaches a condition or scope to a grant, state it
-on the card in one sentence and never drop it. Unless the operator granted
+A card may repeat a grant the operator supplied, since the operator pastes the
+kickoff to act on it. When the operator states a limit, including saying some
+authority is withheld or not supplied, such as a grill without document-write
+authority, or attaches a condition or scope to a grant, state it on the card in
+one sentence and never drop it. Unless the operator granted
 merge, every kickoff whose run may reach implementation, including `impeccable`
 design and front-end work, ends its authority text with "Don't merge without
 human approval." When the operator withheld merge, that line is the limit's one
-sentence. Otherwise say nothing about authority.
+sentence. Add nothing else about authority.
 
 ## Handle parent, child, and existing work
 
@@ -133,12 +134,19 @@ effort is occupancy evidence, not evidence of independent units.
 |---|---|---|---|
 | Single owner | The coordinator alone, on the selected owner's profile. It writes the work itself. | The default when neither other pattern applies | One worker covers later stages of the same owner. |
 | Executor + Reviewer | Two workers: the coordinator writes and revises; the Reviewer only judges. | The operator asks for a separate Reviewer, or explicit acceptance criteria exist for a run that does not implement through `ce-work`, which runs its own review | One round. Stop when the Reviewer's stated criteria pass or fail. Hand the Reviewer the criteria. The Reviewer does not write the artifact. |
-| Coordinator + Executors | The coordinator runs the starting workflow, which dispatches Executor workers to implement the units. | Implementation is expected and supplied evidence establishes independent units, whichever workflow starts | The kickoff names the Executors' model and effort; the workflow decides how many run and when. |
+| Coordinator + Executors | The coordinator runs the starting workflow, which dispatches Executor workers to implement the units. | Implementation is expected or predicted and supplied evidence establishes independent units, whichever workflow starts | The kickoff names the Executors' model and effort; the workflow decides how many run and when. |
+
+When both Executor + Reviewer and Coordinator + Executors apply, use
+Coordinator + Executors and add the Reviewer.
 
 Size the roster for where the run ends, not where it starts, including a
 brainstorm, grill, debug, or plan that implementation will follow. Do not ask
-whether implementation follows; when nothing says so, size for the starting
-workflow and invite the override in Why.
+whether implementation follows. When nothing says so, predict that the run
+reaches implementation and size for it. Skip the prediction when the operator
+limits the run to planning or withholds implementation, or when the run starts
+with `managing-issues` or `grill-with-docs`. A predicted implementation is not
+authorization. The kickoff's implementation-workers sentence sets a profile and
+is not an instruction to implement.
 
 Use one Executor per named or counted unit, or up to three when evidence
 establishes independent units without naming or counting them.
@@ -219,7 +227,7 @@ ordinary names, such as "Fable 5.1 at medium".
 
     **Why**
 
-    [One or two sentences on what needs to happen first and why this pattern fits. Name where the run is expected to end, which the roster was sized for; when the run reaches implementation, say that the coordinator carries the work into it. When the route relies on a pattern or roster default instead of supplied evidence, name the default and invite the override in one reply, such as naming independent units to add Executors.]
+    [One or two sentences on what needs to happen first and why this pattern fits. Name where the run is expected to end, which the roster was sized for; when the run reaches implementation, say that the coordinator carries the work into it. When that end is the predicted implementation, call it a prediction and say the coordinator can adjust the roster as the work unfolds. When the route relies on a pattern or roster default instead of supplied evidence, name the default and invite the override in one reply, such as naming independent units to add Executors.]
 
     **Setup**
 

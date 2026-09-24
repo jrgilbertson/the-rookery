@@ -2,6 +2,8 @@
 
 Format: `date | git rev | check | result | note`
 
+- 2026-09-23 | (working tree) | signal scan: numbered-heading signal removed | recorded | an independent simplicity review found it produced 61 hits across skills/, more than every other signal combined, for a decision the checklist's observable-completion and specificity items already judge. Fixture runner passes 35/35 with twelve signals; no behavioral case grades that signal, so no matched case reruns
+
 Suite round on 2026-09-23 against the corrected checklists at d7ce1ad. Prior package 15abed3 against revised 7d6d913. Prompts and packages were unchanged by the correction, so earlier outputs of both were regraded whole under the new items; the revised package ran fresh where it had no outputs. Same targets, isolation, schema, and cross-graders as the lead-model round. Ship criterion from the owner: every kept case settled pass on both targets with the revised package; where both cannot hold, Opus 5.5 takes precedence.
 
 - 2026-09-23 | 7d6d913 | matched comparison: planted-rot-review, Opus 5.5 | pass (6/6), pass (6/6) | $0.20 and $0.22 (37 and 40 s); the prior fails 3/6 twice, missing signal counts both times. Settled improvement on this target

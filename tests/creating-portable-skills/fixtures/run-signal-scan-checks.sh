@@ -58,7 +58,6 @@ signals=(
 	"history identifier"
 	"pinned model name"
 	"prohibition run"
-	"numbered workflow heading"
 )
 
 planted=$(sh "$scan" "$fixtures/planted")
@@ -85,7 +84,6 @@ expect_count planted "$planted" "migration-relative phrasing" 1
 expect_count planted "$planted" "history identifier" 1
 expect_count planted "$planted" "pinned model name" 1
 expect_count planted "$planted" "prohibition run" 1
-expect_count planted "$planted" "numbered workflow heading" 2
 
 # Every header names the checklist item that judges the signal.
 headers=$(printf '%s\n' "$planted" | grep -c '^## .* -> .')

@@ -73,7 +73,4 @@ runs=$(each_file awk '{
 }')
 report 'prohibition run' 'Steering is positive' "$runs"
 
-scan 'numbered workflow heading' 'Specificity matches fragility' '' \
-	'^#+ [0-9]+\.'
-
 exit 0

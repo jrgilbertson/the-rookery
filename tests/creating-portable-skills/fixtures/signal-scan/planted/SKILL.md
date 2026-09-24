@@ -32,7 +32,3 @@ Restrict the retry to the failed rows.
 - Do not rename the file.
 - Never reorder the columns.
 - Avoid trailing whitespace.
-
-### 1. Export
-
-### 2. Verify

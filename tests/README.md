@@ -105,6 +105,10 @@ note`. The `git rev` field names the commit the run's working tree was
   the skill (or the frozen prior version) and with the revised version, each
   in a fresh context — and ships only when the discriminating cases show the
   intended improvement with no regression. Log one line per graded variant.
+  One blind grader in a fresh context scores both variants of a case on a
+  target from their final answers, quotes the evidence for each verdict, and
+  is a different model from the one that wrote the answers when a second
+  model is available.
 - **Smoke check.** Install the skill from source into a disposable project on
   each roster harness — Claude Code and Codex CLI — ask one trigger query, and
   confirm from the run's trace that the copy which activated is the

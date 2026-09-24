@@ -2,10 +2,100 @@
 
 Format: `date | git rev | check | result | note`
 
+## Completed recovery on 2026-09-23
+
+Six retained cases, two runs per variant on each target. Targets: Claude Code
+2.1.281, Opus 5.5 at medium effort; Codex CLI 0.155.1, gpt-6-sol at high effort.
+Sol grades the Opus packets; Grok CLI 1.0.41, Grok 4.7 at high effort grades the
+Sol packets because Claude exhausted its session quota. Each grader receives
+both variants under neutral letters through one strict JSON schema. The
+control adjudication and checklist corrections are recorded below. Invalid
+grades are retried and never counted; valid failing answers remain failures.
+
+Sol's 28-answer round yielded two empty prior install/grading answers; those
+execution gaps were recovered. Claude's seven attempted grading packets
+returned session-limit errors, despite a success subtype. The temporary runner
+now preserves command failures, rejects empty/error answers, validates unique
+output letters and exact checklist item numbers, and requires every expected
+packet before reporting completion. The retired description case is excluded
+from these six-case totals; its removal supplies no improvement evidence.
+
+All revised Sol runs use the current package revision. Opus answers are reused at the
+revisions named in each row, except the cost case's two new revised runs.
+Later package edits do not affect the reused cases' contracts; these rows
+remain evidence for their named revisions, not fresh runs of the whole suite
+at the final head. Every retained workspace copy was compared with its frozen
+source. Current package source is unchanged since b3917a2.
+
+- 2026-09-23 | b83df51, 9d39948, b3917a2 | comparison: Opus 5.5, six cases | prior 7/12; revised 12/12 | two discriminating cases, planted-rot and install/grading, each improve 0/2 to 2/2; every revised control passes. Authoring totals: 531,102 to 498,874 tokens (−6.1%); median 44,981.5 to 31,483 tokens and 33.5 to 35 s; reported suite cost $1.5764 to $1.5644, excluding grading and discarded attempts. Reused outputs incur no new authoring charge in this recovery.
+- 2026-09-23 | 15abed3, b3917a2 | comparison: Sol high, six cases | prior 6/12; revised 12/12 | the same two discriminating cases each improve 0/2 to 2/2; every revised control passes. Authoring totals: 1,298,974 to 1,086,802 tokens (−16.3%); median 100,765.5 to 87,609 tokens and 62 to 49 s; cost not available. Input counts include cached input; it is not added twice.
+- 2026-09-23 | b3917a2 | structural validation and repository checks | pass | cached official skills-ref 0.1.1 via `uvx --offline --from skills-ref agentskills validate`; catalog, repository integrity, current-tree secrets, and all fixture runners pass. The signal-scan fixture runner exercises the shipped script.
+- 2026-09-23 | b3917a2 | signal scan: entire catalog | recorded | zero pressure-language, thinking-scaffold, and format/narration-suppressor hits; the package itself has zero hits in all eleven categories. Other catalog hits remain advisory and belong to the audit in #165.
+- 2026-09-23 | b3917a2 | description contract | unchanged | the description is byte-identical to the preserved prior version, so the existing trigger suite stands; no new trigger result is claimed.
+- 2026-09-23 | b3917a2 | smoke: Codex CLI 0.155.1, Sol high | pass | skills CLI 1.7.0 installed local source in copy mode into a disposable project; every installed file matched source and signal-scan.sh retained its executable bit. The native trace read the project's installed `.agents/skills/creating-portable-skills/SKILL.md` on the contract query “Help me create a new skill for formatting SQL queries”. Cost not available.
+- 2026-09-23 | b3917a2 | smoke: Claude Code, Opus 5.5 | not run — usage limit; owner accepted | local-source copy installation matched every file and preserved the executable bit, but native activation returned the session-limit error. Owner: “Yes, accept the missing current Claude smoke check”. The earlier Claude activation remains historical; current installation identity is not claimed as current activation.
+
+- 2026-09-23 | b3917a2 | independent final checklist and ship-rule review | pass | a reviewer that did not author the package or grade the comparison inspected every package file, all twelve final grading packets, raw answers, workspace copies, costs, native smoke evidence, and all 48 serialized log rows. Every checklist section passes. Stable gains on both discriminating cases and no revised control failure support shipping for these tested targets and revisions; reused Opus outputs are not fresh final-head runs. Current Claude activation remains unverified with the owner’s explicit acceptance above.
+
+Per-run authoring costs follow. Opus token totals include input, cache creation,
+cache read, and output; Sol input already includes cached tokens. Prices are
+harness-reported figures, not a claim about subscription billing.
+
+- 2026-09-23 | 15abed3 | Opus 5.5: cost-and-check-pruning, prior r1 | fail (4/6); items 3, 5 | $0.1330 reported cost; 44,453 total tokens, 34 s
+- 2026-09-23 | b3917a2 | Opus 5.5: cost-and-check-pruning, revised r2 | pass (6/6) | $0.1317 reported cost; 42,856 total tokens, 47 s
+- 2026-09-23 | b3917a2 | Opus 5.5: cost-and-check-pruning, revised r1 | pass (6/6) | $0.1280 reported cost; 30,708 total tokens, 38 s
+- 2026-09-23 | 15abed3 | Opus 5.5: cost-and-check-pruning, prior r2 | pass (6/6) | $0.1753 reported cost; 61,649 total tokens, 44 s
+- 2026-09-23 | 15abed3 | Opus 5.5: independent-fresh-context-review, prior r1 | pass (3/3) | $0.1011 reported cost; 30,382 total tokens, 18 s
+- 2026-09-23 | 9d39948 | Opus 5.5: independent-fresh-context-review, revised r1 | pass (3/3) | $0.0888 reported cost; 28,942 total tokens, 23 s
+- 2026-09-23 | 15abed3 | Opus 5.5: independent-fresh-context-review, prior r2 | pass (3/3) | $0.0864 reported cost; 29,503 total tokens, 18 s
+- 2026-09-23 | 9d39948 | Opus 5.5: independent-fresh-context-review, revised r2 | pass (3/3) | $0.1170 reported cost; 32,258 total tokens, 20 s
+- 2026-09-23 | b83df51 | Opus 5.5: install-and-grading-gates, revised r1 | pass (4/4) | $0.0920 reported cost; 29,439 total tokens, 32 s
+- 2026-09-23 | b83df51 | Opus 5.5: install-and-grading-gates, revised r2 | pass (4/4) | $0.0947 reported cost; 29,961 total tokens, 23 s
+- 2026-09-23 | 15abed3 | Opus 5.5: install-and-grading-gates, prior r2 | fail (0/4); items 1, 2, 3, 4 | $0.1173 reported cost; 45,510 total tokens, 36 s
+- 2026-09-23 | 15abed3 | Opus 5.5: install-and-grading-gates, prior r1 | fail (0/4); items 1, 2, 3, 4 | $0.1246 reported cost; 58,523 total tokens, 41 s
+- 2026-09-23 | 15abed3 | Opus 5.5: passing-baseline-regression-control, prior r1 | pass (4/4) | $0.0924 reported cost; 29,807 total tokens, 21 s
+- 2026-09-23 | 9d39948 | Opus 5.5: passing-baseline-regression-control, revised r2 | pass (4/4) | $0.0889 reported cost; 28,620 total tokens, 21 s
+- 2026-09-23 | 15abed3 | Opus 5.5: passing-baseline-regression-control, prior r2 | pass (4/4) | $0.0881 reported cost; 41,153 total tokens, 18 s
+- 2026-09-23 | 9d39948 | Opus 5.5: passing-baseline-regression-control, revised r1 | pass (4/4) | $0.0870 reported cost; 28,526 total tokens, 21 s
+- 2026-09-23 | 15abed3 | Opus 5.5: planted-rot-review, prior r2 | fail (3/5); items 3, 4 | $0.1540 reported cost; 35,013 total tokens, 39 s
+- 2026-09-23 | b83df51 | Opus 5.5: planted-rot-review, revised r1 | pass (5/5) | $0.2370 reported cost; 96,663 total tokens, 50 s
+- 2026-09-23 | b83df51 | Opus 5.5: planted-rot-review, revised r2 | pass (5/5) | $0.1908 reported cost; 53,795 total tokens, 49 s
+- 2026-09-23 | 15abed3 | Opus 5.5: planted-rot-review, prior r1 | fail (4/5); items 3 | $0.2009 reported cost; 52,257 total tokens, 50 s
+- 2026-09-23 | 15abed3 | Opus 5.5: vendor-specific-advice-stays-out, prior r2 | pass (6/6) | $0.1572 reported cost; 51,751 total tokens, 33 s
+- 2026-09-23 | 9d39948 | Opus 5.5: vendor-specific-advice-stays-out, revised r1 | pass (6/6) | $0.1569 reported cost; 49,087 total tokens, 42 s
+- 2026-09-23 | 9d39948 | Opus 5.5: vendor-specific-advice-stays-out, revised r2 | pass (6/6) | $0.1516 reported cost; 48,019 total tokens, 46 s
+- 2026-09-23 | 15abed3 | Opus 5.5: vendor-specific-advice-stays-out, prior r1 | pass (6/6) | $0.1460 reported cost; 51,101 total tokens, 29 s
+- 2026-09-23 | 15abed3 | Sol high: cost-and-check-pruning, prior r2 | pass (6/6) | cost not available; 113,054 total tokens, 97 s
+- 2026-09-23 | b3917a2 | Sol high: cost-and-check-pruning, revised r1 | pass (6/6) | cost not available; 84,126 total tokens, 65 s
+- 2026-09-23 | b3917a2 | Sol high: cost-and-check-pruning, revised r2 | pass (6/6) | cost not available; 126,626 total tokens, 77 s
+- 2026-09-23 | 15abed3 | Sol high: cost-and-check-pruning, prior r1 | fail (5/6); items 3 | cost not available; 123,316 total tokens, 96 s
+- 2026-09-23 | 15abed3 | Sol high: independent-fresh-context-review, prior r1 | pass (3/3) | cost not available; 68,779 total tokens, 37 s
+- 2026-09-23 | b3917a2 | Sol high: independent-fresh-context-review, revised r2 | pass (3/3) | cost not available; 102,023 total tokens, 38 s
+- 2026-09-23 | 15abed3 | Sol high: independent-fresh-context-review, prior r2 | pass (3/3) | cost not available; 88,477 total tokens, 42 s
+- 2026-09-23 | b3917a2 | Sol high: independent-fresh-context-review, revised r1 | pass (3/3) | cost not available; 68,514 total tokens, 42 s
+- 2026-09-23 | 15abed3 | Sol high: install-and-grading-gates, prior r2 | fail (1/4); items 1, 3, 4 | cost not available; 52,658 total tokens, 26 s
+- 2026-09-23 | b3917a2 | Sol high: install-and-grading-gates, revised r1 | pass (4/4) | cost not available; 47,963 total tokens, 29 s
+- 2026-09-23 | b3917a2 | Sol high: install-and-grading-gates, revised r2 | pass (4/4) | cost not available; 67,450 total tokens, 34 s
+- 2026-09-23 | 15abed3 | Sol high: install-and-grading-gates, prior r1 | fail (1/4); items 1, 3, 4 | cost not available; 82,108 total tokens, 28 s
+- 2026-09-23 | 15abed3 | Sol high: passing-baseline-regression-control, prior r2 | pass (4/4) | cost not available; 73,209 total tokens, 37 s
+- 2026-09-23 | 15abed3 | Sol high: passing-baseline-regression-control, prior r1 | pass (4/4) | cost not available; 73,004 total tokens, 29 s
+- 2026-09-23 | b3917a2 | Sol high: passing-baseline-regression-control, revised r1 | pass (4/4) | cost not available; 45,857 total tokens, 19 s
+- 2026-09-23 | b3917a2 | Sol high: passing-baseline-regression-control, revised r2 | pass (4/4) | cost not available; 64,522 total tokens, 32 s
+- 2026-09-23 | 15abed3 | Sol high: planted-rot-review, prior r1 | fail (3/5); items 1, 4 | cost not available; 126,556 total tokens, 103 s
+- 2026-09-23 | 15abed3 | Sol high: planted-rot-review, prior r2 | fail (1/5); items 1, 2, 4, 5 | cost not available; 146,306 total tokens, 101 s
+- 2026-09-23 | b3917a2 | Sol high: planted-rot-review, revised r1 | pass (5/5) | cost not available; 91,092 total tokens, 56 s
+- 2026-09-23 | b3917a2 | Sol high: planted-rot-review, revised r2 | pass (5/5) | cost not available; 92,387 total tokens, 74 s
+- 2026-09-23 | b3917a2 | Sol high: vendor-specific-advice-stays-out, revised r2 | pass (6/6) | cost not available; 192,363 total tokens, 63 s
+- 2026-09-23 | 15abed3 | Sol high: vendor-specific-advice-stays-out, prior r2 | fail (5/6); items 3 | cost not available; 194,710 total tokens, 82 s
+- 2026-09-23 | b3917a2 | Sol high: vendor-specific-advice-stays-out, revised r1 | pass (6/6) | cost not available; 103,879 total tokens, 77 s
+- 2026-09-23 | 15abed3 | Sol high: vendor-specific-advice-stays-out, prior r1 | pass (6/6) | cost not available; 156,797 total tokens, 118 s
+
+## Corrections and earlier rounds
+
 - 2026-09-23 | afa1bf3 + case clarification | vendor-specific-advice-stays-out items 4–5 | clarified | a blind reviewer confirmed that “removal” could mean replacing the sentence while keeping the test requirement. The condition now explicitly means removing the requirement to run tests before reporting readiness. Acceptance of preserved requirements is unchanged; regrade both variants under the clarified item.
 
 - 2026-09-23 | afa1bf3 + case retirement | baseline-before-shipping | retired | a blind reviewer found the prompt explicitly ordered testing skipped while its checklist demanded testing, and supplied no prior description or trigger set. A separate necessity pass over the branch diff found that this case protects unchanged description-comparison behavior; the description itself is unchanged. Retired the defective legacy case rather than constructing a new battery outside this change. Its old results below remain historical and are excluded from the final six-case totals.
-- 2026-09-23 | b3917a2 | grading adjudication: Sol passing-baseline-regression-control | pending cross-model adjudication | Grok 4.7 failed revised run 2 on item 3 and both prior answers on item 4. A separate blind Codex agent, given the whole anonymous packet without the key or original grades, accepted their semantic equivalents. A second Grok judgment accepted both prior answers but retained the revised failure. A final cross-model adjudication receives both complete judgments and the anonymous packet; no checklist, prompt, or skill changes. All original verdicts remain recorded as grader disagreement.
+- 2026-09-23 | b3917a2 | grading adjudication: Sol passing-baseline-regression-control | all four answers pass | Grok 4.7 initially failed revised run 2 on item 3 and both prior answers on item 4. A blind Codex advisory review accepted semantic equivalents; a second Grok judgment still failed revised run 2. The final Grok adjudicator inspected both complete judgments against the anonymous packet and accepted all four: an unconditional correction requirement rules out waiving failures, and the revised answer separates control evidence from behavior-changing cases. This complete cross-model adjudication governs both variants; original judgments remain recorded as disagreement. No checklist, prompt, or skill changed.
 
 - 2026-09-23 | b3917a2 + case correction | vendor-specific-advice-stays-out items 4–5 | corrected | a blind reviewer saw the prompt, checklist, and baseline template, but no outputs or grades. The prompt asks whether to delete a release gate and what change to make; keeping or rewording it is a valid branch. Items 4–5 now require a removal experiment and scoped conclusions only when an answer proposes evaluating removal. This widens acceptance for that branch; deletion based solely on vendor advice still fails item 2, and an unscoped removal experiment still fails items 4–5. Prompts and packages are unchanged; existing answers are regraded under the frozen correction.
 

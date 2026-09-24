@@ -1,6 +1,8 @@
 # A passing baseline can protect a load-bearing contract
 
-Provenance: an independent 2026-08-26 package review removed a load-bearing
+Provenance: regression control for retaining load-bearing passing-baseline
+cases without claiming improvement from them, and correcting a failed control
+before shipping. An independent 2026-08-26 package review removed an
 owner-decision case solely because the bare baseline passed; the owner rejected
 waiting for that behavior to fail before protecting it.
 

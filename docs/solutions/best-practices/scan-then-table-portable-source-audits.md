@@ -41,7 +41,7 @@ table, no HTML details, and no em dashes.
    response has no review coverage verdict.
 2. Name every relevant role and how the read finished, in ordinary words,
    using the access results defined in
-   `skills/personal-chief-of-staff/references/source-behavior.md`.
+   `skills/personal-chief-of-staff/references/source-access.md`.
    A bound interface known unavailable without a source call is not attempted;
    an attempted failure requires an executed source call.
 3. Successful reads may share one sentence. A limit gets its own clause or
@@ -58,7 +58,7 @@ missing role. A named available role may not be silently omitted or labeled
 not needed.
 
 `personal-chief-of-staff` ships this shape in
-`skills/personal-chief-of-staff/assets/review-bundle.md`.
+`skills/personal-chief-of-staff/references/source-access.md`.
 
 ## Why This Matters
 

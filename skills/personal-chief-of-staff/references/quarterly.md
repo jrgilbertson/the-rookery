@@ -10,15 +10,14 @@ Resolve the local quarter and query time. A scheduled run on the first Saturday
 of January, April, July, or October reviews the quarter that just ended and
 prepares commitments for the new quarter. A manual run honors an explicitly
 requested period; without one, use the current available quarter. For a new
-review, apply [source coverage](source-behavior.md#establish-source-coverage).
+review, complete [the review baseline](review-reasoning.md#retrieve-the-review-baseline).
 Through each configured binding's native interface under
 [source bindings](source-bindings.md#resolve-before-recommending), read the
 quarterly review for that period when one exists, the configured template,
 and the last completed review that provides useful continuity. Read available
-weekly reviews, selected daily journals, the bound strategy and learning
-roles, a bounded current slice from the canonical task owner, and only the
-additional notes needed to understand material projects, decisions,
-relationships, health, and writing.
+weekly reviews, selected daily journals, and only the additional notes needed
+to understand material projects, decisions, relationships, health, and
+writing.
 
 Query native sources selectively to confirm important outcomes, commitments,
 customer or product evidence, financial or operating changes, and other facts
@@ -53,7 +52,7 @@ The synthesis should clarify, where evidence supports it:
 Distinguish facts, inference, uncertainty, and the strategic judgment that only
 the user can supply. Do not turn a partial quarter into a confident story.
 
-Apply [Make every intention verifiable](source-behavior.md#make-every-intention-verifiable)
+Apply [Make every intention verifiable](review-reasoning.md#make-every-intention-verifiable)
 when any candidate priority, outcome, experiment, boundary, strategy edit, or
 learning proposal first appears. The user-disposition gate below controls
 whether it becomes a commitment or action.
@@ -69,7 +68,7 @@ inspect lower-level evidence only to resolve a material question. Cover the
 quarter's outcomes, losses, capacity, strategy, decisions, operating evidence,
 relationships, health, writing, learning, and next-quarter choices where useful.
 
-Use [Decide what deserves attention](source-behavior.md#decide-what-deserves-attention)
+Use [Decide what deserves attention](review-reasoning.md#decide-what-deserves-attention)
 for health patterns and causal or correlation analysis.
 
 When a consequential release, customer-proof attempt, incident, loss, or
@@ -81,7 +80,7 @@ and missing evidence narrows only the conclusions that depend on it.
 
 ## Audit the quarter's durable coaching evidence
 
-Use [Ground longitudinal coaching in durable evidence](source-behavior.md#ground-longitudinal-coaching-in-durable-evidence)
+Use [Ground longitudinal coaching in durable evidence](review-reasoning.md#ground-longitudinal-coaching-in-durable-evidence)
 for recurrence, evidence chains, and counterevidence. Begin with one compact
 line stating durable-corpus coverage for the selected quarter. Explain a gap
 or source skew only beside the conclusion it limits or biases.
@@ -124,7 +123,7 @@ coaching.
 ### Resolve interpretations before commitments
 
 Present interpretations as inference-labeled questions under
-[Ask on the evidence frontier](source-behavior.md#ask-on-the-evidence-frontier),
+[Ask on the evidence frontier](review-reasoning.md#ask-on-the-evidence-frontier),
 each with a recommended disposition to accept, revise, or reject. Use this
 order across as many bounded rounds as needed:
 
@@ -164,11 +163,11 @@ evidence-backed, and specific enough to guide later reviews.
 
 ## Review and write back
 
-Present one [review bundle](source-behavior.md#prepare-one-review-bundle).
+Present one [review bundle](review-reasoning.md#prepare-one-review-bundle).
 The canonical quarterly review for the selected period is one action; each
 related source change is independently approvable. Apply approved actions
-through the shared [application rules](source-behavior.md#revalidate-apply-and-read-back)
-and, for Obsidian-owned notes, the [Obsidian CLI rules](source-behavior.md#use-obsidian-only-through-its-cli).
+through the shared [application rules](action-application.md#revalidate-apply-and-read-back)
+and, for Obsidian-owned notes, the [Obsidian CLI rules](source-access.md#use-obsidian-only-through-its-cli).
 
 End explicitly using the core run endings. A partial quarter can still end
 Complete when the reviewed record truthfully states its evidence limits; use

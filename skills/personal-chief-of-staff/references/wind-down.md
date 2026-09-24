@@ -3,7 +3,7 @@
 Use this mode to close one local day through the user's canonical daily journal
 and authoritative sources, leave tomorrow ready, and deliver light coaching.
 Scheduled and manual wind-down follow the same workflow. This is the sole daily
-chief-of-staff path. Apply [Make every intention verifiable](source-behavior.md#make-every-intention-verifiable)
+chief-of-staff path. Apply [Make every intention verifiable](review-reasoning.md#make-every-intention-verifiable)
 whenever a plan, commitment, coaching intervention, or durable proposal first
 appears.
 
@@ -29,7 +29,7 @@ Phase 1 left behind.
 
 Once Phase 1 has proposed its bundle, resolve it before opening sources for
 Phase 2. The only discovery exception is recomputing a bundle resumed on a
-later local day under [the resume rule](source-behavior.md#end-and-resume-honestly).
+later local day under [the resume rule](source-access.md#end-and-resume-honestly).
 Per-action revalidation and readback still run. Early Phase 2 reads would
 return the state Phase 1 was about to correct.
 
@@ -38,9 +38,9 @@ return the state Phase 1 was about to correct.
 Resolve the local date and review window. If the run time or the user's wording
 makes the day being closed ambiguous, as can happen just after midnight,
 resolve the intended journal date before querying the bounded day slice or
-drafting. For a new review, apply
-[source coverage](source-behavior.md#establish-source-coverage) and the
-configured baseline before the first recommendation. Treat the following local
+drafting. For a new review, complete
+[the review baseline](review-reasoning.md#retrieve-the-review-baseline) before the
+first recommendation. Treat the following local
 date as the commitment target day. Read the configured daily-journal template
 and the closing-date journal, if one exists, through each binding's native
 interface under [source bindings](source-bindings.md#resolve-before-recommending).
@@ -51,8 +51,7 @@ If a missing journal could supply useful context, offer at most one interactive
 catch-up and continue today's close by default. Never reconstruct a backlog
 or treat a missing journal as evidence that nothing happened.
 
-Read the bound strategy and learning roles and the current slice from the
-canonical task owner. Expand into meetings, project state, or capacity when
+Beyond the baseline, expand into meetings, project state, or capacity when
 the day or a proposed choice needs them. Query each relevant visible personal
 and work calendar separately and retain its identity. Keep observed evidence,
 inference, and subjective meaning distinct.
@@ -140,8 +139,8 @@ own.
 
 ## Phase 1: Review, apply, and read back
 
-Present the sweep as the Phase 1 [review bundle](source-behavior.md#prepare-one-review-bundle)
-and wait for decisions. Use the shared [application rules](source-behavior.md#revalidate-apply-and-read-back)
+Present the sweep as the Phase 1 [review bundle](review-reasoning.md#prepare-one-review-bundle)
+and wait for decisions. Use the shared [application rules](action-application.md#revalidate-apply-and-read-back)
 for each approved action and its outcome. Apply independently approved rows
 even when another row is blocked or undecided. Ask for a decision on undecided
 rows before Phase 2; silence is not deferral. A blocked action with a reported
@@ -152,7 +151,7 @@ with the user absent instead ends **Paused**, even with zero rows, and applies
 nothing. Prepare from canonical role reads; target write-interface rereads
 wait for exact action approval.
 
-When the user replies, apply [the resume rule](source-behavior.md#end-and-resume-honestly)
+When the user replies, apply [the resume rule](source-access.md#end-and-resume-honestly)
 before applying actions, then continue into Phase 2. On a later-day resume,
 use the current local day for the sweep and its following day as the planning
 target. Keep the journal's original closing date.
@@ -197,7 +196,7 @@ remain separate actions, and meaningful commitments need no matching blocks.
 ### Relationship exceptions for tomorrow
 
 When the companion is available, use the shared
-[relationship judgment rules](source-behavior.md#use-relationship-judgment-as-a-companion)
+[relationship judgment rules](crm-companion.md#use-relationship-judgment-as-a-companion)
 to inspect active cadence exceptions and connections to current work, writing,
 reading, decisions, or meetings that could help **tomorrow**. This bounded check
 is separate from the Daily CRM Scan.
@@ -212,7 +211,7 @@ defensible tomorrow judgment items with no filler.
 
 ## Phase 2: Ask on the evidence frontier
 
-Use [Ask on the evidence frontier](source-behavior.md#ask-on-the-evidence-frontier)
+Use [Ask on the evidence frontier](review-reasoning.md#ask-on-the-evidence-frontier)
 after the broad reflection. Ask only what tomorrow's plan, coaching, or
 commitments turn on. If an answer changes the plan, revise it before coaching.
 
@@ -229,7 +228,7 @@ learning roles, or one supported current hypothesis, should change tomorrow's
 actual choice. Apply at most one; do not force a rule or hypothesis merely to
 produce coaching.
 
-Use [Ground longitudinal coaching in durable evidence](source-behavior.md#ground-longitudinal-coaching-in-durable-evidence)
+Use [Ground longitudinal coaching in durable evidence](review-reasoning.md#ground-longitudinal-coaching-in-durable-evidence)
 for the bounded look-back, counterevidence, and intervention shape. Deliver one
 observation, one inference, and one recommendation tied to tomorrow's actual
 plan, commitment, or boundary, and invite correction. A supported recommendation
@@ -254,7 +253,7 @@ planning; a new journal structure requires separate approval.
 
 Draft **three to five numbered plain-Markdown bullets** in the closing-date
 journal. Each uses one to three natural sentences containing the shared
-[current basis, outcome, and closure evidence](source-behavior.md#make-every-intention-verifiable),
+[current basis, outcome, and closure evidence](review-reasoning.md#make-every-intention-verifiable),
 plus a short user-approved reason tied to strategy, an obligation, or an avoided
 cost. Refine activity labels such as “development” or “meetings” into concrete
 outcomes. Every outcome, finish line, and rationale must trace to the user's
@@ -299,7 +298,7 @@ next-day planning continues without an invented journal write.
 Draft from the state Phase 1 left behind. A task, calendar, CRM, or repository
 fact the journal reports comes from the re-read result of an applied action.
 An action carrying any other outcome under "Revalidate, apply, and read back" in
-`references/source-behavior.md` is described as it actually stands, and an
+`references/action-application.md` is described as it actually stands, and an
 outcome that section leaves unknown is described as unconfirmed rather than as
 applied or unapplied.
 
@@ -364,15 +363,15 @@ discovery**, covering both phases' current reads. This is not an action-only
 response.
 
 Continue action numbering from Phase 1 and omit actions already proposed there.
-Use the shared [bundle](source-behavior.md#prepare-one-review-bundle) and
-[application rules](source-behavior.md#revalidate-apply-and-read-back).
+Use the shared [bundle](review-reasoning.md#prepare-one-review-bundle) and
+[application rules](action-application.md#revalidate-apply-and-read-back).
 
 For an approved journal action, re-read the target through its configured
 native interface. Re-read the configured template through its own interface
 when the action adds or changes the meaningful-commitments section. Create
 from the current template or edit the existing journal through the target's
 interface. For an Obsidian-owned journal, follow the
-[Obsidian CLI rules](source-behavior.md#use-obsidian-only-through-its-cli).
+[Obsidian CLI rules](source-access.md#use-obsidian-only-through-its-cli).
 Preserve manual content, frontmatter, links, embeds, and views, do not lint,
 and read the result back through the target's interface before reporting it as
 applied. If the template or any content in the target journal changed after

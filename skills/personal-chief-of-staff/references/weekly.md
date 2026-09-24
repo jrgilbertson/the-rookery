@@ -2,19 +2,19 @@
 
 Use this mode to turn the available week into an executive review and a
 credible plan for the next one. Scheduled and manual invocations follow the
-same interactive workflow. Apply [Make every intention verifiable](source-behavior.md#make-every-intention-verifiable)
+same interactive workflow. Apply [Make every intention verifiable](review-reasoning.md#make-every-intention-verifiable)
 when an outcome, priority, intervention, or durable proposal first appears.
 
 ## Reconstruct the available week
 
-Resolve the local review window. Apply [source coverage](source-behavior.md#establish-source-coverage)
-for a new review. Through each configured binding's native interface under
+Resolve the local review window. Complete
+[the review baseline](review-reasoning.md#retrieve-the-review-baseline) for a new
+review. Through each configured binding's native interface under
 [source bindings](source-bindings.md#resolve-before-recommending), read the
 current weekly review when one already exists, the weekly-review template,
 and the last completed review that can provide useful continuity. Read the
-week's daily journals, the bound strategy and learning roles, a bounded current
-slice from the canonical task owner, and only the additional notes needed to
-understand active projects, relationships, meetings, decisions, and writing.
+week's daily journals and only the additional notes needed to understand
+active projects, relationships, meetings, decisions, and writing.
 
 Query live calendars and selected native sources when they can confirm an
 outcome, commitment, risk, or material operating change. Use both personal and
@@ -67,7 +67,7 @@ opening the supporting detail.
 ## Ask one round after the synthesis
 
 After the synthesis and before coaching, ask one
-[Frontier Round](source-behavior.md#ask-on-the-evidence-frontier), including any
+[Frontier Round](review-reasoning.md#ask-on-the-evidence-frontier), including any
 qualifying recurring-thread candidate. Use the answers to classify threads and
 choose an intervention. Questions discovered during coaching carry over to the
 next round.
@@ -78,7 +78,7 @@ candidate, and its answers were available to the coaching judgment.
 ## Coach on recurring threads
 
 After the Frontier Round and before commitments, use
-[Ground longitudinal coaching in durable evidence](source-behavior.md#ground-longitudinal-coaching-in-durable-evidence)
+[Ground longitudinal coaching in durable evidence](review-reasoning.md#ground-longitudinal-coaching-in-durable-evidence)
 and the round's answers to assess zero to three supported recurring threads.
 Classify each as:
 
@@ -129,7 +129,7 @@ ideas worth advancing. Leave unsupported sections blank, uncertain, or open
 for discussion.
 
 Do not turn source counts into performance scores. Use
-[Decide what deserves attention](source-behavior.md#decide-what-deserves-attention)
+[Decide what deserves attention](review-reasoning.md#decide-what-deserves-attention)
 for health patterns and correlation analysis.
 
 For a consequential release, customer-proof attempt, incident, loss, or
@@ -142,7 +142,7 @@ sections remain blank, uncertain, or open for discussion.
 ## Review relationship opportunities in context
 
 When the companion is available, use the shared
-[relationship judgment rules](source-behavior.md#use-relationship-judgment-as-a-companion)
+[relationship judgment rules](crm-companion.md#use-relationship-judgment-as-a-companion)
 to inspect active cadence exceptions and connect the week's work, decisions,
 writing, reading, and planned commitments to relevant people. Keep one optional
 broader connection separate, with no action unless the user promotes it.
@@ -175,12 +175,12 @@ week, not an agent-authored theory of the user's life.
 
 ## Review and write back
 
-Present one [review bundle](source-behavior.md#prepare-one-review-bundle).
+Present one [review bundle](review-reasoning.md#prepare-one-review-bundle).
 The current canonical weekly-review record is one action; each related source
 change, including each Administrative Sweep resolution and its drafted content,
 is independently approvable. Apply approved actions through the shared
-[application rules](source-behavior.md#revalidate-apply-and-read-back) and, for
-Obsidian-owned notes, the [Obsidian CLI rules](source-behavior.md#use-obsidian-only-through-its-cli).
+[application rules](action-application.md#revalidate-apply-and-read-back) and, for
+Obsidian-owned notes, the [Obsidian CLI rules](source-access.md#use-obsidian-only-through-its-cli).
 
 Use the core ending and recap rules. An otherwise finished useful review with
 a material evidence gap ends **Partial**; open approvals alone do not make it

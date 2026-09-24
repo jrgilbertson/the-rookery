@@ -44,10 +44,16 @@ supplies that locator.
 
 Start from the roles needed by the requested review or explicit setup. Inspect
 existing review behavior, configured connections, task-system guidance, and
-the applicable review templates. A template prompt shows an information need,
-not proof that a populated source exists. Ask the user, for each unresolved or
-proposed role: what decision it informs, which source owns its current version,
-which modes need it, what bounded locator or query and window apply, and what
+the applicable review templates. During setup, locate and read only the source
+ownership and template requirements relevant to the requested roles; load a
+full mode reference only after that review mode is selected. Inspect guidance,
+templates, and connection inventory already supplied or configured. For an
+unresolved role, obtain the user's native identity and bounded locator or query
+before reading its content; do not probe guessed role tokens or locators. A
+template prompt shows an information need, not proof that a populated source
+exists. Ask the user, for each unresolved or proposed role: what decision it
+informs, which source owns its current version, which modes need it, what
+bounded locator or query and window apply, and what
 to do when the source is absent, conflicts, or changes owner. Distinguish a
 designated source from a plausible title or an available connector. Confirm
 separate personal and work identities where both exist.
@@ -105,21 +111,56 @@ approved bounded source and report that result separately. A successful map
 write does not establish source access. If the native read fails, retain the
 approved binding, mark setup incomplete for that role, and retry its read on
 the next relevant session without repeating settled ownership questions.
+
 Completion: each approved role has a matching saved and read-back entry plus
 a native read result, and each deferred or failed role is named as such.
+
+## Finish standalone setup
+
+A setup request outside a review opens no mode and conducts no review. When
+setup happens inside a new review, that review's ending governs instead.
+
+Setup for a role is finished only when its approved entry is saved, reads back
+from the map, and its native source read succeeds. A preview awaiting the
+user's approval is not saved setup. A successful map save is not source
+access. A failed native read after a save leaves the approved binding and its
+owner in place, with setup for that role incomplete.
+
+End a standalone setup run with one core run ending, judged against these
+setup states:
+
+- **Complete:** every requested role is saved, read back, and natively read.
+- **Nothing material:** every requested role already has a matching binding
+  that reads successfully, so no change was needed.
+- **Partial:** at least one approved role is saved, while a requested role is
+  still deferred or unresolved, or a saved role's native read failed.
+- **Unable to prepare reliably:** the map is invalid, unreadable, or
+  symlinked, so no requested role can be previewed or saved safely.
+- **Paused:** a binding preview awaits approval, no requested role has a saved
+  binding because ownership is awaiting designation or deferred, or the user
+  intends to continue later.
+- **Skipped:** the user chose not to set up the requested roles.
+
+Recap each requested role as saved and natively read, saved with a failed
+native read, awaiting preview approval, deferred, or unresolved. The recap and
+audit report setup only: no review coverage verdict, synthesis,
+recommendation, or review action.
+
+Completion: the ending and recap match each requested role's actual setup
+state, and no setup response claims a review or treats a preview or map save
+as source access.
 
 ## Resolve before recommending
 
 For a new Wind-down, Weekly, or Quarterly review, load the map once before
 mode retrieval. Select the required baseline roles and then the mode's
-applicable bounded, mode-specific, and conditional roles. Use each binding's
-native interface and exact identity, locator or bounded query, window, and
-filter. Read strategy and durable learning before recommendations. Inspect
-returned current content for applicability; a successful map lookup alone is
-not source access. Read current task commitments for the review's bounded
-window. Apply the mode reference for its own record, template, and continuity
-reads. A caller-context request resolves only roles needed for that caller's
-decision.
+applicable bounded, mode-specific, and conditional roles. Resolve each
+binding's native interface and exact identity, locator or bounded query,
+window, and filter; a successful map lookup alone is not source access.
+[Retrieve the review baseline](review-reasoning.md#retrieve-the-review-baseline)
+owns the runtime reads and their order, and the mode reference names its own
+record, template, and continuity reads. A caller-context request resolves only
+roles needed for that caller's decision.
 
 An absent map or role starts an ownership question, not a title search. In the
 current response, ask the user to designate each unresolved baseline owner

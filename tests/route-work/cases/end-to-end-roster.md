@@ -9,6 +9,7 @@ implementation is carried by the coordinator alone unless independent units
 are established. On 2026-09-23 issue #162 made a predicted implementation the
 default, because operators had to reply "size to include implementation"
 before a card matched the run, so item 3 now expects the labeled prediction.
+Issue #164 dropped the no-merge line; item 1 still carries its stated merge limit.
 
 ## Prompt
 
@@ -50,26 +51,23 @@ before a card matched the run, so item 3 now expects the labeled prediction.
 - [ ] Item 3 starts with `ce-brainstorm` and stays the coordinator alone, with no
       Executors. Why names implementation as the predicted end and says the
       coordinator can adjust the roster as the work unfolds. The kickoff gives
-      no instruction to implement, states no grant, and ends with "Don't merge
-      without human approval."
+      no instruction to implement and states no grant.
 - [ ] Items 1 and 2 may repeat the supplied grant without widening it, keep
-      its condition on implementation, list no other permission, end the kickoff's authority text with
-      "Don't merge without human approval.", and enumerate no other
-      prohibitions.
+      its condition on implementation, list no other permission, and add no
+      prohibition the prompt did not state. Item 1 states its withheld merge
+      once in Setup and the kickoff.
 - [ ] Items 4–6 start with `ce-plan` on Opus 5.5 at high. Expected
       implementation alone adds no Executors and grants no permission to
       implement; defaults are labeled and no concrete units, owners or write
       scopes are invented.
 - [ ] Item 4's kickoff does not instruct the receiver to implement; ce-plan's
       own handoff gates implementation, so Why may say the coordinator carries
-      the work into it. Because the run may
-      reach implementation, its kickoff ends with "Don't merge without human
-      approval." and adds no other authority sentence, invented permission, or
-      limit.
+      the work into it. It adds no authority sentence, invented permission,
+      or limit.
 - [ ] Item 5 preserves planning-only authority and withheld implementation
       in Setup and the standalone kickoff, with no unconditional carry-forward.
 - [ ] Item 6's Why carries the work into implementation, and its kickoff may
-      repeat the supplied grant without widening it, lists no other permission,
-      and ends with "Don't merge without human approval."
+      repeat the supplied grant without widening it and lists no other
+      permission.
 - [ ] Every card follows the Route template without extra section labels.
 - [ ] The trace contains only reads of the installed package.

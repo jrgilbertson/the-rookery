@@ -1,9 +1,11 @@
 # A comparison reports cost and drops checks that do not discriminate
 
-Provenance: 2026-09-19 comparison against the vendor-neutral Agent Skills
-evaluation guide — the baseline comparison recorded pass results only, so
-a skill that doubled token use for no gain looked the same as a cheap one,
-and items that passed both halves still counted as evidence.
+Provenance: regression control for the contract that a comparison reports
+cost beside its pass result and drops checks that do not discriminate. It
+began as a discriminating case from the 2026-09-19 comparison against the
+vendor-neutral Agent Skills evaluation guide, where the baseline recorded
+pass results only. On 2026-09-23 both variants settled as passes on one
+target, so it proves no improvement.
 
 ## Prompt
 

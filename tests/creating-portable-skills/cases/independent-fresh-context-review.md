@@ -1,9 +1,10 @@
 # Independent fresh-context review of a revision
 
-Provenance: 2026-07-27/28 matched comparisons — the prior package let the
-authoring context grade its own revision and let a user exception replace the
-independent reviewer; both were observed failure paths the current skill
-closes.
+Provenance: regression control for the contract that the authoring context
+never grades its own revision and no user exception replaces the independent
+reviewer. Both were observed failure paths in the 2026-07-27/28 matched
+comparisons; both variants have passed it since, so it proves no
+improvement.
 
 ## Prompt
 

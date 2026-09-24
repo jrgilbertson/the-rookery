@@ -68,7 +68,7 @@ Completion: the validator passes, or every named fallback check passes with the 
 
 Follow [assets/baseline-test-template.md](assets/baseline-test-template.md) for every change it defines as substantive, a description-only change included. It owns case construction, regression controls, the matched pair, grading, cost, and the ship decision. Emit the case files and log lines to the host's test location (`tests/<skill-name>/` when no convention exists).
 
-Completion: every substantive change is covered by graded discriminating cases showing the intended improvement, every retained control still passes, no case regresses, and the case files and log lines are emitted.
+Completion: the template's decision rule is met for every substantive change, and the case files and log lines are emitted.
 
 ### 6. Decide and review
 
@@ -88,12 +88,10 @@ For a new package, or a change to packaging or the install path, recheck the hos
 
 If packaging exposes a defect that changes the package, apply step 6's re-entry rule before completing this step.
 
-Completion: the source validates, and every roster harness has a logged smoke result of pass or not run. A fail or inconclusive result blocks completion until it is corrected and rerun. A revision that changes neither packaging nor the install path completes on validation alone.
+Completion: the source validates, and every roster harness has a logged smoke result of pass. A fail or inconclusive result blocks completion until it is corrected and rerun. A harness whose smoke check cannot run is logged as not run and blocks completion until the user decides whether to ship without it; log that decision. A revision that changes neither packaging nor the install path completes on validation alone.
 
 ## Gotchas
 
-- The description carries the triggering burden. State its owned trigger branches and reserve workflow details for the body.
-- A later substantive edit invalidates the affected comparison even when an earlier draft passed.
 - Check the target collection and system-provided skills for name collisions. Verb-led gerund names (`creating-portable-skills`, not `skill-creator`) are usually more specific.
 - Do not encode a host repository's local rules into a portable skill. Changelog policy, tracker choice, and CI vendor stay in that repository.
 - When the skill's intent shrinks, update evals, cases, and trigger queries in the same change rather than leaving a one-off exception.

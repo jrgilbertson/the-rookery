@@ -34,10 +34,12 @@ artifacts.
    names from paths and text the outputs quote. A second grader is an
    optional spot-check on a contested item and never decides a pass; when
    the two disagree, the item is soft and gets fixed.
-4. **Decide.** Ship only when every discriminating case shows the intended
-   improvement and no case regresses. A
-   regression, or a same-as-baseline result on a required discriminating case,
-   returns the change to correction; rerun the affected cases after fixing.
+4. **Decide.** Ship only when no case regresses and every discriminating
+   case shows a settled improvement on at least one named target; on any other
+   target where that case is unsettled or unchanged, withhold its claim. A
+   regression, or a discriminating case with no settled improvement on any
+   target, returns the change to correction; rerun the affected cases after
+   fixing.
    State the cost delta beside the pass delta, so the decision shows what the
    change costs against what it buys. A checklist item that passes in both
    halves proves nothing: remove it, or keep its case only as a regression

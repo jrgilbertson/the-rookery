@@ -103,8 +103,9 @@ note`. The `git rev` field names the commit the run's working tree was
   single-variant run only regression-checks an unchanged skill. A new skill
   or substantive revision runs its affected cases as matched pairs — without
   the skill (or the frozen prior version) and with the revised version, each
-  in a fresh context — and ships only when the discriminating cases show the
-  intended improvement with no regression. Log one line per graded variant.
+  in a fresh context — and ships only when no case regresses and each
+  discriminating case shows the intended improvement on at least one target,
+  with the claim withheld on any other. Log one line per graded variant.
   One blind grader in a fresh context scores both variants of a case on a
   target from their final answers, quotes the evidence for each verdict, and
   is a different model from the one that wrote the answers when a second

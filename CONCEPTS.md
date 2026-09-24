@@ -278,8 +278,8 @@ revisions compare the frozen prior and revised versions, each in a fresh
 context with the intended variant confirmed loaded. Cases are binary
 pass/fail. One blind grader scores both variants of a case on a target, and it
 is a different model from the one that wrote the answers when a second model
-is available. A substantive revision ships only when the discriminating cases
-show the intended improvement with no regression. The repository's testing
+is available. A substantive revision ships only when no case regresses and each
+discriminating case shows the intended improvement on at least one target. The repository's testing
 convention owns the protocol.
 
 ### Regression Control

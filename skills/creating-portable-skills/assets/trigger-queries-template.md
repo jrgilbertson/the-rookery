@@ -53,5 +53,3 @@ metadata.
 - After a packaging change merges to the branch installers pull from, repeat
   the probe once against that published state — local-source success does
   not prove remote resolution — and log that line too.
-- A listing-proxy pass is not proof of native triggering in a harness; only
-  the smoke check shows that. Keep the two claims distinct.

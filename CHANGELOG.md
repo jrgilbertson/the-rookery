@@ -64,6 +64,13 @@ looked" surface. GitHub Releases mirror its entries.
   `grill-with-docs` start keep their earlier end. The prediction grants nothing, and the kickoff
   still ends with "Don't merge without human approval."
 
+- `route-work` now asks before starting `ce-work` on concrete work nobody
+  asked to implement, such as a diagnosed fix or a bare "route this: add X".
+  The Questions card asks whether implementation is authorized and recommends
+  "Yes". Naming or describing the work is not a request to implement it; a
+  request such as "route the kickoff to implement it" still routes to
+  `ce-work`.
+
 - `route-work` kickoffs that select supervised orchestration now say "Orca
   orchestration" in those words and tell the coordinator to use Orca's
   `orchestration` skill when it is installed, so the receiving session

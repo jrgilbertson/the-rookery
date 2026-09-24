@@ -1,6 +1,7 @@
 ---
 title: "Lead source audits with a short coverage paragraph"
 date: 2026-08-28
+last_updated: 2026-09-24
 category: best-practices
 module: personal-chief-of-staff
 problem_type: best_practice
@@ -38,9 +39,11 @@ table, no HTML details, and no em dashes.
 
 1. Lead with coverage: Sufficient, Partial, or Insufficient. An action-only
    response has no review coverage verdict.
-2. Name every relevant role and how the read finished, in ordinary words:
-   accessed with evidence, accessed with no relevant evidence, attempted
-   and failed, not configured, declined, not needed.
+2. Name every relevant role and how the read finished, in ordinary words,
+   using the access results defined in
+   `skills/personal-chief-of-staff/references/source-behavior.md`.
+   A bound interface known unavailable without a source call is not attempted;
+   an attempted failure requires an executed source call.
 3. Successful reads may share one sentence. A limit gets its own clause or
    sentence, with a "so" only when that result omits, qualifies, or prevents
    a claim.

@@ -5,7 +5,8 @@ estimate the pattern and roster for the whole approach and let supplied
 authority alone bound how far the coordinator carries it. A later review found
 that adding a Reviewer could exceed the five-worker concurrency ceiling.
 Issue #162 added item 4: a predicted implementation adds Executors for named
-modules but grants nothing.
+modules but grants nothing. Issue #164 dropped the no-merge line; items 1 to 3
+still carry their stated merge limit.
 
 ## Prompt
 
@@ -53,8 +54,8 @@ modules but grants nothing.
       and effort, repeats the Reviewer's model and effort where there is one,
       gives the implementation workers' model and effort without a count or
       scheduling,
-      treats the issue as the source of truth, and ends its authority text with
-      "Don't merge without human approval." No kickoff narrates phases, checkpoints, PR cadence, or a
+      and treats the issue as the source of truth. Items 1 to 3 state their
+      withheld merge once; item 4 says nothing about merge. No kickoff narrates phases, checkpoints, PR cadence, or a
       stopping point for the coordinator's work; the Reviewer's one-round guardrail
       is expected, not a stopping point.
 - [ ] The trace contains only reads of the installed package.

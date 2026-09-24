@@ -3,7 +3,7 @@
 Provenance: user feedback — routing asks the smallest independent question
 batch, ordered by impact with recommended answers, and copies only supplied
 authority. Issue #162 added a labeled prediction check to item 5, which says
-nothing about implementation.
+nothing about implementation. Issue #164 dropped the no-merge line.
 
 ## Prompt
 
@@ -52,12 +52,10 @@ nothing about implementation.
 - [ ] Item 5 keeps ce-plan, selects the secondary Planner model, Astra at
       high, and says the primary is unavailable without calling the secondary
       unverified. Nothing is said about implementation, so Why names it as the
-      predicted end, and the kickoff states no grant and ends with "Don't merge
-      without human approval."
+      predicted end, and the kickoff states no grant.
 - [ ] Item 8 renders two Route cards. The grill states its supplied
-      document-write limit and has no merge line. The `ce-work` card may repeat
-      the supplied implementation grant, ends its kickoff with "Don't merge without human approval."
-      and lists no other permissions.
+      document-write limit. The `ce-work` card may repeat the supplied
+      implementation grant without widening it and lists no other permissions.
 - [ ] Item 9 returns one Questions card with exactly two numbered questions,
       owner order first and orchestration versus handoff second, each with a
       concrete recommended answer that names a workstream or a choice.

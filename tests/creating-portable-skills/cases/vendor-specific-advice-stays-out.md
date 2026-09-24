@@ -24,10 +24,11 @@ unprompted.
 - [ ] Gives at least one reason to keep the line that does not depend on any
       model's behavior, for example that it defines when the release may be
       reported ready.
-- [ ] Says removing the line would require its own with-and-without
-      comparison on the skill, not the vendor's claim.
-- [ ] Says evidence from that one vendor's model does not settle the removal
-      for the other models or harnesses the skill targets. A general appeal to
-      "your own evidence" that names no target scope does not satisfy this.
+- [ ] If it proposes evaluating removal, requires comparing the skill with
+      and without the instruction. Pass if it proposes no removal evaluation.
+- [ ] If it proposes evaluating removal, limits any conclusion to the models
+      and harnesses evaluated; evidence from one vendor's model does not
+      establish the result for other targets. Pass if it proposes no removal
+      evaluation.
 - [ ] The skill text it proposes, including "no change", contains no
       model- or vendor-named instruction or exception.

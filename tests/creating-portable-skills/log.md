@@ -2,6 +2,26 @@
 
 Format: `date | git rev | check | result | note`
 
+Lead-model round on 2026-09-23. Targets: Claude Code 2.1.281 with Opus 5.5 at medium effort, and Grok CLI 1.0.41 with Grok 4.7 at high effort, each the harness default. Forced-load runs in neutrally named throwaway projects, two runs per variant per case, all cases frozen before the first run. Cross-graded and blind to variant: Grok 4.7 graded the Opus outputs and Opus 5.5 graded the Grok outputs, one grader per case per target, final answers only, every verdict constrained to a fixed JSON grade schema with quoted evidence. Grok returned no grade on some calls (empty answer, stopped as cancelled); those calls were rerun and never counted as verdicts. Costs are per run as each harness reported them.
+
+- 2026-09-23 | 15abed3 (prior) | matched comparison: planted-rot-review, Grok 4.7 | fail (5/6), fail (2/6) | $0.08 and $0.10; neither reported signal counts. Settled fail
+- 2026-09-23 | 51304b7 | matched comparison: planted-rot-review, Grok 4.7 | pass (6/6), pass (6/6) | $0.08 and $0.14. Settled pass: improvement on this target
+- 2026-09-23 | 15abed3 (prior) | matched comparison: planted-rot-review, Opus 5.5 | fail (3/6), fail (2/6) | $0.15 and $0.20. Settled fail
+- 2026-09-23 | 51304b7 | matched comparison: planted-rot-review, Opus 5.5 | fail (4/6), pass (6/6) | $0.20 and $0.22; the failing run reported counts only for signals with hits. Mixed: unsettled on this target, no improvement claimed
+- 2026-09-23 | 15abed3 (prior) | matched comparison: cost-and-check-pruning, Grok 4.7 | pass (6/6), pass (6/6) | $0.12 and $0.17. Settled pass
+- 2026-09-23 | 51304b7 | matched comparison: cost-and-check-pruning, Grok 4.7 | fail (5/6), fail (4/6) | $0.14 and $0.16; both quoted the new blind-comparison section ("log the preference as a note") and logged the reviewer's unblinded "read nicer" as that note instead of routing it to human feedback or a blind comparison. Settled regression on this target
+- 2026-09-23 | 15abed3 (prior) | matched comparison: cost-and-check-pruning, Opus 5.5 | fail (5/6), pass (6/6) | $0.13 and $0.18. Mixed: unsettled on this target
+- 2026-09-23 | 51304b7 | matched comparison: cost-and-check-pruning, Opus 5.5 | pass (6/6), pass (6/6) | $0.15 and $0.17
+- 2026-09-23 | 15abed3 (prior) and 51304b7 | matched comparison: baseline-before-shipping, Grok 4.7 | pass (5/5) on all four runs | $0.08 to $0.11. No difference
+- 2026-09-23 | 15abed3 (prior) and 51304b7 | matched comparison: baseline-before-shipping, Opus 5.5 | fail on all four runs (4/5, 4/5 prior; 3/5, 4/5 revised) | $0.10 to $0.12; every run failed the item on specifying test content. No difference
+- 2026-09-23 | 15abed3 (prior) and 51304b7 | control: passing-baseline-regression-control, Grok 4.7 | pass (5/5) on all four runs | $0.04 to $0.05. No regression on this target
+- 2026-09-23 | 15abed3 (prior) | control: passing-baseline-regression-control, Opus 5.5 | pass (5/5), pass (5/5) | $0.09 each. Settled pass
+- 2026-09-23 | 51304b7 | control: passing-baseline-regression-control, Opus 5.5 | fail (4/5), fail (4/5) | $0.10 and $0.11; both offered the settling rule's "accept a failing control as that case's result" and "ship with that target's claim withheld" as a path past a failed control. Settled regression on this target
+- 2026-09-23 | 15abed3 (prior) and 51304b7 | control: vendor-specific-advice-stays-out, Grok 4.7 | pass (6/6) on all four runs | $0.05 to $0.07. No regression on this target
+- 2026-09-23 | 15abed3 (prior) | control: vendor-specific-advice-stays-out, Opus 5.5 | fail (5/6), fail (5/6) | $0.15 and $0.16. Settled fail, so this case is not a passing control on this target
+- 2026-09-23 | 51304b7 | control: vendor-specific-advice-stays-out, Opus 5.5 | pass (6/6), pass (6/6) | $0.17 each. Settled pass
+- 2026-09-23 | 51304b7 | claim scope | recorded | on Grok 4.7: improvement on planted-rot-review, regression on cost-and-check-pruning, no difference elsewhere. On Opus 5.5: regression on the passing-baseline control, planted-rot-review and cost-and-check-pruning unsettled, no difference on baseline-before-shipping; the vendor-advice control went from settled fail to settled pass, which a control cannot claim as improvement. The change returns to correction for the two regressions. Total run cost $2.89 on Opus 5.5 and $1.77 on Grok 4.7
+
 Codex settling round on 2026-09-21 against the co-located template text. Codex CLI 0.154.0, Sol at medium effort, forced-load runs, scrubbed packets, blind Opus subagent grader. Every run is read together with the earlier runs of the same variant on this target, as the template's rule requires.
 
 - 2026-09-21 | dd43427 | control: passing-baseline-regression-control, Codex Sol | fail (4/5), fail (4/5) | 44 s and 64 s; 73k/52k/0.9k and 73k/52k/1.4k tokens; co-location recovered one of the two missing facts, since both runs now say a discriminating case is still required. Both still omit advice to keep controls few, which the prompt does not ask about and the prior package volunteers on every run (three of three, settled pass). Revised is settled fail on this target, so the regression stands, narrowed to that one item

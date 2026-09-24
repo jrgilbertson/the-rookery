@@ -128,7 +128,7 @@ looked" surface. GitHub Releases mirror its entries.
   `SKILL.md`, evals, graders, and trigger queries. Gotchas now keep host-repo
   rules out of portable skills and require evals and cases to shrink with the
   skill's intent.
-- Ship workflow documents `no-ai-slop`, `humanize`, and
+- Ship workflow documents `ce-noslop`, `humanize`, and
   `writing-for-agents` in the finishing sequence, with credit. Merge still
   waits for a human.
 - `checking-pr-readiness` keeps one first-menu option for remaining work.

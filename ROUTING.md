@@ -48,8 +48,9 @@ changing state or persisting routing state outside the visible conversation.
 
 Never add authority the operator did not supply. An operator request to
 implement the work, including a request to route the kickoff to implement it,
-is implementation authorization. Artifact approval is task state, not an
-authority grant.
+is implementation authorization. Naming or describing the work, even as a
+command inside a routing request such as "route this: add X", is not a request
+to implement it. Artifact approval is task state, not an authority grant.
 
 Never list permissions the operator did not mention, even to say they are not
 inferred. The card never narrates phases, checkpoints, or stopping points, and
@@ -112,8 +113,11 @@ https://github.com/jrgilbertson/the-rookery/blob/main/ROUTING.md#choose-what-nee
 - For two separate workstreams that could both start and neither blocks the
   other, ask which starts first. A recommended order is allowed; the operator
   still chooses. The Route card names exactly one starting workflow.
-- If the request already names the work, route it. Do not require a plan file,
-  issue, or other artifact first.
+- If the request already names the work, do not require a plan file, issue, or
+  other artifact first. When concrete implementation is ready, including an
+  already-diagnosed fix, but the operator has not asked to implement it, return
+  a Questions card asking whether implementation is authorized. When unsure
+  whether they asked, ask.
 - If a named or required primary artifact cannot be read, the operator says
   they cannot answer a required routing question, the selected workflow is
   confirmed unavailable, or every listed model for a profile is stated

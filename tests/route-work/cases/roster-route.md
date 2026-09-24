@@ -3,9 +3,9 @@
 Provenance: user feedback — a plan-only route was too limiting; the card must
 estimate the pattern and roster for the whole approach and let supplied
 authority alone bound how far the coordinator carries it. A later review found
-that adding a Reviewer could exceed the five-worker concurrency ceiling. Issue
-#162 added item 4: a predicted implementation adds Executors for named modules
-but grants nothing.
+that adding a Reviewer could exceed the five-worker concurrency ceiling.
+Issue #162 added item 4: a predicted implementation adds Executors for named
+modules but grants nothing.
 
 ## Prompt
 

@@ -10,6 +10,9 @@ implementation authority, and proven ownership. On 2026-09-22 the default
 changed to Single owner, so items 6 and 9 now guard that occupancy or bare
 implementation authority does not add Executors. Issue #162 made items 2, 4,
 and 7, which say nothing about implementation, expect a labeled prediction.
+Issue #164 removed the router's authorization gate, the no-merge line, and the
+occupancy sentence: item 3's approved plan now routes to `ce-work`, and pasting
+the kickoff is the operator's approval to start.
 
 ## Prompt
 
@@ -46,10 +49,8 @@ and 7, which say nothing about implementation, expect a labeled prediction.
       owner, permission, unit count, or scope boundary. Generic instructions
       to honor supplied constraints and labeled contract defaults are allowed.
 - [ ] Items 1 and 2 start with `managing-issues` and `ce-plan`, respectively;
-      item 1 chooses no leaf and certifies no frontier. Item 3 returns Questions
-      asking whether implementation is authorized, with a concrete recommendation
-      and no workflow, model, profile, or kickoff.
-- [ ] Item 8 starts with `ce-work` and uses Coordinator + Executors, because
+      item 1 chooses no leaf and certifies no frontier.
+- [ ] Items 3 and 8 start with `ce-work` and use Coordinator + Executors, because
       the approved plan states independent units: a coordinator on Opus 5.5 at
       medium (the Executor profile, which dispatching does not change) and
       Executors on Opus 5.5 at medium, up to three since the prompt names no
@@ -65,26 +66,21 @@ and 7, which say nothing about implementation, expect a labeled prediction.
       locator.
 - [ ] Item 6 starts with `ce-work` as Single owner: the coordinator alone on
       Opus 5.5 at medium. A named worktree and pull request are occupancy
-      evidence, not independent units. Setup and the
-      kickoff last sentence each include: No named owner was proven for this
-      phase; this start is still allowed. They do not emit a stored-status
-      occupancy label or a halt. A kickoff may tell the receiver to verify
-      ownership before writing. The shared side-effect-free case owns the
-      package-read-only trace check.
+      evidence, not independent units. The card emits no occupancy label or
+      halt. A kickoff may tell the receiver to verify ownership before
+      writing. The shared side-effect-free case owns the package-read-only
+      trace check.
 - [ ] Item 7 starts the child with `ce-plan`; the supplied non-blocking family
       gap does not displace the directly named child.
 - [ ] All conclusions use supplied family and ownership state only. Missing
       owner evidence leaves ownership unknown; it does not prove a vacant phase.
-- [ ] Only items 6, 8, and 9 request implementation, and they implement from
-      those direct requests. They may repeat the supplied grant, end the
-      kickoff's authority text with "Don't merge without human approval.", and add
-      no commit, push, PR, or other external authority. Artifact approval alone
-      never becomes permission to implement.
+- [ ] Items 6, 8, and 9 may repeat their stated request without widening it,
+      and item 3 states no grant. No card adds commit, push, PR, merge, or
+      other authority the prompt did not state.
 - [ ] Items 2, 4, and 7 say nothing about implementation, so each Why names
       implementation as the predicted end and says the coordinator can adjust
-      the roster. Each kickoff states no grant, gives no instruction to
-      implement, and ends with "Don't merge without human approval." Item 1
-      carries no prediction and no merge line.
+      the roster. Each kickoff states no grant and gives no instruction to
+      implement. Item 1 carries no prediction.
 - [ ] Every route has a bold first line, one decision sentence naming the
       starting workflow and the coordinator's model and effort, and bold Why, Setup,
       and Copy/paste kickoff labels. Setup lists every role with model and

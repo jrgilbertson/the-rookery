@@ -1,0 +1,1 @@
+Effective 2026-09-01. For the synthetic proof pilot, prioritize a customer-verifiable result over optional internal polish. Do not promise a date without checking existing commitments and recovery time.

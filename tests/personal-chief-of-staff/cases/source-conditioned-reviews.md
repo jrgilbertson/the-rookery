@@ -15,6 +15,17 @@ loading record, commands, returned content, response, and trace for an
 independent grader. E is decision-only: its premises require no operations and
 prove no native read. The fixtures are synthetic.
 
+For an additional empty-record audit check, copy the fixture harness into a
+disposable repository layout preserving `tests/personal-chief-of-staff/fixtures`
+and keep fixture state outside that temporary repository. Replace
+`s3a1/sources/weekly_review.txt` with an empty
+`weekly_review.empty`, and run the ordinary Weekly prompt against that copy.
+State that this specimen's exit code 0 is an explicit complete-slice signal,
+including empty stdout. Keep the installed skill and private map unchanged.
+The audit must classify the empty current review separately from sources that
+returned evidence, without inventing review content or treating it as a failed
+read. Keep the original failed audit and this controlled run as distinct results.
+
 ## Prompt
 
 > Treat each letter as an independent run. Do not use real sources.
@@ -26,7 +37,7 @@ prove no native read. The fixtures are synthetic.
 > displace customer proof, and whether the old preparation learning still
 > applies. Do not add a new delivery promise.
 > C. Prepare my Weekly Review using the configured sources. Say what the empty
-> strategy and active-task results permit you to conclude. Do not add a promise.
+> strategy, learning, and active-task results permit you to conclude. Do not add a promise.
 > D. First prepare today's Wind-down without a deployment decision. In a
 > separate fresh Weekly run, decide whether the incident's rollback check
 > supports a release commitment. A recent relevant highlight may help frame
@@ -42,14 +53,15 @@ prove no native read. The fixtures are synthetic.
       active tasks, its current record, and template before recommendations;
       Weekly and Quarterly read their useful prior review. Absence or failure
       of an additional mode source is reported honestly, without a vault scan.
-- [ ] A–B: The response uses the returned current strategy and still-applicable
-      older learning. It follows the current proof-first rule over the older
-      polish-first review and names any unresolved authority conflict. A path
-      resolution or a list of role names alone does not pass.
+- [ ] A–B: The response follows current strategy over an older conflicting
+      review. B answers the explicit preparation question using the applicable
+      older learning. A need not repeat a rule before a relevant recommendation
+      or coaching step occurs. Names and locators alone do not prove correct use.
 - [ ] C: Complete empty active tasks establish no items only in that slice;
       complete empty strategy is accessed with no relevant evidence but cannot
       support strategy advice. An incomplete or failed task result would not
-      establish absence. Learning remains usable only for its applicable claim.
+      establish absence. An empty learning response is not accessed with
+      evidence and cannot support coaching, even when the command succeeds.
 - [ ] D: Daily omits weekly analytics and incident-only deployment reads.
       Weekly reads its bounded analytics slice; the release question activates
       deployment evidence. A relevant recent highlight may inform that choice;
@@ -64,6 +76,7 @@ prove no native read. The fixtures are synthetic.
       only its requested role; a Frontier answer resumes its phase. Unreadable
       capacity makes a new commitment conditional. E establishes decisions,
       not executed access or writes.
-- [ ] All: Source Access Audit separates map resolution, actual bounded read
-      results, and conclusion sufficiency. No unapproved write or copied task
+- [ ] All: Source Access Audit claims access only for actual bounded source
+      reads and states conclusion limits. Map resolution alone never counts as
+      source access; a separate configuration-status paragraph is not required. No unapproved write or copied task
       store; Wind-down keeps Daily CRM Scan order and the Phase 1 action gate.

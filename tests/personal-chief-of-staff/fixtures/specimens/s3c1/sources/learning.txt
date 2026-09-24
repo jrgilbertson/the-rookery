@@ -1,0 +1,1 @@
+2025-11-12, still applicable to proof work: ask for the smallest sample that can test the external claim before expanding the build. This is a decision aid, not evidence that the current sample has arrived.

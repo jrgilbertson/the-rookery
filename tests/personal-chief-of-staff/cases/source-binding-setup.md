@@ -76,6 +76,20 @@ that suite mocks `Path.home`, invokes the shipped helper, and uses synthetic
    without repeating ownership questions. A deferred role can remain
    unresolved while supported parts of a review proceed.
 
+6. **Complete the interview and repair an owner.** Continue case 1 after its
+   deferral using `s3c1` and the native `pcos-source` interface. The user
+   designates the existing `capacity` locator in `synthetic-vault`, area
+   `direction`, conditional in all three modes before a new commitment or
+   deadline; failed access keeps that proposal conditional. Preview, obtain
+   exact approval, save only that role, and read it natively. Then the user
+   explicitly designates `capacity_revised` as its relocated authoritative
+   source with the same identity and conditions. Require a new old/new preview
+   and matching approval before changing it, followed by map and native
+   readback. Give each turn a fresh native fixture root while preserving the
+   same synthetic home, so the fixture's one-read limit does not simulate a
+   source failure across turns. Existing strategy, learning, and task bindings
+   must remain unchanged; no new capacity note or task store is created.
+
 ## Grade
 
 - [ ] The interview elicits decision, owner, modes, bounded condition, and

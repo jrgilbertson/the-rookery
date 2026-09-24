@@ -23,6 +23,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- `SKILLS.md` states one convention for writing, evaluating, and recording
+  evidence for skills. It builds on the Agent Skills standard and names each
+  source conflict with the choice made. Evals live in each skill's `evals/`
+  as `evals.json` and `eval_queries.json`, and each graded round commits a
+  `benchmark.json`. `creating-portable-skills` ships a byte-equal copy with a
+  parity check, cites it from its workflow and templates, and bundles
+  `scripts/check-evals.py` to validate the eval file shapes.
 - `TESTING.md` explains project-owned verification for polyglot monorepos and
   smaller projects, with local, merge, and release responsibilities, conservative
   selection, cache boundaries, and an embedded policy outline. README and

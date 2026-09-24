@@ -39,13 +39,13 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 ## Invocation and triggering
 
 - The description says when to use the skill, not how it works. Pass: no body step is restated in the description; without the body, an agent would know when to activate but not the process.
-- Triggering conditions are clear. Pass: the description identifies its owned capability and when to activate without requiring a particular opening phrase.
+- Triggering conditions are clear. Pass: the description opens with an imperative "Use when…" clause that identifies its owned capability and when to activate.
 - Trigger keywords are front-loaded. Pass: words a user would type appear in the description's first sentence.
-- The trigger boundary is positive. Pass: the description names the work the skill owns; adjacent jobs live in near-miss queries unless a positive destination is needed to resolve harmful ambiguity.
+- The description leans pushy. Pass: the description names the work and phrasings the skill should catch; adjacent jobs live in near-miss queries, and an exclusion appears only where trigger runs showed misrouting.
 - Each trigger is a distinct branch. Pass: no two trigger phrases are synonyms whose collapse would preserve the same cases.
 - Runtime routing is co-located. Pass: a body routing section appears only when invocation leads to distinct execution branches, and it sits with those branch instructions instead of restating the description.
 - Invocation policy is deliberate. Pass: portable description text is sufficient for model invocation; any harness-specific invocation control stays optional metadata outside the canonical behavior contract.
-- Trigger testing has one owner. Pass: the trigger contract supplies query construction, judging protocol, and thresholds; other files point to it instead of restating them.
+- Trigger testing has one owner. Pass: [skills.md](skills.md) supplies the query format and thresholds, and the trigger contract template supplies the procedure; other files point to them instead of restating them.
 
 ## Information hierarchy
 

@@ -47,9 +47,13 @@ MARKDOWN_REFERENCE = re.compile(
     r"^\s{0,3}\[(?:[^\]\\]|\\.)+\]:\s*(<[^>]*>|\S+)",
     re.MULTILINE,
 )
-ROUTING_DOCUMENTS = (
-    Path("ROUTING.md"),
-    Path("skills/route-work/references/routing.md"),
+PACKAGED_DOCUMENTS = (
+    ("routing", Path("ROUTING.md"), Path("skills/route-work/references/routing.md")),
+    (
+        "skill convention",
+        Path("SKILLS.md"),
+        Path("skills/creating-portable-skills/references/skills.md"),
+    ),
 )
 
 
@@ -171,21 +175,21 @@ def check_links(path: Path, text: str, errors: list[str]) -> None:
             errors.append(f"{path.relative_to(ROOT)}:{line}: broken relative link: {target}")
 
 
-def check_routing_documents(errors: list[str]) -> None:
-    root_relative, packaged_relative = ROUTING_DOCUMENTS
-    root_routing = ROOT / root_relative
-    packaged_routing = ROOT / packaged_relative
-    diagnostic_prefix = f"{root_relative} and {packaged_relative}"
+def check_packaged_documents(errors: list[str]) -> None:
+    for label, root_relative, packaged_relative in PACKAGED_DOCUMENTS:
+        root_document = ROOT / root_relative
+        packaged_document = ROOT / packaged_relative
+        diagnostic_prefix = f"{root_relative} and {packaged_relative}"
 
-    # Reuse the repository's path guard before reading either fixed path. The
-    # main candidate scan owns any more specific symlink diagnostic.
-    if not all(
-        safe_regular_file(path, []) for path in (root_routing, packaged_routing)
-    ):
-        errors.append(f"{diagnostic_prefix}: both routing documents must exist")
-        return
-    if root_routing.read_bytes() != packaged_routing.read_bytes():
-        errors.append(f"{diagnostic_prefix}: routing documents must match byte-for-byte")
+        # Reuse the repository's path guard before reading either fixed path. The
+        # main candidate scan owns any more specific symlink diagnostic.
+        if not all(
+            safe_regular_file(path, []) for path in (root_document, packaged_document)
+        ):
+            errors.append(f"{diagnostic_prefix}: both {label} documents must exist")
+            continue
+        if root_document.read_bytes() != packaged_document.read_bytes():
+            errors.append(f"{diagnostic_prefix}: {label} documents must match byte-for-byte")
 
 
 def main() -> int:
@@ -202,7 +206,7 @@ def main() -> int:
         check_text(path, text, errors)
         check_json(path, text, errors)
         check_links(path, text, errors)
-    check_routing_documents(errors)
+    check_packaged_documents(errors)
     if errors:
         print("\n".join(errors), file=sys.stderr)
         return 1

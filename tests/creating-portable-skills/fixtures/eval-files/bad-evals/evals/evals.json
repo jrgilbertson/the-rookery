@@ -1,0 +1,19 @@
+{
+  "skill_name": "another-skill",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "",
+      "expected_output": "Anything.",
+      "files": ["evals/files/missing.csv", "../valid-skill/SKILL.md"],
+      "assertions": ["The output is correct", ""],
+      "provenance": 7,
+      "regression_control": "yes"
+    },
+    {
+      "id": 1,
+      "prompt": "Second case.",
+      "expected_output": "Anything."
+    }
+  ]
+}

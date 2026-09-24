@@ -2,10 +2,11 @@
 # Delete every "#" comment line when instantiating this template.
 name: skill-name-here
 # name: lowercase kebab-case, at most 64 characters, matching the directory.
-description: "[Owned capability and triggering conditions, including a non-obvious user phrasing.]"
-# description: at most 1024 characters. Make activation clear early. Describe
-# when to use the skill, not a summary of the workflow. Keep adjacent jobs in
-# near-miss tests unless a positive destination resolves harmful ambiguity.
+description: "Use when [owned capability and triggering conditions, including non-obvious user phrasings]."
+# description: at most 1024 characters. Start with "Use when" and lean pushy:
+# name the phrasings the skill should catch. Describe when to use the skill,
+# not a summary of the workflow. Keep adjacent jobs in near-miss trigger
+# queries, and add an exclusion only where trigger runs show misrouting.
 license: "[choose a license, or delete this field if the host collection declares one]"
 # license: optional. Choose it deliberately; never carry over a template default.
 # compatibility: optional. Declare only real command, network, credential, or

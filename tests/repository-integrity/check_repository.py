@@ -20,6 +20,7 @@ FIXTURE_RUNNERS = (
     "tests/checking-merge-readiness/fixtures/run-stub-checks.sh",
     "tests/checking-pr-readiness/fixtures/run-assessment-checks.py",
     "tests/checking-pr-readiness/fixtures/run-helper-checks.sh",
+    "tests/creating-portable-skills/fixtures/run-eval-file-checks.sh",
     "tests/creating-portable-skills/fixtures/run-signal-scan-checks.sh",
     "tests/managing-issues/fixtures/run-graph-checks.py",
     "tests/managing-issues/fixtures/run-config-checks.py",
@@ -81,6 +82,10 @@ def main() -> int:
         routing_contents = b"# Routing\n"
         root_routing.write_bytes(routing_contents)
         packaged_routing.write_bytes(routing_contents)
+        packaged_skills = repository / "skills/creating-portable-skills/references/skills.md"
+        packaged_skills.parent.mkdir(parents=True)
+        (repository / "SKILLS.md").write_bytes(b"# Skills\n")
+        packaged_skills.write_bytes(b"# Skills\n")
         clean = run_checker(repository)
         require(clean.returncode == 0, f"clean repository failed: {clean.stderr}")
 

@@ -1,0 +1,4 @@
+[
+  {"query": "", "should_trigger": true},
+  {"query": "a near miss", "should_trigger": "no", "owner": 3}
+]

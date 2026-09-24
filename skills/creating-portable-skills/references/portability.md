@@ -43,6 +43,8 @@ Its authoring guidance favors third-person descriptions and gerund-form names, r
 
 The [Codex skills documentation](https://developers.openai.com/codex/skills) describes optional display metadata and invocation policy in `agents/openai.yaml`. The package must remain usable without that file.
 
+The Codex system skill-creator validator rejects `compatibility`, which the specification allows. Keep the field when the skill has real requirements, and expect that validator to flag it.
+
 Codex budgets the initial skill listing, so put the key use case and trigger words early in the description. Users may also invoke skills explicitly.
 
 ## Discovery paths

@@ -83,6 +83,16 @@ expect_count planted "$planted" "migration-relative phrasing" 1
 expect_count planted "$planted" "history identifier" 1
 expect_count planted "$planted" "pinned model name" 1
 
+# Pressure markers match attached punctuation; textual signals are whole words.
+pressure=$(sh "$scan" "$fixtures/pressure")
+expect_count pressure "$pressure" "pressure language" 5
+holds "attached pressure marker not reported" has "$pressure" 'Do this!!'
+holds "leading pressure marker not reported" has "$pressure" '!! Review the output.'
+holds "standalone pressure marker not reported" has "$pressure" 'Review !! before exporting.'
+holds "mixed pressure signals not reported" has "$pressure" 'You MUST review this!! ALWAYS check twice!!'
+holds "punctuated pressure words not reported" has "$pressure" '(MUST), NEVER, ALWAYS, CRITICAL, IMPORTANT.'
+fails "pressure word fragments reported" has "$pressure" 'MUSTARD\|_MUST\|_ALWAYS\|_IMPORTANT'
+
 # Every header names the checklist item that judges the signal.
 headers=$(printf '%s\n' "$planted" | grep -c '^## .* -> .')
 holds "every header names a checklist item: want ${#signals[@]} got $headers" [ "$headers" -eq "${#signals[@]}" ]

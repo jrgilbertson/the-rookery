@@ -13,6 +13,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- The `creating-portable-skills` signal scan detects attached pressure markers
+  such as `Do this!!`, preserves whole-word matching for textual pressure
+  signals, and counts each matching line once.
 - The `creating-portable-skills` signal scan returns an error when it cannot
   read an input file or traverse references, instead of reporting a successful
   scan with incomplete results. Matches and completed scans without matches

@@ -50,8 +50,8 @@ scan() { # scan <signal> <checklist item> <grep flags> <pattern>
 	report "$1" "$2" "$hits"
 }
 
-scan 'pressure language' 'Steering is positive' w \
-	'MUST|NEVER|ALWAYS|CRITICAL|IMPORTANT|!!'
+scan 'pressure language' 'Steering is positive' '' \
+	'(^|[^[:alnum:]_])(MUST|NEVER|ALWAYS|CRITICAL|IMPORTANT)([^[:alnum:]_]|$)|!!'
 scan 'hedged requirement' 'Qualifiers are operationalized' iw \
 	'try to|if possible|ideally'
 scan 'model trait claim' 'Steering is positive' i \

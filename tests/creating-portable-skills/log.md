@@ -2,6 +2,23 @@
 
 Format: `date | git rev | check | result | note`
 
+## Scanner pressure boundaries on 2026-09-24
+
+The helper correction scopes word boundaries to textual pressure signals so
+attached punctuation such as `Do this!!` is reported. One line with several
+signals still counts once; word fragments, underscores, and adjacent digits
+remain excluded from the textual alternatives.
+
+| Date | Git rev | Check | Result | Note |
+| --- | --- | --- | --- | --- |
+| 2026-09-24 | 6113369, with new regression assertions | Production scanner fixtures | 40 passed, 2 failed | Attached marker omitted; five matching lines expected, four reported. |
+| 2026-09-24 | 6113369 working-tree pressure correction | Production scanner fixtures | 42 passed, 0 failed | Attached and standalone markers, mixed signals, textual boundaries, existing no-match and operational-error controls pass. |
+
+This deterministic comparison covers the helper correction. Earlier model
+comparisons and activation checks retain their recorded source revisions;
+no paid model calls or new native activation checks were run for this fix.
+The accepted current Claude smoke limitation remains unchanged.
+
 ## Scanner error propagation on 2026-09-24
 
 The scanner correction changes only operational error handling. The production

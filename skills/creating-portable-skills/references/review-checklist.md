@@ -72,13 +72,13 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 
 - Premature completion. Pass: no completion condition can be satisfied by declaring success without the required artifact or observable state.
 - Duplication. Pass: no sentence restates another sentence's meaning in the description, body, or bundled files.
-- Sediment. Pass: the instructions read as if the current rules are the only rules that ever existed. Superseded behavior is removed instead of being surrounded by new caveats, and instructions carry no migration-relative phrasing, past-tense history, incident or pull-request identifiers, workarounds for a named model, or pinned model names. Evidence logs and reference tables that state their review date are records, not instructions.
+- Sediment. Pass: the instructions read as if the current rules are the only rules that ever existed. Superseded behavior is removed instead of being surrounded by new caveats, and instructions carry no migration-relative phrasing, past-tense history, incident or pull-request identifiers, workarounds for a named model, or pinned model names. Sediment is the history of the instructions themselves: a sentence that describes the current facts of the skill's domain stands as current fact, not history, even when it uses a change word. Evidence logs and reference tables that state their review date are records, not instructions.
 - Sprawl. Pass: the skill's job fits one sentence without joining two independent jobs.
 - No-ops. Pass: each sentence changes behavior versus the default or protects a System-Owned Invariant.
 
 ## Evidence integrity
 
-- Review context matches the route. Pass: full validation has independent case grading and a different independent final reviewer as `SKILL.md` requires; focused artifact inspection is identified as such and makes no independent-review claim. Deterministic scripts may perform mechanical checks.
+- Review context matches the route. Pass: grading and review contexts match what `SKILL.md` requires for the route; focused artifact inspection is identified as such and makes no independent-review claim. Deterministic scripts may perform mechanical checks.
 - Artifacts are inspected directly. Pass: the reviewer opens the relevant outputs instead of relying on the executor's summary or claimed filenames.
 - Every pass has substance. Pass: each judgment cites concrete artifact or trace evidence that demonstrates the outcome, not a heading, filename, or other surface compliance.
 - Checks are reviewed too. Pass: no objective check is trivial, unverifiable from the available evidence, or missing a material part of the required outcome.

@@ -278,7 +278,7 @@ revisions compare the frozen prior and revised versions, each in a fresh
 context with the intended variant confirmed loaded. Cases are binary
 pass/fail, graded blind by an agent that did not write the answers. A revision
 on the full validation route ships when it raises the pass count on the cases
-it targets, no Regression Control fails with it, and the gain is worth its cost.
+it targets, no Regression Control blocks it, and the gain is worth its cost.
 The repository's testing convention owns the protocol. The creator's workflow
 owns route eligibility; focused validation supplies an affected behavior check
 and direct artifact inspection without a comparative improvement claim.
@@ -287,8 +287,9 @@ and direct artifact inspection without a comparative improvement claim.
 
 A Regression Control is a Baseline Comparison case that the baseline already
 passes, kept to protect one named load-bearing contract. It never proves an
-improvement. A failure in any run with the change is a regression, and the
-change returns to correction.
+improvement. It blocks the change when the changed arm passes fewer runs than
+the baseline, and the repository's testing convention settles a one-run gap
+with more runs.
 
 ### Independent Review Context
 

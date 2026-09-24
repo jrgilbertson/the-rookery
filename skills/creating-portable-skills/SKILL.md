@@ -11,14 +11,14 @@ Create, revise, migrate, or audit a skill from its intent, required outcome, and
 
 Skills produced here follow the [Agent Skills format](https://agentskills.io/specification): a directory with a `SKILL.md` (frontmatter plus body) and optional `references/`, `assets/`, and `scripts/`. Read [references/portability.md](references/portability.md) for the canonical frontmatter fields and their limits, and when choosing an install location or making a harness-specific claim. [references/skills.md](references/skills.md) is the convention for eval files, arms and runs, targets, grading, the run archive, and committed evidence; read it before steps 2, 5, 6, and 7.
 
-An independent reviewer is any agent that took no part in the authoring discussion and did not produce the artifact under review; an agent auditing a skill it did not write already qualifies and needs no separate context. For full validation, an independent grader grades the matched cases and a different independent reviewer performs the final package review. When a required independent context is unavailable, prepare a self-contained handoff for a separate session; that grade or review stays unverified until the session completes it, because the author's own review never substitutes.
+An independent reviewer is any agent that took no part in the authoring discussion and did not produce the artifact under review; an agent auditing a skill it did not write already qualifies and needs no separate context. For full validation, an independent grader grades the matched cases and a different independent reviewer performs the final package review. The author never supplies a grade or review that must come from an independent context, not even provisionally or as labeled notes standing in for grades. When a required independent context is unavailable, prepare a self-contained handoff for a separate session. Until that session completes it, the grade or review stays unverified and the change does not ship; say so plainly instead of leaving shipping as the user's call.
 
 ## Workflow
 
 Select the validation route before entering the workflow:
 
-- **Focused validation** applies only to a localized, low-risk guidance revision with unchanged task scope, activation boundary, required outcomes, System-Owned Invariants, executable helpers, and evaluation/review policy. An optional method hint can qualify; a one-line approval or output-schema change cannot.
-- **Full validation** applies to new skills, all other substantive changes, and ambiguous eligibility. Substantive means changed instruction semantics, trigger description, or bundled resource; typo, formatting, and link-only edits remain exempt from behavioral evaluation.
+- **Focused validation** applies only to a localized, low-risk guidance revision with unchanged task scope, activation boundary, required outcomes, System-Owned Invariants, executable helpers, and evaluation/review policy. An optional method hint can qualify, and so can removing history phrasing, pinned model names, workarounds for a named model, unsourced hardcoded facts, or duplication when required behavior does not change; even a one-line approval, output-schema, or helper change cannot. A focused check runs each affected eval once per target with the changed skill and a blind independent grader.
+- **Full validation** applies to new skills, fixes that add or change required behavior, all other substantive changes, and ambiguous eligibility. Substantive means changed instruction semantics, trigger description, or bundled resource; typo, formatting, and link-only edits remain exempt from behavioral evaluation. Moving or reformatting eval files is not a behavioral change either, because `SKILL.md` never loads `evals/`; step 4's structural checks and `scripts/check-evals.py` suffice.
 
 A read-only audit starts and ends at step 0. Authorized focused revisions start at step 1; other existing-skill work starts at step 0, and new skills start at step 1. Existing authorization for the material fix scope carries forward.
 
@@ -71,15 +71,17 @@ Completion: the validator passes, or every named fallback check passes with the 
 
 Follow the selected route in [assets/baseline-test-template.md](assets/baseline-test-template.md). [references/skills.md](references/skills.md) owns the file formats, arms and runs, grading, cost, and the ship rule the template applies. Write eval definitions to the skill's `evals/evals.json`, raw runs to the run archive, and the round's benchmark to `evals/benchmarks/`.
 
+For full validation, before any paid run, have the independent final reviewer check eval validity: each assertion is decidable from what the grader sees, no assertion is stricter than the skill's contract, and each regression control's baseline is plausible. The reviewer also checks that the skill's rules are consistent with each other and applies the whole checklist in [references/review-checklist.md](references/review-checklist.md) to the package, with the inputs it names. Revise from its findings before the runs.
+
 Completion: the selected route's checks have run, the eval definitions and the round's benchmark file are written, and this skill's `scripts/check-evals.py` exits 0 on the target skill directory; cosmetic-only edits record behavioral evaluation as not applicable.
 
 ### 6. Decide and review
 
 For focused validation, directly inspect the changed guidance and actual check output against the intended outcome and hard constraints, using the applicable items in [references/review-checklist.md](references/review-checklist.md). The author may do this inspection; it is not independent evidence. A whole-package audit, matched improvement experiment, and separate final reviewer are not required.
 
-For full validation, have the independent final reviewer apply the ship rule in [references/skills.md](references/skills.md) to the graded results, then apply the whole checklist with the inputs it names, and revise from its findings. Required independent grading or review remains unverified and blocks completion when unavailable; a checklist exception cannot replace it.
+For full validation, applying the ship rule in [references/skills.md](references/skills.md) to the graded results is a mechanical read, and the independent final reviewer confirms it. When required independent grading or review is unavailable, the independence rule at the top of this file applies; a checklist exception cannot replace it.
 
-Any substantive follow-up edit reselects its route and returns through step 4 and the affected evals before shipping.
+Any substantive follow-up edit reselects its route and returns through step 4 and the affected evals before shipping. Rerun only evals whose prompt, files, or assertions changed, or whose assertions test text the diff touches. Reuse baseline runs whose bytes did not change and keep their original revision labels; each carried-forward result names the revision it came from.
 
 Completion: focused validation has passing structural and affected behavior checks, direct artifact inspection, and a claim limited to what was exercised; full validation has a ship decision and every checklist item passes.
 

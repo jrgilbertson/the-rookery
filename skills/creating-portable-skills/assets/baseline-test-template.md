@@ -21,12 +21,11 @@ entries and the round's benchmark file enter the host project.
 ## Focused check
 
 Pick the affected evals in `evals/evals.json`, or add one with binary
-assertions. Run each once with the revised skill and inspect the actual output
-against its assertions and the unchanged hard constraints. Write the run files
-to the archive and commit a one-arm benchmark. This check supports only the
-behavior it exercised, not a comparative improvement claim. The author may
-inspect it; name that inspection as the benchmark's `grader` rather than
-calling it independent grading.
+assertions. Run them as [SKILL.md](../SKILL.md#workflow) defines the focused
+check, grade them as step 4 below describes, and inspect the actual output
+against the unchanged hard constraints. Write the run files to the archive and
+commit a one-arm benchmark that names the grader. This check supports only the
+behavior it exercised, not a comparative improvement claim.
 
 ## Matched comparison
 
@@ -41,8 +40,10 @@ set using this protocol.
    skill's text or in a grader prompt out of these evals. Write assertions
    after seeing a first round of outputs, then freeze them before the runs
    that decide.
-2. **State the thresholds.** Before the deciding runs, write the target and
-   the minimum acceptable result for the targeted evals.
+2. **Settle thresholds and review.** Before the deciding runs, confirm each
+   targeted eval's minimum under [references/skills.md](../references/skills.md)
+   and complete the review before any paid run that
+   [SKILL.md](../SKILL.md#5-check-behavior) requires.
 3. **Run the arms.** Run each eval in each arm, each run in a fresh context,
    and confirm from the trace that the intended variant loaded. For a change
    limited to the description, the arms are the prior and revised
@@ -56,14 +57,14 @@ set using this protocol.
    reasoning and the author's conclusions. Scripts grade mechanical
    assertions; the independent grader writes evidence before each verdict in
    `grading.json`.
-5. **Apply the ship rule.** For each target, build the benchmark and compare
-   the targeted evals against the stated minimum and the regression controls,
-   with the token and time delta beside the pass-rate delta. When a
-   discriminating eval passes on some runs and fails on others, run each arm
-   more and compare pass rates; if it stays inconsistent, tighten the
-   ambiguous instruction or assertion. In a discriminating eval, remove an
-   assertion that passes in both arms and fix one that fails in both. Stop
-   iterating when another revision no longer improves the result.
+5. **Apply the ship rule.** For each target, build the benchmark and apply
+   the ship rule and the regression-control rule in
+   [references/skills.md](../references/skills.md), with the token and time
+   delta beside the pass-rate delta. If a targeted eval passes on some runs
+   and fails on others, tighten the ambiguous instruction or assertion. In a
+   targeted eval, remove an assertion that passes in both arms and fix one
+   that fails in both. Stop iterating when another revision no longer
+   improves the result.
 6. **Commit the evidence.** Keep the evals in `evals/evals.json`, commit one
    benchmark file per target in `evals/benchmarks/`, and run
    `scripts/check-evals.py` on the skill. This completed template is working
@@ -71,10 +72,9 @@ set using this protocol.
 
 ## Regression controls
 
-Mark a regression control with `regression_control: true` and name the
-contract it guards in `provenance`. A control that fails in any run with the
-change is a regression: fix the instruction or the assertion and rerun. Keep
-controls few; none exists to enumerate desirable behavior.
+Keep regression controls few; none exists to enumerate desirable behavior.
+[references/skills.md](../references/skills.md) defines their fields, when one
+is valid, and when it blocks shipping.
 
 ## Human review and blind comparison
 

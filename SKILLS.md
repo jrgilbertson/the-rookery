@@ -105,9 +105,10 @@ root `evals/` out of `.skill` packages. Raw run results never go in `evals/`.
   eval fails when any assertion fails.
 - `provenance` is an extension. It names the observed failure or baseline gap
   the eval protects, or the contract a regression control guards.
-- `regression_control` is an extension. `true` marks an eval the baseline
-  already passes, kept to guard one named contract. It never shows an
-  improvement, and one failure with the change blocks shipping.
+- `regression_control` is an extension. `true` marks a regression control,
+  kept to guard one named contract; it never shows an improvement. `false`
+  marks a targeted eval, which measures the change. **Arms and runs** says
+  when a control is valid and when it blocks shipping.
 
 An eval enters only when a baseline run showed the gap or an observed failure
 motivated it. Start a new skill with two or three evals. Fold near-duplicate
@@ -160,17 +161,25 @@ A new skill compares `with_skill` against `without_skill`. A revision compares
 starts in a fresh context with no other conversation state, and its trace
 confirms that the intended variant loaded.
 
-Full validation runs each arm 3 times. A focused check runs the affected evals
-once, with the changed skill only, and supports no comparative claim. When an
-eval passes on some runs and fails on others, run it more and compare pass
-rates.
+Full validation runs each arm 3 times. The `creating-portable-skills` workflow
+defines the focused check, which has one arm and supports no comparative
+claim.
 
 Before dispatch, state the permitted inputs, resources, side effects, and
-budget. Before the runs, state a target and a minimum acceptable result for
-the targeted evals, such as a pass rate. The target is what the change aims
-for. A change ships when it meets the minimum, no regression control fails,
-and the gain is worth its measured token and time cost. Claim an improvement
-only on the targets that showed it.
+budget. A targeted eval meets its minimum when the changed arm passes at least
+2 of 3 runs on each target and beats the baseline by at least 2 runs. An eval
+uses a different threshold only when one is written down before the runs.
+
+A regression control must do no worse than the baseline. It blocks shipping
+when the changed arm passes fewer runs than the baseline. At 3 runs, a gap of
+exactly one run extends both arms once, to 8 runs each, and the 8-run counts
+decide. A control whose baseline passes fewer than 2 of 3 runs is not a valid
+control, and it gets fixed in the workflow's review before any paid run, not
+after the runs.
+
+A change ships when every targeted eval meets its minimum, no regression
+control blocks it, and the gain is worth its measured token and time cost.
+Claim an improvement only on the targets that showed it.
 
 ## Targets
 
@@ -209,11 +218,9 @@ Each run's `grading.json` uses the standard's shape:
   or conclusions.
 - An independent reviewer took no part in the authoring discussion and did not
   produce the artifact. Full validation needs an independent grader and a
-  different independent final reviewer, who applies the ship rule and reviews
-  the package.
-- When a required independent context is unavailable, that grade or review
-  stays unverified and the work is not complete. The author's own review never
-  substitutes.
+  different independent final reviewer. The `creating-portable-skills`
+  workflow says when that reviewer acts and what happens when a required
+  independent context is unavailable.
 - Qualities that binary assertions cannot carry go to specific human
   feedback or a blind comparison of two outputs. Record the result as a note,
   never as a pass or a fail.
@@ -286,6 +293,11 @@ one file per target named `<date>-<short-rev>-<target>.json`.
 - A `runs[]` array in skill-creator's per-run shape may list each graded run.
   A `notes[]` array holds smoke-check results and blind-comparison
   preferences.
+- When a regression control extends to 8 runs, `runs_per_configuration` and
+  `run_summary` still cover the planned runs. Add one `notes[]` entry for each
+  extended control with each arm's runs that passed every assertion out of 8,
+  and list the extra runs in `runs[]` when the file has one. The extension
+  adds no other file.
 - A benchmark states only what its runs checked.
 
 When a repository replaces an older evidence format, keep a one-line pointer

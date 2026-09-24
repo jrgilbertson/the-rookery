@@ -23,9 +23,11 @@ it.
 
 ## Establish source coverage
 
-Start with the mode's time window and likely decisions. Query sources only
-when they can confirm a candidate item, reveal a material conflict, or supply
-context needed for judgment. Wind-down's Daily CRM Scan is the exception: when
+Start with the mode's time window and likely decisions. Read the configured
+baseline roles for every new review as specified in
+[source-bindings.md](source-bindings.md). Query other sources only when they
+can confirm a candidate item, reveal a material conflict, or supply context
+needed for judgment. Wind-down's Daily CRM Scan is the exception: when
 the companion is available, cover configured relationship interaction sources
 for the scan window through the companion before the initial reconstruction,
 even without a named candidate person.
@@ -57,16 +59,13 @@ X-dependent conclusions; truncated history cannot prove no exchange occurred.
 Route Person-note, contact-date, and relationship Task effects through the CRM
 companion, never directly from X evidence.
 
-Resolve journal, review, strategy, learning, and task sources by their
-configured canonical role. Existing titles may inform discovery but are not
-portable identifiers. When a binding is missing or more than one source
-plausibly owns a role, ask the user to identify the authoritative source; do not
-infer the owner from titles or create new configuration or schema. When a
-configured source is temporarily unavailable, preserve its known ownership
-rather than asking the user to choose a replacement. For a missing, ambiguous,
-or unavailable role, narrow only the longitudinal claims that depend on it and
-continue current conclusions supported by authoritative native sources without
-treating them as replacement longitudinal evidence.
+Resolve canonical roles through [source-bindings.md](source-bindings.md). A
+source title is evidence for an ownership interview, not a binding. When a
+role is missing or ambiguous, ask the user to designate its authoritative
+owner. When a configured source read fails, retain its owner; a plausible
+replacement title does not authorize a changed binding. Continue with
+supported current conclusions while limiting every claim that depends on the
+unresolved or unavailable role.
 
 When the same evidence is synced into a configured canonical source, use one
 copy for the conclusion rather than counting it twice. Prefer the canonical
@@ -78,8 +77,8 @@ conversation. Use native timestamps when available, otherwise the current
 response and query time. For Obsidian, use CLI-returned content and metadata.
 Order episodes and bound audit coverage by event or effective date, never
 `date_modified` (freshness only). Undated records can support current context,
-not episode ordering or dated coverage. Keep no result cache, mirror, registry,
-run ledger, or brief archive.
+not episode ordering or dated coverage. Keep no result cache, mirror, run
+ledger, or brief archive.
 
 Coverage is conclusion-specific:
 
@@ -125,8 +124,8 @@ Connector presence, prior access, planned reads, and user-supplied hypothetical
 results are not current access. Without an executed interface, label premises
 user-supplied and unverified, explain requested outcome branches conditionally,
 and use **not configured** when no authoritative path resolves. An unresolved
-path is not a failed attempt. Keep every material role distinct; split slices
-when their access results or safe scopes differ.
+map or role is not a failed source attempt. Keep every material role distinct;
+split slices when their access results or safe scopes differ.
 
 Access results describe reads. **Sufficient**, **Partial**, and **Insufficient**
 describe support for conclusions. A missing or incomplete source limits only

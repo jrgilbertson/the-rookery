@@ -3,6 +3,7 @@ set -euo pipefail
 
 fixture_dir=$(cd "$(dirname "$0")" && pwd -P)
 fixture_bin="$fixture_dir/bin"
+bash "$fixture_dir/binding-checks.sh"
 repo_root=$(cd "$fixture_dir/../../.." && pwd -P)
 PATH="$fixture_bin:$PATH"
 export PATH

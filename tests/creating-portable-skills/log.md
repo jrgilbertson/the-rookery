@@ -2,6 +2,14 @@
 
 Format: `date | git rev | check | result | note`
 
+Narrow rerun on 2026-09-23 after the review fixes that give step 6 the ship decision, point the reviewer inputs at the checklist, open the checklist with the pre-check, and trim restated text. The four cases those edits touch ran the revised package twice on each target, graded as in the reset round below; planted-rot-review, baseline-before-shipping, and install-and-grading-gates were not rerun and keep their reset-round results.
+
+- 2026-09-23 | 9d39948 | control: passing-baseline-regression-control | pass (4/4) twice on Opus 5.5 and twice on Grok 4.7 | the prior fails item 4 twice on each target
+- 2026-09-23 | 9d39948 | control: independent-fresh-context-review | pass (3/3) twice on each target | the prior also passes on both
+- 2026-09-23 | 9d39948 | control: vendor-specific-advice-stays-out | pass (6/6) twice on each target | the prior passes twice on Grok 4.7 and fails item 4 twice on Opus 5.5
+- 2026-09-23 | 9d39948 | control: cost-and-check-pruning | pass (6/6) twice on Grok 4.7; pass (6/6) and fail (5/6) on Opus 5.5 | the failing run was faulted on item 3, recording harness B's cost as not available, while its quoted evidence reads "B also has no cost data". Under the template a control that fails in any run with the change is a regression; recorded as such, pending the owner's decision at PR readiness
+- 2026-09-23 | 9d39948 | cost | recorded | the 16 runs cost $0.97 on Opus 5.5 and $0.54 on Grok 4.7
+
 Reset round on 2026-09-23 after the baseline template moved to the Agent Skills evaluation loop. Targets: Claude Code 2.1.281 with Opus 5.5 at medium effort and Grok CLI 1.0.41 with Grok 4.7 at high effort. Two runs per variant per case, cross-graded blind (Grok 4.7 grades Opus outputs, Opus 5.5 grades Grok outputs) against a fixed JSON grade schema with quoted evidence; a grade that came back empty or malformed was rerun, never counted. The prior package's outputs from earlier rounds were regraded, since neither it nor the prompts changed. Five cases ran the revised package at the suite-correction commit; the passing-baseline control and cost-and-check-pruning ran after the two wording fixes below. The git rev field names each revision. Pass counts are runs passing out of 14 per variant per target.
 
 - 2026-09-23 | b83df51, f62d13d | matched comparison: seven cases, Opus 5.5 | prior 6/14, revised 14/14 | revised $1.79 against prior $1.80 for the suite-correction runs, median tokens 29k against 36k, median 35 s against 31 s. Gains on discriminating cases: planted-rot-review 0 to 2, install-and-grading-gates 0 to 2. Regression controls all pass with the change (the prior fails the passing-baseline control twice under its current item and the cost and vendor-advice controls once each); baseline-before-shipping passes in both

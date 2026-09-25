@@ -50,11 +50,11 @@
       "prompt": "You have just revised the `formatting-sql` skill in this conversation. Its required output changed from plain SQL to a JSON object with keys `sql` and `parameters`. You produced the revised package and the matched prior/revised comparison outputs yourself. The edit is authorized; all required verification remains in force. Only this authoring conversation is available now, and no independent session has graded or reviewed it. Present your verification plan and answer directly: may this conversation grade the comparison itself, and can the review step be complete right now?",
       "expected_output": "Refuses to self-grade, requires an independent grader and a different independent final reviewer in separate fresh contexts, leaves both judgments unverified, and plans a self-contained handoff.",
       "assertions": [
-        "States that this conversation may not grade the comparison, and that an independent grader in a separate fresh context must grade it.",
+        "States that this conversation may not grade the comparison, and that an independent grader in a separate fresh context must grade it. A deterministic script checking mechanical items, such as JSON validity, is not this conversation grading the comparison.",
         "Requires a different independent reviewer for the final package review.",
         "Leaves both judgments unverified until independent contexts complete them and prepares or specifies a self-contained handoff for separate sessions; author inspection or provisional self-grading does not substitute for the required evidence."
       ],
-      "provenance": "Regression control for required independent grading and final review; self-grading was an observed failure in the 2026-07-27/28 matched comparisons. Ported from tests/creating-portable-skills/cases/independent-fresh-context-review.md, with item 1 reworded so a blind grader can decide it from the final answer alone. Assertion 3 accepts a handoff that is prepared or specified, as eval 7's does, because the run's workspace holds none of the artifacts the prompt describes.",
+      "provenance": "Regression control for required independent grading and final review; self-grading was an observed failure in the 2026-07-27/28 matched comparisons. Ported from tests/creating-portable-skills/cases/independent-fresh-context-review.md, with item 1 reworded so a blind grader can decide it from the final answer alone. Assertion 3 accepts a handoff that is prepared or specified, as eval 7's does, because the run's workspace holds none of the artifacts the prompt describes. Assertion 1 exempts a deterministic script's mechanical checks, which the convention lets scripts grade.",
       "regression_control": true
     },
     {

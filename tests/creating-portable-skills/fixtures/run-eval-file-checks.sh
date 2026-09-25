@@ -175,6 +175,22 @@ expect_violation "notes entries" "notes[0]: must be a non-empty string"
 bench_case bad-runs ', "cost_available": false' ', "runs": ["run-1"]'
 expect_violation "runs entries" "runs[0]: must be an object"
 
+# Stated consistency rules: delta is the changed arm minus the baseline, and a
+# file's target suffix names the target at the end of archive_ref.
+better='{"pass_rate": {"mean": 1, "stddev": 0}, "time_seconds": {"mean": 3, "stddev": 0}, "tokens": {"mean": 5, "stddev": 0}}'
+arm_case wrong-delta "{\"with_skill\": $better, \"old_skill\": $arm, \"delta\": {\"pass_rate\": -1, \"time_seconds\": 2, \"tokens\": 4}}"
+expect_code "wrong delta" 1
+expect_violation "wrong delta" "run_summary.delta.pass_rate: must equal with_skill minus old_skill (0)"
+arm_case right-delta "{\"with_skill\": $better, \"old_skill\": $arm, \"delta\": {\"pass_rate\": 0, \"time_seconds\": 2, \"tokens\": 4}}"
+expect_code "right delta" 0
+mkdir -p "$scratch/wrong-suffix/evals/benchmarks"
+cp "$fixtures/no-evals/SKILL.md" "$scratch/wrong-suffix/SKILL.md"
+printf '{"metadata": {"skill_name": "wrong-suffix", "executor_model": "m", "timestamp": "t", "runs_per_configuration": 1, "harness": "h", "grader": "g", "archive_ref": "repo/wrong-suffix/iteration-1/model-b", "cost_available": false}, "run_summary": {"with_skill": %s}}\n' \
+	"$arm" >"$scratch/wrong-suffix/evals/benchmarks/2026-09-24-abc1234-model-a.json"
+run "$scratch/wrong-suffix"
+expect_code "wrong target suffix" 1
+expect_violation "wrong target suffix" "file name target 'model-a' must match the target at the end of metadata.archive_ref"
+
 # The validator writes nothing to disk.
 before=$(find "$fixtures" "$scratch" | LC_ALL=C sort)
 run "$fixtures/valid-skill" "$fixtures/bad-evals" "$fixtures/bad-benchmark"

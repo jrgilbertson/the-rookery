@@ -22,7 +22,7 @@ from typing import Any, Callable
 
 
 BENCHMARK_NAME = re.compile(
-    r"^\d{4}-\d{2}-\d{2}-[0-9a-f]{7,40}(?:-[a-z0-9]+(?:[.-][a-z0-9]+)*)?\.json$"
+    r"^\d{4}-\d{2}-\d{2}-[0-9a-f]{7,40}(?:-([a-z0-9]+(?:[.-][a-z0-9]+)*))?\.json$"
 )
 SUMMARY_METRICS = ("pass_rate", "time_seconds", "tokens")
 REQUIRED_METADATA_TEXT = (
@@ -153,7 +153,8 @@ def check_queries(path: Path, report: list[str]) -> None:
 def check_benchmark(directory: str, path: Path, report: list[str]) -> None:
     fail = reporter(path, report)
 
-    if not BENCHMARK_NAME.match(path.name):
+    name = BENCHMARK_NAME.match(path.name)
+    if not name:
         fail("file name must be <YYYY-MM-DD>-<short-rev>[-<target>].json")
     data = load_json(path)
     if not isinstance(data, dict):
@@ -172,6 +173,10 @@ def check_benchmark(directory: str, path: Path, report: list[str]) -> None:
             fail(f"metadata.skill_name {metadata['skill_name']!r} does not match directory {directory!r}")
         if not is_integer(runs) or runs < 1:
             fail("metadata.runs_per_configuration: must be a positive integer")
+        target = name.group(1) if name else None
+        archive_ref = metadata.get("archive_ref")
+        if target and is_text(archive_ref) and archive_ref.rstrip("/").rsplit("/", 1)[-1] != target:
+            fail(f"file name target {target!r} must match the target at the end of metadata.archive_ref")
         if "final_reviewer" in metadata and not is_text(metadata["final_reviewer"]):
             fail("metadata.final_reviewer: must be a non-empty string")
         if "cost_usd" in metadata and not is_number(metadata["cost_usd"]):
@@ -237,9 +242,23 @@ def check_benchmark(directory: str, path: Path, report: list[str]) -> None:
     if not isinstance(delta, dict):
         fail("run_summary.delta: must be an object when two or more configurations are compared")
         return
+    baseline = next((arm for arm in BASELINE_ARMS if arm in configurations), None)
     for metric in SUMMARY_METRICS:
         if not is_number(delta.get(metric)):
             fail(f"run_summary.delta.{metric}: must be a number")
+            continue
+        changed = summary_mean(configurations.get("with_skill"), metric)
+        base = summary_mean(configurations.get(baseline), metric)
+        if changed is not None and base is not None:
+            expected = changed - base
+            if abs(delta[metric] - expected) > 1e-3 * max(1.0, abs(expected)):
+                fail(f"run_summary.delta.{metric}: must equal with_skill minus {baseline} ({expected:g})")
+
+
+def summary_mean(configuration: Any, metric: str) -> float | None:
+    values = configuration.get(metric) if isinstance(configuration, dict) else None
+    mean = values.get("mean") if isinstance(values, dict) else None
+    return mean if is_number(mean) else None
 
 
 def check_skill(skill: Path, report: list[str]) -> None:

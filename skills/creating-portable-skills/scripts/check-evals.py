@@ -17,7 +17,7 @@ import json
 import re
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 
 BENCHMARK_NAME = re.compile(
@@ -56,9 +56,15 @@ def is_integer(value: Any) -> bool:
     return isinstance(value, int) and not isinstance(value, bool)
 
 
-def check_evals(skill: Path, path: Path, report: list[str]) -> None:
+def reporter(path: Path, report: list[str]) -> Callable[[str], None]:
     def fail(message: str) -> None:
         report.append(f"{path}: {message}")
+
+    return fail
+
+
+def check_evals(skill: Path, path: Path, report: list[str]) -> None:
+    fail = reporter(path, report)
 
     data = load_json(path)
     if not isinstance(data, dict):
@@ -117,8 +123,7 @@ def check_evals(skill: Path, path: Path, report: list[str]) -> None:
 
 
 def check_queries(path: Path, report: list[str]) -> None:
-    def fail(message: str) -> None:
-        report.append(f"{path}: {message}")
+    fail = reporter(path, report)
 
     data = load_json(path)
     if not isinstance(data, list):
@@ -137,9 +142,8 @@ def check_queries(path: Path, report: list[str]) -> None:
             fail(f"{where}.owner: must be a non-empty string")
 
 
-def check_benchmark(skill: Path, path: Path, report: list[str]) -> None:
-    def fail(message: str) -> None:
-        report.append(f"{path}: {message}")
+def check_benchmark(directory: str, path: Path, report: list[str]) -> None:
+    fail = reporter(path, report)
 
     if not BENCHMARK_NAME.match(path.name):
         fail("file name must be <YYYY-MM-DD>-<short-rev>[-<target>].json")
@@ -155,7 +159,6 @@ def check_benchmark(skill: Path, path: Path, report: list[str]) -> None:
         for field in REQUIRED_METADATA_TEXT:
             if not is_text(metadata.get(field)):
                 fail(f"metadata.{field}: must be a non-empty string")
-        directory = skill.resolve().name
         if is_text(metadata.get("skill_name")) and metadata["skill_name"] != directory:
             fail(f"metadata.skill_name {metadata['skill_name']!r} does not match directory {directory!r}")
         runs = metadata.get("runs_per_configuration")
@@ -206,8 +209,9 @@ def check_skill(skill: Path, report: list[str]) -> None:
         check_queries(queries_file, report)
     benchmarks = evals_dir / "benchmarks"
     if benchmarks.is_dir():
+        directory = skill.resolve().name
         for benchmark in sorted(benchmarks.glob("*.json")):
-            check_benchmark(skill, benchmark, report)
+            check_benchmark(directory, benchmark, report)
 
 
 def main(argv: list[str]) -> int:

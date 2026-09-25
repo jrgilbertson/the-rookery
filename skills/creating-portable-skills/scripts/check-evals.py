@@ -15,6 +15,7 @@ invocation, a path without SKILL.md, or unreadable input.
 from __future__ import annotations
 
 import json
+import math
 import re
 import sys
 from pathlib import Path
@@ -53,7 +54,7 @@ def is_text(value: Any) -> bool:
 
 
 def is_number(value: Any) -> bool:
-    return isinstance(value, (int, float)) and not isinstance(value, bool)
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
 
 
 def is_integer(value: Any) -> bool:

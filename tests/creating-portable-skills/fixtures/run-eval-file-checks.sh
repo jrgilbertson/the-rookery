@@ -183,6 +183,11 @@ expect_code "wrong delta" 1
 expect_violation "wrong delta" "run_summary.delta.pass_rate: must equal with_skill minus old_skill (0)"
 arm_case right-delta "{\"with_skill\": $better, \"old_skill\": $arm, \"delta\": {\"pass_rate\": 0, \"time_seconds\": 2, \"tokens\": 4}}"
 expect_code "right delta" 0
+# A JSON number too large for a float reads as infinity; it is not a number.
+huge='{"pass_rate": {"mean": 1e999, "stddev": 0}, "time_seconds": {"mean": 1, "stddev": 0}, "tokens": {"mean": 1, "stddev": 0}}'
+arm_case infinite-mean "{\"with_skill\": $huge, \"old_skill\": $huge, \"delta\": $delta}"
+expect_code "infinite mean" 1
+expect_violation "infinite mean" "run_summary.with_skill.pass_rate.mean: must be a number"
 mkdir -p "$scratch/wrong-suffix/evals/benchmarks"
 cp "$fixtures/no-evals/SKILL.md" "$scratch/wrong-suffix/SKILL.md"
 printf '{"metadata": {"skill_name": "wrong-suffix", "executor_model": "m", "timestamp": "t", "runs_per_configuration": 1, "harness": "h", "grader": "g", "archive_ref": "repo/wrong-suffix/iteration-1/model-b", "cost_available": false}, "run_summary": {"with_skill": %s}}\n' \

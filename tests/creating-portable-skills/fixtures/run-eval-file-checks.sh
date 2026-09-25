@@ -121,11 +121,11 @@ run "$scratch/nan-json"
 expect_code "non-standard JSON constant" 2
 
 # Arms use the names the convention defines: with_skill against one baseline.
-arm_case() { # arm_case <name> <run_summary JSON>
+arm_case() { # arm_case <name> <run_summary JSON> [runs_per_configuration]
 	mkdir -p "$scratch/$1/evals/benchmarks"
 	cp "$fixtures/no-evals/SKILL.md" "$scratch/$1/SKILL.md"
-	printf '{"metadata": {"skill_name": "%s", "executor_model": "m", "timestamp": "t", "runs_per_configuration": 3, "harness": "h", "grader": "g", "archive_ref": "a"}, "run_summary": %s}\n' \
-		"$1" "$2" >"$scratch/$1/evals/benchmarks/2026-09-24-abc1234.json"
+	printf '{"metadata": {"skill_name": "%s", "executor_model": "m", "timestamp": "t", "runs_per_configuration": %s, "harness": "h", "grader": "g", "archive_ref": "a"}, "run_summary": %s}\n' \
+		"$1" "${3:-3}" "$2" >"$scratch/$1/evals/benchmarks/2026-09-24-abc1234.json"
 	run "$scratch/$1"
 }
 arm='{"pass_rate": {"mean": 1, "stddev": 0}, "time_seconds": {"mean": 1, "stddev": 0}, "tokens": {"mean": 1, "stddev": 0}}'
@@ -139,6 +139,14 @@ expect_violation "missing with_skill" "run_summary: must include with_skill"
 arm_case two-baselines "{\"with_skill\": $arm, \"old_skill\": $arm, \"without_skill\": $arm, \"delta\": $delta}"
 expect_code "two baselines" 1
 expect_violation "two baselines" "run_summary: compare with_skill against one baseline, not both old_skill and without_skill"
+
+# A comparison runs each arm 3 times; a focused check runs once.
+arm_case comparison-one-run "{\"with_skill\": $arm, \"old_skill\": $arm, \"delta\": $delta}" 1
+expect_code "comparison with one run" 1
+expect_violation "comparison runs" "metadata.runs_per_configuration: a comparison runs each arm 3 times"
+arm_case focused-three-runs "{\"with_skill\": $arm}" 3
+expect_code "focused check with three runs" 1
+expect_violation "focused runs" "metadata.runs_per_configuration: a focused check runs once"
 
 # The validator writes nothing to disk.
 before=$(find "$fixtures" "$scratch" | LC_ALL=C sort)

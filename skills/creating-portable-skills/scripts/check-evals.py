@@ -161,6 +161,7 @@ def check_benchmark(directory: str, path: Path, report: list[str]) -> None:
         return
 
     metadata = data.get("metadata")
+    runs = metadata.get("runs_per_configuration") if isinstance(metadata, dict) else None
     if not isinstance(metadata, dict):
         fail("metadata: must be an object")
     else:
@@ -169,7 +170,6 @@ def check_benchmark(directory: str, path: Path, report: list[str]) -> None:
                 fail(f"metadata.{field}: must be a non-empty string")
         if is_text(metadata.get("skill_name")) and metadata["skill_name"] != directory:
             fail(f"metadata.skill_name {metadata['skill_name']!r} does not match directory {directory!r}")
-        runs = metadata.get("runs_per_configuration")
         if not is_integer(runs) or runs < 1:
             fail("metadata.runs_per_configuration: must be a positive integer")
 
@@ -187,6 +187,11 @@ def check_benchmark(directory: str, path: Path, report: list[str]) -> None:
         fail("run_summary: must include with_skill")
     if all(arm in configurations for arm in BASELINE_ARMS):
         fail("run_summary: compare with_skill against one baseline, not both old_skill and without_skill")
+    if is_integer(runs) and runs >= 1 and configurations:
+        if len(configurations) >= 2 and runs != 3:
+            fail("metadata.runs_per_configuration: a comparison runs each arm 3 times")
+        elif len(configurations) == 1 and runs != 1:
+            fail("metadata.runs_per_configuration: a focused check runs once")
     for name, configuration in configurations.items():
         where = f"run_summary.{name}"
         if not isinstance(configuration, dict):

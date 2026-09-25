@@ -295,8 +295,8 @@ one file per target named `<date>-<short-rev>-<target>.json`.
   arm minus the baseline arm. A focused check has one arm and no `delta`.
 - `metadata` requires `skill_name`, `executor_model`, `timestamp`,
   `runs_per_configuration`, `harness`, `grader`, and `archive_ref` (the
-  round's target path inside the archive). Full validation adds
-  `final_reviewer`.
+  round's target path inside the archive). The benchmark a full-validation
+  ship decision rests on adds `final_reviewer`; an earlier round has none.
 - Record `cost_usd` when the harness reports dollar cost. Otherwise set
   `cost_available` to `false`.
 - A `runs[]` array in skill-creator's per-run shape may list each graded run.

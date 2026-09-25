@@ -3,12 +3,13 @@
 
 Usage: check-evals.py <skill-directory> [<skill-directory> ...]
 
-For each skill directory, validates evals/evals.json, evals/eval_queries.json,
-and every evals/benchmarks/*.json that exists. A skill without evals passes.
-Prints one "path: message" line per violation. Writes nothing to disk.
+For each skill directory (one holding SKILL.md), validates whichever of
+evals/evals.json, evals/eval_queries.json, and evals/benchmarks/*.json exist,
+so a skill without evals passes. Prints one "path: message" line per
+violation. Writes nothing to disk.
 
 Exit status: 0 when every file is valid, 1 on any violation, 2 on bad
-invocation or unreadable input.
+invocation, a path without SKILL.md, or unreadable input.
 """
 
 from __future__ import annotations

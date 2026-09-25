@@ -2,11 +2,11 @@
 
 This file is the convention for writing, evaluating, and recording evidence
 for agent skills. It builds on the [Agent Skills standard](https://agentskills.io),
-with vendor guidance layered on top. Where sources conflict, the section names
-the conflict and the choice made. The `creating-portable-skills` skill ships a
-byte-equal copy as `references/skills.md`. That skill owns the authoring
-workflow and the choice between full validation and a focused check. This file
-owns the formats and rules the workflow produces.
+with vendor guidance layered on top. Where sources conflict, a **Conflict:**
+note names the conflict and the choice made. The `creating-portable-skills`
+skill ships a byte-equal copy as `references/skills.md`. That skill owns the
+authoring workflow and the choice between full validation and a focused check.
+This file owns the formats and rules the workflow produces.
 
 ## Package format
 
@@ -37,10 +37,12 @@ Codex's validator to flag the field.
 
 ## Descriptions and triggering
 
-The description is the only skill text an agent reads when it decides whether
-to load the skill. Write it as an imperative "Use when…" clause. Put the words
-a user would type in the first sentence, and say when to use the skill, not
-how it works.
+The name and description are the only skill text an agent reads when it
+decides whether to load the skill. Write the description as an imperative
+"Use when…" clause. Put the words a user would type in the first sentence,
+because harnesses budget the skill listing. Claude Code caps each entry at
+1,536 characters, and Codex caps the whole listing at 2% of the context window
+and shortens descriptions first. Say when to use the skill, not how it works.
 
 Err on the side of a pushy description that names the phrasings the skill
 should catch. Add an exclusion only where trigger runs show the skill taking
@@ -54,10 +56,6 @@ skill when…"). This convention uses the imperative.
 pushy descriptions. The Codex skill-creator warns against catch-all lists.
 This convention takes the pushy side and lets trigger runs catch
 over-triggering.
-
-Harnesses budget the skill listing, so front-loaded trigger words matter.
-Claude Code caps each entry at 1,536 characters. Codex caps the whole listing
-at 2% of the context window and shortens descriptions first.
 
 ## Where evals live
 
@@ -73,8 +71,8 @@ Eval files live in an `evals/` directory inside the skill directory:
 
 `SKILL.md` never references `evals/`, so evals cost no context at run time.
 They do ship with any install that copies the whole directory, so eval inputs
-stay synthetic and public-safe. Anthropic's skill-creator packager leaves a
-root `evals/` out of `.skill` packages. Raw run results never go in `evals/`.
+stay synthetic and public-safe. Raw run results go to the **Run archive**,
+never to `evals/`.
 
 ## Eval definitions: `evals/evals.json`
 
@@ -110,10 +108,10 @@ root `evals/` out of `.skill` packages. Raw run results never go in `evals/`.
   marks a targeted eval, which measures the change. **Arms and runs** says
   when a control is valid and when it blocks shipping.
 
-An eval enters only when a baseline run showed the gap or an observed failure
-motivated it. Start a new skill with two or three evals. Fold near-duplicate
-scenarios into one eval, with numbered scenarios in the prompt and one
-assertion for each.
+An eval enters only when a baseline run showed the gap, an observed failure
+motivated it, or it is a regression control guarding a named contract. Start a
+new skill with two or three evals. Fold near-duplicate scenarios into one
+eval, with numbered scenarios in the prompt and one assertion for each.
 
 **Conflict: field names.** The standard uses `assertions` here and
 `assertion_results` in grading. Anthropic's skill-creator uses `expectations`
@@ -133,7 +131,7 @@ aggregator do not read these files unmodified.
 - Write about 20 queries: 8–10 that should trigger and 8–10 near misses.
   Seed them by crossing dimensions where misrouting is likely, such as
   intent, phrasing, and context. Draft the tuples first, then write one query
-  for each tuple. This is a seed method, not a tool.
+  for each tuple.
 - A near miss shares the skill's topic or wording but belongs elsewhere. Its
   `owner` field, an extension, names the skill or workflow that should take
   it.
@@ -151,47 +149,48 @@ aggregator do not read these files unmodified.
   on the same query set.
 
 A fresh-context judge that sees only the name, the description, and one query
-is a cheap first screen. Label its result a listing proxy. It is not evidence
-of activation.
+is a cheap first screen. Label its result a listing proxy, never activation
+evidence.
 
 ## Arms and runs
 
 A new skill compares `with_skill` against `without_skill`. A revision compares
-`with_skill` against `old_skill`, a snapshot of the prior version. Each run
-starts in a fresh context with no other conversation state, and its trace
-confirms that the intended variant loaded.
+`with_skill` against `old_skill`, a snapshot of the prior version.
+`with_skill` is the changed arm; the other arm is the baseline. Each run
+starts in a fresh context, and its trace confirms that the intended variant
+loaded.
 
 Full validation runs each arm 3 times. The `creating-portable-skills` workflow
 defines the focused check, which has one arm and supports no comparative
 claim.
 
-Before dispatch, state the permitted inputs, resources, side effects, and
-budget. A targeted eval meets its minimum when the changed arm passes at least
-2 of 3 runs on each target and beats the baseline by at least 2 runs. An eval
-uses a different threshold only when one is written down before the runs.
+A targeted eval meets its minimum when the changed arm passes at least 2 of 3
+runs on each target and beats the baseline by at least 2 runs. An eval uses a
+different threshold only when one is written down before the runs.
 
-A regression control must do no worse than the baseline. It blocks shipping
-when the changed arm passes fewer runs than the baseline. At 3 runs, a gap of
-exactly one run extends both arms once, to 8 runs each, and the 8-run counts
-decide. A control whose baseline passes fewer than 2 of 3 runs is not a valid
-control, and it gets fixed in the workflow's review before any paid run, not
-after the runs. If a control's baseline still passes fewer than 2 of 3 runs in
-the round, the control neither blocks nor counts; the benchmark notes it, and
-the control is fixed before the next round.
+**Regression controls.** A regression control blocks shipping when the
+changed arm passes fewer runs than the baseline. At 3 runs, a gap of exactly
+one run extends both arms once, to 8 runs each, and the 8-run counts decide.
+A valid control's baseline passes at least 2 of 3 runs; the workflow's
+pre-spend review fixes a control that falls short before any paid run. If a
+control's baseline still passes fewer than 2 of 3 runs in the round, the
+control neither blocks nor counts. The benchmark notes it, and the control is
+fixed before the next round.
 
-A change ships when every targeted eval meets its minimum, no regression
-control blocks it, and the gain is worth its measured token and time cost.
-The change is worth its cost when the mean tokens and the mean time on the
-targeted evals each rise by at most 30% on each target; a larger rise needs a
-written reason from the independent final reviewer. Claim an improvement only
-on the targets that showed it.
+**Ship rule.** A change ships when every targeted eval meets its minimum, no
+regression control blocks it, and the gain is worth its measured token and
+time cost. The change is worth its cost when the mean tokens and the mean time
+on the targeted evals each rise by at most 30% on each target; a larger rise
+needs a written reason from the independent final reviewer. Claim an
+improvement only on the targets that showed it.
 
 ## Targets
 
-Run full validation on the current model and harness, plus every target the
-caller declares. A host repository may declare a default target set in its own
-testing documentation. Record the actual model, harness, and material settings
-such as reasoning effort for every run.
+A target is one model in one harness. Run full validation on the current
+model and harness, plus every target the caller declares. A host repository
+may declare a default target set in its own testing documentation. Record the
+actual model, harness, and material settings such as reasoning effort for
+every run.
 
 **Conflict: model matrix.** Anthropic's checklist asks for tests on Haiku,
 Sonnet, and Opus, which is a Claude-only matrix. skill-creator's trigger loop
@@ -221,10 +220,10 @@ Each run's `grading.json` uses the standard's shape:
   from the executor when one is available. The grader sees final outputs and
   tool observations with arm names removed, and never the author's reasoning
   or conclusions.
-- The `creating-portable-skills` workflow defines an independent reviewer,
+- The `creating-portable-skills` workflow defines an independent reviewer. It
   requires an independent grader and a different independent final reviewer
-  for full validation, and says when that reviewer acts and what happens when
-  a required independent context is unavailable.
+  for full validation. It also says when that reviewer acts and what happens
+  when a required independent context is unavailable.
 - Qualities that binary assertions cannot carry go to specific human
   feedback or a blind comparison of two outputs. Record the result as a note,
   never as a pass or a fail.
@@ -232,11 +231,12 @@ Each run's `grading.json` uses the standard's shape:
 ## Run archive
 
 Raw results live in one machine-local archive directory outside every
-repository. Keep it after each effort.
+repository, with one `iteration-<N>` directory per graded round and one
+directory per target inside it. Keep the archive after the work ends.
 
 ```text
-<archive>/<repo>/<skill>/iteration-<N>/
-  eval-<name>/<arm>/run-<k>/
+<archive>/<repo>/<skill>/iteration-<N>/<target>/
+  eval-<id>-<name>/<arm>/run-<k>/
     outputs/
     transcript       the raw session, including the skill load trace
     timing.json      { "total_tokens": 84852, "duration_ms": 23332 }
@@ -245,6 +245,8 @@ repository. Keep it after each effort.
     build.json       { "skill_revision": "abc1234", "package_hash": "sha256:…", "install_path": "…" }
 ```
 
+- `<target>` matches the target suffix of the round's benchmark file, and
+  `<name>` is a short kebab-case label for the eval.
 - `build.json` identifies the build each run loaded. `skill_revision` is the
   commit under test, or its parent when the change is uncommitted.
   `package_hash` covers the installed package. `install_path` is the
@@ -268,7 +270,7 @@ one file per target named `<date>-<short-rev>-<target>.json`.
     "harness": "harness-name version",
     "grader": "different model, blind packet",
     "final_reviewer": "separate fresh session",
-    "archive_ref": "the-repo/csv-report/iteration-2",
+    "archive_ref": "the-repo/csv-report/iteration-2/model-id",
     "cost_available": false
   },
   "run_summary": {
@@ -290,8 +292,8 @@ one file per target named `<date>-<short-rev>-<target>.json`.
 - `run_summary` holds one object per arm and a numeric `delta`: the changed
   arm minus the baseline arm. A focused check has one arm and no `delta`.
 - `metadata` requires `skill_name`, `timestamp`, `runs_per_configuration`,
-  `harness`, and `grader`. Add `executor_model`, `final_reviewer`, and
-  `archive_ref`, the round's path inside the archive.
+  `harness`, and `grader`. Add `executor_model`, `archive_ref` (the round's
+  target path inside the archive), and, for full validation, `final_reviewer`.
 - Record `cost_usd` when the harness reports dollar cost. Otherwise set
   `cost_available` to `false`.
 - A `runs[]` array in skill-creator's per-run shape may list each graded run.
@@ -299,9 +301,9 @@ one file per target named `<date>-<short-rev>-<target>.json`.
   preferences.
 - When a regression control extends to 8 runs, `runs_per_configuration` and
   `run_summary` still cover the planned runs. Add one `notes[]` entry for each
-  extended control with each arm's runs that passed every assertion out of 8,
-  and list the extra runs in `runs[]` when the file has one. The extension
-  adds no other file.
+  extended control that gives, for each arm, how many of its 8 runs passed
+  every assertion. List the extra runs in `runs[]` when the file has one. The
+  extension adds no other file.
 - A benchmark states only what its runs checked.
 
 When a repository replaces an older evidence format, keep a one-line pointer
@@ -324,24 +326,23 @@ below a threshold. It is not the runner for this convention:
   with `evals/evals.json`.
 - It runs Claude only, so it cannot cover targets in other harnesses.
 
-A repository that ships plugin manifests may add it later as a Claude-side CI
-gate beside this format.
+A repository that ships plugin manifests may add it as a Claude-side CI gate
+beside this format.
 
 ## Enforcement
 
 Commands check these rules:
 
 - `skills-ref validate <skill-directory>` checks frontmatter and naming.
-- `creating-portable-skills` bundles `scripts/check-evals.py`. Given one or
-  more skill directories, it checks the shapes of `evals.json`,
-  `eval_queries.json`, and each benchmark file. It exits 0 when they are
-  valid or absent, 1 on a violation, and 2 on bad invocation or unreadable
-  input. Run it from the host repository's existing checks.
+- `creating-portable-skills` bundles `scripts/check-evals.py`, which checks
+  the shapes of `evals.json`, `eval_queries.json`, and each benchmark file in
+  the skill directories it is given. Run it from the host repository's
+  existing checks.
 
 No command checks grading quality, blinding, independence, whether a run used
 its stated target, or private names. A public repository cannot list the
 private names it must not contain, so people and agents check for them before
-each push. Do not claim a check that no command runs.
+each push. Claim automated coverage only for the commands above.
 
 ## Sources
 

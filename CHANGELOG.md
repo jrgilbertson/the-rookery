@@ -61,6 +61,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `creating-portable-skills` and `SKILLS.md` give each rule one owner and
+  define the terms an agent had to guess at, such as the changed arm, a
+  target, and the ship rule. The run archive nests one directory per target,
+  a regression control may enter to guard a named contract, and the
+  canonical-package rule is checked even when the reference validator passes.
+
 - `creating-portable-skills` never lets the author stand in for a required
   independent grader or reviewer, not even with provisional grades. A change
   whose required independent grade or review is unverified does not ship.

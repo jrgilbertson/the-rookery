@@ -277,9 +277,9 @@ intended direction. New skills run realistic prompts with and without the skill;
 revisions compare the frozen prior and revised versions, each in a fresh
 context with the intended variant confirmed loaded. Cases are binary
 pass/fail, graded blind by an agent that did not write the answers. A revision
-on the full validation route ships when it meets the ship rule in the
-repository's testing convention.
-The repository's testing convention owns the protocol. The creator's workflow
+on the full validation route ships when it meets the ship rule in
+[`SKILLS.md`](SKILLS.md).
+[`SKILLS.md`](SKILLS.md) owns the protocol. The creator's workflow
 owns route eligibility; focused validation supplies an affected behavior check
 and direct artifact inspection without a comparative improvement claim.
 
@@ -288,8 +288,7 @@ and direct artifact inspection without a comparative improvement claim.
 A Regression Control is a Baseline Comparison case that the baseline already
 passes, kept to protect one named load-bearing contract. It never proves an
 improvement. It blocks the change when the changed arm passes fewer runs than
-the baseline, and the repository's testing convention settles a one-run gap
-with more runs.
+the baseline, and [`SKILLS.md`](SKILLS.md) settles a one-run gap with more runs.
 
 ### Independent Review Context
 
@@ -337,7 +336,7 @@ A Trigger Contract treats a skill's description as a tested activation API,
 not documentation. At the fire-or-skip decision, the agent sees only the
 skill's name and description. Test this metadata with should-trigger phrasings
 that must activate and near-misses that must not, judged in fresh contexts
-under the repository's testing convention.
+under [`SKILLS.md`](SKILLS.md).
 
 ## Flagged ambiguities
 

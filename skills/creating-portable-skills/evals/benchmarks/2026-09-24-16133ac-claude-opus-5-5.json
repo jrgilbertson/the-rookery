@@ -470,6 +470,7 @@
     "carry-forward, not rerun: eval 2 (targeted) with_skill f903493 3/3, old_skill 069589f 0/3 runs pass every assertion (iteration-1 grades; assertions unchanged since then). archive_ref the-rookery/creating-portable-skills/iteration-1/claude-opus-5-5/eval-2-retune-evidence; benchmark iteration-1/claude-opus-5-5/benchmark/2026-09-24-f903493-claude-opus-5-5.json",
     "carry-forward, not rerun: eval 6 (targeted) with_skill f903493 3/3, old_skill 069589f 0/3 runs pass every assertion (iteration-1 grades; assertions unchanged since then). archive_ref the-rookery/creating-portable-skills/iteration-1/claude-opus-5-5/eval-6-no-prior-evidence; benchmark iteration-1/claude-opus-5-5/benchmark/2026-09-24-f903493-claude-opus-5-5.json",
     "reused baselines: old_skill runs 1-3 of evals 3, 4, 5 are the iteration-1 069589f records (archive_ref the-rookery/creating-portable-skills/iteration-1/claude-opus-5-5/eval-<id>-<name>/old_skill/run-1..3, build.json unchanged), regraded blind in this round's packets with the new with_skill runs; their executor spend is on iteration-1's ledger, not in cost_usd above",
-    "cost bound, targeted evals rerun this round (eval 7): tokens with 124129 vs old 84135 (+47.5%); time_seconds with 51 vs old 48 (+4.3%); bound is +30% each"
+    "cost bound, targeted evals rerun this round (eval 7): tokens with 124129 vs old 84135 (+47.5%); time_seconds with 51 vs old 48 (+4.3%); bound is +30% each",
+    "superseded cost result: eval 7 was rerun at 1811d82 in iteration-3 against the same old_skill baseline (tokens -5.7%, time_seconds -25.1%), so this round's eval 7 cost result (+47.5% tokens) is superseded; the final reviewer judged the pooled cost bound on the deciding round (baa4cf8)"
   ]
 }

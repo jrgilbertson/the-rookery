@@ -73,6 +73,7 @@ expect_violation evals "evals[0].provenance: must be a string"
 expect_violation evals "evals[0].regression_control: must be a boolean"
 expect_violation evals "evals[1].id: duplicate id 1"
 expect_violation evals "evals[1].assertions: must be an array of strings"
+expect_violation evals "evals[2].assertions: a regression control needs at least one assertion"
 holds "violations are prefixed with the file path" has "$out" "bad-evals/evals/evals.json: "
 
 run "$fixtures/bad-queries"

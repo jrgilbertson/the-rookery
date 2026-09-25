@@ -30,12 +30,13 @@ looked" surface. GitHub Releases mirror its entries.
   evidence for skills. It builds on the Agent Skills standard and names each
   source conflict with the choice made. Evals live in each skill's `evals/`
   as `evals.json` and `eval_queries.json`, and each graded round commits a
-  `benchmark.json`. A targeted eval meets its default minimum when the
-  changed version passes at least 2 of 3 runs on each target and beats the
-  baseline by at least 2 runs. A regression control blocks shipping when the
-  changed version passes fewer runs than the baseline, and a one-run gap at 3
-  runs extends both arms to 8. `creating-portable-skills` ships a
-  byte-equal copy with a parity check, cites it from its workflow and
+  benchmark file named `<date>-<short-rev>.json` (one per target when a round
+  covers several) in `evals/benchmarks/`. A targeted eval meets its default
+  minimum when the changed version passes at least 2 of 3 runs on each target
+  and beats the baseline by at least 2 runs. A regression control blocks
+  shipping when the changed version passes fewer runs than the baseline, and
+  a one-run gap at 3 runs extends both arms to 8. `creating-portable-skills`
+  ships a byte-equal copy with a parity check, cites it from its workflow and
   templates, and bundles `scripts/check-evals.py` to validate the eval file
   shapes.
 - `TESTING.md` explains project-owned verification for polyglot monorepos and

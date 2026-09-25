@@ -113,6 +113,8 @@ def check_evals(skill: Path, path: Path, report: list[str]) -> None:
         if not isinstance(assertions, list):
             fail(f"{where}.assertions: must be an array of strings")
         else:
+            if not assertions and case.get("regression_control") is True:
+                fail(f"{where}.assertions: a regression control needs at least one assertion")
             for assertion_index, assertion in enumerate(assertions):
                 if not is_text(assertion):
                     fail(f"{where}.assertions[{assertion_index}]: must be a non-empty string")

@@ -50,11 +50,11 @@ Keep three evidence layers separate:
 | Outcome evidence | Whether the output met the required outcome and hard constraints | Inspection of actual artifacts and relevant traces; independent grading on both routes; a focused check grades the changed skill only |
 | Coverage | Which changed behaviors were tested and how far the conclusion reaches | Declared cases and limitations; a different independent final reviewer for full validation, or direct inspection limited to the affected behavior for focused validation |
 
-Keep the durable record small: self-contained case files contain the prompt and
-binary checklist, while the log keeps one bounded line per run or check
-(`tests/README.md:35`). Full-validation revisions use matched prior/candidate runs in
-fresh contexts and ship only when discriminating cases improve without
-regression (`skills/creating-portable-skills/assets/baseline-test-template.md:56`).
+Keep the durable record small: eval definitions live in the skill's
+`evals/evals.json`, raw runs stay in the machine-local run archive, and each
+graded round commits one benchmark file (`SKILLS.md`, "Committed evidence").
+Full-validation revisions use matched prior and candidate runs in fresh
+contexts and ship under the ship rule in `SKILLS.md` ("Arms and runs").
 
 For a skill change on the full validation route:
 

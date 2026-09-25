@@ -1,0 +1,101 @@
+[
+  {
+    "query": "Simplify this implementation plan before we start coding",
+    "should_trigger": true
+  },
+  {
+    "query": "Choose the smallest reliable implementation among these approaches",
+    "should_trigger": true
+  },
+  {
+    "query": "Compare our current queued export architecture with the smaller direct synchronous design for its only caller. No formal requirements document survives, but the current behavior and constraints are known.",
+    "should_trigger": true
+  },
+  {
+    "query": "Review this existing service architecture for overengineering before we add another component",
+    "should_trigger": true
+  },
+  {
+    "query": "Look at how the import path uses Kafka and find opportunities to safely simplify it",
+    "should_trigger": true
+  },
+  {
+    "query": "I am still brainstorming the export architecture. Point out opportunities to safely simplify this area before we settle on a design.",
+    "should_trigger": true
+  },
+  {
+    "query": "This completed approach adds a cache. Before coding, check whether existing request memoization already satisfies the requirements.",
+    "should_trigger": true
+  },
+  {
+    "query": "We have the core implementation working. Next I am adding a parser and schema for internal reviewer notes, a three-reviewer protocol, and fresh proof workspaces before and after every edit. Continue with that step.",
+    "should_trigger": true
+  },
+  {
+    "query": "Our requirements and approach brief is complete and proposes a queue plus provider adapter, but no stated requirement or current consumer is tied to either mechanism. Before deepening it into an implementation plan, continue the workflow.",
+    "should_trigger": true
+  },
+  {
+    "query": "The owner asked for a direct export. The agent-authored requirements brief instead adds a queue, job table, provider adapter, and operator configuration that no approved requirement names. Before technical design or implementation planning begins, continue the workflow.",
+    "should_trigger": true
+  },
+  {
+    "query": "We're implementing the archive action. Check for simplicity as well while you continue.",
+    "should_trigger": true
+  },
+  {
+    "query": "Simplify this already-implemented function without changing behavior",
+    "should_trigger": false,
+    "owner": "ce-simplify-code"
+  },
+  {
+    "query": "Review this pull request for bugs and regressions",
+    "should_trigger": false,
+    "owner": "ce-code-review"
+  },
+  {
+    "query": "Explain this architecture in simpler language",
+    "should_trigger": false,
+    "owner": "ce-explain"
+  },
+  {
+    "query": "Make the settings page look visually simpler",
+    "should_trigger": false,
+    "owner": "impeccable"
+  },
+  {
+    "query": "Debug the failing synchronization test",
+    "should_trigger": false,
+    "owner": "ce-debug"
+  },
+  {
+    "query": "Is this branch ready to open a pull request?",
+    "should_trigger": false,
+    "owner": "checking-pr-readiness"
+  },
+  {
+    "query": "Plan and implement a small behavior change to add an archive action. No plan or approach exists yet; begin with planning, not a separate review.",
+    "should_trigger": false,
+    "owner": "ce-plan"
+  },
+  {
+    "query": "The approved requirements brief is ready. Before creating the technical implementation plan, continue the workflow.",
+    "should_trigger": false,
+    "owner": "ce-plan"
+  },
+  {
+    "query": "Implement the decided refactor now: replace the existing queue with a direct call while preserving behavior. Do not reassess the approach.",
+    "should_trigger": false,
+    "owner": "ce-work"
+  },
+  {
+    "query": "The unchanged implementation plan already has a clean simplicity result recommending it proceed as written, with no open user question. Continue to implementation.",
+    "should_trigger": false,
+    "owner": "ce-work"
+  },
+  {
+    "query": "Walk me through the tradeoffs between queues and direct calls for export systems. We are discussing the architecture, not deciding or implementing it yet.",
+    "should_trigger": false,
+    "owner": "ce-brainstorm"
+  }
+]

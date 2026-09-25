@@ -1,0 +1,18 @@
+diff --git a/src/import.ts b/src/import.ts
+--- a/src/import.ts
++++ b/src/import.ts
+@@ -41,9 +41,14 @@ export async function runImport(args: ImportArgs): Promise<ImportSummary> {
+   const rows = await readSource(args.source);
+   const plan = planChanges(rows, await loadCurrent(args.target));
++  if (args.dryRun) {
++    return summarize(plan, { applied: false });
++  }
+   await applyChanges(args.target, plan);
+   return summarize(plan, { applied: true });
+ }
+@@ -112,6 +117,7 @@ export function parseImportArgs(argv: string[]): ImportArgs {
+     source: requireFlag(argv, "--source"),
+     target: requireFlag(argv, "--target"),
++    dryRun: argv.includes("--dry-run"),
+   };
+ }

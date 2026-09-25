@@ -45,8 +45,9 @@ set using this protocol.
    and confirm from the trace that the intended variant loaded. For a change
    limited to the description, the arms are the prior and revised
    descriptions: judge unforced activation on the trigger set under each,
-   instead of forced-load behavior. Write each run's files to the archive in
-   the **Run archive** layout of [references/skills.md](../references/skills.md).
+   instead of forced-load behavior. Write each run's outputs, transcript, token
+   count and duration, metrics, and build identity to the archive in the
+   **Run archive** layout of [references/skills.md](../references/skills.md).
 4. **Grade blind.** Give the grader final answers and the artifact or tool
    observations needed to check execution for every arm, labeled neutrally,
    with arm names removed from paths and quoted text. Exclude private

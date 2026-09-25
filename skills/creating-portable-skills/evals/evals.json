@@ -52,9 +52,9 @@
       "assertions": [
         "States that this conversation may not grade the comparison, and that an independent grader in a separate fresh context must grade it.",
         "Requires a different independent reviewer for the final package review.",
-        "Leaves both judgments unverified until independent contexts complete them and plans a self-contained handoff for separate sessions; author inspection or provisional self-grading does not substitute for the required evidence."
+        "Leaves both judgments unverified until independent contexts complete them and prepares or specifies a self-contained handoff for separate sessions; author inspection or provisional self-grading does not substitute for the required evidence."
       ],
-      "provenance": "Regression control for required independent grading and final review; self-grading was an observed failure in the 2026-07-27/28 matched comparisons. Ported from tests/creating-portable-skills/cases/independent-fresh-context-review.md, with item 1 reworded so a blind grader can decide it from the final answer alone.",
+      "provenance": "Regression control for required independent grading and final review; self-grading was an observed failure in the 2026-07-27/28 matched comparisons. Ported from tests/creating-portable-skills/cases/independent-fresh-context-review.md, with item 1 reworded so a blind grader can decide it from the final answer alone. Assertion 3 accepts a handoff that is prepared or specified, as eval 7's does, because the run's workspace holds none of the artifacts the prompt describes.",
       "regression_control": true
     },
     {

@@ -14,8 +14,9 @@ directory, outside the host project. For a file-writing evaluation, verify its
 process working directory and resolved output paths are inside that run
 directory before dispatch. Existing authorization carries forward. Ask before
 accessing additional resources, affecting a live system, or spending
-substantial unapproved time or money. Keep failed runs and partial outputs in
-the archive as evidence and record their failure; only `evals/evals.json`
+substantial unapproved time or money. Keep failed runs and partial outputs
+isolated in the archive, outside the host project, as evidence and record
+their failure; only `evals/evals.json`
 entries and the round's benchmark file enter the host project.
 
 ## Focused check

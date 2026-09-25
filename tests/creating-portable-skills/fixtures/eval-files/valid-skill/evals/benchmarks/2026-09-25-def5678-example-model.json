@@ -6,7 +6,8 @@
     "runs_per_configuration": 1,
     "harness": "example-harness",
     "grader": "author inspection",
-    "archive_ref": "example-repo/valid-skill/iteration-1/example-model"
+    "archive_ref": "example-repo/valid-skill/iteration-1/example-model",
+    "cost_available": false
   },
   "run_summary": {
     "with_skill": {

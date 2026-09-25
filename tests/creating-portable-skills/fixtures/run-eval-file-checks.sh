@@ -124,7 +124,7 @@ expect_code "non-standard JSON constant" 2
 arm_case() { # arm_case <name> <run_summary JSON> [runs_per_configuration]
 	mkdir -p "$scratch/$1/evals/benchmarks"
 	cp "$fixtures/no-evals/SKILL.md" "$scratch/$1/SKILL.md"
-	printf '{"metadata": {"skill_name": "%s", "executor_model": "m", "timestamp": "t", "runs_per_configuration": %s, "harness": "h", "grader": "g", "archive_ref": "a"}, "run_summary": %s}\n' \
+	printf '{"metadata": {"skill_name": "%s", "executor_model": "m", "timestamp": "t", "runs_per_configuration": %s, "harness": "h", "grader": "g", "archive_ref": "a", "cost_available": false}, "run_summary": %s}\n' \
 		"$1" "${3:-3}" "$2" >"$scratch/$1/evals/benchmarks/2026-09-24-abc1234.json"
 	run "$scratch/$1"
 }
@@ -147,6 +147,33 @@ expect_violation "comparison runs" "metadata.runs_per_configuration: a compariso
 arm_case focused-three-runs "{\"with_skill\": $arm}" 3
 expect_code "focused check with three runs" 1
 expect_violation "focused runs" "metadata.runs_per_configuration: a focused check runs once"
+
+# Every field the benchmark format names has its type; cost is recorded or
+# declared unavailable.
+bench_case() { # bench_case <name> <extra metadata fields> <extra top-level fields>
+	mkdir -p "$scratch/$1/evals/benchmarks"
+	cp "$fixtures/no-evals/SKILL.md" "$scratch/$1/SKILL.md"
+	printf '{"metadata": {"skill_name": "%s", "executor_model": "m", "timestamp": "t", "runs_per_configuration": 1, "harness": "h", "grader": "g", "archive_ref": "a"%s}, "run_summary": {"with_skill": %s}%s}\n' \
+		"$1" "$2" "$arm" "$3" >"$scratch/$1/evals/benchmarks/2026-09-24-abc1234.json"
+	run "$scratch/$1"
+}
+bench_case cost-usd-recorded ', "cost_usd": 0.42' ', "runs": [{"eval_id": 1}], "notes": ["a note"]'
+expect_code "cost_usd with runs and notes" 0
+bench_case no-cost-record '' ''
+expect_code "no cost record" 1
+expect_violation "no cost record" "metadata: record cost_usd, or set cost_available to false"
+bench_case cost-available-true ', "cost_available": true' ''
+expect_violation "cost available without cost_usd" "metadata: record cost_usd, or set cost_available to false"
+bench_case cost-available-text ', "cost_available": "no"' ''
+expect_violation "cost_available type" "metadata.cost_available: must be a boolean"
+bench_case cost-usd-text ', "cost_usd": "0.42"' ''
+expect_violation "cost_usd type" "metadata.cost_usd: must be a number"
+bench_case empty-final-reviewer ', "cost_available": false, "final_reviewer": ""' ''
+expect_violation "final_reviewer type" "metadata.final_reviewer: must be a non-empty string"
+bench_case bad-notes ', "cost_available": false' ', "notes": [7]'
+expect_violation "notes entries" "notes[0]: must be a non-empty string"
+bench_case bad-runs ', "cost_available": false' ', "runs": ["run-1"]'
+expect_violation "runs entries" "runs[0]: must be an object"
 
 # The validator writes nothing to disk.
 before=$(find "$fixtures" "$scratch" | LC_ALL=C sort)

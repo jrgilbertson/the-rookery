@@ -337,10 +337,12 @@ beside this format.
 Commands check these rules:
 
 - `skills-ref validate <skill-directory>` checks frontmatter and naming.
-- `creating-portable-skills` bundles `scripts/check-evals.py`, which checks
-  the shapes of `evals.json`, `eval_queries.json`, and each benchmark file in
-  the skill directories it is given. Run it from the host repository's
-  existing checks.
+- `creating-portable-skills` bundles `scripts/check-evals.py`. For the skill
+  directories it is given, it checks every field, type, name, and count rule
+  this file states for `evals.json`, `eval_queries.json`, and benchmark files.
+  It makes no judgment calls, such as whether an assertion is decidable, a
+  carry-forward is legitimate, or a benchmark states only what its runs
+  checked. Run it from the host repository's existing checks.
 
 No command checks grading quality, blinding, independence, whether a run used
 its stated target, or private names. A public repository cannot list the

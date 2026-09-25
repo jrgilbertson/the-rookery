@@ -172,6 +172,29 @@ def check_benchmark(directory: str, path: Path, report: list[str]) -> None:
             fail(f"metadata.skill_name {metadata['skill_name']!r} does not match directory {directory!r}")
         if not is_integer(runs) or runs < 1:
             fail("metadata.runs_per_configuration: must be a positive integer")
+        if "final_reviewer" in metadata and not is_text(metadata["final_reviewer"]):
+            fail("metadata.final_reviewer: must be a non-empty string")
+        if "cost_usd" in metadata and not is_number(metadata["cost_usd"]):
+            fail("metadata.cost_usd: must be a number")
+        if "cost_available" in metadata and not isinstance(metadata["cost_available"], bool):
+            fail("metadata.cost_available: must be a boolean")
+        if "cost_usd" not in metadata and metadata.get("cost_available") is not False:
+            fail("metadata: record cost_usd, or set cost_available to false")
+
+    if "runs" in data:
+        if not isinstance(data["runs"], list):
+            fail("runs: must be an array")
+        else:
+            for index, entry in enumerate(data["runs"]):
+                if not isinstance(entry, dict):
+                    fail(f"runs[{index}]: must be an object")
+    if "notes" in data:
+        if not isinstance(data["notes"], list):
+            fail("notes: must be an array")
+        else:
+            for index, entry in enumerate(data["notes"]):
+                if not is_text(entry):
+                    fail(f"notes[{index}]: must be a non-empty string")
 
     summary = data.get("run_summary")
     if not isinstance(summary, dict):

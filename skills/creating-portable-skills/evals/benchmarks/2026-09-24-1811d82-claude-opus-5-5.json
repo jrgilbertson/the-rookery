@@ -1,0 +1,269 @@
+{
+  "metadata": {
+    "skill_name": "creating-portable-skills",
+    "executor_model": "claude-opus-5-5 (effort medium)",
+    "timestamp": "2026-09-25T01:30:02Z",
+    "runs_per_configuration": 3,
+    "harness": "claude-code 2.1.282 (Claude Code)",
+    "grader": "gpt-6-sol (effort high) via codex-cli codex-cli 0.156.1, blind packet with shuffled neutral letters, strict array schema",
+    "archive_ref": "the-rookery/creating-portable-skills/iteration-3/claude-opus-5-5",
+    "cost_usd": 0.9243
+  },
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0
+      },
+      "time_seconds": {
+        "mean": 29.3293,
+        "stddev": 7.9814
+      },
+      "tokens": {
+        "mean": 57393.1667,
+        "stddev": 27785.0928
+      }
+    },
+    "old_skill": {
+      "pass_rate": {
+        "mean": 0.8333,
+        "stddev": 0.2041
+      },
+      "time_seconds": {
+        "mean": 36.6978,
+        "stddev": 13.3796
+      },
+      "tokens": {
+        "mean": 63603.8333,
+        "stddev": 24692.5131
+      }
+    },
+    "delta": {
+      "pass_rate": 0.1667,
+      "time_seconds": -7.3685,
+      "tokens": -6210.6666
+    }
+  },
+  "runs": [
+    {
+      "eval_id": 4,
+      "eval_name": "independent-fresh-context-review",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 22.0,
+        "tokens": 32040,
+        "tool_calls": 2,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "independent-fresh-context-review",
+      "configuration": "with_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 23.5,
+        "tokens": 37221,
+        "tool_calls": 2,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "independent-fresh-context-review",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 21.7,
+        "tokens": 37037,
+        "tool_calls": 2,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "independent-fresh-context-review",
+      "configuration": "old_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 24.1,
+        "tokens": 42069,
+        "tool_calls": 3,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "independent-fresh-context-review",
+      "configuration": "old_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 29.6,
+        "tokens": 57444,
+        "tool_calls": 5,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "independent-fresh-context-review",
+      "configuration": "old_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 21.2,
+        "tokens": 29706,
+        "tool_calls": 2,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 35.3,
+        "tokens": 75364,
+        "tool_calls": 5,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "with_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 40.3,
+        "tokens": 102858,
+        "tool_calls": 5,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 33.3,
+        "tokens": 59839,
+        "tool_calls": 4,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "old_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 50.6,
+        "tokens": 93548,
+        "tool_calls": 6,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "old_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 2,
+        "failed": 2,
+        "total": 4,
+        "time_seconds": 50.7,
+        "tokens": 79866,
+        "tool_calls": 6,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "old_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 44.0,
+        "tokens": 78990,
+        "tool_calls": 6,
+        "errors": 0
+      }
+    }
+  ],
+  "notes": [
+    "eval 4 (regression control) with_skill: 3/3 runs pass every assertion",
+    "eval 4 (regression control) old_skill: 3/3 runs pass every assertion",
+    "eval 7 (targeted) with_skill: 3/3 runs pass every assertion",
+    "eval 7 (targeted) old_skill: 0/3 runs pass every assertion",
+    "attempts not counted, kept as evidence (discarded, errored, or superseded by an earlier attempt): none",
+    "grades rejected by validation and rerun: none",
+    "evals.json sha256 ee6f5fd9f3d49a91bd579e428d3d8b6a3ab5820ddc99e5b92ca48ffb4491295b; old_skill 069589f sha256:be06821cc42f7e47cc518a74e34e6327a956cace99fc3071beec13f10d06555d; with_skill 1811d82 sha256:79cdb7ef34aeb118a954dfb1dd5fa61978ede1f0b81ac653321f0cc0b7fb984b",
+    "carry-forward, not rerun: eval 1 (targeted) with_skill f903493 3/3, old_skill 069589f 0/3 runs pass every assertion (iteration-1 grades). archive_ref the-rookery/creating-portable-skills/iteration-1/claude-opus-5-5/eval-1-per-run-evidence; benchmark iteration-1/claude-opus-5-5/benchmark/2026-09-24-f903493-claude-opus-5-5.json",
+    "carry-forward, not rerun: eval 2 (targeted) with_skill f903493 3/3, old_skill 069589f 0/3 runs pass every assertion (iteration-1 grades). archive_ref the-rookery/creating-portable-skills/iteration-1/claude-opus-5-5/eval-2-retune-evidence; benchmark iteration-1/claude-opus-5-5/benchmark/2026-09-24-f903493-claude-opus-5-5.json",
+    "carry-forward, not rerun: eval 6 (targeted) with_skill f903493 3/3, old_skill 069589f 0/3 runs pass every assertion (iteration-1 grades). archive_ref the-rookery/creating-portable-skills/iteration-1/claude-opus-5-5/eval-6-no-prior-evidence; benchmark iteration-1/claude-opus-5-5/benchmark/2026-09-24-f903493-claude-opus-5-5.json",
+    "carry-forward, not rerun: eval 3 (regression control) with_skill 16133ac 3/3, old_skill 069589f 3/3 runs pass every assertion (iteration-2 grades). archive_ref the-rookery/creating-portable-skills/iteration-2/claude-opus-5-5/eval-3-planted-rot-review; benchmark iteration-2/claude-opus-5-5/benchmark/2026-09-24-16133ac-claude-opus-5-5.json",
+    "carry-forward, not rerun: eval 5 (regression control) with_skill 16133ac 3/3, old_skill 069589f 3/3 runs pass every assertion (iteration-2 grades). archive_ref the-rookery/creating-portable-skills/iteration-2/claude-opus-5-5/eval-5-evaluation-containment; benchmark iteration-2/claude-opus-5-5/benchmark/2026-09-24-16133ac-claude-opus-5-5.json",
+    "reused baselines: old_skill runs 1-3 are 069589f records copied unchanged, eval 7 from iteration-2 and eval 4 from iteration-1 (archive_ref in each run's reused_from.json), regraded blind in this round's packets with the new with_skill runs; their executor spend is on the source iteration's ledger, not in cost_usd above",
+    "cost bound, targeted eval rerun this round (eval 7): tokens with 79354 vs old 84135 (-5.7%); time_seconds with 36 vs old 48 (-25.1%); bound is +30% each"
+  ]
+}

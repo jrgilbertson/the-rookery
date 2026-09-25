@@ -338,12 +338,13 @@ Commands check these rules:
 
 - `skills-ref validate <skill-directory>` checks frontmatter and naming.
 - `creating-portable-skills` bundles `scripts/check-evals.py`. For the skill
-  directories it is given, it checks every field, type, name, count, and
-  consistency rule this file states for `evals.json`, `eval_queries.json`, and
-  benchmark files, such as `delta` equaling the changed arm minus the baseline.
-  It makes no judgment calls, such as whether an assertion is decidable, a
-  carry-forward is legitimate, or a benchmark states only what its runs
-  checked. Run it from the host repository's existing checks.
+  directories it is given, it checks every field, type, name, and count rule
+  this file states for `evals.json`, `eval_queries.json`, and benchmark files,
+  plus two consistency rules: `delta` equals the changed arm minus the
+  baseline, and a file's target suffix matches `archive_ref`. It checks no
+  value ranges and makes no judgment calls, such as whether an assertion is
+  decidable, a carry-forward is legitimate, or a benchmark states only what its
+  runs checked. Run it from the host repository's existing checks.
 
 No command checks grading quality, blinding, independence, whether a run used
 its stated target, or private names. A public repository cannot list the

@@ -38,7 +38,7 @@ looked" surface. GitHub Releases mirror its entries.
   a one-run gap at 3 runs extends both arms to 8. `creating-portable-skills`
   ships a byte-equal copy with a parity check, cites it from its workflow and
   templates, and bundles `scripts/check-evals.py` to validate the eval file
-  shapes.
+  shapes. This repository's catalog check runs that validator on every skill.
 - `TESTING.md` explains project-owned verification for polyglot monorepos and
   smaller projects, with local, merge, and release responsibilities, conservative
   selection, cache boundaries, and an embedded policy outline. README and

@@ -12,10 +12,12 @@ if [[ -z "$catalog_dirs" ]]; then
   exit 1
 fi
 
-if ! command -v ruby >/dev/null 2>&1; then
-  echo "catalog: required tool 'ruby' is not installed" >&2
-  exit 1
-fi
+for tool in ruby python3; do
+  if ! command -v "$tool" >/dev/null 2>&1; then
+    echo "catalog: required tool '$tool' is not installed" >&2
+    exit 1
+  fi
+done
 
 if ! diff -u <(printf '%s\n' "$catalog_dirs") <(printf '%s\n' "$readme_links"); then
   echo "catalog: README skill list does not match skills/" >&2
@@ -30,6 +32,7 @@ while IFS= read -r skill_dir; do
   fi
 
   ruby scripts/checks/skill_packages.rb "$skill_dir"
+  python3 skills/creating-portable-skills/scripts/check-evals.py "$skill_dir"
 done <<< "$catalog_dirs"
 
 echo "catalog: ${catalog_dirs//$'\n'/, }"

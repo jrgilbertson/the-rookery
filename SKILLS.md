@@ -99,8 +99,9 @@ never to `evals/`.
   describes success for a human reader. `files` is optional, with paths
   relative to the skill root.
 - `assertions` are binary, verifiable statements. Write them after seeing a
-  first round of outputs, then freeze them before the runs that decide. An
-  eval fails when any assertion fails.
+  first round of outputs, then freeze them before the runs that decide. That
+  draft round runs at most once per eval, inside the approved budget. An eval
+  fails when any assertion fails.
 - `provenance` is an extension. It names the observed failure or baseline gap
   the eval protects, or the contract a regression control guards.
 - `regression_control` is an extension. `true` marks a regression control,
@@ -172,7 +173,7 @@ different threshold only when one is written down before the runs.
 changed arm passes fewer runs than the baseline. At 3 runs, a gap of exactly
 one run extends both arms once, to 8 runs each, and the 8-run counts decide.
 A valid control's baseline passes at least 2 of 3 runs; the workflow's
-pre-spend review fixes a control that falls short before any paid run. If a
+pre-spend review fixes a control that falls short before the deciding runs. If a
 control's baseline still passes fewer than 2 of 3 runs in the round, the
 control neither blocks nor counts. The benchmark notes it, and the control is
 fixed before the next round.

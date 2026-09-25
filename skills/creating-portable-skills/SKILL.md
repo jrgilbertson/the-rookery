@@ -63,9 +63,9 @@ Completion: the validator passes, or every named fallback check passes with the 
 
 Follow the selected route in [assets/baseline-test-template.md](assets/baseline-test-template.md). Write eval definitions to the skill's `evals/evals.json`, raw runs to the run archive, and the round's benchmark to `evals/benchmarks/`.
 
-For full validation, before any paid run, have the independent final reviewer check eval validity: each assertion is decidable from what the grader sees, no assertion is stricter than the skill's contract, and each regression control's baseline plausibly meets the validity bar in **Arms and runs** of [references/skills.md](references/skills.md). The reviewer also checks that the skill's rules are consistent with each other and applies the whole checklist in [references/review-checklist.md](references/review-checklist.md) to the package, with the inputs it names. Revise from its findings before the runs.
+For full validation, before the deciding runs, have the independent final reviewer check eval validity: each assertion is decidable from what the grader sees, no assertion is stricter than the skill's contract, and each regression control's baseline plausibly meets the validity bar in **Arms and runs** of [references/skills.md](references/skills.md). The reviewer also checks that the skill's rules are consistent with each other and applies the whole checklist in [references/review-checklist.md](references/review-checklist.md) to the package, with the inputs it names. Revise from its findings before the deciding runs.
 
-Completion: for full validation, the pre-spend review ran and its findings were resolved before any paid run. The selected route's checks have run, the eval definitions and the round's benchmark file are written, and this skill's `scripts/check-evals.py` exits 0 on the target skill directory. Cosmetic-only edits record behavioral evaluation as not applicable.
+Completion: for full validation, the pre-spend review ran and its findings were resolved before the deciding runs. The selected route's checks have run, the eval definitions and the round's benchmark file are written, and this skill's `scripts/check-evals.py` exits 0 on the target skill directory. Cosmetic-only edits record behavioral evaluation as not applicable.
 
 ### 6. Decide and review
 

@@ -38,7 +38,7 @@ set using this protocol.
    first round of outputs, then freeze them before the runs that decide.
 2. **Settle thresholds and review.** Before the deciding runs, confirm each
    targeted eval's minimum under [references/skills.md](../references/skills.md)
-   and, before any paid run, complete the pre-spend review that
+   and, before the deciding runs, complete the pre-spend review that
    [SKILL.md](../SKILL.md#5-check-behavior) requires.
 3. **Run the arms.** Run each eval in each arm, each run in a fresh context,
    and confirm from the trace that the intended variant loaded. For a change

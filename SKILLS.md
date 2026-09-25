@@ -98,10 +98,10 @@ never to `evals/`.
 - `prompt` is a realistic task with synthetic data, and `expected_output`
   describes success for a human reader. `files` is optional, with paths
   relative to the skill root.
-- `assertions` are binary, verifiable statements. Write them after seeing a
-  first round of outputs, then freeze them before the runs that decide. That
-  draft round runs at most once per eval, inside the approved budget. An eval
-  fails when any assertion fails.
+- `assertions` are binary, verifiable statements. Write them after an
+  optional draft round of at most one run per eval, inside the approved
+  budget, then freeze them before the runs that decide. An eval fails when any
+  assertion fails.
 - `provenance` is an extension. It names the observed failure or baseline gap
   the eval protects, or the contract a regression control guards.
 - `regression_control` is an extension. `true` marks a regression control,
@@ -246,8 +246,9 @@ directory per target inside it. Keep the archive after the work ends.
     build.json       { "skill_revision": "abc1234", "package_hash": "sha256:…", "install_path": "…" }
 ```
 
-- `<target>` matches the target suffix of the round's benchmark file, and
-  `<name>` is a short kebab-case label for the eval.
+- `<target>` names the target, matching the benchmark file's target suffix
+  when the file has one, and `<name>` is a short kebab-case label for the
+  eval.
 - `build.json` identifies the build each run loaded. `skill_revision` is the
   commit under test, or its parent when the change is uncommitted.
   `package_hash` covers the installed package. `install_path` is the

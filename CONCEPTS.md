@@ -279,9 +279,10 @@ context with the intended variant confirmed loaded. Cases are binary
 pass/fail, graded blind by an agent that did not write the answers. A revision
 on the full validation route ships when it meets the ship rule in
 [`SKILLS.md`](SKILLS.md).
-[`SKILLS.md`](SKILLS.md) owns the protocol. The creator's workflow
-owns route eligibility; focused validation supplies an affected behavior check
-and direct artifact inspection without a comparative improvement claim.
+[`SKILLS.md`](SKILLS.md) owns the rules and formats, and the creator's baseline
+template owns the procedure. The creator's workflow owns route eligibility;
+focused validation supplies an affected behavior check and direct artifact
+inspection without a comparative improvement claim.
 
 ### Regression Control
 

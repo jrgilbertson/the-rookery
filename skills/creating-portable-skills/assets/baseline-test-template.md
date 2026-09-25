@@ -34,11 +34,12 @@ set using this protocol.
    least one edge case, each with a `provenance` naming the observed failure
    or baseline gap. For a revision: the existing evals the change affects,
    plus new evals for new behavior. Add a regression control only to guard
-   one named contract, and keep controls few. Write assertions after seeing a
-   first round of outputs, then freeze them before the runs that decide.
+   one named contract, and keep controls few. Write and freeze assertions as
+   the `assertions` rule in [references/skills.md](../references/skills.md)
+   directs.
 2. **Settle thresholds and review.** Before the deciding runs, confirm each
    targeted eval's minimum under [references/skills.md](../references/skills.md)
-   and, before the deciding runs, complete the pre-spend review that
+   and complete the pre-spend review that
    [SKILL.md](../SKILL.md#5-check-behavior) requires.
 3. **Run the arms.** Run each eval in each arm, each run in a fresh context,
    and confirm from the trace that the intended variant loaded. For a change

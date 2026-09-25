@@ -72,7 +72,7 @@ looked" surface. GitHub Releases mirror its entries.
   whose required independent grade or review is unverified does not ship.
 
 - `creating-portable-skills` has an independent reviewer check eval validity
-  and review the package before any paid run, so applying the ship rule
+  and review the package before the deciding runs, so applying the ship rule
   afterward is a mechanical read the final reviewer confirms. After a source
   edit, only evals the diff affects rerun, and unchanged baseline runs carry
   forward under their original revision. Focused validation now covers

@@ -1,0 +1,19 @@
+{
+  "metadata": {
+    "skill_name": "valid-skill",
+    "executor_model": "example-model",
+    "timestamp": "2026-09-25T09:00:00Z",
+    "runs_per_configuration": 1,
+    "harness": "example-harness",
+    "grader": "author inspection",
+    "archive_ref": "example-repo/valid-skill/iteration-1/example-model",
+    "cost_available": false
+  },
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {"mean": 1.0, "stddev": 0.0},
+      "time_seconds": {"mean": 38.0, "stddev": 0.0},
+      "tokens": {"mean": 20500, "stddev": 0}
+    }
+  }
+}

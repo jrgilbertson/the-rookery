@@ -13,6 +13,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- The `creating-portable-skills` review checklist's Sediment item leaves a
+  sentence that describes current domain facts standing, even when it uses a
+  change word.
 - The `creating-portable-skills` signal scan detects attached pressure markers
   such as `Do this!!`, preserves whole-word matching for textual pressure
   signals, and counts each matching line once.
@@ -23,6 +26,19 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- `SKILLS.md` states one convention for writing, evaluating, and recording
+  evidence for skills. It builds on the Agent Skills standard and names each
+  source conflict with the choice made. Evals live in each skill's `evals/`
+  as `evals.json` and `eval_queries.json`, and each graded round commits a
+  benchmark file named `<date>-<short-rev>.json` (one per target when a round
+  covers several) in `evals/benchmarks/`. A targeted eval meets its default
+  minimum when the changed version passes at least 2 of 3 runs on each target
+  and beats the baseline by at least 2 runs. A regression control blocks
+  shipping when the changed version passes fewer runs than the baseline, and
+  a one-run gap at 3 runs extends both arms to 8. `creating-portable-skills`
+  ships a byte-equal copy with a parity check, cites it from its workflow and
+  templates, and bundles `scripts/check-evals.py` to validate the eval file
+  shapes. This repository's catalog check runs that validator on every skill.
 - `TESTING.md` explains project-owned verification for polyglot monorepos and
   smaller projects, with local, merge, and release responsibilities, conservative
   selection, cache boundaries, and an embedded policy outline. README and
@@ -45,6 +61,25 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `creating-portable-skills` and `SKILLS.md` give each rule one owner and
+  define the terms an agent had to guess at, such as the changed arm, a
+  target, and the ship rule. The run archive nests one directory per target,
+  a regression control may enter to guard a named contract, and the
+  canonical-package rule is checked even when the reference validator passes.
+
+- `creating-portable-skills` never lets the author stand in for a required
+  independent grader or reviewer, not even with provisional grades. A change
+  whose required independent grade or review is unverified does not ship.
+
+- `creating-portable-skills` has an independent reviewer check eval validity
+  and review the package before the deciding runs, so applying the ship rule
+  afterward is a mechanical read the final reviewer confirms. After a source
+  edit, only evals the diff affects rerun, and unchanged baseline runs carry
+  forward under their original revision. Focused validation now covers
+  removing history phrasing, pinned model names, named-model workarounds,
+  unsourced hardcoded facts, and duplication, with a blind independent
+  grader, and moving or reformatting eval files needs no behavioral round.
+
 - `creating-portable-skills` uses focused validation for localized, low-risk
   guidance revisions while keeping independent comparison and review for
   consequential changes. Behavioral evaluations use bounded temporary
@@ -59,12 +94,11 @@ looked" surface. GitHub Releases mirror its entries.
   each line whether the model could already know it, and keeps advice that
   rests on one vendor's model out of the portable rules. The baseline
   comparison follows the Agent Skills evaluation loop: it compares pass
-  counts and the token and time cost of each variant, reruns a case that
-  varies, drops checklist items that pass with and without the change, and
-  stops when another revision no longer helps. One blind grader, from a
+  counts and the token and time cost of each variant, drops checklist items
+  that pass with and without the change, and stops when another revision no
+  longer helps. One blind grader, from a
   different model than the author when one is available, scores both
-  variants and quotes its evidence, and any failure of a regression control
-  with the change blocks shipping. An agent auditing a skill it did not
+  variants and quotes its evidence. An agent auditing a skill it did not
   write counts as an independent reviewer, the validator step names the
   reference `skills-ref validate` command, and an install smoke check that
   cannot run needs the user's decision before the change completes.

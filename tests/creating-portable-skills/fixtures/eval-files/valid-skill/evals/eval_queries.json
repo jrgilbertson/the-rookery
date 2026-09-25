@@ -1,0 +1,4 @@
+[
+  {"query": "summarize this sales csv by month", "should_trigger": true},
+  {"query": "draw a chart of these sales", "should_trigger": false, "owner": "charting-data"}
+]

@@ -1,0 +1,1124 @@
+{
+  "metadata": {
+    "skill_name": "creating-portable-skills",
+    "executor_model": "claude-opus-5-5 (effort medium)",
+    "timestamp": "2026-09-24T20:25:54Z",
+    "runs_per_configuration": 3,
+    "harness": "claude-code 2.1.282 (Claude Code)",
+    "grader": "gpt-6-sol (effort high) via codex-cli codex-cli 0.156.1, blind packet with shuffled neutral letters, strict array schema",
+    "archive_ref": "the-rookery/creating-portable-skills/iteration-1/claude-opus-5-5",
+    "cost_usd": 8.3949
+  },
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.9571,
+        "stddev": 0.0912
+      },
+      "time_seconds": {
+        "mean": 42.7987,
+        "stddev": 28.7455
+      },
+      "tokens": {
+        "mean": 63626.619,
+        "stddev": 24579.1071
+      }
+    },
+    "old_skill": {
+      "pass_rate": {
+        "mean": 0.7214,
+        "stddev": 0.3291
+      },
+      "time_seconds": {
+        "mean": 35.5666,
+        "stddev": 8.8322
+      },
+      "tokens": {
+        "mean": 52904.7619,
+        "stddev": 12815.4304
+      }
+    },
+    "delta": {
+      "pass_rate": 0.2357,
+      "time_seconds": 7.2321,
+      "tokens": 10721.8571
+    }
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "eval_name": "per-run-evidence",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 54.8,
+        "tokens": 38021,
+        "tool_calls": 4,
+        "errors": 1
+      }
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "per-run-evidence",
+      "configuration": "with_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 32.0,
+        "tokens": 56022,
+        "tool_calls": 4,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "per-run-evidence",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 39.9,
+        "tokens": 56451,
+        "tool_calls": 4,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "per-run-evidence",
+      "configuration": "old_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.3333,
+        "passed": 2,
+        "failed": 4,
+        "total": 6,
+        "time_seconds": 44.1,
+        "tokens": 43974,
+        "tool_calls": 4,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "per-run-evidence",
+      "configuration": "old_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.3333,
+        "passed": 2,
+        "failed": 4,
+        "total": 6,
+        "time_seconds": 36.5,
+        "tokens": 43240,
+        "tool_calls": 3,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "per-run-evidence",
+      "configuration": "old_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.3333,
+        "passed": 2,
+        "failed": 4,
+        "total": 6,
+        "time_seconds": 37.2,
+        "tokens": 56855,
+        "tool_calls": 5,
+        "errors": 1
+      }
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "retune-evidence",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 41.9,
+        "tokens": 57042,
+        "tool_calls": 5,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "retune-evidence",
+      "configuration": "with_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 39.2,
+        "tokens": 71854,
+        "tool_calls": 4,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "retune-evidence",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 41.3,
+        "tokens": 54468,
+        "tool_calls": 3,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "retune-evidence",
+      "configuration": "old_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.6,
+        "passed": 3,
+        "failed": 2,
+        "total": 5,
+        "time_seconds": 45.0,
+        "tokens": 51242,
+        "tool_calls": 4,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "retune-evidence",
+      "configuration": "old_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.6,
+        "passed": 3,
+        "failed": 2,
+        "total": 5,
+        "time_seconds": 52.3,
+        "tokens": 83782,
+        "tool_calls": 6,
+        "errors": 1
+      }
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "retune-evidence",
+      "configuration": "old_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.6,
+        "passed": 3,
+        "failed": 2,
+        "total": 5,
+        "time_seconds": 48.3,
+        "tokens": 67384,
+        "tool_calls": 7,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "planted-rot-review",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.8,
+        "passed": 4,
+        "failed": 1,
+        "total": 5,
+        "time_seconds": 46.5,
+        "tokens": 85789,
+        "tool_calls": 6,
+        "errors": 1
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "planted-rot-review",
+      "configuration": "with_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 43.8,
+        "tokens": 73670,
+        "tool_calls": 7,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "planted-rot-review",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.8,
+        "passed": 4,
+        "failed": 1,
+        "total": 5,
+        "time_seconds": 56.0,
+        "tokens": 74167,
+        "tool_calls": 6,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "planted-rot-review",
+      "configuration": "with_skill",
+      "run_number": 4,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 52.8,
+        "tokens": 93370,
+        "tool_calls": 7,
+        "errors": 1
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "planted-rot-review",
+      "configuration": "with_skill",
+      "run_number": 5,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 55.4,
+        "tokens": 71577,
+        "tool_calls": 6,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "planted-rot-review",
+      "configuration": "with_skill",
+      "run_number": 6,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 53.1,
+        "tokens": 115543,
+        "tool_calls": 9,
+        "errors": 1
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "planted-rot-review",
+      "configuration": "with_skill",
+      "run_number": 7,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 42.0,
+        "tokens": 109164,
+        "tool_calls": 7,
+        "errors": 1
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "planted-rot-review",
+      "configuration": "with_skill",
+      "run_number": 8,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 51.0,
+        "tokens": 72624,
+        "tool_calls": 6,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "planted-rot-review",
+      "configuration": "old_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 45.1,
+        "tokens": 70781,
+        "tool_calls": 6,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "planted-rot-review",
+      "configuration": "old_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 45.3,
+        "tokens": 70160,
+        "tool_calls": 5,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "planted-rot-review",
+      "configuration": "old_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 40.1,
+        "tokens": 51627,
+        "tool_calls": 5,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "planted-rot-review",
+      "configuration": "old_skill",
+      "run_number": 4,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 45.5,
+        "tokens": 72213,
+        "tool_calls": 6,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "planted-rot-review",
+      "configuration": "old_skill",
+      "run_number": 5,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 50.6,
+        "tokens": 71606,
+        "tool_calls": 6,
+        "errors": 1
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "planted-rot-review",
+      "configuration": "old_skill",
+      "run_number": 6,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 48.3,
+        "tokens": 72552,
+        "tool_calls": 6,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "planted-rot-review",
+      "configuration": "old_skill",
+      "run_number": 7,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 44.4,
+        "tokens": 69885,
+        "tool_calls": 5,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "planted-rot-review",
+      "configuration": "old_skill",
+      "run_number": 8,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 49.5,
+        "tokens": 93398,
+        "tool_calls": 7,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "independent-fresh-context-review",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 21.9,
+        "tokens": 35438,
+        "tool_calls": 2,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "independent-fresh-context-review",
+      "configuration": "with_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 23.9,
+        "tokens": 35674,
+        "tool_calls": 2,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "independent-fresh-context-review",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 22.8,
+        "tokens": 35357,
+        "tool_calls": 2,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "independent-fresh-context-review",
+      "configuration": "old_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 24.1,
+        "tokens": 42069,
+        "tool_calls": 3,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "independent-fresh-context-review",
+      "configuration": "old_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 29.6,
+        "tokens": 57444,
+        "tool_calls": 5,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "independent-fresh-context-review",
+      "configuration": "old_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 21.2,
+        "tokens": 29706,
+        "tool_calls": 2,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "evaluation-containment",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 35.5,
+        "tokens": 61702,
+        "tool_calls": 6,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "evaluation-containment",
+      "configuration": "with_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 51.5,
+        "tokens": 104815,
+        "tool_calls": 7,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "evaluation-containment",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 57.5,
+        "tokens": 130479,
+        "tool_calls": 8,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "evaluation-containment",
+      "configuration": "old_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 33.4,
+        "tokens": 56816,
+        "tool_calls": 4,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "evaluation-containment",
+      "configuration": "old_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 39.2,
+        "tokens": 63286,
+        "tool_calls": 6,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "evaluation-containment",
+      "configuration": "old_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 35.0,
+        "tokens": 58576,
+        "tool_calls": 5,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "no-prior-evidence",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 21.7,
+        "tokens": 54391,
+        "tool_calls": 4,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "no-prior-evidence",
+      "configuration": "with_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 30.3,
+        "tokens": 72308,
+        "tool_calls": 5,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "no-prior-evidence",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 157.4,
+        "tokens": 91439,
+        "tool_calls": 6,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "no-prior-evidence",
+      "configuration": "old_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.2,
+        "passed": 1,
+        "failed": 4,
+        "total": 5,
+        "time_seconds": 28.0,
+        "tokens": 45215,
+        "tool_calls": 5,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "no-prior-evidence",
+      "configuration": "old_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.2,
+        "passed": 1,
+        "failed": 4,
+        "total": 5,
+        "time_seconds": 25.3,
+        "tokens": 44254,
+        "tool_calls": 4,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "no-prior-evidence",
+      "configuration": "old_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.2,
+        "passed": 1,
+        "failed": 4,
+        "total": 5,
+        "time_seconds": 25.2,
+        "tokens": 44158,
+        "tool_calls": 4,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 23.3,
+        "tokens": 41596,
+        "tool_calls": 3,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "with_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 28.1,
+        "tokens": 42288,
+        "tool_calls": 3,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 29.5,
+        "tokens": 63188,
+        "tool_calls": 5,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "with_skill",
+      "run_number": 4,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 24.8,
+        "tokens": 41746,
+        "tool_calls": 3,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "with_skill",
+      "run_number": 5,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 28.7,
+        "tokens": 49802,
+        "tool_calls": 5,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "with_skill",
+      "run_number": 6,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 23.0,
+        "tokens": 42414,
+        "tool_calls": 3,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "with_skill",
+      "run_number": 7,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 26.7,
+        "tokens": 69314,
+        "tool_calls": 5,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "with_skill",
+      "run_number": 8,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 27.2,
+        "tokens": 40908,
+        "tool_calls": 4,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "old_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 28.7,
+        "tokens": 42403,
+        "tool_calls": 3,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "old_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 30.1,
+        "tokens": 43344,
+        "tool_calls": 3,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "old_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 33.2,
+        "tokens": 44684,
+        "tool_calls": 4,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "old_skill",
+      "run_number": 4,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 22.0,
+        "tokens": 30024,
+        "tool_calls": 3,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "old_skill",
+      "run_number": 5,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 26.8,
+        "tokens": 43148,
+        "tool_calls": 3,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "old_skill",
+      "run_number": 6,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 29.6,
+        "tokens": 43678,
+        "tool_calls": 3,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "old_skill",
+      "run_number": 7,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 29.3,
+        "tokens": 55327,
+        "tool_calls": 4,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "grader-unavailable",
+      "configuration": "old_skill",
+      "run_number": 8,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 26.2,
+        "tokens": 42451,
+        "tool_calls": 3,
+        "errors": 0
+      }
+    }
+  ],
+  "notes": [
+    "eval 1 (targeted) with_skill: 3/3 runs pass every assertion",
+    "eval 1 (targeted) old_skill: 0/3 runs pass every assertion",
+    "eval 2 (targeted) with_skill: 3/3 runs pass every assertion",
+    "eval 2 (targeted) old_skill: 0/3 runs pass every assertion",
+    "eval 3 (regression control) with_skill: 1/3 runs pass every assertion",
+    "eval 3 (regression control) old_skill: 3/3 runs pass every assertion",
+    "eval 4 (regression control) with_skill: 3/3 runs pass every assertion",
+    "eval 4 (regression control) old_skill: 3/3 runs pass every assertion",
+    "eval 5 (regression control) with_skill: 3/3 runs pass every assertion",
+    "eval 5 (regression control) old_skill: 3/3 runs pass every assertion",
+    "eval 6 (targeted) with_skill: 3/3 runs pass every assertion",
+    "eval 6 (targeted) old_skill: 0/3 runs pass every assertion",
+    "eval 7 (regression control) with_skill: 1/3 runs pass every assertion",
+    "eval 7 (regression control) old_skill: 2/3 runs pass every assertion",
+    "attempts not counted, kept as evidence (discarded, errored, or superseded by an earlier attempt): ['claude-opus-5-5/eval-2-retune-evidence/old_skill/attempts/run-1.a2', 'claude-opus-5-5/eval-2-retune-evidence/old_skill/attempts/run-2.a2', 'claude-opus-5-5/eval-2-retune-evidence/old_skill/attempts/run-2.a3', 'claude-opus-5-5/eval-2-retune-evidence/old_skill/attempts/run-3.a2', 'claude-opus-5-5/eval-3-planted-rot-review/old_skill/attempts/run-1.a2', 'claude-opus-5-5/eval-3-planted-rot-review/old_skill/attempts/run-1.a3', 'claude-opus-5-5/eval-3-planted-rot-review/old_skill/attempts/run-3.a2', 'claude-opus-5-5/eval-3-planted-rot-review/old_skill/attempts/run-3.a3', 'claude-opus-5-5/eval-3-planted-rot-review/with_skill/attempts/run-1.a2']",
+    "2026-09-24T20:24:13Z reconciliation (foreign-skill and nested-CLI checks judged from tool-call inputs only, not tool results or model text): counted attempt changed for ['eval-2-retune-evidence/old_skill/run-1 a2 (ok)->a1', 'eval-2-retune-evidence/old_skill/run-2 a3 (ok)->a1', 'eval-2-retune-evidence/old_skill/run-3 a2 (ok)->a1', 'eval-3-planted-rot-review/with_skill/run-1 a2 (ok)->a1', 'eval-3-planted-rot-review/old_skill/run-1 a3 (discarded)->a1', 'eval-3-planted-rot-review/old_skill/run-3 a3 (discarded)->a1']",
+    "grades rejected by validation and rerun: none",
+    "evals.json sha256 bf2b7cc0fe34c12e04343baae5ef94271c4fbc34b1009ba106bbeb4ff6585ebc; old_skill 069589f sha256:be06821cc42f7e47cc518a74e34e6327a956cace99fc3071beec13f10d06555d; with_skill f903493 sha256:b1419d7604b037810b484b7d64f1c059588940b7e9c83e9bff60d6e77d10dafe",
+    "control extension: evals 3 and 7 extended to 8 runs per arm (runs 4-8 new, graded blind in their own packets; runs 1-3 grades unchanged; runs_per_configuration and run_summary above cover runs 1-3; runs 4-8 are listed in runs[]). Runs passing every assertion out of 8: eval 3 with_skill 6/8, old_skill 8/8; eval 7 with_skill 3/8, old_skill 5/8"
+  ]
+}

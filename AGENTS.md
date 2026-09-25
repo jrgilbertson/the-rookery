@@ -24,7 +24,9 @@ of a worktree, but the final pull request and default branch must not contain
 or depend on them. Preserve the outcome in its canonical home: code and tests
 for behavior, an ADR for a lasting architectural choice, `docs/solutions/` for
 a reusable learning, or the current root `RELEASING.md` for operating and
-shipping procedures.
+shipping procedures. Eval benchmarks under `skills/*/evals/benchmarks/` are
+maintained evidence that `SKILLS.md` defines and the catalog check validates,
+not point-in-time reports.
 
 Research is durable only when the repository will maintain it as a current
 source. Keep temporary audits and findings with the issue, pull request, or

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prove the catalog door rejects a malformed skill package."""
+"""Prove the catalog door rejects a malformed skill package or eval file."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 CATALOG_CHECK = ROOT / "scripts/checks/catalog.sh"
 PACKAGE_CHECK = ROOT / "scripts/checks/skill_packages.rb"
+EVALS_CHECK = ROOT / "skills/creating-portable-skills/scripts/check-evals.py"
 
 
 def run_catalog(repository: Path) -> subprocess.CompletedProcess[str]:
@@ -33,6 +34,9 @@ def main() -> int:
         skill_directory.mkdir(parents=True)
         shutil.copy2(CATALOG_CHECK, check_directory / "catalog.sh")
         shutil.copy2(PACKAGE_CHECK, check_directory / "skill_packages.rb")
+        evals_check = repository / "skills/creating-portable-skills/scripts/check-evals.py"
+        evals_check.parent.mkdir(parents=True)
+        shutil.copy2(EVALS_CHECK, evals_check)
         subprocess.run(["git", "init", "-q", repository], check=True)
         (repository / "README.md").write_text(
             "- [example-skill](skills/example-skill/SKILL.md).\n",
@@ -78,6 +82,17 @@ def main() -> int:
             if invalid.returncode != 1 or expected_error not in invalid.stderr:
                 raise AssertionError(f"invalid optional field passed: {field}")
 
+        (skill_directory / "SKILL.md").write_text(valid_skill, encoding="utf-8")
+        evals_directory = skill_directory / "evals"
+        evals_directory.mkdir()
+        (evals_directory / "evals.json").write_text(
+            '{"skill_name": "other-skill", "evals": []}\n', encoding="utf-8"
+        )
+        invalid_evals = run_catalog(repository)
+        if invalid_evals.returncode != 1 or "does not match directory" not in invalid_evals.stdout:
+            raise AssertionError("invalid evals.json did not fail the catalog door")
+        shutil.rmtree(evals_directory)
+
         external_skill = Path(temporary) / "external-SKILL.md"
         external_skill.write_text(valid_skill, encoding="utf-8")
         (skill_directory / "SKILL.md").unlink()
@@ -86,7 +101,7 @@ def main() -> int:
         if symlinked.returncode != 1 or "must not be a symlink" not in symlinked.stderr:
             raise AssertionError("symlinked skill package did not fail the catalog door")
 
-    print("PASS: catalog door rejects malformed and symlinked skill packages")
+    print("PASS: catalog door rejects malformed, symlinked, and invalid-eval skill packages")
     return 0
 
 

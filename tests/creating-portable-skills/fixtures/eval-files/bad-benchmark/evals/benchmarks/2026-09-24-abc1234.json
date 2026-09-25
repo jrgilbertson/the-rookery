@@ -1,0 +1,21 @@
+{
+  "metadata": {
+    "skill_name": "bad-benchmark",
+    "timestamp": "2026-09-24T12:00:00Z",
+    "runs_per_configuration": 3,
+    "grader": "independent grader"
+  },
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {"mean": 1.0},
+      "time_seconds": {"mean": 40.5, "stddev": 3.2},
+      "tokens": {"mean": 21000, "stddev": 900}
+    },
+    "without_skill": {
+      "pass_rate": {"mean": 0.5, "stddev": 0.0},
+      "time_seconds": {"mean": 31.0, "stddev": 2.1},
+      "tokens": {"mean": 17000, "stddev": 700}
+    },
+    "delta": {"pass_rate": "+0.50", "time_seconds": 9.5, "tokens": 4000}
+  }
+}

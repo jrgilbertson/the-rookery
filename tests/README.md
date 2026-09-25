@@ -1,9 +1,9 @@
 # Skill Test Suites
 
-Conventions for every `tests/<skill-name>/` directory. This file is the
-canonical statement of the testing convention; the templates in
-`skills/creating-portable-skills/assets/` restate it for portable use. Inside
-this repository, this file governs.
+Conventions for the legacy `tests/<skill-name>/` suites and the repository
+checks. [`SKILLS.md`](../SKILLS.md) owns skill evals: files in each skill's
+`evals/`, their formats, grading, and ship rule. Each suite here follows this
+file until its skill's fix pull request moves it into `evals/`.
 
 ## Repository checks
 
@@ -110,9 +110,9 @@ author conclusions.
   Record its case and a log line, limiting the claim to the behavior exercised.
 - **Matched comparison (full validation).** Run affected cases as matched
   pairs — without the skill (or the frozen prior version) and with the revised version, each
-  in a fresh context. The baseline comparison template in
-  `skills/creating-portable-skills/assets/` owns grading and the ship
-  rule. Log one line per graded variant.
+  in a fresh context, using the baseline comparison template in
+  `skills/creating-portable-skills/assets/`. [`SKILLS.md`](../SKILLS.md) owns
+  grading and the ship rule. Log one line per graded variant.
 - **Smoke check.** Install the skill from source into a disposable project on
   each roster harness — Claude Code and Codex CLI — ask one trigger query, and
   confirm from the run's trace that the copy which activated is the

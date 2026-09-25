@@ -1,10 +1,12 @@
 {
   "metadata": {
     "skill_name": "valid-skill",
+    "executor_model": "example-model",
     "timestamp": "2026-09-25T09:00:00Z",
     "runs_per_configuration": 1,
     "harness": "example-harness",
-    "grader": "author inspection"
+    "grader": "author inspection",
+    "archive_ref": "example-repo/valid-skill/iteration-1/example-model"
   },
   "run_summary": {
     "with_skill": {

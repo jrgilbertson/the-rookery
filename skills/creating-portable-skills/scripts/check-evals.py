@@ -25,7 +25,10 @@ BENCHMARK_NAME = re.compile(
     r"^\d{4}-\d{2}-\d{2}-[0-9a-f]{7,40}(?:-[a-z0-9]+(?:[.-][a-z0-9]+)*)?\.json$"
 )
 SUMMARY_METRICS = ("pass_rate", "time_seconds", "tokens")
-REQUIRED_METADATA_TEXT = ("skill_name", "timestamp", "harness", "grader")
+REQUIRED_METADATA_TEXT = (
+    "skill_name", "executor_model", "timestamp", "harness", "grader", "archive_ref"
+)
+BASELINE_ARMS = ("old_skill", "without_skill")
 
 
 class Unreadable(Exception):
@@ -110,6 +113,8 @@ def check_evals(skill: Path, path: Path, report: list[str]) -> None:
                     fail(f"{file_where}: {entry!r} leaves the skill directory")
                 elif not target.exists():
                     fail(f"{file_where}: {entry!r} does not exist")
+                elif not target.is_file():
+                    fail(f"{file_where}: {entry!r} is not a file")
         assertions = case.get("assertions")
         if not isinstance(assertions, list):
             fail(f"{where}.assertions: must be an array of strings")
@@ -175,6 +180,13 @@ def check_benchmark(directory: str, path: Path, report: list[str]) -> None:
     configurations = {name: value for name, value in summary.items() if name != "delta"}
     if not configurations:
         fail("run_summary: must contain at least one configuration")
+    for name in configurations:
+        if name != "with_skill" and name not in BASELINE_ARMS:
+            fail(f"run_summary.{name}: unknown arm; use with_skill, old_skill, or without_skill")
+    if configurations and "with_skill" not in configurations:
+        fail("run_summary: must include with_skill")
+    if all(arm in configurations for arm in BASELINE_ARMS):
+        fail("run_summary: compare with_skill against one baseline, not both old_skill and without_skill")
     for name, configuration in configurations.items():
         where = f"run_summary.{name}"
         if not isinstance(configuration, dict):

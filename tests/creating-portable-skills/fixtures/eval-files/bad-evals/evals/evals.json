@@ -5,7 +5,7 @@
       "id": 1,
       "prompt": "",
       "expected_output": "Anything.",
-      "files": ["evals/files/missing.csv", "../valid-skill/SKILL.md"],
+      "files": ["evals/files/missing.csv", "../valid-skill/SKILL.md", "evals"],
       "assertions": ["The output is correct", ""],
       "provenance": 7,
       "regression_control": "yes"

@@ -68,6 +68,7 @@ expect_violation evals "skill_name 'another-skill' does not match directory 'bad
 expect_violation evals "evals[0].prompt: must be a non-empty string"
 expect_violation evals "evals[0].files[0]: 'evals/files/missing.csv' does not exist"
 expect_violation evals "evals[0].files[1]: '../valid-skill/SKILL.md' leaves the skill directory"
+expect_violation evals "evals[0].files[2]: 'evals' is not a file"
 expect_violation evals "evals[0].assertions[1]: must be a non-empty string"
 expect_violation evals "evals[0].provenance: must be a string"
 expect_violation evals "evals[0].regression_control: must be a boolean"
@@ -85,6 +86,8 @@ expect_violation queries "[1].owner: must be a non-empty string"
 run "$fixtures/bad-benchmark"
 expect_code "invalid benchmark" 1
 expect_violation benchmark "metadata.harness: must be a non-empty string"
+expect_violation benchmark "metadata.executor_model: must be a non-empty string"
+expect_violation benchmark "metadata.archive_ref: must be a non-empty string"
 expect_violation benchmark "run_summary.with_skill.pass_rate.stddev: must be a number"
 expect_violation benchmark "run_summary.delta.pass_rate: must be a number"
 expect_violation benchmark "latest.json: file name must be <YYYY-MM-DD>-<short-rev>[-<target>].json"
@@ -116,6 +119,26 @@ printf '{"metadata": {}, "run_summary": {"delta": {"pass_rate": NaN}}}\n' \
 	>"$scratch/nan-json/evals/benchmarks/2026-09-24-abc1234.json"
 run "$scratch/nan-json"
 expect_code "non-standard JSON constant" 2
+
+# Arms use the names the convention defines: with_skill against one baseline.
+arm_case() { # arm_case <name> <run_summary JSON>
+	mkdir -p "$scratch/$1/evals/benchmarks"
+	cp "$fixtures/no-evals/SKILL.md" "$scratch/$1/SKILL.md"
+	printf '{"metadata": {"skill_name": "%s", "executor_model": "m", "timestamp": "t", "runs_per_configuration": 3, "harness": "h", "grader": "g", "archive_ref": "a"}, "run_summary": %s}\n' \
+		"$1" "$2" >"$scratch/$1/evals/benchmarks/2026-09-24-abc1234.json"
+	run "$scratch/$1"
+}
+arm='{"pass_rate": {"mean": 1, "stddev": 0}, "time_seconds": {"mean": 1, "stddev": 0}, "tokens": {"mean": 1, "stddev": 0}}'
+delta='{"pass_rate": 0, "time_seconds": 0, "tokens": 0}'
+arm_case unknown-arm "{\"with_skill\": $arm, \"baseline\": $arm, \"delta\": $delta}"
+expect_code "unknown arm name" 1
+expect_violation "unknown arm" "run_summary.baseline: unknown arm; use with_skill, old_skill, or without_skill"
+arm_case no-changed-arm "{\"old_skill\": $arm}"
+expect_code "missing with_skill" 1
+expect_violation "missing with_skill" "run_summary: must include with_skill"
+arm_case two-baselines "{\"with_skill\": $arm, \"old_skill\": $arm, \"without_skill\": $arm, \"delta\": $delta}"
+expect_code "two baselines" 1
+expect_violation "two baselines" "run_summary: compare with_skill against one baseline, not both old_skill and without_skill"
 
 # The validator writes nothing to disk.
 before=$(find "$fixtures" "$scratch" | LC_ALL=C sort)

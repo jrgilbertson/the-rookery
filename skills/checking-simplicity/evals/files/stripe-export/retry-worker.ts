@@ -11,7 +11,7 @@ interface RetryState {
   nextRunAt?: number;
 }
 
-const RETRYABLE = new Set(["StripeConnectionError", "StripeRateLimitError", "StripeAPIError"]);
+const RETRYABLE = new Set(["StripeConnectionError", "StripeAPIError"]);
 
 export class RetryWorker {
   private queue: Array<() => Promise<void>> = [];

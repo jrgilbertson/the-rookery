@@ -39,7 +39,7 @@ stated merge limit.
       with no preamble or closing narration. Cards assert no artifact, locator, or
       task fact that the prompt did not supply.
 - [ ] Item 1 starts with `impeccable` as the coordinator alone on the Design/taste
-      profile, Fable 5.1 at medium. Items 1 and 6 say nothing about
+      profile, Opus 5.5 at medium. Items 1 and 6 say nothing about
       implementation, so each Why names it as the predicted end, and neither
       kickoff states a grant.
 - [ ] Item 2 starts with `ce-work` using Coordinator + Executors: a
@@ -65,7 +65,7 @@ stated merge limit.
 - [ ] Items 5–6 retain exactly two workers in Setup and one round with its
       stop condition in the kickoff.
       Item 5 uses Critic for the Reviewer, GPT-6 Sol at max. Item 6 starts
-      with `impeccable` and uses Design/taste for both workers, Fable 5.1 at
+      with `impeccable` and uses Design/taste for both workers, Opus 5.5 at
       medium. These are passing-baseline regression controls alongside the
       ordinary Reviewer in item 4, not evidence of a judge-profile repair.
 - [ ] No item dispatches agents, creates worktrees, escalates effort, or starts

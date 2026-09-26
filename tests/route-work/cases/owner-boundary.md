@@ -37,8 +37,8 @@ dropped the no-merge line and made item 5 check that a ready fix reaches
 - [ ] Items 1–3 are Single owner with the coordinator alone. Item 3 adds no
       Executors: implementation is authorized, but no independent units are
       established.
-- [ ] Items 4–5 start with `ce-debug` on GPT-6 Sol at high and `ce-work` on
-      Opus 5.5 at medium, respectively, each as the coordinator alone.
+- [ ] Items 4–5 start with `ce-debug` and `ce-work` respectively, both on
+      Opus 5.5 at medium, each as the coordinator alone.
 - [ ] Items 6–7 start with `managing-issues` and `impeccable`, despite their
       issue carriers, each as the coordinator alone.
 - [ ] Items 1, 4, and 7 say nothing about implementation, so each Why names

@@ -44,7 +44,7 @@ Issue #164 dropped the no-merge line; item 1 still carries its stated merge limi
       no independent units are established. Why says the coordinator carries
       the work from discovery into implementation and invites adding Executors
       when independent units appear.
-- [ ] Item 2 starts with `ce-debug` on GPT-6 Sol at high as Single owner: the
+- [ ] Item 2 starts with `ce-debug` on Opus 5.5 at medium as Single owner: the
       coordinator alone on the Researcher profile, with no Executors. Why names
       the expected end of the run and that the coordinator carries the fix
       through.

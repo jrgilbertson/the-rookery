@@ -180,7 +180,7 @@ effort, but selects one only when the operator approves it.
 
 ## Model and effort recommendations
 
-**Last reviewed: 2026-09-22**
+**Last reviewed: 2026-09-26**
 
 | Profile | Seat or worker | Primary | Secondary | Tertiary |
 |---|---|---|---|---|
@@ -188,9 +188,9 @@ effort, but selects one only when the operator approves it.
 | Executor | The coordinator on `ce-work`, and Executor workers | Anthropic / `claude-opus-5-5` / medium | OpenAI / `gpt-6-sol` / high | xAI / `grok-4.7` / high |
 | Reviewer | Reviewer workers and named review or verification gates | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
 | Critic | The Reviewer or an advisor only when the judgment is adversarial; never the coordinator on `grill-with-docs` | OpenAI / `gpt-6-sol` / max | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
-| Researcher | The coordinator on `ce-debug` | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
+| Researcher | The coordinator on `ce-debug` | Anthropic / `claude-opus-5-5` / medium | OpenAI / `gpt-6-sol` / high | xAI / `grok-4.7` / high |
 | Scout | Advisors that gather bounded evidence | xAI / `grok-4.7` / high | OpenAI / `gpt-6-sol` / high | — |
-| Design/taste | The coordinator on `impeccable`, and the Reviewer when the finish line is taste | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-6-astra` / medium | — |
+| Design/taste | The coordinator on `impeccable`, and the Reviewer when the finish line is taste | Anthropic / `claude-opus-5-5` / medium | OpenAI / `gpt-6-astra` / medium | — |
 
 ## Return one portable response
 
@@ -199,7 +199,7 @@ remark around it. Its first line is exactly `**Route**`, `**Resume**`, or
 `**Questions**`. Bold marks that line and the section labels, with a blank line
 after each; use no `#` headings, and never fence the kickoff. Write every
 section as natural prose, not a string of stock sentences. Render model IDs as
-ordinary names, such as "Fable 5.1 at medium".
+ordinary names, such as "Opus 5.5 at medium".
 
 ### Route
 
@@ -277,6 +277,10 @@ the contract.
 - For example, model A passes 60% at $0.60 per attempt and model B passes 30%
   at $0.40. A ranks first although each attempt costs more: $0.60 ÷ 0.60 =
   $1.00 against $0.40 ÷ 0.30 = $1.33.
+- A model earns a place in a row only when its pass rate at its chosen effort
+  is close to the row's best, by the same 95% interval test the effort rule
+  uses. A cheaper model below that line does not rank, however low its cost
+  of pass.
 - A row lists only models that earn a place, so some rows have fewer than
   three.
 - A model may rank by a capability the others lack, as xAI does for Scout
@@ -311,7 +315,12 @@ the contract.
   leaderboard publishes a pass rate and a cost per rollout for every effort
   level in each model's native harness, usually on launch day, in
   https://cognition.com/data/frontiercode-leaderboard/data.json.
-- Design/taste: human-preference boards.
+- Researcher: debugging is coding work, so this row uses the Executor's
+  boards.
+- Design/taste: human-preference boards such as Arena's WebDev leaderboard.
+  They rank models by preference score rather than pass rate, and usually at
+  one effort level, so order the row by score and price, and take effort from
+  the coding boards until a preference board reports every effort level.
 - Planner: no public benchmark scores planning or coordination work, so this
   row is a judgment call. It follows vendor practice of giving planning more
   reasoning effort than execution; revisit it when a planning benchmark

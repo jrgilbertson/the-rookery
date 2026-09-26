@@ -61,6 +61,14 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `route-work` model recommendations are reviewed against VulcanBench Frontier
+  v4, FrontierCode, and Arena's WebDev leaderboard. Design/taste now starts on
+  Claude Opus 5.5 at medium, ahead of GPT-6 Astra, and Fable 5.1 leaves the
+  table. The `ce-debug` coordinator (Researcher) now starts on Opus 5.5 at
+  medium, with GPT-6 Sol at high second. A model earns a place in a row only
+  when its pass rate is close to the row's best, so GPT-6 Luna stays out of
+  the Executor row despite its low cost of pass.
+
 - `ROUTING.md` gives "close to the ceiling" a number for choosing effort. An
   effort qualifies when its pass rate is within the 95% interval of the
   model's best on every board that reports the model, and the qualifying

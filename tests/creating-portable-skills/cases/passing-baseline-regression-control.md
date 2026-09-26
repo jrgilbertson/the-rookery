@@ -19,12 +19,9 @@ waiting for that behavior to fail before protecting it.
 
 ## Expected behavior
 
-- [ ] Allows the case to remain as an explicitly labeled regression control.
-- [ ] Does not count the control as evidence that the new skill improves on the
-      baseline.
-- [ ] Says any claim of improvement must rest on a discriminating case, such
-      as the separate failing-baseline case, not on the control.
-- [ ] Treats a failure of the control in any run with the change as a
-      regression: fix the instruction or the item and rerun, rather than
-      averaging it against passing runs, and never waive it because the
-      control proves no improvement.
+- [ ] Keeps the named regression control without claiming it establishes
+      improvement over the baseline.
+- [ ] Inspects any failed grade against the original transcript, distinguishes
+      behavior failure, grader/assertion error, or capture gap, and diagnoses
+      changed-text attribution with the prior skill on the failing case;
+      preserves original grades and leaves unresolved attribution unverified.

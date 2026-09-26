@@ -33,14 +33,14 @@ method hint.
 
 ## Expected behavior
 
-- [ ] Scenario 1 produces the requested semantic edit, checks structure,
-      confirms the revised sample skill was read back before exercising it,
-      and inspects the one-sentence Thursday conclusion,
-      without requiring a whole-package audit, matched experiment, separate
-      final reviewer, or renewed edit authorization; limits its evidence claim
-      to that affected check without claiming comparative improvement.
-- [ ] Scenario 2 requires matched comparison, independent grading and a
-      different independent final reviewer despite the one-line diff.
-- [ ] Scenario 3 selects the stronger path while the effect remains ambiguous.
-- [ ] Scenario 4 leaves required independent evidence and completion pending;
-      author inspection does not substitute for either independent role.
+- [ ] Scenario 1 makes the authorized edit in disposable storage, checks
+      structure, reads it back and exercises the Thursday conclusion; claims
+      only the behavior exercised and leaves independent grading/review pending
+      when unavailable rather than asking again for edit authorization.
+- [ ] Scenario 2 requires one affected regression check per declared Executor
+      target, different-model blind grading, and one independent PR review;
+      no mandatory paired baseline or pre-spend review.
+- [ ] Scenario 3 resolves the missing meaning before weakening a possible
+      authorization requirement, then selects the affected cases.
+- [ ] Scenario 4 leaves required independent judgments unverified and provides
+      a handoff; author inspection is no substitute.

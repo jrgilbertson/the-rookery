@@ -200,3 +200,29 @@ For a TypeScript/Python monorepo, these pointers may lead to one graph and
 several native runners. For a small Python library, they may lead to its
 existing test command and CI configuration. Neither example needs a second
 dependency list in this document.
+
+## Skill validation in this repository
+
+[`SKILLS.md`](SKILLS.md) owns the regression-check and evidence contract;
+[`tests/README.md`](tests/README.md) owns legacy suite formats and deterministic
+checks. The default Executor target set is the current Executor row in
+[`ROUTING.md`](ROUTING.md#model-and-effort-recommendations), using its listed
+models and efforts in their official subscription CLIs. Explicit caller
+restrictions override that default; record excluded targets and the actual
+coverage. A separate, authorized periodic cross-model sweep supplies broader
+coverage without expanding each change's regression check.
+
+The host owns CLI automation, configuration, isolated per-call usage capture,
+and budget enforcement. The portable skill bundles no runner. Use
+`ccusage --mode calculate` and its upstream-maintained pricing for complete
+API-equivalent estimates across execution, delegation, grading, and failed
+attempts. CLI dollar reports are secondary; account-wide Codex usage or credit
+deltas and repository rate tables are not per-call cost sources. Unknown,
+partial, unpriced, or unidentified-model estimates stop further calls, as do exhausted
+budget or subscription quota. The caller authorizes one budget across all
+providers; API-key billing is not a fallback.
+
+`tools/eval-harness` is planned separately; this policy does not claim that
+runner exists or enforces these requirements. Until host support is available,
+report unsupported usage or pricing as unknown and behavioral checks as not
+run rather than substituting an estimate or a structural pass.

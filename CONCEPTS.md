@@ -270,37 +270,37 @@ research record as the primary result.
 
 ## Skill quality gates
 
+### Regression Check
+
+A Regression Check exercises affected skill evals once per declared Executor
+target after a change. A different model grades blind, and every failure is
+inspected against its original transcript. It establishes only the behavior
+exercised, not comparative improvement. [`SKILLS.md`](SKILLS.md) owns the
+formats, failure attribution, and ship rule.
+
 ### Baseline Comparison
 
-A Baseline Comparison checks whether a skill changes agent behavior in the
-intended direction. New skills run realistic prompts with and without the skill;
-revisions compare the frozen prior and revised versions, each in a fresh
-context with the intended variant confirmed loaded. Cases are binary
-pass/fail, graded blind by an agent that did not write the answers. A revision
-on the full validation route ships when it meets the ship rule in
-[`SKILLS.md`](SKILLS.md).
-[`SKILLS.md`](SKILLS.md) owns the rules and formats, and the creator's baseline
-template owns the procedure. The creator's workflow owns route eligibility;
-focused validation supplies an affected behavior check and direct artifact
-inspection without a comparative improvement claim.
+A Baseline Comparison uses the frozen prior skill on failing evals to diagnose
+whether changed text caused a failure. A new skill may use a no-skill baseline
+when diagnosis needs it. Comparisons use matched inputs, assertions, targets,
+settings, and run counts. A failing-only baseline subset supplies no aggregate
+improvement claim against the whole candidate check.
 
 ### Regression Control
 
-A Regression Control is a Baseline Comparison case that the baseline already
-passes, kept to protect one named load-bearing contract. It never proves an
-improvement. It blocks the change when the changed arm passes fewer runs than
-the baseline, and [`SKILLS.md`](SKILLS.md) settles a one-run gap with more runs.
+A Regression Control protects a named load-bearing contract, including one
+that both prior and revised skills pass. It never establishes improvement.
+A failure needs transcript inspection and attribution under
+[`SKILLS.md`](SKILLS.md), not automatic dismissal or a fixed repeat count.
 
 ### Independent Review Context
 
-An Independent Review Context is the context of any agent that took no part in
-the artifact's authoring discussion and did not produce the artifact; a fresh
-session is one way to get one.
-
-Full validation requires one independent context to grade a matched case and
-a different one for the final review. If a required independent context is
-unavailable, the result remains unverified until a separate session can review
-a self-contained handoff.
+An Independent Review Context belongs to an agent that took no part in the
+artifact's authoring discussion and did not produce the artifact. Behavioral
+grading uses a different model from execution. One independent PR review
+checks the package and evidence; there is no mandatory pre-spend and final
+review cycle. If required independent judgment is unavailable, it remains
+unverified pending a self-contained handoff.
 
 ### Degradation Path
 

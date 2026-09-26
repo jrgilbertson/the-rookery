@@ -49,7 +49,7 @@ expect_violation() { # expect_violation <label> <text>
 	holds "$1 not reported: $2" has "$out" "$2"
 }
 
-# Valid files, including a single-configuration focused benchmark, pass.
+# Valid files, including a single-configuration regression benchmark, pass.
 run "$fixtures/valid-skill"
 expect_code "valid skill" 0
 holds "valid skill printed output: $out" [ -z "$out" ]
@@ -133,20 +133,33 @@ delta='{"pass_rate": 0, "time_seconds": 0, "tokens": 0}'
 arm_case unknown-arm "{\"with_skill\": $arm, \"baseline\": $arm, \"delta\": $delta}"
 expect_code "unknown arm name" 1
 expect_violation "unknown arm" "run_summary.baseline: unknown arm; use with_skill, old_skill, or without_skill"
-arm_case no-changed-arm "{\"old_skill\": $arm}"
-expect_code "missing with_skill" 1
-expect_violation "missing with_skill" "run_summary: must include with_skill"
+arm_case diagnostic-old-skill "{\"old_skill\": $arm}" 1
+expect_code "single-arm old-skill diagnostic" 0
+arm_case diagnostic-without-skill "{\"without_skill\": $arm}" 1
+expect_code "single-arm no-skill diagnostic" 0
+arm_case diagnostic-with-delta "{\"old_skill\": $arm, \"delta\": $delta}" 1
+expect_code "single-arm diagnostic cannot have delta" 1
+expect_violation "single-arm delta" "run_summary.delta: needs at least two configurations to compare"
 arm_case two-baselines "{\"with_skill\": $arm, \"old_skill\": $arm, \"without_skill\": $arm, \"delta\": $delta}"
 expect_code "two baselines" 1
 expect_violation "two baselines" "run_summary: compare with_skill against one baseline, not both old_skill and without_skill"
 
-# A comparison runs each arm 3 times; a focused check runs once.
+arm_case baseline-pair "{\"old_skill\": $arm, \"without_skill\": $arm, \"delta\": $delta}" 1
+expect_code "comparison missing with_skill" 1
+expect_violation "comparison missing changed arm" "run_summary: must include with_skill"
+
+# Default single runs and historical repeated runs remain valid.
 arm_case comparison-one-run "{\"with_skill\": $arm, \"old_skill\": $arm, \"delta\": $delta}" 1
-expect_code "comparison with one run" 1
-expect_violation "comparison runs" "metadata.runs_per_configuration: a comparison runs each arm 3 times"
-arm_case focused-three-runs "{\"with_skill\": $arm}" 3
-expect_code "focused check with three runs" 1
-expect_violation "focused runs" "metadata.runs_per_configuration: a focused check runs once"
+expect_code "matched comparison with one run" 0
+arm_case regression-one-run "{\"with_skill\": $arm}" 1
+expect_code "regression check with one run" 0
+arm_case repeated-three-runs "{\"with_skill\": $arm}" 3
+expect_code "operator-selected repeat count" 0
+for invalid_count in 0 -1 true '"1"' 1.5; do
+	arm_case bad-count "{\"with_skill\": $arm}" "$invalid_count"
+	expect_code "invalid run count $invalid_count" 1
+	expect_violation "run count type" "metadata.runs_per_configuration: must be a positive integer"
+done
 
 # Every field the benchmark format names has its type; cost is recorded or
 # declared unavailable.

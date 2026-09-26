@@ -61,6 +61,15 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Skill validation uses one affected regression check per declared Executor
+  target, blind different-model grading, transcript-based failure attribution,
+  and one independent PR review. Diagnostic baselines cover failing evals only;
+  unmatched cohorts produce no aggregate delta. Cost policy uses complete
+  per-call API-equivalent estimates from `ccusage --mode calculate` under one
+  caller-authorized budget. The portable creator stays runner-free, and its
+  validator accepts single-run and separate diagnostic benchmark records while
+  preserving historical formats.
+
 - `creating-portable-skills` and `SKILLS.md` give each rule one owner and
   define the terms an agent had to guess at, such as the changed arm, a
   target, and the ship rule. The run archive nests one directory per target,

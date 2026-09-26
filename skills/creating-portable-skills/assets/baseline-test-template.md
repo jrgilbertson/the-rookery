@@ -1,78 +1,59 @@
-# Baseline comparison: [skill-name]
+# Regression check: [skill-name]
 
-Use the validation route selected in [SKILL.md](../SKILL.md#workflow).
-[references/skills.md](../references/skills.md) owns the file formats, arms,
-run counts, targets, grading rules, and ship rule. This template owns the
-procedure.
+[references/skills.md](../references/skills.md) owns formats, run counts,
+targets, grading, costs, and the ship rule. This template owns the procedure.
 
 ## Evaluation boundary
 
-For either route, state the permitted inputs, resources, side effects, and run
-budget before dispatch. Execute with synthetic inputs in the run archive's run
-directory, outside the host project. For a file-writing evaluation, verify its
-process working directory and resolved output paths are inside that run
-directory before dispatch. Existing authorization carries forward. Ask before
-accessing additional resources, affecting a live system, or spending
-substantial unapproved time or money. Keep failed runs and partial outputs
-isolated in the archive as evidence and record their failure; only the
-skill's `evals/` files enter the host project.
+Declare permitted inputs, resources, side effects, targets, and the caller's
+cross-provider budget before dispatch. Use synthetic inputs in the archive's
+run directory outside the host project. Before file-writing execution, verify
+that its working directory and resolved outputs are inside that directory.
+Existing authorization carries forward; additional resources or live effects
+need authority. Keep failed runs and partial outputs as isolated evidence.
+Only public-safe eval definitions and benchmarks enter the host project.
 
-## Focused check
+## Check and diagnose
 
-Pick the affected evals in `evals/evals.json`, or add one with binary
-assertions. Run them as [SKILL.md](../SKILL.md#workflow) defines the focused
-check and grade them as step 4 below describes. Write the run files to the
-archive and commit a one-arm benchmark that names the grader.
+1. **Select affected evals.** Use existing cases touched by the change and add
+   realistic cases for new behavior. A new skill starts with two or three
+   realistic prompts, including an edge case. Freeze one or two sharp
+   assertions per eval, or one per numbered independent scenario, before the
+   check. Put mechanical validation in scripts.
+2. **Run the changed skill.** Run each selected eval once per declared Executor
+   target in fresh contexts and confirm the installed variant from the trace.
+   Save outputs, transcripts, usage, duration, metrics, and build identity under
+   the **Run archive** layout. The host collects isolated per-call usage and
+   prices the complete work under **Cost and budget**; unknown usage or prices,
+   exhausted budget, or subscription quota stop further calls.
+3. **Grade blind.** Give an independent different-model grader neutral packets
+   containing the final answer, all tool names and inputs, relevant observations
+   and artifacts, and available child readouts. Remove variant labels, private
+   reasoning, and author conclusions. Keep each original `grading.json`.
+4. **Inspect every failure.** Read the original transcript, distinguish behavior
+   failure, grader/assertion error, and capture gap, and explain corrections in
+   notes without overwriting grades. Compare or rerun the prior skill only on
+   failing evals to attribute the failure. For new skills, use a no-skill check
+   only if needed for diagnosis. Unresolved attribution stays unverified.
+5. **Record and decide.** Write a benchmark for the changed check and a separate
+   one-arm diagnostic benchmark when needed. Compare only matched cohorts;
+   never report an aggregate delta against a failing-only baseline subset.
+   Apply the ship rule and obtain the one independent PR review. The operator
+   decides whether to revise or stop within the authorized budget.
+6. **Validate evidence files.** Keep evals in `evals/evals.json`, benchmarks in
+   `evals/benchmarks/`, and raw evidence outside the repository. Run
+   `scripts/check-evals.py` on the target skill directory. This completed
+   template is temporary working material, not a maintained repository report.
 
-## Matched comparison
-
-Full validation compares behavior with and without the change on a small eval
-set using this protocol.
-
-1. **Write the evals.** For a new skill: two or three realistic prompts where
-   the skill should change execution or output, with varied phrasing and at
-   least one edge case, each with a `provenance` naming the observed failure
-   or baseline gap. For a revision: the existing evals the change affects,
-   plus new evals for new behavior. Add a regression control only to guard
-   one named contract, and keep controls few. Write and freeze assertions as
-   the `assertions` rule in [references/skills.md](../references/skills.md)
-   directs.
-2. **Settle thresholds and review.** Before the deciding runs, confirm each
-   targeted eval's minimum under [references/skills.md](../references/skills.md)
-   and complete the pre-spend review that
-   [SKILL.md](../SKILL.md#5-check-behavior) requires.
-3. **Run the arms.** Run each eval in each arm, each run in a fresh context,
-   and confirm from the trace that the intended variant loaded. For a change
-   limited to the description, the arms are the prior and revised
-   descriptions: judge unforced activation on the trigger set under each,
-   instead of forced-load behavior. Write each run's outputs, transcript, token
-   count and duration, metrics, and build identity to the archive in the
-   **Run archive** layout of [references/skills.md](../references/skills.md).
-4. **Grade blind.** Give the grader final answers and the artifact or tool
-   observations needed to check execution for every arm, labeled neutrally,
-   with arm names removed from paths and quoted text. Exclude private
-   reasoning and the author's conclusions. Grading is done when every run
-   has a `grading.json` in the shape that **Grading and independence** in
-   [references/skills.md](../references/skills.md) defines.
-5. **Apply the ship rule.** For each target, build the benchmark and apply
-   the ship rule and the regression-control rule in
-   [references/skills.md](../references/skills.md). If a targeted eval's
-   changed arm passes some runs but misses its minimum, tighten the
-   ambiguous instruction or assertion. In a targeted eval, remove an
-   assertion that passes in both arms and fix one that fails in both. Stop
-   iterating when another revision no longer improves the result.
-6. **Commit the evidence.** Keep the evals in `evals/evals.json`, commit one
-   benchmark file per target in `evals/benchmarks/`, and run this skill's
-   `scripts/check-evals.py` on the target skill directory until it exits 0.
-   This completed template is working scratch; its content lives on in those
-   files and the commit message.
+For description-only changes, use unforced activation checks in
+[assets/trigger-queries-template.md](trigger-queries-template.md), rather than
+forced-load behavior. Cosmetic changes may skip behavioral evaluation.
 
 ## Human review and blind comparison
 
-Read the outputs beside their grades: assertions catch only what someone
-thought to write down. For qualities binary assertions cannot carry, such as
-organization or polish, give a fresh-context judge two versions' outputs with
-the labels hidden and ask which serves the eval's intended outcome better, and
-why. Record that preference in the benchmark's `notes` to inform revision. A
-preference from someone who knew which version they read is not this
-comparison: route it to specific human feedback, or run the comparison.
+Read outputs beside their grades: assertions cover only their named outcomes.
+For qualities such as organization or polish, use specific human feedback or a
+blind comparison of two outputs. Record preferences as notes, never binary
+passes or fails. A regression check or diagnostic baseline subset does not
+establish improvement; comparative claims need matched evidence and remain
+limited to the cases and targets exercised.

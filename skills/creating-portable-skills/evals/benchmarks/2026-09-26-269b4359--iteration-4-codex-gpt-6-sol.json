@@ -1,0 +1,102 @@
+{
+  "metadata": {
+    "skill_name": "creating-portable-skills",
+    "executor_model": "gpt-6-sol",
+    "timestamp": "2026-09-26T23:00:05Z",
+    "runs_per_configuration": 1,
+    "harness": "codex-cli 0.157.1",
+    "grader": "grok-4.7",
+    "cost_available": true,
+    "identity_verified": true,
+    "archive_ref": "the-rookery/creating-portable-skills/iteration-4/codex-gpt-6-sol",
+    "cost_usd": 0.0869004
+  },
+  "runs": [
+    {
+      "eval_id": 11,
+      "eval_name": "selects-eval-a-because",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "archive_ref": "the-rookery/creating-portable-skills/iteration-4/codex-gpt-6-sol/eval-11-selects-eval-a-because/with_skill/run-1",
+      "harness_version": "codex-cli 0.157.1",
+      "result": {
+        "pass_rate": 1.0,
+        "time_seconds": 34.228,
+        "tokens": 48297,
+        "cost_usd": 0.0433924,
+        "tool_calls": 3,
+        "errors": 0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3
+      },
+      "assertion_results": [
+        {
+          "text": "Requires a new affected behavioral check for eval A despite unchanged prose, prompts, inputs, and assertions; does not claim the old passing grade verifies the changed helper.",
+          "evidence": "run **A once on each of the two authorized Executor targets** in fresh contexts... Note why B and C were carried forward; do not present their earlier passes as runs of the revised package or combine unmatched runs into a delta. Reasoning: The plan requires fresh executions of eval A, the check that exercises the changed render helper, and it does not treat unchanged description, prompts, or prior passes as verification of that helper. New A runs are recorded in a new archive iteration, and earlier passes must not be presented as runs of the revised package.",
+          "passed": true
+        },
+        {
+          "text": "Uses one affected execution per authorized Executor target with a different-model blind grade.",
+          "evidence": "run **A once on each of the two authorized Executor targets** in fresh contexts, and have an independent different-model grader assess those runs blind. Reasoning: That is one execution of the affected eval on each of the two authorized Executor targets, with those runs graded blind by an independent different model.",
+          "passed": true
+        },
+        {
+          "text": "Preserves earlier artifacts and grades under their original revisions and does not require rerunning unaffected evals B and C or another independent PR review.",
+          "evidence": "Keep the earlier archives, benchmarks, and original grades under their **original revision labels**. ... B and C need no rerun on the stated scope. ... the completed independent PR review need not be repeated. Reasoning: Earlier archives, benchmarks, and grades stay under their original revision labels while only A is newly archived. Unaffected evals B and C are not rerun, and the completed independent PR review is not repeated.",
+          "passed": true
+        }
+      ],
+      "needs_operator_review": false
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0
+      },
+      "time_seconds": {
+        "mean": 34.228,
+        "stddev": 0.0
+      },
+      "tokens": {
+        "mean": 48297,
+        "stddev": 0.0
+      }
+    }
+  },
+  "cost_records": [
+    {
+      "kind": "exec",
+      "target": "codex-gpt-6-sol",
+      "provider": "openai",
+      "model": "gpt-6-sol",
+      "cost_usd": 0.0433924,
+      "total_tokens": 48297,
+      "source": "ccusage",
+      "cli_cost_usd": null
+    },
+    {
+      "kind": "grade",
+      "target": "grok-4-7",
+      "provider": "xai",
+      "model": "grok-4.7",
+      "cost_usd": 0.043508000000000005,
+      "executor": "codex-gpt-6-sol",
+      "total_tokens": 12664,
+      "source": "ccusage",
+      "cli_cost_usd": 0.01479272
+    }
+  ],
+  "notes": [
+    "Raw results only; inspect every failure and attribute it before the operator decides to ship.",
+    "Run the old skill separately on failing cases; no aggregate cross-cohort deltas are computed.",
+    "Costs include executions and grading attempts, across providers, in this round only. API-equivalent estimates are not subscription bills.",
+    "Targeted case-11 check of bundled-helper affected-eval selection at 269b4359. Only the new helper-selection case was run; earlier cases and original grades remain under their original revisions.",
+    "Caller authorized Codex GPT-6 Sol high and Grok 4.7 high only. Each executed case 11 once with a different-model blind grade. Both passed all three assertions; no prior-skill diagnostic or additional independent PR review was required.",
+    "Operator inspected both final answers and every tool input: all reads and searches stayed within staged skill material and the project. The new case verifies that changing an executable helper requires checking its affected eval despite unchanged prose and test inputs.",
+    "The four case-11 calls cost $0.3171796 API-equivalent via ccusage. Combined validation is $4.4676560 across 49 calls within the caller-approved $8 allowance. No aggregate improvement delta is claimed."
+  ]
+}

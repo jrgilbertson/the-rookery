@@ -222,7 +222,6 @@ partial, unpriced, or unidentified-model estimates stop further calls, as do exh
 budget or subscription quota. The caller authorizes one budget across all
 providers; API-key billing is not a fallback.
 
-`tools/eval-harness` is planned separately; this policy does not claim that
-runner exists or enforces these requirements. Until host support is available,
-report unsupported usage or pricing as unknown and behavioral checks as not
-run rather than substituting an estimate or a structural pass.
+Configure the host runner to enforce this contract. Unsupported usage or
+pricing stays unknown, and a structural pass does not substitute for a
+behavioral check.

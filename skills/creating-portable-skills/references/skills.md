@@ -170,7 +170,7 @@ evidence. Missing capture is not proof of correct behavior.
 Compare or rerun the frozen prior skill (`old_skill`) only on failing evals
 to attribute the change. Reuse prior evidence only when its package, prompt,
 inputs, assertions, target, and settings match the diagnostic question; retain
-its original revision label and blind-grade compared outputs together. If
+its original revision label and original blind grades. If
 attribution remains unresolved, the result stays unverified.
 
 **Ship rule.** Ship when the required checks and independent PR review are

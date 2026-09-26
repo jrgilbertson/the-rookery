@@ -371,6 +371,24 @@ class HarnessTests(unittest.TestCase):
         self.assertEqual(len(h.ledger_entries()), 1)
         self.assertEqual(h.status_of(h.run_dir('executor', self.ev, 'with_skill', 1)), 'error')
 
+    def test_cli_preflight_missing_binary_allows_retry(self):
+        rd = h.run_dir('executor', self.ev, 'with_skill', 1)
+        with patch.object(h.shutil, 'which', return_value=None), self.assertRaises(h.Halt):
+            self.execute()
+        self.assertFalse(rd.exists())
+        self.assertEqual(h.ledger_entries(), [])
+        self.assertEqual(self.process_calls, [])
+        self.assertEqual(self.execute(), 'ok')
+
+    def test_cli_preflight_version_failure_allows_retry(self):
+        rd = h.run_dir('executor', self.ev, 'with_skill', 1)
+        with patch.object(h, 'cli_version', side_effect=h.Halt('version unavailable')), self.assertRaises(h.Halt):
+            self.execute()
+        self.assertFalse(rd.exists())
+        self.assertEqual(h.ledger_entries(), [])
+        self.assertEqual(self.process_calls, [])
+        self.assertEqual(self.execute(), 'ok')
+
     def test_config_private_paths_and_path_escape(self):
         original = copy.deepcopy(h.CFG)
         for key in ('archive_root', 'workspace_root'):
@@ -555,6 +573,34 @@ class HarnessTests(unittest.TestCase):
                 tr = h.new_trace()
                 tr['tool_calls'] = [{'name': 'command_execution', 'input': inp, 'output': ''}]
                 self.assertTrue(h.identity(tr, ws, adapter, argv)['foreign_access'])
+
+    def test_absolute_path_inputs_outside_staged_workspace_are_foreign(self):
+        ws = {'parent': self.root / 'scratch/ws', 'project': self.root / 'scratch/ws/project',
+              'install': self.root / 'scratch/ws/skills/demo', 'home': self.root / 'scratch/home'}
+        adapter = h.ADAPTERS['codex']
+        argv = adapter.exec_argv(h.CFG['targets']['executor'], ws, 'prompt', self.root / 'final', 1, [])
+        tr = h.new_trace()
+        for inp in ({'file_path': '/etc/hosts'}, {'file_path': str(ws['home'] / '.codex/auth.json')},
+                    {'command': 'cat /home/user/private.txt'},
+                    {'command': '/bin/cat /etc/hosts'}):
+            with self.subTest(inp=inp):
+                tr['tool_calls'] = [{'name': 'read_file', 'input': inp, 'output': ''}]
+                self.assertTrue(h.identity(tr, ws, adapter, argv)['foreign_access'])
+        tr['tool_calls'] = [{'name': 'command_execution', 'input': {
+            'command': '/bin/cat ' + str(ws['install'] / 'SKILL.md')}, 'output': ''}]
+        self.assertFalse(h.identity(tr, ws, adapter, argv)['foreign_access'])
+
+    def test_absolute_external_read_discards_execution(self):
+        original = self.fake_process
+        def with_external_read(argv, **kwargs):
+            result = original(argv, **kwargs)
+            kwargs['stdout'].write((json.dumps({'type': 'item.completed', 'item': {
+                'type': 'command_execution', 'command': 'cat /etc/hosts'}}) + '\n').encode())
+            return result
+        h.subprocess.Popen.side_effect = with_external_read
+        self.assertEqual(self.execute(), 'discarded')
+        identity = h.rjson(h.run_dir('executor', self.ev, 'with_skill', 1) / 'status.json')['identity']
+        self.assertTrue(identity['foreign_access'])
 
     def test_codex_child_readout_saved_and_encrypted_dispatch_unavailable(self):
         sessions = self.root / 'sessions'

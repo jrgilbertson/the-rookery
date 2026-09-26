@@ -484,6 +484,7 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
                                                 os.path.normpath(os.path.join(ws["project"], p))) in want]
     pats, foreign, nested = foreign_patterns(adapter), [], []
     own = [o for w in (ws["parent"], ws["home"]) if w for o in variants(str(w))]
+    staged = variants(str(ws["parent"]))
     roots = sorted(variants(CFG["workspace_root"].rstrip("/")), key=len, reverse=True)
     under_root = re.compile("(?:" + "|".join(map(re.escape, roots)) + r")(?=/|[\s'\"`;|&)]|$)[^\s'\"`;|&)]*")
     project = Path(ws["project"])
@@ -506,9 +507,16 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
                 if not cwd.is_relative_to(project):
                     foreign.append(f"relative workspace escape: {words[1]}")
                 words = words[3:]
-            for word in words:
+            for index, word in enumerate(words):
                 path = word.rsplit('=', 1)[-1].lstrip('(<')
-                if path.startswith('/') or '..' not in Path(path).parts:
+                if path.startswith('/'):
+                    # An absolute first command token names the executable, not a file it read.
+                    if not command or index:
+                        absolute = os.path.normpath(path)
+                        if not any(absolute == root or absolute.startswith(root + '/') for root in staged):
+                            foreign.append(f"absolute outside workspace: {path}")
+                    continue
+                if '..' not in Path(path).parts:
                     continue
                 resolved = Path(os.path.normpath(os.path.join(cwd, path)))
                 if not resolved.is_relative_to(project):
@@ -932,7 +940,6 @@ def invoke(target, kind, directory, cwd, home, make_argv, metadata):
     adapter, target_config = adapter_of(target), CFG['targets'][target]
     budget = allowance()
     env = child_env(adapter, home)
-    directory.mkdir(parents=True, exist_ok=False)
     transcript, stderr, final = directory / 'transcript', directory / 'stderr.txt', directory / 'final.md'
     argv = make_argv(final, budget)
     binary = shutil.which(argv[0], path=BASE_PATH)
@@ -940,6 +947,7 @@ def invoke(target, kind, directory, cwd, home, make_argv, metadata):
         raise Halt(f'{adapter.NAME}: CLI binary not found on PATH')
     argv[0] = binary
     version = cli_version(binary, env, cwd)
+    directory.mkdir(parents=True, exist_ok=False)
     record = {'kind': kind, 'target': target, 'provider': adapter.PROVIDER, 'model': target_config['model'],
               'cost_record': str(directory / 'cost.json'), 'cost_usd': None, **metadata}
     # A crash before settlement leaves an unknown ledger entry and blocks the next call.

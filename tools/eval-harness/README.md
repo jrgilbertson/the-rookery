@@ -84,6 +84,8 @@ must remain private.
 checked for forbidden tool surfaces, missing reads of the installed skill,
 foreign packages/user skills, and nested agent CLIs. Relative command and path
 inputs use the declared `cwd`/`workdir` and a leading `cd … &&` when present.
+Literal absolute path inputs and simple command operands outside the staged
+workspace are marked foreign; a leading absolute executable token is exempt.
 The detector does not interpret shell variables, substitutions, or persistent
 shell state; it is not an OS security boundary. Changes to CLI flags or session
 formats require another integration check against the installed versions.

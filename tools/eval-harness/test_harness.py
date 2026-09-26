@@ -175,6 +175,31 @@ class HarnessTests(unittest.TestCase):
         self.assertEqual(report['metadata']['executor_model'], 'executor-model')
         self.assertIn('abc12345', path.name)
 
+    def test_report_selects_targets_from_frozen_config_after_live_rename(self):
+        self.execute()
+        self.assertTrue(h.grade_one('executor', self.ev))
+        h.CFG['targets']['renamed'] = h.CFG['targets'].pop('executor')
+        path = h.report(None)[0]
+        report = h.rjson(path)
+        self.assertEqual(path.parent.name, 'incomplete')
+        self.assertEqual(report['metadata']['executor_model'], 'executor-model')
+        self.assertFalse(report['metadata']['identity_verified'])
+
+    def test_report_rejects_explicit_target_absent_from_frozen_config(self):
+        self.execute()
+        h.CFG['targets']['renamed'] = h.CFG['targets'].pop('executor')
+        with self.assertRaisesRegex(ValueError, 'frozen'):
+            h.report(['renamed'])
+
+    def test_report_command_uses_frozen_target_after_live_rename(self):
+        self.execute()
+        h.CFG['targets']['renamed'] = h.CFG['targets'].pop('executor')
+        h.wjson(self.config, h.CFG)
+        argv = ['harness.py', 'report', '--round', str(self.config)]
+        with patch.object(h.sys, 'argv', argv):
+            self.assertEqual(h.main(), 0)
+        self.assertEqual(len(list((h.iteration_dir() / 'executor/incomplete').glob('*.json'))), 1)
+
     def test_truncated_jsonl_is_archived_and_discarded(self):
         def damaged(argv, **kwargs):
             self.process_calls.append((argv, kwargs))
@@ -434,6 +459,20 @@ class HarnessTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             h.selected_evals()
 
+    def test_fixture_mode_change_invalidates_frozen_inputs(self):
+        fixture = Path(h.CFG['repo_path']) / 'skills/demo/evals/files/script.sh'
+        fixture.parent.mkdir()
+        fixture.write_text('#!/bin/sh\nexit 0\n')
+        fixture.chmod(0o644)
+        self.ev['files'] = ['evals/files/script.sh']
+        h.wjson(fixture.parents[1] / 'evals.json', {'evals': [self.ev]})
+        before = h.load_evals()[1]
+        h.freeze_inputs()
+        fixture.chmod(0o755)
+        self.assertNotEqual(h.load_evals()[1], before)
+        with self.assertRaises(h.Halt):
+            h.freeze_inputs()
+
     def test_report_attributes_grading_to_its_executor_only(self):
         self.execute()
         h.grade_one('executor', self.ev)
@@ -470,6 +509,31 @@ class HarnessTests(unittest.TestCase):
         self.assertTrue(h.identity(tr, ws, adapter, argv)['foreign_access'])
         tr['tool_calls'][0]['input']['command'] = 'codex exec hello'
         self.assertTrue(h.identity(tr, ws, adapter, argv)['nested_agent_cli'])
+
+    def test_relative_workspace_escape_discards_execution(self):
+        original = self.fake_process
+        def with_escape(argv, **kwargs):
+            result = original(argv, **kwargs)
+            kwargs['stdout'].write((json.dumps({'type': 'item.completed', 'item': {
+                'type': 'command_execution', 'command': 'cat ../../ws-other/skills/demo/SKILL.md'}}) + '\n').encode())
+            return result
+        h.subprocess.Popen.side_effect = with_escape
+        self.assertEqual(self.execute(), 'discarded')
+        identity = h.rjson(h.run_dir('executor', self.ev, 'with_skill', 1) / 'status.json')['identity']
+        self.assertTrue(identity['foreign_access'])
+
+    def test_relative_parent_scan_is_foreign_access(self):
+        ws = {'parent': self.root / 'scratch/ws', 'project': self.root / 'scratch/ws/project',
+              'install': self.root / 'scratch/ws/skills/demo', 'home': self.root / 'scratch/home'}
+        tr = h.new_trace()
+        tr['tool_calls'] = [{'name': 'command_execution', 'input': {'command': 'find .. -name SKILL.md'}, 'output': ''}]
+        adapter = h.ADAPTERS['codex']
+        argv = adapter.exec_argv(h.CFG['targets']['executor'], ws, 'prompt', self.root / 'final', 1, [])
+        self.assertTrue(h.identity(tr, ws, adapter, argv)['foreign_access'])
+        tr['tool_calls'][0]['input'] = {'command': 'find --directory=../../ws-other -name SKILL.md'}
+        self.assertTrue(h.identity(tr, ws, adapter, argv)['foreign_access'])
+        tr['tool_calls'][0]['input'] = {'query': 'What does .. mean in prose?'}
+        self.assertFalse(h.identity(tr, ws, adapter, argv)['foreign_access'])
 
     def test_codex_child_readout_saved_and_encrypted_dispatch_unavailable(self):
         sessions = self.root / 'sessions'

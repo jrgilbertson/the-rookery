@@ -13,7 +13,9 @@ import math
 import os
 import random
 import re
+import shlex
 import shutil
+import stat as stat_module
 import statistics
 import subprocess
 import sys
@@ -79,7 +81,8 @@ def load_evals() -> tuple[list[dict], str]:
         fixture = (skill / name).resolve()
         if not fixture.is_relative_to(skill.resolve() / "evals/files"):
             raise ValueError("Eval fixture is outside evals/files")
-        digest.update(name.encode() + b"\0" + fixture.read_bytes())
+        digest.update(name.encode() + b"\0" + str(stat_module.S_IMODE(fixture.stat().st_mode)).encode() + b"\0"
+                      + fixture.read_bytes())
     return evals, digest.hexdigest()
 
 
@@ -141,6 +144,18 @@ def strings(value, key="") -> list[str]:
     if isinstance(value, dict):
         return [s for k, v in value.items() for s in strings(v, k)]
     return [s for v in value for s in strings(v, key)] if isinstance(value, list) else []
+
+def path_inputs(value) -> list[str]:
+    """Command and path fields that can name a location in the staged project."""
+    if isinstance(value, str):
+        return [value]
+    if isinstance(value, list):
+        return [s for item in value for s in path_inputs(item)]
+    if isinstance(value, dict):
+        keys = {'command', 'cmd', 'path', 'file_path', 'filepath', 'directory', 'cwd', 'glob'}
+        return [s for key, item in value.items() for s in
+                (strings(item) if key.lower() in keys else path_inputs(item) if isinstance(item, (dict, list)) else [])]
+    return []
 
 def new_trace() -> dict:
     return {"tool_calls": [], "final_text": "", "tokens": 0, "token_detail": {}, "cost_usd": None, "is_error": False,
@@ -463,6 +478,7 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
     own = [o for w in (ws["parent"], ws["home"]) if w for o in variants(str(w))]
     roots = sorted(variants(CFG["workspace_root"].rstrip("/")), key=len, reverse=True)
     under_root = re.compile("(?:" + "|".join(map(re.escape, roots)) + r")(?=/|[\s'\"`;|&)]|$)[^\s'\"`;|&)]*")
+    project = Path(ws["project"])
     for c in tr["tool_calls"]:  # inputs only; a grep pattern is text searched for, not a place
         inp = {k: v for k, v in c["input"].items() if k != "pattern"} if c["name"] == adapter.GREP else c["input"]
         for s in strings(inp):
@@ -470,6 +486,18 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
             foreign += [p for p in pats if p in s]
             foreign += [f"another workspace: {m}" for m in under_root.findall(s)  # a sibling run's parent or HOME
                         if not any(m == o or m.startswith(o + "/") for o in own)]
+        for s in path_inputs(inp):
+            try:
+                words = shlex.split(s)
+            except ValueError:
+                words = s.split()
+            for word in words:
+                path = word.rsplit('=', 1)[-1].lstrip('(<')
+                if path.startswith('/') or '..' not in Path(path).parts:
+                    continue
+                resolved = Path(os.path.normpath(os.path.join(project, path)))
+                if not resolved.is_relative_to(project):
+                    foreign.append(f"relative workspace escape: {path}")
     return {"loaded_paths": sorted(set(loaded)), "foreign_access": sorted(set(foreign)), "nested_agent_cli": nested,
             "init_surface_ok": init_ok(adapter, tr["init"], argv)}
 
@@ -1086,7 +1114,7 @@ def grade_round(targets):
     return all(results)
 
 
-def report(targets):
+def report(targets=None):
     global CFG
     live = CFG
     archive = iteration_dir()
@@ -1110,7 +1138,10 @@ def report(targets):
             issues.append('Current eval inputs cannot be verified')
     CFG = frozen_cfg or live
     try:
-        return _report(targets, frozen_evals, issues)
+        selected = targets if targets is not None else executor_targets()
+        if any(target not in executor_targets() for target in selected):
+            raise ValueError('Report targets must name frozen configured Executors')
+        return _report(selected, frozen_evals, issues)
     finally:
         CFG = live
 
@@ -1262,8 +1293,10 @@ def main():
     ARGS = parser.parse_args()
     CFG = rjson(Path(ARGS.round))
     validate_config(ARGS.round)
-    targets = ARGS.targets.split(',') if ARGS.targets else executor_targets()
-    if any(t not in executor_targets() for t in targets):
+    targets = ARGS.targets.split(',') if ARGS.targets else None
+    if ARGS.command != 'report' and targets is None:
+        targets = executor_targets()
+    if ARGS.command != 'report' and any(t not in executor_targets() for t in targets):
         raise ValueError('--targets must name configured Executors')
     if ARGS.command == 'detector-check':
         return detector_check()

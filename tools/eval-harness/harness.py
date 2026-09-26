@@ -112,10 +112,18 @@ def status_of(rd: Path) -> str:
 
 def tree_hash(root: Path) -> str:
     lines = []
-    for path in [root, *sorted(root.rglob('*'))]:
-        metadata = path.stat()
-        kind = 'directory' if path.is_dir() else 'file'
-        content = sha256_bytes(path.read_bytes()) if kind == 'file' else ''
+    root_metadata = root.lstat()
+    paths = [root, *sorted(root.rglob('*'))] if stat_module.S_ISDIR(root_metadata.st_mode) else [root]
+    for path in paths:
+        metadata = root_metadata if path == root else path.lstat()
+        if stat_module.S_ISDIR(metadata.st_mode):
+            kind, content = 'directory', ''
+        elif stat_module.S_ISREG(metadata.st_mode):
+            kind, content = 'file', sha256_bytes(path.read_bytes())
+        elif stat_module.S_ISLNK(metadata.st_mode):
+            kind, content = 'symlink', sha256_bytes(os.fsencode(os.readlink(path)))
+        else:
+            kind, content = f'special:{stat_module.S_IFMT(metadata.st_mode):o}', str(metadata.st_rdev)
         lines.append(f"{path.relative_to(root).as_posix()}\0{kind}\0"
                      f"{stat_module.S_IMODE(metadata.st_mode):o}\0{metadata.st_mtime_ns}\0{content}\n")
     return "sha256:" + sha256_bytes("".join(lines).encode())
@@ -481,6 +489,44 @@ def snapshot(root: Path) -> dict:
     return result
 
 NESTED_CLI = re.compile(r"(^|[\s;&|(\"'/])(claude|codex|grok)\s+(-p\b|--print\b|--single\b|exec\b|e\b)")
+HEREDOC = re.compile(r"<<(-?)[ \t]*(['\"]?)([A-Za-z_][A-Za-z0-9_]*)\2")
+
+
+def heredoc_markers(line: str, quote: str) -> tuple[list[tuple[str, bool]], str]:
+    """Find literal heredoc operators outside quoted shell words."""
+    markers, index = [], 0
+    while index < len(line):
+        char = line[index]
+        if char == '\\' and quote != "'":
+            index += 2
+            continue
+        if quote:
+            if char == quote:
+                quote = ''
+        elif char in ('"', "'"):
+            quote = char
+        elif (char == '<' and (index == 0 or line[index - 1] != '<')
+              and not line.startswith('<<<', index) and (match := HEREDOC.match(line, index))):
+            markers.append((match.group(3), bool(match.group(1))))
+            index = match.end()
+            continue
+        index += 1
+    return markers, quote
+
+
+def without_heredoc_bodies(script: str) -> str:
+    """Keep literal shell lines, excluding bodies passed as heredoc input."""
+    kept, pending, quote = [], [], ''
+    for line in script.splitlines():
+        if pending:
+            delimiter, strip_tabs = pending[0]
+            if (line.lstrip('\t') if strip_tabs else line) == delimiter:
+                pending.pop(0)
+            continue
+        kept.append(line)
+        markers, quote = heredoc_markers(line, quote)
+        pending.extend(markers)
+    return '\n'.join(kept)
 
 def foreign_patterns(adapter) -> list[str]:
     """What a run must never act on: user-level skill copies, the repo and the arm packages
@@ -522,10 +568,13 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
             # Inspect that literal script with the existing static path checks.
             if (command and len(words) >= 3 and Path(words[0]).name in {'sh', 'bash', 'zsh', 'dash', 'ksh'}
                     and words[1] in {'-c', '-lc'}):
-                try:
-                    words = shlex.split(words[2])
-                except ValueError:
-                    words = words[2].split()
+                s = words[2]
+            if command and '<<' in s:
+                s = without_heredoc_bodies(s)
+            try:
+                words = shlex.split(s)
+            except ValueError:
+                words = s.split()
             # Honor the common explicit shell prefix; this remains a static detector,
             # not an interpreter for variables, substitutions, or persistent shell state.
             while command and len(words) >= 3 and words[0] == 'cd' and words[2] == '&&':
@@ -535,7 +584,8 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
                 words = words[3:]
             read_result = bool(c.get('output')) and not c.get('failed', False)
             reads_file = ((command and c['name'] in {'command_execution', 'run_terminal_command', 'Bash'}
-                           and words and Path(words[0]).name == 'cat')
+                           and words and Path(words[0]).name == 'cat' and '\n' not in s.strip()
+                           and not any(any(ch in word for ch in '|;&<>') for word in words))
                           or (not command and c['name'] in {'read_file', 'Read'}))
             for index, word in enumerate(words):
                 path = word.rsplit('=', 1)[-1].lstrip('(<')

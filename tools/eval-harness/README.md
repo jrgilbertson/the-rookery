@@ -42,7 +42,8 @@ fixture file modes and modification times, runner source, and package identities
 are frozen within a round. Actual CLI versions are recorded. Prefer immutable commit SHAs.
 Package identity covers file contents and the modes and modification times of
 files and directories, including the package root and empty directories, as
-preserved when the package is staged.
+preserved when the package is staged. Symlinks and special entries are identified
+without following or reading them, so runtime package mutations can be discarded.
 
 ## Commands
 
@@ -95,10 +96,13 @@ inputs and installed-skill reads use the declared `cwd`/`workdir` and a leading
 `cd … &&` when present. Literal `~` paths resolve to the isolated HOME.
 The installed skill counts as loaded only when `cat` or a native `Read`/`read_file`
 tool targets its `SKILL.md` and returns nonempty output without a reported failure.
-Path mentions, listings, tests, and missing or failed results do not count.
+For shell calls, only simple `cat` commands count; redirects, pipes, command
+chaining, path mentions, listings, tests, and missing or failed results do not.
 For a command recorded as one `sh`/`bash`/`zsh`/`dash`/`ksh` `-c` or `-lc`
 wrapper, the detector checks the literal inner command with those same rules,
 including when positional arguments follow the script.
+Heredoc bodies are excluded from shell-operand path checks; known foreign text
+patterns still scan the whole input. Embedded code in a heredoc is not interpreted.
 Literal absolute path inputs and simple command operands outside the staged
 workspace are marked foreign; a leading absolute executable token is exempt.
 The detector does not interpret shell variables, substitutions, or persistent

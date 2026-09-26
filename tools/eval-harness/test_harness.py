@@ -212,6 +212,37 @@ class HarnessTests(unittest.TestCase):
         empty.rmdir()
         self.assertNotEqual(h.tree_hash(package), baseline)
 
+    def test_package_hash_distinguishes_regular_file_from_matching_symlink(self):
+        package = self.root / 'package'
+        package.mkdir()
+        external = self.root / 'external-skill.md'
+        external.write_text('same contents')
+        skill = package / 'SKILL.md'
+        h.shutil.copy2(external, skill)
+        package_stat = package.stat()
+        before = h.tree_hash(package)
+        skill.unlink()
+        skill.symlink_to(external)
+        os.utime(package, ns=(package_stat.st_atime_ns, package_stat.st_mtime_ns))
+        self.assertNotEqual(h.tree_hash(package), before)
+
+    def test_package_hash_handles_special_entry_without_reading_it(self):
+        package = self.root / 'package'
+        package.mkdir()
+        before = h.tree_hash(package)
+        os.mkfifo(package / 'pipe')
+        self.assertNotEqual(h.tree_hash(package), before)
+
+    def test_package_hash_does_not_walk_symlinked_root(self):
+        external = self.root / 'external'
+        external.mkdir()
+        (external / 'file').write_text('before')
+        package = self.root / 'package-link'
+        package.symlink_to(external, target_is_directory=True)
+        before = h.tree_hash(package)
+        (external / 'file').write_text('after')
+        self.assertEqual(h.tree_hash(package), before)
+
     def test_assertion_free_grade_is_saved_without_a_score(self):
         self.ev['assertions'] = []
         h.wjson(Path(h.CFG['repo_path']) / 'skills/demo/evals/evals.json', {'evals': [self.ev]})
@@ -343,6 +374,21 @@ class HarnessTests(unittest.TestCase):
         obs = h.rjson(rd / 'outputs/observations.json')
         self.assertFalse(obs['skill_package_unchanged'])
         self.assertNotIn('modified during execution', json.dumps(obs))
+
+    def test_dangling_symlink_added_to_staged_package_discards_and_persists_slot(self):
+        original = self.fake_process
+        def with_symlink(argv, **kwargs):
+            result = original(argv, **kwargs)
+            skill = Path(argv[-1].split('Read ', 1)[1].split(' and follow', 1)[0])
+            (skill.parent / 'broken-link').symlink_to('missing-target')
+            return result
+        h.subprocess.Popen.side_effect = with_symlink
+        self.assertEqual(self.execute(), 'discarded')
+        rd = h.run_dir('executor', self.ev, 'with_skill', 1)
+        self.assertEqual(h.rjson(rd / 'status.json')['status'], 'discarded')
+        self.assertFalse(h.rjson(rd / 'outputs/observations.json')['skill_package_unchanged'])
+        self.assertEqual(self.execute(), 'discarded')
+        self.assertEqual(len(self.process_calls), 1)
 
     def test_grade_rejects_nonstring_evidence_and_reasoning(self):
         result = {'grades': [{'letter': 'A', 'passed': True, 'items': [
@@ -796,6 +842,39 @@ class HarnessTests(unittest.TestCase):
                 identity = h.rjson(h.run_dir('executor', self.ev, 'with_skill', run) / 'status.json')['identity']
                 self.assertFalse(identity['loaded_paths'])
 
+    def test_redirected_cat_with_later_output_does_not_prove_skill_read(self):
+        original = self.fake_process
+        def with_redirect(argv, **kwargs):
+            result = original(argv, **kwargs)
+            skill = argv[-1].split('Read ', 1)[1].split(' and follow', 1)[0]
+            kwargs['stdout'].seek(0)
+            kwargs['stdout'].truncate()
+            command = f'cat {skill} > copy; echo done'
+            event = {'type': 'item.completed', 'item': {'type': 'command_execution',
+                     'command': command, 'aggregated_output': 'done', 'exit_code': 0}}
+            kwargs['stdout'].write((json.dumps(event) + '\n' +
+                json.dumps({'type': 'item.completed', 'item': {'type': 'agent_message', 'text': 'Done'}}) + '\n').encode())
+            return result
+        h.subprocess.Popen.side_effect = with_redirect
+        self.assertEqual(self.execute(), 'discarded')
+        identity = h.rjson(h.run_dir('executor', self.ev, 'with_skill', 1) / 'status.json')['identity']
+        self.assertFalse(identity['loaded_paths'])
+
+    def test_simple_cd_cat_keeps_execution_valid(self):
+        original = self.fake_process
+        def with_cd_cat(argv, **kwargs):
+            result = original(argv, **kwargs)
+            kwargs['stdout'].seek(0)
+            kwargs['stdout'].truncate()
+            event = {'type': 'item.completed', 'item': {'type': 'command_execution',
+                     'command': 'cd ../skills/demo && cat SKILL.md',
+                     'aggregated_output': 'Do the thing', 'exit_code': 0}}
+            kwargs['stdout'].write((json.dumps(event) + '\n' +
+                json.dumps({'type': 'item.completed', 'item': {'type': 'agent_message', 'text': 'Done'}}) + '\n').encode())
+            return result
+        h.subprocess.Popen.side_effect = with_cd_cat
+        self.assertEqual(self.execute(), 'ok')
+
     def test_relative_workspace_escape_discards_execution(self):
         original = self.fake_process
         def with_escape(argv, **kwargs):
@@ -935,6 +1014,25 @@ class HarnessTests(unittest.TestCase):
         tr['tool_calls'] = [{'name': 'command_execution', 'input': {
             'command': f"bash -c 'cat {ws['install'] / 'SKILL.md'}' ignored"}, 'output': 'Do the thing'}]
         self.assertTrue(h.identity(tr, ws, adapter, argv)['loaded_paths'])
+
+    def test_heredoc_body_is_not_scanned_as_shell_path(self):
+        ws = {'parent': self.root / 'scratch/ws', 'project': self.root / 'scratch/ws/project',
+              'install': self.root / 'scratch/ws/skills/demo', 'home': self.root / 'scratch/home'}
+        adapter = h.ADAPTERS['codex']
+        argv = adapter.exec_argv(h.CFG['targets']['executor'], ws, 'prompt', self.root / 'final', 1, [])
+        tr = h.new_trace()
+        body = "python3 - <<'PY'\nfrom pathlib import Path\nvalue = Path('one') / 'two'\nPY"
+        for command in (body, f'/bin/zsh -lc "{body}"'):
+            with self.subTest(command=command):
+                tr['tool_calls'] = [{'name': 'command_execution', 'input': {'command': command}, 'output': ''}]
+                self.assertFalse(h.identity(tr, ws, adapter, argv)['foreign_access'])
+        for command in (body + '\ncat /etc/hosts', 'echo "<<PY"\ncat /etc/hosts',
+                        'cat <<<"text"\ncat /etc/hosts',
+                        'echo "\n<<PY\n"\ncat /etc/hosts',
+                        'cat /', 'find /'):
+            with self.subTest(command=command):
+                tr['tool_calls'] = [{'name': 'command_execution', 'input': {'command': command}, 'output': ''}]
+                self.assertTrue(h.identity(tr, ws, adapter, argv)['foreign_access'])
 
     def test_codex_child_readout_saved_and_encrypted_dispatch_unavailable(self):
         sessions = self.root / 'sessions'

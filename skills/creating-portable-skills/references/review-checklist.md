@@ -31,7 +31,7 @@ Judge a change to a candidate instruction group against the hard constraint, req
 
 [assets/baseline-test-template.md](../assets/baseline-test-template.md) owns behavior checks.
 
-Pass: every prescriptive instruction protects a named invariant, responds to observed evidence, or covers a named fragile operation; every relaxation shows no invariant loss attributable to changed text on available evidence, with unresolved attribution left unverified.
+Pass: every prescriptive instruction protects a named invariant, responds to observed evidence, or covers a named fragile operation; every relaxation shows no invariant loss attributable to the change under test on available evidence, with unresolved attribution left unverified.
 
 ## Invocation and triggering
 

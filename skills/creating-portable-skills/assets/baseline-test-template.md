@@ -26,10 +26,11 @@ Only public-safe eval definitions and benchmarks enter the host project.
    the **Run archive** layout. The host collects isolated per-call usage and
    prices the complete work under **Cost and budget**; unknown usage or prices,
    exhausted budget, or subscription quota stop further calls.
-3. **Grade blind.** Give an independent different-model grader neutral packets
-   containing the final answer, all tool names and inputs, relevant observations
-   and artifacts, and available child readouts. Remove variant labels, private
-   reasoning, and author conclusions. Keep each original `grading.json`.
+3. **Grade blind.** Give an independent different-model grader the packet
+   specified under **Grading and independence** in [references/skills.md](../references/skills.md),
+   with sensitive values replaced by typed placeholders before transfer.
+   Keep each original `grading.json`; evidence lost to safe redaction is a
+   capture gap, not a pass.
 4. **Inspect every failure.** Read the original transcript, distinguish behavior
    failure, grader/assertion error, and capture gap, and explain corrections in
    notes without overwriting grades. Compare or rerun the prior skill only on

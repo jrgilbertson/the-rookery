@@ -174,7 +174,7 @@ its original revision label and original blind grades. If
 attribution remains unresolved, the result stays unverified.
 
 **Ship rule.** Ship when the required checks and independent PR review are
-complete and no failure is attributable to changed text. Known pre-existing
+complete and no failure is attributable to the change under test. Known pre-existing
 failures remain visible with their evidence and disposition. A new skill must
 meet its required outcomes; a no-skill failure does not excuse its own failure.
 The operator owns iteration and stopping within the authorized budget; there
@@ -235,8 +235,11 @@ Each run's `grading.json` uses the standard's shape:
   check blind. For comparisons, one grader grades both arms. Its packet
   contains the final answer, all tool names and inputs, relevant observations
   and artifacts, and all available child readouts, with variant labels removed.
-  Exclude private reasoning and author conclusions. A missing trace needed to
-  decide an assertion is a capture gap, not a pass.
+  Replace sensitive values throughout the packet with typed placeholders before
+  sending it to the selected grader, preserving the action and evidence needed
+  to grade. Exclude private reasoning and author conclusions. If a missing
+  trace or safe redaction removes evidence needed to decide an assertion,
+  record a capture gap and leave the outcome unverified.
 - One independent PR review checks the package and evidence using the
   `creating-portable-skills` checklist. There is no mandatory pre-spend review
   plus final-review cycle. An unavailable independent grader or reviewer

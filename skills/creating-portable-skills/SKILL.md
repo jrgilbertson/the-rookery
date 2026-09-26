@@ -67,7 +67,7 @@ Apply the ship rule in [references/skills.md](references/skills.md). Have one in
 
 A substantive follow-up edit returns through step 4 and the affected evals. Recheck evals whose outcomes could change under the revised package or test material, including changed instructions, executable helpers, bundled resources, prompts, inputs, or assertions. Preserve previous artifacts and grades under their original revision labels. Diagnose failures using the prior skill only where needed; do not combine unmatched cohorts into a delta.
 
-Completion: structural checks pass, required independent grading and PR review are complete, every failure has an evidence-backed disposition, and none is attributable to changed text. Claims stay within the exercised cases and targets; unresolved attribution remains unverified.
+Completion: structural checks pass, required independent grading and PR review are complete, every failure has an evidence-backed disposition, and none is attributable to the change under test. Claims stay within the exercised cases and targets; unresolved attribution remains unverified.
 
 ### 7. Test the description
 

@@ -29,7 +29,7 @@ tags:
 Agent-authored skill changes need two kinds of verification. Deterministic
 tools can check structural facts such as frontmatter, file identity, line
 counts, and links. Behavioral validation runs affected evals once per declared
-Executor target with a blind different-model grader. One independent PR review
+Executor target with a blind different-model grader. One independent review
 checks the package and evidence. Author inspection supplies no independent
 evidence.
 
@@ -47,7 +47,7 @@ Keep three evidence layers separate:
 | --- | --- | --- |
 | Provenance | Which package, model, harness, and configuration ran | Hashes, runtime metadata, load traces, and deterministic comparisons |
 | Outcome evidence | Whether the output met the required outcome and hard constraints | Inspection of actual artifacts and relevant traces; blind different-model grading of the changed skill |
-| Coverage | Which changed behaviors were tested and how far the conclusion reaches | Declared cases and limitations; one independent PR review of the package and evidence |
+| Coverage | Which changed behaviors were tested and how far the conclusion reaches | Declared cases and limitations; one independent review of the package and evidence |
 
 Keep the durable record small: eval definitions live in the skill's
 `evals/evals.json`, raw runs stay in the machine-local run archive, and each
@@ -66,7 +66,7 @@ runs"). There is no mandatory pre-spend review plus final-review cycle.
 4. Compare or rerun the prior skill only on failures to attribute changed text.
    Unresolved attribution stays unverified. Never compute an aggregate delta
    between unmatched cohorts or claim improvement from a baseline subset.
-5. Give one independent PR reviewer the package and evidence. Use scripts for
+5. Give one independent reviewer the package and evidence. Use scripts for
    mechanical facts. The operator owns further iteration and stopping within
    the authorized budget.
 6. If required independent judgment is unavailable, prepare a self-contained
@@ -119,7 +119,7 @@ general reliability, broad non-regression, or causal improvement.
 An author carries assumptions from the conversation that produced the
 artifact. Those assumptions make it easier to accept the intended result
 instead of the observable one. A fresh grader reduces that contamination, and
-an independent PR review checks whether the evidence covers
+an independent review checks whether the evidence covers
 the complete package rather than only the cases already graded.
 
 Identity evidence does not prove quality, and a correct score on one case does

@@ -48,7 +48,7 @@ Run the assessment in one subagent, not in the current context:
 - If a caller wants a stronger evidence trail or a repeated-review rule, that
   caller owns it.
 
-For skill changes, one independent PR review checks the package and evidence.
+For skill changes, one independent review checks the package and evidence.
 The operator decides whether to iterate or stop; a fixed review cycle or
 iteration count is not a substitute for judgment. Blind behavioral grading
 remains a separate evidence task, with one or two sharp assertions per eval

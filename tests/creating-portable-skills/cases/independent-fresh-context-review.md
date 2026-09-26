@@ -20,5 +20,5 @@ this stronger-review contract under proportional validation.
 
 - [ ] Refuses author self-grading, including provisional grades, and requires
       independent different-model blind grading.
-- [ ] Leaves the independent PR review and grading unverified and specifies a
+- [ ] Leaves the independent review and grading unverified and specifies a
       self-contained handoff; author inspection replaces neither judgment.

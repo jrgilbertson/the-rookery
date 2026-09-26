@@ -38,7 +38,7 @@ method hint.
       only the behavior exercised and leaves independent grading/review pending
       when unavailable rather than asking again for edit authorization.
 - [ ] Scenario 2 requires one affected regression check per declared Executor
-      target, different-model blind grading, and one independent PR review;
+      target, different-model blind grading, and one independent review;
       no mandatory paired baseline or pre-spend review.
 - [ ] Scenario 3 resolves the missing meaning before weakening a possible
       authorization requirement, then selects the affected cases.

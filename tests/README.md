@@ -118,7 +118,7 @@ Exclude private reasoning and author conclusions; a different model grades.
 - **Diagnostic comparison.** Compare or rerun the prior skill only on failing
   cases to attribute the change. Unresolved attribution remains unverified.
   A single-arm check or baseline subset proves no improvement, and unmatched
-  cohorts get no aggregate delta. One independent PR review checks the package
+  cohorts get no aggregate delta. One independent review checks the package
   and evidence. The operator owns iteration and stopping within the caller's
   authorized cross-provider budget; see [`SKILLS.md`](../SKILLS.md).
 - **Smoke check.** Install the skill from source into a disposable project on

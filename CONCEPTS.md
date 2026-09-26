@@ -297,7 +297,7 @@ A failure needs transcript inspection and attribution under
 
 An Independent Review Context belongs to an agent that took no part in the
 artifact's authoring discussion and did not produce the artifact. Behavioral
-grading uses a different model from execution. One independent PR review
+grading uses a different model from execution. One independent review
 checks the package and evidence; there is no mandatory pre-spend and final
 review cycle. If required independent judgment is unavailable, it remains
 unverified pending a self-contained handoff.

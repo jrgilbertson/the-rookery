@@ -468,6 +468,20 @@ class HarnessTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             h.validate_config(self.config)
 
+    def test_target_names_match_benchmark_suffix(self):
+        original = copy.deepcopy(h.CFG)
+        for name in ('Codex', 'codex_gpt', 'codex..sol', '-codex'):
+            with self.subTest(rejected=name):
+                h.CFG = copy.deepcopy(original)
+                h.CFG['targets'][name] = h.CFG['targets'].pop('executor')
+                with self.assertRaisesRegex(ValueError, 'Invalid target'):
+                    h.validate_config(self.config)
+        for name in ('codex.gpt-6-sol', 'grok-4.7'):
+            with self.subTest(accepted=name):
+                h.CFG = copy.deepcopy(original)
+                h.CFG['targets'][name] = h.CFG['targets'].pop('executor')
+                h.validate_config(self.config)
+
     def test_no_threshold_and_no_concurrency_options(self):
         for key in ('thresholds', 'reuse', 'carry_forward', 'capped_providers'):
             h.CFG[key] = {}

@@ -724,7 +724,7 @@ def validate_config(path, require_executor=True):
             if isinstance(target, dict):
                 target.setdefault('effort', 'high')
             continue
-        if not re.fullmatch(r'[A-Za-z0-9_-]+', name) or target['adapter'] not in ADAPTERS:
+        if not re.fullmatch(r'[a-z0-9]+(?:[.-][a-z0-9]+)*', name) or target['adapter'] not in ADAPTERS:
             raise ValueError('Invalid target')
         if 'jobs' in target:
             raise ValueError('Calls are sequential; remove jobs')

@@ -14,7 +14,9 @@ configuration. The example is a template, not an executable eval configuration.
 `grader` are Executors; targets without one are available only as graders. The
 grader must name a different model from its Executor. Multiple Executors run
 sequentially. Each gets one execution per selected eval by default; `runs` can
-explicitly request repeats. `run_arms` defaults to just `changed_arm`.
+explicitly request repeats. Target names use lowercase letters and digits in
+segments separated by single dots or hyphens; underscores and uppercase letters
+are invalid. `run_arms` defaults to just `changed_arm`.
 
 Grade packets shuffle anonymous letters and scrub revision and workspace paths.
 They include full tool names and inputs, project artifacts, and available child

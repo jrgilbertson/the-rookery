@@ -29,16 +29,21 @@ dropped the no-merge line and made item 5 check that a ready fix reaches
 ## Expected behavior
 
 - [ ] The final answer contains only the requested cards, in item order,
-      with no preamble or closing narration. Cards assert no artifact, locator, or
-      task fact that the prompt did not supply.
+      with no preamble or closing narration. Cards assert no artifact, locator, or task fact that the prompt did not
+      supply. Restating a supplied fact and naming a contract default are
+      fine; describing the work's state, readiness, or meaning beyond what
+      the prompt says fails, including in a Questions recommendation. Facts
+      an item inherits by saying "the same" request count as supplied, and
+      stating the routing table's condition for the chosen owner, such as
+      ready work for `ce-work`, is the routing reason, not a task fact.
 - [ ] Items 1–3 start with `ce-brainstorm`, `grill-with-docs`, and `ce-plan`,
-      respectively, each with a coordinator on Opus 5.5 at high; item 2 uses the
+      respectively, each with a coordinator on the Planner primary; item 2 uses the
       Planner profile, not Critic.
 - [ ] Items 1–3 are Single owner with the coordinator alone. Item 3 adds no
       Executors: implementation is authorized, but no independent units are
       established.
-- [ ] Items 4–5 start with `ce-debug` on GPT-6 Sol at high and `ce-work` on
-      Opus 5.5 at medium, respectively, each as the coordinator alone.
+- [ ] Items 4–5 start with `ce-debug` on the Researcher primary and `ce-work`
+      on the Executor primary, each as the coordinator alone.
 - [ ] Items 6–7 start with `managing-issues` and `impeccable`, despite their
       issue carriers, each as the coordinator alone.
 - [ ] Items 1, 4, and 7 say nothing about implementation, so each Why names

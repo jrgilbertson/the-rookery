@@ -69,6 +69,14 @@ note`. The `git rev` field names the commit the run's working tree was
 - Git is the archive. Beyond the log format's required `git rev` field, no
   hand-recorded hashes, session IDs, evidence labels, or run ledgers in
   these artifacts.
+- Checklists name data that changes between releases by its place in the
+  contract, not by its current value. A `route-work` item says "the Planner
+  primary" or "the Executor secondary", meaning that profile's slot in the
+  model table of the package under test; the grader resolves the slot from
+  that table, quotes the row it used, and expects the card to render it as an
+  ordinary name. A prompt that must make a model unavailable names the slot,
+  not the model. Provenance lines keep the names that were true when the
+  failure was observed.
 - Name the independent-review mechanism in the log line, such as a fresh
   session, CLI run, or subagent. Do not record context identifiers. Naming the
   mechanism does not replace the output or trace evidence behind the judgment.

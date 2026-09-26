@@ -469,7 +469,7 @@ def foreign_patterns(adapter) -> list[str]:
     dirs = [str(REAL_HOME / d) for d in SKILL_DIR_NAMES]
     if not adapter.THROWAWAY_HOME:  # ~ and $HOME resolve to the real HOME
         dirs += [f"{h}/{d}" for h in ("~", "$HOME", "${HOME}") for d in SKILL_DIR_NAMES]
-    m = re.search(r"github\.com[:/]([^/]+/[^/.]+)", git("remote", "get-url", "origin"))
+    m = re.search(r"github\.com[:/]([^/]+/[^/.]+)", git("remote", "-v"))
     web = [f"github.com/{m.group(1)}", f"raw.githubusercontent.com/{m.group(1)}"] if m else []
     return dirs + [CFG["repo_path"], str(iteration_dir() / "packages"), "/.grok/bundled/"] + web
 
@@ -602,7 +602,8 @@ def write_grading(rd: Path, ev: dict, items: list[dict], grader: dict) -> None:
            for a, i in zip(ev["assertions"], sorted(items, key=lambda i: i["n"]))]
     p = sum(r["passed"] for r in res)
     wjson(rd / "grading.json", {"assertion_results": res, "grader": grader, "summary": {
-        "passed": p, "failed": len(res) - p, "total": len(res), "pass_rate": round(p / len(res), 4)}})
+        "passed": p, "failed": len(res) - p, "total": len(res),
+        "pass_rate": round(p / len(res), 4) if res else None}})
 
 def stat(xs: list[float]) -> dict:
     return {"mean": round(statistics.mean(xs), 4) if xs else 0.0,
@@ -1252,7 +1253,9 @@ def _report(targets, frozen_evals, identity_issues):
                     if grade:
                         row['result'].update({x: grade['summary'][x] for x in ('passed', 'failed', 'total')})
                         row['assertion_results'] = grade['assertion_results']
-                    row['needs_operator_review'] = row['status'] != 'ok' or not grade or grade['summary']['failed'] > 0
+                    row['needs_operator_review'] = (row['status'] != 'ok' or not grade
+                                                    or grade['summary']['pass_rate'] is None
+                                                    or grade['summary']['failed'] > 0)
                     for metric in ('pass_rate', 'time_seconds', 'tokens'):
                         value = row['result'][metric]
                         if value is not None and grade:

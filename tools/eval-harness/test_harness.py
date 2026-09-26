@@ -91,8 +91,9 @@ class HarnessTests(unittest.TestCase):
                      {'type': 'turn.completed', 'usage': {'input_tokens': 10, 'output_tokens': 2}}]
             kwargs['stdout'].write(''.join(json.dumps(x) + '\n' for x in trace).encode())
         else:
-            result = {'grades': [{'letter': 'A', 'items': [{'n': 1, 'evidence': 'Done',
-                       'reasoning': 'It did the thing', 'passed': True}], 'passed': True}]}
+            items = [{'n': n, 'evidence': 'Done', 'reasoning': 'It did the thing', 'passed': True}
+                     for n, _ in enumerate(self.ev['assertions'], 1)]
+            result = {'grades': [{'letter': 'A', 'items': items, 'passed': True}]}
             kwargs['stdout'].write(json.dumps({'structuredOutput': result, 'text': 'graded', 'total_cost_usd': 9}).encode())
         if self.json_quota:
             kwargs['stdout'].write(b'\n{"type":"turn.failed","error":{"message":"quota exhausted"}}\n')
@@ -163,6 +164,18 @@ class HarnessTests(unittest.TestCase):
         self.assertEqual(path.parent.name, 'benchmark')
         self.assertTrue(report['metadata']['identity_verified'])
         self.assertEqual(report['runs'][0]['assertion_results'][0]['text'], 'Does the thing')
+
+    def test_assertion_free_grade_is_saved_without_a_score(self):
+        self.ev['assertions'] = []
+        h.wjson(Path(h.CFG['repo_path']) / 'skills/demo/evals/evals.json', {'evals': [self.ev]})
+        self.execute()
+        self.assertTrue(h.grade_one('executor', self.ev))
+        grading = h.rjson(h.run_dir('executor', self.ev, 'with_skill', 1) / 'grading.json')
+        self.assertEqual(grading['summary'], {'passed': 0, 'failed': 0, 'total': 0, 'pass_rate': None})
+        path = h.report(['executor'])[0]
+        report = h.rjson(path)
+        self.assertEqual(path.parent.name, 'incomplete')
+        self.assertTrue(report['runs'][0]['needs_operator_review'])
 
     def test_changed_config_report_keeps_original_model_and_revision(self):
         self.execute()
@@ -730,6 +743,22 @@ class HarnessTests(unittest.TestCase):
         self.assertNotIn('--ephemeral', argv)
         self.assertIn('forced_login_method="chatgpt"', argv)
         self.assertNotIn('--api-key', argv)
+
+
+class RemotePatternTests(unittest.TestCase):
+    def test_local_repository_and_non_origin_remote(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with patch.dict(h.CFG, {'repo_path': directory, 'archive_root': str(root / 'archive'),
+                                   'repo': 'sample', 'skill': 'demo', 'iteration': 1}, clear=True):
+                h.git('init', '--quiet')
+                patterns = h.foreign_patterns(h.ADAPTERS['codex'])
+                self.assertIn(directory, patterns)
+                self.assertFalse(any('github.com/' in item for item in patterns))
+                h.git('remote', 'add', 'upstream', 'https://github.com/example/sample.git')
+                patterns = h.foreign_patterns(h.ADAPTERS['codex'])
+                self.assertIn('github.com/example/sample', patterns)
+                self.assertIn('raw.githubusercontent.com/example/sample', patterns)
 
 
 class FakeProcess:

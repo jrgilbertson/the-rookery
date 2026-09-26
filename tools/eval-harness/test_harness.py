@@ -676,6 +676,30 @@ class HarnessTests(unittest.TestCase):
                 finally:
                     path.write_text(original)
 
+    def test_missing_completed_run_evidence_yields_incomplete_report(self):
+        self.execute()
+        self.assertTrue(h.grade_one('executor', self.ev))
+        rd = h.run_dir('executor', self.ev, 'with_skill', 1)
+        calls = len(self.process_calls)
+        for name in ('timing.json', 'metrics.json', 'build.json'):
+            with self.subTest(name=name):
+                path = rd / name
+                original = path.read_bytes()
+                path.unlink()
+                try:
+                    report_path = h.report(['executor'])[0]
+                    report = h.rjson(report_path)
+                    self.assertEqual(report_path.parent.name, 'incomplete')
+                    self.assertTrue(report['runs'][0]['needs_operator_review'])
+                    self.assertTrue(any(name in note for note in report['notes']))
+                    self.assertEqual(report['metadata']['cost_usd'], .5)
+                    if name == 'timing.json':
+                        self.assertIsNone(report['runs'][0]['result']['time_seconds'])
+                    self.assertFalse(path.exists())
+                    self.assertEqual(len(self.process_calls), calls)
+                finally:
+                    path.write_bytes(original)
+
     def test_unknown_grading_cost_stops_next_inference(self):
         self.execute()
         self.costs = [None]

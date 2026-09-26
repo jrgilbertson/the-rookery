@@ -141,8 +141,8 @@ trace, and validation evidence; the malformed original is not overwritten.
 Harness JSON artifacts are written to a temporary file in their destination
 directory and atomically replaced, so an interrupted write preserves a prior
 valid file. A malformed or missing `status.json` in an existing run directory
-is reported as unavailable; the paid slot is not relaunched. Malformed saved
-run evidence likewise makes the report incomplete and remains untouched for
+is reported as unavailable; the paid slot is not relaunched. Missing or malformed
+timing, metrics, or build evidence likewise makes the report incomplete and remains untouched for
 operator recovery. Ledger costs are still reported when they reconcile.
 
 One `budget_usd` covers all providers, Executors, graders, and failed attempts in

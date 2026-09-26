@@ -743,7 +743,7 @@ def checked_grading(rd: Path, ev: dict, grader_model: str) -> tuple[dict | None,
 
 def report_run_object(path: Path) -> tuple[dict | None, str | None]:
     if not path.exists():
-        return None, None
+        return None, f'{path.name} is missing; recover the saved run evidence'
     try:
         record = rjson(path)
     except (OSError, UnicodeError, ValueError):

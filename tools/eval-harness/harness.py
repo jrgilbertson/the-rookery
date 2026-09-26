@@ -158,7 +158,7 @@ def path_inputs(value, cwd: Path) -> list[tuple[str, Path, bool]]:
         for key, item in value.items():
             if key.lower() in {'cwd', 'workdir'}:
                 rows += [(s, cwd, False) for s in strings(item)]
-            elif key.lower() in {'command', 'cmd', 'path', 'file_path', 'filepath', 'directory', 'glob'}:
+            elif key.lower() in {'command', 'cmd', 'path', 'file_path', 'filepath', 'target_file', 'directory', 'glob'}:
                 rows += [(s, base, key.lower() in {'command', 'cmd'}) for s in strings(item)]
             elif isinstance(item, (dict, list)):
                 rows += path_inputs(item, base)

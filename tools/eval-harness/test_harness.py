@@ -569,6 +569,25 @@ class HarnessTests(unittest.TestCase):
         tr['tool_calls'][0]['input']['command'] = 'codex exec hello'
         self.assertTrue(h.identity(tr, ws, adapter, argv)['nested_agent_cli'])
 
+    def test_grok_native_target_file_is_checked_after_skill_load(self):
+        ws = {'parent': self.root / 'scratch/ws', 'project': self.root / 'scratch/ws/project',
+              'install': self.root / 'scratch/ws/skills/demo', 'home': self.root / 'scratch/home'}
+        adapter = h.ADAPTERS['grok']
+        argv = adapter.exec_argv(h.CFG['targets']['judge'], ws, 'prompt', self.root / 'final', 1, [])
+        transcript = self.root / 'grok-native.jsonl'
+        rows = [{'type': 'tool_call', 'toolCallId': '1', 'toolName': 'read_file',
+                 'rawInput': {'target_file': str(ws['install'] / 'SKILL.md')}}]
+        transcript.write_text(''.join(json.dumps(row) + '\n' for row in rows))
+        identity = h.identity(h.parse(adapter, transcript, None), ws, adapter, argv)
+        self.assertTrue(identity['loaded_paths'])
+        self.assertFalse(identity['foreign_access'])
+        rows.append({'type': 'tool_call', 'toolCallId': '2', 'toolName': 'read_file',
+                     'rawInput': {'target_file': '/etc/hosts'}})
+        transcript.write_text(''.join(json.dumps(row) + '\n' for row in rows))
+        identity = h.identity(h.parse(adapter, transcript, None), ws, adapter, argv)
+        self.assertTrue(identity['loaded_paths'])
+        self.assertTrue(identity['foreign_access'])
+
     def test_relative_workspace_escape_discards_execution(self):
         original = self.fake_process
         def with_escape(argv, **kwargs):

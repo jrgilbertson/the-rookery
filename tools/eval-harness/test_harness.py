@@ -659,7 +659,19 @@ class HarnessTests(unittest.TestCase):
         self.assertTrue(h.grade_one('executor', self.ev))
         rd = h.run_dir('executor', self.ev, 'with_skill', 1)
         cases = [('timing.json', '{"duration_ms":'), ('timing.json', '{"duration_ms":"bad"}'),
-                 ('metrics.json', '[]'), ('build.json', '{"model":')]
+                 ('timing.json', '{"duration_ms":-1,"total_tokens":10}'),
+                 ('timing.json', '{"duration_ms":Infinity,"total_tokens":10}'),
+                 ('timing.json', '{"duration_ms":1000}'),
+                 ('timing.json', '{"duration_ms":1000,"total_tokens":true}'),
+                 ('timing.json', '{"duration_ms":1000,"total_tokens":-1}'),
+                 ('timing.json', '{"duration_ms":1000,"total_tokens":Infinity}'),
+                 ('metrics.json', '[]'), ('metrics.json', '{}'),
+                 ('metrics.json', '{"total_tool_calls":0}'),
+                 ('metrics.json', '{"total_tool_calls":0,"errors_encountered":"bad"}'),
+                 ('metrics.json', '{"total_tool_calls":true,"errors_encountered":0}'),
+                 ('metrics.json', '{"total_tool_calls":-1,"errors_encountered":0}'),
+                 ('metrics.json', '{"total_tool_calls":0,"errors_encountered":Infinity}'),
+                 ('build.json', '{"model":')]
         for name, broken in cases:
             with self.subTest(name=name, broken=broken):
                 path = rd / name
@@ -675,6 +687,7 @@ class HarnessTests(unittest.TestCase):
                     self.assertEqual(path.read_text(), broken)
                 finally:
                     path.write_text(original)
+        self.assertEqual(h.report(['executor'])[0].parent.name, 'benchmark')
 
     def test_missing_completed_run_evidence_yields_incomplete_report(self):
         self.execute()
@@ -1061,6 +1074,21 @@ class HarnessTests(unittest.TestCase):
         self.assertTrue(identity['loaded_paths'])
         identity, _ = self.native_codex_identity(["bash --unsupported -c 'cat /etc/hosts'"])
         self.assertTrue(identity['foreign_access'])
+
+    def test_native_env_shell_wrapper_is_discarded_without_interpreting_it(self):
+        _, ws = self.native_codex_identity([])
+        for command in ("env bash -c 'cat /etc/hosts'",
+                        "env FOO=bar bash -lc 'cat /etc/hosts'",
+                        "/usr/bin/env -i sh -c 'cat /etc/hosts'",
+                        f"cd {ws['project']} && env bash -c 'cat /etc/hosts'"):
+            with self.subTest(command=command):
+                identity, _ = self.native_codex_identity([command])
+                self.assertTrue(identity['foreign_access'])
+        identity, ws = self.native_codex_identity(['env FOO=bar printenv FOO'])
+        self.assertFalse(identity['foreign_access'])
+        identity, _ = self.native_codex_identity([f"bash -c 'cat {ws['install'] / 'SKILL.md'}'"])
+        self.assertTrue(identity['loaded_paths'])
+        self.assertFalse(identity['foreign_access'])
 
     def test_native_quoted_nested_cli_names_are_rejected(self):
         _, ws = self.native_codex_identity([])

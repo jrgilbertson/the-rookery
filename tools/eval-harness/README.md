@@ -107,7 +107,9 @@ For a command recorded as one `sh`/`bash`/`zsh`/`dash`/`ksh` `-c` or `-lc`
 wrapper, the detector checks the literal inner command with those same rules,
 including when positional arguments follow the script. Literal `--noprofile`,
 `--norc`, `--posix`, and `-l` options before `-c` are supported; other such
-option forms discard the run.
+option forms discard the run. An `env`-wrapped shell `-c`/`-lc` call is
+unsupported and discarded; the detector does not interpret its environment or
+inner script.
 Heredoc bodies are excluded from shell-operand path checks; known foreign text
 patterns still scan the whole input. Embedded code in a heredoc is not interpreted.
 Literal absolute path inputs and simple command operands outside the staged
@@ -143,7 +145,10 @@ directory and atomically replaced, so an interrupted write preserves a prior
 valid file. A malformed or missing `status.json` in an existing run directory
 is reported as unavailable; the paid slot is not relaunched. Missing or malformed
 timing, metrics, or build evidence likewise makes the report incomplete and remains untouched for
-operator recovery. Ledger costs are still reported when they reconcile.
+operator recovery. Timing must contain finite, nonnegative numeric `duration_ms`
+and `total_tokens`; metrics must contain finite, nonnegative numeric
+`total_tool_calls` and `errors_encountered`. Ledger costs are still reported
+when they reconcile.
 
 One `budget_usd` covers all providers, Executors, graders, and failed attempts in
 that round. Previous rounds are excluded. Calls are sequential and reserve

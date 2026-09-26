@@ -520,6 +520,7 @@ def snapshot(root: Path) -> dict:
 
 NESTED_CLI = re.compile(r"(^|[\s;&|(\"'/])(claude|codex|grok)['\"]?\s+(-p\b|--print\b|--single\b|exec\b|e\b)")
 HEREDOC = re.compile(r"<<(-?)[ \t]*(['\"]?)([A-Za-z_][A-Za-z0-9_]*)\2")
+SHELL_EXECUTABLES = {'sh', 'bash', 'zsh', 'dash', 'ksh'}
 
 
 def heredoc_markers(line: str, quote: str) -> tuple[list[tuple[str, bool]], str]:
@@ -596,7 +597,7 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
                 words = s.split()
             # Codex command_execution commonly records one shell -c/-lc wrapper.
             # Inspect that literal script with the existing static path checks.
-            if command and words and Path(words[0]).name in {'sh', 'bash', 'zsh', 'dash', 'ksh'}:
+            if command and words and Path(words[0]).name in SHELL_EXECUTABLES:
                 script_index = next((i for i in range(1, len(words)) if words[i] in {'-c', '-lc'}), None)
                 if script_index is not None:
                     if (script_index + 1 < len(words) and
@@ -618,6 +619,13 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
                 if not cwd.is_relative_to(parent):
                     foreign.append(f"relative workspace escape: {words[1]}")
                 words = words[3:]
+            # An env wrapper can change how the inner shell is invoked. Its script
+            # is outside this detector's supported literal-shell contract.
+            if command and words and Path(words[0]).name == 'env':
+                script_index = next((i for i in range(1, len(words)) if words[i] in {'-c', '-lc'}), None)
+                if script_index is not None and any(Path(word).name in SHELL_EXECUTABLES
+                                                    for word in words[1:script_index]):
+                    foreign.append('unsupported env shell wrapper')
             read_result = bool(c.get('output')) and not c.get('failed', False)
             reads_file = ((command and c['name'] in {'command_execution', 'run_terminal_command', 'Bash'}
                            and words and Path(words[0]).name == 'cat' and '\n' not in s.strip()
@@ -751,6 +759,14 @@ def report_run_object(path: Path) -> tuple[dict | None, str | None]:
     if not isinstance(record, dict):
         return None, f'{path.name} is invalid; recover the saved run evidence'
     return record, None
+
+def nonnegative_finite(value) -> bool:
+    if type(value) not in (int, float) or value < 0:
+        return False
+    try:
+        return math.isfinite(value)
+    except OverflowError:
+        return False
 
 def stat(xs: list[float]) -> dict:
     return {"mean": round(statistics.mean(xs), 4) if xs else 0.0,
@@ -1448,9 +1464,12 @@ def _report(targets, frozen_evals, identity_issues):
                     timing, timing_issue = report_run_object(rd / 'timing.json')
                     metrics, metrics_issue = report_run_object(rd / 'metrics.json')
                     build, build_issue = report_run_object(rd / 'build.json')
-                    if timing is not None and (type(timing.get('duration_ms')) not in (int, float) or
-                                               not math.isfinite(timing['duration_ms']) or timing['duration_ms'] < 0):
-                        timing, timing_issue = None, 'timing.json has invalid duration_ms; recover the saved run evidence'
+                    if timing is not None and any(not nonnegative_finite(timing.get(field))
+                                                  for field in ('duration_ms', 'total_tokens')):
+                        timing, timing_issue = None, 'timing.json has invalid duration_ms or total_tokens; recover the saved run evidence'
+                    if metrics is not None and any(not nonnegative_finite(metrics.get(field))
+                                                   for field in ('total_tool_calls', 'errors_encountered')):
+                        metrics, metrics_issue = None, 'metrics.json has invalid total_tool_calls or errors_encountered; recover the saved run evidence'
                     for issue in (timing_issue, metrics_issue, build_issue):
                         if issue:
                             target_issues.append(f'{arm}/run-{k}: {issue}')

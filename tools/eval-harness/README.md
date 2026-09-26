@@ -93,17 +93,21 @@ must remain private.
 `isolation-check` is static and makes no inference calls. Runtime traces are
 checked for forbidden tool surfaces, missing reads of the installed skill,
 foreign packages/user skills, and nested agent CLIs. Grok execution requires its
-`available_commands` inventory; a missing inventory discards the run. Codex
+`available_commands` inventory as a list of tool-name strings; a missing or
+malformed inventory discards the run. Codex
 traces without an init inventory retain their existing treatment. Relative
 command and path inputs and installed-skill reads use the declared `cwd`/`workdir` and a leading
 `cd … &&` when present. Literal `~` paths resolve to the isolated HOME.
 The installed skill counts as loaded only when `cat` or a native `Read`/`read_file`
 tool targets its `SKILL.md` and returns nonempty output without a reported failure.
-For shell calls, only simple `cat` commands count; redirects, pipes, command
-chaining, path mentions, listings, tests, and missing or failed results do not.
+For shell calls, only simple `cat` commands count; `--help`, `--version`,
+redirects, pipes, command chaining, path mentions, listings, tests, and missing
+or failed results do not. Quoted literal nested CLI executable names are checked.
 For a command recorded as one `sh`/`bash`/`zsh`/`dash`/`ksh` `-c` or `-lc`
 wrapper, the detector checks the literal inner command with those same rules,
-including when positional arguments follow the script.
+including when positional arguments follow the script. Literal `--noprofile`,
+`--norc`, `--posix`, and `-l` options before `-c` are supported; other such
+option forms discard the run.
 Heredoc bodies are excluded from shell-operand path checks; known foreign text
 patterns still scan the whole input. Embedded code in a heredoc is not interpreted.
 Literal absolute path inputs and simple command operands outside the staged

@@ -119,6 +119,17 @@ class HarnessTests(unittest.TestCase):
     def execute(self, k=1):
         return h.execute_one('executor', self.ev, 'with_skill', k, h.load_evals()[1], self.packages)
 
+    def native_codex_identity(self, commands):
+        ws = {'parent': self.root / 'scratch/ws', 'project': self.root / 'scratch/ws/project',
+              'install': self.root / 'scratch/ws/skills/demo', 'home': self.root / 'scratch/home'}
+        adapter = h.ADAPTERS['codex']
+        argv = adapter.exec_argv(h.CFG['targets']['executor'], ws, 'prompt', self.root / 'final', 1, [])
+        transcript = self.root / 'native-commands.jsonl'
+        transcript.write_text(''.join(json.dumps({'type': 'item.completed', 'item': {
+            'type': 'command_execution', 'command': command, 'aggregated_output': 'Do the thing',
+            'exit_code': 0}}) + '\n' for command in commands))
+        return h.identity(h.parse(adapter, transcript, None), ws, adapter, argv), ws
+
     def test_interrupted_json_replace_preserves_existing_artifact(self):
         path = self.root / 'private' / 'artifact.json'
         h.wjson(path, {'version': 1})
@@ -542,8 +553,11 @@ class HarnessTests(unittest.TestCase):
             h.wjson(home / '.grok/sessions/marker.json', {'fake': True})
             install = argv[argv.index('-p') + 1].split('Read ', 1)[1].split(' and follow', 1)[0]
             events = []
-            if len(self.process_calls) == 2:
-                events.append({'type': 'available_commands', 'tools': adapter.allowed(argv)})
+            inventories = {2: dict.fromkeys(adapter.allowed(argv), True),
+                           3: [{'name': tool} for tool in adapter.allowed(argv)],
+                           4: adapter.allowed(argv)}
+            if len(self.process_calls) in inventories:
+                events.append({'type': 'available_commands', 'tools': inventories[len(self.process_calls)]})
             events.extend([
                 {'type': 'tool_call', 'toolCallId': 'read-1', 'toolName': 'read_file',
                  'rawInput': {'path': install}},
@@ -556,8 +570,15 @@ class HarnessTests(unittest.TestCase):
         h.subprocess.Popen.side_effect = grok_process
         self.assertEqual(self.execute(1), 'discarded')
         self.assertIsNone(h.rjson(h.run_dir('executor', self.ev, 'with_skill', 1) / 'status.json')['identity']['init_surface_ok'])
-        self.assertEqual(self.execute(2), 'ok')
-        self.assertEqual(len(self.process_calls), 2)
+        for run in (2, 3):
+            with self.subTest(run=run):
+                self.assertEqual(self.execute(run), 'discarded')
+                rd = h.run_dir('executor', self.ev, 'with_skill', run)
+                self.assertFalse(h.rjson(rd / 'status.json')['identity']['init_surface_ok'])
+                self.assertEqual(h.ledger_entries()[-1]['cost_usd'], .25)
+                self.assertEqual(self.execute(run), 'discarded')
+        self.assertEqual(self.execute(4), 'ok')
+        self.assertEqual(len(self.process_calls), 4)
 
     def test_cost_totals_include_all_providers_and_failed_grading(self):
         self.costs = [0.25, 0.75]
@@ -1002,6 +1023,42 @@ class HarnessTests(unittest.TestCase):
         self.assertTrue(h.identity(tr, ws, adapter, argv)['foreign_access'])
         tr['tool_calls'][0]['input']['command'] = 'codex exec hello'
         self.assertTrue(h.identity(tr, ws, adapter, argv)['nested_agent_cli'])
+
+    def test_native_shell_options_before_script_keep_literal_path_checks(self):
+        identity, ws = self.native_codex_identity(["bash --noprofile -c 'cat /etc/hosts'"])
+        self.assertTrue(identity['foreign_access'])
+        identity, _ = self.native_codex_identity(["bash --noprofile --norc -lc 'cat /etc/hosts' extra"])
+        self.assertTrue(identity['foreign_access'])
+        skill = ws['install'] / 'SKILL.md'
+        identity, _ = self.native_codex_identity([f"bash --noprofile -c 'cat {skill}'"])
+        self.assertTrue(identity['loaded_paths'])
+        self.assertFalse(identity['foreign_access'])
+        identity, _ = self.native_codex_identity([f"bash -lc 'cat {skill}'"])
+        self.assertTrue(identity['loaded_paths'])
+        identity, _ = self.native_codex_identity(["bash --unsupported -c 'cat /etc/hosts'"])
+        self.assertTrue(identity['foreign_access'])
+
+    def test_native_quoted_nested_cli_names_are_rejected(self):
+        _, ws = self.native_codex_identity([])
+        read = f"cat {ws['install'] / 'SKILL.md'}"
+        for command in ("'codex' exec hello", '"grok" -p prompt'):
+            with self.subTest(command=command):
+                identity, _ = self.native_codex_identity([read, command])
+                self.assertTrue(identity['loaded_paths'])
+                self.assertTrue(identity['nested_agent_cli'])
+        identity, _ = self.native_codex_identity([read, 'echo codex docs'])
+        self.assertTrue(identity['loaded_paths'])
+        self.assertFalse(identity['nested_agent_cli'])
+
+    def test_native_cat_help_and_version_do_not_prove_skill_read(self):
+        _, ws = self.native_codex_identity([])
+        skill = ws['install'] / 'SKILL.md'
+        for option in ('--help', '--version'):
+            with self.subTest(option=option):
+                identity, _ = self.native_codex_identity([f'cat {option} {skill}'])
+                self.assertFalse(identity['loaded_paths'])
+        identity, _ = self.native_codex_identity([f'cat -n {skill}'])
+        self.assertTrue(identity['loaded_paths'])
 
     def test_grok_native_target_file_is_checked_after_skill_load(self):
         ws = {'parent': self.root / 'scratch/ws', 'project': self.root / 'scratch/ws/project',

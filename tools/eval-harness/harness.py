@@ -166,7 +166,11 @@ def init_ok(adapter, init, argv):
     """None when the CLI reported no tool surface; else whether it matches the allowlist."""
     if init is None:
         return None
-    return (set(init.get("tools") or []) == set(adapter.allowed(argv)) and not init.get("skills")
+    if not isinstance(init, dict) or type(init.get('tools')) is not list or not all(
+            type(tool) is str for tool in init['tools']):
+        return False
+    tools = init['tools']
+    return (len(tools) == len(set(tools)) and set(tools) == set(adapter.allowed(argv)) and not init.get("skills")
             and not init.get("mcp_servers") and not init.get("slash_commands"))
 
 def flag(argv: list[str], name: str) -> str:
@@ -514,7 +518,7 @@ def snapshot(root: Path) -> dict:
         result[path.relative_to(root).as_posix()] = {"sha256": sha256_bytes(data), "text": text}
     return result
 
-NESTED_CLI = re.compile(r"(^|[\s;&|(\"'/])(claude|codex|grok)\s+(-p\b|--print\b|--single\b|exec\b|e\b)")
+NESTED_CLI = re.compile(r"(^|[\s;&|(\"'/])(claude|codex|grok)['\"]?\s+(-p\b|--print\b|--single\b|exec\b|e\b)")
 HEREDOC = re.compile(r"<<(-?)[ \t]*(['\"]?)([A-Za-z_][A-Za-z0-9_]*)\2")
 
 
@@ -592,9 +596,15 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
                 words = s.split()
             # Codex command_execution commonly records one shell -c/-lc wrapper.
             # Inspect that literal script with the existing static path checks.
-            if (command and len(words) >= 3 and Path(words[0]).name in {'sh', 'bash', 'zsh', 'dash', 'ksh'}
-                    and words[1] in {'-c', '-lc'}):
-                s = words[2]
+            if command and words and Path(words[0]).name in {'sh', 'bash', 'zsh', 'dash', 'ksh'}:
+                script_index = next((i for i in range(1, len(words)) if words[i] in {'-c', '-lc'}), None)
+                if script_index is not None:
+                    if (script_index + 1 < len(words) and
+                            all(option in {'--noprofile', '--norc', '--posix', '-l'}
+                                for option in words[1:script_index])):
+                        s = words[script_index + 1]
+                    else:
+                        foreign.append('unsupported shell wrapper before -c')
             if command and '<<' in s:
                 s = without_heredoc_bodies(s)
             try:
@@ -611,6 +621,7 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
             read_result = bool(c.get('output')) and not c.get('failed', False)
             reads_file = ((command and c['name'] in {'command_execution', 'run_terminal_command', 'Bash'}
                            and words and Path(words[0]).name == 'cat' and '\n' not in s.strip()
+                           and not any(word in {'--help', '--version'} for word in words[1:])
                            and not any(any(ch in word for ch in '|;&<>') for word in words))
                           or (not command and c['name'] in {'read_file', 'Read'}))
             for index, word in enumerate(words):

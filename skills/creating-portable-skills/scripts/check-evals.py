@@ -23,7 +23,7 @@ from typing import Any, Callable
 
 
 BENCHMARK_NAME = re.compile(
-    r"^\d{4}-\d{2}-\d{2}-[0-9a-f]{7,40}(?:-([a-z0-9]+(?:[.-][a-z0-9]+)*))?\.json$"
+    r"^\d{4}-\d{2}-\d{2}-[0-9a-f]{7,40}(?:--iteration-([1-9][0-9]*))?(?:-([a-z0-9]+(?:[.-][a-z0-9]+)*))?\.json$"
 )
 SUMMARY_METRICS = ("pass_rate", "time_seconds", "tokens")
 REQUIRED_METADATA_TEXT = (
@@ -156,7 +156,7 @@ def check_benchmark(directory: str, path: Path, report: list[str]) -> None:
 
     name = BENCHMARK_NAME.match(path.name)
     if not name:
-        fail("file name must be <YYYY-MM-DD>-<short-rev>[-<target>].json")
+        fail("file name must be <YYYY-MM-DD>-<short-rev>[--iteration-<N>][-<target>].json")
     data = load_json(path)
     if not isinstance(data, dict):
         fail("must be a JSON object")
@@ -174,10 +174,16 @@ def check_benchmark(directory: str, path: Path, report: list[str]) -> None:
             fail(f"metadata.skill_name {metadata['skill_name']!r} does not match directory {directory!r}")
         if not is_integer(runs) or runs < 1:
             fail("metadata.runs_per_configuration: must be a positive integer")
-        target = name.group(1) if name else None
+        iteration = name.group(1) if name else None
+        target = name.group(2) if name else None
         archive_ref = metadata.get("archive_ref")
         if target and is_text(archive_ref) and archive_ref.rstrip("/").rsplit("/", 1)[-1] != target:
             fail(f"file name target {target!r} must match the target at the end of metadata.archive_ref")
+        if iteration and is_text(archive_ref):
+            archive_parts = archive_ref.rstrip("/").split("/")
+            archive_iteration = archive_parts[-2] if target and len(archive_parts) > 1 else archive_parts[-1]
+            if archive_iteration != f"iteration-{iteration}":
+                fail(f"file name iteration {iteration!r} must match metadata.archive_ref")
         if "final_reviewer" in metadata and not is_text(metadata["final_reviewer"]):
             fail("metadata.final_reviewer: must be a non-empty string")
         if "cost_usd" in metadata and not is_number(metadata["cost_usd"]):

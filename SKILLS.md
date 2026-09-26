@@ -276,7 +276,10 @@ directory per target inside it. Keep the archive after the work ends.
 
 Each graded round commits one file named `<date>-<short-rev>.json`, for the
 date and the revision it tested. When a round covers several targets, commit
-one file per target named `<date>-<short-rev>-<target>.json`.
+one file per target named `<date>-<short-rev>-<target>.json`. Distinct rounds
+on the same date, revision, and target use `--iteration-<N>` before the target
+suffix to keep both records, where `<N>` matches the archive's `iteration-<N>`
+directory: `<date>-<short-rev>--iteration-<N>[-<target>].json`.
 
 ```json
 {

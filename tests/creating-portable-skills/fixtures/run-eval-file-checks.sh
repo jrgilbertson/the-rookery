@@ -90,7 +90,7 @@ expect_violation benchmark "metadata.executor_model: must be a non-empty string"
 expect_violation benchmark "metadata.archive_ref: must be a non-empty string"
 expect_violation benchmark "run_summary.with_skill.pass_rate.stddev: must be a number"
 expect_violation benchmark "run_summary.delta.pass_rate: must be a number"
-expect_violation benchmark "latest.json: file name must be <YYYY-MM-DD>-<short-rev>[-<target>].json"
+expect_violation benchmark "latest.json: file name must be <YYYY-MM-DD>-<short-rev>[--iteration-<N>][-<target>].json"
 
 # Several directories are checked in one run; any violation fails it.
 run "$fixtures/valid-skill" "$fixtures/bad-queries"
@@ -208,6 +208,22 @@ printf '{"metadata": {"skill_name": "wrong-suffix", "executor_model": "m", "time
 run "$scratch/wrong-suffix"
 expect_code "wrong target suffix" 1
 expect_violation "wrong target suffix" "file name target 'model-a' must match the target at the end of metadata.archive_ref"
+
+# A changed check and its same-day diagnostic keep separate benchmark files.
+mkdir -p "$scratch/same-day-rounds/evals/benchmarks"
+cp "$fixtures/no-evals/SKILL.md" "$scratch/same-day-rounds/SKILL.md"
+round_file() { # round_file <file name> <archive_ref> <arm>
+	printf '{"metadata": {"skill_name": "same-day-rounds", "executor_model": "m", "timestamp": "t", "runs_per_configuration": 1, "harness": "h", "grader": "g", "archive_ref": "%s", "cost_available": false}, "run_summary": {"%s": %s}}\n' \
+		"$2" "$3" "$arm" >"$scratch/same-day-rounds/evals/benchmarks/$1"
+}
+round_file 2026-09-24-abc1234-model-a.json repo/same-day-rounds/iteration-1/model-a with_skill
+round_file 2026-09-24-abc1234--iteration-2-model-a.json repo/same-day-rounds/iteration-2/model-a without_skill
+run "$scratch/same-day-rounds"
+expect_code "separate same-day diagnostic benchmark" 0
+round_file 2026-09-24-abc1234--iteration-3-model-a.json repo/same-day-rounds/iteration-2/model-a without_skill
+run "$scratch/same-day-rounds"
+expect_code "wrong iteration suffix" 1
+expect_violation "wrong iteration suffix" "file name iteration '3' must match metadata.archive_ref"
 
 # The validator writes nothing to disk.
 before=$(find "$fixtures" "$scratch" | LC_ALL=C sort)

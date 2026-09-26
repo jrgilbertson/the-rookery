@@ -115,8 +115,7 @@ that must be preserved, the actual callers, and the relevant current code.
 
 When a user decision is the only blocker and no reduction is safe under every
 answer, the readout opens with that question, before any shape, reason, or
-test, even when the evidence favors one answer; that answer is the recommended
-option, and nothing is assumed before the user replies.
+test, even when the evidence favors one answer.
 
 A clean result is the recommendation, one affirmative reason when useful, and
 what must remain, and it ends there. It raises no question and names only

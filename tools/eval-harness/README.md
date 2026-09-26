@@ -18,6 +18,12 @@ explicitly request repeats. Target names use lowercase letters and digits in
 segments separated by single dots or hyphens; underscores and uppercase letters
 are invalid. `run_arms` defaults to just `changed_arm`.
 
+Use synthetic, public-safe test material that may be shared with every configured
+grader. This runner does not redact arbitrary secrets. Inspect saved execution
+evidence before `grade`; if it contains sensitive values, stop and use a host
+workflow that can safely redact the packet while preserving grading evidence.
+Missing evidence after redaction remains unverified.
+
 Grade packets shuffle anonymous letters and scrub revision and workspace paths.
 They include full tool names and inputs, project artifacts, and available child
 readouts from saved sessions. Raw tool outputs remain in the private archive. Encrypted dispatch text is explicitly unavailable; neither the
@@ -145,9 +151,9 @@ directory and atomically replaced, so an interrupted write preserves a prior
 valid file. A malformed or missing `status.json` in an existing run directory
 is reported as unavailable; the paid slot is not relaunched. Missing or malformed
 timing, metrics, or build evidence likewise makes the report incomplete and remains untouched for
-operator recovery. Timing must contain finite, nonnegative numeric `duration_ms`
-and `total_tokens`; metrics must contain finite, nonnegative numeric
-`total_tool_calls` and `errors_encountered`. Ledger costs are still reported
+operator recovery. Timing must contain finite, nonnegative numeric `duration_ms`.
+Its `total_tokens` and the metrics fields `total_tool_calls` and
+`errors_encountered` must be nonnegative integers. Ledger costs are still reported
 when they reconcile.
 
 One `budget_usd` covers all providers, Executors, graders, and failed attempts in

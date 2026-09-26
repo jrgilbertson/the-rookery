@@ -620,7 +620,8 @@
     "Iteration-1 Grok case 1 was discarded for searching the shared scratch parent. Its successful answer also triggered an erroneous quota classification, fixed before iteration-2. The discarded attempt is excluded from pass statistics and included in cost totals.",
     "The iteration-2 runner explicitly states the workspace boundary. No passing execution was repeated. Costs include all executions, discarded attempts, and grades across both iterations; API-equivalent ccusage estimates are not subscription charges.",
     "Caller restriction for this round: only Codex GPT-6 Sol high and Grok 4.7 high were authorized as Executor targets. The ROUTING.md default Claude Opus 5.5 medium target was excluded. Actual coverage was ten affected cases once on each of the two authorized targets, with different-model blind grading; no Claude execution or grade is claimed.",
-    "Operator disposition: required Codex/Grok checks and independent PR review complete. No behavioral failure is attributed to changed text. No aggregate improvement claim or fixed iteration threshold is used. The separate checking-simplicity PR175 hold is unaffected."
+    "Operator disposition: required Codex/Grok checks and independent PR review complete. No behavioral failure is attributed to changed text. No aggregate improvement claim or fixed iteration threshold is used. The separate checking-simplicity PR175 hold is unaffected.",
+    "Subsequent PR review established that original eval 8 scenario 1 omitted the authoritative result-key contract. Preserve these original grades and the historical operator disposition; the original case did not fully verify behavior-failure attribution. The corrected case was checked separately at 05d726b2 on Codex and Grok (see the matching 2026-09-26-05d726b2 benchmark files), with all four assertions passing per target."
   ],
   "failure_dispositions": []
 }

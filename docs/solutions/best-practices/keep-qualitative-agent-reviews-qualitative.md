@@ -128,14 +128,14 @@ need or protected boundary requires it (`skills/checking-simplicity/SKILL.md`).
 Its assessment runs in one subagent that did not author or implement the
 subject, without reviewer churn.
 
-The regression cases make these behaviors observable:
+The regression controls in `skills/checking-simplicity/evals/evals.json` make
+these behaviors observable:
 
-- `tests/checking-simplicity/cases/assessment-runs-in-subagent.md`
-- `tests/checking-simplicity/cases/current-docs-inform-viable-approaches.md`
-- `tests/checking-simplicity/cases/process-machinery-overcomplication.md`
-- `tests/checking-simplicity/cases/independent-gate-one-reviewer.md`
-- `tests/checking-simplicity/cases/existing-architecture-without-formal-requirements.md`
-- `tests/checking-simplicity/cases/brainstorming-simplification-opportunities.md`
+- eval 5, one subagent reviewer without reviewer churn
+- eval 6, open durability decisions during brainstorming
+- eval 7, current official docs before comparing shapes
+- eval 9, process machinery under the same necessity test
+- eval 11, existing architecture without formal requirements
 
 ## Related
 

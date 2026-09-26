@@ -1,0 +1,378 @@
+{
+  "metadata": {
+    "skill_name": "checking-simplicity",
+    "executor_model": "grok-4.7 (effort high)",
+    "timestamp": "2026-09-26T06:01:51Z",
+    "runs_per_configuration": 3,
+    "harness": "grok grok 1.0.41 (4220f3b224a6)",
+    "grader": "claude-opus-5-5 (effort medium) via claude 2.1.283 (Claude Code), blind packet with shuffled neutral letters, strict array schema",
+    "archive_ref": "the-rookery/checking-simplicity/iteration-5/grok-4-7",
+    "cost_usd": 1.4697,
+    "final_reviewer": "independent fresh-context agent (claude-opus-5-5), separate from author, graders, and pre-spend reviewers"
+  },
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.9889,
+        "stddev": 0.0333
+      },
+      "time_seconds": {
+        "mean": 345.5631,
+        "stddev": 129.5314
+      },
+      "tokens": {
+        "mean": 116793.2222,
+        "stddev": 30247.5263
+      }
+    },
+    "old_skill": {
+      "pass_rate": {
+        "mean": 0.8032,
+        "stddev": 0.1949
+      },
+      "time_seconds": {
+        "mean": 240.0062,
+        "stddev": 80.2668
+      },
+      "tokens": {
+        "mean": 92450.7778,
+        "stddev": 20691.5345
+      }
+    },
+    "delta": {
+      "pass_rate": 0.1857,
+      "time_seconds": 105.5569,
+      "tokens": 24342.4444
+    }
+  },
+  "runs": [
+    {
+      "eval_id": 3,
+      "eval_name": "unapproved-scope-asks-owner",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 383.2,
+        "tokens": 139863,
+        "tool_calls": 6,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "unapproved-scope-asks-owner",
+      "configuration": "with_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 304.9,
+        "tokens": 109770,
+        "tool_calls": 6,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "unapproved-scope-asks-owner",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 261.8,
+        "tokens": 92107,
+        "tool_calls": 5,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "unapproved-scope-asks-owner",
+      "configuration": "old_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.7143,
+        "passed": 5,
+        "failed": 2,
+        "total": 7,
+        "time_seconds": 297.9,
+        "tokens": 81120,
+        "tool_calls": 4,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "unapproved-scope-asks-owner",
+      "configuration": "old_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 232.3,
+        "tokens": 92483,
+        "tool_calls": 6,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "unapproved-scope-asks-owner",
+      "configuration": "old_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 152.7,
+        "tokens": 67426,
+        "tool_calls": 3,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "open-durability-decision",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 10,
+        "failed": 0,
+        "total": 10,
+        "time_seconds": 642.3,
+        "tokens": 187076,
+        "tool_calls": 8,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "open-durability-decision",
+      "configuration": "with_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.9,
+        "passed": 9,
+        "failed": 1,
+        "total": 10,
+        "time_seconds": 417.6,
+        "tokens": 103293,
+        "tool_calls": 4,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "open-durability-decision",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 10,
+        "failed": 0,
+        "total": 10,
+        "time_seconds": 344.6,
+        "tokens": 90604,
+        "tool_calls": 4,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "open-durability-decision",
+      "configuration": "old_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.9,
+        "passed": 9,
+        "failed": 1,
+        "total": 10,
+        "time_seconds": 264.8,
+        "tokens": 78609,
+        "tool_calls": 3,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "open-durability-decision",
+      "configuration": "old_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 10,
+        "failed": 0,
+        "total": 10,
+        "time_seconds": 352.1,
+        "tokens": 79624,
+        "tool_calls": 3,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "open-durability-decision",
+      "configuration": "old_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.9,
+        "passed": 9,
+        "failed": 1,
+        "total": 10,
+        "time_seconds": 349.2,
+        "tokens": 101920,
+        "tool_calls": 5,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 12,
+      "eval_name": "frame-from-caller-not-subject",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 289.8,
+        "tokens": 119580,
+        "tool_calls": 16,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 12,
+      "eval_name": "frame-from-caller-not-subject",
+      "configuration": "with_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 198.2,
+        "tokens": 102587,
+        "tool_calls": 15,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 12,
+      "eval_name": "frame-from-caller-not-subject",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 267.6,
+        "tokens": 106259,
+        "tool_calls": 14,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 12,
+      "eval_name": "frame-from-caller-not-subject",
+      "configuration": "old_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.5714,
+        "passed": 4,
+        "failed": 3,
+        "total": 7,
+        "time_seconds": 153.8,
+        "tokens": 120343,
+        "tool_calls": 15,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 12,
+      "eval_name": "frame-from-caller-not-subject",
+      "configuration": "old_skill",
+      "run_number": 2,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.5714,
+        "passed": 4,
+        "failed": 3,
+        "total": 7,
+        "time_seconds": 194.0,
+        "tokens": 128912,
+        "tool_calls": 15,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 12,
+      "eval_name": "frame-from-caller-not-subject",
+      "configuration": "old_skill",
+      "run_number": 3,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.5714,
+        "passed": 4,
+        "failed": 3,
+        "total": 7,
+        "time_seconds": 163.3,
+        "tokens": 81620,
+        "tool_calls": 14,
+        "errors": 0
+      }
+    }
+  ],
+  "notes": [
+    "eval 3 (targeted) with_skill: 3/3 runs pass every assertion",
+    "eval 3 (targeted) old_skill: 2/3 runs pass every assertion",
+    "eval 6 (targeted) with_skill: 2/3 runs pass every assertion",
+    "eval 6 (targeted) old_skill: 1/3 runs pass every assertion",
+    "eval 12 (targeted) with_skill: 3/3 runs pass every assertion",
+    "eval 12 (targeted) old_skill: 0/3 runs pass every assertion",
+    "attempts not counted, kept as evidence (discarded, errored, or superseded by an earlier attempt): none",
+    "grades rejected by validation and rerun: none",
+    "evals.json sha256 f69dd172da1bd3271e2aa126b38cc8ebbd8b14780e079b00dadfd9987151be5c; with_skill 645b431 sha256:3ab3334c15ac76ac0f4e44189bb4aa45ef01ea667342d09a40c2ff984116df1c; old_skill 46ead95 sha256:8bc0b6ccc34c3b849f89ca518131d9614f77fa77e3cae18ed10fbeea9d2cb71c",
+    "carry-forward, not rerun: eval 11 (targeted) with_skill 20578fb 3/3, old_skill 46ead95 2/3 runs pass every assertion (iteration-2 grades). archive_ref the-rookery/checking-simplicity/iteration-2/grok-4-7/eval-11-existing-architecture-direct; benchmark iteration-2/grok-4-7/benchmark/2026-09-25-20578fb-grok-4-7.json",
+    "cost bound, targeted eval rerun this round (eval 3): tokens with 113913 vs old 80343 (+41.8%); time_seconds with 317 vs old 228 (+39.1%); bound is +30% each",
+    "cost bound, targeted eval rerun this round (eval 6): tokens with 126991 vs old 86718 (+46.4%); time_seconds with 468 vs old 322 (+45.4%); bound is +30% each",
+    "cost bound, targeted eval rerun this round (eval 12): tokens with 109475 vs old 110292 (-0.7%); time_seconds with 252 vs old 170 (+47.8%); bound is +30% each",
+    "cost bound on grok-4-7, pooled over targeted evals 11 (carried from iteration-2), 3, 6, 12, mean per run: tokens with 109370 vs old 91019 (+20.2%); time not comparable (jobs with_skill [1, 4] vs old_skill [1, 4]), tokens only; bound is +30% each",
+    "threshold eval 3 (targeted, min 0/3, margin 0): with_skill 3/3 vs old_skill 2/3 -> MET",
+    "threshold eval 6 (targeted, min 0/3, margin 0): with_skill 2/3 vs old_skill 1/3 -> MET",
+    "threshold eval 12 (targeted, min 2/3, margin 2): with_skill 3/3 vs old_skill 0/3 -> MET",
+    "final review: ship 645b431; improvement claimed on this target for eval 12 (3/3 vs 0/3); no worse on eval 3 (3/3 vs 2/3) and eval 6 (2/3 vs 1/3)",
+    "final review, cost reason: targeted time +44% and eval 3/6 tokens above +30% because the changed skill collects subagent output and asks one question per requirement, which buys eval 12 0/3 to 3/3 and eval 3 2/3 to 3/3; the eval 6 rise is mostly one outlier run (187k tokens, 642 s); eval 12 tokens are flat, so its time rise is wall-clock variance; accepted",
+    "SKILL.md changed after this round (765980e) in response to PR review; the focused check at that revision is in the 765980e benchmark for this target; comparative results in this file describe 645b431"
+  ]
+}

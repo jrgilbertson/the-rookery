@@ -118,7 +118,7 @@ deliverable. Test those descriptions as a three-sided routing contract:
    subject and an eligible transition, or belong to adjacent workflows. Broad
    words such as “simplify” do not turn prescribed implementation, settled-code
    cleanup, or general brainstorming into this assessment
-   (`tests/checking-simplicity/triggers.md`).
+   (`skills/checking-simplicity/evals/eval_queries.json`).
 3. **Exit.** Name the successful state that moves ownership onward. An unchanged
    subject with a clean result and no owner question belongs to the
    next planner or executor (`skills/checking-simplicity/SKILL.md:3`).
@@ -156,7 +156,7 @@ exit, a clean review can select itself again and loop instead of handing the
 unchanged subject forward. In the simplicity-checkpoint baseline, adding one
 subjectless reuse near miss and one post-clean-result continuation near miss
 exposed two failures; the revised description passed all 22 declared trigger cases
-(`tests/checking-simplicity/log.md:51-52`). The matched suite proves only those
+(`tests/checking-simplicity/log.md:54-55` at `46ead95`). The matched suite proves only those
 queries. Native load-path evidence is still required.
 
 ## When to Apply
@@ -232,12 +232,12 @@ inspectable evidence; formal requirements and a separate artifact are optional.
 It retains one automatic backstop for durable machinery ungrounded in the
 stated need, keeps ordinary planning and brainstorming with their adjacent
 owners, and routes an unchanged clean result onward
-(`skills/checking-simplicity/SKILL.md:3`). The durable Trigger Contract tests
+(`skills/checking-simplicity/SKILL.md:3`). The trigger query set tests
 both the broader entry and the adjacent-owner exclusions
-(`tests/checking-simplicity/triggers.md`).
+(`skills/checking-simplicity/evals/eval_queries.json`).
 
 The frozen comparison moved from 20/22 to 22/22
-(`tests/checking-simplicity/log.md:51-52`). Native smoke checks then verify the
+(`tests/checking-simplicity/log.md:54-55` at `46ead95`). Native smoke checks then verify the
 stronger claim: the intended adjacent owner, rather than the checker, is the
 first skill whose instructions load. A later correction cannot turn an initial
 wrong load into a passing activation trace.

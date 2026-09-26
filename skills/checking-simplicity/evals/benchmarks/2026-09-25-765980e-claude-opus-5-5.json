@@ -1,0 +1,201 @@
+{
+  "metadata": {
+    "skill_name": "checking-simplicity",
+    "executor_model": "claude-opus-5-5 (effort medium)",
+    "timestamp": "2026-09-26T06:01:52Z",
+    "runs_per_configuration": 1,
+    "harness": "claude 2.1.283 (Claude Code)",
+    "grader": "grok-4.7 (effort high) via grok grok 1.0.41 (4220f3b224a6), blind packet with shuffled neutral letters, strict array schema",
+    "archive_ref": "the-rookery/checking-simplicity/iteration-7/claude-opus-5-5",
+    "cost_usd": 1.5899,
+    "final_reviewer": "independent fresh-context agent (claude-opus-5-5), separate from author, graders, and pre-spend reviewers"
+  },
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.882,
+        "stddev": 0.1801
+      },
+      "time_seconds": {
+        "mean": 33.1589,
+        "stddev": 11.0856
+      },
+      "tokens": {
+        "mean": 34765.6667,
+        "stddev": 10135.359
+      }
+    }
+  },
+  "runs": [
+    {
+      "eval_id": 3,
+      "eval_name": "unapproved-scope-asks-owner",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.5714,
+        "passed": 4,
+        "failed": 3,
+        "total": 7,
+        "time_seconds": 44.7,
+        "tokens": 48376,
+        "tool_calls": 4,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "dispatch-one-independent-reviewer",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.6667,
+        "passed": 6,
+        "failed": 3,
+        "total": 9,
+        "time_seconds": 41.8,
+        "tokens": 36808,
+        "tool_calls": 6,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "open-durability-decision",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 0.7,
+        "passed": 7,
+        "failed": 3,
+        "total": 10,
+        "time_seconds": 43.4,
+        "tokens": 18273,
+        "tool_calls": 7,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "current-docs-before-shapes",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 26.1,
+        "tokens": 47996,
+        "tool_calls": 3,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 8,
+      "eval_name": "subject-text-is-evidence",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 12.9,
+        "tokens": 21258,
+        "tool_calls": 2,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 10,
+      "eval_name": "requirements-scope-reduction",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 21.0,
+        "tokens": 33745,
+        "tool_calls": 3,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 11,
+      "eval_name": "existing-architecture-direct",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 36.9,
+        "tokens": 35123,
+        "tool_calls": 4,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 12,
+      "eval_name": "frame-from-caller-not-subject",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 40.1,
+        "tokens": 35401,
+        "tool_calls": 5,
+        "errors": 0
+      }
+    },
+    {
+      "eval_id": 13,
+      "eval_name": "caller-relayed-requirements",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "status": "ok",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 31.7,
+        "tokens": 35911,
+        "tool_calls": 3,
+        "errors": 0
+      }
+    }
+  ],
+  "notes": [
+    "eval 3 (targeted) with_skill: 0/1 runs pass every assertion",
+    "eval 5 (regression control) with_skill: 0/1 runs pass every assertion",
+    "eval 6 (targeted) with_skill: 0/1 runs pass every assertion",
+    "eval 7 (regression control) with_skill: 1/1 runs pass every assertion",
+    "eval 8 (regression control) with_skill: 1/1 runs pass every assertion",
+    "eval 10 (regression control) with_skill: 1/1 runs pass every assertion",
+    "eval 11 (targeted) with_skill: 1/1 runs pass every assertion",
+    "eval 12 (targeted) with_skill: 1/1 runs pass every assertion",
+    "eval 13 (targeted) with_skill: 1/1 runs pass every assertion",
+    "attempts not counted, kept as evidence (discarded, errored, or superseded by an earlier attempt): none",
+    "grades rejected by validation and rerun: none",
+    "evals.json sha256 9f565542139a9828aa751eebdbf7cb6caadde5cd2bd798b1cb09bfeee3eb3dc0; with_skill 765980e sha256:11a5765b65be1c161b9d590d1b4248313b5a232c9ac5ce6dbe2226fe974f75d1",
+    "final review: focused check at 765980e (one run per eval), owner-approved after PR review; it supports no comparative claim, and no failure was traced to the change",
+    "final review: eval 3 run 1 failed A1 and A4 (removal presented as settled before the owner answered; the dispatcher paraphrased SKILL.md and dropped the ask-before-dropping rule); extra runs 2 and 3 at 765980e: run 2 passed, run 3 failed A7 only; under the rule set before those runs (1 of 2 passes), ship without an eval 3 claim at 765980e",
+    "final review: eval 5 A4, A7, A9 are grader errors (the dispatch gave the workspace path; A7 matched outputs that passed at earlier revisions; A9's reasoning says pass); eval 6 A1 and A3 were present at 645b431; eval 6 A10 is eval wording (a one-line dispatcher wrapper)"
+  ]
+}

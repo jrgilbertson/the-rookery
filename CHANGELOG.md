@@ -26,6 +26,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- `tools/eval-harness` runs subscription-only Codex/Grok regression checks and
+  blind grading, preserves per-call evidence, and uses ccusage for automated
+  cross-provider API-equivalent cost accounting.
+
 - `SKILLS.md` states one convention for writing, evaluating, and recording
   evidence for skills. It builds on the Agent Skills standard and names each
   source conflict with the choice made. Evals live in each skill's `evals/`

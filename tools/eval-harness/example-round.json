@@ -1,0 +1,21 @@
+{
+  "repo": "your-repository",
+  "repo_path": "/absolute/path/to/public-repository",
+  "skill": "your-skill",
+  "iteration": 1,
+  "archive_root": "/absolute/private/eval-archive",
+  "workspace_root": "/absolute/private/eval-workspaces",
+  "arms": {"with_skill": "FULL_COMMIT_SHA"},
+  "changed_arm": "with_skill",
+  "evals": [1, 2],
+  "targets": {
+    "codex-executor": {"adapter": "codex", "model": "EXECUTOR_MODEL", "effort": "high", "grader": "grok-judge"},
+    "grok-judge": {"adapter": "grok", "model": "DIFFERENT_GRADER_MODEL", "effort": "high"}
+  },
+  "capabilities": ["subagents", "web"],
+  "budget_usd": 10,
+  "call_allowance_usd": 1,
+  "ccusage_command": ["ccusage"],
+  "cap_seconds": 1500,
+  "observe_filesystem": true
+}

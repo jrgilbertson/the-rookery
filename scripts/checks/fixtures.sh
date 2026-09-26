@@ -86,3 +86,6 @@ for runner in "${runners[@]}"; do
     *) echo "fixtures: unsupported runner $runner" >&2; exit 1 ;;
   esac
 done
+
+echo "fixtures: eval-harness unit tests"
+python3 -m unittest discover -s tools/eval-harness -p 'test_*.py'

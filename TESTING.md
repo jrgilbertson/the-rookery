@@ -222,6 +222,8 @@ partial, unpriced, or unidentified-model estimates stop further calls, as do exh
 budget or subscription quota. The caller authorizes one budget across all
 providers; API-key billing is not a fallback.
 
-Configure the host runner to enforce this contract. Unsupported usage or
+The repository’s [subscription eval harness](tools/eval-harness/README.md)
+provides this automation for Codex and Grok. Configure it outside the public
+repository, with the caller’s authorized targets and budget. Unsupported usage or
 pricing stays unknown, and a structural pass does not substitute for a
 behavioral check.

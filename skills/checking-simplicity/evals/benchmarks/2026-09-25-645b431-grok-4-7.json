@@ -2,7 +2,7 @@
   "metadata": {
     "skill_name": "checking-simplicity",
     "executor_model": "grok-4.7 (effort high)",
-    "timestamp": "2026-09-26T03:37:39Z",
+    "timestamp": "2026-09-26T06:01:51Z",
     "runs_per_configuration": 3,
     "harness": "grok grok 1.0.41 (4220f3b224a6)",
     "grader": "claude-opus-5-5 (effort medium) via claude 2.1.283 (Claude Code), blind packet with shuffled neutral letters, strict array schema",
@@ -372,6 +372,7 @@
     "threshold eval 6 (targeted, min 0/3, margin 0): with_skill 2/3 vs old_skill 1/3 -> MET",
     "threshold eval 12 (targeted, min 2/3, margin 2): with_skill 3/3 vs old_skill 0/3 -> MET",
     "final review: ship 645b431; improvement claimed on this target for eval 12 (3/3 vs 0/3); no worse on eval 3 (3/3 vs 2/3) and eval 6 (2/3 vs 1/3)",
-    "final review, cost reason: targeted time +44% and eval 3/6 tokens above +30% because the changed skill collects subagent output and asks one question per requirement, which buys eval 12 0/3 to 3/3 and eval 3 2/3 to 3/3; the eval 6 rise is mostly one outlier run (187k tokens, 642 s); eval 12 tokens are flat, so its time rise is wall-clock variance; accepted"
+    "final review, cost reason: targeted time +44% and eval 3/6 tokens above +30% because the changed skill collects subagent output and asks one question per requirement, which buys eval 12 0/3 to 3/3 and eval 3 2/3 to 3/3; the eval 6 rise is mostly one outlier run (187k tokens, 642 s); eval 12 tokens are flat, so its time rise is wall-clock variance; accepted",
+    "SKILL.md changed after this round (765980e) in response to PR review; the focused check at that revision is in the 765980e benchmark for this target; comparative results in this file describe 645b431"
   ]
 }

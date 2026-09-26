@@ -2,7 +2,7 @@
   "metadata": {
     "skill_name": "checking-simplicity",
     "executor_model": "gpt-6-sol (effort high)",
-    "timestamp": "2026-09-26T03:37:39Z",
+    "timestamp": "2026-09-26T06:01:51Z",
     "runs_per_configuration": 3,
     "harness": "codex codex-cli 0.157.0",
     "grader": "grok-4.7 (effort high) via grok grok 1.0.41 (4220f3b224a6), blind packet with shuffled neutral letters, strict array schema",
@@ -374,6 +374,7 @@
     "final review: ship 645b431; no worse on evals 3 and 12, nothing claimed as improved on this target",
     "final review: eval 12 NOT MET (2/3 vs 3/3) is a grader error: with_skill run 3 fails only A5, and its 'call that writer directly' refers to ledger.append_row; 3/3 vs 3/3 in substance, and the pre-registration already made eval 12 not informative on Codex",
     "final review: eval 6 is 0/3 on both arms, so its bar is empty and the earlier Sol gap is not confirmed closed",
-    "final review, cost reason: eval 12 tokens +31.0% with no gain on this target; accepted as marginal because pooled tokens rise +13.1%; watch"
+    "final review, cost reason: eval 12 tokens +31.0% with no gain on this target; accepted as marginal because pooled tokens rise +13.1%; watch",
+    "SKILL.md changed after this round (765980e) in response to PR review; the focused check at that revision is in the 765980e benchmark for this target; comparative results in this file describe 645b431"
   ]
 }

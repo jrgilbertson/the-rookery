@@ -286,8 +286,8 @@ the contract.
   place only when its pass rate at its chosen effort is close to the row's
   best, by the same 95% interval test the effort rule uses. A cheaper model
   below that line does not rank, however low its cost of pass. Rows without
-  pass rates follow "Use evidence that matches the role": Design/taste by
-  preference score and price, and Planner by judgment.
+  pass rates follow "Use evidence that matches the role", which names the
+  evidence or judgment behind every row.
 - A row lists only models that earn a place, so some rows have fewer than
   three.
 - A model may rank by a capability the others lack, as xAI does for Scout
@@ -329,6 +329,13 @@ the contract.
   They rank models by preference score rather than pass rate, and usually at
   one effort level, so order the row by score and price, and take effort from
   the coding boards until a preference board reports every effort level.
+- Reviewer and Critic: no public board reports review or adversarial-judgment
+  pass rates at every effort level, so these rows are judgment calls. They
+  prefer a provider other than the Executor primary's, so review stays
+  independent of the work it judges; revisit them when a review benchmark
+  reports every effort level.
+- Scout: ranked by a capability the others lack, such as X search, rather
+  than by pass rate.
 - Planner: no public benchmark scores planning or coordination work, so this
   row is a judgment call. It follows vendor practice of giving planning more
   reasoning effort than execution; revisit it when a planning benchmark

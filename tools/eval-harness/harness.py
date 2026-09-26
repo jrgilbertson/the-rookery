@@ -1464,10 +1464,11 @@ def _report(targets, frozen_evals, identity_issues):
                     timing, timing_issue = report_run_object(rd / 'timing.json')
                     metrics, metrics_issue = report_run_object(rd / 'metrics.json')
                     build, build_issue = report_run_object(rd / 'build.json')
-                    if timing is not None and any(not nonnegative_finite(timing.get(field))
-                                                  for field in ('duration_ms', 'total_tokens')):
+                    if timing is not None and (not nonnegative_finite(timing.get('duration_ms'))
+                                               or type(timing.get('total_tokens')) is not int
+                                               or timing['total_tokens'] < 0):
                         timing, timing_issue = None, 'timing.json has invalid duration_ms or total_tokens; recover the saved run evidence'
-                    if metrics is not None and any(not nonnegative_finite(metrics.get(field))
+                    if metrics is not None and any(type(metrics.get(field)) is not int or metrics[field] < 0
                                                    for field in ('total_tool_calls', 'errors_encountered')):
                         metrics, metrics_issue = None, 'metrics.json has invalid total_tool_calls or errors_encountered; recover the saved run evidence'
                     for issue in (timing_issue, metrics_issue, build_issue):

@@ -665,12 +665,15 @@ class HarnessTests(unittest.TestCase):
                  ('timing.json', '{"duration_ms":1000,"total_tokens":true}'),
                  ('timing.json', '{"duration_ms":1000,"total_tokens":-1}'),
                  ('timing.json', '{"duration_ms":1000,"total_tokens":Infinity}'),
+                 ('timing.json', '{"duration_ms":1000,"total_tokens":1.5}'),
                  ('metrics.json', '[]'), ('metrics.json', '{}'),
                  ('metrics.json', '{"total_tool_calls":0}'),
                  ('metrics.json', '{"total_tool_calls":0,"errors_encountered":"bad"}'),
                  ('metrics.json', '{"total_tool_calls":true,"errors_encountered":0}'),
                  ('metrics.json', '{"total_tool_calls":-1,"errors_encountered":0}'),
                  ('metrics.json', '{"total_tool_calls":0,"errors_encountered":Infinity}'),
+                 ('metrics.json', '{"total_tool_calls":1.5,"errors_encountered":0}'),
+                 ('metrics.json', '{"total_tool_calls":0,"errors_encountered":0.5}'),
                  ('build.json', '{"model":')]
         for name, broken in cases:
             with self.subTest(name=name, broken=broken):

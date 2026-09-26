@@ -65,7 +65,7 @@ Completion: affected checks ran on every declared target, every failure was insp
 
 Apply the ship rule in [references/skills.md](references/skills.md). Have one independent PR reviewer apply [references/review-checklist.md](references/review-checklist.md) to the package, assertions, artifacts, and evidence. This review checks that assertions are decidable from the grader's packet and no stricter than the contract. It does not require a separate pre-spend review or a repeated final-review cycle.
 
-A substantive follow-up edit returns through step 4 and the affected evals. Recheck only evals whose prompt, inputs, assertions, or tested instructions changed. Preserve previous artifacts and grades under their original revision labels. Diagnose failures using the prior skill only where needed; do not combine unmatched cohorts into a delta.
+A substantive follow-up edit returns through step 4 and the affected evals. Recheck evals whose outcomes could change under the revised package or test material, including changed instructions, executable helpers, bundled resources, prompts, inputs, or assertions. Preserve previous artifacts and grades under their original revision labels. Diagnose failures using the prior skill only where needed; do not combine unmatched cohorts into a delta.
 
 Completion: structural checks pass, required independent grading and PR review are complete, every failure has an evidence-backed disposition, and none is attributable to changed text. Claims stay within the exercised cases and targets; unresolved attribution remains unverified.
 

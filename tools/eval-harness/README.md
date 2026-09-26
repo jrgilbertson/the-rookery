@@ -83,8 +83,9 @@ Each call copies only login material to a throwaway HOME and saves its sessions
 before deleting that HOME. Refreshed auth is never copied back to the user's
 setup or into the archive. Graders also retain session stores. An interrupted
 persistence step leaves its HOME/workspace for recovery rather than destroying
-unarchived evidence. Ctrl-C during a CLI call kills and reaps its process group;
-the interrupted attempt keeps an unknown charge until operator recovery. These
+unarchived evidence. `cap_seconds` must be a finite positive number. Ctrl-C or
+another unexpected wait failure during a CLI call kills and reaps its process
+group; the interrupted attempt keeps an unknown charge until operator recovery. These
 private scratch directories can contain credentials;
 remove them after recovery. Archives contain prompts and session evidence and
 must remain private.
@@ -118,8 +119,11 @@ scratch_root, model=recorded_model)`. `ccusage_command` defaults to `["ccusage"]
 `cli_cost_usd` is kept separately from the ccusage estimate.
 Budget checks and reports reconcile ledger rows with execution and grading
 attempt cost files; unrelated package and output files named `cost.json` are
-not charges. Orphaned or misattributed ledger records make reports incomplete
-and stop further inference until the ledger is recovered.
+not charges. Orphaned, misattributed, or malformed ledger records make reports
+incomplete with unavailable costs and stop further inference until recovery.
+If a run leaves a named pipe, socket, or another unsupported project artifact,
+its capture error and discarded status are recorded after its cost is settled;
+special files and symlink targets are not read for filesystem observations.
 
 One `budget_usd` covers all providers, Executors, graders, and failed attempts in
 that round. Previous rounds are excluded. Calls are sequential and reserve

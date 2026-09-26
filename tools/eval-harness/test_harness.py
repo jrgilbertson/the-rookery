@@ -5,6 +5,7 @@ import datetime as dt
 import copy
 import json
 import os
+import socket
 from pathlib import Path
 import subprocess
 import tempfile
@@ -429,6 +430,71 @@ class HarnessTests(unittest.TestCase):
         self.assertIsNone(h.ledger_entries()[0]['cost_usd'])
         self.assertIsNone(h.rjson(h.run_dir('executor', self.ev, 'with_skill', 1) / 'cost.json')['cost_usd'])
 
+    def test_invalid_timeout_is_rejected_before_launch(self):
+        for value in (None, True, False, 0, -1, float('nan'), float('inf'), '10'):
+            with self.subTest(value=value):
+                h.CFG['cap_seconds'] = value
+                with self.assertRaisesRegex(ValueError, 'cap_seconds'):
+                    h.validate_config(self.config)
+                self.assertEqual(self.process_calls, [])
+        h.CFG['cap_seconds'] = .5
+        h.validate_config(self.config)
+
+    def test_unexpected_wait_error_reaps_process_and_leaves_charge_unsettled(self):
+        class FaultyProcess:
+            pid = 424242
+            waits = 0
+
+            def wait(self, timeout=None):
+                self.waits += 1
+                if self.waits == 1:
+                    raise TypeError('unexpected wait failure')
+                return -9
+
+        process = FaultyProcess()
+        h.subprocess.Popen.side_effect = lambda *args, **kwargs: process
+        with patch.object(h.os, 'killpg') as kill:
+            with self.assertRaisesRegex(TypeError, 'unexpected wait failure'):
+                self.execute()
+        kill.assert_called_once()
+        self.assertEqual(process.waits, 2)
+        self.assertEqual(self.estimates, [])
+        self.assertIsNone(h.ledger_entries()[0]['cost_usd'])
+
+    def test_special_project_artifacts_discard_settled_run(self):
+        original = self.fake_process
+        for kind in ('fifo', 'socket'):
+            with self.subTest(kind=kind):
+                self.process_calls.clear()
+                def with_special(argv, **kwargs):
+                    result = original(argv, **kwargs)
+                    path = Path(kwargs['cwd']) / ('named.pipe' if kind == 'fifo' else 'local.socket')
+                    if kind == 'fifo':
+                        os.mkfifo(path)
+                    else:
+                        previous = Path.cwd()
+                        try:
+                            os.chdir(kwargs['cwd'])
+                            with socket.socket(socket.AF_UNIX) as server:
+                                server.bind(path.name)
+                        finally:
+                            os.chdir(previous)
+                    return result
+                h.subprocess.Popen.side_effect = with_special
+                run = 1 if kind == 'fifo' else 2
+                self.assertEqual(self.execute(run), 'discarded')
+                rd = h.run_dir('executor', self.ev, 'with_skill', run)
+                status = h.rjson(rd / 'status.json')
+                self.assertEqual(status['status'], 'discarded')
+                self.assertIn('capture_error', status)
+                self.assertEqual(h.ledger_entries()[-1]['cost_usd'], .25)
+                self.assertEqual(h.spent(), .25 * run)
+                self.assertEqual(self.execute(run), 'discarded')
+                self.assertEqual(len(self.process_calls), 1)
+        report = h.rjson(h.report(['executor'])[0])
+        self.assertTrue(report['metadata']['cost_available'])
+        self.assertEqual(report['metadata']['cost_usd'], .5)
+
     def test_cost_totals_include_all_providers_and_failed_grading(self):
         self.costs = [0.25, 0.75]
         self.execute()
@@ -663,6 +729,26 @@ class HarnessTests(unittest.TestCase):
                 self.assertFalse(report['metadata']['cost_available'])
                 self.assertNotIn('cost_usd', report['metadata'])
         ledger.write_text(''.join(json.dumps(item) + '\n' for item in original))
+
+    def test_torn_or_malformed_ledger_makes_report_incomplete_and_blocks_inference(self):
+        self.execute()
+        self.assertTrue(h.grade_one('executor', self.ev))
+        ledger = h.iteration_dir() / '_ledger.jsonl'
+        original = ledger.read_text()
+        for broken in ('{"kind":', '[]\n', '{"kind":"exec"}\n'):
+            with self.subTest(broken=broken):
+                ledger.write_text(broken)
+                with self.assertRaises((h.Budget, ValueError, TypeError, AttributeError)):
+                    h.allowance()
+                path = h.report(['executor'])[0]
+                report = h.rjson(path)
+                self.assertEqual(path.parent.name, 'incomplete')
+                self.assertFalse(report['metadata']['cost_available'])
+                self.assertNotIn('cost_usd', report['metadata'])
+                self.assertIsNone(report['runs'][0]['result']['cost_usd'])
+                self.assertTrue(report['runs'][0]['needs_operator_review'])
+                self.assertTrue(any('ledger' in note.lower() for note in report['notes']))
+        ledger.write_text(original)
 
     def test_scrub_preserves_short_arm_names_in_evidence(self):
         h.CFG['arms'] = {'with_skill': 'main', 'without_skill': 'dev'}

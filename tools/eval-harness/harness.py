@@ -478,7 +478,7 @@ def ancestors_with_agent_files(path: Path) -> list[str]:
 def snapshot(root: Path) -> dict:
     result = {}
     for path in sorted(root.rglob("*")):
-        if not path.is_file() or path.is_symlink():
+        if not stat_module.S_ISREG(path.lstat().st_mode):
             continue
         data = path.read_bytes()
         try:
@@ -782,6 +782,10 @@ def validate_config(path, require_executor=True):
         value = CFG.get(key)
         if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
             raise ValueError(f'{key} must be a finite positive number')
+    CFG.setdefault('cap_seconds', 1500)
+    value = CFG['cap_seconds']
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
+        raise ValueError('cap_seconds must be a finite positive number')
     CFG.setdefault('ccusage_command', ['ccusage'])
     if not isinstance(CFG['ccusage_command'], list) or not CFG['ccusage_command'] or not all(
             isinstance(x, str) and x for x in CFG['ccusage_command']):
@@ -1001,11 +1005,11 @@ def call(argv, cwd, env, transcript, stderr):
                 os.killpg(process.pid, signal.SIGKILL)
                 process.wait()
                 rc = -14
-            except KeyboardInterrupt:
+            except BaseException:
                 import signal
                 try:
                     os.killpg(process.pid, signal.SIGKILL)
-                except ProcessLookupError:
+                except OSError:
                     pass
                 while True:
                     try:
@@ -1013,6 +1017,8 @@ def call(argv, cwd, env, transcript, stderr):
                         break
                     except KeyboardInterrupt:
                         continue
+                    except BaseException:
+                        break
                 raise
     return rc, int((time.monotonic() - started) * 1000)
 
@@ -1177,7 +1183,18 @@ def execute_one(target, ev, arm, k, ev_sha, packages):
         outputs = rd / 'outputs'
         outputs.mkdir()
         shutil.copy2(rd / 'final.md', outputs / 'final.md')
-        shutil.copytree(ws['project'], outputs / 'project', symlinks=True)
+        capture_error = None
+        try:
+            for path in ws['project'].rglob('*'):
+                mode = path.lstat().st_mode
+                if not (stat_module.S_ISREG(mode) or stat_module.S_ISDIR(mode)
+                        or stat_module.S_ISLNK(mode)):
+                    raise ValueError(f'Unsupported project artifact: {path.relative_to(ws["project"])}')
+            shutil.copytree(ws['project'], outputs / 'project', symlinks=True)
+        except (OSError, ValueError, shutil.Error) as error:
+            capture_error = f'Project artifact capture failed: {error}'
+            shutil.rmtree(outputs / 'project', ignore_errors=True)
+            status = failure or 'discarded'
         wjson(outputs / 'observations.json', observations(trace, before,
               snapshot(ws['project']) if before is not None else None, package_unchanged))
         wjson(rd / 'build.json', {**packages[arm], 'model': CFG['targets'][target]['model'],
@@ -1187,7 +1204,8 @@ def execute_one(target, ev, arm, k, ev_sha, packages):
         wjson(rd / 'timing.json', {'duration_ms': ms, 'total_tokens': cost.get('total_tokens'),
                                   'cost_usd': cost.get('cost_usd'), 'cli_cost_usd': trace['cost_usd']})
         wjson(rd / 'metrics.json', {'total_tool_calls': len(trace['tool_calls']), 'errors_encountered': trace['errors']})
-        wjson(rd / 'status.json', {'status': status, 'identity': idn, 'rc': rc, 'finished': now()})
+        wjson(rd / 'status.json', {'status': status, 'identity': idn, 'rc': rc, 'finished': now(),
+                                  **({'capture_error': capture_error} if capture_error else {})})
     except BaseException:
         # Preflight never launched or persisted an attempt; remove copied auth and scratch.
         # Keep a failed persistence attempt's HOME for recovery.
@@ -1372,19 +1390,23 @@ def _report(targets, frozen_evals, identity_issues):
                         if value is not None and grade:
                             per.setdefault(arm, {}).setdefault(metric, []).append(value)
                     rows.append(row)
-        entries = ledger_entries()
-        charges = [entry for entry in entries if
-                   entry.get('kind') == 'exec' and entry.get('target') == target or
-                   entry.get('kind') == 'grade' and entry.get('executor') == target]
+        charges = []
         try:
+            entries = ledger_entries()
+            charges = [entry for entry in entries if
+                       entry.get('kind') == 'exec' and entry.get('target') == target or
+                       entry.get('kind') == 'grade' and entry.get('executor') == target]
             reconcile_call_cost_records(entries)
             charge_costs = [verified_cost(entry) for entry in charges]
             known, cost_issue = True, None
-        except Budget as error:
-            charge_costs, known, cost_issue = [], False, str(error)
+        except (Budget, OSError, UnicodeError, ValueError, TypeError, AttributeError, KeyError) as error:
+            charges, charge_costs, known = [], [], False
+            cost_issue = f'Ledger costs are unavailable until operator recovery: {error}'
         if target_issues or cost_issue:
             for row in rows:
                 row['needs_operator_review'] = True
+                if cost_issue:
+                    row['result']['cost_usd'] = None
         t = CFG['targets'][target]
         metadata = {'skill_name': CFG['skill'], 'executor_model': t['model'], 'timestamp': now(),
                     'runs_per_configuration': CFG['runs'], 'harness': ', '.join(sorted({r['harness_version'] for r in rows if r['harness_version']})) or t['adapter'],

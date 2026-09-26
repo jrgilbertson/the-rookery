@@ -412,7 +412,9 @@ def wrapper(install: Path, prompt: str) -> str:
             "below, reading the files it references when it directs you to. Use no other skill. This is a "
             "non-interactive run: where the skill would ask the user something, state the question and the answer "
             "you would need, then continue as far as the skill allows. Paths in the request are relative to the "
-            "current directory.\n\nRequest:\n\n" + prompt)
+            f"current directory. Keep filesystem access within {install.parent.parent}; do not search its "
+            "parent or sibling workspaces. A named synthetic subject need not exist outside the supplied "
+            "fixtures.\n\nRequest:\n\n" + prompt)
 
 def staged_prompt(ev: dict) -> str:
     return ev["prompt"].replace("evals/files/", "")

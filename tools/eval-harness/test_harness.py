@@ -495,6 +495,52 @@ class HarnessTests(unittest.TestCase):
         self.assertTrue(report['metadata']['cost_available'])
         self.assertEqual(report['metadata']['cost_usd'], .5)
 
+    def test_symlinked_project_root_is_discarded_without_copying_target(self):
+        outside = self.root / 'outside-project'
+        outside.mkdir()
+        (outside / 'secret.txt').write_text('outside fake data')
+        original = self.fake_process
+        def replace_project(argv, **kwargs):
+            result = original(argv, **kwargs)
+            project = Path(kwargs['cwd'])
+            h.shutil.rmtree(project)
+            project.symlink_to(outside, target_is_directory=True)
+            return result
+        h.subprocess.Popen.side_effect = replace_project
+        self.assertEqual(self.execute(), 'discarded')
+        rd = h.run_dir('executor', self.ev, 'with_skill', 1)
+        self.assertIn('capture_error', h.rjson(rd / 'status.json'))
+        self.assertFalse((rd / 'outputs/project/secret.txt').exists())
+        self.assertEqual(h.ledger_entries()[0]['cost_usd'], .25)
+        self.assertEqual(self.execute(), 'discarded')
+        self.assertEqual(len(self.process_calls), 1)
+
+    def test_grok_execution_requires_reported_tool_inventory(self):
+        h.CFG['targets']['executor']['adapter'] = 'grok'
+        adapter = h.ADAPTERS['grok']
+        def grok_process(argv, **kwargs):
+            self.process_calls.append((argv, kwargs))
+            home = Path(kwargs['env']['HOME'])
+            h.wjson(home / '.grok/sessions/marker.json', {'fake': True})
+            install = argv[argv.index('-p') + 1].split('Read ', 1)[1].split(' and follow', 1)[0]
+            events = []
+            if len(self.process_calls) == 2:
+                events.append({'type': 'available_commands', 'tools': adapter.allowed(argv)})
+            events.extend([
+                {'type': 'tool_call', 'toolCallId': 'read-1', 'toolName': 'read_file',
+                 'rawInput': {'path': install}},
+                {'type': 'tool_call_update', 'toolCallId': 'read-1', 'rawOutput': {'content': 'Do the thing'}},
+                {'type': 'text', 'data': 'Done'},
+                {'type': 'end', 'usage': {'total_tokens': 12}, 'total_cost_usd': 9},
+            ])
+            kwargs['stdout'].write(''.join(json.dumps(event) + '\n' for event in events).encode())
+            return FakeProcess(0)
+        h.subprocess.Popen.side_effect = grok_process
+        self.assertEqual(self.execute(1), 'discarded')
+        self.assertIsNone(h.rjson(h.run_dir('executor', self.ev, 'with_skill', 1) / 'status.json')['identity']['init_surface_ok'])
+        self.assertEqual(self.execute(2), 'ok')
+        self.assertEqual(len(self.process_calls), 2)
+
     def test_cost_totals_include_all_providers_and_failed_grading(self):
         self.costs = [0.25, 0.75]
         self.execute()
@@ -520,6 +566,28 @@ class HarnessTests(unittest.TestCase):
         self.assertEqual(len(attempts), 2)
         self.assertTrue(all((p / 'sessions/marker.json').exists() for p in attempts))
         self.assertEqual(h.spent(), .75)
+
+    def test_malformed_existing_grade_blocks_retry_and_reports_incomplete(self):
+        self.execute()
+        self.assertTrue(h.grade_one('executor', self.ev))
+        grade = h.run_dir('executor', self.ev, 'with_skill', 1) / 'grading.json'
+        original = grade.read_text()
+        calls = len(self.process_calls)
+        for broken in ('{"summary":', '{}\n', json.dumps({**json.loads(original), 'summary':
+                       {'passed': 1, 'failed': 0, 'total': 1, 'pass_rate': 0.0}})):
+            with self.subTest(broken=broken):
+                grade.write_text(broken)
+                self.assertFalse(h.grade_one('executor', self.ev))
+                self.assertEqual(grade.read_text(), broken)
+                self.assertEqual(len(self.process_calls), calls)
+                path = h.report(['executor'])[0]
+                report = h.rjson(path)
+                self.assertEqual(path.parent.name, 'incomplete')
+                self.assertTrue(report['runs'][0]['needs_operator_review'])
+                self.assertIsNone(report['runs'][0]['result']['pass_rate'])
+                self.assertTrue(any('grading' in note.lower() for note in report['notes']))
+        grade.write_text(original)
+        self.assertTrue(h.grade_one('executor', self.ev))
 
     def test_unknown_grading_cost_stops_next_inference(self):
         self.execute()

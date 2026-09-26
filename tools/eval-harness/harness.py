@@ -475,7 +475,12 @@ def ancestors_with_agent_files(path: Path) -> list[str]:
     return [str(a / n) for a in [path, *path.parents]
             for n in ("CLAUDE.md", "AGENTS.md", ".claude", ".agents", ".codex", ".grok") if (a / n).exists()]
 
+def require_project_root(root: Path) -> None:
+    if not stat_module.S_ISDIR(root.lstat().st_mode):
+        raise ValueError('Project root must be a real directory')
+
 def snapshot(root: Path) -> dict:
+    require_project_root(root)
     result = {}
     for path in sorted(root.rglob("*")):
         if not stat_module.S_ISREG(path.lstat().st_mode):
@@ -675,6 +680,34 @@ def write_grading(rd: Path, ev: dict, items: list[dict], grader: dict) -> None:
     wjson(rd / "grading.json", {"assertion_results": res, "grader": grader, "summary": {
         "passed": p, "failed": len(res) - p, "total": len(res),
         "pass_rate": round(p / len(res), 4) if res else None}})
+
+def checked_grading(rd: Path, ev: dict, grader_model: str) -> tuple[dict | None, str | None]:
+    path = rd / 'grading.json'
+    if not path.exists():
+        return None, None
+    try:
+        grade = rjson(path)
+    except (OSError, UnicodeError, ValueError):
+        return None, 'Unreadable grading.json; recover it from the preserved grader attempt evidence'
+    if not isinstance(grade, dict) or not isinstance(grade.get('grader'), dict) or \
+            grade['grader'].get('model') != grader_model or not isinstance(grade.get('assertion_results'), list):
+        return None, 'Invalid grading.json; recover it from the preserved grader attempt evidence'
+    results = grade['assertion_results']
+    if (len(results) != len(ev['assertions']) or
+            any(not isinstance(item, dict) or item.get('text') != assertion or
+                type(item.get('evidence')) is not str or not item['evidence'].strip() or
+                type(item.get('passed')) is not bool
+                for item, assertion in zip(results, ev['assertions']))):
+        return None, 'Invalid grading.json; recover it from the preserved grader attempt evidence'
+    passed = sum(item['passed'] for item in results)
+    expected = {'passed': passed, 'failed': len(results) - passed, 'total': len(results),
+                'pass_rate': round(passed / len(results), 4) if results else None}
+    summary = grade.get('summary')
+    if (not isinstance(summary, dict) or summary != expected or
+            any(type(summary[key]) is not int for key in ('passed', 'failed', 'total')) or
+            (type(summary['pass_rate']) is not float if results else summary['pass_rate'] is not None)):
+        return None, 'Invalid grading.json; recover it from the preserved grader attempt evidence'
+    return grade, None
 
 def stat(xs: list[float]) -> dict:
     return {"mean": round(statistics.mean(xs), 4) if xs else 0.0,
@@ -1178,25 +1211,29 @@ def execute_one(target, ev, arm, k, ev_sha, packages):
         package_unchanged = tree_hash(ws['install']) == installed_hash
         failure = service_failure(rc, trace, (rd / 'stderr.txt').read_text(errors='replace'),
                                   (rd / 'transcript').read_text(errors='replace'))
+        surface_unverified = (idn['init_surface_ok'] is not True if adapter.NAME == 'grok'
+                              else idn['init_surface_ok'] is False)
         status = failure or ('discarded' if not package_unchanged or not idn['loaded_paths'] or idn['foreign_access'] or
-                             idn['nested_agent_cli'] or idn['init_surface_ok'] is False else 'ok')
+                             idn['nested_agent_cli'] or surface_unverified else 'ok')
         outputs = rd / 'outputs'
         outputs.mkdir()
         shutil.copy2(rd / 'final.md', outputs / 'final.md')
         capture_error = None
+        after = None
         try:
+            require_project_root(ws['project'])
             for path in ws['project'].rglob('*'):
                 mode = path.lstat().st_mode
                 if not (stat_module.S_ISREG(mode) or stat_module.S_ISDIR(mode)
                         or stat_module.S_ISLNK(mode)):
                     raise ValueError(f'Unsupported project artifact: {path.relative_to(ws["project"])}')
             shutil.copytree(ws['project'], outputs / 'project', symlinks=True)
+            after = snapshot(ws['project']) if before is not None else None
         except (OSError, ValueError, shutil.Error) as error:
             capture_error = f'Project artifact capture failed: {error}'
             shutil.rmtree(outputs / 'project', ignore_errors=True)
             status = failure or 'discarded'
-        wjson(outputs / 'observations.json', observations(trace, before,
-              snapshot(ws['project']) if before is not None else None, package_unchanged))
+        wjson(outputs / 'observations.json', observations(trace, before, after, package_unchanged))
         wjson(rd / 'build.json', {**packages[arm], 'model': CFG['targets'][target]['model'],
               'effort': CFG['targets'][target]['effort'], 'adapter': adapter.NAME,
               'harness_version': rjson(rd / 'invocation.json')['harness_version'], 'workspace': str(ws['parent']), 'home': str(ws['home']),
@@ -1240,10 +1277,13 @@ def counted_runs(target, ev):
 def grade_one(target, ev):
     freeze_inputs()
     runs, missing = counted_runs(target, ev)
+    grader = CFG['targets'][target]['grader']
+    grader_model = CFG['targets'][grader]['model']
+    if any(checked_grading(rd, ev, grader_model)[1] for _, _, rd, _ in runs):
+        return False  # Preserve malformed evidence for explicit operator recovery.
     pending = [r for r in runs if not (r[2] / 'grading.json').exists()]
     if not pending:
         return not missing
-    grader = CFG['targets'][target]['grader']
     if CFG['targets'][grader]['model'] == CFG['targets'][target]['model']:
         raise ValueError('Grader must be a different model')
     adapter = adapter_of(grader)
@@ -1355,7 +1395,10 @@ def _report(targets, frozen_evals, identity_issues):
                     rd = run_dir(target, ev, arm, k)
                     row = {'eval_id': ev['id'], 'eval_name': eval_name(ev), 'configuration': arm,
                            'run_number': k, 'status': status_of(rd), 'archive_ref': str(rd.relative_to(CFG['archive_root']))}
-                    grade = rjson(rd / 'grading.json') if (rd / 'grading.json').exists() else None
+                    grade, grade_issue = checked_grading(
+                        rd, ev, CFG['targets'][CFG['targets'][target]['grader']]['model'])
+                    if grade_issue:
+                        target_issues.append(f'{arm}/run-{k}: {grade_issue}')
                     timing = rjson(rd / 'timing.json') if (rd / 'timing.json').exists() else {}
                     metrics = rjson(rd / 'metrics.json') if (rd / 'metrics.json').exists() else {}
                     build = rjson(rd / 'build.json') if (rd / 'build.json').exists() else None

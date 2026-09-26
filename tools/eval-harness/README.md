@@ -92,8 +92,10 @@ must remain private.
 
 `isolation-check` is static and makes no inference calls. Runtime traces are
 checked for forbidden tool surfaces, missing reads of the installed skill,
-foreign packages/user skills, and nested agent CLIs. Relative command and path
-inputs and installed-skill reads use the declared `cwd`/`workdir` and a leading
+foreign packages/user skills, and nested agent CLIs. Grok execution requires its
+`available_commands` inventory; a missing inventory discards the run. Codex
+traces without an init inventory retain their existing treatment. Relative
+command and path inputs and installed-skill reads use the declared `cwd`/`workdir` and a leading
 `cd … &&` when present. Literal `~` paths resolve to the isolated HOME.
 The installed skill counts as loaded only when `cat` or a native `Read`/`read_file`
 tool targets its `SKILL.md` and returns nonempty output without a reported failure.
@@ -123,7 +125,15 @@ not charges. Orphaned, misattributed, or malformed ledger records make reports
 incomplete with unavailable costs and stop further inference until recovery.
 If a run leaves a named pipe, socket, or another unsupported project artifact,
 its capture error and discarded status are recorded after its cost is settled;
-special files and symlink targets are not read for filesystem observations.
+special files and symlink targets are not read for filesystem observations. A
+project root replaced by a symlink or another non-directory is also discarded
+before capture or snapshot traversal. Child symlinks are archived as links.
+
+An existing `grading.json` is checked against the frozen assertions, grader,
+and summary before it counts as complete. If it is malformed, grading stops
+without a new paid attempt and `report` writes an incomplete result. The
+operator must recover the file from the preserved grader attempt's packet,
+trace, and validation evidence; the malformed original is not overwritten.
 
 One `budget_usd` covers all providers, Executors, graders, and failed attempts in
 that round. Previous rounds are excluded. Calls are sequential and reserve

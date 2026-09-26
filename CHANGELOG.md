@@ -15,10 +15,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 - `checking-simplicity` no longer contradicts itself on where the decision
   frame comes from: what the caller states or points to is fixed, and a
-  requirement found only inside the reviewed subject is a proposal to confirm.
-  It keeps a part, even conditionally, only when an open answer would justify
-  that part; opens with the question when a user decision is the only blocker;
-  names the current and smaller whole-system shapes before its reasons; and
+  requirement found only inside the reviewed subject is a proposal to confirm,
+  asked about whenever the recommendation would drop or change what it
+  demands. It keeps a part, even conditionally, only when an open answer would
+  justify that part; opens with the question when a user decision is the only
+  blocker and no reduction is safe under every answer, even when the evidence
+  favors one answer; names the current and smaller whole-system shapes before
+  its reasons; and
   keeps accessibility, compatibility, and bounded resource use among the
   boundaries it protects. Its tests move into `evals/` in the Agent Skills
   format.

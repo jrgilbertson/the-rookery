@@ -282,10 +282,12 @@ the contract.
 - For example, model A passes 60% at $0.60 per attempt and model B passes 30%
   at $0.40. A ranks first although each attempt costs more: $0.60 ÷ 0.60 =
   $1.00 against $0.40 ÷ 0.30 = $1.33.
-- A model earns a place in a row only when its pass rate at its chosen effort
-  is close to the row's best, by the same 95% interval test the effort rule
-  uses. A cheaper model below that line does not rank, however low its cost
-  of pass.
+- In a row whose role-matched evidence reports pass rates, a model earns a
+  place only when its pass rate at its chosen effort is close to the row's
+  best, by the same 95% interval test the effort rule uses. A cheaper model
+  below that line does not rank, however low its cost of pass. Rows without
+  pass rates follow "Use evidence that matches the role": Design/taste by
+  preference score and price, and Planner by judgment.
 - A row lists only models that earn a place, so some rows have fewer than
   three.
 - A model may rank by a capability the others lack, as xAI does for Scout

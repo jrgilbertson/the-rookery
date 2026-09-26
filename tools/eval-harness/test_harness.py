@@ -378,6 +378,7 @@ class HarnessTests(unittest.TestCase):
         self.assertFalse(rd.exists())
         self.assertEqual(h.ledger_entries(), [])
         self.assertEqual(self.process_calls, [])
+        self.assertFalse(any(Path(h.CFG['workspace_root']).iterdir()))
         self.assertEqual(self.execute(), 'ok')
 
     def test_cli_preflight_version_failure_allows_retry(self):
@@ -387,7 +388,24 @@ class HarnessTests(unittest.TestCase):
         self.assertFalse(rd.exists())
         self.assertEqual(h.ledger_entries(), [])
         self.assertEqual(self.process_calls, [])
+        self.assertFalse(any(Path(h.CFG['workspace_root']).iterdir()))
         self.assertEqual(self.execute(), 'ok')
+
+    def test_grader_cli_preflight_cleans_credentials_and_scratch(self):
+        self.execute()
+        gdir = h.iteration_dir() / 'executor/grading/eval-1-sample'
+        for failure in ('missing', 'version'):
+            with self.subTest(failure=failure):
+                if failure == 'missing':
+                    guard = patch.object(h.shutil, 'which', return_value=None)
+                else:
+                    guard = patch.object(h, 'cli_version', side_effect=h.Halt('version unavailable'))
+                with guard, self.assertRaises(h.Halt):
+                    h.grade_one('executor', self.ev)
+                self.assertFalse((gdir / 'attempt-1').exists())
+                self.assertFalse(any(Path(h.CFG['workspace_root']).iterdir()))
+                self.assertEqual(len(h.ledger_entries()), 1)
+        self.assertTrue(h.grade_one('executor', self.ev))
 
     def test_config_private_paths_and_path_escape(self):
         original = copy.deepcopy(h.CFG)
@@ -440,6 +458,29 @@ class HarnessTests(unittest.TestCase):
         (h.iteration_dir() / '_ledger.jsonl').unlink()
         with self.assertRaises(h.Budget):
             h.allowance()
+
+    def test_unrelated_cost_files_do_not_count_as_calls(self):
+        package = h.iteration_dir() / 'packages/with_skill/demo/cost.json'
+        output = h.run_dir('executor', self.ev, 'with_skill', 1) / 'outputs/project/cost.json'
+        h.wjson(package, {'fixture': True})
+        h.wjson(output, {'agent_output': True})
+        self.assertEqual(h.spent(), 0)
+        self.assertEqual(h.allowance(), 1)
+
+    def test_orphaned_cost_record_makes_report_incomplete(self):
+        self.execute()
+        self.assertTrue(h.grade_one('executor', self.ev))
+        (h.iteration_dir() / '_ledger.jsonl').unlink()
+        path = h.report(['executor'])[0]
+        report = h.rjson(path)
+        self.assertEqual(path.parent.name, 'incomplete')
+        self.assertFalse(report['metadata']['cost_available'])
+        self.assertTrue(all(row['needs_operator_review'] for row in report['runs']))
+
+    def test_scrub_preserves_short_arm_names_in_evidence(self):
+        h.CFG['arms'] = {'with_skill': 'main', 'without_skill': 'dev'}
+        build = {'skill_revision': 'abc12345'}
+        self.assertEqual(h.scrub('remain device abc12345', build), 'remain device <rev>')
 
     def test_missing_pricing_cli_stops_main_before_inference(self):
         h.wjson(self.config, h.CFG)
@@ -601,6 +642,26 @@ class HarnessTests(unittest.TestCase):
         self.assertEqual(self.execute(), 'discarded')
         identity = h.rjson(h.run_dir('executor', self.ev, 'with_skill', 1) / 'status.json')['identity']
         self.assertTrue(identity['foreign_access'])
+
+    def test_codex_shell_wrapper_checks_inner_literal_paths(self):
+        ws = {'parent': self.root / 'scratch/ws', 'project': self.root / 'scratch/ws/project',
+              'install': self.root / 'scratch/ws/skills/demo', 'home': self.root / 'scratch/home'}
+        adapter = h.ADAPTERS['codex']
+        argv = adapter.exec_argv(h.CFG['targets']['executor'], ws, 'prompt', self.root / 'final', 1, [])
+        tr = h.new_trace()
+        for command in ("/bin/zsh -lc 'cat /etc/hosts'", "bash -c 'cat ../../../ws-other/file'",
+                        "sh -c 'cd .. && cat ../ws-other/file'"):
+            with self.subTest(command=command):
+                tr['tool_calls'] = [{'name': 'command_execution', 'input': {'command': command}, 'output': ''}]
+                self.assertTrue(h.identity(tr, ws, adapter, argv)['foreign_access'])
+        for command in (f"/bin/zsh -lc 'cat {ws['install'] / 'SKILL.md'}'",
+                        "zsh -lc 'cd nested && cat ../fixture.txt'", "/bin/zsh -lc 'cat '/etc/hosts"):
+            with self.subTest(command=command):
+                tr['tool_calls'] = [{'name': 'command_execution', 'input': {'command': command}, 'output': ''}]
+                h.identity(tr, ws, adapter, argv)
+        tr['tool_calls'] = [{'name': 'command_execution', 'input': {
+            'command': f"/bin/zsh -lc 'cat {ws['install'] / 'SKILL.md'}'"}, 'output': ''}]
+        self.assertFalse(h.identity(tr, ws, adapter, argv)['foreign_access'])
 
     def test_codex_child_readout_saved_and_encrypted_dispatch_unavailable(self):
         sessions = self.root / 'sessions'

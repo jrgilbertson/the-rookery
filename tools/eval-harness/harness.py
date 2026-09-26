@@ -500,6 +500,14 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
                 words = shlex.split(s)
             except ValueError:
                 words = s.split()
+            # Codex command_execution commonly records one shell -c/-lc wrapper.
+            # Inspect that literal script with the existing static path checks.
+            if (command and len(words) == 3 and Path(words[0]).name in {'sh', 'bash', 'zsh', 'dash', 'ksh'}
+                    and words[1] in {'-c', '-lc'}):
+                try:
+                    words = shlex.split(words[2])
+                except ValueError:
+                    words = words[2].split()
             # Honor the common explicit shell prefix; this remains a static detector,
             # not an interpreter for variables, substitutions, or persistent shell state.
             while command and len(words) >= 3 and words[0] == 'cd' and words[2] == '&&':
@@ -525,12 +533,12 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
             "init_surface_ok": init_ok(adapter, tr["init"], argv)}
 
 def scrub(text: str, b: dict) -> str:
-    """Neutral names for a run's workspace, the archive, the harness, HOME, and every revision."""
+    """Neutral names for a run's workspace, archive, harness, HOME, and installed revision."""
     reps = [(v, n) for key, n in (("install_path", f"/workspace/skills/{CFG['skill']}"), ("project", "/workspace/project"),
                                   ("workspace", "/workspace"), ("home", "/home/user")) if b.get(key)
             for v in variants(b[key])]
     reps += [(str(skill_dir()), "/archive"), (str(H), "/harness"), (str(REAL_HOME), "/Users/user")]
-    reps += [(r, "<rev>") for rev in [*CFG["arms"].values(), b["skill_revision"]] for r in (rev, rev[:7])]
+    reps += [(r, "<rev>") for r in (b["skill_revision"], b["skill_revision"][:7])]
     for old, new in sorted(reps, key=lambda x: -len(x[0])):
         text = text.replace(old, new)
     return text
@@ -758,12 +766,24 @@ def verified_cost(entry):
     return cost
 
 
+def reconcile_call_cost_records(entries):
+    """Require every execution and grading attempt cost file to have a ledger row."""
+    root = iteration_dir()
+    call_records = {path.resolve() for pattern in ('*/eval-*/*/run-*/cost.json',
+                                                    '*/grading/eval-*/attempt-*/cost.json')
+                    for path in root.glob(pattern)}
+    linked = {Path(entry['cost_record']).resolve() for entry in entries
+              if isinstance(entry.get('cost_record'), str)}
+    if call_records - linked:
+        raise Budget('Unaccounted attempt exists; recover its ledger entry before inference')
+    if linked - call_records:
+        raise Budget('Missing linked cost record; recover the attempt before inference')
+
+
 def spent():
     total = 0.0
     entries = ledger_entries()
-    recorded = {Path(e['cost_record']).resolve() for e in entries if isinstance(e.get('cost_record'), str)}
-    if {p.resolve() for p in iteration_dir().rglob('cost.json')} - recorded:
-        raise Budget('Unaccounted attempt exists; recover its ledger entry before inference')
+    reconcile_call_cost_records(entries)
     for entry in entries:
         total += verified_cost(entry)
     return total
@@ -1057,7 +1077,11 @@ def execute_one(target, ev, arm, k, ev_sha, packages):
         wjson(rd / 'metrics.json', {'total_tool_calls': len(trace['tool_calls']), 'errors_encountered': trace['errors']})
         wjson(rd / 'status.json', {'status': status, 'identity': idn, 'rc': rc, 'finished': now()})
     except BaseException:
-        # Keep a failed persistence attempt's HOME for recovery; never copy auth to the archive.
+        # Preflight never launched or persisted an attempt; remove copied auth and scratch.
+        # Keep a failed persistence attempt's HOME for recovery.
+        if not rd.exists():
+            drop_home(ws['home'])
+            shutil.rmtree(ws['parent'])
         raise
     else:
         drop_home(ws['home'])
@@ -1122,6 +1146,9 @@ def grade_one(target, ev):
                               {'model': CFG['targets'][grader]['model'], 'effort': CFG['targets'][grader]['effort'],
                                'harness': adapter.NAME, 'packet': str(directory / 'packet.txt'), 'letter': row['letter']})
     except BaseException:
+        if not directory.exists():
+            drop_home(home)
+            shutil.rmtree(cwd)
         raise
     else:
         drop_home(home)
@@ -1231,15 +1258,17 @@ def _report(targets, frozen_evals, identity_issues):
                         if value is not None and grade:
                             per.setdefault(arm, {}).setdefault(metric, []).append(value)
                     rows.append(row)
-        charges = [entry for entry in ledger_entries() if
+        entries = ledger_entries()
+        charges = [entry for entry in entries if
                    entry.get('kind') == 'exec' and entry.get('target') == target or
                    entry.get('kind') == 'grade' and entry.get('executor') == target]
         try:
+            reconcile_call_cost_records(entries)
             charge_costs = [verified_cost(entry) for entry in charges]
-            known = True
-        except Budget:
-            charge_costs, known = [], False
-        if target_issues:
+            known, cost_issue = True, None
+        except Budget as error:
+            charge_costs, known, cost_issue = [], False, str(error)
+        if target_issues or cost_issue:
             for row in rows:
                 row['needs_operator_review'] = True
         t = CFG['targets'][target]
@@ -1261,7 +1290,7 @@ def _report(targets, frozen_evals, identity_issues):
         wjson(out, {'metadata': metadata, 'runs': rows,
                     'run_summary': {a: {m: stat(v) for m, v in values.items()} for a, values in per.items()},
                     'cost_records': public_charges,
-                    'notes': [*sorted(set(target_issues)),
+                    'notes': [*sorted(set(target_issues)), *([cost_issue] if cost_issue else []),
                               'Raw results only; inspect every failure and attribute it before the operator decides to ship.',
                               'Run the old skill separately on failing cases; no aggregate cross-cohort deltas are computed.',
                               'Costs include executions and grading attempts, across providers, in this round only. API-equivalent estimates are not subscription bills.']})

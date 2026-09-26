@@ -84,6 +84,8 @@ must remain private.
 checked for forbidden tool surfaces, missing reads of the installed skill,
 foreign packages/user skills, and nested agent CLIs. Relative command and path
 inputs use the declared `cwd`/`workdir` and a leading `cd … &&` when present.
+For a command recorded as one `sh`/`bash`/`zsh`/`dash`/`ksh` `-c` or `-lc`
+wrapper, the detector checks the literal inner command with those same rules.
 Literal absolute path inputs and simple command operands outside the staged
 workspace are marked foreign; a leading absolute executable token is exempt.
 The detector does not interpret shell variables, substitutions, or persistent
@@ -97,6 +99,10 @@ gets `cost.json` and a current-round ledger entry. The runner calls
 `usage.estimate(adapter, transcript, sessions_or_none, output, command,
 scratch_root, model=recorded_model)`. `ccusage_command` defaults to `["ccusage"]`.
 `cli_cost_usd` is kept separately from the ccusage estimate.
+Budget checks and reports reconcile ledger rows with execution and grading
+attempt cost files; unrelated package and output files named `cost.json` are
+not charges. Orphaned attempt records make reports incomplete and stop further
+inference until the ledger is recovered.
 
 One `budget_usd` covers all providers, Executors, graders, and failed attempts in
 that round. Previous rounds are excluded. Calls are sequential and reserve

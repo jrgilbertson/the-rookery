@@ -284,16 +284,25 @@ the contract.
 - A subscription already paid for may keep an otherwise dominated model in a
   last slot where it still does the role's work well.
 
-### Pick effort where the curve bends
+### Pick the cheapest effort near the ceiling
 
-- Choose the cheapest effort whose pass rate on the role's work is close to
-  that model's ceiling. That is where its cost per extra point bends upward.
+- Choose the effort with the lowest cost of pass among those whose pass rate
+  on the role's work is close to that model's ceiling.
+- Close means within the 95% interval of the model's best pass rate on that
+  board. For a best pass rate p on n tasks, the floor is
+  p − 1.96 × √(p × (1 − p) ÷ n). When the best effort passes every task, the
+  floor is n ÷ (n + 3.84). For example, a best of 60% on 100 tasks admits
+  efforts from 50.4%, and a best of 23 of 23 admits efforts from 19.7 tasks.
+- An effort must be close on every board that reports the model. When the
+  boards pick different cheapest efforts, keep the higher one.
 - A composite index across effort levels shows the curve's shape, but its
   average is not a pass rate. It hides how low effort fails on hard tasks, so
   low effort always looks cheapest.
-- Confirm each effort choice on at least two independent boards that report
-  every effort level, such as the Artificial Analysis Intelligence Index,
-  Zapier's AutomationBench, and VulcanBench.
+- Confirm each effort choice on at least two independent boards that report a
+  pass rate at every effort level, such as FrontierCode, VulcanBench, and
+  Zapier's AutomationBench. A composite index such as the Artificial Analysis
+  Intelligence Index can corroborate the curve's shape but does not count as
+  one of the two.
 
 ### Use evidence that matches the role
 

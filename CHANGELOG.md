@@ -61,6 +61,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- `ROUTING.md` gives "close to the ceiling" a number for choosing effort. An
+  effort qualifies when its pass rate is within the 95% interval of the
+  model's best on every board that reports the model, and the qualifying
+  effort with the lowest cost of pass is chosen. Only boards that report a
+  pass rate at every effort level count toward the two-board confirmation.
+
 - `creating-portable-skills` and `SKILLS.md` give each rule one owner and
   define the terms an agent had to guess at, such as the changed arm, a
   target, and the ship rule. The run archive nests one directory per target,

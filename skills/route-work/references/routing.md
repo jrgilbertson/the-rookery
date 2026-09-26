@@ -305,8 +305,9 @@ the contract.
   (1 + 3.84 ÷ n), which is n ÷ (n + 3.84) when the best effort passes every
   task. For example, a best of 60% on 100 tasks admits efforts from 50.2%,
   and a best of 23 of 23 admits efforts from 19.7 tasks.
-- An effort must be close on every board that reports the model. When the
-  boards pick different cheapest efforts, keep the higher one.
+- An effort must be close on every board that reports the model's pass rate
+  at every effort level; a board that reports one effort does not count. When
+  the boards pick different cheapest efforts, keep the higher one.
 - A composite index across effort levels shows the curve's shape, but its
   average is not a pass rate. It hides how low effort fails on hard tasks, so
   low effort always looks cheapest.

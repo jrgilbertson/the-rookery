@@ -145,16 +145,24 @@ def strings(value, key="") -> list[str]:
         return [s for k, v in value.items() for s in strings(v, k)]
     return [s for v in value for s in strings(v, key)] if isinstance(value, list) else []
 
-def path_inputs(value) -> list[str]:
-    """Command and path fields that can name a location in the staged project."""
+def path_inputs(value, cwd: Path) -> list[tuple[str, Path, bool]]:
+    """Path-bearing inputs with their declared working directory; no shell expansion."""
     if isinstance(value, str):
-        return [value]
+        return [(value, cwd, False)]
     if isinstance(value, list):
-        return [s for item in value for s in path_inputs(item)]
+        return [row for item in value for row in path_inputs(item, cwd)]
     if isinstance(value, dict):
-        keys = {'command', 'cmd', 'path', 'file_path', 'filepath', 'directory', 'cwd', 'glob'}
-        return [s for key, item in value.items() for s in
-                (strings(item) if key.lower() in keys else path_inputs(item) if isinstance(item, (dict, list)) else [])]
+        declared = value.get('cwd', value.get('workdir', '.'))
+        base = Path(os.path.normpath(cwd / declared)) if isinstance(declared, str) else cwd
+        rows = []
+        for key, item in value.items():
+            if key.lower() in {'cwd', 'workdir'}:
+                rows += [(s, cwd, False) for s in strings(item)]
+            elif key.lower() in {'command', 'cmd', 'path', 'file_path', 'filepath', 'directory', 'glob'}:
+                rows += [(s, base, key.lower() in {'command', 'cmd'}) for s in strings(item)]
+            elif isinstance(item, (dict, list)):
+                rows += path_inputs(item, base)
+        return rows
     return []
 
 def new_trace() -> dict:
@@ -486,16 +494,23 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
             foreign += [p for p in pats if p in s]
             foreign += [f"another workspace: {m}" for m in under_root.findall(s)  # a sibling run's parent or HOME
                         if not any(m == o or m.startswith(o + "/") for o in own)]
-        for s in path_inputs(inp):
+        for s, cwd, command in path_inputs(inp, project):
             try:
                 words = shlex.split(s)
             except ValueError:
                 words = s.split()
+            # Honor the common explicit shell prefix; this remains a static detector,
+            # not an interpreter for variables, substitutions, or persistent shell state.
+            while command and len(words) >= 3 and words[0] == 'cd' and words[2] == '&&':
+                cwd = Path(os.path.normpath(cwd / words[1]))
+                if not cwd.is_relative_to(project):
+                    foreign.append(f"relative workspace escape: {words[1]}")
+                words = words[3:]
             for word in words:
                 path = word.rsplit('=', 1)[-1].lstrip('(<')
                 if path.startswith('/') or '..' not in Path(path).parts:
                     continue
-                resolved = Path(os.path.normpath(os.path.join(project, path)))
+                resolved = Path(os.path.normpath(os.path.join(cwd, path)))
                 if not resolved.is_relative_to(project):
                     foreign.append(f"relative workspace escape: {path}")
     return {"loaded_paths": sorted(set(loaded)), "foreign_access": sorted(set(foreign)), "nested_agent_cli": nested,

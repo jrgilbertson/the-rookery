@@ -82,9 +82,11 @@ must remain private.
 
 `isolation-check` is static and makes no inference calls. Runtime traces are
 checked for forbidden tool surfaces, missing reads of the installed skill,
-foreign packages/user skills, and nested agent CLIs. This retains the original
-trace-based isolation approach; it is not an OS security boundary. Changes to CLI flags or
-session formats require another integration check against the installed versions.
+foreign packages/user skills, and nested agent CLIs. Relative command and path
+inputs use the declared `cwd`/`workdir` and a leading `cd … &&` when present.
+The detector does not interpret shell variables, substitutions, or persistent
+shell state; it is not an OS security boundary. Changes to CLI flags or session
+formats require another integration check against the installed versions.
 
 ## Cost and stopping
 

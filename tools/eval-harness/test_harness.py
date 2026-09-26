@@ -535,6 +535,27 @@ class HarnessTests(unittest.TestCase):
         tr['tool_calls'][0]['input'] = {'query': 'What does .. mean in prose?'}
         self.assertFalse(h.identity(tr, ws, adapter, argv)['foreign_access'])
 
+    def test_relative_paths_use_the_tool_working_directory(self):
+        ws = {'parent': self.root / 'scratch/ws', 'project': self.root / 'scratch/ws/project',
+              'install': self.root / 'scratch/ws/skills/demo', 'home': self.root / 'scratch/home'}
+        adapter = h.ADAPTERS['codex']
+        argv = adapter.exec_argv(h.CFG['targets']['executor'], ws, 'prompt', self.root / 'final', 1, [])
+        for inp in ({'command': 'cat ../fixture.txt', 'cwd': str(ws['project'] / 'nested')},
+                    {'cmd': 'cat ../fixture.txt', 'workdir': 'nested'},
+                    {'command': 'cd nested && cat ../fixture.txt'},
+                    {'file_path': '../fixture.txt', 'cwd': 'nested'}):
+            with self.subTest(inp=inp):
+                tr = h.new_trace()
+                tr['tool_calls'] = [{'name': 'command_execution', 'input': inp, 'output': ''}]
+                self.assertFalse(h.identity(tr, ws, adapter, argv)['foreign_access'])
+        for inp in ({'cmd': 'cat ../../../ws-other/file', 'workdir': 'nested'},
+                    {'command': 'cd .. && cat skills/demo/SKILL.md'},
+                    {'command': 'cat file', 'cwd': '../../ws-other'}):
+            with self.subTest(inp=inp):
+                tr = h.new_trace()
+                tr['tool_calls'] = [{'name': 'command_execution', 'input': inp, 'output': ''}]
+                self.assertTrue(h.identity(tr, ws, adapter, argv)['foreign_access'])
+
     def test_codex_child_readout_saved_and_encrypted_dispatch_unavailable(self):
         sessions = self.root / 'sessions'
         sessions.mkdir()

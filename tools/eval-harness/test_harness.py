@@ -213,6 +213,28 @@ class HarnessTests(unittest.TestCase):
             self.assertEqual(h.main(), 0)
         self.assertEqual(len(list((h.iteration_dir() / 'executor/incomplete').glob('*.json'))), 1)
 
+    def test_report_command_uses_frozen_target_after_live_executor_removed(self):
+        self.execute()
+        self.assertTrue(h.grade_one('executor', self.ev))
+        del h.CFG['targets']['executor']
+        h.wjson(self.config, h.CFG)
+        with patch.object(h.sys, 'argv', ['harness.py', 'report', '--round', str(self.config)]):
+            self.assertEqual(h.main(), 0)
+        report = h.rjson(next((h.iteration_dir() / 'executor/incomplete').glob('*.json')))
+        self.assertFalse(report['metadata']['identity_verified'])
+        self.assertEqual(report['metadata']['executor_model'], 'executor-model')
+
+    def test_report_command_uses_frozen_grader_after_live_grader_removed(self):
+        self.execute()
+        self.assertTrue(h.grade_one('executor', self.ev))
+        del h.CFG['targets']['judge']
+        h.wjson(self.config, h.CFG)
+        with patch.object(h.sys, 'argv', ['harness.py', 'report', '--round', str(self.config)]):
+            self.assertEqual(h.main(), 0)
+        report = h.rjson(next((h.iteration_dir() / 'executor/incomplete').glob('*.json')))
+        self.assertFalse(report['metadata']['identity_verified'])
+        self.assertEqual(report['metadata']['grader'], 'judge-model')
+
     def test_truncated_jsonl_is_archived_and_discarded(self):
         def damaged(argv, **kwargs):
             self.process_calls.append((argv, kwargs))
@@ -490,6 +512,27 @@ class HarnessTests(unittest.TestCase):
         self.assertFalse(report['metadata']['cost_available'])
         self.assertTrue(all(row['needs_operator_review'] for row in report['runs']))
 
+    def test_unattributable_ledger_row_blocks_spending_and_report_cost(self):
+        self.execute()
+        self.assertTrue(h.grade_one('executor', self.ev))
+        ledger = h.iteration_dir() / '_ledger.jsonl'
+        original = h.ledger_entries()
+        for field, value in [('kind', None), ('target', None), ('run', '1'),
+                             ('executor', None), ('attempt', '1')]:
+            with self.subTest(field=field):
+                rows = [dict(row) for row in original]
+                row = rows[0] if field in ('kind', 'target', 'run') else rows[1]
+                row[field] = value
+                ledger.write_text(''.join(json.dumps(item) + '\n' for item in rows))
+                with self.assertRaises(h.Budget):
+                    h.spent()
+                path = h.report(['executor'])[0]
+                report = h.rjson(path)
+                self.assertEqual(path.parent.name, 'incomplete')
+                self.assertFalse(report['metadata']['cost_available'])
+                self.assertNotIn('cost_usd', report['metadata'])
+        ledger.write_text(''.join(json.dumps(item) + '\n' for item in original))
+
     def test_scrub_preserves_short_arm_names_in_evidence(self):
         h.CFG['arms'] = {'with_skill': 'main', 'without_skill': 'dev'}
         build = {'skill_revision': 'abc12345'}
@@ -545,10 +588,26 @@ class HarnessTests(unittest.TestCase):
         with self.assertRaises(h.Halt):
             h.freeze_inputs()
 
+    def test_fixture_mtime_change_invalidates_frozen_inputs(self):
+        fixture = Path(h.CFG['repo_path']) / 'skills/demo/evals/files/input.txt'
+        fixture.parent.mkdir()
+        fixture.write_text('original')
+        self.ev['files'] = ['evals/files/input.txt']
+        h.wjson(fixture.parents[1] / 'evals.json', {'evals': [self.ev]})
+        before = h.load_evals()[1]
+        h.freeze_inputs()
+        stat = fixture.stat()
+        os.utime(fixture, ns=(stat.st_atime_ns, stat.st_mtime_ns + 1_000_000_000))
+        self.assertNotEqual(h.load_evals()[1], before)
+        with self.assertRaises(h.Halt):
+            h.freeze_inputs()
+
     def test_report_attributes_grading_to_its_executor_only(self):
+        h.CFG['targets']['other'] = {'adapter': 'codex', 'model': 'other-model', 'grader': 'judge', 'effort': 'high'}
         self.execute()
         h.grade_one('executor', self.ev)
-        h.charge({'kind': 'grade', 'target': 'executor', 'executor': 'other', 'cost_usd': 9})
+        h.execute_one('other', self.ev, 'with_skill', 1, h.load_evals()[1], self.packages)
+        h.grade_one('other', self.ev)
         path = h.report(['executor'])[0]
         report = h.rjson(path)
         self.assertEqual(report['metadata']['cost_usd'], .5)

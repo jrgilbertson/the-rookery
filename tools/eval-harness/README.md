@@ -35,8 +35,9 @@ benchmark files. Inspect their public-safe contents before committing evidence.
 A `run` invocation preserves each slot, including failures, without automatically
 retrying it. Use a new round for another execution. Explicitly invoking `grade`
 again retries only ungraded valid executions in a new attempt directory; previous
-grader attempts remain. Successful grades are retained. Config, eval content, runner source,
-and package identities are frozen within a round. Actual CLI versions are recorded. Prefer immutable commit SHAs.
+grader attempts remain. Successful grades are retained. Config, eval content,
+fixture file modes and modification times, runner source, and package identities
+are frozen within a round. Actual CLI versions are recorded. Prefer immutable commit SHAs.
 
 ## Commands
 
@@ -101,8 +102,8 @@ scratch_root, model=recorded_model)`. `ccusage_command` defaults to `["ccusage"]
 `cli_cost_usd` is kept separately from the ccusage estimate.
 Budget checks and reports reconcile ledger rows with execution and grading
 attempt cost files; unrelated package and output files named `cost.json` are
-not charges. Orphaned attempt records make reports incomplete and stop further
-inference until the ledger is recovered.
+not charges. Orphaned or misattributed ledger records make reports incomplete
+and stop further inference until the ledger is recovered.
 
 One `budget_usd` covers all providers, Executors, graders, and failed attempts in
 that round. Previous rounds are excluded. Calls are sequential and reserve

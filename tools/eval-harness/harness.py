@@ -81,8 +81,9 @@ def load_evals() -> tuple[list[dict], str]:
         fixture = (skill / name).resolve()
         if not fixture.is_relative_to(skill.resolve() / "evals/files"):
             raise ValueError("Eval fixture is outside evals/files")
-        digest.update(name.encode() + b"\0" + str(stat_module.S_IMODE(fixture.stat().st_mode)).encode() + b"\0"
-                      + fixture.read_bytes())
+        metadata = fixture.stat()
+        digest.update(name.encode() + b"\0" + str(stat_module.S_IMODE(metadata.st_mode)).encode() + b"\0"
+                      + str(metadata.st_mtime_ns).encode() + b"\0" + fixture.read_bytes())
     return evals, digest.hexdigest()
 
 
@@ -674,7 +675,7 @@ def outside_repo(path):
     return resolved
 
 
-def validate_config(path):
+def validate_config(path, require_executor=True):
     CFG['repo_path'] = str(Path(CFG['repo_path']).expanduser().resolve())
     outside_repo(path)
     for key in ('repo', 'skill'):
@@ -718,6 +719,10 @@ def validate_config(path):
     if set(CFG.get('capabilities', [])) - set(CAPABILITIES):
         raise ValueError('Unsupported capability')
     for name, target in CFG['targets'].items():
+        if not require_executor:
+            if isinstance(target, dict):
+                target.setdefault('effort', 'high')
+            continue
         if not re.fullmatch(r'[A-Za-z0-9_-]+', name) or target['adapter'] not in ADAPTERS:
             raise ValueError('Invalid target')
         if 'jobs' in target:
@@ -727,7 +732,7 @@ def validate_config(path):
             grader = CFG['targets'][target['grader']]
             if grader['model'] == target['model']:
                 raise ValueError('Blind grader must use a different model from the Executor')
-    if not executor_targets():
+    if require_executor and not executor_targets():
         raise ValueError('At least one Executor with a grader is required')
 
 
@@ -779,6 +784,29 @@ def reconcile_call_cost_records(entries):
         raise Budget('Unaccounted attempt exists; recover its ledger entry before inference')
     if linked - call_records:
         raise Budget('Missing linked cost record; recover the attempt before inference')
+    if len(linked) != len(entries):
+        raise Budget('Duplicate or unlinked ledger attempt; recover its entry before inference')
+    for entry in entries:
+        parts = Path(entry['cost_record']).resolve().relative_to(root.resolve()).parts
+        if len(parts) != 5 or parts[-1] != 'cost.json':
+            raise Budget('Ledger attempt attribution is invalid; recover its entry before inference')
+        eval_match = re.fullmatch(r'eval-(\d+)-[A-Za-z0-9_-]+', parts[2 if parts[1] == 'grading' else 1])
+        if not eval_match or type(entry.get('eval')) is not int or entry['eval'] != int(eval_match[1]):
+            raise Budget('Ledger attempt attribution is invalid; recover its entry before inference')
+        if parts[1] == 'grading':
+            attempt = re.fullmatch(r'attempt-(\d+)', parts[3])
+            expected_grader = CFG['targets'].get(parts[0], {}).get('grader')
+            valid = (attempt and entry.get('kind') == 'grade' and entry.get('executor') == parts[0]
+                     and entry.get('target') == expected_grader and expected_grader is not None
+                     and type(entry.get('attempt')) is int and entry['attempt'] == int(attempt[1]))
+        else:
+            run = re.fullmatch(r'run-(\d+)', parts[3])
+            valid = (run and entry.get('kind') == 'exec' and entry.get('target') == parts[0]
+                     and parts[0] in executor_targets() and parts[2] in CFG['run_arms']
+                     and entry.get('arm') == parts[2]
+                     and type(entry.get('run')) is int and entry['run'] == int(run[1]))
+        if not valid:
+            raise Budget('Ledger attempt attribution is invalid; recover its entry before inference')
 
 
 def spent():
@@ -1347,7 +1375,7 @@ def main():
     parser.add_argument('--evals', default='')
     ARGS = parser.parse_args()
     CFG = rjson(Path(ARGS.round))
-    validate_config(ARGS.round)
+    validate_config(ARGS.round, require_executor=ARGS.command != 'report')
     targets = ARGS.targets.split(',') if ARGS.targets else None
     if ARGS.command != 'report' and targets is None:
         targets = executor_targets()

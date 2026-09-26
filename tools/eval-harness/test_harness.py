@@ -312,6 +312,30 @@ class HarnessTests(unittest.TestCase):
         self.assertIsNone(h.ledger_entries()[0]['cost_usd'])
         self.assertTrue((h.run_dir('executor', self.ev, 'with_skill', 1) / 'sessions/marker.json').exists())
 
+    def test_interrupt_reaps_process_group_and_leaves_charge_unsettled(self):
+        class InterruptedProcess:
+            pid = 424242
+            waits = 0
+
+            def wait(self, timeout=None):
+                self.waits += 1
+                if self.waits == 1:
+                    raise KeyboardInterrupt('operator interrupted')
+                if self.waits == 2:
+                    raise KeyboardInterrupt('again during reaping')
+                return -9
+
+        process = InterruptedProcess()
+        h.subprocess.Popen.side_effect = lambda *args, **kwargs: process
+        with patch.object(h.os, 'killpg') as kill:
+            with self.assertRaisesRegex(KeyboardInterrupt, 'operator interrupted'):
+                self.execute()
+        kill.assert_called_once()
+        self.assertEqual(process.waits, 3)
+        self.assertEqual(self.estimates, [])
+        self.assertIsNone(h.ledger_entries()[0]['cost_usd'])
+        self.assertIsNone(h.rjson(h.run_dir('executor', self.ev, 'with_skill', 1) / 'cost.json')['cost_usd'])
+
     def test_cost_totals_include_all_providers_and_failed_grading(self):
         self.costs = [0.25, 0.75]
         self.execute()
@@ -748,6 +772,33 @@ class HarnessTests(unittest.TestCase):
                 tr['tool_calls'] = [{'name': 'command_execution', 'input': inp, 'output': ''}]
                 self.assertTrue(h.identity(tr, ws, adapter, argv)['foreign_access'])
 
+    def test_loaded_skill_uses_each_tools_normalized_working_directory(self):
+        ws = {'parent': self.root / 'scratch/ws', 'project': self.root / 'scratch/ws/project',
+              'install': self.root / 'scratch/ws/skills/demo', 'home': self.root / 'scratch/home'}
+        adapter = h.ADAPTERS['codex']
+        argv = adapter.exec_argv(h.CFG['targets']['executor'], ws, 'prompt', self.root / 'final', 1, [])
+        for inp in ({'command': 'cat ../../skills/demo/SKILL.md', 'cwd': 'nested'},
+                    {'cmd': 'cat ../../skills/demo/SKILL.md', 'workdir': 'nested'},
+                    {'command': 'cd nested && cat ../../skills/demo/SKILL.md'}):
+            with self.subTest(inp=inp):
+                tr = h.new_trace()
+                tr['loaded_paths'] = ['../../skills/demo/SKILL.md']
+                tr['tool_calls'] = [{'name': 'command_execution', 'input': inp, 'output': ''}]
+                result = h.identity(tr, ws, adapter, argv)
+                self.assertTrue(result['loaded_paths'])
+                self.assertFalse(result['foreign_access'])
+
+    def test_tilde_resolves_to_throwaway_home_and_rejects_credential_read(self):
+        ws = {'parent': self.root / 'scratch/ws', 'project': self.root / 'scratch/ws/project',
+              'install': self.root / 'scratch/ws/skills/demo', 'home': self.root / 'scratch/home'}
+        for adapter in (h.ADAPTERS['codex'], h.ADAPTERS['grok']):
+            with self.subTest(adapter=adapter.NAME):
+                target = 'executor' if adapter.NAME == 'codex' else 'judge'
+                argv = adapter.exec_argv(h.CFG['targets'][target], ws, 'prompt', self.root / 'final', 1, [])
+                tr = h.new_trace()
+                tr['tool_calls'] = [{'name': 'command_execution', 'input': {'command': 'cat ~/.codex/auth.json'}, 'output': ''}]
+                self.assertTrue(h.identity(tr, ws, adapter, argv)['foreign_access'])
+
     def test_absolute_path_inputs_outside_staged_workspace_are_foreign(self):
         ws = {'parent': self.root / 'scratch/ws', 'project': self.root / 'scratch/ws/project',
               'install': self.root / 'scratch/ws/skills/demo', 'home': self.root / 'scratch/home'}
@@ -860,6 +911,12 @@ class RemotePatternTests(unittest.TestCase):
                 patterns = h.foreign_patterns(h.ADAPTERS['codex'])
                 self.assertIn('github.com/example/sample', patterns)
                 self.assertIn('raw.githubusercontent.com/example/sample', patterns)
+                h.git('remote', 'add', 'origin', 'git@github.com:other/rookery.git')
+                patterns = h.foreign_patterns(h.ADAPTERS['codex'])
+                self.assertIn('github.com/example/sample', patterns)
+                self.assertIn('raw.githubusercontent.com/example/sample', patterns)
+                self.assertIn('github.com/other/rookery', patterns)
+                self.assertIn('raw.githubusercontent.com/other/rookery', patterns)
 
 
 class FakeProcess:

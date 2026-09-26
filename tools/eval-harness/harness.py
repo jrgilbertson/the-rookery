@@ -146,15 +146,24 @@ def strings(value, key="") -> list[str]:
         return [s for k, v in value.items() for s in strings(v, k)]
     return [s for v in value for s in strings(v, key)] if isinstance(value, list) else []
 
-def path_inputs(value, cwd: Path) -> list[tuple[str, Path, bool]]:
+def literal_path(path: str, cwd: Path, home: Path) -> Path:
+    """Resolve a literal tool path using its working directory and isolated HOME."""
+    for prefix in ('~', '$HOME', '${HOME}'):
+        if path == prefix or path.startswith(prefix + '/'):
+            path = str(home) + path[len(prefix):]
+            break
+    return Path(os.path.normpath(path if path.startswith('/') else cwd / path))
+
+
+def path_inputs(value, cwd: Path, home: Path) -> list[tuple[str, Path, bool]]:
     """Path-bearing inputs with their declared working directory; no shell expansion."""
     if isinstance(value, str):
         return [(value, cwd, False)]
     if isinstance(value, list):
-        return [row for item in value for row in path_inputs(item, cwd)]
+        return [row for item in value for row in path_inputs(item, cwd, home)]
     if isinstance(value, dict):
         declared = value.get('cwd', value.get('workdir', '.'))
-        base = Path(os.path.normpath(cwd / declared)) if isinstance(declared, str) else cwd
+        base = literal_path(declared, cwd, home) if isinstance(declared, str) else cwd
         rows = []
         for key, item in value.items():
             if key.lower() in {'cwd', 'workdir'}:
@@ -162,7 +171,7 @@ def path_inputs(value, cwd: Path) -> list[tuple[str, Path, bool]]:
             elif key.lower() in {'command', 'cmd', 'path', 'file_path', 'filepath', 'target_file', 'directory', 'glob'}:
                 rows += [(s, base, key.lower() in {'command', 'cmd'}) for s in strings(item)]
             elif isinstance(item, (dict, list)):
-                rows += path_inputs(item, base)
+                rows += path_inputs(item, base, home)
         return rows
     return []
 
@@ -470,8 +479,8 @@ def foreign_patterns(adapter) -> list[str]:
     dirs = [str(REAL_HOME / d) for d in SKILL_DIR_NAMES]
     if not adapter.THROWAWAY_HOME:  # ~ and $HOME resolve to the real HOME
         dirs += [f"{h}/{d}" for h in ("~", "$HOME", "${HOME}") for d in SKILL_DIR_NAMES]
-    m = re.search(r"github\.com[:/]([^/]+/[^/.]+)", git("remote", "-v"))
-    web = [f"github.com/{m.group(1)}", f"raw.githubusercontent.com/{m.group(1)}"] if m else []
+    repos = sorted({m.group(1) for m in re.finditer(r"github\.com[:/]([^/]+/[^/.]+)", git("remote", "-v"))})
+    web = [p for repo in repos for p in (f"github.com/{repo}", f"raw.githubusercontent.com/{repo}")]
     return dirs + [CFG["repo_path"], str(iteration_dir() / "packages"), "/.grok/bundled/"] + web
 
 def parse(adapter, transcript: Path, final_path: Path | None) -> dict:
@@ -481,8 +490,7 @@ def parse(adapter, transcript: Path, final_path: Path | None) -> dict:
 
 def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
     want = {str(Path(v) / "SKILL.md") for v in variants(str(ws["install"]))}
-    loaded = [p for p in tr["loaded_paths"] if (p if p.startswith("/") else
-                                                os.path.normpath(os.path.join(ws["project"], p))) in want]
+    loaded = []
     pats, foreign, nested = foreign_patterns(adapter), [], []
     own = [o for w in (ws["parent"], ws["home"]) if w for o in variants(str(w))]
     staged = variants(str(ws["parent"]))
@@ -490,6 +498,7 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
     under_root = re.compile("(?:" + "|".join(map(re.escape, roots)) + r")(?=/|[\s'\"`;|&)]|$)[^\s'\"`;|&)]*")
     parent = Path(ws["parent"])
     project = Path(ws["project"])
+    home = Path(ws['home']) if adapter.THROWAWAY_HOME else REAL_HOME
     for c in tr["tool_calls"]:  # inputs only; a grep pattern is text searched for, not a place
         inp = {k: v for k, v in c["input"].items() if k != "pattern"} if c["name"] == adapter.GREP else c["input"]
         for s in strings(inp):
@@ -497,7 +506,7 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
             foreign += [p for p in pats if p in s]
             foreign += [f"another workspace: {m}" for m in under_root.findall(s)  # a sibling run's parent or HOME
                         if not any(m == o or m.startswith(o + "/") for o in own)]
-        for s, cwd, command in path_inputs(inp, project):
+        for s, cwd, command in path_inputs(inp, project, home):
             try:
                 words = shlex.split(s)
             except ValueError:
@@ -513,23 +522,22 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
             # Honor the common explicit shell prefix; this remains a static detector,
             # not an interpreter for variables, substitutions, or persistent shell state.
             while command and len(words) >= 3 and words[0] == 'cd' and words[2] == '&&':
-                cwd = Path(os.path.normpath(cwd / words[1]))
+                cwd = literal_path(words[1], cwd, home)
                 if not cwd.is_relative_to(parent):
                     foreign.append(f"relative workspace escape: {words[1]}")
                 words = words[3:]
             for index, word in enumerate(words):
                 path = word.rsplit('=', 1)[-1].lstrip('(<')
-                if path.startswith('/'):
-                    # An absolute first command token names the executable, not a file it read.
-                    if not command or index:
-                        absolute = os.path.normpath(path)
-                        if not any(absolute == root or absolute.startswith(root + '/') for root in staged):
-                            foreign.append(f"absolute outside workspace: {path}")
+                resolved = literal_path(path, cwd, home)
+                if path.endswith('SKILL.md') and str(resolved) in want:
+                    loaded.append(path)
+                # An absolute first command token names the executable, not a file it read.
+                if command and index == 0 and path.startswith('/'):
                     continue
-                if '..' not in Path(path).parts:
-                    continue
-                resolved = Path(os.path.normpath(os.path.join(cwd, path)))
-                if not resolved.is_relative_to(parent):
+                if path.startswith(('/', '~', '$HOME', '${HOME}')):
+                    if not any(str(resolved) == root or str(resolved).startswith(root + '/') for root in staged):
+                        foreign.append(f"absolute outside workspace: {path}")
+                elif '..' in Path(path).parts and not resolved.is_relative_to(parent):
                     foreign.append(f"relative workspace escape: {path}")
     return {"loaded_paths": sorted(set(loaded)), "foreign_access": sorted(set(foreign)), "nested_agent_cli": nested,
             "init_surface_ok": init_ok(adapter, tr["init"], argv)}
@@ -921,6 +929,10 @@ def call(argv, cwd, env, transcript, stderr):
         try:
             process = subprocess.Popen(argv, cwd=cwd, env=env, stdin=subprocess.DEVNULL,
                                        stdout=out, stderr=err, start_new_session=True)
+        except OSError:
+            err.write(b'CLI could not be started\n')
+            rc = 127
+        else:
             try:
                 rc = process.wait(timeout=CFG.get('cap_seconds', 1500))
             except subprocess.TimeoutExpired:
@@ -928,9 +940,19 @@ def call(argv, cwd, env, transcript, stderr):
                 os.killpg(process.pid, signal.SIGKILL)
                 process.wait()
                 rc = -14
-        except OSError:
-            err.write(b'CLI could not be started\n')
-            rc = 127
+            except KeyboardInterrupt:
+                import signal
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+                while True:
+                    try:
+                        process.wait()
+                        break
+                    except KeyboardInterrupt:
+                        continue
+                raise
     return rc, int((time.monotonic() - started) * 1000)
 
 
@@ -1006,39 +1028,38 @@ def invoke(target, kind, directory, cwd, home, make_argv, metadata):
     charge(record)
     transcript.touch()
     stderr.touch()
-    rc, ms, trace = 127, 0, new_trace()
+    trace = new_trace()
+    rc, ms = call(argv, cwd, env, transcript, stderr)
+    # An interrupted call keeps its pending, unknown charge for operator recovery.
+    # After a completed call, cost/session failures preserve the attempt and HOME.
+    sessions = directory / 'sessions'
+    if adapter.SESSIONS and (home / adapter.SESSIONS).exists():
+        shutil.copytree(home / adapter.SESSIONS, sessions)
     try:
-        rc, ms = call(argv, cwd, env, transcript, stderr)
-    finally:
-        # Cost/session failures must not erase the original attempt or its throwaway HOME.
-        sessions = directory / 'sessions'
-        if adapter.SESSIONS and (home / adapter.SESSIONS).exists():
-            shutil.copytree(home / adapter.SESSIONS, sessions)
-        try:
-            trace = parse(adapter, transcript, final)
-            trace['child_readouts'] = child_readouts(adapter, sessions)
-        except (ValueError, KeyError, TypeError) as error:
-            trace['is_error'] = True
-            wjson(directory / 'parse-error.json', {'error': str(error)})
-        try:
-            cost = usage.estimate(adapter.NAME, transcript, sessions if sessions.exists() else None,
-                                  directory / 'cost.json', CFG['ccusage_command'], Path(CFG['workspace_root']),
-                                  model=target_config['model'])
-        except Exception:
-            cost = {'source': 'ccusage', 'cost_usd': None, 'total_tokens': None,
-                    'errors': ['Usage estimator failed; inspect preserved attempt before resolving']}
-        wjson(directory / 'cost.json', cost)
-        record.update(cost_usd=cost.get('cost_usd'), total_tokens=cost.get('total_tokens'),
-                      source=cost.get('source'), errors=cost.get('errors', cost.get('error')),
-                      cli_cost_usd=trace['cost_usd'])
-        rows = ledger_entries()
-        rows[-1] = {'ts': rows[-1]['ts'], **record}
-        temporary = iteration_dir() / '_ledger.tmp'
-        temporary.write_text(''.join(json.dumps(row) + '\n' for row in rows))
-        temporary.replace(iteration_dir() / '_ledger.jsonl')
-        wjson(directory / 'invocation.json', {'command': argv, 'rc': rc, 'duration_ms': ms,
-                                            'model': target_config['model'], 'allowance_usd': budget, 'harness_version': version})
-        wjson(directory / 'trace.json', trace)
+        trace = parse(adapter, transcript, final)
+        trace['child_readouts'] = child_readouts(adapter, sessions)
+    except (ValueError, KeyError, TypeError) as error:
+        trace['is_error'] = True
+        wjson(directory / 'parse-error.json', {'error': str(error)})
+    try:
+        cost = usage.estimate(adapter.NAME, transcript, sessions if sessions.exists() else None,
+                              directory / 'cost.json', CFG['ccusage_command'], Path(CFG['workspace_root']),
+                              model=target_config['model'])
+    except Exception:
+        cost = {'source': 'ccusage', 'cost_usd': None, 'total_tokens': None,
+                'errors': ['Usage estimator failed; inspect preserved attempt before resolving']}
+    wjson(directory / 'cost.json', cost)
+    record.update(cost_usd=cost.get('cost_usd'), total_tokens=cost.get('total_tokens'),
+                  source=cost.get('source'), errors=cost.get('errors', cost.get('error')),
+                  cli_cost_usd=trace['cost_usd'])
+    rows = ledger_entries()
+    rows[-1] = {'ts': rows[-1]['ts'], **record}
+    temporary = iteration_dir() / '_ledger.tmp'
+    temporary.write_text(''.join(json.dumps(row) + '\n' for row in rows))
+    temporary.replace(iteration_dir() / '_ledger.jsonl')
+    wjson(directory / 'invocation.json', {'command': argv, 'rc': rc, 'duration_ms': ms,
+                                        'model': target_config['model'], 'allowance_usd': budget, 'harness_version': version})
+    wjson(directory / 'trace.json', trace)
     final.write_text(trace['final_text'])
     return trace, rc, ms, argv, cost
 

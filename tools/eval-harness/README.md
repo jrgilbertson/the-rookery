@@ -79,14 +79,17 @@ Each call copies only login material to a throwaway HOME and saves its sessions
 before deleting that HOME. Refreshed auth is never copied back to the user's
 setup or into the archive. Graders also retain session stores. An interrupted
 persistence step leaves its HOME/workspace for recovery rather than destroying
-unarchived evidence. These private scratch directories can contain credentials;
+unarchived evidence. Ctrl-C during a CLI call kills and reaps its process group;
+the interrupted attempt keeps an unknown charge until operator recovery. These
+private scratch directories can contain credentials;
 remove them after recovery. Archives contain prompts and session evidence and
 must remain private.
 
 `isolation-check` is static and makes no inference calls. Runtime traces are
 checked for forbidden tool surfaces, missing reads of the installed skill,
 foreign packages/user skills, and nested agent CLIs. Relative command and path
-inputs use the declared `cwd`/`workdir` and a leading `cd … &&` when present.
+inputs and installed-skill reads use the declared `cwd`/`workdir` and a leading
+`cd … &&` when present. Literal `~` paths resolve to the isolated HOME.
 For a command recorded as one `sh`/`bash`/`zsh`/`dash`/`ksh` `-c` or `-lc`
 wrapper, the detector checks the literal inner command with those same rules.
 Literal absolute path inputs and simple command operands outside the staged

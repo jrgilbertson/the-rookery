@@ -108,7 +108,9 @@ The installed skill counts as loaded only when `cat` or a native `Read`/`read_fi
 tool targets its `SKILL.md` and returns nonempty output without a reported failure.
 For shell calls, only simple `cat` commands count; `--help`, `--version`,
 redirects, pipes, command chaining, path mentions, listings, tests, and missing
-or failed results do not. Quoted literal nested CLI executable names are checked.
+or failed results do not. Quoted literal nested CLI executable names are checked. Agent CLI options are
+rejected conservatively, including global options before a subcommand; the
+detector does not parse each provider's option grammar.
 For a command recorded as one direct `sh`/`bash`/`zsh`/`dash`/`ksh` `-c` or
 `-lc` wrapper, the detector checks its literal script with those same rules,
 including when positional arguments follow it. Other shell launch forms,

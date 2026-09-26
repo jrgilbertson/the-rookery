@@ -496,7 +496,7 @@ def snapshot(root: Path) -> dict:
         result[path.relative_to(root).as_posix()] = {"sha256": sha256_bytes(data), "text": text}
     return result
 
-NESTED_CLI = re.compile(r"(^|[\s;&|(\"'/])(claude|codex|grok)['\"]?\s+(-p\b|--print\b|--single\b|exec\b|e\b)")
+NESTED_CLI = re.compile(r"(^|[\s;&|(\"'/])(claude|codex|grok)['\"]?\s+(-|exec\b|e\b)")
 SHELL_EXECUTABLES = {'sh', 'bash', 'zsh', 'dash', 'ksh'}
 
 def foreign_patterns(adapter) -> list[str]:
@@ -773,7 +773,7 @@ def validate_config(path, require_executor=True):
     for key in ('repo', 'skill'):
         if not re.fullmatch(r'[A-Za-z0-9_-]+', CFG[key]):
             raise ValueError(f'{key} must be a single safe path component')
-    if not isinstance(CFG['iteration'], int) or CFG['iteration'] < 1:
+    if type(CFG['iteration']) is not int or CFG['iteration'] < 1:
         raise ValueError('iteration must be a positive round number')
     for key in ('archive_root', 'workspace_root'):
         CFG[key] = str(outside_repo(CFG[key]))

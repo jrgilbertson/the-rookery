@@ -535,6 +535,16 @@ class HarnessTests(unittest.TestCase):
         self.assertEqual(self.execute(), 'unavailable')
         self.assertEqual(process.waits, 3)
 
+    def test_iteration_requires_a_positive_integer(self):
+        for value in (True, False, 0, -1, 1.5, '1'):
+            with self.subTest(value=value):
+                h.CFG['iteration'] = value
+                with self.assertRaisesRegex(ValueError, 'iteration'):
+                    h.validate_config(self.config)
+                self.assertEqual(self.process_calls, [])
+        h.CFG['iteration'] = 1
+        h.validate_config(self.config)
+
     def test_invalid_timeout_is_rejected_before_launch(self):
         for value in (None, True, False, 0, -1, float('nan'), float('inf'), '10'):
             with self.subTest(value=value):
@@ -1201,7 +1211,10 @@ class HarnessTests(unittest.TestCase):
     def test_native_quoted_nested_cli_names_are_rejected(self):
         _, ws = self.native_codex_identity([])
         read = f"cat {ws['install'] / 'SKILL.md'}"
-        for command in ("'codex' exec hello", '"grok" -p prompt'):
+        for command in ("'codex' exec hello", '"grok" -p prompt',
+                        'codex -c \'model="gpt-5"\' exec hello',
+                        'codex --model gpt-5 exec hello', 'grok --model fake -p hello',
+                        'claude --model fake -p hello'):
             with self.subTest(command=command):
                 identity, _ = self.native_codex_identity([read, command])
                 self.assertTrue(identity['loaded_paths'])

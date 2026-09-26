@@ -93,7 +93,7 @@
         "For request 1, the dispatch message gives the reviewer the whole plan, by its full text or by the path evals/files/author-plan.md, rather than only a summary of it",
         "For request 1, the final answer presents the subagent's readout as the result without replacing or overriding it",
         "For request 2, allows the same reviewer to assess the revised plan because it did not author or implement it",
-        "For request 2, names the revised plan in full and the available decision frame as the evidence the skill requires, and adds no broader evidence requirement",
+        "For request 2, names the revised plan in full and the available decision frame, with or without which parts the user or owner stated, as the evidence the skill requires, and adds no broader evidence requirement",
         "For request 2, does not make a stronger evidence trail or a repeated-review rule a requirement of this skill",
         "Neither request requires or creates a tracking file, an extra reviewer, a Git identity inventory, an uninterrupted handoff, a separate workspace used only to prove the review, a named model catalog, or a lifecycle or Git hook"
       ],
@@ -227,7 +227,7 @@
     },
     {
       "id": 13,
-      "prompt": "I'm the planning agent for this change, handing the order-sync area in `evals/files/frame-repo/` to you for a simplicity check before implementation. Where each requirement in `REQUIREMENTS.md` came from: item 1 is the owner's, and item 3 restates what the owner told me, quoted: \"The warehouse team must be able to subscribe to completed orders next quarter without anyone touching orders.py.\" I added items 2 and 4 myself while drafting. Nothing consumes order events today. You did not author this code. Return the assessment only.",
+      "prompt": "I'm the planning agent for this change, handing the order-sync area in `evals/files/frame-repo/` to you for a simplicity check before implementation. You are the dispatched simplicity reviewer. Where each requirement in `REQUIREMENTS.md` came from: item 1 is the owner's, and item 3 restates what the owner told me, quoted: \"The warehouse team must be able to subscribe to completed orders next quarter without anyone touching orders.py.\" I added items 2 and 4 myself while drafting. Nothing consumes order events today. You did not author this code. Return the assessment only.",
       "expected_output": "Treats the owner's ledger row and the owner's relayed warehouse-subscription requirement as fixed, so it keeps a way for the warehouse to subscribe without changing orders.py, and treats the planner-added registry and environment toggle as proposals it recommends removing or asks about.",
       "files": [
         "evals/files/frame-repo/REQUIREMENTS.md",
@@ -238,8 +238,8 @@
         "evals/files/frame-repo/src/ledger.py"
       ],
       "assertions": [
-        "Keeps a way for the warehouse integration to subscribe to completed orders without changing orders.py, because the owner stated it, and does not recommend removing all event publication",
-        "Does not keep the IntegrationRegistry or the ORDER_INTEGRATIONS setting as settled requirements because the planner added them; it recommends removing them or asks whether they are required",
+        "Keeps a way for the warehouse integration to subscribe to completed orders without changing orders.py, not conditional on any answer, and does not recommend removing all event publication",
+        "Does not keep the IntegrationRegistry or the ORDER_INTEGRATIONS setting as settled requirements; it recommends removing them or asks whether they are required",
         "Any question it asks offers exactly four options with one marked recommended",
         "Names an observable test that one completed order appends exactly one ledger row with its id, total, and completion time",
         "Does not edit any file"

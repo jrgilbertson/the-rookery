@@ -25,10 +25,9 @@ caller.
 
 ## Decision frame
 
-Build the frame from what the user or owner states, directly or relayed by the
-caller, and from what the evidence shows:
+Build the frame from what the user or owner states and what the evidence shows:
 
-- the user's stated goal and desired outcome;
+- the stated goal and desired outcome;
 - explicit requirements, hard constraints, and verification criteria when
   present;
 - behavior and boundaries that must be preserved, including authorization,
@@ -58,14 +57,14 @@ still required when the recommendation would drop or change what it demands.
 ## Necessity test
 
 Compare viable approaches and ask whether each boundary, responsibility, data
-path, and operating surface serves a current consumer or protected constraint.
-When a documentation or search tool is available, check current official docs
-for platforms and libraries already named in the subject so a smaller native
-capability is not missed or invented from memory. Current best-practice
-articles may inform a smaller approach; a new stack or extra machinery still
-needs a current consumer or protected constraint. Before accounting for
-individual concepts, summarize the current shape and the smallest viable
-shape as whole systems.
+path, and operating surface serves a current consumer, a fixed requirement, or
+a protected constraint. When a documentation or search tool is available, check
+current official docs for platforms and libraries already named in the subject
+so a smaller native capability is not missed or invented from memory. Current
+best-practice articles may inform a smaller approach; a new stack or extra
+machinery still needs a current consumer, a fixed requirement, or a protected
+constraint. Before accounting for individual concepts, summarize the current
+shape and the smallest viable shape as whole systems.
 
 Separate the needed outcome from the mechanisms proposed to reach it. Then
 climb this ladder and stop at the first rung that completely satisfies the

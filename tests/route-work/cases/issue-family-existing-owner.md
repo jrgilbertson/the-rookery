@@ -51,12 +51,11 @@ the kickoff is the operator's approval to start.
 - [ ] Items 1 and 2 start with `managing-issues` and `ce-plan`, respectively;
       item 1 chooses no leaf and certifies no frontier.
 - [ ] Items 3 and 8 start with `ce-work` and use Coordinator + Executors, because
-      the approved plan states independent units: a coordinator on Opus 5.5 at
-      medium (the Executor profile, which dispatching does not change) and
-      Executors on Opus 5.5 at medium, up to three since the prompt names no
+      the approved plan states independent units: a coordinator on the Executor primary (dispatching does not change the
+      profile) and Executors on the Executor primary, up to three since the prompt names no
       unit count.
 - [ ] Item 9 starts with `ce-work` as Single owner: the coordinator alone on
-      Opus 5.5 at medium. Nothing establishes independent units, so the card
+      the Executor primary. Nothing establishes independent units, so the card
       adds no Executors, invents no units, integrator, or write scopes, and
       invites adding Executors if the plan names independent units.
 - [ ] Item 4 starts the child with `ce-plan` because planning is what needs to
@@ -65,7 +64,7 @@ the kickoff is the operator's approval to start.
       roster, continues the implementation phase, and requests or invents no
       locator.
 - [ ] Item 6 starts with `ce-work` as Single owner: the coordinator alone on
-      Opus 5.5 at medium. A named worktree and pull request are occupancy
+      the Executor primary. A named worktree and pull request are occupancy
       evidence, not independent units. The card emits no occupancy label or
       halt. A kickoff may tell the receiver to verify ownership before
       writing. The shared side-effect-free case owns the package-read-only

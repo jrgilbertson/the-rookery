@@ -180,7 +180,7 @@ effort, but selects one only when the operator approves it.
 
 ## Model and effort recommendations
 
-**Last reviewed: 2026-09-22**
+**Last reviewed: 2026-09-26**
 
 | Profile | Seat or worker | Primary | Secondary | Tertiary |
 |---|---|---|---|---|
@@ -188,9 +188,9 @@ effort, but selects one only when the operator approves it.
 | Executor | The coordinator on `ce-work`, and Executor workers | Anthropic / `claude-opus-5-5` / medium | OpenAI / `gpt-6-sol` / high | xAI / `grok-4.7` / high |
 | Reviewer | Reviewer workers and named review or verification gates | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
 | Critic | The Reviewer or an advisor only when the judgment is adversarial; never the coordinator on `grill-with-docs` | OpenAI / `gpt-6-sol` / max | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
-| Researcher | The coordinator on `ce-debug` | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
+| Researcher | The coordinator on `ce-debug` | Anthropic / `claude-opus-5-5` / medium | OpenAI / `gpt-6-sol` / high | xAI / `grok-4.7` / high |
 | Scout | Advisors that gather bounded evidence | xAI / `grok-4.7` / high | OpenAI / `gpt-6-sol` / high | — |
-| Design/taste | The coordinator on `impeccable`, and the Reviewer when the finish line is taste | Anthropic / `claude-fable-5-1` / medium | OpenAI / `gpt-6-astra` / medium | — |
+| Design/taste | The coordinator on `impeccable`, and the Reviewer when the finish line is taste | Anthropic / `claude-opus-5-5` / medium | OpenAI / `gpt-6-astra` / medium | — |
 
 ## Return one portable response
 
@@ -199,7 +199,7 @@ remark around it. Its first line is exactly `**Route**`, `**Resume**`, or
 `**Questions**`. Bold marks that line and the section labels, with a blank line
 after each; use no `#` headings, and never fence the kickoff. Write every
 section as natural prose, not a string of stock sentences. Render model IDs as
-ordinary names, such as "Fable 5.1 at medium".
+ordinary names, such as "Opus 5.5 at medium".
 
 ### Route
 
@@ -250,9 +250,14 @@ dependent question waits for its prerequisite. Every question carries one
 concrete recommendation, never a test for the operator to apply, and its reason
 cites only supplied facts or contract defaults. Use the contract default where
 one exists; where the operator holds the fact, recommend the answer that lets
-routing proceed under the defaults. A Questions card names no workflow, model,
-profile, or kickoff. When the starting owner falls outside the seven, the
-recommendation is the supported-owner table link.
+routing proceed under the defaults. The reason names what is unknown or
+ambiguous and what the answer decides. Neither the question nor its reason
+presents one reading as what the operator said, predicts what an inspection or
+answer will show, or names an artifact the operator did not supply. For example: "Recommended: Fix. The
+request could mean a bug fix or a redesign, and the answer decides where the
+work starts." A Questions card names no workflow, model, profile, or kickoff.
+When the starting owner falls outside the seven, the recommendation is the
+supported-owner table link.
 
 <!-- route-work-contract-end -->
 
@@ -267,8 +272,22 @@ the contract.
 
 ### Order models by cost of pass
 
-- Order each row by cost of pass: cost per attempt divided by pass rate,
-  measured on work like that role's.
+- Order each row from lowest to highest cost of pass, measured on work like
+  that role's:
+
+      cost of pass = cost per attempt ÷ pass rate
+
+  It is the expected spend to get one passing result, as defined in
+  [Cost-of-Pass](https://arxiv.org/abs/2504.13359) (Erol et al., ICLR 2026).
+- For example, model A passes 60% at $0.60 per attempt and model B passes 30%
+  at $0.40. A ranks first although each attempt costs more: $0.60 ÷ 0.60 =
+  $1.00 against $0.40 ÷ 0.30 = $1.33.
+- In a row whose role-matched evidence reports pass rates, a model earns a
+  place only when its pass rate at its chosen effort is close to the row's
+  best, by the same 95% interval test the effort rule uses. A cheaper model
+  below that line does not rank, however low its cost of pass. Rows without
+  pass rates follow "Use evidence that matches the role", which names the
+  evidence or judgment behind every row.
 - A row lists only models that earn a place, so some rows have fewer than
   three.
 - A model may rank by a capability the others lack, as xAI does for Scout
@@ -276,16 +295,27 @@ the contract.
 - A subscription already paid for may keep an otherwise dominated model in a
   last slot where it still does the role's work well.
 
-### Pick effort where the curve bends
+### Pick the cheapest effort near the ceiling
 
-- Choose the cheapest effort whose pass rate on the role's work is close to
-  that model's ceiling. That is where its cost per extra point bends upward.
+- Choose the effort with the lowest cost of pass among those whose pass rate
+  on the role's work is close to that model's ceiling.
+- Close means within the 95% interval of the model's best pass rate on that
+  board, using Wilson's lower bound. For a best pass rate p on n tasks, the
+  floor is (p + 1.92 ÷ n − 1.96 × √(p × (1 − p) ÷ n + 0.96 ÷ n²)) ÷
+  (1 + 3.84 ÷ n), which is n ÷ (n + 3.84) when the best effort passes every
+  task. For example, a best of 60% on 100 tasks admits efforts from 50.2%,
+  and a best of 23 of 23 admits efforts from 19.7 tasks.
+- An effort must be close on every board that reports the model's pass rate
+  at every effort level; a board that reports one effort does not count. When
+  the boards pick different cheapest efforts, keep the higher one.
 - A composite index across effort levels shows the curve's shape, but its
   average is not a pass rate. It hides how low effort fails on hard tasks, so
   low effort always looks cheapest.
-- Confirm each effort choice on at least two independent boards that report
-  every effort level, such as the Artificial Analysis Intelligence Index,
-  Zapier's AutomationBench, and VulcanBench.
+- Confirm each effort choice on at least two independent boards that report a
+  pass rate at every effort level, such as FrontierCode and VulcanBench. A
+  composite index such as the Artificial Analysis
+  Intelligence Index can corroborate the curve's shape but does not count as
+  one of the two.
 
 ### Use evidence that matches the role
 
@@ -294,7 +324,19 @@ the contract.
   leaderboard publishes a pass rate and a cost per rollout for every effort
   level in each model's native harness, usually on launch day, in
   https://cognition.com/data/frontiercode-leaderboard/data.json.
-- Design/taste: human-preference boards.
+- Researcher: debugging is coding work, so this row uses the Executor's
+  boards.
+- Design/taste: human-preference boards such as Arena's WebDev leaderboard.
+  They rank models by preference score rather than pass rate, and usually at
+  one effort level, so order the row by score and price, and take effort from
+  the coding boards until a preference board reports every effort level.
+- Reviewer and Critic: no public board reports review or adversarial-judgment
+  pass rates at every effort level, so these rows are judgment calls. They
+  prefer a provider other than the Executor primary's, so review stays
+  independent of the work it judges; revisit them when a review benchmark
+  reports every effort level.
+- Scout: ranked by a capability the others lack, such as X search, rather
+  than by pass rate.
 - Planner: no public benchmark scores planning or coordination work, so this
   row is a judgment call. It follows vendor practice of giving planning more
   reasoning effort than execution; revisit it when a planning benchmark

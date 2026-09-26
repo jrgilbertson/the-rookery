@@ -13,6 +13,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- `route-work` Questions cards no longer present one reading of an ambiguous
+  request as what the operator said. A recommendation's reason names what is
+  unknown and what the answer decides. Neither the question nor its reason
+  predicts what an inspection will show or names an artifact the operator did
+  not supply.
+
 - The `creating-portable-skills` review checklist's Sediment item leaves a
   sentence that describes current domain facts standing, even when it uses a
   change word.
@@ -60,6 +66,20 @@ looked" surface. GitHub Releases mirror its entries.
   implement the subject. Lifecycle and Git hooks remain deliberately absent.
 
 ### Changed
+
+- `route-work` model recommendations are reviewed against VulcanBench Frontier
+  v4, FrontierCode, and Arena's WebDev leaderboard. Design/taste now starts on
+  Claude Opus 5.5 at medium, ahead of GPT-6 Astra, and Fable 5.1 leaves the
+  table. The `ce-debug` coordinator (Researcher) now starts on Opus 5.5 at
+  medium, with GPT-6 Sol at high second. A model earns a place in a row only
+  when its pass rate is close to the row's best, so GPT-6 Luna stays out of
+  the Executor row despite its low cost of pass.
+
+- `ROUTING.md` gives "close to the ceiling" a number for choosing effort. An
+  effort qualifies when its pass rate is within the 95% interval of the
+  model's best on every board that reports the model, and the qualifying
+  effort with the lowest cost of pass is chosen. Only boards that report a
+  pass rate at every effort level count toward the two-board confirmation.
 
 - `creating-portable-skills` and `SKILLS.md` give each rule one owner and
   define the terms an agent had to guess at, such as the changed arm, a

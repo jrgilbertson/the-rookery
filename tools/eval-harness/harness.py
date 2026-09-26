@@ -941,9 +941,10 @@ def invoke(target, kind, directory, cwd, home, make_argv, metadata):
 
 
 def service_failure(rc, trace, stderr, transcript=''):
-    said = stderr + trace['final_text']
+    # Successful answers may discuss hypothetical quota/auth failures in the eval.
+    said = stderr
     if rc or trace['is_error']:
-        said += transcript
+        said += trace['final_text'] + transcript
     if re.search(r'usage limit|session limit|out of credits|credits exhausted|quota|login required|not logged in|unauthorized|authentication failed|token expired|\b401\b', said, re.I):
         return 'login_or_quota'
     if rc == -14:

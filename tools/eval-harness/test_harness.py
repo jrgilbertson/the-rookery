@@ -481,6 +481,11 @@ class HarnessTests(unittest.TestCase):
         self.assertEqual(readout['final_readout'], 'child final ' + 'x' * 1000)
         self.assertIn('unavailable', readout['dispatch_prompt'])
 
+    def test_successful_answer_about_hypothetical_quota_is_not_service_failure(self):
+        trace = h.new_trace()
+        trace['final_text'] = 'The hypothetical grader is out of quota; retain evidence and wait.'
+        self.assertIsNone(h.service_failure(0, trace, ''))
+
     def test_quota_in_json_event_stops_round(self):
         self.json_quota = True
         with self.assertRaises(h.Halt):

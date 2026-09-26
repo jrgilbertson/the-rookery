@@ -11,7 +11,6 @@ import io
 import json
 import math
 import os
-import random
 import re
 import shlex
 import shutil
@@ -232,29 +231,8 @@ def events(path: Path) -> list[dict]:
     return out
 
 class Claude:
-    """Claude Code: the real HOME and keychain login, customizations off by flags."""
-    NAME, PROVIDER, BIN, GREP, THROWAWAY_HOME = "claude", "anthropic", "claude", "Grep", False
-    SESSIONS = None  # the stream marks subagent calls with parent_tool_use_id
-    TOOLS = {"base": ["Read", "Glob", "Grep", "Bash"], "subagents": ["Task"], "web": ["WebFetch", "WebSearch"]}
-    SAFE = ["--safe-mode", "--setting-sources", "project", "--disable-slash-commands", "--strict-mcp-config",
-            "--no-session-persistence"]
-
-    def env(self, home):
-        return {"HOME": str(REAL_HOME), "DISABLE_AUTOUPDATER": "1"}
-
-    def exec_argv(self, t, ws, prompt, final_path, budget, caps):
-        tools = ",".join(tools_for(self, caps))
-        return [self.BIN, "-p", prompt, "--model", t["model"], "--effort", t["effort"], "--output-format",
-                "stream-json", "--verbose", *self.SAFE, "--tools", tools, "--allowedTools", tools, "--add-dir",
-                str(ws["parent"])] + (["--max-budget-usd", f"{budget:.2f}"] if budget else [])
-
-    def grade_argv(self, t, packet, out_path, budget, schema=None):
-        return [self.BIN, "-p", packet, "--model", t["model"], "--effort", t["effort"], "--output-format",
-                "stream-json", "--verbose", "--json-schema", schema.read_text(), *self.SAFE, "--tools", ""] + \
-            (["--max-budget-usd", f"{budget:.2f}"] if budget else [])
-
-    def allowed(self, argv):
-        return flag(argv, "--tools").split(",")
+    """Archived Claude transcript reader; new inference uses Codex or Grok only."""
+    NAME, PROVIDER, GREP, THROWAWAY_HOME = "claude", "anthropic", "Grep", False
 
     def parse(self, transcript, final_path):
         r, ids, results = new_trace(), {}, []
@@ -468,7 +446,7 @@ class Grok:
                 c["by"] = "subagent" if cid in child_ids else "main"
         return r
 
-ADAPTERS = {a.NAME: a for a in (Claude(), Codex(), Grok())}
+ADAPTERS = {a.NAME: a for a in (Codex(), Grok())}
 
 def adapter_of(target: str):
     return ADAPTERS[CFG["targets"][target]["adapter"]]
@@ -519,45 +497,7 @@ def snapshot(root: Path) -> dict:
     return result
 
 NESTED_CLI = re.compile(r"(^|[\s;&|(\"'/])(claude|codex|grok)['\"]?\s+(-p\b|--print\b|--single\b|exec\b|e\b)")
-HEREDOC = re.compile(r"<<(-?)[ \t]*(['\"]?)([A-Za-z_][A-Za-z0-9_]*)\2")
 SHELL_EXECUTABLES = {'sh', 'bash', 'zsh', 'dash', 'ksh'}
-
-
-def heredoc_markers(line: str, quote: str) -> tuple[list[tuple[str, bool]], str]:
-    """Find literal heredoc operators outside quoted shell words."""
-    markers, index = [], 0
-    while index < len(line):
-        char = line[index]
-        if char == '\\' and quote != "'":
-            index += 2
-            continue
-        if quote:
-            if char == quote:
-                quote = ''
-        elif char in ('"', "'"):
-            quote = char
-        elif (char == '<' and (index == 0 or line[index - 1] != '<')
-              and not line.startswith('<<<', index) and (match := HEREDOC.match(line, index))):
-            markers.append((match.group(3), bool(match.group(1))))
-            index = match.end()
-            continue
-        index += 1
-    return markers, quote
-
-
-def without_heredoc_bodies(script: str) -> str:
-    """Keep literal shell lines, excluding bodies passed as heredoc input."""
-    kept, pending, quote = [], [], ''
-    for line in script.splitlines():
-        if pending:
-            delimiter, strip_tabs = pending[0]
-            if (line.lstrip('\t') if strip_tabs else line) == delimiter:
-                pending.pop(0)
-            continue
-        kept.append(line)
-        markers, quote = heredoc_markers(line, quote)
-        pending.extend(markers)
-    return '\n'.join(kept)
 
 def foreign_patterns(adapter) -> list[str]:
     """What a run must never act on: user-level skill copies, the repo and the arm packages
@@ -575,7 +515,7 @@ def parse(adapter, transcript: Path, final_path: Path | None) -> dict:
 def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
     want = {str(Path(v) / "SKILL.md") for v in variants(str(ws["install"]))}
     loaded = []
-    pats, foreign, nested = foreign_patterns(adapter), [], []
+    pats, foreign, nested, unverified = foreign_patterns(adapter), [], [], []
     own = [o for w in (ws["parent"], ws["home"]) if w for o in variants(str(w))]
     staged = variants(str(ws["parent"]))
     roots = sorted(variants(CFG["workspace_root"].rstrip("/")), key=len, reverse=True)
@@ -594,24 +534,22 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
             try:
                 words = shlex.split(s)
             except ValueError:
-                words = s.split()
-            # Codex command_execution commonly records one shell -c/-lc wrapper.
-            # Inspect that literal script with the existing static path checks.
+                unverified.append('unparseable literal command or path')
+                continue
+            # Only one direct shell -c/-lc wrapper has a recognized literal script.
             if command and words and Path(words[0]).name in SHELL_EXECUTABLES:
-                script_index = next((i for i in range(1, len(words)) if words[i] in {'-c', '-lc'}), None)
-                if script_index is not None:
-                    if (script_index + 1 < len(words) and
-                            all(option in {'--noprofile', '--norc', '--posix', '-l'}
-                                for option in words[1:script_index])):
-                        s = words[script_index + 1]
-                    else:
-                        foreign.append('unsupported shell wrapper before -c')
+                if len(words) >= 3 and words[1] in {'-c', '-lc'}:
+                    s = words[2]
+                else:
+                    unverified.append('unsupported shell invocation')
             if command and '<<' in s:
-                s = without_heredoc_bodies(s)
+                unverified.append('embedded heredoc code or input')
+                continue
             try:
                 words = shlex.split(s)
             except ValueError:
-                words = s.split()
+                unverified.append('unparseable literal shell script')
+                continue
             # Honor the common explicit shell prefix; this remains a static detector,
             # not an interpreter for variables, substitutions, or persistent shell state.
             while command and len(words) >= 3 and words[0] == 'cd' and words[2] == '&&':
@@ -619,13 +557,10 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
                 if not cwd.is_relative_to(parent):
                     foreign.append(f"relative workspace escape: {words[1]}")
                 words = words[3:]
-            # An env wrapper can change how the inner shell is invoked. Its script
-            # is outside this detector's supported literal-shell contract.
-            if command and words and Path(words[0]).name == 'env':
-                script_index = next((i for i in range(1, len(words)) if words[i] in {'-c', '-lc'}), None)
-                if script_index is not None and any(Path(word).name in SHELL_EXECUTABLES
-                                                    for word in words[1:script_index]):
-                    foreign.append('unsupported env shell wrapper')
+            if command and words and any(Path(word).name in SHELL_EXECUTABLES for word in words[1:]):
+                unverified.append('unsupported nested or prefixed shell invocation')
+            if command and ('$(' in s or '`' in s):
+                unverified.append('shell substitution')
             read_result = bool(c.get('output')) and not c.get('failed', False)
             reads_file = ((command and c['name'] in {'command_execution', 'run_terminal_command', 'Bash'}
                            and words and Path(words[0]).name == 'cat' and '\n' not in s.strip()
@@ -645,7 +580,8 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
                         foreign.append(f"absolute outside workspace: {path}")
                 elif '..' in Path(path).parts and not resolved.is_relative_to(parent):
                     foreign.append(f"relative workspace escape: {path}")
-    return {"loaded_paths": sorted(set(loaded)), "foreign_access": sorted(set(foreign)), "nested_agent_cli": nested,
+    return {"loaded_paths": sorted(set(loaded)), "foreign_access": sorted(set(foreign)),
+            "unverified_access": sorted(set(unverified)), "nested_agent_cli": nested,
             "init_surface_ok": init_ok(adapter, tr["init"], argv)}
 
 def scrub(text: str, b: dict) -> str:
@@ -659,7 +595,7 @@ def scrub(text: str, b: dict) -> str:
         text = text.replace(old, new)
     return text
 
-HEADER = """You are grading anonymous agent outputs against a list of assertions. Each output answered the same request after reading a skill package. You do not know which package version or which run produced which output; do not guess.
+HEADER = """You are grading one anonymous agent output against a list of assertions. You do not know which package version or run produced it; do not guess.
 
 ## Request the agent received
 
@@ -669,27 +605,23 @@ HEADER = """You are grading anonymous agent outputs against a list of assertions
 
 {assertions}
 
-Grade only what each assertion asks, and judge each output only from its text and any harness observations shown with it. For every output and every assertion, first write the evidence: quote the exact span of the output or observation the verdict rests on (for a failure caused by absence, quote the closest relevant span or write "absent"). Then write your reasoning. Only then give the verdict, `passed` true or false. An output passes only if every assertion passes. Reply as JSON matching the provided schema, with one entry per output letter and one item per assertion number.
+Grade only what each assertion asks, using the output text and harness observations. For every assertion, first write the evidence: quote the exact span of the output or observation the verdict rests on (for a failure caused by absence, quote the closest relevant span or write "absent"). Then write your reasoning. Only then give the verdict, `passed` true or false. The output passes only if every assertion passes. Reply as JSON matching the provided schema, with one entry for output A and one item per assertion number.
 
 ## Outputs
 
 """
 
-def build_packet(ev: dict, runs: list[tuple], seed: str) -> tuple[str, dict]:
-    answered = [r for r in runs if r[3] == "ok"]
-    random.Random(seed).shuffle(answered)
-    key, parts = {}, []
-    for i, (arm, k, rd, _) in enumerate(answered):
-        letter, b = chr(65 + i), rjson(rd / "build.json")
-        b["project"] = b["workspace"] + "/project"
-        key[letter] = {"arm": arm, "run": k, "run_dir": str(rd)}
-        body = scrub((rd / "outputs" / "final.md").read_text(errors="replace"), b).strip() or "(empty output)"
-        obs = rd / "outputs" / "observations.json"
-        parts.append(f"### Output {letter}\n\n{body}\n" + (f"\n#### Harness observations for output {letter}\n\n"
-                                                           f"```json\n{scrub(obs.read_text(), b)}\n```\n"
-                                                           if obs.exists() else ""))
+def build_packet(ev: dict, run: tuple) -> tuple[str, dict]:
+    arm, k, rd, _ = run
+    b = rjson(rd / "build.json")
+    b["project"] = b["workspace"] + "/project"
+    key = {"A": {"arm": arm, "run": k, "run_dir": str(rd)}}
+    body = scrub((rd / "outputs" / "final.md").read_text(errors="replace"), b).strip() or "(empty output)"
+    obs = rd / "outputs" / "observations.json"
+    output = f"### Output A\n\n{body}\n" + (f"\n#### Harness observations for output A\n\n"
+                                           f"```json\n{scrub(obs.read_text(), b)}\n```\n" if obs.exists() else "")
     assertions = "\n".join(f"{n}. {a}" for n, a in enumerate(ev["assertions"], 1))
-    return HEADER.format(request=staged_prompt(ev), assertions=assertions) + "\n".join(parts), key
+    return HEADER.format(request=staged_prompt(ev), assertions=assertions) + output, key
 
 def validate(obj, key: dict, n_items: int) -> str | None:
     if not isinstance(obj, dict) or not isinstance(obj.get("grades"), list):
@@ -793,8 +725,6 @@ def subscription_guard(adapter):
             'ANTHROPIC_AUTH_TOKEN', 'CLAUDE_CODE_OAUTH_TOKEN', 'OPENAI_BASE_URL', 'ANTHROPIC_BASE_URL',
             'XAI_BASE_URL')) or billing_keys(CFG):
         raise Halt('API credentials or billing overrides are present; subscription-only calls refused')
-    if adapter.NAME == 'claude':
-        raise Halt('Claude invocation is disabled; its adapter is retained for archived evidence only')
     try:
         auth = rjson(REAL_HOME / f'.{adapter.NAME}' / 'auth.json')
     except (OSError, ValueError):
@@ -859,17 +789,17 @@ def validate_config(path, require_executor=True):
         raise ValueError('Remove obsolete options: ' + ', '.join(sorted(removed)))
     if billing_keys(CFG):
         raise ValueError('API credential or billing configuration is prohibited')
-    CFG.setdefault('runs', 1)
-    if not isinstance(CFG['runs'], int) or CFG['runs'] < 1:
-        raise ValueError('runs must be a positive integer')
+    if type(CFG.get('runs', 1)) is not int or CFG.get('runs', 1) != 1:
+        raise ValueError('runs is fixed at one execution per case')
+    CFG['runs'] = 1
     CFG.setdefault('run_arms', [CFG['changed_arm']])
     for arm in CFG['arms']:
         if arm not in ('with_skill', 'old_skill'):
             raise ValueError('This runner supports with_skill and old_skill; no-skill diagnosis needs another runner')
         if not re.fullmatch(r'[A-Za-z0-9_-]+', arm):
             raise ValueError('Unsafe arm name')
-    if len(CFG['run_arms']) != 1 or any(a not in CFG['arms'] for a in CFG['run_arms']):
-        raise ValueError('Select one configured arm per round; diagnose the baseline separately')
+    if CFG['changed_arm'] not in CFG['arms'] or CFG['run_arms'] != [CFG['changed_arm']]:
+        raise ValueError('Select the changed arm once per round; diagnose the baseline separately')
     for key in ('budget_usd', 'call_allowance_usd'):
         value = CFG.get(key)
         if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
@@ -906,86 +836,76 @@ def executor_targets():
     return [name for name, target in CFG['targets'].items() if target.get('grader')]
 
 
-def ledger_entries():
-    ledger = iteration_dir() / '_ledger.jsonl'
-    if not ledger.exists():
-        return []
-    # Malformed/torn records are errors, never silently discounted.
-    return [json.loads(line) for line in ledger.read_text().splitlines()]
+def attempt_records():
+    """Read each attempt's sole accounting record; directories without one still count as attempts."""
+    root = iteration_dir()
+    if (root / '_ledger.jsonl').exists():
+        raise Budget('Legacy ledger round: use its frozen archived runner, not this runner')
+    directories = sorted({directory for pattern in ('*/eval-*/*/run-*',
+                                                    '*/grading/eval-*/attempt-*')
+                          for directory in root.glob(pattern)})
+    entries = []
+    for directory in directories:
+        path = directory / 'cost.json'
+        parents = [directory, *list(directory.parents)[:3]]
+        if (any(parent.is_symlink() for parent in parents) or not directory.is_dir()
+                or path.is_symlink() or not path.is_file()):
+            raise Budget('Attempt has no safe cost record; inspect it before inference')
+        try:
+            record = rjson(path)
+        except (OSError, UnicodeError, ValueError) as error:
+            raise Budget('Unreadable attempt cost record; inspect it before inference') from error
+        if not isinstance(record, dict):
+            raise Budget('Invalid attempt cost record; inspect it before inference')
+        parts = directory.relative_to(root).parts
+        grading = parts[1] == 'grading'
+        match = re.fullmatch(r'eval-(\d+)-[A-Za-z0-9_-]+', parts[2 if grading else 1])
+        number = re.fullmatch(r'attempt-(\d+)' if grading else r'run-(\d+)', parts[3])
+        if not match or not number or type(record.get('eval')) is not int or record['eval'] != int(match[1]):
+            raise Budget('Attempt attribution is invalid; inspect it before inference')
+        if grading:
+            executor = parts[0]
+            target = CFG['targets'].get(executor, {}).get('grader')
+            expected = {'kind': 'grade', 'executor': executor, 'target': target,
+                        'attempt': int(number[1])}
+        else:
+            target = parts[0]
+            expected = {'kind': 'exec', 'target': target, 'arm': parts[2], 'run': int(number[1])}
+            if target not in executor_targets() or parts[2] != CFG['changed_arm']:
+                raise Budget('Attempt attribution is invalid; inspect it before inference')
+        target_config = CFG['targets'].get(target)
+        if (not target_config or any(record.get(key) != value or
+                type(record.get(key)) is not type(value) for key, value in expected.items())
+                or record.get('model') != target_config['model']
+                or record.get('provider') != adapter_of(target).PROVIDER):
+            raise Budget('Attempt attribution is invalid; inspect it before inference')
+        entries.append({**record, 'cost_record': str(path)})
+    return entries
 
 
 def verified_cost(entry):
-    """A settled ccusage record and its ledger row must describe the same attempt."""
-    path = entry.get('cost_record')
-    if not isinstance(path, str):
-        raise Budget('Missing linked cost record; recover the attempt before inference')
-    path = Path(path).resolve()
-    if not path.is_relative_to(iteration_dir().resolve()) or not path.is_file():
-        raise Budget('Missing linked cost record; recover the attempt before inference')
+    """Accept only a settled ccusage estimate backed by this attempt's report."""
     try:
-        record = rjson(path)
-        cost, tokens = usage.checked_totals(record['report'])
-    except (OSError, ValueError, KeyError, TypeError) as error:
-        raise Budget('Incomplete cost record; recover the attempt before inference') from error
-    if (type(record.get('cost_usd')) not in (int, float) or type(entry.get('cost_usd')) not in (int, float)
-            or record.get('source') != 'ccusage' or record.get('basis') != 'api_equivalent_estimate'
-            or record.get('error') or record.get('errors')
-            or record.get('cost_usd') != cost or record.get('total_tokens') != tokens
-            or entry.get('cost_usd') != cost or entry.get('total_tokens') != tokens
-            or entry.get('source') != record['source']
-            or entry.get('errors') != record.get('errors', record.get('error'))):
-        raise Budget('Ledger and linked cost record disagree or are incomplete')
+        cost, tokens = usage.checked_totals(entry['report'])
+    except (ValueError, KeyError, TypeError) as error:
+        raise Budget('Incomplete attempt cost record; recover it before inference') from error
+    if (entry.get('state') != 'settled' or entry.get('source') != 'ccusage'
+            or entry.get('basis') != 'api_equivalent_estimate' or entry.get('error') or entry.get('errors')
+            or type(entry.get('cost_usd')) not in (int, float)
+            or type(entry.get('total_tokens')) is not int
+            or entry['cost_usd'] != cost or entry['total_tokens'] != tokens):
+        raise Budget('Attempt cost record is unsettled or disagrees with ccusage evidence')
     return cost
 
 
-def reconcile_call_cost_records(entries):
-    """Require every execution and grading attempt cost file to have a ledger row."""
-    root = iteration_dir()
-    call_records = {path.resolve() for pattern in ('*/eval-*/*/run-*/cost.json',
-                                                    '*/grading/eval-*/attempt-*/cost.json')
-                    for path in root.glob(pattern)}
-    linked = {Path(entry['cost_record']).resolve() for entry in entries
-              if isinstance(entry.get('cost_record'), str)}
-    if call_records - linked:
-        raise Budget('Unaccounted attempt exists; recover its ledger entry before inference')
-    if linked - call_records:
-        raise Budget('Missing linked cost record; recover the attempt before inference')
-    if len(linked) != len(entries):
-        raise Budget('Duplicate or unlinked ledger attempt; recover its entry before inference')
-    for entry in entries:
-        parts = Path(entry['cost_record']).resolve().relative_to(root.resolve()).parts
-        if len(parts) != 5 or parts[-1] != 'cost.json':
-            raise Budget('Ledger attempt attribution is invalid; recover its entry before inference')
-        eval_match = re.fullmatch(r'eval-(\d+)-[A-Za-z0-9_-]+', parts[2 if parts[1] == 'grading' else 1])
-        if not eval_match or type(entry.get('eval')) is not int or entry['eval'] != int(eval_match[1]):
-            raise Budget('Ledger attempt attribution is invalid; recover its entry before inference')
-        if parts[1] == 'grading':
-            attempt = re.fullmatch(r'attempt-(\d+)', parts[3])
-            expected_grader = CFG['targets'].get(parts[0], {}).get('grader')
-            valid = (attempt and entry.get('kind') == 'grade' and entry.get('executor') == parts[0]
-                     and entry.get('target') == expected_grader and expected_grader is not None
-                     and type(entry.get('attempt')) is int and entry['attempt'] == int(attempt[1]))
-        else:
-            run = re.fullmatch(r'run-(\d+)', parts[3])
-            valid = (run and entry.get('kind') == 'exec' and entry.get('target') == parts[0]
-                     and parts[0] in executor_targets() and parts[2] in CFG['run_arms']
-                     and entry.get('arm') == parts[2]
-                     and type(entry.get('run')) is int and entry['run'] == int(run[1]))
-        if not valid:
-            raise Budget('Ledger attempt attribution is invalid; recover its entry before inference')
-
-
 def spent():
-    total = 0.0
-    entries = ledger_entries()
-    reconcile_call_cost_records(entries)
-    for entry in entries:
-        total += verified_cost(entry)
-    return total
+    return sum(verified_cost(entry) for entry in attempt_records())
 
 
 def freeze_inputs():
     """Store the exact round and eval definitions before an execution or grade."""
+    if (iteration_dir() / '_ledger.jsonl').exists():
+        raise Halt('Legacy ledger round: use its frozen archived runner or start a new iteration')
     source = iteration_dir() / 'runner'
     source.mkdir(parents=True, exist_ok=True)
     for name in ('harness.py', 'usage.py'):
@@ -1018,15 +938,6 @@ def allowance():
     if spent() + amount > CFG['budget_usd']:
         raise Budget('Current-round budget cannot reserve another call allowance')
     return amount
-
-
-def charge(entry):
-    path = iteration_dir() / '_ledger.jsonl'
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open('a') as stream:
-        stream.write(json.dumps({'ts': now(), **entry}) + '\n')
-        stream.flush()
-        os.fsync(stream.fileno())
 
 
 def prepare():
@@ -1180,11 +1091,10 @@ def invoke(target, kind, directory, cwd, home, make_argv, metadata):
     version = cli_version(binary, env, cwd)
     directory.mkdir(parents=True, exist_ok=False)
     record = {'kind': kind, 'target': target, 'provider': adapter.PROVIDER, 'model': target_config['model'],
-              'cost_record': str(directory / 'cost.json'), 'cost_usd': None, **metadata}
-    # A crash before settlement leaves an unknown ledger entry and blocks the next call.
-    wjson(directory / 'cost.json', {'source': 'ccusage', 'cost_usd': None, 'total_tokens': None,
-                                    'errors': ['Attempt pending settlement']})
-    charge(record)
+              'state': 'pending', 'started': now(), 'source': 'ccusage', 'cost_usd': None,
+              'total_tokens': None, 'errors': ['Attempt pending settlement'], **metadata}
+    # A crash before settlement leaves an unknown attempt and blocks the next call.
+    wjson(directory / 'cost.json', record)
     transcript.touch()
     stderr.touch()
     trace = new_trace()
@@ -1202,20 +1112,14 @@ def invoke(target, kind, directory, cwd, home, make_argv, metadata):
         wjson(directory / 'parse-error.json', {'error': str(error)})
     try:
         cost = usage.estimate(adapter.NAME, transcript, sessions if sessions.exists() else None,
-                              directory / 'cost.json', CFG['ccusage_command'], Path(CFG['workspace_root']),
+                              None, CFG['ccusage_command'], Path(CFG['workspace_root']),
                               model=target_config['model'])
     except Exception:
         cost = {'source': 'ccusage', 'cost_usd': None, 'total_tokens': None,
                 'errors': ['Usage estimator failed; inspect preserved attempt before resolving']}
-    wjson(directory / 'cost.json', cost)
-    record.update(cost_usd=cost.get('cost_usd'), total_tokens=cost.get('total_tokens'),
-                  source=cost.get('source'), errors=cost.get('errors', cost.get('error')),
+    record.update(cost, state='unknown' if cost.get('cost_usd') is None else 'settled',
                   cli_cost_usd=trace['cost_usd'])
-    rows = ledger_entries()
-    rows[-1] = {'ts': rows[-1]['ts'], **record}
-    temporary = iteration_dir() / '_ledger.tmp'
-    temporary.write_text(''.join(json.dumps(row) + '\n' for row in rows))
-    temporary.replace(iteration_dir() / '_ledger.jsonl')
+    wjson(directory / 'cost.json', record)
     wjson(directory / 'invocation.json', {'command': argv, 'rc': rc, 'duration_ms': ms,
                                         'model': target_config['model'], 'allowance_usd': budget, 'harness_version': version})
     wjson(directory / 'trace.json', trace)
@@ -1273,7 +1177,7 @@ def execute_one(target, ev, arm, k, ev_sha, packages):
         surface_unverified = (idn['init_surface_ok'] is not True if adapter.NAME == 'grok'
                               else idn['init_surface_ok'] is False)
         status = failure or ('discarded' if not package_unchanged or not idn['loaded_paths'] or idn['foreign_access'] or
-                             idn['nested_agent_cli'] or surface_unverified else 'ok')
+                             idn['unverified_access'] or idn['nested_agent_cli'] or surface_unverified else 'ok')
         outputs = rd / 'outputs'
         outputs.mkdir()
         shutil.copy2(rd / 'final.md', outputs / 'final.md')
@@ -1297,9 +1201,6 @@ def execute_one(target, ev, arm, k, ev_sha, packages):
               'effort': CFG['targets'][target]['effort'], 'adapter': adapter.NAME,
               'harness_version': rjson(rd / 'invocation.json')['harness_version'], 'workspace': str(ws['parent']), 'home': str(ws['home']),
               'install_path': str(ws['install']), 'eval_inputs_sha256': ev_sha})
-        wjson(rd / 'timing.json', {'duration_ms': ms, 'total_tokens': cost.get('total_tokens'),
-                                  'cost_usd': cost.get('cost_usd'), 'cli_cost_usd': trace['cost_usd']})
-        wjson(rd / 'metrics.json', {'total_tool_calls': len(trace['tool_calls']), 'errors_encountered': trace['errors']})
         wjson(rd / 'status.json', {'status': status, 'identity': idn, 'rc': rc, 'finished': now(),
                                   **({'capture_error': capture_error} if capture_error else {})})
     except BaseException:
@@ -1321,16 +1222,16 @@ def execute_one(target, ev, arm, k, ev_sha, packages):
 def run_round(targets):
     packages = prepare()
     evals, digest = selected_evals(), load_evals()[1]
-    results = [execute_one(target, ev, arm, k, digest, packages)
-               for target in targets for ev in evals for arm in CFG['run_arms']
-               for k in range(1, CFG['runs'] + 1)]
+    results = [execute_one(target, ev, CFG['run_arms'][0], 1, digest, packages)
+               for target in targets for ev in evals]
     return all(status == 'ok' for status in results)
 
 
 def counted_runs(target, ev):
-    runs = [(a, k, run_dir(target, ev, a, k)) for a in CFG['run_arms'] for k in range(1, CFG['runs'] + 1)]
-    return [(a, k, rd, status_of(rd)) for a, k, rd in runs if status_of(rd) == 'ok'], [
-        f'{a}/run-{k}:{status_of(rd)}' for a, k, rd in runs if status_of(rd) != 'ok']
+    a, k = CFG['run_arms'][0], 1
+    rd = run_dir(target, ev, a, k)
+    status = status_of(rd)
+    return ([(a, k, rd, status)], []) if status == 'ok' else ([], [f'{a}/run-{k}:{status}'])
 
 
 def grade_one(target, ev):
@@ -1348,7 +1249,7 @@ def grade_one(target, ev):
     adapter = adapter_of(grader)
     allowance()
     subscription_guard(adapter)
-    packet, key = build_packet(ev, pending, f"{target}:{ev['id']}:{CFG['iteration']}")
+    packet, key = build_packet(ev, pending[0])
     gdir = iteration_dir() / target / 'grading' / eval_dir_name(ev)
     gdir.mkdir(parents=True, exist_ok=True)
     attempt = 1
@@ -1397,6 +1298,9 @@ def report(targets=None):
     global CFG
     live = CFG
     archive = iteration_dir()
+    frozen_runner = archive / 'runner/harness.py'
+    if frozen_runner.exists() and frozen_runner.read_bytes() != (H / 'harness.py').read_bytes():
+        raise Halt('This round uses an earlier runner; report with its frozen archived runner')
     saved = archive / 'round.json'
     definitions = archive / 'evals.json'
     digest_file = archive / 'evals.sha256'
@@ -1445,12 +1349,21 @@ def _report(targets, frozen_evals, identity_issues):
             if (not package.is_dir() or not isinstance(recorded, dict)
                     or recorded.get('package_hash') != tree_hash(package)):
                 identity_issues.append(f'Frozen package identity differs for {arm}')
+    try:
+        entries = attempt_records()
+        for entry in entries:
+            verified_cost(entry)
+        costs_by_dir = {Path(entry['cost_record']).parent: entry for entry in entries}
+        cost_issue = None
+    except (Budget, OSError, UnicodeError, ValueError, TypeError, AttributeError, KeyError) as error:
+        entries, costs_by_dir = [], {}
+        cost_issue = f'Attempt costs are unavailable until operator recovery: {error}'
     for target in targets:
         rows, per = [], {}
         target_issues = list(identity_issues)
         for ev in evals:
             for arm in CFG['run_arms']:
-                for k in range(1, CFG['runs'] + 1):
+                for k in (1,):
                     rd = run_dir(target, ev, arm, k)
                     status = status_of(rd)
                     row = {'eval_id': ev['id'], 'eval_name': eval_name(ev), 'configuration': arm,
@@ -1461,20 +1374,18 @@ def _report(targets, frozen_evals, identity_issues):
                         rd, ev, CFG['targets'][CFG['targets'][target]['grader']]['model'])
                     if grade_issue:
                         target_issues.append(f'{arm}/run-{k}: {grade_issue}')
-                    timing, timing_issue = report_run_object(rd / 'timing.json')
-                    metrics, metrics_issue = report_run_object(rd / 'metrics.json')
+                    invocation, timing_issue = report_run_object(rd / 'invocation.json')
+                    trace, metrics_issue = report_run_object(rd / 'trace.json')
                     build, build_issue = report_run_object(rd / 'build.json')
-                    if timing is not None and (not nonnegative_finite(timing.get('duration_ms'))
-                                               or type(timing.get('total_tokens')) is not int
-                                               or timing['total_tokens'] < 0):
-                        timing, timing_issue = None, 'timing.json has invalid duration_ms or total_tokens; recover the saved run evidence'
-                    if metrics is not None and any(type(metrics.get(field)) is not int or metrics[field] < 0
-                                                   for field in ('total_tool_calls', 'errors_encountered')):
-                        metrics, metrics_issue = None, 'metrics.json has invalid total_tool_calls or errors_encountered; recover the saved run evidence'
+                    if invocation is not None and not nonnegative_finite(invocation.get('duration_ms')):
+                        invocation, timing_issue = None, 'invocation.json has invalid duration_ms; recover the saved run evidence'
+                    if trace is not None and (not isinstance(trace.get('tool_calls'), list)
+                                              or type(trace.get('errors')) is not int or trace['errors'] < 0):
+                        trace, metrics_issue = None, 'trace.json has invalid tool calls or errors; recover the saved run evidence'
                     for issue in (timing_issue, metrics_issue, build_issue):
                         if issue:
                             target_issues.append(f'{arm}/run-{k}: {issue}')
-                    timing, metrics = timing or {}, metrics or {}
+                    invocation, trace = invocation or {}, trace or {}
                     frozen_digest = iteration_dir() / 'evals.sha256'
                     if row['status'] == 'ok' and build is None:
                         target_issues.append(f'Run identity is missing for {arm}/run-{k}')
@@ -1491,10 +1402,12 @@ def _report(targets, frozen_evals, identity_issues):
                         target_issues.append(f'Grader identity differs for {arm}/run-{k}')
                     if grade and [item.get('text') for item in grade.get('assertion_results', [])] != ev['assertions']:
                         target_issues.append(f'Graded assertions differ for {arm}/run-{k}')
+                    cost = costs_by_dir.get(rd, {})
                     row['result'] = {'pass_rate': grade['summary']['pass_rate'] if grade else None,
-                                     'time_seconds': None if timing_issue else timing.get('duration_ms', 0) / 1000,
-                                     'tokens': timing.get('total_tokens'), 'cost_usd': timing.get('cost_usd'),
-                                     'tool_calls': metrics.get('total_tool_calls'), 'errors': metrics.get('errors_encountered')}
+                                     'time_seconds': None if timing_issue else invocation['duration_ms'] / 1000,
+                                     'tokens': cost.get('total_tokens'), 'cost_usd': cost.get('cost_usd'),
+                                     'tool_calls': len(trace['tool_calls']) if not metrics_issue else None,
+                                     'errors': trace.get('errors')}
                     if grade:
                         row['result'].update({x: grade['summary'][x] for x in ('passed', 'failed', 'total')})
                         row['assertion_results'] = grade['assertion_results']
@@ -1506,18 +1419,10 @@ def _report(targets, frozen_evals, identity_issues):
                         if value is not None and grade:
                             per.setdefault(arm, {}).setdefault(metric, []).append(value)
                     rows.append(row)
-        charges = []
-        try:
-            entries = ledger_entries()
-            charges = [entry for entry in entries if
-                       entry.get('kind') == 'exec' and entry.get('target') == target or
-                       entry.get('kind') == 'grade' and entry.get('executor') == target]
-            reconcile_call_cost_records(entries)
-            charge_costs = [verified_cost(entry) for entry in charges]
-            known, cost_issue = True, None
-        except (Budget, OSError, UnicodeError, ValueError, TypeError, AttributeError, KeyError) as error:
-            charges, charge_costs, known = [], [], False
-            cost_issue = f'Ledger costs are unavailable until operator recovery: {error}'
+        charges = [entry for entry in entries if
+                   entry.get('kind') == 'exec' and entry.get('target') == target or
+                   entry.get('kind') == 'grade' and entry.get('executor') == target]
+        known = cost_issue is None
         if target_issues or cost_issue:
             for row in rows:
                 row['needs_operator_review'] = True
@@ -1530,7 +1435,7 @@ def _report(targets, frozen_evals, identity_issues):
                     'identity_verified': not target_issues,
                     'archive_ref': str((iteration_dir() / target).relative_to(CFG['archive_root']))}
         if known:
-            metadata['cost_usd'] = sum(charge_costs)
+            metadata['cost_usd'] = sum(entry['cost_usd'] for entry in charges)
         complete = not target_issues and known and all(row['status'] == 'ok' and row['result']['pass_rate'] is not None for row in rows)
         tested_arm = CFG['run_arms'][0]
         revision = (packages or {}).get(tested_arm, {}).get('skill_revision', CFG['arms'][tested_arm])[:8]

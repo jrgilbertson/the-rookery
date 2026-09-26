@@ -112,13 +112,14 @@ def checked_totals(report: dict) -> tuple[float, int]:
 
 
 def estimate(adapter: str, transcript: Path, sessions: Path | None,
-             output: Path, command: list[str], scratch_root: Path, model: str | None = None) -> dict:
+             output: Path | None, command: list[str], scratch_root: Path, model: str | None = None) -> dict:
     """Return a recorded estimate or explicit unknown; never hide a failed lookup.
 
 Only the supplied run is made visible to ccusage. The source transcript and
 session store remain untouched. No credential is copied into the cost input.
     """
-    output.parent.mkdir(parents=True, exist_ok=True)
+    if output is not None:
+        output.parent.mkdir(parents=True, exist_ok=True)
     timestamp = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     record = {"source": "ccusage", "basis": "api_equivalent_estimate",
               "retrieved_at": timestamp, "cost_usd": None, "total_tokens": None}
@@ -191,5 +192,6 @@ session store remain untouched. No credential is copied into the cost input.
             record["cost_usd"], record["total_tokens"] = cost, tokens
     except (OSError, ValueError, TypeError, KeyError, subprocess.SubprocessError) as error:
         record["error"] = str(error)
-    output.write_text(json.dumps(record, indent=2) + "\n")
+    if output is not None:
+        output.write_text(json.dumps(record, indent=2) + "\n")
     return record

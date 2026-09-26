@@ -13,8 +13,8 @@ configuration. The example is a template, not an executable eval configuration.
 `--targets a,b` selects Executors and `--evals 1,2` selects cases. Targets with a
 `grader` are Executors; targets without one are available only as graders. The
 grader must name a different model from its Executor. Multiple Executors run
-sequentially. Each gets one execution per selected eval by default; `runs` can
-explicitly request repeats. Target names use lowercase letters and digits in
+sequentially. Each gets one execution per selected eval; `runs` cannot request
+repeats. Target names use lowercase letters and digits in
 segments separated by single dots or hyphens; underscores and uppercase letters
 are invalid. `run_arms` defaults to just `changed_arm`.
 
@@ -24,7 +24,7 @@ evidence before `grade`; if it contains sensitive values, stop and use a host
 workflow that can safely redact the packet while preserving grading evidence.
 Missing evidence after redaction remains unverified.
 
-Grade packets shuffle anonymous letters and scrub revision and workspace paths.
+Grade packets label the one output anonymously and scrub revision and workspace paths.
 They include full tool names and inputs, project artifacts, and available child
 readouts from saved sessions. Raw tool outputs remain in the private archive. Encrypted dispatch text is explicitly unavailable; neither the
 parser nor grader should infer the exact prompt. This is evidence-based grading,
@@ -81,9 +81,9 @@ entitlement itself is checked by the provider when the CLI runs; auth-file
 presence cannot prove remaining quota. Parent API-key environments, API-key auth
 files, and API billing configuration are rejected. Child environments are built
 from scratch; there is no API fallback. Login/quota failures stop the command.
-The runner currently supports Codex and Grok subscription execution. Claude
-parsing and cost normalization are retained for archived evidence; new Claude
-invocation is disabled.
+The runner accepts only Codex and Grok for subscription execution. Claude
+transcript parsing and cost normalization remain for archived evidence; it has
+no live launch adapter.
 
 Each call copies only login material to a throwaway HOME and saves its sessions
 before deleting that HOME. Refreshed auth is never copied back to the user's
@@ -109,32 +109,32 @@ tool targets its `SKILL.md` and returns nonempty output without a reported failu
 For shell calls, only simple `cat` commands count; `--help`, `--version`,
 redirects, pipes, command chaining, path mentions, listings, tests, and missing
 or failed results do not. Quoted literal nested CLI executable names are checked.
-For a command recorded as one `sh`/`bash`/`zsh`/`dash`/`ksh` `-c` or `-lc`
-wrapper, the detector checks the literal inner command with those same rules,
-including when positional arguments follow the script. Literal `--noprofile`,
-`--norc`, `--posix`, and `-l` options before `-c` are supported; other such
-option forms discard the run. An `env`-wrapped shell `-c`/`-lc` call is
-unsupported and discarded; the detector does not interpret its environment or
-inner script.
-Heredoc bodies are excluded from shell-operand path checks; known foreign text
-patterns still scan the whole input. Embedded code in a heredoc is not interpreted.
+For a command recorded as one direct `sh`/`bash`/`zsh`/`dash`/`ksh` `-c` or
+`-lc` wrapper, the detector checks its literal script with those same rules,
+including when positional arguments follow it. Other shell launch forms,
+including assignment or `env` prefixes and options before `-c`, are marked
+unverified and discarded. Commands containing heredoc syntax are unverified
+without parsing their bodies; known foreign text patterns still scan the whole
+input. Embedded code is not interpreted.
 Literal absolute path inputs and simple command operands outside the staged
 workspace are marked foreign; a leading absolute executable token is exempt.
-The detector does not interpret shell variables, substitutions, or persistent
-shell state; it is not an OS security boundary. Changes to CLI flags or session
+Shell substitutions are unverified; the detector does not interpret shell
+variables or persistent shell state. It is not an OS security boundary. Changes to CLI flags or session
 formats require another integration check against the installed versions.
 
 ## Cost and stopping
 
 Every execution and grader attempt, including a failed launch or invalid grade,
-gets `cost.json` and a current-round ledger entry. The runner calls
-`usage.estimate(adapter, transcript, sessions_or_none, output, command,
-scratch_root, model=recorded_model)`. `ccusage_command` defaults to `["ccusage"]`.
-`cli_cost_usd` is kept separately from the ccusage estimate.
-Budget checks and reports reconcile ledger rows with execution and grading
-attempt cost files; unrelated package and output files named `cost.json` are
-not charges. Orphaned, misattributed, or malformed ledger records make reports
-incomplete with unavailable costs and stop further inference until recovery.
+has one `cost.json` with attempt identity, pending or settled state, and ccusage
+evidence. The runner prices the call with
+`usage.estimate(adapter, transcript, sessions_or_none, None, command,
+scratch_root, model=recorded_model)` and atomically stores the returned evidence
+in that record. `ccusage_command` defaults to `["ccusage"]`; `cli_cost_usd` is
+kept separately from the ccusage estimate. Budget checks and reports discover
+attempt directories and validate each record against its directory and ccusage
+report. A missing, misattributed, or malformed record makes report costs
+unavailable and stops further inference. Unrelated package and output files
+named `cost.json` are not attempts.
 If a run leaves a named pipe, socket, or another unsupported project artifact,
 its capture error and discarded status are recorded after its cost is settled;
 special files and symlink targets are not read for filesystem observations. A
@@ -150,11 +150,11 @@ Harness JSON artifacts are written to a temporary file in their destination
 directory and atomically replaced, so an interrupted write preserves a prior
 valid file. A malformed or missing `status.json` in an existing run directory
 is reported as unavailable; the paid slot is not relaunched. Missing or malformed
-timing, metrics, or build evidence likewise makes the report incomplete and remains untouched for
-operator recovery. Timing must contain finite, nonnegative numeric `duration_ms`.
-Its `total_tokens` and the metrics fields `total_tool_calls` and
-`errors_encountered` must be nonnegative integers. Ledger costs are still reported
-when they reconcile.
+invocation, trace, or build evidence likewise makes the report incomplete and
+remains untouched for operator recovery. Invocation duration must be finite and
+nonnegative; trace tool calls must be an array and errors a nonnegative integer.
+Report tokens and cost come from the settled attempt record, so recovered usage
+needs no second edit to timing evidence. Valid attempt costs remain available.
 
 One `budget_usd` covers all providers, Executors, graders, and failed attempts in
 that round. Previous rounds are excluded. Calls are sequential and reserve
@@ -165,14 +165,16 @@ bills. The harness has no hardcoded rates or account-wide usage deltas.
 
 A pending, missing, invalid, or unknown cost blocks further inference, including
 a restart. Do not substitute zero. The operator must recover pricing from the
-preserved call evidence and update both that call's `cost.json` and corresponding
-`_ledger.jsonl` entry with the verified estimate and resolution evidence before
+preserved call evidence and update that attempt's `cost.json` with the verified
+ccusage report, totals, `state: "settled"`, and resolution evidence before
 continuing. `report` remains available with unknown costs. No automatic cost
-fallback or resolution command is provided. The ledger and its linked ccusage
-report must agree before another call can begin.
-These checks trust operator-recovered per-call evidence. They do not authenticate
-rewritten cost and ledger records against the original paid attempt; inspect the
-preserved call evidence before settling a cost.
+fallback or resolution command is provided. These consistency checks trust
+operator-recovered per-call evidence; they do not authenticate rewritten records
+against the original paid attempt. Inspect preserved evidence before settling a cost.
+Rounds written by the earlier ledger runner remain on their frozen runner:
+`run` and `grade` reject their legacy ledger, and `report` directs the operator
+to the archived `runner/harness.py`. Start a new iteration for the new format;
+the old paid slots and evidence remain untouched.
 
 ## Zero-inference verification
 

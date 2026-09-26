@@ -113,7 +113,8 @@ class HarnessTests(unittest.TestCase):
         if cost is not None:
             record['report'] = {'sessions': [{'sessionId': 'fake'}],
                                 'totals': {'costUSD': cost, 'totalTokens': 12}}
-        h.wjson(output, record)
+        if output is not None:
+            h.wjson(output, record)
         return record
 
     def execute(self, k=1):
@@ -148,21 +149,20 @@ class HarnessTests(unittest.TestCase):
         self.assertEqual(h.rjson(path), {'version': 1})
         self.assertEqual(list(path.parent.glob(f'.{path.name}.*.tmp')), [])
 
-    def test_ledger_and_cost_record_must_agree_before_next_call(self):
+    def test_pending_attempt_cannot_be_settled_without_ccusage_evidence(self):
         self.costs = [None]
         with self.assertRaises(h.Budget):
             self.execute()
-        row = h.ledger_entries()[0]
-        ledger = h.iteration_dir() / '_ledger.jsonl'
-        row['cost_usd'] = 0.0
-        ledger.write_text(json.dumps(row) + '\n')
+        record = h.run_dir('executor', self.ev, 'with_skill', 1) / 'cost.json'
+        row = h.rjson(record)
+        h.wjson(record, {**row, 'state': 'settled', 'cost_usd': 0.0, 'total_tokens': 0})
         with self.assertRaises(h.Budget):
             h.allowance()
         with self.assertRaises(h.Budget):
             self.execute(2)
         self.assertEqual(len(self.process_calls), 1)
 
-    def test_cost_record_shape_and_reconciliation(self):
+    def test_cost_record_shape_and_ccusage_evidence(self):
         self.execute()
         record = h.run_dir('executor', self.ev, 'with_skill', 1) / 'cost.json'
         for change in ({'total_tokens': None}, {'basis': None}, {'errors': ['pricing incomplete']},
@@ -172,6 +172,70 @@ class HarnessTests(unittest.TestCase):
             with self.subTest(change=change), self.assertRaises(h.Budget):
                 h.allowance()
             h.wjson(record, original)
+
+    def test_recovered_attempt_cost_supplies_report_tokens_without_timing_copy(self):
+        self.costs = [None]
+        with self.assertRaises(h.Budget):
+            self.execute()
+        rd = h.run_dir('executor', self.ev, 'with_skill', 1)
+        self.assertFalse((rd / 'timing.json').exists())
+        record = rd / 'cost.json'
+        pending = h.rjson(record)
+        self.assertEqual(pending['state'], 'unknown')
+        h.wjson(record, {**pending, 'state': 'settled', 'basis': 'api_equivalent_estimate',
+                         'cost_usd': .25, 'total_tokens': 12, 'errors': [],
+                         'report': {'sessions': [{'sessionId': 'fake'}],
+                                    'totals': {'costUSD': .25, 'totalTokens': 12}}})
+        self.assertEqual(h.spent(), .25)
+        self.costs = [.25]
+        self.assertTrue(h.grade_one('executor', self.ev))
+        path = h.report(['executor'])[0]
+        self.assertEqual(path.parent.name, 'benchmark')
+        report = h.rjson(path)
+        self.assertEqual(report['runs'][0]['result']['tokens'], 12)
+        self.assertEqual(report['runs'][0]['result']['cost_usd'], .25)
+        self.assertEqual(len(self.process_calls), 2)
+
+    def test_one_attempt_record_is_the_accounting_source(self):
+        self.execute()
+        rd = h.run_dir('executor', self.ev, 'with_skill', 1)
+        record = h.rjson(rd / 'cost.json')
+        self.assertEqual({key: record[key] for key in ('kind', 'target', 'eval', 'arm', 'run', 'state')},
+                         {'kind': 'exec', 'target': 'executor', 'eval': 1,
+                          'arm': 'with_skill', 'run': 1, 'state': 'settled'})
+        self.assertEqual(record['report']['totals']['costUSD'], .25)
+        self.assertFalse((h.iteration_dir() / '_ledger.jsonl').exists())
+        self.assertFalse((rd / 'timing.json').exists())
+        self.assertFalse((rd / 'metrics.json').exists())
+
+    def test_symlinked_attempt_ancestor_cannot_supply_accounting(self):
+        self.execute()
+        eval_directory = h.run_dir('executor', self.ev, 'with_skill', 1).parent.parent
+        saved = self.root / 'outside-attempt'
+        eval_directory.rename(saved)
+        eval_directory.symlink_to(saved, target_is_directory=True)
+        with self.assertRaises(h.Budget):
+            h.spent()
+
+    def test_legacy_ledger_round_requires_its_archived_runner_before_launch(self):
+        legacy = h.iteration_dir() / '_ledger.jsonl'
+        legacy.parent.mkdir(parents=True, exist_ok=True)
+        legacy.write_text('{"legacy":true}\n')
+        with self.assertRaisesRegex(h.Halt, 'frozen archived runner'):
+            self.execute()
+        self.assertFalse((h.iteration_dir() / 'runner').exists())
+        self.assertEqual(self.process_calls, [])
+
+    def test_old_runner_source_requires_archived_reporter(self):
+        self.execute()
+        source = h.iteration_dir() / 'runner/harness.py'
+        original = source.read_bytes()
+        source.write_bytes(b'# earlier runner format\n')
+        try:
+            with self.assertRaisesRegex(h.Halt, 'frozen archived runner'):
+                h.report(['executor'])
+        finally:
+            source.write_bytes(original)
 
     def test_changed_eval_report_uses_frozen_assertions_and_is_incomplete(self):
         self.execute()
@@ -382,7 +446,7 @@ class HarnessTests(unittest.TestCase):
         h.subprocess.Popen.side_effect = with_artifact_and_child
         self.assertEqual(self.execute(), 'ok')
         runs, _ = h.counted_runs('executor', self.ev)
-        packet, _ = h.build_packet(self.ev, runs, 'seed')
+        packet, _ = h.build_packet(self.ev, runs[0])
         self.assertNotIn('UNIQUE_VARIANT_MARKER_ONLY_IN_SKILL_PACKAGE', packet)
         self.assertNotIn('x' * 2000, packet)
         self.assertIn('command_execution', packet)
@@ -432,7 +496,7 @@ class HarnessTests(unittest.TestCase):
         with self.assertRaises(h.Budget):
             self.execute(2)
         self.assertEqual(len(self.process_calls), 1)
-        self.assertIsNone(h.ledger_entries()[0]['cost_usd'])
+        self.assertIsNone(h.attempt_records()[0]['cost_usd'])
         self.assertTrue((h.run_dir('executor', self.ev, 'with_skill', 1) / 'sessions/marker.json').exists())
 
     def test_interrupt_reaps_process_group_and_leaves_charge_unsettled(self):
@@ -456,8 +520,10 @@ class HarnessTests(unittest.TestCase):
         kill.assert_called_once()
         self.assertEqual(process.waits, 3)
         self.assertEqual(self.estimates, [])
-        self.assertIsNone(h.ledger_entries()[0]['cost_usd'])
+        self.assertIsNone(h.attempt_records()[0]['cost_usd'])
         self.assertIsNone(h.rjson(h.run_dir('executor', self.ev, 'with_skill', 1) / 'cost.json')['cost_usd'])
+        self.assertEqual(self.execute(), 'unavailable')
+        self.assertEqual(process.waits, 3)
 
     def test_invalid_timeout_is_rejected_before_launch(self):
         for value in (None, True, False, 0, -1, float('nan'), float('inf'), '10'):
@@ -488,7 +554,7 @@ class HarnessTests(unittest.TestCase):
         kill.assert_called_once()
         self.assertEqual(process.waits, 2)
         self.assertEqual(self.estimates, [])
-        self.assertIsNone(h.ledger_entries()[0]['cost_usd'])
+        self.assertIsNone(h.attempt_records()[0]['cost_usd'])
 
     def test_special_project_artifacts_discard_settled_run(self):
         original = self.fake_process
@@ -516,7 +582,7 @@ class HarnessTests(unittest.TestCase):
                 status = h.rjson(rd / 'status.json')
                 self.assertEqual(status['status'], 'discarded')
                 self.assertIn('capture_error', status)
-                self.assertEqual(h.ledger_entries()[-1]['cost_usd'], .25)
+                self.assertEqual(h.attempt_records()[-1]['cost_usd'], .25)
                 self.assertEqual(h.spent(), .25 * run)
                 self.assertEqual(self.execute(run), 'discarded')
                 self.assertEqual(len(self.process_calls), 1)
@@ -540,7 +606,7 @@ class HarnessTests(unittest.TestCase):
         rd = h.run_dir('executor', self.ev, 'with_skill', 1)
         self.assertIn('capture_error', h.rjson(rd / 'status.json'))
         self.assertFalse((rd / 'outputs/project/secret.txt').exists())
-        self.assertEqual(h.ledger_entries()[0]['cost_usd'], .25)
+        self.assertEqual(h.attempt_records()[0]['cost_usd'], .25)
         self.assertEqual(self.execute(), 'discarded')
         self.assertEqual(len(self.process_calls), 1)
 
@@ -575,7 +641,7 @@ class HarnessTests(unittest.TestCase):
                 self.assertEqual(self.execute(run), 'discarded')
                 rd = h.run_dir('executor', self.ev, 'with_skill', run)
                 self.assertFalse(h.rjson(rd / 'status.json')['identity']['init_surface_ok'])
-                self.assertEqual(h.ledger_entries()[-1]['cost_usd'], .25)
+                self.assertEqual(h.attempt_records()[-1]['cost_usd'], .25)
                 self.assertEqual(self.execute(run), 'discarded')
         self.assertEqual(self.execute(4), 'ok')
         self.assertEqual(len(self.process_calls), 4)
@@ -586,7 +652,7 @@ class HarnessTests(unittest.TestCase):
         self.fail_grader = True
         self.assertFalse(h.grade_one('executor', self.ev))
         self.assertEqual(h.spent(), 1)
-        rows = h.ledger_entries()
+        rows = h.attempt_records()
         self.assertEqual([e['provider'] for e in rows], ['openai', 'xai'])
         self.assertEqual(rows[1]['kind'], 'grade')
         self.assertEqual(rows[1]['cli_cost_usd'], 9)
@@ -658,22 +724,14 @@ class HarnessTests(unittest.TestCase):
         self.execute()
         self.assertTrue(h.grade_one('executor', self.ev))
         rd = h.run_dir('executor', self.ev, 'with_skill', 1)
-        cases = [('timing.json', '{"duration_ms":'), ('timing.json', '{"duration_ms":"bad"}'),
-                 ('timing.json', '{"duration_ms":-1,"total_tokens":10}'),
-                 ('timing.json', '{"duration_ms":Infinity,"total_tokens":10}'),
-                 ('timing.json', '{"duration_ms":1000}'),
-                 ('timing.json', '{"duration_ms":1000,"total_tokens":true}'),
-                 ('timing.json', '{"duration_ms":1000,"total_tokens":-1}'),
-                 ('timing.json', '{"duration_ms":1000,"total_tokens":Infinity}'),
-                 ('timing.json', '{"duration_ms":1000,"total_tokens":1.5}'),
-                 ('metrics.json', '[]'), ('metrics.json', '{}'),
-                 ('metrics.json', '{"total_tool_calls":0}'),
-                 ('metrics.json', '{"total_tool_calls":0,"errors_encountered":"bad"}'),
-                 ('metrics.json', '{"total_tool_calls":true,"errors_encountered":0}'),
-                 ('metrics.json', '{"total_tool_calls":-1,"errors_encountered":0}'),
-                 ('metrics.json', '{"total_tool_calls":0,"errors_encountered":Infinity}'),
-                 ('metrics.json', '{"total_tool_calls":1.5,"errors_encountered":0}'),
-                 ('metrics.json', '{"total_tool_calls":0,"errors_encountered":0.5}'),
+        cases = [('invocation.json', '{"duration_ms":'), ('invocation.json', '{"duration_ms":"bad"}'),
+                 ('invocation.json', '{"duration_ms":-1}'),
+                 ('invocation.json', '{"duration_ms":Infinity}'),
+                 ('trace.json', '[]'), ('trace.json', '{}'),
+                 ('trace.json', '{"tool_calls":[],"errors":"bad"}'),
+                 ('trace.json', '{"tool_calls":true,"errors":0}'),
+                 ('trace.json', '{"tool_calls":[],"errors":-1}'),
+                 ('trace.json', '{"tool_calls":[],"errors":0.5}'),
                  ('build.json', '{"model":')]
         for name, broken in cases:
             with self.subTest(name=name, broken=broken):
@@ -697,7 +755,7 @@ class HarnessTests(unittest.TestCase):
         self.assertTrue(h.grade_one('executor', self.ev))
         rd = h.run_dir('executor', self.ev, 'with_skill', 1)
         calls = len(self.process_calls)
-        for name in ('timing.json', 'metrics.json', 'build.json'):
+        for name in ('invocation.json', 'trace.json', 'build.json'):
             with self.subTest(name=name):
                 path = rd / name
                 original = path.read_bytes()
@@ -709,7 +767,7 @@ class HarnessTests(unittest.TestCase):
                     self.assertTrue(report['runs'][0]['needs_operator_review'])
                     self.assertTrue(any(name in note for note in report['notes']))
                     self.assertEqual(report['metadata']['cost_usd'], .5)
-                    if name == 'timing.json':
+                    if name == 'invocation.json':
                         self.assertIsNone(report['runs'][0]['result']['time_seconds'])
                     self.assertFalse(path.exists())
                     self.assertEqual(len(self.process_calls), calls)
@@ -753,8 +811,9 @@ class HarnessTests(unittest.TestCase):
             h.wjson(h.REAL_HOME / f'.{adapter}/auth.json', auth)
             with self.subTest(adapter=adapter), self.assertRaises(h.Halt):
                 h.subscription_guard(h.ADAPTERS[adapter])
-        with self.assertRaises(h.Halt):
-            h.subscription_guard(h.ADAPTERS['claude'])
+        h.CFG['targets']['executor']['adapter'] = 'claude'
+        with self.assertRaisesRegex(ValueError, 'Invalid target'):
+            h.validate_config(self.config)
         self.assertFalse(self.process_calls)
 
     def test_quota_failure_retains_cost_and_stops_without_retry(self):
@@ -781,7 +840,7 @@ class HarnessTests(unittest.TestCase):
         h.usage.estimate.side_effect = lambda *a, **kw: {'cost_usd': None, 'total_tokens': None, 'source': 'ccusage'}
         with self.assertRaises(h.Budget):
             self.execute()
-        self.assertEqual(len(h.ledger_entries()), 1)
+        self.assertEqual(len(h.attempt_records()), 1)
         self.assertEqual(h.status_of(h.run_dir('executor', self.ev, 'with_skill', 1)), 'error')
 
     def test_cli_preflight_missing_binary_allows_retry(self):
@@ -789,7 +848,7 @@ class HarnessTests(unittest.TestCase):
         with patch.object(h.shutil, 'which', return_value=None), self.assertRaises(h.Halt):
             self.execute()
         self.assertFalse(rd.exists())
-        self.assertEqual(h.ledger_entries(), [])
+        self.assertEqual(h.attempt_records(), [])
         self.assertEqual(self.process_calls, [])
         self.assertFalse(any(Path(h.CFG['workspace_root']).iterdir()))
         self.assertEqual(self.execute(), 'ok')
@@ -799,7 +858,7 @@ class HarnessTests(unittest.TestCase):
         with patch.object(h, 'cli_version', side_effect=h.Halt('version unavailable')), self.assertRaises(h.Halt):
             self.execute()
         self.assertFalse(rd.exists())
-        self.assertEqual(h.ledger_entries(), [])
+        self.assertEqual(h.attempt_records(), [])
         self.assertEqual(self.process_calls, [])
         self.assertFalse(any(Path(h.CFG['workspace_root']).iterdir()))
         self.assertEqual(self.execute(), 'ok')
@@ -817,7 +876,7 @@ class HarnessTests(unittest.TestCase):
                     h.grade_one('executor', self.ev)
                 self.assertFalse((gdir / 'attempt-1').exists())
                 self.assertFalse(any(Path(h.CFG['workspace_root']).iterdir()))
-                self.assertEqual(len(h.ledger_entries()), 1)
+                self.assertEqual(len(h.attempt_records()), 1)
         self.assertTrue(h.grade_one('executor', self.ev))
 
     def test_config_private_paths_and_path_escape(self):
@@ -845,6 +904,23 @@ class HarnessTests(unittest.TestCase):
         h.CFG['targets']['judge']['model'] = 'executor-model'
         with self.assertRaises(ValueError):
             h.validate_config(self.config)
+
+    def test_config_rejects_repeat_execution(self):
+        for value in (2, True, 0):
+            with self.subTest(value=value):
+                h.CFG['runs'] = value
+                with self.assertRaisesRegex(ValueError, 'one execution per case'):
+                    h.validate_config(self.config)
+                self.assertEqual(self.process_calls, [])
+        h.CFG['runs'] = 1
+        h.validate_config(self.config)
+
+    def test_config_selects_only_its_changed_arm(self):
+        h.CFG['arms']['old_skill'] = 'deadbeef'
+        h.CFG['run_arms'] = ['old_skill']
+        with self.assertRaisesRegex(ValueError, 'changed arm once'):
+            h.validate_config(self.config)
+        self.assertEqual(self.process_calls, [])
 
     def test_target_names_match_benchmark_suffix(self):
         original = copy.deepcopy(h.CFG)
@@ -880,59 +956,61 @@ class HarnessTests(unittest.TestCase):
         self.assertFalse(report['metadata']['identity_verified'])
         self.assertTrue(all(row['needs_operator_review'] for row in report['runs']))
 
-    def test_lost_ledger_cannot_make_existing_attempt_free(self):
+    def test_missing_attempt_record_cannot_make_existing_attempt_free(self):
         self.execute()
-        (h.iteration_dir() / '_ledger.jsonl').unlink()
+        (h.run_dir('executor', self.ev, 'with_skill', 1) / 'cost.json').unlink()
         with self.assertRaises(h.Budget):
             h.allowance()
 
     def test_unrelated_cost_files_do_not_count_as_calls(self):
+        self.execute()
         package = h.iteration_dir() / 'packages/with_skill/demo/cost.json'
         output = h.run_dir('executor', self.ev, 'with_skill', 1) / 'outputs/project/cost.json'
         h.wjson(package, {'fixture': True})
         h.wjson(output, {'agent_output': True})
-        self.assertEqual(h.spent(), 0)
+        self.assertEqual(h.spent(), .25)
         self.assertEqual(h.allowance(), 1)
 
-    def test_orphaned_cost_record_makes_report_incomplete(self):
+    def test_missing_attempt_record_makes_report_incomplete(self):
         self.execute()
         self.assertTrue(h.grade_one('executor', self.ev))
-        (h.iteration_dir() / '_ledger.jsonl').unlink()
+        (h.run_dir('executor', self.ev, 'with_skill', 1) / 'cost.json').unlink()
         path = h.report(['executor'])[0]
         report = h.rjson(path)
         self.assertEqual(path.parent.name, 'incomplete')
         self.assertFalse(report['metadata']['cost_available'])
         self.assertTrue(all(row['needs_operator_review'] for row in report['runs']))
 
-    def test_unattributable_ledger_row_blocks_spending_and_report_cost(self):
+    def test_unattributable_attempt_blocks_spending_and_report_cost(self):
         self.execute()
         self.assertTrue(h.grade_one('executor', self.ev))
-        ledger = h.iteration_dir() / '_ledger.jsonl'
-        original = h.ledger_entries()
+        run_cost = h.run_dir('executor', self.ev, 'with_skill', 1) / 'cost.json'
+        grade_cost = h.iteration_dir() / 'executor/grading/eval-1-sample/attempt-1/cost.json'
         for field, value in [('kind', None), ('target', None), ('run', '1'),
                              ('executor', None), ('attempt', '1')]:
             with self.subTest(field=field):
-                rows = [dict(row) for row in original]
-                row = rows[0] if field in ('kind', 'target', 'run') else rows[1]
-                row[field] = value
-                ledger.write_text(''.join(json.dumps(item) + '\n' for item in rows))
-                with self.assertRaises(h.Budget):
-                    h.spent()
-                path = h.report(['executor'])[0]
-                report = h.rjson(path)
-                self.assertEqual(path.parent.name, 'incomplete')
-                self.assertFalse(report['metadata']['cost_available'])
-                self.assertNotIn('cost_usd', report['metadata'])
-        ledger.write_text(''.join(json.dumps(item) + '\n' for item in original))
+                cost_file = run_cost if field in ('kind', 'target', 'run') else grade_cost
+                original = h.rjson(cost_file)
+                h.wjson(cost_file, {**original, field: value})
+                try:
+                    with self.assertRaises(h.Budget):
+                        h.spent()
+                    path = h.report(['executor'])[0]
+                    report = h.rjson(path)
+                    self.assertEqual(path.parent.name, 'incomplete')
+                    self.assertFalse(report['metadata']['cost_available'])
+                    self.assertNotIn('cost_usd', report['metadata'])
+                finally:
+                    h.wjson(cost_file, original)
 
-    def test_torn_or_malformed_ledger_makes_report_incomplete_and_blocks_inference(self):
+    def test_torn_or_malformed_attempt_makes_report_incomplete_and_blocks_inference(self):
         self.execute()
         self.assertTrue(h.grade_one('executor', self.ev))
-        ledger = h.iteration_dir() / '_ledger.jsonl'
-        original = ledger.read_text()
+        record = h.run_dir('executor', self.ev, 'with_skill', 1) / 'cost.json'
+        original = record.read_text()
         for broken in ('{"kind":', '[]\n', '{"kind":"exec"}\n'):
             with self.subTest(broken=broken):
-                ledger.write_text(broken)
+                record.write_text(broken)
                 with self.assertRaises((h.Budget, ValueError, TypeError, AttributeError)):
                     h.allowance()
                 path = h.report(['executor'])[0]
@@ -942,8 +1020,8 @@ class HarnessTests(unittest.TestCase):
                 self.assertNotIn('cost_usd', report['metadata'])
                 self.assertIsNone(report['runs'][0]['result']['cost_usd'])
                 self.assertTrue(report['runs'][0]['needs_operator_review'])
-                self.assertTrue(any('ledger' in note.lower() for note in report['notes']))
-        ledger.write_text(original)
+                self.assertTrue(any('attempt' in note.lower() for note in report['notes']))
+        record.write_text(original)
 
     def test_scrub_preserves_short_arm_names_in_evidence(self):
         h.CFG['arms'] = {'with_skill': 'main', 'without_skill': 'dev'}
@@ -1042,7 +1120,7 @@ class HarnessTests(unittest.TestCase):
     def test_packet_blind_and_full_tool_evidence(self):
         self.execute()
         runs, _ = h.counted_runs('executor', self.ev)
-        packet, key = h.build_packet(self.ev, runs, 'seed')
+        packet, key = h.build_packet(self.ev, runs[0])
         self.assertEqual(list(key), ['A'])
         self.assertNotIn('with_skill', packet)
         self.assertNotIn('abc12345', packet)
@@ -1064,34 +1142,51 @@ class HarnessTests(unittest.TestCase):
         tr['tool_calls'][0]['input']['command'] = 'codex exec hello'
         self.assertTrue(h.identity(tr, ws, adapter, argv)['nested_agent_cli'])
 
-    def test_native_shell_options_before_script_keep_literal_path_checks(self):
+    def test_shell_options_outside_literal_contract_are_unverified(self):
         identity, ws = self.native_codex_identity(["bash --noprofile -c 'cat /etc/hosts'"])
-        self.assertTrue(identity['foreign_access'])
+        self.assertTrue(identity['unverified_access'])
         identity, _ = self.native_codex_identity(["bash --noprofile --norc -lc 'cat /etc/hosts' extra"])
-        self.assertTrue(identity['foreign_access'])
+        self.assertTrue(identity['unverified_access'])
         skill = ws['install'] / 'SKILL.md'
         identity, _ = self.native_codex_identity([f"bash --noprofile -c 'cat {skill}'"])
-        self.assertTrue(identity['loaded_paths'])
-        self.assertFalse(identity['foreign_access'])
+        self.assertTrue(identity['unverified_access'])
         identity, _ = self.native_codex_identity([f"bash -lc 'cat {skill}'"])
         self.assertTrue(identity['loaded_paths'])
+        self.assertFalse(identity['unverified_access'])
         identity, _ = self.native_codex_identity(["bash --unsupported -c 'cat /etc/hosts'"])
-        self.assertTrue(identity['foreign_access'])
+        self.assertTrue(identity['unverified_access'])
 
-    def test_native_env_shell_wrapper_is_discarded_without_interpreting_it(self):
+    def test_prefixed_shell_wrapper_is_unverified_without_interpreting_it(self):
         _, ws = self.native_codex_identity([])
         for command in ("env bash -c 'cat /etc/hosts'",
                         "env FOO=bar bash -lc 'cat /etc/hosts'",
                         "/usr/bin/env -i sh -c 'cat /etc/hosts'",
-                        f"cd {ws['project']} && env bash -c 'cat /etc/hosts'"):
+                        f"cd {ws['project']} && env bash -c 'cat /etc/hosts'",
+                        "FOO=1 bash -c 'cat /etc/hosts'"):
             with self.subTest(command=command):
                 identity, _ = self.native_codex_identity([command])
-                self.assertTrue(identity['foreign_access'])
+                self.assertTrue(identity['unverified_access'])
         identity, ws = self.native_codex_identity(['env FOO=bar printenv FOO'])
-        self.assertFalse(identity['foreign_access'])
+        self.assertFalse(identity['unverified_access'])
         identity, _ = self.native_codex_identity([f"bash -c 'cat {ws['install'] / 'SKILL.md'}'"])
         self.assertTrue(identity['loaded_paths'])
-        self.assertFalse(identity['foreign_access'])
+        self.assertFalse(identity['unverified_access'])
+
+    def test_assignment_shell_after_valid_skill_read_discards_paid_run(self):
+        original = self.fake_process
+        def with_assignment_shell(argv, **kwargs):
+            result = original(argv, **kwargs)
+            kwargs['stdout'].write((json.dumps({'type': 'item.completed', 'item': {
+                'type': 'command_execution', 'command': "FOO=1 bash -c 'cat /etc/hosts'",
+                'aggregated_output': 'outside', 'exit_code': 0}}) + '\n').encode())
+            return result
+        h.subprocess.Popen.side_effect = with_assignment_shell
+        self.assertEqual(self.execute(), 'discarded')
+        rd = h.run_dir('executor', self.ev, 'with_skill', 1)
+        self.assertTrue(h.rjson(rd / 'status.json')['identity']['unverified_access'])
+        self.assertEqual(h.spent(), .25)
+        self.assertEqual(self.execute(), 'discarded')
+        self.assertEqual(len(self.process_calls), 1)
 
     def test_native_quoted_nested_cli_names_are_rejected(self):
         _, ws = self.native_codex_identity([])
@@ -1347,21 +1442,20 @@ class HarnessTests(unittest.TestCase):
             'command': f"bash -c 'cat {ws['install'] / 'SKILL.md'}' ignored"}, 'output': 'Do the thing'}]
         self.assertTrue(h.identity(tr, ws, adapter, argv)['loaded_paths'])
 
-    def test_heredoc_body_is_not_scanned_as_shell_path(self):
+    def test_embedded_shell_input_is_unverified_without_interpreting_its_body(self):
         ws = {'parent': self.root / 'scratch/ws', 'project': self.root / 'scratch/ws/project',
               'install': self.root / 'scratch/ws/skills/demo', 'home': self.root / 'scratch/home'}
         adapter = h.ADAPTERS['codex']
         argv = adapter.exec_argv(h.CFG['targets']['executor'], ws, 'prompt', self.root / 'final', 1, [])
         tr = h.new_trace()
         body = "python3 - <<'PY'\nfrom pathlib import Path\nvalue = Path('one') / 'two'\nPY"
-        for command in (body, f'/bin/zsh -lc "{body}"'):
+        for command in (body, f'/bin/zsh -lc "{body}"', body + '\ncat /etc/hosts',
+                        'echo "<<PY"\ncat /etc/hosts', 'cat <<<"text"\ncat /etc/hosts',
+                        'echo "\n<<PY\n"\ncat /etc/hosts'):
             with self.subTest(command=command):
                 tr['tool_calls'] = [{'name': 'command_execution', 'input': {'command': command}, 'output': ''}]
-                self.assertFalse(h.identity(tr, ws, adapter, argv)['foreign_access'])
-        for command in (body + '\ncat /etc/hosts', 'echo "<<PY"\ncat /etc/hosts',
-                        'cat <<<"text"\ncat /etc/hosts',
-                        'echo "\n<<PY\n"\ncat /etc/hosts',
-                        'cat /', 'find /'):
+                self.assertTrue(h.identity(tr, ws, adapter, argv)['unverified_access'])
+        for command in ('cat /', 'find /'):
             with self.subTest(command=command):
                 tr['tool_calls'] = [{'name': 'command_execution', 'input': {'command': command}, 'output': ''}]
                 self.assertTrue(h.identity(tr, ws, adapter, argv)['foreign_access'])

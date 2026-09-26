@@ -250,9 +250,14 @@ dependent question waits for its prerequisite. Every question carries one
 concrete recommendation, never a test for the operator to apply, and its reason
 cites only supplied facts or contract defaults. Use the contract default where
 one exists; where the operator holds the fact, recommend the answer that lets
-routing proceed under the defaults. A Questions card names no workflow, model,
-profile, or kickoff. When the starting owner falls outside the seven, the
-recommendation is the supported-owner table link.
+routing proceed under the defaults. The reason names what is unknown or
+ambiguous and what the answer decides. It never presents one reading as what
+the operator said, predicts what an inspection or answer will show, or names an
+artifact the operator did not supply. For example: "Recommended: Fix. The
+request could mean a bug fix or a redesign, and the answer decides where the
+work starts." A Questions card names no workflow, model, profile, or kickoff.
+When the starting owner falls outside the seven, the recommendation is the
+supported-owner table link.
 
 <!-- route-work-contract-end -->
 

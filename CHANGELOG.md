@@ -13,6 +13,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- `route-work` Questions cards no longer present one reading of an ambiguous
+  request as what the operator said. A recommendation's reason names what is
+  unknown and what the answer decides, never predicts what an inspection will
+  show, and never names an artifact the operator did not supply.
+
 - The `creating-portable-skills` review checklist's Sediment item leaves a
   sentence that describes current domain facts standing, even when it uses a
   change word.

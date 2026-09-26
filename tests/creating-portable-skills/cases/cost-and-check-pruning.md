@@ -12,14 +12,18 @@ so it proves no improvement.
 > Three cases, each with and without the revision, each graded by a fresh
 > context.
 >
-> Harness A reported cost. Without the revision: 3 of 3 cases passed, mean
+> Harness A's CLI displayed $0.42 for the comparison, without saying whether
+> that amount covers grading attempts. I have no isolated usage for those
+> attempts or model-specific prices for all calls, so I cannot calculate a
+> complete API-equivalent cost. Without the revision: 3 of 3 cases passed, mean
 > 21,000 tokens and 48 seconds. With it: 3 of 3 passed, mean 39,000 tokens
 > and 95 seconds. Harness B reported no token or timing data; results there
 > were 2 of 3 without and 3 of 3 with.
 >
 > Every case includes the item "The summary is written in English", which
 > passed in all twelve runs. One reviewer also said the revised summaries
-> "read nicer". Write the decision and the log lines.
+> "read nicer". Should I make another round of model calls? Write the decision
+> and the log lines.
 
 ## Expected behavior
 

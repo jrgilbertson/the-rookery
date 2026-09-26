@@ -11,7 +11,7 @@ Create, revise, migrate, or audit a skill from its intent, required outcome, and
 
 Skills produced here follow the [Agent Skills format](https://agentskills.io/specification). Read [references/portability.md](references/portability.md) when checking frontmatter against its canonical-package rule, choosing an install location, adding harness-specific metadata, or making a claim about a harness. [references/skills.md](references/skills.md) is the convention for frontmatter fields, eval files, arms and runs, targets, grading, the run archive, and committed evidence; read it before steps 2, 5, 6, and 7.
 
-An independent reviewer took no part in authoring the change and did not produce the artifact under review; an agent auditing a skill it did not write qualifies. Behavioral grading uses an independent context on a different model from the executor. One independent PR review checks the package and evidence. The author never supplies required independent grades or review, even provisionally. If either is unavailable, prepare a self-contained handoff with assertions, outputs, tool traces, and available child readouts; the missing judgment stays unverified and the change does not ship.
+An independent reviewer took no part in authoring the change and did not produce the artifact under review; an agent auditing a skill it did not write qualifies. Behavioral grading uses an independent context on a different model from the executor. One independent review checks the package and evidence. The author never supplies required independent grades or review, even provisionally. If either is unavailable, prepare a self-contained handoff with assertions, outputs, tool traces, and available child readouts; the missing judgment stays unverified and the change does not ship.
 
 ## Workflow
 
@@ -63,11 +63,11 @@ Completion: affected checks ran on every declared target, every failure was insp
 
 ### 6. Decide and review
 
-Apply the ship rule in [references/skills.md](references/skills.md). Have one independent PR reviewer apply [references/review-checklist.md](references/review-checklist.md) to the package, assertions, artifacts, and evidence. This review checks that assertions are decidable from the grader's packet and no stricter than the contract. It does not require a separate pre-spend review or a repeated final-review cycle.
+Apply the ship rule in [references/skills.md](references/skills.md). Have one independent reviewer apply [references/review-checklist.md](references/review-checklist.md) to the package, assertions, artifacts, and evidence. This review checks that assertions are decidable from the grader's packet and no stricter than the contract. It does not require a separate pre-spend review or a repeated final-review cycle.
 
 A substantive follow-up edit returns through step 4 and the affected evals. Recheck evals whose outcomes could change under the revised package or test material, including changed instructions, executable helpers, bundled resources, prompts, inputs, or assertions. Preserve previous artifacts and grades under their original revision labels. Diagnose failures using the prior skill only where needed; do not combine unmatched cohorts into a delta.
 
-Completion: structural checks pass, required independent grading and PR review are complete, every failure has an evidence-backed disposition, and none is attributable to the change under test. Claims stay within the exercised cases and targets; unresolved attribution remains unverified.
+Completion: structural checks pass, required independent grading and review are complete, every failure has an evidence-backed disposition, and none is attributable to the change under test. Claims stay within the exercised cases and targets; unresolved attribution remains unverified.
 
 ### 7. Test the description
 

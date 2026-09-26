@@ -39,7 +39,7 @@ Only public-safe eval definitions and benchmarks enter the host project.
 5. **Record and decide.** Write a benchmark for the changed check and a separate
    one-arm diagnostic benchmark when needed. Compare only matched cohorts;
    never report an aggregate delta against a failing-only baseline subset.
-   Apply the ship rule and obtain the one independent PR review. The operator
+   Apply the ship rule and obtain the one independent review. The operator
    decides whether to revise or stop within the authorized budget.
 6. **Validate evidence files.** Keep evals in `evals/evals.json`, benchmarks in
    `evals/benchmarks/`, and raw evidence outside the repository. Run

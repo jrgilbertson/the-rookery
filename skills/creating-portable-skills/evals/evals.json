@@ -139,8 +139,7 @@
       "prompt": "A synthetic reporting skill has three existing evals: A exercises scripts/render.py, B exercises scripts/archive.py, and C checks a prose-only naming instruction. I changed only render.py so it quotes CSV fields correctly. SKILL.md, the description, the eval prompts, their supplied inputs, and their assertions are unchanged. Earlier runs of all three passed on both authorized Executor targets, and the one independent PR review is complete. Tell me the minimum follow-up validation before shipping and how to preserve the earlier evidence. Do not execute anything.",
       "expected_output": "Selects eval A because its executable resource changed behavior, runs it once on each authorized Executor target with different-model blind grading, preserves prior records under their original revisions, and leaves unaffected B/C alone without forcing another independent PR review.",
       "assertions": [
-        "Requires a new affected behavioral check for eval A despite unchanged prose, prompts, inputs, and assertions; does not claim the old passing grade verifies the changed helper.",
-        "Uses one affected execution per authorized Executor target with a different-model blind grade.",
+        "Requires a new affected behavioral check for eval A despite unchanged prose, prompts, inputs, and assertions; does not claim the old passing grade verifies the changed helper. Uses one affected execution per authorized Executor target with a different-model blind grade.",
         "Preserves earlier artifacts and grades under their original revisions and does not require rerunning unaffected evals B and C or another independent PR review."
       ]
     },

@@ -1,6 +1,6 @@
 # Review Checklist
 
-Use this rubric for an existing-skill audit, an independent PR review, and every proposed instruction relaxation. `SKILL.md` owns validation and reviewer independence. Apply the whole rubric to audits and PR reviews, marking unrelated items not applicable. Give the reviewer the intended outcome, hard constraints, skill package, evidence record, actual artifacts, and relevant traces without the author's conclusions. A failure becomes a fix-list item that names the problem, impact, and change risk. Review is complete when every applicable item either passes or has a fix-list item.
+Use this rubric for an existing-skill audit, an independent review, and every proposed instruction relaxation. `SKILL.md` owns validation and reviewer independence. Apply the whole rubric to audits and independent reviews, marking unrelated items not applicable. Give the reviewer the intended outcome, hard constraints, skill package, evidence record, actual artifacts, and relevant traces without the author's conclusions. A failure becomes a fix-list item that names the problem, impact, and change risk. Review is complete when every applicable item either passes or has a fix-list item.
 
 ## Mechanical pre-check
 
@@ -72,7 +72,7 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 
 ## Evidence integrity
 
-- Review context is independent. Pass: grading uses a blind different-model context, and one independent PR review follows `SKILL.md`; author inspection makes no independent-review claim. Deterministic scripts perform mechanical checks.
+- Review context is independent. Pass: grading uses a blind different-model context, and one independent review follows `SKILL.md`; author inspection makes no independent-review claim. Deterministic scripts perform mechanical checks.
 - Artifacts are inspected directly. Pass: the reviewer opens the relevant outputs instead of relying on the executor's summary or claimed filenames.
 - Every pass has substance. Pass: each judgment cites concrete artifact or trace evidence that demonstrates the outcome, not a heading, filename, or other surface compliance.
 - Checks are reviewed too. Pass: each eval has one or two sharp assertions, or one per numbered independent scenario; each is decidable from the packet and no stricter than the contract. Every failed grade is checked against the original transcript and classified as behavior failure, grader/assertion error, or capture gap. Original grades remain, with corrections and attribution explained in notes.

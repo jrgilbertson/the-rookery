@@ -173,7 +173,7 @@ inputs, assertions, target, and settings match the diagnostic question; retain
 its original revision label and original blind grades. If
 attribution remains unresolved, the result stays unverified.
 
-**Ship rule.** Ship when the required checks and independent PR review are
+**Ship rule.** Ship when the required checks and independent review are
 complete and no failure is attributable to the change under test. Known pre-existing
 failures remain visible with their evidence and disposition. A new skill must
 meet its required outcomes; a no-skill failure does not excuse its own failure.
@@ -240,7 +240,7 @@ Each run's `grading.json` uses the standard's shape:
   to grade. Exclude private reasoning and author conclusions. If a missing
   trace or safe redaction removes evidence needed to decide an assertion,
   record a capture gap and leave the outcome unverified.
-- One independent PR review checks the package and evidence using the
+- One independent review checks the package and evidence using the
   `creating-portable-skills` checklist. There is no mandatory pre-spend review
   plus final-review cycle. An unavailable independent grader or reviewer
   leaves the required judgment unverified; author inspection cannot replace it.
@@ -317,7 +317,7 @@ directory: `<date>-<short-rev>--iteration-<N>[-<target>].json`.
 - `metadata` requires `skill_name`, `executor_model`, `timestamp`,
   `runs_per_configuration`, `harness`, `grader`, and `archive_ref` (the
   round's target path inside the archive). Record `final_reviewer` when the
-  independent PR review is complete; an earlier round has none.
+  independent review is complete; an earlier round has none.
 - Record the complete API-equivalent estimate as `cost_usd`, with its source
   and scope in notes. Otherwise set `cost_available` to `false` and explain
   the unknown estimate. Historical CLI cost records keep their original

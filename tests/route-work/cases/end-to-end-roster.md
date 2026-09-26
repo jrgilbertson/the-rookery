@@ -39,12 +39,12 @@ Issue #164 dropped the no-merge line; item 1 still carries its stated merge limi
 - [ ] The final answer contains only the requested cards, in item order,
       with no preamble or closing narration. Cards assert no artifact, locator, or
       task fact that the prompt did not supply.
-- [ ] Item 1 starts with `ce-brainstorm` on Opus 5.5 at high as Single owner:
+- [ ] Item 1 starts with `ce-brainstorm` on the Planner primary as Single owner:
       the coordinator alone on the Planner profile, with no Executors because
       no independent units are established. Why says the coordinator carries
       the work from discovery into implementation and invites adding Executors
       when independent units appear.
-- [ ] Item 2 starts with `ce-debug` on Opus 5.5 at medium as Single owner: the
+- [ ] Item 2 starts with `ce-debug` on the Researcher primary as Single owner: the
       coordinator alone on the Researcher profile, with no Executors. Why names
       the expected end of the run and that the coordinator carries the fix
       through.
@@ -56,7 +56,7 @@ Issue #164 dropped the no-merge line; item 1 still carries its stated merge limi
       its condition on implementation, list no other permission, and add no
       prohibition the prompt did not state. Item 1 states its withheld merge
       once in Setup and the kickoff.
-- [ ] Items 4–6 start with `ce-plan` on Opus 5.5 at high. Expected
+- [ ] Items 4–6 start with `ce-plan` on the Planner primary. Expected
       implementation alone adds no Executors and grants no permission to
       implement; defaults are labeled and no concrete units, owners or write
       scopes are invented.

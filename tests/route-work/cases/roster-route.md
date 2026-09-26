@@ -33,18 +33,18 @@ still carry their stated merge limit.
 - [ ] The final answer contains only the requested cards, in item order,
       with no preamble or closing narration. Cards assert no artifact, locator, or
       task fact that the prompt did not supply.
-- [ ] All items return a `**Route**` card whose decision line is "Start with
-      ce-plan on Opus 5.5 at high" and names no role. Why says planning
+- [ ] All items return a `**Route**` card whose decision line starts
+      ce-plan on the Planner primary and names no role. Why says planning
       comes first and the coordinator carries the work into implementation.
-- [ ] Item 1's Setup lists a coordinator on Opus 5.5 at high and two Executors on
-      Opus 5.5 at medium, one per named module, and no Reviewer. It mentions no
+- [ ] Item 1's Setup lists a coordinator on the Planner primary and two
+      Executors on the Executor primary, one per named module, and no Reviewer. It mentions no
       orchestration, worktree isolation, or plan storage.
 - [ ] Item 2 adds no Reviewer, because the run implements through `ce-work`,
       which runs its own review, and keeps item 1's roster.
 - [ ] Item 3's Setup lists one Executor per named module, five in all, plus the
       Reviewer, with no concurrency cap or queue.
-- [ ] Item 4 keeps item 1's roster: a coordinator on Opus 5.5 at high and two
-      Executors on Opus 5.5 at medium. Why names implementation as the
+- [ ] Item 4 keeps item 1's roster: a coordinator on the Planner primary and two
+      Executors on the Executor primary. Why names implementation as the
       predicted end and says the coordinator can adjust the roster. Setup and
       the kickoff state no grant sentence. The kickoff's only implementation
       mention is the template's implementation-workers sentence, verbatim; it

@@ -42,15 +42,14 @@ nothing about implementation. Issue #164 dropped the no-merge line.
       task fact that the prompt did not supply.
 - [ ] Item 1 returns a Questions card with exactly one question, whether the
       product outcome is settled, and no route.
-- [ ] Item 2 returns a Route starting with ce-plan on Opus 5.5 at high as
+- [ ] Item 2 returns a Route starting with ce-plan on the Planner primary as
       Single owner: the coordinator alone on the Planner profile, because no
       independent units are established. Why invites adding Executors.
 - [ ] Items 3, 4, 6, and 7 each return a Questions card that asks for the
       missing fact, artifact, profile, or workflow with a recommended answer
       and names no workflow, model, profile, or kickoff, including in
       its recommendation.
-- [ ] Item 5 keeps ce-plan, selects the secondary Planner model, Astra at
-      high, and says the primary is unavailable without calling the secondary
+- [ ] Item 5 keeps ce-plan, selects the Planner secondary, and says the primary is unavailable without calling the secondary
       unverified. Nothing is said about implementation, so Why names it as the
       predicted end, and the kickoff states no grant.
 - [ ] Item 8 renders two Route cards. The grill states its supplied

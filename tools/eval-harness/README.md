@@ -146,6 +146,7 @@ TTLs; these remain estimates. No provider billing credentials go to ccusage.
 
 The runner accepts one `with_skill` or `old_skill` arm per round. No-skill
 diagnostics need a host that supports them. Complete reports use the canonical
-benchmark filename; incomplete or identity-mismatched reports remain under
+benchmark filename, including `--iteration-N` so same-day rounds stay distinct.
+Incomplete or identity-mismatched reports remain under
 `incomplete/` with their original assertions. Text artifacts are retained in full;
 raw tool outputs and installed skill text stay out of blind grading packets.

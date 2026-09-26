@@ -554,7 +554,19 @@ class HarnessTests(unittest.TestCase):
         self.assertEqual(report['metadata']['cost_usd'], .5)
         self.assertEqual(report['metadata']['archive_ref'], 'sample/demo/iteration-1/executor')
         self.assertNotIn(str(self.root), json.dumps(report))
-        self.assertRegex(path.name, r'^\d{4}-\d{2}-\d{2}-abc12345-executor\.json$')
+        self.assertRegex(path.name, r'^\d{4}-\d{2}-\d{2}-abc12345--iteration-1-executor\.json$')
+
+    def test_reports_from_distinct_iterations_have_distinct_names(self):
+        self.execute()
+        h.grade_one('executor', self.ev)
+        first = h.report(['executor'])[0]
+        source = h.iteration_dir()
+        h.CFG['iteration'] = 2
+        h.shutil.copytree(source, h.iteration_dir())
+        h.wjson(h.iteration_dir() / 'round.json', h.CFG)
+        second = h.report(['executor'])[0]
+        self.assertNotEqual(first.name, second.name)
+        self.assertIn('--iteration-2-', second.name)
 
     def test_packet_blind_and_full_tool_evidence(self):
         self.execute()

@@ -1285,7 +1285,7 @@ def _report(targets, frozen_evals, identity_issues):
         complete = not target_issues and known and all(row['status'] == 'ok' and row['result']['pass_rate'] is not None for row in rows)
         tested_arm = CFG['run_arms'][0]
         revision = (packages or {}).get(tested_arm, {}).get('skill_revision', CFG['arms'][tested_arm])[:8]
-        filename = f"{now()[:10]}-{revision}-{target}.json"
+        filename = f"{now()[:10]}-{revision}--iteration-{CFG['iteration']}-{target}.json"
         out = iteration_dir() / target / ('benchmark' if complete else 'incomplete') / filename
         public_charges = [{k: v for k, v in entry.items() if k in (
             'kind', 'target', 'executor', 'provider', 'model', 'cost_usd', 'total_tokens', 'source', 'cli_cost_usd')}

@@ -13,9 +13,6 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
-- `ROUTING.md` ranks each model-table row by cost of pass divided by pass
-  rate, so a model that fails more often ranks lower than its price suggests.
-  The maintainer section gives the formula and a worked example.
 - The `creating-portable-skills` review checklist's Sediment item leaves a
   sentence that describes current domain facts standing, even when it uses a
   change word.

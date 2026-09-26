@@ -265,21 +265,18 @@ Maintainers update the table manually from external evidence. Benchmark scores,
 cost, quota, confidence, automatic rankings, and staleness state stay outside
 the contract.
 
-### Order models by cost of pass per pass rate
+### Order models by cost of pass
 
-- Order each row from lowest to highest cost of pass divided by pass rate,
-  measured on work like that role's:
+- Order each row from lowest to highest cost of pass, measured on work like
+  that role's:
 
-      rank value = cost per attempt ÷ pass rate²
+      cost of pass = cost per attempt ÷ pass rate
 
-- Cost of pass alone, cost per attempt divided by pass rate, is the expected
-  spend to get one passing result. Dividing by pass rate again also charges
-  for what each failure costs beyond its tokens: a review round, a retry, and
-  the coordinator's time. A model that fails more often therefore ranks lower
-  than its price suggests.
-- For example, model A passes 60% at $0.80 per attempt and model B passes 40%
-  at $0.40. B has the lower cost of pass ($1.00 against $1.33), but A ranks
-  first: $0.80 ÷ 0.36 = $2.22 against $0.40 ÷ 0.16 = $2.50.
+  It is the expected spend to get one passing result, as defined in
+  [Cost-of-Pass](https://arxiv.org/abs/2504.13359) (Erol et al., ICLR 2026).
+- For example, model A passes 60% at $0.60 per attempt and model B passes 30%
+  at $0.40. A ranks first although each attempt costs more: $0.60 ÷ 0.60 =
+  $1.00 against $0.40 ÷ 0.30 = $1.33.
 - A row lists only models that earn a place, so some rows have fewer than
   three.
 - A model may rank by a capability the others lack, as xAI does for Scout

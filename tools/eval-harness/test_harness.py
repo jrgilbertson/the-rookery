@@ -86,7 +86,7 @@ class HarnessTests(unittest.TestCase):
             prompt = argv[-1]
             skill = prompt.split('Read ', 1)[1].split(' and follow', 1)[0]
             trace = [{'type': 'item.completed', 'item': {'type': 'command_execution',
-                       'command': 'cat ' + skill, 'aggregated_output': 'x' * 2000}},
+                       'command': 'cat ' + skill, 'aggregated_output': 'x' * 2000, 'exit_code': 0}},
                      {'type': 'item.completed', 'item': {'type': 'agent_message', 'text': 'Done'}},
                      {'type': 'turn.completed', 'usage': {'input_tokens': 10, 'output_tokens': 2}}]
             kwargs['stdout'].write(''.join(json.dumps(x) + '\n' for x in trace).encode())
@@ -727,7 +727,6 @@ class HarnessTests(unittest.TestCase):
         ws = {'parent': self.root / 'scratch/ws', 'project': self.root / 'scratch/ws/project',
               'install': self.root / 'scratch/ws/skills/demo', 'home': self.root / 'scratch/home'}
         tr = h.new_trace()
-        tr['loaded_paths'] = [str(ws['install'] / 'SKILL.md')]
         tr['tool_calls'] = [{'name': 'command_execution', 'input': {'command': 'cat notes.md'},
                              'output': str(h.REAL_HOME / '.agents/skills') + ' codex exec hello'}]
         adapter = h.ADAPTERS['codex']
@@ -745,7 +744,9 @@ class HarnessTests(unittest.TestCase):
         argv = adapter.exec_argv(h.CFG['targets']['judge'], ws, 'prompt', self.root / 'final', 1, [])
         transcript = self.root / 'grok-native.jsonl'
         rows = [{'type': 'tool_call', 'toolCallId': '1', 'toolName': 'read_file',
-                 'rawInput': {'target_file': str(ws['install'] / 'SKILL.md')}}]
+                 'rawInput': {'target_file': str(ws['install'] / 'SKILL.md')}},
+                {'type': 'tool_call_update', 'toolCallId': '1', 'status': 'completed',
+                 'rawOutput': {'content': 'Do the thing'}}]
         transcript.write_text(''.join(json.dumps(row) + '\n' for row in rows))
         identity = h.identity(h.parse(adapter, transcript, None), ws, adapter, argv)
         self.assertTrue(identity['loaded_paths'])
@@ -756,6 +757,44 @@ class HarnessTests(unittest.TestCase):
         identity = h.identity(h.parse(adapter, transcript, None), ws, adapter, argv)
         self.assertTrue(identity['loaded_paths'])
         self.assertTrue(identity['foreign_access'])
+
+    def test_grok_failed_or_missing_skill_read_result_is_not_loaded(self):
+        ws = {'parent': self.root / 'scratch/ws', 'project': self.root / 'scratch/ws/project',
+              'install': self.root / 'scratch/ws/skills/demo', 'home': self.root / 'scratch/home'}
+        adapter = h.ADAPTERS['grok']
+        argv = adapter.exec_argv(h.CFG['targets']['judge'], ws, 'prompt', self.root / 'final', 1, [])
+        transcript = self.root / 'grok-read.jsonl'
+        call = {'type': 'tool_call', 'toolCallId': '1', 'toolName': 'read_file',
+                'rawInput': {'target_file': str(ws['install'] / 'SKILL.md')}}
+        for updates in ([], [{'type': 'tool_call_update', 'toolCallId': '1', 'status': 'failed',
+                             'rawOutput': {'error': 'permission denied'}}]):
+            with self.subTest(updates=updates):
+                transcript.write_text(''.join(json.dumps(row) + '\n' for row in [call, *updates]))
+                self.assertFalse(h.identity(h.parse(adapter, transcript, None), ws, adapter, argv)['loaded_paths'])
+
+    def test_nonreading_mentions_and_unverified_codex_cat_discard_execution(self):
+        original = self.fake_process
+        cases = [('echo {skill}', 0, 'path'), ('test -f {skill}', 0, 'path'),
+                 ('ls {skill}', 0, 'path'), ('printf %s {skill}', 0, 'path'),
+                 ('cat {skill}', 1, 'permission denied'), ('cat {skill}', 0, '')]
+        for run, (command, exit_code, output) in enumerate(cases, 1):
+            with self.subTest(command=command, exit_code=exit_code, output=output):
+                def with_mention(argv, **kwargs):
+                    result = original(argv, **kwargs)
+                    skill = argv[-1].split('Read ', 1)[1].split(' and follow', 1)[0]
+                    kwargs['stdout'].seek(0)
+                    kwargs['stdout'].truncate()
+                    event = {'type': 'item.completed', 'item': {
+                        'type': 'command_execution', 'command': command.format(skill=skill),
+                        'aggregated_output': skill if output == 'path' else output,
+                        'exit_code': exit_code}}
+                    kwargs['stdout'].write((json.dumps(event) + '\n' +
+                        json.dumps({'type': 'item.completed', 'item': {'type': 'agent_message', 'text': 'Done'}}) + '\n').encode())
+                    return result
+                h.subprocess.Popen.side_effect = with_mention
+                self.assertEqual(self.execute(run), 'discarded')
+                identity = h.rjson(h.run_dir('executor', self.ev, 'with_skill', run) / 'status.json')['identity']
+                self.assertFalse(identity['loaded_paths'])
 
     def test_relative_workspace_escape_discards_execution(self):
         original = self.fake_process
@@ -829,8 +868,7 @@ class HarnessTests(unittest.TestCase):
                     {'command': 'cd nested && cat ../../skills/demo/SKILL.md'}):
             with self.subTest(inp=inp):
                 tr = h.new_trace()
-                tr['loaded_paths'] = ['../../skills/demo/SKILL.md']
-                tr['tool_calls'] = [{'name': 'command_execution', 'input': inp, 'output': ''}]
+                tr['tool_calls'] = [{'name': 'command_execution', 'input': inp, 'output': 'Do the thing'}]
                 result = h.identity(tr, ws, adapter, argv)
                 self.assertTrue(result['loaded_paths'])
                 self.assertFalse(result['foreign_access'])
@@ -881,7 +919,8 @@ class HarnessTests(unittest.TestCase):
         argv = adapter.exec_argv(h.CFG['targets']['executor'], ws, 'prompt', self.root / 'final', 1, [])
         tr = h.new_trace()
         for command in ("/bin/zsh -lc 'cat /etc/hosts'", "bash -c 'cat ../../../ws-other/file'",
-                        "sh -c 'cd .. && cat ../ws-other/file'"):
+                        "sh -c 'cd .. && cat ../ws-other/file'", "bash -c 'cat /etc/hosts' ignored",
+                        "bash -lc 'cat /etc/hosts' ignored"):
             with self.subTest(command=command):
                 tr['tool_calls'] = [{'name': 'command_execution', 'input': {'command': command}, 'output': ''}]
                 self.assertTrue(h.identity(tr, ws, adapter, argv)['foreign_access'])
@@ -893,6 +932,9 @@ class HarnessTests(unittest.TestCase):
         tr['tool_calls'] = [{'name': 'command_execution', 'input': {
             'command': f"/bin/zsh -lc 'cat {ws['install'] / 'SKILL.md'}'"}, 'output': ''}]
         self.assertFalse(h.identity(tr, ws, adapter, argv)['foreign_access'])
+        tr['tool_calls'] = [{'name': 'command_execution', 'input': {
+            'command': f"bash -c 'cat {ws['install'] / 'SKILL.md'}' ignored"}, 'output': 'Do the thing'}]
+        self.assertTrue(h.identity(tr, ws, adapter, argv)['loaded_paths'])
 
     def test_codex_child_readout_saved_and_encrypted_dispatch_unavailable(self):
         sessions = self.root / 'sessions'

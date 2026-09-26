@@ -182,8 +182,7 @@ def path_inputs(value, cwd: Path, home: Path) -> list[tuple[str, Path, bool]]:
 
 def new_trace() -> dict:
     return {"tool_calls": [], "final_text": "", "tokens": 0, "token_detail": {}, "cost_usd": None, "is_error": False,
-            "errors": 0, "steps": 0, "init": None, "structured": None, "cli_duration_ms": None,
-            "loaded_paths": []}
+            "errors": 0, "steps": 0, "init": None, "structured": None, "cli_duration_ms": None}
 
 def events(path: Path) -> list[dict]:
     out = []
@@ -237,11 +236,13 @@ class Claude:
                             continue
                         ids[c.get("id")] = len(r["tool_calls"])
                         r["tool_calls"].append({"name": c.get("name"), "input": c.get("input"), "output": "",
+                                                "failed": False,
                                                 "by": "subagent" if e.get("parent_tool_use_id") else "main"})
             elif e.get("type") == "user" and isinstance(e.get("message", {}).get("content"), list):
                 for c in e["message"]["content"]:
                     if isinstance(c, dict) and c.get("type") == "tool_result" and c.get("tool_use_id") in ids:
                         r["tool_calls"][ids[c["tool_use_id"]]]["output"] = json.dumps(c.get("content"))
+                        r["tool_calls"][ids[c["tool_use_id"]]]["failed"] = bool(c.get("is_error"))
                         r["errors"] += bool(c.get("is_error"))
             elif e.get("type") == "result":
                 u = e.get("usage") or {}
@@ -313,7 +314,8 @@ class Codex:
                                   "input": {"command": cmd[-1] if isinstance(cmd, list) and cmd else cmd} if cmd else
                                   {k: v for k, v in it.items() if k not in self.OUTPUT_FIELDS + ("stdout", "stderr",
                                    "formatted_output", "duration", "process_id", "cwd", "parsed_cmd", "source")},
-                                  "output": (it.get("aggregated_output") or "")})
+                                  "output": (it.get("aggregated_output") or ""),
+                                  "failed": it.get("exit_code") not in (None, 0) or it.get("status") in ("failed", "error")})
         return calls
 
     def allowed(self, argv):
@@ -330,8 +332,9 @@ class Codex:
             elif e.get("type") == "item.completed" and it.get("type") not in (None, "reasoning"):
                 r["tool_calls"].append({"name": it["type"] + (f":{it['tool']}" if it.get("tool") else ""), "by": "main",
                                         "input": {k: v for k, v in it.items() if k not in self.OUTPUT_FIELDS},
-                                        "output": (it.get("aggregated_output") or "")})
-                r["errors"] += it.get("exit_code") not in (None, 0) or it.get("status") == "failed"
+                                        "output": (it.get("aggregated_output") or ""),
+                                        "failed": it.get("exit_code") not in (None, 0) or it.get("status") in ("failed", "error")})
+                r["errors"] += it.get("exit_code") not in (None, 0) or it.get("status") in ("failed", "error")
             elif e.get("type") == "turn.completed":
                 r["steps"] += 1
                 for k, v in (e.get("usage") or {}).items():
@@ -408,6 +411,8 @@ class Grok:
                 tc, out = r["tool_calls"][ids[e["toolCallId"]]], e.get("rawOutput")
                 texts = "".join(c.get("content", {}).get("text", "") for c in e.get("content") or [] if isinstance(c, dict))
                 tc["output"] = (json.dumps(out) if out is not None else texts or tc["output"])
+                tc["failed"] = tc.get("failed", False) or e.get("status") in ("failed", "error") or \
+                    isinstance(out, dict) and bool(out.get("error"))
                 if isinstance(out, dict) and isinstance(out.get("action"), dict):  # server-side web tools
                     tc["input"] = {**tc["input"], **{k: v for k, v in out["action"].items() if k in ("query", "url")}}
                 r["errors"] += e.get("status") == "failed"
@@ -447,7 +452,8 @@ def drop_home(home: Path | None) -> None:
 
 def wrapper(install: Path, prompt: str) -> str:
     return (f"A skill package is installed at {install}. Read {install}/SKILL.md and follow it to handle the request "
-            "below, reading the files it references when it directs you to. Use no other skill. This is a "
+            "below, reading the files it references when it directs you to. Use cat or a native file-read tool "
+            "for the SKILL.md read, and make sure the read succeeds. Use no other skill. This is a "
             "non-interactive run: where the skill would ask the user something, state the question and the answer "
             "you would need, then continue as far as the skill allows. Paths in the request are relative to the "
             f"current directory. Keep filesystem access within {install.parent.parent}; do not search its "
@@ -474,8 +480,6 @@ def snapshot(root: Path) -> dict:
         result[path.relative_to(root).as_posix()] = {"sha256": sha256_bytes(data), "text": text}
     return result
 
-SKILL_TOKEN = re.compile(r"[\w./~@+-]*SKILL\.md")
-
 NESTED_CLI = re.compile(r"(^|[\s;&|(\"'/])(claude|codex|grok)\s+(-p\b|--print\b|--single\b|exec\b|e\b)")
 
 def foreign_patterns(adapter) -> list[str]:
@@ -489,9 +493,7 @@ def foreign_patterns(adapter) -> list[str]:
     return dirs + [CFG["repo_path"], str(iteration_dir() / "packages"), "/.grok/bundled/"] + web
 
 def parse(adapter, transcript: Path, final_path: Path | None) -> dict:
-    tr = adapter.parse(transcript, final_path)
-    tr["loaded_paths"] = sorted({t for c in tr["tool_calls"] for s in strings(c["input"]) for t in SKILL_TOKEN.findall(s)})
-    return tr
+    return adapter.parse(transcript, final_path)
 
 def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
     want = {str(Path(v) / "SKILL.md") for v in variants(str(ws["install"]))}
@@ -518,7 +520,7 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
                 words = s.split()
             # Codex command_execution commonly records one shell -c/-lc wrapper.
             # Inspect that literal script with the existing static path checks.
-            if (command and len(words) == 3 and Path(words[0]).name in {'sh', 'bash', 'zsh', 'dash', 'ksh'}
+            if (command and len(words) >= 3 and Path(words[0]).name in {'sh', 'bash', 'zsh', 'dash', 'ksh'}
                     and words[1] in {'-c', '-lc'}):
                 try:
                     words = shlex.split(words[2])
@@ -531,10 +533,14 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
                 if not cwd.is_relative_to(parent):
                     foreign.append(f"relative workspace escape: {words[1]}")
                 words = words[3:]
+            read_result = bool(c.get('output')) and not c.get('failed', False)
+            reads_file = ((command and c['name'] in {'command_execution', 'run_terminal_command', 'Bash'}
+                           and words and Path(words[0]).name == 'cat')
+                          or (not command and c['name'] in {'read_file', 'Read'}))
             for index, word in enumerate(words):
                 path = word.rsplit('=', 1)[-1].lstrip('(<')
                 resolved = literal_path(path, cwd, home)
-                if path.endswith('SKILL.md') and str(resolved) in want:
+                if read_result and reads_file and path.endswith('SKILL.md') and str(resolved) in want:
                     loaded.append(path)
                 # An absolute first command token names the executable, not a file it read.
                 if command and index == 0 and path.startswith('/'):

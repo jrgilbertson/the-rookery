@@ -93,8 +93,12 @@ checked for forbidden tool surfaces, missing reads of the installed skill,
 foreign packages/user skills, and nested agent CLIs. Relative command and path
 inputs and installed-skill reads use the declared `cwd`/`workdir` and a leading
 `cd … &&` when present. Literal `~` paths resolve to the isolated HOME.
+The installed skill counts as loaded only when `cat` or a native `Read`/`read_file`
+tool targets its `SKILL.md` and returns nonempty output without a reported failure.
+Path mentions, listings, tests, and missing or failed results do not count.
 For a command recorded as one `sh`/`bash`/`zsh`/`dash`/`ksh` `-c` or `-lc`
-wrapper, the detector checks the literal inner command with those same rules.
+wrapper, the detector checks the literal inner command with those same rules,
+including when positional arguments follow the script.
 Literal absolute path inputs and simple command operands outside the staged
 workspace are marked foreign; a leading absolute executable token is exempt.
 The detector does not interpret shell variables, substitutions, or persistent

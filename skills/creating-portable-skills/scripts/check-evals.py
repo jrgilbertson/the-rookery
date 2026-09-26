@@ -181,7 +181,7 @@ def check_benchmark(directory: str, path: Path, report: list[str]) -> None:
             fail(f"file name target {target!r} must match the target at the end of metadata.archive_ref")
         if iteration and is_text(archive_ref):
             archive_parts = archive_ref.rstrip("/").split("/")
-            archive_iteration = archive_parts[-2] if target and len(archive_parts) > 1 else archive_parts[-1]
+            archive_iteration = archive_parts[-2] if len(archive_parts) > 1 else None
             if archive_iteration != f"iteration-{iteration}":
                 fail(f"file name iteration {iteration!r} must match metadata.archive_ref")
         if "final_reviewer" in metadata and not is_text(metadata["final_reviewer"]):

@@ -220,6 +220,10 @@ round_file 2026-09-24-abc1234-model-a.json repo/same-day-rounds/iteration-1/mode
 round_file 2026-09-24-abc1234--iteration-2-model-a.json repo/same-day-rounds/iteration-2/model-a without_skill
 run "$scratch/same-day-rounds"
 expect_code "separate same-day diagnostic benchmark" 0
+mv "$scratch/same-day-rounds/evals/benchmarks/2026-09-24-abc1234--iteration-2-model-a.json" \
+	"$scratch/same-day-rounds/evals/benchmarks/2026-09-24-abc1234--iteration-2.json"
+run "$scratch/same-day-rounds"
+expect_code "targetless diagnostic benchmark keeps archive target" 0
 round_file 2026-09-24-abc1234--iteration-3-model-a.json repo/same-day-rounds/iteration-2/model-a without_skill
 run "$scratch/same-day-rounds"
 expect_code "wrong iteration suffix" 1

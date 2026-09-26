@@ -38,15 +38,20 @@ nothing about implementation. Issue #164 dropped the no-merge line.
 ## Expected behavior
 
 - [ ] The final answer contains only the requested cards, in item order,
-      with no preamble or closing narration. Cards assert no artifact, locator, or
-      task fact that the prompt did not supply.
-- [ ] Item 1 returns a Questions card with exactly one question, whether the
-      product outcome is settled, and no route.
+      with no preamble or closing narration. Cards assert no artifact, locator, or task fact that the prompt did not
+      supply. Restating a supplied fact and naming a contract default are
+      fine; describing the work's state, readiness, or meaning beyond what
+      the prompt says fails, including in a Questions recommendation. Facts
+      an item inherits by saying "the same" request count as supplied, and
+      stating the routing table's condition for the chosen owner, such as
+      ready work for `ce-work`, is the routing reason, not a task fact.
+- [ ] Item 1 returns a Questions card with exactly one question, whether the product outcome (with or without its
+      acceptance boundary) is settled, and no route.
 - [ ] Item 2 returns a Route starting with ce-plan on the Planner primary as
       Single owner: the coordinator alone on the Planner profile, because no
       independent units are established. Why invites adding Executors.
-- [ ] Items 3, 4, 6, and 7 each return a Questions card that asks for the
-      missing fact, artifact, profile, or workflow with a recommended answer
+- [ ] Items 3, 4, 6, and 7 each return a Questions card that asks for the missing fact, artifact, profile, or workflow, or for item 3
+      what would let routing proceed, with a recommended answer
       and names no workflow, model, profile, or kickoff, including in
       its recommendation.
 - [ ] Item 5 keeps ce-plan, selects the Planner secondary, and says the primary is unavailable without calling the secondary
@@ -56,7 +61,9 @@ nothing about implementation. Issue #164 dropped the no-merge line.
       document-write limit. The `ce-work` card may repeat the supplied
       implementation grant without widening it and lists no other permissions.
 - [ ] Item 9 returns one Questions card with exactly two numbered questions,
-      owner order first and orchestration versus handoff second, each with a
+      which workstream starts first and orchestration versus handoff second, each with a
       concrete recommended answer that names a workstream or a choice.
-- [ ] No item probes availability, persists state outside the visible
-      conversation, performs downstream discovery, or escalates effort.
+- [ ] No card escalates effort.
+- [ ] The trace contains only reads of the installed package. No availability probe,
+      state persisted outside the visible conversation, or downstream
+      discovery.

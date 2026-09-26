@@ -36,12 +36,18 @@ stated merge limit.
 ## Expected behavior
 
 - [ ] The final answer contains only the requested cards, in item order,
-      with no preamble or closing narration. Cards assert no artifact, locator, or
-      task fact that the prompt did not supply.
+      with no preamble or closing narration. Cards assert no artifact, locator, or task fact that the prompt did not
+      supply. Restating a supplied fact and naming a contract default are
+      fine; describing the work's state, readiness, or meaning beyond what
+      the prompt says fails, including in a Questions recommendation. Facts
+      an item inherits by saying "the same" request count as supplied, and
+      stating the routing table's condition for the chosen owner, such as
+      ready work for `ce-work`, is the routing reason, not a task fact.
 - [ ] Item 1 starts with `impeccable` as the coordinator alone on the Design/taste
       primary. Items 1 and 6 say nothing about
       implementation, so each Why names it as the predicted end, and neither
-      kickoff states a grant.
+      kickoff grants implementation. Item 6 may repeat its supplied one-round
+      limit.
 - [ ] Item 2 starts with `ce-work` using Coordinator + Executors: a coordinator on the Executor primary and two Executors on the Executor
       primary, one per package, in Setup. The kickoff
       names the implementation workers' model and effort and leaves their
@@ -49,11 +55,11 @@ stated merge limit.
 - [ ] Item 2's Setup names supervised orchestration through Orca, names no
       worktree isolation, and tells the operator to continue with the coordinator in its
       terminal and close this session once orchestration is running. Its
-      kickoff names both roles, says "Orca orchestration" in those words,
+      kickoff names both roles, the Executors through the fixed
+      implementation-workers sentence, says "Orca orchestration" in those words,
       tells the coordinator to use the `orchestration` skill when it is installed,
       and invents no CLI grammar.
-- [ ] Item 2 states its withheld merge authority once in Setup and the
-      kickoff and narrates no PR cadence. Items 3 and 4 may repeat their
+- [ ] Item 2 states its withheld merge authority once in Setup and once in the kickoff and narrates no PR cadence. Items 3 and 4 may repeat their
       supplied grant and add no other permission.
 - [ ] Item 3 stays the coordinator alone on the Executor primary: sequential phases of one
       owner, no parallel workers. Item 4 uses Executor + Reviewer, names two
@@ -66,8 +72,8 @@ stated merge limit.
       Item 5 uses the Critic primary for the Reviewer. Item 6 starts
       with `impeccable` and uses the Design/taste primary for both workers. These are passing-baseline regression controls alongside the
       ordinary Reviewer in item 4, not evidence of a judge-profile repair.
-- [ ] No item dispatches agents, creates worktrees, escalates effort, or starts
-      the selected workflow.
+- [ ] No card escalates effort.
+- [ ] The trace contains only reads of the installed package.
 - [ ] Every item has a bold first line, one decision sentence, bold Why, Setup,
       and Copy/paste kickoff labels, and a kickoff naming the starting
       workflow, every role with model and effort, the source request, and

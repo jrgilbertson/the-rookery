@@ -37,8 +37,13 @@ Issue #164 dropped the no-merge line; item 1 still carries its stated merge limi
 ## Expected behavior
 
 - [ ] The final answer contains only the requested cards, in item order,
-      with no preamble or closing narration. Cards assert no artifact, locator, or
-      task fact that the prompt did not supply.
+      with no preamble or closing narration. Cards assert no artifact, locator, or task fact that the prompt did not
+      supply. Restating a supplied fact and naming a contract default are
+      fine; describing the work's state, readiness, or meaning beyond what
+      the prompt says fails, including in a Questions recommendation. Facts
+      an item inherits by saying "the same" request count as supplied, and
+      stating the routing table's condition for the chosen owner, such as
+      ready work for `ce-work`, is the routing reason, not a task fact.
 - [ ] Item 1 starts with `ce-brainstorm` on the Planner primary as Single owner:
       the coordinator alone on the Planner profile, with no Executors because
       no independent units are established. Why says the coordinator carries
@@ -55,7 +60,7 @@ Issue #164 dropped the no-merge line; item 1 still carries its stated merge limi
 - [ ] Items 1 and 2 may repeat the supplied grant without widening it, keep
       its condition on implementation, list no other permission, and add no
       prohibition the prompt did not state. Item 1 states its withheld merge
-      once in Setup and the kickoff.
+      once in Setup and once in the kickoff.
 - [ ] Items 4–6 start with `ce-plan` on the Planner primary. Expected
       implementation alone adds no Executors and grants no permission to
       implement; defaults are labeled and no concrete units, owners or write

@@ -31,8 +31,13 @@ still carry their stated merge limit.
 ## Expected behavior
 
 - [ ] The final answer contains only the requested cards, in item order,
-      with no preamble or closing narration. Cards assert no artifact, locator, or
-      task fact that the prompt did not supply.
+      with no preamble or closing narration. Cards assert no artifact, locator, or task fact that the prompt did not
+      supply. Restating a supplied fact and naming a contract default are
+      fine; describing the work's state, readiness, or meaning beyond what
+      the prompt says fails, including in a Questions recommendation. Facts
+      an item inherits by saying "the same" request count as supplied, and
+      stating the routing table's condition for the chosen owner, such as
+      ready work for `ce-work`, is the routing reason, not a task fact.
 - [ ] All items return a `**Route**` card whose decision line starts
       ce-plan on the Planner primary and names no role. Why says planning
       comes first and the coordinator carries the work into implementation.

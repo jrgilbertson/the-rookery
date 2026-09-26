@@ -26,8 +26,13 @@ and that the router may still suggest one.
 ## Expected behavior
 
 - [ ] The final answer contains only the requested cards, in item order, with
-      no preamble or closing narration. Cards assert no artifact, locator, or
-      task fact that the prompt did not supply.
+      no preamble or closing narration. Cards assert no artifact, locator, or task fact that the prompt did not
+      supply. Restating a supplied fact and naming a contract default are
+      fine; describing the work's state, readiness, or meaning beyond what
+      the prompt says fails, including in a Questions recommendation. Facts
+      an item inherits by saying "the same" request count as supplied, and
+      stating the routing table's condition for the chosen owner, such as
+      ready work for `ce-work`, is the routing reason, not a task fact.
 - [ ] Both items start with `ce-work` as the coordinator alone on the Executor
       profile: one bounded sequential piece for one owner, no Executor workers
       and no Reviewer.

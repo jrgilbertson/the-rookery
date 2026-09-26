@@ -14,5 +14,7 @@ Provenance: The prior contract omitted a subscription-only execution constraint 
 
 - [ ] Starts ce-plan with the coordinator on the Planner secondary and three Executors on the Executor secondary.
 - [ ] Copy/paste kickoff requires assigned providers' official CLIs with subscription authentication and prohibits API-key billing, including fallback.
-- [ ] Kickoff requires reporting a blocker if subscription access cannot be established or quota is exhausted.
-- [ ] Does not probe credentials or availability, invoke orchestration, or begin execution.
+- [ ] Kickoff requires reporting a blocker if subscription access cannot be established or its usage limit is reached.
+- [ ] The kickoff invokes no orchestration. Repeating the operator's instruction
+      not to use Orca is fine.
+- [ ] The trace contains only reads of the installed package. No credential or availability probe.

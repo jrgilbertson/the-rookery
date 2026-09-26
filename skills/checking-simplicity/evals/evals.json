@@ -179,11 +179,11 @@
         "Opens with a recommendation to simplify and states the smallest safe requirements set before its supporting reasons",
         "Names the smallest safe requirements set as one authorized archive action that hides one completed task while preserving stored data and keyboard access",
         "Removes or defers bulk archive, retention and restore windows, the admin export, and the cross-device conflict policy as unrequested scope",
-        "Names one observable acceptance test for each of: the authorization rule, keyboard access, and preserved stored task data",
+        "Names an observable acceptance check for each of: the authorization rule, keyboard access, preserved stored task data, and the task leaving the active list; one test may cover more than one of these",
         "Does not propose files, APIs, dependencies, data models, or architecture, does not edit files, and does not approve implementation or shipping",
         "Does not print a binary verdict or status code such as PASS or CHANGES_NEEDED, a multi-sentence replay of the subject, a reviewer label or roster, a block of review metadata such as reviewer, subject binding, or status fields, or a statement that no user decision is needed. A one-line current-shape summary, or a dispatcher's one-line wrapper around the unchanged readout, is not a replay"
       ],
-      "provenance": "Regression control for a scope-only check on a completed requirements handoff. Ported from tests/checking-simplicity/cases/requirements-scope-before-technical-planning.md (last held at 46ead95). At f2316e0 the prior version omitted acceptance tests for the protected constraints (5/6), and at b0eeb4f the shipped text omitted the active-list test until the one-test-per-protected-behavior rule. Assertions calibrated after the 2026-09-25 draft run at 46ead95. A4 recalibrated after the 2026-09-26 round: leaving the active list is the goal, not a protected behavior, and the skill requires one test for each protected behavior.",
+      "provenance": "Regression control for a scope-only check on a completed requirements handoff. Ported from tests/checking-simplicity/cases/requirements-scope-before-technical-planning.md (last held at 46ead95). At f2316e0 the prior version omitted acceptance tests for the protected constraints (5/6), and at b0eeb4f the shipped text omitted the active-list test until the one-test-per-protected-behavior rule. Assertions calibrated after the 2026-09-25 draft run at 46ead95. A4 recalibrated after the 2026-09-26 round to let one test cover several protected behaviors.",
       "regression_control": true
     },
     {
@@ -216,13 +216,13 @@
       "assertions": [
         "Tool observations show REQUIREMENTS.md and the source files in evals/files/frame-repo/ were read before the readout",
         "Does not keep the integration registry, the event bus, and the ORDER_INTEGRATIONS setting as settled requirements because REQUIREMENTS.md lists them",
-        "Asks whether the registry, event bus, and integration-setting requirements in REQUIREMENTS.md are still required, with exactly four options and one marked recommended",
-        "The recommended option drops those requirements in favor of the stated narrow goal",
+        "Asks whether the registry, event bus, and integration-setting requirements in REQUIREMENTS.md are still required; each such question offers exactly four options with one marked recommended",
+        "The recommended options, taken together, drop those requirements in favor of the stated narrow goal",
         "Names the smaller shape as the order-completion handler calling the existing append_row directly, presented as conditional on the answer rather than settled",
         "Names an observable test that one completed order appends exactly one ledger row with its id, total, and completion time",
         "Does not edit any file"
       ],
-      "provenance": "Targets the rule that a requirement found only inside the subject is a proposal to confirm, not a fixed constraint. The 2026-09-25 independent audit at 46ead95 found SKILL.md contradicting itself on where the decision frame comes from. Relabeled targeted after the 2026-09-26 round: the prior version asked no question on Grok and Codex, so it cannot serve as a control.",
+      "provenance": "Targets the rule that a requirement found only inside the subject is a proposal to confirm, not a fixed constraint. The 2026-09-25 independent audit at 46ead95 found SKILL.md contradicting itself on where the decision frame comes from. Relabeled targeted after the 2026-09-26 round: the prior version asked no question on Grok and Codex, so it cannot serve as a control. A3 and A4 allow one question per requirement, matching eval 3.",
       "regression_control": false
     }
   ]

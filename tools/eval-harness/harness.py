@@ -111,8 +111,13 @@ def status_of(rd: Path) -> str:
     return rjson(rd / "status.json")["status"] if (rd / "status.json").exists() else "absent"
 
 def tree_hash(root: Path) -> str:
-    lines = [f"{p.relative_to(root).as_posix()}\0{'x' if os.access(p, os.X_OK) else '-'}\0"
-             f"{sha256_bytes(p.read_bytes())}\n" for p in sorted(root.rglob("*")) if p.is_file()]
+    lines = []
+    for path in [root, *sorted(root.rglob('*'))]:
+        metadata = path.stat()
+        kind = 'directory' if path.is_dir() else 'file'
+        content = sha256_bytes(path.read_bytes()) if kind == 'file' else ''
+        lines.append(f"{path.relative_to(root).as_posix()}\0{kind}\0"
+                     f"{stat_module.S_IMODE(metadata.st_mode):o}\0{metadata.st_mtime_ns}\0{content}\n")
     return "sha256:" + sha256_bytes("".join(lines).encode())
 
 def variants(path: str) -> set[str]:

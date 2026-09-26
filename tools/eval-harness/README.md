@@ -40,6 +40,9 @@ again retries only ungraded valid executions in a new attempt directory; previou
 grader attempts remain. Successful grades are retained. Config, eval content,
 fixture file modes and modification times, runner source, and package identities
 are frozen within a round. Actual CLI versions are recorded. Prefer immutable commit SHAs.
+Package identity covers file contents and the modes and modification times of
+files and directories, including the package root and empty directories, as
+preserved when the package is staged.
 
 ## Commands
 

@@ -165,6 +165,53 @@ class HarnessTests(unittest.TestCase):
         self.assertTrue(report['metadata']['identity_verified'])
         self.assertEqual(report['runs'][0]['assertion_results'][0]['text'], 'Does the thing')
 
+    def test_package_file_metadata_changes_invalidate_report_identity(self):
+        self.execute()
+        self.assertTrue(h.grade_one('executor', self.ev))
+        package = h.iteration_dir() / 'packages/with_skill/demo'
+        skill = package / 'SKILL.md'
+        original = skill.stat()
+        before = h.tree_hash(package)
+        for change in ('mtime', 'nonexecuting_mode'):
+            with self.subTest(change=change):
+                if change == 'mtime':
+                    os.utime(skill, ns=(original.st_atime_ns, original.st_mtime_ns + 1_000_000_000))
+                else:
+                    skill.chmod((original.st_mode & 0o777) ^ 0o040)
+                self.assertNotEqual(h.tree_hash(package), before)
+                path = h.report(['executor'])[0]
+                self.assertEqual(path.parent.name, 'incomplete')
+                self.assertFalse(h.rjson(path)['metadata']['identity_verified'])
+                skill.chmod(original.st_mode & 0o777)
+                os.utime(skill, ns=(original.st_atime_ns, original.st_mtime_ns))
+                self.assertEqual(h.tree_hash(package), before)
+
+    def test_package_staging_preserves_file_and_directory_identity(self):
+        package = h.iteration_dir() / 'packages/with_skill/demo'
+        empty = package / 'empty'
+        empty.mkdir()
+        baseline = h.tree_hash(package)
+        ws = h.stage(self.ev, 'with_skill', h.ADAPTERS['codex'])
+        try:
+            self.assertEqual(h.tree_hash(ws['install']), baseline)
+            self.assertTrue((ws['install'] / 'empty').is_dir())
+        finally:
+            h.drop_home(ws['home'])
+            h.shutil.rmtree(ws['parent'])
+        for directory in (empty, package):
+            original = directory.stat()
+            with self.subTest(directory=directory, change='mode'):
+                directory.chmod((original.st_mode & 0o777) ^ 0o040)
+                self.assertNotEqual(h.tree_hash(package), baseline)
+                directory.chmod(original.st_mode & 0o777)
+            with self.subTest(directory=directory, change='mtime'):
+                os.utime(directory, ns=(original.st_atime_ns, original.st_mtime_ns + 1_000_000_000))
+                self.assertNotEqual(h.tree_hash(package), baseline)
+                os.utime(directory, ns=(original.st_atime_ns, original.st_mtime_ns))
+            self.assertEqual(h.tree_hash(package), baseline)
+        empty.rmdir()
+        self.assertNotEqual(h.tree_hash(package), baseline)
+
     def test_assertion_free_grade_is_saved_without_a_score(self):
         self.ev['assertions'] = []
         h.wjson(Path(h.CFG['repo_path']) / 'skills/demo/evals/evals.json', {'evals': [self.ev]})

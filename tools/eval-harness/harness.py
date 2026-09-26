@@ -205,7 +205,7 @@ def path_inputs(value, cwd: Path, home: Path) -> list[tuple[str, Path, bool]]:
         for key, item in value.items():
             if key.lower() in {'cwd', 'workdir'}:
                 rows += [(s, cwd, False) for s in strings(item)]
-            elif key.lower() in {'command', 'cmd', 'path', 'file_path', 'filepath', 'target_file', 'directory', 'glob'}:
+            elif key.lower() in {'command', 'cmd', 'path', 'file_path', 'filepath', 'target_file', 'target_directory', 'directory', 'glob'}:
                 rows += [(s, base, key.lower() in {'command', 'cmd'}) for s in strings(item)]
             elif isinstance(item, (dict, list)):
                 rows += path_inputs(item, base, home)
@@ -1298,6 +1298,8 @@ def report(targets=None):
     global CFG
     live = CFG
     archive = iteration_dir()
+    if (archive / '_ledger.jsonl').exists():
+        raise Halt('Legacy ledger round: use its frozen archived runner, not this runner')
     frozen_runner = archive / 'runner/harness.py'
     if frozen_runner.exists() and frozen_runner.read_bytes() != (H / 'harness.py').read_bytes():
         raise Halt('This round uses an earlier runner; report with its frozen archived runner')

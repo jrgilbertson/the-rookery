@@ -226,6 +226,16 @@ class HarnessTests(unittest.TestCase):
         self.assertFalse((h.iteration_dir() / 'runner').exists())
         self.assertEqual(self.process_calls, [])
 
+    def test_legacy_report_refuses_without_writing_evidence(self):
+        self.execute()
+        legacy = h.iteration_dir() / '_ledger.jsonl'
+        legacy.write_text('{"legacy":true}\n')
+        before = {str(p): p.read_bytes() for p in h.iteration_dir().rglob('*') if p.is_file()}
+        with self.assertRaisesRegex(h.Halt, 'frozen archived runner'):
+            h.report(['executor'])
+        after = {str(p): p.read_bytes() for p in h.iteration_dir().rglob('*') if p.is_file()}
+        self.assertEqual(before, after)
+
     def test_old_runner_source_requires_archived_reporter(self):
         self.execute()
         source = h.iteration_dir() / 'runner/harness.py'
@@ -1224,12 +1234,15 @@ class HarnessTests(unittest.TestCase):
         identity = h.identity(h.parse(adapter, transcript, None), ws, adapter, argv)
         self.assertTrue(identity['loaded_paths'])
         self.assertFalse(identity['foreign_access'])
-        rows.append({'type': 'tool_call', 'toolCallId': '2', 'toolName': 'read_file',
-                     'rawInput': {'target_file': '/etc/hosts'}})
-        transcript.write_text(''.join(json.dumps(row) + '\n' for row in rows))
-        identity = h.identity(h.parse(adapter, transcript, None), ws, adapter, argv)
-        self.assertTrue(identity['loaded_paths'])
-        self.assertTrue(identity['foreign_access'])
+        for tool, key in [('read_file', 'target_file'), ('list_dir', 'target_directory')]:
+            for path, outside in [(str(ws['project']), False), ('/etc', True)]:
+                with self.subTest(tool=tool, path=path):
+                    call = {'type': 'tool_call', 'toolCallId': '2', 'toolName': tool,
+                            'rawInput': {key: path}}
+                    transcript.write_text(''.join(json.dumps(row) + '\n' for row in [*rows, call]))
+                    identity = h.identity(h.parse(adapter, transcript, None), ws, adapter, argv)
+                    self.assertTrue(identity['loaded_paths'])
+                    self.assertEqual(bool(identity['foreign_access']), outside)
 
     def test_grok_failed_or_missing_skill_read_result_is_not_loaded(self):
         ws = {'parent': self.root / 'scratch/ws', 'project': self.root / 'scratch/ws/project',

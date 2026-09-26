@@ -488,6 +488,7 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
     staged = variants(str(ws["parent"]))
     roots = sorted(variants(CFG["workspace_root"].rstrip("/")), key=len, reverse=True)
     under_root = re.compile("(?:" + "|".join(map(re.escape, roots)) + r")(?=/|[\s'\"`;|&)]|$)[^\s'\"`;|&)]*")
+    parent = Path(ws["parent"])
     project = Path(ws["project"])
     for c in tr["tool_calls"]:  # inputs only; a grep pattern is text searched for, not a place
         inp = {k: v for k, v in c["input"].items() if k != "pattern"} if c["name"] == adapter.GREP else c["input"]
@@ -513,7 +514,7 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
             # not an interpreter for variables, substitutions, or persistent shell state.
             while command and len(words) >= 3 and words[0] == 'cd' and words[2] == '&&':
                 cwd = Path(os.path.normpath(cwd / words[1]))
-                if not cwd.is_relative_to(project):
+                if not cwd.is_relative_to(parent):
                     foreign.append(f"relative workspace escape: {words[1]}")
                 words = words[3:]
             for index, word in enumerate(words):
@@ -528,7 +529,7 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
                 if '..' not in Path(path).parts:
                     continue
                 resolved = Path(os.path.normpath(os.path.join(cwd, path)))
-                if not resolved.is_relative_to(project):
+                if not resolved.is_relative_to(parent):
                     foreign.append(f"relative workspace escape: {path}")
     return {"loaded_paths": sorted(set(loaded)), "foreign_access": sorted(set(foreign)), "nested_agent_cli": nested,
             "init_surface_ok": init_ok(adapter, tr["init"], argv)}

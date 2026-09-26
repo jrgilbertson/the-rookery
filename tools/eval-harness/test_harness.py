@@ -684,13 +684,27 @@ class HarnessTests(unittest.TestCase):
         identity = h.rjson(h.run_dir('executor', self.ev, 'with_skill', 1) / 'status.json')['identity']
         self.assertTrue(identity['foreign_access'])
 
-    def test_relative_parent_scan_is_foreign_access(self):
+    def test_relative_installed_skill_access_keeps_execution(self):
+        original = self.fake_process
+        def with_relative_skill_read(argv, **kwargs):
+            result = original(argv, **kwargs)
+            kwargs['stdout'].write((json.dumps({'type': 'item.completed', 'item': {
+                'type': 'command_execution', 'command': 'cat ../skills/demo/SKILL.md'}}) + '\n').encode())
+            return result
+        h.subprocess.Popen.side_effect = with_relative_skill_read
+        self.assertEqual(self.execute(), 'ok')
+        identity = h.rjson(h.run_dir('executor', self.ev, 'with_skill', 1) / 'status.json')['identity']
+        self.assertFalse(identity['foreign_access'])
+
+    def test_relative_parent_scan_stays_within_staged_workspace(self):
         ws = {'parent': self.root / 'scratch/ws', 'project': self.root / 'scratch/ws/project',
               'install': self.root / 'scratch/ws/skills/demo', 'home': self.root / 'scratch/home'}
         tr = h.new_trace()
         tr['tool_calls'] = [{'name': 'command_execution', 'input': {'command': 'find .. -name SKILL.md'}, 'output': ''}]
         adapter = h.ADAPTERS['codex']
         argv = adapter.exec_argv(h.CFG['targets']['executor'], ws, 'prompt', self.root / 'final', 1, [])
+        self.assertFalse(h.identity(tr, ws, adapter, argv)['foreign_access'])
+        tr['tool_calls'][0]['input'] = {'command': 'find ../.. -name SKILL.md'}
         self.assertTrue(h.identity(tr, ws, adapter, argv)['foreign_access'])
         tr['tool_calls'][0]['input'] = {'command': 'find --directory=../../ws-other -name SKILL.md'}
         self.assertTrue(h.identity(tr, ws, adapter, argv)['foreign_access'])
@@ -705,13 +719,15 @@ class HarnessTests(unittest.TestCase):
         for inp in ({'command': 'cat ../fixture.txt', 'cwd': str(ws['project'] / 'nested')},
                     {'cmd': 'cat ../fixture.txt', 'workdir': 'nested'},
                     {'command': 'cd nested && cat ../fixture.txt'},
-                    {'file_path': '../fixture.txt', 'cwd': 'nested'}):
+                    {'file_path': '../fixture.txt', 'cwd': 'nested'},
+                    {'command': 'cat ../skills/demo/SKILL.md'},
+                    {'command': 'cd .. && cat skills/demo/SKILL.md'}):
             with self.subTest(inp=inp):
                 tr = h.new_trace()
                 tr['tool_calls'] = [{'name': 'command_execution', 'input': inp, 'output': ''}]
                 self.assertFalse(h.identity(tr, ws, adapter, argv)['foreign_access'])
         for inp in ({'cmd': 'cat ../../../ws-other/file', 'workdir': 'nested'},
-                    {'command': 'cd .. && cat skills/demo/SKILL.md'},
+                    {'command': 'cd .. && cat ../ws-other/file'},
                     {'command': 'cat file', 'cwd': '../../ws-other'}):
             with self.subTest(inp=inp):
                 tr = h.new_trace()

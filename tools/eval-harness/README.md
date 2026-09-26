@@ -119,6 +119,9 @@ preserved call evidence and update both that call's `cost.json` and correspondin
 continuing. `report` remains available with unknown costs. No automatic cost
 fallback or resolution command is provided. The ledger and its linked ccusage
 report must agree before another call can begin.
+These checks trust operator-recovered per-call evidence. They do not authenticate
+rewritten cost and ledger records against the original paid attempt; inspect the
+preserved call evidence before settling a cost.
 
 ## Zero-inference verification
 

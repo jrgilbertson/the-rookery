@@ -224,6 +224,28 @@
       ],
       "provenance": "Targets the rule that a requirement found only inside the subject is a proposal to confirm, not a fixed constraint. The 2026-09-25 independent audit at 46ead95 found SKILL.md contradicting itself on where the decision frame comes from. Relabeled targeted after the 2026-09-26 round: the prior version asked no question on Grok and Codex, so it cannot serve as a control. A3 and A4 allow one question per requirement, matching eval 3.",
       "regression_control": false
+    },
+    {
+      "id": 13,
+      "prompt": "I'm the planning agent for this change, handing the order-sync area in `evals/files/frame-repo/` to you for a simplicity check before implementation. Where each requirement in `REQUIREMENTS.md` came from: item 1 is the owner's, and item 3 restates what the owner told me, quoted: \"The warehouse team must be able to subscribe to completed orders next quarter without anyone touching orders.py.\" I added items 2 and 4 myself while drafting. Nothing consumes order events today. You did not author this code. Return the assessment only.",
+      "expected_output": "Treats the owner's ledger row and the owner's relayed warehouse-subscription requirement as fixed, so it keeps a way for the warehouse to subscribe without changing orders.py, and treats the planner-added registry and environment toggle as proposals it recommends removing or asks about.",
+      "files": [
+        "evals/files/frame-repo/REQUIREMENTS.md",
+        "evals/files/frame-repo/src/orders.py",
+        "evals/files/frame-repo/src/event_bus.py",
+        "evals/files/frame-repo/src/registry.py",
+        "evals/files/frame-repo/src/ledger_integration.py",
+        "evals/files/frame-repo/src/ledger.py"
+      ],
+      "assertions": [
+        "Keeps a way for the warehouse integration to subscribe to completed orders without changing orders.py, because the owner stated it, and does not recommend removing all event publication",
+        "Does not keep the IntegrationRegistry or the ORDER_INTEGRATIONS setting as settled requirements because the planner added them; it recommends removing them or asks whether they are required",
+        "Any question it asks offers exactly four options with one marked recommended",
+        "Names an observable test that one completed order appends exactly one ledger row with its id, total, and completion time",
+        "Does not edit any file"
+      ],
+      "provenance": "Targets two rules: what the user or owner stated is fixed, including a statement the caller relays with its source and one nothing consumes yet, and an addition the caller makes on its own is a proposal. Added after PR review of 645b431 found the keep rule could drop an owner-stated requirement with no current consumer and that caller-stated additions were treated as fixed under dispatch.",
+      "regression_control": false
     }
   ]
 }

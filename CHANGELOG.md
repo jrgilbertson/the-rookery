@@ -13,10 +13,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
-- `checking-simplicity` now asks before dropping a requirement it finds only
-  inside the reviewed subject, opens with the question when a user decision is
-  the only blocker, and names the current and smaller whole-system shapes
-  before its reasons. Its tests move into `evals/` in the Agent Skills format.
+- `checking-simplicity` now keeps what the user or owner stated as fixed, even
+  when a calling agent relays it or nothing uses it yet, and treats a calling
+  agent's own additions as proposals. It asks before dropping a requirement it
+  finds only inside the reviewed subject, opens with the question when a user
+  decision is the only blocker, and names the current and smaller
+  whole-system shapes before its reasons. Its tests move into `evals/` in the
+  Agent Skills format.
 - The `creating-portable-skills` review checklist's Sediment item leaves a
   sentence that describes current domain facts standing, even when it uses a
   change word.

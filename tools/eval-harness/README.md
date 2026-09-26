@@ -83,8 +83,8 @@ must remain private.
 `isolation-check` is static and makes no inference calls. Runtime traces are
 checked for forbidden tool surfaces, missing reads of the installed skill,
 foreign packages/user skills, and nested agent CLIs. This retains the original
-trace-based isolation approach; it is not an OS security boundary. CLI flags and
-session formats still need integration validation against the installed versions.
+trace-based isolation approach; it is not an OS security boundary. Changes to CLI flags or
+session formats require another integration check against the installed versions.
 
 ## Cost and stopping
 

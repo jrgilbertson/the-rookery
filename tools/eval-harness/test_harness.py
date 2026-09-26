@@ -119,6 +119,24 @@ class HarnessTests(unittest.TestCase):
     def execute(self, k=1):
         return h.execute_one('executor', self.ev, 'with_skill', k, h.load_evals()[1], self.packages)
 
+    def test_interrupted_json_replace_preserves_existing_artifact(self):
+        path = self.root / 'private' / 'artifact.json'
+        h.wjson(path, {'version': 1})
+        original = path.read_bytes()
+        def interrupted_dump(data, stream, indent=None):
+            stream.write('{"partial":')
+            raise KeyboardInterrupt('interrupted write')
+        with patch.object(h.json, 'dump', side_effect=interrupted_dump):
+            with self.assertRaisesRegex(KeyboardInterrupt, 'interrupted write'):
+                h.wjson(path, {'version': 2})
+        self.assertEqual(path.read_bytes(), original)
+        with patch.object(h.os, 'replace', side_effect=KeyboardInterrupt('interrupted write')):
+            with self.assertRaisesRegex(KeyboardInterrupt, 'interrupted write'):
+                h.wjson(path, {'version': 2})
+        self.assertEqual(path.read_bytes(), original)
+        self.assertEqual(h.rjson(path), {'version': 1})
+        self.assertEqual(list(path.parent.glob(f'.{path.name}.*.tmp')), [])
+
     def test_ledger_and_cost_record_must_agree_before_next_call(self):
         self.costs = [None]
         with self.assertRaises(h.Budget):
@@ -588,6 +606,54 @@ class HarnessTests(unittest.TestCase):
                 self.assertTrue(any('grading' in note.lower() for note in report['notes']))
         grade.write_text(original)
         self.assertTrue(h.grade_one('executor', self.ev))
+
+    def test_malformed_run_status_is_unavailable_without_relaunch(self):
+        self.execute()
+        self.assertTrue(h.grade_one('executor', self.ev))
+        rd = h.run_dir('executor', self.ev, 'with_skill', 1)
+        status = rd / 'status.json'
+        original = status.read_text()
+        calls = len(self.process_calls)
+        for broken in ('{"status":', '[]\n', '{"status":"ready"}\n'):
+            with self.subTest(broken=broken):
+                status.write_text(broken)
+                self.assertEqual(self.execute(), 'unavailable')
+                self.assertFalse(h.grade_one('executor', self.ev))
+                path = h.report(['executor'])[0]
+                report = h.rjson(path)
+                self.assertEqual(path.parent.name, 'incomplete')
+                self.assertEqual(report['runs'][0]['status'], 'unavailable')
+                self.assertTrue(report['runs'][0]['needs_operator_review'])
+                self.assertTrue(any('status.json' in note for note in report['notes']))
+                self.assertEqual(report['metadata']['cost_usd'], .5)
+                self.assertEqual(status.read_text(), broken)
+                self.assertEqual(len(self.process_calls), calls)
+        status.unlink()
+        self.assertEqual(self.execute(), 'unavailable')
+        self.assertEqual(len(self.process_calls), calls)
+        status.write_text(original)
+
+    def test_malformed_per_run_evidence_yields_incomplete_report(self):
+        self.execute()
+        self.assertTrue(h.grade_one('executor', self.ev))
+        rd = h.run_dir('executor', self.ev, 'with_skill', 1)
+        cases = [('timing.json', '{"duration_ms":'), ('timing.json', '{"duration_ms":"bad"}'),
+                 ('metrics.json', '[]'), ('build.json', '{"model":')]
+        for name, broken in cases:
+            with self.subTest(name=name, broken=broken):
+                path = rd / name
+                original = path.read_text()
+                path.write_text(broken)
+                try:
+                    report_path = h.report(['executor'])[0]
+                    report = h.rjson(report_path)
+                    self.assertEqual(report_path.parent.name, 'incomplete')
+                    self.assertTrue(report['runs'][0]['needs_operator_review'])
+                    self.assertTrue(any(name in note for note in report['notes']))
+                    self.assertEqual(report['metadata']['cost_usd'], .5)
+                    self.assertEqual(path.read_text(), broken)
+                finally:
+                    path.write_text(original)
 
     def test_unknown_grading_cost_stops_next_inference(self):
         self.execute()

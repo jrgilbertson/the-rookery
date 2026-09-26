@@ -57,7 +57,19 @@ def now() -> str:
 
 def wjson(path: Path, data) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2) + "\n")
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile('w', encoding='utf-8', dir=path.parent,
+                                         prefix=f'.{path.name}.', suffix='.tmp', delete=False) as stream:
+            temporary = Path(stream.name)
+            json.dump(data, stream, indent=2)
+            stream.write('\n')
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, path)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
 
 def rjson(path: Path):
     return json.loads(path.read_text())
@@ -108,7 +120,16 @@ def run_dir(target: str, ev: dict, arm: str, k: int, it=None) -> Path:
     return iteration_dir(it) / target / eval_dir_name(ev) / arm / f"run-{k}"
 
 def status_of(rd: Path) -> str:
-    return rjson(rd / "status.json")["status"] if (rd / "status.json").exists() else "absent"
+    if not rd.exists():
+        return 'absent'
+    try:
+        record = rjson(rd / 'status.json')
+    except (OSError, UnicodeError, ValueError):
+        return 'unavailable'
+    if not isinstance(record, dict) or record.get('status') not in (
+            'ok', 'discarded', 'error', 'timeout', 'login_or_quota'):
+        return 'unavailable'
+    return record['status']
 
 def tree_hash(root: Path) -> str:
     lines = []
@@ -708,6 +729,17 @@ def checked_grading(rd: Path, ev: dict, grader_model: str) -> tuple[dict | None,
             (type(summary['pass_rate']) is not float if results else summary['pass_rate'] is not None)):
         return None, 'Invalid grading.json; recover it from the preserved grader attempt evidence'
     return grade, None
+
+def report_run_object(path: Path) -> tuple[dict | None, str | None]:
+    if not path.exists():
+        return None, None
+    try:
+        record = rjson(path)
+    except (OSError, UnicodeError, ValueError):
+        return None, f'{path.name} is unreadable; recover the saved run evidence'
+    if not isinstance(record, dict):
+        return None, f'{path.name} is invalid; recover the saved run evidence'
+    return record, None
 
 def stat(xs: list[float]) -> dict:
     return {"mean": round(statistics.mean(xs), 4) if xs else 0.0,
@@ -1393,15 +1425,25 @@ def _report(targets, frozen_evals, identity_issues):
             for arm in CFG['run_arms']:
                 for k in range(1, CFG['runs'] + 1):
                     rd = run_dir(target, ev, arm, k)
+                    status = status_of(rd)
                     row = {'eval_id': ev['id'], 'eval_name': eval_name(ev), 'configuration': arm,
-                           'run_number': k, 'status': status_of(rd), 'archive_ref': str(rd.relative_to(CFG['archive_root']))}
+                           'run_number': k, 'status': status, 'archive_ref': str(rd.relative_to(CFG['archive_root']))}
+                    if status == 'unavailable':
+                        target_issues.append(f'{arm}/run-{k}: status.json is unavailable; recover the saved run evidence')
                     grade, grade_issue = checked_grading(
                         rd, ev, CFG['targets'][CFG['targets'][target]['grader']]['model'])
                     if grade_issue:
                         target_issues.append(f'{arm}/run-{k}: {grade_issue}')
-                    timing = rjson(rd / 'timing.json') if (rd / 'timing.json').exists() else {}
-                    metrics = rjson(rd / 'metrics.json') if (rd / 'metrics.json').exists() else {}
-                    build = rjson(rd / 'build.json') if (rd / 'build.json').exists() else None
+                    timing, timing_issue = report_run_object(rd / 'timing.json')
+                    metrics, metrics_issue = report_run_object(rd / 'metrics.json')
+                    build, build_issue = report_run_object(rd / 'build.json')
+                    if timing is not None and (type(timing.get('duration_ms')) not in (int, float) or
+                                               not math.isfinite(timing['duration_ms']) or timing['duration_ms'] < 0):
+                        timing, timing_issue = None, 'timing.json has invalid duration_ms; recover the saved run evidence'
+                    for issue in (timing_issue, metrics_issue, build_issue):
+                        if issue:
+                            target_issues.append(f'{arm}/run-{k}: {issue}')
+                    timing, metrics = timing or {}, metrics or {}
                     frozen_digest = iteration_dir() / 'evals.sha256'
                     if row['status'] == 'ok' and build is None:
                         target_issues.append(f'Run identity is missing for {arm}/run-{k}')
@@ -1419,7 +1461,7 @@ def _report(targets, frozen_evals, identity_issues):
                     if grade and [item.get('text') for item in grade.get('assertion_results', [])] != ev['assertions']:
                         target_issues.append(f'Graded assertions differ for {arm}/run-{k}')
                     row['result'] = {'pass_rate': grade['summary']['pass_rate'] if grade else None,
-                                     'time_seconds': timing.get('duration_ms', 0) / 1000,
+                                     'time_seconds': None if timing_issue else timing.get('duration_ms', 0) / 1000,
                                      'tokens': timing.get('total_tokens'), 'cost_usd': timing.get('cost_usd'),
                                      'tool_calls': metrics.get('total_tool_calls'), 'errors': metrics.get('errors_encountered')}
                     if grade:

@@ -79,6 +79,10 @@ looked" surface. GitHub Releases mirror its entries.
   creator, the official CLIs, accounting, and human review.
   `tools/eval-review/README.md` owns the viewer command and manifest.
 
+- `creating-portable-skills` inspects behavior before the prepared full
+  trigger query set when both are in scope and behavior is satisfactory.
+  Definitions, archive, inspection surface, and budget stay in that workflow.
+
 - Skill validation uses one affected regression check per declared Executor
   target, blind different-model grading, transcript-based failure attribution,
   and one independent review. A failure attributable to the change under test

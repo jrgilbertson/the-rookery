@@ -82,6 +82,15 @@ when the question is whether the skill helps.
    `scripts/check-evals.py` on the target skill directory. This completed
    template is temporary working material, not a maintained repository report.
 
+When the work also includes the full trigger query set, run and inspect the
+behavior check in this procedure first. Continue to the already-prepared
+queries in [assets/trigger-queries-template.md](trigger-queries-template.md)
+when that behavior is satisfactory under the operator's iteration judgment in
+[references/skills.md](../references/skills.md). Keep the same frozen
+definitions, run archive, inspection surface, and caller budget. A small
+native discovery or boundary smoke before these behavioral runs remains
+available.
+
 For description-only changes, use unforced activation checks in
 [assets/trigger-queries-template.md](trigger-queries-template.md), rather than
 forced-load behavior. Cosmetic changes may skip behavioral evaluation.

@@ -3,6 +3,9 @@
 [references/skills.md](../references/skills.md) owns the description rules,
 the `evals/eval_queries.json` format and seeding method, the run count, the
 activation checks, and the tuning split; this template owns the procedure.
+When behavior checks are also in scope, run and inspect them first under
+[assets/baseline-test-template.md](baseline-test-template.md) before the full
+query set below.
 
 ## Build the query set
 

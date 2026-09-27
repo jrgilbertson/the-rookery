@@ -169,8 +169,8 @@ bills. The harness has no hardcoded rates or account-wide usage deltas.
 A pending, missing, invalid, or unknown cost blocks further inference, including
 a restart. Do not substitute zero. The operator must recover pricing from the
 preserved call evidence and update that attempt's `cost.json` with the verified
-ccusage report, totals, `state: "settled"`, and resolution evidence before
-continuing. `report` remains available with unknown costs. No automatic cost
+ccusage report, totals, `state: "settled"`, and resolution evidence, clearing
+resolved `error`/`errors` fields before continuing. `report` remains available with unknown costs. No automatic cost
 fallback or resolution command is provided. These consistency checks trust
 operator-recovered per-call evidence; they do not authenticate rewritten records
 against the original paid attempt. Inspect preserved evidence before settling a cost.

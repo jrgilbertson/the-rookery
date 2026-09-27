@@ -55,6 +55,7 @@ class HarnessTests(unittest.TestCase):
         self.json_quota = False
         self.process = patch.object(h.subprocess, 'Popen', side_effect=self.fake_process)
         self.process.start()
+        self.real_estimate = h.usage.estimate
         self.pricing = patch.object(h.usage, 'estimate', side_effect=self.fake_estimate)
         self.pricing.start()
         self.which = patch.object(h.shutil, 'which', side_effect=lambda binary, **kw: '/fake/bin/' + binary)
@@ -108,8 +109,9 @@ class HarnessTests(unittest.TestCase):
         self.estimates.append((adapter, model, sessions))
         cost = self.costs.pop(0) if len(self.costs) > 1 else self.costs[0]
         record = {'cost_usd': cost, 'total_tokens': 12 if cost is not None else None,
-                  'source': 'ccusage', 'basis': 'api_equivalent_estimate',
-                  'errors': [] if cost is not None else ['unknown model']}
+                  'source': 'ccusage', 'basis': 'api_equivalent_estimate'}
+        if cost is None:
+            record['error'] = 'unknown model'
         if cost is not None:
             record['report'] = {'sessions': [{'sessionId': 'fake'}],
                                 'totals': {'costUSD': cost, 'totalTokens': 12}}
@@ -173,6 +175,24 @@ class HarnessTests(unittest.TestCase):
                 h.allowance()
             h.wjson(record, original)
 
+    def test_real_estimator_result_settles_execution_and_grade(self):
+        trace = self.root / 'pricing-trace'
+        trace.write_text('{"type":"turn.completed","usage":{"input_tokens":10,"output_tokens":2}}\n')
+        report = {'sessions': [{'sessionId': 'fake'}], 'totals': {'costUSD': .25, 'totalTokens': 12}}
+        responses = [subprocess.CompletedProcess([], 0, 'ccusage test', ''),
+                     subprocess.CompletedProcess([], 0, json.dumps(report), '')]
+        with patch.object(h.usage.subprocess, 'run', side_effect=responses):
+            cost = self.real_estimate('codex', trace, None, None, ['fake-ccusage'], self.root,
+                                      model='executor-model')
+        self.assertEqual(cost['cost_usd'], .25)
+        self.assertNotIn('errors', cost)
+        self.assertNotIn('error', cost)
+        with patch.object(h.usage, 'estimate', return_value=cost):
+            self.assertEqual(self.execute(), 'ok')
+            self.assertTrue(h.grade_one('executor', self.ev))
+        self.assertEqual(h.spent(), .5)
+        self.assertEqual(h.report(['executor'])[0].parent.name, 'benchmark')
+
     def test_recovered_attempt_cost_supplies_report_tokens_without_timing_copy(self):
         self.costs = [None]
         with self.assertRaises(h.Budget):
@@ -182,6 +202,7 @@ class HarnessTests(unittest.TestCase):
         record = rd / 'cost.json'
         pending = h.rjson(record)
         self.assertEqual(pending['state'], 'unknown')
+        pending.pop('error', None)
         h.wjson(record, {**pending, 'state': 'settled', 'basis': 'api_equivalent_estimate',
                          'cost_usd': .25, 'total_tokens': 12, 'errors': [],
                          'report': {'sessions': [{'sessionId': 'fake'}],
@@ -236,18 +257,22 @@ class HarnessTests(unittest.TestCase):
         after = {str(p): p.read_bytes() for p in h.iteration_dir().rglob('*') if p.is_file()}
         self.assertEqual(before, after)
 
-    def test_old_runner_source_requires_archived_reporter(self):
+    def test_old_or_missing_runner_source_requires_archived_reporter(self):
         self.execute()
         for name in ('harness.py', 'usage.py'):
-            with self.subTest(name=name):
-                source = h.iteration_dir() / 'runner' / name
-                original = source.read_bytes()
-                source.write_bytes(b'# earlier runner format\n')
-                try:
-                    with self.assertRaisesRegex(h.Halt, 'frozen archived runner'):
-                        h.report(['executor'])
-                finally:
-                    source.write_bytes(original)
+            for mutation in ('changed', 'missing'):
+                with self.subTest(name=name, mutation=mutation):
+                    source = h.iteration_dir() / 'runner' / name
+                    original = source.read_bytes()
+                    if mutation == 'changed':
+                        source.write_bytes(b'# earlier runner format\n')
+                    else:
+                        source.unlink()
+                    try:
+                        with self.assertRaisesRegex(h.Halt, 'frozen archived runner'):
+                            h.report(['executor'])
+                    finally:
+                        source.write_bytes(original)
 
     def test_changed_eval_report_uses_frozen_assertions_and_is_incomplete(self):
         self.execute()
@@ -537,17 +562,18 @@ class HarnessTests(unittest.TestCase):
         self.assertEqual(self.execute(), 'unavailable')
         self.assertEqual(process.waits, 3)
 
-    def test_models_must_be_nonempty_cli_strings(self):
+    def test_model_and_effort_must_be_nonempty_cli_strings(self):
         for target in ('executor', 'judge'):
-            original = h.CFG['targets'][target]['model']
-            for model in (123, None, True, [], {}, '', '   ', 'bad\0model'):
-                with self.subTest(target=target, model=model):
-                    h.CFG['targets'][target]['model'] = model
-                    with self.assertRaisesRegex(ValueError, 'model'):
-                        h.validate_config(self.config)
-                    self.assertEqual(self.process_calls, [])
-                    self.assertFalse(h.run_dir('executor', self.ev, 'with_skill', 1).exists())
-            h.CFG['targets'][target]['model'] = original
+            for field in ('model', 'effort'):
+                original = h.CFG['targets'][target][field]
+                for value in (123, None, True, [], {}, '', '   ', 'bad\0value'):
+                    with self.subTest(target=target, field=field, value=value):
+                        h.CFG['targets'][target][field] = value
+                        with self.assertRaisesRegex(ValueError, field):
+                            h.validate_config(self.config)
+                        self.assertEqual(self.process_calls, [])
+                        self.assertFalse(h.run_dir('executor', self.ev, 'with_skill', 1).exists())
+                h.CFG['targets'][target][field] = original
         h.validate_config(self.config)
 
     def test_iteration_requires_a_positive_integer(self):

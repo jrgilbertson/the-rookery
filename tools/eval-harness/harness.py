@@ -823,12 +823,13 @@ def validate_config(path, require_executor=True):
             continue
         if not re.fullmatch(r'[a-z0-9]+(?:[.-][a-z0-9]+)*', name) or target['adapter'] not in ADAPTERS:
             raise ValueError('Invalid target')
-        model = target.get('model')
-        if not isinstance(model, str) or not model.strip() or '\0' in model:
-            raise ValueError('Target model must be a nonempty CLI string')
+        target.setdefault('effort', 'high')
+        for field in ('model', 'effort'):
+            value = target.get(field)
+            if not isinstance(value, str) or not value.strip() or '\0' in value:
+                raise ValueError(f'Target {field} must be a nonempty CLI string')
         if 'jobs' in target:
             raise ValueError('Calls are sequential; remove jobs')
-        target.setdefault('effort', 'high')
         if 'grader' in target:
             grader = CFG['targets'][target['grader']]
             if grader['model'] == target['model']:
@@ -1097,7 +1098,7 @@ def invoke(target, kind, directory, cwd, home, make_argv, metadata):
     directory.mkdir(parents=True, exist_ok=False)
     record = {'kind': kind, 'target': target, 'provider': adapter.PROVIDER, 'model': target_config['model'],
               'state': 'pending', 'started': now(), 'source': 'ccusage', 'cost_usd': None,
-              'total_tokens': None, 'errors': ['Attempt pending settlement'], **metadata}
+              'total_tokens': None, **metadata}
     # A crash before settlement leaves an unknown attempt and blocks the next call.
     wjson(directory / 'cost.json', record)
     transcript.touch()
@@ -1310,7 +1311,7 @@ def report(targets=None):
         raise Halt('Legacy ledger round: use its frozen archived runner, not this runner')
     for name in ('harness.py', 'usage.py'):
         frozen_runner = archive / 'runner' / name
-        if frozen_runner.exists() and frozen_runner.read_bytes() != (H / name).read_bytes():
+        if not frozen_runner.is_file() or frozen_runner.read_bytes() != (H / name).read_bytes():
             raise Halt('This round uses an earlier runner; report with its frozen archived runner')
     saved = archive / 'round.json'
     definitions = archive / 'evals.json'

@@ -137,30 +137,37 @@ Walk through these categories one at a time, explaining the decisions they
 support and allowing each to be skipped or deferred. Existing users requesting
 a specific mapping operation go directly to [Manage mappings](#manage-mappings).
 
-| Category / `area` | Decision supported | Example roles and information needs |
+| Category / `area` | Decision supported | Starter roles and information needs |
 | --- | --- | --- |
-| Direction / `direction` | What matters and what should take priority? | `strategy`: values, goals, responsibilities, priorities, operating principles. |
-| Projects, actions, and possibilities / `commitments` | What outcomes, actions, and possibilities need review? | `projects`: outcomes, progress, milestones; `tasks`: next actions, waiting-for items, recurring obligations and explicitly deferred possibilities; `writing`: draft context beyond project/task records. |
-| Time and capacity / `time` | What fits, and when? | `calendar`: scheduled events, deadlines, travel; `capacity`: availability, workload limits, protected time. |
-| People and communication / `relationships` | Who needs attention, and what has been communicated? | `relationships`: contacts and relationship context; `mailbox`, `messages`, `meetings`: bounded exchanges and conversation records. |
-| Knowledge and reflection / `reflection` | What have I learned, and what should inform the next decision? | `learning`: durable insights, research, experiments and feedback; `journals`: observations; `decisions`: prior choices and rationale; `review_records`, `review_templates`: review continuity and prompts. |
-| Resources and operations / `resources` | What money, assets, or operating conditions need attention? | `finances`: budgets and obligations; `household`: property, vehicles, documents and administration; `business_signals`: relevant operating measures. |
-| Health and wellbeing / `health` | What supports health, energy, and recovery? | `health`: user-selected routines, observations, appointments and care-plan context. |
-| Leisure and interests / `leisure` | What would I enjoy doing, watching, or reading? | `leisure`: curated movie, TV, book, hobby and recreation recommendations. |
+| Direction / `direction` | What matters and what should take priority? | `strategy`: values, goals, responsibilities, priorities and boundaries. |
+| Commitments and time / `commitments` | What outcomes, actions and scheduled time need attention? | `projects`: outcomes and milestones; `tasks`: actions; `calendar`: scheduled time and availability. |
+| People and communication / `relationships` | Who needs attention, and what has been communicated? | `relationships`: relationship context; `conversations`: relevant email, messages and meeting records. |
+| Knowledge and reflection / `reflection` | What knowledge and experience should inform decisions? | `learning`: durable knowledge and decisions; `journal`: dated observations; `reviews`: completed reviews and review guidance. |
+| Resources and operations / `resources` | What resources and arrangements need attention? | `finances`: financial context; `operations`: personal and work operating information, preferences and arrangements. |
+| Health and wellbeing / `health` | What supports health, energy and recovery? | `health`: user-selected health and wellbeing context. |
+| Leisure and interests / `leisure` | What would I enjoy doing, watching or reading? | `leisure`: movie, TV, book, hobby and recreation recommendations. |
 
 These are optional coverage prompts, not mutually exclusive source categories,
 an exhaustive partition of someone's life, or a closed list of roles.
 Organize by the information's primary purpose, not its file format or app.
-Projects and tasks share an area but remain distinct roles: an outcome and its
-next action are different records. Likewise, a leisure reading list is not
-necessarily a learning source, and a health appointment's time belongs in the
-calendar while its health context belongs in the health source. Reuse links to
-existing records instead of creating duplicate trackers. Give each binding one
-primary presentation group without implying that its content serves only one
-purpose. Treat someday/maybe as a status or bounded view of the relevant
-project/task source, not a default standalone role. Keep a separate writing
-source only when drafts add context beyond the project and task records.
-Existing custom roles, including `someday`, remain valid and unchanged.
+Projects, tasks and calendar share a group but answer different questions.
+Capacity can come from strategy or calendar; writing can come from projects or
+tasks, with an additional source when draft content adds useful context.
+A leisure reading list need not be a learning source, and a health appointment
+can appear in calendar while its health context comes from the health source.
+Give each binding one primary presentation group and reuse existing records.
+Existing custom roles and area values remain valid; the starter does not
+rename or consolidate a user's private map without approval.
+
+Different communication channels can be separate bindings under `conversations`.
+For `reviews`, distinguish completed records from guidance/templates in each
+binding's designation and filter: prompts are not evidence of completed work.
+The starter prescribes no task statuses or productivity methodology. Add bounds
+and detail as the user designates sources, using the documented map fields and
+source-native metadata rather than inventing required fields. Inbox triage and
+reservation booking are actions, not source roles: communication belongs under
+`conversations`, and reservation preferences or arrangements can belong under
+`operations`. A binding provides source context, not authorization to act.
 
 Personal and work are source scopes within each area, not competing categories.
 Use separate bindings when accounts or owners differ, keeping their scope in

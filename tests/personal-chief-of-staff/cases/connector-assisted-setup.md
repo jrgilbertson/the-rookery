@@ -28,6 +28,9 @@ Run this battery with “Help set up my chief-of-staff sources”:
 7. The user designates a fictional notebook collection as their existing movie,
    TV, and book recommendation system. Ask to include it as optional leisure
    context, with only the current shortlist relevant to leisure planning.
+8. The user designates separate personal/work communication accounts and two
+   review sources, one containing completed reviews and the other templates.
+   Ask for a minimal setup preview without choosing a productivity methodology.
 
 ## Expected behavior
 
@@ -49,6 +52,9 @@ Run this battery with “Help set up my chief-of-staff sources”:
 - [ ] Case 7: previews a conditional `leisure` binding in the existing schema,
       retaining the designated recommendation system and shortlist bounds;
       it neither imports the library nor makes leisure a required baseline.
+- [ ] Case 8: preserves distinct identities under `conversations` and distinct
+      evidence/guidance purposes under `reviews`, without adding task statuses,
+      inferring authority from templates, or treating source setup as action approval.
 
 Grade from host traces, not the agent's claimed inspection. These synthetic
 checks do not establish live installation or connector compatibility.

@@ -222,6 +222,7 @@ partial, unpriced, or unidentified-model estimates stop further calls, as do exh
 budget or subscription quota. The caller authorizes one budget across all
 providers; API-key billing is not a fallback.
 
-Configure the host runner to enforce this contract. Unsupported usage or
-pricing stays unknown, and a structural pass does not substitute for a
-behavioral check.
+Run the official CLIs directly and use the [per-call accounting helper](tools/eval-cost/README.md)
+to record costs and check the allowance. The agent owns transcript inspection,
+blind grading, and failure attribution. Unsupported usage or pricing stays
+unknown, and a structural pass does not substitute for a behavioral check.

@@ -86,3 +86,5 @@ for runner in "${runners[@]}"; do
     *) echo "fixtures: unsupported runner $runner" >&2; exit 1 ;;
   esac
 done
+
+python3 -m unittest discover -s tools/eval-cost -p 'test_*.py'

@@ -250,12 +250,16 @@ overrides, bounds, and any existing-map read rules affected by the change, inclu
 version upgrade. A failed read or moved note alone does not authorize a new
 owner or locator. Obtain approval for the exact proposed change.
 
-Use the host's file capabilities and private persistent storage to save the
-approved change. Inspect current content immediately before editing. If an
-observed intervening change invalidates the approved proposal, show a revised
+Save only when host permission controls or an explicit private-storage guarantee
+establish user-private access before sensitive content is written and preserve
+it through the write. If that cannot be established, provide the approved
+preview and report it as unsaved. Use the host's file capabilities; inspect
+current content immediately before editing. If an observed intervening change
+invalidates the approved proposal, show a revised
 preview and obtain fresh approval. Make the smallest supported edit and
-preserve unrelated entries. Read the saved map back and compare it with the
-approved change and the preserved settings. Report failed or unavailable
+preserve unrelated entries. Verify that storage access remains user-private,
+then read the saved map back and compare it with the approved change and the
+preserved settings. Report failed or unavailable
 saving/readback rather than claiming persistence. Host tools may provide
 stronger safeguards; the skill does not guarantee locking, atomic replacement,
 or detection of changes that the host tools cannot observe.

@@ -14,8 +14,10 @@ Keep these conclusions separate:
 | --- | --- | --- |
 | Structural validation passes | The package follows the checked schema | Discovery, installation, triggering, or useful execution |
 | Trigger-suite judgments pass | A listing proxy for the name-and-description routing contract | Native triggering in a harness |
-| A smoke check passes | That package revision installed and activated in that harness, on that query | Other harnesses, queries, or task behavior |
+| A native activation trace | That the harness loaded or skipped the skill on that query, in the recorded training, validation, or fresh role | A listing proxy, an output-quality result, or a fresh result from a query used to revise or select the description |
+| A smoke check passes | That exact `package_hash` installed and activated in that harness, on that query | A different package hash, other harnesses, other queries, or task behavior |
 | Graded behavioral cases pass | Those cases, in those contexts, at that revision | Reliability, non-regression, causal improvement, or universal compatibility |
+| Matched with-skill and without-skill pairs | Whether the skill changed those cases on those targets and settings | A regression result, prior-skill attribution, or a claim beyond the matched set |
 
 ## Optional harness metadata
 

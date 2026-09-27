@@ -204,7 +204,7 @@ dependency list in this document.
 ## Skill validation in this repository
 
 [`SKILLS.md`](SKILLS.md) owns the regression-check and evidence contract;
-[`tests/README.md`](tests/README.md) owns legacy suite formats and deterministic
+[`tests/README.md`](tests/README.md) owns the `tests/<skill-name>/` suite formats and deterministic
 checks. The default Executor target set is the current Executor row in
 [`ROUTING.md`](ROUTING.md#model-and-effort-recommendations), using its listed
 models and efforts in their official subscription CLIs. Explicit caller
@@ -226,3 +226,30 @@ Run the official CLIs directly and use the [per-call accounting helper](tools/ev
 to record costs and check the allowance. The agent owns transcript inspection,
 blind grading, and failure attribution. Unsupported usage or pricing stays
 unknown, and a structural pass does not substitute for a behavioral check.
+
+The repository copy of `creating-portable-skills` is the workflow. Use it for
+a value assessment, an affected regression check, native activation, human
+inspection, and package delivery. [`SKILLS.md`](SKILLS.md) owns those rules.
+Declare each native CLI's tool and filesystem boundary, and include one
+harmless rejected operation in the authorized smoke.
+
+Human inspection uses the local review page. Start the implemented server,
+which binds to loopback and prints the URL it is serving:
+
+```bash
+python3 tools/eval-review/review.py --manifest PATH --feedback PATH [--port N]
+```
+
+`--manifest` and `--feedback` are required. `--port` defaults to 0. The exact
+manifest fields, feedback file, and reopen steps are in
+[tools/eval-review/README.md](tools/eval-review/README.md). The page reads that
+one private manifest and writes that manifest's feedback file. It does not
+invoke models, grade, tune, or price calls. Raw runs, the manifest, and
+feedback stay outside the repository.
+
+`scripts/checks/fixtures.sh` runs the accounting tests and the viewer tests:
+
+```bash
+python3 -m unittest discover -s tools/eval-cost -p 'test_*.py'
+python3 -m unittest discover -s tools/eval-review -p 'test_*.py'
+```

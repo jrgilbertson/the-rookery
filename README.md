@@ -53,13 +53,15 @@ Everything here fits into five core jobs, Research through Ship, plus two feedba
 [Testing with agents](TESTING.md) explains project-owned verification for
 polyglot monorepos and smaller projects. Use it when choosing local, merge, and
 release checks, dependency-based selection, or cache policy across harnesses.
+It is also the host guide for skill evaluation: the official CLIs, per-call
+accounting, and human review.
 
 ## The skills
 
 - [checking-merge-readiness](skills/checking-merge-readiness/SKILL.md). Review a pull request after its review cycle for intent drift, unnecessary complexity, failed merge rules, and unresolved risks. Run it immediately before merging to decide whether the finished change belongs on `main`.
 - [checking-pr-readiness](skills/checking-pr-readiness/SKILL.md). Check a finished branch before opening a pull request. Use it to confirm the change matches the plan, required checks pass, and major risks are resolved.
 - [checking-simplicity](skills/checking-simplicity/SKILL.md). Find opportunities to safely simplify a design, plan, or approach against the current need. Use it when you ask to simplify something, including during a build, or when the next step adds durable machinery that isn't tied to that need.
-- [creating-portable-skills](skills/creating-portable-skills/SKILL.md). Create, revise, migrate, or audit a skill, then verify its structure, triggers, behavior, and installation. Use it when you need a portable skill package with separate evidence for behavior and installation.
+- [creating-portable-skills](skills/creating-portable-skills/SKILL.md). Create, revise, migrate, or audit a skill, then verify its structure, triggers, behavior, and installation. Use it when you need a portable skill package with separate evidence for whether the skill helps, for behavior, and for installation.
 - [managing-issues](skills/managing-issues/SKILL.md). Manage GitHub or Linear issues and their native parent and blocker relationships through the repository's canonical tracker. Use it to read, draft, create, or update a single issue or multi-issue graph, and to assess readiness, dependencies, or completion.
 - [managing-personal-crm](skills/managing-personal-crm/SKILL.md). Keep relationship context in one note per person while messages and other raw interactions stay in their original apps. Use it to prepare for someone, capture an interaction, reconnect an overdue relationship, or find who could help with current work.
 - [personal-chief-of-staff](skills/personal-chief-of-staff/SKILL.md). Turn information from your configured sources into a daily, weekly, or quarterly review. Run it when you need to orient, reflect, and decide what to do next across several parts of your life and work.

@@ -67,6 +67,18 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Skill evaluation keeps one workflow. A value assessment is a matched
+  with-skill and without-skill pair and stays separate from an affected
+  regression check and from prior-skill failure attribution. The ship rule
+  is unchanged: ship with no failure attributable to the change under test,
+  and leave an unresolved hold unresolved. A further round names the decision,
+  the result that would change it, the cases, and the spending limit. Native
+  activation keeps training, validation, and fresh observations separate from
+  a listing proxy. Human feedback preserves original grades. Install and
+  discovery evidence names the exact package hash. `TESTING.md` joins the
+  creator, the official CLIs, accounting, and human review.
+  `tools/eval-review/README.md` owns the viewer command and manifest.
+
 - Skill validation uses one affected regression check per declared Executor
   target, blind different-model grading, transcript-based failure attribution,
   and one independent review. A failure attributable to the change under test

@@ -1,17 +1,52 @@
 # Regression check: [skill-name]
 
 [references/skills.md](../references/skills.md) owns formats, run counts,
-targets, grading, costs, and the ship rule. This template owns the procedure.
+targets, grading, costs, human inspection, value assessment, the execution
+boundary, and the ship rule. This template owns the procedure.
 
 ## Evaluation boundary
 
 Declare permitted inputs, resources, side effects, targets, and the caller's
-cross-provider budget before dispatch. Use synthetic inputs in the archive's
-run directory outside the host project. Before file-writing execution, verify
-that its working directory and resolved outputs are inside that directory.
+cross-provider budget before dispatch. Apply the **Execution boundary** in
+[references/skills.md](../references/skills.md) before native executor, trigger,
+grader, or reviewer calls. Record the effective settings, include the harmless
+rejected operation in the authorized smoke, and stop the affected role when
+the native controls cannot show the boundary. Use synthetic
+inputs in the archive's run directory outside the host project. Before
+file-writing execution, verify that its working directory and resolved outputs
+are inside that directory.
 Existing authorization carries forward; additional resources or live effects
 need authority. Keep failed runs and partial outputs as isolated evidence.
 Only public-safe eval definitions and benchmarks enter the host project.
+
+## Inspect with the human
+
+Follow **Human inspection** in [references/skills.md](../references/skills.md).
+
+1. Before calls on a value assessment, or when the cases are newly proposed,
+   present the prompts, inputs, expected outcomes, assertions, and provenance,
+   and wait for approval of that round. Reuse an already frozen case set for
+   an affected regression.
+2. After grading, present each case's paired results, original grades, quality,
+   time, tokens, cost, and trace links. Keep activation evidence in its own
+   record, apart from output quality.
+3. Save agreement or disagreement and any note under that section's feedback
+   rule. Write the disposition beside the original grade.
+4. When no inspection surface is available, record this step incomplete and
+   keep any feedback already saved.
+
+## Value assessment
+
+Follow **Value assessment** in [references/skills.md](../references/skills.md)
+when the question is whether the skill helps.
+
+1. Freeze the approved cases through the inspection step above.
+2. Run one matched `with_skill` and `without_skill` pair per case per declared
+   Executor target in fresh contexts. Save the run-archive records, including
+   build identity.
+3. Grade both arms blind under **Grading and independence**.
+4. Record a value conclusion for the matched set. Leave shipping to the ship
+   rule, and leave an unresolved hold unresolved.
 
 ## Check and diagnose
 
@@ -34,13 +69,14 @@ Only public-safe eval definitions and benchmarks enter the host project.
 4. **Inspect every failure.** Read the original transcript, distinguish behavior
    failure, grader/assertion error, and capture gap, and explain corrections in
    notes without overwriting grades. Compare or rerun the prior skill only on
-   failing evals to attribute the failure. For new skills, use a no-skill check
-   only if needed for diagnosis. Unresolved attribution stays unverified.
+   failing evals to attribute the failure. On this regression path, use a
+   no-skill run to diagnose a failure. A behavior check does not wait on a
+   no-skill baseline. Unresolved attribution stays unverified.
 5. **Record and decide.** Write a benchmark for the changed check and a separate
    one-arm diagnostic benchmark when needed. Compare only matched cohorts;
-   never report an aggregate delta against a failing-only baseline subset.
-   Apply the ship rule and obtain the one independent review. The operator
-   decides whether to revise or stop within the authorized budget.
+   leave an aggregate delta against a failing-only baseline subset unreported.
+   Apply the ship rule, the repeat rule, and the one independent review in
+   [references/skills.md](../references/skills.md).
 6. **Validate evidence files.** Keep evals in `evals/evals.json`, benchmarks in
    `evals/benchmarks/`, and raw evidence outside the repository. Run
    `scripts/check-evals.py` on the target skill directory. This completed
@@ -55,6 +91,6 @@ forced-load behavior. Cosmetic changes may skip behavioral evaluation.
 Read outputs beside their grades: assertions cover only their named outcomes.
 For qualities such as organization or polish, use specific human feedback or a
 blind comparison of two outputs. Record preferences as notes, never binary
-passes or fails. A regression check or diagnostic baseline subset does not
-establish improvement; comparative claims need matched evidence and remain
-limited to the cases and targets exercised.
+passes or fails. A value assessment records its matched comparison on its own.
+A regression check or diagnostic baseline subset establishes the behavior
+exercised. Comparative claims stay inside the matched cases and targets.

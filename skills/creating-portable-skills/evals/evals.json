@@ -154,6 +154,42 @@
       ],
       "provenance": "Regression control for the ship condition over changed package resources and safe blind grading packets; synthetic credential marker only.",
       "regression_control": true
+    },
+    {
+      "id": 13,
+      "prompt": "Answer three separate questions about synthetic skills. Do not execute anything or spend a budget. 1. I want to know whether the existing skill naming-branches helps. It already has three realistic cases, and I have declared the Executor targets. What comparison answers that question, and does a later one-line regression check of the same skill answer it too? 2. The matched pairs show fewer tokens while the required outcomes still pass. An earlier unresolved shipping hold remains. May I report a general improvement and clear the hold? What must a further round name before it runs? 3. A fresh-context judge saw only the skill name, the description, and one query, and answered yes. Does that establish native activation? If the description is tuned, how do training, validation, and fresh observations stay separate?",
+      "expected_output": "Uses a matched with-skill and without-skill pair per case for the value question, keeps regression and prior-skill diagnosis separate, leaves the unresolved hold in place, requires a named repeat decision and budget, and treats the name-and-description judgment as a listing proxy.",
+      "assertions": [
+        "Scenario 1 requires one matched with-skill and without-skill pair per approved case on each declared Executor target for whether the existing skill helps, and treats a later affected regression check as a separate check of the changed skill.",
+        "Scenario 2 limits the token result to the matched cases, leaves the unresolved shipping hold unresolved, and requires a further round to name the decision, the result that would change it, the cases, and a spending limit before it runs.",
+        "Scenario 3 records the name-and-description judgment as a listing proxy and keeps training, validation, and fresh native observations separate, with a query used to revise or select the description excluded from the fresh check."
+      ],
+      "provenance": "Contract guard for the split between value assessment, affected regression, decision-named repeats, and native activation versus a listing proxy.",
+      "regression_control": true
+    },
+    {
+      "id": 14,
+      "prompt": "A human reviewed two graded cases of the synthetic skill formatting-sql. Do not rerun anything or overwrite grades. 1. Case A failed the assertion that the export contains result. The original transcript shows the export key is summary. The human disagrees with that failing grade and writes the note. What do you record, and what remains of the original grade? 2. Case B passed, and the human left no feedback. How do you record that? 3. On case A the transcript confirms the skill wrote summary where the contract requires result, so the failing grade matches the evidence. What correction follows, and what has to happen before shipping?",
+      "expected_output": "Binds the disagreement to the identified original grade, keeps that grade, treats absent feedback as absent, and follows a confirmed skill miss with a skill correction and an affected regression check before shipping.",
+      "assertions": [
+        "Scenario 1 binds the disagreement to the identified original failing grade, keeps that grade, and records the note as feedback beside it.",
+        "Scenario 2 records case B's feedback as absent rather than as agreement.",
+        "Scenario 3 names a skill correction for the confirmed contract miss, preserves the original failing grade, and requires the affected regression check before shipping."
+      ],
+      "provenance": "Contract guard for human feedback that preserves original grades and leads to an evidence-backed skill correction.",
+      "regression_control": true
+    },
+    {
+      "id": 15,
+      "prompt": "Answer three questions about handing off the synthetic skill formatting-sql. Do not install it globally, publish it, or call a model. 1. Structural validation passed. A discovery smoke for an earlier package hash passed in this harness. The current package has a new hash and install path. What install and discovery evidence does the current package still need? 2. Can finishing this handoff depend on a model runner bundled in the skill, or on installing the skill for the whole machine? 3. For native executor calls, the approved boundary is a disposable workspace and a harmless rejected write outside it. The native controls cannot show that rejection. What happens to further native calls on that target?",
+      "expected_output": "Requires discovery evidence for the current package hash and install path, finishes from the validated package without a bundled runner or global install, and stops native calls when the harmless rejection cannot be shown.",
+      "assertions": [
+        "Scenario 1 requires install and discovery evidence for the current package hash and install path, and does not treat the earlier hash's smoke or structural validation as that evidence.",
+        "Scenario 2 completes the handoff from the validated self-contained package without a bundled model runner and without a global install.",
+        "Scenario 3 stops further native calls on that target and reports the missing boundary evidence."
+      ],
+      "provenance": "Contract guard for exact package-hash discovery evidence, a runner-free handoff without global install, and the harmless-denial execution boundary.",
+      "regression_control": true
     }
   ]
 }

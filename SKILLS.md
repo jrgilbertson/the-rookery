@@ -5,8 +5,8 @@ for agent skills. It builds on the [Agent Skills standard](https://agentskills.i
 with vendor guidance layered on top. Where sources conflict, a **Conflict:**
 note names the conflict and the choice made. The `creating-portable-skills`
 skill ships a byte-equal copy as `references/skills.md`. That skill owns the
-authoring workflow and affected regression checks.
-This file owns the formats and rules the workflow produces.
+authoring workflow. This file owns the formats and rules that workflow
+produces, including value assessment, regression checks, and trigger evidence.
 
 ## Package format
 
@@ -137,49 +137,84 @@ aggregator do not read these files unmodified.
   `owner` field, an extension, names the skill or workflow that should take
   it.
 - Run each query once by default in a harness with the skill installed and
-  retain its activation trace. A query passes when activation matches
-  `should_trigger`. Inspect every failure under **Arms and runs**; an
-  unavailable or inconclusive observation is unverified, never a pass.
+  retain its activation trace. A native session makes the skill available
+  through the harness's ordinary discovery and asks the task without telling
+  the model to load the skill. Record the other skills available in that
+  session. A query passes when that observed activation matches
+  `should_trigger`. Inspect every failure under **Arms and runs**. Record an
+  unavailable or inconclusive observation as unverified; it does not pass
+  the query.
 - To tune a description, split the set 60/40 into train and validation
   queries, and keep both files in the run archive. Revise from train failures
-  only. The operator decides whether to iterate or stop within the authorized
-  budget. Check the selected description on 5–10 fresh queries. A query used for
-  tuning never appears in the validation set or the fresh check. Rerun the
-  whole set after any description edit.
+  only. Further rounds follow **Repeats**. Check the selected description on
+  5–10 fresh queries. A query used for tuning or selection stays out of the
+  fresh check. Label each native observation training, validation, or fresh.
+  A validation observation used to select the description remains a selection
+  result. Rerun the whole set after any description edit. Keep activation
+  results in their own record, apart from output-quality results.
 - For a description-only change, check the revised description on the query
   set and use the prior description only on failing queries to diagnose the
   change. This diagnostic subset establishes no overall improvement.
 
 A fresh-context judge that sees only the name, the description, and one query
-is a cheap first screen. Label its result a listing proxy, never activation
-evidence.
+is a cheap first screen. Label its result a listing proxy. Native activation
+evidence is the harness trace from the session above.
 
 ## Arms and runs
+
+**Value assessment.** Use this when the question is whether the skill helps,
+including a skill that already exists. Run one matched `with_skill` and
+`without_skill` pair for each approved case on each declared Executor target.
+Each run starts in a fresh context. The `with_skill` trace shows the intended
+skill loaded. The `without_skill` trace shows that skill absent. Record the
+actual model, harness, and material settings. The result speaks only for those
+matched cases, targets, and settings. An inconclusive comparison stays
+inconclusive. Record it separately from the ship decision.
 
 A regression check runs each affected eval once per declared Executor target
 with the changed skill (`with_skill`). Each run starts in a fresh context and
 its trace confirms that the intended variant loaded. New skills check
-realistic cases; a `without_skill` comparison is used only when needed for
-diagnosis. A cosmetic change may skip behavioral evaluation.
+realistic cases. A behavior check does not wait on a no-skill baseline. On
+this path, use a `without_skill` run to diagnose a failure. A cosmetic change
+may skip behavioral evaluation.
 
 Inspect **every failure** against the original transcript. Distinguish a
 behavior failure from a grader/assertion error or a capture gap. Retain the
 original grades and explain corrections in benchmark notes, with the source
-evidence. Missing capture is not proof of correct behavior.
+evidence. Missing capture leaves the outcome unverified.
 
 Compare or rerun the frozen prior skill (`old_skill`) only on failing evals
 to attribute the change. Reuse prior evidence only when its package, prompt,
 inputs, assertions, target, and settings match the diagnostic question; retain
-its original revision label and original blind grades. If
-attribution remains unresolved, the result stays unverified.
+its original revision label and original blind grades. If attribution remains
+unresolved, the result stays unverified.
+
+**Repeats.** Before another behavioral round, inspect the existing evidence.
+Repair a grading, assertion, or capture problem first. Handle an attributable
+skill failure through a correction and its affected regression check. The
+operator then decides whether another comparative round runs. Before it runs,
+name the decision it could change, the result that would change that decision,
+the cases, and a spending limit inside the authorized budget. Keep every
+earlier result, and report a repeated subset as a subset. The operator may
+stop on the current evidence, including an explicit unresolved failure.
 
 **Ship rule.** Ship when the required checks and independent review are
-complete and no failure is attributable to the change under test. Known pre-existing
-failures remain visible with their evidence and disposition. A new skill must
-meet its required outcomes; a no-skill failure does not excuse its own failure.
-The operator owns iteration and stopping within the authorized budget; there
-is no fixed iteration limit or forced ship/revert cycle. Each substantive edit
-gets its affected regression check.
+complete and no failure is attributable to the change under test. Known
+pre-existing failures remain visible with their evidence and disposition.
+An unresolved hold stays unresolved. Record the value conclusion separately.
+A new skill must meet its required outcomes; a no-skill failure does not
+excuse its own failure. Each substantive edit gets its affected regression
+check.
+
+**Execution boundary.** Before native executor, trigger, grader, or reviewer
+calls, declare the tool and filesystem boundary. Executors and trigger probes
+receive the approved disposable workspace, skill catalog, resources, and
+effects. Graders receive the blind packet and no tools. Reviewers are
+read-only: they may read the package and evidence, and they do not write,
+execute, or modify either. Record the effective settings. The authorized smoke
+includes one harmless rejected operation against a disposable fixture. When
+the native controls cannot show that boundary, stop further calls for that
+role and report the limitation.
 
 A single-arm check or a diagnostic baseline subset supports no improvement
 claim. Compare only matched eval sets, inputs, assertions, targets, settings,
@@ -246,7 +281,34 @@ Each run's `grading.json` uses the standard's shape:
   leaves the required judgment unverified; author inspection cannot replace it.
 - Qualities that binary assertions cannot carry go to specific human
   feedback or a blind comparison of two outputs. Record the result as a note,
-  never as a pass or a fail.
+  never as a pass or a fail. Agreement with a graded assertion follows
+  **Human inspection**.
+
+## Human inspection
+
+Before calls on a value assessment, or on a round whose cases are newly
+proposed, the human inspects each case's prompt, inputs, expected outcome,
+assertions, and provenance. The approved definitions stay frozen for that
+round. An affected regression of an already frozen case set reuses that set.
+This inspection is the human's look at the cases. It is separate from the
+one independent review.
+
+After the runs, the human can open each case's paired results, original
+grades, quality, time, tokens, cost, and available traces. Activation
+evidence stays in its own record, apart from output-quality comparisons.
+
+Feedback records agreement or disagreement with one identified grade, and
+may include a note. A note may be saved before any grade exists. Agreement
+requires an identified grade. Absent feedback stays absent. A later round
+or a changed grade starts without the earlier agreement.
+
+Keep the original grade. Record one evidence-backed disposition: evaluation
+correction, skill correction, or unresolved. The note and the disposition
+explain the grade. A skill correction then takes the affected regression
+check. An unresolved disposition stays unverified.
+
+When the inspection surface is unavailable, human review is incomplete.
+Keep saved feedback, and leave the step incomplete.
 
 ## Run archive
 
@@ -271,7 +333,9 @@ directory per target inside it. Keep the archive after the work ends.
 - `build.json` identifies the build each run loaded. `skill_revision` is the
   commit under test, or its parent when the change is uncommitted.
   `package_hash` covers the installed package. `install_path` is the
-  disposable install the harness loaded.
+  disposable install the harness loaded. Installation and discovery evidence
+  names that `package_hash` and `install_path`. Evidence recorded for a
+  different hash applies to that other package.
 - Failed runs and partial outputs stay as evidence. Nothing in the archive is
   committed, because transcripts and outputs can hold private data.
 
@@ -309,28 +373,26 @@ directory: `<date>-<short-rev>--iteration-<N>[-<target>].json`.
 ```
 
 - `run_summary` holds one object per arm. A regression check has `with_skill`
-  only and no `delta`. A separate diagnostic round may have only `old_skill`
-  or `without_skill`, also without `delta`. Notes identify the evals and the
-  diagnostic question. Only matched cohorts may share a two-arm summary
-  with a numeric `delta`: changed arm minus baseline. Historical multi-run
-  records remain valid; `runs_per_configuration` is a positive integer.
+  only and no `delta`. A value assessment has matched `with_skill` and
+  `without_skill` and may include `delta`. A separate diagnostic round may
+  have only `old_skill` or `without_skill`, also without `delta`. Notes
+  identify the evals and the diagnostic question. Only matched cohorts may
+  share a two-arm summary with a numeric `delta`: changed arm minus baseline.
+  `runs_per_configuration` is a positive integer.
 - `metadata` requires `skill_name`, `executor_model`, `timestamp`,
   `runs_per_configuration`, `harness`, `grader`, and `archive_ref` (the
   round's target path inside the archive). Record `final_reviewer` when the
   independent review is complete; an earlier round has none.
 - Record the complete API-equivalent estimate as `cost_usd`, with its source
   and scope in notes. Otherwise set `cost_available` to `false` and explain
-  the unknown estimate. Historical CLI cost records keep their original
-  meaning. **Cost and budget** governs further calls.
+  the unknown estimate. **Cost and budget** governs further calls.
 - A `runs[]` array in skill-creator's per-run shape may list each graded run.
   A `notes[]` array holds smoke-check results and blind-comparison
   preferences.
 - Preserve original grades; `notes[]` explains every correction, failure
-  classification, attribution, capture limitation, and carried-forward result.
+  classification, attribution, feedback disposition, capture limitation, and
+  carried-forward result.
 - A benchmark states only what its runs checked.
-
-When a repository replaces an older evidence format, keep a one-line pointer
-to the last commit that holds it. Git is the archive for committed history.
 
 **Conflict: delta and location.** The standard writes numeric deltas to
 `iteration-N/benchmark.json` in its workspace. skill-creator writes signed

@@ -22,15 +22,19 @@ activation checks, and the tuning split; this template owns the procedure.
 ## Run
 
 - Install the skill from the current local source into a disposable project
-  on each target harness. Run each query in a fresh session and record from
-  the trace whether the skill activated.
+  on each target harness. Run each query in a fresh session that discovers
+  the skill in the ordinary way. Ask the task, and leave the load decision to
+  the harness. Record from the trace whether the skill activated, which other
+  skills were available, and the activated copy's `package_hash`.
 
 ## Tune
 
 - Revise the description from train-split failures under the **Descriptions
   and triggering** and **Trigger evals** rules in
-  [references/skills.md](../references/skills.md), then rerun the complete
-  query set; an edit that fixes one query can activate a near miss.
+  [references/skills.md](../references/skills.md). Label each native
+  observation training, validation, or fresh, then rerun the complete query
+  set; an edit that fixes one query can activate a near miss. Keep a query
+  used for revision or selection out of the fresh check.
 
 ## Smoke check
 
@@ -38,9 +42,11 @@ activation checks, and the tuning split; this template owns the procedure.
   [step 2 of SKILL.md](../SKILL.md#2-scope-targets-and-resources).
 - On each roster harness, install as **Run** does, ask one should-trigger
   query, and confirm from the run's trace that the copy which activated is
-  the just-installed one (its path or base directory). When a same-name copy
-  exists in a user or system location and the activated copy's provenance
-  cannot be confirmed, record the result as inconclusive rather than pass.
+  the just-installed one: its `package_hash` and `install_path` match the
+  package under test. Evidence for a different hash applies to that other
+  package. When a same-name copy exists in a user or system location and the
+  activated copy's provenance cannot be confirmed, record the result as
+  inconclusive.
 - Record one result per harness in the run archive and in the round's
   benchmark `notes`; when a roster harness is unavailable, record
   `not run — harness unavailable` and ask the user whether to ship without

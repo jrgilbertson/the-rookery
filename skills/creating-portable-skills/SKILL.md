@@ -9,7 +9,7 @@ compatibility: Behavioral validation requires a different-model blind grader and
 
 Create, revise, migrate, or audit a skill from its intent, required outcome, and only the hard constraints that define acceptable completion or remain under user authority.
 
-Skills produced here follow the [Agent Skills format](https://agentskills.io/specification). Read [references/portability.md](references/portability.md) when checking frontmatter against its canonical-package rule, choosing an install location, adding harness-specific metadata, or making a claim about a harness. [references/skills.md](references/skills.md) is the convention for frontmatter fields, eval files, arms and runs, targets, grading, the run archive, and committed evidence; read it before steps 2, 5, 6, and 7.
+Skills produced here follow the [Agent Skills format](https://agentskills.io/specification). Read [references/portability.md](references/portability.md) when checking frontmatter against its canonical-package rule, choosing an install location, adding harness-specific metadata, or making a claim about a harness. [references/skills.md](references/skills.md) is the convention for frontmatter fields, eval files, arms and runs, human inspection, targets, grading, the run archive, and committed evidence; read it before steps 2, 5, 6, 7, and 8.
 
 An independent reviewer took no part in authoring the change and did not produce the artifact under review; an agent auditing a skill it did not write qualifies. Behavioral grading uses an independent context on a different model from the executor. One independent review checks the package and evidence. The author never supplies required independent grades or review, even provisionally. If either is unavailable, prepare a self-contained handoff with assertions, outputs, tool traces, and available child readouts; the missing judgment stays unverified and the change does not ship.
 
@@ -17,7 +17,9 @@ An independent reviewer took no part in authoring the change and did not produce
 
 A substantive change gets one regression check on affected evals, once per declared Executor target, under [references/skills.md](references/skills.md). New skills check realistic cases. Description changes also follow step 7. Cosmetic edits (typos, formatting, links, or moving eval files without changing their meaning) may skip behavior checks and use step 4 and `scripts/check-evals.py`.
 
-A read-only audit starts and ends at step 0. Authorized revisions and new skills start at step 1; an additional audit before implementation is not required. Existing authorization for the material fix scope carries forward. The operator owns iteration and stopping; broader cross-model sweeps are separate work.
+When the question is whether the skill helps, use the value-assessment procedure in [assets/baseline-test-template.md](assets/baseline-test-template.md). A later correction uses the affected regression check. Human inspection, repeats, native activation, package identity, the execution boundary, and the ship rule live in [references/skills.md](references/skills.md).
+
+A read-only audit starts and ends at step 0. Authorized revisions and new skills start at step 1; an additional audit before implementation is not required. Existing authorization for the material fix scope carries forward. Further rounds follow the repeat rule in [references/skills.md](references/skills.md). Broader cross-model sweeps are separate work.
 
 ### 0. Audit an existing skill
 
@@ -57,9 +59,9 @@ Completion: the validator passes, or every named fallback check passes with the 
 
 ### 5. Check behavior
 
-Use [assets/baseline-test-template.md](assets/baseline-test-template.md) for the affected regression check, blind grading, and failure diagnosis. Before calls, establish the caller's budget and the host's per-call usage and pricing support under **Cost and budget** in [references/skills.md](references/skills.md). The host owns runner automation and configuration; this package stays runner-free.
+Use [assets/baseline-test-template.md](assets/baseline-test-template.md) for the affected regression check, blind grading, and failure diagnosis. When the question is whether the skill helps, use that template's value-assessment section. Before calls, establish the caller's budget and the host's per-call usage and pricing support under **Cost and budget** in [references/skills.md](references/skills.md), and declare the **Execution boundary** in that file. The host owns runner automation and configuration; this package stays runner-free.
 
-Completion: affected checks ran on every declared target, every failure was inspected against its original transcript and classified, and any needed prior-skill diagnosis is recorded. Eval definitions, raw archive records, and the round's benchmark exist, and `scripts/check-evals.py` exits 0 on the target skill. Missing authorized runs or unresolved attribution remain unverified. Cosmetic-only edits record behavior checks as not applicable.
+Completion: affected checks ran on every declared target, every failure was inspected against its original transcript and classified, and any needed prior-skill diagnosis is recorded. A value assessment, and any round with newly proposed cases, has those cases inspected and frozen before calls. A value assessment also has its matched pairs, human-inspection record, and a value conclusion separate from the ship decision. An affected regression of an already frozen case set reuses that set. Eval definitions, raw archive records, and the round's benchmark exist, and `scripts/check-evals.py` exits 0 on the target skill. Missing authorized runs, an unavailable inspection surface on a round that requires inspection, or unresolved attribution remain unverified. Cosmetic-only edits record behavior checks as not applicable.
 
 ### 6. Decide and review
 
@@ -67,7 +69,7 @@ Apply the ship rule in [references/skills.md](references/skills.md). Have one in
 
 A substantive follow-up edit returns through step 4 and the affected evals. Recheck evals whose outcomes could change under the revised package or test material, including changed instructions, executable helpers, bundled resources, prompts, inputs, or assertions. Preserve previous artifacts and grades under their original revision labels. Diagnose failures using the prior skill only where needed; do not combine unmatched cohorts into a delta.
 
-Completion: structural checks pass, required independent grading and review are complete, every failure has an evidence-backed disposition, and none is attributable to the change under test. Claims stay within the exercised cases and targets; unresolved attribution remains unverified.
+Completion: structural checks pass, required independent grading and review are complete, every failure has an evidence-backed disposition, and none is attributable to the change under test. The value conclusion is recorded separately. An unresolved hold stays unresolved. Claims stay within the exercised cases and targets; unresolved attribution remains unverified.
 
 ### 7. Test the description
 
@@ -81,7 +83,7 @@ For a new package, or a change to packaging or the install path, recheck the hos
 
 If packaging exposes a defect that changes the package, apply step 6's re-entry rule before completing this step.
 
-Completion: the source validates, and each harness in step 2's target set records a smoke pass, or a not run with the user's recorded decision to ship without it.
+Completion: the source validates, and each harness in step 2's target set records a smoke pass for the exact `package_hash` and `install_path` under test, or a not run with the user's recorded decision to ship without it. Global installation and publication require their own approval. The package stays runner-free.
 
 ## Gotchas
 

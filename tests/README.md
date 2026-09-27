@@ -1,6 +1,6 @@
 # Skill Test Suites
 
-Conventions for the legacy `tests/<skill-name>/` suites and the repository
+Conventions for the `tests/<skill-name>/` suites and the repository
 checks. [`SKILLS.md`](../SKILLS.md) owns skill evals: files in each skill's
 `evals/`, their formats, grading, and ship rule. Each suite here follows this
 file until its skill's fix pull request moves it into `evals/`.
@@ -105,27 +105,42 @@ Exclude private reasoning and author conclusions; a different model grades.
   sees only the skill name, description, and query; require yes or no. A hedged
   or unavailable judgment stays unverified. The operator decides whether more
   evidence is needed within the authorized budget. These judgments are listing
-  proxies; native activation follows [`SKILLS.md`](../SKILLS.md).
+  proxies. Native activation, including the separate training, validation, and
+  fresh roles, follows [`SKILLS.md`](../SKILLS.md).
 - **Behavioral case.** Fresh agent context, skill installed from current
   source, no other conversation state. The case file is self-contained: run
   its prompt, resolve fixture paths relative to the case file, grade each
   checklist item pass or fail, and record one log line.
+- **Value assessment.** When the question is whether the skill helps, follow
+  the matched with-skill and without-skill rule in [`SKILLS.md`](../SKILLS.md).
+  Record that conclusion separately from shipping. An unresolved hold stays
+  unresolved.
 - **Regression check.** Follow `skills/creating-portable-skills/SKILL.md` and
   its baseline template: affected cases once per declared Executor target,
   with independent different-model blind grading. Inspect every failure against
   the original transcript and classify behavior failure, grader/assertion
-  error, or capture gap. Retain original grades and explain corrections.
+  error, or capture gap. Retain original grades and explain corrections. A
+  behavior check does not wait on a no-skill baseline.
 - **Diagnostic comparison.** Compare or rerun the prior skill only on failing
   cases to attribute the change. Unresolved attribution remains unverified.
   A single-arm check or baseline subset proves no improvement, and unmatched
   cohorts get no aggregate delta. One independent review checks the package
-  and evidence. The operator owns iteration and stopping within the caller's
-  authorized cross-provider budget; see [`SKILLS.md`](../SKILLS.md).
+  and evidence. A further round first inspects existing evidence and repairs
+  grading, capture, or attributable skill failures, then names the decision,
+  the result that would change it, the cases, and a spending limit inside the
+  caller's authorized cross-provider budget; see [`SKILLS.md`](../SKILLS.md).
+- **Human inspection.** The human inspects frozen cases before spend and the
+  results afterward. Feedback preserves the original grades. The host command
+  and manifest are
+  [tools/eval-review/README.md](../tools/eval-review/README.md), as
+  [`TESTING.md`](../TESTING.md) describes.
 - **Smoke check.** Install the skill from source into a disposable project on
   each declared target harness (see [`TESTING.md`](../TESTING.md)), ask one
   trigger query, and
   confirm from the run's trace that the copy which activated is the
-  just-installed one (its path or base directory). When a same-name copy
+  just-installed one, including its package hash and install path under
+  [`SKILLS.md`](../SKILLS.md). Evidence for a different hash applies to that
+  other package. When a same-name copy
   exists in a user or system location and the activated copy's provenance
   cannot be confirmed, log the result as inconclusive rather than pass. One
   log line per harness; if a roster harness is unavailable, log

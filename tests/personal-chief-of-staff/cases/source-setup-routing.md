@@ -24,28 +24,16 @@ variant supplies setup-completion evidence, not a matched strategy case.
 
 ## Expected behavior
 
-- [ ] Discovery inspects exposed integrations and account metadata first, then
-      explains all five interview categories with deferral. Connection inventory
-      is separate from access success and designated ownership.
-- [ ] Native routing activates the just-installed skill from the request for
-      setup, without forcing its path in the user message.
-- [ ] Setup loads its shared source behavior and source binding guidance,
-      uses the supplied synthetic guidance/template facts, and selectively
-      checks relevant mode material without loading unrelated mode instructions
-      or beginning a new review's discovery reads.
-- [ ] Before previewing each role being actively bound, obtain its decision,
-      current owner, modes, read condition, bounds, and absence/conflict rule.
-      Ask for missing information and accept answers already supplied by the
-      user. Explicitly deferred roles remain named gaps; their full interview
-      can wait. A template prompt or available connection does not become an
-      owner on its own.
-- [ ] Unowned or deferred roles remain explicit gaps. The agent does not
-      invent a source, probe guessed native role tokens before designation,
-      write a map, or claim setup complete from a proposal.
-- [ ] A changed role follows an exact user-visible preview and matching
-      approval before the host file write. The saved entry is read back and its
-      native bounded source read is attempted; a save alone is not access.
-- [ ] Completion names each saved-and-read role separately from unresolved or
-      failed roles, with no new review or unapproved source mutation. A sole
-      saved role whose native read fails ends Partial, keeps its owner, and
-      does not claim source access or require another ownership interview.
+- [ ] The unforced setup request activates the installed skill and stays in
+      setup. It inspects exposed integrations/account metadata, uses relevant
+      task/template guidance, and walks the five categories with deferral;
+      it loads shared setup references without unrelated full-mode reads.
+      Inventory and template facts do not establish ownership. For each active
+      role it asks only for missing decision, owner, modes, condition, bounds,
+      and gap effects; deferred roles stay unresolved without guessed reads.
+- [ ] A mapping changes only after its exact preview is approved, and the
+      response distinguishes saved-map readback from the bounded native read.
+      Proposals never count as completion. Saved/read roles and unresolved
+      roles are reported separately without starting a review or mutating a
+      source. In the independent failed-read branch, the saved owner remains,
+      the ending is Partial, and the next read needs no repeated designation.

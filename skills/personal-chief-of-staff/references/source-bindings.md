@@ -203,7 +203,13 @@ or detection of changes that the host tools cannot observe.
 For added or changed access, after the saved binding reads back, follow
 [Resolve harness access](#resolve-harness-access), then read the approved
 bounded source through the selected interface and report that result
-separately. A successful map write does not establish source access. If the
+separately, naming the access description actually exercised. A successful
+read verifies only that description. When an edited override belongs to another
+harness, or edited shared access is hidden by the current harness's override,
+report the change as saved but its access unverified; setup remains Partial
+until a relevant harness selects and successfully reads that route. Preserve
+current-runtime selection rather than reading another harness's override to
+satisfy this check. A successful map write does not establish source access. If the
 native read fails, retain the approved binding, mark setup incomplete for that role, and retry its read on
 the next relevant session without repeating settled ownership questions.
 
@@ -225,7 +231,7 @@ Standalone setup or management opens no review mode. When setup occurs inside
 a new review, that review's ending governs instead. Judge completion by the
 requested operation: listing requires a valid map read, removal requires saved
 map readback, and added or changed access requires saved map readback plus a
-successful bounded native read. A preview is not persistence, and persistence
+successful bounded native read of that access description. A preview is not persistence, and persistence
 is not source access. Failed access retains the saved owner.
 
 Use one core run ending:

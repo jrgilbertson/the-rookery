@@ -34,6 +34,10 @@ simulated results as such; static fixture checks are not agent behavior.
 6. Ask to update one locator and approve its exact preview. Saving/readback
    succeeds; the native read fails. In a fresh relevant session, retry with the
    same map. Include an unrelated deferred role and preserve other bindings.
+7. In a `codex-desktop` context, approve an edit only to the `claude-desktop`
+   override. Separately edit shared access while an unchanged `codex-desktop`
+   override exists. Let the current route succeed; neither edited route has
+   been read. Capture the saved values, selected route, and completion claim.
 
 ## Expected behavior
 
@@ -52,3 +56,6 @@ simulated results as such; static fixture checks are not agent behavior.
 - [ ] 6: Save/readback and native failure are reported separately, the saved
       owner remains, the next session retries without reopening designation,
       and deferred roles do not block supported work or become invented bindings.
+- [ ] 7: Both edits save with readback, but their access remains unverified and
+      setup Partial. A successful unchanged current route verifies only itself;
+      the agent does not select another harness's override to finish the check.

@@ -107,6 +107,24 @@
         "window": "current",
         "gap_effect": "Writing commitments need user context."
       }
+    ],
+    "leisure": [
+      {
+        "area": "leisure",
+        "source": "Fictional Obsidian vault, note Leisure/Recommendations.md",
+        "interface": "Obsidian CLI",
+        "identity": "fictional-personal-vault",
+        "locator": "Leisure/Recommendations.md",
+        "condition": "conditional",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ],
+        "window": "current shortlist",
+        "filter": "movie, TV show, and book recommendations relevant to leisure choices in this review",
+        "gap_effect": "Leisure suggestions lack the user's curated recommendation context."
+      }
     ]
   }
 }

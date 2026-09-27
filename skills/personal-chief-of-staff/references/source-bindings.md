@@ -139,7 +139,14 @@ a specific mapping operation go directly to [Manage mappings](#manage-mappings).
 | Commitments and time | Tasks, active projects, waiting-for items, recurring obligations, someday/maybe, calendars, mailboxes. |
 | Reflection and learning | Journals, durable learning, review templates and prior reviews, decisions, experiments, feedback. |
 | Relationships and conversations | Relationship records, messages, contacts, curated meeting notes, supporting transcripts. |
-| Optional context | Business signals, writing, reading and leisure, health. |
+| Optional context | Business signals, writing, leisure (movies, TV shows, books), health. |
+
+For leisure, offer to map the user's existing content recommendation system,
+watchlist, or reading list as a `leisure` role with `area: leisure`. Designate
+its owner and bounded collection like any other source. Read only the relevant
+shortlist when leisure choices matter to the review, not the full library on
+every run. The map points to that system; it does not copy its recommendations
+or replace it with a new recommendation engine. Leisure can be deferred.
 
 Use supplied or configured task guidance and applicable review templates to
 identify information needs before proposing new records. Read only the

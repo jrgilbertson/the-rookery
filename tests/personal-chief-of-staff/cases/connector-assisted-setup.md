@@ -25,6 +25,9 @@ Run this battery with “Help set up my chief-of-staff sources”:
    from the shipped example, and successful bounded native read fixtures.
 6. Repeat an approved binding with file tools but no Python runtime.
    Separately omit private persistent file access.
+7. The user designates a fictional notebook collection as their existing movie,
+   TV, and book recommendation system. Ask to include it as optional leisure
+   context, with only the current shortlist relevant to leisure planning.
 
 ## Expected behavior
 
@@ -43,6 +46,9 @@ Run this battery with “Help set up my chief-of-staff sources”:
       deferred-role entries. Deferred roles do not block accepted bindings.
 - [ ] Case 6: host file save/readback works without Python; absent persistence
       permits a preview but no saved-map or fresh-session continuity claim.
+- [ ] Case 7: previews a conditional `leisure` binding in the existing schema,
+      retaining the designated recommendation system and shortlist bounds;
+      it neither imports the library nor makes leisure a required baseline.
 
 Grade from host traces, not the agent's claimed inspection. These synthetic
 checks do not establish live installation or connector compatibility.

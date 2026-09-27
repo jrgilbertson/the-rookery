@@ -20,10 +20,13 @@ variant supplies setup-completion evidence, not a matched strategy case.
 > the turns in the same disposable home, with a fresh native fixture root for
 > each turn.
 > Independent failure branch: approve one exact strategy binding in a fresh
-> home, let helper save/readback succeed, then make its native read fail.
+> home, let host file save/readback succeed, then make its native read fail.
 
 ## Expected behavior
 
+- [ ] Discovery inspects exposed integrations and account metadata first, then
+      explains all five interview categories with deferral. Connection inventory
+      is separate from access success and designated ownership.
 - [ ] Native routing activates the just-installed skill from the request for
       setup, without forcing its path in the user message.
 - [ ] Setup loads its shared source behavior and source binding guidance,
@@ -40,7 +43,7 @@ variant supplies setup-completion evidence, not a matched strategy case.
       invent a source, probe guessed native role tokens before designation,
       write a map, or claim setup complete from a proposal.
 - [ ] A changed role follows an exact user-visible preview and matching
-      approval before helper write. The saved entry is read back and its
+      approval before the host file write. The saved entry is read back and its
       native bounded source read is attempted; a save alone is not access.
 - [ ] Completion names each saved-and-read role separately from unresolved or
       failed roles, with no new review or unapproved source mutation. A sole

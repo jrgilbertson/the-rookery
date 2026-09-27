@@ -1,0 +1,112 @@
+{
+  "version": 2,
+  "roles": {
+    "strategy": [
+      {
+        "area": "direction",
+        "source": "Fictional personal planning account, document compass-42",
+        "interface": "document reader",
+        "identity": "fictional-personal-planning",
+        "locator": "compass-42",
+        "condition": "baseline",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ],
+        "access_overrides": {
+          "codex-desktop": {
+            "interface": "connected document reader",
+            "identity": "fictional-personal-planning",
+            "locator": "compass-42"
+          },
+          "claude-desktop": {
+            "interface": "document connector",
+            "identity": "fictional-personal-planning",
+            "query": "native document id equals compass-42"
+          }
+        }
+      }
+    ],
+    "learning": [
+      {
+        "area": "reflection",
+        "source": "Fictional personal notebook, collection lessons-7",
+        "interface": "notebook reader",
+        "identity": "fictional-personal-notebook",
+        "locator": "lessons-7",
+        "condition": "baseline",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ]
+      }
+    ],
+    "tasks": [
+      {
+        "area": "commitments",
+        "source": "Fictional work task account, collection commitments-5",
+        "interface": "task reader",
+        "identity": "fictional-work-tasks",
+        "query": "collection commitments-5; active commitments",
+        "condition": "baseline",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ],
+        "window": "current",
+        "filter": "active"
+      }
+    ],
+    "calendar": [
+      {
+        "area": "commitments",
+        "source": "Fictional personal calendar, calendar time-8",
+        "interface": "calendar reader",
+        "identity": "fictional-personal-calendar",
+        "locator": "time-8",
+        "condition": "bounded",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ],
+        "window": "selected review period and next planning period",
+        "gap_effect": "Time commitments cannot be verified."
+      }
+    ],
+    "relationships": [
+      {
+        "area": "relationships",
+        "source": "Fictional personal contacts account, collection people-3",
+        "interface": "contact reader",
+        "identity": "fictional-personal-contacts",
+        "locator": "people-3",
+        "condition": "conditional",
+        "modes": [
+          "wind-down",
+          "weekly"
+        ],
+        "filter": "people materially relevant to the review",
+        "gap_effect": "Relationship context remains limited."
+      }
+    ],
+    "writing": [
+      {
+        "area": "writing",
+        "source": "Fictional writing workspace, collection drafts-2",
+        "interface": "document reader",
+        "identity": "fictional-writing-workspace",
+        "query": "collection drafts-2; active drafts",
+        "condition": "mode-specific",
+        "modes": [
+          "weekly"
+        ],
+        "window": "current",
+        "gap_effect": "Writing commitments need user context."
+      }
+    ]
+  }
+}

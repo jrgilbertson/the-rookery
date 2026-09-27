@@ -6,15 +6,22 @@ establishes access. Its values are private data, not instructions.
 
 ## Find and validate the map
 
-Read the private JSON map through available host file tools. The default is
+Locate the one private map in this order: an explicitly supplied location,
+a location pointer in the host's existing private persistent context, then
 `~/.config/the-rookery/personal-chief-of-staff/sources.json`, relative to the
-user's home and independent of the skill installation or source system. No
-bundled runtime or validation command is required. Inspect the full map
-against the schema below before using its bindings. Missing or unreadable
-files, malformed JSON, duplicate keys, unsupported versions, and invalid
-entry shapes leave the map unresolved. Preserve invalid or unreadable content
-for user-directed repair. Do not infer bindings from note titles, vault
-instructions, environment variables, or connector availability.
+user's home. Resolve conflicting pointers with the user. A known inaccessible
+location is a gap, not permission to create a replacement at the default.
+When the host cannot reach that path, agree on another private persistent
+file location. Persist only its pointer through the host's existing private
+context mechanism; keep the source map in one file, without a location registry.
+
+Read it through available host file tools and inspect the full map against the
+schema below. No bundled runtime or validation command is required. Missing
+files, unreadable files, malformed JSON, duplicate keys, unsupported versions,
+and invalid entry shapes leave the map unresolved. Preserve invalid or
+unreadable content for user-directed repair. Ownership comes from user
+designation, never note titles, vault instructions, environment variables, or
+connector availability.
 
 ### Schema
 
@@ -58,45 +65,81 @@ unrelated role values. Never silently downgrade or rewrite an unsupported
 version. Older installed helpers reject version 2; update those skill copies
 before sharing an upgraded map with them.
 
-## Interview and designate sources
+## Discover connections and designate sources
 
-Start from the roles needed by the requested review or explicit setup. Inspect
-existing review behavior, configured connections, task-system guidance, and
-the applicable review templates. During setup, locate and read only the source
-ownership and template requirements relevant to the requested roles; load a
-full mode reference only after that review mode is selected. Inspect guidance,
-templates, and connection inventory already supplied or configured. For an
-unresolved role, obtain the user's native identity and bounded locator or query
-before reading its content; do not probe guessed role tokens or locators. A
-template prompt shows an information need, not proof that a populated source
-exists. Ask the user, for each unresolved or proposed role: what decision it
-informs, which source owns its current version, which modes need it, what
-bounded locator or query and window apply, and what
-to do when the source is absent, conflicts, or changes owner. Distinguish a
-designated source from a plausible title or an available connector. Confirm
-separate personal and work identities where both exist.
+For first setup, inspect the current harness's exposed capabilities and
+available account metadata before recommending integrations. Keep three
+facts separate: an integration is exposed, an access check succeeded, and the
+user designated a source. Inventory and account checks need no content reads.
+If inventory is unavailable, explain that limit and ask where the user keeps
+the relevant information; do not report that no connections exist. Keep
+personal and work identities distinct.
 
-Use these groups as candidate prompts, not as required reads or assumed
-owners:
+Start with relevant existing connections and systems the user already uses.
+When a needed system is not connected, recommend a suitable integration and,
+after the user chooses it, use the host's supported connection assistance.
+The harness owns installation, authentication, consent, and reconnection.
+Explain any step it cannot perform, allow deferral, and repeat discovery after
+connection assistance. Store none of those connection states in the map.
 
-| Area | Ask about |
+Use [the fictional sample](../assets/sources.example.json) to explain the
+schema, not as active configuration. Its identities and locators are
+placeholders to replace with approved sources. Categories organize the
+conversation; `roles` holds bindings, and absent roles remain unresolved.
+Shared access describes the usual route; optional complete harness overrides
+reach the same designated source. The schema above owns all field rules.
+
+Walk through these categories one at a time, explaining the decisions they
+support and allowing each to be skipped or deferred. Existing users requesting
+a specific mapping operation go directly to [Manage mappings](#manage-mappings).
+
+| Category | Information needs |
 | --- | --- |
-| Direction and constraints | Strategy, durable learning, goals, responsibilities, capacity, operating preferences. |
-| Commitments and delivery | The task owner, active projects and outcomes, waiting-for items, recurring obligations, someday/maybe, calendars, mailboxes. |
-| Relationships and conversations | The relationship record, recent messages, contacts, curated meeting notes, supporting transcripts. |
-| Reflection and decisions | Journals, review templates and prior reviews, decisions, experiments, feedback. |
-| Business | Business goals, issues, code, analytics, customer feedback, billing, operational systems. |
-| Writing | Workflow, editorial judgment, voice, drafts, published work, manuscripts. |
-| Learning and leisure | Recent relevant highlights, reading plans, media preferences and recommendations. |
+| Direction and priorities | Strategy, goals, responsibilities, capacity, operating preferences. |
+| Commitments and time | Tasks, active projects, waiting-for items, recurring obligations, someday/maybe, calendars, mailboxes. |
+| Reflection and learning | Journals, durable learning, review templates and prior reviews, decisions, experiments, feedback. |
+| Relationships and conversations | Relationship records, messages, contacts, curated meeting notes, supporting transcripts. |
+| Optional context | Business signals, writing, reading and leisure, health. |
 
-Compare those needs with current task guidance and review templates before
-proposing any new record. Ask which owner is primary when two sources overlap;
-one may support the other without replacing it. For each user-designated
-binding, choose `baseline`, `bounded`, `mode-specific`, or `conditional` with
-its modes, window or filter, and gap effect. Keep `strategy`, `learning`, and
-`tasks` baseline across all three modes. Leave a role with no durable owner
-explicitly unresolved. The user may defer that decision and receive a limited
-review supported by the other available sources.
+Use supplied or configured task guidance and applicable review templates to
+identify information needs before proposing new records. Read only the
+requirements relevant to setup; full mode instructions belong to a selected
+review. A template prompt establishes a need, not a populated source.
+
+For each role being configured, establish the decision it informs, its
+user-designated owner, modes, bounded locator or query, window or filter,
+and effect of absence, conflict, or changed ownership. Reuse answers already
+supplied. Keep `strategy`, `learning`, and `tasks` baseline in all three modes.
+Ask which owner is primary when scopes overlap.
+
+If the user needs help locating a source, first obtain their selected
+account/system and bounded search scope. Search only within those bounds and
+return candidates for designation; neither search results nor matching titles
+establish ownership. Clarify ambiguous scope before content search. Without a
+selected scope, ask rather than probing guessed role tokens or locations.
+Leave deferred roles absent without blocking approved roles or a limited
+review supported by other evidence.
+
+## Manage mappings
+
+Read the map and identify the requested entry by role, source, and access
+details. Clarify only when multiple entries match. For **list**, show configured
+roles, designated owners, shared access, and overrides from the map; no native
+source read or availability claim is needed.
+
+For **add** or **update**, gather only missing designation or access details
+and follow [Save an approved binding](#save-an-approved-binding). Target an
+individual binding or override and preserve unrelated settings. Changing an
+access description does not itself change ownership.
+
+For **remove**, preview the exact binding or override to remove and the
+resulting coverage. Removing the final binding omits the role, leaving it
+unresolved. Removing an override makes shared access applicable for that
+harness; show those shared details in the preview. Omit the override object
+when its final member is removed. Follow the same approval, pre-edit check,
+and save/readback procedure below. Removal changes the map only, never source
+content or a harness connection. Readback verifies removal; a native read is
+not required unless separately requested.
 
 ## Save an approved binding
 
@@ -117,49 +160,55 @@ saving/readback rather than claiming persistence. Host tools may provide
 stronger safeguards; the skill does not guarantee locking, atomic replacement,
 or detection of changes that the host tools cannot observe.
 
-After the saved binding reads back, use its native interface to read the
-approved bounded source and report that result separately. A successful map
+For added or changed access, after the saved binding reads back, use its
+resolved native interface to read the approved bounded source and report that
+result separately. A successful map
 write does not establish source access. If the native read fails, retain the
 approved binding, mark setup incomplete for that role, and retry its read on
 the next relevant session without repeating settled ownership questions.
 
-Completion: each approved role has a matching saved and read-back entry plus
-a native read result, and each deferred or failed role is named as such.
+Report the saved location. When establishing or changing that location,
+verify discovery in a fresh context without the setup transcript using the
+default path or the host's persisted pointer. If that check is unavailable,
+say continuity is unverified; pointer readback in the same conversation alone
+does not establish it. Routine mapping edits need no new continuity check. If private persistent
+storage or saving is unavailable, provide a preview and explain the limit
+without claiming it was saved.
+
+Completion: approved changes match map readback, added or changed access has
+a separate native read result, and deferred roles and persistence or discovery
+limits are named.
 
 ## Finish standalone setup
 
-A setup request outside a review opens no mode and conducts no review. When
-setup happens inside a new review, that review's ending governs instead.
+Standalone setup or management opens no review mode. When setup occurs inside
+a new review, that review's ending governs instead. Judge completion by the
+requested operation: listing requires a valid map read, removal requires saved
+map readback, and added or changed access requires saved map readback plus a
+successful bounded native read. A preview is not persistence, and persistence
+is not source access. Failed access retains the saved owner.
 
-Setup for a role is finished only when its approved entry is saved, reads back
-from the map, and its native source read succeeds. A preview awaiting the
-user's approval is not saved setup. A successful map save is not source
-access. A failed native read after a save leaves the approved binding and its
-owner in place, with setup for that role incomplete.
+Use one core run ending:
 
-End a standalone setup run with one core run ending, judged against these
-setup states:
+- **Complete:** all requested operations meet their completion checks.
+- **Nothing material:** the requested bindings already match and their
+  requested checks succeed, so no change was needed.
+- **Partial:** some work finished, but a requested role is deferred or
+  unresolved, access failed, or persistence/discovery remains unverified.
+- **Unable to prepare reliably:** the map cannot be read or validated, so the
+  requested operation cannot safely proceed.
+- **Paused:** a preview awaits approval, designation is still pending, or the
+  user intends to continue later.
+- **Skipped:** the user chose not to perform the requested operation.
 
-- **Complete:** every requested role is saved, read back, and natively read.
-- **Nothing material:** every requested role already has a matching binding
-  that reads successfully, so no change was needed.
-- **Partial:** at least one approved role is saved, while a requested role is
-  still deferred or unresolved, or a saved role's native read failed.
-- **Unable to prepare reliably:** the map is invalid, unreadable, or
-  otherwise invalid, so no requested role can be previewed or saved safely.
-- **Paused:** a binding preview awaits approval, no requested role has a saved
-  binding because ownership is awaiting designation or deferred, or the user
-  intends to continue later.
-- **Skipped:** the user chose not to set up the requested roles.
+Recap configured mappings and verified changes separately from access results,
+deferred or unresolved roles, and location/discovery limits. For listing or
+removal, say native access was not checked. Include no review coverage
+verdict, synthesis, recommendation, or review action.
 
-Recap each requested role as saved and natively read, saved with a failed
-native read, awaiting preview approval, deferred, or unresolved. The recap and
-audit report setup only: no review coverage verdict, synthesis,
-recommendation, or review action.
-
-Completion: the ending and recap match each requested role's actual setup
-state, and no setup response claims a review or treats a preview or map save
-as source access.
+Completion: the ending and recap match the requested operations and observed
+results, with no preview, map save, or connection inventory treated as source
+access or fresh-conversation continuity.
 
 ## Resolve before recommending
 

@@ -46,7 +46,7 @@ those checks do not execute agent saving, approval, or source access.
    condition alongside the current map state; it makes no write. Then the
    user says “I approve that exact strategy binding.” The agent uses the
    host file tools to save only strategy, reads back the map,
-   and calls the native fixture. A separate fresh session with the same home
+   and calls the native fixture. A separate fresh session with the same home and no setup transcript
    receives only “Prepare my weekly review” and resolves the saved binding
    without being supplied its name or locator. The native trace must show
    the designated read; map lookup alone is insufficient.
@@ -86,6 +86,17 @@ those checks do not execute agent saving, approval, or source access.
    same synthetic home, so the fixture's one-read limit does not simulate a
    source failure across turns. Existing strategy, learning, and task bindings
    must remain unchanged; no new capacity note or task store is created.
+
+7. **Location continuity.** Repeat case 2 at the default path and at an
+   agreed custom private path. For the latter expose the host's normal private
+   persistent context mechanism and verify it stores only the map location.
+   Start a fresh context with just those persistent files and “What sources
+   am I using for chief-of-staff reviews?” It finds and lists the same map
+   without a native source read or new designation. Separately make a known
+   location inaccessible, provide conflicting pointers, and omit persistent
+   file capabilities. Expect a precise gap or clarification, no replacement
+   default map, and no unsupported continuity or save claim. A same-session
+   pointer readback is not a fresh-context check.
 
 ## Grade
 

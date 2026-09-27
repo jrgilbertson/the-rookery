@@ -17,6 +17,14 @@ class SourceMapSchemaChecks(unittest.TestCase):
     def setUp(self):
         self.v2 = read_map(HERE / "source-bindings/valid-v2.json")
 
+    def test_shipped_sample(self):
+        sample = read_map(HERE.parents[2] / "skills/personal-chief-of-staff/assets/sources.example.json")
+        self.assertEqual(sample["version"], 2)
+        self.assertTrue({"strategy", "learning", "tasks"} <= sample["roles"].keys())
+        entries = [entry for bindings in sample["roles"].values() for entry in bindings]
+        self.assertTrue(any(len(entry.get("access_overrides", {})) >= 2 for entry in entries))
+        self.assertTrue(all("source" in entry for entry in entries))
+
     def test_versions_and_read_preserve_fixture_bytes(self):
         for name in ("valid.json", "valid-v2.json", "setup-initial.json"):
             path = HERE / "source-bindings" / name

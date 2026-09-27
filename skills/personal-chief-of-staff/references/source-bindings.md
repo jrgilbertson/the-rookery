@@ -133,13 +133,32 @@ Walk through these categories one at a time, explaining the decisions they
 support and allowing each to be skipped or deferred. Existing users requesting
 a specific mapping operation go directly to [Manage mappings](#manage-mappings).
 
-| Category | Information needs |
-| --- | --- |
-| Direction and priorities | Strategy, goals, responsibilities, capacity, operating preferences. |
-| Commitments and time | Tasks, active projects, waiting-for items, recurring obligations, someday/maybe, calendars, mailboxes. |
-| Reflection and learning | Journals, durable learning, review templates and prior reviews, decisions, experiments, feedback. |
-| Relationships and conversations | Relationship records, messages, contacts, curated meeting notes, supporting transcripts. |
-| Optional context | Business signals, writing, leisure (movies, TV shows, books), health. |
+| Category / `area` | Decision supported | Example roles and information needs |
+| --- | --- | --- |
+| Direction / `direction` | What matters and what should take priority? | `strategy`: values, goals, responsibilities, priorities, operating principles. |
+| Projects and commitments / `commitments` | What outcomes and actions have I committed to? | `projects`: outcomes, progress, milestones; `tasks`: next actions, waiting-for items, recurring obligations; `someday`: uncommitted possibilities; `writing`: relevant drafts. |
+| Time and capacity / `time` | What fits, and when? | `calendar`: scheduled events, deadlines, travel; `capacity`: availability, workload limits, protected time. |
+| People and communication / `relationships` | Who needs attention, and what has been communicated? | `relationships`: contacts and relationship context; `mailbox`, `messages`, `meetings`: bounded exchanges and conversation records. |
+| Knowledge and reflection / `reflection` | What have I learned, and what should inform the next decision? | `learning`: durable insights, research, experiments and feedback; `journals`: observations; `decisions`: prior choices and rationale; `review_records`, `review_templates`: review continuity and prompts. |
+| Resources and operations / `resources` | What money, assets, or operating conditions need attention? | `finances`: budgets and obligations; `household`: property, vehicles, documents and administration; `business_signals`: relevant operating measures. |
+| Health and wellbeing / `health` | What supports health, energy, and recovery? | `health`: user-selected routines, observations, appointments and care-plan context. |
+| Leisure and interests / `leisure` | What would I enjoy doing, watching, or reading? | `leisure`: curated movie, TV, book, hobby and recreation recommendations. |
+
+These are setup prompts, not required integrations or a closed list of roles.
+Organize by the information's primary purpose, not its file format or app.
+Projects and tasks share an area but remain distinct roles: an outcome and its
+next action are different records. Likewise, a leisure reading list is not
+necessarily a learning source, and a health appointment's time belongs in the
+calendar while its health context belongs in the health source. Reuse links to
+existing records instead of creating duplicate trackers.
+
+Personal and work are source scopes within each area, not competing categories.
+Use separate bindings when accounts or owners differ, keeping their scope in
+`source`, `identity`, and bounds. One system can serve several roles; designate
+each role's owner and avoid counting the same evidence twice. The sample is a
+menu: omit unused roles rather than copying every example into a live map.
+Its interface labels are placeholders to replace with capabilities discovered
+in the user's harness, not required products or installation instructions.
 
 For leisure, offer to map the user's existing content recommendation system,
 watchlist, or reading list as a `leisure` role with `area: leisure`. Designate

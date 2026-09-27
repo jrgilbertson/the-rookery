@@ -28,19 +28,22 @@
         }
       }
     ],
-    "learning": [
+    "projects": [
       {
-        "area": "reflection",
-        "source": "Fictional personal notebook, collection lessons-7",
-        "interface": "notebook reader",
-        "identity": "fictional-personal-notebook",
-        "locator": "lessons-7",
-        "condition": "baseline",
+        "area": "commitments",
+        "source": "Fictional work planning, collection projects-4",
+        "interface": "host document reader",
+        "identity": "fictional-work-planning",
+        "locator": "projects-4",
+        "condition": "conditional",
         "modes": [
           "wind-down",
           "weekly",
           "quarterly"
-        ]
+        ],
+        "window": "selected review period",
+        "filter": "active project outcomes, status and milestones; excludes individual next actions",
+        "gap_effect": "Commitments context from this source remains unverified."
       }
     ],
     "tasks": [
@@ -57,12 +60,60 @@
           "quarterly"
         ],
         "window": "current",
-        "filter": "active"
+        "filter": "work next actions, waiting-for items and recurring obligations"
+      },
+      {
+        "area": "commitments",
+        "source": "Fictional personal planning, collection actions-6",
+        "interface": "host task reader",
+        "identity": "fictional-personal-planning",
+        "locator": "actions-6",
+        "condition": "baseline",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ],
+        "window": "current",
+        "filter": "personal next actions, waiting-for items and recurring obligations",
+        "gap_effect": "Commitments context from this source remains unverified."
+      }
+    ],
+    "someday": [
+      {
+        "area": "commitments",
+        "source": "Fictional personal planning, collection possibilities-3",
+        "interface": "host document reader",
+        "identity": "fictional-personal-planning",
+        "locator": "possibilities-3",
+        "condition": "conditional",
+        "modes": [
+          "weekly",
+          "quarterly"
+        ],
+        "window": "current",
+        "filter": "uncommitted ideas considered during this review; not active commitments",
+        "gap_effect": "Commitments context from this source remains unverified."
+      }
+    ],
+    "writing": [
+      {
+        "area": "commitments",
+        "source": "Fictional writing workspace, collection drafts-2",
+        "interface": "document reader",
+        "identity": "fictional-writing-workspace",
+        "query": "collection drafts-2; active drafts",
+        "condition": "mode-specific",
+        "modes": [
+          "weekly"
+        ],
+        "window": "current",
+        "gap_effect": "Writing commitments need user context."
       }
     ],
     "calendar": [
       {
-        "area": "commitments",
+        "area": "time",
         "source": "Fictional personal calendar, calendar time-8",
         "interface": "calendar reader",
         "identity": "fictional-personal-calendar",
@@ -75,6 +126,24 @@
         ],
         "window": "selected review period and next planning period",
         "gap_effect": "Time commitments cannot be verified."
+      }
+    ],
+    "capacity": [
+      {
+        "area": "time",
+        "source": "Fictional personal planning, collection availability-2",
+        "interface": "host document reader",
+        "identity": "fictional-personal-planning",
+        "locator": "availability-2",
+        "condition": "conditional",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ],
+        "window": "current and next planning period",
+        "filter": "workload limits, availability and protected time relevant to planning",
+        "gap_effect": "Time context from this source remains unverified."
       }
     ],
     "relationships": [
@@ -93,28 +162,225 @@
         "gap_effect": "Relationship context remains limited."
       }
     ],
-    "writing": [
+    "mailbox": [
       {
-        "area": "writing",
-        "source": "Fictional writing workspace, collection drafts-2",
-        "interface": "document reader",
-        "identity": "fictional-writing-workspace",
-        "query": "collection drafts-2; active drafts",
+        "area": "relationships",
+        "source": "Fictional work mail, collection inbox-8",
+        "interface": "host message reader",
+        "identity": "fictional-work-mail",
+        "locator": "inbox-8",
+        "condition": "bounded",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ],
+        "window": "selected review period",
+        "filter": "relevant work exchanges within the selected period",
+        "gap_effect": "Relationships context from this source remains unverified."
+      }
+    ],
+    "messages": [
+      {
+        "area": "relationships",
+        "source": "Fictional personal messages, collection conversations-6",
+        "interface": "host message reader",
+        "identity": "fictional-personal-messages",
+        "locator": "conversations-6",
+        "condition": "bounded",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ],
+        "window": "selected review period",
+        "filter": "selected personal conversations relevant to this review",
+        "gap_effect": "Relationships context from this source remains unverified."
+      }
+    ],
+    "meetings": [
+      {
+        "area": "relationships",
+        "source": "Fictional work notes, collection meetings-5",
+        "interface": "host document reader",
+        "identity": "fictional-work-notes",
+        "locator": "meetings-5",
+        "condition": "bounded",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ],
+        "window": "selected review period",
+        "filter": "curated meeting notes relevant to current decisions; transcripts only when needed",
+        "gap_effect": "Relationships context from this source remains unverified."
+      }
+    ],
+    "learning": [
+      {
+        "area": "reflection",
+        "source": "Fictional personal notebook, collection lessons-7",
+        "interface": "notebook reader",
+        "identity": "fictional-personal-notebook",
+        "locator": "lessons-7",
+        "condition": "baseline",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ]
+      }
+    ],
+    "journals": [
+      {
+        "area": "reflection",
+        "source": "Fictional personal notes, collection journal-4",
+        "interface": "host document reader",
+        "identity": "fictional-personal-notes",
+        "locator": "journal-4",
+        "condition": "bounded",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ],
+        "window": "selected review period",
+        "filter": "observations for the selected review dates",
+        "gap_effect": "Reflection context from this source remains unverified."
+      }
+    ],
+    "decisions": [
+      {
+        "area": "reflection",
+        "source": "Fictional work notes, collection decisions-7",
+        "interface": "host document reader",
+        "identity": "fictional-work-notes",
+        "locator": "decisions-7",
+        "condition": "conditional",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ],
+        "window": "relevant decision history",
+        "filter": "prior decisions and rationale relevant to the current question",
+        "gap_effect": "Reflection context from this source remains unverified."
+      }
+    ],
+    "review_records": [
+      {
+        "area": "reflection",
+        "source": "Fictional personal notes, collection reviews-2",
+        "interface": "host document reader",
+        "identity": "fictional-personal-notes",
+        "locator": "reviews-2",
+        "condition": "conditional",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ],
+        "window": "relevant prior review periods",
+        "filter": "relevant prior completed reviews; not evidence of current activity",
+        "gap_effect": "Reflection context from this source remains unverified."
+      }
+    ],
+    "review_templates": [
+      {
+        "area": "reflection",
+        "source": "Fictional personal notes, collection templates-1",
+        "interface": "host document reader",
+        "identity": "fictional-personal-notes",
+        "locator": "templates-1",
+        "condition": "conditional",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ],
+        "window": "current template",
+        "filter": "template for the selected review mode; prompts are not populated evidence",
+        "gap_effect": "Reflection context from this source remains unverified."
+      }
+    ],
+    "finances": [
+      {
+        "area": "resources",
+        "source": "Fictional personal finance, collection budget-3",
+        "interface": "host record reader",
+        "identity": "fictional-personal-finance",
+        "locator": "budget-3",
+        "condition": "conditional",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ],
+        "window": "selected review period",
+        "filter": "user-selected budget, bill and renewal summary relevant to the review",
+        "gap_effect": "Resources context from this source remains unverified."
+      }
+    ],
+    "household": [
+      {
+        "area": "resources",
+        "source": "Fictional personal administration, collection home-5",
+        "interface": "host document reader",
+        "identity": "fictional-personal-administration",
+        "locator": "home-5",
+        "condition": "conditional",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ],
+        "window": "selected review period",
+        "filter": "relevant property, vehicle, document and maintenance context; actions stay in tasks",
+        "gap_effect": "Resources context from this source remains unverified."
+      }
+    ],
+    "business_signals": [
+      {
+        "area": "resources",
+        "source": "Fictional work reporting, collection metrics-2",
+        "interface": "host report reader",
+        "identity": "fictional-work-reporting",
+        "locator": "metrics-2",
         "condition": "mode-specific",
         "modes": [
-          "weekly"
+          "weekly",
+          "quarterly"
         ],
-        "window": "current",
-        "gap_effect": "Writing commitments need user context."
+        "window": "selected review period",
+        "filter": "user-selected operating measures relevant to current priorities",
+        "gap_effect": "Resources context from this source remains unverified."
+      }
+    ],
+    "health": [
+      {
+        "area": "health",
+        "source": "Fictional personal wellbeing, collection wellbeing-4",
+        "interface": "host document reader",
+        "identity": "fictional-personal-wellbeing",
+        "locator": "wellbeing-4",
+        "condition": "conditional",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ],
+        "window": "selected review period",
+        "filter": "user-selected health, energy and recovery context; no unrelated sensitive records",
+        "gap_effect": "Health context from this source remains unverified."
       }
     ],
     "leisure": [
       {
         "area": "leisure",
-        "source": "Fictional Obsidian vault, note Leisure/Recommendations.md",
-        "interface": "Obsidian CLI",
-        "identity": "fictional-personal-vault",
-        "locator": "Leisure/Recommendations.md",
+        "source": "Fictional personal recommendations, collection leisure-picks-9",
+        "interface": "host collection reader",
+        "identity": "fictional-personal-recommendations",
+        "locator": "leisure-picks-9",
         "condition": "conditional",
         "modes": [
           "wind-down",
@@ -122,8 +388,8 @@
           "quarterly"
         ],
         "window": "current shortlist",
-        "filter": "movie, TV show, and book recommendations relevant to leisure choices in this review",
-        "gap_effect": "Leisure suggestions lack the user's curated recommendation context."
+        "filter": "movie, TV, book, hobby and recreation recommendations relevant to leisure choices",
+        "gap_effect": "Leisure context from this source remains unverified."
       }
     ]
   }

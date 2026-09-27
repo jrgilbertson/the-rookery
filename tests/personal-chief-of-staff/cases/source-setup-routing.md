@@ -26,7 +26,7 @@ variant supplies setup-completion evidence, not a matched strategy case.
 
 - [ ] The unforced setup request activates the installed skill and stays in
       setup. It inspects exposed integrations/account metadata, uses relevant
-      task/template guidance, and walks the five categories with deferral;
+      task/template guidance, and walks the documented categories with deferral;
       it loads shared setup references without unrelated full-mode reads.
       Inventory and template facts do not establish ownership. For each active
       role it asks only for missing decision, owner, modes, condition, bounds,

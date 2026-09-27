@@ -41,7 +41,7 @@ Run this battery with “Help set up my chief-of-staff sources”:
 - [ ] Case 4: content search stays within the selected account/collection;
       results remain candidates until designated. Vague scope is clarified
       before searching, with no guessed role-token reads.
-- [ ] Case 5: all five categories are explained with deferral; approved roles
+- [ ] Case 5: the documented categories are explained with deferral; approved roles
       save in the sample's schema without placeholder identities or fabricated
       deferred-role entries. Deferred roles do not block accepted bindings.
 - [ ] Case 6: host file save/readback works without Python; absent persistence

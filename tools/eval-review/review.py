@@ -166,33 +166,33 @@ def refs_resolve(refs, index):
 
 def clean_cost(value, errors, run_id):
     if value is None:
-        return None, "unknown", True
+        return None, "unknown"
     if not isinstance(value, dict):
         add_error(errors, "run", run_id, f"Cost for run {run_id} is malformed.")
-        return None, "malformed", False
+        return None, "malformed"
     basis = value.get("basis")
     usd = value.get("usd")
     if basis not in ("api_equivalent_estimate", "subscription_charge") or not finite_number(usd):
         add_error(errors, "run", run_id, f"Cost for run {run_id} is malformed.")
-        return None, "malformed", False
-    return {"usd": usd, "basis": basis}, basis, True
+        return None, "malformed"
+    return {"usd": usd, "basis": basis}, basis
 
 
 def clean_duration(value, errors, run_id):
     if value is None:
-        return None, "unknown", True
+        return None, "unknown"
     if not finite_number(value):
         add_error(errors, "run", run_id, f"Duration for run {run_id} is malformed.")
-        return None, "malformed", False
-    return value, "present", True
+        return None, "malformed"
+    return value, "present"
 
 
 def clean_tokens(value, errors, run_id):
     if value is None:
-        return None, "unknown", True
+        return None, "unknown"
     if not isinstance(value, dict):
         add_error(errors, "run", run_id, f"Tokens for run {run_id} are malformed.")
-        return None, "malformed", False
+        return None, "malformed"
     cleaned = {}
     for key in ("input", "output", "total"):
         item = value.get(key)
@@ -202,10 +202,10 @@ def clean_tokens(value, errors, run_id):
             cleaned[key] = item
         else:
             add_error(errors, "run", run_id, f"Tokens for run {run_id} are malformed.")
-            return None, "malformed", False
+            return None, "malformed"
     if all(item is None for item in cleaned.values()):
-        return cleaned, "unknown", True
-    return cleaned, "present", True
+        return cleaned, "unknown"
+    return cleaned, "present"
 
 
 def clean_availability(value, errors, run_id):
@@ -513,18 +513,9 @@ def clean_run(run, errors, case_id):
     for field, ok in (("model", model_ok), ("settings", settings_ok), ("summary", summary_ok), ("output", output_ok)):
         if not ok:
             add_error(errors, "run", run_id, f"{field} for run {run_id} is malformed.")
-    if "duration_ms" in run:
-        duration, duration_state, duration_ok = clean_duration(run.get("duration_ms"), errors, run_id)
-    else:
-        duration, duration_state, duration_ok = None, "unknown", True
-    if "tokens" in run:
-        tokens, tokens_state, tokens_ok = clean_tokens(run.get("tokens"), errors, run_id)
-    else:
-        tokens, tokens_state, tokens_ok = None, "unknown", True
-    if "cost" in run:
-        cost, cost_state, cost_ok = clean_cost(run.get("cost"), errors, run_id)
-    else:
-        cost, cost_state, cost_ok = None, "unknown", True
+    duration, duration_state = clean_duration(run.get("duration_ms"), errors, run_id)
+    tokens, tokens_state = clean_tokens(run.get("tokens"), errors, run_id)
+    cost, cost_state = clean_cost(run.get("cost"), errors, run_id)
     availability, availability_ok = clean_availability(run.get("skill_availability"), errors, run_id)
     evidence, evidence_ok = clean_evidence_refs(run.get("evidence"), errors, "run", run_id)
     if not (evidence_ok and model_ok and settings_ok and summary_ok and output_ok):

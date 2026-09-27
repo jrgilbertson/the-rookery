@@ -1,8 +1,8 @@
 ---
 name: personal-chief-of-staff
-description: Use when the user wants to complete a daily journal or wind down, requests a daily chief-of-staff review or a weekly or quarterly review, asks to set up or repair chief-of-staff review sources, approves, resumes, or otherwise decides visible chief-of-staff actions, or another workflow requests current cross-source chief-of-staff context. Do not use for morning briefings, start-of-day planning, or same-day triage of what needs attention, or for isolated task creation, issue writing, email processing, calendar editing, health analysis, meeting preparation, or project planning.
+description: Use when the user wants to complete a daily journal or wind down, requests a daily chief-of-staff review or a weekly or quarterly review, asks to set up, list, add, update, or remove chief-of-staff source mappings, approves, resumes, or otherwise decides visible chief-of-staff actions, or another workflow requests current cross-source chief-of-staff context. Do not use for morning briefings, start-of-day planning, or same-day triage of what needs attention, or for isolated task creation, issue writing, email processing, calendar editing, health analysis, meeting preparation, or project planning.
 license: MIT
-compatibility: Requires Python 3.8+ on a POSIX system and access to the user's chosen authoritative sources. Obsidian workflows require a running Obsidian app and its CLI.
+compatibility: Requires host file capabilities, private persistent storage, and access to the user's chosen authoritative sources. Obsidian workflows require a running Obsidian app and its CLI.
 ---
 
 # Personal Chief of Staff
@@ -30,10 +30,12 @@ below names them. Resolve the message in this order:
 2. **Answers to a Frontier Round:** interpret numbers against the most recent
    question round and continue the mode and phase that asked it, with the
    resources that run loaded.
-3. **Source setup:** when asked to establish or repair review source ownership,
-   or when replying to its binding preview,
+3. **Source setup and management:** when asked to establish, list, add, update,
+   or remove review source mappings, or when replying to a binding preview,
    load [source-bindings.md](references/source-bindings.md) and resolve the
-   requested roles with the user. This path opens no mode; finish it under
+   requested mapping operation with the user. Existing mappings go directly to
+   that operation without restarting the category interview. This path opens
+   no mode; finish it under
    [Finish standalone setup](references/source-bindings.md#finish-standalone-setup).
 4. **A new review:** select one mode below. An explicit mode wins. Load
    [source-bindings.md](references/source-bindings.md) and resolve the private

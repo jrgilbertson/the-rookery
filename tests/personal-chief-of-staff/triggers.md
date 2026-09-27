@@ -23,6 +23,11 @@ name + description + query only, binary judgment, any near-miss `yes` fails.
 | Help me set up the sources my chief-of-staff reviews should use. | Standalone source ownership setup. |
 | My review source moved. Help me repair its chief-of-staff binding. | Explicit repair of an established source owner. |
 | I have no chief-of-staff source map yet; can we decide where my strategy and commitments live? | Setup expressed through a missing map and role owners. |
+| What sources am I using for my chief-of-staff reviews? | Lists configured mappings. |
+| Add this calendar as a chief-of-staff review source. | Adds a mapping. |
+| Change only the Claude Desktop locator for my chief-of-staff strategy source. | Updates one access override. |
+| Remove the health source mapping from chief of staff. | Removes a mapping. |
+| Remove the Codex Desktop override from my chief-of-staff strategy source. | Removes an override. |
 
 ## Near misses: should not trigger
 
@@ -41,3 +46,5 @@ name + description + query only, binary judgment, any near-miss `yes` fails.
 | Prepare me for my customer meeting at 2 PM. | Meeting-preparation workflow. |
 | Approve the reply action from the email-processing bundle above. | Email-processing workflow owns its visible actions. |
 | Repair the database connection used by my dashboard. | Dashboard or database owner. |
+| Delete the actual document called Strategy from my drive. | Document workflow; not mapping removal. |
+| Disconnect my calendar account from this app. | Harness connection management. |

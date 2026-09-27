@@ -1,0 +1,164 @@
+{
+  "version": 3,
+  "roles": {
+    "strategy": [
+      {
+        "area": "direction",
+        "source": "Fictional personal planning account, document compass-42",
+        "interface": "document reader",
+        "identity": "fictional-personal-planning",
+        "locator": "compass-42",
+        "access_overrides": {
+          "codex-desktop": {
+            "interface": "connected document reader",
+            "identity": "fictional-personal-planning",
+            "locator": "compass-42"
+          },
+          "claude-desktop": {
+            "interface": "document connector",
+            "identity": "fictional-personal-planning",
+            "query": "native document id equals compass-42"
+          }
+        }
+      }
+    ],
+    "projects": [
+      {
+        "area": "commitments",
+        "source": "Fictional work planning, collection projects-4",
+        "interface": "host document reader",
+        "identity": "fictional-work-planning",
+        "locator": "projects-4"
+      }
+    ],
+    "tasks": [
+      {
+        "area": "commitments",
+        "source": "Fictional work task account, collection commitments-5",
+        "interface": "task reader",
+        "identity": "fictional-work-tasks",
+        "query": "collection commitments-5; user-selected scope"
+      },
+      {
+        "area": "commitments",
+        "source": "Fictional personal planning, collection actions-6",
+        "interface": "host task reader",
+        "identity": "fictional-personal-planning",
+        "locator": "actions-6"
+      }
+    ],
+    "calendar": [
+      {
+        "area": "commitments",
+        "source": "Fictional personal calendar, calendar time-8",
+        "interface": "calendar reader",
+        "identity": "fictional-personal-calendar",
+        "locator": "time-8"
+      }
+    ],
+    "relationships": [
+      {
+        "area": "relationships",
+        "source": "Fictional personal contacts account, collection people-3",
+        "interface": "contact reader",
+        "identity": "fictional-personal-contacts",
+        "locator": "people-3"
+      }
+    ],
+    "conversations": [
+      {
+        "area": "relationships",
+        "source": "Fictional work communication account, collection exchanges-8",
+        "interface": "host message reader",
+        "identity": "fictional-work-mail",
+        "locator": "exchanges-8"
+      },
+      {
+        "area": "relationships",
+        "source": "Fictional personal messages, collection conversations-6",
+        "interface": "host message reader",
+        "identity": "fictional-personal-messages",
+        "locator": "conversations-6"
+      }
+    ],
+    "learning": [
+      {
+        "area": "reflection",
+        "source": "Fictional personal notebook, collection lessons-7",
+        "interface": "notebook reader",
+        "identity": "fictional-personal-notebook",
+        "locator": "lessons-7"
+      }
+    ],
+    "journal": [
+      {
+        "area": "reflection",
+        "source": "Fictional personal notes, collection journal-4",
+        "interface": "host document reader",
+        "identity": "fictional-personal-notes",
+        "locator": "journal-4"
+      }
+    ],
+    "reviews": [
+      {
+        "area": "reflection",
+        "source": "Fictional personal notes, collection reviews-2",
+        "interface": "host document reader",
+        "identity": "fictional-personal-notes",
+        "locator": "reviews-2",
+        "filter": "completed review records; historical evidence"
+      },
+      {
+        "area": "reflection",
+        "source": "Fictional personal notes, collection templates-1",
+        "interface": "host document reader",
+        "identity": "fictional-personal-notes",
+        "locator": "templates-1",
+        "filter": "review guidance and templates; not evidence of completed activity"
+      }
+    ],
+    "finances": [
+      {
+        "area": "resources",
+        "source": "Fictional personal finance, collection budget-3",
+        "interface": "host record reader",
+        "identity": "fictional-personal-finance",
+        "locator": "budget-3"
+      }
+    ],
+    "operations": [
+      {
+        "area": "resources",
+        "source": "Fictional personal operations account, collection arrangements-5",
+        "interface": "host document reader",
+        "identity": "fictional-personal-operations",
+        "locator": "arrangements-5"
+      },
+      {
+        "area": "resources",
+        "source": "Fictional work operations account, collection operations-2",
+        "interface": "host report reader",
+        "identity": "fictional-work-operations",
+        "locator": "operations-2"
+      }
+    ],
+    "health": [
+      {
+        "area": "health",
+        "source": "Fictional personal wellbeing, collection wellbeing-4",
+        "interface": "host document reader",
+        "identity": "fictional-personal-wellbeing",
+        "locator": "wellbeing-4"
+      }
+    ],
+    "leisure": [
+      {
+        "area": "leisure",
+        "source": "Fictional personal recommendations, collection leisure-picks-9",
+        "interface": "host collection reader",
+        "identity": "fictional-personal-recommendations",
+        "locator": "leisure-picks-9"
+      }
+    ]
+  }
+}

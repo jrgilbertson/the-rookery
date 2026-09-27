@@ -33,13 +33,13 @@ The mode reference then names its incremental reads: its current record,
 template, and useful prior review as directed by
 [Wind-down](wind-down.md#establish-the-day),
 [Weekly](weekly.md#reconstruct-the-available-week), or
-[Quarterly](quarterly.md#establish-the-available-period), each through its
-binding's native interface.
+[Quarterly](quarterly.md#establish-the-available-period), each through the access description selected by
+[Resolve harness access](source-bindings.md#resolve-harness-access).
 
-After the baseline, use the mode's time window, likely decisions, and each
-binding's read condition to select bounded changes or due items, mode-specific
-sources, and conditional sources. Query a group member when its configured
-condition applies or it could change a material conclusion. State briefly why
+After the baseline, use the mode's time window and likely decisions to select
+bounded changes, due items, and other evidence that could change a material
+conclusion. Keep reads within the map's source restrictions and
+[existing-map read rules](source-bindings.md#existing-maps). State briefly why
 additional groups were checked; a considered source outside the decision's
 scope is **not needed**, not a failed read. For a relevant learning
 question, read only recent highlights tied to current priorities rather than
@@ -59,7 +59,7 @@ keep the proposed commitment or date conditional.
 Completion: strategy, learning, and the bounded task slice have each been
 read or have an explicit unresolved or failed state before the first
 recommendation, and every additional source read traces to the mode, a
-binding condition, or a material conclusion.
+workflow requirement or a material conclusion, within approved source scope.
 
 ## Make every intention verifiable
 

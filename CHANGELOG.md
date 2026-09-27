@@ -32,6 +32,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- `personal-chief-of-staff` includes a fictional source-map starter and guided
+  setup and source management through host file tools, without a Python/POSIX
+  runtime helper. Version 3 maps roles to sources with optional harness access
+  overrides; workflows own retrieval rules. Existing version 1 and 2 maps
+  retain their restrictions until an approved upgrade. Connection maintenance
+  remains with the harness.
+
 - Per-call eval accounting uses ccusage upstream prices for direct official-CLI
   runs and stops subsequent calls while costs are unknown or the authorized
   allowance is exhausted. Transcript inspection and grading stay with the agent.

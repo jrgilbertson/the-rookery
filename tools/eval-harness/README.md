@@ -120,7 +120,8 @@ without parsing their bodies; known foreign text patterns still scan the whole
 input. Embedded code is not interpreted.
 Literal absolute path inputs and simple command operands outside the staged
 workspace are marked foreign; a leading absolute executable token is exempt.
-Shell substitutions are unverified; the detector does not interpret shell
+Shell redirections, including attached forms, and shell substitutions are
+unverified; the detector does not interpret shell
 variables or persistent shell state. It is not an OS security boundary. Changes to CLI flags or session
 formats require another integration check against the installed versions.
 

@@ -559,6 +559,8 @@ def identity(tr: dict, ws: dict, adapter, argv: list[str]) -> dict:
                 words = words[3:]
             if command and words and any(Path(word).name in SHELL_EXECUTABLES for word in words[1:]):
                 unverified.append('unsupported nested or prefixed shell invocation')
+            if command and any(ch in s for ch in '<>'):
+                unverified.append('shell redirection or embedded angle brackets')
             if command and ('$(' in s or '`' in s):
                 unverified.append('shell substitution')
             read_result = bool(c.get('output')) and not c.get('failed', False)
@@ -1171,7 +1173,10 @@ def execute_one(target, ev, arm, k, ev_sha, packages):
                                                     CFG.get('capabilities', [])),
             {'eval': ev['id'], 'arm': arm, 'run': k})
         idn = identity(trace, ws, adapter, argv)
-        package_unchanged = tree_hash(ws['install']) == installed_hash
+        try:
+            package_unchanged = tree_hash(ws['install']) == installed_hash
+        except OSError:
+            package_unchanged = False
         failure = service_failure(rc, trace, (rd / 'stderr.txt').read_text(errors='replace'),
                                   (rd / 'transcript').read_text(errors='replace'))
         surface_unverified = (idn['init_surface_ok'] is not True if adapter.NAME == 'grok'

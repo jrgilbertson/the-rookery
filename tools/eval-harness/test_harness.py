@@ -1432,6 +1432,35 @@ class HarnessTests(unittest.TestCase):
             'command': '/bin/cat ' + str(ws['install'] / 'SKILL.md')}, 'output': ''}]
         self.assertFalse(h.identity(tr, ws, adapter, argv)['foreign_access'])
 
+    def test_attached_redirection_discards_execution(self):
+        original = self.fake_process
+        def with_redirect(argv, **kwargs):
+            result = original(argv, **kwargs)
+            kwargs['stdout'].write((json.dumps({'type': 'item.completed', 'item': {
+                'type': 'command_execution', 'command': 'cat</etc/hosts'}}) + '\n').encode())
+            return result
+        h.subprocess.Popen.side_effect = with_redirect
+        self.assertEqual(self.execute(), 'discarded')
+        rd = h.run_dir('executor', self.ev, 'with_skill', 1)
+        self.assertTrue(h.rjson(rd / 'status.json')['identity']['unverified_access'])
+        self.assertEqual(h.rjson(rd / 'cost.json')['state'], 'settled')
+
+    def test_deleted_install_is_discarded_and_cleaned_up(self):
+        original = self.fake_process
+        def with_deleted_install(argv, **kwargs):
+            result = original(argv, **kwargs)
+            h.shutil.rmtree(Path(kwargs['cwd']).parent / 'skills/demo')
+            return result
+        h.subprocess.Popen.side_effect = with_deleted_install
+        self.assertEqual(self.execute(), 'discarded')
+        rd = h.run_dir('executor', self.ev, 'with_skill', 1)
+        self.assertEqual(h.rjson(rd / 'cost.json')['state'], 'settled')
+        build = h.rjson(rd / 'build.json')
+        self.assertFalse(Path(build['workspace']).exists())
+        self.assertFalse(Path(build['home']).exists())
+        self.assertEqual(self.execute(), 'discarded')
+        self.assertEqual(len(self.process_calls), 1)
+
     def test_absolute_external_read_discards_execution(self):
         original = self.fake_process
         def with_external_read(argv, **kwargs):

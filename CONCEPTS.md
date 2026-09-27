@@ -20,9 +20,10 @@ replacing task or calendar state.
 
 ### Source map
 
-A private map from chief-of-staff information roles to user-designated sources,
-with native access details and bounded read conditions. It records ownership
-and selection rules, not source contents or access results.
+A private map from chief-of-staff information roles to user-designated sources.
+It records ownership, native access details, and user-approved source
+restrictions, not source contents or access results. Workflows select which
+roles to read and when, within those restrictions.
 
 ### Access override
 

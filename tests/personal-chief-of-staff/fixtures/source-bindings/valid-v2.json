@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "roles": {
+    "strategy": [
+      {
+        "area": "direction",
+        "interface": "pcos-source",
+        "identity": "synthetic-vault",
+        "locator": "northstar",
+        "condition": "baseline",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ],
+        "source": "Fictional planning account, native document compass-42",
+        "access_overrides": {
+          "codex-desktop": {
+            "interface": "connected document reader",
+            "identity": "fictional-planning",
+            "locator": "compass-42"
+          },
+          "claude-desktop": {
+            "interface": "native document connector",
+            "identity": "fictional-planning",
+            "query": "document id equals compass-42"
+          }
+        }
+      }
+    ],
+    "learning": [
+      {
+        "area": "learning",
+        "interface": "pcos-source",
+        "identity": "synthetic-vault",
+        "locator": "fieldnotes",
+        "condition": "baseline",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ]
+      }
+    ],
+    "tasks": [
+      {
+        "area": "commitments",
+        "interface": "pcos-source",
+        "identity": "synthetic-task-owner",
+        "locator": "tasks",
+        "condition": "baseline",
+        "modes": [
+          "wind-down",
+          "weekly",
+          "quarterly"
+        ],
+        "window": "current",
+        "filter": "active"
+      }
+    ]
+  }
+}

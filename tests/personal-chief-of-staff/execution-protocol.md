@@ -23,11 +23,12 @@ no operations. Grade what the agent proposes, permits, refuses, or reports.
 These checks cannot establish executed writes or provider compatibility.
 
 For source-binding cases, install each frozen skill copy in a disposable project
-and keep the synthetic user home outside the repository. An external test adapter
-may substitute `Path.home()` only in the bundled map helper's process. Do not
-change `HOME`, add test controls to the shipped helper, or expose the map location
-in a discovery prompt. Record the adapter and loaded package with the original
-session and native-source traces. A native discovery smoke omits any skill path
+and keep synthetic private storage outside the repository. Use the host's file
+capabilities against that isolated storage; do not change `HOME` or expose the
+map location in a discovery prompt. Supply the sandbox's private location
+pointer through persistent host context when its default home cannot be
+isolated. Record that context, loaded package, file operations and readback,
+and native-source traces with the original session. A native discovery smoke omits any skill path
 from the request; a forced-load case proves behavior after loading only.
 
 Record each result at the scope actually exercised. Fixture behavior, conceptual

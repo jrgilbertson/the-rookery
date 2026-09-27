@@ -166,7 +166,7 @@ Apply the audit to this response's work:
   audit separating **Action access** from **Review discovery** or **Context
   discovery**. This includes Wind-down continuing from Phase 1 into Phase 2.
 - **Source setup:** audit each native verification read of a saved binding.
-  Report the map helper's save and readback in the setup narrative, not as
+  Report the map save and host-file readback in the setup narrative, not as
   source access.
 - **Resumption:** report only current reads. Follow the refresh and prior-turn
   evidence rules in "End and resume honestly".

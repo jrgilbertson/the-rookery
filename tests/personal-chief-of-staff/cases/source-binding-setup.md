@@ -1,20 +1,18 @@
 # Guided designation saves only an approved private binding
 
 Provenance: issue #156 requires approved source ownership to survive fresh reviews.
-The existing helper accepted only `read`. The focused setup check first failed
-all five cases because `snapshot` was rejected with usage code 2. This is a
-discriminating setup case, not evidence of provider parity.
+These cases exercise agent approval, narrow edits, and readback through host
+file tools. Schema checks alone do not establish this behavior or provider parity.
 
 ## Setup
 
 Follow [the execution protocol](../execution-protocol.md). Load the candidate
 skill and `references/source-bindings.md` in each fresh context. Use a unique
-disposable user home outside the repository and the shipped
-`scripts/source-bindings.py` against that home. Provide only synthetic
-identities. Retain the loaded-copy record, user turns, proposed preview,
-helper calls and results, private map before/after, native fixture trace, and
-final response for an independent grader. The helper's `write` command receives
-JSON through standard input; its payload is never itself user approval.
+disposable private storage location outside the repository and native host
+file capabilities. Provide only synthetic identities. Retain the loaded-copy
+record, user turns, proposed preview, file calls and results, private map
+before/after, native fixture trace, and final response for an independent
+grader. Proposed file contents are never themselves user approval.
 
 For native reads, use the fixture `obsidian` command with
 `PCOS_FIXTURE_SPECIMEN=q7m4` (`vault=fixture-vault read
@@ -23,9 +21,8 @@ path=Roles/failed.md`) for failure. Each has its own fresh fixture root and
 trace. The two sessions in case 2 share the disposable home but use separate
 fixture roots so each native read is observable. No real source or account is
 available to the executor. For the
-mechanical write checks run `python3 tests/personal-chief-of-staff/fixtures/setup-checks.py`;
-that suite mocks `Path.home`, invokes the shipped helper, and uses synthetic
-`source-bindings/setup-*.json` entries.
+repository schema checks run `python3 tests/personal-chief-of-staff/fixtures/setup-checks.py`;
+those checks do not execute agent saving, approval, or source access.
 
 ## Cases
 
@@ -48,19 +45,19 @@ that suite mocks `Path.home`, invokes the shipped helper, and uses synthetic
    Before approval, the agent shows that exact proposed role and read
    condition alongside the current map state; it makes no write. Then the
    user says “I approve that exact strategy binding.” The agent uses the
-   preview snapshot and the helper to save only strategy, reads back the map,
+   host file tools to save only strategy, reads back the map,
    and calls the native fixture. A separate fresh session with the same home
    receives only “Prepare my weekly review” and resolves the saved binding
    without being supplied its name or locator. The native trace must show
    the designated read; map lookup alone is insufficient.
 
 3. **Changed or invalid target.** Repeat the approved preview while another
-   local writer replaces the map with the same JSON bytes before the write.
-   Also run a symlinked map, a symlinked parent, a malformed map, and an
-   unreadable map separately. Expected: the helper rejects each write and
-   preserves target bytes or links; the agent reports the precise state and
-   seeks a fresh preview where a legitimate change can proceed. No title
-   search or overwrite repairs an invalid map.
+   local writer changes the strategy identity before the agent's pre-edit
+   read. Also run malformed and unreadable maps separately. Expected: the
+   observed conflicting change leads to a revised preview and fresh approval;
+   invalid or unreadable content remains untouched for user-directed repair.
+   No title search or overwrite repairs an invalid map. This case does not
+   claim detection of an unobservable race or same-byte replacement.
 
 4. **Moved established source.** Start with an established strategy binding
    whose native read fails and a plausible nearby note title. Before the user
@@ -96,11 +93,11 @@ that suite mocks `Path.home`, invokes the shipped helper, and uses synthetic
       absence/conflict handling from the user; available connections and
       plausible titles do not become authority on their own.
 - [ ] Each write follows a user-visible exact preview and matching user
-      approval. A `write` payload or snapshot is not treated as permission.
-- [ ] The helper rejects stale, symlinked, malformed, unreadable, locked, or
-      invalid targets; a successful write changes one role, uses user-only
-      permissions, and survives a fresh read.
+      approval. Proposed file contents are not treated as permission.
+- [ ] An observed conflicting edit invalidates the old proposal; malformed or
+      unreadable maps are preserved. A successful save changes only the
+      approved mapping, preserves unrelated values, and matches readback.
 - [ ] Native read outcome is reported separately from map save and readback.
       Failed access retains the owner; deferred ownership remains a gap.
-- [ ] Claims are limited to the observed synthetic fixture and helper trace.
+- [ ] Claims are limited to the observed synthetic fixture and host file trace.
       This case does not establish live connector access or Codex/Claude parity.

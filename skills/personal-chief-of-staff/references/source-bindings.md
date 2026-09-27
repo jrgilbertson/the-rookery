@@ -41,7 +41,7 @@ under [Existing maps](#existing-maps). `roles` is an object whose keys match
 | `source` | Versions 2 and 3: optional user-approved designation of the underlying system/account and document or bounded collection, preferably with a stable native identifier or URL. Required with overrides. |
 | `access_overrides` | Versions 2 and 3: optional nonempty object of complete harness-specific access descriptions. |
 
-All fields except `access_overrides` are nonempty strings. `area` and shared
+The fields above except `access_overrides` are nonempty strings. `area` and shared
 access fields are required. Version 3 accepts neither `condition` nor `modes`.
 
 Each override key is a lowercase hyphenated harness identifier matching

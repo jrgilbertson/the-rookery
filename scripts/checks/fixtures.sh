@@ -88,3 +88,4 @@ for runner in "${runners[@]}"; do
 done
 
 python3 -m unittest discover -s tools/eval-cost -p 'test_*.py'
+python3 -m unittest discover -s tools/eval-review -p 'test_*.py'

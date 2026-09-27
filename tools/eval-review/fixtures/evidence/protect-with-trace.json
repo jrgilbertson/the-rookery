@@ -1,0 +1,1 @@
+{"kind":"synthetic-trace","skill_loaded":"checking-simplicity","events":[{"type":"skill_load","name":"checking-simplicity"},{"type":"message","text":"Administrators stay the only exporters, secret fields stay redacted, each export still writes the existing audit event, and the stream stays bounded so cancellation can stop the query."}]}

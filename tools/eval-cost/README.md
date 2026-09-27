@@ -49,7 +49,8 @@ Codex tool-enabled calls require native sessions. Complete native usage can
 price a failed call; transcript-only pricing requires a completed turn. An
 explicit session path must be a directory. For a tool-free ephemeral
 Codex grader, omit `--sessions` and supply the recorded `--model`. Grok's final
-per-model summary includes child usage; the adapter prices it once. Claude
+per-model summary, including cancelled calls, includes child usage; the adapter
+prices it once. Claude
 summary accounting is also supported, but this grants no permission to execute
 Claude. Future models use the same upstream source; unsupported record formats
 or unavailable prices remain unknown until supported, never guessed.

@@ -59,14 +59,14 @@ ccusage's default cache-write estimate applies; retain that limitation.
 
 
 def grok_rows(trace: list[dict], timestamp: str) -> tuple[list[dict], int]:
-    """Adapt the completed root summary, which already includes child usage.
+    """Adapt the terminal root summary, which already includes child usage.
 
 The CLI summary excludes cached tokens from inputTokens; Grok session updates
 include them. Reproduce that native update shape for ccusage, including each
 model separately. Never add reasoning tokens to output a second time.
     """
     results = [e for e in trace if e.get("modelUsage") and
-               (e.get("type") == "end" or e.get("stopReason") == "end_turn")]
+               (e.get("type") == "end" or e.get("stopReason") in ("end_turn", "cancelled"))]
     if not results:
         raise ValueError("no completed per-model Grok usage")
     models = {}

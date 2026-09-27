@@ -74,6 +74,16 @@ class UsageTests(unittest.TestCase):
             self.assertEqual(result["cost_usd"], .1)
             self.assertEqual((sessions / "child/updates.jsonl").read_text(), "child")
 
+    def test_grok_cancelled_summary_retains_usage(self):
+        totals = {"grok-model": {"inputTokens": 14384, "outputTokens": 16121,
+                                "cacheReadInputTokens": 0, "cacheCreationInputTokens": 0}}
+        rows, tokens = usage.grok_rows([{"stopReason": "cancelled", "modelUsage": totals}], "2026-09-27T00:00:00Z")
+        self.assertEqual(tokens, 30505)
+        self.assertEqual(rows[0]["params"]["update"]["usage"]["outputTokens"], 16121)
+        for event in ({"stopReason": "cancelled"}, {"modelUsage": totals}):
+            with self.subTest(event=event), self.assertRaises(ValueError):
+                usage.grok_rows([event], "2026-09-27T00:00:00Z")
+
     def test_missing_cli_is_recorded_as_unknown(self):
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)

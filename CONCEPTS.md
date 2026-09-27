@@ -18,6 +18,18 @@ It may be written as natural prose. If the user's exact wording omits one part,
 preserve it but do not present it as complete. It records intent without
 replacing task or calendar state.
 
+### Source map
+
+A private map from chief-of-staff information roles to user-designated sources,
+with native access details and bounded read conditions. It records ownership
+and selection rules, not source contents or access results.
+
+### Access override
+
+A complete native access description for one explicitly identified harness in
+a source binding. It changes how that harness reaches the designated source;
+ownership and shared read bounds remain with the binding.
+
 ### Source Access Audit
 
 A temporary record, shown with one response, of which relevant sources were

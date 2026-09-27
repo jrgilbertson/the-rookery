@@ -13,7 +13,7 @@ Follow [the execution protocol](../execution-protocol.md). Run each scenario
 in a separate fresh context with the current skill installed from source and
 the synthetic `pcos-source` executable first on `PATH`. Give the context a
 disposable home outside the repository. Place the indicated fixture at the
-skill's fixed home-relative `sources.json` locator; do not provide the map,
+documented default home-relative `sources.json` locator; do not provide the map,
 source names, or locators in the user prompt. Use a fresh fixture root, trace,
 and `PCOS_FIXTURE_SPECIMEN` for each run. Preserve the agent's skill-loading
 record, commands, tool results, final response, and fixture trace for an
@@ -24,7 +24,7 @@ independent grader. Source content and bindings in this case are synthetic.
 | A: renamed owners | `../fixtures/source-bindings/valid.json` | `s1b1` | `Please prepare my weekly chief-of-staff review.` |
 | B: missing owner | `../fixtures/source-bindings/missing-role.json` | `s1b1` | `Please prepare my weekly chief-of-staff review.` |
 | C: failed owner read | `../fixtures/source-bindings/valid.json` | `s1b2` | `Please prepare my weekly chief-of-staff review.` |
-| D: invalid maps | Run separately with `duplicate.json`, `duplicate-nested.json`, `malformed.txt` (installed as `sources.json`), and `unsupported.json`; also test an unreadable or symlinked map | `s1b1` | `Please prepare my weekly chief-of-staff review.` |
+| D: invalid maps | Run separately with `duplicate.json`, `duplicate-nested.json`, `malformed.txt` (installed as `sources.json`), and `unsupported.json`; also test an unreadable map | `s1b1` | `Please prepare my weekly chief-of-staff review.` |
 | E: unavailable bound owner | `../fixtures/source-bindings/unavailable-interface.json` | `s1b1` | `Please prepare my quarterly chief-of-staff review.` |
 
 For A and C, the fixture map binds strategy to `northstar` and durable
@@ -39,10 +39,19 @@ to the Obsidian CLI. The harness preamble, not the user prompt, states that
 sources are unavailable, whether or not their executables exist on the host.
 The user prompt still names no source, binding, or locator.
 
+Repeat A with an explicit private map location, then with only a location
+pointer in the host's private persistent context. Place a different valid map
+at the default to make precedence observable. Explicit location wins over the
+pointer; the pointer wins over the default. Separately expose conflicting
+pointers or an inaccessible known location: expect clarification or a gap,
+not a replacement default map. Host file capabilities govern file access;
+symlinks alone are not a schema error or a portable rejection requirement.
+
 ## Expected behavior
 
 - [ ] Every scenario: the loaded skill copy is the candidate source; the agent
-      attempts the fixed private map lookup before new-review source retrieval.
+      uses host file tools to locate and validate the private map before
+      new-review source retrieval, without requiring a bundled helper.
       The tool-call record distinguishes map lookup from native source reads.
 - [ ] A: the trace shows authoritative reads of `northstar`, `fieldnotes`, and
       the configured task slice before any recommendation. The response uses
@@ -65,6 +74,8 @@ The user prompt still names no source, binding, or locator.
       **not attempted** because the bound interface is unavailable, never
       **attempted and failed**; a map lookup or `command -v` check does not
       count as a call. Learning is **not configured**.
+- [ ] Location variants select the documented precedence, preserve inaccessible
+      maps, and do not treat same-session pointer readback as fresh continuity.
 - [ ] Every scenario: map resolution, bounded source access, and use of
       current applicable content are judged separately; the response never
       calls a resolved locator alone an accessed source.

@@ -65,6 +65,46 @@ unrelated role values. Never silently downgrade or rewrite an unsupported
 version. Older installed helpers reject version 2; update those skill copies
 before sharing an upgraded map with them.
 
+## Resolve harness access
+
+Use these rules for setup verification, new reviews, and targeted caller
+context whenever a binding needs a native read. Resolve the harness key from
+explicit runtime identity, never the model name, connector names, or source
+content. Documented keys include `codex-desktop`, `claude-desktop`, and
+`grok-bot`; other explicitly identified hosts use the schema's slug convention.
+Match the exact key. Select its complete override when present; otherwise
+select the shared `interface`, `identity`, and `locator` or `query`. Do not
+merge access fields or select another harness's override.
+
+If runtime identity is ambiguous, ask only when the plausible choices change
+the selected access description. When they all resolve to the same description,
+use it without inventing a harness identity. Keep the binding's shared
+conditions, modes, window, filter, and gap effect with the selected access.
+For queries, preserve the designated collection and approved semantic bounds
+across different native query syntax; string equality alone proves neither
+scope nor equivalence.
+
+A selected override that is unavailable or fails stays selected. Report the
+access gap, retain the designated owner, and use host-supported reconnection
+or propose an approved access repair. Never silently fall back to shared
+access, a different override, or another account after that failure. If no
+source call can execute, audit **not attempted**; if a call executes and fails,
+audit **attempted and failed**. Removing an override is a separate approved
+mapping change that makes shared access applicable.
+
+For an access repair, a stable native record identity within the designated
+system/account can establish that a changed locator reaches the same source.
+Matching titles or content, including a synced copy in another account, cannot.
+For a collection, establish the same designated collection and semantic scope.
+If equivalence remains uncertain, obtain user confirmation of the source
+before proposing the change. Preserve `source` when only access changes and
+follow [Save an approved binding](#save-an-approved-binding) for every map edit.
+Keep native access outcomes in the conversation, not in the map or a cache.
+
+Completion: each needed binding has one resolved access description with its
+shared bounds, or an explicit ambiguity/access gap; ownership remains intact
+and actual native results are reported separately from resolution.
+
 ## Discover connections and designate sources
 
 For first setup, inspect the current harness's exposed capabilities and
@@ -160,11 +200,11 @@ saving/readback rather than claiming persistence. Host tools may provide
 stronger safeguards; the skill does not guarantee locking, atomic replacement,
 or detection of changes that the host tools cannot observe.
 
-For added or changed access, after the saved binding reads back, use its
-resolved native interface to read the approved bounded source and report that
-result separately. A successful map
-write does not establish source access. If the native read fails, retain the
-approved binding, mark setup incomplete for that role, and retry its read on
+For added or changed access, after the saved binding reads back, follow
+[Resolve harness access](#resolve-harness-access), then read the approved
+bounded source through the selected interface and report that result
+separately. A successful map write does not establish source access. If the
+native read fails, retain the approved binding, mark setup incomplete for that role, and retry its read on
 the next relevant session without repeating settled ownership questions.
 
 Report the saved location. When establishing or changing that location,
@@ -214,9 +254,8 @@ access or fresh-conversation continuity.
 
 For a new Wind-down, Weekly, or Quarterly review, load the map once before
 mode retrieval. Select the required baseline roles and then the mode's
-applicable bounded, mode-specific, and conditional roles. Resolve each
-binding's native interface and exact identity, locator or bounded query,
-window, and filter; a successful map lookup alone is not source access.
+applicable bounded, mode-specific, and conditional roles. Apply
+[Resolve harness access](#resolve-harness-access) to each needed binding; a successful map lookup alone is not source access.
 [Retrieve the review baseline](review-reasoning.md#retrieve-the-review-baseline)
 owns the runtime reads and their order, and the mode reference names its own
 record, template, and continuity reads. A caller-context request resolves only
@@ -230,10 +269,10 @@ do not replace the strategy, learning, or task-owner question. Offer deferral
 and continue only the conclusions supported by available evidence. A
 malformed, duplicate-key, unsupported, or unreadable map is
 unresolved as a whole; report the precise state and leave it intact. An
-unambiguous role in a valid map stays bound when its native read fails: audit
-that source as **attempted and failed**, retain ownership, and limit dependent
-conclusions. An unresolved role is **not configured** in the Source Access
-Audit, even if a nearby note looks plausible. A complete bounded read with no
+unambiguous role in a valid map stays bound when its native read fails: retain
+ownership and limit dependent conclusions, using the resolution rules to
+distinguish an executed failure from an unavailable interface. An unresolved
+role is **not configured** in the Source Access Audit, even if a nearby note looks plausible. A complete bounded read with no
 relevant evidence has the audit's separate empty-result category. Explain a
 material gap without presenting a conditional source skipped by design as a
 failure.

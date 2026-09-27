@@ -56,7 +56,9 @@ X-dependent conclusions; truncated history cannot prove no exchange occurred.
 Route Person-note, contact-date, and relationship Task effects through the CRM
 companion, never directly from X evidence.
 
-The map resolves roles, not access. A source title is evidence for an ownership
+For setup, review, or caller-context reads,
+[Resolve harness access](source-bindings.md#resolve-harness-access) selects the
+native access description while preserving ownership. A source title is evidence for an ownership
 interview, not a binding. When a role is missing or ambiguous, ask the user to
 designate its authoritative owner. When a configured source read fails, retain
 its owner; a plausible replacement title does not authorize a changed binding.
@@ -165,9 +167,12 @@ Apply the audit to this response's work:
 - **Actions followed by discovery:** finish the actions first, then use one
   audit separating **Action access** from **Review discovery** or **Context
   discovery**. This includes Wind-down continuing from Phase 1 into Phase 2.
-- **Source setup:** audit each native verification read of a saved binding.
-  Report the map save and host-file readback in the setup narrative, not as
-  source access.
+- **Source setup and management:** audit native verification reads of saved
+  bindings and any bounded candidate search separately. A search establishes
+  candidates within the user-selected scope, not authoritative designation.
+  Listing and removal need no connector or native read; say native access was
+  not checked. Report map reads, saves, and host-file readbacks in the setup
+  narrative, not as source access.
 - **Resumption:** report only current reads. Follow the refresh and prior-turn
   evidence rules in "End and resume honestly".
 - **Scheduled or hostile-source responses:** scheduling supplies neither

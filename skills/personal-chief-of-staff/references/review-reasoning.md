@@ -33,8 +33,8 @@ The mode reference then names its incremental reads: its current record,
 template, and useful prior review as directed by
 [Wind-down](wind-down.md#establish-the-day),
 [Weekly](weekly.md#reconstruct-the-available-week), or
-[Quarterly](quarterly.md#establish-the-available-period), each through its
-binding's native interface.
+[Quarterly](quarterly.md#establish-the-available-period), each through the access description selected by
+[Resolve harness access](source-bindings.md#resolve-harness-access).
 
 After the baseline, use the mode's time window, likely decisions, and each
 binding's read condition to select bounded changes or due items, mode-specific

@@ -140,17 +140,19 @@ session store remain untouched. No credential is copied into the cost input.
                 env["CLAUDE_CONFIG_DIR"] = str(root)
                 record["limitations"] = ["Per-model cache-write TTL and request-size tiers are unavailable in the aggregate CLI summary."]
             elif adapter == "codex":
-                trace = events(transcript)
-                turns = [e["type"] for e in trace if e.get("type") in ("turn.completed", "turn.failed", "error")]
-                if not turns or turns[-1] != "turn.completed":
-                    raise ValueError("Codex attempt has no complete terminal usage")
-                if sessions and sessions.is_dir():
+                if sessions is not None:
+                    if not sessions.is_dir():
+                        raise ValueError("Codex sessions path is not a directory")
                     for path in sessions.rglob("*.jsonl"):
                         if not events(path):
                             raise ValueError("Empty native Codex session record")
                     shutil.copytree(sessions, root / "sessions")
                     env["CODEX_HOME"] = str(root)
                 else:
+                    trace = events(transcript)
+                    turns = [e["type"] for e in trace if e.get("type") in ("turn.completed", "turn.failed", "error")]
+                    if not turns or turns[-1] != "turn.completed":
+                        raise ValueError("Codex attempt has no complete terminal usage")
                     # Tool-enabled aggregates lose child usage and per-request tier context.
                     if any(e.get("type") in ("item.started", "item.completed") and
                            e.get("item", {}).get("type") not in ("agent_message", "reasoning") for e in trace):

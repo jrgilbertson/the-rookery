@@ -96,6 +96,38 @@ class UsageTests(unittest.TestCase):
             self.assertIsNone(record["cost_usd"])
             self.assertIn("JSONL", record["error"])
 
+    def test_explicit_native_store_must_exist_and_be_a_directory(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            trace = root / "trace"
+            trace.write_text('{"type":"turn.completed","usage":{"input_tokens":1,"output_tokens":1}}\n')
+            for sessions in (root / "missing", trace):
+                with self.subTest(sessions=sessions), patch("usage.subprocess.run") as invoke:
+                    record = usage.estimate("codex", trace, sessions, None, ["ccusage"], root, "recorded-model")
+                    self.assertIn("directory", record["error"])
+                    invoke.assert_not_called()
+
+    def test_native_usage_can_price_a_failed_call(self):
+        with tempfile.TemporaryDirectory() as raw:
+            root = Path(raw)
+            trace = root / "trace"
+            trace.write_text('{"type":"turn.failed","error":{"message":"tool failed"}}\n')
+            sessions = root / "saved"
+            sessions.mkdir()
+            (sessions / "run.jsonl").write_text('{"type":"event_msg","payload":{"type":"token_count"}}\n')
+            def invoke(argv, **kw):
+                if "--version" in argv:
+                    return SimpleNamespace(stdout="test", stderr="")
+                self.assertTrue((Path(kw["env"]["CODEX_HOME"]) / "sessions/run.jsonl").is_file())
+                return SimpleNamespace(stdout=json.dumps({"sessions": [{}], "totals": {"costUSD": .1, "totalTokens": 100}}), stderr="")
+            with patch("usage.subprocess.run", side_effect=invoke):
+                record = usage.estimate("codex", trace, sessions, None, ["ccusage"], root)
+            self.assertEqual(record["cost_usd"], .1)
+            with patch("usage.subprocess.run") as invoke:
+                record = usage.estimate("codex", trace, None, None, ["ccusage"], root, "recorded-model")
+                invoke.assert_not_called()
+            self.assertIsNone(record["cost_usd"])
+
     def test_tool_enabled_codex_requires_native_records(self):
         with tempfile.TemporaryDirectory() as raw:
             root = Path(raw)

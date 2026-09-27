@@ -45,7 +45,9 @@ python3 tools/eval-cost/account.py price "$cost_dir/case1-executor.json" \
 python3 tools/eval-cost/account.py status "$cost_dir" --budget 8
 ```
 
-Codex tool-enabled calls require native sessions. For a tool-free ephemeral
+Codex tool-enabled calls require native sessions. Complete native usage can
+price a failed call; transcript-only pricing requires a completed turn. An
+explicit session path must be a directory. For a tool-free ephemeral
 Codex grader, omit `--sessions` and supply the recorded `--model`. Grok's final
 per-model summary includes child usage; the adapter prices it once. Claude
 summary accounting is also supported, but this grants no permission to execute

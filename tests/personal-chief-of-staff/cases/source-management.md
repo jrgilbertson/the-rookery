@@ -26,7 +26,8 @@ and final outputs. Validate resulting maps. No real connectors are available.
 
 ## Expected behavior
 
-- [ ] Case 1: lists configured roles, owners, and overrides without content
+- [ ] Case 1: lists configured roles, owners, and overrides grouped by existing
+      `area`, preserving custom groups and roles without map edits, content
       reads, availability claims, writes, or a restarted category interview.
 - [ ] Case 2: writes only after exact approval, preserves unrelated values,
       and reports map readback separately from native access. Failed access

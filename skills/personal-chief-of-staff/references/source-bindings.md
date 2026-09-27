@@ -33,7 +33,7 @@ integer `1` or `2`; both are supported. `roles` is an object whose keys match
 
 | Field | Meaning |
 | --- | --- |
-| `area` | Source group for selective coverage. |
+| `area` | Primary group for presentation and selective coverage; it does not change source ownership. |
 | `interface` and `identity` | Shared native interface and exact account, vault, or system identity. |
 | `locator` or `query` | Shared exact native target or bounded query; exactly one is required. |
 | `condition` | `baseline`, `bounded`, `mode-specific`, or `conditional`. |
@@ -126,6 +126,10 @@ Use [the fictional sample](../assets/sources.example.json) to explain the
 schema, not as active configuration. Its identities and locators are
 placeholders to replace with approved sources. Categories organize the
 conversation; `roles` holds bindings, and absent roles remain unresolved.
+The JSON is flat: each binding's `area` supplies its group. Present the starter
+and configured bindings grouped by that field, using the labels below where
+applicable. Keep custom area values visible under their own labels. This is a
+presentation rule, not a nested JSON format or a reason to rewrite a map.
 Shared access describes the usual route; optional complete harness overrides
 reach the same designated source. The schema above owns all field rules.
 
@@ -136,7 +140,7 @@ a specific mapping operation go directly to [Manage mappings](#manage-mappings).
 | Category / `area` | Decision supported | Example roles and information needs |
 | --- | --- | --- |
 | Direction / `direction` | What matters and what should take priority? | `strategy`: values, goals, responsibilities, priorities, operating principles. |
-| Projects and commitments / `commitments` | What outcomes and actions have I committed to? | `projects`: outcomes, progress, milestones; `tasks`: next actions, waiting-for items, recurring obligations; `someday`: uncommitted possibilities; `writing`: relevant drafts. |
+| Projects, actions, and possibilities / `commitments` | What outcomes, actions, and possibilities need review? | `projects`: outcomes, progress, milestones; `tasks`: next actions, waiting-for items, recurring obligations and explicitly deferred possibilities; `writing`: draft context beyond project/task records. |
 | Time and capacity / `time` | What fits, and when? | `calendar`: scheduled events, deadlines, travel; `capacity`: availability, workload limits, protected time. |
 | People and communication / `relationships` | Who needs attention, and what has been communicated? | `relationships`: contacts and relationship context; `mailbox`, `messages`, `meetings`: bounded exchanges and conversation records. |
 | Knowledge and reflection / `reflection` | What have I learned, and what should inform the next decision? | `learning`: durable insights, research, experiments and feedback; `journals`: observations; `decisions`: prior choices and rationale; `review_records`, `review_templates`: review continuity and prompts. |
@@ -144,13 +148,19 @@ a specific mapping operation go directly to [Manage mappings](#manage-mappings).
 | Health and wellbeing / `health` | What supports health, energy, and recovery? | `health`: user-selected routines, observations, appointments and care-plan context. |
 | Leisure and interests / `leisure` | What would I enjoy doing, watching, or reading? | `leisure`: curated movie, TV, book, hobby and recreation recommendations. |
 
-These are setup prompts, not required integrations or a closed list of roles.
+These are optional coverage prompts, not mutually exclusive source categories,
+an exhaustive partition of someone's life, or a closed list of roles.
 Organize by the information's primary purpose, not its file format or app.
 Projects and tasks share an area but remain distinct roles: an outcome and its
 next action are different records. Likewise, a leisure reading list is not
 necessarily a learning source, and a health appointment's time belongs in the
 calendar while its health context belongs in the health source. Reuse links to
-existing records instead of creating duplicate trackers.
+existing records instead of creating duplicate trackers. Give each binding one
+primary presentation group without implying that its content serves only one
+purpose. Treat someday/maybe as a status or bounded view of the relevant
+project/task source, not a default standalone role. Keep a separate writing
+source only when drafts add context beyond the project and task records.
+Existing custom roles, including `someday`, remain valid and unchanged.
 
 Personal and work are source scopes within each area, not competing categories.
 Use separate bindings when accounts or owners differ, keeping their scope in
@@ -189,8 +199,9 @@ review supported by other evidence.
 ## Manage mappings
 
 Read the map and identify the requested entry by role, source, and access
-details. Clarify only when multiple entries match. For **list**, show configured
-roles, designated owners, shared access, and overrides from the map; no native
+details. Clarify only when multiple entries match. For **list**, group bindings
+by their existing `area` and show roles, designated owners, shared access,
+and overrides from the map; no native
 source read or availability claim is needed.
 
 For **add** or **update**, gather only missing designation or access details

@@ -75,24 +75,7 @@
           "quarterly"
         ],
         "window": "current",
-        "filter": "personal next actions, waiting-for items and recurring obligations",
-        "gap_effect": "Commitments context from this source remains unverified."
-      }
-    ],
-    "someday": [
-      {
-        "area": "commitments",
-        "source": "Fictional personal planning, collection possibilities-3",
-        "interface": "host document reader",
-        "identity": "fictional-personal-planning",
-        "locator": "possibilities-3",
-        "condition": "conditional",
-        "modes": [
-          "weekly",
-          "quarterly"
-        ],
-        "window": "current",
-        "filter": "uncommitted ideas considered during this review; not active commitments",
+        "filter": "personal next actions, waiting-for items, recurring obligations and deferred possibilities; distinguish active from uncommitted items",
         "gap_effect": "Commitments context from this source remains unverified."
       }
     ],
@@ -108,7 +91,8 @@
           "weekly"
         ],
         "window": "current",
-        "gap_effect": "Writing commitments need user context."
+        "gap_effect": "Writing commitments need user context.",
+        "filter": "draft context beyond project and task records; do not duplicate tracked actions"
       }
     ],
     "calendar": [

@@ -32,6 +32,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- Per-call eval accounting uses ccusage upstream prices for direct official-CLI
+  runs and stops subsequent calls while costs are unknown or the authorized
+  allowance is exhausted. Transcript inspection and grading stay with the agent.
+
 - `SKILLS.md` states one convention for writing, evaluating, and recording
   evidence for skills. It builds on the Agent Skills standard and names each
   source conflict with the choice made. Evals live in each skill's `evals/`

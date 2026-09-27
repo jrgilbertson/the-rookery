@@ -18,9 +18,7 @@ this stronger-review contract under proportional validation.
 
 ## Expected behavior
 
-- [ ] Requires an independent grader who took no part in authoring the
-      revision and produced neither comparison artifact.
-- [ ] Requires a different independent reviewer for the final package review.
-- [ ] Leaves both judgments unverified until independent contexts complete them
-      and plans a self-contained handoff for separate sessions; author inspection
-      or provisional self-grading does not substitute for the required evidence.
+- [ ] Refuses author self-grading, including provisional grades, and requires
+      independent different-model blind grading.
+- [ ] Leaves the independent review and grading unverified and specifies a
+      self-contained handoff; author inspection replaces neither judgment.

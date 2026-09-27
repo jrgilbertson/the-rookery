@@ -1,6 +1,6 @@
 # Review Checklist
 
-Use this rubric for an existing-skill audit, a final review, and every proposed instruction relaxation. `SKILL.md` owns route selection and reviewer independence: audits and full validation use the whole rubric; focused validation uses the applicable items for direct artifact inspection. Give the reviewer the intended outcome, hard constraints, skill package, evidence record, actual artifacts, and relevant traces without the author's conclusions. A failure becomes a fix-list item that names the problem, impact, and change risk. Review is complete when every applicable item either passes or has a fix-list item.
+Use this rubric for an existing-skill audit, an independent review, and every proposed instruction relaxation. `SKILL.md` owns validation and reviewer independence. Apply the whole rubric to audits and independent reviews, marking unrelated items not applicable. Give the reviewer the intended outcome, hard constraints, skill package, evidence record, actual artifacts, and relevant traces without the author's conclusions. A failure becomes a fix-list item that names the problem, impact, and change risk. Review is complete when every applicable item either passes or has a fix-list item.
 
 ## Mechanical pre-check
 
@@ -23,15 +23,15 @@ A **System-Owned Invariant** is a hard constraint that must remain explicit beca
 
 An instruction is not a System-Owned Invariant merely because it uses words such as "must" or "always." Generic reminders about thinking, checking, or narrating work are candidate choreography when the intended outcome and its deterministic check are already explicit.
 
-Judge a change to a candidate instruction group against the hard constraint, required outcome, and cases declared for the selected validation route, with these qualifiers:
+Judge a change to a candidate instruction group against the hard constraint, required outcome, and cases declared for the regression check, with these qualifiers:
 
 - **Material** means capable of changing a required outcome, trigger boundary, user authority, exact output format, deterministic check, package installability, or fragile sequence.
 - An **invariant loss** is an observed violation of the named required outcome or hard constraint. Different wording, reasoning style, or implementation approach is not a loss by itself.
-- **Available evidence** meets the selected validation route's execution and inspection requirements with the intended variant confirmed loaded. A substitute or listing judgment does not qualify as behavioral evidence.
+- **Available evidence** meets the regression check’s execution and inspection requirements with the intended variant confirmed loaded. A substitute or listing judgment does not qualify as behavioral evidence.
 
-[assets/baseline-test-template.md](../assets/baseline-test-template.md) owns each route's behavior checks.
+[assets/baseline-test-template.md](../assets/baseline-test-template.md) owns behavior checks.
 
-Pass: every prescriptive instruction protects a named invariant, responds to observed evidence, or covers a named fragile operation; every relaxation shows no invariant loss on available evidence.
+Pass: every prescriptive instruction protects a named invariant, responds to observed evidence, or covers a named fragile operation; every relaxation shows no invariant loss attributable to the change under test on available evidence, with unresolved attribution left unverified.
 
 ## Invocation and triggering
 
@@ -42,7 +42,7 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 - Each trigger is a distinct branch. Pass: no two trigger phrases are synonyms whose collapse would preserve the same cases.
 - Runtime routing is co-located. Pass: a body routing section appears only when invocation leads to distinct execution branches, and it sits with those branch instructions instead of restating the description.
 - Invocation policy is deliberate. Pass: portable description text is sufficient for model invocation; any harness-specific invocation control stays optional metadata outside the canonical behavior contract.
-- Trigger testing has one owner. Pass: [skills.md](skills.md) supplies the query format and thresholds, and [assets/trigger-queries-template.md](../assets/trigger-queries-template.md) supplies the procedure; other files point to them instead of restating them.
+- Trigger testing has one owner. Pass: [skills.md](skills.md) supplies the query format and activation checks, and [assets/trigger-queries-template.md](../assets/trigger-queries-template.md) supplies the procedure; other files point to them instead of restating them.
 
 ## Information hierarchy
 
@@ -72,10 +72,10 @@ Pass: every prescriptive instruction protects a named invariant, responds to obs
 
 ## Evidence integrity
 
-- Review context matches the route. Pass: grading and review contexts match what `SKILL.md` requires for the route; focused artifact inspection is identified as such and makes no independent-review claim. Deterministic scripts may perform mechanical checks.
+- Review context is independent. Pass: grading uses a blind different-model context, and one independent review follows `SKILL.md`; author inspection makes no independent-review claim. Deterministic scripts perform mechanical checks.
 - Artifacts are inspected directly. Pass: the reviewer opens the relevant outputs instead of relying on the executor's summary or claimed filenames.
 - Every pass has substance. Pass: each judgment cites concrete artifact or trace evidence that demonstrates the outcome, not a heading, filename, or other surface compliance.
-- Checks are reviewed too. Pass: no objective check is trivial, unverifiable from the available evidence, or missing a material part of the required outcome.
+- Checks are reviewed too. Pass: each eval has one or two sharp assertions, or one per numbered independent scenario; each is decidable from the packet and no stricter than the contract. Every failed grade is checked against the original transcript and classified as behavior failure, grader/assertion error, or capture gap. Original grades remain, with corrections and attribution explained in notes.
 - Subjective judgment stays subjective. Pass: taste, polish, and whether an output feels right are handled through specific human feedback or an explicitly scoped blind comparison, not presented as deterministic pass or fail.
 - Traces inform revision. Pass: wasted paths, ignored or ambiguous instructions, repeated corrections, and repeatedly reinvented helper work are considered when deciding what to remove, clarify, add to `Gotchas`, or bundle in `scripts/`.
 

@@ -1,7 +1,7 @@
 ---
 module: skill evaluation
 date: 2026-07-27
-last_updated: 2026-09-23
+last_updated: 2026-09-26
 problem_type: best_practice
 component: testing_framework
 severity: high
@@ -28,17 +28,16 @@ tags:
 
 Agent-authored skill changes need two kinds of verification. Deterministic
 tools can check structural facts such as frontmatter, file identity, line
-counts, and links. Full validation requires independent behavioral grading and final package
-review. The focused route runs each affected eval once per target with the
-changed skill and still uses a blind independent grader; author inspection
-supplies no independent evidence on either route.
+counts, and links. Behavioral validation runs affected evals once per declared
+Executor target with a blind different-model grader. One independent review
+checks the package and evidence. Author inspection supplies no independent
+evidence.
 
 The distinction matters because a plausible executor summary can hide an
 incomplete artifact. A filename or heading can satisfy a weak check while the
 actual output misses the required outcome. The workflow in
 `skills/creating-portable-skills/SKILL.md` therefore gives judgment work to
-fresh agent contexts when the selected route requires independent evidence
-and leaves mechanical checks to scripts.
+independent agent contexts and leaves mechanical checks to scripts.
 
 ## Guidance
 
@@ -47,40 +46,38 @@ Keep three evidence layers separate:
 | Layer | What it establishes | Suitable mechanism |
 | --- | --- | --- |
 | Provenance | Which package, model, harness, and configuration ran | Hashes, runtime metadata, load traces, and deterministic comparisons |
-| Outcome evidence | Whether the output met the required outcome and hard constraints | Inspection of actual artifacts and relevant traces; independent grading on both routes; a focused check grades the changed skill only |
-| Coverage | Which changed behaviors were tested and how far the conclusion reaches | Declared cases and limitations; a different independent final reviewer for full validation, or direct inspection limited to the affected behavior for focused validation |
+| Outcome evidence | Whether the output met the required outcome and hard constraints | Inspection of actual artifacts and relevant traces; blind different-model grading of the changed skill |
+| Coverage | Which changed behaviors were tested and how far the conclusion reaches | Declared cases and limitations; one independent review of the package and evidence |
 
 Keep the durable record small: eval definitions live in the skill's
 `evals/evals.json`, raw runs stay in the machine-local run archive, and each
 graded round commits one benchmark file (`SKILLS.md`, "Committed evidence").
-Full-validation revisions use matched prior and candidate runs in fresh
-contexts and ship under the ship rule in `SKILLS.md` ("Arms and runs").
+Changes follow the regression and attribution rule in `SKILLS.md` ("Arms and
+runs"). There is no mandatory pre-spend review plus final-review cycle.
 
-For a skill change on the full validation route:
-
-1. Run matched variants in fresh contexts and confirm the intended version was
-   loaded.
-2. Give the outputs and relevant traces to a separate fresh-context grader who
-   did not author the change or produce either artifact.
-3. Require concrete evidence for every pass. The grader should challenge any
-   check that is trivial, cannot be verified from the supplied evidence, or
-   omits part of the required outcome.
-4. Give the complete package and evidence record to another fresh-context
-   agent for the final checklist and holistic review.
-5. Use deterministic scripts for mechanical facts. They do not need an agent
-   reviewer.
-6. If an independent context is unavailable, prepare a self-contained handoff
-   and keep the affected result unverified. Author self-review does not replace
-   the missing context.
-7. Record the result at the narrowest level the artifact supports. A log line
-   states only what its run actually checked (`tests/README.md:130`).
+1. Run affected cases once per declared target in fresh contexts and confirm
+   that the intended version loaded.
+2. Give the independent different-model grader the final answer, all tool names
+   and inputs, relevant artifacts and observations, and available child
+   readouts. Remove variant labels, private reasoning, and author conclusions.
+3. Inspect every failed grade against the original transcript. Distinguish a
+   behavior failure, grader/assertion error, and capture gap. Keep original
+   grades and explain corrections in notes.
+4. Compare or rerun the prior skill only on failures to attribute changed text.
+   Unresolved attribution stays unverified. Never compute an aggregate delta
+   between unmatched cohorts or claim improvement from a baseline subset.
+5. Give one independent reviewer the package and evidence. Use scripts for
+   mechanical facts. The operator owns further iteration and stopping within
+   the authorized budget.
+6. If required independent judgment is unavailable, prepare a self-contained
+   handoff and keep it unverified. Author self-review does not replace it.
+7. Record only what the retained artifacts establish.
 
 Treat a source edit as an evidence boundary. Preserve earlier artifacts with
 their original revision labels, then identify which checks crossed the changed
 instruction, case, or resource. Reinstall the new package before rerunning
-affected behavior, and give each new artifact to an independent grader when
-the selected route requires one. Do not
-rename or summarize an older output as though the new bytes produced it.
+affected behavior, and give each new behavioral artifact to an independent
+grader. Do not rename or summarize an older output as though the new bytes produced it.
 
 Package identity has two independent links:
 
@@ -122,7 +119,7 @@ general reliability, broad non-regression, or causal improvement.
 An author carries assumptions from the conversation that produced the
 artifact. Those assumptions make it easier to accept the intended result
 instead of the observable one. A fresh grader reduces that contamination, and
-a different fresh context for final review checks whether the evidence covers
+an independent review checks whether the evidence covers
 the complete package rather than only the cases already graded.
 
 Identity evidence does not prove quality, and a correct score on one case does
@@ -142,20 +139,19 @@ run contained.
 
 ## When to Apply
 
-Use `skills/creating-portable-skills/SKILL.md` to select the validation route.
-Apply this independent-review pattern when full validation is required. A
-focused check establishes only its exercised behavior and does not establish
-comparative improvement. Independent review is especially useful when success depends on
-qualitative completeness, evidence use, authority boundaries, or execution
-trace interpretation.
+Use `skills/creating-portable-skills/SKILL.md` for the regression workflow.
+A check establishes only its exercised behavior and does not establish
+comparative improvement. Independent review is especially useful when success
+depends on qualitative completeness, evidence use, authority boundaries, or
+execution trace interpretation.
 
 It also applies when pass/fail, waiver, scoring, or claim-limit rules appear in
 more than one file, or when a trigger table contains bare judgments without
 run-specific provenance.
 
 Use deterministic validation alone for mechanical questions. Typo,
-formatting, and link-only edits do not need a behavioral comparison. Expand
-beyond a small matched comparison only when the requested claim requires it.
+formatting, and link-only edits do not need a behavioral comparison. Broader
+cross-model sweeps are separate work.
 
 ## Example
 

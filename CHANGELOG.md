@@ -37,13 +37,9 @@ looked" surface. GitHub Releases mirror its entries.
   source conflict with the choice made. Evals live in each skill's `evals/`
   as `evals.json` and `eval_queries.json`, and each graded round commits a
   benchmark file named `<date>-<short-rev>.json` (one per target when a round
-  covers several) in `evals/benchmarks/`. A targeted eval meets its default
-  minimum when the changed version passes at least 2 of 3 runs on each target
-  and beats the baseline by at least 2 runs. A regression control blocks
-  shipping when the changed version passes fewer runs than the baseline, and
-  a one-run gap at 3 runs extends both arms to 8. `creating-portable-skills`
-  ships a byte-equal copy with a parity check, cites it from its workflow and
-  templates, and bundles `scripts/check-evals.py` to validate the eval file
+  covers several) in `evals/benchmarks/`. `creating-portable-skills` ships a
+  byte-equal copy with a parity check, cites it from its workflow and
+  templates, and bundles `scripts/check-evals.py` to validate eval file
   shapes. This repository's catalog check runs that validator on every skill.
 - `TESTING.md` explains project-owned verification for polyglot monorepos and
   smaller projects, with local, merge, and release responsibilities, conservative
@@ -66,6 +62,17 @@ looked" surface. GitHub Releases mirror its entries.
   implement the subject. Lifecycle and Git hooks remain deliberately absent.
 
 ### Changed
+
+- Skill validation uses one affected regression check per declared Executor
+  target, blind different-model grading, transcript-based failure attribution,
+  and one independent review. A failure attributable to the change under test
+  blocks shipping; unresolved attribution stays unverified. Diagnostic
+  baselines cover failing evals only, previous grades retain their revision,
+  and unmatched cohorts produce no aggregate delta. Cost policy uses complete
+  per-call API-equivalent estimates from `ccusage --mode calculate` under one
+  caller-authorized budget. The portable creator stays runner-free, and its
+  validator accepts single-run and separate diagnostic benchmark records while
+  preserving historical formats.
 
 - `route-work` model recommendations are reviewed against VulcanBench Frontier
   v4, FrontierCode, and Arena's WebDev leaderboard. Design/taste now starts on
@@ -91,37 +98,16 @@ looked" surface. GitHub Releases mirror its entries.
   independent grader or reviewer, not even with provisional grades. A change
   whose required independent grade or review is unverified does not ship.
 
-- `creating-portable-skills` has an independent reviewer check eval validity
-  and review the package before the deciding runs, so applying the ship rule
-  afterward is a mechanical read the final reviewer confirms. After a source
-  edit, only evals the diff affects rerun, and unchanged baseline runs carry
-  forward under their original revision. Focused validation now covers
-  removing history phrasing, pinned model names, named-model workarounds,
-  unsourced hardcoded facts, and duplication, with a blind independent
-  grader, and moving or reformatting eval files needs no behavioral round.
-
-- `creating-portable-skills` uses focused validation for localized, low-risk
-  guidance revisions while keeping independent comparison and review for
-  consequential changes. Behavioral evaluations use bounded temporary
-  workspaces, and authoring checks judge activation and discoverability instead
-  of requiring a fixed description opening or reference depth.
-
 - `creating-portable-skills` reviews can open with a bundled signal scan that
   finds pressure language, thinking scaffolds, output clamps, history
   phrasing, pinned model names, and similar mechanical signals, and names the
   checklist item that judges each hit. The checklist makes its sediment check
   runnable, tests that hardcoded facts point to a source of truth, asks of
   each line whether the model could already know it, and keeps advice that
-  rests on one vendor's model out of the portable rules. The baseline
-  comparison follows the Agent Skills evaluation loop: it compares pass
-  counts and the token and time cost of each variant, drops checklist items
-  that pass with and without the change, and stops when another revision no
-  longer helps. One blind grader, from a
-  different model than the author when one is available, scores both
-  variants and quotes its evidence. An agent auditing a skill it did not
-  write counts as an independent reviewer, the validator step names the
-  reference `skills-ref validate` command, and an install smoke check that
-  cannot run needs the user's decision before the change completes.
+  rests on one vendor's model out of the portable rules. An agent auditing a
+  skill it did not write counts as an independent reviewer; the validator step
+  names the reference `skills-ref validate` command, and an install smoke check
+  that cannot run needs the user's decision before the change completes.
 
 - `route-work` model recommendations now use the September 21–22 releases:
   Claude Opus 5.5, GPT-6 Sol and Astra, and Grok 4.7, with rows that list only

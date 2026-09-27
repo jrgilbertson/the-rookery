@@ -2,7 +2,7 @@
 name: creating-portable-skills
 description: Use when creating, updating, or migrating a skill, when editing a skill's SKILL.md, evals, graders, or trigger queries, or when finding problems in its description, triggers, structure, portability, or evidence. Produces prioritized findings or a portable, installable skill package. Explanation-only requests stay with general reasoning.
 license: MIT
-compatibility: Full validation requires isolated agent contexts or separate sessions for agent grading and review.
+compatibility: Behavioral validation requires a different-model blind grader and an independent review context.
 ---
 
 # Creating Skills
@@ -11,17 +11,13 @@ Create, revise, migrate, or audit a skill from its intent, required outcome, and
 
 Skills produced here follow the [Agent Skills format](https://agentskills.io/specification). Read [references/portability.md](references/portability.md) when checking frontmatter against its canonical-package rule, choosing an install location, adding harness-specific metadata, or making a claim about a harness. [references/skills.md](references/skills.md) is the convention for frontmatter fields, eval files, arms and runs, targets, grading, the run archive, and committed evidence; read it before steps 2, 5, 6, and 7.
 
-An independent reviewer is any agent that took no part in the authoring discussion and did not produce the artifact under review; an agent auditing a skill it did not write already qualifies and needs no separate context. For full validation, an independent grader grades the evals and a different independent reviewer performs the final package review. The author never supplies a grade or review that must come from an independent context, not even provisionally or as labeled notes standing in for grades. When a required independent context is unavailable, prepare a self-contained handoff for a separate session that includes the eval assertions and every run output to grade. Until that session completes it, the grade or review stays unverified and the change does not ship; say so plainly instead of leaving shipping as the user's call.
+An independent reviewer took no part in authoring the change and did not produce the artifact under review; an agent auditing a skill it did not write qualifies. Behavioral grading uses an independent context on a different model from the executor. One independent review checks the package and evidence. The author never supplies required independent grades or review, even provisionally. If either is unavailable, prepare a self-contained handoff with assertions, outputs, tool traces, and available child readouts; the missing judgment stays unverified and the change does not ship.
 
 ## Workflow
 
-Select the validation route before entering the workflow:
+A substantive change gets one regression check on affected evals, once per declared Executor target, under [references/skills.md](references/skills.md). New skills check realistic cases. Description changes also follow step 7. Cosmetic edits (typos, formatting, links, or moving eval files without changing their meaning) may skip behavior checks and use step 4 and `scripts/check-evals.py`.
 
-- **Focused validation** applies only to a localized, low-risk guidance revision with unchanged task scope, activation boundary, required outcomes, System-Owned Invariants, executable helpers, and evaluation/review policy. Revising optional advice, such as a suggested reading order, can qualify. So can removing history phrasing, pinned model names, workarounds for a named model, unsourced hardcoded facts, or duplication when required behavior does not change. Even a one-line approval, output-schema, or helper change cannot qualify. A focused check runs each affected eval once per target with the changed skill and a blind independent grader.
-- **Full validation** applies to new skills, fixes that add or change required behavior, all other substantive changes, and ambiguous eligibility. Substantive means changed instruction semantics, trigger description, or bundled resource.
-- **Cosmetic edits** skip behavioral evaluation: typo, formatting, and link-only edits, and moving or reformatting eval files, since `SKILL.md` never loads `evals/`. Step 4's structural checks and `scripts/check-evals.py` suffice.
-
-A read-only audit starts and ends at step 0. Authorized focused revisions and cosmetic edits start at step 1; other existing-skill work starts at step 0, and new skills start at step 1. Existing authorization for the material fix scope carries forward.
+A read-only audit starts and ends at step 0. Authorized revisions and new skills start at step 1; an additional audit before implementation is not required. Existing authorization for the material fix scope carries forward. The operator owns iteration and stopping; broader cross-model sweeps are separate work.
 
 ### 0. Audit an existing skill
 
@@ -61,27 +57,23 @@ Completion: the validator passes, or every named fallback check passes with the 
 
 ### 5. Check behavior
 
-Follow the selected route in [assets/baseline-test-template.md](assets/baseline-test-template.md). Write eval definitions to the skill's `evals/evals.json`, raw runs to the run archive, and the round's benchmark to `evals/benchmarks/`.
+Use [assets/baseline-test-template.md](assets/baseline-test-template.md) for the affected regression check, blind grading, and failure diagnosis. Before calls, establish the caller's budget and the host's per-call usage and pricing support under **Cost and budget** in [references/skills.md](references/skills.md). The host owns runner automation and configuration; this package stays runner-free.
 
-For full validation, before the deciding runs, have the independent final reviewer run the pre-spend review. It checks eval validity: each assertion is decidable from what the grader sees, no assertion is stricter than the skill's contract, and each regression control's baseline plausibly meets the validity bar in **Arms and runs** of [references/skills.md](references/skills.md). The reviewer also checks that the skill's rules are consistent with each other and applies the whole checklist in [references/review-checklist.md](references/review-checklist.md) to the package, with the inputs it names. Revise from its findings before the deciding runs.
-
-Completion: for full validation, the pre-spend review ran and its findings were resolved before the deciding runs. The selected route's checks have run, the eval definitions and the round's benchmark file are written, and this skill's `scripts/check-evals.py` exits 0 on the target skill directory. Cosmetic-only edits record behavioral evaluation as not applicable.
+Completion: affected checks ran on every declared target, every failure was inspected against its original transcript and classified, and any needed prior-skill diagnosis is recorded. Eval definitions, raw archive records, and the round's benchmark exist, and `scripts/check-evals.py` exits 0 on the target skill. Missing authorized runs or unresolved attribution remain unverified. Cosmetic-only edits record behavior checks as not applicable.
 
 ### 6. Decide and review
 
-For focused validation, directly inspect the changed guidance and actual check output against the intended outcome and hard constraints, using the applicable items in [references/review-checklist.md](references/review-checklist.md). The author may do this inspection; it is not independent evidence. A whole-package audit, matched improvement experiment, and separate final reviewer are not required.
+Apply the ship rule in [references/skills.md](references/skills.md). Have one independent reviewer apply [references/review-checklist.md](references/review-checklist.md) to the package, assertions, artifacts, and evidence. This review checks that assertions are decidable from the grader's packet and no stricter than the contract. It does not require a separate pre-spend review or a repeated final-review cycle.
 
-For full validation, applying the ship rule in [references/skills.md](references/skills.md) to the graded results is a mechanical read. The independent final reviewer confirms that read and, when cost rises past the rule's bound, writes the reason the rule requires. When required independent grading or review is unavailable, the independence rule at the top of this file applies; a checklist exception cannot replace it.
+A substantive follow-up edit returns through step 4 and the affected evals. Recheck evals whose outcomes could change under the revised package or test material, including changed instructions, executable helpers, bundled resources, prompts, inputs, or assertions. Preserve previous artifacts and grades under their original revision labels. Diagnose failures using the prior skill only where needed; do not combine unmatched cohorts into a delta.
 
-Any substantive follow-up edit reselects its route and returns through step 4 and the affected evals before shipping. Rerun only evals whose prompt, files, or assertions changed, or whose assertions test text that the diff touches. Reuse baseline runs whose bytes did not change; each carried-forward result keeps the revision label it came from. When an eval reruns, its reused baseline outputs are regraded in the same blind packet as the new runs.
-
-Completion: focused validation has passing structural and affected behavior checks, direct artifact inspection, and a claim limited to what was exercised; full validation has a ship decision and every checklist item passes.
+Completion: structural checks pass, required independent grading and review are complete, every failure has an evidence-backed disposition, and none is attributable to the change under test. Claims stay within the exercised cases and targets; unresolved attribution remains unverified.
 
 ### 7. Test the description
 
 For a new skill, or whenever the description changed, follow [assets/trigger-queries-template.md](assets/trigger-queries-template.md).
 
-Completion: for a new or description-changed skill, every query in `evals/eval_queries.json` passes under the thresholds in [references/skills.md](references/skills.md) and the results are recorded; otherwise, a diff of the description against the preserved prior version is empty. A judgment that cannot be run is recorded as not run and never counted as a pass.
+Completion: for a new or description-changed skill, the query set has run under the trigger rules in [references/skills.md](references/skills.md), every failure has been inspected, and the recorded attribution satisfies its ship rule; otherwise, a diff of the description against the preserved prior version is empty. A judgment that cannot be run is recorded as not run and never counted as a pass.
 
 ### 8. Package and install
 

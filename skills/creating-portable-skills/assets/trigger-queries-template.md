@@ -2,7 +2,7 @@
 
 [references/skills.md](../references/skills.md) owns the description rules,
 the `evals/eval_queries.json` format and seeding method, the run count, the
-pass thresholds, and the tuning split; this template owns the procedure.
+activation checks, and the tuning split; this template owns the procedure.
 
 ## Build the query set
 

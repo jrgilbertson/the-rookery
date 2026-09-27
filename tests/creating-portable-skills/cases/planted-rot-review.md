@@ -9,7 +9,12 @@ have flagged.
 
 > Audit the skill at `../fixtures/rot-review-target/SKILL.md` (resolve the
 > path relative to this case file) against your review checklist and tell me
-> what to fix. Do not edit anything.
+> what to fix. Do not edit anything. Address these independent checks:
+> 1. The incident/PR sentence.
+> 2. The repeated header instruction.
+> 3. The csvtool claim.
+> 4. The customer skip sentence.
+> 5. The completion criterion.
 
 ## Expected behavior
 

@@ -49,7 +49,7 @@ expect_violation() { # expect_violation <label> <text>
 	holds "$1 not reported: $2" has "$out" "$2"
 }
 
-# Valid files, including a single-configuration focused benchmark, pass.
+# Valid files, including a single-configuration regression benchmark, pass.
 run "$fixtures/valid-skill"
 expect_code "valid skill" 0
 holds "valid skill printed output: $out" [ -z "$out" ]
@@ -90,7 +90,7 @@ expect_violation benchmark "metadata.executor_model: must be a non-empty string"
 expect_violation benchmark "metadata.archive_ref: must be a non-empty string"
 expect_violation benchmark "run_summary.with_skill.pass_rate.stddev: must be a number"
 expect_violation benchmark "run_summary.delta.pass_rate: must be a number"
-expect_violation benchmark "latest.json: file name must be <YYYY-MM-DD>-<short-rev>[-<target>].json"
+expect_violation benchmark "latest.json: file name must be <YYYY-MM-DD>-<short-rev>[--iteration-<N>][-<target>].json"
 
 # Several directories are checked in one run; any violation fails it.
 run "$fixtures/valid-skill" "$fixtures/bad-queries"
@@ -133,20 +133,33 @@ delta='{"pass_rate": 0, "time_seconds": 0, "tokens": 0}'
 arm_case unknown-arm "{\"with_skill\": $arm, \"baseline\": $arm, \"delta\": $delta}"
 expect_code "unknown arm name" 1
 expect_violation "unknown arm" "run_summary.baseline: unknown arm; use with_skill, old_skill, or without_skill"
-arm_case no-changed-arm "{\"old_skill\": $arm}"
-expect_code "missing with_skill" 1
-expect_violation "missing with_skill" "run_summary: must include with_skill"
+arm_case diagnostic-old-skill "{\"old_skill\": $arm}" 1
+expect_code "single-arm old-skill diagnostic" 0
+arm_case diagnostic-without-skill "{\"without_skill\": $arm}" 1
+expect_code "single-arm no-skill diagnostic" 0
+arm_case diagnostic-with-delta "{\"old_skill\": $arm, \"delta\": $delta}" 1
+expect_code "single-arm diagnostic cannot have delta" 1
+expect_violation "single-arm delta" "run_summary.delta: needs at least two configurations to compare"
 arm_case two-baselines "{\"with_skill\": $arm, \"old_skill\": $arm, \"without_skill\": $arm, \"delta\": $delta}"
 expect_code "two baselines" 1
 expect_violation "two baselines" "run_summary: compare with_skill against one baseline, not both old_skill and without_skill"
 
-# A comparison runs each arm 3 times; a focused check runs once.
+arm_case baseline-pair "{\"old_skill\": $arm, \"without_skill\": $arm, \"delta\": $delta}" 1
+expect_code "comparison missing with_skill" 1
+expect_violation "comparison missing changed arm" "run_summary: must include with_skill"
+
+# Default single runs and historical repeated runs remain valid.
 arm_case comparison-one-run "{\"with_skill\": $arm, \"old_skill\": $arm, \"delta\": $delta}" 1
-expect_code "comparison with one run" 1
-expect_violation "comparison runs" "metadata.runs_per_configuration: a comparison runs each arm 3 times"
-arm_case focused-three-runs "{\"with_skill\": $arm}" 3
-expect_code "focused check with three runs" 1
-expect_violation "focused runs" "metadata.runs_per_configuration: a focused check runs once"
+expect_code "matched comparison with one run" 0
+arm_case regression-one-run "{\"with_skill\": $arm}" 1
+expect_code "regression check with one run" 0
+arm_case repeated-three-runs "{\"with_skill\": $arm}" 3
+expect_code "operator-selected repeat count" 0
+for invalid_count in 0 -1 true '"1"' 1.5; do
+	arm_case bad-count "{\"with_skill\": $arm}" "$invalid_count"
+	expect_code "invalid run count $invalid_count" 1
+	expect_violation "run count type" "metadata.runs_per_configuration: must be a positive integer"
+done
 
 # Every field the benchmark format names has its type; cost is recorded or
 # declared unavailable.
@@ -195,6 +208,26 @@ printf '{"metadata": {"skill_name": "wrong-suffix", "executor_model": "m", "time
 run "$scratch/wrong-suffix"
 expect_code "wrong target suffix" 1
 expect_violation "wrong target suffix" "file name target 'model-a' must match the target at the end of metadata.archive_ref"
+
+# A changed check and its same-day diagnostic keep separate benchmark files.
+mkdir -p "$scratch/same-day-rounds/evals/benchmarks"
+cp "$fixtures/no-evals/SKILL.md" "$scratch/same-day-rounds/SKILL.md"
+round_file() { # round_file <file name> <archive_ref> <arm>
+	printf '{"metadata": {"skill_name": "same-day-rounds", "executor_model": "m", "timestamp": "t", "runs_per_configuration": 1, "harness": "h", "grader": "g", "archive_ref": "%s", "cost_available": false}, "run_summary": {"%s": %s}}\n' \
+		"$2" "$3" "$arm" >"$scratch/same-day-rounds/evals/benchmarks/$1"
+}
+round_file 2026-09-24-abc1234-model-a.json repo/same-day-rounds/iteration-1/model-a with_skill
+round_file 2026-09-24-abc1234--iteration-2-model-a.json repo/same-day-rounds/iteration-2/model-a without_skill
+run "$scratch/same-day-rounds"
+expect_code "separate same-day diagnostic benchmark" 0
+mv "$scratch/same-day-rounds/evals/benchmarks/2026-09-24-abc1234--iteration-2-model-a.json" \
+	"$scratch/same-day-rounds/evals/benchmarks/2026-09-24-abc1234--iteration-2.json"
+run "$scratch/same-day-rounds"
+expect_code "targetless diagnostic benchmark keeps archive target" 0
+round_file 2026-09-24-abc1234--iteration-3-model-a.json repo/same-day-rounds/iteration-2/model-a without_skill
+run "$scratch/same-day-rounds"
+expect_code "wrong iteration suffix" 1
+expect_violation "wrong iteration suffix" "file name iteration '3' must match metadata.archive_ref"
 
 # The validator writes nothing to disk.
 before=$(find "$fixtures" "$scratch" | LC_ALL=C sort)

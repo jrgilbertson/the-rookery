@@ -24,9 +24,7 @@ originally added this case after finding both contracts untested.
 - [ ] (1) Says packaging cannot be marked complete yet: the second harness
       needs either a smoke pass or a logged "not run" together with the
       user's logged decision to ship without it.
-- [ ] (2) Recommends that one grader score both outputs of each case's
-      matched pair (baseline and revised, or without-skill and with-skill).
-- [ ] (2) Says the grader sees the outputs labeled neutrally, without knowing
-      which variant is which.
-- [ ] (2) Recommends the second vendor's model as the grader because it is a
-      different model from the one that wrote the revision or the outputs.
+- [ ] (2) Assigns both outputs to one independent different-model grader in a
+      blind packet containing final answers, tool names/inputs, relevant
+      observations and available child readouts, without private reasoning or
+      author conclusions.

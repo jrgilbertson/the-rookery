@@ -5,7 +5,7 @@ for agent skills. It builds on the [Agent Skills standard](https://agentskills.i
 with vendor guidance layered on top. Where sources conflict, a **Conflict:**
 note names the conflict and the choice made. The `creating-portable-skills`
 skill ships a byte-equal copy as `references/skills.md`. That skill owns the
-authoring workflow and the choice between full validation and a focused check.
+authoring workflow and affected regression checks.
 This file owns the formats and rules the workflow produces.
 
 ## Package format
@@ -98,20 +98,20 @@ never to `evals/`.
 - `prompt` is a realistic task with synthetic data, and `expected_output`
   describes success for a human reader. `files` is optional, with paths
   relative to the skill root.
-- `assertions` are binary, verifiable statements. Write them after an
-  optional draft round of at most one run per eval, inside the approved
-  budget, then freeze them before the runs that decide. An eval fails when any
-  assertion fails.
+- `assertions` are binary, verifiable statements: one or two sharp assertions
+  per eval, or one per numbered independent scenario. Freeze them before the
+  check. An eval fails when any assertion fails. Put deterministic mechanical
+  checks in scripts rather than asking a model to grade them.
 - `provenance` is an extension. It names the observed failure or baseline gap
   the eval protects, or the contract a regression control guards.
 - `regression_control` is an extension. `true` marks a regression control,
   kept to guard one named contract; it never shows an improvement. `false`
-  marks a targeted eval, which measures the change. **Arms and runs** says
-  when a control is valid and when it blocks shipping.
+  marks a targeted eval. Neither label establishes improvement by itself;
+  **Arms and runs** governs failure attribution and shipping.
 
-An eval enters only when a baseline run showed the gap, an observed failure
-motivated it, or it is a regression control guarding a named contract. Start a
-new skill with two or three evals. Fold near-duplicate scenarios into one
+An eval covers realistic required behavior, an observed failure, or a named
+contract. Start a new skill with two or three realistic evals; a failing
+no-skill baseline is not a prerequisite. Fold near-duplicate scenarios into one
 eval, with numbered scenarios in the prompt and one assertion for each.
 
 **Conflict: field names.** The standard uses `assertions` here and
@@ -136,18 +136,19 @@ aggregator do not read these files unmodified.
 - A near miss shares the skill's topic or wording but belongs elsewhere. Its
   `owner` field, an extension, names the skill or workflow that should take
   it.
-- Run each query 3 times in a harness with the skill installed, and record
-  whether the skill activated. A should-trigger query passes when it
-  activates on at least 2 of 3 runs. A near miss passes only when it never
-  activates. The set passes when every query passes.
+- Run each query once by default in a harness with the skill installed and
+  retain its activation trace. A query passes when activation matches
+  `should_trigger`. Inspect every failure under **Arms and runs**; an
+  unavailable or inconclusive observation is unverified, never a pass.
 - To tune a description, split the set 60/40 into train and validation
   queries, and keep both files in the run archive. Revise from train failures
-  only, for at most about 5 rounds. Keep the description with the best
-  validation pass rate, then check it on 5–10 fresh queries. A query used for
+  only. The operator decides whether to iterate or stop within the authorized
+  budget. Check the selected description on 5–10 fresh queries. A query used for
   tuning never appears in the validation set or the fresh check. Rerun the
   whole set after any description edit.
-- For a description-only change, compare the prior and revised descriptions
-  on the same query set.
+- For a description-only change, check the revised description on the query
+  set and use the prior description only on failing queries to diagnose the
+  change. This diagnostic subset establishes no overall improvement.
 
 A fresh-context judge that sees only the name, the description, and one query
 is a cheap first screen. Label its result a listing proxy, never activation
@@ -155,48 +156,61 @@ evidence.
 
 ## Arms and runs
 
-A new skill compares `with_skill` against `without_skill`. A revision compares
-`with_skill` against `old_skill`, a snapshot of the prior version.
-`with_skill` is the changed arm; the other arm is the baseline. Each run
-starts in a fresh context, and its trace confirms that the intended variant
-loaded.
+A regression check runs each affected eval once per declared Executor target
+with the changed skill (`with_skill`). Each run starts in a fresh context and
+its trace confirms that the intended variant loaded. New skills check
+realistic cases; a `without_skill` comparison is used only when needed for
+diagnosis. A cosmetic change may skip behavioral evaluation.
 
-Full validation runs each arm 3 times. The `creating-portable-skills` workflow
-defines the focused check, which has one arm and supports no comparative
-claim.
+Inspect **every failure** against the original transcript. Distinguish a
+behavior failure from a grader/assertion error or a capture gap. Retain the
+original grades and explain corrections in benchmark notes, with the source
+evidence. Missing capture is not proof of correct behavior.
 
-A targeted eval meets its minimum when the changed arm passes at least 2 of 3
-runs on each target and beats the baseline by at least 2 runs. An eval uses a
-different threshold only when one is written down before the runs.
+Compare or rerun the frozen prior skill (`old_skill`) only on failing evals
+to attribute the change. Reuse prior evidence only when its package, prompt,
+inputs, assertions, target, and settings match the diagnostic question; retain
+its original revision label and original blind grades. If
+attribution remains unresolved, the result stays unverified.
 
-**Regression controls.** A regression control blocks shipping when the
-changed arm passes fewer runs than the baseline. At 3 runs, a gap of exactly
-one run extends both arms once, to 8 runs each, and the 8-run counts decide.
-A valid control's baseline passes at least 2 of 3 runs; the workflow's
-pre-spend review fixes a control that falls short before the deciding runs. If a
-control's baseline still passes fewer than 2 of 3 runs in the round, the
-control neither blocks nor counts. The benchmark notes it, and the control is
-fixed before the next round.
+**Ship rule.** Ship when the required checks and independent review are
+complete and no failure is attributable to the change under test. Known pre-existing
+failures remain visible with their evidence and disposition. A new skill must
+meet its required outcomes; a no-skill failure does not excuse its own failure.
+The operator owns iteration and stopping within the authorized budget; there
+is no fixed iteration limit or forced ship/revert cycle. Each substantive edit
+gets its affected regression check.
 
-**Ship rule.** A change ships when every targeted eval meets its minimum, no
-regression control blocks it, and the gain is worth its measured token and
-time cost. The change is worth its cost when the mean tokens and the mean time
-on the targeted evals each rise by at most 30% on each target; a larger rise
-needs a written reason from the independent final reviewer. Claim an
-improvement only on the targets that showed it.
+A single-arm check or a diagnostic baseline subset supports no improvement
+claim. Compare only matched eval sets, inputs, assertions, targets, settings,
+and run counts. Never compute an aggregate delta between a full candidate
+cohort and a failing-only baseline subset. Periodic broader cross-model sweeps
+are separate work with their own authorization.
 
 ## Targets
 
-A target is one model in one harness. Run full validation on the current
-model and harness, plus every target the caller declares. A host repository
-may declare a default target set in its own testing documentation. Record the
-actual model, harness, and material settings such as reasoning effort for
-every run.
+A target is one model in one harness. Use the caller's declared Executor
+targets, or the host repository's testing default when the caller supplies
+none. Explicit caller restrictions override host defaults. Record the actual
+model, harness, and material settings such as reasoning effort for every run.
+Structural portability does not require expanding the target set. The portable
+skill pins no model names and bundles no runner; the host owns CLI automation
+and configuration.
 
-**Conflict: model matrix.** Anthropic's checklist asks for tests on Haiku,
-Sonnet, and Opus, which is a Claude-only matrix. skill-creator's trigger loop
-uses the session's own model. The standard and OpenAI set no matrix. This
-convention adopts no fixed matrix; the caller declares the targets.
+## Cost and budget
+
+The caller must authorize model spend and one budget across all providers
+before calls begin. Use `ccusage --mode calculate` with its upstream-maintained
+pricing as the single automated price source for current and future models.
+These are API-equivalent estimates, not actual subscription debits. Keep
+CLI-reported dollar amounts secondary; do not maintain repository rate tables
+or use account-wide usage or credit deltas as per-call cost.
+
+Isolate usage records per call and include execution, delegation, grading,
+and failed attempts in the budget. A partial or unpriced estimate, or one using an unidentified model, is unknown, not zero or a usable total. Unavailable prices or usage,
+exhausted budget, or subscription quota stop further calls. Report the gap;
+never fall back to API-key billing. The host implements collection and cost
+calculation; this portable package defines the evidence contract.
 
 ## Grading and independence
 
@@ -217,14 +231,19 @@ Each run's `grading.json` uses the standard's shape:
   `passed`.
 - An example that appears in a grader prompt or in the skill's own text never
   appears in a graded round.
-- One grader grades every arm of an eval on a target, using a different model
-  from the executor when one is available. The grader sees final outputs and
-  tool observations with arm names removed, and never the author's reasoning
-  or conclusions.
-- The `creating-portable-skills` workflow defines an independent reviewer. It
-  requires an independent grader and a different independent final reviewer
-  for full validation. It also says when that reviewer acts and what happens
-  when a required independent context is unavailable.
+- An independent grader on a different model from the executor grades the
+  check blind. For comparisons, one grader grades both arms. Its packet
+  contains the final answer, all tool names and inputs, relevant observations
+  and artifacts, and all available child readouts, with variant labels removed.
+  Replace sensitive values throughout the packet with typed placeholders before
+  sending it to the selected grader, preserving the action and evidence needed
+  to grade. Exclude private reasoning and author conclusions. If a missing
+  trace or safe redaction removes evidence needed to decide an assertion,
+  record a capture gap and leave the outcome unverified.
+- One independent review checks the package and evidence using the
+  `creating-portable-skills` checklist. There is no mandatory pre-spend review
+  plus final-review cycle. An unavailable independent grader or reviewer
+  leaves the required judgment unverified; author inspection cannot replace it.
 - Qualities that binary assertions cannot carry go to specific human
   feedback or a blind comparison of two outputs. Record the result as a note,
   never as a pass or a fail.
@@ -260,7 +279,10 @@ directory per target inside it. Keep the archive after the work ends.
 
 Each graded round commits one file named `<date>-<short-rev>.json`, for the
 date and the revision it tested. When a round covers several targets, commit
-one file per target named `<date>-<short-rev>-<target>.json`.
+one file per target named `<date>-<short-rev>-<target>.json`. Distinct rounds
+on the same date, revision, and target use `--iteration-<N>` before the target
+suffix to keep both records, where `<N>` matches the archive's `iteration-<N>`
+directory: `<date>-<short-rev>--iteration-<N>[-<target>].json`.
 
 ```json
 {
@@ -268,7 +290,7 @@ one file per target named `<date>-<short-rev>-<target>.json`.
     "skill_name": "csv-report",
     "executor_model": "model-id",
     "timestamp": "2026-09-24T12:00:00Z",
-    "runs_per_configuration": 3,
+    "runs_per_configuration": 1,
     "harness": "harness-name version",
     "grader": "different model, blind packet",
     "final_reviewer": "separate fresh session",
@@ -278,35 +300,33 @@ one file per target named `<date>-<short-rev>-<target>.json`.
   "run_summary": {
     "with_skill": {
       "pass_rate": { "mean": 1.0, "stddev": 0.0 },
-      "time_seconds": { "mean": 40.5, "stddev": 3.2 },
-      "tokens": { "mean": 21000, "stddev": 900 }
-    },
-    "without_skill": {
-      "pass_rate": { "mean": 0.5, "stddev": 0.0 },
-      "time_seconds": { "mean": 31.0, "stddev": 2.1 },
-      "tokens": { "mean": 17000, "stddev": 700 }
-    },
-    "delta": { "pass_rate": 0.5, "time_seconds": 9.5, "tokens": 4000 }
-  }
+      "time_seconds": { "mean": 40.5, "stddev": 0.0 },
+      "tokens": { "mean": 21000, "stddev": 0.0 }
+    }
+  },
+  "notes": ["Eval 1 ran once; pricing was unavailable, so further calls stopped."]
 }
 ```
 
-- `run_summary` holds one object per arm and a numeric `delta`: the changed
-  arm minus the baseline arm. A focused check has one arm and no `delta`.
+- `run_summary` holds one object per arm. A regression check has `with_skill`
+  only and no `delta`. A separate diagnostic round may have only `old_skill`
+  or `without_skill`, also without `delta`. Notes identify the evals and the
+  diagnostic question. Only matched cohorts may share a two-arm summary
+  with a numeric `delta`: changed arm minus baseline. Historical multi-run
+  records remain valid; `runs_per_configuration` is a positive integer.
 - `metadata` requires `skill_name`, `executor_model`, `timestamp`,
   `runs_per_configuration`, `harness`, `grader`, and `archive_ref` (the
-  round's target path inside the archive). The benchmark a full-validation
-  ship decision rests on adds `final_reviewer`; an earlier round has none.
-- Record `cost_usd` when the harness reports dollar cost. Otherwise set
-  `cost_available` to `false`.
+  round's target path inside the archive). Record `final_reviewer` when the
+  independent review is complete; an earlier round has none.
+- Record the complete API-equivalent estimate as `cost_usd`, with its source
+  and scope in notes. Otherwise set `cost_available` to `false` and explain
+  the unknown estimate. Historical CLI cost records keep their original
+  meaning. **Cost and budget** governs further calls.
 - A `runs[]` array in skill-creator's per-run shape may list each graded run.
   A `notes[]` array holds smoke-check results and blind-comparison
   preferences.
-- When a regression control extends to 8 runs, `runs_per_configuration` and
-  `run_summary` still cover the planned runs. Add one `notes[]` entry for each
-  extended control that gives, for each arm, how many of its 8 runs passed
-  every assertion. List the extra runs in `runs[]` when the file has one. The
-  extension adds no other file.
+- Preserve original grades; `notes[]` explains every correction, failure
+  classification, attribution, capture limitation, and carried-forward result.
 - A benchmark states only what its runs checked.
 
 When a repository replaces an older evidence format, keep a one-line pointer
@@ -343,8 +363,8 @@ Commands check these rules:
   plus two consistency rules: `delta` equals the changed arm minus the
   baseline, and a file's target suffix matches `archive_ref`. It checks no
   value ranges and makes no judgment calls, such as whether an assertion is
-  decidable, a carry-forward is legitimate, or a benchmark states only what its
-  runs checked. Run it from the host repository's existing checks.
+  decidable, compared cohorts match, a carry-forward is legitimate, or a
+  benchmark states only what its runs checked. Run it from the host repository's existing checks.
 
 No command checks grading quality, blinding, independence, whether a run used
 its stated target, or private names. A public repository cannot list the

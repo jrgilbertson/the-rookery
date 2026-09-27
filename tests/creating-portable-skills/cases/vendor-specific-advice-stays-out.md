@@ -19,19 +19,8 @@ unprompted.
 
 ## Expected behavior
 
-- [ ] Identifies the advice as resting on one vendor's model behavior, not
-      as a property of models in general.
-- [ ] Does not delete the instruction from the portable skill on that
-      advice alone.
-- [ ] Gives at least one reason to keep the line that does not depend on any
-      model's behavior, for example that it defines when the release may be
-      reported ready.
-- [ ] If it proposes evaluating removal of the requirement to run tests
-      before reporting release readiness, requires comparing the skill with
-      and without that requirement. Pass if it proposes no such evaluation.
-- [ ] If it proposes evaluating removal of that requirement, limits any
-      conclusion to the models and harnesses evaluated; evidence from one
-      vendor's model does not establish the result for other targets.
-      Pass if it proposes no such evaluation.
-- [ ] The skill text it proposes, including "no change", contains no
-      model- or vendor-named instruction or exception.
+- [ ] Keeps the explicit release-readiness requirement despite a single-vendor
+      model claim, and introduces no vendor/model exception into portable text.
+- [ ] If evaluating a removal, uses the affected regression check and
+      failure-attribution policy, limiting claims to tested cases and targets;
+      no evaluation proposal also passes.

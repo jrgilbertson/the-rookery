@@ -1,7 +1,7 @@
 ---
 title: Keep qualitative agent reviews qualitative
 date: 2026-08-28
-last_updated: 2026-09-04
+last_updated: 2026-09-26
 category: best-practices
 module: skill-instruction-review
 problem_type: best_practice
@@ -48,6 +48,12 @@ Run the assessment in one subagent, not in the current context:
 - If a caller wants a stronger evidence trail or a repeated-review rule, that
   caller owns it.
 
+For skill changes, one independent review checks the package and evidence.
+The operator decides whether to iterate or stop; a fixed review cycle or
+iteration count is not a substitute for judgment. Blind behavioral grading
+remains a separate evidence task, with one or two sharp assertions per eval
+and deterministic mechanical checks in scripts (`SKILLS.md`).
+
 Apply this necessity test to the review process as well as the product. Build
 the decision frame from the best available evidence: the stated goal,
 requirements when present, protected behavior and constraints, actual
@@ -85,8 +91,9 @@ subject replay, a coverage receipt, and speculation about parts not in the
 prompt. A structural rule restored parity without a numeric line budget: a
 clean result is the recommendation, one reason when useful, and what must
 remain; a simplify result caps at three grouped reasons; process narration
-is banned by name. Re-run the affected cases as matched pairs before
-shipping any change to a readout contract.
+is banned by name. Run the affected regression cases before shipping a readout
+change; diagnose failures against the original transcript and prior skill under
+`SKILLS.md`.
 
 Rewriting prohibitions as positive statements is worth doing, but three of
 them turned out to be guardrails rather than clutter: presenting a dependent
@@ -117,8 +124,8 @@ from hiding an unnecessary distributed design.
 - When review revisions trigger new reviewers, receipts, or proof environments.
 - When a user decision affects the final design but does not block other safe
   reductions.
-- When editing a readout contract, so shape rules are re-verified with matched
-  case runs rather than deleted as clutter.
+- When editing a readout contract, so shape rules are re-verified with affected
+  regression cases rather than deleted as clutter.
 
 ## Examples
 

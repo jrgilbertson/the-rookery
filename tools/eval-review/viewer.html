@@ -282,6 +282,7 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
     status: new Map(),
     conflicts: new Map(),
     saving: new Set(),
+    painters: new Map(),
     subjects: [],
     index: 0,
   };
@@ -465,7 +466,7 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
   }
   const hasContent = (item) => Boolean(item && (item.judgment || str(item.note)));
   function hasFeedback(s) {
-    for (const item of state.items.values()) if (item.subject_id === s.id) return true;
+    for (const item of state.items.values()) if (item.subject_id === s.id && hasContent(item)) return true;
     return false;
   }
 
@@ -534,6 +535,7 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
 
   function renderSubject(moveFocus) {
     const main = $("main");
+    state.painters.clear();
     const wrap = h("div", { class: "wrap" });
     const manifestErrors = state.errors.filter((e) => !state.subjects.some((s) => errorBelongs(e, s)));
     if (manifestErrors.length) {
@@ -775,7 +777,7 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
 
     const section = h("section", { class: "block", "aria-labelledby": "obs-h" },
       h("h2", { id: "obs-h", text: "Activation observations" }),
-      h("p", { class: "lede", text: "Whether the skill loaded when the client could discover it. These are separate from behavior comparisons. Only native activation evidence counts as proof; a listing proxy does not." }));
+      h("p", { class: "lede", text: "Whether the skill loaded when the client could discover it. These are separate from behavior comparisons. A result is recorded only when native activation evidence is listed and readable; a listing proxy never counts. Recorded results are the run's own claim until you check the trace." }));
     if (!obs.length) {
       section.appendChild(h("p", { class: "prose", text: "No activation has been observed for this query in this round." }));
     } else {
@@ -799,32 +801,37 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
     fresh_marked_used_for_selection: ["Fresh, but marked used for selection", "Marked as used for selection, so it is not untouched final evidence."],
   };
   const PROOF = {
-    verified_trigger: "Verified: loaded",
-    verified_non_trigger: "Verified: not loaded",
-    unverified: "Unverified",
+    recorded_trigger: "Recorded: loaded",
+    recorded_non_trigger: "Recorded: not loaded",
   };
+  const MATCHES = "Recorded result matches expectation";
+  const MISMATCH = "Recorded result does not match expectation";
 
   function renderObservation(s, t, o) {
     const b = bindingFor("observation", s.id, o.id) || {};
     const [role, roleCaveat] = word(SELECTION, b.selection, ["Role unknown", null]);
-    const proof = word(PROOF, b.proof, "Unverified");
+    const isRecorded = b.proof === "recorded_trigger" || b.proof === "recorded_non_trigger";
+    const proof = isRecorded ? PROOF[b.proof] : "Unverified";
     const native = b.basis === "native";
-    const recorded = word(OBSERVED, b.observed ?? o.observed, "Unknown");
+    const claimed = word(OBSERVED, b.observed ?? o.observed, "Unknown");
     let match;
-    if (b.proof !== "verified_trigger" && b.proof !== "verified_non_trigger") match = "Cannot compare: no native activation proof";
+    if (!isRecorded) match = "Cannot compare: no native activation record";
     else if (t.expected !== "trigger" && t.expected !== "no_trigger") match = "Cannot compare: expectation unknown";
-    else match = (b.proof === "verified_trigger") === (t.expected === "trigger") ? "Matches expectation" : "Does not match expectation";
+    else match = (b.proof === "recorded_trigger") === (t.expected === "trigger") ? MATCHES : MISMATCH;
+    const proofCaveat = isRecorded
+      ? "Recorded by the run and backed by a readable native evidence file. This viewer does not read the trace, so check it for the load decision and the intended skill package before relying on this."
+      : "The manifest says: " + claimed + ". Not counted as an activation result.";
     return h("li", { "aria-label": "Observation " + o.id },
       h("div", null,
         h("div", { class: "obs-head" },
           h("h3", null, "Observation ", h("code", { text: o.id })),
-          h("span", { class: match === "Does not match expectation" ? "tag fail" : match === "Matches expectation" ? "tag pass" : "tag", text: match })),
+          h("span", { class: match === MISMATCH ? "tag fail" : match === MATCHES ? "tag pass" : "tag", text: match })),
         fieldList([
           ["Target", textOrMissing(b.target ?? o.target, "Unknown")],
           ["Description revision", str(b.description_revision ?? o.description_revision) ? h("code", { text: b.description_revision ?? o.description_revision }) : h("span", { class: "missing", text: "Unknown" })],
           ["Role", role, roleCaveat],
           ["Expected", word(EXPECTED, t.expected, "Unknown")],
-          ["Activation", proof, b.proof === "unverified" || !b.proof ? "Recorded observation: " + recorded + ". Not counted as an activation result." : null],
+          ["Activation", proof, proofCaveat],
           ["Evidence type", word(BASIS, b.basis, "Unknown"), native ? null : "Not proof of native activation."],
         ]),
         str(o.summary) ? h("p", { class: "prose", style: "margin-top:12px;font-size:13px", text: o.summary }) : null,
@@ -928,12 +935,14 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
       savedLine.replaceChildren();
       if (item) {
         const when = h("span", { class: "muted", text: " · " + formatTime(item.saved_at) });
-        if (judged) {
+        if (!hasContent(item)) {
+          savedLine.append(judged ? "Feedback cleared" : "Note cleared", when);
+        } else if (judged) {
           savedLine.append("Saved: ",
             item.judgment === "disagree" ? h("span", { class: "disagree", text: "Disagreed" }) : judgmentWord(item.judgment),
             str(item.note) ? " with a note" : "", when);
         } else {
-          savedLine.append(str(item.note) ? "Note saved" : "Saved with an empty note", when);
+          savedLine.append("Note saved", when);
         }
       } else {
         savedLine.append(h("span", { class: "muted", text: judged ? "No feedback saved for this " + what + " yet." : "No note saved yet." }));
@@ -1020,15 +1029,21 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
         } else {
           state.items.set(key, item);
           state.conflicts.delete(key);
-          const current = currentDraft();
-          if (current.judgment === d.judgment && current.note === d.note) state.drafts.delete(key);
-          state.status.set(key, { kind: "saved", text: "Saved " + formatTime(item.saved_at) });
+          const latest = state.drafts.get(key);
+          if (!latest || (latest.judgment === d.judgment && latest.note === d.note)) {
+            state.drafts.delete(key);
+            state.status.set(key, { kind: "saved", text: "Saved " + formatTime(item.saved_at) });
+          } else {
+            state.status.set(key, { kind: "newer", text: "An earlier version was saved " + formatTime(item.saved_at) + ". Your newer changes are not saved yet." });
+          }
           refreshCounts();
         }
       }
-      if (container.isConnected) paint();
+      const active = state.painters.get(key);
+      if (active) active();
     }
 
+    state.painters.set(key, paint);
     paint();
     return container;
   }

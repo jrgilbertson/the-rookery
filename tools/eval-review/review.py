@@ -47,16 +47,26 @@ def valid_id(value):
 
 
 def finite_number(value):
-    return type(value) in (int, float) and math.isfinite(value) and value >= 0
+    if type(value) not in (int, float):
+        return False
+    try:
+        return math.isfinite(value) and value >= 0
+    except OverflowError:
+        return False
 
 
 def whole_number(value):
     return type(value) is int and value >= 0
 
 
+def dump_json(payload, **kwargs):
+    raw = json.dumps(payload, ensure_ascii=False, **kwargs)
+    return raw.encode("utf-8", "backslashreplace").decode("utf-8")
+
+
 def fingerprint(payload):
-    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
-    return "sha256:" + hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+    encoded = dump_json(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return "sha256:" + hashlib.sha256(encoded).hexdigest()
 
 
 def remember_subject(model, subject_id, subject_fp):
@@ -107,12 +117,16 @@ def resolve_contained(root_real, relative):
     try:
         real = Path(os.path.realpath(root_real.joinpath(*rel.parts)))
         real.relative_to(root_real)
+    except UnicodeError:
+        raise
     except (OSError, ValueError):
         return None
     if real == root_real:
         return None
     try:
         info = real.stat()
+    except UnicodeError:
+        raise
     except OSError:
         return None
     if not stat.S_ISREG(info.st_mode):
@@ -135,6 +149,9 @@ def evidence_index(manifest_path, data, errors):
         root = manifest_path.parent / root
     try:
         root_real = Path(os.path.realpath(root))
+    except UnicodeError:
+        add_error(errors, "manifest", None, "evidence_root is not a usable filesystem path.")
+        return index
     except OSError:
         add_error(errors, "manifest", None, "evidence_root is not available.")
         return index
@@ -152,7 +169,13 @@ def evidence_index(manifest_path, data, errors):
             index.pop(evidence_id, None)
             blocked.add(evidence_id)
             continue
-        if resolve_contained(root_real, entry["path"]) is None:
+        try:
+            contained = resolve_contained(root_real, entry["path"])
+        except UnicodeError:
+            add_error(errors, "manifest", evidence_id, f"Evidence path for {evidence_id} is not a usable filesystem path.")
+            blocked.add(evidence_id)
+            continue
+        if contained is None:
             add_error(errors, "manifest", evidence_id, "Evidence path is outside the evidence root and will not be served.")
             blocked.add(evidence_id)
             continue
@@ -236,16 +259,20 @@ def evidence_material(ref, index):
         return material
     root_real, relative = located
     material["path"] = relative
-    target = resolve_contained(root_real, relative)
+    try:
+        target = resolve_contained(root_real, relative)
+    except UnicodeError:
+        return material
     if target is None:
         return material
+    material["target"] = str(target)
     try:
         info = target.stat()
         if not stat.S_ISREG(info.st_mode) or info.st_size > MAX_EVIDENCE_BYTES:
             material["bytes"] = info.st_size
             return material
         data = target.read_bytes()
-    except OSError:
+    except (OSError, UnicodeError):
         return material
     material["resolved"] = True
     material["bytes"] = len(data)
@@ -815,9 +842,9 @@ def clean_observation(observation, errors, model, trigger, seen):
     materials = [evidence_material(ref, model["files"]) for ref in evidence]
     has_proof = bool(materials) and all(item["resolved"] for item in materials)
     if has_proof and basis == "native" and observed == "loaded":
-        proof = "verified_trigger"
+        proof = "recorded_trigger"
     elif has_proof and basis == "native" and observed == "not_loaded":
-        proof = "verified_non_trigger"
+        proof = "recorded_non_trigger"
     else:
         proof = "unverified"
     obs_fp = None
@@ -919,7 +946,7 @@ def atomic_write(path, payload):
     parent = file_path.parent
     if parent.is_symlink() or not parent.is_dir():
         raise OSError("Feedback directory is not available.")
-    text = json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
+    text = dump_json(payload, indent=2) + "\n"
     fd, name = tempfile.mkstemp(dir=parent, prefix=".feedback-", suffix=".tmp")
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as stream:
@@ -1150,7 +1177,7 @@ class ReviewHandler(BaseHTTPRequestHandler):
         if isinstance(payload, bytes):
             data = payload
         else:
-            data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+            data = dump_json(payload).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(data)))

@@ -135,15 +135,18 @@ A `run` binding has `cost_state` (`unknown`, `api_equivalent_estimate`,
 Read a number from the manifest only when the matching state is `present` or a
 cost basis. Unknown and malformed measures have `null` in the display manifest.
 
-An `observation` binding has `proof` (`verified_trigger`,
-`verified_non_trigger`, or `unverified`), `basis`, `observed`, `role`,
+An `observation` binding has `proof` (`recorded_trigger`,
+`recorded_non_trigger`, or `unverified`), `basis`, `observed`, `role`,
 `used_for_selection`, `selection`, `description_revision`, and `target`.
-`verified_trigger` requires `basis: "native"`, `observed: "loaded"`, and
-every cited evidence file readable within the 2,000,000-byte bound. The
-server does not parse the trace. `verified_non_trigger` is the same check
-with `observed: "not_loaded"`. Empty, unlisted, oversized, or unreadable
-evidence stays `proof: "unverified"`. A listing proxy is also
-`proof: "unverified"`.
+`recorded_trigger` means `basis` is `native`, `observed` is `loaded`, and
+every cited evidence file is readable within the 2,000,000-byte bound. It is
+the manifest's recorded claim beside that file, not a verified activation.
+`recorded_non_trigger` is the same check with `observed: "not_loaded"`. The
+server does not parse the trace, so a file whose text contradicts the claim
+stays recorded. A viewer may show whether that recorded value matches the
+trigger's expectation. It must not present the result as verified proof.
+Empty, unlisted, oversized, or unreadable evidence stays `proof:
+"unverified"`. A listing proxy is also `proof: "unverified"`.
 `selection` is `training`, `validation`, `validation_used_for_selection`,
 `fresh`, or `fresh_marked_used_for_selection`. Validation used for selection is
 not untouched final evidence. Keep trigger observations out of the behavior
@@ -173,11 +176,15 @@ A saved `judgment: null` on a grade is explicit No feedback. An absent item is
 no feedback at all. Notes are limited to 4000 characters.
 
 The server fingerprints the round, subject, grade or observation, the case or
-trigger definition, the referenced run output and measures, and the resolved
-path and sha256 of each evidence file those records name. Editing a file or
-pointing an evidence id at a different path changes that fingerprint. A first
-save that still sends the previous fingerprint is rejected, and feedback saved
-against the previous fingerprint is `binding: "earlier"`. Reusing a grade id
+trigger definition, the referenced run output and measures, and the sha256 and
+canonical resolved target path of each evidence file those records name.
+Identical bytes at another root or relative path are a different fingerprint,
+including when the file is oversized or unreadable. The canonical target is
+recorded as soon as the contained path is known. Those files still do not
+count as recorded activation or a confirmed grade. Editing a readable file
+changes the fingerprint too. A first save that still sends the previous
+fingerprint is rejected, and feedback saved against the previous fingerprint
+is `binding: "earlier"`. Reusing a grade id
 after that content changes does not inherit agreement. Show earlier feedback
 as read-only. Only `binding: "current"` is the judgment for the evidence on
 screen. Adding runs does not retire a pre-run note; editing the prompt, query,

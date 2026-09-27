@@ -377,14 +377,14 @@ class ReviewHttpTest(unittest.TestCase):
         validation = binding(payload, "validation-grok-not-loaded")
         fresh = binding(payload, "fresh-grok-not-loaded")
         listing = binding(payload, "fresh-grok-listing-proxy")
-        self.assertEqual(training["proof"], "verified_trigger")
+        self.assertEqual(training["proof"], "recorded_trigger")
         self.assertEqual(training["selection"], "training")
         self.assertEqual(unverified["proof"], "unverified")
         self.assertEqual(unverified["selection"], "validation_used_for_selection")
-        self.assertNotEqual(unverified["proof"], "verified_non_trigger")
-        self.assertEqual(validation["proof"], "verified_non_trigger")
+        self.assertNotEqual(unverified["proof"], "recorded_non_trigger")
+        self.assertEqual(validation["proof"], "recorded_non_trigger")
         self.assertEqual(validation["selection"], "validation")
-        self.assertEqual(fresh["proof"], "verified_non_trigger")
+        self.assertEqual(fresh["proof"], "recorded_non_trigger")
         self.assertEqual(fresh["selection"], "fresh")
         self.assertEqual(listing["basis"], "listing_proxy")
         self.assertEqual(listing["observed"], "loaded")
@@ -624,8 +624,8 @@ class ReviewHttpTest(unittest.TestCase):
         payload = self.review()
         self.assertEqual(binding(payload, "native-loaded-without-proof")["proof"], "unverified")
         self.assertEqual(binding(payload, "native-absent-unlisted")["proof"], "unverified")
-        self.assertEqual(binding(payload, "train-grok-loaded")["proof"], "verified_trigger")
-        self.assertEqual(binding(payload, "validation-grok-not-loaded")["proof"], "verified_non_trigger")
+        self.assertEqual(binding(payload, "train-grok-loaded")["proof"], "recorded_trigger")
+        self.assertEqual(binding(payload, "validation-grok-not-loaded")["proof"], "recorded_non_trigger")
 
     def test_feedback_path_cannot_replace_manifest_or_evidence(self):
         evidence = self.root / "real-evidence"
@@ -942,6 +942,343 @@ class ReviewHttpTest(unittest.TestCase):
         self.assertFalse(duplicate["confirmed"])
         self.assertEqual(duplicate["consistency"], "incomplete")
         self.assertEqual(duplicate["verdict_claim"], "pass")
+
+    def test_oversized_numeric_fields_do_not_hide_sibling_cases(self):
+        data = json.loads(FIXTURE.read_text())
+        data["evidence_root"] = str(EVIDENCE)
+        data["cases"][0]["runs"][0]["duration_ms"] = 10 ** 400
+        data["cases"][0]["runs"][0]["cost"] = {"usd": 10 ** 400, "basis": "api_equivalent_estimate"}
+        path = self.root / "overflow.json"
+        path.write_text(json.dumps(data))
+        _, port = self.open_server(path, self.root / "overflow-feedback.json")
+        status, raw, _ = self.request("GET", "/api/review", port=port)
+        self.assertEqual(status, 200, raw)
+        payload = json.loads(raw.decode())
+        self.assertIn("Ask the owner", case(payload, "ask-owner-before-dropping-audit")["prompt"])
+        record = run_record(payload, "run-protect-with")
+        self.assertIsNone(record["duration_ms"])
+        self.assertIsNone(record["cost"])
+        messages = [item["message"] for item in payload["errors"]]
+        self.assertIn("Duration for run run-protect-with is malformed.", messages)
+        self.assertIn("Cost for run run-protect-with is malformed.", messages)
+        self.assertEqual(binding(payload, "run-protect-with")["duration_state"], "malformed")
+        self.assertEqual(binding(payload, "run-protect-with")["cost_state"], "malformed")
+
+    def test_lone_surrogate_serializes_and_unicode_fingerprint_stays_utf8(self):
+        payload = {"prompt": "检查 café"}
+        encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+        self.assertEqual(review.fingerprint(payload), "sha256:" + hashlib.sha256(encoded).hexdigest())
+        self.assertIn("café".encode(), encoded)
+        self.assertNotIn(b"\\u00e9", encoded)
+        lone = "before \ud800 after café"
+        literal = "before \\ud800 after café"
+        self.assertNotEqual(review.fingerprint({"prompt": lone}), review.fingerprint({"prompt": literal}))
+        restored = json.loads(review.dump_json({"prompt": lone}))["prompt"]
+        self.assertEqual(restored, lone)
+        self.assertNotEqual(restored, literal)
+        data = json.loads(FIXTURE.read_text())
+        data["evidence_root"] = str(EVIDENCE)
+        data["cases"][0]["prompt"] = "broken \ud800 prompt"
+        data["cases"][1]["prompt"] = "Sibling prompt stays readable."
+        path = self.root / "surrogate.json"
+        path.write_text(json.dumps(data, ensure_ascii=True))
+        _, port = self.open_server(path, self.root / "surrogate-feedback.json")
+        status, raw, headers = self.request("GET", "/api/review", port=port)
+        self.assertEqual(status, 200, raw)
+        self.assertIn("application/json", headers["Content-Type"])
+        body = raw.decode("utf-8")
+        self.assertIn("Sibling prompt stays readable.", body)
+        status, saved, _ = self.post(self.feedback(
+            round_id=data["round"]["id"],
+            subject_id="ask-owner-before-dropping-audit",
+            note="note \ud800 café",
+        ), port=port)
+        self.assertEqual(status, 200, saved)
+        stored = (self.root / "surrogate-feedback.json").read_text(encoding="utf-8")
+        self.assertIn("café", stored)
+        self.assertEqual(json.loads(stored)["items"][0]["note"], "note \ud800 café")
+
+    def test_same_bytes_under_another_evidence_root_retire_agreement(self):
+        first = self.root / "archive-a"
+        second = self.root / "archive-b"
+        first.mkdir()
+        second.mkdir()
+        content = b'{"kind":"same-bytes"}\n'
+        (first / "trace.json").write_bytes(content)
+        (second / "trace.json").write_bytes(content)
+        manifest = {
+            "schema": 1,
+            "title": "Root move",
+            "skill": {"name": "checking-simplicity", "revision": None},
+            "round": {"id": "root-move", "frozen": True, "note": None},
+            "evidence_root": str(first),
+            "files": [{"id": "trace-file", "path": "trace.json"}],
+            "cases": [{
+                "id": "root-case",
+                "title": "Same relative trace",
+                "prompt": "The bytes and relative path match another archive.",
+                "inputs": [],
+                "expected": None,
+                "assertions": [{"id": "one-check", "text": "One check.", "check": "judgment"}],
+                "provenance": None,
+                "runs": [{
+                    "id": "run-root",
+                    "target": "grok-4.7-high",
+                    "arm": "with_skill",
+                    "model": None,
+                    "settings": None,
+                    "skill_availability": "verified",
+                    "output": "One check.",
+                    "summary": None,
+                    "duration_ms": None,
+                    "tokens": None,
+                    "cost": None,
+                    "evidence": [{"id": "trace-file", "label": "Trace"}],
+                }],
+                "grades": [{
+                    "id": "grade-root",
+                    "grader": "blind grader",
+                    "target": None,
+                    "run_ids": ["run-root"],
+                    "verdict": "pass",
+                    "assertions": [{"assertion_id": "one-check", "result": "pass", "evidence": "One check."}],
+                    "summary": "Pass on this archive.",
+                    "evidence": [{"id": "trace-file", "label": "Trace"}],
+                }],
+            }],
+            "triggers": [],
+        }
+        path = self.root / "root-move.json"
+        path.write_text(json.dumps(manifest))
+        _, port = self.open_server(path, self.root / "root-move-feedback.json")
+        shown = self.binding_record("root-case", "grade-root", port)["fingerprint"]
+        manifest["evidence_root"] = str(second)
+        path.write_text(json.dumps(manifest))
+        status, rejected, _ = self.post(self.feedback(
+            round_id="root-move",
+            subject_id="root-case",
+            grade_id="grade-root",
+            judgment="agree",
+            note="agreement from the first archive",
+            fingerprint=shown,
+        ), port=port)
+        self.assertEqual(status, 409, rejected)
+        self.assertIsNone(rejected["item"])
+        self.assertFalse((self.root / "root-move-feedback.json").exists())
+
+    def test_same_bytes_under_another_relative_path_have_a_different_fingerprint(self):
+        root = self.root / "path-archive"
+        root.mkdir()
+        content = b'{"kind":"same-bytes"}\n'
+        (root / "one.json").write_bytes(content)
+        (root / "two.json").write_bytes(content)
+        def manifest_for(relative):
+            return {
+                "schema": 1,
+                "title": "Path identity",
+                "skill": {"name": "checking-simplicity", "revision": None},
+                "round": {"id": "path-move", "frozen": True, "note": None},
+                "evidence_root": str(root),
+                "files": [{"id": "trace-file", "path": relative}],
+                "cases": [{
+                    "id": "path-case",
+                    "title": "Relative path",
+                    "prompt": "Same bytes, different relative path.",
+                    "inputs": [],
+                    "expected": None,
+                    "assertions": [{"id": "one-check", "text": "One check.", "check": "judgment"}],
+                    "provenance": None,
+                    "runs": [],
+                    "grades": [],
+                }],
+                "triggers": [{
+                    "id": "path-trigger",
+                    "query": "Did it load?",
+                    "expected": "trigger",
+                    "note": None,
+                    "observations": [{
+                        "id": "path-obs",
+                        "target": "grok-4.7-high",
+                        "description_revision": None,
+                        "role": "fresh",
+                        "used_for_selection": False,
+                        "observed": "loaded",
+                        "basis": "native",
+                        "summary": "Recorded against this path.",
+                        "evidence": [{"id": "trace-file", "label": "Trace"}],
+                    }],
+                }],
+            }
+        first = self.root / "path-one.json"
+        second = self.root / "path-two.json"
+        first.write_text(json.dumps(manifest_for("one.json")))
+        second.write_text(json.dumps(manifest_for("two.json")))
+        _, first_port = self.open_server(first, self.root / "path-one-feedback.json")
+        _, second_port = self.open_server(second, self.root / "path-two-feedback.json")
+        left = self.binding_record("path-trigger", "path-obs", first_port)["fingerprint"]
+        right = self.binding_record("path-trigger", "path-obs", second_port)["fingerprint"]
+        self.assertNotEqual(left, right)
+
+    def test_readable_trace_is_recorded_not_verified_activation(self):
+        evidence = self.root / "recorded-evidence"
+        evidence.mkdir()
+        (evidence / "contradiction.json").write_text(
+            '{"basis":"native","observed":"not_loaded","skill_loaded":false,"summary":"The native session did not load checking-simplicity."}\n')
+        manifest = {
+            "schema": 1,
+            "title": "Recorded activation",
+            "skill": {"name": "checking-simplicity", "revision": None},
+            "round": {"id": "recorded-round", "frozen": True, "note": None},
+            "evidence_root": str(evidence),
+            "files": [{"id": "contradiction", "path": "contradiction.json"}],
+            "cases": [],
+            "triggers": [{
+                "id": "recorded-trigger",
+                "query": "Simplify this overbuilt plan.",
+                "expected": "trigger",
+                "note": None,
+                "observations": [{
+                    "id": "obs-contradiction",
+                    "target": "grok-4.7-high",
+                    "description_revision": "description-synthetic-1",
+                    "role": "fresh",
+                    "used_for_selection": False,
+                    "observed": "loaded",
+                    "basis": "native",
+                    "summary": "The manifest claims the skill loaded.",
+                    "evidence": [{"id": "contradiction", "label": "Contradictory trace"}],
+                }],
+            }],
+        }
+        path = self.root / "recorded.json"
+        path.write_text(json.dumps(manifest))
+        _, port = self.open_server(path, self.root / "recorded-feedback.json")
+        status, raw, _ = self.request("GET", "/api/review", port=port)
+        self.assertEqual(status, 200, raw)
+        proof = binding(json.loads(raw.decode()), "obs-contradiction")["proof"]
+        self.assertEqual(proof, "recorded_trigger")
+        self.assertNotIn("verified_trigger", raw.decode())
+        self.assertNotIn("verified_non_trigger", raw.decode())
+
+    def oversized_manifest(self, root, round_id):
+        return {
+            "schema": 1,
+            "title": "Oversized identity",
+            "skill": {"name": "checking-simplicity", "revision": None},
+            "round": {"id": round_id, "frozen": True, "note": None},
+            "evidence_root": str(root),
+            "files": [{"id": "huge-trace", "path": "huge.txt"}],
+            "cases": [{
+                "id": "huge-case",
+                "title": "Oversized trace",
+                "prompt": "The trace is listed but larger than the bound.",
+                "inputs": [],
+                "expected": None,
+                "assertions": [{"id": "names-bound", "text": "Names the bound.", "check": "judgment"}],
+                "provenance": None,
+                "runs": [{
+                    "id": "run-huge",
+                    "target": "grok-4.7-high",
+                    "arm": "with_skill",
+                    "model": None,
+                    "settings": None,
+                    "skill_availability": "verified",
+                    "output": "Names the bound.",
+                    "summary": None,
+                    "duration_ms": None,
+                    "tokens": None,
+                    "cost": None,
+                    "evidence": [{"id": "huge-trace", "label": "Oversized trace"}],
+                }],
+                "grades": [{
+                    "id": "grade-huge",
+                    "grader": "blind grader",
+                    "target": None,
+                    "run_ids": ["run-huge"],
+                    "verdict": "pass",
+                    "assertions": [{"assertion_id": "names-bound", "result": "pass", "evidence": "Names the bound."}],
+                    "summary": "Pass claim against an oversized trace.",
+                    "evidence": [{"id": "huge-trace", "label": "Oversized trace"}],
+                }],
+            }],
+            "triggers": [{
+                "id": "huge-trigger",
+                "query": "Did the oversized log show a load?",
+                "expected": "trigger",
+                "note": None,
+                "observations": [{
+                    "id": "obs-huge",
+                    "target": "grok-4.7-high",
+                    "description_revision": None,
+                    "role": "fresh",
+                    "used_for_selection": False,
+                    "observed": "loaded",
+                    "basis": "native",
+                    "summary": "Manifest claims a load.",
+                    "evidence": [{"id": "huge-trace", "label": "Oversized trace"}],
+                }],
+            }],
+        }
+
+    def test_oversized_files_in_different_roots_do_not_share_agreement(self):
+        first = self.root / "huge-a"
+        second = self.root / "huge-b"
+        first.mkdir()
+        second.mkdir()
+        payload = b"x" * (review.MAX_EVIDENCE_BYTES + 1)
+        (first / "huge.txt").write_bytes(payload)
+        (second / "huge.txt").write_bytes(payload)
+        path = self.root / "huge-move.json"
+        path.write_text(json.dumps(self.oversized_manifest(first, "huge-round")))
+        _, port = self.open_server(path, self.root / "huge-feedback.json")
+        shown = self.binding_record("huge-case", "grade-huge", port)["fingerprint"]
+        self.assertEqual(binding(self.review(port), "obs-huge")["proof"], "unverified")
+        self.assertFalse(binding(self.review(port), "grade-huge")["confirmed"])
+        path.write_text(json.dumps(self.oversized_manifest(second, "huge-round")))
+        status, rejected, _ = self.post(self.feedback(
+            round_id="huge-round",
+            subject_id="huge-case",
+            grade_id="grade-huge",
+            judgment="agree",
+            note="agreement from the first oversized archive",
+            fingerprint=shown,
+        ), port=port)
+        self.assertEqual(status, 409, rejected)
+        self.assertIsNone(rejected["item"])
+        self.assertFalse((self.root / "huge-feedback.json").exists())
+
+    def test_surrogate_paths_keep_sibling_cases_visible(self):
+        evidence = self.root / "plain-evidence"
+        evidence.mkdir()
+        (evidence / "ok.txt").write_text("readable trace")
+        data = json.loads(FIXTURE.read_text())
+        data["evidence_root"] = str(evidence)
+        data["files"] = [
+            {"id": "ok-trace", "path": "ok.txt"},
+            {"id": "bad-trace", "path": "bad\ud800.txt"},
+        ]
+        path = self.root / "surrogate-path.json"
+        path.write_text(json.dumps(data, ensure_ascii=True))
+        _, port = self.open_server(path, self.root / "surrogate-path-feedback.json")
+        status, raw, _ = self.request("GET", "/api/review", port=port)
+        self.assertEqual(status, 200, raw)
+        body = raw.decode("utf-8")
+        payload = json.loads(body)
+        self.assertIn("Ask the owner", case(payload, "ask-owner-before-dropping-audit")["prompt"])
+        messages = [item["message"] for item in payload["errors"]]
+        self.assertTrue(any("bad-trace" in message and "usable filesystem path" in message for message in messages), messages)
+        root_data = json.loads(FIXTURE.read_text())
+        root_data["evidence_root"] = str(evidence) + "\ud800"
+        root_path = self.root / "surrogate-root.json"
+        root_path.write_text(json.dumps(root_data, ensure_ascii=True))
+        _, root_port = self.open_server(root_path, self.root / "surrogate-root-feedback.json")
+        status, raw, _ = self.request("GET", "/api/review", port=root_port)
+        self.assertEqual(status, 200, raw)
+        payload = json.loads(raw.decode("utf-8"))
+        self.assertIn("Ask the owner", case(payload, "ask-owner-before-dropping-audit")["prompt"])
+        self.assertTrue(any(
+            item["scope"] == "manifest" and item["message"].startswith("evidence_root")
+            for item in payload["errors"]), payload["errors"])
 
 
 if __name__ == "__main__":

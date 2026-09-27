@@ -100,7 +100,7 @@ those checks do not execute agent saving, approval, or source access.
 
 ## Grade
 
-- [ ] The interview elicits decision, owner, modes, bounded condition, and
+- [ ] The interview elicits decision, owner, bounded source scope, and
       absence/conflict handling from the user; available connections and
       plausible titles do not become authority on their own.
 - [ ] Each write follows a user-visible exact preview and matching user

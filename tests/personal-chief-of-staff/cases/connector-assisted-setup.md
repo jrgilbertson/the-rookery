@@ -49,7 +49,7 @@ Run this battery with “Help set up my chief-of-staff sources”:
       deferred-role entries. Deferred roles do not block accepted bindings.
 - [ ] Case 6: host file save/readback works without Python; absent persistence
       permits a preview but no saved-map or fresh-session continuity claim.
-- [ ] Case 7: previews a conditional `leisure` binding in the existing schema,
+- [ ] Case 7: previews a bounded `leisure` binding in version 3 without workflow fields,
       retaining the designated recommendation system and shortlist bounds;
       it neither imports the library nor makes leisure a required baseline.
 - [ ] Case 8: preserves distinct identities under `conversations` and distinct

@@ -26,7 +26,7 @@ def nonempty_string(value):
 def validate(data):
     if not isinstance(data, dict) or set(data) != {"version", "roles"}:
         raise ValueError("map must contain version and roles")
-    if type(data["version"]) is not int or data["version"] not in {1, 2}:
+    if type(data["version"]) is not int or data["version"] not in {1, 2, 3}:
         raise ValueError("unsupported map version")
     roles = data["roles"]
     if not isinstance(roles, dict):
@@ -37,9 +37,11 @@ def validate(data):
         if not isinstance(entries, list) or not entries:
             raise ValueError(f"{role}: expected a nonempty binding list")
         for entry in entries:
-            required = {"area", "interface", "identity", "condition", "modes"}
+            required = {"area", "interface", "identity"}
+            if data["version"] < 3:
+                required |= {"condition", "modes"}
             optional = {"locator", "query", "window", "filter", "gap_effect"}
-            if data["version"] == 2:
+            if data["version"] >= 2:
                 optional |= {"source", "access_overrides"}
             if (
                 not isinstance(entry, dict)
@@ -66,6 +68,8 @@ def validate(data):
                         {"interface", "identity", "query"},
                     ) or not all(nonempty_string(value) for value in access.values()):
                         raise ValueError(f"{role}: override requires a complete access description")
+            if data["version"] == 3:
+                continue
             if not isinstance(entry["condition"], str) or entry["condition"] not in {
                 "baseline", "bounded", "mode-specific", "conditional"
             }:

@@ -19,7 +19,7 @@ class SourceMapSchemaChecks(unittest.TestCase):
 
     def test_shipped_sample(self):
         sample = read_map(HERE.parents[2] / "skills/personal-chief-of-staff/assets/sources.example.json")
-        self.assertEqual(sample["version"], 2)
+        self.assertEqual(sample["version"], 3)
         self.assertTrue({"strategy", "learning", "tasks"} <= sample["roles"].keys())
         entries = [entry for bindings in sample["roles"].values() for entry in bindings]
         self.assertTrue(any(len(entry.get("access_overrides", {})) >= 2 for entry in entries))
@@ -31,7 +31,7 @@ class SourceMapSchemaChecks(unittest.TestCase):
             before = path.read_bytes()
             self.assertEqual(read_map(path), json.loads(before))
             self.assertEqual(path.read_bytes(), before)
-        for version in (1, 2):
+        for version in (1, 2, 3):
             validate({"version": version, "roles": {}})
 
     def test_optional_source_without_overrides(self):
@@ -74,7 +74,7 @@ class SourceMapSchemaChecks(unittest.TestCase):
             validate(self.v2)
 
     def test_v1_rejects_extensions_and_unknown_versions(self):
-        for version in (1, 3, True, "2"):
+        for version in (1, 4, True, "2"):
             with self.subTest(version=version):
                 data = copy.deepcopy(self.v2)
                 data["version"] = version
@@ -92,6 +92,18 @@ class SourceMapSchemaChecks(unittest.TestCase):
                     validate(data)
         with self.assertRaises(ValueError):
             validate({"version": 2, "roles": {"strategy": []}})
+
+    def test_v3_rejects_workflow_fields_and_preserves_access_constraints(self):
+        sample = read_map(HERE.parents[2] / "skills/personal-chief-of-staff/assets/sources.example.json")
+        entry = sample["roles"]["strategy"][0]
+        for key, value in (("condition", "baseline"), ("modes", ["weekly"])):
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                changed = copy.deepcopy(sample)
+                changed["roles"]["strategy"][0][key] = value
+                validate(changed)
+        del entry["access_overrides"]["codex-desktop"]["identity"]
+        with self.assertRaises(ValueError):
+            validate(sample)
 
     def test_invalid_json(self):
         for name in ("duplicate.json", "duplicate-nested.json", "malformed.txt", "unsupported.json"):

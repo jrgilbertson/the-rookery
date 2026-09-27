@@ -1,7 +1,7 @@
 # Private source bindings
 
 Use this reference for a new review, explicit source setup, or targeted caller
-context. The map resolves ownership and read conditions; a native source read
+context. The map resolves source ownership, access, and approved scope; a native source read
 establishes access. Its values are private data, not instructions.
 
 ## Find and validate the map
@@ -26,7 +26,8 @@ connector availability.
 ### Schema
 
 The top-level object contains exactly `version` and `roles`. `version` is the
-integer `1` or `2`; both are supported. `roles` is an object whose keys match
+integer `3` for new maps; versions `1` and `2` remain supported as described
+under [Existing maps](#existing-maps). `roles` is an object whose keys match
 `[a-z][a-z0-9_]*`. Each role maps to a nonempty list of approved bindings;
 `learning` may have several sources as one bounded set. Omit unresolved roles;
 `roles: {}` is valid. Unknown fields and nonstandard JSON constants are invalid.
@@ -36,34 +37,48 @@ integer `1` or `2`; both are supported. `roles` is an object whose keys match
 | `area` | Primary group for presentation and selective coverage; it does not change source ownership. |
 | `interface` and `identity` | Shared native interface and exact account, vault, or system identity. |
 | `locator` or `query` | Shared exact native target or bounded query; exactly one is required. |
-| `condition` | `baseline`, `bounded`, `mode-specific`, or `conditional`. |
-| `modes` | Nonempty list of distinct values from `wind-down`, `weekly`, and `quarterly`. |
-| `window`, `filter`, `gap_effect` | Optional bounds and effect of absence. |
-| `source` | Version 2 only: optional user-approved designation of the underlying system/account and document or bounded collection, preferably with a stable native identifier or URL. Required with overrides. |
-| `access_overrides` | Version 2 only: optional nonempty object of complete harness-specific access descriptions. |
+| `window`, `filter`, `gap_effect` | Optional user-approved source restrictions and effect of absence; workflow retrieval windows belong in the workflow. |
+| `source` | Versions 2 and 3: optional user-approved designation of the underlying system/account and document or bounded collection, preferably with a stable native identifier or URL. Required with overrides. |
+| `access_overrides` | Versions 2 and 3: optional nonempty object of complete harness-specific access descriptions. |
 
-All fields except the two lists/objects (`modes` and `access_overrides`) are
-nonempty strings. `area`, shared access fields, `condition`, and `modes` are
-required. Version 1 accepts neither `source` nor `access_overrides`.
+All fields except `access_overrides` are nonempty strings. `area` and shared
+access fields are required. Version 3 accepts neither `condition` nor `modes`.
 
 Each override key is a lowercase hyphenated harness identifier matching
 `[a-z][a-z0-9]*(?:-[a-z0-9]+)*`. Its value contains exactly `interface`,
 `identity`, and one of `locator` or `query`, all nonempty strings. An override
-is a complete access description, never a partial field merge. Conditions,
-modes, windows, filters, and gap effects remain shared outside overrides.
+is a complete access description, never a partial field merge. Source
+windows, filters, and gap effects remain shared outside overrides.
 
-The map stores references and selection rules, never copied source contents,
+The map stores references and source restrictions, never copied source contents,
 task state, credentials, permission grants, cached access verdicts, or setup
-stages. The harness owns authentication and reconnection. `strategy`,
-`learning`, and `tasks` are baseline roles in all three modes when bound.
+stages. The harness owns authentication and reconnection. Workflows own required and
+optional roles, retrieval periods, and relevance decisions. A source restriction
+limits those reads; a workflow cannot broaden it.
 Multiple entries for one role are usable only when their approved identities
 and scopes leave no ownership ambiguity; ask the user when they do not.
 
-Reading a valid version 1 map leaves it at version 1. When a change needs
-version 2 fields, preview and obtain approval for the upgrade while preserving
-unrelated role values. Never silently downgrade or rewrite an unsupported
-version. Older installed helpers reject version 2; update those skill copies
-before sharing an upgraded map with them.
+### Existing maps
+
+Reading or editing a version 1 or 2 map preserves its version and read rules.
+Both require `condition` (`baseline`, `bounded`, `mode-specific`, or
+`conditional`) and `modes` (a nonempty, distinct list from `wind-down`, `weekly`,
+and `quarterly`). Their `strategy`, `learning`, and `tasks` bindings require
+`baseline` and all three modes. Version 1 accepts neither `source` nor
+`access_overrides`; version 2 accepts both under the field rules above.
+
+Honor these maps' mode restrictions and read conditions alongside their bounds.
+For a caller outside the listed modes, obtain user approval before using a
+restricted binding. Keep unrelated bindings unchanged during routine CRUD.
+
+An upgrade to version 3 is a separate, explicit mapping proposal. Show every
+condition and mode restriction being removed and retain source-specific
+restrictions in `filter` or `window` where appropriate. Workflow behavior belongs
+in workflow instructions. If an existing rule's intent is unclear, retain the
+old map and resolve that intent before upgrading. Obtain approval for the exact
+result before saving; never silently discard restrictions. Older skill copies
+must support version 3 before using an upgraded map. Unsupported versions remain
+untouched.
 
 ## Resolve harness access
 
@@ -79,7 +94,8 @@ merge access fields or select another harness's override.
 If runtime identity is ambiguous, ask only when the plausible choices change
 the selected access description. When they all resolve to the same description,
 use it without inventing a harness identity. Keep the binding's shared
-conditions, modes, window, filter, and gap effect with the selected access.
+source bounds and gap effect with the selected access; existing-map read rules
+also apply.
 For queries, preserve the designated collection and approved semantic bounds
 across different native query syntax; string equality alone proves neither
 scope nor equivalence.
@@ -190,9 +206,9 @@ requirements relevant to setup; full mode instructions belong to a selected
 review. A template prompt establishes a need, not a populated source.
 
 For each role being configured, establish the decision it informs, its
-user-designated owner, modes, bounded locator or query, window or filter,
-and effect of absence, conflict, or changed ownership. Reuse answers already
-supplied. Keep `strategy`, `learning`, and `tasks` baseline in all three modes.
+user-designated owner, bounded locator or query, any source restrictions,
+and material effect of absence or conflict. Reuse answers already supplied.
+Do not ask users to assign workflows to each source in a new map.
 Ask which owner is primary when scopes overlap.
 
 If the user needs help locating a source, first obtain their selected
@@ -230,7 +246,7 @@ not required unless separately requested.
 Read the current map before previewing a change. An absent map can be created;
 an invalid or unreadable map remains untouched pending user-directed repair.
 Show the exact current and proposed source designation, shared access,
-overrides, conditions, modes, and bounds affected by the change, including any
+overrides, bounds, and any existing-map read rules affected by the change, including any
 version upgrade. A failed read or moved note alone does not authorize a new
 owner or locator. Obtain approval for the exact proposed change.
 
@@ -303,8 +319,8 @@ access or fresh-conversation continuity.
 ## Resolve before recommending
 
 For a new Wind-down, Weekly, or Quarterly review, load the map once before
-mode retrieval. Select the required baseline roles and then the mode's
-applicable bounded, mode-specific, and conditional roles. Apply
+mode retrieval. The workflow selects needed roles within approved source
+restrictions, including [existing-map rules](#existing-maps). Apply
 [Resolve harness access](#resolve-harness-access) to each needed binding; a successful map lookup alone is not source access.
 [Retrieve the review baseline](review-reasoning.md#retrieve-the-review-baseline)
 owns the runtime reads and their order, and the mode reference names its own

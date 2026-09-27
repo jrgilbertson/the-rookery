@@ -1,5 +1,7 @@
+import contextlib
 import hashlib
 import http.client
+import io
 import json
 import os
 from pathlib import Path
@@ -1279,6 +1281,845 @@ class ReviewHttpTest(unittest.TestCase):
         self.assertTrue(any(
             item["scope"] == "manifest" and item["message"].startswith("evidence_root")
             for item in payload["errors"]), payload["errors"])
+
+    def review_skill(self, skill=None, port=None, query=""):
+        path = "/api/review" if skill is None else "/api/review?skill=" + skill
+        if query:
+            path += ("&" if "?" in path else "?") + query
+        status, data, headers = self.request("GET", path, port=port)
+        self.assertEqual(status, 200, data)
+        self.assertIn("application/json", headers["Content-Type"])
+        return json.loads(data.decode())
+
+    def grade_fingerprint(self, skill, port):
+        payload = self.review_skill(skill, port)
+        return binding(payload, "shared-grade")["fingerprint"]
+
+    def open_index(self, index_path):
+        server = review.serve_index(index_path)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        self.addCleanup(server.shutdown)
+        self.addCleanup(server.server_close)
+        return server, server.server_address[1]
+
+    def plant_manifest(self, folder, skill_id, prompt, evidence_root, evidence_body, round_id="shared-round"):
+        folder.mkdir(parents=True, exist_ok=True)
+        evidence_root.mkdir(parents=True, exist_ok=True)
+        (evidence_root / "trace.json").write_bytes(evidence_body)
+        document = {
+            "schema": 1,
+            "title": skill_id,
+            "skill": {"name": skill_id, "revision": None},
+            "round": {"id": round_id, "frozen": True, "note": None},
+            "evidence_root": str(evidence_root),
+            "files": [{"id": "shared-trace", "path": "trace.json"}],
+            "cases": [{
+                "id": "shared-case",
+                "title": "Shared identifiers",
+                "prompt": prompt,
+                "inputs": [],
+                "expected": None,
+                "assertions": [{
+                    "id": "shared-assertion",
+                    "text": "Check the trace.",
+                    "check": "judgment",
+                }],
+                "provenance": None,
+                "runs": [{
+                    "id": "shared-run",
+                    "target": "grok-4.7-high",
+                    "arm": "with_skill",
+                    "model": None,
+                    "settings": None,
+                    "skill_availability": "verified",
+                    "output": prompt,
+                    "summary": None,
+                    "duration_ms": None,
+                    "tokens": None,
+                    "cost": None,
+                    "evidence": [{"id": "shared-trace", "label": "Trace"}],
+                }],
+                "grades": [{
+                    "id": "shared-grade",
+                    "grader": "reviewer",
+                    "target": "grok-4.7-high",
+                    "run_ids": ["shared-run"],
+                    "verdict": "pass",
+                    "assertions": [{
+                        "assertion_id": "shared-assertion",
+                        "result": "pass",
+                        "evidence": "The trace matches this skill.",
+                    }],
+                    "summary": prompt,
+                    "evidence": [{"id": "shared-trace", "label": "Trace"}],
+                }],
+            }],
+            "triggers": [],
+        }
+        manifest_path = folder / "manifest.json"
+        manifest_path.write_text(json.dumps(document))
+        return manifest_path, folder / "feedback.json"
+
+    def write_index(self, directory, skills, repository="repo-one"):
+        directory.mkdir(parents=True, exist_ok=True)
+        index_path = directory / "repo-index.json"
+        index_path.write_text(json.dumps({"repository": repository, "skills": skills}))
+        return index_path
+
+    def feedback_form(self, fingerprint, note, judgment="agree", grade_id="shared-grade", base_revision=0):
+        return {
+            "round_id": "shared-round",
+            "subject_id": "shared-case",
+            "grade_id": grade_id,
+            "judgment": judgment,
+            "note": note,
+            "fingerprint": fingerprint,
+            "base_revision": base_revision,
+        }
+
+    def test_one_manifest_catalog_selects_that_skill_only(self):
+        status, data, _ = self.request("GET", "/api/skills")
+        self.assertEqual(status, 200, data)
+        catalog = json.loads(data.decode())
+        self.assertEqual(set(catalog), {"repository", "skills", "default_skill"})
+        self.assertIsNone(catalog["repository"])
+        self.assertEqual(catalog["skills"], [{
+            "id": "checking-simplicity",
+            "name": "checking-simplicity",
+        }])
+        self.assertEqual(catalog["default_skill"], "checking-simplicity")
+        self.assertNotIn(str(self.root), data.decode())
+        self.assertNotIn("/", data.decode())
+        plain = self.review()
+        selected = self.review_skill("checking-simplicity")
+        self.assertEqual(selected["manifest"]["round"]["id"], plain["manifest"]["round"]["id"])
+        self.assertEqual(
+            binding(plain, "grade-protect-with")["fingerprint"],
+            binding(selected, "grade-protect-with")["fingerprint"],
+        )
+        status, data, _ = self.request("GET", "/api/review?skill=other-skill")
+        self.assertEqual(status, 404, data)
+        self.assertNotIn(b"Ask the owner", data)
+        status, data, _ = self.request("GET", "/api/review?skill=checking-simplicity&skill=other-skill")
+        self.assertEqual(status, 400, data)
+        self.assertIn(b"Rejected", data)
+        self.assertNotIn(b"Ask the owner", data)
+        for query in ("skill=", "skill=../secret", "skill=bad%20id"):
+            status, data, _ = self.request("GET", "/api/review?" + query)
+            self.assertEqual(status, 400, query)
+            self.assertNotIn(b"Ask the owner", data)
+        status, trace, _ = self.request("GET", "/evidence/protect-with-trace?skill=checking-simplicity")
+        self.assertEqual(status, 200)
+        self.assertEqual(trace, (EVIDENCE / "protect-with-trace.json").read_bytes())
+        status, data, _ = self.request("GET", "/evidence/protect-with-trace?skill=other-skill")
+        self.assertEqual(status, 404)
+        self.assertNotEqual(data, trace)
+        self.assertNotIn(b"protect-with-trace", data)
+        status, data, _ = self.request("POST", "/api/feedback?skill=other-skill", b"not-json")
+        self.assertEqual(status, 400, data)
+        self.assertIn(b"Not saved", data)
+        self.assertFalse(self.feedback_path.exists())
+        shown = next(item["fingerprint"] for item in plain["bindings"]
+                     if item.get("record_type") == "subject" and item.get("subject_id") == "ask-owner-before-dropping-audit")
+        form = self.feedback(note="scoped note", fingerprint=shown)
+        status, data, _ = self.request(
+            "POST", "/api/feedback?skill=other-skill", json.dumps(form).encode())
+        self.assertEqual(status, 404, data)
+        self.assertFalse(self.feedback_path.exists())
+        status, data, _ = self.request(
+            "POST", "/api/feedback?skill=checking-simplicity", json.dumps(form).encode(),
+            headers={"Origin": "http://evil.example"})
+        self.assertEqual(status, 403, data)
+        self.assertNotIn(b"Ask the owner", data)
+        self.assertFalse(self.feedback_path.exists())
+        status, body = self.raw((
+            f"GET /api/review?skill=checking-simplicity HTTP/1.1\r\n"
+            f"Host: evil.example\r\n"
+            f"Connection: close\r\n\r\n"
+        ).encode())
+        self.assertEqual(status, 403)
+        self.assertNotIn(b"Ask the owner", body)
+        status, saved, _ = self.post(self.feedback(note="scoped note"))
+        self.assertEqual(status, 200, saved)
+        chosen = self.review_skill("checking-simplicity")
+        self.assertEqual(chosen["feedback"]["items"][0]["note"], "scoped note")
+
+    def test_index_isolates_shared_case_grade_and_evidence_ids(self):
+        zeta_manifest, _zeta_feedback = self.plant_manifest(
+            self.root / "zeta", "skill-zeta", "ZETA-PROMPT-9f3a",
+            self.root / "zeta-evidence", b"ZETA-TRACE-9f3a\n")
+        alpha_manifest, alpha_feedback = self.plant_manifest(
+            self.root / "alpha", "skill-alpha", "ALPHA-PROMPT-9f3a",
+            self.root / "alpha" / "evidence", b"ALPHA-TRACE-9f3a\n")
+        index_path = self.write_index(self.root / "catalog", [])
+        index_path.write_text(json.dumps({
+            "repository": "repo-one",
+            "skills": [
+                {
+                    "id": "skill-zeta",
+                    "manifest": os.path.relpath(zeta_manifest, index_path.parent),
+                    "feedback": "zeta-feedback.json",
+                },
+                {
+                    "id": "skill-alpha",
+                    "manifest": str(alpha_manifest),
+                    "feedback": str(alpha_feedback),
+                },
+            ],
+        }))
+        _, port = self.open_index(index_path)
+        status, data, _ = self.request("GET", "/api/skills?path=/etc/passwd", port=port)
+        self.assertEqual(status, 200, data)
+        catalog = json.loads(data.decode())
+        self.assertEqual(catalog["repository"], "repo-one")
+        self.assertEqual([item["id"] for item in catalog["skills"]], ["skill-zeta", "skill-alpha"])
+        self.assertEqual([item["name"] for item in catalog["skills"]], ["skill-zeta", "skill-alpha"])
+        self.assertEqual(catalog["default_skill"], "skill-zeta")
+        self.assertEqual([{*item} for item in catalog["skills"]], [{"id", "name"}, {"id", "name"}])
+        decoded = data.decode()
+        self.assertNotIn(str(self.root), decoded)
+        self.assertNotIn("manifest", decoded)
+        self.assertNotIn("feedback", decoded)
+        self.assertNotIn("/", decoded)
+        default_payload = self.review_skill(None, port)
+        zeta_payload = self.review_skill("skill-zeta", port, "path=/tmp/not-a-skill")
+        alpha_payload = self.review_skill("skill-alpha", port)
+        self.assertEqual(default_payload["manifest"]["title"], "skill-zeta")
+        self.assertIn("ZETA-PROMPT-9f3a", zeta_payload["manifest"]["cases"][0]["prompt"])
+        self.assertNotIn("ALPHA-PROMPT-9f3a", json.dumps(zeta_payload))
+        self.assertIn("ALPHA-PROMPT-9f3a", alpha_payload["manifest"]["cases"][0]["prompt"])
+        self.assertNotIn("ZETA-PROMPT-9f3a", json.dumps(alpha_payload))
+        self.assertEqual(zeta_payload["manifest"]["cases"][0]["id"], "shared-case")
+        self.assertEqual(alpha_payload["manifest"]["cases"][0]["grades"][0]["id"], "shared-grade")
+        status, zeta_trace, _ = self.request("GET", "/evidence/shared-trace?skill=skill-zeta", port=port)
+        status_alpha, alpha_trace, _ = self.request("GET", "/evidence/shared-trace?skill=skill-alpha", port=port)
+        self.assertEqual(status, 200)
+        self.assertEqual(status_alpha, 200)
+        self.assertEqual(zeta_trace, b"ZETA-TRACE-9f3a\n")
+        self.assertEqual(alpha_trace, b"ALPHA-TRACE-9f3a\n")
+        status, data, _ = self.request("GET", "/evidence/shared-trace?skill=skill-beta", port=port)
+        self.assertEqual(status, 404)
+        self.assertNotIn(b"ZETA-TRACE-9f3a", data)
+        self.assertNotIn(b"ALPHA-TRACE-9f3a", data)
+        status, data, _ = self.request("GET", "/api/review?skill=skill-zeta&skill=skill-alpha", port=port)
+        self.assertEqual(status, 400, data)
+        self.assertNotIn(b"ZETA-PROMPT-9f3a", data)
+        self.assertNotIn(b"ALPHA-PROMPT-9f3a", data)
+        zeta_fp = binding(zeta_payload, "shared-grade")["fingerprint"]
+        alpha_fp = binding(alpha_payload, "shared-grade")["fingerprint"]
+        self.assertNotEqual(zeta_fp, alpha_fp)
+        zeta_form = self.feedback_form(zeta_fp, "zeta agrees")
+        status, saved, _ = self.request(
+            "POST", "/api/feedback?skill=skill-zeta", json.dumps(zeta_form).encode(), port=port)
+        self.assertEqual(status, 200, saved)
+        alpha_view = self.review_skill("skill-alpha", port)
+        self.assertEqual(alpha_view["feedback"]["items"], [])
+        self.assertFalse(alpha_feedback.exists())
+        alpha_form = self.feedback_form(alpha_fp, "alpha agrees")
+        status, saved, _ = self.request(
+            "POST", "/api/feedback?skill=skill-alpha", json.dumps(alpha_form).encode(), port=port)
+        self.assertEqual(status, 200, saved)
+        zeta_notes = [item["note"] for item in self.review_skill("skill-zeta", port)["feedback"]["items"]]
+        alpha_notes = [item["note"] for item in self.review_skill("skill-alpha", port)["feedback"]["items"]]
+        self.assertEqual(zeta_notes, ["zeta agrees"])
+        self.assertEqual(alpha_notes, ["alpha agrees"])
+        stored_zeta = json.loads((index_path.parent / "zeta-feedback.json").read_text())
+        stored_alpha = json.loads(alpha_feedback.read_text())
+        self.assertEqual(stored_zeta["items"][0]["note"], "zeta agrees")
+        self.assertEqual(stored_alpha["items"][0]["note"], "alpha agrees")
+        self.assertNotEqual(stored_zeta["items"][0]["fingerprint"], stored_alpha["items"][0]["fingerprint"])
+
+    def test_identical_case_bytes_cannot_replay_onto_another_skill(self):
+        shared = self.root / "shared-evidence"
+        zeta_manifest, zeta_feedback = self.plant_manifest(
+            self.root / "zeta", "skill-zeta", "SAME-PROMPT-9f3a", shared, b'{"kind":"same-trace"}\n')
+        alpha_manifest, alpha_feedback = self.plant_manifest(
+            self.root / "alpha", "skill-alpha", "SAME-PROMPT-9f3a", shared, b'{"kind":"same-trace"}\n')
+        index_path = self.write_index(self.root / "catalog", [
+            {"id": "skill-zeta", "manifest": str(zeta_manifest), "feedback": str(zeta_feedback)},
+            {"id": "skill-alpha", "manifest": str(alpha_manifest), "feedback": str(alpha_feedback)},
+        ])
+        _, port = self.open_index(index_path)
+        zeta = self.review_skill("skill-zeta", port)
+        alpha = self.review_skill("skill-alpha", port)
+        self.assertEqual(zeta["manifest"]["cases"][0]["prompt"], alpha["manifest"]["cases"][0]["prompt"])
+        self.assertEqual(zeta["manifest"]["cases"][0]["id"], alpha["manifest"]["cases"][0]["id"])
+        self.assertEqual(zeta["manifest"]["title"], "skill-zeta")
+        self.assertEqual(alpha["manifest"]["title"], "skill-alpha")
+        zeta_grade = binding(zeta, "shared-grade")["fingerprint"]
+        alpha_grade = binding(alpha, "shared-grade")["fingerprint"]
+        zeta_subject = next(item["fingerprint"] for item in zeta["bindings"]
+                            if item["record_type"] == "subject" and item["subject_id"] == "shared-case")
+        alpha_subject = next(item["fingerprint"] for item in alpha["bindings"]
+                             if item["record_type"] == "subject" and item["subject_id"] == "shared-case")
+        self.assertNotEqual(zeta_grade, alpha_grade)
+        self.assertNotEqual(zeta_subject, alpha_subject)
+        status, zeta_trace, _ = self.request("GET", "/evidence/shared-trace?skill=skill-zeta", port=port)
+        status_alpha, alpha_trace, _ = self.request("GET", "/evidence/shared-trace?skill=skill-alpha", port=port)
+        self.assertEqual(status, 200)
+        self.assertEqual(status_alpha, 200)
+        self.assertEqual(zeta_trace, alpha_trace)
+        form = self.feedback_form(zeta_grade, "replay me")
+        status, saved, _ = self.request(
+            "POST", "/api/feedback?skill=skill-zeta", json.dumps(form).encode(), port=port)
+        self.assertEqual(status, 200, saved)
+        zeta_bytes = zeta_feedback.read_bytes()
+        status, rejected_raw, _ = self.request(
+            "POST", "/api/feedback?skill=skill-alpha", json.dumps(form).encode(), port=port)
+        rejected = json.loads(rejected_raw.decode())
+        self.assertEqual(status, 409, rejected)
+        self.assertIn("Not saved", rejected["error"])
+        self.assertIsNone(rejected["item"])
+        self.assertFalse(alpha_feedback.exists())
+        self.assertEqual(zeta_feedback.read_bytes(), zeta_bytes)
+        note = self.feedback_form(zeta_subject, "subject replay", judgment=None, grade_id=None)
+        status, saved, _ = self.request(
+            "POST", "/api/feedback?skill=skill-zeta", json.dumps(note).encode(), port=port)
+        self.assertEqual(status, 200, saved)
+        status, rejected_raw, _ = self.request(
+            "POST", "/api/feedback?skill=skill-alpha", json.dumps(note).encode(), port=port)
+        rejected = json.loads(rejected_raw.decode())
+        self.assertEqual(status, 409, rejected)
+        self.assertFalse(alpha_feedback.exists())
+        own = self.feedback_form(alpha_grade, "alpha's own grade")
+        status, saved, _ = self.request(
+            "POST", "/api/feedback?skill=skill-alpha", json.dumps(own).encode(), port=port)
+        self.assertEqual(status, 200, saved)
+        self.assertEqual(
+            [item["note"] for item in json.loads(alpha_feedback.read_text())["items"]],
+            ["alpha's own grade"])
+        self.assertEqual(
+            [item["note"] for item in json.loads(zeta_feedback.read_text())["items"]],
+            ["replay me", "subject replay"])
+
+    def test_index_startup_rejects_bad_config_and_shared_destinations(self):
+        def expect(index_path, text):
+            with self.subTest(text=text):
+                with self.assertRaises(review.ConfigError) as caught:
+                    review.load_index(index_path)
+                self.assertIn(text, str(caught.exception))
+                self.assertNotIn(str(self.root), str(caught.exception))
+
+        broken = self.root / "broken-index.json"
+        broken.write_text("{")
+        expect(broken, "malformed JSON")
+        shape = self.root / "shape"
+        index_path = self.write_index(shape, [])
+        index_path.write_text(json.dumps({"repository": "repo-one"}))
+        expect(index_path, "repository and skills")
+        index_path.write_text(json.dumps({
+            "repository": "repo-one", "skills": [], "path": str(self.root),
+        }))
+        expect(index_path, "repository and skills")
+        index_path.write_text(json.dumps({"repository": "../secret", "skills": []}))
+        expect(index_path, "repository is missing")
+        index_path.write_text(json.dumps({"repository": "repo-one", "skills": []}))
+        expect(index_path, "non-empty")
+        zeta_manifest, zeta_feedback = self.plant_manifest(
+            self.root / "zeta", "skill-zeta", "ZETA-PROMPT-9f3a",
+            self.root / "zeta-evidence", b"ZETA-TRACE-9f3a\n")
+        alpha_manifest, alpha_feedback = self.plant_manifest(
+            self.root / "alpha", "skill-alpha", "ALPHA-PROMPT-9f3a",
+            self.root / "alpha-evidence", b"ALPHA-TRACE-9f3a\n")
+        index_path.write_text(json.dumps({
+            "repository": "repo-one",
+            "skills": [{"id": "../secret", "manifest": "missing.json", "feedback": "missing-feedback.json"}],
+        }))
+        expect(index_path, "skill id")
+        index_path.write_text(json.dumps({
+            "repository": "repo-one",
+            "skills": [
+                {"id": "skill-zeta", "manifest": str(zeta_manifest), "feedback": str(zeta_feedback)},
+                {"id": "skill-zeta", "manifest": str(alpha_manifest), "feedback": str(alpha_feedback)},
+            ],
+        }))
+        expect(index_path, "duplicated")
+        mismatch = json.loads(zeta_manifest.read_text())
+        mismatch["skill"]["name"] = "skill-alpha"
+        zeta_manifest.write_text(json.dumps(mismatch))
+        index_path.write_text(json.dumps({
+            "repository": "repo-one",
+            "skills": [
+                {"id": "skill-zeta", "manifest": str(zeta_manifest), "feedback": str(zeta_feedback)},
+                {"id": "skill-alpha", "manifest": str(alpha_manifest), "feedback": str(alpha_feedback)},
+            ],
+        }))
+        expect(index_path, "does not match")
+        mismatch["skill"]["name"] = "skill-zeta"
+        zeta_manifest.write_text(json.dumps(mismatch))
+        index_path.write_text(json.dumps({
+            "repository": "repo-one",
+            "skills": [{"id": "skill-zeta", "manifest": str(self.root / "absent.json"), "feedback": str(zeta_feedback)}],
+        }))
+        expect(index_path, "not usable")
+        shared_feedback = self.root / "shared-feedback.json"
+        shared_feedback.write_text('{"items":[]}\n')
+        alias = self.root / "alias-feedback.json"
+        alias.symlink_to(shared_feedback)
+        index_path.write_text(json.dumps({
+            "repository": "repo-one",
+            "skills": [
+                {"id": "skill-zeta", "manifest": str(zeta_manifest), "feedback": str(alias)},
+                {"id": "skill-alpha", "manifest": str(alpha_manifest), "feedback": str(shared_feedback)},
+            ],
+        }))
+        expect(index_path, "share a feedback destination")
+        alias.unlink()
+        os.link(shared_feedback, alias)
+        expect(index_path, "share a feedback destination")
+        alias.unlink()
+        lexical = self.root / "lexical"
+        index_path = self.write_index(lexical, [])
+        nested = lexical / "zeta"
+        nested.mkdir()
+        index_path.write_text(json.dumps({
+            "repository": "repo-one",
+            "skills": [
+                {"id": "skill-zeta", "manifest": str(zeta_manifest), "feedback": "zeta/feedback.json"},
+                {"id": "skill-alpha", "manifest": str(alpha_manifest), "feedback": "zeta/../zeta/feedback.json"},
+            ],
+        }))
+        expect(index_path, "share a feedback destination")
+        index_path.write_text(json.dumps({
+            "repository": "repo-one",
+            "skills": [
+                {"id": "skill-zeta", "manifest": str(zeta_manifest), "feedback": str(alpha_manifest)},
+                {"id": "skill-alpha", "manifest": str(alpha_manifest), "feedback": str(alpha_feedback)},
+            ],
+        }))
+        expect(index_path, "overlaps a review input")
+        index_path.write_text(json.dumps({
+            "repository": "repo-one",
+            "skills": [
+                {"id": "skill-zeta", "manifest": str(zeta_manifest), "feedback": str(index_path)},
+                {"id": "skill-alpha", "manifest": str(alpha_manifest), "feedback": str(alpha_feedback)},
+            ],
+        }))
+        expect(index_path, "overlaps a review input")
+        trace = self.root / "zeta-evidence" / "trace.json"
+        index_path.write_text(json.dumps({
+            "repository": "repo-one",
+            "skills": [
+                {"id": "skill-zeta", "manifest": str(zeta_manifest), "feedback": str(trace)},
+                {"id": "skill-alpha", "manifest": str(alpha_manifest), "feedback": str(alpha_feedback)},
+            ],
+        }))
+        expect(index_path, "overlaps a review input")
+        missing_trace = self.root / "zeta-evidence" / "gone.json"
+        listed = json.loads(zeta_manifest.read_text())
+        listed["files"].append({"id": "gone-trace", "path": "gone.json"})
+        zeta_manifest.write_text(json.dumps(listed))
+        index_path.write_text(json.dumps({
+            "repository": "repo-one",
+            "skills": [
+                {"id": "skill-zeta", "manifest": str(zeta_manifest), "feedback": str(missing_trace)},
+                {"id": "skill-alpha", "manifest": str(alpha_manifest), "feedback": str(alpha_feedback)},
+            ],
+        }))
+        expect(index_path, "overlaps a review input")
+        stderr = io.StringIO()
+        with self.assertRaises(SystemExit) as caught:
+            with contextlib.redirect_stderr(stderr):
+                review.main(["--index", str(index_path), "--manifest", str(zeta_manifest), "--feedback", str(zeta_feedback), "--port", "0"])
+        self.assertEqual(caught.exception.code, 2)
+        self.assertIn("--index", stderr.getvalue())
+        stderr = io.StringIO()
+        with self.assertRaises(SystemExit) as caught:
+            with contextlib.redirect_stderr(stderr):
+                review.main(["--manifest", str(zeta_manifest), "--port", "0"])
+        self.assertEqual(caught.exception.code, 2)
+
+    def test_broken_evidence_stays_a_manifest_error(self):
+        zeta_manifest, zeta_feedback = self.plant_manifest(
+            self.root / "zeta", "skill-zeta", "ZETA-PROMPT-9f3a",
+            self.root / "zeta-evidence", b"ZETA-TRACE-9f3a\n")
+        alpha_manifest, alpha_feedback = self.plant_manifest(
+            self.root / "alpha", "skill-alpha", "ALPHA-PROMPT-9f3a",
+            self.root / "alpha-evidence", b"ALPHA-TRACE-9f3a\n")
+        listed = json.loads(zeta_manifest.read_text())
+        listed["files"].append({"id": "gone-trace", "path": "gone.json"})
+        listed["files"].append({"id": "dir-trace", "path": "not-a-file"})
+        zeta_manifest.write_text(json.dumps(listed))
+        (self.root / "zeta-evidence" / "not-a-file").mkdir()
+        index_path = self.write_index(self.root / "catalog", [
+            {"id": "skill-zeta", "manifest": str(zeta_manifest), "feedback": str(zeta_feedback)},
+            {"id": "skill-alpha", "manifest": str(alpha_manifest), "feedback": str(alpha_feedback)},
+        ])
+        repository, sources = review.load_index(index_path)
+        self.assertEqual(repository, "repo-one")
+        self.assertEqual([source.skill_id for source in sources], ["skill-zeta", "skill-alpha"])
+        _, port = self.open_index(index_path)
+        status, data, _ = self.request("GET", "/api/review?skill=skill-zeta", port=port)
+        self.assertEqual(status, 200, data)
+        self.assertNotIn(str(self.root).encode(), data)
+        payload = json.loads(data.decode())
+        self.assertEqual(payload["manifest"]["cases"][0]["prompt"], "ZETA-PROMPT-9f3a")
+        messages = [item["message"] for item in payload["errors"]]
+        self.assertTrue(any("gone-trace" in message or "outside" in message for message in messages), messages)
+        alpha_payload = self.review_skill("skill-alpha", port)
+        self.assertEqual(alpha_payload["manifest"]["cases"][0]["prompt"], "ALPHA-PROMPT-9f3a")
+        self.assertEqual(alpha_payload["errors"], [])
+
+    def test_runtime_retarget_cannot_overwrite_another_skill_input(self):
+        zeta_manifest, zeta_feedback = self.plant_manifest(
+            self.root / "zeta", "skill-zeta", "ZETA-PROMPT-9f3a",
+            self.root / "zeta-evidence", b"ZETA-TRACE-9f3a\n")
+        alpha_manifest, alpha_feedback = self.plant_manifest(
+            self.root / "alpha", "skill-alpha", "ALPHA-PROMPT-9f3a",
+            self.root / "alpha-evidence", b"ALPHA-TRACE-9f3a\n")
+        notes = self.root / "zeta-evidence" / "notes.json"
+        index_path = self.write_index(self.root / "catalog", [
+            {"id": "skill-zeta", "manifest": str(zeta_manifest), "feedback": str(notes)},
+            {"id": "skill-alpha", "manifest": str(alpha_manifest), "feedback": str(alpha_feedback)},
+        ])
+        _, port = self.open_index(index_path)
+        zeta_fp = self.grade_fingerprint("skill-zeta", port)
+        alpha_fp = self.grade_fingerprint("skill-alpha", port)
+        status, saved, _ = self.request(
+            "POST", "/api/feedback?skill=skill-zeta",
+            json.dumps(self.feedback_form(zeta_fp, "zeta note")).encode(), port=port)
+        self.assertEqual(status, 200, saved)
+        status, saved, _ = self.request(
+            "POST", "/api/feedback?skill=skill-alpha",
+            json.dumps(self.feedback_form(alpha_fp, "alpha note")).encode(), port=port)
+        self.assertEqual(status, 200, saved)
+        alpha_bytes = alpha_feedback.read_bytes()
+        manifest_bytes = alpha_manifest.read_bytes()
+        trace_bytes = (self.root / "alpha-evidence" / "trace.json").read_bytes()
+        index_bytes = index_path.read_bytes()
+        def rejected_save(note, fingerprint):
+            status, raw, _ = self.request(
+                "POST", "/api/feedback?skill=skill-zeta",
+                json.dumps(self.feedback_form(fingerprint, note)).encode(), port=port)
+            body = json.loads(raw.decode())
+            self.assertEqual(status, 400, body)
+            self.assertIn("overlap", body["error"])
+
+        notes.unlink()
+        notes.symlink_to(alpha_feedback)
+        rejected_save("overwrite alpha feedback", zeta_fp)
+        self.assertEqual(alpha_feedback.read_bytes(), alpha_bytes)
+        notes.unlink()
+        notes.symlink_to(alpha_manifest)
+        rejected_save("overwrite alpha manifest", zeta_fp)
+        self.assertEqual(alpha_manifest.read_bytes(), manifest_bytes)
+        notes.unlink()
+        os.link(self.root / "alpha-evidence" / "trace.json", notes)
+        rejected_save("overwrite alpha trace", zeta_fp)
+        self.assertEqual((self.root / "alpha-evidence" / "trace.json").read_bytes(), trace_bytes)
+        notes.unlink()
+        notes.symlink_to(index_path)
+        rejected_save("overwrite index", zeta_fp)
+        self.assertEqual(index_path.read_bytes(), index_bytes)
+        notes.unlink()
+        notes.write_text(json.dumps({"items": json.loads(alpha_bytes)["items"]}))
+        original_notes = notes.read_bytes()
+        listed = json.loads(zeta_manifest.read_text())
+        listed["files"].append({"id": "notes-file", "path": "notes.json"})
+        zeta_manifest.write_text(json.dumps(listed))
+        refreshed = self.grade_fingerprint("skill-zeta", port)
+        rejected_save("overwrite listed notes", refreshed)
+        self.assertEqual(notes.read_bytes(), original_notes)
+        self.assertEqual(alpha_feedback.read_bytes(), alpha_bytes)
+
+    def test_concurrent_feedback_writes_stay_on_the_selected_skill(self):
+        zeta_manifest, zeta_feedback = self.plant_manifest(
+            self.root / "zeta", "skill-zeta", "ZETA-PROMPT-9f3a",
+            self.root / "zeta-evidence", b"ZETA-TRACE-9f3a\n")
+        alpha_manifest, alpha_feedback = self.plant_manifest(
+            self.root / "alpha", "skill-alpha", "ALPHA-PROMPT-9f3a",
+            self.root / "alpha-evidence", b"ALPHA-TRACE-9f3a\n")
+        index_path = self.write_index(self.root / "catalog", [
+            {"id": "skill-zeta", "manifest": str(zeta_manifest), "feedback": str(zeta_feedback)},
+            {"id": "skill-alpha", "manifest": str(alpha_manifest), "feedback": str(alpha_feedback)},
+        ])
+        _, port = self.open_index(index_path)
+        zeta_fp = self.grade_fingerprint("skill-zeta", port)
+        alpha_fp = self.grade_fingerprint("skill-alpha", port)
+        raced = []
+        barrier = threading.Barrier(2)
+
+        def race_zeta(note):
+            barrier.wait(timeout=5)
+            status, data, _ = self.request(
+                "POST", "/api/feedback?skill=skill-zeta",
+                json.dumps(self.feedback_form(zeta_fp, note)).encode(), port=port)
+            raced.append((status, json.loads(data.decode())))
+
+        racers = [
+            threading.Thread(target=race_zeta, args=("racer-a",)),
+            threading.Thread(target=race_zeta, args=("racer-b",)),
+        ]
+        for thread in racers:
+            thread.start()
+        for thread in racers:
+            thread.join(timeout=5)
+        self.assertEqual(sorted(item[0] for item in raced), [200, 409], raced)
+        stored = json.loads(zeta_feedback.read_text())["items"]
+        self.assertEqual(len(stored), 1)
+        self.assertIn(stored[0]["note"], {"racer-a", "racer-b"})
+        self.assertFalse(alpha_feedback.exists())
+        saved_note = stored[0]["note"]
+        crossed = []
+        barrier = threading.Barrier(2)
+
+        def save(skill, payload):
+            barrier.wait(timeout=5)
+            status, data, _ = self.request(
+                "POST", "/api/feedback?skill=" + skill, json.dumps(payload).encode(), port=port)
+            crossed.append((skill, status, json.loads(data.decode())))
+
+        threads = [
+            threading.Thread(target=save, args=(
+                "skill-zeta", self.feedback_form(zeta_fp, "zeta updated", base_revision=1))),
+            threading.Thread(target=save, args=(
+                "skill-alpha", self.feedback_form(alpha_fp, "alpha concurrent"))),
+        ]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join(timeout=5)
+        self.assertEqual(sorted(item[0] for item in crossed), ["skill-alpha", "skill-zeta"], crossed)
+        self.assertTrue(all(item[1] == 200 for item in crossed), crossed)
+        zeta_items = json.loads(zeta_feedback.read_text())["items"]
+        alpha_items = json.loads(alpha_feedback.read_text())["items"]
+        self.assertEqual([item["note"] for item in zeta_items], ["zeta updated"])
+        self.assertEqual(zeta_items[0]["revision"], 2)
+        self.assertNotEqual(saved_note, "zeta updated")
+        self.assertEqual([item["note"] for item in alpha_items], ["alpha concurrent"])
+
+    def reject_skill_save(self, port, fingerprint, note, feedback_path, original):
+        status, raw, _ = self.request(
+            "POST", "/api/feedback?skill=skill-zeta",
+            json.dumps(self.feedback_form(fingerprint, note, base_revision=1)).encode(), port=port)
+        body = json.loads(raw.decode())
+        self.assertEqual(status, 400, body)
+        self.assertIn("Not saved", body["error"])
+        self.assertNotIn("ALPHA-PROMPT-9f3a", body["error"])
+        self.assertNotIn("ALPHA-TRACE-9f3a", raw.decode())
+        self.assertEqual(feedback_path.read_bytes(), original)
+
+    def test_replaced_manifest_is_not_served_or_saved_for_that_skill(self):
+        zeta_manifest, zeta_feedback = self.plant_manifest(
+            self.root / "zeta", "skill-zeta", "ZETA-PROMPT-9f3a",
+            self.root / "zeta-evidence", b"ZETA-TRACE-9f3a\n")
+        alpha_manifest, alpha_feedback = self.plant_manifest(
+            self.root / "alpha", "skill-alpha", "ALPHA-PROMPT-9f3a",
+            self.root / "alpha-evidence", b"ALPHA-TRACE-9f3a\n")
+        original = zeta_manifest.read_text()
+        index_path = self.write_index(self.root / "catalog", [
+            {"id": "skill-zeta", "manifest": str(zeta_manifest), "feedback": str(zeta_feedback)},
+            {"id": "skill-alpha", "manifest": str(alpha_manifest), "feedback": str(alpha_feedback)},
+        ])
+        _, port = self.open_index(index_path)
+        zeta_fp = self.grade_fingerprint("skill-zeta", port)
+        alpha_fp = self.grade_fingerprint("skill-alpha", port)
+        status, saved, _ = self.request(
+            "POST", "/api/feedback?skill=skill-zeta",
+            json.dumps(self.feedback_form(zeta_fp, "zeta note")).encode(), port=port)
+        self.assertEqual(status, 200, saved)
+        saved_bytes = zeta_feedback.read_bytes()
+        drifted = json.loads(original)
+        drifted["skill"]["name"] = "skill-alpha"
+        zeta_manifest.write_text(json.dumps(drifted))
+        status, raw, _ = self.request("GET", "/api/review?skill=skill-zeta", port=port)
+        self.assertEqual(status, 200, raw)
+        body = json.loads(raw.decode())
+        self.assertIsNone(body["manifest"])
+        self.assertEqual(body["bindings"], [])
+        self.assertTrue(any("does not match" in item["message"] for item in body["errors"]))
+        self.assertNotIn(b"ZETA-PROMPT-9f3a", raw)
+        self.assertNotIn(b"ALPHA-PROMPT-9f3a", raw)
+        status, evidence, _ = self.request("GET", "/evidence/shared-trace?skill=skill-zeta", port=port)
+        self.assertEqual(status, 404, evidence)
+        self.assertNotIn(b"ZETA-TRACE-9f3a", evidence)
+        self.assertNotIn(b"ALPHA-TRACE-9f3a", evidence)
+        self.reject_skill_save(port, zeta_fp, "stale after name drift", zeta_feedback, saved_bytes)
+        self.reject_skill_save(port, alpha_fp, "fresh after name drift", zeta_feedback, saved_bytes)
+        zeta_manifest.unlink()
+        zeta_manifest.symlink_to(alpha_manifest)
+        status, raw, _ = self.request("GET", "/api/review?skill=skill-zeta", port=port)
+        self.assertEqual(status, 200, raw)
+        body = json.loads(raw.decode())
+        self.assertIsNone(body["manifest"])
+        self.assertEqual(body["bindings"], [])
+        self.assertNotIn(b"ALPHA-PROMPT-9f3a", raw)
+        self.assertNotIn(b"B extra", raw)
+        status, evidence, _ = self.request("GET", "/evidence/shared-trace?skill=skill-zeta", port=port)
+        self.assertEqual(status, 404, evidence)
+        self.assertNotEqual(evidence, b"ALPHA-TRACE-9f3a\n")
+        self.assertNotIn(b"ALPHA-TRACE-9f3a", evidence)
+        self.reject_skill_save(port, zeta_fp, "stale after retarget", zeta_feedback, saved_bytes)
+        self.reject_skill_save(port, alpha_fp, "fresh after retarget", zeta_feedback, saved_bytes)
+        alpha_view = self.review_skill("skill-alpha", port)
+        self.assertEqual(alpha_view["manifest"]["cases"][0]["prompt"], "ALPHA-PROMPT-9f3a")
+        self.assertEqual(alpha_feedback.exists(), False)
+        zeta_manifest.unlink()
+        zeta_manifest.write_text(original)
+        restored = self.review_skill("skill-zeta", port)
+        self.assertEqual(restored["manifest"]["skill"]["name"], "skill-zeta")
+        self.assertEqual(restored["manifest"]["cases"][0]["prompt"], "ZETA-PROMPT-9f3a")
+        self.assertEqual(restored["feedback"]["items"][0]["note"], "zeta note")
+        status, evidence, _ = self.request("GET", "/evidence/shared-trace?skill=skill-zeta", port=port)
+        self.assertEqual(status, 200)
+        self.assertEqual(evidence, b"ZETA-TRACE-9f3a\n")
+        restored_fp = binding(restored, "shared-grade")["fingerprint"]
+        status, saved, _ = self.request(
+            "POST", "/api/feedback?skill=skill-zeta",
+            json.dumps(self.feedback_form(restored_fp, "zeta restored", base_revision=1)).encode(),
+            port=port)
+        self.assertEqual(status, 200, saved)
+        self.assertEqual(json.loads(zeta_feedback.read_text())["items"][0]["note"], "zeta restored")
+        self.assertFalse(alpha_feedback.exists())
+
+    def test_unusable_evidence_root_keeps_listed_paths_for_overlap(self):
+        alpha_manifest, alpha_feedback = self.plant_manifest(
+            self.root / "alpha", "skill-alpha", "ALPHA-PROMPT-9f3a",
+            self.root / "alpha-evidence", b"ALPHA-TRACE-9f3a\n")
+        missing = self.root / "missing-root"
+        zeta_manifest, zeta_feedback = self.plant_manifest(
+            self.root / "zeta", "skill-zeta", "ZETA-PROMPT-9f3a",
+            self.root / "zeta-evidence", b"ZETA-TRACE-9f3a\n")
+        listed = json.loads(zeta_manifest.read_text())
+        listed["evidence_root"] = str(missing)
+        zeta_manifest.write_text(json.dumps(listed))
+        index_path = self.write_index(self.root / "catalog", [
+            {"id": "skill-zeta", "manifest": str(zeta_manifest), "feedback": str(zeta_feedback)},
+            {"id": "skill-alpha", "manifest": str(alpha_manifest), "feedback": str(alpha_feedback)},
+        ])
+        _, port = self.open_index(index_path)
+        status, raw, _ = self.request("GET", "/api/review?skill=skill-zeta", port=port)
+        self.assertEqual(status, 200, raw)
+        payload = json.loads(raw.decode())
+        self.assertEqual(payload["manifest"]["cases"][0]["prompt"], "ZETA-PROMPT-9f3a")
+        self.assertTrue(any("not a directory" in item["message"] for item in payload["errors"]))
+        status, evidence, _ = self.request("GET", "/evidence/shared-trace?skill=skill-zeta", port=port)
+        self.assertEqual(status, 404, evidence)
+        self.assertNotIn(b"ZETA-TRACE-9f3a", evidence)
+        blocked = self.write_index(self.root / "blocked-missing", [
+            {"id": "skill-zeta", "manifest": str(zeta_manifest), "feedback": str(missing / "trace.json")},
+            {"id": "skill-alpha", "manifest": str(alpha_manifest), "feedback": str(alpha_feedback)},
+        ])
+        with self.assertRaises(review.ConfigError) as caught:
+            review.load_index(blocked)
+        self.assertIn("overlaps a review input", str(caught.exception))
+        file_root = self.root / "file-root"
+        file_root.write_text("not a directory")
+        file_listed = json.loads(zeta_manifest.read_text())
+        file_listed["evidence_root"] = str(file_root)
+        file_manifest = self.root / "file-manifest.json"
+        file_manifest.write_text(json.dumps(file_listed))
+        open_root = self.write_index(self.root / "open-file-root", [
+            {"id": "skill-zeta", "manifest": str(file_manifest), "feedback": str(self.root / "safe-feedback.json")},
+            {"id": "skill-alpha", "manifest": str(alpha_manifest), "feedback": str(alpha_feedback)},
+        ])
+        _, file_port = self.open_index(open_root)
+        status, raw, _ = self.request("GET", "/api/review?skill=skill-zeta", port=file_port)
+        self.assertEqual(status, 200, raw)
+        payload = json.loads(raw.decode())
+        self.assertEqual(payload["manifest"]["cases"][0]["prompt"], "ZETA-PROMPT-9f3a")
+        self.assertTrue(any("not a directory" in item["message"] for item in payload["errors"]))
+        blocked_file = self.write_index(self.root / "blocked-file-root", [
+            {"id": "skill-zeta", "manifest": str(file_manifest), "feedback": str(file_root / "trace.json")},
+            {"id": "skill-alpha", "manifest": str(alpha_manifest), "feedback": str(alpha_feedback)},
+        ])
+        with self.assertRaises(review.ConfigError) as caught:
+            review.load_index(blocked_file)
+        self.assertIn("overlaps a review input", str(caught.exception))
+
+    def test_review_read_hides_feedback_aliased_to_another_skill(self):
+        alpha_manifest, alpha_feedback = self.plant_manifest(
+            self.root / "alpha", "skill-alpha", "ALPHA-PROMPT-9f3a",
+            self.root / "alpha-evidence", b"ALPHA-TRACE-9f3a\n")
+        beta_manifest, beta_feedback = self.plant_manifest(
+            self.root / "beta", "skill-beta", "BETA-PROMPT-9f3a",
+            self.root / "beta-evidence", b"BETA-TRACE-SECRET-9f3a\n")
+        index_path = self.write_index(self.root / "catalog", [
+            {"id": "skill-alpha", "manifest": str(alpha_manifest), "feedback": str(alpha_feedback)},
+            {"id": "skill-beta", "manifest": str(beta_manifest), "feedback": str(beta_feedback)},
+        ])
+        _, port = self.open_index(index_path)
+        beta_fp = self.grade_fingerprint("skill-beta", port)
+        note = "BETA-PRIVATE-NOTE-9f3a"
+        status, saved, _ = self.request(
+            "POST", "/api/feedback?skill=skill-beta",
+            json.dumps(self.feedback_form(beta_fp, note)).encode(), port=port)
+        self.assertEqual(status, 200, saved)
+        beta_bytes = beta_feedback.read_bytes()
+        manifest_bytes = beta_manifest.read_bytes()
+        trace_bytes = (self.root / "beta-evidence" / "trace.json").read_bytes()
+
+        def retarget(make):
+            if alpha_feedback.is_symlink() or alpha_feedback.exists():
+                alpha_feedback.unlink()
+            make()
+
+        def assert_hidden(label):
+            status, raw, _ = self.request("GET", "/api/review?skill=skill-alpha", port=port)
+            self.assertEqual(status, 200, raw)
+            body = json.loads(raw.decode())
+            self.assertEqual(body["manifest"]["cases"][0]["prompt"], "ALPHA-PROMPT-9f3a", label)
+            self.assertEqual(body["feedback"]["items"], [], label)
+            self.assertEqual(body["feedback"]["error"], "Feedback path overlaps a review input.", label)
+            self.assertNotIn(note, raw.decode())
+            self.assertNotIn("BETA-TRACE-SECRET-9f3a", raw.decode())
+            self.assertNotIn(str(self.root), raw.decode())
+            self.assertEqual(beta_feedback.read_bytes(), beta_bytes)
+            self.assertEqual(beta_manifest.read_bytes(), manifest_bytes)
+            self.assertEqual((self.root / "beta-evidence" / "trace.json").read_bytes(), trace_bytes)
+
+        retarget(lambda: alpha_feedback.symlink_to(beta_feedback))
+        assert_hidden("symlink feedback")
+        retarget(lambda: os.link(beta_feedback, alpha_feedback))
+        assert_hidden("hardlink feedback")
+        retarget(lambda: alpha_feedback.symlink_to(beta_manifest))
+        assert_hidden("symlink manifest")
+        retarget(lambda: os.link(beta_manifest, alpha_feedback))
+        assert_hidden("hardlink manifest")
+        trace = self.root / "beta-evidence" / "trace.json"
+        retarget(lambda: alpha_feedback.symlink_to(trace))
+        assert_hidden("symlink evidence")
+        retarget(lambda: os.link(trace, alpha_feedback))
+        assert_hidden("hardlink evidence")
+        beta_view = self.review_skill("skill-beta", port)
+        self.assertEqual(beta_view["feedback"]["items"][0]["note"], note)
+
+    def test_startup_rejects_ambiguous_feedback_spellings(self):
+        alpha_manifest, _alpha_feedback = self.plant_manifest(
+            self.root / "alpha", "skill-alpha", "ALPHA-PROMPT-9f3a",
+            self.root / "alpha-evidence", b"ALPHA-TRACE-9f3a\n")
+        beta_manifest, _beta_feedback = self.plant_manifest(
+            self.root / "beta", "skill-beta", "BETA-PROMPT-9f3a",
+            self.root / "beta-evidence", b"BETA-TRACE-9f3a\n")
+        case_index = self.write_index(self.root / "case-catalog", [
+            {"id": "skill-alpha", "manifest": str(alpha_manifest), "feedback": str(self.root / "Feedback.json")},
+            {"id": "skill-beta", "manifest": str(beta_manifest), "feedback": str(self.root / "feedback.json")},
+        ])
+        with self.assertRaises(review.ConfigError) as caught:
+            review.load_index(case_index)
+        self.assertIn("ambiguous feedback paths", str(caught.exception))
+        self.assertNotIn(str(self.root), str(caught.exception))
+        nfc = self.root / "caf\u00e9-feedback.json"
+        nfd = self.root / "cafe\u0301-feedback.json"
+        unicode_index = self.write_index(self.root / "unicode-catalog", [
+            {"id": "skill-alpha", "manifest": str(alpha_manifest), "feedback": str(nfc)},
+            {"id": "skill-beta", "manifest": str(beta_manifest), "feedback": str(nfd)},
+        ])
+        with self.assertRaises(review.ConfigError) as caught:
+            review.load_index(unicode_index)
+        self.assertIn("ambiguous feedback paths", str(caught.exception))
+        listed = json.loads(beta_manifest.read_text())
+        missing_root = self.root / "beta-evidence"
+        listed["files"].append({"id": "later-trace", "path": "later.json"})
+        beta_manifest.write_text(json.dumps(listed))
+        evidence_index = self.write_index(self.root / "evidence-catalog", [
+            {"id": "skill-alpha", "manifest": str(alpha_manifest), "feedback": str(missing_root / "LATER.JSON")},
+            {"id": "skill-beta", "manifest": str(beta_manifest), "feedback": str(self.root / "beta-feedback.json")},
+        ])
+        with self.assertRaises(review.ConfigError) as caught:
+            review.load_index(evidence_index)
+        self.assertIn("ambiguous with a review input", str(caught.exception))
 
 
 if __name__ == "__main__":

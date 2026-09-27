@@ -237,15 +237,17 @@ Human inspection uses the local review page. Start the implemented server,
 which binds to loopback and prints the URL it is serving:
 
 ```bash
+python3 tools/eval-review/review.py --index PATH [--port N]
 python3 tools/eval-review/review.py --manifest PATH --feedback PATH [--port N]
 ```
 
-`--manifest` and `--feedback` are required. `--port` defaults to 0. The exact
-manifest fields, feedback file, and reopen steps are in
-[tools/eval-review/README.md](tools/eval-review/README.md). The page reads that
-one private manifest and writes that manifest's feedback file. It does not
-invoke models, grade, tune, or price calls. Raw runs, the manifest, and
-feedback stay outside the repository.
+`--index` configures one repository of skills. The manifest and feedback pair
+configures one skill on that same server. Use one form. `--port` defaults to
+0. The index shape, manifest fields, feedback file, and reopen steps are in
+[tools/eval-review/README.md](tools/eval-review/README.md). The page reads the
+selected private manifest and writes that skill's feedback file. It does not
+invoke models, grade, tune, or price calls. Raw runs, manifests, and feedback
+stay outside the repository.
 
 `scripts/checks/fixtures.sh` runs the accounting tests and the viewer tests:
 

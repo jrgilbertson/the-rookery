@@ -59,6 +59,10 @@ code, .mono { font-family: var(--mono); font-size: 13px; }
 .top { background: var(--rail); border-bottom: 1px solid var(--border-strong); }
 .top .wrap { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 24px; padding-top: 12px; padding-bottom: 12px; font-size: 13px; }
 .top .skill { font-weight: 600; font-size: 15px; }
+.top .wrap > span { min-width: 0; overflow-wrap: anywhere; }
+.skill-control { display: flex; align-items: center; gap: 8px; flex: 0 1 360px; min-width: 0; }
+.skill-control label { flex: none; }
+.skill-control select { width: 100%; min-width: 0; font-size: 15px; font-weight: 600; text-overflow: ellipsis; }
 .top .reviewed { margin-left: auto; }
 .nav { border-bottom: 1px solid var(--border); background: var(--page); }
 .nav .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding-top: 12px; padding-bottom: 12px; }
@@ -217,6 +221,7 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
   :root { --gutter: 16px; }
   html { scroll-padding-bottom: calc(80px + env(safe-area-inset-bottom)); }
   .top .reviewed { margin-left: 0; }
+  .skill-control { flex-basis: 100%; }
   .nav .wrap { gap: 8px; }
   .nav select { flex-basis: 100%; max-width: none; }
   .nav .desk-pager, .nav .position { display: none; }
@@ -272,6 +277,8 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
   const BASIS = { native: "Native activation", listing_proxy: "Listing proxy" };
 
   const state = {
+    skillId: null,
+    catalog: null,
     manifest: null,
     errors: [],
     feedbackError: null,
@@ -315,7 +322,8 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
   const list = (v) => (Array.isArray(v) ? v : []);
   const word = (map, v, fallback) => (Object.prototype.hasOwnProperty.call(map, v) ? map[v] : fallback);
   const roundId = () => (state.manifest && state.manifest.round && str(state.manifest.round.id)) || null;
-  const keyOf = (subjectId, gradeId) => JSON.stringify([subjectId, gradeId ?? null]);
+  const keyOf = (subjectId, gradeId) => JSON.stringify([state.skillId, subjectId, gradeId ?? null]);
+  const skillUrl = (path) => state.skillId === "" ? path : path + "?" + new URLSearchParams({ skill: state.skillId });
   const bindingKey = (kind, subjectId, recordId) => JSON.stringify([kind, subjectId, recordId]);
   const bindingFor = (kind, subjectId, recordId) => state.bindings.get(bindingKey(kind, subjectId, recordId)) || null;
   function feedbackBinding(subjectId, gradeId) {
@@ -346,7 +354,7 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
     if (items.length === 0) return h("p", { class: "missing", text: "No evidence files listed." });
     return h("ul", { class: "links" }, items.map((e) =>
       h("li", null,
-        h("a", { href: "/evidence/" + encodeURIComponent(e.id), target: "_blank", rel: "noopener noreferrer", text: e.id }),
+        h("a", { href: skillUrl("/evidence/" + encodeURIComponent(e.id)), target: "_blank", rel: "noopener noreferrer", text: e.id }),
         str(e.label) ? h("span", { class: "label", text: e.label }) : null)));
   }
 
@@ -390,10 +398,34 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
   /* ---------- Loading ---------- */
 
   async function load() {
-    const main = $("main");
     let body;
     try {
-      const res = await fetch("/api/review", { cache: "no-store", credentials: "same-origin" });
+      const catalogResponse = await fetch("/api/skills", { cache: "no-store", credentials: "same-origin" });
+      const catalog = await catalogResponse.json().catch(() => null);
+      const unnamed = catalog && catalog.repository === null && catalog.default_skill === "" &&
+        Array.isArray(catalog.skills) && catalog.skills.length === 1 &&
+        catalog.skills[0]?.id === "" && catalog.skills[0]?.name === "";
+      if (!catalogResponse.ok || !catalog || !Array.isArray(catalog.skills) || !catalog.skills.length ||
+          (!unnamed && catalog.skills.some((s) => !s || !str(s.id) || !str(s.name))) ||
+          new Set(catalog.skills.map((s) => s.id)).size !== catalog.skills.length ||
+          !catalog.skills.some((s) => s.id === catalog.default_skill)) {
+        throw new Error("The configured skill list could not be loaded. Check the local review server, then reload this page.");
+      }
+      state.catalog = catalog;
+      const url = new URL(location.href);
+      const requested = url.searchParams.getAll("skill");
+      const selected = requested.length ? requested[0] : catalog.default_skill;
+      if (requested.length > 1 || (requested.length && !selected) || !catalog.skills.some((s) => s.id === selected)) {
+        $("top-bar").replaceChildren(skillControl());
+        throw new Error("This URL does not select one configured skill. Choose a skill above to open its review.");
+      }
+      // This document owns exactly one skill for its entire lifetime.
+      state.skillId = selected;
+      if (selected === "") url.searchParams.delete("skill");
+      else url.searchParams.set("skill", selected);
+      history.replaceState(null, "", url);
+      $("top-bar").replaceChildren(skillControl());
+      const res = await fetch(skillUrl("/api/review"), { cache: "no-store", credentials: "same-origin" });
       body = await res.json().catch(() => null);
       if (!res.ok || !body || typeof body !== "object") {
         throw new Error((body && str(body.error)) || "The server returned status " + res.status + ".");
@@ -470,19 +502,50 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
     return false;
   }
 
+  let leavingWithDiscard = false;
+  function skillControl() {
+    const picker = h("select", { id: "skill-picker" });
+    if (state.skillId === null) picker.appendChild(h("option", { value: " ", disabled: true, text: "Choose a skill" }));
+    for (const skill of state.catalog.skills) {
+      picker.appendChild(h("option", { value: skill.id, text: str(skill.name) || "Evaluation review" }));
+    }
+    picker.value = state.skillId ?? " ";
+    picker.title = state.skillId === null ? "Choose a skill" : state.catalog.skills.find((s) => s.id === state.skillId).name || "Evaluation review";
+    picker.addEventListener("change", () => {
+      const next = picker.value;
+      // Keep the displayed selection truthful if navigation is cancelled.
+      picker.value = state.skillId ?? " ";
+      if (next === state.skillId) return;
+      if (state.saving.size > 0) {
+        window.alert("Feedback is still saving. Wait for it to finish before switching skills.");
+        return;
+      }
+      const dirty = unsavedCount();
+      if (dirty > 0 && !window.confirm("Discard unsaved feedback and switch skills? Your " + dirty +
+          (dirty === 1 ? " unsaved draft will" : " unsaved drafts will") + " be lost. Cancel to keep reviewing or save your feedback first.")) return;
+      const url = new URL(location.href);
+      if (next === "") url.searchParams.delete("skill");
+      else url.searchParams.set("skill", next);
+      url.hash = "";
+      leavingWithDiscard = dirty > 0;
+      location.assign(url.href);
+    });
+    return h("div", { class: "skill-control" }, h("label", { for: "skill-picker", text: "Skill" }), picker);
+  }
+
   function renderChrome() {
     const m = state.manifest;
     const bar = $("top-bar");
     const round = m.round || {};
     const reviewed = state.subjects.filter(hasFeedback).length;
     bar.replaceChildren(
-      h("span", { class: "skill", text: (m.skill && str(m.skill.name)) || "Evaluation review" }),
+      skillControl(),
       m.skill && str(m.skill.revision) ? h("span", null, "Revision ", h("code", { text: m.skill.revision })) : null,
       h("span", null, "Round ", h("code", { text: str(round.id) || "unknown" }), round.frozen === true ? " (frozen)" : " (not frozen)"),
       str(m.title) ? h("span", { text: m.title }) : null,
       h("span", { class: "reviewed", id: "reviewed-count", text: reviewed + " of " + state.subjects.length + " have feedback" }),
     );
-    document.title = (str(m.title) || "Evaluation review") + " — review";
+    document.title = (state.catalog.skills.find((s) => s.id === state.skillId).name || "Evaluation review") + " — " + (str(m.title) || "Evaluation review");
 
     const picker = $("picker");
     picker.replaceChildren();
@@ -526,10 +589,13 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
     if (!target || !state.manifest) return;
     const i = state.subjects.findIndex((s) => s.kind === target.kind && s.id === target.id);
     if (i >= 0 && i !== state.index) { state.index = i; renderSubject(true); }
+    else if (i < 0) renderSubject(false);
   });
   window.addEventListener("beforeunload", (e) => {
+    if (leavingWithDiscard) { leavingWithDiscard = false; return; }
     if (unsavedCount() > 0 || state.saving.size > 0) { e.preventDefault(); e.returnValue = ""; }
   });
+  window.addEventListener("pageshow", () => { leavingWithDiscard = false; });
 
   /* ---------- Subject view ---------- */
 
@@ -551,6 +617,9 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
     }
     const s = state.subjects[state.index];
     if (!s) {
+      const url = new URL(location.href);
+      url.hash = "";
+      history.replaceState(null, "", url);
       wrap.appendChild(h("p", { class: "state", text: "This manifest lists no behavior cases or trigger queries." }));
     } else {
       history.replaceState(null, "", "#" + s.kind + "/" + encodeURIComponent(s.id));
@@ -990,7 +1059,7 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
       paint();
       let res = null, body = null;
       try {
-        res = await fetch("/api/feedback", {
+        res = await fetch(skillUrl("/api/feedback"), {
           method: "POST", credentials: "same-origin", cache: "no-store",
           headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
         });

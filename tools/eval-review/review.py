@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Local review server for one skill-evaluation manifest.
+"""Local review server for skill-evaluation manifests.
 
-Serves a display manifest, human feedback, and listed evidence files.
-It does not launch models, grade output, or manage jobs. The HTTP contract
-lives in tools/eval-review/README.md.
+Serves one manifest, or one repository index of manifests, plus that skill's
+feedback and listed evidence. It does not launch models, grade output, or
+manage jobs. The HTTP contract lives in tools/eval-review/README.md.
 """
 import argparse
 from datetime import datetime, timezone
@@ -12,6 +12,7 @@ import json
 import math
 import os
 from pathlib import Path
+import unicodedata
 import re
 import stat
 import socketserver
@@ -40,6 +41,16 @@ class FeedbackError(Exception):
         super().__init__(message)
         self.status = status
         self.item = item
+
+
+class ConfigError(Exception):
+    pass
+
+
+class SelectorError(Exception):
+    def __init__(self, status):
+        super().__init__("Rejected." if status == 400 else "Not found.")
+        self.status = status
 
 
 def valid_id(value):
@@ -108,7 +119,8 @@ def clean_evidence_refs(value, errors, scope, ident):
     return refs, ok
 
 
-def resolve_contained(root_real, relative):
+def contained_path(root_real, relative):
+    # Overlap checks need the listed path even when the file is not created yet.
     if not isinstance(relative, str) or relative == "" or "\\" in relative or "\x00" in relative:
         return None
     rel = Path(relative)
@@ -122,6 +134,13 @@ def resolve_contained(root_real, relative):
     except (OSError, ValueError):
         return None
     if real == root_real:
+        return None
+    return real
+
+
+def resolve_contained(root_real, relative):
+    real = contained_path(root_real, relative)
+    if real is None:
         return None
     try:
         info = real.stat()
@@ -138,12 +157,13 @@ def evidence_index(manifest_path, data, errors):
     root_value = data.get("evidence_root")
     files = data.get("files")
     index = {}
+    listed = []
     if not isinstance(root_value, str) or root_value == "":
         add_error(errors, "manifest", None, "evidence_root is missing.")
-        return index
+        return index, listed
     if not isinstance(files, list):
         add_error(errors, "manifest", None, "files is malformed.")
-        return index
+        return index, listed
     root = Path(root_value)
     if not root.is_absolute():
         root = manifest_path.parent / root
@@ -151,19 +171,29 @@ def evidence_index(manifest_path, data, errors):
         root_real = Path(os.path.realpath(root))
     except UnicodeError:
         add_error(errors, "manifest", None, "evidence_root is not a usable filesystem path.")
-        return index
+        return index, listed
     except OSError:
         add_error(errors, "manifest", None, "evidence_root is not available.")
-        return index
-    if not root_real.is_dir():
+        return index, listed
+    root_usable = root_real.is_dir()
+    if not root_usable:
         add_error(errors, "manifest", None, "evidence_root is not a directory.")
-        return index
     blocked = set()
     for entry in files:
         if not isinstance(entry, dict) or not valid_id(entry.get("id")) or not isinstance(entry.get("path"), str):
             add_error(errors, "manifest", None, "A files entry is malformed.")
             continue
         evidence_id = entry["id"]
+        try:
+            located = contained_path(root_real, entry["path"])
+        except UnicodeError:
+            add_error(errors, "manifest", evidence_id, f"Evidence path for {evidence_id} is not a usable filesystem path.")
+            blocked.add(evidence_id)
+            continue
+        if located is not None:
+            listed.append(located)
+        if not root_usable:
+            continue
         if evidence_id in index or evidence_id in blocked:
             add_error(errors, "manifest", evidence_id, "Evidence id is duplicated and will not be served.")
             index.pop(evidence_id, None)
@@ -180,7 +210,7 @@ def evidence_index(manifest_path, data, errors):
             blocked.add(evidence_id)
             continue
         index[evidence_id] = (root_real, entry["path"])
-    return index
+    return index, listed
 
 
 def refs_resolve(refs, index):
@@ -309,16 +339,33 @@ def same_file(left, right):
         return False
 
 
-def feedback_overlaps_inputs(feedback_path, manifest_path, files):
-    protected = [manifest_path]
-    for root_real, relative in files.values():
-        target = resolve_contained(root_real, relative)
-        if target is not None:
-            protected.append(target)
-    return any(same_file(feedback_path, item) for item in protected)
+def path_overlaps(candidate, protected):
+    return any(same_file(candidate, item) for item in protected)
 
 
-def load_review(manifest_path):
+def spelling_key(path):
+    # Portable spelling key for configured paths. It is not file identity.
+    raw = os.fspath(path)
+    try:
+        text = os.path.realpath(raw)
+    except (OSError, UnicodeError, ValueError):
+        text = os.path.normpath(raw)
+    try:
+        text = unicodedata.normalize("NFC", text)
+        return tuple(unicodedata.normalize("NFC", part).casefold() for part in Path(text).parts)
+    except (UnicodeError, ValueError):
+        return tuple(Path(os.path.normpath(raw)).parts)
+
+
+def spelling_ambiguous(candidate, others):
+    key = spelling_key(candidate)
+    for item in others:
+        if spelling_key(item) == key and not same_file(candidate, item):
+            return True
+    return False
+
+
+def load_review(manifest_path, skill_id=None):
     path = Path(manifest_path)
     errors = []
     model = {
@@ -328,9 +375,11 @@ def load_review(manifest_path):
         "errors": errors,
         "bindings": [],
         "files": {},
+        "listed": [],
         "grades": {},
         "subjects": {},
         "round_id": None,
+        "skill_id": skill_id if valid_id(skill_id) else None,
     }
     try:
         text = path.read_text(encoding="utf-8")
@@ -356,7 +405,7 @@ def load_review(manifest_path):
         model["fatal"] = "Manifest cases and triggers must be lists."
         return model
     model["round_id"] = round_info["id"]
-    model["files"] = evidence_index(path, data, errors)
+    model["files"], model["listed"] = evidence_index(path, data, errors)
     title, title_ok = optional_string(data.get("title"))
     if not title_ok:
         add_error(errors, "manifest", None, "Title is malformed.")
@@ -370,6 +419,13 @@ def load_review(manifest_path):
         add_error(errors, "manifest", None, "Skill name or revision is malformed.")
         skill_name = skill_name if name_ok else None
         skill_revision = skill_revision if revision_ok else None
+    if model["skill_id"] is None and valid_id(skill_name):
+        model["skill_id"] = skill_name
+    if valid_id(skill_id) and skill_name != skill_id:
+        model["fatal"] = f"Skill {skill_id} does not match the manifest skill name."
+        model["files"] = {}
+        model["bindings"] = []
+        return model
     frozen = round_info.get("frozen")
     if type(frozen) is not bool:
         add_error(errors, "manifest", model["round_id"], "Round frozen flag is malformed.")
@@ -463,6 +519,7 @@ def clean_case(case, index, errors, model, seen_subjects):
     subject_fp = fingerprint({
         "v": 1,
         "kind": "subject",
+        "skill_id": model["skill_id"],
         "round_id": model["round_id"],
         "subject_id": case_id,
         "subject_type": "case",
@@ -637,6 +694,7 @@ def clean_grade(grade, errors, model, display_case, runs_by_id, grade_ids):
         grade_fp = fingerprint({
             "v": 1,
             "kind": "grade",
+            "skill_id": model["skill_id"],
             "round_id": model["round_id"],
             "subject_id": case_id,
             "grade_id": grade_id,
@@ -743,6 +801,7 @@ def clean_trigger(trigger, index, errors, model, seen_subjects):
     remember_subject(model, trigger_id, fingerprint({
         "v": 1,
         "kind": "subject",
+        "skill_id": model["skill_id"],
         "round_id": model["round_id"],
         "subject_id": trigger_id,
         "subject_type": "trigger",
@@ -854,6 +913,7 @@ def clean_observation(observation, errors, model, trigger, seen):
         obs_fp = fingerprint({
             "v": 1,
             "kind": "observation",
+            "skill_id": model["skill_id"],
             "round_id": model["round_id"],
             "subject_id": trigger_id,
             "grade_id": observation_id,
@@ -971,10 +1031,12 @@ def matching_item(items, round_id, subject_id, grade_id, grade_fp):
     return None
 
 
-def apply_feedback(model, form, path):
+def apply_feedback(model, form, path, protected=None):
     if model["fatal"] is not None:
         raise FeedbackError(400, "Not saved: manifest is not reviewable.")
-    if feedback_overlaps_inputs(path, model["manifest_path"], model["files"]):
+    if protected is None:
+        protected = [model["manifest_path"], *model.get("listed", [])]
+    if path_overlaps(path, protected):
         raise FeedbackError(400, "Not saved: feedback path overlaps a review input.")
     for key in ("round_id", "subject_id", "grade_id", "judgment", "note", "base_revision", "fingerprint"):
         if key not in form:
@@ -1052,6 +1114,78 @@ def apply_feedback(model, form, path):
     return body
 
 
+class SkillSource:
+    def __init__(self, manifest_path, feedback_path, skill_id=None):
+        self.manifest_path = Path(manifest_path)
+        self.feedback_path = Path(feedback_path)
+        self.skill_id = skill_id
+
+
+def configured_path(base, value):
+    if not isinstance(value, str) or value == "" or "\x00" in value:
+        raise ConfigError("A skill entry is malformed.")
+    path = Path(value)
+    if not path.is_absolute():
+        path = base / path
+    return path
+
+
+def load_index(index_path):
+    path = Path(index_path)
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        raise ConfigError("Index is missing or malformed JSON.")
+    if not isinstance(data, dict) or set(data) != {"repository", "skills"}:
+        raise ConfigError("Index must contain repository and skills.")
+    repository = data["repository"]
+    entries = data["skills"]
+    if not valid_id(repository):
+        raise ConfigError("Index repository is missing or malformed.")
+    if not isinstance(entries, list) or not entries:
+        raise ConfigError("Index skills must be a non-empty list.")
+    sources = []
+    seen = set()
+    for entry in entries:
+        if not isinstance(entry, dict) or set(entry) != {"id", "manifest", "feedback"}:
+            raise ConfigError("A skill entry is malformed.")
+        skill_id = entry["id"]
+        if not valid_id(skill_id):
+            raise ConfigError("A skill id is missing or malformed.")
+        if skill_id in seen:
+            raise ConfigError(f"Skill id {skill_id} is duplicated.")
+        seen.add(skill_id)
+        sources.append(SkillSource(
+            configured_path(path.parent, entry["manifest"]),
+            configured_path(path.parent, entry["feedback"]),
+            skill_id,
+        ))
+    models = []
+    for source in sources:
+        model = load_review(source.manifest_path, skill_id=source.skill_id)
+        if model["fatal"] is not None:
+            message = model["fatal"]
+            if "does not match the manifest skill name" not in message:
+                message = f"Skill {source.skill_id} manifest is not usable."
+            raise ConfigError(message)
+        models.append(model)
+    protected = [path]
+    for source, model in zip(sources, models):
+        protected.append(source.manifest_path)
+        protected.extend(model.get("listed") or [])
+    for index, source in enumerate(sources):
+        others = [other.feedback_path for other_index, other in enumerate(sources) if other_index != index]
+        if path_overlaps(source.feedback_path, others):
+            raise ConfigError("Two skills share a feedback destination.")
+        if spelling_ambiguous(source.feedback_path, others):
+            raise ConfigError("Two skills have ambiguous feedback paths.")
+        if path_overlaps(source.feedback_path, protected):
+            raise ConfigError("A feedback path overlaps a review input.")
+        if spelling_ambiguous(source.feedback_path, protected):
+            raise ConfigError("A feedback path is ambiguous with a review input.")
+    return repository, sources
+
+
 class ReviewServer(ThreadingHTTPServer):
     allow_reuse_address = False
     daemon_threads = True
@@ -1063,10 +1197,11 @@ class ReviewServer(ThreadingHTTPServer):
         self.server_name = "127.0.0.1"
         self.server_port = self.server_address[1]
 
-    def __init__(self, address, manifest_path, feedback_path, viewer_path=None):
+    def __init__(self, address, sources, repository=None, index_path=None, viewer_path=None):
         super().__init__(address, ReviewHandler)
-        self.manifest_path = Path(manifest_path)
-        self.feedback_path = Path(feedback_path)
+        self.sources = list(sources)
+        self.repository = repository
+        self.index_path = None if index_path is None else Path(index_path)
         self.viewer_path = None if viewer_path is None else Path(viewer_path)
         self.feedback_lock = threading.Lock()
         port = self.server_address[1]
@@ -1100,6 +1235,8 @@ class ReviewHandler(BaseHTTPRequestHandler):
         try:
             if parts == [] and method == "GET":
                 self.serve_viewer()
+            elif parts == ["api", "skills"] and method == "GET":
+                self.serve_skills()
             elif parts == ["api", "review"] and method == "GET":
                 self.serve_review()
             elif parts == ["api", "feedback"] and method == "POST":
@@ -1110,6 +1247,9 @@ class ReviewHandler(BaseHTTPRequestHandler):
                 self.respond(405, {"error": "Method not allowed."}, "application/json; charset=utf-8", DATA_CSP)
             else:
                 self.respond(404, {"error": "Not found."}, "application/json; charset=utf-8", DATA_CSP)
+        except SelectorError as error:
+            message = "Rejected." if error.status == 400 else "Not found."
+            self.respond(error.status, {"error": message}, "application/json; charset=utf-8", DATA_CSP)
         except FeedbackError as error:
             body = {"error": str(error)}
             if error.status == 409:
@@ -1219,9 +1359,83 @@ class ReviewHandler(BaseHTTPRequestHandler):
             return
         self.respond(200, data, "text/html; charset=utf-8", HTML_CSP)
 
+    def query_skill(self):
+        query = urllib.parse.urlsplit(self.path).query
+        values = [value for key, value in urllib.parse.parse_qsl(query, keep_blank_values=True) if key == "skill"]
+        if not values:
+            return None
+        if len(values) != 1 or not valid_id(values[0]):
+            raise SelectorError(400)
+        return values[0]
+
+    def selected_source(self):
+        selected = self.query_skill()
+        sources = self.server.sources
+        if sources[0].skill_id is not None:
+            if selected is None:
+                return sources[0]
+            for source in sources:
+                if source.skill_id == selected:
+                    return source
+            raise SelectorError(404)
+        source = sources[0]
+        if selected is None:
+            return source
+        model = load_review(source.manifest_path)
+        name = None
+        if model["manifest"] is not None:
+            name = model["manifest"]["skill"]["name"]
+        if name == selected:
+            return source
+        raise SelectorError(404)
+
+    def catalog_entry(self, model):
+        name = None
+        if model["manifest"] is not None:
+            candidate = model["manifest"]["skill"]["name"]
+            if valid_id(candidate):
+                name = candidate
+        if name is None:
+            return {"id": "", "name": ""}
+        return {"id": name, "name": name}
+
+    def serve_skills(self):
+        if self.server.index_path is not None:
+            skills = [{"id": source.skill_id, "name": source.skill_id} for source in self.server.sources]
+            repository = self.server.repository
+        else:
+            model = load_review(self.server.sources[0].manifest_path)
+            skills = [self.catalog_entry(model)]
+            repository = None
+        self.respond(200, {
+            "repository": repository,
+            "skills": skills,
+            "default_skill": skills[0]["id"],
+        }, "application/json; charset=utf-8", DATA_CSP)
+
+    def destination_guard(self, destination):
+        protected = []
+        selected = None
+        if self.server.index_path is not None:
+            protected.append(self.server.index_path)
+        for source in self.server.sources:
+            model = load_review(source.manifest_path, skill_id=source.skill_id)
+            protected.append(source.manifest_path)
+            if source is not destination:
+                protected.append(source.feedback_path)
+            protected.extend(model.get("listed") or [])
+            if source is destination:
+                selected = model
+        return selected, protected
+
     def serve_review(self):
-        model = load_review(self.server.manifest_path)
-        feedback, error = load_feedback(self.server.feedback_path)
+        source = self.selected_source()
+        with self.server.feedback_lock:
+            model, protected = self.destination_guard(source)
+            if path_overlaps(source.feedback_path, protected):
+                feedback, error = None, "Feedback path overlaps a review input."
+            else:
+                feedback, error = load_feedback(source.feedback_path)
         if model["fatal"] is not None:
             errors = [{"scope": "manifest", "id": None, "message": model["fatal"]}]
             manifest = None
@@ -1252,16 +1466,19 @@ class ReviewHandler(BaseHTTPRequestHandler):
             raise FeedbackError(400, "Not saved: body is not JSON.")
         if not isinstance(form, dict):
             raise FeedbackError(400, "Not saved: body must be a JSON object.")
+        source = self.selected_source()
         with self.server.feedback_lock:
-            model = load_review(self.server.manifest_path)
-            saved = apply_feedback(model, form, self.server.feedback_path)
+            # The overlap check and the write share one lock across every skill.
+            model, protected = self.destination_guard(source)
+            saved = apply_feedback(model, form, source.feedback_path, protected)
         self.respond(200, {"item": saved}, "application/json; charset=utf-8", DATA_CSP)
 
     def serve_evidence(self, evidence_id):
+        source = self.selected_source()
         if not valid_id(evidence_id):
             self.respond(404, {"error": "Not found."}, "application/json; charset=utf-8", DATA_CSP)
             return
-        model = load_review(self.server.manifest_path)
+        model = load_review(source.manifest_path, skill_id=source.skill_id)
         located = model["files"].get(evidence_id)
         if located is None:
             self.respond(404, {"error": "Not found."}, "application/json; charset=utf-8", DATA_CSP)
@@ -1294,19 +1511,35 @@ class ReviewHandler(BaseHTTPRequestHandler):
 
 
 def serve(manifest_path, feedback_path, port=0, viewer_path=None):
-    server = ReviewServer(("127.0.0.1", port), manifest_path, feedback_path, viewer_path)
-    return server
+    source = SkillSource(manifest_path, feedback_path)
+    return ReviewServer(("127.0.0.1", port), [source], viewer_path=viewer_path)
+
+
+def serve_index(index_path, port=0, viewer_path=None):
+    repository, sources = load_index(index_path)
+    return ReviewServer(("127.0.0.1", port), sources, repository, index_path, viewer_path)
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="Serve one local skill-evaluation review manifest.")
-    parser.add_argument("--manifest", type=Path, required=True)
-    parser.add_argument("--feedback", type=Path, required=True)
+    parser = argparse.ArgumentParser(description="Serve local skill-evaluation reviews.")
+    parser.add_argument("--manifest", type=Path)
+    parser.add_argument("--feedback", type=Path)
+    parser.add_argument("--index", type=Path)
     parser.add_argument("--port", type=int, default=0)
     args = parser.parse_args(argv)
     if args.port < 0 or args.port > 65535:
         parser.error("port must be from 0 through 65535")
-    server = serve(args.manifest, args.feedback, args.port)
+    if args.index is not None and (args.manifest is not None or args.feedback is not None):
+        parser.error("--index cannot be combined with --manifest or --feedback")
+    try:
+        if args.index is not None:
+            server = serve_index(args.index, args.port)
+        elif args.manifest is not None and args.feedback is not None:
+            server = serve(args.manifest, args.feedback, args.port)
+        else:
+            parser.error("provide --index, or both --manifest and --feedback")
+    except ConfigError as error:
+        parser.error(str(error))
     print(f"http://127.0.0.1:{server.server_address[1]}", flush=True)
     try:
         server.serve_forever()

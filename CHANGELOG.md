@@ -32,6 +32,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- The eval review server lists one repository's skills at `GET /api/skills`.
+  `?skill=<id>` selects that skill's manifest, feedback, and evidence.
+  `--index` configures the repository; one manifest and feedback file starts
+  the same server with a single catalog entry.
+
 - Per-call eval accounting uses ccusage upstream prices for direct official-CLI
   runs and stops subsequent calls while costs are unknown or the authorized
   allowance is exhausted. Transcript inspection and grading stay with the agent.
@@ -66,6 +71,10 @@ looked" surface. GitHub Releases mirror its entries.
   implement the subject. Lifecycle and Git hooks remain deliberately absent.
 
 ### Changed
+
+- Eval prompts are natural tasks with explicit synthetic data. The
+  executor sees the task and real user constraints, not the hoped-for
+  conclusion or the assertions. Assertions accept another valid design.
 
 - Skill evaluation keeps one workflow. A value assessment is a matched
   with-skill and without-skill pair and stays separate from an affected

@@ -95,12 +95,25 @@ never to `evals/`.
 
 - `skill_name` equals the skill's directory name, and each `id` is a unique
   integer.
-- `prompt` is a realistic task with synthetic data, and `expected_output`
-  describes success for a human reader. `files` is optional, with paths
-  relative to the skill root.
-- `assertions` are binary, verifiable statements: one or two sharp assertions
-  per eval, or one per numbered independent scenario. Freeze them before the
-  check. An eval fails when any assertion fails. Put deterministic mechanical
+- `prompt` is a natural task a user would give, with explicit synthetic
+  data. It carries the concrete evidence that task needs and every
+  constraint the user requires. Put a short design, snippet, or example
+  in the prompt when that is enough to do the task. `files` is optional,
+  and only for an input the task needs as a file, with paths relative to
+  the skill root. Name a file or document only when the packet contains
+  it. The hoped-for conclusion stays out of the prompt, as do instructions
+  whose only job is to stage, hint, or grade the eval.
+- The executor receives the prompt and any named files. `expected_output`
+  describes success for a human reader. `expected_output` and `assertions`
+  stay out of the executor packet. Human inspection shows them, and the
+  grader receives the assertions with the blind packet under **Grading and
+  independence**.
+- `assertions` are binary, verifiable statements of the required outcome:
+  one or two sharp assertions per eval, or one per numbered independent
+  scenario. Freeze them before the check. An eval fails when any assertion
+  fails. Another design, implementation, or phrasing that meets the outcome
+  passes. Require a particular phrase, structure, or data shape only when
+  that shape is itself a fixed requirement. Put deterministic mechanical
   checks in scripts rather than asking a model to grade them.
 - `provenance` is an extension. It names the observed failure or baseline gap
   the eval protects, or the contract a regression control guards.
@@ -110,9 +123,11 @@ never to `evals/`.
   **Arms and runs** governs failure attribution and shipping.
 
 An eval covers realistic required behavior, an observed failure, or a named
-contract. Start a new skill with two or three realistic evals; a failing
-no-skill baseline is not a prerequisite. Fold near-duplicate scenarios into one
-eval, with numbered scenarios in the prompt and one assertion for each.
+contract. These prompt and assertion rules apply to a new case and to a case
+reused from an earlier round. Start a new skill with two or three realistic
+evals; a failing no-skill baseline is not a prerequisite. Fold near-duplicate
+scenarios into one eval, with numbered scenarios in the prompt and one
+assertion for each.
 
 **Conflict: field names.** The standard uses `assertions` here and
 `assertion_results` in grading. Anthropic's skill-creator uses `expectations`

@@ -238,14 +238,16 @@ class HarnessTests(unittest.TestCase):
 
     def test_old_runner_source_requires_archived_reporter(self):
         self.execute()
-        source = h.iteration_dir() / 'runner/harness.py'
-        original = source.read_bytes()
-        source.write_bytes(b'# earlier runner format\n')
-        try:
-            with self.assertRaisesRegex(h.Halt, 'frozen archived runner'):
-                h.report(['executor'])
-        finally:
-            source.write_bytes(original)
+        for name in ('harness.py', 'usage.py'):
+            with self.subTest(name=name):
+                source = h.iteration_dir() / 'runner' / name
+                original = source.read_bytes()
+                source.write_bytes(b'# earlier runner format\n')
+                try:
+                    with self.assertRaisesRegex(h.Halt, 'frozen archived runner'):
+                        h.report(['executor'])
+                finally:
+                    source.write_bytes(original)
 
     def test_changed_eval_report_uses_frozen_assertions_and_is_incomplete(self):
         self.execute()
@@ -534,6 +536,19 @@ class HarnessTests(unittest.TestCase):
         self.assertIsNone(h.rjson(h.run_dir('executor', self.ev, 'with_skill', 1) / 'cost.json')['cost_usd'])
         self.assertEqual(self.execute(), 'unavailable')
         self.assertEqual(process.waits, 3)
+
+    def test_models_must_be_nonempty_cli_strings(self):
+        for target in ('executor', 'judge'):
+            original = h.CFG['targets'][target]['model']
+            for model in (123, None, True, [], {}, '', '   ', 'bad\0model'):
+                with self.subTest(target=target, model=model):
+                    h.CFG['targets'][target]['model'] = model
+                    with self.assertRaisesRegex(ValueError, 'model'):
+                        h.validate_config(self.config)
+                    self.assertEqual(self.process_calls, [])
+                    self.assertFalse(h.run_dir('executor', self.ev, 'with_skill', 1).exists())
+            h.CFG['targets'][target]['model'] = original
+        h.validate_config(self.config)
 
     def test_iteration_requires_a_positive_integer(self):
         for value in (True, False, 0, -1, 1.5, '1'):

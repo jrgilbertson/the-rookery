@@ -823,6 +823,9 @@ def validate_config(path, require_executor=True):
             continue
         if not re.fullmatch(r'[a-z0-9]+(?:[.-][a-z0-9]+)*', name) or target['adapter'] not in ADAPTERS:
             raise ValueError('Invalid target')
+        model = target.get('model')
+        if not isinstance(model, str) or not model.strip() or '\0' in model:
+            raise ValueError('Target model must be a nonempty CLI string')
         if 'jobs' in target:
             raise ValueError('Calls are sequential; remove jobs')
         target.setdefault('effort', 'high')
@@ -1305,9 +1308,10 @@ def report(targets=None):
     archive = iteration_dir()
     if (archive / '_ledger.jsonl').exists():
         raise Halt('Legacy ledger round: use its frozen archived runner, not this runner')
-    frozen_runner = archive / 'runner/harness.py'
-    if frozen_runner.exists() and frozen_runner.read_bytes() != (H / 'harness.py').read_bytes():
-        raise Halt('This round uses an earlier runner; report with its frozen archived runner')
+    for name in ('harness.py', 'usage.py'):
+        frozen_runner = archive / 'runner' / name
+        if frozen_runner.exists() and frozen_runner.read_bytes() != (H / name).read_bytes():
+            raise Halt('This round uses an earlier runner; report with its frozen archived runner')
     saved = archive / 'round.json'
     definitions = archive / 'evals.json'
     digest_file = archive / 'evals.sha256'

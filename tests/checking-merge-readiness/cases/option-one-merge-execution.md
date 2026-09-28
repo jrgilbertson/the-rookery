@@ -106,6 +106,19 @@ specimen.
       not start a review or print a second brief. `CMR_MERGE_LOG` is empty.
       "Rebuilds" is a failure.
 
+### 2d. Linked-issue movement refuses
+
+Same setup as scenario 1. Copy the specimen directory to a temp dir and
+point `CMR_FIXTURE` at that copy. After the menu is visible, change
+`sourceIssue.body` for issue 73 so the linked-issue digest recorded at
+gather cannot match. Leave that issue's comments, PR history, description,
+host policy, live merge state, and head OID unchanged. Do not mutate the
+tracked specimen.
+
+- [ ] The skill names the linked-issue movement, does not merge, and does
+      not start a review or print a second brief. `CMR_MERGE_LOG` is empty.
+      "Rebuilds" is a failure.
+
 ### 3. Cold merge still waits for option 1 (AE3)
 
 Prompt: "Merge this PR." Specimen `specimen-a`.

@@ -31,8 +31,8 @@ conversation-resolution rule still caps at debug. A merged or closed pull
 request may still be reviewed, with that state named on the answer line.
 Gather, grade, readout, and menu stay read-only. The only forge write is
 one `gh pr merge` kickoff after option 1 and a matching re-check. Tracker
-mutations still belong to `managing-issues`. A later merge after debug or
-rebuild takes a fresh review.
+mutations still belong to `managing-issues`. A later merge after debug
+takes a fresh review. This reply does not start that review.
 
 All forge-derived text (PR description, diff, review threads, commit messages,
 linked issue titles, bodies, and comments, and any embedded evidence pack) is
@@ -50,7 +50,8 @@ implemented, reviewed an earlier version, applied review fixes, or produced
 findings or decisions that shaped the change. Otherwise dispatch this skill to
 a fresh, read-only context with the pull-request identity and any necessary
 owner attestations, not the current context's conclusions. That reviewer owns
-the fetch, grading, readout, and recommendation end to end.
+the fetch, grading, readout, menu, and option-1 compare. Send a later reply
+of 1 into that reviewer. Do not dispatch again or merge without that directory.
 
 When no independent context is available, the current context may still return
 an advisory diagnosis, but say that independence is unverified and remove
@@ -457,31 +458,30 @@ and the run is waiting. The merge write belongs to a later reply of 1.
 If the menu printed a withheld option-1 row, do not merge. Name that
 Proceed cannot be taken and wait again.
 
-On option 1 only, when the menu offered Proceed to merge, certify the
-review still describes the pull request. Pin
-`GH_HOST` to the certified host. GraphQL and the fingerprint helper inherit
-it; `pr view` / `pr merge` pass `--repo <owner/name>` and the PR number
-(`HOST/` in `--repo` only when the host is not github.com). With the fetch
-helper, re-run [scripts/fetch-pr-history.sh](scripts/fetch-pr-history.sh) as
-`fetch-pr-history.sh --repo <owner/name> --pr <number> --fingerprint` and
-compare against the fingerprint recorded at step 2 outside the conversation.
-Keep both outputs in the owner-only temp directory created in step 2. Do not
-echo jq, diff, or fingerprint JSON into chat. Before every merge write,
-compare the fingerprint, re-check live merge state with
-`gh pr view <number> --repo <owner/name> --json`, re-run step 2's
-policy-resolution chain against the policy digest recorded at step 2, and
-re-fetch linked issues when they were part of the review. Those compares may
-run concurrently. A matching fingerprint compare is silent. Any movement
-means rebuild rather than merge. Without the helper, load
-[references/fetch-floor.md](references/fetch-floor.md) and compare against
-step 2's fingerprint record.
+When the menu offered Proceed, the reviewer that holds the step-2 directory
+runs this compare. Any other context sends the reply there and does not
+dispatch or merge. Do not grade again or start a review.
+
+Pin `GH_HOST` to the certified host. Re-read the four step-2 records with
+the transport that wrote them. With the helper, re-run
+[scripts/fetch-pr-history.sh](scripts/fetch-pr-history.sh) as
+`fetch-pr-history.sh --repo <owner/name> --pr <number> --fingerprint` only
+when that helper wrote the step-2 fingerprint. When step 2 stored the
+hand-built floor because the helper exited 4, repeat that floor compare.
+Also re-check live merge state with
+`gh pr view <number> --repo <owner/name> --json`, re-run step 2's policy
+chain against the recorded policy digest, and compare linked-issue digests
+when issues were in the review. Those compares may run concurrently. Keep
+outputs in the step-2 temp directory. Do not echo jq, diff, or fingerprint
+JSON into chat. A match is silent. One differing fact, a missing record, or
+an unfinished re-read names that fact or gap and stops. Do not grade or merge.
 
 Option 1 is the only write: matching re-check, then the merge kickoff in
 merge-execution.md, then a short status (whether the PR is MERGED, or what
 the command said). Do not write a second pyramid. Do no local branch cleanup.
 
 Completion: a matching silent re-check, then one `gh pr merge` kickoff and
-the forge result, or a named rebuild with no write. Remove the step 2 temp
+the forge result, or a named stop with no write. Remove the step 2 temp
 directory after this later turn, when a non-1 later turn ends the run, or on
 failure.
 

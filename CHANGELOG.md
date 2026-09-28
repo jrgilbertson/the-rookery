@@ -13,6 +13,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- `checking-merge-readiness` keeps the Option-1 reply in the review that
+  wrote the brief. That reply compares the recorded fingerprint, live merge
+  state, host policy, and linked-issue digests, then merges or stops. It
+  does not start another review.
 - `route-work` Questions cards no longer present one reading of an ambiguous
   request as what the operator said. A recommendation's reason names what is
   unknown and what the answer decides. Neither the question nor its reason

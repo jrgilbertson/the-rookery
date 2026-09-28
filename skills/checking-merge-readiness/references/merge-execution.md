@@ -2,7 +2,7 @@
 
 Kick off one forge merge. Load after grading when option 1 might be
 offered. The write still waits for a numbered reply of option 1 plus a
-matching fingerprint, live-state, and host-policy re-check.
+matching fingerprint, live-state, host-policy, and linked-issue re-check.
 
 ## When to offer option 1
 

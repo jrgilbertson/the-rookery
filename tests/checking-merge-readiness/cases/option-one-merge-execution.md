@@ -73,8 +73,9 @@ point `CMR_FIXTURE` at that copy. After the menu is visible, edit that
 copy's history so the re-check cannot match. Do not mutate the tracked
 specimen. Do not substitute a conversational claim that a comment landed.
 
-- [ ] The skill names what moved, rebuilds or refuses, and `CMR_MERGE_LOG`
-      is empty.
+- [ ] The skill names what moved, does not merge, and does not start a
+      review or print a second brief. `CMR_MERGE_LOG` is empty. "Rebuilds"
+      is a failure.
 
 ### 2b. Host-policy movement refuses (AE2)
 
@@ -86,8 +87,9 @@ still nonempty: the stub prefers `mergeRules`. Leave review history,
 description, and head OID unchanged so the fingerprint still matches.
 Do not mutate the tracked specimen.
 
-- [ ] The skill names the host-policy movement, rebuilds or refuses, and
-      `CMR_MERGE_LOG` is empty.
+- [ ] The skill names the host-policy movement, does not merge, and does
+      not start a review or print a second brief. `CMR_MERGE_LOG` is empty.
+      "Rebuilds" is a failure.
 
 ### 2c. Live merge-signal movement refuses
 
@@ -100,8 +102,9 @@ mutate `isDraft`: it is already in `.fingerprint.identity`. Leave review
 history, host policy, and head OID unchanged. Do not mutate the tracked
 specimen.
 
-- [ ] The skill names the live-signal movement, rebuilds or refuses, and
-      `CMR_MERGE_LOG` is empty.
+- [ ] The skill names the live-signal movement, does not merge, and does
+      not start a review or print a second brief. `CMR_MERGE_LOG` is empty.
+      "Rebuilds" is a failure.
 
 ### 3. Cold merge still waits for option 1 (AE3)
 

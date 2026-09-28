@@ -6,10 +6,11 @@ SKILL.md owns the verb set and the completion bound; this file owns the
 payload rules. A successful helper run already paginated and fingerprinted.
 
 **Incomplete history** is the leading token for any thin or partial payload on
-a required surface: name the gap and **cap at debug** (remove merge). Never
-invent missing values, skip the check, or treat partial success as full
-history. Degraded mode is not only total unavailability; thin payload is the
-same class of cap.
+a required surface during gather: name the gap and **cap at debug** (remove
+merge). On the option-1 reply, name the gap and stop. Do not grade and do not
+dispatch. Never invent missing values, skip the check, or treat partial
+success as full history. Degraded mode is not only total unavailability; thin
+payload is the same class of cap.
 
 The bundled helper `scripts/fetch-pr-history.sh` is the preferred transport
 for the history surfaces: one run paginates every connection to exhaustion,
@@ -83,7 +84,7 @@ resolution) and comment (id, author, timestamp, opaque body digest); each
 conversation comment the same; each description edit (`editedAt`, editor,
 opaque post-edit body digest); policy digest (resolution required, approval
 count, last-push flags) and live merge-state digest. Without ids, step 7
-cannot certify stability: rebuild or refuse proceed-to-merge.
+cannot compare stability: stop and do not merge.
 
 The helper's fingerprint — each node's stable id plus an opaque digest over
 its full floor-field JSON — satisfies this section for the history surfaces

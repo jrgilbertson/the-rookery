@@ -216,7 +216,7 @@ review. Looks merge-ready is the trigger to start this review.
 It recommends merge, debug, or do not merge, then waits for a numbered reply.
 Gather, grade, and readout stay read-only. Option 1 is Proceed to merge.
 Before merging, it confirms the pull request has not moved, then kicks off
-the forge merge. A match is silent; a mismatch names what moved and rebuilds
+the forge merge. A match is silent; a mismatch names what moved and stops
 rather than merging. It still does not mutate the tracker. The skill does
 not pick option 1 in the same turn that wrote the menu.
 

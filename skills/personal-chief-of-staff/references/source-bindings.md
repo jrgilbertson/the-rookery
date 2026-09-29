@@ -322,6 +322,18 @@ Completion: the ending and recap match the requested operations and observed
 results, with no preview, map save, or connection inventory treated as source
 access or fresh-conversation continuity.
 
+## Thin callers
+
+A caller supplies the installed skill, mode or scheduled context, and map
+location. Replace the pointers in this scheduled prompt with the user's own:
+
+> Use the installed `personal-chief-of-staff` skill for this scheduled weekly
+> review. Source map: `<private-map-location>`.
+
+The skill owns sequencing, questions, approvals, stopping, and resuming for
+both scheduled and direct invocations. The map supplies sources, not another
+workflow or permission to apply changes.
+
 ## Resolve before recommending
 
 For a new Wind-down, Weekly, or Quarterly review, load the map once before

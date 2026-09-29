@@ -4,6 +4,42 @@ Read this reference before retrieving meetings. It defines when source
 material supports a durable proposal and how to handle ambiguity without
 turning the source into authority.
 
+## Resolve supplied configuration
+
+Use existing authoritative provider, approved-note, template, naming, and
+ownership guidance. A caller may instead supply a private source map explicitly:
+
+> Use the installed `reviewing-meetings` skill to review newly completed
+> meetings. Source map: `<private-map-location>`.
+
+An unreadable, malformed, or unsupported map remains unresolved; preserve it
+and ask for repair rather than infer bindings. Supported versions are 1–3.
+When supplied, resolve the designated meeting-provider evidence in
+`conversations`, approved notes in `meetings`, and live guidance in `templates`.
+Existing template designations under `reviews` remain usable; distinguish them
+from completed reviews by their designation and filters. `relationships`,
+`tasks`, and `calendar` can identify downstream owners under
+[action-routing.md](action-routing.md); contact lookup alone does not designate
+a durable relationship owner. Use established guidance for details the map
+does not supply. A collection pointer alone resolves neither the live meeting
+template nor its filename convention.
+
+Honor each binding's exact identity, target, source restrictions, and legacy
+read conditions and modes. For version 1 or 2 bindings restricted to review
+modes, obtain approval before meeting-review reads outside those modes. When
+access overrides exist, use the complete override for the explicitly identified
+current harness, otherwise the shared access description; never merge fields.
+If harness identity is ambiguous, resolve it only when it changes selected
+access. Keep a failed selected override selected and report the access gap;
+do not substitute shared access, another override, or account. Authentication
+and reconnection remain with the harness.
+
+Missing designations or conflicting accounts or destinations remain specific
+configuration gaps under the checks below; resolve only those gaps with the
+user. Standalone review needs no chief-of-staff installation or map discovery.
+The meeting skill owns its workflow, questions, approvals, stopping, and
+resuming regardless of how configuration arrives.
+
 ## Establish source identity and readiness
 
 Treat the meeting provider as configuration. Before a source-ready candidate

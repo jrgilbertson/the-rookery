@@ -25,6 +25,9 @@ connector availability.
 
 ### Schema
 
+Maintainers: the `reviewing-meetings` skill mirrors these map field and version
+rules for standalone use. Keep the two copies aligned when the schema changes.
+
 The top-level object contains exactly `version` and `roles`. `version` is the
 integer `3` for new maps; versions `1` and `2` remain supported as described
 under [Existing maps](#existing-maps). `roles` is an object whose keys match
@@ -81,6 +84,11 @@ must support version 3 before using an upgraded map. Unsupported versions remain
 untouched.
 
 ## Resolve harness access
+
+Resolving a binding selects a route; it does not read the source. Apply the
+[access audit](source-access.md#audit-the-current-responses-source-access) to
+calls this response actually executes. Supplied result descriptions remain
+user-supplied and unverified, even when they describe successful reads.
 
 Use these rules for setup verification, new reviews, and targeted caller
 context whenever a binding needs a native read. Resolve the harness key from

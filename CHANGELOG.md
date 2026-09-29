@@ -13,6 +13,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- Chief-of-staff reviews keep supplied results unverified, give the actual
+  reason when source calls are excluded, and continue conditional questions
+  without claiming a verified review.
 - `checking-merge-readiness` keeps the Option-1 reply in the review that
   wrote the brief. That reply compares the recorded fingerprint, live merge
   state, host policy, and linked-issue digests, then merges or stops. It

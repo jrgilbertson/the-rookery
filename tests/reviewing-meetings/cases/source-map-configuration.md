@@ -1,5 +1,9 @@
 # Supplied source maps and standalone configuration
 
+Regression control for issue #183: a supplied source map must resolve meeting
+evidence and approved-note destinations while preserving standalone use and
+existing map restrictions.
+
 Run each numbered scenario in a fresh context with the installed candidate
 `reviewing-meetings` skill and its referenced resources. These are decision-only
 synthetic premises: perform no real source operations. Capture loaded files,

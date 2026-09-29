@@ -16,6 +16,10 @@ Read the map against this self-contained contract. An unreadable, malformed,
 or unsupported map remains unresolved; preserve it and ask for repair rather
 than infer bindings.
 
+Maintainers: these map field and version rules mirror the
+`personal-chief-of-staff` skill's source-map schema. Keep the two standalone
+copies aligned when the schema changes.
+
 - The JSON object contains exactly `version` (integer 1, 2, or 3) and `roles`
   (an object). Duplicate keys, nonstandard JSON constants, and unknown fields
   are invalid. Role names match `[a-z][a-z0-9_]*`; each has a nonempty binding

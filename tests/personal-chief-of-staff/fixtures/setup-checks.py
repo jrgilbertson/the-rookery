@@ -20,7 +20,18 @@ class SourceMapSchemaChecks(unittest.TestCase):
     def test_shipped_sample(self):
         sample = read_map(HERE.parents[2] / "skills/personal-chief-of-staff/assets/sources.example.json")
         self.assertEqual(sample["version"], 3)
-        self.assertTrue({"strategy", "learning", "tasks"} <= sample["roles"].keys())
+        roles = sample["roles"]
+        self.assertTrue({"strategy", "learning", "tasks", "templates", "meetings"} <= roles.keys())
+        self.assertEqual({entry["area"] for bindings in roles.values() for entry in bindings},
+                         {"direction", "commitments", "relationships", "reflection",
+                          "resources", "health", "leisure"})
+        for role, area in (("reviews", "reflection"), ("templates", "reflection"),
+                           ("meetings", "relationships")):
+            self.assertTrue(all(entry["area"] == area for entry in roles[role]))
+        self.assertTrue({entry["locator"] for entry in roles["reviews"]}.isdisjoint(
+            entry["locator"] for entry in roles["templates"]))
+        self.assertGreaterEqual(len(roles["relationships"]), 2)
+        self.assertGreaterEqual(len(roles["conversations"]), 3)
         entries = [entry for bindings in sample["roles"].values() for entry in bindings]
         self.assertTrue(any(len(entry.get("access_overrides", {})) >= 2 for entry in entries))
         self.assertTrue(all("source" in entry for entry in entries))
@@ -33,6 +44,20 @@ class SourceMapSchemaChecks(unittest.TestCase):
             self.assertEqual(path.read_bytes(), before)
         for version in (1, 2, 3):
             validate({"version": version, "roles": {}})
+
+    def test_optional_and_custom_roles_need_no_migration(self):
+        for version in (1, 2, 3):
+            entry = {"area": "reflection", "interface": "document reader",
+                     "identity": "fictional-notes", "locator": "templates-1",
+                     "filter": "review templates; not evidence of completed activity"}
+            if version < 3:
+                entry.update(condition="bounded", modes=["weekly"])
+            data = {"version": version, "roles": {"reviews": [entry],
+                    "custom_context": [{**entry, "area": "custom_group"}]}}
+            before = copy.deepcopy(data)
+            with self.subTest(version=version):
+                validate(data)
+                self.assertEqual(data, before)
 
     def test_optional_source_without_overrides(self):
         entry = self.v2["roles"]["strategy"][0]

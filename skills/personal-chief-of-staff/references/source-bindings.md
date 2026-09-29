@@ -157,8 +157,8 @@ a specific mapping operation go directly to [Manage mappings](#manage-mappings).
 | --- | --- | --- |
 | Direction / `direction` | What matters and what should take priority? | `strategy`: values, goals, responsibilities, priorities and boundaries. |
 | Commitments and time / `commitments` | What outcomes, actions and scheduled time need attention? | `projects`: outcomes and milestones; `tasks`: actions; `calendar`: scheduled time and availability. |
-| People and communication / `relationships` | Who needs attention, and what has been communicated? | `relationships`: relationship context; `conversations`: relevant email, messages and meeting records. |
-| Knowledge and reflection / `reflection` | What knowledge and experience should inform decisions? | `learning`: durable knowledge and decisions; `journal`: dated observations; `reviews`: completed reviews and review guidance. |
+| People and communication / `relationships` | Who needs attention, and what has been communicated? | `relationships`: contact lookup and durable relationship context; `conversations`: relevant email, messages and provider meeting evidence; `meetings`: approved meeting notes. |
+| Knowledge and reflection / `reflection` | What knowledge and experience should inform decisions? | `learning`: durable knowledge and decisions; `journal`: dated observations; `reviews`: completed reviews; `templates`: review and meeting guidance. |
 | Resources and operations / `resources` | What resources and arrangements need attention? | `finances`: financial context; `operations`: personal and work operating information, preferences and arrangements. |
 | Health and wellbeing / `health` | What supports health, energy and recovery? | `health`: user-selected health and wellbeing context. |
 | Leisure and interests / `leisure` | What would I enjoy doing, watching or reading? | `leisure`: movie, TV, book, hobby and recreation recommendations. |
@@ -175,9 +175,15 @@ Give each binding one primary presentation group and reuse existing records.
 Existing custom roles and area values remain valid; the starter does not
 rename or consolidate a user's private map without approval.
 
-Different communication channels can be separate bindings under `conversations`.
-For `reviews`, distinguish completed records from guidance/templates in each
-binding's designation and filter: prompts are not evidence of completed work.
+Different communication channels and meeting providers can be separate bindings
+under `conversations`; `meetings` can designate the durable destination for
+approved notes. Under `relationships`, distinguish a contact directory used
+for identity lookup from the designated owner of durable relationship context
+and interaction history. A directory alone does not establish that owner.
+The sample separates completed `reviews` from `templates`. Maps with templates
+under `reviews`, custom roles, or omitted roles remain usable without migration:
+use each binding's designation and filter to distinguish guidance from completed
+activity. Template prompts are not evidence of completed work.
 The starter prescribes no task statuses or productivity methodology. Add bounds
 and detail as the user designates sources, using the documented map fields and
 source-native metadata rather than inventing required fields. Inbox triage and

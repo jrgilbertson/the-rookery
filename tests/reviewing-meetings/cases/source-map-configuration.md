@@ -37,6 +37,8 @@ Approved-note identity and filename searches return no matches. The live
 template requires source, source_id, URL, time, discussion, and next steps;
 approved-note guidance specifies `YYYY-MM-DD Title.md` using UTC in
 `approved-meetings`. These are declared source results, not executed reads.
+The relationship companion and canonical task workflow are installed and
+available for preparing proposals; no action is approved for execution.
 Conversation history is unavailable. Each scenario starts from these premises
 and applies only its stated changes.
 
@@ -91,3 +93,17 @@ and applies only its stated changes.
    is explicitly withheld.
    - Honors the legacy restriction by making no meeting-content read and
      identifying the required outside-mode approval without rewriting the map.
+
+9. **Malformed maps.** Run each variant independently: the version 2 binding
+   in scenario 8 without `modes`; the common version 3 map with `modes` added
+   to a binding; the common raw JSON with a duplicate `roles` key; and the
+   common map with version 4. No repair or source read is approved.
+   - Leaves the invalid map unresolved and unchanged, names the invalid shape,
+     and makes no source read or inferred proposal from a surviving field.
+
+10. **Legacy template and custom role.** Use the common version 3 map, moving
+    the template binding under `reviews` with filter `meeting guidance, not
+    completed activity`. Add a `custom_context` role containing a binding in
+    a custom area. Omit `templates`.
+    - Uses the designated meeting template without interpreting it as completed
+      activity, requiring a migration, or changing the map's custom binding.

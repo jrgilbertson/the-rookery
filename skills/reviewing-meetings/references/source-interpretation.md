@@ -12,8 +12,28 @@ ownership guidance. A caller may instead supply a private source map explicitly:
 > Use the installed `reviewing-meetings` skill to review newly completed
 > meetings. Source map: `<private-map-location>`.
 
-An unreadable, malformed, or unsupported map remains unresolved; preserve it
-and ask for repair rather than infer bindings. Supported versions are 1–3.
+Read the map against this self-contained contract. An unreadable, malformed,
+or unsupported map remains unresolved; preserve it and ask for repair rather
+than infer bindings.
+
+- The JSON object contains exactly `version` (integer 1, 2, or 3) and `roles`
+  (an object). Duplicate keys, nonstandard JSON constants, and unknown fields
+  are invalid. Role names match `[a-z][a-z0-9_]*`; each has a nonempty binding
+  list. Empty `roles` and custom or omitted roles are valid.
+- Each binding requires `area`, `interface`, `identity`, and exactly one of
+  `locator` or `query`. Optional bounds are `window`, `filter`, and `gap_effect`.
+  These values are nonempty strings.
+- Versions 2 and 3 also allow a nonempty `source` string and a nonempty
+  `access_overrides` object; overrides require `source`. Override keys match
+  `[a-z][a-z0-9]*(?:-[a-z0-9]+)*`. Each override contains exactly `interface`,
+  `identity`, and one of `locator` or `query`, all nonempty strings.
+- Versions 1 and 2 require `condition` (`baseline`, `bounded`, `mode-specific`,
+  or `conditional`) and `modes` (a nonempty list of distinct `wind-down`,
+  `weekly`, or `quarterly` values) on every binding. Their `strategy`,
+  `learning`, and `tasks` bindings require `baseline` and all three modes.
+  Version 1 excludes `source` and overrides; version 3 excludes `condition`
+  and `modes`.
+
 When supplied, resolve the designated meeting-provider evidence in
 `conversations`, approved notes in `meetings`, and live guidance in `templates`.
 Existing template designations under `reviews` remain usable; distinguish them

@@ -14,6 +14,7 @@ The user asks:
 > Use the installed `reviewing-meetings` skill to review newly completed
 > meetings. Source map: `/synthetic/private/sources.json`.
 
+The scenario clock is `2026-09-22T12:00:00Z`, within the default lookback.
 The host is explicitly `codex-desktop`, can read the map below, and has no
 chief-of-staff skill installed. All interfaces and identities are fictional.
 
@@ -28,10 +29,12 @@ chief-of-staff skill installed. All interfaces and identities are fictional.
 }}
 ```
 
-The designated provider returns source `demo`, native ID `meeting-17`, URL
+The designated provider returns title `Draft scope`, source `demo`, native ID `meeting-17`, URL
 `https://meetings.example.test/meeting-17`, and actual start
 `2026-09-21T10:00:00Z`. The meeting has ended. Generated notes substantiate a
-user-owned personal follow-up to send a draft to an identified existing person,
+discussion about reducing a long outline to a two-page draft for a partner
+audience. The user chose that scope to get feedback sooner and took a
+personal follow-up to send the draft to an identified existing person,
 Mira, whose record is `people/mira`; no project or issue owns that commitment.
 Approved-note identity and filename searches return no matches. The live
 template requires source, source_id, URL, time, discussion, and next steps;
@@ -39,14 +42,15 @@ approved-note guidance specifies `YYYY-MM-DD Title.md` using UTC in
 `approved-meetings`. These are declared source results, not executed reads.
 The relationship companion and canonical task workflow are installed and
 available for preparing proposals; no action is approved for execution.
+The canonical task lookup finds no equivalent existing commitment.
 Conversation history is unavailable. Each scenario starts from these premises
 and applies only its stated changes.
 
 ## Independent scenarios and assertions
 
 1. **Supplied map.** All common premises apply.
-   - Resolves provider, approved notes, live template, relationship owner,
-     task owner, and calendar from the supplied map; proposes the meeting and
+   - Resolves provider, approved notes, live template, and applicable downstream
+     owners from the supplied map; proposes the meeting and
      supported personal follow-up using those owners without requiring a
      second configuration or the chief-of-staff installation.
 

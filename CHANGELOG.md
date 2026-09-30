@@ -13,6 +13,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- Chief-of-staff reviews keep supplied results unverified, give the actual
+  reason when source calls are excluded, and continue conditional questions
+  without claiming a verified review.
 - `checking-merge-readiness` keeps the Option-1 reply in the review that
   wrote the brief. That reply compares the recorded fingerprint, live merge
   state, host policy, and linked-issue digests, then merges or stops. It
@@ -35,6 +38,11 @@ looked" surface. GitHub Releases mirror its entries.
   still succeed.
 
 ### Added
+
+- Chief-of-staff source examples distinguish templates, completed reviews,
+  meeting evidence, approved notes, contact lookup, and durable relationship
+  records. Thin review prompts can supply a source map; meeting review accepts
+  that map while retaining standalone configuration and its existing workflow.
 
 - `personal-chief-of-staff` includes a fictional source-map starter and guided
   setup and source management through host file tools, without a Python/POSIX

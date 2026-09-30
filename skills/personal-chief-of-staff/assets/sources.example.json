@@ -62,7 +62,16 @@
         "source": "Fictional personal contacts account, collection people-3",
         "interface": "contact reader",
         "identity": "fictional-personal-contacts",
-        "locator": "people-3"
+        "locator": "people-3",
+        "filter": "contact directory for identity lookup"
+      },
+      {
+        "area": "relationships",
+        "source": "Fictional personal records, collection relationships-9",
+        "interface": "host record reader",
+        "identity": "fictional-personal-records",
+        "locator": "relationships-9",
+        "filter": "authoritative durable relationship context and interaction history"
       }
     ],
     "conversations": [
@@ -79,6 +88,24 @@
         "interface": "host message reader",
         "identity": "fictional-personal-messages",
         "locator": "conversations-6"
+      },
+      {
+        "area": "relationships",
+        "source": "Fictional work meeting account, collection sessions-7",
+        "interface": "meeting reader",
+        "identity": "fictional-work-meetings",
+        "locator": "sessions-7",
+        "filter": "meeting provider evidence: transcripts and summaries"
+      }
+    ],
+    "meetings": [
+      {
+        "area": "relationships",
+        "source": "Fictional work notes, collection meeting-notes-6",
+        "interface": "host document reader",
+        "identity": "fictional-work-notes",
+        "locator": "meeting-notes-6",
+        "filter": "durable destination for approved meeting notes"
       }
     ],
     "learning": [
@@ -107,14 +134,16 @@
         "identity": "fictional-personal-notes",
         "locator": "reviews-2",
         "filter": "completed review records; historical evidence"
-      },
+      }
+    ],
+    "templates": [
       {
         "area": "reflection",
         "source": "Fictional personal notes, collection templates-1",
         "interface": "host document reader",
         "identity": "fictional-personal-notes",
         "locator": "templates-1",
-        "filter": "review guidance and templates; not evidence of completed activity"
+        "filter": "review and meeting guidance and templates; not evidence of completed activity"
       }
     ],
     "finances": [

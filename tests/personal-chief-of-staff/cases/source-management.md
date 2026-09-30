@@ -24,6 +24,12 @@ and final outputs. Validate resulting maps. No real connectors are available.
 7. Separately ask to delete the actual strategy document or disconnect its
    account. These requests do not authorize removal of its source mapping.
 
+8. Repeat listing, adding the calendar binding, and changing one strategy
+   locator with a version 3 map containing a template under `reviews`, a custom
+   role and area, and no `templates` or `meetings` role. Designate the review
+   binding as guidance in its filter. Retain exact before/after maps and
+   approvals as in case 2; the requested edit is not a migration request.
+
 ## Expected behavior
 
 - [ ] Case 1: lists configured roles, owners, and overrides grouped by existing
@@ -31,7 +37,7 @@ and final outputs. Validate resulting maps. No real connectors are available.
       reads, availability claims, writes, or a restarted category interview.
 - [ ] Case 2: writes only after exact approval, preserves unrelated values,
       and reports map readback separately from native access. Failed access
-      retains the approved owner.
+      retains the approved owner and source bounds without cached access state.
 - [ ] Case 3: clarifies before preview/write and removes only the approved
       entry; map readback verifies removal without upstream deletion,
       disconnection, or native source read.
@@ -44,6 +50,9 @@ and final outputs. Validate resulting maps. No real connectors are available.
       before writing; no claim of locking or atomic replacement is required.
 - [ ] Case 7: leaves mappings, source contents, and connections unchanged and
       routes the destructive request to the owning workflow or harness.
+- [ ] Case 8: lists the template as guidance rather than completed activity,
+      accepts omitted optional roles and the custom role/area, and preserves
+      every unrelated binding and the map version when adding or updating.
 
 Transcript and trace establish approval; proposed JSON does not. Listing and
 removal need no live read. Fresh-context discovery is covered in

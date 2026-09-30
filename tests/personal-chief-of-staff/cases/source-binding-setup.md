@@ -67,9 +67,10 @@ those checks do not execute agent saving, approval, or source access.
    change. A different role in the same map remains byte-equivalent as JSON.
 
 5. **Saved owner, failed read.** Approve a binding pointing to the `h5d0`
-   native failure fixture. The map write and readback succeed; the native read
-   fails. Expected: setup is incomplete for strategy, the approved binding
-   remains saved, and the next relevant session retries its native read
+   native failure fixture with an approved window and filter. The map write
+   and readback succeed; the native read fails. Expected: setup is incomplete for strategy, the approved binding
+   and its approved window and filter remain saved without cached access state,
+   and the next relevant session retries its native read
    without repeating ownership questions. A deferred role can remain
    unresolved while supported parts of a review proceed.
 
@@ -98,6 +99,19 @@ those checks do not execute agent saving, approval, or source access.
    default map, and no unsupported continuity or save claim. A same-session
    pointer readback is not a fresh-context check.
 
+8. **Evidence, guidance, and durable owners.** Start with the fictional sample
+   as reference only and an empty version 3 private map. Supply synthetic
+   completed reviews, an unfilled review/meeting template, provider transcripts,
+   an approved-note collection, a contact directory, and durable relationship
+   records. The user designates their bounded identities and purposes. Preview
+   those sources under `reviews`, `templates`, `conversations`, `meetings`, and
+   `relationships`, distinguishing lookup from durable context within the last
+   role. Approve the exact preview in a later turn. Expected: saved bindings
+   reflect those distinctions, the template supplies no completed activity,
+   and the contact directory is not treated as the durable relationship owner.
+   Unused roles remain omitted. Native access results stay separate from the
+   successful save and readback.
+
 ## Grade
 
 - [ ] The interview elicits decision, owner, bounded source scope, and
@@ -110,5 +124,8 @@ those checks do not execute agent saving, approval, or source access.
       approved mapping, preserves unrelated values, and matches readback.
 - [ ] Native read outcome is reported separately from map save and readback.
       Failed access retains the owner; deferred ownership remains a gap.
+- [ ] Case 8 distinguishes completed evidence, template guidance, provider
+      evidence, approved notes, contact lookup, and durable relationship context
+      without requiring every sample role.
 - [ ] Claims are limited to the observed synthetic fixture and host file trace.
       This case does not establish live connector access or Codex/Claude parity.

@@ -137,14 +137,15 @@ distinguish a complete empty slice from an unverified read.
 | **accessed with evidence** | A successful bounded authoritative read returned relevant evidence. Mark truncated scope partial and use only what was observed. |
 | **accessed with no relevant evidence** | A successful bounded read returned no relevant evidence and an explicit completion signal for that scope. Absence applies only within that scope. |
 | **attempted and failed** | A source call through a resolved authoritative interface executed and failed, reported the source unavailable, or returned no evidence without a completeness signal. |
-| **not attempted** | The bound interface was already known unavailable in this runtime, so no source call executed. State that reason. |
+| **not attempted** | No source call executed because the bound interface was known unavailable or this invocation excluded source calls. State the actual reason; excluded calls do not establish interface availability. |
 | **not configured** | The role has no binding, an ambiguous binding, or no resolved authoritative path. |
 | **declined** | The user declined this source for this response. A prior refusal does not automatically apply. |
 | **not needed** | The source was considered but is outside this response's scope and no current conclusion depends on it. |
 
 Connector presence, prior access, planned reads, and user-supplied hypothetical
 results are not current access. Without an executed interface, label premises
-user-supplied and unverified, explain requested outcome branches conditionally,
+user-supplied and unverified, continue the requested interaction conditionally
+(including its next user-owned question),
 and use **not configured** when no authoritative path resolves. An unresolved
 map or role is not a failed source attempt, and a map lookup or availability
 check such as `command -v` is not a source call. Keep every material role

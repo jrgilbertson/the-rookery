@@ -355,6 +355,11 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Removed
 
+- Twelve `creating-portable-skills` eval cases that asked the model to recite
+  validation procedure or gave the answer in the prompt. Cases 3, 5 and 7
+  remain: case 3 no longer lists the lines to audit, case 5 keeps only its
+  real renderer run, and case 7 no longer offers refusal in its last line.
+  Earlier benchmarks keep their original grades.
 - Repo Gardener's managed-run machinery: the two-record tracker protocol
   and its scripts, caller-only mode, liveness reconciliation, revision
   check points, per-area mutation grants, the declared-audit sandbox, and

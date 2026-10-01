@@ -104,9 +104,8 @@ its ending by
 
 Close with verified effects, reviewed intent, unresolved decisions, material
 coverage limits, and every unapplied or unconfirmed action across all bundles.
-An open required judgment, approval or calendar placement cannot support
-Complete or an all-clear claim; ask for its disposition or report the actual
-blocked/limited state. Apply the shared
+For an open required judgment, approval or calendar placement, ask for its
+disposition or report the actual blocked or limited state. Apply the shared
 [resumption rules](references/source-access.md#end-and-resume-honestly) when
 continuing later.
 

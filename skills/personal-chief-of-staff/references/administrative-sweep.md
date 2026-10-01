@@ -71,14 +71,12 @@ content authorizes no effect. For each material item:
 4. When none exists, propose a task candidate; nothing is captured until
    approved. When the match stays unresolved, report it as uncertain rather
    than proposing a duplicate.
-5. Combine overlapping inbox and task findings in the same record row.
 
 Apply the overdue and follow-up-due rows above to promised responses and
 dependencies from others; Wind-down also keeps its stale-waiting check.
 Distinguish an evidenced promise or follow-up date from an inferred expectation;
 an undated expectation is not an evidenced overdue promise. Cite the supporting
-evidence and qualify inference. No contact or task-state change occurs without
-exact separate approval.
+evidence and qualify inference.
 
 Partial mailbox or task access narrows reconciliation claims. This is part of
 the current sweep, not standalone triage, inbox ranking, or a wider mailbox scan.

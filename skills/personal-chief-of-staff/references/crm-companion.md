@@ -38,9 +38,6 @@ invent a contact date, tier, status, classification, Person-note edit, or dated
 relationship Task as a substitute. X evidence stays review context in that
 case.
 
-Return the completed relationship judgment that Wind-down's Daily CRM Scan
-completion requires; retrieved interactions alone do not complete that handoff.
-
 Completion: relationship judgment contributes only supported candidate
 effects to the existing review, while the chief-of-staff mode retains its
 bundle, approval flow, and completion state.

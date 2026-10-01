@@ -63,13 +63,14 @@ stated merge limit.
       supplied grant and add no other permission.
 - [ ] Item 3 stays the coordinator alone on the Executor primary: sequential phases of one
       owner, no parallel workers. Item 4 uses Executor + Reviewer, names two
-      workers total: the executor is also the coordinator on the Executor primary, and
-      the Reviewer is on the Reviewer primary. No third coordinator or third model
-      assignment. It hands the Reviewer the criteria and names one round
+      workers total: the coordinator writes and revises on the Executor primary, and
+      the Reviewer uses the first available different-provider Executor model
+      at its listed effort. No third coordinator or third model
+      assignment. No additional Executor workers are required. It hands the Reviewer the criteria and names one round
       with a stop condition.
 - [ ] Items 5–6 retain exactly two workers in Setup and one round with its
       stop condition in the kickoff.
-      Item 5 uses the Critic primary for the Reviewer. Item 6 starts
+      Item 5 uses the same derived Reviewer selection for adversarial review. Item 6 starts
       with `impeccable` and uses the Design/taste primary for both workers. These are passing-baseline regression controls alongside the
       ordinary Reviewer in item 4, not evidence of a judge-profile repair.
 - [ ] No card escalates effort.
@@ -78,5 +79,7 @@ stated merge limit.
       and Copy/paste kickoff labels, and a kickoff naming the starting
       workflow, every role with model and effort, the source request, and
       orchestration only when it differs from the default. Orca appears only
-      in item 2, and no item mentions availability or names where plans are
-      stored.
+      in item 2. No item asserts or narrates unstated model availability, filters
+      models on that basis, or names where plans are stored. Describing the
+      first-available selection rule or suggesting an unselected higher effort
+      does not assert model availability.

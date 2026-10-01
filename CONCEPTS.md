@@ -356,5 +356,5 @@ under [`SKILLS.md`](SKILLS.md).
 
 - "Parent" and "child" in gardener talk meant Coordinator and Executor. Those
   words remain Orca worktree roles and issue-graph relationships; they are not
-  gardener roles. Gardener prose uses the `ROUTING.md` names Coordinator,
-  Executor, Scout, and Reviewer.
+  gardener roles. The shared `ROUTING.md` names are Coordinator, Executor,
+  and Reviewer; Scout is no longer a routing profile.

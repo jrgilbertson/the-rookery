@@ -11,6 +11,16 @@ looked" surface. GitHub Releases mirror its entries.
 
 ## [Unreleased]
 
+### Changed
+
+- `route-work` refreshes model and effort recommendations for Sol 6.1 and
+  Sonnet 5.5. Model-table maintenance compares role-relevant quality, cost,
+  and latency, with a separate evidence rule for design and taste.
+- `route-work` derives correctness reviewers from the Executor row, preferring
+  a different provider from the actual implementer without increasing effort.
+  Critic, Researcher, and Scout profiles are removed. Planning and coordination
+  remain combined, while supplied implementation boundaries stay explicit.
+
 ### Fixed
 
 - `checking-merge-readiness` keeps the Option-1 reply in the review that

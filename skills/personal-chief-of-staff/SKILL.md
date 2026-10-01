@@ -91,9 +91,9 @@ Use exactly one run ending. A standalone setup run conducts no review; judge
 its ending by
 [Finish standalone setup](references/source-bindings.md#finish-standalone-setup).
 
-- **Complete:** required review judgments, task coverage and material planning
-  decisions are settled, and every approved action has a verified finished
-  outcome.
+- **Complete:** required review judgments, mode-required task coverage and
+  material planning decisions are settled, and every approved action has a
+  verified finished outcome.
 - **Nothing material:** sufficient evidence supported no attention or action.
 - **Partial:** a useful review finished with named material evidence limits.
 - **Unable to prepare reliably:** missing central evidence prevents a

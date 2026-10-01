@@ -78,8 +78,10 @@ Classify each action independently:
 - **Deferred** or **skipped:** the user chose not to apply it now.
 
 After an interrupted or uncertain write, run steps 1 to 4 on that action
-before any repeat attempt. For a create, title similarity does not identify the
-created record; without its stable identity the result stays **Indeterminate**.
+before any repeat attempt. If that re-read fails, the result stays
+**Indeterminate**; repeat the write only after a readback shows the effect is
+absent. For a create, title similarity does not identify the created record;
+without its stable identity the result stays **Indeterminate**.
 
 Mixed outcomes do not roll back or conceal successful independent actions.
 Report what changed and what remains unapplied. A **Failed**, **Indeterminate**,

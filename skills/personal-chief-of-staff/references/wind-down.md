@@ -100,9 +100,9 @@ coverage for wind-down, separate from prepare-tomorrow's cadence exceptions.
 Completion: the companion has returned completed relationship judgment before
 initial reconstruction; scan window set; each configured relationship source
 for the window covered or marked Partial; every bindable substantive direct
-contact from the scan, other day evidence, or (later) reflection has a
-contact-date outcome (novel action, Already satisfied in coverage, or
-identity/time unresolved); unknown handles unresolved; no write performed.
+contact from the scan or other day evidence has a contact-date outcome (novel
+action, Already satisfied in coverage, or identity/time unresolved); unknown
+handles unresolved; no write performed.
 
 ## Begin with one broad reflection
 

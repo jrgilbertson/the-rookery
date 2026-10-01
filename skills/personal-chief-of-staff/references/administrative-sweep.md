@@ -87,6 +87,6 @@ evidence. Relationship effects use the [companion rules](crm-companion.md).
 All effects retain the [exact-approval and readback requirements](action-application.md).
 
 Completion: canonical open-task coverage and bounded inbox reconciliation are
-reported at the scope actually inspected; every qualifying record has one
+reported at the scope actually inspected; every qualifying correction has one
 proposed action, upcoming context feeds the plan, healthy records remain
 unlisted, and coverage gaps or zero findings are reported honestly.

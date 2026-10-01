@@ -183,11 +183,6 @@ Evaluate these outcomes independently:
 5. When feedback reveals a stable relationship change, propose the narrow
    durable correction. Otherwise use the feedback only in the current run.
 
-When identity remains unresolved, keep the supported contact classification and
-local date visible. List each contact-date or real follow-up effect that would
-apply once identity is confirmed, with its canonical destination, separately
-from the facts still needed before proposing it.
-
 Zero effects and zero people are valid. Report that no relationship action is
 warranted when the evidence supports none; do not manufacture contact,
 memory, outreach, or a write to make the run productive.

@@ -91,7 +91,9 @@ Use exactly one run ending. A standalone setup run conducts no review; judge
 its ending by
 [Finish standalone setup](references/source-bindings.md#finish-standalone-setup).
 
-- **Complete:** the review and all approved actions finished.
+- **Complete:** required review judgments, task coverage and material planning
+  decisions are settled, and every approved action has a verified finished
+  outcome. Explicitly deferred or skipped proposals remain named.
 - **Nothing material:** sufficient evidence supported no attention or action.
 - **Partial:** a useful review finished with named material evidence limits.
 - **Unable to prepare reliably:** missing central evidence prevents a
@@ -100,8 +102,11 @@ its ending by
   user interaction.
 - **Skipped:** the user chose not to conduct the review.
 
-Close with what changed and every action still unapplied, across all bundles
-in the run. Apply the shared
+Close with verified effects, reviewed intent, unresolved decisions, material
+coverage limits, and every unapplied or unconfirmed action across all bundles.
+An open required judgment, approval or calendar placement cannot support
+Complete or an all-clear claim; ask for its disposition or report the actual
+blocked/limited state. Apply the shared
 [resumption rules](references/source-access.md#end-and-resume-honestly) when
 continuing later.
 

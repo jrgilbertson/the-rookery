@@ -38,9 +38,14 @@ invent a contact date, tier, status, classification, Person-note edit, or dated
 relationship Task as a substitute. X evidence stays review context in that
 case.
 
-Completion: relationship judgment contributes only supported candidate
-effects to the existing review, while the chief-of-staff mode retains its
-bundle, approval flow, and completion state.
+Return the completed relationship judgment, not just retrieved interactions:
+each bindable substantive contact has its supported effect or Already satisfied
+outcome, and unresolved identities or times and claim-limiting source gaps
+remain explicit. Wind-down uses this return to close its Daily CRM Scan before
+reconstruction; retrieval alone does not complete that handoff.
+
+Completion: the mode has this judgment and only supported candidate effects
+for its existing bundle, approval flow, and completion state.
 
 ## Apply approved relationship effects
 

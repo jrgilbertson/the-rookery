@@ -1,0 +1,1 @@
+Open canonical tasks are due 2026-09-24, 2026-10-02, and 2026-10-15, each with a few hours of remaining work and no follow-up date. Nothing is past its due date, nothing is due on 2026-09-03, and no earliest-begin date falls after a due date.

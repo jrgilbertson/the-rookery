@@ -32,8 +32,10 @@ upcoming-task context into next-week planning and put each proposed correction
 in its own review action, as the sweep specifies. Report zero rows when empty.
 
 Completion: the available period and material coverage gaps are clear, the
-sweep has covered overdue tasks and the coming planning interval, and no source was
-changed while reconstructing.
+configured canonical open-task sweep has covered overdue tasks and the coming
+planning interval with aggregate coverage or a material gap reported, and no
+source was changed while reconstructing. Incidental task reads do not establish
+sweep completion.
 
 ## Lead with the executive synthesis
 

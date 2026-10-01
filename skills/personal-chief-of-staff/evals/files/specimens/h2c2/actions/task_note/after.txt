@@ -1,0 +1,1 @@
+Canonical task: Validate recovery procedure. Done. Result: documented restore test passed 2026-09-02.

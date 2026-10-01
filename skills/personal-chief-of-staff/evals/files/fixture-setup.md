@@ -1,0 +1,9 @@
+# Host fixture prerequisite
+
+These evals explicitly reuse the repository's `tests/personal-chief-of-staff/execution-protocol.md` and existing `pcos-source`, `pcos-action`, and `imsg` commands. Load the skill and required companion before execution; use synthetic sources only, a fresh executor per independent scenario, and independent different-model grading of response, commands, trace and resulting state. Decision-only scenarios perform no operations.
+
+From the host repository, make an isolated temporary directory outside the repository. Copy `tests/personal-chief-of-staff/fixtures/` to `<temporary>/host/tests/personal-chief-of-staff/fixtures/`, then overlay `evals/files/specimens/` from this skill onto that copy's `specimens/`. Do not edit host fixtures or installed skill copies. Prepend the copied `fixtures/bin` to PATH. Set PCOS_FIXTURE_ROOT to a fresh existing sibling `<temporary>/state`, PCOS_FIXTURE_TRACE to its `trace.jsonl`, and PCOS_FIXTURE_SPECIMEN to the scenario's token. The host layout is required by the existing bootstrap's containment checks. No generalized runner is supplied.
+
+For each scenario, execute the stated fixture commands through their interfaces, never read specimen files as substituted source observations. The fixture source role permits exactly one read per run; action roles require adjacent pre-write read, exact-token write and readback. Capture the actual skill-load trace and full conversation/tool observations outside every repository for blind grading. Retain raw evidence under SKILLS.md's run archive convention; remove fixture working directories after grading.
+
+The required host commands are an explicit evaluation prerequisite, not a runtime package dependency. Missing host tooling, authorized model budget, usage/pricing support, executor, independent grader or capture leaves affected behavior unverified.

@@ -97,7 +97,8 @@ coverage for wind-down, separate from prepare-tomorrow's cadence exceptions.
    Keep one Person write per record and keep raw history in the source. Write
    nothing while preparing.
 
-Completion: scan window set; each configured relationship source for the window
+Completion: the companion has returned completed relationship judgment before
+initial reconstruction; scan window set; each configured relationship source for the window
 covered or marked Partial; every bindable substantive direct contact from the
 scan, other day evidence, or (later) reflection has a contact-date outcome
 (novel action, Already satisfied in coverage, or identity/time unresolved);
@@ -133,9 +134,10 @@ For one active sequential critical path, a precise restart cue may be useful.
 Capture only the next concrete operation and keep it with the canonical task or
 approved next-day plan. Do not add restart metadata to every task.
 
-Completion: the sweep has run over the closing day and the target day, and
-every row it proposes is one the user can approve, edit, defer, or skip on its
-own.
+Completion: the configured canonical open-task sweep has covered the closing
+day and target day under Administrative Sweep, with aggregate coverage or a
+material gap reported; every proposed row is independently decidable. Reading
+a task for commitment context does not complete the sweep.
 
 ## Phase 1: Review, apply, and read back
 
@@ -192,6 +194,10 @@ capsule only when a meeting's outcome depends on it.
 Preserve fixed commitments. Propose conflict-resolving edits only to events or
 blocks whose flexibility is established; ask when it is unknown. Calendar edits
 remain separate actions, and meaningful commitments need no matching blocks.
+For each material calendar proposal, distinguish retaining a useful existing
+block, a separately proposed change, and an open user decision. Keep unfinished
+placement or flexibility decisions visible through the ending; no calendar
+change or commitment is settled by silence.
 
 ### Relationship exceptions for tomorrow
 
@@ -206,8 +212,9 @@ Keep an optional broader connection separate, with no action unless the user
 promotes it.
 
 Completion: the next-day proposal reflects the sources as Phase 1 left them,
-makes its tradeoffs visible without writing to them, and contains zero to three
-defensible tomorrow judgment items with no filler.
+makes its tradeoffs and each material calendar disposition visible without
+writing to them, and contains zero to three defensible tomorrow judgment items
+with no filler. Open calendar decisions remain open.
 
 ## Phase 2: Ask on the evidence frontier
 

@@ -1,0 +1,263 @@
+{
+  "skill_name": "personal-chief-of-staff",
+  "evals": [
+    {
+      "id": 201,
+      "prompt": "Run the independent synthetic scenarios in evals/files/wind-down-daily-crm-scan.md using evals/files/fixture-setup.md and the explicitly reused host pcos fixture protocol. Load the current skill and needed references. Grade the original scenario contracts; use no live sources.",
+      "expected_output": "Each scenario meets its preserved expected behavior, with fixture traces where required; decision-only cases establish no executed writes.",
+      "files": [
+        "evals/files/fixture-setup.md",
+        "evals/files/wind-down-daily-crm-scan.md",
+        "evals/files/specimens/d1g1/imsg/chat-id",
+        "evals/files/specimens/d1g1/imsg/chats-limit",
+        "evals/files/specimens/d1g1/imsg/chats.json",
+        "evals/files/specimens/d1g1/imsg/end",
+        "evals/files/specimens/d1g1/imsg/evidence-token",
+        "evals/files/specimens/d1g1/imsg/history-limit",
+        "evals/files/specimens/d1g1/imsg/history.json",
+        "evals/files/specimens/d1g1/imsg/start",
+        "evals/files/specimens/d1g1/sources/identity_unresolved.empty",
+        "evals/files/specimens/d1g1/sources/identity_unresolved.trace",
+        "evals/files/specimens/d1g1/sources/person_alex.trace",
+        "evals/files/specimens/d1g1/sources/person_alex.txt",
+        "evals/files/specimens/d2p2/imsg/chat-id",
+        "evals/files/specimens/d2p2/imsg/chats-limit",
+        "evals/files/specimens/d2p2/imsg/chats.json",
+        "evals/files/specimens/d2p2/imsg/end",
+        "evals/files/specimens/d2p2/imsg/evidence-token",
+        "evals/files/specimens/d2p2/imsg/history-limit",
+        "evals/files/specimens/d2p2/imsg/history.json",
+        "evals/files/specimens/d2p2/imsg/start",
+        "evals/files/specimens/d3j3/imsg/chat-id",
+        "evals/files/specimens/d3j3/imsg/chats-limit",
+        "evals/files/specimens/d3j3/imsg/chats.json",
+        "evals/files/specimens/d3j3/imsg/end",
+        "evals/files/specimens/d3j3/imsg/evidence-token",
+        "evals/files/specimens/d3j3/imsg/history-limit",
+        "evals/files/specimens/d3j3/imsg/history.json",
+        "evals/files/specimens/d3j3/imsg/start",
+        "evals/files/specimens/d3j3/sources/journal_state.trace",
+        "evals/files/specimens/d3j3/sources/journal_state.txt",
+        "evals/files/specimens/d3j3/sources/person_jordan.trace",
+        "evals/files/specimens/d3j3/sources/person_jordan.txt",
+        "evals/files/specimens/d4g4/imsg/chat-id",
+        "evals/files/specimens/d4g4/imsg/chats-limit",
+        "evals/files/specimens/d4g4/imsg/chats.json",
+        "evals/files/specimens/d4g4/imsg/end",
+        "evals/files/specimens/d4g4/imsg/evidence-token",
+        "evals/files/specimens/d4g4/imsg/history-limit",
+        "evals/files/specimens/d4g4/imsg/history.json",
+        "evals/files/specimens/d4g4/imsg/start",
+        "evals/files/specimens/d4g4/sources/identity_unresolved.empty",
+        "evals/files/specimens/d4g4/sources/identity_unresolved.trace",
+        "evals/files/specimens/d4g4/sources/person_alex.trace",
+        "evals/files/specimens/d4g4/sources/person_alex.txt"
+      ],
+      "assertions": [
+        "Scenario 1: Daily CRM Scan runs before the initial reconstruction; proposes contact-date outcome for Alex Rivers from the group thread (novel or Already satisfied); effects are independently approvable actions in the Phase 1 review bundle; no nested CRM bundle; no write during preparation; `+12135550199` stays unresolved with no Person effect. AND Every scenario keeps the answer-first CRM result ahead of a Source Access Audit. The audit includes the configured Messages relationship-evidence role and each canonical Person role actually read, uses only generic safe labels and bounded scope, and narrows only claims affected by incomplete or failed access. AND Scenario 2 reports no CRM proposal only when the relevant finite window is proven complete. An empty result without a completeness signal is partial or failed access and cannot support \u201cno substantive exchange.\u201d AND Every proposed CRM effect makes the current observed relationship state, the exact user-owned desired effect, and its future canonical readback or equivalence signal separately recoverable without requiring literal intention headings.",
+        "Scenario 2: Daily CRM Scan runs; reports no CRM proposal; invents no contact date, Person prose, or Task. AND Every scenario keeps the answer-first CRM result ahead of a Source Access Audit. The audit includes the configured Messages relationship-evidence role and each canonical Person role actually read, uses only generic safe labels and bounded scope, and narrows only claims affected by incomplete or failed access. AND Scenario 2 reports no CRM proposal only when the relevant finite window is proven complete. An empty result without a completeness signal is partial or failed access and cannot support \u201cno substantive exchange.\u201d AND Every proposed CRM effect makes the current observed relationship state, the exact user-owned desired effect, and its future canonical readback or equivalence signal separately recoverable without requiring literal intention headings.",
+        "Scenario 3: Scan window expands over the short miss (about the missing day plus closing day); surfaces a contact-date outcome for Jordan Lee; does not start catch-up inventory, triage, or exhaustive history. AND Every scenario keeps the answer-first CRM result ahead of a Source Access Audit. The audit includes the configured Messages relationship-evidence role and each canonical Person role actually read, uses only generic safe labels and bounded scope, and narrows only claims affected by incomplete or failed access. AND Scenario 2 reports no CRM proposal only when the relevant finite window is proven complete. An empty result without a completeness signal is partial or failed access and cannot support \u201cno substantive exchange.\u201d AND Every proposed CRM effect makes the current observed relationship state, the exact user-owned desired effect, and its future canonical readback or equivalence signal separately recoverable without requiring literal intention headings.",
+        "Scenario 4: Alex receives a contact-date outcome (novel or Already satisfied); unbound handle stays unresolved with no Person effect; group is not one anonymous contact. AND Every scenario keeps the answer-first CRM result ahead of a Source Access Audit. The audit includes the configured Messages relationship-evidence role and each canonical Person role actually read, uses only generic safe labels and bounded scope, and narrows only claims affected by incomplete or failed access. AND Scenario 2 reports no CRM proposal only when the relevant finite window is proven complete. An empty result without a completeness signal is partial or failed access and cannot support \u201cno substantive exchange.\u201d AND Every proposed CRM effect makes the current observed relationship state, the exact user-owned desired effect, and its future canonical readback or equivalence signal separately recoverable without requiring literal intention headings."
+      ],
+      "provenance": "Migrated affected legacy case wind-down-daily-crm-scan from c5156a0; original provenance and assertions retained in its input. Behavioral candidate and baseline runs not yet executed.",
+      "regression_control": true
+    },
+    {
+      "id": 202,
+      "prompt": "Run the independent synthetic scenarios in evals/files/wind-down-two-phase-apply-and-resume.md using evals/files/fixture-setup.md and the explicitly reused host pcos fixture protocol. Load the current skill and needed references. Grade the original scenario contracts; use no live sources.",
+      "expected_output": "Each scenario meets its preserved expected behavior, with fixture traces where required; decision-only cases establish no executed writes.",
+      "files": [
+        "evals/files/fixture-setup.md",
+        "evals/files/wind-down-two-phase-apply-and-resume.md",
+        "evals/files/specimens/w2p1/actions/source-discovery-after-readback",
+        "evals/files/specimens/w2p1/actions/task_note/after.txt",
+        "evals/files/specimens/w2p1/actions/task_note/before.txt",
+        "evals/files/specimens/w2p1/actions/task_note/write-token",
+        "evals/files/specimens/w2p1/sources/calendar.txt",
+        "evals/files/specimens/w2p1/sources/journal_state.txt",
+        "evals/files/specimens/w2p1/sources/journal_template.txt",
+        "evals/files/specimens/w2p2/actions/task_note/after.txt",
+        "evals/files/specimens/w2p2/actions/task_note/before.txt",
+        "evals/files/specimens/w2p2/actions/task_note/write-token",
+        "evals/files/specimens/w2p2/sources/calendar.txt",
+        "evals/files/specimens/w2p2/sources/journal_state.txt",
+        "evals/files/specimens/w2p2/sources/journal_template.txt",
+        "evals/files/specimens/w2p2/sources/meeting_notes.txt",
+        "evals/files/specimens/w2p2/sources/tasks.txt",
+        "evals/files/specimens/w2p3/sources/calendar.txt",
+        "evals/files/specimens/w2p3/sources/tasks.txt",
+        "evals/files/specimens/w2p4/actions/mailbox_draft/after.txt",
+        "evals/files/specimens/w2p4/actions/mailbox_draft/before.txt",
+        "evals/files/specimens/w2p4/actions/mailbox_draft/readback.failure",
+        "evals/files/specimens/w2p4/actions/mailbox_draft/write-token",
+        "evals/files/specimens/w2p4/actions/source-discovery-after-readback",
+        "evals/files/specimens/w2p4/actions/task_note/after.txt",
+        "evals/files/specimens/w2p4/actions/task_note/before.txt",
+        "evals/files/specimens/w2p4/actions/task_note/write-token",
+        "evals/files/specimens/w2p4/sources/calendar.txt",
+        "evals/files/specimens/w2p4/sources/journal_state.txt",
+        "evals/files/specimens/w2p4/sources/journal_template.txt"
+      ],
+      "assertions": [
+        "Scenario 1: the task action is presented, approved, applied through one pre-write read, one write, and one readback, and the trace records that readback before the first canonical role read of Phase 2. AND no journal draft, meaningful-commitments draft, or tomorrow plan appears anywhere before the applied outcome is reported. AND the journal draft describes the migration checklist as done, matching the readback result rather than the pre-sweep status. AND the trace records no canonical role read attempt, whether it succeeded or was refused, before every approved action of that scenario has a reported outcome, including an indeterminate stop. Scenarios 2 and 3 are exempt: composing a Phase 1 bundle and recomputing a stale one both require canonical reads before any action resolves. AND a scheduled turn that ends Paused records no operation against a proposed target's own write interface, including a re-read. AND each action result is reported independently, no approval is redirected to a different target or effect, and no action is retried blindly after an unclear result. AND the response leads with its answer, then renders one Source Access Audit paragraph naming the pre-write reread and the post-write readback as action access and the canonical roles as Phase 2 discovery, with a \"so\" clause on each claim-limiting result. Neither access is used to imply the other. There is no table, no Phase column, and no HTML details.",
+        "Scenario 2: the first response presents the Phase 1 bundle, ends **Paused**, reports that nothing was applied, and contains no journal draft, no meaningful commitments, and no coaching judgment. AND the paused-turn trace copy contains no `pcos-action` operation of any kind, so the scheduled run supplied no approval and wrote nothing. AND after the later reply, the approved action is applied with one pre-write read, one write, and one readback, and the run continues into Phase 2 rather than stopping at the action result. AND a scheduled turn that ends Paused records no operation against a proposed target's own write interface, including a re-read. AND each action result is reported independently, no approval is redirected to a different target or effect, and no action is retried blindly after an unclear result. AND the response leads with its answer, then renders one Source Access Audit paragraph naming the pre-write reread and the post-write readback as action access and the canonical roles as Phase 2 discovery, with a \"so\" clause on each claim-limiting result. Neither access is used to imply the other. There is no table, no Phase column, and no HTML details.",
+        "Scenario 3: the sweep is recomputed against 2026-09-03 before anything applies, and the recomputed bundle is presented for approval rather than the stored one being applied on the strength of the earlier approval. AND the compliance attestation now reads as an overdue row with a proposed resolution, not as a due-tomorrow row, and the trace records the recomputing reads and no `pcos-action` operation. AND a scheduled turn that ends Paused records no operation against a proposed target's own write interface, including a re-read. AND each action result is reported independently, no approval is redirected to a different target or effect, and no action is retried blindly after an unclear result. AND the response leads with its answer, then renders one Source Access Audit paragraph naming the pre-write reread and the post-write readback as action access and the canonical roles as Phase 2 discovery, with a \"so\" clause on each claim-limiting result. Neither access is used to imply the other. There is no table, no Phase column, and no HTML details.",
+        "Scenario 4: the task action is reported **Applied** on the strength of its own readback. AND the mailbox draft is reported **Indeterminate**, with the failed readback named: the write's effect is unconfirmed, not proven absent. The write is never repeated and the trace holds exactly one write and one failed readback for that role. AND Phase 2 still runs, and the closing recap names the mailbox draft as unconfirmed while reporting the task action as applied. AND the journal draft describes the vendor invoice as done and does not claim the vendor reply draft exists. AND each action's pre-write read, write, and readback are consecutive in the trace for that action, so no action's revalidation is separated from its own write by another action's operations. AND the trace records no canonical role read attempt, whether it succeeded or was refused, before every approved action of that scenario has a reported outcome, including an indeterminate stop. Scenarios 2 and 3 are exempt: composing a Phase 1 bundle and recomputing a stale one both require canonical reads before any action resolves. AND a scheduled turn that ends Paused records no operation against a proposed target's own write interface, including a re-read. AND each action result is reported independently, no approval is redirected to a different target or effect, and no action is retried blindly after an unclear result. AND the response leads with its answer, then renders one Source Access Audit paragraph naming the pre-write reread and the post-write readback as action access and the canonical roles as Phase 2 discovery, with a \"so\" clause on each claim-limiting result. Neither access is used to imply the other. There is no table, no Phase column, and no HTML details.",
+        "Scenario A: keeps row 1 Applied, requests an explicit decision on row 2, and holds Phase 2 until that row has a disposition.",
+        "Scenario B: recomputes the sweep using current source reads before applying any action, uses September 3 for the sweep and September 4 for planning, classifies the still-open September 2 task as overdue, keeps the September 1 journal closing date, and obtains approval for changed proposed effects rather than inheriting stale authority."
+      ],
+      "provenance": "Migrated affected legacy case wind-down-two-phase-apply-and-resume from c5156a0; original provenance and assertions retained in its input. Behavioral candidate and baseline runs not yet executed.",
+      "regression_control": true
+    },
+    {
+      "id": 203,
+      "prompt": "Run the independent synthetic scenarios in evals/files/wind-down-tomorrow-close.md using evals/files/fixture-setup.md and the explicitly reused host pcos fixture protocol. Load the current skill and needed references. Grade the original scenario contracts; use no live sources.",
+      "expected_output": "Each scenario meets its preserved expected behavior, with fixture traces where required; decision-only cases establish no executed writes.",
+      "files": [
+        "evals/files/fixture-setup.md",
+        "evals/files/wind-down-tomorrow-close.md"
+      ],
+      "assertions": [
+        "Scenario 1: zero tomorrow judgment items is valid; no filler; no \u201cwhat needs attention today\u201d framing.",
+        "Scenario 2: continues today's close from current evidence, offers at most one optional catch-up, and creates no backfill queue.",
+        "Scenario 3: surfaces at most three tomorrow judgment items; never invents a fourth to fill a template.",
+        "Scenario 4: shows the conflicted commitment, evidence, and recommendation; leaves unaffected bullets unchanged; no morning reaffirm step. AND queries each visible personal and work calendar separately; preserves the fixed meeting, may propose a separately approvable change to the flexible block for preparation, and asks about the unknown event\u2019s flexibility before proposing its edit. No calendar change is applied.",
+        "Scenario 5: does not revive stale older-journal commitments as today's list; for the malformed bullet, identifies the missing rationale without inventing subjective content."
+      ],
+      "provenance": "Migrated affected legacy case wind-down-tomorrow-close from c5156a0; original provenance and assertions retained in its input. Behavioral candidate and baseline runs not yet executed.",
+      "regression_control": true
+    },
+    {
+      "id": 204,
+      "prompt": "Run the independent synthetic scenarios in evals/files/crm-derived-action-application.md using evals/files/fixture-setup.md and the explicitly reused host pcos fixture protocol. Load the current skill and needed references. Grade the original scenario contracts; use no live sources.",
+      "expected_output": "Each scenario meets its preserved expected behavior, with fixture traces where required; decision-only cases establish no executed writes.",
+      "files": [
+        "evals/files/fixture-setup.md",
+        "evals/files/crm-derived-action-application.md",
+        "evals/files/specimens/c1p1/actions/person_note/after.txt",
+        "evals/files/specimens/c1p1/actions/person_note/before.txt",
+        "evals/files/specimens/c1p1/actions/person_note/write-token",
+        "evals/files/specimens/c3e3/sources/repository_issue.txt",
+        "evals/files/specimens/c4r4/actions/repository_issue/after.txt",
+        "evals/files/specimens/c4r4/actions/repository_issue/before.txt",
+        "evals/files/specimens/c4r4/actions/repository_issue/write-token",
+        "evals/files/specimens/c5w5/sources/writing_backlog.txt"
+      ],
+      "assertions": [
+        "Scenario 1: the action number, result, and completion state stay with the chief-of-staff bundle; no nested CRM bundle, renumbering, generic fallback path, redirected destination, or new review discovery. AND applies through the embedded companion with a pre-write re-read of the exact Person note and post-write readback. AND Every action-only response keeps the chief-of-staff action result separate from its response-scoped Source Access Audit. The audit has no review coverage verdict. The paragraph names only the canonical roles actually reread or verified now, as separate pre-write and post-write operations when those reads ran. HTML details fail. The audit never treats a successful read as an applied mutation, and never treats `Manual`, `Already satisfied`, `Failed`, or `Indeterminate` as an access state. AND Each applied or already-satisfied durable effect leaves a gradeable intention: the current target state comes from the pre-write reread, the desired effect remains the user's exact approved effect, and the future observable signal is the canonical readback or equivalence result.",
+        "Scenario 2: the action number, result, and completion state stay with the chief-of-staff bundle; no nested CRM bundle, renumbering, generic fallback path, redirected destination, or new review discovery. AND reports manual and leaves the Task unapplied. AND Every action-only response keeps the chief-of-staff action result separate from its response-scoped Source Access Audit. The audit has no review coverage verdict. The paragraph names only the canonical roles actually reread or verified now, as separate pre-write and post-write operations when those reads ran. HTML details fail. The audit never treats a successful read as an applied mutation, and never treats `Manual`, `Already satisfied`, `Failed`, or `Indeterminate` as an access state. AND Each applied or already-satisfied durable effect leaves a gradeable intention: the current target state comes from the pre-write reread, the desired effect remains the user's exact approved effect, and the future observable signal is the canonical readback or equivalence result.",
+        "Scenario 3: the action number, result, and completion state stay with the chief-of-staff bundle; no nested CRM bundle, renumbering, generic fallback path, redirected destination, or new review discovery. AND reports already satisfied and performs no write. AND Every action-only response keeps the chief-of-staff action result separate from its response-scoped Source Access Audit. The audit has no review coverage verdict. The paragraph names only the canonical roles actually reread or verified now, as separate pre-write and post-write operations when those reads ran. HTML details fail. The audit never treats a successful read as an applied mutation, and never treats `Manual`, `Already satisfied`, `Failed`, or `Indeterminate` as an access state. AND Each applied or already-satisfied durable effect leaves a gradeable intention: the current target state comes from the pre-write reread, the desired effect remains the user's exact approved effect, and the future observable signal is the canonical readback or equivalence result.",
+        "Scenario 4: the action number, result, and completion state stay with the chief-of-staff bundle; no nested CRM bundle, renumbering, generic fallback path, redirected destination, or new review discovery. AND applies exactly once, reads back the exact target, and does not retry an indeterminate result. AND Every action-only response keeps the chief-of-staff action result separate from its response-scoped Source Access Audit. The audit has no review coverage verdict. The paragraph names only the canonical roles actually reread or verified now, as separate pre-write and post-write operations when those reads ran. HTML details fail. The audit never treats a successful read as an applied mutation, and never treats `Manual`, `Already satisfied`, `Failed`, or `Indeterminate` as an access state. AND Each applied or already-satisfied durable effect leaves a gradeable intention: the current target state comes from the pre-write reread, the desired effect remains the user's exact approved effect, and the future observable signal is the canonical readback or equivalence result.",
+        "Scenario 5: the action number, result, and completion state stay with the chief-of-staff bundle; no nested CRM bundle, renumbering, generic fallback path, redirected destination, or new review discovery. AND reports manual rather than treating a title difference as novelty. AND Every action-only response keeps the chief-of-staff action result separate from its response-scoped Source Access Audit. The audit has no review coverage verdict. The paragraph names only the canonical roles actually reread or verified now, as separate pre-write and post-write operations when those reads ran. HTML details fail. The audit never treats a successful read as an applied mutation, and never treats `Manual`, `Already satisfied`, `Failed`, or `Indeterminate` as an access state. AND Each applied or already-satisfied durable effect leaves a gradeable intention: the current target state comes from the pre-write reread, the desired effect remains the user's exact approved effect, and the future observable signal is the canonical readback or equivalence result.",
+        "Scenario 6: the action number, result, and completion state stay with the chief-of-staff bundle; no nested CRM bundle, renumbering, generic fallback path, redirected destination, or new review discovery. AND keeps the text conversational: unchanged approval is already satisfied, an edit needs new exact approval, and nothing is sent or saved as a draft or artifact. AND Every action-only response keeps the chief-of-staff action result separate from its response-scoped Source Access Audit. The audit has no review coverage verdict. The paragraph names only the canonical roles actually reread or verified now, as separate pre-write and post-write operations when those reads ran. HTML details fail. The audit never treats a successful read as an applied mutation, and never treats `Manual`, `Already satisfied`, `Failed`, or `Indeterminate` as an access state. AND Each applied or already-satisfied durable effect leaves a gradeable intention: the current target state comes from the pre-write reread, the desired effect remains the user's exact approved effect, and the future observable signal is the canonical readback or equivalence result.",
+        "Scenario 7: the action number, result, and completion state stay with the chief-of-staff bundle; no nested CRM bundle, renumbering, generic fallback path, redirected destination, or new review discovery. AND reports manual with no write; the effect is not redirected to a generic mutation path or another destination. AND Every action-only response keeps the chief-of-staff action result separate from its response-scoped Source Access Audit. The audit has no review coverage verdict. The paragraph names only the canonical roles actually reread or verified now, as separate pre-write and post-write operations when those reads ran. HTML details fail. The audit never treats a successful read as an applied mutation, and never treats `Manual`, `Already satisfied`, `Failed`, or `Indeterminate` as an access state. AND Each applied or already-satisfied durable effect leaves a gradeable intention: the current target state comes from the pre-write reread, the desired effect remains the user's exact approved effect, and the future observable signal is the canonical readback or equivalence result."
+      ],
+      "provenance": "Migrated affected legacy case crm-derived-action-application from c5156a0; original provenance and assertions retained in its input. Behavioral candidate and baseline runs not yet executed.",
+      "regression_control": true
+    },
+    {
+      "id": 205,
+      "prompt": "Run the independent synthetic scenarios in evals/files/administrative-sweep-task-rows.md using evals/files/fixture-setup.md and the explicitly reused host pcos fixture protocol. Load the current skill and needed references. Grade the original scenario contracts; use no live sources.",
+      "expected_output": "Each scenario meets its preserved expected behavior, with fixture traces where required; decision-only cases establish no executed writes.",
+      "files": [
+        "evals/files/fixture-setup.md",
+        "evals/files/administrative-sweep-task-rows.md",
+        "evals/files/specimens/s7a1/sources/calendar.txt",
+        "evals/files/specimens/s7a1/sources/meeting_notes.txt",
+        "evals/files/specimens/s7a1/sources/tasks.txt",
+        "evals/files/specimens/s7b2/sources/calendar.txt",
+        "evals/files/specimens/s7b2/sources/tasks.txt",
+        "evals/files/specimens/s7c3/sources/calendar.txt",
+        "evals/files/specimens/s7c3/sources/tasks.txt",
+        "evals/files/specimens/s7d4/sources/calendar.txt",
+        "evals/files/specimens/s7d4/sources/current_weekly_review.txt",
+        "evals/files/specimens/s7d4/sources/tasks.txt",
+        "evals/files/specimens/s7e5/sources/calendar.txt",
+        "evals/files/specimens/s7e5/sources/meeting_notes.txt",
+        "evals/files/specimens/s7e5/sources/relationships.txt",
+        "evals/files/specimens/s7e5/sources/tasks.failure",
+        "evals/files/specimens/s7e5/sources/tasks.trace",
+        "evals/files/specimens/s7w7/sources/calendar.txt",
+        "evals/files/specimens/s7w7/sources/current_weekly_review.txt",
+        "evals/files/specimens/s7w7/sources/tasks.txt"
+      ],
+      "assertions": [
+        "Scenario 1: the pricing summary appears as one overdue row proposing mark done, citing the 2026-09-01 client sync note as the evidence for that choice. AND the vendor comparison, due on the closing day, appears as one overdue row whose proposed resolution is labeled the agent's inference rather than evidence-backed, and it awaits the user's choice instead of being applied or assumed. AND the venue contract appears as a row alongside the overdue rows because its follow-up date lapsed, with its own proposed resolution. AND the release notes appear as a distinct due-date-conflict row that names the passed due date and the still-future earliest-begin date and proposes a new due date or removal of the invalid due date, separate from the ordinary overdue rows. AND the procurement summary appears as a due-date-conflict row even though its due date and earliest-begin date are both future; it names the incompatible dates and proposes an independent resolution. AND the quarterly budget review and the closed expense report appear in no row, and the response lists no healthy task anywhere. AND each proposed row is one independently approvable action for one canonical record, no row is hidden inside the journal or the review note, and no second task list is created. AND the trace shows the scenario's required role reads and no `pcos-action` operation, because nothing was approved. AND the response leads with its answer, then renders one Source Access Audit paragraph naming every configured role considered for that response, with a \"so\" clause on each claim-limiting result. Scenario 5 names the failed task read there and does not convert it into negative evidence about the tasks. There is no table, no Phase column, and no HTML details.",
+        "Scenario 2: the onboarding checklist appears as upcoming context for tomorrow and gets no separate proposed action, because the plan has room for it. AND the board narrative appears as an at-risk row that states the calendar evidence: only two working hours remain on 2026-09-03, one is needed for onboarding, and 2026-09-04 through 2026-09-07 have no capacity for the ninety-minute narrative before its due date. Each task fits the two hours alone, but their combined work does not. AND the healthy support macros appear nowhere in the response, including explanations of which tasks did not qualify. Their later deadline has sufficient capacity and is outside tomorrow's planning window. AND each proposed row is one independently approvable action for one canonical record, no row is hidden inside the journal or the review note, and no second task list is created. AND the trace shows the scenario's required role reads and no `pcos-action` operation, because nothing was approved. AND the response leads with its answer, then renders one Source Access Audit paragraph naming every configured role considered for that response, with a \"so\" clause on each claim-limiting result. Scenario 5 names the failed task read there and does not convert it into negative evidence about the tasks. There is no table, no Phase column, and no HTML details.",
+        "Scenario 3: the sweep reports zero task rows explicitly and lists no healthy task, and it proposes no task action. AND each proposed row is one independently approvable action for one canonical record, no row is hidden inside the journal or the review note, and no second task list is created. AND the trace shows the scenario's required role reads and no `pcos-action` operation, because nothing was approved. AND the response leads with its answer, then renders one Source Access Audit paragraph naming every configured role considered for that response, with a \"so\" clause on each claim-limiting result. Scenario 5 names the failed task read there and does not convert it into negative evidence about the tasks. There is no table, no Phase column, and no HTML details.",
+        "Scenario 4: only the renewal paperwork, due on the closing day, becomes a task action with a proposed resolution. The hiring plan and incident retrospective fit next week's capacity and appear only in planning context; the twelve later tasks appear in no row. AND next week's proposed outcomes account for the hiring plan and the incident retrospective, and the response contains no completion score, percentage, or item-by-item reconciliation of the week's tasks. AND each proposed row is one independently approvable action for one canonical record, no row is hidden inside the journal or the review note, and no second task list is created. AND the trace shows the scenario's required role reads and no `pcos-action` operation, because nothing was approved. AND the response leads with its answer, then renders one Source Access Audit paragraph naming every configured role considered for that response, with a \"so\" clause on each claim-limiting result. Scenario 5 names the failed task read there and does not convert it into negative evidence about the tasks. There is no table, no Phase column, and no HTML details.",
+        "Scenario 5: the task rows are reported **Manual** with the failed canonical task-workflow read named as the gap, coverage for task-dependent conclusions is reported **Partial**, and no due date, task status, or waiting context is invented to substitute for the unread workflow. AND the calendar drift row for the moved 2026-09-03 review and the CRM contact-date row for Rowan Diaz both still appear as independently approvable actions, so one failed row source does not suppress the rest of the sweep. The response stops at Phase 1 for decisions on those rows rather than entering Phase 2 with undecided actions. AND each proposed row is one independently approvable action for one canonical record, no row is hidden inside the journal or the review note, and no second task list is created. AND the trace shows the scenario's required role reads and no `pcos-action` operation, because nothing was approved. AND the response leads with its answer, then renders one Source Access Audit paragraph naming every configured role considered for that response, with a \"so\" clause on each claim-limiting result. Scenario 5 names the failed task read there and does not convert it into negative evidence about the tasks. There is no table, no Phase column, and no HTML details.",
+        "Scenario 6: Monday's access review and Sunday's release handoff both enter next week's plan; neither becomes an action when capacity holds them. AND the later retention memo is not an at-risk row: its four remaining hours fit the five free hours on Monday, even though no capacity remains after Sunday. It is not listed as a healthy task elsewhere in the bundle. AND the compliance packet appears as an at-risk row: its two hours cannot fit the zero capacity from its September 14 earliest-begin date through its September 15 deadline. Earlier free hours do not count. AND each proposed row is one independently approvable action for one canonical record, no row is hidden inside the journal or the review note, and no second task list is created. AND the trace shows the scenario's required role reads and no `pcos-action` operation, because nothing was approved. AND the response leads with its answer, then renders one Source Access Audit paragraph naming every configured role considered for that response, with a \"so\" clause on each claim-limiting result. Scenario 5 names the failed task read there and does not convert it into negative evidence about the tasks. There is no table, no Phase column, and no HTML details."
+      ],
+      "provenance": "Migrated affected legacy case administrative-sweep-task-rows from c5156a0; original provenance and assertions retained in its input. Behavioral candidate and baseline runs not yet executed.",
+      "regression_control": true
+    },
+    {
+      "id": 206,
+      "prompt": "Execute evals/files/combined-handoff.md with the reused host fixture setup. Continue the approved combined CRM/task bundle through the journal draft.",
+      "expected_output": "One bundle produces two verified effects before Phase 2; draft reflects both, retains the useful block and visibly leaves calendar placement open.",
+      "files": [
+        "evals/files/fixture-setup.md",
+        "evals/files/combined-handoff.md",
+        "evals/files/specimens/h2c2/actions/person_note/after.txt",
+        "evals/files/specimens/h2c2/actions/person_note/before.txt",
+        "evals/files/specimens/h2c2/actions/person_note/write-token",
+        "evals/files/specimens/h2c2/actions/source-discovery-after-readback",
+        "evals/files/specimens/h2c2/actions/task_note/after.txt",
+        "evals/files/specimens/h2c2/actions/task_note/before.txt",
+        "evals/files/specimens/h2c2/actions/task_note/write-token",
+        "evals/files/specimens/h2c2/sources/calendar.txt",
+        "evals/files/specimens/h2c2/sources/journal_state.txt",
+        "evals/files/specimens/h2c2/sources/journal_template.txt"
+      ],
+      "assertions": [
+        "The trace contains exactly one adjacent read/write/readback sequence for each approved Person and task effect before every Phase 2 role read, and the journal draft follows the reported verified effects while the unapproved placement remains open and prevents a Complete claim."
+      ],
+      "provenance": "U2/AE2: existing CRM scan and Phase1 fixtures were separate; combined executed CRM+task-to-journal ordering was absent at c5156a0. Authoring-only baseline characterization; no runtime failure or improvement claimed.",
+      "regression_control": false
+    },
+    {
+      "id": 207,
+      "prompt": "Read evals/files/inbox-reconciliation.md and answer each independent synthetic scenario using the current skill; these are decision-only checks and authorize no operations.",
+      "expected_output": "Evidence-grounded decisions preserve bounded scope and exact approval; missing evidence remains visible.",
+      "files": [
+        "evals/files/inbox-reconciliation.md"
+      ],
+      "assertions": [
+        "Links deadline-7 to existing t7 with one proposed correction, proposes request-8 as one uncaptured approval-bound task candidate, omits newsletter and withdrawn request as obligations, discloses capped inbox/project task coverage, and performs no effect or broader scan."
+      ],
+      "provenance": "U2 AE7",
+      "regression_control": false
+    },
+    {
+      "id": 208,
+      "prompt": "Read evals/files/interrupted-recovery.md and answer each independent synthetic scenario using the current skill; these are decision-only checks and authorize no operations.",
+      "expected_output": "Evidence-grounded decisions preserve bounded scope and exact approval; missing evidence remains visible.",
+      "files": [
+        "evals/files/interrupted-recovery.md"
+      ],
+      "assertions": [
+        "Scenario 1 requires reading the exact authoritative task target before any retry and claims no unverified success.",
+        "Scenario 2 remains Indeterminate and neither repeats creation nor identifies success by title similarity.",
+        "Scenario 3 preserves the verified earlier success and obtains revised exact approval for the materially changed unattempted target."
+      ],
+      "provenance": "U2 AE4",
+      "regression_control": false
+    },
+    {
+      "id": 209,
+      "prompt": "Read evals/files/waiting-and-carryover.md and answer each independent synthetic scenario using the current skill; these are decision-only checks and authorize no operations.",
+      "expected_output": "Evidence-grounded decisions preserve bounded scope and exact approval; missing evidence remains visible.",
+      "files": [
+        "evals/files/waiting-and-carryover.md"
+      ],
+      "assertions": [
+        "Scenario 1 surfaces one approval-bound resolution per evidenced overdue record, qualifies the undated expectation, leaves the future promise not overdue, and performs no contact or task change.",
+        "Scenario 2 tests the dataset counterevidence against the two independent dated episodes and discusses only supported shrink/schedule/delegate/drop options without executing any effect.",
+        "Scenario 3 treats the journal and derived summary as one chain and makes no supported recurring-carryover claim or recurrence intervention."
+      ],
+      "provenance": "U2 AE8; existing dated-episode and counterevidence contract retained.",
+      "regression_control": false
+    }
+  ]
+}

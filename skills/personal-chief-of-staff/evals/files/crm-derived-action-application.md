@@ -8,11 +8,7 @@ owned by the managing-personal-crm suite.
 
 ## Setup
 
-Run every scenario in a fresh executor using only the supplied test sources. For fixture-backed scenarios, create a fresh temporary directory
-outside the repository, set `PCOS_FIXTURE_ROOT` to it, set
-`PCOS_FIXTURE_TRACE` to `<temporary-directory>/trace.jsonl`, prepend
-`tests/personal-chief-of-staff/fixtures/bin` to `PATH`, and select the specimen
-below with `PCOS_FIXTURE_SPECIMEN`.
+Run each independent scenario in a fresh executor using the isolated copied and overlaid fixture setup in [fixture-setup.md](fixture-setup.md). Select the frozen specimen below with `PCOS_FIXTURE_SPECIMEN`; use the copied `fixtures/bin`, never the repository binary. Capture `command -v pcos-source`, `command -v pcos-action`, and `command -v imsg` with the run evidence.
 
 Follow [the host execution protocol prerequisite](fixture-setup.md) for skill loading,
 fixture use, and independent response/trace grading.

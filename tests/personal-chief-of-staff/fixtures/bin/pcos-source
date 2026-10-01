@@ -76,7 +76,12 @@ fi
 state_dir="$fixture_root/source-$role"
 read_claim_dir="$state_dir/read-claim"
 fixture_prepare_state_dir "$state_dir"
-mkdir "$read_claim_dir" 2>/dev/null || reject "exactly one canonical role read is permitted" "$role"
+if ! mkdir "$read_claim_dir" 2>/dev/null; then
+  [[ -f "$source_dir/$role.reread.txt" ]] || reject "exactly one canonical role read is permitted" "$role"
+  mkdir "$state_dir/reread-claim" 2>/dev/null || reject "exactly two drift role reads are permitted" "$role"
+  evidence_file="$source_dir/$role.reread.txt"
+  evidence_token=changed_authoritative_evidence
+fi
 
 if [[ -f "$failure_marker" ]]; then
   trace "$role" failure unknown "${evidence_token:-none}"

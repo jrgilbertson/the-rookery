@@ -9,7 +9,8 @@ repo_root=$(cd "$fixture_dir/../../.." && pwd -P)
 PATH="$fixture_bin:$PATH"
 export PATH
 run_root=$(mktemp -d "${TMPDIR:-/tmp}/pcos-fixture.XXXXXX")
-trap 'rm -rf "$run_root"' EXIT
+overlay_root=""
+trap 'rm -rf "$run_root"; [[ -z "$overlay_root" ]] || rm -rf "$overlay_root"' EXIT
 
 fail() {
   printf 'fixture self-check failed: %s\n' "$1" >&2
@@ -710,6 +711,52 @@ for specimen in p1w1 p2q2; do
     pcos-source read "role=$role" >/dev/null
   done
 done
+
+# Evaluation-only specimens are executed from a copied host fixture tree,
+# matching the package overlay rather than bypassing it with repository binaries.
+overlay_root=$(mktemp -d "${TMPDIR:-/tmp}/pcos-overlay.XXXXXX")
+mkdir -p "$overlay_root/host/tests/personal-chief-of-staff"
+cp -R "$fixture_dir" "$overlay_root/host/tests/personal-chief-of-staff/fixtures"
+for specimen in d5u5 r1u1 t1d1; do
+  cp -R "$repo_root/skills/personal-chief-of-staff/evals/files/specimens/$specimen" \
+    "$overlay_root/host/tests/personal-chief-of-staff/fixtures/specimens/"
+done
+PATH="$overlay_root/host/tests/personal-chief-of-staff/fixtures/bin:$PATH"
+[[ "$(command -v pcos-source)" == "$overlay_root/host/tests/personal-chief-of-staff/fixtures/bin/pcos-source" ]] || fail "isolated source binary path"
+
+new_run d5u5
+imsg --version >/dev/null
+imsg chats --limit 10 --json >/dev/null
+output=$(imsg history --chat-id passive-1 --start 2026-08-05T00:00:00-07:00 --end 2026-08-06T00:00:00-07:00 --limit 100 --json)
+[[ "$output" == '[]' ]] || fail "unknown-empty history output"
+assert_trace '"target":"messages_history","result":"success","completeness":"unknown"'
+
+new_run r1u1
+pcos-action read role=task_note >/dev/null
+pcos-action write role=task_note content=mark_recovery_test_done >/dev/null
+# A native turn boundary changes no fixture state: successful mutation remains
+# recoverable by its exact-target readback, without replaying the write.
+output=$(pcos-action readback role=task_note)
+[[ "$output" == 'Canonical task t12: status done; recovery test completed.' ]] || fail "interrupted-update exact-target recovery"
+if pcos-action write role=task_note content=mark_recovery_test_done >/dev/null 2>&1; then
+  fail "interrupted update allowed repeated write"
+fi
+[[ "$(grep -Fc '"operation":"write","target":"task_note","result":"success"' "$PCOS_FIXTURE_TRACE")" -eq 1 ]] || fail "interrupted update write count"
+
+new_run t1d1
+for role in journal_template journal_state; do
+  initial=$(pcos-source read "role=$role")
+  changed=$(pcos-source read "role=$role")
+  [[ "$initial" != "$changed" ]] || fail "drift source did not change"
+  assert_trace '"evidence":"changed_authoritative_evidence"'
+  if [[ "$role" == journal_state ]]; then
+    [[ "$changed" == *'protected recovery time'* && "$changed" == *'![[Synthetic sketch]]'* ]] || fail "drift journal lost preserved user content"
+  fi
+  if pcos-source read "role=$role" >/dev/null 2>&1; then
+    fail "drift source allowed a third read"
+  fi
+done
+PATH="$fixture_bin:$PATH"
 
 unexpected_file=$(find "$run_root" -type f \
   ! \( -name trace.jsonl -o -name read-index -o -name read -o -name written -o -name content \

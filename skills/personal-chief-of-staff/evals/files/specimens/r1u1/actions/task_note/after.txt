@@ -1,0 +1,1 @@
+Canonical task t12: status done; recovery test completed.

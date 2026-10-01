@@ -38,3 +38,12 @@ change explicitly requires a provider, its unavailable test environment leaves
 that acceptance requirement incomplete; neither another provider nor fixture
 success substitutes for it. Run official provider CLIs through subscription
 authentication when required by the test session; never fall back to API billing.
+
+For mapped two-turn interruption and drift evals, retain the same native executor
+session and fixture state across the explicit turn boundary. Capture the first
+turn trace separately before continuing with the exact stated user reply. A
+fresh executor, substituted second read or pre-seeded successful effect does
+not establish recovery or post-approval revalidation. The drift source marker
+permits one second authoritative read only for its designated roles; ordinary
+one-read cases retain their limit. Capture the resolved copied fixture binary
+paths with every executed case.

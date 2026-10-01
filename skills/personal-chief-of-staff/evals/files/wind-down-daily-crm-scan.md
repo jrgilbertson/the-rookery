@@ -17,20 +17,14 @@ themselves count as a traced source read.
 
 ## Setup
 
-Run each scenario in a fresh executor using only the supplied test sources. Create a fresh temporary directory outside the repository, set
-`PCOS_FIXTURE_ROOT` to it, set `PCOS_FIXTURE_TRACE` to
-`<temporary-directory>/trace.jsonl`, prepend
-`tests/personal-chief-of-staff/fixtures/bin` to `PATH`, and select the specimen
-below with `PCOS_FIXTURE_SPECIMEN`.
+Run each independent scenario in a fresh executor using the isolated copied and overlaid fixture setup in [fixture-setup.md](fixture-setup.md). Select the frozen specimen below with `PCOS_FIXTURE_SPECIMEN`; use the copied `fixtures/bin`, never the repository binary. Capture `command -v pcos-source`, `command -v pcos-action`, and `command -v imsg` with the run evidence.
 
 Follow [the host execution protocol prerequisite](fixture-setup.md) for skill loading,
 fixture use, and independent response/trace grading.
 
 For every scenario, prove the substituted Messages path with `imsg --version`,
 enumerate it with `imsg chats --limit 10 --json`, then run the exact bounded
-history command below. Returned fixture counts are below their explicit limits,
-so the trace's complete result is the authoritative finite-window completion
-signal.
+history command below. Scenarios 1–4 have explicit complete-window traces. Scenario 5 deliberately returns an empty history with unknown completeness; a small returned count supplies no completion signal.
 
 | Scenario | Specimen | Bounded history and canonical-role reads |
 | --- | --- | --- |
@@ -38,6 +32,7 @@ signal.
 | 2 | `d2p2` | `imsg history --chat-id passive-1 --start 2026-08-05T00:00:00-07:00 --end 2026-08-06T00:00:00-07:00 --limit 100 --json` |
 | 3 | `d3j3` | `pcos-source read role=journal_state`; `imsg history --chat-id direct-1 --start 2026-08-04T00:00:00-07:00 --end 2026-08-06T00:00:00-07:00 --limit 100 --json`; `pcos-source read role=person_jordan` |
 | 4 | `d4g4` | `imsg history --chat-id group-1 --start 2026-08-05T00:00:00-07:00 --end 2026-08-06T00:00:00-07:00 --limit 100 --json`; `pcos-source read role=person_alex`; `pcos-source read role=identity_unresolved` |
+| 5 | `d5u5` | `imsg history --chat-id passive-1 --start 2026-08-05T00:00:00-07:00 --end 2026-08-06T00:00:00-07:00 --limit 100 --json` |
 
 Give the grader the evidence required by
 [the host execution protocol prerequisite](fixture-setup.md), including the fixture trace. Remove each
@@ -70,6 +65,8 @@ temporary directory afterward.
 > 4. Mixed group: Same as scenario 1 for Alex, and unbound `+12135550199`
 >    remains unlinked. Confirm per-speaker outcomes.
 
+> 5. Unknown empty window: the same configured Messages role is reachable, but its bounded history returns no rows and supplies no complete-window evidence. Treat the actual interface observation as authoritative; no Person is named.
+
 ## Expected behavior
 
 - [ ] 1 → Daily CRM Scan runs before the initial reconstruction; proposes
@@ -97,3 +94,5 @@ temporary directory afterward.
       the exact user-owned desired effect, and its future canonical readback or
       equivalence signal separately recoverable without requiring literal
       intention headings.
+
+- [ ] 5 → Trace proves an executed empty Messages history with unknown completeness; reports Partial coverage, no proven absence of substantive exchange, and no invented contact effect. Scenario 2 remains the complete passive-window control.

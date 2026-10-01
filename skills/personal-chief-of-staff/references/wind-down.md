@@ -137,8 +137,7 @@ approved next-day plan. Do not add restart metadata to every task.
 
 Completion: the configured canonical open-task sweep has covered the closing
 day and target day under Administrative Sweep, with aggregate coverage or a
-material gap reported; every proposed row is independently decidable. Reading
-a task for commitment context does not complete the sweep.
+material gap reported; every proposed row is independently decidable.
 
 ## Phase 1: Review, apply, and read back
 

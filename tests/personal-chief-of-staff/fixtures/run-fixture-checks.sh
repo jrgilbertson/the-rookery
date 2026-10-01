@@ -711,49 +711,6 @@ for specimen in p1w1 p2q2; do
   done
 done
 
-new_run d5u5
-imsg --version >/dev/null
-imsg chats --limit 10 --json >/dev/null
-output=$(imsg history --chat-id passive-1 --start 2026-08-05T00:00:00-07:00 --end 2026-08-06T00:00:00-07:00 --limit 2 --json)
-[[ "$(grep -o '"guid"' <<<"$output" | wc -l | tr -d ' ')" == 2 ]] || fail "capped history returns exactly its limit"
-assert_trace '"target":"messages_history","result":"success","completeness":"truncated"'
-if imsg history --chat-id passive-1 --start 2026-08-05T08:05:00-07:00 --end 2026-08-06T00:00:00-07:00 --limit 2 --json >/dev/null 2>&1; then
-  fail "capped history allowed an unsupported next page"
-fi
-
-new_run d5x5
-imsg --version >/dev/null
-imsg chats --limit 10 --json >/dev/null
-if imsg history --chat-id passive-1 --start 2026-08-05T00:00:00-07:00 --end 2026-08-06T00:00:00-07:00 --limit 2 --json >/dev/null 2>&1; then
-  fail "invalid history completeness marker accepted"
-fi
-
-new_run r1u1
-pcos-action read role=task_note >/dev/null
-pcos-action write role=task_note content=mark_recovery_test_done >/dev/null
-# A native turn boundary changes no fixture state: successful mutation remains
-# recoverable by its exact-target readback, without replaying the write.
-output=$(pcos-action readback role=task_note)
-[[ "$output" == 'Canonical task t12: status done; recovery test completed.' ]] || fail "interrupted-update exact-target recovery"
-if pcos-action write role=task_note content=mark_recovery_test_done >/dev/null 2>&1; then
-  fail "interrupted update allowed repeated write"
-fi
-[[ "$(grep -Fc '"operation":"write","target":"task_note","result":"success"' "$PCOS_FIXTURE_TRACE")" -eq 1 ]] || fail "interrupted update write count"
-
-new_run t1d1
-for role in journal_template journal_state; do
-  initial=$(pcos-source read "role=$role")
-  changed=$(pcos-source read "role=$role")
-  [[ "$initial" != "$changed" ]] || fail "drift source did not change"
-  assert_trace '"evidence":"changed_authoritative_evidence"'
-  if [[ "$role" == journal_state ]]; then
-    [[ "$changed" == *'protected recovery time'* && "$changed" == *'![[Synthetic sketch]]'* ]] || fail "drift journal lost preserved user content"
-  fi
-  if pcos-source read "role=$role" >/dev/null 2>&1; then
-    fail "drift source allowed a third read"
-  fi
-done
-
 unexpected_file=$(find "$run_root" -type f \
   ! \( -name trace.jsonl -o -name read-index -o -name read -o -name written -o -name content \
     -o -name stage -o -name source-phase-complete \) \

@@ -56,4 +56,3 @@ Candidate-triggered-only reads quietly drop real relationship work on busy days 
 - Issue: https://github.com/jrgilbertson/the-rookery/issues/34
 - Implementation: https://github.com/jrgilbertson/the-rookery/pull/38
 - Skill owners: `skills/personal-chief-of-staff/references/wind-down.md`, `skills/managing-personal-crm/references/apple-messages-cli.md`
-- Discriminator case: `tests/personal-chief-of-staff/cases/wind-down-daily-crm-scan.md`

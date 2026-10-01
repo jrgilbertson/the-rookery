@@ -1,1 +1,0 @@
-Canonical task t12: status open; recovery test unfinished.

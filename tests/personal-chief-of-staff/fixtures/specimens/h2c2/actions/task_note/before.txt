@@ -1,1 +1,0 @@
-Canonical task: Validate recovery procedure. Open. Closure: documented successful restore test.

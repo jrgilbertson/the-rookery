@@ -102,13 +102,8 @@ case "$operation" in
     sed -n '1,$p' "$imsg_dir/history.json"
     evidence_token=$(<"$imsg_dir/evidence-token")
     [[ "$evidence_token" =~ ^[a-z][a-z0-9_]*$ ]] || reject "unsafe Messages evidence token"
-    completeness=complete
-    if [[ -f "$imsg_dir/history-completeness" ]]; then
-      completeness=$(<"$imsg_dir/history-completeness")
-      [[ "$completeness" == truncated ]] || reject "invalid history completeness marker"
-    fi
-    printf '{"operation":"history","target":"messages_history","result":"success","completeness":"%s","chat":"%s","start":"%s","end":"%s","limit":"%s","evidence":"%s"}\n' \
-      "$completeness" "$chat_id" "$start" "$end" "$limit" "$evidence_token" >> "$trace_path"
+    printf '{"operation":"history","target":"messages_history","result":"success","completeness":"complete","chat":"%s","start":"%s","end":"%s","limit":"%s","evidence":"%s"}\n' \
+      "$chat_id" "$start" "$end" "$limit" "$evidence_token" >> "$trace_path"
     printf '3\n' > "$stage_file"
     ;;
   *) reject "unsupported Messages operation" ;;

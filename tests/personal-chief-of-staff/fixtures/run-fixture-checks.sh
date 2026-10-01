@@ -9,8 +9,7 @@ repo_root=$(cd "$fixture_dir/../../.." && pwd -P)
 PATH="$fixture_bin:$PATH"
 export PATH
 run_root=$(mktemp -d "${TMPDIR:-/tmp}/pcos-fixture.XXXXXX")
-overlay_root=""
-trap 'rm -rf "$run_root"; [[ -z "$overlay_root" ]] || rm -rf "$overlay_root"' EXIT
+trap 'rm -rf "$run_root"' EXIT
 
 fail() {
   printf 'fixture self-check failed: %s\n' "$1" >&2
@@ -712,18 +711,6 @@ for specimen in p1w1 p2q2; do
   done
 done
 
-# Evaluation-only specimens are executed from a copied host fixture tree,
-# matching the package overlay rather than bypassing it with repository binaries.
-overlay_root=$(mktemp -d "${TMPDIR:-/tmp}/pcos-overlay.XXXXXX")
-mkdir -p "$overlay_root/host/tests/personal-chief-of-staff"
-cp -R "$fixture_dir" "$overlay_root/host/tests/personal-chief-of-staff/fixtures"
-for specimen in d5u5 r1u1 t1d1; do
-  cp -R "$repo_root/skills/personal-chief-of-staff/evals/files/specimens/$specimen" \
-    "$overlay_root/host/tests/personal-chief-of-staff/fixtures/specimens/"
-done
-PATH="$overlay_root/host/tests/personal-chief-of-staff/fixtures/bin:$PATH"
-[[ "$(command -v pcos-source)" == "$overlay_root/host/tests/personal-chief-of-staff/fixtures/bin/pcos-source" ]] || fail "isolated source binary path"
-
 new_run d5u5
 imsg --version >/dev/null
 imsg chats --limit 10 --json >/dev/null
@@ -734,9 +721,6 @@ if imsg history --chat-id passive-1 --start 2026-08-05T08:05:00-07:00 --end 2026
   fail "capped history allowed an unsupported next page"
 fi
 
-overlay_specimens="$overlay_root/host/tests/personal-chief-of-staff/fixtures/specimens"
-cp -R "$overlay_specimens/d5u5" "$overlay_specimens/d5x5"
-printf 'unknown\n' > "$overlay_specimens/d5x5/imsg/history-completeness"
 new_run d5x5
 imsg --version >/dev/null
 imsg chats --limit 10 --json >/dev/null
@@ -769,7 +753,6 @@ for role in journal_template journal_state; do
     fail "drift source allowed a third read"
   fi
 done
-PATH="$fixture_bin:$PATH"
 
 unexpected_file=$(find "$run_root" -type f \
   ! \( -name trace.jsonl -o -name read-index -o -name read -o -name written -o -name content \

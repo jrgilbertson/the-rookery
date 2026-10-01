@@ -7,60 +7,7 @@
       "expected_output": "Each scenario meets its preserved expected behavior, with fixture traces where required; decision-only cases establish no executed writes.",
       "files": [
         "evals/files/fixture-setup.md",
-        "evals/files/wind-down-daily-crm-scan.md",
-        "evals/files/specimens/d1g1/imsg/chat-id",
-        "evals/files/specimens/d1g1/imsg/chats-limit",
-        "evals/files/specimens/d1g1/imsg/chats.json",
-        "evals/files/specimens/d1g1/imsg/end",
-        "evals/files/specimens/d1g1/imsg/evidence-token",
-        "evals/files/specimens/d1g1/imsg/history-limit",
-        "evals/files/specimens/d1g1/imsg/history.json",
-        "evals/files/specimens/d1g1/imsg/start",
-        "evals/files/specimens/d1g1/sources/identity_unresolved.empty",
-        "evals/files/specimens/d1g1/sources/identity_unresolved.trace",
-        "evals/files/specimens/d1g1/sources/person_alex.trace",
-        "evals/files/specimens/d1g1/sources/person_alex.txt",
-        "evals/files/specimens/d2p2/imsg/chat-id",
-        "evals/files/specimens/d2p2/imsg/chats-limit",
-        "evals/files/specimens/d2p2/imsg/chats.json",
-        "evals/files/specimens/d2p2/imsg/end",
-        "evals/files/specimens/d2p2/imsg/evidence-token",
-        "evals/files/specimens/d2p2/imsg/history-limit",
-        "evals/files/specimens/d2p2/imsg/history.json",
-        "evals/files/specimens/d2p2/imsg/start",
-        "evals/files/specimens/d3j3/imsg/chat-id",
-        "evals/files/specimens/d3j3/imsg/chats-limit",
-        "evals/files/specimens/d3j3/imsg/chats.json",
-        "evals/files/specimens/d3j3/imsg/end",
-        "evals/files/specimens/d3j3/imsg/evidence-token",
-        "evals/files/specimens/d3j3/imsg/history-limit",
-        "evals/files/specimens/d3j3/imsg/history.json",
-        "evals/files/specimens/d3j3/imsg/start",
-        "evals/files/specimens/d3j3/sources/journal_state.trace",
-        "evals/files/specimens/d3j3/sources/journal_state.txt",
-        "evals/files/specimens/d3j3/sources/person_jordan.trace",
-        "evals/files/specimens/d3j3/sources/person_jordan.txt",
-        "evals/files/specimens/d4g4/imsg/chat-id",
-        "evals/files/specimens/d4g4/imsg/chats-limit",
-        "evals/files/specimens/d4g4/imsg/chats.json",
-        "evals/files/specimens/d4g4/imsg/end",
-        "evals/files/specimens/d4g4/imsg/evidence-token",
-        "evals/files/specimens/d4g4/imsg/history-limit",
-        "evals/files/specimens/d4g4/imsg/history.json",
-        "evals/files/specimens/d4g4/imsg/start",
-        "evals/files/specimens/d4g4/sources/identity_unresolved.empty",
-        "evals/files/specimens/d4g4/sources/identity_unresolved.trace",
-        "evals/files/specimens/d4g4/sources/person_alex.trace",
-        "evals/files/specimens/d4g4/sources/person_alex.txt",
-        "evals/files/specimens/d5u5/imsg/chat-id",
-        "evals/files/specimens/d5u5/imsg/chats-limit",
-        "evals/files/specimens/d5u5/imsg/chats.json",
-        "evals/files/specimens/d5u5/imsg/end",
-        "evals/files/specimens/d5u5/imsg/evidence-token",
-        "evals/files/specimens/d5u5/imsg/history-completeness",
-        "evals/files/specimens/d5u5/imsg/history-limit",
-        "evals/files/specimens/d5u5/imsg/history.json",
-        "evals/files/specimens/d5u5/imsg/start"
+        "evals/files/wind-down-daily-crm-scan.md"
       ],
       "assertions": [
         "Scenario 1: Daily CRM Scan runs before the initial reconstruction; proposes contact-date outcome for Alex Rivers from the group thread (novel or Already satisfied); effects are independently approvable actions in the Phase 1 review bundle; no nested CRM bundle; no write during preparation; `+12135550199` stays unresolved with no Person effect. AND Every scenario keeps the answer-first CRM result ahead of a Source Access Audit. The audit includes the configured Messages relationship-evidence role and each canonical Person role actually read, uses only generic safe labels and bounded scope, and narrows only claims affected by incomplete or failed access. AND Every proposed CRM effect makes the current observed relationship state, the exact user-owned desired effect, and its future canonical readback or equivalence signal separately recoverable without requiring literal intention headings.",
@@ -78,35 +25,7 @@
       "expected_output": "Each scenario meets its preserved expected behavior, with fixture traces where required; decision-only cases establish no executed writes.",
       "files": [
         "evals/files/fixture-setup.md",
-        "evals/files/wind-down-two-phase-apply-and-resume.md",
-        "evals/files/specimens/w2p1/actions/source-discovery-after-readback",
-        "evals/files/specimens/w2p1/actions/task_note/after.txt",
-        "evals/files/specimens/w2p1/actions/task_note/before.txt",
-        "evals/files/specimens/w2p1/actions/task_note/write-token",
-        "evals/files/specimens/w2p1/sources/calendar.txt",
-        "evals/files/specimens/w2p1/sources/journal_state.txt",
-        "evals/files/specimens/w2p1/sources/journal_template.txt",
-        "evals/files/specimens/w2p2/actions/task_note/after.txt",
-        "evals/files/specimens/w2p2/actions/task_note/before.txt",
-        "evals/files/specimens/w2p2/actions/task_note/write-token",
-        "evals/files/specimens/w2p2/sources/calendar.txt",
-        "evals/files/specimens/w2p2/sources/journal_state.txt",
-        "evals/files/specimens/w2p2/sources/journal_template.txt",
-        "evals/files/specimens/w2p2/sources/meeting_notes.txt",
-        "evals/files/specimens/w2p2/sources/tasks.txt",
-        "evals/files/specimens/w2p3/sources/calendar.txt",
-        "evals/files/specimens/w2p3/sources/tasks.txt",
-        "evals/files/specimens/w2p4/actions/mailbox_draft/after.txt",
-        "evals/files/specimens/w2p4/actions/mailbox_draft/before.txt",
-        "evals/files/specimens/w2p4/actions/mailbox_draft/readback.failure",
-        "evals/files/specimens/w2p4/actions/mailbox_draft/write-token",
-        "evals/files/specimens/w2p4/actions/source-discovery-after-readback",
-        "evals/files/specimens/w2p4/actions/task_note/after.txt",
-        "evals/files/specimens/w2p4/actions/task_note/before.txt",
-        "evals/files/specimens/w2p4/actions/task_note/write-token",
-        "evals/files/specimens/w2p4/sources/calendar.txt",
-        "evals/files/specimens/w2p4/sources/journal_state.txt",
-        "evals/files/specimens/w2p4/sources/journal_template.txt"
+        "evals/files/wind-down-two-phase-apply-and-resume.md"
       ],
       "assertions": [
         "Scenario 1: the task action is presented, approved, applied through one pre-write read, one write, and one readback, and the trace records that readback before the first canonical role read of Phase 2. AND no journal draft, meaningful-commitments draft, or tomorrow plan appears anywhere before the applied outcome is reported. AND the journal draft describes the migration checklist as done, matching the readback result rather than the pre-sweep status. AND the trace records no canonical role read attempt, whether it succeeded or was refused, before every approved action of that scenario has a reported outcome, including an indeterminate stop. Scenarios 2 and 3 are exempt: composing a Phase 1 bundle and recomputing a stale one both require canonical reads before any action resolves. AND a scheduled turn that ends Paused records no operation against a proposed target's own write interface, including a re-read. AND each action result is reported independently, no approval is redirected to a different target or effect, and no action is retried blindly after an unclear result. AND the response leads with its answer, then renders one Source Access Audit paragraph naming the pre-write reread and the post-write readback as action access and the canonical roles as Phase 2 discovery, with a \"so\" clause on each claim-limiting result. Neither access is used to imply the other. There is no table, no Phase column, and no HTML details.",
@@ -143,15 +62,7 @@
       "expected_output": "Each scenario meets its preserved expected behavior, with fixture traces where required; decision-only cases establish no executed writes.",
       "files": [
         "evals/files/fixture-setup.md",
-        "evals/files/crm-derived-action-application.md",
-        "evals/files/specimens/c1p1/actions/person_note/after.txt",
-        "evals/files/specimens/c1p1/actions/person_note/before.txt",
-        "evals/files/specimens/c1p1/actions/person_note/write-token",
-        "evals/files/specimens/c3e3/sources/repository_issue.txt",
-        "evals/files/specimens/c4r4/actions/repository_issue/after.txt",
-        "evals/files/specimens/c4r4/actions/repository_issue/before.txt",
-        "evals/files/specimens/c4r4/actions/repository_issue/write-token",
-        "evals/files/specimens/c5w5/sources/writing_backlog.txt"
+        "evals/files/crm-derived-action-application.md"
       ],
       "assertions": [
         "Scenario 1: the action number, result, and completion state stay with the chief-of-staff bundle; no nested CRM bundle, renumbering, generic fallback path, redirected destination, or new review discovery. AND applies through the embedded companion with a pre-write re-read of the exact Person note and post-write readback. AND Every action-only response keeps the chief-of-staff action result separate from its response-scoped Source Access Audit. The audit has no review coverage verdict. The paragraph names only the canonical roles actually reread or verified now, as separate pre-write and post-write operations when those reads ran. HTML details fail. The audit never treats a successful read as an applied mutation, and never treats `Manual`, `Already satisfied`, `Failed`, or `Indeterminate` as an access state. AND Each applied or already-satisfied durable effect leaves a gradeable intention: the current target state comes from the pre-write reread, the desired effect remains the user's exact approved effect, and the future observable signal is the canonical readback or equivalence result.",
@@ -171,25 +82,7 @@
       "expected_output": "Each scenario meets its preserved expected behavior, with fixture traces where required; decision-only cases establish no executed writes.",
       "files": [
         "evals/files/fixture-setup.md",
-        "evals/files/administrative-sweep-task-rows.md",
-        "evals/files/specimens/s7a1/sources/calendar.txt",
-        "evals/files/specimens/s7a1/sources/meeting_notes.txt",
-        "evals/files/specimens/s7a1/sources/tasks.txt",
-        "evals/files/specimens/s7b2/sources/calendar.txt",
-        "evals/files/specimens/s7b2/sources/tasks.txt",
-        "evals/files/specimens/s7c3/sources/calendar.txt",
-        "evals/files/specimens/s7c3/sources/tasks.txt",
-        "evals/files/specimens/s7d4/sources/calendar.txt",
-        "evals/files/specimens/s7d4/sources/current_weekly_review.txt",
-        "evals/files/specimens/s7d4/sources/tasks.txt",
-        "evals/files/specimens/s7e5/sources/calendar.txt",
-        "evals/files/specimens/s7e5/sources/meeting_notes.txt",
-        "evals/files/specimens/s7e5/sources/relationships.txt",
-        "evals/files/specimens/s7e5/sources/tasks.failure",
-        "evals/files/specimens/s7e5/sources/tasks.trace",
-        "evals/files/specimens/s7w7/sources/calendar.txt",
-        "evals/files/specimens/s7w7/sources/current_weekly_review.txt",
-        "evals/files/specimens/s7w7/sources/tasks.txt"
+        "evals/files/administrative-sweep-task-rows.md"
       ],
       "assertions": [
         "Scenario 1: the pricing summary appears as one overdue row proposing mark done, citing the 2026-09-01 client sync note as the evidence for that choice. AND the vendor comparison, due on the closing day, appears as one overdue row whose proposed resolution is labeled the agent's inference rather than evidence-backed, and it awaits the user's choice instead of being applied or assumed. AND the venue contract appears as a row alongside the overdue rows because its follow-up date lapsed, with its own proposed resolution. AND the release notes appear as a distinct due-date-conflict row that names the passed due date and the still-future earliest-begin date and proposes a new due date or removal of the invalid due date, separate from the ordinary overdue rows. AND the procurement summary appears as a due-date-conflict row even though its due date and earliest-begin date are both future; it names the incompatible dates and proposes an independent resolution. AND the quarterly budget review and the closed expense report appear in no row, and the response lists no healthy task anywhere. AND each proposed row is one independently approvable action for one canonical record, no row is hidden inside the journal or the review note, and no second task list is created. AND the trace shows the scenario's required role reads and no `pcos-action` operation, because nothing was approved. AND the response leads with its answer, then renders one Source Access Audit paragraph naming every configured role considered for that response, with a \"so\" clause on each claim-limiting result. There is no table, no Phase column, and no HTML details.",
@@ -208,17 +101,7 @@
       "expected_output": "One bundle produces two verified effects before Phase 2; draft reflects both, retains the useful block and visibly leaves calendar placement open.",
       "files": [
         "evals/files/fixture-setup.md",
-        "evals/files/combined-handoff.md",
-        "evals/files/specimens/h2c2/actions/person_note/after.txt",
-        "evals/files/specimens/h2c2/actions/person_note/before.txt",
-        "evals/files/specimens/h2c2/actions/person_note/write-token",
-        "evals/files/specimens/h2c2/actions/source-discovery-after-readback",
-        "evals/files/specimens/h2c2/actions/task_note/after.txt",
-        "evals/files/specimens/h2c2/actions/task_note/before.txt",
-        "evals/files/specimens/h2c2/actions/task_note/write-token",
-        "evals/files/specimens/h2c2/sources/calendar.txt",
-        "evals/files/specimens/h2c2/sources/journal_state.txt",
-        "evals/files/specimens/h2c2/sources/journal_template.txt"
+        "evals/files/combined-handoff.md"
       ],
       "assertions": [
         "The trace contains exactly one adjacent read/write/readback sequence for each approved Person and task effect before every Phase 2 role read, and the journal draft follows the reported verified effects while the unapproved placement remains open and prevents a Complete claim."
@@ -307,10 +190,7 @@
       "expected_output": "A native same-session interruption after the actual successful canonical t12 update is followed by exactly one authoritative exact-target readback and no repeated write; Applied is reported only after recovery verifies the original approved effect.",
       "files": [
         "evals/files/fixture-setup.md",
-        "evals/files/executed-recovery.md",
-        "evals/files/specimens/r1u1/actions/task_note/after.txt",
-        "evals/files/specimens/r1u1/actions/task_note/before.txt",
-        "evals/files/specimens/r1u1/actions/task_note/write-token"
+        "evals/files/executed-recovery.md"
       ],
       "assertions": [
         "A native same-session interruption after the actual successful canonical t12 update is followed by exactly one authoritative exact-target readback and no repeated write; Applied is reported only after recovery verifies the original approved effect."
@@ -324,14 +204,7 @@
       "expected_output": "The two-turn trace contains exactly two authoritative reads of each configured template and journal role, detects both post-approval changes, preserves changed user content and embed, performs no stale write, and requires fresh exact approval for a revised proposal.",
       "files": [
         "evals/files/fixture-setup.md",
-        "evals/files/executed-template-drift.md",
-        "evals/files/specimens/t1d1/actions/journal_note/after.txt",
-        "evals/files/specimens/t1d1/actions/journal_note/before.txt",
-        "evals/files/specimens/t1d1/actions/journal_note/write-token",
-        "evals/files/specimens/t1d1/sources/journal_state.reread.txt",
-        "evals/files/specimens/t1d1/sources/journal_state.txt",
-        "evals/files/specimens/t1d1/sources/journal_template.reread.txt",
-        "evals/files/specimens/t1d1/sources/journal_template.txt"
+        "evals/files/executed-template-drift.md"
       ],
       "assertions": [
         "The two-turn trace contains exactly two authoritative reads of each configured template and journal role, detects both post-approval changes, preserves changed user content and embed, performs no stale write, and requires fresh exact approval for a revised proposal."

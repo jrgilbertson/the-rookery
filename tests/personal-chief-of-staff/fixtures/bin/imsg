@@ -105,7 +105,7 @@ case "$operation" in
     completeness=complete
     if [[ -f "$imsg_dir/history-completeness" ]]; then
       completeness=$(<"$imsg_dir/history-completeness")
-      [[ "$completeness" == unknown || "$completeness" == truncated ]] || reject "invalid history completeness marker"
+      [[ "$completeness" == truncated ]] || reject "invalid history completeness marker"
     fi
     printf '{"operation":"history","target":"messages_history","result":"success","completeness":"%s","chat":"%s","start":"%s","end":"%s","limit":"%s","evidence":"%s"}\n' \
       "$completeness" "$chat_id" "$start" "$end" "$limit" "$evidence_token" >> "$trace_path"

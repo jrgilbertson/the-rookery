@@ -727,9 +727,22 @@ PATH="$overlay_root/host/tests/personal-chief-of-staff/fixtures/bin:$PATH"
 new_run d5u5
 imsg --version >/dev/null
 imsg chats --limit 10 --json >/dev/null
-output=$(imsg history --chat-id passive-1 --start 2026-08-05T00:00:00-07:00 --end 2026-08-06T00:00:00-07:00 --limit 100 --json)
-[[ "$output" == '[]' ]] || fail "unknown-empty history output"
-assert_trace '"target":"messages_history","result":"success","completeness":"unknown"'
+output=$(imsg history --chat-id passive-1 --start 2026-08-05T00:00:00-07:00 --end 2026-08-06T00:00:00-07:00 --limit 2 --json)
+[[ "$(grep -o '"guid"' <<<"$output" | wc -l | tr -d ' ')" == 2 ]] || fail "capped history returns exactly its limit"
+assert_trace '"target":"messages_history","result":"success","completeness":"truncated"'
+if imsg history --chat-id passive-1 --start 2026-08-05T08:05:00-07:00 --end 2026-08-06T00:00:00-07:00 --limit 2 --json >/dev/null 2>&1; then
+  fail "capped history allowed an unsupported next page"
+fi
+
+overlay_specimens="$overlay_root/host/tests/personal-chief-of-staff/fixtures/specimens"
+cp -R "$overlay_specimens/d5u5" "$overlay_specimens/d5x5"
+printf 'unknown\n' > "$overlay_specimens/d5x5/imsg/history-completeness"
+new_run d5x5
+imsg --version >/dev/null
+imsg chats --limit 10 --json >/dev/null
+if imsg history --chat-id passive-1 --start 2026-08-05T00:00:00-07:00 --end 2026-08-06T00:00:00-07:00 --limit 2 --json >/dev/null 2>&1; then
+  fail "invalid history completeness marker accepted"
+fi
 
 new_run r1u1
 pcos-action read role=task_note >/dev/null

@@ -22,7 +22,6 @@ looked" surface. GitHub Releases mirror its entries.
   evidence and approval rules; live configured templates own drafting structure.
 - `managing-personal-crm` uses bounded supported contact lookup after an empty
   unsupported phone-string search, retaining conservative identity binding.
-
 - `checking-merge-readiness` keeps the Option-1 reply in the review that
   wrote the brief. That reply compares the recorded fingerprint, live merge
   state, host policy, and linked-issue digests, then merges or stops. It

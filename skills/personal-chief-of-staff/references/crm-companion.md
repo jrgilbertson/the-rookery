@@ -40,12 +40,13 @@ case.
 
 Return the completed relationship judgment, not just retrieved interactions:
 each bindable substantive contact has its supported effect or Already satisfied
-outcome, and unresolved identities or times and claim-limiting source gaps
-remain explicit. Wind-down uses this return to close its Daily CRM Scan before
-reconstruction; retrieval alone does not complete that handoff.
+outcome. Name each unresolved identity, each unresolved interaction time, and
+each source gap that limits a claim. Wind-down uses this return to close its
+Daily CRM Scan before reconstruction; retrieval alone does not complete that
+handoff.
 
-Completion: the mode has this judgment and only supported candidate effects
-for its existing bundle, approval flow, and completion state.
+Completion: the calling mode holds this judgment and adds only its supported
+candidate effects to its own bundle, approval flow, and completion state.
 
 ## Apply approved relationship effects
 

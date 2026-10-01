@@ -98,10 +98,11 @@ coverage for wind-down, separate from prepare-tomorrow's cadence exceptions.
    nothing while preparing.
 
 Completion: the companion has returned completed relationship judgment before
-initial reconstruction; scan window set; each configured relationship source for the window
-covered or marked Partial; every bindable substantive direct contact from the
-scan, other day evidence, or (later) reflection has a contact-date outcome
-(novel action, Already satisfied in coverage, or identity/time unresolved);
+initial reconstruction; scan window set; each configured relationship source
+for the window covered or marked Partial; every bindable substantive direct
+contact from the scan, other day evidence, or (later) reflection has a
+contact-date outcome (novel action, Already satisfied in coverage, or
+identity/time unresolved);
 unknown handles unresolved; no write performed.
 
 ## Begin with one broad reflection
@@ -262,7 +263,8 @@ journal structure requires separate approval.
 
 Draft in the count and format requested by the live template in the closing-date
 journal. When it specifies no count, use the user's reviewed outcomes and
-capacity without adding a quota. Each commitment naturally states the shared
+capacity without adding a quota. Each commitment states, in natural sentences,
+the shared
 [current basis, outcome, and closure evidence](review-reasoning.md#make-every-intention-verifiable),
 plus a short user-approved reason tied to strategy, an obligation, or an avoided
 cost. Refine activity labels such as “development” or “meetings” into concrete
@@ -299,8 +301,9 @@ the section immediately before writing, including the template-drift check
 under “Phase 2: Review, write, and verify.”
 
 Completion: the configured section follows the live template's count, format
-and purpose, with reviewed commitments and quality checks applied; explicitly approved incomplete wording is preserved
-verbatim and identified as nonconforming. Without a configured section,
+and purpose, with reviewed commitments and quality checks applied; explicitly
+approved incomplete wording is preserved verbatim and identified as
+nonconforming. Without a configured section,
 next-day planning continues without an invented journal write.
 
 ## Phase 2: Complete the existing journal together

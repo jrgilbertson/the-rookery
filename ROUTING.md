@@ -1,16 +1,23 @@
 # Routing work
 
-`route-work` turns one explicit routing request and its supplied evidence into
-one recommended way to start the work: a first workflow, a coordinator, a
-pattern, a roster of roles with models and effort, and a copy/paste kickoff.
-When work already has a proven owner it says where to resume. When it lacks a
-routing fact it asks. It leaves execution to the selected workflow.
+`route-work` uses an explicit routing request and supplied evidence to recommend
+a starting workflow, coordinator, pattern, roster with models and effort, and
+copy/paste kickoff. It returns Resume when work has a proven owner, or Questions
+when a routing fact is missing. The selected workflow executes the work.
 
-The coordinator is not an added worker. It is the session the operator pastes
-the kickoff into, and it runs on the profile the model table names for its
-starting workflow. It owns the human-facing conversation. In Single owner, the
-default, it does all the work itself. When a route adds workers, it also
-dispatches them and integrates their results. It judges completion.
+The coordinator is the session receiving the kickoff, not an added worker. It
+owns the human-facing conversation and completion, using the model profile for
+the starting workflow.
+
+Planning defines scope, acceptance criteria, work breakdown, and dependencies.
+Coordination assigns owners, tracks progress, unblocks dependencies, and
+reconciles results. The same coordinator does both as needed; Planner is a
+model/effort profile, not a separate agent.
+
+In Single owner, the default, the coordinator does the work itself. With
+workers, it delegates their units and implements only work it owns. A parent
+issue does not by itself make the coordinator coordination-only; preserve any
+supplied implementation boundaries in the kickoff, independently of profile.
 
 ## Activation boundary
 
@@ -37,8 +44,7 @@ walk an issue graph, or probe external state.
 
 Facts about an artifact do not mean the artifact was supplied. An issue
 family's uncertain coverage supplies neither a named node nor a relationship
-summary. Without an explicitly supplied artifact or locator, use the request
-itself as the kickoff's source of truth.
+summary.
 
 ## Preserve authority
 
@@ -68,8 +74,9 @@ or switch the card to Resume; apply it before the owner table.
 
 A named in-flight owner is proven only by an operator statement or supplied
 artifact that names a specific owner for the requested phase. A stated
-worktree, branch, pull request, worker, or parallel effort without that phase
-owner still uses the normal Route.
+worktree, branch, pull request, worker, or parallel effort is occupancy
+evidence: it establishes neither a phase owner nor independent implementation
+units. Without a proven phase owner, use the normal Route.
 
 ## Choose what needs to happen first
 
@@ -112,8 +119,7 @@ Name the role for each worker, and count workers, not steps.
 Start with Single owner, including when implementation is expected. Supplied
 evidence establishes independent units when it names units that need separate
 write paths, such as named modules, or when a plan states its units are
-independent. A stated worktree, branch, pull request, worker, or parallel
-effort is occupancy evidence, not evidence of independent units.
+independent.
 
 | Pattern | Roles | Use when | Guardrail |
 |---|---|---|---|
@@ -134,31 +140,46 @@ with `managing-issues` or `grill-with-docs`.
 Use one Executor per named or counted unit, or up to three when evidence
 establishes independent units without naming or counting them.
 
-An advisor only gathers bounded evidence. Do not count it as a worker and do
-not give it ownership.
-
 ## Keep orchestration and ownership separate
 
-Workflow ownership, structured orchestration, and ownership handoff are
-independent decisions.
-
 Supervised orchestration through Orca keeps the current coordinator as the sole
-human-facing owner and integrator, and acting on it requires Orca's installed
-version-matched orchestration contract. A full handoff transfers human-facing
-ownership to the receiving worktree or agent and leaves the sender no
-monitoring duty.
+human-facing owner and integrator. When acting on supervised orchestration,
+follow Orca's installed, version-matched orchestration contract. A full handoff
+transfers human-facing ownership to the
+receiving worktree or agent; the sender has no monitoring duty.
 
-When supervised orchestration is selected, say so in Setup and the kickoff,
-tell the operator to follow Orca's installed contract, and add to Setup: once
-orchestration is running, continue with the coordinator in its terminal and
-close this session. The kickoff's orchestration sentence says "Orca
-orchestration" in those words and tells the coordinator to use Orca's
-`orchestration` skill when it is installed, because the receiving session
-matches that phrase to the skill. Do not copy Orca commands into the card.
+When supervised orchestration is selected:
+
+- Name it in Setup and the kickoff, and tell the operator to follow Orca's
+  installed contract.
+- In Setup, tell the operator to continue with the coordinator in its terminal
+  and close this session once orchestration is running.
+- In the kickoff, say "Orca orchestration" exactly and tell the coordinator to
+  use Orca's `orchestration`
+  skill when installed. The receiving session uses that phrase to find the skill.
+
+Do not copy Orca commands into the card.
 
 ## Select profiles
 
 Each seat and worker uses the profile whose row in the model table names it.
+Resolve the operator's model choices and availability before assigning reviewers.
+An advisor gathers bounded evidence using its coordinator's profile; it has no
+ownership and does not count toward the worker roster.
+
+### Reviewer selection
+
+For the Reviewer profile, take the first available model in Executor order
+whose provider differs from the selected worker producing the reviewed work.
+When the coordinator writes directly, compare against the coordinator instead.
+Retain the chosen model's Executor effort; reviewing adds no automatic increase.
+
+If no different-provider option is available, use the first available Executor
+model in a fresh review session and disclose the same-provider fallback in
+Setup and the kickoff. Provider diversity does not guarantee independent errors.
+Resolve the rule to a concrete model and effort in both places. Taste-led
+review instead uses the first available Design/taste model at its listed
+effort, without applying this provider-diversity rule.
 
 ### Availability fallback
 
@@ -180,17 +201,14 @@ effort, but selects one only when the operator approves it.
 
 ## Model and effort recommendations
 
-**Last reviewed: 2026-09-26**
+**Last reviewed: 2026-09-30**
 
-| Profile | Seat or worker | Primary | Secondary | Tertiary |
+| Profile | Seat or worker | Primary or selection rule | Secondary | Tertiary |
 |---|---|---|---|---|
-| Planner | The coordinator on `ce-brainstorm`, `grill-with-docs`, `ce-plan`, or `managing-issues` | Anthropic / `claude-opus-5-5` / high | OpenAI / `gpt-6-astra` / high | — |
-| Executor | The coordinator on `ce-work`, and Executor workers | Anthropic / `claude-opus-5-5` / medium | OpenAI / `gpt-6-sol` / high | xAI / `grok-4.7` / high |
-| Reviewer | Reviewer workers and named review or verification gates | OpenAI / `gpt-6-sol` / high | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
-| Critic | The Reviewer or an advisor only when the judgment is adversarial; never the coordinator on `grill-with-docs` | OpenAI / `gpt-6-sol` / max | Anthropic / `claude-opus-5-5` / high | xAI / `grok-4.7` / high |
-| Researcher | The coordinator on `ce-debug` | Anthropic / `claude-opus-5-5` / medium | OpenAI / `gpt-6-sol` / high | xAI / `grok-4.7` / high |
-| Scout | Advisors that gather bounded evidence | xAI / `grok-4.7` / high | OpenAI / `gpt-6-sol` / high | — |
-| Design/taste | The coordinator on `impeccable`, and the Reviewer when the finish line is taste | Anthropic / `claude-opus-5-5` / medium | OpenAI / `gpt-6-astra` / medium | — |
+| Planner | The coordinator on `ce-brainstorm`, `grill-with-docs`, `ce-plan`, or `managing-issues` | Anthropic / `claude-opus-5-5` / high | OpenAI / `gpt-6.1-sol` / high | — |
+| Executor | The coordinator on `ce-work` or `ce-debug`, and Executor workers | Anthropic / `claude-opus-5-5` / medium | OpenAI / `gpt-6.1-sol` / medium | Anthropic / `claude-sonnet-5-5` / high |
+| Reviewer | Reviewer workers, including adversarial reviews, and named review or verification gates | [Derive from Executor using the selected implementer's provider](#reviewer-selection) | — | — |
+| Design/taste | The coordinator on `impeccable`, and the Reviewer when the finish line is taste | Anthropic / `claude-opus-5-5` / max | OpenAI / `gpt-6.1-sol` / max | OpenAI / `gpt-6-astra` / max |
 
 ## Return one portable response
 
@@ -209,7 +227,7 @@ ordinary names, such as "Opus 5.5 at medium".
 
     **Why**
 
-    [One or two sentences on what needs to happen first and why this pattern fits. Name where the run is expected to end, which the roster was sized for; when the run reaches implementation, say that the coordinator carries the work into it. When that end is the predicted implementation, call it a prediction and say the coordinator can adjust the roster as the work unfolds. When the route relies on a pattern or roster default instead of supplied evidence, name the default and invite the override in one reply, such as naming independent units to add Executors.]
+    [One or two sentences on what needs to happen first and why this pattern fits. Name where the run is expected to end, which the roster was sized for; when the run reaches implementation, say that the coordinator remains accountable for completion, whether implementing or coordinating workers. When implementation is predicted, label it and say the coordinator can adjust the roster. When using a pattern or roster default, name it and invite an override, such as naming independent units to add Executors.]
 
     **Setup**
 
@@ -217,7 +235,10 @@ ordinary names, such as "Opus 5.5 at medium".
 
     **Copy/paste kickoff**
 
-    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the coordinator on [model] at [effort]. [Each Reviewer or advisor with its model and effort. In Executor + Reviewer: hand the Reviewer the criteria and stop after one round, when they pass or fail.] [Subscription billing constraint.] [In Coordinator + Executors: When the work reaches implementation, run implementation workers on [Executor model] at [effort]; [the implementing workflow] decides how many and how to schedule them.] [Orchestration sentence only when supervised orchestration is selected.] Treat [the supplied artifact or request] as the source of truth. [The operator's stated grants, limits, and conditions, when any.]
+    Start [starting workflow] from [stable artifact locator or concise supplied request]. You are the coordinator on [model] at [effort]. [Each Reviewer or advisor with its model and effort. In Executor + Reviewer: hand the Reviewer the criteria and stop after one round, when they pass or fail.] [Subscription billing constraint.] [In Coordinator + Executors: When the work reaches implementation, run implementation workers on [Executor model] at [effort]; [the implementing workflow] decides how many and how to schedule them.] [Orchestration sentence only when supervised orchestration is selected.] Treat [the supplied request, or the artifact whose contents or locator were supplied] as the source of truth. [The operator's stated grants, limits, and conditions, when any.]
+
+If only facts about an artifact were supplied, name the request, not that
+artifact, as the kickoff's source of truth.
 
 The decision line never names a role; roles live in Setup. The kickoff states
 each worker's model and effort as settings to apply and leaves how workers are
@@ -244,18 +265,24 @@ A Resume card carries no kickoff.
     2. [question]
     Recommended: [one concrete answer the operator can accept in a word]. [One-line reason.]
 
-Order questions by routing impact: owner, then pattern, then profile, then
-orchestration and ownership handoff. Batch only independent questions; a
-dependent question waits for its prerequisite. Every question carries one
-concrete recommendation, never a test for the operator to apply, and its reason
-cites only supplied facts or contract defaults. Use the contract default where
-one exists; where the operator holds the fact, recommend the answer that lets
-routing proceed under the defaults. The reason names what is unknown or
-ambiguous and what the answer decides. Neither the question nor its reason
-presents one reading as what the operator said, predicts what an inspection or
-answer will show, or names an artifact the operator did not supply. For example: "Recommended: Fix. The
+Order questions by routing impact: owner, pattern, profile, then orchestration
+and ownership handoff. Batch independent questions; ask dependent questions
+after their prerequisites are answered.
+
+Give each question one concrete recommended answer, not a test for the operator
+to apply. Use the contract default when one exists. When only the operator
+knows the missing fact, recommend the answer that lets routing proceed under
+the defaults.
+
+The reason states what is unknown or ambiguous and what the answer decides,
+using only supplied facts or contract defaults. Neither the question nor its
+reason may treat an interpretation as the operator's statement, predict an
+inspection's findings or the operator's answer, or name an unsupplied artifact.
+For example: "Recommended: Fix. The
 request could mean a bug fix or a redesign, and the answer decides where the
-work starts." A Questions card names no workflow, model, profile, or kickoff.
+work starts."
+
+A Questions card names no workflow, model, profile, or kickoff.
 When the starting owner falls outside the seven, the recommendation is the
 supported-owner table link.
 
@@ -266,78 +293,207 @@ supported-owner table link.
 
 ## Maintaining the model table
 
-Maintainers update the table manually from external evidence. Benchmark scores,
-cost, quota, confidence, automatic rankings, and staleness state stay outside
-the contract.
+On a maintainer's update request, recommend model slots for Planner, Executor,
+and Design/taste. Retain Reviewer as the selection rule, not a separate ranking.
+Update only the requested profiles. Adding a profile is a separate maintainer
+decision. Choices are qualitative judgments informed by quantitative inputs,
+not an automatic ranking. This procedure stays outside runtime: route-work
+reads the table at kickoff.
 
-### Order models by cost of pass
+### Gather
 
-- Order each row from lowest to highest cost of pass, measured on work like
-  that role's:
+Start with affected roles, current selections, candidates, and explicit
+maintainer constraints. All supported efforts, including max, are eligible
+unless the maintainer excludes them. Use third-party evaluations rather than
+provider launch claims or direct model trials. Product defaults, account access,
+and CLI availability are outside this analysis; runtime handles availability.
+Consult provider documentation only to resolve ambiguous identifiers or settings.
 
-      cost of pass = cost per attempt ÷ pass rate
+**Release coverage.** Treat each release independently: evidence for a
+predecessor or successor does not establish its scores or effort choice.
+Recheck exact-release coverage and prior gaps on every run after a launch.
+Missing results mean unevaluated, not poor performance; keep superseded results
+as history rather than filling slots solely because those results exist.
+Seek independent corroboration without requiring a fixed number of boards,
+every effort level, or a waiting period. A partial sweep informs the steps it
+measures; max-only evidence establishes neither a lower effort's quality nor
+the best effort.
 
-  It is the expected spend to get one passing result, as defined in
-  [Cost-of-Pass](https://arxiv.org/abs/2504.13359) (Erol et al., ICLR 2026).
-- For example, model A passes 60% at $0.60 per attempt and model B passes 30%
-  at $0.40. A ranks first although each attempt costs more: $0.60 ÷ 0.60 =
-  $1.00 against $0.40 ÷ 0.30 = $1.33.
-- In a row whose role-matched evidence reports pass rates, a model earns a
-  place only when its pass rate at its chosen effort is close to the row's
-  best, by the same 95% interval test the effort rule uses. A cheaper model
-  below that line does not rank, however low its cost of pass. Rows without
-  pass rates follow "Use evidence that matches the role", which names the
-  evidence or judgment behind every row.
-- A row lists only models that earn a place, so some rows have fewer than
-  three.
-- A model may rank by a capability the others lack, as xAI does for Scout
-  with X search.
-- A subscription already paid for may keep an otherwise dominated model in a
-  last slot where it still does the role's work well.
+**Sources by role.** Start here, follow current evidence, and replace stale
+or saturated rankers. This is a shortlist, not a required catalog. Where direct
+role evaluations are missing, use the closest relevant evidence and explain
+the transfer. No single source needs to cover every dimension of a role.
 
-### Pick the cheapest effort near the ceiling
+- Executor: repository repair, debugging, and terminal correctness. Start with
+  [FrontierCode](https://cognition.com/frontiercode),
+  [SWE-bench Pro](https://scale.com/leaderboard/swe_bench_pro_public),
+  [Terminal-Bench](https://www.tbench.ai/benchmarks),
+  [Next.js evals](https://nextjs.org/evals), and
+  [AA Coding Agent comparisons](https://artificialanalysis.ai/agents/coding-agents/comparisons/claude-code-vs-codex).
+  Inspect AA's components and matched agent cost/time, distinct from its
+  general intelligence index.
+- Design/taste: human preference on finished interfaces. Start with
+  [Arena WebDev Frontend](https://arena.ai/leaderboard/code/webdev/frontend),
+  inspecting its Reference-Based Design, Brand & Marketing, and Consumer
+  Product categories for task fit ([category methodology](https://arena.ai/blog/new-categories-code-arena)).
+  Use [Image-to-WebDev](https://arena.ai/leaderboard/code/image-to-webdev)
+  for following screenshots or an existing visual direction. Category views
+  share WebDev evidence, so do not count them as independent sources.
+  Cross-check [Design Arena](https://www.designarena.ai/leaderboard/website),
+  a separate human-preference source ([methodology](https://www.designarena.ai/about));
+  match its single-turn website or agentic web-app category to the work.
+  [OpenDesign](https://open-design.ai/llm-arena-for-design/) adds designer-rated
+  prototype quality and per-artifact cost/time; check effort and harness disclosure
+  before using it to choose an effort. Treat its recommendation weights as that
+  site's preferences, not ours.
+  Keep visual preference separate from implementation correctness. Arena Text
+  informs writing taste. Image-generation rankings inform image-model selection,
+  not the coding LLM's design ability.
+- Planner: reasoning, decomposition, and repository comprehension. Label
+  general reasoning and coding evidence as indirect evidence of plan quality.
 
-- Choose the effort with the lowest cost of pass among those whose pass rate
-  on the role's work is close to that model's ceiling.
-- Close means within the 95% interval of the model's best pass rate on that
-  board, using Wilson's lower bound. For a best pass rate p on n tasks, the
-  floor is (p + 1.92 ÷ n − 1.96 × √(p × (1 − p) ÷ n + 0.96 ÷ n²)) ÷
-  (1 + 3.84 ÷ n), which is n ÷ (n + 3.84) when the best effort passes every
-  task. For example, a best of 60% on 100 tasks admits efforts from 50.2%,
-  and a best of 23 of 23 admits efforts from 19.7 tasks.
-- An effort must be close on every board that reports the model's pass rate
-  at every effort level; a board that reports one effort does not count. When
-  the boards pick different cheapest efforts, keep the higher one.
-- A composite index across effort levels shows the curve's shape, but its
-  average is not a pass rate. It hides how low effort fails on hard tasks, so
-  low effort always looks cheapest.
-- Confirm each effort choice on at least two independent boards that report a
-  pass rate at every effort level, such as FrontierCode and VulcanBench. A
-  composite index such as the Artificial Analysis
-  Intelligence Index can corroborate the curve's shape but does not count as
-  one of the two.
+[AA's general intelligence index](https://artificialanalysis.ai/leaderboards/models)
+and [VulcanBench](https://vulcanbench.com/leaderboard.html) add quality/cost and
+effort context; identify their relevance to the role. Prefer test-verified
+correctness and human preference for taste. Practitioner reports can clarify
+workloads and failure modes; anecdotes do not establish an effort curve.
 
-### Use evidence that matches the role
+**Source check.** Inspect the methodology and results used in the comparison.
+Record URL, observation date, exact model/effort,
+benchmark version, metric meaning, grading, harness, overlap with other sources,
+and matched cost/time where available. Distinguish human, model-judged, and
+blended scores, and pure-model from fallback-enabled runs. A page update alone
+does not make its candidate results current. Mark missing or inaccessible data;
+do not estimate it from unrelated runs or infer task cost from token rates.
+For design sources, distinguish blind human preference from rubric scores and
+single-author examples, and single-turn generation from agentic or iterative
+work. Undisclosed effort can inform model choice, not an effort comparison.
 
-- Executor: coding-agent boards such as FrontierCode, CursorBench,
-  Terminal-Bench, or a coding-agent index. Cognition's FrontierCode
-  leaderboard publishes a pass rate and a cost per rollout for every effort
-  level in each model's native harness, usually on launch day, in
-  https://cognition.com/data/frontiercode-leaderboard/data.json.
-- Researcher: debugging is coding work, so this row uses the Executor's
-  boards.
-- Design/taste: human-preference boards such as Arena's WebDev leaderboard.
-  They rank models by preference score rather than pass rate, and usually at
-  one effort level, so order the row by score and price, and take effort from
-  the coding boards until a preference board reports every effort level.
-- Reviewer and Critic: no public board reports review or adversarial-judgment
-  pass rates at every effort level, so these rows are judgment calls. They
-  prefer a provider other than the Executor primary's, so review stays
-  independent of the work it judges; revisit them when a review benchmark
-  reports every effort level.
-- Scout: ranked by a capability the others lack, such as X search, rather
-  than by pass rate.
-- Planner: no public benchmark scores planning or coordination work, so this
-  row is a judgment call. It follows vendor practice of giving planning more
-  reasoning effort than execution; revisit it when a planning benchmark
-  reports every effort level.
+Use independent audits such as [Epoch's reviews](https://epoch.ai/data/benchmark-reviews-documentation/included-benchmarks)
+to flag issues. Investigate linked data, defects, and maintainer fixes when
+they could change the decision. Match findings to the evaluated version and
+harness rather than inheriting an older verdict. Audits inform source
+suitability, not extra ranking votes or a requirement for admission.
+
+### Compare
+
+Use the same benchmark version, scoring rule, and comparable harness conditions
+for each comparison. Keep quality, cost, and available latency visible together.
+Give each independent, role-relevant source equal qualitative weight; compare
+conclusions rather than averaging incompatible scores or assigning custom weights.
+Count overlapping aggregates, components, and republished results once.
+
+**Cost per pass.** Pass rate is the fraction of attempts or tasks meeting the
+benchmark's binary success criterion. For matched cost and success units:
+
+    cost per pass = average cost per attempt ÷ pass rate as a fraction
+
+At $0.60 per attempt and 60% passing, cost per pass is $1.00; zero observed
+passes gives no finite estimate. Pass@4 requires the matching attempt-budget
+cost, not one attempt's cost. Indices, preference scores, and partial-credit
+percentages are not pass rates. This measures spend across evaluated work,
+not a guarantee that retries solve a hard task. Retain raw success alongside
+cost/pass; neither automatically takes priority.
+See [Cost-of-Pass](https://arxiv.org/abs/2504.13359).
+
+**Frontier.** Remove dominated settings: another has at least as much quality,
+no greater cost or latency, and is strictly better on one measure. Missing
+latency leaves that dimension unresolved; note unique capabilities separately.
+Compare the remaining settings within and across models for the role's work.
+
+**Marginal gains.** For successive remaining effort settings, skipping dominated
+levels, show quality gain, absolute and percentage cost/time increases, and
+additional dollars and minutes per point. For a positive gain:
+
+    cost per additional point = (higher-effort cost − lower-effort cost)
+                                ÷ (higher-effort score − lower-effort score)
+
+Moving from 48 points at $0.21 to 50 at $0.32 costs $0.055 per additional point.
+Name the metric and distinguish percentage points from relative percentages;
+compare increments only within that metric. Added cost without better quality
+is no observed gain, not a negative-cost bargain. Missing cost prevents the
+calculation, not use of the quality observation.
+
+**Balance.** Prefer the curve's bend: a role-suitable setting before cost and
+time rise disproportionately to useful quality gains. Keep measured costs
+unchanged; the role determines which gains warrant paying more. Neither the
+highest score nor maximum score/dollar establishes suitability. A choice beyond
+the bend needs an evidence-backed reason for both premiums. Without a matched
+curve, use the Design/taste rule below for that profile; otherwise make a
+provisional effort judgment from the available evidence and the role's needs
+rather than defaulting to the highest effort or leaving the choice unresolved.
+
+**Design/taste without an effort curve.** Choose using relevant human visual
+preference and compare measured task cost/time where available. Retain the
+configuration supporting the selection, including its effort. If effort is
+undisclosed, choose it provisionally without attributing it to that result.
+Depart from the observed configuration
+only for an explicit workload, budget, or latency reason; label unmeasured
+quality and savings assumptions. An observed max result proves neither that
+max is necessary nor that a lower effort preserves its quality. Missing economics
+remain unknown, not evidence of an optimum.
+
+Explain conflicting boards rather than automatically taking higher effort.
+Use no fixed point gap, quality floor, statistical gate, or marginal-cost
+threshold.
+
+### Recommend
+
+Propose Primary, Secondary, and Tertiary provider/model/effort slots for each
+affected role. Show before-to-after choices and a short reason for each change
+or retention, comparing alternatives in the row. Where measured, state why
+the next upgrade's quality gain is or is not worth its cost and time.
+
+- **Fallback fit:** choose credible substitutes for the role and disclose their
+  main weakness. Apply the same balanced-setting rule as for the primary,
+  including the Design/taste exception. Covering a fallback's weakest task
+  category alone does not justify higher effort. Before paying that premium,
+  compare the upgrade with other models' role-relevant quality, cost, and time.
+  They need not be proven equivalent to the primary. Keep
+  specialists that require a narrower task separate from unconditional slots.
+  An already-paid subscription may retain a usable fallback despite weaker API
+  economics: benchmark dollars are not subscription marginal prices or quotas.
+- **Provisional choices:** use incomplete or indirect evidence to make the best
+  justified choice, separating observations from model/effort judgment. Name
+  the evidence date, material gap, and revisit trigger. Missing coverage limits
+  confidence, not eligibility. Leave a slot empty when no candidate seems
+  suitable for the role, not merely because evaluations are incomplete.
+
+**Deliver:** a compact evidence comparison followed by the proposed table and
+rationale. Show source coverage, exact-release and effort gaps, agreement and
+disagreement, measured upgrade tradeoffs, and revisit triggers alongside the
+choices they inform.
+
+Repeated runs may confirm existing choices; change them only when evidence or
+constraints justify it. Apply only when authorized: update the root table,
+review date, and affected rationale, then copy the document byte-for-byte to
+the bundled reference. Preserve runtime routing, subscription authentication,
+availability fallback, and operator-approved effort escalation.
+
+### Rationale retained from the current release update
+
+Reviewed 2026-09-30. These are qualitative selections under the maintenance
+procedure, with the following evidence gaps and maintainer constraints.
+
+- **Planner:** Opus 5.5 high and Sol 6.1 high balance general reasoning quality
+  against effort cost in [AA's index](https://artificialanalysis.ai/leaderboards/models).
+  These are indirect plan-quality judgments, not measured planning optima.
+  Planner tertiary remains empty: the maintainer excluded Gemini 4 Argon
+  because it is not publicly available. Revisit on public availability and
+  exact-release planning or repository-comprehension evidence.
+- **Executor:** Opus 5.5 medium prioritizes repository quality; Sol 6.1 medium
+  offers lower measured spend. [FrontierCode](https://cognition.com/frontiercode)
+  and [AA agent comparisons](https://artificialanalysis.ai/agents/coding-agents/comparisons/claude-code-vs-codex)
+  inform the effort choices. Sonnet 5.5 high is a balanced fallback; its xhigh
+  terminal gains do not justify the general cost/time premium against other
+  models. Opus medium lacks matched AA terminal coverage, and
+  [VulcanBench](https://vulcanbench.com/benchmarks/swe-v4-opus55-v315.html)
+  includes fallback-model turns. Revisit on matched, fallback-free effort runs.
+- **Design/taste:** Opus 5.5 max, Sol 6.1 max, and Astra max retain the
+  configurations measured by [Arena Frontend](https://arena.ai/leaderboard/code/webdev/frontend).
+  Sol's consumer-product preference and [OpenDesign](https://open-design.ai/llm-arena-for-design/)
+  prototype results support its secondary slot; Astra adds
+  [screenshot-following evidence](https://arena.ai/leaderboard/code/image-to-webdev).
+  OpenDesign does not disclose effort, so its costs are not attributed to max.
+  These selections are not proven economic optima. Revisit on matched visual
+  effort/cost/time data and accessible independent Design Arena results.

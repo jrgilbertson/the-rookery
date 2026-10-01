@@ -39,6 +39,10 @@ the kickoff is the operator's approval to start.
 > 9. The parent has an approved plan and the operator says: "Implementation is
 >    authorized; route the kickoff." Nothing names units, an integrator, or
 >    write scopes.
+> 10. A parent has an approved plan with three independent child units and
+>     child-owned worktrees. Route implementation. The parent coordinates and
+>     replans as needed but makes no source edits or code commits; child leads
+>     own implementation.
 
 ## Expected behavior
 
@@ -58,6 +62,12 @@ the kickoff is the operator's approval to start.
       the Executor primary. Nothing establishes independent units, so the card
       adds no Executors, invents no units, integrator, or write scopes, and
       invites adding Executors if the plan names independent units.
+- [ ] Item 10 starts with `ce-work` and uses Coordinator + Executors with
+      three Executors. The coordinator uses the Executor primary because of
+      the starting workflow, not a separate Planner agent. Setup and kickoff
+      preserve the parent's no-source-edits/no-code-commits boundary and child
+      implementation ownership. Accountability for completion does not assign
+      child implementation to the parent.
 - [ ] Item 4 starts the child with `ce-plan` because planning is what needs to
       happen first.
 - [ ] Item 5 returns a `**Resume**` card naming Jordan with no kickoff or

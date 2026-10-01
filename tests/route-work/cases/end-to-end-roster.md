@@ -49,8 +49,8 @@ Issue #164 dropped the no-merge line; item 1 still carries its stated merge limi
       no independent units are established. Why says the coordinator carries
       the work from discovery into implementation and invites adding Executors
       when independent units appear.
-- [ ] Item 2 starts with `ce-debug` on the Researcher primary as Single owner: the
-      coordinator alone on the Researcher profile, with no Executors. Why names
+- [ ] Item 2 starts with `ce-debug` on the Executor primary as Single owner: the
+      coordinator alone on the Executor profile, with no Executors. Why names
       the expected end of the run and that the coordinator carries the fix
       through.
 - [ ] Item 3 starts with `ce-brainstorm` and stays the coordinator alone, with no

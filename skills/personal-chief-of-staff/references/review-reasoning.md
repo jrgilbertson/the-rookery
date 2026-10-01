@@ -122,6 +122,10 @@ the slice inspected instead of claiming no counterexample exists elsewhere.
 Counterevidence must narrow, weaken, or leave a candidate unresolved unless the
 remaining evidence supports a more precise claim.
 
+For a commitment carried forward across independently dated episodes, apply this
+same evidence and counterevidence rule before discussing whether to shrink it,
+schedule it against realistic capacity, delegate it, or drop it.
+
 Separate dated observations, inference, counterevidence or alternatives, and
 the user's subjective judgment. A supported intervention states the pattern,
 its cost to the user, a recommended boundary or decision, the smallest change

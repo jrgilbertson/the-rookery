@@ -64,6 +64,17 @@ does or where an effect goes.
 
 ## Resolve identity conservatively
 
+An empty Contacts search establishes only the result of that documented query; a
+phone string sent to a search that supports only names, email, or companies does
+not establish that the sender has no contact record. When identity can change
+the current judgment, use the configured source's documented capabilities to try
+a bounded supported lookup with an already known name, email, or company. Read
+only the resulting candidates needed for stable corroboration against the source
+identity and canonical Person note. Do not enumerate the contact directory or
+assume reverse-phone lookup is supported. If no supported fallback is available,
+corroboration is unavailable, or candidates still collide, keep the observation
+visibly unlinked and ask for confirmation when the identity remains material.
+
 A title-only or alias-only match creates a candidate, not a cross-source
 binding. Attach private source evidence to a Person note only after one of:
 

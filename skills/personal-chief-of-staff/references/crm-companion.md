@@ -38,15 +38,12 @@ invent a contact date, tier, status, classification, Person-note edit, or dated
 relationship Task as a substitute. X evidence stays review context in that
 case.
 
-Return the completed relationship judgment, not just retrieved interactions:
-each bindable substantive contact has its supported effect or Already satisfied
-outcome. Name each unresolved identity, each unresolved interaction time, and
-each source gap that limits a claim. Wind-down uses this return to close its
-Daily CRM Scan before reconstruction; retrieval alone does not complete that
-handoff.
+Return the completed relationship judgment that Wind-down's Daily CRM Scan
+completion requires; retrieved interactions alone do not complete that handoff.
 
-Completion: the calling mode holds this judgment and adds only its supported
-candidate effects to its own bundle, approval flow, and completion state.
+Completion: relationship judgment contributes only supported candidate
+effects to the existing review, while the chief-of-staff mode retains its
+bundle, approval flow, and completion state.
 
 ## Apply approved relationship effects
 

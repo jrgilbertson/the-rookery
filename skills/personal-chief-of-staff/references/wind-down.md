@@ -102,8 +102,7 @@ initial reconstruction; scan window set; each configured relationship source
 for the window covered or marked Partial; every bindable substantive direct
 contact from the scan, other day evidence, or (later) reflection has a
 contact-date outcome (novel action, Already satisfied in coverage, or
-identity/time unresolved);
-unknown handles unresolved; no write performed.
+identity/time unresolved); unknown handles unresolved; no write performed.
 
 ## Begin with one broad reflection
 
@@ -135,9 +134,9 @@ For one active sequential critical path, a precise restart cue may be useful.
 Capture only the next concrete operation and keep it with the canonical task or
 approved next-day plan. Do not add restart metadata to every task.
 
-Completion: the configured canonical open-task sweep has covered the closing
-day and target day under Administrative Sweep, with aggregate coverage or a
-material gap reported; every proposed row is independently decidable.
+Completion: the sweep has run over the closing day and the target day, and
+every row it proposes is one the user can approve, edit, defer, or skip on its
+own.
 
 ## Phase 1: Review, apply, and read back
 
@@ -195,9 +194,7 @@ Preserve fixed commitments. Propose conflict-resolving edits only to events or
 blocks whose flexibility is established; ask when it is unknown. Calendar edits
 remain separate actions, and meaningful commitments need no matching blocks.
 For each material calendar proposal, distinguish retaining a useful existing
-block, a separately proposed change, and an open user decision. Keep unfinished
-placement or flexibility decisions visible through the ending; no calendar
-change or commitment is settled by silence.
+block, a separately proposed change, and an open user decision.
 
 ### Relationship exceptions for tomorrow
 
@@ -214,7 +211,7 @@ promotes it.
 Completion: the next-day proposal reflects the sources as Phase 1 left them,
 makes its tradeoffs and each material calendar disposition visible without
 writing to them, and contains zero to three defensible tomorrow judgment items
-with no filler. Open calendar decisions remain open.
+with no filler.
 
 ## Phase 2: Ask on the evidence frontier
 

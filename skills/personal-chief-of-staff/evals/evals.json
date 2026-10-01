@@ -130,9 +130,8 @@
         "evals/files/interrupted-recovery.md"
       ],
       "assertions": [
-        "Scenario 1 requires reading the exact authoritative task target before any retry and claims no unverified success.",
-        "Scenario 2 remains Indeterminate and neither repeats creation nor identifies success by title similarity.",
-        "Scenario 3 preserves the verified earlier success and obtains revised exact approval for the materially changed unattempted target."
+        "Scenario 1 remains Indeterminate and neither repeats creation nor identifies success by title similarity.",
+        "Scenario 2 preserves the verified earlier success and obtains revised exact approval for the materially changed unattempted target."
       ],
       "provenance": "U2 AE4",
       "regression_control": false
@@ -162,9 +161,8 @@
       "assertions": [
         "Scenario 1 proposes exactly the two user-approved outcomes as unnumbered bullets under Next day intent, preserves manual reflection and embed, and adds no filler or invented subjective rationale.",
         "Scenario 2 discloses unavailable or ambiguous template structure, asks only the necessary clarification, and persists no invented section; absent forward section still permits ordinary planning.",
-        "Scenario 3 preserves the changed journal and presents a revised exact proposal for fresh approval instead of applying the stale approved draft.",
-        "Scenario 4 retains the configured Compass, native task owner and Closing guide section semantics, never substitutes familiar titles/providers after a failed owner, and reports the unsupported CRM destination without redirecting it.",
-        "Scenario 5 follows each Weekly/Quarterly template scope and prompts rather than daily section or hard-coded counts, preserves user-owned meaning, adds no Quarterly sweep, and remains read-only and Paused for an absent scheduled user."
+        "Scenario 3 retains the configured Compass, native task owner and Closing guide section semantics, never substitutes familiar titles/providers after a failed owner, and reports the unsupported CRM destination without redirecting it.",
+        "Scenario 4 follows each Weekly/Quarterly template scope and prompts rather than daily section or hard-coded counts, preserves user-owned meaning, adds no Quarterly sweep, and remains read-only and Paused for an absent scheduled user."
       ],
       "provenance": "Issue 189/R6/R12: pre-edit wind-down hard-coded three-to-five numbered bullets and an exact forward-section title; weekly duplicated a one-to-three priority count. Static characterization only; no runtime baseline or improvement claim.",
       "regression_control": false

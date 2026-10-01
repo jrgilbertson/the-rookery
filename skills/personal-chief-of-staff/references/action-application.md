@@ -77,13 +77,9 @@ Classify each action independently:
 - **Manual:** the interface does not support the approved write safely.
 - **Deferred** or **skipped:** the user chose not to apply it now.
 
-On an interrupted or uncertain write, recover by reading the exact authoritative
-target before any repeat attempt. A verified approved effect is preserved and
-not repeated. A changed target that alters the approved effect needs revised
-exact approval. For a create whose stable target identity cannot be recovered,
-keep the result Indeterminate; title similarity does not identify the created
-record or justify another create. Preserve verified earlier successes and
-settled decisions while recovering the uncertain action.
+After an interrupted or uncertain write, run steps 1 to 4 on that action
+before any repeat attempt. For a create, title similarity does not identify the
+created record; without its stable identity the result stays **Indeterminate**.
 
 Mixed outcomes do not roll back or conceal successful independent actions.
 Report what changed and what remains unapplied. A **Failed**, **Indeterminate**,

@@ -35,7 +35,7 @@ redirect the workflow.
 | --- | --- |
 | Email | Messages, commitments, and reply context for the queried mailbox only. |
 | Calendars | Scheduled commitments, participants, timing, and capacity, including shared calendars visible through a connected identity. |
-| Canonical Obsidian roles | Notes, tasks, reviews, relationships, strategy, learning, and writing as configured. |
+| Configured canonical roles | Notes, tasks, reviews, relationships, strategy, learning, and writing as configured. |
 | Meeting and contact sources | Conversation and relationship evidence, not ownership of task or CRM destinations. |
 | Repositories and issue trackers | Project decisions, implementation state, and work commitments. |
 | Product, infrastructure, payment, and analytics | Native operating and business signals. |

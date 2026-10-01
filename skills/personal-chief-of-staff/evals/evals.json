@@ -258,6 +258,38 @@
       ],
       "provenance": "U2 AE8; existing dated-episode and counterevidence contract retained.",
       "regression_control": false
+    },
+    {
+      "id": 301,
+      "prompt": "Read evals/files/template-authority.md and answer each independent synthetic scenario with the current skill. Supplied premises only, no tools or writes.",
+      "files": [
+        "evals/files/template-authority.md"
+      ],
+      "expected_output": "Follows live template fields/count/format and forward-section semantics, preserves manual content, reports missing/ambiguous ownership and changed approval, retains designated providers and absent-user boundaries.",
+      "assertions": [
+        "Scenario 1 proposes exactly the two user-approved outcomes as unnumbered bullets under Next day intent, preserves manual reflection and embed, and adds no filler or invented subjective rationale.",
+        "Scenario 2 discloses unavailable or ambiguous template structure, asks only the necessary clarification, and persists no invented section; absent forward section still permits ordinary planning.",
+        "Scenario 3 preserves the changed journal and presents a revised exact proposal for fresh approval instead of applying the stale approved draft.",
+        "Scenario 4 retains the configured Compass, native task owner and Closing guide section semantics, never substitutes familiar titles/providers after a failed owner, and reports the unsupported CRM destination without redirecting it.",
+        "Scenario 5 follows each Weekly/Quarterly template scope and prompts rather than daily section or hard-coded counts, preserves user-owned meaning, adds no Quarterly sweep, and remains read-only and Paused for an absent scheduled user."
+      ],
+      "provenance": "Issue 189/R6/R12: pre-edit wind-down hard-coded three-to-five numbered bullets and an exact forward-section title; weekly duplicated a one-to-three priority count. Static characterization only; no runtime baseline or improvement claim.",
+      "regression_control": false
+    },
+    {
+      "id": 302,
+      "prompt": "Run the three independent conversation-only scenarios in evals/files/meaningful-commitment-capture.md. Use the supplied synthetic journal/template and user meaning, no source operations.",
+      "files": [
+        "evals/files/meaningful-commitment-capture.md"
+      ],
+      "expected_output": "Preserves the original user-owned journal meaning, exact three chosen commitments when the template supplies no competing count, absent-section planning and explicitly approved incomplete wording.",
+      "assertions": [
+        "Scenario 1 keeps Tuesday as closing date, Wednesday as target, preserves manual reflection and user meaning, coaches before finalizing exactly three chosen outcomes with their basis/rationale/observable closure, and proposes the journal independently without writing or inventing task/calendar duplicates.",
+        "Scenario 2 continues ordinary planning without an invented forward journal section or write.",
+        "Scenario 3 preserves explicitly approved Development wording verbatim while naming missing outcome/closure and does not call it conforming."
+      ],
+      "provenance": "Migrated meaningful-commitment-capture legacy regression control; protects user meaning and no-invented-section behavior while the skill defers count to the live template. Original detailed checklist retained in input.",
+      "regression_control": true
     }
   ]
 }

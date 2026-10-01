@@ -252,14 +252,17 @@ no-material-intervention result, with an invitation to correct the judgment.
 
 ## Phase 2: Record tomorrow's meaningful commitments
 
-Use the live template's `Tomorrow’s Meaningful Commitments` section for
-reviewed next-day intent. If the template lacks it, continue ordinary next-day
-planning; a new journal structure requires separate approval.
+Use the live template's designated forward-commitment section for reviewed
+next-day intent, resolving its stated purpose rather than requiring a fixed
+section title. If its identity is ambiguous, clarify before proposing a section
+edit. If the template lacks one, continue ordinary next-day planning; a new
+journal structure requires separate approval.
 
 ### Draft and test the commitments
 
-Draft **three to five numbered plain-Markdown bullets** in the closing-date
-journal. Each uses one to three natural sentences containing the shared
+Draft in the count and format requested by the live template in the closing-date
+journal. When it specifies no count, use the user's reviewed outcomes and
+capacity without adding a quota. Each commitment naturally states the shared
 [current basis, outcome, and closure evidence](review-reasoning.md#make-every-intention-verifiable),
 plus a short user-approved reason tied to strategy, an obligation, or an avoided
 cost. Refine activity labels such as “development” or “meetings” into concrete
@@ -295,8 +298,8 @@ journal structure. Removing a user edit requires explicit approval. Revalidate
 the section immediately before writing, including the template-drift check
 under “Phase 2: Review, write, and verify.”
 
-Completion: the configured section has three to five reviewed bullets with
-quality checks applied; explicitly approved incomplete wording is preserved
+Completion: the configured section follows the live template's count, format
+and purpose, with reviewed commitments and quality checks applied; explicitly approved incomplete wording is preserved
 verbatim and identified as nonconforming. Without a configured section,
 next-day planning continues without an invented journal write.
 

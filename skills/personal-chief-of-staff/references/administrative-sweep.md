@@ -28,11 +28,9 @@ dates and Person effects through the companion, owed or incorrect
 communication text, repository or issue state, and strategy or learning
 updates already supported by dated durable evidence.
 
-Complete the configured canonical open-task sweep before treating Wind-down
-or Weekly as reviewed. A task read for incidental context is not sweep coverage.
-Report the bounded open-task coverage in aggregate, or the material access gap;
-classify qualifying findings and carry upcoming context into the plan. Read open
-tasks through the configured canonical task or issue workflow:
+Complete the configured canonical open-task sweep before treating Wind-down or
+Weekly as reviewed. A task read for incidental context is not sweep coverage.
+Read open tasks through the configured canonical task or issue workflow:
 
 | Task finding | Condition | Treatment |
 | --- | --- | --- |

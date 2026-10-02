@@ -275,16 +275,14 @@ research record as the primary result.
 A Regression Check exercises affected skill evals once per declared Executor
 target after a change. A different model grades blind, and every failure is
 inspected against its original transcript. It establishes the behavior
-exercised. It is separate from a Value Assessment. [`SKILLS.md`](SKILLS.md)
-owns the formats, failure attribution, and ship rule.
+exercised. It is separate from a Value Assessment.
 
 ### Value Assessment
 
 A Value Assessment runs one matched with-skill and without-skill pair for
 each approved case on each declared Executor target to judge whether the
 skill helps. An inconclusive result stays inconclusive and leaves an
-unresolved shipping hold unresolved. [`SKILLS.md`](SKILLS.md) owns the
-comparison.
+unresolved shipping hold unresolved.
 
 ### Baseline Comparison
 
@@ -299,8 +297,8 @@ the whole candidate check.
 
 A Regression Control protects a named load-bearing contract, including one
 that both prior and revised skills pass. It never establishes improvement.
-A failure needs transcript inspection and attribution under
-[`SKILLS.md`](SKILLS.md), not automatic dismissal or a fixed repeat count.
+A failure needs transcript inspection and attribution, not automatic dismissal
+or a fixed repeat count.
 
 ### Independent Review Context
 
@@ -347,7 +345,6 @@ harness shows when deciding whether to load the skill. Should-trigger
 phrasings must load it, and near-misses must not. A listing proxy judges the
 name and description alone. Native activation observes the harness's load
 decision, with training, validation, and fresh queries kept distinct.
-[`SKILLS.md`](SKILLS.md) owns the checks.
 
 ## Flagged ambiguities
 

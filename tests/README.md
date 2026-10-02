@@ -92,8 +92,9 @@ note`. The `git rev` field names the commit the run's working tree was
 
 ## Running
 
-Regression checks and diagnostic comparisons use the baseline template's
-Evaluation boundary: declare permitted resources, effects, and budget; use
+Regression checks and diagnostic comparisons follow the execution boundary
+in [`SKILLS.md`](../SKILLS.md#arms-and-runs): declare permitted resources,
+effects, and budget; use
 synthetic inputs in isolated temporary workspaces; preserve existing authority
 and ask for any additional authority or substantial unapproved cost. Keep raw
 outputs outside the repository, including partial outputs from failed runs.
@@ -115,8 +116,8 @@ Exclude private reasoning and author conclusions; a different model grades.
   the matched with-skill and without-skill rule in [`SKILLS.md`](../SKILLS.md).
   Record that conclusion separately from shipping. An unresolved hold stays
   unresolved.
-- **Regression check.** Follow `skills/creating-portable-skills/SKILL.md` and
-  its baseline template: affected cases once per declared Executor target,
+- **Regression check.** Follow [`SKILLS.md`](../SKILLS.md#arms-and-runs):
+  affected cases once per declared Executor target,
   with independent different-model blind grading. Inspect every failure against
   the original transcript and classify behavior failure, grader/assertion
   error, or capture gap. Retain original grades and explain corrections. A

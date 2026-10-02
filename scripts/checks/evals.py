@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Check the shapes of a skill's eval files against references/skills.md.
+"""Check the shapes of a skill's eval files against the repository SKILLS.md.
 
-Usage: check-evals.py <skill-directory> [<skill-directory> ...]
+Usage: evals.py <skill-directory> [<skill-directory> ...]
 
 For each skill directory (one holding SKILL.md), validates whichever of
 evals/evals.json, evals/eval_queries.json, and evals/benchmarks/*.json exist,
@@ -280,7 +280,7 @@ def check_skill(skill: Path, report: list[str]) -> None:
 
 def main(argv: list[str]) -> int:
     if not argv:
-        print("usage: check-evals.py <skill-directory> [<skill-directory> ...]", file=sys.stderr)
+        print("usage: evals.py <skill-directory> [<skill-directory> ...]", file=sys.stderr)
         return 2
     report: list[str] = []
     unreadable = False

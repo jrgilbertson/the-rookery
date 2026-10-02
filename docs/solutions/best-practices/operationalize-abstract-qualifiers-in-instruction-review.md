@@ -162,7 +162,7 @@ queries. Native load-path evidence is still required.
 ## When to Apply
 
 - Reviewing or auditing any agent instructions: skills, prompts, CLAUDE.md files, subagent task briefs.
-- Running the Instruction economy group of the skill-review checklist (step 0 audit or step 6, Decide and review, in `skills/creating-portable-skills/SKILL.md`).
+- Running the skill-review checklist in `skills/creating-portable-skills/references/review-checklist.md`.
 - Writing new instructions that reach for an adjective to describe output quality. Define it at write time rather than deferring to review.
 - Gate-probing a revised skill, where the check applies to the skill's own text, not just the skills it reviews (see the borderline example below, caught exactly this way).
 - Writing a positive skill description for an expensive workflow whose methods or qualities overlap with routine requests.
@@ -191,11 +191,12 @@ Same day, a gate probe applied this lens to the adopting skill's then-current st
 **Before.** The retained run summary says the probe caught "borderline"
 undefined. The exact prior draft was not preserved.
 
-**After.** The listing-judgment protocol now lives in
-`skills/creating-portable-skills/assets/trigger-queries-template.md`; it
-requires a plain `yes` or `no`. An initial `unsure` or hedged response counts
-as borderline and triggers two additional runs. The protocol therefore defines
-the qualifier by an observable retry rule rather than leaving it to judgment.
+**After, at the time of the probe.** The listing-judgment protocol required a
+plain `yes` or `no`. An initial `unsure` or hedged response counted as
+borderline and triggered two additional runs. That protocol defined the
+qualifier by an observable retry rule rather than leaving it to judgment.
+The repository's current trigger-evidence rules live in
+[`SKILLS.md`](../../../SKILLS.md#trigger-evals-evalseval_queriesjson).
 
 This example shows the enumerated-options fix shape and demonstrates that the
 check catches failures the delete test had already blessed (session probe

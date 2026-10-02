@@ -32,7 +32,7 @@ while IFS= read -r skill_dir; do
   fi
 
   ruby scripts/checks/skill_packages.rb "$skill_dir"
-  python3 skills/creating-portable-skills/scripts/check-evals.py "$skill_dir"
+  python3 scripts/checks/evals.py "$skill_dir"
 done <<< "$catalog_dirs"
 
 echo "catalog: ${catalog_dirs//$'\n'/, }"

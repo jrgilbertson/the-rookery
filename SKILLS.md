@@ -1,12 +1,13 @@
 # Skills
 
-This file is the convention for writing, evaluating, and recording evidence
-for agent skills. It builds on the [Agent Skills standard](https://agentskills.io),
-with vendor guidance layered on top. Where sources conflict, a **Conflict:**
-note names the conflict and the choice made. The `creating-portable-skills`
-skill ships a byte-equal copy as `references/skills.md`. That skill owns the
-authoring workflow. This file owns the formats and rules that workflow
-produces, including value assessment, regression checks, and trigger evidence.
+This file is this repository's convention for writing, evaluating, and
+recording evidence for agent skills. It builds on the
+[Agent Skills standard](https://agentskills.io), with vendor guidance layered
+on top. Where sources conflict, a **Conflict:** note names the conflict and
+the choice made. The `creating-portable-skills` skill owns the portable
+authoring workflow. This host document owns the repository's eval formats,
+value assessment, regression checks, trigger evidence, and ship rules; it is
+not bundled with the skill.
 
 ## Package format
 
@@ -37,25 +38,10 @@ Codex's validator to flag the field.
 
 ## Descriptions and triggering
 
-The name and description are the only skill text an agent reads when it
-decides whether to load the skill. Write the description as an imperative
-"Use when…" clause. Put the words a user would type in the first sentence,
-because harnesses budget the skill listing. Claude Code caps each entry at
-1,536 characters, and Codex caps the whole listing at 2% of the context window
-and shortens descriptions first. Say when to use the skill, not how it works.
-
-Err on the side of a pushy description that names the phrasings the skill
-should catch. Add an exclusion only where trigger runs show the skill taking
-work that belongs to another skill.
-
-**Conflict: voice.** Anthropic's best practices ask for the third person
-("Processes Excel files…"). The standard recommends the imperative ("Use this
-skill when…"). This convention uses the imperative.
-
-**Conflict: pushiness.** The standard and Anthropic's skill-creator favor
-pushy descriptions. The Codex skill-creator warns against catch-all lists.
-This convention takes the pushy side and lets trigger runs catch
-over-triggering.
+Follow the [Agent Skills specification](https://agentskills.io/specification#description-field):
+the description is 1–1024 characters and describes what the skill does and
+when to use it. Include specific keywords that help agents identify relevant
+tasks. Trigger evidence follows the rules below.
 
 ## Where evals live
 
@@ -260,7 +246,7 @@ Isolate usage records per call and include execution, delegation, grading,
 and failed attempts in the budget. A partial or unpriced estimate, or one using an unidentified model, is unknown, not zero or a usable total. Unavailable prices or usage,
 exhausted budget, or subscription quota stop further calls. Report the gap;
 never fall back to API-key billing. The host implements collection and cost
-calculation; this portable package defines the evidence contract.
+calculation; this host document defines the evidence contract.
 
 ## Grading and independence
 
@@ -434,14 +420,16 @@ beside this format.
 Commands check these rules:
 
 - `skills-ref validate <skill-directory>` checks frontmatter and naming.
-- `creating-portable-skills` bundles `scripts/check-evals.py`. For the skill
-  directories it is given, it checks every field, type, name, and count rule
+- `python3 scripts/checks/evals.py <skill-directory> [...]` is this
+  repository's eval-file check. For the skill directories it is given, it
+  checks every field, type, name, and count rule
   this file states for `evals.json`, `eval_queries.json`, and benchmark files,
   plus two consistency rules: `delta` equals the changed arm minus the
   baseline, and a file's target suffix matches `archive_ref`. It checks no
   value ranges and makes no judgment calls, such as whether an assertion is
   decidable, compared cohorts match, a carry-forward is legitimate, or a
-  benchmark states only what its runs checked. Run it from the host repository's existing checks.
+  benchmark states only what its runs checked. The catalog check runs it for
+  every published skill directory.
 
 No command checks grading quality, blinding, independence, whether a run used
 its stated target, or private names. A public repository cannot list the

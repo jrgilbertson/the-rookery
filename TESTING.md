@@ -227,9 +227,11 @@ to record costs and check the allowance. The agent owns transcript inspection,
 blind grading, and failure attribution. Unsupported usage or pricing stays
 unknown, and a structural pass does not substitute for a behavioral check.
 
-The repository copy of `creating-portable-skills` is the workflow. Use it for
-a value assessment, an affected regression check, native activation, human
-inspection, and package delivery. [`SKILLS.md`](SKILLS.md) owns those rules.
+Use [`creating-portable-skills`](skills/creating-portable-skills/SKILL.md) for
+portable package authoring, auditing, structural validation, and installation.
+It links the upstream `build-eval` and `ce-retune` workflows for evaluation and
+tuning. For this repository's value assessments, affected regression checks,
+native activation, and human inspection, follow [`SKILLS.md`](SKILLS.md).
 Declare each native CLI's tool and filesystem boundary, and include one
 harmless rejected operation in the authorized smoke.
 

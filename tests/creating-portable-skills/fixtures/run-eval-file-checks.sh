@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# run-eval-file-checks.sh — exercises the creating-portable-skills eval file
+# run-eval-file-checks.sh — exercises the repository's eval file
 # validator against valid and invalid fixture skills. It tests the script. It
 # does not validate skills/.
 #
@@ -10,7 +10,7 @@
 set -uo pipefail
 
 here=$(cd "$(dirname "$0")" && pwd)
-check="$here/../../../skills/creating-portable-skills/scripts/check-evals.py"
+check="$here/../../../scripts/checks/evals.py"
 fixtures="$here/eval-files"
 
 passed=0

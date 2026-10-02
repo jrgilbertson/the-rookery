@@ -11,6 +11,14 @@ looked" surface. GitHub Releases mirror its entries.
 
 ## [Unreleased]
 
+### Changed
+
+- `creating-portable-skills` follows the Agent Skills format for portable
+  packages and descriptions, and delegates evaluation to pinned upstream
+  `build-eval` and `ce-retune` guides. Repository evaluation formats and release
+  rules stay in `SKILLS.md`; `scripts/checks/evals.py` validates them for the
+  catalog without shipping the repository's eval procedure in the skill.
+
 ### Fixed
 
 - `route-work` Questions cards no longer present one reading of an ambiguous
@@ -46,10 +54,8 @@ looked" surface. GitHub Releases mirror its entries.
   source conflict with the choice made. Evals live in each skill's `evals/`
   as `evals.json` and `eval_queries.json`, and each graded round commits a
   benchmark file named `<date>-<short-rev>.json` (one per target when a round
-  covers several) in `evals/benchmarks/`. `creating-portable-skills` ships a
-  byte-equal copy with a parity check, cites it from its workflow and
-  templates, and bundles `scripts/check-evals.py` to validate eval file
-  shapes. This repository's catalog check runs that validator on every skill.
+  covers several) in `evals/benchmarks/`. This repository's catalog check runs
+  `scripts/checks/evals.py` on every skill to validate eval file shapes.
 - `TESTING.md` explains project-owned verification for polyglot monorepos and
   smaller projects, with local, merge, and release responsibilities, conservative
   selection, cache boundaries, and an embedded policy outline. README and

@@ -27,15 +27,13 @@ related_components:
 
 ## Context
 
-The `creating-portable-skills` baseline protocol asks for an independent
-grader in step 3 ("Grade binary") of
-`skills/creating-portable-skills/assets/baseline-test-template.md`. One grader scores both variants of a case on a target. When a
-second model is available, the grader is a different model from the one that
-wrote the outputs. It sees final answers and the artifact or tool observations
-needed to verify execution, with variant names removed and private reasoning
-excluded.
-`tests/README.md` ("Matched comparison") points the repo's suites at that
-template.
+The repository's protocol in
+[`SKILLS.md`](../../../SKILLS.md#grading-and-independence) asks for an
+independent different-model grader. One grader scores both variants of a case
+on a target. It sees final answers and the artifact or tool observations needed
+to verify execution, with variant names removed and private reasoning excluded.
+[`tests/README.md`](../../../tests/README.md#running) points the repository's
+suites at that host protocol.
 
 The issue #134 refresh ran that protocol across two harnesses: Claude Code
 2.1.281 with Opus 5.5 at medium effort, and Grok CLI 1.0.41 with Grok 4.7 at
@@ -232,7 +230,7 @@ letting the run quietly drop out of the record.
 
 ## When to Apply
 
-- Any matched comparison under the baseline template where a second model
+- Any matched comparison under `SKILLS.md` where a second model
   grades, including issue #165's follow-up rounds and any skill suite in
   `tests/`.
 - Any headless use of Grok CLI at high effort with a long prompt, whether it

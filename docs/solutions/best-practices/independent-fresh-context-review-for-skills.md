@@ -35,8 +35,8 @@ evidence.
 
 The distinction matters because a plausible executor summary can hide an
 incomplete artifact. A filename or heading can satisfy a weak check while the
-actual output misses the required outcome. The workflow in
-`skills/creating-portable-skills/SKILL.md` therefore gives judgment work to
+actual output misses the required outcome. The host workflow in
+[`SKILLS.md`](../../../SKILLS.md#grading-and-independence) gives judgment work to
 independent agent contexts and leaves mechanical checks to scripts.
 
 ## Guidance
@@ -139,7 +139,8 @@ run contained.
 
 ## When to Apply
 
-Use `skills/creating-portable-skills/SKILL.md` for the regression workflow.
+Use [`SKILLS.md`](../../../SKILLS.md#arms-and-runs) for this repository's
+regression workflow.
 A check establishes only its exercised behavior and does not establish
 comparative improvement. Independent review is especially useful when success
 depends on qualitative completeness, evidence use, authority boundaries, or

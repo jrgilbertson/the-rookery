@@ -1,30 +1,34 @@
 # Trigger contract: creating-portable-skills
 
+Authoring and explicit audit routing examples. The creator is normally invoked
+explicitly; this set supplies evidence for routing checks, not a requirement to
+auto-load it on every skill-adjacent request.
+
 Judged per the protocol in [`tests/README.md`](../README.md): fresh context,
 name + description + query only, binary judgment, any near-miss `yes` fails.
 
-## Should trigger
+## Skill-authoring requests
 
 | Query | Reason |
 | --- | --- |
 | Help me create a new skill for formatting SQL queries | Explicit new-skill creation request. |
 | I want to write a skill that enforces our commit message style | Authoring a new skill from a stated behavior. |
-| Review my deploy-checks skill and tell me what's wrong with it | Review of an existing skill. |
+| Use creating-portable-skills to review my deploy-checks skill and tell me what's wrong with it | Review of an existing skill. |
 | Update the description on my notes skill so it triggers more reliably | Description and trigger repair. |
 | Port this skill from my old toolkit repo into this collection | Migration between collections. |
 | Migrate the data-validation skill over here and fix it up during the move | Migration combined with repair. |
 | My skill never fires when I ask about invoices — fix its triggers | Trigger-failure diagnosis on an existing skill. |
 | Turn this prompt I keep pasting into a proper reusable skill | Converting a repeated prompt into a skill. |
-| Is my skill's SKILL.md structured right? Audit it | Structural audit of a skill package. |
+| Use creating-portable-skills to audit whether my skill's SKILL.md is structured right | Structural audit of a skill package. |
 | Make this skill work in Codex too, not just Claude Code | Cross-harness portability request. |
-| Update the evals for this skill now that we simplified its intent | Eval update after the skill's intent shrank. |
-| I'm editing SKILL.md and the graders after shrinking what the skill does | Direct edit of an existing skill package and its graders. |
+| Use creating-portable-skills to revise SKILL.md after shrinking what the skill does | Explicit package revision. |
 
 ## Near misses: should not trigger
 
 | Query | Expected owner |
 | --- | --- |
-| Design evals for my dataset | Standalone eval-suite design. |
+| Design evals for my dataset | Upstream build-eval workflow. |
+| Update the evals for this skill now that we simplified its intent | Upstream build-eval workflow. |
 | Create a plugin for my editor that adds a slash command | Plugin or editor-extension work. |
 | Review my README for clarity | Prose review of a non-skill document. |
 | Build a grader and rubric for judging model outputs | Eval and grading tooling. |

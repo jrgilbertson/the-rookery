@@ -12,7 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 CATALOG_CHECK = ROOT / "scripts/checks/catalog.sh"
 PACKAGE_CHECK = ROOT / "scripts/checks/skill_packages.rb"
-EVALS_CHECK = ROOT / "skills/creating-portable-skills/scripts/check-evals.py"
+EVALS_CHECK = ROOT / "scripts/checks/evals.py"
 
 
 def run_catalog(repository: Path) -> subprocess.CompletedProcess[str]:
@@ -34,8 +34,7 @@ def main() -> int:
         skill_directory.mkdir(parents=True)
         shutil.copy2(CATALOG_CHECK, check_directory / "catalog.sh")
         shutil.copy2(PACKAGE_CHECK, check_directory / "skill_packages.rb")
-        evals_check = repository / "skills/creating-portable-skills/scripts/check-evals.py"
-        evals_check.parent.mkdir(parents=True)
+        evals_check = check_directory / "evals.py"
         shutil.copy2(EVALS_CHECK, evals_check)
         subprocess.run(["git", "init", "-q", repository], check=True)
         (repository / "README.md").write_text(

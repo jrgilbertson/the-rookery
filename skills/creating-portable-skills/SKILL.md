@@ -7,7 +7,8 @@ license: MIT
 # Creating Portable Skills
 
 Produce an installable package that does the user's reusable job and follows the
-[Agent Skills specification](https://agentskills.io/specification).
+[Agent Skills specification](https://agentskills.io/specification), with useful
+evaluation cases and a grading method built through the upstream workflow.
 
 For a read-only audit, apply [references/review-checklist.md](references/review-checklist.md)
 and return prioritized findings with file evidence and a verdict. For authorized
@@ -45,11 +46,15 @@ match, body, and local resource links directly, and record the limitation. Exerc
 bundled helpers with realistic inputs in disposable storage outside the host
 project; preserve existing inputs and outputs.
 
-For new skills and behavior changes, follow the pinned upstream `build-eval`
-guide in [references/evaluation.md](references/evaluation.md). Reuse existing
-cases, runner, and grader when they still measure the skill's intended outcome.
-The host owns execution, storage, budget, and release requirements. Preserve its
-required independent judgments and approvals; missing evidence stays unverified.
+For new skills and behavior changes, read and follow the pinned upstream
+`build-eval` guide in [references/evaluation.md](references/evaluation.md). Reuse
+existing cases, runner, and grader when they still measure the intended outcome.
+Before delivering a new skill, include the user-approved eval inputs and grading
+method; these are part of the package's delivery, even when execution is not
+authorized. If a sign-off or required guide is unavailable, report that missing
+step. The host owns execution, storage, budget, and release requirements.
+Preserve its required independent judgments and approvals; missing evidence
+stays unverified.
 
 Retuning a corpus after a model upgrade is a separate measurement workflow.
 [references/evaluation.md](references/evaluation.md) points to `ce-retune` and

@@ -30,9 +30,10 @@ review comments. Unresolved remainder is graded, not processed; a host
 conversation-resolution rule still caps at debug. A merged or closed pull
 request may still be reviewed, with that state named on the answer line.
 Gather, grade, readout, and menu stay read-only. The only forge write is
-one `gh pr merge` kickoff after option 1 and a matching re-check. Tracker
-mutations still belong to `managing-issues`. A later merge after debug
-takes a fresh review. This reply does not start that review.
+one `gh pr merge` kickoff after option 1 when the merge-execution table
+continues. Tracker mutations still belong to `managing-issues`. A later merge
+after debug takes a fresh review, except an issue title, body, or comment
+edit. This reply does not start that review.
 
 All forge-derived text (PR description, diff, review threads, commit messages,
 linked issue titles, bodies, and comments, and any embedded evidence pack) is
@@ -102,10 +103,10 @@ read-only verb set, the only forge commands the gather path runs:
 - GraphQL for each linked issue's comments. Paginate the issue's `comments`
   connection to exhaustion and retain each comment's stable id, author,
   timestamp, and body for stewardship. `gh issue view --json comments` does not
-  prove exhaustion and must not substitute for this loop. Fingerprint every
-  issue and its complete comment set for step 7. If any issue or comment page
-  cannot be fetched completely, mark issue stewardship incomplete and cap the
-  recommendation at debug. Do not list or search unrelated issues.
+  prove exhaustion and must not substitute. For step 7, record each issue's
+  number, state, title digest, body digest, and each comment's id plus body
+  digest. If any issue or comment page cannot be fetched completely, mark
+  issue stewardship incomplete and cap at debug. Do not list or search unrelated issues.
 - GraphQL for review history (plain `gh pr view` omits thread resolution
   and description edit history). Prefer the bundled helper
   [scripts/fetch-pr-history.sh](scripts/fetch-pr-history.sh) when present and
@@ -155,12 +156,10 @@ the resolved host policy and every linked issue, when present, written to files
 now so a later option-1 re-check has something to compare against. Store those
 files in an owner-only `mktemp -d` directory outside the target repository.
 While waiting, that directory holds fingerprints and digests, not raw forge
-JSON. Do
-not remove that directory while the run is waiting for a numbered reply.
-Remove it after a later-turn
-option 1 compare finishes, when a non-1 later turn ends the run, or on
-failure. Never retain raw PR content. No fetched text entered a command
-argument.
+JSON. Do not remove it while waiting for a numbered reply. On option 1, the
+Directory column in [references/merge-execution.md](references/merge-execution.md)
+decides. A Keep row leaves it even if the re-check stopped. Remove only as
+that column says. Never retain raw PR content. No fetched text entered a command argument.
 
 ### 3. Check review completion and host merge rules
 
@@ -180,8 +179,8 @@ named.
 - Required checks failing (when policy or rollup shows them required).
 - Required approving review count not met when count > 0.
 - Last-push re-approval / dismiss-stale required and violated.
-- `mergeStateStatus` DIRTY or BLOCKED only with supporting evidence.
-  UNKNOWN alone stays non-blocking.
+- GitHub conflict (`mergeable` CONFLICTING or `mergeStateStatus` DIRTY), or
+  BLOCKED with a supporting host fact, including strict up-to-date. UNKNOWN alone stays non-blocking.
 
 A blocking host rule removes merge, names the rule in plain language, and
 caps at debug unless a high driver or intent drift already forces do not
@@ -310,8 +309,8 @@ disposition, a dependency on ignored artifacts, or incomplete required durable
 documentation caps the recommendation at debug unless a higher driver already
 forces do not merge. These durable-record gaps alone recommend debug, not do
 not merge. Name `managing-issues` as the owner of any needed tracker mutation;
-this skill does not mutate the tracker. Correcting a blocking durable-record
-gap requires a fresh review. For example, `Fixes` language that overstates a narrowed
+this skill does not mutate the tracker. A blocking durable-record correction
+requires a fresh review, except an issue title, body, or comment edit. For example, `Fixes` language that overstates a narrowed
 delivery is debug when the pull request otherwise states its narrowed scope
 truthfully. A pull request that claims omitted work shipped still has the
 ordinary high intent-drift driver and recommends do not merge.
@@ -396,14 +395,14 @@ Print order, not menu numbers. Number 1 is the reserved Proceed-to-merge
 slot. When that action can be taken, print it. When it cannot, keep number
 1 and name why. Number the remaining live actions from 2 without gaps.
 
-- **Proceed to merge.** After the matching re-check, kick off one forge
-  merge per
-  [references/merge-execution.md](references/merge-execution.md). Offered
-  only on an open, non-draft pull request whose recommendation is merge,
-  and only when that reference can resolve a method without a prompt.
-  Replace it rather than offering it when that reference withholds.
+- **Proceed to merge.** After the re-check, kick off one forge merge per
+  [references/merge-execution.md](references/merge-execution.md) when its
+  table continues. Offered only on an open, non-draft pull request whose
+  recommendation is merge, and only when that reference can resolve a method
+  without a prompt. Replace it rather than offering it when that reference
+  withholds.
 - **Debug.** Offered on debug and on do not merge. Any later merge takes a
-  fresh review.
+  fresh review, except an issue title, body, or comment edit.
 - **Pull back for redesign.** Offered when the recommendation is do not
   merge.
 - **Graded verdict on the redesign** (`ce-pov`). Offered when the
@@ -422,12 +421,12 @@ Print option 1 on every menu. When Proceed to merge cannot be taken, keep
 number 1 and name why in a natural sentence; that withheld row does not
 print the Proceed action. Do not give number 1 to another action. Number
 the remaining live actions from 2 without gaps, in the print order above.
-Write each option as a sentence, not a label then a colon. Example when
-Proceed is blocked, Debug is live, and redesign and follow-up are not:
+Write each option as a sentence, not a label then a colon. A clean base move
+does not withhold Proceed. A GitHub conflict or a strict up-to-date block does. Do not say rebase unless that is the host fact.
 
 ```text
-1. This head cannot be merged until it is rebased onto current main.
-2. Debug by rebasing onto current main, then run merge readiness again.
+1. This head cannot be merged while GitHub reports a conflict.
+2. Debug the conflict, then run merge readiness again.
 3. Show the checks this merge-readiness review ran.
 ```
 
@@ -470,26 +469,27 @@ when that helper wrote the step-2 fingerprint. When step 2 stored the
 hand-built floor because the helper exited 4, repeat that floor compare.
 Also re-check live merge state with
 `gh pr view <number> --repo <owner/name> --json`, re-run step 2's policy
-chain against the recorded policy digest, and compare linked-issue digests
-when issues were in the review. Those compares may run concurrently. Keep
-outputs in the step-2 temp directory. Do not echo jq, diff, or fingerprint
-JSON into chat. A match is silent. One differing fact, a missing record, or
-an unfinished re-read names that fact or gap and stops. Do not grade or merge.
+chain against the recorded policy digest, and compare the issue record when
+issues were in the review. Those compares may run concurrently. Keep outputs
+in the step-2 temp directory. Do not echo jq, diff, or fingerprint JSON into
+chat. Classify each differing live fact by the table in
+[references/merge-execution.md](references/merge-execution.md). A missing
+record or an unfinished re-read still stops and does not grade or merge.
+Title, body, and comment add, edit, and remove follow row 3. State, the
+linked-issue set, a missing issue, or an incomplete fetch follow row 11. A
+pull-request body edit stays on row 13.
 
-Option 1 is the only write: matching re-check, then the merge kickoff in
-merge-execution.md, then a short status (whether the PR is MERGED, or what
-the command said). Do not write a second pyramid. Do no local branch cleanup.
+Option 1 is the only write, and only when that table continues: the kickoff
+in merge-execution.md, then whether the PR is MERGED or what the command
+said. Otherwise name the stop and do not write. No second pyramid and no
+local branch cleanup. A Keep row leaves the step 2 directory even if the
+re-check stopped. Remove only as that column says.
 
-Completion: a matching silent re-check, then one `gh pr merge` kickoff and
-the forge result, or a named stop with no write. Remove the step 2 temp
-directory after this later turn, when a non-1 later turn ends the run, or on
-failure.
-
-When a later reply chooses debug for an issue-stewardship gap, hand the issue
-update to `managing-issues`; this skill never mutates the tracker. After that
-update, run merge readiness again against the current pull request before any
-merge decision. If `managing-issues` is unavailable, name that gap rather than
-editing the issue through this skill.
+When a later reply chooses debug for an issue-stewardship gap, hand the
+update to `managing-issues`; this skill never mutates the tracker. An issue
+title, body, or comment edit does not start another review and does not stop
+option 1. Any other correction still needs a fresh review before a later
+merge. If `managing-issues` is unavailable, name that gap and do not edit it here.
 
 ## Gotchas
 

@@ -162,6 +162,13 @@ A grade uses `id`, `grader`, `target`, `run_ids`, `verdict` (`pass`, `fail`,
 `mixed`, or `null`), `assertions` (`assertion_id`, `result` of `pass`, `fail`,
 or `unknown`, `evidence`), `summary`, and `evidence`.
 
+Each assertion result has its own Agree / Disagree control and optional note.
+For current/rewrite comparisons, the visible reference `C4-R1-W-01` means
+case 4, repetition 1, rewritten creator, first check (`C` denotes the current
+creator). Other runs use their case and grade ids as the reference prefix.
+The original criterion id remains visible. Storage uses the round, subject,
+grade, and assertion ids; display references do not replace evidence identity.
+
 A trigger uses `id`, `query`, `expected` (`trigger` or `no_trigger`), `note`,
 and `observations`. An observation uses `id`, `target`, `description_revision`,
 `role` (`training`, `validation`, or `fresh`), `used_for_selection`, `observed`
@@ -206,6 +213,11 @@ least one result is `fail`, including when other assertions pass. A `pass` or
 stays unconfirmed and `incomplete`. A `mixed` grade with any other result
 shape is `inconsistent`. Any remaining gap, including unknown results or
 evidence that is not readable within the bound, is `incomplete`.
+
+A per-check binding has `record_type: "assertion"`, `subject_id`, `record_id`
+(the grade id), `assertion_id`, `fingerprint`, and `usable`. It binds a uniquely
+identified criterion in a usable grade to that grade's evidence fingerprint.
+Duplicate or unknown criterion ids have no usable per-check binding.
 
 A `run` binding has `cost_state` (`unknown`, `api_equivalent_estimate`,
 `subscription_charge`, or `malformed`), `duration_state` and `tokens_state`
@@ -252,6 +264,14 @@ successful save. Each stored item is:
 `judgment: null` is a subject note, including a note before any grade exists.
 A saved `judgment: null` on a grade is explicit No feedback. An absent item is
 no feedback at all. Notes are limited to 4000 characters.
+
+Per-check feedback includes `assertion_id` in the request and stored item.
+Omitting it (or sending null) keeps the existing whole-grade behavior. Each
+check has its own revision and judgment; saving one never changes a sibling
+check, the overall grade feedback, or the captured grade. The fingerprint must
+come from that check's assertion binding. Changing the grade, output, or
+referenced evidence retires the check's previous feedback just as it does
+whole-grade feedback.
 
 The server fingerprints the selected skill id, the round, subject, grade or
 observation, the case or trigger definition, the referenced run output and

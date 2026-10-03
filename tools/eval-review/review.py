@@ -377,6 +377,7 @@ def load_review(manifest_path, skill_id=None):
         "files": {},
         "listed": [],
         "grades": {},
+        "assertions": {},
         "subjects": {},
         "round_id": None,
         "skill_id": skill_id if valid_id(skill_id) else None,
@@ -533,6 +534,21 @@ def clean_case(case, index, errors, model, seen_subjects):
         grades.append(cleaned)
         model["bindings"].append(binding)
         model["grades"][(case_id, cleaned["id"])] = record
+        required = {item["id"] for item in assertions}
+        ids = [item["assertion_id"] for item in cleaned["assertions"]]
+        for assertion in cleaned["assertions"]:
+            assertion_id = assertion["assertion_id"]
+            if not record["usable"] or assertion_id not in required or ids.count(assertion_id) != 1:
+                continue
+            assertion_fp = fingerprint({"grade": record["fingerprint"], "assertion_id": assertion_id})
+            model["assertions"][(case_id, cleaned["id"], assertion_id)] = {
+                "fingerprint": assertion_fp, "usable": True,
+            }
+            model["bindings"].append({
+                "record_type": "assertion", "subject_id": case_id,
+                "record_id": cleaned["id"], "assertion_id": assertion_id,
+                "fingerprint": assertion_fp, "usable": True,
+            })
     return display_case
 
 
@@ -948,6 +964,10 @@ def feedback_item_ok(item):
         return False
     if item.get("grade_id") is not None and not valid_id(item.get("grade_id")):
         return False
+    if item.get("assertion_id") is not None and (
+        not valid_id(item["assertion_id"]) or item.get("grade_id") is None
+    ):
+        return False
     if item.get("judgment") not in (None, "agree", "disagree"):
         return False
     if not isinstance(item.get("note"), str) or len(item["note"]) > MAX_NOTE:
@@ -956,7 +976,7 @@ def feedback_item_ok(item):
         return False
     if not isinstance(item.get("saved_at"), str) or not isinstance(item.get("fingerprint"), str):
         return False
-    return set(item) == {"round_id", "subject_id", "grade_id", "judgment", "note", "revision", "saved_at", "fingerprint"}
+    return set(item) - {"assertion_id"} == {"round_id", "subject_id", "grade_id", "judgment", "note", "revision", "saved_at", "fingerprint"}
 
 
 def load_feedback(path):
@@ -983,7 +1003,10 @@ def annotate_feedback(model, feedback):
     for item in feedback["items"]:
         current = None
         if model["fatal"] is None and item["round_id"] == model["round_id"]:
-            if item["grade_id"] is None:
+            if item.get("assertion_id") is not None:
+                record = model["assertions"].get((item["subject_id"], item["grade_id"], item["assertion_id"]))
+                current = record["fingerprint"] if record else None
+            elif item["grade_id"] is None:
                 subject = model["subjects"].get(item["subject_id"])
                 current = subject["fingerprint"] if subject else None
             else:
@@ -1024,9 +1047,9 @@ def atomic_write(path, payload):
         raise OSError("Feedback path is a symlink and was not changed.")
 
 
-def matching_item(items, round_id, subject_id, grade_id, grade_fp):
+def matching_item(items, round_id, subject_id, grade_id, grade_fp, assertion_id=None):
     for item in items:
-        if item["round_id"] == round_id and item["subject_id"] == subject_id and item["grade_id"] == grade_id and item["fingerprint"] == grade_fp:
+        if item["round_id"] == round_id and item["subject_id"] == subject_id and item["grade_id"] == grade_id and item.get("assertion_id") == assertion_id and item["fingerprint"] == grade_fp:
             return item
     return None
 
@@ -1048,6 +1071,9 @@ def apply_feedback(model, form, path, protected=None):
     grade_id = form["grade_id"]
     if grade_id is not None and not valid_id(grade_id):
         raise FeedbackError(400, "Not saved: grade_id is malformed.")
+    assertion_id = form.get("assertion_id")
+    if assertion_id is not None and (not valid_id(assertion_id) or grade_id is None):
+        raise FeedbackError(400, "Not saved: assertion_id requires a valid grade and assertion.")
     judgment = form["judgment"]
     if judgment not in (None, "agree", "disagree"):
         raise FeedbackError(400, "Not saved: judgment is malformed.")
@@ -1057,7 +1083,12 @@ def apply_feedback(model, form, path, protected=None):
         raise FeedbackError(400, "Not saved: note exceeds 4000 characters.")
     if type(form["base_revision"]) is not int or form["base_revision"] < 0:
         raise FeedbackError(400, "Not saved: base_revision is malformed.")
-    if grade_id is None:
+    if assertion_id is not None:
+        record = model["assertions"].get((form["subject_id"], grade_id, assertion_id))
+        if record is None or not record["usable"]:
+            raise FeedbackError(400, "Not saved: assertion_id is not a usable check on this grade.")
+        grade_fp = record["fingerprint"]
+    elif grade_id is None:
         if judgment is not None:
             raise FeedbackError(400, "Not saved: agreement requires a grade or observation id.")
         grade_fp = model["subjects"][form["subject_id"]]["fingerprint"]
@@ -1076,7 +1107,7 @@ def apply_feedback(model, form, path, protected=None):
     feedback, error = load_feedback(path)
     if error is not None:
         raise FeedbackError(500, "Not saved: " + error[0].lower() + error[1:])
-    current = matching_item(feedback["items"], form["round_id"], form["subject_id"], grade_id, grade_fp)
+    current = matching_item(feedback["items"], form["round_id"], form["subject_id"], grade_id, grade_fp, assertion_id)
     base = form["base_revision"]
     if current is None:
         if base != 0:
@@ -1091,6 +1122,8 @@ def apply_feedback(model, form, path, protected=None):
             "saved_at": now_utc(),
             "fingerprint": grade_fp,
         }
+        if assertion_id is not None:
+            saved["assertion_id"] = assertion_id
         feedback["items"].append(saved)
     else:
         if current["revision"] != base:

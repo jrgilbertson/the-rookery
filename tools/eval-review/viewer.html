@@ -160,19 +160,26 @@ ul.links .label { color: var(--muted); margin-left: 8px; font-family: var(--font
 /* Grades and feedback */
 .grades { margin-top: 24px; display: grid; gap: 16px; }
 .grade { background: var(--surface); border: 1px solid var(--border); padding: 16px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
-@media (min-width: 1100px) { .grade { grid-template-columns: minmax(0, 1.25fr) minmax(320px, 1fr); gap: 24px; } }
 .grade-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin-bottom: 8px; }
 .grade-head .by { font-size: 13px; color: var(--muted); }
 .grade .applies { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
-.grade ol.assertions li { grid-template-columns: minmax(0, 1fr) auto; }
-.grade ol.assertions .result { font-size: 12px; font-weight: 600; white-space: nowrap; }
+.grade ol.assertions { gap: 16px; }
+.grade ol.assertions li { display: block; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius); }
+.grade ol.assertions li:first-child { border-top: 1px solid var(--border); padding-top: 16px; }
+.assertion-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+.assertion-ref { font-size: 15px; font-weight: 700; }
+.criterion { margin-bottom: 12px; font-size: 15px; line-height: 1.6; }
+.criterion-id { font-size: 12px; color: var(--muted); margin-top: 4px; }
+.grade ol.assertions .result { font-size: 13px; font-weight: 700; white-space: nowrap; padding: 4px 10px; border: 1px solid currentColor; border-radius: var(--radius); }
 .grade ol.assertions .result.pass { color: var(--pass); }
 .grade ol.assertions .result.fail { color: var(--fail); }
-.grade ol.assertions .ev { grid-column: 1 / -1; font-size: 13px; color: var(--muted); white-space: pre-wrap; overflow-wrap: anywhere; }
+.grade ol.assertions .ev { font-size: 14px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
+.explanation-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
 
 .feedback { min-width: 0; }
 .grade .feedback { border-top: 1px solid var(--border); padding-top: 16px; }
-@media (min-width: 1100px) { .grade .feedback { border-top: 0; padding-top: 0; border-left: 1px solid var(--border); padding-left: 24px; } }
+.grade .assertion-feedback { margin-top: 16px; }
+.grade .assertion-feedback textarea { min-height: 64px; }
 .feedback fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 .feedback legend { padding: 0; font-weight: 600; font-size: 15px; margin-bottom: 8px; }
 .feedback legend code { font-weight: 400; }
@@ -322,16 +329,17 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
   const list = (v) => (Array.isArray(v) ? v : []);
   const word = (map, v, fallback) => (Object.prototype.hasOwnProperty.call(map, v) ? map[v] : fallback);
   const roundId = () => (state.manifest && state.manifest.round && str(state.manifest.round.id)) || null;
-  const keyOf = (subjectId, gradeId) => JSON.stringify([state.skillId, subjectId, gradeId ?? null]);
+  const keyOf = (subjectId, gradeId, assertionId = null) => JSON.stringify([state.skillId, subjectId, gradeId ?? null, assertionId]);
   const skillUrl = (path) => state.skillId === "" ? path : path + "?" + new URLSearchParams({ skill: state.skillId });
-  const bindingKey = (kind, subjectId, recordId) => JSON.stringify([kind, subjectId, recordId]);
-  const bindingFor = (kind, subjectId, recordId) => state.bindings.get(bindingKey(kind, subjectId, recordId)) || null;
-  function feedbackBinding(subjectId, gradeId) {
+  const bindingKey = (kind, subjectId, recordId, assertionId = null) => JSON.stringify([kind, subjectId, recordId, assertionId]);
+  const bindingFor = (kind, subjectId, recordId, assertionId = null) => state.bindings.get(bindingKey(kind, subjectId, recordId, assertionId)) || null;
+  function feedbackBinding(subjectId, gradeId, assertionId = null) {
+    if (assertionId !== null) return bindingFor("assertion", subjectId, gradeId, assertionId);
     if (gradeId === null) return bindingFor("subject", subjectId, null);
     return bindingFor("grade", subjectId, gradeId) || bindingFor("observation", subjectId, gradeId);
   }
-  function displayedFingerprint(subjectId, gradeId) {
-    const b = feedbackBinding(subjectId, gradeId);
+  function displayedFingerprint(subjectId, gradeId, assertionId = null) {
+    const b = feedbackBinding(subjectId, gradeId, assertionId);
     return b && b.usable === true ? str(b.fingerprint) : null;
   }
   function textOrMissing(v, missingText) {
@@ -448,14 +456,14 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
       const kind = b && typeof b === "object" ? str(b.record_type) : null;
       if (!kind || !str(b.subject_id)) continue;
       if (kind === "subject") state.bindings.set(bindingKey(kind, b.subject_id, null), b);
-      else if (str(b.record_id)) state.bindings.set(bindingKey(kind, b.subject_id, b.record_id), b);
+      else if (str(b.record_id)) state.bindings.set(bindingKey(kind, b.subject_id, b.record_id, kind === "assertion" ? b.assertion_id : null), b);
     }
     const round = roundId();
     for (const item of list(feedback.items)) {
       if (!item || typeof item !== "object" || !str(item.subject_id)) continue;
-      const shown = displayedFingerprint(item.subject_id, item.grade_id ?? null);
+      const shown = displayedFingerprint(item.subject_id, item.grade_id ?? null, item.assertion_id ?? null);
       if (item.binding === "current" && item.round_id === round && shown && item.fingerprint === shown) {
-        state.items.set(keyOf(item.subject_id, item.grade_id), item);
+        state.items.set(keyOf(item.subject_id, item.grade_id, item.assertion_id ?? null), item);
       } else {
         state.earlier.push(item);
       }
@@ -773,13 +781,24 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
         ["Tokens", tokens, tokensCaveat],
         ["Cost", cost, costCaveat],
       ]),
-      out,
+      str(r.output) && r.output.length > 1800 ? h("details", { class: "sub" },
+        h("summary", null, "Recorded output", h("span", { class: "count", text: "Expand to read" })), out) : out,
       str(r.summary) ? h("details", { class: "sub" },
         h("summary", null, "Trace summary"),
         h("p", { class: "prose", style: "font-size:13px", text: r.summary })) : null,
       h("details", { class: "sub" },
         h("summary", null, "Native evidence", h("span", { class: "count", text: String(list(r.evidence).length) })),
         evidenceLinks(r.evidence)));
+  }
+
+  function assertionReference(c, g, index) {
+    const runIds = list(g.run_ids);
+    const match = runIds.length === 1 && /^(current|rewritten)-(\d+)_rep(\d+)$/.exec(runIds[0]);
+    const uniqueRun = runIds.length === 1 && list(c.grades).filter((grade) =>
+      list(grade?.run_ids).includes(runIds[0])).length === 1;
+    const prefix = match && uniqueRun ? "C" + match[2] + "-R" + (Number(match[3]) + 1) + "-" + (match[1] === "current" ? "C" : "W") :
+      "case[" + c.id + "]-grade[" + g.id + "]";
+    return prefix + "-" + String(index + 1).padStart(2, "0");
   }
 
   function renderGrades(s, grades, c, runById, emptyText) {
@@ -812,17 +831,26 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
           h("p", { class: "applies", text: applies.length ? "Applies to " + applies.join(" and ") : "Graded runs not identified" }),
           caveats.map((t) => h("p", { class: "gap", style: "margin:0 0 12px", text: t })),
           str(g.summary) ? h("p", { class: "prose", style: "margin-bottom:12px", text: g.summary }) : null,
-          rows.length ? h("ol", { class: "assertions" }, rows.map((a) => {
-            const res = word(RESULT, a.result, "Unknown");
-            return h("li", null,
-              h("span", null, h("code", { class: "aid", text: (str(a.assertion_id) || "—") + " " }), str(assertionText.get(a.assertion_id)) || ""),
-              h("span", { class: "result " + (a.result === "pass" ? "pass" : a.result === "fail" ? "fail" : ""), text: res }),
-              h("span", { class: "ev", text: str(a.evidence) ? a.evidence : "No supporting evidence recorded." }));
+          rows.length ? h("p", { class: "lede", text: "Review each check separately. Quote its reference in a message, or save Agree / Disagree and a note below it. R1 is repetition 1; C is current and W is rewritten." }) : null,
+          rows.length ? h("ol", { class: "assertions" }, rows.map((a, index) => {
+            const res = word(RESULT, a.result, "Unknown").toUpperCase();
+            const ref = assertionReference(c, g, index);
+            return h("li", { "aria-label": "Check " + ref },
+              h("div", { class: "assertion-head" }, h("code", { class: "assertion-ref", text: ref }),
+                h("span", { class: "result " + (a.result === "pass" ? "pass" : a.result === "fail" ? "fail" : ""), text: res })),
+              h("div", { class: "criterion" },
+                h("p", { text: str(assertionText.get(a.assertion_id)) || "Criterion text not recorded." }),
+                h("p", { class: "criterion-id" }, "Criterion ID: ", h("code", { text: str(a.assertion_id) || "—" }))),
+              h("div", null, h("span", { class: "explanation-label", text: "Grader explanation" }),
+                h("p", { class: "ev", text: str(a.evidence) ? a.evidence : "No supporting evidence recorded." })),
+              str(a.assertion_id) ? feedbackControl(s, g.id, { legend: "Your feedback on check ", legendCode: ref, assertionId: a.assertion_id }) :
+                h("p", { class: "missing", text: "Feedback unavailable: this check has no criterion identifier." }));
           })) : h("p", { class: "missing", text: "No per-assertion results recorded." }),
           h("details", { class: "sub" },
             h("summary", null, "Grading evidence", h("span", { class: "count", text: String(list(g.evidence).length) })),
             evidenceLinks(g.evidence))),
-        feedbackControl(s, g.id, { legend: "Your judgment of grade ", legendCode: g.id, record: "grade" }));
+        h("details", { class: "sub" }, h("summary", { text: "Feedback on the overall grade" }),
+          feedbackControl(s, g.id, { legend: "Your judgment of grade ", legendCode: g.id, record: "grade" })));
     }));
   }
 
@@ -921,6 +949,7 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
         h("div", null,
           "Round ", h("code", { text: str(item.round_id) || "unknown" }),
           item.grade_id ? [", ", s.kind === "case" ? "grade " : "observation ", h("code", { text: item.grade_id })] : ", note only",
+          item.assertion_id ? [", criterion ", h("code", { text: item.assertion_id })] : null,
           ": ", judgmentWord(item.judgment),
           h("span", { class: "muted", text: " · saved " + formatTime(item.saved_at) })),
         str(item.note) ? h("div", { class: "note", text: item.note }) : null))));
@@ -946,18 +975,19 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
 
   let uid = 0;
   function feedbackControl(s, gradeId, opts) {
-    const key = keyOf(s.id, gradeId);
+    const assertionId = str(opts.assertionId);
+    const key = keyOf(s.id, gradeId, assertionId);
     const round = roundId();
     const judged = gradeId !== null;
-    const what = !judged ? "note" : opts.record === "observation" ? "observation" : "grade";
-    const fingerprint = displayedFingerprint(s.id, gradeId);
+    const what = !judged ? "note" : assertionId ? "check" : opts.record === "observation" ? "observation" : "grade";
+    const fingerprint = displayedFingerprint(s.id, gradeId, assertionId);
     let blocked = null;
     if (!round) blocked = "Feedback cannot be saved: the manifest has no round identifier.";
     else if (state.feedbackError) blocked = "Feedback cannot be saved until the feedback file can be read.";
     else if (!fingerprint) blocked = "Feedback cannot be saved: the server did not identify the version of this " + what + " shown here. Reload the page; any text you type stays here until then.";
     const id = "fb" + (++uid);
     const draft = draftOf(key);
-    const container = h("div", { class: "feedback" });
+    const container = h("div", { class: "feedback" + (assertionId ? " assertion-feedback" : "") });
     const savedLine = h("p", { class: "saved-state" });
     const status = h("p", { class: "status", id: id + "-status", "aria-live": "polite" });
     const conflictBox = h("div");
@@ -971,7 +1001,7 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
       h("legend", null, opts.legend, opts.legendCode ? h("code", { text: opts.legendCode }) : null));
     if (blocked) fs.appendChild(h("p", { class: "reason", text: blocked }));
     if (judged) {
-      const choices = h("div", { class: "choices", role: "radiogroup", "aria-label": "Judgment of " + what + " " + gradeId });
+      const choices = h("div", { class: "choices", role: "radiogroup", "aria-label": "Judgment of " + what + " " + (opts.legendCode || gradeId) });
       for (const [value, label] of [["", "No judgment"], ["agree", "Agree"], ["disagree", "Disagree"]]) {
         const input = h("input", { type: "radio", name: id + "-j", value, checked: (draft.judgment || "") === value });
         input.addEventListener("change", () => { if (input.checked) edit(); });
@@ -1054,6 +1084,7 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
         judgment: d.judgment, note: d.note,
         base_revision: base && Number.isInteger(base.revision) ? base.revision : 0,
       };
+      if (assertionId !== null) payload.assertion_id = assertionId;
       state.saving.add(key);
       state.status.delete(key);
       paint();
@@ -1070,6 +1101,7 @@ ul.observations .feedback { border-top: 1px solid var(--border); padding-top: 16
       state.saving.delete(key);
       const matches = (item) => item && typeof item === "object" && item.binding === "current" &&
         item.round_id === round && item.subject_id === s.id && (item.grade_id ?? null) === gradeId &&
+        (item.assertion_id ?? null) === assertionId &&
         item.fingerprint === fingerprint && Number.isInteger(item.revision);
       const reason = (fallback) => {
         const text = (body && str(body.error)) || fallback;

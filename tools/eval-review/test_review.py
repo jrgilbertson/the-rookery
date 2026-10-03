@@ -93,21 +93,23 @@ class ReviewHttpTest(unittest.TestCase):
         self.assertIn("application/json", headers["Content-Type"])
         return json.loads(data.decode())
 
-    def binding_record(self, subject_id, grade_id=None, port=None):
+    def binding_record(self, subject_id, grade_id=None, port=None, assertion_id=None):
         payload = self.review(port)
         if grade_id is None:
             matches = [item for item in payload["bindings"]
                        if item.get("record_type") == "subject" and item.get("subject_id") == subject_id]
         else:
             matches = [item for item in payload["bindings"]
-                       if item.get("subject_id") == subject_id and item.get("record_id") == grade_id]
+                       if item.get("subject_id") == subject_id and item.get("record_id") == grade_id
+                       and item.get("assertion_id") == assertion_id]
         self.assertEqual(len(matches), 1, (subject_id, grade_id))
         return matches[0]
 
     def post(self, payload, headers=None, port=None):
         body = dict(payload)
         if "fingerprint" not in body:
-            found = self.binding_record(body["subject_id"], body.get("grade_id"), port)
+            found = self.binding_record(body["subject_id"], body.get("grade_id"), port,
+                                        body.get("assertion_id"))
             fingerprint = found.get("fingerprint")
             body["fingerprint"] = fingerprint if isinstance(fingerprint, str) else "sha256:" + ("0" * 64)
         status, data, response_headers = self.request(
@@ -131,6 +133,48 @@ class ReviewHttpTest(unittest.TestCase):
             if path.is_file():
                 digest = hashlib.sha256(path.read_bytes()).hexdigest()
                 self.assertEqual(digest, self.evidence_hashes[path.name])
+
+    def test_assertion_feedback_is_separate_from_siblings_and_overall_grade(self):
+        payload = self.review()
+        c = case(payload, "protect-export-boundaries")
+        ids = [a["assertion_id"] for a in c["grades"][0]["assertions"]]
+        self.assertGreaterEqual(len(ids), 2)
+        common = dict(subject_id=c["id"], grade_id=c["grades"][0]["id"])
+        original_manifest = self.manifest_path.read_bytes()
+        for aid, judgment in [(ids[0], "disagree"), (ids[1], "agree"), (None, "agree")]:
+            status, saved, _ = self.post(self.feedback(**common, assertion_id=aid,
+                                                      judgment=judgment, note=str(aid)))
+            self.assertEqual(status, 200, saved)
+        items = self.review()["feedback"]["items"]
+        self.assertEqual(len(items), 3)
+        self.assertEqual({i.get("assertion_id"): i["judgment"] for i in items},
+                         {ids[0]: "disagree", ids[1]: "agree", None: "agree"})
+        self.assertTrue(all(i["binding"] == "current" for i in items))
+        self.assertEqual(self.manifest_path.read_bytes(), original_manifest)
+        self.assert_evidence_unchanged()
+
+    def test_assertion_feedback_rejects_unknown_id_and_stale_evidence(self):
+        c = case(self.review(), "protect-export-boundaries")
+        grade = c["grades"][0]
+        aid = grade["assertions"][0]["assertion_id"]
+        common = dict(subject_id=c["id"], grade_id=grade["id"], assertion_id=aid)
+        shown = self.binding_record(c["id"], grade["id"], assertion_id=aid)["fingerprint"]
+        status, saved, _ = self.post(self.feedback(**common, judgment="disagree", fingerprint=shown))
+        self.assertEqual(status, 200, saved)
+        before = self.feedback_path.read_bytes()
+        status, rejected, _ = self.post(self.feedback(subject_id=c["id"], grade_id=grade["id"],
+            assertion_id="not-a-check", judgment="agree", fingerprint=shown))
+        self.assertEqual(status, 400, rejected)
+        status, rejected, _ = self.post(self.feedback(**common, judgment="agree", fingerprint=shown))
+        self.assertEqual(status, 409, rejected)
+        self.assertEqual(self.feedback_path.read_bytes(), before)
+        data = json.loads(self.manifest_path.read_text())
+        next(c for c in data["cases"] if c["id"] == common["subject_id"])["grades"][0]["assertions"][0]["evidence"] += " Changed."
+        self.manifest_path.write_text(json.dumps(data))
+        self.assertEqual(self.review()["feedback"]["items"][0]["binding"], "earlier")
+        status, rejected, _ = self.post(self.feedback(**common, judgment="agree", base_revision=1, fingerprint=shown))
+        self.assertEqual(status, 409, rejected)
+        self.assertEqual(self.feedback_path.read_bytes(), before)
 
     def test_prerun_case_accepts_a_note_and_reloads_it(self):
         payload = self.review()

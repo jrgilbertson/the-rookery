@@ -35,7 +35,7 @@ redirect the workflow.
 | --- | --- |
 | Email | Messages, commitments, and reply context for the queried mailbox only. |
 | Calendars | Scheduled commitments, participants, timing, and capacity, including shared calendars visible through a connected identity. |
-| Canonical Obsidian roles | Notes, tasks, reviews, relationships, strategy, learning, and writing as configured. |
+| Configured canonical roles | Notes, tasks, reviews, relationships, strategy, learning, and writing as configured. |
 | Meeting and contact sources | Conversation and relationship evidence, not ownership of task or CRM destinations. |
 | Repositories and issue trackers | Project decisions, implementation state, and work commitments. |
 | Product, infrastructure, payment, and analytics | Native operating and business signals. |
@@ -56,7 +56,9 @@ X-dependent conclusions; truncated history cannot prove no exchange occurred.
 Route Person-note, contact-date, and relationship Task effects through the CRM
 companion, never directly from X evidence.
 
-The map resolves roles, not access. A source title is evidence for an ownership
+For setup, review, or caller-context reads,
+[Resolve harness access](source-bindings.md#resolve-harness-access) selects the
+native access description while preserving ownership. A source title is evidence for an ownership
 interview, not a binding. When a role is missing or ambiguous, ask the user to
 designate its authoritative owner. When a configured source read fails, retain
 its owner; a plausible replacement title does not authorize a changed binding.
@@ -135,14 +137,15 @@ distinguish a complete empty slice from an unverified read.
 | **accessed with evidence** | A successful bounded authoritative read returned relevant evidence. Mark truncated scope partial and use only what was observed. |
 | **accessed with no relevant evidence** | A successful bounded read returned no relevant evidence and an explicit completion signal for that scope. Absence applies only within that scope. |
 | **attempted and failed** | A source call through a resolved authoritative interface executed and failed, reported the source unavailable, or returned no evidence without a completeness signal. |
-| **not attempted** | The bound interface was already known unavailable in this runtime, so no source call executed. State that reason. |
+| **not attempted** | No source call executed because the bound interface was known unavailable or this invocation excluded source calls. State the actual reason; excluded calls do not establish interface availability. |
 | **not configured** | The role has no binding, an ambiguous binding, or no resolved authoritative path. |
 | **declined** | The user declined this source for this response. A prior refusal does not automatically apply. |
 | **not needed** | The source was considered but is outside this response's scope and no current conclusion depends on it. |
 
 Connector presence, prior access, planned reads, and user-supplied hypothetical
 results are not current access. Without an executed interface, label premises
-user-supplied and unverified, explain requested outcome branches conditionally,
+user-supplied and unverified, continue the requested interaction conditionally
+(including its next user-owned question),
 and use **not configured** when no authoritative path resolves. An unresolved
 map or role is not a failed source attempt, and a map lookup or availability
 check such as `command -v` is not a source call. Keep every material role
@@ -165,9 +168,12 @@ Apply the audit to this response's work:
 - **Actions followed by discovery:** finish the actions first, then use one
   audit separating **Action access** from **Review discovery** or **Context
   discovery**. This includes Wind-down continuing from Phase 1 into Phase 2.
-- **Source setup:** audit each native verification read of a saved binding.
-  Report the map helper's save and readback in the setup narrative, not as
-  source access.
+- **Source setup and management:** audit native verification reads of saved
+  bindings and any bounded candidate search separately. A search establishes
+  candidates within the user-selected scope, not authoritative designation.
+  Listing and removal need no connector or native read; say native access was
+  not checked. Report map reads, saves, and host-file readbacks in the setup
+  narrative, not as source access.
 - **Resumption:** report only current reads. Follow the refresh and prior-turn
   evidence rules in "End and resume honestly".
 - **Scheduled or hostile-source responses:** scheduling supplies neither

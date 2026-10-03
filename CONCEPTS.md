@@ -18,6 +18,19 @@ It may be written as natural prose. If the user's exact wording omits one part,
 preserve it but do not present it as complete. It records intent without
 replacing task or calendar state.
 
+### Source map
+
+A private map from chief-of-staff information roles to user-designated sources.
+It records ownership, native access details, and user-approved source
+restrictions, not source contents or access results. Workflows select which
+roles to read and when, within those restrictions.
+
+### Access override
+
+A complete native access description for one explicitly identified harness in
+a source binding. It changes how that harness reaches the designated source;
+ownership and shared read bounds remain with the binding.
+
 ### Source Access Audit
 
 A temporary record, shown with one response, of which relevant sources were
@@ -203,7 +216,7 @@ review. Looks merge-ready is the trigger to start this review.
 It recommends merge, debug, or do not merge, then waits for a numbered reply.
 Gather, grade, and readout stay read-only. Option 1 is Proceed to merge.
 Before merging, it confirms the pull request has not moved, then kicks off
-the forge merge. A match is silent; a mismatch names what moved and rebuilds
+the forge merge. A match is silent; a mismatch names what moved and stops
 rather than merging. It still does not mutate the tracker. The skill does
 not pick option 1 in the same turn that wrote the menu.
 
@@ -311,5 +324,5 @@ decision, with training, validation, and fresh queries kept distinct.
 
 - "Parent" and "child" in gardener talk meant Coordinator and Executor. Those
   words remain Orca worktree roles and issue-graph relationships; they are not
-  gardener roles. Gardener prose uses the `ROUTING.md` names Coordinator,
-  Executor, Scout, and Reviewer.
+  gardener roles. The shared `ROUTING.md` names are Coordinator, Executor,
+  and Reviewer; Scout is no longer a routing profile.

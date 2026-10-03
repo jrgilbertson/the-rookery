@@ -1,6 +1,7 @@
 # Administrative Sweep
 
-Wind-down and Weekly sweep the canonical records their review touches.
+Wind-down and Weekly sweep the configured canonical open tasks and the records
+their review touches.
 Quarterly runs no sweep. Surface records that evidence shows need correction
 or a decision, plus tasks due in the planning window. Omit other sweep-discovered
 tasks from the response, including outcomes and capacity explanations, unless
@@ -27,6 +28,8 @@ dates and Person effects through the companion, owed or incorrect
 communication text, repository or issue state, and strategy or learning
 updates already supported by dated durable evidence.
 
+Complete the configured canonical open-task sweep before treating Wind-down or
+Weekly as reviewed. A task read for incidental context is not sweep coverage.
 Read open tasks through the configured canonical task or issue workflow:
 
 | Task finding | Condition | Treatment |
@@ -50,6 +53,30 @@ cancellation needs a reason; waiting needs a party and follow-up date. Draft
 and write are one proposed record change, not separate actions. Never invent
 source state to fill these fields.
 
+## Reconcile already-retrieved inbox evidence
+
+Within the already-authorized bounded inbox slice, reconcile important requests,
+actual deadlines, and waiting-for changes with configured canonical tasks.
+Resolved requests and optional reading create no obligation. For each material
+item:
+
+1. Read bounded thread context only when the existing authorized scope permits
+   it. Retain the source account, thread identity, and links.
+2. Search the configured task workflow for a task with the same complete
+   meaning.
+3. When one exists, link the item to that canonical record. Propose one
+   correction only when the evidence changes its commitment.
+4. When none exists, propose a task candidate. When the match stays
+   unresolved, report it as uncertain rather than proposing a duplicate.
+
+Apply the overdue and follow-up-due rows above to promised responses and
+dependencies from others. Distinguish an evidenced promise or follow-up date
+from an inferred expectation; an undated expectation is not an evidenced overdue
+promise.
+
+This is part of the current sweep, not standalone triage, inbox ranking, or a
+wider mailbox scan.
+
 ## Apply through the owning workflow
 
 Task reads and approved writes use the configured canonical workflow; create
@@ -59,6 +86,7 @@ gap, mark task-dependent coverage **Partial**, and continue with the remaining
 evidence. Relationship effects use the [companion rules](crm-companion.md).
 All effects retain the [exact-approval and readback requirements](action-application.md).
 
-Completion: every qualifying correction has one proposed action, upcoming
-context feeds the plan, healthy records remain unlisted, and coverage gaps or
-zero findings are reported honestly.
+Completion: canonical open-task coverage and bounded inbox reconciliation are
+reported at the scope actually inspected; every qualifying correction has one
+proposed action, upcoming context feeds the plan, healthy records remain
+unlisted, and coverage gaps or zero findings are reported honestly.

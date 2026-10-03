@@ -198,10 +198,8 @@ so the post-approval path could not occur.
 The original repair added a synthetic follow-up with exact approval and asked
 for the authoritative re-read, revalidation, one-write, and CLI-readback
 sequence. That was a bounded narration check, not executable acceptance
-evidence. The current suite keeps journal meaning and no-approval drafting in
-`tests/personal-chief-of-staff/cases/meaningful-commitment-capture.md` and checks
-approval-time drift, exact-match decisions, preservation proposals, and unclear
-readback in `tests/personal-chief-of-staff/cases/obsidian-canonical-access.md`.
+evidence. The current suite checks approval-time drift, exact-match decisions,
+preservation proposals, and unclear readback in `tests/personal-chief-of-staff/cases/obsidian-canonical-access.md`.
 Those checks supply source outcomes and grade the agent's decisions; they make
 no CLI calls and claim no executed writes. Command syntax and Obsidian behavior
 belong to the CLI owner's tests. No isolated launcher or test vault is needed

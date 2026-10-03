@@ -20,6 +20,19 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- Chief-of-staff reviews keep supplied results unverified, give the actual
+  reason when source calls are excluded, and continue conditional questions
+  without claiming a verified review.
+- `personal-chief-of-staff` completes relationship judgment, task and inbox
+  reconciliation, action dispositions, and calendar decisions before reporting
+  review completion. Waiting-on-others and repeated carryovers use existing
+  evidence and approval rules; live configured templates own drafting structure.
+- `managing-personal-crm` uses bounded supported contact lookup after an empty
+  unsupported phone-string search, retaining conservative identity binding.
+- `checking-merge-readiness` keeps the Option-1 reply in the review that
+  wrote the brief. That reply compares the recorded fingerprint, live merge
+  state, host policy, and linked-issue digests, then merges or stops. It
+  does not start another review.
 - `route-work` Questions cards no longer present one reading of an ambiguous
   request as what the operator said. A recommendation's reason names what is
   unknown and what the answer decides. Neither the question nor its reason
@@ -38,6 +51,18 @@ looked" surface. GitHub Releases mirror its entries.
   still succeed.
 
 ### Added
+
+- Chief-of-staff source examples distinguish templates, completed reviews,
+  meeting evidence, approved notes, contact lookup, and durable relationship
+  records. Thin review prompts can supply a source map; meeting review accepts
+  that map while retaining standalone configuration and its existing workflow.
+
+- `personal-chief-of-staff` includes a fictional source-map starter and guided
+  setup and source management through host file tools, without a Python/POSIX
+  runtime helper. Version 3 maps roles to sources with optional harness access
+  overrides; workflows own retrieval rules. Existing version 1 and 2 maps
+  retain their restrictions until an approved upgrade. Connection maintenance
+  remains with the harness.
 
 - `SKILLS.md` states the repository's package conventions and evaluation
   workflow. Behavioral evaluation now starts with the evals plugin's
@@ -70,19 +95,13 @@ looked" surface. GitHub Releases mirror its entries.
   eval-only simulators. Prior committed evidence remains in Git history.
   Skill packages and deterministic shipped-helper checks are retained.
 
-- `route-work` model recommendations are reviewed against VulcanBench Frontier
-  v4, FrontierCode, and Arena's WebDev leaderboard. Design/taste now starts on
-  Claude Opus 5.5 at medium, ahead of GPT-6 Astra, and Fable 5.1 leaves the
-  table. The `ce-debug` coordinator (Researcher) now starts on Opus 5.5 at
-  medium, with GPT-6 Sol at high second. A model earns a place in a row only
-  when its pass rate is close to the row's best, so GPT-6 Luna stays out of
-  the Executor row despite its low cost of pass.
-
-- `ROUTING.md` gives "close to the ceiling" a number for choosing effort. An
-  effort qualifies when its pass rate is within the 95% interval of the
-  model's best on every board that reports the model, and the qualifying
-  effort with the lowest cost of pass is chosen. Only boards that report a
-  pass rate at every effort level count toward the two-board confirmation.
+- `route-work` refreshes model and effort recommendations for Sol 6.1 and
+  Sonnet 5.5. Model-table maintenance compares role-relevant quality, cost,
+  and latency, with a separate evidence rule for design and taste.
+- `route-work` derives correctness reviewers from the Executor row, preferring
+  a different provider from the actual implementer without increasing effort.
+  Critic, Researcher, and Scout profiles are removed. Planning and coordination
+  remain combined, while supplied implementation boundaries stay explicit.
 
 - `creating-portable-skills` and `SKILLS.md` give each rule one owner and
   define the terms an agent had to guess at, such as the changed arm, a

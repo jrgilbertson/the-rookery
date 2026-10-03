@@ -60,7 +60,7 @@ Before/after example. `9b76104` claimed `Case 26 (unavailable task path):
 folded-into crm-derived-action-application`, but the target case had no
 scenario exercising that path — the fold existed only in the commit message.
 After `42446dd`, `tests/personal-chief-of-staff/cases/crm-derived-action-application.md`
-carries it as scenario 7 ("the canonical task workflow cannot search or read
+carried it as scenario 7 ("the canonical task workflow cannot search or read
 back the exact displayed destination") with a matching graded expectation
 ("reports manual with no write; the effect is not redirected to a generic
 mutation path"). That line is what check 1 demands you be able to point at.

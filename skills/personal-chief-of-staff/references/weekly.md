@@ -48,7 +48,8 @@ The synthesis should answer, when evidence supports it:
 - where current behavior and commitments diverged from strategy;
 - which open loop, relationship, or operating risk now matters;
 - where the user's effort compounded and where it did not; and
-- which one to three outcomes deserve priority next week.
+- which outcomes deserve priority next week, within the live template's scope
+  and count, or by reviewed outcomes and capacity when it states no count.
 
 Separate observed evidence from inference and from judgments that still need
 the user. Do not manufacture a narrative to fill the template. A quiet week or

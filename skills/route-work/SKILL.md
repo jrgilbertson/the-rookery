@@ -8,12 +8,8 @@ license: MIT
 
 Read [references/routing.md](references/routing.md) through its
 `route-work-contract-end` marker before assessing the request. It is the
-single source of truth for every routing decision and output; do not recreate
-its tables here.
+single source of truth for routing decisions and output. Model-table
+maintenance below the marker is not part of a routing invocation.
 
-## Assess, render, stop
-
-1. Assess the request under the reference.
-2. Render exactly one of its response templates without changing its
-   bold first line or section labels.
-3. Stop immediately after the card.
+Assess the request, render exactly one response template with its specified
+first line and section labels, and stop after the card.

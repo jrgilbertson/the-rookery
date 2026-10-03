@@ -15,7 +15,7 @@ The gate runs package/catalog validation, repository text and link checks,
 secret scanning, and the fixture roster in
 [scripts/checks/fixtures.sh](../scripts/checks/fixtures.sh). Fixture checks
 exercise the shipped fetch, PR assessment, signal scan, issue configuration,
-provider and graph, and personal-chief-of-staff source-binding helpers. The
+provider and graph, and personal-chief-of-staff source-map schema. The
 repository-integrity tests also exercise malformed packages and unsafe paths.
 
 Each fixture runner creates disposable state and requires no model calls.

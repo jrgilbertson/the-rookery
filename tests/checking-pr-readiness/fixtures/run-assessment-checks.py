@@ -264,6 +264,32 @@ def report_check_results(discovered_checks: dict[str, tuple[str, ...]], executed
     return {check: executed_checks.get(check, "not verified") for check in discovered_checks}
 
 
+def identity_movement_gaps(
+    *,
+    captured_subject: str,
+    current_subject: str | None,
+    captured_head: str,
+    current_head: str,
+    captured_base_ref: str,
+    current_base_ref: str,
+    captured_base_oid: str,
+    current_base_oid: str,
+) -> list[str]:
+    gaps: list[str] = []
+    if captured_subject != current_subject:
+        current_label = current_subject if current_subject is not None else "detached HEAD"
+        gaps.append(f"subject moved: {captured_subject} -> {current_label}")
+    if captured_head != current_head:
+        gaps.append(f"head moved: {captured_head} -> {current_head}")
+    # A same-name base OID change is not a gap. A renamed base ref still is.
+    if captured_base_ref != current_base_ref:
+        gaps.append(
+            "base moved: "
+            f"{captured_base_ref}@{captured_base_oid} -> {current_base_ref}@{current_base_oid}"
+        )
+    return gaps
+
+
 def assessment_decision(
     *,
     captured_subject: str,
@@ -281,18 +307,16 @@ def assessment_decision(
     dirty_paths: dict[str, set[str]],
     deferred_sweep_gates: dict[str, str] | None = None,
 ) -> tuple[str, tuple[str, ...]]:
-    gaps: list[str] = []
-    if captured_subject != current_subject:
-        current_label = current_subject if current_subject is not None else "detached HEAD"
-        gaps.append(f"subject moved: {captured_subject} -> {current_label}")
-    if captured_head != current_head:
-        gaps.append(f"head moved: {captured_head} -> {current_head}")
-    # A same-name base tip move is not a stopping gap. A renamed base ref still is.
-    if captured_base_ref != current_base_ref:
-        gaps.append(
-            "base moved: "
-            f"{captured_base_ref}@{captured_base_oid} -> {current_base_ref}@{current_base_oid}"
-        )
+    gaps: list[str] = identity_movement_gaps(
+        captured_subject=captured_subject,
+        current_subject=current_subject,
+        captured_head=captured_head,
+        current_head=current_head,
+        captured_base_ref=captured_base_ref,
+        current_base_ref=current_base_ref,
+        captured_base_oid=captured_base_oid,
+        current_base_oid=current_base_oid,
+    )
     if inspected_paths != expected_paths:
         missing = sorted(expected_paths - inspected_paths)
         unexpected = sorted(inspected_paths - expected_paths)
@@ -331,18 +355,16 @@ def local_publication_gaps(
     current_base_oid: str,
     dirty_paths: dict[str, set[str]],
 ) -> list[str]:
-    gaps: list[str] = []
-    if captured_subject != current_subject:
-        current_label = current_subject if current_subject is not None else "detached HEAD"
-        gaps.append(f"subject moved: {captured_subject} -> {current_label}")
-    if captured_head != current_head:
-        gaps.append(f"head moved: {captured_head} -> {current_head}")
-    # A same-name base tip move is not a publication gap. A renamed base ref still is.
-    if captured_base_ref != current_base_ref:
-        gaps.append(
-            "base moved: "
-            f"{captured_base_ref}@{captured_base_oid} -> {current_base_ref}@{current_base_oid}"
-        )
+    gaps = identity_movement_gaps(
+        captured_subject=captured_subject,
+        current_subject=current_subject,
+        captured_head=captured_head,
+        current_head=current_head,
+        captured_base_ref=captured_base_ref,
+        current_base_ref=current_base_ref,
+        captured_base_oid=captured_base_oid,
+        current_base_oid=current_base_oid,
+    )
     for category in ("staged", "unstaged", "untracked"):
         for path in sorted(dirty_paths.get(category, set())):
             gaps.append(f"{category} dirty path: {path}")
@@ -441,7 +463,9 @@ def inspect_stable_session(
 def validate_contract_sources() -> None:
     assessment = (REPO_ROOT / "skills" / "checking-pr-readiness" / "references" / "identity-and-argv.md").read_text(encoding="utf-8").lower()
     normalized_assessment = " ".join(assessment.split())
-    skill = (REPO_ROOT / "skills" / "checking-pr-readiness" / "SKILL.md").read_text(encoding="utf-8").lower()
+    skill = " ".join(
+        (REPO_ROOT / "skills" / "checking-pr-readiness" / "SKILL.md").read_text(encoding="utf-8").lower().split()
+    )
     for phrase in (
         "same assessment session",
         "subject",
@@ -496,10 +520,10 @@ def validate_contract_sources() -> None:
         "mktemp -d",
         "outside the target repository",
         "on a later reply of 1",
-        "names the new base in one sentence and keeps approve",
+        "a same-name base oid change names the new base in one sentence and keeps approve",
         "no github mergeability object yet; do not invent a conflict check",
         "dirty surface that differs from the recorded surface",
-        "already-typed 1 does not approve that rebuilt gather",
+        "the already-typed 1 does not approve that rebuilt gather",
     ):
         require(phrase in skill, f"skill routing missing: {phrase}")
     for label, pattern in RETIRED_MACHINERY.items():
@@ -810,13 +834,15 @@ def run_suite() -> None:
         )
         run("git", "checkout", "-q", "assessment-subject", cwd=moved_base_repo)
         moved_base_oid = full_base_oid(moved_base_repo, captured_base_ref)
-        require(current_subject(moved_base_repo) == captured_subject, "base movement changed the native subject")
-        require(full_head(moved_base_repo) == captured, "base movement changed the native head")
+        moved_subject = current_subject(moved_base_repo)
+        moved_head = full_head(moved_base_repo)
+        require(moved_subject == captured_subject, "base movement changed the native subject")
+        require(moved_head == captured, "base movement changed the native head")
         decision, gaps = assessment_decision(
             captured_subject=captured_subject,
-            current_subject=current_subject(moved_base_repo),
+            current_subject=moved_subject,
             captured_head=captured,
-            current_head=full_head(moved_base_repo),
+            current_head=moved_head,
             captured_base_ref=captured_base_ref,
             current_base_ref=captured_base_ref,
             captured_base_oid=captured_base_oid,
@@ -828,14 +854,14 @@ def run_suite() -> None:
             dirty_paths={},
         )
         require(captured_base_oid != moved_base_oid, "fixture did not advance the same-name base OID")
-        require(decision == "offer-option-1", "same-name base tip move omitted Approve")
-        require(gaps == (), "same-name base tip move appended a stopping base-moved gap")
+        require(decision == "offer-option-1", "same-name base OID change omitted Approve")
+        require(gaps == (), "same-name base OID change appended a base-moved gap")
         renamed_base_ref = "refs/heads/renamed-base"
         decision, gaps = assessment_decision(
             captured_subject=captured_subject,
-            current_subject=current_subject(moved_base_repo),
+            current_subject=moved_subject,
             captured_head=captured,
-            current_head=full_head(moved_base_repo),
+            current_head=moved_head,
             captured_base_ref=captured_base_ref,
             current_base_ref=renamed_base_ref,
             captured_base_oid=captured_base_oid,
@@ -1085,33 +1111,36 @@ def run_suite() -> None:
         )
         moved_base_oid = full_base_oid(pre_push_base_repo, captured_base_ref)
         run("git", "checkout", "-q", "assessment-subject", cwd=pre_push_base_repo)
+        pre_push_subject = current_subject(pre_push_base_repo)
+        pre_push_head = full_head(pre_push_base_repo)
+        pre_push_provider_head = read_provider_head(pre_push_base_repo, "pre-push-provider", provider_subject)
         decision, gaps = ownerless_first_push_decision(
             captured_subject=captured_subject,
-            current_subject=current_subject(pre_push_base_repo),
+            current_subject=pre_push_subject,
             captured_head=captured_head,
-            current_head=full_head(pre_push_base_repo),
+            current_head=pre_push_head,
             captured_base_ref=captured_base_ref,
             current_base_ref=captured_base_ref,
             captured_base_oid=captured_base_oid,
             current_base_oid=moved_base_oid,
             dirty_paths={},
             provider_readable=True,
-            provider_head=read_provider_head(pre_push_base_repo, "pre-push-provider", provider_subject),
+            provider_head=pre_push_provider_head,
         )
-        require(decision == "ready" and not gaps, "same-name base tip move before first push was not ready")
+        require(decision == "ready" and not gaps, "same-name base OID change before first push was not ready")
         renamed_base_ref = "refs/heads/renamed-base"
         decision, gaps = ownerless_first_push_decision(
             captured_subject=captured_subject,
-            current_subject=current_subject(pre_push_base_repo),
+            current_subject=pre_push_subject,
             captured_head=captured_head,
-            current_head=full_head(pre_push_base_repo),
+            current_head=pre_push_head,
             captured_base_ref=captured_base_ref,
             current_base_ref=renamed_base_ref,
             captured_base_oid=captured_base_oid,
             current_base_oid=moved_base_oid,
             dirty_paths={},
             provider_readable=True,
-            provider_head=read_provider_head(pre_push_base_repo, "pre-push-provider", provider_subject),
+            provider_head=pre_push_provider_head,
         )
         require(decision == "action-required", "base ref rename before first push did not stop publication")
         require(
@@ -1159,7 +1188,7 @@ def run_suite() -> None:
             provider_readable=True,
             provider_head=read_provider_head(post_push_base_repo, "post-push-provider", provider_subject),
         )
-        require(decision == "ready" and not gaps, "same-name base tip move before PR open was not ready")
+        require(decision == "ready" and not gaps, "same-name base OID change before PR open was not ready")
 
     print("PASS: stable deterministic slice ran fixture-quality but omitted Approve for unexecuted steps 3-6 judgment checks")
     print("PASS: captured non-default base inspection includes a committed path omitted by implicit default inspection")

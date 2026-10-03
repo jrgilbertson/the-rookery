@@ -24,8 +24,8 @@ Every check reports with one word from this closed set, used consistently and
 without synonyms:
 
 - **verified** — a named receipt supports the claim in the captured gather,
-  or, for solution simplicity only, this gate's own live fresh dispatch
-  against an unchanged subject does.
+  or, for solution simplicity only, a matching recorded identity on a clean
+  result does.
 - **attested** — the owner states missing intent (step 4) and no durable
   source exists; recorded as attestation, not as evidence. Do not use this
   word to vouch that a missing review or simplify step happened.
@@ -100,6 +100,11 @@ every transient hit is classified as ignored working material, cleanup, or a
 finding; and every durable citation is accounted for. If either enumeration is
 incomplete, stop rather than treating an incomplete inventory as clean.
 
+Record the working-surface identity in this step's temp directory for every
+gather, including when `checking-simplicity` is not dispatched, and do not
+print it. [references/identity-and-argv.md](references/identity-and-argv.md)
+defines that record. Approve, recompose, and the simplicity check compare it.
+
 ### 2. Gather repository gates
 
 Discover the host repository's own deterministic gates before any
@@ -145,35 +150,48 @@ alternatives:
 - Browser testing leaves a receipt only when its output or screenshots were
   saved; otherwise it has none.
 - Solution simplicity is verified by this gate's own dispatch, not by a
-  receipt. After step 1, dispatch `checking-simplicity` with the resolved
-  intent source, the repository, branch, and full `HEAD`, and all four path
-  categories with their complete current contents, read from the index or as
-  link objects so a symlink is transferred as its link text and never
-  followed; that skill owns the reviewer's independence and how it reads the
-  subject. The result is verified only when it recommends keeping the current
-  approach, no user question remains, and nothing on the surface changed after
-  the dispatch, confirmed by re-reading the intent source and the full contents
-  of all four path categories rather than comparing path names. A result that
-  recommends simplifying first, or that needs a
-  user decision, is failed until the subject is revised or the decision made
-  and the dispatch repeated. A result that cannot assess yet, or that came
-  from an older or same-context run, is not verified.
+  receipt. Compare the working-surface identity recorded at the end of step 1.
+  [references/identity-and-argv.md](references/identity-and-argv.md) defines
+  the record: the head OID, plus for staged, unstaged, and untracked paths
+  only, each path, mode, and content digest. Store a symlink as its link text
+  and never follow it. Do not hash every committed blob. The committed
+  category is the head OID. A new head, including a message-only amend,
+  restarts the check.
+  [scripts/surface-report.sh](scripts/surface-report.sh) lists paths and does
+  not emit content digests; do not treat its path lists as this identity. An
+  in-place edit of an already-listed path does not change that listing, which
+  is why the digest is required. Then dispatch `checking-simplicity` with the
+  resolved intent source, the repository, branch, and full `HEAD`, and the
+  four path categories. That skill owns the reviewer's independence and how it
+  reads the subject. Compare the identity again when the result returns, so an
+  in-place edit during the check is caught. When the recorded head OID and the
+  staged, unstaged, and untracked path, mode, and content digest match, the
+  clean result counts, including a same-context result, and file bodies are
+  not re-read to prove it. The readout does not contain the digest or the
+  commit hash. A mismatch restarts the check. If the result returns after an
+  in-place edit of an already-listed path, that second compare restarts the
+  check. The result is verified only when it recommends keeping the current
+  approach, no user question remains, and the identity matches. A result that
+  recommends simplifying first, or that needs a user decision, is failed until
+  the subject is revised or the decision made and the dispatch repeated. A
+  result that cannot assess yet is not verified. The simplicity result does
+  not replace the whole-change grade.
 - Code review, code simplification, and solution simplicity leave no durable
   artifact today, so outside the session that ran them they are not verified.
-  Solution simplicity is never verified by attestation, because its fresh
-  dispatch and unchanged subject are part of the check.
+  Outside the session the simplicity result stays not verified, and it is
+  never verified by attestation.
 
 Write verified only with the receipt named in the gather, or for solution
-simplicity with the live dispatch and unchanged subject named. Where neither
-exists, record not verified. Do not ask anyone to vouch that it happened. When
-the companion skill or tooling a check depends on is absent (no compound
-engineering plugin, no `checking-simplicity`, no design-critique tooling),
-record that check skipped, name what was missing, and run the rest of the
-checks.
+simplicity when the recorded identity matches. Where neither exists, record
+not verified. Do not ask anyone to vouch that it happened. When the companion
+skill or tooling a check depends on is absent (no compound engineering plugin,
+no `checking-simplicity`, no design-critique tooling), record that check
+skipped, name what was missing, and run the rest of the checks.
 
 Completion: each of the six steps carries one status word in the captured
-gather, every verified step names its receipt or its live dispatch, and the
-user-interface classification and its basis are stated.
+gather, every verified step names its receipt or, for solution simplicity,
+that the recorded identity matched, and the user-interface classification and
+its basis are stated.
 
 ### 4. Compare intent to what was delivered
 
@@ -368,7 +386,7 @@ terminology with CHANGELOG.md:20, and finish the stopped actionlint check.
 4. Leave these remaining changes for a later fix.
 ```
 
-Show the checks is non-terminal: print the list from the captured gather, then the brief and numbered options again. Starting remaining work from the follow-up, and Explain, are non-terminal: when one finishes, **recompose**. Re-read the working surface from step 1 and, when it changed, re-run the steps whose inputs the change touches. A returned `checking-simplicity` result refreshes step 3 even when no path changed; that skill is read-only and returns its finding to this gate. When that result is a question for the user, print the question with its options and wait; the next reply answers it and goes back to the same reviewer, and only the readout that follows refreshes step 3 and recomposes this menu.
+Show the checks is non-terminal: print the list from the captured gather, then the brief and numbered options again. Starting remaining work from the follow-up, and Explain, are non-terminal: when one finishes, **recompose**. Compare the working-surface identity recorded at the end of step 1 and, when it differs, re-run the steps whose inputs the change touches. A returned `checking-simplicity` result whose recorded identity matches counts and does not start the check over; that skill is read-only and returns its finding to this gate. A mismatch restarts the check. When that result is a question for the user, print the question with its options and wait; the next reply answers it and goes back to the same reviewer, and only the readout that follows is compared, counts when the identity matches, and recomposes this menu.
 
 Completion of this turn: the brief and numbered live options are on screen,
 and the run is waiting. Identity re-read and the evidence pack belong to a
@@ -383,12 +401,15 @@ that wait.
 If the menu printed a withheld option-1 row, do not approve. Name that
 Approve cannot be taken and wait again. Do not enter the finishing path.
 
-Before accepting Approve, re-read HEAD, the merge-base, and staged, unstaged,
-and untracked content per
-[references/identity-and-argv.md](references/identity-and-argv.md). A same-name
+Before accepting Approve, re-read HEAD, the merge-base, and the working-surface
+identity recorded at the end of step 1, not the file bodies, per
+[references/identity-and-argv.md](references/identity-and-argv.md). That
+identity is the head OID and the staged, unstaged, and untracked path, mode,
+and digest. A same-name
 base OID change names the new base in one sentence and keeps Approve. There
 is no GitHub mergeability object yet; do not invent a conflict check. A
 subject change, a head change, a base-ref rename, or a dirty surface that differs from the recorded surface still rejects and rebuilds.
+A change to staged, unstaged, or untracked files restarts this grade even when the head commit is unchanged. A changed digest on that dirty surface restarts the PR-readiness grade and the simplicity check. A finished merge-readiness grade is about the pull-request head, so this dirty-surface change does not restart it. A new head, including a message-only amend, restarts the simplicity check. A new commit on the branch restarts the simplicity check.
 The already-typed 1 does not approve that rebuilt gather. Any other matching
 re-read is silent. The one-sentence base naming is not a rebuild.
 

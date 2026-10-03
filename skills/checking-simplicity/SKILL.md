@@ -1,6 +1,6 @@
 ---
 name: checking-simplicity
-description: 'Use when the user asks to simplify, right-size, identify overengineering, compare with a stated smaller alternative, choose the smallest viable approach, check for simplicity as well, or test whether reuse removes the need for change on a named architecture, design, area, plan, technical choice, or code-level approach. General architecture comparison or product brainstorming without that simplification intent stays with planning. Also use during a build or plan-to-build handoff when the next step adds durable machinery the user''s stated need does not name, including when the user did not ask to simplify. Completion of a brief or plan alone is not a trigger. Direct behavior-preserving cleanup of settled code stays with implementation. An unchanged subject with a clean result continues without another check.'
+description: 'Use when the user asks to simplify, right-size, identify overengineering, compare with a stated smaller alternative, choose the smallest viable approach, check for simplicity as well, or test whether reuse removes the need for change on a named architecture, design, area, plan, technical choice, or code-level approach. General architecture comparison or product brainstorming without that simplification intent stays with planning. Also use during a build or plan-to-build handoff when the next step adds durable machinery the user''s stated need does not name, including when the user did not ask to simplify. Completion of a brief or plan alone is not a trigger. Direct behavior-preserving cleanup of settled code stays with implementation. An unchanged subject with a clean result continues without another check. A caller-supplied identity change is not an unchanged subject.'
 license: MIT
 compatibility: Requires a named area, question, or reviewable subject, enough accessible evidence to identify the current need and protected boundaries, and a harness that can dispatch a subagent.
 ---
@@ -20,7 +20,9 @@ you are the dispatched reviewer, assess here. Use the current model unless the
 caller names a different one. The reviewer must not have authored or
 implemented the subject; having reviewed an earlier revision is fine. The
 assessment is one reviewer and one readout. A stronger evidence trail or a
-repeated-review rule belongs to the caller.
+repeated-review rule belongs to the caller. An unchanged subject with a clean
+result continues without another check. A caller-supplied identity change is
+not an unchanged subject.
 
 ## Decision frame
 
@@ -127,7 +129,8 @@ as unrendered text, with short lists where they aid scanning, a colon for a
 label and its description, and no em dashes. Process and method stay out of
 it: the ladder, its rungs, this skill, and whether a decision was needed are
 not mentioned, and neither is a replay of the subject, a reviewer roster, a
-commit hash, or a status code. Detailed evidence is available on request. The
+commit hash, a digest, or a status code. Do not print a digest or a commit
+hash. Detailed evidence is available on request. The
 reviewer returns the readout without revising the subject, editing repository
 files, committing, or approving shipping.
 

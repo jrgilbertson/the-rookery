@@ -58,8 +58,9 @@ actual event shapes in the installed harness, and keep unknown shapes visible
 rather than assuming another harness emits the same fields.
 
 Preserve interrupted attempts and their original grades. Report the capture
-limitation separately and exclude them from claims based on completed runs;
-[SKILLS.md](../../../SKILLS.md#arms-and-runs) leaves missing capture unverified.
+limitation separately and exclude them from claims based on completed runs.
+Missing capture leaves completion unverified. The current repository workflow
+is selected through [SKILLS.md](../../../SKILLS.md#evaluation-workflow).
 Replacement evidence needs the same frozen package, inputs, assertions, target,
 and material settings. Apply the completion check to both comparison arms.
 

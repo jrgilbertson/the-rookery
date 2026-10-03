@@ -195,8 +195,8 @@ undefined. The exact prior draft was not preserved.
 plain `yes` or `no`. An initial `unsure` or hedged response counted as
 borderline and triggered two additional runs. That protocol defined the
 qualifier by an observable retry rule rather than leaving it to judgment.
-The repository's current trigger-evidence rules live in
-[`SKILLS.md`](../../../SKILLS.md#trigger-evals-evalseval_queriesjson).
+The repository's current evaluation workflow lives in
+[`SKILLS.md`](../../../SKILLS.md#evaluation-workflow).
 
 This example shows the enumerated-options fix shape and demonstrates that the
 check catches failures the delete test had already blessed (session probe

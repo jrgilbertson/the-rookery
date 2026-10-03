@@ -1,1 +1,0 @@
-The release handoff is blocked until the synthetic verification note is attached.

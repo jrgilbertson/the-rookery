@@ -268,46 +268,7 @@ inform a decision, but unlike
 `ce-pov`'s compact, project-grounded verdict it preserves a multi-perspective
 research record as the primary result.
 
-## Skill quality gates
-
-### Regression Check
-
-A Regression Check exercises affected skill evals once per declared Executor
-target after a change. A different model grades blind, and every failure is
-inspected against its original transcript. It establishes the behavior
-exercised. It is separate from a Value Assessment.
-
-### Value Assessment
-
-A Value Assessment runs one matched with-skill and without-skill pair for
-each approved case on each declared Executor target to judge whether the
-skill helps. An inconclusive result stays inconclusive and leaves an
-unresolved shipping hold unresolved.
-
-### Baseline Comparison
-
-A Baseline Comparison uses the frozen prior skill on failing evals to diagnose
-whether changed text caused a failure. On a regression check, a no-skill run
-diagnoses a failure, and a behavior check does not wait on a no-skill baseline.
-Comparisons use matched inputs, assertions, targets, settings, and run counts.
-A failing-only baseline subset supplies no aggregate improvement claim against
-the whole candidate check.
-
-### Regression Control
-
-A Regression Control protects a named load-bearing contract, including one
-that both prior and revised skills pass. It never establishes improvement.
-A failure needs transcript inspection and attribution, not automatic dismissal
-or a fixed repeat count.
-
-### Independent Review Context
-
-An Independent Review Context belongs to an agent that took no part in the
-artifact's authoring discussion and did not produce the artifact. Behavioral
-grading uses a different model from execution. One independent review
-checks the package and evidence; there is no mandatory pre-spend and final
-review cycle. If required independent judgment is unavailable, it remains
-unverified pending a self-contained handoff.
+## Instruction and workflow contracts
 
 ### Degradation Path
 

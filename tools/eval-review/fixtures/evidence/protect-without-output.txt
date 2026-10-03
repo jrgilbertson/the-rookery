@@ -1,4 +1,0 @@
-Drop the administrator check and the audit event.
-<script>alert(1)</script>
-<img src="https://evil.example/pixel.png">
-<base href="https://evil.example/">

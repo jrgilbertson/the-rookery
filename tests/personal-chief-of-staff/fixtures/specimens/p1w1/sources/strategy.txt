@@ -1,1 +1,0 @@
-The current strategy prioritizes external customer proof while permitting work that directly clears the same release critical path.

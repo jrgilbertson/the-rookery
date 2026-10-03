@@ -203,57 +203,20 @@ dependency list in this document.
 
 ## Skill validation in this repository
 
-[`SKILLS.md`](SKILLS.md) owns the regression-check and evidence contract;
-[`tests/README.md`](tests/README.md) owns the `tests/<skill-name>/` suite formats and deterministic
-checks. The default Executor target set is the current Executor row in
-[`ROUTING.md`](ROUTING.md#model-and-effort-recommendations), using its listed
-models and efforts in their official subscription CLIs. Explicit caller
-restrictions override that default; record excluded targets and the actual
-coverage. A separate, authorized periodic cross-model sweep supplies broader
-coverage without expanding each change's regression check.
-
-The host owns CLI automation, configuration, isolated per-call usage capture,
-and budget enforcement. The portable skill bundles no runner. Use
-`ccusage --mode calculate` and its upstream-maintained pricing for complete
-API-equivalent estimates across execution, delegation, grading, and failed
-attempts. CLI dollar reports are secondary; account-wide Codex usage or credit
-deltas and repository rate tables are not per-call cost sources. Unknown,
-partial, unpriced, or unidentified-model estimates stop further calls, as do exhausted
-budget or subscription quota. The caller authorizes one budget across all
-providers; API-key billing is not a fallback.
-
-Run the official CLIs directly and use the [per-call accounting helper](tools/eval-cost/README.md)
-to record costs and check the allowance. The agent owns transcript inspection,
-blind grading, and failure attribution. Unsupported usage or pricing stays
-unknown, and a structural pass does not substitute for a behavioral check.
+[`SKILLS.md`](SKILLS.md) owns the current skill-validation policy;
+[`tests/README.md`](tests/README.md) documents the deterministic repository
+checks. Package validation, helper fixtures, repository integrity, and
+installation checks establish their specific contracts. They do not establish
+a skill's behavioral quality.
 
 Use [`creating-portable-skills`](skills/creating-portable-skills/SKILL.md) for
 portable package authoring, auditing, structural validation, and installation.
-It links the upstream `build-eval` and `ce-retune` workflows for evaluation and
-tuning. For this repository's value assessments, affected regression checks,
-native activation, and human inspection, follow [`SKILLS.md`](SKILLS.md).
-Declare each native CLI's tool and filesystem boundary, and include one
-harmless rejected operation in the authorized smoke.
+For behavioral evaluation, start with the evals plugin's `evals-start` skill
+and follow the workflow it selects. The first dogfood target is
+`creating-portable-skills`, with Claude, Codex, and Grok as the main hosts.
+The other skill packages await revalidation after the eval reset.
 
-Human inspection uses the local review page. Start the implemented server,
-which binds to loopback and prints the URL it is serving:
-
-```bash
-python3 tools/eval-review/review.py --index PATH [--port N]
-python3 tools/eval-review/review.py --manifest PATH --feedback PATH [--port N]
-```
-
-`--index` configures one repository of skills. The manifest and feedback pair
-configures one skill on that same server. Use one form. `--port` defaults to
-0. The index shape, manifest fields, feedback file, and reopen steps are in
-[tools/eval-review/README.md](tools/eval-review/README.md). The page reads the
-selected private manifest and writes that skill's feedback file. It does not
-invoke models, grade, tune, or price calls. Raw runs, manifests, and feedback
-stay outside the repository.
-
-`scripts/checks/fixtures.sh` runs the accounting tests and the viewer tests:
-
-```bash
-python3 -m unittest discover -s tools/eval-cost -p 'test_*.py'
-python3 -m unittest discover -s tools/eval-review -p 'test_*.py'
-```
+An evaluation requires an explicit scope and authorization for model runs.
+Retired suites and passing deterministic checks supply no behavioral pass
+claim. Keep raw runs and temporary reports outside the repository, and report
+only the behavior actually inspected.

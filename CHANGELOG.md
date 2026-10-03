@@ -15,9 +15,8 @@ looked" surface. GitHub Releases mirror its entries.
 
 - `creating-portable-skills` follows the Agent Skills format for portable
   packages and descriptions, and delegates evaluation to pinned upstream
-  `build-eval` and `ce-retune` guides. Repository evaluation formats and release
-  rules stay in `SKILLS.md`; `scripts/checks/evals.py` validates them for the
-  catalog without shipping the repository's eval procedure in the skill.
+  `build-eval` and `ce-retune` guides. Repository package conventions stay in
+  `SKILLS.md` without shipping the repository's evaluation procedure in the skill.
 
 ### Fixed
 
@@ -40,22 +39,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
-- The eval review server lists one repository's skills at `GET /api/skills`.
-  `?skill=<id>` selects that skill's manifest, feedback, and evidence.
-  `--index` configures the repository; one manifest and feedback file starts
-  the same server with a single catalog entry.
-
-- Per-call eval accounting uses ccusage upstream prices for direct official-CLI
-  runs and stops subsequent calls while costs are unknown or the authorized
-  allowance is exhausted. Transcript inspection and grading stay with the agent.
-
-- `SKILLS.md` states one convention for writing, evaluating, and recording
-  evidence for skills. It builds on the Agent Skills standard and names each
-  source conflict with the choice made. Evals live in each skill's `evals/`
-  as `evals.json` and `eval_queries.json`, and each graded round commits a
-  benchmark file named `<date>-<short-rev>.json` (one per target when a round
-  covers several) in `evals/benchmarks/`. This repository's catalog check runs
-  `scripts/checks/evals.py` on every skill to validate eval file shapes.
+- `SKILLS.md` states the repository's package conventions and evaluation
+  workflow. Behavioral evaluation now starts with the evals plugin's
+  `evals-start`; `creating-portable-skills` is the first dogfood target, and
+  the other packages await revalidation.
 - `TESTING.md` explains project-owned verification for polyglot monorepos and
   smaller projects, with local, merge, and release responsibilities, conservative
   selection, cache boundaries, and an embedded policy outline. README and
@@ -78,36 +65,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
-- Eval prompts are natural tasks with explicit synthetic data. The
-  executor sees the task and real user constraints, not the hoped-for
-  conclusion or the assertions. Assertions accept another valid design.
-
-- Skill evaluation keeps one workflow. A value assessment is a matched
-  with-skill and without-skill pair and stays separate from an affected
-  regression check and from prior-skill failure attribution. The ship rule
-  is unchanged: ship with no failure attributable to the change under test,
-  and leave an unresolved hold unresolved. A further round names the decision,
-  the result that would change it, the cases, and the spending limit. Native
-  activation keeps training, validation, and fresh observations separate from
-  a listing proxy. Human feedback preserves original grades. Install and
-  discovery evidence names the exact package hash. `TESTING.md` joins the
-  creator, the official CLIs, accounting, and human review.
-  `tools/eval-review/README.md` owns the viewer command and manifest.
-
-- `creating-portable-skills` inspects behavior before the prepared full
-  trigger query set when both are in scope and behavior is satisfactory.
-  Definitions, archive, inspection surface, and budget stay in that workflow.
-
-- Skill validation uses one affected regression check per declared Executor
-  target, blind different-model grading, transcript-based failure attribution,
-  and one independent review. A failure attributable to the change under test
-  blocks shipping; unresolved attribution stays unverified. Diagnostic
-  baselines cover failing evals only, previous grades retain their revision,
-  and unmatched cohorts produce no aggregate delta. Cost policy uses complete
-  per-call API-equivalent estimates from `ccusage --mode calculate` under one
-  caller-authorized budget. The portable creator stays runner-free, and its
-  validator accepts single-run and separate diagnostic benchmark records while
-  preserving historical formats.
+- Retired the legacy behavioral cases, trigger lists, run logs, committed
+  benchmarks, custom eval schema checks, review server, cost tools, and
+  eval-only simulators. Prior committed evidence remains in Git history.
+  Skill packages and deterministic shipped-helper checks are retained.
 
 - `route-work` model recommendations are reviewed against VulcanBench Frontier
   v4, FrontierCode, and Arena's WebDev leaderboard. Design/taste now starts on

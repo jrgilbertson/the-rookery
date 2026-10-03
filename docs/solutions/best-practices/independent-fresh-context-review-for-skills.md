@@ -1,7 +1,7 @@
 ---
 module: skill evaluation
 date: 2026-07-27
-last_updated: 2026-09-26
+last_updated: 2026-10-03
 problem_type: best_practice
 component: testing_framework
 severity: high
@@ -24,6 +24,11 @@ tags:
 
 # Use independent contexts for skill grading and review
 
+> The repository-specific eval formats, run protocol, and benchmark rules
+> described here were retired on 2026-10-03. The evidence and independent-review
+> principles remain useful; follow [SKILLS.md](../../../SKILLS.md#evaluation-workflow)
+> for the current workflow. Case paths below refer to files in Git history.
+
 ## Context
 
 Agent-authored skill changes need two kinds of verification. Deterministic
@@ -36,7 +41,7 @@ evidence.
 The distinction matters because a plausible executor summary can hide an
 incomplete artifact. A filename or heading can satisfy a weak check while the
 actual output misses the required outcome. The host workflow in
-[`SKILLS.md`](../../../SKILLS.md#grading-and-independence) gives judgment work to
+[`SKILLS.md`](../../../SKILLS.md#evaluation-workflow) gives judgment work to
 independent agent contexts and leaves mechanical checks to scripts.
 
 ## Guidance

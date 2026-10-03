@@ -1,1 +1,0 @@
-2026-08-30 completed review suggested internal polish before proof. That recommendation predates the current strategy rule.

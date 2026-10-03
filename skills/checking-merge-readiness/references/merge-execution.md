@@ -56,13 +56,14 @@ comment's id plus body digest. Read the base tip from `baseRefOid`.
 | 5 | baseRefName change | Void | Stop. This turn does not grade. | Remove |
 | 6 | Failing or pending required checks | Stands | Stop | Keep |
 | 7 | GitHub conflict: mergeable CONFLICTING, or mergeStateStatus DIRTY | Kept, not voided. The finished-grade rule does not hold. | Stop. Do not void. DIRTY is a conflict without a second paragraph of evidence. | Keep |
-| 8 | mergeStateStatus BLOCKED with a supporting host fact from the gather. Supporting facts are failing or pending required checks, review count, an unresolved thread the host requires, draft, or a strict up-to-date rule. | Stands | Stop | Keep |
+| 8 | mergeStateStatus BLOCKED with a supporting host fact from the gather. Supporting facts are failing or pending required checks, review count, an unresolved thread the host requires, draft, or the strict boolean recorded in step 2. | Stands | Stop | Keep |
 | 9 | mergeStateStatus UNKNOWN and no other block | Stands | UNKNOWN does not itself stop. Continue to the existing merge command. | Keep |
 | 10 | UNKNOWN together with BEHIND | Stands | Name the base. Do not void. Allow the one merge command. If it fails, report it and do not retry. | Keep |
 | 11 | Issue state change, linked-issue set change, missing issue, or incomplete issue fetch. Closing the issue stops this merge. | Stands | Stop | Keep |
 | 12 | Dismissed approval, head unchanged | Stands | Stop until approval returns | Keep |
 | 13 | Other history-fingerprint change: pull-request body, a new pull-request comment, a thread, or a review | Stands | Stop. Say a new review is required and do not start it. | Keep |
 | 14 | Pull-request state is not OPEN, or isDraft is true. This is the pull request, not issue state on row 11. | Stands | Stop. Name that state. Do not run the merge command. Do not void the grade. | Keep |
+| 15 | mergeStateStatus BLOCKED with no row-8 supporting host fact. This is not a GitHub conflict. | Stands | Continue to the existing merge command. Do not void the grade. | Keep |
 
 A missing record or an unfinished re-read is not a row. Stop. Do not grade
 or merge. Keep the directory.
@@ -72,7 +73,7 @@ a host-rule refuse. A docs-only push does not keep the old grade. Else if
 baseRefName changed, stop on row 5 and do not apply a later row. Stop rows
 are 6, 7, 8, 11, 12, 13, and 14. If one matches, stop, follow each matching stop
 row's This turn, and use its Directory. Do not apply a continue row over a
-stop. Rows 1, 2, 3, 9, and 10 continue. If no stop row matches, follow each
+stop. Rows 1, 2, 3, 9, 10, and 15 continue. If no stop row matches, follow each
 matching continue row, run the one merge command, and keep the directory
 when any matching row says Keep. Otherwise remove it after the merge attempt.
 
@@ -87,11 +88,8 @@ A policy-digest change that is not one of the named host facts stops, leaves
 the grade, and keeps the directory. The named host facts are the supporting
 facts on row 8.
 
-BLOCKED without a supporting host fact is not a conflict and does not itself
-stop. It does not void the grade. If that is the only difference, continue
-to the existing merge command and keep the directory.
-
-A strict up-to-date rule uses row 8 while mergeable stays MERGEABLE.
+A strict boolean recorded in step 2 uses row 8 while mergeable stays
+MERGEABLE. BEHIND is not that boolean. Row 15 is the bare BLOCKED continue.
 
 Updating the branch creates a new head, which is row 4.
 

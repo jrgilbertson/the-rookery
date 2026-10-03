@@ -136,15 +136,15 @@ read-only verb set, the only forge commands the gather path runs:
      the PR repository's owner and name, URL-encode the base ref as one path
      segment, and call `gh api
      "repos/<owner>/<repo>/rules/branches/<encoded-base-ref>"` with those
-     concrete values. Prefer ruleset
-     `pull_request` fields: `required_review_thread_resolution`,
-     `required_approving_review_count`, `require_last_push_approval`,
-     `dismiss_stale_reviews_on_push`.
-  2. GraphQL `repository.branchProtectionRules` — match `baseRefName` to each
-     rule's `pattern` (fnmatch-style). If any matching rule requires a check,
-     treat that check as required. Read at least
-     `requiresConversationResolution`, `requiredApprovingReviewCount`,
-     `requiresStatusChecks`, `requiredStatusCheckContexts`.
+     concrete values. Read ruleset `pull_request` fields
+     `required_review_thread_resolution`, `required_approving_review_count`,
+     `require_last_push_approval`, and `dismiss_stale_reviews_on_push`. Record
+     `required_status_checks` parameter `strict_required_status_checks_policy` when a check is enabled.
+  2. GraphQL `repository.branchProtectionRules`, matching `baseRefName` by
+     fnmatch `pattern`. If a rule requires a check, that check is required.
+     Read `requiresConversationResolution`, `requiredApprovingReviewCount`,
+     `requiresStatusChecks` with `requiresStrictStatusChecks`, and
+     `requiredStatusCheckContexts`. `BEHIND` is not that strict boolean.
   3. Classic REST branch protection last (often admin-gated). On 403/404, name
      policy unavailable for that surface.
 
@@ -193,7 +193,7 @@ named.
 - Required approving review count not met when count > 0.
 - Last-push re-approval / dismiss-stale required and violated.
 - GitHub conflict (`mergeable` CONFLICTING or `mergeStateStatus` DIRTY), or
-  BLOCKED with a supporting host fact, including strict up-to-date. UNKNOWN alone stays non-blocking.
+  BLOCKED with a supporting host fact, including the recorded strict boolean. UNKNOWN alone stays non-blocking.
 
 A blocking host rule removes merge, names the rule in plain language, and
 caps at debug unless a high driver or intent drift already forces do not

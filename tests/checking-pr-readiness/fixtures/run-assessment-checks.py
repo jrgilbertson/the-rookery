@@ -287,7 +287,8 @@ def assessment_decision(
         gaps.append(f"subject moved: {captured_subject} -> {current_label}")
     if captured_head != current_head:
         gaps.append(f"head moved: {captured_head} -> {current_head}")
-    if (captured_base_ref, captured_base_oid) != (current_base_ref, current_base_oid):
+    # A same-name base tip move is not a stopping gap. A renamed base ref still is.
+    if captured_base_ref != current_base_ref:
         gaps.append(
             "base moved: "
             f"{captured_base_ref}@{captured_base_oid} -> {current_base_ref}@{current_base_oid}"
@@ -336,7 +337,8 @@ def local_publication_gaps(
         gaps.append(f"subject moved: {captured_subject} -> {current_label}")
     if captured_head != current_head:
         gaps.append(f"head moved: {captured_head} -> {current_head}")
-    if (captured_base_ref, captured_base_oid) != (current_base_ref, current_base_oid):
+    # A same-name base tip move is not a publication gap. A renamed base ref still is.
+    if captured_base_ref != current_base_ref:
         gaps.append(
             "base moved: "
             f"{captured_base_ref}@{captured_base_oid} -> {current_base_ref}@{current_base_oid}"
@@ -460,6 +462,10 @@ def validate_contract_sources() -> None:
         "target/base ref",
         "full base oid",
         "old and new base identity",
+        "a same-name base oid change names the new base in one sentence and keeps approve",
+        "no github mergeability object yet; do not invent a conflict check",
+        "dirty surface that differs from the recorded surface",
+        "the already-typed 1 does not approve that rebuilt gather",
         "surface-report.sh --base \"$captured_base_selector\" --full",
         "resolution still yields the captured full base oid",
         "do not fall back to its implicit default base",
@@ -490,6 +496,10 @@ def validate_contract_sources() -> None:
         "mktemp -d",
         "outside the target repository",
         "on a later reply of 1",
+        "names the new base in one sentence and keeps approve",
+        "no github mergeability object yet; do not invent a conflict check",
+        "dirty surface that differs from the recorded surface",
+        "already-typed 1 does not approve that rebuilt gather",
     ):
         require(phrase in skill, f"skill routing missing: {phrase}")
     for label, pattern in RETIRED_MACHINERY.items():
@@ -817,10 +827,29 @@ def run_suite() -> None:
             check_results=check_results,
             dirty_paths={},
         )
-        require(decision == "omit-Approve", "moved base did not return omit-Approve")
+        require(captured_base_oid != moved_base_oid, "fixture did not advance the same-name base OID")
+        require(decision == "offer-option-1", "same-name base tip move omitted Approve")
+        require(gaps == (), "same-name base tip move appended a stopping base-moved gap")
+        renamed_base_ref = "refs/heads/renamed-base"
+        decision, gaps = assessment_decision(
+            captured_subject=captured_subject,
+            current_subject=current_subject(moved_base_repo),
+            captured_head=captured,
+            current_head=full_head(moved_base_repo),
+            captured_base_ref=captured_base_ref,
+            current_base_ref=renamed_base_ref,
+            captured_base_oid=captured_base_oid,
+            current_base_oid=captured_base_oid,
+            expected_paths=paths,
+            inspected_paths=paths,
+            expected_checks=set(check_results),
+            check_results=check_results,
+            dirty_paths={},
+        )
+        require(decision == "omit-Approve", "base ref rename did not return omit-Approve")
         require(
-            f"base moved: {captured_base_ref}@{captured_base_oid} -> {captured_base_ref}@{moved_base_oid}" in gaps,
-            "moved base did not name both base identities",
+            f"base moved: {captured_base_ref}@{captured_base_oid} -> {renamed_base_ref}@{captured_base_oid}" in gaps,
+            "base ref rename did not name both refs",
         )
 
         renamed_repo = Path(temporary) / "renamed"
@@ -1069,10 +1098,25 @@ def run_suite() -> None:
             provider_readable=True,
             provider_head=read_provider_head(pre_push_base_repo, "pre-push-provider", provider_subject),
         )
-        require(decision == "action-required", "base movement before first push did not stop publication")
+        require(decision == "ready" and not gaps, "same-name base tip move before first push was not ready")
+        renamed_base_ref = "refs/heads/renamed-base"
+        decision, gaps = ownerless_first_push_decision(
+            captured_subject=captured_subject,
+            current_subject=current_subject(pre_push_base_repo),
+            captured_head=captured_head,
+            current_head=full_head(pre_push_base_repo),
+            captured_base_ref=captured_base_ref,
+            current_base_ref=renamed_base_ref,
+            captured_base_oid=captured_base_oid,
+            current_base_oid=moved_base_oid,
+            dirty_paths={},
+            provider_readable=True,
+            provider_head=read_provider_head(pre_push_base_repo, "pre-push-provider", provider_subject),
+        )
+        require(decision == "action-required", "base ref rename before first push did not stop publication")
         require(
-            f"base moved: {captured_base_ref}@{captured_base_oid} -> {captured_base_ref}@{moved_base_oid}" in gaps,
-            "base movement before first push did not name old/new base identity",
+            f"base moved: {captured_base_ref}@{captured_base_oid} -> {renamed_base_ref}@{moved_base_oid}" in gaps,
+            "base ref rename before first push did not name both refs",
         )
 
         post_push_base_repo = Path(temporary) / "post-push-base"
@@ -1115,20 +1159,16 @@ def run_suite() -> None:
             provider_readable=True,
             provider_head=read_provider_head(post_push_base_repo, "post-push-provider", provider_subject),
         )
-        require(decision == "action-required", "base movement before PR open did not stop publication")
-        require(
-            f"base moved: {captured_base_ref}@{captured_base_oid} -> {captured_base_ref}@{moved_base_oid}" in gaps,
-            "base movement before PR open did not name old/new base identity",
-        )
+        require(decision == "ready" and not gaps, "same-name base tip move before PR open was not ready")
 
     print("PASS: stable deterministic slice ran fixture-quality but omitted Approve for unexecuted steps 3-6 judgment checks")
     print("PASS: captured non-default base inspection includes a committed path omitted by implicit default inspection")
     print("PASS: discovered repository checks outside the caller-authorized argv list remain not verified and omit Approve")
-    print("PASS: stable subject/head with a changed base OID omits Approve and names old/new base identity")
+    print("PASS: a same-name base OID change keeps Approve; a base ref rename still omits Approve and names both refs")
     print("PASS: subject movement, moved head, incomplete inventories, and disallowed checks omit Approve; dirt still offers option 1")
     print("PASS: an absent provider ref permits first push only when its exact captured OID is present before PR creation")
     print("PASS: only an exact verified equivalent gate normalizes a deferred sweep class to verified evidence")
-    print("PASS: base movement before first push or PR open stops publication and names old/new base identity")
+    print("PASS: a same-name base OID change does not stop first push or PR open; a base ref rename still stops first push")
 
 
 def materialize(destination: Path) -> None:

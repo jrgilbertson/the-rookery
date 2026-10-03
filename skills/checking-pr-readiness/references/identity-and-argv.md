@@ -74,15 +74,21 @@ for example `code review: not verified`. Check-result spelling is canonical:
 
 Immediately before accepting Approve, re-resolve the same native subject,
 full head, target/base ref, and full base OID through the same boundary and
-re-read staged, unstaged, and untracked content. If the subject, head, base
-ref, base OID, or staged, unstaged, or untracked content differs from the
-captured state, reject the prior findings. Name the old and new subjects when
-the subject changed, the old and new full OIDs when the head changed, the
-old and new base identity when the base changed, and the old and new paths
-and categories when working-tree content changed, then require a fresh run.
-If any required state is unavailable, name every exact gap and omit Approve.
-Do not reuse findings across moved heads or bases. A matching re-read is
-silent.
+re-read staged, unstaged, and untracked content. A same-name base OID change
+names the new base in one sentence and keeps Approve. There is no GitHub
+mergeability object yet; do not invent a conflict check. Do not stop
+pre-push or pre-PR publication solely for that move.
+
+A subject change, a head change, a base-ref rename, or a dirty surface that
+differs from the recorded surface rejects the prior findings and requires a
+fresh run. Name the old and new subjects when the subject changed, the old
+and new full OIDs when the head changed, the old and new base identity when
+the base ref changed, and the old and new paths and categories when
+working-tree content changed. The already-typed 1 does not approve that
+rebuilt gather. If any required state is unavailable, name every exact gap
+and omit Approve. Do not reuse findings across a moved head, a renamed base
+ref, or a dirty surface that differs from the recorded surface. Any other
+matching re-read is silent. The one-sentence base naming is not a rebuild.
 
 This skill remains read-only except for remaining-changes follow-up
 picks and the option-1 finishing dispatch. A companion skill or repository

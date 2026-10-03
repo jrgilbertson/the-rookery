@@ -380,10 +380,12 @@ Approve cannot be taken and wait again. Do not enter the finishing path.
 
 Before accepting Approve, re-read HEAD, the merge-base, and staged, unstaged,
 and untracked content per
-[references/identity-and-argv.md](references/identity-and-argv.md). If any of
-those moved, name what moved, rebuild, and do not continue as if the old
-surface were still current. The already-typed 1 does not approve the rebuilt
-gather. A matching re-read is silent.
+[references/identity-and-argv.md](references/identity-and-argv.md). A same-name
+base OID change names the new base in one sentence and keeps Approve. There
+is no GitHub mergeability object yet; do not invent a conflict check. A
+subject change, a head change, a base-ref rename, or a dirty surface that differs from the recorded surface still rejects and rebuilds.
+The already-typed 1 does not approve that rebuilt gather. Any other matching
+re-read is silent. The one-sentence base naming is not a rebuild.
 
 Discover the installed skill that owns opening a pull request the same way
 `ce-explain` is: when that skill is present. WORKFLOWS.md's example is
@@ -416,9 +418,10 @@ plan. When step 4 found no durable source, summarize the recorded intent
 attestation instead. Do not copy ignored-plan paths or contents, local-only
 paths, credentials, or unnecessary personal data.
 
-Completion: a matching silent re-read, then silent pack plus continue into
-finishing, including finishing.md, a named missing-path stop with no pack,
-or a named rebuild with no pack. This skill wrote nothing to the
+Completion: a matching re-read, with one sentence when the same-name base
+moved, then silent pack plus continue into finishing, including finishing.md,
+a named missing-path stop with no pack, or a named rebuild with no pack.
+This skill wrote nothing to the
 repository. Remove the step 1 temp directory after this later turn, when a
 non-1 later turn ends the run, or on failure.
 

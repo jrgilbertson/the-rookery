@@ -33,6 +33,15 @@ looked" surface. GitHub Releases mirror its entries.
   wrote the brief. That reply compares the recorded fingerprint, live merge
   state, host policy, and linked-issue digests, then merges or stops. It
   does not start another review.
+- A finished review of a pull request commit stays usable when main has moved
+  and GitHub reports no conflict. `checking-merge-readiness` names that new
+  base in one sentence and still merges on option 1. A new commit on the pull
+  request's own branch starts that review over. An edit to a GitHub or Linear
+  issue title, body, or comments leaves the review in place.
+  `checking-pr-readiness` keeps Approve when the named base tip moves, and a
+  clean simplicity result counts when the recorded head and dirty-surface
+  identity match. A later gate in the same session reuses the earlier review
+  and still runs its own checks.
 - `route-work` Questions cards no longer present one reading of an ambiguous
   request as what the operator said. A recommendation's reason names what is
   unknown and what the answer decides. Neither the question nor its reason

@@ -62,6 +62,7 @@ comment's id plus body digest. Read the base tip from `baseRefOid`.
 | 11 | Issue state change, linked-issue set change, missing issue, or incomplete issue fetch. Closing the issue stops this merge. | Stands | Stop | Keep |
 | 12 | Dismissed approval, head unchanged | Stands | Stop until approval returns | Keep |
 | 13 | Other history-fingerprint change: pull-request body, a new pull-request comment, a thread, or a review | Stands | Stop. Say a new review is required and do not start it. | Keep |
+| 14 | Pull-request state is not OPEN, or isDraft is true. This is the pull request, not issue state on row 11. | Stands | Stop. Name that state. Do not run the merge command. Do not void the grade. | Keep |
 
 A missing record or an unfinished re-read is not a row. Stop. Do not grade
 or merge. Keep the directory.
@@ -69,7 +70,7 @@ or merge. Keep the directory.
 If the head OID changed, stop on row 4 and do not apply a later row, including
 a host-rule refuse. A docs-only push does not keep the old grade. Else if
 baseRefName changed, stop on row 5 and do not apply a later row. Stop rows
-are 6, 7, 8, 11, 12, and 13. If one matches, stop, follow each matching stop
+are 6, 7, 8, 11, 12, 13, and 14. If one matches, stop, follow each matching stop
 row's This turn, and use its Directory. Do not apply a continue row over a
 stop. Rows 1, 2, 3, 9, and 10 continue. If no stop row matches, follow each
 matching continue row, run the one merge command, and keep the directory

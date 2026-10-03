@@ -236,8 +236,13 @@ to `surface-report.sh` and `changelog-union.sh` (`--base <ref>` or
 neither flag.
 
 Every remaining class runs by model instruction from the reference, in one
-pass: read the branch diff once and apply every judgment class to that single
-reading rather than re-reading the diff per class.
+pass: read the branch diff once, write that reading into the step 1 `mktemp -d`
+directory outside the target repository, and apply every judgment class to
+that single reading rather than re-reading the diff per class. Keep that
+directory until the same-session later gate finishes, the head changes, or the
+session ends. The later gate reads that diff file, not the surface-report
+listing. The file is the diff already read for this grade. It is not a durable
+receipt. Do not put raw forge JSON into the merge skill's waiting directory.
 
 Map helper exit codes and `verdict:` lines to status words using the table in
 [references/sweep-classes.md](references/sweep-classes.md).
@@ -422,8 +427,9 @@ Completion: a matching re-read, with one sentence when the same-name base
 moved, then silent pack plus continue into finishing, including finishing.md,
 a named missing-path stop with no pack, or a named rebuild with no pack.
 This skill wrote nothing to the
-repository. Remove the step 1 temp directory after this later turn, when a
-non-1 later turn ends the run, or on failure.
+repository. Do not remove the step 1 temp directory when this gate ends,
+including after this later turn, when a non-1 later turn ends the run, or on
+failure. The later gate still needs the diff file.
 
 ## Gotchas
 
@@ -437,8 +443,10 @@ non-1 later turn ends the run, or on failure.
 - A dead session needs a fresh gate. There is no pasteable pack to restock.
 - When `checking-merge-readiness` is also installed, a non-Executor option-1
   reply continues into it only after babysit looks merge-ready or cautiously
-  looks ready, in a fresh uninvolved context. An Executor option-1 reply does
-  not dispatch it; the Coordinator starts that Reviewer after looks
-  merge-ready, cautiously looks ready, or pipeline `success`. This gate
-  still does not merge. If merge-readiness is absent after babysit on a
+  looks ready, in a fresh uninvolved context. Pass the temp path and the
+  written grade only when this session still holds the diff file for the live
+  head. A new session receives the pull-request identity only. An Executor
+  option-1 reply does not dispatch it; the Coordinator starts that Reviewer
+  after looks merge-ready, cautiously looks ready, or pipeline `success`. This
+  gate still does not merge. If merge-readiness is absent after babysit on a
   non-Executor run, name that once and stop.

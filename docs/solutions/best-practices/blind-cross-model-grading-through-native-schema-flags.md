@@ -1,7 +1,7 @@
 ---
 title: "Run blind cross-model grading through each CLI's native JSON schema flag"
 date: 2026-09-23
-last_updated: 2026-09-24
+last_updated: 2026-10-03
 category: best-practices
 module: "creating-portable-skills skill verification"
 problem_type: best_practice
@@ -27,15 +27,12 @@ related_components:
 
 ## Context
 
-The `creating-portable-skills` baseline protocol asks for an independent
-grader in step 3 ("Grade binary") of
-`skills/creating-portable-skills/assets/baseline-test-template.md`. One grader scores both variants of a case on a target. When a
-second model is available, the grader is a different model from the one that
-wrote the outputs. It sees final answers and the artifact or tool observations
-needed to verify execution, with variant names removed and private reasoning
-excluded.
-`tests/README.md` ("Matched comparison") points the repo's suites at that
-template.
+The former repository protocol required an independent different-model grader.
+One grader scored both variants of a case on a target, using final answers and
+artifact or tool observations with variant names and private reasoning removed.
+That protocol and its behavioral suites were retired on 2026-10-03. Follow
+[SKILLS.md](../../../SKILLS.md#evaluation-workflow) for the current evaluation
+workflow; run-log paths below refer to committed Git history.
 
 The issue #134 refresh ran that protocol across two harnesses: Claude Code
 2.1.281 with Opus 5.5 at medium effort, and Grok CLI 1.0.41 with Grok 4.7 at
@@ -232,9 +229,8 @@ letting the run quietly drop out of the record.
 
 ## When to Apply
 
-- Any matched comparison under the baseline template where a second model
-  grades, including issue #165's follow-up rounds and any skill suite in
-  `tests/`.
+- A matched comparison whose selected evaluation workflow calls for a second
+  model to grade outputs.
 - Any headless use of Grok CLI at high effort with a long prompt, whether it
   grades or is the target.
 - Any test run where the skill under test may try to start another agent,

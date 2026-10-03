@@ -8,5 +8,5 @@
 - [ ] Nothing added depends on context that only exists on my machine (no absolute paths and no private names, per the same-door rule)
 - [ ] `main` stays install-clean: this change is complete, not a work-in-progress
 - [ ] I updated affected documentation and the changelog, or neither needs a change
-- [ ] I ran the repository checks and any affected skill cases
+- [ ] I ran the repository checks and reported any behavioral evaluation or unresolved revalidation under SKILLS.md
 - [ ] I removed or sanitized secrets, personal data, and private evidence

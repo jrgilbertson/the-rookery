@@ -1,1 +1,0 @@
-The returned fragment mentions an internal preparation block; later records were not returned.

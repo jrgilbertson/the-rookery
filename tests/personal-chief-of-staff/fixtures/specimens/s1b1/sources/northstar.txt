@@ -1,1 +1,0 @@
-Current synthetic strategy: protect the customer proof block before optional internal polish.

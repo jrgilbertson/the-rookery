@@ -7,10 +7,8 @@ export PYTHONDONTWRITEBYTECODE=1
 
 runners=(
   tests/checking-merge-readiness/fixtures/run-fetch-checks.sh
-  tests/checking-merge-readiness/fixtures/run-stub-checks.sh
   tests/checking-pr-readiness/fixtures/run-assessment-checks.py
   tests/checking-pr-readiness/fixtures/run-helper-checks.sh
-  tests/creating-portable-skills/fixtures/run-eval-file-checks.sh
   tests/creating-portable-skills/fixtures/run-signal-scan-checks.sh
   tests/managing-issues/fixtures/run-graph-checks.py
   tests/managing-issues/fixtures/run-config-checks.py
@@ -22,7 +20,10 @@ runners=(
 
 discovered=()
 while IFS= read -r -d '' task_runner; do
-  discovered+=("$task_runner")
+  # Git still lists unstaged deletions; retain symlinks for the safety check.
+  if [[ -e "$task_runner" || -L "$task_runner" ]]; then
+    discovered+=("$task_runner")
+  fi
 done < <(git ls-files --cached --others --exclude-standard -z -- \
   'tests/**/run-*.sh' 'tests/**/run-*.py' 'tests/**/check_*.py')
 
@@ -86,5 +87,3 @@ for runner in "${runners[@]}"; do
     *) echo "fixtures: unsupported runner $runner" >&2; exit 1 ;;
   esac
 done
-
-python3 -m unittest discover -s tools/eval-cost -p 'test_*.py'

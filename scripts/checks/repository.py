@@ -49,11 +49,6 @@ MARKDOWN_REFERENCE = re.compile(
 )
 PACKAGED_DOCUMENTS = (
     ("routing", Path("ROUTING.md"), Path("skills/route-work/references/routing.md")),
-    (
-        "skill convention",
-        Path("SKILLS.md"),
-        Path("skills/creating-portable-skills/references/skills.md"),
-    ),
 )
 
 

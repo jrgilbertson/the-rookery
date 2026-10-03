@@ -1,10 +1,9 @@
 ---
 # Delete every "#" comment line and every HTML comment when instantiating this
-# template. Field limits and description rules: the "Package format" and
-# "Descriptions and triggering" sections of creating-portable-skills'
-# references/skills.md.
+# template. Frontmatter follows https://agentskills.io/specification.
+# Describe what the skill does and when to use it in 1–1024 characters.
 name: skill-name-here
-description: "Use when [owned capability and triggering conditions, including non-obvious user phrasings]."
+description: "[What the skill does and when to use it.]"
 license: "[choose a license, or delete this field if the host collection declares one]"
 # compatibility: optional. Declare only real command, network, credential, or
 # environment requirements. Delete it when there are none.
@@ -26,9 +25,8 @@ these facts are already clear elsewhere. -->
 ## Workflow
 
 <!-- Provide only the instructions needed to reach the
-outcome within its hard constraints, applying the checklist sections that
-step 3 of creating-portable-skills names. Use a numbered sequence only when
-order matters; for open-ended work, organize around outcomes and completion
+outcome within its hard constraints, using the package review checklist. Use a
+numbered sequence only when order matters; for open-ended work, organize around outcomes and completion
 criteria. When the skill does destructive or batch work, have it confirm the
 exact targets and planned action against the system that owns those targets
 before executing. -->

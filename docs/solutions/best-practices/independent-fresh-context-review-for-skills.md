@@ -1,7 +1,7 @@
 ---
 module: skill evaluation
 date: 2026-07-27
-last_updated: 2026-09-26
+last_updated: 2026-10-03
 problem_type: best_practice
 component: testing_framework
 severity: high
@@ -24,20 +24,25 @@ tags:
 
 # Use independent contexts for skill grading and review
 
+> The repository-specific eval formats, run protocol, and benchmark rules
+> described here were retired on 2026-10-03. The evidence and independent-review
+> principles remain useful; follow [SKILLS.md](../../../SKILLS.md#evaluation-workflow)
+> for the current workflow. Case paths below refer to files in Git history.
+
 ## Context
 
 Agent-authored skill changes need two kinds of verification. Deterministic
 tools can check structural facts such as frontmatter, file identity, line
-counts, and links. Behavioral validation runs affected evals once per declared
-Executor target with a blind different-model grader. One independent review
-checks the package and evidence. Author inspection supplies no independent
+counts, and links. The former repository protocol ran affected evals once per
+declared Executor target with a blind different-model grader and one independent
+review of the package and evidence. Author inspection supplies no independent
 evidence.
 
 The distinction matters because a plausible executor summary can hide an
 incomplete artifact. A filename or heading can satisfy a weak check while the
-actual output misses the required outcome. The workflow in
-`skills/creating-portable-skills/SKILL.md` therefore gives judgment work to
-independent agent contexts and leaves mechanical checks to scripts.
+actual output misses the required outcome. The former protocol gave judgment work to independent agent contexts and left
+mechanical checks to scripts. The current workflow is in
+[SKILLS.md](../../../SKILLS.md#evaluation-workflow).
 
 ## Guidance
 
@@ -49,11 +54,11 @@ Keep three evidence layers separate:
 | Outcome evidence | Whether the output met the required outcome and hard constraints | Inspection of actual artifacts and relevant traces; blind different-model grading of the changed skill |
 | Coverage | Which changed behaviors were tested and how far the conclusion reaches | Declared cases and limitations; one independent review of the package and evidence |
 
-Keep the durable record small: eval definitions live in the skill's
-`evals/evals.json`, raw runs stay in the machine-local run archive, and each
-graded round commits one benchmark file (`SKILLS.md`, "Committed evidence").
-Changes follow the regression and attribution rule in `SKILLS.md` ("Arms and
-runs"). There is no mandatory pre-spend review plus final-review cycle.
+The retired protocol kept eval definitions in `evals/evals.json`, raw runs in
+a machine-local archive, and one committed benchmark per graded round. Its
+regression and attribution rules are historical, not current repository
+requirements. The following practices describe that protocol; adapt them to
+the selected evaluation workflow rather than restoring its formats or gates.
 
 1. Run affected cases once per declared target in fresh contexts and confirm
    that the intended version loaded.
@@ -139,7 +144,8 @@ run contained.
 
 ## When to Apply
 
-Use `skills/creating-portable-skills/SKILL.md` for the regression workflow.
+Use [`SKILLS.md`](../../../SKILLS.md#evaluation-workflow) to select this
+repository's current evaluation workflow.
 A check establishes only its exercised behavior and does not establish
 comparative improvement. Independent review is especially useful when success
 depends on qualitative completeness, evidence use, authority boundaries, or

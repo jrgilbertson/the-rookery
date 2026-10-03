@@ -203,26 +203,20 @@ dependency list in this document.
 
 ## Skill validation in this repository
 
-[`SKILLS.md`](SKILLS.md) owns the regression-check and evidence contract;
-[`tests/README.md`](tests/README.md) owns legacy suite formats and deterministic
-checks. The default Executor target set is the current Executor row in
-[`ROUTING.md`](ROUTING.md#model-and-effort-recommendations), using its listed
-models and efforts in their official subscription CLIs. Explicit caller
-restrictions override that default; record excluded targets and the actual
-coverage. A separate, authorized periodic cross-model sweep supplies broader
-coverage without expanding each change's regression check.
+[`SKILLS.md`](SKILLS.md) owns the current skill-validation policy;
+[`tests/README.md`](tests/README.md) documents the deterministic repository
+checks. Package validation, helper fixtures, repository integrity, and
+installation checks establish their specific contracts. They do not establish
+a skill's behavioral quality.
 
-The host owns CLI automation, configuration, isolated per-call usage capture,
-and budget enforcement. The portable skill bundles no runner. Use
-`ccusage --mode calculate` and its upstream-maintained pricing for complete
-API-equivalent estimates across execution, delegation, grading, and failed
-attempts. CLI dollar reports are secondary; account-wide Codex usage or credit
-deltas and repository rate tables are not per-call cost sources. Unknown,
-partial, unpriced, or unidentified-model estimates stop further calls, as do exhausted
-budget or subscription quota. The caller authorizes one budget across all
-providers; API-key billing is not a fallback.
+Use [`creating-portable-skills`](skills/creating-portable-skills/SKILL.md) for
+portable package authoring, auditing, structural validation, and installation.
+For behavioral evaluation, start with the evals plugin's `evals-start` skill
+and follow the workflow it selects. The first dogfood target is
+`creating-portable-skills`, with Claude, Codex, and Grok as the main hosts.
+The other skill packages await revalidation after the eval reset.
 
-Run the official CLIs directly and use the [per-call accounting helper](tools/eval-cost/README.md)
-to record costs and check the allowance. The agent owns transcript inspection,
-blind grading, and failure attribution. Unsupported usage or pricing stays
-unknown, and a structural pass does not substitute for a behavioral check.
+An evaluation requires an explicit scope and authorization for model runs.
+Retired suites and passing deterministic checks supply no behavioral pass
+claim. Keep raw runs and temporary reports outside the repository, and report
+only the behavior actually inspected.

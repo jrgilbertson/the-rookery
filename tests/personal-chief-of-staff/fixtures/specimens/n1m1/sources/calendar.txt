@@ -1,1 +1,0 @@
-The caller's handoff window closes after the next bounded verification pass.

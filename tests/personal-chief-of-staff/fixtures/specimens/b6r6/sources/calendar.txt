@@ -1,1 +1,0 @@
-The release handoff window closes before the next scheduled review.

@@ -17,10 +17,8 @@ FIXTURES = ROOT / "scripts/checks/fixtures.sh"
 
 FIXTURE_RUNNERS = (
     "tests/checking-merge-readiness/fixtures/run-fetch-checks.sh",
-    "tests/checking-merge-readiness/fixtures/run-stub-checks.sh",
     "tests/checking-pr-readiness/fixtures/run-assessment-checks.py",
     "tests/checking-pr-readiness/fixtures/run-helper-checks.sh",
-    "tests/creating-portable-skills/fixtures/run-eval-file-checks.sh",
     "tests/creating-portable-skills/fixtures/run-signal-scan-checks.sh",
     "tests/managing-issues/fixtures/run-graph-checks.py",
     "tests/managing-issues/fixtures/run-config-checks.py",
@@ -76,20 +74,6 @@ def require_routing_failure(
     )
 
 
-def require_skills_failure(
-    result: subprocess.CompletedProcess[str],
-    expected: str,
-    condition: str,
-) -> None:
-    require_packaged_failure(
-        result,
-        "SKILLS.md",
-        "skills/creating-portable-skills/references/skills.md",
-        expected,
-        condition,
-    )
-
-
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="rookery-repository-check-") as temporary:
         temporary_root = Path(temporary)
@@ -115,11 +99,8 @@ def main() -> int:
         root_routing.write_bytes(routing_contents)
         packaged_routing.write_bytes(routing_contents)
         root_skills = repository / "SKILLS.md"
-        packaged_skills = repository / "skills/creating-portable-skills/references/skills.md"
-        packaged_skills.parent.mkdir(parents=True)
         skills_contents = b"# Skills\n"
         root_skills.write_bytes(skills_contents)
-        packaged_skills.write_bytes(skills_contents)
         clean = run_checker(repository)
         require(clean.returncode == 0, f"clean repository failed: {clean.stderr}")
 
@@ -151,35 +132,6 @@ def main() -> int:
             run_checker(repository), routing_drift, "routing-page byte drift"
         )
         packaged_routing.write_bytes(routing_contents)
-
-        skills_missing = "both skill convention documents must exist"
-        skills_drift = "skill convention documents must match byte-for-byte"
-
-        root_skills.unlink()
-        require_skills_failure(
-            run_checker(repository), skills_missing, "a missing root skill convention"
-        )
-        root_skills.write_bytes(skills_contents)
-
-        packaged_skills.unlink()
-        require_skills_failure(
-            run_checker(repository), skills_missing, "a missing packaged skill convention"
-        )
-        packaged_skills.write_bytes(skills_contents)
-
-        root_skills.unlink()
-        packaged_skills.unlink()
-        require_skills_failure(
-            run_checker(repository), skills_missing, "both missing skill conventions"
-        )
-        root_skills.write_bytes(skills_contents)
-        packaged_skills.write_bytes(skills_contents)
-
-        packaged_skills.write_bytes(skills_contents + b"\n")
-        require_skills_failure(
-            run_checker(repository), skills_drift, "skill-convention byte drift"
-        )
-        packaged_skills.write_bytes(skills_contents)
 
         for regular_name in (
             "plans",

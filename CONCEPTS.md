@@ -281,39 +281,7 @@ inform a decision, but unlike
 `ce-pov`'s compact, project-grounded verdict it preserves a multi-perspective
 research record as the primary result.
 
-## Skill quality gates
-
-### Regression Check
-
-A Regression Check exercises affected skill evals once per declared Executor
-target after a change. A different model grades blind, and every failure is
-inspected against its original transcript. It establishes only the behavior
-exercised, not comparative improvement. [`SKILLS.md`](SKILLS.md) owns the
-formats, failure attribution, and ship rule.
-
-### Baseline Comparison
-
-A Baseline Comparison uses the frozen prior skill on failing evals to diagnose
-whether changed text caused a failure. A new skill may use a no-skill baseline
-when diagnosis needs it. Comparisons use matched inputs, assertions, targets,
-settings, and run counts. A failing-only baseline subset supplies no aggregate
-improvement claim against the whole candidate check.
-
-### Regression Control
-
-A Regression Control protects a named load-bearing contract, including one
-that both prior and revised skills pass. It never establishes improvement.
-A failure needs transcript inspection and attribution under
-[`SKILLS.md`](SKILLS.md), not automatic dismissal or a fixed repeat count.
-
-### Independent Review Context
-
-An Independent Review Context belongs to an agent that took no part in the
-artifact's authoring discussion and did not produce the artifact. Behavioral
-grading uses a different model from execution. One independent review
-checks the package and evidence; there is no mandatory pre-spend and final
-review cycle. If required independent judgment is unavailable, it remains
-unverified pending a self-contained handoff.
+## Instruction and workflow contracts
 
 ### Degradation Path
 
@@ -346,11 +314,11 @@ reminders to think, narrate, or recheck may be removed when they no longer help.
 
 ### Trigger Contract
 
-A Trigger Contract treats a skill's description as a tested activation API,
-not documentation. At the fire-or-skip decision, the agent sees only the
-skill's name and description. Test this metadata with should-trigger phrasings
-that must activate and near-misses that must not, judged in fresh contexts
-under [`SKILLS.md`](SKILLS.md).
+A Trigger Contract treats a skill's description as the activation API the
+harness shows when deciding whether to load the skill. Should-trigger
+phrasings must load it, and near-misses must not. A listing proxy judges the
+name and description alone. Native activation observes the harness's load
+decision, with training, validation, and fresh queries kept distinct.
 
 ## Flagged ambiguities
 

@@ -440,8 +440,6 @@ def validate_contract_sources() -> None:
     assessment = (REPO_ROOT / "skills" / "checking-pr-readiness" / "references" / "identity-and-argv.md").read_text(encoding="utf-8").lower()
     normalized_assessment = " ".join(assessment.split())
     skill = (REPO_ROOT / "skills" / "checking-pr-readiness" / "SKILL.md").read_text(encoding="utf-8").lower()
-    exact_case = (REPO_ROOT / "tests" / "checking-pr-readiness" / "cases" / "same-session-exact-head.md").read_text(encoding="utf-8").lower()
-    variants_case = (REPO_ROOT / "tests" / "checking-pr-readiness" / "cases" / "identity-fail-closed-variants.md").read_text(encoding="utf-8").lower()
     for phrase in (
         "same assessment session",
         "subject",
@@ -497,29 +495,6 @@ def validate_contract_sources() -> None:
     for label, pattern in RETIRED_MACHINERY.items():
         require(pattern.search(FROZEN_RETIRED_ASSESSMENT), f"retired guard is inert: {label}")
         require(not pattern.search(assessment), f"obsolete assessment machinery remains: {label}")
-    for source, name in ((exact_case, "exact case"), (variants_case, "variants case")):
-        normalized_source = " ".join(line.removeprefix("> ") for line in source.splitlines())
-        for phrase in (
-            "complete inspected-path inventory",
-            "complete relevant-check inventory",
-            "every applicable required check is `verified` or proven `not applicable`",
-        ):
-            require(phrase in normalized_source, f"{name} omits stable assessment requirement: {phrase}")
-    require("offers option 1 for this" in exact_case, "exact case does not require offering option 1")
-    require("do not pick" in exact_case, "exact case omits do-not-pick")
-    require("immediately before accepting a later approve" in exact_case, "exact case omits later-Approve re-read")
-    require("stable-head variant offers option 1" in variants_case, "variants case does not require stable option 1")
-    require("re-reads immediately before accepting an option-1 reply" in variants_case, "variants case pins offer-time re-read")
-    require("picks an option in the same turn" in variants_case, "variants case omits do-not-pick")
-    for phrase in (
-        "moved-head variant omits approve",
-        "moved-base variant omits approve",
-        "branch-rename variant omits approve",
-        "detached-head variant omits approve",
-        "dirty-surface variants name every",
-        "inventories omit approve",
-    ):
-        require(phrase in variants_case, f"variants case does not preserve fail-closed result: {phrase}")
     for phrase in (
         "exact named equivalent repository gate",
         "present and `verified` in the same complete assessment session",

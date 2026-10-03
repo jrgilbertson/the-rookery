@@ -1,1 +1,0 @@
-The exact draft target now resolves to acting identity B, while the approved action is bound to acting identity A.

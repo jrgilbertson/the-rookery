@@ -206,7 +206,7 @@ The prevention strategy decides where the learning lives, and where it lands mat
 | Prose instruction  | A line in a README, a code comment, or an instructions file                             | The floor. Nothing enforces it, so it holds only as long as the model follows it                  |
 
 
-When the reusable-procedure rung is the right home, [`creating-portable-skills`](skills/creating-portable-skills/SKILL.md) creates, revises, migrates, or audits the package and checks its structure, triggers, behavior, and installation. Use it when a repeated gap needs a portable skill rather than a one-off instruction.
+When the reusable-procedure rung is the right home, [`creating-portable-skills`](skills/creating-portable-skills/SKILL.md) creates, revises, migrates, or audits a portable package and checks its structure and installation. It routes evaluation to `build-eval` and tuning to `ce-retune`. Use it when a repeated gap needs a portable skill rather than a one-off instruction. [`SKILLS.md`](SKILLS.md) owns this repository's evaluation and evidence rules.
 
 In practice that means a reproducible bug becomes a regression test rather than a paragraph asking the model to be careful, and a convention becomes a lint rule. Only learnings with no mechanical home fall to prose, which is often the honest answer for something that can't be automated yet.
 

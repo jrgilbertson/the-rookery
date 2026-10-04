@@ -185,7 +185,9 @@ result it reports that result and stops.
 
 For each PR whose Executor reported a ready babysit result, the Coordinator
 dispatches `checking-merge-readiness` to a fresh, read-only Reviewer
-with no prior involvement. Pass only the pull-request identity. Put its
+with no prior involvement. That Reviewer is a new session: it grades the
+commit once and receives no temp path and no grade. Pass only the
+pull-request identity. Put its
 recommendation (merge, debug, or do not merge) and risk drivers into the
 report. A debug or do-not-merge verdict goes into the report with its
 findings; the owner decides in the morning. Babysit is a local

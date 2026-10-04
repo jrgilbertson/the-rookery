@@ -216,9 +216,12 @@ review. Looks merge-ready is the trigger to start this review.
 It recommends merge, debug, or do not merge, then waits for a numbered reply.
 Gather, grade, and readout stay read-only. Option 1 is Proceed to merge.
 Before merging, it confirms the pull request has not moved, then kicks off
-the forge merge. A match is silent; a mismatch names what moved and stops
-rather than merging. It still does not mutate the tracker. The skill does
-not pick option 1 in the same turn that wrote the menu.
+the forge merge. A match is silent. A same-name base move with no GitHub
+conflict is named and is not a stopping mismatch. A `baseRefName` change
+voids the grade. An edit to a GitHub or Linear issue title, body, or
+comments is not a stopping mismatch. Any other mismatch names what moved
+and stops rather than merging. It still does not mutate the tracker. The
+skill does not pick option 1 in the same turn that wrote the menu.
 
 ### Risk Driver
 
@@ -258,9 +261,10 @@ An Executor may dispatch Scouts for evidence and runs PR readiness on
 its own head. After babysit reports a ready result (pipeline `success`,
 looks merge-ready, or cautiously looks ready), the Executor reports
 that to the Coordinator, and the Coordinator dispatches `checking-merge-readiness` to
-a fresh uninvolved Reviewer for merge readiness. Scouts and Reviewers
-do not own a pull request. One Executor ships at most one pull
-request. Merge remains a later human step.
+a fresh uninvolved Reviewer for merge readiness. That Reviewer is a new
+session: it grades the commit once and receives no temp path and no grade.
+Scouts and Reviewers do not own a pull request. One Executor ships at most
+one pull request. Merge remains a later human step.
 
 ### Gardening Tracker
 

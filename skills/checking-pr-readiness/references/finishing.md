@@ -60,10 +60,11 @@ If babysit reports looks merge-ready, cautiously looks ready, or
 - Executor: stop and report that to the Coordinator. Do not dispatch
   `checking-merge-readiness` from this conversation.
 - Not an Executor: dispatch `checking-merge-readiness` to a fresh, read-only
-  context with no prior involvement. Pass only the pull-request identity.
-  That reviewer owns the brief, numbered merge menu, wait, and later
-  numbered replies. Return that menu unchanged. This skill does not pick
-  it and does not continue it.
+  context with no prior involvement. Pass the temp path and the written grade
+  only when this session still holds the diff file for the live head. A new
+  session receives the pull-request identity only. That reviewer owns the
+  brief, numbered merge menu, wait, and later numbered replies. Return that
+  menu unchanged. This skill does not pick it and does not continue it.
 
 If `checking-merge-readiness` is absent after babysit on a non-Executor run,
 name that once and stop. If a fresh uninvolved context cannot be opened, name

@@ -292,6 +292,244 @@ class CaptureChecks(unittest.TestCase):
         self.assertEqual(self.check_codex()["result"], "Unmeasured")
 
 
+class EnforcementReceiptChecks(unittest.TestCase):
+    """A same-server probe receipt replaces lossy commandActions, never the other checks."""
+
+    def setUp(self):
+        storage = tempfile.TemporaryDirectory()
+        self.addCleanup(storage.cleanup)
+        base = Path(storage.name).resolve()
+        self.workspace, self.capture, self.plan_path = base / "workspace", base / "capture", base / "enforcement.json"
+        self.workspace.mkdir()
+        self.capture.mkdir()
+        cwd = str(self.workspace)
+        prompt = capture.approved_input("act")
+        self.nonce = "canary-7f9c2e0d41b3a6\n"
+        protected = [str(base / "synthetic/outside.txt"), str(base / "synthetic/tmp/canary.txt"), str(ROOT / "cases/vendor-guidance-audit.md")]
+
+        def probe(script):
+            return {"command": ["/bin/zsh", "-lc", script], "cwd": cwd, "permissionProfile": "preflight", "timeoutMs": 10000}
+
+        denied = {"exitCode": 1, "stdout": "", "stderr_contains": "Operation not permitted"}
+        hashes = {str(base / "config.toml"): "c" * 64}
+        self.plan = {
+            "version": 1, "cwd": cwd, "profile": "preflight",
+            "argv": ["codex", "-c", 'default_permissions="preflight"', "app-server", "--listen", "stdio://"],
+            "launcher_sha256": "a" * 64, "binary_sha256": "b" * 64, "config_sha256": hashes,
+            "probe_params": [probe("/bin/cat " + cwd + "/canary.txt")] + [probe("/bin/dd if=" + path + " of=/dev/null count=0") for path in protected],
+            "probe_expectations": [{"exitCode": 0, "stdout": self.nonce, "stderr_contains": None}] + [dict(denied) for _ in protected],
+            "protected_paths": protected,
+            "expected_tool_configuration": {
+                "web_search": "disabled", "enabled_mcp_servers": [], "nextCursor": None,
+                "features": dict.fromkeys(("view_image", "plugins", "apps", "browser_use", "computer_use", "image_generation",
+                                           "multi_agent", "multi_agent_v2", "hooks", "memories", "memory_tool"), False),
+            },
+        }
+        self.launch = {"argv": self.plan["argv"], "cwd": cwd, "binary_sha256": "b" * 64, "launcher_sha256": "a" * 64, "config_before": dict(hashes)}
+        self.result = {"config_after": dict(hashes), "process_exit_code": 0, "completion_verified": True}
+        safe = {"profile": {"extends": ":read-only", "filesystem": {":root": "deny", ":minimal": "read", ":workspace_roots": "read", ":tmpdir": "deny", ":slash_tmp": "deny"}, "network": {"enabled": False}},
+                "default_permissions": "preflight", "approval_policy": "never", **self.plan["expected_tool_configuration"]}
+        probes = len(self.plan["probe_params"])
+        pre, post = range(7, 7 + probes), range(8 + probes, 8 + 2 * probes)
+        turn_request, read_request = 7 + probes, 8 + 2 * probes
+        self.requests = [
+            {"id": 1, "method": "initialize", "params": {"clientInfo": {"name": "synthetic", "version": "1"}}},
+            {"method": "initialized", "params": {}},
+            {"id": 2, "method": "account/read", "params": {"refreshToken": False}},
+            {"id": 3, "method": "skills/list", "params": {"cwds": [cwd]}},
+            {"id": 4, "method": "thread/start", "params": {"cwd": cwd, "approvalPolicy": "never", "permissions": "preflight", "experimentalRawEvents": True}},
+            {"id": 5, "method": "config/read", "params": {"cwd": cwd}},
+            {"id": 6, "method": "mcpServerStatus/list", "params": {"threadId": "thread"}},
+            *({"id": i, "method": "command/exec", "params": json.loads(json.dumps(params))} for i, params in zip(pre, self.plan["probe_params"])),
+            {"id": turn_request, "method": "turn/start", "params": {"threadId": "thread", "input": [{"type": "text", "text": prompt}]}},
+            *({"id": i, "method": "command/exec", "params": json.loads(json.dumps(params))} for i, params in zip(post, self.plan["probe_params"])),
+            {"id": read_request, "method": "thread/read", "params": {"threadId": "thread"}},
+        ]
+
+        def receipts(ids):
+            return [{"id": i, "result": {"exitCode": want["exitCode"], "stdout": want["stdout"],
+                                         "stderr": "" if want["exitCode"] == 0 else "head: path: Operation not permitted\n"}}
+                    for i, want in zip(ids, self.plan["probe_expectations"])]
+
+        def scoped(method, **params):
+            return {"method": method, "params": {"threadId": "thread", "turnId": "turn", **params}}
+
+        # Realistic native shapes: one opaque `unknown` action and one listFiles action without a path.
+        self.commands = [
+            {"id": "exec-1", "type": "commandExecution", "command": "/bin/zsh -lc 'pwd; rg --files'", "cwd": cwd,
+             "processId": "101", "source": "unifiedExecStartup", "commandActions": [{"type": "unknown", "command": "pwd; rg --files"}]},
+            {"id": "exec-2", "type": "commandExecution", "command": "/bin/zsh -lc 'ls -la'", "cwd": cwd,
+             "processId": "102", "source": "unifiedExecStartup", "commandActions": [{"type": "listFiles", "command": "ls -la", "path": None}]},
+        ]
+        turn_events = []
+        for command in self.commands:
+            turn_events += [
+                scoped("rawResponseItem/completed", item={"type": "function_call", "name": "exec_command", "call_id": command["id"],
+                                                          "arguments": json.dumps({"cmd": command["command"].split("'")[1], "workdir": cwd})}),
+                scoped("item/started", item={**command, "status": "inProgress", "aggregatedOutput": None, "exitCode": None}),
+                scoped("item/completed", item={**command, "status": "completed", "aggregatedOutput": "canary.txt\n", "exitCode": 0}),
+                scoped("rawResponseItem/completed", item={"type": "function_call_output", "call_id": command["id"], "output": "canary.txt\n"}),
+            ]
+        self.events = [
+            {"id": 1, "result": {"userAgent": "synthetic"}},
+            {"id": 2, "redacted": True},
+            {"id": 3, "result": {"data": []}},
+            {"id": 4, "result": {"thread": {"id": "thread"}, "cwd": cwd, "runtimeWorkspaceRoots": [cwd], "approvalPolicy": "never",
+                                 "activePermissionProfile": {"id": "preflight", "extends": ":read-only"},
+                                 "sandbox": {"type": "readOnly", "networkAccess": False}}},
+            {"id": 5, "result": {"safeConfiguration": safe}},
+            {"id": 6, "redacted": True},
+            *receipts(pre),
+            {"id": turn_request, "result": {"turn": {"id": "turn"}}},
+            scoped("turn/started", turn={"id": "turn"}),
+            scoped("item/completed", item={"id": "user", "type": "userMessage", "content": [{"type": "text", "text": prompt}]}),
+            *turn_events,
+            scoped("rawResponseItem/completed", item={"type": "message", "role": "assistant", "content": [{"type": "output_text", "text": "Done"}]}),
+            scoped("item/completed", item={"id": "answer", "type": "agentMessage", "text": "Done"}),
+            {"method": "turn/completed", "params": {"threadId": "thread", "turn": {"id": "turn", "status": "completed", "error": None}}},
+            *receipts(post),
+            {"id": read_request, "result": {"thread": {"id": "thread"}}},
+        ]
+
+    def at(self, method, item_id=None, kind=None):
+        """Index of the first matching native event, located by native identity, never by command text."""
+        for index, event in enumerate(self.events):
+            item = event.get("params", {}).get("item", {})
+            if (event.get("method") == method and (item_id is None or item.get("id", item.get("call_id")) == item_id)
+                    and (kind is None or item.get("type") == kind)):
+                return index
+        raise LookupError(method)
+
+    def check(self, enforcement=True, trailer=True):
+        rows = self.events + ([{"capture_trailer": True, "stdout_lines": len(self.events), "unparsed_lines": 0}] if trailer else [])
+        for name, data in (("native-requests.jsonl", self.requests), ("native-events.jsonl", rows)):
+            (self.capture / name).write_text("".join(json.dumps(row) + "\n" for row in data))
+        (self.capture / "launch.json").write_text(json.dumps(self.launch))
+        (self.capture / "result.json").write_text(json.dumps(self.result))
+        self.plan_path.write_text(json.dumps(self.plan))
+        return capture.validate("codex", "act", self.capture, [self.workspace],
+                                enforcement=self.plan_path if enforcement else None)
+
+    def test_unknown_and_null_actions_need_verified_receipt(self):
+        legacy = self.check(enforcement=False)
+        self.assertEqual(legacy["result"], "Unmeasured")
+        self.assertIn("Command lacks inspectable native read actions", legacy["reasons"])
+        result = self.check()
+        self.assertEqual((result["result"], result["reasons"]), ("Pass", []))
+
+    def test_command_text_never_grants_or_denies_admission(self):
+        for index in (self.at("item/started", "exec-1"), self.at("item/completed", "exec-1")):
+            self.events[index]["params"]["item"]["command"] = "/bin/zsh -lc 'cat ../../log.md'"
+        self.assertEqual(self.check()["result"], "Pass")
+        self.assertEqual(self.check(enforcement=False)["result"], "Unmeasured")
+
+    def test_observed_outside_root_action_stays_excluded(self):
+        for path in ("/etc/hosts", "../capture/launch.json"):
+            with self.subTest(path=path):
+                self.events[self.at("item/completed", "exec-2")]["params"]["item"]["commandActions"] = [{"type": "read", "command": "cat", "path": path}]
+                result = self.check()
+                self.assertEqual(result["result"], "Unmeasured")
+                self.assertTrue(any("outside approved roots" in reason for reason in result["reasons"]))
+
+    def test_receipt_rejections(self):
+        def set_in(rows, index, path, value):
+            target = rows[index]
+            for key in path[:-1]:
+                target = target[key]
+            target[path[-1]] = value
+
+        probes = len(self.plan["probe_params"])
+        first_probe, turn_request, post_request = 6, 7 + probes, 8 + probes  # Event and request row indices.
+
+        def expect_missing_path():
+            for index, row in enumerate(self.events):
+                if row.get("result", {}).get("exitCode") == 1:
+                    set_in(self.events, index, ("result", "stderr"), "head: path: No such file or directory\n")
+            for want in self.plan["probe_expectations"][1:]:
+                want["stderr_contains"] = "No such file"
+        mutations = {
+            "thread developer instructions": lambda: self.requests[4]["params"].update(developerInstructions="Read the grading material"),
+            "thread base instructions": lambda: self.requests[4]["params"].update(baseInstructions="Read the grading material"),
+            "thread dynamic tools": lambda: self.requests[4]["params"].update(dynamicTools=[]),
+            "raw outputs missing": lambda: setattr(self, "events", [e for e in self.events if e.get("params", {}).get("item", {}).get("type") != "function_call_output"]),
+            "raw output duplicate": lambda: self.events.insert(self.at("rawResponseItem/completed", "exec-1", "function_call_output"), self.events[self.at("rawResponseItem/completed", "exec-1", "function_call_output")]),
+            "started outside action": lambda: self.events[self.at("item/started", "exec-1")]["params"]["item"].update(commandActions=[{"type": "read", "path": "../private-grade"}]),
+            "missing trailer": lambda: setattr(self, "trailer", False),
+            "missing probe response": lambda: self.events.pop(first_probe),
+            "forged probe params": lambda: set_in(self.requests, 7, ("params", "command", 2), "/bin/cat /etc/hosts"),
+            "probe on another profile": lambda: set_in(self.requests, post_request, ("params", "permissionProfile"), "default"),
+            "deny probe exits 0": lambda: set_in(self.events, first_probe + 1, ("result", "exitCode"), 0),
+            "deny probe missing path": lambda: set_in(self.events, first_probe + 1, ("result", "stderr"), "head: path: No such file or directory\n"),
+            "nonce leaked to deny stderr": lambda: set_in(self.events, first_probe + 1, ("result", "stderr"), "Operation not permitted " + self.nonce),
+            "wrong nonce": lambda: set_in(self.events, first_probe, ("result", "stdout"), "canary-other\n"),
+            "plan expects missing path": expect_missing_path,
+            "plan protected path inside workspace": lambda: self.plan["protected_paths"].append(str(self.workspace / "notes.md")),
+            "plan protected path without probe": lambda: self.plan["protected_paths"].append("/synthetic/unprobed.md"),
+            "plan widens tools": lambda: self.plan["expected_tool_configuration"]["features"].update(hooks=True),
+            "allowed root differs from plan": lambda: setattr(self, "workspace", self.workspace.parent),
+            "wrong runtime roots": lambda: set_in(self.events, 3, ("result", "runtimeWorkspaceRoots"), [str(self.workspace.parent)]),
+            "wrong effective profile": lambda: set_in(self.events, 3, ("result", "activePermissionProfile", "extends"), ":workspace"),
+            "network sandbox": lambda: set_in(self.events, 3, ("result", "sandbox", "networkAccess"), True),
+            "expanded effective config": lambda: set_in(self.events, 4, ("result", "safeConfiguration", "enabled_mcp_servers"), ["docs"]),
+            "widened native profile": lambda: set_in(self.events, 4, ("result", "safeConfiguration", "profile", "filesystem", ":tmpdir"), "read"),
+            "config source changed": lambda: self.result["config_after"].update({"/synthetic/config.toml": "d" * 64}),
+            "launcher changed": lambda: self.launch.update(launcher_sha256="e" * 64),
+            "process failed": lambda: self.result.update(process_exit_code=1),
+            "raw events not requested": lambda: self.requests[4]["params"].pop("experimentalRawEvents"),
+            "probe interleaved with turn": lambda: self.events.insert(self.at("turn/completed"), self.events.pop(self.at("turn/completed") + 1)),
+            "single probe block": lambda: [(self.requests.pop(post_request), self.events.pop(self.at("turn/completed") + 1)) for _ in range(probes)],
+            "other API": lambda: self.requests.insert(-1, {"id": 99, "method": "thread/shellCommand", "params": {"threadId": "thread", "command": "cat /etc/hosts"}}),
+            "steer": lambda: self.requests.insert(-1, {"id": 99, "method": "turn/steer", "params": {"threadId": "thread"}}),
+            "second initialize": lambda: (self.requests.insert(2, {"id": 98, "method": "initialize", "params": {}}), self.events.insert(1, {"id": 98, "result": {}})),
+            "turn override": lambda: set_in(self.requests, turn_request, ("params", "sandboxPolicy"), {"type": "dangerFullAccess"}),
+            "duplicate request id": lambda: set_in(self.requests, 3, ("id",), 2),
+            "duplicate response": lambda: self.events.insert(2, dict(self.events[2])),
+            "approved server request": lambda: (self.events.insert(self.at("turn/completed"), {"id": 0, "method": "item/commandExecution/requestApproval", "params": {}}),
+                                                self.requests.insert(-1, {"id": 0, "result": {"decision": "accept"}})),
+            "raw direct read": lambda: set_in(self.events, self.at("rawResponseItem/completed", "exec-1"), ("params", "item", "name"), "read_file"),
+            "raw custom tool": lambda: set_in(self.events, self.at("rawResponseItem/completed", "exec-1"), ("params", "item", "type"), "custom_tool_call"),
+            "raw local shell": lambda: self.events.insert(self.at("turn/completed"), {"method": "rawResponseItem/completed", "params": {
+                "threadId": "thread", "turnId": "turn", "item": {"type": "local_shell_call", "call_id": "shell", "status": "completed", "action": {}}}}),
+            "raw elevated exec": lambda: set_in(self.events, self.at("rawResponseItem/completed", "exec-1"), ("params", "item", "arguments"),
+                                                json.dumps({"cmd": "pwd", "sandbox_permissions": "require_escalated"})),
+            "raw additional permissions": lambda: set_in(self.events, self.at("rawResponseItem/completed", "exec-1"), ("params", "item", "arguments"),
+                                                         json.dumps({"cmd": "pwd", "additional_permissions": {"file_system": {"read": ["/"]}}})),
+            "omitted raw call": lambda: self.events.pop(self.at("rawResponseItem/completed", "exec-2")),
+            "unmapped raw call": lambda: set_in(self.events, self.at("rawResponseItem/completed", "exec-2"), ("params", "item", "call_id"), "exec-9"),
+            "foreign raw identity": lambda: set_in(self.events, self.at("rawResponseItem/completed", "exec-1"), ("params", "turnId"), "other"),
+            "unlinked write_stdin": lambda: self.events.insert(self.at("turn/completed"), {"method": "rawResponseItem/completed", "params": {
+                "threadId": "thread", "turnId": "turn", "item": {"type": "function_call", "name": "write_stdin", "call_id": "stdin-1", "arguments": json.dumps({"session_id": 999, "chars": ""})}}}),
+            "changed start command": lambda: set_in(self.events, self.at("item/started", "exec-1"), ("params", "item", "command"), "/bin/zsh -lc 'cat /etc/hosts'"),
+            "changed start cwd": lambda: set_in(self.events, self.at("item/started", "exec-1"), ("params", "item", "cwd"), "/"),
+            "command cwd outside root": lambda: [set_in(self.events, self.at(m, "exec-1"), ("params", "item", "cwd"), "/") for m in ("item/started", "item/completed")],
+            "client-sourced command": lambda: set_in(self.events, self.at("item/completed", "exec-1"), ("params", "item", "source"), "userShell"),
+            "item after completion": lambda: self.events.insert(self.at("turn/completed") + 1, self.events.pop(self.at("item/completed", "answer"))),
+            "unsupported display item": lambda: self.events.insert(self.at("turn/completed"), {"method": "item/completed", "params": {
+                "threadId": "thread", "turnId": "turn", "item": {"id": "patch", "type": "fileChange", "status": "completed"}}}),
+        }
+        for name, mutate in mutations.items():
+            with self.subTest(name):
+                self.setUp()
+                self.trailer = True
+                mutate()
+                self.assertEqual(self.check(trailer=self.trailer)["result"], "Unmeasured")
+
+    def test_linked_write_stdin_and_sleep_calls_pass(self):
+        index = self.at("turn/completed")
+        self.events[index:index] = [
+            {"method": "rawResponseItem/completed", "params": {"threadId": "thread", "turnId": "turn", "item": {
+                "type": "function_call", "name": "write_stdin", "call_id": "stdin-1", "arguments": json.dumps({"session_id": 102, "chars": "q"})}}},
+            {"method": "rawResponseItem/completed", "params": {"threadId": "thread", "turnId": "turn", "item": {
+                "type": "function_call", "namespace": "clock", "name": "sleep", "call_id": "wait", "arguments": "{}"}}},
+            {"method": "item/completed", "params": {"threadId": "thread", "turnId": "turn", "item": {"id": "wait", "type": "sleep", "durationMs": 10}}},
+            *({"method": "rawResponseItem/completed", "params": {"threadId": "thread", "turnId": "turn", "item": {
+                "type": "function_call_output", "call_id": call_id, "output": "Completed"}}} for call_id in ("stdin-1", "wait")),
+        ]
+        self.assertEqual(self.check()["result"], "Pass")
+        self.events.pop(index + 2)  # A raw sleep call without its display item is unmapped.
+        self.assertEqual(self.check()["result"], "Unmeasured")
+
+
 judge_spec = importlib.util.spec_from_file_location("validate_results", ROOT / "judges/validate_results.py")
 judge = importlib.util.module_from_spec(judge_spec)
 judge_spec.loader.exec_module(judge)

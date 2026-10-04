@@ -99,9 +99,62 @@ python3 tests/creating-portable-skills/validate_capture.py codex aud "$capture_d
 ```
 
 Set all paths outside the public worktree. A capture-check Pass covers these
-objective observations only. Verify frozen skill identity/discovery and native
-filesystem confinement separately before admitting a run. Keep C3's file
-observation separate even when a run is excluded from behavioral comparisons.
+objective observations only. Verify frozen skill identity/discovery separately,
+and native filesystem confinement through the receipt below or other host
+evidence, before admitting a run. Keep C3's file observation separate even when
+a run is excluded from behavioral comparisons.
+
+### Optional Codex enforcement receipt
+
+A Codex command with unknown or path-less `commandActions` is admissible only
+with a verified same-server enforcement receipt:
+
+```sh
+python3 tests/creating-portable-skills/validate_capture.py codex aud "$capture_dir" --allowed-root "$eval_workspace" --enforcement "$enforcement_plan"
+```
+
+This adapter targets the inspected Codex 0.160.0 protocol with direct tool
+exposure. Freeze the actual native executable and invoke its absolute path.
+For models whose catalog selects Code Mode, a private `model_catalog_json`
+override can preserve the model metadata while setting `tool_mode` to `direct`.
+Pin that catalog alongside the launcher. This is a distinct harness configuration;
+an admitted direct-tool smoke does not validate Code Mode's nested call capture.
+Code Mode facades and unmapped tool calls remain Unmeasured.
+
+The plan is the operator's frozen JSON, not a result: `version` 1, `profile`
+`preflight`, the single approved workspace `cwd`, the exact app-server `argv`,
+`launcher_sha256`, `binary_sha256`, `config_sha256` for pinned non-secret inputs,
+canonical `command/exec` `probe_params` with matching `probe_expectations`
+(`exitCode`, exact `stdout`, `stderr_contains`), the required
+`expected_tool_configuration`, and `protected_paths`. Allow probes return a
+canary. Deny probes must expect exit 1 with a permission error, never a missing
+path, and every protected path needs a deny probe. Case files, coordination
+files, prior outputs, the plan and the capture must resolve outside the
+workspace.
+
+The checker recomputes the receipt from the native streams and spawns nothing.
+It requires the same probe block before `turn/start` and after the native
+`turn/completed`, with matching exact responses. It also requires the effective
+`preflight` profile (`:read-only`, `:root` deny, `:minimal` and
+`:workspace_roots` read, `:tmpdir` and `:slash_tmp` deny, network off), approval
+`never`, runtime roots equal to `cwd`, and the launcher's redacted
+`safeConfiguration` matching the fixed tool surface. Only approved client methods
+may appear, with one initialize and one turn. Each request needs exactly one
+response. Server requests may receive only paired error replies. The capture
+needs a final trailer row covering every native stdout line, with none
+unparsed. Raw `rawResponseItem/completed` events must show only `exec_command`,
+`write_stdin` and `clock.sleep` calls, without elevated sandbox permissions. Each
+exec `call_id` must equal a completed `commandExecution` item ID inside the
+workspace, and each `write_stdin` must name the process of an earlier command.
+The started and completed command payloads must agree. Admission never depends
+on command text. An action that names a path outside the approved roots is
+still excluded.
+
+`launch.json` and `result.json` hash facts are trusted launcher records bound to
+the plan, not independent receipts. Probes sample named paths. They do not audit
+every read, and `:minimal` keeps ambient OS, loader, library and device access,
+so a receipt does not show the runtime is free of secrets. Without
+`--enforcement`, the lossy-action rules above apply unchanged.
 
 Host setup remains a prerequisite.
 The private launcher must refuse model execution until native confinement is
@@ -110,8 +163,9 @@ captures contain extra input text and therefore do not measure these exact cases
 These setup findings are not repaired-host claims or grounds for model retries.
 A resolved Codex read-only/never policy alone does not prove read confinement.
 The inspected native thread also inherited user-level instructions. Filesystem
-read confinement and acceptable inherited instruction exposure remain separate,
-unverified admission prerequisites. The checker retains Grok support only for
+read confinement needs a verified receipt or equivalent host evidence. Acceptable
+inherited instruction exposure remains a separate, unverified admission
+prerequisite. The checker retains Grok support only for
 inspecting historical captures; no new Grok execution or sandbox repair is planned.
 
 ## Provisional subjective judges

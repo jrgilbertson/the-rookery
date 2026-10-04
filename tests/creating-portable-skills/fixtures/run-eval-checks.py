@@ -87,7 +87,7 @@ class CaptureChecks(unittest.TestCase):
             {"id": 2, "result": {"turn": {"id": "turn"}}},
             {"method": "item/completed", "params": {"threadId": "thread", "turnId": "turn", "item": {"id": "user", "type": "userMessage", "content": [{"type": "text", "text": self.prompt}]}}},
             {"method": "turn/completed", "params": {"threadId": "thread", "turn": {"id": "turn", "status": "completed", "error": None}}},
-            {"id": 3, "result": {"thread": {"id": "thread"}}},
+            {"id": 3, "result": {"thread": {"id": "thread", "status": {"type": "idle"}, "turns": []}}},
         ]
         self.grok = [
             {"type": "system", "subtype": "init", "session_id": "session", "cwd": str(self.root)},
@@ -100,10 +100,10 @@ class CaptureChecks(unittest.TestCase):
     def write_rows(self, path, rows):
         path.write_text("".join(json.dumps(row) + "\n" for row in rows))
 
-    def check_codex(self):
+    def check_codex(self, case="act"):
         self.write_rows(self.root / "native-requests.jsonl", self.requests)
         self.write_rows(self.root / "native-events.jsonl", self.events)
-        return capture.validate("codex", "act", self.root, [self.root])
+        return capture.validate("codex", case, self.root, [self.root])
 
     def check_grok(self):
         self.write_rows(self.root / "stdout.ndjson", self.grok)
@@ -112,6 +112,21 @@ class CaptureChecks(unittest.TestCase):
     def test_native_success(self):
         self.assertEqual(self.check_codex()["result"], "Pass")
         self.assertEqual(self.check_grok()["result"], "Pass")
+
+    def test_activation_cases_require_exact_text_and_no_forced_skill(self):
+        for case in ("author", "review", "writing"):
+            with self.subTest(case=case):
+                prompt = capture.approved_input(case)
+                request = self.requests[1]["params"]
+                user = self.events[2]["params"]["item"]
+                request["input"] = [{"type": "text", "text": prompt}]
+                user["content"] = [{"type": "text", "text": prompt}]
+                self.assertEqual(self.check_codex(case)["result"], "Pass")
+                request["input"].append({"type": "skill", "name": "creating-portable-skills",
+                                         "path": str(self.root / "SKILL.md")})
+                self.assertEqual(self.check_codex(case)["result"], "Unmeasured")
+                request["input"] = [{"type": "text", "text": prompt + " Activate the skill."}]
+                self.assertEqual(self.check_codex(case)["result"], "Unmeasured")
 
     def test_codex_completed_read_and_sleep(self):
         self.events[3:3] = [
@@ -189,6 +204,35 @@ class CaptureChecks(unittest.TestCase):
         self.assertIn("Command lacks inspectable native read actions", result["reasons"])
         self.assertFalse(any("outside approved roots" in reason for reason in result["reasons"]))
         item["commandActions"] = []
+        self.assertEqual(self.check_codex()["result"], "Unmeasured")
+
+    def test_codex_display_paths_without_confinement_are_unmeasured(self):
+        for action in ({"type": "read", "path": "{/etc/passwd,x}"},
+                       {"type": "read", "path": "`echo ..`/secret"},
+                       {"type": "read", "path": "~/.ssh/key"},
+                       {"type": "read", "path": "$HOME/.codex/auth.json"},
+                       {"type": "listFiles", "path": "private-grading"},
+                       {"type": "search", "path": "private-grading"}):
+            with self.subTest(action=action):
+                self.events.insert(-2, {"method": "item/completed", "params": {
+                    "threadId": "thread", "turnId": "turn", "item": {
+                        "id": "ambiguous", "type": "commandExecution", "cwd": str(self.root),
+                        "status": "completed", "exitCode": 0, "commandActions": [action]}}})
+                result = self.check_codex()["result"]
+                self.events.pop(-3)
+                self.assertEqual(result, "Unmeasured")
+
+    def test_codex_post_completion_read_must_be_idle_identity_only(self):
+        thread = self.events[-1]["result"]["thread"]
+        for status in (None, {"type": "active"}, {"type": "systemError"}):
+            with self.subTest(status=status):
+                thread["status"] = status
+                self.assertEqual(self.check_codex()["result"], "Unmeasured")
+        thread["status"] = {"type": "idle"}
+        self.requests[-1]["params"]["includeTurns"] = True
+        self.assertEqual(self.check_codex()["result"], "Unmeasured")
+        self.requests[-1]["params"]["includeTurns"] = False
+        thread["turns"] = [{"id": "turn", "status": "inProgress", "items": []}]
         self.assertEqual(self.check_codex()["result"], "Unmeasured")
 
     def test_codex_audit_explicit_skill_input(self):
@@ -388,7 +432,7 @@ class EnforcementReceiptChecks(unittest.TestCase):
             scoped("item/completed", item={"id": "answer", "type": "agentMessage", "text": "Done"}),
             {"method": "turn/completed", "params": {"threadId": "thread", "turn": {"id": "turn", "status": "completed", "error": None}}},
             *receipts(post),
-            {"id": read_request, "result": {"thread": {"id": "thread"}}},
+            {"id": read_request, "result": {"thread": {"id": "thread", "status": {"type": "idle"}, "turns": []}}},
         ]
 
     def at(self, method, item_id=None, kind=None):
@@ -416,6 +460,23 @@ class EnforcementReceiptChecks(unittest.TestCase):
         self.assertIn("Command lacks inspectable native read actions", legacy["reasons"])
         result = self.check()
         self.assertEqual((result["result"], result["reasons"]), ("Pass", []))
+
+    def test_code_mode_facade_without_nested_receipts_stays_unmeasured(self):
+        # Native CodeMode uses facade call IDs while child commands have exec UUIDs.
+        for event in self.events:
+            if event.get("method") != "rawResponseItem/completed":
+                continue
+            item = event["params"]["item"]
+            if item.get("type") == "function_call":
+                item.update(type="custom_tool_call", name="exec", call_id="facade-" + item["call_id"],
+                            input="text(await tools.exec_command({cmd:'ls'}));")
+                del item["arguments"]
+            elif item.get("type") == "function_call_output":
+                item.update(type="custom_tool_call_output", call_id="facade-" + item["call_id"],
+                            internal_chat_message_metadata_passthrough={"turn_id": "turn"})
+        result = self.check()
+        self.assertEqual(result["result"], "Unmeasured")
+        self.assertIn("Enforcement receipt: command items and raw exec calls do not map one-to-one", result["reasons"])
 
     def test_command_text_never_grants_or_denies_admission(self):
         for index in (self.at("item/started", "exec-1"), self.at("item/completed", "exec-1")):

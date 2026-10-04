@@ -5,8 +5,8 @@ repository checks. The legacy behavioral cases, trigger lists, run logs, and
 simulator adapters have been retired. Their committed versions remain in Git
 history. New behavioral evaluation follows [SKILLS.md](../SKILLS.md#evaluation-workflow).
 The [Creating Portable Skills suite](creating-portable-skills/README.md) defines
-its initial cases and deterministic input-preservation check; host behavior
-remains unmeasured until the approved pilot completes.
+bounded cases and deterministic checks. Report native host behavior separately
+from repository checks and provisional subjective judgments.
 
 Run the complete repository gate:
 

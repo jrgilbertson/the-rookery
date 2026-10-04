@@ -1,9 +1,15 @@
 # Creating Portable Skills evaluation
 
-The initial suite defines two bounded tasks:
+The suite defines five bounded tasks:
 
 - [CPS-ACT-001](cases/activation-near-miss.md): a generic grader request should
   not activate the skill creator merely because it mentions a grader.
+- [CPS-ACT-002](cases/activation-authoring.md): implicit skill authoring should
+  load the creator through ordinary discovery.
+- [CPS-ACT-003](cases/activation-explicit-review.md): naming the creator in a
+  normal review request should load it without a forced skill attachment.
+- [CPS-ACT-004](cases/activation-writing-near-miss.md): reusable meeting
+  instructions should stay an ordinary writing task.
 - [CPS-AUD-001](cases/vendor-guidance-audit.md): compare a supplied small skill
   with synthetic vendor guidance without narrowing its portability or editing
   the supplied files.
@@ -21,11 +27,13 @@ requirement or a blocker for this suite.
 Follow [SKILLS.md](../../SKILLS.md#evaluation-workflow). Agree on the case inputs,
 criteria, host, model, execution limits, authentication and budget before model
 runs. Send exactly the case's `INPUT` paragraph, optionally followed by one
-transport newline. ACT is `Build a grader and rubric for judging model outputs.`
-AUD is `Use creating-portable-skills for a read-only comparison of this skill and
-the supplied vendor guide. Which guidance should we adopt while keeping the skill
-usable across harnesses and models?` Supply AUD's two fixture files at their named
+transport newline. Read each input from its linked case's `INPUT` section.
+Supply AUD's two fixture files at their named
 relative paths; do not append fixture hints or isolation prose to the paragraph.
+Use the exact INPUT paragraph from ACT-002/003/004 as well, with no native skill
+attachment. These cases grade native activation only; a draft or review
+response is not a behavioral evaluation of a generated skill. The capture
+checker names these cases `author`, `review`, and `writing`, respectively.
 Record necessary host instructions separately. Keep executor input separate from criteria and answer material. Use native
 host tools and disposable storage outside the repository; do not execute the
 supplied or generated skill as a second task.
@@ -66,11 +74,39 @@ is required, and unchanged requirements need not be repeated.
 Report each host and criterion separately. Exclude incomplete captures from
 completed comparisons and leave unavailable usage/cost unknown. This small pilot
 can check case clarity and capture reliability; it cannot establish population
-success rates, positive activation reliability or portability across unmeasured
+success rates, activation reliability beyond the cases run or portability across unmeasured
 hosts. Private traces and review pages are not suite dependencies and must not
 be committed here.
 
 ## Check existing native captures
+
+Claude capture admission uses manual native-trace review; the automated capture
+checker below supports Codex and historical Grok captures only. For Claude,
+place an unchanged copy of the creator package under the disposable workspace's
+`.claude/skills/creating-portable-skills/`, retain its file hashes, and confirm
+normal discovery. Capture the approved text with the native CLI's print mode,
+`--output-format stream-json --verbose`, a fresh session ID, and the agreed
+read-only tool and permission configuration. Retain stdout, stderr, the native
+session transcript, effective settings and before/after workspace manifests
+outside the repository. Do not supply criterion text or force a skill attachment
+for activation cases.
+
+Review the native evidence before assigning behavior grades:
+
+- Require exactly one matching init and successful result, the expected session
+  identity throughout, and the exact canonical user input in persisted history.
+- Verify the frozen package was discovered, exposed tools and instructions were
+  recorded, and every tool call has its matching result with no outstanding or
+  delegated work. Record unavailable host context explicitly.
+- Inspect all reads against the approved workspace and skill roots. Missing,
+  ambiguous or successful outside-root reads make admission Unmeasured.
+- Count activation only when a successful native Skill load or body read exposes
+  the frozen body. Verify any native wrapper or argument suffix against the
+  actual call; discovery metadata, path listings and failed attempts are separate.
+
+This procedure does not depend on a private launcher or prior session. A manual
+admission decision must name its evidence and limitations; it is not a verdict
+from `validate_capture.py`.
 
 The stdlib capture checker reads Codex `native-requests.jsonl` and
 `native-events.jsonl`, or Grok `stdout.ndjson` plus native `chat_history.jsonl`
@@ -79,7 +115,9 @@ from the matching session-ID directory. Grok query identity comes from native
 It checks actual text against canonical case input, successful native completion,
 matching session/turn identity, duplicate or retyped native item identities,
 outstanding work and successful reads outside the
-approved read roots. Codex also requires a matching post-completion thread read.
+approved read roots. Codex also requires a matching post-completion thread read
+with `includeTurns` absent or false, idle status and no turn history; this confirms
+identity and idleness, not a complete second tool inventory.
 Report flags, saved prompt hashes and process exit codes do not replace native
 evidence. Supply only executor-approved workspace and skill roots, never a parent
 containing criteria, coordination files or other runs. A successful grading or
@@ -88,7 +126,11 @@ native evidence is conservatively Unmeasured. Codex command reads are checked
 even when the aggregate command fails: a read may succeed before a later error.
 Codex `commandActions` are best-effort, lossy display metadata, not an exhaustive
 filesystem read audit. Unclassified actions and missing paths remain Unmeasured;
-a missing path is not evidence of an observed outside-root read. A valid completed
+a missing path is not evidence of an observed outside-root read. Without an
+enforcement receipt, listing/search paths and paths containing unresolved tilde,
+dollar, backtick or brace expansions remain Unmeasured even when they look
+lexically inside a root.
+A valid completed
 native `sleep` display item is non-reading, but still requires matching identity
 and no outstanding work. These checks do not parse opaque commands or scripts to
 infer safe reads. The CLI exits 1 for inadmissible or
@@ -132,6 +174,39 @@ path, and every protected path needs a deny probe. Case files, coordination
 files, prior outputs, the plan and the capture must resolve outside the
 workspace.
 
+The enforcement adapter accepts one workspace root only. Copy the unchanged
+creator package into `.agents/skills/creating-portable-skills/` within that root
+so ordinary Codex discovery and instruction reads stay inside it. Put case
+definitions, criteria, captures and all coordination material outside the root.
+Verify discovery and the copied package's hashes separately.
+
+Use a native app-server recorder, not transcript text copied from a terminal.
+The recorder must preserve each client request in `native-requests.jsonl` and
+each server response or notification in `native-events.jsonl`, with native IDs
+and ordering intact. It must reject approvals, apply the frozen settings before
+the turn, verify the effective configuration, perform the planned probes, wait
+for native completion and idle `thread/read`, then close and reap the server.
+The maintained checker is a consumer, not a capture launcher; an operator may
+implement this recorder with the stdlib or existing native orchestration tools.
+Its required companion records are:
+
+```text
+launch.json: {argv, cwd, binary_sha256, launcher_sha256, config_before}
+result.json: {config_after, process_exit_code: 0, completion_verified: true}
+final native-events.jsonl row:
+  {capture_trailer: true, stdout_lines: N, unparsed_lines: 0}
+```
+
+Hash maps use absolute non-secret input paths and SHA-256 digests. `argv` is the
+exact native invocation; `cwd` is the approved workspace. `N` counts every
+preceding native stdout row, excluding the trailer. Missing or unparsed rows
+cannot be replaced with successful completion flags. The recorder's projected
+`config/read` response must expose `safeConfiguration` with the exact `PROFILE`
+and `TOOLS` contract in [validate_capture.py](validate_capture.py); preserve the
+original effective settings separately. Freeze the recorder itself and the
+native executable before execution. These are operator-bound facts, not proof
+that an arbitrary third-party recorder is trustworthy.
+
 The checker recomputes the receipt from the native streams and spawns nothing.
 It requires the same probe block before `turn/start` and after the native
 `turn/completed`, with matching exact responses. It also requires the effective
@@ -156,17 +231,13 @@ every read, and `:minimal` keeps ambient OS, loader, library and device access,
 so a receipt does not show the runtime is free of secrets. Without
 `--enforcement`, the lossy-action rules above apply unchanged.
 
-Host setup remains a prerequisite.
-The private launcher must refuse model execution until native confinement is
-verified; permission mode and isolation prose cannot replace it. Codex's inspected
-captures contain extra input text and therefore do not measure these exact cases.
-These setup findings are not repaired-host claims or grounds for model retries.
-A resolved Codex read-only/never policy alone does not prove read confinement.
-The inspected native thread also inherited user-level instructions. Filesystem
-read confinement needs a verified receipt or equivalent host evidence. Acceptable
-inherited instruction exposure remains a separate, unverified admission
-prerequisite. The checker retains Grok support only for
-inspecting historical captures; no new Grok execution or sandbox repair is planned.
+Host setup remains a prerequisite. The launcher must verify native confinement
+before model execution; permission mode and isolation prose cannot replace it.
+A Codex read-only/never policy alone does not prove read confinement. Record
+inherited instructions separately and confirm that discovery and any instruction
+body loads identify the frozen package. Preserve excluded historical captures
+under their original setup and input labels; do not relabel them as repaired
+runs. Grok support remains only for historical inspection.
 
 ## Provisional subjective judges
 
@@ -184,6 +255,11 @@ challenge labels. Synthetic challenge agreement is not human TPR/TNR or a
 validated judgment of actual model behavior. Preserve provisional decisions and
 quoted output separately; missing calibration is Unmeasured.
 
+For each criterion packet, strip its `C1.`, `C2.` or `C4.` prefix from the six
+synthetic challenge IDs. Optional actual-output candidates use `response-a` and
+`response-b`; those verdicts are checked for schema but excluded from synthetic
+agreement counts. Keep their source output identities in the separate packet.
+
 ## Check the deterministic evaluators
 
 ```sh
@@ -196,5 +272,17 @@ reads, changed/restored/deleted files, symlink replacements and unavailable
 evidence. Native-format synthetic captures additionally exercise altered input,
 wrong identities, cancelled results, external reads and missing native evidence;
 judge checks exercise schema failures and deliberately swapped challenge labels.
-Passing these tests validates the objective checkers, not the creator's behavior
+Passing these tests exercises the objective checkers, not the creator's behavior
 or a subjective judge's human alignment.
+
+## Human calibration remains separate
+
+LLM verdicts and synthetic challenge labels cannot stand in for independent
+human labels. Freeze the criterion prompt, source output and reviewer label
+separately. Present the exact output and criterion to the reviewer without the
+LLM verdict. Use Pass, Fail or Defer; a deferred or missing label is not a Fail.
+Separate few-shot training examples, development labels and a held-out test
+before tuning. Report per-criterion TPR/TNR and disagreements only when labels
+cover both classes; small sets have wide uncertainty. Run the held-out test once,
+and do not tune against it. Until that evidence exists, keep subjective results
+provisional and human alignment Unmeasured.

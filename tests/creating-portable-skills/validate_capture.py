@@ -8,7 +8,9 @@ import re
 
 
 ROOT = Path(__file__).resolve().parent
-CASES = {"act": "activation-near-miss.md", "aud": "vendor-guidance-audit.md"}
+CASES = {"act": "activation-near-miss.md", "aud": "vendor-guidance-audit.md",
+         "author": "activation-authoring.md", "review": "activation-explicit-review.md",
+         "writing": "activation-writing-near-miss.md"}
 # Fixed native profile and tool surface that an enforcement receipt may vouch for.
 PROFILE = {"extends": ":read-only", "filesystem": {":root": "deny", ":minimal": "read", ":workspace_roots": "read", ":tmpdir": "deny", ":slash_tmp": "deny"}, "network": {"enabled": False}}
 TOOLS = {"web_search": "disabled", "enabled_mcp_servers": [], "nextCursor": None,
@@ -245,6 +247,11 @@ def validate(host, case, directory, allowed_roots, history=None, enforcement=Non
                       any(event.get("id") == r["id"] and i > completion_positions[0] for i, event in enumerate(events))
                       for r in reads) if completion_positions else False,
                   "Missing matching post-completion native thread read")
+            for read in reads:
+                thread = responses.get(read["id"], {}).get("thread", {})
+                check(read["params"].get("includeTurns", False) is False and
+                      thread.get("status") == {"type": "idle"} and thread.get("turns", []) == [],
+                      "Native thread read must confirm idle identity without turn history")
             completed_items = [e["params"]["item"] for e in scoped if e.get("method") == "item/completed"]
             completed = {item["id"]: item for item in completed_items}
             check(len(completed_items) == len(completed), "Duplicate native completed item identities")
@@ -280,6 +287,8 @@ def validate(host, case, directory, allowed_roots, history=None, enforcement=Non
                     actions = item.get("commandActions", [])
                     read_types = ("read", "listFiles", "search")
                     check(bool(actions) and all(a.get("type") in read_types for a in actions), "Command lacks inspectable native read actions")
+                    check(all(a.get("type") == "read" for a in actions),
+                          "Native listing/search display paths need independent confinement evidence")
                     # Native actions are lossy display metadata, not an exhaustive read audit.
                     for action in actions:
                         if action.get("type") not in read_types:
@@ -288,6 +297,8 @@ def validate(host, case, directory, allowed_roots, history=None, enforcement=Non
                         if not isinstance(path, str) or not path:
                             check(False, "Native command missing or malformed read path: " + str(path))
                             continue
+                        check(not any(c in path for c in "~$`{"),
+                              "Native command read path may contain unresolved shell expansion: " + path)
                         check(allowed(path, item.get("cwd", directory)), "Native command read outside approved roots (per-read success cannot be inferred from aggregate exit code): " + path)
             for name in ("hook",):
                 begun = {e["params"]["run"]["id"] for e in events if e.get("method") == name + "/started"}

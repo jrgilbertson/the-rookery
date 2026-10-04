@@ -51,7 +51,12 @@ record which host a result covers rather than treating one host's success as
 proof for all three.
 
 `creating-portable-skills` is the first dogfood for this workflow. Its
-replacement suite has not yet been validated. The other skill packages remain
+[bounded replacement suite](tests/creating-portable-skills/README.md) targets
+Claude and Codex with activation cases, a read-only portability audit, manual
+Claude trace review, automated Codex capture checks and provisional criterion
+judges. Independent human calibration
+is still required to claim judge alignment; a direct-tool Codex result does not
+validate default Code Mode. The other skill packages remain
 available and await revalidation in turn. Passing repository
 checks does not establish behavioral quality.
 

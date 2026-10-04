@@ -113,6 +113,84 @@ class CaptureChecks(unittest.TestCase):
         self.assertEqual(self.check_codex()["result"], "Pass")
         self.assertEqual(self.check_grok()["result"], "Pass")
 
+    def test_codex_completed_read_and_sleep(self):
+        self.events[3:3] = [
+            {"method": "item/started", "params": {"threadId": "thread", "turnId": "turn", "item": {
+                "id": "read", "type": "commandExecution", "status": "inProgress",
+            }}},
+            {"method": "item/completed", "params": {"threadId": "thread", "turnId": "turn", "item": {
+                "id": "read", "type": "commandExecution", "cwd": str(self.root), "status": "completed", "exitCode": 0,
+                "command": "cat SKILL.md", "aggregatedOutput": "Synthetic skill",
+                "commandActions": [{"type": "read", "name": "SKILL.md", "path": "SKILL.md"}],
+            }}},
+            {"method": "item/started", "params": {"threadId": "thread", "turnId": "turn", "item": {
+                "id": "wait", "type": "sleep", "durationMs": 60000,
+            }}},
+            {"method": "item/completed", "params": {"threadId": "thread", "turnId": "turn", "item": {
+                "id": "wait", "type": "sleep", "durationMs": 60000,
+            }}},
+        ]
+        self.assertEqual(self.check_codex()["result"], "Pass")
+        self.events.pop(6)  # A started sleep still requires its matching completion.
+        self.assertEqual(self.check_codex()["result"], "Unmeasured")
+
+    def test_codex_reused_or_retyped_item_cannot_hide_read(self):
+        read = {"id": "reused", "type": "commandExecution", "cwd": str(self.root),
+                "status": "completed", "exitCode": 0, "command": "cat ../worker-spec.txt",
+                "commandActions": [{"type": "read", "path": "../worker-spec.txt"}]}
+        for method in ("item/completed", "item/started"):
+            for kind in ("sleep", "agentMessage"):
+                with self.subTest(method=method, kind=kind):
+                    replacement = ({"id": "reused", "type": "sleep", "durationMs": 0} if kind == "sleep"
+                                   else {"id": "reused", "type": "agentMessage", "text": "Done"})
+                    self.events[3:3] = [
+                        {"method": method, "params": {"threadId": "thread", "turnId": "turn", "item": read}},
+                        {"method": "item/completed", "params": {"threadId": "thread", "turnId": "turn", "item": replacement}},
+                    ]
+                    self.assertEqual(self.check_codex()["result"], "Unmeasured")
+                    del self.events[3:5]
+
+    def test_codex_sleep_requires_native_display_shape(self):
+        item = {"id": "wait", "type": "sleep", "durationMs": 0}
+        self.events.insert(3, {"method": "item/completed", "params": {
+            "threadId": "thread", "turnId": "turn", "item": item,
+        }})
+        self.assertEqual(self.check_codex()["result"], "Pass")
+        for duration in (None, True, -1, 0.5, "60000", 2 ** 64):
+            with self.subTest(duration=duration):
+                item["durationMs"] = duration
+                self.assertEqual(self.check_codex()["result"], "Unmeasured")
+        item["durationMs"] = 60000
+        item["command"] = "cat ../worker-spec.txt"
+        self.assertEqual(self.check_codex()["result"], "Unmeasured")
+        del item["command"]
+        del item["durationMs"]
+        self.assertEqual(self.check_codex()["result"], "Unmeasured")
+
+    def test_codex_missing_path_is_not_an_observed_external_read(self):
+        item = {"id": "listing", "type": "commandExecution", "cwd": str(self.root),
+                "status": "completed", "exitCode": 0, "command": "ls -la",
+                "aggregatedOutput": "SKILL.md"}
+        self.events.insert(3, {"method": "item/completed", "params": {
+            "threadId": "thread", "turnId": "turn", "item": item,
+        }})
+        for action in ({"type": "listFiles", "path": None}, {"type": "read"},
+                       {"type": "search", "path": ""}, {"type": "read", "path": 42}):
+            with self.subTest(action=action):
+                item["commandActions"] = [action]
+                result = self.check_codex()
+                self.assertEqual(result["result"], "Unmeasured")
+                self.assertTrue(any("missing or malformed read path" in reason for reason in result["reasons"]))
+                self.assertFalse(any("outside approved roots" in reason for reason in result["reasons"]))
+        item["command"] = "pwd; cat ../worker-spec.txt"
+        item["commandActions"] = [{"type": "unknown", "command": item["command"]}]
+        result = self.check_codex()
+        self.assertEqual(result["result"], "Unmeasured")
+        self.assertIn("Command lacks inspectable native read actions", result["reasons"])
+        self.assertFalse(any("outside approved roots" in reason for reason in result["reasons"]))
+        item["commandActions"] = []
+        self.assertEqual(self.check_codex()["result"], "Unmeasured")
+
     def test_codex_audit_explicit_skill_input(self):
         content = [{"type": "text", "text": capture.approved_input("aud")},
                    {"type": "skill", "name": "creating-portable-skills", "path": str(self.root / ".agents/skills/creating-portable-skills/SKILL.md")}]

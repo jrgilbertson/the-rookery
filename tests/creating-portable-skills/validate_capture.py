@@ -87,19 +87,38 @@ def validate(host, case, directory, allowed_roots, history=None):
                       any(event.get("id") == r["id"] and i > completion_positions[0] for i, event in enumerate(events))
                       for r in reads) if completion_positions else False,
                   "Missing matching post-completion native thread read")
-            completed = {e["params"]["item"]["id"]: e["params"]["item"] for e in scoped if e.get("method") == "item/completed"}
-            started = {e["params"]["item"]["id"] for e in scoped if e.get("method") == "item/started"}
-            check(started <= completed.keys(), "Outstanding native item identities")
+            completed_items = [e["params"]["item"] for e in scoped if e.get("method") == "item/completed"]
+            completed = {item["id"]: item for item in completed_items}
+            check(len(completed_items) == len(completed), "Duplicate native completed item identities")
+            started_items = [e["params"]["item"] for e in scoped if e.get("method") == "item/started"]
+            check(all(item["id"] in completed for item in started_items), "Outstanding native item identities")
+            check(all(item.get("type") == completed[item["id"]].get("type") for item in started_items if item["id"] in completed),
+                  "Native item type changed between start and completion")
             user = [item for item in completed.values() if item.get("type") == "userMessage"]
             check(len(user) == 1 and approved_parts(user[0]["content"]), "Native user event differs from approved INPUT or is missing")
             for item in completed.values():
-                check(item.get("type") in ("userMessage", "agentMessage", "reasoning", "commandExecution"), "Native item lacks inspectable read semantics: " + str(item.get("type")))
+                check(item.get("type") in ("userMessage", "agentMessage", "reasoning", "commandExecution", "sleep"), "Native item lacks inspectable read semantics: " + str(item.get("type")))
                 check(item.get("status") not in ("inProgress", "pending", "running") and "collab" not in item.get("type", "").lower(), "Outstanding/delegated work lacks completion evidence")
+                if item.get("type") == "sleep":
+                    # Codex's clock.sleep display item carries no command or read payload.
+                    duration = item.get("durationMs")
+                    check(set(item) == {"id", "type", "durationMs"} and
+                          isinstance(item.get("id"), str) and bool(item["id"]) and
+                          type(duration) is int and 0 <= duration < 2 ** 64,
+                          "Malformed native sleep display item")
                 if item.get("type") == "commandExecution":
                     actions = item.get("commandActions", [])
-                    check(bool(actions) and all(a.get("type") in ("read", "listFiles", "search") for a in actions), "Command lacks inspectable native read actions")
+                    read_types = ("read", "listFiles", "search")
+                    check(bool(actions) and all(a.get("type") in read_types for a in actions), "Command lacks inspectable native read actions")
+                    # Native actions are lossy display metadata, not an exhaustive read audit.
                     for action in actions:
-                        check(allowed(action.get("path"), item.get("cwd", directory)), "Native command read outside approved roots (per-read success cannot be inferred from aggregate exit code): " + str(action.get("path")))
+                        if action.get("type") not in read_types:
+                            continue
+                        path = action.get("path")
+                        if not isinstance(path, str) or not path:
+                            check(False, "Native command missing or malformed read path: " + str(path))
+                            continue
+                        check(allowed(path, item.get("cwd", directory)), "Native command read outside approved roots (per-read success cannot be inferred from aggregate exit code): " + path)
             for name in ("hook",):
                 begun = {e["params"]["run"]["id"] for e in events if e.get("method") == name + "/started"}
                 ended = {e["params"]["run"]["id"] for e in events if e.get("method") == name + "/completed"}

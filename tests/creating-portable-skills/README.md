@@ -77,14 +77,21 @@ The stdlib capture checker reads Codex `native-requests.jsonl` and
 from the matching session-ID directory. Grok query identity comes from native
 `prompt_index` metadata; unclassified user context stays Unmeasured.
 It checks actual text against canonical case input, successful native completion,
-matching session/turn identity, outstanding work and successful reads outside the
+matching session/turn identity, duplicate or retyped native item identities,
+outstanding work and successful reads outside the
 approved read roots. Codex also requires a matching post-completion thread read.
 Report flags, saved prompt hashes and process exit codes do not replace native
 evidence. Supply only executor-approved workspace and skill roots, never a parent
 containing criteria, coordination files or other runs. A successful grading or
 coordination read invalidates the capture. An opaque successful tool or missing
 native evidence is conservatively Unmeasured. Codex command reads are checked
-even when the aggregate command fails: a read may succeed before a later error. The CLI exits 1 for inadmissible or
+even when the aggregate command fails: a read may succeed before a later error.
+Codex `commandActions` are best-effort, lossy display metadata, not an exhaustive
+filesystem read audit. Unclassified actions and missing paths remain Unmeasured;
+a missing path is not evidence of an observed outside-root read. A valid completed
+native `sleep` display item is non-reading, but still requires matching identity
+and no outstanding work. These checks do not parse opaque commands or scripts to
+infer safe reads. The CLI exits 1 for inadmissible or
 incomplete evidence; it does not assign a behavioral Fail.
 
 ```sh

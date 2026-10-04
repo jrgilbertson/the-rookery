@@ -297,7 +297,7 @@ def validate(host, case, directory, allowed_roots, history=None, enforcement=Non
                         if not isinstance(path, str) or not path:
                             check(False, "Native command missing or malformed read path: " + str(path))
                             continue
-                        check(not any(c in path for c in "~$`{"),
+                        check(not any(c in path for c in "~$`{*?["),
                               "Native command read path may contain unresolved shell expansion: " + path)
                         check(allowed(path, item.get("cwd", directory)), "Native command read outside approved roots (per-read success cannot be inferred from aggregate exit code): " + path)
             for name in ("hook",):

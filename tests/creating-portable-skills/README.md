@@ -128,7 +128,7 @@ Codex `commandActions` are best-effort, lossy display metadata, not an exhaustiv
 filesystem read audit. Unclassified actions and missing paths remain Unmeasured;
 a missing path is not evidence of an observed outside-root read. Without an
 enforcement receipt, listing/search paths and paths containing unresolved tilde,
-dollar, backtick or brace expansions remain Unmeasured even when they look
+dollar, backtick, brace or wildcard expansions remain Unmeasured even when they look
 lexically inside a root.
 A valid completed
 native `sleep` display item is non-reading, but still requires matching identity

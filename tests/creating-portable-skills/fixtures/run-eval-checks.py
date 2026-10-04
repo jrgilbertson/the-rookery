@@ -207,7 +207,10 @@ class CaptureChecks(unittest.TestCase):
         self.assertEqual(self.check_codex()["result"], "Unmeasured")
 
     def test_codex_display_paths_without_confinement_are_unmeasured(self):
-        for action in ({"type": "read", "path": "{/etc/passwd,x}"},
+        for action in ({"type": "read", "path": ".?/.?/outside.txt"},
+                       {"type": "read", "path": ".[.]/.[.]/outside.txt"},
+                       {"type": "read", "path": ".*/.*/outside.txt"},
+                       {"type": "read", "path": "{/etc/passwd,x}"},
                        {"type": "read", "path": "`echo ..`/secret"},
                        {"type": "read", "path": "~/.ssh/key"},
                        {"type": "read", "path": "$HOME/.codex/auth.json"},

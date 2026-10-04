@@ -256,9 +256,10 @@ neither flag.
 Every remaining class runs by model instruction from the reference, in one
 pass: read the branch diff once, write that reading into the step 1 `mktemp -d`
 directory outside the target repository, and apply every judgment class to
-that single reading rather than re-reading the diff per class. Keep that
-directory until the same-session later gate finishes, the head changes, or the
-session ends. The later gate reads that diff file, not the surface-report
+that single reading rather than re-reading the diff per class. That directory
+lives only until the same-session later gate has read its diff file for the
+live head. Remove it when that gate has finished, or as soon as that handoff
+cannot happen. The later gate reads that diff file, not the surface-report
 listing. The file is the diff already read for this grade. It is not a durable
 receipt. Do not put raw forge JSON into the merge skill's waiting directory.
 
@@ -448,9 +449,10 @@ Completion: a matching re-read, with one sentence when the same-name base
 moved, then silent pack plus continue into finishing, including finishing.md,
 a named missing-path stop with no pack, or a named rebuild with no pack.
 This skill wrote nothing to the
-repository. Do not remove the step 1 temp directory when this gate ends,
-including after this later turn, when a non-1 later turn ends the run, or on
-failure. The later gate still needs the diff file.
+repository. Remove the step 1 temp directory when the same-session later gate
+has finished reading its diff file, or as soon as that handoff cannot happen.
+This gate ending keeps the file only while this session can still hand it to
+that gate for the live head.
 
 ## Gotchas
 

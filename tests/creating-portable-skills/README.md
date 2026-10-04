@@ -12,6 +12,10 @@ These definitions alone do not establish host coverage or validated behavioral
 results. The synthetic hook in the fixture does not describe a real vendor API.
 Updating and migrating skills are not covered.
 
+The target harnesses are Claude and Codex. Grok is outside the current testing
+scope; its earlier capture findings are historical evidence, not a coverage
+requirement or a blocker for this suite.
+
 ## Prepare and capture a run
 
 Follow [SKILLS.md](../../SKILLS.md#evaluation-workflow). Agree on the case inputs,
@@ -85,7 +89,6 @@ incomplete evidence; it does not assign a behavioral Fail.
 
 ```sh
 python3 tests/creating-portable-skills/validate_capture.py codex aud "$capture_dir" --allowed-root "$eval_workspace"
-python3 tests/creating-portable-skills/validate_capture.py grok act "$capture_dir" --allowed-root "$eval_workspace" --history "$native_history"
 ```
 
 Set all paths outside the public worktree. A capture-check Pass covers these
@@ -93,8 +96,7 @@ objective observations only. Verify frozen skill identity/discovery and native
 filesystem confinement separately before admitting a run. Keep C3's file
 observation separate even when a run is excluded from behavioral comparisons.
 
-Host setup remains a prerequisite: the inspected Grok native strict/read-only
-profiles refused to apply because `/var/run/docker.sock` resolves to a symlink.
+Host setup remains a prerequisite.
 The private launcher must refuse model execution until native confinement is
 verified; permission mode and isolation prose cannot replace it. Codex's inspected
 captures contain extra input text and therefore do not measure these exact cases.
@@ -102,7 +104,8 @@ These setup findings are not repaired-host claims or grounds for model retries.
 A resolved Codex read-only/never policy alone does not prove read confinement.
 The inspected native thread also inherited user-level instructions. Filesystem
 read confinement and acceptable inherited instruction exposure remain separate,
-unverified admission prerequisites.
+unverified admission prerequisites. The checker retains Grok support only for
+inspecting historical captures; no new Grok execution or sandbox repair is planned.
 
 ## Provisional subjective judges
 

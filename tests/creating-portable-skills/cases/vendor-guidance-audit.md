@@ -33,4 +33,10 @@ synthetic and makes no claim about any real vendor API.
 
 ## CPS-AUD-001.CAPTURE
 
-Verify the frozen creator package was loaded. C3 uses deterministic filesystem checks. C1, C2, and C4 use human per-criterion labels in the pilot. An automated subjective judge is not used without independent calibration. The generated skill is not executed.
+Verify the frozen creator package was loaded. C3 uses deterministic filesystem
+checks. C1, C2, and C4 support human or explicitly provisional per-criterion LLM
+review. Independent human labels establish calibration. Record provisional LLM
+judgments separately with their judge version, output evidence and synthetic
+challenge agreement; they do not establish human alignment or replace human
+labels. Missing human calibration remains Unmeasured. The generated skill is not
+executed.

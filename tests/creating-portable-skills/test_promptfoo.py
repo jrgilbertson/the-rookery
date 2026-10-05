@@ -94,6 +94,27 @@ class PromptfooChecks(unittest.TestCase):
                     self.assertEqual(suite.admit(altered, setup)['result'], 'Unmeasured')
                     self.assertFalse(suite.assertion(altered, setup)['pass'])
 
+    def test_native_hooks_are_unsupported(self):
+        with tempfile.TemporaryDirectory() as storage:
+            response, setup = self.supported(storage, suite.cases()[1], True)
+            raw = json.loads(response['raw'])
+            for methods in (('hook/started',), ('hook/completed',),
+                            ('hook/completed', 'hook/started'),
+                            ('hook/started', 'hook/started', 'hook/completed')):
+                for after_turn in (False, True):
+                    changed = copy.deepcopy(raw)
+                    hooks = [{'method': method, 'params': {'hookId': 'same'}} for method in methods]
+                    position = len(changed['notifications']) if after_turn else 0
+                    changed['notifications'][position:position] = hooks
+                    altered = copy.deepcopy(response)
+                    altered['raw'] = json.dumps(changed)
+                    altered['metadata']['codexAppServer']['notificationCount'] = len(changed['notifications'])
+                    with self.subTest(methods=methods, after_turn=after_turn):
+                        result = suite.admit(altered, setup)
+                        self.assertEqual(result['result'], 'Unmeasured')
+                        self.assertIn('hook', result['reason'])
+                        self.assertFalse(suite.assertion(altered, setup)['pass'])
+
     def test_absence_cannot_pass_near_misses(self):
         for case in suite.cases():
             result = suite.admit({}, {'case': case['id']})

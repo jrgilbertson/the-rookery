@@ -111,8 +111,8 @@ allowing accumulated assistant/tool history. Pinned `response.create` deltas may
 inherit context only through a matching earlier response ID in the same turn;
 added user/developer context is unsupported.
 Trace schema support is pinned to
-Codex 0.160.0. Yielded cells, other tools, scripts, unresolved/opaque commands,
-missing/altered/foreign records and unsupported discovery are **Unmeasured**.
+Codex 0.160.0. Native hooks, yielded cells, other tools, scripts,
+unresolved/opaque commands, missing/altered/foreign records and unsupported discovery are **Unmeasured**.
 Claude automated admission is currently Unmeasured pending native evidence review.
 
 Only admitted complete captures grade behavior: a successful exact frozen body

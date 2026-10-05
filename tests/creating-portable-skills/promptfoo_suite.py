@@ -116,6 +116,8 @@ def admit(response, setup):
                 raise ValueError('Foreign native event identity')
             item = params.get('item', {})
             method = event.get('method')
+            if method and method.startswith('hook/'):
+                raise ValueError('Unsupported native hook lifecycle')
             if method and (method.startswith(('item/', 'rawResponse')) or method == 'turn/started'):
                 if index >= completion_position:
                     raise ValueError('Invalid native notification lifecycle ordering')

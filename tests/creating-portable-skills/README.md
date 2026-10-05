@@ -155,13 +155,12 @@ with a verified same-server enforcement receipt:
 python3 tests/creating-portable-skills/validate_capture.py codex aud "$capture_dir" --allowed-root "$eval_workspace" --enforcement "$enforcement_plan"
 ```
 
-This adapter targets the inspected Codex 0.160.0 protocol with direct tool
-exposure. Freeze the actual native executable and invoke its absolute path.
-For models whose catalog selects Code Mode, a private `model_catalog_json`
-override can preserve the model metadata while setting `tool_mode` to `direct`.
-Pin that catalog alongside the launcher. This is a distinct harness configuration;
-an admitted direct-tool smoke does not validate Code Mode's nested call capture.
-Code Mode facades and unmapped tool calls remain Unmeasured.
+This adapter targets the inspected Codex 0.160.0 protocol. Freeze the actual
+native executable and invoke its absolute path. Direct tool calls use the raw
+native call-to-command identity checks below. CodeMode's synchronous `exec`
+facades additionally require the native trace bundle described in the next
+section. A direct-tool catalog override is a distinct configuration; report it
+separately from native CodeMode. Unmapped calls remain Unmeasured.
 
 The plan is the operator's frozen JSON, not a result: `version` 1, `profile`
 `preflight`, the single approved workspace `cwd`, the exact app-server `argv`,
@@ -217,13 +216,14 @@ It requires the same probe block before `turn/start` and after the native
 may appear, with one initialize and one turn. Each request needs exactly one
 response. Server requests may receive only paired error replies. The capture
 needs a final trailer row covering every native stdout line, with none
-unparsed. Raw `rawResponseItem/completed` events must show only `exec_command`,
-`write_stdin` and `clock.sleep` calls, without elevated sandbox permissions. Each
-exec `call_id` must equal a completed `commandExecution` item ID inside the
-workspace, and each `write_stdin` must name the process of an earlier command.
-The started and completed command payloads must agree. Admission never depends
-on command text. An action that names a path outside the approved roots is
-still excluded.
+unparsed. For direct tools, raw `rawResponseItem/completed` events must show
+only `exec_command`, `write_stdin` and `clock.sleep` calls, without elevated
+sandbox permissions. Each exec `call_id` must equal a completed
+`commandExecution` item ID inside the workspace, and each `write_stdin` must
+name the process of an earlier command. CodeMode facades instead require the
+native child graph below. The started and completed command payloads must agree.
+The checker does not interpret command text to infer reads. An action that names
+a path outside the approved roots is still excluded.
 
 `launch.json` and `result.json` hash facts are trusted launcher records bound to
 the plan, not independent receipts. Probes sample named paths. They do not audit
@@ -238,6 +238,54 @@ inherited instructions separately and confirm that discovery and any instruction
 body loads identify the frozen package. Preserve excluded historical captures
 under their original setup and input labels; do not relabel them as repaired
 runs. Grok support remains only for historical inspection.
+
+### Native CodeMode trace bundle
+
+For synchronous CodeMode `exec` cells, retain exactly one native bundle under
+`$capture_dir/traces/`, containing `manifest.json`, `trace.jsonl` and the referenced
+`payloads/` files. The checker consumes any present trace directory, including
+zero-tool captures, and requires one when raw `exec` facades appear. No JavaScript
+execution or interpretation is involved. The existing
+`--enforcement` receipt remains required. Graph provenance does not establish
+filesystem confinement by itself.
+
+Enable the native `executed_tool_call_metadata` feature and launch the recorder's
+native process with `CODEX_ROLLOUT_TRACE_ROOT` pointing at that case's private
+trace directory. Preserve the complete native bundle after shutdown. Record the
+exact instrumentation and launch environment: this feature can enrich later
+inference history, so describe the run as instrumented native CodeMode even
+when the model, effort and catalog keep their configured defaults.
+
+The native schema must expose the facade's model-visible call ID, runtime cell
+ID, each child's broker tool-call ID, invocation and result payloads, and the
+command's process identity. Multiple children may run concurrently within a
+cell; runtime child IDs are local to their cell and may repeat across cells.
+The checker follows explicit native links and compares exact payloads against
+the app-server command events and later outgoing inference metadata. Payload
+references must resolve inside the bundle. Missing, duplicate, foreign, altered,
+or unsupported evidence is Unmeasured rather than a behavioral Fail.
+
+The schema is pinned to native Codex 0.160.0's
+[raw trace events](https://github.com/openai/codex/blob/rust-v0.160.0/codex-rs/rollout-trace/src/raw_event.rs)
+and [CodeMode output](https://github.com/openai/codex/blob/rust-v0.160.0/codex-rs/core/src/tools/code_mode/output.rs).
+Recheck this contract when changing native versions. The bundle must contain
+schema version 1, the matching root thread/rollout identity, contiguous event
+sequence numbers, paired terminal lifecycles and a closed inventory of confined
+payload references. Every facade output must follow its terminal cell and match
+the native result. User messages in the first inference request must match the
+app-server user inventory; canonical input and selected skill identities must
+match `turn/start`. Other host instructions are not fully attested. Native
+capture is operator-supplied evidence, not a proof
+of authenticity against a malicious recorder.
+
+Support is bounded to completed synchronous cells with `exec_command` children.
+Yielded cells, waits, stdin, sleeps, failed dispatches and other nested tools
+remain Unmeasured. A command process may exit nonzero if its complete terminal
+result is preserved; capture admission does not require every command to succeed.
+A zero-tool capture with a trace bundle still requires consistent native
+request and message records. Frozen package discovery and native body loading
+remain separate activation observations; a capture Pass does not
+grade output quality or establish human alignment.
 
 ## Provisional subjective judges
 

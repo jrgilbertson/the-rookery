@@ -482,7 +482,7 @@ class EnforcementReceiptChecks(unittest.TestCase):
                             internal_chat_message_metadata_passthrough={"turn_id": "turn"})
         result = self.check()
         self.assertEqual(result["result"], "Unmeasured")
-        self.assertIn("Enforcement receipt: command items and raw exec calls do not map one-to-one", result["reasons"])
+        self.assertTrue(any("Native exec graph: missing or linked traces directory" in reason for reason in result["reasons"]))
 
     def test_command_text_never_grants_or_denies_admission(self):
         for index in (self.at("item/started", "exec-1"), self.at("item/completed", "exec-1")):
@@ -642,6 +642,14 @@ class JudgeChecks(unittest.TestCase):
             with self.assertRaises(ValueError):
                 self.check()
             self.verdicts[0][field] = original
+
+
+def load_tests(loader, tests, pattern):
+    graph_spec = importlib.util.spec_from_file_location("native_graph_checks", ROOT / "test_native_graph.py")
+    graph_checks = importlib.util.module_from_spec(graph_spec)
+    graph_spec.loader.exec_module(graph_checks)
+    tests.addTests(loader.loadTestsFromModule(graph_checks))
+    return tests
 
 
 if __name__ == "__main__":

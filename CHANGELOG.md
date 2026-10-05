@@ -63,8 +63,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 - A bounded `creating-portable-skills` evaluation suite covers activation and
   a read-only portability audit in Claude and Codex. Manual Claude trace review
-  and automated Codex capture checks keep incomplete evidence Unmeasured;
-  subjective judges remain provisional
+  and automated Codex capture checks keep incomplete evidence Unmeasured.
+  Native synchronous CodeMode exec graphs use explicit cell, child-call and
+  payload identities, including concurrent children; unsupported graphs remain
+  Unmeasured. Subjective judges remain provisional
   until independent human calibration.
 
 - Chief-of-staff source examples distinguish templates, completed reviews,

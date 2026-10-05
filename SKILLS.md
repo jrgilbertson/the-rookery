@@ -54,9 +54,10 @@ proof for all three.
 [bounded replacement suite](tests/creating-portable-skills/README.md) targets
 Claude and Codex with activation cases, a read-only portability audit, manual
 Claude trace review, automated Codex capture checks and provisional criterion
-judges. Independent human calibration
-is still required to claim judge alignment; a direct-tool Codex result does not
-validate default Code Mode. The other skill packages remain
+judges. Codex capture checks distinguish direct tools from instrumented native
+CodeMode synchronous exec graphs; unsupported tool patterns remain Unmeasured.
+Independent human calibration is still required to claim judge alignment.
+The other skill packages remain
 available and await revalidation in turn. Passing repository
 checks does not establish behavioral quality.
 

@@ -55,7 +55,7 @@ def main():
     try:
         references = json.loads(Path(__file__).with_name('validation-cases.json').read_text())
         result = check(json.loads(args.verdicts.read_text()), args.criterion, references)
-    except (OSError, ValueError) as error:
+    except (OSError, ValueError, RecursionError) as error:
         parser.exit(2, f'Invalid judge evidence: {error}\n')
     print(json.dumps(result, indent=2))
     return bool(result['disagreements'])

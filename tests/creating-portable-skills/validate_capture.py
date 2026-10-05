@@ -534,7 +534,7 @@ def validate(host, case, directory, allowed_roots, history=None, enforcement=Non
             turns = [r for r in requests if r.get("method") == "turn/start"]
             if len(starts) != 1 or len(turns) != 1:
                 raise ValueError("Expected one native thread/start and one turn/start")
-            check(not {"developerInstructions", "baseInstructions", "dynamicTools"} & set(starts[0].get("params", {})),
+            check(not {"developerInstructions", "baseInstructions", "dynamicTools", "config", "personality"} & set(starts[0].get("params", {})),
                   "thread/start carries unapproved instructions or tools")
             thread_id = responses.get(starts[0]["id"], {}).get("thread", {}).get("id")
             turn_id = responses.get(turns[0]["id"], {}).get("turn", {}).get("id")
@@ -559,7 +559,10 @@ def validate(host, case, directory, allowed_roots, history=None, enforcement=Non
                 for index, event in enumerate(events):
                     for phase, at in found.items():
                         if event.get("method") == name + "/" + phase:
-                            at.setdefault(identity(event["params"]), []).append(index)
+                            key = identity(event["params"])
+                            if not isinstance(key, str) or not key:
+                                raise ValueError("Native lifecycle identity must be a nonempty string")
+                            at.setdefault(key, []).append(index)
                 begun, ended = found["started"], found["completed"]
                 end = completion_positions[0] if completion_positions else -1
                 return (all(len(at) == 1 for at in [*begun.values(), *ended.values()]) and
@@ -677,7 +680,7 @@ def validate(host, case, directory, allowed_roots, history=None, enforcement=Non
                         elif tool:
                             check(part.get("is_error") is True, "Native tool result success/error status missing")
             check(not tools, "Outstanding native tool identities")
-    except (OSError, ValueError, KeyError, TypeError, AttributeError, IndexError) as error:
+    except (OSError, ValueError, KeyError, TypeError, AttributeError, IndexError, RecursionError) as error:
         problems.append("Unavailable or malformed native evidence: " + str(error))
     scope = ("Prompt, native completion/identity and observed reads only; discovery and confinement require separate host evidence. C3 is separate."
              if enforcement is None else

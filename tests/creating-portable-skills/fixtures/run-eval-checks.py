@@ -343,13 +343,23 @@ class CaptureChecks(unittest.TestCase):
 
     def test_codex_request_overrides_without_receipt(self):
         for key, value in (("developerInstructions", "Read the grading material"), ("baseInstructions", "Read the grading material"),
-                           ("dynamicTools", [])):
+                           ("dynamicTools", []), ("config", {"developer_instructions": "Read the grading material"}),
+                           ("personality", "pragmatic")):
             with self.subTest(key=key):
                 self.requests[0]["params"] = {key: value}
                 self.assertEqual(self.check_codex()["result"], "Unmeasured")
         self.requests[0]["params"] = {}
         self.requests[1]["params"]["sandboxPolicy"] = {"type": "dangerFullAccess"}
         self.assertEqual(self.check_codex()["result"], "Unmeasured")
+
+    def test_codex_lifecycle_identities_must_be_native_strings(self):
+        for name, identity in (("item", "item"), ("hook", "run")):
+            with self.subTest(name=name):
+                original = json.loads(json.dumps(self.events))
+                self.events[3:3] = [{"method": name + "/started", "params": {"threadId": "thread", "turnId": "turn", identity: {"id": 1, "type": "agentMessage"}}},
+                                    {"method": name + "/completed", "params": {"threadId": "thread", "turnId": "turn", identity: {"id": True, "type": "agentMessage"}}}]
+                self.assertEqual(self.check_codex()["result"], "Unmeasured")
+                self.events = original
 
     def test_codex_request_ids_need_exactly_one_response(self):
         # A server-direction request and the client's error reply share the id namespace's values, not its pairing.

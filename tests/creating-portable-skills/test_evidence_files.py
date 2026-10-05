@@ -92,5 +92,26 @@ class JudgePacketChecks(unittest.TestCase):
         self.assertEqual(completed.stdout, "")
 
 
+class JsonDepthChecks(unittest.TestCase):
+    def test_deeply_nested_evidence_has_a_structured_rejection(self):
+        malformed = "[" * 200000 + "0" + "]" * 200000
+        with tempfile.TemporaryDirectory() as storage:
+            root = Path(storage)
+            before, after = root / "before.json", root / "after.json"
+            before.write_text(malformed)
+            after.write_text("null")
+            result = run("evaluate_read_only.py", "compare", before, after)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(json.loads(result.stdout)["result"], "Unmeasured")
+            result = run("judges/validate_results.py", "CPS-AUD-001.C1", before)
+            self.assertEqual(result.returncode, 2, result.stderr)
+            self.assertIn("Invalid judge evidence", result.stderr)
+            (root / "native-requests.jsonl").write_text("{}\n")
+            (root / "native-events.jsonl").write_text(malformed + "\n")
+            result = run("validate_capture.py", "codex", "act", root, "--allowed-root", root)
+            self.assertEqual(result.returncode, 1, result.stderr)
+            self.assertEqual(json.loads(result.stdout)["result"], "Unmeasured")
+
+
 if __name__ == "__main__":
     unittest.main()

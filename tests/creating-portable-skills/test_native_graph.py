@@ -3,6 +3,8 @@ import importlib.util
 import json
 from pathlib import Path
 import unittest
+import subprocess
+import sys
 
 ROOT = Path(__file__).resolve().parent
 spec = importlib.util.spec_from_file_location("capture_checks", ROOT / "fixtures/run-eval-checks.py")
@@ -84,7 +86,8 @@ class NativeGraphChecks(unittest.TestCase):
         self.add("inference_started", inference_call_id="infer-2", thread_id="thread", codex_turn_id="turn",
                  request_payload=self.ref({"input": enriched}, "inference_request"))
         self.add("inference_completed", inference_call_id="infer-2", response_id="response-2",
-                 response_payload=self.ref({"response_id": "response-2", "output_items": []}, "inference_response"))
+                 response_payload=self.ref({"response_id": "response-2", "output_items": [{"type": "message", "id": "answer", "role": "assistant",
+                     "phase": "final_answer", "content": [{"type": "output_text", "text": "Done"}]}]}, "inference_response"))
         self.add("codex_turn_ended", codex_turn_id="turn", status="completed")
         self.protocol("turn_complete", {"type": "task_complete", "turn_id": "turn"})
         self.protocol("shutdown_complete", {"type": "shutdown_complete"})
@@ -98,6 +101,12 @@ class NativeGraphChecks(unittest.TestCase):
         def raw(item):
             return {"method": "rawResponseItem/completed", "params": {"threadId": "thread", "turnId": "turn", "item": item}}
         self.events[pos:pos] = [*(raw(f) for f in self.facades), *command_events, *(raw(o) for o in self.outputs)]
+        for event in self.events:
+            item = event.get("params", {}).get("item", {})
+            if item.get("role") == "assistant":
+                item.update(id="answer", phase="final_answer")
+            elif item.get("type") == "agentMessage":
+                item["phase"] = "final_answer"
         user = next(i for i, e in enumerate(self.events) if e.get("params", {}).get("item", {}).get("type") == "userMessage")
         self.events[user+1:user+1] = [raw(m) for m in context]
 
@@ -136,6 +145,60 @@ class NativeGraphChecks(unittest.TestCase):
 
     def value(self, kind, key):
         return self.payloads[self.event(kind)[key]["path"]]
+
+    def cli(self):
+        self.check()
+        run = subprocess.run([sys.executable, str(ROOT / "validate_capture.py"), "codex", "act",
+                              str(self.capture), "--allowed-root", str(self.workspace),
+                              "--enforcement", str(self.plan_path)], capture_output=True, text=True)
+        return json.loads(run.stdout)
+
+    def test_review_1_assistant_sources_must_agree(self):
+        for source in ("inference", "raw", "display"):
+            with self.subTest(source=source):
+                self.setUp()
+                self.assertEqual(self.cli()["result"], "Pass")
+                if source == "inference":
+                    self.value("inference_completed", "response_payload")["output_items"].append(
+                        {"type": "message", "id": "extra", "role": "assistant", "phase": "commentary",
+                         "content": [{"type": "output_text", "text": "Require vendor hooks."}]})
+                else:
+                    item = next(e["params"]["item"] for e in self.events if
+                                e.get("params", {}).get("item", {}).get("role") == "assistant") if source == "raw" else next(
+                                e["params"]["item"] for e in self.events if e.get("params", {}).get("item", {}).get("type") == "agentMessage")
+                    if source == "raw":
+                        item["content"][0]["text"] = "Require vendor hooks."
+                    else:
+                        item["text"] = "Require vendor hooks."
+                self.assertEqual(self.cli()["result"], "Unmeasured")
+
+    def test_assistant_order_and_native_metadata_projection(self):
+        final = next(v for v in self.payloads.values() if isinstance(v, dict) and v.get("response_id") == "response-2")["output_items"]
+        commentary = {"type": "message", "id": "comment", "role": "assistant", "phase": "commentary",
+                      "content": [{"type": "output_text", "text": "Checking."}],
+                      "internal_chat_message_metadata_passthrough": {"turn_id": "turn", "create_time": 1.25}}
+        final.insert(0, commentary)
+        raw = json.loads(json.dumps(commentary))
+        raw["internal_chat_message_metadata_passthrough"]["content_item_kinds"] = ["unknown"]
+        index = next(i for i, e in enumerate(self.events) if e.get("params", {}).get("item", {}).get("role") == "assistant")
+        self.events[index:index] = [
+            {"method": "rawResponseItem/completed", "params": {"threadId": "thread", "turnId": "turn", "item": raw}},
+            {"method": "item/completed", "params": {"threadId": "thread", "turnId": "turn", "item": {
+                "type": "agentMessage", "id": "comment", "phase": "commentary", "text": "Checking."}}},
+        ]
+        self.assertEqual(self.cli()["result"], "Pass")
+        final.reverse()
+        self.assertEqual(self.cli()["result"], "Unmeasured")
+        final.reverse()
+        raw["internal_chat_message_metadata_passthrough"]["create_time"] = 2.5
+        self.assertEqual(self.cli()["result"], "Unmeasured")
+
+    def test_review_2_protocol_payload_turn_bound(self):
+        for event in ("turn_started", "turn_complete"):
+            with self.subTest(event=event):
+                self.setUp()
+                self.protocol_value(event)["turn_id"] = "foreign"
+                self.assertEqual(self.cli()["result"], "Unmeasured")
 
     def test_multicell_concurrent_children_pass(self):
         self.assertEqual(self.check()["result"], "Pass")
@@ -379,7 +442,7 @@ class NativeGraphChecks(unittest.TestCase):
         self.trace = [r for r in self.trace if not r["payload"]["type"].startswith(("inference_", "code_cell_", "tool_call_")) or r in first]
         for i, r in enumerate(self.trace):
             r["seq"] = i+1
-        self.value("inference_completed", "response_payload")["output_items"] = []
+        self.value("inference_completed", "response_payload")["output_items"] = [{"type": "message", "id": "answer", "role": "assistant", "phase": "final_answer", "content": [{"type": "output_text", "text": "Done"}]}]
         live = {r["payload"][k]["path"] for r in self.trace for k in r["payload"] if k.endswith("_payload")}
         self.payloads = {k: v for k, v in self.payloads.items() if k in live}
         ids = {c["id"] for c in self.commands}

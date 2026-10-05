@@ -63,8 +63,44 @@ def prompt_matches(text, approved):
     return text in (approved, approved + "\n")
 
 
+def object_pairs(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError("duplicate JSON key: " + key)
+        result[key] = value
+    return result
+
+
+def load_json(text):
+    return json.loads(text, object_pairs_hook=object_pairs)
+
+
+def invocation_matches(args, command, workspace):
+    """Corroborate unified-exec shell/cwd payloads; never infer reads from shell text."""
+    argv = shlex.split(command["command"])
+    return (isinstance(args, dict) and isinstance(args.get("cmd"), str) and
+            args.get("sandbox_permissions") in (None, "use_default") and args.get("additional_permissions") is None and
+            (args.get("workdir") is None or isinstance(args["workdir"], str)) and
+            len(argv) == 3 and argv[0] in SHELLS and argv[1] in ("-c", "-lc") and argv[2] == args["cmd"] and
+            Path(command["cwd"]).is_absolute() and Path(command["cwd"]).resolve().is_relative_to(workspace) and
+            Path(command["cwd"]).resolve() == (workspace / (args.get("workdir") or ".")).resolve())
+
+
+def exec_output(text):
+    """Parse the pinned unified-exec text envelope, including a yielded process."""
+    if not isinstance(text, str) or "\ufffd" in text:
+        raise ValueError("unsupported raw exec output")
+    match = re.fullmatch(r"Chunk ID: [^\n]+\nWall time: \d+\.\d+ seconds\n"
+                         r"(?:Process exited with code (-?\d+)|Process running with session ID (\d+))\n"
+                         r"(?:Original token count: \d+\n)?Output:\n(.*)", text, re.DOTALL)
+    if not match or re.search(r"…\d+ tokens truncated…|Warning: truncated output", match[3]):
+        raise ValueError("unsupported or truncated raw exec output")
+    return match[3], int(match[1]) if match[1] is not None else None, match[2]
+
+
 def rows(path):
-    data = [json.loads(line) for line in path.read_text().splitlines() if line.strip()]
+    data = [load_json(line) for line in path.read_text().splitlines() if line.strip()]
     if not data or not all(isinstance(row, dict) for row in data):
         raise ValueError("empty or malformed native capture: " + str(path))
     return data
@@ -74,28 +110,20 @@ def text_input(content):
     return "".join(part.get("text", "") for part in content if part.get("type") == "text")
 
 
-def verify_native_graph(directory, raw, commands, thread_id, turn_id, workspace, turn_input):
+def verify_native_graph(directory, raw, commands, thread_id, turn_id, workspace, turn_input, displayed):
     """Consume Codex 0.160 schema-1 synchronous exec graphs, without interpreting JS.
 
     Contract: openai/codex rust-v0.160.0, rollout-trace/src/raw_event.rs and
     core/src/tools/code_mode/{output,delegate}.rs. Raw trace instrumentation and
     executed_tool_call_metadata must be enabled. Display actions are not edges.
     First-request developer and user messages are corroborated against the raw stream;
-    base instructions, additional tools and the selected skill body are not attested,
+    ordered assistant outputs also match the raw stream and native display.
+    Base instructions, additional tools and the selected skill body are not attested,
     and neither source is authenticated. The caller verifies the confinement receipt.
     """
-    import shlex
-
     def require(condition, reason):
         if not condition:
             raise ValueError("Native exec graph: " + reason)
-
-    def object_pairs(pairs):
-        result = {}
-        for key, value in pairs:
-            require(key not in result, "duplicate JSON key")
-            result[key] = value
-        return result
 
     def load(path):
         text = path.read_text(encoding="utf-8")
@@ -203,13 +231,35 @@ def verify_native_graph(directory, raw, commands, thread_id, turn_id, workspace,
             require(kind != "custom_tool_call_output" or fid in facades, "facade output precedes raw call")
             target[fid] = item
     require(set(facades) == set(outputs) and Counter(r["payload"]["model_visible_call_id"] for r in cells.values()) == Counter({f:1 for f in facades}), "facade/cell inventory")
-    model_calls = []
-    for row in responses.values():
+    model_calls, answers = [], []
+    for row in sorted(responses.values(), key=lambda r: r["seq"]):
         rsp = pv(row["payload"]["response_payload"])
         require(rsp["response_id"] == row["payload"]["response_id"], "inference response identity")
         model_calls.extend(i for i in rsp["output_items"] if i["type"] not in ("message", "reasoning"))
+        answers.extend(i for i in rsp["output_items"] if i["type"] == "message")
     require(Counter(json.dumps(i, sort_keys=True) for i in model_calls) ==
             Counter(json.dumps(i, sort_keys=True) for i in facades.values()), "inference/raw facade inventory differs")
+    def assistant(item, raw_stream=False):
+        require(item.get("role") == "assistant" and isinstance(item.get("id"), str) and item["id"] and
+                item.get("phase") in ("commentary", "final_answer") and isinstance(item.get("content"), list) and
+                all(part.get("type") == "output_text" and isinstance(part.get("text"), str) for part in item["content"]),
+                "unsupported assistant message representation")
+        value = dict(item)
+        meta = dict(value.get("internal_chat_message_metadata_passthrough", {}))
+        if raw_stream:
+            # RawEvent adds this display-classification field to native inference messages.
+            require(meta.get("content_item_kinds", ["unknown"]) == ["unknown"], "unsupported assistant metadata")
+            meta.pop("content_item_kinds", None)
+        if "internal_chat_message_metadata_passthrough" in value:
+            value["internal_chat_message_metadata_passthrough"] = meta
+        return value
+
+    streamed_answers = [i for i in raw if i.get("type") == "message" and i.get("role") == "assistant"]
+    require([assistant(i) for i in answers] == [assistant(i, True) for i in streamed_answers],
+            "ordered inference/raw assistant messages differ")
+    require(len({i["id"] for i in answers}) == len(answers), "duplicate assistant message identity")
+    require([(i["id"], i["phase"], "".join(p["text"] for p in i["content"])) for i in answers] ==
+            [(i["id"], i.get("phase"), i.get("text")) for i in displayed], "assistant display projection differs")
     require(len({r["payload"]["response_id"] for r in responses.values()}) == len(responses), "duplicate inference response")
     first = min(inferences.values(), key=lambda r: r["seq"]) if inferences else None
     requested = []
@@ -259,6 +309,11 @@ def verify_native_graph(directory, raw, commands, thread_id, turn_id, workspace,
         p = row["payload"]
         require(p["event_type"] in PROTOCOL_EVENTS and pv(p["event_payload"]).get("type") == PROTOCOL_EVENTS[p["event_type"]],
                 "unsupported protocol event")
+        event = pv(p["event_payload"])
+        require(all(event[key] == expected for key, expected in (("thread_id", thread_id), ("turn_id", turn_id)) if key in event),
+                "foreign protocol payload identity")
+        if p["event_type"] in ("turn_started", "turn_complete"):
+            require(event.get("turn_id") == turn_id, "missing protocol payload turn identity")
         if p["event_type"] == "warning":
             # The only accepted warning is the one the required feature flag emits in 0.160.
             warning = pv(p["event_payload"])
@@ -292,6 +347,7 @@ def verify_native_graph(directory, raw, commands, thread_id, turn_id, workspace,
             require(isinstance(args, dict) and isinstance(args.get("cmd"), str) and args.get("sandbox_permissions") in (None, "use_default") and
                     args.get("additional_permissions") is None and (args.get("workdir") is None or isinstance(args["workdir"], str)),
                     "child permissions/cwd widened")
+            require(invocation_matches(args, cmd, workspace), "command invocation differs")
             executed.append({"name": "exec_command", "arguments": args})
             rs = pv(runtime_starts[bid]["payload"]["runtime_payload"])
             re_ = pv(runtime_ends[bid]["payload"]["runtime_payload"])
@@ -334,7 +390,59 @@ def verify_native_graph(directory, raw, commands, thread_id, turn_id, workspace,
             "orphan native child")
 
 
-def verify_enforcement(plan, plan_path, directory, roots, requests, events, trailer, thread_id, turn_id, started_items, completed):
+def verify_raw(raw, commands, completed, thread_id, turn_id, workspace, check):
+    """Apply direct raw inventory and payload consistency with or without a receipt."""
+    check(all(item.get("threadId") == thread_id and item.get("turnId") == turn_id for item in raw),
+          "raw native events missing or foreign")
+    # Raw model calls: only unified exec, stdin and sleep, each mapped by native identity.
+    raw_calls, raw_order, stdin, outputs, arguments_by_id, results = {}, {}, [], [], {}, {}
+    for order, item in enumerate(entry["item"] for entry in raw):
+        kind = item.get("type")
+        if kind == "function_call":
+            name = ((item["namespace"] + ".") if item.get("namespace") else "") + item["name"]
+            name = name.removeprefix("functions.")
+            arguments = load_json(item["arguments"])
+            check(name in RAW_CALLS and isinstance(arguments, dict), "unapproved raw native tool call: " + name)
+            check(isinstance(item.get("call_id"), str) and bool(item["call_id"]) and item["call_id"] not in raw_calls, "duplicate or malformed raw call identity")
+            raw_calls[item["call_id"]], raw_order[item["call_id"]] = name, order
+            arguments_by_id[item["call_id"]] = arguments
+            if name == "exec_command":
+                check(arguments.get("sandbox_permissions") in (None, "use_default") and arguments.get("additional_permissions") is None,
+                      "raw exec requests elevated sandbox permissions")
+            elif name == "write_stdin":
+                stdin.append((order, arguments.get("session_id")))
+        elif kind == "function_call_output":
+            check(item.get("call_id") in raw_calls, "raw tool output lacks a matching call")
+            outputs.append(item.get("call_id"))
+            results[item.get("call_id")] = item.get("output")
+        else:
+            check(kind in ("message", "reasoning"), "unapproved raw native item type: " + str(kind))
+    check(Counter(outputs) == Counter({key: 1 for key in raw_calls}), "raw tool calls need exactly one matching output")
+    sleeps = {key for key, item in completed.items() if item.get("type") == "sleep"}
+    check({key for key, name in raw_calls.items() if name == "exec_command"} == set(commands), "command items and raw exec calls do not map one-to-one")
+    check({key for key, name in raw_calls.items() if name == "clock.sleep"} == sleeps, "sleep items and raw sleep calls do not map one-to-one")
+    for order, session in stdin:
+        check(type(session) is int and any(item.get("processId") == str(session) and raw_order[key] < order for key, item in commands.items()),
+              "raw write_stdin lacks a preceding linked command process")
+    for key, command in commands.items():
+        args = arguments_by_id.get(key, {})
+        check(invocation_matches(args, command, workspace), "raw exec invocation differs from command item")
+        output, exit_code, session = exec_output(results.get(key))
+        if session is not None:
+            check(session == command.get("processId"), "raw exec yielded process identity differs")
+            continuations = [call for call, name in raw_calls.items() if name == "write_stdin" and
+                             arguments_by_id[call].get("session_id") == int(session) and raw_order[call] > raw_order[key]]
+            check(bool(continuations), "yielded raw exec lacks stdin completion")
+            for call in continuations:
+                text, exit_code, linked = exec_output(results.get(call))
+                check(linked in (None, session), "stdin yielded process identity differs")
+                output += text
+            check(exit_code is not None, "raw exec process still outstanding")
+        check(output == command.get("aggregatedOutput") and exit_code == command.get("exitCode") and type(command.get("exitCode")) is int,
+              "raw exec result differs from command item")
+
+
+def verify_enforcement(plan, plan_path, directory, roots, requests, events, trailer, thread_id, turn_id, completed):
     """Recompute a same-server confinement receipt from raw native streams and a frozen operator plan."""
     problems = []
 
@@ -370,8 +478,8 @@ def verify_enforcement(plan, plan_path, directory, roots, requests, events, trai
         check(not Path(path).resolve().is_relative_to(workspace), "grading or control material resolves inside the workspace: " + str(path))
 
     # Trusted, hash-bound launcher facts; they bind the run to the plan but are not receipts themselves.
-    launch = json.loads((directory / "launch.json").read_text())
-    result = json.loads((directory / "result.json").read_text())
+    launch = load_json((directory / "launch.json").read_text())
+    result = load_json((directory / "result.json").read_text())
     check(all(launch.get(key) == plan[key] for key in ("argv", "cwd", "binary_sha256", "launcher_sha256")) and launch.get("config_before") == hashes,
           "launch facts differ from the approved plan")
     check(result.get("config_after") == hashes and result.get("process_exit_code") == 0 and result.get("completion_verified") is True,
@@ -441,52 +549,14 @@ def verify_enforcement(plan, plan_path, directory, roots, requests, events, trai
                   "probe response is interleaved with model work")
 
     raw = [event["params"] for event in events if event.get("method") == "rawResponseItem/completed"]
-    check(raw and all(item.get("threadId") == thread_id and item.get("turnId") == turn_id for item in raw), "raw native events missing or foreign")
+    check(bool(raw), "raw native events missing or foreign")
     commands = {key: item for key, item in completed.items() if item.get("type") == "commandExecution"}
-    # A present trace is native evidence too: it is consumed even when the raw stream shows no facades.
     traced = (directory / "traces").exists() or (directory / "traces").is_symlink()
     if traced or any(entry["item"].get("type", "").startswith("custom_tool_call") for entry in raw):
-        check(Counter(item["id"] for item in started_items if item.get("type") == "commandExecution") == Counter({key: 1 for key in commands}),
-              "native graph commands need exactly one matching start")
+        check(all(item.get("threadId") == thread_id and item.get("turnId") == turn_id for item in raw), "raw native events missing or foreign")
         check(not any(item.get("type") == "sleep" for item in completed.values()), "sleep items lack a native graph edge")
-        verify_native_graph(directory, [entry["item"] for entry in raw], commands, thread_id, turn_id, workspace, turn["params"]["input"])
-    else:
-        # Raw model calls: only unified exec, stdin and sleep, each mapped by native identity.
-        raw_calls, raw_order, stdin, outputs = {}, {}, [], []
-        for order, item in enumerate(entry["item"] for entry in raw):
-            kind = item.get("type")
-            if kind == "function_call":
-                name = ((item["namespace"] + ".") if item.get("namespace") else "") + item["name"]
-                name = name.removeprefix("functions.")
-                arguments = json.loads(item["arguments"])
-                check(name in RAW_CALLS and isinstance(arguments, dict), "unapproved raw native tool call: " + name)
-                check(item["call_id"] not in raw_calls, "duplicate raw call identity")
-                raw_calls[item["call_id"]], raw_order[item["call_id"]] = name, order
-                if name == "exec_command":
-                    check(arguments.get("sandbox_permissions") in (None, "use_default") and arguments.get("additional_permissions") is None,
-                          "raw exec requests elevated sandbox permissions")
-                elif name == "write_stdin":
-                    stdin.append((order, arguments.get("session_id")))
-            elif kind == "function_call_output":
-                check(item.get("call_id") in raw_calls, "raw tool output lacks a matching call")
-                outputs.append(item.get("call_id"))
-            else:
-                check(kind in ("message", "reasoning"), "unapproved raw native item type: " + str(kind))
-        check(Counter(outputs) == Counter({key: 1 for key in raw_calls}), "raw tool calls need exactly one matching output")
-        sleeps = {key for key, item in completed.items() if item.get("type") == "sleep"}
-        check({key for key, name in raw_calls.items() if name == "exec_command"} == set(commands), "command items and raw exec calls do not map one-to-one")
-        check({key for key, name in raw_calls.items() if name == "clock.sleep"} == sleeps, "sleep items and raw sleep calls do not map one-to-one")
-        for order, session in stdin:
-            check(type(session) is int and any(item.get("processId") == str(session) and raw_order[key] < order for key, item in commands.items()),
-                  "raw write_stdin lacks a preceding linked command process")
-    for item in commands.values():
-        check(item.get("status") in ("completed", "failed") and item.get("source") == "unifiedExecStartup" and
-              isinstance(item.get("cwd"), str) and Path(item["cwd"]).resolve().is_relative_to(workspace),
-              "command item is not a completed model exec inside the workspace: " + str(item.get("id")))
-    for item in started_items:
-        if item.get("id") in commands:
-            check(all(item[key] == commands[item["id"]].get(key) for key in ("command", "cwd", "processId", "source") if key in item),
-                  "started command payload diverges from completion: " + str(item.get("id")))
+        verify_native_graph(directory, [entry["item"] for entry in raw], commands, thread_id, turn_id, workspace, turn["params"]["input"],
+                            [item for item in completed.values() if item.get("type") == "agentMessage"])
     return problems
 
 
@@ -567,6 +637,7 @@ def validate(host, case, directory, allowed_roots, history=None, enforcement=Non
                 begun, ended = found["started"], found["completed"]
                 end = completion_positions[0] if completion_positions else -1
                 return (all(len(at) == 1 for at in [*begun.values(), *ended.values()]) and
+                        all(at[0] < end for at in ended.values()) and
                         all(key in ended and at[0] < ended[key][0] < end for key, at in begun.items()))
 
             check(any(responses.get(r["id"], {}).get("thread", {}).get("id") == thread_id and
@@ -582,6 +653,24 @@ def validate(host, case, directory, allowed_roots, history=None, enforcement=Non
             completed = {item["id"]: item for item in completed_items}
             check(len(completed_items) == len(completed), "Duplicate native completed item identities")
             started_items = [e["params"]["item"] for e in scoped if e.get("method") == "item/started"]
+            commands = {key: item for key, item in completed.items() if item.get("type") == "commandExecution"}
+            check(Counter(item["id"] for item in started_items if item.get("type") == "commandExecution") == Counter({key: 1 for key in commands}),
+                  "Native commands need exactly one matching start")
+            raw = [e["params"] for e in events if e.get("method") == "rawResponseItem/completed"]
+            check(all(e.get("params", {}).get("threadId") == thread_id and e.get("params", {}).get("turnId") == turn_id and
+                      completion_positions and index < completion_positions[0] for index, e in enumerate(events) if e.get("method") == "rawResponseItem/completed"),
+                  "Raw native events foreign or after turn completion")
+            if raw and not any(entry["item"].get("type", "").startswith("custom_tool_call") for entry in raw) and not (directory / "traces").exists():
+                verify_raw(raw, commands, completed, thread_id, turn_id, Path(starts[0]["params"].get("cwd", directory)).resolve(), check)
+            if raw or enforcement is not None:
+                for item in commands.values():
+                    check(item.get("status") in ("completed", "failed") and item.get("source") == "unifiedExecStartup" and
+                          isinstance(item.get("cwd"), str) and allowed(item["cwd"], directory),
+                          "Command item is not a completed model exec inside approved roots")
+            for item in started_items:
+                if item.get("id") in commands:
+                    check(all(item[key] == commands[item["id"]].get(key) for key in ("command", "cwd", "processId", "source") if key in item),
+                          "Started command payload diverges from completion: " + str(item.get("id")))
             check(lifecycle("item", lambda params: params["item"]["id"]), "Outstanding, duplicate or out-of-order native item identities")
             check(all(item.get("type") == completed[item["id"]].get("type") for item in started_items if item["id"] in completed),
                   "Native item type changed between start and completion")
@@ -634,8 +723,8 @@ def validate(host, case, directory, allowed_roots, history=None, enforcement=Non
                 check(not ((directory / "traces").exists() or (directory / "traces").is_symlink()),
                       "Native trace bundle requires a same-server enforcement receipt")
             if enforcement is not None:
-                problems.extend(verify_enforcement(json.loads(Path(enforcement).read_text()), Path(enforcement), directory, roots, requests, events,
-                                                   trailer, thread_id, turn_id, started_items, completed))
+                problems.extend(verify_enforcement(load_json(Path(enforcement).read_text()), Path(enforcement), directory, roots, requests, events,
+                                                   trailer, thread_id, turn_id, completed))
         else:
             check(enforcement is None, "Enforcement receipts are defined only for Codex app-server captures")
             events = rows(directory / "stdout.ndjson")

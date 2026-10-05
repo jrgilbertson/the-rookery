@@ -225,7 +225,15 @@ only `exec_command`, `write_stdin` and `clock.sleep` calls, without elevated
 sandbox permissions. Each exec `call_id` must equal a completed
 `commandExecution` item ID inside the workspace, and each `write_stdin` must
 name the process of an earlier command. CodeMode facades instead require the
-native child graph below. The started and completed command payloads must agree.
+native child graph below. The started and completed command payloads must agree,
+with exactly one start per command and every item/hook completion before turn end.
+When raw records are present, identity and direct call/output inventory checks also
+apply without a receipt. Display-only legacy captures remain supported when raw
+records are absent. Direct exec shell/cwd payloads and the pinned unified-exec text
+output envelope must corroborate the completed command result; yielded direct exec
+output needs linked `write_stdin` outputs through a terminal result. Unknown or
+truncated result representations stay Unmeasured. Native JSON evidence rejects
+duplicate object keys, including nested tool arguments and receipt companions.
 The checker does not interpret command text to infer reads. An action that names
 a path outside the approved roots is still excluded.
 
@@ -277,7 +285,12 @@ schema version 1, the matching root thread/rollout identity, contiguous event
 sequence numbers, paired terminal lifecycles and a closed inventory of confined
 payload references. Every facade output must follow its terminal cell and match
 the native result. Developer and user messages in the first inference request
-must match the app-server inventory, except base instructions. Session identity, workspace,
+must match the app-server inventory, except base instructions. Ordered assistant
+output messages must match inference responses, raw messages and the display
+projection by ID, phase and text. Only the raw stream's added
+`content_item_kinds: ["unknown"]` classification is excluded from that comparison.
+Native task-start and task-complete payload turn IDs must match the admitted turn.
+Session identity, workspace,
 approval and active permission profile must match the enforcement receipt.
 Canonical input and selected skill identities must match `turn/start`. Base
 instructions, additional tool definitions and injected skill bodies are not fully

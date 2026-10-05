@@ -498,7 +498,7 @@ class EnforcementReceiptChecks(unittest.TestCase):
                                                           "arguments": json.dumps({"cmd": command["command"].split("'")[1], "workdir": cwd})}),
                 scoped("item/started", item={**command, "status": "inProgress", "aggregatedOutput": None, "exitCode": None}),
                 scoped("item/completed", item={**command, "status": "completed", "aggregatedOutput": "canary.txt\n", "exitCode": 0}),
-                scoped("rawResponseItem/completed", item={"type": "function_call_output", "call_id": command["id"], "output": "canary.txt\n"}),
+                scoped("rawResponseItem/completed", item={"type": "function_call_output", "call_id": command["id"], "output": "Chunk ID: abc123\nWall time: 0.0000 seconds\nProcess exited with code 0\nOriginal token count: 4\nOutput:\ncanary.txt\n"}),
             ]
         self.events = [
             {"id": 1, "result": {"userAgent": "synthetic"}},
@@ -567,6 +567,7 @@ class EnforcementReceiptChecks(unittest.TestCase):
     def test_command_text_never_grants_or_denies_admission(self):
         for index in (self.at("item/started", "exec-1"), self.at("item/completed", "exec-1")):
             self.events[index]["params"]["item"]["command"] = "/bin/zsh -lc 'cat ../../log.md'"
+        self.events[self.at("rawResponseItem/completed", "exec-1", "function_call")]["params"]["item"]["arguments"] = json.dumps({"cmd": "cat ../../log.md", "workdir": str(self.workspace)})
         self.assertEqual(self.check()["result"], "Pass")
         self.assertEqual(self.check(enforcement=False)["result"], "Unmeasured")
 
@@ -625,8 +626,8 @@ class EnforcementReceiptChecks(unittest.TestCase):
             "raw events not requested": lambda: self.requests[4]["params"].pop("experimentalRawEvents"),
             "probe interleaved with turn": lambda: self.events.insert(self.at("turn/completed"), self.events.pop(self.at("turn/completed") + 1)),
             "single probe block": lambda: [(self.requests.pop(post_request), self.events.pop(self.at("turn/completed") + 1)) for _ in range(probes)],
-            "other API": lambda: self.requests.insert(-1, {"id": 99, "method": "thread/shellCommand", "params": {"threadId": "thread", "command": "cat /etc/hosts"}}),
-            "steer": lambda: self.requests.insert(-1, {"id": 99, "method": "turn/steer", "params": {"threadId": "thread"}}),
+            "other API": lambda: (self.requests.insert(-1, {"id": 99, "method": "thread/shellCommand", "params": {"threadId": "thread", "command": "cat /etc/hosts"}}), self.events.insert(-1, {"id": 99, "result": {}})),
+            "steer": lambda: (self.requests.insert(-1, {"id": 99, "method": "turn/steer", "params": {"threadId": "thread"}}), self.events.insert(-1, {"id": 99, "result": {}})),
             "second initialize": lambda: (self.requests.insert(2, {"id": 98, "method": "initialize", "params": {}}), self.events.insert(1, {"id": 98, "result": {}})),
             "turn override": lambda: set_in(self.requests, turn_request, ("params", "sandboxPolicy"), {"type": "dangerFullAccess"}),
             "duplicate request id": lambda: set_in(self.requests, 3, ("id",), 2),
@@ -659,7 +660,10 @@ class EnforcementReceiptChecks(unittest.TestCase):
                 self.setUp()
                 self.trailer = True
                 mutate()
-                self.assertEqual(self.check(trailer=self.trailer)["result"], "Unmeasured")
+                result = self.check(trailer=self.trailer)
+                self.assertEqual(result["result"], "Unmeasured")
+                if name in ("other API", "steer"):
+                    self.assertIn("Enforcement receipt: unapproved native API request", result["reasons"])
 
     def set_probe(self, index, command):
         """Replace one frozen probe and both of its native requests, keeping the synthetic receipt."""

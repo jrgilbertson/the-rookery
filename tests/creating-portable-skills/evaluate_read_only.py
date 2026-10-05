@@ -91,7 +91,13 @@ def main():
     if args.command == "snapshot":
         result = snapshot(args.root)
     else:
-        result = evaluate(json.loads(args.before.read_text()), json.loads(args.after.read_text()))
+        def load(path):
+            # Missing, empty, or truncated snapshot files still produce a structured Unmeasured verdict.
+            try:
+                return json.loads(path.read_text())
+            except (OSError, ValueError):
+                return None
+        result = evaluate(load(args.before), load(args.after))
     print(json.dumps(result, indent=2))
 
 

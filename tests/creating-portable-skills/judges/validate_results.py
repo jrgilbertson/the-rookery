@@ -25,9 +25,12 @@ def check(verdicts, criterion, references):
         raise ValueError('Unknown criterion')
     prefix = criterion.rsplit('.', 1)[-1] + '.'
     expected = {r['id'].removeprefix(prefix): r['reference_label'] for r in selected}
-    # The first-pass packet also contains these two actual response IDs.
-    if set(observed) - set(expected) - {'response-a', 'response-b'}:
+    # A first-pass packet also contains both actual response IDs; a challenge-only packet has neither.
+    actual = {'response-a', 'response-b'}
+    if set(observed) - set(expected) - actual:
         raise ValueError('Unexpected candidate ID')
+    if actual & set(observed) not in (set(), actual):
+        raise ValueError('First-pass packet requires both response-a and response-b verdicts')
     if set(expected) - set(observed):
         raise ValueError('Missing challenge verdicts')
     counts = {label: {'correct': 0, 'total': 0} for label in ('Pass', 'Fail')}

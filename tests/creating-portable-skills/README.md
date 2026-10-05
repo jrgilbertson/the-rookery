@@ -169,7 +169,11 @@ canonical `command/exec` `probe_params` with matching `probe_expectations`
 (`exitCode`, exact `stdout`, `stderr_contains`), the required
 `expected_tool_configuration`, and `protected_paths`. Allow probes return a
 canary. Deny probes must expect exit 1 with a permission error, never a missing
-path, and every protected path needs a deny probe. Case files, coordination
+path, and every protected path needs a deny probe with that exact target. Probes
+must use `/bin/cat TARGET` or `/bin/dd if=TARGET of=/dev/null count=0`, optionally
+inside at most two `/bin/zsh`, `/bin/bash` or `/bin/sh` `-c` or `-lc` wrappers.
+Other commands, shell operators, substitutions, comments and globs are rejected.
+Case files, coordination
 files, prior outputs, the plan and the capture must resolve outside the
 workspace.
 
@@ -308,7 +312,7 @@ quoted output separately; missing calibration is Unmeasured.
 
 For each criterion packet, strip its `C1.`, `C2.` or `C4.` prefix from the six
 synthetic challenge IDs. Optional actual-output candidates use `response-a` and
-`response-b`; those verdicts are checked for schema but excluded from synthetic
+`response-b`; include both or neither. Those verdicts are checked for schema but excluded from synthetic
 agreement counts. Keep their source output identities in the separate packet.
 
 ## Check the deterministic evaluators

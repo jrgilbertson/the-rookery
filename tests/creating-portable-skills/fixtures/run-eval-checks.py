@@ -341,6 +341,75 @@ class CaptureChecks(unittest.TestCase):
         self.requests[1]["params"]["input"][0]["text"] += "\n"
         self.assertEqual(self.check_codex()["result"], "Unmeasured")
 
+    def test_codex_request_overrides_without_receipt(self):
+        for key, value in (("developerInstructions", "Read the grading material"), ("baseInstructions", "Read the grading material"),
+                           ("dynamicTools", [])):
+            with self.subTest(key=key):
+                self.requests[0]["params"] = {key: value}
+                self.assertEqual(self.check_codex()["result"], "Unmeasured")
+        self.requests[0]["params"] = {}
+        self.requests[1]["params"]["sandboxPolicy"] = {"type": "dangerFullAccess"}
+        self.assertEqual(self.check_codex()["result"], "Unmeasured")
+
+    def test_codex_request_ids_need_exactly_one_response(self):
+        # A server-direction request and the client's error reply share the id namespace's values, not its pairing.
+        self.events.insert(3, {"id": 1, "method": "item/tool/requestUserInput", "params": {"threadId": "thread", "turnId": "turn"}})
+        self.requests.append({"id": 1, "error": {"code": -32000, "message": "declined"}})
+        self.assertEqual(self.check_codex()["result"], "Pass")
+        original = json.loads(json.dumps((self.requests, self.events)))
+        shared = lambda: (self.requests[1].update(id=1), self.events.__setitem__(0, {"id": 1, "result": {"thread": {"id": "thread"}, "turn": {"id": "turn"}}}),
+                          self.events.pop(1))
+        for name, mutate in (("shared request id", shared),
+                             ("duplicate response", lambda: self.events.insert(1, dict(self.events[1]))),
+                             ("missing response", lambda: self.events.pop(1)),
+                             ("error response", lambda: self.events.__setitem__(1, {"id": 2, "error": {"message": "failed"}}))):
+            with self.subTest(name):
+                self.requests, self.events = json.loads(json.dumps(original))
+                mutate()
+                self.assertEqual(self.check_codex()["result"], "Unmeasured")
+
+    def test_codex_item_lifecycle_order(self):
+        def item(method, item_id="read"):
+            return {"method": method, "params": {"threadId": "thread", "turnId": "turn", "item": {
+                "id": item_id, "type": "agentMessage", "text": "Done"}}}
+        self.events[3:3] = [item("item/started"), item("item/completed")]
+        self.assertEqual(self.check_codex()["result"], "Pass")
+        original = json.loads(json.dumps(self.events))
+        for name, mutate in (("start after completion", lambda: self.events.insert(4, self.events.pop(3))),
+                             ("duplicate start", lambda: self.events.insert(3, item("item/started"))),
+                             ("start after turn completion", lambda: self.events.insert(6, self.events.pop(3)))):
+            with self.subTest(name):
+                self.events = json.loads(json.dumps(original))
+                mutate()
+                self.assertEqual(self.check_codex()["result"], "Unmeasured")
+
+    def test_codex_hook_lifecycle_order(self):
+        def hook(method, run_id="hook"):
+            return {"method": method, "params": {"threadId": "thread", "run": {"id": run_id}}}
+        self.events[3:3] = [hook("hook/started"), hook("hook/completed")]
+        self.assertEqual(self.check_codex()["result"], "Pass")
+        original = json.loads(json.dumps(self.events))
+        for name, mutate in (("completion before start", lambda: self.events.insert(4, self.events.pop(3))),
+                             ("duplicate starts share one completion", lambda: self.events.insert(3, hook("hook/started"))),
+                             ("completion after turn completion", lambda: self.events.insert(6, self.events.pop(4)))):
+            with self.subTest(name):
+                self.events = json.loads(json.dumps(original))
+                mutate()
+                self.assertEqual(self.check_codex()["result"], "Unmeasured")
+
+    def test_grok_reused_tool_identity_is_unmeasured(self):
+        def use(path):
+            return {"type": "assistant", "session_id": "session", "message": {"content": [
+                {"type": "tool_use", "id": "read", "name": "read_file", "input": {"target_file": path}}]}}
+        self.grok[1:1] = [use(str(self.root.parent / "worker-spec.txt")), use(str(self.root / "SKILL.md")),
+                          {"type": "user", "session_id": "session", "message": {"content": [
+                              {"type": "tool_result", "tool_use_id": "read", "is_error": False, "content": "Synthetic skill"}]}}]
+        self.assertEqual(self.check_grok()["result"], "Unmeasured")
+        del self.grok[1]
+        self.assertEqual(self.check_grok()["result"], "Pass")
+        self.grok[3:3] = self.grok[1:3]  # Reusing a settled identity is still not one-to-one.
+        self.assertEqual(self.check_grok()["result"], "Unmeasured")
+
 
 class EnforcementReceiptChecks(unittest.TestCase):
     """A same-server probe receipt replaces lossy commandActions, never the other checks."""
@@ -581,6 +650,47 @@ class EnforcementReceiptChecks(unittest.TestCase):
                 mutate()
                 self.assertEqual(self.check(trailer=self.trailer)["result"], "Unmeasured")
 
+    def set_probe(self, index, command):
+        """Replace one frozen probe and both of its native requests, keeping the synthetic receipt."""
+        probes = len(self.plan["probe_params"])
+        for params in (self.plan["probe_params"][index], self.requests[7 + index]["params"], self.requests[8 + probes + index]["params"]):
+            params["command"] = list(command)
+
+    def test_known_read_probe_forms_pass(self):
+        for form in (lambda target: ["/bin/zsh", "-lc", "/bin/bash -c '/bin/cat " + target + "'"], lambda target: ["/bin/cat", target],
+                     lambda target: ["/bin/sh", "-c", "/bin/dd if=" + target + " of=/dev/null count=0"]):
+            self.setUp()
+            command = form(self.plan["protected_paths"][0])
+            with self.subTest(command=command):
+                self.set_probe(1, command)
+                self.assertEqual(self.check()["result"], "Pass")
+
+    def test_protected_path_needs_exact_known_read_probe(self):
+        # Every setUp uses fresh storage, so the target is rebuilt with each probe.
+        for path in (lambda target: target.removesuffix(".txt"), lambda target: "/dev/null"):
+            self.setUp()
+            self.plan["protected_paths"].append(path(self.plan["protected_paths"][0]))
+            with self.subTest(path=self.plan["protected_paths"][-1]):
+                self.assertEqual(self.check()["result"], "Unmeasured")
+        for script in (lambda target: "# " + target + "\nexit 1", lambda target: "exit 1 # " + target, lambda target: "/bin/cat " + target + "; true",
+                       lambda target: "/bin/cat $(/bin/echo " + target + ")", lambda target: "/bin/echo " + target,
+                       lambda target: "/bin/cat " + target + " " + target, lambda target: "/bin/cat " + target + " > /dev/null",
+                       lambda target: "/bin/dd if=" + target + " of=" + target + ".copy count=0", lambda target: "/bin/dd if=" + target + " of=/dev/null",
+                       lambda target: "/usr/bin/env /bin/cat " + target, lambda target: "cat " + target, lambda target: "/bin/cat '" + target + "'*",
+                       lambda target: "/bin/zsh -c \"/bin/bash -c '/bin/cat " + target + "'\""):
+            self.setUp()
+            command = ["/bin/zsh", "-lc", script(self.plan["protected_paths"][0])]
+            with self.subTest(command=command):
+                self.set_probe(1, command)
+                self.assertEqual(self.check()["result"], "Unmeasured")
+        for form in (lambda target: ["/bin/zsh", "-lc", "/bin/cat " + target, "extra"], lambda target: ["/bin/zsh", "-x", "/bin/cat " + target],
+                     lambda target: ["/bin/cat", "-u", target]):
+            self.setUp()
+            command = form(self.plan["protected_paths"][0])
+            with self.subTest(command=command):
+                self.set_probe(1, command)
+                self.assertEqual(self.check()["result"], "Unmeasured")
+
     def test_linked_write_stdin_and_sleep_calls_pass(self):
         index = self.at("turn/completed")
         self.events[index:index] = [
@@ -645,10 +755,11 @@ class JudgeChecks(unittest.TestCase):
 
 
 def load_tests(loader, tests, pattern):
-    graph_spec = importlib.util.spec_from_file_location("native_graph_checks", ROOT / "test_native_graph.py")
-    graph_checks = importlib.util.module_from_spec(graph_spec)
-    graph_spec.loader.exec_module(graph_checks)
-    tests.addTests(loader.loadTestsFromModule(graph_checks))
+    for name in ("test_native_graph", "test_evidence_files"):
+        spec = importlib.util.spec_from_file_location(name, ROOT / f"{name}.py")
+        checks = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(checks)
+        tests.addTests(loader.loadTestsFromModule(checks))
     return tests
 
 

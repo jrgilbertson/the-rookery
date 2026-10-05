@@ -5,6 +5,7 @@ from collections import Counter
 import json
 from pathlib import Path
 import re
+import shlex
 
 
 ROOT = Path(__file__).resolve().parent
@@ -20,9 +21,35 @@ CLIENT_METHODS = {"initialize", "account/read", "skills/list", "thread/start", "
 RAW_CALLS = {"exec_command", "write_stdin", "clock.sleep"}
 DENIED = ("Operation not permitted", "PermissionError")  # EPERM, never a missing path.
 SHA256 = re.compile("[0-9a-f]{64}")
+SHELLS = ("/bin/zsh", "/bin/bash", "/bin/sh")
+# Any shell syntax beyond words and single quotes: operators, substitution, comments, globs, escapes.
+SHELL_SYNTAX = set(";&|<>()$`\\\"\n\r#*?[]{}~!^")
 # Codex 0.160 protocol event_type and the payload type it carries.
 PROTOCOL_EVENTS = {"session_configured": "session_configured", "warning": "warning", "turn_started": "task_started",
                    "turn_complete": "task_complete", "shutdown_complete": "shutdown_complete"}
+
+
+def probe_target(argv, wrappers=2):
+    """Return the one absolute file a structurally known read probe opens, else None.
+
+    Supported: /bin/cat TARGET and /bin/dd if=TARGET of=/dev/null count=0, optionally
+    inside at most two exact `SHELL -c|-lc SCRIPT` wrappers. This is a closed grammar,
+    not a shell parser; any other form or shell syntax is unknown.
+    """
+    if wrappers and len(argv) == 3 and argv[0] in SHELLS and argv[1] in ("-c", "-lc"):
+        if SHELL_SYNTAX & set(argv[2]):
+            return None
+        try:
+            return probe_target(shlex.split(argv[2]), wrappers - 1)
+        except ValueError:
+            return None
+    if len(argv) == 2 and argv[0] == "/bin/cat":
+        target = argv[1]
+    elif len(argv) == 4 and argv[0] == "/bin/dd" and argv[1].startswith("if=") and argv[2:] == ["of=/dev/null", "count=0"]:
+        target = argv[1].removeprefix("if=")
+    else:
+        return None
+    return target if Path(target).is_absolute() else None
 
 
 def approved_input(case):
@@ -327,14 +354,16 @@ def verify_enforcement(plan, plan_path, directory, roots, requests, events, trai
         check(set(params) <= {"command", "cwd", "permissionProfile", "timeoutMs"} and params["cwd"] == cwd and
               params["permissionProfile"] == plan["profile"] and params["command"] and all(isinstance(arg, str) for arg in params["command"]),
               "probe is not bound to the approved workspace and profile: " + json.dumps(params))
+        check(probe_target(params["command"]) is not None, "probe is not a known read of one absolute path: " + json.dumps(params["command"]))
         check(set(want) == {"exitCode", "stdout", "stderr_contains"} and want["exitCode"] in (0, 1) and type(want["exitCode"]) is int and
               isinstance(want["stdout"], str) and (want["exitCode"] == 0 or any(marker in str(want["stderr_contains"]) for marker in DENIED)),
               "deny probe must expect a permission error with exit 1, not a missing path")
     nonces = [want["stdout"] for want in expected if want["exitCode"] == 0 and want["stdout"].strip()]
-    denied = [" ".join(params["command"]) for params, want in zip(probes, expected) if want["exitCode"] == 1]
+    denied = {probe_target(params["command"]) for params, want in zip(probes, expected) if want["exitCode"] == 1}
     check(nonces and denied, "plan lacks an allow canary or a deny probe")
     protected = plan["protected_paths"]
-    check(protected and all(Path(path).is_absolute() and any(path in command for command in denied) for path in protected),
+    # Coverage is the exact read target, never text that merely appears in a probe.
+    check(protected and all(Path(path).is_absolute() and path in denied for path in protected),
           "protected path is relative or lacks a deny probe")
     for path in [*protected, directory, plan_path, ROOT]:
         check(not Path(path).resolve().is_relative_to(workspace), "grading or control material resolves inside the workspace: " + str(path))
@@ -494,16 +523,25 @@ def validate(host, case, directory, allowed_roots, history=None, enforcement=Non
             requests = rows(directory / "native-requests.jsonl")
             events = rows(directory / "native-events.jsonl")
             trailer = events.pop() if enforcement is not None else None
+            # Client calls carry a method and id; server-direction calls carry both in events and
+            # are answered by client rows without a method. Pair each client id with one response.
+            calls = Counter(json.dumps(r["id"]) for r in requests if "method" in r and "id" in r)
+            answers = Counter(json.dumps(e["id"]) for e in events if "id" in e and "method" not in e)
+            if any(count != 1 for count in calls.values()) or answers != calls:
+                raise ValueError("Native request ids are not unique with exactly one response each")
             responses = {event["id"]: event.get("result", {}) for event in events if "id" in event and "method" not in event and "error" not in event}
             starts = [r for r in requests if r.get("method") == "thread/start"]
             turns = [r for r in requests if r.get("method") == "turn/start"]
             if len(starts) != 1 or len(turns) != 1:
                 raise ValueError("Expected one native thread/start and one turn/start")
+            check(not {"developerInstructions", "baseInstructions", "dynamicTools"} & set(starts[0].get("params", {})),
+                  "thread/start carries unapproved instructions or tools")
             thread_id = responses.get(starts[0]["id"], {}).get("thread", {}).get("id")
             turn_id = responses.get(turns[0]["id"], {}).get("turn", {}).get("id")
             check(bool(thread_id) and bool(turn_id), "Missing native thread/turn response identity")
             params = turns[0]["params"]
             check(params.get("threadId") == thread_id, "Turn request thread identity mismatch")
+            check(set(params) == {"threadId", "input"}, "turn/start carries unapproved overrides")
             check(approved_parts(params["input"]), "Actually sent request differs from approved INPUT")
             for event in events:
                 if event.get("method", "").startswith(("item/", "turn/")):
@@ -514,6 +552,19 @@ def validate(host, case, directory, allowed_roots, history=None, enforcement=Non
             check(len(completions) == 1 and completions[0].get("status") == "completed" and not completions[0].get("error"), "Missing successful native turn completion")
             reads = [r for r in requests if r.get("method") == "thread/read" and r.get("params", {}).get("threadId") == thread_id]
             completion_positions = [i for i, event in enumerate(events) if event.get("method") == "turn/completed" and event in scoped]
+
+            def lifecycle(name, identity):
+                """Each start is unique and precedes its unique completion, before the turn completes."""
+                found = {"started": {}, "completed": {}}
+                for index, event in enumerate(events):
+                    for phase, at in found.items():
+                        if event.get("method") == name + "/" + phase:
+                            at.setdefault(identity(event["params"]), []).append(index)
+                begun, ended = found["started"], found["completed"]
+                end = completion_positions[0] if completion_positions else -1
+                return (all(len(at) == 1 for at in [*begun.values(), *ended.values()]) and
+                        all(key in ended and at[0] < ended[key][0] < end for key, at in begun.items()))
+
             check(any(responses.get(r["id"], {}).get("thread", {}).get("id") == thread_id and
                       any(event.get("id") == r["id"] and i > completion_positions[0] for i, event in enumerate(events))
                       for r in reads) if completion_positions else False,
@@ -527,7 +578,7 @@ def validate(host, case, directory, allowed_roots, history=None, enforcement=Non
             completed = {item["id"]: item for item in completed_items}
             check(len(completed_items) == len(completed), "Duplicate native completed item identities")
             started_items = [e["params"]["item"] for e in scoped if e.get("method") == "item/started"]
-            check(all(item["id"] in completed for item in started_items), "Outstanding native item identities")
+            check(lifecycle("item", lambda params: params["item"]["id"]), "Outstanding, duplicate or out-of-order native item identities")
             check(all(item.get("type") == completed[item["id"]].get("type") for item in started_items if item["id"] in completed),
                   "Native item type changed between start and completion")
             user = [item for item in completed.values() if item.get("type") == "userMessage"]
@@ -571,10 +622,7 @@ def validate(host, case, directory, allowed_roots, history=None, enforcement=Non
                         check(not any(c in path for c in '~$`{*?[\\"\''),
                               "Native command read path may contain unresolved shell expansion: " + path)
                         check(allowed(path, item.get("cwd", directory)), "Native command read outside approved roots (per-read success cannot be inferred from aggregate exit code): " + path)
-            for name in ("hook",):
-                begun = {e["params"]["run"]["id"] for e in events if e.get("method") == name + "/started"}
-                ended = {e["params"]["run"]["id"] for e in events if e.get("method") == name + "/completed"}
-                check(begun <= ended, "Outstanding native hook identities")
+            check(lifecycle("hook", lambda params: params["run"]["id"]), "Outstanding, duplicate or out-of-order native hook identities")
             if enforcement is None:
                 check(not any(e.get("method") == "rawResponseItem/completed" and
                               e["params"]["item"].get("type", "").startswith("custom_tool_call") for e in events),
@@ -609,10 +657,12 @@ def validate(host, case, directory, allowed_roots, history=None, enforcement=Non
                         elif row.get("synthetic_reason") != "system_reminder":
                             check(False, "Unclassified native user context; cannot infer query identity from prose")
                 check(len(queries) == 1 and prompt_matches(queries[0], approved), "Native user query differs from approved INPUT or is missing")
-            tools = {}
+            tools, seen = {}, set()
             for event in events:
                 for part in event.get("message", {}).get("content", []):
                     if part.get("type") == "tool_use":
+                        check(part["id"] not in seen, "Reused native tool identity: " + str(part["id"]))
+                        seen.add(part["id"])
                         tools[part["id"]] = part
                     elif part.get("type") == "tool_result":
                         tool = tools.pop(part.get("tool_use_id"), None)

@@ -243,10 +243,10 @@ runs. Grok support remains only for historical inspection.
 
 For synchronous CodeMode `exec` cells, retain exactly one native bundle under
 `$capture_dir/traces/`, containing `manifest.json`, `trace.jsonl` and the referenced
-`payloads/` files. The checker consumes any present trace directory, including
-zero-tool captures, and requires one when raw `exec` facades appear. No JavaScript
-execution or interpretation is involved. The existing
-`--enforcement` receipt remains required. Graph provenance does not establish
+`payloads/` files. Any present trace directory, including one for a zero-tool
+capture, requires `--enforcement` and is consumed by the checker. Raw `exec` facades require a
+trace bundle. Missing receipts remain Unmeasured. No JavaScript execution or
+interpretation is involved. Graph provenance does not establish
 filesystem confinement by itself.
 
 Enable the native `executed_tool_call_metadata` feature and launch the recorder's
@@ -272,11 +272,14 @@ Recheck this contract when changing native versions. The bundle must contain
 schema version 1, the matching root thread/rollout identity, contiguous event
 sequence numbers, paired terminal lifecycles and a closed inventory of confined
 payload references. Every facade output must follow its terminal cell and match
-the native result. User messages in the first inference request must match the
-app-server user inventory; canonical input and selected skill identities must
-match `turn/start`. Other host instructions are not fully attested. Native
-capture is operator-supplied evidence, not a proof
-of authenticity against a malicious recorder.
+the native result. Developer and user messages in the first inference request
+must match the app-server inventory, except base instructions. Session identity, workspace,
+approval and active permission profile must match the enforcement receipt.
+Canonical input and selected skill identities must match `turn/start`. Base
+instructions, additional tool definitions and injected skill bodies are not fully
+attested by this checker; verify the frozen body separately for activation.
+Native capture is operator-supplied evidence, not a proof of authenticity against
+a malicious recorder.
 
 Support is bounded to completed synchronous cells with `exec_command` children.
 Yielded cells, waits, stdin, sleeps, failed dispatches and other nested tools

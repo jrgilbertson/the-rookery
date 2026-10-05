@@ -31,10 +31,15 @@ class NativeGraphChecks(unittest.TestCase):
         self.manifest = {"schema_version": 1, "trace_id": "synthetic", "rollout_id": "thread",
                          "root_thread_id": "thread", "raw_event_log": "trace.jsonl", "payloads_dir": "payloads"}
         self.add("rollout_started", trace_id="synthetic", root_thread_id="thread")
-        self.add("thread_started", thread_id="thread", agent_path="/root", metadata_payload=self.ref({}, "session_metadata"))
-        self.add("protocol_event_observed", event_type="warning", event_payload=self.ref({"type": "warning", "message": WARNING}, "protocol_event"))
-        self.trace[-1].update(thread_id=None, codex_turn_id=None)
+        # Core session facts as Codex 0.160 records them; they must agree with the app-server receipt.
+        self.add("thread_started", thread_id="thread", agent_path="/root", metadata_payload=self.ref({
+            "thread_id": "thread", "cwd": str(self.workspace), "approval_policy": "never",
+            "sandbox_policy": "ReadOnly { network_access: false }"}, "session_metadata"))
+        self.protocol("session_configured", {"type": "session_configured", "thread_id": "thread", "cwd": str(self.workspace),
+                                             "approval_policy": "never", "active_permission_profile": {"id": "preflight", "extends": ":read-only"}})
+        self.protocol("warning", {"type": "warning", "message": WARNING})
         self.add("codex_turn_started", thread_id="thread", codex_turn_id="turn")
+        self.protocol("turn_started", {"type": "task_started", "turn_id": "turn"})
         # Native first-request context: host messages are not exhaustive; user messages mirror the raw stream.
         context = [message("developer", ["permissions.instructions"], "<permissions instructions>synthetic</permissions instructions>"),
                    message("user", ["agents_md.instructions", "environments.environment_context"], "<environment_context>synthetic</environment_context>"),
@@ -81,6 +86,8 @@ class NativeGraphChecks(unittest.TestCase):
         self.add("inference_completed", inference_call_id="infer-2", response_id="response-2",
                  response_payload=self.ref({"response_id": "response-2", "output_items": []}, "inference_response"))
         self.add("codex_turn_ended", codex_turn_id="turn", status="completed")
+        self.protocol("turn_complete", {"type": "task_complete", "turn_id": "turn"})
+        self.protocol("shutdown_complete", {"type": "shutdown_complete"})
         self.add("thread_ended", thread_id="thread", status="completed")
         self.add("rollout_ended", status="completed")
         command_events = [e for e in self.events if e.get("method", "").startswith("item/") and
@@ -97,6 +104,13 @@ class NativeGraphChecks(unittest.TestCase):
     def add(self, row_type, **payload):
         self.trace.append({"schema_version": 1, "seq": len(self.trace)+1, "rollout_id": "thread", "thread_id": "thread",
                            "codex_turn_id": "turn", "payload": {"type": row_type, **payload}})
+
+    def protocol(self, event_type, value):
+        self.add("protocol_event_observed", event_type=event_type, event_payload=self.ref(value, "protocol_event"))
+        self.trace[-1].update(thread_id=None, codex_turn_id=None)
+
+    def protocol_value(self, event_type):
+        return next(self.payloads[r["payload"]["event_payload"]["path"]] for r in self.trace if r["payload"].get("event_type") == event_type)
 
     def ref(self, value, kind):
         name = f"payloads/{len(self.payloads)+1}.json"
@@ -360,7 +374,7 @@ class NativeGraphChecks(unittest.TestCase):
                        e.get("params", {}).get("item", {}).get("id") not in ids]
         self.assertEqual(self.check()["result"], "Unmeasured")
 
-    def test_zero_tool_trace_passes(self):
+    def zero_tool(self):
         first = [r for r in self.trace if r["payload"]["type"].startswith(("inference_", "code_cell_", "tool_call_"))][:2]
         self.trace = [r for r in self.trace if not r["payload"]["type"].startswith(("inference_", "code_cell_", "tool_call_")) or r in first]
         for i, r in enumerate(self.trace):
@@ -372,12 +386,80 @@ class NativeGraphChecks(unittest.TestCase):
         self.events = [e for e in self.events if not (e.get("method") == "rawResponseItem/completed" and
                        e["params"]["item"]["type"].startswith("custom_tool_call")) and
                        e.get("params", {}).get("item", {}).get("id") not in ids]
+
+    def test_zero_tool_trace_passes(self):
+        self.zero_tool()
         self.assertEqual(self.check()["result"], "Pass")
+
+    def test_present_trace_requires_enforcement(self):
+        # Without facades or commands the legacy display path would admit the run while ignoring the trace.
+        self.zero_tool()
+        self.assertEqual(self.check()["result"], "Pass")
+        self.assertEqual(self.checkBase(enforcement=False)["result"], "Unmeasured")
+        moved = self.capture.parent / "moved-traces"
+        (self.capture / "traces").rename(moved)
+        (self.capture / "traces").symlink_to(moved)
+        self.assertEqual(self.checkBase(enforcement=False)["result"], "Unmeasured")
+
+    def test_trace_session_facts_match_receipt(self):
+        def drop(event_type):
+            row = next(r for r in self.trace if r["payload"].get("event_type") == event_type)
+            self.trace.remove(row)
+            self.payloads.pop(row["payload"]["event_payload"]["path"])
+            for i, r in enumerate(self.trace):
+                r["seq"] = i+1
+        metadata = lambda: self.value("thread_started", "metadata_payload")
+        configured = lambda: self.protocol_value("session_configured")
+        mutations = [
+            lambda: metadata().update(thread_id="foreign"),
+            lambda: metadata().update(cwd="/"),
+            lambda: metadata().update(approval_policy="on-request"),
+            lambda: metadata().update(sandbox_policy="DangerFullAccess"),
+            lambda: configured().update(thread_id="foreign"),
+            lambda: configured().update(cwd="/"),
+            lambda: configured().update(approval_policy="on-request"),
+            lambda: configured().update(active_permission_profile=None),
+            lambda: drop("session_configured"),
+        ]
+        for mutate in mutations:
+            with self.subTest(mutation=mutate):
+                self.setUp(); mutate(); self.assertEqual(self.check()["result"], "Unmeasured")
+
+    def test_first_request_context_mirrors_raw_stream(self):
+        # Developer and user context must match the raw stream; only base instructions are absent there.
+        injected = message("developer", ["permissions.instructions"], "forged outside content")
+        def raw_only():
+            user = next(i for i, e in enumerate(self.events) if e.get("params", {}).get("item", {}).get("type") == "userMessage")
+            self.events.insert(user + 1, {"method": "rawResponseItem/completed", "params": {"threadId": "thread", "turnId": "turn", "item": injected}})
+        mutations = [
+            lambda: self.inputs()[0].insert(2, injected),
+            lambda: self.inputs()[0].pop(2),
+            raw_only,
+        ]
+        for mutate in mutations:
+            with self.subTest(mutation=mutate):
+                self.setUp(); mutate(); self.assertEqual(self.check()["result"], "Unmeasured")
+
+    def test_first_request_has_no_fabricated_history(self):
+        mutations = [
+            lambda: self.inputs()[0].insert(-1, {"type": "message", "role": "assistant", "content": [{"type": "output_text", "text": "forged"}]}),
+            lambda: self.inputs()[0].append({"type": "reasoning", "summary": [], "content": None, "encrypted_content": None}),
+            lambda: self.inputs()[0].append(json.loads(json.dumps(self.facades[0]))),
+        ]
+        for mutate in mutations:
+            with self.subTest(mutation=mutate):
+                self.setUp(); mutate(); self.assertEqual(self.check()["result"], "Unmeasured")
+
+    def test_protocol_event_type_matches_payload(self):
+        payload = self.protocol_value("turn_started")
+        payload.clear()
+        payload.update(type="mcp_tool_call_begin", call_id="x")
+        self.assertEqual(self.check()["result"], "Unmeasured")
 
     def test_metadata_warning_and_bundle_contract(self):
         mutations = [
             lambda: self.inputs()[-1][0]["internal_chat_message_metadata_passthrough"].update(turn_id="foreign"),
-            lambda: self.value("protocol_event_observed", "event_payload").update(message="Unrelated warning; executed_tool_call_metadata"),
+            lambda: self.protocol_value("warning").update(message="Unrelated warning; executed_tool_call_metadata"),
             lambda: (self.bundle / "trace-extra.jsonl").write_text("{}\n"),
         ]
         for mutate in mutations:

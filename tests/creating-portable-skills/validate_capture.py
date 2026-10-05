@@ -20,6 +20,9 @@ CLIENT_METHODS = {"initialize", "account/read", "skills/list", "thread/start", "
 RAW_CALLS = {"exec_command", "write_stdin", "clock.sleep"}
 DENIED = ("Operation not permitted", "PermissionError")  # EPERM, never a missing path.
 SHA256 = re.compile("[0-9a-f]{64}")
+# Codex 0.160 protocol event_type and the payload type it carries.
+PROTOCOL_EVENTS = {"session_configured": "session_configured", "warning": "warning", "turn_started": "task_started",
+                   "turn_complete": "task_complete", "shutdown_complete": "shutdown_complete"}
 
 
 def approved_input(case):
@@ -49,8 +52,9 @@ def verify_native_graph(directory, raw, commands, thread_id, turn_id, workspace,
     Contract: openai/codex rust-v0.160.0, rollout-trace/src/raw_event.rs and
     core/src/tools/code_mode/{output,delegate}.rs. Raw trace instrumentation and
     executed_tool_call_metadata must be enabled. Display actions are not edges.
-    Native user messages are corroborated across requests and the raw stream; other
-    host context is not attested. The caller verifies the confinement receipt.
+    First-request developer and user messages are corroborated against the raw stream;
+    base instructions, additional tools and the selected skill body are not attested,
+    and neither source is authenticated. The caller verifies the confinement receipt.
     """
     import shlex
 
@@ -188,6 +192,8 @@ def verify_native_graph(directory, raw, commands, thread_id, turn_id, workspace,
                     "unsupported inference input item")
             # Later native requests are incremental, so context messages belong to the first one only.
             require(kind != "message" or row is first, "message outside first native request")
+            # A fresh thread's first request carries context only, never prior model history.
+            require(row is not first or kind in ("message", "additional_tools"), "history in first native request")
             if kind == "message":
                 requested.append(item)
             if kind == "custom_tool_call_output":
@@ -200,10 +206,12 @@ def verify_native_graph(directory, raw, commands, thread_id, turn_id, workspace,
     streamed = [i for i in raw if i["type"] == "message"]
     require(all(item.get("internal_chat_message_metadata_passthrough", {}).get("turn_id", turn_id) == turn_id for item in requested + streamed),
             "message from a foreign native turn")
+    require(all(i.get("role") in ("developer", "user") for i in requested), "unsupported role in native request")
+    # The raw stream mirrors every request context message except the developer base instructions.
+    context = lambda items: Counter(json.dumps(i, sort_keys=True) for i in items if i.get("role") in ("developer", "user") and
+                                    not (i["role"] == "developer" and kinds_of(i) == ["model.base_instructions"]))
+    require(context(requested) == context(streamed), "native context messages differ between request and raw stream")
     sent = [i for i in requested if i.get("role") == "user"]
-    require(Counter(json.dumps(i["content"], sort_keys=True) for i in sent) ==
-            Counter(json.dumps(i["content"], sort_keys=True) for i in streamed if i.get("role") == "user"),
-            "native user messages differ between request and raw stream")
     require([i["content"] for i in sent if kinds_of(i) == ["user.text"]] ==
             [[{"type": "input_text", "text": part["text"]} for part in turn_input if part["type"] == "text"]], "native request prompt differs from approved turn input")
     skills = [f"<skill>\n<name>{part['name']}</name>\n<path>{part['path']}</path>\n" for part in turn_input if part["type"] == "skill"]
@@ -211,9 +219,18 @@ def verify_native_graph(directory, raw, commands, thread_id, turn_id, workspace,
     require(len(injected) == len(skills) and all(len(content) == 1 and content[0]["type"] == "input_text" and content[0]["text"].startswith(prefix)
                                                  for content, prefix in zip(injected, skills)), "native skill injection differs from approved turn input")
 
+    # Trace-side session facts must agree with the receipt's cwd, approval policy and read-only profile.
+    meta = pv(bykind("thread_started")[0]["payload"]["metadata_payload"])
+    require((meta["thread_id"], meta["cwd"], meta["approval_policy"], meta["sandbox_policy"]) ==
+            (thread_id, str(workspace), "never", "ReadOnly { network_access: false }"), "native session metadata differs from receipt")
+    configured = [pv(r["payload"]["event_payload"]) for r in bykind("protocol_event_observed") if r["payload"]["event_type"] == "session_configured"]
+    require(len(configured) == 1 and (configured[0]["thread_id"], configured[0]["cwd"], configured[0]["approval_policy"],
+                                      configured[0]["active_permission_profile"]) ==
+            (thread_id, str(workspace), "never", {"id": "preflight", "extends": ":read-only"}), "native session configuration differs from receipt")
     for row in bykind("protocol_event_observed"):
         p = row["payload"]
-        require(p["event_type"] in ("session_configured", "warning", "turn_started", "turn_complete", "shutdown_complete"), "unsupported protocol event")
+        require(p["event_type"] in PROTOCOL_EVENTS and pv(p["event_payload"]).get("type") == PROTOCOL_EVENTS[p["event_type"]],
+                "unsupported protocol event")
         if p["event_type"] == "warning":
             # The only accepted warning is the one the required feature flag emits in 0.160.
             warning = pv(p["event_payload"])
@@ -562,6 +579,8 @@ def validate(host, case, directory, allowed_roots, history=None, enforcement=Non
                 check(not any(e.get("method") == "rawResponseItem/completed" and
                               e["params"]["item"].get("type", "").startswith("custom_tool_call") for e in events),
                       "Native exec graph requires a same-server enforcement receipt")
+                check(not ((directory / "traces").exists() or (directory / "traces").is_symlink()),
+                      "Native trace bundle requires a same-server enforcement receipt")
             if enforcement is not None:
                 problems.extend(verify_enforcement(json.loads(Path(enforcement).read_text()), Path(enforcement), directory, roots, requests, events,
                                                    trailer, thread_id, turn_id, started_items, completed))

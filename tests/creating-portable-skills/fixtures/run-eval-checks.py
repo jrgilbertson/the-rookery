@@ -344,7 +344,8 @@ class CaptureChecks(unittest.TestCase):
     def test_codex_request_overrides_without_receipt(self):
         for key, value in (("developerInstructions", "Read the grading material"), ("baseInstructions", "Read the grading material"),
                            ("dynamicTools", []), ("config", {"developer_instructions": "Read the grading material"}),
-                           ("personality", "pragmatic")):
+                           ("personality", "pragmatic"), ("model", "other-model"),
+                           ("sandbox", "danger-full-access"), ("environments", []), ("unexpected", True)):
             with self.subTest(key=key):
                 self.requests[0]["params"] = {key: value}
                 self.assertEqual(self.check_codex()["result"], "Unmeasured")

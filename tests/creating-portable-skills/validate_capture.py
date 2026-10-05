@@ -18,6 +18,7 @@ TOOLS = {"web_search": "disabled", "enabled_mcp_servers": [], "nextCursor": None
          "features": dict.fromkeys(("view_image", "plugins", "apps", "browser_use", "computer_use", "image_generation",
                                     "multi_agent", "multi_agent_v2", "hooks", "memories", "memory_tool"), False)}
 CLIENT_METHODS = {"initialize", "account/read", "skills/list", "thread/start", "config/read", "mcpServerStatus/list", "command/exec", "turn/start", "thread/read"}
+THREAD_START_FIELDS = {"cwd", "ephemeral", "approvalPolicy", "permissions", "approvalsReviewer", "experimentalRawEvents"}
 RAW_CALLS = {"exec_command", "write_stdin", "clock.sleep"}
 DENIED = ("Operation not permitted", "PermissionError")  # EPERM, never a missing path.
 SHA256 = re.compile("[0-9a-f]{64}")
@@ -398,7 +399,7 @@ def verify_enforcement(plan, plan_path, directory, roots, requests, events, trai
     start = calls[methods.index("thread/start")]
     turn = calls[methods.index("turn/start")]
     check(start["params"].get("experimentalRawEvents") is True, "raw native events were not requested")
-    check(set(start["params"]) <= {"cwd", "ephemeral", "approvalPolicy", "permissions", "approvalsReviewer", "experimentalRawEvents"} and
+    check(set(start["params"]) <= THREAD_START_FIELDS and
           start["params"].get("cwd") == cwd and start["params"].get("permissions") == "preflight" and
           start["params"].get("approvalPolicy") == "never", "thread/start carries unapproved instructions, tools or overrides")
     check(set(turn["params"]) == {"threadId", "input"}, "turn/start carries unapproved overrides")
@@ -534,7 +535,7 @@ def validate(host, case, directory, allowed_roots, history=None, enforcement=Non
             turns = [r for r in requests if r.get("method") == "turn/start"]
             if len(starts) != 1 or len(turns) != 1:
                 raise ValueError("Expected one native thread/start and one turn/start")
-            check(not {"developerInstructions", "baseInstructions", "dynamicTools", "config", "personality"} & set(starts[0].get("params", {})),
+            check(set(starts[0].get("params", {})) <= THREAD_START_FIELDS,
                   "thread/start carries unapproved instructions or tools")
             thread_id = responses.get(starts[0]["id"], {}).get("thread", {}).get("id")
             turn_id = responses.get(turns[0]["id"], {}).get("turn", {}).get("id")

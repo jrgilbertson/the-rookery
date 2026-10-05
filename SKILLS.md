@@ -53,9 +53,11 @@ proof for all three.
 `creating-portable-skills` is the first dogfood for this workflow. Its
 [bounded replacement suite](tests/creating-portable-skills/README.md) targets
 Claude and Codex with activation cases, a read-only portability audit, manual
-Claude trace review, automated Codex capture checks and provisional criterion
-judges. Codex capture checks distinguish direct tools from instrumented native
-CodeMode synchronous exec graphs; unsupported tool patterns remain Unmeasured.
+review, Promptfoo's native providers and provisional criterion judges.
+Native capture and exact package identity are prerequisites for behavioral
+grades; missing or unsupported evidence remains Unmeasured. The suite retains
+its case definitions and objective evaluators while Promptfoo owns execution,
+result export and the review interface.
 Independent human calibration is still required to claim judge alignment.
 The other skill packages remain
 available and await revalidation in turn. Passing repository

@@ -69,9 +69,11 @@ do not present zero duration as measured elapsed time.
 Use this approach for native telemetry omissions with an output-bearing terminal
 result. It does not establish a new creator execution, admit an old incomplete
 capture, or prove arbitrary shell reads. Command support is a separate check:
-the maintained parser accepts one literal cat read, so compound commands, loops
-and scripts still require explicit provenance support. Keep unsupported captures
-Unmeasured and stop semantic judging until admission succeeds.
+the historical parser accepted one literal cat read and could not establish
+compound-command provenance. The current skill suite uses stock Promptfoo SDK
+assertions and no strict capture gate or upstream fork. Its skill-use observations
+do not establish this stronger proof. Historical unsupported captures remain
+Unmeasured.
 
 ## Related
 

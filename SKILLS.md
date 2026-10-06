@@ -54,10 +54,13 @@ proof for all three.
 [bounded replacement suite](tests/creating-portable-skills/README.md) targets
 Claude and Codex with activation cases, a read-only portability audit, manual
 review, Promptfoo's native providers and provisional criterion judges.
-Native capture and exact package identity are prerequisites for behavioral
-grades; missing or unsupported evidence remains Unmeasured. The suite retains
-its case definitions and objective evaluators while Promptfoo owns execution,
-result export and the review interface.
+Stock provider assertions check final answers and skill-use observations; the
+Codex SDK's skill-path detection is heuristic, not proof of exact loading or
+complete read provenance. The audit retains its deterministic file-preservation
+check and explicit subscription criterion judges. Missing answers, provider errors
+and unavailable file snapshots do not pass. Strict capture is not collected and
+remains Unmeasured; historical incomplete runs are not reclassified. Promptfoo
+owns execution, ordinary assertions, result export and the review interface.
 Independent human calibration is still required to claim judge alignment.
 The other skill packages remain
 available and await revalidation in turn. Passing repository

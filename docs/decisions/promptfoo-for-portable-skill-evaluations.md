@@ -8,12 +8,23 @@ The previous bespoke capture checker, native graph parser, private launch contro
 
 Native subscription authentication remains distinct from API-key execution. Prepare disposable workspaces and native state outside the repository, use the existing approved credential store, and do not introduce a paid API fallback. Codex and Claude configurations are separate. A configured host is not evidence that its live evaluation succeeded.
 
-Capture validity precedes behavioral grading. A missing or incomplete trace is Unmeasured, including for a case expecting no activation. Discovery metadata and failed loads do not prove activation. A successful instruction-body read must identify the exact frozen package. Promptfoo's path-based skill-used assertion is a useful observation, but alone does not establish package identity or capture completeness. Unsupported tool evidence remains Unmeasured.
+The suite uses the stock Codex SDK provider and ordinary Promptfoo assertions.
+A final answer is required, and skill-used/not-skill-used observations are checked
+against the activation cases. Codex's command-path heuristic does not establish
+exact instruction loading, package identity or complete capture. Negative
+observations do not prove absence. These limits are reported rather than repaired
+with a private upstream fork or a custom trace admission layer.
 
-This boundary measures the case's observable native execution; it does not certify all filesystem reads or authenticate operator-supplied artifacts against a malicious recorder. Native read-only permissions constrain writes, not every read. Report those limits instead of importing the old recorder's receipt schema into the replacement.
+Native read-only permissions constrain writes, not every read. Strict provenance
+is not collected and remains Unmeasured; historical incomplete captures remain
+Unmeasured. Remove the replaced parser and admission hooks rather than retaining
+a second runnable approach. Generated state and results remain private.
 
 Audit C3 continues to compare the supplied files objectively. Audit C1, C2 and C4 use separate provisional LLM judgments with preserved evidence and synthetic challenges. Human alignment remains Unmeasured until independently labeled held-out examples support calibration. Activation grades do not evaluate the quality of a generated skill.
 
-A dependency upgrade must recheck native authentication, configuration forwarding, raw event retention, exact body-load evidence, missing-capture controls, and private storage behavior. A future need for container benchmarks or additional native harnesses should be evaluated separately rather than adding another custom runner here.
+A dependency upgrade must recheck native authentication, configuration forwarding,
+skill-use observations, unavailable-output controls, and private storage behavior.
+A future need for strict provenance or additional native harnesses must be assessed
+separately. This suite does not own upstream runtime test failures.
 
-Provider references: [Codex app-server](https://www.promptfoo.dev/docs/providers/openai-codex-app-server/) and [Claude Agent SDK](https://www.promptfoo.dev/docs/providers/claude-agent-sdk/). Suite commands and current verification boundaries live in the [suite README](../../tests/creating-portable-skills/README.md).
+Provider references: [Codex SDK](https://www.promptfoo.dev/docs/providers/openai-codex-sdk/) and [Claude Agent SDK](https://www.promptfoo.dev/docs/providers/claude-agent-sdk/). Suite commands and current verification boundaries live in the [suite README](../../tests/creating-portable-skills/README.md).

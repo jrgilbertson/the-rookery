@@ -224,6 +224,52 @@ class PromptfooChecks(unittest.TestCase):
                 self.assertEqual(suite.admit(response, setup)['result'], 'Pass')
                 self.assertTrue(suite.assertion(response, setup)['pass'])
 
+    def test_completed_child_without_runtime_or_command_reports_evidence_gap(self):
+        # Native audit shape: one projected read plus a second completed child
+        # returning text/exit status without runtime events or a command item.
+        with tempfile.TemporaryDirectory() as storage:
+            response, setup, bundle, records = self.native(storage)
+            start = copy.deepcopy(next(r for r in records if r['type'] == 'tool_call_started'))
+            end = copy.deepcopy(next(r for r in records if r['type'] == 'tool_call_ended'))
+            start['tool_call_id'] = end['tool_call_id'] = 'unprojected-read'
+            start['invocation_payload'] = {'path': 'unprojected-invocation.json'}
+            end['result_payload'] = {'path': 'unprojected-result.json'}
+            suite.save(bundle / 'unprojected-invocation.json', {'tool_name': 'exec_command', 'payload': {
+                'type': 'function', 'arguments': json.dumps({'cmd': 'cat SKILL.md; command -v skills-ref'})}})
+            suite.save(bundle / 'unprojected-result.json', {'type': 'code_mode_response', 'value': {
+                'exit_code': 1, 'output': Path(setup['body_path']).read_text()}})
+            position = next(i for i, r in enumerate(records) if r['type'] == 'code_cell_initial_response')
+            records[position:position] = [start, end]
+            self.write_trace(bundle, records)
+            admission = suite.admit(response, setup)
+            self.assertEqual(admission['result'], 'Unmeasured')
+            self.assertEqual(admission['reason'], 'Native child call/command inventory mismatch: '
+                             'runtime starts missing=["unprojected-read"] extra=[]; '
+                             'runtime ends missing=["unprojected-read"] extra=[]; '
+                             'provider commands missing=["unprojected-read"] extra=[]')
+            self.assertNotIn('behavior', admission)
+            self.assertFalse(suite.assertion(response, setup)['pass'])
+
+    def test_child_inventory_diagnostics_distinguish_missing_and_extra_evidence(self):
+        for kind, label in (('tool_call_ended', 'child results'),
+                            ('tool_call_runtime_started', 'runtime starts'),
+                            ('tool_call_runtime_ended', 'runtime ends')):
+            for extra in (False, True):
+                with self.subTest(kind=kind, extra=extra), tempfile.TemporaryDirectory() as storage:
+                    response, setup, bundle, records = self.native(storage)
+                    record = next(r for r in records if r['type'] == kind)
+                    if extra:
+                        orphan = dict(record, tool_call_id='orphan')
+                        records.insert(records.index(record), orphan)
+                    else:
+                        records.remove(record)
+                    self.write_trace(bundle, records)
+                    admission = suite.admit(response, setup)
+                    self.assertEqual(admission['result'], 'Unmeasured')
+                    expected = 'missing=[] extra=["orphan"]' if extra else 'missing=["read"] extra=[]'
+                    self.assertEqual(admission['reason'],
+                                     'Native child call/command inventory mismatch: ' + label + ' ' + expected)
+
     def test_native_evidence_mutations(self):
         mutations = {'missing-response': 'No such file', 'raw-answer': 'output',
                      'native-answer': 'output', 'raw-phase': 'output', 'raw-id': 'output',

@@ -103,6 +103,10 @@ command and cwd fields stay fixed. Shell operators are unsupported. Item/call
 starts precede results, and cells and their children close before turn completion.
 Every inference response payload is loaded, and ordered assistant answers and
 facade calls must agree with raw notifications, display items and exported output.
+Child inventory mismatches report missing and extra call IDs separately for child
+results, runtime starts/ends and provider command items. A completed child result
+containing output and an exit status cannot replace missing runtime or command
+evidence; that capture remains Unmeasured.
 The pinned provider can redact raw assistant content as exactly `['[...]']`;
 that marker requires matching identity/phase and a full native response answer
 that agrees with display and raw projected text. Other missing text is Unmeasured.

@@ -166,7 +166,13 @@ def inspect(root, thread, turn, commands, facades):
     runtime_starts = inventory('tool_call_runtime_started', 'tool_call_id')
     runtime_ends = inventory('tool_call_runtime_ended', 'tool_call_id')
     if not (set(calls) == set(ends) == set(runtime_starts) == set(runtime_ends) == set(commands)):
-        raise ValueError('Native child call/command inventory mismatch')
+        gaps = []
+        for label, observed in (('child results', ends), ('runtime starts', runtime_starts),
+                                ('runtime ends', runtime_ends), ('provider commands', commands)):
+            missing, extra = sorted(set(calls) - set(observed)), sorted(set(observed) - set(calls))
+            if missing or extra:
+                gaps.append(label + ' missing=' + json.dumps(missing) + ' extra=' + json.dumps(extra))
+        raise ValueError('Native child call/command inventory mismatch: ' + '; '.join(gaps))
     paired(calls, runtime_starts)
     paired(runtime_starts, runtime_ends)
     paired(calls, ends)

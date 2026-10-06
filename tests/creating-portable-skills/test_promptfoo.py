@@ -84,7 +84,8 @@ class PromptfooChecks(unittest.TestCase):
             root = Path(storage)
             target = self.prepare(root)
             candidate = root / 'candidate.json'
-            suite.save(candidate, {'results': {'results': [{'response': {'output': 'Audit response'}}]}})
+            suite.save(candidate, {'results': {'results': [{'response': {'output': 'Audit response'},
+                                                            'gradingResult': {'pass': True}}]}})
             suite.prepare_judges(argparse.Namespace(
                 destination=str(root / 'judges'), creator_config=str(target / 'CPS-AUD-001/promptfooconfig.json'),
                 candidate_results=str(candidate)))
@@ -94,6 +95,28 @@ class PromptfooChecks(unittest.TestCase):
                 self.assertEqual(config['providers'][0]['config']['cli_config']['forced_login_method'], 'chatgpt')
                 self.assertEqual(config['providers'][0]['config']['maxRetries'], 0)
                 self.assertEqual(config['tests'][0]['assert'], [{'type': 'is-json'}])
+
+    def test_actual_judges_reject_unavailable_or_failed_ordinary_checks(self):
+        with tempfile.TemporaryDirectory() as storage:
+            root = Path(storage)
+            target = self.prepare(root)
+            candidate = root / 'candidate.json'
+            rows = [[], [{}], [{'response': None}],
+                    [{'response': {'output': 'Audit response'}}],
+                    [{'response': {'output': 'Audit response'}, 'gradingResult': {'pass': False},
+                      'metadata': {'portableSkills': {'C3': {'result': 'Pass'}}}}],
+                    [{'response': {'output': 'Audit response'}, 'gradingResult': {'pass': False},
+                      'metadata': {'portableSkills': {'C3': {'result': 'Fail'}}}}],
+                    [{'response': {'output': 'Audit response'}, 'gradingResult': {'pass': 'true'}}]]
+            payloads = [{'results': {'results': results}} for results in rows] + [{}, {'results': {}}]
+            for index, payload in enumerate(payloads):
+                with self.subTest(payload=payload):
+                    suite.save(candidate, payload)
+                    with self.assertRaises(ValueError):
+                        suite.prepare_judges(argparse.Namespace(
+                            destination=str(root / ('judges-' + str(index))),
+                            creator_config=str(target / 'CPS-AUD-001/promptfooconfig.json'),
+                            candidate_results=str(candidate)))
 
     def test_export_preserves_historical_unmeasured_and_new_checks(self):
         with tempfile.TemporaryDirectory() as storage:

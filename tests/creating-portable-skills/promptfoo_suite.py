@@ -151,11 +151,14 @@ def prepare_judges(args):
     challenges = json.loads((ROOT / 'judges/validation-cases.json').read_text())
     candidate = None
     if args.candidate_results:
-        rows = json.loads(Path(args.candidate_results).read_text())['results']['results']
-        response = rows[0]['response']
+        rows = json.loads(Path(args.candidate_results).read_text()).get('results', {}).get('results', [])
+        row = rows[0] if rows else {}
+        response = row.get('response') or {}
         candidate = response.get('output')
-        if rows[0].get('error') or response.get('error') or not isinstance(candidate, str) or not candidate.strip():
+        if row.get('error') or response.get('error') or not isinstance(candidate, str) or not candidate.strip():
             raise ValueError('Creator unavailable or missing final answer')
+        if (row.get('gradingResult') or {}).get('pass') is not True:
+            raise ValueError('Creator ordinary checks, including C3, did not pass')
     context = {name: (ROOT / 'fixtures/vendor-guidance' / name).read_text()
                for name in ('vendor-guide.md', 'summarizing-notes/SKILL.md')}
     for criterion in ('C1', 'C2', 'C4'):

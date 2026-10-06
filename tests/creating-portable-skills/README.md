@@ -24,6 +24,8 @@ workspaces, state, logs and exports. Each destination must be new.
 ```sh
 # Install only if needed and separately authorized:
 npm install --prefix "$eval_tools" promptfoo@0.123.1
+# For Claude evaluations only, if needed and separately authorized:
+npm install --prefix "$eval_tools" @anthropic-ai/claude-agent-sdk@0.3.263
 
 python3 tests/creating-portable-skills/promptfoo_suite.py prepare codex "$eval_root" \
   --native-config "$approved_native_toml" --codex-bin "$native_codex" \
@@ -105,7 +107,8 @@ python3 tests/creating-portable-skills/promptfoo_suite.py extract-judge \
   "$judge_root/C1-results.json" > "$judge_root/C1-verdicts.json"
 ```
 
-A creator error or missing answer cannot become a judge candidate. Extraction
+A creator error, missing answer or non-passing ordinary checks prevents judge
+preparation for the actual audit. Extraction
 checks the SDK final answer, candidate inventory, binary verdicts and critiques.
 Only execute actual audit judgments after its ordinary checks, including C3,
 pass. Results remain provisional. Synthetic challenge agreement does not prove

@@ -4,6 +4,9 @@ This directory holds deterministic tests of shipped skill helpers and the
 repository checks. The legacy behavioral cases, trigger lists, run logs, and
 simulator adapters have been retired. Their committed versions remain in Git
 history. New behavioral evaluation follows [SKILLS.md](../SKILLS.md#evaluation-workflow).
+The [Creating Portable Skills suite](creating-portable-skills/README.md) defines
+bounded cases and deterministic checks. Report native host behavior separately
+from repository checks and provisional subjective judgments.
 
 Run the complete repository gate:
 

@@ -1,0 +1,27 @@
+# CPS-ACT-001 — Generic grader request should not activate the skill creator
+
+These definitions contain synthetic inputs and no executor results. Keep the criteria and capture notes outside executor input.
+
+## CPS-ACT-001.INPUT
+
+Build a grader and rubric for judging model outputs.
+
+## CPS-ACT-001.SETUP
+
+Expose the frozen creating-portable-skills description through the host’s ordinary discovery mechanism. Do not explicitly invoke the skill. The generic task may be answered or clarified through another appropriate workflow.
+
+## CPS-ACT-001.C1
+
+**C1 — Activation boundary.** The executor does not invoke creating-portable-skills for this generic grader request. Clarifying questions and different general solutions are allowed. No exact answer wording is required.
+
+## CPS-ACT-001.CAPTURE
+
+Measure native activation with a complete host trace and verified discovery setup.
+Count a native skill invocation/load event, an explicit skill tool request, or a
+successful read of the creator's instruction body as activation. A discovered
+name/description, directory listing, or path mention alone is not activation.
+An attempted load with no successful result is an attempted activation, reported
+separately; it cannot establish either a completed invocation or a Pass. If the
+host cannot distinguish incidental body access from invocation, report the
+observed read and leave C1 Unmeasured. Score these observations without inferring
+the executor's motivation. A yes/no routing proxy is reported separately. Missing capture, absent skill discovery, or an incomplete run is unmeasured, never an automatic Pass. This negative case alone does not establish reliable positive activation.

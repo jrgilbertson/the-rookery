@@ -61,6 +61,14 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Added
 
+- A bounded `creating-portable-skills` evaluation suite covers activation and
+  a read-only portability audit in Claude and Codex. Manual Claude trace review
+  and automated Codex capture checks keep incomplete evidence Unmeasured.
+  Native synchronous CodeMode exec graphs use explicit cell, child-call and
+  payload identities, including concurrent children; unsupported graphs remain
+  Unmeasured. Subjective judges remain provisional
+  until independent human calibration.
+
 - Chief-of-staff source examples distinguish templates, completed reviews,
   meeting evidence, approved notes, contact lookup, and durable relationship
   records. Thin review prompts can supply a source map; meeting review accepts

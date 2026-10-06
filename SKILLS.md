@@ -51,7 +51,15 @@ record which host a result covers rather than treating one host's success as
 proof for all three.
 
 `creating-portable-skills` is the first dogfood for this workflow. Its
-replacement suite has not yet been validated. The other skill packages remain
+[bounded replacement suite](tests/creating-portable-skills/README.md) targets
+Claude and Codex with activation cases, a read-only portability audit, manual
+review, Promptfoo's native providers and provisional criterion judges.
+Native capture and exact package identity are prerequisites for behavioral
+grades; missing or unsupported evidence remains Unmeasured. The suite retains
+its case definitions and objective evaluators while Promptfoo owns execution,
+result export and the review interface.
+Independent human calibration is still required to claim judge alignment.
+The other skill packages remain
 available and await revalidation in turn. Passing repository
 checks does not establish behavioral quality.
 

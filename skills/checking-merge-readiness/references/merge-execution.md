@@ -37,6 +37,19 @@ Several allowed → `viewerDefaultMergeMethod` only when it is still in
 the allowed set. Never hardcode squash. Never call `gh pr merge`
 without a method flag.
 
+## Approval reads
+
+Reuse the completed grade and policy facts. Read only the history fingerprint,
+one `gh pr view` for head/base refs and OIDs, state/draft, closing issue links,
+mergeable, mergeStateStatus, reviewDecision, and statusCheckRollup, and each
+recorded linked issue's native identity and state through its original provider.
+For GitHub use `gh issue view --json number,state`. If a provider returns more
+fields, discard them without hashing or retaining their text. Compare the issue
+set as well as each state; a missing issue or incomplete state read stops.
+Do not re-fetch issue comments, titles, or bodies, or the branch-policy chain.
+Apply the captured policy to the live checks and review state. Before the write,
+repeat the queue/method probe above; keep the offered method if still allowed.
+
 ## Option-1 live facts
 
 This table is the option-1 ending. Apply it before the merge command.
@@ -44,8 +57,10 @@ The finished grade stands while the pull request's own commit is unchanged,
 GitHub reports no conflict, and an uncommitted surface change does not
 restart it. Do not reprint that grade on a continue row.
 
-The issue record is number, state, title digest, body digest, and each
-comment's id plus body digest. Read the base tip from `baseRefOid`.
+The issue record is native identity and state only. Initial stewardship reads
+issue text, but approval never re-fetches or hashes it. Read the base tip from
+`baseRefOid`. Before the write, repeat the queue/method probe above: queue-off
+must still be known, and the method offered in the menu must still be allowed.
 
 | # | Live fact | Grade | This turn | Directory |
 | --- | --- | --- | --- | --- |
@@ -64,6 +79,7 @@ comment's id plus body digest. Read the base tip from `baseRefOid`.
 | 13 | Other history-fingerprint change: pull-request body, a new pull-request comment, a thread, or a review | Stands | Stop. Say a new review is required and do not start it. | Keep |
 | 14 | Pull-request state is not OPEN, or isDraft is true. This is the pull request, not issue state on row 11. | Stands | Stop. Name that state. Do not run the merge command. Do not void the grade. | Keep |
 | 15 | mergeStateStatus BLOCKED with no row-8 supporting host fact. This is not a GitHub conflict. | Stands | Continue to the existing merge command. Do not void the grade. | Keep |
+| 16 | Merge queue enabled, offered merge method no longer allowed, or queue/method eligibility unavailable | Stands | Stop. Do not enqueue, enable auto-merge, or silently select another method. | Keep |
 
 A missing record or an unfinished re-read is not a row. Stop. Do not grade
 or merge. Keep the directory.
@@ -71,7 +87,7 @@ or merge. Keep the directory.
 If the head OID changed, stop on row 4 and do not apply a later row, including
 a host-rule refuse. A docs-only push does not keep the old grade. Else if
 baseRefName changed, stop on row 5 and do not apply a later row. Stop rows
-are 6, 7, 8, 11, 12, 13, and 14. If one matches, stop, follow each matching stop
+are 6, 7, 8, 11, 12, 13, 14, and 16. If one matches, stop, follow each matching stop
 row's This turn, and use its Directory. Do not apply a continue row over a
 stop. Rows 1, 2, 3, 9, 10, and 15 continue. If no stop row matches, follow each
 matching continue row, run the one merge command, and keep the directory
@@ -84,9 +100,10 @@ row 1. A stop row still stops.
 
 Do not byte-compare the live `gh pr view` rollup.
 
-A policy-digest change that is not one of the named host facts stops, leaves
-the grade, and keeps the directory. The named host facts are the supporting
-facts on row 8.
+Do not compare policy-document digests or re-fetch the policy chain after
+approval. Apply the gathered policy facts to live eligibility; a known required
+check or review failure still stops. The ordinary guarded merge evaluates the
+forge's current rules. It never requests an administrative bypass.
 
 A strict boolean recorded in step 2 uses row 8 while mergeable stays
 MERGEABLE. BEHIND is not that boolean. Row 15 is the bare BLOCKED continue.

@@ -152,20 +152,19 @@ alternatives:
 - Solution simplicity is verified by this gate's own dispatch, not by a
   receipt. Compare the working-surface identity recorded at the end of step 1.
   [references/identity-and-argv.md](references/identity-and-argv.md) defines
-  the record: the head OID, plus for staged, unstaged, and untracked paths
-  only, each path, mode, and content digest. Store a symlink as its link text
-  and never follow it. Do not hash every committed blob. The committed
-  category is the head OID. A new head, including a message-only amend,
-  restarts the check.
+  the content-review inputs: native subject, target, committed tree,
+  comparison base, intent frame, and dirty paths, modes, and content digests.
+  Store symlinks as link text without following them. Keep the full head OID
+  separately for publication. A message-only amend with matching review inputs
+  reuses the diff grade and simplicity result; refresh only head-specific checks.
   [scripts/surface-report.sh](scripts/surface-report.sh) lists paths and does
   not emit content digests; do not treat its path lists as this identity. An
   in-place edit of an already-listed path does not change that listing, which
   is why the digest is required. Then dispatch `checking-simplicity` with the
   resolved intent source, the repository, branch, and full `HEAD`, and the
   four path categories. That skill owns the reviewer's independence and how it
-  reads the subject. Compare the identity again when the result returns, so an
-  in-place edit during the check is caught. When the recorded head OID and the
-  staged, unstaged, and untracked path, mode, and content digest match, the
+  reads the subject. Compare the review inputs again when the result returns,
+  so an in-place edit or context change is caught. When they match, the
   clean result counts, including a same-context result, and file bodies are
   not re-read to prove it. The readout does not contain the digest or the
   commit hash. A mismatch restarts the check. If the result returns after an
@@ -402,17 +401,21 @@ that wait.
 If the menu printed a withheld option-1 row, do not approve. Name that
 Approve cannot be taken and wait again. Do not enter the finishing path.
 
-Before accepting Approve, re-read HEAD, the merge-base, and the working-surface
-identity recorded at the end of step 1, not the file bodies, per
-[references/identity-and-argv.md](references/identity-and-argv.md). That
-identity is the head OID and the staged, unstaged, and untracked path, mode,
-and digest. A same-name
-base OID change names the new base in one sentence and keeps Approve. There
-is no GitHub mergeability object yet; do not invent a conflict check. A
-subject change, a head change, a base-ref rename, or a dirty surface that differs from the recorded surface still rejects and rebuilds.
-A change to staged, unstaged, or untracked files restarts this grade even when the head commit is unchanged. A changed digest on that dirty surface restarts the PR-readiness grade and the simplicity check. A finished merge-readiness grade is about the pull-request head, so this dirty-surface change does not restart it. A new head, including a message-only amend, restarts the simplicity check. A new commit on the branch restarts the simplicity check.
-The already-typed 1 does not approve that rebuilt gather. Any other matching
-re-read is silent. The one-sentence base naming is not a rebuild.
+Before accepting Approve, compare the recorded content-review inputs and
+re-read the full head per
+[references/identity-and-argv.md](references/identity-and-argv.md). A same-name
+base OID change names the new base in one sentence and keeps Approve when
+the comparison base and required check inputs still match. There is no GitHub
+mergeability object yet; do not invent a conflict check. A subject change,
+base-ref rename, changed comparison base or intent, changed committed tree,
+or a dirty surface that differs from the recorded surface recomposes affected
+checks. The already-typed 1 does not approve that rebuilt gather.
+When only the head changed and review inputs match, retain the diff and
+simplicity reviews, refresh head-specific checks, and rebind publication to
+the current full head. If the recommendation stays Approve, continue with
+the existing 1 without another approval menu. Missing required evidence or
+new findings recompose instead. This never carries merge approval to a new
+PR head. Any other matching re-read is silent.
 
 Discover the installed skill that owns opening a pull request the same way
 `ce-explain` is: when that skill is present. WORKFLOWS.md's example is

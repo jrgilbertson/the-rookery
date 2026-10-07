@@ -13,6 +13,10 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
+- Readiness approval reuses completed reviews. Merge approval retains review
+  history, live eligibility, and linked-issue state checks without repeating
+  tracker-text hashes or policy comparisons. PR content reviews survive
+  message-only amendments when their content and context still match.
 - `creating-portable-skills` follows the Agent Skills format for portable
   packages and descriptions, and delegates evaluation to pinned upstream
   `build-eval` and `ce-retune` guides. Repository package conventions stay in

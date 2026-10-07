@@ -82,16 +82,18 @@ Record by node id: each submission (id, author, timestamp, state, reviewed
 commit, opaque body digest — never raw PR text); each thread (id, path,
 resolution) and comment (id, author, timestamp, opaque body digest); each
 conversation comment the same; each description edit (`editedAt`, editor,
-opaque post-edit body digest); policy digest (resolution required, approval
-count, last-push flags) and live merge-state digest. Without ids, step 7
+opaque post-edit body digest). Keep resolved policy facts and linked-issue
+identities and states separately; do not fingerprint policy documents or issue
+text. Without ids, step 7
 cannot compare stability: stop and do not merge.
 
 The helper's fingerprint — each node's stable id plus an opaque digest over
 its full floor-field JSON — satisfies this section for the history surfaces
 and identity; its `--fingerprint` mode re-emits it with no body text, so the
-step 7 comparison runs entirely outside the conversation. Policy and live
-merge-state digests still come from the step 2 `gh pr view --json` and policy
-fetches.
+step 7 comparison runs entirely outside the conversation. Fingerprint mode
+still fetches every history surface to catch edits; it reduces output, not
+network reads. Live merge eligibility uses the small PR view and queue/method
+probe, not a policy or live-state byte comparison.
 
 ## Semantic traps
 

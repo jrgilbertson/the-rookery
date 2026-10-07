@@ -463,6 +463,17 @@ def inspect_stable_session(
 def validate_contract_sources() -> None:
     assessment = (REPO_ROOT / "skills" / "checking-pr-readiness" / "references" / "identity-and-argv.md").read_text(encoding="utf-8").lower()
     normalized_assessment = " ".join(assessment.split())
+    require("head^{tree}" in assessment, "review reuse must bind Git's content tree, not only the commit")
+    require("merge-base" in assessment, "review reuse must bind the reviewed comparison base")
+    require("intent" in assessment, "review reuse must preserve the reviewer's intent context")
+    require(
+        "including a message-only amend, restarts the simplicity check" not in normalized_assessment,
+        "unchanged content must not restart simplicity after a message-only amend",
+    )
+    merge_skill = (REPO_ROOT / "skills" / "checking-merge-readiness" / "SKILL.md").read_text(encoding="utf-8")
+    merge_approval = merge_skill.split("### On a later reply of 1", 1)[1].lower()
+    require("policy digest" not in merge_approval, "merge approval must not repeat the policy fingerprint comparison")
+    require("identity and state" in merge_approval, "merge approval must retain the small linked-issue state check")
     skill = " ".join(
         (REPO_ROOT / "skills" / "checking-pr-readiness" / "SKILL.md").read_text(encoding="utf-8").lower().split()
     )
@@ -569,6 +580,34 @@ def validate_contract_sources() -> None:
 
 
 def run_suite() -> None:
+    # Exercise the native identity operations named by the production contract,
+    # not a second implementation of the readiness decision.
+    with tempfile.TemporaryDirectory(prefix="pr-content-reuse-") as temporary:
+        repo = Path(temporary) / "checkout"
+        initial_head = build_repository(repo)
+        initial_tree = run("git", "rev-parse", "--verify", "HEAD^{tree}", cwd=repo)
+        base_oid = full_base_oid(repo, BASE_REF)
+        initial_comparison = run("git", "merge-base", "HEAD", base_oid, cwd=repo)
+        run("git", "commit", "-q", "--amend", "-m", "metadata-only amendment", cwd=repo, env=git_env())
+        require(full_head(repo) != initial_head, "message amendment did not move the publication head")
+        require(run("git", "rev-parse", "--verify", "HEAD^{tree}", cwd=repo) == initial_tree, "message amendment changed review content")
+        require(run("git", "merge-base", "HEAD", base_oid, cwd=repo) == initial_comparison, "message amendment changed comparison base")
+
+        # An empty base advance followed by a rebase preserves the tree, but
+        # changes what the review compares against. Tree equality alone is unsafe.
+        run("git", "checkout", "-q", "main", cwd=repo)
+        run("git", "commit", "-q", "--allow-empty", "-m", "new comparison base", cwd=repo, env=git_env())
+        new_base = full_head(repo)
+        run("git", "checkout", "-q", "assessment-subject", cwd=repo)
+        run("git", "rebase", "-q", "main", cwd=repo, env=git_env())
+        require(run("git", "rev-parse", "--verify", "HEAD^{tree}", cwd=repo) == initial_tree, "fixture rebase unexpectedly changed content")
+        require(run("git", "merge-base", "HEAD", new_base, cwd=repo) != initial_comparison, "base movement was invisible to review identity")
+
+        (repo / "src" / "app.txt").write_text("changed content\n", encoding="utf-8")
+        run("git", "add", "src/app.txt", cwd=repo)
+        run("git", "commit", "-q", "--amend", "--no-edit", cwd=repo, env=git_env())
+        require(run("git", "rev-parse", "--verify", "HEAD^{tree}", cwd=repo) != initial_tree, "content amendment was invisible to review identity")
+    print("PASS: native tree/base identity distinguishes message-only amendments, changed comparison bases, and changed content")
     validate_contract_sources()
     with tempfile.TemporaryDirectory(prefix="pr-readiness-assessment-") as temporary:
         stable_repo = Path(temporary) / "stable"

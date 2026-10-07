@@ -215,8 +215,10 @@ review. Looks merge-ready is the trigger to start this review.
 
 It recommends merge, debug, or do not merge, then waits for a numbered reply.
 Gather, grade, and readout stay read-only. Option 1 is Proceed to merge.
-Before merging, it confirms the pull request has not moved, then kicks off
-the forge merge. A match is silent. A same-name base move with no GitHub
+Before merging, it compares review history, PR identity and live eligibility,
+and linked-issue identities and states, then kicks off the guarded forge merge.
+It reuses the finished grade without re-fetching issue text or policy documents.
+A match is silent. A same-name base move with no GitHub
 conflict is named and is not a stopping mismatch. A `baseRefName` change
 voids the grade. An edit to a GitHub or Linear issue title, body, or
 comments is not a stopping mismatch. Any other mismatch names what moved

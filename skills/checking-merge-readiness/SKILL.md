@@ -12,8 +12,7 @@ redesign pressure, and follow-up debt), not a recap of individual review
 comments. Babysit, bot rounds, and point fixes clear the queue; ask whether
 the accumulated change is still the right system to put on main.
 
-Print a short Minto pyramid brief (shape in step 6). Recommendations are
-merge, debug, or do not merge, then wait for a numbered reply.
+Print a short Minto pyramid brief (step 6): merge, debug, or do not merge, then wait for a numbered reply.
 
 Thin checks run first: whether the review loop is quiet enough to grade and
 whether host merge rules pass (for example required conversation resolution).
@@ -116,9 +115,9 @@ read-only verb set, the only forge commands the gather path runs:
 - GraphQL for each linked issue's comments. Paginate the issue's `comments`
   connection to exhaustion and retain each comment's stable id, author,
   timestamp, and body for stewardship. `gh issue view --json comments` does not
-  prove exhaustion and must not substitute. For step 7, record each issue's
-  number, state, title digest, body digest, and each comment's id plus body
-  digest. If any issue or comment page cannot be fetched completely, mark
+  prove exhaustion and must not substitute. For step 7, record only each
+  issue's native identity and state. Comments serve this initial stewardship
+  review; do not fingerprint their text. If any issue or comment page cannot be fetched completely, mark
   issue stewardship incomplete and cap at debug. Do not list or search unrelated issues.
 - GraphQL for review history (plain `gh pr view` omits thread resolution
   and description edit history). Prefer the bundled helper
@@ -164,11 +163,11 @@ not echo helper JSON, jq, fingerprints, or rollup dumps into chat.
 Completion: the description, diff, review history, linked source issues when
 present, and host policy/live state are each in hand with the floor met, or
 marked unavailable / incomplete with its cap recorded; the head OID and
-fingerprints are recorded, with the payload's fingerprint block and a digest of
-the resolved host policy and every linked issue, when present, written to files
-now so a later option-1 re-check has something to compare against. Store those
+fingerprints are recorded, with the payload's history fingerprint, resolved
+host-policy facts, and each linked issue's identity and state written to files
+now for the later option-1 execution check. Store those
 files in an owner-only `mktemp -d` directory outside the target repository.
-While waiting, that directory holds fingerprints and digests, not raw forge
+While waiting, that directory holds history fingerprints and these small records, not raw forge
 JSON. Do not remove it while waiting for a numbered reply. On option 1, the
 Directory column in [references/merge-execution.md](references/merge-execution.md)
 decides. A Keep row leaves it even if the re-check stopped. Remove only as
@@ -467,23 +466,18 @@ When the menu offered Proceed, the reviewer that holds the step-2 directory
 runs this compare. Any other context sends the reply there and does not
 dispatch or merge. Do not grade again or start a review.
 
-Pin `GH_HOST` to the certified host. Re-read the four step-2 records with
-the transport that wrote them. With the helper, re-run
-[scripts/fetch-pr-history.sh](scripts/fetch-pr-history.sh) as
-`fetch-pr-history.sh --repo <owner/name> --pr <number> --fingerprint` only
-when that helper wrote the step-2 fingerprint. When step 2 stored the
-hand-built floor because the helper exited 4, repeat that floor compare.
-Also re-check live merge state with
-`gh pr view <number> --repo <owner/name> --json`, re-run step 2's policy
-chain against the recorded policy digest, and compare the issue record when
-issues were in the review. Those compares may run concurrently. Keep outputs
-in the step-2 temp directory. Do not echo jq, diff, or fingerprint JSON into
-chat. Classify each differing live fact by the table in
-[references/merge-execution.md](references/merge-execution.md). A missing
-record or an unfinished re-read still stops and does not grade or merge.
-Title, body, and comment add, edit, and remove follow row 3. State, the
-linked-issue set, a missing issue, or an incomplete fetch follow row 11. A
-pull-request body edit stays on row 13.
+Pin `GH_HOST` to the certified host. Reuse the finished grade and captured
+host-policy facts. Follow the approval reads and table in
+[references/merge-execution.md](references/merge-execution.md): compare review
+history, PR identity and live eligibility, and each linked issue's identity and state.
+Use [scripts/fetch-pr-history.sh](scripts/fetch-pr-history.sh) with `--fingerprint`
+only when it wrote the captured history fingerprint; otherwise repeat the
+captured manual history compare. These reads may run concurrently.
+Do not download or regrade the diff, re-fetch issue text, or fingerprint policy
+documents. Keep outputs in the step-2 temp directory and compare them off chat.
+A missing record or unfinished read stops without grading or merging. Issue
+states and membership follow row 11; PR body and review evidence follow row 13.
+A match is silent. If narration is needed, say you are merging the reviewed head.
 
 Option 1 is the only write, and only when that table continues: the kickoff
 in merge-execution.md, then whether the PR is MERGED or what the command

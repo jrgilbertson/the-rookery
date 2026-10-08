@@ -13,3 +13,5 @@ pre-push:
       run: gitleaks dir --redact --no-banner --no-color .
     fixtures:
       run: bash scripts/checks/fixtures.sh
+    global-agents-freshness:
+      run: bash scripts/sync-global-agents.sh --check

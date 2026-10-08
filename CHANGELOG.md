@@ -16,8 +16,10 @@ looked" surface. GitHub Releases mirror its entries.
 - `GLOBAL-AGENTS.md` publishes the maintainer's global agent guidance, the
   file every agent reads before a repository's own `AGENTS.md`. The local file
   stays the source of truth: `scripts/sync-global-agents.sh` copies it one way
-  into the repository, and a pre-push check fails when the copy is stale.
-  `WORKFLOWS.md` explains its role under Foundations.
+  into the repository, and a pre-push check fails when the committed copy is
+  stale. The check runs only in a clone that opts in with
+  `git config rookery.globalAgentsSource`. `WORKFLOWS.md` explains its role
+  under Foundations.
 
 ### Changed
 

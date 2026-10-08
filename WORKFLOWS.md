@@ -23,10 +23,11 @@ deciding whether a proven in-flight owner should continue.
 
 ## Foundations
 
-The workflows assume two things are in place:
+The workflows assume three things are in place:
 
 - **Repository-based work.** These workflows lean heavily on repositories such as GitHub for code development and knowledge management. Repos give you branches for parallel work, version control, and backups, which all help when you're running agents and working with others.
 - **A durable personal knowledge source.** Sources such as Obsidian, Notion, plain markdown files, or anything that persists outside an AI provider's memory. Point each agent at that store so every harness reads the same knowledge. Turning off in-tool agent memory is a separate choice that stops knowledge from collecting where only one provider can reach it.
+- **One global agent guidance file.** Every agent in every project reads the same file before any repository's own `AGENTS.md`. Mine lives at `~/.codex/AGENTS.md`, and `~/.claude/CLAUDE.md` imports it with a single `@~/.codex/AGENTS.md` line, so Codex and Claude Code follow identical rules. It holds the habits that apply everywhere: climb the simplicity ladder before writing code, get a bug red before fixing it, and keep going until the outcome is verified. Project files add only what is specific to that repository. Because this one file shapes every run, it changes rarely and deliberately. [GLOBAL-AGENTS.md](GLOBAL-AGENTS.md) is a published copy of mine. My local file stays the source of truth; `scripts/sync-global-agents.sh` copies it here, and a pre-push check fails when the copy falls behind.
 
 The skills themselves are not tied to one editor. They work in VS Code, Claude Cowork, Cursor, Codex, Gemini CLI, and other compatible tools. I run the loop in [Orca](https://github.com/stablyai/orca) because it is a strong agentic IDE and can drive several of those harnesses side by side in one project.
 

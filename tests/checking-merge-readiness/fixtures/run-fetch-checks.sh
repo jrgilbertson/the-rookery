@@ -431,7 +431,12 @@ has_text "no grade store: grades stay out of every store" "$WORK/skill.flat" \
   'write no grade into the repository, the pull request, or any other store'
 has_text "single write: the merge is pinned to the graded head" "$WORK/exec.flat" \
   'GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --<method> --match-head-commit <oid>'
-if grep -qE -- 'gh pr merge .*--(admin|auto|delete-branch)' "$EXEC_MD"; then
+# Flatten only the fenced command blocks, so a flag on a continuation line is
+# caught and the prose sentence that names the forbidden flags is not.
+# The backticks are literal Markdown fence delimiters.
+# shellcheck disable=SC2016
+if sed -n '/^```text$/,/^```$/p' "$EXEC_MD" | tr '\n' ' ' |
+  grep -qE -- 'gh pr merge .*--(admin|auto|delete-branch)'; then
   fail "single write: no bypass flags in the merge command" "found a forbidden flag"
 else pass "single write: no bypass flags in the merge command"; fi
 

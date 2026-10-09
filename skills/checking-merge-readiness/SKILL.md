@@ -427,7 +427,9 @@ menu offered it. A `1` on a withheld row is not Proceed: name that the action
 cannot be taken and wait again.
 
 The reviewer that holds the step 2 directory runs the re-check and merge in
-[references/merge-execution.md](references/merge-execution.md). It does not
+[references/merge-execution.md](references/merge-execution.md). A dispatching
+context forwards the reply to that same reviewer; if it cannot be resumed,
+stop without merging and say a fresh review is needed. It does not
 grade again, start a review, download the diff, or re-fetch issue text or
 policy documents. A match is silent. If narration is needed, say you are
 merging the reviewed head. On a stop, name what moved and do not write.

@@ -369,10 +369,12 @@ pins() { # pins <label> <needle>
 }
 pins "boundary: a named subject must match the checkout" \
 	"require \`git rev-parse HEAD\` to equal it"
-pins "boundary: a published tree mismatch stops before merge readiness" \
-	"and stop: do not start merge readiness"
+pins "boundary: a published mismatch stops babysit and merge readiness" \
+	"and stop: start neither babysit nor merge readiness"
 pins "boundary: the publisher gets the approved base and it is checked" \
-	"and the pull request's base branch with the approved target"
+	"pull request's base repository and branch with the approved target"
+pins "boundary: nothing acts on the pull request before the publish check" \
+	"An attended run passes \`babysit:off\`"
 pins "boundary: a withheld 1 is not Approve" "A \`1\` on a withheld row is not Approve"
 pins "boundary: the menu turn never picks" "Do not pick an option in the same turn that wrote the menu."
 

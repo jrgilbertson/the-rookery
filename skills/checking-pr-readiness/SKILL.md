@@ -48,12 +48,15 @@ for a numbered reply and remove it when the run ends.
 
 When the caller names a branch, commit, or pull request, resolve its head OID
 through its own read (git for a branch or commit, the forge for a pull
-request) and require `git rev-parse HEAD` to equal it. On a mismatch, or when
+request) and require `git rev-parse HEAD` to equal it. A named branch or pull
+request also requires the checked-out branch to be that branch or the pull
+request's head branch. On a mismatch, or when
 the named subject cannot be resolved, name it, withhold Approve, and stop
 gathering; never assess the checkout in its place. With no named subject, the
 current branch is the subject.
 
-Resolve the target branch the pull request will merge into (the remote's
+Resolve the target branch the pull request will merge into (the base of an
+open pull request for this head branch when one exists, else the remote's
 HEAD, or ask when it is ambiguous) and record its full base OID. Run
 [scripts/surface-report.sh](scripts/surface-report.sh) when it is present and
 executable, with `--base <target> --full`. Otherwise gather the same four
@@ -355,30 +358,34 @@ or contents, local-only paths, credentials, or unnecessary personal data. Do
 not write the filled pack back to the asset or print it as a readout.
 
 Invoke the installed skill that owns opening a pull request once, with the
-pack and the approved target branch as the pull request's base
-(WORKFLOWS.md's example is `ce-commit-push-pr`). When this run is
-unattended, pass that skill's non-interactive mode, such as `mode:pipeline`.
+pack and the approved target as the pull request's base (tell it to pass
+`--base <target>` when it creates one); WORKFLOWS.md's example is
+`ce-commit-push-pr`. An unattended run, one executing the `repo-gardener`
+Executor contract (installing gardener does not make a run one), passes that
+skill's non-interactive mode, such as `mode:pipeline`. An attended run passes
+`babysit:off`, so nothing acts on the pull request before the check below.
 Ordinary publication writes the pack into the pull request description. That
 skill must not re-ask the same Approve. If no such skill is installed, name
 that once and stop; option 1 accepted readiness, and publishing still needs a
 companion.
 
-When that skill returns, compare `git rev-parse <published head>^{tree}` with
-the recorded tree OID, and the pull request's base branch with the approved
-target. On a mismatch, name what differs, say that the published pull request
-is not what was approved, and stop: do not start merge
-readiness, because the published head needs a fresh PR-readiness pass.
+When that skill returns, compare the tree of the head it pushed
+(`git rev-parse <pushed head>^{tree}`) with the recorded tree OID, and the
+pull request's base repository and branch with the approved target. On a
+mismatch, name what differs, say that the published pull request is not what
+was approved, and stop: start neither babysit nor merge readiness, because the
+published head needs a fresh PR-readiness pass. An unattended run reports the
+mismatch to its caller with that same instruction.
 
-An unattended run stops after the publisher and leaves babysit and merge
-readiness to its caller. Otherwise, when the publisher created or updated a
-pull request without starting `ce-babysit-pr` and its completion gate allows
-babysit, invoke `ce-babysit-pr` for that pull request; never start a second
-babysit. When babysit reports looks merge-ready or cautiously looks ready,
-invoke `checking-merge-readiness` for the pull request; it moves the review to
-a fresh reviewer itself, and its menu waits for the owner. When the publisher
-opened nothing, its gate says not to babysit, or babysit ends any other way,
-report that and stop. The Approve 1
-never selects Proceed to merge.
+On a match, an unattended run stops and leaves babysit and merge readiness to
+its caller. An attended run invokes `ce-babysit-pr` for the pull request
+unless it is a draft or the repository's Compound Engineering config sets
+`auto_babysit: false`. When babysit reports looks merge-ready or cautiously
+looks ready, invoke `checking-merge-readiness` for the pull request; it moves
+the review to a fresh reviewer itself, and its menu waits for the owner. When
+the publisher opened nothing, babysit is skipped or not installed, merge
+readiness is not installed, or babysit ends any other way, name that once and
+stop. The Approve 1 never selects Proceed to merge.
 
 ## Gotchas
 

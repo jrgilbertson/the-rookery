@@ -173,8 +173,10 @@ the authored commit preserved and no PR. The Coordinator never picks Stop and
 file follow-up work.
 
 After reply 1, checking-pr-readiness invokes `ce-commit-push-pr
-mode:pipeline`. If that skill created or updated a pull request, its
-completion gate allows babysit, and it did not already start babysit, the
+mode:pipeline`. If that skill created or updated a pull request,
+checking-pr-readiness did not report that the published pull request is not
+what was approved, its completion gate allows babysit, and it did not already
+start babysit, the
 Executor invokes `ce-babysit-pr mode:pipeline` for it; otherwise it reports
 what the publisher said and stops. Babysit repairs CI
 through `ce-debug` and answers review comments through

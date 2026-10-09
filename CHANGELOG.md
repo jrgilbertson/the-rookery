@@ -23,11 +23,12 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
-- `checking-pr-readiness` and `checking-merge-readiness` are about half their
-  former size. Merge readiness always grades the live head in a fresh
-  reviewer that receives only the pull-request identity, and its option-1
-  re-check is four checks (head and base ref, review history, linked-issue
-  states, host rules) instead of a 16-row table. PR readiness records one
+- `checking-pr-readiness` is about 40% of its former size and
+  `checking-merge-readiness` about 80%. Merge readiness always grades the
+  live head in a fresh reviewer that receives only the pull-request
+  identity, and its option-1 re-check is four checks (head and base ref,
+  review history, linked-issue states, host rules) instead of a 16-row
+  table. PR readiness records one
   surface identity and recomposes on any change. Its Approve invokes the
   PR-opening skill and, once babysit reports looks merge-ready, starts merge
   readiness, which moves itself to a fresh reviewer. Unattended runs stop

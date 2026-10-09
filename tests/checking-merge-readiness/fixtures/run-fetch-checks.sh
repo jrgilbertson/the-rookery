@@ -423,7 +423,7 @@ lacks_text() { # lacks_text <label> <file> <needle>
 has_text "baseline: source-issue provenance" "$WORK/skill.flat" 'Provenance is "source issue".'
 has_text "baseline: earliest revision kept" "$WORK/skill.flat" 'provenance "earliest revision"'
 has_text "baseline: earliest revision predates review and states a purpose" "$WORK/skill.flat" \
-  'Use it as provenance "earliest revision" when that edit predates the first review submission and that body states a purpose in more than one line.'
+  'Use it as provenance "earliest revision" when that edit predates every review submission and every substantive top-level conversation comment, and that body states a purpose in more than one line.'
 has_text "baseline: a purposeless pre-review body asks" "$WORK/skill.flat" \
   'or that body states no such purpose, disclose the gap and ask for the purpose.'
 has_text "baseline: current description fallback" "$WORK/skill.flat" 'provenance "current description"'

@@ -227,7 +227,7 @@ entry's `diff` is the full post-edit body, not a patch and not the pre-edit
 text. Sort by `editedAt`. When an entry's snapshot is missing, disclose that gap first.
 It is not a debug cap and does not make the current description the earliest revision.
 Take the oldest surviving entry that has a body. Use it as provenance "earliest revision"
-when that edit predates the first review submission and that body states a purpose in more
+when that edit predates every review submission and every substantive top-level conversation comment, and that body states a purpose in more
 than one line. When that edit is later, its time cannot be compared, or that body states
 no such purpose, disclose the gap and ask for the purpose. It is not a debug cap.
 No recorded edits after that read means the body was never changed. When it states a purpose in more than one line, say the baseline is the description as first written.

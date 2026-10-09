@@ -421,6 +421,10 @@ lacks_text() { # lacks_text <label> <file> <needle>
   else pass "$1"; fi
 }
 has_text "baseline: source-issue provenance" "$WORK/skill.flat" 'Provenance is "source issue".'
+has_text "baseline: every stated purpose is compared" "$WORK/skill.flat" \
+  'Keep every stated purpose in the baseline and compare each with the final diff.'
+has_text "baseline: drift is a purpose the diff no longer describes" "$WORK/skill.flat" \
+  'A purpose that no longer describes that diff is intent drift in step 5.'
 has_text "baseline: earliest revision kept" "$WORK/skill.flat" 'provenance "earliest revision"'
 has_text "baseline: earliest revision predates review and states a purpose" "$WORK/skill.flat" \
   'Use it as provenance "earliest revision" when that edit predates every review submission and every substantive top-level conversation comment, and that body states a purpose in more than one line.'

@@ -218,8 +218,8 @@ A linked issue whose description states a purpose supplies the baseline first.
 Use each repository-local closing or source issue from step 2, and a source
 issue on another tracker, including Linear, when this run already read its
 description. No new login, and no invented text. Provenance is "source issue".
-One shared purpose is the baseline. Conflicting purposes are intent drift in
-step 5. Do not ask which description the owner meant.
+Keep every stated purpose in the baseline and compare each with the final diff.
+A purpose that no longer describes that diff is intent drift in step 5. Do not ask which description the owner meant.
 
 With no such issue description, use the pull request description. **SSOT for
 edit snapshots:** where `userContentEdits` was read to exhaustion, each

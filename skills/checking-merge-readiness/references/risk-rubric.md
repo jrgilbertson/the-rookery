@@ -4,8 +4,9 @@ The review grades each driver class below low, medium, or high against the
 accumulated review history and the final diff. Every anchor is a criterion
 the grading agent self-applies honestly ("can I name it, can I trace it"),
 never a severity label to reach for. A class with nothing to grade does not
-fire, is never invented, and counts as low in the roll-up. The principle-tension classes cite
-first-principles.md for their canon rather than restating it here.
+fire, is never invented, and counts as low in the roll-up. Classes 1-3 and 5
+name the source of their principle so the grader applies the operational test,
+not a summary of the book.
 
 Grades map to the recommendation by the fixed rule in SKILL.md step 6: all low
 grades merge; any medium grades debug; any high grades do not merge; caps
@@ -14,10 +15,15 @@ never restates that mapping beyond this line.
 
 ## 1. Complexity accretion
 
-Deep-module erosion and tactical-fix accumulation (first-principles.md §1
-and §2). Looks across the accumulated fixes for interfaces widened round by
-round, special cases stacked on special cases, and changes whose shape is
-explained by the previous fix rather than by the design.
+Deep-module erosion and tactical-fix accumulation (Ousterhout, *A Philosophy
+of Software Design*, 2nd ed., Ch. 2-4). A fix that widens an interface faster
+than it grows hidden functionality damages the design, and complexity arrives
+in small, individually defensible doses, so grade the sequence of fixes rather
+than any single diff. Looks for interfaces widened round by round, special
+cases stacked on special cases, and changes whose shape is explained by the
+previous fix rather than by the design. Weight that comes from the shape of
+earlier fixes is accidental complexity (Brooks, "No Silver Bullet"), however
+correct.
 
 - Low: you verified the accretion exists but it is localized to the flagged
   code, the module's interface still explains its use, and the owner would
@@ -34,10 +40,12 @@ explained by the previous fix rather than by the design.
 
 ## 2. Knowledge duplication
 
-The same fact or rule now living in two places (first-principles.md §3).
-Looks for a review fix that copied a rule, threshold, or format into a second
-file instead of referencing the place that owns it. Similar-looking code
-encoding independent rules is not a finding.
+The same fact or rule now living in two places (Hunt & Thomas, *The
+Pragmatic Programmer*, Tip 11: DRY is about knowledge, not text). Looks for a
+review fix that copied a rule, threshold, or format into a second file instead
+of referencing the place that owns it. Similar-looking code encoding
+independent rules is not a finding; treating it as one is how review pressure
+produces premature abstraction.
 
 - Low: you verified a fix introduced a second copy of a fact, but the copies
   sit adjacent, re-single-sourcing is mechanical, and the owner would not
@@ -51,7 +59,8 @@ encoding independent rules is not a finding.
 ## 3. Speculative generality
 
 Machinery built for a hypothetical the review raised but the PR does not
-need (first-principles.md §4). Looks for abstractions, configuration knobs,
+need (Fowler, "Yagni" and *Refactoring*'s Speculative Generality smell). Looks
+for abstractions, configuration knobs,
 and state machines whose only justification is a reviewer's "what if".
 Effort that makes the code easier to modify is not a finding.
 
@@ -84,8 +93,8 @@ that only looks at inline threads can miss the latter two.
 
 A later fix weakening or regressing an earlier one. Looks at regions touched
 in more than one round and reads the final state against each round's stated
-fix; first-principles.md carries the churn evidence for why reworked regions
-are graded as risk carriers.
+fix. Relative code churn predicts defect density (Nagappan & Ball, ICSE
+2005), which is why reworked regions are graded as risk carriers.
 
 - Low: you verified rounds touched the same region, read the final state,
   and each earlier fix's effect survives it.
@@ -149,4 +158,6 @@ or redesign.
 
 **Systems health** (blast radius, module boundaries, traps for the next
 change) grades through classes 1, 3, and 5 and redesign pressure — not a
-separate eighth driver.
+separate eighth driver. The test: did the birth-to-tip path leave the design
+easier or harder for the next maintainer to change? A pull request that
+satisfies every review comment but leaves the design harder to change fails it.

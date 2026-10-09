@@ -1,6 +1,7 @@
 ---
 title: "Isolate native state for ephemeral Codex evals"
 date: 2026-10-04
+last_updated: 2026-10-09
 category: best-practices
 module: "creating-portable-skills skill verification"
 problem_type: best_practice
@@ -68,6 +69,14 @@ native CLI never writes anything under the operator's home; helper staging and
 other native runtime behavior need their own evidence. Record instrumentation
 that can alter inference history separately from model and catalog defaults.
 
+**Current suite.** The Promptfoo suite's `prepare` step in
+`tests/creating-portable-skills/promptfoo_suite.py` gives each Codex run a
+fresh private `CODEX_HOME` with linked authentication, plus a private
+`sqlite_home` and `log_dir`. It does not run the seed-and-control or row-count
+checks above, so it claims private paths rather than proven storage
+isolation. Apply this procedure when a run must reuse an existing Codex home,
+or during the decision record's dependency-upgrade recheck.
+
 ## Why This Matters
 
 An ephemeral flag describes a conversation's persistence behavior, not every
@@ -100,3 +109,6 @@ rejected before the model turn.
   covers independent configuration and output-schema controls.
 - [Cross-harness dogfood testing](cross-harness-dogfood-testing.md) separates
   installed identity, native loading, and behavior evidence.
+- [Use Promptfoo for portable skill evaluations](../../decisions/promptfoo-for-portable-skill-evaluations.md)
+  pins the native providers and requires a private-storage recheck on
+  dependency upgrades.

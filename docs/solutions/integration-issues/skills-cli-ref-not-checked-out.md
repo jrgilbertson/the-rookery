@@ -1,6 +1,7 @@
 ---
 title: "skills CLI @ref targeting silently scans the default branch"
 date: 2026-07-16
+last_updated: 2026-10-09
 category: integration-issues
 module: "skills CLI install probe (creating-portable-skills)"
 problem_type: integration_issue
@@ -25,7 +26,7 @@ tags: [skills-cli, vercel-labs, git-ref, default-branch, false-positive, install
 
 The `skills` CLI (v1.5.19, resolved fresh via `npx`) accepts a ref suffix on remote installs — `npx skills add owner/repo@<ref>` — and its output claims the ref was honored. It was not. The CLI clones the repository but scans the default branch's tree, ignoring the requested ref entirely. Any pre-merge install probe that relies on `@<branch>` or `@<sha>` is testing the wrong tree.
 
-This surfaced while running the install-probe gate for `skills/creating-portable-skills` on branch `jrgilbertson/Initial-setup` of `jrgilbertson/the-rookery`. PR #4 merged on 2026-07-17. Evidence is recorded in `tests/creating-portable-skills/results.md`.
+This surfaced while running the install-probe gate for `skills/creating-portable-skills` on branch `jrgilbertson/Initial-setup` of `jrgilbertson/the-rookery`. PR #4 merged on 2026-07-17. Evidence is recorded in `tests/creating-portable-skills/results.md` (Git history; last present at cc66ee8).
 
 ## Symptoms
 
@@ -59,7 +60,7 @@ $ npx skills add owner/repo --list
 
 Record the CLI version alongside every probe (`skills` 1.5.19 this run). The tool is 0.x and resolved fresh via `npx`, so its surface can change silently between runs.
 
-The gate row in `tests/creating-portable-skills/results.md` records the local probe as the pre-merge pass. The deferred publication check completed after merge on 2026-07-27: `npx skills@1.5.20 add jrgilbertson/the-rookery --list` reported four skills from the default branch and included `creating-portable-skills`. This confirms default-branch publication and does not retest the historical 1.5.19 `@ref` behavior.
+The gate row in `tests/creating-portable-skills/results.md` (Git history; last present at cc66ee8) records the local probe as the pre-merge pass. The deferred publication check completed after merge on 2026-07-27: `npx skills@1.5.20 add jrgilbertson/the-rookery --list` reported four skills from the default branch and included `creating-portable-skills`. This confirms default-branch publication and does not retest the historical 1.5.19 `@ref` behavior.
 
 ## Why This Works
 
@@ -75,4 +76,7 @@ The local-path scan reads the working tree directly, so it exercises the same di
 ## Related Issues
 
 - PR jrgilbertson/the-rookery#4 (merged 2026-07-17; the branch whose install-probe gate surfaced this)
-- `tests/creating-portable-skills/results.md` — the recorded gate evidence and caveat
+- `tests/creating-portable-skills/results.md` (Git history; last present at cc66ee8) — the recorded gate evidence and caveat
+- [CONCEPTS.md "Install Probe"](../../../CONCEPTS.md#install-probe) and
+  [RELEASING.md](../../../RELEASING.md) — the current owners of the install
+  probe procedure

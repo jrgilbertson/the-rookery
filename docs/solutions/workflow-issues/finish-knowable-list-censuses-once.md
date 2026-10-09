@@ -49,14 +49,12 @@ A Census describes one stated query and window. Record its filters, returned
 counts, pagination or search limits, and inspected coverage. Reuse results
 and body reads across areas when queries overlap.
 
-Start implementation discovery with supported open/ready filters and a
-preference for mapped estimates 1–2. Narrow metadata locally when the native
-interface lacks an estimate filter; if estimates are absent from metadata,
-inspect the supported-filter shortlist. Missing estimates or readiness mappings
-remain eligible for selective broadening. Triage uses its own relevant query.
+Start discovery with the provider's supported ready or open filters and the
+narrowest query that serves the decision. Repo Gardener, for example, reads
+ready-state issues through the managing-issues config, else
+`gh issue list --state open --limit 500`, and reports that limit when the
+returned count reaches it. Triage uses its own relevant query.
 
-Complete the quick available-input pass across all five areas before dispatch,
-then deepen where another read could change an assignment or recommendation.
 Fetch further pages when they serve that decision, and state any remaining
 coverage limit. A completed filtered query proves only its own population and
 window. An empty result does not establish that the repository has no work.
@@ -68,7 +66,7 @@ work distinct. There is no fixed body-read count or full-backlog prerequisite.
 ## Example
 
 A provider reports 446 open issues. An open/ready query returns 12 records,
-of which six have mapped estimates 1–2. Inspect that shortlist first. A separate
+of which six are small and clearly specified. Inspect that shortlist first. A separate
 triage query may reveal older feedback; reuse any overlapping records. Broaden
 when an unestimated request or another page could change the recommendation.
 Report the actual filters and reads, leaving the rest unassessed.
@@ -81,5 +79,5 @@ claiming query completion or backlog exhaustion.
 
 - Historical motivation: pull request 69 on `jrgilbertson/the-rookery`
 - [Repo Gardener](../../../skills/repo-gardener/SKILL.md)
-- [Make skill safe stops local and observable](make-skill-safe-stops-local-and-observable.md)
+- [Stop only the work a missing fact blocks](stop-only-the-work-a-missing-fact-blocks.md)
 - [Cross-harness dogfood testing](../best-practices/cross-harness-dogfood-testing.md)

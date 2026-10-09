@@ -88,15 +88,8 @@ Keep terms with stable shared meaning.
 [Installation Parity](../../../CONCEPTS.md#installation-parity) names the
 repository's visitor-equivalent installation invariant.
 [Repository Maintenance Run](../../../CONCEPTS.md#repository-maintenance-run)
-names the complete `Sense -> Decide -> Act -> Verify -> Learn` contract used by
+names one unattended pass of
 [`repo-gardener`](../../../skills/repo-gardener/SKILL.md).
-
-Use plain language when the owning workflow can state the rule directly. The
-issue-management skill reports which issues are "Ready to start now" and keeps
-the exact blocker and readiness rules in its graph reference rather than naming
-that set as a separate project concept. Its behavioral comparison checks both
-directions of the contract: the rewritten skill still reports every eligible
-issue and no ineligible issue.
 
 Remove or demote names that merely label steps. In this cleanup, `Global Pass`,
 `Process Residual`, and `Targeted Sweep` stopped being standalone concepts. The
@@ -112,4 +105,4 @@ Current` and `Personal Learning Current` became the more familiar
 - [Operationalize abstract qualifiers in instruction review](../best-practices/operationalize-abstract-qualifiers-in-instruction-review.md)
 - [Use answer-first natural prose for owner-facing skill readouts](../best-practices/answer-first-natural-prose-for-owner-facing-skill-readouts.md)
 - [Allow honest nulls in mandatory novelty fields](../design-patterns/allow-honest-nulls-in-mandatory-novelty-fields.md)
-- [Separate scout measurement stages from authoring capacity](../architecture-patterns/separate-scout-measurement-stages-from-authoring-capacity.md)
+- [Reuse the shipping pipeline instead of a managed-run protocol](../architecture-patterns/reuse-the-shipping-pipeline-instead-of-a-managed-run-protocol.md)

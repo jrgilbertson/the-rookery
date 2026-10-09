@@ -1,7 +1,9 @@
 ---
+title: "Define the abstract qualifiers that the delete test misses"
+category: best-practices
 module: skill-instruction-review
 date: 2026-07-16
-last_updated: 2026-09-01
+last_updated: 2026-10-09
 problem_type: best_practice
 component: documentation
 severity: medium
@@ -39,8 +41,8 @@ tags:
 The delete test checks each agent instruction by asking whether the agent would
 get something wrong without it. Lines that restate default model behavior get
 cut. This repository's skill review checklist
-(`skills/creating-portable-skills/references/review-checklist.md`) uses it as the
-first item under Instruction economy.
+(`skills/creating-portable-skills/references/review-checklist.md`) applies it as
+the No-ops item, the first under Instruction economy.
 
 The test misses abstract qualifiers such as "thorough," "punchier," and
 "clean." Removing one changes behavior, so the line survives. The word still
@@ -59,10 +61,10 @@ briefing from one authoritative lookup. The listing-level trigger judge still
 said that a request to find an API rate limit in official documentation and
 cite the page would activate Storm Research.
 The near-miss regression contract for that query lives in
-`tests/storm-research/triggers.md` (API rate-limit near miss). The run log
-records the failed first correction and the later 17/17 result
-(`tests/storm-research/log.md` trigger-suite lines for the review-fix
-description).
+`tests/storm-research/triggers.md` (retired in #191; Git history at be1c655) (API rate-limit near
+miss). The run log records the failed first correction and the later 17/17
+result (`tests/storm-research/log.md` (retired in #191; Git history at be1c655) trigger-suite
+lines for the review-fix description).
 
 ## Guidance
 
@@ -79,9 +81,8 @@ Run the operationalize-the-qualifier check as its own named pass, separate from 
 
 The checklist item that encodes this lives under Instruction economy in `skills/creating-portable-skills/references/review-checklist.md`:
 
-> Qualifiers are operationalized. Pass: abstract words such as thorough, clean,
-> fast, bold, reliable, compatible, and improved map to concrete behavior or an
-> observable check.
+> Qualifiers are operationalized: abstract quality words and hedged requirements
+> have an observable meaning.
 
 Keep running the delete test too. The two checks catch disjoint failures: the delete test removes lines that steer nothing, the qualifier check defines words that steer unpredictably.
 
@@ -94,8 +95,10 @@ checkable criterion:
 3. Add a directly confusable near miss that shares attractive surface words
    but asks for a smaller artifact, such as one cited official-documentation
    lookup.
-4. Re-run the complete Trigger Contract in fresh contexts. A new negative case
-   does not excuse regressions on the existing positives or near misses.
+4. Re-run the complete Trigger Contract in fresh contexts through the
+   [SKILLS.md evaluation workflow](../../../SKILLS.md#evaluation-workflow).
+   A new negative case does not excuse regressions on the existing positives
+   or near misses.
 
 Prefer one categorical deliverable boundary over a growing exclusion list. The
 boundary states what must be present; the near misses demonstrate important
@@ -118,19 +121,21 @@ deliverable. Test those descriptions as a three-sided routing contract:
    subject and an eligible transition, or belong to adjacent workflows. Broad
    words such as “simplify” do not turn prescribed implementation, settled-code
    cleanup, or general brainstorming into this assessment
-   (`tests/checking-simplicity/triggers.md`).
+   (`tests/checking-simplicity/triggers.md` (retired in #191; Git history at be1c655)).
 3. **Exit.** Name the successful state that moves ownership onward. An unchanged
    subject with a clean result and no owner question belongs to the
    next planner or executor (`skills/checking-simplicity/SKILL.md:3`).
 
 Freeze the prior description, run the prior and revised metadata in separate
 fresh contexts, and keep the full positive and near-miss matrix on every run
-(`tests/README.md:83-100`). Then install the exact candidate beside its adjacent
-skills in a disposable project. Inspect the native trace for the first
+([CONCEPTS.md "Trigger Contract"](../../../CONCEPTS.md#trigger-contract)).
+Then install the exact candidate beside its adjacent skills in a disposable
+project. Inspect the native trace for the first
 `SKILL.md` loaded. If the wrong skill loads and its body later routes away, the
 activation still failed; the body repaired a metadata error after paying its
 cost (session history). Keep this native evidence separate from the trigger
-suite, which remains a listing proxy (`tests/README.md:101-116`).
+suite, which remains a listing proxy
+([CONCEPTS.md "Trigger Contract"](../../../CONCEPTS.md#trigger-contract)).
 
 ## Why This Matters
 
@@ -149,15 +154,15 @@ into a slower, costlier workflow and take work away from a better-matched tool.
 A deliverable is categorical enough to test: the request asks for the
 qualifying artifact or it does not. The resulting trigger-suite pass remains a
 listing proxy, not proof that every native harness will activate correctly
-(`tests/README.md:113-116`).
+([CONCEPTS.md "Trigger Contract"](../../../CONCEPTS.md#trigger-contract)).
 
 A workflow-state skill needs one more boundary: completion. Without an explicit
 exit, a clean review can select itself again and loop instead of handing the
 unchanged subject forward. In the simplicity-checkpoint baseline, adding one
 subjectless reuse near miss and one post-clean-result continuation near miss
 exposed two failures; the revised description passed all 22 declared trigger cases
-(`tests/checking-simplicity/log.md:51-52`). The matched suite proves only those
-queries. Native load-path evidence is still required.
+(`tests/checking-simplicity/log.md:54-55` (retired in #191; Git history at be1c655)).
+The matched suite proves only those queries. Native load-path evidence is still required.
 
 ## When to Apply
 
@@ -213,7 +218,7 @@ full research briefing, a STORM-style investigation, or an evidence review
 across multiple independent perspectives. Evidence comparison and decision
 support remain capabilities in the second sentence, not alternate trigger
 branches (`skills/storm-research/SKILL.md:3`). The directly confusable lookup
-stays in the near-miss set (`tests/storm-research/triggers.md:27`).
+stays in the near-miss set (`tests/storm-research/triggers.md:27` (retired in #191; Git history at be1c655)).
 
 This is the checkable-criterion fix shape applied to activation. It does not
 mean every skill needs the same words; it means the positive description should
@@ -235,11 +240,11 @@ stated need, keeps ordinary planning and brainstorming with their adjacent
 owners, and routes an unchanged clean result onward
 (`skills/checking-simplicity/SKILL.md:3`). The durable Trigger Contract tests
 both the broader entry and the adjacent-owner exclusions
-(`tests/checking-simplicity/triggers.md`).
+(`tests/checking-simplicity/triggers.md` (retired in #191; Git history at be1c655)).
 
 The frozen comparison moved from 20/22 to 22/22
-(`tests/checking-simplicity/log.md:51-52`). Native smoke checks then verify the
-stronger claim: the intended adjacent owner, rather than the checker, is the
+(`tests/checking-simplicity/log.md:54-55` (retired in #191; Git history at be1c655)).
+Native smoke checks then verify the stronger claim: the intended adjacent owner, rather than the checker, is the
 first skill whose instructions load. A later correction cannot turn an initial
 wrong load into a passing activation trace.
 

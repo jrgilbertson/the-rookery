@@ -23,10 +23,16 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Changed
 
-- Readiness approval reuses completed reviews. Merge approval retains review
-  history, live eligibility, and linked-issue state checks without repeating
-  tracker-text hashes or policy comparisons. PR content reviews survive
-  message-only amendments when their content and context still match.
+- `checking-pr-readiness` is about 40% of its former size and
+  `checking-merge-readiness` about 80%. Merge readiness always grades the
+  live head in a fresh reviewer that receives only the pull-request
+  identity, and its option-1 re-check is four checks (head and base ref,
+  review history, linked-issue states, host rules) instead of a 16-row
+  table. PR readiness records one
+  surface identity and recomposes on any change. Its Approve invokes the
+  PR-opening skill and, once babysit reports looks merge-ready, starts merge
+  readiness, which moves itself to a fresh reviewer. Unattended runs stop
+  after publishing; `repo-gardener`'s Coordinator starts merge readiness.
 - `creating-portable-skills` follows the Agent Skills format for portable
   packages and descriptions, and delegates evaluation to pinned upstream
   `build-eval` and `ce-retune` guides. Repository package conventions stay in
@@ -34,24 +40,22 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
+- `checking-merge-readiness` again dispatches a fresh reviewer when the
+  invoking session wrote or shaped the pull request, instead of grading it
+  itself, capping at debug, and asking the owner to request that review.
+  When no subagent can be opened, it reviews in place with a warning and
+  still offers merge.
 - `checking-merge-readiness` takes the intent baseline from a linked issue
-  whose description states a purpose, then from the pull request description.
-  Every stated purpose stays in the baseline; drift is a purpose the diff no longer fulfills.
-  An authorized issue comment this run already read replaces a stale issue description when the diff still matches that comment, and that stale description is not intent drift. The issue is not re-fetched.
-  A completed description history keeps the newest entry that predates every
-  review submission and every substantive top-level conversation comment,
-  when that entry has a body and that body states a purpose in more than one
-  line. An older entry is not the baseline. Description cases apply in order and
-  the first match wins. When no entry predates review, a later edit asks even
-  when that body states a purpose, and that later edit is not the current-description
-  baseline. A missing description snapshot is disclosed and does not
-  make the current description the earliest revision. A source issue on another
-  tracker is read only when the invoking owner has already named that tracker, workspace, and issue identity. A pull request description does not authorize that read. A failed read of that
-  owner-named issue is a named gap, does not by itself cap, and does not stop option 1.
-  It asks for the purpose, naming no candidate from the diff, only when the
-  matching description case says to ask. Unreadable description-edit history, or a
-  missing snapshot, is disclosed before the baseline is chosen, including when
-  a linked issue supplies that baseline, and does not by itself cap the recommendation.
+  whose description states a purpose, then from the newest pull request
+  description written before review, then, only when edit history cannot be
+  read, from the current description with the gap disclosed. A description
+  rewritten after review never becomes the baseline. Every stated purpose stays in the baseline; drift is a
+  purpose the diff no longer fulfills. An authorized issue comment this run
+  already read replaces a stale issue description when the diff still matches
+  it. A source issue on another tracker is read only when the invoking owner
+  has already named it; a failed read is a named gap that does not cap. The
+  owner is asked for the purpose, with no candidate from the diff, only when
+  no source states one.
 - Chief-of-staff reviews keep supplied results unverified, give the actual
   reason when source calls are excluded, and continue conditional questions
   without claiming a verified review.
@@ -62,18 +66,12 @@ looked" surface. GitHub Releases mirror its entries.
 - `managing-personal-crm` uses bounded supported contact lookup after an empty
   unsupported phone-string search, retaining conservative identity binding.
 - `checking-merge-readiness` keeps the Option-1 reply in the review that
-  wrote the brief. That reply compares the recorded fingerprint, live merge
-  state, host policy, and linked-issue digests, then merges or stops. It
-  does not start another review.
-- A finished review of a pull request commit stays usable when main has moved
-  and GitHub reports no conflict. `checking-merge-readiness` names that new
-  base in one sentence and still merges on option 1. A new commit on the pull
-  request's own branch starts that review over. An edit to a GitHub or Linear
+  wrote the brief. That reply re-checks the head, review history,
+  linked-issue states, and host rules, then merges or stops. It does not
+  start another review. A base that moved without a GitHub conflict is named
+  in one sentence and does not stop the merge; a new commit on the pull
+  request's own branch needs a fresh review. An edit to a GitHub or Linear
   issue title, body, or comments leaves the review in place.
-  `checking-pr-readiness` keeps Approve when the named base tip moves, and a
-  clean simplicity result counts when the recorded head and dirty-surface
-  identity match. A later gate in the same session reuses the earlier review
-  and still runs its own checks.
 - `route-work` Questions cards no longer present one reading of an ambiguous
   request as what the operator said. A recommendation's reason names what is
   unknown and what the answer decides. Neither the question nor its reason
@@ -390,6 +388,13 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Removed
 
+- `checking-pr-readiness` no longer ships `changelog-union.sh`,
+  `evidence-freshness.sh`, the content-digest identity, the reviewer-cap size
+  class, or the separate finishing reference; Approve's publish and
+  merge-readiness steps now live in the skill itself.
+  `checking-merge-readiness` no longer accepts a grade or diff file handed
+  over from another gate, and folds its first-principles reference into the
+  risk rubric.
 - Twelve `creating-portable-skills` eval cases that asked the model to recite
   validation procedure or gave the answer in the prompt. Cases 3, 5 and 7
   remain: case 3 no longer lists the lines to audit, case 5 keeps only its

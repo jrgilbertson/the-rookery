@@ -1,7 +1,7 @@
 ---
 title: Keep qualitative agent reviews qualitative
 date: 2026-08-28
-last_updated: 2026-09-26
+last_updated: 2026-10-09
 category: best-practices
 module: skill-instruction-review
 problem_type: best_practice
@@ -50,9 +50,9 @@ Run the assessment in one subagent, not in the current context:
 
 For skill changes, one independent review checks the package and evidence.
 The operator decides whether to iterate or stop; a fixed review cycle or
-iteration count is not a substitute for judgment. Blind behavioral grading
-remains a separate evidence task, with one or two sharp assertions per eval
-and deterministic mechanical checks in scripts (`SKILLS.md`).
+iteration count is not a substitute for judgment. Behavioral evaluation
+remains a separate evidence task, run through the
+[SKILLS.md evaluation workflow](../../../SKILLS.md#evaluation-workflow).
 
 Apply this necessity test to the review process as well as the product. Build
 the decision frame from the best available evidence: the stated goal,
@@ -91,9 +91,8 @@ subject replay, a coverage receipt, and speculation about parts not in the
 prompt. A structural rule restored parity without a numeric line budget: a
 clean result is the recommendation, one reason when useful, and what must
 remain; a simplify result caps at three grouped reasons; process narration
-is banned by name. Run the affected regression cases before shipping a readout
-change; diagnose failures against the original transcript and prior skill under
-`SKILLS.md`.
+is banned by name. Re-evaluate the affected readout behavior through that
+workflow before shipping a readout change.
 
 Rewriting prohibitions as positive statements is worth doing, but three of
 them turned out to be guardrails rather than clutter: presenting a dependent
@@ -124,8 +123,8 @@ from hiding an unnecessary distributed design.
 - When review revisions trigger new reviewers, receipts, or proof environments.
 - When a user decision affects the final design but does not block other safe
   reductions.
-- When editing a readout contract, so shape rules are re-verified with affected
-  regression cases rather than deleted as clutter.
+- When editing a readout contract, so shape rules are re-evaluated rather than
+  deleted as clutter.
 
 ## Examples
 
@@ -135,7 +134,8 @@ need or protected boundary requires it (`skills/checking-simplicity/SKILL.md`).
 Its assessment runs in one subagent that did not author or implement the
 subject, without reviewer churn.
 
-The regression cases make these behaviors observable:
+The retired regression cases (Git history at be1c655) made these behaviors
+observable:
 
 - `tests/checking-simplicity/cases/assessment-runs-in-subagent.md`
 - `tests/checking-simplicity/cases/current-docs-inform-viable-approaches.md`
@@ -149,4 +149,4 @@ The regression cases make these behaviors observable:
 - [Operationalize abstract qualifiers in instruction review](operationalize-abstract-qualifiers-in-instruction-review.md)
 - [Use independent contexts for skill grading and review](independent-fresh-context-review-for-skills.md)
 - [Answer-first natural prose for owner-facing skill readouts](answer-first-natural-prose-for-owner-facing-skill-readouts.md)
-- [Make skill safe stops local and observable](../workflow-issues/make-skill-safe-stops-local-and-observable.md)
+- [Stop only the work a missing fact blocks](../workflow-issues/stop-only-the-work-a-missing-fact-blocks.md)

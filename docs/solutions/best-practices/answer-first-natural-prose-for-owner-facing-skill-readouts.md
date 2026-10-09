@@ -20,7 +20,7 @@ resolution_type: documentation_update
 related_components:
   - testing_framework
   - checking-pr-readiness
-last_updated: 2026-09-09
+last_updated: 2026-10-09
 tags:
   - skill-authoring
   - owner-facing-readouts
@@ -105,5 +105,6 @@ The end-of-run API (menu, wait, later `1`) is a separate contract. See
 - Skills: `skills/checking-merge-readiness/SKILL.md` step 6,
   `skills/checking-pr-readiness/SKILL.md` step 7
 - [Do not split human and agent skill products](../conventions/do-not-split-human-and-agent-skill-products.md) — end-of-run API (menu and wait), not pyramid shape
-- Battery log: `tests/checking-merge-readiness/log.md` (conciseness and
-  blind re-grade sections)
+- Battery log: retired in #191; the conciseness and blind re-grade sections
+  are in Git history. Current evaluation:
+  [SKILLS.md evaluation workflow](../../../SKILLS.md#evaluation-workflow)

@@ -1,7 +1,7 @@
 ---
 title: "Prove which skill loaded in cross-harness dogfood runs"
 date: 2026-07-16
-last_updated: 2026-07-28
+last_updated: 2026-10-09
 category: best-practices
 module: "creating-portable-skills skill verification"
 problem_type: best_practice
@@ -37,8 +37,8 @@ risk. A fresh conversation and a bare repository do not prove which same-named
 skill the harness loaded. Two Opus 5 policy probes quoted rules absent from the
 project files, so both were discarded. A bounded, tool-less rerun with the
 authoritative policy embedded produced usable evidence for that policy case
-(`tests/creating-portable-skills/results.md`, "FR-P4 new-skill
-unavailable-target policy").
+(`tests/creating-portable-skills/results.md` (Git history; last present at
+cc66ee8), "FR-P4 new-skill unavailable-target policy").
 
 A valid run needs two checks. Fresh context prevents conversational carry-over.
 An identity check catches discovery precedence, stale installs, and same-name
@@ -112,7 +112,8 @@ check must fail when the wrong skill copy loads.
 ## Examples
 
 The first three cases come from the historical run log in
-`tests/creating-portable-skills/results.md`:
+`tests/creating-portable-skills/results.md` (Git history; last present at
+cc66ee8):
 
 1. **Codex CLI, network-denied sandbox.** `npx skills-ref` failed with
    `ENOTFOUND` mid-run. The agent followed the skill's manual fallback checks
@@ -129,8 +130,8 @@ The first three cases come from the historical run log in
    installed from local source, compared all six installed files with that
    source, and recorded the exact project-local base directory as deterministic
    native load provenance. The distinctive body sentence only corroborated
-   that provenance (`tests/creating-portable-skills/results.md`, "Final-source
-   U4 rerun").
+   that provenance (`tests/creating-portable-skills/results.md` (Git history;
+   last present at cc66ee8), "Final-source U4 rerun").
 
 ## Related
 
@@ -138,9 +139,15 @@ The first three cases come from the historical run log in
   the same shipping evidence from a different angle. In the recorded skills
   CLI 1.5.19 behavior, `@ref` targeting cloned the repository but scanned the
   default branch instead of checking out the requested ref.
-- `tests/creating-portable-skills/baseline-cases.md` contains the matched cases
+- `tests/creating-portable-skills/baseline-cases.md` (Git history; last present
+  at cc66ee8) contains the matched cases
   and contamination records for the frontier retune.
-- `tests/creating-portable-skills/results.md` contains the final package
+- `tests/creating-portable-skills/results.md` (Git history; last present at
+  cc66ee8) contains the final package
   identity and native model-harness evidence.
 - Issue jrgilbertson/the-rookery#13 is the frontier-model retune that surfaced
   the same-name collision.
+- `tests/creating-portable-skills/README.md` describes the current Promptfoo
+  suite. Its skill-use assertion is a native trigger observation, not load
+  provenance, so the identity checks above still apply when a run must prove
+  which copy loaded.

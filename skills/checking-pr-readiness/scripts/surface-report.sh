@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 #
-# surface-report.sh — the working-surface and size report.
+# surface-report.sh — the working-surface report.
 #
-# Serves SKILL.md step 1 (report the full working surface) and sweep class 11
-# (diff size against automated-reviewer file caps) in
-# references/sweep-classes.md.
+# Serves SKILL.md step 1: report the full working surface.
 #
 # Reports four categories with counts and paths: committed against the merge
 # base with the default branch, staged, unstaged, and untracked. Empty
@@ -14,35 +12,21 @@
 # flooding the caller.
 #
 # Usage:
-#   surface-report.sh [--cap <name>=<n>]... [--base <ref>] [--merge-base <sha>]
-#                     [--full] [--defer <gate-name>] [--help]
+#   surface-report.sh [--base <ref>] [--merge-base <sha>] [--full] [--help]
 #
 # Output states. Line 1 is always `verdict: <word>`; human detail follows.
 #
-#   verdict: under caps                exit 0  every supplied cap is at or above
-#                                              the total distinct changed files
-#   verdict: exceeds cap for <name>    exit 0  at least one supplied cap is below
-#                                              the total; the verdict names the
-#                                              first such reviewer and every cap
-#                                              is listed in the detail lines
-#   verdict: cap unverified            exit 0  no --cap was supplied, so the size
-#                                              check could not be made; or the
-#                                              committed category could not be
-#                                              measured, so no supplied cap can
-#                                              be called met. The surface is
-#                                              still reported
-#   verdict: no changes on surface     exit 0  all four categories are empty and
-#                                              the committed category was
-#                                              measured; when it could not be,
-#                                              an empty measured surface reports
-#                                              `cap unverified` instead.
-#                                              Distinct from `under caps`: an
-#                                              absent surface is not a pass
-#                                              against a cap
-#   verdict: covered by repo gate      exit 3  --defer named a repository-owned
-#                                              check; nothing was measured
-#   verdict: not run                   exit 2  usage error (unknown option, or a
-#                                              malformed --cap value)
+#   verdict: surface listed            exit 0  every category was measured and
+#                                              at least one path changed
+#   verdict: no changes on surface     exit 0  every category was measured and
+#                                              all four are empty
+#   verdict: surface incomplete        exit 0  no default branch resolved (or it
+#                                              was ambiguous), so the committed
+#                                              category was not measured; the
+#                                              other three are still reported.
+#                                              An incomplete surface is never a
+#                                              no-changes result
+#   verdict: not run                   exit 2  usage error (unknown option)
 #   verdict: not run                   exit 4  git is unavailable, this is not a
 #                                              git repository, one of the five
 #                                              git enumerations (merge base,
@@ -55,28 +39,17 @@
 #                                              category; the reason line names the
 #                                              enumeration
 #
-# One further state rides in the detail lines rather than the verdict: when no
-# default branch resolves, `default branch: unresolved` is printed, the
-# committed category reports `not computed`, and the other three categories are
-# still reported, so the verdict describes a HEAD-only surface. Because the
-# committed count is then unknown, supplied caps report `cap unverified` unless
-# the measured part alone already exceeds one.
-#
 # Dependencies: git and standard POSIX tools. No network, no jq, no node.
 
 set -euo pipefail
 
 usage() {
 	cat <<'EOF'
-surface-report.sh — working-surface and size report
+surface-report.sh — working-surface report
 
 Usage:
-  surface-report.sh [--cap <name>=<n>]... [--base <ref>] [--merge-base <sha>]
-                    [--full] [--defer <gate-name>] [--help]
+  surface-report.sh [--base <ref>] [--merge-base <sha>] [--full] [--help]
 
-  --cap <name>=<n>    Compare the total distinct changed-file count against
-                      reviewer cap <n> for reviewer <name>. Repeatable.
-                      With no --cap the size check reports `cap unverified`.
   --base <ref>        Use <ref> as the default branch instead of resolving one.
                       It resolves in the branch namespaces only — refs/remotes/
                       then refs/heads/ — so a tag cannot shadow a branch; a ref
@@ -89,12 +62,9 @@ Usage:
                       A supplied merge base that fails validation exits 4.
   --full              Print every path in each category instead of the first
                       25. Counts are exact either way.
-  --defer <gate-name> Report this class as owned by the named repository gate
-                      and measure nothing (exit 3).
   --help              Print this text and exit 0.
 
-Verdicts: under caps | exceeds cap for <name> | cap unverified |
-          no changes on surface | covered by repo gate | not run
+Verdicts: surface listed | no changes on surface | surface incomplete | not run
 EOF
 }
 
@@ -105,16 +75,6 @@ fail_usage() {
 	exit 2
 }
 
-validate_bounded_text() {
-	local LC_ALL=C label="$1" value="$2" maximum="$3"
-	[ "${#value}" -le "$maximum" ] || fail_usage "$label must be at most $maximum bytes"
-	if [[ "$value" =~ [[:cntrl:]] ]]; then
-		fail_usage "$label must be a single line without control characters"
-	fi
-}
-
-caps=""
-defer_gate=""
 supplied_base=""
 supplied_merge_base=""
 full_listing=0
@@ -124,36 +84,6 @@ while [ "$#" -gt 0 ]; do
 	--help | -h)
 		usage
 		exit 0
-		;;
-	--defer)
-		[ "$#" -ge 2 ] || fail_usage "--defer requires a gate name"
-		[ -n "$2" ] || fail_usage "--defer requires a non-empty gate name"
-		validate_bounded_text "--defer gate name" "$2" 128
-		defer_gate="$2"
-		shift 2
-		;;
-	--cap)
-		[ "$#" -ge 2 ] || fail_usage "--cap requires <name>=<n>"
-		validate_bounded_text "--cap value" "$2" 80
-		case "$2" in
-		*=*) ;;
-		*) fail_usage "--cap expects <name>=<n>, got: $2" ;;
-		esac
-		cap_value="${2#*=}"
-		case "$cap_value" in
-		'' | *[!0-9]*) fail_usage "--cap count must be a non-negative integer, got: $2" ;;
-		esac
-		# Beyond 15 digits the shell's integer comparison breaks, and a broken
-		# comparison must not fall through to a clean verdict.
-		[ "${#cap_value}" -le 15 ] || fail_usage "--cap count is too large to compare: $2"
-		cap_name="${2%%=*}"
-		case "$cap_name" in
-		'') fail_usage "--cap requires a reviewer name before '=', got: $2" ;;
-		esac
-		validate_bounded_text "--cap reviewer name" "$cap_name" 64
-		caps="${caps}${2}
-"
-		shift 2
 		;;
 	--base)
 		[ "$#" -ge 2 ] || fail_usage "--base requires a ref"
@@ -176,13 +106,6 @@ while [ "$#" -gt 0 ]; do
 		;;
 	esac
 done
-
-if [ -n "$defer_gate" ]; then
-	printf 'verdict: covered by repo gate\n'
-	printf 'gate: %s\n' "$defer_gate"
-	printf 'detail: surface and size not measured here; the named repository gate owns this class.\n'
-	exit 3
-fi
 
 if ! command -v git >/dev/null 2>&1; then
 	printf 'verdict: not run\n'
@@ -212,7 +135,7 @@ count_of() {
 	fi
 }
 
-# The count is always exact — the cap check depends on it — but the path
+# The count is always exact, but the path
 # listing is capped so a 500-file surface does not flood the caller; --full
 # restores the complete dump.
 emit_category() {
@@ -305,7 +228,7 @@ fi
 fail_read() {
 	printf 'verdict: not run\n'
 	printf 'reason: the %s enumeration could not be read: %s\n' "$1" "$2"
-	printf 'detail: a failed git read is not an empty category, so no surface and no cap result is reported.\n'
+	printf 'detail: a failed git read is not an empty category, so no surface is reported.\n'
 	exit 4
 }
 
@@ -399,50 +322,14 @@ all_paths=$(printf '%s\n%s\n%s\n%s\n' "$committed" "$staged" "$unstaged" "$untra
 	sed '/^$/d' | sort -u)
 total=$(count_of "$all_paths")
 
-cap_lines="caps: none supplied — see references/sweep-classes.md class 11"
-if [ -z "$all_paths" ]; then
-	if [ "$committed_measured" -eq 0 ]; then
-		# An empty measured surface proves nothing when the committed
-		# category was never measured; a clean verdict here would hide
-		# exactly the branch work this report exists to expose.
-		verdict="cap unverified"
-		cap_lines="caps: not confirmed — the committed category could not be measured, so an empty measured surface is not a no-changes result"
-	else
-		verdict="no changes on surface"
-		cap_lines="caps: not evaluated — the working surface is empty"
-	fi
-elif [ -z "$caps" ]; then
-	verdict="cap unverified"
+if [ "$committed_measured" -eq 0 ]; then
+	# An unmeasured committed category hides exactly the branch work this
+	# report exists to expose, so it is never a clean or empty result.
+	verdict="surface incomplete"
+elif [ -z "$all_paths" ]; then
+	verdict="no changes on surface"
 else
-	verdict="under caps"
-	cap_lines=""
-	first_exceeded=""
-	while IFS= read -r cap_entry; do
-		[ -n "$cap_entry" ] || continue
-		cap_name="${cap_entry%%=*}"
-		cap_max="${cap_entry#*=}"
-		if [ "$total" -gt "$cap_max" ]; then
-			cap_lines="${cap_lines}cap ${cap_name}=${cap_max}: exceeded by ${total} changed files
-"
-			[ -n "$first_exceeded" ] || first_exceeded="$cap_name"
-		else
-			cap_lines="${cap_lines}cap ${cap_name}=${cap_max}: under (${total} changed files)
-"
-		fi
-	done <<EOF
-$caps
-EOF
-	if [ -n "$first_exceeded" ]; then
-		# An unmeasured committed count only makes the total a floor, so an
-		# exceeded cap still holds.
-		verdict="exceeds cap for ${first_exceeded}"
-	elif [ "$committed_measured" -eq 0 ]; then
-		verdict="cap unverified"
-		cap_lines="${cap_lines}caps: not confirmed — the committed category could not be measured, so the total above is a floor
-"
-	fi
-	cap_lines="${cap_lines%
-}"
+	verdict="surface listed"
 fi
 
 printf 'verdict: %s\n' "$verdict"
@@ -461,5 +348,4 @@ emit_category "staged" "$staged"
 emit_category "unstaged" "$unstaged"
 emit_category "untracked" "$untracked"
 printf 'total distinct changed files: %s\n' "$total"
-printf '%s\n' "$cap_lines"
 exit 0

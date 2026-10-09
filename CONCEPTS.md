@@ -175,6 +175,12 @@ release-notes surface, not an installation pin: ordinary installs continue to
 follow `main`, and a correction receives a new release tag instead of moving an
 existing one.
 
+### Unmeasured
+
+An evaluation result that was not collected or cannot be trusted, kept distinct
+from both pass and fail. An Unmeasured result never counts toward a pass rate,
+and an earlier run is not reclassified later to fill the gap.
+
 ## Readiness checkpoints
 
 ### Option-1 reply
@@ -198,10 +204,9 @@ the recommendation, material next work, a coverage close, and the learning
 signal, not a census of every sweep class or inspected path.
 
 The review instantiates it on the option-1 reply as silent input to the
-selected finishing workflow. Ordinary publication writes it into the pull
-request description. The pack becomes durable only when written to that
-workflow's approved destination; an in-process handoff alone is not
-persistence.
+skill that opens the pull request, which writes it into the pull request
+description. The pack becomes durable only when written there; an in-process
+handoff alone is not persistence.
 
 ### Merge Readiness Review
 
@@ -213,17 +218,18 @@ It is not `ce-babysit-pr`'s looks-merge-ready stop. That Compound Engineering
 report means babysit settled. Settled is not merged, and it is not this
 review. Looks merge-ready is the trigger to start this review.
 
-It recommends merge, debug, or do not merge, then waits for a numbered reply.
-Gather, grade, and readout stay read-only. Option 1 is Proceed to merge.
-Before merging, it compares review history, PR identity and live eligibility,
-and linked-issue identities and states, then kicks off the guarded forge merge.
-It reuses the finished grade without re-fetching issue text or policy documents.
-A match is silent. A same-name base move with no GitHub
-conflict is named and is not a stopping mismatch. A `baseRefName` change
-voids the grade. An edit to a GitHub or Linear issue title, body, or
-comments is not a stopping mismatch. Any other mismatch names what moved
-and stops rather than merging. It still does not mutate the tracker. The
-skill does not pick option 1 in the same turn that wrote the menu.
+It runs in a reviewer with no prior involvement: a session that shaped the
+change dispatches it to a fresh subagent. When no subagent can open, it
+reviews in place and its brief warns that the review was not independent. It recommends merge,
+debug, or do not merge, then waits for a numbered reply. Gather, grade, and
+readout stay read-only. Option 1 is Proceed to merge. Before merging, it
+re-checks the head and base ref, review history, linked-issue states, and host
+rules, then runs the guarded forge merge. A match is silent. A same-name base
+move with no GitHub conflict is named and is not a stopping mismatch. An edit
+to a GitHub or Linear issue title, body, or comments is not a stopping
+mismatch. Any other mismatch names what moved and stops rather than merging.
+It does not mutate the tracker. The skill does not pick option 1 in the same
+turn that wrote the menu.
 
 ### Risk Driver
 
@@ -263,8 +269,8 @@ An Executor may dispatch Scouts for evidence and runs PR readiness on
 its own head. After babysit reports a ready result (pipeline `success`,
 looks merge-ready, or cautiously looks ready), the Executor reports
 that to the Coordinator, and the Coordinator dispatches `checking-merge-readiness` to
-a fresh uninvolved Reviewer for merge readiness. That Reviewer is a new
-session: it grades the commit once and receives no temp path and no grade.
+a fresh uninvolved Reviewer for merge readiness, passing only the
+pull-request identity.
 Scouts and Reviewers do not own a pull request. One Executor ships at most
 one pull request. Merge remains a later human step.
 
@@ -309,7 +315,7 @@ The instruction-economy check asks one question for every line: would the agent
 get this wrong without it? A line that restates default model behavior fails and
 is cut whole. The test decides only whether to keep the line. The separate
 operationalize-the-qualifier check handles words that survive but still steer
-unpredictably.
+unpredictably. The skill review checklist names this check No-ops.
 
 ### System-Owned Invariant
 
@@ -332,3 +338,6 @@ decision, with training, validation, and fresh queries kept distinct.
   words remain Orca worktree roles and issue-graph relationships; they are not
   gardener roles. The shared `ROUTING.md` names are Coordinator, Executor,
   and Reviewer; Scout is no longer a routing profile.
+- `ROUTING.md` uses Coordinator and Executor for its own roles. Its coordinator
+  is the session that receives a kickoff and may do the work itself; a gardener
+  Coordinator never implements. The words are shared, the roles are not.

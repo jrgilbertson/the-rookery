@@ -174,7 +174,7 @@ The shipping sequence, in order:
 5. [`writing-for-agents`](https://github.com/mattpocock/skills/tree/main/skills/productivity/writing-for-agents) when the change includes a document whose primary consumer is an AI agent.
 6. [`checking-pr-readiness`](skills/checking-pr-readiness/SKILL.md). The final checkpoint.
 
-I can also ask for an explanation of the change or a concept it introduced. Then `ce-commit-push-pr` opens the pull request, `ce-babysit-pr` works through CI failures and review feedback, and [`checking-merge-readiness`](skills/checking-merge-readiness/SKILL.md) reviews the full change. I still choose whether to merge. I write the changelog and release notes from the merged pull requests afterward.
+I can also ask for an explanation of the change or a concept it introduced. Approving readiness opens the pull request through `ce-commit-push-pr`. Then `ce-babysit-pr` works through CI failures and review feedback, and once it reports looks merge-ready, PR readiness starts [`checking-merge-readiness`](skills/checking-merge-readiness/SKILL.md), which reviews the full change in a fresh reviewer that did not build it, or warns when it could not start one. I still choose whether to merge. I write the changelog and release notes from the merged pull requests afterward.
 
 CI gates the merge on the project's selected requirements; [Testing with agents](TESTING.md#local-merge-and-release-responsibilities) explains how to allocate broader checks across local work and release. GitHub enforces the rest, and each of these is a setting you have to turn on: a PR for every change, review comments resolved before merge, and no direct pushes to main, including for administrators.
 

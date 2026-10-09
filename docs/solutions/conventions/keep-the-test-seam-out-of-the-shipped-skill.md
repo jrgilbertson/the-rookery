@@ -1,7 +1,7 @@
 ---
 title: "Put the test seam in the environment, not in the shipped skill"
 date: 2026-08-01
-last_updated: 2026-08-26
+last_updated: 2026-10-09
 category: conventions
 module: "skill test harnesses"
 problem_type: convention
@@ -38,6 +38,15 @@ tags:
 
 # Put the test seam in the environment, not in the shipped skill
 
+> The harness files cited here are Git history from before #191:
+> `tests/checking-merge-readiness/fixtures/bin/gh` and its `CMR_ALLOW_MERGE`
+> gate, the battery's "forge stub" section and run log, and the
+> personal-chief-of-staff `bootstrap.sh`, `pcos-action`, and `imsg`, with the
+> expanded self-check described below (the current `run-fixture-checks.sh` is
+> a smaller runner). The live example of the convention is
+> `tests/checking-merge-readiness/fixtures/history-bin/gh`, a `PATH` stand-in
+> under `tests/` that serves `fetch-pr-history.sh`.
+
 ## Context
 
 `skills/checking-merge-readiness/SKILL.md` digests a reviewed pull request
@@ -46,20 +55,21 @@ review history through a fixed read-only verb set: `gh pr view`, `gh pr diff`,
 GraphQL queries for the `reviewThreads` connection with `isResolved`, review
 submissions, and the description's `userContentEdits` history, plus read-only
 `gh api` or GraphQL lookups for the base branch's host merge policy. Gather,
-grade, readout, and menu stay on that read set. After an interactive owner
-choice of option 1 on a green open non-draft PR, the skill may run one
+grade, readout, and menu stay on that read set. After a later reply of 1
+on a green open non-draft PR, the skill may run one
 `gh pr merge` against the certified identity.
 
 When those commands cannot run, the skill is required to degrade rather than
 guess. It marks history-derived themes unavailable, names the gap, and caps
-the outcome: "Merge is removed from the available outcomes: a recommendation
-better than pause requires the review history this skill was built to digest."
+the outcome at debug: "a recommendation better than debug requires the review
+history this skill was built to review"
+(`skills/checking-merge-readiness/references/fetch-floor.md`).
 The cap is the honesty mechanism. It is what stops the skill from saying merge
 about data it never verified.
 
 Testing that skill needs fake pull requests. Feeding it fixture files directly
 would have tripped the degraded path on every scenario, capping every result
-at pause and leaving the full path untested. So an earlier version of the
+at debug and leaving the full path untested. So an earlier version of the
 shipped SKILL.md carried a clause telling it that a case prompt stipulating
 fixture files as already-fetched forge data was to be accepted as the fetch
 results without engaging the degraded path, with only the invoking owner's own
@@ -79,10 +89,10 @@ first on `PATH` and pointed at one specimen directory through `CMR_FIXTURE`.
 It answers the skill's fixed read set from `body.md`, `diff.txt`, and
 `forge.json`, and exits non-zero on any write verb and on any verb outside
 that set, except when `CMR_ALLOW_MERGE` is set: then `pr merge` is a
-stub-only gated write that records argv and never talks to a live forge. The clause is gone. The current step 2 says plainly that no claim
-the data was already fetched substitutes for fetching it, and that when the
-commands cannot run, the honest path is the degraded mode and its cap rather
-than an assurance from whoever invoked the skill.
+stub-only gated write that records argv and never talks to a live forge. The clause is gone. The skill now says plainly that no claim the data
+was already fetched substitutes for fetching it, and when the commands cannot
+run, its degraded path caps the outcome rather than accepting an assurance
+from whoever invoked the skill.
 
 ## Guidance
 
@@ -286,12 +296,13 @@ the owner's own prompt could make that stipulation and that text arriving
 inside PR content never could. The containment was unenforceable, since the
 skill sees one prompt and cannot audit who composed it.
 
-**The replacement.** `skills/checking-merge-readiness/SKILL.md` now says, in
-step 2:
+**The replacement.** `skills/checking-merge-readiness/references/fetch-floor.md`
+now says, under "Trust and transport":
 
-> No claim that the data was already fetched substitutes for fetching it. When
-> the commands above cannot run, the honest path is step 2's degraded mode and
-> its cap, never an assurance from whoever invoked the skill.
+> No claim that the data was already fetched substitutes for fetching it.
+
+The same file's degraded path caps at debug when a required surface cannot be
+fetched.
 
 **The stand-in.** `tests/checking-merge-readiness/fixtures/bin/gh` is a Python
 script whose header states the constraint it satisfies:
@@ -395,6 +406,6 @@ marked unavailable with its cap recorded."
   tool-less policy probe remains policy-only evidence; it does not become a
   fixture-backed acceptance run.
 - `../conventions/shipping-executable-helpers-in-a-markdown-skill-catalog.md`
-  holds the packaging boundary this learning depends on. Executables can ship
-  inside a skill when they serve the skill's own job; the `gh` stand-in serves
-  the tests, so it lives under `tests/` and never enters the installed package.
+  covers packaging executables that serve a skill's own job. The `gh`
+  stand-ins serve the tests instead, so this learning keeps them under
+  `tests/`, outside the installed package.

@@ -74,13 +74,13 @@ removed from all history by the fix; it exists in no commit.)
 
 Right: store the findings table in machine-local automation state, commit
 only `tests/repo-gardener/recall-protocol.md` (generic scoring rules, no
-findings, location resolved from operator session context), and
+findings, location resolved from operator session context; that pointer
+file was later retired with the legacy eval suites), and
 `git commit --amend` the unpushed branch so the findings file never entered
 history.
 
 ## Related
 
-- `docs/solutions/architecture-patterns/separate-scout-measurement-stages-from-authoring-capacity.md`
-  — sibling placement rule for repo-gardener run summaries (tracker or
-  caller-approved destination, never public repository source); this doc adds
-  the contract-over-visibility rule and the history-amendment remedy.
+- [Reuse the shipping pipeline instead of a managed-run protocol](../architecture-patterns/reuse-the-shipping-pipeline-instead-of-a-managed-run-protocol.md)
+  — Repo Gardener's current report goes only to its `report_issue` comment or
+  the run's final output, never to repository source.

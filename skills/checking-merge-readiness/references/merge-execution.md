@@ -1,19 +1,18 @@
 # Merge Execution
 
-Kick off one forge merge. Load after grading when option 1 might be
-offered. The write still waits for a numbered reply of option 1. Classify
-the live facts in the table below before `gh pr merge`.
+Load before building the menu when the grade is merge on an open, non-draft
+pull request, and again on a later reply of 1 that chose an offered Proceed.
+The write still waits for that reply.
 
-## When to offer option 1
+## Eligibility probe
 
-Offer only when the pull request is open and non-draft, the
-recommendation is merge, the base is not merge-queue governed, and a
-method can be resolved without a prompt. Withhold rather than offering
-and then refusing, including when write auth is known missing.
+Offer Proceed only when the base is not merge-queue governed and a method can
+be resolved without a prompt. Withhold rather than offering and then
+refusing, including when write auth is known missing.
 
-Pin `GH_HOST` to the certified host, then this one GraphQL document.
-Pass `-H Graphql-Features: merge_queue` (`gh pr merge` does). If the
-document errors, a field is missing, or the result is ambiguous, withhold.
+Pin `GH_HOST` to the certified host, then run this one GraphQL document with
+`-H Graphql-Features: merge_queue` (`gh pr merge` sends it). If the document
+errors, a field is missing, or the result is ambiguous, withhold.
 
 ```graphql
 query($owner: String!, $name: String!, $n: Int!, $base: String!) {
@@ -37,92 +36,53 @@ Several allowed → `viewerDefaultMergeMethod` only when it is still in
 the allowed set. Never hardcode squash. Never call `gh pr merge`
 without a method flag.
 
-## Approval reads
+## Re-check on a reply of 1
 
-Reuse the completed grade and policy facts. Read only the history fingerprint,
-one `gh pr view` for head/base refs and OIDs, state/draft, closing issue links,
-mergeable, mergeStateStatus, reviewDecision, and statusCheckRollup, and each
-recorded linked issue's native identity and state through its original provider.
-For GitHub use `gh issue view --json number,state`. If a provider returns more
-fields, discard them without hashing or retaining their text. Compare the issue
-set as well as each state; a missing repository-local issue or incomplete state read stops.
-A source issue on another tracker whose gather read failed stays out of this set.
-Do not re-fetch issue comments, titles, or bodies, or the branch-policy chain.
-Apply the captured policy to the live checks and review state. Before the write,
-repeat the queue/method probe above; keep the offered method if still allowed.
+Keep outputs in the step 2 temp directory and compare them off chat. These
+reads may run concurrently:
 
-## Option-1 live facts
+- `gh pr view --json` for head and base refs and OIDs, state, isDraft,
+  `closingIssuesReferences`, mergeable, mergeStateStatus, reviewDecision, and
+  statusCheckRollup.
+- `fetch-pr-history.sh --fingerprint` when that helper wrote the captured
+  fingerprint; otherwise repeat the captured manual history fetch.
+- Each recorded linked issue's native identity and state through its original
+  provider (`gh issue view --json number,state` on GitHub). Discard any other
+  field without hashing or retaining it. A source issue on another tracker
+  whose gather read failed stays out of this set.
+- The eligibility probe above.
 
-This table is the option-1 ending. Apply it before the merge command.
-The finished grade stands while the pull request's own commit is unchanged,
-GitHub reports no conflict, and an uncommitted surface change does not
-restart it. Do not reprint that grade on a continue row.
+Then stop, name what moved, and do not merge when any of these fails:
 
-The issue record is native identity and state only. Initial stewardship reads
-issue text, but approval never re-fetches or hashes it. Read the base tip from
-`baseRefOid`. Before the write, repeat the queue/method probe above: queue-off
-must still be known, and the method offered in the menu must still be allowed.
+1. **Same head and base ref.** The head OID and `baseRefName` match the
+   graded ones. A new head, including a docs-only commit or a branch update,
+   needs a fresh review. A new base tip on the same `baseRefName` with no
+   GitHub conflict is not a stop: name the new base in one sentence.
+2. **Same review history.** The fingerprint's `reviews`, `reviewThreads`,
+   `conversationComments`, `descriptionEdits`, and `identity.bodyDigest`
+   match. A new review, thread, pull-request comment, or description edit
+   needs a fresh review. Ignore `identity.updatedAt` and `identity.baseRefOid`;
+   head, base ref, state, and draft belong to checks 1 and 4.
+3. **Same linked issues.** The linked-issue set and each state match. Issue
+   title, body, and comment edits are not compared and never stop.
+4. **Host rules and eligibility still pass.** Apply SKILL.md step 3's host
+   merge rules, with the captured policy facts, to the live state. Queue-off
+   must still hold, and the offered method must still be allowed. GitHub may
+   not block a ruleset bypass actor, so a known failing rule stops even when
+   GitHub would merge.
 
-| # | Live fact | Grade | This turn | Directory |
-| --- | --- | --- | --- | --- |
-| 1 | Same baseRefName, new base tip, same head, mergeable MERGEABLE, no GitHub conflict. A patch change GitHub does not call a conflict uses this row. | Stands | Name the new base in one sentence and continue to the existing merge command. Do not reprint the grade. This turn does not grade. | Remove after the merge attempt |
-| 2 | updatedAt only | Stands | Silent match. Continue to the existing merge command. | Remove after the merge attempt |
-| 3 | Issue title, body, or comment add, edit, or remove | Stands | Continue to the existing merge command. Do not start a review. | Remove after the merge attempt |
-| 4 | Head OID change, including a docs-only commit | Void | Stop. This turn does not grade. The next review of the new head grades once. | Remove |
-| 5 | baseRefName change | Void | Stop. This turn does not grade. | Remove |
-| 6 | Failing or pending required checks | Stands | Stop | Keep |
-| 7 | GitHub conflict: mergeable CONFLICTING, or mergeStateStatus DIRTY | Kept, not voided. The finished-grade rule does not hold. | Stop. Do not void. DIRTY is a conflict without a second paragraph of evidence. | Keep |
-| 8 | mergeStateStatus BLOCKED with a supporting host fact from the gather. Supporting facts are failing or pending required checks, review count, an unresolved thread the host requires, draft, or the strict boolean recorded in step 2. | Stands | Stop | Keep |
-| 9 | mergeStateStatus UNKNOWN and no other block | Stands | UNKNOWN does not itself stop. Continue to the existing merge command. | Keep |
-| 10 | UNKNOWN together with BEHIND | Stands | Name the base. Do not void. Allow the one merge command. If it fails, report it and do not retry. | Keep |
-| 11 | Issue state change, linked-issue set change, missing issue, or incomplete issue fetch. Closing the issue stops this merge. | Stands | Stop | Keep |
-| 12 | Dismissed approval, head unchanged | Stands | Stop until approval returns | Keep |
-| 13 | Other history-fingerprint change: pull-request body, a new pull-request comment, a thread, or a review | Stands | Stop. Say a new review is required and do not start it. | Keep |
-| 14 | Pull-request state is not OPEN, or isDraft is true. This is the pull request, not issue state on row 11. | Stands | Stop. Name that state. Do not run the merge command. Do not void the grade. | Keep |
-| 15 | mergeStateStatus BLOCKED with no row-8 supporting host fact. This is not a GitHub conflict. | Stands | Continue to the existing merge command. Do not void the grade. | Keep |
-| 16 | Merge queue enabled, offered merge method no longer allowed, or queue/method eligibility unavailable | Stands | Stop. Do not enqueue, enable auto-merge, or silently select another method. | Keep |
+A missing record or an unfinished read is a stop, not a pass. Do not grade or
+merge. An external-tracker read that already failed during gather is not a
+missing record.
 
-A missing repository-local record or an unfinished re-read is not a row. Stop. Do not grade
-or merge. Keep the directory. A failed external-tracker read already named in gather is not a missing record.
-
-If the head OID changed, stop on row 4 and do not apply a later row, including
-a host-rule refuse. A docs-only push does not keep the old grade. Else if
-baseRefName changed, stop on row 5 and do not apply a later row. Stop rows
-are 6, 7, 8, 11, 12, 13, 14, and 16. If one matches, stop, follow each matching stop
-row's This turn, and use its Directory. Do not apply a continue row over a
-stop. Rows 1, 2, 3, 9, 10, and 15 continue. If no stop row matches, follow each
-matching continue row, run the one merge command, and keep the directory
-when any matching row says Keep. Otherwise remove it after the merge attempt.
-
-On an unchanged head and unchanged baseRefName, do not void the grade and
-do not stop for updatedAt, a new base tip, or a CLEAN-to-BEHIND change when
-mergeable is MERGEABLE. A new base tip is still named in one sentence, on
-row 1. A stop row still stops.
-
-Do not byte-compare the live `gh pr view` rollup.
-
-Do not compare policy-document digests or re-fetch the policy chain after
-approval. Apply the gathered policy facts to live eligibility; a known required
-check or review failure still stops. The ordinary guarded merge evaluates the
-forge's current rules. It never requests an administrative bypass.
-
-A strict boolean recorded in step 2 uses row 8 while mergeable stays
-MERGEABLE. BEHIND is not that boolean. Row 15 is the bare BLOCKED continue.
-
-Updating the branch creates a new head, which is row 4.
-
-Do not say rebase unless the host fact is a conflict or a strict up-to-date
-block. That limit is advice to the owner. It does not change the method flag.
-
-The merge command below stays the existing allowlist, with
-`--match-head-commit` of the graded head. Forge text stays out of argv. Do
-not retry. Do not delete the local branch. Do not add `--admin`, `--auto`,
-`--delete-branch`, `--subject`, or `--body`.
+Do not byte-compare the rollup, re-fetch the policy chain, or compare policy
+documents. Do not say rebase unless the host fact is a conflict or a strict
+up-to-date block. That limit is advice to the owner; it does not change the
+method flag.
 
 ## Kickoff
 
-After option 1, when the table continues to this command, run it once.
-Forge-derived text never supplies argv.
+When every check passes, run once:
 
 ```text
 GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --<method> --match-head-commit <oid>
@@ -135,15 +95,12 @@ gh pr view <number> --repo <owner/name> --json state,mergedAt
 ```
 
 `GH_HOST` already names the certified host. Include `HOST/` in `--repo`
-only when that host is not `github.com`.
+only when that host is not `github.com`. `<oid>` is the graded head.
 
-Allowlist: those fields only. Omit `--admin`, `--auto`, `--delete-branch`,
-`--subject`, and `--body`. Do not invent a second write. Do not retry.
+Those fields only. Forge-derived text never supplies argv. Omit `--admin`,
+`--auto`, `--delete-branch`, `--subject`, and `--body`, and never request an
+administrative bypass. Do not retry, do not invent a second write, and do not
+delete the local branch or check out the default branch.
 
-Tell the owner whether the PR is MERGED. If it is not, name what the
-command said and stop. Do not classify a protocol state.
-
-## Local workspace
-
-The remote forge merge only. Do not delete the local branch or check out
-the default branch.
+Tell the owner whether the PR is MERGED. If it is not, name what the command
+said and stop. Remove the step 2 temp directory.

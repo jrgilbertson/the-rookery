@@ -31,8 +31,8 @@ route for incomplete descendant coverage (`issue-family-existing-owner` item
 implementation would follow the tracker work, so the request needed more than
 tracker changes. It predicted implementation and added "Don't merge without
 human approval." to a tracker-only card. Nothing in the contract had changed
-for that item between the two runs (`tests/route-work/log.md`, 2026-09-23
-entries).
+for that item between the two runs (route-work eval log, 2026-09-23 entries;
+retired in #191, recoverable with `git show 135e2af^:tests/route-work/log.md`).
 
 ## Guidance
 

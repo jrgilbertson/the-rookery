@@ -5,8 +5,9 @@ order. Every class carries one verdict from its own enumerated set in the
 captured gather. A class that fired names where it fired — the file and line
 for a line-scoped finding, the file alone for a file-level one, and the
 repository surface for a repository-level finding such as a missing changelog
-entry or a review-coverage gap. Record every class in the gather. The brief in SKILL.md step 7 names only
-classes that drive the recommendation.
+entry. Record every class in the gather. The brief in SKILL.md step 7 names
+only classes that drive the recommendation. When a class cannot be checked,
+record `not run` with the reason rather than dropping it.
 
 ## 1. Underspecified rules in prose and instruction files
 
@@ -25,14 +26,10 @@ Verdicts: clear / underspecified / not applicable.
 Two documents state different things about the same behavior, or a name, path,
 or filename is referenced that no longer matches what shipped.
 
-Check by judgment, with helper support: `evidence-freshness.sh --check-name
-<name> <search-root>` covers plan-named artifacts that no longer match what
-shipped, by existence — it reports `consistent` when a file whose basename or
-path suffix is that literal name exists under the search root, and `stale
-reference found` when none does, so a name carried only in prose reads as
-stale. By judgment, compare each document the diff changed against the
+Check by judgment. Compare each document the diff changed against the
 documents that describe the same behavior, and resolve every path, filename,
-and skill or command name the diff mentions against the working surface.
+and skill or command name the diff mentions against the working surface. A
+name that exists only in prose, with no matching file, is stale.
 
 Verdicts: consistent / contradiction found / stale reference found / not
 applicable.
@@ -42,25 +39,26 @@ applicable.
 The branch's own work does not appear in the repository's changelog, in a
 repository that keeps one.
 
-Check with `helper: changelog-union.sh`.
+Check by judgment against the step 1 surface. When the repository keeps a
+changelog and the surface changes shipped content, look for an entry the
+branch added that describes this work.
 
-Verdicts: present / changed without entry / missing / no changes on surface /
-no changelog / covered by repo gate / not run.
+Verdicts: present / missing / no changelog / covered by repo gate / not
+applicable.
 
 ## 4. Evidence or test records predating the final edit
 
 A log, run record, or recorded result is older than the last edit of the thing
 it describes, so it attests to a version that no longer exists.
 
-Check with `helper: evidence-freshness.sh`. Comparisons use commit ancestry,
-never committer timestamps or file modification times: a checkout or copy
-rewrites mtimes, and a skewed or rewritten committer clock can date a later
-commit earlier. A record is fresh only when every described path's last commit
-is contained in the history of the record's last commit; when checking by
-judgment, apply the same ancestry rule.
+Check by judgment using commit ancestry, never committer timestamps or file
+modification times: a checkout or copy rewrites mtimes, and a skewed or
+rewritten committer clock can date a later commit earlier. A record is fresh
+only when every described path's last commit is an ancestor of the record's
+last commit (`git merge-base --is-ancestor`). A described path with
+uncommitted changes makes the record stale.
 
-Verdicts: fresh / stale record found / record unverifiable (dirty) / no records
-/ covered by repo gate / not run.
+Verdicts: fresh / stale record found / no records / covered by repo gate.
 
 ## 5. Duplicated source-of-truth literals
 
@@ -130,53 +128,3 @@ someone broke it, and look for whether any check in the repository reads the
 same input the rule reads.
 
 Verdicts: enforced / prose-only invariant found / not applicable.
-
-## 11. Diff size against automated-reviewer file caps
-
-File counts and known reviewer limits identify potential review-coverage risk.
-Read them from step 1's full surface report. When a limit is already available
-from repository configuration or supplied evidence, optionally pass
-`--cap <reviewer>=<n>`; record its source and read the helper's comparison.
-Numeric caps are optional diagnostics. There is no required vendor or plan
-research, or new cap configuration, to complete this class.
-
-When no automated reviewer is configured, record `not applicable`. Otherwise
-retain the helper's size verdict, including `cap unverified` when no cap was
-supplied. With a complete inventory, unknown or exceeded caps alone are
-informational: they neither fail the check nor withhold Approve, require a
-split, or prove that review ran. Assess actual review coverage from the
-required reviews and their receipts in steps 2 and 3. An actual required-review
-failure or omission without replacement coverage remains a named unresolved
-finding; complete independent required coverage can coexist with an optional
-reviewer's exceeded cap.
-
-Read the inventory detail as well as the size verdict. `cap unverified` can
-also accompany an unmeasurable committed category, and `exceeds cap` may
-compare only a measured subset. Missing or failed git inventory and unresolved
-base identity remain step 1 blockers, even when the helper exits zero.
-
-Verdicts: under caps / `exceeds cap for <reviewer>` / cap unverified /
-no changes on surface / covered by repo gate / not run / not applicable.
-
-## Helper exit → status word (SSOT)
-
-A helper's verdict and the gate's status words are two layers: the verdict says
-what the class found; the status word says whether the check happened. Read both
-off the helper's exit code and its `verdict:` line (script headers list the
-verdicts; this table maps execution).
-
-| Exit | Meaning | Status word |
-| --- | --- | --- |
-| 0 | Class carried a verdict from its enumerated set | **verified** with the verdict line as named evidence, or **failed** when the verdict is a finding. Class 11's informational cap verdicts follow its coverage and inventory rules above; they do not verify that a review ran. |
-| 2 with absent-input verdict (`no changelog`, `no records`) | Input missing | **unavailable** |
-| 2 with `not run` / usage error | Helper could not run as invoked | **not run**. Fall back to the class's model-instruction check and record that judgment as the class verdict. |
-| 3 | `--defer` to a repository gate | **skipped**, naming that gate |
-| 4 | Helper hard failure | **not run**. Fall back to the class's model-instruction check and record that judgment as the class verdict. |
-
-## When a helper cannot run
-
-A helper that is absent, not executable, or exits without producing its output
-does not remove its class from the sweep. Check that class by judgment against
-the class description above. Record the status as `not run` and store the
-model judgment as the class verdict, so helper verdicts stay distinct from
-judgment verdicts.

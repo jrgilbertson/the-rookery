@@ -474,6 +474,47 @@ else
   fail "queue probe: eligibility selects mergeQueue(branch:) and the readback does not" \
     "eligibility document lost mergeQueue or the readback gained it"
 fi
+# Each proceed sentence and its write have to sit in that queue section. A file
+# that offers one action for both states stays red.
+# shellcheck disable=SC2016
+if awk '
+  function finish() {
+    if (sec == "") return
+    gsub(/\n/, " ", body)
+    gsub(/  +/, " ", body)
+    if (sec == "elig-on") {
+      elig_on = index(body, "`mergeQueue` is non-null") &&
+        index(body, "Add to the merge queue.") &&
+        index(body, "Do not resolve a method.") &&
+        index(body, "Proceed to merge.") == 0
+    } else if (sec == "elig-off") {
+      elig_off = index(body, "`mergeQueue` is null") &&
+        index(body, "The proceed sentence is \"Proceed to merge.\"") &&
+        index(body, "Add to the merge queue.") == 0
+    } else if (sec == "write-on") {
+      write_on = index(body, "GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --match-head-commit <oid>") &&
+        index(body, "--<method>") == 0 &&
+        index(body, "isInMergeQueue == true") &&
+        index(body, "Tell the owner the pull request is queued")
+    } else if (sec == "write-off") {
+      write_off = index(body, "GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --<method> --match-head-commit <oid>") &&
+        index(body, "GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --match-head-commit <oid>") == 0 &&
+        index(body, "Tell the owner whether the PR is MERGED")
+    }
+  }
+  /^\*\*Queue on\.\*\*/ { finish(); sec = "elig-on"; body = $0 "\n"; next }
+  /^\*\*Queue off\.\*\*/ { finish(); sec = "elig-off"; body = $0 "\n"; next }
+  /^## / { finish(); sec = ""; next }
+  /^### Queue on$/ { finish(); sec = "write-on"; body = $0 "\n"; next }
+  /^### Queue off$/ { finish(); sec = "write-off"; body = $0 "\n"; next }
+  sec != "" { body = body $0 "\n" }
+  END { finish(); exit !(elig_on && elig_off && write_on && write_off) }
+' "$EXEC_MD"; then
+  pass "queue state: each section names its own proceed sentence and write"
+else
+  fail "queue state: each section names its own proceed sentence and write" \
+    "a queue section lost its sentence or write, or gained the other path"
+fi
 # The queue write is the fenced gh pr merge line that carries no method flag.
 # A copy of the command in this test would stay green if the skill dropped it.
 # The backticks are literal Markdown fence delimiters.

@@ -212,9 +212,10 @@ evidence states:
    `userContentEdits` entry's `diff` is the full post-edit body, not a patch;
    sort by `editedAt`. With no recorded edits, the current body is that
    description. Provenance is "pre-review revision".
-3. When edit history cannot be read, or that snapshot is missing, disclose
-   the gap and use the current description. Provenance is "current
-   description". The gap is not a debug cap.
+3. When edit history cannot be read at all, disclose the gap and use the
+   current description. Provenance is "current description". The gap is not
+   a debug cap. When history was read but no pre-review body survives, do
+   not substitute a later body: no source states a purpose, so ask.
 
 A linked issue states a purpose when its description says what problem to
 solve. A pull request description counts only when it states a purpose in more

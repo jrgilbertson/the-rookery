@@ -458,12 +458,15 @@ has_text "queue on: do not resolve a method" "$WORK/exec.flat" \
 has_text "queue fact: membership is not whether the base has a queue" "$WORK/exec.flat" \
   '`isInMergeQueue` says whether this pull request is already queued, not whether the base has a queue.'
 # The eligibility fence is the one that names the method flags. The readback
-# query selects isInMergeQueue and must not satisfy this pin.
+# query selects isInMergeQueue and must not satisfy this pin. The re-check runs
+# this fence before the write, so its autoMergeRequest is the queue stop's
+# before-read.
 # shellcheck disable=SC2016
 if awk '
   function finish() {
     if (index(body, "mergeCommitAllowed")) {
-      if (index(body, "mergeQueue(branch: $base) { id }")) elig_ok = 1
+      if (index(body, "mergeQueue(branch: $base) { id }") &&
+          index(body, "pullRequest(number: $n) { autoMergeRequest { enabledAt } }")) elig_ok = 1
       else elig_bad = 1
     }
     if (index(body, "isInMergeQueue") && index(body, "mergeQueue")) readback_bad = 1
@@ -473,10 +476,10 @@ if awk '
   in_fence { body = body $0 "\n" }
   END { exit !(elig_ok && !elig_bad && !readback_bad) }
 ' "$EXEC_MD"; then
-  pass "queue probe: eligibility selects mergeQueue(branch:) and the readback does not"
+  pass "queue probe: eligibility selects mergeQueue(branch:) and autoMergeRequest, and the readback does not select mergeQueue"
 else
-  fail "queue probe: eligibility selects mergeQueue(branch:) and the readback does not" \
-    "eligibility document lost mergeQueue or the readback gained it"
+  fail "queue probe: eligibility selects mergeQueue(branch:) and autoMergeRequest, and the readback does not select mergeQueue" \
+    "eligibility document lost mergeQueue or autoMergeRequest, or the readback gained mergeQueue"
 fi
 # Each proceed sentence and its write have to sit in that queue section. A file
 # that offers one action for both states stays red.
@@ -502,6 +505,8 @@ if awk '
         index(body, "Tell the owner the pull request is queued") &&
         index(body, "state` MERGED is also success") &&
         index(body, "A non-zero exit is a plain failure") &&
+        index(body, "The eligibility probe in the re-check is the `autoMergeRequest` read before the write.") &&
+        index(body, "selector below") == 0 &&
         index(body, "absent before the write and present after it") &&
         index(body, "absent before the write and present after it") < index(body, "--disable-auto") &&
         index(body, "GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --disable-auto")

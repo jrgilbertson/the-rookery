@@ -12,16 +12,18 @@ missing. A merge queue on the base resolves the action.
 
 Pin `GH_HOST` to the certified host, then run this one GraphQL document with
 `-H Graphql-Features: merge_queue` (`gh pr merge` sends it). If the document
-errors, a field is missing, or the result is ambiguous, withhold.
+errors, a field is missing, or the result is ambiguous, withhold. A null
+`mergeQueue` or `autoMergeRequest` is a value, not a missing field.
 
 ```graphql
-query($owner: String!, $name: String!, $base: String!) {
+query($owner: String!, $name: String!, $n: Int!, $base: String!) {
   repository(owner: $owner, name: $name) {
     mergeCommitAllowed
     squashMergeAllowed
     rebaseMergeAllowed
     viewerDefaultMergeMethod
     mergeQueue(branch: $base) { id }
+    pullRequest(number: $n) { autoMergeRequest { enabledAt } }
   }
 }
 ```
@@ -96,9 +98,8 @@ pull request is neither queued nor merged.
 
 ### Queue on
 
-Read `autoMergeRequest` before the write. Use the header and the selector
-below, and keep that result in the step 2 temp directory. Absent means no
-auto-merge is armed.
+The eligibility probe in the re-check is the `autoMergeRequest` read before the write.
+A null `autoMergeRequest` there is absent: no auto-merge was armed.
 
 ```text
 GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --match-head-commit <oid>

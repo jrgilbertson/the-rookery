@@ -109,9 +109,11 @@ read-only verb set, the only forge commands the gather path runs:
   rollup into chat.
 - `gh pr diff` — the final code, once, unless Review independence supplied that file.
 - `gh issue view --json` — fetch the number, title, body, state, and URL for
-  every repository-local issue in `closingIssuesReferences`. Also fetch every
-  repository-local issue link that the description identifies as a source
-  issue. Keep every selector within the pull request's repository.
+  every repository-local issue in `closingIssuesReferences`, plus every
+  repository-local source-issue link in the description. Keep GitHub selectors
+  in this repository. Also read a linked source issue on another tracker,
+  including Linear, with existing credentials and no new login. A failed read
+  is a named gap; continue without inventing its text.
 - GraphQL for each linked issue's comments. Paginate the issue's `comments`
   connection to exhaustion and retain each comment's stable id, author,
   timestamp, and body for stewardship. `gh issue view --json comments` does not
@@ -156,7 +158,8 @@ semantic traps (including tip residual), trust and transport, and the
 degraded path.
 
 In every branch: paginate until exhaustion is observed; meet the floor or
-record incomplete history and cap at debug; record the head OID and
+record incomplete history and cap at debug. Unavailable description-edit
+history is a disclosed gap for step 4, not that cap. Record the head OID and
 the step-7 fingerprint; keep fetched PR text out of command arguments. Do
 not echo helper JSON, jq, fingerprints, or rollup dumps into chat.
 
@@ -208,32 +211,31 @@ pass, fail with a named rule, or are unavailable with the gap named.
 
 ### 4. Establish the intent baseline
 
-The baseline is the change's pre-review intent, recovered from the description
-where the forge allows it. A description with no recorded edits was never
-changed, so the body already in hand is the original, and confirmation
-collapses to a disclosure: say the baseline is the description as first
-written, and move on.
+The baseline is the change's pre-review intent. Take it from evidence already
+gathered. Do not ask the owner to reconfirm a purpose that evidence states.
 
-Where edits exist, the true original is not recoverable. **SSOT for edit
-snapshots:** despite the field name, each `userContentEdits` entry's `diff` is
-the full post-edit body, not a patch and not the pre-edit text. Sort by
-`editedAt` and take the oldest surviving entry as a candidate (earliest
-the forge still holds, not necessarily first-written). When that oldest
-surviving body equals the current description, disclose that the baseline is
-that surviving text and continue; do not ask. When it differs and its editor
-is the invoking owner, show a redacted projection (a restatement in the run's
-words with only intent-bearing content; omit credentials, tokens, keys,
-endpoints, personal data; restate rather than quote raw body with secrets
-starred) and ask whether it still represents pre-review intent. When the
-editor is someone else, the entry has no body, or edit history was not
-exhausted, intent is unverifiable: cap and use attestation below rather than
-confirming a guess.
+A linked issue whose description states a purpose supplies the baseline first.
+Use each repository-local closing or source issue from step 2, and a source
+issue on another tracker, including Linear, when this run already read its
+description. No new login, and no invented text. Provenance is "source issue".
+One shared purpose is the baseline. Conflicting purposes are intent drift in
+step 5. Do not ask which description the owner meant.
 
-When no baseline can be established, intent is unverifiable and the
-recommendation caps at debug. When the description is empty or one line, say
-unverifiable and take the owner's open attestation of purpose (name no
-candidate purpose from the diff). Attestation is a prerequisite to grading
-drift, never the terminal decision.
+With no such issue description, use the pull request description. No recorded
+edits means the body was never changed: say the baseline is the description
+as first written, and move on. **SSOT for edit snapshots:** where
+`userContentEdits` was read to exhaustion, each entry's `diff` is the full
+post-edit body, not a patch and not the pre-edit text. Sort by `editedAt`
+and take the oldest surviving entry that has a body. That body is the
+baseline, provenance "earliest revision", whether or not it equals the
+current description. Disclose which text you used.
+
+When that history cannot be read, a snapshot is missing, or no entry has a
+body, disclose the gap. It is not a debug cap. Use provenance "current description"
+when the description states a purpose in more than one line. Ask the owner only
+when no linked issue supplies a description and the pull request description is
+empty or one line. Ask for the purpose. Name no candidate from the diff. The
+reply is a prerequisite to grading drift, not the terminal decision.
 
 When the description carries an evidence pack from a pre-PR gate such as
 `checking-pr-readiness`, treat it as unverified claims: cross-check against
@@ -248,9 +250,9 @@ do so. The operational test is whether the baseline's stated purpose still
 describes the final diff. A purpose that no longer matches is intent drift;
 more files or edge cases under the same purpose is scope growth.
 
-Completion: the baseline is established with its provenance named (earliest
-revision, owner confirmation, or owner attestation), or declared unverifiable
-with the debug cap recorded.
+Completion: name the provenance (source issue, earliest revision, current
+description, or the owner's reply on an empty or one-line description).
+Unreadable edit history is a disclosed gap, not a debug cap.
 
 ### 5. Review the whole change
 
@@ -350,7 +352,7 @@ regardless of the seven drivers. Scope growth alone never does this. High
 redesign pressure likewise forces do not merge.
 
 Caps (degraded inputs, empty review history, incomplete history or thin
-payload, unverifiable intent, sampled history, blocking host merge rules,
+payload, sampled history, blocking host merge rules,
 an incomplete review-completion check, unverified review independence, or
 missing durable-record disposition) remove merge and cap at debug; they never
 soften a high driver's do not merge.
@@ -496,5 +498,5 @@ merge. If `managing-issues` is unavailable, name that gap and do not edit it her
 - Resolved threads and green checks are not merge safety; judge the aggregate diff.
 - Babysit owns comment management. Read that history. Do not resolve threads or grow a comment loop.
 - Tip residual and host last-push rules: see fetch-floor semantic traps.
-- Incomplete history, including partial GraphQL without a floor field, caps at debug.
+- Incomplete history, including partial GraphQL without a floor field, caps at debug. Unavailable description-edit history does not.
 - `checking-pr-readiness` is the pre-PR gate. Neither skill requires the other.

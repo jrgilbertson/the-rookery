@@ -402,5 +402,36 @@ jq_is "ghost author: the review still arrives, attributed to null" \
 jq_is "ghost editor: the description edit still arrives" \
   '[.descriptionEdits[].editor | tostring] | join(",")' "null"
 
+echo "== J. intent baseline uses a linked issue instead of an owner reconfirmation =="
+# Pins issue 199: a stated purpose is graded from the linked issue or the
+# readable description history. The owner is asked only when both are absent
+# and the description is empty or one line. Unreadable edit history is a
+# disclosed gap, not a debug cap.
+SKILL_MD="$HERE/../../../skills/checking-merge-readiness/SKILL.md"
+FLOOR_MD="$HERE/../../../skills/checking-merge-readiness/references/fetch-floor.md"
+tr '\n' ' ' < "$SKILL_MD" | tr -s ' ' > "$WORK/skill.flat"
+tr '\n' ' ' < "$FLOOR_MD" | tr -s ' ' > "$WORK/floor.flat"
+has_text() { # has_text <label> <file> <needle>
+  if grep -qF -- "$3" "$2"; then pass "$1"
+  else fail "$1" "missing [$3]"; fi
+}
+lacks_text() { # lacks_text <label> <file> <needle>
+  if grep -qF -- "$3" "$2"; then fail "$1" "still contains [$3]"
+  else pass "$1"; fi
+}
+has_text "baseline: source-issue provenance" "$WORK/skill.flat" 'Provenance is "source issue".'
+has_text "baseline: earliest revision kept" "$WORK/skill.flat" 'provenance "earliest revision"'
+has_text "baseline: current description fallback" "$WORK/skill.flat" 'provenance "current description"'
+has_text "baseline: ask only when the description is empty" "$WORK/skill.flat" \
+  'Ask the owner only when no linked issue supplies a'
+has_text "baseline: unreadable edits are not a cap" "$WORK/skill.flat" \
+  'Unreadable edit history is a disclosed gap, not a debug cap.'
+lacks_text "baseline: owner confirmation is not a provenance" "$WORK/skill.flat" 'owner confirmation'
+lacks_text "baseline: owner attestation is not a provenance" "$WORK/skill.flat" 'owner attestation'
+lacks_text "baseline: unverifiable intent is not a cap" "$WORK/skill.flat" 'unverifiable intent'
+has_text "floor: an unreadable edit history is a disclosed gap" "$WORK/floor.flat" \
+  'Unreadable history or a missing snapshot is a disclosed gap'
+lacks_text "floor: a missing snapshot is not unverifiable intent" "$WORK/floor.flat" 'intent unverifiable'
+
 printf '\n%d assertions: %d passed, %d failed\n' "$((PASS + FAIL))" "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ] || exit 1

@@ -404,9 +404,10 @@ jq_is "ghost editor: the description edit still arrives" \
 
 echo "== J. intent baseline uses a linked issue instead of an owner reconfirmation =="
 # Pins issue 199: a stated purpose is graded from the linked issue or from
-# description text known to predate review. The owner is asked when neither
-# states a purpose in more than one line. Unreadable edit history is a
-# disclosed gap, not a debug cap.
+# description text known to predate review. The oldest body is that baseline
+# only when it states a purpose in more than one line. The owner is asked
+# when neither states a purpose in more than one line. Unreadable edit
+# history is a disclosed gap, not a debug cap.
 SKILL_MD="$HERE/../../../skills/checking-merge-readiness/SKILL.md"
 FLOOR_MD="$HERE/../../../skills/checking-merge-readiness/references/fetch-floor.md"
 tr '\n' ' ' < "$SKILL_MD" | tr -s ' ' > "$WORK/skill.flat"
@@ -421,8 +422,10 @@ lacks_text() { # lacks_text <label> <file> <needle>
 }
 has_text "baseline: source-issue provenance" "$WORK/skill.flat" 'Provenance is "source issue".'
 has_text "baseline: earliest revision kept" "$WORK/skill.flat" 'provenance "earliest revision"'
-has_text "baseline: earliest revision predates review" "$WORK/skill.flat" \
-  'Use it as provenance "earliest revision" when that edit predates the first review submission.'
+has_text "baseline: earliest revision predates review and states a purpose" "$WORK/skill.flat" \
+  'Use it as provenance "earliest revision" when that edit predates the first review submission and that body states a purpose in more than one line.'
+has_text "baseline: a purposeless pre-review body asks" "$WORK/skill.flat" \
+  'or that body states no such purpose, disclose the gap and ask for the purpose.'
 has_text "baseline: current description fallback" "$WORK/skill.flat" 'provenance "current description"'
 has_text "baseline: current description only without a usable history" "$WORK/skill.flat" \
   'When that history cannot be read, or no surviving entry has a body, disclose the gap.'

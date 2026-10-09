@@ -89,14 +89,14 @@ conversation comment the same; each description edit (`editedAt`, editor,
 opaque post-edit body digest). Keep resolved policy facts and linked-issue
 identities and states separately; do not fingerprint policy documents or issue
 text. Without ids, option 1
-cannot compare stability: stop and do not write.
+cannot compare stability: stop and do not merge.
 
 The helper's fingerprint — each node's stable id plus an opaque digest over
 its full floor-field JSON — satisfies this section for the history surfaces
 and identity; its `--fingerprint` mode re-emits it with no body text, so the
 re-check runs entirely outside the conversation. Fingerprint mode
 still fetches every history surface to catch edits; it reduces output, not
-network reads. Live merge eligibility uses the small PR view and queue/method
+network reads. Live merge eligibility uses the small PR view and method
 probe, not a policy or live-state byte comparison.
 
 ## Semantic traps

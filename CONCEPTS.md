@@ -188,7 +188,6 @@ and an earlier run is not reclassified later to fill the gap.
 The next message after a readiness menu, when that message is `1` or that
 menu's spoken equivalent. After an Approve menu: `Approve`, `approve and
 proceed`. After a Proceed-to-merge menu: `Proceed to merge`, `merge it`.
-After a merge-queue menu: `Add to the merge queue`.
 It is the only way Approve or Proceed is accepted.
 
 The turn that printed the menu cannot pick. The request that started the
@@ -223,13 +222,12 @@ It runs in a reviewer with no prior involvement: a session that shaped the
 change dispatches it to a fresh subagent. When no subagent can open, it
 reviews in place and its brief warns that the review was not independent. It recommends merge,
 debug, or do not merge, then waits for a numbered reply. Gather, grade, and
-readout stay read-only. Option 1 is Proceed to merge, or adding the pull
-request to the merge queue when the base has one. Before that write, it
+readout stay read-only. Option 1 is Proceed to merge. Before merging, it
 re-checks the head and base ref, review history, linked-issue states, and host
-rules, then runs the guarded forge merge or enqueue. A match is silent. A same-name base
+rules, then runs the guarded forge merge. A match is silent. A same-name base
 move with no GitHub conflict is named and is not a stopping mismatch. An edit
 to a GitHub or Linear issue title, body, or comments is not a stopping
-mismatch. Any other mismatch names what moved and stops rather than writing.
+mismatch. Any other mismatch names what moved and stops rather than merging.
 It does not mutate the tracker. The skill does not pick option 1 in the same
 turn that wrote the menu.
 

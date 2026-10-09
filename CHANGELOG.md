@@ -40,14 +40,9 @@ looked" surface. GitHub Releases mirror its entries.
 
 ### Fixed
 
-- `checking-merge-readiness` enqueues a pull request whose base branch has a
-  GitHub merge queue. Option 1 then reads "Add to the merge queue." The write
-  is one `enqueuePullRequest` mutation pinned to the graded head, so it works
-  when repository auto-merge is disabled and never arms auto-merge. Success
-  is `isInMergeQueue`, or `MERGED` when the queue has already merged the pull
-  request. A failed write names what GitHub said and stops. A base with no
-  queue still merges with the resolved method and reports MERGED. Both paths
-  keep the graded-head pin, the re-check, and the one write.
+- `checking-merge-readiness` offers option 1 when the base branch has a
+  GitHub merge queue. The write is the same pinned `gh pr merge`, which adds
+  the pull request to the queue there, and the report relays what gh said.
 - `checking-merge-readiness` again dispatches a fresh reviewer when the
   invoking session wrote or shaped the pull request, instead of grading it
   itself, capping at debug, and asking the owner to request that review.

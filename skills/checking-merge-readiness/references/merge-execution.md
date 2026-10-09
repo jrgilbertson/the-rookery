@@ -1,42 +1,34 @@
 # Merge Execution
 
 Load before building the menu when the grade is merge on an open, non-draft
-pull request, and again on a later reply of 1 that chose an offered proceed
-action. The write still waits for that reply.
+pull request, and again on a later reply of 1 that chose an offered Proceed.
+The write still waits for that reply.
 
 ## Eligibility probe
 
-Offer the proceed action when this probe resolves without a prompt. Withhold
+Offer Proceed only when a method can be resolved without a prompt. Withhold
 rather than offering and then refusing, including when write auth is known
-missing. A merge queue on the base resolves the action.
+missing. A merge queue on the base does not withhold it. There, `gh pr merge`
+adds the pull request to the queue and the queue sets the method.
 
-Pin `GH_HOST` to the certified host, then run this one GraphQL document with
-`-H Graphql-Features: merge_queue` (merge-queue fields need it). If the document
-errors, a field is missing, or the result is ambiguous, withhold. A null
-`mergeQueue` is a value, not a missing field.
+Pin `GH_HOST` to the certified host, then run this one GraphQL document. If
+the document errors, a field is missing, or the result is ambiguous, withhold.
 
 ```graphql
-query($owner: String!, $name: String!, $n: Int!, $base: String!) {
+query($owner: String!, $name: String!) {
   repository(owner: $owner, name: $name) {
     mergeCommitAllowed
     squashMergeAllowed
     rebaseMergeAllowed
     viewerDefaultMergeMethod
-    mergeQueue(branch: $base) { id }
-    pullRequest(number: $n) { id }
   }
 }
 ```
 
-**Queue on.** `mergeQueue` is non-null. The proceed sentence is "Add to the
-merge queue." Do not resolve a method. `isInMergeQueue` says whether this
-pull request is already queued, not whether the base has a queue.
-
-**Queue off.** `mergeQueue` is null. The proceed sentence is "Proceed to
-merge." Exactly one of merge/squash/rebase allowed → that flag. Several
-allowed → `viewerDefaultMergeMethod` only when it is still in the allowed
-set. Never hardcode squash. The non-queue write passes that method flag.
-When no method resolves, withhold.
+**Method.** Exactly one of merge/squash/rebase allowed → that flag.
+Several allowed → `viewerDefaultMergeMethod` only when it is still in
+the allowed set. Never hardcode squash. Never call `gh pr merge`
+without a method flag.
 
 ## Re-check on a reply of 1
 
@@ -54,7 +46,7 @@ reads may run concurrently:
   whose gather read failed stays out of this set.
 - The eligibility probe above.
 
-Then stop, name what moved, and do not write when any of these fails:
+Then stop, name what moved, and do not merge when any of these fails:
 
 1. **Same head and base ref.** The head OID and `baseRefName` match the
    graded ones. A new head, including a docs-only commit or a branch update,
@@ -68,14 +60,13 @@ Then stop, name what moved, and do not write when any of these fails:
 3. **Same linked issues.** The linked-issue set and each state match. Issue
    title, body, and comment edits are not compared and never stop.
 4. **Host rules and eligibility still pass.** Apply SKILL.md step 3's host
-   merge rules, with the captured policy facts, to the live state. The queue
-   fact from the menu must still hold: a queued base stays non-null, and a
-   base with no queue stays null with the offered method still allowed.
-   GitHub may not block a ruleset bypass actor, so a known failing rule stops
-   even when GitHub would merge.
+   merge rules, with the captured policy facts, to the live state. The
+   offered method must still be allowed. GitHub may
+   not block a ruleset bypass actor, so a known failing rule stops even when
+   GitHub would merge.
 
 A missing record or an unfinished read is a stop, not a pass. Do not grade or
-write. An external-tracker read that already failed during gather is not a
+merge. An external-tracker read that already failed during gather is not a
 missing record.
 
 Do not byte-compare the rollup, re-fetch the policy chain, or compare policy
@@ -85,57 +76,7 @@ method flag.
 
 ## Kickoff
 
-When every check passes, run the one write for the path the menu offered.
-`<oid>` is the graded head. `GH_HOST` already names the certified host.
-Include `HOST/` in `--repo` only when that host is not `github.com`.
-
-Forge-derived text never supplies argv. Omit `--admin`, `--auto`,
-`--delete-branch`, `--subject`, and `--body`, and never request an
-administrative bypass. The enqueue passes only the pull request id and the
-graded head, never `jump`. Do not retry the write, do not invent another
-write, and do not delete the local branch or check out the default branch.
-
-### Queue on
-
-`<id>` is the pull request `id` from the eligibility probe in the re-check.
-Run this one mutation. It enqueues the graded head or fails; it never arms
-auto-merge.
-
-```text
-GH_PROMPT_DISABLED=1 gh api graphql -H 'Graphql-Features: merge_queue' -f query=<enqueue document> -f id=<id> -f oid=<oid>
-```
-
-```graphql
-mutation($id: ID!, $oid: GitObjectID!) {
-  enqueuePullRequest(input: { pullRequestId: $id, expectedHeadOid: $oid }) {
-    mergeQueueEntry { id }
-  }
-}
-```
-
-A non-zero exit is a plain failure. Name what GitHub said and stop.
-
-On exit 0, read `isInMergeQueue` and `state` with `gh api graphql` and the
-same header. `gh pr view --json` does not return `isInMergeQueue`.
-
-```graphql
-query($owner: String!, $name: String!, $n: Int!) {
-  repository(owner: $owner, name: $name) {
-    pullRequest(number: $n) {
-      isInMergeQueue
-      state
-    }
-  }
-}
-```
-
-**Queued.** `isInMergeQueue == true`. Tell the owner the pull request is queued.
-
-**Merged.** `state` MERGED is also success. Tell the owner the pull request is MERGED.
-
-Otherwise name what the readback shows and stop.
-
-### Queue off
+When every check passes, run once:
 
 ```text
 GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --<method> --match-head-commit <oid>
@@ -147,7 +88,14 @@ Then the same selector:
 gh pr view <number> --repo <owner/name> --json state,mergedAt
 ```
 
-Tell the owner whether the PR is MERGED. If it is not, name what the command
-said and stop.
+`GH_HOST` already names the certified host. Include `HOST/` in `--repo`
+only when that host is not `github.com`. `<oid>` is the graded head.
 
-Remove the step 2 temp directory on either path.
+Those fields only. Forge-derived text never supplies argv. Omit `--admin`,
+`--auto`, `--delete-branch`, `--subject`, and `--body`, and never request an
+administrative bypass. Do not retry, do not invent a second write, and do not
+delete the local branch or check out the default branch.
+
+Tell the owner whether the PR is MERGED. If it is not, name what the command
+said, including that it was added to the merge queue, and stop. Remove the
+step 2 temp directory.

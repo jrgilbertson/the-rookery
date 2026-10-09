@@ -89,7 +89,7 @@ conversation comment the same; each description edit (`editedAt`, editor,
 opaque post-edit body digest). Keep resolved policy facts and linked-issue
 identities and states separately; do not fingerprint policy documents or issue
 text. Without ids, option 1
-cannot compare stability: stop and do not merge.
+cannot compare stability: stop and do not write.
 
 The helper's fingerprint — each node's stable id plus an opaque digest over
 its full floor-field JSON — satisfies this section for the history surfaces

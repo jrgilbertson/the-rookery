@@ -431,6 +431,28 @@ has_text "no grade store: grades stay out of every store" "$WORK/skill.flat" \
   'write no grade into the repository, the pull request, or any other store'
 has_text "single write: the merge is pinned to the graded head" "$WORK/exec.flat" \
   'GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --<method> --match-head-commit <oid>'
+has_text "queue write: enqueue is pinned to the graded head" "$WORK/exec.flat" \
+  'GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --match-head-commit <oid>'
+has_text "queue readback: success is membership in the queue" "$WORK/exec.flat" \
+  'isInMergeQueue == true'
+has_text "queue report: say the pull request is queued" "$WORK/exec.flat" \
+  'Tell the owner the pull request is queued'
+has_text "non-queue report: say whether the pull request is MERGED" "$WORK/exec.flat" \
+  'Tell the owner whether the PR is MERGED'
+has_text "menu: a merge queue resolves the proceed probe" "$WORK/skill.flat" \
+  'A merge queue on the base resolves that probe.'
+has_text "menu: the queued proceed sentence is Add to the merge queue" "$WORK/exec.flat" \
+  'Add to the merge queue.'
+# The queue write is the fenced gh pr merge line that carries no method flag.
+# A copy of the command in this test would stay green if the skill dropped it.
+# The backticks are literal Markdown fence delimiters.
+# shellcheck disable=SC2016
+queue_cmd=$(sed -n '/^```text$/,/^```$/p' "$EXEC_MD" | grep -F 'gh pr merge' | grep -F -v -- '--<method>' || true)
+if [ "$queue_cmd" = 'GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --match-head-commit <oid>' ]; then
+  pass "queue write: the fenced enqueue has no method flag"
+else
+  fail "queue write: the fenced enqueue has no method flag" "got [${queue_cmd}]"
+fi
 # Flatten only the fenced command blocks, so a flag on a continuation line is
 # caught and the prose sentence that names the forbidden flags is not.
 # The backticks are literal Markdown fence delimiters.

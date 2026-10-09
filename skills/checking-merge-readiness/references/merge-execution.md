@@ -45,7 +45,8 @@ mergeable, mergeStateStatus, reviewDecision, and statusCheckRollup, and each
 recorded linked issue's native identity and state through its original provider.
 For GitHub use `gh issue view --json number,state`. If a provider returns more
 fields, discard them without hashing or retaining their text. Compare the issue
-set as well as each state; a missing issue or incomplete state read stops.
+set as well as each state; a missing repository-local issue or incomplete state read stops.
+A source issue on another tracker whose gather read failed stays out of this set.
 Do not re-fetch issue comments, titles, or bodies, or the branch-policy chain.
 Apply the captured policy to the live checks and review state. Before the write,
 repeat the queue/method probe above; keep the offered method if still allowed.
@@ -81,8 +82,8 @@ must still be known, and the method offered in the menu must still be allowed.
 | 15 | mergeStateStatus BLOCKED with no row-8 supporting host fact. This is not a GitHub conflict. | Stands | Continue to the existing merge command. Do not void the grade. | Keep |
 | 16 | Merge queue enabled, offered merge method no longer allowed, or queue/method eligibility unavailable | Stands | Stop. Do not enqueue, enable auto-merge, or silently select another method. | Keep |
 
-A missing record or an unfinished re-read is not a row. Stop. Do not grade
-or merge. Keep the directory.
+A missing repository-local record or an unfinished re-read is not a row. Stop. Do not grade
+or merge. Keep the directory. A failed external-tracker read already named in gather is not a missing record.
 
 If the head OID changed, stop on row 4 and do not apply a later row, including
 a host-rule refuse. A docs-only push does not keep the old grade. Else if

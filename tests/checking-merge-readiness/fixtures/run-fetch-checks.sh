@@ -435,6 +435,8 @@ has_text "baseline: a missing snapshot is not the current description" "$WORK/sk
   'does not make the current description the earliest revision.'
 has_text "baseline: another tracker read does not cap" "$WORK/skill.flat" \
   'A failed read is a named gap and does not by itself cap'
+has_text "baseline: a failed external read is not an option-1 stop" "$WORK/skill.flat" \
+  'A failed external-tracker read already named in gather is not that stop.'
 has_text "baseline: ask when no description states a multi-line purpose" "$WORK/skill.flat" \
   'Ask the owner only when no linked issue description states a purpose and the pull request description does not state a purpose in more than one line.'
 has_text "baseline: a completed empty history still asks" "$WORK/skill.flat" \

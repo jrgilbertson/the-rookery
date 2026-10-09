@@ -40,7 +40,7 @@ looked" surface. GitHub Releases mirror its entries.
   that edit predates every review submission and every substantive top-level conversation comment, and that body states a purpose in more
   than one line. A missing description snapshot is disclosed and does not
   make the current description the earliest revision. A failed read of a
-  source issue on another tracker is a named gap and does not by itself cap.
+  source issue on another tracker is a named gap, does not by itself cap, and does not stop option 1.
   It asks the owner when no linked issue
   description states a purpose and the pull request description does not state
   a purpose in more than one line, including when a completed read recorded no

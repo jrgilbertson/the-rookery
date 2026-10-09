@@ -113,7 +113,7 @@ read-only verb set, the only forge commands the gather path runs:
   repository-local source-issue link in the description. Keep GitHub selectors
   in this repository. Also read a linked source issue on another tracker,
   including Linear, with existing credentials and no new login. A failed read
-  is a named gap and does not by itself cap; continue without inventing its text.
+  is a named gap and does not by itself cap, and it is not an option-1 record. Continue without inventing its text.
 - GraphQL for each linked issue's comments. Paginate the issue's `comments`
   connection to exhaustion and retain each comment's stable id, author,
   timestamp, and body for stewardship. `gh issue view --json comments` does not
@@ -167,7 +167,7 @@ Completion: the description, diff, review history, linked source issues when
 present, and host policy/live state are each in hand with the floor met, or
 marked unavailable / incomplete with its cap recorded; the head OID and
 fingerprints are recorded, with the payload's history fingerprint, resolved
-host-policy facts, and each linked issue's identity and state written to files
+host-policy facts, and each linked issue this run read, by identity and state, written to files
 now for the later option-1 execution check. Store those
 files in an owner-only `mktemp -d` directory outside the target repository.
 While waiting, that directory holds history fingerprints and these small records, not raw forge
@@ -475,13 +475,13 @@ dispatch or merge. Do not grade again or start a review.
 Pin `GH_HOST` to the certified host. Reuse the finished grade and captured
 host-policy facts. Follow the approval reads and table in
 [references/merge-execution.md](references/merge-execution.md): compare review
-history, PR identity and live eligibility, and each linked issue's identity and state.
+history, PR identity and live eligibility, and each recorded linked issue's identity and state.
 Use [scripts/fetch-pr-history.sh](scripts/fetch-pr-history.sh) with `--fingerprint`
 only when it wrote the captured history fingerprint; otherwise repeat the
 captured manual history compare. These reads may run concurrently.
 Do not download or regrade the diff, re-fetch issue text, or fingerprint policy
 documents. Keep outputs in the step-2 temp directory and compare them off chat.
-A missing record or unfinished read stops without grading or merging. Issue
+A missing repository-local record or an unfinished read stops without grading or merging. A failed external-tracker read already named in gather is not that stop. Issue
 states and membership follow row 11; PR body and review evidence follow row 13.
 A match is silent. If narration is needed, say you are merging the reviewed head.
 

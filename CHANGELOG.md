@@ -37,6 +37,7 @@ looked" surface. GitHub Releases mirror its entries.
 - `checking-merge-readiness` takes the intent baseline from a linked issue
   whose description states a purpose, then from the pull request description.
   Every stated purpose stays in the baseline; drift is a purpose the diff no longer fulfills.
+  An authorized issue comment this run already read replaces a stale issue description when the diff still matches that comment, and that stale description is not intent drift. The issue is not re-fetched.
   A completed description history keeps the newest entry that predates every
   review submission and every substantive top-level conversation comment,
   when that entry has a body and that body states a purpose in more than one

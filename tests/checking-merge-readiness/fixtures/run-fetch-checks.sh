@@ -425,6 +425,8 @@ has_text "baseline: every stated purpose is compared" "$WORK/skill.flat" \
   'Keep every stated purpose in the baseline and compare each with the final diff.'
 has_text "baseline: drift is a purpose the diff no longer describes" "$WORK/skill.flat" \
   'A purpose that no longer describes that diff is intent drift in step 5.'
+has_text "baseline: an authorized issue comment is not stale-body drift" "$WORK/skill.flat" \
+  'Before calling that mismatch intent drift, keep a purpose an issue comment this run already read records'
 has_text "baseline: the first matching case wins" "$WORK/skill.flat" \
   'Apply the first matching case. Do not also apply a later case.'
 has_text "baseline: newest pre-review entry kept" "$WORK/skill.flat" \

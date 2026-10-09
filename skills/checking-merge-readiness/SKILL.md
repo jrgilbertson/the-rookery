@@ -224,6 +224,7 @@ Use each repository-local closing or source issue from step 2, and a source
 issue on another tracker, including Linear, when this run already read its
 description. No new login, and no invented text. Provenance is "source issue".
 Keep every stated purpose in the baseline and compare each with the final diff.
+Before calling that mismatch intent drift, keep a purpose an issue comment this run already read records when the repository owner or a clearly authorized maintainer wrote it, or the invoking owner confirms it during this run, and the final diff still matches it. The stale issue description is then informational. Do not re-fetch the issue.
 A purpose that no longer describes that diff is intent drift in step 5. Do not ask which description the owner meant.
 
 With no such issue description, use the pull request description.
@@ -247,7 +248,7 @@ not require it and does not re-run the pre-PR gate.
 Intent versus scope, the criterion step 5 grades against: intent is what
 problem the pull request solves and for whom; scope is how much it touches to
 do so. The operational test is whether the baseline's stated purpose still
-describes the final diff. A purpose that no longer matches is intent drift;
+describes the final diff. A purpose that no longer matches is intent drift, except that authorized comment;
 more files or edge cases under the same purpose is scope growth.
 
 Completion: name the provenance (source issue, pre-review revision, current
@@ -306,7 +307,7 @@ issue, its absence is not a gap.
 When owner-approved scope is clear and the truthful pull request description
 and final diff match it, stale source-issue wording is informational. Suggest
 the correction as housekeeping rather than a missing material disposition;
-it does not withhold merge. Required work and closure claims still get checked.
+it does not withhold merge. Step 4 applies this before declaring intent drift. Required work and closure claims still get checked.
 
 Confirm that durable code, tests, documentation, and evidence do not cite or
 depend on ignored working artifacts, and that any ADR, solution, release

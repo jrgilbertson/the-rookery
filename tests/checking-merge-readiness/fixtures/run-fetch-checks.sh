@@ -448,8 +448,8 @@ has_text "baseline: unreadable history uses the current description" "$WORK/skil
   'When that history cannot be read, disclose the gap.'
 has_text "baseline: no surviving body uses the current description" "$WORK/skill.flat" \
   'When no surviving entry has a body, disclose the gap.'
-has_text "baseline: a missing snapshot is disclosed" "$WORK/skill.flat" \
-  "When an entry's snapshot is missing, disclose that gap first."
+has_text "baseline: a description-history gap is disclosed before the baseline" "$WORK/skill.flat" \
+  "When description-edit history cannot be read, or an entry's snapshot is missing, disclose that gap before choosing a baseline."
 has_text "baseline: a missing snapshot is not the current description" "$WORK/skill.flat" \
   'does not make the current description the earliest revision.'
 has_text "baseline: another tracker read does not cap" "$WORK/skill.flat" \
@@ -457,8 +457,10 @@ has_text "baseline: another tracker read does not cap" "$WORK/skill.flat" \
 has_text "baseline: a failed external read is not an option-1 stop" "$WORK/skill.flat" \
   'A failed external-tracker read already named in gather is not that stop.'
 has_text "baseline: the ask names no candidate from the diff" "$WORK/skill.flat" \
-  'Ask for the purpose. Name no candidate from the diff.'
-has_text "baseline: a completed empty history still asks" "$WORK/skill.flat" \
+  'Ask for the purpose only when the matching case says to ask. Name no candidate from the diff.'
+has_text "baseline: no edits asks when that body states no multi-line purpose" "$WORK/skill.flat" \
+  'When it states a purpose in more than one line, the baseline is the description as first written. Otherwise ask for the purpose.'
+lacks_text "baseline: a completed read does not ask on its own" "$WORK/skill.flat" \
   'That ask still applies when a completed read recorded no edits.'
 has_text "baseline: no edits is not an automatic move-on" "$WORK/skill.flat" \
   'No recorded edits after that read means the body was never changed.'

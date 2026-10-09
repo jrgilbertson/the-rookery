@@ -213,6 +213,10 @@ pass, fail with a named rule, or are unavailable with the gap named.
 
 The baseline is the change's pre-review intent. Take it from evidence already
 gathered. Do not ask the owner to reconfirm a purpose that evidence states.
+**SSOT for edit snapshots:** where `userContentEdits` was read to exhaustion, each
+entry's `diff` is the full post-edit body, not a patch and not the pre-edit
+text. Sort by `editedAt`. When description-edit history cannot be read, or an entry's snapshot is missing, disclose that gap before choosing a baseline.
+It is not a debug cap and does not make the current description the earliest revision.
 
 A linked issue whose description states a purpose supplies the baseline first.
 Use each repository-local closing or source issue from step 2, and a source
@@ -221,11 +225,7 @@ description. No new login, and no invented text. Provenance is "source issue".
 Keep every stated purpose in the baseline and compare each with the final diff.
 A purpose that no longer describes that diff is intent drift in step 5. Do not ask which description the owner meant.
 
-With no such issue description, use the pull request description. **SSOT for
-edit snapshots:** where `userContentEdits` was read to exhaustion, each
-entry's `diff` is the full post-edit body, not a patch and not the pre-edit
-text. Sort by `editedAt`. When an entry's snapshot is missing, disclose that gap first.
-It is not a debug cap and does not make the current description the earliest revision.
+With no such issue description, use the pull request description.
 Apply the first matching case. Do not also apply a later case.
 1. When that history cannot be read, disclose the gap. It is not a debug cap. Use provenance "current description" when that body states a purpose in more than one line. Otherwise ask for the purpose.
 2. No recorded edits after that read means the body was never changed. When it states a purpose in more than one line, the baseline is the description as first written. Otherwise ask for the purpose.
@@ -234,7 +234,7 @@ Apply the first matching case. Do not also apply a later case.
 5. When no surviving entry has a body, disclose the gap. Use provenance "current description" when that body states a purpose in more than one line. Otherwise ask for the purpose.
 6. When that newest pre-review snapshot is missing while an older entry has a body, ask for the purpose. Do not use the older entry.
 7. When the newest pre-review entry's time cannot be compared, or its body states no purpose in more than one line, ask for the purpose.
-That ask still applies when a completed read recorded no edits. Ask for the purpose. Name no candidate from the diff. The reply is a prerequisite to grading drift, not the terminal decision.
+Ask for the purpose only when the matching case says to ask. Name no candidate from the diff. The reply is a prerequisite to grading drift, not the terminal decision.
 
 When the description carries an evidence pack from a pre-PR gate such as
 `checking-pr-readiness`, treat it as unverified claims: cross-check against

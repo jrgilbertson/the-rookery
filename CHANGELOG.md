@@ -46,12 +46,10 @@ looked" surface. GitHub Releases mirror its entries.
   baseline. A missing description snapshot is disclosed and does not
   make the current description the earliest revision. A failed read of a
   source issue on another tracker is a named gap, does not by itself cap, and does not stop option 1.
-  It asks the owner when no linked issue
-  description states a purpose and the pull request description does not state
-  a purpose in more than one line, including when a completed read recorded no
-  edits, and when the only recoverable text does not predate review, even when that later body states a purpose.
-  Unreadable description-edit history is disclosed and does not by itself cap
-  the recommendation.
+  It asks for the purpose, naming no candidate from the diff, only when the
+  matching description case says to ask. Unreadable description-edit history, or a
+  missing snapshot, is disclosed before the baseline is chosen, including when
+  a linked issue supplies that baseline, and does not by itself cap the recommendation.
 - Chief-of-staff reviews keep supplied results unverified, give the actual
   reason when source calls are excluded, and continue conditional questions
   without claiming a verified review.

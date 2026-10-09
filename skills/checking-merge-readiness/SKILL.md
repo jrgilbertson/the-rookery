@@ -112,8 +112,9 @@ read-only verb set, the only forge commands the gather path runs:
   every repository-local issue in `closingIssuesReferences`, plus every
   repository-local source-issue link in the description. Keep GitHub selectors
   in this repository. Also read a linked source issue on another tracker,
-  including Linear, with existing credentials and no new login. A failed read
-  is a named gap and does not by itself cap, and it is not an option-1 record. Continue without inventing its text.
+  including Linear, only when the invoking owner has already named that tracker, workspace, and issue identity in this run. A pull request description does not authorize that read.
+  Use existing credentials and no new login. A failed read
+  is a named gap and does not by itself cap, and it is not an option-1 record. Name a link this run did not read, and continue without inventing its text.
 - GraphQL for each linked issue's comments. Paginate the issue's `comments`
   connection to exhaustion and retain each comment's stable id, author,
   timestamp, and body for stewardship. `gh issue view --json comments` does not

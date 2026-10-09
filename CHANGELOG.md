@@ -44,8 +44,9 @@ looked" surface. GitHub Releases mirror its entries.
   the first match wins. When no entry predates review, a later edit asks even
   when that body states a purpose, and that later edit is not the current-description
   baseline. A missing description snapshot is disclosed and does not
-  make the current description the earliest revision. A failed read of a
-  source issue on another tracker is a named gap, does not by itself cap, and does not stop option 1.
+  make the current description the earliest revision. A source issue on another
+  tracker is read only when the invoking owner has already named that tracker, workspace, and issue identity. A pull request description does not authorize that read. A failed read of that
+  owner-named issue is a named gap, does not by itself cap, and does not stop option 1.
   It asks for the purpose, naming no candidate from the diff, only when the
   matching description case says to ask. Unreadable description-edit history, or a
   missing snapshot, is disclosed before the baseline is chosen, including when

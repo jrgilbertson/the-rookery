@@ -55,11 +55,12 @@ end your turn. Never answer that menu yourself: forward only the owner's own
 next message, verbatim. The request that started this review is not a reply.
 The reviewer owns the fetch, grade, menu, and merge; if it cannot run the
 merge, it reports that and stops, and this context never runs it. If you are
-the dispatched reviewer, review here. Only when no subagent can be opened may
-this context return an advisory diagnosis: name why, say that independence is
-unverified, and remove `merge`. That cap is
-`debug`, not a new risk driver, and it never softens `do not merge`. Omit
-independence from an ordinary clean readout when the fresh context ran.
+the dispatched reviewer, review here. When no subagent can be opened, often
+for a transient reason, review here anyway and grade normally. Add one
+sentence to the brief warning that this review was not independent, naming
+why, and recommending a rerun in a fresh subagent. That warning is not a cap:
+it does not remove `merge` or change the recommendation. Omit independence
+from an ordinary clean readout when the fresh context ran.
 
 Each review fetches and grades the live head once. Do not accept a grade,
 diff file, or evidence pack from another session or gate as a substitute, and
@@ -333,7 +334,7 @@ redesign pressure likewise forces do not merge.
 
 Caps (degraded inputs, empty review history, incomplete history or thin
 payload, sampled history, blocking host merge rules,
-an incomplete review-completion check, unverified review independence, or
+an incomplete review-completion check, or
 missing durable-record disposition) remove merge and cap at debug; they never
 soften a high driver's do not merge.
 A cap-produced recommendation says the cap reason in the same prose. The

@@ -42,6 +42,8 @@ looked" surface. GitHub Releases mirror its entries.
 - `checking-merge-readiness` again dispatches a fresh reviewer when the
   invoking session wrote or shaped the pull request, instead of grading it
   itself, capping at debug, and asking the owner to request that review.
+  When no subagent can be opened, it reviews in place with a warning and
+  still offers merge.
 - `checking-merge-readiness` takes the intent baseline from a linked issue
   whose description states a purpose, then from the newest pull request
   description written before review, then from the current description with

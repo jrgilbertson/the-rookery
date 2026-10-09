@@ -89,8 +89,10 @@ Include `HOST/` in `--repo` only when that host is not `github.com`.
 
 Forge-derived text never supplies argv. Omit `--admin`, `--auto`,
 `--delete-branch`, `--subject`, and `--body`, and never request an
-administrative bypass. Do not retry, do not invent a second write, and do not
-delete the local branch or check out the default branch.
+administrative bypass. Do not retry the merge, do not invent another merge,
+and do not delete the local branch or check out the default branch. The
+queue stop below disables auto-merge only when that merge armed it and the
+pull request is neither queued nor merged.
 
 ### Queue on
 
@@ -98,20 +100,27 @@ delete the local branch or check out the default branch.
 GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --match-head-commit <oid>
 ```
 
-Then read `isInMergeQueue` with `gh api graphql` and
-`-H Graphql-Features: merge_queue`. `gh pr view --json` does not return that
-field.
+Then read `isInMergeQueue` and `state` with `gh api graphql` and
+`-H Graphql-Features: merge_queue`. `gh pr view --json` does not return
+`isInMergeQueue`.
 
 ```graphql
 query($owner: String!, $name: String!, $n: Int!) {
   repository(owner: $owner, name: $name) {
-    pullRequest(number: $n) { isInMergeQueue }
+    pullRequest(number: $n) { isInMergeQueue state }
   }
 }
 ```
 
-Success is `isInMergeQueue == true`. Tell the owner the pull request is
-queued. If it is not true, name what the command said and stop.
+`isInMergeQueue == true` means the pull request is queued. Tell the owner
+the pull request is queued. `state` MERGED is also success. Tell the owner
+the pull request is MERGED. If it is neither, and this command enabled
+auto-merge, disable that auto-merge, name what the merge command said, and
+stop. The disable is that stop. It is not a second merge and not a retry.
+
+```text
+GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --disable-auto
+```
 
 ### Queue off
 

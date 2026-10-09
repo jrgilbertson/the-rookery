@@ -1,6 +1,6 @@
 ---
 name: checking-merge-readiness
-description: Use when a reviewed pull request is about to be merged, including digest this PR before I merge, should I merge this, or merge this PR. Briefs merge, debug, or do not merge plus numbered live options and waits for a numbered reply. Option 1 is Proceed to merge. A bare merge request still runs this review and still waits. For opening a pull request, use checking-pr-readiness.
+description: Use when a reviewed pull request is about to be merged, including digest this PR before I merge, should I merge this, or merge this PR. Briefs merge, debug, or do not merge plus numbered live options and waits for a numbered reply. Option 1 is Proceed to merge, or Add to the merge queue when the base has one. A bare merge request still runs this review and still waits. For opening a pull request, use checking-pr-readiness.
 license: MIT
 compatibility: Requires GitHub CLI (`gh`) with the invoking user's credentials; prefers a subagent when the invoking session shaped the change. Option 1 needs merge permission; request no new login. The fetch helper also needs `jq` and `shasum` or `sha256sum`; without them, step 2's manual fetch applies. Without `gh`, or on a non-GitHub forge, degrade to an owner-supplied description and an identity-checked local diff, which removes merge from recommendations; a high driver still returns do not merge.
 ---

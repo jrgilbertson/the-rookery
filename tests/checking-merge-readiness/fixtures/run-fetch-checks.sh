@@ -441,6 +441,8 @@ has_text "non-queue report: say whether the pull request is MERGED" "$WORK/exec.
   'Tell the owner whether the PR is MERGED'
 has_text "menu: a merge queue resolves the proceed probe" "$WORK/skill.flat" \
   'A merge queue on the base resolves that probe.'
+has_text "menu: the description names both proceed sentences" "$WORK/skill.flat" \
+  'Option 1 is Proceed to merge, or Add to the merge queue when the base has one.'
 has_text "menu: the queued proceed sentence is Add to the merge queue" "$WORK/exec.flat" \
   'Add to the merge queue.'
 has_text "menu: the no-queue proceed sentence is Proceed to merge" "$WORK/exec.flat" \
@@ -495,7 +497,9 @@ if awk '
       write_on = index(body, "GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --match-head-commit <oid>") &&
         index(body, "--<method>") == 0 &&
         index(body, "isInMergeQueue == true") &&
-        index(body, "Tell the owner the pull request is queued")
+        index(body, "Tell the owner the pull request is queued") &&
+        index(body, "state` MERGED is also success") &&
+        index(body, "GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --disable-auto")
     } else if (sec == "write-off") {
       write_off = index(body, "GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --<method> --match-head-commit <oid>") &&
         index(body, "GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --match-head-commit <oid>") == 0 &&
@@ -520,7 +524,9 @@ fi
 # The backticks are literal Markdown fence delimiters.
 # shellcheck disable=SC2016
 queue_cmd=$(sed -n '/^```text$/,/^```$/p' "$EXEC_MD" | grep -F 'gh pr merge' | grep -F -v -- '--<method>' || true)
-if [ "$queue_cmd" = 'GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --match-head-commit <oid>' ]; then
+expected_queue_cmd='GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --match-head-commit <oid>
+GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --disable-auto'
+if [ "$queue_cmd" = "$expected_queue_cmd" ]; then
   pass "queue write: the fenced enqueue has no method flag"
 else
   fail "queue write: the fenced enqueue has no method flag" "got [${queue_cmd}]"

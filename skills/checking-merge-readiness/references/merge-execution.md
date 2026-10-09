@@ -96,31 +96,48 @@ pull request is neither queued nor merged.
 
 ### Queue on
 
+Read `autoMergeRequest` before the write. Use the header and the selector
+below, and keep that result in the step 2 temp directory. Absent means no
+auto-merge is armed.
+
 ```text
 GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --match-head-commit <oid>
 ```
 
-Then read `isInMergeQueue` and `state` with `gh api graphql` and
-`-H Graphql-Features: merge_queue`. `gh pr view --json` does not return
-`isInMergeQueue`.
+A non-zero exit is a plain failure. Name what the command said and stop.
+
+On exit 0, read `isInMergeQueue`, `state`, and `autoMergeRequest` with
+`gh api graphql` and `-H Graphql-Features: merge_queue`. `gh pr view --json`
+does not return `isInMergeQueue`.
 
 ```graphql
 query($owner: String!, $name: String!, $n: Int!) {
   repository(owner: $owner, name: $name) {
-    pullRequest(number: $n) { isInMergeQueue state }
+    pullRequest(number: $n) {
+      isInMergeQueue
+      state
+      autoMergeRequest { enabledAt }
+    }
   }
 }
 ```
 
-`isInMergeQueue == true` means the pull request is queued. Tell the owner
-the pull request is queued. `state` MERGED is also success. Tell the owner
-the pull request is MERGED. If it is neither, and this command enabled
-auto-merge, disable that auto-merge, name what the merge command said, and
-stop. The disable is that stop. It is not a second merge and not a retry.
+**Queued.** `isInMergeQueue == true`. Tell the owner the pull request is queued.
+
+**Merged.** `state` MERGED is also success. Tell the owner the pull request is MERGED.
+
+**Neither.** The pull request is not queued and `state` is not MERGED.
+This write armed auto-merge when `autoMergeRequest` was absent before the
+write and present after it. Disable that auto-merge, name what the merge
+command said, and stop. The disable is that stop. It is not a second merge
+and not a retry.
 
 ```text
 GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --disable-auto
 ```
+
+When `autoMergeRequest` was already present, or it is still absent, name
+what the command said and stop.
 
 ### Queue off
 

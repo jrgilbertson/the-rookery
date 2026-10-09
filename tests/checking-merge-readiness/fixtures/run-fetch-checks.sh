@@ -443,6 +443,8 @@ has_text "menu: a merge queue resolves the proceed probe" "$WORK/skill.flat" \
   'A merge queue on the base resolves that probe.'
 has_text "menu: the description names both proceed sentences" "$WORK/skill.flat" \
   'Option 1 is Proceed to merge, or Add to the merge queue when the base has one.'
+has_text "queue stop: a failed enqueue is not the disarm" "$WORK/skill.flat" \
+  'When that queue write armed auto-merge and the pull request is neither queued nor merged, the stop in merge-execution.md disables that auto-merge.'
 has_text "menu: the queued proceed sentence is Add to the merge queue" "$WORK/exec.flat" \
   'Add to the merge queue.'
 has_text "menu: the no-queue proceed sentence is Proceed to merge" "$WORK/exec.flat" \
@@ -499,6 +501,9 @@ if awk '
         index(body, "isInMergeQueue == true") &&
         index(body, "Tell the owner the pull request is queued") &&
         index(body, "state` MERGED is also success") &&
+        index(body, "A non-zero exit is a plain failure") &&
+        index(body, "absent before the write and present after it") &&
+        index(body, "absent before the write and present after it") < index(body, "--disable-auto") &&
         index(body, "GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --disable-auto")
     } else if (sec == "write-off") {
       write_off = index(body, "GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --<method> --match-head-commit <oid>") &&

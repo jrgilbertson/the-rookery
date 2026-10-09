@@ -443,6 +443,37 @@ has_text "menu: a merge queue resolves the proceed probe" "$WORK/skill.flat" \
   'A merge queue on the base resolves that probe.'
 has_text "menu: the queued proceed sentence is Add to the merge queue" "$WORK/exec.flat" \
   'Add to the merge queue.'
+has_text "menu: the no-queue proceed sentence is Proceed to merge" "$WORK/exec.flat" \
+  'The proceed sentence is "Proceed to merge."'
+# shellcheck disable=SC2016
+has_text "queue probe: the eligibility header is the one gh pr merge sends" "$WORK/exec.flat" \
+  'then run this one GraphQL document with `-H Graphql-Features: merge_queue`'
+has_text "queue on: do not resolve a method" "$WORK/exec.flat" \
+  'Do not resolve a method.'
+# shellcheck disable=SC2016
+has_text "queue fact: membership is not whether the base has a queue" "$WORK/exec.flat" \
+  '`isInMergeQueue` says whether this pull request is already queued, not whether the base has a queue.'
+# The eligibility fence is the one that names the method flags. The readback
+# query selects isInMergeQueue and must not satisfy this pin.
+# shellcheck disable=SC2016
+if awk '
+  function finish() {
+    if (index(body, "mergeCommitAllowed")) {
+      if (index(body, "mergeQueue(branch: $base) { id }")) elig_ok = 1
+      else elig_bad = 1
+    }
+    if (index(body, "isInMergeQueue") && index(body, "mergeQueue")) readback_bad = 1
+  }
+  /^```graphql$/ { in_fence = 1; body = ""; next }
+  /^```$/ && in_fence { finish(); in_fence = 0; next }
+  in_fence { body = body $0 "\n" }
+  END { exit !(elig_ok && !elig_bad && !readback_bad) }
+' "$EXEC_MD"; then
+  pass "queue probe: eligibility selects mergeQueue(branch:) and the readback does not"
+else
+  fail "queue probe: eligibility selects mergeQueue(branch:) and the readback does not" \
+    "eligibility document lost mergeQueue or the readback gained it"
+fi
 # The queue write is the fenced gh pr merge line that carries no method flag.
 # A copy of the command in this test would stay green if the skill dropped it.
 # The backticks are literal Markdown fence delimiters.

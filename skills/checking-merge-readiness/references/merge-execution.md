@@ -30,10 +30,11 @@ query($owner: String!, $name: String!, $base: String!) {
 merge queue." Do not resolve a method. `isInMergeQueue` says whether this
 pull request is already queued, not whether the base has a queue.
 
-**Queue off.** `mergeQueue` is null. Exactly one of merge/squash/rebase
-allowed → that flag. Several allowed → `viewerDefaultMergeMethod` only when
-it is still in the allowed set. Never hardcode squash. The non-queue write
-passes that method flag. When no method resolves, withhold.
+**Queue off.** `mergeQueue` is null. The proceed sentence is "Proceed to
+merge." Exactly one of merge/squash/rebase allowed → that flag. Several
+allowed → `viewerDefaultMergeMethod` only when it is still in the allowed
+set. Never hardcode squash. The non-queue write passes that method flag.
+When no method resolves, withhold.
 
 ## Re-check on a reply of 1
 

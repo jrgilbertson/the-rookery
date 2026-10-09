@@ -231,8 +231,8 @@ edits after that read means the body was never changed. When it states a
 purpose in more than one line, say the baseline is the description as first
 written.
 
-When that history cannot be read, a snapshot is missing, or no entry has a
-body, disclose the gap. It is not a debug cap. Use provenance "current description"
+When that history cannot be read, or no surviving entry has a body, disclose
+the gap. It is not a debug cap. Use provenance "current description"
 when the description states a purpose in more than one line. Ask the owner only
 when no linked issue description states a purpose and the pull request description is
 empty or one line. That ask still applies when a completed read recorded no

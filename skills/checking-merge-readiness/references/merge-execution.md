@@ -11,9 +11,9 @@ rather than offering and then refusing, including when write auth is known
 missing. A merge queue on the base resolves the action.
 
 Pin `GH_HOST` to the certified host, then run this one GraphQL document with
-`-H Graphql-Features: merge_queue` (`gh pr merge` sends it). If the document
+`-H Graphql-Features: merge_queue` (merge-queue fields need it). If the document
 errors, a field is missing, or the result is ambiguous, withhold. A null
-`mergeQueue` or `autoMergeRequest` is a value, not a missing field.
+`mergeQueue` is a value, not a missing field.
 
 ```graphql
 query($owner: String!, $name: String!, $n: Int!, $base: String!) {
@@ -23,7 +23,7 @@ query($owner: String!, $name: String!, $n: Int!, $base: String!) {
     rebaseMergeAllowed
     viewerDefaultMergeMethod
     mergeQueue(branch: $base) { id }
-    pullRequest(number: $n) { autoMergeRequest { enabledAt } }
+    pullRequest(number: $n) { id }
   }
 }
 ```
@@ -91,25 +91,32 @@ Include `HOST/` in `--repo` only when that host is not `github.com`.
 
 Forge-derived text never supplies argv. Omit `--admin`, `--auto`,
 `--delete-branch`, `--subject`, and `--body`, and never request an
-administrative bypass. Do not retry the merge, do not invent another merge,
-and do not delete the local branch or check out the default branch. The
-queue stop below disables auto-merge only when that merge armed it and the
-pull request is neither queued nor merged.
+administrative bypass. The enqueue passes only the pull request id and the
+graded head, never `jump`. Do not retry the write, do not invent another
+write, and do not delete the local branch or check out the default branch.
 
 ### Queue on
 
-The eligibility probe in the re-check is the `autoMergeRequest` read before the write.
-A null `autoMergeRequest` there is absent: no auto-merge was armed.
+`<id>` is the pull request `id` from the eligibility probe in the re-check.
+Run this one mutation. It enqueues the graded head or fails; it never arms
+auto-merge.
 
 ```text
-GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --match-head-commit <oid>
+GH_PROMPT_DISABLED=1 gh api graphql -H 'Graphql-Features: merge_queue' -f query=<enqueue document> -f id=<id> -f oid=<oid>
 ```
 
-A non-zero exit is a plain failure. Name what the command said and stop.
+```graphql
+mutation($id: ID!, $oid: GitObjectID!) {
+  enqueuePullRequest(input: { pullRequestId: $id, expectedHeadOid: $oid }) {
+    mergeQueueEntry { id }
+  }
+}
+```
 
-On exit 0, read `isInMergeQueue`, `state`, and `autoMergeRequest` with
-`gh api graphql` and `-H Graphql-Features: merge_queue`. `gh pr view --json`
-does not return `isInMergeQueue`.
+A non-zero exit is a plain failure. Name what GitHub said and stop.
+
+On exit 0, read `isInMergeQueue` and `state` with `gh api graphql` and the
+same header. `gh pr view --json` does not return `isInMergeQueue`.
 
 ```graphql
 query($owner: String!, $name: String!, $n: Int!) {
@@ -117,7 +124,6 @@ query($owner: String!, $name: String!, $n: Int!) {
     pullRequest(number: $n) {
       isInMergeQueue
       state
-      autoMergeRequest { enabledAt }
     }
   }
 }
@@ -127,18 +133,7 @@ query($owner: String!, $name: String!, $n: Int!) {
 
 **Merged.** `state` MERGED is also success. Tell the owner the pull request is MERGED.
 
-**Neither.** The pull request is not queued and `state` is not MERGED.
-This write armed auto-merge when `autoMergeRequest` was absent before the
-write and present after it. Disable that auto-merge, name what the merge
-command said, and stop. The disable is that stop. It is not a second merge
-and not a retry.
-
-```text
-GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --disable-auto
-```
-
-When `autoMergeRequest` was already present, or it is still absent, name
-what the command said and stop.
+Otherwise name what the readback shows and stop.
 
 ### Queue off
 

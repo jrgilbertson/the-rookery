@@ -431,8 +431,9 @@ has_text "no grade store: grades stay out of every store" "$WORK/skill.flat" \
   'write no grade into the repository, the pull request, or any other store'
 has_text "single write: the merge is pinned to the graded head" "$WORK/exec.flat" \
   'GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --<method> --match-head-commit <oid>'
+# shellcheck disable=SC2016
 has_text "queue write: enqueue is pinned to the graded head" "$WORK/exec.flat" \
-  'GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --match-head-commit <oid>'
+  'enqueuePullRequest(input: { pullRequestId: $id, expectedHeadOid: $oid })'
 has_text "queue readback: success is membership in the queue" "$WORK/exec.flat" \
   'isInMergeQueue == true'
 has_text "queue report: say the pull request is queued" "$WORK/exec.flat" \
@@ -443,8 +444,9 @@ has_text "menu: a merge queue resolves the proceed probe" "$WORK/skill.flat" \
   'A merge queue on the base resolves that probe.'
 has_text "menu: the description names both proceed sentences" "$WORK/skill.flat" \
   'Option 1 is Proceed to merge, or Add to the merge queue when the base has one.'
-has_text "queue stop: a failed enqueue is not the disarm" "$WORK/skill.flat" \
-  'When that queue write armed auto-merge and the pull request is neither queued nor merged, the stop in merge-execution.md disables that auto-merge.'
+# shellcheck disable=SC2016
+has_text "single write: the skill names both option-1 writes" "$WORK/skill.flat" \
+  'or the head-pinned `enqueuePullRequest` mutation on a base with one.'
 has_text "menu: the queued proceed sentence is Add to the merge queue" "$WORK/exec.flat" \
   'Add to the merge queue.'
 has_text "menu: the no-queue proceed sentence is Proceed to merge" "$WORK/exec.flat" \
@@ -459,27 +461,28 @@ has_text "queue fact: membership is not whether the base has a queue" "$WORK/exe
   '`isInMergeQueue` says whether this pull request is already queued, not whether the base has a queue.'
 # The eligibility fence is the one that names the method flags. The readback
 # query selects isInMergeQueue and must not satisfy this pin. The re-check runs
-# this fence before the write, so its autoMergeRequest is the queue stop's
-# before-read.
+# this fence before the write, so its pull request id feeds the enqueue. No
+# fence reads autoMergeRequest: the enqueue never arms auto-merge.
 # shellcheck disable=SC2016
 if awk '
   function finish() {
     if (index(body, "mergeCommitAllowed")) {
       if (index(body, "mergeQueue(branch: $base) { id }") &&
-          index(body, "pullRequest(number: $n) { autoMergeRequest { enabledAt } }")) elig_ok = 1
+          index(body, "pullRequest(number: $n) { id }")) elig_ok = 1
       else elig_bad = 1
     }
-    if (index(body, "isInMergeQueue") && index(body, "mergeQueue")) readback_bad = 1
+    if (index(body, "isInMergeQueue") && index(body, "mergeQueue(")) readback_bad = 1
+    if (index(body, "autoMergeRequest")) readback_bad = 1
   }
   /^```graphql$/ { in_fence = 1; body = ""; next }
   /^```$/ && in_fence { finish(); in_fence = 0; next }
   in_fence { body = body $0 "\n" }
   END { exit !(elig_ok && !elig_bad && !readback_bad) }
 ' "$EXEC_MD"; then
-  pass "queue probe: eligibility selects mergeQueue(branch:) and autoMergeRequest, and the readback does not select mergeQueue"
+  pass "queue probe: eligibility selects mergeQueue(branch:) and the pull request id, and no fence reads autoMergeRequest"
 else
-  fail "queue probe: eligibility selects mergeQueue(branch:) and autoMergeRequest, and the readback does not select mergeQueue" \
-    "eligibility document lost mergeQueue or autoMergeRequest, or the readback gained mergeQueue"
+  fail "queue probe: eligibility selects mergeQueue(branch:) and the pull request id, and no fence reads autoMergeRequest" \
+    "eligibility document lost mergeQueue or the id, or a fence gained mergeQueue or autoMergeRequest"
 fi
 # Each proceed sentence and its write have to sit in that queue section. A file
 # that offers one action for both states stays red.
@@ -499,17 +502,14 @@ if awk '
         index(body, "The proceed sentence is \"Proceed to merge.\"") &&
         index(body, "Add to the merge queue.") == 0
     } else if (sec == "write-on") {
-      write_on = index(body, "GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --match-head-commit <oid>") &&
+      write_on = index(body, "enqueuePullRequest(input: { pullRequestId: $id, expectedHeadOid: $oid })") &&
+        index(body, "`<id>` is the pull request `id` from the eligibility probe in the re-check.") &&
+        index(body, "gh pr merge") == 0 &&
         index(body, "--<method>") == 0 &&
         index(body, "isInMergeQueue == true") &&
         index(body, "Tell the owner the pull request is queued") &&
         index(body, "state` MERGED is also success") &&
-        index(body, "A non-zero exit is a plain failure") &&
-        index(body, "The eligibility probe in the re-check is the `autoMergeRequest` read before the write.") &&
-        index(body, "selector below") == 0 &&
-        index(body, "absent before the write and present after it") &&
-        index(body, "absent before the write and present after it") < index(body, "--disable-auto") &&
-        index(body, "GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --disable-auto")
+        index(body, "A non-zero exit is a plain failure")
     } else if (sec == "write-off") {
       write_off = index(body, "GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --<method> --match-head-commit <oid>") &&
         index(body, "GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --match-head-commit <oid>") == 0 &&
@@ -529,17 +529,18 @@ else
   fail "queue state: each section names its own proceed sentence and write" \
     "a queue section lost its sentence or write, or gained the other path"
 fi
-# The queue write is the fenced gh pr merge line that carries no method flag.
+# Option 1 has exactly two fenced writes: the method merge and the enqueue.
+# Neither path carries a second write such as --disable-auto.
 # A copy of the command in this test would stay green if the skill dropped it.
 # The backticks are literal Markdown fence delimiters.
 # shellcheck disable=SC2016
-queue_cmd=$(sed -n '/^```text$/,/^```$/p' "$EXEC_MD" | grep -F 'gh pr merge' | grep -F -v -- '--<method>' || true)
-expected_queue_cmd='GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --match-head-commit <oid>
-GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --disable-auto'
-if [ "$queue_cmd" = "$expected_queue_cmd" ]; then
-  pass "queue write: the fenced enqueue has no method flag"
+write_cmds=$(sed -n '/^```text$/,/^```$/p' "$EXEC_MD" | grep -E 'gh pr merge|enqueue' || true)
+expected_write_cmds="GH_PROMPT_DISABLED=1 gh api graphql -H 'Graphql-Features: merge_queue' -f query=<enqueue document> -f id=<id> -f oid=<oid>
+GH_PROMPT_DISABLED=1 gh pr merge <number> --repo <owner/name> --<method> --match-head-commit <oid>"
+if [ "$write_cmds" = "$expected_write_cmds" ] && ! grep -qF -- '--disable-auto' "$EXEC_MD"; then
+  pass "single write: one enqueue and one method merge, and no second write"
 else
-  fail "queue write: the fenced enqueue has no method flag" "got [${queue_cmd}]"
+  fail "single write: one enqueue and one method merge, and no second write" "got [${write_cmds}]"
 fi
 # Flatten only the fenced command blocks, so a flag on a continuation line is
 # caught and the prose sentence that names the forbidden flags is not.
@@ -549,6 +550,11 @@ if sed -n '/^```text$/,/^```$/p' "$EXEC_MD" | tr '\n' ' ' |
   grep -qE -- 'gh pr merge .*--(admin|auto|delete-branch)'; then
   fail "single write: no bypass flags in the merge command" "found a forbidden flag"
 else pass "single write: no bypass flags in the merge command"; fi
+# A queue jump is the enqueue's bypass. No GraphQL fence may pass it.
+# shellcheck disable=SC2016
+if sed -n '/^```graphql$/,/^```$/p' "$EXEC_MD" | grep -q 'jump'; then
+  fail "single write: the enqueue never jumps the queue" "found jump"
+else pass "single write: the enqueue never jumps the queue"; fi
 
 printf '\n%d assertions: %d passed, %d failed\n' "$((PASS + FAIL))" "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ] || exit 1

@@ -27,10 +27,9 @@ review comments. Unresolved remainder is graded, not processed; a host
 conversation-resolution rule still caps at debug. A merged or closed pull
 request may still be reviewed, with that state named on the answer line.
 Gather, grade, readout, and menu stay read-only. Option 1's merge or
-enqueue is one `gh pr merge` after a later reply of 1. When that queue
-write armed auto-merge and the pull request is neither queued nor merged,
-the stop in merge-execution.md disables that auto-merge. Tracker mutations
-belong to `managing-issues`.
+enqueue is one forge write after a later reply of 1: `gh pr merge` on a base
+with no merge queue, or the head-pinned `enqueuePullRequest` mutation on a
+base with one. Tracker mutations belong to `managing-issues`.
 
 **Fresh review.** Any change to the pull request after this review, including
 a correction picked from the menu, needs a fresh review before option 1 writes. An
@@ -441,9 +440,8 @@ policy documents. A match is silent. If narration is needed, say you are
 merging the reviewed head, or adding it to the merge queue when that was the
 offered action. On a stop, name what moved and do not write.
 Option 1's merge or enqueue is that one write, then whether the pull
-request is MERGED, queued, or what the command said. The queue stop
-disables auto-merge only when the readback shows that write armed it. No
-second pyramid and no local branch cleanup.
+request is MERGED, queued, or what the command said. No second pyramid
+and no local branch cleanup.
 
 When a later reply chooses debug for an issue-stewardship gap, hand the
 update to `managing-issues`; this skill never mutates the tracker. If

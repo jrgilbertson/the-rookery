@@ -367,12 +367,15 @@ the recorded tree OID. On a mismatch, name the differing paths, say that the
 published content is not what was approved, and stop: do not start merge
 readiness, because the published head needs a fresh PR-readiness pass.
 
-The publisher normally hands the pull request to `ce-babysit-pr`. When that
-babysit reports looks merge-ready or cautiously looks ready, invoke
-`checking-merge-readiness` for the pull request; it moves the review to a
-fresh reviewer itself, and its menu waits for the owner. On any other babysit
-result, or when no babysit ran, report it and stop. An unattended run stops
-after the publisher and leaves merge readiness to its caller. The Approve 1
+An unattended run stops after the publisher and leaves babysit and merge
+readiness to its caller. Otherwise, when the publisher created or updated a
+pull request without starting `ce-babysit-pr` and its completion gate allows
+babysit, invoke `ce-babysit-pr` for that pull request; never start a second
+babysit. When babysit reports looks merge-ready or cautiously looks ready,
+invoke `checking-merge-readiness` for the pull request; it moves the review to
+a fresh reviewer itself, and its menu waits for the owner. When the publisher
+opened nothing, its gate says not to babysit, or babysit ends any other way,
+report that and stop. The Approve 1
 never selects Proceed to merge.
 
 ## Gotchas

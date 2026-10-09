@@ -381,6 +381,8 @@ pins "boundary: the publisher gets the approved base and it is checked" \
 	"pull request's base repository and branch with the approved target"
 pins "boundary: nothing acts on the pull request before the publish check" \
 	"An attended run passes \`babysit:off\`"
+pins "boundary: the surface report is bound to the recorded base OID" \
+	"to equal \`git merge-base HEAD <recorded base OID>\`"
 pins "boundary: a withheld 1 is not Approve" "A \`1\` on a withheld row is not Approve"
 pins "boundary: the menu turn never picks" "Do not pick an option in the same turn that wrote the menu."
 

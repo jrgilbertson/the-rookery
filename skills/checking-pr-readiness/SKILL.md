@@ -59,9 +59,11 @@ Resolve the target branch the pull request will merge into (the base of an
 open pull request for this head branch when one exists, else the remote's
 HEAD, or ask when it is ambiguous) and record its full base OID. Run
 [scripts/surface-report.sh](scripts/surface-report.sh) when it is present and
-executable, with `--base <target> --full`. Otherwise gather the same four
-categories directly with git: committed on this branch against the merge base
-with the target, plus staged, unstaged, and untracked paths.
+executable, with `--base <target> --full`, and require its `merge base:` line
+to equal `git merge-base HEAD <recorded base OID>`; on a difference the
+report measured another base, so the gather is incomplete. Otherwise gather
+the same four categories directly with git: committed on this branch against
+that merge base, plus staged, unstaged, and untracked paths.
 
 List untracked paths with the same weight as tracked ones. Publishers
 stage them, so they ship with the change even though no diff command shows

@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
 """Read-only `gh` stand-in that serves one scripted pagination scenario.
 
-Sibling of `fixtures/bin/gh`, and deliberately not the same stub. That one
-serves a constructed pull request to the *model's* fetch path and guards
-under-fetch. This one serves `scripts/fetch-pr-history.sh`, whose queries the
-other stub does not answer (a connection-free identity query, and
-`node(id:)` thread-comment resume), and whose failure modes are the point:
+It serves `scripts/fetch-pr-history.sh`: a connection-free identity query and
+`node(id:)` thread-comment resume. Its failure modes are the point:
 pages that must be followed by cursor, a surface that dies mid-run, an
 identity the floor rejects.
 

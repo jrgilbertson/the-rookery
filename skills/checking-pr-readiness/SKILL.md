@@ -41,7 +41,7 @@ each word; **bypassed** always records the owner's reason.
 
 ### 1. Gather the working surface
 
-The finishing path will stage this surface. Create an owner-only `mktemp -d`
+The publisher will stage this surface. Create an owner-only `mktemp -d`
 directory outside the target repository first; capture helper stdout there and
 do not echo the inventory into chat. Keep that directory while the run waits
 for a numbered reply and remove it when the run ends.

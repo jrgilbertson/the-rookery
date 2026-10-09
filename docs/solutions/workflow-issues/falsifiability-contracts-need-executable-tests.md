@@ -32,7 +32,10 @@ tags: [skills, helper-scripts, falsifiability-contract, silent-pass, fixture-tes
 > retired in #201; their sweep classes are now judgment checks. The file and
 > line citations to them below record the original incident. The lesson still
 > governs the helpers that remain: `surface-report.sh` and
-> `skills/checking-merge-readiness/scripts/fetch-pr-history.sh`.
+> `skills/checking-merge-readiness/scripts/fetch-pr-history.sh`. Citations to
+> those two helpers and to their runners point at current line numbers. The
+> 2026-08-11 recurrence's artifacts were retired too: the gardener CLI in #153
+> and `run-assessment-checks.py` in #201.
 
 ## Context
 
@@ -47,7 +50,7 @@ absent input exits 2, verdicts exit 0, an explicit deferral to a repository-owne
 gate exits 3, and an environment failure exits 4. Line 1 of every output is
 `verdict: <word>`, so a caller reads a fixed pair — verdict line and exit code —
 rather than parsing prose. `evidence-freshness.sh:31-77`,
-`changelog-union.sh:16-55`, and `surface-report.sh:17-58` each carry that
+`changelog-union.sh:16-55`, and `surface-report.sh:17-40` each carry that
 enumeration in the header.
 
 That design was not enough. All three helpers still shipped with holes where a
@@ -84,7 +87,7 @@ branch is squash-merged — closed each hole and
 committed a rerunnable fixture runner,
 `tests/checking-pr-readiness/fixtures/run-helper-checks.sh`, which
 asserts the exact verdict line and exit code for every documented output state
-across all three helpers, all currently green.
+across all three helpers, all green at the time.
 
 ### Recurrence (2026-08-06): a new helper, written with this learning in view
 
@@ -103,20 +106,20 @@ reproducible holes the same day:
    object of null fields, not the string `null`, so the guard comparing the
    constructed object against `"null"` never fired and a `pullRequest: null`
    response produced `complete: true` at exit 0. The fix tests the raw
-   response before construction (`fetch-pr-history.sh:167-168`).
+   response before construction (`fetch-pr-history.sh:185-186`).
 6. **Unvalidated `--merge-base` pass-through.** The sibling helpers' new
    pass-through flag trusted any value that resolved to a commit. Passing
    `HEAD` emptied the committed diff range and turned a diff-laden branch
    into a green `verdict: no changes on surface` at exit 0. The fix
    cross-checks the supplied value against the merge base the resolved
    default branch yields, or ancestry when no base resolves
-   (`surface-report.sh:313-320`).
+   (`surface-report.sh:272-290`).
 7. **SIGPIPE crash in the capped-listing pipeline.** `printf | head -25 |
    sed` under `set -euo pipefail` dies at exit 141 once the payload outlives
    `head` closing the pipe — exactly and only on the oversized surfaces the
    cap exists for, which is why a small live run never triggered it. The fix
-   caps with `sed -n '1,25p'`, which drains its stdin
-   (`surface-report.sh:206-212`).
+   caps with `sed -n '1,25s/^/  /p'`, which drains its stdin
+   (`surface-report.sh:147-151`).
 
 All three fixes shipped in the same change as the fixtures that pin them:
 `tests/checking-merge-readiness/fixtures/run-fetch-checks.sh` (31 assertions,
@@ -124,7 +127,8 @@ including not-found, null floor identity, mid-run failure, missing resume
 cursor, and a 1.2MB body) and an extended
 `tests/checking-pr-readiness/fixtures/run-helper-checks.sh` (154 assertions,
 including 500-path and 900-file payloads sized to actually reproduce the
-SIGPIPE race).
+SIGPIPE race). Today the runners hold 66 and 55 assertions respectively; the
+helper runner shrank when #201 retired two of its three helpers.
 
 ### Recurrence (2026-08-11): self-consistent evidence without authenticated execution
 
@@ -322,7 +326,7 @@ fi
 
 **Failed reads as empty categories.** Every one of the five git enumerations
 now goes through one wrapper that exits 4 on a non-zero status
-(`skills/checking-pr-readiness/scripts/surface-report.sh:218-228`):
+(`skills/checking-pr-readiness/scripts/surface-report.sh:244-254`):
 
 ```sh
 # Every enumeration goes through this: an empty result and a failed read look
@@ -338,9 +342,10 @@ read_or_fail() {
 }
 ```
 
-An unmeasurable committed count downgrades the result to `cap unverified`
-rather than letting an under-cap total stand
-(`surface-report.sh:307-310`).
+At the time, an unmeasurable committed count downgraded the result to
+`cap unverified` rather than letting an under-cap total stand. That verdict
+left with the reviewer cap in #201; the same state now reports
+`surface incomplete`.
 
 **Self-matching content grep.** Existence is now decided against paths on the
 working surface, with content hits demoted to detail
@@ -356,7 +361,8 @@ surface=$(git ls-files --cached --others --exclude-standard -- "$search_root" 2>
 
 **The runner.** Each assertion compares the first output line and the exit code
 against the documented pair, and nothing else
-(`tests/checking-pr-readiness/fixtures/run-helper-checks.sh:27-41`):
+(`tests/checking-pr-readiness/fixtures/run-helper-checks.sh:28-50`; `record`
+also logs each verdict pair for the exit-map pin at the end of the run):
 
 ```sh
 check() { # check <state> <expected-verdict> <expected-exit> <cwd> <cmd>...
@@ -364,23 +370,24 @@ check() { # check <state> <expected-verdict> <expected-exit> <cwd> <cmd>...
 	shift 4
 	out=$(cd "$dir" && "$@" 2>&1)
 	code=$?
+	record "$out" "$code"
 	got=$(printf '%s\n' "$out" | sed -n '1p')
 	if [ "$got" = "verdict: $want" ] && [ "$code" -eq "$want_code" ]; then
 ```
 
 The adversarial fixtures are built inline. A corrupted index is one line
-(`run-helper-checks.sh:93-95`):
+(`run-helper-checks.sh:171-173`):
 
 ```sh
 s4=$(repo surface-broken)
 printf 'not an index' >"$s4/.git/index"
-check "surface: not run (failed git read)" "not run" 4 "$s4" "$surface" --cap reviewer=10
+check "surface: not run (failed git read)" "not run" 4 "$s4" "$surface"
 ```
 
-The deleted-record case (`run-helper-checks.sh:166-168`), the changelog edit
-that removes a line without adding one (`run-helper-checks.sh:111-120`), and
-the empty `--cap` name and empty `--check-name` values
-(`run-helper-checks.sh:82` and `:184`) each get the same treatment. Running
+The original runner gave the deleted-record case, the changelog edit that
+removes a line without adding one, and the empty `--cap` name and empty
+`--check-name` values the same treatment; those cases left with their helpers
+and flag in #201 and remain in Git history. Running
 `bash tests/checking-pr-readiness/fixtures/run-helper-checks.sh` reports every
 assertion passing (`0 failed`).
 
@@ -403,11 +410,13 @@ assertion passing (`0 failed`).
 - `docs/solutions/best-practices/cross-harness-dogfood-testing.md` makes the
   parallel point for skill bodies: a run is evidence only when the artifact
   under test is the one that actually executed.
-- `skills/checking-pr-readiness/SKILL.md:183-194` maps helper exit codes and
+- `skills/checking-pr-readiness/SKILL.md:183-194` (as shipped in #23; the
+  mapping is no longer in the current SKILL.md) mapped helper exit codes and
   verdict lines onto the gate's status words — verdicts say what a class found,
   status words say whether the check happened.
-- `tests/checking-pr-readiness/log.md:11` records the first green 34/34 run
-  after the original fixes; the harness has since grown to 154 assertions.
+- `tests/checking-pr-readiness/log.md:11` (retired in #191; in Git history)
+  recorded the first green 34/34 run after the original fixes; the harness
+  grew to 154 assertions and now holds 55.
 - `skills/checking-merge-readiness/references/fetch-floor.md` names
   `fetch-pr-history.sh` the preferred transport for the merge-readiness review's history
   surfaces, which is exactly why a silent-pass hole in it would degrade every

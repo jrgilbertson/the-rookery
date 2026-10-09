@@ -1,7 +1,7 @@
 ---
 title: "Run blind cross-model grading through each CLI's native JSON schema flag"
 date: 2026-09-23
-last_updated: 2026-10-03
+last_updated: 2026-10-09
 category: best-practices
 module: "creating-portable-skills skill verification"
 problem_type: best_practice
@@ -205,8 +205,8 @@ grades to a durable work folder outside the repository.
 A grade that is missing or malformed looks like a verdict if the harness does
 not check it. An empty Grok answer parsed as "no items passed" would have
 recorded a false fail. A malformed grade with a wrong item count would have
-scored a case against the wrong checklist. The step 3 rule in the baseline
-template holds only if every counted verdict came from a complete, well-formed
+scored a case against the wrong checklist. The former protocol's same-grader rule
+held only if every counted verdict came from a complete, well-formed
 grade.
 
 One schema across CLIs holds the output contract fixed. The packet,
@@ -280,8 +280,8 @@ for L, v in g.items():
 **Cross-grading assignment.** With two targets, fix the grader per target for
 the whole round: Grok 4.7 grades every Opus case packet, and Opus 5.5 grades
 every Grok case packet. Each packet holds both variants of one case on one
-target, so one grader scores both halves of the comparison, as step 3
-requires. Scrub variant names and project paths from the outputs before they
+target, so one grader scores both halves of the comparison, as the former
+protocol required. Scrub variant names and project paths from the outputs before they
 enter the packet.
 
 ## Related
@@ -293,3 +293,9 @@ enter the packet.
   which skill copy loaded in a target run.
 - `docs/solutions/workflow-issues/loosening-a-checklist-during-grading-removes-the-check.md`:
   fix a bad item in its own commit, never mid-grading.
+- `docs/decisions/promptfoo-for-portable-skill-evaluations.md` and
+  `extract_judge` in `tests/creating-portable-skills/promptfoo_suite.py`: the
+  current suite runs criterion judges through Promptfoo native providers and
+  applies these validation rules. An unavailable or errored judge yields no
+  verdict, and the verdict count, candidate ids, and result values must match
+  the candidates.

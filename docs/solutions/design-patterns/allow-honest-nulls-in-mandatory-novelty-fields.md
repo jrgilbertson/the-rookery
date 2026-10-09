@@ -30,6 +30,10 @@ tags:
 
 ## Context
 
+> **Retired evidence:** the `tests/storm-research/` cases, fixtures, and run log
+> cited below were retired in #191. Recover them with
+> `git show 135e2af^:tests/storm-research/<path>`.
+
 Research executors often return findings followed by a field such as `Unique
 insight`. When that field requires a positive answer, the schema turns novelty
 into a completion obligation even when the evidence supports no distinct

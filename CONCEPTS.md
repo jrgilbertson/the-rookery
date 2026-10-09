@@ -175,6 +175,12 @@ release-notes surface, not an installation pin: ordinary installs continue to
 follow `main`, and a correction receives a new release tag instead of moving an
 existing one.
 
+### Unmeasured
+
+An evaluation result that was not collected or cannot be trusted, kept distinct
+from both pass and fail. An Unmeasured result never counts toward a pass rate,
+and an earlier run is not reclassified later to fill the gap.
+
 ## Readiness checkpoints
 
 ### Option-1 reply
@@ -309,7 +315,7 @@ The instruction-economy check asks one question for every line: would the agent
 get this wrong without it? A line that restates default model behavior fails and
 is cut whole. The test decides only whether to keep the line. The separate
 operationalize-the-qualifier check handles words that survive but still steer
-unpredictably.
+unpredictably. The skill review checklist names this check No-ops.
 
 ### System-Owned Invariant
 
@@ -332,3 +338,6 @@ decision, with training, validation, and fresh queries kept distinct.
   words remain Orca worktree roles and issue-graph relationships; they are not
   gardener roles. The shared `ROUTING.md` names are Coordinator, Executor,
   and Reviewer; Scout is no longer a routing profile.
+- `ROUTING.md` uses Coordinator and Executor for its own roles. Its coordinator
+  is the session that receives a kickoff and may do the work itself; a gardener
+  Coordinator never implements. The words are shared, the roles are not.

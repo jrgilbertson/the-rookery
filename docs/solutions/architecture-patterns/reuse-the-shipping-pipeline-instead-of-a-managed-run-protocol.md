@@ -50,12 +50,18 @@ file of about 1,800 words plus a policy template:
 - Executors run the `lfg` front half: `ce-debug` when the cause is open,
   `ce-plan` from the brief, `ce-work mode:return-to-caller <plan-path>`,
   `ce-simplify-code`, `ce-code-review mode:agent`, `ce-test-browser
-  mode:pipeline`, then `checking-pr-readiness`, and stop at its menu. The
-  Coordinator answers option 1 on a later turn. Finishing publishes with
-  `ce-commit-push-pr mode:pipeline` and watches with `ce-babysit-pr
-  mode:pipeline`. The Coordinator then dispatches `checking-merge-readiness` to
-  a fresh Reviewer for the verdict. Babysit is a local optimization;
-  merge readiness is the global one.
+  mode:pipeline`, run the policy `verify` argv, then `checking-pr-readiness`,
+  and stop at its menu. On a later turn the Coordinator authorizes the
+  Executor's reply `1` when the readiness surface stays inside the unit's
+  allowed files. Readiness then invokes `ce-commit-push-pr mode:pipeline`, and
+  the Executor starts `ce-babysit-pr mode:pipeline` when the publisher's
+  completion gate allows it. The Coordinator then dispatches
+  `checking-merge-readiness` to a fresh Reviewer, passing only the pull-request
+  identity. Babysit is a local optimization; merge readiness is the global one.
+- Qualitative judgment stays with the model: which work is small, testable,
+  and worth shipping, and when a source gap is a finding rather than a stop.
+  Deterministic checks prove only mechanically falsifiable facts; they never
+  certify that a candidate matters or that a plan is good.
 - An open pull request blocks a unit only when both change the same source
   file. Changelog and lockfile overlap is resolved at merge time.
 - Scans run with the host's command tool and a timeout. Output is captured
@@ -93,6 +99,6 @@ it is the owner's morning work at merge readiness.
 
 ## Related
 
-- [Separate scout measurement stages from authoring capacity](separate-scout-measurement-stages-from-authoring-capacity.md)
+- [Keep qualitative agent reviews qualitative](../best-practices/keep-qualitative-agent-reviews-qualitative.md)
 - [Gate on host-readable facts, not config grants](../design-patterns/gate-on-host-readable-facts-not-config-grants.md)
 - [Repo Gardener](../../../skills/repo-gardener/SKILL.md)

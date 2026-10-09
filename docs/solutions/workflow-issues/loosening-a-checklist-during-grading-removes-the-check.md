@@ -1,6 +1,7 @@
 ---
 title: "Loosening a test checklist during grading removes the check"
 date: 2026-08-01
+last_updated: 2026-10-09
 category: workflow-issues
 module: "checking-merge-readiness behavioral battery"
 problem_type: workflow_issue
@@ -23,6 +24,10 @@ related_components:
 ---
 
 # Loosening a test checklist during grading removes the check
+
+> The battery and run log cited here were retired in #191 and remain in Git
+> history. "Pause" is now "debug", and the recommendation mapping is in
+> `skills/checking-merge-readiness/SKILL.md` step 6.
 
 ## Context
 
@@ -226,7 +231,7 @@ in the run log).
   nothing forced it to be checked against the surviving artifact; here a
   checklist item passes because nothing forces its wording to be checked against
   the criterion it encodes.
-- [Ship bundled skill helpers with an executable fail-closed contract](../workflow-issues/falsifiability-contracts-need-executable-tests.md)
+- [Ship bundled skill helpers with an executable falsifiability contract](../workflow-issues/falsifiability-contracts-need-executable-tests.md)
   states the general rule this case instantiates. A check that cannot fail is
   not a check, whether the hole came from a self-matching grep or from an item
   widened to fit the run in front of you.

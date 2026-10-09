@@ -24,7 +24,7 @@ At the time, Repo Gardener's live authority was one durable yaml file in the
 target repository, not a file this catalog kept. Its `config_check.py`
 script parsed that file with a hand-rolled loader, and the `lanes`
 subcommand in `release_a_contract.py` inventoried the same `lanes:` section
-with a two-space regex. Review on #78 (unmerged as of this writing) kept
+with a two-space regex. Review on #78 kept
 finding cases one grammar accepted and the other rejected: extra indent,
 flow `{mutation: true}`, trailing commas, `Null`/`NULL`. Fixing the regex
 did not end the split.

@@ -1,6 +1,7 @@
 ---
 title: "Shipping executable helpers in a markdown skill catalog"
 date: 2026-07-31
+last_updated: 2026-10-09
 category: conventions
 module: "skills"
 problem_type: convention
@@ -20,7 +21,11 @@ tags: [skills, bundled-scripts, install-probe, skills-ref, executable-bits, acti
 Until `checking-pr-readiness`, every published skill in this catalog was
 markdown-only. Bundling three bash helpers surfaced packaging facts that had
 never been exercised here, and that the authoring conventions did not yet
-record. This work is pending on branch `jrgilbertson/checking-pr-readiness`.
+record. This work shipped in #23. The skills that now ship executable helpers
+are `skills/checking-pr-readiness/scripts/surface-report.sh`,
+`skills/checking-merge-readiness/scripts/fetch-pr-history.sh`,
+`skills/creating-portable-skills/scripts/signal-scan.sh`, and
+`skills/managing-issues/scripts/config_check.py`.
 
 ## Guidance
 

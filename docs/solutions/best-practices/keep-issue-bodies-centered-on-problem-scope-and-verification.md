@@ -42,8 +42,9 @@ delivered the intended behavior.
 
 The minimum durable structure is `Problem`, `Scope`, and `Verification`.
 Optional sections should appear only when they prevent a material misreading.
-The focused behavioral contract lives in
-`tests/managing-issues/cases/issue-body-range-and-verification-alignment.md`.
+The owning contract lives in `skills/managing-issues/SKILL.md` (step 1) and
+`skills/managing-issues/assets/issue-body-template.md`; the earlier behavioral
+case was retired in #191.
 
 ## Guidance
 

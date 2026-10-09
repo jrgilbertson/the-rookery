@@ -37,4 +37,4 @@ unavailability.
 
 ## Related
 
-- [Separate scout and measurement stages from authoring capacity](../architecture-patterns/separate-scout-measurement-stages-from-authoring-capacity.md)
+- [Reuse the shipping pipeline instead of a managed-run protocol](../architecture-patterns/reuse-the-shipping-pipeline-instead-of-a-managed-run-protocol.md)

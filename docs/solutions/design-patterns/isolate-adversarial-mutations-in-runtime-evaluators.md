@@ -19,6 +19,10 @@ tags: [skills, runtime-testing, test-isolation, adversarial-mutation, binding-re
 
 ## Context
 
+> **Retired evidence:** the `tests/storm-research/` cases, fixtures, and run log
+> cited below were retired in #191. Recover them with
+> `git show 135e2af^:tests/storm-research/<path>`.
+
 Runtime tests for skills sometimes need a deliberate defect so the test
 can prove that a later review stage detects and repairs it. That defect must not
 be part of the sample user request. The Storm Research case now labels itself
@@ -51,9 +55,10 @@ Give each reviewer the briefing, baseline, source audit, raw returns, and
 internal run record, but not the orchestrator's synthesis reasoning
 (`skills/storm-research/references/fidelity-check.md` opening artifact list).
 
-Treat the review loop as open-ended. Apply every binding finding so the
-reader-facing briefing changes, then start a new clean reviewer and repeat
-until one reports `FIDELITY CLEAN` (`skills/storm-research/SKILL.md` **§9** and
+Do not fix the expected number of review rounds. Apply every binding finding so
+the reader-facing briefing changes, then start a new clean reviewer and repeat
+until one reports `FIDELITY CLEAN`, or until the skill's three-recheck budget
+ends and reduced verification is disclosed (`skills/storm-research/SKILL.md` **§9** and
 **Completion check**). Require every reviewer prompt and return, every briefing
 revision, and eventual clean completion, not a fixed number of rounds
 (`tests/storm-research/cases/runtime-isolation-and-binding-review.md:8`, `:42`).
@@ -69,7 +74,7 @@ disagreement, while a conflict invented by the briefing is a review defect
 (`skills/storm-research/references/fidelity-check.md` **What counts as
 disagreement**).
 
-An open-ended loop matters because a reviewer may find another material defect
+An unfixed round count matters because a reviewer may find another material defect
 after the injected one is repaired. The review also checks evidence
 traceability for assumptions, mechanisms, and every material causal-chain link,
 not just contradictions (`skills/storm-research/references/fidelity-check.md`
@@ -113,7 +118,8 @@ Research the reporting policy with five isolated lenses.
 After all raw returns and draft 1 exist, select two lenses whose conclusions
 are compatible on one claim. Inject a sentence saying they conflict. Preserve
 the mutation, apply every binding finding, and use new clean reviewers until
-one reports FIDELITY CLEAN. Keep every revision and review artifact.
+one reports FIDELITY CLEAN or the recheck budget is exhausted and disclosed.
+Keep every revision and review artifact.
 ```
 
 ## Related

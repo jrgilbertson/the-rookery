@@ -142,7 +142,8 @@ Two checks catch a restated gate before it ships:
 2. **Probe prompt through a fresh runner.** Write a prompt that hits exactly
    the rule's edge, run it through a fresh subagent that loads only the
    package, and have a separate grader read the card against a prediction
-   written in advance. The route-work eval log records these runs.
+   written in advance. The route-work eval log recorded these runs until #191 retired the behavioral
+   suites (recoverable with `git show 135e2af^:tests/route-work/log.md`).
 
 ## Related
 

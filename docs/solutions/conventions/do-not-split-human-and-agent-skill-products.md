@@ -69,16 +69,18 @@ Keep one end-of-run API for every caller of a checking skill.
    reply writes the menu and stops; the next message is the pick. Do not
    pick an option in the same turn that wrote the menu.
 2. **Later `1` is Approve or Proceed, after identity re-read.** Accept option
-   1 only after the identity re-read. For PR readiness that is HEAD,
-   merge-base, and staged, unstaged, and untracked content. For merge
-   readiness that is the fingerprint, live merge state, host policy, and
-   linked-issue re-check. The activating utterance never authorizes option 1.
-   On PR readiness, the option-1 reply continues into the finishing path for
-   this conversation without presenting the pack as a wait. Finishing may
-   then babysit. A run that is not a gardener Executor returns a
-   fresh-context merge-readiness menu; an Executor's option-1 reply does
-   not pick merge and does not dispatch that Reviewer, and reports the
-   ready babysit result to the Coordinator instead.
+   1 only after the identity re-read. For PR readiness that rebuilds the
+   surface identity (head, base OID, and one tree covering staged, unstaged,
+   and untracked content) and the intent source. For merge readiness that
+   re-checks head and base ref, review-history fingerprint, linked-issue
+   states, and host rules against live state. The activating utterance never
+   authorizes option 1. On PR readiness, the option-1 reply fills the
+   evidence pack and invokes the PR-opening skill once. When babysit reports
+   looks merge-ready, an attended run invokes `checking-merge-readiness`,
+   which moves itself to a fresh reviewer and waits on its own menu. An
+   unattended run stops after the publisher; in `repo-gardener` the
+   Coordinator dispatches merge readiness. The Approve `1` never selects
+   Proceed to merge.
 3. **Do not keep a second product in the checking skill.** Do not add
    assessment-only, agent-mode, report-only, disposition tokens, "don't
    wait," or a stricter unattended ready bar as a parallel print contract.
@@ -137,7 +139,8 @@ Approve, do not pick in the same turn. Merge readiness matches: brief
 merge, debug, or do not merge, wait, later `1` is Proceed to merge after
 the matching re-check, and a bare merge request still waits. The stub
 fixture now greps that one-process contract rather than a report-only merge
-path (`tests/checking-merge-readiness/fixtures/run-stub-checks.sh`).
+path (`tests/checking-merge-readiness/fixtures/run-stub-checks.sh`, retired in
+#191; in Git history).
 
 **Identity is not a second product.** The identity bind (then
 `identity-and-argv.md`) binds one

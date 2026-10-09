@@ -75,12 +75,15 @@ Record the surface identity in the temp directory and do not print it: the
 full head OID, the base OID, and one tree OID that covers every tracked and
 untracked path as it stands. Build it in a copy of the real index, so staged,
 force-added, and assume-unchanged entries match what a publisher's
-`git add -A` would commit, and the real index and working tree stay untouched:
+`git add -A` would commit. New objects go to the temp directory, so the real
+index, object store, and working tree stay untouched:
 
 ```sh
+objs=$(cd "$(git rev-parse --git-path objects)" && pwd)
 cp -p "$(git rev-parse --git-path index)" "$tmp/index" 2>/dev/null || :
-GIT_INDEX_FILE="$tmp/index" git add -A &&
-GIT_INDEX_FILE="$tmp/index" git write-tree
+mkdir -p "$tmp/objects"
+(export GIT_INDEX_FILE="$tmp/index" GIT_OBJECT_DIRECTORY="$tmp/objects" \
+  GIT_ALTERNATE_OBJECT_DIRECTORIES="$objs"; git add -A && git write-tree)
 ```
 
 Approve and recompose compare this identity. Any difference means the

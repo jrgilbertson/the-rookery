@@ -350,6 +350,12 @@ if [ "$status_before" = "$(git -C "$si" status --porcelain)" ] &&
 	[ "$index_before" = "$(git -C "$si" ls-files -s)" ]; then
 	ok "identity: the real index and working tree are untouched"
 else no "identity: the real index and working tree are untouched" "status or index moved"; fi
+w "$si/fresh.txt" "content no object store has seen"
+objects_before=$(find "$si/.git/objects" -type f | sort)
+surface_id "$si" >/dev/null
+if [ "$objects_before" = "$(find "$si/.git/objects" -type f | sort)" ]; then
+	ok "identity: the real object store is untouched"
+else no "identity: the real object store is untouched" "new objects were written under .git/objects"; fi
 pub=$(mktemp -d "$work/pub.XXXXXX")
 cp "$si/.git/index" "$pub/index"
 published=$(cd "$si" && GIT_INDEX_FILE="$pub/index" git add -A && GIT_INDEX_FILE="$pub/index" git write-tree)
